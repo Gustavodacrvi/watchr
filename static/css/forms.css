@@ -1,0 +1,58 @@
+.mobile-margin {
+  height: 125px;
+}
+
+.card-form {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.card-form > div {
+  flex-basis: 500px;
+  display: flex;
+  flex-direction: column;
+  margin: 6px;
+}
+
+.card-form .form-el:last-child {
+  margin-bottom: 20px;
+}
+
+.form-el {
+  margin-top: 20px;
+}
+
+.form-title {
+  display: flex;
+  justify-content: center;
+}
+
+.form-input {
+  display: flex;
+  justify-content: center;
+}
+
+.form-input + .form-input {
+  margin-top: 10px;
+}
+
+.input {
+  width: 80%;
+  font-family: 'Work Sans';
+  padding: 10px;
+  font-size: 1.02em;
+  outline: none;
+  border: none;
+  background: url(/images/backcolor.png);
+}
+
+.form-title h1 {
+  margin: 0;
+} 
+
+@media screen and (max-width: 796px) {
+  .mobile-margin {
+    height: 250px;
+  }
+}

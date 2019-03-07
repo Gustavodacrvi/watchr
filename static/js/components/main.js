@@ -38,7 +38,7 @@ Vue.component('navigation', {
           <white-link to='/user'>User page</white-link>
         </div>
         <div v-else>
-          asf
+          
         </div>
         <div>
         </div>

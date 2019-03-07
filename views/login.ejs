@@ -1,1 +1,27 @@
-asdf
+<!doctype html>
+
+<html lang='en'>
+  <head>
+    <link rel="stylesheet" href="/css/forms.css" type='text/css' />
+    <% include partials/header %>
+    <script src='/js/components/forms.js' defer></script>
+    <script src='/js/main.js' defer></script>
+
+    <title>Login</title>
+  </head>
+
+  <body>
+
+    <div id='vue'>
+      <navigation :desktop='desktop'></navigation>
+
+      <div class='mobile-margin'></div>
+      <card-form act='/login'>
+        <form-title>LOGIN</form-title>
+        <form-input :max='50' name='username' placeholder='Username:'></form-input>
+      </card-form>
+      <div class='mobile-margin'></div>
+    </div>
+
+  </body>
+</html>
