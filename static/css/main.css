@@ -9,7 +9,7 @@ body {
   font-family: 'Work Sans';
 }
 
-a, .fa {
+a, .fa, span {
   color: #c8c8c8;
 }
 
@@ -27,6 +27,14 @@ a, .fa {
 
 .card {
   background: url(/images/cardcolor.png);
+}
+
+.round {
+  border-radius: 6px;
+}
+
+.shadow {
+  box-shadow: 0 3px 10px 1px rgba(65, 65, 65, .3);
 }
 
 #navigation {
@@ -49,9 +57,68 @@ a, .fa {
 }
 
 #navigation > div {
-  flex-basis: 25%;
+  flex-basis: 35%;
 }
 
 #navigation > :nth-child(2) {
-  flex-basis: 50%;
+  flex-basis: 30%;
 }
+
+#navigation > :last-child {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.big-icon {
+  font-size: 1.8em;
+}
+
+.big-icon:hover {
+  color: #baf2ef;
+  cursor: pointer;
+}
+
+#navigation-mobile-drop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+#navigation-mobile-drop > div {
+  position: absolute;
+  transition-duration: .2s;
+  opacity: 0;
+  visibility: hidden;
+  top: 100%;
+  min-width: 150px;
+  right: 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#navigation-mobile-drop:hover > div {
+  opacity: 1;
+  visibility: visible;
+}
+
+.drop-link {
+  display: inline-block;
+  padding: 6px;
+  text-decoration: none;
+  transition-duration: .2s;
+}
+
+.drop-link:hover {
+  background-color: #baf2ef;
+  color: #323232;
+}
+
+/* NAVIGATION */
+@media screen and (max-width: 798px) {
+  #navigation {
+    padding: 0 3%;
+    width: 94%;
+  }
+} 
