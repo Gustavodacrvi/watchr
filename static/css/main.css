@@ -1,6 +1,12 @@
+@font-face {
+  font-family: 'Work Sans';
+  src: url(../fonts/WorkSans-Light.otf);
+}
+
 body {
   margin: 0;
   background: url(/images/backcolor.png);
+  font-family: 'Work Sans';
 }
 
 .card {
