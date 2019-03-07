@@ -1,0 +1,8 @@
+body {
+  margin: 0;
+  background: url(/images/backcolor.png);
+}
+
+.card {
+  background: url(/images/cardcolor.png);
+}
