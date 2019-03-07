@@ -9,7 +9,7 @@ body {
   font-family: 'Work Sans';
 }
 
-a {
+a, .fa {
   color: #c8c8c8;
 }
 
