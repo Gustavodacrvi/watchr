@@ -9,6 +9,130 @@ body {
   font-family: 'Work Sans';
 }
 
+a, .fa, span {
+  color: #c8c8c8;
+}
+
+#navigation,
+#navigation > :last-child {
+  display: flex;
+}
+
+#navigation-mobile-drop,
+#navigation-mobile-drop > div {
+  display: flex;
+  flex-direction: column;
+}
+
+#navigation {
+  align-items: center;
+}
+
+.white-link,
+#navigation-mobile-drop > div,
+.drop-link {
+  transition-duration: .2s;
+}
+
+.shadow {
+  box-shadow: 0 3px 10px 1px rgba(50, 50, 50, .4);
+}
+
+#navigation > div {
+  flex-basis: 35%;
+}
+
+#navigation > :nth-child(2) {
+  flex-basis: 30%;
+}
+
+
+
+
+.white-link {
+  font-size: 1.1em;
+  display: inline-block;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.white-link:hover {
+  color: #baf2ef;
+}
+
 .card {
   background: url(/images/cardcolor.png);
 }
+
+.round {
+  border-radius: 6px;
+}
+
+#navigation {
+  background-color: red;
+  position: absolute;
+  top: 0;
+  width: 90%;
+  height: 45px;
+  padding: 0 5%;
+}
+
+#navigation + div {
+  height: 45px;
+}
+
+#navigation .white-link {
+  margin: 6px;
+}
+
+#navigation > :last-child {
+  justify-content: flex-end;
+}
+
+.big-icon {
+  font-size: 1.8em;
+}
+
+.big-icon:hover {
+  color: #baf2ef;
+  cursor: pointer;
+}
+
+#navigation-mobile-drop {
+  position: relative;
+}
+
+#navigation-mobile-drop > div {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  top: 100%;
+  min-width: 150px;
+  right: 0;
+  text-align: center;
+  overflow: hidden;
+}
+
+#navigation-mobile-drop:hover > div {
+  opacity: 1;
+  visibility: visible;
+}
+
+.drop-link {
+  display: inline-block;
+  padding: 6px;
+  text-decoration: none;
+}
+
+.drop-link:hover {
+  background-color: #baf2ef;
+  color: #323232;
+}
+
+/* NAVIGATION */
+@media screen and (max-width: 798px) {
+  #navigation {
+    padding: 0 3%;
+    width: 94%;
+  }
+} 
