@@ -8,12 +8,6 @@ Vue.component('white-link', {
   `,
 })
 
-Vue.component('big-icon', {
-  template: `
-    <i class='fa fa-bars big-icon'></i>
-  `,
-})
-
 Vue.component('drop-link', {
   props: {
     to: String
@@ -23,17 +17,25 @@ Vue.component('drop-link', {
   `,
 })
 
+
+
+Vue.component('big-icon', {
+  template: `
+    <i class='fa fa-bars big-icon'></i>
+  `,
+})
+
 Vue.component('navigation', {
   props: {
     desktop: Boolean,
   },
   template: `
     <div>
-      <div id='navigation' class='card'>
+      <div id='navigation' class='card shadow'>
         <div v-if='desktop'>
           <white-link to='/'>Home</white-link>
-          <white-link>Login</white-link>
-          <white-link>User page</white-link>
+          <white-link to='/login'>Login</white-link>
+          <white-link to='/user'>User page</white-link>
         </div>
         <div v-else>
           asf
@@ -41,18 +43,18 @@ Vue.component('navigation', {
         <div>
         </div>
         <div v-if='desktop'>
-          <white-link>Terms of use</white-link>
-          <white-link>Privacy policy</white-link>
+          <white-link to='/terms-of-use'>Terms of use</white-link>
+          <white-link to='/privacy-policy'>Privacy policy</white-link>
         </div>
         <div v-else>
           <div id='navigation-mobile-drop'>
             <big-icon></big-icon>
             <div class='card round shadow'>
               <drop-link to='/'>Home</drop-link>
-              <drop-link>Login</drop-link>
-              <drop-link>User page</drop-link>
-              <drop-link>Terms of use</drop-link>
-              <drop-link>Privacy policy</drop-link>
+              <drop-link to='/login'>Login</drop-link>
+              <drop-link to='/user'>User page</drop-link>
+              <drop-link to='/terms-of-use'>Terms of use</drop-link>
+              <drop-link to='/privacy-policy'>Privacy policy</drop-link>
             </div>
           </div>
         </div>
