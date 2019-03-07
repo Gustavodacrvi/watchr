@@ -9,6 +9,49 @@ body {
   font-family: 'Work Sans';
 }
 
+a {
+  color: #c8c8c8;
+}
+
+.white-link {
+  font-size: 1.1em;
+  display: inline-block;
+  cursor: pointer;
+  transition-duration: .2s;
+  text-decoration: none;
+}
+
+.white-link:hover {
+  color: #baf2ef;
+}
+
 .card {
   background: url(/images/cardcolor.png);
+}
+
+#navigation {
+  background-color: red;
+  position: absolute;
+  top: 0;
+  width: 90%;
+  height: 45px;
+  padding: 0 5%;
+  display: flex;
+  align-items: center;
+}
+
+#navigation + div {
+  height: 45px;
+}
+
+#navigation .white-link {
+  margin: 6px;
+}
+
+#navigation > div {
+  flex-basis: 25%;
+}
+
+#navigation > :nth-child(2) {
+  flex-basis: 50%;
 }
