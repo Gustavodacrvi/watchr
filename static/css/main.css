@@ -57,7 +57,7 @@ a, .fa, span {
 }
 
 .white-link:hover {
-  color: #baf2ef;
+  color: #8bf2ef;
 }
 
 .card {
@@ -94,7 +94,7 @@ a, .fa, span {
 }
 
 .big-icon:hover {
-  color: #baf2ef;
+  color: #8bf2ef;
   cursor: pointer;
 }
 
@@ -125,7 +125,7 @@ a, .fa, span {
 }
 
 .drop-link:hover {
-  background-color: #baf2ef;
+  background-color: #8bf2ef;
   color: #323232;
 }
 
