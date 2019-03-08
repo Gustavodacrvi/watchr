@@ -70,7 +70,7 @@
 }
 
 .wrong-input {
-  border: 1px solid #fe4a49;
+  border: 1px solid #fcb150;
 }
 
 .form-title h1 {
@@ -78,7 +78,7 @@
 }
 
 .alert {
-  color: #fe4a49;
+  color: #fcb150;
 }
 
 @media screen and (max-width: 796px) {

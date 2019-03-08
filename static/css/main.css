@@ -69,6 +69,19 @@ h1 {
   color: #8bf2ef;
 }
 
+.blue-link {
+  color: #8bf2ef;
+  text-decoration: none;
+}
+
+.form-link {
+  margin-left: 30px;
+}
+
+.blue-link:hover {
+  text-decoration: underline;
+}
+
 .card {
   background: url(/images/cardcolor.png);
 }

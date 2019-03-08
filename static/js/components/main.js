@@ -17,6 +17,17 @@ Vue.component('drop-link', {
   `,
 })
 
+Vue.component('form-link', {
+  props: {
+    to: String
+  },
+  template: `
+    <div class='form-el'>
+      <a class='blue-link form-link' :href='to'><slot></slot></a>
+    </div>
+  `,
+})
+
 
 
 Vue.component('big-icon', {
