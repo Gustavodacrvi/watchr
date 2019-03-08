@@ -1,6 +1,11 @@
 let express = require('express')
 let ejs = require('ejs')
 let path = require('path')
+let mongose = require('mongoose')
+
+
+mongose.connect(process.env.DATABASE || 'mongodb://localhost/GTDF2',{useNewUrlParser:!0})
+let mongoose = mongose.connection
 
 let app = express()
 

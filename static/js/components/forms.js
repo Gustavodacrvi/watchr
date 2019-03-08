@@ -65,16 +65,16 @@ Vue.component('form-button', {
       }
       if (noClientErrors) {
         this.$parent.httpSent = true
-        setTimeout(() => this.$parent.httpSent = false, 3000)
-        /* POSTrequestData('/login', parseInputObj(map.values()), (dt) => {
+        POSTrequestData('/login', parseInputObj(map.values()), (dt) => {
           let data = JSON.parse(dt)
           if (!dt.error) {
-            
+            // REDIRECT THIS SHIT BRUH
           } else {
-
+            this.$parent.inputName = dt.inputName
+            this.$parent.error = dt.error
           }
           this.$parent.httpSent = false
-        }) */
+        })
       }
     },
   },
