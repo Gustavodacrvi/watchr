@@ -54,26 +54,14 @@ Vue.component('form-button', {
     analise() {
       let map = this.$parent.map
       let noClientErrors = true
-      let passwordValue
-      let confirmValue
-      let foundFirstPassword
       for (let input of map.values()) {
-        if (input.isPassword && !foundFirstPassword) {
-          passwordValue = input.value
-          foundFirstPassword = true
-        }
-        else if (input.isPassword) {
+        if (input.isPassword) {
           confirmValue = input.value
         }
         if (input.hasError) {
           noClientErrors = false
           break
         }
-      }
-      if (confirmValue !== undefined && passwordValue !== confirmValue) {
-        noClientErrors = false
-        this.$parent.inputName = 'confirm'
-        this.$parent.error = 'Passwords not matching.'
       }
       if (noClientErrors) {
         if (typeof this.$parent.act === 'string') {
@@ -112,31 +100,30 @@ Vue.component('form-input', {
     }
   },
   mounted() {
-    if (this.type === 'password') this.showing = false
+    if (this.isPasswordType) this.showing = false
     else this.showing = true
+
     this.isPassword = !this.showing
-    let obj = { 
-      hasError: true,
-      value: '',
-      isPassword: this.isPassword,
-      name: this.name,
-    }
+    let obj = this.getInputObj()
     this.$parent.map.set(this.name, obj)
   },
   template: `
     <div class='form-input form-el'>
       <div>
-        <input v-model='val' :class='{ input: true, round: true, "wrong-input": error || $parent.inputName === name}' autocomplete='off' :type='inputType' :placeholder='placeholder' :name='name' />
-        <alert v-if='error && errorType === "empty"'>
+        <input v-model='val' :class='{ input: true, round: true, "wrong-input": error || hasHttpError}' autocomplete='off' :type='inputType' :placeholder='placeholder' :name='name' :ref='name' />
+        <alert v-if='hasErrorType("empty")'>
           This field cannot be empty.
         </alert>
-        <alert v-if='error && errorType === "max"'>
+        <alert v-else-if='hasErrorType("max")'>
           The field has to be less than {{ max + 1 }} characters.
         </alert>
-        <alert v-if='$parent.inputName === name'>
+        <alert v-else-if='hasErrorType("passwords not matching")'>
+          Passwords are not matching.
+        </alert>
+        <alert v-else-if='hasHttpError'>
           {{ $parent.error }}
         </alert>
-        <template v-if='type === "password"'>
+        <template v-if='isPasswordType'>
           <i v-if='showing' @click='showing = false' class='fa fa-eye tine-icon'></i>
           <i v-if='!showing' @click='showing = true' class='fa fa-eye-slash tine-icon'></i>
         </template>
@@ -144,22 +131,39 @@ Vue.component('form-input', {
     </div>
   `,
   computed: {
+    isPasswordType() {
+      return (this.type === 'password' || this.type === 'confirmpassword')
+    },
     inputType() {
       if (this.showing) return "text"
       else return "password"
     },
+    hasHttpError() {
+      return (this.$parent.inputName === this.name)
+    },
   },
-  watch: {
-    val() {
-      if (this.$parent.inputName === this.name) {
-        this.$parent.inputName = undefined
-        this.$parent.error = undefined
-      }
-      let obj = { 
+  methods: {
+    hasErrorType(str) {
+      return (this.error && this.errorType === str)
+    },
+    getInputObj() {
+      return { 
         hasError: true,
         value: this.val.trim(),
         isPassword: this.isPassword,
         name: this.name,
+      }
+    },
+  },
+  watch: {
+    val() {
+      if (this.hasHttpError) {
+        this.$parent.inputName = undefined
+        this.$parent.error = undefined
+      }
+      let obj = this.getInputObj()
+      if (this.type === 'password') {
+        this.$parent.passwordValue = this.val
       }
       if (this.val.trim() === '') {
         this.error = true
@@ -167,6 +171,9 @@ Vue.component('form-input', {
       } else if (this.val.trim().length > this.max) {
         this.error = true
         this.errorType = 'max'
+      } else if (this.type === 'confirmpassword' && this.val.trim() !== this.$parent.passwordValue) {
+        this.error = true
+        this.errorType = 'passwords not matching'
       }
       else {
         obj.hasError = false
