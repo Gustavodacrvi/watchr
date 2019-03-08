@@ -39,6 +39,14 @@ Vue.component('card-form', {
   `,
 })
 
+Vue.component('form-sync', {
+  template: `
+    <div v-if='$parent.httpSent' class='centralize form-el'>
+      <i class='fa fa-sync icon-massive fa-spin'></i>
+    </div>
+  `,
+})
+
 Vue.component('form-button', {
   template: `
     <div class='form-button form-el'>
@@ -57,7 +65,8 @@ Vue.component('form-button', {
       }
       if (noClientErrors) {
         this.$parent.httpSent = true
-        POSTrequestData('/login', parseInputObj(map.values()), (dt) => {
+        setTimeout(() => this.$parent.httpSent = false, 3000)
+        /* POSTrequestData('/login', parseInputObj(map.values()), (dt) => {
           let data = JSON.parse(dt)
           if (!dt.error) {
             
@@ -65,7 +74,7 @@ Vue.component('form-button', {
 
           }
           this.$parent.httpSent = false
-        })
+        }) */
       }
     },
   },

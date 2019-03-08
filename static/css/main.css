@@ -119,6 +119,10 @@ h1 {
   cursor: pointer;
 }
 
+.icon-massive {
+  font-size: 2.5em;
+}
+
 #navigation-mobile-drop {
   position: relative;
 }
