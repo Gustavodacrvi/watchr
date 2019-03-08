@@ -50,32 +50,46 @@ Vue.component('form-button', {
       </button>
     </div>
   `,
+  computed: {
+    ajax() {
+      return (typeof this.$parent.act === 'string')
+    },
+  },
   methods: {
-    analise() {
-      let map = this.$parent.map
-      let noClientErrors = true
-      for (let input of map.values()) {
-        if (input.isPassword) {
-          confirmValue = input.value
+    hasClientErrors() {
+      for (let input of this.$parent.map.values()) {
+        if (this.isTextInput(input) && input.value === '') {
+          this.$parent.inputName = input.name
+          this.$parent.error = 'This field cannot be empty.'
+          return true
         }
         if (input.hasError) {
-          noClientErrors = false
-          break
+          return true
         }
       }
-      if (noClientErrors) {
-        if (typeof this.$parent.act === 'string') {
-          this.$parent.httpSent = true
-          POSTrequestData(this.$parent.act, parseInputObj(map.values()), (dt) => {
-            let data = JSON.parse(dt)
-            if (!dt.error) {
-              // REDIRECT THIS SHIT BRUH
-            } else {
-              this.$parent.inputName = dt.inputName
-              this.$parent.error = dt.error
-            }
-            this.$parent.httpSent = false
-          })
+      return false
+    },
+    isTextInput(input) {
+      return (input.type === 'password' || input.type === 'text' || input.type === 'confirmpassword')
+    },
+    sendAjax() {
+      let form = this.$parent
+      form.httpSent = true
+      POSTrequestData(form.act, parseInputObj(form.map.values()), (dt) => {
+        let data = JSON.parse(dt)
+        if (!data.error) {
+          // REDIRECT THIS SHIT BRUH
+        } else {
+          form.inputName = dt.inputName
+          form.error = dt.error
+        }
+        form.httpSent = false
+      })
+    },
+    analise() {
+      if (!this.hasClientErrors()) {
+        if (this.ajax) {
+          this.sendAjax()
         } else this.$parent.act(map.values())
       }
     },
@@ -152,18 +166,20 @@ Vue.component('form-input', {
         value: this.val.trim(),
         isPassword: this.isPassword,
         name: this.name,
+        type: this.type,
       }
     },
   },
   watch: {
     val() {
+      let form = this.$parent
       if (this.hasHttpError) {
-        this.$parent.inputName = undefined
-        this.$parent.error = undefined
+        form.inputName = undefined
+        form.error = undefined
       }
       let obj = this.getInputObj()
       if (this.type === 'password') {
-        this.$parent.passwordValue = this.val
+        form.passwordValue = this.val
       }
       if (this.val.trim() === '') {
         this.error = true
@@ -171,7 +187,7 @@ Vue.component('form-input', {
       } else if (this.val.trim().length > this.max) {
         this.error = true
         this.errorType = 'max'
-      } else if (this.type === 'confirmpassword' && this.val.trim() !== this.$parent.passwordValue) {
+      } else if (this.type === 'confirmpassword' && this.val.trim() !== form.passwordValue) {
         this.error = true
         this.errorType = 'passwords not matching'
       }
@@ -179,7 +195,7 @@ Vue.component('form-input', {
         obj.hasError = false
         this.error = false
       }
-      this.$parent.map.set(this.name, obj)
+      form.map.set(this.name, obj)
     },
   },
 })
