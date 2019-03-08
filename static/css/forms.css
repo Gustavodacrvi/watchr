@@ -33,6 +33,14 @@
   justify-content: center;
 }
 
+.form-input .fa {
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  right: 5px;
+  cursor: pointer;
+}
+
 .form-input .alert {
   position: relative;
   left: -10px;
@@ -42,6 +50,7 @@
   width: 80%;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .form-input + .form-input {
