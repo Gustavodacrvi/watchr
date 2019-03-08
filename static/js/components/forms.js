@@ -21,13 +21,13 @@ Vue.component('alert', {
 })
 
 Vue.component('card-form', {
-  props: {
-    act: String
-  },
+  props: ['act'],
   data() {
     return {
       map: new Map(),
       httpSent: false,
+      inputName: undefined,
+      error: undefined,
     }
   },
   template: `
@@ -57,24 +57,41 @@ Vue.component('form-button', {
     analise() {
       let map = this.$parent.map
       let noClientErrors = true
+      let passwordValue
+      let confirmValue
+      let foundFirstPassword
       for (let input of map.values()) {
+        if (input.isPassword && !foundFirstPassword) {
+          passwordValue = input.value
+          foundFirstPassword = true
+        }
+        else if (input.isPassword) {
+          confirmValue = input.value
+        }
         if (input.hasError) {
           noClientErrors = false
           break
         }
       }
+      if (confirmValue !== undefined && passwordValue !== confirmValue) {
+        noClientErrors = false
+        this.$parent.inputName = 'confirm'
+        this.$parent.error = 'Passwords not matching.'
+      }
       if (noClientErrors) {
-        this.$parent.httpSent = true
-        POSTrequestData('/login', parseInputObj(map.values()), (dt) => {
-          let data = JSON.parse(dt)
-          if (!dt.error) {
-            // REDIRECT THIS SHIT BRUH
-          } else {
-            this.$parent.inputName = dt.inputName
-            this.$parent.error = dt.error
-          }
-          this.$parent.httpSent = false
-        })
+        if (typeof this.$parent.act === 'string') {
+          this.$parent.httpSent = true
+          POSTrequestData(this.$parent.act, parseInputObj(map.values()), (dt) => {
+            let data = JSON.parse(dt)
+            if (!dt.error) {
+              // REDIRECT THIS SHIT BRUH
+            } else {
+              this.$parent.inputName = dt.inputName
+              this.$parent.error = dt.error
+            }
+            this.$parent.httpSent = false
+          })
+        } else this.$parent.act(map.values())
       }
     },
   },
@@ -112,12 +129,15 @@ Vue.component('form-input', {
   template: `
     <div class='form-input form-el'>
       <div>
-        <input v-model='val' :class='{ input: true, round: true, "wrong-input": error}' autocomplete='off' :type='inputType' :placeholder='placeholder' :name='name' />
+        <input v-model='val' :class='{ input: true, round: true, "wrong-input": error || $parent.inputName === name}' autocomplete='off' :type='inputType' :placeholder='placeholder' :name='name' />
         <alert v-if='error && errorType === "empty"'>
           This field cannot be empty.
         </alert>
         <alert v-if='error && errorType === "max"'>
           The field has to be less than {{ max + 1 }} characters.
+        </alert>
+        <alert v-if='$parent.inputName === name'>
+          {{ $parent.error }}
         </alert>
         <template v-if='type === "password"'>
           <i v-if='showing' @click='showing = false' class='fa fa-eye tine-icon'></i>
@@ -134,6 +154,10 @@ Vue.component('form-input', {
   },
   watch: {
     val() {
+      if (this.$parent.inputName === this.name) {
+        this.$parent.inputName = undefined
+        this.$parent.error = undefined
+      }
       let obj = { 
         hasError: true,
         value: this.val.trim(),

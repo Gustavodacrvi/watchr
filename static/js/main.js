@@ -27,8 +27,8 @@ let vm = new Vue({
   },
   methods: {
     // AUTHENTICATION
-    login() {
-      console.log('do login')
+    login(obj) {
+      console.log(obj)
     },
   },
 })
