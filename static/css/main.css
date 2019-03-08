@@ -9,7 +9,7 @@ body {
   font-family: 'Work Sans';
 }
 
-a, .fa, span, input {
+a, .fa, span, input, button {
   color: #c8c8c8;
 }
 
@@ -70,7 +70,7 @@ h1 {
 }
 
 .blue-link {
-  color: #8bf2ef;
+  color: rgb(0, 150, 255);
   text-decoration: none;
 }
 

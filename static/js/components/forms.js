@@ -35,6 +35,30 @@ Vue.component('card-form', {
   }
 })
 
+Vue.component('form-button', {
+  props: {
+
+  },
+  template: `
+    <div class='form-button form-el'>
+      <button class='round' @click='analise'><slot></slot></button>
+    </div>
+  `,
+  methods: {
+    analise() {
+      let map = this.$parent.map
+      let results = map.values()
+      let send = true
+      for (input of results) {
+        if (input.hasError)
+          send = false
+      }
+
+      if (send) this.$emit('send')
+    },
+  },
+})
+
 Vue.component('form-input', {
   props: {
     max: Number,
@@ -56,6 +80,12 @@ Vue.component('form-input', {
     if (this.type === 'password') this.showing = false
     else this.showing = true
     this.isPassword = !this.showing
+    let obj = { 
+      hasError: true,
+      value: '',
+      isPassword: this.isPassword,
+    }
+    this.$parent.map.set(this.name, obj)
   },
   template: `
     <div class='form-input form-el'>
@@ -99,7 +129,6 @@ Vue.component('form-input', {
         this.error = false
       }
       this.$parent.map.set(this.name, obj)
-      console.log(this.$parent.map.get(this.name))
-    }
+    },
   },
 })
