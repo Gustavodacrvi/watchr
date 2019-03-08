@@ -1,6 +1,14 @@
 Vue.component('form-title', {
   template: `
-    <h1 class='form-title form-el'><slot></slot></h1>
+    <div class='form-title form-el'>
+      <h1><slot></slot></h1>
+    </div>
+  `,
+})
+
+Vue.component('alert', {
+  template: `
+    <span class='alert'><slot></slot></span>
   `,
 })
 
@@ -13,15 +21,34 @@ Vue.component('form-input', {
   data() {
     return {
       val: '',
+      empty: undefined,
+      error: undefined,
+      errorType: undefined,
     }
   },
   template: `
     <div class='form-input form-el'>
-      <input v-model='val' class='input round' autocomplete='off' type='text' :placeholder='placeholder' :name='name' />
+      <div>
+        <input v-model='val' :class='{ input: true, round: true, "wrong-input": error}' autocomplete='off' type='text' :placeholder='placeholder' :name='name' />
+        <alert v-if='error && errorType === "empty"'>
+          This field cannot be empty.
+        </alert>
+        <alert v-if='error && errorType === "max"'>
+          The field has to be less than {{ max + 1 }} characters.
+        </alert>
+      </div>
     </div>
   `,
   watch: {
     val() {
+      if (this.val === '') {
+        this.error = true
+        this.errorType = 'empty'
+      } else if (this.val.length > this.max) {
+        this.error = true
+        this.errorType = 'max'
+      }
+      else this.error = false
     }
   },
 })

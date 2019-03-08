@@ -9,7 +9,7 @@
 }
 
 .card-form > div {
-  flex-basis: 500px;
+  flex-basis: 525px;
   display: flex;
   flex-direction: column;
   margin: 6px;
@@ -33,12 +33,25 @@
   justify-content: center;
 }
 
+.form-input .alert {
+  position: relative;
+  left: -10px;
+}
+
+.form-input > div {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+}
+
 .form-input + .form-input {
   margin-top: 10px;
 }
 
 .input {
-  width: 80%;
+  width: 100%;
+  position: relative;
+  left: -10px;
   font-family: 'Work Sans';
   padding: 10px;
   font-size: 1.02em;
@@ -47,9 +60,17 @@
   background: url(/images/backcolor.png);
 }
 
+.wrong-input {
+  border: 1px solid #fe4a49;
+}
+
 .form-title h1 {
   margin: 0;
-} 
+}
+
+.alert {
+  color: #fe4a49;
+}
 
 @media screen and (max-width: 796px) {
   .mobile-margin {
