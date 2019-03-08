@@ -1,3 +1,11 @@
+function parseInputObj(map_iterable) {
+  let str = ''
+  for (let input of map_iterable) {
+    str += input.name + '=' + input.value + '&'
+  }
+  return str.slice(0, -1)
+}
+
 Vue.component('form-title', {
   template: `
     <div class='form-title form-el'>
@@ -18,7 +26,8 @@ Vue.component('card-form', {
   },
   data() {
     return {
-      map: new Map()
+      map: new Map(),
+      httpSent: false,
     }
   },
   template: `
@@ -28,17 +37,9 @@ Vue.component('card-form', {
       </div>
     </div>
   `,
-  watch: {
-    map() {
-      console.log(this.map.values())
-    }
-  }
 })
 
 Vue.component('form-button', {
-  props: {
-
-  },
   template: `
     <div class='form-button form-el'>
       <button class='round' @click='analise'><slot></slot></button>
@@ -47,14 +48,25 @@ Vue.component('form-button', {
   methods: {
     analise() {
       let map = this.$parent.map
-      let results = map.values()
-      let send = true
-      for (input of results) {
-        if (input.hasError)
-          send = false
+      let noClientErrors = true
+      for (let input of map.values()) {
+        if (input.hasError) {
+          noClientErrors = false
+          break
+        }
       }
+      if (noClientErrors) {
+        this.$parent.httpSent = true
+        POSTrequestData('/login', parseInputObj(map.values()), (dt) => {
+          let data = JSON.parse(dt)
+          if (!dt.error) {
+            
+          } else {
 
-      if (send) this.$emit('send')
+          }
+          this.$parent.httpSent = false
+        })
+      }
     },
   },
 })
@@ -84,6 +96,7 @@ Vue.component('form-input', {
       hasError: true,
       value: '',
       isPassword: this.isPassword,
+      name: this.name,
     }
     this.$parent.map.set(this.name, obj)
   },
@@ -114,13 +127,14 @@ Vue.component('form-input', {
     val() {
       let obj = { 
         hasError: true,
-        value: this.val,
+        value: this.val.trim(),
         isPassword: this.isPassword,
+        name: this.name,
       }
-      if (this.val === '') {
+      if (this.val.trim() === '') {
         this.error = true
         this.errorType = 'empty'
-      } else if (this.val.length > this.max) {
+      } else if (this.val.trim().length > this.max) {
         this.error = true
         this.errorType = 'max'
       }
