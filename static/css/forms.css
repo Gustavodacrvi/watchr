@@ -86,6 +86,12 @@
   justify-content: center;
 }
 
+.form-button i {
+  color: #8bf2ef;
+  font-size: 1.1em;
+  margin: 0 30px;
+}
+
 .form-button button{
   background: none;
   font-family: 'Work Sans';
@@ -100,6 +106,10 @@
 
 .form-button button:hover {
   background-color: #8bf2ef;
+  color: #323232;
+}
+
+.form-button button:hover i {
   color: #323232;
 }
 

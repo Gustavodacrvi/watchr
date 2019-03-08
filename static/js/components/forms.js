@@ -39,18 +39,15 @@ Vue.component('card-form', {
   `,
 })
 
-Vue.component('form-sync', {
-  template: `
-    <div v-if='$parent.httpSent' class='centralize form-el'>
-      <i class='fa fa-sync icon-massive fa-spin'></i>
-    </div>
-  `,
-})
-
 Vue.component('form-button', {
   template: `
     <div class='form-button form-el'>
-      <button class='round' @click='analise'><slot></slot></button>
+      <button class='round' @click='analise'>
+        <i v-if='$parent.httpSent' class='fa fa-sync fa-spin'></i>
+        <template v-else>
+          <slot></slot>
+        </template>
+      </button>
     </div>
   `,
   methods: {
