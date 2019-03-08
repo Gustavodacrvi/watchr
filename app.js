@@ -2,6 +2,9 @@ let express = require('express')
 let ejs = require('ejs')
 let path = require('path')
 let mongose = require('mongoose')
+let cookieParser = require('cookie-parser')
+let bodyParser = require('body-parser')
+let passport = require('passport')
 
 
 mongose.connect(process.env.DATABASE || 'mongodb://localhost/GTDF2',{useNewUrlParser:!0})
@@ -9,11 +12,17 @@ let mongoose = mongose.connection
 
 let app = express()
 
+app.use(cookieParser())
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended:!1}))
+
 let authentication = require('./routes/authentication')
 
 app.set('view engine', 'ejs')
 app.set('views',path.join(__dirname,'views'))
 app.use(express.static(path.join(__dirname,'static')))
+app.use(passport.initialize())
+app.use(passport.session())
 
 
 app.use('/', authentication)
