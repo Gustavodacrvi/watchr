@@ -77,11 +77,11 @@ Vue.component('form-button', {
       form.httpSent = true
       POSTrequestData(form.act, parseInputObj(form.map.values()), (dt) => {
         let data = JSON.parse(dt)
-        if (!data.error) {
-          // REDIRECT THIS SHIT BRUH
+        if (data.valid) {
+          window.location.href = "/login"
         } else {
-          form.inputName = dt.inputName
-          form.error = dt.error
+          form.inputName = data.inputName
+          form.error = data.error
         }
         form.httpSent = false
       })

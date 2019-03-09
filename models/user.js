@@ -16,35 +16,41 @@ var userSchema = mongoose.Schema({
     unique: !0
   },
   reset: {
-    passwordToken: String,
-    passwordExpires: Date,
-    usernameToken: String,
-    usernameExpires: Date,
+    password: {
+      token: String,
+      expires: Date,
+    },
+    username: {
+      token: String,
+      expires: Date,
+    },
   },
-  confirmAccountToken: String,
-  confirmAccountExpires: Date,
+  accountConfirmation: {
+    token: String,
+    expires: Date,
+  },
   data: {
   }
 })
 var User = module.exports = mongoose.model('User', userSchema)
 
-module.exports.createUser = function(newUser, caLLback) {
+module.exports.createUser = function(newUser, callBack) {
   bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(newUser.password, salt, (err, hash) => {
       newUser.password = hash
-      newUser.save(caLLback)
+      newUser.save(callBack)
     })
   })
 }
 
-module.exports.getUserByUsername = function(username, caLLback) {
-  let query = {
-    username: username
-  }
-  User.findOne(query, caLLback)
+module.exports.getUserByUsername = function(username, callBack) {
+  User.findOne({ username: username }, callBack)
 }
 
-module.exports.getUserById = function(id, caLLback) {
-  User.findById(id, caLLback)
+module.exports.getUserByEmail = function(email, callBack) {
+  User.findOne({ email: email}, callBack)
 }
 
+module.exports.getUserById = function(id, callBack) {
+  User.findById(id, callBack)
+}
