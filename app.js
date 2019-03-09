@@ -9,6 +9,7 @@ let flash = require('connect-flash')
 let session = require('express-session') 
 
 
+
 mongose.connect(process.env.DATABASE || 'mongodb://localhost/GTDF2',{useNewUrlParser:!0})
 let mongoose = mongose.connection
 

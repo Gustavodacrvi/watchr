@@ -3,8 +3,17 @@ let router = express.Router()
 let crypto = require('crypto')
 let passport = require('passport')
 let LocalStrategy = require('passport-local').Strategy
+let CronJob = require('cron').CronJob
+
 
 let User = require('../models/user')
+
+function getToken(callback) {
+  crypto.randomBytes(20, function(err, buf) {
+    let token = buf.toString('hex')
+    callback(token)
+  })
+}
 
 router.get('/login', (req, res) => {
   res.render('login')
@@ -27,16 +36,26 @@ router.post('/signup', (req, res) => {
         if (user !== null) {
           res.send(JSON.stringify({ valid: false, error: 'Email taken.', inputName: 'email' }))
         } else {
-          let user = new User({
-            username: b.username,
-            email: b.email,
-            password: b.password
-          })
-          User.createUser(user, (err) => {
-            if (err) return handleError(err)
+          getToken((token) => {
+            
 
-            req.flash('success', 'You created an account and can now log in.')
-            res.send(JSON.stringify({ valid: true, error: null, inputName: null }))
+            let user = new User({
+              username: b.username,
+              email: b.email,
+              password: b.password,
+              confirmed: false,
+              accountConfirmation: {
+                token: token,
+                expires: Date.now() + 604800000, // 7 days : 604800000
+              },
+            })
+            User.createUser(user, (err) => {
+              if (err) return handleError(err)
+  
+  
+              req.flash('success', 'You created an account and can now log in.')
+              res.send(JSON.stringify({ valid: true, error: null, inputName: null }))
+            })
           })
         }
       })
@@ -44,7 +63,21 @@ router.post('/signup', (req, res) => {
   })
 })
 
+// RUN EVERY HOUR '0 0 * * * *'
+new CronJob('0 * * * * *', function() {
+  User.find({ confirmed: false }, (err, docs) => {
+    if (err) return handleError(err)
 
+    let length = docs.length
+    for (let i =0;i<length;i++) {
+      if (new Date(docs[0].accountConfirmation.expires).getTime() < Date.now()) {
+        User.deleteOne({ username: docs[i].username }, (err) => {
+          if (err) return handleError(err)
+        })
+      }
+    }
+  })
+}, null, true, 'America/Los_Angeles');
 
 passport.use(new LocalStrategy(function(username, password, done) {
   User.getUserByUsername(username.trim(), function(err, user) {
