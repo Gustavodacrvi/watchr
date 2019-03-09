@@ -39,6 +39,14 @@ Vue.component('card-form', {
   `,
 })
 
+Vue.component('form-success', {
+  template: `
+    <div class='form-el form-success'>
+      <span><slot></slot></span>
+    </div>
+  `
+})
+
 Vue.component('form-button', {
   template: `
     <div class='form-button form-el'>
