@@ -73,10 +73,11 @@ Vue.component('form-button', {
   },
   methods: {
     hasClientErrors() {
-      for (let input of this.$parent.map.values()) {
+      let form = this.$parent
+      for (let input of form.map.values()) {
         if (this.isTextInput(input) && input.value === '') {
-          this.$parent.inputName = input.name
-          this.$parent.error = 'This field cannot be empty.'
+          form.inputName = input.name
+          form.error = 'This field cannot be empty.'
           return true
         }
         if (input.hasError) {

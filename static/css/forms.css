@@ -2,16 +2,26 @@
   height: 100px;
 }
 
-.card-form {
-  width: 100%;
+.card-form,
+.form-input,
+.form-title,
+.form-button {
   display: flex;
   justify-content: center;
 }
 
-.card-form > div {
-  flex-basis: 525px;
+.card-form > div,
+.form-input > div {
   display: flex;
   flex-direction: column;
+}
+
+.card-form {
+  width: 100%;
+}
+
+.card-form > div {
+  flex-basis: 525px;
   margin: 6px;
 }
 
@@ -21,16 +31,6 @@
 
 .form-el {
   margin-top: 20px;
-}
-
-.form-title {
-  display: flex;
-  justify-content: center;
-}
-
-.form-input {
-  display: flex;
-  justify-content: center;
 }
 
 .form-input .fa {
@@ -48,8 +48,6 @@
 
 .form-input > div {
   width: 80%;
-  display: flex;
-  flex-direction: column;
   position: relative;
 }
 
@@ -83,11 +81,6 @@
 
 .alert {
   color: #fcb150;
-}
-
-.form-button {
-  display: flex;
-  justify-content: center;
 }
 
 .form-button i {

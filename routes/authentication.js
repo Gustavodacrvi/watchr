@@ -12,6 +12,20 @@ function handleError(err) {
   console.log(err)
 }
 
+function getNodeMailerTransport() {
+  return {
+    service: 'gmail',
+    auth: {
+      type: 'OAuth2',
+      user: 'gettingthingsdoneforfree@gmail.com',
+      clientId: '419231519910-ud5h7i6vlppum2htb8dphsapjnqe1t87.apps.googleusercontent.com',
+      clientSecret: process.env.CSECRET,
+      refreshToken: '1/LLDNO2am9KrK1KACOHlnjq5SsSx1XI47E5JYsRRQIT8',
+      accessToken: 'ya29.GluyBq6s7HtZagS2FknhmE1TxsiFWbqxF8_cx_W-GonYDsxUxPFUxh0ofm-oz4AXoh99W8c3EWkHQ3cSZBUAM0dcj0g5_S6IxGyJ0N1oJDZhcnIf35jWgyJHmcIi'
+    }
+  }
+}
+
 
 let User = require('../models/user')
 
@@ -81,23 +95,13 @@ router.post('/signup', (req, res) => {
               if (err) return handleError(err)
   
               async.waterfall([function(done) {
-                var smtpTransport = nodemailer.createTransport({
-                  service: 'gmail',
-                  auth: {
-                    type: 'OAuth2',
-                    user: 'gettingthingsdoneforfree@gmail.com',
-                    clientId: '419231519910-ud5h7i6vlppum2htb8dphsapjnqe1t87.apps.googleusercontent.com',
-                    clientSecret: process.env.CSECRET,
-                    refreshToken: '1/LLDNO2am9KrK1KACOHlnjq5SsSx1XI47E5JYsRRQIT8',
-                    accessToken: 'ya29.GluyBq6s7HtZagS2FknhmE1TxsiFWbqxF8_cx_W-GonYDsxUxPFUxh0ofm-oz4AXoh99W8c3EWkHQ3cSZBUAM0dcj0g5_S6IxGyJ0N1oJDZhcnIf35jWgyJHmcIi'
-                  }
-                });
+                var smtpTransport = nodemailer.createTransport(getNodeMailerTransport())
                 var mailOptions = {
                   to: b.email,
                   from: 'gettingthingsdoneforfree@gmail.com',
                   subject: 'Getting Things Done for Free(GTDF) confirm account',
                   text: "You are receiving this because you (or someone else) created an account on INSERT LINK HERE LATTER,.\n\n" + 'Please click on the following link, or paste this into your browser to confirm your account:\n\n' + 'http://' + req.headers.host + '/confirm-password/' + token + '\n\n' + "Your GTDF account will be deleted 7 days after its creation if not confirmed.\n"
-                };
+                }
                 smtpTransport.sendMail(mailOptions, function(err) {
                   if (err) {
                     handleError(err)
@@ -111,7 +115,7 @@ router.post('/signup', (req, res) => {
                   }
                 })
               }], function(err) {
-                if (err) return next(err);
+                if (err) return next(err)
                 User.deleteOne({ username: b.username }, (err) => {
                   if (err) return handleError(err)
                 })
@@ -134,23 +138,13 @@ router.get('/authenticated', (req, res) => {
 
 router.post('/resend-confirmation-email', (req, res) => {
   async.waterfall([function(done) {
-    var smtpTransport = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        type: 'OAuth2',
-        user: 'gettingthingsdoneforfree@gmail.com',
-        clientId: '419231519910-ud5h7i6vlppum2htb8dphsapjnqe1t87.apps.googleusercontent.com',
-        clientSecret: process.env.CSECRET,
-        refreshToken: '1/LLDNO2am9KrK1KACOHlnjq5SsSx1XI47E5JYsRRQIT8',
-        accessToken: 'ya29.GluyBq6s7HtZagS2FknhmE1TxsiFWbqxF8_cx_W-GonYDsxUxPFUxh0ofm-oz4AXoh99W8c3EWkHQ3cSZBUAM0dcj0g5_S6IxGyJ0N1oJDZhcnIf35jWgyJHmcIi'
-      }
-    });
+    var smtpTransport = nodemailer.createTransport(getNodeMailerTransport())
     var mailOptions = {
       to: req.user.email,
       from: 'gettingthingsdoneforfree@gmail.com',
       subject: 'Getting Things Done for Free(GTDF) confirm account',
       text: "You are receiving this because you (or someone else) created an account on INSERT LINK HERE LATTER,.\n\n" + 'Please click on the following link, or paste this into your browser to confirm your account:\n\n' + 'http://' + req.headers.host + '/confirm-password/' + req.user.accountConfirmationToken + '\n\n' + "Your GTDF account will be deleted 7 days after its creation if not confirmed.\n"
-    };
+    }
     smtpTransport.sendMail(mailOptions, function(err) {
       if (err) {
         handleError(err)
@@ -160,7 +154,7 @@ router.post('/resend-confirmation-email', (req, res) => {
       }
     })
   }], function(err) {
-    if (err) return next(err);
+    if (err) return next(err)
   }) 
 })
 
