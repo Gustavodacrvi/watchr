@@ -17,8 +17,8 @@ h1 {
   color: #8bf2ef;
 }
 
-#navigation,
-#navigation > :last-child,
+#navigation > :first-child,
+#navigation > :first-child > :last-child,
 .centralize {
   display: flex;
 }
@@ -29,7 +29,7 @@ h1 {
   flex-direction: column;
 }
 
-#navigation {
+#navigation > :first-child {
   align-items: center;
 }
 
@@ -47,11 +47,11 @@ h1 {
   box-shadow: 0 3px 10px 1px rgba(50, 50, 50, .4);
 }
 
-#navigation > div {
+#navigation > :first-child > div {
   flex-basis: 35%;
 }
 
-#navigation > :nth-child(2) {
+#navigation > :first-child > :nth-child(2) {
   flex-basis: 30%;
 }
 
@@ -72,6 +72,7 @@ h1 {
 .blue-link {
   color: rgb(0, 140, 255);
   text-decoration: none;
+  cursor: pointer;
 }
 
 
@@ -87,7 +88,7 @@ h1 {
   border-radius: 6px;
 }
 
-#navigation {
+#navigation > :first-child {
   position: absolute;
   top: 0;
   width: 90%;
@@ -103,7 +104,7 @@ h1 {
   margin: 6px;
 }
 
-#navigation > :last-child {
+#navigation > :first-child > :last-child {
   justify-content: flex-end;
 }
 
@@ -138,6 +139,24 @@ h1 {
 #navigation-mobile-drop:hover > div {
   opacity: 1;
   visibility: visible;
+}
+
+#navigation > :last-child {
+  position: absolute;
+  top: 45px;
+  min-height: 30px;
+  background-color: #fcb150;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex-direction: column;
+  padding: 4px 0;
+}
+
+#navigation > :last-child span {
+  color: #323232;
+  margin: 0 6px;
 }
 
 .drop-link {

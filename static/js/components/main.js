@@ -40,37 +40,60 @@ Vue.component('navigation', {
   props: {
     desktop: Boolean,
   },
+  data() {
+    return {
+      confirmedAccount: true,
+      emailResent: false,
+    }
+  },
+  mounted() {
+
+  },
   template: `
     <div>
-      <div id='navigation' class='card shadow'>
-        <div v-if='desktop'>
-          <white-link to='/'>Home</white-link>
-          <white-link to='/login'>Login</white-link>
-          <white-link to='/user'>User page</white-link>
-        </div>
-        <div v-else>
+      <div id='navigation'>
+        <div class='card shadow'>
+          <div v-if='desktop'>
           
-        </div>
-        <div>
-        </div>
-        <div v-if='desktop'>
-          <white-link to='/terms-of-use'>Terms of use</white-link>
-          <white-link to='/privacy-policy'>Privacy policy</white-link>
-        </div>
-        <div v-else>
-          <div id='navigation-mobile-drop'>
-            <big-icon></big-icon>
-            <div class='card round shadow'>
-              <drop-link to='/'>Home</drop-link>
-              <drop-link to='/login'>Login</drop-link>
-              <drop-link to='/user'>User page</drop-link>
-              <drop-link to='/terms-of-use'>Terms of use</drop-link>
-              <drop-link to='/privacy-policy'>Privacy policy</drop-link>
+            <white-link to='/'>Home</white-link>
+            <white-link to='/login'>Login</white-link>
+            <white-link to='/user'>User page</white-link>
+          </div>
+          <div v-else>
+            
+          </div>
+          <div>
+          </div>
+          <div v-if='desktop'>
+            <white-link to='/terms-of-use'>Terms of use</white-link>
+            <white-link to='/privacy-policy'>Privacy policy</white-link>
+          </div>
+          <div v-else>
+            <div id='navigation-mobile-drop'>
+              <big-icon></big-icon>
+              <div class='card round shadow'>
+                <drop-link to='/'>Home</drop-link>
+                <drop-link to='/login'>Login</drop-link>
+                <drop-link to='/user'>User page</drop-link>
+                <drop-link to='/terms-of-use'>Terms of use</drop-link>
+                <drop-link to='/privacy-policy'>Privacy policy</drop-link>
+              </div>
             </div>
           </div>
         </div>
+        <div v-if='confirmedAccount'>
+          <span>We have sent an email with a confirmation link to your email address, your GTDF account will be <strong>deleted 7</strong> days after its creation if not confirmed.</span>
+          <span v-if='!emailResent'>Click <a @click='resendEmail' class='blue-link'>here</a> to resend the email.</span>
+          <span v-else>Email resent.</span>
+      </div>
       </div>
       <div></div>
     </div>
   `,
+  methods: {
+    resendEmail() {
+      console.log(3)
+      this.emailResent = true
+    },
+  },
 })
