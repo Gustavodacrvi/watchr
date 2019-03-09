@@ -73,7 +73,7 @@ router.post('/signup', (req, res) => {
               username: b.username,
               email: b.email,
               password: b.password,
-              accountConfirmationConfirmed: false,
+              accountNotConfirmed: true,
               accountConfirmationToken: token,
               accountConfirmationExpires: Date.now() + 604800000, // 7 days : 604800000
             })
@@ -136,12 +136,12 @@ router.get('/confirm-password/:token', (req, res) => {
       req.flash('error', 'Confirmation token is invalid or has expired.')
       res.redirect('/login')
     } else {
-      user.accountConfirmationConfirmed = undefined
+      user.accountNotConfirmed = undefined
       user.accountConfirmationToken = undefined
       user.accountConfirmationExpires = undefined
       user.markModified('accountConfirmationExpires')
       user.markModified('accountConfirmationToken')
-      user.markModified('accountConfirmationConfirmed')
+      user.markModified('accountNotConfirmed')
       user.save((err) => {
         if (err) return handleError(err)
 
@@ -154,7 +154,7 @@ router.get('/confirm-password/:token', (req, res) => {
 
 // RUN EVERY HOUR '0 0 * * * *'
 new CronJob('0 0 * * * *', function() {
-  User.find({ accountConfirmationConfirmed: false }, (err, docs) => {
+  User.find({ accountNotConfirmed: true }, (err, docs) => {
     if (err) return handleError(err)
 
     let length = docs.length

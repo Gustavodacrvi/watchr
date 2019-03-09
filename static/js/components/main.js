@@ -42,12 +42,23 @@ Vue.component('navigation', {
   },
   data() {
     return {
-      confirmedAccount: true,
+      showAlert: false,
       emailResent: false,
+      username: undefined,
     }
   },
   mounted() {
-
+    GETrequest('/authenticated', (json) => {
+      let data = JSON.parse(json)
+      
+      console.log(data)
+      if (data.isAuthenticated) {
+        this.username = data.username
+        if (!data.confirmed) {
+          this.showAlert = true
+        }
+      }
+    })
   },
   template: `
     <div>
@@ -81,11 +92,11 @@ Vue.component('navigation', {
             </div>
           </div>
         </div>
-        <div v-if='confirmedAccount'>
+        <div v-show='showAlert'>
           <span>We have sent an email with a confirmation link to your email address, your GTDF account will be <strong>deleted 7</strong> days after its creation if not confirmed.</span>
           <span v-if='!emailResent'>Click <a @click='resendEmail' class='blue-link'>here</a> to resend the email.</span>
           <span v-else>Email resent.</span>
-      </div>
+        </div>
       </div>
       <div></div>
     </div>

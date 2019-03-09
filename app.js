@@ -8,9 +8,6 @@ let passport = require('passport')
 let flash = require('connect-flash')
 let session = require('express-session') 
 
-function handleError(err) {
-  console.log(err)
-}
 
 mongose.connect(process.env.DATABASE || 'mongodb://localhost/GTDF2',{useNewUrlParser:!0})
 let mongoose = mongose.connection
@@ -27,6 +24,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:!1}))
 
 let authentication = require('./routes/authentication')
+let gtdf = require('./routes/gtdf')
 
 app.set('view engine', 'ejs')
 app.set('views',path.join(__dirname,'views'))
@@ -46,6 +44,7 @@ app.use(function(req, res, next) {
 
 
 app.use('/', authentication)
+app.use('/', gtdf)
 
 
 app.get('/', (req, res) => {

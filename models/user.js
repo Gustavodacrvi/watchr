@@ -25,7 +25,7 @@ var userSchema = mongoose.Schema({
       expires: Date,
     },
   },
-  accountConfirmationConfirmed: Boolean,
+  accountNotConfirmed: Boolean,
   accountConfirmationToken: String,
   accountConfirmationExpires: Date,
   data: {
