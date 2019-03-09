@@ -26,6 +26,29 @@ router.get('/login', (req, res) => {
   res.render('login')
 })
 
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) {
+      handleError(err)
+      return next(err)
+    }
+    if (info === undefined) {
+      req.logIn(user, function(err) {
+        if (err) {
+          handleError(err)
+          return next(err)
+        }
+        return res.redirect('/user')
+      })
+    }
+    else if (info.message === 'Unknown username') {
+      res.send({ valid: false, inputName: 'username', error: 'Unknown username.' })
+    } else if (info.message === 'Wrong password') {
+      res.send({ valid: false, inputName: 'password', error: 'Wrong password.'})
+    }
+  })(req, res, next) 
+})
+
 router.get('/signup', (req, res) => {
   res.render('signup')
 })
@@ -146,7 +169,7 @@ new CronJob('0 0 * * * *', function() {
 }, null, true, 'America/Los_Angeles')
 
 passport.use(new LocalStrategy(function(username, password, done) {
-  User.getUserByUsername(username.trim(), function(err, user) {
+  User.getUserByUsername(username, function(err, user) {
     if (err) throw err
     if (!user) {
       return done(null, !1, {

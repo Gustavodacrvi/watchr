@@ -42,6 +42,13 @@ module.exports.createUser = function(newUser, callBack) {
   })
 }
 
+module.exports.comparePassword = function(candidatePassword, hash, callBack) {
+  bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
+    if (err) throw err
+    callBack(null, isMatch)
+  })
+}
+
 module.exports.getUserByUsername = function(username, callBack) {
   User.findOne({ username: username }, callBack)
 }
