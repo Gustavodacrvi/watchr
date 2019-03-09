@@ -1,8 +1,8 @@
 let express = require('express')
 let router = express.Router()
 let crypto = require('crypto')
-var passport = require('passport')
-var LocalStrategy = require('passport-local').Strategy
+let passport = require('passport')
+let LocalStrategy = require('passport-local').Strategy
 
 let User = require('../models/user')
 
@@ -35,6 +35,7 @@ router.post('/signup', (req, res) => {
           User.createUser(user, (err) => {
             if (err) return handleError(err)
 
+            req.flash('success', 'You created an account and can now log in.')
             res.send(JSON.stringify({ valid: true, error: null, inputName: null }))
           })
         }

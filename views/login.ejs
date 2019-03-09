@@ -20,6 +20,9 @@
         <form-title>LOGIN</form-title>
         <form-input :max='40' name='username' placeholder='Username:' type='text'></form-input>
         <form-input :max='40' name='password' placeholder='Password:' type='password'></form-input>
+        <% if (success[0]) { %>
+          <h1><%= success[0] %></h1>
+        <% } %>
         <form-link to='/signup'>Doesn't have an account? Sign up!</form-link>
         <form-button @send='login'>Get things done</form-button>
         <form-link to='/forgot'>Forgot password or username?</form-link>
