@@ -47,6 +47,14 @@ Vue.component('form-success', {
   `
 })
 
+Vue.component('form-error', {
+  template: `
+    <div class='form-el form-error'>
+      <span><slot></slot></span>
+    </div>
+  `
+})
+
 Vue.component('form-button', {
   template: `
     <div class='form-button form-el'>
@@ -95,7 +103,6 @@ Vue.component('form-button', {
       })
     },
     analise() {
-      console.log('run')
       if (!this.hasClientErrors()) {
         if (this.ajax) {
           this.sendAjax()

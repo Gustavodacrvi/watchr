@@ -77,7 +77,7 @@
   margin: 0;
 }
 
-.form-link, .form-success span {
+.form-link, .form-success span, .form-error span {
   margin-left: 30px;
 }
 
@@ -119,6 +119,10 @@
 
 .form-success span{
   color: #01e000;
+}
+
+.form-error span{
+  color: #fcb150;
 }
 
 @media screen and (max-width: 796px) {

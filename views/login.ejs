@@ -23,6 +23,9 @@
         <% if (success[0]) { %>
           <form-success><%= success[0] %></form-success>
         <% } %>
+        <% if (error[0]) {%>
+          <form-error><%= error[0] %></form-error>
+        <% } %>
         <form-link to='/signup'>Doesn't have an account? Sign up!</form-link>
         <form-button @send='login'>Get things done</form-button>
         <form-link to='/forgot'>Forgot password or username?</form-link>
