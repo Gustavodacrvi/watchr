@@ -45,11 +45,9 @@ router.post('/signup', (req, res) => {
               username: b.username,
               email: b.email,
               password: b.password,
-              confirmed: false,
-              accountConfirmation: {
-                token: token,
-                expires: Date.now() + 120000, // 7 days : 604800000
-              },
+              accountConfirmationConfirmed: false,
+              accountConfirmationToken: token,
+              accountConfirmationExpires: Date.now() + 604800000, // 7 days : 604800000
             })
             User.createUser(user, (err) => {
               if (err) return handleError(err)
@@ -91,15 +89,42 @@ router.post('/signup', (req, res) => {
   })
 })
 
+router.get('/confirm-password/:token', (req, res) => {
+  User.findOne({ 
+    accountConfirmationToken: req.params.token,
+    accountConfirmationExpires: {
+      $gt: Date.now(),
+    },
+  }, function(err, user) {
+    if (err) return handleError(err)
+    if (!user) {
+      req.flash('error', 'Confirmation token is invalid or has expired.')
+      res.redirect('/login')
+    } else {
+      user.accountConfirmationConfirmed = undefined
+      user.accountConfirmationToken = undefined
+      user.accountConfirmationExpires = undefined
+      user.markModified('accountConfirmationExpires')
+      user.markModified('accountConfirmationToken')
+      user.markModified('accountConfirmationConfirmed')
+      user.save((err) => {
+        if (err) return handleError(err)
+
+        req.flash('success', 'Your account has been confirmed!')
+        res.redirect('/login')
+      })
+    }
+  })
+})
+
 // RUN EVERY HOUR '0 0 * * * *'
-new CronJob('0 * * * * *', function() {
-  User.find({ confirmed: false }, (err, docs) => {
+new CronJob('0 0 * * * *', function() {
+  User.find({ accountConfirmationConfirmed: false }, (err, docs) => {
     if (err) return handleError(err)
 
     let length = docs.length
     for (let i =0;i<length;i++) {
-      console.log(new Date(docs[0].accountConfirmation.expires).getTime() - Date.now())
-      if (new Date(docs[0].accountConfirmation.expires).getTime() < Date.now()) {
+      if (new Date(docs[0].accountConfirmationExpires).getTime() < Date.now()) {
         User.deleteOne({ username: docs[i].username }, (err) => {
           if (err) return handleError(err)
         })
