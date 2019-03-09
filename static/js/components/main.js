@@ -103,8 +103,10 @@ Vue.component('navigation', {
   `,
   methods: {
     resendEmail() {
-      console.log(3)
       this.emailResent = true
+      POSTrequestData('/resend-confirmation-email', 'username='+this.username, (dt) => {
+        
+      })
     },
   },
 })
