@@ -8,7 +8,9 @@ let passport = require('passport')
 let flash = require('connect-flash')
 let session = require('express-session') 
 
-
+function handleError(err) {
+  console.log(err)
+}
 
 mongose.connect(process.env.DATABASE || 'mongodb://localhost/GTDF2',{useNewUrlParser:!0})
 let mongoose = mongose.connection

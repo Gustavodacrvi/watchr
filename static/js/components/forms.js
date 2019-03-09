@@ -50,7 +50,7 @@ Vue.component('form-success', {
 Vue.component('form-button', {
   template: `
     <div class='form-button form-el'>
-      <button class='round' @click='analise'>
+      <button class='round' @click='analise' :disabled='$parent.httpSent'>
         <i v-if='$parent.httpSent' class='fa fa-sync fa-spin'></i>
         <template v-else>
           <slot></slot>
@@ -95,6 +95,7 @@ Vue.component('form-button', {
       })
     },
     analise() {
+      console.log('run')
       if (!this.hasClientErrors()) {
         if (this.ajax) {
           this.sendAjax()

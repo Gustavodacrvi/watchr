@@ -8,6 +8,11 @@ let async = require('async')
 let nodemailer = require('nodemailer')
 
 
+function handleError(err) {
+  console.log(err)
+}
+
+
 let User = require('../models/user')
 
 function getToken(callback) {
@@ -71,9 +76,16 @@ router.post('/signup', (req, res) => {
                   text: "You are receiving this because you (or someone else) created an account on INSERT LINK HERE LATTER,.\n\n" + 'Please click on the following link, or paste this into your browser to confirm your account:\n\n' + 'http://' + req.headers.host + '/confirm-password/' + token + '\n\n' + "Your GTDF account will be deleted 7 days after its creation if not confirmed.\n"
                 };
                 smtpTransport.sendMail(mailOptions, function(err) {
-                  if (err) return handleError(err)
-                  req.flash('success', 'You created an account and can now log in.')
-                  res.send(JSON.stringify({ valid: true, error: null, inputName: null }))
+                  if (err) {
+                    handleError(err)
+                    res.send(JSON.stringify({ valid: false, inputName: 'email', error: 'Invalid email.' }))
+                    User.deleteOne({ username: b.username }, (err) => {
+                      if (err) return handleError(err)
+                    })
+                  } else {
+                    req.flash('success', 'You created an account and can now log in.')
+                    res.send(JSON.stringify({ valid: true, error: null, inputName: null }))
+                  }
                 })
               }], function(err) {
                 if (err) return next(err);
