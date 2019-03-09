@@ -3,6 +3,7 @@
 <html>
   <head>
     <% include partials/header %>
+    <script src='/js/main.js' defer></script>
 
     <title>Index</title>
   </head>
@@ -11,9 +12,7 @@
 
     <div id='vue'>
       <navigation :desktop='desktop'></navigation>
-      {{ desktop }}
     </div>
 
-    <% include partials/footer %>
   </body>
 </html>

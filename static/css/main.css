@@ -9,12 +9,17 @@ body {
   font-family: 'Work Sans';
 }
 
-a, .fa, span {
+a, .fa, span, input, button {
   color: #c8c8c8;
 }
 
-#navigation,
-#navigation > :last-child {
+h1 {
+  color: #8bf2ef;
+}
+
+#navigation > :first-child,
+#navigation > :first-child > :last-child,
+.centralize {
   display: flex;
 }
 
@@ -24,8 +29,12 @@ a, .fa, span {
   flex-direction: column;
 }
 
-#navigation {
+#navigation > :first-child {
   align-items: center;
+}
+
+.centralize {
+  justify-content: center;
 }
 
 .white-link,
@@ -38,11 +47,11 @@ a, .fa, span {
   box-shadow: 0 3px 10px 1px rgba(50, 50, 50, .4);
 }
 
-#navigation > div {
+#navigation > :first-child > div {
   flex-basis: 35%;
 }
 
-#navigation > :nth-child(2) {
+#navigation > :first-child > :nth-child(2) {
   flex-basis: 30%;
 }
 
@@ -60,6 +69,17 @@ a, .fa, span {
   color: #8bf2ef;
 }
 
+.blue-link {
+  color: rgb(0, 140, 255);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+.blue-link:hover {
+  text-decoration: underline;
+}
+
 .card {
   background: url(/images/cardcolor.png);
 }
@@ -68,8 +88,7 @@ a, .fa, span {
   border-radius: 6px;
 }
 
-#navigation {
-  background-color: red;
+#navigation > :first-child {
   position: absolute;
   top: 0;
   width: 90%;
@@ -85,7 +104,7 @@ a, .fa, span {
   margin: 6px;
 }
 
-#navigation > :last-child {
+#navigation > :first-child > :last-child {
   justify-content: flex-end;
 }
 
@@ -96,6 +115,14 @@ a, .fa, span {
 .big-icon:hover {
   color: #8bf2ef;
   cursor: pointer;
+}
+
+.icon-massive {
+  font-size: 2.5em;
+}
+
+.icon-medium {
+  font-size: 1.3em;
 }
 
 #navigation-mobile-drop {
@@ -118,6 +145,33 @@ a, .fa, span {
   visibility: visible;
 }
 
+#navigation > :last-child {
+  position: absolute;
+  top: 45px;
+  min-height: 30px;
+  background-color: #fcb150;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex-direction: column;
+  padding: 4px 0;
+}
+
+#navigation > :last-child span {
+  color: #323232;
+  margin: 0 6px;
+}
+
+#navigation > :last-child i {
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  right: 25px;
+  color: #323232;
+  cursor: pointer;
+}
+
 .drop-link {
   display: inline-block;
   padding: 6px;
@@ -129,10 +183,8 @@ a, .fa, span {
   color: #323232;
 }
 
-/* NAVIGATION */
-@media screen and (max-width: 798px) {
-  #navigation {
-    padding: 0 3%;
-    width: 94%;
+@media screen and (max-width: 796px) {
+  #navigation > :last-child span {
+    margin-right: 50px;
   }
-} 
+}

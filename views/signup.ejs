@@ -1,0 +1,31 @@
+<!doctype html>
+
+<html lang='en'>
+  <head>
+    <link rel="stylesheet" href="/css/forms.css" type='text/css' />
+    <% include partials/header %>
+    <script src='/js/components/forms.js' defer></script>
+    <script src='/js/main.js' defer></script>
+
+    <title>Sign up</title>
+  </head>
+
+  <body>
+
+    <div id='vue'>
+      <navigation :desktop='desktop'></navigation>
+
+      <div class='mobile-margin'></div>
+      <card-form act='/signup'>
+        <form-title>SIGN UP</form-title>
+        <form-input :max='40' name='username' placeholder='New username:' type='text'></form-input>
+        <form-input :max='40' name='email' placeholder='Email:' type='text'></form-input>
+        <form-input :max='40' name='password' placeholder='New password:' type='password'></form-input>
+        <form-input :max='40' name='confirm' placeholder='Confirm password:' type='confirmpassword'></form-input>
+        <form-button @send='login'>Sign up</form-button>
+      </card-form>
+      <div class='mobile-margin'></div>
+    </div>
+
+  </body>
+</html>
