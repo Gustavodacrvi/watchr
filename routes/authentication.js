@@ -4,6 +4,8 @@ let crypto = require('crypto')
 let passport = require('passport')
 let LocalStrategy = require('passport-local').Strategy
 let CronJob = require('cron').CronJob
+let async = require('async')
+let nodemailer = require('nodemailer')
 
 
 let User = require('../models/user')
@@ -46,15 +48,41 @@ router.post('/signup', (req, res) => {
               confirmed: false,
               accountConfirmation: {
                 token: token,
-                expires: Date.now() + 604800000, // 7 days : 604800000
+                expires: Date.now() + 120000, // 7 days : 604800000
               },
             })
             User.createUser(user, (err) => {
               if (err) return handleError(err)
   
-  
-              req.flash('success', 'You created an account and can now log in.')
-              res.send(JSON.stringify({ valid: true, error: null, inputName: null }))
+              async.waterfall([function(done) {
+                var smtpTransport = nodemailer.createTransport({
+                  service: 'gmail',
+                  auth: {
+                    type: 'OAuth2',
+                    user: 'gettingthingsdoneforfree@gmail.com',
+                    clientId: '419231519910-ud5h7i6vlppum2htb8dphsapjnqe1t87.apps.googleusercontent.com',
+                    clientSecret: process.env.CSECRET,
+                    refreshToken: '1/LLDNO2am9KrK1KACOHlnjq5SsSx1XI47E5JYsRRQIT8',
+                    accessToken: 'ya29.GluyBq6s7HtZagS2FknhmE1TxsiFWbqxF8_cx_W-GonYDsxUxPFUxh0ofm-oz4AXoh99W8c3EWkHQ3cSZBUAM0dcj0g5_S6IxGyJ0N1oJDZhcnIf35jWgyJHmcIi'
+                  }
+                });
+                var mailOptions = {
+                  to: b.email,
+                  from: 'gettingthingsdoneforfree@gmail.com',
+                  subject: 'Getting Things Done for Free(GTDF) confirm account',
+                  text: "You are receiving this because you (or someone else) created an account on INSERT LINK HERE LATTER,.\n\n" + 'Please click on the following link, or paste this into your browser to confirm your account:\n\n' + 'http://' + req.headers.host + '/confirm-password/' + token + '\n\n' + "Your GTDF account will be deleted 7 days after its creation if not confirmed.\n"
+                };
+                smtpTransport.sendMail(mailOptions, function(err) {
+                  if (err) return handleError(err)
+                  req.flash('success', 'You created an account and can now log in.')
+                  res.send(JSON.stringify({ valid: true, error: null, inputName: null }))
+                })
+              }], function(err) {
+                if (err) return next(err);
+                User.deleteOne({ username: b.username }, (err) => {
+                  if (err) return handleError(err)
+                })
+              })
             })
           })
         }
@@ -70,6 +98,7 @@ new CronJob('0 * * * * *', function() {
 
     let length = docs.length
     for (let i =0;i<length;i++) {
+      console.log(new Date(docs[0].accountConfirmation.expires).getTime() - Date.now())
       if (new Date(docs[0].accountConfirmation.expires).getTime() < Date.now()) {
         User.deleteOne({ username: docs[i].username }, (err) => {
           if (err) return handleError(err)
