@@ -77,7 +77,7 @@ new CronJob('0 * * * * *', function() {
       }
     }
   })
-}, null, true, 'America/Los_Angeles');
+}, null, true, 'America/Los_Angeles')
 
 passport.use(new LocalStrategy(function(username, password, done) {
   User.getUserByUsername(username.trim(), function(err, user) {
