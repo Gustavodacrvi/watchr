@@ -51,7 +51,6 @@ Vue.component('navigation', {
     GETrequest('/authenticated', (json) => {
       let data = JSON.parse(json)
       
-      console.log(data)
       if (data.isAuthenticated) {
         this.username = data.username
         if (!data.confirmed) {
@@ -96,6 +95,7 @@ Vue.component('navigation', {
           <span>We have sent an email with a confirmation link to your email address, your GTDF account will be <strong>deleted 7</strong> days after its creation if not confirmed.</span>
           <span v-if='!emailResent'>Click <a @click='resendEmail' class='blue-link'>here</a> to resend the email.</span>
           <span v-else>Email resent.</span>
+          <i class='fa fa-times icon-medium' @click='showAlert = false'></i>
         </div>
       </div>
       <div></div>
@@ -105,7 +105,7 @@ Vue.component('navigation', {
     resendEmail() {
       this.emailResent = true
       POSTrequestData('/resend-confirmation-email', 'username='+this.username, (dt) => {
-        
+
       })
     },
   },
