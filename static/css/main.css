@@ -5,8 +5,17 @@
 
 body {
   margin: 0;
-  background: url(/images/backcolor.png);
   font-family: 'Work Sans';
+}
+
+.backcolor-dark {
+  background: url(/images/backcolor.png);  
+}
+
+#vue {
+  height: 100%;
+  width: 100%;
+  position: absolute;
 }
 
 a, .fa, span, input, button {
@@ -83,7 +92,7 @@ h1 {
   text-decoration: underline;
 }
 
-.card {
+.card-dark {
   background: url(/images/cardcolor.png);
 }
 
@@ -185,6 +194,7 @@ h1 {
   min-height: 30px;
   background-color: #fcb150;
   width: 100%;
+  flex-direction: column;
   padding: 4px 0;
 }
 

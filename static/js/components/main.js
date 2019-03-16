@@ -77,7 +77,7 @@ Vue.component('navigation', {
   template: `
     <div>
       <div id='navigation'>
-        <div class='card shadow'>
+        <div class='shadow' :class='$root.theme.card'>
           <div v-if='desktop'>
           
             <white-link to='/'>Home</white-link>
@@ -97,7 +97,7 @@ Vue.component('navigation', {
           <div v-else>
             <div id='navigation-mobile-drop'>
               <big-icon></big-icon>
-              <div class='card round shadow'>
+              <div class='round shadow' :class='$root.theme.card'>
                 <drop-link to='/'>Home</drop-link>
                 <drop-link to='/login'>Login</drop-link>
                 <drop-link to='/user'>User page</drop-link>

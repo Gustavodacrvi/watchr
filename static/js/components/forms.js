@@ -32,7 +32,7 @@ Vue.component('card-form', {
   },
   template: `
     <div class='card-form'>
-      <div class='card round'>
+      <div class='round' :class='$root.theme.card'>
         <slot></slot>
       </div>
     </div>

@@ -27,9 +27,28 @@ let vm = new Vue({
   data: {
     desktopLength: undefined,
     dark: true,
+    theme: {
+      backColor: {
+        'backcolor-dark': true,
+      },
+      card: {
+        'card-dark': true,
+      },
+    },
     authentication: {
       httpSent: false,
     },
+  },
+  computed() {
+    if (dark)
+      this.theme = {
+        backColor: {
+          'backcolor-dark': true,
+        },
+        card: {
+          'card-dark': true,
+        },
+      }
   },
   computed: {
     desktop() {
