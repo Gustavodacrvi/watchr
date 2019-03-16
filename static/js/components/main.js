@@ -36,9 +36,24 @@ Vue.component('big-icon', {
   `,
 })
 
+Vue.component('theme-switch', {
+  props: {
+    dark: Boolean,
+  },
+  template: `
+    <div class='theme-switch' @click="$emit('change-theme')">
+      <span>Dark theme</span>
+      <div>
+        <div :class='{ floatLeft: dark, floatRight: !dark }'></div>
+      </div>
+    </div>
+  `,
+})
+
 Vue.component('navigation', {
   props: {
     desktop: Boolean,
+    dark: Boolean,
   },
   data() {
     return {
@@ -75,6 +90,7 @@ Vue.component('navigation', {
           <div>
           </div>
           <div v-if='desktop'>
+            <theme-switch @change-theme='$emit("change-theme")' :dark='dark'></theme-switch>
             <white-link to='/terms-of-use'>Terms of use</white-link>
             <white-link to='/privacy-policy'>Privacy policy</white-link>
           </div>

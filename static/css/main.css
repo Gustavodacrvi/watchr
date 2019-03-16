@@ -17,7 +17,6 @@ h1 {
   color: #8bf2ef;
 }
 
-#navigation > :first-child,
 #navigation > :first-child > :last-child,
 .centralize {
   display: flex;
@@ -29,7 +28,10 @@ h1 {
   flex-direction: column;
 }
 
-#navigation > :first-child {
+#navigation > :first-child,
+.theme-switch,
+#navigation > :first-child > div {
+  display: flex;
   align-items: center;
 }
 
@@ -48,11 +50,12 @@ h1 {
 }
 
 #navigation > :first-child > div {
-  flex-basis: 35%;
+  flex-basis: 40%;
+  height: 100%;
 }
 
 #navigation > :first-child > :nth-child(2) {
-  flex-basis: 30%;
+  flex-basis: 20%;
 }
 
 
@@ -100,8 +103,39 @@ h1 {
   height: 45px;
 }
 
-#navigation .white-link {
-  margin: 6px;
+#navigation .white-link, .theme-switch {
+  margin: 0 6px;
+}
+
+.theme-switch {
+  cursor: pointer;
+}
+
+.theme-switch span {
+  margin-right: 6px;
+}
+
+.theme-switch > div {
+  display: inline-block;
+  background: url(/images/backcolor.png);
+  border-radius: 30px;
+  width: 50px;
+  padding: 2px;
+}
+
+.theme-switch > div > div {
+  height: 18px;
+  border-radius: 30px;
+  width: 50%;
+  background: url(/images/cardcolor.png);
+}
+
+.floatLeft {
+  float: left;
+}
+
+.floatRight {
+  float: right;
 }
 
 #navigation > :first-child > :last-child {
@@ -150,11 +184,7 @@ h1 {
   top: 45px;
   min-height: 30px;
   background-color: #fcb150;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: 100%;
-  flex-direction: column;
   padding: 4px 0;
 }
 

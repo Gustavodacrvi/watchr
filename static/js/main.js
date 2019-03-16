@@ -26,6 +26,7 @@ let vm = new Vue({
   el: '#vue',
   data: {
     desktopLength: undefined,
+    dark: true,
     authentication: {
       httpSent: false,
     },
