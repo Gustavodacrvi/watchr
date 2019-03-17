@@ -9,14 +9,14 @@ function parseInputObj(map_iterable) {
 Vue.component('form-title', {
   template: `
     <div class='form-title form-el'>
-      <h1><slot></slot></h1>
+      <heading :lvl='1'><slot></slot></heading>
     </div>
   `,
 })
 
 Vue.component('alert', {
   template: `
-    <span class='alert'><slot></slot></span>
+    <txt class='alert'><slot></slot></txt>
   `,
 })
 
@@ -32,7 +32,7 @@ Vue.component('card-form', {
   },
   template: `
     <div class='card-form'>
-      <div class='round' :class='$root.theme.card'>
+      <div class='round' :class='$root.themes.cardStyle'>
         <slot></slot>
       </div>
     </div>
@@ -42,7 +42,7 @@ Vue.component('card-form', {
 Vue.component('form-success', {
   template: `
     <div class='form-el form-success'>
-      <span><slot></slot></span>
+      <txt><slot></slot></txt>
     </div>
   `
 })
@@ -50,7 +50,7 @@ Vue.component('form-success', {
 Vue.component('form-error', {
   template: `
     <div class='form-el form-error'>
-      <span><slot></slot></span>
+      <txt><slot></slot></txt>
     </div>
   `
 })
@@ -58,12 +58,12 @@ Vue.component('form-error', {
 Vue.component('form-button', {
   template: `
     <div class='form-button form-el'>
-      <button class='round' @click='analise' :disabled='$parent.httpSent'>
-        <i v-if='$parent.httpSent' class='fa fa-sync fa-spin'></i>
+      <btn class='round' :class='$root.themes.textStyle' @click='analise' :disabled='$parent.httpSent'>
+        <ftaw v-if='$parent.httpSent' class='fa fa-sync fa-spin'></ftaw>
         <template v-else>
           <slot></slot>
         </template>
-      </button>
+      </btn>
     </div>
   `,
   computed: {
@@ -141,7 +141,7 @@ Vue.component('form-input', {
   template: `
     <div class='form-input form-el'>
       <div>
-        <input v-model='val' :class='{ input: true, round: true, "wrong-input": error || hasHttpError}' autocomplete='off' :type='inputType' :placeholder='placeholder' :name='name' :ref='name' />
+        <input v-model='val' :class='[{ input: true, round: true, "wrong-input": error || hasHttpError}, $root.themes.backgroundStyle, $root.themes.textStyle]' autocomplete='off' :type='inputType' :placeholder='placeholder' :name='name' :ref='name' />
         <alert v-if='hasErrorType("empty")'>
           This field cannot be empty.
         </alert>
@@ -155,8 +155,8 @@ Vue.component('form-input', {
           {{ $parent.error }}
         </alert>
         <template v-if='isPasswordType'>
-          <i v-if='showing' @click='showing = false' class='fa fa-eye tine-icon'></i>
-          <i v-if='!showing' @click='showing = true' class='fa fa-eye-slash tine-icon'></i>
+          <ftaw v-if='showing' @click='showing = false' class='fa fa-eye tine-icon'></ftaw>
+          <ftaw v-if='!showing' @click='showing = true' class='fa fa-eye-slash tine-icon'></ftaw>
         </template>
       </div>
     </div>

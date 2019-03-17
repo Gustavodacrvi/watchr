@@ -8,19 +8,49 @@ body {
   font-family: 'Work Sans';
 }
 
-.backcolor-dark {
-  background: url(/images/backcolor.png);  
-}
-
 #vue {
   height: 100%;
   width: 100%;
   position: absolute;
 }
 
-a, .fa, span, input, button {
+/* THEMES */
+
+.background-dark {
+  background: url(/images/backcolor.png);  
+}
+
+.background-white {
+  background-color: #fafafa;
+}
+
+.card-white {
+  background-color: #ffffff;
+  box-shadow: 0 3px 8px 1px rgba(200, 200, 200, .3);
+}
+
+.card-dark {
+  background: url(/images/cardcolor.png);
+}
+
+.text-dark {
   color: #c8c8c8;
 }
+
+.text-white {
+  color: #878787;
+}
+
+.color-dark {
+  color: #8bf2ef;
+}
+
+.color-white {
+  color: #ac6ea5;
+}
+
+
+
 
 h1 {
   color: #8bf2ef;
@@ -92,10 +122,6 @@ h1 {
   text-decoration: underline;
 }
 
-.card-dark {
-  background: url(/images/cardcolor.png);
-}
-
 .round {
   border-radius: 6px;
 }
@@ -126,7 +152,6 @@ h1 {
 
 .theme-switch > div {
   display: inline-block;
-  background: url(/images/backcolor.png);
   border-radius: 30px;
   width: 50px;
   padding: 2px;
@@ -136,7 +161,6 @@ h1 {
   height: 18px;
   border-radius: 30px;
   width: 50%;
-  background: url(/images/cardcolor.png);
 }
 
 .floatLeft {

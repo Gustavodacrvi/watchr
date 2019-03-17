@@ -1,10 +1,47 @@
+
+Vue.component('txt', {
+  template: `
+    <span :class='$root.themes.textStyle'><slot></slot></span>
+  `,
+})
+
+Vue.component('ftaw', {
+  template: `
+    <i :class='$root.themes.textStyle' @click='$emit("click")'></i>
+  `,
+})
+
+Vue.component('btn', {
+  template: `
+    <button :class='$root.themes.textStyle' @click='$emit("click")'><slot></slot></button>
+  `,
+})
+
+Vue.component('heading', {
+  props: {
+    lvl: Number,
+  },
+  render: function (createElement) {
+    return createElement(
+      'h' + this.lvl,
+      {
+        attrs: { class: this.$root.themes.mainColor },
+      },
+      this.$slots.default,
+    )
+  },
+  template: `
+    <h{{lvl}} :class='$root.themes.mainColor'><slot></slot></h{{lvl}}>
+  `,
+})
+
 // LINKS AND BUTTONS
 Vue.component('white-link', {
   props: {
     to: String
   },
   template: `
-    <a class='white-link' :href='to'><slot></slot></a>
+    <a class='white-link' :class='$root.themes.textStyle' :href='to'><slot></slot></a>
   `,
 })
 
@@ -13,7 +50,7 @@ Vue.component('drop-link', {
     to: String
   },
   template: `
-    <a class='drop-link' :href='to'><slot></slot></a>
+    <a class='drop-link' :class='$root.themes.textStyle' :href='to'><slot></slot></a>
   `,
 })
 
@@ -23,7 +60,7 @@ Vue.component('form-link', {
   },
   template: `
     <div class='form-el'>
-      <a class='blue-link form-link' :href='to'><slot></slot></a>
+      <a class='blue-link form-link' :class='$root.themes.textStyle' :href='to'><slot></slot></a>
     </div>
   `,
 })
@@ -32,7 +69,7 @@ Vue.component('form-link', {
 
 Vue.component('big-icon', {
   template: `
-    <i class='fa fa-bars big-icon'></i>
+    <ftaw class='fa fa-bars big-icon'></ftaw>
   `,
 })
 
@@ -42,9 +79,9 @@ Vue.component('theme-switch', {
   },
   template: `
     <div class='theme-switch' @click="$emit('change-theme')">
-      <span>Dark theme</span>
-      <div>
-        <div :class='{ floatLeft: dark, floatRight: !dark }'></div>
+      <txt>Dark theme</txt>
+      <div :class='$root.themes.backgroundStyle'>
+        <div :class='[{ floatLeft: dark, floatRight: !dark }, $root.themes.cardStyle]' ></div>
       </div>
     </div>
   `,
@@ -77,7 +114,7 @@ Vue.component('navigation', {
   template: `
     <div>
       <div id='navigation'>
-        <div class='shadow' :class='$root.theme.card'>
+        <div :class='$root.themes.cardStyle'>
           <div v-if='desktop'>
           
             <white-link to='/'>Home</white-link>
@@ -97,7 +134,7 @@ Vue.component('navigation', {
           <div v-else>
             <div id='navigation-mobile-drop'>
               <big-icon></big-icon>
-              <div class='round shadow' :class='$root.theme.card'>
+              <div class='round' :class='$root.themes.cardStyle'>
                 <drop-link to='/'>Home</drop-link>
                 <drop-link to='/login'>Login</drop-link>
                 <drop-link to='/user'>User page</drop-link>
@@ -108,10 +145,10 @@ Vue.component('navigation', {
           </div>
         </div>
         <div v-show='showAlert'>
-          <span>We have sent an email with a confirmation link to your email address, your GTDF account will be <strong>deleted 7</strong> days after its creation if not confirmed.</span>
-          <span v-if='!emailResent'>Click <a @click='resendEmail' class='blue-link'>here</a> to resend the email.</span>
-          <span v-else>Email resent.</span>
-          <i class='fa fa-times icon-medium' @click='showAlert = false'></i>
+          <txt>We have sent an email with a confirmation link to your email address, your GTDF account will be <strong>deleted 7</strong> days after its creation if not confirmed.</txt>
+          <txt v-if='!emailResent'>Click <a @click='resendEmail' class='blue-link' :class='$root.themes.textStyle'>here</a> to resend the email.</txt>
+          <txt v-else>Email resent.</txt>
+          <ftaw class='fa fa-times icon-medium' @click='showAlert = false'></ftaw>
         </div>
       </div>
       <div></div>

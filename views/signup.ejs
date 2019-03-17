@@ -12,7 +12,7 @@
 
   <body>
 
-    <div id='vue'>
+    <div id='vue' :class='themes.backgroundStyle'>
       <navigation :dark='dark' :desktop='desktop'  @change-theme='dark = !dark'></navigation>
 
       <div class='mobile-margin'></div>
