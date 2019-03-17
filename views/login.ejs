@@ -12,8 +12,8 @@
 
   <body>
 
-    <div id='vue'>
-      <navigation :desktop='desktop'></navigation>
+    <div id='vue' :class='themes.backgroundStyle'>
+      <navigation :dark='dark' :desktop='desktop' @change-theme='applyThemes(!dark)'></navigation>
 
       <div class='mobile-margin'></div>
       <card-form act='/login'>

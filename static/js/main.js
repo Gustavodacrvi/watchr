@@ -26,9 +26,21 @@ let vm = new Vue({
   el: '#vue',
   data: {
     desktopLength: undefined,
+    dark: false,
+    themes: {
+      cardStyle: 'card-dark',
+      backgroundStyle: 'background-dark',
+      textStyle: 'text-dark',
+      mainColor: 'color-dark',
+      inputStyle: 'input-dark',
+      mainColorHover: 'color-dark-hover',
+    },
     authentication: {
       httpSent: false,
     },
+  },
+  mounted() {
+    this.applyThemes(this.dark)
   },
   computed: {
     desktop() {
@@ -36,6 +48,31 @@ let vm = new Vue({
     },
   },
   methods: {
+    // THEME
+    applyThemes(dark) {
+      console.log(dark)
+      this.dark = dark
+      if (dark)
+      this.themes = {
+        cardStyle: 'card-dark',
+        backgroundStyle: 'background-dark',
+        textStyle: 'text-dark',
+        mainColor: 'color-dark',
+        buttonStyle: 'button-dark',
+        inputStyle: 'input-dark',
+        mainColorHover: 'color-dark-hover',
+      }
+    else 
+      this.themes = {
+        cardStyle: 'card-white',
+        backgroundStyle: 'background-white',
+        textStyle: 'text-white',
+        mainColor: 'color-white',
+        buttonStyle: 'button-white',
+        inputStyle: 'input-white',
+        mainColorHover: 'color-white-hover',
+      }
+    },
     // AUTHENTICATION
     login(obj) {
       console.log(obj)

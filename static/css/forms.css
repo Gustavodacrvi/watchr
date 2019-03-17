@@ -64,11 +64,10 @@
   font-size: 1.02em;
   outline: none;
   border: none;
-  background: url(/images/backcolor.png);
 }
 
 .wrong-input {
-  border: 1px solid #fcb150;
+  border: 1px solid #fcb150 !important;
 }
 
 .form-title h1 {
@@ -84,26 +83,17 @@
 }
 
 .form-button i {
-  color: #8bf2ef;
   font-size: 1.1em;
   margin: 0 30px;
 }
 
 .form-button button{
-  background: none;
   font-family: 'Work Sans';
-  color: #8bf2ef;
   cursor: pointer;
   font-size: 1.05em;
-  border: 2px solid #8bf2ef;
   padding: 12px;
   transition-duration: .2s;
   outline: none;
-}
-
-.form-button button:hover {
-  background-color: #8bf2ef;
-  color: #323232;
 }
 
 .form-button button:hover i {
@@ -111,11 +101,11 @@
 }
 
 .form-success span{
-  color: #01e000;
+  color: #01e000 !important;
 }
 
 .form-error span{
-  color: #fcb150;
+  color: #fcb150 !important;
 }
 
 @media screen and (max-width: 796px) {
