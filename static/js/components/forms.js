@@ -141,7 +141,7 @@ Vue.component('form-input', {
   template: `
     <div class='form-input form-el'>
       <div>
-        <input v-model='val' :class='[{ input: true, round: true, "wrong-input": error || hasHttpError}, $root.themes.backgroundStyle, $root.themes.textStyle]' autocomplete='off' :type='inputType' :placeholder='placeholder' :name='name' :ref='name' />
+        <input v-model='val' :class='[{ input: true, round: true, "wrong-input": error || hasHttpError}, $root.themes.inputStyle]' autocomplete='off' :type='inputType' :placeholder='placeholder' :name='name' :ref='name' />
         <alert v-if='hasErrorType("empty")'>
           This field cannot be empty.
         </alert>

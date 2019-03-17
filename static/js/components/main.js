@@ -13,7 +13,7 @@ Vue.component('ftaw', {
 
 Vue.component('btn', {
   template: `
-    <button :class='$root.themes.textStyle' @click='$emit("click")'><slot></slot></button>
+    <button :class='$root.themes.buttonStyle' @click='$emit("click")'><slot></slot></button>
   `,
 })
 
@@ -41,7 +41,7 @@ Vue.component('white-link', {
     to: String
   },
   template: `
-    <a class='white-link' :class='$root.themes.textStyle' :href='to'><slot></slot></a>
+    <a class='white-link' :class='[$root.themes.textStyle, $root.themes.mainColorHover]' :href='to'><slot></slot></a>
   `,
 })
 
@@ -79,9 +79,9 @@ Vue.component('theme-switch', {
   },
   template: `
     <div class='theme-switch' @click="$emit('change-theme')">
-      <txt>Dark theme</txt>
+      <txt :class='$root.themes.mainColorHover'>Dark theme</txt>
       <div :class='$root.themes.backgroundStyle'>
-        <div :class='[{ floatLeft: dark, floatRight: !dark }, $root.themes.cardStyle]' ></div>
+        <div :class='[{ floatLeft: !dark, floatRight: dark }, $root.themes.cardStyle]' ></div>
       </div>
     </div>
   `,

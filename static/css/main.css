@@ -21,12 +21,12 @@ body {
 }
 
 .background-white {
-  background-color: #fafafa;
+  background-color: #f5f5f5;
 }
 
 .card-white {
-  background-color: #ffffff;
-  box-shadow: 0 3px 8px 1px rgba(200, 200, 200, .3);
+  background-color: #fefefe;
+  box-shadow: 0 3px 8px 2px rgba(200, 200, 200, .4);
 }
 
 .card-dark {
@@ -38,17 +38,50 @@ body {
 }
 
 .text-white {
-  color: #878787;
+  color: #646464;
 }
 
 .color-dark {
   color: #8bf2ef;
 }
 
-.color-white {
-  color: #ac6ea5;
+.color-dark-hover:hover {
+  color: #8bf2ef;
 }
 
+.color-white {
+  color: #f57a44;
+}
+
+.color-white-hover:hover {
+  color: #f57a44;
+}
+
+.button-dark, .button-white {
+  background: none;
+  border: none;
+}
+
+.button-dark {
+  background-color: #8bf2ef;
+  color: #323232;
+}
+
+.button-white {
+  background-color: #f57a44;
+  color: #fff;
+}
+
+.input-dark {
+  background: url(/images/backcolor.png);
+  color: #c8c8c8;
+}
+
+.input-white {
+  color: #646464;
+  background-color: #f5f5f5;
+  border: 1px solid #e6e6e6;
+}
 
 
 
@@ -105,10 +138,6 @@ h1 {
   display: inline-block;
   cursor: pointer;
   text-decoration: none;
-}
-
-.white-link:hover {
-  color: #8bf2ef;
 }
 
 .blue-link {

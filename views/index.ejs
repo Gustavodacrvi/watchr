@@ -11,7 +11,7 @@
   <body>
 
     <div id='vue' :class='themes.backgroundStyle'>
-      <navigation :dark='dark' :desktop='desktop'  @change-theme='dark = !dark'></navigation>
+      <navigation :dark='dark' :desktop='desktop'  @change-theme='applyThemes(!dark)'></navigation>
     </div>
 
   </body>

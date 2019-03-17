@@ -32,6 +32,8 @@ let vm = new Vue({
       backgroundStyle: 'background-dark',
       textStyle: 'text-dark',
       mainColor: 'color-dark',
+      inputStyle: 'input-dark',
+      mainColorHover: 'color-dark-hover',
     },
     authentication: {
       httpSent: false,
@@ -48,6 +50,7 @@ let vm = new Vue({
   methods: {
     // THEME
     applyThemes(dark) {
+      console.log(dark)
       this.dark = dark
       if (dark)
       this.themes = {
@@ -55,6 +58,9 @@ let vm = new Vue({
         backgroundStyle: 'background-dark',
         textStyle: 'text-dark',
         mainColor: 'color-dark',
+        buttonStyle: 'button-dark',
+        inputStyle: 'input-dark',
+        mainColorHover: 'color-dark-hover',
       }
     else 
       this.themes = {
@@ -62,6 +68,9 @@ let vm = new Vue({
         backgroundStyle: 'background-white',
         textStyle: 'text-white',
         mainColor: 'color-white',
+        buttonStyle: 'button-white',
+        inputStyle: 'input-white',
+        mainColorHover: 'color-white-hover',
       }
     },
     // AUTHENTICATION
