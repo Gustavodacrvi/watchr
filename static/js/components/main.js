@@ -7,7 +7,7 @@ Vue.component('txt', {
 
 Vue.component('ftaw', {
   template: `
-    <i :class='$root.themes.textStyle' @click='$emit("click")'></i>
+    <i :class='$root.themes.iconColor' @click='$emit("click")'></i>
   `,
 })
 

@@ -34,6 +34,7 @@ let vm = new Vue({
       mainColor: 'color-dark',
       inputStyle: 'input-dark',
       mainColorHover: 'color-dark-hover',
+      iconColor: 'icon-color-dark',
     },
     authentication: {
       httpSent: false,
@@ -61,7 +62,8 @@ let vm = new Vue({
         buttonStyle: 'button-dark',
         inputStyle: 'input-dark',
         mainColorHover: 'color-dark-hover',
-      }
+        iconColor: 'icon-color-dark',
+    }
     else 
       this.themes = {
         cardStyle: 'card-white',
@@ -71,7 +73,8 @@ let vm = new Vue({
         buttonStyle: 'button-white',
         inputStyle: 'input-white',
         mainColorHover: 'color-white-hover',
-      }
+        iconColor: 'icon-color-white',
+    }
     },
     // AUTHENTICATION
     login(obj) {

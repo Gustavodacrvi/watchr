@@ -67,7 +67,7 @@
 }
 
 .wrong-input {
-  border: 1px solid #fcb150 !important;
+  border: 1px solid #ff7514 !important;
 }
 
 .form-title h1 {
@@ -79,7 +79,7 @@
 }
 
 .alert {
-  color: #fcb150;
+  color: #ff7514 !important;
 }
 
 .form-button i {

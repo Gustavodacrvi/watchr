@@ -41,7 +41,7 @@ Vue.component('card-form', {
 
 Vue.component('form-success', {
   template: `
-    <div class='form-el form-success'>
+    <div class='form-el form-success' :class='$root.themes.mainC'>
       <txt><slot></slot></txt>
     </div>
   `
