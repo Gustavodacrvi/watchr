@@ -51,7 +51,6 @@ let vm = new Vue({
   methods: {
     // THEME
     applyThemes(dark) {
-      console.log(dark)
       this.dark = dark
       if (dark)
       this.themes = {
@@ -63,22 +62,18 @@ let vm = new Vue({
         inputStyle: 'input-dark',
         mainColorHover: 'color-dark-hover',
         iconColor: 'icon-color-dark',
-    }
-    else 
-      this.themes = {
-        cardStyle: 'card-white',
-        backgroundStyle: 'background-white',
-        textStyle: 'text-white',
-        mainColor: 'color-white',
-        buttonStyle: 'button-white',
-        inputStyle: 'input-white',
-        mainColorHover: 'color-white-hover',
-        iconColor: 'icon-color-white',
-    }
-    },
-    // AUTHENTICATION
-    login(obj) {
-      console.log(obj)
+      }
+      else 
+        this.themes = {
+          cardStyle: 'card-white',
+          backgroundStyle: 'background-white',
+          textStyle: 'text-white',
+          mainColor: 'color-white',
+          buttonStyle: 'button-white',
+          inputStyle: 'input-white',
+          mainColorHover: 'color-white-hover',
+          iconColor: 'icon-color-white',
+      }
     },
   },
 })
