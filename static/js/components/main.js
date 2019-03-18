@@ -106,7 +106,9 @@ Vue.component('navigation', {
       if (data.isAuthenticated) {
         this.username = data.username
         if (!data.confirmed) {
-          this.showAlert = true
+          if (typeof(Storage) !== "undefined")
+            this.checkIfUserClosedTheAlertPopUpInTheSameSession()
+          else this.showAlert = true
         }
       }
     })
@@ -148,18 +150,31 @@ Vue.component('navigation', {
           <txt>We have sent an email with a confirmation link to your email address, your GTDF account will be <strong>deleted 7</strong> days after its creation if not confirmed.</txt>
           <txt v-if='!emailResent'>Click <a @click='resendEmail' class='blue-link' :class='$root.themes.textStyle'>here</a> to resend the email.</txt>
           <txt v-else>Email resent.</txt>
-          <ftaw class='fa fa-times icon-medium' @click='showAlert = false'></ftaw>
+          <ftaw class='fa fa-times icon-medium' @click='closeAlert'></ftaw>
         </div>
       </div>
       <div></div>
     </div>
   `,
   methods: {
+    closeAlert() {
+      this.showAlert = false
+      sessionStorage.setItem('confirmationEmailAlert', 'closed')
+    },
     resendEmail() {
       this.emailResent = true
       POSTrequestData('/resend-confirmation-email', 'username='+this.username, (dt) => {
 
       })
     },
+    checkIfUserClosedTheAlertPopUpInTheSameSession() {
+      let state = sessionStorage.getItem('confirmationEmailAlert')
+
+      if (state === null) {
+        this.showAlert = true
+      } else if (state === 'closed') {
+        this.showAlert = false
+      }
+    }
   },
 })
