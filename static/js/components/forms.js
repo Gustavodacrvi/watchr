@@ -59,7 +59,7 @@ Vue.component('form-button', {
   template: `
     <div class='form-button form-el'>
       <btn class='round' :class='$root.themes.textStyle' @click='analise' :disabled='$parent.httpSent'>
-        <ftaw v-if='$parent.httpSent' class='fa fa-sync fa-spin'></ftaw>
+        <ftaw v-if='$parent.httpSent' class='fa fa-sync fa-spin white-text'></ftaw>
         <template v-else>
           <slot></slot>
         </template>

@@ -75,9 +75,17 @@ body {
   color: #323232;
 }
 
+.button-dark .fa {
+  color: #323232 !important;
+}
+
 .button-white {
   background-color: #f57a44;
   color: #fff;
+}
+
+.button-white .fa{
+  color: #fdfdfd !important;
 }
 
 .input-dark {
@@ -110,7 +118,8 @@ h1 {
 
 #navigation > :first-child,
 .theme-switch,
-#navigation > :first-child > div {
+#navigation > :first-child > div,
+#navigation > :last-child {
   display: flex;
   align-items: center;
 }
