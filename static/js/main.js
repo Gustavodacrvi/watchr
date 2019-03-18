@@ -41,7 +41,7 @@ let vm = new Vue({
     },
   },
   mounted() {
-    this.applyThemes(this.dark)
+    this.applyThemes(this.getSavedTheme())
   },
   computed: {
     desktop() {
@@ -49,9 +49,16 @@ let vm = new Vue({
     },
   },
   methods: {
+    getSavedTheme() {
+      let dark = localStorage.getItem('dark')
+      if (dark === null || dark === 'false')
+        return false
+      else return true
+    },
     // THEME
     applyThemes(dark) {
       this.dark = dark
+      localStorage.setItem('dark', dark)
       if (dark)
       this.themes = {
         cardStyle: 'card-dark',
