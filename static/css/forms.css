@@ -10,22 +10,26 @@
   justify-content: center;
 }
 
-.form-checkbox > div {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .card-form > div,
+.form-checkbox,
 .form-input > div {
   display: flex;
   flex-direction: column;
 }
 
-.form-checkbox {
+
+.form-checkbox > div {
   display: flex;
   align-items: center;
 }
+
+.form-checkbox > div > div {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
 
 .card-form {
   width: 100%;
@@ -105,7 +109,10 @@
   color: #323232;
 }
 
-.form-checkbox > div {
+
+
+.form-checkbox > div > div {
+  position: relative;
   width: 20px;
   height: 20px;
   margin-left: 10px;

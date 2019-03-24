@@ -120,9 +120,9 @@ Vue.component('form-button', {
     analise() {
       if (!this.hasClientErrors()) {
         console.log('sent')
-        /* if (this.ajax) {
+        if (this.ajax) {
           this.sendAjax()
-        } else this.$parent.act(map.values()) */
+        } else this.$parent.act(map.values())
       }
     },
   },
@@ -261,11 +261,13 @@ Vue.component('form-checkbox', {
   },
   template: `
     <div class='form-el form-checkbox'>
-      <txt class='form-left-text'><slot></slot></txt>
-      <div class='transparent-border-card' @click='state = !state'>
-        <ftaw v-show='state' class='fa fa-check'></ftaw>
-      </div></br>
-      <alert class='form-left-text' v-if='hasFormError'>
+      <div>
+        <txt class='form-left-text'><slot></slot></txt>
+        <div class='transparent-border-card' @click='state = !state'>
+          <ftaw v-show='state' class='fa fa-check'></ftaw>
+        </div>
+      </div>
+      <alert class='form-left-text' v-show='hasFormError'>
         {{ this.errormsg }}
       </alert>
     </div>
