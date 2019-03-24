@@ -32,7 +32,7 @@ let vm = new Vue({
     },
   },
   beforeMount() {
-    this.applyThemes(this.getSavedTheme())
+    this.applyTheme(this.getSavedTheme())
   },
   computed: {
     desktop() {
@@ -47,7 +47,11 @@ let vm = new Vue({
         return 'light_orange'
       else return theme
     },
-    applyThemes(theme) {
+    applyTheme(theme) {
+      this.downloadTheme(theme)
+      localStorage.setItem('theme', theme)
+    },
+    changeTheme(theme) {
       if (theme !== this.theme) {
         this.removeCurrentTheme()
         this.downloadTheme(theme)

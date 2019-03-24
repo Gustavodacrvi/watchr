@@ -160,6 +160,7 @@ body {
 }
 
 #navigation-mobile-drop > div {
+  padding: 6px 0;
   position: absolute;
   opacity: 0;
   visibility: hidden;

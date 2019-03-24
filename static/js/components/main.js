@@ -63,20 +63,6 @@ Vue.component('big-icon', {
   `,
 })
 
-Vue.component('theme-switch', {
-  props: {
-    dark: Boolean,
-  },
-  template: `
-    <div class='theme-switch' @click="$emit('change-theme')">
-      <txt class='main-color-hover'>Dark theme</txt>
-      <div class='background'>
-        <div class='card' :class='{ floatLeft: !dark, floatRight: dark }' ></div>
-      </div>
-    </div>
-  `,
-})
-
 Vue.component('thematic-break', {
   template: `
     <hr class='thematic-break' />
@@ -125,7 +111,6 @@ Vue.component('navigation', {
           <div>
           </div>
           <div v-if='desktop'>
-            <theme-switch @change-theme='$emit("change-theme")' :dark='dark'></theme-switch>
           </div>
           <div v-else>
             <div id='navigation-mobile-drop'>
@@ -134,8 +119,6 @@ Vue.component('navigation', {
                 <drop-link to='/'>Home</drop-link>
                 <drop-link to='/login'>Login</drop-link>
                 <drop-link to='/user'>User page</drop-link>
-                <thematic-break></thematic-break>
-                <theme-switch class='mobile-switch mobile-theme-switch' @change-theme='$emit("change-theme")' :dark='dark'></theme-switch>
               </div>
             </div>
           </div>
