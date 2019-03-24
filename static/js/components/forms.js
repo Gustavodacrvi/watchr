@@ -119,7 +119,6 @@ Vue.component('form-button', {
     },
     analise() {
       if (!this.hasClientErrors()) {
-        console.log('sent')
         if (this.ajax) {
           this.sendAjax()
         } else this.$parent.act(map.values())

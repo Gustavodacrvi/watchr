@@ -19,6 +19,11 @@ body {
 
 
 
+.flexCenter {
+  display: flex;
+  justify-content: center;
+}
+
 #navigation > :first-child > :last-child,
 .centralize {
   display: flex;
@@ -205,6 +210,7 @@ body {
 .drop-link {
   display: inline-block;
   padding: 6px;
+  cursor: pointer;
   padding-left: 14px;
   text-decoration: none;
 }
@@ -218,6 +224,29 @@ body {
   padding: 6px;
   padding-left: 14px;
   margin: 0;
+}
+
+.dropdown {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown > div {
+  position: absolute;
+  left: -50%;
+  top: 100%;
+  width: 200%;
+}
+
+.dropdown > div > div {
+  display: flex;
+  flex-direction: column;
+  width: 175px;
+}
+
+.container {
+  padding: 6px 0;
 }
 
 

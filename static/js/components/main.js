@@ -1,4 +1,14 @@
 
+function removeUnderline(str) {
+  let newStr = ''
+  let length = str.length
+  for (let i=0;i<length;i++)
+    if (str[i] === '_') newStr += ' '
+    else newStr += str[i]
+  return newStr
+}
+
+
 Vue.component('txt', {
   template: `
     <span class='text'><slot></slot></span>
@@ -50,7 +60,7 @@ Vue.component('drop-link', {
     to: String
   },
   template: `
-    <a class='drop-link text drop-link' :href='to'><slot></slot></a>
+    <a class='drop-link text drop-link' :href='to' @click='$emit("click")'><slot></slot></a>
   `,
 })
 
@@ -69,10 +79,35 @@ Vue.component('thematic-break', {
   `
 })
 
+Vue.component('dropdown', {
+  props: {
+    hdlstyle: String,
+    hdlvalue: String,
+    floatdirect: String,
+  },
+  data() {
+    return {
+      opd: false,
+    }
+  },
+  template: `
+    <div class='dropdown'  @mouseover='opd = true' @mouseleave='opd = false'>
+      <span :class='hdlstyle'>{{ this.hdlvalue }}</span>
+      <div v-if='opd' :class='{flexCenter: floatdirect === "center"}'>
+        <div class='card container round' :class='{floatRight: floatdirect === "right", floatLeft: floatdirect === "left"}'>
+          <slot></slot>
+        </div>
+      </div>
+    </div>
+  `,
+  computed: {
+
+  }
+})
+
 Vue.component('navigation', {
   props: {
     desktop: Boolean,
-    dark: Boolean,
   },
   data() {
     return {
@@ -94,6 +129,7 @@ Vue.component('navigation', {
         }
       }
     })
+    setInterval(() => {console.log(this.showAlert)}, 1000)
   },
   template: `
     <div>
@@ -106,11 +142,14 @@ Vue.component('navigation', {
             <white-link to='/user'>User page</white-link>
           </div>
           <div v-else>
-            
           </div>
           <div>
           </div>
           <div v-if='desktop'>
+            <dropdown style='z-index: 100' hdlstyle='white-link text main-color-hover' :hdlvalue='getThemeName($root.theme)' floatdirect='center'>
+              <drop-link @click='$root.changeTheme("light_orange")'>Light orange</drop-link>
+              <drop-link @click='$root.changeTheme("dark_light_blue")'>Dark light blue</drop-link>
+            </dropdown>
           </div>
           <div v-else>
             <div id='navigation-mobile-drop'>
@@ -134,6 +173,9 @@ Vue.component('navigation', {
     </div>
   `,
   methods: {
+    getThemeName(theme) {
+      return removeUnderline(theme)
+    },
     closeAlert() {
       this.showAlert = false
       sessionStorage.setItem('confirmationEmailAlert', 'closed')
