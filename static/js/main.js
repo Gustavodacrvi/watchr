@@ -26,7 +26,7 @@ let vm = new Vue({
   el: '#vue',
   data: {
     desktopLength: undefined,
-    theme: 'light_orange',
+    theme: undefined,
     authentication: {
       httpSent: false,
     },
@@ -49,6 +49,7 @@ let vm = new Vue({
     },
     applyTheme(theme) {
       this.downloadTheme(theme)
+      this.theme = theme
       localStorage.setItem('theme', theme)
     },
     changeTheme(theme) {
@@ -57,6 +58,7 @@ let vm = new Vue({
         this.downloadTheme(theme)
       }
 
+      this.theme = theme
       localStorage.setItem('theme', theme)
     },
     removeCurrentTheme() {

@@ -52,7 +52,7 @@ router.post('/login', (req, res, next) => {
           handleError(err)
           return next(err)
         }
-        return res.redirect('/user')
+        return res.send({ valid: true, inputName: '', error: ''})
       })
     }
     else if (info.message === 'Unknown username') {

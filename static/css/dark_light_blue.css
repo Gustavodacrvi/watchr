@@ -1,0 +1,82 @@
+
+
+
+.background {
+  background: url(/images/backcolor.png);  
+}
+
+.card {
+  background: url(/images/cardcolor.png);
+}
+
+.text {
+  color: #c8c8c8;
+}
+
+.icon-color {
+  color: #c8c8c8;
+}
+
+.main-color {
+  color: #8bf2ef;
+}
+
+.main-color-hover:hover {
+  color: #8bf2ef !important;
+}
+
+.button {
+  background: none;
+  border: none;
+  background-color: #8bf2ef;
+  color: #323232;
+}
+
+.button .fa {
+  color: #323232 !important;
+}
+
+.input {
+  background: url(/images/backcolor.png);
+  color: #c8c8c8;
+}
+
+.drop-link:hover {
+  color: #8bf2ef;
+}
+
+
+.transparent-border-card {
+  border-radius: 6px;
+  border: 0.5px solid #a3a3a3;
+}
+
+
+.form-success span{
+  color: #01e000 !important;
+}
+
+.form-error span{
+  color: #fcb150 !important;
+}
+
+.alert {
+  color: #ff7514 !important;
+}
+
+.wrong-input {
+  border: 1px solid #ff7514 !important;
+}
+
+.blue-link {
+  color: #0096ff;
+}
+
+.alert-card {
+  background-color: #f57a44;
+}
+
+.alert-card span, .alert-card i {
+  color: #fdfdfd !important;
+}
+

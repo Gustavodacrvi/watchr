@@ -1,4 +1,14 @@
 
+function removeUnderline(str) {
+  let newStr = ''
+  let length = str.length
+  for (let i=0;i<length;i++)
+    if (str[i] === '_') newStr += ' '
+    else newStr += str[i]
+  return newStr
+}
+
+
 Vue.component('txt', {
   template: `
     <span class='text'><slot></slot></span>
@@ -50,7 +60,7 @@ Vue.component('drop-link', {
     to: String
   },
   template: `
-    <a class='drop-link text drop-link' :href='to'><slot></slot></a>
+    <a class='drop-link text drop-link' :href='to' @click='$emit("click")'><slot></slot></a>
   `,
 })
 
@@ -119,6 +129,7 @@ Vue.component('navigation', {
         }
       }
     })
+    setInterval(() => {console.log(this.showAlert)}, 1000)
   },
   template: `
     <div>
@@ -135,10 +146,9 @@ Vue.component('navigation', {
           <div>
           </div>
           <div v-if='desktop'>
-            <dropdown hdlstyle='white-link text main-color-hover' :hdlvalue='$root.theme' floatdirect='center'>
-              <drop-link>Theme 1</drop-link>
-              <drop-link>Theme 2</drop-link>
-              <drop-link>Theme 3</drop-link>
+            <dropdown style='z-index: 100' hdlstyle='white-link text main-color-hover' :hdlvalue='getThemeName($root.theme)' floatdirect='center'>
+              <drop-link @click='$root.changeTheme("light_orange")'>Light orange</drop-link>
+              <drop-link @click='$root.changeTheme("dark_light_blue")'>Dark light blue</drop-link>
             </dropdown>
           </div>
           <div v-else>
@@ -163,6 +173,9 @@ Vue.component('navigation', {
     </div>
   `,
   methods: {
+    getThemeName(theme) {
+      return removeUnderline(theme)
+    },
     closeAlert() {
       this.showAlert = false
       sessionStorage.setItem('confirmationEmailAlert', 'closed')
