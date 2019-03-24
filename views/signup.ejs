@@ -22,6 +22,7 @@
         <form-input :max='40' name='email' placeholder='Email:' type='text'></form-input>
         <form-input :max='40' name='password' placeholder='New password:' type='password'></form-input>
         <form-input :max='40' name='confirm' placeholder='Confirm password:' type='confirmpassword'></form-input>
+        <form-checkbox name='termsagreement' :initial='false' mustbe='false' errormsg='You must accept the terms of service and privacy policy.'>I agree to the terms of service and privacy policy</form-checkbox>
         <form-button>Sign up</form-button>
       </card-form>
       <div class='mobile-margin'></div>

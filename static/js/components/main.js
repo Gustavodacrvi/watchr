@@ -7,7 +7,7 @@ Vue.component('txt', {
 
 Vue.component('ftaw', {
   template: `
-    <i :class='$root.themes.iconColor' @click='$emit("click")'></i>
+    <i :class='[$root.themes.iconColor, $root.themes.mainColorHover]' @click='$emit("click")'></i>
   `,
 })
 
@@ -50,20 +50,10 @@ Vue.component('drop-link', {
     to: String
   },
   template: `
-    <a class='drop-link' :class='$root.themes.textStyle' :href='to'><slot></slot></a>
+    <a class='drop-link' :class='[$root.themes.textStyle, $root.themes.dropLinkStyle]' :href='to'><slot></slot></a>
   `,
 })
 
-Vue.component('form-link', {
-  props: {
-    to: String
-  },
-  template: `
-    <div class='form-el'>
-      <a class='blue-link form-link' :class='$root.themes.textStyle' :href='to'><slot></slot></a>
-    </div>
-  `,
-})
 
 
 
@@ -85,6 +75,12 @@ Vue.component('theme-switch', {
       </div>
     </div>
   `,
+})
+
+Vue.component('thematic-break', {
+  template: `
+    <hr class='thematic-break' />
+  `
 })
 
 Vue.component('navigation', {
@@ -130,8 +126,6 @@ Vue.component('navigation', {
           </div>
           <div v-if='desktop'>
             <theme-switch @change-theme='$emit("change-theme")' :dark='dark'></theme-switch>
-            <white-link to='/terms-of-use'>Terms of use</white-link>
-            <white-link to='/privacy-policy'>Privacy policy</white-link>
           </div>
           <div v-else>
             <div id='navigation-mobile-drop'>
@@ -140,8 +134,8 @@ Vue.component('navigation', {
                 <drop-link to='/'>Home</drop-link>
                 <drop-link to='/login'>Login</drop-link>
                 <drop-link to='/user'>User page</drop-link>
-                <drop-link to='/terms-of-use'>Terms of use</drop-link>
-                <drop-link to='/privacy-policy'>Privacy policy</drop-link>
+                <thematic-break></thematic-break>
+                <theme-switch :class='[$root.themes.mobileThemeSwitchStyle, "mobile-theme-switch"]' @change-theme='$emit("change-theme")' :dark='dark'></theme-switch>
               </div>
             </div>
           </div>

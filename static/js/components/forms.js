@@ -37,12 +37,18 @@ Vue.component('card-form', {
       </div>
     </div>
   `,
+  methods: {
+    cleanErrors() {
+      this.inputName = undefined
+      this.error = undefined
+    }
+  }
 })
 
 Vue.component('form-success', {
   template: `
     <div class='form-el form-success' :class='$root.themes.mainC'>
-      <txt><slot></slot></txt>
+      <txt form-left-text><slot></slot></txt>
     </div>
   `
 })
@@ -50,7 +56,7 @@ Vue.component('form-success', {
 Vue.component('form-error', {
   template: `
     <div class='form-el form-error'>
-      <txt><slot></slot></txt>
+      <txt class='form-left-text'><slot></slot></txt>
     </div>
   `
 })
@@ -59,7 +65,7 @@ Vue.component('form-button', {
   template: `
     <div class='form-button form-el'>
       <btn class='round' :class='$root.themes.textStyle' @click='analise' :disabled='$parent.httpSent'>
-        <ftaw v-if='$parent.httpSent' class='fa fa-sync fa-spin white-text'></ftaw>
+        <ftaw v-if='$parent.httpSent' class='fa fa-sync fa-spin white'></ftaw>
         <template v-else>
           <slot></slot>
         </template>
@@ -80,11 +86,19 @@ Vue.component('form-button', {
           form.error = 'This field cannot be empty.'
           return true
         }
+        if (this.isCheckbox(input) && input.hasError) {
+          form.inputName = input.name
+          form.error = ''
+          return true
+        }
         if (input.hasError) {
           return true
         }
       }
       return false
+    },
+    isCheckbox(input) {
+      return (input.type === 'checkbox')
     },
     isTextInput(input) {
       return (input.type === 'password' || input.type === 'text' || input.type === 'confirmpassword')
@@ -105,9 +119,10 @@ Vue.component('form-button', {
     },
     analise() {
       if (!this.hasClientErrors()) {
-        if (this.ajax) {
+        console.log('sent')
+        /* if (this.ajax) {
           this.sendAjax()
-        } else this.$parent.act(map.values())
+        } else this.$parent.act(map.values()) */
       }
     },
   },
@@ -141,7 +156,7 @@ Vue.component('form-input', {
   template: `
     <div class='form-input form-el'>
       <div>
-        <input v-model='val' :class='[{ input: true, round: true, "wrong-input": error || hasHttpError}, $root.themes.inputStyle]' autocomplete='off' :type='inputType' :placeholder='placeholder' :name='name' :ref='name' />
+        <input v-model='val' :class='[{ input: true, round: true, "wrong-input": error || hasFormError}, $root.themes.inputStyle]' autocomplete='off' :type='inputType' :placeholder='placeholder' :name='name' :ref='name' />
         <alert v-if='hasErrorType("empty")'>
           This field cannot be empty.
         </alert>
@@ -151,7 +166,7 @@ Vue.component('form-input', {
         <alert v-else-if='hasErrorType("passwords not matching")'>
           Passwords are not matching.
         </alert>
-        <alert v-else-if='hasHttpError'>
+        <alert v-else-if='hasFormError'>
           {{ $parent.error }}
         </alert>
         <template v-if='isPasswordType'>
@@ -169,7 +184,7 @@ Vue.component('form-input', {
       if (this.showing) return "text"
       else return "password"
     },
-    hasHttpError() {
+    hasFormError() {
       return (this.$parent.inputName === this.name)
     },
   },
@@ -190,9 +205,8 @@ Vue.component('form-input', {
   watch: {
     val() {
       let form = this.$parent
-      if (this.hasHttpError) {
-        form.inputName = undefined
-        form.error = undefined
+      if (this.hasFormError) {
+        form.cleanErrors()
       }
       let obj = this.getInputObj()
       if (this.type === 'password') {
@@ -214,5 +228,80 @@ Vue.component('form-input', {
       }
       form.map.set(this.name, obj)
     },
+  },
+})
+
+Vue.component('form-link', {
+  props: {
+    to: String
+  },
+  template: `
+    <div class='form-el'>
+      <a class='blue-link form-link form-left-text' :class='$root.themes.textStyle' :href='to'><slot></slot></a>
+    </div>
+  `,
+})
+
+Vue.component('form-checkbox', {
+  props: {
+    initial: Boolean,
+    mustbe: String,
+    name: String,
+    errormsg: String,
+  },
+  data() {
+    return {
+      state: this.initial,
+      error: this.hasError()
+    }
+  },
+  mounted() {
+    this.error = this.hasError()
+    this.$parent.map.set(this.name, this.getInputObj())
+  },
+  template: `
+    <div class='form-el form-checkbox'>
+      <txt class='form-left-text'><slot></slot></txt>
+      <div class='transparent-border-card' @click='state = !state'>
+        <ftaw v-show='state' class='fa fa-check'></ftaw>
+      </div></br>
+      <alert class='form-left-text' v-if='hasFormError'>
+        {{ this.errormsg }}
+      </alert>
+    </div>
+  `,
+  computed: {
+    hasFormError() {
+      return (this.$parent.inputName === this.name)
+    },
+  },
+  methods: {
+    hasError() {
+      if (this.mustbe === 'false' || this.mustbe === 'true') {
+        if (this.mustbe === 'false' && this.state)
+          return true
+        else if (this.mustbe === 'true' && !this.state)
+          return true
+        else return false
+      } else
+        return false
+    },
+    getInputObj() {
+      return {
+        value: this.state,
+        hasError: this.error,
+        name: this.name,
+        type: 'checkbox',
+      }
+    },
+  },
+  watch: {
+    state() {
+      if (this.hasFormError) {
+        this.$parent.cleanErrors()
+      }
+      this.error = this.hasError()
+      this.$parent.map.set(this.name, this.getInputObj())
+    }
   },
 })
