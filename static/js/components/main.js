@@ -7,7 +7,7 @@ Vue.component('txt', {
 
 Vue.component('ftaw', {
   template: `
-    <i :class='$root.themes.iconColor' @click='$emit("click")'></i>
+    <i :class='[$root.themes.iconColor, $root.themes.mainColorHover]' @click='$emit("click")'></i>
   `,
 })
 
@@ -50,7 +50,7 @@ Vue.component('drop-link', {
     to: String
   },
   template: `
-    <a class='drop-link' :class='$root.themes.textStyle' :href='to'><slot></slot></a>
+    <a class='drop-link' :class='[$root.themes.textStyle, $root.themes.dropLinkStyle]' :href='to'><slot></slot></a>
   `,
 })
 

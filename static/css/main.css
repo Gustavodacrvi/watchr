@@ -54,7 +54,7 @@ body {
 }
 
 .color-dark-hover:hover {
-  color: #8bf2ef;
+  color: #8bf2ef !important;
 }
 
 .color-white {
@@ -62,7 +62,7 @@ body {
 }
 
 .color-white-hover:hover {
-  color: #fd8d67;
+  color: #fd8d67 !important;
 }
 
 .button-dark, .button-white {
@@ -98,6 +98,20 @@ body {
   background-color: #f6f8f8;
   border: 1px solid #e6e6e6;
 }
+
+.drop-link-style-dark:hover {
+  background-color: #8bf2ef;
+  color: #323232;
+}
+
+.drop-link-style-white:hover {
+  background-color: #f57a44;
+  color: #fdfdfd;
+}
+
+
+
+
 
 
 
@@ -146,6 +160,9 @@ h1 {
 #navigation > :first-child > :nth-child(2) {
   flex-basis: 20%;
 }
+
+
+
 
 
 
@@ -286,11 +303,6 @@ h1 {
   display: inline-block;
   padding: 6px;
   text-decoration: none;
-}
-
-.drop-link:hover {
-  background-color: #8bf2ef;
-  color: #323232;
 }
 
 @media screen and (max-width: 796px) {
