@@ -69,10 +69,35 @@ Vue.component('thematic-break', {
   `
 })
 
+Vue.component('dropdown', {
+  props: {
+    hdlstyle: String,
+    hdlvalue: String,
+    floatdirect: String,
+  },
+  data() {
+    return {
+      opd: false,
+    }
+  },
+  template: `
+    <div class='dropdown'  @mouseover='opd = true' @mouseleave='opd = false'>
+      <span :class='hdlstyle'>{{ this.hdlvalue }}</span>
+      <div v-if='opd' :class='{flexCenter: floatdirect === "center"}'>
+        <div class='card container round' :class='{floatRight: floatdirect === "right", floatLeft: floatdirect === "left"}'>
+          <slot></slot>
+        </div>
+      </div>
+    </div>
+  `,
+  computed: {
+
+  }
+})
+
 Vue.component('navigation', {
   props: {
     desktop: Boolean,
-    dark: Boolean,
   },
   data() {
     return {
@@ -106,11 +131,15 @@ Vue.component('navigation', {
             <white-link to='/user'>User page</white-link>
           </div>
           <div v-else>
-            
           </div>
           <div>
           </div>
           <div v-if='desktop'>
+            <dropdown hdlstyle='white-link text main-color-hover' :hdlvalue='$root.theme' floatdirect='center'>
+              <drop-link>Theme 1</drop-link>
+              <drop-link>Theme 2</drop-link>
+              <drop-link>Theme 3</drop-link>
+            </dropdown>
           </div>
           <div v-else>
             <div id='navigation-mobile-drop'>
