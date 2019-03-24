@@ -26,8 +26,7 @@ let vm = new Vue({
   el: '#vue',
   data: {
     desktopLength: undefined,
-    dark: false,
-    themes: undefined,
+    theme: 'light_orange',
     authentication: {
       httpSent: false,
     },
@@ -41,18 +40,35 @@ let vm = new Vue({
     },
   },
   methods: {
+    // THEMES
     getSavedTheme() {
-      let dark = localStorage.getItem('dark')
-      if (dark === null || dark === 'false')
-        return false
-      else return true
+      let theme = localStorage.getItem('theme')
+      if (theme === null)
+        return 'light_orange'
+      else return theme
     },
-    // THEME
-    applyThemes(dark) {
-      this.dark = dark
-      localStorage.setItem('dark', dark)
-      
+    applyThemes(theme) {
+      if (theme !== this.theme) {
+        this.removeCurrentTheme()
+        this.downloadTheme(theme)
+      }
+
+      localStorage.setItem('theme', theme)
     },
+    removeCurrentTheme() {
+      let link = document.getElementById(this.theme)
+      link.parentNode.removeChild(link)
+    },
+    downloadTheme(theme) {
+      var link = document.createElement('link')
+
+      link.setAttribute('rel', 'stylesheet')
+      link.setAttribute('type', 'text/css')
+      link.setAttribute('href', '/css/' + theme + '.css')
+      link.setAttribute('id', theme)
+      document.getElementsByTagName('head')[0].appendChild(link)
+
+    }
   },
 })
 
