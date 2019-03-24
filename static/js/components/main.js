@@ -1,19 +1,19 @@
 
 Vue.component('txt', {
   template: `
-    <span :class='$root.themes.textStyle'><slot></slot></span>
+    <span class='text'><slot></slot></span>
   `,
 })
 
 Vue.component('ftaw', {
   template: `
-    <i :class='[$root.themes.iconColor, $root.themes.mainColorHover]' @click='$emit("click")'></i>
+    <i class='icon-color main-color-hover' @click='$emit("click")'></i>
   `,
 })
 
 Vue.component('btn', {
   template: `
-    <button :class='$root.themes.buttonStyle' @click='$emit("click")'><slot></slot></button>
+    <button class='button' @click='$emit("click")'><slot></slot></button>
   `,
 })
 
@@ -25,13 +25,13 @@ Vue.component('heading', {
     return createElement(
       'h' + this.lvl,
       {
-        attrs: { class: this.$root.themes.mainColor },
+        attrs: { class: 'main-color' },
       },
       this.$slots.default,
     )
   },
   template: `
-    <h{{lvl}} :class='$root.themes.mainColor'><slot></slot></h{{lvl}}>
+    <h{{lvl}} class='main-color'><slot></slot></h{{lvl}}>
   `,
 })
 
@@ -41,7 +41,7 @@ Vue.component('white-link', {
     to: String
   },
   template: `
-    <a class='white-link' :class='[$root.themes.textStyle, $root.themes.mainColorHover]' :href='to'><slot></slot></a>
+    <a class='white-link text main-color-hover' :href='to'><slot></slot></a>
   `,
 })
 
@@ -50,7 +50,7 @@ Vue.component('drop-link', {
     to: String
   },
   template: `
-    <a class='drop-link' :class='[$root.themes.textStyle, $root.themes.dropLinkStyle]' :href='to'><slot></slot></a>
+    <a class='drop-link text drop-link' :href='to'><slot></slot></a>
   `,
 })
 
@@ -60,20 +60,6 @@ Vue.component('drop-link', {
 Vue.component('big-icon', {
   template: `
     <ftaw class='fa fa-bars big-icon'></ftaw>
-  `,
-})
-
-Vue.component('theme-switch', {
-  props: {
-    dark: Boolean,
-  },
-  template: `
-    <div class='theme-switch' @click="$emit('change-theme')">
-      <txt :class='$root.themes.mainColorHover'>Dark theme</txt>
-      <div :class='$root.themes.backgroundStyle'>
-        <div :class='[{ floatLeft: !dark, floatRight: dark }, $root.themes.cardStyle]' ></div>
-      </div>
-    </div>
   `,
 })
 
@@ -112,7 +98,7 @@ Vue.component('navigation', {
   template: `
     <div>
       <div id='navigation'>
-        <div :class='$root.themes.cardStyle'>
+        <div class='card'>
           <div v-if='desktop'>
           
             <white-link to='/'>Home</white-link>
@@ -125,24 +111,21 @@ Vue.component('navigation', {
           <div>
           </div>
           <div v-if='desktop'>
-            <theme-switch @change-theme='$emit("change-theme")' :dark='dark'></theme-switch>
           </div>
           <div v-else>
             <div id='navigation-mobile-drop'>
               <big-icon></big-icon>
-              <div class='round' :class='$root.themes.cardStyle'>
+              <div class='round card'>
                 <drop-link to='/'>Home</drop-link>
                 <drop-link to='/login'>Login</drop-link>
                 <drop-link to='/user'>User page</drop-link>
-                <thematic-break></thematic-break>
-                <theme-switch :class='[$root.themes.mobileThemeSwitchStyle, "mobile-theme-switch"]' @change-theme='$emit("change-theme")' :dark='dark'></theme-switch>
               </div>
             </div>
           </div>
         </div>
-        <div v-show='showAlert'>
+        <div v-show='showAlert' class='alert-card'>
           <txt>We have sent an email with a confirmation link to your email address, your GTDF account will be <strong>deleted 7</strong> days after its creation if not confirmed.</txt>
-          <txt v-if='!emailResent'>Click <a @click='resendEmail' class='blue-link' :class='$root.themes.textStyle'>here</a> to resend the email.</txt>
+          <txt v-if='!emailResent'>Click <a @click='resendEmail' class='blue-link'>here</a> to resend the email.</txt>
           <txt v-else>Email resent.</txt>
           <ftaw class='fa fa-times icon-medium' @click='closeAlert'></ftaw>
         </div>

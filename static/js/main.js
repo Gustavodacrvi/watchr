@@ -26,14 +26,13 @@ let vm = new Vue({
   el: '#vue',
   data: {
     desktopLength: undefined,
-    dark: false,
-    themes: undefined,
+    theme: 'light_orange',
     authentication: {
       httpSent: false,
     },
   },
   beforeMount() {
-    this.applyThemes(this.getSavedTheme())
+    this.applyTheme(this.getSavedTheme())
   },
   computed: {
     desktop() {
@@ -41,43 +40,39 @@ let vm = new Vue({
     },
   },
   methods: {
+    // THEMES
     getSavedTheme() {
-      let dark = localStorage.getItem('dark')
-      if (dark === null || dark === 'false')
-        return false
-      else return true
+      let theme = localStorage.getItem('theme')
+      if (theme === null)
+        return 'light_orange'
+      else return theme
     },
-    // THEME
-    applyThemes(dark) {
-      this.dark = dark
-      localStorage.setItem('dark', dark)
-      if (dark)
-      this.themes = {
-        cardStyle: 'card-dark',
-        backgroundStyle: 'background-dark',
-        textStyle: 'text-dark',
-        mainColor: 'color-dark',
-        buttonStyle: 'button-dark',
-        inputStyle: 'input-dark',
-        mainColorHover: 'color-dark-hover',
-        iconColor: 'icon-color-dark',
-        dropLinkStyle: 'drop-link-style-dark',
-        mobileThemeSwitchStyle: 'mobile-theme-switch-dark'
-      }
-      else 
-        this.themes = {
-          cardStyle: 'card-white',
-          backgroundStyle: 'background-white',
-          textStyle: 'text-white',
-          mainColor: 'color-white',
-          buttonStyle: 'button-white',
-          inputStyle: 'input-white',
-          mainColorHover: 'color-white-hover',
-          iconColor: 'icon-color-white',
-          dropLinkStyle: 'drop-link-style-white',
-          mobileThemeSwitchStyle: 'mobile-theme-switch-white'
-      }
+    applyTheme(theme) {
+      this.downloadTheme(theme)
+      localStorage.setItem('theme', theme)
     },
+    changeTheme(theme) {
+      if (theme !== this.theme) {
+        this.removeCurrentTheme()
+        this.downloadTheme(theme)
+      }
+
+      localStorage.setItem('theme', theme)
+    },
+    removeCurrentTheme() {
+      let link = document.getElementById(this.theme)
+      link.parentNode.removeChild(link)
+    },
+    downloadTheme(theme) {
+      var link = document.createElement('link')
+
+      link.setAttribute('rel', 'stylesheet')
+      link.setAttribute('type', 'text/css')
+      link.setAttribute('href', '/css/' + theme + '.css')
+      link.setAttribute('id', theme)
+      document.getElementsByTagName('head')[0].appendChild(link)
+
+    }
   },
 })
 

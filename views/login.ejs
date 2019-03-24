@@ -10,10 +10,10 @@
     <title>Login</title>
   </head>
 
-  <body>
+  <body class='background'>
 
-    <div id='vue' :class='themes.backgroundStyle'>
-      <navigation :dark='dark' :desktop='desktop' @change-theme='applyThemes(!dark)'></navigation>
+    <div id='vue'>
+      <navigation :dark='false' :desktop='desktop' @change-theme='applyThemes(!dark)'></navigation>
 
       <div class='mobile-margin'></div>
       <card-form act='/login'>

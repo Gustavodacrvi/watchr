@@ -14,114 +14,10 @@ body {
   position: absolute;
 }
 
-/* THEMES */
-
-.background-dark {
-  background: url(/images/backcolor.png);  
-}
-
-.background-white {
-  background-color: #f6f8f8;
-}
-
-.card-white {
-  background-color: #fdfdfd;
-  box-shadow: 0 1px 30px 8px rgba(210, 210, 210, .2);
-}
-
-.card-dark {
-  background: url(/images/cardcolor.png);
-}
-
-.text-dark {
-  color: #c8c8c8;
-}
-
-.text-white {
-  color: #929292;
-}
-
-.icon-color-dark {
-  color: #c8c8c8;
-}
-
-.icon-color-white {
-  color: #a3a3a3;
-}
-
-.color-dark {
-  color: #8bf2ef;
-}
-
-.color-dark-hover:hover {
-  color: #8bf2ef !important;
-}
-
-.color-white {
-  color: #fd8d67;
-}
-
-.color-white-hover:hover {
-  color: #fd8d67 !important;
-}
-
-.button-dark, .button-white {
-  background: none;
-  border: none;
-}
-
-.button-dark {
-  background-color: #8bf2ef;
-  color: #323232;
-}
-
-.button-dark .fa {
-  color: #323232 !important;
-}
-
-.button-white {
-  background-color: #f57a44;
-  color: #fff;
-}
-
-.button-white .fa{
-  color: #fdfdfd !important;
-}
-
-.input-dark {
-  background: url(/images/backcolor.png);
-  color: #c8c8c8;
-}
-
-.input-white {
-  color: #646464;
-  background-color: #f6f8f8;
-  border: 1px solid #e6e6e6;
-}
-
-.drop-link-style-dark:hover {
-  background-color: #8bf2ef;
-  color: #323232;
-}
-
-.drop-link-style-white:hover {
-  background-color: #f57a44;
-  color: #fdfdfd;
-}
-
-.transparent-border-card {
-  border-radius: 6px;
-  border: 0.5px solid #a3a3a3;
-}
 
 
 
 
-
-
-h1 {
-  color: #8bf2ef;
-}
 
 #navigation > :first-child > :last-child,
 .centralize {
@@ -150,6 +46,10 @@ h1 {
 #navigation-mobile-drop > div,
 .drop-link {
   transition-duration: .2s;
+}
+
+.white {
+  color: white !important;
 }
 
 .shadow {
@@ -264,6 +164,7 @@ h1 {
 }
 
 #navigation-mobile-drop > div {
+  padding: 6px 0;
   position: absolute;
   opacity: 0;
   visibility: hidden;
@@ -282,7 +183,6 @@ h1 {
   position: absolute;
   top: 45px;
   min-height: 30px;
-  background-color: #fcb150;
   width: 100%;
   flex-direction: column;
   padding: 4px 0;
@@ -320,21 +220,6 @@ h1 {
   margin: 0;
 }
 
-.mobile-theme-switch-dark:hover {
-  background-color: #8bf2ef;
-}
-
-.mobile-theme-switch-dark:hover span {
-  color: #323232 !important;
-}
-
-.mobile-theme-switch-white:hover {
-  background-color: #f57a44;
-}
-
-.mobile-theme-switch-white:hover span {
-  color: #f6f8f8 !important;
-}
 
 @media screen and (max-width: 796px) {
   #navigation > :last-child span {
