@@ -32,7 +32,7 @@ Vue.component('card-form', {
   },
   template: `
     <div class='card-form'>
-      <div class='round' :class='$root.themes.cardStyle'>
+      <div class='round card'>
         <slot></slot>
       </div>
     </div>
@@ -47,7 +47,7 @@ Vue.component('card-form', {
 
 Vue.component('form-success', {
   template: `
-    <div class='form-el form-success' :class='$root.themes.mainC'>
+    <div class='form-el form-success main-color'>
       <txt form-left-text><slot></slot></txt>
     </div>
   `
@@ -64,7 +64,7 @@ Vue.component('form-error', {
 Vue.component('form-button', {
   template: `
     <div class='form-button form-el'>
-      <btn class='round' :class='$root.themes.textStyle' @click='analise' :disabled='$parent.httpSent'>
+      <btn class='round text' @click='analise' :disabled='$parent.httpSent'>
         <ftaw v-if='$parent.httpSent' class='fa fa-sync fa-spin white'></ftaw>
         <template v-else>
           <slot></slot>
@@ -156,7 +156,7 @@ Vue.component('form-input', {
   template: `
     <div class='form-input form-el'>
       <div>
-        <input v-model='val' :class='[{ input: true, round: true, "wrong-input": error || hasFormError}, $root.themes.inputStyle]' autocomplete='off' :type='inputType' :placeholder='placeholder' :name='name' :ref='name' />
+        <input v-model='val' class='form-input' :class='{ input: true, round: true, "wrong-input": error || hasFormError}' autocomplete='off' :type='inputType' :placeholder='placeholder' :name='name' :ref='name' />
         <alert v-if='hasErrorType("empty")'>
           This field cannot be empty.
         </alert>
@@ -237,7 +237,7 @@ Vue.component('form-link', {
   },
   template: `
     <div class='form-el'>
-      <a class='blue-link form-link form-left-text' :class='$root.themes.textStyle' :href='to'><slot></slot></a>
+      <a class='blue-link form-link form-left-text text' :href='to'><slot></slot></a>
     </div>
   `,
 })

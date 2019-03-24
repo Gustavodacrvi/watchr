@@ -51,32 +51,7 @@ let vm = new Vue({
     applyThemes(dark) {
       this.dark = dark
       localStorage.setItem('dark', dark)
-      if (dark)
-      this.themes = {
-        cardStyle: 'card-dark',
-        backgroundStyle: 'background-dark',
-        textStyle: 'text-dark',
-        mainColor: 'color-dark',
-        buttonStyle: 'button-dark',
-        inputStyle: 'input-dark',
-        mainColorHover: 'color-dark-hover',
-        iconColor: 'icon-color-dark',
-        dropLinkStyle: 'drop-link-style-dark',
-        mobileThemeSwitchStyle: 'mobile-theme-switch-dark'
-      }
-      else 
-        this.themes = {
-          cardStyle: 'card-white',
-          backgroundStyle: 'background-white',
-          textStyle: 'text-white',
-          mainColor: 'color-white',
-          buttonStyle: 'button-white',
-          inputStyle: 'input-white',
-          mainColorHover: 'color-white-hover',
-          iconColor: 'icon-color-white',
-          dropLinkStyle: 'drop-link-style-white',
-          mobileThemeSwitchStyle: 'mobile-theme-switch-white'
-      }
+      
     },
   },
 })
