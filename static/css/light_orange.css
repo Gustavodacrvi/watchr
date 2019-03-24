@@ -70,6 +70,17 @@
   border: 1px solid #ff7514 !important;
 }
 
+.blue-link {
+  color: #0096ff;
+}
+
+.alert-card {
+  background-color: #f57a44;
+}
+
+.alert-card span, .alert-card i {
+  color: #fdfdfd !important;
+}
 
 
 

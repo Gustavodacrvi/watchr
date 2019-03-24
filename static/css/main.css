@@ -48,6 +48,10 @@ body {
   transition-duration: .2s;
 }
 
+.white {
+  color: white !important;
+}
+
 .shadow {
   box-shadow: 0 3px 10px 1px rgba(50, 50, 50, .4);
 }

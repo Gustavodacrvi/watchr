@@ -123,7 +123,7 @@ Vue.component('navigation', {
             </div>
           </div>
         </div>
-        <div v-show='showAlert'>
+        <div v-show='showAlert' class='alert-card'>
           <txt>We have sent an email with a confirmation link to your email address, your GTDF account will be <strong>deleted 7</strong> days after its creation if not confirmed.</txt>
           <txt v-if='!emailResent'>Click <a @click='resendEmail' class='blue-link'>here</a> to resend the email.</txt>
           <txt v-else>Email resent.</txt>

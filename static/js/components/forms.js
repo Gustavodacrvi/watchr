@@ -47,7 +47,7 @@ Vue.component('card-form', {
 
 Vue.component('form-success', {
   template: `
-    <div class='form-el form-success main-color'>
+    <div class='form-el form-success main-color form-left-text'>
       <txt form-left-text><slot></slot></txt>
     </div>
   `
@@ -55,7 +55,7 @@ Vue.component('form-success', {
 
 Vue.component('form-error', {
   template: `
-    <div class='form-el form-error'>
+    <div class='form-el form-error form-left-text'>
       <txt class='form-left-text'><slot></slot></txt>
     </div>
   `
@@ -237,7 +237,7 @@ Vue.component('form-link', {
   },
   template: `
     <div class='form-el'>
-      <a class='blue-link form-link form-left-text text' :href='to'><slot></slot></a>
+      <a class='blue-link form-left-text text' :href='to'><slot></slot></a>
     </div>
   `,
 })
