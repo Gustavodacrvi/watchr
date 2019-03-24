@@ -264,9 +264,8 @@ h1 {
   opacity: 0;
   visibility: hidden;
   top: 100%;
-  min-width: 150px;
+  min-width: 175px;
   right: 0;
-  text-align: center;
   overflow: hidden;
 }
 
@@ -302,7 +301,35 @@ h1 {
 .drop-link {
   display: inline-block;
   padding: 6px;
+  padding-left: 14px;
   text-decoration: none;
+}
+
+.thematic-break {
+  width: 85%;
+  border: 0.5px solid #c8c8c8;
+}
+
+.mobile-theme-switch {
+  padding: 6px;
+  padding-left: 14px;
+  margin: 0;
+}
+
+.mobile-theme-switch-dark:hover {
+  background-color: #8bf2ef;
+}
+
+.mobile-theme-switch-dark:hover span {
+  color: #323232 !important;
+}
+
+.mobile-theme-switch-white:hover {
+  background-color: #f57a44;
+}
+
+.mobile-theme-switch-white:hover span {
+  color: #f6f8f8 !important;
 }
 
 @media screen and (max-width: 796px) {

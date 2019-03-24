@@ -87,6 +87,12 @@ Vue.component('theme-switch', {
   `,
 })
 
+Vue.component('thematic-break', {
+  template: `
+    <hr class='thematic-break' />
+  `
+})
+
 Vue.component('navigation', {
   props: {
     desktop: Boolean,
@@ -130,8 +136,6 @@ Vue.component('navigation', {
           </div>
           <div v-if='desktop'>
             <theme-switch @change-theme='$emit("change-theme")' :dark='dark'></theme-switch>
-            <white-link to='/terms-of-use'>Terms of use</white-link>
-            <white-link to='/privacy-policy'>Privacy policy</white-link>
           </div>
           <div v-else>
             <div id='navigation-mobile-drop'>
@@ -140,8 +144,8 @@ Vue.component('navigation', {
                 <drop-link to='/'>Home</drop-link>
                 <drop-link to='/login'>Login</drop-link>
                 <drop-link to='/user'>User page</drop-link>
-                <drop-link to='/terms-of-use'>Terms of use</drop-link>
-                <drop-link to='/privacy-policy'>Privacy policy</drop-link>
+                <thematic-break></thematic-break>
+                <theme-switch :class='[$root.themes.mobileThemeSwitchStyle, "mobile-theme-switch"]' @change-theme='$emit("change-theme")' :dark='dark'></theme-switch>
               </div>
             </div>
           </div>

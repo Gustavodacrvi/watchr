@@ -62,6 +62,7 @@ let vm = new Vue({
         mainColorHover: 'color-dark-hover',
         iconColor: 'icon-color-dark',
         dropLinkStyle: 'drop-link-style-dark',
+        mobileThemeSwitchStyle: 'mobile-theme-switch-dark'
       }
       else 
         this.themes = {
@@ -74,7 +75,8 @@ let vm = new Vue({
           mainColorHover: 'color-white-hover',
           iconColor: 'icon-color-white',
           dropLinkStyle: 'drop-link-style-white',
-        }
+          mobileThemeSwitchStyle: 'mobile-theme-switch-white'
+      }
     },
   },
 })
