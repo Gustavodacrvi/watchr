@@ -1,6 +1,33 @@
 const MAX_WIDTH_MOBILE_NAVIGATION_BAR = 796
 
 
+function setCookie(name, value, expireDays, path) {
+  let d = new Date()
+  d.setTime(d.getTime() + (expireDays * 24 * 60 * 60 * 1000))
+  let expires = 'expires='+d.toUTCString()
+  document.cookie = name + '=' + value + ';' + expires + ';path=' + path
+}
+
+function getCookie(name) {
+  let nm = name + '='
+  let ca = document.cookie.split(';')
+  for(let i=0;i<ca.length;i++) {
+    let c = ca[i]
+    while (c.charAt(0) === ' ')
+      c = c.substring(1)
+    if (c.indexOf(nm) === 0)
+      return c.substring(nm.length, c.length)
+  }
+  return ''
+}
+
+function checkCookie(name) {
+  let user = getCookie(name)
+  if (user !== '')
+    return true
+  return false
+}
+
 function POSTrequestData(route, params, callback) {
   let xhttp = new XMLHttpRequest()
   xhttp.onreadystatechange = function() {
@@ -32,7 +59,7 @@ let vm = new Vue({
     },
   },
   created() {
-    this.applyTheme(this.getSavedTheme())
+    this.theme = this.getSavedTheme()
   },
   computed: {
     desktop() {
@@ -42,15 +69,10 @@ let vm = new Vue({
   methods: {
     // THEMES
     getSavedTheme() {
-      let theme = localStorage.getItem('theme')
-      if (theme === null)
+      let theme = getCookie('theme')
+      if (theme === '')
         return 'light_orange'
       else return theme
-    },
-    applyTheme(theme) {
-      this.downloadTheme(theme)
-      this.theme = theme
-      localStorage.setItem('theme', theme)
     },
     changeTheme(theme) {
       if (theme !== this.theme) {
@@ -59,7 +81,7 @@ let vm = new Vue({
       }
 
       this.theme = theme
-      localStorage.setItem('theme', theme)
+      setCookie('theme', theme, 28, '/')
     },
     removeCurrentTheme() {
       let link = document.getElementById(this.theme)
@@ -73,7 +95,6 @@ let vm = new Vue({
       link.setAttribute('href', '/css/' + theme + '.css')
       link.setAttribute('id', theme)
       document.getElementsByTagName('head')[0].appendChild(link)
-
     }
   },
 })
@@ -81,3 +102,5 @@ let vm = new Vue({
 
 vm.desktopLength = window.innerWidth
 window.addEventListener('resize', () => vm.desktopLength = window.innerWidth)
+
+let cookieName = 'everywhere'

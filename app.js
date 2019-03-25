@@ -6,7 +6,8 @@ let cookieParser = require('cookie-parser')
 let bodyParser = require('body-parser')
 let passport = require('passport')
 let flash = require('connect-flash')
-let session = require('express-session') 
+let session = require('express-session')
+let func = require('./functions')
 
 
 mongose.connect(process.env.DATABASE || 'mongodb://localhost/GTDF2',{useNewUrlParser:!0})

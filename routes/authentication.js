@@ -6,11 +6,7 @@ let LocalStrategy = require('passport-local').Strategy
 let CronJob = require('cron').CronJob
 let async = require('async')
 let nodemailer = require('nodemailer')
-
-
-function handleError(err) {
-  console.log(err)
-}
+let func = require('./../functions')
 
 function getNodeMailerTransport() {
   return {
@@ -43,13 +39,13 @@ router.get('/login', (req, res) => {
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', function(err, user, info) {
     if (err) {
-      handleError(err)
+      func.handleError(err)
       return next(err)
     }
     if (info === undefined) {
       req.logIn(user, function(err) {
         if (err) {
-          handleError(err)
+          func.handleError(err)
           return next(err)
         }
         return res.send({ valid: true, inputName: '', error: ''})
@@ -71,12 +67,12 @@ router.post('/signup', (req, res) => {
   let b = req.body
 
   User.getUserByUsername(b.username, (err, user) => {
-    if (err) return handleError(err)
+    if (err) return func.handleError(err)
     if (user !== null) {
       res.send(JSON.stringify({ valid: false, error: 'Username taken.', inputName: 'username' }))
     } else {
       User.getUserByEmail(b.email, (err, user) => {
-        if (err) return handleError(err)
+        if (err) return func.handleError(err)
         if (user !== null) {
           res.send(JSON.stringify({ valid: false, error: 'Email taken.', inputName: 'email' }))
         } else {
@@ -92,7 +88,7 @@ router.post('/signup', (req, res) => {
               accountConfirmationExpires: Date.now() + 604800000, // 7 days : 604800000
             })
             User.createUser(user, (err) => {
-              if (err) return handleError(err)
+              if (err) return func.handleError(err)
   
               async.waterfall([function(done) {
                 var smtpTransport = nodemailer.createTransport(getNodeMailerTransport())
@@ -104,10 +100,10 @@ router.post('/signup', (req, res) => {
                 }
                 smtpTransport.sendMail(mailOptions, function(err) {
                   if (err) {
-                    handleError(err)
+                    func.handleError(err)
                     res.send(JSON.stringify({ valid: false, inputName: 'email', error: 'Invalid email.' }))
                     User.deleteOne({ username: b.username }, (err) => {
-                      if (err) return handleError(err)
+                      if (err) return func.handleError(err)
                     })
                   } else {
                     req.flash('success', 'You created an account and can now log in.')
@@ -117,7 +113,7 @@ router.post('/signup', (req, res) => {
               }], function(err) {
                 if (err) return next(err)
                 User.deleteOne({ username: b.username }, (err) => {
-                  if (err) return handleError(err)
+                  if (err) return func.handleError(err)
                 })
               })
             })
@@ -147,7 +143,7 @@ router.post('/resend-confirmation-email', (req, res) => {
     }
     smtpTransport.sendMail(mailOptions, function(err) {
       if (err) {
-        handleError(err)
+        func.handleError(err)
       } else {
         req.flash('success', 'You created an account and can now log in.')
         res.send(JSON.stringify({ valid: true, error: null, inputName: null }))
@@ -165,7 +161,7 @@ router.get('/confirm-password/:token', (req, res) => {
       $gt: Date.now(),
     },
   }, function(err, user) {
-    if (err) return handleError(err)
+    if (err) return func.handleError(err)
     if (!user) {
       req.flash('error', 'Confirmation token is invalid or has expired.')
       res.redirect('/login')
@@ -177,7 +173,7 @@ router.get('/confirm-password/:token', (req, res) => {
       user.markModified('accountConfirmationToken')
       user.markModified('accountNotConfirmed')
       user.save((err) => {
-        if (err) return handleError(err)
+        if (err) return func.handleError(err)
 
         req.flash('success', 'Your account has been confirmed!')
         res.redirect('/login')
@@ -189,13 +185,13 @@ router.get('/confirm-password/:token', (req, res) => {
 // RUN EVERY HOUR '0 0 * * * *'
 new CronJob('0 0 * * * *', function() {
   User.find({ accountNotConfirmed: true }, (err, docs) => {
-    if (err) return handleError(err)
+    if (err) return func.handleError(err)
 
     let length = docs.length
     for (let i =0;i<length;i++) {
       if (new Date(docs[0].accountConfirmationExpires).getTime() < Date.now()) {
         User.deleteOne({ username: docs[i].username }, (err) => {
-          if (err) return handleError(err)
+          if (err) return func.handleError(err)
         })
       }
     }
