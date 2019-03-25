@@ -177,7 +177,6 @@ body {
   top: 100%;
   min-width: 175px;
   right: 0;
-  overflow: hidden;
 }
 
 #navigation-mobile-drop:hover > div {
@@ -261,6 +260,26 @@ body {
   padding: 6px 0;
 }
 
+.mobile-subdropdown {
+  position: relative;
+}
+
+.mobile-subdropdown > div {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  visibility: hidden;
+  opacity: 0;
+  right: 97%;
+  top: 0;
+  transition-duration: .2s;
+  width: 175px;
+}
+
+.mobile-subdropdown:hover > div {
+  visibility: visible;
+  opacity: 1;
+}
 
 @media screen and (max-width: 796px) {
   #navigation > :last-child span {
