@@ -1,3 +1,6 @@
+function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 function removeUnderline(str) {
   let newStr = ''
@@ -5,7 +8,7 @@ function removeUnderline(str) {
   for (let i=0;i<length;i++)
     if (str[i] === '_') newStr += ' '
     else newStr += str[i]
-  return newStr
+  return capitalizeFirstLetter(newStr)
 }
 
 
