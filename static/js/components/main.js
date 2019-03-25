@@ -116,12 +116,14 @@ Vue.component('dropdown', {
   },
   template: `
     <div class='dropdown'  @mouseover='opd = true' @mouseleave='opd = false'>
-      <span :class='hdlstyle'>{{ this.hdlvalue }}</span>
-      <div v-if='opd' :class='{flexCenter: floatdirect === "center"}'>
-        <div class='card container round' :class='{floatRight: floatdirect === "right", floatLeft: floatdirect === "left"}'>
-          <slot></slot>
+      <span :class='hdlstyle'>{{ this.hdlvalue }}<ftaw class='fa fa-angle-up'></ftaw></span>
+      <transition name='dropdown'>
+        <div v-if='opd' :class='{flexCenter: floatdirect === "center"}'>
+          <div class='card container round' :class='{floatRight: floatdirect === "right", floatLeft: floatdirect === "left"}'>
+            <slot></slot>
+          </div>
         </div>
-      </div>
+      </transition>
     </div>
   `,
   computed: {

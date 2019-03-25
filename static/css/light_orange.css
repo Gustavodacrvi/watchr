@@ -96,3 +96,13 @@
   color: #fdfdfd !important;
 }
 
+.dropdown:hover i {
+  color: #f57a44;
+}
+
+.dropdown-enter-active, .dropdown-leave-active {
+  transition: opacity .2s;
+}
+.dropdown-enter, .dropdown-leave-to {
+  opacity: 0;
+}

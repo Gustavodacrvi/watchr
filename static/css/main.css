@@ -246,6 +246,17 @@ body {
   width: 175px;
 }
 
+.dropdown i {
+  position: relative;
+  left: 7px;
+  top: 2px;
+  transition-duration: .2s;
+}
+
+.dropdown:hover i {
+  transform: rotate(180deg);
+}
+
 .container {
   padding: 6px 0;
 }
