@@ -80,18 +80,18 @@ let vm = new Vue({
     },
     changeTheme(theme) {
       if (theme !== this.theme) {
-        this.removeCurrentTheme()
-        this.downloadTheme(theme)
+        let oldTheme = this.theme
+        this.downloadTheme(theme).then(this.removeTheme(oldTheme))
       }
 
       this.theme = theme
       setCookie('theme', theme, 28, '/')
     },
-    removeCurrentTheme() {
-      let link = document.getElementById(this.theme)
+    removeTheme(theme) {
+      let link = document.getElementById(theme)
       link.parentNode.removeChild(link)
     },
-    downloadTheme(theme) {
+    async downloadTheme(theme) {
       var link = document.createElement('link')
 
       link.setAttribute('rel', 'stylesheet')

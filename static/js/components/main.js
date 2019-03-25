@@ -183,6 +183,14 @@ Vue.component('navigation', {
                 <drop-link to='/'>Home</drop-link>
                 <drop-link to='/login'>Login</drop-link>
                 <drop-link to='/user'>User page</drop-link>
+                <thematic-break></thematic-break>
+                <div class='mobile-subdropdown'>
+                  <drop-link>{{ getThemeName($root.theme) }}</drop-link>
+                  <div class='round card'>
+                  <drop-link @click='$root.changeTheme("light_orange")'>Light orange</drop-link>
+                    <drop-link @click='$root.changeTheme("dark_light_blue")'>Dark light blue</drop-link>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
