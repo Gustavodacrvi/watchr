@@ -9,6 +9,27 @@ function removeUnderline(str) {
 }
 
 
+Vue.component('root-preloading', {
+  data() {
+    return {
+      str: 'Loading'
+    }
+  },
+  mounted() {
+    setInterval(this.addChar, 150)
+  },
+  template: `
+    <div class='preloading'>
+      <h1>{{ this.str }}</h1>
+    </div>
+  `,
+  methods: {
+    addChar() {
+      this.str += '.'
+    }
+  },
+})
+
 Vue.component('txt', {
   template: `
     <span class='text'><slot></slot></span>

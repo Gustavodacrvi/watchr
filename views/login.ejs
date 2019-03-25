@@ -13,9 +13,7 @@
   <body class='background'>
 
     <div id='vue'>
-      <template v-if='preloading'>
-        <h1>PRELOADING MOTHERFUCKER.....</h1>
-      </template>
+      <root-preloading v-if='preloading'></root-preloading>
       <template v-else>
         <navigation :desktop='desktop'></navigation>
 

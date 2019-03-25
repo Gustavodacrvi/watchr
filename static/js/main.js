@@ -63,7 +63,7 @@ let vm = new Vue({
     this.theme = this.getSavedTheme()
   },
   mounted() {
-    setTimeout(() => this.preloading = false, 3000)
+    this.preloading = false
   },
   computed: {
     desktop() {
