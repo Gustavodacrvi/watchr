@@ -116,7 +116,7 @@ Vue.component('navigation', {
       username: undefined,
     }
   },
-  mounted() {
+  created() {
     GETrequest('/authenticated', (json) => {
       let data = JSON.parse(json)
       
@@ -129,7 +129,6 @@ Vue.component('navigation', {
         }
       }
     })
-    setInterval(() => {console.log(this.showAlert)}, 1000)
   },
   template: `
     <div>

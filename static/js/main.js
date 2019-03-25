@@ -31,7 +31,7 @@ let vm = new Vue({
       httpSent: false,
     },
   },
-  beforeMount() {
+  created() {
     this.applyTheme(this.getSavedTheme())
   },
   computed: {
