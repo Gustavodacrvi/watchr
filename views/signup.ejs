@@ -13,19 +13,22 @@
   <body class='background'>
 
     <div id='vue'>
-      <navigation :desktop='desktop'></navigation>
+      <root-preloading v-if='preloading'></root-preloading>
+      <template v-else>
+        <navigation :desktop='desktop'></navigation>
 
-      <div class='mobile-margin'></div>
-      <card-form act='/signup'>
-        <form-title>SIGN UP</form-title>
-        <form-input :max='40' name='username' placeholder='New username:' type='text'></form-input>
-        <form-input :max='40' name='email' placeholder='Email:' type='text'></form-input>
-        <form-input :max='40' name='password' placeholder='New password:' type='password'></form-input>
-        <form-input :max='40' name='confirm' placeholder='Confirm password:' type='confirmpassword'></form-input>
-        <form-checkbox name='termsagreement' :initial='false' mustbe='true' errormsg='You must accept the terms of service and privacy policy.'>I agree to the terms of service and privacy policy</form-checkbox>
-        <form-button>Sign up</form-button>
-      </card-form>
-      <div class='mobile-margin'></div>
+        <div class='mobile-margin'></div>
+        <card-form act='/signup'>
+          <form-title>SIGN UP</form-title>
+          <form-input :max='40' name='username' placeholder='New username:' type='text'></form-input>
+          <form-input :max='40' name='email' placeholder='Email:' type='text'></form-input>
+          <form-input :max='40' name='password' placeholder='New password:' type='password'></form-input>
+          <form-input :max='40' name='confirm' placeholder='Confirm password:' type='confirmpassword'></form-input>
+          <form-checkbox name='termsagreement' :initial='false' mustbe='true' errormsg='You must accept the terms of service and privacy policy.'>I agree to the terms of service and privacy policy</form-checkbox>
+          <form-button>Sign up</form-button>
+        </card-form>
+        <div class='mobile-margin'></div>
+      </template>
     </div>
 
   </body>

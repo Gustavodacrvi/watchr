@@ -13,24 +13,27 @@
   <body class='background'>
 
     <div id='vue'>
-      <navigation :desktop='desktop'></navigation>
+      <root-preloading v-if='preloading'></root-preloading>
+      <template v-else>
+        <navigation :desktop='desktop'></navigation>
 
-      <div class='mobile-margin'></div>
-      <card-form act='/login'>
-        <form-title>LOGIN</form-title>
-        <form-input :max='40' name='username' placeholder='Username:' type='text'></form-input>
-        <form-input :max='40' name='password' placeholder='Password:' type='password'></form-input>
-        <% if (success[0]) { %>
-          <form-success><%= success[0] %></form-success>
-        <% } %>
-        <% if (error[0]) {%>
-          <form-error><%= error[0] %></form-error>
-        <% } %>
-        <form-link to='/signup'>Doesn't have an account? Sign up!</form-link>
-        <form-button>Get things done</form-button>
-        <form-link to='/forgot'>Forgot password or username?</form-link>
-      </card-form>
-      <div class='mobile-margin'></div>
+        <div class='mobile-margin'></div>
+        <card-form act='/login'>
+          <form-title>LOGIN</form-title>
+          <form-input :max='40' name='username' placeholder='Username:' type='text'></form-input>
+          <form-input :max='40' name='password' placeholder='Password:' type='password'></form-input>
+          <% if (success[0]) { %>
+            <form-success><%= success[0] %></form-success>
+          <% } %>
+          <% if (error[0]) {%>
+            <form-error><%= error[0] %></form-error>
+          <% } %>
+          <form-link to='/signup'>Doesn't have an account? Sign up!</form-link>
+          <form-button>Get things done</form-button>
+          <form-link to='/forgot'>Forgot password or username?</form-link>
+        </card-form>
+        <div class='mobile-margin'></div>
+      </template>
     </div>
 
   </body>

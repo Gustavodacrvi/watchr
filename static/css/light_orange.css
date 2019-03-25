@@ -2,6 +2,19 @@
 
 
 
+.preloading {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.preloading h1 {
+  color: #f57a44;
+}
+
 .background {
   background-color: #f6f8f8;
 }
