@@ -18,12 +18,11 @@ body {
 
 
 
-
-
 .flexCenter {
   display: flex;
   justify-content: center;
 }
+
 
 #navigation > :first-child > :last-child,
 .centralize {
@@ -31,7 +30,10 @@ body {
 }
 
 #navigation-mobile-drop,
-#navigation-mobile-drop > div {
+#navigation-mobile-drop > div,
+.dropdown,
+.dropdown > div > div,
+.mobile-subdropdown > div {
   display: flex;
   flex-direction: column;
 }
@@ -50,7 +52,9 @@ body {
 
 .white-link,
 #navigation-mobile-drop > div,
-.drop-link {
+.drop-link,
+.dropdown i,
+.mobile-subdropdown > div {
   transition-duration: .2s;
 }
 
@@ -228,8 +232,6 @@ body {
 
 .dropdown {
   position: relative;
-  display: flex;
-  flex-direction: column;
 }
 
 .dropdown > div {
@@ -240,8 +242,6 @@ body {
 }
 
 .dropdown > div > div {
-  display: flex;
-  flex-direction: column;
   width: 175px;
 }
 
@@ -249,7 +249,6 @@ body {
   position: relative;
   left: 7px;
   top: 2px;
-  transition-duration: .2s;
 }
 
 .dropdown:hover i {
@@ -266,13 +265,10 @@ body {
 
 .mobile-subdropdown > div {
   position: absolute;
-  display: flex;
-  flex-direction: column;
   visibility: hidden;
   opacity: 0;
   right: 97%;
   top: 0;
-  transition-duration: .2s;
   width: 175px;
 }
 
