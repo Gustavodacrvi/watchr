@@ -53,6 +53,7 @@ let vm = new Vue({
   el: '#vue',
   data: {
     desktopLength: undefined,
+    preloading: true,
     theme: undefined,
     authentication: {
       httpSent: false,
@@ -60,6 +61,9 @@ let vm = new Vue({
   },
   created() {
     this.theme = this.getSavedTheme()
+  },
+  mounted() {
+    setTimeout(() => this.preloading = false, 3000)
   },
   computed: {
     desktop() {
