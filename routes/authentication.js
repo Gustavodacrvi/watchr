@@ -33,7 +33,9 @@ function getToken(callback) {
 }
 
 router.get('/login', (req, res) => {
-  res.render('login')
+  res.render('login', {
+    theme: req.cookies.theme
+  })
 })
 
 router.post('/login', (req, res, next) => {
@@ -60,7 +62,9 @@ router.post('/login', (req, res, next) => {
 })
 
 router.get('/signup', (req, res) => {
-  res.render('signup')
+  res.render('signup', {
+    theme: req.cookies.theme
+  })
 })
 
 router.post('/signup', (req, res) => {

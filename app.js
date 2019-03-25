@@ -49,7 +49,9 @@ app.use('/', gtdf)
 
 
 app.get('/', (req, res) => {
-  res.render('index')
+  res.render('index', {
+    theme: req.cookies.theme
+  })
 })
 
 
