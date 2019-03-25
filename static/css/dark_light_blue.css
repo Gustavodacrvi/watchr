@@ -80,3 +80,27 @@
   color: #fdfdfd !important;
 }
 
+.dropdown:hover i, .dropdown:hover span {
+  color: #8bf2ef;
+}
+
+.preloading {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.preloading h1 {
+  color: #8bf2ef;
+}
+
+.dropdown-enter-active, .dropdown-leave-active {
+  transition: opacity .2s;
+}
+.dropdown-enter, .dropdown-leave-to {
+  opacity: 0;
+}
+
