@@ -144,7 +144,7 @@ Vue.component('form-input', {
       isPassword: undefined,
     }
   },
-  mounted() {
+  created() {
     if (this.isPasswordType) this.showing = false
     else this.showing = true
 
@@ -254,7 +254,7 @@ Vue.component('form-checkbox', {
       error: this.hasError()
     }
   },
-  mounted() {
+  created() {
     this.error = this.hasError()
     this.$parent.map.set(this.name, this.getInputObj())
   },

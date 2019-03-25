@@ -9,6 +9,7 @@
 .card {
   background-color: #fdfdfd;
   box-shadow: 0 1px 30px 8px rgba(210, 210, 210, .2);
+  border: .5px solid #ebebeb;
 }
 
 .text {
@@ -82,53 +83,3 @@
   color: #fdfdfd !important;
 }
 
-
-
-
-/* .background-dark {
-  background: url(/images/backcolor.png);  
-} */
-
-/* .card-dark {
-  background: url(/images/cardcolor.png);
-} */
-
-/* .text-dark {
-  color: #c8c8c8;
-} */
-
-/* .icon-color-dark {
-  color: #c8c8c8;
-} */
-
-/* .color-dark {
-  color: #8bf2ef;
-} */
-
-/* .color-dark-hover:hover {
-  color: #8bf2ef !important;
-} */
-
-/* .button-dark {
-  background: none;
-  border: none;
-} */
-
-/* .button-dark {
-  background-color: #8bf2ef;
-  color: #323232;
-} */
-
-/* .button-dark .fa {
-  color: #323232 !important;
-} */
-
-/* .input-dark {
-  background: url(/images/backcolor.png);
-  color: #c8c8c8;
-} */
-
-/* .drop-link-style-dark:hover {
-  background-color: #8bf2ef;
-  color: #323232;
-} */

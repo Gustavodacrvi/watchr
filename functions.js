@@ -1,11 +1,9 @@
 let express = require('express')
 let router = express.Router()
 
-
-
-let User = require('../models/user')
-
-
+function handleError(err) {
+  console.log(err)
+}
 
 
 module.exports = router
