@@ -80,22 +80,45 @@ let vm = new Vue({
     changeLang(lang) {
       if (lang !== this.l.lang) {
         let oldLang = this.l.lang
-        this.downloadLang(lang).then(this.removeLang(oldLang))
+        this.downloadLang(lang, () => {
+          this.removeLang(oldLang)
+          this.l = l
+        })
       }
 
-      this.l.lang = lang
       setCookie('lang', lang, 28, '/')
     },
-    async downloadLang(lang) {
+    downloadLang(lang, callback) {
+      lang = this.parseFileNameToLang(lang)
       let scr = document.createElement('script')
 
-      scr.setAttribute('src', '/js/langs/' + lang + '.js')
       scr.setAttribute('id', lang)
+      scr.setAttribute('type', 'text/javascript')
+      scr.setAttribute('src', '/js/langs/' + lang + '.js')
+      scr.onload = callback
       document.getElementsByTagName('head')[0].appendChild(scr)
     },
     removeLang(lang) {
-      let scr = document.getElementById(lang)
+      let scr = document.getElementById(this.parseLangToFileName(lang))
       scr.parentNode.removeChild(scr)
+    },
+    parseFileNameToLang(lang) {
+      let str = ''
+      let len = lang.length
+      for (let i=0;i<len;i++)
+        if (lang[i] === '-')
+          str += '_'
+        else str += lang[i]
+      return str
+    },
+    parseLangToFileName(lang) {
+      let str = ''
+      let len = lang.length
+      for (let i=0;i<len;i++)
+        if (lang[i] === '-')
+          str += '_'
+        else str += lang[i]
+      return str
     },
     // THEMES
     getSavedTheme() {
@@ -107,23 +130,26 @@ let vm = new Vue({
     changeTheme(theme) {
       if (theme !== this.theme) {
         let oldTheme = this.theme
-        this.downloadTheme(theme).then(this.removeTheme(oldTheme))
+        this.downloadTheme(theme, () => {
+          this.removeTheme(oldTheme)
+          this.theme = theme
+        })
       }
 
-      this.theme = theme
       setCookie('theme', theme, 28, '/')
     },
     removeTheme(theme) {
       let link = document.getElementById(theme)
       link.parentNode.removeChild(link)
     },
-    async downloadTheme(theme) {
+    downloadTheme(theme, callback) {
       let link = document.createElement('link')
 
       link.setAttribute('rel', 'stylesheet')
       link.setAttribute('type', 'text/css')
       link.setAttribute('href', '/css/' + theme + '.css')
       link.setAttribute('id', theme)
+      link.onload = callback
       document.getElementsByTagName('head')[0].appendChild(link)
     }
   },

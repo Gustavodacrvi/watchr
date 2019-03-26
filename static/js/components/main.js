@@ -173,13 +173,13 @@ Vue.component('navigation', {
 
           </div>
           <div v-if='desktop'>
-            <dropdown style='z-index: 100' hdlstyle='white-link text main-color-hover' :hdlvalue='$root.l[$root.theme]' floatdirect='center'>
+            <dropdown class='nav-el' style='z-index: 100' hdlstyle='white-link text main-color-hover' :hdlvalue='$root.l[$root.theme]' floatdirect='center'>
               <drop-link @click='$root.changeTheme("light_orange")'>{{ $root.l.light_orange }}</drop-link>
               <drop-link @click='$root.changeTheme("dark_light_blue")'>{{ $root.l.dark_light_blue }}</drop-link>
             </dropdown>
-            <dropdown style='z-index: 100' hdlstyle='white-link text main-color-hover' :hdlvalue='$root.l[$root.theme]' floatdirect='center'>
-              <drop-link @click='$root.changeTheme("light_orange")'>{{ $root.l.light_orange }}</drop-link>
-              <drop-link @click='$root.changeTheme("dark_light_blue")'>{{ $root.l.dark_light_blue }}</drop-link>
+            <dropdown class='nav-el' style='z-index: 100' hdlstyle='white-link text main-color-hover' :hdlvalue='getLangName($root.l.lang)' floatdirect='center'>
+              <drop-link @click='$root.changeLang("en")'>English</drop-link>
+              <drop-link @click='$root.changeLang("pt-BR")'>Português(Brasil)</drop-link>
             </dropdown>
           </div>
           <div v-else>
@@ -212,6 +212,12 @@ Vue.component('navigation', {
     </div>
   `,
   methods: {
+    getLangName(lang) {
+      if (lang === 'en')
+        return 'English'
+      else if (lang === 'pt-BR')
+        return 'Português(Brasil)'
+    },
     closeAlert() {
       this.showAlert = false
       sessionStorage.setItem('confirmationEmailAlert', 'closed')

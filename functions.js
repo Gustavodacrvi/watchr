@@ -23,7 +23,6 @@ module.exports = {
     return str
   },
   getRenderObject(req) {
-    this.hasSavedLang(req)
     return {
       theme: req.cookies.theme,
       lang: this.parseLangToFileName(this.getPreferedLang(req, ['en', 'pt-BR']))
