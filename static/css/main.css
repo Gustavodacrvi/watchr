@@ -179,7 +179,7 @@ body {
   opacity: 0;
   visibility: hidden;
   top: 100%;
-  min-width: 175px;
+  min-width: 200px;
   right: 0;
 }
 
@@ -242,7 +242,7 @@ body {
 }
 
 .dropdown > div > div {
-  width: 175px;
+  min-width: 200px;
 }
 
 .dropdown i {
@@ -269,12 +269,16 @@ body {
   opacity: 0;
   right: 97%;
   top: 0;
-  width: 175px;
+  min-width: 200px;
 }
 
 .mobile-subdropdown:hover > div {
   visibility: visible;
   opacity: 1;
+}
+
+.nav-el {
+  margin: 6px;
 }
 
 @media screen and (max-width: 796px) {

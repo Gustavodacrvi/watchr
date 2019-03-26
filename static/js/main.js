@@ -52,52 +52,104 @@ function GETrequest(route, callback) {
 let vm = new Vue({
   el: '#vue',
   data: {
+    l: undefined,
     desktopLength: undefined,
-    preloading: true,
+    mounted: false,
     theme: undefined,
     authentication: {
       httpSent: false,
     },
   },
   created() {
+    this.l = l
     this.theme = this.getSavedTheme()
   },
   mounted() {
-    this.preloading = false
+    this.mounted = true
   },
   computed: {
     desktop() {
       return (this.desktopLength >= MAX_WIDTH_MOBILE_NAVIGATION_BAR)
     },
+    isPreloding() {
+      return (!this.mounted && !this.l)
+    }
   },
   methods: {
+    // LANGUAGE
+    changeLang(lang) {
+      if (lang !== this.l.lang) {
+        let oldLang = this.l.lang
+        this.downloadLang(lang, () => {
+          this.removeLang(oldLang)
+          this.l = l
+        })
+      }
+
+      setCookie('lang', lang, 28, '/')
+    },
+    downloadLang(lang, callback) {
+      lang = this.parseFileNameToLang(lang)
+      let scr = document.createElement('script')
+
+      scr.setAttribute('id', lang)
+      scr.setAttribute('type', 'text/javascript')
+      scr.setAttribute('src', '/js/langs/' + lang + '.js')
+      scr.onload = callback
+      document.getElementsByTagName('head')[0].appendChild(scr)
+    },
+    removeLang(lang) {
+      let scr = document.getElementById(this.parseLangToFileName(lang))
+      scr.parentNode.removeChild(scr)
+    },
+    parseFileNameToLang(lang) {
+      let str = ''
+      let len = lang.length
+      for (let i=0;i<len;i++)
+        if (lang[i] === '-')
+          str += '_'
+        else str += lang[i]
+      return str
+    },
+    parseLangToFileName(lang) {
+      let str = ''
+      let len = lang.length
+      for (let i=0;i<len;i++)
+        if (lang[i] === '-')
+          str += '_'
+        else str += lang[i]
+      return str
+    },
     // THEMES
     getSavedTheme() {
       let theme = getCookie('theme')
       if (theme === '')
         return 'light_orange'
-      else return theme
+      return theme
     },
     changeTheme(theme) {
       if (theme !== this.theme) {
         let oldTheme = this.theme
-        this.downloadTheme(theme).then(this.removeTheme(oldTheme))
+        this.downloadTheme(theme, () => {
+          this.removeTheme(oldTheme)
+          this.theme = theme
+        })
       }
 
-      this.theme = theme
       setCookie('theme', theme, 28, '/')
     },
     removeTheme(theme) {
       let link = document.getElementById(theme)
       link.parentNode.removeChild(link)
     },
-    async downloadTheme(theme) {
-      var link = document.createElement('link')
+    downloadTheme(theme, callback) {
+      let link = document.createElement('link')
 
       link.setAttribute('rel', 'stylesheet')
       link.setAttribute('type', 'text/css')
       link.setAttribute('href', '/css/' + theme + '.css')
       link.setAttribute('id', theme)
+      link.onload = callback
       document.getElementsByTagName('head')[0].appendChild(link)
     }
   },

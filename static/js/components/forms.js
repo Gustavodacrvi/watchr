@@ -83,7 +83,7 @@ Vue.component('form-button', {
       for (let input of form.map.values()) {
         if (this.isTextInput(input) && input.value === '') {
           form.inputName = input.name
-          form.error = 'This field cannot be empty.'
+          form.error = 'formInputEmpty'
           return true
         }
         if (this.isCheckbox(input) && input.hasError) {
@@ -157,16 +157,16 @@ Vue.component('form-input', {
       <div>
         <input v-model='val' class='form-input' :class='{ input: true, round: true, "wrong-input": error || hasFormError}' autocomplete='off' :type='inputType' :placeholder='placeholder' :name='name' :ref='name' />
         <alert v-if='hasErrorType("empty")'>
-          This field cannot be empty.
+          {{ $root.l.formInputEmpty }}
         </alert>
         <alert v-else-if='hasErrorType("max")'>
-          The field has to be less than {{ max + 1 }} characters.
+          {{ getFormInputErrorMsg(max + 1) }}
         </alert>
         <alert v-else-if='hasErrorType("passwords not matching")'>
-          Passwords are not matching.
+          {{ $root.l.formInputPasswordNotMatching }}
         </alert>
         <alert v-else-if='hasFormError'>
-          {{ $parent.error }}
+          {{ $root.l[$parent.error] }}
         </alert>
         <template v-if='isPasswordType'>
           <ftaw v-if='showing' @click='showing = false' class='fa fa-eye tine-icon'></ftaw>
@@ -188,6 +188,13 @@ Vue.component('form-input', {
     },
   },
   methods: {
+    getFormInputErrorMsg(max) {
+      let l = this.$root.l.lang
+      if (l === 'pt-BR')
+        return 'O número de caracteres deve ser menor que ' + max + '.' 
+      else if (l === 'en')
+        return 'The number of characters must be less than ' + max + '.'
+    },
     hasErrorType(str) {
       return (this.error && this.errorType === str)
     },
