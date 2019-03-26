@@ -14,7 +14,7 @@ const l = {
   signUpButton: 'Criar conta',
   bigSignUpTitle: 'INSCREVER-SE', 
   navHomeLink: 'Início',
-  navLoginLink: 'Login',
+  navLoginLink: 'Enter',
   navUserPageLink: 'Usuário',
   formInputEmpty: 'Esse campo não pode estar vazio.',
   formInputPasswordNotMatching: 'As senhas não batem.',
