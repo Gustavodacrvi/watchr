@@ -1,4 +1,4 @@
-const l = {
+var l = {
   lang: 'en',
   bigLoginTitle: 'LOGIN',
   usernameInputPlaceholder: 'Username:',

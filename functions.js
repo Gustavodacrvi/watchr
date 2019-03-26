@@ -3,6 +3,9 @@ module.exports = {
     console.log(err)
   },
   getPreferedLang(req, langs) {
+    if (req.cookies.lang !== undefined)
+      return req.cookies.lang
+    
     let acc = req.acceptsLanguages()
     let length = acc.length
     for (let i=0;i<length;i++)
@@ -20,6 +23,7 @@ module.exports = {
     return str
   },
   getRenderObject(req) {
+    this.hasSavedLang(req)
     return {
       theme: req.cookies.theme,
       lang: this.parseLangToFileName(this.getPreferedLang(req, ['en', 'pt-BR']))

@@ -61,8 +61,8 @@ let vm = new Vue({
     },
   },
   created() {
-    this.theme = this.getSavedTheme()
     this.l = l
+    this.theme = this.getSavedTheme()
   },
   mounted() {
     this.mounted = true
@@ -76,12 +76,33 @@ let vm = new Vue({
     }
   },
   methods: {
+    // LANGUAGE
+    changeLang(lang) {
+      if (lang !== this.l.lang) {
+        let oldLang = this.l.lang
+        this.downloadLang(lang).then(this.removeLang(oldLang))
+      }
+
+      this.l.lang = lang
+      setCookie('lang', lang, 28, '/')
+    },
+    async downloadLang(lang) {
+      let scr = document.createElement('script')
+
+      scr.setAttribute('src', '/js/langs/' + lang + '.js')
+      scr.setAttribute('id', lang)
+      document.getElementsByTagName('head')[0].appendChild(scr)
+    },
+    removeLang(lang) {
+      let scr = document.getElementById(lang)
+      scr.parentNode.removeChild(scr)
+    },
     // THEMES
     getSavedTheme() {
       let theme = getCookie('theme')
       if (theme === '')
         return 'light_orange'
-      else return theme
+      return theme
     },
     changeTheme(theme) {
       if (theme !== this.theme) {
@@ -97,7 +118,7 @@ let vm = new Vue({
       link.parentNode.removeChild(link)
     },
     async downloadTheme(theme) {
-      var link = document.createElement('link')
+      let link = document.createElement('link')
 
       link.setAttribute('rel', 'stylesheet')
       link.setAttribute('type', 'text/css')

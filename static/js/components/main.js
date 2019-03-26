@@ -167,10 +167,16 @@ Vue.component('navigation', {
             <white-link to='/user'>{{ $root.l.navUserPageLink }}</white-link>
           </div>
           <div v-else>
+
           </div>
           <div>
+
           </div>
           <div v-if='desktop'>
+            <dropdown style='z-index: 100' hdlstyle='white-link text main-color-hover' :hdlvalue='$root.l[$root.theme]' floatdirect='center'>
+              <drop-link @click='$root.changeTheme("light_orange")'>{{ $root.l.light_orange }}</drop-link>
+              <drop-link @click='$root.changeTheme("dark_light_blue")'>{{ $root.l.dark_light_blue }}</drop-link>
+            </dropdown>
             <dropdown style='z-index: 100' hdlstyle='white-link text main-color-hover' :hdlvalue='$root.l[$root.theme]' floatdirect='center'>
               <drop-link @click='$root.changeTheme("light_orange")'>{{ $root.l.light_orange }}</drop-link>
               <drop-link @click='$root.changeTheme("dark_light_blue")'>{{ $root.l.dark_light_blue }}</drop-link>
