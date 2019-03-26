@@ -1,3 +1,3 @@
-const lang = {
+const l = {
   michaelHere: 'pt-br',
 }

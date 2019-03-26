@@ -52,6 +52,7 @@ function GETrequest(route, callback) {
 let vm = new Vue({
   el: '#vue',
   data: {
+    l: undefined,
     desktopLength: undefined,
     preloading: true,
     theme: undefined,
@@ -61,9 +62,11 @@ let vm = new Vue({
   },
   created() {
     this.theme = this.getSavedTheme()
+    this.l = l
   },
   mounted() {
     this.preloading = false
+    console.log(l.michaelHere)
   },
   computed: {
     desktop() {

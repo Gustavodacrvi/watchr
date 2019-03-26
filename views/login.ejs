@@ -14,9 +14,10 @@
 
     <div id='vue'>
       <root-preloading v-if='preloading'></root-preloading>
+
       <template v-else>
         <navigation :desktop='desktop'></navigation>
-
+        
         <div class='mobile-margin'></div>
         <card-form act='/login'>
           <form-title>LOGIN</form-title>
