@@ -197,6 +197,13 @@ Vue.component('navigation', {
                     <drop-link @click='$root.changeTheme("dark_light_blue")'>{{ $root.l.dark_light_blue }}</drop-link>
                   </div>
                 </div>
+                <div class='mobile-subdropdown'>
+                  <drop-link>{{ getLangName($root.l.lang) }}</drop-link>
+                  <div class='round card'>
+                    <drop-link @click='$root.changeLang("en")'>English</drop-link>
+                    <drop-link @click='$root.changeLang("pt-BR")'>Português(Brasil)</drop-link>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
