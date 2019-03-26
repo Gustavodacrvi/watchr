@@ -1,3 +1,15 @@
 const l = {
-  michaelHere: 'pt-br',
+  bigLoginTitle: 'ENTRAR',
+  usernameInputPlaceholder: 'Nome de usuário:',
+  passwordInputPlaceholder: 'Senha:',
+  doesntHaveAnAccountLink: 'Não tem uma conta? Inscreva-se!',
+  forgotPasswordOrUsernameLink: 'Esqueceu a senha ou o nome de usuário?',
+  getThingsDoneButton: 'Pôr as coisas em prática',
+  newUsernameInputPlaceholder: 'Novo nome de usuário:',
+  emailInputPlaceholder: 'E-mail:',
+  newPasswordInputPlaceholder: 'Nova senha:',
+  confirmNewPasswordInputPlaceholder: 'Confirmar nova senha:',privacyPolicyCheckBoxErrorMsg: 'Você deve aceitar os termos de serviço e a política de privacidade.',
+  privacyPolicyPlaceholderCheckBox: 'Eu aceito os termos de serciço e a política de privacidade',
+  signUpButton: 'Criar conta',
+  bigSignUpTitle: 'INSCREVER-SE', 
 }

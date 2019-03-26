@@ -54,7 +54,7 @@ let vm = new Vue({
   data: {
     l: undefined,
     desktopLength: undefined,
-    preloading: true,
+    mounted: false,
     theme: undefined,
     authentication: {
       httpSent: false,
@@ -65,13 +65,15 @@ let vm = new Vue({
     this.l = l
   },
   mounted() {
-    this.preloading = false
-    console.log(l.michaelHere)
+    this.mounted = true
   },
   computed: {
     desktop() {
       return (this.desktopLength >= MAX_WIDTH_MOBILE_NAVIGATION_BAR)
     },
+    isPreloding() {
+      return (!this.mounted && !this.l)
+    }
   },
   methods: {
     // THEMES
