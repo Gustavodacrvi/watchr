@@ -12,4 +12,9 @@ const l = {
   privacyPolicyPlaceholderCheckBox: 'Eu aceito os termos de serciço e a política de privacidade',
   signUpButton: 'Criar conta',
   bigSignUpTitle: 'INSCREVER-SE', 
+  navHomeLink: 'Início',
+  navLoginLink: 'Login',
+  navUserPageLink: 'Usuário',
+  light_orange: 'Laranja com branco',
+  dark_light_blue: 'Escuro Azul Claro',
 }

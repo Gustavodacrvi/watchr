@@ -162,33 +162,33 @@ Vue.component('navigation', {
         <div class='card'>
           <div v-if='desktop'>
           
-            <white-link to='/'>Home</white-link>
-            <white-link to='/login'>Login</white-link>
-            <white-link to='/user'>User page</white-link>
+            <white-link to='/'>{{ $root.l.navHomeLink }}</white-link>
+            <white-link to='/login'>{{ $root.l.navLoginLink }}</white-link>
+            <white-link to='/user'>{{ $root.l.navUserPageLink }}</white-link>
           </div>
           <div v-else>
           </div>
           <div>
           </div>
           <div v-if='desktop'>
-            <dropdown style='z-index: 100' hdlstyle='white-link text main-color-hover' :hdlvalue='getThemeName($root.theme)' floatdirect='center'>
-              <drop-link @click='$root.changeTheme("light_orange")'>Light orange</drop-link>
-              <drop-link @click='$root.changeTheme("dark_light_blue")'>Dark light blue</drop-link>
+            <dropdown style='z-index: 100' hdlstyle='white-link text main-color-hover' :hdlvalue='$root.l[$root.theme]' floatdirect='center'>
+              <drop-link @click='$root.changeTheme("light_orange")'>{{ $root.l.light_orange }}</drop-link>
+              <drop-link @click='$root.changeTheme("dark_light_blue")'>{{ $root.l.dark_light_blue }}</drop-link>
             </dropdown>
           </div>
           <div v-else>
             <div id='navigation-mobile-drop'>
               <big-icon></big-icon>
               <div class='round card'>
-                <drop-link to='/'>Home</drop-link>
-                <drop-link to='/login'>Login</drop-link>
-                <drop-link to='/user'>User page</drop-link>
+                <drop-link to='/'>{{ $root.l.navHomeLink }}</drop-link>
+                <drop-link to='/login'>{{ $root.l.navLoginLink }}</drop-link>
+                <drop-link to='/user'>{{ $root.l.navUserPageLink }}</drop-link>
                 <thematic-break></thematic-break>
                 <div class='mobile-subdropdown'>
-                  <drop-link>{{ getThemeName($root.theme) }}</drop-link>
+                  <drop-link>{{ $root.l[$root.theme] }}</drop-link>
                   <div class='round card'>
-                  <drop-link @click='$root.changeTheme("light_orange")'>Light orange</drop-link>
-                    <drop-link @click='$root.changeTheme("dark_light_blue")'>Dark light blue</drop-link>
+                    <drop-link @click='$root.changeTheme("light_orange")'>{{ $root.l.light_orange }}</drop-link>
+                    <drop-link @click='$root.changeTheme("dark_light_blue")'>{{ $root.l.dark_light_blue }}</drop-link>
                   </div>
                 </div>
               </div>
@@ -206,9 +206,6 @@ Vue.component('navigation', {
     </div>
   `,
   methods: {
-    getThemeName(theme) {
-      return removeUnderline(theme)
-    },
     closeAlert() {
       this.showAlert = false
       sessionStorage.setItem('confirmationEmailAlert', 'closed')
