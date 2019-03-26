@@ -1,4 +1,5 @@
 const l = {
+  lang: 'pt-BR',
   bigLoginTitle: 'ENTRAR',
   usernameInputPlaceholder: 'Nome de usuário:',
   passwordInputPlaceholder: 'Senha:',
@@ -15,6 +16,13 @@ const l = {
   navHomeLink: 'Início',
   navLoginLink: 'Login',
   navUserPageLink: 'Usuário',
+  formInputEmpty: 'Esse campo não pode estar vazio.',
+  formInputPasswordNotMatching: 'As senhas não batem.',
+  formInputEmailTaken: 'Endereço de e-mail já usado.',
+  formInputInvalidEmail: 'Endereço de e-mail inválido.',
+  formInputUnknownUsername: 'Nome de usuário desconhecido.',
+  formInputWrongPassword: 'Senha errada.',
+
   light_orange: 'Laranja com branco',
   dark_light_blue: 'Escuro Azul Claro',
 }

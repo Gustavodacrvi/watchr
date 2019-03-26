@@ -52,9 +52,9 @@ router.post('/login', (req, res, next) => {
       })
     }
     else if (info.message === 'Unknown username') {
-      res.send({ valid: false, inputName: 'username', error: 'Unknown username.' })
+      res.send({ valid: false, inputName: 'username', error: 'formInputUnknownUsername' })
     } else if (info.message === 'Wrong password') {
-      res.send({ valid: false, inputName: 'password', error: 'Wrong password.'})
+      res.send({ valid: false, inputName: 'password', error: 'formInputWrongPassword'})
     }
   })(req, res, next) 
 })
@@ -69,12 +69,12 @@ router.post('/signup', (req, res) => {
   User.getUserByUsername(b.username, (err, user) => {
     if (err) return func.handleError(err)
     if (user !== null) {
-      res.send(JSON.stringify({ valid: false, error: 'Username taken.', inputName: 'username' }))
+      res.send(JSON.stringify({ valid: false, error: 'formInputUsernameTaken', inputName: 'username' }))
     } else {
       User.getUserByEmail(b.email, (err, user) => {
         if (err) return func.handleError(err)
         if (user !== null) {
-          res.send(JSON.stringify({ valid: false, error: 'Email taken.', inputName: 'email' }))
+          res.send(JSON.stringify({ valid: false, error: 'formInputEmailTaken', inputName: 'email' }))
         } else {
           getToken((token) => {
             
@@ -101,7 +101,7 @@ router.post('/signup', (req, res) => {
                 smtpTransport.sendMail(mailOptions, function(err) {
                   if (err) {
                     func.handleError(err)
-                    res.send(JSON.stringify({ valid: false, inputName: 'email', error: 'Invalid email.' }))
+                    res.send(JSON.stringify({ valid: false, inputName: 'email', error: 'formInputInvalidEmail' }))
                     User.deleteOne({ username: b.username }, (err) => {
                       if (err) return func.handleError(err)
                     })
