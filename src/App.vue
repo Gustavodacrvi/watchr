@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id='body'>
     <nav-bar></nav-bar>
     <router-view/>
   </div>
@@ -21,6 +21,12 @@ export default Vue.extend({
 <style>
 body {
   margin: 0;
+}
+
+#body {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
 </style>
