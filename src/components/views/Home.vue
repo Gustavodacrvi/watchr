@@ -1,6 +1,5 @@
 <template>
   <div>
-    <span>I am alive</span>
   </div>
 </template>
 

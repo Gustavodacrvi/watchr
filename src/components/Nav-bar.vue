@@ -1,13 +1,10 @@
 <template>
   <nav :style="$store.getters.card">
     <section>
-      first
     </section>
     <section>
-      second
     </section>
     <section>
-      thirt
     </section>
   </nav>
 </template>
@@ -21,9 +18,9 @@ export default Vue.extend({
 
 <style scoped>
 nav {
-  width: 96%;
+  width: 90%;
   height: 40px;
-  padding: 0 2%;
+  padding: 0 5%;
 
   display: flex;
   align-items: center;
@@ -31,7 +28,11 @@ nav {
 
 nav > section {
   height: 100%;
-  flex-basis: 33%;
+  flex-basis: 42.5%;
+}
+
+nav > :nth-child(1) {
+  flex-basis: 15%;
 }
 
 

@@ -6,9 +6,8 @@ Vue.use(Vuex);
 interface Styles {
   currentTheme: string;
   light: {
-    card: {
-      backgroundColor: string;
-    };
+    body: object;
+    card: object;
   };
   [key: string]: any;
 }
@@ -19,6 +18,9 @@ export default new Vuex.Store({
     styles: {
       currentTheme: 'light',
       light: {
+        body: {
+          backgroundColor: '#f7f7fb',
+        },
         card: {
           backgroundColor: '#fff',
         },
@@ -28,6 +30,9 @@ export default new Vuex.Store({
   getters: {
     card: (state) => {
       return state.styles[state.styles.currentTheme].card;
+    },
+    backgroundColor: (state) => {
+      return state.styles[state.styles.currentTheme].body;
     },
   },
   mutations: {
