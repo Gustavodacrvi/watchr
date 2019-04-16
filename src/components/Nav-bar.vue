@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <nav :style="$store.getters.card">
     <section>
       first
     </section>
@@ -22,8 +22,6 @@ export default Vue.extend({
 <style scoped>
 nav {
   width: 96%;
-  box-shadow: 2px 2px 10px rgba(200,200,200);
-  background-color: #fff;
   height: 40px;
   padding: 0 2%;
 
