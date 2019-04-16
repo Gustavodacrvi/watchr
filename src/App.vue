@@ -29,4 +29,8 @@ body {
   height: 100%;
 }
 
+span {
+  color: #989398;
+}
+
 </style>

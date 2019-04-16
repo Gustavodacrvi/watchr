@@ -25,7 +25,7 @@ export default Vue.extend({
 <style scoped>
 nav {
   width: 90%;
-  height: 40px;
+  height: 45px;
   padding: 0 5%;
   position: relative;
 
@@ -41,8 +41,6 @@ nav > section {
 nav > :nth-child(1) {
   flex-basis: 15%;
 }
-
-
 
 </style>
 

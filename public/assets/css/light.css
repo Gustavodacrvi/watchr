@@ -1,7 +1,8 @@
 .bodyBackground-light {
-  background-color: #fbf7fa;
+  background-color: ##faf7fb;
 }
 
 .card-light {
   background-color: #fff;
+  box-shadow: 0 2px 4px rgba(230,230,230,0.4);
 }
