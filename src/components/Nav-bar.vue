@@ -3,8 +3,8 @@
     <section>
     </section>
     <section>
-      <nav-link>Home</nav-link>
-      <nav-link>Login</nav-link>
+      <nav-link to='/home'>Home</nav-link>
+      <nav-link to='/test'>Login</nav-link>
     </section>
     <section>
     </section>

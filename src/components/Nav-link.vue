@@ -1,14 +1,15 @@
 <template>
   <div>
-    <span>
+    <router-link :to='to'>
       <slot></slot>
-    </span>
+    </router-link>
   </div>
 </template>
 
 <script lang='ts'>
 import Vue from 'vue';
 export default Vue.extend({
+  props: ['to'],
 });
 </script>
 
@@ -24,13 +25,14 @@ div:hover {
   cursor: pointer;
 }
 
-span {
+a {
   display: inline-block;
   padding: 12px;
+  text-decoration: none;
   transition-duration: .2;
 }
 
-div:hover > span {
+div:hover > a {
   color: #30e8e2;
 }
 
