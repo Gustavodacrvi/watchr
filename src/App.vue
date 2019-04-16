@@ -1,5 +1,5 @@
 <template>
-  <div id='body' :style="$store.getters.backgroundColor">
+  <div id='body' :class="$store.getters.bodyBackground">
     <nav-bar></nav-bar>
     <router-view/>
   </div>
@@ -19,14 +19,25 @@ export default Vue.extend({
 
 
 <style>
+
+@font-face {
+  font-family: 'Work Sans';
+  src: url('/assets/fonts/WorkSans-Light.otf');
+}
+
 body {
   margin: 0;
+  font-family: 'Work Sans';
 }
 
 #body {
   position: absolute;
   width: 100%;
   height: 100%;
+}
+
+span, a {
+  color: #969c9c;
 }
 
 </style>

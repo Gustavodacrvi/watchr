@@ -1,8 +1,10 @@
 <template>
-  <nav :style="$store.getters.card">
+  <nav :class="$store.getters.card">
     <section>
     </section>
     <section>
+      <nav-link to='/home'>Home</nav-link>
+      <nav-link to='/test'>Login</nav-link>
     </section>
     <section>
     </section>
@@ -11,7 +13,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import NavLink from './Nav-link.vue';
+
 export default Vue.extend({
+  components: {
+    'nav-link': NavLink,
+  },
 });
 </script>
 
@@ -19,8 +26,9 @@ export default Vue.extend({
 <style scoped>
 nav {
   width: 90%;
-  height: 40px;
+  height: 43px;
   padding: 0 5%;
+  position: relative;
 
   display: flex;
   align-items: center;
@@ -28,14 +36,12 @@ nav {
 
 nav > section {
   height: 100%;
-  flex-basis: 42.5%;
+  flex-basis: 40%;
 }
 
 nav > :nth-child(1) {
-  flex-basis: 15%;
+  flex-basis: 20%;
 }
-
-
 
 </style>
 
