@@ -22,19 +22,16 @@ div {
 
 div:hover {
   cursor: pointer;
-  border-bottom: 2px solid #ac6ea5;
-}
-
-div:hover > span {
-  color: #ac6ea5;
 }
 
 span {
   display: inline-block;
-  margin-top: 3px;
-  padding: 9px;
-  font-size: 1.1em;
+  padding: 12px;
   transition-duration: .2;
+}
+
+div:hover > span {
+  color: #30e8e2;
 }
 
 </style>

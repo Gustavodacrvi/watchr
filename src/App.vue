@@ -37,7 +37,7 @@ body {
 }
 
 span {
-  color: #989398;
+  color: #969c9c;
 }
 
 </style>
