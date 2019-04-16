@@ -1,5 +1,5 @@
 <template>
-  <div id='body' :style="$store.getters.backgroundColor">
+  <div id='body' :class="$store.getters.bodyBackground">
     <nav-bar></nav-bar>
     <router-view/>
   </div>

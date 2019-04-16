@@ -3,36 +3,21 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-interface Styles {
-  currentTheme: string;
-  light: {
-    body: object;
-    card: object;
-  };
-  [key: string]: any;
+interface State {
+  style: string;
 }
 
 
 export default new Vuex.Store({
   state: {
-    styles: {
-      currentTheme: 'light',
-      light: {
-        body: {
-          backgroundColor: '#f7f7fb',
-        },
-        card: {
-          backgroundColor: '#fff',
-        },
-      },
-    } as Styles,
-  },
+    style: 'light',
+  } as State,
   getters: {
     card: (state) => {
-      return state.styles[state.styles.currentTheme].card;
+      return 'card-' + state.style;
     },
-    backgroundColor: (state) => {
-      return state.styles[state.styles.currentTheme].body;
+    bodyBackground: (state) => {
+      return 'bodyBackground-' + state.style;
     },
   },
   mutations: {

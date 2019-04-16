@@ -1,5 +1,5 @@
 <template>
-  <nav :style="$store.getters.card">
+  <nav :class="$store.getters.card">
     <section>
     </section>
     <section>
