@@ -3,6 +3,7 @@
     <section>
     </section>
     <section>
+      <nav-link> fdaasdf</nav-link>
     </section>
     <section>
     </section>
@@ -11,7 +12,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import NavLink from './Nav-link.vue';
+
 export default Vue.extend({
+  components: {
+    'nav-link': NavLink,
+  },
 });
 </script>
 
@@ -21,6 +27,7 @@ nav {
   width: 90%;
   height: 40px;
   padding: 0 5%;
+  position: relative;
 
   display: flex;
   align-items: center;
