@@ -1,7 +1,9 @@
 <template>
-  <div id='body' :class="$store.getters.style('bodyBackground')">
+  <div id='body' :class='$store.getters.style("bodyBackground")'>
     <nav-bar></nav-bar>
-    <router-view/>
+    <transition :name='$store.getters.style("router-view")' mode='out-in'>
+      <router-view/>
+    </transition>
   </div>
 </template>
 
@@ -20,14 +22,8 @@ export default Vue.extend({
 
 <style>
 
-@font-face {
-  font-family: 'Work Sans';
-  src: url('/assets/fonts/WorkSans-Light.otf');
-}
-
 body {
   margin: 0;
-  font-family: 'Work Sans';
 }
 
 #body {

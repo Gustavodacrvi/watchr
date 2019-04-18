@@ -1,3 +1,12 @@
+@font-face {
+  font-family: 'Work Sans';
+  src: url('/assets/fonts/WorkSans-Light.otf');
+}
+
+body {
+  font-family: 'Work Sans';
+}
+
 .bodyBackground-light {
   background-color: #fefafa;
 }
@@ -23,4 +32,11 @@ div.nav-link-light:hover > a, .active-nav-link-light > a {
 .heading-light {
   color: #ec554d;
   margin: 15px 0;
+}
+
+.router-view-light-enter-active, .router-view-light-leave-active {
+  transition: opacity .1s;
+}
+.router-view-light-enter, .router-view-light-leave-to {
+  opacity: 0;
 }
