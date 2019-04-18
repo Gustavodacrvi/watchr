@@ -41,14 +41,10 @@ input.input {
   padding: 8px;
   background-color: #fdeded;
   outline: none;
-  width: 80%;
   color: #6a6262;
-  font-size: 1.05em;
+  font-size: 1.01em;
   transition-duration: .2s;
   bottom: 0;
-
-  margin: 20px 0;
-  margin-left: 30px;
 }
 
 input.input:focus {

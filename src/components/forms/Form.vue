@@ -1,27 +1,30 @@
 <template>
-  <div :class='$store.getters.style("card-round")' class='form'>
+  <article :class='$store.getters.style("card-round")' class='form'>
     <slot></slot>
-  </div>
+  </article>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import Vuex from 'vuex'
 
-Vue.directive('column', {
-  bind(el, binding) {
-    el.style.display = 'flex';
-    el.style.flexDirection = 'column';
-  },
-});
+export const bus = new Vue();
 
 export default Vue.extend({
+  data() {
+    return {
+      logs: new Map(),
+    }
+  },
 });
 </script>
 
 <style scoped>
 
-div.form {
+article.form {
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 </style>

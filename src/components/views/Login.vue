@@ -1,13 +1,9 @@
 <template>
   <div class='login'>
     <div>
-      <app-form v-column>
+      <app-form>
         <heading :lvl='1' v-align>Login</heading>
-        <app-input name='username'
-          placeholder='Username: '
-          :max='100'
-          type='text'
-        ></app-input>
+        <app-input name='username' placeholder='Username or e-mail: ' :max='100' type='text'></app-input>
       </app-form>
     </div>
   </div>
