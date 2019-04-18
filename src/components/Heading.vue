@@ -1,6 +1,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
+
+Vue.directive('align', {
+  bind(el) {
+    el.style.marginLeft = 'auto';
+    el.style.marginRight = 'auto';
+  },
+});
+
 export default Vue.extend({
   props: {
     lvl: Number,

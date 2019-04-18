@@ -12,7 +12,7 @@ body {
 }
 
 span, a, p {
-  color: #969c9c;
+  color: #9c9696;
 }
 
 .card-light, .card-round-light {
@@ -32,6 +32,32 @@ div.nav-link-light:hover > a, .active-nav-link-light > a {
 .heading-light {
   color: #ec554d;
   margin: 15px 0;
+}
+
+input.input {
+  position: relative;
+  border: 1px solid #f8bdba;
+  border-radius: 6px;
+  padding: 8px;
+  background-color: #fdeded;
+  outline: none;
+  width: 80%;
+  color: #6a6262;
+  font-size: 1.05em;
+  transition-duration: .2s;
+  bottom: 0;
+
+  margin: 20px 0;
+  margin-left: 30px;
+}
+
+input.input:focus {
+  border: 2px solid #ec554d;
+  bottom: 3px;
+}
+
+input.input::placeholder {
+  color: #9d9595;
 }
 
 .router-view-light-enter-active, .router-view-light-leave-active {
