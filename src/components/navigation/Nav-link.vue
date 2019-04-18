@@ -15,7 +15,7 @@ export default Vue.extend({
   },
   computed: {
     isActive(): boolean {
-      return (router.currentRoute.path === this.to);
+      return (this.$route.path === this.to);
     },
   },
 });
