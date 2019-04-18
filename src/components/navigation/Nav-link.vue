@@ -8,13 +8,13 @@
 
 <script lang='ts'>
 import Vue from 'vue';
-import router from '../router';
+import router from '../../router';
 export default Vue.extend({
   props: {
     to: String,
   },
   computed: {
-    isActive() : boolean {
+    isActive(): boolean {
       return (router.currentRoute.path === this.to);
     },
   },
