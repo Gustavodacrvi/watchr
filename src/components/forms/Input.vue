@@ -9,11 +9,6 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { 
-  LogObject,
-  ComponentComputed,
-  ComponentMethods,
-} from './formInterfaces';
 
 import { bus } from './Form.vue';
 
@@ -26,38 +21,41 @@ export default Vue.extend({
   },
   data() {
     return {
-      value: '',
-    }
+      value: undefined,
+      errorType: null as any,
+    };
   },
   created() {
-    this.commitLog();
+    bus.$emit('errorLog', {
+      name: this.name,
+      value: undefined,
+      error: true,
+    });
   },
-  methods: {
-    hasErrors(): boolean {
-      if (this.reachedMaximumCharacters() || this.isEmpty()) {
-        return true;
-      }
-      return false;
-    },
-    reachedMaximumCharacters(): boolean {
-      return (this.value.length > this.max);
-    },
-    isEmpty(): boolean {
-      return (this.value.length === 0);
-    },
-    commitLog(): void {
-      bus.$emit('errorLog', this.logObject);
-    },
-  } as ComponentMethods,
   computed: {
-    logObject(): LogObject {
+    logObject(): object {
+      const val: any = this.value;
+      let hasError: boolean = false;
+      if (val === '') {
+        this.errorType = 'emptyValue';
+        hasError = true;
+      } else if (val.length > this.max) {
+        this.errorType = 'reachedMaxCharacters';
+        hasError = true;
+      }
+
       return {
         name: this.name,
         value: this.value,
-        error: this.hasErrors(),
+        error: hasError,
       };
     },
-  } as ComponentComputed,
+  },
+  watch: {
+    value(): void {
+      bus.$emit('errorLog', this.logObject);
+    },
+  },
 });
 </script>
 

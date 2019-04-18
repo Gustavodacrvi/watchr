@@ -6,15 +6,23 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Vuex from 'vuex'
 
 export const bus = new Vue();
+interface LogObject {
+  name: string;
+  value: any;
+  error: boolean;
+}
 
 export default Vue.extend({
   data() {
     return {
       logs: new Map(),
-    }
+    };
+  },
+  created() {
+    bus.$on('errorLog', (obj: LogObject) => {
+    });
   },
 });
 </script>
