@@ -1,5 +1,5 @@
 <template>
-  <div :class='$store.getters.cardRound'>
+  <div>
     <p>I am the form</p>
   </div>
 </template>
