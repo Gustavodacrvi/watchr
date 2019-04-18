@@ -1,5 +1,9 @@
 .bodyBackground-light {
-  background-color: #f5faff;
+  background-color: #fefafa;
+}
+
+span, a, p {
+  color: #969c9c;
 }
 
 .card-light, .card-round-light {
@@ -12,10 +16,11 @@
 }
 
 div.nav-link-light:hover > a, .active-nav-link-light > a {
-  color: #63b8ff;
-  border-bottom: 3px solid #63b8ff;
+  color: #ec554d;
+  border-bottom: 3px solid #ec554d;
 }
 
 .heading-light {
-  color: #63b8ff;
+  color: #ec554d;
+  margin: 15px 0;
 }

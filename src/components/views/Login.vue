@@ -2,7 +2,7 @@
   <div>
     <div>
       <app-form>
-        <heading :lvl='1'>fdasf</heading>
+        <heading :lvl='2'>Login</heading>
       </app-form>
     </div>
   </div>
