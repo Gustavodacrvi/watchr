@@ -1,18 +1,25 @@
 <template>
   <div class='input'>
     <div>
-      <input class='input' :name='name' :placeholder='placeholder' :type='type' autocomplete='off' v-model='value'/>
+      <div>
+        <input class='input' :name='name' :placeholder='placeholder' :type='type' autocomplete='off' v-model='value'/>
+      </div>
+      <alert type='error' v-if='errorType === "emptyValue"'>This field cannot be empty.</alert>
+      <alert type='error' v-if='errorType === "reachedMaxCharacters"'>Reached maximum number of characters.</alert>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-
+import Alert from './../Alert.vue';
 
 import { bus } from './Form.vue';
 
 export default Vue.extend({
+  components: {
+    alert: Alert,
+  },
   props: {
     name: String,
     placeholder: String,
@@ -42,6 +49,8 @@ export default Vue.extend({
       } else if (val.length > this.max) {
         this.errorType = 'reachedMaxCharacters';
         hasError = true;
+      } else {
+        this.errorType = null;
       }
 
       return {
@@ -66,13 +75,9 @@ input {
   width: 100%;
 }
 
-div.input {
-  display: flex;
-  justify-content: center;
-}
-
 div.input > div {
   width: 85%;
+  margin: auto;
   margin-bottom: 15px;
 }
 

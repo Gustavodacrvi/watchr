@@ -56,6 +56,10 @@ input.input::placeholder {
   color: #9d9595;
 }
 
+.span-alert-error-light {
+  color: #ec554d;
+}
+
 .router-view-light-enter-active, .router-view-light-leave-active {
   transition: opacity .1s;
 }
