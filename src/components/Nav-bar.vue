@@ -26,7 +26,7 @@ export default Vue.extend({
 <style scoped>
 nav {
   width: 90%;
-  height: 43px;
+  height: 48px;
   padding: 0 5%;
   position: relative;
 

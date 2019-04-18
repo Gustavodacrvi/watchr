@@ -1,8 +1,13 @@
 .bodyBackground-light {
-  background-color: #fbf7fa;
+  background-color: #f5faff;
 }
 
 .card-light {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(230,230,230,0.4);
+}
+
+div.nav-link:hover > a, .active-nav-link > a {
+  color: #63b8ff;
+  border-bottom: 3px solid #63b8ff;
 }
