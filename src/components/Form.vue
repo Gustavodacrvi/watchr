@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <p>I am the form</p>
+  <div :class='$store.getters.style("card-round")'>
+    <slot></slot>
   </div>
 </template>
 
@@ -13,7 +13,6 @@ export default Vue.extend({
 <style scoped>
 
 div {
-  background-color: red;
   width: 450px;
 }
 

@@ -36,7 +36,7 @@ body {
   height: 100%;
 }
 
-span, a {
+span, a, p {
   color: #969c9c;
 }
 
