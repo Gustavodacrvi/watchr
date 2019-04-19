@@ -34,7 +34,7 @@ div.nav-link-light:hover > a, .active-nav-link-light > a {
   margin: 15px 0;
 }
 
-input.input {
+input.input-light {
   position: relative;
   border: 1px solid #b3c2ff;
   border-radius: 6px;
@@ -52,12 +52,12 @@ input.input {
   background-color: #ffebeb !important;
 }
 
-input.input:focus {
+input.input-light:focus {
   border: 2px solid #6186ff;
   bottom: 3px;
 }
 
-input.input::placeholder {
+input.input-light::placeholder {
   color: #9d9595;
 }
 

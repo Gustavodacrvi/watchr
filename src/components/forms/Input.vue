@@ -2,7 +2,7 @@
   <div class='input'>
     <div>
       <div>
-        <input class='input' :class='wrongInput' :name='name' :placeholder='placeholder' :type='type' autocomplete='off' v-model='value'/>
+        <input :class='[wrongInput, $store.getters.style("input")]' :name='name' :placeholder='placeholder' :type='type' autocomplete='off' v-model='value'/>
       </div>
       <alert type='error' v-if='errorType === "emptyValue"'>This field cannot be empty.</alert>
       <alert type='error' v-if='errorType === "reachedMaxCharacters"'>Reached maximum number of characters.</alert>
