@@ -1,7 +1,7 @@
 <template>
-  <div class='login'>
+  <div class='login body' :class='$store.getters.style("background")'>
     <div>
-      <app-form v-column>
+      <app-form v-column v-padding>
         <app-title class='form-margin'>LOGIN</app-title>
         <app-input class='form-margin' name='username' placeholder='Username or e-mail:' :max='50' type='text'></app-input>
         <app-input class='form-margin' name='password' placeholder='Password:' :max='50' type='password'></app-input>
@@ -44,6 +44,12 @@ div.login {
 div.login > div {
   margin-top: 110px;
   flex-basis: 500px;
+}
+
+@media screen and (max-width: 801px) {
+  div.login {
+    padding: 25px 0;
+  }
 }
 
 </style>

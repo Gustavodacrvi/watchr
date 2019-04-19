@@ -13,6 +13,12 @@ Vue.directive('column', {
   },
 });
 
+Vue.directive('padding', {
+  bind(el) {
+    el.classList.add('padding');
+  },
+});
+
 export const bus = new Vue();
 interface LogObject {
   name: string;
@@ -43,6 +49,10 @@ article.form {
 article.column {
   display: flex;
   flex-direction: column;
+}
+
+article.padding {
+  padding: 4px 0;
 }
 
 .form-margin {

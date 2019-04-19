@@ -22,7 +22,7 @@ export default Vue.extend({
 <style scoped>
 
 i.icon-light {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 i.pointer {

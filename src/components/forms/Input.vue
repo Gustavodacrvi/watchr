@@ -94,7 +94,7 @@ input {
 }
 
 div.form-margin {
-  margin: 4px 0;
+  margin: 2px 0;
 }
 
 div.input > div {
@@ -110,6 +110,12 @@ i.icon {
   position: absolute;
   top: 8px;
   right: 8px;
+}
+
+@media screen and (max-width: 801px) {
+  div.input > div {
+    width: 90%;
+  }
 }
 
 </style>
