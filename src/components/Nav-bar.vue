@@ -1,10 +1,10 @@
 <template>
-  <nav :class="$store.getters.style('card')">
+  <nav :class="$store.getters.card">
     <section>
     </section>
     <section>
-      <nav-link to='/'>Home</nav-link>
-      <nav-link to='/login'>Login</nav-link>
+      <nav-link to='/home'>Home</nav-link>
+      <nav-link to='/test'>Login</nav-link>
     </section>
     <section>
     </section>
