@@ -1,8 +1,11 @@
 /* 
-  mainColor: #b97bb2;
-  secondary: #e5cde2;
-  third: #f8f2f7;
-  fourth: #fbf8fb;
+  mainColor: #ec554d;
+  secondary: #f8bdba;
+  third: #fdeded;
+  fourth: #fef6f6;
+
+  wrongColor: #febe5d;
+  secondWrong: #fff7eb;
 */
 
 
@@ -16,7 +19,7 @@ body {
 }
 
 .bodyBackground-light {
-  background-color: #fbf8fb;
+  background-color: #fef6f6;
 }
 
 span, a, p {
@@ -33,21 +36,21 @@ span, a, p {
 }
 
 div.nav-link-light:hover > a, .active-nav-link-light > a {
-  color: #b97bb2;
-  border-bottom: 3px solid #b97bb2;
+  color: #ec554d;
+  border-bottom: 3px solid #ec554d;
 }
 
 .heading-light {
-  color: #b97bb2;
+  color: #ec554d;
   margin: 15px 0;
 }
 
 input.input-light {
   position: relative;
-  border: 1px solid #e5cde2;
+  border: 1px solid #f8bdba;
   border-radius: 6px;
   padding: 8px;
-  background-color: #f8f2f7;
+  background-color: #fdeded;
   outline: none;
   color: #6a6262;
   font-size: 1.01em;
@@ -56,12 +59,12 @@ input.input-light {
 }
 
 .wrong-input-light {
-  border: 2px solid #ec554d !important;
-  background-color: #ffebeb !important;
+  border: 2px solid #febe5d !important;
+  background-color: #fff7eb !important;
 }
 
 input.input-light:focus {
-  border: 2px solid #b97bb2;
+  border: 2px solid #ec554d;
   bottom: 2px;
 }
 
@@ -70,7 +73,7 @@ input.input-light::placeholder {
 }
 
 .span-alert-error-light {
-  color: #ec554d;
+  color: #febe5d;
 }
 
 .icon-light {
@@ -92,21 +95,21 @@ input.input-light::placeholder {
   border-radius: 30px;
   padding: 14px 24px;
   color: #fff;
-  background-color: #b97bb2;
+  background-color: #ec554d;
   font-size: 1.005em;
   cursor: pointer;
-  box-shadow: 0 6px 6px rgba(185, 121, 177, 0.8);
+  box-shadow: 0 6px 6px rgba(236, 83, 75, 0.8);
   transition-duration: .2s;
   outline: none;
   top: 0;
 }
 
 .button-light:hover {
-  box-shadow: 0 10px 8px rgba(185, 121, 177, 0.8);  
+  box-shadow: 0 10px 8px rgba(236, 83, 75, 0.8);  
 }
 
 .button-light:active {
-  box-shadow: 0 2px 4px rgba(185, 121, 177, 0.8);  
+  box-shadow: 0 2px 4px rgba(236, 83, 75, 0.8);  
   top: 3px;
 }
 
