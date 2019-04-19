@@ -99,8 +99,6 @@ input.input-light::placeholder {
   transition-duration: .2s;
   outline: none;
   top: 0;
-
-  margin: 30px;
 }
 
 .button-light:hover {

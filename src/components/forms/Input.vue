@@ -1,5 +1,5 @@
 <template>
-  <div class='input'>
+  <div class='input form-element'>
     <div>
       <div>
         <input :class='[wrongInput, $store.getters.style("input")]' :name='name' :placeholder='placeholder' :type='inputType' autocomplete='off' v-model='value'/>
@@ -96,7 +96,7 @@ input {
 div.input > div {
   width: 85%;
   margin: auto;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 div.input > div > div {

@@ -1,5 +1,5 @@
 <template>
-  <div class='form-link'>
+  <div class='form-link form-element'>
     <route :to='to'><slot></slot></route>
   </div>
 </template>
