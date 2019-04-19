@@ -12,7 +12,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Heading from './../Heading.vue';
 
 import Form from './../forms/Form.vue';
 import Input from './../forms/Input.vue';
@@ -20,7 +19,6 @@ import Input from './../forms/Input.vue';
 export default Vue.extend({
   components: {
     'app-form': Form,
-    'heading': Heading,
     'app-input': Input,
   },
 });

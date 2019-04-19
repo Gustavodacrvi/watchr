@@ -14,16 +14,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Alert from './../Alert.vue';
-import Icon from './../Icon.vue';
 
 import { bus } from './Form.vue';
 
 export default Vue.extend({
-  components: {
-    alert: Alert,
-    icon: Icon,
-  },
   props: {
     name: String,
     placeholder: String,

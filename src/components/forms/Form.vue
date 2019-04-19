@@ -22,7 +22,7 @@ export default Vue.extend({
   },
   created() {
     bus.$on('errorLog', (obj: LogObject) => {
-      
+      this.logs.set(obj.name, obj);
     });
   },
 });
