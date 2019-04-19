@@ -8,7 +8,7 @@ body {
 }
 
 .bodyBackground-light {
-  background-color: #fefafa;
+  background-color: #fafbff;
 }
 
 span, a, p {
@@ -25,21 +25,21 @@ span, a, p {
 }
 
 div.nav-link-light:hover > a, .active-nav-link-light > a {
-  color: #ec554d;
-  border-bottom: 3px solid #ec554d;
+  color: #6186ff;
+  border-bottom: 3px solid #6186ff;
 }
 
 .heading-light {
-  color: #ec554d;
+  color: #6186ff;
   margin: 15px 0;
 }
 
 input.input {
   position: relative;
-  border: 1px solid #f8bdba;
+  border: 1px solid #b3c2ff;
   border-radius: 6px;
   padding: 8px;
-  background-color: #fdeded;
+  background-color: #ebefff;
   outline: none;
   color: #6a6262;
   font-size: 1.01em;
@@ -47,8 +47,13 @@ input.input {
   bottom: 0;
 }
 
+.wrong-input-light {
+  border: 2px solid #ec554d !important;
+  background-color: #ffebeb !important;
+}
+
 input.input:focus {
-  border: 2px solid #ec554d;
+  border: 2px solid #6186ff;
   bottom: 3px;
 }
 

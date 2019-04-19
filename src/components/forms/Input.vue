@@ -2,7 +2,7 @@
   <div class='input'>
     <div>
       <div>
-        <input class='input' :name='name' :placeholder='placeholder' :type='type' autocomplete='off' v-model='value'/>
+        <input class='input' :class='wrongInput' :name='name' :placeholder='placeholder' :type='type' autocomplete='off' v-model='value'/>
       </div>
       <alert type='error' v-if='errorType === "emptyValue"'>This field cannot be empty.</alert>
       <alert type='error' v-if='errorType === "reachedMaxCharacters"'>Reached maximum number of characters.</alert>
@@ -58,6 +58,11 @@ export default Vue.extend({
         value: this.value,
         error: hasError,
       };
+    },
+    wrongInput(): object {
+      return [
+        (this.errorType === null) ? '' : this.$store.getters.style('wrong-input'),
+      ];
     },
   },
   watch: {
