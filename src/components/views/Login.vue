@@ -6,6 +6,9 @@
         <app-input name='username' placeholder='Username or e-mail:' :max='50' type='text'></app-input>
         <app-input name='password' placeholder='Password:' :max='50' type='password'></app-input>
         <form-route to='/' v-margin='"5%"'>Don't have an account? Sign up!</form-route>
+        <div>
+        <btn>CLICK ME</btn>
+        </div>
       </app-form>
     </div>
   </div>

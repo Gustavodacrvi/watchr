@@ -86,6 +86,32 @@ input.input-light::placeholder {
   text-decoration: underline;
 }
 
+.button-light {
+  position: relative;
+  border: none;
+  border-radius: 30px;
+  padding: 14px 24px;
+  color: #fff;
+  background-color: #b97bb2;
+  font-size: 1.005em;
+  cursor: pointer;
+  box-shadow: 0 6px 6px rgba(185, 121, 177, 0.8);
+  transition-duration: .2s;
+  outline: none;
+  top: 0;
+
+  margin: 30px;
+}
+
+.button-light:hover {
+  box-shadow: 0 10px 8px rgba(185, 121, 177, 0.8);  
+}
+
+.button-light:active {
+  box-shadow: 0 2px 4px rgba(185, 121, 177, 0.8);  
+  top: 3px;
+}
+
 .router-view-light-enter-active, .router-view-light-leave-active {
   transition: opacity .1s;
 }
