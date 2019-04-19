@@ -3,7 +3,7 @@
     <div>
       <div>
         <input :class='[wrongInput, $store.getters.style("input")]' :name='name' :placeholder='placeholder' :type='type' autocomplete='off' v-model='value'/>
-        <i class='fa fa-bars'></i>
+        <icon ico='bars' sz='medium'></icon>
       </div>
       <alert type='error' v-if='errorType === "emptyValue"'>This field cannot be empty.</alert>
       <alert type='error' v-if='errorType === "reachedMaxCharacters"'>Reached maximum number of characters.</alert>
@@ -14,12 +14,14 @@
 <script lang="ts">
 import Vue from 'vue';
 import Alert from './../Alert.vue';
+import Icon from './../Icon.vue';
 
 import { bus } from './Form.vue';
 
 export default Vue.extend({
   components: {
     alert: Alert,
+    icon: Icon,
   },
   props: {
     name: String,

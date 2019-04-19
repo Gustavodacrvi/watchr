@@ -65,6 +65,10 @@ input.input-light::placeholder {
   color: #ec554d;
 }
 
+.icon-light {
+  color: #9c9696;
+}
+
 .router-view-light-enter-active, .router-view-light-leave-active {
   transition: opacity .1s;
 }
