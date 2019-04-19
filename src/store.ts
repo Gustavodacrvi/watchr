@@ -13,8 +13,11 @@ export default new Vuex.Store({
     style: 'light',
   } as State,
   getters: {
-    style: (state) => (className: string): string => {
-      return className + '-' + state.style;
+    card: (state) => {
+      return 'card-' + state.style;
+    },
+    bodyBackground: (state) => {
+      return 'bodyBackground-' + state.style;
     },
   },
   mutations: {

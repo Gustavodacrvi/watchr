@@ -1,5 +1,5 @@
 <template>
-  <div :class='classObject'>
+  <div :class='{"nav-link": true, "active-nav-link": isActive}'>
     <router-link :to='to'>
       <slot></slot>
     </router-link>
@@ -8,20 +8,14 @@
 
 <script lang='ts'>
 import Vue from 'vue';
-import router from '../../router';
+import router from '../router';
 export default Vue.extend({
   props: {
     to: String,
   },
   computed: {
-    isActive(): boolean {
-      return (this.$route.path === this.to);
-    },
-    classObject(): object {
-      return [
-        true ? this.$store.getters.style('nav-link') : '',
-        this.isActive ? this.$store.getters.style('active-nav-link') : '',
-      ];
+    isActive() : boolean {
+      return (router.currentRoute.path === this.to);
     },
   },
 });
