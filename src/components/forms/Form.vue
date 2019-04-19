@@ -22,6 +22,7 @@ export default Vue.extend({
   },
   created() {
     bus.$on('errorLog', (obj: LogObject) => {
+      
     });
   },
 });

@@ -3,7 +3,8 @@
     <div>
       <app-form>
         <heading :lvl='1' v-align>Login</heading>
-        <app-input name='username' placeholder='Username or e-mail: ' :max='100' type='text'></app-input>
+        <app-input name='username' placeholder='Username or e-mail:' :max='50' type='text'></app-input>
+        <app-input name='password' placeholder='Password:' :max='50' type='password'></app-input>
       </app-form>
     </div>
   </div>
