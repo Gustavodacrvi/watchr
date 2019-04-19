@@ -2,11 +2,12 @@
   <div class='input'>
     <div>
       <div>
-        <input :class='[wrongInput, $store.getters.style("input")]' :name='name' :placeholder='placeholder' :type='type' autocomplete='off' v-model='value'/>
-        <icon ico='bars' sz='medium'></icon>
+        <input :class='[wrongInput, $store.getters.style("input")]' :name='name' :placeholder='placeholder' :type='inputType' autocomplete='off' v-model='value'/>
+        <icon @click='togglePassword' v-show='isPassword && visiblePassword' sz='medium' ico='eye' v-cursor></icon>
+        <icon @click='togglePassword' v-show='isPassword && !visiblePassword' sz='medium' ico='eye-slash' v-cursor></icon>
       </div>
-      <alert type='error' v-if='errorType === "emptyValue"'>This field cannot be empty.</alert>
-      <alert type='error' v-if='errorType === "reachedMaxCharacters"'>Reached maximum number of characters.</alert>
+      <alert type='error' v-show='errorType === "emptyValue"'>This field cannot be empty.</alert>
+      <alert type='error' v-show='errorType === "reachedMaxCharacters"'>Reached maximum number of characters.</alert>
     </div>
   </div>
 </template>
@@ -33,6 +34,8 @@ export default Vue.extend({
     return {
       value: undefined,
       errorType: null as any,
+      inputType: this.type as string,
+      visiblePassword: false as boolean,
     };
   },
   created() {
@@ -41,6 +44,16 @@ export default Vue.extend({
       value: undefined,
       error: true,
     });
+  },
+  methods: {
+    togglePassword(): void {
+      this.visiblePassword = !this.visiblePassword;
+      if (this.visiblePassword) {
+        this.inputType = 'text';
+      } else {
+        this.inputType = 'password';
+      }
+    },
   },
   computed: {
     logObject(): object {
@@ -67,6 +80,9 @@ export default Vue.extend({
         (this.errorType === null) ? '' : this.$store.getters.style('wrong-input'),
       ];
     },
+    isPassword(): boolean {
+      return (this.type === 'password');
+    },
   },
   watch: {
     value(): void {
@@ -87,6 +103,16 @@ div.input > div {
   width: 85%;
   margin: auto;
   margin-bottom: 15px;
+}
+
+div.input > div > div {
+  position: relative;
+}
+
+i.icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
 }
 
 </style>

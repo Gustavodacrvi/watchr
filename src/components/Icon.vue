@@ -1,9 +1,16 @@
 <template>
-  <i :class='"fa fa-" + ico + " " + sz + " " + $store.getters.style("icon")'></i>  
+  <i :class='"fa fa-" + ico + " " + sz + " icon " + $store.getters.style("icon")' @click='$emit("click")'></i>  
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+
+Vue.directive('cursor', {
+  bind(el, binding) {
+    el.classList.add('pointer');
+  },
+});
+
 export default Vue.extend({
   props: {
     sz: String,
@@ -14,8 +21,12 @@ export default Vue.extend({
 
 <style scoped>
 
-.icon-light {
+i.icon-light {
   font-size: 20px;
+}
+
+i.pointer {
+  cursor: pointer;
 }
 
 </style>
