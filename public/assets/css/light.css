@@ -62,7 +62,7 @@ input.input-light {
 
 input.input-light:focus {
   border: 2px solid #b97bb2;
-  bottom: 3px;
+  bottom: 2px;
 }
 
 input.input-light::placeholder {

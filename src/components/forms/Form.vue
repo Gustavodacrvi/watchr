@@ -7,6 +7,12 @@
 <script lang="ts">
 import Vue from 'vue';
 
+Vue.directive('column', {
+  bind(el) {
+    el.classList.add('column');
+  },
+});
+
 export const bus = new Vue();
 interface LogObject {
   name: string;
@@ -32,8 +38,15 @@ export default Vue.extend({
 
 article.form {
   width: 100%;
+}
+
+article.column {
   display: flex;
   flex-direction: column;
+}
+
+.form-margin {
+  margin: 10px 0;
 }
 
 </style>

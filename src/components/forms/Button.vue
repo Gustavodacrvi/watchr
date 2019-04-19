@@ -6,6 +6,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+
 export default Vue.extend({
   props: {
     type: String,
@@ -18,7 +19,6 @@ export default Vue.extend({
 div.form-button {
   display: flex;
   justify-content: center;
-  margin-bottom: 10px;
 }
 
 </style>

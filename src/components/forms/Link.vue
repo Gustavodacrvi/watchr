@@ -7,7 +7,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-Vue.directive('margin', {
+Vue.directive('margin-left', {
   bind(el, binding) {
     const a: any = el.firstChild;
 
@@ -24,8 +24,5 @@ export default Vue.extend({
 
 <style scoped>
 
-.form-link {
-  margin-bottom: 10px;
-}
 
 </style>

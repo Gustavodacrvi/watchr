@@ -93,10 +93,13 @@ input {
   width: 100%;
 }
 
+div.form-margin {
+  margin: 4px 0;
+}
+
 div.input > div {
   width: 85%;
   margin: auto;
-  margin-bottom: 10px;
 }
 
 div.input > div > div {
