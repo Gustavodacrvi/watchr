@@ -21,5 +21,9 @@ div.form-button {
   justify-content: center;
 }
 
+div.form-button button {
+  width: 90%;
+}
+
 </style>
 

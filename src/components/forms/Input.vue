@@ -94,11 +94,11 @@ input {
 }
 
 div.form-margin {
-  margin: 2px 0;
+  margin: 4px 0;
 }
 
 div.input > div {
-  width: 85%;
+  width: 90%;
   margin: auto;
 }
 

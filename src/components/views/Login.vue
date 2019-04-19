@@ -2,11 +2,11 @@
   <div class='login body' :class='$store.getters.style("background")'>
     <div>
       <app-form v-column v-padding>
-        <app-title class='form-margin'>LOGIN</app-title>
+        <app-title class='form-margin'>Login</app-title>
         <app-input class='form-margin' name='username' placeholder='Username or e-mail:' :max='50' type='text'></app-input>
         <app-input class='form-margin' name='password' placeholder='Password:' :max='50' type='password'></app-input>
         <app-route class='form-margin' to='/' v-margin-left='"5%"'>Don't have an account? Sign up!</app-route>
-        <app-button class='form-margin'>CLICK ME</app-button>
+        <app-button class='form-margin'>Enter</app-button>
         <app-route class='form-margin' to='/' v-margin-left='"5%"'>Forgot account or username?</app-route>
       </app-form>
     </div>
@@ -43,7 +43,7 @@ div.login {
 
 div.login > div {
   margin-top: 110px;
-  flex-basis: 500px;
+  flex-basis: 475px;
 }
 
 @media screen and (max-width: 801px) {
