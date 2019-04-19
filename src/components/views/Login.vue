@@ -5,6 +5,7 @@
         <heading :lvl='1' v-align>Login</heading>
         <app-input name='username' placeholder='Username or e-mail:' :max='50' type='text'></app-input>
         <app-input name='password' placeholder='Password:' :max='50' type='password'></app-input>
+        <route to='/'>Don't have an account? Sign up!</route>
       </app-form>
     </div>
   </div>

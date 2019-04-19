@@ -1,3 +1,11 @@
+/* 
+  mainColor: #b97bb2;
+  secondary: #e5cde2;
+  third: #f8f2f7;
+  fourth: #fbf8fb;
+*/
+
+
 @font-face {
   font-family: 'Work Sans';
   src: url('/assets/fonts/WorkSans-Light.otf');
@@ -8,7 +16,7 @@ body {
 }
 
 .bodyBackground-light {
-  background-color: #fafbff;
+  background-color: #fbf8fb;
 }
 
 span, a, p {
@@ -25,21 +33,21 @@ span, a, p {
 }
 
 div.nav-link-light:hover > a, .active-nav-link-light > a {
-  color: #6186ff;
-  border-bottom: 3px solid #6186ff;
+  color: #b97bb2;
+  border-bottom: 3px solid #b97bb2;
 }
 
 .heading-light {
-  color: #6186ff;
+  color: #b97bb2;
   margin: 15px 0;
 }
 
 input.input-light {
   position: relative;
-  border: 1px solid #b3c2ff;
+  border: 1px solid #e5cde2;
   border-radius: 6px;
   padding: 8px;
-  background-color: #ebefff;
+  background-color: #f8f2f7;
   outline: none;
   color: #6a6262;
   font-size: 1.01em;
@@ -53,7 +61,7 @@ input.input-light {
 }
 
 input.input-light:focus {
-  border: 2px solid #6186ff;
+  border: 2px solid #b97bb2;
   bottom: 3px;
 }
 
@@ -67,6 +75,15 @@ input.input-light::placeholder {
 
 .icon-light {
   color: #9c9696;
+}
+
+.route-link-light {
+  text-decoration: none;
+  color: #6387ff;
+}
+
+.route-link-light:hover {
+  text-decoration: underline;
 }
 
 .router-view-light-enter-active, .router-view-light-leave-active {
