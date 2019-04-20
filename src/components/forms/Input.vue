@@ -126,7 +126,7 @@ div.input > div > div {
 
 i.icon {
   position: absolute;
-  top: 8px;
+  top: 9px;
   right: 8px;
 }
 
