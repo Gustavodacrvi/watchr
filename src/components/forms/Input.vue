@@ -17,11 +17,8 @@
 import Vue from 'vue';
 
 import { bus } from './Form.vue';
+import { ErrorObject } from './interfaces';
 
-interface ErrorObject {
-  name: string;
-  msg: string;
-}
 
 export default Vue.extend({
   props: {

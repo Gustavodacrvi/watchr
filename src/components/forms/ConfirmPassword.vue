@@ -10,12 +10,7 @@ import Vue from 'vue';
 
 import Input from './Input.vue';
 import { bus } from './Form.vue';
-
-interface LogObject {
-  name: string;
-  value: any;
-  error: boolean;
-}
+import { LogObject, ErrorObject } from './interfaces';
 
 export default Vue.extend({
   components: {
@@ -46,7 +41,7 @@ export default Vue.extend({
         bus.$emit('error', {
           name: 'confirm',
           msg: 'Passwords not matching.',
-        });
+        } as ErrorObject);
       }
     });
   },
