@@ -8,6 +8,7 @@
       </div>
       <alert type='error' v-show='errorType === "emptyValue"'>This field cannot be empty.</alert>
       <alert type='error' v-show='errorType === "reachedMaxCharacters"'>Reached maximum number of characters.</alert>
+      <alert type='error' v-show='errorType === "errorMsg"'>{{ this.error }}</alert>
     </div>
   </div>
 </template>
@@ -16,6 +17,11 @@
 import Vue from 'vue';
 
 import { bus } from './Form.vue';
+
+interface ErrorObject {
+  name: string;
+  msg: string;
+}
 
 export default Vue.extend({
   props: {
@@ -30,6 +36,7 @@ export default Vue.extend({
       value: undefined,
       errorType: null as any,
       inputType: this.type as string,
+      error: '' as string,
       visiblePassword: false as boolean,
       eventName: undefined as any,
     };
@@ -45,6 +52,12 @@ export default Vue.extend({
       name: this.name,
       value: undefined,
       error: true,
+    });
+    bus.$on('error', (obj: ErrorObject) => {
+      if (obj.name === this.name) {
+        this.errorType = 'errorMsg';
+        this.error = obj.msg;
+      }
     });
   },
   methods: {
