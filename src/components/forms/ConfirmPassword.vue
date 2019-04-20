@@ -1,13 +1,16 @@
 <template>
   <div class='confirm-password'>
-    <app-input :class='inputClass' name='password' :placeholder='placeholder1' :max='max' type='password'></app-input>
-    <app-input :class='inputClass' name='password' :placeholder='placeholder2' :max='max' type='password'></app-input>
+    <app-input :class='inputClass' name='password' :placeholder='placeholder1' :max='max' type='password' bus-event='ConfirmPassword'></app-input>
+    <app-input :class='inputClass' name='password' :placeholder='placeholder2' :max='max' type='password' bus-event='ConfirmPassword'></app-input>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+
 import Input from './Input.vue';
+import { bus } from './Form.vue';
+
 
 export default Vue.extend({
   components: {

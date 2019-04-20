@@ -23,6 +23,7 @@ export default Vue.extend({
     placeholder: String,
     max: Number,
     type: String,
+    busEvent: String,
   },
   data() {
     return {
@@ -30,10 +31,17 @@ export default Vue.extend({
       errorType: null as any,
       inputType: this.type as string,
       visiblePassword: false as boolean,
+      eventName: undefined as any,
     };
   },
   created() {
-    bus.$emit('errorLog', {
+    if (this.busEvent) {
+      this.eventName = this.busEvent;
+    } else {
+      this.eventName = 'errorLog';
+    }
+
+    bus.$emit(this.eventName, {
       name: this.name,
       value: undefined,
       error: true,
@@ -80,7 +88,7 @@ export default Vue.extend({
   },
   watch: {
     value(): void {
-      bus.$emit('errorLog', this.logObject);
+      bus.$emit(this.eventName, this.logObject);
     },
   },
 });
