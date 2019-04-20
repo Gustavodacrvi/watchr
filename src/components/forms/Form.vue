@@ -7,6 +7,8 @@
 <script lang="ts">
 import Vue from 'vue';
 
+import { LogObject } from './interfaces';
+
 Vue.directive('column', {
   bind(el) {
     el.classList.add('column');
@@ -20,11 +22,6 @@ Vue.directive('padding', {
 });
 
 export const bus = new Vue();
-interface LogObject {
-  name: string;
-  value: any;
-  error: boolean;
-}
 
 export default Vue.extend({
   data() {

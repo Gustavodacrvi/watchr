@@ -5,7 +5,7 @@
         <app-title class='form-margin'>Login</app-title>
         <app-input class='form-margin' name='username' placeholder='Username or e-mail:' :max='50' type='text'></app-input>
         <app-input class='form-margin' name='password' placeholder='Password:' :max='50' type='password'></app-input>
-        <app-route class='form-margin' to='/' v-margin-left='"5%"'>Don't have an account? Sign up!</app-route>
+        <app-route class='form-margin' to='/signup' v-margin-left='"5%"'>Don't have an account? Sign up!</app-route>
         <app-button class='form-margin'>Enter</app-button>
         <app-route class='form-margin' to='/' v-margin-left='"5%"'>Forgot account or username?</app-route>
       </app-form>

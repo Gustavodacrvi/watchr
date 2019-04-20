@@ -8,6 +8,7 @@
       </div>
       <alert type='error' v-show='errorType === "emptyValue"'>This field cannot be empty.</alert>
       <alert type='error' v-show='errorType === "reachedMaxCharacters"'>Reached maximum number of characters.</alert>
+      <alert type='error' v-show='errorType === "errorMsg"'>{{ this.error }}</alert>
     </div>
   </div>
 </template>
@@ -16,6 +17,8 @@
 import Vue from 'vue';
 
 import { bus } from './Form.vue';
+import { ErrorObject } from './interfaces';
+
 
 export default Vue.extend({
   props: {
@@ -23,20 +26,35 @@ export default Vue.extend({
     placeholder: String,
     max: Number,
     type: String,
+    busEvent: String,
   },
   data() {
     return {
       value: undefined,
       errorType: null as any,
       inputType: this.type as string,
+      error: '' as string,
       visiblePassword: false as boolean,
+      eventName: undefined as any,
     };
   },
   created() {
-    bus.$emit('errorLog', {
+    if (this.busEvent) {
+      this.eventName = this.busEvent;
+    } else {
+      this.eventName = 'errorLog';
+    }
+
+    bus.$emit(this.eventName, {
       name: this.name,
       value: undefined,
       error: true,
+    });
+    bus.$on('error', (obj: ErrorObject) => {
+      if (obj.name === this.name) {
+        this.errorType = 'errorMsg';
+        this.error = obj.msg;
+      }
     });
   },
   methods: {
@@ -80,7 +98,7 @@ export default Vue.extend({
   },
   watch: {
     value(): void {
-      bus.$emit('errorLog', this.logObject);
+      bus.$emit(this.eventName, this.logObject);
     },
   },
 });
@@ -108,7 +126,7 @@ div.input > div > div {
 
 i.icon {
   position: absolute;
-  top: 8px;
+  top: 9px;
   right: 8px;
 }
 
