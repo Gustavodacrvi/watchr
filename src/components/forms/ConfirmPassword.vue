@@ -10,7 +10,7 @@ import Vue from 'vue';
 
 import Input from './Input.vue';
 import { FormBus } from './Form.vue';
-import { LogObject, ErrorObject } from './interfaces';
+import { LogObject, ErrorObject } from './../interfaces';
 
 export default Vue.extend({
   components: {

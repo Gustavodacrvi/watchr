@@ -7,7 +7,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-export const { ToastBus } = new Vue();
+export const { Toast } = new Vue();
 
 export default Vue.extend({
   data() {

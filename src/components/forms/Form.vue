@@ -7,7 +7,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { LogObject } from './interfaces';
+import { LogObject } from './../interfaces';
 
 Vue.directive('column', {
   bind(el) {

@@ -17,7 +17,7 @@
 import Vue from 'vue';
 
 import { FormBus } from './Form.vue';
-import { ErrorObject } from './interfaces';
+import { ErrorObject } from './../interfaces';
 
 
 export default Vue.extend({
