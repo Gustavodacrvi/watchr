@@ -2,6 +2,9 @@
   <transition :name='$store.getters.style("toast-transition")' @after-leave='showNext'>
     <article v-show='showing' id='toast' class='toast' :class='toastClass'>
       <span>{{ msg }}</span>
+      <span v-show='infiniteToast' class='toast-icon'>
+        <icon ico='times' sz='big' @click='showing = false' v-cursor v-color></icon>
+      </span>
     </article>
   </transition>
 </template>
@@ -21,6 +24,7 @@ export default Vue.extend({
       ] as ToastObj[],
       showing: false,
       type: 'normal',
+      infiniteToast: false,
     };
   },
   created() {
@@ -31,14 +35,34 @@ export default Vue.extend({
         this.toasts.push(toast);
       }
     });
+    ToastBus.$emit('addToast', {
+      msg: 'I am the first fucking toast!',
+      duration_seconds: 1,
+      type: 'normal',
+    });
+    ToastBus.$emit('addToast', {
+      msg: 'I am the infinite toast!',
+      duration_seconds: null,
+      type: 'normal',
+    });
+    ToastBus.$emit('addToast', {
+      msg: 'I am the last fucking toast!',
+      duration_seconds: 1,
+      type: 'normal',
+    });
   },
   methods: {
     show(toast: ToastObj): void {
       this.showing = true;
+      this.infiniteToast = false;
       this.msg = toast.msg;
       this.type = toast.type;
-      if (toast.duration_seconds !== null) {
+
+      if (toast.duration_seconds !== null && toast.duration_seconds !== 0) {
         setTimeout(() => this.showing = false, toast.duration_seconds * 1000);
+      } else {
+        this.infiniteToast = true;
+        this.showing = true;
       }
     },
     showNext(): void {
@@ -69,6 +93,11 @@ export default Vue.extend({
   bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.toast-icon {
+  padding-left: 12px;
+  padding-right: 4px;
 }
 
 </style>
