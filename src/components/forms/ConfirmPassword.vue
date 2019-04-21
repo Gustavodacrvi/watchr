@@ -9,7 +9,7 @@
 import Vue from 'vue';
 
 import Input from './Input.vue';
-import { bus } from './Form.vue';
+import { FormBus } from './Form.vue';
 import { LogObject, ErrorObject } from './interfaces';
 
 export default Vue.extend({
@@ -30,7 +30,7 @@ export default Vue.extend({
     };
   },
   created() {
-    bus.$on('ConfirmPassword', (obj: LogObject) => {
+    FormBus.$on('ConfirmPassword', (obj: LogObject) => {
       if (obj.name === 'password') {
         this.password = obj.value;
       } else {
@@ -38,7 +38,7 @@ export default Vue.extend({
       }
 
       if (this.wrongInputs()) {
-        bus.$emit('error', {
+        FormBus.$emit('error', {
           name: 'confirm',
           msg: 'Passwords not matching.',
         } as ErrorObject);
