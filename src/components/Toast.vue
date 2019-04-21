@@ -1,5 +1,5 @@
 <template>
-  <transition :name='$store.getters.style("toast-transition")' :before-enter='showNext'>
+  <transition :name='$store.getters.style("toast-transition")' @after-leave='showNext'>
     <article v-show='showing' id='toast' class='toast' :class='toastClass'>
       <span>{{ msg }}</span>
     </article>
@@ -31,26 +31,21 @@ export default Vue.extend({
         this.toasts.push(toast);
       }
     });
-    setTimeout(() => {
-      ToastBus.$emit('addToast', {
-        msg: 'I am a toast!',
-        duration_seconds: 10,
-        type: 'normal'
-      } as ToastObj);
-    }, 1000);
   },
   methods: {
     show(toast: ToastObj): void {
-      if (toast.duration_seconds !== null) {
-        setTimeout(() => this.showing = false, toast.duration_seconds * 1000);
-      }
       this.showing = true;
       this.msg = toast.msg;
       this.type = toast.type;
+      if (toast.duration_seconds !== null) {
+        setTimeout(() => this.showing = false, toast.duration_seconds * 1000);
+      }
     },
     showNext(): void {
       if (this.toasts.length !== 0) {
-        this.show(this.toasts.pop() as any);
+        this.show(this.toasts.shift() as any);
+      } else {
+        this.showing = false;
       }
     },
   },

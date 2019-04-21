@@ -13,4 +13,4 @@ export interface ToastObj {
   msg: string;
   duration_seconds: number | null;
   type: 'normal' | 'error' | 'success';
-};
+}
