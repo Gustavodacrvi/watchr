@@ -16,8 +16,8 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { bus } from './Form.vue';
-import { ErrorObject } from './interfaces';
+import { FormBus } from './Form.vue';
+import { ErrorObject } from './../interfaces';
 
 
 export default Vue.extend({
@@ -45,12 +45,12 @@ export default Vue.extend({
       this.eventName = 'errorLog';
     }
 
-    bus.$emit(this.eventName, {
+    FormBus.$emit(this.eventName, {
       name: this.name,
       value: undefined,
       error: true,
     });
-    bus.$on('error', (obj: ErrorObject) => {
+    FormBus.$on('error', (obj: ErrorObject) => {
       if (obj.name === this.name) {
         this.errorType = 'errorMsg';
         this.error = obj.msg;
@@ -98,7 +98,7 @@ export default Vue.extend({
   },
   watch: {
     value(): void {
-      bus.$emit(this.eventName, this.logObject);
+      FormBus.$emit(this.eventName, this.logObject);
     },
   },
 });

@@ -7,7 +7,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { LogObject } from './interfaces';
+import { LogObject } from './../interfaces';
 
 Vue.directive('column', {
   bind(el) {
@@ -21,7 +21,7 @@ Vue.directive('padding', {
   },
 });
 
-export const bus = new Vue();
+export const FormBus = new Vue();
 
 export default Vue.extend({
   data() {
@@ -30,7 +30,7 @@ export default Vue.extend({
     };
   },
   created() {
-    bus.$on('errorLog', (obj: LogObject) => {
+    FormBus.$on('errorLog', (obj: LogObject) => {
       this.logs.set(obj.name, obj);
     });
   },

@@ -11,6 +11,12 @@ Vue.directive('cursor', {
   },
 });
 
+Vue.directive('color', {
+  bind(el, binding) {
+    el.classList.add('icon-color');
+  },
+});
+
 export default Vue.extend({
   props: {
     sz: String,
@@ -27,6 +33,10 @@ i.icon-light {
 
 i.pointer {
   cursor: pointer;
+}
+
+i.big {
+  font-size: 25px;
 }
 
 </style>
