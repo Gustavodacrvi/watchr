@@ -3,7 +3,7 @@
     <article v-show='showing' id='toast' class='toast' :class='toastClass'>
       <span>{{ msg }}</span>
       <span v-show='infiniteToast' class='toast-icon'>
-        <icon ico='times' sz='big' @click='showing = false' v-cursor v-color></icon>
+        <icon ico='times' sz='big' @click='showing = false' v-cursor></icon>
       </span>
     </article>
   </transition>
@@ -34,21 +34,6 @@ export default Vue.extend({
       } else {
         this.toasts.push(toast);
       }
-    });
-    ToastBus.$emit('addToast', {
-      msg: 'I am the first fucking toast!',
-      duration_seconds: 1,
-      type: 'normal',
-    });
-    ToastBus.$emit('addToast', {
-      msg: 'I am the infinite toast!',
-      duration_seconds: null,
-      type: 'normal',
-    });
-    ToastBus.$emit('addToast', {
-      msg: 'I am the last fucking toast!',
-      duration_seconds: 1,
-      type: 'normal',
     });
   },
   methods: {
