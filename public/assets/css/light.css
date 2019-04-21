@@ -1,17 +1,17 @@
 /* 
   mainColor: #8cd9b6;
-  secondary: #f8bdba;
-  third: #fdeded;
   fourth: #ecf9f3;
-
-  wrongColor: #fffc5a;
-  secondWrong: #ffffeb;
 */
 
 
 @font-face {
   font-family: 'Work Sans';
   src: url('/assets/fonts/WorkSans-Light.otf');
+}
+
+@font-face {
+  font-family: 'Work Sans Regular';
+  src: url('/assets/fonts/WorkSans-Regular.otf');
 }
 
 body {
@@ -107,6 +107,15 @@ input.input-light::placeholder {
 
 .button-light:hover {
   background-color: #b0e8df;
+}
+
+.toast-light {
+  padding: 14px;
+  font-family: 'Work Sans Regular';
+}
+
+.shadow-light {
+  box-shadow: 0 4px 10px 2px rgba(180, 180, 180, .4) !important;
 }
 
 .router-view-light-enter-active, .router-view-light-leave-active {

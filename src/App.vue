@@ -4,16 +4,19 @@
     <transition :name='$store.getters.style("router-view")' mode='out-in'>
       <router-view/>
     </transition>
+    <toast></toast>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import NavBar from './components/navigation/Nav-bar.vue';
+import Toast from './components/Toast.vue';
 
 export default Vue.extend({
   components: {
     'nav-bar': NavBar,
+    'toast': Toast,
   },
 });
 </script>
