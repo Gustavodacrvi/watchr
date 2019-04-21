@@ -1,13 +1,15 @@
 <template>
-  <div id='body' :class="$store.getters.bodyBackground">
+  <div id='body' :class='$store.getters.style("bodyBackground")'>
     <nav-bar></nav-bar>
-    <router-view/>
+    <transition :name='$store.getters.style("router-view")' mode='out-in'>
+      <router-view/>
+    </transition>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import NavBar from './components/Nav-bar.vue';
+import NavBar from './components/navigation/Nav-bar.vue';
 
 export default Vue.extend({
   components: {
@@ -20,24 +22,14 @@ export default Vue.extend({
 
 <style>
 
-@font-face {
-  font-family: 'Work Sans';
-  src: url('/assets/fonts/WorkSans-Light.otf');
-}
-
 body {
   margin: 0;
-  font-family: 'Work Sans';
 }
 
 #body {
   position: absolute;
   width: 100%;
   height: 100%;
-}
-
-span, a {
-  color: #969c9c;
 }
 
 </style>
