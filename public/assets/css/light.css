@@ -114,6 +114,19 @@ input.input-light::placeholder {
   font-family: 'Work Sans Regular';
 }
 
+.toast-transition-light-enter {
+  bottom: -40px !important;
+}
+
+.toast-transition-light-enter-active {
+  transition-duration: .3s;
+}
+
+.toast-transition-light-leave-active {
+  transition-duration: .3s;
+  bottom: -40px !important;
+}
+
 .shadow-light {
   box-shadow: 0 4px 10px 2px rgba(180, 180, 180, .4) !important;
 }
