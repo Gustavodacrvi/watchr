@@ -6,7 +6,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
+
+import Heading from './../generalComponents/Heading.vue';
+
 export default Vue.extend({
+  components: {
+    heading: Heading,
+  },
 });
 </script>
 

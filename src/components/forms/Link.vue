@@ -7,6 +7,8 @@
 <script lang="ts">
 import Vue from 'vue';
 
+import Route from './../generalComponents/Link.vue';
+
 Vue.directive('margin-left', {
   bind(el, binding) {
     const a: any = el.firstChild;
@@ -16,6 +18,9 @@ Vue.directive('margin-left', {
 });
 
 export default Vue.extend({
+  components: {
+    route: Route,
+  },
   props: {
     to: String,
   },

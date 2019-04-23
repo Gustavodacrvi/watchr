@@ -11,11 +11,16 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ToastObj } from './interfaces';
+import { ToastObj } from './../interfaces';
+
+import Icon from './../generalComponents/Icon.vue';
 
 export const ToastBus = new Vue();
 
 export default Vue.extend({
+  components: {
+    icon: Icon,
+  },
   data() {
     return {
       msg: '',

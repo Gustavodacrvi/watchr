@@ -16,11 +16,18 @@
 <script lang="ts">
 import Vue from 'vue';
 
+import Alert from './../generalComponents/Alert.vue';
+import Icon from './../generalComponents/Icon.vue';
+
 import { FormBus } from './Form.vue';
 import { ErrorObject } from './../interfaces';
 
 
 export default Vue.extend({
+  components: {
+    alert: Alert,
+    icon: Icon,
+  },
   props: {
     name: String,
     placeholder: String,

@@ -7,7 +7,12 @@
 <script lang="ts">
 import Vue from 'vue';
 
+import Button from './../generalComponents/Button.vue';
+
 export default Vue.extend({
+  components: {
+    btn: Button,
+  },
   props: {
     type: String,
   },

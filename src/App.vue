@@ -11,7 +11,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import NavBar from './components/navigation/Nav-bar.vue';
-import Toast from './components/Toast.vue';
+import Toast from './components/generalComponents/Toast.vue';
 
 export default Vue.extend({
   components: {
@@ -24,7 +24,7 @@ export default Vue.extend({
 
 
 <style>
-@import './assets/css/light/light.css';
+@import './assets/css/light/main.css';
 @import './assets/css/light/vueTransitions.css';
 @import './assets/css/light/toast.css';
 @import './assets/css/light/input.css';
