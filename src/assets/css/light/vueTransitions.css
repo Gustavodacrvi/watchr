@@ -1,0 +1,19 @@
+.toast-transition-light-enter {
+  bottom: -40px !important;
+}
+
+.toast-transition-light-enter-active {
+  transition-duration: .3s;
+}
+
+.toast-transition-light-leave-active {
+  transition-duration: .3s;
+  bottom: -40px !important;
+}
+
+.router-view-light-enter-active, .router-view-light-leave-active {
+  transition: opacity .1s;
+}
+.router-view-light-enter, .router-view-light-leave-to {
+  opacity: 0;
+}

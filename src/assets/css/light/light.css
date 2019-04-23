@@ -45,45 +45,8 @@ div.nav-link-light:hover > a, .active-nav-link-light > a {
   margin: 15px 0;
 }
 
-input.input-light {
-  position: relative;
-  border: none;
-  border-radius: 6px;
-  padding: 8px;
-  background-color: #F6F7F9;
-  outline: none;
-  font-family: 'Work Sans';
-  color: #6a6262;
-  font-size: 1.01em;
-  transition-duration: .2s;
-  bottom: 0;
-}
-
-.wrong-input-light {
-  border: 2px solid #ec554d !important;
-  background-color: #fde9e8 !important;
-}
-
-input.input-light:focus {
-  border: 2px solid #8cd9b6;
-  bottom: 2px;
-}
-
-input.input-light::placeholder {
-  color: #9d9595;
-}
-
 .span-alert-error-light {
   color: #ec554d;
-}
-
-.icon-light {
-  color: #9c9696;
-}
-
-.icon-color:hover {
-  transition-duration: .2s;
-  color: #8cd9b6;
 }
 
 .route-link-light {
@@ -95,69 +58,6 @@ input.input-light::placeholder {
   text-decoration: underline;
 }
 
-.button-light {
-  position: relative;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  color: #fff;
-  background-color: #8cd9b6;
-  font-size: 1.05em;
-  cursor: pointer;
-  transition-duration: .2s;
-  outline: none;
-  font-family: 'Work Sans';
-  top: 0;
-}
-
-.button-light:hover {
-  background-color: #b0e8df;
-}
-
-.toast-light {
-  padding: 0 14px;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Work Sans Regular';
-}
-
-.toast-success-light {
-  border: 2px solid #8cd9b6;
-  background-color: #ecf9f3;
-}
-
-.toast-error-light {
-  border: 2px solid #ec554d;
-  background-color: #fde9e8;
-}
-
-.toast-warning-light {
-  border: 2px solid #ecec4b;
-  background-color: #f8f8ba;
-}
-
-.toast-transition-light-enter {
-  bottom: -40px !important;
-}
-
-.toast-transition-light-enter-active {
-  transition-duration: .3s;
-}
-
-.toast-transition-light-leave-active {
-  transition-duration: .3s;
-  bottom: -40px !important;
-}
-
 .shadow-light {
   box-shadow: 0 4px 10px 2px rgba(180, 180, 180, .4) !important;
-}
-
-.router-view-light-enter-active, .router-view-light-leave-active {
-  transition: opacity .1s;
-}
-.router-view-light-enter, .router-view-light-leave-to {
-  opacity: 0;
 }

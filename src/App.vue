@@ -25,6 +25,11 @@ export default Vue.extend({
 
 <style>
 @import './assets/css/light/light.css';
+@import './assets/css/light/vueTransitions.css';
+@import './assets/css/light/toast.css';
+@import './assets/css/light/input.css';
+@import './assets/css/light/button.css';
+@import './assets/css/light/icon.css';
 @import './assets/css/fontawesome.min.css';
 
 body {
