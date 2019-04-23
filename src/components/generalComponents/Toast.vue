@@ -2,7 +2,7 @@
   <transition :name='$store.getters.style("toast-transition")' @after-leave='showNext'>
     <article v-show='showing' id='toast' class='toast' :class='toastClass'>
       <span>{{ msg }}</span>
-      <span v-show='infiniteToast' class='toast-icon'>
+      <span v-if='infiniteToast' class='toast-icon'>
         <icon ico='times' sz='big' @click='showing = false' v-cursor></icon>
       </span>
     </article>
@@ -81,8 +81,13 @@ export default Vue.extend({
 .toast {
   position: fixed;
   bottom: 40px;
+  min-height: 50px;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.toast > span {
+  padding: 10px;
 }
 
 .toast-icon {
