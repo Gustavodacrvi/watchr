@@ -24,6 +24,8 @@ export default Vue.extend({
 
 
 <style>
+@import './assets/css/light/light.css';
+@import './assets/css/fontawesome.min.css';
 
 body {
   margin: 0;
