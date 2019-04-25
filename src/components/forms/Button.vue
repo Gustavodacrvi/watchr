@@ -1,6 +1,6 @@
 <template>
   <div class='form-button form-element'>
-    <btn :type='type'><slot></slot></btn>
+    <btn :type='type' @click='sendButtonEvent'><slot></slot></btn>
   </div>
 </template>
 
@@ -8,6 +8,7 @@
 import Vue from 'vue';
 
 import Button from './../generalComponents/Button.vue';
+import { FormBus } from './Form.vue';
 
 export default Vue.extend({
   components: {
@@ -15,6 +16,11 @@ export default Vue.extend({
   },
   props: {
     type: String,
+  },
+  methods: {
+    sendButtonEvent() {
+      FormBus.$emit('submit');
+    },
   },
 });
 </script>

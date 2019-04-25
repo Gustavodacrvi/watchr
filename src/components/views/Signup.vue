@@ -1,7 +1,7 @@
 <template>
   <div class='signup body' :class='$store.getters.style("background")'>
     <div>
-      <app-form v-column v-padding>
+      <app-form v-column v-padding :act='submit'>
         <app-title class='form-margin'>Sign-up</app-title>
         <app-input class='form-margin' name='username' placeholder='Username:' :max='50' type='text'></app-input>
         <app-input class='form-margin' name='email' placeholder='E-mail:' :max='50' type='text'></app-input>
@@ -28,6 +28,11 @@ export default Vue.extend({
     'app-button': Button,
     'app-title': Title,
     'confirm-password': ConfirmPassword,
+  },
+  methods: {
+    submit(values) {
+      console.log(values);
+    },
   },
 });
 </script>

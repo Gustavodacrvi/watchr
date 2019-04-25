@@ -24,6 +24,9 @@ Vue.directive('padding', {
 export const FormBus = new Vue();
 
 export default Vue.extend({
+  props: {
+    act: Function,
+  },
   data() {
     return {
       logs: new Map(),
@@ -32,6 +35,9 @@ export default Vue.extend({
   created() {
     FormBus.$on('errorLog', (obj: LogObject) => {
       this.logs.set(obj.name, obj);
+    });
+    FormBus.$on('submit', () => {
+      this.act(1);
     });
   },
 });
