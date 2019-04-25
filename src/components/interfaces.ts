@@ -1,10 +1,10 @@
-export interface LogObject {
+export interface FormLogObject {
   name: string;
   value: any;
   error: boolean;
 }
 
-export interface ErrorObject {
+export interface InputErrorObject {
   name: string;
   msg: string;
 }

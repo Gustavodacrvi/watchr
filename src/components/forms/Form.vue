@@ -7,7 +7,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { LogObject } from './../interfaces';
+import { FormLogObject } from './../interfaces';
 
 Vue.directive('column', {
   bind(el) {
@@ -37,7 +37,7 @@ export default Vue.extend({
     };
   },
   created() {
-    FormBus.$on('errorLog', (obj: LogObject) => {
+    FormBus.$on('errorLog', (obj: FormLogObject) => {
       this.logs.set(obj.name, obj);
     });
     FormBus.$on('submit', () => {
