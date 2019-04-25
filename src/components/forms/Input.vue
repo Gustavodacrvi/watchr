@@ -56,7 +56,7 @@ export default Vue.extend({
       name: this.name,
       value: undefined,
       error: true,
-    });
+    } as ErrorObject);
     FormBus.$on('error', (obj: ErrorObject) => {
       if (obj.name === this.name) {
         this.errorType = 'errorMsg';

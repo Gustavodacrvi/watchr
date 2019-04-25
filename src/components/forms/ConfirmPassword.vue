@@ -32,29 +32,50 @@ export default Vue.extend({
   created() {
     FormBus.$on('ConfirmPassword', (obj: LogObject) => {
       if (obj.name === 'password') {
-        this.password = obj.value;
+        this.password = obj;
       } else {
-        this.confirm = obj.value;
+        this.confirm = obj;
       }
+      let errorObj = {
+        name: this.name,
+        value: this.password.value,
+        error: undefined,
+      } as ErrorObject;
 
-      if (this.wrongInputs()) {
+      if (this.passwordsNotMatching()) {
         FormBus.$emit('error', {
           name: 'confirm',
           msg: 'Passwords not matching.',
         } as ErrorObject);
+        errorObj.error = true;
+
+        FormBus.$emit('errorLog', errorObj);
+      } else {
+        errorObj.error = this.password.error;
+
+        FormBus.$emit('errorLog', errorObj);
       }
     });
+
+    FormBus.$emit('errorLog', {
+      name: this.name,
+      value: undefined,
+      error: true,
+    } as ErrorObject);
   },
   methods: {
-    wrongInputs(): boolean {
-      if (this.password !== undefined && this.confirm !== undefined) {
-        if (this.password !== this.confirm) {
+    passwordsNotMatching(): boolean {
+      if (this.password.value !== undefined && this.confirm.value !== undefined) {
+        if (this.password.value !== this.confirm.value) {
           return true;
         }
         return false;
       }
       return false;
     },
+    hasError(): boolean {
+      return (this.password.error || this.confirm.error);
+    }
   },
 });
 </script>
