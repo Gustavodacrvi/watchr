@@ -36,11 +36,11 @@ export default Vue.extend({
       } else {
         this.confirm = obj;
       }
-      let errorObj = {
+      const errorObj = {
         name: this.name,
         value: this.password.value,
-        error: undefined,
-      } as ErrorObject;
+        error: false,
+      } as LogObject;
 
       if (this.passwordsNotMatching()) {
         FormBus.$emit('error', {
@@ -51,7 +51,7 @@ export default Vue.extend({
 
         FormBus.$emit('errorLog', errorObj);
       } else {
-        errorObj.error = this.password.error;
+        errorObj.error = this.password.error || this.confirm.error;
 
         FormBus.$emit('errorLog', errorObj);
       }
@@ -61,7 +61,7 @@ export default Vue.extend({
       name: this.name,
       value: undefined,
       error: true,
-    } as ErrorObject);
+    } as LogObject);
   },
   methods: {
     passwordsNotMatching(): boolean {
@@ -75,7 +75,7 @@ export default Vue.extend({
     },
     hasError(): boolean {
       return (this.password.error || this.confirm.error);
-    }
+    },
   },
 });
 </script>

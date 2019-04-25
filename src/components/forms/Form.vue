@@ -37,8 +37,26 @@ export default Vue.extend({
       this.logs.set(obj.name, obj);
     });
     FormBus.$on('submit', () => {
-      this.act(1);
+      if (!this.hasError()) {
+        const entries = this.logs.values();
+        const obj = {};
+        for (const el of entries) {
+          obj[el.name] = el.value;
+        }
+        this.act(obj);
+      }
     });
+  },
+  methods: {
+    hasError(): boolean {
+      const entries = this.logs.values();
+      for (const el of entries) {
+        if (el.error) {
+          return true;
+        }
+      }
+      return false;
+    },
   },
 });
 </script>
