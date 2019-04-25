@@ -23,6 +23,10 @@ Vue.directive('padding', {
 
 export const FormBus = new Vue();
 
+interface SubmitObj {
+  [index: string]: any;
+}
+
 export default Vue.extend({
   props: {
     act: Function,
@@ -39,7 +43,7 @@ export default Vue.extend({
     FormBus.$on('submit', () => {
       if (!this.hasError()) {
         const entries = this.logs.values();
-        const obj = {};
+        const obj: SubmitObj = {};
         for (const el of entries) {
           obj[el.name] = el.value;
         }
