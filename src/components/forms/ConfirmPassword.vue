@@ -10,7 +10,7 @@ import Vue from 'vue';
 
 import Input from './Input.vue';
 import { FormBus } from './Form.vue';
-import { InputErrorObject, ErrorObject } from './../interfaces';
+import { InputErrorObject, FormLogObject } from './../interfaces';
 
 export default Vue.extend({
   components: {
@@ -40,13 +40,13 @@ export default Vue.extend({
         name: this.name,
         value: this.password.value,
         error: false,
-      } as InputErrorObject;
+      } as FormLogObject;
 
       if (this.passwordsNotMatching()) {
         FormBus.$emit('error', {
           name: 'confirm',
           msg: 'Passwords not matching.',
-        } as ErrorObject);
+        } as InputErrorObject);
         errorObj.error = true;
 
         FormBus.$emit('errorLog', errorObj);
@@ -61,7 +61,7 @@ export default Vue.extend({
       name: this.name,
       value: undefined,
       error: true,
-    } as InputErrorObject);
+    } as FormLogObject);
   },
   methods: {
     passwordsNotMatching(): boolean {

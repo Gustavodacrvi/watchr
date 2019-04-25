@@ -20,7 +20,7 @@ import Alert from './../generalComponents/Alert.vue';
 import Icon from './../generalComponents/Icon.vue';
 
 import { FormBus } from './Form.vue';
-import { ErrorObject, LogObject } from './../interfaces';
+import { FormLogObject, InputErrorObject } from './../interfaces';
 
 
 export default Vue.extend({
@@ -56,8 +56,8 @@ export default Vue.extend({
       name: this.name,
       value: undefined,
       error: true,
-    } as LogObject);
-    FormBus.$on('error', (obj: ErrorObject) => {
+    } as FormLogObject);
+    FormBus.$on('error', (obj: InputErrorObject) => {
       if (obj.name === this.name) {
         this.errorType = 'errorMsg';
         this.error = obj.msg;
