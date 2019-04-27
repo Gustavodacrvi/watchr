@@ -1,7 +1,9 @@
 <template>
   <div class='form-button form-element'>
-    <btn :type='type' @click='sendButtonEvent'><slot></slot></btn>
-    <span v-show='showingIcon'>Loading</span>
+    <btn :type='type' @click='sendButtonEvent'>
+      <span v-show='!showingIcon'><slot></slot></span>
+      <icon v-show='showingIcon' ico='sync-alt fa-spin' sz='big'></icon>
+    </btn>
   </div>
 </template>
 
@@ -9,11 +11,13 @@
 import Vue from 'vue';
 
 import Button from './../generalComponents/Button.vue';
+import Icon from './../generalComponents/Icon.vue';
 import { FormBus } from './Form.vue';
 
 export default Vue.extend({
   components: {
     btn: Button,
+    icon: Icon,
   },
   props: {
     type: String,
