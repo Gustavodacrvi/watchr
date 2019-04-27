@@ -9,7 +9,7 @@ const app = express();
 
 
 mongoose.connect(process.env.DATABASE, {
-  useNewUrlParser: !0,
+  useNewUrlParser: true,
 });
 const connection = mongoose.connection;
 
