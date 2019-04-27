@@ -1,14 +1,22 @@
-let express = require('express');
-let bodyParser = require('body-parser');
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-let app = express();
+const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false, }));
 
+const corsOptions = {
+  origin: 'http://localhost:8080',
+};
 
-app.get('/hello', (req, res) => {
-  res.send('hello');
+app.use(cors(corsOptions));
+
+
+app.post('/signup', (req, res) => {
+  console.log(req.body.content);
+  res.send(req.body.content);
 });
 
 

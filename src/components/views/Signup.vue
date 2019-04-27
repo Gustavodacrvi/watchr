@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import http from 'axios';
 
 import Form from './../forms/Form.vue';
 import Input from './../forms/Input.vue';
@@ -30,8 +31,14 @@ export default Vue.extend({
     'confirm-password': ConfirmPassword,
   },
   methods: {
-    submit(values) {
+    submit(values: any) {
       console.log(values);
+      http.post('http://localhost:3000/signup', {
+        content: 'I am the content',
+      }).then((res) => {
+        console.log(res);
+        
+      });
     },
   },
 });
