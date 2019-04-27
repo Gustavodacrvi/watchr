@@ -13,10 +13,15 @@ import Vue from 'vue';
 import NavBar from './components/navigation/Nav-bar.vue';
 import Toast from './components/generalComponents/Toast.vue';
 
+import { setCookie } from './assets/javaScript/cookies';
+
 export default Vue.extend({
   components: {
     'nav-bar': NavBar,
     'toast': Toast,
+  },
+  created() {
+    setCookie('hey', 'fuckyeah', 10);
   },
 });
 </script>
