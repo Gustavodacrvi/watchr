@@ -30,6 +30,7 @@ interface SubmitObj {
 export default Vue.extend({
   props: {
     act: Function,
+    loadIcon: Boolean,
   },
   data() {
     return {
@@ -47,7 +48,14 @@ export default Vue.extend({
         for (const el of entries) {
           obj[el.name] = el.value;
         }
-        this.act(obj);
+        if (this.loadIcon) {
+          FormBus.$emit('loadIcon', true);
+          this.act(obj).then(() => {
+            FormBus.$emit('loadIcon', false);
+          });
+        } else {
+          this.act(obj);
+        }
       }
     });
   },

@@ -1,6 +1,7 @@
 <template>
   <div class='form-button form-element'>
     <btn :type='type' @click='sendButtonEvent'><slot></slot></btn>
+    <span v-show='showingIcon'>Loading</span>
   </div>
 </template>
 
@@ -16,6 +17,17 @@ export default Vue.extend({
   },
   props: {
     type: String,
+    icon: String,
+  },
+  data() {
+    return {
+      showingIcon: false,
+    };
+  },
+  created() {
+    FormBus.$on('loadIcon', (showIcon: boolean) => {
+      this.showingIcon = showIcon;
+    });
   },
   methods: {
     sendButtonEvent() {

@@ -1,7 +1,7 @@
 <template>
   <div class='signup body' :class='$store.getters.style("background")'>
     <div>
-      <app-form v-column v-padding :act='submit'>
+      <app-form v-column v-padding :act='submit' :load-icon='true'>
         <app-title class='form-margin'>Sign-up</app-title>
         <app-input class='form-margin' name='username' placeholder='Username:' :max='50' type='text'></app-input>
         <app-input class='form-margin' name='email' placeholder='E-mail:' :max='50' type='text'></app-input>
@@ -32,8 +32,8 @@ export default Vue.extend({
     'confirm-password': ConfirmPassword,
   },
   methods: {
-    submit(values: any) {
-      http.post('http://localhost:3000/signup', {
+    async submit(values: any) {
+      await http.post('http://localhost:3000/signup', {
         username: values.username,
         email: values.email,
         password: values.password,
