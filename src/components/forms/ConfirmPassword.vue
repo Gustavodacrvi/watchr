@@ -1,7 +1,7 @@
 <template>
   <div class='confirm-password'>
-    <app-input :class='inputClass' name='password' :placeholder='placeholder1' :max='max' type='password' bus-event='ConfirmPassword'></app-input>
-    <app-input :class='inputClass' name='confirm' :placeholder='placeholder2' :max='max' type='password' bus-event='ConfirmPassword'></app-input>
+    <app-input :class='inputClass' name='password' :placeholder='placeholder1' :max='max' type='password' bus-event='confirmPassword'></app-input>
+    <app-input :class='inputClass' name='confirm' :placeholder='placeholder2' :max='max' type='password' bus-event='confirmPassword'></app-input>
   </div>
 </template>
 
@@ -30,7 +30,9 @@ export default Vue.extend({
     };
   },
   created() {
-    FormBus.$on('ConfirmPassword', (obj: InputErrorObject) => {
+    FormBus.$off('confirmPassword');
+
+    FormBus.$on('confirmPassword', (obj: InputErrorObject) => {
       if (obj.name === 'password') {
         this.password = obj;
       } else {

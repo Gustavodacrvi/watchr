@@ -29,6 +29,8 @@ export default Vue.extend({
     };
   },
   created() {
+    FormBus.$off('loadIcon');
+
     FormBus.$on('loadIcon', (showIcon: boolean) => {
       this.showingIcon = showIcon;
     });
