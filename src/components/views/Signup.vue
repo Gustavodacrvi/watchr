@@ -17,13 +17,13 @@ import Vue from 'vue';
 import http from 'axios';
 
 import Form from './../forms/Form.vue';
-import { FormBus } from './../forms/Form.vue';
 import Input from './../forms/Input.vue';
 import Button from './../forms/Button.vue';
 import Title from './../forms/Title.vue';
 import ConfirmPassword from './../forms/ConfirmPassword.vue';
 import router from '../../router';
 
+import { FormBus } from './../forms/Form.vue';
 import { InputErrorObject } from './../interfaces';
 
 export default Vue.extend({
