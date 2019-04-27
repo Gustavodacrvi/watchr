@@ -29,8 +29,6 @@ export default Vue.extend({
     };
   },
   created() {
-    FormBus.$off('loadIcon');
-
     FormBus.$on('loadIcon', (showIcon: boolean) => {
       this.showingIcon = showIcon;
     });
@@ -39,6 +37,9 @@ export default Vue.extend({
     sendButtonEvent() {
       FormBus.$emit('submit');
     },
+  },
+  beforeDestroy() {
+    FormBus.$off('loadIcon');
   },
 });
 </script>

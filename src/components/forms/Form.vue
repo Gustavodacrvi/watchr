@@ -38,8 +38,6 @@ export default Vue.extend({
     };
   },
   created() {
-    FormBus.$off('errorLog');
-    FormBus.$off('submit');
     FormBus.$on('errorLog', (obj: FormLogObject) => {
       this.logs.set(obj.name, obj);
     });
@@ -71,6 +69,10 @@ export default Vue.extend({
       }
       return false;
     },
+  },
+  beforeDestroy() {
+    FormBus.$off('errorLog');
+    FormBus.$off('submit');
   },
 });
 </script>

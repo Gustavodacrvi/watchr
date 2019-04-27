@@ -30,8 +30,6 @@ export default Vue.extend({
     };
   },
   created() {
-    FormBus.$off('confirmPassword');
-
     FormBus.$on('confirmPassword', (obj: InputErrorObject) => {
       if (obj.name === 'password') {
         this.password = obj;
@@ -78,6 +76,9 @@ export default Vue.extend({
     hasError(): boolean {
       return (this.password.error || this.confirm.error);
     },
+  },
+  beforeDestroy() {
+    FormBus.$off('confirmPassword');
   },
 });
 </script>
