@@ -21,6 +21,7 @@ import Input from './../forms/Input.vue';
 import Button from './../forms/Button.vue';
 import Title from './../forms/Title.vue';
 import ConfirmPassword from './../forms/ConfirmPassword.vue';
+import router from '../../router';
 
 export default Vue.extend({
   components: {
@@ -32,12 +33,12 @@ export default Vue.extend({
   },
   methods: {
     submit(values: any) {
-      console.log(values);
       http.post('http://localhost:3000/signup', {
-        content: 'I am the content',
+        username: values.username,
+        email: values.email,
+        password: values.password,
       }).then((res) => {
-        console.log(res);
-        
+        router.push('/login');
       });
     },
   },
