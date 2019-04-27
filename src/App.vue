@@ -13,7 +13,7 @@ import Vue from 'vue';
 import NavBar from './components/navigation/Nav-bar.vue';
 import Toast from './components/generalComponents/Toast.vue';
 
-import { setCookie } from './assets/javaScript/cookies';
+import { setCookie, getCookie } from './assets/javaScript/cookies';
 
 export default Vue.extend({
   components: {
@@ -22,6 +22,7 @@ export default Vue.extend({
   },
   created() {
     setCookie('hey', 'fuckyeah', 10);
+    console.log(getCookie('hey'));
   },
 });
 </script>
