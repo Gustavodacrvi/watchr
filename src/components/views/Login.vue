@@ -52,6 +52,7 @@ export default Vue.extend({
             msg: 'Wrong password.',
           } as InputErrorObject);
         } else {
+          this.$store.commit('logUser', res.data.user);
           router.push('/');
         }
       });

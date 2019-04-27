@@ -57,7 +57,10 @@ app.post('/login', (req, res) => {
         if (!isMatch) {
           res.send({ error: 'wrongPassword' },);
         } else {
-          res.send({ error: '' },);
+          res.send({ error: '', user: {
+            username: doc.username,
+            email: doc.email,
+          }},);
         }
       });
     }
