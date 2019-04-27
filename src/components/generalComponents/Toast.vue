@@ -33,6 +33,7 @@ export default Vue.extend({
     };
   },
   created() {
+    ToastBus.$off('addToast');
     ToastBus.$on('addToast', (toast: ToastObj) => {
       if (!this.showing) {
         this.show(toast);

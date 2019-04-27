@@ -13,6 +13,10 @@
   top: 0;
 }
 
+.button-light span, .button-light i {
+  color: #fff;
+}
+
 .button-light:hover {
   background-color: #b0e8df;
 }

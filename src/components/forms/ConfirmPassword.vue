@@ -1,7 +1,7 @@
 <template>
   <div class='confirm-password'>
-    <app-input :class='inputClass' name='password' :placeholder='placeholder1' :max='max' type='password' bus-event='ConfirmPassword'></app-input>
-    <app-input :class='inputClass' name='confirm' :placeholder='placeholder2' :max='max' type='password' bus-event='ConfirmPassword'></app-input>
+    <app-input :class='inputClass' name='password' :placeholder='placeholder1' :max='max' type='password' bus-event='confirmPassword'></app-input>
+    <app-input :class='inputClass' name='confirm' :placeholder='placeholder2' :max='max' type='password' bus-event='confirmPassword'></app-input>
   </div>
 </template>
 
@@ -10,7 +10,7 @@ import Vue from 'vue';
 
 import Input from './Input.vue';
 import { FormBus } from './Form.vue';
-import { LogObject, ErrorObject } from './../interfaces';
+import { InputErrorObject, FormLogObject } from './../interfaces';
 
 export default Vue.extend({
   components: {
@@ -30,30 +30,53 @@ export default Vue.extend({
     };
   },
   created() {
-    FormBus.$on('ConfirmPassword', (obj: LogObject) => {
-      if (obj.name === 'password') {
-        this.password = obj.value;
-      } else {
-        this.confirm = obj.value;
-      }
+    FormBus.$off('confirmPassword');
 
-      if (this.wrongInputs()) {
+    FormBus.$on('confirmPassword', (obj: InputErrorObject) => {
+      if (obj.name === 'password') {
+        this.password = obj;
+      } else {
+        this.confirm = obj;
+      }
+      const errorObj = {
+        name: this.name,
+        value: this.password.value,
+        error: false,
+      } as FormLogObject;
+
+      if (this.passwordsNotMatching()) {
         FormBus.$emit('error', {
           name: 'confirm',
           msg: 'Passwords not matching.',
-        } as ErrorObject);
+        } as InputErrorObject);
+        errorObj.error = true;
+
+        FormBus.$emit('errorLog', errorObj);
+      } else {
+        errorObj.error = this.password.error || this.confirm.error;
+
+        FormBus.$emit('errorLog', errorObj);
       }
     });
+
+    FormBus.$emit('errorLog', {
+      name: this.name,
+      value: undefined,
+      error: true,
+    } as FormLogObject);
   },
   methods: {
-    wrongInputs(): boolean {
-      if (this.password !== undefined && this.confirm !== undefined) {
-        if (this.password !== this.confirm) {
+    passwordsNotMatching(): boolean {
+      if (this.password.value !== undefined && this.confirm.value !== undefined) {
+        if (this.password.value !== this.confirm.value) {
           return true;
         }
         return false;
       }
       return false;
+    },
+    hasError(): boolean {
+      return (this.password.error || this.confirm.error);
     },
   },
 });
