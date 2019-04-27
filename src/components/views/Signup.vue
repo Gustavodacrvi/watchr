@@ -17,11 +17,14 @@ import Vue from 'vue';
 import http from 'axios';
 
 import Form from './../forms/Form.vue';
+import { FormBus } from './../forms/Form.vue';
 import Input from './../forms/Input.vue';
 import Button from './../forms/Button.vue';
 import Title from './../forms/Title.vue';
 import ConfirmPassword from './../forms/ConfirmPassword.vue';
 import router from '../../router';
+
+import { InputErrorObject } from './../interfaces';
 
 export default Vue.extend({
   components: {
@@ -38,7 +41,19 @@ export default Vue.extend({
         email: values.email,
         password: values.password,
       }).then((res) => {
-        router.push('/login');
+        if (res.data.error === 'usernameTaken') {
+          FormBus.$emit('error', {
+            name: 'username',
+            msg: 'Username taken, please choose another one.',
+          } as InputErrorObject);
+        } else if (res.data.error === 'emailTaken') {
+          FormBus.$emit('error', {
+            name: 'email',
+            msg: 'Email taken, please choose another one.',
+          } as InputErrorObject);
+        } else {
+          router.push('/login');
+        }
       });
     },
   },

@@ -27,12 +27,24 @@ const User = require('./mongodbModel');
 
 
 app.post('/signup', (req, res) => {
-  User.createUser(new User({
-    username: req.body.username.trim(),
-    email: req.body.email.trim(),
-    password: req.body.password.trim(),
-  }), () => {
-    res.send();
+  User.findOne({ username: req.body.username.trim() }, (err, doc) => {
+    if (doc) {
+      res.send({ error: 'usernameTaken' },);
+    } else {
+      User.findOne({ email: req.body.email.trim() }, (err, doc) => {
+        if (doc) {
+          res.send({ error: 'emailTaken' },);
+        } else {
+          User.createUser(new User({
+            username: req.body.username.trim(),
+            email: req.body.email.trim(),
+            password: req.body.password.trim(),
+          }), () => {
+            res.send({ error: '' },);
+          });
+        }
+      });
+    }
   });
 });
 
