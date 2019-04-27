@@ -4,8 +4,12 @@
     </section>
     <section>
       <nav-link to='/'>Home</nav-link>
+
       <nav-link to='/login'>Login</nav-link>
+
       <nav-link to='/signup'>Signup</nav-link>
+      <nav-link v-if='$store.getters.isAuthenticated' to='/user'>User</nav-link>
+      <nav-link v-if='$store.getters.isAuthenticated' to='/logout'>Logout</nav-link>
     </section>
     <section>
     </section>

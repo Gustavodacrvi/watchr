@@ -3,6 +3,9 @@ import Router from 'vue-router';
 import Home from './components/views/Home.vue';
 import Login from './components/views/Login.vue';
 import Signup from './components/views/Signup.vue';
+import User from './components/views/User.vue';
+
+import store from './store';
 
 Vue.use(Router);
 
@@ -22,6 +25,26 @@ export default new Router({
       path: '/signup',
       name: 'signup',
       component: Signup,
+    },
+    {
+      path: '/user',
+      name: 'user',
+      component: User,
+      beforeEnter: (to, from, next) => {
+        if (store.getters.isAuthenticated) {
+          next();
+        } else {
+          next('/login');
+        }
+      },
+    },
+    {
+      path: '/logout',
+      name: 'logout',
+      beforeEnter: (to, from, next) => {
+        store.commit('logOut');
+        next('/login');
+      },
     },
   ],
 });

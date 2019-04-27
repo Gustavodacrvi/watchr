@@ -1,7 +1,7 @@
 <template>
   <div class='signup body' :class='$store.getters.style("background")'>
     <div>
-      <app-form v-column v-padding>
+      <app-form v-column v-padding :act='submit' :load-icon='true'>
         <app-title class='form-margin'>Sign-up</app-title>
         <app-input class='form-margin' name='username' placeholder='Username:' :max='50' type='text'></app-input>
         <app-input class='form-margin' name='email' placeholder='E-mail:' :max='50' type='text'></app-input>
@@ -14,12 +14,17 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import http from 'axios';
 
 import Form from './../forms/Form.vue';
 import Input from './../forms/Input.vue';
 import Button from './../forms/Button.vue';
 import Title from './../forms/Title.vue';
 import ConfirmPassword from './../forms/ConfirmPassword.vue';
+import router from '../../router';
+
+import { FormBus } from './../forms/Form.vue';
+import { InputErrorObject } from './../interfaces';
 
 export default Vue.extend({
   components: {
@@ -28,6 +33,29 @@ export default Vue.extend({
     'app-button': Button,
     'app-title': Title,
     'confirm-password': ConfirmPassword,
+  },
+  methods: {
+    async submit(values: any) {
+      await http.post('http://localhost:3000/signup', {
+        username: values.username,
+        email: values.email,
+        password: values.password,
+      }).then((res) => {
+        if (res.data.error === 'usernameTaken') {
+          FormBus.$emit('error', {
+            name: 'username',
+            msg: 'Username taken, please choose another one.',
+          } as InputErrorObject);
+        } else if (res.data.error === 'emailTaken') {
+          FormBus.$emit('error', {
+            name: 'email',
+            msg: 'Email taken, please choose another one.',
+          } as InputErrorObject);
+        } else {
+          router.push('/login');
+        }
+      });
+    },
   },
 });
 </script>
