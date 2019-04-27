@@ -15,3 +15,9 @@ User.createUser = (newUser, callback) => {
     newUser.save(callback);
   });
 };
+
+User.comparePassword = (candidatePassword, hash, callback) => {
+  bcrypt.matchPasswords(candidatePassword, hash, (err, isMatch) => {
+    callback(err, isMatch);
+  });
+};

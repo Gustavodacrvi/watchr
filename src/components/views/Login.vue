@@ -1,7 +1,7 @@
 <template>
   <div class='login body' :class='$store.getters.style("background")'>
     <div>
-      <app-form v-column v-padding>
+      <app-form v-column v-padding :act='submit' :load-icon='true'>
         <app-title class='form-margin'>Login</app-title>
         <app-input class='form-margin' name='username' placeholder='Username or e-mail:' :max='50' type='text'></app-input>
         <app-input class='form-margin' name='password' placeholder='Password:' :max='50' type='password'></app-input>
@@ -15,12 +15,17 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import axios from 'axios';
 
 import Form from './../forms/Form.vue';
 import Input from './../forms/Input.vue';
 import Link from './../forms/Link.vue';
 import Button from './../forms/Button.vue';
 import Title from './../forms/Title.vue';
+
+import { FormBus } from './../forms/Form.vue';
+import { InputErrorObject } from './../interfaces';
+import router from '../../router';
 
 export default Vue.extend({
   components: {
@@ -29,6 +34,29 @@ export default Vue.extend({
     'app-route': Link,
     'app-button': Button,
     'app-title': Title,
+  },
+  methods: {
+    async submit(values: any) {
+      await axios.post('http://localhost:3000/login', {
+        username: values.username,
+        password: values.password,
+      }).then((res) => {
+        if (res.data.error === 'usernameNotFound') {
+          FormBus.$emit('error', {
+            name: 'username',
+            msg: 'Username not found.',
+          } as InputErrorObject);
+        } else if (res.data.error === 'wrongPassword') {
+          FormBus.$emit('error', {
+            name: 'password',
+            msg: 'Wrong password.',
+          } as InputErrorObject);
+        } else {
+          this.$store.commit('logUser', res.data.user);
+          router.push('/');
+        }
+      });
+    },
   },
 });
 </script>

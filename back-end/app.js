@@ -48,6 +48,25 @@ app.post('/signup', (req, res) => {
   });
 });
 
+app.post('/login', (req, res) => {
+  User.findOne({ username: req.body.username.trim() }, (err, doc) => {
+    if (doc === null) {
+      res.send({ error: 'usernameNotFound' },);
+    } else {
+      User.comparePassword(req.body.password, doc.password, (err, isMatch) => {
+        if (!isMatch) {
+          res.send({ error: 'wrongPassword' },);
+        } else {
+          res.send({ error: '', user: {
+            username: doc.username,
+            email: doc.email,
+          }},);
+        }
+      });
+    }
+  });
+});
+
 
 
 app.listen(3000);
