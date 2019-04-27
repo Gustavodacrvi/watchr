@@ -3,7 +3,7 @@
     <div>
       <app-form v-column v-padding :act='submit' :load-icon='true'>
         <app-title class='form-margin'>Login</app-title>
-        <app-input class='form-margin' name='usernameEmail' placeholder='Username or e-mail:' :max='50' type='text'></app-input>
+        <app-input class='form-margin' name='username' placeholder='Username or e-mail:' :max='50' type='text'></app-input>
         <app-input class='form-margin' name='password' placeholder='Password:' :max='50' type='password'></app-input>
         <app-route class='form-margin' to='/signup' v-margin-left='"5%"'>Don't have an account? Sign up!</app-route>
         <app-button class='form-margin'>Enter</app-button>
@@ -38,17 +38,17 @@ export default Vue.extend({
   methods: {
     async submit(values: any) {
       await axios.post('http://localhost:3000/login', {
-        usernameEmail: values.usernameEmail,
+        username: values.username,
         password: values.password,
       }).then((res) => {
-        if (res.data.error === 'usernameEmailNotFound') {
+        if (res.data.error === 'usernameNotFound') {
           FormBus.$emit('error', {
-            name: 'usernameEmail',
-            msg: 'Username or e-mail not found.',
+            name: 'username',
+            msg: 'Username not found.',
           } as InputErrorObject);
-        } else if (res.data.error === 'email') {
+        } else if (res.data.error === 'wrongPassword') {
           FormBus.$emit('error', {
-            name: 'email',
+            name: 'password',
             msg: 'Wrong password.',
           } as InputErrorObject);
         } else {

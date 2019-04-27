@@ -7,3 +7,9 @@ module.exports.getPasswordHash = (password, callback) => {
     })
   });
 };
+
+module.exports.matchPasswords = (password, hash, callback) => {
+  bcrypt.compare(password, hash, (err, isMatch) => {
+    callback(err, isMatch);
+  });
+};
