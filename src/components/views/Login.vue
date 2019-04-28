@@ -26,6 +26,7 @@ import Title from './../forms/Title.vue';
 import { FormBus } from './../forms/Form.vue';
 import { InputErrorObject } from './../interfaces';
 import router from '../../router';
+import { getCookie, setCookie } from './../../assets/javaScript/cookies';
 
 export default Vue.extend({
   components: {
@@ -53,6 +54,7 @@ export default Vue.extend({
           } as InputErrorObject);
         } else {
           this.$store.commit('logUser', res.data.user);
+          setCookie('watchrSessionToken', res.data.sessionToken, 30);
           router.push('/');
         }
       });

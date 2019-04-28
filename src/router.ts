@@ -7,6 +7,8 @@ import User from './components/views/User.vue';
 
 import store from './store';
 
+import { setCookie } from './assets/javaScript/cookies';
+
 Vue.use(Router);
 
 export default new Router({
@@ -43,6 +45,7 @@ export default new Router({
       name: 'logout',
       beforeEnter: (to, from, next) => {
         store.commit('logOut');
+        setCookie('watchrSessionToken', '', 30);
         next('/login');
       },
     },
