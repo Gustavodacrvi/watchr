@@ -25,6 +25,7 @@ app.use(bodyParser.urlencoded({ extended: false, }));
 
 const User = require('./user');
 const Token = require('./tokens');
+const Bcrypt = require('./bcrypt');
 
 const SESSION_EXPIRE_DATE = 2419200000; // 28 days
 
@@ -37,7 +38,7 @@ app.post('/signup', (req, res) => {
         if (taken) {
           res.send({ error: 'emailTaken' },);
         } else {
-          Bcrypt.getPasswordHash(user.password, (hash) => {
+          Bcrypt.getPasswordHash(req.body.password, (hash) => {
             Token.createToken((token) => {
               User.createUser({
                 username: req.body.username.trim(),
@@ -65,38 +66,6 @@ app.post('/login', (req, res) => {
         if (!isMatch) {
           res.send({ error: 'wrongPassword' },);
         } else {
-          if (User.dateExpired(doc.sessionTokenExpireDate)) {
-            Token.createToken
-          }
-        }
-      });
-    }
-  });
-
-
-
-  User.findOne({ username: req.body.username.trim() }, (err, doc) => {
-    if (doc === null) {
-      res.send({ error: 'usernameNotFound' },);
-    } else {
-      User.comparePassword(req.body.password, doc.password, (err, isMatch) => {
-        if (!isMatch) {
-          res.send({ error: 'wrongPassword' },);
-        } else {
-          if (Token.dateExpired(doc.sessionTokenExpireDate)) {
-            User.createToken((token) => {
-              res.send({ error: '', user: {
-                username: doc.username,
-                email: doc.email,
-              }, sessionToken: token});
-
-              doc.sessionToken = token;
-              doc.sessionTokenExpireDate = Date.now() + SESSION_EXPIRE_DATE;
-              doc.markModified('sessionToken');
-              doc.markModified('sessionTokenExpireDate');
-              doc.save();
-            });
-          }
           res.send({ error: '', user: {
             username: doc.username,
             email: doc.email,

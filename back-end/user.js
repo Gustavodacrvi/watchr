@@ -27,7 +27,8 @@ User.checkIfEmailIsTaken = (email, callback) => {
 };
 
 User.createUser = (user, callback) => {
-  user.save(callback);
+  let newUser = new Model(user); 
+  newUser.save(callback);
 };
 
 User.getUserByUsername = (username, callback) => {
