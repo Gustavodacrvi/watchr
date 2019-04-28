@@ -66,10 +66,25 @@ app.post('/login', (req, res) => {
         if (!isMatch) {
           res.send({ error: 'wrongPassword' },);
         } else {
-          res.send({ error: '', user: {
-            username: doc.username,
-            email: doc.email,
-          }, sessionToken: doc.sessionToken});
+          if (User.dateExpired(doc.sessionTokenExpireDate)) {
+            Token.createToken((token) => {
+              doc.sessionToken = token;
+              doc.sessionTokenExpireDate = Date.now() + SESSION_EXPIRE_DATE;
+              doc.markModified('sessionToken');
+              doc.markModified('sessionTokenExpireDate');
+              doc.save(() => {
+                res.send({ error: '', user: {
+                  username: doc.username,
+                  email: doc.email,
+                }, sessionToken: token});
+              });
+            });
+          } else {
+            res.send({ error: '', user: {
+              username: doc.username,
+              email: doc.email,
+            }, sessionToken: doc.sessionToken});
+          }
         }
       });
     }
