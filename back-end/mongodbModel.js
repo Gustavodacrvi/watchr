@@ -9,17 +9,4 @@ const userSchema = mongoose.Schema({
   sessionTokenExpireDate: Number,
 });
 
-const User = module.exports = mongoose.model('User', userSchema);
-
-User.createUser = (newUser, callback) => {
-  bcrypt.getPasswordHash(newUser.password, (err, hash) => {
-    newUser.password = hash;
-    newUser.save(callback);
-  });
-};
-
-User.comparePassword = (candidatePassword, hash, callback) => {
-  bcrypt.matchPasswords(candidatePassword, hash, (err, isMatch) => {
-    callback(err, isMatch);
-  });
-};
+module.exports = mongoose.model('User', userSchema);
