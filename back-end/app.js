@@ -113,6 +113,7 @@ app.post('/autologin', (req, res, next) => {
             username: doc.username,
             email: doc.email,
           },
+          validToken: true,
         });
         next();
       }
