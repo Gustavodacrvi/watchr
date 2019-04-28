@@ -10,13 +10,29 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import store from './store';
+import axios from 'axios';
 import NavBar from './components/navigation/Nav-bar.vue';
 import Toast from './components/generalComponents/Toast.vue';
+
+import { getCookie, setCookie } from './assets/javaScript/cookies';
 
 export default Vue.extend({
   components: {
     'nav-bar': NavBar,
     'toast': Toast,
+  },
+  beforeCreate() {
+    const sessionToken = getCookie('watchrSessionToken');
+    if (sessionToken !== '') {
+      axios.post('http://localhost:3000/autologin', { token: sessionToken }).then((res: any) => {
+        if (res.data.validToken) {
+          store.commit('logUser', res.data.user);
+        } else {
+          setCookie('watchrSessionToken', '', 30);
+        }
+      });
+    }
   },
 });
 </script>

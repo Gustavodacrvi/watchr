@@ -23,24 +23,36 @@ app.use(bodyParser.urlencoded({ extended: false, }));
 
 
 
-const User = require('./mongodbModel');
+const User = require('./user');
+const Token = require('./tokens');
+const Bcrypt = require('./bcrypt');
 
+const SESSION_EXPIRE_DATE = 2419200000; // 28 days
 
-app.post('/signup', (req, res) => {
-  User.findOne({ username: req.body.username.trim() }, (err, doc) => {
-    if (doc) {
+app.post('/signup', (req, res, next) => {
+  User.checkIfUsernameIsTaken(req.body.username, (taken) => {
+    if (taken) {
       res.send({ error: 'usernameTaken' },);
+      next();
     } else {
-      User.findOne({ email: req.body.email.trim() }, (err, doc) => {
-        if (doc) {
+      User.checkIfEmailIsTaken(req.body.email, (taken) => {
+        if (taken) {
           res.send({ error: 'emailTaken' },);
+          next();
         } else {
-          User.createUser(new User({
-            username: req.body.username.trim(),
-            email: req.body.email.trim(),
-            password: req.body.password.trim(),
-          }), () => {
-            res.send({ error: '' },);
+          Bcrypt.getPasswordHash(req.body.password, (hash) => {
+            Token.createToken((token) => {
+              User.createUser({
+                username: req.body.username.trim(),
+                email: req.body.email.trim(),
+                password: hash,
+                sessionToken: token,
+                sessionTokenExpireDate: Date.now() + SESSION_EXPIRE_DATE,
+              }, () => {
+                res.send({ error: '' },);
+                next();
+              });
+            });
           });
         }
       });
@@ -48,21 +60,63 @@ app.post('/signup', (req, res) => {
   });
 });
 
-app.post('/login', (req, res) => {
-  User.findOne({ username: req.body.username.trim() }, (err, doc) => {
-    if (doc === null) {
+app.post('/login', (req, res, next) => {
+  User.getUserByUsername(req.body.username, (doc) => {
+    if (!doc) {
       res.send({ error: 'usernameNotFound' },);
+      next();
     } else {
-      User.comparePassword(req.body.password, doc.password, (err, isMatch) => {
+      User.comparePassword(req.body.password, doc.password, (isMatch) => {
         if (!isMatch) {
           res.send({ error: 'wrongPassword' },);
+          next();
         } else {
-          res.send({ error: '', user: {
-            username: doc.username,
-            email: doc.email,
-          }},);
+          if (User.dateExpired(doc.sessionTokenExpireDate)) {
+            Token.createToken((token) => {
+              doc.sessionToken = token;
+              doc.sessionTokenExpireDate = Date.now() + SESSION_EXPIRE_DATE;
+              doc.markModified('sessionToken');
+              doc.markModified('sessionTokenExpireDate');
+              doc.save(() => {
+                res.send({ error: '', user: {
+                  username: doc.username,
+                  email: doc.email,
+                }, sessionToken: token});
+                next();
+              });
+            });
+          } else {
+            res.send({ error: '', user: {
+              username: doc.username,
+              email: doc.email,
+            }, sessionToken: doc.sessionToken});
+            next();
+          }
         }
       });
+    }
+  });
+});
+
+app.post('/autologin', (req, res, next) => {
+  User.getUserByToken(req.body.token, (doc) => {
+    if (!doc) {
+      res.send({ validToken: false },);
+      next();
+    } else {
+      if (User.dateExpired(doc.sessionTokenExpireDate)) {
+        res.send({ validToken: false },);
+        next();
+      } else {
+        res.send({
+          user: {
+            username: doc.username,
+            email: doc.email,
+          },
+          validToken: true,
+        });
+        next();
+      }
     }
   });
 });
