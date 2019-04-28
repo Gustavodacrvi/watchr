@@ -29,14 +29,16 @@ const Bcrypt = require('./bcrypt');
 
 const SESSION_EXPIRE_DATE = 2419200000; // 28 days
 
-app.post('/signup', (req, res) => {
+app.post('/signup', (req, res, next) => {
   User.checkIfUsernameIsTaken(req.body.username, (taken) => {
     if (taken) {
       res.send({ error: 'usernameTaken' },);
+      next();
     } else {
       User.checkIfEmailIsTaken(req.body.email, (taken) => {
         if (taken) {
           res.send({ error: 'emailTaken' },);
+          next();
         } else {
           Bcrypt.getPasswordHash(req.body.password, (hash) => {
             Token.createToken((token) => {
@@ -48,6 +50,7 @@ app.post('/signup', (req, res) => {
                 sessionTokenExpireDate: Date.now() + SESSION_EXPIRE_DATE,
               }, () => {
                 res.send({ error: '' },);
+                next();
               });
             });
           });
@@ -57,14 +60,16 @@ app.post('/signup', (req, res) => {
   });
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', (req, res, next) => {
   User.getUserByUsername(req.body.username, (doc) => {
     if (!doc) {
       res.send({ error: 'usernameNotFound' },);
+      next();
     } else {
       User.comparePassword(req.body.password, doc.password, (isMatch) => {
         if (!isMatch) {
           res.send({ error: 'wrongPassword' },);
+          next();
         } else {
           if (User.dateExpired(doc.sessionTokenExpireDate)) {
             Token.createToken((token) => {
@@ -77,6 +82,7 @@ app.post('/login', (req, res) => {
                   username: doc.username,
                   email: doc.email,
                 }, sessionToken: token});
+                next();
               });
             });
           } else {
@@ -84,9 +90,32 @@ app.post('/login', (req, res) => {
               username: doc.username,
               email: doc.email,
             }, sessionToken: doc.sessionToken});
+            next();
           }
         }
       });
+    }
+  });
+});
+
+app.post('/autologin', (req, res, next) => {
+  User.getUserByToken(req.body.token, (doc) => {
+    if (!doc) {
+      res.send({ validToken: false },);
+      next();
+    } else {
+      if (User.dateExpired(doc.sessionTokenExpireDate)) {
+        res.send({ validToken: false },);
+        next();
+      } else {
+        res.send({
+          user: {
+            username: doc.username,
+            email: doc.email,
+          },
+        });
+        next();
+      }
     }
   });
 });

@@ -26,8 +26,9 @@ export default Vue.extend({
   },
   methods: {
     autoLogin(): void {
-      if (getCookie('watchrSessionToken') !== '') {
-        axios.post('/autologin', (res: any) => {
+      const sessionToken = getCookie('watchrSessionToken');
+      if (sessionToken !== '') {
+        axios.post('/autologin', { token: sessionToken }).then((res: any) => {
           if (res.data.validToken) {
             this.$store.commit('logUser', res.data.user);
           } else {

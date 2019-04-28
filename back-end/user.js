@@ -53,3 +53,13 @@ User.dateExpired = (expireDate) => {
   }
   return false;
 };
+
+User.getUserByToken = (token, callback) => {
+  Model.findOne({ sessionToken: token }, (err, doc) => {
+    if (doc === null) {
+      callback(false);
+    } else {
+      callback(doc);
+    }
+  });
+};
