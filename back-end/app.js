@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const crypto = require('crypto');
 
 const mongoose = require('mongoose');
 
@@ -25,6 +24,7 @@ app.use(bodyParser.urlencoded({ extended: false, }));
 
 
 const User = require('./mongodbModel');
+const Token = require('./tokens');
 
 
 app.post('/signup', (req, res) => {
@@ -36,8 +36,7 @@ app.post('/signup', (req, res) => {
         if (doc) {
           res.send({ error: 'emailTaken' },);
         } else {
-          crypto.randomBytes(20, (err, buf) => {
-            const token = buf.toString('hex');
+          User.createToken((token) => {
             User.createUser(new User({
               username: req.body.username.trim(),
               email: req.body.email.trim(),
@@ -63,10 +62,14 @@ app.post('/login', (req, res) => {
         if (!isMatch) {
           res.send({ error: 'wrongPassword' },);
         } else {
+          if (Token.dateExpired(doc.sessionTokenExpireDate)) {
+
+          }
+          
           res.send({ error: '', user: {
             username: doc.username,
             email: doc.email,
-          }, sessionToken: token});
+          }, sessionToken: doc.token});
         }
       });
     }
