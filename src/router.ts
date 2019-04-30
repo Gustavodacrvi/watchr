@@ -11,27 +11,32 @@ import { setCookie } from './assets/javaScript/cookies';
 
 Vue.use(Router);
 
+const lazyLoad = (view: any) => {
+  return () => import(`@/components/views/${view}.vue`);
+};
+
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
       name: 'home',
-      component: Home,
+      component: lazyLoad('Home'),
     },
     {
       path: '/login',
       name: 'login',
-      component: Login,
+      component: lazyLoad('Login'),
     },
     {
       path: '/signup',
       name: 'signup',
-      component: Signup,
+      component: lazyLoad('Signup'),
     },
     {
       path: '/user',
       name: 'user',
-      component: User,
+      component: lazyLoad('User'),
       beforeEnter: (to, from, next) => {
         if (store.getters.isAuthenticated) {
           next();
