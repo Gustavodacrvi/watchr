@@ -26,6 +26,10 @@ span, a, p {
   color: #9c9696;
 }
 
+.mainColor-light {
+  color: #8cd9b6;  
+}
+
 .card-light, .card-round-light {
   background-color: #fff;
   box-shadow: 0 2px 6px rgba(220,220,220,0.4);

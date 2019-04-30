@@ -2,7 +2,11 @@
   color: #9c9696;
 }
 
-.icon-color:hover {
+.icon-main-color-light {
+  color: #8cd9b6;
+}
+
+.icon-color-light:hover {
   transition-duration: .2s;
   color: #8cd9b6;
 }

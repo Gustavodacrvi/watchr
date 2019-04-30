@@ -39,5 +39,9 @@ i.big {
   font-size: 25px;
 }
 
+i.massive {
+  font-size: 100px;
+}
+
 </style>
 

@@ -2,7 +2,8 @@
   <div id='body' :class='$store.getters.style("bodyBackground")'>
     <nav-bar></nav-bar>
     <transition :name='$store.getters.style("router-view")' mode='out-in'>
-      <router-view/>
+      <loading v-if='$root.loading'></loading>
+      <router-view v-else/>
     </transition>
     <toast></toast>
   </div>
@@ -14,6 +15,7 @@ import store from './store';
 import axios from 'axios';
 import NavBar from './components/navigation/Nav-bar.vue';
 import Toast from './components/generalComponents/Toast.vue';
+import Loading from './components/generalComponents/Loading.vue';
 
 import { getCookie, setCookie } from './assets/javaScript/cookies';
 
@@ -21,6 +23,7 @@ export default Vue.extend({
   components: {
     'nav-bar': NavBar,
     'toast': Toast,
+    'loading': Loading,
   },
   beforeCreate() {
     const sessionToken = getCookie('watchrSessionToken');
