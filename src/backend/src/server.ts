@@ -1,17 +1,15 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
+import dotenv from '.env';
+dotenv.config()
 
-const mongoose = require('mongoose');
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+
+import { createDatabaseConnection, User } from './implementation';
+createDatabaseConnection();
 
 const app = express();
 
-
-
-mongoose.connect(process.env.DATABASE, {
-  useNewUrlParser: true,
-});
-const connection = mongoose.connection;
 
 const corsOptions = {
   origin: 'http://localhost:8080',
@@ -22,26 +20,21 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false, }));
 
 
+const SESSION_EXPIRE_DATE = 2419200000;
 
-const User = require('./user');
-const Token = require('./tokens');
-const Bcrypt = require('./bcrypt');
-
-const SESSION_EXPIRE_DATE = 2419200000; // 28 days
-
-app.post('/signup', (req, res, next) => {
-  User.checkIfUsernameIsTaken(req.body.username, (taken) => {
-    if (taken) {
+app.post('/signup', (req: any, res: any, next: any) => {
+  User.checkIfUsernameIsTaken(req.body.username, (usernameTaken: boolean) => {
+    if (usernameTaken) {
       res.send({ error: 'usernameTaken' },);
       next();
     } else {
-      User.checkIfEmailIsTaken(req.body.email, (taken) => {
-        if (taken) {
+      User.checkIfEmailIsTaken(req.body.email, (emailTaken: boolean) => {
+        if (emailTaken) {
           res.send({ error: 'emailTaken' },);
           next();
         } else {
-          Bcrypt.getPasswordHash(req.body.password, (hash) => {
-            Token.createToken((token) => {
+          User.getPasswordHash(req.body.password, (hash: any) => {
+            User.createToken((token: string) => {
               User.createUser({
                 username: req.body.username.trim(),
                 email: req.body.email.trim(),
@@ -60,19 +53,19 @@ app.post('/signup', (req, res, next) => {
   });
 });
 
-app.post('/login', (req, res, next) => {
-  User.getUserByUsername(req.body.username, (doc) => {
+app.post('/login', (req: any, res: any, next: any) => {
+  User.getUserByUsername(req.body.username, (doc: any) => {
     if (!doc) {
       res.send({ error: 'usernameNotFound' },);
       next();
     } else {
-      User.comparePassword(req.body.password, doc.password, (isMatch) => {
+      User.comparePassword(req.body.password, doc.password, (isMatch: boolean) => {
         if (!isMatch) {
           res.send({ error: 'wrongPassword' },);
           next();
         } else {
           if (User.dateExpired(doc.sessionTokenExpireDate)) {
-            Token.createToken((token) => {
+            User.createToken((token: string) => {
               doc.sessionToken = token;
               doc.sessionTokenExpireDate = Date.now() + SESSION_EXPIRE_DATE;
               doc.markModified('sessionToken');
@@ -98,8 +91,8 @@ app.post('/login', (req, res, next) => {
   });
 });
 
-app.post('/autologin', (req, res, next) => {
-  User.getUserByToken(req.body.token, (doc) => {
+app.post('/autologin', (req: any, res: any, next: any) => {
+  User.getUserByToken(req.body.token, (doc: any) => {
     if (!doc) {
       res.send({ validToken: false },);
       next();
@@ -121,6 +114,3 @@ app.post('/autologin', (req, res, next) => {
   });
 });
 
-
-
-app.listen(3000);
