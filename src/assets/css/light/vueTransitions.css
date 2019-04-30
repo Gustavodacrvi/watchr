@@ -17,3 +17,10 @@
 .router-view-light-enter, .router-view-light-leave-to {
   opacity: 0;
 }
+
+.nav-link-light-enter-active, .nav-link-light-leave-active {
+  transition: opacity .3s;
+}
+.nav-link-light-enter, .nav-link-light-leave-to {
+  opacity: 0;
+}

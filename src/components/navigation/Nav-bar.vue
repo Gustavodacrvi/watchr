@@ -3,13 +3,13 @@
     <section>
     </section>
     <section>
-      <nav-link to='/'>Home</nav-link>
-
-      <nav-link to='/login'>Login</nav-link>
-
-      <nav-link to='/signup'>Signup</nav-link>
-      <nav-link v-if='$store.getters.isAuthenticated' to='/user'>User</nav-link>
-      <nav-link v-if='$store.getters.isAuthenticated' to='/logout'>Logout</nav-link>
+      <transition-group :name='$store.getters.style("nav-link")'>
+        <nav-link to='/' key='nav-link-home'>Home</nav-link>
+        <nav-link to='/login' key='nav-link-login'>Login</nav-link>
+        <nav-link to='/signup' key='nav-link-signup'>Signup</nav-link>
+        <nav-link v-if='$store.getters.isAuthenticated' to='/user' key='nav-link-user'>User</nav-link>
+        <nav-link v-if='$store.getters.isAuthenticated' to='/logout' key='nav-link-logout'>Logout</nav-link>
+      </transition-group>
     </section>
     <section>
     </section>
