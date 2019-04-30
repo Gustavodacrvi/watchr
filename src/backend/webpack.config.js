@@ -1,6 +1,6 @@
 
 module.exports = {
-  entry: "./src/app.ts",
+  entry: "./src/server.ts",
   target: "node",
   module: {
     rules: [
