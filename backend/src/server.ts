@@ -8,6 +8,8 @@ import cors from 'cors';
 import { createDatabaseConnection, User } from './implementation';
 createDatabaseConnection();
 
+import { UserObj, CallbackFunction } from './interfaces';
+
 const app = express();
 
 
@@ -22,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 const SESSION_EXPIRE_DATE = 2419200000;
 
-app.post('/signup', (req: any, res: any, next: any) => {
+app.post('/signup', (req: any, res: any, next: CallableFunction) => {
   User.checkIfUsernameIsTaken(req.body.username, (usernameTaken: boolean) => {
     if (usernameTaken) {
       res.send({ error: 'usernameTaken' });
@@ -33,7 +35,7 @@ app.post('/signup', (req: any, res: any, next: any) => {
           res.send({ error: 'emailTaken' });
           next();
         } else {
-          User.getPasswordHash(req.body.password, (hash: any) => {
+          User.getPasswordHash(req.body.password, (hash: string) => {
             User.createToken((token: string) => {
               User.createUser({
                 username: req.body.username.trim(),
@@ -53,8 +55,8 @@ app.post('/signup', (req: any, res: any, next: any) => {
   });
 });
 
-app.post('/login', (req: any, res: any, next: any) => {
-  User.getUserByUsername(req.body.username, (doc: any) => {
+app.post('/login', (req: any, res: any, next: CallableFunction) => {
+  User.getUserByUsername(req.body.username, (doc: UserObj) => {
     if (!doc) {
       res.send({ error: 'usernameNotFound' });
       next();
@@ -91,8 +93,8 @@ app.post('/login', (req: any, res: any, next: any) => {
   });
 });
 
-app.post('/autologin', (req: any, res: any, next: any) => {
-  User.getUserByToken(req.body.token, (doc: any) => {
+app.post('/autologin', (req: any, res: any, next: CallableFunction) => {
+  User.getUserByToken(req.body.token, (doc: UserObj) => {
     if (!doc) {
       res.send({ validToken: false });
       next();

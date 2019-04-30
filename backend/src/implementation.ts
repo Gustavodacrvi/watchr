@@ -12,6 +12,8 @@ const userSchema = mongoose.Schema({
 
 export const User = mongoose.model('User', userSchema);
 
+import { UserObj } from './interfaces';
+
 export const createDatabaseConnection = () => {
   mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true,
@@ -19,8 +21,8 @@ export const createDatabaseConnection = () => {
   const connection = mongoose.connection;
 };
 
-User.checkIfEmailIsTaken = (email: string, callback: any) => {
-  User.findOne({ email: email.trim() }, (err: any, doc: any) => {
+User.checkIfEmailIsTaken = (email: string, callback: CallableFunction) => {
+  User.findOne({ email: email.trim() }, (err: any, doc: UserObj) => {
     if (doc) {
       callback(true);
     } else {
@@ -29,8 +31,8 @@ User.checkIfEmailIsTaken = (email: string, callback: any) => {
   });
 };
 
-User.checkIfUsernameIsTaken = (username: string, callback: any) => {
-  User.findOne({ username: username.trim() }, (err: any, doc: any) => {
+User.checkIfUsernameIsTaken = (username: string, callback: CallableFunction) => {
+  User.findOne({ username: username.trim() }, (err: any, doc: UserObj) => {
     if (doc) {
       callback(true);
     } else {
@@ -39,13 +41,13 @@ User.checkIfUsernameIsTaken = (username: string, callback: any) => {
   });
 };
 
-User.createUser = (user: object, callback: any) => {
+User.createUser = (user: UserObj, callback: CallableFunction) => {
   const newUser = new User(user);
   newUser.save(callback);
 };
 
-User.getUserByUsername = (username: string, callback: any) => {
-  User.findOne({ username: username.trim() }, (err: any, doc: any) => {
+User.getUserByUsername = (username: string, callback: CallableFunction) => {
+  User.findOne({ username: username.trim() }, (err: any, doc: UserObj) => {
     if (doc === null) {
       callback(false);
     } else {
@@ -54,14 +56,14 @@ User.getUserByUsername = (username: string, callback: any) => {
   });
 };
 
-User.comparePassword = (candidatePassword: string, hash: string, callback: any) => {
+User.comparePassword = (candidatePassword: string, hash: string, callback: CallableFunction) => {
   bcrypt.compare(candidatePassword, hash, (err: any, isMatch: boolean) => {
     callback(isMatch);
   });
 };
 
-User.getPasswordHash = (password: string, callback: any) => {
-  bcrypt.genSalt(10, (err: any, salt: any) => {
+User.getPasswordHash = (password: string, callback: CallableFunction) => {
+  bcrypt.genSalt(10, (err: any, salt: string) => {
     bcrypt.hash(password, salt, (err2: any, hash: string) => {
       callback(hash);
     });
@@ -75,8 +77,8 @@ User.dateExpired = (expireDate: number) => {
   return false;
 };
 
-User.getUserByToken = (token: string, callback: any) => {
-  User.findOne({ sessionToken: token }, (err: any, doc: any) => {
+User.getUserByToken = (token: string, callback: CallableFunction) => {
+  User.findOne({ sessionToken: token }, (err: any, doc: UserObj) => {
     if (doc === null) {
       callback(false);
     } else {
