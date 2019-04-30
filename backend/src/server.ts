@@ -1,5 +1,5 @@
-import dotenv from '.env';
-dotenv.config()
+import dotenv from 'dotenv';
+dotenv.config();
 
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -17,7 +17,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false, }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 
 const SESSION_EXPIRE_DATE = 2419200000;
@@ -25,12 +25,12 @@ const SESSION_EXPIRE_DATE = 2419200000;
 app.post('/signup', (req: any, res: any, next: any) => {
   User.checkIfUsernameIsTaken(req.body.username, (usernameTaken: boolean) => {
     if (usernameTaken) {
-      res.send({ error: 'usernameTaken' },);
+      res.send({ error: 'usernameTaken' });
       next();
     } else {
       User.checkIfEmailIsTaken(req.body.email, (emailTaken: boolean) => {
         if (emailTaken) {
-          res.send({ error: 'emailTaken' },);
+          res.send({ error: 'emailTaken' });
           next();
         } else {
           User.getPasswordHash(req.body.password, (hash: any) => {
@@ -42,7 +42,7 @@ app.post('/signup', (req: any, res: any, next: any) => {
                 sessionToken: token,
                 sessionTokenExpireDate: Date.now() + SESSION_EXPIRE_DATE,
               }, () => {
-                res.send({ error: '' },);
+                res.send({ error: '' });
                 next();
               });
             });
@@ -56,12 +56,12 @@ app.post('/signup', (req: any, res: any, next: any) => {
 app.post('/login', (req: any, res: any, next: any) => {
   User.getUserByUsername(req.body.username, (doc: any) => {
     if (!doc) {
-      res.send({ error: 'usernameNotFound' },);
+      res.send({ error: 'usernameNotFound' });
       next();
     } else {
       User.comparePassword(req.body.password, doc.password, (isMatch: boolean) => {
         if (!isMatch) {
-          res.send({ error: 'wrongPassword' },);
+          res.send({ error: 'wrongPassword' });
           next();
         } else {
           if (User.dateExpired(doc.sessionTokenExpireDate)) {
@@ -94,11 +94,11 @@ app.post('/login', (req: any, res: any, next: any) => {
 app.post('/autologin', (req: any, res: any, next: any) => {
   User.getUserByToken(req.body.token, (doc: any) => {
     if (!doc) {
-      res.send({ validToken: false },);
+      res.send({ validToken: false });
       next();
     } else {
       if (User.dateExpired(doc.sessionTokenExpireDate)) {
-        res.send({ validToken: false },);
+        res.send({ validToken: false });
         next();
       } else {
         res.send({
@@ -114,3 +114,4 @@ app.post('/autologin', (req: any, res: any, next: any) => {
   });
 });
 
+app.listen(3000);

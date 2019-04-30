@@ -1,8 +1,8 @@
 # GTDF2
 
-## Project setup
+## Initialize project for development
 ```
-npm install
+'npm run serve' in the root directory and on the 'backend' directory
 ```
 
 ### Compiles and hot-reloads for development

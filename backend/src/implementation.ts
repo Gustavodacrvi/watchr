@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 
 const userSchema = mongoose.Schema({
@@ -40,7 +40,7 @@ User.checkIfUsernameIsTaken = (username: string, callback: any) => {
 };
 
 User.createUser = (user: object, callback: any) => {
-  let newUser = new User(user); 
+  const newUser = new User(user);
   newUser.save(callback);
 };
 
@@ -62,9 +62,9 @@ User.comparePassword = (candidatePassword: string, hash: string, callback: any) 
 
 User.getPasswordHash = (password: string, callback: any) => {
   bcrypt.genSalt(10, (err: any, salt: any) => {
-    bcrypt.hash(password, salt, (err: any, hash: string) => {
+    bcrypt.hash(password, salt, (err2: any, hash: string) => {
       callback(hash);
-    })
+    });
   });
 };
 
