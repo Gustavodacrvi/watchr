@@ -1,5 +1,5 @@
 <template>
-  <i :class='"fa fa-" + ico + " " + sz + " icon " + $store.getters.style("icon")' @click='$emit("click")'></i>  
+  <i :class='`fa fa-${ico} ${sz} icon` + $store.getters.style("icon")' @click='$emit("click")'></i>  
 </template>
 
 <script lang="ts">
