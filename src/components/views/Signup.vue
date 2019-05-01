@@ -22,6 +22,8 @@ import Button from './../forms/Button.vue';
 import Title from './../forms/Title.vue';
 import ConfirmPassword from './../forms/ConfirmPassword.vue';
 import router from '../../router';
+import { ToastBus } from './../generalComponents/Toast.vue';
+import { ToastObj } from './../interfaces';
 
 import { FormBus } from './../forms/Form.vue';
 import { InputErrorObject } from './../interfaces';
@@ -53,6 +55,11 @@ export default Vue.extend({
           } as InputErrorObject);
         } else {
           router.push('/login');
+          ToastBus.$emit('addToast', {
+            msg: 'You have successfully created an account and can now log in!',
+            duration_seconds: 5,
+            type: 'success',
+          } as ToastObj);
         }
       });
     },

@@ -1,11 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from './components/views/Home.vue';
-import Login from './components/views/Login.vue';
-import Signup from './components/views/Signup.vue';
-import User from './components/views/User.vue';
 
 import store from './store';
+// This warning doesn't make sense, just leave it there.
+import { ToastBus } from './components/generalComponents/Toast.vue';
+import { ToastObj } from './components/interfaces';
 
 import { setCookie } from './assets/javaScript/cookies';
 
@@ -51,6 +50,11 @@ export default new Router({
       beforeEnter: (to, from, next) => {
         store.commit('logOut');
         setCookie('watchrSessionToken', '', 30);
+        ToastBus.$emit('addToast', {
+          msg: 'You have successfully logged out!',
+          duration_seconds: 5,
+          type: 'success',
+        } as ToastObj);
         next('/login');
       },
     },
