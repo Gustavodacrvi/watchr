@@ -38,9 +38,7 @@ div.nav-link-light:hover > a, .active-nav-link-light > a {
 }
 
 .magic-line-light {
-  height: 3px;
   background-color: #FE684F;
-  bottom: 0;
 }
 
 .heading-light {

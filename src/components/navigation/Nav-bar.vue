@@ -20,16 +20,12 @@
 <script lang="ts">
 import Vue from 'vue';
 import NavLink from './Nav-link.vue';
-
-Vue.component('magicline', {
-  template: `
-    <span></span>
-  `,
-});
+import Icon from './../generalComponents/Icon.vue';
 
 export default Vue.extend({
   components: {
     'nav-link': NavLink,
+    'icon': Icon,
   },
   methods: {
     moveMagicLine(str: string) {
@@ -59,6 +55,8 @@ export default Vue.extend({
 .magicLine {
   position: absolute;
   transition-duration: .2s;
+  bottom: 0;
+  height: 3px;
 }
 
 nav {
@@ -89,4 +87,3 @@ nav > :nth-child(3) {
 }
 
 </style>
-
