@@ -1,5 +1,5 @@
 /* 
-  mainColor: #8cd9b6;
+  mainColor: #FE5443;
   fourth: #ecf9f3;
 */
 
@@ -19,15 +19,15 @@ body {
 }
 
 .bodyBackground-light {
-  background-color: #ecf9f3;
+  background-color: #f8f6f6;
 }
 
 span, a, p {
-  color: #9c9696;
+  color: #ADADAD;
 }
 
 .mainColor-light {
-  color: #8cd9b6;  
+  color: #FE5443;  
 }
 
 .card-light, .card-round-light {
@@ -40,17 +40,17 @@ span, a, p {
 }
 
 div.nav-link-light:hover > a, .active-nav-link-light > a {
-  color: #8cd9b6;
-  border-bottom: 3px solid #8cd9b6;
+  color: #FE5443;
+  border-bottom: 3px solid #FE5443;
 }
 
 .heading-light {
-  color: #8cd9b6;
+  color: #FE5443;
   margin: 15px 0;
 }
 
 .span-alert-error-light {
-  color: #ec554d;
+  color: #ecec4b;
 }
 
 .route-link-light {
