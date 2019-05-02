@@ -1,5 +1,5 @@
 /* 
-  mainColor: #FE5443;
+  mainColor: #FE684F;
   fourth: #ecf9f3;
 */
 
@@ -21,7 +21,7 @@ span, a, p {
 }
 
 .mainColor-light {
-  color: #FE5443;  
+  color: #FE684F;  
 }
 
 .card-light, .card-round-light {
@@ -34,12 +34,17 @@ span, a, p {
 }
 
 div.nav-link-light:hover > a, .active-nav-link-light > a {
-  color: #FE5443;
-  border-bottom: 3px solid #FE5443;
+  color: #FE684F;
+}
+
+.magic-line-light {
+  height: 3px;
+  background-color: #FE684F;
+  bottom: 0;
 }
 
 .heading-light {
-  color: #FE5443;
+  color: #FE684F;
   margin: 15px 0;
 }
 

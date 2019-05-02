@@ -3,10 +3,11 @@
     <section>
     </section>
     <section>
+      <span class='magicLine' ref='magicLine' :class='$store.getters.style("magic-line")'></span>
       <transition-group :name='$store.getters.style("nav-link")'>
-        <nav-link to='/' key='nav-link-home'>Home</nav-link>
-        <nav-link to='/login' key='nav-link-login'>Login</nav-link>
-        <nav-link to='/signup' key='nav-link-signup'>Signup</nav-link>
+        <nav-link to='/' ref='/' key='nav-link-home'>Home</nav-link>
+        <nav-link to='/login' ref='/login' key='nav-link-login'>Login</nav-link>
+        <nav-link to='/signup' ref='/signup' key='nav-link-signup'>Signup</nav-link>
         <nav-link v-if='$store.getters.isAuthenticated' to='/user' key='nav-link-user'>User</nav-link>
         <nav-link v-if='$store.getters.isAuthenticated' to='/logout' key='nav-link-logout'>Logout</nav-link>
       </transition-group>
@@ -20,15 +21,46 @@
 import Vue from 'vue';
 import NavLink from './Nav-link.vue';
 
+Vue.component('magicline', {
+  template: `
+    <span></span>
+  `,
+});
+
 export default Vue.extend({
   components: {
     'nav-link': NavLink,
+  },
+  methods: {
+    moveMagicLine(str: string) {
+      // Those warning don't make sense, ignore them
+      const el: any = this.$refs[str];
+      const magicLineStr = 'magicLine';
+      const magicLine: any = this.$refs[magicLineStr];
+
+      const left: any = el.$el.offsetLeft;
+      const width: any = el.$el.clientWidth;
+
+      magicLine.style.left = left + 'px';
+      magicLine.style.width = width + 'px';
+    },
+  },
+  watch: {
+    '$route.path'() {
+      this.moveMagicLine(this.$route.path);
+    },
   },
 });
 </script>
 
 
 <style scoped>
+
+.magicLine {
+  position: absolute;
+  transition-duration: .2s;
+}
+
 nav {
   height: 48px;
   margin: 25px 50px;

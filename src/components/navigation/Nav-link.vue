@@ -1,5 +1,5 @@
 <template>
-  <div :class='classObject'>
+  <div :class='classObject' @click='$emit("click", to)'>
     <router-link :to='to'>
       <slot></slot>
     </router-link>
@@ -12,6 +12,7 @@ import router from '../../router';
 export default Vue.extend({
   props: {
     to: String,
+    value: String,
   },
   computed: {
     isActive(): boolean {
@@ -43,7 +44,7 @@ div:hover {
 a {
   display: inline-block;
   padding: 0 12px 16px 12px;
-  margin: 0 6px;
+  margin: 0 4px;
   text-decoration: none;
   transition-duration: .1s;
 }
