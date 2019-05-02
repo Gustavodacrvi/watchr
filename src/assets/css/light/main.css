@@ -3,14 +3,8 @@
   fourth: #ecf9f3;
 */
 
-
 @font-face {
   font-family: 'Work Sans';
-  src: url('/assets/fonts/WorkSans-Light.otf');
-}
-
-@font-face {
-  font-family: 'Work Sans Regular';
   src: url('/assets/fonts/WorkSans-Regular.otf');
 }
 

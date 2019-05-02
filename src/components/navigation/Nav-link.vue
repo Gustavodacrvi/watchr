@@ -33,6 +33,7 @@ div {
   position: relative;
   display: inline-block;
   height: 100%;
+  font-size: 1.15em;
 }
 
 div:hover {
@@ -41,8 +42,8 @@ div:hover {
 
 a {
   display: inline-block;
-  padding: 12px 3px;
-  margin: 2px 5px;
+  padding: 0 12px 16px 12px;
+  margin: 0 6px;
   text-decoration: none;
   transition-duration: .1s;
 }

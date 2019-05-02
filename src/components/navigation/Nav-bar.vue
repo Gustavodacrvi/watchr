@@ -31,7 +31,7 @@ export default Vue.extend({
 <style scoped>
 nav {
   height: 48px;
-  margin: 20px;
+  margin: 25px 50px;
   position: relative;
 }
 
