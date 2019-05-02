@@ -1,5 +1,5 @@
 <template>
-  <nav :class="$store.getters.style('card')">
+  <nav>
     <section>
     </section>
     <section>
@@ -30,22 +30,30 @@ export default Vue.extend({
 
 <style scoped>
 nav {
-  width: 90%;
   height: 48px;
-  padding: 0 5%;
+  margin: 20px;
   position: relative;
-
-  display: flex;
-  align-items: center;
 }
 
 nav > section {
   height: 100%;
-  flex-basis: 40%;
+}
+
+nav > :nth-child(2) {
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 nav > :nth-child(1) {
-  flex-basis: 20%;
+  clear: left;
+  float: left;
+}
+
+nav > :nth-child(3) {
+  float: right;
+  clear: right;
 }
 
 </style>
