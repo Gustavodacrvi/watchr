@@ -1,12 +1,13 @@
 <template>
-  <nav :class="$store.getters.style('card')">
+  <nav>
     <section>
     </section>
     <section>
+      <span class='magicLine' ref='magicLine' :class='$store.getters.style("magic-line")'></span>
       <transition-group :name='$store.getters.style("nav-link")'>
-        <nav-link to='/' key='nav-link-home'>Home</nav-link>
-        <nav-link to='/login' key='nav-link-login'>Login</nav-link>
-        <nav-link to='/signup' key='nav-link-signup'>Signup</nav-link>
+        <nav-link to='/' ref='/' key='nav-link-home'>Home</nav-link>
+        <nav-link to='/login' ref='/login' key='nav-link-login'>Login</nav-link>
+        <nav-link to='/signup' ref='/signup' key='nav-link-signup'>Signup</nav-link>
         <nav-link v-if='$store.getters.isAuthenticated' to='/user' key='nav-link-user'>User</nav-link>
         <nav-link v-if='$store.getters.isAuthenticated' to='/logout' key='nav-link-logout'>Logout</nav-link>
       </transition-group>
@@ -19,34 +20,70 @@
 <script lang="ts">
 import Vue from 'vue';
 import NavLink from './Nav-link.vue';
+import Icon from './../generalComponents/Icon.vue';
 
 export default Vue.extend({
   components: {
     'nav-link': NavLink,
+    'icon': Icon,
+  },
+  methods: {
+    moveMagicLine(str: string) {
+      // Those warning don't make sense, ignore them
+      const el: any = this.$refs[str];
+      const magicLineStr = 'magicLine';
+      const magicLine: any = this.$refs[magicLineStr];
+
+      const left: any = el.$el.offsetLeft;
+      const width: any = el.$el.clientWidth;
+
+      magicLine.style.left = left + 'px';
+      magicLine.style.width = width + 'px';
+    },
+  },
+  watch: {
+    '$route.path'() {
+      this.moveMagicLine(this.$route.path);
+    },
   },
 });
 </script>
 
 
 <style scoped>
-nav {
-  width: 90%;
-  height: 48px;
-  padding: 0 5%;
-  position: relative;
 
-  display: flex;
-  align-items: center;
+.magicLine {
+  position: absolute;
+  transition-duration: .2s;
+  bottom: 0;
+  height: 3px;
+}
+
+nav {
+  height: 48px;
+  margin: 25px 50px;
+  position: relative;
 }
 
 nav > section {
   height: 100%;
-  flex-basis: 40%;
+}
+
+nav > :nth-child(2) {
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 nav > :nth-child(1) {
-  flex-basis: 20%;
+  clear: left;
+  float: left;
+}
+
+nav > :nth-child(3) {
+  float: right;
+  clear: right;
 }
 
 </style>
-

@@ -76,7 +76,7 @@ div.signup {
 }
 
 div.signup > div {
-  margin-top: 110px;
+  margin-top: 90px;
   flex-basis: 475px;
 }
 

@@ -3,10 +3,10 @@
 }
 
 .icon-main-color-light {
-  color: #8cd9b6;
+  color: #FE684F;
 }
 
-.icon-color-light:hover {
+.icon-color-hover-light:hover {
   transition-duration: .2s;
-  color: #8cd9b6;
+  color: #FE684F;
 }

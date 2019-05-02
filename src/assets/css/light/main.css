@@ -1,16 +1,10 @@
 /* 
-  mainColor: #8cd9b6;
+  mainColor: #FE684F;
   fourth: #ecf9f3;
 */
 
-
 @font-face {
   font-family: 'Work Sans';
-  src: url('/assets/fonts/WorkSans-Light.otf');
-}
-
-@font-face {
-  font-family: 'Work Sans Regular';
   src: url('/assets/fonts/WorkSans-Regular.otf');
 }
 
@@ -19,15 +13,15 @@ body {
 }
 
 .bodyBackground-light {
-  background-color: #ecf9f3;
+  background-color: #f8f6f6;
 }
 
 span, a, p {
-  color: #9c9696;
+  color: #ADADAD;
 }
 
 .mainColor-light {
-  color: #8cd9b6;  
+  color: #FE684F;  
 }
 
 .card-light, .card-round-light {
@@ -40,17 +34,20 @@ span, a, p {
 }
 
 div.nav-link-light:hover > a, .active-nav-link-light > a {
-  color: #8cd9b6;
-  border-bottom: 3px solid #8cd9b6;
+  color: #FE684F;
+}
+
+.magic-line-light {
+  background-color: #FE684F;
 }
 
 .heading-light {
-  color: #8cd9b6;
+  color: #FE684F;
   margin: 15px 0;
 }
 
 .span-alert-error-light {
-  color: #ec554d;
+  color: #ecec4b;
 }
 
 .route-link-light {
