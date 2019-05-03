@@ -1,0 +1,17 @@
+input.input.dark {
+  background-color: #363636;
+  color: #9C9696;
+}
+
+.wrong-input.dark {
+  border: 2px solid #ecec4b !important;
+  background-color: #363636 !important;
+}
+
+input.input.dark:focus {
+  border: 2px solid #FE684F;
+}
+
+input.input.dark::placeholder {
+  color: #9d9595;
+}

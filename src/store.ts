@@ -25,6 +25,13 @@ export default new Vuex.Store({
     logOut(state: any) {
       state.user = undefined;
     },
+    invertTheme(state: any) {
+      if (state.style === 'light') {
+        state.style = 'dark';
+      } else {
+        state.style = 'light';
+      }
+    },
   },
   actions: {
 

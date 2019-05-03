@@ -1,15 +1,6 @@
 input.input.light {
-  position: relative;
-  border: none;
-  border-radius: 6px;
-  padding: 8px;
   background-color: #F6F7F9;
-  outline: none;
-  font-family: 'Work Sans';
   color: #6a6262;
-  font-size: 1.01em;
-  transition-duration: .2s;
-  bottom: 0;
 }
 
 .wrong-input.light {
@@ -19,7 +10,6 @@ input.input.light {
 
 input.input.light:focus {
   border: 2px solid #FE684F;
-  bottom: 2px;
 }
 
 input.input.light::placeholder {

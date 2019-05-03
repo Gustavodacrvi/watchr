@@ -13,7 +13,7 @@
       </transition-group>
     </section>
     <section>
-      <icon sz='big' ico='adjust' v-cursor v-color-hover></icon>
+      <icon class='icon-color-hover pointer' sz='big' ico='adjust' @click='invertTheme'></icon>
     </section>
   </nav>
 </template>
@@ -37,6 +37,9 @@ export default Vue.extend({
     this.moveMagicLine(this.$route.path);
   },
   methods: {
+    invertTheme(): void {
+      this.$store.commit('invertTheme');
+    },
     navigate(route: string) {
       this.$router.push(route);
     },

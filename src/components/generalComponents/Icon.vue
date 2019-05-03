@@ -5,18 +5,6 @@
 <script lang="ts">
 import Vue from 'vue';
 
-Vue.directive('cursor', {
-  bind(el, binding) {
-    el.classList.add('pointer');
-  },
-});
-
-Vue.directive('color-hover', {
-  bind(el, binding) {
-    el.classList.add('icon-color-hover');
-  },
-});
-
 export default Vue.extend({
   props: {
     sz: String,

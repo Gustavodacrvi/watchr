@@ -3,8 +3,8 @@
     <div>
       <div>
         <input class='input' :class='[wrongInput, $store.state.style]' :name='name' :placeholder='placeholder' :type='inputType' autocomplete='off' v-model='value'/>
-        <icon @click='togglePassword' v-show='isPassword && visiblePassword' sz='medium' ico='eye' v-cursor></icon>
-        <icon @click='togglePassword' v-show='isPassword && !visiblePassword' sz='medium' ico='eye-slash' v-cursor></icon>
+        <icon class='pointer' @click='togglePassword' v-show='isPassword && visiblePassword' sz='medium' ico='eye'></icon>
+        <icon class='pointer' @click='togglePassword' v-show='isPassword && !visiblePassword' sz='medium' ico='eye-slash'></icon>
       </div>
       <alert type='error' v-show='errorType === "emptyValue"'>This field cannot be empty.</alert>
       <alert type='error' v-show='errorType === "reachedMaxCharacters"'>Reached maximum number of characters.</alert>
