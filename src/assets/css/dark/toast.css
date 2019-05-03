@@ -1,14 +1,11 @@
 .toast-success.dark {
-  border: 2px solid #8cd9b6;
   background-color: #282828;
 }
 
 .toast-error.dark {
-  border: 2px solid #ec554d;
   background-color: #282828;
 }
 
 .toast-warning.dark {
-  border: 2px solid #ecec4b;
   background-color: #282828;
 }

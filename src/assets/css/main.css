@@ -93,7 +93,7 @@ div.nav-link:hover > a, .active-nav-link > a {
   color: #FE684F;
 }
 
-/* ICON */
+/* INPUT */
 
 input.input {
   position: relative;
@@ -107,6 +107,18 @@ input.input {
   bottom: 0;
 }
 
+.wrong-input {
+  border: 2px solid #ecec4b !important;
+}
+
+input.input:focus {
+  border: 2px solid #FE684F;
+}
+
+input.input::placeholder {
+  color: #9d9595;
+}
+
 /* TOAST */
 
 .toast {
@@ -115,6 +127,18 @@ input.input {
   justify-content: center;
   align-items: center;
   font-family: 'Work Sans Regular';
+}
+
+.toast-success {
+  border: 2px solid #8cd9b6;
+}
+
+.toast-error {
+  border: 2px solid #ec554d;
+}
+
+.toast-warning {
+  border: 2px solid #ecec4b;
 }
 
 /* TRANSITIONS */

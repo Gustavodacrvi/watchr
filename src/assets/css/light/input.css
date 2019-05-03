@@ -4,14 +4,6 @@ input.input.light {
 }
 
 .wrong-input.light {
-  border: 2px solid #ecec4b !important;
   background-color: #fdfde8 !important;
 }
 
-input.input.light:focus {
-  border: 2px solid #FE684F;
-}
-
-input.input.light::placeholder {
-  color: #9d9595;
-}
