@@ -5,9 +5,9 @@
     <section>
       <span class='magicLine magic-line' :class='$store.state.style' ref='magicLine'></span>
       <transition-group :class='$store.state.style' name='nav-link'>
-        <nav-link to='/' ref='/' key='nav-link-home'>Home</nav-link>
-        <nav-link to='/login' ref='/login' key='nav-link-login'>Login</nav-link>
-        <nav-link to='/signup' ref='/signup' key='nav-link-signup'>Signup</nav-link>
+        <nav-link to='/' ref='/' key='nav-link-home' @click='navigate'>Home</nav-link>
+        <nav-link to='/login' ref='/login' key='nav-link-login' @click='navigate'>Login</nav-link>
+        <nav-link to='/signup' ref='/signup' key='nav-link-signup' @click='navigate'>Signup</nav-link>
         <nav-link v-if='$store.getters.isAuthenticated' to='/user' key='nav-link-user'>User</nav-link>
         <nav-link v-if='$store.getters.isAuthenticated' to='/logout' key='nav-link-logout'>Logout</nav-link>
       </transition-group>
@@ -27,10 +27,18 @@ export default Vue.extend({
     'nav-link': NavLink,
     'icon': Icon,
   },
+  data() {
+    return {
+      movedLineTimes: 0,
+    };
+  },
   mounted() {
     this.moveMagicLine(this.$route.path);
   },
   methods: {
+    navigate(route: string) {
+      this.$router.push(route);
+    },
     moveMagicLine(str: string) {
       const el: any = this.$refs[str];
       const magicLineStr = 'magicLine';
@@ -39,12 +47,17 @@ export default Vue.extend({
       const left: any = el.$el.offsetLeft;
       const width: any = el.$el.clientWidth;
 
-      magicLine.style.left = left + 'px';
+      if (str === '/' && this.movedLineTimes === 1) {
+        magicLine.style.left = left + 4 + 'px';
+      } else {
+        magicLine.style.left = left + 'px';
+      }
       magicLine.style.width = width + 'px';
     },
   },
   watch: {
     '$route.path'() {
+      this.movedLineTimes++;
       this.moveMagicLine(this.$route.path);
     },
   },
