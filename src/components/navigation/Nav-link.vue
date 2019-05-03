@@ -1,5 +1,5 @@
 <template>
-  <div :class='classObject' @click='$emit("click", to)'>
+  <div :class='[classObject, $store.state.style]' @click='$emit("click", to)'>
     <router-link :to='to'>
       <slot></slot>
     </router-link>
@@ -20,8 +20,8 @@ export default Vue.extend({
     },
     classObject(): object {
       return [
-        true ? this.$store.getters.style('nav-link') : '',
-        this.isActive ? this.$store.getters.style('active-nav-link') : '',
+        true ? 'nav-link' : '',
+        this.isActive ? 'active-nav-link' : '',
       ];
     },
   },

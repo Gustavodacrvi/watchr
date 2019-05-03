@@ -1,4 +1,4 @@
-.button-light {
+.button.light {
   position: relative;
   border: none;
   border-radius: 8px;
@@ -13,10 +13,10 @@
   top: 0;
 }
 
-.button-light span, .button-light i {
+.button.light span, .button.light i {
   color: #fff;
 }
 
-.button-light:hover {
+.button.light:hover {
   background-color: #fe7367;
 }

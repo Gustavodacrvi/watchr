@@ -1,7 +1,7 @@
 <template>
-  <div id='body' :class='$store.getters.style("bodyBackground")'>
+  <div id='body' class='background' :class='$store.state.style'>
     <nav-bar></nav-bar>
-    <transition :name='$store.getters.style("router-view")' mode='out-in'>
+    <transition :class='$store.state.style' name='router-view' mode='out-in'>
       <loading v-if='$root.loading'></loading>
       <router-view v-else/>
     </transition>

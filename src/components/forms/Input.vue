@@ -2,7 +2,7 @@
   <div class='input form-element'>
     <div>
       <div>
-        <input :class='[wrongInput, $store.getters.style("input")]' :name='name' :placeholder='placeholder' :type='inputType' autocomplete='off' v-model='value'/>
+        <input class='input' :class='[wrongInput, $store.state.style]' :name='name' :placeholder='placeholder' :type='inputType' autocomplete='off' v-model='value'/>
         <icon @click='togglePassword' v-show='isPassword && visiblePassword' sz='medium' ico='eye' v-cursor></icon>
         <icon @click='togglePassword' v-show='isPassword && !visiblePassword' sz='medium' ico='eye-slash' v-cursor></icon>
       </div>
@@ -96,7 +96,7 @@ export default Vue.extend({
     },
     wrongInput(): object {
       return [
-        (this.errorType === null) ? '' : this.$store.getters.style('wrong-input'),
+        (this.errorType === null) ? '' : 'wrong-input ' + this.$store.state.style,
       ];
     },
     isPassword(): boolean {
