@@ -6,7 +6,10 @@
   color: #FE684F;
 }
 
-.icon-color-hover.light:hover {
+.icon-color-hover.light {
   transition-duration: .2s;
+}
+
+.icon-color-hover.light:hover {
   color: #FE684F;
 }

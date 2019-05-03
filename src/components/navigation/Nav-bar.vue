@@ -13,6 +13,7 @@
       </transition-group>
     </section>
     <section>
+      <icon sz='big' ico='adjust' v-cursor v-color-hover></icon>
     </section>
   </nav>
 </template>

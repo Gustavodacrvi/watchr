@@ -11,9 +11,9 @@ Vue.directive('cursor', {
   },
 });
 
-Vue.directive('color', {
+Vue.directive('color-hover', {
   bind(el, binding) {
-    el.classList.add('icon-color');
+    el.classList.add('icon-color-hover');
   },
 });
 
