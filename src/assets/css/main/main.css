@@ -1,0 +1,67 @@
+
+@font-face {
+  font-family: 'Work Sans';
+  src: url('/assets/fonts/WorkSans-Regular.otf');
+}
+
+body {
+  font-family: 'Work Sans';
+}
+
+.mainColor {
+  color: #FE684F;
+}
+
+.card-round {
+  border-radius: 8px;
+}
+
+span, a, p {
+  color: #ADADAD;
+}
+
+div.nav-link:hover > a, .active-nav-link > a {
+  color: #FE684F;
+}
+
+.magic-line {
+  background-color: #FE684F;
+}
+
+.route-link {
+  text-decoration: none;
+  color: #6387ff;
+}
+
+.route-link:hover {
+  text-decoration: underline;
+}
+
+.heading {
+  color: #FE684F;
+  margin: 15px 0;
+}
+
+.span-alert-error {
+  color: #ecec4b;
+}
+
+.route-link {
+  text-decoration: none;
+  color: #6387ff;
+}
+
+.route-link:hover {
+  text-decoration: underline;
+}
+
+.heading {
+  color: #FE684F;
+  margin: 15px 0;
+}
+
+.span-alert-error {
+  color: #ecec4b;
+}
+
+

@@ -1,22 +1,11 @@
-.toast.light {
-  padding: 0 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Work Sans Regular';
-}
-
 .toast-success.light {
-  border: 2px solid #8cd9b6;
   background-color: #ecf9f3;
 }
 
 .toast-error.light {
-  border: 2px solid #ec554d;
   background-color: #fde9e8;
 }
 
 .toast-warning.light {
-  border: 2px solid #ecec4b;
   background-color: #f8f8ba;
 }

@@ -43,13 +43,22 @@ export default Vue.extend({
 
 
 <style>
+@import './assets/css/main/button.css';
+@import './assets/css/main/fontawesome.min.css';
+@import './assets/css/main/icon.css';
+@import './assets/css/main/input.css';
+@import './assets/css/main/main.css';
+@import './assets/css/main/toast.css';
+@import './assets/css/main/transitions.css';
+
 @import './assets/css/light/main.css';
-@import './assets/css/light/vueTransitions.css';
 @import './assets/css/light/toast.css';
 @import './assets/css/light/input.css';
-@import './assets/css/light/button.css';
-@import './assets/css/light/icon.css';
-@import './assets/css/fontawesome.min.css';
+
+@import './assets/css/dark/main.css';
+@import './assets/css/dark/toast.css';
+@import './assets/css/dark/input.css';
+
 
 body {
   margin: 0;
