@@ -1,5 +1,5 @@
 <template>
-  <router-link :class='$store.getters.style("route-link")' :to='to'><slot></slot></router-link>  
+  <router-link class='route-link' :class='$store.state.style' :to='to'><slot></slot></router-link>  
 </template>
 
 <script lang="ts">

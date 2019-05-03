@@ -1,6 +1,6 @@
 <template>
   <div>
-    <icon :class='$store.getters.style("icon-main-color")' ico='circle-notch fa-spin' sz='massive'></icon>
+    <icon class='icon-main-color' :class='$store.state.style' ico='circle-notch fa-spin' sz='massive'></icon>
   </div>  
 </template>
 

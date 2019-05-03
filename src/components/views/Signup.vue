@@ -1,5 +1,5 @@
 <template>
-  <div class='signup body' :class='$store.getters.style("background")'>
+  <div class='signup body background' :class='$store.state.style'>
     <div>
       <app-form v-column v-padding :act='submit' :load-icon='true'>
         <app-title class='form-margin'>Sign-up</app-title>

@@ -1,6 +1,6 @@
 <template>
-  <transition :name='$store.getters.style("toast-transition")' @after-leave='showNext'>
-    <article v-show='showing' id='toast' class='toast' :class='toastClass'>
+  <transition :class='$store.state.style' name='toast-transition' @after-leave='showNext'>
+    <article :class='[toastClass, $store.state.style]' v-show='showing' id='toast' class='toast'>
       <span>{{ msg }}</span>
       <span v-if='infiniteToast' class='toast-icon'>
         <icon ico='times' sz='big' @click='showing = false' v-cursor></icon>
@@ -67,10 +67,10 @@ export default Vue.extend({
   computed: {
     toastClass(): object {
       return [
-        this.$store.getters.style('toast'),
-        this.$store.getters.style('card-round'),
-        this.$store.getters.style('shadow'),
-        this.$store.getters.style('toast-' + this.type),
+        'toast',
+        'card-round',
+        'shadow',
+        'toast-' + this.type,
       ];
     },
   },

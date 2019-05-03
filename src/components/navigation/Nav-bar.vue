@@ -3,8 +3,8 @@
     <section>
     </section>
     <section>
-      <span class='magicLine' ref='magicLine' :class='$store.getters.style("magic-line")'></span>
-      <transition-group :name='$store.getters.style("nav-link")'>
+      <span class='magicLine magic-line' :class='$store.state.style' ref='magicLine'></span>
+      <transition-group :class='$store.state.style' name='nav-link'>
         <nav-link to='/' ref='/' key='nav-link-home'>Home</nav-link>
         <nav-link to='/login' ref='/login' key='nav-link-login'>Login</nav-link>
         <nav-link to='/signup' ref='/signup' key='nav-link-signup'>Signup</nav-link>
@@ -27,9 +27,11 @@ export default Vue.extend({
     'nav-link': NavLink,
     'icon': Icon,
   },
+  mounted() {
+    this.moveMagicLine(this.$route.path);
+  },
   methods: {
     moveMagicLine(str: string) {
-      // Those warning don't make sense, ignore them
       const el: any = this.$refs[str];
       const magicLineStr = 'magicLine';
       const magicLine: any = this.$refs[magicLineStr];

@@ -14,9 +14,6 @@ export default new Vuex.Store({
     user: undefined,
   } as State,
   getters: {
-    style: (state) => (className: string): string => {
-      return className + '-' + state.style;
-    },
     isAuthenticated(state: any) {
       return (state.user !== undefined);
     },

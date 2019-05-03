@@ -1,12 +1,12 @@
-.icon-light {
+.icon.light {
   color: #9c9696;
 }
 
-.icon-main-color-light {
+.icon-main-color.light {
   color: #FE684F;
 }
 
-.icon-color-hover-light:hover {
+.icon-color-hover.light:hover {
   transition-duration: .2s;
   color: #FE684F;
 }
