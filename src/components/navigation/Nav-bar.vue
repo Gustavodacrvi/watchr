@@ -40,6 +40,7 @@ export default Vue.extend({
       this.$router.push(route);
     },
     moveMagicLine(str: string) {
+      this.movedLineTimes++;
       const el: any = this.$refs[str];
       const magicLineStr = 'magicLine';
       const magicLine: any = this.$refs[magicLineStr];
@@ -57,7 +58,6 @@ export default Vue.extend({
   },
   watch: {
     '$route.path'() {
-      this.movedLineTimes++;
       this.moveMagicLine(this.$route.path);
     },
   },
