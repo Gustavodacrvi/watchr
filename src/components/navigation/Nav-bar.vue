@@ -8,7 +8,7 @@
         <nav-link to='/' ref='/' key='nav-link-home' @click='navigate'>Home</nav-link>
         <nav-link to='/login' ref='/login' key='nav-link-login' @click='navigate'>Login</nav-link>
         <nav-link to='/signup' ref='/signup' key='nav-link-signup' @click='navigate'>Signup</nav-link>
-        <nav-link v-if='$store.getters.isAuthenticated' to='/user' key='nav-link-user'>User</nav-link>
+        <nav-link to='/user' ref='/user' key='nav-link-user' @click='navigate' v-if='$store.getters.isAuthenticated'>User</nav-link>
         <nav-link v-if='$store.getters.isAuthenticated' to='/logout' key='nav-link-logout'>Logout</nav-link>
       </transition-group>
     </section>

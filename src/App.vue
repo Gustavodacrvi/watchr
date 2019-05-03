@@ -36,6 +36,11 @@ export default Vue.extend({
         }
       });
     }
+
+    const style = getCookie('darkTheme');
+    if (style !== '') {
+      this.$store.commit('changeThemeTo', style);
+    }
   },
 });
 </script>

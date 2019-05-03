@@ -7,6 +7,7 @@ interface State {
   style: string;
 }
 
+import { setCookie } from './assets/javaScript/cookies';
 
 export default new Vuex.Store({
   state: {
@@ -31,6 +32,10 @@ export default new Vuex.Store({
       } else {
         state.style = 'light';
       }
+      setCookie('darkTheme', state.style, 365);
+    },
+    changeThemeTo(state: any, style: 'light' | 'dark') {
+      state.style = style;
     },
   },
   actions: {
