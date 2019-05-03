@@ -1,7 +1,7 @@
 <template>
   <div class='signup body background' :class='$store.state.style'>
     <div>
-      <app-form v-column v-padding :act='submit' :load-icon='true'>
+      <app-form class='column padding' :act='submit' :load-icon='true'>
         <app-title class='form-margin'>Sign-up</app-title>
         <app-input class='form-margin' name='username' placeholder='Username:' :max='50' type='text'></app-input>
         <app-input class='form-margin' name='email' placeholder='E-mail:' :max='50' type='text'></app-input>

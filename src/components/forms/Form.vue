@@ -9,18 +9,6 @@ import Vue from 'vue';
 
 import { FormLogObject } from './../interfaces';
 
-Vue.directive('column', {
-  bind(el) {
-    el.classList.add('column');
-  },
-});
-
-Vue.directive('padding', {
-  bind(el) {
-    el.classList.add('padding');
-  },
-});
-
 export const FormBus = new Vue();
 
 interface SubmitObj {
