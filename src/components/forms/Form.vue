@@ -81,6 +81,7 @@ export default Vue.extend({
 
 article.form {
   width: 100%;
+  overflow: hidden;
 }
 
 article.column {
