@@ -15,6 +15,7 @@ export default new Vuex.Store({
     style: 'light',
     lang: {
       strings: undefined as any,
+      loading: true,
     },
     user: undefined,
   } as State,
@@ -48,6 +49,7 @@ export default new Vuex.Store({
       import(`@/assets/javaScript/languages/${lang}.ts`).then((file) => {
         state.lang.strings = file.strings;
         setCookie('watchrLanguage', lang, 365);
+        state.lang.loading = false;
       });
     },
   },

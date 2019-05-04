@@ -2,11 +2,11 @@
   <div class='signup body background' :class='$store.state.style'>
     <div>
       <app-form class='column padding' :act='submit' :load-icon='true'>
-        <app-title class='form-margin'>Sign-up</app-title>
-        <app-input class='form-margin' name='username' placeholder='Username:' :max='50' type='text'></app-input>
-        <app-input class='form-margin' name='email' placeholder='E-mail:' :max='50' type='text'></app-input>
-        <confirm-password input-class='form-margin' name='password' placeholder1='New password:' placeholder2='Confirm your password:' :max='50'></confirm-password>
-        <app-button class='form-margin'>Create account</app-button>
+        <app-title class='form-margin'>{{ $store.getters.l('signUpTitle') }}</app-title>
+        <app-input class='form-margin' name='username' :placeholder='$store.getters.l("passwordInputPlaceholder")' :max='50' type='text'></app-input>
+        <app-input class='form-margin' name='email' :placeholder='$store.getters.l("emailInputPlaceholder")' :max='50' type='text'></app-input>
+        <confirm-password input-class='form-margin' name='password' :placeholder1='$store.getters.l("newPasswordInputPlaceholder")' :placeholder2='$store.getters.l("confirmPasswordInputPlaceholder")' :max='50'></confirm-password>
+        <app-button class='form-margin'>{{ $store.getters.l("createAccountButton") }}</app-button>
       </app-form>
     </div>
   </div>

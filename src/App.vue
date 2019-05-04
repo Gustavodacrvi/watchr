@@ -1,8 +1,8 @@
 <template>
   <div id='body' class='background' :class='$store.state.style'>
-    <nav-bar></nav-bar>
+    <nav-bar v-if='!$store.state.lang.loading'></nav-bar>
     <transition :class='$store.state.style' name='router-view' mode='out-in'>
-      <loading v-if='$root.loading'></loading>
+      <loading v-if='$root.loading || $store.state.lang.loading'></loading>
       <router-view v-else/>
     </transition>
     <toast></toast>
