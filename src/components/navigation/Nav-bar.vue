@@ -28,13 +28,10 @@ export default Vue.extend({
     'nav-link': NavLink,
     'icon': Icon,
   },
-  data() {
-    return {
-      movedLineTimes: 0,
-    };
-  },
   mounted() {
-    this.moveMagicLine(this.$route.path);
+    setTimeout(() => {
+      this.moveMagicLine(this.$route.path);
+    }, 100);
   },
   methods: {
     invertTheme(): void {
@@ -44,7 +41,6 @@ export default Vue.extend({
       this.$router.push(route);
     },
     moveMagicLine(str: string) {
-      this.movedLineTimes++;
       const el: any = this.$refs[str];
       const magicLineStr = 'magicLine';
       const magicLine: any = this.$refs[magicLineStr];
@@ -52,11 +48,7 @@ export default Vue.extend({
       const left: any = el.$el.offsetLeft;
       const width: any = el.$el.clientWidth;
 
-      if (str === '/' && this.movedLineTimes === 1) {
-        magicLine.style.left = left + 4 + 'px';
-      } else {
-        magicLine.style.left = left + 'px';
-      }
+      magicLine.style.left = left + 'px';
       magicLine.style.width = width + 'px';
     },
   },

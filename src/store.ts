@@ -8,14 +8,13 @@ interface State {
   style: string;
 }
 
-import { setCookie } from './assets/javaScript/cookies';
+import { setCookie, getCookie } from './assets/javaScript/cookies';
 
 export default new Vuex.Store({
   state: {
     style: 'light',
     lang: {
       strings: undefined as any,
-      loading: true,
     },
     user: undefined,
   } as State,
@@ -49,11 +48,40 @@ export default new Vuex.Store({
       import(`@/assets/javaScript/languages/${lang}.ts`).then((file) => {
         state.lang.strings = file.strings;
         setCookie('watchrLanguage', lang, 365);
-        state.lang.loading = false;
       });
     },
   },
   actions: {
-
+    setSavedTheme({ commit }) {
+      const style = getCookie('darkTheme');
+      if (style !== '') {
+        commit('changeThemeTo', style);
+      }
+    },
+    setSavedLanguage({ commit, state }) {
+      let lang = getCookie('watchrLanguage');
+      if (lang === '') {
+        lang = 'en';
+      }
+      return import(`@/assets/javaScript/languages/${lang}.ts`).then((file) => {
+        state.lang.strings = file.strings;
+        setCookie('watchrLanguage', lang, 365);
+      });
+    },
+    getUserDataIfLogged({ commit }) {
+      const sessionToken = getCookie('watchrSessionToken');
+      if (sessionToken !== '') {
+        return axios.post('http://localhost:3000/autologin', { token: sessionToken }).then((res: any) => {
+          if (res.data.validToken) {
+            commit('logUser', res.data.user);
+          } else {
+            setCookie('watchrSessionToken', '', 30);
+          }
+        });
+      }
+      return new Promise((resolve) => {
+        resolve();
+      });
+    },
   },
 });

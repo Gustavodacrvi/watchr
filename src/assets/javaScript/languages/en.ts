@@ -19,5 +19,3 @@ export const strings = {
   successfullLoginToast: 'You have successfully logged in!',
   signUpTitle: 'Signup',
 };
-
-
