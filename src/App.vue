@@ -38,6 +38,7 @@ export default Vue.extend({
 @import './assets/css/main/main.css';
 @import './assets/css/main/toast.css';
 @import './assets/css/main/transitions.css';
+@import './assets/css/main/dropdown.css';
 
 @import './assets/css/light/main.css';
 @import './assets/css/light/toast.css';
