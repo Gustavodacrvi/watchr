@@ -44,11 +44,10 @@ export default new Vuex.Store({
     changeThemeTo(state: any, style: 'light' | 'dark') {
       state.style = style;
     },
-    changeLanguage(state: any, lang: string,
-      ) {
+    changeLanguage(state: any, lang: string) {
       import(`@/assets/javaScript/languages/${lang}.ts`).then((file) => {
         state.lang.strings = file.strings;
-        setCookie('language', lang, 365);
+        setCookie('watchrLanguage', lang, 365);
       });
     },
   },

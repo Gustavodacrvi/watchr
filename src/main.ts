@@ -9,7 +9,8 @@ import { getCookie } from './assets/javaScript/cookies';
 
 Vue.config.productionTip = false;
 
-let lang: string = getCookie('language');
+let lang = getCookie('watchrLanguage');
+
 if (lang === '') {
   lang = 'en';
 }
