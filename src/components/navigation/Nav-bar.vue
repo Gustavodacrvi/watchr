@@ -13,6 +13,17 @@
       </transition-group>
     </section>
     <section>
+      <dropdown class='navBar-margin'>
+        <template v-slot:handle>
+          <icon class="icon-color-hover pointer" sz="big" ico="globe"></icon>
+        </template>
+        <template v-slot:content>
+          <div>fdaasdf</div>
+          <div>fd</div>
+          <div>ff asdfasdfd</div>
+          <div>ff asdfasdfaçls djkd</div>
+        </template>
+      </dropdown>
       <icon class='icon-color-hover pointer' sz='big' ico='adjust' @click='invertTheme'></icon>
     </section>
   </nav>
@@ -22,11 +33,13 @@
 import Vue from 'vue';
 import NavLink from './Nav-link.vue';
 import Icon from './../generalComponents/Icon.vue';
+import Dropdown from './../dropdown/CenterDropdown.vue';
 
 export default Vue.extend({
   components: {
     'nav-link': NavLink,
     'icon': Icon,
+    'dropdown': Dropdown,
   },
   mounted() {
     setTimeout(() => {
@@ -68,6 +81,10 @@ export default Vue.extend({
   transition-duration: .2s;
   bottom: 0;
   height: 3px;
+}
+
+.navBar-margin {
+  margin: 25px;
 }
 
 nav {
