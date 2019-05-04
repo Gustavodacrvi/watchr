@@ -1,9 +1,11 @@
 <template>
   <span class='dropdown' @mouseenter='show = !show' @mouseleave='show = !show'>
     <slot name='handle'></slot>
+    <transition name='fade-transition'>
     <div class='card-round' :class='$store.state.style' v-if='show'>
       <slot name='content'></slot>
     </div>
+    </transition>
   </span>
 </template>
 
@@ -31,7 +33,7 @@ export default Vue.extend({
 
 .dropdown > div {
   position: absolute;
-  top: 115%;
+  top: 100%;
   display: inline-block;
 }
 

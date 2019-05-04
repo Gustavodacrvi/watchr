@@ -1,7 +1,7 @@
 <template>
   <div id='body' class='background' :class='$store.state.style'>
     <nav-bar></nav-bar>
-    <transition :class='$store.state.style' name='router-view' mode='out-in'>
+    <transition :class='$store.state.style' name='fade-transition' mode='out-in'>
       <loading v-if='$root.routerViewLoading'></loading>
       <router-view v-else/>
     </transition>

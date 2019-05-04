@@ -18,10 +18,8 @@
           <icon class="icon-color-hover pointer" sz="big" ico="globe"></icon>
         </template>
         <template v-slot:content>
-          <el>fdsa</el>
-          <el>fdsafdas f</el>
-          <el>fdsafdafasfdsaf sf</el>
-          <el>fdsafdaff</el>
+          <el @click='changeTheme("en")'>English</el>
+          <el @click='changeTheme("pt-BR")'>Português(Brasil)</el>
         </template>
       </dropdown>
       <icon class='icon-color-hover pointer' sz='big' ico='adjust' @click='invertTheme'></icon>
@@ -65,6 +63,9 @@ export default Vue.extend({
 
       magicLine.style.left = left + 'px';
       magicLine.style.width = width + 'px';
+    },
+    changeTheme(lang: string) {
+      this.$store.commit('changeLanguage', lang);
     },
   },
   watch: {

@@ -11,10 +11,10 @@
   bottom: -40px !important;
 }
 
-.router-view-enter-active, .router-view-leave-active {
+.fade-transition-active, .fade-transition-leave-active {
   transition: opacity .1s;
 }
-.router-view-enter, .router-view-leave-to {
+.fade-transition-enter, .fade-transition-leave-to {
   opacity: 0;
 }
 

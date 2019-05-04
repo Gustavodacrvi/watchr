@@ -1,5 +1,5 @@
 <template>
-  <div class='dropdown-text-element'>
+  <div class='dropdown-text-element' @click='$emit("click")'>
     <span><slot></slot></span>
   </div>
 </template>

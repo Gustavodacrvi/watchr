@@ -9,6 +9,7 @@ interface State {
 }
 
 import { setCookie, getCookie } from './assets/javaScript/cookies';
+import router from './router';
 
 export default new Vuex.Store({
   state: {
@@ -48,6 +49,7 @@ export default new Vuex.Store({
       import(`@/assets/javaScript/languages/${lang}.ts`).then((file) => {
         state.lang.strings = file.strings;
         setCookie('watchrLanguage', lang, 365);
+        router.push(router.currentRoute);
       });
     },
   },
