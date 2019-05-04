@@ -51,7 +51,7 @@ export default new Router({
         store.commit('logOut');
         setCookie('watchrSessionToken', '', 30);
         ToastBus.$emit('addToast', {
-          msg: 'You have successfully logged out!',
+          msg: store.getters.l('logoutToast'),
           duration_seconds: 5,
           type: 'success',
         } as ToastObj);

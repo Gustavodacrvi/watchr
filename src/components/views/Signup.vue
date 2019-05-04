@@ -46,17 +46,17 @@ export default Vue.extend({
         if (res.data.error === 'usernameTaken') {
           FormBus.$emit('error', {
             name: 'username',
-            msg: 'Username taken, please choose another one.',
+            msg: this.$store.getters.l('usernameTakenMsg'),
           } as InputErrorObject);
         } else if (res.data.error === 'emailTaken') {
           FormBus.$emit('error', {
             name: 'email',
-            msg: 'Email taken, please choose another one.',
+            msg: this.$store.getters.l('emailTakenMsg'),
           } as InputErrorObject);
         } else {
           router.push('/login');
           ToastBus.$emit('addToast', {
-            msg: 'You have successfully created an account and can now log in!',
+            msg: this.$store.getters.l('successfullCreatedAccountToast'),
             duration_seconds: 5,
             type: 'success',
           } as ToastObj);

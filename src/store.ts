@@ -63,6 +63,7 @@ export default new Vuex.Store({
       if (lang === '') {
         lang = 'en';
       }
+      lang = 'pt-BR'
       return import(`@/assets/javaScript/languages/${lang}.ts`).then((file) => {
         state.lang.strings = file.strings;
         setCookie('watchrLanguage', lang, 365);

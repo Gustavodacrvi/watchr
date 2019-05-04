@@ -17,5 +17,9 @@ export const strings = {
   usernameNotFoundInputMsg: 'Username not found.',
   wrongPasswordInputMsg: 'Wrong password.',
   successfullLoginToast: 'You have successfully logged in!',
+  successfullCreatedAccountToast: 'You have successfully created an account and can now log in!',
+  logoutToast: 'You have successfully logged out!',
+  usernameTakenMsg: 'Username taken, please chose another one.',
+  emailTakenMsg: 'E-mail taken, please choose another one.',
   signUpTitle: 'Signup',
 };
