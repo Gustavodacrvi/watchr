@@ -5,7 +5,16 @@ import store from './store';
 import './registerServiceWorker';
 import { Route } from 'vue-router';
 
+import { getCookie } from './assets/javaScript/cookies';
+
 Vue.config.productionTip = false;
+
+let lang: string = getCookie('language');
+if (lang === '') {
+  lang = 'en';
+}
+
+store.commit('changeLanguage', lang);
 
 const app = new Vue({
   data: { loading: false },

@@ -1,6 +1,7 @@
 <template>
   <div class='login body background' :class='$store.state.style'>
     <div>
+      {{ $store.getters.l('hey') }}
       <app-form class='column padding' :act='submit' :load-icon='true'>
         <app-title class='form-margin'>Login</app-title>
         <app-input class='form-margin' name='username' placeholder='Username or e-mail:' :max='50' type='text'></app-input>
