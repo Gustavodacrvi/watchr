@@ -31,23 +31,49 @@ export default Vue.extend({
 
 
 <style>
-@import './assets/css/main/button.css';
-@import './assets/css/main/fontawesome.min.css';
-@import './assets/css/main/icon.css';
-@import './assets/css/main/input.css';
-@import './assets/css/main/main.css';
-@import './assets/css/main/toast.css';
-@import './assets/css/main/transitions.css';
-@import './assets/css/main/dropdown.css';
 
-@import './assets/css/light/main.css';
-@import './assets/css/light/toast.css';
-@import './assets/css/light/input.css';
+.shadow.light {
+  box-shadow: 0 4px 10px 2px rgba(180, 180, 180, .4) !important;
+}
 
-@import './assets/css/dark/main.css';
-@import './assets/css/dark/toast.css';
-@import './assets/css/dark/input.css';
+.background.light {
+  background-color: #f8f6f6;
+}
 
+.card.light, .card-round.light { 
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(220,220,220,0.4);
+}
+
+.background.dark {
+  background-color: #1F1F1F;
+}
+
+.card.dark, .card-round.dark { 
+  background-color: #282828;
+}
+
+
+@font-face {
+  font-family: 'Work Sans';
+  src: url('/assets/fonts/WorkSans-Regular.otf');
+}
+
+body {
+  font-family: 'Work Sans';
+}
+
+.mainColor {
+  color: #FE684F;
+}
+
+.card-round {
+  border-radius: 8px;
+}
+
+span, a, p {
+  color: #ADADAD;
+}
 
 body {
   margin: 0;
@@ -58,5 +84,34 @@ body {
   width: 100%;
   height: 100%;
 }
+
+
+.toast-transition-enter {
+  bottom: -40px !important;
+}
+
+.toast-transition-enter-active {
+  transition-duration: .3s;
+}
+
+.toast-transition-leave-active {
+  transition-duration: .3s;
+  bottom: -40px !important;
+}
+
+.fade-transition-active, .fade-transition-leave-active {
+  transition: opacity .1s;
+}
+.fade-transition-enter, .fade-transition-leave-to {
+  opacity: 0;
+}
+
+.nav-link-enter-active, .nav-link-leave-active {
+  transition: opacity .3s;
+}
+.nav-link-enter, .nav-link-leave-to {
+  opacity: 0;
+}
+
 
 </style>

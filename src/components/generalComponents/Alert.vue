@@ -14,3 +14,11 @@ export default Vue.extend({
 });
 </script>
 
+<style scoped>
+
+.span-alert-error {
+  color: #ecec4b;
+}
+
+</style>
+

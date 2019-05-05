@@ -79,6 +79,30 @@ export default Vue.extend({
 
 <style scoped>
 
+.toast-success.light {
+  background-color: #ecf9f3;
+}
+
+.toast-error.light {
+  background-color: #fde9e8;
+}
+
+.toast-warning.light {
+  background-color: #f8f8ba;
+}
+
+.toast-success.dark {
+  background-color: #282828;
+}
+
+.toast-error.dark {
+  background-color: #282828;
+}
+
+.toast-warning.dark {
+  background-color: #282828;
+}
+
 .toast {
   position: fixed;
   bottom: 40px;
@@ -95,6 +119,27 @@ export default Vue.extend({
   padding-left: 12px;
   padding-right: 4px;
 }
+
+.toast {
+  padding: 0 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Work Sans Regular';
+}
+
+.toast-success {
+  border: 2px solid #8cd9b6;
+}
+
+.toast-error {
+  border: 2px solid #ec554d;
+}
+
+.toast-warning {
+  border: 2px solid #ecec4b;
+}
+
 
 </style>
 

@@ -49,4 +49,8 @@ a {
   transition-duration: .1s;
 }
 
+div.nav-link:hover > a, .active-nav-link > a {
+  color: #FE684F;
+}
+
 </style>

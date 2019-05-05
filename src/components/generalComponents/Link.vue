@@ -13,6 +13,16 @@ export default Vue.extend({
 
 <style scoped>
 
+.route-link {
+  text-decoration: none;
+  color: #6387ff;
+}
+
+.route-link:hover {
+  text-decoration: underline;
+}
+
+
 
 </style>
 
