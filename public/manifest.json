@@ -2,9 +2,19 @@
   "name": "GTDF2",
   "short_name": "GTDF2",
   "icons": [
+    {
+      "src": "./assets/img/icons/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./assets/img/icons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ],
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#4DBA87"
+  "background_color": "#F8F6F6",
+  "theme_color": "#FE684F"
 }
