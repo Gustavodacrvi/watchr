@@ -20,4 +20,11 @@ export default Vue.extend({
 });
 </script>
 
+<style scoped>
 
+.heading {
+  color: #FE684F;
+  margin: 15px 0;
+}
+
+</style>

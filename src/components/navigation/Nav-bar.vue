@@ -79,6 +79,10 @@ export default Vue.extend({
 
 <style scoped>
 
+.magic-line {
+  background-color: #FE684F;
+}
+
 .magicLine {
   position: absolute;
   transition-duration: .2s;

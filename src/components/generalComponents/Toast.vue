@@ -79,6 +79,30 @@ export default Vue.extend({
 
 <style scoped>
 
+.toast-success.light {
+  background-color: #ecf9f3;
+}
+
+.toast-error.light {
+  background-color: #fde9e8;
+}
+
+.toast-warning.light {
+  background-color: #f8f8ba;
+}
+
+.toast-success.dark {
+  background-color: #282828;
+}
+
+.toast-error.dark {
+  background-color: #282828;
+}
+
+.toast-warning.dark {
+  background-color: #282828;
+}
+
 .toast {
   position: fixed;
   bottom: 40px;

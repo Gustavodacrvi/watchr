@@ -47,6 +47,5 @@ i.massive {
   color: #FE684F;
 }
 
-
 </style>
 

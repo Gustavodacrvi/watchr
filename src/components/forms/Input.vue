@@ -115,6 +115,23 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+input.input.dark {
+  background-color: #363636;
+  color: #9C9696;
+}
+
+.wrong-input.dark {
+  background-color: #363636 !important;
+}
+
+input.input.light {
+  background-color: #F6F7F9;
+  color: #6a6262;
+}
+
+.wrong-input.light {
+  background-color: #fdfde8 !important;
+}
 
 input {
   box-sizing: border-box;
