@@ -96,5 +96,26 @@ export default Vue.extend({
   padding-right: 4px;
 }
 
+.toast {
+  padding: 0 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Work Sans Regular';
+}
+
+.toast-success {
+  border: 2px solid #8cd9b6;
+}
+
+.toast-error {
+  border: 2px solid #ec554d;
+}
+
+.toast-warning {
+  border: 2px solid #ecec4b;
+}
+
+
 </style>
 

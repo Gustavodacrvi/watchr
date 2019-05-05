@@ -31,14 +31,9 @@ export default Vue.extend({
 
 
 <style>
-@import './assets/css/main/button.css';
 @import './assets/css/main/fontawesome.min.css';
-@import './assets/css/main/icon.css';
-@import './assets/css/main/input.css';
 @import './assets/css/main/main.css';
-@import './assets/css/main/toast.css';
 @import './assets/css/main/transitions.css';
-@import './assets/css/main/dropdown.css';
 
 @import './assets/css/light/main.css';
 @import './assets/css/light/toast.css';

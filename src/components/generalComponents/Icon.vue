@@ -31,5 +31,22 @@ i.massive {
   font-size: 100px;
 }
 
+.icon {
+  color: #ADADAD;
+}
+
+.icon-main-color {
+  color: #FE684F;
+}
+
+.icon-color-hover {
+  transition-duration: .2s;
+}
+
+.icon-color-hover:hover {
+  color: #FE684F;
+}
+
+
 </style>
 

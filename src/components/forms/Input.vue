@@ -140,6 +140,32 @@ i.icon {
   right: 8px;
 }
 
+
+input.input {
+  position: relative;
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
+  outline: none;
+  font-family: 'Work Sans';
+  font-size: 1.01em;
+  transition-duration: .2s;
+  bottom: 0;
+}
+
+.wrong-input {
+  border: 2px solid #ecec4b !important;
+}
+
+input.input:focus {
+  border: 2px solid #FE684F;
+}
+
+input.input::placeholder {
+  color: #9d9595;
+}
+
+
 @media screen and (max-width: 801px) {
   div.input > div {
     width: 90%;

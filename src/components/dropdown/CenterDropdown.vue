@@ -31,6 +31,11 @@ export default Vue.extend({
   justify-content: center;
 }
 
+.dropdown-text-element:hover > span {
+  color: #FE684F;
+}
+
+
 .dropdown > div {
   position: absolute;
   top: 100%;
