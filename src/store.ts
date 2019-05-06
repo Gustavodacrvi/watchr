@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import axios from 'axios';
 import Vuex from 'vuex';
+import defaultLanguage from '@/assets/javaScript/en';
 
 Vue.use(Vuex);
 
@@ -17,8 +18,8 @@ export default new Vuex.Store({
     style: 'light',
     savedLanguages: new Map(),
     lang: {
-      name: undefined,
-      strings: undefined as any,
+      name: 'en',
+      strings: defaultLanguage.strings,
     },
     user: undefined,
   } as State,
@@ -54,6 +55,7 @@ export default new Vuex.Store({
     setLanguage(state: any, lang) {
       state.lang.strings = state.savedLanguages.get(lang).strings;
       state.lang.name = lang;
+      setCookie('watchrLanguage', lang, 365);
     },
     saveLanguage(state: any, { lang, langObj}: any) {
       state.savedLanguages.set(lang, {
@@ -77,6 +79,7 @@ export default new Vuex.Store({
         scr.onload = () => {
           state.lang.strings = language.strings;
           state.lang.name = lang;
+          setCookie('watchrLanguage', lang, 365);
           commit('saveLanguage', { lang, langObj: language });
           resolve();
         };

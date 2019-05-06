@@ -8,14 +8,12 @@ import './registerServiceWorker';
 import { Route } from 'vue-router';
 import defaultLanguage from '@/assets/javaScript/en';
 
-import { getCookie, setCookie } from './assets/javaScript/cookies';
 
 Vue.config.productionTip = false;
 
 
 store.dispatch('setSavedTheme');
-store.commit('saveLanguage', { lang: 'en', langObj: defaultLanguage });
-store.commit('setLanguage', 'en');
+store.commit('saveLanguage', { lang: 'en' , langObj: defaultLanguage});
 
 let app = new Vue({
   data: { routerViewLoading: false },
