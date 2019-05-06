@@ -9,12 +9,15 @@ interface State {
 }
 
 import { setCookie, getCookie } from './assets/javaScript/cookies';
-import router from './router';
+
+declare var language: any;
 
 export default new Vuex.Store({
   state: {
     style: 'light',
+    savedLanguages: new Map(),
     lang: {
+      name: undefined,
       strings: undefined as any,
     },
     user: undefined,
@@ -25,6 +28,9 @@ export default new Vuex.Store({
     },
     l: (state) => (msg: string) => {
       return state.lang.strings[msg];
+    },
+    hasLanguage(state: any, lang) {
+      return state.savedLanguages.has(lang);
     },
   },
   mutations: {
@@ -45,11 +51,13 @@ export default new Vuex.Store({
     changeThemeTo(state: any, style: 'light' | 'dark') {
       state.style = style;
     },
-    changeLanguage(state: any, lang: string) {
-      import(`@/assets/javaScript/languages/${lang}.ts`).then((file) => {
-        state.lang.strings = file.strings;
-        setCookie('watchrLanguage', lang, 365);
-        router.push(router.currentRoute);
+    setLanguage(state: any, lang) {
+      state.lang.strings = state.savedLanguages.get(lang).strings;
+      state.lang.name = lang;
+    },
+    saveLanguage(state: any, { lang, langObj}: any) {
+      state.savedLanguages.set(lang, {
+        strings: langObj.strings,
       });
     },
   },
@@ -60,15 +68,31 @@ export default new Vuex.Store({
         commit('changeThemeTo', style);
       }
     },
-    setSavedLanguage({ commit, state }) {
-      let lang = getCookie('watchrLanguage');
-      if (lang === '') {
-        lang = 'en';
-      }
-      return import(`@/assets/javaScript/languages/${lang}.ts`).then((file) => {
-        state.lang.strings = file.strings;
-        setCookie('watchrLanguage', lang, 365);
+    downloadLanguage({ commit, state }, lang) {
+      return new Promise((resolve) => {
+        const scr = document.createElement('script');
+        scr.setAttribute('id', lang);
+        scr.setAttribute('type', 'text/javascript');
+        scr.setAttribute('src', '/assets/langs/' + lang + '.js');
+        scr.onload = () => {
+          state.lang.strings = language.strings;
+          state.lang.name = lang;
+          commit('saveLanguage', { lang, langObj: language });
+          resolve();
+        };
+        document.getElementsByTagName('head')[0].appendChild(scr);
       });
+    },
+    setPreferedLanguage({ commit, state, dispatch }) {
+      const lang = getCookie('watchrLanguage');
+      if (lang === '' || lang === 'en') {
+        setCookie('watchrLanguage', 'en', 365);
+        return new Promise((resolve) => {
+          resolve();
+        });
+      } else {
+        return dispatch('downloadLanguage', lang);
+      }
     },
     getUserDataIfLogged({ commit }) {
       const sessionToken = getCookie('watchrSessionToken');

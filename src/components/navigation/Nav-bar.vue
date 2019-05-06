@@ -65,7 +65,11 @@ export default Vue.extend({
       magicLine.style.width = width + 'px';
     },
     changeTheme(lang: string) {
-      this.$store.commit('changeLanguage', lang);
+      if (this.$store.state.savedLanguages.has(lang)) {
+        this.$store.commit('setLanguage', lang);
+      } else {
+        this.$store.dispatch('downloadLanguage', lang);
+      }
     },
   },
   watch: {
