@@ -2,11 +2,11 @@
   <div class='signup body background' :class='$store.state.theme.style'>
     <div>
       <app-form class='column padding' :act='submit' :load-icon='true'>
-        <app-title class='form-margin'>{{ $store.getters.l('signUpTitle') }}</app-title>
-        <app-input class='form-margin' name='username' :placeholder='$store.getters.l("passwordInputPlaceholder")' :max='50' type='text'></app-input>
-        <app-input class='form-margin' name='email' :placeholder='$store.getters.l("emailInputPlaceholder")' :max='50' type='text'></app-input>
-        <confirm-password input-class='form-margin' name='password' :placeholder1='$store.getters.l("newPasswordInputPlaceholder")' :placeholder2='$store.getters.l("confirmPasswordInputPlaceholder")' :max='50'></confirm-password>
-        <app-button class='form-margin'>{{ $store.getters.l("createAccountButton") }}</app-button>
+        <app-title class='form-margin'>{{ $store.getters['lang/l']('signUpTitle') }}</app-title>
+        <app-input class='form-margin' name='username' :placeholder='$store.getters["lang/l"]("passwordInputPlaceholder")' :max='50' type='text'></app-input>
+        <app-input class='form-margin' name='email' :placeholder='$store.getters["lang/l"]("emailInputPlaceholder")' :max='50' type='text'></app-input>
+        <confirm-password input-class='form-margin' name='password' :placeholder1='$store.getters["lang/l"]("newPasswordInputPlaceholder")' :placeholder2='$store.getters["lang/l"]("confirmPasswordInputPlaceholder")' :max='50'></confirm-password>
+        <app-button class='form-margin'>{{ $store.getters['lang/l']("createAccountButton") }}</app-button>
       </app-form>
     </div>
   </div>
@@ -46,17 +46,17 @@ export default Vue.extend({
         if (res.data.error === 'usernameTaken') {
           FormBus.$emit('error', {
             name: 'username',
-            msg: this.$store.getters.l('usernameTakenMsg'),
+            msg: this.$store.getters['lang/l']('usernameTakenMsg'),
           } as InputErrorObject);
         } else if (res.data.error === 'emailTaken') {
           FormBus.$emit('error', {
             name: 'email',
-            msg: this.$store.getters.l('emailTakenMsg'),
+            msg: this.$store.getters['lang/l']('emailTakenMsg'),
           } as InputErrorObject);
         } else {
           router.push('/login');
           ToastBus.$emit('addToast', {
-            msg: this.$store.getters.l('successfullCreatedAccountToast'),
+            msg: this.$store.getters['lang/l']('successfullCreatedAccountToast'),
             duration_seconds: 5,
             type: 'success',
           } as ToastObj);

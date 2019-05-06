@@ -6,7 +6,6 @@ import router from './router';
 import store from './store';
 import './registerServiceWorker';
 import { Route } from 'vue-router';
-import defaultLanguage from '@/assets/javaScript/en';
 
 import { getCookie } from '@/assets/javaScript/cookies';
 
@@ -14,7 +13,7 @@ Vue.config.productionTip = false;
 
 
 store.dispatch('theme/setSavedTheme');
-store.commit('saveLanguage', { lang: 'en' , langObj: defaultLanguage});
+store.dispatch('lang/setLanguage', 'en');
 
 let app = new Vue({
   data: { routerViewLoading: false },

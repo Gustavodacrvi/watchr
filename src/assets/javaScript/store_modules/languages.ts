@@ -6,27 +6,30 @@ savedLanguages.set('en', defaultLanguage);
 
 declare const LANGUAGE: any;
 
+
 export default {
   namespaced: true,
   state: {
-    savedLanguages: savedLanguages,
+    savedLanguages,
     currentLanguage: 'en',
     strings: defaultLanguage.strings,
   },
-  mutations: {
-    
+  getters: {
+    l: (state: any) => (msg: string) => {
+      return state.strings[msg];
+    },
   },
   actions: {
     setLanguage({ state, commit }: any, lang: string) {
       return new Promise((resolve) => {
         if (lang === '' || lang === 'en') {
           state.currentLanguage = 'en';
-          state.strings = state.savedLanguages.get('en');
+          state.strings = state.savedLanguages.get('en').strings;
           setCookie('watchrLanguage', 'en', 365);
           resolve();
         } else if (state.savedLanguages.has(lang)) {
           state.currentLanguage = lang;
-          state.strings = state.savedLanguages.get(lang);
+          state.strings = state.savedLanguages.get(lang).strings;
           setCookie('watchrLanguage', lang, 365);
           resolve();
         } else {
