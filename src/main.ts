@@ -8,6 +8,7 @@ import './registerServiceWorker';
 import { Route } from 'vue-router';
 import defaultLanguage from '@/assets/javaScript/en';
 
+import { getCookie } from '@/assets/javaScript/cookies';
 
 Vue.config.productionTip = false;
 
@@ -22,7 +23,7 @@ let app = new Vue({
 }).$mount('#app');
 
 Promise.all([
-  store.dispatch('setPreferedLanguage'),
+  store.dispatch('lang/setLanguage', getCookie('watchrLanguage')),
   store.dispatch('getUserDataIfLogged'),
 ]).finally(() => {
 

@@ -1,5 +1,4 @@
-
-var language = {
+var LANGUAGE = {
   strings: {
     loginTitle: 'Entrar',
     usernameInputPlaceholder: 'Nome de usuário:',
