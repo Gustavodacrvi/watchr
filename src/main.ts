@@ -12,7 +12,7 @@ import defaultLanguage from '@/assets/javaScript/en';
 Vue.config.productionTip = false;
 
 
-store.dispatch('setSavedTheme');
+store.dispatch('theme/setSavedTheme');
 store.commit('saveLanguage', { lang: 'en' , langObj: defaultLanguage});
 
 let app = new Vue({

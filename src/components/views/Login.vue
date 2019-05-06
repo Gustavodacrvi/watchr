@@ -1,5 +1,5 @@
 <template>
-  <div class='login body background' :class='$store.state.style'>
+  <div class='login body background' :class='$store.state.theme.style'>
     <div>
       {{ $store.getters.l('hey') }}
       <app-form class='column padding' :act='submit' :load-icon='true'>

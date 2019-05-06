@@ -2,7 +2,7 @@
   <div class='input form-element'>
     <div>
       <div>
-        <input class='input' :class='[wrongInput, $store.state.style]' :name='name' :placeholder='placeholder' :type='inputType' autocomplete='off' v-model='value'/>
+        <input class='input' :class='[wrongInput, $store.state.theme.style]' :name='name' :placeholder='placeholder' :type='inputType' autocomplete='off' v-model='value'/>
         <icon class='pointer' @click='togglePassword' v-show='isPassword && visiblePassword' sz='medium' ico='eye'></icon>
         <icon class='pointer' @click='togglePassword' v-show='isPassword && !visiblePassword' sz='medium' ico='eye-slash'></icon>
       </div>

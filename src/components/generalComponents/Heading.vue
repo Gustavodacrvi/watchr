@@ -11,7 +11,7 @@ export default Vue.extend({
       'h' + this.lvl,
       {
         attrs: {
-          class: 'heading ' + this.$store.state.style,
+          class: 'heading ' + this.$store.state.theme.style,
         },
       },
       this.$slots.default,

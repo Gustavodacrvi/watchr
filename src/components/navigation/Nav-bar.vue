@@ -3,8 +3,8 @@
     <section>
     </section>
     <section>
-      <span class='magicLine magic-line' :class='$store.state.style' ref='magicLine'></span>
-      <transition-group :class='$store.state.style' name='nav-link'>
+      <span class='magicLine magic-line' :class='$store.state.theme.style' ref='magicLine'></span>
+      <transition-group :class='$store.state.theme.style' name='nav-link'>
         <nav-link to='/' ref='/' key='nav-link-home' @click='navigate'>{{ this.$store.getters.l('navBarHome') }}</nav-link>
         <nav-link to='/login' ref='/login' key='nav-link-login' @click='navigate'>{{ this.$store.getters.l('navBarLogin') }}</nav-link>
         <nav-link to='/signup' ref='/signup' key='nav-link-signup' @click='navigate'>{{ this.$store.getters.l('navBarSignup') }}</nav-link>
@@ -48,7 +48,7 @@ export default Vue.extend({
   },
   methods: {
     invertTheme(): void {
-      this.$store.commit('invertTheme');
+      this.$store.commit('theme/invertTheme');
     },
     navigate(route: string) {
       this.$router.push(route);

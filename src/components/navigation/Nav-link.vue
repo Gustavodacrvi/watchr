@@ -1,5 +1,5 @@
 <template>
-  <div :class='[classObject, $store.state.style]' @click='$emit("click", to)'>
+  <div :class='[classObject, $store.state.theme.style]' @click='$emit("click", to)'>
     <router-link :to='to'>
       <slot></slot>
     </router-link>

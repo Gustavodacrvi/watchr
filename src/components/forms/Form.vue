@@ -1,5 +1,5 @@
 <template>
-  <article class='form card-round' :class='$store.state.style'>
+  <article class='form card-round' :class='$store.state.theme.style'>
     <slot></slot>
   </article>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <div class='signup body background' :class='$store.state.style'>
+  <div class='signup body background' :class='$store.state.theme.style'>
     <div>
       <app-form class='column padding' :act='submit' :load-icon='true'>
         <app-title class='form-margin'>{{ $store.getters.l('signUpTitle') }}</app-title>
