@@ -2,33 +2,33 @@ import Vue from 'vue';
 import axios from 'axios';
 import Vuex from 'vuex';
 import defaultLanguage from '@/assets/javaScript/en';
+import themes from '@/assets/javaScript/store_modules/themes';
 
 Vue.use(Vuex);
 
-interface State {
-  style: string;
-}
 
 import { setCookie, getCookie } from './assets/javaScript/cookies';
 
 declare var language: any;
 
 export default new Vuex.Store({
+  modules: {
+    theme: themes,
+  },
   state: {
-    style: 'light',
     savedLanguages: new Map(),
     lang: {
       name: 'en',
       strings: defaultLanguage.strings,
     },
     user: undefined,
-  } as State,
+  },
   getters: {
+    l: (state: any) => (msg: string) => {
+      return state.lang.strings[msg];
+    },
     isAuthenticated(state: any) {
       return (state.user !== undefined);
-    },
-    l: (state) => (msg: string) => {
-      return state.lang.strings[msg];
     },
     hasLanguage(state: any, lang) {
       return state.savedLanguages.has(lang);
@@ -40,17 +40,6 @@ export default new Vuex.Store({
     },
     logOut(state: any) {
       state.user = undefined;
-    },
-    invertTheme(state: any) {
-      if (state.style === 'light') {
-        state.style = 'dark';
-      } else {
-        state.style = 'light';
-      }
-      setCookie('darkTheme', state.style, 365);
-    },
-    changeThemeTo(state: any, style: 'light' | 'dark') {
-      state.style = style;
     },
     setLanguage(state: any, lang) {
       state.lang.strings = state.savedLanguages.get(lang).strings;
@@ -64,12 +53,6 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    setSavedTheme({ commit }) {
-      const style = getCookie('darkTheme');
-      if (style !== '') {
-        commit('changeThemeTo', style);
-      }
-    },
     downloadLanguage({ commit, state }, lang) {
       return new Promise((resolve) => {
         const scr = document.createElement('script');
