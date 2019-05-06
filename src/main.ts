@@ -7,11 +7,13 @@ import store from './store';
 import './registerServiceWorker';
 import { Route } from 'vue-router';
 
-import { getCookie, setCookie } from './assets/javaScript/cookies';
+import { getCookie } from '@/assets/javaScript/cookies';
 
 Vue.config.productionTip = false;
 
-store.dispatch('setSavedTheme');
+
+store.dispatch('theme/setSavedTheme');
+store.dispatch('lang/setLanguage', 'en');
 
 let app = new Vue({
   data: { routerViewLoading: false },
@@ -20,7 +22,7 @@ let app = new Vue({
 }).$mount('#app');
 
 Promise.all([
-  store.dispatch('setSavedLanguage'),
+  store.dispatch('lang/setLanguage', getCookie('watchrLanguage')),
   store.dispatch('getUserDataIfLogged'),
 ]).finally(() => {
 

@@ -1,5 +1,5 @@
 <template>
-  <i class='icon' :class='`fa fa-${ico} ${sz} icon ` + $store.state.style' @click='$emit("click")'></i>  
+  <i class='icon' :class='`fa fa-${ico} ${sz} icon ` + $store.state.theme.style' @click='$emit("click")'></i>  
 </template>
 
 <script lang="ts">

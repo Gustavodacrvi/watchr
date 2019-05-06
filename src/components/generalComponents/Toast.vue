@@ -1,6 +1,6 @@
 <template>
-  <transition :class='$store.state.style' name='toast-transition' @after-leave='showNext'>
-    <article :class='[toastClass, $store.state.style]' v-show='showing' id='toast' class='toast'>
+  <transition :class='$store.state.theme.style' name='toast-transition' @after-leave='showNext'>
+    <article :class='[toastClass, $store.state.theme.style]' v-show='showing' id='toast' class='toast'>
       <span>{{ msg }}</span>
       <span v-if='infiniteToast' class='toast-icon'>
         <icon ico='times' sz='big' @click='showing = false' v-cursor></icon>

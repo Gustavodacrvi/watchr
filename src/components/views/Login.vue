@@ -1,14 +1,13 @@
 <template>
-  <div class='login body background' :class='$store.state.style'>
+  <div class='login body background' :class='$store.state.theme.style'>
     <div>
-      {{ $store.getters.l('hey') }}
       <app-form class='column padding' :act='submit' :load-icon='true'>
-        <app-title class='form-margin'>{{ $store.getters.l('loginTitle') }}</app-title>
-        <app-input class='form-margin' name='username' :placeholder='$store.getters.l("usernameInputPlaceholder")' :max='50' type='text'></app-input>
-        <app-input class='form-margin' name='password' :placeholder='$store.getters.l("passwordInputPlaceholder")' :max='50' type='password'></app-input>
-        <app-route class='form-margin' to='/signup' v-margin-left='"5%"'>{{ $store.getters.l("loginDontHavePasswordMsg") }}</app-route>
-        <app-button class='form-margin'>{{ $store.getters.l("enterButton") }}</app-button>
-        <app-route class='form-margin' to='/' v-margin-left='"5%"'>{{ $store.getters.l("loginForgotUsernameOrPasswordMessage") }}</app-route>
+        <app-title class='form-margin'>{{ $store.getters['lang/l']('loginTitle') }}</app-title>
+        <app-input class='form-margin' name='username' :placeholder='$store.getters["lang/l"]("usernameInputPlaceholder")' :max='50' type='text'></app-input>
+        <app-input class='form-margin' name='password' :placeholder='$store.getters["lang/l"]("passwordInputPlaceholder")' :max='50' type='password'></app-input>
+        <app-route class='form-margin' to='/signup' v-margin-left='"5%"'>{{ $store.getters['lang/l']("loginDontHavePasswordMsg") }}</app-route>
+        <app-button class='form-margin'>{{ $store.getters['lang/l']("enterButton") }}</app-button>
+        <app-route class='form-margin' to='/' v-margin-left='"5%"'>{{ $store.getters['lang/l']("loginForgotUsernameOrPasswordMessage") }}</app-route>
       </app-form>
     </div>
   </div>
@@ -48,19 +47,19 @@ export default Vue.extend({
         if (res.data.error === 'usernameNotFound') {
           FormBus.$emit('error', {
             name: 'username',
-            msg: this.$store.getters.l('usernameNotFoundInputMsg'),
+            msg: this.$store.getters.lang.l('usernameNotFoundInputMsg'),
           } as InputErrorObject);
         } else if (res.data.error === 'wrongPassword') {
           FormBus.$emit('error', {
             name: 'password',
-            msg: this.$store.getters.l('wrongPasswordInputMsg'),
+            msg: this.$store.getters.lang.l('wrongPasswordInputMsg'),
           } as InputErrorObject);
         } else {
           this.$store.commit('logUser', res.data.user);
           setCookie('watchrSessionToken', res.data.sessionToken, 30);
           router.push('/');
           ToastBus.$emit('addToast', {
-            msg: this.$store.getters.l('successfullLoginToast'),
+            msg: this.$store.getters.lang.l('successfullLoginToast'),
             duration_seconds: 5,
             type: 'success',
           } as ToastObj);

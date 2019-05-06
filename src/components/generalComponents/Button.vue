@@ -1,5 +1,5 @@
 <template>
-  <button class='button' :class='$store.state.style' @click='$emit("click")' :type='type'><slot></slot></button>
+  <button class='button' :class='$store.state.theme.style' @click='$emit("click")' :type='type'><slot></slot></button>
 </template>
 
 <script lang="ts">

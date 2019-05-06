@@ -2,7 +2,7 @@
   <span class='dropdown' @mouseenter='show = !show' @mouseleave='show = !show'>
     <slot name='handle'></slot>
     <transition name='fade-transition'>
-    <div class='card-round' :class='$store.state.style' v-if='show'>
+    <div class='card-round' :class='$store.state.theme.style' v-if='show'>
       <slot name='content'></slot>
     </div>
     </transition>

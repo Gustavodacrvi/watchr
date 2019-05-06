@@ -1,5 +1,5 @@
 <template>
-  <div id='body' class='background' :class='$store.state.style'>
+  <div id='body' class='background' :class='$store.state.theme.style'>
     <loading></loading>
   </div>
 </template>

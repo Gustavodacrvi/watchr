@@ -1,5 +1,5 @@
 <template>
-  <span :class='["span-alert-" + type,$store.state.style]'>
+  <span :class='["span-alert-" + type,$store.state.theme.style]'>
     <slot></slot>
   </span>
 </template>
