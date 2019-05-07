@@ -2,12 +2,12 @@
   <div class='login body background' :class='$store.state.theme.style'>
     <div>
       <app-form class='column padding' :act='submit' :load-icon='true'>
-        <app-title class='form-margin'>{{ $store.getters['lang/l']('loginTitle') }}</app-title>
-        <app-input class='form-margin' name='username' :placeholder='$store.getters["lang/l"]("usernameInputPlaceholder")' :max='50' type='text'></app-input>
-        <app-input class='form-margin' name='password' :placeholder='$store.getters["lang/l"]("passwordInputPlaceholder")' :max='50' type='password'></app-input>
-        <app-route class='form-margin' to='/signup' v-margin-left='"5%"'>{{ $store.getters['lang/l']("loginDontHavePasswordMsg") }}</app-route>
-        <app-button class='form-margin'>{{ $store.getters['lang/l']("enterButton") }}</app-button>
-        <app-route class='form-margin' to='/' v-margin-left='"5%"'>{{ $store.getters['lang/l']("loginForgotUsernameOrPasswordMessage") }}</app-route>
+        <app-title class='form-margin'>{{ lang('loginTitle') }}</app-title>
+        <app-input class='form-margin' name='username' :placeholder='lang("usernameInputPlaceholder")' :max='50' type='text'></app-input>
+        <app-input class='form-margin' name='password' :placeholder='lang("passwordInputPlaceholder")' :max='50' type='password'></app-input>
+        <app-route class='form-margin' to='/signup' v-margin-left='"5%"'>{{ lang("loginDontHavePasswordMsg") }}</app-route>
+        <app-button class='form-margin'>{{ lang("enterButton") }}</app-button>
+        <app-route class='form-margin' to='/' v-margin-left='"5%"'>{{ lang("loginForgotUsernameOrPasswordMessage") }}</app-route>
       </app-form>
     </div>
   </div>
@@ -37,6 +37,11 @@ export default Vue.extend({
     'app-route': Link,
     'app-button': Button,
     'app-title': Title,
+  },
+  computed: {
+    lang(): string {
+      return this.$store.getters['lang/l'];
+    },
   },
   methods: {
     async submit(values: any) {
