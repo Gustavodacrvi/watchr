@@ -5,11 +5,11 @@
     <section>
       <span class='magicLine magic-line' :class='$store.state.theme.style' ref='magicLine'></span>
       <transition-group :class='$store.state.theme.style' name='nav-link'>
-        <nav-link to='/' ref='/' key='nav-link-home' @click='navigate'>{{ this.$store.getters['lang/l']('navBarHome') }}</nav-link>
-        <nav-link to='/login' ref='/login' key='nav-link-login' @click='navigate'>{{ this.$store.getters['lang/l']('navBarLogin') }}</nav-link>
-        <nav-link to='/signup' ref='/signup' key='nav-link-signup' @click='navigate'>{{ this.$store.getters['lang/l']('navBarSignup') }}</nav-link>
-        <nav-link to='/user' ref='/user' key='nav-link-user' @click='navigate' v-if='$store.getters.isAuthenticated'>{{ this.$store.getters['lang/l']('navBarUser') }}</nav-link>
-        <nav-link v-if='$store.getters.isAuthenticated' to='/logout' key='nav-link-logout'>{{ this.$store.getters['lang/l']('navBarLogout') }}</nav-link>
+        <nav-link to='/' ref='/' key='nav-link-home' @click='navigate'>{{ lang('navBarHome') }}</nav-link>
+        <nav-link to='/login' ref='/login' key='nav-link-login' @click='navigate'>{{ lang('navBarLogin') }}</nav-link>
+        <nav-link to='/signup' ref='/signup' key='nav-link-signup' @click='navigate'>{{ lang('navBarSignup') }}</nav-link>
+        <nav-link to='/user' ref='/user' key='nav-link-user' @click='navigate' v-if='lang.isAuthenticated'>{{ lang('navBarUser') }}</nav-link>
+        <nav-link v-if='$store.getters.isAuthenticated' to='/logout' key='nav-link-logout'>{{ lang('navBarLogout') }}</nav-link>
       </transition-group>
     </section>
     <section>
@@ -45,6 +45,11 @@ export default Vue.extend({
     setTimeout(() => {
       this.moveMagicLine(this.$route.path);
     }, 100);
+  },
+  computed: {
+    lang(): string {
+      return this.$store.getters['lang/l'];
+    },
   },
   methods: {
     invertTheme(): void {
