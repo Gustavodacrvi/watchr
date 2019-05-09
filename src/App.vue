@@ -32,17 +32,6 @@ export default Vue.extend({
     'toast': Toast,
     'loading': Loading,
   },
-  mounted() {
-    setTimeout(() => {
-      this.$store.commit('showMobileSection');
-    }, 1000);
-    setTimeout(() => {
-      this.$store.commit('hideMobileSection');
-    }, 2000);
-    setTimeout(() => {
-      this.$store.commit('showMobileSection');
-    }, 3000);
-  },
   methods: {
     showMobileSection() {
       const content: any = document.getElementById('content');

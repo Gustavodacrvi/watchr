@@ -1,5 +1,5 @@
 <template>
-  <div id='hamburger-icon' :class='{"active-hamburger": active}' @click='active = !active'>
+  <div id='hamburger-icon' :class='{"active-hamburger": active}' @click='toggleMobileSection'>
     <span class='line'></span>
     <span class='line'></span>
     <span class='line'></span>
@@ -13,6 +13,16 @@ export default Vue.extend({
     return {
       active: false,
     };
+  },
+  methods: {
+    toggleMobileSection() {
+      if (this.active) {
+        this.$store.commit('hideMobileSection');
+      } else {
+        this.$store.commit('showMobileSection');
+      }
+      this.active = !this.active;
+    },
   },
 });
 </script>
