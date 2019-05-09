@@ -13,7 +13,7 @@
       </transition-group>
     </section>
     <section>
-      <dropdown class='navBar-margin text-align'>
+      <dropdown class='navBar-margin-right text-align'>
         <template v-slot:handle>
           <icon class="icon-color-hover pointer" sz="big" ico="globe"></icon>
         </template>
@@ -49,6 +49,14 @@ export default Vue.extend({
   computed: {
     lang(): string {
       return this.$store.getters['lang/l'];
+    },
+    isDesktop() {
+      const root: any = this.$root;
+      const width = root.width;
+      if (width > 1024) {
+        return true;
+      }
+      return false;
     },
   },
   methods: {
@@ -95,8 +103,8 @@ export default Vue.extend({
   height: 3px;
 }
 
-.navBar-margin {
-  margin: 0 25px;
+.navBar-margin-right {
+  margin-right: 25px;
 }
 
 nav {
