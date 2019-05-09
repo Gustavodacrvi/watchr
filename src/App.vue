@@ -61,6 +61,14 @@ export default Vue.extend({
 
 body {
   font-family: 'Work Sans';
+  margin: 0;
+}
+
+#body {
+  position: relative;
+  overflow: auto;
+  width: 100vw;
+  height: 100vh;
 }
 
 .mainColor {
@@ -73,16 +81,6 @@ body {
 
 span, a, p {
   color: #ADADAD;
-}
-
-body {
-  margin: 0;
-}
-
-#body {
-  position: absolute;
-  width: 100%;
-  height: 100%;
 }
 
 

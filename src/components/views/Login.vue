@@ -78,13 +78,13 @@ export default Vue.extend({
 <style scoped>
 
 div.login {
+  height: 100%;
   display: flex;
   justify-content: center;
   margin: 4px;
 }
 
 div.login > div {
-  margin-top: 110px;
   flex-basis: 475px;
 }
 

@@ -15,20 +15,20 @@ export default Vue.extend({
 
 <style scoped>
 
-i.icon {
+i.medium {
   font-size: 18px;
 }
 
-i.pointer {
-  cursor: pointer;
-}
-
 i.big {
-  font-size: 25px;
+  font-size: 24px;
 }
 
 i.massive {
   font-size: 100px;
+}
+
+i.pointer {
+  cursor: pointer;
 }
 
 .icon {
