@@ -8,7 +8,7 @@
         <nav-link to='/' ref='/' key='nav-link-home' @click='$parent.navigate'>{{ lang('navBarHome') }}</nav-link>
         <nav-link to='/login' ref='/login' key='nav-link-login' @click='$parent.navigate'>{{ lang('navBarLogin') }}</nav-link>
         <nav-link to='/signup' ref='/signup' key='nav-link-signup' @click='$parent.navigate'>{{ lang('navBarSignup') }}</nav-link>
-        <nav-link to='/user' ref='/user' key='nav-link-user' @click='$parent.navigate' v-if='lang.isAuthenticated'>{{ lang('navBarUser') }}</nav-link>
+        <nav-link to='/user' ref='/user' key='nav-link-user' @click='$parent.navigate' v-if='$store.getters.isAuthenticated'>{{ lang('navBarUser') }}</nav-link>
         <nav-link v-if='$store.getters.isAuthenticated' to='/logout' key='nav-link-logout'>{{ lang('navBarLogout') }}</nav-link>
       </transition-group>
     </section>
