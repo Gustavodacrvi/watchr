@@ -106,7 +106,7 @@ export default Vue.extend({
 }
 
 .active-hamburger {
-  right: -125px !important;
+  right: -150px !important;
 }
 
 </style>

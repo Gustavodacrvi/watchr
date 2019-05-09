@@ -42,7 +42,7 @@ export default Vue.extend({
 
 a {
   text-decoration: none;
-  font-size: 1.5em;
+  font-size: 1.25em;
 }
 
 a:hover {

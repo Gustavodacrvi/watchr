@@ -48,7 +48,7 @@ export default new Vuex.Store({
       state.mobileSectionOpened = true;
 
       mobile.style.right = '0px';
-      content.style.right = '125px';
+      content.style.right = '150px';
     },
     hideMobileSection(state: any) {
       const content: any = document.getElementById('content');
@@ -56,7 +56,7 @@ export default new Vuex.Store({
       state.mobileSectionOpened = false;
 
       if (mobile) {
-        mobile.style.right = '-125px';
+        mobile.style.right = '-150px';
       }
       content.style.right = '0';
     },

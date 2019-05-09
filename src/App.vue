@@ -88,10 +88,10 @@ body {
 
 #mobile-section {
   position: absolute;
-  right: -125px;
+  right: -150px;
   box-sizing: border-box;
   height: 100%;
-  width: 125px;
+  width: 150px;
   transition-duration: .2s;
 }
 
