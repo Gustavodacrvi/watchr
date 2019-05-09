@@ -1,5 +1,5 @@
 <template>
-  <desktop v-if='isDesktop'></desktop>
+  <desktop v-if='$store.getters.NavbarisOnDesktop'></desktop>
   <mobile v-else></mobile>
 </template>
 
@@ -12,15 +12,6 @@ export default Vue.extend({
   components: {
     desktop: Desktop,
     mobile: Mobile,
-  },
-  computed: {
-    isDesktop() {
-      const width = this.$store.state.windowWidth;
-      if (width > 824) {
-        return true;
-      }
-      return false;
-    },
   },
   methods: {
     invertTheme(): void {

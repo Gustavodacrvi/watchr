@@ -36,6 +36,10 @@ export default Vue.extend({
   transition-duration: .2s;
 }
 
+#hamburger-icon:hover .line {
+  background-color: #FE815E !important;
+}
+
 #hamburger-icon > :nth-child(1) {
   top: 0;
   width: 100%;

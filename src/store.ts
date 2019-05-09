@@ -24,6 +24,12 @@ export default new Vuex.Store({
     isAuthenticated(state: any) {
       return (state.user !== undefined);
     },
+    NavbarisOnDesktop(state: any) {
+      if (state.windowWidth > 824) {
+        return true;
+      }
+      return false;
+    },
   },
   mutations: {
     logUser(state: any, user) {
