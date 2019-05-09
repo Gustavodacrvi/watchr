@@ -75,4 +75,46 @@ export default Vue.extend({
 
 <style scoped>
 
+.navBar-margin-right {
+  margin-right: 25px !important;
+}
+
+.magic-line {
+  background-color: #FE684F;
+}
+
+.magicLine {
+  position: absolute;
+  transition-duration: .2s;
+  bottom: 0;
+  height: 3px;
+}
+
+nav {
+  height: 48px;
+  margin: 25px 50px;
+  position: relative;
+}
+
+nav > section {
+  height: 100%;
+}
+
+nav > :nth-child(2) {
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+nav > :nth-child(1) {
+  clear: left;
+  float: left;
+}
+
+nav > :nth-child(3) {
+  float: right;
+  clear: right;
+}
+
 </style>

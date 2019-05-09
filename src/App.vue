@@ -4,7 +4,7 @@
       <nav-bar></nav-bar>
       <transition :class='$store.state.theme.style' name='fade-transition' mode='out-in'>
         <loading v-if='$root.routerViewLoading'></loading>
-        <div id='router-view'>
+        <div v-else id='router-view'>
           <router-view/>
         </div>
       </transition>
