@@ -9,6 +9,7 @@
         </div>
       </transition>
     </section>
+    <mobile-section id='mobile-section' v-if='!$store.getters.NavbarisOnDesktop'></mobile-section>
     <toast></toast>
   </div>
 </template>
@@ -18,6 +19,7 @@ import Vue from 'vue';
 import store from './store';
 import axios from 'axios';
 import NavBar from './components/navigation/Nav-bar.vue';
+import MobileSection from './components/navigation/Mobile-section.vue';
 import Toast from './components/generalComponents/Toast.vue';
 import Loading from './components/generalComponents/Loading.vue';
 
@@ -25,14 +27,40 @@ import { getCookie, setCookie } from './assets/javaScript/cookies';
 
 export default Vue.extend({
   components: {
+    'mobile-section': MobileSection,
     'nav-bar': NavBar,
     'toast': Toast,
     'loading': Loading,
   },
+  mounted() {
+    setTimeout(() => {
+      this.showMobileSection();
+    }, 1000);
+    setTimeout(() => {
+      this.hideMobileSection();
+    }, 2000);
+    setTimeout(() => {
+      this.showMobileSection();
+    }, 3000);
+  },
+  methods: {
+    showMobileSection() {
+      const content: any = document.getElementById('content');
+      const mobile: any = document.getElementById('mobile-section');
+
+      mobile.style.right = '0px';
+      content.style.right = '200px';
+    },
+    hideMobileSection() {
+      const content: any = document.getElementById('content');
+      const mobile: any = document.getElementById('mobile-section');
+
+      mobile.style.right = '-200px';
+      content.style.right = '0';
+    },
+  },
 });
 </script>
-
-
 
 <style>
 
@@ -70,7 +98,8 @@ body {
 
 #body {
   position: relative;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   width: 100vw;
   height: 100vh;
 }
@@ -81,6 +110,15 @@ body {
   height: 100%;
   width: 100%;
   flex-direction: column;
+  transition-duration: .2s;
+}
+
+#mobile-section {
+  position: absolute;
+  right: -200px;
+  height: 100%;
+  width: 200px;
+  transition-duration: .2s;
 }
 
 #router-view {
@@ -127,6 +165,5 @@ span, a, p {
 .nav-link-enter, .nav-link-leave-to {
   opacity: 0;
 }
-
 
 </style>
