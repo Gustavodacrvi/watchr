@@ -29,19 +29,6 @@ export default Vue.extend({
     'toast': Toast,
     'loading': Loading,
   },
-  data() {
-    return {
-      width: undefined as any,
-    };
-  },
-  created() {
-    window.addEventListener('resize', this.getWindowWidth);
-  },
-  methods: {
-    getWindowWidth() {
-      this.width = document.body.clientWidth;
-    },
-  },
 });
 </script>
 

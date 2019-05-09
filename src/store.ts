@@ -18,6 +18,7 @@ export default new Vuex.Store({
   },
   state: {
     user: undefined,
+    windowWidth: undefined,
   },
   getters: {
     isAuthenticated(state: any) {
@@ -31,8 +32,17 @@ export default new Vuex.Store({
     logOut(state: any) {
       state.user = undefined;
     },
+    setWindowWidth(state: any, width: number) {
+      state.windowWidth = width;
+    },
   },
   actions: {
+    getWindowWidthOnResize({ state }) {
+      state.windowWidth = document.body.clientWidth;
+      window.addEventListener('resize', () => {
+        state.windowWidth = document.body.clientWidth;
+      });
+    },
     getUserDataIfLogged({ commit }) {
       const sessionToken = getCookie('watchrSessionToken');
       if (sessionToken !== '') {

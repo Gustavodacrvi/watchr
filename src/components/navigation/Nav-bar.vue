@@ -5,16 +5,14 @@
 <script lang="ts">
 import Vue from 'vue';
 import Desktop from './desktop.vue';
-import Mobile from './mobile.vue';
 
 export default Vue.extend({
   components: {
     desktop: Desktop,
-    mobile: Mobile,
   },
   computed: {
     isDesktop() {
-      const width = this.$store.state.width;
+      const width = this.$store.state.windowWidth;
       if (width > 1024) {
         return true;
       }
