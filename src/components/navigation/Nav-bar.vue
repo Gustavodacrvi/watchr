@@ -1,58 +1,20 @@
 <template>
-  <nav>
-    <section>
-    </section>
-    <section>
-      <span class='magicLine magic-line' :class='$store.state.theme.style' ref='magicLine'></span>
-      <transition-group :class='$store.state.theme.style' name='nav-link'>
-        <nav-link to='/' ref='/' key='nav-link-home' @click='navigate'>{{ lang('navBarHome') }}</nav-link>
-        <nav-link to='/login' ref='/login' key='nav-link-login' @click='navigate'>{{ lang('navBarLogin') }}</nav-link>
-        <nav-link to='/signup' ref='/signup' key='nav-link-signup' @click='navigate'>{{ lang('navBarSignup') }}</nav-link>
-        <nav-link to='/user' ref='/user' key='nav-link-user' @click='navigate' v-if='lang.isAuthenticated'>{{ lang('navBarUser') }}</nav-link>
-        <nav-link v-if='$store.getters.isAuthenticated' to='/logout' key='nav-link-logout'>{{ lang('navBarLogout') }}</nav-link>
-      </transition-group>
-    </section>
-    <section>
-      <dropdown class='navBar-margin-right text-align'>
-        <template v-slot:handle>
-          <icon class="icon-color-hover pointer" sz="big" ico="globe"></icon>
-        </template>
-        <template v-slot:content>
-          <el @click='changeTheme("en")'>English</el>
-          <el @click='changeTheme("pt-BR")'>Português(Brasil)</el>
-        </template>
-      </dropdown>
-      <icon class='icon-color-hover pointer' sz='big' ico='adjust' @click='invertTheme'></icon>
-    </section>
-  </nav>
+  <desktop v-if='isDesktop'></desktop>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import NavLink from './Nav-link.vue';
-import Icon from './../generalComponents/Icon.vue';
-import Dropdown from './../dropdown/CenterDropdown.vue';
-import TextDropdownElement from './../dropdown/TextElement.vue';
+import Desktop from './desktop.vue';
+import Mobile from './mobile.vue';
 
 export default Vue.extend({
   components: {
-    'nav-link': NavLink,
-    'icon': Icon,
-    'dropdown': Dropdown,
-    'el': TextDropdownElement,
-  },
-  mounted() {
-    setTimeout(() => {
-      this.moveMagicLine(this.$route.path);
-    }, 100);
+    desktop: Desktop,
+    mobile: Mobile,
   },
   computed: {
-    lang(): string {
-      return this.$store.getters['lang/l'];
-    },
     isDesktop() {
-      const root: any = this.$root;
-      const width = root.width;
+      const width = this.$store.state.width;
       if (width > 1024) {
         return true;
       }
@@ -66,24 +28,8 @@ export default Vue.extend({
     navigate(route: string) {
       this.$router.push(route);
     },
-    moveMagicLine(str: string) {
-      const el: any = this.$refs[str];
-      const magicLineStr = 'magicLine';
-      const magicLine: any = this.$refs[magicLineStr];
-
-      const left: any = el.$el.offsetLeft;
-      const width: any = el.$el.clientWidth;
-
-      magicLine.style.left = left + 'px';
-      magicLine.style.width = width + 'px';
-    },
-    changeTheme(lang: string) {
+    changeLang(lang: string) {
       this.$store.dispatch('lang/setLanguage', lang);
-    },
-  },
-  watch: {
-    '$route.path'() {
-      this.moveMagicLine(this.$route.path);
     },
   },
 });
