@@ -35,4 +35,9 @@ div {
   top: 70px;
 }
 
+#mobile-section {
+  text-align: right;
+  padding-right: 30px;
+}
+
 </style>

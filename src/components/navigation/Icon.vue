@@ -12,6 +12,7 @@ export default Vue.extend({
   data() {
     return {
       active: false,
+      mobileSectionOpened: this.$store.state.mobileSectionOpened,
     };
   },
   methods: {
@@ -22,6 +23,16 @@ export default Vue.extend({
         this.$store.commit('showMobileSection');
       }
       this.active = !this.active;
+    },
+  },
+  computed: {
+    mobileSectionState(): boolean {
+      return this.$store.state.mobileSectionOpened;
+    },
+  },
+  watch: {
+    mobileSectionState(newState) {
+      this.active = newState;
     },
   },
 });
@@ -95,7 +106,7 @@ export default Vue.extend({
 }
 
 .active-hamburger {
-  right: -200px !important;
+  right: -125px !important;
 }
 
 </style>

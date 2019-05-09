@@ -19,6 +19,7 @@ export default new Vuex.Store({
   state: {
     user: undefined,
     windowWidth: undefined,
+    mobileSectionOpened: false,
   },
   getters: {
     isAuthenticated(state: any) {
@@ -41,19 +42,21 @@ export default new Vuex.Store({
     setWindowWidth(state: any, width: number) {
       state.windowWidth = width;
     },
-    showMobileSection() {
+    showMobileSection(state: any) {
       const content: any = document.getElementById('content');
       const mobile: any = document.getElementById('mobile-section');
+      state.mobileSectionOpened = true;
 
       mobile.style.right = '0px';
-      content.style.right = '200px';
+      content.style.right = '125px';
     },
-    hideMobileSection() {
+    hideMobileSection(state: any) {
       const content: any = document.getElementById('content');
       const mobile: any = document.getElementById('mobile-section');
+      state.mobileSectionOpened = false;
 
       if (mobile) {
-        mobile.style.right = '-200px';
+        mobile.style.right = '-125px';
       }
       content.style.right = '0';
     },

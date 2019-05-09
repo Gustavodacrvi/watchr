@@ -32,22 +32,6 @@ export default Vue.extend({
     'toast': Toast,
     'loading': Loading,
   },
-  methods: {
-    showMobileSection() {
-      const content: any = document.getElementById('content');
-      const mobile: any = document.getElementById('mobile-section');
-
-      mobile.style.right = '0px';
-      content.style.right = '200px';
-    },
-    hideMobileSection() {
-      const content: any = document.getElementById('content');
-      const mobile: any = document.getElementById('mobile-section');
-
-      mobile.style.right = '-200px';
-      content.style.right = '0';
-    },
-  },
 });
 </script>
 
@@ -104,9 +88,10 @@ body {
 
 #mobile-section {
   position: absolute;
-  right: -200px;
+  right: -125px;
+  box-sizing: border-box;
   height: 100%;
-  width: 200px;
+  width: 125px;
   transition-duration: .2s;
 }
 
