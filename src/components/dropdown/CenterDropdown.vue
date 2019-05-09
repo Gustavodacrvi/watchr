@@ -29,6 +29,7 @@ export default Vue.extend({
   position: relative;
   display: inline-flex;
   justify-content: center;
+  z-index: 1;
 }
 
 .dropdown-text-element:hover > span {

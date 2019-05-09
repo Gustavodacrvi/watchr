@@ -18,10 +18,18 @@ export default new Vuex.Store({
   },
   state: {
     user: undefined,
+    windowWidth: undefined,
+    mobileSectionOpened: false,
   },
   getters: {
     isAuthenticated(state: any) {
       return (state.user !== undefined);
+    },
+    NavbarisOnDesktop(state: any) {
+      if (state.windowWidth > 824) {
+        return true;
+      }
+      return false;
     },
   },
   mutations: {
@@ -31,8 +39,38 @@ export default new Vuex.Store({
     logOut(state: any) {
       state.user = undefined;
     },
+    setWindowWidth(state: any, width: number) {
+      state.windowWidth = width;
+    },
+    showMobileSection(state: any) {
+      const content: any = document.getElementById('content');
+      const mobile: any = document.getElementById('mobile-section');
+      state.mobileSectionOpened = true;
+
+      mobile.style.right = '0px';
+      content.style.right = '150px';
+    },
+    hideMobileSection(state: any) {
+      const content: any = document.getElementById('content');
+      const mobile: any = document.getElementById('mobile-section');
+      state.mobileSectionOpened = false;
+
+      if (mobile) {
+        mobile.style.right = '-150px';
+      }
+      content.style.right = '0';
+    },
   },
   actions: {
+    getWindowWidthOnResize({ state, getters, commit }) {
+      state.windowWidth = document.body.clientWidth;
+      window.addEventListener('resize', () => {
+        state.windowWidth = document.body.clientWidth;
+        if (getters.NavbarisOnDesktop) {
+          commit('hideMobileSection');
+        }
+      });
+    },
     getUserDataIfLogged({ commit }) {
       const sessionToken = getCookie('watchrSessionToken');
       if (sessionToken !== '') {

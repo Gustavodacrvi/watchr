@@ -14,6 +14,7 @@ Vue.config.productionTip = false;
 
 store.dispatch('theme/setSavedTheme');
 store.dispatch('lang/setLanguage', 'en');
+store.dispatch('getWindowWidthOnResize');
 
 let app = new Vue({
   data: { routerViewLoading: false },

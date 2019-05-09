@@ -1,13 +1,15 @@
 <template>
   <div class='signup body background' :class='$store.state.theme.style'>
     <div>
-      <app-form class='column padding' :act='submit' :load-icon='true'>
-        <app-title class='form-margin'>{{ $store.getters['lang/l']('signUpTitle') }}</app-title>
-        <app-input class='form-margin' name='username' :placeholder='$store.getters["lang/l"]("passwordInputPlaceholder")' :max='50' type='text'></app-input>
-        <app-input class='form-margin' name='email' :placeholder='$store.getters["lang/l"]("emailInputPlaceholder")' :max='50' type='text'></app-input>
-        <confirm-password input-class='form-margin' name='password' :placeholder1='$store.getters["lang/l"]("newPasswordInputPlaceholder")' :placeholder2='$store.getters["lang/l"]("confirmPasswordInputPlaceholder")' :max='50'></confirm-password>
-        <app-button class='form-margin'>{{ $store.getters['lang/l']("createAccountButton") }}</app-button>
-      </app-form>
+      <div>
+        <app-form class='column padding' :act='submit' :load-icon='true'>
+          <app-title class='form-margin'>{{ lang('signUpTitle') }}</app-title>
+          <app-input class='form-margin' name='username' :placeholder='lang("passwordInputPlaceholder")' :max='50' type='text'></app-input>
+          <app-input class='form-margin' name='email' :placeholder='lang("emailInputPlaceholder")' :max='50' type='text'></app-input>
+          <confirm-password input-class='form-margin' name='password' :placeholder1='lang("newPasswordInputPlaceholder")' :placeholder2='lang("confirmPasswordInputPlaceholder")' :max='50'></confirm-password>
+          <app-button class='form-margin'>{{ lang("createAccountButton") }}</app-button>
+        </app-form>
+      </div>
     </div>
   </div>
 </template>
@@ -35,6 +37,11 @@ export default Vue.extend({
     'app-button': Button,
     'app-title': Title,
     'confirm-password': ConfirmPassword,
+  },
+  computed: {
+    lang(): string {
+      return this.$store.getters['lang/l'];
+    },
   },
   methods: {
     async submit(values: any) {
@@ -71,12 +78,21 @@ export default Vue.extend({
 
 div.signup {
   display: flex;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+
+div.signup > div {
+  display: flex;
+  width: 100%;
   justify-content: center;
   margin: 4px;
 }
 
-div.signup > div {
-  margin-top: 90px;
+div.signup > div > div {
+  margin-top: -60px;
   flex-basis: 475px;
 }
 
