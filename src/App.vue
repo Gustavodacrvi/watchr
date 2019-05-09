@@ -1,10 +1,14 @@
 <template>
   <div id='body' class='background' :class='$store.state.theme.style'>
-    <nav-bar></nav-bar>
-    <transition :class='$store.state.theme.style' name='fade-transition' mode='out-in'>
-      <loading v-if='$root.routerViewLoading'></loading>
-      <router-view v-else/>
-    </transition>
+    <section id='content'>
+      <nav-bar></nav-bar>
+      <transition :class='$store.state.theme.style' name='fade-transition' mode='out-in'>
+        <loading v-if='$root.routerViewLoading'></loading>
+        <div id='router-view'>
+          <router-view/>
+        </div>
+      </transition>
+    </section>
     <toast></toast>
   </div>
 </template>
@@ -69,6 +73,19 @@ body {
   overflow: auto;
   width: 100vw;
   height: 100vh;
+}
+
+#content {
+  display: flex;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+}
+
+#router-view {
+  position: relative;
+  height: 100%;
 }
 
 .mainColor {

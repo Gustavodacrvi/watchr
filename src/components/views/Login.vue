@@ -1,15 +1,17 @@
 <template>
   <div class='login body background' :class='$store.state.theme.style'>
     <div>
-      <app-form class='column padding' :act='submit' :load-icon='true'>
-        <app-title class='form-margin'>{{ lang('loginTitle') }}</app-title>
-        <app-input class='form-margin' name='username' :placeholder='lang("usernameInputPlaceholder")' :max='50' type='text'></app-input>
-        <app-input class='form-margin' name='password' :placeholder='lang("passwordInputPlaceholder")' :max='50' type='password'></app-input>
-        <app-route class='form-margin' to='/signup' v-margin-left='"5%"'>{{ lang("loginDontHavePasswordMsg") }}</app-route>
-        <app-button class='form-margin'>{{ lang("enterButton") }}</app-button>
-        <app-route class='form-margin' to='/' v-margin-left='"5%"'>{{ lang("loginForgotUsernameOrPasswordMessage") }}</app-route>
-      </app-form>
-    </div>
+      <div>
+        <app-form class='column padding' :act='submit' :load-icon='true'>
+          <app-title class='form-margin'>{{ lang('loginTitle') }}</app-title>
+          <app-input class='form-margin' name='username' :placeholder='lang("usernameInputPlaceholder")' :max='50' type='text'></app-input>
+          <app-input class='form-margin' name='password' :placeholder='lang("passwordInputPlaceholder")' :max='50' type='password'></app-input>
+          <app-route class='form-margin' to='/signup' v-margin-left='"5%"'>{{ lang("loginDontHavePasswordMsg") }}</app-route>
+          <app-button class='form-margin'>{{ lang("enterButton") }}</app-button>
+          <app-route class='form-margin' to='/' v-margin-left='"5%"'>{{ lang("loginForgotUsernameOrPasswordMessage") }}</app-route>
+        </app-form>
+      </div>
+    </div>    
   </div>
 </template>
 
@@ -78,13 +80,22 @@ export default Vue.extend({
 <style scoped>
 
 div.login {
+  position: absolute;
+  width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+div.login > div {
+  width: 100%;
   display: flex;
   justify-content: center;
   margin: 4px;
 }
 
-div.login > div {
+div.login > div > div {
+  margin-top: -60px;
   flex-basis: 475px;
 }
 
