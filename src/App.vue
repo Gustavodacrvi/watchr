@@ -34,13 +34,13 @@ export default Vue.extend({
   },
   mounted() {
     setTimeout(() => {
-      this.showMobileSection();
+      this.$store.commit('showMobileSection');
     }, 1000);
     setTimeout(() => {
-      this.hideMobileSection();
+      this.$store.commit('hideMobileSection');
     }, 2000);
     setTimeout(() => {
-      this.showMobileSection();
+      this.$store.commit('showMobileSection');
     }, 3000);
   },
   methods: {

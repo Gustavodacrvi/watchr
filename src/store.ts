@@ -41,12 +41,31 @@ export default new Vuex.Store({
     setWindowWidth(state: any, width: number) {
       state.windowWidth = width;
     },
+    showMobileSection() {
+      const content: any = document.getElementById('content');
+      const mobile: any = document.getElementById('mobile-section');
+
+      mobile.style.right = '0px';
+      content.style.right = '200px';
+    },
+    hideMobileSection() {
+      const content: any = document.getElementById('content');
+      const mobile: any = document.getElementById('mobile-section');
+
+      if (mobile) {
+        mobile.style.right = '-200px';
+      }
+      content.style.right = '0';
+    },
   },
   actions: {
-    getWindowWidthOnResize({ state }) {
+    getWindowWidthOnResize({ state, getters, commit }) {
       state.windowWidth = document.body.clientWidth;
       window.addEventListener('resize', () => {
         state.windowWidth = document.body.clientWidth;
+        if (getters.NavbarisOnDesktop) {
+          commit('hideMobileSection');
+        }
       });
     },
     getUserDataIfLogged({ commit }) {
