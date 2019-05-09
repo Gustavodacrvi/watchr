@@ -1,6 +1,6 @@
 <template>
-  <div>
-      fdaasdfa sdf adsf asdf asdf
+  <div class='background' :class='$store.state.theme.style'>
+    <span>fdaf asdf dasfasd</span>
   </div>
 </template>
 
@@ -13,7 +13,7 @@ export default Vue.extend({
 <style scoped>
 
 div {
-  background-color: purple;
+  top: 70px;
 }
 
 </style>

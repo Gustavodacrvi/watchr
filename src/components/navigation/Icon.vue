@@ -31,17 +31,19 @@ export default Vue.extend({
 <style scoped>
 
 #hamburger-icon {
+  position: relative;
+  right: 0;
   display: inline-block;
   width: 32px !important;
   height: 28px !important;
-  position: relative;
   cursor: pointer;
+  transition-duration: .2s;
 }
 
 .line {
   position: absolute;
   height: 5px;
-  border-radius: 1px;
+  border-radius: 1.5px;
   background-color: #ADADAD;
   transition-duration: .2s;
 }
@@ -90,6 +92,10 @@ export default Vue.extend({
 .active-hamburger > :nth-child(2) {
   width: 0 !important;
   left: 50% !important;
+}
+
+.active-hamburger {
+  right: -200px !important;
 }
 
 </style>
