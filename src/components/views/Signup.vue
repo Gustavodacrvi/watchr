@@ -1,5 +1,5 @@
 <template>
-  <div id='signup' class='body background' :class='$store.state.theme.style'>
+  <div id='form' class='body background' :class='$store.state.theme.style'>
     <div id='centralize'>
       <div id='formContainer'>
         <app-form class='column padding' :act='submit' :load-icon='true'>
@@ -74,32 +74,7 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped>
-
-#signup {
-  display: flex;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  align-items: center;
-}
-
-#centralize {
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  margin: 4px;
-}
-
-#formContainer {
-  margin-top: -60px;
-  flex-basis: 475px;
-}
-
-@media screen and (max-width: 801px) {
-  #signup {
-    padding: 25px 0;
-  }
-}
+<style module>
+@import 'Form-module.css';
 
 </style>
