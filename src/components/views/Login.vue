@@ -1,7 +1,7 @@
 <template>
-  <div class='login body background' :class='$store.state.theme.style'>
-    <div>
-      <div>
+  <div id='login' class='body background' :class='$store.state.theme.style'>
+    <div id='centralize'>
+      <div id='formContainer'>
         <app-form class='column padding' :act='submit' :load-icon='true'>
           <app-title class='form-margin'>{{ lang('loginTitle') }}</app-title>
           <app-input class='form-margin' name='username' :placeholder='lang("usernameInputPlaceholder")' :max='50' type='text'></app-input>
@@ -79,7 +79,7 @@ export default Vue.extend({
 
 <style scoped>
 
-div.login {
+#login {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -87,20 +87,20 @@ div.login {
   align-items: center;
 }
 
-div.login > div {
+#centralize {
   width: 100%;
   display: flex;
   justify-content: center;
   margin: 4px;
 }
 
-div.login > div > div {
+#formContainer {
   margin-top: -60px;
   flex-basis: 475px;
 }
 
 @media screen and (max-width: 801px) {
-  div.login {
+  #login {
     padding: 25px 0;
   }
 }
