@@ -37,10 +37,6 @@ div {
   font-size: 1.15em;
 }
 
-div:hover {
-  cursor: pointer;
-}
-
 a {
   display: inline-block;
   padding: 0 12px;

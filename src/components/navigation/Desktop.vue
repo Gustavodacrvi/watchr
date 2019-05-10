@@ -5,10 +5,10 @@
     <section>
       <span class='magicLine magic-line' :class='$store.state.theme.style' ref='magicLine'></span>
       <transition-group :class='$store.state.theme.style' name='nav-link'>
-        <nav-link to='/' ref='/' key='nav-link-home' @click='$router.push(route)'>{{ lang('navBarHome') }}</nav-link>
-        <nav-link to='/login' ref='/login' key='nav-link-login' @click='$router.push(route)'>{{ lang('navBarLogin') }}</nav-link>
-        <nav-link to='/signup' ref='/signup' key='nav-link-signup' @click='$router.push(route)'>{{ lang('navBarSignup') }}</nav-link>
-        <nav-link to='/user' ref='/user' key='nav-link-user' @click='$router.push(route)' v-if='$store.getters.isAuthenticated'>{{ lang('navBarUser') }}</nav-link>
+        <nav-link to='/' ref='/' key='nav-link-home'>{{ lang('navBarHome') }}</nav-link>
+        <nav-link to='/login' ref='/login' key='nav-link-login'>{{ lang('navBarLogin') }}</nav-link>
+        <nav-link to='/signup' ref='/signup' key='nav-link-signup'>{{ lang('navBarSignup') }}</nav-link>
+        <nav-link to='/user' ref='/user' key='nav-link-user' v-if='$store.getters.isAuthenticated'>{{ lang('navBarUser') }}</nav-link>
         <nav-link v-if='$store.getters.isAuthenticated' to='/logout' key='nav-link-logout'>{{ lang('navBarLogout') }}</nav-link>
       </transition-group>
     </section>
