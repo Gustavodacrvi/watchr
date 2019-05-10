@@ -1,5 +1,5 @@
 <template>
-  <article class='form card-round' :class='$store.state.theme.style'>
+  <article id='form' class='card-round' :class='$store.state.theme.style'>
     <slot></slot>
   </article>
 </template>
@@ -67,17 +67,17 @@ export default Vue.extend({
 
 <style scoped>
 
-article.form {
+#form {
   width: 100%;
   overflow: hidden;
 }
 
-article.column {
+.column {
   display: flex;
   flex-direction: column;
 }
 
-article.padding {
+.padding {
   padding: 4px 0;
 }
 

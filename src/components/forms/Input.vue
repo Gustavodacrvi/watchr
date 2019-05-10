@@ -1,8 +1,8 @@
 <template>
-  <div class='input form-element'>
+  <div class='inputContainer form-element'>
     <div>
-      <div>
-        <input class='input' :class='[wrongInput, $store.state.theme.style]' :name='name' :placeholder='placeholder' :type='inputType' autocomplete='off' v-model='value'/>
+      <div class='input-box'>
+        <input class='input-el' :class='[wrongInput, $store.state.theme.style]' :name='name' :placeholder='placeholder' :type='inputType' autocomplete='off' v-model='value'/>
         <icon class='pointer' @click='togglePassword' v-show='isPassword && visiblePassword' sz='medium' ico='eye'></icon>
         <icon class='pointer' @click='togglePassword' v-show='isPassword && !visiblePassword' sz='medium' ico='eye-slash'></icon>
       </div>
@@ -115,7 +115,7 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-input.input.dark {
+.input-el.dark {
   background-color: #363636;
   color: #9C9696;
 }
@@ -124,7 +124,7 @@ input.input.dark {
   background-color: #363636 !important;
 }
 
-input.input.light {
+.input-el.light {
   background-color: #F6F7F9;
   color: #6a6262;
 }
@@ -133,32 +133,32 @@ input.input.light {
   background-color: #fdfde8 !important;
 }
 
-input {
+.input-el {
   box-sizing: border-box;
   width: 100%;
 }
 
-div.form-margin {
+.form-margin {
   margin: 4px 0;
 }
 
-div.input > div {
+.inputContainer > div {
   width: 90%;
   margin: auto;
 }
 
-div.input > div > div {
+.input-box {
   position: relative;
 }
 
-i.icon {
+.icon {
   position: absolute;
   top: 8px;
   right: 8px;
 }
 
 
-input.input {
+.input-el {
   position: relative;
   border: none;
   border-radius: 6px;
@@ -174,17 +174,16 @@ input.input {
   border: 2px solid #ecec4b !important;
 }
 
-input.input:focus {
+.input-el:focus {
   border: 2px solid #FE684F;
 }
-
-input.input::placeholder {
+.input-el::placeholder {
   color: #9d9595;
 }
 
 
 @media screen and (max-width: 801px) {
-  div.input > div {
+  .inputContainer > div {
     width: 90%;
   }
 }

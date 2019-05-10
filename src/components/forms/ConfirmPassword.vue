@@ -1,5 +1,5 @@
 <template>
-  <div class='confirm-password'>
+  <div id='confirm-password'>
     <app-input :class='inputClass' name='password' :placeholder='placeholder1' :max='max' type='password' bus-event='confirmPassword'></app-input>
     <app-input :class='inputClass' name='confirm' :placeholder='placeholder2' :max='max' type='password' bus-event='confirmPassword'></app-input>
   </div>
@@ -85,7 +85,7 @@ export default Vue.extend({
 
 <style scoped>
 
-div.confirm-password {
+#confirm-password {
   display: flex;
   flex-direction: column;
 }

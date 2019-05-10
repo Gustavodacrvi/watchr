@@ -39,7 +39,7 @@ export default Vue.extend({
   height: 100%;
 }
 
-i.massive {
+.massive {
   font-size: 100px;
 }
 

@@ -1,9 +1,9 @@
 <template>
   <transition :class='$store.state.theme.style' name='toast-transition' @after-leave='showNext'>
-    <article :class='[toastClass, $store.state.theme.style]' v-show='showing' id='toast' class='toast'>
+    <article :class='[toastClass, $store.state.theme.style]' v-show='showing' id='toast'>
       <span>{{ msg }}</span>
       <span v-if='infiniteToast' class='toast-icon'>
-        <icon ico='times' sz='big' @click='showing = false' v-cursor></icon>
+        <icon class='pointer' ico='times' sz='big' @click='showing = false'></icon>
       </span>
     </article>
   </transition>
@@ -103,29 +103,26 @@ export default Vue.extend({
   background-color: #282828;
 }
 
-.toast {
+#toast {
   position: fixed;
   bottom: 40px;
   min-height: 50px;
   left: 50%;
   transform: translateX(-50%);
+  padding: 0 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Work Sans Regular';
 }
 
-.toast > span {
+#toast > span {
   padding: 10px;
 }
 
 .toast-icon {
   padding-left: 12px;
   padding-right: 4px;
-}
-
-.toast {
-  padding: 0 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Work Sans Regular';
 }
 
 .toast-success {

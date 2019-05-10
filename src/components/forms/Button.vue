@@ -46,12 +46,12 @@ export default Vue.extend({
 
 <style scoped>
 
-div.form-button {
+.form-button {
   display: flex;
   justify-content: center;
 }
 
-div.form-button button {
+.form-button .button {
   width: 90%;
 }
 
