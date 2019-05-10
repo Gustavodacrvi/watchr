@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id='loading'>
     <icon class='icon-main-color' :class='$store.state.theme.style' ico='circle-notch fa-spin' sz='massive'></icon>
   </div>  
 </template>
@@ -17,7 +17,7 @@ export default Vue.extend({
 
 <style scoped>
 
-div {
+#loading {
   height: 85%;
   display: flex;
   justify-content: center;

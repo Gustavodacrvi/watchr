@@ -15,19 +15,19 @@ export default Vue.extend({
 
 <style scoped>
 
-i.medium {
+.medium {
   font-size: 18px;
 }
 
-i.big {
+.big {
   font-size: 24px;
 }
 
-i.massive {
+.massive {
   font-size: 100px;
 }
 
-i.pointer {
+.pointer {
   cursor: pointer;
 }
 
@@ -48,4 +48,3 @@ i.pointer {
 }
 
 </style>
-
