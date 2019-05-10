@@ -22,16 +22,12 @@ import Vue from 'vue';
 import NavLink from './Nav-link.vue';
 import Icon from './../generalComponents/Icon.vue';
 import IconGroup from './Navigation-icon-group.vue';
-import Dropdown from './../dropdown/CenterDropdown.vue';
-import TextDropdownElement from './../dropdown/TextElement.vue';
 
 export default Vue.extend({
   components: {
     'icon-group': IconGroup,
     'nav-link': NavLink,
     'icon': Icon,
-    'dropdown': Dropdown,
-    'el': TextDropdownElement,
   },
   computed: {
     lang(): string {
