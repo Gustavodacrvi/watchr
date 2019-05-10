@@ -66,10 +66,6 @@ export default Vue.extend({
 
 <style scoped>
 
-.navBar-margin-right {
-  margin-right: 25px !important;
-}
-
 .magic-line {
   background-color: #FE684F;
 }

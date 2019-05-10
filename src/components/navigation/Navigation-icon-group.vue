@@ -38,4 +38,12 @@ export default Vue.extend({
 
 <style scoped>
 
+.navBar-margin-right {
+  margin-right: 20px;
+}
+
+.navBar-margin-top {
+  margin-top: 14px;
+}
+
 </style>

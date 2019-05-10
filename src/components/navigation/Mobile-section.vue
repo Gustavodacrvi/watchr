@@ -5,7 +5,7 @@
     <route to='/signup' @click='hideMobileSection'>{{ lang('navBarSignup') }}</route>
     <route to='/user' @click='hideMobileSection' v-if='lang.isAuthenticated'>{{ lang('navBarUser') }}</route>
     <route v-if='$store.getters.isAuthenticated' to='/logout'>{{ lang('navBarLogout') }}</route>
-    <icon-group></icon-group>
+    <icon-group class='navBar-margin-top'></icon-group>
   </div>
 </template>
 
@@ -34,13 +34,6 @@ export default Vue.extend({
 
 <style scoped>
 
-.navBar-margin-right {
-  margin-right: 28px;
-}
-
-.navBar-margin-top {
-  margin-top: 14px;
-}
 
 div {
   top: 70px;
