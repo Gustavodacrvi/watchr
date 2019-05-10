@@ -15,10 +15,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import Dropdown from './../dropdown/CenterDropdown.vue';
+import DropElement from './../dropdown/TextElement.vue';
 import Icon from './../generalComponents/Icon.vue';
 
 export default Vue.extend({
   components: {
+    dropdown: Dropdown,
+    el: DropElement,
     icon: Icon,
   },
   methods: {
