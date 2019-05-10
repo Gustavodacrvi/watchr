@@ -1,5 +1,5 @@
 <template>
-  <div id='form' class='body background' :class='$store.state.theme.style'>
+  <div id='authentication' class='body background' :class='$store.state.theme.style'>
     <div id='centralize'>
       <div id='formContainer'>
         <app-form class='column padding' :act='submit' :load-icon='true'>
