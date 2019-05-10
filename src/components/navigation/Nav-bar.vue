@@ -13,22 +13,5 @@ export default Vue.extend({
     desktop: Desktop,
     mobile: Mobile,
   },
-  methods: {
-    invertTheme(): void {
-      this.$store.commit('theme/invertTheme');
-    },
-    navigate(route: string) {
-      this.$router.push(route);
-    },
-    changeLang(lang: string) {
-      this.$store.dispatch('lang/setLanguage', lang);
-    },
-  },
 });
 </script>
-
-
-<style scoped>
-
-
-</style>
