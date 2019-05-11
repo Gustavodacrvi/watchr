@@ -1,8 +1,8 @@
 <template>
   <nav>
-    <section>
+    <section id='nav-left'>
     </section>
-    <section>
+    <section id='nav-center'>
       <span class='magicLine magic-line' :class='$store.state.theme.style' ref='magicLine'></span>
       <transition-group :class='$store.state.theme.style' name='nav-link'>
         <nav-link to='/' ref='/' key='nav-link-home'>{{ lang('navBarHome') }}</nav-link>
@@ -13,7 +13,7 @@
         <nav-link v-if='$store.getters.isAuthenticated' to='/logout' key='nav-link-logout'>{{ lang('navBarLogout') }}</nav-link>
       </transition-group>
     </section>
-    <icon-group></icon-group>
+    <icon-group id='nav-right'></icon-group>
   </nav>
 </template>
 
@@ -84,19 +84,19 @@ nav > section {
   height: 100%;
 }
 
-nav > :nth-child(2) {
-  display: inline-block;
+#nav-center {
+  display: inline-flex;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
 }
 
-nav > :nth-child(1) {
+#nav-left {
   clear: left;
   float: left;
 }
 
-nav > :nth-child(3) {
+#nav-right {
   float: right;
   clear: right;
 }
