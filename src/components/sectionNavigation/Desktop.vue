@@ -1,24 +1,24 @@
 <template>
   <div id='navigation'>
-    <icon class='pointer icon-color-hover' sz='big' ico='home'></icon>
-    <icon class='pointer icon-color-hover' sz='big' ico='tasks'></icon>
-    <icon class='pointer icon-color-hover' sz='big' ico='calendar'></icon>
-    <icon class='pointer icon-color-hover' sz='big' ico='stopwatch'></icon>
-    <icon class='pointer icon-color-hover' sz='big' ico='stream'></icon>
-    <icon class='pointer icon-color-hover' sz='big' ico='tags'></icon>
-    <icon class='pointer icon-color-hover' sz='big' ico='chart-pie'></icon>
-    <icon class='pointer icon-color-hover' sz='big' ico='settings'></icon>
-    <icon class='pointer icon-color-hover' sz='big' ico='info'></icon>
+    <desk-icon ico='home' txt='fdsafds'></desk-icon>
+    <desk-icon ico='tasks'></desk-icon>
+    <desk-icon ico='calendar'></desk-icon>
+    <desk-icon ico='stopwatch'></desk-icon>
+    <desk-icon ico='stream'></desk-icon>
+    <desk-icon ico='tags'></desk-icon>
+    <desk-icon ico='chart-pie'></desk-icon>
+    <desk-icon ico='cog'></desk-icon>
+    <desk-icon ico='info'></desk-icon>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import Icon from './../generalComponents/Icon.vue';
+import Icon from './Desktop-icon.vue';
 
 export default Vue.extend({
   components: {
-    icon: Icon,
+    'desk-icon': Icon,
   },
 });
 </script>
