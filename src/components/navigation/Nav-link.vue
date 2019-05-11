@@ -46,7 +46,8 @@ export default Vue.extend({
 }
 
 .nav-link:hover .router-link, .active-nav-link .router-link {
-  color: #FE684F;
+  color: #A97CFC;
+  text-shadow: 0 0 1px #A97CFC;
 }
 
 </style>

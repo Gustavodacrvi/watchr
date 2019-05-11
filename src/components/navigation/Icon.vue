@@ -60,7 +60,7 @@ export default Vue.extend({
 }
 
 #hamburger-icon:hover .line {
-  background-color: #FE815E !important;
+  background-color: #A97CFC !important;
 }
 
 #hamburger-icon-top {

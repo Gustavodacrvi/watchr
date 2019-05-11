@@ -23,7 +23,8 @@ export default Vue.extend({
 <style scoped>
 
 .heading {
-  color: #FE684F;
+  color: #A97CFC;
+  text-shadow: 0 0 1px #A97CFC;
   margin: 15px 0;
 }
 

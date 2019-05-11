@@ -18,7 +18,8 @@ export default Vue.extend({
 }
 
 .dropdown-text-element:hover #text {
-  color: #FE684F;
+  color: #A97CFC;
+  text-shadow: 0 0 1px #A97CFC;
 }
 
 </style>

@@ -125,8 +125,7 @@ export default Vue.extend({
 }
 
 .input-el.light {
-  background-color: #F6F7F9;
-  color: #6a6262;
+  background-color: #F1F1F3;
 }
 
 .wrong-input.light {
@@ -172,10 +171,11 @@ export default Vue.extend({
 
 .wrong-input {
   border: 2px solid #ecec4b !important;
+  box-shadow: 0 0 2px #A97CFC;
 }
 
 .input-el:focus {
-  border: 2px solid #FE684F;
+  border: 2px solid #A97CFC;
 }
 .input-el::placeholder {
   color: #9d9595;

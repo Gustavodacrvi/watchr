@@ -50,12 +50,12 @@ export default Vue.extend({
   top: 42%;
   transform: translateY(-50%);
   left: 80%;
-  color: #FE684F;
+  color: #A97CFC;
   font-size: 22px;
 }
 
 .section-icon-active {
-  color: #FE684F;
+  color: #A97CFC;
 }
 
 </style>

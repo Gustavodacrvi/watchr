@@ -40,7 +40,7 @@ export default Vue.extend({
 }
 
 .icon-main-color {
-  color: #FE684F;
+  color: #A97CFC;
 }
 
 .icon-color-hover {
@@ -48,7 +48,8 @@ export default Vue.extend({
 }
 
 .icon-color-hover:hover {
-  color: #FE684F;
+  color: #A97CFC;
+  text-shadow: 0 0 4px #A97CFC;
 }
 
 </style>

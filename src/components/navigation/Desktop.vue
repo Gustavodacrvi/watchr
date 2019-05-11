@@ -64,7 +64,8 @@ export default Vue.extend({
 <style scoped>
 
 .magic-line {
-  background-color: #FE684F;
+  background-color: #A97CFC;
+  box-shadow: 0 2px 5px #A97CFC;
 }
 
 .magicLine {
