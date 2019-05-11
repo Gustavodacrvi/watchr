@@ -33,6 +33,11 @@ export default new Router({
       component: lazyLoad('Signup'),
     },
     {
+      path: '/guest',
+      name: 'guest',
+      component: lazyLoad('Guest'),
+    },
+    {
       path: '/user',
       name: 'user',
       component: lazyLoad('User'),

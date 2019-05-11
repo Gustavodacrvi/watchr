@@ -12,6 +12,7 @@ export default {
     navBarLogin: 'Login',
     navBarSignup: 'Signup',
     navBarUser: 'User',
+    navBarGuest: 'Guest',
     navBarLogout: 'Logout',
     loginDontHavePasswordMsg: 'Don\'t have an account? Sign up!',
     loginForgotUsernameOrPasswordMessage: 'Forgot password or username?',

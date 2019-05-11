@@ -12,6 +12,7 @@ var LANGUAGE = {
     navBarLogin: 'Entrar',
     navBarSignup: 'Criar conta',
     navBarUser: 'Usuário',
+    navBarGuest: 'Convidado',
     navBarLogout: 'Sair',
     loginDontHavePasswordMsg: 'Não tem uma conta? Inscreva-se!',
     loginForgotUsernameOrPasswordMessage: 'Esqueceu seu nome de usuário ou senha?',
