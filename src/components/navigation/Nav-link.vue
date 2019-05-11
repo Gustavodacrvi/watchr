@@ -32,7 +32,7 @@ export default Vue.extend({
 
 .nav-link {
   position: relative;
-  float: left;
+  white-space: nowrap;
   height: 100%;
   font-size: 1.15em;
 }
