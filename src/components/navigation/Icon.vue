@@ -1,8 +1,8 @@
 <template>
   <div id='hamburger-icon' :class='{"active-hamburger": active}' @click='toggleMobileSection'>
-    <span class='line'></span>
-    <span class='line'></span>
-    <span class='line'></span>
+    <span class='line' id='hamburger-icon-top'></span>
+    <span class='line' id='hamburger-icon-middle'></span>
+    <span class='line' id='hamburger-icon-bottom'></span>
   </div>
 </template>
 
@@ -63,44 +63,44 @@ export default Vue.extend({
   background-color: #FE815E !important;
 }
 
-#hamburger-icon > :nth-child(1) {
+#hamburger-icon-top {
   top: 0;
   width: 100%;
   left: 0;
 }
 
-#hamburger-icon > :nth-child(3) {
+#hamburger-icon-bottom {
   bottom: 0;
   width: 100%;
   left: 0;
 }
 
-#hamburger-icon > :nth-child(2) {
+#hamburger-icon-middle {
   width: 22px;
   right: 0;
   top: 50%;
   transform: translateY(-50%);
 }
 
-.active-hamburger > :nth-child(2) {
+.active-hamburger #hamburger-icon-middle {
   width: 0;
 }
 
-.active-hamburger > :nth-child(1) {
+.active-hamburger #hamburger-icon-top {
   top: 42% !important;
   left: -3px !important;
   width: 32px !important;
   transform: rotate(50deg);
 }
 
-.active-hamburger > :nth-child(3) {
+.active-hamburger #hamburger-icon-bottom {
   bottom: 40% !important;
   left: -3px !important;
   width: 32px !important;
   transform: rotate(-50deg);
 }
 
-.active-hamburger > :nth-child(2) {
+.active-hamburger #hamburger-icon-middle {
   width: 0 !important;
   left: 50% !important;
 }
