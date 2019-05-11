@@ -1,6 +1,6 @@
 <template>
   <div class='dropdown-text-element' @click='$emit("click")'>
-    <span><slot></slot></span>
+    <span id='text'><slot></slot></span>
   </div>
 </template>
 
@@ -15,6 +15,10 @@ export default Vue.extend({
 .dropdown-text-element {
   margin: 8px;
   cursor: pointer;
+}
+
+.dropdown-text-element:hover #text {
+  color: #FE684F;
 }
 
 </style>

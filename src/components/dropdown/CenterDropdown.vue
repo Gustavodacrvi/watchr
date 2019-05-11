@@ -2,9 +2,9 @@
   <span class='dropdown' @mouseenter='show = !show' @mouseleave='show = !show'>
     <slot name='handle'></slot>
     <transition name='fade-transition'>
-    <div id='content' class='card-round' :class='$store.state.theme.style' v-if='show'>
-      <slot name='content'></slot>
-    </div>
+      <div id='drop-content' class='card-round' :class='$store.state.theme.style' v-if='show'>
+        <slot name='content'></slot>
+      </div>
     </transition>
   </span>
 </template>
@@ -32,11 +32,7 @@ export default Vue.extend({
   z-index: 1;
 }
 
-.dropdown-text-element:hover > span {
-  color: #FE684F;
-}
-
-#content {
+#drop-content {
   position: absolute;
   top: 100%;
   display: inline-block;
