@@ -38,7 +38,7 @@ export default Vue.extend({
   mounted() {
     setTimeout(() => {
       this.moveMagicLine(this.$route.path);
-    }, 100);
+    }, 200);
   },
   methods: {
     moveMagicLine(str: string) {

@@ -41,7 +41,7 @@ export default Vue.extend({
     'app-title': Title,
   },
   computed: {
-    lang(): string {
+    lang(): (str: string) => string {
       return this.$store.getters['lang/l'];
     },
   },
@@ -54,19 +54,19 @@ export default Vue.extend({
         if (res.data.error === 'usernameNotFound') {
           FormBus.$emit('error', {
             name: 'username',
-            msg: this.$store.getters.lang.l('usernameNotFoundInputMsg'),
+            msg: this.lang('usernameNotFoundInputMsg'),
           } as InputErrorObject);
         } else if (res.data.error === 'wrongPassword') {
           FormBus.$emit('error', {
             name: 'password',
-            msg: this.$store.getters.lang.l('wrongPasswordInputMsg'),
+            msg: this.lang('wrongPasswordInputMsg'),
           } as InputErrorObject);
         } else {
           this.$store.commit('logUser', res.data.user);
           setCookie('watchrSessionToken', res.data.sessionToken, 30);
           router.push('/');
           ToastBus.$emit('addToast', {
-            msg: this.$store.getters.lang.l('successfullLoginToast'),
+            msg: this.lang('successfullLoginToast'),
             duration_seconds: 5,
             type: 'success',
           } as ToastObj);
