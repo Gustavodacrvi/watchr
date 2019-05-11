@@ -1,6 +1,6 @@
 <template>
   <div class='navigation-desktop-icon'>
-    <icon @mouseover='showing = true' @mouseleave='showing = false' class='pointer icon-color-hover' :class='{"section-icon-active": isActive}' sz='big-big' :ico='ico'></icon>
+    <icon @mouseover='showing = true' @mouseleave='showing = false' class='pointer icon-color-hover' :class='{"section-icon-active": isActive}' sz='big-big' :ico='ico' @click='navigate'></icon>
     <transition name='fade-transition'>
       <span v-show='showing' class='txt'>{{ txt }}</span>
     </transition>
@@ -23,6 +23,11 @@ export default Vue.extend({
     return {
       showing: false,
     };
+  },
+  methods: {
+    navigate() {
+      this.$store.commit('app/pushSection', this.txt.toLowerCase());
+    },
   },
   computed: {
     isActive(): boolean {

@@ -25,7 +25,7 @@ export default Vue.extend({
     intervals: () => AsyncComponent('Intervals') as any,
     settings: () => AsyncComponent('Settings') as any,
     statistics: () => AsyncComponent('Statistics') as any,
-    stream: () => AsyncComponent('Stream') as any,
+    routines: () => AsyncComponent('Routines') as any,
     tags: () => AsyncComponent('Tags') as any,
     help: () => AsyncComponent('Help') as any,
   },

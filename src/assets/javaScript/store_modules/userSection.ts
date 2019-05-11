@@ -8,7 +8,9 @@ export default {
 
   },
   mutations: {
-
+    pushSection(state: any, section: string) {
+      state.section = section;
+    },
   },
   actions: {
 
