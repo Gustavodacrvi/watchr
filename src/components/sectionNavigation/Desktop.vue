@@ -2,14 +2,13 @@
   <div id='navigation'>
     <desk-icon ico='home' :txt='lang("sectionNavOverview")'></desk-icon>
     <desk-icon ico='tasks' :txt='lang("sectionNavTasks")'></desk-icon>
-    <desk-icon ico='calendar' :txt='lang("sectionNavCalendar")'></desk-icon>
     <desk-icon ico='stopwatch' :txt='lang("sectionNavIntervals")'></desk-icon>
     <desk-icon ico='stream' :txt='lang("sectionNavRoutines")'></desk-icon>
     <desk-icon ico='tags' :txt='lang("sectionNavTags")'></desk-icon>
     <desk-icon ico='chart-pie' :txt='lang("sectionNavStatistics")'></desk-icon>
     <hr id='navigation-margin'/>
     <desk-icon ico='cog' :txt='lang("sectionNavSettings")'></desk-icon>
-    <desk-icon ico='info' :txt='lang("sectionNavHelp")'></desk-icon>
+    <desk-icon ico='info-circle' :txt='lang("sectionNavHelp")'></desk-icon>
   </div>
 </template>
 

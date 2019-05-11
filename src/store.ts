@@ -4,6 +4,7 @@ import Vuex from 'vuex';
 
 import themes from '@/assets/javaScript/store_modules/themes';
 import languages from '@/assets/javaScript/store_modules/languages';
+import userSection from '@/assets/javaScript/store_modules/userSection';
 
 Vue.use(Vuex);
 
@@ -15,6 +16,7 @@ export default new Vuex.Store({
   modules: {
     theme: themes,
     lang: languages,
+    app: userSection,
   },
   state: {
     user: undefined,

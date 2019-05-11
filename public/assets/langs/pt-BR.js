@@ -16,7 +16,6 @@ var LANGUAGE = {
     navBarLogout: 'Sair',
     sectionNavOverview: 'Resumo',
     sectionNavTasks: 'Tarefas',
-    sectionNavCalendar: 'Agenda',
     sectionNavTimeTracking: 'Time tracking',
     sectionNavIntervals: 'Intervalos',
     sectionNavRoutines: 'Rotinas',

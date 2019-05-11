@@ -16,7 +16,6 @@ export default {
     navBarLogout: 'Logout',
     sectionNavOverview: 'Overview',
     sectionNavTasks: 'Tasks',
-    sectionNavCalendar: 'Calendar',
     sectionNavTimeTracking: 'Time tracking',
     sectionNavIntervals: 'Intervals',
     sectionNavRoutines: 'Routines',
