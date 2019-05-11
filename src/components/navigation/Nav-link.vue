@@ -1,6 +1,6 @@
 <template>
-  <div :class='[classObject, $store.state.theme.style]' @click='$emit("click", to)'>
-    <router-link :to='to'>
+  <div class='nav-link' :class='[classObject, $store.state.theme.style]' @click='$emit("click", to)'>
+    <router-link class='router-link' :to='to'>
       <slot></slot>
     </router-link>
   </div>
@@ -30,22 +30,22 @@ export default Vue.extend({
 
 <style scoped>
 
-div {
+.nav-link {
   position: relative;
-  display: inline-block;
+  white-space: nowrap;
   height: 100%;
   font-size: 1.15em;
 }
 
-a {
-  display: inline-block;
+.router-link {
+  float: left;
   padding: 0 12px;
   margin: 0 4px;
   text-decoration: none;
   transition-duration: .1s;
 }
 
-div.nav-link:hover > a, .active-nav-link > a {
+.nav-link:hover .router-link, .active-nav-link .router-link {
   color: #FE684F;
 }
 

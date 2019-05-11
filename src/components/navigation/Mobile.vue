@@ -1,8 +1,8 @@
 <template>
-  <nav>
-    <section>
+  <nav id='mobile-nav'>
+    <section id='mobile-nav-left'>
     </section>
-    <section>
+    <section id='mobile-nav-right'>
       <icon></icon>
     </section>
   </nav>
@@ -21,16 +21,16 @@ export default Vue.extend({
 
 <style scoped>
 
-nav {
+#mobile-nav {
   margin: 20px 18px;
 }
 
-nav > :nth-child(1) {
+#mobile-nav-left {
   float: left;
   clear: left;
 }
 
-nav > :nth-child(2) {
+#mobile-nav-right {
   float: right;
   clear: right;
 }

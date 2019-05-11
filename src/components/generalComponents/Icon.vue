@@ -1,5 +1,5 @@
 <template>
-  <i class='icon' :class='`fa fa-${ico} ${sz} icon ` + $store.state.theme.style' @click='$emit("click")'></i>  
+  <i class='icon' :class='`fa fa-${ico} ${sz} icon ` + $store.state.theme.style' @click='$emit("click")' @mouseover='$emit("mouseover")' @mouseleave='$emit("mouseleave")'></i>  
 </template>
 
 <script lang="ts">
@@ -21,6 +21,10 @@ export default Vue.extend({
 
 .big {
   font-size: 24px;
+}
+
+.big-big {
+  font-size: 26px;
 }
 
 .massive {

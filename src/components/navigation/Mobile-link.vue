@@ -1,6 +1,6 @@
 <template>
   <div class='mobile-link' :class='{"active-link": isActive}' @click='$emit("click")'>
-    <router-link :to='to'>
+    <router-link class='router-link' :to='to'>
       <slot></slot>
     </router-link>
   </div>
@@ -26,12 +26,12 @@ export default Vue.extend({
   padding: 3px;
 }
 
-.active-link a {
+.active-link .router-link {
   color: #FE684F;
   position: relative;
 }
 
-.active-link a::before {
+.active-link .router-link::before {
   content: '';
   position: absolute;
   width: 100%;
@@ -40,12 +40,12 @@ export default Vue.extend({
   height: 3px;
 }
 
-a {
+.router-link {
   text-decoration: none;
   font-size: 1.25em;
 }
 
-a:hover {
+.router-link:hover {
   color: #FE684F;
 }
 
