@@ -7,6 +7,7 @@
     <desk-icon ico='stream' :txt='lang("sectionNavRoutines")'></desk-icon>
     <desk-icon ico='tags' :txt='lang("sectionNavTags")'></desk-icon>
     <desk-icon ico='chart-pie' :txt='lang("sectionNavStatistics")'></desk-icon>
+    <hr id='navigation-margin'/>
     <desk-icon ico='cog' :txt='lang("sectionNavSettings")'></desk-icon>
     <desk-icon ico='info' :txt='lang("sectionNavHelp")'></desk-icon>
   </div>
@@ -35,9 +36,14 @@ export default Vue.extend({
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 87px;
+  width: 75px;
   display: flex;
   flex-direction: column;
+}
+
+#navigation-margin {
+  border: none;
+  margin-top: 15px;
 }
 
 </style>
