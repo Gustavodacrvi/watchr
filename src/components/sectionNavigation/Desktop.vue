@@ -1,14 +1,14 @@
 <template>
   <div id='navigation'>
-    <desk-icon ico='home' txt='fdsafds'></desk-icon>
-    <desk-icon ico='tasks'></desk-icon>
-    <desk-icon ico='calendar'></desk-icon>
-    <desk-icon ico='stopwatch'></desk-icon>
-    <desk-icon ico='stream'></desk-icon>
-    <desk-icon ico='tags'></desk-icon>
-    <desk-icon ico='chart-pie'></desk-icon>
-    <desk-icon ico='cog'></desk-icon>
-    <desk-icon ico='info'></desk-icon>
+    <desk-icon ico='home' :txt='lang("sectionNavOverview")'></desk-icon>
+    <desk-icon ico='tasks' :txt='lang("sectionNavTasks")'></desk-icon>
+    <desk-icon ico='calendar' :txt='lang("sectionNavCalendar")'></desk-icon>
+    <desk-icon ico='stopwatch' :txt='lang("sectionNavIntervals")'></desk-icon>
+    <desk-icon ico='stream' :txt='lang("sectionNavRoutines")'></desk-icon>
+    <desk-icon ico='tags' :txt='lang("sectionNavTags")'></desk-icon>
+    <desk-icon ico='chart-pie' :txt='lang("sectionNavStatistics")'></desk-icon>
+    <desk-icon ico='cog' :txt='lang("sectionNavSettings")'></desk-icon>
+    <desk-icon ico='info' :txt='lang("sectionNavHelp")'></desk-icon>
   </div>
 </template>
 
@@ -19,6 +19,11 @@ import Icon from './Desktop-icon.vue';
 export default Vue.extend({
   components: {
     'desk-icon': Icon,
+  },
+  computed: {
+    lang(): string {
+      return this.$store.getters['lang/l'];
+    },
   },
 });
 </script>
