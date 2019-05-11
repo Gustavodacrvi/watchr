@@ -56,7 +56,7 @@ export default new Router({
         store.commit('logOut');
         setCookie('watchrSessionToken', '', 30);
         ToastBus.$emit('addToast', {
-          msg: store.getters.l('logoutToast'),
+          msg: store.getters['lang/l']('logoutToast'),
           duration_seconds: 5,
           type: 'success',
         } as ToastObj);
