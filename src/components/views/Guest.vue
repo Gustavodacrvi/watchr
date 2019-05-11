@@ -1,12 +1,17 @@
 <template>
   <div>
-    asdf
+    <navigation></navigation>
   </div>
 </template>
 
 <script>
 import Vue from 'vue';
+import Navigation from './../sectionNavigation/Navigation.vue';
+
 export default Vue.extend({
+  components: {
+    navigation: Navigation,
+  },
 });
 </script>
 

@@ -8,9 +8,9 @@
         <nav-link to='/' ref='/' key='nav-link-home'>{{ lang('navBarHome') }}</nav-link>
         <nav-link to='/login' ref='/login' key='nav-link-login'>{{ lang('navBarLogin') }}</nav-link>
         <nav-link to='/signup' ref='/signup' key='nav-link-signup'>{{ lang('navBarSignup') }}</nav-link>
-        <nav-link to='/guest' ref='/guest' key='nav-link-guest'>{{ lang('navBarGuest') }}</nav-link>
         <nav-link to='/user' ref='/user' key='nav-link-user' v-if='$store.getters.isAuthenticated'>{{ lang('navBarUser') }}</nav-link>
         <nav-link v-if='$store.getters.isAuthenticated' to='/logout' key='nav-link-logout'>{{ lang('navBarLogout') }}</nav-link>
+        <nav-link to='/guest' ref='/guest' key='nav-link-guest'>{{ lang('navBarGuest') }}</nav-link>
       </transition-group>
     </section>
     <icon-group id='nav-right'  class='nav-section'></icon-group>
