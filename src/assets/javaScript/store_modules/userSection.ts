@@ -1,13 +1,16 @@
+import { Routine } from '@/components/interfaces';
 
 export default {
   namespaced: true,
   state: {
     section: 'overview',
-    routines: new Map() as Map<string, object>,
+    routines: [] as Routine[],
   },
   getters: {
     getRoutine: (state: any) => (key: string) => {
-      return state.routines.get(key);
+      return state.find((el: Routine) => {
+        return el.id === key;
+      });
     },
   },
   mutations: {
