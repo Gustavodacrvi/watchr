@@ -1,20 +1,18 @@
 <template>
-  <div>
-    <routine></routine>
+  <div class='routine card-round' :class='$store.state.theme.style'>
+      routine
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import Routine from './../appComponents/Routine.vue';
-
 export default Vue.extend({
-  components: {
-    'routine': Routine,
-  },
 });
 </script>
 
 <style scoped>
+
+.routine {
+}
 
 </style>

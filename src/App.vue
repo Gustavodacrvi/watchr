@@ -105,7 +105,7 @@ body {
 }
 
 .card-round {
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 span, a, p {

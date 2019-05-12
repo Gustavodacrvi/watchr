@@ -1,7 +1,7 @@
 <template>
-  <div id='section'>
+  <div id='user-section'>
     <navigation></navigation>
-    <div id='content'>
+    <div id='user-section-content'>
       <component :is='currentSection'></component>
     </div>
   </div>
@@ -41,12 +41,13 @@ export default Vue.extend({
 
 <style scoped>
 
-#section {
+#user-section {
   display: flex;
   justify-content: center;
+  background-color: red !important;
 }
 
-#content {
+#user-section-content {
   flex-basis: 1526px;
   margin: 0 60px;
 }
