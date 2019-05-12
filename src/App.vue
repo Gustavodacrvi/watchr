@@ -82,8 +82,9 @@ body {
   position: absolute;
   height: 100%;
   width: 100%;
+  right: 0;
   flex-direction: column;
-  transition-duration: .2s;
+  transition-duration: .3s;
 }
 
 #mobile-section {
@@ -92,7 +93,7 @@ body {
   box-sizing: border-box;
   height: 100%;
   width: 150px;
-  transition-duration: .2s;
+  transition: right .3s;
 }
 
 #router-view {

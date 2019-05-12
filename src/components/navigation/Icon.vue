@@ -48,7 +48,7 @@ export default Vue.extend({
   width: 32px !important;
   height: 28px !important;
   cursor: pointer;
-  transition-duration: .2s;
+  transition: right .3s;
 }
 
 .line {
