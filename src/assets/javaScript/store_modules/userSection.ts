@@ -1,9 +1,16 @@
+import { setCookie, getCookie } from '@/assets/javaScript/cookies';
+
 import { Routine } from '@/components/interfaces';
+
+let savedSection = getCookie('watchrSavedUserSection');
+if (savedSection === '') {
+  savedSection = 'overview';
+}
 
 export default {
   namespaced: true,
   state: {
-    section: 'overview',
+    section: savedSection,
     routines: [] as Routine[],
   },
   getters: {
@@ -15,6 +22,7 @@ export default {
   },
   mutations: {
     pushSection(state: any, section: string) {
+      setCookie('watchrSavedUserSection', section, 265);
       state.section = section;
     },
     addRoutine(state: any, routine: Routine) {

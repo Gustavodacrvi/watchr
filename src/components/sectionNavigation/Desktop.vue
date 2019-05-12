@@ -10,11 +10,6 @@ export default Vue.extend({
   components: {
     'icon-group': IconGroup,
   },
-  computed: {
-    lang(): string {
-      return this.$store.getters['lang/l'];
-    },
-  },
 });
 </script>
 
