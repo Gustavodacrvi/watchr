@@ -1,14 +1,14 @@
 <template>
   <div>
-    <icon ico='home' :showtext='desktop' :txt='lang("sectionNavOverview")'></icon>
-    <icon ico='tasks' :showtext='desktop' :txt='lang("sectionNavTasks")'></icon>
-    <icon ico='stopwatch' :showtext='desktop' :txt='lang("sectionNavIntervals")'></icon>
-    <icon ico='stream' :showtext='desktop' :txt='lang("sectionNavRoutines")'></icon>
-    <icon ico='tags' :showtext='desktop' :txt='lang("sectionNavTags")'></icon>
-    <icon ico='chart-pie' :showtext='desktop' :txt='lang("sectionNavStatistics")'></icon>
+    <icon ico='home' :desktop='desktop' :txt='lang("sectionNavOverview")'></icon>
+    <icon ico='tasks' :desktop='desktop' :txt='lang("sectionNavTasks")'></icon>
+    <icon ico='stopwatch' :desktop='desktop' :txt='lang("sectionNavIntervals")'></icon>
+    <icon ico='stream' :desktop='desktop' :txt='lang("sectionNavRoutines")'></icon>
+    <icon ico='tags' :desktop='desktop' :txt='lang("sectionNavTags")'></icon>
+    <icon ico='chart-pie' :desktop='desktop' :txt='lang("sectionNavStatistics")'></icon>
     <hr v-if='desktop' id='navigation-margin'/>
-    <icon ico='cog' :showtext='desktop' :txt='lang("sectionNavSettings")'></icon>
-    <icon ico='info-circle' :showtext='desktop' :txt='lang("sectionNavHelp")'></icon>
+    <icon ico='cog' :desktop='desktop' :txt='lang("sectionNavSettings")'></icon>
+    <icon ico='info-circle' :desktop='desktop' :txt='lang("sectionNavHelp")'></icon>
   </div>
 </template>
 
