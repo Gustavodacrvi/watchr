@@ -1,5 +1,7 @@
 <template>
-  <icon-group id='navigation' :desktop='false'></icon-group>
+  <div id='navigation'>
+    <icon-group id='icon-group' :desktop='false'></icon-group>
+  </div>
 </template>
 
 <script lang="ts">
@@ -23,9 +25,17 @@ export default Vue.extend({
 #navigation {
   position: fixed;
   bottom: 0;
+  left: 0;
   height: 50px;
+  box-sizing: border-box;
+  padding: 0 5px;
   width: 100%;
+  z-index: 1;
+}
+
+#icon-group {
   display: flex;
+  height: 100%;
   align-items: center;
 }
 
