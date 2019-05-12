@@ -1,5 +1,5 @@
 <template>
-  <icon-group id='navigation'></icon-group>
+  <icon-group id='navigation' :desktop='true'></icon-group>
 </template>
 
 <script lang="ts">

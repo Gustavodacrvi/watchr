@@ -1,12 +1,15 @@
 <template>
-  <div id='navigation'>
-  </div>
+  <icon-group id='navigation' :desktop='false'></icon-group>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import IconGroup from './Icon-group.vue';
 
 export default Vue.extend({
+  components: {
+    'icon-group': IconGroup,
+  },
   computed: {
     lang(): string {
       return this.$store.getters['lang/l'];

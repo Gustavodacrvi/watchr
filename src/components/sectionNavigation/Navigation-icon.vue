@@ -2,7 +2,7 @@
   <div class='navigation-desktop-icon'>
     <icon @mouseover='showing = true' @mouseleave='showing = false' class='pointer icon-color-hover' :class='{"section-icon-active": isActive}' sz='big-big' :ico='ico' @click='navigate'></icon>
     <transition name='fade-transition'>
-      <span v-show='showing' class='txt'>{{ txt }}</span>
+      <span v-show='showing && showtext' class='txt'>{{ txt }}</span>
     </transition>
   </div>
 </template>
@@ -18,6 +18,7 @@ export default Vue.extend({
   props: {
     ico: String,
     txt: String,
+    showtext: Boolean,
   },
   data() {
     return {
