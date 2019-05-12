@@ -8,7 +8,7 @@ export default {
   },
   getters: {
     getRoutine: (state: any) => (key: string) => {
-      return state.find((el: Routine) => {
+      return state.routines.find((el: Routine) => {
         return el.id === key;
       });
     },
@@ -16,6 +16,9 @@ export default {
   mutations: {
     pushSection(state: any, section: string) {
       state.section = section;
+    },
+    addRoutine(state: any, routine: Routine) {
+      state.routines.push(routine);
     },
   },
   actions: {
