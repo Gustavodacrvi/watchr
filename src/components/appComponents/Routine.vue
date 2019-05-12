@@ -2,7 +2,11 @@
   <div class='routine card-round' :class='$store.state.theme.style'>
     <div class='routine-header'>
       <app-title :no-margin='true' :inline='true' :lvl='3'>{{ routine.name }}</app-title>
-      <icon-group handle-ico='ellipsis-v' options='asdf'></icon-group>
+      <icon-group class='options' handle='ellipsis-v' :options='[
+        { ico: "trash", dbclick: false, color: "red" },
+        { ico: "calendar-minus", dbclick: true, color: "red" },
+        { ico: "clone", dbclick: false },
+      ]'></icon-group>
     </div>
   </div>
 </template>
@@ -48,10 +52,6 @@ export default Vue.extend({
   padding: 14px;
 }
 
-.routine-header {
-  overflow: auto;
-}
-
 .toggle-section {
   margin-left: 60px;
 }
@@ -61,6 +61,11 @@ export default Vue.extend({
   color: #A97CFC;
   font-size: 1.2em;
   margin: 0 10px;
+}
+
+.options {
+  float: right;
+  clear: right;
 }
 
 </style>
