@@ -1,7 +1,9 @@
 <template>
-  <div>
+  <div id='section'>
     <navigation></navigation>
-    <component :is='currentSection'></component>
+    <div id='content'>
+      <component :is='currentSection'></component>
+    </div>
   </div>
 </template>
 
@@ -38,5 +40,15 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+
+#section {
+  display: flex;
+  justify-content: center;
+}
+
+#content {
+  flex-basis: 1526px;
+  margin: 0 60px;
+}
 
 </style>
