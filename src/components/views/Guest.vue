@@ -44,7 +44,6 @@ export default Vue.extend({
 #user-section {
   display: flex;
   justify-content: center;
-  background-color: red !important;
 }
 
 #user-section-content {

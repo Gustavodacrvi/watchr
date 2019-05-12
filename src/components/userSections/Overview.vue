@@ -10,7 +10,7 @@ import Routine from './../appComponents/Routine.vue';
 
 export default Vue.extend({
   components: {
-    'routine': Routine,
+    routine: Routine,
   },
 });
 </script>
