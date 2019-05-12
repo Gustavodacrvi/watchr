@@ -1,7 +1,8 @@
 <template>
   <div class='routine card-round' :class='$store.state.theme.style'>
     <div class='routine-header'>
-      <app-title :no-margin='true' :lvl='3'>{{ routine.name }}</app-title>
+      <app-title :no-margin='true' :inline='true' :lvl='3'>{{ routine.name }}</app-title>
+      <icon-group handle-ico='ellipsis-v' options='asdf'></icon-group>
     </div>
   </div>
 </template>
@@ -10,10 +11,12 @@
 import Vue from 'vue';
 import { Routine } from '@/components/interfaces';
 import Heading from '@/components/generalComponents/Heading.vue';
+import IconGroup from '@/components/dropdown/IconGroup.vue';
 
 export default Vue.extend({
   components: {
     'app-title': Heading,
+    'icon-group': IconGroup,
   },
   props: {
     'routine-id': String,
@@ -33,6 +36,8 @@ export default Vue.extend({
       routine: this.$store.getters['app/getRoutine']('id'),
     };
   },
+  computed: {
+  },
 });
 </script>
 
@@ -45,6 +50,17 @@ export default Vue.extend({
 
 .routine-header {
   overflow: auto;
+}
+
+.toggle-section {
+  margin-left: 60px;
+}
+
+.toggle-text {
+  position: relative;
+  color: #A97CFC;
+  font-size: 1.2em;
+  margin: 0 10px;
 }
 
 </style>

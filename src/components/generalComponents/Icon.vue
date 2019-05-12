@@ -39,6 +39,10 @@ export default Vue.extend({
   color: #ADADAD;
 }
 
+.color {
+  color: #A97CFC;
+}
+
 .icon-main-color {
   color: #A97CFC;
 }

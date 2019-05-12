@@ -12,6 +12,9 @@ export default {
   state: {
     section: savedSection,
     routines: [] as Routine[],
+    options: {
+      clockConvention: '24',
+    },
   },
   getters: {
     getRoutine: (state: any) => (key: string) => {

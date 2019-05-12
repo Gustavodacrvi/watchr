@@ -6,11 +6,15 @@ export default Vue.extend({
   props: {
     lvl: Number,
     noMargin: Boolean,
+    inline: Boolean,
   },
   render(createElement) {
     let classes = 'heading ' + this.$store.state.theme.style;
     if (this.noMargin) {
       classes += ' no-margin';
+    }
+    if (this.inline) {
+      classes += ' inline';
     }
     return createElement(
       'h' + this.lvl,
@@ -35,6 +39,10 @@ export default Vue.extend({
 
 .no-margin {
   margin: 0;
+}
+
+.inline {
+  display: inline-block;
 }
 
 </style>
