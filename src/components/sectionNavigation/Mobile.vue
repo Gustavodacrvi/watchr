@@ -1,5 +1,5 @@
 <template>
-  <div id='navigation'>
+  <div id='navigation' :class='$store.state.theme.style'>
     <icon-group id='icon-group' :desktop='false'></icon-group>
   </div>
 </template>
@@ -31,8 +31,16 @@ export default Vue.extend({
   padding: 0 5px;
   width: 100%;
   z-index: 1;
+}
+
+#navigation.light {
   background-color: #FAFAF9;
   box-shadow: 0 5px 30px 40px #FAFAF9;
+}
+
+#navigation.dark {
+  background-color: #1F1F1F;
+  box-shadow: 0 5px 30px 40px #1F1F1F;
 }
 
 #icon-group {
