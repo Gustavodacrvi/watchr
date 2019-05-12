@@ -5,13 +5,18 @@ import Vue from 'vue';
 export default Vue.extend({
   props: {
     lvl: Number,
+    noMargin: Boolean,
   },
   render(createElement) {
+    let classes = 'heading ' + this.$store.state.theme.style;
+    if (this.noMargin) {
+      classes += ' no-margin';
+    }
     return createElement(
       'h' + this.lvl,
       {
         attrs: {
-          class: 'heading ' + this.$store.state.theme.style,
+          class: classes,
         },
       },
       this.$slots.default,
@@ -26,6 +31,10 @@ export default Vue.extend({
   color: #A97CFC;
   text-shadow: 0 0 1px #A97CFC;
   margin: 15px 0;
+}
+
+.no-margin {
+  margin: 0;
 }
 
 </style>

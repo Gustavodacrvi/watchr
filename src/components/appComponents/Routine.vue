@@ -1,14 +1,20 @@
 <template>
   <div class='routine card-round' :class='$store.state.theme.style'>
-      {{ routine }}
+    <div class='routine-header'>
+      <app-title :no-margin='true' :lvl='3'>{{ routine.name }}</app-title>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { Routine } from '@/components/interfaces';
+import Heading from '@/components/generalComponents/Heading.vue';
 
 export default Vue.extend({
+  components: {
+    'app-title': Heading,
+  },
   props: {
     'routine-id': String,
   },
@@ -34,6 +40,11 @@ export default Vue.extend({
 
 .routine {
   height: 100px;
+  padding: 14px;
+}
+
+.routine-header {
+  overflow: auto;
 }
 
 </style>

@@ -51,4 +51,10 @@ export default Vue.extend({
   margin: 0 60px;
 }
 
+@media screen and (max-width: 825px) {
+  #user-section-content {
+    margin: 0 8px;
+  }
+}
+
 </style>
