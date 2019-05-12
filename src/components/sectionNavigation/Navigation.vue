@@ -1,6 +1,8 @@
 <template>
-  <desktop v-if='$store.getters.NavbarisOnDesktop'></desktop>
-  <mobile v-else></mobile>
+  <transition name='fade-transition' mode='out-in'>
+    <desktop v-if='$store.getters.NavbarisOnDesktop'></desktop>
+    <mobile v-else></mobile>
+  </transition>
 </template>
 
 <script lang="ts">

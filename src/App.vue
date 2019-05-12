@@ -127,7 +127,7 @@ span, a, p {
 }
 
 .fade-transition-active, .fade-transition-leave-active {
-  transition: opacity .1s;
+  transition: opacity .2s;
 }
 .fade-transition-enter, .fade-transition-leave-to {
   opacity: 0;

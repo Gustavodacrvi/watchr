@@ -2,7 +2,9 @@
   <div id='user-section'>
     <navigation></navigation>
     <div id='user-section-content'>
-      <component :is='currentSection'></component>
+      <transition name='fade-transition' mode='out-in'>
+        <component :is='currentSection'></component>
+      </transition>
     </div>
   </div>
 </template>

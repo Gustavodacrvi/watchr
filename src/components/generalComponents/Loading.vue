@@ -18,7 +18,8 @@ export default Vue.extend({
 <style scoped>
 
 #loading {
-  height: 85%;
+  height: 100%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
