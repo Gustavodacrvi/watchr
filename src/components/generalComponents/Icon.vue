@@ -49,7 +49,7 @@ export default Vue.extend({
 
 .icon-color-hover:hover {
   color: #A97CFC;
-  text-shadow: 0 0 4px #A97CFC;
+  text-shadow: 0 0 2px #A97CFC;
 }
 
 </style>
