@@ -20,7 +20,7 @@ export default Vue.extend({
   padding: 10px 20px;
   color: #fff;
   background-color: #A97CFC;
-  box-shadow: 0 2px 4px #A97CFC;
+  box-shadow: 0 1px 3px rgb(169, 124, 252, .4);
   font-size: 1.05em;
   cursor: pointer;
   transition-duration: .2s;
@@ -35,7 +35,7 @@ export default Vue.extend({
 
 .button:hover {
   background-color: #bd9bfd;
-  box-shadow: 0 3px 6px #A97CFC;
+  box-shadow: 0 2px 4px #A97CFC;
 }
 
 
