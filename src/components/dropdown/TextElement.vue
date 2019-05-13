@@ -15,6 +15,8 @@ export default Vue.extend({
 .dropdown-text-element {
   margin: 8px;
   cursor: pointer;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .dropdown-text-element:hover #text {
