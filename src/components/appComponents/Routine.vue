@@ -1,5 +1,5 @@
 <template>
-  <div class='routine card-round' :class='$store.state.theme.style'>
+  <div v-if='routine' class='routine card-round' :class='$store.state.theme.style'>
     <div class='routine-header'>
       <app-title :no-margin='true' :inline='true' :lvl='3'>{{ routine.name }}</app-title>
       <icon-group class='options' handle='ellipsis-v' :options="[
@@ -8,6 +8,9 @@
         { ico: 'trash', dblclick: true, title: 'Delete routine', color: 'red', callback: () => console.log('dbclick') },
       ]"></icon-group>
     </div>
+  </div>
+  <div v-else class='routine dash'>
+    hj
   </div>
 </template>
 
@@ -37,7 +40,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      routine: this.$store.getters['app/getRoutine']('id'),
+      routine: this.$store.getters['app/getRoutine']('idj'),
     };
   },
 });
@@ -48,6 +51,12 @@ export default Vue.extend({
 .routine {
   height: 100px;
   padding: 14px;
+}
+
+.dash {
+  border-style: dashed;
+  border-radius: 12px;
+  color: #ADADAD;
 }
 
 .toggle-section {

@@ -42,6 +42,7 @@ export default {
             state.strings = LANGUAGE.strings;
             setCookie('watchrLanguage', lang, 365);
             state.savedLanguages.set(lang, LANGUAGE);
+
             resolve();
           };
           document.getElementsByTagName('head')[0].appendChild(scr);
