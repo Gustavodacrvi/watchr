@@ -4,8 +4,8 @@
     <transition name='fade-transition'>
       <div v-show='showing' class='content card-round' :class='$store.state.theme.style'>
         <template v-for='el in options'>
-          <icon v-if='el.dblclick' :class='`color-${el.color}`' class='icon-group-icon pointer' :key='el.ico' :ico='el.ico' sz='big-big' :blink='true' @dblclick='el.callback'></icon>
-          <icon v-else :class='`color-${el.color}`' class='icon-group-icon pointer' :key='el.ico' :ico='el.ico' sz='big-big' @click='el.callback'></icon>
+          <icon v-if='el.dblclick' :class='`color-${el.color}`' class='icon-group-icon pointer' :key='el.ico' :ico='el.ico' sz='big-big' :title='el.title' :blink='true' @dblclick='el.callback'></icon>
+          <icon v-else :title='el.title' :class='`color-${el.color}`' class='icon-group-icon pointer' :key='el.ico' :ico='el.ico' sz='big-big' @click='el.callback'></icon>
         </template>
       </div>
     </transition>

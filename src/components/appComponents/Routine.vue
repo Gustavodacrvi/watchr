@@ -3,9 +3,9 @@
     <div class='routine-header'>
       <app-title :no-margin='true' :inline='true' :lvl='3'>{{ routine.name }}</app-title>
       <icon-group class='options' handle='ellipsis-v' :options="[
-        { ico: 'clone', dblclick: false, callback: () => console.log('not dbclick') },
-        { ico: 'calendar-minus', dblclick: true, color: 'red', callback: () => console.log('dbclick') },
-        { ico: 'trash', dblclick: true, color: 'red', callback: () => console.log('dbclick') },
+        { ico: 'clone', dblclick: false, title: 'Clone routine' , callback: () => console.log('dbclick') },
+        { ico: 'calendar-minus', dblclick: true, title: 'Remove routine from today', color: 'red', callback: () => console.log('dbclick') },
+        { ico: 'trash', dblclick: true, title: 'Delete routine', color: 'red', callback: () => console.log('dbclick') },
       ]"></icon-group>
     </div>
   </div>

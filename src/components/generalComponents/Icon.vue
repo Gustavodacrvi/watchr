@@ -22,7 +22,7 @@ export default Vue.extend({
         this.blinking = true;
         setTimeout(() => {
           this.blinking = false;
-        }, 250);
+        }, 100);
       }
     },
   },
@@ -56,6 +56,10 @@ export default Vue.extend({
   color: #ADADAD;
 }
 
+.icon:hover {
+  text-shadow: 0 0 3px #ADADAD;
+}
+
 .color {
   color: #A97CFC;
 }
@@ -77,6 +81,7 @@ export default Vue.extend({
 }
 
 .blink {
+  transition-duration: .1s;
   color: #A97CFC !important;
   text-shadow: none !important;
   transform: scale(1.1,1.1);
