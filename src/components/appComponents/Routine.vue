@@ -2,11 +2,11 @@
   <div class='routine card-round' :class='$store.state.theme.style'>
     <div class='routine-header'>
       <app-title :no-margin='true' :inline='true' :lvl='3'>{{ routine.name }}</app-title>
-      <icon-group class='options' handle='ellipsis-v' :options='[
-        { ico: "trash", dbclick: false, color: "red" },
-        { ico: "calendar-minus", dbclick: true, color: "red" },
-        { ico: "clone", dbclick: false },
-      ]'></icon-group>
+      <icon-group class='options' handle='ellipsis-v' :options="[
+        { ico: 'clone', dblclick: false, callback: () => console.log('not dbclick') },
+        { ico: 'calendar-minus', dblclick: true, color: 'red', callback: () => console.log('dbclick') },
+        { ico: 'trash', dblclick: true, color: 'red', callback: () => console.log('dbclick') },
+      ]"></icon-group>
     </div>
   </div>
 </template>
@@ -39,8 +39,6 @@ export default Vue.extend({
     return {
       routine: this.$store.getters['app/getRoutine']('id'),
     };
-  },
-  computed: {
   },
 });
 </script>

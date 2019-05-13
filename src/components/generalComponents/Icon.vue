@@ -1,5 +1,5 @@
 <template>
-  <i class='icon' :class='`fa fa-${ico} ${sz} icon ` + $store.state.theme.style' @click='$emit("click")' @mouseover='$emit("mouseover")' @mouseleave='$emit("mouseleave")'></i>  
+  <i class='icon' :class='[`fa fa-${ico} ${sz} icon ` + $store.state.theme.style, blinking ? "blink" : ""]' @click='$emit("click");activateBlink()' @mouseover='$emit("mouseover")' @mouseleave='$emit("mouseleave")' @dblclick='$emit("dblclick")'></i>  
 </template>
 
 <script lang="ts">
@@ -9,6 +9,22 @@ export default Vue.extend({
   props: {
     sz: String,
     ico: String,
+    blink: Boolean,
+  },
+  data() {
+    return {
+      blinking: false,
+    };
+  },
+  methods: {
+    activateBlink() {
+      if (this.blink) {
+        this.blinking = true;
+        setTimeout(() => {
+          this.blinking = false;
+        }, 250);
+      }
+    },
   },
 });
 </script>
@@ -36,6 +52,7 @@ export default Vue.extend({
 }
 
 .icon {
+  transition-duration: .2s;
   color: #ADADAD;
 }
 
@@ -43,12 +60,30 @@ export default Vue.extend({
   color: #A97CFC;
 }
 
-.icon-main-color {
-  color: #A97CFC;
+.color-red {
+  color: #FC7C85;
 }
 
-.icon-color-hover {
-  transition-duration: .2s;
+.color-red:hover {
+  text-shadow: 0 0 2px #FC7C85;
+}
+
+.color-green {
+  color: #89FC7C;
+}
+
+.color-green:hover {
+  text-shadow: 0 0 2px #89FC7C;
+}
+
+.blink {
+  color: #A97CFC !important;
+  text-shadow: none !important;
+  transform: scale(1.1,1.1);
+}
+
+.icon-main-color {
+  color: #A97CFC;
 }
 
 .icon-color-hover:hover {

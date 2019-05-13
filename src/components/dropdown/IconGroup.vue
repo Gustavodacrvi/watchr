@@ -1,11 +1,14 @@
 <template>
-  <span class='icon-group' @mouseenter='showing = !showing' @mouseleave='showing = !showing'>
+  <span class='icon-group' @mouseenter='showing = true' @mouseleave='showing = false'>
     <icon class='icon-color-hover pointer' sz='big-big' :ico='handle'></icon>
-    <div v-if='showing' class='content card-round' :class='$store.state.theme.style'>
-      <template v-for='el in options'>
-        <icon :key='el.ico' :ico='el.ico' sz='big-big'></icon>
-      </template>
-    </div>
+    <transition name='fade-transition'>
+      <div v-show='showing' class='content card-round' :class='$store.state.theme.style'>
+        <template v-for='el in options'>
+          <icon v-if='el.dblclick' :class='`color-${el.color}`' class='icon-group-icon pointer' :key='el.ico' :ico='el.ico' sz='big-big' :blink='true' @dblclick='el.callback'></icon>
+          <icon v-else :class='`color-${el.color}`' class='icon-group-icon pointer' :key='el.ico' :ico='el.ico' sz='big-big' @click='el.callback'></icon>
+        </template>
+      </div>
+    </transition>
   </span>
 </template>
 
@@ -23,7 +26,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      showing: true,
+      showing: false,
     };
   },
 });
@@ -36,10 +39,15 @@ export default Vue.extend({
 }
 
 .content {
+  display: flex;
   position: absolute;
   bottom: 100%;
   right: 0;
   z-index: 1;
+}
+
+.icon-group-icon {
+  margin: 6px;
 }
 
 </style>
