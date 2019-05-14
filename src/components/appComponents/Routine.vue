@@ -9,7 +9,7 @@
       ]"></icon-group>
     </div>
   </div>
-  <div v-else class='routine dash' :class='$store.state.theme.style'>
+  <div v-else class='routine no-routine' :class='$store.state.theme.style'>
     <div>
       <span>There are no routines today</span>
       <div class='routine-icons'>
@@ -48,7 +48,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      routine: this.$store.getters['app/getRoutine']('idj'),
+      routine: this.$store.getters['app/getRoutine']('idf'),
     };
   },
 });
@@ -56,20 +56,17 @@ export default Vue.extend({
 
 <style scoped>
 
-.dash.light {
+.no-routine.light {
   background-color: #e9e4e2;
 }
 
-.dash.dark {
+.no-routine.dark {
   background-color: #1C1C1C;
 }
 
 .routine {
-  height: 60px;
+  height: 100px;
   padding: 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .routine-icons {
@@ -82,10 +79,13 @@ export default Vue.extend({
   margin: 4px;
 }
 
-.dash {
+.no-routine {
   border-style: dashed;
   border-radius: 12px;
   color: #ADADAD;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .toggle-section {
