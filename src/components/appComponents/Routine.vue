@@ -2,11 +2,17 @@
   <div v-if='routine' class='routine card-round' :class='$store.state.theme.style'>
     <div class='routine-header'>
       <app-title :no-margin='true' :inline='true' :lvl='3'>{{ routine.name }}</app-title>
-      <icon-group class='options' handle='ellipsis-v' :options="[
-        { ico: 'clone', dblclick: false, title: 'Clone routine' , callback: () => console.log('dbclick') },
-        { ico: 'calendar-minus', dblclick: true, title: 'Remove routine from today', color: 'red', callback: () => console.log('dbclick') },
-        { ico: 'trash', dblclick: true, title: 'Delete routine', color: 'red', callback: () => console.log('dbclick') },
-      ]"></icon-group>
+      <div class='options'>
+        <icon-group class='icon-group' handle='stopwatch' :options="[
+          { ico: 'folder-plus', dbclick: false, title: 'Add existing interval', callback: () => console.log(3)},
+          { ico: 'pen', dbclick: false, title: 'Create interval', callback: () => console.log('d') },
+        ]"></icon-group>
+        <icon-group class='icon-group' handle='ellipsis-v' :options="[
+          { ico: 'clone', dblclick: false, title: 'Clone routine', callback: () => console.log('dbclick') },
+          { ico: 'calendar-minus', dblclick: true, title: 'Remove routine from today', color: 'red', callback: () => console.log('dbclick') },
+          { ico: 'trash', dblclick: true, title: 'Delete routine', color: 'red', callback: () => console.log('dbclick') },
+        ]"></icon-group>
+      </div>
     </div>
   </div>
   <div v-else class='routine no-routine' :class='$store.state.theme.style'>
@@ -48,7 +54,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      routine: this.$store.getters['app/getRoutine']('idf'),
+      routine: this.$store.getters['app/getRoutine']('id'),
     };
   },
 });
@@ -102,6 +108,10 @@ export default Vue.extend({
 .options {
   float: right;
   clear: right;
+}
+
+.icon-group {
+  margin: 4px;
 }
 
 </style>
