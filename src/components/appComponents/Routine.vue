@@ -9,8 +9,14 @@
       ]"></icon-group>
     </div>
   </div>
-  <div v-else class='routine dash'>
-    hj
+  <div v-else class='routine dash' :class='$store.state.theme.style'>
+    <div>
+      <span>There are no routines today</span>
+      <div class='routine-icons'>
+        <icon class='pointer' sz='big-big' ico='folder-plus' title='Add bind existing routine'></icon>
+        <icon class='pointer' sz='big-big' ico='pen' title='Create routine'></icon>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -18,10 +24,12 @@
 import Vue from 'vue';
 import { Routine } from '@/components/interfaces';
 import Heading from '@/components/generalComponents/Heading.vue';
+import Icon from '@/components/generalComponents/Icon.vue';
 import IconGroup from '@/components/dropdown/IconGroup.vue';
 
 export default Vue.extend({
   components: {
+    'icon': Icon,
     'app-title': Heading,
     'icon-group': IconGroup,
   },
@@ -48,9 +56,30 @@ export default Vue.extend({
 
 <style scoped>
 
+.dash.light {
+  background-color: #e9e4e2;
+}
+
+.dash.dark {
+  background-color: #1C1C1C;
+}
+
 .routine {
-  height: 100px;
+  height: 60px;
   padding: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.routine-icons {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.routine-icons .icon {
+  margin: 4px;
 }
 
 .dash {
