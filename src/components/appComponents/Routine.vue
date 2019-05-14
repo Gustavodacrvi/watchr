@@ -16,6 +16,12 @@
     </div>
     <div class='intervals'>
       <div class='intervals-line'></div>
+      <div class='numbers'>
+        <template v-for='i in 25'>
+          <span v-if='i !== 25' class='number' :key='i'>{{ i - 1 }}</span>
+          <span v-else class='number' :key='i'>0</span>
+        </template>
+      </div>
     </div>
   </div>
   <div v-else class='routine no-routine' :class='$store.state.theme.style'>
@@ -129,9 +135,21 @@ export default Vue.extend({
   top: 40%;
   transform: translateY(-50%);
   height: 15px;
-  width: 1457px;
+  width: 2400px;
   border-radius: 12px;
   background-color: #F1F1F3;
+}
+
+.numbers {
+  position: absolute;
+  top: 51%;
+  width: 2400px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.number {
+  font-size: 0.8em;
 }
 
 </style>
