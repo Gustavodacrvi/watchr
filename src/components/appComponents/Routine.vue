@@ -54,7 +54,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      routine: this.$store.getters['app/getRoutine']('id'),
+      routine: this.$store.getters['app/getRoutine']('iddf'),
     };
   },
 });
@@ -92,17 +92,6 @@ export default Vue.extend({
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.toggle-section {
-  margin-left: 60px;
-}
-
-.toggle-text {
-  position: relative;
-  color: #A97CFC;
-  font-size: 1.2em;
-  margin: 0 10px;
 }
 
 .options {
