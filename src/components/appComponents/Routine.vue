@@ -14,8 +14,10 @@
         ]"></icon-group>
       </div>
     </div>
+        min: {{ min }} hour: {{ hour }}
+
     <div class='intervals'>
-      <div class='intervals-line'></div>
+      <div class='intervals-line' :class='$store.state.theme.style'></div>
       <div class='numbers'>
         <template v-for='i in 25'>
           <span v-if='i !== 25' class='number' :key='i'>{{ i - 1 }}</span>
@@ -61,15 +63,40 @@ export default Vue.extend({
       ],
     } as Routine);
   },
+  created() {
+    this.intervalId = setInterval(() => {
+      this.hour = new Date().getHours();
+      this.min = new Date().getMinutes();
+    }, 500);
+  },
   data() {
     return {
+      intervalId: undefined as any,
       routine: this.$store.getters['app/getRoutine']('id'),
+      hour: new Date().getHours() as number,
+      min: new Date().getMinutes() as number,
     };
+  },
+  watch: {
+    min() {
+      
+    },
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalId);
   },
 });
 </script>
 
 <style scoped>
+
+.intervals-line.light {
+  background-color: #F1F1F3;
+}
+
+.intervals-line.dark {
+  background-color: #363636;
+}
 
 .no-routine.light {
   background-color: #e9e4e2;
@@ -137,7 +164,6 @@ export default Vue.extend({
   height: 15px;
   width: 2400px;
   border-radius: 12px;
-  background-color: #F1F1F3;
 }
 
 .numbers {
