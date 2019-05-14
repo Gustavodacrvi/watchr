@@ -19,8 +19,9 @@
       <div class='pointer' ref='pointer'></div>
       <div class='numbers'>
         <template v-for='i in 25'>
-          <span v-if='i !== 25' class='number' :key='i'>{{ i - 1 }}</span>
-          <span v-else class='number' :key='i'>0</span>
+          <span v-if='i !== 25 && i < 11' class='number' :key='i' :style="`left: ${(i - 1) * 100}px`">{{ i - 1 }}</span>
+          <span v-else-if='i !== 25 && i > 10' class='number' :key='i' :style="`left: ${((i - 1) * 100) - 3}px`">{{ i - 1 }}</span>
+          <span v-else class='number' :key='i' style='left: 2400px'>0</span>
         </template>
       </div>
     </div>
@@ -86,7 +87,7 @@ export default Vue.extend({
     },
     setPointer() {
       const minutes: number = ((this.hour * 60) + this.min);
-      const left: number = (minutes * 5) / 3;
+      const left: number = ((minutes * 5) / 3) + 3;
       const pointer: any = this.$refs.pointer;
       pointer.style.left = left + 'px';
     },
@@ -174,9 +175,10 @@ export default Vue.extend({
 .intervals-line {
   position: absolute;
   top: 40%;
+  left: 3px;
   transform: translateY(-50%);
   height: 15px;
-  width: 2400px;
+  width: 2402px;
   border-radius: 12px;
 }
 
@@ -184,11 +186,10 @@ export default Vue.extend({
   position: absolute;
   top: 51%;
   width: 2400px;
-  display: flex;
-  justify-content: space-between;
 }
 
 .number {
+  position: absolute;
   font-size: 0.8em;
 }
 
@@ -196,14 +197,15 @@ export default Vue.extend({
   position: absolute;
   top: 40%;
   transform: translateY(-50%);
-  height: 25px;
-  width: 2px;
+  height: 28px;
+  width: 2.5px;
   background-color: #A97CFC;
 }
 
+@media screen and (min-width: 824px) {
+  .intervals::-webkit-scrollbar {
+    height: 12px;
+  }
+}
+
 </style>
-
-24px = 2400px
-8px = x
-
-12 * 2400 = 24x

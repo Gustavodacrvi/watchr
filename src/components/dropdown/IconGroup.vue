@@ -41,7 +41,7 @@ export default Vue.extend({
 .content {
   display: flex;
   position: absolute;
-  bottom: 100%;
+  bottom: 160%;
   right: 0;
   z-index: 1;
 }
