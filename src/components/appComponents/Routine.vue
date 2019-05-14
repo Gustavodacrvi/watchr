@@ -14,10 +14,9 @@
         ]"></icon-group>
       </div>
     </div>
-        min: {{ min }} hour: {{ hour }}
-
     <div class='intervals'>
       <div class='intervals-line' :class='$store.state.theme.style'></div>
+      <div class='pointer' ref='pointer'></div>
       <div class='numbers'>
         <template v-for='i in 25'>
           <span v-if='i !== 25' class='number' :key='i'>{{ i - 1 }}</span>
@@ -65,9 +64,12 @@ export default Vue.extend({
   },
   created() {
     this.intervalId = setInterval(() => {
-      this.hour = new Date().getHours();
-      this.min = new Date().getMinutes();
+      this.getTime();
     }, 500);
+    this.getTime();
+  },
+  mounted() {
+    this.setPointer();
   },
   data() {
     return {
@@ -77,9 +79,21 @@ export default Vue.extend({
       min: new Date().getMinutes() as number,
     };
   },
+  methods: {
+    getTime() {
+      this.hour = new Date().getHours();
+      this.min = new Date().getMinutes();
+    },
+    setPointer() {
+      const minutes: number = ((this.hour * 60) + this.min);
+      const left: number = (minutes * 5) / 3;
+      const pointer: any = this.$refs.pointer;
+      pointer.style.left = left + 'px';
+    },
+  },
   watch: {
     min() {
-      
+      this.setPointer();
     },
   },
   beforeDestroy() {
@@ -178,4 +192,18 @@ export default Vue.extend({
   font-size: 0.8em;
 }
 
+.pointer {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  height: 25px;
+  width: 2px;
+  background-color: #A97CFC;
+}
+
 </style>
+
+24px = 2400px
+8px = x
+
+12 * 2400 = 24x
