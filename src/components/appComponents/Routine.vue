@@ -14,6 +14,9 @@
         ]"></icon-group>
       </div>
     </div>
+    <div class='intervals'>
+      <div class='intervals-line'></div>
+    </div>
   </div>
   <div v-else class='routine no-routine' :class='$store.state.theme.style'>
     <div>
@@ -54,7 +57,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      routine: this.$store.getters['app/getRoutine']('iddf'),
+      routine: this.$store.getters['app/getRoutine']('id'),
     };
   },
 });
@@ -73,6 +76,9 @@ export default Vue.extend({
 .routine {
   height: 100px;
   padding: 14px;
+  padding-bottom: 6px;
+  display: flex;
+  flex-direction: column;
 }
 
 .routine-icons {
@@ -101,6 +107,31 @@ export default Vue.extend({
 
 .icon-group {
   margin: 4px;
+}
+
+.intervals {
+  position: relative;
+  height: 100%;
+  overflow: auto;
+}
+
+.intervals::-webkit-scrollbar {
+  height: 5px;
+}
+ 
+.intervals::-webkit-scrollbar-thumb {
+  background-color: #A97CFC;
+  border-radius: 12px;
+}
+
+.intervals-line {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  height: 15px;
+  width: 1457px;
+  border-radius: 12px;
+  background-color: #F1F1F3;
 }
 
 </style>
