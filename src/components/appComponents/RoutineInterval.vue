@@ -2,9 +2,10 @@
   <div :ref='id' class='interval' :class='{selected: isSelected}' :style='styles' @click='$emit("select", {id: id, position: getPosition})'>
     <div class='nameDiv' v-if='!dontShowName'>
       <span class='name'>{{ id }}</span>
-      <icon class='pointer color left' sz='big-big-big' ico='arrows-alt-h'></icon>
-      <icon class='pointer color right' sz='big-big-big' ico='arrows-alt-h'></icon>
+      <icon class='pointer color left routine-icon-left' sz='big-big-big' ico='arrows-alt-h'></icon>
+      <icon ref='routine-icon-right' class='pointer color right routine-icon-right' sz='big-big-big' ico='arrows-alt-h'></icon>
     </div>
+    {{ a }}
   </div>
 </template>
 
@@ -27,6 +28,7 @@ export default Vue.extend({
     return {
       left: undefined as any,
       width: undefined as any,
+      a: undefined as any,
     };
   },
   created() {
@@ -36,6 +38,15 @@ export default Vue.extend({
   mounted() {
     const ref: any = this.$refs[this.id];
     ref.style.left = this.left + 'px';
+
+    const right: any = document.getElementsByClassName('routine-icon-right')[0];
+    right.addEventListener('touchmove', (event: any) => {
+      event.preventDefault();
+      const touch = event.touches[0];
+      const div: any = this.$refs[this.id];
+      const windowOffset = div.getBoundingClientRect().left;
+      this.width = touch.screenX - windowOffset;
+    }, false);
   },
   computed: {
     styles(): object {
