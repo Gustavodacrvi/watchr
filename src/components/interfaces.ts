@@ -34,3 +34,15 @@ export interface Routine {
     string // id for the calendar tag || ISO date
   >;
 }
+
+export interface Label {
+  id: string;
+  name: string;
+}
+
+export interface Interval {
+  id: string;
+  name: string;
+  tasks: Array<string>;
+  tags: Array<Label>;
+}
