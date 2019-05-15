@@ -1,5 +1,8 @@
 <template>
   <div :ref='name' class='interval' v-bind:style='styles'>
+    <div class='nameDiv'>
+      <span class='name'>{{ name }}</span>
+    </div>
   </div>
 </template>
 
@@ -62,9 +65,20 @@ export default Vue.extend({
 
 .interval {
   position: absolute;
-  height: 100%;
+  height: 95%;
   border-radius: 12px;
   z-index: 5;
+}
+
+.nameDiv {
+  position: relative; 
+}
+
+.name {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 5px;
 }
 
 </style>

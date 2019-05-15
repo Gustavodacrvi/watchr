@@ -16,7 +16,7 @@
     </div>
     <div class='intervals'>
       <div class='intervals-line' :class='$store.state.theme.style'>
-        <interval name='Exercise' color='#FC7C85' start='12-0' end='15-12'></interval>
+        <interval name='Exercise' color='#FC7C85' start='0-0' end='1-0'></interval>
       </div>
       <div class='pointer' ref='pointer'></div>
       <div class='numbers'>
@@ -153,7 +153,7 @@ export default Vue.extend({
 }
 
 .routine {
-  height: 100px;
+  height: 110px;
   padding: 14px;
   padding-bottom: 6px;
   display: flex;
