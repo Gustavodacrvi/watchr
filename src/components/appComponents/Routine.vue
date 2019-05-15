@@ -18,10 +18,23 @@
       <div class='intervals-line' :class='$store.state.theme.style'></div>
       <div class='pointer' ref='pointer'></div>
       <div class='numbers'>
-        <template v-for='i in 25'>
-          <span v-if='i !== 25 && i < 11' class='number' :key='i' :style="`left: ${(i - 1) * 100}px`">{{ i - 1 }}</span>
-          <span v-else-if='i !== 25 && i > 10' class='number' :key='i' :style="`left: ${((i - 1) * 100) - 3}px`">{{ i - 1 }}</span>
-          <span v-else class='number' :key='i' style='left: 2400px'>0</span>
+        <template v-if='is24HourConvention'>
+          <template v-for='i in 25'>
+            <span v-if='i !== 25 && i < 11' class='number' :key='i + "routine24"' :style="`left: ${(i - 1) * 100}px`">{{ i - 1 }}</span>
+            <span v-else-if='i !== 25 && i > 10' class='number' :key='i  + "routine24"' :style="`left: ${((i - 1) * 100) - 3}px`">{{ i - 1 }}</span>
+            <span v-else class='number' :key='i  + "routine24"' style='left: 2400px'>0</span>
+          </template>
+        </template>
+        <template v-else>
+          <template v-for='i in 12'>
+            <span v-if='i !== 1' class='number' :key='i  + "routine12am"' :style='`left: ${(i - 1) * 100}px`'>{{ i - 1 }}am</span>
+            <span v-else class='number' :key='i  + "routine12am"'>12am</span>
+          </template>
+          <template v-for='i in 13'>
+            <span v-if='i === 13' class='number' :key='i  + "routine12am"' style='left: 2400px'>12am</span>
+            <span v-else-if='i !== 1' class='number' :key='i  + "routine12pm"' :style='`left: ${((i - 1) * 100) + 1200}px`'>{{ i - 1 }}pm</span>
+            <span v-else class='number' :key='i  + "routine12pm"' style='left: 1200px'>12pm</span>
+          </template>
         </template>
       </div>
     </div>
@@ -90,6 +103,11 @@ export default Vue.extend({
       const left: number = ((minutes * 5) / 3) + 3;
       const pointer: any = this.$refs.pointer;
       pointer.style.left = left + 'px';
+    },
+  },
+  computed: {
+    is24HourConvention(): boolean {
+      return (this.$store.state.app.options.clockConvention === '24');
     },
   },
   watch: {

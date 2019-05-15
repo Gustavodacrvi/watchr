@@ -13,7 +13,7 @@ export default {
     section: savedSection,
     routines: [] as Routine[],
     options: {
-      clockConvention: '24',
+      clockConvention: '21',
     },
   },
   getters: {
