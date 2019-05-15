@@ -14,7 +14,7 @@
         ]"></icon-group>
       </div>
     </div>
-    <div class='intervals'>
+    <div class='intervals' ref='intervals-div'>
       <div class='intervals-line' :class='$store.state.theme.style'>
         <interval id='Exercise' color='#FC7C85' start='12-30' end='15-0' @select="selectInterval"></interval>
       </div>
@@ -101,6 +101,9 @@ export default mixins(app).extend({
   },
   mounted() {
     this.setPointer();
+    const intervals: any = this.$refs['intervals-div'];
+    intervals.addEventListener('scroll', this.saveScrollPosition);
+    intervals.scrollLeft = localStorage.getItem('watchrRoutineScroll');
   },
   data() {
     return {
@@ -114,6 +117,9 @@ export default mixins(app).extend({
     getTime() {
       this.hour = new Date().getHours();
       this.min = new Date().getMinutes();
+    },
+    saveScrollPosition(event: any) {
+      localStorage.setItem(`watchrRoutineScroll`, '' + event.target.scrollLeft);
     },
     setPointer() {
       const pointer: any = this.$refs.pointer;
@@ -137,6 +143,8 @@ export default mixins(app).extend({
   },
   beforeDestroy() {
     clearInterval(this.intervalId);
+    const intervals: any = this.$refs['intervals-div'];
+    intervals.removeEventListener('scroll', this.saveScrollPosition);
   },
 });
 </script>

@@ -61,6 +61,7 @@ export default mixins(app).extend({
       if (event.screenX - windowOffset > this.parseTimeToPixels('00-15')) {
         this.width = event.screenX - windowOffset;
       }
+      this.$emit('select', {id: this.id, position: this.getPosition});
     },
     resizeRightMobile(event: any) {
       event.preventDefault();
@@ -70,6 +71,7 @@ export default mixins(app).extend({
       if (event.touches[0].screenX - windowOffset > this.parseTimeToPixels('00-15')) {
         this.width = event.touches[0].screenX - windowOffset;
       }
+      this.$emit('select', {id: this.id, position: this.getPosition});
     },
   },
   computed: {
