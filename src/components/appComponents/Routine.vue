@@ -16,7 +16,8 @@
     </div>
     <div class='intervals'>
       <div class='intervals-line' :class='$store.state.theme.style'>
-        <interval name='Exercise' color='#FC7C85' start='0-0' end='1-0'></interval>
+        <interval id='Exercise' color='#FC7C85' start='0-0' end='1-0' @select="selectInterval"></interval>
+        <interval id='Work' color='#89FC7C' start='12-0' end='13-0' @select="selectInterval"></interval>
       </div>
       <div class='pointer' ref='pointer'></div>
       <div class='numbers'>
@@ -115,6 +116,9 @@ export default Vue.extend({
     setPointer() {
       const pointer: any = this.$refs.pointer;
       pointer.style.left = app.computed.parseTimeToPixels(`${this.hour}-${this.min}`);
+    },
+    selectInterval(id: string) {
+      this.$store.commit('app/selectInterval', id);
     },
   },
   computed: {

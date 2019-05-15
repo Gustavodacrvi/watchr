@@ -16,6 +16,7 @@ export default {
     options: {
       clockConvention: '24',
     },
+    interval: undefined,
   },
   getters: {
     getRoutine: (state: any) => (key: string) => {
@@ -34,6 +35,9 @@ export default {
     },
     addInterval(state: any, interval: Interval) {
       state.intervals.push(interval);
+    },
+    selectInterval(state: any, id: string) {
+      state.interval = id;
     },
   },
   actions: {

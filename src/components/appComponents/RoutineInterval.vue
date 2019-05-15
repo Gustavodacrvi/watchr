@@ -1,7 +1,7 @@
 <template>
-  <div :ref='name' class='interval' v-bind:style='styles'>
+  <div :ref='id' class='interval' :class='{selected: isSelected}' :style='styles' @click='$emit("select", id)'>
     <div class='nameDiv'>
-      <span class='name'>{{ name }}</span>
+      <span class='name'>{{ id }}</span>
     </div>
   </div>
 </template>
@@ -15,7 +15,7 @@ export default Vue.extend({
     color: String,
     start: String,
     end: String,
-    name: String,
+    id: String,
   },
   data() {
     return {
@@ -25,11 +25,11 @@ export default Vue.extend({
   },
   created() {
     this.width = this.getWidth;
-    this.left = this.getDistance;
+    this.left = app.computed.parseTimeToPixels(this.start);
   },
   mounted() {
-    const ref: any = this.$refs[this.name];
-    ref.style.left = this.left + 'px';
+    const ref: any = this.$refs[this.id];
+    ref.style.left = this.left;
   },
   computed: {
     styles(): object {
@@ -39,8 +39,8 @@ export default Vue.extend({
         width: this.width + 'px',
       };
     },
-    getDistance(): string {
-      return app.computed.parseTimeToPixels(this.start);
+    isSelected(): boolean {
+      return this.id === this.$store.state.app.interval;
     },
     getWidth(): number {
       const minutes = app.computed.parseTimeToMinutes(this.end) - app.computed.parseTimeToMinutes(this.start);
@@ -57,6 +57,8 @@ export default Vue.extend({
   height: 95%;
   border-radius: 12px;
   z-index: 5;
+  cursor: pointer;
+  transition: border .2s;
 }
 
 .nameDiv {
@@ -68,6 +70,10 @@ export default Vue.extend({
   left: 50%;
   transform: translateX(-50%);
   bottom: 5px;
+}
+
+.selected {
+  border: 2px solid #A97CFC;
 }
 
 </style>
