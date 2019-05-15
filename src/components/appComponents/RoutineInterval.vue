@@ -1,9 +1,10 @@
 <template>
   <div :ref='id' class='interval' :class='{selected: isSelected}' :style='styles' @click='$emit("select", {id: id, position: getPosition})' @dblclick='showIcons = !showIcons'>
-    <div class='nameDiv' v-if='!dontShowName'>
-      <span class='name'>{{ id }}</span>
-      <span v-show='showIcons' class='interval-time right'>{{ getEnd }}</span>
-      <icon v-show='showIcons' class='pointer color left routine-icon-left' sz='big-big-big' ico='arrows-alt-h'>{{ getStart }}</icon>
+    <div class='nameDiv'>
+      <span class='name' v-if='!dontShowName && !showIcons'>{{ id }}</span>
+      <span v-show='showIcons' class='interval-time time-right'>{{ getEnd }}</span>
+      <span v-show='showIcons' class='interval-time time-left'>{{ getStart }}</span>
+      <icon v-show='showIcons' class='pointer color left routine-icon-left' sz='big-big-big' ico='arrows-alt-h'></icon>
       <icon v-show='showIcons' ref='routine-icon-right' draggable='true' class='pointer color right routine-icon-right' sz='big-big-big' ico='arrows-alt-h'></icon>
     </div>
   </div>
@@ -33,7 +34,7 @@ export default Vue.extend({
   },
   created() {
     this.width = this.getWidth;
-    this.left = app.computed.parseTimeToPixels(this.start);
+    this.left = app.computed.parseTimeToPixels(this.start) + 3;
   },
   mounted() {
     const ref: any = this.$refs[this.id];
@@ -54,7 +55,7 @@ export default Vue.extend({
       event.preventDefault();
       const div: any = this.$refs[this.id];
 
-      const windowOffset = div.getBoundingClientRect().left;
+      const windowOffset = div.getBoundingClientRect().left + 3;
       if (event.screenX - windowOffset > app.computed.parseTimeToPixels('00-15')) {
         this.width = event.screenX - windowOffset;
       }
@@ -63,7 +64,7 @@ export default Vue.extend({
       event.preventDefault();
       const div: any = this.$refs[this.id];
 
-      const windowOffset = div.getBoundingClientRect().left;
+      const windowOffset = div.getBoundingClientRect().left + 3;
       if (event.touches[0].screenX - windowOffset > app.computed.parseTimeToPixels('00-15')) {
         this.width = event.touches[0].screenX - windowOffset;
       }
@@ -94,7 +95,7 @@ export default Vue.extend({
       return app.computed.parseMinutesToPixels(minutes);
     },
     dontShowName(): boolean {
-      return this.width < 101 && !this.isSelected;
+      return this.width < 101 && this.isSelected;
     },
   },
 });
@@ -134,6 +135,19 @@ export default Vue.extend({
 
 .right {
   right: -15px;
+}
+
+.interval-time {
+  position: absolute;
+  top: -25px;
+}
+
+.time-right {
+  right: -40px;
+}
+
+.time-left {
+  left: -40px;
 }
 
 </style>

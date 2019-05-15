@@ -13,7 +13,7 @@ export const app = {
     parsePixelsToTime(pixels: number): string {
       let str: string = '';
       str += '' + Math.floor(pixels / 100);
-      str += '- ' + pixels % 100;
+      str += '-' + Math.floor(((pixels % 100) * 3) / 5);
       return str;
     },
   },
