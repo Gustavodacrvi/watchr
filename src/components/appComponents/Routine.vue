@@ -63,6 +63,7 @@ import IconGroup from '@/components/dropdown/IconGroup.vue';
 import RoutineInterval from '@/components/appComponents/RoutineInterval.vue';
 
 export default Vue.extend({
+  mixins: [app as any],
   components: {
     'icon': Icon,
     'app-title': Heading,
@@ -115,7 +116,7 @@ export default Vue.extend({
     },
     setPointer() {
       const pointer: any = this.$refs.pointer;
-      pointer.style.left = app.computed.parseTimeToPixels(`${this.hour}-${this.min}`) + 'px';
+      pointer.style.left = this.parseTimeToPixels(`${this.hour}-${this.min}`) + 'px';
     },
     selectInterval(obj: any) {
       this.$store.commit('app/selectInterval', obj.id);

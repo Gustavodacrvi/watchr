@@ -1,5 +1,5 @@
 export const app = {
-  computed: {
+  methods: {
     parseMinutesToPixels(minutes: number): number {
       return ((minutes * 5) / 3) + 3;
     },

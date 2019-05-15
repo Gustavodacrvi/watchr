@@ -16,6 +16,7 @@ import { app } from '@/components/mixins';
 import Icon from '@/components/generalComponents/Icon.vue';
 
 export default Vue.extend({
+  mixins: [app as any],
   components: {
     icon: Icon,
   },
@@ -34,7 +35,8 @@ export default Vue.extend({
   },
   created() {
     this.width = this.getWidth;
-    this.left = app.computed.parseTimeToPixels(this.start) + 3;
+    // this error doesn't make sense, simply ignore it
+    this.left = this.parseTimeToPixels(this.start) + 3;
   },
   mounted() {
     const ref: any = this.$refs[this.id];
@@ -55,7 +57,7 @@ export default Vue.extend({
       const div: any = this.$refs[this.id];
 
       const windowOffset = div.getBoundingClientRect().left + 3;
-      if (event.screenX - windowOffset > app.computed.parseTimeToPixels('00-15')) {
+      if (event.screenX - windowOffset > this.parseTimeToPixels('00-15')) {
         this.width = event.screenX - windowOffset;
       }
     },
@@ -64,7 +66,7 @@ export default Vue.extend({
       const div: any = this.$refs[this.id];
 
       const windowOffset = div.getBoundingClientRect().left + 3;
-      if (event.touches[0].screenX - windowOffset > app.computed.parseTimeToPixels('00-15')) {
+      if (event.touches[0].screenX - windowOffset > this.parseTimeToPixels('00-15')) {
         this.width = event.touches[0].screenX - windowOffset;
       }
     },
@@ -78,10 +80,10 @@ export default Vue.extend({
       };
     },
     getEnd(): string {
-      return app.computed.parsePixelsToTime(this.width + this.left);
+      return this.parsePixelsToTime(this.width + this.left);
     },
     getStart(): string {
-      return app.computed.parsePixelsToTime(this.left);
+      return this.parsePixelsToTime(this.left);
     },
     isSelected(): boolean {
       return this.id === this.$store.state.app.interval;
@@ -90,8 +92,8 @@ export default Vue.extend({
       return this.left + (this.width / 2);
     },
     getWidth(): number {
-      const minutes = app.computed.parseTimeToMinutes(this.end) - app.computed.parseTimeToMinutes(this.start);
-      return app.computed.parseMinutesToPixels(minutes);
+      const minutes = this.parseTimeToMinutes(this.end) - this.parseTimeToMinutes(this.start);
+      return this.parseMinutesToPixels(minutes);
     },
     dontShowName(): boolean {
       return this.width < 101 && this.isSelected;
