@@ -34,7 +34,7 @@ export default {
     },
     addInterval(state: any, interval: Interval) {
       state.intervals.push(interval);
-    }
+    },
   },
   actions: {
 
