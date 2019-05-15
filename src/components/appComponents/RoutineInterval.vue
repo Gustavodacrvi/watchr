@@ -43,14 +43,13 @@ export default Vue.extend({
     const right: any = document.getElementsByClassName('routine-icon-right')[0];
     right.addEventListener('touchmove', this.resizeRightMobile);
     right.addEventListener('drag', this.resizeRightDesktop);
-    right.addEventListener('touchend', (event: any) => {
-      this.$emit('resizeright', this.width);
-    });
-    right.addEventListener('dragend', (event: any) => {
-      this.$emit('resizeright', this.width);
-    });
+    right.addEventListener('touchend', this.resizeRightEvent);
+    right.addEventListener('dragend', this.resizeRightEvent);
   },
   methods: {
+    resizeRightEvent() {
+      this.$emit('resizeright', this.width);
+    },
     resizeRightDesktop(event: any) {
       event.preventDefault();
       const div: any = this.$refs[this.id];
@@ -97,6 +96,13 @@ export default Vue.extend({
     dontShowName(): boolean {
       return this.width < 101 && this.isSelected;
     },
+  },
+  destroyed() {
+    const right: any = document.getElementsByClassName('routine-icon-right')[0];
+    right.removeEventListener('touchmove', this.resizeRightMobile);
+    right.removeEventListener('touchend', this.resizeRightEvent);
+    right.removeEventListener('dragend', this.resizeRightEvent);
+    right.removeEventListener('drag', this.resizeRightDesktop);
   },
 });
 </script>
