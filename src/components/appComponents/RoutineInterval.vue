@@ -1,5 +1,5 @@
 <template>
-  <div :ref='id' class='interval' :class='{selected: isSelected}' :style='styles' @click='$emit("select", id)'>
+  <div :ref='id' class='interval' :class='{selected: isSelected}' :style='styles' @click='$emit("select", {id: id, position: getPosition})'>
     <div class='nameDiv'>
       <span class='name'>{{ id }}</span>
     </div>
@@ -29,7 +29,7 @@ export default Vue.extend({
   },
   mounted() {
     const ref: any = this.$refs[this.id];
-    ref.style.left = this.left;
+    ref.style.left = this.left + 'px';
   },
   computed: {
     styles(): object {
@@ -41,6 +41,9 @@ export default Vue.extend({
     },
     isSelected(): boolean {
       return this.id === this.$store.state.app.interval;
+    },
+    getPosition(): number {
+      return this.left + (this.width / 2);
     },
     getWidth(): number {
       const minutes = app.computed.parseTimeToMinutes(this.end) - app.computed.parseTimeToMinutes(this.start);

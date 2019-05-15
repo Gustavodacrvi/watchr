@@ -40,6 +40,7 @@
           </template>
         </template>
       </div>
+      <icon ref='angle' v-show='$store.state.app.interval !== undefined' class='angle color' sz='big' ico='angle-up'></icon>
     </div>
   </div>
   <div v-else class='routine no-routine' :class='$store.state.theme.style'>
@@ -115,10 +116,12 @@ export default Vue.extend({
     },
     setPointer() {
       const pointer: any = this.$refs.pointer;
-      pointer.style.left = app.computed.parseTimeToPixels(`${this.hour}-${this.min}`);
+      pointer.style.left = app.computed.parseTimeToPixels(`${this.hour}-${this.min}`) + 'px';
     },
-    selectInterval(id: string) {
-      this.$store.commit('app/selectInterval', id);
+    selectInterval(obj: any) {
+      this.$store.commit('app/selectInterval', obj.id);
+      const angle: any = this.$refs.angle;
+      angle.$el.style.left = obj.position + 'px';
     },
   },
   computed: {
@@ -234,6 +237,13 @@ export default Vue.extend({
   height: 28px;
   width: 2.5px;
   background-color: #A97CFC;
+}
+
+.angle {
+  position: relative;
+  top: 65%;
+  left: 0;
+  transition: left .5s;
 }
 
 @media screen and (min-width: 824px) {

@@ -7,8 +7,8 @@ export const app = {
       const arr = time.split('-');
       return (parseInt(arr[0], 10) * 60) + parseInt(arr[1], 10);
     },
-    parseTimeToPixels(time: string): string {
-      return this.parseMinutesToPixels(this.parseTimeToMinutes(time)) + 'px';
+    parseTimeToPixels(time: string): number {
+      return this.parseMinutesToPixels(this.parseTimeToMinutes(time));
     },
   },
 };
