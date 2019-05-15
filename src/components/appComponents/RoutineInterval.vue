@@ -14,8 +14,9 @@
 import Vue from 'vue';
 import { app } from '@/components/mixins';
 import Icon from '@/components/generalComponents/Icon.vue';
+import mixins from 'vue-typed-mixins';
 
-export default Vue.extend({
+export default mixins(app).extend({
   mixins: [app as any],
   components: {
     icon: Icon,

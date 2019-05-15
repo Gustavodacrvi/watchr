@@ -61,8 +61,9 @@ import Heading from '@/components/generalComponents/Heading.vue';
 import Icon from '@/components/generalComponents/Icon.vue';
 import IconGroup from '@/components/dropdown/IconGroup.vue';
 import RoutineInterval from '@/components/appComponents/RoutineInterval.vue';
+import mixins from 'vue-typed-mixins';
 
-export default Vue.extend({
+export default mixins(app).extend({
   mixins: [app as any],
   components: {
     'icon': Icon,

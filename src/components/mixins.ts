@@ -1,4 +1,6 @@
-export const app = {
+import Vue from 'vue';
+
+export const app = Vue.extend({
   methods: {
     parseMinutesToPixels(minutes: number): number {
       return ((minutes * 5) / 3) + 3;
@@ -17,4 +19,4 @@ export const app = {
       return str;
     },
   },
-};
+});
