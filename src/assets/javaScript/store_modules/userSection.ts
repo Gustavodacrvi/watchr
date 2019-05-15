@@ -1,6 +1,6 @@
 import { setCookie, getCookie } from '@/assets/javaScript/cookies';
 
-import { Routine } from '@/components/interfaces';
+import { Routine, Interval } from '@/components/interfaces';
 
 let savedSection = getCookie('watchrSavedUserSection');
 if (savedSection === '') {
@@ -12,6 +12,7 @@ export default {
   state: {
     section: savedSection,
     routines: [] as Routine[],
+    intervals: [] as Interval[],
     options: {
       clockConvention: '24',
     },
@@ -31,6 +32,9 @@ export default {
     addRoutine(state: any, routine: Routine) {
       state.routines.push(routine);
     },
+    addInterval(state: any, interval: Interval) {
+      state.intervals.push(interval);
+    }
   },
   actions: {
 

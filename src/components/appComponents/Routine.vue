@@ -52,7 +52,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Routine } from '@/components/interfaces';
+import { Routine, Interval } from '@/components/interfaces';
 import Heading from '@/components/generalComponents/Heading.vue';
 import Icon from '@/components/generalComponents/Icon.vue';
 import IconGroup from '@/components/dropdown/IconGroup.vue';
@@ -70,11 +70,20 @@ export default Vue.extend({
     this.$store.commit('app/addRoutine', {
       id: 'id',
       name: 'Weekends',
-      intervals: [],
+      intervals: [
+        { id: 'int', start: '08-12', end: '12-00'},
+      ],
       visibilityField: [
         'every day',
       ],
     } as Routine);
+    this.$store.commit('app/addInterval', {
+      id: 'int',
+      name: 'Exercise',
+      color: '#FC7C85',
+      tags: [],
+      tasks: [],
+    } as Interval);
   },
   created() {
     this.intervalId = setInterval(() => {

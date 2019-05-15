@@ -43,6 +43,7 @@ export interface Label {
 export interface Interval {
   id: string;
   name: string;
-  tasks: Array<string>;
-  tags: Array<Label>;
+  color: string; // hex
+  tasks: string[];
+  tags: Label[];
 }
