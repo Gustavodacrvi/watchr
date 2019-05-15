@@ -2,6 +2,8 @@
   <div :ref='id' class='interval' :class='{selected: isSelected}' :style='styles' @click='$emit("select", {id: id, position: getPosition})'>
     <div class='nameDiv' v-if='!dontShowName'>
       <span class='name'>{{ id }}</span>
+      <icon class='pointer color left' sz='big-big-big' ico='arrows-alt-h'></icon>
+      <icon class='pointer color right' sz='big-big-big' ico='arrows-alt-h'></icon>
     </div>
   </div>
 </template>
@@ -9,8 +11,12 @@
 <script lang="ts">
 import Vue from 'vue';
 import { app } from '@/components/mixins';
+import Icon from '@/components/generalComponents/Icon.vue';
 
 export default Vue.extend({
+  components: {
+    icon: Icon,
+  },
   props: {
     color: String,
     start: String,
@@ -68,18 +74,28 @@ export default Vue.extend({
 }
 
 .nameDiv {
-  position: relative; 
+  position: relative;
+  height: 100%;
 }
 
 .name {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 5px;
+  bottom: 17px;
 }
 
-.selected {
-  border: 1px solid #A97CFC;
+.icon {
+  position: absolute;
+  top: -10px;
+}
+
+.left {
+  left: -15px;
+}
+
+.right {
+  right: -15px;
 }
 
 </style>
