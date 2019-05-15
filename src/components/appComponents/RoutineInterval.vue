@@ -37,7 +37,7 @@ export default mixins(app).extend({
   created() {
     this.width = this.getWidth;
     // this error doesn't make sense, simply ignore it
-    this.left = this.parseTimeToPixels(this.start) + 3;
+    this.left = this.parseTimeToPixels(this.start);
   },
   mounted() {
     const ref: any = this.$refs[this.id];
@@ -57,7 +57,7 @@ export default mixins(app).extend({
       event.preventDefault();
       const div: any = this.$refs[this.id];
 
-      const windowOffset = div.getBoundingClientRect().left + 3;
+      const windowOffset = div.getBoundingClientRect().left;
       if (event.screenX - windowOffset > this.parseTimeToPixels('00-15')) {
         this.width = event.screenX - windowOffset;
       }
@@ -67,7 +67,7 @@ export default mixins(app).extend({
       event.preventDefault();
       const div: any = this.$refs[this.id];
 
-      const windowOffset = div.getBoundingClientRect().left + 3;
+      const windowOffset = div.getBoundingClientRect().left;
       if (event.touches[0].screenX - windowOffset > this.parseTimeToPixels('00-15')) {
         this.width = event.touches[0].screenX - windowOffset;
       }

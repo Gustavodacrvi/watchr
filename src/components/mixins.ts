@@ -3,7 +3,7 @@ import Vue from 'vue';
 export const app = Vue.extend({
   methods: {
     parseMinutesToPixels(minutes: number): number {
-      return ((minutes * 7) / 4) + 3;
+      return ((minutes * 7) / 4);
     },
     parseTimeToMinutes(time: string): number {
       const arr = time.split('-');
