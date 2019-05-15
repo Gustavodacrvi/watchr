@@ -8,6 +8,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { app } from '@/components/mixins';
+
 export default Vue.extend({
   props: {
     color: String,
@@ -22,32 +24,12 @@ export default Vue.extend({
     };
   },
   created() {
-    this.width = this.getWidth();
-    this.left = this.getDistance();
+    this.width = this.getWidth;
+    this.left = this.getDistance;
   },
   mounted() {
-    this.$refs[this.name].style.left = this.left + 'px';
-  },
-  methods: {
-    getDistance(): number {
-      const arr = this.start.split('-');
-      let minutes = parseInt(arr[0]) * 60 + parseInt(arr[1]);
-      return ((minutes * 5) / 3);
-    },
-    getWidth(): number {
-      const numbers: Array<number> = [];
-
-      let arr = this.start.split('-');
-      numbers.push(parseInt(arr[0]));
-      numbers.push(parseInt(arr[1]));
-      arr = this.end.split('-');
-      numbers.push(parseInt(arr[0]));
-      numbers.push(parseInt(arr[1]));
-      
-      const minutes = (numbers[2] * 60 + numbers[3]) - (numbers[0] * 60 + numbers[1]);
-      
-      return ((minutes * 5) / 3);
-    },
+    const ref: any = this.$refs[this.name];
+    ref.style.left = this.left + 'px';
   },
   computed: {
     styles(): object {
@@ -55,7 +37,14 @@ export default Vue.extend({
         backgroundColor: this.color,
         boxShadow: `0 1px 3px ${this.color}`,
         width: this.width + 'px',
-      }
+      };
+    },
+    getDistance(): string {
+      return app.computed.parseTimeToPixels(this.start);
+    },
+    getWidth(): number {
+      const minutes = app.computed.parseTimeToMinutes(this.end) - app.computed.parseTimeToMinutes(this.start);
+      return app.computed.parseMinutesToPixels(minutes);
     },
   },
 });

@@ -55,6 +55,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Routine, Interval } from '@/components/interfaces';
+import { app } from '@/components/mixins';
 import Heading from '@/components/generalComponents/Heading.vue';
 import Icon from '@/components/generalComponents/Icon.vue';
 import IconGroup from '@/components/dropdown/IconGroup.vue';
@@ -65,7 +66,7 @@ export default Vue.extend({
     'icon': Icon,
     'app-title': Heading,
     'icon-group': IconGroup,
-    interval: RoutineInterval,
+    'interval': RoutineInterval,
   },
   props: {
     'routine-id': String,
@@ -112,10 +113,8 @@ export default Vue.extend({
       this.min = new Date().getMinutes();
     },
     setPointer() {
-      const minutes: number = ((this.hour * 60) + this.min);
-      const left: number = ((minutes * 5) / 3) + 3;
       const pointer: any = this.$refs.pointer;
-      pointer.style.left = left + 'px';
+      pointer.style.left = app.computed.parseTimeToPixels(`${this.hour}-${this.min}`);
     },
   },
   computed: {
