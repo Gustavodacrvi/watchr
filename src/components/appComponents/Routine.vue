@@ -16,8 +16,9 @@
     </div>
     <div class='intervals'>
       <div class='intervals-line' :class='$store.state.theme.style'>
-        <interval id='Exercise' color='#FC7C85' start='0-0' end='1-0' @select="selectInterval"></interval>
-        <interval id='Work' color='#89FC7C' start='12-0' end='13-0' @select="selectInterval"></interval>
+        <interval id='Exercise' color='#FC7C85' start='12-30' end='13-0' @select="selectInterval"></interval>
+        <interval id='Work' color='#89FC7C' start='13-0' end='13-20' @select="selectInterval"></interval>
+        <interval id='Sleep' color='#FCF37C' start='13-20' end='14-50' @select="selectInterval"></interval>
       </div>
       <div class='pointer' ref='pointer'></div>
       <div class='numbers'>

@@ -1,6 +1,6 @@
 <template>
   <div :ref='id' class='interval' :class='{selected: isSelected}' :style='styles' @click='$emit("select", {id: id, position: getPosition})'>
-    <div class='nameDiv'>
+    <div class='nameDiv' v-if='!dontShowName'>
       <span class='name'>{{ id }}</span>
     </div>
   </div>
@@ -49,6 +49,9 @@ export default Vue.extend({
       const minutes = app.computed.parseTimeToMinutes(this.end) - app.computed.parseTimeToMinutes(this.start);
       return app.computed.parseMinutesToPixels(minutes);
     },
+    dontShowName(): boolean {
+      return this.width < 101 && !this.isSelected;
+    },
   },
 });
 </script>
@@ -76,7 +79,7 @@ export default Vue.extend({
 }
 
 .selected {
-  border: 2px solid #A97CFC;
+  border: 1px solid #A97CFC;
 }
 
 </style>
