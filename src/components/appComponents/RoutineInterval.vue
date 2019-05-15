@@ -3,7 +3,7 @@
     <div class='nameDiv' v-if='!dontShowName'>
       <span class='name'>{{ id }}</span>
       <icon class='pointer color left routine-icon-left' sz='big-big-big' ico='arrows-alt-h'></icon>
-      <icon ref='routine-icon-right' class='pointer color right routine-icon-right' sz='big-big-big' ico='arrows-alt-h'></icon>
+      <icon ref='routine-icon-right' draggable='true' class='pointer color right routine-icon-right' sz='big-big-big' ico='arrows-alt-h'></icon>
     </div>
     {{ a }}
   </div>
@@ -45,8 +45,25 @@ export default Vue.extend({
       const touch = event.touches[0];
       const div: any = this.$refs[this.id];
       const windowOffset = div.getBoundingClientRect().left;
-      this.width = touch.screenX - windowOffset;
-    }, false);
+      if (touch.screenX - windowOffset > app.computed.parseTimeToPixels('00-15')) {
+        this.width = touch.screenX - windowOffset;
+      }
+    });
+    right.addEventListener('drag', (event: any) => {
+      event.preventDefault();
+      const div: any = this.$refs[this.id];
+      
+      const windowOffset = div.getBoundingClientRect().left;
+      if (event.screenX - windowOffset > app.computed.parseTimeToPixels('00-15')) {
+        this.width = event.screenX - windowOffset;
+      }
+    });
+    right.addEventListener('touchend', (event: any) => {
+      this.$emit('resizeright', this.width);
+    });
+  },
+  methods: {
+    
   },
   computed: {
     styles(): object {
