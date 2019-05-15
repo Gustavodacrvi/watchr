@@ -10,5 +10,11 @@ export const app = {
     parseTimeToPixels(time: string): number {
       return this.parseMinutesToPixels(this.parseTimeToMinutes(time));
     },
+    parsePixelsToTime(pixels: number): string {
+      let str: string = '';
+      str += '' + Math.floor(pixels / 100);
+      str += '- ' + pixels % 100;
+      return str;
+    },
   },
 };

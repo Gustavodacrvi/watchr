@@ -2,6 +2,7 @@
   <div :ref='id' class='interval' :class='{selected: isSelected}' :style='styles' @click='$emit("select", {id: id, position: getPosition})' @dblclick='showIcons = !showIcons'>
     <div class='nameDiv' v-if='!dontShowName'>
       <span class='name'>{{ id }}</span>
+      <span v-show='showIcons' class='interval-time right'></span>
       <icon v-show='showIcons' class='pointer color left routine-icon-left' sz='big-big-big' ico='arrows-alt-h'></icon>
       <icon v-show='showIcons' ref='routine-icon-right' draggable='true' class='pointer color right routine-icon-right' sz='big-big-big' ico='arrows-alt-h'></icon>
     </div>
@@ -45,7 +46,7 @@ export default Vue.extend({
       this.$emit('resizeright', this.width);
     });
     right.addEventListener('dragend', (event: any) => {
-      this.$emit('resizerihgt', this.width);
+      this.$emit('resizeright', this.width);
     });
   },
   methods: {
