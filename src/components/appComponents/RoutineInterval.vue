@@ -2,8 +2,8 @@
   <div :ref='id' class='interval' :class='{selected: isSelected}' :style='styles' @click='$emit("select", {id: id, position: getPosition})' @dblclick='showIcons = !showIcons'>
     <div class='nameDiv' v-if='!dontShowName'>
       <span class='name'>{{ id }}</span>
-      <span v-show='showIcons' class='interval-time right'></span>
-      <icon v-show='showIcons' class='pointer color left routine-icon-left' sz='big-big-big' ico='arrows-alt-h'></icon>
+      <span v-show='showIcons' class='interval-time right'>{{ getEnd }}</span>
+      <icon v-show='showIcons' class='pointer color left routine-icon-left' sz='big-big-big' ico='arrows-alt-h'>{{ getStart }}</icon>
       <icon v-show='showIcons' ref='routine-icon-right' draggable='true' class='pointer color right routine-icon-right' sz='big-big-big' ico='arrows-alt-h'></icon>
     </div>
   </div>
@@ -76,6 +76,12 @@ export default Vue.extend({
         boxShadow: `0 1px 3px ${this.color}`,
         width: this.width + 'px',
       };
+    },
+    getEnd(): string {
+      return app.computed.parsePixelsToTime(this.width + this.left);
+    },
+    getStart(): string {
+      return app.computed.parsePixelsToTime(this.left);
     },
     isSelected(): boolean {
       return this.id === this.$store.state.app.interval;
