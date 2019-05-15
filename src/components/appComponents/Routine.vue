@@ -15,7 +15,9 @@
       </div>
     </div>
     <div class='intervals'>
-      <div class='intervals-line' :class='$store.state.theme.style'></div>
+      <div class='intervals-line' :class='$store.state.theme.style'>
+        <interval name='Exercise' color='#FC7C85' start='12-0' end='15-12'></interval>
+      </div>
       <div class='pointer' ref='pointer'></div>
       <div class='numbers'>
         <template v-if='is24HourConvention'>
@@ -56,12 +58,14 @@ import { Routine, Interval } from '@/components/interfaces';
 import Heading from '@/components/generalComponents/Heading.vue';
 import Icon from '@/components/generalComponents/Icon.vue';
 import IconGroup from '@/components/dropdown/IconGroup.vue';
+import RoutineInterval from '@/components/appComponents/RoutineInterval.vue';
 
 export default Vue.extend({
   components: {
     'icon': Icon,
     'app-title': Heading,
     'icon-group': IconGroup,
+    interval: RoutineInterval,
   },
   props: {
     'routine-id': String,
