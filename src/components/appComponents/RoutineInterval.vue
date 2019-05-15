@@ -1,11 +1,10 @@
 <template>
-  <div :ref='id' class='interval' :class='{selected: isSelected}' :style='styles' @click='$emit("select", {id: id, position: getPosition})'>
+  <div :ref='id' class='interval' :class='{selected: isSelected}' :style='styles' @click='$emit("select", {id: id, position: getPosition})' @dblclick='showIcons = !showIcons'>
     <div class='nameDiv' v-if='!dontShowName'>
       <span class='name'>{{ id }}</span>
-      <icon class='pointer color left routine-icon-left' sz='big-big-big' ico='arrows-alt-h'></icon>
-      <icon ref='routine-icon-right' draggable='true' class='pointer color right routine-icon-right' sz='big-big-big' ico='arrows-alt-h'></icon>
+      <icon v-show='showIcons' class='pointer color left routine-icon-left' sz='big-big-big' ico='arrows-alt-h'></icon>
+      <icon v-show='showIcons' ref='routine-icon-right' draggable='true' class='pointer color right routine-icon-right' sz='big-big-big' ico='arrows-alt-h'></icon>
     </div>
-    {{ a }}
   </div>
 </template>
 
@@ -26,9 +25,9 @@ export default Vue.extend({
   },
   data() {
     return {
+      showIcons: false,
       left: undefined as any,
       width: undefined as any,
-      a: undefined as any,
     };
   },
   created() {
@@ -40,30 +39,34 @@ export default Vue.extend({
     ref.style.left = this.left + 'px';
 
     const right: any = document.getElementsByClassName('routine-icon-right')[0];
-    right.addEventListener('touchmove', (event: any) => {
-      event.preventDefault();
-      const touch = event.touches[0];
-      const div: any = this.$refs[this.id];
-      const windowOffset = div.getBoundingClientRect().left;
-      if (touch.screenX - windowOffset > app.computed.parseTimeToPixels('00-15')) {
-        this.width = touch.screenX - windowOffset;
-      }
+    right.addEventListener('touchmove', this.resizeRightMobile);
+    right.addEventListener('drag', this.resizeRightDesktop);
+    right.addEventListener('touchend', (event: any) => {
+      this.$emit('resizeright', this.width);
     });
-    right.addEventListener('drag', (event: any) => {
+    right.addEventListener('dragend', (event: any) => {
+      this.$emit('resizerihgt', this.width);
+    });
+  },
+  methods: {
+    resizeRightDesktop(event: any) {
       event.preventDefault();
       const div: any = this.$refs[this.id];
-      
+
       const windowOffset = div.getBoundingClientRect().left;
       if (event.screenX - windowOffset > app.computed.parseTimeToPixels('00-15')) {
         this.width = event.screenX - windowOffset;
       }
-    });
-    right.addEventListener('touchend', (event: any) => {
-      this.$emit('resizeright', this.width);
-    });
-  },
-  methods: {
-    
+    },
+    resizeRightMobile(event: any) {
+      event.preventDefault();
+      const div: any = this.$refs[this.id];
+
+      const windowOffset = div.getBoundingClientRect().left;
+      if (event.touches[0].screenX - windowOffset > app.computed.parseTimeToPixels('00-15')) {
+        this.width = event.touches[0].screenX - windowOffset;
+      }
+    },
   },
   computed: {
     styles(): object {
