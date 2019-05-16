@@ -58,20 +58,23 @@ export default mixins(app).extend({
       const div: any = this.$refs[this.id];
 
       const windowOffset = div.getBoundingClientRect().left;
-      if (event.screenX - windowOffset > this.parseTimeToPixels('00-15')) {
-        this.width = event.screenX - windowOffset;
+      const value: number = event.screenX - windowOffset;
+      const leftWidth = value + Math.abs(div.offsetLeft);
+      if (value > this.parseTimeToPixels('00-15') && event.screenX !== 0 && leftWidth < 2809) {
+        this.width = value;
+        this.$emit('select', {id: this.id, position: this.getPosition});
       }
-      this.$emit('select', {id: this.id, position: this.getPosition});
     },
     resizeRightMobile(event: any) {
       event.preventDefault();
       const div: any = this.$refs[this.id];
 
       const windowOffset = div.getBoundingClientRect().left;
-      if (event.touches[0].screenX - windowOffset > this.parseTimeToPixels('00-15')) {
-        this.width = event.touches[0].screenX - windowOffset;
+      const value: number = event.touches[0].screenX - windowOffset;
+      if (value > this.parseTimeToPixels('00-15') && value + windowOffset < 1404 && event.screenX !== 0) {
+        this.width = value;
+        this.$emit('select', {id: this.id, position: this.getPosition});
       }
-      this.$emit('select', {id: this.id, position: this.getPosition});
     },
   },
   computed: {
@@ -121,6 +124,7 @@ export default mixins(app).extend({
   z-index: 5;
   cursor: pointer;
   transition: border .2s;
+  touch-action: manipulation;
 }
 
 .nameDiv {

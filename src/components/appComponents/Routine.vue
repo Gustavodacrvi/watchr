@@ -16,25 +16,25 @@
     </div>
     <div class='intervals' ref='intervals-div'>
       <div class='intervals-line' :class='$store.state.theme.style'>
-        <interval id='Exercise' color='#FC7C85' start='12-30' end='15-0' @select="selectInterval"></interval>
+        <interval id='Exercise' color='#FC7C85' start='20-30' end='22-0' @select="selectInterval"></interval>
       </div>
       <div class='pointer' ref='pointer'></div>
       <div class='numbers'>
         <template v-if='is24HourConvention'>
           <template v-for='i in 25'>
-            <span v-if='i !== 25 && i < 11' class='number' :key='i + "routine24"' :style="`left: ${(i - 1) * 105}px`">{{ i - 1 }}</span>
-            <span v-else-if='i !== 25 && i > 10' class='number' :key='i  + "routine24"' :style="`left: ${((i - 1) * 105) - 3}px`">{{ i - 1 }}</span>
-            <span v-else class='number' :key='i  + "routine24"' style='left: 2520px'>0</span>
+            <span v-if='i !== 25 && i < 11' class='number' :key='i + "routine24"' :style="`left: ${(i - 1) * 117}px`">{{ i - 1 }}</span>
+            <span v-else-if='i !== 25 && i > 10' class='number' :key='i  + "routine24"' :style="`left: ${((i - 1) * 117) - 3}px`">{{ i - 1 }}</span>
+            <span v-else class='number' :key='i  + "routine24"' style='left: 2808px'>0</span>
           </template>
         </template>
         <template v-else>
           <template v-for='i in 12'>
-            <span v-if='i !== 1' class='number' :key='i  + "routine12am"' :style='`left: ${(i - 1) * 105}px`'>{{ i - 1 }}am</span>
+            <span v-if='i !== 1' class='number' :key='i  + "routine12am"' :style='`left: ${(i - 1) * 117}px`'>{{ i - 1 }}am</span>
             <span v-else class='number' :key='i  + "routine12am"'>12am</span>
           </template>
           <template v-for='i in 13'>
-            <span v-if='i === 13' class='number' :key='i  + "routine12am"' style='left: 2520px'>12am</span>
-            <span v-else-if='i !== 1' class='number' :key='i  + "routine12pm"' :style='`left: ${((i - 1) * 105) + 1200}px`'>{{ i - 1 }}pm</span>
+            <span v-if='i === 13' class='number' :key='i  + "routine12am"' style='left: 2808px'>12am</span>
+            <span v-else-if='i !== 1' class='number' :key='i  + "routine12pm"' :style='`left: ${((i - 1) * 117) + 1200}px`'>{{ i - 1 }}pm</span>
             <span v-else class='number' :key='i  + "routine12pm"' style='left: 1200px'>12pm</span>
           </template>
         </template>
@@ -224,14 +224,14 @@ export default mixins(app).extend({
   left: 3px;
   transform: translateY(-50%);
   height: 15px;
-  width: 2520px;
+  width: 2808px;
   border-radius: 12px;
 }
 
 .numbers {
   position: absolute;
   top: 51%;
-  width: 2520px;
+  width: 2808px;
 }
 
 .number {
