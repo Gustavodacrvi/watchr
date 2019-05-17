@@ -26,7 +26,6 @@ Promise.all([
   store.dispatch('lang/setLanguage', getCookie('watchrLanguage')),
   store.dispatch('getUserDataIfLogged'),
 ]).finally(() => {
-
   app = new Vue({
     data: { routerViewLoading: false },
     router,

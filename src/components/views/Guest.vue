@@ -1,7 +1,12 @@
 <template>
-  <div>
+  <div id='user-section'>
+    <span v-if='!$store.getters.NavbarisOnDesktop' id='current-section'>{{ currentSection.toUpperCase() }}</span>
     <navigation></navigation>
-    <component :is='currentSection'></component>
+    <div id='user-section-content'>
+      <transition name='fade-transition' mode='out-in'>
+        <component :is='currentSection'></component>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -38,5 +43,31 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+
+#user-section {
+  display: flex;
+  justify-content: center;
+}
+
+#user-section-content {
+  flex-basis: 1526px;
+  padding-top: 10px;
+  margin: 0 60px;
+}
+
+#current-section {
+  color: #A97CFC;
+  text-shadow: 0 0 2px #A97CFC;
+  top: -15px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@media screen and (max-width: 825px) {
+  #user-section-content {
+    margin: 0 8px;
+  }
+}
 
 </style>

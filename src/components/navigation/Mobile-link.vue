@@ -27,7 +27,7 @@ export default Vue.extend({
 }
 
 .active-link .router-link {
-  color: #FE684F;
+  color: #A97CFC;
   position: relative;
 }
 
@@ -35,7 +35,7 @@ export default Vue.extend({
   content: '';
   position: absolute;
   width: 100%;
-  background-color: #FE684F;
+  background-color: #A97CFC;
   bottom: -4px;
   height: 3px;
 }
@@ -46,7 +46,7 @@ export default Vue.extend({
 }
 
 .router-link:hover {
-  color: #FE684F;
+  color: #A97CFC;
 }
 
 </style>

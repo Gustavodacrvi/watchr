@@ -48,7 +48,9 @@ export default Vue.extend({
   width: 32px !important;
   height: 28px !important;
   cursor: pointer;
-  transition-duration: .2s;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: transparent;
+  transition: right .3s;
 }
 
 .line {

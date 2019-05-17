@@ -1,55 +1,17 @@
 <template>
   <div>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
-    <p>overview overview overview</p>
+    <routine></routine>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import Routine from './../appComponents/Routine.vue';
+
 export default Vue.extend({
+  components: {
+    routine: Routine,
+  },
 });
 </script>
 

@@ -14,3 +14,36 @@ export interface ToastObj {
   duration_seconds: number | null;
   type: 'normal' | 'error' | 'success' | 'warning';
 }
+
+
+
+
+export interface DateInterval {
+  start: string;
+  end: string;
+}
+
+export interface Routine {
+  id: string;
+  name: string;
+  intervals: Array<{
+    id: string, start: string, end: string,
+  }>;
+  visibilityField: Array<
+    DateInterval |
+    string // id for the calendar tag || ISO date
+  >;
+}
+
+export interface Label {
+  id: string;
+  name: string;
+}
+
+export interface Interval {
+  id: string;
+  name: string;
+  color: string; // hex
+  tasks: string[];
+  tags: Label[];
+}

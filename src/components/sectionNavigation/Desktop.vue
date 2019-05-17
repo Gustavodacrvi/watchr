@@ -10,11 +10,6 @@ export default Vue.extend({
   components: {
     'icon-group': IconGroup,
   },
-  computed: {
-    lang(): string {
-      return this.$store.getters['lang/l'];
-    },
-  },
 });
 </script>
 
@@ -23,9 +18,9 @@ export default Vue.extend({
 #navigation {
   position: absolute;
   left: 0;
-  top: 50%;
+  top: 40%;
   transform: translateY(-50%);
-  width: 75px;
+  width: 60px;
   display: flex;
   flex-direction: column;
 }
