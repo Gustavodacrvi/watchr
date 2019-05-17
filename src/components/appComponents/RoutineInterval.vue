@@ -4,7 +4,7 @@
       <span class='name' v-if='!dontShowName && !showIcons'>{{ id }}</span>
       <span v-show='showIcons' class='interval-time time-right'>{{ getEnd }}</span>
       <span v-show='showIcons' class='interval-time time-left'>{{ getStart }}</span>
-      <icon v-show='showIcons' class='pointer color left routine-icon-left' sz='big-big-big' ico='arrows-alt-h'></icon>
+      <icon v-show='showIcons' ref='routine-icon-left' draggable='true' class='pointer color left routine-icon-left' sz='big-big-big' ico='arrows-alt-h'></icon>
       <icon v-show='showIcons' ref='routine-icon-right' draggable='true' class='pointer color right routine-icon-right' sz='big-big-big' ico='arrows-alt-h'></icon>
     </div>
   </div>
@@ -36,14 +36,11 @@ export default mixins(app).extend({
   },
   created() {
     this.width = this.getWidth;
-    // this error doesn't make sense, simply ignore it
     this.left = this.parseTimeToPixels(this.start);
   },
   mounted() {
-    const ref: any = this.$refs[this.id];
-    ref.style.left = this.left + 'px';
-
     const right: any = document.getElementsByClassName('routine-icon-right')[0];
+    const left: any = document.getElementsByClassName('routine-icon-left')[0];
     right.addEventListener('touchmove', this.resizeRightMobile);
     right.addEventListener('drag', this.resizeRightDesktop);
     right.addEventListener('touchend', this.resizeRightEvent);
@@ -57,11 +54,11 @@ export default mixins(app).extend({
       event.preventDefault();
       const div: any = this.$refs[this.id];
 
-      const windowOffset = div.getBoundingClientRect().left;
-      const value: number = event.screenX - windowOffset;
-      const leftWidth = value + Math.abs(div.offsetLeft);
-      if (value > this.parseTimeToPixels('00-15') && event.screenX !== 0 && leftWidth < 2809) {
-        this.width = value;
+      const screenDistanceLeft = div.getBoundingClientRect().left;
+      const width: number = event.screenX - screenDistanceLeft;
+      const leftWidth = width + Math.abs(div.offsetLeft);
+      if (width > this.parseTimeToPixels('00-15') && event.screenX !== 0 && leftWidth < 2809) {
+        this.width = width;
         this.$emit('select', {id: this.id, position: this.getPosition});
       }
     },
@@ -69,10 +66,11 @@ export default mixins(app).extend({
       event.preventDefault();
       const div: any = this.$refs[this.id];
 
-      const windowOffset = div.getBoundingClientRect().left;
-      const value: number = event.touches[0].screenX - windowOffset;
-      if (value > this.parseTimeToPixels('00-15') && value + windowOffset < 1404 && event.screenX !== 0) {
-        this.width = value;
+      const screenDistanceLeft = div.getBoundingClientRect().left;
+      const width: number = event.touches[0].screenX - screenDistanceLeft;
+      const leftWidth = width + Math.abs(div.offsetLeft);
+      if (width > this.parseTimeToPixels('00-15') && event.screenX !== 0 && leftWidth < 2809) {
+        this.width = width;
         this.$emit('select', {id: this.id, position: this.getPosition});
       }
     },
@@ -83,6 +81,7 @@ export default mixins(app).extend({
         backgroundColor: this.color,
         boxShadow: `0 1px 3px ${this.color}`,
         width: this.width + 'px',
+        left: this.left + 'px',
       };
     },
     getEnd(): string {
