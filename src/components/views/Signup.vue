@@ -75,6 +75,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-@import 'Form-module.css';
+@import 'FormModule.css';
 
 </style>
