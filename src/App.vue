@@ -18,8 +18,8 @@
 import Vue from 'vue';
 import store from './store';
 import axios from 'axios';
-import NavBar from './components/navigation/Nav-bar.vue';
-import MobileSection from './components/navigation/Mobile-section.vue';
+import NavBar from './components/navigation/NavBar.vue';
+import MobileSection from './components/navigation/MobileSection.vue';
 import Toast from './components/generalComponents/Toast.vue';
 import Loading from './components/generalComponents/Loading.vue';
 
