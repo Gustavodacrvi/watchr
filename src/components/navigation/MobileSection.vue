@@ -12,8 +12,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Route from './Mobile-link.vue';
-import IconGroup from './Navigation-icon-group.vue';
+import Route from './MobileLink.vue';
+import IconGroup from './NavigationIconGroup.vue';
 
 export default Vue.extend({
   components: {

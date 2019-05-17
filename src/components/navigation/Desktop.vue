@@ -20,9 +20,9 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import NavLink from './Nav-link.vue';
+import NavLink from './NavLink.vue';
 import Icon from './../generalComponents/Icon.vue';
-import IconGroup from './Navigation-icon-group.vue';
+import IconGroup from './NavigationIconGroup.vue';
 
 export default Vue.extend({
   components: {
