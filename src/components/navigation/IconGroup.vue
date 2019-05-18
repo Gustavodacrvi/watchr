@@ -15,9 +15,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Dropdown from './../dropdown/CenterDropdown.vue';
-import DropElement from './../dropdown/TextElement.vue';
-import Icon from './../generalComponents/Icon.vue';
+import Dropdown from '@/components/dropdown/CenterDropdown.vue';
+import DropElement from '@/components/dropdown/TextElement.vue';
+import Icon from '@/components/generalComponents/Icon.vue';
 
 export default Vue.extend({
   components: {

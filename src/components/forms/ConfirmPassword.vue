@@ -8,9 +8,9 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import Input from './Input.vue';
-import { FormBus } from './Form.vue';
-import { InputErrorObject, FormLogObject } from './../interfaces';
+import Input from '@/components/forms/Input.vue';
+import { FormBus } from '@/components/forms/Form.vue';
+import { InputErrorObject, FormLogObject } from '@/components/interfaces';
 
 export default Vue.extend({
   components: {

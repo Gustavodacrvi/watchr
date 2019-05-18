@@ -22,7 +22,7 @@ import Vue from 'vue';
 
 import NavLink from './NavLink.vue';
 import Icon from './../generalComponents/Icon.vue';
-import IconGroup from './NavigationIconGroup.vue';
+import IconGroup from './IconGroup.vue';
 
 export default Vue.extend({
   components: {

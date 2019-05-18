@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import NavigationIcon from './NavigationIcon.vue';
+import NavigationIcon from '@/components/sectionNavigation/NavigationIcon.vue';
 
 export default Vue.extend({
   props: {

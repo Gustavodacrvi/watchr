@@ -7,7 +7,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { FormLogObject } from './../interfaces';
+import { FormLogObject } from '@/components/interfaces';
 
 export const FormBus = new Vue();
 

@@ -12,8 +12,8 @@
 
 <script lang='ts'>
 import Vue from 'vue';
-import Navigation from './../sectionNavigation/Navigation.vue';
-import LoadingComponent from './../generalComponents/Loading.vue';
+import Navigation from '@/components/sectionNavigation/Navigation.vue';
+import LoadingComponent from '@/components/generalComponents/Loading.vue';
 
 const AsyncComponent = (component: string) => ({
   component: import(`./../userSections/${component}.vue`).then((m) => m.default),

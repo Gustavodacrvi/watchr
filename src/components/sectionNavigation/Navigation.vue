@@ -7,8 +7,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Desktop from './Desktop.vue';
-import Mobile from './Mobile.vue';
+import Desktop from '@/components/sectionNavigation/Desktop.vue';
+import Mobile from '@/components/sectionNavigation/Mobile.vue';
 
 export default Vue.extend({
   components: {
