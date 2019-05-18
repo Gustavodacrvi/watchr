@@ -10,9 +10,9 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import Button from './../generalComponents/Button.vue';
-import Icon from './../generalComponents/Icon.vue';
-import { FormBus } from './Form.vue';
+import Button from '@/components/generalComponents/Button.vue';
+import Icon from '@/components/generalComponents/Icon.vue';
+import { FormBus } from '@/components/forms/Form.vue';
 
 export default Vue.extend({
   components: {

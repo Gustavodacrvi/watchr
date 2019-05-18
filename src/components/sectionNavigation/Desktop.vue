@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import IconGroup from './IconGroup.vue';
+import IconGroup from '@/components/sectionNavigation/IconGroup.vue';
 
 export default Vue.extend({
   components: {

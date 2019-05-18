@@ -16,11 +16,11 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import Alert from './../generalComponents/Alert.vue';
-import Icon from './../generalComponents/Icon.vue';
+import Alert from '@/components/generalComponents/Alert.vue';
+import Icon from '@/components/generalComponents/Icon.vue';
 
 import { FormBus } from './Form.vue';
-import { FormLogObject, InputErrorObject } from './../interfaces';
+import { FormLogObject, InputErrorObject } from '@/components/interfaces';
 
 
 export default Vue.extend({

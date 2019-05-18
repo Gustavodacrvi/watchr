@@ -7,7 +7,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import Route from './../generalComponents/Link.vue';
+import Route from '@/components/generalComponents/Link.vue';
 
 Vue.directive('margin-left', {
   bind(el, binding) {

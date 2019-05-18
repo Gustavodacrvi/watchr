@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Icon from './Icon.vue';
+import Icon from '@/components/generalComponents/Icon.vue';
 
 export default Vue.extend({
   components: {
