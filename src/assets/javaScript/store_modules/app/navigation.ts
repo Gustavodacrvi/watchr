@@ -21,6 +21,8 @@ if (fixed) {
 export default {
   namespaced: true,
   state: {
+    clicked: false,
+    iconClick: false,
     component: comp,
     open,
     fixed,
@@ -30,6 +32,16 @@ export default {
 
   },
   mutations: {
+    click(state: any) {
+      state.clicked = true;
+    },
+    iconClick(state: any) {
+      state.iconClick = true;
+    },
+    fallbackClick(state: any) {
+      state.clicked = false;
+      state.iconClick = false;
+    },
     toggleFixed(state: any) {
       state.open = !state.open;
       state.fixed = !state.fixed;

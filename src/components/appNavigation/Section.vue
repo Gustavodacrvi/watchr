@@ -49,12 +49,15 @@ export default Vue.extend({
       }
     },
     hideNav() {
-      if (!this.$store.state.app.nav.fixed) {
+      if (!this.$store.state.app.nav.fixed && this.$store.getters.NavbarisOnDesktop) {
         this.$store.commit('app/nav/hide');
       }
     },
     navigate(route: string) {
       this.$store.commit('app/nav/pushComp', route);
+      if (!this.$store.getters.NavbarisOnDesktop) {
+        this.$store.commit('app/nav/hide');
+      }
     },
   },
   computed: {

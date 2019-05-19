@@ -1,5 +1,5 @@
 <template>
-  <div id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed", !isDesktop ? "mobile" : ""]'>
+  <div @click='$store.commit("app/nav/click")' id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed", !isDesktop ? "mobile" : ""]'>
     <div id='navigation-margin'></div>
     <icon-section ico='home' :top="[
       {txt: 'Overview', to: 'overview'},
@@ -35,7 +35,7 @@ export default Vue.extend({
   created() {
     if (!this.isDesktop) {
       this.$store.commit('app/nav/hide');
-      this.$store.commit('app/nav/unfix');
+      this.$store.commit('app/nav/unFix');
     }
   },
   computed: {
@@ -88,7 +88,7 @@ export default Vue.extend({
 }
 
 #app-navigation.closed.mobile {
-  left: -40px;
+  left: -50px;
 }
 
 #navigation-margin {

@@ -14,6 +14,7 @@ export default Vue.extend({
   },
   methods: {
     showNavBar() {
+      this.$store.commit('app/nav/iconClick');
       this.$store.commit('app/nav/show');
     },
   },

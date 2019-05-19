@@ -1,5 +1,5 @@
 <template>
-  <div id='body' class='background' :class='$store.state.theme.style'>
+  <div id='body' class='background' :class='$store.state.theme.style' @click='hideAppNavBar'>
     <section id='content'>
       <nav-bar v-if='!($store.getters.isOnMobileApp && isOnAppRoute)'></nav-bar>
       <app-nav-bar v-if='isOnAppRoute && !$store.getters.NavbarisOnDesktop'></app-nav-bar>
@@ -35,9 +35,30 @@ export default Vue.extend({
     'loading': Loading,
     'app-nav-bar': AppNavBar,
   },
+  data() {
+    return {
+      clickedOnAppNavBar: false,
+    };
+  },
+  methods: {
+    hideAppNavBar() {
+      setTimeout(() => {
+        if (this.closeNavbar) {
+          this.$store.commit('app/nav/hide');
+        }
+        this.$store.commit('app/nav/fallbackClick');
+      }, 10);
+    },
+  },
   computed: {
     isOnAppRoute(): boolean {
       return this.$route.path === '/guest' || this.$route.path === '/user';
+    },
+    closeNavbar(): boolean {
+      return !this.$store.state.app.nav.clicked && !this.$store.state.app.nav.iconClick && this.isOpened;
+    },
+    isOpened(): boolean {
+      return this.$store.state.app.nav.open;
     },
   },
 });
