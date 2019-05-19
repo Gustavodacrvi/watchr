@@ -2,7 +2,6 @@
   <div id='body' class='background' :class='$store.state.theme.style'>
     <section id='content'>
       <nav-bar v-if='!($store.getters.isOnMobileApp && this.$route.path === "/guest" || this.$route.path === "/user")'></nav-bar>
-      {{ $store.getters.isOnApp }}
       <transition :class='$store.state.theme.style' name='fade-transition' mode='out-in'>
         <loading v-if='$root.routerViewLoading'></loading>
         <div v-else id='router-view'>

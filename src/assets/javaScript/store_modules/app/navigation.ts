@@ -46,6 +46,12 @@ export default {
       state.open = !state.open;
       localStorage.setItem('watchrSavedopen', state.open);
     },
+    hide(state: any) {
+
+    },
+    show(state: any) {
+
+    },
     pushComp(state: any, component: string) {
       localStorage.setItem('watchrSavedUserComponent', component);
       state.component = component;
