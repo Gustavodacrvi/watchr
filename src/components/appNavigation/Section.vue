@@ -4,21 +4,15 @@
     <transition name='fade-transition'>
       <div class='section-content' v-show='isActive && isNavOpened'>
         <div class='top'>
-          <template v-for='link in top'>
-            <span class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'><icon v-if='link.ico' class='link-icon' :ico='link.ico'></icon>{{ link.txt }}</span>
-          </template>
+          <link-group v-for='link in top' :link='link' :key='link.to'></link-group>
         </div>
         <hr class='margin'/>
         <div class='middle'>
-          <template v-for='link in middle'>
-            <span class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'>{{ link.txt }}</span>
-          </template>
+          <link-group v-for='link in middle' :link='link' :key='link.to'></link-group>
         </div>
         <hr class='margin'/>
         <div class='bottom'>
-          <template v-for='link in bottom'>
-            <span class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'>{{ link.txt }}</span>
-          </template>
+          <link-group v-for='link in bottom' :link='link' :key='link.to'></link-group>
         </div>
       </div>
     </transition>
@@ -28,9 +22,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import Icon from '@/components/generalComponents/Icon.vue';
+import LinkGroup from '@/components/appNavigation/LinkGroup.vue';
 
 export default Vue.extend({
   components: {
+    'link-group': LinkGroup,
     icon: Icon,
   },
   props: {
@@ -45,27 +41,20 @@ export default Vue.extend({
       const vm: any = this;
       this.$store.commit('app/nav/selectSection', vm.ico);
     },
-    isLinkActive(link: string): boolean {
-      return link === this.$store.state.app.nav.component;
-    },
     showNav() {
       if (!this.$store.state.app.nav.fixed) {
         this.$store.commit('app/nav/show');
       }
     },
-    navigate(route: string) {
-      this.$store.commit('app/nav/pushComp', route);
-      if (!this.$store.getters.NavbarisOnDesktop) {
-        this.$store.commit('app/nav/hide');
-      }
-    },
   },
   computed: {
     isActive(): boolean {
-      return this.$store.state.app.nav.section === this.ico;
+      const store: any = this.$store;
+      return store.state.app.nav.section === this.ico;
     },
     isNavOpened(): boolean {
-      return this.$store.state.app.nav.open;
+      const store: any = this.$store;
+      return store.state.app.nav.open;
     },
   },
 });
@@ -84,25 +73,9 @@ export default Vue.extend({
   top: 115px;
 }
 
-.navigation-link {
-  display: flex;
-  cursor: pointer;
-  margin-top: 4px;
-  font-size: 1.2em;
-  transition-duration: .2s;
-}
-
-.navigation-link:hover, .navigation-link:hover .icon, .active, .active .icon {
-  color: #A97CFC;
-}
-
 .margin {
   margin-top: 20px;
   border: none;
-}
-
-.link-icon {
-  margin: 0 6px;
 }
 
 </style>

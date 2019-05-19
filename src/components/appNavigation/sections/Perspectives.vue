@@ -2,7 +2,8 @@
   <icon-section ico='layer-group' title='Perspectives' :top="[
     {txt: 'Custom', to: 'custom'},      
   ]" 
-  :middle="[]" 
+  :middle="[
+  ]" 
   :bottom="[]"
   ></icon-section>
 </template>
@@ -16,5 +17,12 @@ export default Vue.extend({
     'icon-section': Section,
   },
 });
-</script>
 
+/* {type: 'link-group', title: 'Task Type', links: [
+      {txt: 'Periodic', to: 'something'},
+      {txt: 'Time Specific', to: 'something2'},
+      {txt: 'Inbox', to: 'somethin3'},
+      {txt: 'Anytime', to: 'something4'},
+    ]}, */
+
+</script>
