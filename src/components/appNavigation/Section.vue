@@ -79,4 +79,9 @@ export default Vue.extend({
   border: none;
 }
 
+.icon {
+  position: relative;
+  z-index: 5;
+}
+
 </style>
