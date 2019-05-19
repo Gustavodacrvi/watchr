@@ -2,21 +2,21 @@
 import { Routine, Interval } from '@/components/interfaces';
 
 let savedSection = localStorage.getItem('watchrSavedUserSection');
-let appNavigationOpen: any = localStorage.getItem('watchrSavedNavigationOpened');
+let navigationOpened: any = localStorage.getItem('watchrSavedNavigationOpened');
 if (savedSection === '') {
   savedSection = 'overview';
 }
-if (appNavigationOpen === null) {
-  appNavigationOpen = true;
+if (navigationOpened === null) {
+  navigationOpened = true;
 } else {
-  appNavigationOpen = (appNavigationOpen === 'true');
+  navigationOpened = (navigationOpened === 'true');
 }
 
 export default {
   namespaced: true,
   state: {
     section: savedSection,
-    appNavigationOpen,
+    navigationOpened,
     currentNavigationIcon: 'home',
     routines: [] as Routine[],
     intervals: [] as Interval[],
@@ -33,6 +33,9 @@ export default {
     },
   },
   mutations: {
+    toggleSectionNavigation(state: any) {
+      state.navigationOpened = !state.navigationOpened;
+    },
     pushSection(state: any, section: string) {
       console.log(section)
       localStorage.setItem('watchrSavedUserSection', section);

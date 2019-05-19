@@ -13,16 +13,25 @@
       {txt: 'bottom', to: 'fdsa'}
     ]">
     </icon-section>
+    <icon class='pointer icon-color-hover' ico='bars' sz='big-big' id='navigation-toggle' @click='toggleNavBar'></icon>
+    {{ $store.state.app.navigationOpened }}
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import Section from '@/components/appNavigation/Section.vue';
+import Icon from '@/components/generalComponents/Icon.vue';
 
 export default Vue.extend({
   components: {
     'icon-section': Section,
+    'icon': Icon,
+  },
+  methods: {
+    toggleNavBar() {
+      this.$store.commit('app/toggleSectionNavigation');
+    },
   },
 });
 </script>
@@ -40,7 +49,7 @@ export default Vue.extend({
 
 #app-navigation {
   position: fixed;
-  width: 280px;
+  width: 250px;
   height: 100vh;
   left: 0;
   top: 0;
@@ -49,6 +58,12 @@ export default Vue.extend({
 
 #navigation-margin {
   height: 110px;
+}
+
+#navigation-toggle {
+  position: absolute;
+  bottom: 10px;
+  margin: 0 10px;
 }
 
 </style>
