@@ -1,13 +1,18 @@
 <template>
   <div id='app-navigation' :class='$store.state.theme.style'>
-    asdf
+    <div id='navigation-margin'></div>
+    <icon-section></icon-section>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import Section from '@/components/appNavigation/Section.vue';
 
 export default Vue.extend({
+  components: {
+    'icon-section': Section,
+  },
 });
 </script>
 
@@ -29,6 +34,10 @@ export default Vue.extend({
   left: 0;
   top: 0;
   z-index: 5;
+}
+
+#navigation-margin {
+  height: 110px;
 }
 
 </style>
