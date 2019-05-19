@@ -4,7 +4,7 @@
     <overview></overview>
     <perspectives></perspectives>
     <icon-section ico='project-diagram' title='Projects' :top="[]" :middle="[]" :bottom="[]"></icon-section>
-    <icon-section ico='stopwatch' title='Time tracking' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <time-tracking></time-tracking>
     <icon-section ico='stream' title='Routines and intervals' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon-section ico='tags' title='Tags and labels' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon-section ico='pie-chart' title='Statistics' :top="[]" :middle="[]" :bottom="[]"></icon-section>
@@ -18,8 +18,10 @@ import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import Section from '@/components/appNavigation/Section.vue';
 import Icon from '@/components/generalComponents/Icon.vue';
+
 import Overview from '@/components/appNavigation/sections/Overview.vue';
 import Perspectives from '@/components/appNavigation/sections/Perspectives.vue';
+import TimeTracking from '@/components/appNavigation/sections/TimeTracking.vue';
 
 export default Vue.extend({
   components: {
@@ -27,6 +29,7 @@ export default Vue.extend({
     'icon': Icon,
     'overview': Overview,
     'perspectives': Perspectives,
+    'time-tracking': TimeTracking,
   },
   methods: {
     toggleNavBar() {

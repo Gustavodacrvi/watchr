@@ -86,7 +86,7 @@ export default Vue.extend({
 }
 
 .link-group {
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .level-1 {
