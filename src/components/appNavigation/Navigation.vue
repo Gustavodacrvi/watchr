@@ -1,11 +1,12 @@
 <template>
   <div @click='$store.commit("app/nav/click")' id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed", !isDesktop ? "mobile" : ""]' @mouseleave='hideNav'>
     <div id='navigation-margin'></div>
-    <icon-section ico='home' :top="[
-      {txt: 'Overview', to: 'overview'},
-      {txt: 'Inbox', to: 'inbox'},
-      {txt: 'Upcoming', to: ''},
-      {txt: 'Upcoming', to: 'upcoming'},
+    <icon-section ico='home' title='Overview' :top="[
+      {txt: 'Today', to: 'today', ico: 'calendar-day'},
+      {txt: 'Inbox', to: 'inbox', ico: 'inbox'},
+      {txt: 'Upcoming', to: 'upcoming', ico: 'calendar-alt'},
+      {txt: 'Anytime', to: 'anytime', ico: 'layer-group'},
+      {txt: 'Someday', to: 'someday', ico: 'archive'},
     ]"
     :middle="[
       {txt: 'Middle', to: 'comp'},
@@ -13,13 +14,13 @@
     :bottom="[
       {txt: 'bottom', to: 'fdsa'}
     ]"></icon-section>
-    <icon-section ico='layer-group' :top="[]" :middle="[]" :bottom="[]"></icon-section>
-    <icon-section ico='project-diagram' :top="[]" :middle="[]" :bottom="[]"></icon-section>
-    <icon-section ico='stopwatch' :top="[]" :middle="[]" :bottom="[]"></icon-section>
-    <icon-section ico='stream' :top="[]" :middle="[]" :bottom="[]"></icon-section>
-    <icon-section ico='tags' :top="[]" :middle="[]" :bottom="[]"></icon-section>
-    <icon-section ico='pie-chart' :top="[]" :middle="[]" :bottom="[]"></icon-section>
-    <icon-section ico='cog' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <icon-section ico='layer-group' title='Perspectives' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <icon-section ico='project-diagram' title='Projects' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <icon-section ico='stopwatch' title='Time tracking' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <icon-section ico='stream' title='Routines and intervals' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <icon-section ico='tags' title='Tags and labels' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <icon-section ico='pie-chart' title='Statistics' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <icon-section ico='cog' title='Settings' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon v-if='isDesktop' class='pointer icon-color-hover' ico='bars' sz='big-big' id='navigation-toggle' @click='toggleNavBar'></icon>
   </div>
 </template>

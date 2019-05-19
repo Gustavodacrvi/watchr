@@ -1,11 +1,11 @@
 <template>
   <div class='section'>
-    <icon @mouseover='showNav' class='pointer icon-color-hover' :class='{color: isActive}' :ico='ico' sz='big-big' @click='selectIcon'></icon>
+    <icon @mouseover='showNav' :title='title' class='pointer icon-color-hover' :class='{color: isActive}' :ico='ico' sz='big-big' @click='selectIcon'></icon>
     <transition name='fade-transition'>
       <div class='section-content' v-show='isActive && isNavOpened'>
         <div class='top'>
           <template v-for='link in top'>
-            <span class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'>{{ link.txt }}</span>
+            <span class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'><icon class='link-icon' :ico='link.ico'></icon>{{ link.txt }}</span>
           </template>
         </div>
         <hr class='margin'/>
@@ -34,6 +34,7 @@ export default Vue.extend({
     icon: Icon,
   },
   props: {
+    title: String,
     ico: String,
     top: Array,
     middle: Array,
@@ -41,8 +42,8 @@ export default Vue.extend({
   },
   methods: {
     selectIcon() {
-      // this error doesn't make sense, simply leave it there
-      this.$store.commit('app/nav/selectSection', this.ico);
+      const vm: any = this;
+      this.$store.commit('app/nav/selectSection', vm.ico);
     },
     isLinkActive(link: string): boolean {
       return link === this.$store.state.app.nav.component;
@@ -75,6 +76,7 @@ export default Vue.extend({
 .section {
   position: relative;
   padding: 5px 10px;
+  width: 25px;
 }
 
 .section-content {
@@ -84,20 +86,24 @@ export default Vue.extend({
 }
 
 .navigation-link {
-  display: block;
+  display: flex;
   cursor: pointer;
   margin-top: 4px;
   font-size: 1.2em;
   transition-duration: .2s;
 }
 
-.navigation-link:hover, .active {
-  color: #A97CFC
+.navigation-link:hover, .navigation-link:hover .icon, .active, .active .icon {
+  color: #A97CFC;
 }
 
 .margin {
   margin-top: 20px;
   border: none;
+}
+
+.link-icon {
+  margin: 0 6px;
 }
 
 </style>
