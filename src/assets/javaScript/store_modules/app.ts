@@ -1,8 +1,7 @@
-import { setCookie, getCookie } from '@/assets/javaScript/cookies';
 
 import { Routine, Interval } from '@/components/interfaces';
 
-let savedSection = getCookie('watchrSavedUserSection');
+let savedSection = localStorage.getItem('watchrSavedUserSection');
 let appNavigationOpen: any = localStorage.getItem('watchrSavedNavigationOpened');
 if (savedSection === '') {
   savedSection = 'overview';
@@ -34,7 +33,8 @@ export default {
   },
   mutations: {
     pushSection(state: any, section: string) {
-      setCookie('watchrSavedUserSection', section, 265);
+      console.log(section)
+      localStorage.setItem('watchrSavedUserSection', section);
       state.section = section;
     },
     addRoutine(state: any, routine: Routine) {
