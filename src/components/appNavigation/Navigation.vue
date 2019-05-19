@@ -1,17 +1,7 @@
 <template>
   <div @click='$store.commit("app/nav/click")' id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed", !isDesktop ? "mobile" : ""]' @mouseleave='hideNav'>
     <div id='navigation-margin'></div>
-    <icon-section ico='home' title='Overview' :top="[
-      {txt: 'Today', to: 'today', ico: 'calendar-day'},
-      {txt: 'Inbox', to: 'inbox', ico: 'inbox'},
-      {txt: 'Upcoming', to: 'upcoming', ico: 'calendar-alt'},
-      {txt: 'Anytime', to: 'anytime', ico: 'layer-group'},
-      {txt: 'Someday', to: 'someday', ico: 'archive'},
-    ]"
-    :middle="[
-    ]"
-    :bottom="[
-    ]"></icon-section>
+    <overview></overview>
     <icon-section ico='layer-group' title='Perspectives' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon-section ico='project-diagram' title='Projects' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon-section ico='stopwatch' title='Time tracking' :top="[]" :middle="[]" :bottom="[]"></icon-section>
@@ -28,11 +18,13 @@ import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import Section from '@/components/appNavigation/Section.vue';
 import Icon from '@/components/generalComponents/Icon.vue';
+import Overview from '@/components/appNavigation/sections/Overview.vue';
 
 export default Vue.extend({
   components: {
     'icon-section': Section,
     'icon': Icon,
+    'overview': Overview,
   },
   methods: {
     toggleNavBar() {
