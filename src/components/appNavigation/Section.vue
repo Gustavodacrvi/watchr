@@ -27,7 +27,7 @@ import LinkGroup from '@/components/appNavigation/LinkGroup.vue';
 export default Vue.extend({
   components: {
     'link-group': LinkGroup,
-    icon: Icon,
+    'icon': Icon,
   },
   props: {
     title: String,

@@ -35,6 +35,10 @@ export default Vue.extend({
   font-size: 18px;
 }
 
+.medium-medium {
+  font-size: 20px;
+}
+
 .big {
   font-size: 24px;
 }

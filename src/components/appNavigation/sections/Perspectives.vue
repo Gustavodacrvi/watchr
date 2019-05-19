@@ -3,6 +3,12 @@
     {txt: 'Custom', to: 'custom'},      
   ]" 
   :middle="[
+    {type: 'Link Group', lvl: 1, title: 'Task Type', links: [
+      {txt: 'Periodic', to: 'something'},
+      {txt: 'Time Specific', to: 'something2'},
+      {txt: 'Inbox', to: 'somethin3'},
+      {txt: 'Anytime', to: 'something4'},
+    ]}, 
   ]" 
   :bottom="[]"
   ></icon-section>
@@ -17,12 +23,5 @@ export default Vue.extend({
     'icon-section': Section,
   },
 });
-
-/* {type: 'link-group', title: 'Task Type', links: [
-      {txt: 'Periodic', to: 'something'},
-      {txt: 'Time Specific', to: 'something2'},
-      {txt: 'Inbox', to: 'somethin3'},
-      {txt: 'Anytime', to: 'something4'},
-    ]}, */
 
 </script>
