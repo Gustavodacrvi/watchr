@@ -14,7 +14,7 @@
         {txt: 'bottom', to: 'fdsa'}
       ]">
       </icon-section>
-      <nav-icon class='nav-icon'></nav-icon>
+      <nav-icon position='left' class='nav-icon'></nav-icon>
     </div>
     <icon class='pointer icon-color-hover' ico='bars' sz='big-big' id='navigation-toggle' @click='toggleNavBar'></icon>
   </div>

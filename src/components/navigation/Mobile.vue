@@ -3,7 +3,7 @@
     <section id='mobile-nav-left'>
     </section>
     <section id='mobile-nav-right'>
-      <icon></icon>
+      <icon class='navBar-icon' position='right' :active='active' @toggle='toggleMobileSection'></icon>
     </section>
   </nav>
 </template>
@@ -15,6 +15,31 @@ import Icon from '@/components/navigation/Icon.vue';
 export default Vue.extend({
   components: {
     icon: Icon,
+  },
+  data() {
+    return {
+      active: false,
+    };
+  },
+  methods: {
+    toggleMobileSection() {
+      if (this.active) {
+        this.$store.commit('hideMobileSection');
+      } else {
+        this.$store.commit('showMobileSection');
+      }
+      this.active = !this.active;
+    },
+  },
+  computed: {
+    mobileSectionState(): boolean {
+      return this.$store.state.mobileSectionOpened;
+    },
+  },
+  watch: {
+    mobileSectionState(newState) {
+      this.active = newState;
+    },
   },
 });
 </script>
@@ -33,6 +58,10 @@ export default Vue.extend({
 #mobile-nav-right {
   float: right;
   clear: right;
+}
+
+.navBar-icon.active {
+  left: 150px !important;
 }
 
 </style>

@@ -34,11 +34,7 @@ export default new Vuex.Store({
       }
       return false;
     },
-    isOnApp(state: any, getters: any) {
-      let isPWA = false;
-      if (window.matchMedia('(display-mode: standalone)').matches) {
-        isPWA = true;
-      }
+    isOnMobileApp(state: any, getters: any) {
       return !getters.NavbarisOnDesktop && getters.isStandAlone;
     },
     isStandAlone() {
