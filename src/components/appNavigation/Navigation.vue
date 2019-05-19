@@ -13,7 +13,6 @@
       {txt: 'bottom', to: 'fdsa'}
     ]">
     </icon-section>
-    <nav-icon class='nav-icon' position='left' :active='isOpened' @toggle='showNavBar'></nav-icon>
     <icon v-if='isDesktop' class='pointer icon-color-hover' ico='bars' sz='big-big' id='navigation-toggle' @click='toggleNavBar'></icon>
   </div>
 </template>
@@ -22,20 +21,15 @@
 import Vue from 'vue';
 import Section from '@/components/appNavigation/Section.vue';
 import Icon from '@/components/generalComponents/Icon.vue';
-import NavIcon from '@/components/navigation/Icon.vue';
 
 export default Vue.extend({
   components: {
     'icon-section': Section,
     'icon': Icon,
-    'nav-icon': NavIcon,
   },
   methods: {
     toggleNavBar() {
       this.$store.commit('app/nav/toggleFixed');
-    },
-    showNavBar() {
-      this.$store.commit('app/nav/show');
     },
   },
   computed: {
@@ -43,7 +37,7 @@ export default Vue.extend({
       return this.$store.state.app.nav.open;
     },
     isDesktop(): boolean {
-      return this.$store.state.NavbarisOnDesktop;
+      return this.$store.getters.NavbarisOnDesktop;
     },
   },
 });
@@ -78,21 +72,12 @@ export default Vue.extend({
 }
 
 #app-navigation.closed.mobile {
-  width: 50px;
-}
-
-#app-navigation.mobile {
   left: -40px;
+  background-color: red;
 }
 
 #navigation-margin {
   height: 110px;
-}
-
-.nav-icon {
-  position: absolute !important;
-  top: 20px !important;
-  left: 58px !important;
 }
 
 #navigation-toggle {
@@ -100,6 +85,5 @@ export default Vue.extend({
   bottom: 10px;
   margin: 0 10px;
 }
-
 
 </style>

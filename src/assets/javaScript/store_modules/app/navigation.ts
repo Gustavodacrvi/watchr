@@ -28,7 +28,7 @@ export default {
   namespaced: true,
   state: {
     component: comp,
-    open,
+    open: false,
     fixed,
     section: 'home',
   },
@@ -50,7 +50,8 @@ export default {
 
     },
     show(state: any) {
-
+      state.open = !state.open;
+      localStorage.setItem('watchrSavedopen', state.open);
     },
     pushComp(state: any, component: string) {
       localStorage.setItem('watchrSavedUserComponent', component);
