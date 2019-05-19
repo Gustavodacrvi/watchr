@@ -2,7 +2,7 @@
   <div @click='$store.commit("app/nav/click")' id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed", !isDesktop ? "mobile" : ""]' @mouseleave='hideNav'>
     <div id='navigation-margin'></div>
     <overview></overview>
-    <icon-section ico='layer-group' title='Perspectives' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <perspectives></perspectives>
     <icon-section ico='project-diagram' title='Projects' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon-section ico='stopwatch' title='Time tracking' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon-section ico='stream' title='Routines and intervals' :top="[]" :middle="[]" :bottom="[]"></icon-section>
@@ -19,12 +19,14 @@ import { mapGetters } from 'vuex';
 import Section from '@/components/appNavigation/Section.vue';
 import Icon from '@/components/generalComponents/Icon.vue';
 import Overview from '@/components/appNavigation/sections/Overview.vue';
+import Perspectives from '@/components/appNavigation/sections/Perspectives.vue';
 
 export default Vue.extend({
   components: {
     'icon-section': Section,
     'icon': Icon,
     'overview': Overview,
+    'perspectives': Perspectives,
   },
   methods: {
     toggleNavBar() {

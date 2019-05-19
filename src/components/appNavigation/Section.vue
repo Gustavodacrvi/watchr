@@ -5,7 +5,7 @@
       <div class='section-content' v-show='isActive && isNavOpened'>
         <div class='top'>
           <template v-for='link in top'>
-            <span class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'><icon class='link-icon' :ico='link.ico'></icon>{{ link.txt }}</span>
+            <span class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'><icon v-if='link.ico' class='link-icon' :ico='link.ico'></icon>{{ link.txt }}</span>
           </template>
         </div>
         <hr class='margin'/>
@@ -74,7 +74,6 @@ export default Vue.extend({
 <style scoped>
 
 .section {
-  position: relative;
   padding: 5px 10px;
   width: 25px;
 }
@@ -82,7 +81,7 @@ export default Vue.extend({
 .section-content {
   position: absolute;
   left: 50px;
-  top: 0;
+  top: 115px;
 }
 
 .navigation-link {

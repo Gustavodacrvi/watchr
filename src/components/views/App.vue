@@ -32,6 +32,7 @@ export default Vue.extend({
     someday: () => AsyncComponent('overview/Someday') as any,
     today: () => AsyncComponent('overview/Today') as any,
     upcoming: () => AsyncComponent('overview/Upcoming') as any,
+    custom: () => AsyncComponent('perspectives/Custom') as any,
     tasks: () => AsyncComponent('Tasks') as any,
     intervals: () => AsyncComponent('Intervals') as any,
     settings: () => AsyncComponent('Settings') as any,

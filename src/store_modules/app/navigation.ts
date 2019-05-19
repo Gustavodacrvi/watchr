@@ -1,11 +1,6 @@
 
 
-let comp = localStorage.getItem('watchrSavedUserComponent');
 let fixed: any = localStorage.getItem('watchrSavedUserFixedState');
-
-if (comp === '') {
-  comp = 'today';
-}
 
 if (fixed === null) {
   fixed = true;
@@ -23,7 +18,7 @@ export default {
   state: {
     clicked: false,
     iconClick: false,
-    component: comp,
+    component: 'today',
     open,
     fixed,
     section: 'home',
