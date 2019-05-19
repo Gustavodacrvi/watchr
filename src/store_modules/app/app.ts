@@ -1,6 +1,6 @@
 
 import { Routine, Interval } from '@/components/interfaces';
-import NavigationModule from '@/assets/javaScript/store_modules/app/navigation';
+import NavigationModule from '@/store_modules/app/navigation';
 
 export default {
   namespaced: true,
