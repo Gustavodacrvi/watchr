@@ -45,7 +45,19 @@ export default Vue.extend({
 .section-content {
   position: relative;
   left: 50px;
-  top: -25px;
+  top: -30px;
+}
+
+.navigation-link {
+  display: block;
+  text-decoration: none;
+  margin-top: 4px;
+  font-size: 1.2em;
+  transition-duration: .2s;
+}
+
+.navigation-link:hover {
+  color: #A97CFC
 }
 
 </style>
