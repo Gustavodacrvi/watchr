@@ -19,7 +19,7 @@
     <icon-section ico='stream' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon-section ico='tags' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon-section ico='pie-chart' :top="[]" :middle="[]" :bottom="[]"></icon-section>
-    <icon-section ico='config' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <icon-section ico='cog' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon v-if='isDesktop' class='pointer icon-color-hover' ico='bars' sz='big-big' id='navigation-toggle' @click='toggleNavBar'></icon>
   </div>
 </template>

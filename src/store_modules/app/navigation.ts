@@ -64,6 +64,9 @@ export default {
       localStorage.setItem('watchrSavedUserComponent', component);
       state.component = component;
     },
+    selectSection(state: any, ico: string) {
+      state.section = ico;
+    },
   },
   actions: {
 

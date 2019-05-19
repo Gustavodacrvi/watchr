@@ -41,7 +41,8 @@ export default Vue.extend({
   },
   methods: {
     selectIcon() {
-      this.$store.commit('app/nav/selectIcon', this.ico);
+      // this error doesn't make sense, simply leave it there
+      this.$store.commit('app/nav/selectSection', this.ico);
     },
     isLinkActive(link: string): boolean {
       return link === this.$store.state.app.nav.component;
