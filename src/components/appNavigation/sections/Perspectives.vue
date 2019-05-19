@@ -8,7 +8,18 @@
       {txt: 'Time Specific', to: 'something2'},
       {txt: 'Inbox', to: 'somethin3'},
       {txt: 'Anytime', to: 'something4'},
-    ]}, 
+    ]},
+    {type: 'Link Group', lvl: 1, title: 'Time', links: [
+      {txt: 'Today', to: 'something4'},
+      {txt: 'Tomorrow', to: 'something6'},
+      {txt: 'Next 7 days', to: 'someth'},
+    ]},
+    {type: 'Link Group', lvl: 1, title: 'Priority', links: [
+      {txt: 'High', to: 'sometasdfhing4'},
+      {txt: 'Medium', to: 'sometfdshing6'},
+      {txt: 'Low', to: 'sometlowh'},
+      {txt: 'No priority', to: 'sometlownoh'},
+    ]},
   ]" 
   :bottom="[]"
   ></icon-section>

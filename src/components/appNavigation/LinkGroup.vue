@@ -53,6 +53,9 @@ export default Vue.extend({
   margin: 0 6px;
 }
 
+.link-group {
+  margin-top: 12px;
+}
 
 .level-1 {
   margin-left: 15px !important;
