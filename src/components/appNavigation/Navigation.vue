@@ -1,5 +1,5 @@
 <template>
-  <div id='app-navigation' :class='$store.state.theme.style'>
+  <div id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed"]'>
     <div id='navigation-margin'></div>
     <icon-section ico='home' :top="[
       {txt: 'Overview', to: 'overview'},
@@ -14,7 +14,6 @@
     ]">
     </icon-section>
     <icon class='pointer icon-color-hover' ico='bars' sz='big-big' id='navigation-toggle' @click='toggleNavBar'></icon>
-    {{ $store.state.app.navigationOpened }}
   </div>
 </template>
 
@@ -33,27 +32,40 @@ export default Vue.extend({
       this.$store.commit('app/toggleSectionNavigation');
     },
   },
+  computed: {
+    isOpened(): boolean {
+      return this.$store.state.app.navigationOpened;
+    },
+  },
 });
 </script>
 
 <style scoped>
 
-#app-navigation.light {
+#app-navigation.light.opened {
   background-color: #EEEDED;
   box-shadow: inset 0 0 6px #b4b4b4;
 }
 
-#app-navigation.dark {
+#app-navigation.dark.opened {
   background-color: #282828;
 }
 
 #app-navigation {
   position: fixed;
-  width: 250px;
   height: 100vh;
   left: 0;
   top: 0;
   z-index: 5;
+  transition-duration: .3s;
+}
+
+#app-navigation.opened {
+  width: 250px;
+}
+
+#app-navigation.closed {
+  width: 50px;
 }
 
 #navigation-margin {

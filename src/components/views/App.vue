@@ -1,7 +1,7 @@
 <template>
   <div id='user-app'>
     <navigation></navigation>
-    <div class='user-app-content' :class='{navOpened: $store.state.app.appNavigationOpen}'>
+    <div class='user-app-content' :class='{navOpened: $store.state.app.navigationOpened}'>
       <transition name='fade-transition' mode='out-in'>
         <component :is='currentSection'></component>
       </transition>
@@ -55,6 +55,7 @@ export default Vue.extend({
   flex-basis: 1526px;
   padding-top: 10px;
   margin: 0 60px;
+  transition: margin .3s;
 }
 
 .navOpened {

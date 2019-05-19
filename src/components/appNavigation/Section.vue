@@ -2,7 +2,7 @@
   <div class='section'>
     <icon @click='show = !show' class='pointer icon-color-hover' :ico='ico' sz='big-big'></icon>
     <transition name='fade-transition'>
-      <div class='section-content' v-show='show'>
+      <div class='section-content' v-show='isActive && isNavOpened'>
         <div class='top'>
           <template v-for='link in top'>
             <router-link class='navigation-link' :key='link.to' :to='link.to'>{{ link.txt }}</router-link>
@@ -39,14 +39,12 @@ export default Vue.extend({
     middle: Array,
     bottom: Array,
   },
-  data() {
-    return {
-      show: true,
-    };
-  },
   computed: {
     isActive(): boolean {
       return this.$store.state.app.currentNavigationIcon === this.ico;
+    },
+    isNavOpened(): boolean {
+      return this.$store.state.app.navigationOpened;
     },
   },
 });
