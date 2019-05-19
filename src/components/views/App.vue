@@ -1,7 +1,7 @@
 <template>
-  <div id='user-section'>
+  <div id='user-app'>
     <navigation></navigation>
-    <div id='user-section-content'>
+    <div id='user-app-content'>
       <transition name='fade-transition' mode='out-in'>
         <component :is='currentSection'></component>
       </transition>
@@ -11,11 +11,11 @@
 
 <script lang='ts'>
 import Vue from 'vue';
-import Navigation from '@/components/sectionNavigation/Navigation.vue';
+import Navigation from '@/components/appNavigation/Navigation.vue';
 import LoadingComponent from '@/components/generalComponents/Loading.vue';
 
 const AsyncComponent = (component: string) => ({
-  component: import(`./../userSections/${component}.vue`).then((m) => m.default),
+  component: import(`./../appSections/${component}.vue`).then((m) => m.default),
   loading: LoadingComponent,
   delay: 200,
   timeout: 3000,
@@ -46,19 +46,19 @@ export default Vue.extend({
 
 <style scoped>
 
-#user-section {
+#user-app {
   display: flex;
   justify-content: center;
 }
 
-#user-section-content {
+#user-app-content {
   flex-basis: 1526px;
   padding-top: 10px;
   margin: 0 60px;
 }
 
 @media screen and (max-width: 825px) {
-  #user-section-content {
+  #user-app-content {
     margin: 0 8px;
   }
 }

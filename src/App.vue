@@ -42,7 +42,7 @@ export default Vue.extend({
 }
 
 .background.light {
-  background-color: #F4F2F1;
+  background-color: #F8F7F6;
 }
 
 .card.light, .card-round.light { 
