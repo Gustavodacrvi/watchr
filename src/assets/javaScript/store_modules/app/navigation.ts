@@ -1,7 +1,7 @@
 
 
 let open: any = localStorage.getItem('watchrSavedopen');
-let component = localStorage.getItem('watchrSavedUserSection');
+let comp = localStorage.getItem('watchrSavedUserComponent');
 let fixed: any = localStorage.getItem('watchrSavedUserFixedState');
 
 if (open === null) {
@@ -10,8 +10,8 @@ if (open === null) {
   open = (open === 'true');
 }
 
-if (component === '') {
-  component = 'overview';
+if (comp === '') {
+  comp = 'overview';
 }
 
 if (fixed === null) {
@@ -20,10 +20,14 @@ if (fixed === null) {
   fixed = (fixed === 'true');
 }
 
+if (!fixed) {
+  open = false;
+}
+
 export default {
   namespaced: true,
   state: {
-    component,
+    component: component,
     open,
     fixed,
     section: 'home',
@@ -36,15 +40,15 @@ export default {
       state.open = !state.open;
       state.fixed = !state.fixed;
       localStorage.setItem('watchrSavedUserFixedState', state.fixed);
+      localStorage.setItem('watchrSavedopen', state.open);
     },
     toggleNav(state: any) {
       state.open = !state.open;
       localStorage.setItem('watchrSavedopen', state.open);
     },
-    pushComp(state: any, section: string) {
-      console.log(section)
-      localStorage.setItem('watchrSavedUserSection', section);
-      state.section = section;
+    pushComp(state: any, component: string) {
+      localStorage.setItem('watchrSavedUserComponent', component);
+      state.component = component;
     },
   },
   actions: {

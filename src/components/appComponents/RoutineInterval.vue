@@ -104,7 +104,7 @@ export default mixins(app).extend({
       return this.width < 101 && this.isSelected;
     },
   },
-  destroyed() {
+  beforeDestroy() {
     const right: any = document.getElementsByClassName('routine-icon-right')[0];
     right.removeEventListener('touchmove', this.resizeRightMobile);
     right.removeEventListener('touchend', this.resizeRightEvent);

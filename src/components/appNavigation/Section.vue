@@ -1,23 +1,23 @@
 <template>
   <div class='section' @mouseleave='toggleNav'>
-    <icon @click='show = !show' @mouseover='toggleNav' class='pointer icon-color-hover' :class='{color: isActive}' :ico='ico' sz='big-big'></icon>
+    <icon @mouseover='toggleNav' class='pointer icon-color-hover' :class='{color: isActive}' :ico='ico' sz='big-big'></icon>
     <transition name='fade-transition'>
       <div class='section-content' v-show='isActive && isNavOpened'>
         <div class='top'>
           <template v-for='link in top'>
-            <router-link class='navigation-link' :class='{active: isLinkActive(link.to)}' :key='link.to' :to='link.to'>{{ link.txt }}</router-link>
+            <span class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'>{{ link.txt }}</span>
           </template>
         </div>
         <hr class='margin'/>
         <div class='middle'>
           <template v-for='link in middle'>
-            <router-link class='navigation-link' :key='link.to' :to='link.to'>{{ link.txt }}</router-link>
+            <span class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'>{{ link.txt }}</span>
           </template>
         </div>
         <hr class='margin'/>
         <div class='bottom'>
           <template v-for='link in bottom'>
-            <router-link class='navigation-link' :key='link.to' :to='link.to'>{{ link.txt }}</router-link>
+            <span class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'>{{ link.txt }}</span>
           </template>
         </div>
       </div>
@@ -48,6 +48,9 @@ export default Vue.extend({
         this.$store.commit('app/nav/toggleNav');
       }
     },
+    navigate(route: string) {
+      this.$store.commit('app/nav/pushComp', route);
+    },
   },
   computed: {
     isActive(): boolean {
@@ -74,7 +77,7 @@ export default Vue.extend({
 
 .navigation-link {
   display: block;
-  text-decoration: none;
+  cursor: pointer;
   margin-top: 4px;
   font-size: 1.2em;
   transition-duration: .2s;

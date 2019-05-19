@@ -28,7 +28,7 @@ export default new Vuex.Store({
       return (state.user !== undefined);
     },
     NavbarisOnDesktop(state: any) {
-      if (state.windowWidth > 824) {
+      if (state.windowWidth > 1025) {
         return true;
       }
       return false;
