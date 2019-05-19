@@ -10,6 +10,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 import Icon from '@/components/navigation/Icon.vue';
 
 export default Vue.extend({
@@ -29,16 +30,6 @@ export default Vue.extend({
         this.$store.commit('showMobileSection');
       }
       this.active = !this.active;
-    },
-  },
-  computed: {
-    mobileSectionState(): boolean {
-      return this.$store.state.mobileSectionOpened;
-    },
-  },
-  watch: {
-    mobileSectionState(newState) {
-      this.active = newState;
     },
   },
 });
