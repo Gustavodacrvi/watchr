@@ -5,7 +5,7 @@
     <perspectives></perspectives>
     <icon-section ico='project-diagram' title='Projects' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <time-tracking></time-tracking>
-    <icon-section ico='stream' title='Routines and intervals' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <routines-intervals></routines-intervals>
     <icon-section ico='tags' title='Tags and labels' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon-section ico='pie-chart' title='Statistics' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon-section ico='cog' title='Settings' :top="[]" :middle="[]" :bottom="[]"></icon-section>
@@ -22,6 +22,7 @@ import Icon from '@/components/generalComponents/Icon.vue';
 import Overview from '@/components/appNavigation/sections/Overview.vue';
 import Perspectives from '@/components/appNavigation/sections/Perspectives.vue';
 import TimeTracking from '@/components/appNavigation/sections/TimeTracking.vue';
+import RoutinesIntervals from '@/components/appNavigation/sections/RoutinesIntervals.vue';
 
 export default Vue.extend({
   components: {
@@ -30,6 +31,7 @@ export default Vue.extend({
     'overview': Overview,
     'perspectives': Perspectives,
     'time-tracking': TimeTracking,
+    'routines-intervals': RoutinesIntervals,
   },
   methods: {
     toggleNavBar() {
