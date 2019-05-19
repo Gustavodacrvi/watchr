@@ -2,7 +2,7 @@
   <div id='body' class='background' :class='$store.state.theme.style'>
     <section id='content'>
       <nav-bar v-if='!($store.getters.isOnMobileApp && isOnAppRoute)'></nav-bar>
-      <app-nav-bar v-if='isOnAppRoute'></app-nav-bar>
+      <app-nav-bar v-if='isOnAppRoute && !$store.getters.NavbarisOnDesktop'></app-nav-bar>
       <transition :class='$store.state.theme.style' name='fade-transition' mode='out-in'>
         <loading v-if='$root.routerViewLoading'></loading>
         <div v-else id='router-view'>
@@ -37,7 +37,7 @@ export default Vue.extend({
   },
   computed: {
     isOnAppRoute(): boolean {
-      return this.$route.path === "/guest" || this.$route.path === "/user";
+      return this.$route.path === '/guest' || this.$route.path === '/user';
     },
   },
 });

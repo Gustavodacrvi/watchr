@@ -32,12 +32,28 @@ export default Vue.extend({
       this.$store.commit('app/nav/toggleFixed');
     },
   },
+  created() {
+    if (!this.isDesktop) {
+      this.$store.commit('app/nav/hide');
+      this.$store.commit('app/nav/unfix');
+    }
+  },
   computed: {
     isOpened(): boolean {
       return this.$store.state.app.nav.open;
     },
     isDesktop(): boolean {
       return this.$store.getters.NavbarisOnDesktop;
+    },
+  },
+  watch: {
+    isDesktop(change: boolean) {
+      if (change) {
+        this.$store.commit('app/nav/toggleFixed');
+      } else {
+        this.$store.commit('app/nav/unFix');
+        this.$store.commit('app/nav/hide');
+      }
     },
   },
 });
@@ -73,7 +89,6 @@ export default Vue.extend({
 
 #app-navigation.closed.mobile {
   left: -40px;
-  background-color: red;
 }
 
 #navigation-margin {

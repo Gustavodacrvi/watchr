@@ -1,6 +1,6 @@
 <template>
-  <div class='section' @mouseleave='toggleNav'>
-    <icon @mouseover='toggleNav' class='pointer icon-color-hover' :class='{color: isActive}' :ico='ico' sz='big-big'></icon>
+  <div class='section' @mouseleave='hideNav'>
+    <icon @mouseover='showNav' class='pointer icon-color-hover' :class='{color: isActive}' :ico='ico' sz='big-big'></icon>
     <transition name='fade-transition'>
       <div class='section-content' v-show='isActive && isNavOpened'>
         <div class='top'>
@@ -43,9 +43,14 @@ export default Vue.extend({
     isLinkActive(link: string): boolean {
       return link === this.$store.state.app.nav.component;
     },
-    toggleNav() {
+    showNav() {
       if (!this.$store.state.app.nav.fixed) {
-        this.$store.commit('app/nav/toggleNav');
+        this.$store.commit('app/nav/show');
+      }
+    },
+    hideNav() {
+      if (!this.$store.state.app.nav.fixed) {
+        this.$store.commit('app/nav/hide');
       }
     },
     navigate(route: string) {
