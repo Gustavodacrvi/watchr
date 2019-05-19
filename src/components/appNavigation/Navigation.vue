@@ -1,18 +1,21 @@
 <template>
-  <div id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed"]'>
-    <div id='navigation-margin'></div>
-    <icon-section ico='home' :top="[
-      {txt: 'Overview', to: 'overview'},
-      {txt: 'Inbox', to: 'inbox'},
-      {txt: 'Upcoming', to: 'upcoming'},
-    ]"
-    :middle="[
-      {txt: 'Middle', to: 'comp'},
-    ]"
-    :bottom="[
-      {txt: 'bottom', to: 'fdsa'}
-    ]">
-    </icon-section>
+  <div id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed", !$store.state.NavbarisOnDesktop ? "mobile" : ""]'>
+    <div class='wrapper'>
+      <div id='navigation-margin'></div>
+      <icon-section ico='home' :top="[
+        {txt: 'Overview', to: 'overview'},
+        {txt: 'Inbox', to: 'inbox'},
+        {txt: 'Upcoming', to: 'upcoming'},
+      ]"
+      :middle="[
+        {txt: 'Middle', to: 'comp'},
+      ]"
+      :bottom="[
+        {txt: 'bottom', to: 'fdsa'}
+      ]">
+      </icon-section>
+      <nav-icon class='nav-icon'></nav-icon>
+    </div>
     <icon class='pointer icon-color-hover' ico='bars' sz='big-big' id='navigation-toggle' @click='toggleNavBar'></icon>
   </div>
 </template>
@@ -21,11 +24,13 @@
 import Vue from 'vue';
 import Section from '@/components/appNavigation/Section.vue';
 import Icon from '@/components/generalComponents/Icon.vue';
+import NavIcon from '@/components/navigation/Icon.vue';
 
 export default Vue.extend({
   components: {
     'icon-section': Section,
     'icon': Icon,
+    'nav-icon': NavIcon,
   },
   methods: {
     toggleNavBar() {
@@ -60,6 +65,12 @@ export default Vue.extend({
   transition-duration: .3s;
 }
 
+.wrapper {
+  position: relative;
+  height: 100%;
+  background-color: red;
+}
+
 #app-navigation.opened {
   width: 250px;
 }
@@ -68,8 +79,22 @@ export default Vue.extend({
   width: 50px;
 }
 
+#app-navigation.closed.mobile {
+  width: 50px;
+}
+
+#app-navigation.mobile {
+  left: -40px;
+}
+
 #navigation-margin {
   height: 110px;
+}
+
+.nav-icon {
+  position: absolute !important;
+  top: 25px;
+  left: 106%;
 }
 
 #navigation-toggle {
@@ -77,5 +102,6 @@ export default Vue.extend({
   bottom: 10px;
   margin: 0 10px;
 }
+
 
 </style>

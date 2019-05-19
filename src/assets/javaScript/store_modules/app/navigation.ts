@@ -27,7 +27,7 @@ if (!fixed) {
 export default {
   namespaced: true,
   state: {
-    component: component,
+    component: comp,
     open,
     fixed,
     section: 'home',
