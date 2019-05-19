@@ -1,7 +1,7 @@
 <template>
   <div id='body' class='background' :class='$store.state.theme.style'>
     <section id='content'>
-      <nav-bar></nav-bar>
+      <nav-bar v-if='!$store.state.getters.isOnApp'></nav-bar>
       <transition :class='$store.state.theme.style' name='fade-transition' mode='out-in'>
         <loading v-if='$root.routerViewLoading'></loading>
         <div v-else id='router-view'>

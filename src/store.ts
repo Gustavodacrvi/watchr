@@ -33,6 +33,19 @@ export default new Vuex.Store({
       }
       return false;
     },
+    isOnApp(state: any) {
+      let isPWA = false;
+      if (window.matchMedia('(display-mode: standalone)').matches) {
+        isPWA = true;
+      }
+      return !this.NavbarisOnDesktop && this.isStandAlone;
+    },
+    isStandAlone() {
+      if (window.matchMedia('(display-mode: standalone)').matches) {
+        return true;
+      }
+      return false;
+    },
   },
   mutations: {
     logUser(state: any, user) {

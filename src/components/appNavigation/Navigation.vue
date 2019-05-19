@@ -1,5 +1,5 @@
 <template>
-  <div id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed", !$store.state.NavbarisOnDesktop ? "mobile" : ""]'>
+  <div id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed", !isDesktop ? "mobile" : ""]'>
     <div class='wrapper'>
       <div id='navigation-margin'></div>
       <icon-section ico='home' :top="[
@@ -39,7 +39,10 @@ export default Vue.extend({
   },
   computed: {
     isOpened(): boolean {
-      return this.$store.state.app.nav.open;
+      return this.$store.state.app.nav.open && !this.isDesktop;
+    },
+    isDesktop(): boolean {
+      return this.$store.state.NavbarisOnDesktop;
     },
   },
 });
@@ -68,7 +71,6 @@ export default Vue.extend({
 .wrapper {
   position: relative;
   height: 100%;
-  background-color: red;
 }
 
 #app-navigation.opened {
