@@ -1,7 +1,7 @@
 <template>
   <div id='user-app'>
     <navigation></navigation>
-    <div id='user-app-content'>
+    <div class='user-app-content' :class='{navOpened: $store.state.app.appNavigationOpen}'>
       <transition name='fade-transition' mode='out-in'>
         <component :is='currentSection'></component>
       </transition>
@@ -51,14 +51,18 @@ export default Vue.extend({
   justify-content: center;
 }
 
-#user-app-content {
+.user-app-content {
   flex-basis: 1526px;
   padding-top: 10px;
   margin: 0 60px;
 }
 
+.navOpened {
+  margin: 0 40px 0 320px;
+}
+
 @media screen and (max-width: 825px) {
-  #user-app-content {
+  .user-app-content {
     margin: 0 8px;
   }
 }

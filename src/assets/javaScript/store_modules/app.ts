@@ -3,14 +3,21 @@ import { setCookie, getCookie } from '@/assets/javaScript/cookies';
 import { Routine, Interval } from '@/components/interfaces';
 
 let savedSection = getCookie('watchrSavedUserSection');
+let appNavigationOpen: any = localStorage.getItem('watchrSavedNavigationOpened');
 if (savedSection === '') {
   savedSection = 'overview';
+}
+if (appNavigationOpen === null) {
+  appNavigationOpen = true;
+} else {
+  appNavigationOpen = (appNavigationOpen === 'true');
 }
 
 export default {
   namespaced: true,
   state: {
     section: savedSection,
+    appNavigationOpen,
     routines: [] as Routine[],
     intervals: [] as Interval[],
     options: {
