@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import axios from 'axios';
 import Vuex from 'vuex';
+import router from '@/router';
 
 import themes from '@/assets/javaScript/store_modules/themes';
 import languages from '@/assets/javaScript/store_modules/languages';
@@ -33,12 +34,12 @@ export default new Vuex.Store({
       }
       return false;
     },
-    isOnApp(state: any) {
+    isOnApp(state: any, getters: any) {
       let isPWA = false;
       if (window.matchMedia('(display-mode: standalone)').matches) {
         isPWA = true;
       }
-      return !this.NavbarisOnDesktop && this.isStandAlone;
+      return !getters.NavbarisOnDesktop && getters.isStandAlone;
     },
     isStandAlone() {
       if (window.matchMedia('(display-mode: standalone)').matches) {
