@@ -1,11 +1,11 @@
 <template>
   <div class='section'>
-    <icon @click='show = !show' class='pointer icon-color-hover' :ico='ico' sz='big-big'></icon>
+    <icon @click='show = !show' class='pointer icon-color-hover' :class='{color: isActive}' :ico='ico' sz='big-big'></icon>
     <transition name='fade-transition'>
       <div class='section-content' v-show='isActive && isNavOpened'>
         <div class='top'>
           <template v-for='link in top'>
-            <router-link class='navigation-link' :key='link.to' :to='link.to'>{{ link.txt }}</router-link>
+            <router-link class='navigation-link' :class='{active: isLinkActive(link.to)}' :key='link.to' :to='link.to'>{{ link.txt }}</router-link>
           </template>
         </div>
         <hr class='margin'/>
@@ -39,6 +39,11 @@ export default Vue.extend({
     middle: Array,
     bottom: Array,
   },
+  methods: {
+    isLinkActive(link: string): boolean {
+      return link === this.$store.state.app.section;
+    },
+  },
   computed: {
     isActive(): boolean {
       return this.$store.state.app.currentNavigationIcon === this.ico;
@@ -70,7 +75,7 @@ export default Vue.extend({
   transition-duration: .2s;
 }
 
-.navigation-link:hover {
+.navigation-link:hover, .active {
   color: #A97CFC
 }
 
