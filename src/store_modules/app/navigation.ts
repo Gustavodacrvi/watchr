@@ -1,11 +1,6 @@
 
 
-let comp = localStorage.getItem('watchrSavedUserComponent');
 let fixed: any = localStorage.getItem('watchrSavedUserFixedState');
-
-if (comp === '') {
-  comp = 'overview';
-}
 
 if (fixed === null) {
   fixed = true;
@@ -23,7 +18,7 @@ export default {
   state: {
     clicked: false,
     iconClick: false,
-    component: comp,
+    component: 'today',
     open,
     fixed,
     section: 'home',
@@ -63,6 +58,9 @@ export default {
     pushComp(state: any, component: string) {
       localStorage.setItem('watchrSavedUserComponent', component);
       state.component = component;
+    },
+    selectSection(state: any, ico: string) {
+      state.section = ico;
     },
   },
   actions: {

@@ -1,18 +1,14 @@
 <template>
-  <div @click='$store.commit("app/nav/click")' id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed", !isDesktop ? "mobile" : ""]'>
+  <div @click='$store.commit("app/nav/click")' id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed", !isDesktop ? "mobile" : ""]' @mouseleave='hideNav'>
     <div id='navigation-margin'></div>
-    <icon-section ico='home' :top="[
-      {txt: 'Overview', to: 'overview'},
-      {txt: 'Inbox', to: 'inbox'},
-      {txt: 'Upcoming', to: 'upcoming'},
-    ]"
-    :middle="[
-      {txt: 'Middle', to: 'comp'},
-    ]"
-    :bottom="[
-      {txt: 'bottom', to: 'fdsa'}
-    ]">
-    </icon-section>
+    <overview></overview>
+    <perspectives></perspectives>
+    <icon-section ico='project-diagram' title='Projects' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <time-tracking></time-tracking>
+    <routines-intervals></routines-intervals>
+    <tags-labels></tags-labels>
+    <icon-section ico='pie-chart' title='Statistics' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <icon-section ico='cog' title='Settings' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon v-if='isDesktop' class='pointer icon-color-hover' ico='bars' sz='big-big' id='navigation-toggle' @click='toggleNavBar'></icon>
   </div>
 </template>
@@ -23,14 +19,30 @@ import { mapGetters } from 'vuex';
 import Section from '@/components/appNavigation/Section.vue';
 import Icon from '@/components/generalComponents/Icon.vue';
 
+import Overview from '@/components/appNavigation/sections/Overview.vue';
+import Perspectives from '@/components/appNavigation/sections/Perspectives.vue';
+import TimeTracking from '@/components/appNavigation/sections/TimeTracking.vue';
+import RoutinesIntervals from '@/components/appNavigation/sections/RoutinesIntervals.vue';
+import TagsLabels from '@/components/appNavigation/sections/TagsLabels.vue';
+
 export default Vue.extend({
   components: {
     'icon-section': Section,
     'icon': Icon,
+    'overview': Overview,
+    'perspectives': Perspectives,
+    'time-tracking': TimeTracking,
+    'routines-intervals': RoutinesIntervals,
+    'tags-labels': TagsLabels,
   },
   methods: {
     toggleNavBar() {
       this.$store.commit('app/nav/toggleFixed');
+    },
+    hideNav() {
+      if (!this.$store.state.app.nav.fixed && this.$store.getters.NavbarisOnDesktop) {
+        this.$store.commit('app/nav/hide');
+      }
     },
   },
   created() {

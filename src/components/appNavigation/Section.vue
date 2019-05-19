@@ -1,24 +1,18 @@
 <template>
-  <div class='section' @mouseleave='hideNav'>
-    <icon @mouseover='showNav' class='pointer icon-color-hover' :class='{color: isActive}' :ico='ico' sz='big-big'></icon>
+  <div class='section'>
+    <icon @mouseover='showNav' :title='title' class='pointer icon-color-hover' :class='{color: isActive}' :ico='ico' sz='big-big' @click='selectIcon'></icon>
     <transition name='fade-transition'>
       <div class='section-content' v-show='isActive && isNavOpened'>
         <div class='top'>
-          <template v-for='link in top'>
-            <span class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'>{{ link.txt }}</span>
-          </template>
+          <link-group v-for='link in top' :link='link' :key='link.to'></link-group>
         </div>
         <hr class='margin'/>
         <div class='middle'>
-          <template v-for='link in middle'>
-            <span class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'>{{ link.txt }}</span>
-          </template>
+          <link-group v-for='link in middle' :link='link' :key='link.to'></link-group>
         </div>
         <hr class='margin'/>
         <div class='bottom'>
-          <template v-for='link in bottom'>
-            <span class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'>{{ link.txt }}</span>
-          </template>
+          <link-group v-for='link in bottom' :link='link' :key='link.to'></link-group>
         </div>
       </div>
     </transition>
@@ -28,44 +22,39 @@
 <script lang="ts">
 import Vue from 'vue';
 import Icon from '@/components/generalComponents/Icon.vue';
+import LinkGroup from '@/components/appNavigation/LinkGroup.vue';
 
 export default Vue.extend({
   components: {
-    icon: Icon,
+    'link-group': LinkGroup,
+    'icon': Icon,
   },
   props: {
+    title: String,
     ico: String,
     top: Array,
     middle: Array,
     bottom: Array,
   },
   methods: {
-    isLinkActive(link: string): boolean {
-      return link === this.$store.state.app.nav.component;
+    selectIcon() {
+      const vm: any = this;
+      this.$store.commit('app/nav/selectSection', vm.ico);
     },
     showNav() {
       if (!this.$store.state.app.nav.fixed) {
         this.$store.commit('app/nav/show');
       }
     },
-    hideNav() {
-      if (!this.$store.state.app.nav.fixed && this.$store.getters.NavbarisOnDesktop) {
-        this.$store.commit('app/nav/hide');
-      }
-    },
-    navigate(route: string) {
-      this.$store.commit('app/nav/pushComp', route);
-      if (!this.$store.getters.NavbarisOnDesktop) {
-        this.$store.commit('app/nav/hide');
-      }
-    },
   },
   computed: {
     isActive(): boolean {
-      return this.$store.state.app.nav.section === this.ico;
+      const store: any = this.$store;
+      return store.state.app.nav.section === this.ico;
     },
     isNavOpened(): boolean {
-      return this.$store.state.app.nav.open;
+      const store: any = this.$store;
+      return store.state.app.nav.open;
     },
   },
 });
@@ -74,30 +63,25 @@ export default Vue.extend({
 <style scoped>
 
 .section {
-  padding: 0 10px;
+  padding: 5px 10px;
 }
 
 .section-content {
-  position: relative;
-  left: 45px;
-  top: -30px;
-}
-
-.navigation-link {
-  display: block;
-  cursor: pointer;
-  margin-top: 4px;
-  font-size: 1.2em;
-  transition-duration: .2s;
-}
-
-.navigation-link:hover, .active {
-  color: #A97CFC
+  position: absolute;
+  padding-left: 40px;
+  top: 115px;
+  box-sizing: border-box;
+  width: 90%;
 }
 
 .margin {
   margin-top: 20px;
   border: none;
+}
+
+.icon {
+  position: relative;
+  z-index: 5;
 }
 
 </style>

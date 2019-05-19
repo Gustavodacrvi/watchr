@@ -1,17 +1,13 @@
 <template>
   <div>
-    <routine></routine>
+    today
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import Routine from '@/components/appComponents/Routine.vue';
 
 export default Vue.extend({
-  components: {
-    routine: Routine,
-  },
 });
 </script>
 
