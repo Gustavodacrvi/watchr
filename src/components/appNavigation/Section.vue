@@ -64,13 +64,14 @@ export default Vue.extend({
 
 .section {
   padding: 5px 10px;
-  width: 25px;
 }
 
 .section-content {
   position: absolute;
-  left: 50px;
+  padding-left: 40px;
   top: 115px;
+  box-sizing: border-box;
+  width: 90%;
 }
 
 .margin {

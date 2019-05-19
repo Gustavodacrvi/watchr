@@ -19,6 +19,12 @@
       {txt: 'Medium', to: 'sometfdshing6'},
       {txt: 'Low', to: 'sometlowh'},
       {txt: 'No priority', to: 'sometlownoh'},
+      {type: 'Link Group', lvl: 2, title: 'Hell yeah', links: [
+        {txt: 'High', to: 'sometasdfhing4fasd'},
+        {txt: 'Medium', to: 'sometfdshing6fdsafdas'},
+        {txt: 'Low', to: 'sometlowhsd'},
+        {txt: 'No priority', to: 'somefjdktlownoh'},
+      ]}
     ]},
   ]" 
   :bottom="[]"

@@ -4,8 +4,18 @@
     <div class='header'>
       <icon ico='cube' sz='medium-medium'></icon>
       <span class='title'>{{ link.title }}</span>
+      <span>
+        <icon ico='angle-down' @click='show = !show' class='toggle pointer' :class='[show ? "down" : "up"]' sz='medium'></icon>
+      </span>
     </div>
-    <group-link v-for='subLink in link.links' :key='subLink.to' :link='subLink' :class='`level-${link.lvl}`'></group-link>
+    <transition-group name='fade-transition'>
+      <template v-if='show'>
+        <template v-for='subLink in link.links'>
+          <group-link v-if='subLink.to' :key='subLink.to' :link='subLink' :class='`level-${link.lvl}`'></group-link>
+          <group-link v-else :key='subLink.title + "vue-key"' :link='subLink' :class='`level-${link.lvl}`'></group-link>
+        </template>
+      </template>
+    </transition-group>
   </div>
 </template>
 
@@ -20,6 +30,11 @@ export default Vue.extend({
   },
   props: {
     link: Object,
+  },
+  data() {
+    return {
+      show: false,
+    };
   },
   methods: {
     navigate(route: string) {
@@ -53,12 +68,33 @@ export default Vue.extend({
   margin: 0 6px;
 }
 
+.header {
+  width: 100%;
+}
+
+.toggle {
+  float: right;
+  transition-duration: .3s;
+}
+
+.down {
+  transform: rotate(0deg);
+}
+
+.up {
+  transform: rotate(180deg);
+}
+
 .link-group {
   margin-top: 12px;
 }
 
 .level-1 {
   margin-left: 15px !important;
+}
+
+.level-2 {
+  margin-left: 17px !important;
 }
 
 .header .title, .header .icon {
