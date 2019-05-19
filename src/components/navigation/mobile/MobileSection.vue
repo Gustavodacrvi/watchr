@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Route from '@/components/navigation/MobileLink.vue';
+import Route from '@/components/navigation/mobile/MobileLink.vue';
 import IconGroup from '@/components/navigation/IconGroup.vue';
 
 export default Vue.extend({

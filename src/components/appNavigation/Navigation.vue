@@ -19,6 +19,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 import Section from '@/components/appNavigation/Section.vue';
 import Icon from '@/components/generalComponents/Icon.vue';
 

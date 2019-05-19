@@ -3,9 +3,9 @@ import axios from 'axios';
 import Vuex from 'vuex';
 import router from '@/router';
 
-import themes from '@/assets/javaScript/store_modules/themes';
-import languages from '@/assets/javaScript/store_modules/languages';
-import userSection from '@/assets/javaScript/store_modules/app/app';
+import themes from '@/store_modules/themes';
+import languages from '@/store_modules/languages';
+import userSection from '@/store_modules/app/app';
 
 Vue.use(Vuex);
 
