@@ -80,7 +80,7 @@ export default Vue.extend({
 }
 
 #app-navigation.opened {
-  width: 250px;
+  width: 225px;
 }
 
 #app-navigation.closed {
