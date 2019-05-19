@@ -1,6 +1,6 @@
 <template>
-  <div class='section'>
-    <icon @click='show = !show' class='pointer icon-color-hover' :class='{color: isActive}' :ico='ico' sz='big-big'></icon>
+  <div class='section' @mouseleave='toggleNav'>
+    <icon @click='show = !show' @mouseover='toggleNav' class='pointer icon-color-hover' :class='{color: isActive}' :ico='ico' sz='big-big'></icon>
     <transition name='fade-transition'>
       <div class='section-content' v-show='isActive && isNavOpened'>
         <div class='top'>
@@ -42,6 +42,12 @@ export default Vue.extend({
   methods: {
     isLinkActive(link: string): boolean {
       return link === this.$store.state.app.section;
+    },
+    toggleNav() {
+      // this error doesn't make sense, ignore it
+      if (!this.$store.state.app.navigationFixed) {
+        this.$store.commit("app/toggleNavigation")
+      }
     },
   },
   computed: {

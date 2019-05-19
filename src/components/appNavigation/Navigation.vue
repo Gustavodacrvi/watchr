@@ -29,7 +29,7 @@ export default Vue.extend({
   },
   methods: {
     toggleNavBar() {
-      this.$store.commit('app/toggleSectionNavigation');
+      this.$store.commit('app/toggleNavigationFixed');
     },
   },
   computed: {

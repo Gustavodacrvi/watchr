@@ -17,6 +17,7 @@ export default {
   state: {
     section: savedSection,
     navigationOpened,
+    navigationFixed: true,
     currentNavigationIcon: 'home',
     routines: [] as Routine[],
     intervals: [] as Interval[],
@@ -33,7 +34,11 @@ export default {
     },
   },
   mutations: {
-    toggleSectionNavigation(state: any) {
+    toggleNavigationFixed(state: any) {
+      state.navigationOpened = !state.navigationOpened;
+      state.navigationFixed = !state.navigationFixed;
+    },
+    toggleNavigation(state: any) {
       state.navigationOpened = !state.navigationOpened;
     },
     pushSection(state: any, section: string) {
