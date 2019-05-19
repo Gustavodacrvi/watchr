@@ -4,7 +4,7 @@ let comp = localStorage.getItem('watchrSavedUserComponent');
 let fixed: any = localStorage.getItem('watchrSavedUserFixedState');
 
 if (comp === '') {
-  comp = 'overview';
+  comp = 'today';
 }
 
 if (fixed === null) {

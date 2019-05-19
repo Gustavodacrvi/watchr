@@ -9,10 +9,8 @@
       {txt: 'Someday', to: 'someday', ico: 'archive'},
     ]"
     :middle="[
-      {txt: 'Middle', to: 'comp'},
     ]"
     :bottom="[
-      {txt: 'bottom', to: 'fdsa'}
     ]"></icon-section>
     <icon-section ico='layer-group' title='Perspectives' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon-section ico='project-diagram' title='Projects' :top="[]" :middle="[]" :bottom="[]"></icon-section>
