@@ -4,7 +4,7 @@ import Vuex from 'vuex';
 
 import themes from '@/assets/javaScript/store_modules/themes';
 import languages from '@/assets/javaScript/store_modules/languages';
-import userSection from '@/assets/javaScript/store_modules/app';
+import userSection from '@/assets/javaScript/store_modules/app/app';
 
 Vue.use(Vuex);
 

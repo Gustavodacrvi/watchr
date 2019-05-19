@@ -1,7 +1,7 @@
 <template>
   <div id='user-app'>
     <navigation></navigation>
-    <div class='user-app-content' :class='{navOpened: $store.state.app.navigationOpened}'>
+    <div class='user-app-content' :class='{navOpened: $store.state.app.nav.open}'>
       <transition name='fade-transition' mode='out-in'>
         <component :is='currentSection'></component>
       </transition>
@@ -38,7 +38,7 @@ export default Vue.extend({
   },
   computed: {
     currentSection(): string {
-      return this.$store.state.app.section;
+      return this.$store.state.app.nav.component;
     },
   },
 });

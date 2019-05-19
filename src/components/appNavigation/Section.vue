@@ -41,21 +41,20 @@ export default Vue.extend({
   },
   methods: {
     isLinkActive(link: string): boolean {
-      return link === this.$store.state.app.section;
+      return link === this.$store.state.app.nav.component;
     },
     toggleNav() {
-      // this error doesn't make sense, ignore it
-      if (!this.$store.state.app.navigationFixed) {
-        this.$store.commit("app/toggleNavigation")
+      if (!this.$store.state.app.nav.fixed) {
+        this.$store.commit('app/nav/toggleNav');
       }
     },
   },
   computed: {
     isActive(): boolean {
-      return this.$store.state.app.currentNavigationIcon === this.ico;
+      return this.$store.state.app.nav.section === this.ico;
     },
     isNavOpened(): boolean {
-      return this.$store.state.app.navigationOpened;
+      return this.$store.state.app.nav.open;
     },
   },
 });

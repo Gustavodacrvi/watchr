@@ -29,12 +29,12 @@ export default Vue.extend({
   },
   methods: {
     toggleNavBar() {
-      this.$store.commit('app/toggleNavigationFixed');
+      this.$store.commit('app/nav/toggleFixed');
     },
   },
   computed: {
     isOpened(): boolean {
-      return this.$store.state.app.navigationOpened;
+      return this.$store.state.app.nav.open;
     },
   },
 });
