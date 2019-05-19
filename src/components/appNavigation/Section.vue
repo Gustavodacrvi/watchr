@@ -1,13 +1,27 @@
 <template>
   <div class='section'>
     <icon @click='show = !show' class='pointer icon-color-hover' :ico='ico' sz='big-big'></icon>
-    <div class='section-content'>
-      <div class='top'>
-        <template v-for='link in top'>
-          <router-link class='navigation-link' :key='link.to' :to='link.to'>{{ link.txt }}</router-link>
-        </template>
+    <transition name='fade-transition'>
+      <div class='section-content' v-show='show'>
+        <div class='top'>
+          <template v-for='link in top'>
+            <router-link class='navigation-link' :key='link.to' :to='link.to'>{{ link.txt }}</router-link>
+          </template>
+        </div>
+        <hr class='margin'/>
+        <div class='middle'>
+          <template v-for='link in middle'>
+            <router-link class='navigation-link' :key='link.to' :to='link.to'>{{ link.txt }}</router-link>
+          </template>
+        </div>
+        <hr class='margin'/>
+        <div class='bottom'>
+          <template v-for='link in bottom'>
+            <router-link class='navigation-link' :key='link.to' :to='link.to'>{{ link.txt }}</router-link>
+          </template>
+        </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -22,6 +36,8 @@ export default Vue.extend({
   props: {
     ico: String,
     top: Array,
+    middle: Array,
+    bottom: Array,
   },
   data() {
     return {
@@ -44,7 +60,7 @@ export default Vue.extend({
 
 .section-content {
   position: relative;
-  left: 50px;
+  left: 45px;
   top: -30px;
 }
 
@@ -58,6 +74,11 @@ export default Vue.extend({
 
 .navigation-link:hover {
   color: #A97CFC
+}
+
+.margin {
+  margin-top: 20px;
+  border: none;
 }
 
 </style>

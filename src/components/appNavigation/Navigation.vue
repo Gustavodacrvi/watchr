@@ -5,6 +5,12 @@
       {txt: 'Overview', to: 'overview'},
       {txt: 'Inbox', to: 'inbox'},
       {txt: 'Upcoming', to: 'upcoming'},
+    ]"
+    :middle="[
+      {txt: 'Middle', to: 'comp'},
+    ]"
+    :bottom="[
+      {txt: 'bottom', to: 'fdsa'}
     ]">
     </icon-section>
   </div>
