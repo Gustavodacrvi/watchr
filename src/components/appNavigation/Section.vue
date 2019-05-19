@@ -1,6 +1,6 @@
 <template>
-  <div class='section' @mouseleave='hideNav'>
-    <icon @mouseover='showNav' class='pointer icon-color-hover' :class='{color: isActive}' :ico='ico' sz='big-big'></icon>
+  <div class='section'>
+    <icon @mouseover='showNav' class='pointer icon-color-hover' :class='{color: isActive}' :ico='ico' sz='big-big' @click='selectIcon'></icon>
     <transition name='fade-transition'>
       <div class='section-content' v-show='isActive && isNavOpened'>
         <div class='top'>
@@ -40,17 +40,15 @@ export default Vue.extend({
     bottom: Array,
   },
   methods: {
+    selectIcon() {
+      this.$store.commit('app/nav/selectIcon', this.ico);
+    },
     isLinkActive(link: string): boolean {
       return link === this.$store.state.app.nav.component;
     },
     showNav() {
       if (!this.$store.state.app.nav.fixed) {
         this.$store.commit('app/nav/show');
-      }
-    },
-    hideNav() {
-      if (!this.$store.state.app.nav.fixed && this.$store.getters.NavbarisOnDesktop) {
-        this.$store.commit('app/nav/hide');
       }
     },
     navigate(route: string) {
@@ -74,13 +72,14 @@ export default Vue.extend({
 <style scoped>
 
 .section {
-  padding: 0 10px;
+  position: relative;
+  padding: 5px 10px;
 }
 
 .section-content {
-  position: relative;
-  left: 45px;
-  top: -30px;
+  position: absolute;
+  left: 50px;
+  top: 0;
 }
 
 .navigation-link {

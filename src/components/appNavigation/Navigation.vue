@@ -1,9 +1,10 @@
 <template>
-  <div @click='$store.commit("app/nav/click")' id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed", !isDesktop ? "mobile" : ""]'>
+  <div @click='$store.commit("app/nav/click")' id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed", !isDesktop ? "mobile" : ""]' @mouseleave='hideNav'>
     <div id='navigation-margin'></div>
     <icon-section ico='home' :top="[
       {txt: 'Overview', to: 'overview'},
       {txt: 'Inbox', to: 'inbox'},
+      {txt: 'Upcoming', to: ''},
       {txt: 'Upcoming', to: 'upcoming'},
     ]"
     :middle="[
@@ -11,8 +12,14 @@
     ]"
     :bottom="[
       {txt: 'bottom', to: 'fdsa'}
-    ]">
-    </icon-section>
+    ]"></icon-section>
+    <icon-section ico='layer-group' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <icon-section ico='project-diagram' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <icon-section ico='stopwatch' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <icon-section ico='stream' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <icon-section ico='tags' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <icon-section ico='pie-chart' :top="[]" :middle="[]" :bottom="[]"></icon-section>
+    <icon-section ico='config' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon v-if='isDesktop' class='pointer icon-color-hover' ico='bars' sz='big-big' id='navigation-toggle' @click='toggleNavBar'></icon>
   </div>
 </template>
@@ -31,6 +38,11 @@ export default Vue.extend({
   methods: {
     toggleNavBar() {
       this.$store.commit('app/nav/toggleFixed');
+    },
+    hideNav() {
+      if (!this.$store.state.app.nav.fixed && this.$store.getters.NavbarisOnDesktop) {
+        this.$store.commit('app/nav/hide');
+      }
     },
   },
   created() {
