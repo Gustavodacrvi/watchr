@@ -1,7 +1,8 @@
 <template>
-  <div id='body' class='background' :class='$store.state.theme.style'>
+  <div id='body' class='background' :class='$store.state.theme.style' @click='hideAppNavBar'>
     <section id='content'>
-      <nav-bar></nav-bar>
+      <nav-bar v-if='!($store.getters.isOnMobileApp && isOnAppRoute)'></nav-bar>
+      <app-nav-bar v-if='isOnAppRoute && !$store.getters.NavbarisOnDesktop'></app-nav-bar>
       <transition :class='$store.state.theme.style' name='fade-transition' mode='out-in'>
         <loading v-if='$root.routerViewLoading'></loading>
         <div v-else id='router-view'>
@@ -9,19 +10,20 @@
         </div>
       </transition>
     </section>
-    <mobile-section id='mobile-section' v-if='!$store.getters.NavbarisOnDesktop'></mobile-section>
+    <mobile-section id='mobile-section' v-if='!$store.getters.NavbarisOnDesktop && !isOnAppRoute'></mobile-section>
     <toast></toast>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import store from './store';
+import store from '@/store';
 import axios from 'axios';
-import NavBar from './components/navigation/NavBar.vue';
-import MobileSection from './components/navigation/MobileSection.vue';
-import Toast from './components/generalComponents/Toast.vue';
-import Loading from './components/generalComponents/Loading.vue';
+import NavBar from '@/components/navigation/NavBar.vue';
+import AppNavBar from '@/components/appNavigation/AppNavBar.vue';
+import MobileSection from '@/components/navigation/MobileSection.vue';
+import Toast from '@/components/generalComponents/Toast.vue';
+import Loading from '@/components/generalComponents/Loading.vue';
 
 import { getCookie, setCookie } from './assets/javaScript/cookies';
 
@@ -31,6 +33,33 @@ export default Vue.extend({
     'nav-bar': NavBar,
     'toast': Toast,
     'loading': Loading,
+    'app-nav-bar': AppNavBar,
+  },
+  data() {
+    return {
+      clickedOnAppNavBar: false,
+    };
+  },
+  methods: {
+    hideAppNavBar() {
+      setTimeout(() => {
+        if (this.closeNavbar) {
+          this.$store.commit('app/nav/hide');
+        }
+        this.$store.commit('app/nav/fallbackClick');
+      }, 10);
+    },
+  },
+  computed: {
+    isOnAppRoute(): boolean {
+      return this.$route.path === '/guest' || this.$route.path === '/user';
+    },
+    closeNavbar(): boolean {
+      return !this.$store.state.app.nav.clicked && !this.$store.state.app.nav.iconClick && this.isOpened;
+    },
+    isOpened(): boolean {
+      return this.$store.state.app.nav.open;
+    },
   },
 });
 </script>
@@ -42,7 +71,7 @@ export default Vue.extend({
 }
 
 .background.light {
-  background-color: #F4F2F1;
+  background-color: #F8F7F6;
 }
 
 .card.light, .card-round.light { 

@@ -1,5 +1,5 @@
 <template>
-  <div id='hamburger-icon' :class='{"active-hamburger": active}' @click='toggleMobileSection'>
+  <div id='hamburger-icon' :class='[{"active": active}, position]' @click='$emit("toggle")'>
     <span class='line' id='hamburger-icon-top'></span>
     <span class='line' id='hamburger-icon-middle'></span>
     <span class='line' id='hamburger-icon-bottom'></span>
@@ -9,31 +9,10 @@
 <script lang="ts">
 import Vue from 'vue';
 export default Vue.extend({
-  data() {
-    return {
-      active: false,
-      mobileSectionOpened: this.$store.state.mobileSectionOpened,
-    };
-  },
-  methods: {
-    toggleMobileSection() {
-      if (this.active) {
-        this.$store.commit('hideMobileSection');
-      } else {
-        this.$store.commit('showMobileSection');
-      }
-      this.active = !this.active;
-    },
-  },
-  computed: {
-    mobileSectionState(): boolean {
-      return this.$store.state.mobileSectionOpened;
-    },
-  },
-  watch: {
-    mobileSectionState(newState) {
-      this.active = newState;
-    },
+  props: {
+    position: String,
+    active: Boolean,
+    toggle: Function,
   },
 });
 </script>
@@ -44,13 +23,16 @@ export default Vue.extend({
 #hamburger-icon {
   position: relative;
   right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
   display: inline-block;
   width: 32px !important;
   height: 28px !important;
   cursor: pointer;
   -webkit-tap-highlight-color: rgba(0,0,0,0);
   -webkit-tap-highlight-color: transparent;
-  transition: right .3s;
+  transition-duration: .3s;
 }
 
 .line {
@@ -79,36 +61,35 @@ export default Vue.extend({
 
 #hamburger-icon-middle {
   width: 22px;
-  right: 0;
   top: 50%;
   transform: translateY(-50%);
 }
 
-.active-hamburger #hamburger-icon-middle {
+#hamburger-icon.right #hamburger-icon-middle {
+  right: 0;
+}
+
+.active #hamburger-icon-middle {
   width: 0;
 }
 
-.active-hamburger #hamburger-icon-top {
+.active #hamburger-icon-top {
   top: 42% !important;
   left: -3px !important;
   width: 32px !important;
   transform: rotate(50deg);
 }
 
-.active-hamburger #hamburger-icon-bottom {
+.active #hamburger-icon-bottom {
   bottom: 40% !important;
   left: -3px !important;
   width: 32px !important;
   transform: rotate(-50deg);
 }
 
-.active-hamburger #hamburger-icon-middle {
+.active #hamburger-icon-middle {
   width: 0 !important;
   left: 50% !important;
-}
-
-.active-hamburger {
-  right: -150px !important;
 }
 
 </style>

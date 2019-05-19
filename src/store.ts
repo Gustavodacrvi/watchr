@@ -1,10 +1,11 @@
 import Vue from 'vue';
 import axios from 'axios';
 import Vuex from 'vuex';
+import router from '@/router';
 
 import themes from '@/assets/javaScript/store_modules/themes';
 import languages from '@/assets/javaScript/store_modules/languages';
-import userSection from '@/assets/javaScript/store_modules/app';
+import userSection from '@/assets/javaScript/store_modules/app/app';
 
 Vue.use(Vuex);
 
@@ -28,7 +29,16 @@ export default new Vuex.Store({
       return (state.user !== undefined);
     },
     NavbarisOnDesktop(state: any) {
-      if (state.windowWidth > 824) {
+      if (state.windowWidth > 1025) {
+        return true;
+      }
+      return false;
+    },
+    isOnMobileApp(state: any, getters: any) {
+      return !getters.NavbarisOnDesktop && getters.isStandAlone;
+    },
+    isStandAlone() {
+      if (window.matchMedia('(display-mode: standalone)').matches) {
         return true;
       }
       return false;

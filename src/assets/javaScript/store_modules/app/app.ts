@@ -1,16 +1,13 @@
-import { setCookie, getCookie } from '@/assets/javaScript/cookies';
 
 import { Routine, Interval } from '@/components/interfaces';
-
-let savedSection = getCookie('watchrSavedUserSection');
-if (savedSection === '') {
-  savedSection = 'overview';
-}
+import NavigationModule from '@/assets/javaScript/store_modules/app/navigation';
 
 export default {
   namespaced: true,
+  modules: {
+    nav: NavigationModule,
+  },
   state: {
-    section: savedSection,
     routines: [] as Routine[],
     intervals: [] as Interval[],
     options: {
@@ -26,10 +23,6 @@ export default {
     },
   },
   mutations: {
-    pushSection(state: any, section: string) {
-      setCookie('watchrSavedUserSection', section, 265);
-      state.section = section;
-    },
     addRoutine(state: any, routine: Routine) {
       state.routines.push(routine);
     },
