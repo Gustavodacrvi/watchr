@@ -17,6 +17,7 @@ export default {
   state: {
     section: savedSection,
     appNavigationOpen,
+    currentNavigationIcon: 'home',
     routines: [] as Routine[],
     intervals: [] as Interval[],
     options: {

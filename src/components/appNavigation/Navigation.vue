@@ -1,10 +1,11 @@
 <template>
   <div id='app-navigation' :class='$store.state.theme.style'>
     <div id='navigation-margin'></div>
-    <icon-section ico='home'>
-      <template v-slot:top>
-        <span>fdas</span>
-      </template>
+    <icon-section ico='home' :top="[
+      {txt: 'Overview', to: 'overview'},
+      {txt: 'Inbox', to: 'inbox'},
+      {txt: 'Upcoming', to: 'upcoming'},
+    ]">
     </icon-section>
   </div>
 </template>
