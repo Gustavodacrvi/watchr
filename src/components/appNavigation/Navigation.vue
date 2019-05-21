@@ -9,7 +9,7 @@
     <tags-labels></tags-labels>
     <icon-section ico='pie-chart' title='Statistics' :top="[]" :middle="[]" :bottom="[]"></icon-section>
     <icon-section ico='cog' title='Settings' :top="[]" :middle="[]" :bottom="[]"></icon-section>
-    <icon v-if='isDesktop' class='pointer icon-color-hover' ico='bars' sz='big-big' id='navigation-toggle' @click='toggleNavBar'></icon>
+    <icon v-if='isDesktop' class='pointer icon-color-hover' ico='bars' sz='medium-medium' id='navigation-toggle' @click='toggleNavBar'></icon>
   </div>
 </template>
 
@@ -75,8 +75,8 @@ export default Vue.extend({
 <style scoped>
 
 #app-navigation.light.opened {
-  background-color: #EEEDED;
-  box-shadow: inset 0 0 6px #b4b4b4;
+  background-color: #EDEDED;
+  box-shadow: inset 0 0 4px #b4b4b4;
 }
 
 #app-navigation.dark.opened {
@@ -93,7 +93,7 @@ export default Vue.extend({
 }
 
 #app-navigation.opened {
-  width: 225px;
+  width: 250px;
 }
 
 #app-navigation.closed {

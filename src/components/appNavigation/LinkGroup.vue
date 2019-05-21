@@ -1,8 +1,8 @@
 <template>
-  <span v-if='!link.type' class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'><icon v-if='link.ico' class='link-icon' :ico='link.ico'></icon>{{ link.txt }}</span>
+  <span v-if='!link.type' class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'><icon v-if='link.ico' class='link-icon' :ico='link.ico' sz='tiny'></icon>{{ link.txt }}</span>
   <div class='link-group' v-else-if='link.type === "Link Group"'>
     <div class='header'>
-      <icon ico='cube' sz='medium-medium'></icon>
+      <icon ico='cube' sz='tiny'></icon>
       <span class='title'>{{ link.title }}</span>
       <span>
         <icon ico='angle-down' @click='show = !show' class='toggle pointer' :class='[show ? "down" : "up"]' sz='medium'></icon>
@@ -62,10 +62,11 @@ export default Vue.extend({
 
 .navigation-link:hover, .navigation-link:hover .icon, .active, .active .icon {
   color: #A97CFC;
+  text-shadow: 0 0 1px #A97CFC;
 }
 
 .link-icon {
-  margin: 0 6px;
+  margin: 2px 6px;
 }
 
 .header {
@@ -74,6 +75,7 @@ export default Vue.extend({
 
 .toggle {
   float: right;
+  margin-top: 3px;
   transition-duration: .3s;
 }
 

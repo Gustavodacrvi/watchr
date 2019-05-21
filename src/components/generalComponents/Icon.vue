@@ -31,6 +31,10 @@ export default Vue.extend({
 
 <style scoped>
 
+.tiny {
+  font-size: 16px;
+}
+
 .medium {
   font-size: 18px;
 }

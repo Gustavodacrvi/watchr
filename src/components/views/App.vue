@@ -64,7 +64,7 @@ export default Vue.extend({
 }
 
 .navOpened {
-  margin: 0 40px 0 265px;
+  margin: 0 40px 0 290px;
 }
 
 @media screen and (max-width: 825px) {
