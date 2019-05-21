@@ -13,7 +13,9 @@ export default {
       temporaly: undefined as Routine | undefined,
       routines: [] as Routine[],
     },
-    intervals: [] as Interval[],
+    interval: {
+      intervals: [] as Interval[],
+    },
     options: {
       clockConvention: '24',
     },
@@ -29,22 +31,27 @@ export default {
     useWebStorage(state: any, use: boolean) {
       state.webStorage = use;
       if (use) {
-        const data = localStorage.getItem('watchrRoutines');
+        let data = localStorage.getItem('watchrRoutines');
         if (data !== null) {
           state.routine = JSON.parse(data);
         }
+        data = localStorage.getItem('watchrIntervals');
+        if (data !== null) {
+          state.interval = JSON.parse(data);
+        }
       }
-    },
-    addRoutine(state: any, routine: Routine) {
-      state.routines.push(routine);
-    },
-    addInterval(state: any, interval: Interval) {
-      state.intervals.push(interval);
     },
     saveRoutines(state: any) {
       if (state.webStorage) {
         localStorage.setItem('watchrRoutines', JSON.stringify(
           state.routine,
+        ));
+      }
+    },
+    saveIntervals(state: any) {
+      if (state.webStorage) {
+        localStorage.setItem('watchrIntervals', JSON.stringify(
+          state.interval,
         ));
       }
     },
@@ -61,6 +68,14 @@ export default {
         ],
       } as Routine);
       commit('saveRoutines');
+    },
+    addRoutine({ state, commit }: any, routine: Routine) {
+      state.routines.push(routine);
+      commit('saveRoutines');
+    },
+    addInterval({ state, commit }: any, interval: Interval) {
+      state.intervals.push(interval);
+      commit('saveIntervals');
     },
   },
 };
