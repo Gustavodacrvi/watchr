@@ -72,43 +72,28 @@ export default mixins(app).extend({
     'interval': RoutineInterval,
   },
   props: {
-    'routine-id': String,
-  },
-  beforeCreate() {
-    this.$store.commit('app/addRoutine', {
-      id: 'id',
-      name: 'Weekends',
-      intervals: [
-        { id: 'int', start: '08-12', end: '12-00'},
-      ],
-      visibilityField: [
-        'every day',
-      ],
-    } as Routine);
-    this.$store.commit('app/addInterval', {
-      id: 'int',
-      name: 'Exercise',
-      color: '#FC7C85',
-      tags: [],
-      tasks: [],
-    } as Interval);
+    id: String,
   },
   created() {
-    this.intervalId = setInterval(() => {
+    if (this.routine) {
+      this.intervalId = setInterval(() => {
+        this.getTime();
+      }, 500);
       this.getTime();
-    }, 500);
-    this.getTime();
+    }
   },
   mounted() {
-    this.setPointer();
-    const intervals: any = this.$refs['intervals-div'];
-    intervals.addEventListener('scroll', this.saveScrollPosition);
-    intervals.scrollLeft = localStorage.getItem('watchrRoutineScroll');
+    if (this.routine) {
+      this.setPointer();
+      const intervals: any = this.$refs['intervals-div'];
+      intervals.addEventListener('scroll', this.saveScrollPosition);
+      intervals.scrollLeft = localStorage.getItem('watchrRoutineScroll');
+    }
   },
   data() {
     return {
       intervalId: undefined as any,
-      routine: this.$store.getters['app/getRoutine']('id'),
+      routine: this.$store.getters['app/getRoutine'](this.id),
       hour: new Date().getHours() as number,
       min: new Date().getMinutes() as number,
       interval: undefined,

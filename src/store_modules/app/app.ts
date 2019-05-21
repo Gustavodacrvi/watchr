@@ -25,6 +25,12 @@ export default {
   mutations: {
     useWebStorage(state: any, use: boolean) {
       state.webStorage = use;
+      if (use) {
+        const data = localStorage.getItem('watchrData');
+        if (data !== null) {
+          state = JSON.parse(data);
+        }
+      }
     },
     addRoutine(state: any, routine: Routine) {
       state.routines.push(routine);

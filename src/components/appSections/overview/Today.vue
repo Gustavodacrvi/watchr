@@ -1,7 +1,7 @@
 <template>
   <div>
     <app-title :lvl='1'>Today</app-title>
-    <routine id='' @interval-selected='selectInterval'></routine>
+    <routine id='fd' @interval-selected='selectInterval'></routine>
   </div>
 </template>
 
