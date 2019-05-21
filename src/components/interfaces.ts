@@ -26,10 +26,11 @@ export interface DateInterval {
 export interface Routine {
   id: string;
   name: string;
+  creationDate?: string;
   intervals: Array<{
     id: string, start: string, end: string,
   }>;
-  visibilityField: Array<
+  visibilityField?: Array<
     DateInterval |
     string // id for the calendar tag || ISO date
   >;

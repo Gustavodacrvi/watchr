@@ -46,7 +46,7 @@
     <span>There are no routines today</span>
     <div class='routine-icons'>
       <icon class='pointer' sz='big-big' ico='folder-plus' title='Add bind existing routine'></icon>
-      <icon class='pointer' sz='big-big' ico='pen' title='Create routine'></icon>
+      <icon class='pointer' @click='$store.dispatch("app/addTemporaryRoutine", getCurrentDate)' sz='big-big' ico='pen' title='Create routine'></icon>
     </div>
   </div>
 </template>
