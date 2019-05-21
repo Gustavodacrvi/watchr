@@ -18,7 +18,7 @@
       <div class='intervals-line' :class='$store.state.theme.style'>
         <interval :selected-interval='interval' id='Exercise' color='#FC7C85' start='20-30' end='22-0' @select="selectInterval"></interval>
       </div>
-      <div class='pointer' ref='pointer'></div>
+      <div class='interval-pointer' ref='pointer'></div>
       <div class='numbers'>
         <template v-if='is24HourConvention'>
           <template v-for='i in 25'>
@@ -43,12 +43,10 @@
     </div>
   </div>
   <div v-else class='routine no-routine' :class='$store.state.theme.style'>
-    <div>
-      <span>There are no routines today</span>
-      <div class='routine-icons'>
-        <icon class='pointer' sz='big-big' ico='folder-plus' title='Add bind existing routine'></icon>
-        <icon class='pointer' sz='big-big' ico='pen' title='Create routine'></icon>
-      </div>
+    <span>There are no routines today</span>
+    <div class='routine-icons'>
+      <icon class='pointer' sz='big-big' ico='folder-plus' title='Add bind existing routine'></icon>
+      <icon class='pointer' sz='big-big' ico='pen' title='Create routine'></icon>
     </div>
   </div>
 </template>
@@ -228,7 +226,7 @@ export default mixins(app).extend({
   font-size: 0.8em;
 }
 
-.pointer {
+.interval-pointer {
   position: absolute;
   top: 40%;
   transform: translateY(-50%);
