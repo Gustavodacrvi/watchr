@@ -26,6 +26,7 @@ export default mixins(app).extend({
     start: String,
     end: String,
     id: String,
+    selectedInterval: String,
   },
   data() {
     return {
@@ -91,7 +92,7 @@ export default mixins(app).extend({
       return this.parsePixelsToTime(this.left);
     },
     isSelected(): boolean {
-      return this.id === this.$store.state.app.interval;
+      return this.id === this.selectedInterval;
     },
     getPosition(): number {
       return this.left + (this.width / 2);

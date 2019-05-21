@@ -1,6 +1,6 @@
 <template>
   <div>
-    I am the fucking user section!!!!!
+    I am the user section!!!!!
   </div>
 </template>
 

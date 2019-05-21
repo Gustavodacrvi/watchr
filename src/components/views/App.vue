@@ -23,7 +23,14 @@ const AsyncComponent = (component: string) => ({
 
 export default Vue.extend({
   props: {
-    guest: Boolean,
+    webStorage: Boolean,
+  },
+  created() {
+    if (this.webStorage) {
+      this.$store.commit('app/useWebStorage', true);
+    } else {
+      this.$store.commit('app/useWebStorage', false);
+    }
   },
   components: {
     navigation: Navigation,

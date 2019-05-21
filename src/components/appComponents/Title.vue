@@ -1,7 +1,7 @@
 <template>
-  <span class='app-title'>
+  <div>
     <app-title :lvl='lvl'><slot></slot></app-title>
-  </span>
+  </div>
 </template>
 
 <script lang="ts">
@@ -14,7 +14,7 @@ export default Vue.extend({
   },
   props: {
     lvl: Number,
-  }
+  },
 });
 </script>
 

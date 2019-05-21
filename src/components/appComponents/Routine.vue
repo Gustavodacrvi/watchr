@@ -16,7 +16,7 @@
     </div>
     <div class='intervals' ref='intervals-div'>
       <div class='intervals-line' :class='$store.state.theme.style'>
-        <interval id='Exercise' color='#FC7C85' start='20-30' end='22-0' @select="selectInterval"></interval>
+        <interval :selected-interval='interval' id='Exercise' color='#FC7C85' start='20-30' end='22-0' @select="selectInterval"></interval>
       </div>
       <div class='pointer' ref='pointer'></div>
       <div class='numbers'>
@@ -39,7 +39,7 @@
           </template>
         </template>
       </div>
-      <icon ref='angle' v-show='$store.state.app.interval !== undefined' class='angle color' sz='big' ico='angle-up'></icon>
+      <icon ref='angle' v-show='interval !== undefined' class='angle color' sz='big' ico='angle-up'></icon>
     </div>
   </div>
   <div v-else class='routine no-routine' :class='$store.state.theme.style'>
@@ -111,6 +111,7 @@ export default mixins(app).extend({
       routine: this.$store.getters['app/getRoutine']('id'),
       hour: new Date().getHours() as number,
       min: new Date().getMinutes() as number,
+      interval: undefined,
     };
   },
   methods: {
@@ -126,7 +127,7 @@ export default mixins(app).extend({
       pointer.style.left = this.parseTimeToPixels(`${this.hour}-${this.min}`) + 'px';
     },
     selectInterval(obj: any) {
-      this.$store.commit('app/selectInterval', obj.id);
+      this.interval = obj.id;
       const angle: any = this.$refs.angle;
       angle.$el.style.left = obj.position + 'px';
     },
@@ -139,6 +140,9 @@ export default mixins(app).extend({
   watch: {
     min() {
       this.setPointer();
+    },
+    interval(newId: string) {
+      this.$emit('interval-selected', newId);
     },
   },
   beforeDestroy() {

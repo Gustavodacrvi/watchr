@@ -8,12 +8,12 @@ export default {
     nav: NavigationModule,
   },
   state: {
+    webStorage: undefined,
     routines: [] as Routine[],
     intervals: [] as Interval[],
     options: {
       clockConvention: '24',
     },
-    interval: undefined,
   },
   getters: {
     getRoutine: (state: any) => (key: string) => {
@@ -23,14 +23,14 @@ export default {
     },
   },
   mutations: {
+    useWebStorage(state: any, use: boolean) {
+      state.webStorage = use;
+    },
     addRoutine(state: any, routine: Routine) {
       state.routines.push(routine);
     },
     addInterval(state: any, interval: Interval) {
       state.intervals.push(interval);
-    },
-    selectInterval(state: any, id: string) {
-      state.interval = id;
     },
   },
   actions: {
