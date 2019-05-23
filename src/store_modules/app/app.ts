@@ -1,6 +1,7 @@
 
-import { Routine, Interval } from '@/components/interfaces';
+import { Routine, Interval, DateInterval } from '@/components/interfaces';
 import NavigationModule from '@/store_modules/app/navigation';
+import { app } from '@/components/mixins';
 
 export default {
   namespaced: true,
@@ -26,14 +27,27 @@ export default {
         return el.id === key;
       });
     },
-    getRoutineByDate: (state: any) => (date: string): string => {
-      
+    isVisible: (state: any) => (arr: Array<any>, value: Date | DateInterval): boolean => {
+      let length = arr.length;
+      if (value instanceof Date) {
+        for (let i = 0;i < length;i++) {
+          if (arr[i] instanceof Date && arr[i] === value) {
+            return true;
+          }
+        }
+      }
+      return false;
     },
-    getTodaysRoutine(state: any, getters: any): string {
+    getRoutineByDate: (state: any, getters: any) => (date: Date): string => {
+      return state.routine.routines.find((el: Routine) => {
+        return getters.isVisible(el.id, date);
+      });
+    },
+    getTodaysRoutine(state: any, getters: any): Routine {
       if (state.routine.temporary) {
-
+        
       } else {
-        return getters.getRoutineByDate;
+        return getters.getRoutineByDate(new Date());
       }
     },
   },
@@ -66,6 +80,10 @@ export default {
           state.interval,
         ));
       }
+    },
+    deleteLocalStorageData() {
+      localStorage.removeItem('watchrRoutines');
+      localStorage.removeItem('watchrIntervals');
     },
   },
   actions: {

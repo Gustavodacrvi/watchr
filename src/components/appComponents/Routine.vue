@@ -91,7 +91,7 @@ export default mixins(app).extend({
   data() {
     return {
       intervalId: undefined as any,
-      routine: this.$store.getters['app/getRoutine'](this.id),
+      routine: this.$store.getters['app/getRoutineById'](this.id),
       hour: new Date().getHours() as number,
       min: new Date().getMinutes() as number,
       interval: undefined,

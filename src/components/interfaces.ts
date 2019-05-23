@@ -19,13 +19,9 @@ export interface ToastObj {
 
 
 export interface DateInterval {
-  start: string;
-  end: string;
-}
-
-export interface ISOdate {
-  type: 'ISOdate',
-  date: string,
+  type: 'DateInterval';
+  start: Date;
+  end: Date;
 }
 
 export interface Routine {
@@ -37,7 +33,7 @@ export interface Routine {
   }>;
   visibilityField?: Array<
     DateInterval |
-    ISOdate
+    Date
   >;
 }
 
