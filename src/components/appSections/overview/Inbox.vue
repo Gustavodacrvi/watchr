@@ -1,10 +1,11 @@
 <template>
   <div>
-    <app-title class='' :lvl='1'>Inbox</app-title>
+    <app-title :lvl='1'>Inbox</app-title>
+    <p class='description'>All of your inbox tasks will be shown here. Inbox tasks aren't scheduled neither periodic and don't have tags, intervals or projects. </p>
     <div>
-      <icon class='right icon-group-icon pointer circle' ico='circle' sz='medium' ></icon>
-      <icon class='right icon-group-icon pointer' ico='filter' sz='medium' ></icon>
-      <icon class='left icon-group-icon pointer' ico='search' sz='medium' ></icon>
+      <icon class='right icon-group-icon pointer circle' ico='circle' sz='medium-medium' ></icon>
+      <icon class='right icon-group-icon pointer' ico='filter' sz='medium-medium' ></icon>
+      <icon class='left icon-group-icon pointer' ico='search' sz='medium-medium' ></icon>
     </div>
   </div>
 </template>
@@ -24,6 +25,9 @@ export default Vue.extend({
 
 <style scoped>
 
+.description {
+  padding: 18px 0;
+}
 
 .icon {
   margin: 2px;
