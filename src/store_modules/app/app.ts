@@ -10,7 +10,8 @@ export default {
     nav: NavigationModule,
   },
   state: {
-    webStorage: undefined,
+    indexedDB: undefined,
+    allowIndexDB: undefined,
     routine: {
       temporary: undefined as Routine | undefined,
       routines: [] as Routine[],
@@ -30,33 +31,6 @@ export default {
     },
   },
   mutations: {
-    useWebStorage(state: any, use: boolean) {
-      state.webStorage = use;
-      if (use) {
-        if (!window.indexedDB) {
-          ToastBus.$emit('addToast', {
-            msg: `Your browser doesn\'t support a
-             stable version of IndexedDB. Consider updating your browser or using another one.`,
-            duration_seconds: null,
-            type: 'error',
-          });
-        } else {
-          let db;
-          const request = indexedDB.open('MyTestDatabase');
-          request.onerror = (event) => {
-            ToastBus.$emit('addToast', {
-              msg: `We need permission to use the IndexedDB of your browser to store task data`,
-              duration_seconds: null,
-              type: 'error',
-            });
-          };
-          request.onsuccess = (event: any) => {
-            db = event.target.result;
-            console.log(event)
-          };
-        }
-      }
-    },
     saveRoutines(state: any) {
       if (state.webStorage) {
         localStorage.setItem('watchrRoutines', JSON.stringify(
@@ -73,6 +47,33 @@ export default {
     },
   },
   actions: {
+    useIndexedDB({ state }: any, use: boolean) {
+      state.indexedDB = use;
+      if (use) {
+        if (window.indexedDB) {
+          ToastBus.$emit('addToast', {
+            msg: `Your browser doesn\'t support a
+             stable version of IndexedDB. Consider updating your browser or using another one.`,
+            duration_seconds: null,
+            type: 'error',
+          });
+        } else {
+          let db;
+          const request = indexedDB.open('MyTestDatabase');
+          request.onerror = (event) => {
+            ToastBus.$emit('addToast', {
+              msg: `We need permission to use the IndexedDB of your browser to store data`,
+              duration_seconds: null,
+              type: 'error',
+            });
+          };
+          request.onsuccess = (event: any) => {
+            db = event.target.result;
+            state.allowIndexDB = true;
+          };
+        }
+      }
+    },
     addTemporaryRoutine({ state, commit }: any, currentDate: string) {
       state.routine.temporary = {
         id: 'temporary',

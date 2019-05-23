@@ -1,5 +1,5 @@
 <template>
-  <app :web-storage='true'></app>
+  <app :indexed-db='true'></app>
 </template>
 
 <script lang="ts">
