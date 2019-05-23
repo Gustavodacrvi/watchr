@@ -16,7 +16,7 @@
     </div>
     <div class='intervals' ref='intervals-div'>
       <div class='intervals-line' :class='$store.state.theme.style'>
-        <interval v-for='i in routine.intervals' :key='i.id' :selected-interval='intervalId' :id='i.id' :color='i.color' :start='i.start' :end='i.end' @select="selectInterval"></interval>
+        <interval v-for='i in routine.intervals' :key='i.id' :is-selected='intervalId === i.id' :id='i.id' :color='i.color' :start='i.start' :end='i.end' @select="selectInterval"></interval>
       </div>
       <div class='interval-pointer' ref='pointer'></div>
       <div class='numbers'>
