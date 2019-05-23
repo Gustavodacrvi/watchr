@@ -1,7 +1,7 @@
 <template>
   <div :ref='id' class='interval' :class='{selected: isSelected}' :style='styles' @click='$emit("select", {id: id, position: getPosition})' @dblclick='showIcons = !showIcons'>
     <div class='nameDiv'>
-      <span class='name' v-if='!dontShowName && !showIcons'>{{ id }}</span>
+      <span class='name' v-if='!dontShowName && !showIcons'>{{ name }}</span>
       <span v-show='showIcons' class='interval-time time-right'>{{ getEnd }}</span>
       <span v-show='showIcons' class='interval-time time-left'>{{ getStart }}</span>
       <icon v-show='showIcons' ref='routine-icon-left' draggable='true' class='pointer color left routine-icon-left' sz='big-big-big' ico='arrows-alt-h'></icon>
@@ -26,6 +26,8 @@ export default mixins(app).extend({
     start: String,
     end: String,
     id: String,
+    name: String,
+    isSelected: Boolean,
   },
   data() {
     return {
@@ -89,9 +91,6 @@ export default mixins(app).extend({
     },
     getStart(): string {
       return this.parsePixelsToTime(this.left);
-    },
-    isSelected(): boolean {
-      return this.id === this.$store.state.app.interval;
     },
     getPosition(): number {
       return this.left + (this.width / 2);

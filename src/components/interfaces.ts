@@ -19,19 +19,21 @@ export interface ToastObj {
 
 
 export interface DateInterval {
-  start: string;
-  end: string;
+  type: 'DateInterval';
+  start: Date;
+  end: Date;
 }
 
 export interface Routine {
   id: string;
   name: string;
+  creationDate?: Date;
   intervals: Array<{
     id: string, start: string, end: string,
   }>;
-  visibilityField: Array<
+  visibilityField?: Array<
     DateInterval |
-    string // id for the calendar tag || ISO date
+    Date
   >;
 }
 

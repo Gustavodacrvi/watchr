@@ -1,56 +1,55 @@
 <template>
-  <div v-if='routine' class='routine card-round' :class='$store.state.theme.style'>
-    <div class='routine-header'>
-      <app-title :no-margin='true' :inline='true' :lvl='3'>{{ routine.name }}</app-title>
-      <div class='options'>
-        <icon-group class='icon-group' handle='stopwatch' :options="[
-          { ico: 'folder-plus', dbclick: false, title: 'Add existing interval', callback: () => console.log(3)},
-          { ico: 'pen', dbclick: false, title: 'Create interval', callback: () => console.log('d') },
-        ]"></icon-group>
-        <icon-group class='icon-group' handle='ellipsis-v' :options="[
-          { ico: 'clone', dblclick: false, title: 'Clone routine', callback: () => console.log('dbclick') },
-          { ico: 'calendar-minus', dblclick: true, title: 'Remove routine from today', color: 'red', callback: () => console.log('dbclick') },
-          { ico: 'trash', dblclick: true, title: 'Delete routine', color: 'red', callback: () => console.log('dbclick') },
-        ]"></icon-group>
+  <transition name='fade-transition' mode='out-in'>
+    <div key='today-routine-showing' v-if='routine' class='routine card-round' :class='$store.state.theme.style'>
+      <div class='routine-header'>
+        <app-title :no-margin='true' :inline='true' :lvl='3'>{{ routine.name }}</app-title>
+        <div class='options'>
+          <icon-group class='icon-group' handle='stopwatch' :options="[
+            { ico: 'folder-plus', dbclick: false, title: 'Add existing interval', callback: () => console.log(3)},
+            { ico: 'pen', dbclick: false, title: 'Create interval', callback: () => console.log('d') },
+          ]"></icon-group>
+          <icon-group class='icon-group' handle='ellipsis-v' :options="[
+            { ico: 'clone', dblclick: false, title: 'Clone routine', callback: () => console.log('dbclick') },
+            { ico: 'calendar-minus', dblclick: true, title: 'Remove routine from today', color: 'red', callback: removeRoutineFromToday },
+          ]"></icon-group>
+        </div>
+      </div>
+      <div class='intervals' ref='intervals-div'>
+        <div class='intervals-line' :class='$store.state.theme.style'>
+          <interval v-for='i in routine.intervals' :key='i.id' :is-selected='intervalId === i.id' :id='i.id' :color='i.color' :start='i.start' :end='i.end' @select="selectInterval"></interval>
+        </div>
+        <div class='interval-pointer' ref='pointer'></div>
+        <div class='numbers'>
+          <template v-if='is24HourConvention'>
+            <template v-for='i in 25'>
+              <span v-if='i !== 25 && i < 11' class='number' :key='i + "routine24"' :style="`left: ${(i - 1) * 117}px`">{{ i - 1 }}</span>
+              <span v-else-if='i !== 25 && i > 10' class='number' :key='i  + "routine24"' :style="`left: ${((i - 1) * 117) - 3}px`">{{ i - 1 }}</span>
+              <span v-else class='number' :key='i  + "routine24"' style='left: 2808px'>0</span>
+            </template>
+          </template>
+          <template v-else>
+            <template v-for='i in 12'>
+              <span v-if='i !== 1' class='number' :key='i  + "routine12am"' :style='`left: ${(i - 1) * 117}px`'>{{ i - 1 }}am</span>
+              <span v-else class='number' :key='i  + "routine12am"'>12am</span>
+            </template>
+            <template v-for='i in 13'>
+              <span v-if='i === 13' class='number' :key='i  + "routine12am"' style='left: 2808px'>12am</span>
+              <span v-else-if='i !== 1' class='number' :key='i  + "routine12pm"' :style='`left: ${((i - 1) * 117) + 1200}px`'>{{ i - 1 }}pm</span>
+              <span v-else class='number' :key='i  + "routine12pm"' style='left: 1200px'>12pm</span>
+            </template>
+          </template>
+        </div>
+        <icon ref='angle' v-show='intervalId !== undefined' class='angle color' sz='big' ico='angle-up'></icon>
       </div>
     </div>
-    <div class='intervals' ref='intervals-div'>
-      <div class='intervals-line' :class='$store.state.theme.style'>
-        <interval id='Exercise' color='#FC7C85' start='20-30' end='22-0' @select="selectInterval"></interval>
-      </div>
-      <div class='pointer' ref='pointer'></div>
-      <div class='numbers'>
-        <template v-if='is24HourConvention'>
-          <template v-for='i in 25'>
-            <span v-if='i !== 25 && i < 11' class='number' :key='i + "routine24"' :style="`left: ${(i - 1) * 117}px`">{{ i - 1 }}</span>
-            <span v-else-if='i !== 25 && i > 10' class='number' :key='i  + "routine24"' :style="`left: ${((i - 1) * 117) - 3}px`">{{ i - 1 }}</span>
-            <span v-else class='number' :key='i  + "routine24"' style='left: 2808px'>0</span>
-          </template>
-        </template>
-        <template v-else>
-          <template v-for='i in 12'>
-            <span v-if='i !== 1' class='number' :key='i  + "routine12am"' :style='`left: ${(i - 1) * 117}px`'>{{ i - 1 }}am</span>
-            <span v-else class='number' :key='i  + "routine12am"'>12am</span>
-          </template>
-          <template v-for='i in 13'>
-            <span v-if='i === 13' class='number' :key='i  + "routine12am"' style='left: 2808px'>12am</span>
-            <span v-else-if='i !== 1' class='number' :key='i  + "routine12pm"' :style='`left: ${((i - 1) * 117) + 1200}px`'>{{ i - 1 }}pm</span>
-            <span v-else class='number' :key='i  + "routine12pm"' style='left: 1200px'>12pm</span>
-          </template>
-        </template>
-      </div>
-      <icon ref='angle' v-show='$store.state.app.interval !== undefined' class='angle color' sz='big' ico='angle-up'></icon>
-    </div>
-  </div>
-  <div v-else class='routine no-routine' :class='$store.state.theme.style'>
-    <div>
+    <div key='today-routine-nonshowing' v-else class='routine no-routine' :class='$store.state.theme.style'>
       <span>There are no routines today</span>
       <div class='routine-icons'>
-        <icon class='pointer' sz='big-big' ico='folder-plus' title='Add bind existing routine'></icon>
-        <icon class='pointer' sz='big-big' ico='pen' title='Create routine'></icon>
+        <icon class='pointer' sz='big-big' ico='folder-plus' title='Add bind existing routine temporary'></icon>
+        <icon class='pointer' @click='$store.dispatch("app/addTemporaryRoutine", getCurrentDate)' sz='big-big' ico='pen' title='Create temporary routine'></icon>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script lang="ts">
@@ -61,7 +60,7 @@ import Heading from '@/components/generalComponents/Heading.vue';
 import Icon from '@/components/generalComponents/Icon.vue';
 import IconGroup from '@/components/dropdown/IconGroup.vue';
 import RoutineInterval from '@/components/appComponents/RoutineInterval.vue';
-import mixins from 'vue-typed-mixins';
+import mixins from 'vue-typed-mixins';  
 
 export default mixins(app).extend({
   mixins: [app as any],
@@ -72,48 +71,37 @@ export default mixins(app).extend({
     'interval': RoutineInterval,
   },
   props: {
-    'routine-id': String,
-  },
-  beforeCreate() {
-    this.$store.commit('app/addRoutine', {
-      id: 'id',
-      name: 'Weekends',
-      intervals: [
-        { id: 'int', start: '08-12', end: '12-00'},
-      ],
-      visibilityField: [
-        'every day',
-      ],
-    } as Routine);
-    this.$store.commit('app/addInterval', {
-      id: 'int',
-      name: 'Exercise',
-      color: '#FC7C85',
-      tags: [],
-      tasks: [],
-    } as Interval);
+    routine: Object,
   },
   created() {
-    this.intervalId = setInterval(() => {
+    console.log(this.routine)
+    if (this.routine) {
+      this.interval = setInterval(() => {
+        this.getTime();
+      }, 500);
       this.getTime();
-    }, 500);
-    this.getTime();
+    }
   },
   mounted() {
-    this.setPointer();
-    const intervals: any = this.$refs['intervals-div'];
-    intervals.addEventListener('scroll', this.saveScrollPosition);
-    intervals.scrollLeft = localStorage.getItem('watchrRoutineScroll');
+    if (this.routine) {
+      this.setPointer();
+      const intervals: any = this.$refs['intervals-div'];
+      intervals.addEventListener('scroll', this.saveScrollPosition);
+      intervals.scrollLeft = localStorage.getItem('watchrRoutineScroll');
+    }
   },
   data() {
     return {
-      intervalId: undefined as any,
-      routine: this.$store.getters['app/getRoutine']('id'),
+      interval: undefined as any,
       hour: new Date().getHours() as number,
       min: new Date().getMinutes() as number,
+      intervalId: undefined,
     };
   },
   methods: {
+    removeRoutineFromToday() {
+      this.$store.dispatch('app/deleteRoutineById', this.routine.id);
+    },
     getTime() {
       this.hour = new Date().getHours();
       this.min = new Date().getMinutes();
@@ -126,7 +114,7 @@ export default mixins(app).extend({
       pointer.style.left = this.parseTimeToPixels(`${this.hour}-${this.min}`) + 'px';
     },
     selectInterval(obj: any) {
-      this.$store.commit('app/selectInterval', obj.id);
+      this.interval = obj.id;
       const angle: any = this.$refs.angle;
       angle.$el.style.left = obj.position + 'px';
     },
@@ -140,9 +128,12 @@ export default mixins(app).extend({
     min() {
       this.setPointer();
     },
+    interval(newId: string) {
+      this.$emit('interval-selected', newId);
+    },
   },
   beforeDestroy() {
-    clearInterval(this.intervalId);
+    clearInterval(this.interval);
     const intervals: any = this.$refs['intervals-div'];
     intervals.removeEventListener('scroll', this.saveScrollPosition);
   },
@@ -239,7 +230,7 @@ export default mixins(app).extend({
   font-size: 0.8em;
 }
 
-.pointer {
+.interval-pointer {
   position: absolute;
   top: 40%;
   transform: translateY(-50%);

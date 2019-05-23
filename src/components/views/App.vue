@@ -3,7 +3,7 @@
     <navigation></navigation>
     <div class='user-app-content' :class='{navOpened: $store.state.app.nav.open}'>
       <transition name='fade-transition' mode='out-in'>
-        <component :is='currentSection'></component>
+        <component class='perspective' :is='currentSection'></component>
       </transition>
     </div>
   </div>
@@ -23,7 +23,14 @@ const AsyncComponent = (component: string) => ({
 
 export default Vue.extend({
   props: {
-    guest: Boolean,
+    webStorage: Boolean,
+  },
+  created() {
+    if (this.webStorage) {
+      this.$store.commit('app/useWebStorage', true);
+    } else {
+      this.$store.commit('app/useWebStorage', false);
+    }
   },
   components: {
     navigation: Navigation,
@@ -59,12 +66,16 @@ export default Vue.extend({
 .user-app-content {
   flex-basis: 1526px;
   padding-top: 10px;
-  margin: 0 60px;
+  margin: 0 45px;
   transition: margin .3s;
 }
 
 .navOpened {
-  margin: 0 40px 0 290px;
+  margin: 0 40px 0 275px;
+}
+
+.perspective {
+  margin-top: -25px;
 }
 
 @media screen and (max-width: 825px) {
