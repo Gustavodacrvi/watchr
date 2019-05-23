@@ -16,7 +16,7 @@
     </div>
     <div class='intervals' ref='intervals-div'>
       <div class='intervals-line' :class='$store.state.theme.style'>
-        <interval :selected-interval='interval' id='Exercise' color='#FC7C85' start='20-30' end='22-0' @select="selectInterval"></interval>
+        <interval v-for='i in routine.intervals' :key='i.id' :selected-interval='intervalId' :id='i.id' :color='i.color' :start='i.start' :end='i.end' @select="selectInterval"></interval>
       </div>
       <div class='interval-pointer' ref='pointer'></div>
       <div class='numbers'>
@@ -70,11 +70,12 @@ export default mixins(app).extend({
     'interval': RoutineInterval,
   },
   props: {
-    id: String,
+    routine: Object,
   },
   created() {
+    console.log(this.routine)
     if (this.routine) {
-      this.intervalId = setInterval(() => {
+      this.interval = setInterval(() => {
         this.getTime();
       }, 500);
       this.getTime();
@@ -90,11 +91,10 @@ export default mixins(app).extend({
   },
   data() {
     return {
-      intervalId: undefined as any,
-      routine: this.$store.getters['app/getRoutineById'](this.id),
+      interval: undefined as any,
       hour: new Date().getHours() as number,
       min: new Date().getMinutes() as number,
-      interval: undefined,
+      intervalId: undefined,
     };
   },
   methods: {
@@ -129,7 +129,7 @@ export default mixins(app).extend({
     },
   },
   beforeDestroy() {
-    clearInterval(this.intervalId);
+    clearInterval(this.interval);
     const intervals: any = this.$refs['intervals-div'];
     intervals.removeEventListener('scroll', this.saveScrollPosition);
   },

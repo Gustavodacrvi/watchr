@@ -49,7 +49,6 @@ export default {
       });
     },
     getTodaysRoutine(state: any, getters: any): Routine {
-      console.log(state.routine.temporary.creationDate)
       if (state.routine.temporary && sameDay(new Date(state.routine.temporary.creationDate), new Date())) {
         return state.routine.temporary;
       } else {
