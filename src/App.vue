@@ -139,7 +139,7 @@ body {
 }
 
 span, a, p {
-  color: #ADADAD;
+  color: #999999;
 }
 
 

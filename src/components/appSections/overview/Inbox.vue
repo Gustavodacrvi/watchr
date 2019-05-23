@@ -7,7 +7,7 @@
       <icon class='right icon-group-icon pointer' ico='filter' sz='medium-medium' ></icon>
       <icon class='left icon-group-icon pointer' ico='search' sz='medium-medium' ></icon>
     </div>
-    <adder msg='Add task'></adder>
+    <adder msg='Add task' btn-msg='Add task'></adder>
   </div>
 </template>
 
