@@ -1,7 +1,12 @@
 
 import { Routine, Interval, DateInterval } from '@/components/interfaces';
 import NavigationModule from '@/store_modules/app/navigation';
-import { app } from '@/components/mixins';
+
+const sameDay = (d1: Date, d2: Date) => {
+  return d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate();
+}
 
 export default {
   namespaced: true,
@@ -27,10 +32,10 @@ export default {
         return el.id === key;
       });
     },
-    isVisible: (state: any) => (arr: Array<any>, value: Date | DateInterval): boolean => {
-      let length = arr.length;
+    isVisible: (state: any) => (arr: any[], value: Date | DateInterval): boolean => {
+      const length = arr.length;
       if (value instanceof Date) {
-        for (let i = 0;i < length;i++) {
+        for (let i = 0; i < length; i++) {
           if (arr[i] instanceof Date && arr[i] === value) {
             return true;
           }
@@ -44,8 +49,9 @@ export default {
       });
     },
     getTodaysRoutine(state: any, getters: any): Routine {
-      if (state.routine.temporary) {
-        
+      console.log(state.routine.temporary.creationDate)
+      if (state.routine.temporary && sameDay(new Date(state.routine.temporary.creationDate), new Date())) {
+        return state.routine.temporary;
       } else {
         return getters.getRoutineByDate(new Date());
       }
@@ -63,8 +69,7 @@ export default {
         if (data !== null) {
           state.interval = JSON.parse(data);
         }
-        console.log(state.interval)
-        console.log(state.routine)
+        console.log(state)
       }
     },
     saveRoutines(state: any) {
@@ -87,16 +92,15 @@ export default {
     },
   },
   actions: {
-    addTemporaryRoutine({ state, commit }: any, currentDate: string) {
-      state.routine.routines.push({
+    addTemporaryRoutine({ state, commit }: any) {
+      state.routine.temporary = {
         id: 'temporary',
         name: 'Temporary Routine',
-        creationDate: currentDate,
+        creationDate: new Date(),
         intervals: [],
         visibilityField: [
-          currentDate,
         ],
-      } as Routine);
+      } as Routine;
       commit('saveRoutines');
     },
     addRoutine({ state, commit }: any, routine: Routine) {

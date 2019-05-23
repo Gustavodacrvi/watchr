@@ -45,8 +45,8 @@
   <div v-else class='routine no-routine' :class='$store.state.theme.style'>
     <span>There are no routines today</span>
     <div class='routine-icons'>
-      <icon class='pointer' sz='big-big' ico='folder-plus' title='Add bind existing routine'></icon>
-      <icon class='pointer' @click='$store.dispatch("app/addTemporaryRoutine", getCurrentDate)' sz='big-big' ico='pen' title='Create routine'></icon>
+      <icon class='pointer' sz='big-big' ico='folder-plus' title='Add bind existing routine temporary'></icon>
+      <icon class='pointer' @click='$store.dispatch("app/addTemporaryRoutine", getCurrentDate)' sz='big-big' ico='pen' title='Create temporary routine'></icon>
     </div>
   </div>
 </template>

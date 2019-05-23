@@ -27,7 +27,7 @@ export interface DateInterval {
 export interface Routine {
   id: string;
   name: string;
-  creationDate?: string;
+  creationDate?: Date;
   intervals: Array<{
     id: string, start: string, end: string,
   }>;
