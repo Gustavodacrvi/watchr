@@ -156,7 +156,7 @@ span, a, p {
   bottom: -80px !important;
 }
 
-.fade-transition-active, .fade-transition-leave-active {
+.fade-transition-enter-active, .fade-transition-leave-active {
   transition: opacity .2s;
 }
 .fade-transition-enter, .fade-transition-leave-to {
