@@ -20,7 +20,7 @@ export const app = Vue.extend({
     },
   },
   computed: {
-    getCurrentDate() {
+    getCurrentDate(): string {
       const date = new Date();
       const year = date.getFullYear();
       let month: any = date.getMonth() + 1;

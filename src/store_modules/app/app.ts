@@ -10,7 +10,7 @@ export default {
   state: {
     webStorage: undefined,
     routine: {
-      temporaly: undefined as Routine | undefined,
+      temporary: undefined as Routine | undefined,
       routines: [] as Routine[],
     },
     interval: {
@@ -21,10 +21,20 @@ export default {
     },
   },
   getters: {
-    getRoutine: (state: any) => (key: string) => {
+    getRoutineById: (state: any) => (key: string): string => {
       return state.routine.routines.find((el: Routine) => {
         return el.id === key;
       });
+    },
+    getRoutineByDate: (state: any) => (date: string): string => {
+      
+    },
+    getTodaysRoutine(state: any, getters: any): string {
+      if (state.routine.temporary) {
+
+      } else {
+        return getters.getRoutineByDate;
+      }
     },
   },
   mutations: {
@@ -39,6 +49,8 @@ export default {
         if (data !== null) {
           state.interval = JSON.parse(data);
         }
+        console.log(state.interval)
+        console.log(state.routine)
       }
     },
     saveRoutines(state: any) {

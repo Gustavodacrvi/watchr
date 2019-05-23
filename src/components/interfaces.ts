@@ -23,6 +23,11 @@ export interface DateInterval {
   end: string;
 }
 
+export interface ISOdate {
+  type: 'ISOdate',
+  date: string,
+}
+
 export interface Routine {
   id: string;
   name: string;
@@ -32,7 +37,7 @@ export interface Routine {
   }>;
   visibilityField?: Array<
     DateInterval |
-    string // id for the calendar tag || ISO date
+    ISOdate
   >;
 }
 
