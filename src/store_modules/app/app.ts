@@ -106,6 +106,12 @@ export default {
       state.routines.push(routine);
       commit('saveRoutines');
     },
+    deleteRoutineById({ state, commit }: any, id: string) {
+      if (id === 'temporary') {
+        state.routine.temporary = undefined;
+      }
+      commit('saveRoutines');
+    },
     addInterval({ state, commit }: any, interval: Interval) {
       state.intervals.push(interval);
       commit('saveIntervals');

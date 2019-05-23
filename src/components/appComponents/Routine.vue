@@ -9,8 +9,7 @@
         ]"></icon-group>
         <icon-group class='icon-group' handle='ellipsis-v' :options="[
           { ico: 'clone', dblclick: false, title: 'Clone routine', callback: () => console.log('dbclick') },
-          { ico: 'calendar-minus', dblclick: true, title: 'Remove routine from today', color: 'red', callback: () => console.log('dbclick') },
-          { ico: 'trash', dblclick: true, title: 'Delete routine', color: 'red', callback: () => console.log('dbclick') },
+          { ico: 'calendar-minus', dblclick: true, title: 'Remove routine from today', color: 'red', callback: removeRoutineFromToday },
         ]"></icon-group>
       </div>
     </div>
@@ -98,6 +97,12 @@ export default mixins(app).extend({
     };
   },
   methods: {
+    removeRoutineFromToday() {
+      console.log(3)
+      if (this.routine.id === 'temporary') {
+        this.$store.dispatch('app/deleteRoutineById', 'temporary');
+      }
+    },
     getTime() {
       this.hour = new Date().getHours();
       this.min = new Date().getMinutes();
