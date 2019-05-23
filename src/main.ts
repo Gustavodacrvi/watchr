@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import axios from 'axios';
 import App from './App.vue';
 import AppLoad from './AppLoad.vue';
 import router from './router';

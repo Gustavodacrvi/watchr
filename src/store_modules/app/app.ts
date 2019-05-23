@@ -2,6 +2,8 @@
 import { Routine, Interval } from '@/components/interfaces';
 import NavigationModule from '@/store_modules/app/navigation';
 
+import { ToastBus } from '@/components/generalComponents/Toast.vue';
+
 export default {
   namespaced: true,
   modules: {
@@ -10,7 +12,7 @@ export default {
   state: {
     webStorage: undefined,
     routine: {
-      temporaly: undefined as Routine | undefined,
+      temporary: undefined as Routine | undefined,
       routines: [] as Routine[],
     },
     interval: {
@@ -31,13 +33,27 @@ export default {
     useWebStorage(state: any, use: boolean) {
       state.webStorage = use;
       if (use) {
-        let data = localStorage.getItem('watchrRoutines');
-        if (data !== null) {
-          state.routine = JSON.parse(data);
-        }
-        data = localStorage.getItem('watchrIntervals');
-        if (data !== null) {
-          state.interval = JSON.parse(data);
+        if (!window.indexedDB) {
+          ToastBus.$emit('addToast', {
+            msg: `Your browser doesn\'t support a
+             stable version of IndexedDB. Consider updating your browser or using another one.`,
+            duration_seconds: null,
+            type: 'error',
+          });
+        } else {
+          let db;
+          const request = indexedDB.open('MyTestDatabase');
+          request.onerror = (event) => {
+            ToastBus.$emit('addToast', {
+              msg: `We need permission to use the IndexedDB of your browser to store task data`,
+              duration_seconds: null,
+              type: 'error',
+            });
+          };
+          request.onsuccess = (event: any) => {
+            db = event.target.result;
+            console.log(event)
+          };
         }
       }
     },
@@ -58,7 +74,7 @@ export default {
   },
   actions: {
     addTemporaryRoutine({ state, commit }: any, currentDate: string) {
-      state.routine.routines.push({
+      state.routine.temporary = {
         id: 'temporary',
         name: 'Temporary Routine',
         creationDate: currentDate,
@@ -66,7 +82,7 @@ export default {
         visibilityField: [
           currentDate,
         ],
-      } as Routine);
+      } as Routine;
       commit('saveRoutines');
     },
     addRoutine({ state, commit }: any, routine: Routine) {
