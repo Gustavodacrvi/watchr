@@ -1,5 +1,5 @@
 <template>
-  <div id='user-app' v-if='indexedDb && isAllowed'>
+  <div id='user-app'>
     <navigation></navigation>
     <div class='user-app-content' :class='{navOpened: $store.state.app.nav.open}'>
       <transition name='fade-transition' mode='out-in'>
@@ -23,13 +23,13 @@ const AsyncComponent = (component: string) => ({
 
 export default Vue.extend({
   props: {
-    indexedDb: Boolean,
+    webStorage: Boolean,
   },
   created() {
-    if (this.indexedDb) {
-      this.$store.dispatch('app/useIndexedDB', true);
+    if (this.webStorage) {
+      this.$store.commit('app/useWebStorage', true);
     } else {
-      this.$store.dispatch('app/useIndexedDB', false);
+      this.$store.commit('app/useWebStorage', false);
     }
   },
   components: {
@@ -49,9 +49,6 @@ export default Vue.extend({
     help: () => AsyncComponent('Help') as any,
   },
   computed: {
-    isAllowed(): boolean {
-      return this.$store.state.app.allowIndexDB;
-    },
     currentSection(): string {
       return this.$store.state.app.nav.component;
     },
