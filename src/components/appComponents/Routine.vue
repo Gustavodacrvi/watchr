@@ -100,10 +100,7 @@ export default mixins(app).extend({
   },
   methods: {
     removeRoutineFromToday() {
-      console.log(3)
-      if (this.routine.id === 'temporary') {
-        this.$store.dispatch('app/deleteRoutineById', 'temporary');
-      }
+      this.$store.dispatch('app/deleteRoutineById', this.routine.id);
     },
     getTime() {
       this.hour = new Date().getHours();

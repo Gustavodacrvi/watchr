@@ -109,6 +109,11 @@ export default {
     deleteRoutineById({ state, commit }: any, id: string) {
       if (id === 'temporary') {
         state.routine.temporary = undefined;
+      } else {
+        const index = state.routine.routines.findIndex((el: Routine) => {
+          return el.id === id;
+        });
+        state.routines.splice(index, 1);
       }
       commit('saveRoutines');
     },
