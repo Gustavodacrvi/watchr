@@ -7,6 +7,7 @@
       <icon class='right icon-group-icon pointer' ico='filter' sz='medium-medium' ></icon>
       <icon class='left icon-group-icon pointer' ico='search' sz='medium-medium' ></icon>
     </div>
+    <adder></adder>
   </div>
 </template>
 
@@ -14,11 +15,13 @@
 import Vue from 'vue';
 import Title from '@/components/appComponents/Title.vue';
 import Icon from '@/components/generalComponents/Icon.vue';
+import Adder from '@/components/appComponents/Adder.vue';
 
 export default Vue.extend({
   components: {
     'app-title': Title,
     'icon': Icon,
+    'adder': Adder,
   },
 });
 </script>
