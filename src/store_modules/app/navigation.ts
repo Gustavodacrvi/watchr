@@ -19,6 +19,7 @@ export default {
     clicked: false,
     iconClick: false,
     component: 'today',
+    popUp: 'addtask',
     open,
     fixed,
     section: 'home',
