@@ -30,7 +30,11 @@ import Button from '@/components/generalComponents/Button.vue';
 import Alert from '@/components/generalComponents/Alert.vue';
 import Heading from '@/components/appComponents/Heading.vue';
 
-export default Vue.extend({
+import mixin from 'vue-typed-mixins';
+import { app } from '@/components/mixins';
+
+export default mixin(app).extend({
+  mixins: [app as any],
   components: {
     'app-title': Title,
     'app-input': Input,
@@ -58,8 +62,9 @@ export default Vue.extend({
         if (value[value.length - 1] === ':') {
           value = value.slice(0, -1);
         }
-        console.log(value)
-        this.result = this.$store.getters['app/labelExists'](value);
+        if (!this.$store.getters['app/labelExists'](value)) {
+          this.$store.commit('app/addLabel',);
+        }
       }
     },
   },

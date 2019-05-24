@@ -1,3 +1,5 @@
+import uuid from 'uuid';
+
 import Vue from 'vue';
 
 export const app = Vue.extend({
@@ -17,6 +19,9 @@ export const app = Vue.extend({
       str += '' + Math.floor(pixels / 117);
       str += '-' + Math.floor(((pixels % 117) * 20) / 39);
       return str;
+    },
+    createId(): string {
+      return uuid.v4();
     },
   },
   computed: {
