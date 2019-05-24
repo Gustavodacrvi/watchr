@@ -6,10 +6,9 @@
     {type: 'Link Group', lvl: 1, title: 'Calendar Tags', links: [
     ]},
     {type: 'Link Group', lvl: 1, icos: [
-      { ico: 'plus', callback: () => console.log('crazy guys')},
+      { ico: 'plus', callback: () => console.log(3)},
     ], title: 'Labels', links: [
       {txt: '2 min', to: 'cusastasdf'},
-      {type: 'Input', show: true, callback: () => console.log('crazy guys'), placeholder: 'Add label'},
     ]},
     {type: 'Link Group', lvl: 1, title: 'Tag Group', links: [
     ]},
