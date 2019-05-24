@@ -4,7 +4,8 @@
     <div class='header'>
       <icon ico='cube' sz='tiny'></icon>
       <span class='title'>{{ link.title }}</span>
-      <span>
+      <span class='icons'>
+        <icon v-for='ico in link.icos' :key='`section-navigation-icon-${ico}`' :ico='ico.ico' @click='ico.callback' class='pointer' sz='medium'></icon>
         <icon ico='angle-down' @click='show = !show' class='toggle pointer' :class='[show ? "down" : "up"]' sz='medium'></icon>
       </span>
     </div>
@@ -73,9 +74,16 @@ export default Vue.extend({
   width: 100%;
 }
 
-.toggle {
+.icons {
   float: right;
   margin-top: 3px;
+}
+
+.icons .icon {
+  margin: 0 4px;
+}
+
+.toggle {
   transition-duration: .3s;
 }
 

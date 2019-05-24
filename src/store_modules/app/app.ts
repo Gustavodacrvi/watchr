@@ -1,5 +1,5 @@
 
-import { Routine, Interval, DateInterval } from '@/components/interfaces';
+import { Routine, Interval, DateInterval, Label } from '@/components/interfaces';
 import NavigationModule from '@/store_modules/app/navigation';
 
 const sameDay = (d1: Date, d2: Date) => {
@@ -22,6 +22,7 @@ export default {
     interval: {
       intervals: [] as Interval[],
     },
+    labels: [] as Label[],
     options: {
       clockConvention: '24',
     },

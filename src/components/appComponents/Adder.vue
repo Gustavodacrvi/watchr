@@ -6,11 +6,11 @@
     </div>
     <div key='inbox-task-adder-adder' class='adder'>
       <div>
-        <input :class='$store.state.theme.style' class='input card' name='input' placeholder='Task' autocomplete='off' v-model='value'/>
+        <input :class='$store.state.theme.style' class='input card' name='input' placeholder='Do something @interval #label $project %calendar_tag' autocomplete='off' v-model='value'/>
       </div>
       <div class='options'>
         <btn class='style-2'>{{ btnMsg }}</btn>
-        <alert @click='active = false' type='error'>Cancel</alert>
+        <alert class='pointer' @click='active = false' type='error'>Cancel</alert>
       </div>
     </div>
   </transition>
@@ -84,7 +84,6 @@ export default Vue.extend({
 
 .alert {
   margin: 6px;
-  cursor: pointer;
 }
 
 </style>

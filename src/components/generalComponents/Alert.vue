@@ -16,6 +16,14 @@ export default Vue.extend({
 
 <style scoped>
 
+.pointer {
+  cursor: pointer;
+}
+
+.pointer:hover {
+  text-decoration: underline;
+}
+
 .span-alert-error {
   color: #ec554d;
 }

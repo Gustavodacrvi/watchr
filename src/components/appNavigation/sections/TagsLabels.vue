@@ -5,7 +5,9 @@
   :middle="[
     {type: 'Link Group', lvl: 1, title: 'Calendar Tags', links: [
     ]},
-    {type: 'Link Group', lvl: 1, title: 'Labels', links: [
+    {type: 'Link Group', lvl: 1, icos: [
+      { ico: 'plus', callback: () => console.log('crazy guys')},
+    ], title: 'Labels', links: [
       {txt: '2 min', to: 'cusastasdf'},
     ]},
     {type: 'Link Group', lvl: 1, title: 'Tag Group', links: [
