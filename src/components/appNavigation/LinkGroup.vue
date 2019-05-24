@@ -18,16 +18,21 @@
       </template>
     </transition-group>
   </div>
+  <div v-else-if='link.type === "Input"'>
+    <sect-input :placeholder='link.placeholder' @click='link.callback' :show='link.show'></sect-input>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import Icon from '@/components/generalComponents/Icon.vue';
+import SectionInput from '@/components/appNavigation/SectionInput.vue';
 
 export default Vue.extend({
   name: 'group-link',
   components: {
-    icon: Icon,
+    'icon': Icon,
+    'sect-input': SectionInput,
   },
   props: {
     link: Object,

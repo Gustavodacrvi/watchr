@@ -9,6 +9,7 @@
       { ico: 'plus', callback: () => console.log('crazy guys')},
     ], title: 'Labels', links: [
       {txt: '2 min', to: 'cusastasdf'},
+      {type: 'Input', show: true, callback: () => console.log('crazy guys'), placeholder: 'Add label'},
     ]},
     {type: 'Link Group', lvl: 1, title: 'Tag Group', links: [
     ]},
