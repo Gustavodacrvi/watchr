@@ -52,7 +52,7 @@ export default Vue.extend({
       this.inputState = !state.wrong;
     },
     add() {
-      let tags = this.value.split(':');
+      const tags = this.value.split(':');
       this.result = tags;
     },
   },

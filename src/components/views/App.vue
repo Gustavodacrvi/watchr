@@ -43,7 +43,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      keys: '',
+      keys: [] as string[],
     };
   },
   created() {
@@ -56,13 +56,12 @@ export default Vue.extend({
   },
   methods: {
     openPopUp(event: any) {
-      this.keys += event.key;
+      this.keys.push(event.key);
       setTimeout(() => {
-        this.keys = '';
+        this.keys = [];
       }, 300);
-      if (this.keys.length === 1) {
-        this.$store.dispatch('app/nav/doubleKewpress', this.keys);
-        this.keys = '';
+      if (this.keys.length === 2) {
+        this.$store.dispatch('app/nav/doubleKeypress', this.keys);
       }
     },
   },

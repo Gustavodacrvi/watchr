@@ -71,10 +71,21 @@ export default {
     },
   },
   actions: {
-    doubleKewpress({ state, commit }: any, keys: string) {
-      if (keys === 'al') {
-        commit('pushPopUp', 'addlabel');
+    doubleKeypress({ commit }: any, keys: string) {
+      switch (keys[0]) {
+        case 'a': {
+          switch (keys[1]) {
+          case 'l': commit('pushPopUp', 'addlabel');
+          }
+        }
+        case 'Control': {
+          switch (keys[1]) {
+            case 'c': commit('hidePopUp');
+          }
+        }
       }
+    },
+    keypress({ commit }: any, key: string) {
     },
   },
 };
