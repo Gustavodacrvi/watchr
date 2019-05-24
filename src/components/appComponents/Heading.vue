@@ -1,8 +1,8 @@
 <template>
   <div class='heading'>
-    <div class='header'>
+    <div v-if='simple' class='header' :class='{pointer: simple}' @click='show = !show'>
       <span class='left'>{{ title }}</span>
-      <icon v-if='simple' :class='{right: simple, active: show}' class='pointer icon-color-hover' ico='angle-down' sz='tiny' @click='show = !show'></icon>
+      <icon v-if='simple' :class='{right: simple, active: show}' class='pointer icon-color-hover' ico='angle-down' sz='tiny'></icon>
     </div>
     <transition name='fade-transition'>
       <div v-if='show' class='content'>
@@ -57,6 +57,10 @@ export default Vue.extend({
 
 .content {
   margin: 14px 6px;
+}
+
+.pointer {
+  cursor: pointer;
 }
 
 </style>

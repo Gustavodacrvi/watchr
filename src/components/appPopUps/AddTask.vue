@@ -6,7 +6,8 @@
     <div class='input'>
       <div class='wrapper'>
         <heading :simple='true' title='Help' :showing='false'>
-          help help help
+          <span>You can create sub-labels using <span class='big'>:</span> .<br/><br/>
+          E.g: family:spouse, work:people:karen, work:office.<br/><br/>The outer tag is automatically created when non existing.</span>
         </heading>
         <app-input class='stretch' @state-change='updateState' placeholder='E.g: 5 minutes, full focus, work, family...'></app-input>
         <div class='options'>
@@ -71,6 +72,10 @@ export default Vue.extend({
 
 .alert {
   margin: 8px;
+}
+
+.big {
+  font-size: 1.5em;
 }
 
 </style>
