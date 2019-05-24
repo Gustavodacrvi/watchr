@@ -23,6 +23,12 @@ export default Vue.extend({
         this.state = '';
       }
     },
+    state() {
+      this.$emit('state-change', {
+        state: this.state,
+        wrong: this.state === 'wrong',
+      });
+    },
   },
 });
 </script>
@@ -39,6 +45,11 @@ export default Vue.extend({
   font-size: 1.01em;
   transition-duration: .2s;
   bottom: 0;
+}
+
+.stretch {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .input.wrong {
