@@ -1,5 +1,5 @@
 
-import { Routine, Interval, DateInterval, Tags } from '@/components/interfaces';
+import { Routine, Interval, DateInterval, Tag } from '@/components/interfaces';
 import NavigationModule from '@/store_modules/app/navigation';
 
 const sameDay = (d1: Date, d2: Date) => {
@@ -23,7 +23,7 @@ export default {
       intervals: [] as Interval[],
     },
     tags: {
-      labels: [] as Tags[],
+      labels: [] as Tag[],
     },
     options: {
       clockConvention: '24',
@@ -85,6 +85,10 @@ export default {
         if (data !== null) {
           state.interval = JSON.parse(data);
         }
+        data = localStorage.getItem('watchrTags');
+        if (data !== null) {
+          state.tags = JSON.parse(data);
+        }
       }
     },
     saveRoutines(state: any) {
@@ -98,6 +102,13 @@ export default {
       if (state.webStorage) {
         localStorage.setItem('watchrIntervals', JSON.stringify(
           state.interval,
+        ));
+      }
+    },
+    saveTags(state: any) {
+      if (state.webStorage) {
+        localStorage.setItem('watchrTags', JSON.stringify(
+          state.tags,
         ));
       }
     },
@@ -136,6 +147,10 @@ export default {
     addInterval({ state, commit }: any, interval: Interval) {
       state.intervals.push(interval);
       commit('saveIntervals');
+    },
+    addLabel({ state, commit }: any, label: Tag) {
+      state.tags.labels.push(label);
+      commit('saveTags');
     },
   },
 };

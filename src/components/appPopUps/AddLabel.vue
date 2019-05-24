@@ -30,6 +30,8 @@ import Button from '@/components/generalComponents/Button.vue';
 import Alert from '@/components/generalComponents/Alert.vue';
 import Heading from '@/components/appComponents/Heading.vue';
 
+import { Tag } from '@/components/interfaces';
+
 import mixin from 'vue-typed-mixins';
 import { app } from '@/components/mixins';
 
@@ -62,8 +64,14 @@ export default mixin(app).extend({
         if (value[value.length - 1] === ':') {
           value = value.slice(0, -1);
         }
-        if (!this.$store.getters['app/labelExists'](value)) {
-          this.$store.commit('app/addLabel',);
+        const values = value.split(':');
+        const exists = this.$store.getters['app/labelExists'](value);
+        if (!exists && values.length === 1) {
+          this.$store.dispatch('app/addLabel', {
+            id: this.createId(),
+            type: 'Label',
+            name: value,
+          } as Tag);
         }
       }
     },
