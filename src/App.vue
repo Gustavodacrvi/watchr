@@ -10,7 +10,7 @@
         </div>
       </transition>
     </section>
-    <pop-up></pop-up>
+    <pop-up v-if='isOnAppRoute'></pop-up>
     <mobile-section id='mobile-section' v-if='!$store.getters.NavbarisOnDesktop && !isOnAppRoute'></mobile-section>
     <toast></toast>
   </div>
@@ -117,10 +117,6 @@ body {
   right: 0;
   flex-direction: column;
   transition-duration: .3s;
-}
-
-.pop-up-opened {
-  background-color: rgba(0, 0, 0, .6) !important; 
 }
 
 .reduced-brightness {

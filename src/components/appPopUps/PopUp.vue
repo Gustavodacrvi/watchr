@@ -8,8 +8,6 @@
   </div>
 </template>
 
-
-
 <script lang="ts">
 import Vue from 'vue';
 import LoadingComponent from '@/components/generalComponents/Loading.vue';
