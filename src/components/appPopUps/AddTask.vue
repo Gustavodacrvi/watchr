@@ -12,7 +12,7 @@
         <app-input class='stretch' @state-change='updateState' placeholder='E.g: 5 minutes, full focus, work, family...'></app-input>
         <div class='options'>
           <btn class='medium'>Add label</btn>
-          <alert class='pointer' type='error'>Cancel</alert>
+          <alert class='pointer' type='error' @click='$store.commit("app/nav/hidePopUp")'>Cancel</alert>
         </div>
       </div>
     </div>

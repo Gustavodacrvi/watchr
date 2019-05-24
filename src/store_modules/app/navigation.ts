@@ -19,7 +19,7 @@ export default {
     clicked: false,
     iconClick: false,
     component: 'today',
-    popUp: 'addtask',
+    popUp: '',
     open,
     fixed,
     section: 'home',
@@ -28,6 +28,12 @@ export default {
 
   },
   mutations: {
+    hidePopUp(state: any) {
+      state.popUp = '';
+    },
+    pushPopUp(state: any, component: string) {
+      state.popUp = component;
+    },
     click(state: any) {
       state.clicked = true;
     },
