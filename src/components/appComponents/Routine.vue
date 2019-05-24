@@ -134,7 +134,9 @@ export default mixins(app).extend({
   beforeDestroy() {
     clearInterval(this.interval);
     const intervals: any = this.$refs['intervals-div'];
-    intervals.removeEventListener('scroll', this.saveScrollPosition);
+    if (this.routine) {
+      intervals.removeEventListener('scroll', this.saveScrollPosition);
+    }
   },
 });
 </script>

@@ -22,16 +22,6 @@ const AsyncComponent = (component: string) => ({
 });
 
 export default Vue.extend({
-  props: {
-    webStorage: Boolean,
-  },
-  created() {
-    if (this.webStorage) {
-      this.$store.commit('app/useWebStorage', true);
-    } else {
-      this.$store.commit('app/useWebStorage', false);
-    }
-  },
   components: {
     navigation: Navigation,
     anytime: () => AsyncComponent('appSections/overview/Anytime') as any,
@@ -48,10 +38,41 @@ export default Vue.extend({
     tags: () => AsyncComponent('appSections/Tags') as any,
     help: () => AsyncComponent('appSections/Help') as any,
   },
+  props: {
+    webStorage: Boolean,
+  },
+  data() {
+    return {
+      keys: '',
+    };
+  },
+  created() {
+    if (this.webStorage) {
+      this.$store.commit('app/useWebStorage', true);
+    } else {
+      this.$store.commit('app/useWebStorage', false);
+    }
+    window.addEventListener('keydown', this.openPopUp);
+  },
+  methods: {
+    openPopUp(event: any) {
+      this.keys += event.key;
+      setTimeout(() => {
+        this.keys = '';
+      }, 300);
+      if (this.keys.length === 1) {
+        this.$store.dispatch('app/nav/doubleKewpress', this.keys);
+        this.keys = '';
+      }
+    },
+  },
   computed: {
     currentSection(): string {
       return this.$store.state.app.nav.component;
     },
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.openPopUp);
   },
 });
 </script>

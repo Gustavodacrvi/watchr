@@ -21,7 +21,7 @@ const AsyncComponent = (component: string) => ({
 
 export default Vue.extend({
   components: {
-    addtask: () => AsyncComponent('appPopUps/AddTask') as any,
+    addlabel: () => AsyncComponent('appPopUps/AddLabel') as any,
   },
   computed: {
     popUpOpened(): boolean {

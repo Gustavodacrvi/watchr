@@ -71,6 +71,10 @@ export default {
     },
   },
   actions: {
-
+    doubleKewpress({ state, commit }: any, keys: string) {
+      if (keys === 'al') {
+        commit('pushPopUp', 'addlabel');
+      }
+    },
   },
 };

@@ -9,10 +9,12 @@
           <span>You can create sub-labels using <span class='big'>:</span> .<br/><br/>
           E.g: family:spouse, work:people:karen, work:office.<br/><br/>The outer tag is automatically created when non existing.</span>
         </heading>
-        <app-input class='stretch' @state-change='updateState' placeholder='E.g: 5 minutes, full focus, work, family...'></app-input>
+        <app-input class='stretch' @value-change='valueChange' @state-change='updateState' placeholder='E.g: 5 minutes, full focus, brain dead...'></app-input>
         <div class='options'>
-          <btn class='medium'>Add label</btn>
+          <btn class='medium' @click='add'>Add label</btn>
           <alert class='pointer' type='error' @click='$store.commit("app/nav/hidePopUp")'>Cancel</alert>
+          {{ result }}
+          <span class='right'>Press <strong>A + L</strong> to open this pop up.</span>
         </div>
       </div>
     </div>
@@ -38,11 +40,20 @@ export default Vue.extend({
   data() {
     return {
       inputState: false as boolean,
+      result: undefined as any,
+      value: '',
     };
   },
   methods: {
+    valueChange(value: string) {
+      this.value = value;
+    },
     updateState(state: any) {
       this.inputState = !state.wrong;
+    },
+    add() {
+      let tags = this.value.split(':');
+      this.result = tags;
     },
   },
 });
@@ -76,6 +87,11 @@ export default Vue.extend({
 
 .big {
   font-size: 1.5em;
+}
+
+.right {
+  float: right;
+  clear: right;
 }
 
 </style>

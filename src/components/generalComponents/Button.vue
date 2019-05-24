@@ -26,7 +26,6 @@ export default Vue.extend({
   -webkit-tap-highlight-color: rgba(0,0,0,0);
   -webkit-tap-highlight-color: transparent;
   transition-duration: .2s;
-  outline: none;
   font-family: 'Work Sans';
   top: 0;
 }

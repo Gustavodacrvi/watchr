@@ -19,11 +19,13 @@ export default Vue.extend({
       } else {
         this.state = '';
       }
+      this.$emit('value-change', this.value);
     },
     state() {
       this.$emit('state-change', {
         state: this.state,
         wrong: this.state === 'wrong',
+        value: this.value,
       });
     },
   },
