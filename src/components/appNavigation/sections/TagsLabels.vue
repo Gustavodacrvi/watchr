@@ -8,7 +8,6 @@
     {type: 'Link Group', lvl: 1, icos: [
       { ico: 'plus', callback: popUp},
     ], title: 'Labels', links: [
-      {txt: '2 min', to: 'cusastasdf'},
     ]},
     {type: 'Link Group', lvl: 1, title: 'Tag Group', links: [
     ]},
@@ -27,7 +26,7 @@ export default Vue.extend({
   },
   methods: {
     popUp() {
-      this.$store.commit('app/nav/pushPopUp', 'addtask');
+      this.$store.commit('app/nav/pushPopUp', 'addlabel');
     },
   },
 });

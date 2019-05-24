@@ -22,12 +22,28 @@ export default {
     interval: {
       intervals: [] as Interval[],
     },
-    tags: [] as Tags[],
+    tags: {
+      labels: [] as Tags[],
+    },
     options: {
       clockConvention: '24',
     },
   },
   getters: {
+    labelExists: (state: any) => (labelName: string): boolean => {
+      const values = labelName.split(':');
+      const labels = state.tags.labels;
+      if (labels.length === 0) {
+        const length = labels.length;
+        for (let i = 0; i < length; i++) {
+          if (labels[i] === values[0]) {
+            return true;
+          }
+        }
+        return false;
+      }
+      return true;
+    },
     getRoutineById: (state: any) => (key: string): string => {
       return state.routine.routines.find((el: Routine) => {
         return el.id === key;

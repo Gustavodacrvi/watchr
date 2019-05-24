@@ -9,7 +9,7 @@ export default Vue.extend({
   data() {
     return {
       value: undefined as any,
-      state: '',
+      state: undefined as any,
     };
   },
   watch: {

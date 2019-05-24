@@ -15,6 +15,7 @@
           <alert class='pointer' type='error' @click='$store.commit("app/nav/hidePopUp")'>Cancel</alert>
           {{ result }}
           <span class='right'>Press <strong>A + L</strong> to open this pop up.</span>
+          <span class='right'>Press <strong>CTRL + C</strong> to close any pop up</span>
         </div>
       </div>
     </div>
@@ -39,7 +40,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      inputState: false as boolean,
+      validInput: false as boolean,
       result: undefined as any,
       value: '',
     };
@@ -49,11 +50,17 @@ export default Vue.extend({
       this.value = value;
     },
     updateState(state: any) {
-      this.inputState = !state.wrong;
+      this.validInput = !state.wrong;
     },
     add() {
-      const tags = this.value.split(':');
-      this.result = tags;
+      if (this.validInput) {
+        let value = this.value.trim();
+        if (value[value.length - 1] === ':') {
+          value = value.slice(0, -1);
+        }
+        console.log(value)
+        this.result = this.$store.getters['app/labelExists'](value);
+      }
     },
   },
 });
