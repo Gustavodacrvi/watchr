@@ -1,11 +1,6 @@
 <template>
   <div id='user-app'>
     <navigation></navigation>
-    <div id='app-pop-ups'>
-      <div id='app-pop-up-wrapper'>
-        <component class='pop-up' :is='currentPopUp'></component>
-      </div>
-    </div>
     <div class='user-app-content' :class='{navOpened: $store.state.app.nav.open}'>
       <transition name='fade-transition' mode='out-in'>
         <component class='perspective' :is='currentSection'></component>
@@ -52,15 +47,10 @@ export default Vue.extend({
     routines: () => AsyncComponent('appSections/Routines') as any,
     tags: () => AsyncComponent('appSections/Tags') as any,
     help: () => AsyncComponent('appSections/Help') as any,
-    // pop ups
-    addtask: () => AsyncComponent('appPopUps/AddTask') as any,
   },
   computed: {
     currentSection(): string {
       return this.$store.state.app.nav.component;
-    },
-    currentPopUp(): string {
-      return this.$store.state.app.nav.popUp;
     },
   },
 });
@@ -86,26 +76,6 @@ export default Vue.extend({
 
 .perspective {
   margin-top: -25px;
-}
-
-#app-pop-ups {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-}
-
-#app-pop-up-wrapper {
-  position: relative;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.pop-up {
-  width: 400px;
-  height: 100px;
-  background-color: red;
-  margin-top: 100px;
 }
 
 @media screen and (max-width: 825px) {

@@ -13,5 +13,8 @@ export default Vue.extend({
 
 <style scoped>
 
+.pop-up {
+  flex-basis: 400px;
+}
 
 </style>

@@ -10,6 +10,7 @@
         </div>
       </transition>
     </section>
+    <pop-up></pop-up>
     <mobile-section id='mobile-section' v-if='!$store.getters.NavbarisOnDesktop && !isOnAppRoute'></mobile-section>
     <toast></toast>
   </div>
@@ -25,6 +26,8 @@ import MobileSection from '@/components/navigation/mobile/MobileSection.vue';
 import Toast from '@/components/generalComponents/Toast.vue';
 import Loading from '@/components/generalComponents/Loading.vue';
 
+import PopUps from '@/components/appPopUps/PopUp.vue';
+
 import { getCookie, setCookie } from './assets/javaScript/cookies';
 
 export default Vue.extend({
@@ -34,6 +37,7 @@ export default Vue.extend({
     'toast': Toast,
     'loading': Loading,
     'app-nav-bar': AppNavBar,
+    'pop-up': PopUps,
   },
   data() {
     return {
@@ -87,7 +91,6 @@ export default Vue.extend({
   background-color: #282828;
 }
 
-
 @font-face {
   font-family: 'Work Sans';
   src: url('/assets/fonts/WorkSans-Regular.otf');
@@ -114,6 +117,19 @@ body {
   right: 0;
   flex-direction: column;
   transition-duration: .3s;
+}
+
+.pop-up-opened {
+  background-color: rgba(0, 0, 0, .6) !important; 
+}
+
+.reduced-brightness {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 100;
 }
 
 #mobile-section {
