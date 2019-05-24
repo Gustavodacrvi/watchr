@@ -34,6 +34,7 @@ export default Vue.extend({
     ico: String,
     top: Array,
     middle: Array,
+    middleInput: Object,
     bottom: Array,
   },
   methods: {

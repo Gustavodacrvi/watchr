@@ -1,12 +1,12 @@
 
-import { Routine, Interval, DateInterval } from '@/components/interfaces';
+import { Routine, Interval, DateInterval, Tags } from '@/components/interfaces';
 import NavigationModule from '@/store_modules/app/navigation';
 
 const sameDay = (d1: Date, d2: Date) => {
   return d1.getFullYear() === d2.getFullYear() &&
     d1.getMonth() === d2.getMonth() &&
     d1.getDate() === d2.getDate();
-}
+};
 
 export default {
   namespaced: true,
@@ -22,6 +22,7 @@ export default {
     interval: {
       intervals: [] as Interval[],
     },
+    tags: [] as Tags[],
     options: {
       clockConvention: '24',
     },
@@ -68,7 +69,6 @@ export default {
         if (data !== null) {
           state.interval = JSON.parse(data);
         }
-        console.log(state)
       }
     },
     saveRoutines(state: any) {

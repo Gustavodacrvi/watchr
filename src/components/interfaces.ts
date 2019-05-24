@@ -37,7 +37,8 @@ export interface Routine {
   >;
 }
 
-export interface Label {
+export interface Tags {
+  type: 'Label' | 'Calendar';
   id: string;
   name: string;
 }
@@ -47,5 +48,5 @@ export interface Interval {
   name: string;
   color: string; // hex
   tasks: string[];
-  tags: Label[];
+  tags: Tags[];
 }

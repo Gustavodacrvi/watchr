@@ -1,5 +1,5 @@
 <template>
-  <span :class='["span-alert-" + type,$store.state.theme.style]'>
+  <span @click='$emit("click")' class='alert' :class='["span-alert-" + type,$store.state.theme.style]'>
     <slot></slot>
   </span>
 </template>
@@ -16,8 +16,16 @@ export default Vue.extend({
 
 <style scoped>
 
+.pointer {
+  cursor: pointer;
+}
+
+.pointer:hover {
+  text-decoration: underline;
+}
+
 .span-alert-error {
-  color: #ecec4b;
+  color: #ec554d;
 }
 
 </style>

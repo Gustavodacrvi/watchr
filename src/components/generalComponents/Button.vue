@@ -37,9 +37,14 @@ export default Vue.extend({
 
 .button:hover {
   background-color: #bd9bfd;
-  box-shadow: 0 2px 4px #A97CFC;
+  box-shadow: 0 1px 4px #A97CFC;
 }
 
+.style-2 {
+  padding: 8px;
+  font-size: 0.9em;
+  border-radius: 100px;
+}
 
 </style>
 

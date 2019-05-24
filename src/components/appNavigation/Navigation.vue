@@ -40,7 +40,7 @@ export default Vue.extend({
       this.$store.commit('app/nav/toggleFixed');
     },
     hideNav() {
-      if (!this.$store.state.app.nav.fixed && this.$store.getters.NavbarisOnDesktop) {
+      if (!this.$store.state.app.nav.fixed) {
         this.$store.commit('app/nav/hide');
       }
     },
