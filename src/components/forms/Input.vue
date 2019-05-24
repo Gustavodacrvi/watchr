@@ -170,8 +170,8 @@ export default Vue.extend({
 }
 
 .wrong-input {
-  border: 2px solid #ecec4b !important;
-  box-shadow: 0 0 2px #A97CFC;
+  border: 2px solid #ec554d !important;
+  box-shadow: 0 0 2px #ec554d;
 }
 
 .input-el:focus {

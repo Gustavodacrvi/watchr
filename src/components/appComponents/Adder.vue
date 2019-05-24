@@ -9,7 +9,7 @@
         <input :class='$store.state.theme.style' class='input card' name='input' placeholder='Do something @interval #label $project %calendar_tag' autocomplete='off' v-model='value'/>
       </div>
       <div class='options'>
-        <btn class='style-2'>{{ btnMsg }}</btn>
+        <btn class='tiny-round'>{{ btnMsg }}</btn>
         <alert class='pointer' @click='active = false' type='error'>Cancel</alert>
       </div>
     </div>

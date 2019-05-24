@@ -15,15 +15,36 @@ import Navigation from '@/components/appNavigation/Navigation.vue';
 import LoadingComponent from '@/components/generalComponents/Loading.vue';
 
 const AsyncComponent = (component: string) => ({
-  component: import(`./../appSections/${component}.vue`).then((m) => m.default),
+  component: import(`./../${component}.vue`).then((m) => m.default),
   loading: LoadingComponent,
   delay: 200,
   timeout: 3000,
 });
 
 export default Vue.extend({
+  components: {
+    navigation: Navigation,
+    anytime: () => AsyncComponent('appSections/overview/Anytime') as any,
+    inbox: () => AsyncComponent('appSections/overview/Inbox') as any,
+    someday: () => AsyncComponent('appSections/overview/Someday') as any,
+    today: () => AsyncComponent('appSections/overview/Today') as any,
+    upcoming: () => AsyncComponent('appSections/overview/Upcoming') as any,
+    custom: () => AsyncComponent('appSections/perspectives/Custom') as any,
+    tasks: () => AsyncComponent('appSections/Tasks') as any,
+    intervals: () => AsyncComponent('appSections/Intervals') as any,
+    settings: () => AsyncComponent('appSections/Settings') as any,
+    statistics: () => AsyncComponent('appSections/Statistics') as any,
+    routines: () => AsyncComponent('appSections/Routines') as any,
+    tags: () => AsyncComponent('appSections/Tags') as any,
+    help: () => AsyncComponent('appSections/Help') as any,
+  },
   props: {
     webStorage: Boolean,
+  },
+  data() {
+    return {
+      keys: [] as string[],
+    };
   },
   created() {
     if (this.webStorage) {
@@ -31,27 +52,26 @@ export default Vue.extend({
     } else {
       this.$store.commit('app/useWebStorage', false);
     }
+    window.addEventListener('keydown', this.openPopUp);
   },
-  components: {
-    navigation: Navigation,
-    anytime: () => AsyncComponent('overview/Anytime') as any,
-    inbox: () => AsyncComponent('overview/Inbox') as any,
-    someday: () => AsyncComponent('overview/Someday') as any,
-    today: () => AsyncComponent('overview/Today') as any,
-    upcoming: () => AsyncComponent('overview/Upcoming') as any,
-    custom: () => AsyncComponent('perspectives/Custom') as any,
-    tasks: () => AsyncComponent('Tasks') as any,
-    intervals: () => AsyncComponent('Intervals') as any,
-    settings: () => AsyncComponent('Settings') as any,
-    statistics: () => AsyncComponent('Statistics') as any,
-    routines: () => AsyncComponent('Routines') as any,
-    tags: () => AsyncComponent('Tags') as any,
-    help: () => AsyncComponent('Help') as any,
+  methods: {
+    openPopUp(event: any) {
+      this.keys.push(event.key);
+      setTimeout(() => {
+        this.keys = [];
+      }, 300);
+      if (this.keys.length === 2) {
+        this.$store.dispatch('app/nav/doubleKeypress', this.keys);
+      }
+    },
   },
   computed: {
     currentSection(): string {
       return this.$store.state.app.nav.component;
     },
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.openPopUp);
   },
 });
 </script>

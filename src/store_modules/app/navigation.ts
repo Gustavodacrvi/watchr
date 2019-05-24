@@ -19,6 +19,7 @@ export default {
     clicked: false,
     iconClick: false,
     component: 'today',
+    popUp: '',
     open,
     fixed,
     section: 'home',
@@ -27,6 +28,12 @@ export default {
 
   },
   mutations: {
+    hidePopUp(state: any) {
+      state.popUp = '';
+    },
+    pushPopUp(state: any, component: string) {
+      state.popUp = component;
+    },
     click(state: any) {
       state.clicked = true;
     },
@@ -64,6 +71,21 @@ export default {
     },
   },
   actions: {
-
+    doubleKeypress({ commit }: any, keys: string) {
+      switch (keys[0]) {
+        case 'a': {
+          switch (keys[1]) {
+          case 'l': commit('pushPopUp', 'addlabel');
+          }
+        }
+        case 'Control': {
+          switch (keys[1]) {
+            case 'c': commit('hidePopUp');
+          }
+        }
+      }
+    },
+    keypress({ commit }: any, key: string) {
+    },
   },
 };

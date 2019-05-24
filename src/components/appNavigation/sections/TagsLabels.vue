@@ -6,7 +6,7 @@
     {type: 'Link Group', lvl: 1, title: 'Calendar Tags', links: [
     ]},
     {type: 'Link Group', lvl: 1, icos: [
-      { ico: 'plus', callback: () => console.log(3)},
+      { ico: 'plus', callback: popUp},
     ], title: 'Labels', links: [
       {txt: '2 min', to: 'cusastasdf'},
     ]},
@@ -24,6 +24,11 @@ import Section from '@/components/appNavigation/Section.vue';
 export default Vue.extend({
   components: {
     'icon-section': Section,
+  },
+  methods: {
+    popUp() {
+      this.$store.commit('app/nav/pushPopUp', 'addtask');
+    },
   },
 });
 
