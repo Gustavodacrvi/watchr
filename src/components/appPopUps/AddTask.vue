@@ -5,9 +5,11 @@
     </div>
     <div class='input'>
       <div class='wrapper'>
-        <app-input class='stretch' @state-change='updateState'></app-input>
+        <heading>fds</heading>
+        <app-input class='stretch' @state-change='updateState' placeholder='E.g: 5 minutes, full focus, work, family...'></app-input>
         <div class='options'>
-          <btn class='left tiny'>Add label</btn>
+          <btn class='medium'>Add label</btn>
+          <alert class='pointer' type='error'>Cancel</alert>
         </div>
       </div>
     </div>
@@ -19,12 +21,16 @@ import Vue from 'vue';
 import Title from '@/components/generalComponents/Heading.vue';
 import Input from '@/components/appComponents/Input.vue';
 import Button from '@/components/generalComponents/Button.vue';
+import Alert from '@/components/generalComponents/Alert.vue';
+import Heading from '@/components/appComponents/Heading.vue';
 
 export default Vue.extend({
   components: {
     'app-title': Title,
     'app-input': Input,
     'btn': Button,
+    'alert': Alert,
+    'heading': Heading,
   },
   data() {
     return {
@@ -61,9 +67,8 @@ export default Vue.extend({
   margin-top: 10px;
 }
 
-.left {
-  float: left;
-  clear: left;
+.alert {
+  margin: 8px;
 }
 
 </style>

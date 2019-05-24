@@ -1,14 +1,11 @@
 <template>
-  <input :class='[$store.state.theme.style, state]' class='input' name='input' :placeholder='placeholder' autocomplete='off' v-model='value'/>
+  <input :class='[$store.state.theme.style, state]' class='input' name='input' autocomplete='off' v-model='value'/>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
 export default Vue.extend({
-  props: {
-    placeholder: String,
-  },
   data() {
     return {
       value: undefined as any,

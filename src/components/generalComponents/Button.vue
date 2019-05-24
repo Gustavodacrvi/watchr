@@ -46,6 +46,13 @@ export default Vue.extend({
   border-radius: 12px;
 }
 
+.medium {
+  padding: 12px;
+  font-size: 0.9em;
+  border-radius: 12px;
+}
+
+
 .tiny-round {
   border-radius: 100px;
 }
