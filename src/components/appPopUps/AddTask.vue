@@ -5,7 +5,9 @@
     </div>
     <div class='input'>
       <div class='wrapper'>
-        <heading>fds</heading>
+        <heading :simple='true' title='Help' :showing='false'>
+          help help help
+        </heading>
         <app-input class='stretch' @state-change='updateState' placeholder='E.g: 5 minutes, full focus, work, family...'></app-input>
         <div class='options'>
           <btn class='medium'>Add label</btn>
