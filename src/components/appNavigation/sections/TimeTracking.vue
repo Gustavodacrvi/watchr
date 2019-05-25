@@ -5,7 +5,7 @@
     {txt: 'Last 7 days', to: 'last7daystimetrack', id: 'last 7 days-timetracking-perspective'},
   ]" 
   :middle="[
-    {type: 'Link Group', lvl: 1, title: 'Reminders', links: [
+    {type: 'Link Group', title: 'Reminders', links: [
     ]},
   ]" 
   :bottom="[]"

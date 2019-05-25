@@ -3,25 +3,25 @@
     {txt: 'Untagged', to: 'ntagged', id: 'tags-untagged'},
   ]" 
   :middle="[
-    {type: 'Link Group', lvl: 1, title: 'Calendar Tags', links: [
-      {txt: 'fuck ass', lvl: 1, to: 'asdfasdfasf', id: 'jfkdsaçlçalsdfj', subLinks: [
-        {txt: 'sub link2', to: 'fucking', id: 'suck dick', lvl: 2},
-        {txt: 'sub link5', to: 'fucking', id: 'suck dick1', lvl: 2},
-        {txt: 'fuck ass', to: 'asdfasdfasf', lvl: 2, id: 'jfkdsaçlçalsfdsadfj', subLinks: [
-          {txt: 'sub link2', to: 'fucking', id: 'suck dickasfd', lvl: 3},
-          {txt: 'sub link5', to: 'fucking', id: 'suck dick1fdf', lvl: 3},
-          {txt: 'fuck ass', to: 'asdfasdfasf', lvl: 3, id: 'jfkdsaçlçalsfdsadfj', subLinks: [
-            {txt: 'sub link2', to: 'fucking', id: 'suck dickasfd', lvl: 4},
-            {txt: 'sub link5', to: 'fucking', id: 'suck dick1fdf', lvl: 4},
-            {txt: 'fuck ass', to: 'asdfasdfasf', lvl: 4, id: 'jfkdsaçlçalsfdsadfj'}
+    {type: 'Link Group', title: 'Calendar Tags', links: [
+      {txt: 'fuck ass', to: 'asdfasdfasf', id: 'jfkdsaçlçalsdfj', subLinks: [
+        {txt: 'sub link2', to: 'fucking', id: 'suck dick'},
+        {txt: 'sub link5', to: 'fucking', id: 'suck dick1'},
+        {txt: 'fuck ass', to: 'asdfasdfasf', id: 'jfkdsaçlçalsfdsadfj', subLinks: [
+          {txt: 'sub link2', to: 'fucking', id: 'suck dickasfd'},
+          {txt: 'sub link5', to: 'fucking', id: 'suck dick1fdf'},
+          {txt: 'fuck ass', to: 'asdfasdfasf', id: 'jfkdsaçlçalsfdsadfj', subLinks: [
+            {txt: 'sub link2', to: 'fucking', id: 'suck dickasfd'},
+            {txt: 'sub link5', to: 'fucking', id: 'suck dick1fdf'},
+            {txt: 'fuck ass', to: 'asdfasdfasf', id: 'jfkdsaçlçalsfdsadfj'}
           ]}
         ]}
       ]},
     ]},
-    {type: 'Link Group', lvl: 1, icos: [
+    {type: 'Link Group', icos: [
       { ico: 'plus', callback: popUp},
     ], title: 'Labels', links: labels},
-    {type: 'Link Group', lvl: 1, title: 'Tag Group', links: [
+    {type: 'Link Group', title: 'Tag Group', links: [
     ]},
   ]" 
   :bottom="[]"
