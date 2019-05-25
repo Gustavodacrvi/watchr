@@ -33,11 +33,7 @@ import { ToastBus } from '@/components/generalComponents/Toast.vue';
 
 import { Tag } from '@/components/interfaces';
 
-import mixin from 'vue-typed-mixins';
-import { app } from '@/components/mixins';
-
-export default mixin(app).extend({
-  mixins: [app as any],
+export default Vue.extend({
   components: {
     'app-title': Title,
     'app-input': Input,

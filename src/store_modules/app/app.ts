@@ -1,4 +1,6 @@
 
+import uuid from 'uuid';
+
 import { Routine, Interval, DateInterval, Tag, ToastObj } from '@/components/interfaces';
 import NavigationModule from '@/store_modules/app/navigation';
 
@@ -163,15 +165,37 @@ export default {
       state.tags.labels.splice(index, 1);
       commit('saveTags');
     },
+    addLabelNode({ state, dispatch }: any, node: string[], labels: any) {
+      if (labels === undefined) {
+        labels = state.tags.labels;
+      }
+
+      if (node.length > 1) {
+        const subLabel = labels.find((el: Tag) => {
+          return el.name === node[0];
+        });
+        node.shift();
+        dispatch(node, subLabel.subLabels);
+      } else {
+        labels.push({
+          type: 'Label',
+          name: node[0],
+          id: uuid.v4(),
+          subLabels: [],
+        } as Tag);
+      }
+    },
     addLabelBranch({ commit, dispatch, getters }: any, values: string[]) {
       const length = values.length;
 
+      // fuck
+
       for (let i = 0;i < length; i++) {
         let splice = values.slice();
-        splice.splice(i);
+        splice.splice(i + 1);
         
         if (!getters.labelBranchExists(splice)) {
-          commit('addLabelNode', splice);
+          dispatch('addLabelNode', splice);
         } else if (i + 1 === length) {
           ToastBus.$emit('addToast', {
             msg: `Label ${values[values.length - 1]} already exists.`,
@@ -179,9 +203,7 @@ export default {
             type: 'error',
           });
         }
-      }      
-
-
+      }
 
       // commit('saveTags');
       /* ToastBus.$emit('addToast', {
