@@ -27,6 +27,9 @@ export default Vue.extend({
     popUp() {
       this.$store.commit('app/nav/pushPopUp', 'addlabel');
     },
+    deleteLabel(id: string) {
+      console.log('delete', id);
+    },
   },
   computed: {
     labels(): any[] {
@@ -38,6 +41,9 @@ export default Vue.extend({
           txt: labels[i].name,
           to: 'custom',
           id: labels[i].id,
+          icos: [
+           {ico: 'times', callback: this.deleteLabel},
+          ],
         });
       }
       return links;

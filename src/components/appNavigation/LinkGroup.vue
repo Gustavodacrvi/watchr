@@ -1,5 +1,11 @@
 <template>
-  <span v-if='!link.type' class='navigation-link' @click='navigate(link)' :class='{active: isLinkActive(link.txt)}' :key='link.id'><icon v-if='link.ico' class='link-icon' :ico='link.ico' sz='tiny'></icon>{{ link.txt }}</span>
+  <div v-if='!link.type' class='navigation-wrapper'>
+    <span class='navigation-link' @click='navigate(link)' :class='{active: isLinkActive(link.txt)}' :key='link.id'><icon v-if='link.ico' class='link-icon' :ico='link.ico' sz='tiny'></icon>{{ link.txt }}
+    </span>
+    <span class='navigation-icons' v-if='link.icos'>
+      <icon class='navigation-icon pointer icon-color-hover' v-for='ico in link.icos' :key='ico.ico' :ico='ico.ico' @click='ico.callback(link.id)'></icon>
+    </span>
+  </div>
   <div class='link-group' v-else-if='link.type === "Link Group"'>
     <div class='header'>
       <icon ico='cube' sz='tiny'></icon>
@@ -59,7 +65,7 @@ export default Vue.extend({
 .navigation-link {
   display: flex;
   cursor: pointer;
-  margin-top: 8px;
+  flex-basis: 95%;
   font-size: 1.1em;
   transition-duration: .2s;
 }
@@ -119,6 +125,22 @@ export default Vue.extend({
 .header .title {
   margin-left: 4px;
   font-size: 1.1em;
+}
+
+.navigation-wrapper {
+  display: flex;
+  position: relative;
+  margin-top: 8px;
+}
+
+.navigation-icons {
+  flex-basis: 5%;
+  display: flex;
+  align-items: center;
+}
+
+.navigation-icon {
+  margin-left: 3px;
 }
 
 </style>
