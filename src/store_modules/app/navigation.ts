@@ -19,6 +19,7 @@ export default {
     clicked: false,
     iconClick: false,
     component: 'today',
+    componentText: 'Today',
     popUp: '',
     open,
     fixed,
@@ -62,9 +63,9 @@ export default {
     show(state: any) {
       state.open = true;
     },
-    pushComp(state: any, component: string) {
-      localStorage.setItem('watchrSavedUserComponent', component);
-      state.component = component;
+    pushComp(state: any, object: any) {
+      state.component = object.component;
+      state.componentText = object.txt;
     },
     selectSection(state: any, ico: string) {
       state.section = ico;

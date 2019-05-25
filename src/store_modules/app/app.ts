@@ -157,7 +157,7 @@ export default {
       commit('saveTags');
       ToastBus.$emit('addToast', {
         msg: 'Added label successfuly',
-        duration_seconds: null,
+        duration_seconds: 3,
         type: 'success',
       } as ToastObj);
     },
