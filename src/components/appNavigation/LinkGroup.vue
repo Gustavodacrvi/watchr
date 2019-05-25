@@ -1,5 +1,5 @@
 <template>
-  <span v-if='!link.type' class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'><icon v-if='link.ico' class='link-icon' :ico='link.ico' sz='tiny'></icon>{{ link.txt }}</span>
+  <span v-if='!link.type' class='navigation-link' @click='link.callback();navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.id'><icon v-if='link.ico' class='link-icon' :ico='link.ico' sz='tiny'></icon>{{ link.txt }}</span>
   <div class='link-group' v-else-if='link.type === "Link Group"'>
     <div class='header'>
       <icon ico='cube' sz='tiny'></icon>
@@ -12,7 +12,7 @@
     <transition-group name='fade-transition'>
       <template v-if='show'>
         <template v-for='subLink in link.links'>
-          <group-link v-if='subLink.to' :key='subLink.to' :link='subLink' :class='`level-${link.lvl}`'></group-link>
+          <group-link v-if='subLink.to' :key='subLink.id' :link='subLink' :class='`level-${link.lvl}`'></group-link>
           <group-link v-else :key='subLink.title + "vue-key"' :link='subLink' :class='`level-${link.lvl}`'></group-link>
         </template>
       </template>

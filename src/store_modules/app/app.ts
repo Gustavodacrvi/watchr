@@ -1,6 +1,9 @@
 
-import { Routine, Interval, DateInterval, Tag } from '@/components/interfaces';
+import { Routine, Interval, DateInterval, Tag, ToastObj } from '@/components/interfaces';
 import NavigationModule from '@/store_modules/app/navigation';
+
+// this error doesn't make sense, just leave it there
+import { ToastBus } from '@/components/generalComponents/Toast.vue';
 
 const sameDay = (d1: Date, d2: Date) => {
   return d1.getFullYear() === d2.getFullYear() &&
@@ -33,10 +36,10 @@ export default {
     labelExists: (state: any) => (labelName: string): boolean => {
       const values = labelName.split(':');
       const labels = state.tags.labels;
-      if (labels.length === 0) {
+      if (values.length === 1) {
         const length = labels.length;
         for (let i = 0; i < length; i++) {
-          if (labels[i] === values[0]) {
+          if (labels[i].name === values[0]) {
             return true;
           }
         }
@@ -115,6 +118,7 @@ export default {
     deleteLocalStorageData() {
       localStorage.removeItem('watchrRoutines');
       localStorage.removeItem('watchrIntervals');
+      localStorage.removeItem('watchrTags');
     },
   },
   actions: {
@@ -151,6 +155,11 @@ export default {
     addLabel({ state, commit }: any, label: Tag) {
       state.tags.labels.push(label);
       commit('saveTags');
+      ToastBus.$emit('addToast', {
+        msg: 'Added label successfuly',
+        duration_seconds: null,
+        type: 'success',
+      } as ToastObj);
     },
   },
 };

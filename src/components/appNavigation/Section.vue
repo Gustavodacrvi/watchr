@@ -4,15 +4,15 @@
     <transition name='fade-transition'>
       <div class='section-content' v-show='isActive && isNavOpened'>
         <div class='top'>
-          <link-group v-for='link in top' :link='link' :key='link.to'></link-group>
+          <link-group v-for='link in top' :link='link' :key='link.id'></link-group>
         </div>
         <hr class='margin'/>
         <div class='middle'>
-          <link-group v-for='link in middle' :link='link' :key='link.to'></link-group>
+          <link-group v-for='link in middle' :link='link' :key='link.id'></link-group>
         </div>
         <hr class='margin'/>
         <div class='bottom'>
-          <link-group v-for='link in bottom' :link='link' :key='link.to'></link-group>
+          <link-group v-for='link in bottom' :link='link' :key='link.id'></link-group>
         </div>
       </div>
     </transition>

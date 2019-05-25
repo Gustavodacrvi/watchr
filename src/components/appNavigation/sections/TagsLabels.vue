@@ -29,14 +29,14 @@ export default Vue.extend({
     },
   },
   computed: {
-    labels(): Array<any> {
+    labels(): any[] {
       const labels = this.$store.state.app.tags.labels;
       const links = [];
       const length = labels.length;
       for (let i = 0; i < length; i++) {
         links.push({
           txt: labels[i].name,
-          to: 'custom'
+          to: 'custom',
         });
       }
       return links;
