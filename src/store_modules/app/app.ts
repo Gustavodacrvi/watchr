@@ -148,6 +148,13 @@ export default {
       }
       commit('saveRoutines');
     },
+    deleteLabelById({ state, commit }: any, id: string) {
+      const index = state.tags.labels.findIndex((el: Tag) => {
+        return el.id === id;
+      });
+      state.tags.labels.splice(index, 1);
+      commit('saveTags');
+    },
     addInterval({ state, commit }: any, interval: Interval) {
       state.intervals.push(interval);
       commit('saveIntervals');

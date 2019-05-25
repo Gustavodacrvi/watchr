@@ -28,7 +28,7 @@ export default Vue.extend({
       this.$store.commit('app/nav/pushPopUp', 'addlabel');
     },
     deleteLabel(id: string) {
-      console.log('delete', id);
+      this.$store.dispatch('app/deleteLabelById', id);
     },
   },
   computed: {
