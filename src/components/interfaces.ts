@@ -41,7 +41,7 @@ export interface Tag {
   type: 'Label' | 'Calendar';
   id: string;
   name: string;
-  subLabels?: Tag[];
+  subLabels: Tag[];
 }
 
 export interface Interval {
