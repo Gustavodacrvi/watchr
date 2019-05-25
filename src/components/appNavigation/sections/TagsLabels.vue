@@ -4,19 +4,6 @@
   ]" 
   :middle="[
     {type: 'Link Group', title: 'Calendar Tags', links: [
-      {txt: 'fuck ass', to: 'asdfasdfasf', id: 'jfkdsaçlçalsdfj', subLinks: [
-        {txt: 'sub link2', to: 'fucking', id: 'suck dick'},
-        {txt: 'sub link5', to: 'fucking', id: 'suck dick1'},
-        {txt: 'fuck ass', to: 'asdfasdfasf', id: 'jfkdsaçlçalsfdsadfj', subLinks: [
-          {txt: 'sub link2', to: 'fucking', id: 'suck dickasfd'},
-          {txt: 'sub link5', to: 'fucking', id: 'suck dick1fdf'},
-          {txt: 'fuck ass', to: 'asdfasdfasf', id: 'jfkdsaçlçalsfdsadfj', subLinks: [
-            {txt: 'sub link2', to: 'fucking', id: 'suck dickasfd'},
-            {txt: 'sub link5', to: 'fucking', id: 'suck dick1fdf'},
-            {txt: 'fuck ass', to: 'asdfasdfasf', id: 'jfkdsaçlçalsfdsadfj'}
-          ]}
-        ]}
-      ]},
     ]},
     {type: 'Link Group', icos: [
       { ico: 'plus', callback: popUp},
@@ -43,6 +30,25 @@ export default Vue.extend({
     deleteLabel(id: string) {
       this.$store.dispatch('app/deleteLabelById', id);
     },
+    getSubLabels(label: any): any[] {
+      const labels = label.subLabels;
+      const length = labels.length;
+      const subLinks = [];
+
+      for (let i = 0; i < length; i++) {
+        subLinks.push({
+          txt: labels[i].name,
+          to: 'custom',
+          id: labels[i].id,
+          subLinks: this.getSubLabels(labels[i]),
+          icos: [
+            {ico: 'times', callback: this.deleteLabel},
+          ],
+        });
+      }
+
+      return subLinks;
+    },
   },
   computed: {
     labels(): any[] {
@@ -50,15 +56,19 @@ export default Vue.extend({
       const links = [];
       const length = labels.length;
       for (let i = 0; i < length; i++) {
+        const subLinks = [];
+
         links.push({
           txt: labels[i].name,
           to: 'custom',
           id: labels[i].id,
+          subLinks: this.getSubLabels(labels[i]),
           icos: [
            {ico: 'times', callback: this.deleteLabel},
           ],
         });
       }
+
       return links;
     },
   },

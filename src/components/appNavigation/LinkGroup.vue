@@ -1,13 +1,15 @@
 <template>
   <div v-if='!link.type' class='link'>
-    <div class='navigation-wrapper'>
+    <div class='navigation-wrapper' @mouseover='showIcon = true' @mouseleave='showIcon = false'>
       <span class='navigation-link' @click='navigate(link)' :class='{active: isLinkActive(link.txt)}' :key='link.id'><icon v-if='link.ico' class='link-icon' :ico='link.ico' sz='tiny'></icon>{{ link.txt }}
       </span>
       <span class='navigation-icons'>
-        <template v-if='link.icos'>
-          <icon class='navigation-icon pointer icon-color-hover' v-for='ico in link.icos' :key='ico.ico' :ico='ico.ico' @click='ico.callback(link.id)'></icon>
-        </template>
-        <icon v-if='link.subLinks' class='navigation-icon pointer icon-color-hover' :key='`hide-sublinks-ico-${link.id}`' ico='angle-down' :class="[show ? 'down' : 'up']" @click='show = !show'></icon>
+        <transition-group name='fade-transition'>
+          <template v-if='link.icos && showIcon'>
+            <icon class='navigation-icon pointer icon-color-hover color-red' v-for='ico in link.icos' :blink='true' :key='ico.ico' :ico='ico.ico' @dblclick='ico.callback(link.id)' sz='medium'></icon>
+          </template>
+        </transition-group>
+        <icon v-if='link.subLinks && link.subLinks.length > 0' class='navigation-icon pointer icon-color-hover' :key='`hide-sublinks-ico-${link.id}`' ico='angle-down' sz='medium' :class="[show ? 'down' : 'up']" @click='show = !show'></icon>
       </span>
     </div>
     <template v-if='show'>
@@ -21,8 +23,8 @@
       <icon ico='cube' sz='tiny'></icon>
       <span class='title'>{{ link.title }}</span>
       <span class='icons'>
-        <icon v-for='ico in link.icos' :key='`section-navigation-icon-${ico}`' :ico='ico.ico' @click='ico.callback' class='pointer' sz='medium'></icon>
-        <icon ico='angle-down' @click='show = !show' class='toggle pointer' :class='[show ? "down" : "up"]' sz='medium'></icon>
+        <icon v-for='ico in link.icos' :key='`section-navigation-icon-${ico}`' :ico='ico.ico' @click='ico.callback' class='pointer' sz='medium-medium'></icon>
+        <icon ico='angle-down' @click='show = !show' class='toggle pointer' :class='[show ? "down" : "up"]' sz='medium-medium'></icon>
       </span>
     </div>
     <transition-group name='fade-transition'>
@@ -52,6 +54,7 @@ export default Vue.extend({
   data() {
     return {
       show: false,
+      showIcon: false,
     };
   },
   methods: {
@@ -159,7 +162,7 @@ export default Vue.extend({
 }
 
 .navigation-icon {
-  margin-left: 3px;
+  margin-left: 8px;
 }
 
 </style>
