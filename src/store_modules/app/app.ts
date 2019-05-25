@@ -34,18 +34,32 @@ export default {
   },
   getters: {
     labelExists: (state: any) => (labelName: string): boolean => {
-      const values = labelName.split(':');
       const labels = state.tags.labels;
-      if (values.length === 1) {
-        const length = labels.length;
-        for (let i = 0; i < length; i++) {
-          if (labels[i].name === values[0]) {
-            return true;
-          }
+      let length = labels.length;
+
+      for (let i = 0; i < length; i++) {
+        if (labels[i].name === labelName) {
+          return true;
         }
-        return false;
       }
-      return true;
+      
+      return false;
+    },
+    subLabelExists: (state: any, getters: any) => (outerLabelName: string, subLabelName: string): boolean => {
+      const label = getters.getLabelByName(outerLabelName);
+    },
+    getLabelByName: (state: any) => (labelName: string): Tag => {
+      const labels = state.tags.labels;
+      const length = labels.length;
+      for (let i = 0; i < length; i++) {
+        if (labels[i].name === labelName) {
+          return labels[i];
+        }
+        const targetSubLabel = this.findSubLabel(labels[i]);
+        if (targetSubLabel !== undefined) {
+          return targetSubLabel;
+        }
+      }
     },
     getRoutineById: (state: any) => (key: string): string => {
       return state.routine.routines.find((el: Routine) => {
@@ -148,6 +162,10 @@ export default {
       }
       commit('saveRoutines');
     },
+    addInterval({ state, commit }: any, interval: Interval) {
+      state.intervals.push(interval);
+      commit('saveIntervals');
+    },
     deleteLabelById({ state, commit }: any, id: string) {
       const index = state.tags.labels.findIndex((el: Tag) => {
         return el.id === id;
@@ -155,15 +173,11 @@ export default {
       state.tags.labels.splice(index, 1);
       commit('saveTags');
     },
-    addInterval({ state, commit }: any, interval: Interval) {
-      state.intervals.push(interval);
-      commit('saveIntervals');
-    },
     addLabel({ state, commit }: any, label: Tag) {
       state.tags.labels.push(label);
-      commit('saveTags');
+      // commit('saveTags');
       ToastBus.$emit('addToast', {
-        msg: 'Added label successfuly',
+        msg: `Added ${label.name} label successfuly`,
         duration_seconds: 3,
         type: 'success',
       } as ToastObj);

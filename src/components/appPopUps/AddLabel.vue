@@ -9,7 +9,6 @@
           <span>You can create sub-labels using <span class='big'>:</span> .<br/><br/>
           E.g: family:spouse, work:people:karen, work:office.<br/><br/>The outer tag is automatically created if not present.</span>
         </heading>
-        <alert type='error'>{{ errorMsg }}</alert>
         <app-input tabindex='1' class='stretch' :max='80' @value-change='valueChange' @state-change='updateState' @enter='add' placeholder='E.g: 5 minutes, full focus, brain dead...'></app-input>
         <div class='options'>
           <btn class='medium' @click='add'>Add label</btn>
@@ -30,6 +29,8 @@ import Button from '@/components/generalComponents/Button.vue';
 import Alert from '@/components/generalComponents/Alert.vue';
 import Heading from '@/components/appComponents/Heading.vue';
 
+import { ToastBus } from '@/components/generalComponents/Toast.vue';
+
 import { Tag } from '@/components/interfaces';
 
 import mixin from 'vue-typed-mixins';
@@ -49,16 +50,20 @@ export default mixin(app).extend({
       validInput: false as boolean,
       result: undefined as any,
       value: '',
-      errorMsg: '',
     };
   },
   methods: {
     valueChange(value: string) {
       this.value = value;
-      this.errorMsg = '';
     },
     updateState(state: any) {
       this.validInput = !state.wrong;
+    },
+    labelExists(labelName: string): boolean {
+      return this.$store.getters['app/labelExists'](labelName);
+    },
+    subLabelExists(outerName: string, subName: string): boolean {
+      return this.$store.getters['app/subLabelExists'](outerName, subName);
     },
     add() {
       if (this.validInput) {
@@ -67,16 +72,32 @@ export default mixin(app).extend({
           value = value.slice(0, -1);
         }
         const values = value.split(':');
-        const exists = this.$store.getters['app/labelExists'](value);
-        if (!exists && values.length === 1) {
-          this.$store.dispatch('app/addLabel', {
-            id: this.createId(),
-            type: 'Label',
-            name: value,
-          } as Tag);
-        } else {
-          this.errorMsg = 'Duplicate label name.';
+        const length = values.length;
+
+
+        // fuck:evelyn:athome
+
+        for (let i = 0;i < length; i++) {
+          if (i === 0 && !this.labelExists(values[i])) {
+            console.log('add label', values[i])
+          } else if (i > 0 && !this.subLabelExists(values[i]))
         }
+      
+        
+        /* 
+            if valueIsOuterTag and !valueExists:
+              addOuterTag
+            elif valueIsSubTag and !subTagExists:
+              addSubTag
+            elif lastIteration
+              toasterror
+         */
+        
+        /* this.$store.dispatch('app/addLabel', {
+          id: this.createId(),
+          type: 'Label',
+          name: value,
+        } as Tag); */
       }
     },
   },
