@@ -1,5 +1,5 @@
 <template>
-  <span v-if='!link.type' class='navigation-link' @click='link.callback();navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.id'><icon v-if='link.ico' class='link-icon' :ico='link.ico' sz='tiny'></icon>{{ link.txt }}</span>
+  <span v-if='!link.type' class='navigation-link' @click='navigate(link)' :class='{active: isLinkActive(link.to)}' :key='link.id'><icon v-if='link.ico' class='link-icon' :ico='link.ico' sz='tiny'></icon>{{ link.txt }}</span>
   <div class='link-group' v-else-if='link.type === "Link Group"'>
     <div class='header'>
       <icon ico='cube' sz='tiny'></icon>
@@ -38,8 +38,11 @@ export default Vue.extend({
     };
   },
   methods: {
-    navigate(route: string) {
-      this.$store.commit('app/nav/pushComp', route);
+    navigate(link: any) {
+      if (link.callback) {
+        link.callback();
+      }      
+      this.$store.commit('app/nav/pushComp', link.to);
       if (!this.$store.getters.NavbarisOnDesktop) {
         this.$store.commit('app/nav/hide');
       }

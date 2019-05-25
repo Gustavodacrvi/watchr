@@ -1,10 +1,10 @@
 <template>
   <icon-section ico='home' title='Overview' :top="[
-      {txt: 'Today', to: 'today', id: 'overview-today-section', callback: callback, ico: 'calendar-day'},
-      {txt: 'Inbox', to: 'inbox', id: 'overview-inbox-section', callback: callback, ico: 'inbox'},
-      {txt: 'Upcoming', to: 'upcoming', id: 'overview-upcoming-section', callback: callback, ico: 'calendar-alt'},
-      {txt: 'Anytime', to: 'anytime', id: 'overview-anytime-section', callback: callback, ico: 'layer-group'},
-      {txt: 'Someday', to: 'someday', id: 'overview-someday-section', callback: callback, ico: 'archive'},
+      {txt: 'Today', to: 'today', id: 'overview-today-section', ico: 'calendar-day'},
+      {txt: 'Inbox', to: 'inbox', id: 'overview-inbox-section', ico: 'inbox'},
+      {txt: 'Upcoming', to: 'upcoming', id: 'overview-upcoming-section', ico: 'calendar-alt'},
+      {txt: 'Anytime', to: 'anytime', id: 'overview-anytime-section', ico: 'layer-group'},
+      {txt: 'Someday', to: 'someday', id: 'overview-someday-section', ico: 'archive'},
     ]"
     :middle="[
     ]"
@@ -20,11 +20,7 @@ export default Vue.extend({
   components: {
     'icon-section': Section,
   },
-  methods: {
-    callback() {
-      console.log('I am the section callback');
-    },
-  },
+
 });
 </script>
 

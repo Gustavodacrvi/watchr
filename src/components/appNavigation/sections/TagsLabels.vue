@@ -1,6 +1,6 @@
 <template>
   <icon-section ico='tags' title='Time tracking' :top="[
-    {txt: 'Untagged', to: 'ntagged'},
+    {txt: 'Untagged', to: 'ntagged', id: 'tags-untagged'},
   ]" 
   :middle="[
     {type: 'Link Group', lvl: 1, title: 'Calendar Tags', links: [
@@ -37,6 +37,7 @@ export default Vue.extend({
         links.push({
           txt: labels[i].name,
           to: 'custom',
+          id: labels[i].id,
         });
       }
       return links;
