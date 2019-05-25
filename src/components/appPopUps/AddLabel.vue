@@ -7,13 +7,13 @@
       <div class='wrapper'>
         <heading :simple='true' title='Help' :showing='false'>
           <span>You can create sub-labels using <span class='big'>:</span> .<br/><br/>
-          E.g: family:spouse, work:people:karen, work:office.<br/><br/>The outer tag is automatically created when non existing.</span>
+          E.g: family:spouse, work:people:karen, work:office.<br/><br/>The outer tag is automatically created if not present.</span>
         </heading>
-        <app-input class='stretch' @value-change='valueChange' @state-change='updateState' placeholder='E.g: 5 minutes, full focus, brain dead...'></app-input>
+        <alert type='error'>{{ errorMsg }}</alert>
+        <app-input tabindex='1' class='stretch' :max='80' @value-change='valueChange' @state-change='updateState' @enter='add' placeholder='E.g: 5 minutes, full focus, brain dead...'></app-input>
         <div class='options'>
           <btn class='medium' @click='add'>Add label</btn>
           <alert class='pointer' type='error' @click='$store.commit("app/nav/hidePopUp")'>Cancel</alert>
-          {{ result }}
           <span class='right'>Press <strong>A + L</strong> to open this pop up.</span>
           <span class='right'>Press <strong>CTRL + C</strong> to close any pop up</span>
         </div>
@@ -49,11 +49,13 @@ export default mixin(app).extend({
       validInput: false as boolean,
       result: undefined as any,
       value: '',
+      errorMsg: '',
     };
   },
   methods: {
     valueChange(value: string) {
       this.value = value;
+      this.errorMsg = '';
     },
     updateState(state: any) {
       this.validInput = !state.wrong;
@@ -72,6 +74,8 @@ export default mixin(app).extend({
             type: 'Label',
             name: value,
           } as Tag);
+        } else {
+          this.errorMsg = 'Duplicate label name.';
         }
       }
     },
@@ -86,7 +90,7 @@ export default mixin(app).extend({
 }
 
 .pop-up {
-  flex-basis: 600px;
+  flex-basis: 700px;
   padding: 0 18px;
   padding-bottom: 18px;
 }
