@@ -33,33 +33,17 @@ export default {
     },
   },
   getters: {
-    labelExists: (state: any) => (labelName: string): boolean => {
-      const labels = state.tags.labels;
-      let length = labels.length;
+    labelBranchExists: (state: any, getters) => (branch: string[]): boolean => {
+      const length = branch.length;
+      const labels: Tag[] = state.tags.labels;
 
-      for (let i = 0; i < length; i++) {
-        if (labels[i].name === labelName) {
-          return true;
-        }
-      }
-      
-      return false;
+      const root: any = labels.find((el: Tag) => {
+        return el.name === branch[0];
+      });
+      const label = getters.findSubLabelByName(root.name, )
     },
-    subLabelExists: (state: any, getters: any) => (outerLabelName: string, subLabelName: string): boolean => {
-      const label = getters.getLabelByName(outerLabelName);
-    },
-    getLabelByName: (state: any) => (labelName: string): Tag => {
-      const labels = state.tags.labels;
-      const length = labels.length;
-      for (let i = 0; i < length; i++) {
-        if (labels[i].name === labelName) {
-          return labels[i];
-        }
-        const targetSubLabel = this.findSubLabel(labels[i]);
-        if (targetSubLabel !== undefined) {
-          return targetSubLabel;
-        }
-      }
+    findSubLabelByName: (state: any) => (parentName: string, childName: string): Tag | undefined => {
+
     },
     getRoutineById: (state: any) => (key: string): string => {
       return state.routine.routines.find((el: Routine) => {
