@@ -59,9 +59,6 @@ export default mixin(app).extend({
     updateState(state: any) {
       this.validInput = !state.wrong;
     },
-    labelBranchExists(branch: any[]): boolean {
-      return this.$store.getters['app/labelBranchExists'](branch);
-    },
     add() {
       if (this.validInput) {
         let value = this.value.trim();
@@ -69,36 +66,8 @@ export default mixin(app).extend({
           value = value.slice(0, -1);
         }
         const values = value.split(':');
-        const length = values.length;
 
-
-        // fuck:evelyn:athome
-
-        for (let i = 0;i < length; i++) {
-          let splice = values.slice();
-          splice.splice(i);
-          if (i === 0 && !this.labelBranchExists(splice)) {
-            console.log('add label', values[i])
-          } else if (i > 0 && !this.labelBranchExists(splice)) {
-
-          }
-        }
-      
-        
-        /* 
-            if valueIsOuterTag and !valueExists:
-              addOuterTag
-            elif valueIsSubTag and !subTagExists:
-              addSubTag
-            elif lastIteration
-              toasterror
-         */
-        
-        /* this.$store.dispatch('app/addLabel', {
-          id: this.createId(),
-          type: 'Label',
-          name: value,
-        } as Tag); */
+        this.$store.dispatch('app/addLabelBranch', values);
       }
     },
   },

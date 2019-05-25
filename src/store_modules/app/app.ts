@@ -163,14 +163,48 @@ export default {
       state.tags.labels.splice(index, 1);
       commit('saveTags');
     },
-    addLabel({ state, commit }: any, label: Tag) {
-      state.tags.labels.push(label);
+    addLabelBranch({ commit, dispatch, getters }: any, values: string[]) {
+      const length = values.length;
+
+      for (let i = 0;i < length; i++) {
+        let splice = values.slice();
+        splice.splice(i);
+        
+        if (!getters.labelBranchExists(splice)) {
+          commit('addLabelNode', splice);
+        } else if (i + 1 === length) {
+          ToastBus.$emit('addToast', {
+            msg: `Label ${values[values.length - 1]} already exists.`,
+            duration_seconds: 2,
+            type: 'error',
+          });
+        }
+      }      
+
+
+
       // commit('saveTags');
-      ToastBus.$emit('addToast', {
+      /* ToastBus.$emit('addToast', {
         msg: `Added ${label.name} label successfuly`,
         duration_seconds: 3,
         type: 'success',
-      } as ToastObj);
+      } as ToastObj); */
+
+      // fuck:evelyn
+      
+        
+        /* 
+            if !labelBranchExists:
+              addLabel
+            elif lastIteration
+              toasterror
+         */
+        
+        /* this.$store.dispatch('app/addLabel', {
+          id: this.createId(),
+          type: 'Label',
+          name: value,
+        } as Tag); */
     },
   },
 };
