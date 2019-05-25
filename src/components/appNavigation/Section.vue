@@ -4,15 +4,15 @@
     <transition name='fade-transition'>
       <div class='section-content' v-show='isActive && isNavOpened'>
         <div class='top'>
-          <link-group v-for='link in top' :link='link' :key='link.to'></link-group>
+          <link-group v-for='link in top' :link='link' :key='link.id' :lvl='1'></link-group>
         </div>
         <hr class='margin'/>
         <div class='middle'>
-          <link-group v-for='link in middle' :link='link' :key='link.to'></link-group>
+          <link-group v-for='link in middle' :link='link' :key='link.id' :lvl='1'></link-group>
         </div>
         <hr class='margin'/>
         <div class='bottom'>
-          <link-group v-for='link in bottom' :link='link' :key='link.to'></link-group>
+          <link-group v-for='link in bottom' :link='link' :key='link.id' :lvl='1'></link-group>
         </div>
       </div>
     </transition>
@@ -72,7 +72,7 @@ export default Vue.extend({
   padding-left: 33px;
   top: 115px;
   box-sizing: border-box;
-  width: 90%;
+  min-width: 90%;
 }
 
 .margin {

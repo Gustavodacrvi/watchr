@@ -1,19 +1,37 @@
 <template>
-  <span v-if='!link.type' class='navigation-link' @click='navigate(link.to)' :class='{active: isLinkActive(link.to)}' :key='link.to'><icon v-if='link.ico' class='link-icon' :ico='link.ico' sz='tiny'></icon>{{ link.txt }}</span>
+  <div v-if='!link.type' class='link'>
+    <div class='navigation-wrapper' @mouseover='showIcon = true' @mouseleave='showIcon = false'>
+      <span class='navigation-link' @click='navigate(link)' :class='{active: isLinkActive(link.txt)}' :key='link.id'><icon v-if='link.ico' class='link-icon' :ico='link.ico' sz='tiny'></icon>{{ link.txt }}
+      </span>
+      <span class='navigation-icons'>
+        <transition-group name='fade-transition'>
+          <template v-if='link.icos && showIcon'>
+            <icon class='navigation-icon pointer icon-color-hover color-red' v-for='ico in link.icos' :blink='true' :key='ico.ico' :ico='ico.ico' @dblclick='ico.callback(link.id)' sz='medium'></icon>
+          </template>
+        </transition-group>
+        <icon v-if='link.subLinks && link.subLinks.length > 0' class='navigation-icon pointer icon-color-hover' :key='`hide-sublinks-ico-${link.id}`' ico='angle-down' sz='medium' :class="[show ? 'down' : 'up']" @click='show = !show'></icon>
+      </span>
+    </div>
+    <template v-if='show'>
+      <div class='sub-links' v-if='link.subLinks'>
+        <group-link v-for='subLink in link.subLinks' :key='subLink.id' :link='subLink' :class='`level-${lvl}`' :lvl='lvl + 1'></group-link>
+      </div>
+    </template>
+  </div>
   <div class='link-group' v-else-if='link.type === "Link Group"'>
     <div class='header'>
       <icon ico='cube' sz='tiny'></icon>
       <span class='title'>{{ link.title }}</span>
       <span class='icons'>
-        <icon v-for='ico in link.icos' :key='`section-navigation-icon-${ico}`' :ico='ico.ico' @click='ico.callback' class='pointer' sz='medium'></icon>
-        <icon ico='angle-down' @click='show = !show' class='toggle pointer' :class='[show ? "down" : "up"]' sz='medium'></icon>
+        <icon v-for='ico in link.icos' :key='`section-navigation-icon-${ico}`' :ico='ico.ico' @click='ico.callback' class='pointer' sz='medium-medium'></icon>
+        <icon ico='angle-down' @click='show = !show' class='toggle pointer' :class='[show ? "down" : "up"]' sz='medium-medium'></icon>
       </span>
     </div>
     <transition-group name='fade-transition'>
       <template v-if='show'>
         <template v-for='subLink in link.links'>
-          <group-link v-if='subLink.to' :key='subLink.to' :link='subLink' :class='`level-${link.lvl}`'></group-link>
-          <group-link v-else :key='subLink.title + "vue-key"' :link='subLink' :class='`level-${link.lvl}`'></group-link>
+          <group-link v-if='subLink.to' :key='subLink.id' :link='subLink' :class='`level-${lvl}`' :lvl='lvl + 1'></group-link>
+          <group-link v-else :key='subLink.title + "vue-key"' :link='subLink' :class='`level-${lvl}`' :lvl='lvl + 1'></group-link>
         </template>
       </template>
     </transition-group>
@@ -31,21 +49,26 @@ export default Vue.extend({
   },
   props: {
     link: Object,
+    lvl: Number,
   },
   data() {
     return {
       show: false,
+      showIcon: false,
     };
   },
   methods: {
-    navigate(route: string) {
-      this.$store.commit('app/nav/pushComp', route);
+    navigate(link: any) {
+      if (link.callback) {
+        link.callback();
+      }      
+      this.$store.commit('app/nav/pushComp', { component: link.to, txt: link.txt});
       if (!this.$store.getters.NavbarisOnDesktop) {
         this.$store.commit('app/nav/hide');
       }
     },
-    isLinkActive(link: string): boolean {
-      return link === this.$store.state.app.nav.component;
+    isLinkActive(txt: string): boolean {
+      return txt === this.$store.state.app.nav.componentText;
     },
   },
 });
@@ -56,8 +79,8 @@ export default Vue.extend({
 .navigation-link {
   display: flex;
   cursor: pointer;
-  margin-top: 4px;
-  font-size: 1.2em;
+  flex-basis: 95%;
+  font-size: 1.1em;
   transition-duration: .2s;
 }
 
@@ -75,7 +98,8 @@ export default Vue.extend({
 }
 
 .icons {
-  float: right;
+  position: absolute;
+  right: 0;
   margin-top: 3px;
 }
 
@@ -97,6 +121,7 @@ export default Vue.extend({
 
 .link-group {
   margin-top: 8px;
+  width: 250px;
 }
 
 .level-1 {
@@ -104,7 +129,15 @@ export default Vue.extend({
 }
 
 .level-2 {
-  margin-left: 17px !important;
+  margin-left: 12px !important;
+}
+
+.level-3 {
+  margin-left: 19px !important;
+}
+
+.level-4 {
+  margin-left: 21px !important;
 }
 
 .header .title, .header .icon {
@@ -113,7 +146,23 @@ export default Vue.extend({
 
 .header .title {
   margin-left: 4px;
-  font-size: 1.15em;
+  font-size: 1.1em;
+}
+
+.navigation-wrapper {
+  display: flex;
+  position: relative;
+  margin-top: 8px;
+}
+
+.navigation-icons {
+  flex-basis: 5%;
+  display: flex;
+  align-items: center;
+}
+
+.navigation-icon {
+  margin-left: 8px;
 }
 
 </style>

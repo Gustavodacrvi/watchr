@@ -7,14 +7,14 @@
       <div class='wrapper'>
         <heading :simple='true' title='Help' :showing='false'>
           <span>You can create sub-labels using <span class='big'>:</span> .<br/><br/>
-          E.g: family:spouse, work:people:karen, work:office.<br/><br/>The outer tag is automatically created when non existing.</span>
+          E.g: family:spouse, work:people:karen, work:office.<br/><br/>The outer tag is automatically created if not present.</span>
         </heading>
-        <app-input class='stretch' @value-change='valueChange' @state-change='updateState' placeholder='E.g: 5 minutes, full focus, brain dead...'></app-input>
+        <app-input tabindex='1' class='stretch' :max='80' @value-change='valueChange' @state-change='updateState' @enter='add' placeholder='E.g: 5 minutes, full focus, brain dead...'></app-input>
         <div class='options'>
           <btn class='medium' @click='add'>Add label</btn>
           <alert class='pointer' type='error' @click='$store.commit("app/nav/hidePopUp")'>Cancel</alert>
-          {{ result }}
           <span class='right'>Press <strong>A + L</strong> to open this pop up.</span>
+          <span class='right'>Press <strong>CTRL + C</strong> to close any pop up</span>
         </div>
       </div>
     </div>
@@ -29,6 +29,10 @@ import Button from '@/components/generalComponents/Button.vue';
 import Alert from '@/components/generalComponents/Alert.vue';
 import Heading from '@/components/appComponents/Heading.vue';
 
+import { ToastBus } from '@/components/generalComponents/Toast.vue';
+
+import { Tag } from '@/components/interfaces';
+
 export default Vue.extend({
   components: {
     'app-title': Title,
@@ -39,7 +43,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      inputState: false as boolean,
+      validInput: false as boolean,
       result: undefined as any,
       value: '',
     };
@@ -49,11 +53,30 @@ export default Vue.extend({
       this.value = value;
     },
     updateState(state: any) {
-      this.inputState = !state.wrong;
+      this.validInput = !state.wrong;
     },
     add() {
-      const tags = this.value.split(':');
-      this.result = tags;
+      if (this.validInput) {
+        let value = this.value.trim();
+        if (value[value.length - 1] === ':') {
+          value = value.slice(0, -1);
+        }
+        let values = value.split(':');
+        const length = values.length;
+        for (let i = 0; i < length; i++) {
+          values[i] = values[i].trim();
+        }
+
+        if (values.length > 4) {
+          ToastBus.$emit('addToast', {
+            msg: `Subtags can only go to 4 sublevels`,
+            duration_seconds: 4,
+            type: 'error',
+          });
+        } else {
+          this.$store.dispatch('app/addLabelBranch', values);
+        }
+      }
     },
   },
 });
@@ -66,7 +89,7 @@ export default Vue.extend({
 }
 
 .pop-up {
-  flex-basis: 600px;
+  flex-basis: 700px;
   padding: 0 18px;
   padding-bottom: 18px;
 }

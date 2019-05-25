@@ -1,6 +1,11 @@
 
-import { Routine, Interval, DateInterval, Tags } from '@/components/interfaces';
+import uuid from 'uuid';
+
+import { Routine, Interval, DateInterval, Tag, ToastObj } from '@/components/interfaces';
 import NavigationModule from '@/store_modules/app/navigation';
+
+// this error doesn't make sense, just leave it there
+import { ToastBus } from '@/components/generalComponents/Toast.vue';
 
 const sameDay = (d1: Date, d2: Date) => {
   return d1.getFullYear() === d2.getFullYear() &&
@@ -22,12 +27,32 @@ export default {
     interval: {
       intervals: [] as Interval[],
     },
-    tags: [] as Tags[],
+    tags: {
+      labels: [] as Tag[],
+    },
     options: {
       clockConvention: '24',
     },
   },
   getters: {
+    labelBranchExists: (state: any, getters: any) => (branch: string[], labels: any): boolean => {
+      if (labels === undefined) {
+        labels = state.tags.labels;
+      }
+
+      const subLabel = labels.find((el: Tag) => {
+        return el.name === branch[0];
+      });
+      if (subLabel === undefined) {
+        return false;
+      }
+
+      branch.shift();
+      if (branch.length === 0) {
+        return true;
+      }
+      return getters.labelBranchExists(branch, subLabel.subLabels);
+    },
     getRoutineById: (state: any) => (key: string): string => {
       return state.routine.routines.find((el: Routine) => {
         return el.id === key;
@@ -69,6 +94,10 @@ export default {
         if (data !== null) {
           state.interval = JSON.parse(data);
         }
+        data = localStorage.getItem('watchrTags');
+        if (data !== null) {
+          state.tags = JSON.parse(data);
+        }
       }
     },
     saveRoutines(state: any) {
@@ -85,9 +114,17 @@ export default {
         ));
       }
     },
+    saveTags(state: any) {
+      if (state.webStorage) {
+        localStorage.setItem('watchrTags', JSON.stringify(
+          state.tags,
+        ));
+      }
+    },
     deleteLocalStorageData() {
       localStorage.removeItem('watchrRoutines');
       localStorage.removeItem('watchrIntervals');
+      localStorage.removeItem('watchrTags');
     },
   },
   actions: {
@@ -120,6 +157,66 @@ export default {
     addInterval({ state, commit }: any, interval: Interval) {
       state.intervals.push(interval);
       commit('saveIntervals');
+    },
+    deleteLabelById({ state, commit }: any, id: string) {
+      const index = state.tags.labels.findIndex((el: Tag) => {
+        return el.id === id;
+      });
+      state.tags.labels.splice(index, 1);
+      commit('saveTags');
+    },
+    addLabelNode({ state, dispatch }: any, {node, labels}: any) {
+      if (labels === undefined) {
+        labels = state.tags.labels;
+      }
+
+      if (node.length > 1) {
+        const subLabel = labels.find((el: Tag) => {
+          return el.name === node[0];
+        });
+        node.shift();
+        dispatch('addLabelNode', { node , labels: subLabel.subLabels});
+      } else {
+        labels.push({
+          type: 'Label',
+          name: node[0],
+          id: uuid.v4(),
+          subLabels: [],
+        } as Tag);
+      }
+    },
+    addLabelBranch({ commit, state, dispatch, getters }: any, values: string[]) {
+      const length = values.length;
+      console.log(length)
+
+      // fuck
+
+      let success = true;
+      for (let i = 0;i < length; i++) {
+        const splice = values.slice();
+        splice.splice(i + 1);
+
+        if (!getters.labelBranchExists(splice.slice())) {
+          dispatch('addLabelNode', { node: splice.slice()});
+        } else if (i + 1 === length) {
+          success = false;
+          ToastBus.$emit('addToast', {
+            msg: `Label ${values[values.length - 1]} already exists.`,
+            duration_seconds: 4,
+            type: 'error',
+          });
+        }
+      }
+
+      if (success) {
+        ToastBus.$emit('addToast', {
+          msg: `Added ${values[values.length - 1]} label successfuly`,
+          duration_seconds: 3.5,
+          type: 'success',
+        } as ToastObj);
+      }
+
+      // commit('saveTags');
     },
   },
 };

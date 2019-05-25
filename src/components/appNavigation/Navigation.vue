@@ -89,11 +89,13 @@ export default Vue.extend({
   left: 0;
   top: 0;
   z-index: 5;
+  padding-right: 20px;
   transition-duration: .3s;
+  overflow-y: auto; 
 }
 
 #app-navigation.opened {
-  width: 250px;
+  width: 300px;
 }
 
 #app-navigation.closed {
@@ -112,6 +114,21 @@ export default Vue.extend({
   position: absolute;
   bottom: 10px;
   margin: 0 10px;
+}
+
+#app-navigation::-webkit-scrollbar {
+  height: 5px;
+}
+ 
+#app-navigation::-webkit-scrollbar-thumb {
+  background-color: #A97CFC;
+  border-radius: 12px;
+}
+
+@media screen and (min-width: 1025px) {
+  #app-navigation::-webkit-scrollbar {
+    height: 12px;
+  }
 }
 
 </style>

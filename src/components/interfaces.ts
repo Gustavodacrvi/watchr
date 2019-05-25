@@ -37,10 +37,11 @@ export interface Routine {
   >;
 }
 
-export interface Tags {
+export interface Tag {
   type: 'Label' | 'Calendar';
   id: string;
   name: string;
+  subLabels: Tag[];
 }
 
 export interface Interval {
@@ -48,5 +49,5 @@ export interface Interval {
   name: string;
   color: string; // hex
   tasks: string[];
-  tags: Tags[];
+  tags: Tag[];
 }

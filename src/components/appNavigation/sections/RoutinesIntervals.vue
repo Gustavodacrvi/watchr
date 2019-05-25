@@ -1,11 +1,11 @@
 <template>
   <icon-section ico='stream' title='Time tracking' :top="[
-    {txt: 'Custom routines', to: 'routeinscustom'},
+    {txt: 'Custom routines', to: 'routeinscustom', id: 'custom-routines-perspective'},
   ]" 
   :middle="[
-    {type: 'Link Group', lvl: 1, title: 'Intervals', links: [
+    {type: 'Link Group', title: 'Intervals', links: [
     ]},
-    {type: 'Link Group', lvl: 1, title: 'Routines', links: [
+    {type: 'Link Group', title: 'Routines', links: [
     ]},
   ]" 
   :bottom="[]"

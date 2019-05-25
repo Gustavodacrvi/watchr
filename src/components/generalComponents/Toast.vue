@@ -114,6 +114,7 @@ export default Vue.extend({
   justify-content: center;
   align-items: center;
   font-family: 'Work Sans Regular';
+  z-index: 101;
 }
 
 #toast > span {

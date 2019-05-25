@@ -247,7 +247,7 @@ export default mixins(app).extend({
   transition: left .5s;
 }
 
-@media screen and (min-width: 824px) {
+@media screen and (min-width: 1025px) {
   .intervals::-webkit-scrollbar {
     height: 12px;
   }

@@ -1,11 +1,11 @@
 <template>
   <icon-section ico='stopwatch' title='Time tracking' :top="[
-    {txt: 'Custom', to: 'timetrackitoday'},
-    {txt: 'Today', to: 'timetrackyesterday'},
-    {txt: 'Last 7 days', to: 'last7daystimetrack'},
+    {txt: 'Custom', to: 'timetrackitoday', id: 'custom-time-tracking-perspective'},
+    {txt: 'Today', to: 'timetrackyesterday', id: 'today-timetracking-perspective'},
+    {txt: 'Last 7 days', to: 'last7daystimetrack', id: 'last 7 days-timetracking-perspective'},
   ]" 
   :middle="[
-    {type: 'Link Group', lvl: 1, title: 'Reminders', links: [
+    {type: 'Link Group', title: 'Reminders', links: [
     ]},
   ]" 
   :bottom="[]"

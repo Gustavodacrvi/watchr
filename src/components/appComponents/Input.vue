@@ -1,20 +1,30 @@
 <template>
-  <input :class='[$store.state.theme.style, state]' class='input' name='input' autocomplete='off' v-model='value'/>
+  <input :class='[$store.state.theme.style, state]' class='input' name='input' autocomplete='off' v-model='value' @keypress='keyPress'/>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
 export default Vue.extend({
+  props: {
+    max: Number,
+  },
   data() {
     return {
       value: undefined as any,
-      state: '',
+      state: undefined as any,
     };
+  },
+  methods: {
+    keyPress(key: any) {
+      if (key.key === 'Enter') {
+        this.$emit('enter');
+      }
+    },
   },
   watch: {
     value() {
-      if (this.value.length === 0) {
+      if (this.value.length === 0 || this.value.length > this.max) {
         this.state = 'wrong';
       } else {
         this.state = '';

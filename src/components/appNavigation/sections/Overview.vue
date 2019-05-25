@@ -1,10 +1,10 @@
 <template>
   <icon-section ico='home' title='Overview' :top="[
-      {txt: 'Today', to: 'today', ico: 'calendar-day'},
-      {txt: 'Inbox', to: 'inbox', ico: 'inbox'},
-      {txt: 'Upcoming', to: 'upcoming', ico: 'calendar-alt'},
-      {txt: 'Anytime', to: 'anytime', ico: 'layer-group'},
-      {txt: 'Someday', to: 'someday', ico: 'archive'},
+      {txt: 'Today', to: 'today', id: 'overview-today-section', ico: 'calendar-day'},
+      {txt: 'Inbox', to: 'inbox', id: 'overview-inbox-section', ico: 'inbox'},
+      {txt: 'Upcoming', to: 'upcoming', id: 'overview-upcoming-section', ico: 'calendar-alt'},
+      {txt: 'Anytime', to: 'anytime', id: 'overview-anytime-section', ico: 'layer-group'},
+      {txt: 'Someday', to: 'someday', id: 'overview-someday-section', ico: 'archive'},
     ]"
     :middle="[
     ]"
@@ -20,6 +20,7 @@ export default Vue.extend({
   components: {
     'icon-section': Section,
   },
+
 });
 </script>
 

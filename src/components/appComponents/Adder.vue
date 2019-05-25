@@ -1,5 +1,5 @@
 <template>
-  <transition name='fade-transition' mode='out-in'>
+  <transition-group name='fade-transition' mode='out-in'>
     <div key='inbox-task-adder-msg' class='msg' v-if='!active'>
       <icon @click='active = true' ico='plus' sz='medium'></icon>
       <span @click='active = true' class='msg'>{{ msg }}</span>
@@ -13,7 +13,7 @@
         <alert class='pointer' @click='active = false' type='error'>Cancel</alert>
       </div>
     </div>
-  </transition>
+  </transition-group>
 </template>
 
 <script lang="ts">

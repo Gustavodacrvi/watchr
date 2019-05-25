@@ -37,9 +37,9 @@ export default Vue.extend({
 <style scoped>
 
 #app-pop-ups {
-  position: absolute;
-  height: 100%;
-  width: 100%;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
   pointer-events: none;
 }
 
