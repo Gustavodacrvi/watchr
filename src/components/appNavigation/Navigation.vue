@@ -89,11 +89,12 @@ export default Vue.extend({
   left: 0;
   top: 0;
   z-index: 5;
+  padding-right: 20px;
   transition-duration: .3s;
 }
 
 #app-navigation.opened {
-  width: 250px;
+  width: 300px;
 }
 
 #app-navigation.closed {

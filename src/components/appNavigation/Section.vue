@@ -72,7 +72,7 @@ export default Vue.extend({
   padding-left: 33px;
   top: 115px;
   box-sizing: border-box;
-  width: 90%;
+  min-width: 90%;
 }
 
 .margin {

@@ -91,14 +91,14 @@ export default Vue.extend({
 }
 
 .navOpened {
-  margin: 0 40px 0 290px;
+  margin: 0 40px 0 340px;
 }
 
 .perspective {
   margin-top: -25px;
 }
 
-@media screen and (max-width: 825px) {
+@media screen and (max-width: 1025px) {
   .user-app-content {
     margin: 0 8px;
   }

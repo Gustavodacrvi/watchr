@@ -59,8 +59,8 @@ export default Vue.extend({
 .navigation-link {
   display: flex;
   cursor: pointer;
-  margin-top: 4px;
-  font-size: 1.2em;
+  margin-top: 8px;
+  font-size: 1.1em;
   transition-duration: .2s;
 }
 
@@ -78,7 +78,8 @@ export default Vue.extend({
 }
 
 .icons {
-  float: right;
+  position: absolute;
+  right: 0;
   margin-top: 3px;
 }
 
@@ -100,6 +101,7 @@ export default Vue.extend({
 
 .link-group {
   margin-top: 8px;
+  width: 250px;
 }
 
 .level-1 {
@@ -116,7 +118,7 @@ export default Vue.extend({
 
 .header .title {
   margin-left: 4px;
-  font-size: 1.15em;
+  font-size: 1.1em;
 }
 
 </style>
