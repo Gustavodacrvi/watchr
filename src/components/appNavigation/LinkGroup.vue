@@ -1,10 +1,20 @@
 <template>
-  <div v-if='!link.type' class='navigation-wrapper'>
-    <span class='navigation-link' @click='navigate(link)' :class='{active: isLinkActive(link.txt)}' :key='link.id'><icon v-if='link.ico' class='link-icon' :ico='link.ico' sz='tiny'></icon>{{ link.txt }}
-    </span>
-    <span class='navigation-icons' v-if='link.icos'>
-      <icon class='navigation-icon pointer icon-color-hover' v-for='ico in link.icos' :key='ico.ico' :ico='ico.ico' @click='ico.callback(link.id)'></icon>
-    </span>
+  <div v-if='!link.type' class='link'>
+    <div class='navigation-wrapper'>
+      <span class='navigation-link' @click='navigate(link)' :class='{active: isLinkActive(link.txt)}' :key='link.id'><icon v-if='link.ico' class='link-icon' :ico='link.ico' sz='tiny'></icon>{{ link.txt }}
+      </span>
+      <span class='navigation-icons'>
+        <template v-if='link.icos'>
+          <icon class='navigation-icon pointer icon-color-hover' v-for='ico in link.icos' :key='ico.ico' :ico='ico.ico' @click='ico.callback(link.id)'></icon>
+        </template>
+        <icon v-if='link.subLinks' class='navigation-icon pointer icon-color-hover' :key='`hide-sublinks-ico-${link.id}`' ico='angle-down' :class="[show ? 'down' : 'up']" @click='show = !show'></icon>
+      </span>
+    </div>
+    <template v-if='show'>
+      <div class='sub-links' v-if='link.subLinks'>
+        <group-link v-for='subLink in link.subLinks' :key='subLink.id' :link='subLink' :class='`level-${subLink.lvl}`'></group-link>
+      </div>
+    </template>
   </div>
   <div class='link-group' v-else-if='link.type === "Link Group"'>
     <div class='header'>
@@ -115,7 +125,15 @@ export default Vue.extend({
 }
 
 .level-2 {
-  margin-left: 17px !important;
+  margin-left: 12px !important;
+}
+
+.level-3 {
+  margin-left: 19px !important;
+}
+
+.level-4 {
+  margin-left: 21px !important;
 }
 
 .header .title, .header .icon {
