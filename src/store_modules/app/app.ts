@@ -165,7 +165,7 @@ export default {
       state.tags.labels.splice(index, 1);
       commit('saveTags');
     },
-    addLabelNode({ state, dispatch }: any, node: string[], labels: any) {
+    addLabelNode({ state, dispatch }: any, {node, labels}: any) {
       if (labels === undefined) {
         labels = state.tags.labels;
       }
@@ -175,7 +175,7 @@ export default {
           return el.name === node[0];
         });
         node.shift();
-        dispatch(node, subLabel.subLabels);
+        dispatch('addLabelNode', { node , labels: subLabel.subLabels});
       } else {
         labels.push({
           type: 'Label',
@@ -185,48 +185,38 @@ export default {
         } as Tag);
       }
     },
-    addLabelBranch({ commit, dispatch, getters }: any, values: string[]) {
+    addLabelBranch({ commit, state, dispatch, getters }: any, values: string[]) {
       const length = values.length;
+      console.log(length)
 
       // fuck
 
+      let success = true;
       for (let i = 0;i < length; i++) {
-        let splice = values.slice();
+        const splice = values.slice();
         splice.splice(i + 1);
-        
-        if (!getters.labelBranchExists(splice)) {
-          dispatch('addLabelNode', splice);
+
+        if (!getters.labelBranchExists(splice.slice())) {
+          dispatch('addLabelNode', { node: splice.slice()});
         } else if (i + 1 === length) {
+          success = false;
           ToastBus.$emit('addToast', {
             msg: `Label ${values[values.length - 1]} already exists.`,
-            duration_seconds: 2,
+            duration_seconds: 4,
             type: 'error',
           });
         }
       }
 
-      // commit('saveTags');
-      /* ToastBus.$emit('addToast', {
-        msg: `Added ${label.name} label successfuly`,
-        duration_seconds: 3,
-        type: 'success',
-      } as ToastObj); */
+      if (success) {
+        ToastBus.$emit('addToast', {
+          msg: `Added ${values[values.length - 1]} label successfuly`,
+          duration_seconds: 3.5,
+          type: 'success',
+        } as ToastObj);
+      }
 
-      // fuck:evelyn
-      
-        
-        /* 
-            if !labelBranchExists:
-              addLabel
-            elif lastIteration
-              toasterror
-         */
-        
-        /* this.$store.dispatch('app/addLabel', {
-          id: this.createId(),
-          type: 'Label',
-          name: value,
-        } as Tag); */
+      // commit('saveTags');
     },
   },
 };

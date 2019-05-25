@@ -61,9 +61,21 @@ export default Vue.extend({
         if (value[value.length - 1] === ':') {
           value = value.slice(0, -1);
         }
-        const values = value.split(':');
+        let values = value.split(':');
+        const length = values.length;
+        for (let i = 0; i < length; i++) {
+          values[i] = values[i].trim();
+        }
 
-        this.$store.dispatch('app/addLabelBranch', values);
+        if (values.length > 4) {
+          ToastBus.$emit('addToast', {
+            msg: `Subtags can only go to 4 sublevels`,
+            duration_seconds: 4,
+            type: 'error',
+          });
+        } else {
+          this.$store.dispatch('app/addLabelBranch', values);
+        }
       }
     },
   },
