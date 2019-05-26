@@ -90,6 +90,11 @@ export default Vue.extend({
   width: 230px;
 }
 
+#app-navigation.light {
+  background-color: #f0f0f0 !important;
+  border: none;
+}
+
 #app-navigation.opened.mobile {
   width: 280px;
 }

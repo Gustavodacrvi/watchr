@@ -85,8 +85,8 @@ export default Vue.extend({
 }
 
 .card.light, .card-round.light { 
-  background-color: #FAFAF9;
-  box-shadow: 0 4px 14px rgba(207,207,207,0.4);
+  background-color: #F8F7F6;
+  border: .5px solid rgba(207,207,207,0.6);
 }
 
 .background.dark {

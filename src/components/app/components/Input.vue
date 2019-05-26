@@ -72,7 +72,8 @@ export default Vue.extend({
 }
 
 .input.light {
-  background-color: #F1F1F3;
+  background-color: #f0f0f0 !important;
+  color: #999999;
 }
 
 </style>

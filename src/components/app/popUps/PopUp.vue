@@ -48,7 +48,7 @@ export default Vue.extend({
 }
 
 .pop-up-opened {
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, .3);
   pointer-events: initial !important;
 }
 

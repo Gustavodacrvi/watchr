@@ -1,19 +1,19 @@
 <template>
-  <transition-group name='fade-transition' mode='out-in'>
+  <transition name='fade-transition' mode='out-in'>
     <div key='inbox-task-adder-msg' class='msg' v-if='!active'>
       <icon @click='active = true' ico='plus' sz='medium'></icon>
       <span @click='active = true' class='msg'>{{ msg }}</span>
     </div>
-    <div key='inbox-task-adder-adder' class='adder'>
+    <div v-else key='inbox-task-adder-adder' class='adder'>
       <div>
         <input :class='$store.state.theme.style' class='input card' name='input' placeholder='Do something @interval #label $project %calendar_tag' autocomplete='off' v-model='value'/>
       </div>
       <div class='options'>
-        <btn class='tiny-round'>{{ btnMsg }}</btn>
+        <btn class='tiny-round tiny'>{{ btnMsg }}</btn>
         <alert class='pointer' @click='active = false' type='error'>Cancel</alert>
       </div>
     </div>
-  </transition-group>
+  </transition>
 </template>
 
 <script lang="ts">
@@ -67,7 +67,8 @@ export default Vue.extend({
   border-radius: 100px;
   font-family: 'Work Sans';
   outline: none;
-  color: #999999;
+  color: #ADADAD;
+  background-color: #f0f0f0;
   font-size: 1em;
   width: 100%;
   box-sizing: border-box;

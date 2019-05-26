@@ -1,5 +1,5 @@
 <template>
-  <i class='icon' :class='[`fa fa-${ico} ${sz} icon ` + $store.state.theme.style, blinking ? "blink" : ""]' @click='$emit("click");activateBlink()' @mouseover='$emit("mouseover")' @mouseleave='$emit("mouseleave")' @dblclick='$emit("dblclick")'></i>  
+  <i class='icon' :class='[`fa fa-${ico} ${sz} icon ` + $store.state.theme.style, blinking ? "blink" : ""]' :style='`color: ${color};text-shadow: 0 0 1px ${color}`' @click='$emit("click");activateBlink()' @mouseover='$emit("mouseover")' @mouseleave='$emit("mouseleave")' @dblclick='$emit("dblclick")'></i>
 </template>
 
 <script lang="ts">
@@ -10,6 +10,7 @@ export default Vue.extend({
     sz: String,
     ico: String,
     blink: Boolean,
+    color: String,
   },
   data() {
     return {
@@ -67,11 +68,11 @@ export default Vue.extend({
 
 .icon {
   transition-duration: .2s;
-  color: #ADADAD;
+  color: #999999;
 }
 
 .icon:hover {
-  text-shadow: 0 0 3px #ADADAD;
+  text-shadow: 0 0 3px #999999;
 }
 
 .color {

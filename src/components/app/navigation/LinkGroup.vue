@@ -1,7 +1,8 @@
 <template>
   <div v-if='!link.type' class='link'>
     <div class='navigation-wrapper' @mouseover='showIcon = true' @mouseleave='showIcon = false'>
-      <span class='navigation-link' @click='navigate(link)' :class='{active: isLinkActive(link.txt), mobile: !isDesktop}' :key='link.id'><icon v-if='link.ico' class='link-icon' :ico='link.ico' :sz='icoSz'></icon>{{ link.txt }}
+      <span class='navigation-link' @click='navigate(link)' :class='{active: isLinkActive(link.txt), mobile: !isDesktop}' :key='link.id'>
+        <icon v-if='link.ico' class='link-icon' :ico='link.ico' :color='link.iconColor' :sz='icoSz'></icon>{{ link.txt }}
       </span>
       <span class='navigation-icons'>
         <template v-if='isDesktop && link.icos && showIcon'>
@@ -118,7 +119,7 @@ export default Vue.extend({
 
 .navigation-link.mobile {
   font-size: 1.4em;
-  padding: 2px;
+  padding: 3px;
 }
 
 .navigation-link:hover, .navigation-link:hover .icon, .active, .active .icon {
@@ -173,10 +174,6 @@ export default Vue.extend({
   margin-left: 14px !important;
 }
 
-.header .title, .header .icon {
-  color: #777777 !important;
-}
-
 .header .title {
   margin-left: 4px;
   font-size: 1.1em;
@@ -189,7 +186,7 @@ export default Vue.extend({
 .navigation-wrapper {
   display: flex;
   position: relative;
-  margin-top: 8px;
+  margin-top: 9px;
 }
 
 .navigation-icons {
