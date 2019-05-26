@@ -1,7 +1,7 @@
 <template>
   <div v-if='!link.type' class='link'>
     <div class='navigation-wrapper' @mouseover='showIcon = true' @mouseleave='showIcon = false'>
-      <span class='navigation-link' @click='navigate(link)' :class='{active: isLinkActive(link.txt)}' :key='link.id'><icon v-if='link.ico' class='link-icon' :ico='link.ico' sz='tiny'></icon>{{ link.txt }}
+      <span class='navigation-link' @click='navigate(link)' :class='{active: isLinkActive(link.txt), mobile: !$store.getters.NavbarisOnDesktop}' :key='link.id'><icon v-if='link.ico' class='link-icon' :ico='link.ico' sz='tiny'></icon>{{ link.txt }}
       </span>
       <span class='navigation-icons'>
         <transition-group name='fade-transition'>
@@ -18,13 +18,13 @@
       </div>
     </template>
   </div>
-  <div class='link-group' v-else-if='link.type === "Link Group"'>
+  <div class='link-group' :class='{mobile: !$store.getters.NavbarisOnDesktop}' v-else-if='link.type === "Link Group"'>
     <div class='header'>
-      <icon ico='cube' sz='tiny'></icon>
-      <span class='title'>{{ link.title }}</span>
+      <icon ico='cube' :sz='[!$store.getters.NavbarisOnDesktop ? "big" : "tiny"]'></icon>
+      <span class='title' :class='{mobile: !$store.getters.NavbarisOnDesktop}'>{{ link.title }}</span>
       <span class='icons'>
         <icon v-for='ico in link.icos' :key='`section-navigation-icon-${ico}`' :ico='ico.ico' @click='ico.callback' class='pointer' sz='medium-medium'></icon>
-        <icon ico='angle-down' @click='show = !show' class='toggle pointer' :class='[show ? "down" : "up"]' sz='medium-medium'></icon>
+        <icon ico='angle-down' @click='show = !show' class='toggle pointer' :class='[show ? "down" : "up"]' :sz='[!$store.getters.NavbarisOnDesktop ? "big" : "medium-medium"]'></icon>
       </span>
     </div>
     <transition-group name='fade-transition'>
@@ -87,9 +87,14 @@ export default Vue.extend({
 .navigation-link {
   display: flex;
   cursor: pointer;
-  flex-basis: 95%;
+  flex-basis: 100%;
   font-size: 1.1em;
   transition-duration: .2s;
+}
+
+.navigation-link.mobile {
+  font-size: 1.4em;
+  padding: 2px;
 }
 
 .navigation-link:hover, .navigation-link:hover .icon, .active, .active .icon {
@@ -129,7 +134,11 @@ export default Vue.extend({
 
 .link-group {
   margin-top: 8px;
-  width: 205px;
+  width: 188px;
+}
+
+.link-group.mobile {
+  width: 233px;
 }
 
 .level-1 {
@@ -147,6 +156,10 @@ export default Vue.extend({
 .header .title {
   margin-left: 4px;
   font-size: 1.1em;
+}
+
+.title.mobile {
+  font-size: 1.3em;
 }
 
 .navigation-wrapper {

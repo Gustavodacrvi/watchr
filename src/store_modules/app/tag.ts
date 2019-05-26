@@ -87,7 +87,7 @@ export default {
       if (index === -1) {
         const length = labels.length;
         for (let i = 0; i < length; i++) {
-         dispatch('deleteLabelById', {id, labels: labels[i].subTags})
+         dispatch('deleteLabelNodeById', {id, labels: labels[i].subTags})
         }
       } else {
         ToastBus.$emit('addToast', {
