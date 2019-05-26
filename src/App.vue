@@ -21,12 +21,12 @@ import Vue from 'vue';
 import store from '@/store';
 import axios from 'axios';
 import NavBar from '@/components/navigation/NavBar.vue';
-import AppNavBar from '@/components/appNavigation/AppNavBar.vue';
+import AppNavBar from '@/components/app/navigation/AppNavBar.vue';
 import MobileSection from '@/components/navigation/mobile/MobileSection.vue';
-import Toast from '@/components/generalComponents/Toast.vue';
-import Loading from '@/components/generalComponents/Loading.vue';
+import Toast from '@/components/regular/Toast.vue';
+import Loading from '@/components/regular/Loading.vue';
 
-import PopUps from '@/components/appPopUps/PopUp.vue';
+import PopUps from '@/components/app/popUps/PopUp.vue';
 
 import { getCookie, setCookie } from './assets/javaScript/cookies';
 

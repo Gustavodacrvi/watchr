@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Loading from './components/generalComponents/Loading.vue';
+import Loading from './components/regular/Loading.vue';
 
 export default Vue.extend({
   components: {

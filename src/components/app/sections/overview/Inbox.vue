@@ -1,0 +1,51 @@
+<template>
+  <div>
+    <app-title :lvl='1'>Inbox</app-title>
+    <p class='description'>All of your inbox tasks will be shown here. Inbox tasks aren't scheduled neither periodic and don't have tags, intervals or projects. </p>
+    <div class='icons'>
+      <icon class='right icon-group-icon pointer circle' ico='circle' sz='medium-medium' ></icon>
+      <icon class='right icon-group-icon pointer' ico='filter' sz='medium-medium' ></icon>
+      <icon class='left icon-group-icon pointer' ico='search' sz='medium-medium' ></icon>
+    </div>
+    <adder msg='Add task' btn-msg='Add task'></adder>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import Title from '@/components/app/components/Title.vue';
+import Icon from '@/components/regular/Icon.vue';
+import Adder from '@/components/app/components/Adder.vue';
+
+export default Vue.extend({
+  components: {
+    'app-title': Title,
+    'icon': Icon,
+    'adder': Adder,
+  },
+});
+</script>
+
+<style scoped>
+
+.description {
+  padding: 18px 0;
+}
+
+.icon {
+  margin: 2px;
+}
+
+.icons {
+  height: 40px;
+}
+
+.right {
+  float: right;
+}
+
+.left {
+  float: left;
+}
+
+</style>

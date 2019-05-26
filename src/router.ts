@@ -1,17 +1,16 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import store from './store';
-// This warning doesn't make sense, just leave it there.
-import { ToastBus } from './components/generalComponents/Toast.vue';
-import { ToastObj } from './components/interfaces';
+import store from '@/store';
+import { ToastBus } from '@/components/regular/Toast.vue';
+import { ToastObj } from '@/components/interfaces';
 
-import { setCookie } from './assets/javaScript/cookies';
+import { setCookie } from '@/assets/javaScript/cookies';
 
 Vue.use(Router);
 
 const lazyLoad = (view: any) => {
-  return () => import(`@/components/views/${view}.vue`);
+  return () => import(`@/components/${view}.vue`);
 };
 
 export default new Router({
@@ -20,27 +19,27 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: lazyLoad('Home'),
+      component: lazyLoad('views/Home'),
     },
     {
       path: '/login',
       name: 'login',
-      component: lazyLoad('Login'),
+      component: lazyLoad('auth/views/Login'),
     },
     {
       path: '/signup',
       name: 'signup',
-      component: lazyLoad('Signup'),
+      component: lazyLoad('auth/views/Signup'),
     },
     {
       path: '/guest',
       name: 'guest',
-      component: lazyLoad('Guest'),
+      component: lazyLoad('views/Guest'),
     },
     {
       path: '/user',
       name: 'user',
-      component: lazyLoad('User'),
+      component: lazyLoad('views/User'),
       beforeEnter: (to, from, next) => {
         if (store.getters.isAuthenticated) {
           next();
