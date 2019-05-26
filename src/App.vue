@@ -1,8 +1,8 @@
 <template>
   <div id='body' class='background' :class='$store.state.theme.style' @click='hideAppNavBar'>
     <section id='content'>
-      <nav-bar v-if='!($store.getters.isOnMobileApp && isOnAppRoute)'></nav-bar>
-      <app-nav-bar v-if='isOnAppRoute && !$store.getters.NavbarisOnDesktop'></app-nav-bar>
+      <nav-bar></nav-bar>
+      <app-nav-bar v-if='isOnAppRoute && !isDesktop'></app-nav-bar>
       <transition :class='$store.state.theme.style' name='fade-transition' mode='out-in'>
         <loading v-if='$root.routerViewLoading'></loading>
         <div v-else id='router-view'>
@@ -11,7 +11,7 @@
       </transition>
     </section>
     <pop-up v-if='isOnAppRoute'></pop-up>
-    <mobile-section id='mobile-section' v-if='!$store.getters.NavbarisOnDesktop && !isOnAppRoute'></mobile-section>
+    <mobile-section v-if='!(isMobileApp && isOnAppRoute)'></mobile-section>
     <toast></toast>
   </div>
 </template>
@@ -58,8 +58,14 @@ export default Vue.extend({
     isOnAppRoute(): boolean {
       return this.$route.path === '/guest' || this.$route.path === '/user';
     },
+    isDesktop(): boolean {
+      return this.$store.getters.NavbarisOnDesktop;
+    },
     closeNavbar(): boolean {
       return !this.$store.state.app.nav.clicked && !this.$store.state.app.nav.iconClick && this.isOpened;
+    },
+    isMobileApp(): boolean {
+      return this.$store.getters.isOnMobileApp;
     },
     isOpened(): boolean {
       return this.$store.state.app.nav.open;

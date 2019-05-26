@@ -1,14 +1,15 @@
 <template>
   <div v-if='!link.type' class='link'>
     <div class='navigation-wrapper' @mouseover='showIcon = true' @mouseleave='showIcon = false'>
-      <span class='navigation-link' @click='navigate(link)' :class='{active: isLinkActive(link.txt)}' :key='link.id'><icon v-if='link.ico' class='link-icon' :ico='link.ico' sz='tiny'></icon>{{ link.txt }}
+      <span class='navigation-link' @click='navigate(link)' :class='{active: isLinkActive(link.txt), mobile: !isDesktop}' :key='link.id'><icon v-if='link.ico' class='link-icon' :ico='link.ico' :sz='icoSz'></icon>{{ link.txt }}
       </span>
       <span class='navigation-icons'>
-        <transition-group name='fade-transition'>
-          <template v-if='link.icos && showIcon'>
-            <icon class='navigation-icon pointer icon-color-hover color-red' v-for='ico in link.icos' :blink='true' :key='ico.ico' :ico='ico.ico' @dblclick='ico.callback(link.id)' sz='medium'></icon>
-          </template>
-        </transition-group>
+        <template v-if='isDesktop && link.icos && showIcon'>
+          <transition-group name='fade-transition'>
+            <icon class='navigation-icon pointer icon-color-hover' v-for='ico in link.icos' :class='`color-${ico.color}`' :blink='true' :key='ico.ico' :ico='ico.ico' @dblclick='ico.callback(link.id)' sz='medium'></icon>
+          </transition-group>
+        </template>
+        <icon-group v-if='!isDesktop && link.icos' class='navigation-icon pointer icon-color-hover' handle='ellipsis-v' :options="getIcons(link.icos, link.id)"></icon-group>
         <icon v-if='link.subLinks && link.subLinks.length > 0' class='navigation-icon pointer icon-color-hover' :key='`hide-sublinks-ico-${link.id}`' ico='angle-down' sz='medium' :class="[show ? 'down' : 'up']" @click='show = !show'></icon>
       </span>
     </div>
@@ -18,13 +19,13 @@
       </div>
     </template>
   </div>
-  <div class='link-group' v-else-if='link.type === "Link Group"'>
+  <div class='link-group' :class='{mobile: !isDesktop}' v-else-if='link.type === "Link Group"'>
     <div class='header'>
-      <icon ico='cube' sz='tiny'></icon>
-      <span class='title'>{{ link.title }}</span>
+      <icon ico='cube' :sz='!isDesktop ? "medium-medium" : "tiny"'></icon>
+      <span class='title' :class='{mobile: !isDesktop}'>{{ link.title }}</span>
       <span class='icons'>
         <icon v-for='ico in link.icos' :key='`section-navigation-icon-${ico}`' :ico='ico.ico' @click='ico.callback' class='pointer' sz='medium-medium'></icon>
-        <icon ico='angle-down' @click='show = !show' class='toggle pointer' :class='[show ? "down" : "up"]' sz='medium-medium'></icon>
+        <icon ico='angle-down' @click='show = !show' class='toggle pointer' :class='[show ? "down" : "up"]' :sz='icoSz'></icon>
       </span>
     </div>
     <transition-group name='fade-transition'>
@@ -41,11 +42,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import Icon from '@/components/regular/Icon.vue';
+import IconGroup from '@/components/regular/dropdown/IconGroup.vue';
 
 export default Vue.extend({
   name: 'group-link',
   components: {
-    icon: Icon,
+    'icon': Icon,
+    'icon-group': IconGroup,
   },
   props: {
     link: Object,
@@ -58,12 +61,27 @@ export default Vue.extend({
     };
   },
   methods: {
+    getIcons(icos: any[], id: string): any[] {
+      const length = icos.length;
+      let arr: any = [];
+      for (let i = 0; i < length; i++) {
+        console.log(icos[i].dblclick)
+        arr.push({
+          ico: icos[i].ico,
+          dblclick: icos[i].dblclick,
+          callback: () => icos[i].callback(id),
+          color: icos[i].color,
+        });
+      }
+
+      return arr;
+    },
     navigate(link: any) {
       if (link.callback) {
         link.callback();
       }      
       this.$store.commit('app/nav/pushComp', { component: link.to, txt: link.txt});
-      if (!this.$store.getters.NavbarisOnDesktop) {
+      if (!this.isDesktop) {
         this.$store.commit('app/nav/hide');
       }
     },
@@ -78,6 +96,12 @@ export default Vue.extend({
       }
       return '1';
     },
+    isDesktop(): boolean {
+      return this.$store.getters.NavbarisOnDesktop;
+    },
+    icoSz(): string {
+      return !this.isDesktop ? 'medium-medium' : 'medium';
+    },
   },
 });
 </script>
@@ -87,9 +111,14 @@ export default Vue.extend({
 .navigation-link {
   display: flex;
   cursor: pointer;
-  flex-basis: 95%;
+  flex-basis: 100%;
   font-size: 1.1em;
   transition-duration: .2s;
+}
+
+.navigation-link.mobile {
+  font-size: 1.4em;
+  padding: 2px;
 }
 
 .navigation-link:hover, .navigation-link:hover .icon, .active, .active .icon {
@@ -98,7 +127,7 @@ export default Vue.extend({
 }
 
 .link-icon {
-  margin: 2px 6px;
+  margin: 1px 8px;
 }
 
 .header {
@@ -129,7 +158,11 @@ export default Vue.extend({
 
 .link-group {
   margin-top: 8px;
-  width: 205px;
+  width: 188px;
+}
+
+.link-group.mobile {
+  width: 233px;
 }
 
 .level-1 {
@@ -147,6 +180,10 @@ export default Vue.extend({
 .header .title {
   margin-left: 4px;
   font-size: 1.1em;
+}
+
+.title.mobile {
+  font-size: 1.3em;
 }
 
 .navigation-wrapper {

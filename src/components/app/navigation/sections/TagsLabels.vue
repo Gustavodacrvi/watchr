@@ -42,7 +42,7 @@ export default Vue.extend({
           id: labels[i].id,
           subLinks: this.getSubTags(labels[i]),
           icos: [
-            {ico: 'times', callback: this.deleteLabel},
+            {ico: 'times', callback: this.deleteLabel, color: 'red', dblclick: true},
           ],
         });
       }
@@ -64,7 +64,7 @@ export default Vue.extend({
           id: labels[i].id,
           subLinks: this.getSubTags(labels[i]),
           icos: [
-           {ico: 'times', callback: this.deleteLabel},
+           {ico: 'times', callback: this.deleteLabel, color: 'red', dblclick: true},
           ],
         });
       }
