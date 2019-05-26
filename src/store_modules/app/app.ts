@@ -3,9 +3,7 @@ import uuid from 'uuid';
 
 import { Routine, Interval, DateInterval, Tag, ToastObj } from '@/components/interfaces';
 import NavigationModule from '@/store_modules/app/navigation';
-
-// this error doesn't make sense, just leave it there
-import { ToastBus } from '@/components/regular/Toast.vue';
+import TagModule from '@/store_modules/app/tag';
 
 const sameDay = (d1: Date, d2: Date) => {
   return d1.getFullYear() === d2.getFullYear() &&
@@ -17,6 +15,7 @@ export default {
   namespaced: true,
   modules: {
     nav: NavigationModule,
+    tag: TagModule,
   },
   state: {
     webStorage: undefined,
@@ -27,69 +26,15 @@ export default {
     interval: {
       intervals: [] as Interval[],
     },
-    tags: {
-      labels: [] as Tag[],
-    },
     options: {
       clockConvention: '24',
     },
   },
   getters: {
-    labelBranchExists: (state: any, getters: any) => (branch: string[], labels: any): boolean => {
-      if (labels === undefined) {
-        labels = state.tags.labels;
-      }
-
-      const subTag: Tag = labels.find((el: Tag) => {
-        return el.name === branch[0];
-      });
-      if (subTag === undefined) {
-        return false;
-      }
-
-      branch.shift();
-      if (branch.length === 0) {
-        return true;
-      }
-      return getters.labelBranchExists(branch, subTag.subTags);
-    },
     getRoutineById: (state: any) => (key: string): string => {
       return state.routine.routines.find((el: Routine) => {
         return el.id === key;
       });
-    },
-    parseArrayNodeToString: (state: any) => (node: string[]): string => {
-      const length = node.length;
-      let str = '';
-      for (let i = 0; i < length; i++) {
-        str += node[i];
-        if (i + 1 !== length) {
-          str += ':';
-        }
-      }
-      return str;
-    },
-    getLabelArrayBranchById: (state: any, getters: any) => (id: string, node: any, labels: any): string[] | undefined => {
-      if (labels === undefined) {
-        labels = state.tags.labels;
-      }
-      if (node === undefined) {
-        node = [];
-      }
-
-      const length = labels.length;
-      for (let i = 0; i < length; i++) {
-        let returnBranch = node.slice();
-        returnBranch.push(labels[i].name);
-        if (labels[i].id === id) {
-          return returnBranch;
-        }
-        const targetBranch = getters.getLabelArrayBranchById(id, returnBranch, labels[i].subTags);
-        if (targetBranch !== undefined) {
-          return targetBranch;
-        }
-      }
-      return undefined;
     },
     isVisible: (state: any) => (arr: any[], value: Date | DateInterval): boolean => {
       const length = arr.length;
@@ -147,13 +92,6 @@ export default {
         // ));
       }
     },
-    saveTags(state: any) {
-      if (state.webStorage) {
-        // localStorage.setItem('watchrTags', JSON.stringify(
-        //   state.tags,
-        // ));
-      }
-    },
     deleteLocalStorageData() {
       localStorage.removeItem('watchrRoutines');
       localStorage.removeItem('watchrIntervals');
@@ -190,78 +128,6 @@ export default {
     addInterval({ state, commit }: any, interval: Interval) {
       state.intervals.push(interval);
       commit('saveIntervals');
-    },
-    deleteLabelById({ state, commit, dispatch, getters }: any, {id, labels}: any) {
-      if (labels === undefined) {
-        labels = state.tags.labels;
-      }
-
-      const index = labels.findIndex((el: Tag) => {
-        return el.id === id;
-      });
-
-      if (index === -1) {
-        const length = labels.length;
-        for (let i = 0; i < length; i++) {
-         dispatch('deleteLabelById', {id, labels: labels[i].subTags})
-        }
-      } else {
-        ToastBus.$emit('addToast', {
-          msg: `Deleted <strong>'${getters.parseArrayNodeToString(getters.getLabelArrayBranchById(id))}'</strong> label and all of its sub tags successfuly.`,
-          duration_seconds: 3,
-          type: 'success',
-        } as ToastObj);
-        labels.splice(index, 1);
-        commit('saveTags');
-      }
-    },
-    addLabelNode({ state, dispatch, getters }: any, {node, labels, originalNode}: any) {
-      if (labels === undefined) {
-        labels = state.tags.labels;
-      }
-      if (originalNode === undefined) {
-        originalNode = node.slice();
-      }
-
-      if (node.length > 1) {
-        const subLabel: Tag = labels.find((el: Tag) => {
-          return el.name === node[0];
-        });
-        node.shift();
-        dispatch('addLabelNode', { node , labels: subLabel.subTags, originalNode});
-      } else {
-        labels.push({
-          type: 'Label',
-          name: node[0],
-          id: uuid.v4(),
-          subTags: [],
-        } as Tag);
-        ToastBus.$emit('addToast', {
-
-          msg: `Added <strong>'${getters.parseArrayNodeToString(originalNode)}' </strong> label successfuly`,
-          duration_seconds: 2,
-          type: 'success',
-        } as ToastObj);
-      }
-    },
-    addLabelBranch({ commit, state, dispatch, getters }: any, values: string[]) {
-      const length = values.length;
-
-      for (let i = 0;i < length; i++) {
-        const splice = values.slice();
-        splice.splice(i + 1);
-
-        if (!getters.labelBranchExists(splice.slice())) {
-          dispatch('addLabelNode', { node: splice.slice()});
-        } else if (i + 1 === length) {
-          ToastBus.$emit('addToast', {
-            msg: `Label ${values[values.length - 1]} already exists.`,
-            duration_seconds: 4,
-            type: 'error',
-          });
-        }
-      }
-      commit('saveTags');
     },
   },
 };

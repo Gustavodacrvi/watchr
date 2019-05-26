@@ -28,7 +28,7 @@ export default Vue.extend({
       this.$store.commit('app/nav/pushPopUp', 'addlabel');
     },
     deleteLabel(id: string) {
-      this.$store.dispatch('app/deleteLabelById', {id});
+      this.$store.dispatch('app/tag/deleteLabelNodeById', {id});
     },
     getSubTags(label: any): any[] {
       const labels = label.subTags;
@@ -52,7 +52,7 @@ export default Vue.extend({
   },
   computed: {
     labels(): any[] {
-      const labels = this.$store.state.app.tags.labels;
+      const labels = this.$store.state.app.tag.tags.labels;
       const links = [];
       const length = labels.length;
       for (let i = 0; i < length; i++) {
