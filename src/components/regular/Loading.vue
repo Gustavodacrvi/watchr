@@ -18,6 +18,7 @@ export default Vue.extend({
 <style scoped>
 
 #loading {
+  position: absolute;
   height: 100%;
   width: 100%;
   display: flex;

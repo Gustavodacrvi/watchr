@@ -24,7 +24,7 @@ export default Vue.extend({
 <style scoped>
 
 .app-navBar {
-  position: fixed;
+  position: absolute;
   width: 100%;
   top: 0;
   left: 0;

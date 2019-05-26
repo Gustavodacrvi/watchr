@@ -1,5 +1,5 @@
 <template>
-  <div @click='$store.commit("app/nav/click")' id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed", !isDesktop ? "mobile" : ""]' @mouseleave='hideNav'>
+  <div @click='$store.commit("app/nav/click")' class='card' id='app-navigation' :class='[$store.state.theme.style, isOpened ? "opened" : "closed", !isDesktop ? "mobile" : ""]' @mouseleave='hideNav'>
     <div id='navigation-margin'></div>
     <overview></overview>
     <perspectives></perspectives>
@@ -74,14 +74,6 @@ export default Vue.extend({
 
 <style scoped>
 
-#app-navigation.light.opened {
-  background-color: #EDEDED;
-  box-shadow: inset 0 0 4px #b4b4b4;
-}
-
-#app-navigation.dark.opened {
-  background-color: #282828;
-}
 
 #app-navigation {
   position: fixed;
@@ -104,6 +96,8 @@ export default Vue.extend({
 
 #app-navigation.closed {
   width: 50px;
+  background-color: transparent !important;
+  box-shadow: none;
 }
 
 #app-navigation.closed.mobile {

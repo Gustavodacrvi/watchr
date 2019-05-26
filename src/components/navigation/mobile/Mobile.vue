@@ -3,7 +3,7 @@
     <section id='mobile-nav-left'>
     </section>
     <section id='mobile-nav-right'>
-      <icon class='navBar-icon' position='right' :active='active' @toggle='toggleMobileSection'></icon>
+      <icon v-if="!($store.getters.isOnMobileApp && ($route.path === '/guest' || $route.path === '/user'))" class='navBar-icon' position='right' :active='active' @toggle='toggleMobileSection'></icon>
     </section>
   </nav>
 </template>
