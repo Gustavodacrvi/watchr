@@ -74,7 +74,7 @@ export default Vue.extend({
             type: 'error',
           });
         } else {
-          this.$store.dispatch('app/addLabelBranch', values);
+          this.$store.dispatch('app/tag/addLabelBranch', values);
         }
       }
     },

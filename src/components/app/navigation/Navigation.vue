@@ -95,7 +95,7 @@ export default Vue.extend({
 }
 
 #app-navigation.opened {
-  width: 300px;
+  width: 250px;
 }
 
 #app-navigation.closed {

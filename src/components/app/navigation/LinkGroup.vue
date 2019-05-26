@@ -14,7 +14,7 @@
     </div>
     <template v-if='show'>
       <div class='sub-links' v-if='link.subLinks'>
-        <group-link v-for='subLink in link.subLinks' :key='subLink.id' :link='subLink' :class='`level-${lvl}`' :lvl='lvl + 1'></group-link>
+        <group-link v-for='subLink in link.subLinks' :key='subLink.id' :link='subLink' :class='`level-${level}`' :lvl='lvl + 1'></group-link>
       </div>
     </template>
   </div>
@@ -30,8 +30,8 @@
     <transition-group name='fade-transition'>
       <template v-if='show'>
         <template v-for='subLink in link.links'>
-          <group-link v-if='subLink.to' :key='subLink.id' :link='subLink' :class='`level-${lvl}`' :lvl='lvl + 1'></group-link>
-          <group-link v-else :key='subLink.title + "vue-key"' :link='subLink' :class='`level-${lvl}`' :lvl='lvl + 1'></group-link>
+          <group-link v-if='subLink.to' :key='subLink.id' :link='subLink' :class='`level-${level}`' :lvl='lvl + 1'></group-link>
+          <group-link v-else :key='subLink.title + "vue-key"' :link='subLink' :class='`level-${level}`' :lvl='lvl + 1'></group-link>
         </template>
       </template>
     </transition-group>
@@ -69,6 +69,14 @@ export default Vue.extend({
     },
     isLinkActive(txt: string): boolean {
       return txt === this.$store.state.app.nav.componentText;
+    },
+  },
+  computed: {
+    level() {
+      if (this.lvl > 1) {
+        return 'sub';
+      }
+      return '1';
     },
   },
 });
@@ -121,23 +129,15 @@ export default Vue.extend({
 
 .link-group {
   margin-top: 8px;
-  width: 250px;
+  width: 205px;
 }
 
 .level-1 {
-  margin-left: 15px !important;
+  margin-left: 16px !important;
 }
 
-.level-2 {
-  margin-left: 12px !important;
-}
-
-.level-3 {
-  margin-left: 19px !important;
-}
-
-.level-4 {
-  margin-left: 21px !important;
+.level-sub {
+  margin-left: 14px !important;
 }
 
 .header .title, .header .icon {

@@ -1,7 +1,7 @@
 <template>
   <transition :class='$store.state.theme.style' name='toast-transition' @after-leave='showNext'>
     <article :class='[toastClass, $store.state.theme.style]' v-show='showing' id='toast'>
-      <span>{{ msg }}</span>
+      <span v-html='msg'></span>
       <span v-if='infiniteToast' class='toast-icon'>
         <icon class='pointer' ico='times' sz='big' @click='showing = false'></icon>
       </span>
