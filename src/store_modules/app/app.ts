@@ -5,7 +5,7 @@ import { Routine, Interval, DateInterval, Tag, ToastObj } from '@/components/int
 import NavigationModule from '@/store_modules/app/navigation';
 
 // this error doesn't make sense, just leave it there
-import { ToastBus } from '@/components/generalComponents/Toast.vue';
+import { ToastBus } from '@/components/regular/Toast.vue';
 
 const sameDay = (d1: Date, d2: Date) => {
   return d1.getFullYear() === d2.getFullYear() &&

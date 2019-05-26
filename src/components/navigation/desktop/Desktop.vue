@@ -21,7 +21,7 @@
 import Vue from 'vue';
 
 import NavLink from '@/components/navigation/desktop/DesktopLink.vue';
-import Icon from '@/components/generalComponents/Icon.vue';
+import Icon from '@/components/regular/Icon.vue';
 import IconGroup from '@/components/navigation/IconGroup.vue';
 
 export default Vue.extend({
