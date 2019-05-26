@@ -10,7 +10,7 @@
     ], title: 'Labels', links: labels},
     {type: 'Link Group', title: 'Tag Group', links: [
     ]},
-  ]" 
+  ]"
   :bottom="[]"
   ></icon-section>
 </template>
@@ -28,10 +28,10 @@ export default Vue.extend({
       this.$store.commit('app/nav/pushPopUp', 'addlabel');
     },
     deleteLabel(id: string) {
-      this.$store.dispatch('app/deleteLabelById', id);
+      this.$store.dispatch('app/deleteLabelById', {id});
     },
-    getSubLabels(label: any): any[] {
-      const labels = label.subLabels;
+    getSubTags(label: any): any[] {
+      const labels = label.subTags;
       const length = labels.length;
       const subLinks = [];
 
@@ -40,7 +40,7 @@ export default Vue.extend({
           txt: labels[i].name,
           to: 'custom',
           id: labels[i].id,
-          subLinks: this.getSubLabels(labels[i]),
+          subLinks: this.getSubTags(labels[i]),
           icos: [
             {ico: 'times', callback: this.deleteLabel},
           ],
@@ -62,7 +62,7 @@ export default Vue.extend({
           txt: labels[i].name,
           to: 'custom',
           id: labels[i].id,
-          subLinks: this.getSubLabels(labels[i]),
+          subLinks: this.getSubTags(labels[i]),
           icos: [
            {ico: 'times', callback: this.deleteLabel},
           ],

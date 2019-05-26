@@ -40,10 +40,10 @@ export default {
         labels = state.tags.labels;
       }
 
-      const subLabel = labels.find((el: Tag) => {
+      const subTag: Tag = labels.find((el: Tag) => {
         return el.name === branch[0];
       });
-      if (subLabel === undefined) {
+      if (subTag === undefined) {
         return false;
       }
 
@@ -51,12 +51,23 @@ export default {
       if (branch.length === 0) {
         return true;
       }
-      return getters.labelBranchExists(branch, subLabel.subLabels);
+      return getters.labelBranchExists(branch, subTag.subTags);
     },
     getRoutineById: (state: any) => (key: string): string => {
       return state.routine.routines.find((el: Routine) => {
         return el.id === key;
       });
+    },
+    parseArrayNodeToString: (state: any) => (node: string[]): string => {
+      const length = node.length;
+      let str = '';
+      for (let i = 0; i < length; i++) {
+        str += node[i];
+        if (i + 1 !== length) {
+          str += ':';
+        }
+      }
+      return str;
     },
     isVisible: (state: any) => (arr: any[], value: Date | DateInterval): boolean => {
       const length = arr.length;
@@ -102,23 +113,23 @@ export default {
     },
     saveRoutines(state: any) {
       if (state.webStorage) {
-        localStorage.setItem('watchrRoutines', JSON.stringify(
-          state.routine,
-        ));
+        // localStorage.setItem('watchrRoutines', JSON.stringify(
+        //   state.routine,
+        // ));
       }
     },
     saveIntervals(state: any) {
       if (state.webStorage) {
-        localStorage.setItem('watchrIntervals', JSON.stringify(
-          state.interval,
-        ));
+        // localStorage.setItem('watchrIntervals', JSON.stringify(
+        //   state.interval,
+        // ));
       }
     },
     saveTags(state: any) {
       if (state.webStorage) {
-        localStorage.setItem('watchrTags', JSON.stringify(
-          state.tags,
-        ));
+        // localStorage.setItem('watchrTags', JSON.stringify(
+        //   state.tags,
+        // ));
       }
     },
     deleteLocalStorageData() {
@@ -158,40 +169,57 @@ export default {
       state.intervals.push(interval);
       commit('saveIntervals');
     },
-    deleteLabelById({ state, commit }: any, id: string) {
-      const index = state.tags.labels.findIndex((el: Tag) => {
-        return el.id === id;
-      });
-      state.tags.labels.splice(index, 1);
-      commit('saveTags');
-    },
-    addLabelNode({ state, dispatch }: any, {node, labels}: any) {
+    deleteLabelById({ state, commit, dispatch }: any, {id, labels}: any) {
       if (labels === undefined) {
         labels = state.tags.labels;
       }
 
+      const index = labels.findIndex((el: Tag) => {
+        return el.id === id;
+      });
+
+      if (index === -1) {
+        const length = labels.length;
+        for (let i = 0; i < length; i++) {
+         dispatch('deleteLabelById', {id, labels: labels[i].subTags})
+        }
+      } else {
+        labels.splice(index, 1);
+        commit('saveTags');
+      }
+    },
+    addLabelNode({ state, dispatch, getters }: any, {node, labels, originalNode}: any) {
+      if (labels === undefined) {
+        labels = state.tags.labels;
+      }
+      if (originalNode === undefined) {
+        originalNode = node.slice();
+      }
+
       if (node.length > 1) {
-        const subLabel = labels.find((el: Tag) => {
+        const subLabel: Tag = labels.find((el: Tag) => {
           return el.name === node[0];
         });
         node.shift();
-        dispatch('addLabelNode', { node , labels: subLabel.subLabels});
+        dispatch('addLabelNode', { node , labels: subLabel.subTags, originalNode});
       } else {
         labels.push({
           type: 'Label',
           name: node[0],
           id: uuid.v4(),
-          subLabels: [],
+          subTags: [],
         } as Tag);
+        ToastBus.$emit('addToast', {
+
+          msg: `Added <strong>'${getters.parseArrayNodeToString(originalNode)}' </strong> label successfuly`,
+          duration_seconds: 2.5,
+          type: 'success',
+        } as ToastObj);
       }
     },
     addLabelBranch({ commit, state, dispatch, getters }: any, values: string[]) {
       const length = values.length;
-      console.log(length)
 
-      // fuck
-
-      let success = true;
       for (let i = 0;i < length; i++) {
         const splice = values.slice();
         splice.splice(i + 1);
@@ -199,7 +227,6 @@ export default {
         if (!getters.labelBranchExists(splice.slice())) {
           dispatch('addLabelNode', { node: splice.slice()});
         } else if (i + 1 === length) {
-          success = false;
           ToastBus.$emit('addToast', {
             msg: `Label ${values[values.length - 1]} already exists.`,
             duration_seconds: 4,
@@ -207,16 +234,7 @@ export default {
           });
         }
       }
-
-      if (success) {
-        ToastBus.$emit('addToast', {
-          msg: `Added ${values[values.length - 1]} label successfuly`,
-          duration_seconds: 3.5,
-          type: 'success',
-        } as ToastObj);
-      }
-
-      // commit('saveTags');
+      commit('saveTags');
     },
   },
 };
