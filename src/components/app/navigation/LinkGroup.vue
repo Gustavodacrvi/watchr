@@ -121,23 +121,23 @@ export default Vue.extend({
 
 .link-group {
   margin-top: 8px;
-  width: 250px;
+  width: 205px;
 }
 
 .level-1 {
-  margin-left: 15px !important;
+  margin-left: 16px !important;
 }
 
 .level-2 {
-  margin-left: 12px !important;
+  margin-left: 14px !important;
 }
 
 .level-3 {
-  margin-left: 19px !important;
+  margin-left: 14px !important;
 }
 
 .level-4 {
-  margin-left: 21px !important;
+  margin-left: 14px !important;
 }
 
 .header .title, .header .icon {
