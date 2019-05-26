@@ -69,6 +69,28 @@ export default {
       }
       return str;
     },
+    getLabelArrayBranchById: (state: any, getters: any) => (id: string, node: any, labels: any): string[] | undefined => {
+      if (labels === undefined) {
+        labels = state.tags.labels;
+      }
+      if (node === undefined) {
+        node = [];
+      }
+
+      const length = labels.length;
+      for (let i = 0; i < length; i++) {
+        let returnBranch = node.slice();
+        returnBranch.push(labels[i].name);
+        if (labels[i].id === id) {
+          return returnBranch;
+        }
+        const targetBranch = getters.getLabelArrayBranchById(id, returnBranch, labels[i].subTags);
+        if (targetBranch !== undefined) {
+          return targetBranch;
+        }
+      }
+      return undefined;
+    },
     isVisible: (state: any) => (arr: any[], value: Date | DateInterval): boolean => {
       const length = arr.length;
       if (value instanceof Date) {
@@ -169,7 +191,7 @@ export default {
       state.intervals.push(interval);
       commit('saveIntervals');
     },
-    deleteLabelById({ state, commit, dispatch }: any, {id, labels}: any) {
+    deleteLabelById({ state, commit, dispatch, getters }: any, {id, labels}: any) {
       if (labels === undefined) {
         labels = state.tags.labels;
       }
@@ -184,6 +206,11 @@ export default {
          dispatch('deleteLabelById', {id, labels: labels[i].subTags})
         }
       } else {
+        ToastBus.$emit('addToast', {
+          msg: `Deleted <strong>'${getters.parseArrayNodeToString(getters.getLabelArrayBranchById(id))}'</strong> label and all of its sub tags successfuly.`,
+          duration_seconds: 3,
+          type: 'success',
+        } as ToastObj);
         labels.splice(index, 1);
         commit('saveTags');
       }
@@ -212,7 +239,7 @@ export default {
         ToastBus.$emit('addToast', {
 
           msg: `Added <strong>'${getters.parseArrayNodeToString(originalNode)}' </strong> label successfuly`,
-          duration_seconds: 2.5,
+          duration_seconds: 2,
           type: 'success',
         } as ToastObj);
       }
