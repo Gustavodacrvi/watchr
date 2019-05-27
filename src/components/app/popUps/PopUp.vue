@@ -1,8 +1,8 @@
 <template>
-  <div id='app-pop-ups' class='reduced-brightness' :class='{"pop-up-opened": popUpOpened}'>
-    <div id='app-pop-up-wrapper'>
+  <div id='app-pop-ups' class='reduced-brightness'>
+    <div id='app-pop-up-wrapper' :class='{"pop-up-opened": popUpOpened}'>
       <transition name='fade-transition' mode='out-in'>
-        <component class='pop-up' :is='currentPopUp'></component>
+        <component class='pop-up card-round' :is='currentPopUp'></component>
       </transition>
     </div>
   </div>
@@ -37,14 +37,15 @@ export default Vue.extend({
 <style scoped>
 
 #app-pop-ups {
-  position: fixed;
-  height: 100vh;
-  width: 100vw;
+  position: absolute;
+  height: 110%;
+  width: 100%;
   pointer-events: none;
 }
 
 .pop-up {
-  margin-top: 100px;
+  margin: 0 6px;
+  margin-top: 75px;
 }
 
 .pop-up-opened {
@@ -54,7 +55,7 @@ export default Vue.extend({
 
 #app-pop-up-wrapper {
   position: relative;
-  height: 100%;
+  height: 125%;
   display: flex;
   justify-content: center;
   align-items: flex-start;

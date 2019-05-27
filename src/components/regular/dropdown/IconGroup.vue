@@ -1,6 +1,7 @@
 <template>
   <span class='icon-group' @mouseenter='showing = true' @mouseleave='showing = false'>
-    <icon class='icon-color-hover pointer' sz='big-big' :ico='handle'></icon>
+    <icon v-if='!sz' class='icon-color-hover pointer' sz='big-big' :ico='handle'></icon>
+    <icon v-else class='icon-color-hover pointer' :sz='sz' :ico='handle'></icon>
     <transition name='fade-transition'>
       <div v-show='showing' class='content card-round' :class='$store.state.theme.style'>
         <template v-for='el in options'>
@@ -23,6 +24,7 @@ export default Vue.extend({
   props: {
     handle: String,
     options: Array,
+    sz: String,
   },
   data() {
     return {

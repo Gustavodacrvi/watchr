@@ -95,6 +95,10 @@ export default Vue.extend({
   border: none;
 }
 
+#app-navigation.dark {
+  background-color: #1C1C1C;
+}
+
 #app-navigation.opened.mobile {
   width: 290px;
 }

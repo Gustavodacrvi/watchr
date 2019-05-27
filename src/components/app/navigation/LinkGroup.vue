@@ -10,7 +10,7 @@
             <icon class='navigation-icon pointer icon-color-hover' v-for='ico in link.icos' :class='`color-${ico.color}`' :blink='true' :key='ico.ico' :ico='ico.ico' @dblclick='ico.callback(link.id)' sz='tiny'></icon>
           </transition-group>
         </template>
-        <icon-group v-if='!isDesktop && link.icos' class='navigation-icon pointer icon-color-hover' handle='ellipsis-v' :options="getIcons(link.icos, link.id)"></icon-group>
+        <icon-group v-if='!isDesktop && link.icos' class='navigation-icon pointer icon-color-hover' handle='ellipsis-v' sz='tiny' :options="getIcons(link.icos, link.id)"></icon-group>
         <icon v-if='link.subLinks && link.subLinks.length > 0' class='navigation-icon pointer icon-color-hover' :key='`hide-sublinks-ico-${link.id}`' ico='angle-down' :sz='icoSz' :class="[show ? 'down' : 'up']" @click='show = !show'></icon>
       </span>
     </div>
@@ -24,8 +24,9 @@
     <div class='header' @click='show = !show'>
       <icon class='link-icon' ico='cube' :sz='icoSz'></icon>
       <span class='title' :class='{mobile: !isDesktop}'>{{ link.title }}</span>
-      <span class='icons'>
+      <span class='link-group-icons'>
         <icon v-for='ico in link.icos' :key='`section-navigation-icon-${ico}`' :ico='ico.ico' @click='ico.callback' class='pointer' sz='tiny'></icon>
+        <icon ico='angle-down' @click='show = !show' class='toggle pointer' :class='[show ? "down" : "up"]' :sz='icoSz'></icon>
       </span>
     </div>
     <transition-group name='fade-transition'>
@@ -65,7 +66,6 @@ export default Vue.extend({
       const length = icos.length;
       let arr: any = [];
       for (let i = 0; i < length; i++) {
-        console.log(icos[i].dblclick)
         arr.push({
           ico: icos[i].ico,
           dblclick: icos[i].dblclick,
@@ -118,7 +118,6 @@ export default Vue.extend({
 
 .navigation-link.mobile {
   font-size: 1.15em;
-  padding: 3px;
 }
 
 .navigation-link:hover, .navigation-link:hover .icon, .active, .active .icon {
@@ -135,13 +134,13 @@ export default Vue.extend({
   cursor: pointer;
 }
 
-.icons {
+.link-group-icons {
   position: absolute;
   right: 0;
   margin-top: 3px;
 }
 
-.icons .icon {
+.link-group-icons .icon {
   margin: 0 4px;
 }
 
@@ -163,7 +162,7 @@ export default Vue.extend({
 }
 
 .link-group.mobile {
-  width: 233px;
+  width: 243px;
 }
 
 .level-1 {
@@ -195,7 +194,8 @@ export default Vue.extend({
 }
 
 .navigation-icon {
-  margin-left: 8px;
+  float: right;
+  margin-left: 5px;
 }
 
 </style>
