@@ -1,6 +1,6 @@
 <template>
   <div class='section'>
-    <icon @mouseover='showNav' :title='title' class='pointer icon-color-hover' :class='{color: isActive}' :ico='ico' sz='medium-medium' @click='selectIcon'></icon>
+    <icon @mouseover='showNav' :title='title' class='pointer icon-color-hover' :class='{color: isActive}' :ico='ico' sz='tiny-tiny' @click='selectIcon'></icon>
     <transition name='fade-transition'>
       <div class='section-content' v-show='isActive && isNavOpened'>
         <div class='top'>
@@ -64,26 +64,26 @@ export default Vue.extend({
 <style scoped>
 
 .section {
-  padding: 8px 10px;
-  margin-left: 6px;
+  padding: 4px 8px;
 }
 
 .section-content {
   position: absolute;
   padding-left: 33px;
-  top: 108px;
+  top: 149px;
   box-sizing: border-box;
   min-width: 90%;
 }
 
 .margin {
-  margin-top: 20px;
+  margin-top: 25px;
   border: none;
 }
 
 .icon {
   position: relative;
   z-index: 5;
+  padding: 6px;
 }
 
 </style>

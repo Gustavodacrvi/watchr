@@ -87,7 +87,7 @@ export default Vue.extend({
 }
 
 #app-navigation.opened {
-  width: 230px;
+  width: 250px;
 }
 
 #app-navigation.light {
@@ -96,7 +96,7 @@ export default Vue.extend({
 }
 
 #app-navigation.opened.mobile {
-  width: 280px;
+  width: 290px;
 }
 
 #app-navigation.closed {
@@ -110,7 +110,7 @@ export default Vue.extend({
 }
 
 #navigation-margin {
-  height: 110px;
+  height: 150px;
 }
 
 #navigation-toggle {

@@ -7,11 +7,11 @@
       <span class='navigation-icons'>
         <template v-if='isDesktop && link.icos && showIcon'>
           <transition-group name='fade-transition'>
-            <icon class='navigation-icon pointer icon-color-hover' v-for='ico in link.icos' :class='`color-${ico.color}`' :blink='true' :key='ico.ico' :ico='ico.ico' @dblclick='ico.callback(link.id)' sz='medium'></icon>
+            <icon class='navigation-icon pointer icon-color-hover' v-for='ico in link.icos' :class='`color-${ico.color}`' :blink='true' :key='ico.ico' :ico='ico.ico' @dblclick='ico.callback(link.id)' sz='tiny'></icon>
           </transition-group>
         </template>
         <icon-group v-if='!isDesktop && link.icos' class='navigation-icon pointer icon-color-hover' handle='ellipsis-v' :options="getIcons(link.icos, link.id)"></icon-group>
-        <icon v-if='link.subLinks && link.subLinks.length > 0' class='navigation-icon pointer icon-color-hover' :key='`hide-sublinks-ico-${link.id}`' ico='angle-down' sz='medium' :class="[show ? 'down' : 'up']" @click='show = !show'></icon>
+        <icon v-if='link.subLinks && link.subLinks.length > 0' class='navigation-icon pointer icon-color-hover' :key='`hide-sublinks-ico-${link.id}`' ico='angle-down' :sz='icoSz' :class="[show ? 'down' : 'up']" @click='show = !show'></icon>
       </span>
     </div>
     <template v-if='show'>
@@ -21,12 +21,11 @@
     </template>
   </div>
   <div class='link-group' :class='{mobile: !isDesktop}' v-else-if='link.type === "Link Group"'>
-    <div class='header'>
-      <icon ico='cube' :sz='!isDesktop ? "medium-medium" : "tiny"'></icon>
+    <div class='header' @click='show = !show'>
+      <icon class='link-icon' ico='cube' :sz='icoSz'></icon>
       <span class='title' :class='{mobile: !isDesktop}'>{{ link.title }}</span>
       <span class='icons'>
-        <icon v-for='ico in link.icos' :key='`section-navigation-icon-${ico}`' :ico='ico.ico' @click='ico.callback' class='pointer' sz='medium-medium'></icon>
-        <icon ico='angle-down' @click='show = !show' class='toggle pointer' :class='[show ? "down" : "up"]' :sz='icoSz'></icon>
+        <icon v-for='ico in link.icos' :key='`section-navigation-icon-${ico}`' :ico='ico.ico' @click='ico.callback' class='pointer' sz='tiny'></icon>
       </span>
     </div>
     <transition-group name='fade-transition'>
@@ -113,12 +112,12 @@ export default Vue.extend({
   display: flex;
   cursor: pointer;
   flex-basis: 100%;
-  font-size: 1.1em;
+  font-size: 1.05em;
   transition-duration: .2s;
 }
 
 .navigation-link.mobile {
-  font-size: 1.4em;
+  font-size: 1.15em;
   padding: 3px;
 }
 
@@ -133,6 +132,7 @@ export default Vue.extend({
 
 .header {
   width: 100%;
+  cursor: pointer;
 }
 
 .icons {
@@ -159,7 +159,7 @@ export default Vue.extend({
 
 .link-group {
   margin-top: 8px;
-  width: 188px;
+  width: 206px;
 }
 
 .link-group.mobile {
@@ -175,12 +175,11 @@ export default Vue.extend({
 }
 
 .header .title {
-  margin-left: 4px;
-  font-size: 1.1em;
+  font-size: 1.05em;
 }
 
 .title.mobile {
-  font-size: 1.3em;
+  font-size: 1.15em;
 }
 
 .navigation-wrapper {

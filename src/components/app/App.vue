@@ -91,7 +91,7 @@ export default Vue.extend({
 }
 
 .navOpened {
-  margin: 0 40px 0 290px;
+  margin: 0 40px 0 310px;
 }
 
 .perspective {
