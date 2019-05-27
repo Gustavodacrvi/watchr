@@ -3,6 +3,7 @@
     <section id='content'>
       <nav-bar></nav-bar>
       <app-nav-bar v-if='isOnAppRoute && !isDesktop'></app-nav-bar>
+      <div v-if='isMobileApp && isOnAppRoute' class='app-nav-bar-margin'></div>
       <transition :class='$store.state.theme.style' name='fade-transition' mode='out-in'>
         <loading v-if='$root.routerViewLoading'></loading>
         <div v-else id='router-view'>
@@ -160,6 +161,9 @@ span, a, p {
   color: #999999;
 }
 
+.app-nav-bar-margin {
+  height: 40px;
+}
 
 .toast-transition-enter {
   bottom: -80px !important;
