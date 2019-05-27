@@ -12,7 +12,7 @@
       </transition>
     </section>
     <pop-up v-if='isOnAppRoute'></pop-up>
-    <mobile-section v-if='!(isMobileApp && isOnAppRoute)'></mobile-section>
+    <mobile-section v-if='!(isMobileApp && isOnAppRoute) && !isDesktop'></mobile-section>
     <toast></toast>
   </div>
 </template>
@@ -44,6 +44,15 @@ export default Vue.extend({
     return {
       clickedOnAppNavBar: false,
     };
+  },
+  beforeCreate() {
+    if (this.$store.getters.isStandAlone) {
+      if (store.getters.isAuthenticated) {
+        this.$router.push('/user');
+      } else {
+        this.$router.push('/guest');
+      }
+    }
   },
   methods: {
     hideAppNavBar() {
