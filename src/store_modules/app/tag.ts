@@ -64,6 +64,24 @@ export default {
       }
       return undefined;
     },
+    getSubTagsFromBranchSearch: (state: any, getters: any) => (branch: string[], labels: any): string[] => {
+      if (labels === undefined) {
+        labels = state.tags.labels;
+      }
+
+      if (branch.length === 1) {
+        return labels.filter;
+      } else {
+        const label = labels.find((el: Tag) => {
+          return el.name === branch[0];
+        });
+        if (label === undefined) {
+          return [];
+        }
+        branch.shift();
+        return getters.getSubTagsFromBranch(branch, label.subTags);
+      }
+    }
   },
   mutations: {
     saveTags(state: any) {

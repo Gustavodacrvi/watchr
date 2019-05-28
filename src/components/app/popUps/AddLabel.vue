@@ -18,6 +18,7 @@
             <span class='right'>Press <strong>H + H</strong> to close any pop up</span>
           </template>
         </div>
+        {{ result }}
       </div>
     </div>
   </div>
@@ -53,21 +54,29 @@ export default Vue.extend({
   methods: {
     valueChange(value: string) {
       this.value = value;
+      const values = this.getValuesArray();
+      
+      this.result = this.$store.getters['app/tag/getSubTagsFromBranchSearch'](values);
     },
     updateState(state: any) {
       this.validInput = !state.wrong;
     },
+    getValuesArray(): string[] {
+      let value = this.value.trim();
+      if (value[value.length - 1] === ':') {
+        value = value.slice(0, -1);
+      }
+      let values = value.split(':');
+      const length = values.length;
+      for (let i = 0; i < length; i++) {
+        values[i] = values[i].trim();
+      }
+
+      return values;
+    },
     add() {
       if (this.validInput) {
-        let value = this.value.trim();
-        if (value[value.length - 1] === ':') {
-          value = value.slice(0, -1);
-        }
-        let values = value.split(':');
-        const length = values.length;
-        for (let i = 0; i < length; i++) {
-          values[i] = values[i].trim();
-        }
+        const values = this.getValuesArray();
 
         if (values.length > 4) {
           ToastBus.$emit('addToast', {
