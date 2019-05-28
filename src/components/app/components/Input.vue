@@ -15,19 +15,24 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  props: ['max', 'placeholder', 'tabindex', 'options'],
+  props: ['max', 'placeholder', 'tabindex', 'options', 'input'],
   data() {
     return {
-      value: undefined as any,
+      value: this.input as string,
       state: undefined as any,
       focus: false,
-      selected: 'f',
+      selected: '',
     };
   },
   methods: {
     keyPress(key: any) {
       if (key.key === 'Enter') {
-        this.$emit('enter');
+        if (this.selected === '') {
+          this.$emit('enter');
+        } else {
+          this.$emit('select', this.selected);
+          this.selected = '';
+        }
       }
     },
     selectOptions(key: any) {
@@ -41,7 +46,6 @@ export default Vue.extend({
       const index = this.options.findIndex((el: any) => {
         return el === this.selected;
       });
-      console.log(this.selected, this.options, index, direction)
       if (direction === 'up' && this.options[index - 1] !== undefined) {
         this.selected = this.options[index - 1];
       } else if (this.options[index + 1] !== undefined) {
@@ -57,6 +61,9 @@ export default Vue.extend({
         this.state = '';
       }
       this.$emit('value-change', this.value);
+    },
+    input() {
+      this.value = this.input;
     },
     state() {
       this.$emit('state-change', {

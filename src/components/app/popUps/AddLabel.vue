@@ -9,9 +9,9 @@
           <span>You can create sub-labels using <span class='big'>:</span> .<br/><br/>
           E.g: family:spouse, work:people:karen, work:office.<br/><br/>The outer tag is automatically created if not present.</span>
         </heading>
-        <app-input tabindex='1' class='stretch' :max='80' :options='subTagNames' @value-change='valueChange' @state-change='updateState' @enter='add' placeholder='E.g: 5 minutes, full focus, brain dead...'></app-input>
+        <app-input tabindex='1' class='stretch' :max='80' :options='subTagNames' :input='value' @value-change='valueChange' @state-change='updateState' @enter='add' @select='selectString' placeholder='E.g: 5 minutes, full focus, brain dead...'></app-input>
         <div class='options'>
-          <btn class='medium' @click='add'>Add label</btn>
+          <btn tabindex='2' class='medium' @click='add'>Add label</btn>
           <alert class='pointer' type='error' @click='$store.commit("app/nav/hidePopUp")'>Cancel</alert>
           <template v-if='$store.state.NavbarisOnDesktop'>
             <span class='right'>Press <strong>A + L</strong> to open this pop up.</span>
@@ -47,10 +47,27 @@ export default Vue.extend({
     return {
       validInput: false as boolean,
       value: '',
-      subTags: [],
+      subTags: [] as any[],
     };
   },
   methods: {
+    selectString(selected: string) {
+      let arr = this.getValuesArray(true);
+      if (arr.length > 0) {
+        arr[arr.length - 1] = selected;
+      } else {
+        arr.push(selected);
+      }
+      const length = arr.length;
+      let value = '';
+      for (let i = 0; i < length; i++) {
+        value += arr[i];
+        if (i + 1 !== length) {
+          value += ':';
+        }
+      }
+      this.value = value;
+    },
     valueChange(value: string) {
       this.value = value;
       const values = this.getValuesArray(true);
@@ -75,7 +92,7 @@ export default Vue.extend({
     },
     add() {
       if (this.validInput) {
-        const values = this.getValuesArray();
+        const values = this.getValuesArray(false);
 
         if (values.length > 4) {
           ToastBus.$emit('addToast', {
