@@ -70,7 +70,9 @@ export default {
       }
 
       if (branch.length === 1) {
-        return labels.filter;
+        return labels.filter((label: Tag) => {
+          return label.name.match(branch[0]);
+        });
       } else {
         const label = labels.find((el: Tag) => {
           return el.name === branch[0];
@@ -79,7 +81,7 @@ export default {
           return [];
         }
         branch.shift();
-        return getters.getSubTagsFromBranch(branch, label.subTags);
+        return getters.getSubTagsFromBranchSearch(branch, label.subTags);
       }
     }
   },

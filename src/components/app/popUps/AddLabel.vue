@@ -18,7 +18,9 @@
             <span class='right'>Press <strong>H + H</strong> to close any pop up</span>
           </template>
         </div>
-        {{ result }}
+        <template v-if='subTags'>
+          {{ subTagNames }}
+        </template>
       </div>
     </div>
   </div>
@@ -47,23 +49,23 @@ export default Vue.extend({
   data() {
     return {
       validInput: false as boolean,
-      result: undefined as any,
       value: '',
+      subTags: undefined as any,
     };
   },
   methods: {
     valueChange(value: string) {
       this.value = value;
-      const values = this.getValuesArray();
+      const values = this.getValuesArray(true);
       
-      this.result = this.$store.getters['app/tag/getSubTagsFromBranchSearch'](values);
+      this.subTags = this.$store.getters['app/tag/getSubTagsFromBranchSearch'](values);
     },
     updateState(state: any) {
       this.validInput = !state.wrong;
     },
-    getValuesArray(): string[] {
+    getValuesArray(acceptLastTwoDots: boolean): string[] {
       let value = this.value.trim();
-      if (value[value.length - 1] === ':') {
+      if (!acceptLastTwoDots && value[value.length - 1] === ':') {
         value = value.slice(0, -1);
       }
       let values = value.split(':');
@@ -88,6 +90,16 @@ export default Vue.extend({
           this.$store.dispatch('app/tag/addLabelBranch', values);
         }
       }
+    },
+  },
+  computed: {
+    subTagNames(): string[] {
+      const length = this.subTags.length;
+      let arr = [];
+      for (let i = 0; i < length; i++) {
+        arr.push(this.subTags[i].name);
+      }
+      return arr;
     },
   },
 });
