@@ -170,6 +170,10 @@ body {
   border-radius: 12px;
 }
 
+.bright.dark {
+  background-color: #3d3d3d;
+}
+
 span, a, p {
   color: #999999;
 }

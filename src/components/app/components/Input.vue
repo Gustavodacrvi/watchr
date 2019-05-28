@@ -1,10 +1,10 @@
 <template>
   <div class='wrapper'>
-    <input :class='[$store.state.theme.style, state]' class='input' name='input' autocomplete='off' :tabindex='tabindex' :placeholder='placeholder' v-model='value' @keypress='keyPress' @focus='focus = true' @blur='focus = false'/>
+    <input :class='[$store.state.theme.style, state]' class='input' name='input' autocomplete='off' :tabindex='tabindex' :placeholder='placeholder' v-model='value' @keypress='keyPress' @focus='focus = true' @blur='focus = false' @keydown='selectOptions'/>
     <transition name='fade-transition'>
       <div :class='$store.state.theme.style' class='dropdown card-round border' v-if='options.length > 0 && focus'>
         <transition-group name='fade-transition'>
-          <div v-for='opt in options' :key='opt' class='drop-element'><span>{{ opt }}</span></div>
+          <div v-for='opt in options' :key='opt' class='drop-element' :class='[{"selected bright": selected === opt}, $store.state.theme.style]'><span class='txt'>{{ opt }}</span></div>
         </transition-group>
       </div>
     </transition>
@@ -21,12 +21,31 @@ export default Vue.extend({
       value: undefined as any,
       state: undefined as any,
       focus: false,
+      selected: 'f',
     };
   },
   methods: {
     keyPress(key: any) {
       if (key.key === 'Enter') {
         this.$emit('enter');
+      }
+    },
+    selectOptions(key: any) {
+      if (key.key === 'ArrowDown') {
+        this.moveSelection('down');
+      } else if (key.key === 'ArrowUp') {
+        this.moveSelection('up');
+      }
+    },
+    moveSelection(direction: string) {
+      const index = this.options.findIndex((el: any) => {
+        return el === this.selected;
+      });
+      console.log(this.selected, this.options, index, direction)
+      if (direction === 'up' && this.options[index - 1] !== undefined) {
+        this.selected = this.options[index - 1];
+      } else if (this.options[index + 1] !== undefined) {
+        this.selected = this.options[index + 1];
       }
     },
   },
@@ -62,11 +81,24 @@ export default Vue.extend({
   top: 100%;
   z-index: 3;
   max-height: 300px;
+  overflow: hidden;
 }
 
 .drop-element {
   padding: 12px;
+  cursor: pointer;
+  transition: background-color .2s;
 }
+
+.drop-element:hover {
+  background-color: #3d3d3d;
+}
+
+.selected .txt, .drop-element:hover .txt {
+  color: #A97CFC;
+  text-shadow: 0 0 1px solid #A97CFC;
+}
+
 
 .drop-element + .drop-element {
   border-top: .5px solid rgba(230,230,230,.1);
