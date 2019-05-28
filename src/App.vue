@@ -99,6 +99,10 @@ export default Vue.extend({
   border: .5px solid rgba(207,207,207,.4);
 }
 
+.border.dark {
+  border: .5px solid rgba(230,230,230,.1);
+}
+
 .background.dark {
   background-color: #1F1F1F;
 }
@@ -198,6 +202,13 @@ span, a, p {
   transition: opacity .3s;
 }
 .nav-link-enter, .nav-link-leave-to {
+  opacity: 0;
+}
+
+.list-enter-active, .list-leave-active {
+  transition: all 1s;
+}
+.list-enter, .list-leave-to {
   opacity: 0;
 }
 
