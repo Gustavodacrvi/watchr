@@ -52,7 +52,7 @@ export default Vue.extend({
   },
   methods: {
     selectString(selected: string) {
-      let arr = this.getValuesArray(true);
+      const arr = this.getValuesArray(true);
       if (arr.length > 0) {
         arr[arr.length - 1] = selected;
       } else {
@@ -71,7 +71,6 @@ export default Vue.extend({
     valueChange(value: string) {
       this.value = value;
       const values = this.getValuesArray(true);
-      
       this.subTags = this.$store.getters['app/tag/getSubTagsFromBranchSearch'](values);
     },
     updateState(state: any) {
@@ -82,7 +81,7 @@ export default Vue.extend({
       if (!acceptLastTwoDots && value[value.length - 1] === ':') {
         value = value.slice(0, -1);
       }
-      let values = value.split(':');
+      const values = value.split(':');
       const length = values.length;
       for (let i = 0; i < length; i++) {
         values[i] = values[i].trim();
@@ -109,7 +108,7 @@ export default Vue.extend({
   computed: {
     subTagNames(): string[] {
       const length = this.subTags.length;
-      let arr = [];
+      const arr = [];
       for (let i = 0; i < length; i++) {
         arr.push(this.subTags[i].name);
       }

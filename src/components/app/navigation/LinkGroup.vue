@@ -64,7 +64,7 @@ export default Vue.extend({
   methods: {
     getIcons(icos: any[], id: string): any[] {
       const length = icos.length;
-      let arr: any = [];
+      const arr: any = [];
       for (let i = 0; i < length; i++) {
         arr.push({
           ico: icos[i].ico,
@@ -79,7 +79,7 @@ export default Vue.extend({
     navigate(link: any) {
       if (link.callback) {
         link.callback();
-      }      
+      }
       this.$store.commit('app/nav/pushComp', { component: link.to, txt: link.txt});
       if (!this.isDesktop) {
         this.$store.commit('app/nav/hide');
@@ -100,7 +100,7 @@ export default Vue.extend({
       return this.$store.getters.NavbarisOnDesktop;
     },
     icoSz(): string {
-      return !this.isDesktop ? 'medium-medium' : 'medium';
+      return !this.isDesktop ? 'medium' : 'tiny';
     },
   },
 });
@@ -112,12 +112,12 @@ export default Vue.extend({
   display: flex;
   cursor: pointer;
   flex-basis: 100%;
-  font-size: 1.05em;
+  font-size: 1em;
   transition-duration: .2s;
 }
 
 .navigation-link.mobile {
-  font-size: 1.15em;
+  font-size: 1.05em;
 }
 
 .navigation-link:hover, .navigation-link:hover .icon, .active, .active .icon {
@@ -178,7 +178,7 @@ export default Vue.extend({
 }
 
 .title.mobile {
-  font-size: 1.15em;
+  font-size: 1.1em;
 }
 
 .navigation-wrapper {

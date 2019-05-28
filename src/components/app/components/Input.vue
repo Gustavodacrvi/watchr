@@ -41,8 +41,8 @@ export default Vue.extend({
       }
     },
     moveSelection(direction: string) {
-      const index = this.options.findIndex((el: any) => {
-        return el === this.selected;
+      const index = this.options.findIndex((arrayEl: any) => {
+        return arrayEl === this.selected;
       });
       if (direction === 'up' && this.options[index - 1] !== undefined) {
         this.selected = this.options[index - 1];
@@ -52,7 +52,7 @@ export default Vue.extend({
       // check if element is visible on dropdown
       let el: any = this.$refs[this.selected];
       el = el[0];
-      let drop: any = this.$refs.dropdown;
+      const drop: any = this.$refs.dropdown;
 
       const belowScroll = drop.offsetHeight + drop.scrollTop < el.offsetTop;
       const uponScroll = drop.scrollTop > el.offsetTop;

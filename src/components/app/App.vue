@@ -100,7 +100,7 @@ export default Vue.extend({
 
 @media screen and (max-width: 1025px) {
   .user-app-content {
-    margin: 0 8px;
+    margin: 0 14px;
   }
 }
 

@@ -42,7 +42,8 @@ export default {
       }
       return str;
     },
-    getLabelArrayBranchByNodeId: (state: any, getters: any) => (id: string, branch: any, labels: any): string[] | undefined => {
+    getLabelArrayBranchByNodeId:
+     (state: any, getters: any) => (id: string, branch: any, labels: any): string[] | undefined => {
       if (labels === undefined) {
         labels = state.tags.labels;
       }
@@ -52,7 +53,7 @@ export default {
 
       const length = labels.length;
       for (let i = 0; i < length; i++) {
-        let returnBranch = branch.slice();
+        const returnBranch = branch.slice();
         returnBranch.push(labels[i].name);
         if (labels[i].id === id) {
           return returnBranch;
@@ -83,7 +84,7 @@ export default {
         branch.shift();
         return getters.getSubTagsFromBranchSearch(branch, label.subTags);
       }
-    }
+    },
   },
   mutations: {
     saveTags(state: any) {
@@ -107,11 +108,12 @@ export default {
       if (index === -1) {
         const length = labels.length;
         for (let i = 0; i < length; i++) {
-         dispatch('deleteLabelNodeById', {id, labels: labels[i].subTags})
+         dispatch('deleteLabelNodeById', {id, labels: labels[i].subTags});
         }
       } else {
         ToastBus.$emit('addToast', {
-          msg: `Deleted <strong>'${getters.parseArrayBranchToStringBranch(getters.getLabelArrayBranchByNodeId(id))}'</strong> label and all of its sub tags successfuly.`,
+          msg: `Deleted <strong>'${getters.parseArrayBranchToStringBranch(getters.getLabelArrayBranchByNodeId(id))}'
+          </strong> label and all of its sub tags successfuly.`,
           duration_seconds: 3,
           type: 'success',
         } as ToastObj);
@@ -151,7 +153,7 @@ export default {
     addLabelBranch({ commit, state, dispatch, getters }: any, branch: string[]) {
       const length = branch.length;
 
-      for (let i = 0;i < length; i++) {
+      for (let i = 0; i < length; i++) {
         const splice = branch.slice();
         splice.splice(i + 1);
 
