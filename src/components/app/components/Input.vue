@@ -2,8 +2,8 @@
   <div class='wrapper'>
     <input :class='[$store.state.theme.style, state]' class='input' name='input' autocomplete='off' :tabindex='tabindex' :placeholder='placeholder' v-model='value' @keypress='keyPress' @focus='focus = true' @blur='focus = false' @keydown='selectOptions'/>
     <transition name='fade-transition'>
-      <div :class='$store.state.theme.style' class='dropdown card-round border' v-if='options.length > 0 && focus'>
-        <div v-for='opt in options' :key='opt' class='drop-element' :class='[{"selected bright": selected === opt}, $store.state.theme.style]'><span class='txt'>{{ opt }}</span></div>
+      <div :class='$store.state.theme.style' ref='dropdown' class='dropdown card-round border' v-if='options.length > 0 && focus'>
+        <div v-for='opt in options' :key='opt' class='drop-element' :ref='opt' :class='[{"selected bright": selected === opt}, $store.state.theme.style]'><span class='txt'>{{ opt }}</span></div>
       </div>
     </transition>
   </div>
@@ -46,8 +46,20 @@ export default Vue.extend({
       });
       if (direction === 'up' && this.options[index - 1] !== undefined) {
         this.selected = this.options[index - 1];
-      } else if (this.options[index + 1] !== undefined) {
+      } else if (direction === 'down' && this.options[index + 1] !== undefined) {
         this.selected = this.options[index + 1];
+      }
+      // check if element is visible on dropdown
+      let el: any = this.$refs[this.selected];
+      el = el[0];
+      let drop: any = this.$refs.dropdown;
+
+      const belowScroll = drop.offsetHeight + drop.scrollTop < el.offsetTop;
+      const uponScroll = drop.scrollTop > el.offsetTop;
+      if (drop.offsetHeight + drop.scrollTop < el.offsetTop + el.offsetHeight) {
+        drop.scrollTop = el.offsetTop - drop.offsetHeight + el.offsetHeight;
+      } else if (drop.scrollTop > el.offsetTop) {
+        drop.scrollTop = el.offsetTop;
       }
     },
   },
@@ -86,7 +98,7 @@ export default Vue.extend({
   top: 100%;
   z-index: 3;
   max-height: 300px;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .drop-element {
