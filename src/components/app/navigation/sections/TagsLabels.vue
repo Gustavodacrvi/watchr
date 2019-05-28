@@ -1,6 +1,6 @@
 <template>
   <icon-section ico='tags' title='Time tracking' :top="[
-    {txt: 'Untagged', to: 'ntagged', id: 'tags-untagged'},
+    {txt: 'Untagged', to: 'ntagged', id: 'tags-untagged', ico: 'tag', iconColor: '#ff6966'},
   ]" 
   :middle="[
     {type: 'Link Group', title: 'Calendar Tags', links: [

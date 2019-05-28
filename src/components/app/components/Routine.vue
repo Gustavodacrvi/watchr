@@ -152,7 +152,7 @@ export default mixins(app).extend({
 }
 
 .no-routine.light {
-  background-color: #e9e4e2;
+  background-color: #f0f0f0;
 }
 
 .no-routine.dark {
@@ -178,7 +178,6 @@ export default mixins(app).extend({
 }
 
 .no-routine {
-  border-style: dashed;
   border-radius: 12px;
   color: #ADADAD;
   display: flex;

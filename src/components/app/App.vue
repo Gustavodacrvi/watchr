@@ -86,12 +86,12 @@ export default Vue.extend({
 .user-app-content {
   flex-basis: 1526px;
   padding-top: 10px;
-  margin: 0 45px;
+  margin: 0 80px;
   transition: margin .3s;
 }
 
 .navOpened {
-  margin: 0 40px 0 290px;
+  margin: 0 40px 0 310px;
 }
 
 .perspective {

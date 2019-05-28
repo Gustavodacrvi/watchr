@@ -1,6 +1,6 @@
 <template>
   <transition :class='$store.state.theme.style' name='toast-transition' @after-leave='showNext'>
-    <article :class='[toastClass, $store.state.theme.style]' v-show='showing' id='toast'>
+    <article :class='[toastClass, $store.state.theme.style]' v-show='showing' id='toast' class='card'>
       <span v-html='msg'></span>
       <span v-if='infiniteToast' class='toast-icon'>
         <icon class='pointer' ico='times' sz='big' @click='showing = false'></icon>
@@ -69,7 +69,6 @@ export default Vue.extend({
       return [
         'toast',
         'card-round',
-        'shadow',
         'toast-' + this.type,
       ];
     },
@@ -79,16 +78,8 @@ export default Vue.extend({
 
 <style scoped>
 
-.toast-success.light {
-  background-color: #ecf9f3;
-}
-
-.toast-error.light {
-  background-color: #fde9e8;
-}
-
-.toast-warning.light {
-  background-color: #f8f8ba;
+.toast-success.light, .toast-error.light, .toast-warning.light {
+  background-color: #f0f0f0;
 }
 
 .toast-success.dark {
@@ -127,15 +118,15 @@ export default Vue.extend({
 }
 
 .toast-success {
-  border: 2px solid #8cd9b6;
+  border: 2px solid #8cd9b6 !important;
 }
 
 .toast-error {
-  border: 2px solid #ec554d;
+  border: 2px solid #ec554d !important;
 }
 
 .toast-warning {
-  border: 2px solid #ecec4b;
+  border: 2px solid #ecec4b !important;
 }
 
 

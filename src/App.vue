@@ -3,6 +3,7 @@
     <section id='content'>
       <nav-bar></nav-bar>
       <app-nav-bar v-if='isOnAppRoute && !isDesktop'></app-nav-bar>
+      <div v-if='isMobileApp && isOnAppRoute' class='app-nav-bar-margin'></div>
       <transition :class='$store.state.theme.style' name='fade-transition' mode='out-in'>
         <loading v-if='$root.routerViewLoading'></loading>
         <div v-else id='router-view'>
@@ -11,7 +12,7 @@
       </transition>
     </section>
     <pop-up v-if='isOnAppRoute'></pop-up>
-    <mobile-section v-if='!(isMobileApp && isOnAppRoute)'></mobile-section>
+    <mobile-section v-if='!(isMobileApp && isOnAppRoute) && !isDesktop'></mobile-section>
     <toast></toast>
   </div>
 </template>
@@ -43,6 +44,15 @@ export default Vue.extend({
     return {
       clickedOnAppNavBar: false,
     };
+  },
+  beforeCreate() {
+    if (this.$store.getters.isStandAlone) {
+      if (store.getters.isAuthenticated) {
+        this.$router.push('/user');
+      } else {
+        this.$router.push('/guest');
+      }
+    }
   },
   methods: {
     hideAppNavBar() {
@@ -85,8 +95,12 @@ export default Vue.extend({
 }
 
 .card.light, .card-round.light { 
-  background-color: #FAFAF9;
-  box-shadow: 0 4px 14px rgba(207,207,207,0.4);
+  background-color: #F8F7F6;
+  border: .5px solid rgba(207,207,207,.4);
+}
+
+.border.dark {
+  border: .5px solid rgba(230,230,230,.1);
 }
 
 .background.dark {
@@ -156,10 +170,17 @@ body {
   border-radius: 12px;
 }
 
+.bright.dark {
+  background-color: #3d3d3d;
+}
+
 span, a, p {
   color: #999999;
 }
 
+.app-nav-bar-margin {
+  height: 40px;
+}
 
 .toast-transition-enter {
   bottom: -80px !important;
@@ -185,6 +206,13 @@ span, a, p {
   transition: opacity .3s;
 }
 .nav-link-enter, .nav-link-leave-to {
+  opacity: 0;
+}
+
+.list-enter-active, .list-leave-active {
+  transition: all 1s;
+}
+.list-enter, .list-leave-to {
   opacity: 0;
 }
 

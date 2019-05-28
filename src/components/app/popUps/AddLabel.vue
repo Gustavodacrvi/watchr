@@ -1,5 +1,5 @@
 <template>
-  <div class='card-round pop-up' :class='$store.state.theme.style'>
+  <div class='pop-up' :class='$store.state.theme.style'>
     <div class='title'>
       <app-title :lvl='3'>Add label</app-title>
     </div>
@@ -9,13 +9,13 @@
           <span>You can create sub-labels using <span class='big'>:</span> .<br/><br/>
           E.g: family:spouse, work:people:karen, work:office.<br/><br/>The outer tag is automatically created if not present.</span>
         </heading>
-        <app-input tabindex='1' class='stretch' :max='80' @value-change='valueChange' @state-change='updateState' @enter='add' placeholder='E.g: 5 minutes, full focus, brain dead...'></app-input>
+        <app-input tabindex='1' class='stretch' :max='80' :options='subTagNames' :input='value' @value-change='valueChange' @state-change='updateState' @enter='add' @select='selectString' placeholder='E.g: 5 minutes, full focus, brain dead...'></app-input>
         <div class='options'>
-          <btn class='medium' @click='add'>Add label</btn>
+          <btn tabindex='2' class='medium' @click='add'>Add label</btn>
           <alert class='pointer' type='error' @click='$store.commit("app/nav/hidePopUp")'>Cancel</alert>
           <template v-if='$store.state.NavbarisOnDesktop'>
             <span class='right'>Press <strong>A + L</strong> to open this pop up.</span>
-            <span class='right'>Press <strong>CTRL + C</strong> to close any pop up</span>
+            <span class='right'>Press <strong>H + H</strong> to close any pop up</span>
           </template>
         </div>
       </div>
@@ -46,28 +46,53 @@ export default Vue.extend({
   data() {
     return {
       validInput: false as boolean,
-      result: undefined as any,
       value: '',
+      subTags: [] as any[],
     };
   },
   methods: {
+    selectString(selected: string) {
+      let arr = this.getValuesArray(true);
+      if (arr.length > 0) {
+        arr[arr.length - 1] = selected;
+      } else {
+        arr.push(selected);
+      }
+      const length = arr.length;
+      let value = '';
+      for (let i = 0; i < length; i++) {
+        value += arr[i];
+        if (i + 1 !== length) {
+          value += ':';
+        }
+      }
+      this.value = value;
+    },
     valueChange(value: string) {
       this.value = value;
+      const values = this.getValuesArray(true);
+      
+      this.subTags = this.$store.getters['app/tag/getSubTagsFromBranchSearch'](values);
     },
     updateState(state: any) {
       this.validInput = !state.wrong;
     },
+    getValuesArray(acceptLastTwoDots: boolean): string[] {
+      let value = this.value.trim();
+      if (!acceptLastTwoDots && value[value.length - 1] === ':') {
+        value = value.slice(0, -1);
+      }
+      let values = value.split(':');
+      const length = values.length;
+      for (let i = 0; i < length; i++) {
+        values[i] = values[i].trim();
+      }
+
+      return values;
+    },
     add() {
       if (this.validInput) {
-        let value = this.value.trim();
-        if (value[value.length - 1] === ':') {
-          value = value.slice(0, -1);
-        }
-        let values = value.split(':');
-        const length = values.length;
-        for (let i = 0; i < length; i++) {
-          values[i] = values[i].trim();
-        }
+        const values = this.getValuesArray(false);
 
         if (values.length > 4) {
           ToastBus.$emit('addToast', {
@@ -79,6 +104,16 @@ export default Vue.extend({
           this.$store.dispatch('app/tag/addLabelBranch', values);
         }
       }
+    },
+  },
+  computed: {
+    subTagNames(): string[] {
+      const length = this.subTags.length;
+      let arr = [];
+      for (let i = 0; i < length; i++) {
+        arr.push(this.subTags[i].name);
+      }
+      return arr;
     },
   },
 });

@@ -1,16 +1,17 @@
 <template>
   <div v-if='!link.type' class='link'>
     <div class='navigation-wrapper' @mouseover='showIcon = true' @mouseleave='showIcon = false'>
-      <span class='navigation-link' @click='navigate(link)' :class='{active: isLinkActive(link.txt), mobile: !isDesktop}' :key='link.id'><icon v-if='link.ico' class='link-icon' :ico='link.ico' :sz='icoSz'></icon>{{ link.txt }}
+      <span class='navigation-link' @click='navigate(link)' :class='{active: isLinkActive(link.txt), mobile: !isDesktop}' :key='link.id'>
+        <icon v-if='link.ico' class='link-icon' :ico='link.ico' :color='link.iconColor' :sz='icoSz'></icon>{{ link.txt }}
       </span>
       <span class='navigation-icons'>
         <template v-if='isDesktop && link.icos && showIcon'>
           <transition-group name='fade-transition'>
-            <icon class='navigation-icon pointer icon-color-hover' v-for='ico in link.icos' :class='`color-${ico.color}`' :blink='true' :key='ico.ico' :ico='ico.ico' @dblclick='ico.callback(link.id)' sz='medium'></icon>
+            <icon class='navigation-icon pointer icon-color-hover' v-for='ico in link.icos' :class='`color-${ico.color}`' :blink='true' :key='ico.ico' :ico='ico.ico' @dblclick='ico.callback(link.id)' sz='tiny'></icon>
           </transition-group>
         </template>
-        <icon-group v-if='!isDesktop && link.icos' class='navigation-icon pointer icon-color-hover' handle='ellipsis-v' :options="getIcons(link.icos, link.id)"></icon-group>
-        <icon v-if='link.subLinks && link.subLinks.length > 0' class='navigation-icon pointer icon-color-hover' :key='`hide-sublinks-ico-${link.id}`' ico='angle-down' sz='medium' :class="[show ? 'down' : 'up']" @click='show = !show'></icon>
+        <icon-group v-if='!isDesktop && link.icos' class='navigation-icon pointer icon-color-hover' handle='ellipsis-v' sz='tiny' :options="getIcons(link.icos, link.id)"></icon-group>
+        <icon v-if='link.subLinks && link.subLinks.length > 0' class='navigation-icon pointer icon-color-hover' :key='`hide-sublinks-ico-${link.id}`' ico='angle-down' :sz='icoSz' :class="[show ? 'down' : 'up']" @click='show = !show'></icon>
       </span>
     </div>
     <template v-if='show'>
@@ -20,11 +21,11 @@
     </template>
   </div>
   <div class='link-group' :class='{mobile: !isDesktop}' v-else-if='link.type === "Link Group"'>
-    <div class='header'>
-      <icon ico='cube' :sz='!isDesktop ? "medium-medium" : "tiny"'></icon>
+    <div class='header' @click='show = !show'>
+      <icon class='link-icon' ico='cube' :sz='icoSz'></icon>
       <span class='title' :class='{mobile: !isDesktop}'>{{ link.title }}</span>
-      <span class='icons'>
-        <icon v-for='ico in link.icos' :key='`section-navigation-icon-${ico}`' :ico='ico.ico' @click='ico.callback' class='pointer' sz='medium-medium'></icon>
+      <span class='link-group-icons'>
+        <icon v-for='ico in link.icos' :key='`section-navigation-icon-${ico}`' :ico='ico.ico' @click='ico.callback' class='pointer' sz='tiny'></icon>
         <icon ico='angle-down' @click='show = !show' class='toggle pointer' :class='[show ? "down" : "up"]' :sz='icoSz'></icon>
       </span>
     </div>
@@ -65,7 +66,6 @@ export default Vue.extend({
       const length = icos.length;
       let arr: any = [];
       for (let i = 0; i < length; i++) {
-        console.log(icos[i].dblclick)
         arr.push({
           ico: icos[i].ico,
           dblclick: icos[i].dblclick,
@@ -112,13 +112,12 @@ export default Vue.extend({
   display: flex;
   cursor: pointer;
   flex-basis: 100%;
-  font-size: 1.1em;
+  font-size: 1.05em;
   transition-duration: .2s;
 }
 
 .navigation-link.mobile {
-  font-size: 1.4em;
-  padding: 2px;
+  font-size: 1.15em;
 }
 
 .navigation-link:hover, .navigation-link:hover .icon, .active, .active .icon {
@@ -132,15 +131,16 @@ export default Vue.extend({
 
 .header {
   width: 100%;
+  cursor: pointer;
 }
 
-.icons {
+.link-group-icons {
   position: absolute;
   right: 0;
   margin-top: 3px;
 }
 
-.icons .icon {
+.link-group-icons .icon {
   margin: 0 4px;
 }
 
@@ -158,11 +158,11 @@ export default Vue.extend({
 
 .link-group {
   margin-top: 8px;
-  width: 188px;
+  width: 206px;
 }
 
 .link-group.mobile {
-  width: 233px;
+  width: 243px;
 }
 
 .level-1 {
@@ -173,23 +173,18 @@ export default Vue.extend({
   margin-left: 14px !important;
 }
 
-.header .title, .header .icon {
-  color: #777777 !important;
-}
-
 .header .title {
-  margin-left: 4px;
-  font-size: 1.1em;
+  font-size: 1.05em;
 }
 
 .title.mobile {
-  font-size: 1.3em;
+  font-size: 1.15em;
 }
 
 .navigation-wrapper {
   display: flex;
   position: relative;
-  margin-top: 8px;
+  margin-top: 9px;
 }
 
 .navigation-icons {
@@ -199,7 +194,8 @@ export default Vue.extend({
 }
 
 .navigation-icon {
-  margin-left: 8px;
+  float: right;
+  margin-left: 5px;
 }
 
 </style>
