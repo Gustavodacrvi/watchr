@@ -2,7 +2,7 @@
   <div class='wrapper'>
     <input :class='[$store.state.theme.style, state]' class='input' name='input' autocomplete='off' :tabindex='tabindex' :placeholder='placeholder' v-model='value' @keypress='keyPress' @focus='focus = true' @blur='focus = false' @keydown='selectOptions'/>
     <transition name='fade-transition'>
-      <div :class='$store.state.theme.style' ref='dropdown' class='dropdown card-round border' v-if='options.length > 0 && focus'>
+      <div :class='$store.state.theme.style' ref='dropdown' class='dropdown card-round border' v-if='options !== undefined && options.length > 0 && focus'>
         <div v-for='opt in options' :key='opt' class='drop-element' :ref='opt' :class='[{"selected bright": selected === opt}, $store.state.theme.style]' @click='select(opt)'><span class='txt'>{{ opt }}</span></div>
       </div>
     </transition>
@@ -12,11 +12,19 @@
 <script lang="ts">
 import Vue from 'vue';
 
+const returnEmptyIfUndefined = (input: string) => {
+  if (input) {
+    return input;
+  } else {
+    return '';
+  }
+}
+
 export default Vue.extend({
   props: ['max', 'placeholder', 'tabindex', 'options', 'input'],
   data() {
     return {
-      value: this.input as string,
+      value: returnEmptyIfUndefined(this.input),
       state: undefined as any,
       focus: false,
       selected: '',
@@ -128,6 +136,8 @@ export default Vue.extend({
   border: none;
   border-radius: 6px;
   padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
   outline: none;
   font-family: 'Work Sans';
   font-size: 1.01em;
@@ -143,6 +153,10 @@ export default Vue.extend({
 .input.wrong {
   border: 2px solid #ec554d !important;
   box-shadow: 0 0 2px #ec554d;
+}
+
+.round .input {
+  border-radius: 100px;
 }
 
 .input.dark {

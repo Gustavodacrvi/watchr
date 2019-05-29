@@ -6,7 +6,7 @@
     </div>
     <div v-else key='inbox-task-adder-adder' class='adder'>
       <div>
-        <input :class='$store.state.theme.style' class='input card' name='input' placeholder='Do something @interval #label $project %calendar_tag' autocomplete='off' v-model='value'/>
+        <app-input :class='$store.state.theme.style' class='stretch round' placeholder='Do something @interval #label $project %calendar_tag' :max='300' @value-change='updateValue' @state-change='updateState' @enter='addTask'></app-input>
       </div>
       <div class='options'>
         <btn class='tiny-round tiny'>{{ btnMsg }}</btn>
@@ -21,6 +21,7 @@ import Vue from 'vue';
 import Icon from '@/components/regular/Icon.vue';
 import Button from '@/components/regular/Button.vue';
 import Alert from '@/components/regular/Alert.vue';
+import Input from '@/components/app/components/Input.vue';
 
 export default Vue.extend({
   props: {
@@ -28,15 +29,27 @@ export default Vue.extend({
     btnMsg: String,
   },
   components: {
-    icon: Icon,
-    btn: Button,
-    alert: Alert,
+    'icon': Icon,
+    'btn': Button,
+    'alert': Alert,
+    'app-input': Input,
   },
   data() {
     return {
       active: false,
       value: '',
     };
+  },
+  methods: {
+    updateValue(value: string) {
+      this.value = value;
+    },
+    updateState(state: boolean) {
+      console.log(state);
+    },
+    addTask() {
+
+    },
   },
 });
 </script>
@@ -61,19 +74,6 @@ export default Vue.extend({
   margin-left: 10px
 }
 
-.input {
-  border: none;
-  padding: 8px 12px;
-  border-radius: 100px;
-  font-family: 'Work Sans';
-  outline: none;
-  color: #ADADAD;
-  background-color: #f0f0f0;
-  font-size: 1em;
-  width: 100%;
-  box-sizing: border-box;
-}
-
 .options {
   margin-top: 6px;
 }
@@ -88,4 +88,3 @@ export default Vue.extend({
 }
 
 </style>
-
