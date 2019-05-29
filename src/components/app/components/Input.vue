@@ -3,7 +3,7 @@
     <input :class='[$store.state.theme.style, state]' class='input' name='input' autocomplete='off' :tabindex='tabindex' :placeholder='placeholder' v-model='value' @keypress='keyPress' @focus='focus = true' @blur='focus = false' @keydown='selectOptions'/>
     <transition name='fade-transition'>
       <div :class='$store.state.theme.style' ref='dropdown' class='dropdown card-round border' v-if='options.length > 0 && focus'>
-        <div v-for='opt in options' :key='opt' class='drop-element' :ref='opt' :class='[{"selected bright": selected === opt}, $store.state.theme.style]'><span class='txt'>{{ opt }}</span></div>
+        <div v-for='opt in options' :key='opt' class='drop-element' :ref='opt' :class='[{"selected bright": selected === opt}, $store.state.theme.style]' @click='select(opt)'><span class='txt'>{{ opt }}</span></div>
       </div>
     </transition>
   </div>
@@ -28,10 +28,13 @@ export default Vue.extend({
         if (this.selected === '') {
           this.$emit('enter');
         } else {
-          this.$emit('select', this.selected);
-          this.selected = '';
+          this.select(this.selected);
         }
       }
+    },
+    select(option: string) {
+      this.$emit('select', option);
+      this.selected = '';
     },
     selectOptions(key: any) {
       if (key.key === 'ArrowDown') {
