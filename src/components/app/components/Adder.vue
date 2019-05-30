@@ -38,14 +38,17 @@ export default Vue.extend({
     return {
       active: false,
       value: '',
+      validInput: true,
     };
   },
   methods: {
     updateValue(value: string) {
       this.value = value;
+
+      console.log(/\s#[^ ]+/.exec(value))
     },
-    updateState(state: boolean) {
-      console.log(state);
+    updateState(state: any) {
+      this.validInput = !state.wrong;
     },
     addTask() {
 
