@@ -45,7 +45,27 @@ export default Vue.extend({
     updateValue(value: string) {
       this.value = value;
 
-      console.log(/\s#[^ ]+/.exec(value))
+      const index = value.search(/\s#/);
+      if (index !== -1) {
+        let target = value.slice(index + 2);
+        if (target[target.length - 1] === ' '){
+          target = target.substring(0, target.length - 1);
+        }
+        const labels = target.split(' ');
+        const length = labels.length;
+        const labelCombinations = [];
+        for (let i = 0; i < length; i++) {
+          const comb = [];
+          for (let j = 0; j < i + 1; j++) {
+            if (labels[j] !== '') {
+              comb.push(labels[j]);
+            }
+          }
+          if (comb.length !== 0) {
+            labelCombinations.push(comb);
+          }
+        }
+      }
     },
     updateState(state: any) {
       this.validInput = !state.wrong;

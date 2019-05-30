@@ -42,6 +42,19 @@ export default {
       }
       return str;
     },
+    parseStringBranchToArrayBranch: (state: any) => (branch: string, acceptLastTwoDots: boolean): string[] => {
+      let value = branch.trim();
+      if (!acceptLastTwoDots && value[value.length - 1] === ':') {
+        value = value.slice(0, -1);
+      }
+      const values = value.split(':');
+      const length = values.length;
+      for (let i = 0; i < length; i++) {
+        values[i] = values[i].trim();
+      }
+
+      return values;
+    },
     getLabelArrayBranchByNodeId:
      (state: any, getters: any) => (id: string, branch: any, labels: any): string[] | undefined => {
       if (labels === undefined) {

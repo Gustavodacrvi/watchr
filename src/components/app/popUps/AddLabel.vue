@@ -52,7 +52,7 @@ export default Vue.extend({
   },
   methods: {
     selectString(selected: string) {
-      const arr = this.getValuesArray(true);
+      const arr = this.$store.getters['app/tag/parseStringBranchToArrayBranch'](this.value, true);
       if (arr.length > 0) {
         arr[arr.length - 1] = selected;
       } else {
@@ -70,28 +70,15 @@ export default Vue.extend({
     },
     valueChange(value: string) {
       this.value = value;
-      const values = this.getValuesArray(true);
+      const values = this.$store.getters['app/tag/parseStringBranchToArrayBranch'](this.value, true);
       this.subTags = this.$store.getters['app/tag/getSubTagsFromBranchSearch'](values);
     },
     updateState(state: any) {
       this.validInput = !state.wrong;
     },
-    getValuesArray(acceptLastTwoDots: boolean): string[] {
-      let value = this.value.trim();
-      if (!acceptLastTwoDots && value[value.length - 1] === ':') {
-        value = value.slice(0, -1);
-      }
-      const values = value.split(':');
-      const length = values.length;
-      for (let i = 0; i < length; i++) {
-        values[i] = values[i].trim();
-      }
-
-      return values;
-    },
     add() {
       if (this.validInput) {
-        const values = this.getValuesArray(false);
+        const values = this.$store.getters['app/tag/parseStringBranchToArrayBranch'](this.value, false);
 
         if (values.length > 4) {
           ToastBus.$emit('addToast', {
