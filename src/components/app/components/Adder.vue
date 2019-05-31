@@ -49,11 +49,11 @@ export default Vue.extend({
       const index = value.search(/\s#/);
       if (index !== -1) {
         let target = value.slice(index + 2);
-        if (target[target.length - 1] === ' '){
+        if (target[target.length - 1] === ' ') {
           target = target.substring(0, target.length - 1);
         }
         const labels = target.split(' ');
-        let length = labels.length;
+        const length = labels.length;
         const labelCombinations = [];
         for (let i = 0; i < length; i++) {
           let comb = '';

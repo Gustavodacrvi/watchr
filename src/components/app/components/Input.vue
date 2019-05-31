@@ -19,7 +19,7 @@ const returnEmptyIfUndefined = (input: string) => {
   } else {
     return '';
   }
-}
+};
 
 export default Vue.extend({
   props: ['max', 'placeholder', 'tabindex', 'options', 'input', 'id'],
@@ -32,41 +32,42 @@ export default Vue.extend({
     };
   },
   mounted() {
-    let div: any = this.$refs[this.id];
+    const div: any = this.$refs[this.id];
     div.innerHTML = this.value;
     div.addEventListener('input', this.textChange);
   },
   methods: {
     getCaretPosition() {
-      let range = window.getSelection().getRangeAt(0);
-      let selectedObj: any = window.getSelection();
+      const selection: any = window.getSelection();
+      const range: any = selection.getRangeAt(0);
+      const selectedObj: any = window.getSelection();
       let rangeCount = 0;
-      let childNodes = selectedObj.anchorNode.parentNode.childNodes;
-      for (let i = 0; i < childNodes.length; i++) {
-        if (childNodes[i] == selectedObj.anchorNode) {
+      const childNodes = selectedObj.anchorNode.parentNode.childNodes;
+      for (const node of childNodes) {
+        if (node === selectedObj.anchorNode) {
           break;
         }
-        if (childNodes[i].outerHTML)
-          rangeCount += childNodes[i].outerHTML.length;
-        else if (childNodes[i].nodeType == 3) {
-          rangeCount += childNodes[i].textContent.length;
+        if (node.outerHTML) {
+          rangeCount += node.outerHTML.length;
+        } else if (node.nodeType === 3) {
+          rangeCount += node.textContent.length;
         }
       }
       return range.startOffset + rangeCount;
     },
     setCaretPosition(position: number) {
-      let div: any = this.$refs[this.id];
-      let range = document.createRange();
-      let sel = window.getSelection();
+      const div: any = this.$refs[this.id];
+      const range = document.createRange();
+      const sel: any = window.getSelection();
       range.setStart(div.childNodes[0], position);
       range.collapse(true);
       sel.removeAllRanges();
       sel.addRange(range);
     },
     textChange() {
-      let div: any = this.$refs[this.id];
+      const div: any = this.$refs[this.id];
       this.value = div.textContent;
-      let position = this.getCaretPosition()
+      const position = this.getCaretPosition();
       div.innerHTML = this.value;
       this.setCaretPosition(position);
     },
@@ -138,7 +139,7 @@ export default Vue.extend({
     },
   },
   beforeDestroy() {
-    let div: any = this.$refs[this.id];
+    const div: any = this.$refs[this.id];
     div.removeEventListener('input', this.textChange);
   },
 });
