@@ -1,6 +1,6 @@
 <template>
   <div class='wrapper'>
-    <div ref='add-label-pop-up' :class='[$store.state.theme.style, state]' class='input' :tabindex='tabindex' @keypress='keyPress' @focus='focus = true' @blur='focus = false' @keydown='selectOptions' contenteditable='true'>
+    <div :ref='id' :id='id' :class='[$store.state.theme.style, state]' class='input' :tabindex='tabindex' @keypress='keyPress' @focus='focus = true' @blur='focus = false' @keydown='selectOptions' contenteditable='true'>
     </div>
     <transition name='fade-transition'>
       <div :class='$store.state.theme.style' ref='dropdown' class='dropdown card-round border' v-if='options !== undefined && options.length > 0 && focus'>
@@ -38,29 +38,37 @@ export default Vue.extend({
   },
   methods: {
     getCaretPosition() {
-      if (window.getSelection && window.getSelection().getRangeAt) {
-        let range = window.getSelection().getRangeAt(0);
-        let selectedObj: any = window.getSelection();
-        let rangeCount = 0;
-        let childNodes = selectedObj.anchorNode.parentNode.childNodes;
-        for (let i = 0; i < childNodes.length; i++) {
-          if (childNodes[i] == selectedObj.anchorNode) {
-            break;
-          }
-          if (childNodes[i].outerHTML)
-            rangeCount += childNodes[i].outerHTML.length;
-          else if (childNodes[i].nodeType == 3) {
-            rangeCount += childNodes[i].textContent.length;
-          }
+      let range = window.getSelection().getRangeAt(0);
+      let selectedObj: any = window.getSelection();
+      let rangeCount = 0;
+      let childNodes = selectedObj.anchorNode.parentNode.childNodes;
+      for (let i = 0; i < childNodes.length; i++) {
+        if (childNodes[i] == selectedObj.anchorNode) {
+          break;
         }
-        return range.startOffset + rangeCount;
+        if (childNodes[i].outerHTML)
+          rangeCount += childNodes[i].outerHTML.length;
+        else if (childNodes[i].nodeType == 3) {
+          rangeCount += childNodes[i].textContent.length;
+        }
       }
-      return -1;
+      return range.startOffset + rangeCount;
+    },
+    setCaretPosition(position: number) {
+      let div: any = this.$refs[this.id];
+      let range = document.createRange();
+      let sel = window.getSelection();
+      range.setStart(div.childNodes[0], position);
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
     },
     textChange() {
       let div: any = this.$refs[this.id];
       this.value = div.textContent;
-      this.caret = this.getCaretPosition();
+      let position = this.getCaretPosition()
+      div.innerHTML = this.value;
+      this.setCaretPosition(position);
     },
     keyPress(key: any) {
       if (key.key === 'Enter') {
