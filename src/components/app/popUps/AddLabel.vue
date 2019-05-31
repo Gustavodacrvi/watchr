@@ -47,7 +47,7 @@ export default Vue.extend({
     return {
       validInput: false as boolean,
       value: '',
-      subTags: [] as any[],
+      subTagNames: [] as any[],
     };
   },
   methods: {
@@ -71,7 +71,7 @@ export default Vue.extend({
     valueChange(value: string) {
       this.value = value;
       const values = this.$store.getters['app/tag/parseStringBranchToArrayBranch'](this.value, true);
-      this.subTags = this.$store.getters['app/tag/getSubTagsFromBranchSearch'](values);
+      this.subTagNames = this.$store.getters['app/tag/getSubTagsFromBranchSearch'](values);
     },
     updateState(state: any) {
       this.validInput = !state.wrong;
@@ -90,16 +90,6 @@ export default Vue.extend({
           this.$store.dispatch('app/tag/addLabelBranch', values);
         }
       }
-    },
-  },
-  computed: {
-    subTagNames(): string[] {
-      const length = this.subTags.length;
-      const arr = [];
-      for (let i = 0; i < length; i++) {
-        arr.push(this.subTags[i].name);
-      }
-      return arr;
     },
   },
 });

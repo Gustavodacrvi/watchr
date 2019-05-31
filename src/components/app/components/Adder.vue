@@ -39,6 +39,7 @@ export default Vue.extend({
       active: false,
       value: '',
       validInput: true,
+      options: undefined,
     };
   },
   methods: {
@@ -52,25 +53,30 @@ export default Vue.extend({
           target = target.substring(0, target.length - 1);
         }
         const labels = target.split(' ');
-        const length = labels.length;
+        let length = labels.length;
         const labelCombinations = [];
         for (let i = 0; i < length; i++) {
-          const comb = [];
+          let comb = '';
           for (let j = 0; j < i + 1; j++) {
             if (labels[j] !== '') {
-              comb.push(labels[j]);
+              comb += ' ' + labels[j];
             }
           }
           if (comb.length !== 0) {
             labelCombinations.push(comb);
           }
         }
+        let arrayBranch = this.$store.getters['app/tag/parseStringBranchToArrayBranch'](target, false);
+        this.options = this.$store.getters['app/tag/getSubTagsFromBranchSearch'](arrayBranch);
       }
     },
     updateState(state: any) {
       this.validInput = !state.wrong;
     },
     addTask() {
+
+    },
+    computed: {
 
     },
   },

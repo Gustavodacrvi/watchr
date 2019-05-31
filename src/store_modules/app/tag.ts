@@ -42,7 +42,7 @@ export default {
       }
       return str;
     },
-    parseStringBranchToArrayBranch: (state: any) => (branch: string, acceptLastTwoDots: boolean): string[] => {
+    parseStringBranchToArrayBranch: () => (branch: string, acceptLastTwoDots: boolean): string[] => {
       let value = branch.trim();
       if (!acceptLastTwoDots && value[value.length - 1] === ':') {
         value = value.slice(0, -1);
@@ -54,6 +54,14 @@ export default {
       }
 
       return values;
+    },
+    getArrayOfNamesOutOfArrayOfTags: () => (tags: Tag[]): string[] => {
+      const length = tags.length;
+      const arr = [];
+      for (let i = 0; i < length; i++) {
+        arr.push(tags[i].name);
+      }
+      return arr;
     },
     getLabelArrayBranchByNodeId:
      (state: any, getters: any) => (id: string, branch: any, labels: any): string[] | undefined => {
