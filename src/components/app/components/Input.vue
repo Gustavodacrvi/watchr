@@ -25,7 +25,7 @@ export default Vue.extend({
   props: ['max', 'placeholder', 'tabindex', 'options', 'input', 'id'],
   data() {
     return {
-      value: returnEmptyIfUndefined(this.input),
+      value: '' as string,
       state: undefined as any,
       focus: false,
       selected: '',
@@ -69,7 +69,11 @@ export default Vue.extend({
       this.value = div.textContent;
       const position = this.getCaretPosition();
       div.innerHTML = this.value;
-      this.setCaretPosition(position);
+      if (div.textContent.length > 0 && this.value.length === position) {
+        this.setCaretPosition(position);
+      } else if (this.value.length !== position) {
+        this.setCaretToLast();
+      }
     },
     keyPress(key: any) {
       if (key.key === 'Enter') {
@@ -117,6 +121,10 @@ export default Vue.extend({
         drop.scrollTop = el.offsetTop;
       }
     },
+    setCaretToLast() {
+      const div: any = this.$refs[this.id];
+      this.setCaretPosition(this.value.length);
+    },
   },
   watch: {
     value() {
@@ -128,7 +136,12 @@ export default Vue.extend({
       this.$emit('value-change', this.value);
     },
     input() {
-      this.value = this.input;
+      const div: any = this.$refs[this.id];
+      const position = this.getCaretPosition();
+      div.innerHTML = this.input;
+      if (div.textContent.length > 0) {
+        this.setCaretPosition(position);
+      }
     },
     state() {
       this.$emit('state-change', {
