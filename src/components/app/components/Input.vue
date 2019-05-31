@@ -1,6 +1,7 @@
 <template>
   <div class='wrapper'>
-    <input :class='[$store.state.theme.style, state]' class='input' name='input' autocomplete='off' :tabindex='tabindex' :placeholder='placeholder' v-model='value' @keypress='keyPress' @focus='focus = true' @blur='focus = false' @keydown='selectOptions'/>
+    <div ref='add-label-pop-up' :class='[$store.state.theme.style, state]' class='input' :tabindex='tabindex' @keypress='keyPress' @focus='focus = true' @blur='focus = false' @keydown='selectOptions' contenteditable='true'>
+    </div>
     <transition name='fade-transition'>
       <div :class='$store.state.theme.style' ref='dropdown' class='dropdown card-round border' v-if='options !== undefined && options.length > 0 && focus'>
         <div v-for='opt in options' :key='opt' class='drop-element' :ref='opt' :class='[{"selected bright": selected === opt}, $store.state.theme.style]' @click='select(opt)'><span class='txt'>{{ opt }}</span></div>
@@ -21,7 +22,7 @@ const returnEmptyIfUndefined = (input: string) => {
 }
 
 export default Vue.extend({
-  props: ['max', 'placeholder', 'tabindex', 'options', 'input'],
+  props: ['max', 'placeholder', 'tabindex', 'options', 'input', 'id'],
   data() {
     return {
       value: returnEmptyIfUndefined(this.input),
@@ -30,13 +31,45 @@ export default Vue.extend({
       selected: '',
     };
   },
+  mounted() {
+    let div: any = this.$refs[this.id];
+    div.innerHTML = this.value;
+    div.addEventListener('input', this.textChange);
+  },
   methods: {
+    getCaretPosition() {
+      if (window.getSelection && window.getSelection().getRangeAt) {
+        let range = window.getSelection().getRangeAt(0);
+        let selectedObj: any = window.getSelection();
+        let rangeCount = 0;
+        let childNodes = selectedObj.anchorNode.parentNode.childNodes;
+        for (let i = 0; i < childNodes.length; i++) {
+          if (childNodes[i] == selectedObj.anchorNode) {
+            break;
+          }
+          if (childNodes[i].outerHTML)
+            rangeCount += childNodes[i].outerHTML.length;
+          else if (childNodes[i].nodeType == 3) {
+            rangeCount += childNodes[i].textContent.length;
+          }
+        }
+        return range.startOffset + rangeCount;
+      }
+      return -1;
+    },
+    textChange() {
+      let div: any = this.$refs[this.id];
+      this.value = div.textContent;
+      this.caret = this.getCaretPosition();
+    },
     keyPress(key: any) {
       if (key.key === 'Enter') {
         if (this.selected === '') {
           this.$emit('enter');
         } else {
-          this.select(this.selected);
+          if (this.options.length !== 0) {
+            this.select(this.selected);
+          }
         }
       }
     },
@@ -45,10 +78,12 @@ export default Vue.extend({
       this.selected = '';
     },
     selectOptions(key: any) {
-      if (key.key === 'ArrowDown') {
-        this.moveSelection('down');
-      } else if (key.key === 'ArrowUp') {
-        this.moveSelection('up');
+      if (this.options.length !== 0) {
+        if (key.key === 'ArrowDown') {
+          this.moveSelection('down');
+        } else if (key.key === 'ArrowUp') {
+          this.moveSelection('up');
+        }
       }
     },
     moveSelection(direction: string) {
@@ -94,6 +129,10 @@ export default Vue.extend({
       });
     },
   },
+  beforeDestroy() {
+    let div: any = this.$refs[this.id];
+    div.removeEventListener('input', this.textChange);
+  },
 });
 </script>
 
@@ -133,14 +172,11 @@ export default Vue.extend({
 }
 
 .input {
-  border: none;
   border-radius: 6px;
   padding: 8px;
   width: 100%;
   box-sizing: border-box;
   outline: none;
-  font-family: 'Work Sans';
-  font-size: 1.01em;
   transition-duration: .2s;
   bottom: 0;
 }

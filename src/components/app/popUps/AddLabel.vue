@@ -9,7 +9,7 @@
           <span>You can create sub-labels using <span class='big'>:</span> .<br/><br/>
           E.g: family:spouse, work:people:karen, work:office.<br/><br/>The outer tag is automatically created if not present.</span>
         </heading>
-        <app-input tabindex='1' class='stretch' :max='80' :options='subTagNames' :input='value' @value-change='valueChange' @state-change='updateState' @enter='add' @select='selectString' placeholder='E.g: 5 minutes, full focus, brain dead...'></app-input>
+        <app-input tabindex='1' class='stretch' :max='80' :options='subTagNames' id='add-label-pop-up' :input='value' @value-change='valueChange' @state-change='updateState' @enter='add' @select='selectString' placeholder='E.g: 5 minutes, full focus, brain dead...'></app-input>
         <div class='options'>
           <btn tabindex='2' class='medium' @click='add'>Add label</btn>
           <alert class='pointer' type='error' @click='$store.commit("app/nav/hidePopUp")'>Cancel</alert>
@@ -71,7 +71,7 @@ export default Vue.extend({
     valueChange(value: string) {
       this.value = value;
       const values = this.$store.getters['app/tag/parseStringBranchToArrayBranch'](this.value, true);
-      this.subTagNames = this.$store.getters['app/tag/getSubTagsFromBranchSearch'](values);
+      this.subTagNames = this.$store.getters['app/tag/getArrayOfNamesOutOfArrayOfTags'](this.$store.getters['app/tag/getSubTagsFromBranchSearch'](values));
     },
     updateState(state: any) {
       this.validInput = !state.wrong;

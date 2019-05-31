@@ -6,7 +6,7 @@
     </div>
     <div v-else key='inbox-task-adder-adder' class='adder'>
       <div>
-        <app-input :class='$store.state.theme.style' class='stretch round' placeholder='Do something @interval #label $project %calendar_tag' :max='300' @value-change='updateValue' @state-change='updateState' @enter='addTask'></app-input>
+        <app-input :class='$store.state.theme.style' class='stretch round' placeholder='Do something @interval #label $project %calendar_tag' :max='300' :options='tagNames' @value-change='updateValue' @state-change='updateState' @enter='addTask'></app-input>
       </div>
       <div class='options'>
         <btn class='tiny-round tiny'>{{ btnMsg }}</btn>
@@ -39,7 +39,7 @@ export default Vue.extend({
       active: false,
       value: '',
       validInput: true,
-      options: undefined,
+      tagNames: [] as string[],
     };
   },
   methods: {
@@ -66,17 +66,17 @@ export default Vue.extend({
             labelCombinations.push(comb);
           }
         }
-        let arrayBranch = this.$store.getters['app/tag/parseStringBranchToArrayBranch'](target, false);
-        this.options = this.$store.getters['app/tag/getSubTagsFromBranchSearch'](arrayBranch);
+        const arrayBranch = this.$store.getters['app/tag/parseStringBranchToArrayBranch'](target, false);
+        const tags = this.$store.getters['app/tag/getSubTagsFromBranchSearch'](arrayBranch);
+        this.tagNames = this.$store.getters['app/tag/getArrayOfNamesOutOfArrayOfTags'](tags);
+      } else {
+        this.tagNames = [];
       }
     },
     updateState(state: any) {
       this.validInput = !state.wrong;
     },
     addTask() {
-
-    },
-    computed: {
 
     },
   },
