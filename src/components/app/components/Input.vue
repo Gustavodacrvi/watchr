@@ -35,7 +35,9 @@ export default Vue.extend({
   },
   mounted() {
     const div: any = this.$refs[this.id];
-    div.innerHTML = this.input;
+    if (this.input) {
+      div.innerHTML = this.input;
+    }
     div.addEventListener('input', this.textChange);
   },
   methods: {
@@ -106,15 +108,17 @@ export default Vue.extend({
       }
       // check if element is visible on dropdown
       let el: any = this.$refs[this.selected];
-      el = el[0];
-      const drop: any = this.$refs.dropdown;
-
-      const belowScroll = drop.offsetHeight + drop.scrollTop < el.offsetTop;
-      const uponScroll = drop.scrollTop > el.offsetTop;
-      if (drop.offsetHeight + drop.scrollTop < el.offsetTop + el.offsetHeight) {
-        drop.scrollTop = el.offsetTop - drop.offsetHeight + el.offsetHeight;
-      } else if (drop.scrollTop > el.offsetTop) {
-        drop.scrollTop = el.offsetTop;
+      if (el !== undefined) {
+        el = el[0];
+        const drop: any = this.$refs.dropdown;
+  
+        const belowScroll = drop.offsetHeight + drop.scrollTop < el.offsetTop;
+        const uponScroll = drop.scrollTop > el.offsetTop;
+        if (drop.offsetHeight + drop.scrollTop < el.offsetTop + el.offsetHeight) {
+          drop.scrollTop = el.offsetTop - drop.offsetHeight + el.offsetHeight;
+        } else if (drop.scrollTop > el.offsetTop) {
+          drop.scrollTop = el.offsetTop;
+        }
       }
     },
     setCaretToLast() {

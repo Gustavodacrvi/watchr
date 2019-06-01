@@ -6,7 +6,7 @@
     </div>
     <div v-else key='inbox-task-adder-adder' class='adder'>
       <div>
-        <app-input :class='$store.state.theme.style' class='stretch round' placeholder='Do something @interval #label $project %calendar_tag' :max='300' :options='tagNames' @value-change='updateValue' @state-change='updateState' @enter='addTask'></app-input>
+        <app-input tabindex='1' id='adder-input-rich-text' :class='$store.state.theme.style' class='stretch round' placeholder='Do something @interval #label $project %calendar_tag' :max='300' :options='tagNames' @value-change='updateValue' @state-change='updateState' @enter='addTask'></app-input>
       </div>
       <div class='options'>
         <btn class='tiny-round tiny'>{{ btnMsg }}</btn>
