@@ -57,7 +57,7 @@ export default Vue.extend({
   methods: {
     hideAppNavBar() {
       setTimeout(() => {
-        if (this.closeNavbar && !this.$store.getters.NavbarisOnDesktop) {
+        if (this.closeNavbar && !this.isDesktop) {
           this.$store.commit('app/nav/hide');
         }
         this.$store.commit('app/nav/fallbackClick');

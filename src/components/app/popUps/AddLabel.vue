@@ -13,7 +13,7 @@
         <div class='options'>
           <btn tabindex='2' class='medium' @click='add'>Add label</btn>
           <alert class='pointer' type='error' @click='$store.commit("app/nav/hidePopUp")'>Cancel</alert>
-          <template v-if='$store.state.NavbarisOnDesktop'>
+          <template v-if='$store.getters.NavbarisOnDesktop'>
             <span class='right'>Press <strong>A + L</strong> to open this pop up.</span>
             <span class='right'>Press <strong>CTRL + C</strong> to close any pop up</span>
           </template>

@@ -30,6 +30,7 @@ export default Vue.extend({
       state: undefined as any,
       focus: false,
       selected: '',
+      goToLastCaret: undefined as any,
       showPlaceholder: true as any,
     };
   },
@@ -71,16 +72,16 @@ export default Vue.extend({
     textChange() {
       const div: any = this.$refs[this.id];
       this.value = div.textContent;
+      this.goToLastCaret = false;
       this.writeValue();
     },
     keyPress(key: any) {
       if (key.key === 'Enter') {
         if (this.selected === '') {
           this.$emit('enter');
-        } else {
-          if (this.options.length !== 0) {
-            this.select(this.selected);
-          }
+        } else if (this.options.length !== 0) {
+          this.goToLastCaret = true;
+          this.select(this.selected);
         }
       }
     },
@@ -129,9 +130,9 @@ export default Vue.extend({
       const div: any = this.$refs[this.id];
       const position = this.getCaretPosition();
       div.innerHTML = this.value;
-      if (div.textContent.length > 0 && this.value.length === position) {
+      if (div.textContent.length > 0 && !this.goToLastCaret) {
         this.setCaretPosition(position);
-      } else if (this.value.length !== position) {
+      } else if (this.goToLastCaret) {
         this.setCaretToLast();
       }
     },

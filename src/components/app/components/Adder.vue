@@ -49,6 +49,7 @@ export default Vue.extend({
       const index = value.search(/\s#/);
       if (index !== -1) {
         let target = value.slice(index + 2);
+        console.log(target[target.length - 1] === ' ')
         if (target[target.length - 1] === ' ') {
           target = target.substring(0, target.length - 1);
         }
