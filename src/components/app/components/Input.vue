@@ -2,6 +2,7 @@
   <div class='wrapper'>
     <div :ref='id' :id='id' :class='[$store.state.theme.style, state]' class='input' :tabindex='tabindex' @keypress='keyPress' @focus='focus = true' @blur='focus = false' @keydown='selectOptions' contenteditable='true'>
     </div>
+    <div class='input placeholder' :class='state' v-if='showPlaceholder'><span>{{ placeholder }}</span></div>
     <transition name='fade-transition'>
       <div :class='$store.state.theme.style' ref='dropdown' class='dropdown card-round border' v-if='options !== undefined && options.length > 0 && focus'>
         <div v-for='opt in options' :key='opt' class='drop-element' :ref='opt' :class='[{"selected bright": selected === opt}, $store.state.theme.style]' @click='select(opt)'><span class='txt'>{{ opt }}</span></div>
@@ -29,11 +30,12 @@ export default Vue.extend({
       state: undefined as any,
       focus: false,
       selected: '',
+      showPlaceholder: true as any,
     };
   },
   mounted() {
     const div: any = this.$refs[this.id];
-    div.innerHTML = this.value;
+    div.innerHTML = this.input;
     div.addEventListener('input', this.textChange);
   },
   methods: {
@@ -67,13 +69,7 @@ export default Vue.extend({
     textChange() {
       const div: any = this.$refs[this.id];
       this.value = div.textContent;
-      const position = this.getCaretPosition();
-      div.innerHTML = this.value;
-      if (div.textContent.length > 0 && this.value.length === position) {
-        this.setCaretPosition(position);
-      } else if (this.value.length !== position) {
-        this.setCaretToLast();
-      }
+      this.writeValue();
     },
     keyPress(key: any) {
       if (key.key === 'Enter') {
@@ -125,9 +121,20 @@ export default Vue.extend({
       const div: any = this.$refs[this.id];
       this.setCaretPosition(this.value.length);
     },
+    writeValue() {
+      const div: any = this.$refs[this.id];
+      const position = this.getCaretPosition();
+      div.innerHTML = this.value;
+      if (div.textContent.length > 0 && this.value.length === position) {
+        this.setCaretPosition(position);
+      } else if (this.value.length !== position) {
+        this.setCaretToLast();
+      }
+    },
   },
   watch: {
     value() {
+      this.showPlaceholder = this.value.length === 0;
       if (this.value.length === 0 || this.value.length > this.max) {
         this.state = 'wrong';
       } else {
@@ -136,12 +143,8 @@ export default Vue.extend({
       this.$emit('value-change', this.value);
     },
     input() {
-      const div: any = this.$refs[this.id];
-      const position = this.getCaretPosition();
-      div.innerHTML = this.input;
-      if (div.textContent.length > 0) {
-        this.setCaretPosition(position);
-      }
+      this.value = this.input;
+      this.writeValue();
     },
     state() {
       this.$emit('state-change', {
@@ -201,6 +204,21 @@ export default Vue.extend({
   outline: none;
   transition-duration: .2s;
   bottom: 0;
+}
+
+.placeholder {
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+  opacity: .7;
+}
+
+.placeholder.wrong {
+  border: 2px;
+}
+
+.fuck-yeah {
+  background-color: red;
 }
 
 .stretch {
