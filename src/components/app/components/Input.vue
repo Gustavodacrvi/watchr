@@ -60,6 +60,19 @@ export default Vue.extend({
       }
       return range.startOffset + rangeCount;
     },
+    getInnerHTML() {
+      const div: any = this.$refs[this.id];
+      let text = '';
+      const length = div.textContent.length;
+      for (let i = 0; i < length; i++) {
+        if (div.textContent.charCodeAt(i) === 160) {
+          text += ' ';
+        } else {
+          text += div.textContent[i];
+        }
+      }
+      return text;
+    },
     setCaretPosition(position: number) {
       const div: any = this.$refs[this.id];
       const range = document.createRange();
@@ -145,11 +158,13 @@ export default Vue.extend({
       } else {
         this.state = '';
       }
-      this.$emit('value-change', this.value);
+      this.$emit('value-change', this.getInnerHTML());
     },
     input() {
-      this.value = this.input;
-      this.writeValue();
+      if (this.getInnerHTML() !== this.input) {
+        this.value = this.input;
+        this.writeValue();
+      }
     },
     state() {
       this.$emit('state-change', {
