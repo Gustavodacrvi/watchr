@@ -43,37 +43,26 @@ export default Vue.extend({
     };
   },
   methods: {
+    getMatchesStringFromChar(char: string) {
+      const regexString = `\\s${char}[^ ]+`;
+      const regex = new RegExp(regexString, 'g');
+      let match: string[] | null = this.value.match(regex);
+      if (match === null) {
+        return undefined;
+      }
+      const matches = [];
+      const length = match.length;
+      for (let i = 0; i < length; i++) {
+        matches.push(match[i].substring(2));
+      }
+      return matches;
+    },
     updateValue(value: string) {
       this.value = value;
 
-      const index = value.search(/\s#/);
-      if (index !== -1) {
-        let target = value.slice(index + 2);
-        let lastChar = target[target.length - 1];
-        console.log(lastChar.charCodeAt(0))
-        console.log(lastChar === ' ')
-        if (target[target.length - 1] === ' ') {
-          target = target.substring(0, target.length - 1);
-        }
-        const labels = target.split(' ');
-        const length = labels.length;
-        const labelCombinations = [];
-        for (let i = 0; i < length; i++) {
-          let comb = '';
-          for (let j = 0; j < i + 1; j++) {
-            if (labels[j] !== '') {
-              comb += ' ' + labels[j];
-            }
-          }
-          if (comb.length !== 0) {
-            labelCombinations.push(comb);
-          }
-        }
-        const arrayBranch = this.$store.getters['app/tag/parseStringBranchToArrayBranch'](target, false);
-        const tags = this.$store.getters['app/tag/getSubTagsFromBranchSearch'](arrayBranch);
-        this.tagNames = this.$store.getters['app/tag/getArrayOfNamesOutOfArrayOfTags'](tags);
-      } else {
-        this.tagNames = [];
+      const matches = this.getMatchesStringFromChar('#');
+      if (matches !== undefined) {
+        console.log(matches)
       }
     },
     updateState(state: any) {

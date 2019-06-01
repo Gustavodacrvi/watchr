@@ -170,7 +170,7 @@ export default Vue.extend({
       this.$emit('state-change', {
         state: this.state,
         wrong: this.state === 'wrong',
-        value: this.value,
+        value: this.getInnerHTML(),
       });
     },
   },
