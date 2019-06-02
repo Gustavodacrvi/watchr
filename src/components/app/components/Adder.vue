@@ -6,7 +6,7 @@
     </div>
     <div v-else key='inbox-task-adder-adder' class='adder'>
       <div>
-        <app-input tabindex='1' id='adder-input-rich-text' :class='$store.state.theme.style' class='stretch round' placeholder='Do something @interval #label $project %calendar_tag' :max='300' :options='[]' @value-change='updateValue' @state-change='updateState' @enter='addTask' :tags='inputTags()'></app-input>
+        <app-input tabindex='1' id='adder-input-rich-text' :class='$store.state.theme.style' class='stretch round' placeholder='Do something @interval #label $project %calendar_tag' :max='300' :options='[]' @value-change='updateValue' @state-change='updateState' @enter='addTask' :tags='inputTags'></app-input>
       </div>
       <div class='options'>
         <btn class='tiny-round tiny'>{{ btnMsg }}</btn>
@@ -40,11 +40,11 @@ export default Vue.extend({
       active: false,
       value: '',
       validInput: true,
-      tags: [] as any,
+      tags: [] as string[] | null,
     };
   },
   methods: {
-    getMatchesStringFromChar(char: string): any[] | null {
+    getMatchesStringFromChar(char: string): string[] | null{
       const regexString = `\\s${char}[^ ]+`;
       const regex = new RegExp(regexString, 'g');
       let match: string[] | null = this.value.match(regex);
@@ -54,10 +54,7 @@ export default Vue.extend({
       const matches = [];
       const length = match.length;
       for (let i = 0; i < length; i++) {
-        matches.push({
-          index: this.value.search(match[i]) + 1,
-          name: match[i].substring(2),
-        });
+        matches.push(match[i].substring(2));
       }
       return matches;
     },
@@ -71,24 +68,25 @@ export default Vue.extend({
     updateState(state: any) {
       this.validInput = !state.wrong;
     },
+    addTask() {
+
+    },
+  },
+  computed: {
     inputTags() {
       const inputTags: any = [];
       if (this.tags !== null) {
         const length = this.tags.length;
         for (let i = 0; i < length; i++) {
           inputTags.push({
-            name: this.tags[i].name,
+            name: this.tags[i],
             handle: '#',
-            index: this.tags[i].index,
             color: '#FC7C85',
             ico: 'tag',
           });
         }
       }
       return inputTags;
-    },
-    addTask() {
-
     },
   },
 });

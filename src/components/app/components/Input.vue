@@ -33,30 +33,35 @@ export default Vue.extend({
     div.addEventListener('input', this.textChange);
   },
   methods: {
-    getNodeIndex(): number {
-      const selection: any = window.getSelection();
-      const currentNode: string = selection.focusNode.data;
-      const childNodes = selection.anchorNode.parentNode.childNodes;
-      const length = childNodes.length;
-      for (let i = 0; i < length; i++) {
-        if (childNodes[i].nodeType === 3 && childNodes[i].nodeValue === currentNode) {
-          return i;
-        }
-      }
-      return 0;
+    getCaretPosition(): number {
+      return window.getSelection().focusOffset;
     },
-    getCaretPosition() {
-      const selection: any = window.getSelection();
-      const caretPosition = selection.focusOffset;
-    },
-    setCaretPosition(node: number, position: number | undefined) {
+    setCaretPosition(position: any) {
       const div: any = this.$refs[this.id];
       const selection: any = window.getSelection();
       const range: any = document.createRange();
       if (position === undefined) {
-        position = div.childNodes[node].length;
+        position = div.childNodes[0].length;
       }
-      range.setStart(div.childNodes[node], position);
+      let i = 0;
+      let beforePosition = position;
+      while (true) {
+        let node = div.childNodes[i];
+        if (position > node.textContent.length) {
+          position = position - node.textContent.length;
+          i++;
+        } else {
+          break;
+        }
+      }
+      console.log(i, beforePosition, position)
+      console.log(div.childNodes[i])
+      if (div.childNodes[i].nodeType === 3) {
+        range.setStart(div.childNodes[i], position);
+      } else {
+        console.log(div.childNodes[i])
+        range.setStart(div.childNodes[i].firstChild, position);
+      }
       range.collapse(true);
       selection.removeAllRanges();
       selection.addRange(range);
@@ -67,9 +72,30 @@ export default Vue.extend({
     },
     updateInnerHTML() {
       const div: any = this.$refs[this.id];
-      const node = this.getNodeIndex();
       div.innerHTML = this.value;
-      this.setCaretPosition(node, undefined);
+      this.setCaretPosition(undefined);
+    },
+    caretPosition() {
+      let selection: any = window.getSelection();
+      selection.modify("extend", "backward", "paragraphboundary");
+      let pos = selection.toString().length;
+      if(selection.anchorNode != undefined) selection.collapseToEnd();
+      return pos;
+    },
+    addTags() {
+      if (this.tags !== undefined && this.tags.length !== 0) {
+
+        const div: any = this.$refs[this.id];
+        const length = this.tags.length;
+        let str = div.textContent;
+        for (let i = 0; i < length; i++) {
+          let searchString = '' + this.tags[i].handle + this.tags[i].name + String.fromCharCode(160);
+          str = str.replace(searchString, `<strong>${this.tags[i].handle}${this.tags[i].name}</strong>${String.fromCharCode(160)}`);
+        }
+        const position = this.caretPosition();
+        div.innerHTML = str;
+        this.setCaretPosition(position);
+      }
     },
     keyPress(key: any) {
       if (key.keyCode === 13) {
@@ -120,18 +146,6 @@ export default Vue.extend({
         }
       }
     },
-    addTags() {
-      /* if (this.tags !== undefined && this.tags.length !== 0) {
-        this.addedTags = true;
-        const div: any = this.$refs[this.id];
-        const length = this.tags.length;
-        for (let i = 0; i < length; i++) {
-          div.innerHTML = div.childNodes[0].nodeValue.replace('' + this.tags[i].handle + this.tags[i].name, `<strong>${this.tags[i].name}</strong>&nbsp`);
-          console.log(this.tags[i].handle + this.tags[i].name, div.childNodes[0])
-        }
-        this.setCaretToLast(div.childNodes.length - 1);
-      } */
-    },
     getInnerHTML() {
       const div: any = this.$refs[this.id];
       let text = '';
@@ -147,6 +161,9 @@ export default Vue.extend({
     },
   },
   watch: {
+    tags() {
+      this.addTags();
+    },
     value() {
       this.showPlaceholder = this.value.length === 0;
       if (this.value.length === 0 || this.value.length > this.max) {
