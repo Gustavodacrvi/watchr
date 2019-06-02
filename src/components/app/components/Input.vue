@@ -36,17 +36,17 @@ export default Vue.extend({
       div.innerHTML = this.input;
     }
     div.addEventListener('input', this.textChange);
-    test.addEventListener('input', this.getNodeIndex);
     test.addEventListener('keydown', (e: any) => {
       if (e.keyCode === 13) {
         e.preventDefault();
         const test: any = this.$refs.fuckingtest;
         test.appendChild(document.createTextNode('<br>'));
       }
+      this.getCaretPositio();
     });
   },
   methods: {
-    getNodeIndex() {
+    getNodeIndex(): number {
       const selection: any = window.getSelection();
       const currentNode: string = selection.focusNode.data;
       const childNodes = selection.anchorNode.parentNode.childNodes;
@@ -56,6 +56,11 @@ export default Vue.extend({
           return i;
         }
       }
+      return 0;
+    },
+    getCaretPositio() {
+      const selection: any = window.getSelection();
+      const caretPosition = selection.focusOffset;
     },
     getCaretPosition() {
       const selection: any = window.getSelection();
