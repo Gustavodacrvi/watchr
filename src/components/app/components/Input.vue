@@ -44,12 +44,20 @@ export default Vue.extend({
         position = div.childNodes[0].length;
       }
       let i = 0;
-      let beforePosition = position;
       while (true) {
         let node = div.childNodes[i];
-        if (position > node.textContent.length) {
-          position = position - node.textContent.length;
+        let increment = 0;
+        if (node.nodeType !== 3) {
+          increment += 1;
+        }
+        if (position > node.textContent.length - increment) {
+          position = position - (node.textContent.length - increment);
           i++;
+          if (i > div.childNodes.length - 1) {
+            i--;
+            break;
+          }
+          // asdf #j 
         } else {
           break;
         }
@@ -57,7 +65,7 @@ export default Vue.extend({
       if (div.childNodes[i].nodeType === 3) {
         range.setStart(div.childNodes[i], position);
       } else {
-        range.setStart(div.childNodes[i].lastChild.firstChild, position);
+        range.setStart(div.childNodes[i].lastChild.lastChild.lastChild, position);
       }
       range.collapse(true);
       selection.removeAllRanges();
@@ -87,8 +95,8 @@ export default Vue.extend({
         let str = div.textContent;
         for (let i = 0; i < length; i++) {
           let tag = this.tags[i];
-          let searchString = '' + tag.handle + tag.name + String.fromCharCode(160);
-          str = str.replace(searchString, `<span class='app-adder-tag' style='background-color: ${tag.color};box-shadow: 0 1px 1px ${tag.color}'><i class='fa fa-${tag.ico} app-adder-tag-icon'></i><span class='app-adder-tag-txt'>${tag.handle}${tag.name}</span></span>${String.fromCharCode(160)}`);
+          let searchString = '' + tag.handle + tag.name;
+          str = str.replace(searchString, `<span class='app-adder-tag' style='background-color: ${tag.color};box-shadow: 0 1px 1px ${tag.color}'><i class='fa fa-${tag.ico} app-adder-tag-icon'></i><span class='app-adder-tag-txt'><i class='app-adder-hided-handle'>${tag.handle}</i><span style='color: white'>${tag.name}</span></span></span>`);
         }
         const position = this.caretPosition();
         div.innerHTML = str;
@@ -202,6 +210,15 @@ export default Vue.extend({
 .app-adder-tag-txt, .app-adder-tag-icon {
   color: white !important;
   margin: 2px 4px;
+}
+
+.app-adder-hided-handle {
+  display: none;
+}
+
+.app-adder-tag-txt {
+  position: relative;
+  left: -4px;
 }
 
 </style>
