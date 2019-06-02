@@ -6,7 +6,7 @@
     </div>
     <div v-else key='inbox-task-adder-adder' class='adder'>
       <div>
-        <app-input tabindex='1' id='adder-input-rich-text' :class='$store.state.theme.style' class='stretch round' placeholder='Do something @interval #label $project %calendar_tag' :max='300' :options='tagNames' @value-change='updateValue' @state-change='updateState' @enter='addTask'></app-input>
+        <app-input tabindex='1' id='adder-input-rich-text' :class='$store.state.theme.style' class='stretch round' placeholder='Do something @interval #label $project %calendar_tag' :max='300' :options='[]' @value-change='updateValue' @state-change='updateState' @enter='addTask' :tags='inputTags()'></app-input>
       </div>
       <div class='options'>
         <btn class='tiny-round tiny'>{{ btnMsg }}</btn>
@@ -27,6 +27,7 @@ export default Vue.extend({
   props: {
     msg: String,
     btnMsg: String,
+    tag: Boolean,
   },
   components: {
     'icon': Icon,
@@ -39,34 +40,52 @@ export default Vue.extend({
       active: false,
       value: '',
       validInput: true,
-      tagNames: [] as string[],
+      tags: [] as any,
     };
   },
   methods: {
-    getMatchesStringFromChar(char: string) {
+    getMatchesStringFromChar(char: string): any[] | null {
       const regexString = `\\s${char}[^ ]+`;
       const regex = new RegExp(regexString, 'g');
       let match: string[] | null = this.value.match(regex);
       if (match === null) {
-        return undefined;
+        return null;
       }
       const matches = [];
       const length = match.length;
       for (let i = 0; i < length; i++) {
-        matches.push(match[i].substring(2));
+        matches.push({
+          index: this.value.search(match[i]) + 1,
+          name: match[i].substring(2),
+        });
       }
       return matches;
     },
     updateValue(value: string) {
       this.value = value;
 
-      const matches = this.getMatchesStringFromChar('#');
-      if (matches !== undefined) {
-        console.log(matches)
+      if (this.tag) {
+        this.tags = this.getMatchesStringFromChar('#');
       }
     },
     updateState(state: any) {
       this.validInput = !state.wrong;
+    },
+    inputTags() {
+      const inputTags: any = [];
+      if (this.tags !== null) {
+        const length = this.tags.length;
+        for (let i = 0; i < length; i++) {
+          inputTags.push({
+            name: this.tags[i].name,
+            handle: '#',
+            index: this.tags[i].index,
+            color: '#FC7C85',
+            ico: 'tag',
+          });
+        }
+      }
+      return inputTags;
     },
     addTask() {
 
@@ -82,17 +101,14 @@ export default Vue.extend({
   height: 30px;
   display: flex;
   align-items: center;
+  color: #A97CFC;
+  margin-left: 10px;
+  cursor: pointer;
 }
 
 .icon {
   color: #A97CFC;
   cursor: pointer;
-}
-
-.msg {
-  color: #A97CFC;
-  cursor: pointer;
-  margin-left: 10px
 }
 
 .options {

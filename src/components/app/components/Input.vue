@@ -3,6 +3,8 @@
     <div :ref='id' :id='id' :class='[$store.state.theme.style, state]' class='input' :tabindex='tabindex' @keypress='keyPress' @focus='focus = true' @blur='focus = false' @keydown='selectOptions' contenteditable='true'>
     </div>
     <div class='input placeholder' :class='state' v-if='showPlaceholder'><span>{{ placeholder }}</span></div>
+    <div id='fuckingtest' ref='fuckingtest' style='min-height: 100px; width: 100%;display: inline-block;' contenteditable='true'>
+    </div>
     <transition name='fade-transition'>
       <div :class='$store.state.theme.style' ref='dropdown' class='dropdown card-round border' v-if='options !== undefined && options.length > 0 && focus'>
         <div v-for='opt in options' :key='opt' class='drop-element' :ref='opt' :class='[{"selected bright": selected === opt}, $store.state.theme.style]' @click='select(opt)'><span class='txt'>{{ opt }}</span></div>
@@ -14,34 +16,47 @@
 <script lang="ts">
 import Vue from 'vue';
 
-const returnEmptyIfUndefined = (input: string) => {
-  if (input) {
-    return input;
-  } else {
-    return '';
-  }
-};
-
 export default Vue.extend({
-  props: ['max', 'placeholder', 'tabindex', 'options', 'input', 'id'],
+  props: ['max', 'placeholder', 'tabindex', 'options', 'input', 'id', 'tags'],
   data() {
     return {
       value: '' as string,
       state: undefined as any,
       focus: false,
       selected: '',
+      addedTags: undefined as any,
       goToLastCaret: undefined as any,
       showPlaceholder: true as any,
     };
   },
   mounted() {
     const div: any = this.$refs[this.id];
+    const test: any = this.$refs.fuckingtest;
     if (this.input) {
       div.innerHTML = this.input;
     }
     div.addEventListener('input', this.textChange);
+    test.addEventListener('input', this.getNodeIndex);
+    test.addEventListener('keydown', (e: any) => {
+      if (e.keyCode === 13) {
+        e.preventDefault();
+        const test: any = this.$refs.fuckingtest;
+        test.appendChild(document.createTextNode('<br>'));
+      }
+    });
   },
   methods: {
+    getNodeIndex() {
+      const selection: any = window.getSelection();
+      const currentNode: string = selection.focusNode.data;
+      const childNodes = selection.anchorNode.parentNode.childNodes;
+      const length = childNodes.length;
+      for (let i = 0; i < length; i++) {
+        if (childNodes[i].nodeType === 3 && childNodes[i].nodeValue === currentNode) {
+          return i;
+        }
+      }
+    },
     getCaretPosition() {
       const selection: any = window.getSelection();
       const range: any = selection.getRangeAt(0);
@@ -83,10 +98,13 @@ export default Vue.extend({
       sel.addRange(range);
     },
     textChange() {
-      const div: any = this.$refs[this.id];
-      this.value = div.textContent;
-      this.goToLastCaret = false;
-      this.writeValue();
+      if (!this.addedTags) {
+        const div: any = this.$refs[this.id];
+        this.value = div.textContent;
+        this.goToLastCaret = false;
+        this.writeValue();
+      }
+        this.addedTags = false;
     },
     keyPress(key: any) {
       if (key.key === 'Enter') {
@@ -149,8 +167,23 @@ export default Vue.extend({
         this.setCaretToLast();
       }
     },
+    addTags() {
+      /* if (this.tags !== undefined && this.tags.length !== 0) {
+        this.addedTags = true;
+        const div: any = this.$refs[this.id];
+        const length = this.tags.length;
+        for (let i = 0; i < length; i++) {
+          div.innerHTML = div.childNodes[0].nodeValue.replace('' + this.tags[i].handle + this.tags[i].name, `<strong>${this.tags[i].name}</strong>&nbsp`);
+          console.log(this.tags[i].handle + this.tags[i].name, div.childNodes[0])
+        }
+        this.setCaretToLast(div.childNodes.length - 1);
+      } */
+    },
   },
   watch: {
+    tags() {
+      this.addTags();
+    },
     value() {
       this.showPlaceholder = this.value.length === 0;
       if (this.value.length === 0 || this.value.length > this.max) {
