@@ -41,8 +41,8 @@ export default Vue.extend({
         e.preventDefault();
         const test: any = this.$refs.fuckingtest;
         test.appendChild(document.createTextNode('<br>'));
+        this.setCaretPositio(this.getNodeIndex());
       }
-      this.getCaretPositio();
     });
   },
   methods: {
@@ -61,6 +61,18 @@ export default Vue.extend({
     getCaretPositio() {
       const selection: any = window.getSelection();
       const caretPosition = selection.focusOffset;
+    },
+    setCaretPositio(node: number, position: number | undefined) {
+      const div: any = this.$refs.fuckingtest;
+      const selection: any = window.getSelection();
+      const range: any = document.createRange();
+      if (position === undefined) {
+        position = div.childNodes[node].length;
+      }
+      range.setStart(div.childNodes[node], position);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
     },
     getCaretPosition() {
       const selection: any = window.getSelection();
