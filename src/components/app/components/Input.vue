@@ -54,13 +54,10 @@ export default Vue.extend({
           break;
         }
       }
-      console.log(i, beforePosition, position)
-      console.log(div.childNodes[i])
       if (div.childNodes[i].nodeType === 3) {
         range.setStart(div.childNodes[i], position);
       } else {
-        console.log(div.childNodes[i])
-        range.setStart(div.childNodes[i].firstChild, position);
+        range.setStart(div.childNodes[i].lastChild.firstChild, position);
       }
       range.collapse(true);
       selection.removeAllRanges();
@@ -89,8 +86,9 @@ export default Vue.extend({
         const length = this.tags.length;
         let str = div.textContent;
         for (let i = 0; i < length; i++) {
-          let searchString = '' + this.tags[i].handle + this.tags[i].name + String.fromCharCode(160);
-          str = str.replace(searchString, `<strong>${this.tags[i].handle}${this.tags[i].name}</strong>${String.fromCharCode(160)}`);
+          let tag = this.tags[i];
+          let searchString = '' + tag.handle + tag.name + String.fromCharCode(160);
+          str = str.replace(searchString, `<span class='app-adder-tag' style='background-color: ${tag.color};box-shadow: 0 1px 1px ${tag.color}'><i class='fa fa-${tag.ico} app-adder-tag-icon'></i><span class='app-adder-tag-txt'>${tag.handle}${tag.name}</span></span>${String.fromCharCode(160)}`);
         }
         const position = this.caretPosition();
         div.innerHTML = str;
@@ -194,6 +192,20 @@ export default Vue.extend({
 });
 </script>
 
+<style>
+
+.app-adder-tag {
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.app-adder-tag-txt, .app-adder-tag-icon {
+  color: white !important;
+  margin: 2px 4px;
+}
+
+</style>
+
 <style scoped>
 
 .wrapper {
@@ -269,7 +281,7 @@ export default Vue.extend({
 }
 
 .input.dark {
-  background-color: #363636;
+  background-color: #1C1C1C;
   color: #9C9696;
 }
 
