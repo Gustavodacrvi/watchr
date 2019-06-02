@@ -1,10 +1,8 @@
 <template>
   <div class='wrapper'>
-    <div :ref='id' :id='id' :class='[$store.state.theme.style, state]' class='input' :tabindex='tabindex' @keypress='keyPress' @focus='focus = true' @blur='focus = false' @keydown='selectOptions' contenteditable='true'>
+    <div :ref='id' :id='id' :class='[$store.state.theme.style, state]' class='input' :tabindex='tabindex' @keypress='keyPress' @focus='focus = true' @blur='focus = false' @keydown='keyDown' contenteditable='true'>
     </div>
     <div class='input placeholder' :class='state' v-if='showPlaceholder'><span>{{ placeholder }}</span></div>
-    <div id='fuckingtest' ref='fuckingtest' style='min-height: 100px; width: 100%;display: inline-block;' contenteditable='true'>
-    </div>
     <transition name='fade-transition'>
       <div :class='$store.state.theme.style' ref='dropdown' class='dropdown card-round border' v-if='options !== undefined && options.length > 0 && focus'>
         <div v-for='opt in options' :key='opt' class='drop-element' :ref='opt' :class='[{"selected bright": selected === opt}, $store.state.theme.style]' @click='select(opt)'><span class='txt'>{{ opt }}</span></div>
@@ -24,26 +22,15 @@ export default Vue.extend({
       state: undefined as any,
       focus: false,
       selected: '',
-      addedTags: undefined as any,
-      goToLastCaret: undefined as any,
       showPlaceholder: true as any,
     };
   },
   mounted() {
     const div: any = this.$refs[this.id];
-    const test: any = this.$refs.fuckingtest;
     if (this.input) {
       div.innerHTML = this.input;
     }
     div.addEventListener('input', this.textChange);
-    test.addEventListener('keydown', (e: any) => {
-      if (e.keyCode === 13) {
-        e.preventDefault();
-        const test: any = this.$refs.fuckingtest;
-        test.appendChild(document.createTextNode('<br>'));
-        this.setCaretPositio(this.getNodeIndex());
-      }
-    });
   },
   methods: {
     getNodeIndex(): number {
@@ -58,12 +45,12 @@ export default Vue.extend({
       }
       return 0;
     },
-    getCaretPositio() {
+    getCaretPosition() {
       const selection: any = window.getSelection();
       const caretPosition = selection.focusOffset;
     },
-    setCaretPositio(node: number, position: number | undefined) {
-      const div: any = this.$refs.fuckingtest;
+    setCaretPosition(node: number, position: number | undefined) {
+      const div: any = this.$refs[this.id];
       const selection: any = window.getSelection();
       const range: any = document.createRange();
       if (position === undefined) {
@@ -74,61 +61,24 @@ export default Vue.extend({
       selection.removeAllRanges();
       selection.addRange(range);
     },
-    getCaretPosition() {
-      const selection: any = window.getSelection();
-      const range: any = selection.getRangeAt(0);
-      const selectedObj: any = window.getSelection();
-      let rangeCount = 0;
-      const childNodes = selectedObj.anchorNode.parentNode.childNodes;
-      for (const node of childNodes) {
-        if (node === selectedObj.anchorNode) {
-          break;
-        }
-        if (node.outerHTML) {
-          rangeCount += node.outerHTML.length;
-        } else if (node.nodeType === 3) {
-          rangeCount += node.textContent.length;
-        }
-      }
-      return range.startOffset + rangeCount;
-    },
-    getInnerHTML() {
-      const div: any = this.$refs[this.id];
-      let text = '';
-      const length = div.textContent.length;
-      for (let i = 0; i < length; i++) {
-        if (div.textContent.charCodeAt(i) === 160) {
-          text += ' ';
-        } else {
-          text += div.textContent[i];
-        }
-      }
-      return text;
-    },
-    setCaretPosition(position: number) {
-      const div: any = this.$refs[this.id];
-      const range = document.createRange();
-      const sel: any = window.getSelection();
-      range.setStart(div.childNodes[0], position);
-      range.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(range);
-    },
     textChange() {
-      if (!this.addedTags) {
-        const div: any = this.$refs[this.id];
-        this.value = div.textContent;
-        this.goToLastCaret = false;
-        this.writeValue();
-      }
-        this.addedTags = false;
+      const div: any = this.$refs[this.id];
+      this.value = div.textContent;
+    },
+    updateInnerHTML() {
+      const div: any = this.$refs[this.id];
+      const node = this.getNodeIndex();
+      div.innerHTML = this.value;
+      this.setCaretPosition(node, undefined);
     },
     keyPress(key: any) {
+      if (key.keyCode === 13) {
+        key.preventDefault();
+      }
       if (key.key === 'Enter') {
         if (this.selected === '') {
           this.$emit('enter');
         } else if (this.options.length !== 0) {
-          this.goToLastCaret = true;
           this.select(this.selected);
         }
       }
@@ -137,7 +87,7 @@ export default Vue.extend({
       this.$emit('select', option);
       this.selected = '';
     },
-    selectOptions(key: any) {
+    keyDown(key: any) {
       if (this.options.length !== 0) {
         if (key.key === 'ArrowDown') {
           this.moveSelection('down');
@@ -170,20 +120,6 @@ export default Vue.extend({
         }
       }
     },
-    setCaretToLast() {
-      const div: any = this.$refs[this.id];
-      this.setCaretPosition(this.value.length);
-    },
-    writeValue() {
-      const div: any = this.$refs[this.id];
-      const position = this.getCaretPosition();
-      div.innerHTML = this.value;
-      if (div.textContent.length > 0 && !this.goToLastCaret) {
-        this.setCaretPosition(position);
-      } else if (this.goToLastCaret) {
-        this.setCaretToLast();
-      }
-    },
     addTags() {
       /* if (this.tags !== undefined && this.tags.length !== 0) {
         this.addedTags = true;
@@ -196,11 +132,21 @@ export default Vue.extend({
         this.setCaretToLast(div.childNodes.length - 1);
       } */
     },
+    getInnerHTML() {
+      const div: any = this.$refs[this.id];
+      let text = '';
+      const length = div.textContent.length;
+      for (let i = 0; i < length; i++) {
+        if (div.textContent.charCodeAt(i) === 160) {
+          text += ' ';
+        } else {
+          text += div.textContent[i];
+        }
+      }
+      return text;
+    },
   },
   watch: {
-    tags() {
-      this.addTags();
-    },
     value() {
       this.showPlaceholder = this.value.length === 0;
       if (this.value.length === 0 || this.value.length > this.max) {
@@ -213,7 +159,7 @@ export default Vue.extend({
     input() {
       if (this.getInnerHTML() !== this.input) {
         this.value = this.input;
-        this.writeValue();
+        this.updateInnerHTML();
       }
     },
     state() {
