@@ -34,9 +34,6 @@ export default new Vuex.Store({
       }
       return false;
     },
-    isOnMobileApp(state: any, getters: any) {
-      return !getters.NavbarisOnDesktop && getters.isStandAlone;
-    },
     isStandAlone() {
       if (window.matchMedia('(display-mode: standalone)').matches) {
         return true;

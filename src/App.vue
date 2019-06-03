@@ -2,8 +2,8 @@
   <div id='body' class='background' :class='$store.state.theme.style' @click='hideAppNavBar'>
     <section id='content'>
       <nav-bar></nav-bar>
-      <app-nav-bar v-if='isOnAppRoute && !isDesktop'></app-nav-bar>
-      <div v-if='isMobileApp && isOnAppRoute' class='app-nav-bar-margin'></div>
+      <app-nav-bar v-if='!isDesktop'></app-nav-bar>
+      <div v-if='isStandAlone && isOnAppRoute' class='app-nav-bar-margin'></div>
       <transition :class='$store.state.theme.style' name='fade-transition' mode='out-in'>
         <loading v-if='$root.routerViewLoading'></loading>
         <div v-else id='router-view'>
@@ -12,12 +12,23 @@
       </transition>
     </section>
     <pop-up v-if='isOnAppRoute'></pop-up>
-    <mobile-section v-if='!(isMobileApp && isOnAppRoute) && !isDesktop'></mobile-section>
+    <mobile-section v-if='!isDesktop && (!isOnAppRoute || (isOnAppRoute && !isStandAlone))'></mobile-section>
     <toast></toast>
   </div>
 </template>
 
 <script lang="ts">
+/*
+  appRoute    standAlone   browser  
+  desktop       false        false
+  mobile        false        true
+
+  notAppRoute   standAlone  browser
+  desktop         false       false
+  mobile           true       true
+ */
+
+
 import Vue from 'vue';
 import store from '@/store';
 import axios from 'axios';
@@ -74,8 +85,8 @@ export default Vue.extend({
     closeNavbar(): boolean {
       return !this.$store.state.app.nav.clicked && !this.$store.state.app.nav.iconClick && this.isOpened;
     },
-    isMobileApp(): boolean {
-      return this.$store.getters.isOnMobileApp;
+    isStandAlone(): boolean {
+      return this.$store.getters.isStandAlone;
     },
     isOpened(): boolean {
       return this.$store.state.app.nav.open;
@@ -175,7 +186,7 @@ body {
 }
 
 span, a, p {
-  color: #999999;
+  color: #808080;
 }
 
 .app-nav-bar-margin {

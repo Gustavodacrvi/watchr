@@ -34,7 +34,8 @@ export default Vue.extend({
   },
   methods: {
     getCaretPosition(): number {
-      return window.getSelection().focusOffset;
+      const selection: any = window.getSelection();
+      return selection.focusOffset;
     },
     setCaretPosition(position: any) {
       const div: any = this.$refs[this.id];
@@ -303,8 +304,8 @@ export default Vue.extend({
 }
 
 .input.light {
-  background-color: #f0f0f0 !important;
-  color: #999999;
+  background-color: #ededed !important;
+  color: #808080;
 }
 
 </style>
