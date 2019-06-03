@@ -66,7 +66,7 @@ export default Vue.extend({
       if (div.childNodes[i].nodeType === 3) {
         range.setStart(div.childNodes[i], position);
       } else {
-        range.setStart(div.childNodes[i].lastChild.lastChild.lastChild, position);
+        range.setStart(div.childNodes[i].lastChild.lastChild, 1);
       }
       range.collapse(true);
       selection.removeAllRanges();

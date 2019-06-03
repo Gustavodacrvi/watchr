@@ -44,18 +44,15 @@ export default Vue.extend({
     };
   },
   methods: {
-    getMatchesStringFromChar(char: string): string[] | null{
-      const regexString = `\\s${char}.+`;
-      const regex = new RegExp(regexString, 'g');
-      let match: string[] | null = this.value.match(regex);
-      if (match === null) {
-        return null;
-      }
-      const matches = [];
-      const length = match.length;
+    getMatchesStringFromHandle(char: string, desired: string[]): string[] | null{
+      const matches: string[] = [];
+      const length: number = desired.length;
       for (let i = 0; i < length; i++) {
-        matches.push(match[i].substring(2));
+        if (this.value.search(new RegExp(`\\s${char}${desired[i]}`)) !== -1) {
+          matches.push(desired[i]);
+        }
       }
+
       return matches;
     },
     updateValue(value: string) {
@@ -64,8 +61,8 @@ export default Vue.extend({
       
       if (this.tag) {
         const possibleValues = this.$store.getters['app/tag/getAllPossibleLabelBranchesInString']();
-        console.log(possibleValues);
-        this.tags = this.getMatchesStringFromChar('#');
+        
+        this.tags = this.getMatchesStringFromHandle('#', possibleValues);
       }
     },
     updateState(state: any) {
