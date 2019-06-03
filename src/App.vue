@@ -18,17 +18,6 @@
 </template>
 
 <script lang="ts">
-/*
-  appRoute    standAlone   browser  
-  desktop       false        false
-  mobile        false        true
-
-  notAppRoute   standAlone  browser
-  desktop         false       false
-  mobile           true       true
- */
-
-
 import Vue from 'vue';
 import store from '@/store';
 import axios from 'axios';

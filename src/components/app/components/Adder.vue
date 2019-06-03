@@ -45,7 +45,7 @@ export default Vue.extend({
   },
   methods: {
     getMatchesStringFromChar(char: string): string[] | null{
-      const regexString = `\\s${char}[^ ]+`;
+      const regexString = `\\s${char}.+`;
       const regex = new RegExp(regexString, 'g');
       let match: string[] | null = this.value.match(regex);
       if (match === null) {
@@ -61,7 +61,10 @@ export default Vue.extend({
     updateValue(value: string) {
       this.value = value;
 
+      
       if (this.tag) {
+        const possibleValues = this.$store.getters['app/tag/getAllPossibleLabelBranchesInString']();
+        console.log(possibleValues);
         this.tags = this.getMatchesStringFromChar('#');
       }
     },

@@ -86,7 +86,7 @@ export default {
       }
       return undefined;
     },
-    getSubTagsFromBranchSearch: (state: any, getters: any) => (branch: string[], labels: any): string[] => {
+    getSubLabelsFromBranchSearch: (state: any, getters: any) => (branch: string[], labels: any): string[] => {
       if (labels === undefined) {
         labels = state.tags.labels;
       }
@@ -103,8 +103,32 @@ export default {
           return [];
         }
         branch.shift();
-        return getters.getSubTagsFromBranchSearch(branch, label.subTags);
+        return getters.getSubLabelsFromBranchSearch(branch, label.subTags);
       }
+    },
+    getAllPossibleLabelBranchesInString: (state: any, getters: any) => (subLabels: any, branch: any): any => {
+      if (subLabels === undefined) {
+        subLabels = state.tags.labels;
+      }
+      if (branch === undefined) {
+        branch = '';
+      }
+      
+      const arr: string[] = [];
+      const length = subLabels.length;
+      for (let i = 0; i < length; i++) {
+        let currentBranch;
+        if (branch !== '') {
+          currentBranch = branch + ':' + subLabels[i].name;
+        } else {
+          currentBranch = subLabels[i].name;
+        }
+        arr.push(currentBranch);
+        const subBranches = getters.getAllPossibleLabelBranchesInString(subLabels[i].subTags, currentBranch);
+        arr.push(...subBranches);
+      }
+
+      return arr;
     },
   },
   mutations: {

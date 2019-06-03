@@ -71,7 +71,7 @@ export default Vue.extend({
     valueChange(value: string) {
       this.value = value;
       const values = this.$store.getters['app/tag/parseStringBranchToArrayBranch'](this.value, true);
-      const subTags = this.$store.getters['app/tag/getSubTagsFromBranchSearch'](values);
+      const subTags = this.$store.getters['app/tag/getSubLabelsFromBranchSearch'](values);
       this.subTagNames = this.$store.getters['app/tag/getArrayOfNamesOutOfArrayOfTags'](subTags);
     },
     updateState(state: any) {
