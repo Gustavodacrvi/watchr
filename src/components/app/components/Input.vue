@@ -111,7 +111,7 @@ export default Vue.extend({
       if (key.key === 'Enter') {
         if (this.selected === '') {
           this.$emit('enter');
-        } else if (this.options.length !== 0) {
+        } else if (this.options.length !== undefined && this.options.length !== 0) {
           this.select(this.selected);
         }
       }
@@ -121,7 +121,8 @@ export default Vue.extend({
       this.selected = '';
     },
     keyDown(key: any) {
-      if (this.options.length !== 0) {
+      this.$emit('keydown', key.key);
+      if (this.options.length !== undefined && this.options.length !== 0) {
         if (key.key === 'ArrowDown') {
           this.moveSelection('down');
         } else if (key.key === 'ArrowUp') {

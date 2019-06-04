@@ -6,7 +6,7 @@
     </div>
     <div v-else key='inbox-task-adder-adder' class='adder'>
       <div>
-        <app-input tabindex='1' id='adder-input-rich-text' :class='$store.state.theme.style' class='stretch round' placeholder='Do something @interval #label $project %calendar_tag' :max='300' :options='[]' @value-change='updateValue' @state-change='updateState' @enter='addTask' :tags='inputTags'></app-input>
+        <app-input tabindex='1' id='adder-input-rich-text' :class='$store.state.theme.style' class='stretch round' placeholder='Do something @interval #label $project %calendar_tag' :max='300' :options='options' @value-change='updateValue' @state-change='updateState' @enter='addTask' :tags='inputTags' @keydown='keydown' @select='selectTag'></app-input>
       </div>
       <div class='options'>
         <btn class='tiny-round tiny'>{{ btnMsg }}</btn>
@@ -40,7 +40,10 @@ export default Vue.extend({
       active: false,
       value: '',
       validInput: true,
+      options: [] as string[],
       tags: [] as string[] | null,
+      searchHandle: undefined as any,
+      search: undefined as any,
     };
   },
   methods: {
@@ -48,7 +51,7 @@ export default Vue.extend({
       const matches: string[] = [];
       const length: number = desired.length;
       for (let i = 0; i < length; i++) {
-        if (this.value.search(new RegExp(`\\s${char}${desired[i]}`)) !== -1) {
+        if (this.value.search(new RegExp(`\\s${char}${desired[i]}(?![a-z|0-9])`)) !== -1) {
           matches.push(desired[i]);
         }
       }
@@ -67,6 +70,19 @@ export default Vue.extend({
     },
     updateState(state: any) {
       this.validInput = !state.wrong;
+    },
+    keydown(key: string) {
+      if (this.tags && key === '#') {
+        this.search = '';
+        this.searchHandle = '#';
+      } else if (key === ' ') {
+        this.searchHandle = undefined;
+        this.search = undefined;
+      } else if (key === 'Backspace') {
+        this.search = this.search.slice(0, -1);
+      } else if (key !== 'ArrowUp' && key !== 'ArrowDown') {
+        this.search += key;
+      }
     },
     addTask() {
 
@@ -87,6 +103,16 @@ export default Vue.extend({
         }
       }
       return inputTags;
+    },
+  },
+  watch: {
+    search() {
+      if (this.tag && this.searchHandle === '#') {
+        const tags = this.$store.getters['app/tag/getSubLabelsFromBranchSearch'](this.$store.getters['app/tag/parseStringBranchToArrayBranch'](this.search));
+        this.options = this.$store.getters['app/tag/getArrayOfNamesOutOfArrayOfTags'](tags);
+      } else {
+        this.options = [];
+      }
     },
   },
 });
