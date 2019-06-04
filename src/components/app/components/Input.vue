@@ -1,6 +1,6 @@
 <template>
   <div class='wrapper'>
-    <div :ref='id' :id='id' :class='[$store.state.theme.style, state]' class='input' :tabindex='tabindex' @keypress='keyPress' @focus='focus = true' @blur='focus = false' @keydown='keyDown' contenteditable='true'>
+    <div :ref='id' :id='id' :class='[$store.state.theme.style, state]' class='input' :tabindex='tabindex' @focus='focus = true' @blur='focus = false' @keydown='keyDown' contenteditable='true'>
     </div>
     <div class='input placeholder' :class='state' v-if='showPlaceholder'><span>{{ placeholder }}</span></div>
     <transition name='fade-transition'>
@@ -104,29 +104,27 @@ export default Vue.extend({
         this.setCaretPosition(position);
       }
     },
-    keyPress(key: any) {
+    select(option: string) {
+      this.$emit('select', option);
+      this.selected = '';
+    },
+    keyDown(key: any) {
       if (key.keyCode === 13) {
         key.preventDefault();
+      }
+      this.$emit('keydown', {key: key.key, caretPosition: this.getCaretPosition()});
+      if (this.options.length !== undefined && this.options.length !== 0) {
+        if (key.key === 'ArrowDown') {
+          this.moveSelection('down');
+        } else if (key.key === 'ArrowUp') {
+          this.moveSelection('up');
+        }
       }
       if (key.key === 'Enter') {
         if (this.selected === '') {
           this.$emit('enter');
         } else if (this.options.length !== undefined && this.options.length !== 0) {
           this.select(this.selected);
-        }
-      }
-    },
-    select(option: string) {
-      this.$emit('select', option);
-      this.selected = '';
-    },
-    keyDown(key: any) {
-      this.$emit('keydown', key.key);
-      if (this.options.length !== undefined && this.options.length !== 0) {
-        if (key.key === 'ArrowDown') {
-          this.moveSelection('down');
-        } else if (key.key === 'ArrowUp') {
-          this.moveSelection('up');
         }
       }
     },

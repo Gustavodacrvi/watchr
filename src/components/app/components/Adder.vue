@@ -1,12 +1,12 @@
 <template>
   <transition name='fade-transition' mode='out-in'>
-    <div key='inbox-task-adder-msg' class='msg' v-if='!active'>
-      <icon @click='active = true' ico='plus' sz='medium'></icon>
-      <span @click='active = true' class='msg'>{{ msg }}</span>
+    <div key='inbox-task-adder-msg' class='msg' v-if='!active' @click='active = true'>
+      <icon ico='plus' sz='medium'></icon>
+      <span class='msg'>{{ msg }}</span>
     </div>
     <div v-else key='inbox-task-adder-adder' class='adder'>
       <div>
-        <app-input tabindex='1' id='adder-input-rich-text' :class='$store.state.theme.style' class='stretch round' placeholder='Do something @interval #label $project %calendar_tag' :max='300' :options='options' @value-change='updateValue' @state-change='updateState' @enter='addTask' :tags='inputTags' @keydown='keydown' @select='selectTag'></app-input>
+        <app-input tabindex='1' id='adder-input-rich-text' :class='$store.state.theme.style' class='stretch round' placeholder='Do something @interval #label $project %calendar_tag' :max='300' :options='options' @value-change='updateValue' :input='input' @state-change='updateState' @enter='addTask' :tags='inputTags' @keydown='keydown' @select='selectTag'></app-input>
       </div>
       <div class='options'>
         <btn class='tiny-round tiny'>{{ btnMsg }}</btn>
@@ -40,10 +40,12 @@ export default Vue.extend({
       active: false,
       value: '',
       validInput: true,
+      input: '',
       options: [] as string[],
       tags: [] as string[] | null,
       searchHandle: undefined as any,
       search: undefined as any,
+      searchPosition: undefined as any,
     };
   },
   methods: {
@@ -71,21 +73,47 @@ export default Vue.extend({
     updateState(state: any) {
       this.validInput = !state.wrong;
     },
-    keydown(key: string) {
+    keydown({ key, caretPosition }: any) {
       if (this.tags && key === '#') {
         this.search = '';
         this.searchHandle = '#';
+        this.searchPosition = caretPosition;
       } else if (key === ' ') {
         this.searchHandle = undefined;
         this.search = undefined;
-      } else if (key === 'Backspace') {
+      } else if (key === 'Backspace' && this.search !== undefined) {
         this.search = this.search.slice(0, -1);
-      } else if (key !== 'ArrowUp' && key !== 'ArrowDown') {
+      } else if (key !== 'ArrowUp' && key !== 'ArrowDown' && key !== 'Enter' && key !== 'Control' && key !== 'Shift' && key !== 'Alt' && key !== 'Tab') {
         this.search += key;
       }
+      this.updateSearchOptions();
+    },
+    updateSearchOptions() {
+      if (this.tag && this.searchHandle === '#') {
+        const tags = this.$store.getters['app/tag/getSubLabelsFromBranchSearch'](this.$store.getters['app/tag/parseStringBranchToArrayBranch'](this.search, true));
+        this.options = this.$store.getters['app/tag/getArrayOfNamesOutOfArrayOfTags'](tags);
+      } else {
+        this.options = [];
+      }
+    },
+    selectTag(name: string) {
+      let str = this.value.substring(0, this.searchPosition) + this.value.substring(this.searchPosition + this.search.length + 1);
+
+      if (str[str.length - 1] !== ' ') {
+        str += ' ';
+      }
+
+      this.input = '';
+      this.input = str + this.searchHandle + name;
+      this.updateSearchOptions();
     },
     addTask() {
-
+      if (this.tag && this.searchHandle === '#') {
+        const tags = this.$store.getters['app/tag/getSubLabelsFromBranchSearch'](this.$store.getters['app/tag/parseStringBranchToArrayBranch'](this.search));
+        this.options = this.$store.getters['app/tag/getArrayOfNamesOutOfArrayOfTags'](tags);
+      } else {
+        this.options = [];
+      }
     },
   },
   computed: {
@@ -103,16 +131,6 @@ export default Vue.extend({
         }
       }
       return inputTags;
-    },
-  },
-  watch: {
-    search() {
-      if (this.tag && this.searchHandle === '#') {
-        const tags = this.$store.getters['app/tag/getSubLabelsFromBranchSearch'](this.$store.getters['app/tag/parseStringBranchToArrayBranch'](this.search));
-        this.options = this.$store.getters['app/tag/getArrayOfNamesOutOfArrayOfTags'](tags);
-      } else {
-        this.options = [];
-      }
     },
   },
 });
