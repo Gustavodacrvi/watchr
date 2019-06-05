@@ -33,10 +33,6 @@ export default Vue.extend({
     div.addEventListener('input', this.textChange);
   },
   methods: {
-    getCaretPosition(): number {
-      const selection: any = window.getSelection();
-      return selection.focusOffset;
-    },
     setCaretPosition(position: any) {
       const div: any = this.$refs[this.id];
       const selection: any = window.getSelection();
@@ -66,7 +62,7 @@ export default Vue.extend({
       if (div.childNodes[i].nodeType === 3) {
         range.setStart(div.childNodes[i], position);
       } else {
-        range.setStart(div.childNodes[i].lastChild.lastChild, 1);
+        range.setStart(div.childNodes[i].lastChild, position);
       }
       range.collapse(true);
       selection.removeAllRanges();
@@ -81,7 +77,7 @@ export default Vue.extend({
       div.innerHTML = this.value;
       this.setCaretPosition(undefined);
     },
-    caretPosition() {
+    getCaretPosition() {
       let selection: any = window.getSelection();
       selection.modify("extend", "backward", "paragraphboundary");
       let pos = selection.toString().length;
@@ -92,15 +88,25 @@ export default Vue.extend({
       if (this.tags !== undefined && this.tags.length !== 0) {
 
         const div: any = this.$refs[this.id];
-        const length = this.tags.length;
+        let length = this.tags.length;
         let str = div.textContent;
         for (let i = 0; i < length; i++) {
           let tag = this.tags[i];
           let searchString = '' + tag.handle + tag.name;
-          str = str.replace(searchString, `<span class='app-adder-tag' style='background-color: ${tag.color};box-shadow: 0 1px 1px ${tag.color}'><i class='fa fa-${tag.ico} app-adder-tag-icon'></i><span class='app-adder-tag-txt'><i class='app-adder-hided-handle'>${tag.handle}</i><span style='color: white'>${tag.name}</span></span></span>`);
+          str = str.replace(searchString, `<span class='app-adder-tag ${tag.name}' style='background-color: ${tag.color};box-shadow: 0 1px 1px ${tag.color}'>
+            <i class='fa fa-${tag.ico} app-adder-tag-icon'></i>
+            <i class='app-adder-hided-handle'>${tag.handle}</i>
+            <span style='color: white'>${tag.name}</span>
+          </span>`);
         }
-        const position = this.caretPosition();
+        const position = this.getCaretPosition();
         div.innerHTML = str;
+        length = div.childNodes.length;
+        for (let i = 0; i < length; i++) {
+          if (div.childNodes[i].nodeType !== 3 && div.childNodes[i].classList.contains('app-adder-tag')) {
+            div.childNodes[i].addEventListener('input', this.textChange);
+          }
+        }
         this.setCaretPosition(position);
       }
     },
@@ -112,7 +118,9 @@ export default Vue.extend({
       if (key.keyCode === 13) {
         key.preventDefault();
       }
-      this.$emit('keydown', {key: key.key, caretPosition: this.getCaretPosition()});
+      const position = this.getCaretPosition();
+      this.$emit('caretpositionkeypress', {position, key: key.key});
+      this.$emit('keydown', {key: key.key, caretPosition: position});
       if (this.options.length !== undefined && this.options.length !== 0) {
         if (key.key === 'ArrowDown') {
           this.moveSelection('down');
@@ -203,13 +211,17 @@ export default Vue.extend({
 <style>
 
 .app-adder-tag {
-  border-radius: 4px;
+  border-radius: 6px;
   display: inline-block;
 }
 
 .app-adder-tag-txt, .app-adder-tag-icon {
   color: white !important;
-  margin: 2px 4px;
+  margin-left: 4px;
+}
+
+.app-adder-tag-icon {
+  margin: 2px 4px;  
 }
 
 .app-adder-hided-handle {
@@ -239,7 +251,7 @@ export default Vue.extend({
 }
 
 .drop-element {
-  padding: 12px;
+  padding: 8px;
   cursor: pointer;
   transition: background-color .2s;
 }

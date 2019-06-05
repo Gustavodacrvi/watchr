@@ -6,7 +6,7 @@
     </div>
     <div v-else key='inbox-task-adder-adder' class='adder'>
       <div>
-        <app-input tabindex='1' id='adder-input-rich-text' :class='$store.state.theme.style' class='stretch round' placeholder='Do something @interval #label $project %calendar_tag' :max='300' :options='options' @value-change='updateValue' :input='input' @state-change='updateState' @enter='addTask' :tags='inputTags' @keydown='keydown' @select='selectTag'></app-input>
+        <app-input tabindex='1' id='adder-input-rich-text' :class='$store.state.theme.style' class='stretch round' placeholder='Do something @interval #label $project %calendar_tag' :max='300' :options='options' @value-change='updateValue' :input='input' @state-change='updateState' @enter='addTask' :tags='inputTags' @keydown='keydown' @caretpositionkeypress='getCaretPosition' @select='selectTag'></app-input>
       </div>
       <div class='options'>
         <btn class='tiny-round tiny'>{{ btnMsg }}</btn>
@@ -42,19 +42,24 @@ export default Vue.extend({
       validInput: true,
       input: '',
       options: [] as string[],
-      tags: [] as string[] | null,
+      tags: [] as any[],
       searchHandle: undefined as any,
       search: undefined as any,
       searchPosition: undefined as any,
     };
   },
   methods: {
-    getMatchesStringFromHandle(char: string, desired: string[]): string[] | null{
-      const matches: string[] = [];
+    getMatchesStringFromHandle(char: string, desired: string[]): any[] {
+      const matches: any[] = [];
       const length: number = desired.length;
       for (let i = 0; i < length; i++) {
-        if (this.value.search(new RegExp(`\\s${char}${desired[i]}(?![a-z|0-9])`)) !== -1) {
-          matches.push(desired[i]);
+        const position = this.value.search(new RegExp(`\\s${char}${desired[i]}(?![a-z|0-9])`));
+        if (position !== -1) {
+          matches.push({
+            position: position,
+            name: desired[i],
+            handle: char,
+          });
         }
       }
 
@@ -73,6 +78,32 @@ export default Vue.extend({
     updateState(state: any) {
       this.validInput = !state.wrong;
     },
+    isUselessKey(key: string): boolean {
+      switch (key) {
+        case 'ArrowUp': return true;
+        case 'ArrowDown': return true;
+        case 'ArrowLeft': return true;
+        case 'ArrowRight': return true;
+        case 'Enter': return true;
+        case 'Control': return true;
+        case 'Shift': return true;
+        case 'Alt': return true;
+        case 'Tab': return true;
+      }
+      return false;
+    },
+    getCaretPosition({ position, key }: any) {
+      /* const length = this.tags.length;
+      for (let i = 0; i < length; i++) {
+        const tag = this.tags[i];
+        if (tag.position + 1 <= position && tag.position + tag.name.length + 1 >= position && !this.isUselessKey(key)) {
+          console.log(this.tags)
+          this.tags.splice(i, 1);
+          this.input = 'asdf'
+          console.log(this.tags)
+        }
+      } */
+    },
     keydown({ key, caretPosition }: any) {
       if (this.tags && key === '#') {
         this.search = '';
@@ -83,7 +114,7 @@ export default Vue.extend({
         this.search = undefined;
       } else if (key === 'Backspace' && this.search !== undefined) {
         this.search = this.search.slice(0, -1);
-      } else if (key !== 'ArrowUp' && key !== 'ArrowDown' && key !== 'Enter' && key !== 'Control' && key !== 'Shift' && key !== 'Alt' && key !== 'Tab') {
+      } else if (!this.isUselessKey(key)) {
         this.search += key;
       }
       this.updateSearchOptions();
@@ -123,7 +154,7 @@ export default Vue.extend({
         const length = this.tags.length;
         for (let i = 0; i < length; i++) {
           inputTags.push({
-            name: this.tags[i],
+            name: this.tags[i].name,
             handle: '#',
             color: '#FC7C85',
             ico: 'tag',
