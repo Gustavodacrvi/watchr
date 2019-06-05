@@ -42,6 +42,27 @@ export default {
       }
       return str;
     },
+    parseStringBranchToArrayBranch: () => (branch: string, acceptLastTwoDots: boolean): string[] => {
+      let value = branch.trim();
+      if (!acceptLastTwoDots && value[value.length - 1] === ':') {
+        value = value.slice(0, -1);
+      }
+      const values = value.split(':');
+      const length = values.length;
+      for (let i = 0; i < length; i++) {
+        values[i] = values[i].trim();
+      }
+
+      return values;
+    },
+    getArrayOfNamesOutOfArrayOfTags: () => (tags: Tag[]): string[] => {
+      const length = tags.length;
+      const arr = [];
+      for (let i = 0; i < length; i++) {
+        arr.push(tags[i].name);
+      }
+      return arr;
+    },
     getLabelArrayBranchByNodeId:
      (state: any, getters: any) => (id: string, branch: any, labels: any): string[] | undefined => {
       if (labels === undefined) {
@@ -65,7 +86,7 @@ export default {
       }
       return undefined;
     },
-    getSubTagsFromBranchSearch: (state: any, getters: any) => (branch: string[], labels: any): string[] => {
+    getSubLabelsFromBranchSearch: (state: any, getters: any) => (branch: string[], labels: any): string[] => {
       if (labels === undefined) {
         labels = state.tags.labels;
       }
@@ -82,8 +103,32 @@ export default {
           return [];
         }
         branch.shift();
-        return getters.getSubTagsFromBranchSearch(branch, label.subTags);
+        return getters.getSubLabelsFromBranchSearch(branch, label.subTags);
       }
+    },
+    getAllPossibleLabelBranchesInString: (state: any, getters: any) => (subLabels: any, branch: any): any => {
+      if (subLabels === undefined) {
+        subLabels = state.tags.labels;
+      }
+      if (branch === undefined) {
+        branch = '';
+      }
+      
+      const arr: string[] = [];
+      const length = subLabels.length;
+      for (let i = 0; i < length; i++) {
+        let currentBranch;
+        if (branch !== '') {
+          currentBranch = branch + ':' + subLabels[i].name;
+        } else {
+          currentBranch = subLabels[i].name;
+        }
+        arr.push(currentBranch);
+        const subBranches = getters.getAllPossibleLabelBranchesInString(subLabels[i].subTags, currentBranch);
+        arr.push(...subBranches);
+      }
+
+      return arr;
     },
   },
   mutations: {

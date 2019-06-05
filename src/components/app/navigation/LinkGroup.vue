@@ -26,7 +26,7 @@
       <span class='title' :class='{mobile: !isDesktop}'>{{ link.title }}</span>
       <span class='link-group-icons'>
         <icon v-for='ico in link.icos' :key='`section-navigation-icon-${ico}`' :ico='ico.ico' @click='ico.callback' class='pointer' sz='tiny'></icon>
-        <icon ico='angle-down' @click='show = !show' class='toggle pointer' :class='[show ? "down" : "up"]' :sz='icoSz'></icon>
+        <icon ico='angle-down' class="toggle pointer" :class='[show ? "down" : "up"]' :sz='icoSz'></icon>
       </span>
     </div>
     <transition-group name='fade-transition'>

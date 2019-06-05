@@ -91,7 +91,7 @@ export default Vue.extend({
 }
 
 #app-navigation.light {
-  background-color: #f0f0f0 !important;
+  background-color: #ededed !important;
   border: none;
 }
 

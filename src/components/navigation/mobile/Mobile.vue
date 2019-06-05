@@ -3,7 +3,7 @@
     <section id='mobile-nav-left'>
     </section>
     <section id='mobile-nav-right'>
-      <icon v-if="!($store.getters.isOnMobileApp && ($route.path === '/guest' || $route.path === '/user'))" class='navBar-icon' position='right' :active='active' @toggle='toggleMobileSection'></icon>
+      <icon v-if="!isOnAppRoute || (isOnAppRoute && !isStandAlone)" class='navBar-icon' position='right' :active='active' @toggle='toggleMobileSection'></icon>
     </section>
   </nav>
 </template>
@@ -32,6 +32,17 @@ export default Vue.extend({
       this.active = !this.active;
     },
   },
+  computed: {
+    isDesktop(): boolean {
+      return this.$store.getters.NavbarisOnDesktop;
+    },
+    isOnAppRoute(): boolean {
+      return this.$route.path === '/guest' || this.$route.path === '/user';
+    },
+    isStandAlone(): boolean {
+      return this.$store.getters.isStandAlone;
+    },
+  },
 });
 </script>
 
@@ -39,6 +50,7 @@ export default Vue.extend({
 
 #mobile-nav {
   margin: 20px 18px;
+  z-index: 100;
 }
 
 #mobile-nav-left {
