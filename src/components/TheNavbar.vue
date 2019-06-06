@@ -10,7 +10,14 @@
         </template>
       </div>
       <div class='right'>
-        <icon class='icon' icon='adjust' @click='changeTheme'></icon>
+        <icon-dropdown class='margin' handle='user'>
+          <div class='dual-txt'>
+            <span class='txt'><icon icon='sign-in-alt' size='sm'></icon>Sign in</span>
+            <hr class='thematic-break'>
+            <span class='txt'><icon icon='user-plus' size='sm'></icon>Sign up</span>
+          </div>
+        </icon-dropdown>
+        <icon class='margin' icon='adjust' @click='changeTheme'></icon>
       </div>
       <div class='magic-line' :style='magicLineStyles'></div>
     </div>
@@ -22,10 +29,12 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
 import FontAwesomeIcons from '@/components/FontAwesomeIcon.vue'
+import IconDropdown from '@/components/IconDropdown.vue'
 
 @Component({
   components: {
-    icon: FontAwesomeIcons,
+    'icon': FontAwesomeIcons,
+    'icon-dropdown': IconDropdown,
   },
 })
 export default class TheNavbar extends Vue {
@@ -98,6 +107,7 @@ export default class TheNavbar extends Vue {
 .right {
   position: absolute;
   right: 0;
+  display: flex;
 }
 
 .center {
@@ -130,8 +140,32 @@ export default class TheNavbar extends Vue {
   text-shadow: 0 0 1px #A97CFC;
 }
 
-.icon {
-  font-size: 18px;
+.margin {
+  margin-left: 30px;
+}
+
+.txt {
+  display: block;
+  padding: 12px;
+  cursor: pointer;
+  font-size: 1.1em;
+}
+
+.txt:hover  {
+  color: #A97CFC !important;
+}
+
+.dual-txt {
+  display: flex;
+  justify-content: space-around;
+}
+
+.thematic-break {
+  border: .5px solid #D9D9D9;
+}
+
+.fontawesome-icon {
+  margin: 4px;
 }
 
 </style>

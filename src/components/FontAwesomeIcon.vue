@@ -1,5 +1,5 @@
 <template>
-  <span class='fontawesome-icon ' @click='$emit("click")' :class='{blink: blink}'>
+  <span class='fontawesome-icon' @click='$emit("click")' :class='{blink: blink}'>
     <span v-if='!stack' class='txt'>
       <i v-if='!spin' :class='`fas fa-${icon} fa-${size}`'></i>
       <i v-else :class='`fas fa-${icon} fa-${size} fa-spin`'></i>
