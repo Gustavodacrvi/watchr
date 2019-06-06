@@ -16,6 +16,12 @@ body, button, input {
   color: #8C8C8C;
 }
 
+.faded {
+  color: #bfbfbf;
+  opacity: .8;
+  cursor: initial !important;
+}
+
 .main-color {
   color: #A97CFC;
 }
