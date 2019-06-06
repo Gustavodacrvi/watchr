@@ -33,6 +33,7 @@ export default class TheNavbar extends Vue {
 
   private mounted() {
     this.moveMagicLine(this.$route.path)
+    window.addEventListener('resize', () => this.moveMagicLine(this.$route.path))
   }
 
   private moveMagicLine(ref: string): void {
@@ -57,13 +58,16 @@ export default class TheNavbar extends Vue {
 
 <style scoped>
 
+.navbar-wrapper, .navbar {
+  display: flex;
+  align-items: center;
+}
+
 .navbar-wrapper {
   position: absolute;
   height: 100%;
   width: 100%;
   box-sizing: border-box;
-  display: flex;
-  align-items: center;
   padding: 0 30px;
 }
 
@@ -72,8 +76,6 @@ export default class TheNavbar extends Vue {
   width: 100%;
   height: 100%;
   min-height: 20px;
-  display: flex;
-  align-items: center;
 }
 
 .left {
@@ -103,7 +105,7 @@ export default class TheNavbar extends Vue {
 }
 
 .link {
-  margin-top: 10px;
+  margin-top: 7px;
   display: inline-block;
   text-decoration: none;
   box-sizing: border-box;
