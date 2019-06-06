@@ -3,13 +3,16 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+const savedTheme: string = localStorage.getItem('watchrTheme') || 'light'
+
 export default new Vuex.Store({
   state: {
-    theme: 'light',
+    theme: savedTheme,
   },
   mutations: {
     pushTheme(state: {theme: string}, theme: string): void {
       state.theme = theme
+      localStorage.setItem('watchrTheme', theme)
     },
   },
   getters: {

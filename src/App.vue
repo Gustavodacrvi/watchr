@@ -3,7 +3,6 @@
     <div class='app background-color' :class='theme'>
       <div class='visible'>
         <div class='navbar'>
-          <icon icon='camera'></icon>
           <the-nav-bar></the-nav-bar>
         </div>
         <router-view class='content' />
@@ -18,12 +17,10 @@ import { Vue, Component } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
 import TheNavbar from '@/components/TheNavbar.vue'
-import FontAwesomeIcons from '@/components/FontAwesomeIcon.vue'
 
 @Component({
   components: {
     'the-nav-bar': TheNavbar,
-    'icon': FontAwesomeIcons,
   },
 })
 export default class App extends Vue {

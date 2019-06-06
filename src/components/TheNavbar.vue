@@ -10,6 +10,7 @@
         </template>
       </div>
       <div class='right'>
+        <icon class='icon' icon='adjust' @click='changeTheme'></icon>
       </div>
       <div class='magic-line' :style='magicLineStyles'></div>
     </div>
@@ -19,17 +20,26 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
+import { State, Mutation } from 'vuex-class'
+import FontAwesomeIcons from '@/components/FontAwesomeIcon.vue'
 
-@Component
+@Component({
+  components: {
+    icon: FontAwesomeIcons,
+  },
+})
 export default class TheNavbar extends Vue {
+  @State('theme') public theme!: string
+  @Mutation('pushTheme') public pushTheme!: (theme: string) => void
+
   public links: object[] = [
     {name: 'Home', route: '/'},
     {name: 'User', route: '/user', private: true},
     {name: 'Guest', route: '/guest'},
     {name: 'Help', route: '/help'},
   ]
-  public lineLeftPosition: string = '0px'
-  public lineWidth: string = '0px'
+  public lineLeftPosition: string = ''
+  public lineWidth: string = ''
 
   private mounted() {
     this.moveMagicLine(this.$route.path)
@@ -44,7 +54,13 @@ export default class TheNavbar extends Vue {
       this.lineWidth = el.offsetWidth + 'px'
     }
   }
-
+  private changeTheme(): void {
+    if (this.theme === 'dark') {
+      this.pushTheme('light')
+    } else {
+      this.pushTheme('dark')
+    }
+  }
   private get magicLineStyles(): object {
     return {
       left: this.lineLeftPosition,
@@ -68,7 +84,8 @@ export default class TheNavbar extends Vue {
   height: 100%;
   width: 100%;
   box-sizing: border-box;
-  padding: 0 30px;
+  padding: 0 50px;
+  padding-top: 10px;
 }
 
 .navbar {
@@ -78,14 +95,9 @@ export default class TheNavbar extends Vue {
   min-height: 20px;
 }
 
-.left {
-  float: left;
-  clear: left;
-}
-
 .right {
-  float: right;
-  clear: right;
+  position: absolute;
+  right: 0;
 }
 
 .center {
@@ -105,7 +117,6 @@ export default class TheNavbar extends Vue {
 }
 
 .link {
-  margin-top: 7px;
   display: inline-block;
   text-decoration: none;
   box-sizing: border-box;
@@ -114,9 +125,13 @@ export default class TheNavbar extends Vue {
   transition: color .3s;
 }
 
-.link:hover.private, .router-link-exact-active {
+.link:hover.non-private, .router-link-exact-active {
   color: #A97CFC;
   text-shadow: 0 0 1px #A97CFC;
+}
+
+.icon {
+  font-size: 18px;
 }
 
 </style>
