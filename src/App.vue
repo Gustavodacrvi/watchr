@@ -2,8 +2,10 @@
   <div class='app-wrapper'>
     <div class='app background-color' :class='theme'>
       <div class='visible'>
-        <div class='navbar'></div>
-        <div class='content'></div>
+        <div class='navbar'>
+          <the-nav-bar></the-nav-bar>
+        </div>
+        <router-view class='content' />
       </div>
     </div>
   </div>
@@ -14,7 +16,13 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
-@Component
+import TheNavbar from '@/components/TheNavbar.vue'
+
+@Component({
+  components: {
+    'the-nav-bar': TheNavbar,
+  },
+})
 export default class App extends Vue {
   @State('theme') private theme!: string
 }
@@ -22,11 +30,7 @@ export default class App extends Vue {
 </script>
 
 
-<style>
-
-body {
-  margin: 0;
-}
+<style scoped>
 
 .app-wrapper {
   position: absolute;
@@ -47,11 +51,13 @@ body {
 }
 
 .navbar {
+  position: relative;
   width: 100%;
   flex-basis: 60px;
 }
 
 .content {
+  position: relative;
   flex-basis: 100%;
 }
 
@@ -59,6 +65,6 @@ body {
 
 <style>
 
-@import 'assets/css/global.css'
+@import 'assets/css/global.css';
 
 </style>

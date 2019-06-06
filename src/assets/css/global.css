@@ -1,4 +1,21 @@
 
+@font-face {
+  font-family: 'Work Sans';
+  src: '@/assets/fonts/WorkSans-Regular.otf';
+}
+
+body {
+  margin: 0;
+}
+
+body, button, input {
+  font-family: 'Work Sans';
+}
+
+.txt {
+  color: #8C8C8C;
+}
+
 .main-color {
   color: #A97CFC;
 }
