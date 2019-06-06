@@ -1,0 +1,41 @@
+
+.main-color {
+  color: #A97CFC;
+}
+
+.background-color.light {
+  background-color: #F8F7F6;
+}
+
+.background-color.dark {
+  background-color: #1F1F1F;
+}
+
+.card.light {
+  background-color: #FDFCFC;
+  border: .5px solid #D9D9D9;
+}
+
+.card.dark {
+  background-color: #282828;
+}
+
+.main-color-card.light {
+  background-color: #A97CFC;
+}
+
+.main-color.dark {
+  background-color: #282828;
+}
+
+.gray.light {
+  background-color: #F0F0F0;
+}
+
+.gray.dark {
+  background-color: #1C1C1C;
+}
+
+.round-border {
+  border-radius: 8px;
+}
