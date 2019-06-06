@@ -1,8 +1,8 @@
-# GTDF2
+# watchr
 
-## Initialize project for development
+## Project setup
 ```
-'npm run serve' in the root directory and on the 'backend' directory
+npm install
 ```
 
 ### Compiles and hot-reloads for development
