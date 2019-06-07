@@ -164,8 +164,8 @@ export default class TheNavbar extends Vue {
   border: .5px solid #D9D9D9;
 }
 
-.fontawesome-icon {
-  margin: 4px;
+.icon-dropdown .fontawesome-icon {
+  margin: 6px;
 }
 
 </style>
