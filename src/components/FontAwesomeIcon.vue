@@ -1,5 +1,5 @@
 <template>
-  <span class='fontawesome-icon' @click='$emit("click")' :class='{blink: blink}'>
+  <span class='fontawesome-icon' @click='$emit("click")' :class='[{blink: blink,}, hoverColor]'>
     <span v-if='!stack' class='txt'>
       <i v-if='!spin' :class='`fas fa-${icon} fa-${size}`'></i>
       <i v-else :class='`fas fa-${icon} fa-${size} fa-spin`'></i>
@@ -23,6 +23,10 @@ import { Vue, Component } from 'vue-property-decorator'
       type: String,
       default: 'lg',
     },
+    hoverColor: {
+      type: String,
+      default: 'main-color',
+    },
     blink: Boolean,
     spin: Boolean,
     icon: String,
@@ -37,11 +41,22 @@ export default class App extends Vue {
 
 <style scoped>
 
-.fontawesome-icon:hover .fas {
+.fontawesome-icon .fas {
+  transition: color .3s;
+}
+
+.fontawesome-icon:hover {
+  cursor: pointer;
+}
+
+.fontawesome-icon.main-color:hover .fas {
   color: #A97CFC;
   text-shadow: 0 0 1px #A97CFC;
-  transition: color .3s;
-  cursor: pointer;
+}
+
+.fontawesome-icon.red:hover .fas {
+  color: #FC7C85;
+  text-shadow: 0 0 1px #FC7C85;
 }
 
 .blink:active .fas {

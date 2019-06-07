@@ -6,11 +6,11 @@
           <the-nav-bar></the-nav-bar>
         </div>
         <router-view class='content' />
-        <transition name='fade'>
-          <div v-if='showingPopUp' class='pop-ups'>
-            <component :is='popUp'></component>
-          </div>
-        </transition>
+        <div v-show='showingPopUp' class='pop-ups'>
+          <transition name='fade' mode='out-in'>
+            <component class='pop-up' :is='popUp'></component>
+          </transition>
+        </div>
       </div>
     </div>
   </div>
@@ -68,6 +68,13 @@ export default class App extends Vue {
   width: 100%;
   background-color: rgba(0, 0, 0, .5);
   transition: background-color .3s; 
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.pop-up {
+  margin-top: 100px;
 }
 
 .navbar {
