@@ -6,15 +6,15 @@
       <div class='center'>
         <template v-for='link in links'>
           <router-link v-if='!link.private' class='link txt non-private' :key='link.route' :to='link.route' :ref='link.route' @click.native='moveMagicLine(link.route)'>{{ link.name }}</router-link>
-          <span v-else :key='link.route' class='link txt faded private'>{{ link.name }}</span>
+          <span v-else :key='link.route' class='link txt faded private' :class='theme'>{{ link.name }}</span>
         </template>
       </div>
       <div class='right'>
         <icon-dropdown class='margin' handle='user'>
-          <div class='dual-txt'>
-            <span class='txt'><icon icon='sign-in-alt' size='sm'></icon>Sign in</span>
+          <div class='dual-drop-el'>
+            <span class='drop-el txt'><icon icon='sign-in-alt' size='sm'></icon>Sign in</span>
             <hr class='thematic-break'>
-            <span class='txt'><icon icon='user-plus' size='sm'></icon>Sign up</span>
+            <span class='drop-el txt'><icon icon='user-plus' size='sm'></icon>Sign up</span>
           </div>
         </icon-dropdown>
         <icon class='margin' icon='adjust' @click='changeTheme'></icon>
@@ -94,7 +94,7 @@ export default class TheNavbar extends Vue {
   width: 100%;
   box-sizing: border-box;
   padding: 0 50px;
-  padding-top: 10px;
+  padding-top: 5px;
 }
 
 .navbar {
@@ -144,18 +144,18 @@ export default class TheNavbar extends Vue {
   margin-left: 30px;
 }
 
-.txt {
+.drop-el {
   display: block;
   padding: 12px;
   cursor: pointer;
   font-size: 1.1em;
 }
 
-.txt:hover  {
+.drop-el:hover  {
   color: #A97CFC !important;
 }
 
-.dual-txt {
+.dual-drop-el {
   display: flex;
   justify-content: space-around;
 }

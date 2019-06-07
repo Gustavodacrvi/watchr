@@ -8,9 +8,10 @@ const savedTheme: string = localStorage.getItem('watchrTheme') || 'light'
 export default new Vuex.Store({
   state: {
     theme: savedTheme,
+    popUpComponent: '',
   },
   mutations: {
-    pushTheme(state: {theme: string}, theme: string): void {
+    pushTheme(state: any, theme: string): void {
       state.theme = theme
       localStorage.setItem('watchrTheme', theme)
     },

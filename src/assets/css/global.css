@@ -16,10 +16,16 @@ body, button, input {
   color: #8C8C8C;
 }
 
-.faded {
+.faded.light {
   color: #bfbfbf;
   opacity: .8;
-  cursor: initial !important;
+  cursor: initial;
+}
+
+.faded.dark {
+  color: #808080;
+  opacity: .5;
+  cursor: initial;
 }
 
 .main-color {

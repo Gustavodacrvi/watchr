@@ -6,6 +6,11 @@
           <the-nav-bar></the-nav-bar>
         </div>
         <router-view class='content' />
+        <transition name='fade'>
+          <div v-if='showingPopUp' class='pop-ups'>
+            <component :is='popUp'></component>
+          </div>
+        </transition>
       </div>
     </div>
   </div>
@@ -25,6 +30,11 @@ import TheNavbar from '@/components/TheNavbar.vue'
 })
 export default class App extends Vue {
   @State('theme') private theme!: string
+  @State('popUpComponent') private popUp!: string
+
+  get showingPopUp(): boolean {
+    return this.popUp !== ''
+  }
 }
 
 </script>
@@ -50,10 +60,18 @@ export default class App extends Vue {
   flex-direction: column;
 }
 
+.pop-ups {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, .5);
+  transition: background-color .3s; 
+}
+
 .navbar {
   position: relative;
   width: 100%;
-  flex-basis: 70px;
+  flex-basis: 80px;
 }
 
 .content {
