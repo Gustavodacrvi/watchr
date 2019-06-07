@@ -31,6 +31,12 @@ import { State, Mutation } from 'vuex-class'
 import FontAwesomeIcons from '@/components/FontAwesomeIcon.vue'
 import IconDropdown from '@/components/IconDropdown.vue'
 
+interface NavLinks {
+  name: string
+  route: string
+  private?: boolean
+}
+
 @Component({
   components: {
     'icon': FontAwesomeIcons,
@@ -40,8 +46,9 @@ import IconDropdown from '@/components/IconDropdown.vue'
 export default class TheNavbar extends Vue {
   @State('theme') public theme!: string
   @Mutation('pushTheme') public pushTheme!: (theme: string) => void
+  @Mutation('pushPopUp') public pushPopUp!: (compName: string) => void
 
-  public links: object[] = [
+  public links: NavLinks[] = [
     {name: 'Home', route: '/'},
     {name: 'User', route: '/user', private: true},
     {name: 'Guest', route: '/guest'},
