@@ -26,6 +26,8 @@ import TheNavbar from '@/components/TheNavbar.vue'
 @Component({
   components: {
     'the-nav-bar': TheNavbar,
+    'SigninPopup': () => import('@/components/PopUps/SigninPopup.vue'),
+    'SignupPopup': () => import('@/components/PopUps/SignupPopup.vue'),
   },
 })
 export default class App extends Vue {

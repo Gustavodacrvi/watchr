@@ -12,9 +12,9 @@
       <div class='right'>
         <icon-dropdown class='margin' handle='user'>
           <div class='dual-drop-el'>
-            <span class='drop-el txt'><icon icon='sign-in-alt' size='sm'></icon>Sign in</span>
+            <span class='drop-el txt' @click="pushPopUp('SigninPopup')"><icon icon='sign-in-alt' size='sm'></icon>Sign in</span>
             <hr class='thematic-break'>
-            <span class='drop-el txt'><icon icon='user-plus' size='sm'></icon>Sign up</span>
+            <span class='drop-el txt' @click="pushPopUp('SignupPopup')"><icon icon='user-plus' size='sm'></icon>Sign up</span>
           </div>
         </icon-dropdown>
         <icon class='margin' icon='adjust' @click='changeTheme'></icon>
@@ -137,7 +137,7 @@ export default class TheNavbar extends Vue {
   display: inline-block;
   text-decoration: none;
   box-sizing: border-box;
-  padding: 0 12px 9px 12px;
+  padding: 0 16px 9px 16px;
   font-size: 1.12em;
   transition: color .3s;
 }
