@@ -11,7 +11,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
@@ -19,14 +19,10 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
   components: {
     icon: FontAwesomeIcon,
   },
-  props: {
-    handle: {
-      type: String,
-      required: true,
-    },
-  },
 })
 export default class TheNavbar extends Vue {
+  @Prop({ required: true, type: String }) public readonly handle!: string
+
   @State('theme') public theme!: string
 
   public showing: boolean = false

@@ -66,7 +66,7 @@ export default class App extends Vue {
   position: absolute;
   height: 100%;
   width: 100%;
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, .2);
   transition: background-color .3s; 
   display: flex;
   justify-content: center;

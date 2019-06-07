@@ -15,26 +15,22 @@
 
 <script lang="ts">
 
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 
-@Component({
-  props: {
-    size: {
-      type: String,
-      default: 'lg',
-    },
-    hoverColor: {
-      type: String,
-      default: 'main-color',
-    },
-    blink: Boolean,
-    spin: Boolean,
-    icon: String,
-    stack: Array,
-  },
-})
+interface Stack {
+  color: string
+  icon: string
+  size: string
+}
+
+@Component
 export default class App extends Vue {
-
+  @Prop({default: 'lg', type: String}) public readonly size!: string
+  @Prop({default: 'main-color', type: String}) public readonly hoverColor!: string
+  @Prop(Boolean) public readonly blink!: boolean
+  @Prop(Boolean) public readonly spin!: boolean
+  @Prop(String) public readonly icon!: string
+  @Prop(Array) public readonly stack!: Stack[]
 }
 
 </script>

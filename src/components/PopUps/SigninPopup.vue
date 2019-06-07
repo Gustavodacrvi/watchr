@@ -1,7 +1,9 @@
 <template>
   <div class='card round-border signin-popup' :class='theme'>
-    <icon class='close' icon='times' @click="pushPopUp('')" hover-color='red'></icon>
-    asdf
+    <icon class='close' icon='times' hover-color='red' @click="pushPopUp('')"></icon>
+    <div class='title'>
+      <h2>Sign in</h2>
+    </div>
   </div>
 </template>
 
@@ -36,6 +38,10 @@ export default class SigninPopUp extends Vue {
   position: absolute;
   right: 8px;
   top: 8px;
+}
+
+.title {
+  text-align: center;
 }
 
 </style>
