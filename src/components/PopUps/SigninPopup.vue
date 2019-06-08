@@ -26,8 +26,9 @@
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Mixins } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
+import Mixin from '@/mixins/authPopUp'
 
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
@@ -36,26 +37,18 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
     icon: FontAwesomeIcon,
   },
 })
-export default class SigninPopUp extends Vue {
+export default class SigninPopUp extends Mixins(Mixin) {
   @State('theme') public theme!: string
   @Mutation('pushPopUp') public pushPopUp!: (compName: string) => void
 
   public username: string = ''
   public password: string = ''
-  public passwordType: string = 'password'
-
-  public togglePassword(): void {
-    if (this.passwordType === 'password') {
-      this.passwordType = 'text'
-    } else {
-      this.passwordType = 'password'
-    }
-  }
 }
 
 </script>
 
 <style scoped>
+
 
 .signin-popup {
   position: relative;
@@ -64,7 +57,7 @@ export default class SigninPopUp extends Vue {
 
 .content {
   margin: 0 40px;
-  margin-bottom: 15px;
+  margin-bottom: 25px;
 }
 
 .close {
