@@ -1,8 +1,8 @@
 <template>
   <span class='fontawesome-icon' @click='$emit("click")' :class='[{blink: blink,}, hoverColor]'>
     <span v-if='!stack' class='txt'>
-      <i v-if='!spin' :class='`fas fa-${icon} fa-${size}`'></i>
-      <i v-else :class='`fas fa-${icon} fa-${size} fa-spin`'></i>
+      <i v-if='!spin' :class='`fas fa-${icon} fa-${size}`' :style='`color: ${color}`'></i>
+      <i v-else :class='`fas fa-${icon} fa-${size} fa-spin`' :style='`color: ${color}`'></i>
     </span>
     <span v-else :class='`fa-stack txt`'>
       <template v-for='i in stack'>
@@ -27,6 +27,7 @@ interface Stack {
 export default class App extends Vue {
   @Prop({default: 'lg', type: String}) public readonly size!: string
   @Prop({default: 'main-color', type: String}) public readonly hoverColor!: string
+  @Prop({default: '', type: String}) public readonly color!: string
   @Prop(Boolean) public readonly blink!: boolean
   @Prop(Boolean) public readonly spin!: boolean
   @Prop(String) public readonly icon!: string
@@ -53,6 +54,11 @@ export default class App extends Vue {
 .fontawesome-icon.red:hover .fas {
   color: #FC7C85;
   text-shadow: 0 0 1px #FC7C85;
+}
+
+.fontawesome-icon.white:hover .fas {
+  color: white;
+  text-shadow: 0 0 1px white;
 }
 
 .blink:active .fas {
