@@ -4,6 +4,23 @@
     <div class='title'>
       <h2>Sign in</h2>
     </div>
+    <div class='content'>
+      <input class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='theme' v-model='username'>
+      <div class='margin password'>
+        <input class='input txt round-border gray' placeholder='Password: ' :type='passwordType' autocomplete='off' :class='theme' v-model='password'>
+        <span class='eyes'>
+          <transition name='fade'>
+            <icon v-if="passwordType === 'text'" class='eye' icon='eye' size='1x' @click='togglePassword'></icon>
+            <icon v-else class='eye' icon='eye-slash' size='1x' @click='togglePassword'></icon>
+          </transition>
+        </span>
+      </div>
+      <button class='margin button round-border'>Sign in</button>
+      <div class='margin links'>
+        <span class='link'>Forgot password?</span>
+        <span class='link'>Forgot username?</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -23,6 +40,17 @@ export default class SigninPopUp extends Vue {
   @State('theme') public theme!: string
   @Mutation('pushPopUp') public pushPopUp!: (compName: string) => void
 
+  public username: string = ''
+  public password: string = ''
+  public passwordType: string = 'password'
+
+  public togglePassword(): void {
+    if (this.passwordType === 'password') {
+      this.passwordType = 'text'
+    } else {
+      this.passwordType = 'password'
+    }
+  }
 }
 
 </script>
@@ -34,6 +62,11 @@ export default class SigninPopUp extends Vue {
   flex-basis: 600px;
 }
 
+.content {
+  margin: 0 40px;
+  margin-bottom: 15px;
+}
+
 .close {
   position: absolute;
   right: 8px;
@@ -42,6 +75,57 @@ export default class SigninPopUp extends Vue {
 
 .title {
   text-align: center;
+}
+
+.input {
+  padding: 8px;
+  outline: none;
+  border: none;
+  box-sizing: border-box;
+  width: 100%;
+  font-size: 1em;
+}
+
+.margin + .margin {
+  margin-top: 8px;
+}
+
+.password {
+  position: relative;
+}
+
+.eyes {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.button {
+  color: white;
+  text-align: center;
+  background-color: #A97CFC;
+  border: none;
+  outline: none;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 1em;
+  width: 100%;
+  transition: background-color .3s;
+}
+
+.button:hover {
+  background-color: #bd9bfd;
+}
+
+.links {
+  display: flex;
+  justify-content: space-around;
+}
+
+.link {
+  color: #2599fe;
+  cursor: pointer;
 }
 
 </style>
