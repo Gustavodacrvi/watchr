@@ -21,7 +21,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
-import TheNavbar from '@/components/TheNavbar.vue'
+import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 
 @Component({
   components: {

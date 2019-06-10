@@ -1,26 +1,24 @@
 <template>
-  <div class='navbar-wrapper'>
-    <div class='navbar'>
-      <div class='left'>
-      </div>
-      <div class='center'>
-        <template v-for='link in links'>
-          <router-link v-if='!link.private' class='link txt non-private' :key='link.route' :to='link.route' :ref='link.route' @click.native='moveMagicLine(link.route)'>{{ link.name }}</router-link>
-          <span v-else :key='link.route' class='link txt faded private' :class='theme'>{{ link.name }}</span>
-        </template>
-      </div>
-      <div class='right'>
-        <icon-dropdown class='margin' handle='user'>
-          <div class='dual-drop-el'>
-            <span class='drop-el txt' @click="pushPopUp('SigninPopup')"><icon icon='sign-in-alt' size='sm'></icon>Sign in</span>
-            <hr class='thematic-break'>
-            <span class='drop-el txt' @click="pushPopUp('SignupPopup')"><icon icon='user-plus' size='sm'></icon>Sign up</span>
-          </div>
-        </icon-dropdown>
-        <icon class='margin' icon='adjust' @click='changeTheme'></icon>
-      </div>
-      <div class='magic-line' :style='magicLineStyles'></div>
+  <div class='navbar'>
+    <div class='left'>
     </div>
+    <div class='center'>
+      <template v-for='link in links'>
+        <router-link v-if='!link.private' class='link txt non-private' :key='link.route' :to='link.route' :ref='link.route' @click.native='moveMagicLine(link.route)'>{{ link.name }}</router-link>
+        <span v-else :key='link.route' class='link txt faded private' :class='theme'>{{ link.name }}</span>
+      </template>
+    </div>
+    <div class='right'>
+      <icon-dropdown class='margin' handle='user'>
+        <div class='dual-drop-el'>
+          <span class='drop-el txt' @click="pushPopUp('SigninPopup')"><icon icon='sign-in-alt' size='sm'></icon>Sign in</span>
+          <hr class='thematic-break'>
+          <span class='drop-el txt' @click="pushPopUp('SignupPopup')"><icon icon='user-plus' size='sm'></icon>Sign up</span>
+        </div>
+      </icon-dropdown>
+      <icon class='margin' icon='adjust' @click='changeTheme'></icon>
+    </div>
+    <div class='magic-line' :style='magicLineStyles'></div>
   </div>
 </template>
 
@@ -28,6 +26,7 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
+
 import FontAwesomeIcons from '@/components/FontAwesomeIcon.vue'
 import IconDropdown from '@/components/IconDropdown.vue'
 
@@ -43,8 +42,8 @@ interface NavLinks {
     'icon-dropdown': IconDropdown,
   },
 })
-export default class TheNavbar extends Vue {
-  @State('theme') public theme!: string
+export default class DesktopNavbar extends Vue {
+    @State('theme') public theme!: string
   @Mutation('pushTheme') public pushTheme!: (theme: string) => void
   @Mutation('pushPopUp') public pushPopUp!: (compName: string) => void
 
@@ -89,20 +88,6 @@ export default class TheNavbar extends Vue {
 </script>
 
 <style scoped>
-
-.navbar-wrapper, .navbar {
-  display: flex;
-  align-items: center;
-}
-
-.navbar-wrapper {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0 50px;
-  padding-top: 5px;
-}
 
 .navbar {
   position: relative;
