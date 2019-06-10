@@ -15,10 +15,10 @@
           </transition>
         </span>
       </div>
-      <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest'>Sign in</button>
-      <button v-else class='margin button round-border'>
-        <icon class='icon' icon='sync' hoverColor='white' color='white' :spin='true'></icon>
-      </button>
+        <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest'>Sign in</button>
+        <button v-else class='margin button round-border'>
+          <icon class='icon' icon='sync' hoverColor='white' color='white' :spin='true'></icon>
+        </button>
       <div class='margin links'>
         <span class='link'>Forgot password?</span>
         <span class='link'>Forgot username?</span>
@@ -89,6 +89,11 @@ export default class SigninPopUp extends Mixins(Mixin) {
   box-sizing: border-box;
   width: 100%;
   font-size: 1em;
+}
+
+.input.wrong {
+  border: 1px solid #FC7C85;
+  background-color: #fec8cc;
 }
 
 .margin + .margin {

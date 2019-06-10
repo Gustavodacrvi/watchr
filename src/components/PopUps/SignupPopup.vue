@@ -25,7 +25,10 @@
           </transition>
         </span>
       </div>
-      <button class='margin button round-border'>Sign up</button>
+      <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest'>Sign in</button>
+      <button v-else class='margin button round-border'>
+        <icon class='icon' icon='sync' hoverColor='white' color='white' :spin='true'></icon>
+      </button>
     </div>
   </div>
 </template>
@@ -51,6 +54,7 @@ export default class SigninPopUp extends Mixins(Mixin) {
   public email: string = ''
   public password: string = ''
   public newPassword: string = ''
+  public waitingResponse: boolean = false
 }
 
 </script>
