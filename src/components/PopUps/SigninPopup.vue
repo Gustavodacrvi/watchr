@@ -46,14 +46,17 @@ export default class SigninPopUp extends Mixins(Mixin) {
 
   public username: string | null = null
   public password: string | null = null
+
   public waitingResponse: boolean = false
 
   public sendRequest(): void {
-    this.waitingResponse = true
-
-    setTimeout(() => {
-      this.waitingResponse = false
-    }, 2000)
+    const hasError: boolean = this.inputHasError(this.username, 50) || this.inputHasError(this.password, 50)
+    if (!hasError) {
+      this.waitingResponse = true
+      setTimeout(() => {
+        this.waitingResponse = false
+      }, 2000)
+    }
   }
 }
 

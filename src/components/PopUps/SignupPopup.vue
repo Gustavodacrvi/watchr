@@ -50,11 +50,22 @@ export default class SigninPopUp extends Mixins(Mixin) {
   @State('theme') public theme!: string
   @Mutation('pushPopUp') public pushPopUp!: (compName: string) => void
 
-  public username: string = ''
-  public email: string = ''
-  public password: string = ''
-  public newPassword: string = ''
+  public username: string | null = null
+  public email: string | null = null
+  public password: string | null = null
+  public newPassword: string | null = null
   public waitingResponse: boolean = false
+
+  public sendRequest(): void {
+    const hasError: boolean = this.inputHasError(this.username, 50) || this.inputHasError(this.email, 50) ||
+    this.inputHasError(this.password, 50) || this.inputHasError(this.newPassword, 50)
+    if (!hasError) {
+      this.waitingResponse = true
+      setTimeout(() => {
+        this.waitingResponse = false
+      }, 2000)
+    }
+  }
 }
 
 </script>
