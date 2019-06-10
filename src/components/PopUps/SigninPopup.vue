@@ -5,9 +5,9 @@
       <h2>Sign in</h2>
     </div>
     <div class='content'>
-      <input class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='theme' v-model='username'>
+      <input class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme,{wrong: inputHasError(username, 50)}]' v-model='username'>
       <div class='margin password'>
-        <input class='input txt round-border gray' placeholder='Password: ' :type='passwordType' autocomplete='off' :class='theme' v-model='password'>
+        <input class='input txt round-border gray' placeholder='Password: ' :type='passwordType' autocomplete='off' :class='[theme, {wrong: inputHasError(password, 50)}]' v-model='password'>
         <span class='eyes'>
           <transition name='fade'>
             <icon v-if="passwordType === 'text'" class='eye' icon='eye' size='1x' @click='togglePassword'></icon>
@@ -44,8 +44,8 @@ export default class SigninPopUp extends Mixins(Mixin) {
   @State('theme') public theme!: string
   @Mutation('pushPopUp') public pushPopUp!: (compName: string) => void
 
-  public username: string = ''
-  public password: string = ''
+  public username: string | null = null
+  public password: string | null = null
   public waitingResponse: boolean = false
 
   public sendRequest(): void {
@@ -88,12 +88,12 @@ export default class SigninPopUp extends Mixins(Mixin) {
   border: none;
   box-sizing: border-box;
   width: 100%;
+  transition: border .3s, background-color .3s;
   font-size: 1em;
 }
 
 .input.wrong {
-  border: 1px solid #FC7C85;
-  background-color: #fec8cc;
+  border: 2px solid #FC7C85;
 }
 
 .margin + .margin {
