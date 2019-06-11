@@ -1,8 +1,10 @@
 
 import { Component, Vue } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 
 @Component
 export default class AuthPopUpMixin extends Vue {
+  @Getter('isDesktop') public readonly isDesktop!: boolean
   public passwordType: string = 'password'
 
   public togglePassword(): void {

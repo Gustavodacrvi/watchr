@@ -1,10 +1,9 @@
 <template>
   <div class='card round-border signin-popup' :class='theme'>
-    <icon class='close' icon='times' hover-color='red' @click="pushPopUp('')"></icon>
     <div class='title'>
       <h2>Sign in</h2>
     </div>
-    <div class='content'>
+    <div class='content' :class='{mobile: !isDesktop}'>
       <input class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme,{wrong: inputHasError(username, 50)}]' v-model='username'>
       <div class='margin password'>
         <input class='input txt round-border gray' placeholder='Password: ' :type='passwordType' autocomplete='off' :class='[theme, {wrong: inputHasError(password, 50)}]' v-model='password'>
@@ -42,7 +41,6 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 })
 export default class SigninPopUp extends Mixins(Mixin) {
   @State('theme') public readonly theme!: string
-  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
 
   public username: string | null = null
   public password: string | null = null
@@ -72,6 +70,11 @@ export default class SigninPopUp extends Mixins(Mixin) {
 
 .content {
   margin: 0 40px;
+  margin-bottom: 25px;
+}
+
+.content.mobile {
+  margin: 0 10px;
   margin-bottom: 25px;
 }
 
