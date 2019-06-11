@@ -1,9 +1,9 @@
 <template>
   <div class='app-wrapper'>
-    <div class='app background-color' :class='theme' @click='appClick'>
+    <div class='app background-color' :class='theme'>
       <div class='visible'>
         <div class='navbar' :class='isDesktop ? "desktop" : "mobile"'>
-          <the-nav-bar @iconclick='appBarIconClick'></the-nav-bar>
+          <the-nav-bar></the-nav-bar>
         </div>
         <router-view class='content' />
         <div v-show='showingPopUp' class='pop-ups'>
@@ -12,7 +12,10 @@
           </transition>
         </div>
         <transition name='appbar-trans'>
-          <the-app-bar v-if='appBarState' class='appbar' @click='appNavClick'></the-app-bar>
+          <div v-if='appBarState' class='appbar-wrapper'>
+            <the-app-bar class='appbar'></the-app-bar>
+            <div class='appbar-margin' @click='closeAppBar'></div>
+          </div>
         </transition>
       </div>
     </div>
@@ -41,29 +44,6 @@ export default class App extends Vue {
   @Getter('isDesktop') public readonly isDesktop!: boolean
 
   @Mutation('closeAppBar') public readonly closeAppBar!: () => void
-
-  public appBarClickState: boolean = false
-  public appBarIconState: boolean = false
-
-  public appClick(): void {
-    if (this.appBarState && !this.appBarIconState && !this.appBarClickState) {
-      this.closeAppBar()
-    }
-  }
-
-  public appNavClick(): void {
-    this.appBarClickState = true
-    setTimeout(() => {
-      this.appBarClickState = false
-    }, 10)
-  }
-
-  public appBarIconClick(): void {
-    this.appBarIconState = true
-    setTimeout(() => {
-      this.appBarIconState = false
-    }, 10)
-  }
 
   get showingPopUp(): boolean {
     return this.popUp !== ''
@@ -102,6 +82,7 @@ export default class App extends Vue {
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  z-index: 50;
 }
 
 .pop-up {
@@ -127,15 +108,25 @@ export default class App extends Vue {
   flex-basis: 100%;
 }
 
-.appbar {
+.appbar-wrapper {
   position: fixed;
   top: 0;
   left: 0;
   height: 100%;
+  width: 100%;
+  display: flex;
+}
+
+.appbar-margin {
+  flex-grow: 1;
+}
+
+.appbar {
+  flex-basis: 300px;
 }
 
 .appbar-trans-enter {
-  left: -320px;
+  left: -300px;
 }
 
 .appbar-trans-enter-to, .appbar-trans-leave-active {
@@ -147,7 +138,7 @@ export default class App extends Vue {
 }
 
 .appbar-trans-leave-active {
-  left: -320px;
+  left: -300px;
 }
 
 </style>

@@ -1,13 +1,13 @@
 <template>
-  <div class='wrapper gray' :class='theme' @click='$emit("click")'>
+  <div class='wrapper gray' :class='theme'>
     <div v-if='isDesktop' class='theappbar'>
 
     </div>
     <div v-else-if='!isLogged' class='theappbar'>
       <div class='relatives'>
         <div class='auth-banner main-color-card' :class='theme'>
-          <button class='auth-button' :class='theme'>SIGN UP</button>
-          <button class='auth-button' :class='theme'>SIGN IN</button>
+          <button class='auth-button' @click='pushPopUp("SignupPopup")' :class='theme'>SIGN UP</button>
+          <button class='auth-button' @click='pushPopUp("SigninPopup")' :class='theme'>SIGN IN</button>
         </div>
         <div class='content'>
 
@@ -26,14 +26,14 @@
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-import { State, Getter } from 'vuex-class'
+import { State, Getter, Mutation } from 'vuex-class'
 
 @Component
 export default class TheNavBar extends Vue {
   @State('theme') public readonly theme!: string
   @State('isLogged') public readonly isLogged!: boolean
   @Getter('isDesktop') public readonly isDesktop!: boolean
-
+  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
   public mobileSettingsSection: boolean = false
 }
 
@@ -45,10 +45,6 @@ export default class TheNavBar extends Vue {
 </script>
 
 <style scoped>
-
-.wrapper {
-  width: 320px;
-}
 
 .theappbar {
   position: relative;
