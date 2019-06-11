@@ -11,6 +11,7 @@
             <component class='pop-up' :is='popUp'></component>
           </transition>
         </div>
+        <the-app-bar v-if='appBarState' class='appbar'></the-app-bar>
       </div>
     </div>
   </div>
@@ -28,11 +29,13 @@ import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
     'the-nav-bar': TheNavbar,
     'SigninPopup': () => import('@/components/PopUps/SigninPopup.vue'),
     'SignupPopup': () => import('@/components/PopUps/SignupPopup.vue'),
+    'the-app-bar': () => import('@/components/TheAppBar/TheAppBar.vue'),
   },
 })
 export default class App extends Vue {
   @State('theme') public readonly theme!: string
   @State('popUpComponent') public readonly popUp!: string
+  @State('appBarState') public readonly appBarState!: boolean
   @Getter('isDesktop') public readonly isDesktop!: boolean
 
   get showingPopUp(): boolean {
@@ -95,6 +98,13 @@ export default class App extends Vue {
 .content {
   position: relative;
   flex-basis: 100%;
+}
+
+.appbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
 }
 
 </style>

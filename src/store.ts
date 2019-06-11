@@ -9,13 +9,15 @@ interface State {
   theme: string
   popUpComponent: string
   windowWidth: number
+  appBarState: boolean
 }
 
 const store: any = new Vuex.Store({
   state: {
     theme: savedTheme,
     popUpComponent: '',
-    windowWidth: 1024,
+    windowWidth: document.body.clientWidth,
+    appBarState: false,
   } as State,
   mutations: {
     pushTheme(state: State, theme: string): void {
@@ -24,6 +26,9 @@ const store: any = new Vuex.Store({
     },
     pushPopUp(state: State, compName: string): void {
       state.popUpComponent = compName
+    },
+    openAppBar(state: State): void {
+      state.appBarState = true
     },
   },
   getters: {
@@ -36,7 +41,6 @@ const store: any = new Vuex.Store({
   },
   actions: {
     getWindowWidthOnResize({state}: {state: State}): void {
-      state.windowWidth = document.body.clientWidth
       window.addEventListener('resize', () => {
         state.windowWidth = document.body.clientWidth
       })

@@ -2,7 +2,7 @@
   <div class='navbar'>
     <div class='relatives'>
       <div class='left'>
-        <div class='icon'>
+        <div class='icon' @click='openAppBar'>
           <div class='line'></div>
           <div class='line middle'></div>
           <div class='line'></div>
@@ -18,10 +18,11 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
+import { Mutation } from 'vuex-class'
 
 @Component
 export default class MobileNavbar extends Vue {
-
+  @Mutation('openAppBar') public readonly openAppBar!: () => void
 }
 
 </script>
