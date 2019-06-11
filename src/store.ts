@@ -30,6 +30,9 @@ const store: any = new Vuex.Store({
     openAppBar(state: State): void {
       state.appBarState = true
     },
+    closeAppBar(state: State): void {
+      state.appBarState = false
+    },
   },
   getters: {
     isDesktop(state: State): boolean {

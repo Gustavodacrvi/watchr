@@ -1,9 +1,9 @@
 <template>
   <div class='app-wrapper'>
-    <div class='app background-color' :class='theme'>
+    <div class='app background-color' :class='theme' @click='appClick'>
       <div class='visible'>
         <div class='navbar' :class='isDesktop ? "desktop" : "mobile"'>
-          <the-nav-bar></the-nav-bar>
+          <the-nav-bar @iconclick='appBarIconClick'></the-nav-bar>
         </div>
         <router-view class='content' />
         <div v-show='showingPopUp' class='pop-ups'>
@@ -11,7 +11,9 @@
             <component class='pop-up' :is='popUp'></component>
           </transition>
         </div>
-        <the-app-bar v-if='appBarState' class='appbar'></the-app-bar>
+        <transition name='appbar-trans'>
+          <the-app-bar v-if='appBarState' class='appbar' @click='appNavClick'></the-app-bar>
+        </transition>
       </div>
     </div>
   </div>
@@ -20,7 +22,7 @@
 <script lang='ts'>
 
 import { Vue, Component } from 'vue-property-decorator'
-import { State, Getter } from 'vuex-class'
+import { State, Getter, Mutation } from 'vuex-class'
 
 import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 
@@ -37,6 +39,31 @@ export default class App extends Vue {
   @State('popUpComponent') public readonly popUp!: string
   @State('appBarState') public readonly appBarState!: boolean
   @Getter('isDesktop') public readonly isDesktop!: boolean
+
+  @Mutation('closeAppBar') public readonly closeAppBar!: () => void
+
+  public appBarClickState: boolean = false
+  public appBarIconState: boolean = false
+
+  public appClick(): void {
+    if (this.appBarState && !this.appBarIconState && !this.appBarClickState) {
+      this.closeAppBar()
+    }
+  }
+
+  public appNavClick(): void {
+    this.appBarClickState = true
+    setTimeout(() => {
+      this.appBarClickState = false
+    }, 10)
+  }
+
+  public appBarIconClick(): void {
+    this.appBarIconState = true
+    setTimeout(() => {
+      this.appBarIconState = false
+    }, 10)
+  }
 
   get showingPopUp(): boolean {
     return this.popUp !== ''
@@ -105,6 +132,22 @@ export default class App extends Vue {
   top: 0;
   left: 0;
   height: 100%;
+}
+
+.appbar-trans-enter {
+  left: -320px;
+}
+
+.appbar-trans-enter-to, .appbar-trans-leave-active {
+  transition: left .3s;
+}
+
+.appbar-trans-enter-to {
+  left: 0;
+}
+
+.appbar-trans-leave-active {
+  left: -320px;
 }
 
 </style>

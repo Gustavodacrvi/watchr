@@ -1,7 +1,7 @@
 <template>
   <div class='navbar-wrapper' :class='isDesktop ? "desktop" : "mobile"'>
     <desktop v-if='isDesktop'></desktop>
-    <mobile v-else></mobile>
+    <mobile v-else @iconclick='$emit("iconclick")'></mobile>
   </div>
 </template>
 

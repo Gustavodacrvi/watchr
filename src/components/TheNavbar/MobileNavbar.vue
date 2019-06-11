@@ -2,7 +2,7 @@
   <div class='navbar'>
     <div class='relatives'>
       <div class='left'>
-        <div class='icon' @click='openAppBar'>
+        <div class='icon' @click='openAppBar();$emit("iconclick")'>
           <div class='line'></div>
           <div class='line middle'></div>
           <div class='line'></div>
