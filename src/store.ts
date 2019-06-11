@@ -21,6 +21,11 @@ interface Mutations {
   [key: string]: (state: States, payload: any) => any
 }
 
+interface Getters {
+  isDesktop: (state: States) => boolean
+  [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
+}
+
 const store: any = new Vuex.Store({
   state: {
     theme: savedTheme,
@@ -51,14 +56,14 @@ const store: any = new Vuex.Store({
       }
       return false
     },
-  },
+  } as Getters,
   actions: {
     getWindowWidthOnResize({state}: {state: States}): void {
       window.addEventListener('resize', () => {
         state.windowWidth = document.body.clientWidth
       })
     },
-  },
+  } as Actions,
 })
 
 store.dispatch('getWindowWidthOnResize')
