@@ -10,6 +10,7 @@ interface State {
   popUpComponent: string
   windowWidth: number
   appBarState: boolean
+  isLogged: boolean
 }
 
 const store: any = new Vuex.Store({
@@ -18,6 +19,7 @@ const store: any = new Vuex.Store({
     popUpComponent: '',
     windowWidth: document.body.clientWidth,
     appBarState: false,
+    isLogged: false,
   } as State,
   mutations: {
     pushTheme(state: State, theme: string): void {
