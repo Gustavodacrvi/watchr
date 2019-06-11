@@ -1,19 +1,23 @@
 <template>
   <div class='navbar-wrapper'>
-    <desktop></desktop>
+    <desktop v-if='isDesktop'></desktop>
+    <h1>{{ isDesktop }}</h1>
   </div>
 </template>
 
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 
 @Component({
   components: {
     desktop: () => import('@/components/TheNavbar/DesktopNavbar.vue'),
   },
 })
-export default class TheNavbar extends Vue {}
+export default class TheNavbar extends Vue {
+  @Getter('isDesktop') public readonly isDesktop!: boolean
+}
 
 </script>
 

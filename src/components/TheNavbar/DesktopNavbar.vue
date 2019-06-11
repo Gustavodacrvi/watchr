@@ -4,8 +4,8 @@
     </div>
     <div class='center'>
       <template v-for='link in links'>
-        <router-link v-if='!link.private' class='link txt non-private' :key='link.route' :to='link.route' :ref='link.route' @click.native='moveMagicLine(link.route)'>{{ link.name }}</router-link>
-        <span v-else :key='link.route' class='link txt faded private' :class='theme'>{{ link.name }}</span>
+        <router-link v-if='!link.public ' class='link txt non-public ' :key='link.route' :to='link.route' :ref='link.route' @click.native='moveMagicLineTo(link.route)'>{{ link.name }}</router-link>
+        <span v-else :key='link.route' class='link txt faded public ' :class='theme'>{{ link.name }}</span>
       </template>
     </div>
     <div class='right'>
@@ -33,7 +33,7 @@ import IconDropdown from '@/components/IconDropdown.vue'
 interface NavLinks {
   name: string
   route: string
-  private?: boolean
+  public ?: boolean
 }
 
 @Component({
@@ -43,25 +43,33 @@ interface NavLinks {
   },
 })
 export default class DesktopNavbar extends Vue {
-    @State('theme') public theme!: string
-  @Mutation('pushTheme') public pushTheme!: (theme: string) => void
-  @Mutation('pushPopUp') public pushPopUp!: (compName: string) => void
+  @State('theme') public readonly theme!: string
+  @Mutation('pushTheme') public readonly pushTheme!: (theme: string) => void
+  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
 
-  public links: NavLinks[] = [
+  public readonly links: NavLinks[] = [
     {name: 'Home', route: '/'},
-    {name: 'User', route: '/user', private: true},
+    {name: 'User', route: '/user', public : true},
     {name: 'Guest', route: '/guest'},
     {name: 'Help', route: '/help'},
   ]
   public lineLeftPosition: string = ''
   public lineWidth: string = ''
 
-  private mounted() {
-    this.moveMagicLine(this.$route.path)
-    window.addEventListener('resize', () => this.moveMagicLine(this.$route.path))
+  public  mounted(): void {
+    this.moveMagicLineTo(this.$route.path)
+    window.addEventListener('resize', this.windowEventListener)
   }
 
-  private moveMagicLine(ref: string): void {
+  public  beforeDestroy(): void {
+    window.removeEventListener('resize', this.windowEventListener)
+  }
+
+  public windowEventListener(): void {
+    this.moveMagicLineTo(this.$route.path)
+  }
+
+  public  moveMagicLineTo(ref: string): void {
     if (this.$refs[ref]) {
       const comp: any = this.$refs[ref]
       const el: any = comp[0].$el
@@ -69,14 +77,14 @@ export default class DesktopNavbar extends Vue {
       this.lineWidth = el.offsetWidth + 'px'
     }
   }
-  private changeTheme(): void {
+  public  changeTheme(): void {
     if (this.theme === 'dark') {
       this.pushTheme('light')
     } else {
       this.pushTheme('dark')
     }
   }
-  private get magicLineStyles(): object {
+  public  get magicLineStyles(): object {
     return {
       left: this.lineLeftPosition,
       width: this.lineWidth,
@@ -127,7 +135,7 @@ export default class DesktopNavbar extends Vue {
   transition: color .3s;
 }
 
-.link:hover.non-private, .router-link-exact-active {
+.link:hover.non-public , .router-link-exact-active {
   color: #A97CFC;
   text-shadow: 0 0 1px #A97CFC;
 }

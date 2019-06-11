@@ -31,8 +31,8 @@ import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
   },
 })
 export default class App extends Vue {
-  @State('theme') private theme!: string
-  @State('popUpComponent') private popUp!: string
+  @State('theme') private readonly theme!: string
+  @State('popUpComponent') private readonly popUp!: string
 
   get showingPopUp(): boolean {
     return this.popUp !== ''

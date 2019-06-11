@@ -47,8 +47,8 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
   },
 })
 export default class SigninPopUp extends Mixins(Mixin) {
-  @State('theme') public theme!: string
-  @Mutation('pushPopUp') public pushPopUp!: (compName: string) => void
+  @State('theme') public readonly theme!: string
+  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
 
   public username: string | null = null
   public email: string | null = null
