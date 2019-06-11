@@ -6,7 +6,7 @@
           <the-nav-bar></the-nav-bar>
         </div>
         <router-view class='content' />
-        <div v-show='showingPopUp' class='pop-ups-wrapper'>
+        <div class='pop-ups-wrapper' :class='{hidden: !showingPopUp}'>
           <div class='pop-ups'>
             <transition name='fade' mode='out-in'>
               <component class='pop-up' :is='popUp'></component>
@@ -85,6 +85,11 @@ export default class App extends Vue {
   transition: background-color .3s; 
   z-index: 50;
   overflow: auto;
+}
+
+.pop-ups-wrapper.hidden {
+  background-color: initial;
+  pointer-events: none;
 }
 
 .popup-margin {
