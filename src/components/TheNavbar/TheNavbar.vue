@@ -1,7 +1,7 @@
 <template>
-  <div class='navbar-wrapper'>
+  <div class='navbar-wrapper' :class='isDesktop ? "desktop" : "mobile"'>
     <desktop v-if='isDesktop'></desktop>
-    <h1>{{ isDesktop }}</h1>
+    <mobile v-else></mobile>
   </div>
 </template>
 
@@ -13,6 +13,7 @@ import { Getter } from 'vuex-class'
 @Component({
   components: {
     desktop: () => import('@/components/TheNavbar/DesktopNavbar.vue'),
+    mobile: () => import('@/components/TheNavbar/MobileNavbar.vue'),
   },
 })
 export default class TheNavbar extends Vue {
@@ -33,8 +34,16 @@ export default class TheNavbar extends Vue {
   height: 100%;
   width: 100%;
   box-sizing: border-box;
-  padding: 0 50px;
   padding-top: 5px;
+  transition: padding .3s;
+}
+
+.navbar-wrapper.desktop {
+  padding: 0 50px;
+}
+
+.navbar-wrapper.mobile {
+  padding: 0 20px;
 }
 
 </style>

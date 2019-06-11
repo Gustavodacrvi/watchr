@@ -2,7 +2,7 @@
   <div class='app-wrapper'>
     <div class='app background-color' :class='theme'>
       <div class='visible'>
-        <div class='navbar'>
+        <div class='navbar' :class='isDesktop ? "desktop" : "mobile"'>
           <the-nav-bar></the-nav-bar>
         </div>
         <router-view class='content' />
@@ -19,7 +19,7 @@
 <script lang='ts'>
 
 import { Vue, Component } from 'vue-property-decorator'
-import { State } from 'vuex-class'
+import { State, Getter } from 'vuex-class'
 
 import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 
@@ -31,8 +31,9 @@ import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
   },
 })
 export default class App extends Vue {
-  @State('theme') private readonly theme!: string
-  @State('popUpComponent') private readonly popUp!: string
+  @State('theme') public readonly theme!: string
+  @State('popUpComponent') public readonly popUp!: string
+  @Getter('isDesktop') public readonly isDesktop!: boolean
 
   get showingPopUp(): boolean {
     return this.popUp !== ''
@@ -80,7 +81,15 @@ export default class App extends Vue {
 .navbar {
   position: relative;
   width: 100%;
+  transition: flex-basis .3s;
+}
+
+.navbar.desktop {
   flex-basis: 80px;
+}
+
+.navbar.mobile {
+  flex-basis: 50px;
 }
 
 .content {
