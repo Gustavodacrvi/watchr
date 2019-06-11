@@ -1,7 +1,7 @@
 
 @font-face {
   font-family: 'Work Sans';
-  src: '@/assets/fonts/WorkSans-Regular.otf';
+  src: url('../fonts/WorkSans-Regular.otf');
 }
 
 body {
