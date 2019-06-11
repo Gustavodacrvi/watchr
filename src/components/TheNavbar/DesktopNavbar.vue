@@ -135,7 +135,7 @@ export default class DesktopNavbar extends Vue {
   transition: color .3s;
 }
 
-.link:hover.non-public , .router-link-exact-active {
+.link:hover.non-public , .router-link-outer-active {
   color: #A97CFC;
   text-shadow: 0 0 1px #A97CFC;
 }
