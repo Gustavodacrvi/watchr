@@ -5,12 +5,20 @@ Vue.use(Vuex)
 
 const savedTheme: string = localStorage.getItem('watchrTheme') || 'light'
 
-interface State {
+interface States {
   theme: string
   popUpComponent: string
   windowWidth: number
   appBarState: boolean
   isLogged: boolean
+}
+
+interface Mutations {
+  pushTheme: (state: States, theme: string) => void
+  pushPopUp: (state: States, compName: string) => void
+  openAppBar: (state: States) => void
+  closeAppBar: (state: States) => void
+  [key: string]: (state: States, payload: any) => any
 }
 
 const store: any = new Vuex.Store({
@@ -20,24 +28,24 @@ const store: any = new Vuex.Store({
     windowWidth: document.body.clientWidth,
     appBarState: false,
     isLogged: false,
-  } as State,
+  } as States,
   mutations: {
-    pushTheme(state: State, theme: string): void {
+    pushTheme(state: States, theme: string): void {
       state.theme = theme
       localStorage.setItem('watchrTheme', theme)
     },
-    pushPopUp(state: State, compName: string): void {
+    pushPopUp(state: States, compName: string): void {
       state.popUpComponent = compName
     },
-    openAppBar(state: State): void {
+    openAppBar(state: States): void {
       state.appBarState = true
     },
-    closeAppBar(state: State): void {
+    closeAppBar(state: States): void {
       state.appBarState = false
     },
-  },
+  } as Mutations,
   getters: {
-    isDesktop(state: State): boolean {
+    isDesktop(state: States): boolean {
       if (state.windowWidth > 1024) {
         return true
       }
@@ -45,7 +53,7 @@ const store: any = new Vuex.Store({
     },
   },
   actions: {
-    getWindowWidthOnResize({state}: {state: State}): void {
+    getWindowWidthOnResize({state}: {state: States}): void {
       window.addEventListener('resize', () => {
         state.windowWidth = document.body.clientWidth
       })
