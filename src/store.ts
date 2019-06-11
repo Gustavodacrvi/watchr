@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
+import Vuex, { Action } from 'vuex'
 
 Vue.use(Vuex)
 
@@ -24,6 +24,11 @@ interface Mutations {
 interface Getters {
   isDesktop: (state: States) => boolean
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
+}
+
+interface Actions {
+  getWindowWidthOnResize: (obj: {state: States}) => void
+  [key: string]: (obj: any) => any
 }
 
 const store: any = new Vuex.Store({
