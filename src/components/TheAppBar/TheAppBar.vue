@@ -10,7 +10,17 @@
           <button class='auth-button' @click='pushPopUp("SigninPopup")' :class='theme'>SIGN IN</button>
         </div>
         <div class='content'>
+        </div>
+        <div class='footer-wrapper'>
+          <hr class='border'>
+          <div class='footer'>
+            <div class='left'>
 
+            </div>
+            <div class='right'>
+              <icon icon='adjust' @click='changeTheme'></icon>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -28,13 +38,28 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 
-@Component
+import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+
+@Component({
+  components: {
+    icon: FontAwesomeIcon,
+  },
+})
 export default class TheNavBar extends Vue {
   @State('theme') public readonly theme!: string
   @State('isLogged') public readonly isLogged!: boolean
   @Getter('isDesktop') public readonly isDesktop!: boolean
   @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
   public mobileSettingsSection: boolean = false
+  @Mutation('pushTheme') public readonly pushTheme!: (theme: string) => void
+
+  public changeTheme(): void {
+    if (this.theme === 'dark') {
+      this.pushTheme('light')
+    } else {
+      this.pushTheme('dark')
+    }
+  }
 }
 
 /*
@@ -59,6 +84,30 @@ export default class TheNavBar extends Vue {
 
 .content {
   flex-basis: 100%;
+}
+
+.footer-wrapper {
+  flex-basis: 60px;
+}
+
+.footer {
+  margin: 0 12px;
+}
+
+.border {
+  width: 92%;
+  border: .5px solid #D9D9D9;
+  opacity: .4;
+}
+
+.left {
+  float: left;
+  clear: left;
+}
+
+.right {
+  float: right;
+  clear: right;
 }
 
 .auth-banner {
