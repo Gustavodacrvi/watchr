@@ -2,7 +2,11 @@
   <div class='navbar'>
     <div class='relatives'>
       <div class='left'>
-        <span>left</span>
+        <div class='icon'>
+          <div class='line'></div>
+          <div class='line middle'></div>
+          <div class='line'></div>
+        </div>
       </div>
       <div class='right'>
         <span>right</span>
@@ -46,6 +50,36 @@ export default class MobileNavbar extends Vue {
 .right {
   float: right;
   clear: right;
+}
+
+.icon {
+  height: 25px;
+  width: 30px;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: height .2s;
+}
+
+.line {
+  height: 5px;
+  width: 100%;
+  border-radius: 2px;
+  background-color: #8C8C8C;
+  transition: background-color .3s;
+}
+
+.middle {
+  width: 65%;
+}
+
+.icon:hover {
+  height: 30px;
+}
+
+.icon:hover .line {
+  background-color: #A97CFC;
 }
 
 </style>
