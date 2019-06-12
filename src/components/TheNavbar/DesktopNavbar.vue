@@ -4,8 +4,8 @@
     </div>
     <div class='center'>
       <template v-for='link in links'>
-        <router-link v-if='!link.public ' class='link txt non-public ' :key='link.route' :to='link.route' :ref='link.route' @click.native='moveMagicLineTo(link.route)'>{{ link.name }}</router-link>
-        <span v-else :key='link.route' class='link txt faded public ' :class='theme'>{{ link.name }}</span>
+        <router-link v-if='!link.public ' class='link txt non-public ' :key='link.name' :to='{name: link.name}' :ref='link.name' @click.native='moveMagicLineTo(link.name)'>{{ link.name }}</router-link>
+        <span v-else :key='link.name' class='link txt faded public ' :class='theme'>{{ link.name }}</span>
       </template>
     </div>
     <div class='right'>
@@ -32,7 +32,6 @@ import IconDropdown from '@/components/IconDropdown.vue'
 
 interface NavLinks {
   name: string
-  route: string
   public ?: boolean
 }
 
@@ -48,16 +47,16 @@ export default class DesktopNavbar extends Vue {
   @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
 
   public readonly links: NavLinks[] = [
-    {name: 'Home', route: '/'},
-    {name: 'User', route: '/user', public : true},
-    {name: 'Guest', route: '/guest'},
-    {name: 'Help', route: '/help'},
+    {name: 'Home'},
+    {name: 'User', public : true},
+    {name: 'Guest'},
+    {name: 'Help'},
   ]
   public lineLeftPosition: string = ''
   public lineWidth: string = ''
 
   public  mounted(): void {
-    this.moveMagicLineTo(this.$route.path)
+    this.moveMagicLineTo(this.$route.name)
     window.addEventListener('resize', this.windowEventListener)
   }
 
@@ -69,8 +68,8 @@ export default class DesktopNavbar extends Vue {
     this.moveMagicLineTo(this.$route.path)
   }
 
-  public  moveMagicLineTo(ref: string): void {
-    if (this.$refs[ref]) {
+  public  moveMagicLineTo(ref: string | undefined): void {
+    if (ref && this.$refs[ref]) {
       const comp: any = this.$refs[ref]
       const el: any = comp[0].$el
       this.lineLeftPosition = el.offsetLeft + 'px'
@@ -135,7 +134,7 @@ export default class DesktopNavbar extends Vue {
   transition: color .3s;
 }
 
-.link:hover.non-public , .router-link-active {
+.link:hover.non-public , .router-link-exact-active {
   color: #A97CFC;
   text-shadow: 0 0 1px #A97CFC;
 }

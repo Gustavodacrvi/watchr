@@ -5,7 +5,9 @@
         <div class='navbar' :class='isDesktop ? "desktop" : "mobile"'>
           <the-nav-bar></the-nav-bar>
         </div>
-        <router-view class='content' />
+        <transition name='fade' mode='out-in'>
+          <router-view class='content' />
+        </transition>
         <div class='pop-ups-wrapper' :class='{hidden: !showingPopUp}'>
           <div class='pop-ups' :class='{hidden: !showingPopUp}'>
             <transition name='fade' mode='out-in'>

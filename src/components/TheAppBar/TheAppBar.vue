@@ -1,18 +1,18 @@
 <template>
   <div class='wrapper gray' :class='theme'>
-    <transition name='fade' mode='out-in'>
-      <div v-if='isDesktop' class='theappbar'>
+    <transition name='fade' mode='out-in' tag='div'>
+      <div v-if='isDesktop' class='theappbar' key='desktop-appbar'>
 
       </div>
-      <div v-else-if='!isLogged && !mobileSettingsMenu' class='theappbar'>
+      <div v-else-if='!isLogged && !mobileSettingsMenu' class='theappbar' key='mobile-appbar-notlogged'>
         <div class='auth-banner main-color-card' :class='theme'>
           <button class='auth-button' @click='pushPopUp("SignupPopup")' :class='theme'>SIGN UP</button>
           <button class='auth-button' @click='pushPopUp("SigninPopup")' :class='theme'>SIGN IN</button>
         </div>
         <div class='content-wrapper'>
           <div class='content'>
-            <router-link class='link txt' :class='theme' to='/' @click.native='closeAppBar'>Home</router-link>
-            <router-link class='link txt' :class='theme' to='/guest' @click.native='closeAppBar'>Guest</router-link>
+            <router-link class='link txt' :class='theme' :to='{name: "Home"}' @click.native='closeAppBar'>Home</router-link>
+            <router-link class='link txt' :class='theme' :to='{name: "Guest"}' @click.native='closeAppBar'>Guest</router-link>
           </div>
         </div>
         <div class='footer-wrapper'>
@@ -27,7 +27,7 @@
           </div>
         </div>
       </div>
-      <div v-else-if='!isLogged && mobileSettingsMenu' class='theappbar'>
+      <div v-else-if='!isLogged && mobileSettingsMenu' class='theappbar' key='mobile-appbar-notlogged-settingsmenu'>
         <div class='auth-banner main-color-card' :class='theme'>
           <button class='auth-button' @click='pushPopUp("SignupPopup")' :class='theme'>SIGN UP</button>
           <button class='auth-button' @click='pushPopUp("SigninPopup")' :class='theme'>SIGN IN</button>
@@ -48,8 +48,9 @@
           </div>
         </div>
       </div>
-      <div v-else class='theappbar'>
-
+      <div v-else-if='isLogged && !mobileSettingsMenu' class='theappbar' key='mobile-appbar-logged'>
+      </div>
+      <div v-else-if='isLogged && mobileSettingsMenu' class='theappbar' key='mobile-appbar-logged-settingsmenu'>
       </div>
     </transition>
   </div>

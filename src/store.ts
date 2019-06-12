@@ -67,9 +67,7 @@ const store: any = new Vuex.Store({
        {state: States, getters: Getters, commit: (str: string) => void}): void {
       window.addEventListener('resize', () => {
         state.windowWidth = document.body.clientWidth
-        if (!getters.isDesktop) {
-          commit('closeAppBar')
-        }
+        commit('closeAppBar')
       })
     },
   } as Actions,
