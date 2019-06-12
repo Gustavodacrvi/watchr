@@ -1,10 +1,10 @@
 <template>
   <div class='wrapper gray' :class='theme'>
-    <div v-if='isDesktop' class='theappbar'>
+    <transition name='fade' mode='out-in'>
+      <div v-if='isDesktop' class='theappbar'>
 
-    </div>
-    <div v-else-if='!isLogged' class='theappbar'>
-      <div class='relatives'>
+      </div>
+      <div v-else-if='!isLogged && !mobileSettingsMenu' class='theappbar'>
         <div class='auth-banner main-color-card' :class='theme'>
           <button class='auth-button' @click='pushPopUp("SignupPopup")' :class='theme'>SIGN UP</button>
           <button class='auth-button' @click='pushPopUp("SigninPopup")' :class='theme'>SIGN IN</button>
@@ -18,19 +18,40 @@
         <div class='footer-wrapper'>
           <hr class='border'>
           <div class='footer'>
+            <div class='left'>
+              <icon icon='cog' @click='changeMenu'></icon>
+            </div>
             <div class='right'>
               <icon icon='adjust' @click='changeTheme'></icon>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div v-else-if='!mobileSettingsSection' class='theappbar'>
-      
-    </div>
-    <div v-else class='theappbar'>
+      <div v-else-if='!isLogged && mobileSettingsMenu' class='theappbar'>
+        <div class='auth-banner main-color-card' :class='theme'>
+          <button class='auth-button' @click='pushPopUp("SignupPopup")' :class='theme'>SIGN UP</button>
+          <button class='auth-button' @click='pushPopUp("SigninPopup")' :class='theme'>SIGN IN</button>
+        </div>
+        <div class='content-wrapper'>
+          <div class='content'>
+          </div>
+        </div>
+        <div class='footer-wrapper'>
+          <hr class='border'>
+          <div class='footer'>
+            <div class='left'>
+              <icon icon='tasks' @click='changeMenu'></icon>
+            </div>
+            <div class='right'>
+              <icon icon='adjust' @click='changeTheme'></icon>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else class='theappbar'>
 
-    </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -53,7 +74,7 @@ export default class TheNavBar extends Vue {
   @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
   @Mutation('pushTheme') public readonly pushTheme!: (theme: string) => void
   @Mutation('closeAppBar') public readonly closeAppBar!: () => void
-  public mobileSettingsSection: boolean = false
+  public mobileSettingsMenu: boolean = false
 
   public changeTheme(): void {
     if (this.theme === 'dark') {
@@ -61,6 +82,10 @@ export default class TheNavBar extends Vue {
     } else {
       this.pushTheme('dark')
     }
+  }
+
+  public changeMenu(): void {
+    this.mobileSettingsMenu = !this.mobileSettingsMenu
   }
 }
 
@@ -76,9 +101,6 @@ export default class TheNavBar extends Vue {
 .theappbar {
   position: relative;
   height: 100%;
-}
-
-.relatives {
   height: 100%;
   display: flex;
   flex-direction: column;

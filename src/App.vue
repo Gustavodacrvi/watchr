@@ -7,7 +7,7 @@
         </div>
         <router-view class='content' />
         <div class='pop-ups-wrapper' :class='{hidden: !showingPopUp}'>
-          <div class='pop-ups'>
+          <div class='pop-ups' :class='{hidden: !showingPopUp}'>
             <transition name='fade' mode='out-in'>
               <component class='pop-up' :is='popUp'></component>
             </transition>
@@ -92,13 +92,6 @@ export default class App extends Vue {
   pointer-events: none;
 }
 
-.popup-margin {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 49;
-}
-
 .pop-ups {
   position: relative;
   height: 130%;
@@ -106,6 +99,17 @@ export default class App extends Vue {
   display: flex;
   justify-content: center;
   align-items: flex-start;
+}
+
+.pop-ups.hidden {
+  height: 100%;
+}
+
+.popup-margin {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 49;
 }
 
 .pop-up {
