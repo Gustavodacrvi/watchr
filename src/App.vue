@@ -1,219 +1,180 @@
 <template>
-  <div id='body' class='background' :class='$store.state.theme.style' @click='hideAppNavBar'>
-    <section id='content'>
-      <nav-bar></nav-bar>
-      <app-nav-bar v-if='!isDesktop'></app-nav-bar>
-      <div v-if='isStandAlone && isOnAppRoute' class='app-nav-bar-margin'></div>
-      <transition :class='$store.state.theme.style' name='fade-transition' mode='out-in'>
-        <loading v-if='$root.routerViewLoading'></loading>
-        <div v-else id='router-view'>
-          <router-view/>
+  <div class='app-wrapper'>
+    <div class='app background-color' :class='theme'>
+      <div class='visible'>
+        <div class='navbar' :class='isDesktop ? "desktop" : "mobile"'>
+          <the-nav-bar></the-nav-bar>
         </div>
-      </transition>
-    </section>
-    <pop-up v-if='isOnAppRoute'></pop-up>
-    <mobile-section v-if='!isDesktop && (!isOnAppRoute || (isOnAppRoute && !isStandAlone))'></mobile-section>
-    <toast></toast>
+        <transition name='fade' mode='out-in'>
+          <router-view class='content' />
+        </transition>
+        <div class='pop-ups-wrapper' :class='{hidden: !showingPopUp}'>
+          <div class='pop-ups' :class='{hidden: !showingPopUp}'>
+            <transition name='fade' mode='out-in'>
+              <component class='pop-up' :is='popUp'></component>
+            </transition>
+            <div class='popup-margin' @click='pushPopUp("")'></div>
+          </div>
+        </div>
+        <transition name='appbar-trans'>
+          <div v-if='appBarState' class='appbar-wrapper'>
+            <the-app-bar class='appbar'></the-app-bar>
+            <div class='appbar-margin' @click='closeAppBar'></div>
+          </div>
+        </transition>
+      </div>
+    </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
-import store from '@/store';
-import axios from 'axios';
-import NavBar from '@/components/navigation/NavBar.vue';
-import AppNavBar from '@/components/app/navigation/AppNavBar.vue';
-import MobileSection from '@/components/navigation/mobile/MobileSection.vue';
-import Toast from '@/components/regular/Toast.vue';
-import Loading from '@/components/regular/Loading.vue';
+<script lang='ts'>
 
-import PopUps from '@/components/app/popUps/PopUp.vue';
+import { Vue, Component } from 'vue-property-decorator'
+import { State, Getter, Mutation } from 'vuex-class'
 
-import { getCookie, setCookie } from './assets/javaScript/cookies';
+import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 
-export default Vue.extend({
+@Component({
   components: {
-    'mobile-section': MobileSection,
-    'nav-bar': NavBar,
-    'toast': Toast,
-    'loading': Loading,
-    'app-nav-bar': AppNavBar,
-    'pop-up': PopUps,
+    'the-nav-bar': TheNavbar,
+    'SigninPopup': () => import('@/components/PopUps/SigninPopup.vue'),
+    'SignupPopup': () => import('@/components/PopUps/SignupPopup.vue'),
+    'the-app-bar': () => import('@/components/TheAppBar/TheAppBar.vue'),
   },
-  data() {
-    return {
-      clickedOnAppNavBar: false,
-    };
-  },
-  beforeCreate() {
-    if (this.$store.getters.isStandAlone) {
-      if (store.getters.isAuthenticated) {
-        this.$router.push('/user');
-      } else {
-        this.$router.push('/guest');
-      }
-    }
-  },
-  methods: {
-    hideAppNavBar() {
-      setTimeout(() => {
-        if (this.closeNavbar && !this.isDesktop) {
-          this.$store.commit('app/nav/hide');
-        }
-        this.$store.commit('app/nav/fallbackClick');
-      }, 10);
-    },
-  },
-  computed: {
-    isOnAppRoute(): boolean {
-      return this.$route.path === '/guest' || this.$route.path === '/user';
-    },
-    isDesktop(): boolean {
-      return this.$store.getters.NavbarisOnDesktop;
-    },
-    closeNavbar(): boolean {
-      return !this.$store.state.app.nav.clicked && !this.$store.state.app.nav.iconClick && this.isOpened;
-    },
-    isStandAlone(): boolean {
-      return this.$store.getters.isStandAlone;
-    },
-    isOpened(): boolean {
-      return this.$store.state.app.nav.open;
-    },
-  },
-});
+})
+export default class App extends Vue {
+  @State('theme') public readonly theme!: string
+  @State('popUpComponent') public readonly popUp!: string
+  @State('appBarState') public readonly appBarState!: boolean
+  @Getter('isDesktop') public readonly isDesktop!: boolean
+
+  @Mutation('closeAppBar') public readonly closeAppBar!: () => void
+  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
+
+  get showingPopUp(): boolean {
+    return this.popUp !== ''
+  }
+}
+
 </script>
 
-<style>
 
-.shadow.light {
-  box-shadow: 0 4px 10px 2px rgba(180, 180, 180, .4) !important;
-}
+<style scoped>
 
-.background.light {
-  background-color: #F8F7F6;
-}
-
-.card.light, .card-round.light { 
-  background-color: #F8F7F6;
-  border: .5px solid rgba(207,207,207,.4);
-}
-
-.border.dark {
-  border: .5px solid rgba(230,230,230,.1);
-}
-
-.background.dark {
-  background-color: #1F1F1F;
-}
-
-.card.dark, .card-round.dark { 
-  background-color: #282828;
-}
-
-@font-face {
-  font-family: 'Work Sans';
-  src: url('/assets/fonts/WorkSans-Regular.otf');
-}
-
-body {
-  font-family: 'Work Sans';
-  margin: 0;
-}
-
-#body {
-  position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
-  width: 100vw;
-  height: 100vh;
-}
-
-#content {
-  display: flex;
+.app-wrapper {
   position: absolute;
   height: 100%;
   width: 100%;
-  right: 0;
-  flex-direction: column;
-  transition-duration: .3s;
 }
 
-.reduced-brightness {
+.app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.visible {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.pop-ups-wrapper {
+  position: fixed;
+  height: 110%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, .2);
+  transition: background-color .3s; 
+  z-index: 50;
+  overflow: auto;
+}
+
+.pop-ups-wrapper.hidden {
+  background-color: initial;
+  pointer-events: none;
+}
+
+.pop-ups {
+  position: relative;
+  height: 130%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.pop-ups.hidden {
+  height: 100%;
+}
+
+.popup-margin {
   position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 49;
+}
+
+.pop-up {
+  margin-top: 100px;
+  z-index: 50;
+}
+
+.navbar {
+  position: relative;
+  width: 100%;
+  transition: flex-basis .3s;
+}
+
+.navbar.desktop {
+  flex-basis: 80px;
+}
+
+.navbar.mobile {
+  flex-basis: 50px;
+}
+
+.content {
+  position: relative;
+  flex-basis: 100%;
+}
+
+.appbar-wrapper {
+  position: fixed;
   top: 0;
   left: 0;
   height: 100%;
   width: 100%;
-  z-index: 100;
+  display: flex;
 }
 
-#mobile-section {
-  position: absolute;
-  right: -150px;
-  box-sizing: border-box;
-  height: 100%;
-  width: 150px;
-  transition: right .3s;
+.appbar-margin {
+  flex-grow: 1;
 }
 
-#router-view {
-  position: relative;
-  height: 100%;
+.appbar {
+  flex-basis: 300px;
 }
 
-.mainColor {
-  color: #A97CFC;
+.appbar-trans-enter {
+  left: -300px;
 }
 
-.card-round {
-  border-radius: 12px;
+.appbar-trans-enter-to, .appbar-trans-leave-active {
+  transition: left .3s;
 }
 
-.bright.dark {
-  background-color: #3d3d3d;
+.appbar-trans-enter-to {
+  left: 0;
 }
 
-span, a, p {
-  color: #808080;
+.appbar-trans-leave-active {
+  left: -300px;
 }
 
-.app-nav-bar-margin {
-  height: 40px;
-}
+</style>
 
-.toast-transition-enter {
-  bottom: -80px !important;
-}
+<style>
 
-.toast-transition-enter-active {
-  transition-duration: .3s;
-}
-
-.toast-transition-leave-active {
-  transition-duration: .3s;
-  bottom: -80px !important;
-}
-
-.fade-transition-enter-active, .fade-transition-leave-active {
-  transition: opacity .2s;
-}
-.fade-transition-enter, .fade-transition-leave-to {
-  opacity: 0;
-}
-
-.nav-link-enter-active, .nav-link-leave-active {
-  transition: opacity .3s;
-}
-.nav-link-enter, .nav-link-leave-to {
-  opacity: 0;
-}
-
-.list-enter-active, .list-leave-active {
-  transition: all 1s;
-}
-.list-enter, .list-leave-to {
-  opacity: 0;
-}
+@import 'assets/css/global.css';
 
 </style>

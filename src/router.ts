@@ -1,66 +1,52 @@
-import Vue from 'vue';
-import Router from 'vue-router';
+import Vue from 'vue'
+import Router from 'vue-router'
 
-import store from '@/store';
-import { ToastBus } from '@/components/regular/Toast.vue';
-import { ToastObj } from '@/components/interfaces';
+Vue.use(Router)
 
-import { setCookie } from '@/assets/javaScript/cookies';
+const isStandAlone: boolean = window.matchMedia('(display-mode: standalone)').matches
 
-Vue.use(Router);
+let initialPage: string = 'Home'
+if (isStandAlone) {
+  if (localStorage.getItem('watchrIsLogged')) {
+    initialPage = 'App'
+  } else {
+    initialPage = 'Guest'
+  }
+}
 
-const lazyLoad = (view: any) => {
-  return () => import(`@/components/${view}.vue`);
-};
+const routes: any = [
+  {
+    path: '/',
+    name: initialPage,
+    component: () => import(`@/views/${initialPage}.vue`),
+  },
+  {
+    path: '/user',
+    name: 'User',
+    component: () => import('@/views/User.vue'),
+  },
+  {
+    path: '/guest',
+    name: 'Guest',
+    component: () => import('@/views/Guest.vue'),
+  },
+  {
+    path: '/help',
+    name: 'Help',
+    component: () => import('@/views/Help.vue'),
+  },
+]
+
+if (isStandAlone) {
+  routes.push({
+    path: '/home',
+    name: 'Home',
+    component: () => import('@/views/Home.vue'),
+  })
+}
 
 export default new Router({
   mode: 'history',
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: lazyLoad('views/Home'),
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: lazyLoad('auth/views/Login'),
-    },
-    {
-      path: '/signup',
-      name: 'signup',
-      component: lazyLoad('auth/views/Signup'),
-    },
-    {
-      path: '/guest',
-      name: 'guest',
-      component: lazyLoad('views/Guest'),
-    },
-    {
-      path: '/user',
-      name: 'user',
-      component: lazyLoad('views/User'),
-      beforeEnter: (to, from, next) => {
-        if (store.getters.isAuthenticated) {
-          next();
-        } else {
-          next('/login');
-        }
-      },
-    },
-    {
-      path: '/logout',
-      name: 'logout',
-      beforeEnter: (to, from, next) => {
-        store.commit('logOut');
-        setCookie('watchrSessionToken', '', 30);
-        ToastBus.$emit('addToast', {
-          msg: store.getters['lang/l']('logoutToast'),
-          duration_seconds: 5,
-          type: 'success',
-        } as ToastObj);
-        next('/login');
-      },
-    },
-  ],
-});
+  base: process.env.BASE_URL,
+  routes,
+})

@@ -1,99 +1,78 @@
-import Vue from 'vue';
-import axios from 'axios';
-import Vuex from 'vuex';
-import router from '@/router';
+import Vue from 'vue'
+import Vuex, { Action } from 'vuex'
 
-import themes from '@/store_modules/themes';
-import languages from '@/store_modules/languages';
-import userSection from '@/store_modules/app/app';
+Vue.use(Vuex)
 
-Vue.use(Vuex);
+const savedTheme: string = localStorage.getItem('watchrTheme') || 'light'
 
+interface States {
+  theme: string
+  popUpComponent: string
+  windowWidth: number
+  appBarState: boolean
+  isLogged: boolean
+}
 
-import { setCookie, getCookie } from './assets/javaScript/cookies';
+interface Mutations {
+  pushTheme: (state: States, theme: string) => void
+  pushPopUp: (state: States, compName: string) => void
+  openAppBar: (state: States) => void
+  closeAppBar: (state: States) => void
+  [key: string]: (state: States, payload: any) => any
+}
 
+interface Getters {
+  isDesktop: (state: States) => boolean
+  [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
+}
 
-export default new Vuex.Store({
-  modules: {
-    theme: themes,
-    lang: languages,
-    app: userSection,
-  },
+interface Actions {
+  getWindowWidthOnResize: (obj: {state: States}) => void
+  [key: string]: (obj: any) => any
+}
+
+const store: any = new Vuex.Store({
   state: {
-    user: undefined,
-    windowWidth: undefined,
-    mobileSectionOpened: false,
-  },
-  getters: {
-    isAuthenticated(state: any) {
-      return (state.user !== undefined);
-    },
-    NavbarisOnDesktop(state: any) {
-      if (state.windowWidth > 1025) {
-        return true;
-      }
-      return false;
-    },
-    isStandAlone() {
-      if (window.matchMedia('(display-mode: standalone)').matches) {
-        return true;
-      }
-      return false;
-    },
-  },
+    theme: savedTheme,
+    popUpComponent: '',
+    windowWidth: document.body.clientWidth,
+    appBarState: false,
+    isLogged: false,
+  } as States,
   mutations: {
-    logUser(state: any, user) {
-      state.user = user;
+    pushTheme(state: States, theme: string): void {
+      state.theme = theme
+      localStorage.setItem('watchrTheme', theme)
     },
-    logOut(state: any) {
-      state.user = undefined;
+    pushPopUp(state: States, compName: string): void {
+      state.popUpComponent = compName
     },
-    setWindowWidth(state: any, width: number) {
-      state.windowWidth = width;
+    openAppBar(state: States): void {
+      state.appBarState = true
     },
-    showMobileSection(state: any) {
-      const content: any = document.getElementById('content');
-      const mobile: any = document.getElementById('mobile-section');
-      state.mobileSectionOpened = true;
-
-      mobile.style.right = '0px';
-      content.style.right = '150px';
+    closeAppBar(state: States): void {
+      state.appBarState = false
     },
-    hideMobileSection(state: any) {
-      const content: any = document.getElementById('content');
-      const mobile: any = document.getElementById('mobile-section');
-      state.mobileSectionOpened = false;
-
-      if (mobile) {
-        mobile.style.right = '-150px';
+  } as Mutations,
+  getters: {
+    isDesktop(state: States): boolean {
+      if (state.windowWidth > 1024) {
+        return true
       }
-      content.style.right = '0';
+      return false
     },
-  },
+  } as Getters,
   actions: {
-    getWindowWidthOnResize({ state, getters, commit }) {
-      state.windowWidth = document.body.clientWidth;
+    getWindowWidthOnResize({state, getters, commit}:
+       {state: States, getters: Getters, commit: (str: string) => void}): void {
       window.addEventListener('resize', () => {
-        state.windowWidth = document.body.clientWidth;
-        if (getters.NavbarisOnDesktop) {
-          commit('hideMobileSection');
-        }
-      });
+        state.windowWidth = document.body.clientWidth
+        commit('closeAppBar')
+      })
     },
-    getUserDataIfLogged({ commit }) {
-      const sessionToken = getCookie('watchrSessionToken');
-      if (sessionToken !== '') {
-        return axios.post('http://localhost:3000/autologin', { token: sessionToken }).then((res: any) => {
-          if (res.data.validToken) {
-            commit('logUser', res.data.user);
-          } else {
-            setCookie('watchrSessionToken', '', 30);
-          }
-        });
-      }
-      return new Promise((resolve) => {
-        resolve();
-      });
-    },
-  },
-});
+  } as Actions,
+})
+
+store.dispatch('getWindowWidthOnResize')
+
+export default store

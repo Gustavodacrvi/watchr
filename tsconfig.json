@@ -7,7 +7,6 @@
     "importHelpers": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
-    "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
@@ -35,7 +34,6 @@
     "tests/**/*.tsx"
   ],
   "exclude": [
-    "node_modules",
-    "backend"
+    "node_modules"
   ]
 }

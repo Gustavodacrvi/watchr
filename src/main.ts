@@ -1,43 +1,13 @@
-import Vue from 'vue';
-import App from './App.vue';
-import AppLoad from './AppLoad.vue';
-import router from './router';
-import store from './store';
-import './registerServiceWorker';
-import { Route } from 'vue-router';
+import Vue from 'vue'
+import App from './App.vue'
+import router from './router'
+import store from './store'
+import './registerServiceWorker'
 
-import { getCookie } from '@/assets/javaScript/cookies';
+Vue.config.productionTip = false
 
-Vue.config.productionTip = false;
-
-
-store.dispatch('theme/setSavedTheme');
-store.dispatch('lang/setLanguage', 'en');
-store.dispatch('getWindowWidthOnResize');
-
-let app = new Vue({
-  data: { routerViewLoading: false },
+new Vue({
+  router,
   store,
-  render: (h) => h(AppLoad),
-}).$mount('#app');
-
-Promise.all([
-  store.dispatch('lang/setLanguage', getCookie('watchrLanguage')),
-  store.dispatch('getUserDataIfLogged'),
-]).finally(() => {
-  app = new Vue({
-    data: { routerViewLoading: false },
-    router,
-    store,
-    render: (h) => h(App),
-  }).$mount('#body');
-
-  router.beforeEach((to, from, next) => {
-    app.routerViewLoading = true;
-    next();
-  });
-
-  router.afterEach((to: Route, from: Route) => {
-    app.routerViewLoading = false;
-  });
-});
+  render: (h) => h(App),
+}).$mount('#app')
