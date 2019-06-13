@@ -5,6 +5,7 @@
         <div class='navbar' :class='isDesktop ? "desktop" : "mobile"'>
           <the-nav-bar></the-nav-bar>
         </div>
+        {{ $route.name }}
         <transition name='fade' mode='out-in'>
           <router-view class='content' />
         </transition>

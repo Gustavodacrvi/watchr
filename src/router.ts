@@ -3,33 +3,29 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-const isStandAlone: boolean = window.matchMedia('(display-mode: standalone)').matches
-
-const routes: any = [
-  {
-    path: '/',
-    name: 'Home',
-    component: () => import(`@/views/Home.vue`),
-  },
-  {
-    path: '/user',
-    name: 'User',
-    component: () => import('@/views/User.vue'),
-  },
-  {
-    path: '/guest',
-    name: 'Guest',
-    component: () => import('@/views/Guest.vue'),
-  },
-  {
-    path: '/help',
-    name: 'Help',
-    component: () => import('@/views/Help.vue'),
-  },
-]
-
 export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes,
+  routes: [
+    {
+      path: '/',
+      name: 'Home',
+      component: () => import(`@/views/Home.vue`),
+    },
+    {
+      path: '/user',
+      name: 'User',
+      component: () => import('@/views/User.vue'),
+    },
+    {
+      path: '/guest',
+      name: 'Guest',
+      component: () => import('@/views/Guest.vue'),
+    },
+    {
+      path: '/help',
+      name: 'Help',
+      component: () => import('@/views/Help.vue'),
+    },
+  ],
 })
