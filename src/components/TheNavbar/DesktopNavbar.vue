@@ -65,7 +65,7 @@ export default class DesktopNavbar extends Vue {
   }
 
   public windowEventListener(): void {
-    this.moveMagicLineTo(this.$route.path)
+    this.moveMagicLineTo(this.$route.name)
   }
 
   public  moveMagicLineTo(ref: string | undefined): void {

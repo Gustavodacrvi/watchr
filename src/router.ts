@@ -5,20 +5,11 @@ Vue.use(Router)
 
 const isStandAlone: boolean = window.matchMedia('(display-mode: standalone)').matches
 
-let initialPage: string = 'Home'
-if (isStandAlone) {
-  if (localStorage.getItem('watchrIsLogged')) {
-    initialPage = 'App'
-  } else {
-    initialPage = 'Guest'
-  }
-}
-
 const routes: any = [
   {
     path: '/',
-    name: initialPage,
-    component: () => import(`@/views/${initialPage}.vue`),
+    name: 'Home',
+    component: () => import(`@/views/Home.vue`),
   },
   {
     path: '/user',
@@ -36,14 +27,6 @@ const routes: any = [
     component: () => import('@/views/Help.vue'),
   },
 ]
-
-if (isStandAlone) {
-  routes.push({
-    path: '/home',
-    name: 'Home',
-    component: () => import('@/views/Home.vue'),
-  })
-}
 
 export default new Router({
   mode: 'history',
