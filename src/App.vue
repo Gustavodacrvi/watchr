@@ -8,14 +8,9 @@
         <transition name='fade' mode='out-in'>
           <router-view class='content' />
         </transition>
-        <div class='pop-ups-wrapper' :class='{hidden: !showingPopUp}'>
-          <div class='pop-ups' :class='{hidden: !showingPopUp}'>
-            <transition name='fade' mode='out-in'>
-              <component class='pop-up' :is='popUp'></component>
-            </transition>
-            <div class='popup-margin' @click='pushPopUp("")'></div>
-          </div>
-        </div>
+        <transition name='fade' mode='out-in'>
+          <component :is='popUp'></component>
+        </transition>
         <transition name='appbar-trans'>
           <keep-alive>
             <the-app-bar v-if='appBarState'></the-app-bar>
@@ -48,11 +43,6 @@ export default class App extends Vue {
   @Getter('isDesktop') public readonly isDesktop!: boolean
 
   @Mutation('closeAppBar') public readonly closeAppBar!: () => void
-  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
-
-  get showingPopUp(): boolean {
-    return this.popUp !== ''
-  }
 }
 
 </script>
@@ -76,46 +66,6 @@ export default class App extends Vue {
   height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.pop-ups-wrapper {
-  position: fixed;
-  height: 110%;
-  width: 100%;
-  background-color: rgba(0, 0, 0, .2);
-  transition: background-color .3s; 
-  z-index: 50;
-  overflow: auto;
-}
-
-.pop-ups-wrapper.hidden {
-  background-color: initial;
-  pointer-events: none;
-}
-
-.pop-ups {
-  position: relative;
-  height: 130%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.pop-ups.hidden {
-  height: 100%;
-}
-
-.popup-margin {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 49;
-}
-
-.pop-up {
-  margin: 100px 20px 100px 20px;
-  z-index: 50;
 }
 
 .navbar {

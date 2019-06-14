@@ -1,33 +1,38 @@
 <template>
-  <div class='card round-border signin-popup' :class='theme'>
-    <div class='title'>
-      <h2>Sign in</h2>
-    </div>
-    <div class='content' :class='{mobile: !isDesktop}'>
-      <input class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='theme' v-model='username'>
-      <input class='margin input txt round-border gray' placeholder='E-mail: ' type='text' autocomplete='off' :class='theme' v-model='email'>
-      <div class='margin password'>
-        <input class='input txt round-border gray' placeholder='New password: ' :type='passwordType' autocomplete='off' :class='theme' v-model='password'>
-        <span class='eyes'>
-          <transition name='fade'>
-            <icon v-if="passwordType === 'text'" class='eye' icon='eye' size='1x' @click='togglePassword'></icon>
-            <icon v-else class='eye' icon='eye-slash' size='1x' @click='togglePassword'></icon>
-          </transition>
-        </span>
+  <div class='wrapper'>
+    <div class='relative-wrapper'>
+      <div class='pop-up card round-border signin-popup' :class='theme'>
+        <div class='title'>
+          <h2>Sign in</h2>
+        </div>
+        <div class='content' :class='{mobile: !isDesktop}'>
+          <input class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='theme' v-model='username'>
+          <input class='margin input txt round-border gray' placeholder='E-mail: ' type='text' autocomplete='off' :class='theme' v-model='email'>
+          <div class='margin password'>
+            <input class='input txt round-border gray' placeholder='New password: ' :type='passwordType' autocomplete='off' :class='theme' v-model='password'>
+            <span class='eyes'>
+              <transition name='fade'>
+                <icon v-if="passwordType === 'text'" class='eye' icon='eye' size='1x' @click='togglePassword'></icon>
+                <icon v-else class='eye' icon='eye-slash' size='1x' @click='togglePassword'></icon>
+              </transition>
+            </span>
+          </div>
+          <div class='margin password'>
+            <input class='input txt round-border gray' placeholder='Confirm password: ' :type='passwordType' autocomplete='off' :class='theme' v-model='newPassword'>
+            <span class='eyes'>
+              <transition name='fade'>
+                <icon v-if="passwordType === 'text'" class='eye' icon='eye' size='1x' @click='togglePassword'></icon>
+                <icon v-else class='eye' icon='eye-slash' size='1x' @click='togglePassword'></icon>
+              </transition>
+            </span>
+          </div>
+          <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest'>Sign in</button>
+          <button v-else class='margin button round-border'>
+            <icon class='icon' icon='sync' hoverColor='white' color='white' :spin='true'></icon>
+          </button>
+        </div>
       </div>
-      <div class='margin password'>
-        <input class='input txt round-border gray' placeholder='Confirm password: ' :type='passwordType' autocomplete='off' :class='theme' v-model='newPassword'>
-        <span class='eyes'>
-          <transition name='fade'>
-            <icon v-if="passwordType === 'text'" class='eye' icon='eye' size='1x' @click='togglePassword'></icon>
-            <icon v-else class='eye' icon='eye-slash' size='1x' @click='togglePassword'></icon>
-          </transition>
-        </span>
-      </div>
-      <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest'>Sign in</button>
-      <button v-else class='margin button round-border'>
-        <icon class='icon' icon='sync' hoverColor='white' color='white' :spin='true'></icon>
-      </button>
+      <div class='popup-margin' @click='pushPopUp("")'></div>
     </div>
   </div>
 </template>
@@ -47,6 +52,7 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 })
 export default class SigninPopUp extends Mixins(Mixin) {
   @State('theme') public readonly theme!: string
+  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
 
   public username: string | null = null
   public email: string | null = null
@@ -70,18 +76,44 @@ export default class SigninPopUp extends Mixins(Mixin) {
 
 <style scoped>
 
+.wrapper {
+  position: fixed;
+  height: 110%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, .2);
+  transition: background-color .3s; 
+  z-index: 50;
+  overflow: auto;
+}
+
+.relative-wrapper {
+  position: relative;
+  height: 130%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.popup-margin {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 49;
+}
+
+.pop-up {
+  margin: 100px 20px 100px 20px;
+  z-index: 50;
+}
+
 .signin-popup {
   position: relative;
   flex-basis: 600px;
 }
 
 .content {
-  margin: 0 40px;
-  margin-bottom: 25px;
-}
-
-.content.mobile {
-  margin: 0 10px;
+  margin: 0 20px;
   margin-bottom: 25px;
 }
 
@@ -101,7 +133,12 @@ export default class SigninPopUp extends Mixins(Mixin) {
   border: none;
   box-sizing: border-box;
   width: 100%;
+  transition: border .3s, background-color .3s;
   font-size: 1em;
+}
+
+.input.wrong {
+  border: 2px solid #FC7C85;
 }
 
 .margin + .margin {
@@ -142,8 +179,10 @@ export default class SigninPopUp extends Mixins(Mixin) {
 }
 
 .link {
+  font-size: .9em;
   color: #2599fe;
   cursor: pointer;
 }
+
 
 </style>
