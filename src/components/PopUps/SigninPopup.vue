@@ -69,12 +69,7 @@ export default class SigninPopUp extends Mixins(Mixin) {
 }
 
 .content {
-  margin: 0 40px;
-  margin-bottom: 25px;
-}
-
-.content.mobile {
-  margin: 0 10px;
+  margin: 0 20px;
   margin-bottom: 25px;
 }
 
@@ -140,6 +135,7 @@ export default class SigninPopUp extends Mixins(Mixin) {
 }
 
 .link {
+  font-size: .9em;
   color: #2599fe;
   cursor: pointer;
 }

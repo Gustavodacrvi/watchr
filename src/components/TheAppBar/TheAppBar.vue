@@ -1,58 +1,61 @@
 <template>
-  <div class='wrapper gray' :class='theme'>
-    <transition name='fade' mode='out-in' tag='div'>
-      <div v-if='isDesktop' class='theappbar' key='desktop-appbar'>
+  <div class='wrapper'>
+    <div class='appbar gray' :class='theme'>
+      <transition name='fade' mode='out-in' tag='div'>
+        <div v-if='isDesktop' class='theappbar' key='desktop-appbar'>
 
-      </div>
-      <div v-else-if='!isLogged && !mobileSettingsMenu' class='theappbar' key='mobile-appbar-notlogged'>
-        <div class='auth-banner main-color-card' :class='theme'>
-          <button class='auth-button' @click='pushPopUp("SignupPopup")' :class='theme'>SIGN UP</button>
-          <button class='auth-button' @click='pushPopUp("SigninPopup")' :class='theme'>SIGN IN</button>
         </div>
-        <div class='content-wrapper'>
-          <div class='content'>
-            <router-link class='link txt' :class='theme' :to='{name: "Home"}' @click.native='closeAppBar'>Home</router-link>
-            <router-link class='link txt' :class='theme' :to='{name: "Guest"}' @click.native='closeAppBar'>Guest</router-link>
+        <div v-else-if='!isLogged && !mobileSettingsMenu' class='theappbar' key='mobile-appbar-notlogged'>
+          <div class='auth-banner main-color-card' :class='theme'>
+            <button class='auth-button' @click='pushPopUp("SignupPopup")' :class='theme'>SIGN UP</button>
+            <button class='auth-button' @click='pushPopUp("SigninPopup")' :class='theme'>SIGN IN</button>
           </div>
-        </div>
-        <div class='footer-wrapper'>
-          <hr class='border'>
-          <div class='footer'>
-            <div class='left'>
-              <icon icon='cog' @click='changeMenu'></icon>
-            </div>
-            <div class='right'>
-              <icon icon='adjust' @click='changeTheme'></icon>
+          <div class='content-wrapper'>
+            <div class='content'>
+              <router-link class='link txt' :class='theme' :to='{name: "Home"}' @click.native='closeAppBar'>Home</router-link>
+              <router-link class='link txt' :class='theme' :to='{name: "Guest"}' @click.native='closeAppBar'>Guest</router-link>
             </div>
           </div>
-        </div>
-      </div>
-      <div v-else-if='!isLogged && mobileSettingsMenu' class='theappbar' key='mobile-appbar-notlogged-settingsmenu'>
-        <div class='auth-banner main-color-card' :class='theme'>
-          <button class='auth-button' @click='pushPopUp("SignupPopup")' :class='theme'>SIGN UP</button>
-          <button class='auth-button' @click='pushPopUp("SigninPopup")' :class='theme'>SIGN IN</button>
-        </div>
-        <div class='content-wrapper'>
-          <div class='content'>
-          </div>
-        </div>
-        <div class='footer-wrapper'>
-          <hr class='border'>
-          <div class='footer'>
-            <div class='left'>
-              <icon icon='tasks' @click='changeMenu'></icon>
-            </div>
-            <div class='right'>
-              <icon icon='adjust' @click='changeTheme'></icon>
+          <div class='footer-wrapper'>
+            <hr class='border'>
+            <div class='footer'>
+              <div class='left'>
+                <icon icon='cog' @click='changeMenu'></icon>
+              </div>
+              <div class='right'>
+                <icon icon='adjust' @click='changeTheme'></icon>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div v-else-if='isLogged && !mobileSettingsMenu' class='theappbar' key='mobile-appbar-logged'>
-      </div>
-      <div v-else-if='isLogged && mobileSettingsMenu' class='theappbar' key='mobile-appbar-logged-settingsmenu'>
-      </div>
-    </transition>
+        <div v-else-if='!isLogged && mobileSettingsMenu' class='theappbar' key='mobile-appbar-notlogged-settingsmenu'>
+          <div class='auth-banner main-color-card' :class='theme'>
+            <button class='auth-button' @click='pushPopUp("SignupPopup")' :class='theme'>SIGN UP</button>
+            <button class='auth-button' @click='pushPopUp("SigninPopup")' :class='theme'>SIGN IN</button>
+          </div>
+          <div class='content-wrapper'>
+            <div class='content'>
+            </div>
+          </div>
+          <div class='footer-wrapper'>
+            <hr class='border'>
+            <div class='footer'>
+              <div class='left'>
+                <icon icon='tasks' @click='changeMenu'></icon>
+              </div>
+              <div class='right'>
+                <icon icon='adjust' @click='changeTheme'></icon>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-else-if='isLogged && !mobileSettingsMenu' class='theappbar' key='mobile-appbar-logged'>
+        </div>
+        <div v-else-if='isLogged && mobileSettingsMenu' class='theappbar' key='mobile-appbar-logged-settingsmenu'>
+        </div>
+      </transition>
+    </div>
+    <div class='appbar-margin' @click='closeAppBar'></div>
   </div>
 </template>
 
@@ -98,6 +101,23 @@ export default class TheNavBar extends Vue {
 </script>
 
 <style scoped>
+
+.wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+
+.appbar {
+  flex-basis: 300px;
+}
+
+.appbar-margin {
+  flex-grow: 1;
+}
 
 .theappbar {
   position: relative;

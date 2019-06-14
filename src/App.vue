@@ -5,7 +5,6 @@
         <div class='navbar' :class='isDesktop ? "desktop" : "mobile"'>
           <the-nav-bar></the-nav-bar>
         </div>
-        {{ $route.name }}
         <transition name='fade' mode='out-in'>
           <router-view class='content' />
         </transition>
@@ -18,10 +17,9 @@
           </div>
         </div>
         <transition name='appbar-trans'>
-          <div v-if='appBarState' class='appbar-wrapper'>
-            <the-app-bar class='appbar'></the-app-bar>
-            <div class='appbar-margin' @click='closeAppBar'></div>
-          </div>
+          <keep-alive>
+            <the-app-bar v-if='appBarState'></the-app-bar>
+          </keep-alive>
         </transition>
       </div>
     </div>
@@ -116,7 +114,7 @@ export default class App extends Vue {
 }
 
 .pop-up {
-  margin-top: 100px;
+  margin: 100px 20px 100px 20px;
   z-index: 50;
 }
 
@@ -139,37 +137,20 @@ export default class App extends Vue {
   flex-basis: 100%;
 }
 
-.appbar-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  display: flex;
-}
-
-.appbar-margin {
-  flex-grow: 1;
-}
-
-.appbar {
-  flex-basis: 300px;
-}
-
 .appbar-trans-enter {
-  left: -300px;
+  left: -300px !important;
 }
 
 .appbar-trans-enter-to, .appbar-trans-leave-active {
-  transition: left .3s;
+  transition: left .3s !important;
 }
 
 .appbar-trans-enter-to {
-  left: 0;
+  left: 0 !important;
 }
 
 .appbar-trans-leave-active {
-  left: -300px;
+  left: -300px !important;
 }
 
 </style>
