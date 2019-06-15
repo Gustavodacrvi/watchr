@@ -55,12 +55,14 @@ export default class DesktopNavbar extends Vue {
   public lineLeftPosition: string = ''
   public lineWidth: string = ''
 
-  public  mounted(): void {
-    this.moveMagicLineTo(this.$route.name)
+  public mounted(): void {
+    setTimeout(() => {
+      this.moveMagicLineTo(this.$route.name)
+    }, 50)
     window.addEventListener('resize', this.windowEventListener)
   }
 
-  public  beforeDestroy(): void {
+  public beforeDestroy(): void {
     window.removeEventListener('resize', this.windowEventListener)
   }
 
@@ -68,7 +70,7 @@ export default class DesktopNavbar extends Vue {
     this.moveMagicLineTo(this.$route.name)
   }
 
-  public  moveMagicLineTo(ref: string | undefined): void {
+  public moveMagicLineTo(ref: string | undefined): void {
     if (ref && this.$refs[ref]) {
       const comp: any = this.$refs[ref]
       const el: any = comp[0].$el
@@ -76,14 +78,14 @@ export default class DesktopNavbar extends Vue {
       this.lineWidth = el.offsetWidth + 'px'
     }
   }
-  public  changeTheme(): void {
+  public changeTheme(): void {
     if (this.theme === 'dark') {
       this.pushTheme('light')
     } else {
       this.pushTheme('dark')
     }
   }
-  public  get magicLineStyles(): object {
+  public get magicLineStyles(): object {
     return {
       left: this.lineLeftPosition,
       width: this.lineWidth,
@@ -119,10 +121,10 @@ export default class DesktopNavbar extends Vue {
 .magic-line {
   position: absolute;
   bottom: 0;
-  background-color: #A97CFC;
+  background-color: #AF92F7;
   height: 2px;
   border-radius: 2px;
-  box-shadow: 0 1px 1px #A97CFC;
+  box-shadow: 0 1px 1px #AF92F7;
 }
 
 .link {
@@ -135,8 +137,8 @@ export default class DesktopNavbar extends Vue {
 }
 
 .link:hover.non-public , .router-link-exact-active {
-  color: #A97CFC;
-  text-shadow: 0 0 1px #A97CFC;
+  color: #AF92F7;
+  text-shadow: 0 0 1px #AF92F7;
 }
 
 .margin {
@@ -151,7 +153,7 @@ export default class DesktopNavbar extends Vue {
 }
 
 .drop-el:hover  {
-  color: #A97CFC !important;
+  color: #AF92F7 !important;
 }
 
 .dual-drop-el {

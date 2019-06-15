@@ -29,11 +29,11 @@ body, button, input {
 }
 
 .main-color, h1, h2, h3, h4, h5, h6 {
-  color: #A97CFC;
+  color: #AF92F7;
 }
 
 .background-color.light {
-  background-color: #F8F7F6;
+  background-color: #FAFAFA;
 }
 
 .background-color.dark {
@@ -42,7 +42,7 @@ body, button, input {
 
 .card.light {
   background-color: #FDFCFC;
-  border: .5px solid #D9D9D9;
+  box-shadow: 0 0 5px rgba(200, 200, 200, .4);
 }
 
 .card.dark {
@@ -50,7 +50,7 @@ body, button, input {
 }
 
 .main-color-card.light {
-  background-color: #A97CFC;
+  background-color: #AF92F7;
 }
 
 .main-color-card.dark {
@@ -66,7 +66,7 @@ body, button, input {
 }
 
 .round-border {
-  border-radius: 12px;
+  border-radius: 10px;
 }
 
 .fade-enter-active, .fade-leave-active {

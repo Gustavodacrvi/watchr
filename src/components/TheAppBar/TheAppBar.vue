@@ -145,12 +145,12 @@ export default class TheNavBar extends Vue {
 }
 
 .link.light:hover, .router-link-exact-active.light {
-  color: #A97CFC;
+  color: #AF92F7;
   background-color: #E6E6E6;
 }
 
 .link.dark:hover, .router-link-exact-active.dark {
-  color: #A97CFC;
+  color: #AF92F7;
   background-color: #282828;
 }
 
@@ -196,7 +196,7 @@ export default class TheNavBar extends Vue {
 }
 
 .auth-button.dark {
-  background-color: #A97CFC;
+  background-color: #AF92F7;
   color: white;
   transition: background-color .3s;
 }
@@ -211,7 +211,7 @@ export default class TheNavBar extends Vue {
 }
 
 .auth-button.light:hover {
-  color: #A97CFC;
+  color: #AF92F7;
 }
 
 </style>

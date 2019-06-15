@@ -5,9 +5,9 @@
         <div class='title'>
           <h2>Sign in</h2>
         </div>
-        <div class='content' :class='{mobile: !isDesktop}'>
-          <input class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme,{wrong: inputHasError(username, 50)}]' v-model='username'>
-          <div class='margin password'>
+        <div class='content'>
+          <input  class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme,{wrong: inputHasError(username, 50)}, !isDesktop ? "mobile" : ""]' v-model='username'>
+          <div class='margin password' :class='{mobile: !isDesktop}'>
             <input class='input txt round-border gray' placeholder='Password: ' :type='passwordType' autocomplete='off' :class='[theme, {wrong: inputHasError(password, 50)}]' v-model='password'>
             <span class='eyes'>
               <transition name='fade'>
@@ -16,17 +16,17 @@
               </transition>
             </span>
           </div>
-            <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest'>Sign in</button>
-            <button v-else class='margin button round-border'>
+            <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest' :class='{mobile: !isDesktop}'>Sign in</button>
+            <button v-else class='margin button round-border' :class='{mobile: !isDesktop}'>
               <icon class='icon' icon='sync' hoverColor='white' color='white' :spin='true'></icon>
             </button>
-          <div class='margin links'>
+          <div class='margin links' :class='{mobile: !isDesktop}'>
             <span class='link'>Forgot password?</span>
             <span class='link'>Forgot username?</span>
           </div>
         </div>
       </div>
-      <div class='popup-margin' @click='pushPopUp("")'></div>
+      <div class='popup-margin' :class='{mobile: !isDesktop}' @click='pushPopUp("")'></div>
     </div>
   </div>
 </template>
@@ -34,7 +34,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Mixins } from 'vue-property-decorator'
-import { State, Mutation } from 'vuex-class'
+import { State, Mutation, Getter } from 'vuex-class'
 import Mixin from '@/mixins/authPopUp'
 
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
@@ -46,6 +46,7 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 })
 export default class SigninPopUp extends Mixins(Mixin) {
   @State('theme') public readonly theme!: string
+  @Getter('isDesktop') public readonly isDesktop!: boolean
   @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
 
   public username: string | null = null
@@ -72,7 +73,7 @@ export default class SigninPopUp extends Mixins(Mixin) {
   position: fixed;
   height: 110%;
   width: 100%;
-  background-color: rgba(0, 0, 0, .2);
+  background-color: rgba(0, 0, 0, .1);
   transition: background-color .3s; 
   z-index: 50;
   overflow: auto;
@@ -120,7 +121,7 @@ export default class SigninPopUp extends Mixins(Mixin) {
 }
 
 .input {
-  padding: 8px;
+  padding: 10px;
   outline: none;
   border: none;
   box-sizing: border-box;
@@ -137,6 +138,10 @@ export default class SigninPopUp extends Mixins(Mixin) {
   margin-top: 8px;
 }
 
+.margin.mobile + .margin.mobile {
+  margin-top: 12px;
+}
+
 .password {
   position: relative;
 }
@@ -151,7 +156,7 @@ export default class SigninPopUp extends Mixins(Mixin) {
 .button {
   color: white;
   text-align: center;
-  background-color: #A97CFC;
+  background-color: #AF92F7;
   border: none;
   outline: none;
   padding: 8px;
