@@ -23,6 +23,7 @@ interface Mutations {
 
 interface Getters {
   isDesktop: (state: States) => boolean
+  isStandAlone: (state: States) => boolean
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
 }
 
@@ -60,6 +61,9 @@ const store: any = new Vuex.Store({
         return true
       }
       return false
+    },
+    isStandAlone(state: States): boolean {
+      return window.matchMedia('(display-mode: standalone)').matches
     },
   } as Getters,
   actions: {

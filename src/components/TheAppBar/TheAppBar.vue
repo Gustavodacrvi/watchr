@@ -2,57 +2,11 @@
   <div class='wrapper'>
     <div class='appbar gray' :class='theme'>
       <transition name='fade' mode='out-in' tag='div'>
-        <div v-if='isDesktop' class='theappbar' key='desktop-appbar'>
-
-        </div>
-        <div v-else-if='!isLogged && !mobileSettingsMenu' class='theappbar' key='mobile-appbar-notlogged'>
-          <div class='auth-banner main-color-card' :class='theme'>
-            <button class='auth-button' @click='pushPopUp("SignupPopup")' :class='theme'>SIGN UP</button>
-            <button class='auth-button' @click='pushPopUp("SigninPopup")' :class='theme'>SIGN IN</button>
-          </div>
-          <div class='content-wrapper'>
-            <div class='content'>
-              <router-link class='link txt' :class='theme' :to='{name: "Home"}' @click.native='closeAppBar'>Home</router-link>
-              <router-link class='link txt' :class='theme' :to='{name: "Guest"}' @click.native='closeAppBar'>Guest</router-link>
-            </div>
-          </div>
-          <div class='footer-wrapper'>
-            <hr class='border'>
-            <div class='footer'>
-              <div class='left'>
-                <icon icon='cog' @click='changeMenu'></icon>
-              </div>
-              <div class='right'>
-                <icon icon='adjust' @click='changeTheme'></icon>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div v-else-if='!isLogged && mobileSettingsMenu' class='theappbar' key='mobile-appbar-notlogged-settingsmenu'>
-          <div class='auth-banner main-color-card' :class='theme'>
-            <button class='auth-button' @click='pushPopUp("SignupPopup")' :class='theme'>SIGN UP</button>
-            <button class='auth-button' @click='pushPopUp("SigninPopup")' :class='theme'>SIGN IN</button>
-          </div>
-          <div class='content-wrapper'>
-            <div class='content'>
-            </div>
-          </div>
-          <div class='footer-wrapper'>
-            <hr class='border'>
-            <div class='footer'>
-              <div class='left'>
-                <icon icon='tasks' @click='changeMenu'></icon>
-              </div>
-              <div class='right'>
-                <icon icon='adjust' @click='changeTheme'></icon>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div v-else-if='isLogged && !mobileSettingsMenu' class='theappbar' key='mobile-appbar-logged'>
-        </div>
-        <div v-else-if='isLogged && mobileSettingsMenu' class='theappbar' key='mobile-appbar-logged-settingsmenu'>
-        </div>
+        <desktop v-if='desktop' key='desktop-appbar'></desktop>
+        <not-logged-appnav v-else-if='!isLogged && !settings' key='mobile-appbar-notlogged'></not-logged-appnav>
+        <not-logged-settings v-else-if='!isLogged && settings' key='mobile-appbar-notlogged-settingsmenu'></not-logged-settings>
+        <logged-appnav v-else-if='isLogged && !settings' key='mobile-appbar-logged'></logged-appnav>
+        <logged-settings v-else-if='isLogged && settings' key='mobile-appbar-logged-settingsmenu'></logged-settings>
       </transition>
     </div>
     <div class='appbar-margin' @click='closeAppBar'></div>
@@ -69,16 +23,26 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 @Component({
   components: {
     icon: FontAwesomeIcon,
+    'desktop': () => import('@/components/TheAppBar/DesktopAppbar.vue'),
+    'not-logged-settings': () => import('@/components/TheAppBar/NotloggedSettings.vue'),
+    'not-logged-appnav': () => import('@/components/TheAppBar/NotloggedAppnav.vue'),
+    'logged-appnav': () => import('@/components/TheAppBar/LoggedAppnav.vue'),
+    'logged-settings': () => import('@/components/TheAppBar/LoggedSettings.vue'),
   },
 })
 export default class TheNavBar extends Vue {
   @State('theme') public readonly theme!: string
   @State('isLogged') public readonly isLogged!: boolean
   @Getter('isDesktop') public readonly isDesktop!: boolean
+  @Getter('isStandAlone') public readonly isStandAlone!: boolean
   @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
   @Mutation('pushTheme') public readonly pushTheme!: (theme: string) => void
   @Mutation('closeAppBar') public readonly closeAppBar!: () => void
-  public mobileSettingsMenu: boolean = false
+  public settings: boolean = !this.isStandAlone
+
+  created() {
+    this.settings = !this.isStandAlone
+  }
 
   public changeTheme(): void {
     if (this.theme === 'dark') {
@@ -89,7 +53,7 @@ export default class TheNavBar extends Vue {
   }
 
   public changeMenu(): void {
-    this.mobileSettingsMenu = !this.mobileSettingsMenu
+    this.settings = !this.settings
   }
 }
 
@@ -212,6 +176,11 @@ export default class TheNavBar extends Vue {
 
 .auth-button.light:hover {
   color: #AF92F7;
+}
+
+.navsect {
+  display: flex;
+  justify-content: space-around;
 }
 
 </style>
