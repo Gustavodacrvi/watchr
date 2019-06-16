@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class='auth-banner main-color-card' :class='theme'>
+    <div v-if='!isLogged' class='auth-banner main-color-card' :class='theme'>
       <button class='auth-button' @click='pushPopUp("SignupPopup")' :class='theme'>SIGN UP</button>
       <button class='auth-button' @click='pushPopUp("SigninPopup")' :class='theme'>SIGN IN</button>
     </div>
@@ -11,11 +11,11 @@
         </div>
       </div>
     </div>
-    <div class='footer-wrapper'>
+    <div v-if='!isDesktop' class='footer-wrapper'>
       <hr class='border'>
       <div class='footer'>
         <div class='left'>
-          <icon icon='cog' @click='$emit("change", "NotloggedSettings")'></icon>
+          <icon icon='cog' @click='$emit("change")'></icon>
         </div>
         <div class='right'>
           <icon icon='adjust' @click='$emit("theme")'></icon>
@@ -28,7 +28,7 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { State } from 'vuex-class'
+import { State, Getter } from 'vuex-class'
 
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
@@ -39,6 +39,8 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 })
 export default class LoggedAppnav extends Vue {
   @State('theme') public readonly theme!: string
+  @State('isLogged') public readonly isLogged!: boolean
+  @Getter('isDesktop') public readonly isDesktop!: boolean
 
   public readonly sectionIcons: string[] = [
     'home', 'layer-group', 'project-diagram', 'stopwatch', 'stream', 'tags', 'chart-pie',

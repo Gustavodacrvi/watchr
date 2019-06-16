@@ -7,15 +7,15 @@
     <div class='content-wrapper'>
       <div class='content'>
         <router-link class='link txt' :class='theme' :to='{name: "Home"}' @click.native='closeAppBar'>Home</router-link>
-        <router-link class='link txt' :class='theme' :to='{name: "User"}' @click.native='closeAppBar'>User</router-link>
         <router-link class='link txt' :class='theme' :to='{name: "Help"}' @click.native='closeAppBar'>Help</router-link>
+        <router-link class='link txt' :class='theme' :to='{name: "User"}' @click.native='closeAppBar'>User</router-link>
       </div>
     </div>
     <div class='footer-wrapper'>
       <hr class='border'>
       <div class='footer'>
         <div class='left'>
-          <icon icon='tasks' @click='$emit("change", "NotloggedAppnav")'></icon>
+          <icon icon='tasks' @click='$emit("change")'></icon>
         </div>
         <div class='right'>
           <icon icon='adjust' @click='$emit("theme")'></icon>
@@ -28,7 +28,7 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { State } from 'vuex-class'
+import { State, Getter } from 'vuex-class'
 
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
@@ -39,6 +39,7 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 })
 export default class LoggedAppnav extends Vue {
   @State('theme') public readonly theme!: string
+  @Getter('isDesktop') public readonly isDesktop!: boolean
 }
 
 </script>

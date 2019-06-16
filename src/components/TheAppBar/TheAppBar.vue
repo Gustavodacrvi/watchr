@@ -16,16 +16,12 @@ import { State, Getter, Mutation } from 'vuex-class'
 
 @Component({
   components: {
-    DesktopAppbar: () => import('@/components/TheAppBar/DesktopAppbar.vue'),
-    NotloggedSettings: () => import('@/components/TheAppBar/NotloggedSettings.vue'),
-    NotloggedAppnav: () => import('@/components/TheAppBar/NotloggedAppnav.vue'),
-    LoggedAppnav: () => import('@/components/TheAppBar/LoggedAppnav.vue'),
-    LoggedSettings: () => import('@/components/TheAppBar/LoggedSettings.vue'),
+    appnav: () => import('@/components/TheAppBar/Appnav.vue'),
+    settingsnav: () => import('@/components/TheAppBar/Settingsnav.vue'),
   },
 })
 export default class TheNavBar extends Vue {
   @State('theme') public readonly theme!: string
-  @State('isLogged') public readonly isLogged!: boolean
   @Getter('isDesktop') public readonly isDesktop!: boolean
   @Getter('platform') public readonly platform!: 'mobile' | 'desktop'
   @Getter('isStandAlone') public readonly isStandAlone!: boolean
@@ -38,16 +34,10 @@ export default class TheNavBar extends Vue {
   public created() {
     this.settings = !this.isStandAlone
 
-    if (this.isDesktop) {
-      this.appMenu = 'DesktopAppbar'
-    } else if (!this.isLogged && !this.settings) {
-      this.appMenu = 'NotloggedAppnav'
-    } else if (!this.isLogged && this.settings) {
-      this.appMenu = 'NotloggedSettings'
-    } else if (this.isLogged && !this.settings) {
-      this.appMenu = 'LoggedAppnav'
-    } else if (this.isLogged && this.settings) {
-      this.appMenu = 'LoggedSettings'
+    if (this.isDesktop || !this.settings) {
+      this.appMenu = 'appnav'
+    } else {
+      this.appMenu = 'settingsnav'
     }
   }
 
@@ -59,8 +49,12 @@ export default class TheNavBar extends Vue {
     }
   }
 
-  public changeMenu(compName: string): void {
-    this.appMenu = compName
+  public changeMenu(): void {
+    if (this.appMenu === 'appnav') {
+      this.appMenu = 'settingsnav'
+    } else {
+      this.appMenu = 'appnav'
+    }
   }
 }
 
@@ -78,7 +72,7 @@ export default class TheNavBar extends Vue {
 }
 
 .wrapper.desktop {
-  pointer-events: none;
+  width: 320px;
 }
 
 .wrapper.mobile {

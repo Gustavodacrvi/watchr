@@ -4,8 +4,8 @@
     </div>
     <div class='center'>
       <router-link class='link txt' :to='{name: "Home"}' ref='Home' @click.native='moveMagicLineTo("Home")'>Home</router-link>
-      <router-link class='link txt' :to='{name: "Help"}' ref='Help' @click.native='moveMagicLineTo("Help")'>Help</router-link>
       <router-link class='link txt' :to='{name: "User"}' ref='User' @click.native='moveMagicLineTo("User")'>User</router-link>
+      <router-link class='link txt' :to='{name: "Help"}' ref='Help' @click.native='moveMagicLineTo("Help")'>Help</router-link>
     </div>
     <div class='right'>
       <icon-dropdown class='margin' handle='user'>

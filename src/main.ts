@@ -15,3 +15,11 @@ new Vue({
 if (store.isStandAlone) {
   router.replace({name: 'User'})
 }
+
+router.beforeEach((to: any, from: any, next: any) => {
+  if (to.name !== 'User') {
+    store.commit('closeAppBar')
+  }
+
+  next()
+})

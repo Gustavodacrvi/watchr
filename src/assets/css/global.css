@@ -33,11 +33,11 @@ body, button, input {
 }
 
 .background-color.light {
-  background-color: #FAFAFA;
+  background-color: #FEFEFE;
 }
 
 .background-color.dark {
-  background-color: #1F1F1F;
+  background-color: #1F1F1F; 
 }
 
 .card.light {
@@ -58,7 +58,7 @@ body, button, input {
 }
 
 .gray.light {
-  background-color: #F0F0F0;
+  background-color: #F5F6F7;
 }
 
 .gray.dark {
