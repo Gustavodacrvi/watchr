@@ -13,9 +13,5 @@ new Vue({
 }).$mount('#app')
 
 if (store.isStandAlone) {
-  if (localStorage.getItem('watchrIsLogged')) {
-    router.replace({name: 'User'})
-  } else {
-    router.replace({name: 'Guest'})
-  }
+  router.replace({name: 'User'})
 }

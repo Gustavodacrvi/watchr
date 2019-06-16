@@ -18,11 +18,6 @@ export default new Router({
       component: () => import('@/views/User.vue'),
     },
     {
-      path: '/guest',
-      name: 'Guest',
-      component: () => import('@/views/Guest.vue'),
-    },
-    {
       path: '/help',
       name: 'Help',
       component: () => import('@/views/Help.vue'),
