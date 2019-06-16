@@ -16,14 +16,15 @@ interface States {
 interface Mutations {
   pushTheme: (state: States, theme: string) => void
   pushPopUp: (state: States, compName: string) => void
-  openAppBar: (state: States) => void
-  closeAppBar: (state: States) => void
+  openAppBar: () => void
+  closeAppBar: () => void
   [key: string]: (state: States, payload: any) => any
 }
 
 interface Getters {
-  isDesktop: (state: States) => boolean
-  isStandAlone: (state: States) => boolean
+  isDesktop: () => boolean
+  isStandAlone: () => boolean
+  platform: () => 'mobile' | 'desktop'
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
 }
 
@@ -62,6 +63,12 @@ const store: any = new Vuex.Store({
       }
       return false
     },
+    platform(state: States, getters: Getters): 'desktop' | 'mobile' {
+      if (getters.isDesktop) {
+        return 'desktop'
+      }
+      return 'mobile'
+    },
     isStandAlone(state: States): boolean {
       return window.matchMedia('(display-mode: standalone)').matches
     },
@@ -71,7 +78,11 @@ const store: any = new Vuex.Store({
        {state: States, getters: Getters, commit: (str: string) => void}): void {
       window.addEventListener('resize', () => {
         state.windowWidth = document.body.clientWidth
-        commit('closeAppBar')
+        if (!getters.isDesktop) {
+          commit('closeAppBar')
+        } else {
+          commit('openAppBar')
+        }
       })
     },
   } as Actions,

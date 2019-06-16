@@ -1,5 +1,6 @@
 <template>
-  <div class='theappbar'>
+  <div>
+    fdas
   </div>
 </template>
 

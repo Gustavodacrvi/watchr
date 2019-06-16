@@ -6,9 +6,9 @@
           <h2>Sign up</h2>
         </div>
         <div class='content'>
-          <input class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme, {wrong: inputHasError(username)}, !isDesktop ? "mobile" : ""]' v-model='username'>
-          <input  class='margin input txt round-border gray' placeholder='E-mail: ' type='text' autocomplete='off' :class='[theme, , {wrong: inputHasError(email)}, !isDesktop ? "mobile" : "mobile"]' v-model='email'>
-          <div class='margin password' :class='{mobile: !isDesktop}'>
+          <input class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme, {wrong: inputHasError(username)}, platform]' v-model='username'>
+          <input  class='margin input txt round-border gray' placeholder='E-mail: ' type='text' autocomplete='off' :class='[theme, , {wrong: inputHasError(email)}, platform]' v-model='email'>
+          <div class='margin password' :class='platform'>
             <input class='input txt round-border gray' placeholder='New password: ' :type='passwordType' autocomplete='off' :class='[theme, , {wrong: inputHasError(password)}]' v-model='password'>
             <span class='eyes'>
               <transition name='fade'>
@@ -17,7 +17,7 @@
               </transition>
             </span>
           </div>
-          <div class='margin password' :class='{mobile: !isDesktop}'>
+          <div class='margin password' :class='platform'>
             <input class='input txt round-border gray' placeholder='Confirm password: ' :type='passwordType' autocomplete='off' :class='[theme, , {wrong: inputHasError(newPassword)}]' v-model='newPassword'>
             <span class='eyes'>
               <transition name='fade'>
@@ -26,8 +26,8 @@
               </transition>
             </span>
           </div>
-          <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest' :class='{mobile: !isDesktop}'>Sign in</button>
-          <button v-else class='margin button round-border' :class='{mobile: !isDesktop}'>
+          <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest' :class='platform'>Sign in</button>
+          <button v-else class='margin button round-border' :class='platform'>
             <icon class='icon' icon='sync' hoverColor='white' color='white' :spin='true'></icon>
           </button>
         </div>
@@ -52,7 +52,7 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 })
 export default class SigninPopUp extends Mixins(Mixin) {
   @State('theme') public readonly theme!: string
-  @Getter('isDesktop') public readonly isDesktop!: boolean
+  @Getter('platform') public readonly platform!: 'mobile' | 'desktop'
   @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
 
   public username: string | null = null

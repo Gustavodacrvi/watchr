@@ -1,11 +1,11 @@
 <template>
-  <div class='wrapper'>
-    <div class='appbar gray' :class='theme'>
+  <div class='wrapper' :class='platform'>
+    <div class='appbar gray' :class='platform'>
       <transition name='fade' mode='out-in'>
-        <component class='theappbar' :is='appMenu' @change='changeMenu' @theme='changeTheme'></component>
+        <component class='theappbar gray' :class='theme' :is='appMenu' @change='changeMenu' @theme='changeTheme'></component>
       </transition>
     </div>
-    <div class='appbar-margin' @click='closeAppBar'></div>
+    <div v-if='!isDesktop' class='appbar-margin' @click='closeAppBar'></div>
   </div>
 </template>
 
@@ -27,6 +27,7 @@ export default class TheNavBar extends Vue {
   @State('theme') public readonly theme!: string
   @State('isLogged') public readonly isLogged!: boolean
   @Getter('isDesktop') public readonly isDesktop!: boolean
+  @Getter('platform') public readonly platform!: 'mobile' | 'desktop'
   @Getter('isStandAlone') public readonly isStandAlone!: boolean
   @Mutation('pushTheme') public readonly pushTheme!: (theme: string) => void
   @Mutation('closeAppBar') public readonly closeAppBar!: () => void
@@ -38,7 +39,7 @@ export default class TheNavBar extends Vue {
     this.settings = !this.isStandAlone
 
     if (this.isDesktop) {
-      this.appMenu = 'desktop'
+      this.appMenu = 'DesktopAppbar'
     } else if (!this.isLogged && !this.settings) {
       this.appMenu = 'NotloggedAppnav'
     } else if (!this.isLogged && this.settings) {
@@ -76,8 +77,20 @@ export default class TheNavBar extends Vue {
   display: flex;
 }
 
-.appbar {
+.wrapper.desktop {
+  pointer-events: none;
+}
+
+.wrapper.mobile {
+  display: flex;
+}
+
+.appbar.mobile {
   flex-basis: 300px;
+}
+
+.appbar.desktop {
+  width: 300px;
 }
 
 .appbar-margin {

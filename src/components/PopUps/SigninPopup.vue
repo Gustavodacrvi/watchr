@@ -6,8 +6,8 @@
           <h2>Sign in</h2>
         </div>
         <div class='content'>
-          <input  class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme,{wrong: inputHasError(username, 50)}, !isDesktop ? "mobile" : ""]' v-model='username'>
-          <div class='margin password' :class='{mobile: !isDesktop}'>
+          <input  class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme,{wrong: inputHasError(username, 50)}, platform]' v-model='username'>
+          <div class='margin password' :class='platform'>
             <input class='input txt round-border gray' placeholder='Password: ' :type='passwordType' autocomplete='off' :class='[theme, {wrong: inputHasError(password, 50)}]' v-model='password'>
             <span class='eyes'>
               <transition name='fade'>
@@ -16,17 +16,17 @@
               </transition>
             </span>
           </div>
-            <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest' :class='{mobile: !isDesktop}'>Sign in</button>
-            <button v-else class='margin button round-border' :class='{mobile: !isDesktop}'>
+            <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest' :class='platform'>Sign in</button>
+            <button v-else class='margin button round-border' :class='platform'>
               <icon class='icon' icon='sync' hoverColor='white' color='white' :spin='true'></icon>
             </button>
-          <div class='margin links' :class='{mobile: !isDesktop}'>
+          <div class='margin links' :class='platform'>
             <span class='link'>Forgot password?</span>
             <span class='link'>Forgot username?</span>
           </div>
         </div>
       </div>
-      <div class='popup-margin' :class='{mobile: !isDesktop}' @click='pushPopUp("")'></div>
+      <div class='popup-margin' :class='platform' @click='pushPopUp("")'></div>
     </div>
   </div>
 </template>
@@ -46,7 +46,7 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 })
 export default class SigninPopUp extends Mixins(Mixin) {
   @State('theme') public readonly theme!: string
-  @Getter('isDesktop') public readonly isDesktop!: boolean
+  @Getter('platform') public readonly platform!: 'mobile' | 'desktop'
   @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
 
   public username: string | null = null

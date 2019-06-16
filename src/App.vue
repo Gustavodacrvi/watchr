@@ -2,7 +2,7 @@
   <div class='app-wrapper'>
     <div class='app background-color' :class='theme'>
       <div class='visible'>
-        <div class='navbar' :class='isDesktop ? "desktop" : "mobile"'>
+        <div class='navbar' :class='platform'>
           <the-nav-bar></the-nav-bar>
         </div>
         <transition name='fade' mode='out-in'>
@@ -40,7 +40,7 @@ export default class App extends Vue {
   @State('theme') public readonly theme!: string
   @State('popUpComponent') public readonly popUp!: string
   @State('appBarState') public readonly appBarState!: boolean
-  @Getter('isDesktop') public readonly isDesktop!: boolean
+  @Getter('platform') public readonly platform!: 'mobile' | 'desktop'
 
   @Mutation('closeAppBar') public readonly closeAppBar!: () => void
 }
