@@ -7,15 +7,8 @@
     <div class='content-wrapper'>
       <div class='content'>
         <div class='navsect'>
-          <icon icon='home'></icon>
-          <icon icon='layer-group'></icon>
-          <icon icon='project-diagram'></icon>
-          <icon icon='stopwatch'></icon>
-          <icon icon='stream'></icon>
-          <icon icon='tags'></icon>
-          <icon icon='chart-pie'></icon>
+          <icon v-for='icon in sectionIcons' :key='icon' :icon='icon' :color='icon === sectionIcon ? "main-color" : ""'></icon>
         </div>
-        
       </div>
     </div>
     <div class='footer-wrapper'>
@@ -46,6 +39,11 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 })
 export default class LoggedAppnav extends Vue {
   @State('theme') public readonly theme!: string
+
+  public readonly sectionIcons: string[] = [
+    'home', 'layer-group', 'project-diagram', 'stopwatch', 'stream', 'tags', 'chart-pie',
+  ]
+  public sectionIcon: string = 'home'
 }
 
 </script>

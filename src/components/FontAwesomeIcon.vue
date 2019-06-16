@@ -1,27 +1,13 @@
 <template>
-  <span class='fontawesome-icon' @click='$emit("click")' :class='[{blink: blink,}, hoverColor]'>
-    <span v-if='!stack' class='txt'>
-      <i v-if='!spin' :class='`fas fa-${icon} fa-${size}`' :style='`color: ${color}`'></i>
-      <i v-else :class='`fas fa-${icon} fa-${size} fa-spin`' :style='`color: ${color}`'></i>
-    </span>
-    <span v-else :class='`fa-stack txt`'>
-      <template v-for='i in stack'>
-        <i v-if='!i.color' :key='i.icon' :class='`fas fa-${i.icon} fa-stack-${i.size}`'></i>
-        <i v-else :key='i.icon' :class='`fas fa-${i.icon} fa-stack-${i.size}`' :style='`color: ${i.color}`'></i>
-      </template>
-    </span>
+  <span class='fontawesome-icon' @click='$emit("click")' :class='[{blink: blink,}, "hover-" + hoverColor]'>
+    <i v-if='!spin' :class='`fas fa-${icon} fa-${size} ${color}`'></i>
+    <i v-else :class='`fas fa-${icon} fa-${size} fa-spin ${color}`'></i>
   </span>
 </template>
 
 <script lang="ts">
 
 import { Vue, Component, Prop } from 'vue-property-decorator'
-
-interface Stack {
-  color: string
-  icon: string
-  size: string
-}
 
 @Component
 export default class App extends Vue {
@@ -31,12 +17,19 @@ export default class App extends Vue {
   @Prop(Boolean) public readonly blink!: boolean
   @Prop(Boolean) public readonly spin!: boolean
   @Prop(String) public readonly icon!: string
-  @Prop(Array) public readonly stack!: Stack[]
 }
 
 </script>
 
 <style scoped>
+
+.fontawesome-icon .fas {
+  color: #8C8C8C;
+}
+
+.fontawesome-icon .fas.main-color {
+  color: #AF92F7;
+}
 
 .fontawesome-icon .fas {
   transition: color .3s;
@@ -46,19 +39,16 @@ export default class App extends Vue {
   cursor: pointer;
 }
 
-.fontawesome-icon.main-color:hover .fas {
+.fontawesome-icon.hover-main-color:hover .fas {
   color: #AF92F7;
-  text-shadow: 0 0 1px #AF92F7;
 }
 
-.fontawesome-icon.red:hover .fas {
+.fontawesome-icon.hover-red:hover .fas {
   color: #FC7C85;
-  text-shadow: 0 0 1px #FC7C85;
 }
 
-.fontawesome-icon.white:hover .fas {
+.fontawesome-icon.hover-white:hover .fas {
   color: white;
-  text-shadow: 0 0 1px white;
 }
 
 .blink:active .fas {

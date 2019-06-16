@@ -63,11 +63,6 @@ export default class TheNavBar extends Vue {
   }
 }
 
-/*
-  header:
-    not logged mobile, logged mobile and desktop, mobile settings section
- */
-
 </script>
 
 <style scoped>
