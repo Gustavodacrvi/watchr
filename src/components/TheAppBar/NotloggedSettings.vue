@@ -1,5 +1,5 @@
 <template>
-  <div class='theappbar'>
+  <div>
     <div class='auth-banner main-color-card' :class='theme'>
       <button class='auth-button' @click='pushPopUp("SignupPopup")' :class='theme'>SIGN UP</button>
       <button class='auth-button' @click='pushPopUp("SigninPopup")' :class='theme'>SIGN IN</button>
@@ -15,10 +15,10 @@
       <hr class='border'>
       <div class='footer'>
         <div class='left'>
-          <icon icon='tasks' @click='changeMenu'></icon>
+          <icon icon='tasks' @click='$emit("change", "NotloggedAppnav")'></icon>
         </div>
         <div class='right'>
-          <icon icon='adjust' @click='changeTheme'></icon>
+          <icon icon='adjust' @click='$emit("theme")'></icon>
         </div>
       </div>
     </div>
@@ -28,14 +28,20 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
+import { State } from 'vuex-class'
 
-@Component
-export default class LoggedAppnav extends Vue {}
+import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+
+@Component({
+  components: {
+    icon: FontAwesomeIcon,
+  },
+})
+export default class LoggedAppnav extends Vue {
+  @State('theme') public readonly theme!: string
+}
 
 </script>
 
-<style scoped>
-
-
-
+<style scoped src='@/assets/css/appBarMenu.css'>
 </style>

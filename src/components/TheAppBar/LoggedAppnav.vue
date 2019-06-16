@@ -1,5 +1,5 @@
 <template>
-  <div class='theappbar'>
+  <div>
   </div>
 </template>
 
@@ -12,6 +12,5 @@ export default class LoggedAppnav extends Vue {}
 
 </script>
 
-<style scoped>
-
+<style scoped src='@/assets/css/appBarMenu.css'>
 </style>

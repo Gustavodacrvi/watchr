@@ -12,6 +12,5 @@ export default class LoggedAppnav extends Vue {}
 
 </script>
 
-<style scoped>
-
+<style scoped src='@/assets/css/appBarMenu.css'>
 </style>
