@@ -36,4 +36,6 @@ export default class LoggedAppnav extends Vue {}
 
 <style scoped>
 
+
+
 </style>
