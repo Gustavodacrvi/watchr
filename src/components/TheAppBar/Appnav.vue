@@ -7,7 +7,11 @@
     <div class='content-wrapper'>
       <div class='content'>
         <div class='navsect'>
-          <icon v-for='icon in sectionIcons' :key='icon' :icon='icon' :color='icon === sectionIcon ? "main-color" : ""'></icon>
+          <icon v-for='sect in sections' :key='sect.name' :icon='sect.icon' :color='currentSect === sect.name ? "main-color" : ""' @click='currentSect = sect.name'></icon>
+        </div>
+        <hr class='border' style='width: 100%;margin-top:13px;'>
+        <div class='section-title'>
+          <span>{{ currentSect }}</span>
         </div>
       </div>
     </div>
@@ -32,6 +36,11 @@ import { State, Getter } from 'vuex-class'
 
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
+interface Section {
+  name: string
+  icon: string
+}
+
 @Component({
   components: {
     icon: FontAwesomeIcon,
@@ -42,10 +51,16 @@ export default class LoggedAppnav extends Vue {
   @State('isLogged') public readonly isLogged!: boolean
   @Getter('isDesktop') public readonly isDesktop!: boolean
 
-  public readonly sectionIcons: string[] = [
-    'home', 'layer-group', 'project-diagram', 'stopwatch', 'stream', 'tags', 'chart-pie',
+  public readonly sections: Section[] = [
+    {name: 'overview', icon: 'home'},
+    {name: 'perspectives', icon: 'layer-group'},
+    {name: 'projects', icon: 'project-diagram'},
+    {name: 'time tracking', icon: 'stopwatch'},
+    {name: 'intervals and routines', icon: 'stream'},
+    {name: 'tags and labels', icon: 'tags'},
+    {name: 'statistics', icon: 'chart-pie'},
   ]
-  public sectionIcon: string = 'home'
+  public currentSect: string = 'overview'
 }
 
 </script>

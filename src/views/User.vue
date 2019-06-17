@@ -1,6 +1,6 @@
 <template>
   <span>
-    app
+    
   </span>
 </template>
 
