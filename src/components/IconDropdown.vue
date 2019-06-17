@@ -41,6 +41,7 @@ export default class TheNavbar extends Vue {
   top: 100%;
   right: 0;
   min-width: 250px;
+  z-index: 25;
 }
 
 </style>

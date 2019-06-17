@@ -2,26 +2,19 @@
   <div class='app-wrapper'>
     <div class='app background-color' :class='theme'>
       <div class='visible'>
-        <div class='navbar' :class='isDesktop ? "desktop" : "mobile"'>
+        <div class='navbar' :class='platform'>
           <the-nav-bar></the-nav-bar>
         </div>
-        {{ $route.name }}
         <transition name='fade' mode='out-in'>
           <router-view class='content' />
         </transition>
-        <div class='pop-ups-wrapper' :class='{hidden: !showingPopUp}'>
-          <div class='pop-ups' :class='{hidden: !showingPopUp}'>
-            <transition name='fade' mode='out-in'>
-              <component class='pop-up' :is='popUp'></component>
-            </transition>
-            <div class='popup-margin' @click='pushPopUp("")'></div>
-          </div>
-        </div>
+        <transition name='fade' mode='out-in'>
+          <component :is='popUp'></component>
+        </transition>
         <transition name='appbar-trans'>
-          <div v-if='appBarState' class='appbar-wrapper'>
-            <the-app-bar class='appbar'></the-app-bar>
-            <div class='appbar-margin' @click='closeAppBar'></div>
-          </div>
+          <keep-alive>
+            <the-app-bar v-if='appBarState'></the-app-bar>
+          </keep-alive>
         </transition>
       </div>
     </div>
@@ -47,14 +40,9 @@ export default class App extends Vue {
   @State('theme') public readonly theme!: string
   @State('popUpComponent') public readonly popUp!: string
   @State('appBarState') public readonly appBarState!: boolean
-  @Getter('isDesktop') public readonly isDesktop!: boolean
+  @Getter('platform') public readonly platform!: 'mobile' | 'desktop'
 
   @Mutation('closeAppBar') public readonly closeAppBar!: () => void
-  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
-
-  get showingPopUp(): boolean {
-    return this.popUp !== ''
-  }
 }
 
 </script>
@@ -80,46 +68,6 @@ export default class App extends Vue {
   flex-direction: column;
 }
 
-.pop-ups-wrapper {
-  position: fixed;
-  height: 110%;
-  width: 100%;
-  background-color: rgba(0, 0, 0, .2);
-  transition: background-color .3s; 
-  z-index: 50;
-  overflow: auto;
-}
-
-.pop-ups-wrapper.hidden {
-  background-color: initial;
-  pointer-events: none;
-}
-
-.pop-ups {
-  position: relative;
-  height: 130%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.pop-ups.hidden {
-  height: 100%;
-}
-
-.popup-margin {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 49;
-}
-
-.pop-up {
-  margin-top: 100px;
-  z-index: 50;
-}
-
 .navbar {
   position: relative;
   width: 100%;
@@ -139,37 +87,20 @@ export default class App extends Vue {
   flex-basis: 100%;
 }
 
-.appbar-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  display: flex;
-}
-
-.appbar-margin {
-  flex-grow: 1;
-}
-
-.appbar {
-  flex-basis: 300px;
-}
-
 .appbar-trans-enter {
-  left: -300px;
+  left: -300px !important;
 }
 
 .appbar-trans-enter-to, .appbar-trans-leave-active {
-  transition: left .3s;
+  transition: left .3s !important;
 }
 
 .appbar-trans-enter-to {
-  left: 0;
+  left: 0 !important;
 }
 
 .appbar-trans-leave-active {
-  left: -300px;
+  left: -300px !important;
 }
 
 </style>

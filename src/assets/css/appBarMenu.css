@@ -1,0 +1,92 @@
+
+.content-wrapper {
+  flex-basis: 100%;
+}
+
+.content {
+  margin: 14px 14px 0 14px;
+}
+
+.link {
+  display: block;
+  text-decoration: none;
+  padding: 6px 10px;
+  font-size: 1.05em;
+  transition: color .3s, background-color .3s;
+  border-radius: 8px;
+}
+
+.link.light:hover, .router-link-exact-active.light {
+  color: #AF92F7;
+  background-color: #E6E6E6;
+}
+
+.link.dark:hover, .router-link-exact-active.dark {
+  color: #AF92F7;
+  background-color: #282828;
+}
+
+.footer-wrapper {
+  flex-basis: 60px;
+}
+
+.footer {
+  margin: 0 12px;
+}
+
+.border {
+  width: 92%;
+  border: .5px solid #D9D9D9;
+  opacity: .4;
+}
+
+.left {
+  float: left;
+  clear: left;
+}
+
+.right {
+  float: right;
+  clear: right;
+}
+
+.auth-banner {
+  flex-basis: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-button {
+  margin: 8px;
+  padding: 8px 50px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.auth-button.dark {
+  background-color: #AF92F7;
+  color: white;
+  transition: background-color .3s;
+}
+
+.auth-button.dark:hover {
+  background-color: #ba96fd;
+}
+
+.auth-button.light {
+  background-color: #F0F0F0;
+  color: #8C8C8C;
+}
+
+.auth-button.light:hover {
+  color: #AF92F7;
+}
+
+.navsect {
+  display: flex;
+  justify-content: space-between;
+}

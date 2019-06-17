@@ -12,12 +12,14 @@ new Vue({
   render: (h) => h(App),
 }).$mount('#app')
 
-const isStandAlone: boolean = window.matchMedia('(display-mode: standalone)').matches
-
-if (isStandAlone) {
-  if (localStorage.getItem('watchrIsLogged')) {
-    router.replace({name: 'User'})
-  } else {
-    router.replace({name: 'Guest'})
-  }
+if (store.isStandAlone) {
+  router.replace({name: 'User'})
 }
+
+router.beforeEach((to: any, from: any, next: any) => {
+  if (to.name !== 'User') {
+    store.commit('closeAppBar')
+  }
+
+  next()
+})

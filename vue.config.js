@@ -1,7 +1,7 @@
 
 module.exports = {
   pwa: {
-    themeColor: '#A97CFC',
+    themeColor: '#AF92F7',
   },
   chainWebpack: (config) => {
     config.plugins.delete('prefetch')
