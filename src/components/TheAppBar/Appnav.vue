@@ -13,6 +13,7 @@
         <div class='section-title'>
           <span>{{ currentSect }}</span>
         </div>
+        <component :is='currentSect'></component>
       </div>
     </div>
     <div v-if='!isDesktop' class='footer-wrapper'>
@@ -44,6 +45,7 @@ interface Section {
 @Component({
   components: {
     icon: FontAwesomeIcon,
+    overview: () => import('@/components/TheAppBar/AppnavSections/OverviewAppnav.vue'),
   },
 })
 export default class LoggedAppnav extends Vue {

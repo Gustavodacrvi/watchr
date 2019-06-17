@@ -1,5 +1,7 @@
 <template>
-  
+  <div>  
+    asdf
+  </div>
 </template>
 
 <script lang='ts'>
@@ -13,3 +15,6 @@ export default class OverviewAppnav extends Vue {
 
 </script>
 
+<style scoped>
+
+</style>
