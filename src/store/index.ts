@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex, { Action } from 'vuex'
 
-import app from './app'
+import perspective from './perspective'
 
 Vue.use(Vuex)
 
@@ -37,7 +37,7 @@ interface Actions {
 
 const store: any = new Vuex.Store({
   modules: {
-    app,
+    perspective,
   },
   state: {
     theme: savedTheme,

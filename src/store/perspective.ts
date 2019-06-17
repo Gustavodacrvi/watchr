@@ -1,0 +1,34 @@
+
+import { Perspective } from '@/interfaces/app'
+
+interface States {
+  perspectives: Perspective[] | undefined
+}
+
+interface Mutations {
+  setDefaultData: () => void
+  [key: string]: (state: States, payload: any) => any
+}
+
+export default {
+  namespaced: true,
+  state: {
+    perspectives: undefined as Perspective[] | undefined,
+  } as States,
+  mutations: {
+    setDefaultData(state: States) {
+      state.perspectives = [
+        {name: 'Today', binded: true, smart: true, icon: 'calendar-day', iconColor: '#FFE366',
+         hasToBeEmpty: [], showTaskNumber: true, showWhenNotEmpty: false},
+        {name: 'Inbox', binded: true, smart: true, icon: 'inbox', iconColor: '#83B7E2', hasToBeEmpty: [],
+         showTaskNumber: true, showWhenNotEmpty: false},
+        {name: 'Upcoming', binded: true, smart: true, icon: 'calendar-alt', iconColor: '#FF6B66',
+         hasToBeEmpty: [], showTaskNumber: false, showWhenNotEmpty: false},
+        {name: 'Anytime', binded: true, smart: true, icon: 'layer-group', iconColor: '#88DDB7',
+         hasToBeEmpty: [], showTaskNumber: false, showWhenNotEmpty: false},
+        {name: 'Someday', binded: true, smart: true, icon: 'archive', iconColor: '#E2B983',
+         hasToBeEmpty: [], showTaskNumber: false, showWhenNotEmpty: false},
+      ]
+    },
+  } as Mutations,
+}
