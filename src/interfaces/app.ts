@@ -1,4 +1,4 @@
-interface Perspective {
+export interface Perspective {
   smart: boolean
   binded: boolean
   showWhenNotEmpty: boolean

@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuex, { Action } from 'vuex'
 
+import app from './app'
+
 Vue.use(Vuex)
 
 const savedTheme: string = localStorage.getItem('watchrTheme') || 'light'
@@ -34,6 +36,9 @@ interface Actions {
 }
 
 const store: any = new Vuex.Store({
+  modules: {
+    app,
+  },
   state: {
     theme: savedTheme,
     popUpComponent: '',
