@@ -14,6 +14,13 @@
           </span>
         </div>
       </transition>
+      <transition name='top-trans'>
+        <div v-if='showing' class='top-wrapper'>
+          <span class='btn top' v-for='btn in topButtons' :key='btn.icon' :style='`background-color: ${btn.backColor}`' @click='btn.click'>
+            <icon :icon='btn.icon' :color='btn.iconColor'></icon>
+          </span>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -40,6 +47,10 @@ export default class ActionButton extends Vue {
     {icon: 'inbox', iconColor: 'white', backColor: '#83B7E2', click: () => console.log(3)},
     {icon: 'calendar-day', iconColor: 'white', backColor: '#FFE366', click: () => console.log(3)},
     {icon: 'calendar-alt', iconColor: 'white', backColor: '#FF6B66', click: () => console.log(3)},
+  ]
+  public topButtons: Buttons[] = [
+    {icon: 'stopwatch', iconColor: 'white', backColor: '#70FF66', click: () => console.log(3)},
+    {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: () => console.log(3)},
   ]
 
   public showing: boolean = false
@@ -98,6 +109,16 @@ export default class ActionButton extends Vue {
   flex-direction: row-reverse;
 }
 
+.top-wrapper {
+  position: absolute;
+  width: 45px;
+  bottom: 70px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  flex-direction: column-reverse;
+}
+
 .btn {
   display: inline-block;
   border-radius: 100px;
@@ -112,6 +133,10 @@ export default class ActionButton extends Vue {
 
 .btn.left {
   margin: 0 6px;
+}
+
+.btn.top {
+  margin: 6px 0;
 }
 
 .below-trans-enter-active, .below-trans-leave-active {
