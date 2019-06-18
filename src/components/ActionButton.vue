@@ -54,7 +54,7 @@ export default class ActionButton extends Vue {
   ]
   public topButtons: Buttons[] = [
     {icon: 'stopwatch', iconColor: 'white', backColor: '#70FF66'},
-    {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: this.popUp('TagadderPopup')},
+    {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: this.popUp('LabeladderPopup')},
   ]
 
   public showing: boolean = false
