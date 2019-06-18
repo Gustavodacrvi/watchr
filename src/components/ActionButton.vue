@@ -1,7 +1,9 @@
 <template>
   <div class='wrapper'>
     <div class='relative-wrapper'>
-      
+      <span class='main' :class='{close: !showing}' @click='showing = !showing'>
+        <icon class='icon' icon='plus' color='white'></icon>
+      </span>
     </div>
   </div>
 </template>
@@ -29,6 +31,7 @@ export default class ActionButton extends Vue {
   width: 100%;
   height: 100%;
   z-index: 50;
+  pointer-events: none;
 }
 
 .relative-wrapper {
@@ -37,9 +40,25 @@ export default class ActionButton extends Vue {
   height: 100%;
 }
 
-.action-button {
-  
+.main {
+  pointer-events: all;
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100px;
+  background-color: #AF92F7;
+  transition-duration: .3s;
 }
 
+
+.main.close {
+  transform: rotate(45deg);
+}
 
 </style>
