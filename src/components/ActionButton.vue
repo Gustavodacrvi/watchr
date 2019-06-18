@@ -155,4 +155,20 @@ export default class ActionButton extends Vue {
   bottom: -50px;
 }
 
+.top-trans-enter-active, .top-trans-leave-active {
+  transition: right .3s;
+}
+
+.top-trans-enter {
+  right: -50px;
+}
+
+.top-trans-enter-to, .top-trans-leavev {
+  right: 16px;
+}
+
+.top-trans-leave-to {
+  right: -50px;
+}
+
 </style>
