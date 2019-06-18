@@ -4,8 +4,8 @@
       <h2>Sign in</h2>
     </div>
     <div class='content'>
-      <input  class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme,{wrong: inputHasError(username, 50)}, platform]' v-model='username'>
-      <div class='margin password' :class='platform'>
+      <input  class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme,{wrong: inputHasError(username, 50)}]' v-model='username'>
+      <div class='margin password'>
         <input class='input txt round-border gray' placeholder='Password: ' :type='passwordType' autocomplete='off' :class='[theme, {wrong: inputHasError(password, 50)}]' v-model='password'>
         <span class='eyes'>
           <transition name='fade'>
@@ -14,11 +14,11 @@
           </transition>
         </span>
       </div>
-        <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest' :class='platform'>Sign in</button>
-        <button v-else class='margin button round-border' :class='platform'>
+        <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest'>Sign in</button>
+        <button v-else class='margin button round-border'>
           <icon class='icon' icon='sync' hoverColor='white' color='white' :spin='true'></icon>
         </button>
-      <div class='margin links' :class='platform'>
+      <div class='margin links'>
         <span class='link'>Forgot password?</span>
         <span class='link'>Forgot username?</span>
       </div>
@@ -41,7 +41,6 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 })
 export default class SigninPopUp extends Mixins(Mixin) {
   @State('theme') public readonly theme!: string
-  @Getter('platform') public readonly platform!: 'mobile' | 'desktop'
   @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
 
   public username: string | null = null

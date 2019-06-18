@@ -2,7 +2,7 @@
   <div class='wrapper'>
     <div class='relative-wrapper'>
       <icon v-if='!isDesktop' class='close-icon' icon='arrow-left' size='2x' @click='pushPopUp("")'></icon>
-      <component class='pop-up' :class='[{card: isDesktop, "round-border": isDesktop, "background-color": !isDesktop}, platform]' :is='popUp'></component>
+      <component class='pop-up card' :class='[{"round-border": isDesktop, "background-color": !isDesktop}, platform]' :is='popUp'></component>
       <div v-if='isDesktop' class='popup-margin' :class='platform' @click='pushPopUp("")'></div>
     </div>
   </div>
@@ -20,6 +20,7 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
     icon: FontAwesomeIcon,
     SignupPopup: () => import('@/components/PopUps/SignupPopup.vue'),
     SigninPopup: () => import('@/components/PopUps/SigninPopup.vue'),
+    TagadderPopup: () => import('@/components/PopUps/TagadderPopup.vue'),
   },
 })
 export default class PopUp extends Vue {
