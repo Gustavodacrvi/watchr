@@ -34,7 +34,7 @@ interface Buttons {
   icon: string
   iconColor: string
   backColor: string
-  click: () => void
+  click?: () => void
 }
 
 @Component({
@@ -44,13 +44,13 @@ interface Buttons {
 })
 export default class ActionButton extends Vue {
   public leftButtons: Buttons[] = [
-    {icon: 'inbox', iconColor: 'white', backColor: '#83B7E2', click: () => console.log(3)},
-    {icon: 'calendar-day', iconColor: 'white', backColor: '#FFE366', click: () => console.log(3)},
-    {icon: 'calendar-alt', iconColor: 'white', backColor: '#FF6B66', click: () => console.log(3)},
+    {icon: 'inbox', iconColor: 'white', backColor: '#83B7E2'},
+    {icon: 'calendar-day', iconColor: 'white', backColor: '#FFE366'},
+    {icon: 'calendar-alt', iconColor: 'white', backColor: '#FF6B66'},
   ]
   public topButtons: Buttons[] = [
-    {icon: 'stopwatch', iconColor: 'white', backColor: '#70FF66', click: () => console.log(3)},
-    {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: () => console.log(3)},
+    {icon: 'stopwatch', iconColor: 'white', backColor: '#70FF66'},
+    {icon: 'tags', iconColor: 'white', backColor: '#FF6B66'},
   ]
 
   public showing: boolean = false
