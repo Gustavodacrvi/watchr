@@ -18,7 +18,7 @@ interface Getters {
 export default {
   namespaced: true,
   state: {
-    perspectives: undefined as Perspective[] | undefined,
+    perspectives: undefined,
   } as States,
   mutations: {
     setDefaultData(state: States) {

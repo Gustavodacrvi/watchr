@@ -1,8 +1,10 @@
 <template>
   <div>
-    <span class='perspective txt' v-for='pers in smartBindedPerspectives' :key='pers.name'>
-      <icon :icon='pers.icon' :color='pers.iconColor'></icon>
-      {{ pers.name }}
+    <span class='perspective round-border' v-for='pers in smartBindedPerspectives' :class='[theme, {active: pers.name === perspective}]' :key='pers.name'>
+      <span class='icon'>
+        <icon :icon='pers.icon' :color='pers.iconColor'></icon>
+      </span>
+      <span class='txt name'>{{ pers.name }}</span>
     </span>
   </div>
 </template>
@@ -10,7 +12,7 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { Getter, namespace } from 'vuex-class'
+import { Getter, State, namespace } from 'vuex-class'
 
 import { Perspective } from '@/interfaces/app'
 
@@ -24,9 +26,10 @@ const perspective = namespace('perspective')
   },
 })
 export default class OverviewAppnav extends Vue {
+  @State('theme') public readonly theme!: string
   @perspective.Getter('smartBindedPerspectives') public readonly smartBindedPerspectives!: Perspective[]
 
-  public perspective: string = 'Inbox'
+  public perspective: string = 'Today'
 }
 
 </script>

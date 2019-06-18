@@ -7,7 +7,7 @@
     <div class='content-wrapper'>
       <div class='content'>
         <div class='navsect'>
-          <icon v-for='sect in sections' :key='sect.name' :icon='sect.icon' :color='currentSect === sect.name ? "main-color" : ""' @click='currentSect = sect.name'></icon>
+          <icon v-for='sect in sections' :key='sect.name' :icon='sect.icon' :color='currentSect === sect.name ? "#AF92F7" : ""' @click='currentSect = sect.name'></icon>
         </div>
         <hr class='border' style='width: 100%;margin-top:13px;'>
         <div class='section-title'>

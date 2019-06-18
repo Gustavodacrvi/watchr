@@ -38,7 +38,7 @@ interface Actions {
 const store: any = new Vuex.Store({
   modules: {
     perspective,
-  },
+  } as any,
   state: {
     theme: savedTheme,
     popUpComponent: '',
