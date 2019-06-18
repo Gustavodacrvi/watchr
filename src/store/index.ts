@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex, { Action } from 'vuex'
+import router from '@/router'
 
 import perspective from './perspective'
 
@@ -27,6 +28,7 @@ interface Getters {
   isDesktop: () => boolean
   isStandAlone: () => boolean
   platform: () => 'mobile' | 'desktop'
+  isOnAppRoute: () => boolean
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
 }
 
@@ -76,6 +78,9 @@ const store: any = new Vuex.Store({
     },
     isStandAlone(state: States): boolean {
       return window.matchMedia('(display-mode: standalone)').matches
+    },
+    isOnAppRoute(state: States): boolean {
+      return router.currentRoute.name === 'User'
     },
   } as Getters,
   actions: {
