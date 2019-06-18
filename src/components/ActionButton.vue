@@ -1,7 +1,10 @@
 <template>
   <div class='wrapper'>
     <div class='relative-wrapper'>
-      <span class='main' :class='{close: showing}' @click='showing = !showing'>
+      <transition name='fade'>
+        <div v-if='showing' class='margin' @click='showing = false'></div>
+      </transition>
+      <span class='main' @click='showing = !showing'>
         <icon class='icon' icon='plus' color='white'></icon>
       </span>
       <transition name='below-trans'>
@@ -61,6 +64,14 @@ export default class ActionButton extends Vue {
   overflow: hidden;
 }
 
+.margin {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: all;
+  background-color: rgba(0, 0, 0, .4);
+}
+
 .main {
   pointer-events: all;
   position: absolute;
@@ -75,10 +86,6 @@ export default class ActionButton extends Vue {
   border-radius: 100px;
   background-color: #AF92F7;
   transition-duration: .3s;
-}
-
-.main.close {
-  transform: rotate(45deg);
 }
 
 .left-wrapper {
