@@ -4,11 +4,13 @@
       <span class='main' :class='{close: showing}' @click='showing = !showing'>
         <icon class='icon' icon='plus' color='white'></icon>
       </span>
-      <div class='left-wrapper'>
-        <span class='btn left' v-for='btn in leftButtons' :key='btn.icon' :style='`background-color: ${btn.backColor}`' @click='btn.click'>
-          <icon :icon='btn.icon' :color='btn.iconColor'></icon>
-        </span>
-      </div>
+      <transition name='below-trans'>
+        <div class='left-wrapper' v-if='showing'>
+          <span class='btn left' v-for='btn in leftButtons' :key='btn.icon' :style='`background-color: ${btn.backColor}`' @click='btn.click'>
+            <icon :icon='btn.icon' :color='btn.iconColor'></icon>
+          </span>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -56,6 +58,7 @@ export default class ActionButton extends Vue {
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
 .main {
@@ -96,10 +99,28 @@ export default class ActionButton extends Vue {
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+  pointer-events: all;
 }
 
 .btn.left {
   margin: 0 6px;
+}
+
+.below-trans-enter-active, .below-trans-leave-active {
+  transition: bottom .3s;
+}
+
+.below-trans-enter {
+  bottom: -50px;
+}
+
+.below-trans-enter-to, .below-trans-leave {
+  bottom: 16px;
+}
+
+.below-trans-leave-to {
+  bottom: -50px;
 }
 
 </style>
