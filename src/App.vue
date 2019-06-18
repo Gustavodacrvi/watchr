@@ -8,8 +8,8 @@
         <transition name='fade' mode='out-in'>
           <router-view class='content' />
         </transition>
-        <transition name='fade' mode='out-in'>
-          <component :is='popUp'></component>
+        <transition name='pop-up-trans' mode='out-in'>
+          <pop-up v-if='isShowingPopUp'></pop-up>
         </transition>
         <transition name='appbar-trans'>
           <keep-alive>
@@ -17,7 +17,7 @@
           </keep-alive>
         </transition>
         <transition name='fade'>
-          <action-button v-if='isOnAppRoute'></action-button>
+          <action-button v-if='isOnAppRoute && !isShowingPopUp && !appBarState'></action-button>
         </transition>
       </div>
     </div>
@@ -34,8 +34,7 @@ import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 @Component({
   components: {
     'the-nav-bar': TheNavbar,
-    'SigninPopup': () => import('@/components/PopUps/SigninPopup.vue'),
-    'SignupPopup': () => import('@/components/PopUps/SignupPopup.vue'),
+    'pop-up': () => import('@/components/PopUps/PopUp.vue'),
     'the-app-bar': () => import('@/components/TheAppBar/TheAppBar.vue'),
     'action-button': () => import('@/components/ActionButton.vue'),
   },
@@ -50,6 +49,9 @@ export default class App extends Vue {
 
   get isOnAppRoute(): boolean {
     return this.$route.name === 'User'
+  }
+  get isShowingPopUp(): boolean {
+    return this.popUp !== ''
   }
 }
 
@@ -109,6 +111,20 @@ export default class App extends Vue {
 
 .appbar-trans-leave-active {
   left: -300px !important;
+}
+
+.pop-up-trans-enter-active, .pop-up-trans-leave-active {
+  transition: top .3s, opacity .3s !important;
+} 
+
+.pop-up-trans-enter, .pop-up-trans-leave-to {
+  top: 15px;
+  opacity: 0;
+}
+
+.pop-up-trans-enter-to, .pop-up-trans-leave {
+  top: 0;
+  opacity: 1;
 }
 
 </style>

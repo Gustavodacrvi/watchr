@@ -1,38 +1,33 @@
 <template>
-  <div class='wrapper'>
-    <div class='relative-wrapper'>
-      <div class='pop-up card round-border signin-popup' :class='theme'>
-        <div class='title'>
-          <h2>Sign up</h2>
-        </div>
-        <div class='content'>
-          <input class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme, {wrong: inputHasError(username)}, platform]' v-model='username'>
-          <input  class='margin input txt round-border gray' placeholder='E-mail: ' type='text' autocomplete='off' :class='[theme, , {wrong: inputHasError(email)}, platform]' v-model='email'>
-          <div class='margin password' :class='platform'>
-            <input class='input txt round-border gray' placeholder='New password: ' :type='passwordType' autocomplete='off' :class='[theme, , {wrong: inputHasError(password)}]' v-model='password'>
-            <span class='eyes'>
-              <transition name='fade'>
-                <icon v-if="passwordType === 'text'" class='eye' icon='eye' size='1x' @click='togglePassword'></icon>
-                <icon v-else class='eye' icon='eye-slash' size='1x' @click='togglePassword'></icon>
-              </transition>
-            </span>
-          </div>
-          <div class='margin password' :class='platform'>
-            <input class='input txt round-border gray' placeholder='Confirm password: ' :type='passwordType' autocomplete='off' :class='[theme, , {wrong: inputHasError(newPassword)}]' v-model='newPassword'>
-            <span class='eyes'>
-              <transition name='fade'>
-                <icon v-if="passwordType === 'text'" class='eye' icon='eye' size='1x' @click='togglePassword'></icon>
-                <icon v-else class='eye' icon='eye-slash' size='1x' @click='togglePassword'></icon>
-              </transition>
-            </span>
-          </div>
-          <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest' :class='platform'>Sign in</button>
-          <button v-else class='margin button round-border' :class='platform'>
-            <icon class='icon' icon='sync' hoverColor='white' color='white' :spin='true'></icon>
-          </button>
-        </div>
+  <div class='signin-popup' :class='theme'>
+    <div class='title'>
+      <h2>Sign up</h2>
+    </div>
+    <div class='content'>
+      <input class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme, {wrong: inputHasError(username)}, platform]' v-model='username'>
+      <input  class='margin input txt round-border gray' placeholder='E-mail: ' type='text' autocomplete='off' :class='[theme, , {wrong: inputHasError(email)}, platform]' v-model='email'>
+      <div class='margin password' :class='platform'>
+        <input class='input txt round-border gray' placeholder='New password: ' :type='passwordType' autocomplete='off' :class='[theme, , {wrong: inputHasError(password)}]' v-model='password'>
+        <span class='eyes'>
+          <transition name='fade'>
+            <icon v-if="passwordType === 'text'" class='eye' icon='eye' size='1x' @click='togglePassword'></icon>
+            <icon v-else class='eye' icon='eye-slash' size='1x' @click='togglePassword'></icon>
+          </transition>
+        </span>
       </div>
-      <div class='popup-margin' @click='pushPopUp("")'></div>
+      <div class='margin password' :class='platform'>
+        <input class='input txt round-border gray' placeholder='Confirm password: ' :type='passwordType' autocomplete='off' :class='[theme, , {wrong: inputHasError(newPassword)}]' v-model='newPassword'>
+        <span class='eyes'>
+          <transition name='fade'>
+            <icon v-if="passwordType === 'text'" class='eye' icon='eye' size='1x' @click='togglePassword'></icon>
+            <icon v-else class='eye' icon='eye-slash' size='1x' @click='togglePassword'></icon>
+          </transition>
+        </span>
+      </div>
+      <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest' :class='platform'>Sign in</button>
+      <button v-else class='margin button round-border' :class='platform'>
+        <icon class='icon' icon='sync' hoverColor='white' color='white' :spin='true'></icon>
+      </button>
     </div>
   </div>
 </template>

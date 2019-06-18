@@ -35,7 +35,7 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { State, Getter } from 'vuex-class'
+import { State, Getter, Mutation } from 'vuex-class'
 
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
@@ -53,6 +53,7 @@ interface Section {
 export default class LoggedAppnav extends Vue {
   @State('theme') public readonly theme!: string
   @State('isLogged') public readonly isLogged!: boolean
+  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
   @Getter('isDesktop') public readonly isDesktop!: boolean
 
   public readonly sections: Section[] = [

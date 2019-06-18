@@ -1,40 +1,4 @@
 
-.wrapper {
-  position: fixed;
-  height: 110%;
-  width: 100%;
-  background-color: rgba(0, 0, 0, .4);
-  transition: background-color .3s; 
-  z-index: 50;
-  overflow: auto;
-}
-
-.relative-wrapper {
-  position: relative;
-  height: 130%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.popup-margin {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 49;
-}
-
-.pop-up {
-  margin: 100px 20px 100px 20px;
-  z-index: 50;
-}
-
-.signin-popup {
-  position: relative;
-  flex-basis: 600px;
-}
-
 .content {
   margin: 0 20px;
   margin-bottom: 25px;
@@ -66,10 +30,6 @@
 
 .margin + .margin {
   margin-top: 8px;
-}
-
-.margin.mobile + .margin.mobile {
-  margin-top: 12px;
 }
 
 .password {

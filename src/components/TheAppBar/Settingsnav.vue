@@ -28,7 +28,7 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { State, Getter } from 'vuex-class'
+import { State, Getter, Mutation } from 'vuex-class'
 
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
@@ -39,6 +39,7 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 })
 export default class LoggedAppnav extends Vue {
   @State('theme') public readonly theme!: string
+  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
   @Getter('isDesktop') public readonly isDesktop!: boolean
 }
 
