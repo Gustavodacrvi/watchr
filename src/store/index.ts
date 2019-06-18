@@ -5,6 +5,8 @@ import router from '@/router'
 import perspective from './perspective'
 import label from './label'
 
+import { Alert } from '@/interfaces/alert'
+
 Vue.use(Vuex)
 
 const savedTheme: string = localStorage.getItem('watchrTheme') || 'light'
@@ -15,13 +17,16 @@ interface States {
   windowWidth: number
   appBarState: boolean
   isLogged: boolean
+  alerts: Alert[]
 }
 
 interface Mutations {
   pushTheme: (state: States, theme: string) => void
   pushPopUp: (state: States, compName: string) => void
+  pushAlert: (state: States, alert: Alert) => void
   openAppBar: () => void
   closeAppBar: () => void
+  moveAlertQueue: () => void
   [key: string]: (state: States, payload: any) => any
 }
 
@@ -35,7 +40,7 @@ interface Getters {
 
 interface Actions {
   getWindowWidthOnResize: (obj: {state: States}) => void
-  [key: string]: (obj: any) => any
+  [key: string]: (obj: any, payload: any) => any
 }
 
 const store: any = new Vuex.Store({
@@ -48,6 +53,7 @@ const store: any = new Vuex.Store({
     windowWidth: document.body.clientWidth,
     appBarState: false,
     isLogged: false,
+    alerts: [],
   } as States,
   mutations: {
     pushTheme(state: States, theme: string): void {
@@ -56,6 +62,12 @@ const store: any = new Vuex.Store({
     },
     pushPopUp(state: States, compName: string): void {
       state.popUpComponent = compName
+    },
+    pushAlert(state: States, alert: Alert): void {
+      state.alerts.push(alert)
+    },
+    moveAlertQueue(state: States): void {
+      state.alerts.shift()
     },
     openAppBar(state: States): void {
       state.appBarState = true
