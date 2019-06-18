@@ -31,14 +31,15 @@ import { Vue, Component } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 
 import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
+import Alerts from '@/components/Alerts.vue'
 
 @Component({
   components: {
     'the-nav-bar': TheNavbar,
+    'alerts': Alerts,
     'pop-up': () => import('@/components/PopUps/PopUp.vue'),
     'the-app-bar': () => import('@/components/TheAppBar/TheAppBar.vue'),
     'action-button': () => import('@/components/ActionButton.vue'),
-    'alerts': () => import('@/components/Alerts.vue'),
   },
 })
 export default class App extends Vue {

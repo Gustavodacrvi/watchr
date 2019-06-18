@@ -26,6 +26,7 @@ interface Mutations {
   pushAlert: (state: States, alert: Alert) => void
   openAppBar: () => void
   closeAppBar: () => void
+  moveAlertQueue: () => void
   [key: string]: (state: States, payload: any) => any
 }
 
@@ -62,8 +63,11 @@ const store: any = new Vuex.Store({
     pushPopUp(state: States, compName: string): void {
       state.popUpComponent = compName
     },
-    pushAlert(state, alert): void {
+    pushAlert(state: States, alert: Alert): void {
       state.alerts.push(alert)
+    },
+    moveAlertQueue(state: States): void {
+      state.alerts.shift()
     },
     openAppBar(state: States): void {
       state.appBarState = true
