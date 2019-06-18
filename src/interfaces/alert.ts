@@ -1,5 +1,5 @@
 export interface Alert {
   name: string
   duration: number
-  type: 'error' | 'normal' | 'success' | 'fail' | 'warning'
+  type: 'error' | 'normal' | 'success' | 'warning'
 }

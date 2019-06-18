@@ -1,8 +1,8 @@
 <template>
   <div class='wrapper'>
     <div class='relative'>
-      <transition name='fade' @after-leave='closeAlert'>
-        <div v-if='showing' class='alert card round-border' :class='theme'>
+      <transition name='alert-trans' @after-leave='closeAlert'>
+        <div v-if='showing' class='alert card round-border' :class='[theme, alert.type]'>
           <span class='txt'>{{ alert.name }}</span>
         </div>
       </transition>
@@ -23,10 +23,8 @@ export default class LabelAdder extends Vue {
   @State('theme') public readonly theme!: Alert[]
   @Mutation('moveAlertQueue') public readonly moveAlertQueue!: () => void
 
-  public showing: boolean = true
-  public alert: Alert | null = {
-    name: 'I am a fucking alert mother fucker'
-  }
+  public showing: boolean = false
+  public alert: Alert | null = null
 
   public showLastAlert(): void {
     if (this.alerts.length !== 0 && !this.showing) {
@@ -80,6 +78,30 @@ export default class LabelAdder extends Vue {
   align-items: center;
   height: 55px;
   z-index: 100;
+}
+
+.alert.error {
+  border: 1px solid #FF6B66;
+}
+
+.alert.success {
+  border: 1px solid #70FF66;
+}
+
+.alert.warning {
+  border: 1px solid #FFE366;
+}
+
+.alert-trans-enter-active, .alert-trans-leave-active {
+  transition: margin-bottom .3s !important;
+} 
+
+.alert-trans-enter, .alert-trans-leave-to {
+  margin-bottom: -55px;
+}
+
+.alert-trans-enter-to, .alert-trans-leave {
+  margin-bottom: 25px;
 }
 
 </style>
