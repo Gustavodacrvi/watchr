@@ -1,32 +1,27 @@
 <template>
-  <div class='wrapper'>
-    <div class='relative-wrapper'>
-      <div class='pop-up card round-border signin-popup' :class='theme'>
-        <div class='title'>
-          <h2>Sign in</h2>
-        </div>
-        <div class='content'>
-          <input  class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme,{wrong: inputHasError(username, 50)}, platform]' v-model='username'>
-          <div class='margin password' :class='platform'>
-            <input class='input txt round-border gray' placeholder='Password: ' :type='passwordType' autocomplete='off' :class='[theme, {wrong: inputHasError(password, 50)}]' v-model='password'>
-            <span class='eyes'>
-              <transition name='fade'>
-                <icon v-if="passwordType === 'text'" class='eye' icon='eye' size='1x' @click='togglePassword'></icon>
-                <icon v-else class='eye' icon='eye-slash' size='1x' @click='togglePassword'></icon>
-              </transition>
-            </span>
-          </div>
-            <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest' :class='platform'>Sign in</button>
-            <button v-else class='margin button round-border' :class='platform'>
-              <icon class='icon' icon='sync' hoverColor='white' color='white' :spin='true'></icon>
-            </button>
-          <div class='margin links' :class='platform'>
-            <span class='link'>Forgot password?</span>
-            <span class='link'>Forgot username?</span>
-          </div>
-        </div>
+  <div class='signin-popup' :class='theme'>
+    <div class='title'>
+      <h2>Sign in</h2>
+    </div>
+    <div class='content'>
+      <input  class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme,{wrong: inputHasError(username, 50)}, platform]' v-model='username'>
+      <div class='margin password' :class='platform'>
+        <input class='input txt round-border gray' placeholder='Password: ' :type='passwordType' autocomplete='off' :class='[theme, {wrong: inputHasError(password, 50)}]' v-model='password'>
+        <span class='eyes'>
+          <transition name='fade'>
+            <icon v-if="passwordType === 'text'" class='eye' icon='eye' size='1x' @click='togglePassword'></icon>
+            <icon v-else class='eye' icon='eye-slash' size='1x' @click='togglePassword'></icon>
+          </transition>
+        </span>
       </div>
-      <div class='popup-margin' :class='platform' @click='pushPopUp("")'></div>
+        <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest' :class='platform'>Sign in</button>
+        <button v-else class='margin button round-border' :class='platform'>
+          <icon class='icon' icon='sync' hoverColor='white' color='white' :spin='true'></icon>
+        </button>
+      <div class='margin links' :class='platform'>
+        <span class='link'>Forgot password?</span>
+        <span class='link'>Forgot username?</span>
+      </div>
     </div>
   </div>
 </template>
