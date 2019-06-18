@@ -28,6 +28,8 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
+import { Mutation } from 'vuex-class'
+
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
 interface Buttons {
@@ -43,6 +45,8 @@ interface Buttons {
   },
 })
 export default class ActionButton extends Vue {
+  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
+
   public leftButtons: Buttons[] = [
     {icon: 'inbox', iconColor: 'white', backColor: '#83B7E2'},
     {icon: 'calendar-day', iconColor: 'white', backColor: '#FFE366'},
@@ -50,10 +54,16 @@ export default class ActionButton extends Vue {
   ]
   public topButtons: Buttons[] = [
     {icon: 'stopwatch', iconColor: 'white', backColor: '#70FF66'},
-    {icon: 'tags', iconColor: 'white', backColor: '#FF6B66'},
+    {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: this.popUp('LabeladderPopup')},
   ]
 
   public showing: boolean = false
+
+  public popUp(compName: string): () => void {
+    return () => {
+      this.pushPopUp(compName)
+    }
+  }
 }
 
 </script>

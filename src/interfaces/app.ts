@@ -8,3 +8,10 @@ export interface Perspective {
   icon: string
   iconColor: string
 }
+
+export interface Label {
+  smart: boolean
+  name: string
+  subLabels: Label[]
+  id: string
+}
