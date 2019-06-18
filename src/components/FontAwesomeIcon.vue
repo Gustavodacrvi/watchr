@@ -1,7 +1,7 @@
 <template>
   <span class='fontawesome-icon' @click='$emit("click")' :class='[{blink: blink,}, "hover-" + hoverColor]'>
-    <i v-if='!spin' :class='`fas fa-${icon} fa-${size} ${color}`'></i>
-    <i v-else :class='`fas fa-${icon} fa-${size} fa-spin ${color}`'></i>
+    <i v-if='!spin' :class='`fas fa-${icon} fa-${size}`' :style='`color: ${color} !important`'></i>
+    <i v-else :class='`fas fa-${icon} fa-${size} fa-spin`' :style='`color: ${color} !important`'></i>
   </span>
 </template>
 
