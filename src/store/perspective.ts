@@ -10,6 +10,11 @@ interface Mutations {
   [key: string]: (state: States, payload: any) => any
 }
 
+interface Getters {
+  smartBindedPerspectives: () => Perspective[] | undefined
+  [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
+}
+
 export default {
   namespaced: true,
   state: {
@@ -31,4 +36,13 @@ export default {
       ]
     },
   } as Mutations,
+  getters: {
+    smartBindedPerspectives(state: States): Perspective[] | undefined {
+      if (state.perspectives) {
+        return state.perspectives.filter((el: Perspective) => el.binded && el.smart)
+      } else {
+        return undefined
+      }
+    },
+  } as Getters,
 }

@@ -16,6 +16,9 @@ export default class Guest extends Vue {
   @Mutation('openAppBar') public readonly openAppBar!: () => void
 
   public created() {
+    if (!localStorage.getItem('watchrFirstTimeIn')) {
+      this.$store.commit('perspective/setDefaultData')
+    }
     if (this.isDesktop) {
       this.openAppBar()
     }

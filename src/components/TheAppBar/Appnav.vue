@@ -13,7 +13,9 @@
         <div class='section-title'>
           <span>{{ currentSect }}</span>
         </div>
-        <component :is='currentSect'></component>
+        <transition name='fade'>
+          <component :is='currentSect'></component>
+        </transition>
       </div>
     </div>
     <div v-if='!isDesktop' class='footer-wrapper'>
