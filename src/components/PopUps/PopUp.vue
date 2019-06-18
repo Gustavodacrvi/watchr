@@ -1,7 +1,7 @@
 <template>
   <div class='wrapper'>
     <div class='relative-wrapper'>
-      <icon class='close-icon' icon='arrow-left' size='2x' @click='pushPopUp("")'></icon>
+      <icon v-if='!isDesktop' class='close-icon' icon='arrow-left' size='2x' @click='pushPopUp("")'></icon>
       <component class='pop-up' :class='[{card: isDesktop, "round-border": isDesktop, "background-color": !isDesktop}, platform]' :is='popUp'></component>
       <div v-if='isDesktop' class='popup-margin' :class='platform' @click='pushPopUp("")'></div>
     </div>

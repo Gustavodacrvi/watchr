@@ -17,7 +17,7 @@
           </keep-alive>
         </transition>
         <transition name='fade'>
-          <action-button v-if='isOnAppRoute && !isShowingPopUp'></action-button>
+          <action-button v-if='isOnAppRoute && !isShowingPopUp && !appBarState'></action-button>
         </transition>
       </div>
     </div>

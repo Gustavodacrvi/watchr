@@ -32,10 +32,6 @@
   margin-top: 8px;
 }
 
-.margin.mobile + .margin.mobile {
-  margin-top: 12px;
-}
-
 .password {
   position: relative;
 }
