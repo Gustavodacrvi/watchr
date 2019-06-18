@@ -16,6 +16,9 @@
             <the-app-bar v-if='appBarState'></the-app-bar>
           </keep-alive>
         </transition>
+        <transition name='fade'>
+          <action-button v-if='isOnAppRoute'></action-button>
+        </transition>
       </div>
     </div>
   </div>
@@ -34,6 +37,7 @@ import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
     'SigninPopup': () => import('@/components/PopUps/SigninPopup.vue'),
     'SignupPopup': () => import('@/components/PopUps/SignupPopup.vue'),
     'the-app-bar': () => import('@/components/TheAppBar/TheAppBar.vue'),
+    'action-button': () => import('@/components/ActionButton.vue'),
   },
 })
 export default class App extends Vue {
@@ -43,6 +47,10 @@ export default class App extends Vue {
   @Getter('platform') public readonly platform!: 'mobile' | 'desktop'
 
   @Mutation('closeAppBar') public readonly closeAppBar!: () => void
+
+  get isOnAppRoute(): boolean {
+    return this.$route.name === 'User'
+  }
 }
 
 </script>
