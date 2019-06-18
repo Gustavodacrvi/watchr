@@ -3,6 +3,7 @@ import Vuex, { Action } from 'vuex'
 import router from '@/router'
 
 import perspective from './perspective'
+import label from './label'
 
 Vue.use(Vuex)
 
@@ -39,7 +40,7 @@ interface Actions {
 
 const store: any = new Vuex.Store({
   modules: {
-    perspective,
+    perspective, label,
   } as any,
   state: {
     theme: savedTheme,
