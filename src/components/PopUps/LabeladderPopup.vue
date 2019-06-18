@@ -15,13 +15,17 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
+import label from '@/utils/label'
+
 @Component
 export default class LabelAdder extends Vue {
   @State('theme') public readonly theme!: string
 
   public value: string = ''
 
-  public addLabel(): void {}
+  public addLabel(): void {
+    console.log(label.getArrFromPath(''))
+  }
 }
 
 </script>
