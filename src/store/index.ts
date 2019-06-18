@@ -79,9 +79,6 @@ const store: any = new Vuex.Store({
     isStandAlone(state: States): boolean {
       return window.matchMedia('(display-mode: standalone)').matches
     },
-    isOnAppRoute(state: States): boolean {
-      return router.currentRoute.name === 'User'
-    },
   } as Getters,
   actions: {
     getWindowWidthOnResize({state, getters, commit}:
