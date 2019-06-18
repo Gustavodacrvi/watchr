@@ -8,7 +8,7 @@
         <transition name='fade' mode='out-in'>
           <router-view class='content' />
         </transition>
-        <transition name='fade' mode='out-in'>
+        <transition name='pop-up-trans' mode='out-in'>
           <pop-up v-if='isShowingPopUp'></pop-up>
         </transition>
         <transition name='appbar-trans'>
@@ -111,6 +111,20 @@ export default class App extends Vue {
 
 .appbar-trans-leave-active {
   left: -300px !important;
+}
+
+.pop-up-trans-enter-active, .pop-up-trans-leave-active {
+  transition: top .3s, opacity .3s !important;
+} 
+
+.pop-up-trans-enter, .pop-up-trans-leave-to {
+  top: 15px;
+  opacity: 0;
+}
+
+.pop-up-trans-enter-to, .pop-up-trans-leave {
+  top: 0;
+  opacity: 1;
 }
 
 </style>
