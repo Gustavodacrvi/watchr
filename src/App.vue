@@ -19,6 +19,7 @@
         <transition name='fade'>
           <action-button v-if='showActionButton'></action-button>
         </transition>
+        <alerts></alerts>
       </div>
     </div>
   </div>
@@ -37,6 +38,7 @@ import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
     'pop-up': () => import('@/components/PopUps/PopUp.vue'),
     'the-app-bar': () => import('@/components/TheAppBar/TheAppBar.vue'),
     'action-button': () => import('@/components/ActionButton.vue'),
+    'alerts': () => import('@/components/Alerts.vue'),
   },
 })
 export default class App extends Vue {
