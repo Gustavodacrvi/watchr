@@ -2,7 +2,9 @@
   <div class='wrapper'>
     <div class='relative'>
       <transition name='fade' @after-leave='closeAlert'>
-        <div class='alert' v-if='showing'>{{ alert.name }}</div>
+        <div v-if='showing' class='alert card round-border' :class='theme'>
+          <span class='txt'>{{ alert.name }}</span>
+        </div>
       </transition>
     </div>
   </div>
@@ -18,10 +20,13 @@ import { Alert } from '@/interfaces/alert'
 @Component
 export default class LabelAdder extends Vue {
   @State('alerts') public readonly alerts!: Alert[]
+  @State('theme') public readonly theme!: Alert[]
   @Mutation('moveAlertQueue') public readonly moveAlertQueue!: () => void
 
-  public showing: boolean = false
-  public alert: Alert | null = null
+  public showing: boolean = true
+  public alert: Alert | null = {
+    name: 'I am a fucking alert mother fucker'
+  }
 
   public showLastAlert(): void {
     if (this.alerts.length !== 0 && !this.showing) {
@@ -53,22 +58,28 @@ export default class LabelAdder extends Vue {
   position: absolute;
   width: 100%;
   height: 100%;
+  pointer-events: none;
 }
 
 .relative {
   position: relative;
   width: 100%;
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
 }
 
 .alert {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100px;
-  height: 100px;
-  background-color: purple;
+  pointer-events: all;
+  margin-bottom: 25px;
+  padding: 16px;
+  box-sizing: border-box;
+  max-width: 320px;
+  display: flex;
+  align-items: center;
+  height: 55px;
+  z-index: 100;
 }
 
 </style>
