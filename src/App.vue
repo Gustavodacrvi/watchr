@@ -57,6 +57,7 @@ export default class App extends Vue {
   @Getter('isDesktop') public readonly isDesktop!: boolean
   @Getter('platform') public readonly platform!: 'mobile' | 'desktop'
   @Action('showLastAlert') public readonly showLastAlert!: () => void
+  @Action('activateKeyShortcut') public readonly activateKeyShortcut!: (key: string) => void
 
   @Mutation('closeAppBar') public readonly closeAppBar!: () => void
 
@@ -85,6 +86,7 @@ export default class App extends Vue {
   public keyPressed({key}: {key: string}): void {
     const active = document.activeElement
     if (active && active.nodeName !== 'INPUT') {
+      this.activateKeyShortcut(key)
     }
   }
 
