@@ -4,7 +4,7 @@
       <h3>Add label</h3>
     </div>
     <div class='content'>
-      <dropdown-input tabindex='1' class='margin' :values='options' @value='v => value = v' @update='getOptions' @enter='add' @select='selectValue'></dropdown-input>
+      <dropdown-input tabindex='1' class='margin' :values='options' @value='v => value = v' :input='input' @update='getOptions' @enter='add' @select='selectValue'></dropdown-input>
       <button tabindex='2' class='button round-border margin' @click='add'>Add label</button>
       <span v-show='isDesktop' class='margin txt'>You can open this pop up at any time by clicking the 'L' key.</span><br>
       <span v-show='isDesktop' class='margin txt'>You can close any pop up at any time by clicking 'H' key.</span>
@@ -41,6 +41,7 @@ export default class LabelAdder extends Vue {
   // tslint:disable-next-line:max-line-length
   @labelModule.Getter('getLabelNodeFromArrayPath') public readonly  getLabelNodeFromArrayPath!: (path: string[]) => Label | undefined
 
+  public input: string | null = null
   public value: string = ''
   public options: string[] = []
 
@@ -83,6 +84,11 @@ export default class LabelAdder extends Vue {
     }
     const names = labels.map((el: Label) => el.name)
     this.options = names.filter((el: string) => el.includes(search))
+  }
+  public selectValue(value: string): void {
+    const arr = labelUtil.getArrFromStringPath(this.value)
+    arr.push(value)
+    this.input = labelUtil.getStringPathFromArr(arr)
   }
 
   @Watch('value')

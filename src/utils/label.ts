@@ -6,4 +6,16 @@ export default {
     }
     return path.split(':').map((el: string) => el.trim())
   },
+  getStringPathFromArr(arr: string[]): string {
+    let str = ''
+    let i = 0
+    for (const el of arr) {
+      str += el
+      if (i + 1 !== arr.length) {
+        str += ':'
+      }
+      i++
+    }
+    return str
+  },
 }
