@@ -45,43 +45,44 @@ export default class LabelAdder extends Vue {
   public options: string[] = []
 
   public add(): void {
-    const arr = labelUtil.getArrFromStringPath(this.value)
-    const label: Label | undefined = this.getLabelNodeFromArrayPath(arr)
-    if (label !== undefined) {
-      this.pushAlert({
-        name: `<strong>${this.value}</strong> already exists.`,
-        duration: 2.5,
-        type: 'error',
-      })
-    } else if (arr.length > 4) {
-      this.pushAlert({
-        name: 'The maximum number of subtasks is 4',
-        duration: 2.5,
-        type: 'error',
-      })
-    } else {
-      this.addLabelFromArrayPath(arr)
-      this.pushAlert({
-        name: `<strong>${this.value}</strong> was successfully added`,
-        duration: 2.5,
-        type: 'success',
-      })
+    if (this.value !== '') {
+      const arr = labelUtil.getArrFromStringPath(this.value)
+      const label: Label | undefined = this.getLabelNodeFromArrayPath(arr)
+      if (label !== undefined) {
+        this.pushAlert({
+          name: `<strong>${this.value}</strong> already exists.`,
+          duration: 2.5,
+          type: 'error',
+        })
+      } else if (arr.length > 4) {
+        this.pushAlert({
+          name: 'The maximum number of subtasks is 4',
+          duration: 2.5,
+          type: 'error',
+        })
+      } else {
+        this.addLabelFromArrayPath(arr)
+        this.pushAlert({
+          name: `<strong>${this.value}</strong> was successfully added`,
+          duration: 2.5,
+          type: 'success',
+        })
+      }
     }
   }
   public getOptions(): void {
-    const arr = labelUtil.getArrFromStringPath(this.value)
+    const arr = labelUtil.getArrFromStringPath(this.value, false)
+    let labels: Label[] = this.labels
+    const search = arr[arr.length - 1]
     if (arr.length > 1) {
-      const search = arr.pop() as string
-      const label: Label | undefined = this.getLabelNodeFromArrayPath(arr)
+      arr.pop()
+      const label = this.getLabelNodeFromArrayPath(arr)
       if (label !== undefined) {
-        const names = label.subLabels.map((el: Label) => el.name)
-        this.options = names.filter((el: string) => el.includes(search))
+        labels = label.subLabels
       }
-    } else {
-      const search = arr.pop() as string
-      const names = this.labels.map((el: Label) => el.name)
-      this.options = names.filter((el: string) => el.includes(search))
     }
+    const names = labels.map((el: Label) => el.name)
+    this.options = names.filter((el: string) => el.includes(search))
   }
 
   @Watch('value')
