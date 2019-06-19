@@ -5,7 +5,7 @@
     <transition name='fade'>
       <div v-if='showing' class='dropdown round-border gray border' :class='theme'>
         <transition-group name='fade'>
-          <span class='option txt' :class='[theme,{active: option === selected}]' v-for='option in values' :key='option'>{{ option }}</span>
+          <span class='option txt' :class='[theme,{active: option === selected}]' v-for='option in values' :key='option' @click='select(option)'>{{ option }}</span>
         </transition-group>
       </div>
     </transition>
@@ -37,8 +37,7 @@ export default class DropdownInput extends Vue {
     if (key === 'Enter' && this.selected === '') {
       this.$emit('enter')
     } else if (key === 'Enter') {
-      this.$emit('select', this.selected)
-      this.selected = ''
+      this.select(this.selected)
     }
     this.$emit('update')
   }
@@ -68,6 +67,10 @@ export default class DropdownInput extends Vue {
         }
       }
     }
+  }
+  public select(str: string): void {
+    this.$emit('select', str)
+    this.selected = ''
   }
 
   @Watch('input')
