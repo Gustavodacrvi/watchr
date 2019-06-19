@@ -19,7 +19,11 @@
         <transition name='fade'>
           <action-button v-if='showActionButton'></action-button>
         </transition>
-        <alerts></alerts>
+        <div class='alert-wrapper'>
+          <transition name='alert-trans' @after-leave='closeAlert'>
+            <alerts v-if='showingAlert'></alerts>
+          </transition>
+        </div>
       </div>
     </div>
   </div>
@@ -27,16 +31,17 @@
 
 <script lang='ts'>
 
-import { Vue, Component } from 'vue-property-decorator'
-import { State, Getter, Mutation } from 'vuex-class'
+import { Vue, Component, Watch } from 'vue-property-decorator'
+import { State, Getter, Mutation, Action } from 'vuex-class'
 
 import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
-import Alerts from '@/components/Alerts.vue'
+
+import { Alert } from '@/interfaces/alert'
 
 @Component({
   components: {
     'the-nav-bar': TheNavbar,
-    'alerts': Alerts,
+    'alerts': () => import('@/components/Alerts.vue'),
     'pop-up': () => import('@/components/PopUps/PopUp.vue'),
     'the-app-bar': () => import('@/components/TheAppBar/TheAppBar.vue'),
     'action-button': () => import('@/components/ActionButton.vue'),
@@ -45,9 +50,13 @@ import Alerts from '@/components/Alerts.vue'
 export default class App extends Vue {
   @State('theme') public readonly theme!: string
   @State('popUpComponent') public readonly popUp!: string
+  @State('alerts') public readonly alerts!: Alert[]
   @State('appBarState') public readonly appBarState!: boolean
+  @State('showingAlert') public readonly showingAlert!: boolean
+  @Mutation('hideAlert') public readonly hideAlert!: () => void
   @Getter('isDesktop') public readonly isDesktop!: boolean
   @Getter('platform') public readonly platform!: 'mobile' | 'desktop'
+  @Action('showLastAlert') public readonly showLastAlert!: () => void
 
   @Mutation('closeAppBar') public readonly closeAppBar!: () => void
 
@@ -59,6 +68,16 @@ export default class App extends Vue {
   }
   get isShowingPopUp(): boolean {
     return this.popUp !== ''
+  }
+
+  public closeAlert(): void {
+    this.hideAlert()
+    this.showLastAlert()
+  }
+
+  @Watch('alerts')
+  public onAlertsChange(alerts: Alert[]): void {
+    this.showLastAlert()
   }
 }
 
@@ -104,6 +123,14 @@ export default class App extends Vue {
   flex-basis: 100%;
 }
 
+.alert-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
 .appbar-trans-enter {
   left: -300px !important;
 }
@@ -132,6 +159,18 @@ export default class App extends Vue {
 .pop-up-trans-enter-to, .pop-up-trans-leave {
   top: 0;
   opacity: 1;
+}
+
+.alert-trans-enter-active, .alert-trans-leave-active {
+  transition: bottom .3s !important;
+} 
+
+.alert-trans-enter, .alert-trans-leave-to {
+  bottom: -100px !important;
+}
+
+.alert-trans-enter-to, .alert-trans-leave {
+  bottom: 0 !important;
 }
 
 </style>

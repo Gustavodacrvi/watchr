@@ -17,7 +17,9 @@ interface States {
   windowWidth: number
   appBarState: boolean
   isLogged: boolean
+  showingAlert: boolean
   alerts: Alert[]
+  alert: Alert | undefined
 }
 
 interface Mutations {
@@ -26,7 +28,7 @@ interface Mutations {
   pushAlert: (state: States, alert: Alert) => void
   openAppBar: () => void
   closeAppBar: () => void
-  moveAlertQueue: () => void
+  hideAlert: () => void
   [key: string]: (state: States, payload: any) => any
 }
 
@@ -38,9 +40,17 @@ interface Getters {
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
 }
 
+interface ActionContext {
+  state: States
+  getters: Getters
+  commit: (mutation: string) => void
+  dispatch: (action: string) => void
+}
+
 interface Actions {
-  getWindowWidthOnResize: (obj: {state: States}) => void
-  [key: string]: (obj: any, payload: any) => any
+  getWindowWidthOnResize: (context: ActionContext, payload: any) => void
+  showLastAlert: (context: ActionContext, payload: any) => void
+  [key: string]: (context: ActionContext, payload: any) => any
 }
 
 const store: any = new Vuex.Store({
@@ -53,7 +63,9 @@ const store: any = new Vuex.Store({
     windowWidth: document.body.clientWidth,
     appBarState: false,
     isLogged: false,
+    showingAlert: false,
     alerts: [],
+    alert: undefined,
   } as States,
   mutations: {
     pushTheme(state: States, theme: string): void {
@@ -66,8 +78,8 @@ const store: any = new Vuex.Store({
     pushAlert(state: States, alert: Alert): void {
       state.alerts.push(alert)
     },
-    moveAlertQueue(state: States): void {
-      state.alerts.shift()
+    hideAlert(state: States): void {
+      state.showingAlert = false
     },
     openAppBar(state: States): void {
       state.appBarState = true
@@ -94,8 +106,7 @@ const store: any = new Vuex.Store({
     },
   } as Getters,
   actions: {
-    getWindowWidthOnResize({state, getters, commit}:
-       {state: States, getters: Getters, commit: (str: string) => void}): void {
+    getWindowWidthOnResize({state, getters, commit}): void {
       window.addEventListener('resize', () => {
         state.windowWidth = document.body.clientWidth
         if (!getters.isDesktop) {
@@ -104,6 +115,15 @@ const store: any = new Vuex.Store({
           commit('openAppBar')
         }
       })
+    },
+    showLastAlert({state, commit}): void {
+      if (state.alerts.length !== 0 && !state.showingAlert) {
+        state.alert = state.alerts.shift() as Alert
+        state.showingAlert = true
+        setTimeout(() => {
+          state.showingAlert = false
+        }, state.alert.duration * 1000)
+      }
     },
   } as Actions,
 })
