@@ -40,7 +40,7 @@ export default {
       const walk = (labels: Label[], path: string[]): void => {
         const targetLabelName: string | undefined = path.shift()
         if (targetLabelName !== undefined) {
-          const label: Label | undefined = state.labels.find((el: Label) => {
+          const label: Label | undefined = labels.find((el: Label) => {
             return el.name === targetLabelName
           })
           if (label === undefined) {
@@ -56,7 +56,7 @@ export default {
           }
         }
       }
-      walk(state.labels, nodePath)
+      walk(state.labels, nodePath.slice())
     },
   } as Mutations,
   getters: {
@@ -78,7 +78,7 @@ export default {
         }
         return undefined
       }
-      return walk(state.labels, nodePath)
+      return walk(state.labels, nodePath.slice())
     },
   } as Getters,
   actions: {
