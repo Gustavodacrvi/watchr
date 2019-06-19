@@ -4,7 +4,7 @@
       <h3>Add label</h3>
     </div>
     <div class='content'>
-      <dropdown-input tabindex='1' class='margin' :values='options' @value='v => value = v' @update='getOptions' @enter='add'></dropdown-input>
+      <dropdown-input tabindex='1' class='margin' :values='options' @value='v => value = v' @update='getOptions' @enter='add' @select='selectValue'></dropdown-input>
       <button tabindex='2' class='button round-border margin' @click='add'>Add label</button>
       <span v-show='isDesktop' class='margin txt'>You can open this pop up at any time by clicking the 'L' key.</span><br>
       <span v-show='isDesktop' class='margin txt'>You can close any pop up at any time by clicking 'H' key.</span>

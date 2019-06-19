@@ -1,12 +1,14 @@
 <template>
   <div class='dropdown-input'>
-    <input v-if='tabindex' :tabindex='tabindex' class='margin input txt round-border gray' :placeholder='placeholder' type='text' autocomplete='off' :class='[theme, {wrong: hasError}]' v-model='value' @keypress='keyPressed'>
-    <input v-else :tabindex='tabindex' class='margin input txt round-border gray' :placeholder='placeholder' type='text' autocomplete='off' :class='[theme, {wrong: hasError}]' v-model='value' @keypress='keyPressed'>
-    <div class='dropdown round-border gray border' :class='theme'>
-      <transition-group name='fade'>
-        <span class='option txt' :class='[theme,{active: option === selected}]' v-for='option in values' :key='option'>{{ option }}</span>
-      </transition-group>
-    </div>
+    <input v-if='tabindex' :tabindex='tabindex' class='margin input txt round-border gray' :placeholder='placeholder' type='text' autocomplete='off' :class='[theme, {wrong: hasError}]' v-model='value' @keydown='keyDown' @keypress='keyPressed' @focus='showing = true' @blur='showing = false'>
+    <input v-else :tabindex='tabindex' class='margin input txt round-border gray' :placeholder='placeholder' type='text' autocomplete='off' :class='[theme, {wrong: hasError}]' v-model='value' @keydown='keyDown' @keypress='keyPressed'  @focus='showing = true' @blur='showing = false'>
+    <transition name='fade'>
+      <div v-if='showing' class='dropdown round-border gray border' :class='theme'>
+        <transition-group name='fade'>
+          <span class='option txt' :class='[theme,{active: option === selected}]' v-for='option in values' :key='option'>{{ option }}</span>
+        </transition-group>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -23,6 +25,7 @@ export default class DropdownInput extends Vue {
   @Prop({type: String}) public readonly tabindex!: string[]
   @Prop({type: String}) public readonly placeholder!: string[]
 
+  public showing: boolean = true
   public value: string | null = this.input
   public selected: string = ''
 
@@ -33,7 +36,37 @@ export default class DropdownInput extends Vue {
   public keyPressed({key}: {key: string}): void {
     if (key === 'Enter' && this.selected === '') {
       this.$emit('enter')
-      this.$emit('update')
+    } else if (key === 'Enter') {
+      this.$emit('select', this.selected)
+      this.selected = ''
+    }
+    this.$emit('update')
+  }
+  public keyDown({key}: {key: string}): void {
+    this.moveSelection(key)
+  }
+  public moveSelection(key: string): void {
+    const index = this.values.findIndex((el: string) => {
+      return el === this.selected
+    })
+    if (key === 'ArrowDown') {
+      if (this.selected === '') {
+        this.selected = this.values[0]
+      } else {
+        if (index + 1 < this.values.length) {
+          this.selected = this.values[index + 1]
+        } else {
+          this.selected = ''
+        }
+      }
+    } else if (key === 'ArrowUp') {
+      if (this.selected === this.values[0]) {
+        this.selected = ''
+      } else {
+        if (index !== 0) {
+          this.selected = this.values[index - 1]
+        }
+      }
     }
   }
 
