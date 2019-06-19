@@ -57,8 +57,17 @@ export default class App extends Vue {
   @Getter('isDesktop') public readonly isDesktop!: boolean
   @Getter('platform') public readonly platform!: 'mobile' | 'desktop'
   @Action('showLastAlert') public readonly showLastAlert!: () => void
+  @Action('activateKeyShortcut') public readonly activateKeyShortcut!: (key: string) => void
 
   @Mutation('closeAppBar') public readonly closeAppBar!: () => void
+
+  public mounted() {
+    window.addEventListener('keypress', this.keyPressed)
+  }
+
+  public beforeDestroy() {
+    window.removeEventListener('keypress', this.keyPressed)
+  }
 
   get showActionButton(): boolean {
     return this.isOnAppRoute && !this.isShowingPopUp && (this.isDesktop || !this.appBarState)
@@ -73,6 +82,12 @@ export default class App extends Vue {
   public closeAlert(): void {
     this.hideAlert()
     this.showLastAlert()
+  }
+  public keyPressed({key}: {key: string}): void {
+    const active = document.activeElement
+    if (active && active.nodeName !== 'INPUT') {
+      this.activateKeyShortcut(key)
+    }
   }
 
   @Watch('alerts')

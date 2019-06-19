@@ -43,13 +43,14 @@ interface Getters {
 interface ActionContext {
   state: States
   getters: Getters
-  commit: (mutation: string) => void
+  commit: (mutation: string, payload?: any) => void
   dispatch: (action: string) => void
 }
 
 interface Actions {
-  getWindowWidthOnResize: (context: ActionContext, payload: any) => void
-  showLastAlert: (context: ActionContext, payload: any) => void
+  getWindowWidthOnResize: (context: ActionContext) => void
+  showLastAlert: (context: ActionContext) => void
+  activateKeyShortcut: (context: ActionContext, key: string) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -123,6 +124,12 @@ const store: any = new Vuex.Store({
         setTimeout(() => {
           state.showingAlert = false
         }, state.alert.duration * 1000)
+      }
+    },
+    activateKeyShortcut({state, commit}, key): void {
+      switch (key) {
+        case 'l': commit('pushPopUp', 'LabeladderPopup'); break
+        case 'h': commit('pushPopUp', ''); break
       }
     },
   } as Actions,
