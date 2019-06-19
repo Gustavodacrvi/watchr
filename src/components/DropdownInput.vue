@@ -3,7 +3,9 @@
     <input v-if='tabindex' :tabindex='tabindex' class='margin input txt round-border gray' :placeholder='placeholder' type='text' autocomplete='off' :class='[theme, {wrong: hasError}]' v-model='value' @keypress='keyPressed'>
     <input v-else :tabindex='tabindex' class='margin input txt round-border gray' :placeholder='placeholder' type='text' autocomplete='off' :class='[theme, {wrong: hasError}]' v-model='value' @keypress='keyPressed'>
     <div class='dropdown round-border gray border' :class='theme'>
-      <span class='option txt' :class='[theme,{active: option === selected}]' v-for='option in values' :key='option'>{{ option }}</span>
+      <transition-group name='fade'>
+        <span class='option txt' :class='[theme,{active: option === selected}]' v-for='option in values' :key='option'>{{ option }}</span>
+      </transition-group>
     </div>
   </div>
 </template>
@@ -31,16 +33,18 @@ export default class DropdownInput extends Vue {
   public keyPressed({key}: {key: string}): void {
     if (key === 'Enter' && this.selected === '') {
       this.$emit('enter')
+      this.$emit('update')
     }
   }
 
   @Watch('input')
-  onInput(): void {
+  public onInput(): void {
     this.value = this.input
   }
   @Watch('value')
-  onValue(): void {
+  public onValue(): void {
     this.$emit('value', this.value)
+    this.$emit('update')
   }
 }
 
@@ -59,7 +63,7 @@ export default class DropdownInput extends Vue {
   position: absolute;
   top: 100%;
   width: 100%;
-  max-height: 300px;
+  max-height: 250px;
   overflow: hidden;
 }
 

@@ -4,7 +4,7 @@
       <h3>Add label</h3>
     </div>
     <div class='content'>
-      <dropdown-input tabindex='1' class='margin' :values='options' @value='v => value = v' @enter='add'></dropdown-input>
+      <dropdown-input tabindex='1' class='margin' :values='options' @value='v => value = v' @update='getOptions' @enter='add'></dropdown-input>
       <button tabindex='2' class='button round-border margin' @click='add'>Add label</button>
       <span v-show='isDesktop' class='margin txt'>You can open this pop up at any time by clicking the 'L' key.</span><br>
       <span v-show='isDesktop' class='margin txt'>You can close any pop up at any time by clicking 'H' key.</span>
@@ -68,20 +68,25 @@ export default class LabelAdder extends Vue {
       })
     }
   }
-
-
-  @Watch('value')
-  onValueChange(): void {
+  public getOptions(): void {
     const arr = labelUtil.getArrFromStringPath(this.value)
-    if (arr.length > 1) { 
-      arr.pop()
+    if (arr.length > 1) {
+      const search = arr.pop() as string
       const label: Label | undefined = this.getLabelNodeFromArrayPath(arr)
       if (label !== undefined) {
-        this.options = label.subLabels.map((el: Label) => el.name)
+        const names = label.subLabels.map((el: Label) => el.name)
+        this.options = names.filter((el: string) => el.includes(search))
       }
     } else {
-      this.options = this.labels.map((el: Label) => el.name)
+      const search = arr.pop() as string
+      const names = this.labels.map((el: Label) => el.name)
+      this.options = names.filter((el: string) => el.includes(search))
     }
+  }
+
+  @Watch('value')
+  public onChange(): void {
+    this.getOptions()
   }
 }
 
