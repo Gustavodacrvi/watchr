@@ -13,16 +13,19 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { State, Getter, namespace } from 'vuex-class'
+import { State, Getter, Mutation, namespace } from 'vuex-class'
 
-import label from '@/utils/label'
+import labelUtil from '@/utils/label'
+
 import { Label } from '../../interfaces/app'
+import { Alert } from '../../interfaces/alert'
 
 const labelModule = namespace('label')
 
 @Component
 export default class LabelAdder extends Vue {
   @State('theme') public readonly theme!: string
+  @Mutation('pushAlert') public readonly pushAlert!: (alert: Alert) => void
   // tslint:disable-next-line:max-line-length
   @labelModule.Getter('getLabelNodeFromArrayPath') public readonly  getLabelNodeFromArrayPath!: (path: string[]) => Label | undefined
 
@@ -34,8 +37,14 @@ export default class LabelAdder extends Vue {
     }
   }
   public addLabel(): void {
-    const arr = label.getArrFromStringPath(this.value)
-    console.log(this.getLabelNodeFromArrayPath(arr))
+    const label: Label | undefined = this.getLabelNodeFromArrayPath(labelUtil.getArrFromStringPath(this.value))
+    if (label !== undefined) {
+      this.pushAlert({
+        name: `<strong>${this.value}</strong> already exists.`,
+        duration: 2.5,
+        type: 'error',
+      })
+    }
   }
 }
 
