@@ -64,6 +64,10 @@ export default class App extends Vue {
     window.addEventListener('keypress', this.keyPressed)
   }
 
+  public beforeDestroy() {
+    window.removeEventListener('keypress', this.keyPressed)
+  }
+
   get showActionButton(): boolean {
     return this.isOnAppRoute && !this.isShowingPopUp && (this.isDesktop || !this.appBarState)
   }
@@ -78,8 +82,10 @@ export default class App extends Vue {
     this.hideAlert()
     this.showLastAlert()
   }
-  public keyPressed(key: any): void {
-    console.log(key)
+  public keyPressed({key}: {key: string}): void {
+    const active = document.activeElement
+    if (active && active.nodeName !== 'INPUT') {
+    }
   }
 
   @Watch('alerts')
