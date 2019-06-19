@@ -92,7 +92,9 @@ export default class App extends Vue {
 
   @Watch('alerts')
   public onAlertsChange(alerts: Alert[]): void {
-    this.showLastAlert()
+    if (!this.showingAlert) {
+      this.showLastAlert()
+    }
   }
 }
 

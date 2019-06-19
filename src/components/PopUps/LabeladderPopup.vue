@@ -6,6 +6,8 @@
     <div class='content'>
       <input tabindex='1' class='input gray round-border txt margin' type='text' autocomplete='off' :class='theme' v-model='value' @keypress='keyPressed' />
       <button tabindex='2' class='button round-border margin' @click='add'>Add label</button>
+      <span v-show='isDesktop' class='margin txt'>You can open this pop up at any time by clicking the 'L' key.</span><br>
+      <span v-show='isDesktop' class='margin txt'>You can close any pop up at any time by clicking 'H' key.</span>
     </div>
   </div>
 </template>
@@ -25,6 +27,7 @@ const labelModule = namespace('label')
 @Component
 export default class LabelAdder extends Vue {
   @State('theme') public readonly theme!: string
+  @Getter('isDesktop') public readonly isDesktop!: boolean
   @Mutation('pushAlert') public readonly pushAlert!: (alert: Alert) => void
   // tslint:disable-next-line:max-line-length
   @labelModule.Mutation('addLabelFromArrayPath') public readonly addLabelFromArrayPath!: (path: string[]) => void
@@ -44,6 +47,12 @@ export default class LabelAdder extends Vue {
     if (label !== undefined) {
       this.pushAlert({
         name: `<strong>${this.value}</strong> already exists.`,
+        duration: 2.5,
+        type: 'error',
+      })
+    } else if (arr.length > 4) {
+      this.pushAlert({
+        name: 'The maximum number of subtasks is 4',
         duration: 2.5,
         type: 'error',
       })
