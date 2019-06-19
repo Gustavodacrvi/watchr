@@ -60,6 +60,10 @@ export default class App extends Vue {
 
   @Mutation('closeAppBar') public readonly closeAppBar!: () => void
 
+  public mounted() {
+    window.addEventListener('keypress', this.keyPressed)
+  }
+
   get showActionButton(): boolean {
     return this.isOnAppRoute && !this.isShowingPopUp && (this.isDesktop || !this.appBarState)
   }
@@ -73,6 +77,9 @@ export default class App extends Vue {
   public closeAlert(): void {
     this.hideAlert()
     this.showLastAlert()
+  }
+  public keyPressed(key: any): void {
+    console.log(key)
   }
 
   @Watch('alerts')
