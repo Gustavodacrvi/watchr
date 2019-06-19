@@ -23,7 +23,8 @@ const labelModule = namespace('label')
 @Component
 export default class LabelAdder extends Vue {
   @State('theme') public readonly theme!: string
-  @labelModule.Getter('getLabelNodeFromArrayPath') public readonly getLabelNodeFromArrayPath!: () => Label | undefined
+  // tslint:disable-next-line:max-line-length
+  @labelModule.Getter('getLabelNodeFromArrayPath') public readonly  getLabelNodeFromArrayPath!: (path: string[]) => Label | undefined
 
   public value: string = ''
 
@@ -34,6 +35,7 @@ export default class LabelAdder extends Vue {
   }
   public addLabel(): void {
     const arr = label.getArrFromStringPath(this.value)
+    console.log(this.getLabelNodeFromArrayPath(arr))
   }
 }
 

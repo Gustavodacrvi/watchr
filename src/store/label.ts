@@ -10,7 +10,7 @@ interface Mutations {
 }
 
 interface Getters {
-  getLabelNodeFromArrayPath: () => Label | undefined
+  getLabelNodeFromArrayPath: () => () => Label | undefined
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
 }
 
@@ -23,7 +23,7 @@ export default {
 
   } as Mutations,
   getters: {
-    getLabelNodeFromArrayPath(state: States, nodePath: string[]): Label | undefined {
+    getLabelNodeFromArrayPath: (state: States) => (nodePath: string[]): Label | undefined => {
       if (state.labels === undefined) {
         return undefined
       }
