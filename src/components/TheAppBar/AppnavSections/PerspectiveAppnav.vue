@@ -1,6 +1,6 @@
 <template>
   <div>
-    <draggable v-if='smarts' v-model='smarts'>
+    <draggable v-if='smarts' v-model='smarts' :animation='300'>
       <span class='perspective round-border' v-for='pers in smarts' :class='[theme, {active: pers.name === perspective}]' :key='pers.name'>
         <span class='icon'>
           <icon :icon='pers.icon' :color='pers.iconColor'></icon>
@@ -42,6 +42,18 @@ export default class PerspectiveAppnav extends Vue {
 }
 
 </script>
+
+<style scoped>
+
+.sortable-drag {
+  opacity: 0;
+}
+
+.ghost {
+  
+}
+
+</style>
 
 <style scoped src='@/assets/css/appBarSection.css'>
 </style>
