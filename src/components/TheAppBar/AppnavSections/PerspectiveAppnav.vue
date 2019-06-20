@@ -35,7 +35,7 @@ const perspective = namespace('perspective')
 export default class PerspectiveAppnav extends Vue {
   @State('theme') public readonly theme!: string
   @perspective.Getter('smartBindedPerspectives') public readonly smartBindedPerspectives!: Perspective[]
-  @perspective.Mutation('updatePerspectives') public readonly updatePerspectives!: (perspectives: Perspective[]) => void
+  @perspective.Action('updatePerspectives') public readonly updatePerspectives!: (perspectives: Perspective[]) => void
 
   public smarts: Perspective[] = []
   public perspective: string = 'Today'

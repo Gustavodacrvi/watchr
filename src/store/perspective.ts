@@ -7,8 +7,8 @@ interface States {
 
 interface Mutations {
   setDefaultData: () => void
-  updatePerspectives: (state: States, perspectives: Perspective[]) => void
   save: () => void
+  getSavedData: () => void
   [key: string]: (state: States, payload: any) => any
 }
 
@@ -26,6 +26,7 @@ interface ActionContext {
 
 interface Actions {
   setDefaultData: (context: ActionContext) => void
+  updatePerspectives: (context: ActionContext, perspectives: Perspective[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -36,12 +37,14 @@ export default {
     perspectives: undefined,
   } as States,
   mutations: {
-    updatePerspectives(state: States, perspectives: Perspective[]): void {
-      state.perspectives = perspectives
-    },
     save(state: States): void {
       if (!localStorage.getItem('watchrIsLogged')) {
         localStorage.setItem('watchrPerspectives', JSON.stringify(state.perspectives))
+      }
+    },
+    getSavedData(state: States): void {
+      if (!localStorage.getItem('watchrIsLogged')) {
+        state.perspectives = JSON.parse(localStorage.getItem('watchrPerspectives') as any)
       }
     },
   } as Mutations,
@@ -68,6 +71,10 @@ export default {
         {name: 'Someday', binded: true, smart: true, icon: 'archive', iconColor: '#E2B983',
          hasToBeEmpty: [], showTaskNumber: false, showWhenNotEmpty: false},
       ]
+      commit('save')
+    },
+    updatePerspectives({state, commit}, perspectives: Perspective[]): void {
+      state.perspectives = perspectives
       commit('save')
     },
   } as Actions,

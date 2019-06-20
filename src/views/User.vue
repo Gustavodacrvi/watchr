@@ -17,7 +17,11 @@ export default class Guest extends Vue {
 
   public created() {
     if (!localStorage.getItem('watchrFirstTimeIn')) {
-      this.$store.commit('perspective/setDefaultData')
+      this.$store.dispatch('perspective/setDefaultData')
+
+      localStorage.setItem('watchrFirstTimeIn', 'false')
+    } else {
+      this.$store.commit('perspective/getSavedData')
     }
     if (this.isDesktop) {
       this.openAppBar()
