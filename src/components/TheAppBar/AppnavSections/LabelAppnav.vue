@@ -1,14 +1,6 @@
 <template>
   <div>
-    <draggable v-if='smarts' v-model='smarts' :animation='300' @end='onEnd'>
-      <div class='list-el' v-for='lab in smarts' :key='lab.id'>
-        <div class='round-border visible' :class='[theme, {active: lab.name === label}]'>
-          <div class='content'>
-            <span class='txt name'>{{ lab.name }}</span>
-          </div>
-        </div>
-      </div>
-    </draggable>
+    <renderer :list='smartLabels' content='name' :active='label' sublist='subLabels'></renderer>
     <division name='CUSTOM LABELS'>
       <renderer v-if='test' :list='test' content='name' active='evelyn' sublist='sublists'></renderer>
     </division>
@@ -113,6 +105,3 @@ export default class OverviewAppnav extends Vue {
 }
 
 </script>
-
-<style scoped src='@/assets/css/appBarSection.css'>
-</style>

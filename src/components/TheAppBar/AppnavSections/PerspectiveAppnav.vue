@@ -1,17 +1,6 @@
 <template>
   <div>
-    <draggable v-if='smarts' v-model='smarts' :animation='300' @end='onEnd'>
-      <div class='list-el' v-for='pers in smartBindedPerspectives' :key='pers.key'>
-        <div class='round-border visible' :class='[theme, {active: pers.name === perspective}]'>
-          <div class='content'>
-            <span class='left-icon'>
-              <icon :icon='pers.icon' :color='pers.iconColor'></icon>
-            </span>
-            <span class='txt name'>{{ pers.name }}</span>
-          </div>
-        </div>
-      </div>
-    </draggable>
+    <renderer :list='smarts' content='name' active='perspective'></renderer>
   </div>
 </template>
 
@@ -20,8 +9,8 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Getter, State, namespace } from 'vuex-class'
 
-import Draggable from 'vuedraggable'
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+import LinkRenderer from '@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'
 
 import appUtil from '@/utils/app'
 
@@ -31,7 +20,7 @@ const perspective = namespace('perspective')
 
 @Component({
   components: {
-    draggable: Draggable,
+    renderer: LinkRenderer,
     icon: FontAwesomeIcon,
   },
 })
@@ -54,6 +43,3 @@ export default class PerspectiveAppnav extends Vue {
 }
 
 </script>
-
-<style scoped src='@/assets/css/appBarSection.css'>
-</style>

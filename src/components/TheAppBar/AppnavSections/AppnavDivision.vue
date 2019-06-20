@@ -36,7 +36,7 @@ export default class AppnavDivision extends Vue {
 <style scoped>
 
 .margin {
-  height: 10px;
+  height: 12px;
 }
 
 .icon {
@@ -58,7 +58,4 @@ export default class AppnavDivision extends Vue {
   font-size: .8em;
 }
 
-</style>
-
-<style scoped src='@/assets/css/appBarSection.css'>
 </style>

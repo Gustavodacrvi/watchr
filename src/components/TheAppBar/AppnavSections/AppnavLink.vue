@@ -2,14 +2,18 @@
   <div class='list-el'>
     <div class='round-border visible' :class='[theme, {active: obj[content] === active}]'>
       <div class='content'>
+        <span class='left-icon' v-if='obj.icon'>
+          <icon v-if='obj.iconColor' :icon='obj.icon' :color='obj.iconColor'></icon>
+          <icon v-else :icon='obj.icon'></icon>
+        </span>
         <span class='txt name'>{{ obj[content] }}</span>
         <span class='icons'>
-          <icon v-if='obj[sublist].length > 0' icon='angle-right' :class='{showing: showing}' size='1x' @click='showing = !showing'></icon>
+          <icon v-if='obj[sublist] && obj[sublist].length > 0' icon='angle-right' :class='{showing: showing}' size='1x' @click='showing = !showing'></icon>
         </span>
       </div>
     </div>
     <transition name='fade'>
-      <div v-if='showing && obj[sublist].length > 0' class='drop'>
+      <div v-if='showing && obj[sublist] && obj[sublist].length > 0' class='drop'>
         <link-render :sublist='sublist' :content='content' :active='active' :list='obj[sublist]'></link-render>
       </div>
     </transition>

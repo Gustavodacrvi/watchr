@@ -1,6 +1,6 @@
 <template>
   <div>
-    <draggable v-model='arr' :animation='300' @end='onEnd'>
+    <draggable v-model='arr' :animation='300' @end='onEnd' :sort='sort'>
       <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active'></appnav-link>
     </draggable>
   </div>
@@ -23,8 +23,9 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 export default class AppnavLinkrenderer extends Vue {
   @Prop({required: true}) public readonly list!: any[]
   @Prop({required: true}) public readonly content!: string
-  @Prop({required: true}) public readonly active!: string
-  @Prop({required: true}) public readonly sublist!: string
+  @Prop({default: ''}) public readonly active!: string
+  @Prop({default: ''}) public readonly sublist!: string
+  @Prop({default: true}) public readonly sort!: boolean
 
   public arr: any[] = this.list
 
