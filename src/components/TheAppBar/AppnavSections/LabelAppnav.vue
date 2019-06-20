@@ -5,11 +5,11 @@
         <span class='txt name'>{{ lab.name }}</span>
       </span>
     </draggable>
-    <division></division>
-    <div class='margin'></div>
-    <span class='list-el round-border txt' :class='theme'>
-      <span class='name'>asdf</span>
-    </span>
+    <division name='CUSTOM LABELS'>
+      <span class='list-el round-border txt' :class='theme'>
+        <span class='name'>asdf</span>
+      </span>
+    </division>
   </div>
 </template>
 
