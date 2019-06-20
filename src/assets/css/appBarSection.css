@@ -1,6 +1,7 @@
 
 .list-el {
   position: relative;
+  margin-top: 2px;
 }
 
 .list-el .visible {
@@ -11,6 +12,7 @@
 }
 
 .list-el .content {
+  position: relative;
   display: flex;
 }
 
@@ -25,7 +27,10 @@
 
 .list-el .icons {
   position: absolute;
-  right: 2px;
+  height: 100%;
+  right: 8px;
+  display: flex;
+  align-items: center;
 }
 
 .list-el .visible.light:hover, .list-el .visible.light.active {

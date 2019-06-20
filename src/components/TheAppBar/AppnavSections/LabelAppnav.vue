@@ -8,31 +8,16 @@
           </div>
         </div>
       </div>
-        <!-- <span class='label round-border list-el' v-for='lab in smarts' :class='[theme, {active: lab.name === label}]' :key='lab.id'>
-          <span class='txt name'>{{ lab.name }}</span>
-        </span> -->
     </draggable>
     <division name='CUSTOM LABELS'>
       <span class='list-el round-border txt' :class='theme'>
-        <!-- <renderer v-if='nonSmartLabels' :list='nonSmartLabels' content='name' :active='label'></renderer> -->
+        <renderer v-if='test' :list='test' content='name' active='evelyn' sublists='sublists'></renderer>
       </span>
     </division>
   </div>
 </template>
 
 <script lang='ts'>
-
-/* 
-  <div class='list-el'>
-    <div class='round-border visible'>
-      <div class='content'>
-        <span class='txt name'></span>
-      </div>
-      <span class='icons'>
-      </span>
-    </div>
-  </div>
- */
 
 import { Component, Vue } from 'vue-property-decorator'
 import { Getter, State, namespace } from 'vuex-class'
@@ -64,6 +49,60 @@ export default class OverviewAppnav extends Vue {
 
   public smarts: Label[] = []
   public label: string = ''
+  public test: any[] = [
+    {
+      name: 'yeh',
+      id: 'a',
+      sublists: [
+        {
+          name: 'evelyn',
+          id: 'e',
+          sublists: [],
+        },
+        {
+          name: 'workplace',
+          id: 'w',
+          sublists: [
+            {
+              name: 'jennifer',
+              id: 'je',
+              sublists: [],
+            },
+            {
+              name: 'anotherone',
+              id: 'asdfasd',
+              sublists: [],
+            }
+          ]
+        },
+        {
+          name: 'kid',
+          id: 'k',
+          sublists: [],
+        },
+      ],
+    },
+    {
+      name: 'bruh',
+      id: 'b',
+      sublists: [],
+    }, {
+      name: 'last one',
+      id: 'las',
+      sublists: [
+        {
+          name: 'somethin',
+          id: 'd',
+          sublists: [],
+        },
+        {
+          name: 'mean',
+          id: 'm',
+          sublists: [],
+        }
+      ]
+    }
+  ]
 
   public created() {
     this.smarts = this.smartLabels
