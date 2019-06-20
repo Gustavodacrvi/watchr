@@ -44,13 +44,15 @@ export default {
             return el.name === targetLabelName
           })
           if (label === undefined) {
-            labels.push({
-              smart: false,
-              name: targetLabelName,
-              id: uuid(),
-              subLabels: [],
-            })
-            walk(labels[labels.length - 1].subLabels, path)
+            if (targetLabelName !== '') {
+              labels.push({
+                smart: false,
+                name: targetLabelName,
+                id: uuid(),
+                subLabels: [],
+              })
+              walk(labels[labels.length - 1].subLabels, path)
+            }
           } else {
             walk(label.subLabels, path)
           }
