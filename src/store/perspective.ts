@@ -8,6 +8,7 @@ interface States {
 interface Mutations {
   setDefaultData: () => void
   updatePerspectives: (state: States, perspectives: Perspective[]) => void
+  save: () => void
   [key: string]: (state: States, payload: any) => any
 }
 
@@ -16,13 +17,45 @@ interface Getters {
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
 }
 
+interface ActionContext {
+  state: States
+  getters: Getters
+  commit: (mutation: string, payload?: any) => void
+  dispatch: (action: string) => void
+}
+
+interface Actions {
+  setDefaultData: (context: ActionContext) => void
+  [key: string]: (context: ActionContext, payload: any) => any
+}
+
+
 export default {
   namespaced: true,
   state: {
     perspectives: undefined,
   } as States,
   mutations: {
-    setDefaultData(state: States) {
+    updatePerspectives(state: States, perspectives: Perspective[]): void {
+      state.perspectives = perspectives
+    },
+    save(state: States): void {
+      if (!localStorage.getItem('watchrIsLogged')) {
+        localStorage.setItem('watchrPerspectives', JSON.stringify(state.perspectives))
+      }
+    },
+  } as Mutations,
+  getters: {
+    smartBindedPerspectives(state: States): Perspective[] | undefined {
+      if (state.perspectives) {
+        return state.perspectives.filter((el: Perspective) => el.binded && el.smart)
+      } else {
+        return undefined
+      }
+    },
+  } as Getters,
+  actions: {
+    setDefaultData({state, commit}): void {
       state.perspectives = [
         {name: 'Today', binded: true, smart: true, icon: 'calendar-day', iconColor: '#FFE366',
          hasToBeEmpty: [], showTaskNumber: true, showWhenNotEmpty: false},
@@ -35,18 +68,7 @@ export default {
         {name: 'Someday', binded: true, smart: true, icon: 'archive', iconColor: '#E2B983',
          hasToBeEmpty: [], showTaskNumber: false, showWhenNotEmpty: false},
       ]
+      commit('save')
     },
-    updatePerspectives(state: States, perspectives: Perspective[]): void {
-      state.perspectives = perspectives
-    },
-  } as Mutations,
-  getters: {
-    smartBindedPerspectives(state: States): Perspective[] | undefined {
-      if (state.perspectives) {
-        return state.perspectives.filter((el: Perspective) => el.binded && el.smart)
-      } else {
-        return undefined
-      }
-    },
-  } as Getters,
+  } as Actions,
 }
