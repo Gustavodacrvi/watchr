@@ -1,5 +1,6 @@
 
 import { Perspective } from '@/interfaces/app'
+import uuid from 'uuid'
 
 interface States {
   perspectives: Perspective[] | undefined
@@ -60,15 +61,15 @@ export default {
   actions: {
     setDefaultData({state, commit}): void {
       state.perspectives = [
-        {name: 'Today', binded: true, smart: true, icon: 'calendar-day', iconColor: '#FFE366',
+        {name: 'Today', binded: true, smart: true, icon: 'calendar-day', iconColor: '#FFE366', id: uuid(),
          hasToBeEmpty: [], showTaskNumber: true, showWhenNotEmpty: false},
-        {name: 'Inbox', binded: true, smart: true, icon: 'inbox', iconColor: '#83B7E2', hasToBeEmpty: [],
+        {name: 'Inbox', binded: true, smart: true, icon: 'inbox', iconColor: '#83B7E2', hasToBeEmpty: [], id: uuid(),
          showTaskNumber: true, showWhenNotEmpty: false},
-        {name: 'Upcoming', binded: true, smart: true, icon: 'calendar-alt', iconColor: '#FF6B66',
+        {name: 'Upcoming', binded: true, smart: true, icon: 'calendar-alt', iconColor: '#FF6B66', id: uuid(),
          hasToBeEmpty: [], showTaskNumber: false, showWhenNotEmpty: false},
-        {name: 'Anytime', binded: true, smart: true, icon: 'layer-group', iconColor: '#88DDB7',
+        {name: 'Anytime', binded: true, smart: true, icon: 'layer-group', iconColor: '#88DDB7', id: uuid(),
          hasToBeEmpty: [], showTaskNumber: false, showWhenNotEmpty: false},
-        {name: 'Someday', binded: true, smart: true, icon: 'archive', iconColor: '#E2B983',
+        {name: 'Someday', binded: true, smart: true, icon: 'archive', iconColor: '#E2B983', id: uuid(),
          hasToBeEmpty: [], showTaskNumber: false, showWhenNotEmpty: false},
       ]
       commit('save')
