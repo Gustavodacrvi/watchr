@@ -1,19 +1,38 @@
 <template>
   <div>
     <draggable v-if='smarts' v-model='smarts' :animation='300' @end='onEnd'>
-      <span class='label round-border list-el' v-for='lab in smarts' :class='[theme, {active: lab.name === label}]' :key='lab.id'>
-        <span class='txt name'>{{ lab.name }}</span>
-      </span>
+      <div class='list-el' v-for='lab in smarts' :key='lab.id'>
+        <div class='round-border visible' :class='[theme, {active: lab.name === label}]'>
+          <div class='content'>
+            <span class='txt name'>{{ lab.name }}</span>
+          </div>
+        </div>
+      </div>
+        <!-- <span class='label round-border list-el' v-for='lab in smarts' :class='[theme, {active: lab.name === label}]' :key='lab.id'>
+          <span class='txt name'>{{ lab.name }}</span>
+        </span> -->
     </draggable>
     <division name='CUSTOM LABELS'>
       <span class='list-el round-border txt' :class='theme'>
-        <renderer></renderer>
+        <!-- <renderer v-if='nonSmartLabels' :list='nonSmartLabels' content='name' :active='label'></renderer> -->
       </span>
     </division>
   </div>
 </template>
 
 <script lang='ts'>
+
+/* 
+  <div class='list-el'>
+    <div class='round-border visible'>
+      <div class='content'>
+        <span class='txt name'></span>
+      </div>
+      <span class='icons'>
+      </span>
+    </div>
+  </div>
+ */
 
 import { Component, Vue } from 'vue-property-decorator'
 import { Getter, State, namespace } from 'vuex-class'
@@ -40,6 +59,7 @@ const label = namespace('label')
 export default class OverviewAppnav extends Vue {
   @State('theme') public readonly theme!: string
   @label.Getter('smartLabels') public readonly smartLabels!: Label[]
+  @label.Getter('nonSmartLabels') public readonly nonSmartLabels!: Label[]
   @label.Action('updateLabels') public readonly updateLabels!: (label: Label[]) => void
 
   public smarts: Label[] = []

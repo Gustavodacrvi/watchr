@@ -1,12 +1,16 @@
 <template>
   <div>
     <draggable v-if='smarts' v-model='smarts' :animation='300' @end='onEnd'>
-      <span class='perspective round-border list-el' v-for='pers in smarts' :class='[theme, {active: pers.name === perspective}]' :key='pers.id'>
-        <span class='icon'>
-          <icon :icon='pers.icon' :color='pers.iconColor'></icon>
-        </span>
-        <span class='txt name'>{{ pers.name }}</span>
-      </span>
+      <div class='list-el' v-for='pers in smartBindedPerspectives' :key='pers.key'>
+        <div class='round-border visible' :class='[theme, {active: pers.name === perspective}]'>
+          <div class='content'>
+            <span class='left-icon'>
+              <icon :icon='pers.icon' :color='pers.iconColor'></icon>
+            </span>
+            <span class='txt name'>{{ pers.name }}</span>
+          </div>
+        </div>
+      </div>
     </draggable>
   </div>
 </template>

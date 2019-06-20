@@ -1,24 +1,37 @@
 
 .list-el {
-  display: flex;
-  cursor: pointer;
+  position: relative;
+}
+
+.list-el .visible {
+  position: relative;
   padding: 6px 0;
+  cursor: pointer;
   transition: background-color .3s;
 }
 
-.list-el .icon {
-  width: 30px;
+.list-el .content {
+  display: flex;
+}
+
+.list-el .left-icon {
   text-align: center;
+  width: 30px;
 }
 
 .list-el .name {
   margin-left: 6px;
 }
 
-.list-el.dark:hover, .list-el.dark.active {
-  background-color: #282828;
+.list-el .icons {
+  position: absolute;
+  right: 2px;
 }
 
-.list-el.light:hover, .list-el.light.active {
+.list-el .visible.light:hover, .list-el .visible.light.active {
   background-color: #E6E6E6;
+}
+
+.list-el .visible.dark:hover, .list-el .visible.dark.active {
+  background-color: #282828;
 }
