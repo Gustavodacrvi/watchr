@@ -5,6 +5,11 @@
         <span class='txt name'>{{ lab.name }}</span>
       </span>
     </draggable>
+    <division></division>
+    <div class='margin'></div>
+    <span class='list-el round-border txt' :class='theme'>
+      <span class='name'>asdf</span>
+    </span>
   </div>
 </template>
 
@@ -15,6 +20,7 @@ import { Getter, State, namespace } from 'vuex-class'
 
 import Draggable from 'vuedraggable'
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+import Division from '@/components/TheAppBar/AppnavSections/AppnavDivision.vue'
 
 import appUtil from '@/utils/app'
 
@@ -26,6 +32,7 @@ const label = namespace('label')
   components: {
     draggable: Draggable,
     icon: FontAwesomeIcon,
+    division: Division,
   },
 })
 export default class OverviewAppnav extends Vue {
