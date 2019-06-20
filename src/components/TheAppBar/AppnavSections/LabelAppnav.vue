@@ -7,7 +7,7 @@
     </draggable>
     <division name='CUSTOM LABELS'>
       <span class='list-el round-border txt' :class='theme'>
-        <span class='name'>asdf</span>
+        <renderer></renderer>
       </span>
     </division>
   </div>
@@ -21,6 +21,7 @@ import { Getter, State, namespace } from 'vuex-class'
 import Draggable from 'vuedraggable'
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 import Division from '@/components/TheAppBar/AppnavSections/AppnavDivision.vue'
+import LinkRenderer from '@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'
 
 import appUtil from '@/utils/app'
 
@@ -33,6 +34,7 @@ const label = namespace('label')
     draggable: Draggable,
     icon: FontAwesomeIcon,
     division: Division,
+    renderer: LinkRenderer,
   },
 })
 export default class OverviewAppnav extends Vue {

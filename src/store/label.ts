@@ -17,6 +17,7 @@ interface Mutations {
 interface Getters {
   getLabelNodeFromArrayPath: () => () => Label | undefined
   smartLabels: () => Label[]
+  nonSmartLabels: () => Label[]
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
 }
 
@@ -96,6 +97,9 @@ export default {
     },
     smartLabels(state: States): Label[] {
       return state.labels.filter((el: Label) => el.smart)
+    },
+    nonSmartLabels(state: States): Label[] {
+      return state.labels.filter((el: Label) => !el.smart)
     },
   } as Getters,
   actions: {
