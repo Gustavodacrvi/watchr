@@ -3,7 +3,7 @@
     <input v-if='tabindex' :tabindex='tabindex' class='margin input txt round-border gray' :placeholder='placeholder' type='text' autocomplete='off' :class='[theme, {wrong: hasError}]' v-model='value' @keydown='keyDown' @keypress='keyPressed' @focus='focus' @blur='blur'>
     <input v-else :tabindex='tabindex' class='margin input txt round-border gray' :placeholder='placeholder' type='text' autocomplete='off' :class='[theme, {wrong: hasError}]' v-model='value' @keydown='keyDown' @keypress='keyPressed'  @focus='focus' @blur='blur'>
     <transition name='fade'>
-      <div v-if='showing' class='dropdown round-border gray border' :class='theme' ref='dropdown'>
+      <div v-if='showing' class='dropdown round-border gray border scroll' :class='theme' ref='dropdown'>
         <transition-group name='fade'>
           <span v-for='option in values' :ref='option' class='option txt' :class='[theme,{active: selected === option}]' :key='option' @click='select(option)'>{{ option }}</span>
         </transition-group>
