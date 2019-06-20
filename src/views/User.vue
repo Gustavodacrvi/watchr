@@ -19,7 +19,7 @@ export default class Guest extends Vue {
     if (!localStorage.getItem('watchrFirstTimeIn')) {
       this.$store.dispatch('perspective/setDefaultData')
 
-      localStorage.setItem('watchrFirstTimeIn', 'false')
+      localStorage.setItem('watchrFirstTimeIn', 'true')
     } else {
       this.$store.commit('perspective/getSavedData')
     }
