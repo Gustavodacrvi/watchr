@@ -22,6 +22,7 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 import appUtil from '@/utils/app'
 
 import { Perspective } from '@/interfaces/app'
+import app from '@/utils/app'
 
 const perspective = namespace('perspective')
 
@@ -34,6 +35,7 @@ const perspective = namespace('perspective')
 export default class PerspectiveAppnav extends Vue {
   @State('theme') public readonly theme!: string
   @perspective.Getter('smartBindedPerspectives') public readonly smartBindedPerspectives!: Perspective[]
+  @perspective.Mutation('updatePerspectives') public readonly updatePerspectives!: (perspectives: Perspective[]) => void
 
   public smarts: Perspective[] = []
   public perspective: string = 'Today'
@@ -42,9 +44,9 @@ export default class PerspectiveAppnav extends Vue {
     this.smarts = this.smartBindedPerspectives
   }
 
-  public onEnd(e: any): void{
-    console.log(this.smarts)
-    console.log(appUtil.updateObjectsOrder(this.smartBindedPerspectives as any, this.smarts as any))
+  public onEnd(e: any): void {
+    const arr: Perspective[] = appUtil.updateArrayOrderFromFilteredArray(this.smartBindedPerspectives, this.smarts)
+    this.updatePerspectives(arr)
   }
 }
 

@@ -7,6 +7,7 @@ interface States {
 
 interface Mutations {
   setDefaultData: () => void
+  updatePerspectives: (state: States, perspectives: Perspective[]) => void
   [key: string]: (state: States, payload: any) => any
 }
 
@@ -34,6 +35,9 @@ export default {
         {name: 'Someday', binded: true, smart: true, icon: 'archive', iconColor: '#E2B983',
          hasToBeEmpty: [], showTaskNumber: false, showWhenNotEmpty: false},
       ]
+    },
+    updatePerspectives(state: States, perspectives: Perspective[]): void {
+      state.perspectives = perspectives
     },
   } as Mutations,
   getters: {
