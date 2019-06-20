@@ -84,6 +84,10 @@ body, button, input {
 /* .scroll::-webkit-scrollbar-track {
 } */
 
+.sortable-drag {
+  opacity: 0;
+}
+
 .scroll::-webkit-scrollbar-thumb {
   background-color: #AF92F7; 
   border-radius: 10px;
