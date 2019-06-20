@@ -50,6 +50,7 @@ interface Section {
     icon: FontAwesomeIcon,
     overview: () => import('@/components/TheAppBar/AppnavSections/OverviewAppnav.vue'),
     labels: () => import('@/components/TheAppBar/AppnavSections/LabelAppnav.vue'),
+    perspectives: () => import('@/components/TheAppBar/AppnavSections/PerspectiveAppnav.vue'),
   },
 })
 export default class LoggedAppnav extends Vue {
