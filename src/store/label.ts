@@ -8,6 +8,8 @@ interface States {
 }
 
 interface Mutations {
+  save: () => void
+  getSavedData: () => void
   addLabelFromArrayPath: (state: States, path: string[]) => void
   [key: string]: (state: States, payload: any) => any
 }
@@ -26,7 +28,6 @@ interface ActionContext {
 
 
 interface Actions {
-  addLabelFromArrayPath: (context: ActionContext, path: string[]) => boolean
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -36,6 +37,16 @@ export default {
     labels: [],
   } as States,
   mutations: {
+    save(state: States): void {
+      if (!localStorage.getItem('watchrIsLogged')) {
+        localStorage.setItem('watchrLabels', JSON.stringify(state.labels))
+      }
+    },
+    getSavedData(state: States): void {
+      if (!localStorage.getItem('watchrIsLogged')) {
+        state.labels = JSON.parse(localStorage.getItem('watchrLabels') as any)
+      }
+    },
     addLabelFromArrayPath(state: States, nodePath: string[]): void {
       const walk = (labels: Label[], path: string[]): void => {
         const targetLabelName: string | undefined = path.shift()
@@ -84,5 +95,12 @@ export default {
     },
   } as Getters,
   actions: {
+    setDefaultData({state, commit}): void {
+      state.labels = [
+        {name: 'Someday', id: uuid(), smart: true, subLabels: []},
+        {name: 'Anytime', id: uuid(), smart: true, subLabels: []},
+      ]
+      commit('save')
+    },
   } as Actions,
 }
