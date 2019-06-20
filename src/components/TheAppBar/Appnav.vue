@@ -7,11 +7,11 @@
     <div class='content-wrapper'>
       <div class='content'>
         <div class='navsect'>
-          <icon v-for='sect in sections' :key='sect.name' :icon='sect.icon' :color='currentSect === sect.name ? "#AF92F7" : ""' @click='currentSect = sect.comp'></icon>
+          <icon v-for='sect in sections' :key='sect.name' :icon='sect.icon' :color='currentSect === sect.name ? "#AF92F7" : ""' @click='currentSect = sect.comp;currentSectName = sect.name'></icon>
         </div>
         <hr class='border' style='width: 100%;margin-top:13px;'>
         <div class='section-title'>
-          <span>{{ currentSect }}</span>
+          <span>{{ currentSectName }}</span>
         </div>
         <transition name='fade' mode='out-in'>
           <component :is='currentSect'></component>
@@ -60,14 +60,16 @@ export default class LoggedAppnav extends Vue {
   @Getter('isDesktop') public readonly isDesktop!: boolean
 
   public readonly sections: Section[] = [
-    {name: 'overview', icon: 'home', comp: 'overview'},
-    {name: 'perspectives', icon: 'layer-group', comp: 'perspectives'},
-    {name: 'projects', icon: 'project-diagram', comp: 'projects'},
-    {name: 'time tracking', icon: 'stopwatch', comp: 'timetracking'},
-    {name: 'intervals and routines', icon: 'stream', comp: 'intervalsandroutines'},
-    {name: 'labels', icon: 'tags', comp: 'labels'},
-    {name: 'statistics', icon: 'chart-pie', comp: 'statistics'},
+    {name: 'OVERVIEW', icon: 'home', comp: 'overview'},
+    {name: 'PERSPECTIVES', icon: 'layer-group', comp: 'perspectives'},
+    {name: 'PROJECTS', icon: 'project-diagram', comp: 'projects'},
+    {name: 'TIME TRACKING', icon: 'stopwatch', comp: 'timetracking'},
+    {name: 'INTERVALS AND ROUTINES', icon: 'stream', comp: 'intervalsandroutines'},
+    {name: 'LABELS', icon: 'tags', comp: 'labels'},
+    {name: 'STATISTICS', icon: 'chart-pie', comp: 'statistics'},
   ]
+
+  public currentSectName: string = 'OVERVIEW'
   public currentSect: string = 'overview'
 }
 

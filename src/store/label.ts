@@ -8,12 +8,16 @@ interface States {
 }
 
 interface Mutations {
+  save: () => void
+  getSavedData: () => void
   addLabelFromArrayPath: (state: States, path: string[]) => void
   [key: string]: (state: States, payload: any) => any
 }
 
 interface Getters {
   getLabelNodeFromArrayPath: () => () => Label | undefined
+  smartLabels: () => Label[]
+  nonSmartLabels: () => Label[]
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
 }
 
@@ -26,7 +30,6 @@ interface ActionContext {
 
 
 interface Actions {
-  addLabelFromArrayPath: (context: ActionContext, path: string[]) => boolean
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -36,6 +39,16 @@ export default {
     labels: [],
   } as States,
   mutations: {
+    save(state: States): void {
+      if (!localStorage.getItem('watchrIsLogged')) {
+        localStorage.setItem('watchrLabels', JSON.stringify(state.labels))
+      }
+    },
+    getSavedData(state: States): void {
+      if (!localStorage.getItem('watchrIsLogged')) {
+        state.labels = JSON.parse(localStorage.getItem('watchrLabels') as any)
+      }
+    },
     addLabelFromArrayPath(state: States, nodePath: string[]): void {
       const walk = (labels: Label[], path: string[]): void => {
         const targetLabelName: string | undefined = path.shift()
@@ -82,7 +95,24 @@ export default {
       }
       return walk(state.labels, nodePath.slice())
     },
+    smartLabels(state: States): Label[] {
+      return state.labels.filter((el: Label) => el.smart)
+    },
+    nonSmartLabels(state: States): Label[] {
+      return state.labels.filter((el: Label) => !el.smart)
+    },
   } as Getters,
   actions: {
+    setDefaultData({state, commit}): void {
+      state.labels = [
+        {name: 'Someday', id: uuid(), smart: true, subLabels: []},
+        {name: 'Anytime', id: uuid(), smart: true, subLabels: []},
+      ]
+      commit('save')
+    },
+    updateLabels({state, commit}, labels: Label[]): void {
+      state.labels = labels
+      commit('save')
+    },
   } as Actions,
 }

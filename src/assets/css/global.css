@@ -77,14 +77,6 @@ body, button, input {
   border-radius: 10px;
 }
 
-.list-el.dark:hover, .list-el.dark.active {
-  background-color: #282828;
-}
-
-.list-el.light:hover, .list-el.light.active {
-  background-color: #E6E6E6;
-}
-
 .scroll::-webkit-scrollbar {
   width: 10px;
 }

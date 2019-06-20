@@ -1,11 +1,6 @@
 <template>
   <div>
-    <span class='perspective round-border list-el' v-for='pers in smartBindedPerspectives' :class='[theme, {active: pers.name === perspective}]' :key='pers.name'>
-      <span class='icon'>
-        <icon :icon='pers.icon' :color='pers.iconColor'></icon>
-      </span>
-      <span class='txt name'>{{ pers.name }}</span>
-    </span>
+    <renderer :list='smartBindedPerspectives' content='name' :active='perspective' :sort='false'></renderer>
   </div>
 </template>
 
@@ -17,12 +12,14 @@ import { Getter, State, namespace } from 'vuex-class'
 import { Perspective } from '@/interfaces/app'
 
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+import LinkRenderer from '@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'
 
 const perspective = namespace('perspective')
 
 @Component({
   components: {
     icon: FontAwesomeIcon,
+    renderer: LinkRenderer,
   },
 })
 export default class OverviewAppnav extends Vue {
@@ -33,6 +30,3 @@ export default class OverviewAppnav extends Vue {
 }
 
 </script>
-
-<style scoped src='@/assets/css/appBarSection.css'>
-</style>
