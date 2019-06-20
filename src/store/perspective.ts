@@ -3,7 +3,7 @@ import { Perspective } from '@/interfaces/app'
 import uuid from 'uuid'
 
 interface States {
-  perspectives: Perspective[] | undefined
+  perspectives: Perspective[]
 }
 
 interface Mutations {
@@ -35,7 +35,7 @@ interface Actions {
 export default {
   namespaced: true,
   state: {
-    perspectives: undefined,
+    perspectives: [],
   } as States,
   mutations: {
     save(state: States): void {
@@ -50,12 +50,8 @@ export default {
     },
   } as Mutations,
   getters: {
-    smartBindedPerspectives(state: States): Perspective[] | undefined {
-      if (state.perspectives) {
-        return state.perspectives.filter((el: Perspective) => el.binded && el.smart)
-      } else {
-        return undefined
-      }
+    smartBindedPerspectives(state: States): Perspective[] {
+      return state.perspectives.filter((el: Perspective) => el.binded && el.smart)
     },
   } as Getters,
   actions: {

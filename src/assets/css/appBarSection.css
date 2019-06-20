@@ -1,16 +1,25 @@
 
-.perspective {
+.list-el {
   display: flex;
   cursor: pointer;
   padding: 6px 0;
   transition: background-color .3s;
 }
 
-.perspective .icon {
+.list-el .icon {
   width: 30px;
   text-align: center;
 }
 
-.perspective .name {
+.list-el .name {
   margin-left: 6px;
 }
+
+.list-el.dark:hover, .list-el.dark.active {
+  background-color: #282828;
+}
+
+.list-el.light:hover, .list-el.light.active {
+  background-color: #E6E6E6;
+}
+

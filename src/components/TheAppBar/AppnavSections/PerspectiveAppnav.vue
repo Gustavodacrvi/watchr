@@ -1,7 +1,7 @@
 <template>
   <div>
     <draggable v-if='smarts' v-model='smarts' :animation='300' @end='onEnd'>
-      <span class='perspective round-border list-el' v-for='pers in smarts' :class='[theme, {active: pers.name === perspective}]' :key='pers.name'>
+      <span class='perspective round-border list-el' v-for='pers in smarts' :class='[theme, {active: pers.name === perspective}]' :key='pers.id'>
         <span class='icon'>
           <icon :icon='pers.icon' :color='pers.iconColor'></icon>
         </span>
@@ -22,7 +22,6 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 import appUtil from '@/utils/app'
 
 import { Perspective } from '@/interfaces/app'
-import app from '@/utils/app'
 
 const perspective = namespace('perspective')
 

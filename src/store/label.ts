@@ -16,6 +16,7 @@ interface Mutations {
 
 interface Getters {
   getLabelNodeFromArrayPath: () => () => Label | undefined
+  smartLabels: () => Label[]
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
 }
 
@@ -93,6 +94,9 @@ export default {
       }
       return walk(state.labels, nodePath.slice())
     },
+    smartLabels(state: States): Label[] {
+      return state.labels.filter((el: Label) => el.smart)
+    },
   } as Getters,
   actions: {
     setDefaultData({state, commit}): void {
@@ -100,6 +104,10 @@ export default {
         {name: 'Someday', id: uuid(), smart: true, subLabels: []},
         {name: 'Anytime', id: uuid(), smart: true, subLabels: []},
       ]
+      commit('save')
+    },
+    updateLabels({state, commit}, labels: Label[]): void {
+      state.labels = labels
       commit('save')
     },
   } as Actions,
