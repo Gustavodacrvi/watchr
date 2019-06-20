@@ -1,8 +1,8 @@
 <template>
   <div>
-    <renderer :list='smartLabels' content='name' :active='label' sublist='subLabels'></renderer>
+    <renderer :list='smartLabels' content='name' :active='label' sublist='subLabels' @update='update'></renderer>
     <division name='CUSTOM LABELS'>
-      <renderer v-if='test' :list='test' content='name' active='evelyn' sublist='sublists'></renderer>
+      <renderer v-if='nonSmartLabels' :list='nonSmartLabels' content='name' :active='label' sublist='subLabels' @update='update'></renderer>
     </division>
   </div>
 </template>
@@ -33,74 +33,19 @@ const label = namespace('label')
 })
 export default class OverviewAppnav extends Vue {
   @State('theme') public readonly theme!: string
+  @label.State('labels') public readonly labels!: Label[]
   @label.Getter('smartLabels') public readonly smartLabels!: Label[]
   @label.Getter('nonSmartLabels') public readonly nonSmartLabels!: Label[]
   @label.Action('updateLabels') public readonly updateLabels!: (label: Label[]) => void
 
-  public smarts: Label[] = []
   public label: string = ''
-  public test: any[] = [
-    {
-      name: 'yeh',
-      id: 'a',
-      sublists: [
-        {
-          name: 'evelyn',
-          id: 'e',
-          sublists: [],
-        },
-        {
-          name: 'workplace',
-          id: 'w',
-          sublists: [
-            {
-              name: 'jennifer',
-              id: 'je',
-              sublists: [],
-            },
-            {
-              name: 'anotherone',
-              id: 'asdfasd',
-              sublists: [],
-            }
-          ]
-        },
-        {
-          name: 'kid',
-          id: 'k',
-          sublists: [],
-        },
-      ],
-    },
-    {
-      name: 'bruh',
-      id: 'b',
-      sublists: [],
-    }, {
-      name: 'last one',
-      id: 'las',
-      sublists: [
-        {
-          name: 'somethin',
-          id: 'd',
-          sublists: [],
-        },
-        {
-          name: 'mean',
-          id: 'm',
-          sublists: [],
-        }
-      ]
-    }
-  ]
 
   public created() {
-    this.smarts = this.smartLabels
-    this.label = this.smarts[0].name
+    this.label = this.smartLabels[0].name
   }
-  public onEnd() {
-    const arr: Label[] = appUtil.updateArrayOrderFromFilteredArray(this.smartLabels, this.smarts)
-    this.updateLabels(arr)
+
+  public update({arr}: {arr: Label[]}): void {
+    this.updateLabels(appUtil.updateArrayOrderFromFilteredArray(this.labels, arr))
   }
 }
 

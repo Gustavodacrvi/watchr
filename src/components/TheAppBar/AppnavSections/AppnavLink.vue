@@ -14,7 +14,7 @@
     </div>
     <transition name='fade'>
       <div v-if='showing && obj[sublist] && obj[sublist].length > 0' class='drop'>
-        <link-render :sublist='sublist' :content='content' :active='active' :list='obj[sublist]'></link-render>
+        <link-render :sublist='sublist' :content='content' :active='active' :list='obj[sublist]' @update='update'></link-render>
       </div>
     </transition>
   </div>
@@ -41,6 +41,10 @@ export default class AppnavLink extends Vue {
   @Prop({required: true}) public readonly active!: string
 
   public showing: boolean = false
+
+  public update({arr}: any): void {
+    this.$emit('update', {arr, id: this.obj.id})
+  }
 }
 
 </script>

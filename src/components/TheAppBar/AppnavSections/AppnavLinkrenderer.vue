@@ -1,7 +1,7 @@
 <template>
   <div>
-    <draggable v-model='arr' :animation='300' @end='onEnd' :sort='sort'>
-      <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active'></appnav-link>
+    <draggable v-model='arr' :animation='300' @end='update' :sort='sort'>
+      <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active' @update='update'></appnav-link>
     </draggable>
   </div>
 </template>
@@ -34,8 +34,15 @@ export default class AppnavLinkrenderer extends Vue {
     this.arr = this.list
   }
 
-  public onEnd(): void {
+  public update({arr, id}: {arr: any[], id: string}): void {
+    if (id) {
+      const newObj = this.arr.find((el: any) => {
+        return el.id === id
+      })
+      newObj[this.sublist] = arr
+    }
 
+    this.$emit('update', {arr: this.arr, id})
   }
 }
 

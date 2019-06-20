@@ -1,6 +1,6 @@
 <template>
   <div>
-    <renderer :list='smarts' content='name' active='perspective'></renderer>
+    <renderer :list='smartBindedPerspectives' content='name' active='perspective' @update='update'></renderer>
   </div>
 </template>
 
@@ -29,16 +29,10 @@ export default class PerspectiveAppnav extends Vue {
   @perspective.Getter('smartBindedPerspectives') public readonly smartBindedPerspectives!: Perspective[]
   @perspective.Action('updatePerspectives') public readonly updatePerspectives!: (perspectives: Perspective[]) => void
 
-  public smarts: Perspective[] = []
   public perspective: string = 'Today'
 
-  public created() {
-    this.smarts = this.smartBindedPerspectives
-  }
-
-  public onEnd(e: any): void {
-    const arr: Perspective[] = appUtil.updateArrayOrderFromFilteredArray(this.smartBindedPerspectives, this.smarts)
-    this.updatePerspectives(arr)
+  public update({arr}: {arr: Perspective[]}): void {
+    this.updatePerspectives(appUtil.updateArrayOrderFromFilteredArray(this.smartBindedPerspectives, arr))
   }
 }
 
