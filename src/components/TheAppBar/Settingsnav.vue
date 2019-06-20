@@ -40,6 +40,7 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 export default class LoggedAppnav extends Vue {
   @State('theme') public readonly theme!: string
   @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
+  @Mutation('closeAppBar') public readonly closeAppBar!: () => void
   @Getter('isDesktop') public readonly isDesktop!: boolean
 }
 
