@@ -10,9 +10,7 @@
       </div>
     </draggable>
     <division name='CUSTOM LABELS'>
-      <span class='list-el round-border txt' :class='theme'>
-        <renderer v-if='test' :list='test' content='name' active='evelyn' sublists='sublists'></renderer>
-      </span>
+      <renderer v-if='test' :list='test' content='name' active='evelyn' sublist='sublists'></renderer>
     </division>
   </div>
 </template>
