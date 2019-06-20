@@ -1,3 +1,4 @@
+
 export interface Perspective {
   smart: boolean
   binded: boolean
@@ -7,6 +8,7 @@ export interface Perspective {
   name: string
   icon: string
   iconColor: string
+  id: string
 }
 
 export interface Label {

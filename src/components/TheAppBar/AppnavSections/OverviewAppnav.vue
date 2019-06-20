@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span class='perspective round-border' v-for='pers in smartBindedPerspectives' :class='[theme, {active: pers.name === perspective}]' :key='pers.name'>
+    <span class='perspective round-border list-el' v-for='pers in smartBindedPerspectives' :class='[theme, {active: pers.name === perspective}]' :key='pers.name'>
       <span class='icon'>
         <icon :icon='pers.icon' :color='pers.iconColor'></icon>
       </span>

@@ -14,11 +14,3 @@
 .perspective .name {
   margin-left: 6px;
 }
-
-.perspective.dark:hover, .perspective.dark.active {
-  background-color: #282828;
-}
-
-.perspective.light:hover, .perspective.light.active {
-  background-color: #E6E6E6;
-}
