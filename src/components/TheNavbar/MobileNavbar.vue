@@ -80,7 +80,7 @@ export default class MobileNavbar extends Vue {
 }
 
 .icon:hover .line {
-  background-color: #AF92F7;
+  background-color: #fc7d7d;
 }
 
 </style>

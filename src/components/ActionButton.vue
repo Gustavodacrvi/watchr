@@ -50,11 +50,11 @@ export default class ActionButton extends Vue {
   public leftButtons: Buttons[] = [
     {icon: 'inbox', iconColor: 'white', backColor: '#83B7E2'},
     {icon: 'calendar-day', iconColor: 'white', backColor: '#FFE366'},
-    {icon: 'calendar-alt', iconColor: 'white', backColor: '#FF6B66'},
+    {icon: 'calendar-alt', iconColor: 'white', backColor: '#fc7d7d'},
   ]
   public topButtons: Buttons[] = [
     {icon: 'stopwatch', iconColor: 'white', backColor: '#70FF66'},
-    {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: this.popUp('LabeladderPopup')},
+    {icon: 'tags', iconColor: 'white', backColor: '#fc7d7d', click: this.popUp('LabeladderPopup')},
   ]
 
   public showing: boolean = false
@@ -105,7 +105,7 @@ export default class ActionButton extends Vue {
   justify-content: center;
   align-items: center;
   border-radius: 100px;
-  background-color: #AF92F7;
+  background-color: #fc7d7d;
   transition-duration: .3s;
 }
 

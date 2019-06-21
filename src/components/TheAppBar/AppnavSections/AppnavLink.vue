@@ -157,7 +157,7 @@ export default class AppnavLink extends Vue {
   bottom: 1px;
   display: flex;
   align-items: center;
-  background-color: #AF92F7;
+  background-color: #fc7d7d;
   transition: background-color .3s;
   z-index: 1;
 }

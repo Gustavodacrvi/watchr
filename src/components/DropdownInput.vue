@@ -169,7 +169,7 @@ export default class DropdownInput extends Vue {
 }
 
 .option.light:hover, .option.light.active {
-  background-color: #AF92F7;
+  background-color: #fc7d7d;
   color: white;
 }
 

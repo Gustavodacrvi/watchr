@@ -16,53 +16,41 @@ body, button, input {
   color: #8C8C8C;
 }
 
-.faded.light {
-  color: #bfbfbf;
-  opacity: .8;
-  cursor: initial;
-}
-
-.faded.dark {
-  color: #808080;
-  opacity: .5;
-  cursor: initial;
-}
-
 .main-color, h1, h2, h3, h4, h5, h6 {
-  color: #AF92F7;
+  color: #fc7d7d;
 }
 
 .background-color.light {
-  background-color: #FEFEFE;
+  background-color: #F8F7F6;
 }
 
 .background-color.dark {
-  background-color: #1F1F1F; 
+  background-color: #121212; 
 }
 
 .card.light {
-  background-color: #FDFCFC;
-  box-shadow: 0 0 5px rgba(200, 200, 200, .4);
+  background-color: #F8F7F6;
+  border: .5px solid #F0F0F0;
 }
 
 .card.dark {
-  background-color: #282828;
+  background-color: #242424;
 }
 
 .main-color-card.light {
-  background-color: #AF92F7;
+  background-color: #fc7d7d;
 }
 
 .main-color-card.dark {
-  background-color: #282828;
+  background-color: #242424;
 }
 
 .gray.light {
-  background-color: #F0F2F6;
+  background-color: #F0F0F0;
 }
 
 .gray.dark {
-  background-color: #1C1C1C;
+  background-color: #191919;
 }
 
 .border.dark {
@@ -93,7 +81,7 @@ body, button, input {
 }
 
 .scroll::-webkit-scrollbar-thumb {
-  background-color: #AF92F7; 
+  background-color: #fc7d7d; 
   border-radius: 10px;
 }
 

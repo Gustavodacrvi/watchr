@@ -17,12 +17,12 @@
 }
 
 .link.light:hover, .router-link-exact-active.light {
-  color: #AF92F7;
+  color: #fc7d7d;
   background-color: #E6E6E6;
 }
 
 .link.dark:hover, .router-link-exact-active.dark {
-  color: #AF92F7;
+  color: #fc7d7d;
   background-color: #282828;
 }
 
@@ -68,13 +68,13 @@
 }
 
 .auth-button.dark {
-  background-color: #AF92F7;
+  background-color: #fc7d7d;
   color: white;
   transition: background-color .3s;
 }
 
 .auth-button.dark:hover {
-  background-color: #ba96fd;
+  background-color: #fc7d7d;
 }
 
 .auth-button.light {
@@ -83,7 +83,7 @@
 }
 
 .auth-button.light:hover {
-  color: #AF92F7;
+  color: #fc7d7d;
 }
 
 .navsect {
@@ -93,7 +93,7 @@
 
 .section-title {
   text-align: center;
-  color: #AF92F7;
+  color: #fc7d7d;
   font-size: 1.1em;
   margin: 10px 0;
 }

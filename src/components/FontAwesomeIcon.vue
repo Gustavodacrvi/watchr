@@ -28,7 +28,7 @@ export default class App extends Vue {
 }
 
 .fontawesome-icon .fas.main-color {
-  color: #AF92F7;
+  color: #fc7d7d;
 }
 
 .fontawesome-icon .fas {
@@ -40,7 +40,7 @@ export default class App extends Vue {
 }
 
 .fontawesome-icon.hover-main-color:hover .fas {
-  color: #AF92F7;
+  color: #fc7d7d;
 }
 
 .fontawesome-icon.hover-red:hover .fas {

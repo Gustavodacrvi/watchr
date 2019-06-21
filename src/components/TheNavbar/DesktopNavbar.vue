@@ -109,10 +109,10 @@ export default class DesktopNavbar extends Vue {
 .magic-line {
   position: absolute;
   bottom: 0;
-  background-color: #AF92F7;
+  background-color: #fc7d7d;
   height: 2px;
   border-radius: 2px;
-  box-shadow: 0 1px 1px #AF92F7;
+  box-shadow: 0 1px 1px #fc7d7d;
 }
 
 .link {
@@ -125,8 +125,8 @@ export default class DesktopNavbar extends Vue {
 }
 
 .link:hover , .router-link-exact-active {
-  color: #AF92F7;
-  text-shadow: 0 0 1px #AF92F7;
+  color: #fc7d7d;
+  text-shadow: 0 0 1px #fc7d7d;
 }
 
 .margin {
@@ -141,7 +141,7 @@ export default class DesktopNavbar extends Vue {
 }
 
 .drop-el:hover  {
-  color: #AF92F7 !important;
+  color: #fc7d7d !important;
 }
 
 .dual-drop-el {
