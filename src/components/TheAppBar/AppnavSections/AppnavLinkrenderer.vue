@@ -1,7 +1,7 @@
 <template>
   <div>
-    <draggable v-model='arr' :animation='300' @end='update' :sort='sort'>
-      <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active' @update='update'></appnav-link>
+    <draggable v-model='arr' :animation='300' @end='update' :disabled='disabled'>
+      <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active' :leftpan='leftpan' :rightpan='rightpan' @update='update' @panevent='panevent'></appnav-link>
     </draggable>
   </div>
 </template>
@@ -12,6 +12,8 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
 import Draggable from 'vuedraggable'
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+
+import { PanGesture } from '@/interfaces/app'
 
 @Component({
   components: {
@@ -25,7 +27,10 @@ export default class AppnavLinkrenderer extends Vue {
   @Prop({required: true}) public readonly content!: string
   @Prop({default: ''}) public readonly active!: string
   @Prop({default: ''}) public readonly sublist!: string
-  @Prop({default: true}) public readonly sort!: boolean
+  @Prop({default: false}) public readonly disabled!: boolean
+
+  @Prop() public readonly leftpan!: PanGesture
+  @Prop() public readonly rightpan!: PanGesture
 
   public arr: any[] = this.list
 
@@ -43,6 +48,9 @@ export default class AppnavLinkrenderer extends Vue {
     }
 
     this.$emit('update', {arr: this.arr, id})
+  }
+  public panevent(obj: any): void {
+    this.$emit('panevent', obj)
   }
 }
 

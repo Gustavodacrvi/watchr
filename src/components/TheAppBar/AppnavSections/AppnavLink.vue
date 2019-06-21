@@ -1,6 +1,6 @@
 <template>
-  <div class='list-el'>
-    <v-touch :enabled='true' @panleft='panleft' @panright='panright' @panend='panend' @panstart='panstart' :pan='{direction: "horizontal"}'>
+  <div class='list-el' :class='platform'>
+    <v-touch :enabled='!isDesktop' @panleft='panLeftEvent' @panright='panRightEvent' @panend='panend' @panstart='panstart' :pan='{direction: "horizontal"}'>
       <div class='round-border visible'>
         <div class='back' v-if='!isDesktop'>
           <div class='back-icons'>
@@ -38,6 +38,8 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 import VueTouch from 'vue-touch'
 Vue.use(VueTouch, {name: 'v-touch'})
 
+import { PanGesture } from '@/interfaces/app'
+
 @Component({
   components: {
     'link-render': () => import('@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'),
@@ -47,10 +49,14 @@ Vue.use(VueTouch, {name: 'v-touch'})
 export default class AppnavLink extends Vue {
   @State('theme') public readonly theme!: string
   @Getter('isDesktop') public readonly isDesktop!: boolean
+  @Getter('platform') public readonly platform!: string
   @Prop({required: true}) public readonly obj!: any
   @Prop({required: true}) public readonly content!: string
   @Prop({required: true}) public readonly sublist!: string
   @Prop({required: true}) public readonly active!: string
+
+  @Prop() public readonly leftpan!: PanGesture
+  @Prop() public readonly rightpan!: PanGesture
 
   public showing: boolean = false
   public div: any = null
@@ -64,24 +70,36 @@ export default class AppnavLink extends Vue {
     this.$emit('update', {arr, id: this.obj.id})
   }
 
-  public panright(e: any): void {
-    this.div.style.left = e.distance + 'px'
-    this.div.style.right = 'unset'
-    this.direction = 'right'
+  public panRightEvent(e: any): void {
+    if (this.leftpan) {
+      this.div.style.left = e.distance + 'px'
+      this.div.style.right = 'unset'
+      this.direction = 'right'
+    }
   }
-  public panleft(e: any): void {
-    this.div.style.right = e.distance + 'px'
-    this.div.style.left = 'unset'
-    this.direction = 'left'
+  public panLeftEvent(e: any): void {
+    if (this.rightpan) {
+      this.div.style.right = e.distance + 'px'
+      this.div.style.left = 'unset'
+      this.direction = 'left'
+    }
   }
   public panstart(): void {
     this.div.style.transition = 'background-color .3s'
   }
   public panend(): void {
     this.div.style.transition = 'background-color .3s, right .3s, left .3s'
-    if (this.direction === 'left') {
+    if (this.direction === 'left' && this.rightpan) {
+      if (parseInt(this.div.style.right) > this.rightpan.distance) {
+        this.$emit('panevent', {type: 'right', id: this.obj.id})
+      }
+
       this.div.style.right = '0px'
-    } else if (this.direction === 'right') {
+    } else if (this.direction === 'right' && this.leftpan) {
+      if (parseInt(this.div.style.left) > this.leftpan.distance) {
+        this.$emit('panevent', {type: 'left', id: this.obj.id})
+      }
+      
       this.div.style.left = '0px'
     }
   }

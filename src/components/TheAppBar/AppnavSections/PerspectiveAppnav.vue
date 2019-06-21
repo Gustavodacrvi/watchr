@@ -1,6 +1,7 @@
 <template>
   <div>
-    <renderer :list='smartBindedPerspectives' content='name' active='perspective' @update='update'></renderer>
+    <renderer :list='smartBindedPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
+     @panevent='pan'></renderer>
   </div>
 </template>
 
@@ -14,7 +15,7 @@ import LinkRenderer from '@/components/TheAppBar/AppnavSections/AppnavLinkrender
 
 import appUtil from '@/utils/app'
 
-import { Perspective } from '@/interfaces/app'
+import { Perspective, PanGesture } from '@/interfaces/app'
 
 const perspective = namespace('perspective')
 
@@ -30,9 +31,17 @@ export default class PerspectiveAppnav extends Vue {
   @perspective.Action('updatePerspectives') public readonly updatePerspectives!: (perspectives: Perspective[]) => void
 
   public perspective: string = 'Today'
+  public rightPanEvent: PanGesture = {
+    icon: 'thumbtack',
+    iconColor: 'white',
+    distance: 200,
+  }
 
   public update({arr}: {arr: Perspective[]}): void {
     this.updatePerspectives(appUtil.updateArrayOrderFromFilteredArray(this.smartBindedPerspectives, arr))
+  }
+  public pan(obj: any): void {
+    console.log(obj)
   }
 }
 
