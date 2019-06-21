@@ -1,4 +1,10 @@
 
+export interface PanGesture {
+  icon: string
+  iconColor: string
+  distance: number
+}
+
 export interface Perspective {
   smart: boolean
   binded: boolean

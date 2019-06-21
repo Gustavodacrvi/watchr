@@ -88,6 +88,10 @@ body, button, input {
   opacity: 0;
 }
 
+.sortable-drag.mobile {
+  visibility: hidden;
+}
+
 .scroll::-webkit-scrollbar-thumb {
   background-color: #AF92F7; 
   border-radius: 10px;
