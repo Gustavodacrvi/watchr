@@ -8,7 +8,7 @@
             <icon icon='thumbtack' size='1x' color='white'></icon>
           </div>
         </div>
-        <div class='content gray' ref='content' :class='[theme, {active: obj[content] === active}]'>
+        <div class='content gray' ref='content' :class='[theme, {active: obj[content] === active, blinking: blinking}]'>
           <span class='left-icon' v-if='obj.icon'>
             <icon v-if='obj.iconColor' :icon='obj.icon' :color='obj.iconColor'></icon>
             <icon v-else :icon='obj.icon'></icon>
@@ -61,8 +61,10 @@ export default class AppnavLink extends Vue {
   public showing: boolean = false
   public div: any = null
   public direction: string | null = null
+  public blinking: boolean = false
 
   public mounted(): void {
+    /* tslint:disable:no-string-literal */
     this.div = this.$refs['content']
   }
 
@@ -90,18 +92,25 @@ export default class AppnavLink extends Vue {
   public panend(): void {
     this.div.style.transition = 'background-color .3s, right .3s, left .3s'
     if (this.direction === 'left' && this.rightpan) {
-      if (parseInt(this.div.style.right) > this.rightpan.distance) {
+      if (parseInt(this.div.style.right, 10) > this.rightpan.distance) {
         this.$emit('panevent', {type: 'right', id: this.obj.id})
+        this.blink()
       }
 
       this.div.style.right = '0px'
     } else if (this.direction === 'right' && this.leftpan) {
-      if (parseInt(this.div.style.left) > this.leftpan.distance) {
+      if (parseInt(this.div.style.left, 10) > this.leftpan.distance) {
         this.$emit('panevent', {type: 'left', id: this.obj.id})
+        this.blink()
       }
-      
       this.div.style.left = '0px'
     }
+  }
+  public blink(): void {
+    this.blinking = true
+    setTimeout(() => {
+      this.blinking = false
+    }, 200)
   }
 }
 
@@ -122,7 +131,7 @@ export default class AppnavLink extends Vue {
   position: relative;
   cursor: pointer;
   overflow: hidden;
-  height: 30px;
+  height: 40px;
 }
 
 .list-el .back {
@@ -135,7 +144,12 @@ export default class AppnavLink extends Vue {
   display: flex;
   align-items: center;
   background-color: #AF92F7;
+  transition: background-color .3s;
   z-index: 1;
+}
+
+.list-el .blinking {
+  background-color: white !important;
 }
 
 .back-icons {

@@ -2,6 +2,7 @@
   <div>
     <renderer :list='smartBindedPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
      @panevent='pan'></renderer>
+     {{test}}
   </div>
 </template>
 
@@ -34,14 +35,15 @@ export default class PerspectiveAppnav extends Vue {
   public rightPanEvent: PanGesture = {
     icon: 'thumbtack',
     iconColor: 'white',
-    distance: 200,
+    distance: 100,
   }
+  public test: any = null
 
   public update({arr}: {arr: Perspective[]}): void {
     this.updatePerspectives(appUtil.updateArrayOrderFromFilteredArray(this.smartBindedPerspectives, arr))
   }
   public pan(obj: any): void {
-    console.log(obj)
+    this.test = obj
   }
 }
 
