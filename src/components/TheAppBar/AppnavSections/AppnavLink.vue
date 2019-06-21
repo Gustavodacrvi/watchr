@@ -1,19 +1,21 @@
 <template>
   <div class='list-el'>
-    <div class='round-border visible' v-hammer:pan.horizontal='pan'>
-      <div class='back'>
+    <v-touch @panmove='panmove'>
+      <div class='round-border visible'>
+        <div class='back'>
+        </div>
+        <div class='content gray' ref='content' :class='[theme, {active: obj[content] === active}]'>
+          <span class='left-icon' v-if='obj.icon'>
+            <icon v-if='obj.iconColor' :icon='obj.icon' :color='obj.iconColor'></icon>
+            <icon v-else :icon='obj.icon'></icon>
+          </span>
+          <span class='txt name'>{{ obj[content] }}</span>
+          <span class='icons'>
+            <icon v-if='obj[sublist] && obj[sublist].length > 0' icon='angle-right' :class='{showing: showing}' size='1x' @click='showing = !showing'></icon>
+          </span>
+        </div>
       </div>
-      <div class='content gray' ref='content' :class='[theme, {active: obj[content] === active}]'>
-        <span class='left-icon' v-if='obj.icon'>
-          <icon v-if='obj.iconColor' :icon='obj.icon' :color='obj.iconColor'></icon>
-          <icon v-else :icon='obj.icon'></icon>
-        </span>
-        <span class='txt name'>{{ obj[content] }}</span>
-        <span class='icons'>
-          <icon v-if='obj[sublist] && obj[sublist].length > 0' icon='angle-right' :class='{showing: showing}' size='1x' @click='showing = !showing'></icon>
-        </span>
-      </div>
-    </div>
+    </v-touch>
     <transition name='fade'>
       <div v-if='showing && obj[sublist] && obj[sublist].length > 0' class='drop'>
         <link-render :sublist='sublist' :content='content' :active='active' :list='obj[sublist]' @update='update'></link-render>
@@ -25,12 +27,12 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { State } from 'vuex-class'
+import { State, Getter } from 'vuex-class'
 
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
-import { VueHammer } from 'vue2-hammer'
-Vue.use(VueHammer)
+import VueTouch from 'vue-touch'
+Vue.use(VueTouch, {name: 'v-touch'})
 
 @Component({
   components: {
@@ -40,6 +42,7 @@ Vue.use(VueHammer)
 })
 export default class AppnavLink extends Vue {
   @State('theme') public readonly theme!: string
+  @Getter('isDesktop') public readonly isDesktop!: boolean
   @Prop({required: true}) public readonly obj!: any
   @Prop({required: true}) public readonly content!: string
   @Prop({required: true}) public readonly sublist!: string
@@ -51,16 +54,8 @@ export default class AppnavLink extends Vue {
     this.$emit('update', {arr, id: this.obj.id})
   }
 
-  public pan(e: any): void {
-    const div: any = this.$refs['content']
-
-    if (!e.isFinal) {
-      console.log('moved')
-      div.style.right = e.distance + 'px'
-    } else {
-      console.log('final')
-      div.style.right = '0px'
-    }
+  public panmove(e: any): void {
+    
   }
 }
 
@@ -86,10 +81,11 @@ export default class AppnavLink extends Vue {
 
 .list-el .back {
   position: absolute;
-  height: 100%;
+  height: 93%;
   width: 99%;
   border-radius: 10px;
   left: 1px;
+  bottom: 1px;
   background-color: #AF92F7;
   z-index: 1;
 }
@@ -98,11 +94,12 @@ export default class AppnavLink extends Vue {
   position: relative;
   display: flex;
   z-index: 2;
+  right: 0px;
   align-items: center;
   height: 100%;
   width: 100%;
   border-radius: 10px;
-  transition: background-color .3s, right .3s;
+  transition: background-color .3s, right .1s;
 }
 
 .list-el .left-icon {
