@@ -5,6 +5,12 @@ export interface PanGesture {
   distance: number
 }
 
+export interface ListIcon {
+  icon: string
+  iconColor: string
+  size: string
+}
+
 export interface Perspective {
   smart: boolean
   binded: boolean

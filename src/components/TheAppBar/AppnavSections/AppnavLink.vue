@@ -16,6 +16,7 @@
           <span class='txt name'>{{ obj[content] }}</span>
           <span class='icons'>
             <icon v-if='obj[sublist] && obj[sublist].length > 0' icon='angle-right' :class='{showing: showing}' size='1x' @click='showing = !showing'></icon>
+            <icon v-for='i in icons' :key='i.icon' :icon='i.icon' :size='i.size'></icon>
           </span>
         </div>
       </div>
@@ -38,7 +39,7 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 import VueTouch from 'vue-touch'
 Vue.use(VueTouch, {name: 'v-touch'})
 
-import { PanGesture } from '@/interfaces/app'
+import { PanGesture, ListIcon } from '@/interfaces/app'
 
 @Component({
   components: {
@@ -54,6 +55,7 @@ export default class AppnavLink extends Vue {
   @Prop({required: true}) public readonly content!: string
   @Prop({required: true}) public readonly sublist!: string
   @Prop({required: true}) public readonly active!: string
+  @Prop() public readonly icons!: ListIcon[]
 
   @Prop() public readonly leftpan!: PanGesture
   @Prop() public readonly rightpan!: PanGesture
@@ -127,11 +129,23 @@ export default class AppnavLink extends Vue {
   margin-top: 2px;
 }
 
+.angle-right {
+  transition: transform .3s;
+}
+
+.angle-right.showing {
+  transform: rotate(90deg);
+}
+
+.icon + .icon {
+  margin-left: 8px;
+}
+
 .list-el .visible {
   position: relative;
   cursor: pointer;
   overflow: hidden;
-  height: 40px;
+  height: 35px;
 }
 
 .list-el .back {
