@@ -1,8 +1,8 @@
 <template>
   <div>
-    <renderer :list='smartBindedPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
+    <renderer :list='smartPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
      @panevent='pan'></renderer>
-     {{test}}
+     {{smartPerspectives.length}}
   </div>
 </template>
 
@@ -28,7 +28,9 @@ const perspective = namespace('perspective')
 })
 export default class PerspectiveAppnav extends Vue {
   @State('theme') public readonly theme!: string
-  @perspective.Getter('smartBindedPerspectives') public readonly smartBindedPerspectives!: Perspective[]
+  @perspective.State('perspectives') public readonly perspectives!: Perspective[]
+  @perspective.Mutation('toggleBindPerspectiveById') public readonly toggleBindPerspectiveById!: (id: string) => void
+  @perspective.Getter('smartPerspectives') public readonly smartPerspectives!: Perspective[]
   @perspective.Action('updatePerspectives') public readonly updatePerspectives!: (perspectives: Perspective[]) => void
 
   public perspective: string = 'Today'
@@ -37,13 +39,14 @@ export default class PerspectiveAppnav extends Vue {
     iconColor: 'white',
     distance: 100,
   }
-  public test: any = null
 
   public update({arr}: {arr: Perspective[]}): void {
-    this.updatePerspectives(appUtil.updateArrayOrderFromFilteredArray(this.smartBindedPerspectives, arr))
+    this.updatePerspectives(appUtil.updateArrayOrderFromFilteredArray(this.perspectives, arr))
   }
   public pan(obj: any): void {
-    this.test = obj
+    if (obj.type === 'right') {
+      this.toggleBindPerspectiveById(obj.id)
+    }
   }
 }
 
