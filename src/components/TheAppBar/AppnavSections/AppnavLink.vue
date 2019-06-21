@@ -1,7 +1,9 @@
 <template>
   <div class='list-el'>
-    <div class='round-border visible' :class='[theme, {active: obj[content] === active}]'>
-      <div class='content'>
+    <div class='round-border visible' v-hammer:pan.horizontal='pan'>
+      <div class='back'>
+      </div>
+      <div class='content gray' ref='content' :class='[theme, {active: obj[content] === active}]'>
         <span class='left-icon' v-if='obj.icon'>
           <icon v-if='obj.iconColor' :icon='obj.icon' :color='obj.iconColor'></icon>
           <icon v-else :icon='obj.icon'></icon>
@@ -27,6 +29,9 @@ import { State } from 'vuex-class'
 
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
+import { VueHammer } from 'vue2-hammer'
+Vue.use(VueHammer)
+
 @Component({
   components: {
     'link-render': () => import('@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'),
@@ -45,6 +50,18 @@ export default class AppnavLink extends Vue {
   public update({arr}: any): void {
     this.$emit('update', {arr, id: this.obj.id})
   }
+
+  public pan(e: any): void {
+    const div: any = this.$refs['content']
+
+    if (!e.isFinal) {
+      console.log('moved')
+      div.style.right = e.distance + 'px'
+    } else {
+      console.log('final')
+      div.style.right = '0px'
+    }
+  }
 }
 
 </script>
@@ -62,14 +79,30 @@ export default class AppnavLink extends Vue {
 
 .list-el .visible {
   position: relative;
-  padding: 6px 0;
   cursor: pointer;
-  transition: background-color .3s;
+  overflow: hidden;
+  height: 30px;
+}
+
+.list-el .back {
+  position: absolute;
+  height: 100%;
+  width: 99%;
+  border-radius: 10px;
+  left: 1px;
+  background-color: #AF92F7;
+  z-index: 1;
 }
 
 .list-el .content {
   position: relative;
   display: flex;
+  z-index: 2;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  transition: background-color .3s, right .3s;
 }
 
 .list-el .left-icon {
@@ -89,11 +122,11 @@ export default class AppnavLink extends Vue {
   align-items: center;
 }
 
-.list-el .visible.light:hover, .list-el .visible.light.active {
+.list-el .content.light:hover, .list-el .content.light.active {
   background-color: #E6E6E6;
 }
 
-.list-el .visible.dark:hover, .list-el .visible.dark.active {
+.list-el .content.dark:hover, .list-el .content.dark.active {
   background-color: #282828;
 }
 
