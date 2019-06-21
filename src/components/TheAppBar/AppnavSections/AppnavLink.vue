@@ -1,8 +1,12 @@
 <template>
   <div class='list-el'>
-    <v-touch @panmove='panmove' @panend='panend' @panstart='panstart' :pan='{direction: "horizontal"}'>
+    <v-touch :enabled='true' @panleft='panleft' @panright='panright' @panend='panend' @panstart='panstart' :pan='{direction: "horizontal"}'>
       <div class='round-border visible'>
-        <div class='back'>
+        <div class='back' v-if='!isDesktop'>
+          <div class='back-icons'>
+            <icon icon='thumbtack' size='1x' color='white'></icon>
+            <icon icon='thumbtack' size='1x' color='white'></icon>
+          </div>
         </div>
         <div class='content gray' ref='content' :class='[theme, {active: obj[content] === active}]'>
           <span class='left-icon' v-if='obj.icon'>
@@ -50,6 +54,7 @@ export default class AppnavLink extends Vue {
 
   public showing: boolean = false
   public div: any = null
+  public direction: string | null = null
 
   public mounted(): void {
     this.div = this.$refs['content']
@@ -59,19 +64,26 @@ export default class AppnavLink extends Vue {
     this.$emit('update', {arr, id: this.obj.id})
   }
 
-  public panmove(e: any): void {
-    console.log(e)
-
-    if (e.additionalEvent === 'panleft') {
-      this.div.style.right = e.distance + 'px'
-    }
+  public panright(e: any): void {
+    this.div.style.left = e.distance + 'px'
+    this.div.style.right = 'unset'
+    this.direction = 'right'
+  }
+  public panleft(e: any): void {
+    this.div.style.right = e.distance + 'px'
+    this.div.style.left = 'unset'
+    this.direction = 'left'
   }
   public panstart(): void {
     this.div.style.transition = 'background-color .3s'
   }
   public panend(): void {
-    this.div.style.right = '0px'
     this.div.style.transition = 'background-color .3s, right .3s, left .3s'
+    if (this.direction === 'left') {
+      this.div.style.right = '0px'
+    } else if (this.direction === 'right') {
+      this.div.style.left = '0px'
+    }
   }
 }
 
@@ -102,8 +114,17 @@ export default class AppnavLink extends Vue {
   border-radius: 10px;
   left: 1px;
   bottom: 1px;
+  display: flex;
+  align-items: center;
   background-color: #AF92F7;
   z-index: 1;
+}
+
+.back-icons {
+  margin: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
 }
 
 .list-el .content {
