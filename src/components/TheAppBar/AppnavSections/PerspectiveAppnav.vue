@@ -1,8 +1,7 @@
 <template>
   <div>
     <renderer :list='smartPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
-     @panevent='pan'></renderer>
-     {{smartPerspectives.length}}
+     @panevent='pan' :icons='icons' :mapicon='mapIcon'></renderer>
   </div>
 </template>
 
@@ -16,7 +15,7 @@ import LinkRenderer from '@/components/TheAppBar/AppnavSections/AppnavLinkrender
 
 import appUtil from '@/utils/app'
 
-import { Perspective, PanGesture } from '@/interfaces/app'
+import { Perspective, PanGesture, ListIcon } from '@/interfaces/app'
 
 const perspective = namespace('perspective')
 
@@ -38,6 +37,19 @@ export default class PerspectiveAppnav extends Vue {
     icon: 'thumbtack',
     iconColor: 'white',
     distance: 100,
+  }
+  public icons: ListIcon[] = [
+    {
+      icon: 'thumbtack',
+      iconColor: '',
+      size: 'xs',
+    },
+  ]
+  public mapIcon(icons: ListIcon[], pers: Perspective): ListIcon[] {
+    if (pers.binded) {
+      return icons
+    }
+    return []
   }
 
   public update({arr}: {arr: Perspective[]}): void {

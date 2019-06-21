@@ -61,7 +61,6 @@ export default {
   } as Mutations,
   getters: {
     smartPerspectives(state: States): Perspective[] {
-      
       return state.perspectives.filter((el: Perspective) => el.smart)
     },
     smartBindedPerspectives(state: States): Perspective[] {
