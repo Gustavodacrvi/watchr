@@ -1,6 +1,6 @@
 <template>
   <div class='list-el'>
-    <v-touch @panmove='panmove'>
+    <v-touch @panmove='panmove' @panend='panend' @panstart='panstart' :pan='{direction: "horizontal"}'>
       <div class='round-border visible'>
         <div class='back'>
         </div>
@@ -49,13 +49,29 @@ export default class AppnavLink extends Vue {
   @Prop({required: true}) public readonly active!: string
 
   public showing: boolean = false
+  public div: any = null
+
+  public mounted(): void {
+    this.div = this.$refs['content']
+  }
 
   public update({arr}: any): void {
     this.$emit('update', {arr, id: this.obj.id})
   }
 
   public panmove(e: any): void {
-    
+    console.log(e)
+
+    if (e.additionalEvent === 'panleft') {
+      this.div.style.right = e.distance + 'px'
+    }
+  }
+  public panstart(): void {
+    this.div.style.transition = 'background-color .3s'
+  }
+  public panend(): void {
+    this.div.style.right = '0px'
+    this.div.style.transition = 'background-color .3s, right .3s, left .3s'
   }
 }
 
@@ -99,7 +115,7 @@ export default class AppnavLink extends Vue {
   height: 100%;
   width: 100%;
   border-radius: 10px;
-  transition: background-color .3s, right .1s;
+  transition: background-color .3s;
 }
 
 .list-el .left-icon {
