@@ -63,7 +63,7 @@ const store: any = new Vuex.Store({
   state: {
     theme: savedTheme,
     popUpComponent: '',
-    popUpPayload: undefined,
+    popUpPayload: null,
     windowWidth: document.body.clientWidth,
     appBarState: false,
     isLogged: false,
@@ -78,7 +78,7 @@ const store: any = new Vuex.Store({
     },
     pushPopUp(state: States, compName: string): void {
       state.popUpComponent = compName
-      state.popUpPayload = undefined
+      state.popUpPayload = null
     },
     pushPopUpPayload(state: States, payload: any): void {
       state.popUpPayload = payload

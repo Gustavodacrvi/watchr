@@ -10,7 +10,7 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { Getter, State, namespace } from 'vuex-class'
+import { Getter, State, Mutation, namespace } from 'vuex-class'
 
 import Draggable from 'vuedraggable'
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
@@ -18,6 +18,7 @@ import Division from '@/components/TheAppBar/AppnavSections/AppnavDivision.vue'
 import LinkRenderer from '@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'
 
 import appUtil from '@/utils/app'
+import labelUtil from '@/utils/label'
 
 import { Label, ListIcon } from '@/interfaces/app'
 
@@ -33,6 +34,8 @@ const label = namespace('label')
 })
 export default class OverviewAppnav extends Vue {
   @State('theme') public readonly theme!: string
+  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
+  @Mutation('pushPopUpPayload') public readonly pushPopUpPayload!: (payload: any) => void
   @label.State('labels') public readonly labels!: Label[]
   @label.Getter('smartLabels') public readonly smartLabels!: Label[]
   @label.Getter('nonSmartLabels') public readonly nonSmartLabels!: Label[]
@@ -45,7 +48,7 @@ export default class OverviewAppnav extends Vue {
     this.label = this.smartLabels[0].name
   }
 
-  public options(lab: Label): ListIcon[] {
+  public options(): ListIcon[] {
     return [
       {
         name: 'add sublabel',
@@ -53,7 +56,10 @@ export default class OverviewAppnav extends Vue {
         iconColor: '',
         size: '',
         callback: (lab: Label) => {
-          console.log('add sublabel')
+          const path: string[] = this.labelPathById(lab.id)
+          const strPath: string = labelUtil.getStringPathFromArr(path)
+          this.pushPopUp('LabeladderPopup')
+          this.pushPopUpPayload(strPath + ':')
         },
       },
       {

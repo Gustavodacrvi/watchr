@@ -33,6 +33,7 @@ const labelModule = namespace('label')
 })
 export default class LabelAdder extends Vue {
   @State('theme') public readonly theme!: string
+  @State('popUpPayload') public readonly popUpPayload!: any
   @Getter('isDesktop') public readonly isDesktop!: boolean
   @Mutation('pushAlert') public readonly pushAlert!: (alert: Alert) => void
   // tslint:disable-next-line:max-line-length
@@ -44,6 +45,10 @@ export default class LabelAdder extends Vue {
   public input: string | null = null
   public value: string = ''
   public options: string[] = []
+
+  public created() {
+    this.input = this.popUpPayload
+  }
 
   public add(): void {
     if (this.value !== '') {
@@ -83,7 +88,6 @@ export default class LabelAdder extends Vue {
       }
     }
     const names = labels.map((el: Label) => el.name)
-    console.log(search)
     this.options = names.filter((el: string) => el.includes(search))
   }
   public selectValue(value: string): void {

@@ -79,9 +79,10 @@ export default {
             path.push(lab.name)
             return path
           }
-          const childPath: string[] | undefined = walk(lab.subLabels, path)
+          const sliced = path.slice()
+          sliced.push(lab.name)
+          const childPath: string[] | undefined = walk(lab.subLabels, sliced)
           if (childPath !== undefined) {
-            path.push(lab.name)
             return childPath
           }
         }
