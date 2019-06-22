@@ -35,6 +35,7 @@ interface ActionContext {
 interface Actions {
   addLabelFromArrayPath: (context: ActionContext, path: string[]) => void
   deleteLabelById: (context: ActionContext, id: string) => void
+  addSubLabelById: (context: ActionContext, {parentId, subLabelName, position}: {parentId: string, subLabelName: string, position?: number}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -181,6 +182,21 @@ export default {
       }
       walk(state.labels)
       commit('save')
-    }
+    },
+    addSubLabelById({state, commit, getters}, {subLabelName, parentId, position}): void {
+      const getLabelNodeById = <any>getters.getLabelNodeById
+      const parentLabel: Label = getLabelNodeById(parentId)
+      const label: Label = {
+        smart: false,
+        name: subLabelName,
+        id: uuid(),
+        subLabels: [],
+      }
+      if (!position) {
+        parentLabel.subLabels.push(label)
+      } else {
+        parentLabel.subLabels.splice(position, 0, label)
+      }
+    },
   } as Actions,
 }
