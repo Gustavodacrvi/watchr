@@ -21,7 +21,8 @@ import appUtil from '@/utils/app'
 import labelUtil from '@/utils/label'
 
 import { Label, ListIcon, SimpleAdder } from '@/interfaces/app'
-import LabelAdder from '../../Alerts.vue';
+import { Alert } from '@/interfaces/alert'
+import LabelAdder from '../../Alerts.vue'
 
 const label = namespace('label')
 
@@ -36,6 +37,7 @@ const label = namespace('label')
 export default class OverviewAppnav extends Vue {
   @State('theme') public readonly theme!: string
   @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
+  @Mutation('pushAlert') public readonly pushAlert!: (alert: Alert) => void
   @Mutation('pushPopUpPayload') public readonly pushPopUpPayload!: (payload: any) => void
   @label.State('labels') public readonly labels!: Label[]
   @label.Getter('smartLabels') public readonly smartLabels!: Label[]
@@ -44,6 +46,7 @@ export default class OverviewAppnav extends Vue {
   @label.Getter('getParentLabelById') public readonly getParentLabelById!: (id: string) => Label | undefined
   @label.Action('updateLabels') public readonly updateLabels!: (label: Label[]) => void
   @label.Action('deleteLabelById') public readonly deleteLabelById!: (id: string) => void
+  // tslint:disable-next-line:max-line-length
   @label.Action('addSubLabelById') public readonly addSubLabelById!: (obj: {parentId: string, subLabelName: string, position?: number}) => void
   @label.Action('addRootLabel') public readonly addRootLabel!: (obj: {labelName: string, position?: number}) => void
 
@@ -92,20 +95,38 @@ export default class OverviewAppnav extends Vue {
               this.pushPopUp('')
               const parent: Label | undefined = this.getParentLabelById(lab.id)
               if (parent === undefined) {
-                const index: number = this.labels.findIndex((el: Label) => el.id === lab.id)
-                this.addRootLabel({
-                  labelName: input,
-                  position: index,
-                })
+                const subLabel: Label | undefined = this.labels.find((el: Label) => el.name === input)
+                if (subLabel) {
+                  this.pushAlert({
+                    name: `There is already another tag with the name <strong>${input}</strong>`,
+                    duration: 2.5,
+                    type: 'error',
+                  })
+                } else {
+                  const index: number = this.labels.findIndex((el: Label) => el.id === lab.id)
+                  this.addRootLabel({
+                    labelName: input,
+                    position: index,
+                  })
+                }
               } else {
-                const index: number = parent.subLabels.findIndex((el: Label) => el.id === lab.id)
-                this.addSubLabelById({
-                  parentId: parent.id,
-                  subLabelName: input,
-                  position: index,
-                })
+                const subLabel: Label | undefined = parent.subLabels.find((el: Label) => el.name === input)
+                if (subLabel !== undefined) {
+                  this.pushAlert({
+                    name: `There is already another tag with the name ${input}`,
+                    duration: 2.5,
+                    type: 'error',
+                  })
+                } else {
+                  const index: number = parent.subLabels.findIndex((el: Label) => el.id === lab.id)
+                  this.addSubLabelById({
+                    parentId: parent.id,
+                    subLabelName: input,
+                    position: index,
+                  })
+                }
               }
-            }
+            },
           } as SimpleAdder)
         },
       },

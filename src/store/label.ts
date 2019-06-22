@@ -2,7 +2,6 @@
 import { Label } from '@/interfaces/app'
 
 import uuid from 'uuid'
-import label from '@/utils/label';
 
 interface States {
   labels: Label[]
@@ -35,8 +34,10 @@ interface ActionContext {
 interface Actions {
   addLabelFromArrayPath: (context: ActionContext, path: string[]) => void
   deleteLabelById: (context: ActionContext, id: string) => void
+  // tslint:disable-next-line:max-line-length
   addSubLabelById: (context: ActionContext, {parentId, subLabelName, position}: {parentId: string, subLabelName: string, position: number | undefined}) => void
-  addRootLabel: (context: ActionContext, {labelName, position}: {labelName: string, position: number | undefined}) => void
+  // tslint:disable-next-line:max-line-length
+  addRootLabel: (context: ActionContext, obj: {labelName: string, position: number | undefined}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -59,9 +60,6 @@ export default {
   } as Mutations,
   getters: {
     getLabelNodeFromArrayPath: (state: States) => (nodePath: string[]): Label | undefined => {
-      if (state.labels.length === 0) {
-        return undefined
-      }
       const walk = (labels: Label[], path: string[]): Label | undefined => {
         const targetLabelName: string | undefined = path.shift()
         if (targetLabelName === undefined) {
@@ -77,6 +75,21 @@ export default {
         return undefined
       }
       return walk(state.labels, nodePath.slice())
+    },
+    getLabelNodeById: (state: States) => (id: string): Label | undefined => {
+      const walk = (labels: Label[]): Label | undefined => {
+        for (const lab of labels) {
+          if (lab.id === id) {
+            return lab
+          }
+          const label: Label | undefined = walk(lab.subLabels)
+          if (label !== undefined) {
+            return label
+          }
+        }
+        return undefined
+      }
+      return walk(state.labels)
     },
     getParentLabelById: (state: States) => (id: string): Label | undefined => {
       const rootLabel: Label | undefined = state.labels.find((el: Label) => el.id === id)
@@ -102,21 +115,6 @@ export default {
         }
       }
       return undefined
-    },
-    getLabelNodeById: (state: States) => (id: string): Label | undefined => {
-      const walk = (labels: Label[]): Label | undefined => {
-        for (const lab of labels) {
-          if (lab.id === id) {
-            return lab
-          }
-          const label: Label | undefined = walk(lab.subLabels)
-          if (label !== undefined) {
-            return label
-          }
-        }
-        return undefined
-      }
-      return walk(state.labels)
     },
     labelPathById: (state: States) => (id: string): string[] | undefined => {
       const walk = (labels: Label[], path: string[]): string[] | undefined => {
@@ -200,37 +198,40 @@ export default {
       commit('save')
     },
     addSubLabelById({state, commit, getters}, {subLabelName, parentId, position}): void {
-      const getLabelNodeById = <any>getters.getLabelNodeById
+      const getLabelNodeById = getters.getLabelNodeById as any
       const parentLabel: Label = getLabelNodeById(parentId)
-      const label: Label = {
-        smart: false,
-        name: subLabelName,
-        id: uuid(),
-        subLabels: [],
-      }
-      if (position === undefined) {
-        parentLabel.subLabels.push(label)
-      } else {
-        parentLabel.subLabels.splice(position, 0, label)
+      const subLabel: Label | undefined = parentLabel.subLabels.find((el: Label) => el.name === subLabelName)
+      if (subLabel === undefined) {
+        const label: Label = {
+          smart: false,
+          name: subLabelName,
+          id: uuid(),
+          subLabels: [],
+        }
+        if (position === undefined) {
+          parentLabel.subLabels.push(label)
+        } else {
+          parentLabel.subLabels.splice(position, 0, label)
+        }
       }
       commit('save')
     },
     addRootLabel({state, commit}, {labelName, position}): void {
       const label: Label | undefined = state.labels.find((el: Label) => el.name === labelName)
       if (label === undefined) {
-        const label: Label = {
+        const lab: Label = {
           smart: false,
           name: labelName,
           id: uuid(),
           subLabels: [],
         }
         if (position === undefined) {
-          state.labels.push(label)
+          state.labels.push(lab)
         } else {
-          state.labels.splice(position, 0, label)
+          state.labels.splice(position, 0, lab)
         }
         commit('save')
       }
-    }
+    },
   } as Actions,
 }
