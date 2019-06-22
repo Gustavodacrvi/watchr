@@ -17,12 +17,14 @@
           <span class='icons'>
             <icon class='margin' v-for='i in icons' :key='i.icon' :icon='i.icon' :size='i.size' :disabled='true'></icon>
             <icon class='margin' v-if='obj[sublist] && obj[sublist].length > 0' icon='angle-right' :class='{sublist: showingSublists}' size='1x' @click='showingSublists = !showingSublists'></icon>
-            <icon-drop class='margin' minwidth='100px' handle='ellipsis-v'>
-              <div class='drop'>
-                <span v-for='i in options' :key='i.name' class='drop-el' @click='i.callback'>
-                  <span class='drop-icon'><icon :icon='i.icon' :size='i.size' :color='i.color'></icon></span>
-                  <span class='drop-name'>{{ i.name }}</span>
-                </span>
+            <icon-drop v-if='options' class='margin' minwidth='150px' handle='ellipsis-v'>
+              <div class='dropdown round-border'>
+                <div class='wrapper'>
+                  <div v-for='i in options' :key='i.name' class='drop-el' @click='i.callback(obj)' :class='theme'>
+                    <span class='drop-icon'><icon :icon='i.icon' :size='i.size' :color='i.color'></icon></span>
+                    <span class='drop-name txt'>{{ i.name }}</span>
+                  </div>
+                </div>
               </div>
             </icon-drop>
             <!-- <icon class='margin' icon='ellipsis-v' size='1x' @click='showingOptions = !showingOptions'></icon> -->
@@ -216,6 +218,35 @@ export default class AppnavLink extends Vue {
 }
 
 .list-el .content.dark:hover, .list-el .content.dark.active {
+  background-color: #282828;
+}
+
+.dropdown {
+  overflow: hidden;
+}
+
+.drop-el {
+  display: flex;
+  height: 35px;
+  width: 100%;
+  align-items: center;
+  transition: background-color .3s;
+}
+
+.drop-icon {
+  width: 39px;
+  text-align: center;
+}
+
+.drop-name {
+  white-space: nowrap;
+}
+
+.drop-el.light:hover {
+  background-color: #E6E6E6;
+}
+
+.drop-el.dark:hover {
   background-color: #282828;
 }
 

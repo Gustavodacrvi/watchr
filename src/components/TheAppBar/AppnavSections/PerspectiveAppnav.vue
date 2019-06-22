@@ -60,7 +60,7 @@ export default class PerspectiveAppnav extends Vue {
       callback: () => console.log(1),
     },
     {
-      name: 'option 2',
+      name: 'option 2 ',
       icon: 'list',
       iconColor: '',
       size: '',
