@@ -70,8 +70,12 @@ export default {
   actions: {
     setDefaultData({state, commit}): void {
       state.perspectives = [
-        {name: 'Today', binded: true, smart: true, icon: 'calendar-day', iconColor: '#FFE366', id: uuid(),
+        {name: 'All stuff', binded: false, smart: true, icon: 'list', iconColor: '#86e283', id: uuid(),
+        hasToBeEmpty: [], showTaskNumber: false, showWhenNotEmpty: false},
+        {name: 'Today', binded: true, smart: true, icon: 'star', iconColor: '#FFE366', id: uuid(),
          hasToBeEmpty: [], showTaskNumber: true, showWhenNotEmpty: false},
+         {name: 'Tomorrow', binded: false, smart: true, icon: 'sun', iconColor: '#faa46b', id: uuid(),
+        hasToBeEmpty: [], showTaskNumber: false, showWhenNotEmpty: false},
         {name: 'Inbox', binded: true, smart: true, icon: 'inbox', iconColor: '#83B7E2', hasToBeEmpty: [], id: uuid(),
          showTaskNumber: true, showWhenNotEmpty: false},
         {name: 'Upcoming', binded: true, smart: true, icon: 'calendar-alt', iconColor: '#FF6B66', id: uuid(),
@@ -79,7 +83,7 @@ export default {
         {name: 'Anytime', binded: true, smart: true, icon: 'layer-group', iconColor: '#88DDB7', id: uuid(),
          hasToBeEmpty: [], showTaskNumber: false, showWhenNotEmpty: false},
         {name: 'Someday', binded: true, smart: true, icon: 'archive', iconColor: '#E2B983', id: uuid(),
-         hasToBeEmpty: [], showTaskNumber: false, showWhenNotEmpty: false},
+        hasToBeEmpty: [], showTaskNumber: false, showWhenNotEmpty: false},
       ]
       commit('save')
     },
