@@ -15,14 +15,15 @@
           </span>
           <span class='txt name'>{{ obj[content] }}</span>
           <span class='icons'>
-            <icon v-if='obj[sublist] && obj[sublist].length > 0' icon='angle-right' :class='{showing: showing}' size='1x' @click='showing = !showing'></icon>
-            <icon v-for='i in icons' :key='i.icon' :icon='i.icon' :size='i.size'></icon>
+            <icon class='margin' v-for='i in icons' :key='i.icon' :icon='i.icon' :size='i.size' :disabled='true'></icon>
+            <icon class='margin' v-if='obj[sublist] && obj[sublist].length > 0' icon='angle-right' :class='{sublist: showingSublists}' size='1x' @click='showingSublists = !showingSublists'></icon>
+            <icon class='margin' icon='ellipsis-v' size='1x' @click='showingOptions = !showingOptions'></icon>
           </span>
         </div>
       </div>
     </v-touch>
     <transition name='fade'>
-      <div v-if='showing && obj[sublist] && obj[sublist].length > 0' class='drop'>
+      <div v-if='showingSublists && obj[sublist] && obj[sublist].length > 0' class='drop'>
         <link-render :sublist='sublist' :content='content' :active='active' :list='obj[sublist]' @update='update'></link-render>
       </div>
     </transition>
@@ -56,11 +57,12 @@ export default class AppnavLink extends Vue {
   @Prop({required: true}) public readonly sublist!: string
   @Prop({required: true}) public readonly active!: string
   @Prop() public readonly icons!: ListIcon[]
+  @Prop() public readonly options!: ListIcon[]
 
   @Prop() public readonly leftpan!: PanGesture
   @Prop() public readonly rightpan!: PanGesture
 
-  public showing: boolean = false
+  public showingSublists: boolean = false
   public div: any = null
   public direction: string | null = null
   public blinking: boolean = false
@@ -133,11 +135,11 @@ export default class AppnavLink extends Vue {
   transition: transform .3s;
 }
 
-.angle-right.showing {
+.angle-right.sublist {
   transform: rotate(90deg);
 }
 
-.icon + .icon {
+.margin + .margin {
   margin-left: 8px;
 }
 

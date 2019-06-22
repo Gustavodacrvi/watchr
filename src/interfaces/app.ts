@@ -9,6 +9,8 @@ export interface ListIcon {
   icon: string
   iconColor: string
   size: string
+  callback?: () => void
+  text?: string
 }
 
 export interface Perspective {

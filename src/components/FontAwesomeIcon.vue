@@ -1,5 +1,5 @@
 <template>
-  <span class='fontawesome-icon' @click='$emit("click")' :class='[{blink: blink,}, "hover-" + hoverColor]'>
+  <span class='fontawesome-icon' @click='$emit("click")' :class='[{blink: blink,}, "hover-" + hoverColor, disabled ? "disabled" : "not-disabled"]'>
     <i v-if='!spin' :class='`fas fa-${icon} fa-${size}`' :style='`color: ${color} !important`'></i>
     <i v-else :class='`fas fa-${icon} fa-${size} fa-spin`' :style='`color: ${color} !important`'></i>
   </span>
@@ -17,6 +17,7 @@ export default class App extends Vue {
   @Prop(Boolean) public readonly blink!: boolean
   @Prop(Boolean) public readonly spin!: boolean
   @Prop(String) public readonly icon!: string
+  @Prop({default: false, type: Boolean}) public readonly disabled!: boolean
 }
 
 </script>
@@ -35,24 +36,28 @@ export default class App extends Vue {
   transition: color .3s;
 }
 
-.fontawesome-icon:hover {
+.fontawesome-icon.not-disabled:hover {
   cursor: pointer;
 }
 
-.fontawesome-icon.hover-main-color:hover .fas {
+.fontawesome-icon.not-disabled.hover-main-color:hover .fas {
   color: #fc7d7d;
 }
 
-.fontawesome-icon.hover-red:hover .fas {
+.fontawesome-icon.not-disabled.hover-red:hover .fas {
   color: #FC7C85;
 }
 
-.fontawesome-icon.hover-white:hover .fas {
+.fontawesome-icon.not-disabled.hover-white:hover .fas {
   color: white;
 }
 
 .blink:active .fas {
   color: white;
+}
+
+.disabled {
+  opacity: .5;
 }
 
 </style>
