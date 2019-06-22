@@ -51,7 +51,7 @@ export default class SortableComponent extends Vue {
       // Called when an item is deselected
       onDeselect: (e: any) => {
         this.$emit('deselect', e)
-      }
+      },
     })
   }
 
@@ -62,7 +62,6 @@ export default class SortableComponent extends Vue {
   }
   public moveElements(): any[] {
     const childs = this.getChilds()
-    console.log(childs)
     const arr: any[] = []
     for (let i = 0; i < this.value.length; i++) {
       for (let j = 0; j < this.value.length; j++) {

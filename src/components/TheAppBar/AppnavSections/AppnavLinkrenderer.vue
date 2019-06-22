@@ -1,8 +1,8 @@
 <template>
   <div>
-    <draggable v-model='arr' :animation='300' @end='update' :disabled='disabled' :multi-drag='true' :delayOnTouchOnly='true'>
+    <sortable v-model='arr' :animation='300' @end='update' :disabled='disabled' :multi-drag='true' :delayOnTouchOnly='true'>
       <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active' :leftpan='leftpan' :rightpan='rightpan' @update='update' @panevent='panevent' :options='options(el)' :icons='icons(el)' :optionsrender='options' :iconsrender='icons'></appnav-link>
-    </draggable>
+    </sortable>
   </div>
 </template>
 
@@ -17,7 +17,7 @@ import { PanGesture, ListIcon } from '@/interfaces/app'
 
 @Component({
   components: {
-    'draggable': Sortable,
+    'sortable': Sortable,
     'icon': FontAwesomeIcon,
     'appnav-link': () => import('@/components/TheAppBar/AppnavSections/AppnavLink.vue'),
   },
