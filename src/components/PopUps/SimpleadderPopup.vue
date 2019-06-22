@@ -26,8 +26,8 @@ export default class SigninPopUp extends Mixins(Mixin) {
   public input: string | null = null
 
   public runCallback(): void {
-    if (!this.inputHasError(this.input, this.data.inputMaximumCharacters)) {
-      this.data.callback(this.input)
+    if (this.input && !this.inputHasError(this.input, this.data.inputMaximumCharacters)) {
+      this.data.callback(this.input.trim())
     }
   }
 }
