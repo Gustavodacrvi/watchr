@@ -38,12 +38,20 @@ export default class SortableComponent extends Vue {
       selectedClass: 'sortable-selected',
       group: this.group,
 
-      onUpdate: (v: any) => {
+      onUpdate: (e: any) => {
         this.$emit('input', this.moveElements())
       },
-      onEnd: (v: any) => {
-        this.$emit('end', v)
+      onEnd: (e: any) => {
+        this.$emit('end', e)
       },
+      onSelect: (e: any) => {
+        this.$emit('select', e)
+      },
+
+      // Called when an item is deselected
+      onDeselect: (e: any) => {
+        this.$emit('deselect', e)
+      }
     })
   }
 
