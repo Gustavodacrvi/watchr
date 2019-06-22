@@ -20,7 +20,7 @@ import LinkRenderer from '@/components/TheAppBar/AppnavSections/AppnavLinkrender
 import appUtil from '@/utils/app'
 import labelUtil from '@/utils/label'
 
-import { Label, ListIcon } from '@/interfaces/app'
+import { Label, ListIcon, SimpleAdder } from '@/interfaces/app'
 
 const label = namespace('label')
 
@@ -70,6 +70,33 @@ export default class OverviewAppnav extends Vue {
         size: '',
         callback: (lab: Label) => {
           this.deleteLabelById(lab.id)
+        },
+      },
+      {
+        name: 'add label above',
+        icon: 'arrow-up',
+        iconColor: '',
+        size: '',
+        callback: (lab: Label) => {
+          this.pushPopUp('SimpleadderPopup')
+          this.pushPopUpPayload({
+            popUpTitle: 'Add label',
+            buttonName: 'Add label',
+            inputPlaceholder: 'Label name: ',
+            inputMaximumCharacters: 50,
+            callback: (input: string): void => {
+              console.log(3)
+            }
+          } as SimpleAdder)
+        },
+      },
+      {
+        name: 'add label below',
+        icon: 'arrow-down',
+        iconColor: '',
+        size: '',
+        callback: (lab: Label) => {
+
         },
       },
     ]

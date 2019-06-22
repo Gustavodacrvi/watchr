@@ -5,6 +5,7 @@ import router from '@/router'
 import perspective from './perspective'
 import label from './label'
 
+import { SimpleAdder } from '@/interfaces/app'
 import { Alert } from '@/interfaces/alert'
 
 Vue.use(Vuex)
@@ -15,7 +16,7 @@ interface States {
   theme: string
   popUpComponent: string
   windowWidth: number
-  popUpPayload: any
+  popUpPayload: any | SimpleAdder
   appBarState: boolean
   isLogged: boolean
   showingAlert: boolean
@@ -80,7 +81,7 @@ const store: any = new Vuex.Store({
       state.popUpComponent = compName
       state.popUpPayload = null
     },
-    pushPopUpPayload(state: States, payload: any): void {
+    pushPopUpPayload(state: States, payload: any | SimpleAdder): void {
       state.popUpPayload = payload
     },
     pushAlert(state: States, alert: Alert): void {

@@ -243,6 +243,7 @@ export default class AppnavLink extends Vue {
 
 .drop-name {
   white-space: nowrap;
+  margin-right: 12px;
 }
 
 .drop-el.light:hover {

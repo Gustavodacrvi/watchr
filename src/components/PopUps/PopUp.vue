@@ -21,6 +21,7 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
     SignupPopup: () => import('@/components/PopUps/SignupPopup.vue'),
     SigninPopup: () => import('@/components/PopUps/SigninPopup.vue'),
     LabeladderPopup: () => import('@/components/PopUps/LabeladderPopup.vue'),
+    SimpleadderPopup: () => import('@/components/PopUps/SimpleadderPopup.vue'),
   },
 })
 export default class PopUp extends Vue {

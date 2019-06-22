@@ -5,6 +5,14 @@ export interface PanGesture {
   distance: number
 }
 
+export interface SimpleAdder {
+  popUpTitle: string
+  buttonName: string
+  inputPlaceholder: string
+  inputMaximumCharacters: number
+  callback: (input: string | null) => void
+}
+
 export interface ListIcon {
   icon: string
   iconColor: string
