@@ -15,14 +15,25 @@
           </span>
           <span class='txt name'>{{ obj[content] }}</span>
           <span class='icons'>
-            <icon v-if='obj[sublist] && obj[sublist].length > 0' icon='angle-right' :class='{showing: showing}' size='1x' @click='showing = !showing'></icon>
-            <icon v-for='i in icons' :key='i.icon' :icon='i.icon' :size='i.size'></icon>
+            <icon class='margin' v-for='i in icons' :key='i.icon' :icon='i.icon' :size='i.size' :disabled='true'></icon>
+            <icon class='margin' v-if='obj[sublist] && obj[sublist].length > 0' icon='angle-right' :class='{sublist: showingSublists}' size='1x' @click='showingSublists = !showingSublists'></icon>
+            <icon-drop v-if='options && options.length > 0' class='margin' minwidth='150px' handle='ellipsis-v'>
+              <div class='dropdown round-border'>
+                <div class='wrapper'>
+                  <div v-for='i in options' :key='i.name' class='drop-el' @click='i.callback(obj)' :class='theme'>
+                    <span class='drop-icon'><icon :icon='i.icon' :size='i.size' :color='i.color'></icon></span>
+                    <span class='drop-name txt'>{{ i.name }}</span>
+                  </div>
+                </div>
+              </div>
+            </icon-drop>
+            <!-- <icon class='margin' icon='ellipsis-v' size='1x' @click='showingOptions = !showingOptions'></icon> -->
           </span>
         </div>
       </div>
     </v-touch>
     <transition name='fade'>
-      <div v-if='showing && obj[sublist] && obj[sublist].length > 0' class='drop'>
+      <div v-if='showingSublists && obj[sublist] && obj[sublist].length > 0' class='drop'>
         <link-render :sublist='sublist' :content='content' :active='active' :list='obj[sublist]' @update='update'></link-render>
       </div>
     </transition>
@@ -35,6 +46,7 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter } from 'vuex-class'
 
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+import IconDropdown from '@/components/IconDropdown.vue'
 
 import VueTouch from 'vue-touch'
 Vue.use(VueTouch, {name: 'v-touch'})
@@ -43,6 +55,7 @@ import { PanGesture, ListIcon } from '@/interfaces/app'
 
 @Component({
   components: {
+    'icon-drop': IconDropdown,
     'link-render': () => import('@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'),
     'icon': FontAwesomeIcon,
   },
@@ -51,16 +64,17 @@ export default class AppnavLink extends Vue {
   @State('theme') public readonly theme!: string
   @Getter('isDesktop') public readonly isDesktop!: boolean
   @Getter('platform') public readonly platform!: string
-  @Prop({required: true}) public readonly obj!: any
-  @Prop({required: true}) public readonly content!: string
-  @Prop({required: true}) public readonly sublist!: string
-  @Prop({required: true}) public readonly active!: string
-  @Prop() public readonly icons!: ListIcon[]
+  @Prop({required: true, type: Object}) public readonly obj!: any
+  @Prop({required: true, type: String}) public readonly content!: string
+  @Prop({required: true, type: String}) public readonly sublist!: string
+  @Prop({required: true, type: String}) public readonly active!: string
+  @Prop(Array) public readonly icons!: ListIcon[]
+  @Prop(Array) public readonly options!: ListIcon[]
 
-  @Prop() public readonly leftpan!: PanGesture
-  @Prop() public readonly rightpan!: PanGesture
+  @Prop(Object) public readonly leftpan!: PanGesture
+  @Prop(Object) public readonly rightpan!: PanGesture
 
-  public showing: boolean = false
+  public showingSublists: boolean = false
   public div: any = null
   public direction: string | null = null
   public blinking: boolean = false
@@ -133,18 +147,17 @@ export default class AppnavLink extends Vue {
   transition: transform .3s;
 }
 
-.angle-right.showing {
+.angle-right.sublist {
   transform: rotate(90deg);
 }
 
-.icon + .icon {
+.margin + .margin {
   margin-left: 8px;
 }
 
 .list-el .visible {
   position: relative;
   cursor: pointer;
-  overflow: hidden;
   height: 35px;
 }
 
@@ -159,7 +172,6 @@ export default class AppnavLink extends Vue {
   align-items: center;
   background-color: #fc7d7d;
   transition: background-color .3s;
-  z-index: 1;
 }
 
 .list-el .blinking {
@@ -176,7 +188,6 @@ export default class AppnavLink extends Vue {
 .list-el .content {
   position: relative;
   display: flex;
-  z-index: 2;
   right: 0px;
   align-items: center;
   height: 100%;
@@ -207,6 +218,35 @@ export default class AppnavLink extends Vue {
 }
 
 .list-el .content.dark:hover, .list-el .content.dark.active {
+  background-color: #282828;
+}
+
+.dropdown {
+  overflow: hidden;
+}
+
+.drop-el {
+  display: flex;
+  height: 35px;
+  width: 100%;
+  align-items: center;
+  transition: background-color .3s;
+}
+
+.drop-icon {
+  width: 39px;
+  text-align: center;
+}
+
+.drop-name {
+  white-space: nowrap;
+}
+
+.drop-el.light:hover {
+  background-color: #E6E6E6;
+}
+
+.drop-el.dark:hover {
   background-color: #282828;
 }
 
