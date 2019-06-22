@@ -10,7 +10,6 @@ interface States {
 interface Mutations {
   save: () => void
   getSavedData: () => void
-  addLabelFromArrayPath: (state: States, path: string[]) => void
   [key: string]: (state: States, payload: any) => any
 }
 
@@ -30,6 +29,7 @@ interface ActionContext {
 
 
 interface Actions {
+  addLabelFromArrayPath: (context: ActionContext, path: string[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -48,30 +48,6 @@ export default {
       if (!localStorage.getItem('watchrIsLogged')) {
         state.labels = JSON.parse(localStorage.getItem('watchrLabels') as any)
       }
-    },
-    addLabelFromArrayPath(state: States, nodePath: string[]): void {
-      const walk = (labels: Label[], path: string[]): void => {
-        const targetLabelName: string | undefined = path.shift()
-        if (targetLabelName !== undefined) {
-          const label: Label | undefined = labels.find((el: Label) => {
-            return el.name === targetLabelName
-          })
-          if (label === undefined) {
-            if (targetLabelName !== '') {
-              labels.push({
-                smart: false,
-                name: targetLabelName,
-                id: uuid(),
-                subLabels: [],
-              })
-              walk(labels[labels.length - 1].subLabels, path)
-            }
-          } else {
-            walk(label.subLabels, path)
-          }
-        }
-      }
-      walk(state.labels, nodePath.slice())
     },
   } as Mutations,
   getters: {
@@ -112,6 +88,31 @@ export default {
     },
     updateLabels({state, commit}, labels: Label[]): void {
       state.labels = labels
+      commit('save')
+    },
+    addLabelFromArrayPath({state, commit}, nodePath: string[]): void {
+      const walk = (labels: Label[], path: string[]): void => {
+        const targetLabelName: string | undefined = path.shift()
+        if (targetLabelName !== undefined) {
+          const label: Label | undefined = labels.find((el: Label) => {
+            return el.name === targetLabelName
+          })
+          if (label === undefined) {
+            if (targetLabelName !== '') {
+              labels.push({
+                smart: false,
+                name: targetLabelName,
+                id: uuid(),
+                subLabels: [],
+              })
+              walk(labels[labels.length - 1].subLabels, path)
+            }
+          } else {
+            walk(label.subLabels, path)
+          }
+        }
+      }
+      walk(state.labels, nodePath.slice())
       commit('save')
     },
   } as Actions,

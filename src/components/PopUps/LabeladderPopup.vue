@@ -37,9 +37,9 @@ export default class LabelAdder extends Vue {
   @Mutation('pushAlert') public readonly pushAlert!: (alert: Alert) => void
   // tslint:disable-next-line:max-line-length
   @labelModule.State('labels') public readonly labels!: Label[]
-  @labelModule.Mutation('addLabelFromArrayPath') public readonly addLabelFromArrayPath!: (path: string[]) => void
   // tslint:disable-next-line:max-line-length
   @labelModule.Getter('getLabelNodeFromArrayPath') public readonly  getLabelNodeFromArrayPath!: (path: string[]) => Label | undefined
+  @labelModule.Action('addLabelFromArrayPath') public readonly addLabelFromArrayPath!: (path: string[]) => void
 
   public input: string | null = null
   public value: string = ''
@@ -83,6 +83,7 @@ export default class LabelAdder extends Vue {
       }
     }
     const names = labels.map((el: Label) => el.name)
+    console.log(search)
     this.options = names.filter((el: string) => el.includes(search))
   }
   public selectValue(value: string): void {

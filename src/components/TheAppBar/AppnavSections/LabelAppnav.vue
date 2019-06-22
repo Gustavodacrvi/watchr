@@ -2,7 +2,7 @@
   <div>
     <renderer :list='smartLabels' content='name' :active='label' sublist='subLabels' @update='update'></renderer>
     <division name='CUSTOM LABELS'>
-      <renderer v-if='nonSmartLabels' :list='nonSmartLabels' content='name' :active='label' sublist='subLabels' @update='update'></renderer>
+      <renderer v-if='nonSmartLabels' :list='nonSmartLabels' content='name' :active='label' sublist='subLabels' :options='options' @update='update'></renderer>
     </division>
   </div>
 </template>
@@ -19,7 +19,7 @@ import LinkRenderer from '@/components/TheAppBar/AppnavSections/AppnavLinkrender
 
 import appUtil from '@/utils/app'
 
-import { Label } from '@/interfaces/app'
+import { Label, ListIcon } from '@/interfaces/app'
 
 const label = namespace('label')
 
@@ -42,6 +42,29 @@ export default class OverviewAppnav extends Vue {
 
   public created() {
     this.label = this.smartLabels[0].name
+  }
+
+  public options(lab: Label): ListIcon[] {
+    return [
+      {
+        name: 'add sublabel',
+        icon: 'plus',
+        iconColor: '',
+        size: '',
+        callback: (lab: Label) => {
+          console.log('add sublabel')
+        },
+      },
+      {
+        name: 'delete label',
+        icon: 'backspace',
+        iconColor: '',
+        size: '',
+        callback: (lab: Label) => {
+          console.log('delete label')
+        },
+      },
+    ]
   }
 
   public update({arr}: {arr: Label[]}): void {

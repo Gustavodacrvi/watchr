@@ -34,7 +34,7 @@
     </v-touch>
     <transition name='fade'>
       <div v-if='showingSublists && obj[sublist] && obj[sublist].length > 0' class='drop'>
-        <link-render :sublist='sublist' :content='content' :active='active' :list='obj[sublist]' @update='update'></link-render>
+        <link-render :sublist='sublist' :content='content' :active='active' :list='obj[sublist]' @update='update' :options='optionsrender' :icons='iconsrender'></link-render>
       </div>
     </transition>
   </div>
@@ -73,6 +73,9 @@ export default class AppnavLink extends Vue {
 
   @Prop(Object) public readonly leftpan!: PanGesture
   @Prop(Object) public readonly rightpan!: PanGesture
+
+  @Prop({default: () => [], type: Function}) public readonly iconsrender!: (obj: any) => ListIcon[]
+  @Prop({default: () => [], type: Function}) public readonly optionsrender!: (obj: any) => ListIcon[]
 
   public showingSublists: boolean = false
   public div: any = null
