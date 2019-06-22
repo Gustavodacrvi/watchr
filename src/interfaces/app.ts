@@ -10,7 +10,7 @@ export interface ListIcon {
   iconColor: string
   size: string
   callback?: () => void
-  text?: string
+  name?: string
 }
 
 export interface Perspective {

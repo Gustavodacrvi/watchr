@@ -17,7 +17,15 @@
           <span class='icons'>
             <icon class='margin' v-for='i in icons' :key='i.icon' :icon='i.icon' :size='i.size' :disabled='true'></icon>
             <icon class='margin' v-if='obj[sublist] && obj[sublist].length > 0' icon='angle-right' :class='{sublist: showingSublists}' size='1x' @click='showingSublists = !showingSublists'></icon>
-            <icon class='margin' icon='ellipsis-v' size='1x' @click='showingOptions = !showingOptions'></icon>
+            <icon-drop class='margin' minwidth='100px' handle='ellipsis-v'>
+              <div class='drop'>
+                <span v-for='i in options' :key='i.name' class='drop-el' @click='i.callback'>
+                  <span class='drop-icon'><icon :icon='i.icon' :size='i.size' :color='i.color'></icon></span>
+                  <span class='drop-name'>{{ i.name }}</span>
+                </span>
+              </div>
+            </icon-drop>
+            <!-- <icon class='margin' icon='ellipsis-v' size='1x' @click='showingOptions = !showingOptions'></icon> -->
           </span>
         </div>
       </div>
@@ -36,6 +44,7 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter } from 'vuex-class'
 
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+import IconDropdown from '@/components/IconDropdown.vue'
 
 import VueTouch from 'vue-touch'
 Vue.use(VueTouch, {name: 'v-touch'})
@@ -44,6 +53,7 @@ import { PanGesture, ListIcon } from '@/interfaces/app'
 
 @Component({
   components: {
+    'icon-drop': IconDropdown,
     'link-render': () => import('@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'),
     'icon': FontAwesomeIcon,
   },
@@ -53,9 +63,9 @@ export default class AppnavLink extends Vue {
   @Getter('isDesktop') public readonly isDesktop!: boolean
   @Getter('platform') public readonly platform!: string
   @Prop({required: true}) public readonly obj!: any
-  @Prop({required: true}) public readonly content!: string
-  @Prop({required: true}) public readonly sublist!: string
-  @Prop({required: true}) public readonly active!: string
+  @Prop({required: true, type: String}) public readonly content!: string
+  @Prop({required: true, type: String}) public readonly sublist!: string
+  @Prop({required: true, type: String}) public readonly active!: string
   @Prop() public readonly icons!: ListIcon[]
   @Prop() public readonly options!: ListIcon[]
 
@@ -146,7 +156,6 @@ export default class AppnavLink extends Vue {
 .list-el .visible {
   position: relative;
   cursor: pointer;
-  overflow: hidden;
   height: 35px;
 }
 
@@ -161,7 +170,6 @@ export default class AppnavLink extends Vue {
   align-items: center;
   background-color: #fc7d7d;
   transition: background-color .3s;
-  z-index: 1;
 }
 
 .list-el .blinking {
@@ -178,7 +186,6 @@ export default class AppnavLink extends Vue {
 .list-el .content {
   position: relative;
   display: flex;
-  z-index: 2;
   right: 0px;
   align-items: center;
   height: 100%;

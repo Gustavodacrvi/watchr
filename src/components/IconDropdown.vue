@@ -2,7 +2,7 @@
   <span class='icon-dropdown' @mouseenter='showing = !showing' @mouseleave='showing = !showing'>
     <icon :icon='handle'></icon>
     <transition name='fade'>
-      <div v-show='showing' class='card round-border content' :class='theme'>
+      <div v-show='showing' class='card round-border content' :class='theme' :style='`min-width: ${minwidth}`'>
         <slot></slot>
       </div>
     </transition>
@@ -21,7 +21,8 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
   },
 })
 export default class TheNavbar extends Vue {
-  @Prop({ required: true, type: String }) public readonly handle!: string
+  @Prop({required: true, type: String}) public readonly handle!: string
+  @Prop({default: '250px', type: String}) public readonly minwidth!: string
 
   @State('theme') public theme!: string
 
@@ -40,7 +41,6 @@ export default class TheNavbar extends Vue {
   position: absolute;
   top: 100%;
   right: 0;
-  min-width: 250px;
   z-index: 25;
 }
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <draggable v-model='arr' :animation='300' @end='update' :disabled='disabled'>
-      <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active' :leftpan='leftpan' :rightpan='rightpan' @update='update' @panevent='panevent' :icons='mapicon(icons, el)'></appnav-link>
+      <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active' :leftpan='leftpan' :rightpan='rightpan' @update='update' @panevent='panevent' :options='options' :icons='mapicon(icons, el)'></appnav-link>
     </draggable>
   </div>
 </template>
@@ -24,10 +24,10 @@ import { PanGesture, ListIcon } from '@/interfaces/app'
 })
 export default class AppnavLinkrenderer extends Vue {
   @Prop({required: true}) public readonly list!: any[]
-  @Prop({required: true}) public readonly content!: string
-  @Prop({default: ''}) public readonly active!: string
-  @Prop({default: ''}) public readonly sublist!: string
-  @Prop({default: false}) public readonly disabled!: boolean
+  @Prop({required: true, type: String}) public readonly content!: string
+  @Prop({default: '', type: String}) public readonly active!: string
+  @Prop({default: '', type: String}) public readonly sublist!: string
+  @Prop({default: false, type: Boolean}) public readonly disabled!: boolean
   @Prop({default: false}) public readonly icons!: ListIcon
   @Prop({default: () => (icons: ListIcon[]) => {
     return icons
@@ -35,6 +35,8 @@ export default class AppnavLinkrenderer extends Vue {
 
   @Prop() public readonly leftpan!: PanGesture
   @Prop() public readonly rightpan!: PanGesture
+
+  @Prop() public readonly options!: ListIcon[]
 
   public arr: any[] = this.list
 

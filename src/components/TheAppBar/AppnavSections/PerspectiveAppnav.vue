@@ -1,7 +1,7 @@
 <template>
   <div>
     <renderer :list='smartPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
-     @panevent='pan' :icons='icons' :mapicon='mapIcon'></renderer>
+     @panevent='pan' :icons='icons' :mapicon='mapIcon' :options='options'></renderer>
   </div>
 </template>
 
@@ -51,6 +51,36 @@ export default class PerspectiveAppnav extends Vue {
     }
     return []
   }
+  public options: ListIcon[] = [
+    {
+      name: 'option 1',
+      icon: 'list',
+      iconColor: '',
+      size: '',
+      callback: () => console.log(1),
+    },
+    {
+      name: 'option 2',
+      icon: 'list',
+      iconColor: '',
+      size: '',
+      callback: () => console.log(2),
+    },
+    {
+      name: 'option 3',
+      icon: 'list',
+      iconColor: '',
+      size: '',
+      callback: () => console.log(3),
+    },
+    {
+      name: 'option 4',
+      icon: 'list',
+      iconColor: '',
+      size: '',
+      callback: () => console.log(4),
+    },
+  ]
 
   public update({arr}: {arr: Perspective[]}): void {
     this.updatePerspectives(appUtil.updateArrayOrderFromFilteredArray(this.perspectives, arr))
