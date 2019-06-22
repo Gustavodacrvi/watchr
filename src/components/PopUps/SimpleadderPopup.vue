@@ -22,14 +22,12 @@ import { SimpleAdder } from '@/interfaces/app'
 export default class SigninPopUp extends Mixins(Mixin) {
   @State('theme') public readonly theme!: SimpleAdder
   @State('popUpPayload') public readonly data!: SimpleAdder
-  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
 
   public input: string | null = null
 
   public runCallback(): void {
     if (!this.inputHasError(this.input, this.data.inputMaximumCharacters)) {
       this.data.callback(this.input)
-      this.pushPopUp('')
     }
   }
 }

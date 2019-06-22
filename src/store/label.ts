@@ -2,6 +2,7 @@
 import { Label } from '@/interfaces/app'
 
 import uuid from 'uuid'
+import label from '@/utils/label';
 
 interface States {
   labels: Label[]
@@ -16,6 +17,8 @@ interface Mutations {
 interface Getters {
   getLabelNodeFromArrayPath: () => (nodePath: string[]) => Label | undefined
   labelPathById: () => (id: string) => string[] | undefined
+  getLabelNodeById: () => (id: string) => Label
+  getParentLabelById: () => (id: string) => Label | undefined
   smartLabels: () => Label[]
   nonSmartLabels: () => Label[]
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
@@ -72,6 +75,31 @@ export default {
         return undefined
       }
       return walk(state.labels, nodePath.slice())
+    },
+    getParentLabelById: (state: States) => (id: string): Label | undefined => {
+      const rootLabel: Label | undefined = state.labels.find((el: Label) => el.id === id)
+      if (rootLabel !== undefined) {
+        return undefined
+      }
+      const walk = (labels: Label[], parent: Label): Label | undefined => {
+        for (const lab of labels) {
+          if (lab.id === id) {
+            return parent
+          }
+          const node: Label | undefined = walk(lab.subLabels, lab)
+          if (node !== undefined) {
+            return node
+          }
+        }
+        return undefined
+      }
+      for (const lab of state.labels) {
+        const node: Label | undefined = walk(lab.subLabels, lab)
+        if (node !== undefined) {
+          return node
+        }
+      }
+      return undefined
     },
     labelPathById: (state: States) => (id: string): string[] | undefined => {
       const walk = (labels: Label[], path: string[]): string[] | undefined => {
