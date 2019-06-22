@@ -1,5 +1,5 @@
 <template>
-  <div class='list-el' :class='platform'>
+  <div class='list-el' :class='[platform, theme]'>
     <v-touch :enabled='!isDesktop' @panleft='panLeftEvent' @panright='panRightEvent' @panend='panend' @panstart='panstart' :pan='{direction: "horizontal"}'>
       <div class='round-border visible'>
         <div class='back' v-if='!isDesktop'>
@@ -231,12 +231,12 @@ export default class AppnavLink extends Vue {
   align-items: center;
 }
 
-.list-el .content.light:hover, .list-el .content.light.active {
-  background-color: #E6E6E6;
+.list-el .content.light:hover, .list-el .content.light.active, .sortable-selected.light .content {
+  background-color: #E6E6E6 !important;
 }
 
-.list-el .content.dark:hover, .list-el .content.dark.active {
-  background-color: #282828;
+.list-el .content.dark:hover, .list-el .content.dark.active,  .sortable-selected.dark .content {
+  background-color: #282828 !important;
 }
 
 .dropdown {

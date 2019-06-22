@@ -1,9 +1,7 @@
 <template>
   <div>
-    <draggable v-model='arr' :animation='300' @end='update' :disabled='disabled'>
-      <transition-group name='fade'>
-        <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active' :leftpan='leftpan' :rightpan='rightpan' @update='update' @panevent='panevent' :options='options(el)' :icons='icons(el)' :optionsrender='options' :iconsrender='icons'></appnav-link>
-      </transition-group>
+    <draggable v-model='arr' :animation='300' @end='update' :disabled='disabled' :multi-drag='true' :delayOnTouchOnly='true'>
+      <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active' :leftpan='leftpan' :rightpan='rightpan' @update='update' @panevent='panevent' :options='options(el)' :icons='icons(el)' :optionsrender='options' :iconsrender='icons'></appnav-link>
     </draggable>
   </div>
 </template>
@@ -12,14 +10,14 @@
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
-import Draggable from 'vuedraggable'
+import Sortable from '@/components/Sortablejs.vue'
 import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
 import { PanGesture, ListIcon } from '@/interfaces/app'
 
 @Component({
   components: {
-    'draggable': Draggable,
+    'draggable': Sortable,
     'icon': FontAwesomeIcon,
     'appnav-link': () => import('@/components/TheAppBar/AppnavSections/AppnavLink.vue'),
   },
