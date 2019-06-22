@@ -43,7 +43,7 @@ export default class OverviewAppnav extends Vue {
   @label.Action('updateLabels') public readonly updateLabels!: (label: Label[]) => void
   @label.Action('getParentLabelById') public readonly getParentLabelById!: (id: string) => Label | undefined
   @label.Action('deleteLabelById') public readonly deleteLabelById!: (id: string) => void
-  @label.Action('addSubLabelById') public readonly addSubLabelById!: (obj: {parentId: string, subLabelName: string}) => void
+  @label.Action('addSubLabelById') public readonly addSubLabelById!: (obj: {parentId: string, subLabelName: string, position?: number}) => void
 
   public label: string = ''
 
