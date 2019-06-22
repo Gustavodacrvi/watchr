@@ -1,6 +1,6 @@
 <template>
   <div>
-    <renderer :delay-on-touch-only='true' :list='smartPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
+    <renderer :list='smartPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
      @panevent='pan' :icons='icons' :options='options'></renderer>
   </div>
 </template>

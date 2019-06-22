@@ -17,7 +17,6 @@
     "vue-property-decorator": "^8.1.0",
     "vue-router": "^3.0.3",
     "vue-touch": "^2.0.0-beta.4",
-    "vuedraggable": "^2.21.0",
     "vuex": "^3.0.1",
     "vuex-class": "^0.3.2"
   },
