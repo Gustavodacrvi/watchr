@@ -1,8 +1,6 @@
 <template>
   <div ref='sortable' class='sort'>
-    <span class='txt el'>item 1</span>
-    <span class='txt el'>item 2</span>
-    <span class='txt el'>item 3</span>
+    <slot></slot>
   </div>
 </template>
 
@@ -17,12 +15,53 @@ Sortable.mount(new MultiDrag(), new AutoScroll())
 
 @Component
 export default class SortableComponent extends Vue {
+  @Prop(Array) public value!: any[]
+  @Prop({default: false, type: Boolean}) public readonly delayOnTouchOnly!: boolean
+  @Prop({default: false, type: Boolean}) public readonly disabled!: boolean
+  @Prop({default: 150, type: Number}) public readonly animation!: number
+  @Prop({default: false, type: Boolean}) public readonly multiDrag!: boolean
+  @Prop(String) public readonly group!: string
 
-  public sortable: any = null
+  public els: any = null
 
   public mounted() {
-    const div: any = this.$refs['sortable']
-    this.sortable = Sortable.create(div)
+    const ref: string = 'sortable'
+    const div: any = this.$refs[ref]
+    this.els = this.getChilds()
+
+    const sortable: any = new Sortable.create(div, {
+      delayOnTouchOnly: this.delayOnTouchOnly,
+      disabled: this.disabled,
+      animation: this.animation,
+      multiDrag: this.multiDrag,
+      group: this.group,
+
+      onUpdate: (v: any) => {
+        this.$emit('input', this.moveElements())
+      },
+      onEnd: (v: any) => {
+        this.$emit('end', v)
+      },
+    })
+  }
+
+  public getChilds(): any[] {
+    const ref: string = 'sortable'
+    const div: any = this.$refs[ref]
+    return Array.prototype.slice.call(div.childNodes).slice()
+  }
+  public moveElements(): any[] {
+    const childs = this.getChilds()
+    const arr: any[] = []
+    for (let i = 0; i < this.value.length; i++) {
+      for (let j = 0; j < this.value.length; j++) {
+        if (childs[i].isEqualNode(this.els[j])) {
+          arr.push(this.value[j])
+        }
+      }
+    }
+    this.els = childs.slice()
+    return arr
   }
 }
 
@@ -33,13 +72,6 @@ export default class SortableComponent extends Vue {
 
 .sort {
   margin: 0 50px;
-}
-
-.el {
-  display: block;
-  background-color: #242424;
-  cursor: pointer;
-  margin: 6px;
 }
 
 </style>
