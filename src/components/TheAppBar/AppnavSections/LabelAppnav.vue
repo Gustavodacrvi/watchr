@@ -41,6 +41,7 @@ export default class OverviewAppnav extends Vue {
   @label.Getter('nonSmartLabels') public readonly nonSmartLabels!: Label[]
   @label.Getter('labelPathById') public readonly labelPathById!: (id: string) => string[]
   @label.Action('updateLabels') public readonly updateLabels!: (label: Label[]) => void
+  @label.Action('deleteLabelById') public readonly deleteLabelById!: (id: string) => void
 
   public label: string = ''
 
@@ -68,7 +69,7 @@ export default class OverviewAppnav extends Vue {
         iconColor: '',
         size: '',
         callback: (lab: Label) => {
-          console.log('delete label')
+          this.deleteLabelById(lab.id)
         },
       },
     ]

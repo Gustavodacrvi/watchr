@@ -31,6 +31,7 @@ interface ActionContext {
 
 interface Actions {
   addLabelFromArrayPath: (context: ActionContext, path: string[]) => void
+  deleteLabelById: (context: ActionContext, id: string) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -134,5 +135,24 @@ export default {
       walk(state.labels, nodePath.slice())
       commit('save')
     },
+    deleteLabelById({state, commit}, id: string): void {
+      const walk = (labels: Label[]): boolean => {
+        let i = 0
+        for (const lab of labels) {
+          if (lab.id === id) {
+            labels.splice(i, 1)
+            return true
+          }
+          const found: boolean = walk(lab.subLabels)
+          if (found) {
+            return true
+          }
+          i++
+        }
+        return false
+      }
+      walk(state.labels)
+      commit('save')
+    }
   } as Actions,
 }
