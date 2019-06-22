@@ -28,7 +28,7 @@ export default class App extends Vue {
   color: #8C8C8C;
 }
 
-.fontawesome-icon .fas.main-color {
+.fontawesome-icon.not-disabled .fas.main-color {
   color: #fc7d7d;
 }
 
