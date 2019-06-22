@@ -16,7 +16,7 @@
           <span class='txt name'>{{ obj[content] }}</span>
           <span class='icons'>
             <icon class='margin' v-for='i in icons' :key='i.icon' :icon='i.icon' :size='i.size' :disabled='true'></icon>
-            <icon class='margin' v-if='obj[sublist] && obj[sublist].length > 0' icon='angle-right' :class='{sublist: showingSublists}' size='1x' @click='showingSublists = !showingSublists'></icon>
+            <icon class='margin angle-right' v-if='obj[sublist] && obj[sublist].length > 0' icon='angle-right' :class='{sublist: showingSublists}' size='1x' @click='showingSublists = !showingSublists'></icon>
             <icon-drop v-if='options && options.length > 0' class='margin' minwidth='150px' handle='ellipsis-v'>
               <div class='dropdown round-border'>
                 <div class='wrapper'>
@@ -155,7 +155,7 @@ export default class AppnavLink extends Vue {
 }
 
 .margin + .margin {
-  margin-left: 8px;
+  margin-left: 14px;
 }
 
 .list-el .visible {

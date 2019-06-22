@@ -15,6 +15,7 @@ interface States {
   theme: string
   popUpComponent: string
   windowWidth: number
+  popUpPayload: any
   appBarState: boolean
   isLogged: boolean
   showingAlert: boolean
@@ -26,6 +27,7 @@ interface Mutations {
   pushTheme: (state: States, theme: string) => void
   pushPopUp: (state: States, compName: string) => void
   pushAlert: (state: States, alert: Alert) => void
+  pushPopUpPayload: (state: States, payload: any) => void
   openAppBar: () => void
   closeAppBar: () => void
   hideAlert: () => void
@@ -61,6 +63,7 @@ const store: any = new Vuex.Store({
   state: {
     theme: savedTheme,
     popUpComponent: '',
+    popUpPayload: undefined,
     windowWidth: document.body.clientWidth,
     appBarState: false,
     isLogged: false,
@@ -75,6 +78,10 @@ const store: any = new Vuex.Store({
     },
     pushPopUp(state: States, compName: string): void {
       state.popUpComponent = compName
+      state.popUpPayload = undefined
+    },
+    pushPopUpPayload(state: States, payload: any): void {
+      state.popUpPayload = payload
     },
     pushAlert(state: States, alert: Alert): void {
       state.alerts.push(alert)

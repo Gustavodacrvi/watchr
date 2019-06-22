@@ -36,6 +36,7 @@ export default class OverviewAppnav extends Vue {
   @label.State('labels') public readonly labels!: Label[]
   @label.Getter('smartLabels') public readonly smartLabels!: Label[]
   @label.Getter('nonSmartLabels') public readonly nonSmartLabels!: Label[]
+  @label.Getter('labelPathById') public readonly labelPathById!: (id: string) => string[]
   @label.Action('updateLabels') public readonly updateLabels!: (label: Label[]) => void
 
   public label: string = ''

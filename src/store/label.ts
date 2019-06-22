@@ -14,7 +14,8 @@ interface Mutations {
 }
 
 interface Getters {
-  getLabelNodeFromArrayPath: () => () => Label | undefined
+  getLabelNodeFromArrayPath: () => (nodePath: string[]) => Label | undefined
+  labelPathById: () => (id: string) => string[] | undefined
   smartLabels: () => Label[]
   nonSmartLabels: () => Label[]
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
@@ -70,6 +71,23 @@ export default {
         return undefined
       }
       return walk(state.labels, nodePath.slice())
+    },
+    labelPathById: (state: States) => (id: string): string[] | undefined => {
+      const walk = (labels: Label[], path: string[]): string[] | undefined => {
+        for (const lab of labels) {
+          if (lab.id === id) {
+            path.push(lab.name)
+            return path
+          }
+          const childPath: string[] | undefined = walk(lab.subLabels, path)
+          if (childPath !== undefined) {
+            path.push(lab.name)
+            return childPath
+          }
+        }
+        return undefined
+      }
+      return walk(state.labels, [])
     },
     smartLabels(state: States): Label[] {
       return state.labels.filter((el: Label) => el.smart)
