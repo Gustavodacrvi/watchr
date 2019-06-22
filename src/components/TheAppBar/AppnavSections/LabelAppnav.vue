@@ -21,6 +21,7 @@ import appUtil from '@/utils/app'
 import labelUtil from '@/utils/label'
 
 import { Label, ListIcon, SimpleAdder } from '@/interfaces/app'
+import LabelAdder from '../../Alerts.vue';
 
 const label = namespace('label')
 
@@ -40,10 +41,11 @@ export default class OverviewAppnav extends Vue {
   @label.Getter('smartLabels') public readonly smartLabels!: Label[]
   @label.Getter('nonSmartLabels') public readonly nonSmartLabels!: Label[]
   @label.Getter('labelPathById') public readonly labelPathById!: (id: string) => string[]
+  @label.Getter('getParentLabelById') public readonly getParentLabelById!: (id: string) => Label | undefined
   @label.Action('updateLabels') public readonly updateLabels!: (label: Label[]) => void
-  @label.Action('getParentLabelById') public readonly getParentLabelById!: (id: string) => Label | undefined
   @label.Action('deleteLabelById') public readonly deleteLabelById!: (id: string) => void
   @label.Action('addSubLabelById') public readonly addSubLabelById!: (obj: {parentId: string, subLabelName: string, position?: number}) => void
+  @label.Action('addRootLabel') public readonly addRootLabel!: (obj: {labelName: string, position?: number}) => void
 
   public label: string = ''
 
@@ -87,11 +89,22 @@ export default class OverviewAppnav extends Vue {
             inputPlaceholder: 'Label name: ',
             inputMaximumCharacters: 50,
             callback: (input: string): void => {
+              this.pushPopUp('')
               const parent: Label | undefined = this.getParentLabelById(lab.id)
-              if (!parent) {
+              if (parent === undefined) {
                 const index: number = this.labels.findIndex((el: Label) => el.id === lab.id)
-                
-              } 
+                this.addRootLabel({
+                  labelName: input,
+                  position: index,
+                })
+              } else {
+                const index: number = parent.subLabels.findIndex((el: Label) => el.id === lab.id)
+                this.addSubLabelById({
+                  parentId: parent.id,
+                  subLabelName: input,
+                  position: index,
+                })
+              }
             }
           } as SimpleAdder)
         },

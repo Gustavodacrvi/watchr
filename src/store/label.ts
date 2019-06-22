@@ -35,8 +35,8 @@ interface ActionContext {
 interface Actions {
   addLabelFromArrayPath: (context: ActionContext, path: string[]) => void
   deleteLabelById: (context: ActionContext, id: string) => void
-  addSubLabelById: (context: ActionContext, {parentId, subLabelName, position}: {parentId: string, subLabelName: string, position?: number}) => void
-  addRootLabel: (context: ActionContext, {labelName, position}: {labelName: string, position?: number}) => void
+  addSubLabelById: (context: ActionContext, {parentId, subLabelName, position}: {parentId: string, subLabelName: string, position: number | undefined}) => void
+  addRootLabel: (context: ActionContext, {labelName, position}: {labelName: string, position: number | undefined}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -102,6 +102,21 @@ export default {
         }
       }
       return undefined
+    },
+    getLabelNodeById: (state: States) => (id: string): Label | undefined => {
+      const walk = (labels: Label[]): Label | undefined => {
+        for (const lab of labels) {
+          if (lab.id === id) {
+            return lab
+          }
+          const label: Label | undefined = walk(lab.subLabels)
+          if (label !== undefined) {
+            return label
+          }
+        }
+        return undefined
+      }
+      return walk(state.labels)
     },
     labelPathById: (state: States) => (id: string): string[] | undefined => {
       const walk = (labels: Label[], path: string[]): string[] | undefined => {
@@ -193,7 +208,7 @@ export default {
         id: uuid(),
         subLabels: [],
       }
-      if (!position) {
+      if (position === undefined) {
         parentLabel.subLabels.push(label)
       } else {
         parentLabel.subLabels.splice(position, 0, label)
@@ -202,14 +217,14 @@ export default {
     },
     addRootLabel({state, commit}, {labelName, position}): void {
       const label: Label | undefined = state.labels.find((el: Label) => el.name === labelName)
-      if (!label) {
+      if (label === undefined) {
         const label: Label = {
           smart: false,
           name: labelName,
           id: uuid(),
           subLabels: [],
         }
-        if (!position) {
+        if (position === undefined) {
           state.labels.push(label)
         } else {
           state.labels.splice(position, 0, label)
