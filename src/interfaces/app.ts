@@ -9,7 +9,7 @@ export interface ListIcon {
   icon: string
   iconColor: string
   size: string
-  callback?: () => void
+  callback?: (...args: any) => void
   name?: string
 }
 

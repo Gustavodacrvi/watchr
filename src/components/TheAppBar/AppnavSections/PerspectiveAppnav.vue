@@ -1,7 +1,7 @@
 <template>
   <div>
     <renderer :list='smartPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
-     @panevent='pan' :icons='icons' :mapicon='mapIcon' :options='options'></renderer>
+     @panevent='pan' :icons='icons' :options='options'></renderer>
   </div>
 </template>
 
@@ -38,49 +38,35 @@ export default class PerspectiveAppnav extends Vue {
     iconColor: 'white',
     distance: 100,
   }
-  public icons: ListIcon[] = [
-    {
-      icon: 'thumbtack',
-      iconColor: '',
-      size: 'xs',
-    },
-  ]
-  public mapIcon(icons: ListIcon[], pers: Perspective): ListIcon[] {
+  public icons(pers: Perspective): ListIcon[] {
     if (pers.binded) {
-      return icons
+      return [
+        {
+          icon: 'thumbtack',
+          iconColor: '',
+          size: 'xs',
+        },
+      ]
     }
     return []
   }
-  public options: ListIcon[] = [
-    {
-      name: 'option 1',
-      icon: 'list',
-      iconColor: '',
-      size: '',
-      callback: () => console.log(1),
-    },
-    {
-      name: 'option 2 ',
-      icon: 'list',
-      iconColor: '',
-      size: '',
-      callback: () => console.log(2),
-    },
-    {
-      name: 'option 3',
-      icon: 'list',
-      iconColor: '',
-      size: '',
-      callback: () => console.log(3),
-    },
-    {
-      name: 'option 4',
-      icon: 'list',
-      iconColor: '',
-      size: '',
-      callback: () => console.log(4),
-    },
-  ]
+  public options(pers: Perspective): ListIcon[] {
+    let name = 'unbind from overview'
+    if (!pers.binded) {
+      name = 'bind on overview'
+    }
+    return [
+      {
+        name,
+        icon: 'thumbtack',
+        iconColor: '',
+        size: '',
+        callback: (per: Perspective) => {
+          this.toggleBindPerspectiveById(per.id)
+        },
+      },
+    ] as ListIcon[]
+  }
 
   public update({arr}: {arr: Perspective[]}): void {
     this.updatePerspectives(appUtil.updateArrayOrderFromFilteredArray(this.perspectives, arr))

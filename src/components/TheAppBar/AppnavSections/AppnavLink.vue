@@ -17,7 +17,7 @@
           <span class='icons'>
             <icon class='margin' v-for='i in icons' :key='i.icon' :icon='i.icon' :size='i.size' :disabled='true'></icon>
             <icon class='margin' v-if='obj[sublist] && obj[sublist].length > 0' icon='angle-right' :class='{sublist: showingSublists}' size='1x' @click='showingSublists = !showingSublists'></icon>
-            <icon-drop v-if='options' class='margin' minwidth='150px' handle='ellipsis-v'>
+            <icon-drop v-if='options && options.length > 0' class='margin' minwidth='150px' handle='ellipsis-v'>
               <div class='dropdown round-border'>
                 <div class='wrapper'>
                   <div v-for='i in options' :key='i.name' class='drop-el' @click='i.callback(obj)' :class='theme'>
@@ -64,15 +64,15 @@ export default class AppnavLink extends Vue {
   @State('theme') public readonly theme!: string
   @Getter('isDesktop') public readonly isDesktop!: boolean
   @Getter('platform') public readonly platform!: string
-  @Prop({required: true}) public readonly obj!: any
+  @Prop({required: true, type: Object}) public readonly obj!: any
   @Prop({required: true, type: String}) public readonly content!: string
   @Prop({required: true, type: String}) public readonly sublist!: string
   @Prop({required: true, type: String}) public readonly active!: string
-  @Prop() public readonly icons!: ListIcon[]
-  @Prop() public readonly options!: ListIcon[]
+  @Prop(Array) public readonly icons!: ListIcon[]
+  @Prop(Array) public readonly options!: ListIcon[]
 
-  @Prop() public readonly leftpan!: PanGesture
-  @Prop() public readonly rightpan!: PanGesture
+  @Prop(Object) public readonly leftpan!: PanGesture
+  @Prop(Object) public readonly rightpan!: PanGesture
 
   public showingSublists: boolean = false
   public div: any = null

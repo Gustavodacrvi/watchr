@@ -1,7 +1,7 @@
 <template>
   <div>
     <draggable v-model='arr' :animation='300' @end='update' :disabled='disabled'>
-      <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active' :leftpan='leftpan' :rightpan='rightpan' @update='update' @panevent='panevent' :options='options' :icons='mapicon(icons, el)'></appnav-link>
+      <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active' :leftpan='leftpan' :rightpan='rightpan' @update='update' @panevent='panevent' :options='options(el)' :icons='icons(el)'></appnav-link>
     </draggable>
   </div>
 </template>
@@ -23,20 +23,17 @@ import { PanGesture, ListIcon } from '@/interfaces/app'
   },
 })
 export default class AppnavLinkrenderer extends Vue {
-  @Prop({required: true}) public readonly list!: any[]
+  @Prop({required: true, type: Array}) public readonly list!: any[]
   @Prop({required: true, type: String}) public readonly content!: string
   @Prop({default: '', type: String}) public readonly active!: string
   @Prop({default: '', type: String}) public readonly sublist!: string
   @Prop({default: false, type: Boolean}) public readonly disabled!: boolean
-  @Prop({default: false}) public readonly icons!: ListIcon
-  @Prop({default: () => (icons: ListIcon[]) => {
-    return icons
-  }}) public readonly mapicon!: (icons: ListIcon, obj: any) => ListIcon[]
 
-  @Prop() public readonly leftpan!: PanGesture
-  @Prop() public readonly rightpan!: PanGesture
+  @Prop(Object) public readonly leftpan!: PanGesture
+  @Prop(Object) public readonly rightpan!: PanGesture
 
-  @Prop() public readonly options!: ListIcon[]
+  @Prop({default: () => [], type: Function}) public readonly icons!: (obj: any) => ListIcon[]
+  @Prop({default: () => [], type: Function}) public readonly options!: (obj: any) => ListIcon[]
 
   public arr: any[] = this.list
 
