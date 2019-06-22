@@ -1,7 +1,9 @@
 <template>
   <div>
     <draggable v-model='arr' :animation='300' @end='update' :disabled='disabled'>
-      <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active' :leftpan='leftpan' :rightpan='rightpan' @update='update' @panevent='panevent' :options='options(el)' :icons='icons(el)'></appnav-link>
+      <transition-group name='fade'>
+        <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active' :leftpan='leftpan' :rightpan='rightpan' @update='update' @panevent='panevent' :options='options(el)' :icons='icons(el)' :optionsrender='options' :iconsrender='icons'></appnav-link>
+      </transition-group>
     </draggable>
   </div>
 </template>

@@ -5,6 +5,7 @@ import router from '@/router'
 import perspective from './perspective'
 import label from './label'
 
+import { SimpleAdder } from '@/interfaces/app'
 import { Alert } from '@/interfaces/alert'
 
 Vue.use(Vuex)
@@ -15,6 +16,7 @@ interface States {
   theme: string
   popUpComponent: string
   windowWidth: number
+  popUpPayload: any | SimpleAdder
   appBarState: boolean
   isLogged: boolean
   showingAlert: boolean
@@ -26,6 +28,7 @@ interface Mutations {
   pushTheme: (state: States, theme: string) => void
   pushPopUp: (state: States, compName: string) => void
   pushAlert: (state: States, alert: Alert) => void
+  pushPopUpPayload: (state: States, payload: any) => void
   openAppBar: () => void
   closeAppBar: () => void
   hideAlert: () => void
@@ -61,6 +64,7 @@ const store: any = new Vuex.Store({
   state: {
     theme: savedTheme,
     popUpComponent: '',
+    popUpPayload: null,
     windowWidth: document.body.clientWidth,
     appBarState: false,
     isLogged: false,
@@ -75,6 +79,10 @@ const store: any = new Vuex.Store({
     },
     pushPopUp(state: States, compName: string): void {
       state.popUpComponent = compName
+      state.popUpPayload = null
+    },
+    pushPopUpPayload(state: States, payload: any | SimpleAdder): void {
+      state.popUpPayload = payload
     },
     pushAlert(state: States, alert: Alert): void {
       state.alerts.push(alert)

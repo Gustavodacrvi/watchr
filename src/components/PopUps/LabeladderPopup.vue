@@ -33,17 +33,22 @@ const labelModule = namespace('label')
 })
 export default class LabelAdder extends Vue {
   @State('theme') public readonly theme!: string
+  @State('popUpPayload') public readonly popUpPayload!: any
   @Getter('isDesktop') public readonly isDesktop!: boolean
   @Mutation('pushAlert') public readonly pushAlert!: (alert: Alert) => void
   // tslint:disable-next-line:max-line-length
   @labelModule.State('labels') public readonly labels!: Label[]
-  @labelModule.Mutation('addLabelFromArrayPath') public readonly addLabelFromArrayPath!: (path: string[]) => void
   // tslint:disable-next-line:max-line-length
   @labelModule.Getter('getLabelNodeFromArrayPath') public readonly  getLabelNodeFromArrayPath!: (path: string[]) => Label | undefined
+  @labelModule.Action('addLabelFromArrayPath') public readonly addLabelFromArrayPath!: (path: string[]) => void
 
   public input: string | null = null
   public value: string = ''
   public options: string[] = []
+
+  public created() {
+    this.input = this.popUpPayload
+  }
 
   public add(): void {
     if (this.value !== '') {

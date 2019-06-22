@@ -15,18 +15,24 @@
           </span>
           <span class='txt name'>{{ obj[content] }}</span>
           <span class='icons'>
-            <icon class='margin' v-for='i in icons' :key='i.icon' :icon='i.icon' :size='i.size' :disabled='true'></icon>
-            <icon class='margin' v-if='obj[sublist] && obj[sublist].length > 0' icon='angle-right' :class='{sublist: showingSublists}' size='1x' @click='showingSublists = !showingSublists'></icon>
-            <icon-drop v-if='options && options.length > 0' class='margin' minwidth='150px' handle='ellipsis-v'>
-              <div class='dropdown round-border'>
-                <div class='wrapper'>
-                  <div v-for='i in options' :key='i.name' class='drop-el' @click='i.callback(obj)' :class='theme'>
-                    <span class='drop-icon'><icon :icon='i.icon' :size='i.size' :color='i.color'></icon></span>
-                    <span class='drop-name txt'>{{ i.name }}</span>
+            <span v-for='i in icons' :key='i.icon' class='nav-icon'>
+              <icon :icon='i.icon' :size='i.size' :disabled='true' :expand='true'></icon>
+            </span>
+            <span v-if='obj[sublist] && obj[sublist].length > 0' class='nav-icon' @click='showingSublists = !showingSublists'>
+              <icon class='angle-right' icon='angle-right' :class='{sublist: showingSublists}' size='1x' :expand='true'></icon>
+            </span>
+            <span v-if='options && options.length > 0' class='nav-icon'>
+              <icon-drop minwidth='150px' handle='ellipsis-v' :expand='true' :click='true'>
+                <div class='dropdown round-border'>
+                  <div class='wrapper'>
+                    <div v-for='i in options' :key='i.name' class='drop-el' @click='i.callback(obj)' :class='theme'>
+                      <span class='drop-icon'><icon :icon='i.icon' :size='i.size' :color='i.color'></icon></span>
+                      <span class='drop-name txt'>{{ i.name }}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </icon-drop>
+              </icon-drop>
+            </span>
             <!-- <icon class='margin' icon='ellipsis-v' size='1x' @click='showingOptions = !showingOptions'></icon> -->
           </span>
         </div>
@@ -34,7 +40,7 @@
     </v-touch>
     <transition name='fade'>
       <div v-if='showingSublists && obj[sublist] && obj[sublist].length > 0' class='drop'>
-        <link-render :sublist='sublist' :content='content' :active='active' :list='obj[sublist]' @update='update'></link-render>
+        <link-render :sublist='sublist' :content='content' :active='active' :list='obj[sublist]' @update='update' :options='optionsrender' :icons='iconsrender'></link-render>
       </div>
     </transition>
   </div>
@@ -73,6 +79,9 @@ export default class AppnavLink extends Vue {
 
   @Prop(Object) public readonly leftpan!: PanGesture
   @Prop(Object) public readonly rightpan!: PanGesture
+
+  @Prop({default: () => [], type: Function}) public readonly iconsrender!: (obj: any) => ListIcon[]
+  @Prop({default: () => [], type: Function}) public readonly optionsrender!: (obj: any) => ListIcon[]
 
   public showingSublists: boolean = false
   public div: any = null
@@ -151,8 +160,17 @@ export default class AppnavLink extends Vue {
   transform: rotate(90deg);
 }
 
-.margin + .margin {
-  margin-left: 8px;
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  width: 20px;
+  cursor: pointer;
+}
+
+.nav-icon:hover .fas {
+  color: #fc7d7d !important;
 }
 
 .list-el .visible {
@@ -240,6 +258,7 @@ export default class AppnavLink extends Vue {
 
 .drop-name {
   white-space: nowrap;
+  margin-right: 12px;
 }
 
 .drop-el.light:hover {
