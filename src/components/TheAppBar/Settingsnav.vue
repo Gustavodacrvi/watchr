@@ -15,10 +15,10 @@
       <hr class='border'>
       <div class='footer'>
         <div class='left'>
-          <!-- <icon icon='tasks' @click='$emit("change")'></icon> -->
+          <ft-icon class='icon txt pointer' icon='tasks' @click="$emit('change')"></ft-icon>
         </div>
         <div class='right'>
-          <!-- <icon icon='adjust' @click='$emit("theme")'></icon> -->
+          <ft-icon class='icon txt pointer' icon='adjust' @click="$emit('theme')"></ft-icon>
         </div>
       </div>
     </div>
@@ -30,18 +30,17 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 
-// import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faAdjust, faTasks } from '@fortawesome/free-solid-svg-icons'
 
-@Component({
-  components: {
-    // icon: FontAwesomeIcon,
-  },
-})
+library.add(faAdjust, faTasks)
+
+@Component
 export default class LoggedAppnav extends Vue {
-  @State('theme') public readonly theme!: string
-  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
-  @Mutation('closeAppBar') public readonly closeAppBar!: () => void
-  @Getter('isDesktop') public readonly isDesktop!: boolean
+  @State theme!: string
+  @Mutation pushPopUp!: (compName: string) => void
+  @Mutation closeAppBar!: () => void
+  @Getter isDesktop!: boolean
 }
 
 </script>

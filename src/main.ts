@@ -5,10 +5,10 @@ import store from './store/index'
 import './registerServiceWorker'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faUser, faAdjust, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faAdjust, faSignInAlt, faUserAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import { dom } from '@fortawesome/fontawesome-svg-core'
 
-library.add(faUser, faAdjust, faUserPlus, faSignInAlt)
+library.add(faUser, faAdjust, faUserAlt, faSignInAlt, faUserPlus)
 
 dom.watch()
 

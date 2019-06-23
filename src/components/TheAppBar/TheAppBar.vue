@@ -21,40 +21,36 @@ import { State, Getter, Mutation } from 'vuex-class'
   },
 })
 export default class TheNavBar extends Vue {
-  @State('theme') public readonly theme!: string
-  @Getter('isDesktop') public readonly isDesktop!: boolean
-  @Getter('platform') public readonly platform!: 'mobile' | 'desktop'
-  @Getter('isStandAlone') public readonly isStandAlone!: boolean
-  @Mutation('pushTheme') public readonly pushTheme!: (theme: string) => void
-  @Mutation('closeAppBar') public readonly closeAppBar!: () => void
+  @State theme!: string
+  @Mutation pushTheme!: (theme: string) => void
+  @Mutation closeAppBar!: () => void
+  @Getter isDesktop!: boolean
+  @Getter platform!: 'mobile' | 'desktop'
+  @Getter isStandAlone!: boolean
 
-  public settings: boolean = !this.isStandAlone
-  public appMenu: string = ''
+  settings: boolean = !this.isStandAlone
+  appMenu: string = ''
 
-  public created() {
+  created() {
     this.settings = !this.isStandAlone
 
-    if (this.isDesktop || !this.settings) {
+    if (this.isDesktop || !this.settings)
       this.appMenu = 'appnav'
-    } else {
+    else
       this.appMenu = 'settingsnav'
-    }
   }
 
-  public changeTheme(): void {
-    if (this.theme === 'dark') {
+  changeTheme() {
+    if (this.theme === 'dark')
       this.pushTheme('light')
-    } else {
+    else
       this.pushTheme('dark')
-    }
   }
-
-  public changeMenu(): void {
-    if (this.appMenu === 'appnav') {
+  changeMenu() {
+    if (this.appMenu === 'appnav')
       this.appMenu = 'settingsnav'
-    } else {
+    else
       this.appMenu = 'appnav'
-    }
   }
 }
 
@@ -62,21 +58,20 @@ export default class TheNavBar extends Vue {
 
 <style scoped>
 
+.wrapper, .theappbar {
+  display: flex;
+}
+
 .wrapper {
   position: fixed;
   top: 0;
   left: 0;
   height: 100%;
   width: 100%;
-  display: flex;
 }
 
 .wrapper.desktop {
   width: 320px;
-}
-
-.wrapper.mobile {
-  display: flex;
 }
 
 .appbar.mobile {
@@ -95,7 +90,6 @@ export default class TheNavBar extends Vue {
   position: relative;
   height: 100%;
   height: 100%;
-  display: flex;
   flex-direction: column;
 }
 

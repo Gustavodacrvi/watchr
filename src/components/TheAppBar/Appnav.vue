@@ -7,7 +7,7 @@
     <div class='content-wrapper'>
       <div class='content'>
         <div class='navsect'>
-          <!-- <icon v-for='sect in sections' :key='sect.name' :icon='sect.icon' :color='currentSectName === sect.name ? "#fc7d7d" : ""' @click='currentSect = sect.comp;currentSectName = sect.name' size='lg'></icon> -->
+          <ft-icon v-for='sect in sections' :key='sect.comp' class='txt pointer icon' :icon='sect.icon' :style="isActiveClass(sect.comp)" @click='currentSect = sect.comp' size='lg'></ft-icon>
         </div>
         <hr class='border' style='width: 100%;margin-top:13px;'>
         <transition name='fade' mode='out-in'>
@@ -19,10 +19,10 @@
       <hr class='border'>
       <div class='footer'>
         <div class='left'>
-          <!-- <icon icon='cog' @click='$emit("change")'></icon> -->
+          <ft-icon class='txt pointer icon' icon='cog' @click="$emit('change')"></ft-icon>
         </div>
         <div class='right'>
-          <!-- <icon icon='adjust' @click='$emit("theme")'></icon> -->
+          <ft-icon class='txt pointer icon' icon='adjust' @click="$emit('theme')"></ft-icon>
         </div>
       </div>
     </div>
@@ -34,40 +34,51 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 
-// import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faAdjust, faCog, faHome, faLayerGroup, faProjectDiagram, faStopwatch,
+ faStream, faTags, faChartPie } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faAdjust, faCog, faHome, faLayerGroup, faProjectDiagram,
+faStopwatch, faStream, faTags, faChartPie)
 
 interface Section {
-  name: string
   icon: string
   comp: string
 }
 
 @Component({
   components: {
-    // icon: FontAwesomeIcon,
     overview: () => import('@/components/TheAppBar/AppnavSections/OverviewAppnav.vue'),
     labels: () => import('@/components/TheAppBar/AppnavSections/LabelAppnav.vue'),
     perspectives: () => import('@/components/TheAppBar/AppnavSections/PerspectiveAppnav.vue'),
   },
 })
 export default class LoggedAppnav extends Vue {
-  @State('theme') public readonly theme!: string
-  @State('isLogged') public readonly isLogged!: boolean
-  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
-  @Getter('isDesktop') public readonly isDesktop!: boolean
+  @State theme!: string
+  @State isLogged!: boolean
+  @Mutation pushPopUp!: (compName: string) => void
+  @Getter isDesktop!: boolean
 
-  public readonly sections: Section[] = [
-    {name: 'OVERVIEW', icon: 'home', comp: 'overview'},
-    {name: 'PERSPECTIVES', icon: 'layer-group', comp: 'perspectives'},
-    {name: 'PROJECTS', icon: 'project-diagram', comp: 'projects'},
-    {name: 'TIME TRACKING', icon: 'stopwatch', comp: 'timetracking'},
-    {name: 'INTERVALS AND ROUTINES', icon: 'stream', comp: 'intervalsandroutines'},
-    {name: 'LABELS', icon: 'tags', comp: 'labels'},
-    {name: 'STATISTICS', icon: 'chart-pie', comp: 'statistics'},
+  sections: Section[] = [
+    {icon: 'home', comp: 'overview'},
+    {icon: 'layer-group', comp: 'perspectives'},
+    {icon: 'project-diagram', comp: 'projects'},
+    {icon: 'stopwatch', comp: 'timetracking'},
+    {icon: 'stream', comp: 'intervalsandroutines'},
+    {icon: 'tags', comp: 'labels'},
+    {icon: 'chart-pie', comp: 'statistics'},
   ]
 
-  public currentSectName: string = 'OVERVIEW'
-  public currentSect: string = 'overview'
+  isActiveClass(comp: string): object {
+    let mainColor: string = ''
+    if (this.currentSect === comp)
+      mainColor = '#fc7d7d'
+    return {
+      color: mainColor,
+    }
+  }
+
+  currentSect: string = 'overview'
 }
 
 </script>
