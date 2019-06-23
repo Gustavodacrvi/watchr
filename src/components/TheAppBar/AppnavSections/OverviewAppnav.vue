@@ -11,14 +11,14 @@ import { Getter, State, namespace } from 'vuex-class'
 
 import { Perspective } from '@/interfaces/app'
 
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+// import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 import LinkRenderer from '@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'
 
 const perspective = namespace('perspective')
 
 @Component({
   components: {
-    icon: FontAwesomeIcon,
+    // icon: FontAwesomeIcon,
     renderer: LinkRenderer,
   },
 })

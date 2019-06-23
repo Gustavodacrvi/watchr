@@ -11,14 +11,12 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
 import Sortable from '@/components/Sortablejs.vue'
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
 import { PanGesture, ListIcon } from '@/interfaces/app'
 
 @Component({
   components: {
     'sortable': Sortable,
-    'icon': FontAwesomeIcon,
     'appnav-link': () => import('@/components/TheAppBar/AppnavSections/AppnavLink.vue'),
   },
 })

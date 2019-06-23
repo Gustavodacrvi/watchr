@@ -1,7 +1,7 @@
 <template>
   <div class='wrapper'>
     <div class='relative-wrapper'>
-      <icon v-if='!isDesktop' class='close-icon' icon='arrow-left' size='2x' @click='pushPopUp("")'></icon>
+      <!-- <icon v-if='!isDesktop' class='close-icon' icon='arrow-left' size='2x' @click='pushPopUp("")'></icon> -->
       <component class='pop-up card' :class='[{"round-border": isDesktop, "background-color": !isDesktop}, platform, theme]' :is='popUp'></component>
       <div v-if='isDesktop' class='popup-margin' :class='platform' @click='pushPopUp("")'></div>
     </div>
@@ -13,11 +13,11 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+// import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
 @Component({
   components: {
-    icon: FontAwesomeIcon,
+    // icon: FontAwesomeIcon,
     SignupPopup: () => import('@/components/PopUps/SignupPopup.vue'),
     SigninPopup: () => import('@/components/PopUps/SigninPopup.vue'),
     LabeladderPopup: () => import('@/components/PopUps/LabeladderPopup.vue'),

@@ -3,7 +3,7 @@
     <div class='margin'></div>
     <div class='header'>
       <span class='name txt'>{{ name }}</span>
-      <icon class='icon' :class='{showing: showing}' icon='angle-right' @click='showing = !showing' size='1x'></icon>
+      <!-- <icon class='icon' :class='{showing: showing}' icon='angle-right' @click='showing = !showing' size='1x'></icon> -->
     </div>
     <div class='margin'></div>
     <transition name='fade'>
@@ -18,11 +18,11 @@
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+// import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
 @Component({
   components: {
-    icon: FontAwesomeIcon,
+    // icon: FontAwesomeIcon,
   },
 })
 export default class AppnavDivision extends Vue {

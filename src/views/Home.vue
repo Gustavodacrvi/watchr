@@ -1,7 +1,7 @@
 <template>
   <div>
     <span class='txt'>home</span>
-    <ft-icon icon="user-secret"></ft-icon>
+    <ft-icon class='txt icon pointer' icon='adjust'></ft-icon>
   </div>
 </template>
 

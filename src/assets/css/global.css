@@ -12,11 +12,15 @@ body, button, input {
   font-family: 'Work Sans';
 }
 
-.txt {
+.txt, .icon {
   color: #8C8C8C;
 }
 
-.main-color, h1, h2, h3, h4, h5, h6 {
+.pointer {
+  cursor: pointer;
+}
+
+.main-color, h1, h2, h3, h4, h5, h6, .icon:hover {
   color: #fc7d7d;
 }
 

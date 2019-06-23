@@ -4,11 +4,13 @@ import router from './router'
 import store from './store/index'
 import './registerServiceWorker'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faUser, faAdjust } from '@fortawesome/free-solid-svg-icons'
 import { dom } from '@fortawesome/fontawesome-svg-core'
-import importIcons from './iconsLibrary'
+
+library.add(faUser, faAdjust)
 
 dom.watch()
-importIcons()
 
 Vue.component('ft-icon', FontAwesomeIcon)
 

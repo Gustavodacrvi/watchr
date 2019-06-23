@@ -4,22 +4,22 @@
       <div class='round-border visible'>
         <div class='back' v-if='!isDesktop'>
           <div class='back-icons'>
-            <icon icon='thumbtack' size='1x' color='white'></icon>
-            <icon icon='thumbtack' size='1x' color='white'></icon>
+            <!-- <icon icon='thumbtack' size='1x' color='white'></icon> -->
+            <!-- <icon icon='thumbtack' size='1x' color='white'></icon> -->
           </div>
         </div>
         <div class='content gray' ref='content' :class='[theme, {active: obj[content] === active, blinking: blinking}]'>
           <span class='left-icon' v-if='obj.icon'>
-            <icon v-if='obj.iconColor' :icon='obj.icon' :color='obj.iconColor'></icon>
-            <icon v-else :icon='obj.icon'></icon>
+            <!-- <icon v-if='obj.iconColor' :icon='obj.icon' :color='obj.iconColor'></icon> -->
+            <!-- <icon v-else :icon='obj.icon'></icon> -->
           </span>
           <span class='txt name'>{{ obj[content] }}</span>
           <span class='icons'>
             <span v-for='i in icons' :key='i.icon' class='nav-icon'>
-              <icon :icon='i.icon' :size='i.size' :disabled='true' :expand='true'></icon>
+              <!-- <icon :icon='i.icon' :size='i.size' :disabled='true' :expand='true'></icon> -->
             </span>
             <span v-if='obj[sublist] && obj[sublist].length > 0' class='nav-icon' @click='showingSublists = !showingSublists'>
-              <icon class='angle-right' icon='angle-right' :class='{sublist: showingSublists}' size='1x' :expand='true'></icon>
+              <!-- <icon class='angle-right' icon='angle-right' :class='{sublist: showingSublists}' size='1x' :expand='true'></icon> -->
             </span>
             <span v-if='options && options.length > 0' class='nav-icon'>
               <icon-drop minwidth='150px' handle='ellipsis-v' :expand='true' :click='true'>
@@ -51,7 +51,7 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter } from 'vuex-class'
 
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+// import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 import IconDropdown from '@/components/IconDropdown.vue'
 
 import VueTouch from 'vue-touch'
@@ -63,7 +63,7 @@ import { PanGesture, ListIcon } from '@/interfaces/app'
   components: {
     'icon-drop': IconDropdown,
     'link-render': () => import('@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'),
-    'icon': FontAwesomeIcon,
+    // 'icon': FontAwesomeIcon,
   },
 })
 export default class AppnavLink extends Vue {

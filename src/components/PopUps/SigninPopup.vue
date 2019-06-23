@@ -9,14 +9,14 @@
         <input class='input txt round-border gray' placeholder='Password: ' :type='passwordType' autocomplete='off' :class='[theme, {wrong: inputHasError(password, 50)}]' v-model='password'>
         <span class='eyes'>
           <transition name='fade'>
-            <icon v-if="passwordType === 'text'" class='eye' icon='eye' size='1x' @click='togglePassword'></icon>
-            <icon v-else class='eye' icon='eye-slash' size='1x' @click='togglePassword'></icon>
+            <!-- <icon v-if="passwordType === 'text'" class='eye' icon='eye' size='1x' @click='togglePassword'></icon> -->
+            <!-- <icon v-else class='eye' icon='eye-slash' size='1x' @click='togglePassword'></icon> -->
           </transition>
         </span>
       </div>
         <button v-if='!waitingResponse' class='margin button round-border' @click='sendRequest'>Sign in</button>
         <button v-else class='margin button round-border'>
-          <icon class='icon' icon='sync' hoverColor='white' color='white' :spin='true'></icon>
+          <!-- <icon class='icon' icon='sync' hoverColor='white' color='white' :spin='true'></icon> -->
         </button>
       <div class='margin links'>
         <span class='link'>Forgot password?</span>
@@ -32,11 +32,11 @@ import { Component, Vue, Mixins } from 'vue-property-decorator'
 import { State, Mutation, Getter } from 'vuex-class'
 import Mixin from '@/mixins/authPopUp'
 
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+// import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
 @Component({
   components: {
-    icon: FontAwesomeIcon,
+    // icon: FontAwesomeIcon,
   },
 })
 export default class SigninPopUp extends Mixins(Mixin) {

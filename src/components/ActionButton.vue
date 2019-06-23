@@ -5,19 +5,19 @@
         <div v-if='showing' class='margin' @click='showing = false'></div>
       </transition>
       <span class='main' @click='showing = !showing'>
-        <icon class='icon' icon='plus' color='white'></icon>
+        <!-- <icon class='icon' icon='plus' color='white'></icon> -->
       </span>
       <transition name='below-trans'>
         <div class='left-wrapper' v-if='showing'>
           <span class='btn left' v-for='btn in leftButtons' :key='btn.icon' :style='`background-color: ${btn.backColor}`' @click='btn.click'>
-            <icon :icon='btn.icon' :color='btn.iconColor'></icon>
+            <!-- <icon :icon='btn.icon' :color='btn.iconColor'></icon> -->
           </span>
         </div>
       </transition>
       <transition name='top-trans'>
         <div v-if='showing' class='top-wrapper'>
           <span class='btn top' v-for='btn in topButtons' :key='btn.icon' :style='`background-color: ${btn.backColor}`' @click='btn.click'>
-            <icon :icon='btn.icon' :color='btn.iconColor'></icon>
+            <!-- <icon :icon='btn.icon' :color='btn.iconColor'></icon> -->
           </span>
         </div>
       </transition>
@@ -30,7 +30,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Mutation } from 'vuex-class'
 
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+// import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
 interface Buttons {
   icon: string
@@ -41,7 +41,7 @@ interface Buttons {
 
 @Component({
   components: {
-    icon: FontAwesomeIcon,
+    // icon: FontAwesomeIcon,
   },
 })
 export default class ActionButton extends Vue {

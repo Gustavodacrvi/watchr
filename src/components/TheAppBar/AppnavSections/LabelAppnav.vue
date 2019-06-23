@@ -12,7 +12,6 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Getter, State, Mutation, namespace } from 'vuex-class'
 
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 import Division from '@/components/TheAppBar/AppnavSections/AppnavDivision.vue'
 import LinkRenderer from '@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'
 
@@ -27,7 +26,6 @@ const label = namespace('label')
 
 @Component({
   components: {
-    icon: FontAwesomeIcon,
     division: Division,
     renderer: LinkRenderer,
   },

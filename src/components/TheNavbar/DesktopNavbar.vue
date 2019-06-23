@@ -10,12 +10,18 @@
     <div class='right'>
       <icon-dropdown class='margin' handle='user'>
         <div class='dual-drop-el'>
-          <span class='drop-el txt' @click="pushPopUp('SigninPopup')"><icon icon='sign-in-alt' size='sm'></icon>Sign in</span>
+          <span class='drop-el txt' @click="pushPopUp('SigninPopup')">
+            <!-- <icon icon='sign-in-alt' size='sm'></icon> -->
+            Sign in
+          </span>
           <hr class='thematic-break'>
-          <span class='drop-el txt' @click="pushPopUp('SignupPopup')"><icon icon='user-plus' size='sm'></icon>Sign up</span>
+          <span class='drop-el txt' @click="pushPopUp('SignupPopup')">
+            <!-- <icon icon='user-plus' size='sm'></icon> -->
+            Sign up
+          </span>
         </div>
       </icon-dropdown>
-      <icon class='margin' icon='adjust' @click='changeTheme'></icon>
+      <!-- <icon class='margin' icon='adjust' @click='changeTheme'></icon> -->
     </div>
     <div class='magic-line' :style='magicLineStyles'></div>
   </div>
@@ -26,12 +32,12 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
 
-import FontAwesomeIcons from '@/components/FontAwesomeIcon.vue'
+// import FontAwesomeIcons from '@/components/FontAwesomeIcon.vue'
 import IconDropdown from '@/components/IconDropdown.vue'
 
 @Component({
   components: {
-    'icon': FontAwesomeIcons,
+    // 'icon': FontAwesomeIcons,
     'icon-dropdown': IconDropdown,
   },
 })

@@ -15,10 +15,10 @@
       <hr class='border'>
       <div class='footer'>
         <div class='left'>
-          <icon icon='tasks' @click='$emit("change")'></icon>
+          <!-- <icon icon='tasks' @click='$emit("change")'></icon> -->
         </div>
         <div class='right'>
-          <icon icon='adjust' @click='$emit("theme")'></icon>
+          <!-- <icon icon='adjust' @click='$emit("theme")'></icon> -->
         </div>
       </div>
     </div>
@@ -30,11 +30,11 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+// import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
 @Component({
   components: {
-    icon: FontAwesomeIcon,
+    // icon: FontAwesomeIcon,
   },
 })
 export default class LoggedAppnav extends Vue {

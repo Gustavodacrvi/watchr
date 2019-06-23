@@ -7,7 +7,7 @@
     <div class='content-wrapper'>
       <div class='content'>
         <div class='navsect'>
-          <icon v-for='sect in sections' :key='sect.name' :icon='sect.icon' :color='currentSectName === sect.name ? "#fc7d7d" : ""' @click='currentSect = sect.comp;currentSectName = sect.name' size='lg'></icon>
+          <!-- <icon v-for='sect in sections' :key='sect.name' :icon='sect.icon' :color='currentSectName === sect.name ? "#fc7d7d" : ""' @click='currentSect = sect.comp;currentSectName = sect.name' size='lg'></icon> -->
         </div>
         <hr class='border' style='width: 100%;margin-top:13px;'>
         <transition name='fade' mode='out-in'>
@@ -19,10 +19,10 @@
       <hr class='border'>
       <div class='footer'>
         <div class='left'>
-          <icon icon='cog' @click='$emit("change")'></icon>
+          <!-- <icon icon='cog' @click='$emit("change")'></icon> -->
         </div>
         <div class='right'>
-          <icon icon='adjust' @click='$emit("theme")'></icon>
+          <!-- <icon icon='adjust' @click='$emit("theme")'></icon> -->
         </div>
       </div>
     </div>
@@ -34,7 +34,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+// import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
 interface Section {
   name: string
@@ -44,7 +44,7 @@ interface Section {
 
 @Component({
   components: {
-    icon: FontAwesomeIcon,
+    // icon: FontAwesomeIcon,
     overview: () => import('@/components/TheAppBar/AppnavSections/OverviewAppnav.vue'),
     labels: () => import('@/components/TheAppBar/AppnavSections/LabelAppnav.vue'),
     perspectives: () => import('@/components/TheAppBar/AppnavSections/PerspectiveAppnav.vue'),
