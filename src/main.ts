@@ -4,8 +4,10 @@ import router from './router'
 import store from './store/index'
 import './registerServiceWorker'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { dom } from '@fortawesome/fontawesome-svg-core'
 import importIcons from './iconsLibrary'
 
+dom.watch()
 importIcons()
 
 Vue.component('ft-icon', FontAwesomeIcon)
