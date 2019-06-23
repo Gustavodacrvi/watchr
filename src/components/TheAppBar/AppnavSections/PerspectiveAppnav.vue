@@ -5,7 +5,10 @@
         <span class='title'>PERSPECTIVES</span>
       </div>
       <div v-else class='header options' key='header-options'>
-        <icon icon='car'></icon>
+        <stack-icon :icons="[
+          {icon: 'circle', size: '2x'},
+          {icon: 'flag', size: '1x', iconColor: 'white'},
+        ]" size='2x'></stack-icon>
       </div>
     </transition>
     <renderer :list='smartPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
@@ -18,7 +21,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Getter, State, namespace } from 'vuex-class'
 
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+import StackIcons from '@/components/StackIcons.vue'
 import LinkRenderer from '@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'
 
 import appUtil from '@/utils/app'
@@ -29,8 +32,8 @@ const perspective = namespace('perspective')
 
 @Component({
   components: {
-    renderer: LinkRenderer,
-    icon: FontAwesomeIcon,
+    'renderer': LinkRenderer,
+    'stack-icon': StackIcons,
   },
 })
 export default class PerspectiveAppnav extends Vue {
