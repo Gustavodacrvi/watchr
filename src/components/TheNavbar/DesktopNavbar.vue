@@ -40,42 +40,45 @@ import IconDropdown from '@/components/IconDropdown.vue'
   },
 })
 export default class DesktopNavbar extends Vue {
-  @State('theme') readonly theme!: string
-  @Mutation('pushTheme') readonly pushTheme!: (theme: string) => void
-  @Mutation('pushPopUp') readonly pushPopUp!: (compName: string) => void
+  @State theme!: string
+  @Mutation pushTheme!: (theme: string) => void
+  @Mutation pushPopUp!: (compName: string) => void
 
   lineLeftPosition: string = ''
   lineWidth: string = ''
 
-  public mounted(): void {
+  mounted() {
     setTimeout(() => {
       this.moveMagicLineTo(this.$route.name)
     }, 50)
     window.addEventListener('resize', this.windowEventListener)
   }
-  public beforeDestroy(): void {
+  beforeDestroy() {
     window.removeEventListener('resize', this.windowEventListener)
   }
 
-  public windowEventListener(): void {
+  windowEventListener() {
     this.moveMagicLineTo(this.$route.name)
   }
-  public moveMagicLineTo(ref: string | undefined): void {
+  moveMagicLineTo(ref: string | undefined) {
     if (ref && this.$refs[ref]) {
-      const comp: any = this.$refs[ref]
-      const el: any = comp.$el
+      const comp: Vue = this.linkRef(ref)
+      const el: HTMLElement = comp.$el as HTMLElement
       this.lineLeftPosition = el.offsetLeft + 'px'
       this.lineWidth = el.offsetWidth + 'px'
     }
   }
-  public changeTheme(): void {
-    if (this.theme === 'dark') {
+  changeTheme() {
+    if (this.theme === 'dark')
       this.pushTheme('light')
-    } else {
+    else
       this.pushTheme('dark')
-    }
   }
-  public get magicLineStyles(): object {
+  linkRef(ref: string): Vue {
+    return this.$refs[ref] as Vue
+  }
+
+  get magicLineStyles(): object {
     return {
       left: this.lineLeftPosition,
       width: this.lineWidth,
@@ -88,6 +91,10 @@ export default class DesktopNavbar extends Vue {
 
 <style scoped>
 
+.right, .center, .dual-drop-el {
+  display: flex;
+}
+
 .navbar {
   position: relative;
   width: 100%;
@@ -98,13 +105,11 @@ export default class DesktopNavbar extends Vue {
 .right {
   position: absolute;
   right: 0;
-  display: flex;
 }
 
 .center {
   position: absolute;
   width: 100%;
-  display: flex;
   justify-content: center;
 }
 
@@ -147,7 +152,6 @@ export default class DesktopNavbar extends Vue {
 }
 
 .dual-drop-el {
-  display: flex;
   justify-content: space-around;
 }
 

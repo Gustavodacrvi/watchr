@@ -16,11 +16,11 @@ import { State } from 'vuex-class'
 
 @Component
 export default class TheNavbar extends Vue {
-  @Prop({required: true, type: String}) public readonly handle!: string
-  @Prop({default: 'lg', type: String}) public readonly size!: string
-  @Prop({default: '250px', type: String}) public readonly minwidth!: string
+  @Prop({required: true, type: String}) handle!: string
+  @Prop({default: 'lg', type: String}) size!: string
+  @Prop({default: '250px', type: String}) minwidth!: string
 
-  @State('theme') public theme!: string
+  @State theme!: string
 
   public showing: boolean = false
 }
