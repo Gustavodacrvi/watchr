@@ -140,8 +140,8 @@ export default class DesktopNavbar extends Vue {
   font-size: 1.1em;
 }
 
-.drop-el:hover  {
-  color: #fc7d7d !important;
+.drop-el:hover, .drop-el:hover .fontawesome-icon {
+  color: #fc7d7d;
 }
 
 .dual-drop-el {

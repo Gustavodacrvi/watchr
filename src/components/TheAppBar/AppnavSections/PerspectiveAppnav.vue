@@ -1,7 +1,18 @@
 <template>
   <div>
+    <transition name='fade' mode='out-in'>
+      <div v-if='selected.length === 0' class='header title' key='header-title'>
+        <span class='title'>PERSPECTIVES</span>
+      </div>
+      <div v-else class='header options' key='header-options'>
+        <stack-icon :icons="[
+          {icon: 'thumbtack', size: '1x'},
+          {icon: 'slash', size: '2x', iconColor: 'white'},
+        ]"></stack-icon>
+      </div>
+    </transition>
     <renderer :list='smartPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
-     @panevent='pan' :icons='icons' :options='options'></renderer>
+     @panevent='pan' :icons='icons' :options='options' @selected="select"></renderer>
   </div>
 </template>
 
@@ -10,7 +21,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Getter, State, namespace } from 'vuex-class'
 
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+import StackIcons from '@/components/StackIcons.vue'
 import LinkRenderer from '@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'
 
 import appUtil from '@/utils/app'
@@ -21,8 +32,8 @@ const perspective = namespace('perspective')
 
 @Component({
   components: {
-    renderer: LinkRenderer,
-    icon: FontAwesomeIcon,
+    'renderer': LinkRenderer,
+    'stack-icon': StackIcons,
   },
 })
 export default class PerspectiveAppnav extends Vue {
@@ -33,6 +44,7 @@ export default class PerspectiveAppnav extends Vue {
   @perspective.Action('updatePerspectives') public readonly updatePerspectives!: (perspectives: Perspective[]) => void
 
   public perspective: string = 'Today'
+  public selected: Perspective[] = []
   public rightPanEvent: PanGesture = {
     icon: 'thumbtack',
     iconColor: 'white',
@@ -68,6 +80,10 @@ export default class PerspectiveAppnav extends Vue {
     ] as ListIcon[]
   }
 
+  public select(pers: Perspective[]): void {
+    this.selected = pers
+  }
+
   public update({arr}: {arr: Perspective[]}): void {
     this.updatePerspectives(appUtil.updateArrayOrderFromFilteredArray(this.perspectives, arr))
   }
@@ -79,3 +95,6 @@ export default class PerspectiveAppnav extends Vue {
 }
 
 </script>
+
+<style scoped src='@/assets/css/appBarMenu.css'>
+</style>

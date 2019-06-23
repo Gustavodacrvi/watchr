@@ -10,9 +10,6 @@
           <icon v-for='sect in sections' :key='sect.name' :icon='sect.icon' :color='currentSectName === sect.name ? "#fc7d7d" : ""' @click='currentSect = sect.comp;currentSectName = sect.name' size='lg'></icon>
         </div>
         <hr class='border' style='width: 100%;margin-top:13px;'>
-        <div class='section-title'>
-          <span>{{ currentSectName }}</span>
-        </div>
         <transition name='fade' mode='out-in'>
           <component :is='currentSect'></component>
         </transition>

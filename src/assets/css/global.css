@@ -12,7 +12,7 @@ body, button, input {
   font-family: 'Work Sans';
 }
 
-.txt {
+.txt, .fontawesome-icon {
   color: #8C8C8C;
 }
 
