@@ -3,9 +3,9 @@
     <div class='left'>
     </div>
     <div class='center'>
-      <router-link class='link txt' :to='{name: "Home"}' ref='Home' @click.native='moveMagicLineTo("Home")'>Home</router-link>
-      <router-link class='link txt' :to='{name: "User"}' ref='User' @click.native='moveMagicLineTo("User")'>User</router-link>
-      <router-link class='link txt' :to='{name: "Help"}' ref='Help' @click.native='moveMagicLineTo("Help")'>Help</router-link>
+      <router-link class='link txt' :to="{name: 'Home'}" ref='Home' @click.native="moveMagicLineTo('Home')">Home</router-link>
+      <router-link class='link txt' :to="{name: 'User'}" ref='User' @click.native="moveMagicLineTo('User')">User</router-link>
+      <router-link class='link txt' :to='{name: "Help"}' ref='Help' @click.native="moveMagicLineTo('Help')">Help</router-link>
     </div>
     <div class='right'>
       <icon-dropdown class='margin' handle='user-alt'>
@@ -40,12 +40,12 @@ import IconDropdown from '@/components/IconDropdown.vue'
   },
 })
 export default class DesktopNavbar extends Vue {
-  @State('theme') public readonly theme!: string
-  @Mutation('pushTheme') public readonly pushTheme!: (theme: string) => void
-  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
+  @State('theme') readonly theme!: string
+  @Mutation('pushTheme') readonly pushTheme!: (theme: string) => void
+  @Mutation('pushPopUp') readonly pushPopUp!: (compName: string) => void
 
-  public lineLeftPosition: string = ''
-  public lineWidth: string = ''
+  lineLeftPosition: string = ''
+  lineWidth: string = ''
 
   public mounted(): void {
     setTimeout(() => {
@@ -53,7 +53,6 @@ export default class DesktopNavbar extends Vue {
     }, 50)
     window.addEventListener('resize', this.windowEventListener)
   }
-
   public beforeDestroy(): void {
     window.removeEventListener('resize', this.windowEventListener)
   }
@@ -61,7 +60,6 @@ export default class DesktopNavbar extends Vue {
   public windowEventListener(): void {
     this.moveMagicLineTo(this.$route.name)
   }
-
   public moveMagicLineTo(ref: string | undefined): void {
     if (ref && this.$refs[ref]) {
       const comp: any = this.$refs[ref]
