@@ -4,21 +4,21 @@
       <div class='round-border visible'>
         <div class='back' v-if='!isDesktop'>
           <div class='back-icons'>
-            <ft-icon class='margin icon txt pointer' :icon='obj.icon' size='1x' :style="{color: 'white'}"></ft-icon>
+            <ft-icon-dynamic class='margin icon txt pointer' :icon='obj.icon' size='1x' :style="{color: 'white'}"></ft-icon-dynamic>
           </div>
         </div>
         <div class='content gray' ref='content' :class='[theme, {active: obj[content] === active, blinking: blinking}]'>
           <span class='left-icon' v-if='obj.icon'>
-            <ft-icon v-if='obj.iconColor' class='margin icon txt pointer' :icon='obj.icon' :style="{color: obj.iconColor}"></ft-icon>
-            <ft-icon v-else class='margin icon txt pointer' :icon='obj.icon'></ft-icon>
+            <ft-icon-dynamic v-if='obj.iconColor' class='margin icon txt pointer' :icon='obj.icon' :style="{color: obj.iconColor}"></ft-icon-dynamic>
+            <ft-icon-dynamic v-else class='margin icon txt pointer' :icon='obj.icon'></ft-icon-dynamic>
           </span>
           <span class='txt name'>{{ obj[content] }}</span>
           <span class='icons'>
             <span v-for='i in icons' :key='i.icon' class='nav-icon'>
-              <ft-icon class='angle-right margin icon txt pointer' :icon='i.icon' :size='i.size' :class='{sublist: showingSublists}'></ft-icon>
+              <ft-icon-dynamic class='angle-right margin icon txt pointer' :icon='i.icon' :size='i.size' :class='{sublist: showingSublists}'></ft-icon-dynamic>
             </span>
             <span v-if='obj[sublist] && obj[sublist].length > 0' class='nav-icon' @click='showingSublists = !showingSublists'>
-              <ft-icon class='angle-right margin icon txt pointer' icon='angle-right' :class='{sublist: showingSublists}' size='1x'></ft-icon>
+              <ft-icon-dynamic class='angle-right margin icon txt pointer' icon='angle-right' :class='{sublist: showingSublists}' size='1x'></ft-icon-dynamic>
             </span>
             <span v-if='options && options.length > 0' class='nav-icon'>
               <icon-drop minwidth='150px' handle='ellipsis-v' :expand='true' :click='true'>
@@ -61,13 +61,13 @@ import { faEllipsisV, faAngleRight, faThumbtack, faDownload } from '@fortawesome
 
 library.add(faEllipsisV, faAngleRight, faThumbtack)
 
-import appUtilModule from '@/utils/app'
-
 import { PanGesture, ListIcon } from '@/interfaces/app'
+import DynamicFontawesome from '@/components/DynamicFontawesome.vue';
 
 @Component({
   components: {
     'icon-drop': IconDropdown,
+    'ft-icon-dynamic': DynamicFontawesome,
     'list-render': () => import('@/components/TheAppBar/AppnavSections/AppnavListrenderer.vue'),
   },
 })
