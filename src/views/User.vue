@@ -9,11 +9,10 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { Mutation, Getter } from 'vuex-class'
 
-
 @Component
 export default class Guest extends Vue {
-  @Getter('isDesktop') public readonly isDesktop!: boolean
-  @Mutation('openAppBar') public readonly openAppBar!: () => void
+  @Mutation openAppBar!: () => void
+  @Getter isDesktop!: boolean
 
   public created() {
     if (!localStorage.getItem('watchrFirstTimeIn')) {
@@ -25,9 +24,8 @@ export default class Guest extends Vue {
       this.$store.commit('perspective/getSavedData')
       this.$store.commit('label/getSavedData')
     }
-    if (this.isDesktop) {
+    if (this.isDesktop)
       this.openAppBar()
-    }
   }
 }
 

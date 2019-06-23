@@ -1,4 +1,10 @@
 
+export interface Alert {
+  name: string
+  duration: number
+  type: 'error' | 'normal' | 'success' | 'warning'
+}
+
 export interface PanGesture {
   icon: string
   iconColor: string

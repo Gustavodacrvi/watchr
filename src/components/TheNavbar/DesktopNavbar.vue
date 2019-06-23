@@ -48,9 +48,7 @@ export default class DesktopNavbar extends Vue {
   lineWidth: string = ''
 
   mounted() {
-    setTimeout(() => {
-      this.moveMagicLineTo(this.$route.name)
-    }, 50)
+    this.moveMagicLineTo(this.$route.name)
     window.addEventListener('resize', this.windowEventListener)
   }
   beforeDestroy() {

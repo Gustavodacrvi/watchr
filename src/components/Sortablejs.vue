@@ -15,17 +15,17 @@ Sortable.mount(new MultiDrag(), new AutoScroll())
 
 @Component
 export default class SortableComponent extends Vue {
-  @Prop(Array) public value!: any[]
-  @Prop({default: false, type: Boolean}) public readonly delayOnTouchOnly!: boolean
-  @Prop({default: false, type: Boolean}) public readonly disabled!: boolean
-  @Prop({default: 150, type: Number}) public readonly animation!: number
-  @Prop({default: false, type: Boolean}) public readonly multiDrag!: boolean
+  @Prop(Array) value!: any[]
+  @Prop({default: false, type: Boolean}) delayOnTouchOnly!: boolean
+  @Prop({default: false, type: Boolean}) disabled!: boolean
+  @Prop({default: 150, type: Number}) animation!: number
+  @Prop({default: false, type: Boolean}) multiDrag!: boolean
   @Prop(String) public readonly group!: string
-  @Prop({default: 'sortable-selected'}) public readonly selectedClass!: string
+  @Prop({default: 'sortable-selected'}) selectedClass!: string
 
-  public els: any = null
+  els: any = null
 
-  public mounted() {
+  mounted() {
     const ref: string = 'sortable'
     const div: any = this.$refs[ref]
     this.els = this.getChilds()
@@ -48,27 +48,23 @@ export default class SortableComponent extends Vue {
         this.$emit('select', e)
       },
 
-      // Called when an item is deselected
       onDeselect: (e: any) => {
         this.$emit('deselect', e)
       },
     })
   }
-  public getChilds(): any[] {
+  getChilds(): any[] {
     const ref: string = 'sortable'
     const div: any = this.$refs[ref]
     return Array.prototype.slice.call(div.childNodes).slice()
   }
-  public moveElements(): any[] {
+  moveElements(): any[] {
     const childs = this.getChilds()
     const arr: any[] = []
-    for (let i = 0; i < this.value.length; i++) {
-      for (let j = 0; j < this.value.length; j++) {
-        if (childs[i].isEqualNode(this.els[j])) {
+    for (let i = 0; i < this.value.length; i++)
+      for (let j = 0; j < this.value.length; j++)
+        if (childs[i].isEqualNode(this.els[j]))
           arr.push(this.value[j])
-        }
-      }
-    }
     this.els = childs.slice()
     return arr
   }

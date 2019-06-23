@@ -4,9 +4,9 @@
       <h2>Sign in</h2>
     </div>
     <div class='content'>
-      <input class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme,{wrong: inputHasError(username, 50)}]' v-model='username'>
+      <input class='margin input txt round-border gray' placeholder='Username: ' type='text' autocomplete='off' :class='[theme,{wrong: inputHasError(username, MAXIMUM_NUMBER_OF_CHARACTERS)}]' v-model='username'>
       <div class='margin password'>
-        <input class='input txt round-border gray' placeholder='Password: ' :type='passwordType' autocomplete='off' :class='[theme, {wrong: inputHasError(password, 50)}]' v-model='password'>
+        <input class='input txt round-border gray' placeholder='Password: ' :type='passwordType' autocomplete='off' :class='[theme, {wrong: inputHasError(password, MAXIMUM_NUMBER_OF_CHARACTERS)}]' v-model='password'>
         <span class='eyes'>
           <transition name='fade' mode='out-in'>
             <ft-icon key='eye' v-if="passwordType === 'text'" class='eye txt icon pointer' icon='eye' size='1x' @click='togglePassword'></ft-icon>
@@ -37,6 +37,8 @@ import { faEye, faEyeSlash, faSync } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faEye, faEyeSlash, faSync)
 
+const MAXIMUM_NUMBER_OF_CHARACTERS = 50
+
 @Component
 export default class SigninPopUp extends Mixins(Mixin) {
   @State theme!: string
@@ -48,13 +50,8 @@ export default class SigninPopUp extends Mixins(Mixin) {
   waitingResponse: boolean = false
 
   sendRequest() {
-    const hasError: boolean = this.inputHasError(this.username, 50) || this.inputHasError(this.password, 50)
-    if (!hasError) {
-      this.waitingResponse = true
-      setTimeout(() => {
-        this.waitingResponse = false
-      }, 2000)
-    }
+    const hasError: boolean = this.inputHasError(this.username, MAXIMUM_NUMBER_OF_CHARACTERS)
+     || this.inputHasError(this.password, MAXIMUM_NUMBER_OF_CHARACTERS)
   }
 }
 

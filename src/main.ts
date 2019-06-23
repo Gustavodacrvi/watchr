@@ -19,17 +19,15 @@ Vue.config.productionTip = false
 new Vue({
   router,
   store,
-  render: (h) => h(App),
+  render: h => h(App),
 }).$mount('#app')
 
-if (store.getters.isStandAlone) {
+if (store.getters.isStandAlone)
   router.replace({name: 'User'})
-}
 
 router.beforeEach((to: any, from: any, next: any) => {
-  if (to.name !== 'User') {
+  if (to.name !== 'User')
     store.commit('closeAppBar')
-  }
 
   next()
 })

@@ -36,7 +36,7 @@ import { State, Getter, Mutation, Action } from 'vuex-class'
 
 import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 
-import { Alert } from '@/interfaces/alert'
+import { Alert } from '@/interfaces/app'
 
 @Component({
   components: {

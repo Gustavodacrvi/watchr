@@ -13,13 +13,12 @@ import { Component, Vue } from 'vue-property-decorator'
 import { Getter, State, Mutation, namespace } from 'vuex-class'
 
 import Division from '@/components/TheAppBar/AppnavSections/AppnavDivision.vue'
-import LinkRenderer from '@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'
+import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavListrenderer.vue'
 
 import appUtil from '@/utils/app'
 import labelUtil from '@/utils/label'
 
-import { Label, ListIcon, SimpleAdder } from '@/interfaces/app'
-import { Alert } from '@/interfaces/alert'
+import { Label, ListIcon, SimpleAdder, Alert } from '@/interfaces/app'
 import LabelAdder from '../../Alerts.vue'
 
 const label = namespace('label')
@@ -27,38 +26,38 @@ const label = namespace('label')
 @Component({
   components: {
     division: Division,
-    renderer: LinkRenderer,
+    renderer: ListRenderer,
   },
 })
 export default class OverviewAppnav extends Vue {
-  @State('theme') public readonly theme!: string
-  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
-  @Mutation('pushAlert') public readonly pushAlert!: (alert: Alert) => void
-  @Mutation('pushPopUpPayload') public readonly pushPopUpPayload!: (payload: any) => void
-  @label.State('labels') public readonly labels!: Label[]
-  @label.Getter('smartLabels') public readonly smartLabels!: Label[]
-  @label.Getter('nonSmartLabels') public readonly nonSmartLabels!: Label[]
-  @label.Getter('labelPathById') public readonly labelPathById!: (id: string) => string[]
-  @label.Getter('getParentLabelById') public readonly getParentLabelById!: (id: string) => Label | undefined
-  @label.Action('updateLabels') public readonly updateLabels!: (label: Label[]) => void
-  @label.Action('deleteLabelById') public readonly deleteLabelById!: (id: string) => void
-  // tslint:disable-next-line:max-line-length
-  @label.Action('addSubLabelById') public readonly addSubLabelById!: (obj: {parentId: string, subLabelName: string, position?: number}) => void
-  @label.Action('addRootLabel') public readonly addRootLabel!: (obj: {labelName: string, position?: number}) => void
+  @State theme!: string
+  @Mutation pushPopUp!: (compName: string) => void
+  @Mutation pushAlert!: (alert: Alert) => void
+  @Mutation pushPopUpPayload!: (payload: any) => void
 
-  public label: string = ''
+  @label.State labels!: Label[]
+  @label.Getter smartLabels!: Label[]
+  @label.Getter nonSmartLabels!: Label[]
+  @label.Getter labelPathById!: (id: string) => string[]
+  @label.Getter getParentLabelById!: (id: string) => Label | undefined
+  @label.Action updateLabels!: (label: Label[]) => void
+  @label.Action deleteLabelById!: (id: string) => void
+  @label.Action addSubLabelById!: (obj: {parentId: string, subLabelName: string, position?: number}) => void
+  @label.Action addRootLabel!: (obj: {labelName: string, position?: number}) => void
 
-  public created() {
+  label: string = ''
+
+  created() {
     this.label = this.smartLabels[0].name
   }
 
-  public options(): ListIcon[] {
+  options(): ListIcon[] {
     return [
       {
         name: 'add sublabel',
         icon: 'plus',
         iconColor: '',
-        size: '',
+        size: 'lg',
         callback: (lab: Label) => {
           const path: string[] = this.labelPathById(lab.id)
           const strPath: string = labelUtil.getStringPathFromArr(path)
@@ -70,7 +69,7 @@ export default class OverviewAppnav extends Vue {
         name: 'delete label',
         icon: 'backspace',
         iconColor: '',
-        size: '',
+        size: 'lg',
         callback: (lab: Label) => {
           this.deleteLabelById(lab.id)
         },
@@ -79,7 +78,7 @@ export default class OverviewAppnav extends Vue {
         name: 'add label above',
         icon: 'arrow-up',
         iconColor: '',
-        size: '',
+        size: 'lg',
         callback: (lab: Label) => {
           this.pushPopUp('SimpleadderPopup')
           this.pushPopUpPayload({
@@ -97,7 +96,7 @@ export default class OverviewAppnav extends Vue {
         name: 'add label below',
         icon: 'arrow-down',
         iconColor: '',
-        size: '',
+        size: 'lg',
         callback: (lab: Label) => {
           this.pushPopUp('SimpleadderPopup')
           this.pushPopUpPayload({
@@ -113,22 +112,21 @@ export default class OverviewAppnav extends Vue {
       },
     ]
   }
-  public addLabel(position: 'below' | 'above', lab: Label, name: string): void {
+  addLabel(position: 'below' | 'above', lab: Label, name: string) {
     this.pushPopUp('')
     let increment: 1 | 0 = 0
-    if (position === 'below') {
+    if (position === 'below')
       increment = 1
-    }
     const parent: Label | undefined = this.getParentLabelById(lab.id)
     if (parent === undefined) {
       const subLabel: Label | undefined = this.labels.find((el: Label) => el.name === name)
-      if (subLabel) {
+      if (subLabel)
         this.pushAlert({
           name: `There is already another tag with the name <strong>${name}</strong>`,
           duration: 2.5,
           type: 'error',
         })
-      } else {
+      else {
         const index: number = this.labels.findIndex((el: Label) => el.id === lab.id)
         this.addRootLabel({
           labelName: name,
@@ -137,13 +135,13 @@ export default class OverviewAppnav extends Vue {
       }
     } else {
       const subLabel: Label | undefined = parent.subLabels.find((el: Label) => el.name === name)
-      if (subLabel !== undefined) {
+      if (subLabel !== undefined)
         this.pushAlert({
           name: `There is already another tag with the name ${name}`,
           duration: 2.5,
           type: 'error',
         })
-      } else {
+      else {
         const index: number = parent.subLabels.findIndex((el: Label) => el.id === lab.id)
         this.addSubLabelById({
           parentId: parent.id,
@@ -153,8 +151,7 @@ export default class OverviewAppnav extends Vue {
       }
     }
   }
-
-  public update({arr}: {arr: Label[]}): void {
+  update({arr}: {arr: Label[]}) {
     this.updateLabels(appUtil.updateArrayOrderFromFilteredArray(this.labels, arr))
   }
 }

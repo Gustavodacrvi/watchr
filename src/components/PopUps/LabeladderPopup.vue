@@ -21,10 +21,11 @@ import DropdownInput from '@/components/DropdownInput.vue'
 
 import labelUtil from '@/utils/label'
 
-import { Label } from '../../interfaces/app'
-import { Alert } from '../../interfaces/alert'
+import { Label, Alert } from '../../interfaces/app'
 
 const labelModule = namespace('label')
+
+const MAXIMUM_LENGTH_OF_LABEL_TREE = 4
 
 @Component({
   components: {
@@ -59,7 +60,7 @@ export default class LabelAdder extends Vue {
           duration: 2.5,
           type: 'error',
         })
-      else if (arr.length > 4)
+      else if (arr.length > MAXIMUM_LENGTH_OF_LABEL_TREE)
         this.pushAlert({
           name: 'The maximum number of subtasks is 4',
           duration: 2.5,

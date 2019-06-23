@@ -5,10 +5,6 @@
         <span class='title'>PERSPECTIVES</span>
       </div>
       <div v-else class='header options' key='header-options'>
-        <!-- <stack-icon :icons="[
-          {icon: 'thumbtack', size: '1x'},
-          {icon: 'slash', size: '2x', iconColor: 'white'},
-        ]"></stack-icon> -->
       </div>
     </transition>
     <renderer :list='smartPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
@@ -21,8 +17,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Getter, State, namespace } from 'vuex-class'
 
-// import StackIcons from '@/components/StackIcons.vue'
-import LinkRenderer from '@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'
+import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavListrenderer.vue'
 
 import appUtil from '@/utils/app'
 
@@ -32,26 +27,25 @@ const perspective = namespace('perspective')
 
 @Component({
   components: {
-    'renderer': LinkRenderer,
-    // 'stack-icon': StackIcons,
+    renderer: ListRenderer,
   },
 })
 export default class PerspectiveAppnav extends Vue {
-  @State('theme') public readonly theme!: string
-  @perspective.State('perspectives') public readonly perspectives!: Perspective[]
-  @perspective.Mutation('toggleBindPerspectiveById') public readonly toggleBindPerspectiveById!: (id: string) => void
-  @perspective.Getter('smartPerspectives') public readonly smartPerspectives!: Perspective[]
-  @perspective.Action('updatePerspectives') public readonly updatePerspectives!: (perspectives: Perspective[]) => void
+  @State theme!: string
+  @perspective.State perspectives!: Perspective[]
+  @perspective.Mutation toggleBindPerspectiveById!: (id: string) => void
+  @perspective.Getter smartPerspectives!: Perspective[]
+  @perspective.Action updatePerspectives!: (perspectives: Perspective[]) => void
 
-  public perspective: string = 'Today'
-  public selected: Perspective[] = []
-  public rightPanEvent: PanGesture = {
+  perspective: string = 'Today'
+  selected: Perspective[] = []
+  rightPanEvent: PanGesture = {
     icon: 'thumbtack',
     iconColor: 'white',
     distance: 100,
   }
-  public icons(pers: Perspective): ListIcon[] {
-    if (pers.binded) {
+  icons(pers: Perspective): ListIcon[] {
+    if (pers.binded)
       return [
         {
           icon: 'thumbtack',
@@ -59,20 +53,18 @@ export default class PerspectiveAppnav extends Vue {
           size: 'xs',
         },
       ]
-    }
     return []
   }
-  public options(pers: Perspective): ListIcon[] {
+  options(pers: Perspective): ListIcon[] {
     let name = 'unbind from overview'
-    if (!pers.binded) {
+    if (!pers.binded)
       name = 'bind on overview'
-    }
     return [
       {
         name,
         icon: 'thumbtack',
         iconColor: '',
-        size: '',
+        size: 'lg',
         callback: (per: Perspective) => {
           this.toggleBindPerspectiveById(per.id)
         },
@@ -80,17 +72,16 @@ export default class PerspectiveAppnav extends Vue {
     ] as ListIcon[]
   }
 
-  public select(pers: Perspective[]): void {
+  select(pers: Perspective[]): void {
     this.selected = pers
   }
 
-  public update({arr}: {arr: Perspective[]}): void {
+  update({arr}: {arr: Perspective[]}): void {
     this.updatePerspectives(appUtil.updateArrayOrderFromFilteredArray(this.perspectives, arr))
   }
-  public pan(obj: any): void {
-    if (obj.type === 'right') {
+  pan(obj: any): void {
+    if (obj.type === 'right')
       this.toggleBindPerspectiveById(obj.id)
-    }
   }
 }
 

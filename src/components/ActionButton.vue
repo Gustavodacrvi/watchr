@@ -33,9 +33,12 @@ import { Mutation } from 'vuex-class'
 import { FloatingButton } from '@/interfaces/app'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEye, faEyeSlash, faSync, faInbox, faCalendarDay, faCalendarAlt, faStopwatch, faTags, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faEye, faEyeSlash, faSync, faInbox, faCalendarDay,
+ faCalendarAlt, faStopwatch, faTags, faPlus,
+ } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faEye, faEyeSlash, faSync, faInbox, faCalendarDay, faCalendarAlt, faStopwatch, faTags, faPlus)
+library.add(faEye, faEyeSlash, faSync, faInbox, faCalendarDay,
+ faCalendarAlt, faStopwatch, faTags, faPlus)
 
 @Component
 export default class ActionButtonComp extends Vue {

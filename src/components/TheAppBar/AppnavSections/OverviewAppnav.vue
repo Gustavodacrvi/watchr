@@ -11,22 +11,20 @@ import { Getter, State, namespace } from 'vuex-class'
 
 import { Perspective } from '@/interfaces/app'
 
-// import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
-import LinkRenderer from '@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'
+import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavListrenderer.vue'
 
 const perspective = namespace('perspective')
 
 @Component({
   components: {
-    // icon: FontAwesomeIcon,
-    renderer: LinkRenderer,
+    renderer: ListRenderer,
   },
 })
 export default class OverviewAppnav extends Vue {
-  @State('theme') public readonly theme!: string
-  @perspective.Getter('smartBindedPerspectives') public readonly smartBindedPerspectives!: Perspective[]
+  @State theme!: string
+  @perspective.Getter smartBindedPerspectives!: Perspective[]
 
-  public perspective: string = 'Today'
+  perspective: string = 'Today'
 }
 
 </script>

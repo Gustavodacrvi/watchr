@@ -11,7 +11,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
-import { Alert } from '@/interfaces/alert'
+import { Alert } from '@/interfaces/app'
 
 @Component
 export default class LabelAdder extends Vue {

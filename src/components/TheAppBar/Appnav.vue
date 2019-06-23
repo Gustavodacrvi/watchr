@@ -68,6 +68,7 @@ export default class LoggedAppnav extends Vue {
     {icon: 'tags', comp: 'labels'},
     {icon: 'chart-pie', comp: 'statistics'},
   ]
+  currentSect: string = 'overview'
 
   isActiveClass(comp: string): object {
     let mainColor: string = ''
@@ -77,8 +78,6 @@ export default class LoggedAppnav extends Vue {
       color: mainColor,
     }
   }
-
-  currentSect: string = 'overview'
 }
 
 </script>

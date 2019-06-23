@@ -25,7 +25,6 @@
     "deprecation": true,
     "no-require-imports": true,
     "arrow-return-shorthand": true,
-    "unnecessary-else": true,
     "arrow-parens": [true, "ban-single-arg-parens"],
     "eofline": true,
     "member-access": false,
