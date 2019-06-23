@@ -6,9 +6,9 @@
       </div>
       <div v-else class='header options' key='header-options'>
         <stack-icon :icons="[
-          {icon: 'circle', size: '2x'},
-          {icon: 'flag', size: '1x', iconColor: 'white'},
-        ]" size='2x'></stack-icon>
+          {icon: 'thumbtack', size: '1x'},
+          {icon: 'slash', size: '2x', iconColor: 'white'},
+        ]"></stack-icon>
       </div>
     </transition>
     <renderer :list='smartPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
