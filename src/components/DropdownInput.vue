@@ -30,38 +30,36 @@ interface RefsPositions {
 
 @Component
 export default class DropdownInput extends Vue {
-  @State('theme') public readonly theme!: string
-  @Prop({default: null, type: String}) public readonly input!: string
-  @Prop({default: () => [], type: Array}) public readonly values!: string[]
-  @Prop({type: String}) public readonly tabindex!: string[]
-  @Prop({type: String}) public readonly placeholder!: string[]
+  @State theme!: string
+  @Prop({default: null, type: String}) input!: string
+  @Prop({default: () => [], type: Array}) values!: string[]
+  @Prop({type: String}) tabindex!: string[]
+  @Prop({type: String}) placeholder!: string[]
 
-  public showing: boolean = true
-  public value: string | null = this.input
-  public selected: string = ''
+  showing: boolean = true
+  value: string | null = this.input
+  selected: string = ''
 
   get hasError(): boolean {
     return this.value === ''
   }
 
-  public keyPressed({key}: {key: string}): void {
-    if (key === 'Enter' && this.selected === '') {
+  keyPressed({key}: {key: string}) {
+    if (key === 'Enter' && this.selected === '')
       this.$emit('enter')
-    } else if (key === 'Enter') {
+    else if (key === 'Enter')
       this.select(this.selected)
-    }
     this.$emit('update')
   }
-  public keyDown({key}: {key: string}): void {
-    if (key === 'ArrowDown' || key === 'ArrowUp') {
+  public keyDown({key}: {key: string}) {
+    if (key === 'ArrowDown' || key === 'ArrowUp')
       this.moveSelection(key)
-    } else if (key === 'ArrowLeft' || key === 'ArrowRight') {
+    else if (key === 'ArrowLeft' || key === 'ArrowRight')
       this.selected = ''
-    }
   }
   public getRefsPositions(ref: string): RefsPositions {
     /* tslint:disable:no-string-literal */
-    const drop: any = this.$refs['dropdown']
+    const drop: any = this.$refs.dropdown
     let active: any = this.$refs[ref]
     active = active[0]
     const activeHeight: number = active.clientHeight
@@ -80,10 +78,10 @@ export default class DropdownInput extends Vue {
       },
     }
   }
-  public moveSelection(key: string): void {
-    if (this.selected === '') {
+  public moveSelection(key: string) {
+    if (this.selected === '')
       this.selected = this.values[0]
-    } else {
+    else {
       const index = this.values.findIndex((el: string) => {
         return el === this.selected
       })
@@ -94,22 +92,19 @@ export default class DropdownInput extends Vue {
         this.selected = this.values[index + 1]
         const p = this.getRefsPositions(this.selected)
 
-        if (p.act.top + p.act.height > p.drop.height + p.drop.scroll) {
+        if (p.act.top + p.act.height > p.drop.height + p.drop.scroll)
           drop.scrollTop += p.act.height
-        }
       } else if (key === 'ArrowUp' && index !== 0) {
         this.selected = this.values[index - 1]
         const p = this.getRefsPositions(this.selected)
 
-        if (p.act.top < p.drop.scroll) {
+        if (p.act.top < p.drop.scroll)
           drop.scrollTop -= p.act.height
-        }
-      } else if (index + 1 !== this.values.length) {
+      } else if (index + 1 !== this.values.length)
         this.selected = ''
-      }
     }
   }
-  public select(str: string): void {
+  public select(str: string) {
     this.$emit('select', str)
     this.selected = ''
   }
@@ -117,17 +112,17 @@ export default class DropdownInput extends Vue {
     this.showing = false
     this.selected = ''
   }
-  public focus(): void {
+  public focus() {
     this.showing = true
     this.selected = ''
   }
 
   @Watch('input')
-  public onInput(): void {
+  onInput() {
     this.value = this.input
   }
   @Watch('value')
-  public onValue(): void {
+  onValue() {
     this.selected = ''
     this.$emit('value', this.value)
     this.$emit('update')

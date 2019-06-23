@@ -1,4 +1,10 @@
 
+export interface Alert {
+  name: string
+  duration: number
+  type: 'error' | 'normal' | 'success' | 'warning'
+}
+
 export interface PanGesture {
   icon: string
   iconColor: string
@@ -11,6 +17,13 @@ export interface SimpleAdder {
   inputPlaceholder: string
   inputMaximumCharacters: number
   callback: (input: string | null) => void
+}
+
+export interface FloatingButton {
+  icon: string
+  iconColor: string
+  backColor: string
+  click?: () => void
 }
 
 export interface ListIcon {

@@ -1,8 +1,8 @@
 <template>
   <div class='wrapper'>
     <div class='relative-wrapper'>
-      <icon v-if='!isDesktop' class='close-icon' icon='arrow-left' size='2x' @click='pushPopUp("")'></icon>
-      <component class='pop-up card' :class='[{"round-border": isDesktop, "background-color": !isDesktop}, platform, theme]' :is='popUp'></component>
+      <ft-icon v-if='!isDesktop' class='clone-icon icon pointer txt' icon='arrow-left' size='2x' @click="pushPopUp('')"></ft-icon>
+      <component class='pop-up card' :class='[{"round-border": isDesktop, "background-color": !isDesktop}, platform, theme]' :is='popUpComponent'></component>
       <div v-if='isDesktop' class='popup-margin' :class='platform' @click='pushPopUp("")'></div>
     </div>
   </div>
@@ -12,12 +12,13 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+library.add(faArrowLeft)
 
 @Component({
   components: {
-    icon: FontAwesomeIcon,
     SignupPopup: () => import('@/components/PopUps/SignupPopup.vue'),
     SigninPopup: () => import('@/components/PopUps/SigninPopup.vue'),
     LabeladderPopup: () => import('@/components/PopUps/LabeladderPopup.vue'),
@@ -25,11 +26,11 @@ import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
   },
 })
 export default class PopUp extends Vue {
-  @State('theme') public readonly theme!: string
-  @State('popUpComponent') public readonly popUp!: string
-  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
-  @Getter('isDesktop') public readonly isDesktop!: boolean
-  @Getter('platform') public readonly platform!: 'mobile' | 'desktop'
+  @State theme!: string
+  @State popUp!: string
+  @Mutation pushPopUp!: (compName: string) => void
+  @Getter isDesktop!: boolean
+  @Getter platform!: 'mobile' | 'desktop'
 }
 
 </script>

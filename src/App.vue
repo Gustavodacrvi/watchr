@@ -36,7 +36,7 @@ import { State, Getter, Mutation, Action } from 'vuex-class'
 
 import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 
-import { Alert } from '@/interfaces/alert'
+import { Alert } from '@/interfaces/app'
 
 @Component({
   components: {
@@ -48,25 +48,34 @@ import { Alert } from '@/interfaces/alert'
   },
 })
 export default class App extends Vue {
-  @State('theme') public readonly theme!: string
-  @State('popUpComponent') public readonly popUp!: string
-  @State('alerts') public readonly alerts!: Alert[]
-  @State('appBarState') public readonly appBarState!: boolean
-  @State('showingAlert') public readonly showingAlert!: boolean
-  @Mutation('hideAlert') public readonly hideAlert!: () => void
-  @Getter('isDesktop') public readonly isDesktop!: boolean
-  @Getter('platform') public readonly platform!: 'mobile' | 'desktop'
-  @Action('showLastAlert') public readonly showLastAlert!: () => void
-  @Action('activateKeyShortcut') public readonly activateKeyShortcut!: (key: string) => void
+  @State theme!: string
+  @State popUpComponent!: string
+  @State alerts!: Alert[]
+  @State appBarState!: boolean
+  @State showingAlert!: boolean
+  @Mutation hideAlert!: () => void
+  @Mutation closeAppBar!: () => void
+  @Getter isDesktop!: boolean
+  @Getter platform!: 'mobile' | 'desktop'
+  @Action showLastAlert!: () => void
+  @Action activateKeyShortcut!: (key: string) => void
 
-  @Mutation('closeAppBar') public readonly closeAppBar!: () => void
 
-  public mounted() {
+  mounted() {
     window.addEventListener('keypress', this.keyPressed)
   }
-
-  public beforeDestroy() {
+  beforeDestroy() {
     window.removeEventListener('keypress', this.keyPressed)
+  }
+
+  closeAlert() {
+    this.hideAlert()
+    this.showLastAlert()
+  }
+  keyPressed({key}: {key: string}) {
+    const active = document.activeElement
+    if (active && active.nodeName !== 'INPUT')
+      this.activateKeyShortcut(key)
   }
 
   get showActionButton(): boolean {
@@ -76,25 +85,13 @@ export default class App extends Vue {
     return this.$route.name === 'User'
   }
   get isShowingPopUp(): boolean {
-    return this.popUp !== ''
-  }
-
-  public closeAlert(): void {
-    this.hideAlert()
-    this.showLastAlert()
-  }
-  public keyPressed({key}: {key: string}): void {
-    const active = document.activeElement
-    if (active && active.nodeName !== 'INPUT') {
-      this.activateKeyShortcut(key)
-    }
+    return this.popUpComponent !== ''
   }
 
   @Watch('alerts')
-  public onAlertsChange(alerts: Alert[]): void {
-    if (!this.showingAlert) {
+  onAlertsChange(alerts: Alert[]): void {
+    if (!this.showingAlert)
       this.showLastAlert()
-    }
   }
 }
 

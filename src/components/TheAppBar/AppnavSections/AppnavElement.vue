@@ -1,46 +1,46 @@
 <template>
-  <div class='list-el' :class='[platform, theme]'>
+  <div v-if='fetched' class='list-el' :class='[platform, theme]'>
     <v-touch :enabled='!isDesktop' @panleft='panLeftEvent' @panright='panRightEvent' @panend='panend' @panstart='panstart' :pan='{direction: "horizontal"}'>
       <div class='round-border visible'>
         <div class='back' v-if='!isDesktop'>
           <div class='back-icons'>
-            <icon icon='thumbtack' size='1x' color='white'></icon>
-            <icon icon='thumbtack' size='1x' color='white'></icon>
+            <ft-icon class='margin icon txt pointer' :icon='obj.icon' size='1x' :style="{color: 'white'}"></ft-icon>
           </div>
         </div>
         <div class='content gray' ref='content' :class='[theme, {active: obj[content] === active, blinking: blinking}]'>
           <span class='left-icon' v-if='obj.icon'>
-            <icon v-if='obj.iconColor' :icon='obj.icon' :color='obj.iconColor'></icon>
-            <icon v-else :icon='obj.icon'></icon>
+            <ft-icon v-if='obj.iconColor' class='margin icon txt pointer' :icon='obj.icon' :style="{color: obj.iconColor}"></ft-icon>
+            <ft-icon v-else class='margin icon txt pointer' :icon='obj.icon'></ft-icon>
           </span>
           <span class='txt name'>{{ obj[content] }}</span>
           <span class='icons'>
             <span v-for='i in icons' :key='i.icon' class='nav-icon'>
-              <icon :icon='i.icon' :size='i.size' :disabled='true' :expand='true'></icon>
+              <ft-icon class='angle-right margin icon txt pointer' :icon='i.icon' :size='i.size' :class='{sublist: showingSublists}'></ft-icon>
             </span>
             <span v-if='obj[sublist] && obj[sublist].length > 0' class='nav-icon' @click='showingSublists = !showingSublists'>
-              <icon class='angle-right' icon='angle-right' :class='{sublist: showingSublists}' size='1x' :expand='true'></icon>
+              <ft-icon class='angle-right margin icon txt pointer' icon='angle-right' :class='{sublist: showingSublists}' size='1x'></ft-icon>
             </span>
             <span v-if='options && options.length > 0' class='nav-icon'>
               <icon-drop minwidth='150px' handle='ellipsis-v' :expand='true' :click='true'>
                 <div class='dropdown round-border'>
                   <div class='wrapper'>
                     <div v-for='i in options' :key='i.name' class='drop-el' @click='i.callback(obj)' :class='theme'>
-                      <span class='drop-icon'><icon :icon='i.icon' :size='i.size' :color='i.color'></icon></span>
+                      <span class='drop-icon'>
+                        <ft-icon class='margin icon txt pointer' :icon='i.icon' :size='i.size' :style="{color: i.color}"></ft-icon>
+                      </span>
                       <span class='drop-name txt'>{{ i.name }}</span>
                     </div>
                   </div>
                 </div>
               </icon-drop>
             </span>
-            <!-- <icon class='margin' icon='ellipsis-v' size='1x' @click='showingOptions = !showingOptions'></icon> -->
           </span>
         </div>
       </div>
     </v-touch>
     <transition name='fade'>
       <div v-if='showingSublists && obj[sublist] && obj[sublist].length > 0' class='drop'>
-        <link-render :sublist='sublist' :content='content' :active='active' :list='obj[sublist]' @update='update' :options='optionsrender' :icons='iconsrender'></link-render>
+        <list-render :sublist='sublist' :content='content' :active='active' :list='obj[sublist]' @update='update' :options='optionsrender' :icons='iconsrender'></list-render>
       </div>
     </transition>
   </div>
@@ -51,70 +51,95 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter } from 'vuex-class'
 
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 import IconDropdown from '@/components/IconDropdown.vue'
 
 import VueTouch from 'vue-touch'
 Vue.use(VueTouch, {name: 'v-touch'})
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faEllipsisV, faAngleRight, faThumbtack, faDownload } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faEllipsisV, faAngleRight, faThumbtack)
+
+import appUtilModule from '@/utils/app'
 
 import { PanGesture, ListIcon } from '@/interfaces/app'
 
 @Component({
   components: {
     'icon-drop': IconDropdown,
-    'link-render': () => import('@/components/TheAppBar/AppnavSections/AppnavLinkrenderer.vue'),
-    'icon': FontAwesomeIcon,
+    'list-render': () => import('@/components/TheAppBar/AppnavSections/AppnavListrenderer.vue'),
   },
 })
 export default class AppnavLink extends Vue {
-  @State('theme') public readonly theme!: string
-  @Getter('isDesktop') public readonly isDesktop!: boolean
-  @Getter('platform') public readonly platform!: string
-  @Prop({required: true, type: Object}) public readonly obj!: any
-  @Prop({required: true, type: String}) public readonly content!: string
-  @Prop({required: true, type: String}) public readonly sublist!: string
-  @Prop({required: true, type: String}) public readonly active!: string
-  @Prop(Array) public readonly icons!: ListIcon[]
-  @Prop(Array) public readonly options!: ListIcon[]
+  @Prop({required: true, type: Object}) obj!: any
+  @Prop({required: true, type: String}) content!: string
+  @Prop({required: true, type: String}) sublist!: string
+  @Prop({required: true, type: String}) active!: string
+  @Prop(Array) icons!: ListIcon[]
+  @Prop(Array) options!: ListIcon[]
+  @Prop(Object) leftpan!: PanGesture
+  @Prop(Object) rightpan!: PanGesture
+  @Prop({default: () => [], type: Function}) iconsrender!: (obj: any) => ListIcon[]
+  @Prop({default: () => [], type: Function}) optionsrender!: (obj: any) => ListIcon[]
 
-  @Prop(Object) public readonly leftpan!: PanGesture
-  @Prop(Object) public readonly rightpan!: PanGesture
+  @State theme!: string
+  @Getter isDesktop!: boolean
+  @Getter platform!: string
 
-  @Prop({default: () => [], type: Function}) public readonly iconsrender!: (obj: any) => ListIcon[]
-  @Prop({default: () => [], type: Function}) public readonly optionsrender!: (obj: any) => ListIcon[]
+  showingSublists: boolean = false
+  div: any = null
+  direction: string | null = null
+  blinking: boolean = false
+  appUtil: any = appUtilModule
+  fetched: boolean = false
 
-  public showingSublists: boolean = false
-  public div: any = null
-  public direction: string | null = null
-  public blinking: boolean = false
-
-  public mounted(): void {
-    /* tslint:disable:no-string-literal */
-    this.div = this.$refs['content']
+  created() {
+    this.importNecessaryIcons()
+  }
+  mounted() {
+    this.div = this.$refs.content
   }
 
-  public update({arr}: any): void {
+  importNecessaryIcons() {
+    if (this.obj.icon)
+      this.importIcon(this.obj.icon)
+    if (this.leftpan)
+      this.importIcon(this.leftpan.icon)
+    if (this.rightpan)
+      this.importIcon(this.rightpan.icon)
+    for (const icon of this.icons)
+      this.importIcon(icon.icon)
+    for (const opt of this.options)
+      this.importIcon(opt.icon)
+  }
+  importIcon(icon: string) {
+    this.fetched = false
+    this.appUtil.importIcon(icon, () => {
+      this.fetched = true
+    })
+  }
+  update({arr}: any) {
     this.$emit('update', {arr, id: this.obj.id})
   }
-
-  public panRightEvent(e: any): void {
+  panRightEvent(e: any) {
     if (this.leftpan) {
       this.div.style.left = e.distance + 'px'
       this.div.style.right = 'unset'
       this.direction = 'right'
     }
   }
-  public panLeftEvent(e: any): void {
+  panLeftEvent(e: any) {
     if (this.rightpan) {
       this.div.style.right = e.distance + 'px'
       this.div.style.left = 'unset'
       this.direction = 'left'
     }
   }
-  public panstart(): void {
+  panstart() {
     this.div.style.transition = 'background-color .3s'
   }
-  public panend(): void {
+  panend() {
     this.div.style.transition = 'background-color .3s, right .3s, left .3s'
     if (this.direction === 'left' && this.rightpan) {
       if (parseInt(this.div.style.right, 10) > this.rightpan.distance) {
@@ -131,17 +156,44 @@ export default class AppnavLink extends Vue {
       this.div.style.left = '0px'
     }
   }
-  public blink(): void {
+  blink(): void {
+    const BLINK_TRANSITION_DURATION = 200
     this.blinking = true
     setTimeout(() => {
       this.blinking = false
-    }, 200)
+    }, BLINK_TRANSITION_DURATION)
+  }
+
+  @Watch('icons')
+  onIconsChange() {
+    this.importNecessaryIcons()
+  }
+  @Watch('options')
+  onOptionsChange() {
+    this.importNecessaryIcons()
+  }
+  @Watch('obj')
+  onObjChange() {
+    this.importNecessaryIcons()
+  }
+  @Watch('leftpan')
+  onLeftpanChange() {
+    this.importNecessaryIcons()
+  }
+  @Watch('options')
+  onRightpanChange() {
+    this.importNecessaryIcons()
   }
 }
 
 </script>
 
 <style scoped>
+
+.nav-icon, .list-el .back, .list-el .content, .list-el .icons, .drop-el {
+  display: flex;
+  align-items: center;
+}
 
 .drop {
   margin-left: 10px;
@@ -161,8 +213,6 @@ export default class AppnavLink extends Vue {
 }
 
 .nav-icon {
-  display: flex;
-  align-items: center;
   justify-content: flex-end;
   height: 100%;
   width: 20px;
@@ -186,8 +236,6 @@ export default class AppnavLink extends Vue {
   border-radius: 10px;
   left: 1px;
   bottom: 1px;
-  display: flex;
-  align-items: center;
   background-color: #fc7d7d;
   transition: background-color .3s;
 }
@@ -205,9 +253,7 @@ export default class AppnavLink extends Vue {
 
 .list-el .content {
   position: relative;
-  display: flex;
   right: 0px;
-  align-items: center;
   height: 100%;
   width: 100%;
   border-radius: 10px;
@@ -227,8 +273,6 @@ export default class AppnavLink extends Vue {
   position: absolute;
   height: 100%;
   right: 8px;
-  display: flex;
-  align-items: center;
 }
 
 .list-el .content.light:hover, .list-el .content.light.active, .sortable-selected.light .content {
@@ -244,10 +288,8 @@ export default class AppnavLink extends Vue {
 }
 
 .drop-el {
-  display: flex;
   height: 35px;
   width: 100%;
-  align-items: center;
   transition: background-color .3s;
 }
 

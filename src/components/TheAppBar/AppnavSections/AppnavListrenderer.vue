@@ -11,63 +11,56 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
 import Sortable from '@/components/Sortablejs.vue'
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
 import { PanGesture, ListIcon } from '@/interfaces/app'
 
 @Component({
   components: {
     'sortable': Sortable,
-    'icon': FontAwesomeIcon,
-    'appnav-link': () => import('@/components/TheAppBar/AppnavSections/AppnavLink.vue'),
+    'appnav-link': () => import('@/components/TheAppBar/AppnavSections/AppnavElement.vue'),
   },
 })
 export default class AppnavLinkrenderer extends Vue {
-  @Prop({required: true, type: Array}) public readonly list!: any[]
-  @Prop({required: true, type: String}) public readonly content!: string
-  @Prop({default: '', type: String}) public readonly active!: string
-  @Prop({default: '', type: String}) public readonly sublist!: string
-  @Prop({default: false, type: Boolean}) public readonly disabled!: boolean
+  @Prop({required: true, type: Array}) list!: any[]
+  @Prop({required: true, type: String}) content!: string
+  @Prop({default: '', type: String}) active!: string
+  @Prop({default: '', type: String}) sublist!: string
+  @Prop({default: false, type: Boolean}) disabled!: boolean
+  @Prop(Object) leftpan!: PanGesture
+  @Prop(Object) rightpan!: PanGesture
+  @Prop({default: () => [], type: Function}) icons!: (obj: any) => ListIcon[]
+  @Prop({default: () => [], type: Function}) options!: (obj: any) => ListIcon[]
 
-  @Prop(Object) public readonly leftpan!: PanGesture
-  @Prop(Object) public readonly rightpan!: PanGesture
+  arr: any[] = this.list
 
-  @Prop({default: () => [], type: Function}) public readonly icons!: (obj: any) => ListIcon[]
-  @Prop({default: () => [], type: Function}) public readonly options!: (obj: any) => ListIcon[]
-
-  public arr: any[] = this.list
-
-  public getSelectedElements(event: any): any[] {
+  getSelectedElements(event: any): any[] {
     const indexes: number[] = event.newIndicies.map((el: any) => el.index)
     const els: any[] = []
-    for (const i of indexes) {
+    for (const i of indexes)
       els.push(this.list[i])
-    }
     return els
   }
-
-  public select(e: any): void {
+  select(e: any) {
     this.$emit('selected', this.getSelectedElements(e))
   }
-  public deselect(e: any): void {
+  deselect(e: any) {
     this.$emit('selected', this.getSelectedElements(e))
   }
-  public update({arr, id}: {arr: any[], id: string}): void {
+  update({arr, id}: {arr: any[], id: string}) {
     if (id) {
       const newObj = this.arr.find((el: any) => {
         return el.id === id
       })
       newObj[this.sublist] = arr
     }
-
     this.$emit('update', {arr: this.arr, id})
   }
-  public panevent(obj: any): void {
+  panevent(obj: any) {
     this.$emit('panevent', obj)
   }
 
   @Watch('list')
-  public onChange(): void {
+  onChange() {
     this.arr = this.list
   }
 }

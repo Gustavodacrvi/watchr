@@ -41,22 +41,19 @@ export default {
   } as States,
   mutations: {
     save(state: States): void {
-      if (!localStorage.getItem('watchrIsLogged')) {
+      if (!localStorage.getItem('watchrIsLogged'))
         localStorage.setItem('watchrPerspectives', JSON.stringify(state.perspectives))
-      }
     },
     getSavedData(state: States): void {
-      if (!localStorage.getItem('watchrIsLogged')) {
+      if (!localStorage.getItem('watchrIsLogged'))
         state.perspectives = JSON.parse(localStorage.getItem('watchrPerspectives') as any)
-      }
     },
     toggleBindPerspectiveById(state: States, id: string): void {
       const pers: Perspective | undefined = state.perspectives.find((el: Perspective) => {
         return el.id === id
       })
-      if (pers) {
+      if (pers)
         pers.binded = !pers.binded
-      }
     },
   } as Mutations,
   getters: {

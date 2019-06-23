@@ -3,7 +3,7 @@
     <div class='margin'></div>
     <div class='header'>
       <span class='name txt'>{{ name }}</span>
-      <icon class='icon' :class='{showing: showing}' icon='angle-right' @click='showing = !showing' size='1x'></icon>
+      <ft-icon class='icon txt pointer' :class='{showing: showing}' icon='angle-right' size='1x' @click='showing = !showing'></ft-icon>
     </div>
     <div class='margin'></div>
     <transition name='fade'>
@@ -18,17 +18,16 @@
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
-import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 
-@Component({
-  components: {
-    icon: FontAwesomeIcon,
-  },
-})
+library.add(faAngleRight)
+
+@Component
 export default class AppnavDivision extends Vue {
-  @Prop({type: String, required: true}) public readonly name!: string
+  @Prop({type: String, required: true}) name!: string
 
-  public showing: boolean = true
+  showing: boolean = true
 }
 
 </script>

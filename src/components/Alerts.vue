@@ -11,20 +11,23 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
-import { Alert } from '@/interfaces/alert'
+import { Alert } from '@/interfaces/app'
 
 @Component
 export default class LabelAdder extends Vue {
-  @State('theme') public readonly theme!: Alert[]
-  @State('alert') public readonly alert!: Alert
+  @State theme!: string
+  @State alert!: Alert
 }
 
 </script>
 
 <style scoped>
 
-.wrapper {
+.wrapper, .alert {
   display: flex;
+}
+
+.wrapper {
   justify-content: center;
   position: absolute;
   pointer-events: none;
@@ -38,7 +41,6 @@ export default class LabelAdder extends Vue {
   padding: 16px;
   box-sizing: border-box;
   max-width: 320px;
-  display: flex;
   align-items: center;
   height: 55px;
   z-index: 100;

@@ -3,19 +3,25 @@
     <div class='left'>
     </div>
     <div class='center'>
-      <router-link class='link txt' :to='{name: "Home"}' ref='Home' @click.native='moveMagicLineTo("Home")'>Home</router-link>
-      <router-link class='link txt' :to='{name: "User"}' ref='User' @click.native='moveMagicLineTo("User")'>User</router-link>
-      <router-link class='link txt' :to='{name: "Help"}' ref='Help' @click.native='moveMagicLineTo("Help")'>Help</router-link>
+      <router-link class='link txt' :to="{name: 'Home'}" ref='Home' @click.native="moveMagicLineTo('Home')">Home</router-link>
+      <router-link class='link txt' :to="{name: 'User'}" ref='User' @click.native="moveMagicLineTo('User')">User</router-link>
+      <router-link class='link txt' :to='{name: "Help"}' ref='Help' @click.native="moveMagicLineTo('Help')">Help</router-link>
     </div>
     <div class='right'>
-      <icon-dropdown class='margin' handle='user'>
+      <icon-dropdown class='margin' handle='user-alt'>
         <div class='dual-drop-el'>
-          <span class='drop-el txt' @click="pushPopUp('SigninPopup')"><icon icon='sign-in-alt' size='sm'></icon>Sign in</span>
+          <span class='drop-el txt' @click="pushPopUp('SigninPopup')">
+            <ft-icon icon='sign-in-alt' size='sm'></ft-icon>
+            Sign in
+          </span>
           <hr class='thematic-break'>
-          <span class='drop-el txt' @click="pushPopUp('SignupPopup')"><icon icon='user-plus' size='sm'></icon>Sign up</span>
+          <span class='drop-el txt' @click="pushPopUp('SignupPopup')">
+            <ft-icon icon='user-plus' size='sm'></ft-icon>
+            Sign up
+          </span>
         </div>
       </icon-dropdown>
-      <icon class='margin' icon='adjust' @click='changeTheme'></icon>
+      <ft-icon class='txt pointer icon margin' icon='adjust' @click='changeTheme' size='lg'></ft-icon>
     </div>
     <div class='magic-line' :style='magicLineStyles'></div>
   </div>
@@ -26,54 +32,51 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
 
-import FontAwesomeIcons from '@/components/FontAwesomeIcon.vue'
 import IconDropdown from '@/components/IconDropdown.vue'
 
 @Component({
   components: {
-    'icon': FontAwesomeIcons,
     'icon-dropdown': IconDropdown,
   },
 })
 export default class DesktopNavbar extends Vue {
-  @State('theme') public readonly theme!: string
-  @Mutation('pushTheme') public readonly pushTheme!: (theme: string) => void
-  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
+  @State theme!: string
+  @Mutation pushTheme!: (theme: string) => void
+  @Mutation pushPopUp!: (compName: string) => void
 
-  public lineLeftPosition: string = ''
-  public lineWidth: string = ''
+  lineLeftPosition: string = ''
+  lineWidth: string = ''
 
-  public mounted(): void {
-    setTimeout(() => {
-      this.moveMagicLineTo(this.$route.name)
-    }, 50)
+  mounted() {
+    this.moveMagicLineTo(this.$route.name)
     window.addEventListener('resize', this.windowEventListener)
   }
-
-  public beforeDestroy(): void {
+  beforeDestroy() {
     window.removeEventListener('resize', this.windowEventListener)
   }
 
-  public windowEventListener(): void {
+  windowEventListener() {
     this.moveMagicLineTo(this.$route.name)
   }
-
-  public moveMagicLineTo(ref: string | undefined): void {
+  moveMagicLineTo(ref: string | undefined) {
     if (ref && this.$refs[ref]) {
-      const comp: any = this.$refs[ref]
-      const el: any = comp.$el
+      const comp: Vue = this.linkRef(ref)
+      const el: HTMLElement = comp.$el as HTMLElement
       this.lineLeftPosition = el.offsetLeft + 'px'
       this.lineWidth = el.offsetWidth + 'px'
     }
   }
-  public changeTheme(): void {
-    if (this.theme === 'dark') {
+  changeTheme() {
+    if (this.theme === 'dark')
       this.pushTheme('light')
-    } else {
+    else
       this.pushTheme('dark')
-    }
   }
-  public get magicLineStyles(): object {
+  linkRef(ref: string): Vue {
+    return this.$refs[ref] as Vue
+  }
+
+  get magicLineStyles(): object {
     return {
       left: this.lineLeftPosition,
       width: this.lineWidth,
@@ -86,6 +89,10 @@ export default class DesktopNavbar extends Vue {
 
 <style scoped>
 
+.right, .center, .dual-drop-el {
+  display: flex;
+}
+
 .navbar {
   position: relative;
   width: 100%;
@@ -96,13 +103,11 @@ export default class DesktopNavbar extends Vue {
 .right {
   position: absolute;
   right: 0;
-  display: flex;
 }
 
 .center {
   position: absolute;
   width: 100%;
-  display: flex;
   justify-content: center;
 }
 
@@ -145,7 +150,6 @@ export default class DesktopNavbar extends Vue {
 }
 
 .dual-drop-el {
-  display: flex;
   justify-content: space-around;
 }
 

@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import Vuex, { Action } from 'vuex'
-import router from '@/router'
+
+const MAX_MOBILE_SCREEN_WIDTH = 1024
 
 import perspective from './perspective'
 import label from './label'
 
-import { SimpleAdder } from '@/interfaces/app'
-import { Alert } from '@/interfaces/alert'
+import { SimpleAdder, Alert } from '@/interfaces/app'
 
 Vue.use(Vuex)
 
@@ -99,15 +99,13 @@ const store: any = new Vuex.Store({
   } as Mutations,
   getters: {
     isDesktop(state: States): boolean {
-      if (state.windowWidth > 1024) {
+      if (state.windowWidth > MAX_MOBILE_SCREEN_WIDTH)
         return true
-      }
       return false
     },
     platform(state: States, getters: Getters): 'desktop' | 'mobile' {
-      if (getters.isDesktop) {
+      if (getters.isDesktop)
         return 'desktop'
-      }
       return 'mobile'
     },
     isStandAlone(state: States): boolean {
@@ -115,26 +113,26 @@ const store: any = new Vuex.Store({
     },
   } as Getters,
   actions: {
-    getWindowWidthOnResize({state, getters, commit}): void {
+    getWindowWidthOnResize({state, getters, commit}) {
       window.addEventListener('resize', () => {
         state.windowWidth = document.body.clientWidth
-        if (!getters.isDesktop) {
+        if (!getters.isDesktop)
           commit('closeAppBar')
-        } else {
+        else
           commit('openAppBar')
-        }
       })
     },
-    showLastAlert({state, commit}): void {
+    showLastAlert({state, commit}) {
+      const NUMBER_OF_MILISECONDS_IN_ONE_SECOND = 1000
       if (state.alerts.length !== 0 && !state.showingAlert) {
         state.alert = state.alerts.shift() as Alert
         state.showingAlert = true
         setTimeout(() => {
           state.showingAlert = false
-        }, state.alert.duration * 1000)
+        }, state.alert.duration * NUMBER_OF_MILISECONDS_IN_ONE_SECOND)
       }
     },
-    activateKeyShortcut({state, commit}, key): void {
+    activateKeyShortcut({state, commit}, key) {
       switch (key) {
         case 'l': commit('pushPopUp', 'LabeladderPopup'); break
         case 'h': commit('pushPopUp', ''); break

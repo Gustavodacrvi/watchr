@@ -47,31 +47,26 @@ export default {
     labels: [],
   } as States,
   mutations: {
-    save(state: States): void {
-      if (!localStorage.getItem('watchrIsLogged')) {
+    save(state: States) {
+      if (!localStorage.getItem('watchrIsLogged'))
         localStorage.setItem('watchrLabels', JSON.stringify(state.labels))
-      }
     },
-    getSavedData(state: States): void {
-      if (!localStorage.getItem('watchrIsLogged')) {
+    getSavedData(state: States) {
+      if (!localStorage.getItem('watchrIsLogged'))
         state.labels = JSON.parse(localStorage.getItem('watchrLabels') as any)
-      }
     },
   } as Mutations,
   getters: {
     getLabelNodeFromArrayPath: (state: States) => (nodePath: string[]): Label | undefined => {
       const walk = (labels: Label[], path: string[]): Label | undefined => {
         const targetLabelName: string | undefined = path.shift()
-        if (targetLabelName === undefined) {
+        if (targetLabelName === undefined)
           return undefined
-        }
-        for (const label of labels) {
-          if (label.name === targetLabelName && path.length === 0) {
+        for (const label of labels)
+          if (label.name === targetLabelName && path.length === 0)
             return label
-          } else if (label.name === targetLabelName) {
+          else if (label.name === targetLabelName)
             return walk(label.subLabels, path)
-          }
-        }
         return undefined
       }
       return walk(state.labels, nodePath.slice())
@@ -79,13 +74,11 @@ export default {
     getLabelNodeById: (state: States) => (id: string): Label | undefined => {
       const walk = (labels: Label[]): Label | undefined => {
         for (const lab of labels) {
-          if (lab.id === id) {
+          if (lab.id === id)
             return lab
-          }
           const label: Label | undefined = walk(lab.subLabels)
-          if (label !== undefined) {
+          if (label !== undefined)
             return label
-          }
         }
         return undefined
       }
@@ -93,26 +86,22 @@ export default {
     },
     getParentLabelById: (state: States) => (id: string): Label | undefined => {
       const rootLabel: Label | undefined = state.labels.find((el: Label) => el.id === id)
-      if (rootLabel !== undefined) {
+      if (rootLabel !== undefined)
         return undefined
-      }
       const walk = (labels: Label[], parent: Label): Label | undefined => {
         for (const lab of labels) {
-          if (lab.id === id) {
+          if (lab.id === id)
             return parent
-          }
           const node: Label | undefined = walk(lab.subLabels, lab)
-          if (node !== undefined) {
+          if (node !== undefined)
             return node
-          }
         }
         return undefined
       }
       for (const lab of state.labels) {
         const node: Label | undefined = walk(lab.subLabels, lab)
-        if (node !== undefined) {
+        if (node !== undefined)
           return node
-        }
       }
       return undefined
     },
@@ -126,9 +115,8 @@ export default {
           const sliced = path.slice()
           sliced.push(lab.name)
           const childPath: string[] | undefined = walk(lab.subLabels, sliced)
-          if (childPath !== undefined) {
+          if (childPath !== undefined)
             return childPath
-          }
         }
         return undefined
       }
@@ -142,18 +130,18 @@ export default {
     },
   } as Getters,
   actions: {
-    setDefaultData({state, commit}): void {
+    setDefaultData({state, commit}) {
       state.labels = [
         {name: 'Someday', id: uuid(), smart: true, subLabels: []},
         {name: 'Anytime', id: uuid(), smart: true, subLabels: []},
       ]
       commit('save')
     },
-    updateLabels({state, commit}, labels: Label[]): void {
+    updateLabels({state, commit}, labels: Label[]) {
       state.labels = labels
       commit('save')
     },
-    addLabelFromArrayPath({state, commit}, nodePath: string[]): void {
+    addLabelFromArrayPath({state, commit}, nodePath: string[]) {
       const walk = (labels: Label[], path: string[]): void => {
         const targetLabelName: string | undefined = path.shift()
         if (targetLabelName !== undefined) {
@@ -170,15 +158,14 @@ export default {
               })
               walk(labels[labels.length - 1].subLabels, path)
             }
-          } else {
+          } else
             walk(label.subLabels, path)
-          }
         }
       }
       walk(state.labels, nodePath.slice())
       commit('save')
     },
-    deleteLabelById({state, commit}, id: string): void {
+    deleteLabelById({state, commit}, id: string) {
       const walk = (labels: Label[]): boolean => {
         let i = 0
         for (const lab of labels) {
@@ -187,9 +174,8 @@ export default {
             return true
           }
           const found: boolean = walk(lab.subLabels)
-          if (found) {
+          if (found)
             return true
-          }
           i++
         }
         return false
@@ -208,15 +194,14 @@ export default {
           id: uuid(),
           subLabels: [],
         }
-        if (position === undefined) {
+        if (position === undefined)
           parentLabel.subLabels.push(label)
-        } else {
+        else
           parentLabel.subLabels.splice(position, 0, label)
-        }
       }
       commit('save')
     },
-    addRootLabel({state, commit}, {labelName, position}): void {
+    addRootLabel({state, commit}, {labelName, position}) {
       const label: Label | undefined = state.labels.find((el: Label) => el.name === labelName)
       if (label === undefined) {
         const lab: Label = {
@@ -225,11 +210,10 @@ export default {
           id: uuid(),
           subLabels: [],
         }
-        if (position === undefined) {
+        if (position === undefined)
           state.labels.push(lab)
-        } else {
+        else
           state.labels.splice(position, 0, lab)
-        }
         commit('save')
       }
     },

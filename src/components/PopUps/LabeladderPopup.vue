@@ -21,10 +21,11 @@ import DropdownInput from '@/components/DropdownInput.vue'
 
 import labelUtil from '@/utils/label'
 
-import { Label } from '../../interfaces/app'
-import { Alert } from '../../interfaces/alert'
+import { Label, Alert } from '../../interfaces/app'
 
 const labelModule = namespace('label')
+
+const MAXIMUM_LENGTH_OF_LABEL_TREE = 4
 
 @Component({
   components: {
@@ -32,41 +33,40 @@ const labelModule = namespace('label')
   },
 })
 export default class LabelAdder extends Vue {
-  @State('theme') public readonly theme!: string
-  @State('popUpPayload') public readonly popUpPayload!: any
-  @Getter('isDesktop') public readonly isDesktop!: boolean
-  @Mutation('pushAlert') public readonly pushAlert!: (alert: Alert) => void
-  // tslint:disable-next-line:max-line-length
-  @labelModule.State('labels') public readonly labels!: Label[]
-  // tslint:disable-next-line:max-line-length
-  @labelModule.Getter('getLabelNodeFromArrayPath') public readonly  getLabelNodeFromArrayPath!: (path: string[]) => Label | undefined
-  @labelModule.Action('addLabelFromArrayPath') public readonly addLabelFromArrayPath!: (path: string[]) => void
+  @State theme!: string
+  @State popUpPayload!: any
+  @Getter isDesktop!: boolean
+  @Mutation pushAlert!: (alert: Alert) => void
 
-  public input: string | null = null
-  public value: string = ''
-  public options: string[] = []
+  @labelModule.State labels!: Label[]
+  @labelModule.Getter getLabelNodeFromArrayPath!: (path: string[]) => Label | undefined
+  @labelModule.Action addLabelFromArrayPath!: (path: string[]) => void
 
-  public created() {
+  input: string | null = null
+  value: string = ''
+  options: string[] = []
+
+  created() {
     this.input = this.popUpPayload
   }
 
-  public add(): void {
+  add() {
     if (this.value !== '') {
-      const arr = labelUtil.getArrFromStringPath(this.value)
+      const arr: string[] = labelUtil.getArrFromStringPath(this.value)
       const label: Label | undefined = this.getLabelNodeFromArrayPath(arr)
-      if (label !== undefined) {
+      if (label !== undefined)
         this.pushAlert({
           name: `<strong>${this.value}</strong> already exists.`,
           duration: 2.5,
           type: 'error',
         })
-      } else if (arr.length > 4) {
+      else if (arr.length > MAXIMUM_LENGTH_OF_LABEL_TREE)
         this.pushAlert({
           name: 'The maximum number of subtasks is 4',
           duration: 2.5,
           type: 'error',
         })
-      } else {
+      else {
         this.addLabelFromArrayPath(arr)
         this.pushAlert({
           name: `<strong>${this.value}</strong> was successfully added`,
@@ -76,28 +76,27 @@ export default class LabelAdder extends Vue {
       }
     }
   }
-  public getOptions(): void {
-    const arr = labelUtil.getArrFromStringPath(this.value, false)
+  getOptions() {
+    const arr: string[] = labelUtil.getArrFromStringPath(this.value, false)
     let labels: Label[] = this.labels
-    const search = arr[arr.length - 1]
+    const search: string = arr[arr.length - 1]
     if (arr.length > 1) {
       arr.pop()
-      const label = this.getLabelNodeFromArrayPath(arr)
-      if (label !== undefined) {
+      const label: Label | undefined = this.getLabelNodeFromArrayPath(arr)
+      if (label !== undefined)
         labels = label.subLabels
-      }
     }
-    const names = labels.map((el: Label) => el.name)
+    const names: string[] = labels.map((el: Label) => el.name)
     this.options = names.filter((el: string) => el.includes(search))
   }
-  public selectValue(value: string): void {
-    const arr = labelUtil.getArrFromStringPath(this.value)
+  selectValue(value: string) {
+    const arr: string[] = labelUtil.getArrFromStringPath(this.value)
     arr.push(value)
     this.input = labelUtil.getStringPathFromArr(arr)
   }
 
   @Watch('value')
-  public onChange(): void {
+  onChange() {
     this.getOptions()
   }
 }
