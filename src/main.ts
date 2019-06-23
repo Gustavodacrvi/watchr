@@ -3,6 +3,12 @@ import App from './App.vue'
 import router from './router'
 import store from './store/index'
 import './registerServiceWorker'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import importIcons from './iconsLibrary'
+
+importIcons()
+
+Vue.component('ft-icon', FontAwesomeIcon)
 
 Vue.config.productionTip = false
 

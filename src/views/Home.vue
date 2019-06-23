@@ -1,6 +1,7 @@
 <template>
   <div>
     <span class='txt'>home</span>
+    <ft-icon icon="user-secret"></ft-icon>
   </div>
 </template>
 
