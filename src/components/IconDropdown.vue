@@ -1,6 +1,6 @@
 <template>
   <span v-if='!click' class='icon-dropdown' @mouseenter='showing = true' @mouseleave='showing = false'>
-    <!-- <icon :icon='handle'></icon> -->
+    <ft-icon class='pointer icon txt' :icon='handle' :size='size'></ft-icon>
     <transition name='fade'>
       <div v-show='showing' class='card round-border content' :class='theme' :style='`min-width: ${minwidth}`'>
         <slot></slot>
@@ -8,7 +8,7 @@
     </transition>
   </span>
   <span v-else class='icon-dropdown' @click='showing = true' @mouseleave='showing = false'>
-    <!-- <icon :icon='handle'></icon> -->
+    <ft-icon class='pointer icon txt' :icon='handle' :size='size'></ft-icon>
     <transition name='fade'>
       <div v-show='showing' class='card round-border content' :class='theme' :style='`min-width: ${minwidth}`'>
         <slot></slot>
@@ -21,11 +21,11 @@
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State } from 'vuex-class'
-// import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
 
 @Component
 export default class TheNavbar extends Vue {
   @Prop({required: true, type: String}) public readonly handle!: string
+  @Prop({default: 'lg', type: String}) public readonly size!: string
   @Prop({default: '250px', type: String}) public readonly minwidth!: string
   @Prop({default: false, type: Boolean}) public readonly click!: boolean
 

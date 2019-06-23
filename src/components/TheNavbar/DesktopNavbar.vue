@@ -8,20 +8,20 @@
       <router-link class='link txt' :to='{name: "Help"}' ref='Help' @click.native='moveMagicLineTo("Help")'>Help</router-link>
     </div>
     <div class='right'>
-      <icon-dropdown class='margin' handle='user'>
+      <icon-dropdown class='margin' handle='user-alt'>
         <div class='dual-drop-el'>
           <span class='drop-el txt' @click="pushPopUp('SigninPopup')">
-            <!-- <icon icon='sign-in-alt' size='sm'></icon> -->
+            <ft-icon icon='sign-in-alt' size='sm'></ft-icon>
             Sign in
           </span>
           <hr class='thematic-break'>
           <span class='drop-el txt' @click="pushPopUp('SignupPopup')">
-            <!-- <icon icon='user-plus' size='sm'></icon> -->
+            <ft-icon icon='user-plus' size='sm'></ft-icon>
             Sign up
           </span>
         </div>
       </icon-dropdown>
-      <!-- <icon class='margin' icon='adjust' @click='changeTheme'></icon> -->
+      <ft-icon class='txt pointer icon margin' icon='adjust' @click='changeTheme' size='lg'></ft-icon>
     </div>
     <div class='magic-line' :style='magicLineStyles'></div>
   </div>
@@ -32,12 +32,10 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
 
-// import FontAwesomeIcons from '@/components/FontAwesomeIcon.vue'
 import IconDropdown from '@/components/IconDropdown.vue'
 
 @Component({
   components: {
-    // 'icon': FontAwesomeIcons,
     'icon-dropdown': IconDropdown,
   },
 })
