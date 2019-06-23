@@ -19,7 +19,7 @@ import { Getter } from 'vuex-class'
   },
 })
 export default class TheNavbar extends Vue {
-  @Getter('isDesktop') public readonly isDesktop!: boolean
+  @Getter isDesktop!: boolean
 }
 
 </script>

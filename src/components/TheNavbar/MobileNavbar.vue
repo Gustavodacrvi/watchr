@@ -22,7 +22,7 @@ import { Mutation } from 'vuex-class'
 
 @Component
 export default class MobileNavbar extends Vue {
-  @Mutation('openAppBar') public readonly openAppBar!: () => void
+  @Mutation openAppBar!: () => void
 }
 
 </script>
