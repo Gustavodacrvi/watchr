@@ -5,19 +5,19 @@
         <div v-if='showing' class='margin' @click='showing = false'></div>
       </transition>
       <span class='main' @click='showing = !showing'>
-        <!-- <icon class='icon' icon='plus' color='white'></icon> -->
+        <ft-icon class='icon txt pointer' icon='plus' :style="{color: 'white'}"></ft-icon>
       </span>
       <transition name='below-trans'>
         <div class='left-wrapper' v-if='showing'>
           <span class='btn left' v-for='btn in leftButtons' :key='btn.icon' :style='`background-color: ${btn.backColor}`' @click='btn.click'>
-            <!-- <icon :icon='btn.icon' :color='btn.iconColor'></icon> -->
+            <ft-icon class='icon txt pointer' :icon='btn.icon' :style='{color: btn.iconColor}'></ft-icon>
           </span>
         </div>
       </transition>
       <transition name='top-trans'>
         <div v-if='showing' class='top-wrapper'>
           <span class='btn top' v-for='btn in topButtons' :key='btn.icon' :style='`background-color: ${btn.backColor}`' @click='btn.click'>
-            <!-- <icon :icon='btn.icon' :color='btn.iconColor'></icon> -->
+            <ft-icon class='icon txt pointer' :icon='btn.icon' :style='{color: btn.iconColor}'></ft-icon>
           </span>
         </div>
       </transition>
@@ -30,36 +30,29 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Mutation } from 'vuex-class'
 
-// import FontAwesomeIcon from '@/components/FontAwesomeIcon.vue'
+import { FloatingButton } from '@/interfaces/app'
 
-interface Buttons {
-  icon: string
-  iconColor: string
-  backColor: string
-  click?: () => void
-}
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faEye, faEyeSlash, faSync, faInbox, faCalendarDay, faCalendarAlt, faStopwatch, faTags, faPlus } from '@fortawesome/free-solid-svg-icons'
 
-@Component({
-  components: {
-    // icon: FontAwesomeIcon,
-  },
-})
-export default class ActionButton extends Vue {
-  @Mutation('pushPopUp') public readonly pushPopUp!: (compName: string) => void
+library.add(faEye, faEyeSlash, faSync, faInbox, faCalendarDay, faCalendarAlt, faStopwatch, faTags, faPlus)
 
-  public leftButtons: Buttons[] = [
+@Component
+export default class ActionButtonComp extends Vue {
+  @Mutation pushPopUp!: (compName: string) => void
+
+  leftButtons: FloatingButton[] = [
     {icon: 'inbox', iconColor: 'white', backColor: '#83B7E2'},
     {icon: 'calendar-day', iconColor: 'white', backColor: '#FFE366'},
     {icon: 'calendar-alt', iconColor: 'white', backColor: '#fc7d7d'},
   ]
-  public topButtons: Buttons[] = [
+  topButtons: FloatingButton[] = [
     {icon: 'stopwatch', iconColor: 'white', backColor: '#70FF66'},
     {icon: 'tags', iconColor: 'white', backColor: '#fc7d7d', click: this.popUp('LabeladderPopup')},
   ]
+  showing: boolean = false
 
-  public showing: boolean = false
-
-  public popUp(compName: string): () => void {
+  popUp(compName: string): () => void {
     return () => {
       this.pushPopUp(compName)
     }
@@ -69,6 +62,11 @@ export default class ActionButton extends Vue {
 </script>
 
 <style scoped>
+
+.main, .left-wrapper, .top-wrapper {
+  display: flex;
+  align-items: center;
+}
 
 .wrapper {
   position: absolute;
@@ -100,10 +98,8 @@ export default class ActionButton extends Vue {
   bottom: 16px;
   width: 45px;
   height: 45px;
-  display: flex;
   cursor: pointer;
   justify-content: center;
-  align-items: center;
   border-radius: 100px;
   background-color: #fc7d7d;
   transition-duration: .3s;
@@ -114,8 +110,6 @@ export default class ActionButton extends Vue {
   height: 45px;
   bottom: 16px;
   right: 70px;
-  display: flex;
-  align-items: center;
   flex-direction: row-reverse;
 }
 
@@ -124,8 +118,6 @@ export default class ActionButton extends Vue {
   width: 45px;
   bottom: 70px;
   right: 16px;
-  display: flex;
-  align-items: center;
   flex-direction: column-reverse;
 }
 

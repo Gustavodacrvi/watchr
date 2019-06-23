@@ -13,6 +13,13 @@ export interface SimpleAdder {
   callback: (input: string | null) => void
 }
 
+export interface FloatingButton {
+  icon: string
+  iconColor: string
+  backColor: string
+  click?: () => void
+}
+
 export interface ListIcon {
   icon: string
   iconColor: string

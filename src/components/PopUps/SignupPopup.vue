@@ -45,8 +45,8 @@ library.add(faEye, faEyeSlash, faSync)
 
 @Component
 export default class SigninPopUp extends Mixins(Mixin) {
-  @State('theme') theme!: string
-  @Mutation('pushPopUp') pushPopUp!: (compName: string) => void
+  @State theme!: string
+  @Mutation pushPopUp!: (compName: string) => void
 
   username: string | null = null
   email: string | null = null
