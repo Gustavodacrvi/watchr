@@ -91,9 +91,21 @@
   justify-content: space-between;
 }
 
-.section-title {
-  text-align: center;
+.header {
+  height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.header.title {
+  justify-content: center;
+}
+
+.header .title {
   color: #fc7d7d;
   font-size: 1.1em;
-  margin: 10px 0;
+}
+
+.header.options {
+  justify-content: flex-start;
 }

@@ -1,7 +1,15 @@
 <template>
   <div>
+    <transition name='fade' mode='out-in'>
+      <div v-if='selected.length === 0' class='header title' key='header-title'>
+        <span class='title'>PERSPECTIVES</span>
+      </div>
+      <div v-else class='header options' key='header-options'>
+        <icon icon='car'></icon>
+      </div>
+    </transition>
     <renderer :list='smartPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
-     @panevent='pan' :icons='icons' :options='options' @selected="selected"></renderer>
+     @panevent='pan' :icons='icons' :options='options' @selected="select"></renderer>
   </div>
 </template>
 
@@ -33,6 +41,7 @@ export default class PerspectiveAppnav extends Vue {
   @perspective.Action('updatePerspectives') public readonly updatePerspectives!: (perspectives: Perspective[]) => void
 
   public perspective: string = 'Today'
+  public selected: Perspective[] = []
   public rightPanEvent: PanGesture = {
     icon: 'thumbtack',
     iconColor: 'white',
@@ -68,8 +77,8 @@ export default class PerspectiveAppnav extends Vue {
     ] as ListIcon[]
   }
 
-  public selected(ids: string[]): void {
-    console.log(ids)
+  public select(pers: Perspective[]): void {
+    this.selected = pers
   }
 
   public update({arr}: {arr: Perspective[]}): void {
@@ -83,3 +92,6 @@ export default class PerspectiveAppnav extends Vue {
 }
 
 </script>
+
+<style scoped src='@/assets/css/appBarMenu.css'>
+</style>
