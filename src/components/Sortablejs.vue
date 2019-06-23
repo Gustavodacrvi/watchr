@@ -54,7 +54,6 @@ export default class SortableComponent extends Vue {
       },
     })
   }
-
   public getChilds(): any[] {
     const ref: string = 'sortable'
     const div: any = this.$refs[ref]

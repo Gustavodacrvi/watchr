@@ -1,6 +1,6 @@
 <template>
   <div>
-    <sortable v-model='arr' :animation='300' @end='update' :disabled='disabled' :multi-drag='true' :delayOnTouchOnly='true'>
+    <sortable v-model='arr' :animation='300' @end='update' :disabled='disabled' :multi-drag='true' :delayOnTouchOnly='true' @select='select' @deselect='deselect'>
       <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active' :leftpan='leftpan' :rightpan='rightpan' @update='update' @panevent='panevent' :options='options(el)' :icons='icons(el)' :optionsrender='options' :iconsrender='icons'></appnav-link>
     </sortable>
   </div>
@@ -37,11 +37,21 @@ export default class AppnavLinkrenderer extends Vue {
 
   public arr: any[] = this.list
 
-  @Watch('list')
-  public onChange(): void {
-    this.arr = this.list
+  public getSelectedElements(event: any): any[] {
+    const indexes: number[] = event.newIndicies.map((el: any) => el.index)
+    const els: any[] = []
+    for (const i of indexes) {
+      els.push(this.list[i])
+    }
+    return els
   }
 
+  public select(e: any): void {
+    this.$emit('selected', this.getSelectedElements(e))
+  }
+  public deselect(e: any): void {
+    this.$emit('selected', this.getSelectedElements(e))
+  }
   public update({arr, id}: {arr: any[], id: string}): void {
     if (id) {
       const newObj = this.arr.find((el: any) => {
@@ -54,6 +64,11 @@ export default class AppnavLinkrenderer extends Vue {
   }
   public panevent(obj: any): void {
     this.$emit('panevent', obj)
+  }
+
+  @Watch('list')
+  public onChange(): void {
+    this.arr = this.list
   }
 }
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <renderer :list='smartPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
-     @panevent='pan' :icons='icons' :options='options'></renderer>
+     @panevent='pan' :icons='icons' :options='options' @selected="selected"></renderer>
   </div>
 </template>
 
@@ -66,6 +66,10 @@ export default class PerspectiveAppnav extends Vue {
         },
       },
     ] as ListIcon[]
+  }
+
+  public selected(ids: string[]): void {
+    console.log(ids)
   }
 
   public update({arr}: {arr: Perspective[]}): void {
