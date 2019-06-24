@@ -1,8 +1,20 @@
 <template>
-  <span class='icon-dropdown' @mouseenter='showing = true' @mouseleave='showing = false'>
-    <ft-icon class='pointer icon txt' :icon='handle' :size='size'></ft-icon>
+  <span
+    class='icon-dropdown'
+    @mouseenter='showing = true'
+    @mouseleave='showing = false'
+  >
+    <ft-icon
+      class='pointer icon txt'
+      :icon='handle'
+      :size='size'
+    ></ft-icon>
     <transition name='fade'>
-      <div v-show='showing' class='card round-border content' :class='theme' :style='`min-width: ${minwidth}`'>
+      <div v-show='showing'
+        class='card round-border content'
+        :class='theme'
+        :style='`min-width: ${minwidth}`'
+      >
         <slot></slot>
       </div>
     </transition>
