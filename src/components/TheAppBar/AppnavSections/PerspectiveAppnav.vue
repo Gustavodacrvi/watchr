@@ -14,6 +14,11 @@
         class='header options'
         key='header-options'
       >
+        <ft-icon class='header-icon icon txt pointer' icon='thumbtack' />
+        <ft-icon-layers class='header-icon'>
+          <ft-icon class='txt' icon='thumbtack' />
+          <ft-icon icon='slash' transform='shrink-6' :style="{ color: 'white' }" />
+        </ft-icon-layers>
       </div>
     </transition>
     <renderer
@@ -40,6 +45,11 @@ import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavListrender
 import appUtil from '@/utils/app'
 
 import { Perspective, PanGesture, ListIcon } from '@/interfaces/app'
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faThumbtack, faSlash } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faThumbtack, faSlash)
 
 const perspective = namespace('perspective')
 
