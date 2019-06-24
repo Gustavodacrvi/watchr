@@ -1,24 +1,24 @@
 <template>
-  <div v-if='fetched' class='list-el' :class='[platform, theme]'>
+  <div class='list-el' :class='[platform, theme]'>
     <v-touch :enabled='!isDesktop' @panleft='panLeftEvent' @panright='panRightEvent' @panend='panend' @panstart='panstart' :pan='{direction: "horizontal"}'>
       <div class='round-border visible'>
         <div class='back' v-if='!isDesktop'>
           <div class='back-icons'>
-            <ft-icon class='margin icon txt pointer' :icon='obj.icon' size='1x' :style="{color: 'white'}"></ft-icon>
+            <ft-icon-dynamic class='margin icon txt pointer' :icon='obj.icon' size='1x' :style="{color: 'white'}"></ft-icon-dynamic>
           </div>
         </div>
         <div class='content gray' ref='content' :class='[theme, {active: obj[content] === active, blinking: blinking}]'>
           <span class='left-icon' v-if='obj.icon'>
-            <ft-icon v-if='obj.iconColor' class='margin icon txt pointer' :icon='obj.icon' :style="{color: obj.iconColor}"></ft-icon>
-            <ft-icon v-else class='margin icon txt pointer' :icon='obj.icon'></ft-icon>
+            <ft-icon-dynamic v-if='obj.iconColor' class='margin icon txt pointer' :icon='obj.icon' :style="{color: obj.iconColor}"></ft-icon-dynamic>
+            <ft-icon-dynamic v-else class='margin icon txt pointer' :icon='obj.icon'></ft-icon-dynamic>
           </span>
           <span class='txt name'>{{ obj[content] }}</span>
           <span class='icons'>
             <span v-for='i in icons' :key='i.icon' class='nav-icon'>
-              <ft-icon class='angle-right margin icon txt pointer' :icon='i.icon' :size='i.size' :class='{sublist: showingSublists}'></ft-icon>
+              <ft-icon-dynamic class='angle-right margin icon txt pointer' :icon='i.icon' :size='i.size' :class='{sublist: showingSublists}'></ft-icon-dynamic>
             </span>
             <span v-if='obj[sublist] && obj[sublist].length > 0' class='nav-icon' @click='showingSublists = !showingSublists'>
-              <ft-icon class='angle-right margin icon txt pointer' icon='angle-right' :class='{sublist: showingSublists}' size='1x'></ft-icon>
+              <ft-icon-dynamic class='angle-right margin icon txt pointer' icon='angle-right' :class='{sublist: showingSublists}' size='1x'></ft-icon-dynamic>
             </span>
             <span v-if='options && options.length > 0' class='nav-icon'>
               <icon-drop minwidth='150px' handle='ellipsis-v' :expand='true' :click='true'>
@@ -26,7 +26,7 @@
                   <div class='wrapper'>
                     <div v-for='i in options' :key='i.name' class='drop-el' @click='i.callback(obj)' :class='theme'>
                       <span class='drop-icon'>
-                        <ft-icon class='margin icon txt pointer' :icon='i.icon' :size='i.size' :style="{color: i.color}"></ft-icon>
+                        <ft-icon-dynamic class='margin icon txt pointer' :icon='i.icon' :size='i.size' :style="{color: i.color}"></ft-icon-dynamic>
                       </span>
                       <span class='drop-name txt'>{{ i.name }}</span>
                     </div>
@@ -51,6 +51,7 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter } from 'vuex-class'
 
+import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import IconDropdown from '@/components/IconDropdown.vue'
 
 import VueTouch from 'vue-touch'
@@ -61,13 +62,12 @@ import { faEllipsisV, faAngleRight, faThumbtack, faDownload } from '@fortawesome
 
 library.add(faEllipsisV, faAngleRight, faThumbtack)
 
-import appUtilModule from '@/utils/app'
-
 import { PanGesture, ListIcon } from '@/interfaces/app'
 
 @Component({
   components: {
     'icon-drop': IconDropdown,
+    'ft-icon-dynamic': DynamicFontawesome,
     'list-render': () => import('@/components/TheAppBar/AppnavSections/AppnavListrenderer.vue'),
   },
 })
@@ -91,34 +91,11 @@ export default class AppnavLink extends Vue {
   div: any = null
   direction: string | null = null
   blinking: boolean = false
-  appUtil: any = appUtilModule
-  fetched: boolean = false
 
-  created() {
-    this.importNecessaryIcons()
-  }
   mounted() {
     this.div = this.$refs.content
   }
 
-  importNecessaryIcons() {
-    if (this.obj.icon)
-      this.importIcon(this.obj.icon)
-    if (this.leftpan)
-      this.importIcon(this.leftpan.icon)
-    if (this.rightpan)
-      this.importIcon(this.rightpan.icon)
-    for (const icon of this.icons)
-      this.importIcon(icon.icon)
-    for (const opt of this.options)
-      this.importIcon(opt.icon)
-  }
-  importIcon(icon: string) {
-    this.fetched = false
-    this.appUtil.importIcon(icon, () => {
-      this.fetched = true
-    })
-  }
   update({arr}: any) {
     this.$emit('update', {arr, id: this.obj.id})
   }
@@ -162,27 +139,6 @@ export default class AppnavLink extends Vue {
     setTimeout(() => {
       this.blinking = false
     }, BLINK_TRANSITION_DURATION)
-  }
-
-  @Watch('icons')
-  onIconsChange() {
-    this.importNecessaryIcons()
-  }
-  @Watch('options')
-  onOptionsChange() {
-    this.importNecessaryIcons()
-  }
-  @Watch('obj')
-  onObjChange() {
-    this.importNecessaryIcons()
-  }
-  @Watch('leftpan')
-  onLeftpanChange() {
-    this.importNecessaryIcons()
-  }
-  @Watch('options')
-  onRightpanChange() {
-    this.importNecessaryIcons()
   }
 }
 
