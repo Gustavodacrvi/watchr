@@ -34,17 +34,28 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { State, Getter, Mutation, Action } from 'vuex-class'
 
+import LoadingComponent from '@/components/LoadingComponent.vue'
+import ErrorComponent from '@/components/ErrorComponent.vue'
+
 import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 
 import { Alert } from '@/interfaces/app'
 
+const AsyncComponent = (compPath: string): any => () => ({
+  component: import(`${compPath}`),
+  loading: LoadingComponent,
+  error: ErrorComponent,
+  delay: 200,
+  timeout: 5000,
+})
+
 @Component({
   components: {
     'the-nav-bar': TheNavbar,
-    'alerts': () => import('@/components/Alerts.vue'),
-    'pop-up': () => import('@/components/PopUps/PopUp.vue'),
-    'the-app-bar': () => import('@/components/TheAppBar/TheAppBar.vue'),
-    'action-button': () => import('@/components/ActionButton.vue'),
+    'alerts': AsyncComponent('./components/Alerts.vue'),
+    'pop-up': AsyncComponent('./components/PopUps/PopUp.vue'),
+    'the-app-bar': AsyncComponent('./components/TheAppBar/TheAppBar.vue'),
+    'action-button': AsyncComponent('./components/ActionButton.vue'),
   },
 })
 export default class App extends Vue {
@@ -99,6 +110,11 @@ export default class App extends Vue {
 
 
 <style scoped>
+
+.loading-component {
+  position: absolute;
+  z-index: 999;
+}
 
 .app-wrapper {
   position: absolute;

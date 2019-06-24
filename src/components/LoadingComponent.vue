@@ -1,5 +1,5 @@
 <template>
-  <div class='loading'>
+  <div class='loading-component'>
     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
       <g>
         <path class='gray' :class='theme' d="M100,87.428C100,94.001,94.092,99,87.647,99H11.797C5.352,99,0,94.001,0,87.428v-73.4   C0,7.454,5.352,2,11.797,2h75.851C94.092,2,100,7.454,100,14.028V87.428z"/>
@@ -28,6 +28,15 @@ export default class LoadingComponent extends Vue {
 
 <style scoped>
 
+.loading-component {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 @keyframes dark {
   0% {
     fill: #191919;
@@ -49,6 +58,29 @@ export default class LoadingComponent extends Vue {
 
 .card.dark {
   fill: #242424;
+}
+
+@keyframes light {
+  0% {
+    fill: #F0F0F0;
+  }
+  50% {
+    fill: #fc7d7d;
+  }
+  100% {
+    fill: #F0F0F0;
+  }
+}
+
+.gray.light {
+  fill: #F0F0F0;
+  animation: light;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+}
+
+.card.light {
+  fill: #F8F7F6;
 }
 
 </style>

@@ -3,9 +3,9 @@
     <div class='left'>
     </div>
     <div class='center'>
-      <router-link class='link txt' :to="{name: 'Home'}" ref='Home' @click.native="moveMagicLineTo('Home')">Home</router-link>
-      <router-link class='link txt' :to="{name: 'User'}" ref='User' @click.native="moveMagicLineTo('User')">User</router-link>
-      <router-link class='link txt' :to='{name: "Help"}' ref='Help' @click.native="moveMagicLineTo('Help')">Help</router-link>
+      <router-link class='link txt' :to="{name: 'Home'}" ref='Home'>Home</router-link>
+      <router-link class='link txt' :to="{name: 'User'}" ref='User'>User</router-link>
+      <router-link class='link txt' :to='{name: "Help"}' ref='Help'>Help</router-link>
     </div>
     <div class='right'>
       <icon-dropdown class='margin' handle='user-alt'>
@@ -29,7 +29,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
 
 import IconDropdown from '@/components/IconDropdown.vue'
@@ -82,6 +82,11 @@ export default class DesktopNavbar extends Vue {
       width: this.lineWidth,
       transitionDuration: '.3s',
     }
+  }
+
+  @Watch('$route')
+  onChange() {
+    this.moveMagicLineTo(this.$route.name)
   }
 }
 

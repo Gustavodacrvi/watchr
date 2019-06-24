@@ -23,25 +23,20 @@ import appUtils from '../../utils/app';
 
 library.add(faArrowLeft)
 
-const AsyncComponent = (compPath: string) => () => ({
-  component: new Promise(resolve => {
-    const comp = import(`${compPath}`)
-    setTimeout(() => {
-      resolve(comp)
-    }, 3000)
-  }),
+const AsyncComponent = (compPath: string): any => () => ({
+  component: import(`${compPath}`),
   loading: LoadingComponent,
   error: ErrorComponent,
   delay: 200,
-  timeout: 5000,
+  timeout: 3000,
 })
 
 @Component({
   components: {
-    SimpleadderPopup: AsyncComponent('./SimpleadderPopup.vue') as any,
-    SignupPopup: AsyncComponent('./SignupPopup.vue') as any,
-    SigninPopup: AsyncComponent('./SigninPopup.vue') as any,
-    LabeladderPopup: AsyncComponent('./LabeladderPopup.vue') as any,
+    SimpleadderPopup: AsyncComponent('./SimpleadderPopup.vue'),
+    SignupPopup: AsyncComponent('./SignupPopup.vue'),
+    SigninPopup: AsyncComponent('./SigninPopup.vue'),
+    LabeladderPopup: AsyncComponent('./LabeladderPopup.vue'),
   },
 })
 export default class PopUp extends Vue {
@@ -56,7 +51,7 @@ export default class PopUp extends Vue {
 
 <style scoped>
 
-.loading {
+.loading-component {
   width: 300px;
   height: 300px;
   display: flex;

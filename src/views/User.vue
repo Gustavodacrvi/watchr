@@ -6,7 +6,7 @@
 
 <script lang="ts">
 
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { Mutation, Getter } from 'vuex-class'
 
 @Component
@@ -26,6 +26,11 @@ export default class Guest extends Vue {
     }
     if (this.isDesktop)
       this.openAppBar()
+  }
+
+  @Watch('isDesktop')
+  onResize() {
+    this.openAppBar()
   }
 }
 

@@ -3,6 +3,17 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
+import LoadingComponent from './components/LoadingComponent.vue'
+import ErrorComponent from './components/ErrorComponent.vue'
+
+const AsyncComponent = (compPath: string): any => () => ({
+  component: import(`${compPath}`),
+  loading: LoadingComponent,
+  error: ErrorComponent,
+  delay: 200,
+  timeout: 5000,
+})
+
 export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
@@ -10,17 +21,17 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: () => import(`@/views/Home.vue`),
+      component: AsyncComponent(`./views/Home.vue`),
     },
     {
       path: '/user',
       name: 'User',
-      component: () => import('@/views/User.vue'),
+      component: AsyncComponent('./views/User.vue'),
     },
     {
       path: '/help',
       name: 'Help',
-      component: () => import('@/views/Help.vue'),
+      component: AsyncComponent('./views/Help.vue'),
     },
   ],
 })
