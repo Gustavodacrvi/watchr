@@ -1,5 +1,6 @@
 
-import { library } from '@fortawesome/fontawesome-svg-core'
+import LoadingComponent from '@/components/LoadingComponent.vue'
+import ErrorComponent from '@/components/ErrorComponent.vue'
 
 export default {
   updateArrayOrderFromFilteredArray(oldArray: any[], filteredArray: any[]): any[] {
@@ -23,12 +24,13 @@ export default {
   snakeToCamel(s: string) {
     return s.replace(/(\-\w)/g, (m: any) => m[1].toUpperCase())
   },
-  importIcon(s: string, callback: () => void) {
-    const camel: string = this.snakeToCamel('fa-' + s)
-    import(`@fortawesome/free-solid-svg-icons/${camel}.js`).then((response: any) => {
-      if (response && response.definition)
-        library.add(response.definition)
-      callback()
+  asyncComponent(compPath: string) {
+    return () => ({
+      component: import(`${compPath}`),
+      loading: LoadingComponent,
+      error: ErrorComponent,
+      delay: 200,
+      timeout: 3000,
     })
   },
 }
