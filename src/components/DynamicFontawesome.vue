@@ -1,5 +1,5 @@
 <template>
-  <ft-icon v-if='fetched' v-bind='$props'></ft-icon>
+  <ft-icon v-if='fetched' v-bind='$props' v-on='$listeners'></ft-icon>
 </template>
 
 <script lang='ts'>
@@ -15,7 +15,6 @@ import appUtils from '@/utils/app'
   props: FontAwesomeIcon.props,
 })
 export default class DynamicFontawesome extends Vue {
-  
   fetched: boolean = false
 
   created() {
@@ -23,9 +22,8 @@ export default class DynamicFontawesome extends Vue {
     import(`@fortawesome/free-solid-svg-icons/${camel}.js`).then((response: any) => {
       if (response && response.definition) {
         library.add(response.definition)
-      } else this.fetched = true
-    }).catch(() => {
-      this.fetched = true
+        this.fetched = true
+      }
     })
   }
 }
