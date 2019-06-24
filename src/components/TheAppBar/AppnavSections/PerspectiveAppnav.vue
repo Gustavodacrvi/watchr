@@ -7,7 +7,7 @@
       <div v-else class='header options' key='header-options'>
       </div>
     </transition>
-    <renderer :list='smartPerspectives' content='name' active='perspective' @update='update' :rightpan='rightPanEvent'
+    <renderer :list='smartPerspectives' content-obj-property-name='name' active-content='perspective' @update='update' :right-pan-gesture='rightPanEvent'
      @panevent='pan' :icons='icons' :options='options' @selected="select"></renderer>
   </div>
 </template>

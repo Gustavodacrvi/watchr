@@ -1,46 +1,51 @@
 <template>
   <div class='list-el' :class='[platform, theme]'>
     <v-touch :enabled='!isDesktop' @panleft='panLeftEvent' @panright='panRightEvent' @panend='panend' @panstart='panstart' :pan='{direction: "horizontal"}'>
-      <div class='round-border visible'>
+      <div class='round-border visible' @mouseenter='optionsOnHover = true' @mouseleave='optionsOnHover = false'>
         <div class='back' v-if='!isDesktop'>
           <div class='back-icons'>
-            <ft-icon-dynamic class='margin icon txt pointer' :icon='obj.icon' size='1x' :style="{color: 'white'}"></ft-icon-dynamic>
+            <ft-icon-dynamic v-if='leftPanGesture' class='margin icon txt pointer' :icon='leftPanGesture.icon' size='1x' :style="{color: leftPanGesture.iconColor}"></ft-icon-dynamic>
+            <span v-else>a</span>
+            <ft-icon-dynamic v-if='rightPanGesture' class='margin icon txt pointer' :icon='rightPanGesture.icon' size='1x' :style="{color: rightPanGesture.iconColor}"></ft-icon-dynamic>
+            <span v-else>a</span>
           </div>
         </div>
-        <div class='content gray' ref='content' :class='[theme, {active: obj[content] === active, blinking: blinking}]'>
+        <div class='content gray' ref='content' :class='[theme, {active: obj[contentObjPropertyName] === activeContent, blinking: blinking}]'>
           <span class='left-icon' v-if='obj.icon'>
             <ft-icon-dynamic v-if='obj.iconColor' class='margin icon txt pointer' :icon='obj.icon' size='lg' :style="{color: obj.iconColor}"></ft-icon-dynamic>
             <ft-icon-dynamic v-else class='margin icon txt pointer' :icon='obj.icon' size='lg'></ft-icon-dynamic>
           </span>
-          <span class='txt name'>{{ obj[content] }}</span>
+          <span class='txt name'>{{ obj[contentObjPropertyName] }}</span>
           <span class='icons'>
             <span v-for='i in icons' :key='i.icon' class='nav-icon'>
               <ft-icon-dynamic class='angle-right margin icon txt pointer' :icon='i.icon' :size='i.size' :class='{sublist: showingSublists}'></ft-icon-dynamic>
             </span>
-            <span v-if='obj[sublist] && obj[sublist].length > 0' class='nav-icon' @click='showingSublists = !showingSublists'>
+            <span v-if='obj[subElementsPropertyName] && obj[subElementsPropertyName].length > 0' class='nav-icon' @click='showingSublists = !showingSublists'>
               <ft-icon-dynamic class='angle-right margin icon txt pointer' icon='angle-right' :class='{sublist: showingSublists}' size='1x'></ft-icon-dynamic>
             </span>
-            <span v-if='options && options.length > 0' class='nav-icon'>
-              <icon-drop minwidth='150px' handle='ellipsis-v' :expand='true' :click='true'>
-                <div class='dropdown round-border'>
-                  <div class='wrapper'>
-                    <div v-for='i in options' :key='i.name' class='drop-el' @click='i.callback(obj)' :class='theme'>
-                      <span class='drop-icon'>
-                        <ft-icon-dynamic class='margin icon txt pointer' :icon='i.icon' :size='i.size' :style="{color: i.color}"></ft-icon-dynamic>
-                      </span>
-                      <span class='drop-name txt'>{{ i.name }}</span>
+            <transition name='fade'>
+              <span v-if='options && options.length > 0 && (!isDesktop || ((isDesktop && optionsOnHover)))' class='nav-icon'>
+                <icon-drop minwidth='150px' handle='ellipsis-v' :expand='true' :click='true'>
+                  <div class='dropdown round-border'>
+                    <div class='wrapper'>
+                      <div v-for='i in options' :key='i.name' class='drop-el' @click='i.callback(obj)' :class='theme'>
+                        <span class='drop-icon'>
+                          <ft-icon-dynamic class='margin icon txt pointer' :icon='i.icon' :size='i.size' :style="{color: i.color}"></ft-icon-dynamic>
+                        </span>
+                        <span class='drop-name txt'>{{ i.name }}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </icon-drop>
-            </span>
+                </icon-drop>
+              </span>
+            </transition>
           </span>
         </div>
       </div>
     </v-touch>
     <transition name='fade'>
-      <div v-if='showingSublists && obj[sublist] && obj[sublist].length > 0' class='drop'>
-        <list-render :sublist='sublist' :content='content' :active='active' :list='obj[sublist]' @update='update' :options='optionsrender' :icons='iconsrender'></list-render>
+      <div v-if='showingSublists && obj[subElementsPropertyName] && obj[subElementsPropertyName].length > 0' class='drop'>
+        <list-render :sub-elements-property-name='subElementsPropertyName' :content-obj-property-name='contentObjPropertyName' :active-content='activeContent' :list='obj[subElementsPropertyName]' @update='update' :options='optionsrender' :icons='iconsrender'></list-render>
       </div>
     </transition>
   </div>
@@ -73,13 +78,13 @@ import { PanGesture, ListIcon } from '@/interfaces/app'
 })
 export default class AppnavLink extends Vue {
   @Prop({required: true, type: Object}) obj!: any
-  @Prop({required: true, type: String}) content!: string
-  @Prop({required: true, type: String}) sublist!: string
-  @Prop({required: true, type: String}) active!: string
+  @Prop({required: true, type: String}) contentObjPropertyName!: string
+  @Prop({required: true, type: String}) subElementsPropertyName!: string
+  @Prop({required: true, type: String}) activeContent!: string
   @Prop(Array) icons!: ListIcon[]
   @Prop(Array) options!: ListIcon[]
-  @Prop(Object) leftpan!: PanGesture
-  @Prop(Object) rightpan!: PanGesture
+  @Prop(Object) rightPanGesture!: PanGesture
+  @Prop(Object) leftPanGesture!: PanGesture
   @Prop({default: () => [], type: Function}) iconsrender!: (obj: any) => ListIcon[]
   @Prop({default: () => [], type: Function}) optionsrender!: (obj: any) => ListIcon[]
 
@@ -88,6 +93,7 @@ export default class AppnavLink extends Vue {
   @Getter platform!: string
 
   showingSublists: boolean = false
+  optionsOnHover: boolean = false
   div: any = null
   direction: string | null = null
   blinking: boolean = false
@@ -100,14 +106,14 @@ export default class AppnavLink extends Vue {
     this.$emit('update', {arr, id: this.obj.id})
   }
   panRightEvent(e: any) {
-    if (this.leftpan) {
+    if (this.leftPanGesture) {
       this.div.style.left = e.distance + 'px'
       this.div.style.right = 'unset'
       this.direction = 'right'
     }
   }
   panLeftEvent(e: any) {
-    if (this.rightpan) {
+    if (this.rightPanGesture) {
       this.div.style.right = e.distance + 'px'
       this.div.style.left = 'unset'
       this.direction = 'left'
@@ -118,15 +124,15 @@ export default class AppnavLink extends Vue {
   }
   panend() {
     this.div.style.transition = 'background-color .3s, right .3s, left .3s'
-    if (this.direction === 'left' && this.rightpan) {
-      if (parseInt(this.div.style.right, 10) > this.rightpan.distance) {
+    if (this.direction === 'left' && this.rightPanGesture) {
+      if (parseInt(this.div.style.right, 10) > this.rightPanGesture.distance) {
         this.$emit('panevent', {type: 'right', id: this.obj.id})
         this.blink()
       }
 
       this.div.style.right = '0px'
-    } else if (this.direction === 'right' && this.leftpan) {
-      if (parseInt(this.div.style.left, 10) > this.leftpan.distance) {
+    } else if (this.direction === 'right' && this.leftPanGesture) {
+      if (parseInt(this.div.style.left, 10) > this.leftPanGesture.distance) {
         this.$emit('panevent', {type: 'left', id: this.obj.id})
         this.blink()
       }

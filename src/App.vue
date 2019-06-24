@@ -66,12 +66,23 @@ export default class App extends Vue {
   @State showingAlert!: boolean
   @Mutation hideAlert!: () => void
   @Mutation closeAppBar!: () => void
+  @Mutation openAppBar!: () => void
   @Getter isDesktop!: boolean
   @Getter platform!: 'mobile' | 'desktop'
   @Action showLastAlert!: () => void
   @Action activateKeyShortcut!: (key: string) => void
 
+  created() {
+    if (!localStorage.getItem('watchrFirstTimeIn')) {
+      this.$store.dispatch('perspective/setDefaultData')
+      this.$store.dispatch('label/setDefaultData')
 
+      localStorage.setItem('watchrFirstTimeIn', 'true')
+    } else {
+      this.$store.commit('perspective/getSavedData')
+      this.$store.commit('label/getSavedData')
+    }
+  }
   mounted() {
     window.addEventListener('keypress', this.keyPressed)
   }
