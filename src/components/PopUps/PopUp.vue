@@ -19,7 +19,7 @@ import ErrorComponent from '@/components/ErrorComponent.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
-import appUtils from '../../utils/app';
+import appUtils from '../../utils/app'
 
 library.add(faArrowLeft)
 
