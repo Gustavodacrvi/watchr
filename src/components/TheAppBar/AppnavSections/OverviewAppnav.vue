@@ -1,6 +1,6 @@
 <template>
   <div>
-    <renderer :list='smartBindedPerspectives' content='name' :active='perspective' :disabled='true'></renderer>
+    <renderer :list='smartBindedPerspectives' content-obj-property-name='name' :active-content='perspective' :disabled='true'></renderer>
   </div>
 </template>
 

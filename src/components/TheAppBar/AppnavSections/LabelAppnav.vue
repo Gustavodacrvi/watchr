@@ -1,8 +1,8 @@
 <template>
   <div>
-    <renderer :list='smartLabels' content='name' :active='label' sublist='subLabels' @update='update'></renderer>
+    <renderer :list='smartLabels' content-obj-property-name='name' :active-content='label' sub-elements-property-name='subLabels' @update='update'></renderer>
     <division name='CUSTOM LABELS'>
-      <renderer v-if='nonSmartLabels' :list='nonSmartLabels' content='name' :active='label' sublist='subLabels' :options='options' @update='update'></renderer>
+      <renderer v-if='nonSmartLabels' :list='nonSmartLabels' content-obj-property-name='name' :active-el='label' sub-elements-property-name='subLabels' :options='options' @update='update'></renderer>
     </division>
   </div>
 </template>

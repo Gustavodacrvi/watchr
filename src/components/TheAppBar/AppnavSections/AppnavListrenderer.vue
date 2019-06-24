@@ -1,7 +1,7 @@
 <template>
   <div>
     <sortable v-model='arr' :animation='300' @end='update' :disabled='disabled' :multi-drag='true' :delayOnTouchOnly='true' @select='select' @deselect='deselect'>
-      <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content='content' :sublist='sublist' :active='active' :leftpan='leftpan' :rightpan='rightpan' @update='update' @panevent='panevent' :options='options(el)' :icons='icons(el)' :optionsrender='options' :iconsrender='icons'></appnav-link>
+      <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content-obj-property-name='contentObjPropertyName' :sub-elements-property-name='subElementsPropertyName' :active-content='activeContent' :left-pan-gesture='leftPanGesture' :right-pan-gesture='rightPanGesture' @update='update' @panevent='panevent' :options='options(el)' :icons='icons(el)' :optionsrender='options' :iconsrender='icons'></appnav-link>
     </sortable>
   </div>
 </template>
@@ -22,12 +22,12 @@ import { PanGesture, ListIcon } from '@/interfaces/app'
 })
 export default class AppnavLinkrenderer extends Vue {
   @Prop({required: true, type: Array}) list!: any[]
-  @Prop({required: true, type: String}) content!: string
-  @Prop({default: '', type: String}) active!: string
-  @Prop({default: '', type: String}) sublist!: string
+  @Prop({required: true, type: String}) contentObjPropertyName!: string
+  @Prop({default: '', type: String}) activeContent!: string
+  @Prop({default: '', type: String}) subElementsPropertyName!: string
   @Prop({default: false, type: Boolean}) disabled!: boolean
-  @Prop(Object) leftpan!: PanGesture
-  @Prop(Object) rightpan!: PanGesture
+  @Prop(Object) leftPanGesture!: PanGesture
+  @Prop(Object) rightPanGesture!: PanGesture
   @Prop({default: () => [], type: Function}) icons!: (obj: any) => ListIcon[]
   @Prop({default: () => [], type: Function}) options!: (obj: any) => ListIcon[]
 
@@ -51,7 +51,7 @@ export default class AppnavLinkrenderer extends Vue {
       const newObj = this.arr.find((el: any) => {
         return el.id === id
       })
-      newObj[this.sublist] = arr
+      newObj[this.subElementsPropertyName] = arr
     }
     this.$emit('update', {arr: this.arr, id})
   }

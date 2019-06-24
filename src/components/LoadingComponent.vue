@@ -21,7 +21,7 @@ import { State } from 'vuex-class'
 
 @Component
 export default class LoadingComponent extends Vue {
-  @State theme! :string
+  @State theme!: string
 }
 
 </script>
