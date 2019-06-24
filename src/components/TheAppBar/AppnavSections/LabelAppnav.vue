@@ -3,7 +3,7 @@
     <renderer
       content-obj-property-name='name'
       sub-elements-property-name='subLabels'
-      :list='smartLabels'
+      v-model='smartLabels'
       :active-content='label'
       @update='update'></renderer>
     <division name='CUSTOM LABELS'>

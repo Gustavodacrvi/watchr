@@ -2,7 +2,7 @@
   <div>
     <renderer
       content-obj-property-name='name'
-      :list='smartBindedPerspectives'
+      v-model='smartBindedPerspectives'
       :active-content='perspective'
       :disabled='true'
     ></renderer>

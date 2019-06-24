@@ -28,8 +28,6 @@ export default class SortableComponent extends Vue {
   mounted() {
     this.els = this.getChilds()
 
-    console.log('mounted')
-
     const sortable: any = new Sortable.create(this.sortableRoot(), {
       delayOnTouchOnly: this.delayOnTouchOnly,
       disabled: this.disabled,
@@ -46,7 +44,6 @@ export default class SortableComponent extends Vue {
       },
       onSelect: (e: any) => {
         this.$emit('select', e)
-        console.log(e)
       },
 
       onDeselect: (e: any) => {

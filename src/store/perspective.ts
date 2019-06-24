@@ -10,7 +10,6 @@ interface Mutations {
   setDefaultData: () => void
   save: () => void
   getSavedData: () => void
-  toggleBindPerspectiveById: (state: States, id: string) => void
   [key: string]: (state: States, payload: any) => any
 }
 
@@ -30,6 +29,9 @@ interface ActionContext {
 interface Actions {
   setDefaultData: (context: ActionContext) => void
   updatePerspectives: (context: ActionContext, perspectives: Perspective[]) => void
+  toggleBindPerspectiveById: (context: ActionContext, id: string) => void
+  bindPerspectives: (context: ActionContext, ids: string[]) => void
+  unBindPerspectives: (context: ActionContext, ids: string[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -47,13 +49,6 @@ export default {
     getSavedData(state: States): void {
       if (!localStorage.getItem('watchrIsLogged'))
         state.perspectives = JSON.parse(localStorage.getItem('watchrPerspectives') as any)
-    },
-    toggleBindPerspectiveById(state: States, id: string): void {
-      const pers: Perspective | undefined = state.perspectives.find((el: Perspective) => {
-        return el.id === id
-      })
-      if (pers)
-        pers.binded = !pers.binded
     },
   } as Mutations,
   getters: {
@@ -86,6 +81,34 @@ export default {
     },
     updatePerspectives({state, commit}, perspectives: Perspective[]): void {
       state.perspectives = perspectives
+      commit('save')
+    },
+    unBindPerspectives({state, commit}, ids: string[]): void {
+      for (const id of ids) {
+        const pers: Perspective | undefined = state.perspectives.find(el => {
+          return el.id === id
+        })
+        if (pers)
+          pers.binded = false
+      }
+      commit('save')
+    },
+    bindPerspectives({state, commit}, ids: string[]): void {
+      for (const id of ids) {
+        const pers: Perspective | undefined = state.perspectives.find(el => {
+          return el.id === id
+        })
+        if (pers)
+          pers.binded = true
+      }
+      commit('save')
+    },
+    toggleBindPerspectiveById({state, commit}, id: string): void {
+      const pers: Perspective | undefined = state.perspectives.find((el: Perspective) => {
+        return el.id === id
+      })
+      if (pers)
+        pers.binded = !pers.binded
       commit('save')
     },
   } as Actions,

@@ -43,7 +43,7 @@ import { PanGesture, ListIcon } from '@/interfaces/app'
   },
 })
 export default class AppnavLinkrenderer extends Vue {
-  @Prop({required: true, type: Array}) list!: any[]
+  @Prop({required: true, type: Array}) value!: any[]
   @Prop({required: true, type: String}) contentObjPropertyName!: string
   @Prop({default: '', type: String}) activeContent!: string
   @Prop({default: '', type: String}) subElementsPropertyName!: string
@@ -53,20 +53,23 @@ export default class AppnavLinkrenderer extends Vue {
   @Prop({default: () => [], type: Function}) icons!: (obj: any) => ListIcon[]
   @Prop({default: () => [], type: Function}) options!: (obj: any) => ListIcon[]
 
-  arr: any[] = this.list
+  arr: any[] = this.value
 
   getSelectedElements(event: any): any[] {
     const indexes: number[] = event.newIndicies.map((el: any) => el.index)
     const els: any[] = []
     for (const i of indexes)
-      els.push(this.list[i])
+      els.push(this.value[i])
     return els
   }
   select(e: any) {
     this.$emit('selected', this.getSelectedElements(e))
   }
   deselect(e: any) {
-    this.$emit('selected', this.getSelectedElements(e))
+    const INTERVAL_REQUIRED_TO_LISTEN_TO_ICON_CLICK_EVENT = 1
+    setTimeout(() => {
+      this.$emit('selected', this.getSelectedElements(e))
+    }, INTERVAL_REQUIRED_TO_LISTEN_TO_ICON_CLICK_EVENT)
   }
   update({arr, id}: {arr: any[], id: string}) {
     if (id) {
@@ -76,14 +79,16 @@ export default class AppnavLinkrenderer extends Vue {
       newObj[this.subElementsPropertyName] = arr
     }
     this.$emit('update', {arr: this.arr, id})
+    this.$emit('input', this.arr)
   }
   panevent(obj: any) {
     this.$emit('panevent', obj)
   }
 
-  @Watch('list')
-  onChange() {
-    this.arr = this.list
+  @Watch('arr')
+  onReorder() {
+    this.$emit('input', this.arr)
+    this.$emit('update', {arr: this.arr})
   }
 }
 

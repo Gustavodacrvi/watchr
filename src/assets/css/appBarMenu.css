@@ -19,6 +19,7 @@
 }
 
 .list {
+  position: relative;
   margin: 0 14px;
 }
 
