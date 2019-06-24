@@ -1,11 +1,32 @@
 <template>
   <div class='dropdown-input'>
-    <input v-if='tabindex' :tabindex='tabindex' class='margin input txt round-border gray' :placeholder='placeholder' type='text' autocomplete='off' :class='[theme, {wrong: hasError}]' v-model='value' @keydown='keyDown' @keypress='keyPressed' @focus='focus' @blur='blur'>
-    <input v-else :tabindex='tabindex' class='margin input txt round-border gray' :placeholder='placeholder' type='text' autocomplete='off' :class='[theme, {wrong: hasError}]' v-model='value' @keydown='keyDown' @keypress='keyPressed'  @focus='focus' @blur='blur'>
+    <input v-bind='attrs'
+      :tabindex='tabindex'
+      class='margin input txt round-border gray'
+      :placeholder='placeholder'
+      type='text'
+      autocomplete='off'
+      :class='inputClass'
+      v-model='value'
+      @keydown='keyDown'
+      @keypress='keyPressed'
+      @focus='focus'
+      @blur='blur'
+    >
     <transition name='fade'>
-      <div v-if='showing && values.length > 0' class='dropdown round-border gray border scroll' :class='theme' ref='dropdown'>
+      <div v-if='showing && values.length > 0'
+        class='dropdown round-border gray border scroll'
+        :class='theme'
+        ref='dropdown'
+      >
         <transition-group name='fade'>
-          <span v-for='option in values' :ref='option' class='option txt' :class='[theme,{active: selected === option}]' :key='option' @click='select(option)'>{{ option }}</span>
+          <span v-for='option in values'
+            :ref='option'
+            class='option txt'
+            :class='[theme,{active: selected === option}]'
+            :key='option'
+            @click='select(option)'
+          >{{ option }}</span>
         </transition-group>
       </div>
     </transition>
@@ -33,16 +54,12 @@ export default class DropdownInput extends Vue {
   @State theme!: string
   @Prop({default: null, type: String}) input!: string
   @Prop({default: () => [], type: Array}) values!: string[]
-  @Prop({type: String}) tabindex!: string[]
+  @Prop({type: String}) tabindex!: string
   @Prop({type: String}) placeholder!: string[]
 
   showing: boolean = true
   value: string | null = this.input
   selected: string = ''
-
-  get hasError(): boolean {
-    return this.value === ''
-  }
 
   keyPressed({key}: {key: string}) {
     if (key === 'Enter' && this.selected === '')
@@ -51,13 +68,13 @@ export default class DropdownInput extends Vue {
       this.select(this.selected)
     this.$emit('update')
   }
-  public keyDown({key}: {key: string}) {
+  keyDown({key}: {key: string}) {
     if (key === 'ArrowDown' || key === 'ArrowUp')
       this.moveSelection(key)
     else if (key === 'ArrowLeft' || key === 'ArrowRight')
       this.selected = ''
   }
-  public getRefsPositions(ref: string): RefsPositions {
+  getRefsPositions(ref: string): RefsPositions {
     /* tslint:disable:no-string-literal */
     const drop: any = this.$refs.dropdown
     let active: any = this.$refs[ref]
@@ -78,7 +95,7 @@ export default class DropdownInput extends Vue {
       },
     }
   }
-  public moveSelection(key: string) {
+  moveSelection(key: string) {
     if (this.selected === '')
       this.selected = this.values[0]
     else {
@@ -104,17 +121,33 @@ export default class DropdownInput extends Vue {
         this.selected = ''
     }
   }
-  public select(str: string) {
+  select(str: string) {
     this.$emit('select', str)
     this.selected = ''
   }
-  public blur(): void {
+  blur(): void {
     this.showing = false
     this.selected = ''
   }
-  public focus() {
+  focus() {
     this.showing = true
     this.selected = ''
+  }
+
+  get hasError(): boolean {
+    return this.value === ''
+  }
+  get inputClass() {
+    return [
+      this.theme,
+      {wrong: this.hasError},
+    ]
+  }
+  get attrs() {
+    if (this.tabindex)
+      return {
+        ['tabindex']: this.tabindex,
+      }
   }
 
   @Watch('input')

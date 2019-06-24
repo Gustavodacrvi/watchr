@@ -1,9 +1,22 @@
 <template>
   <div class='wrapper'>
     <div class='relative-wrapper'>
-      <ft-icon v-if='!isDesktop' class='clone-icon icon pointer txt' icon='arrow-left' size='2x' @click="pushPopUp('')"></ft-icon>
-      <component class='pop-up card' :class='[{"round-border": isDesktop, "background-color": !isDesktop}, platform, theme]' :is='popUpComponent'></component>
-      <div v-if='isDesktop' class='popup-margin' :class='platform' @click='pushPopUp("")'></div>
+      <ft-icon v-if='!isDesktop'
+        class='close-icon icon pointer txt'
+        icon='arrow-left'
+        size='2x'
+        @click="pushPopUp('')"
+      />
+      <component
+        class='pop-up card'
+        :class='componentClass'
+        :is='popUpComponent'
+      />
+      <div v-if='isDesktop'
+        class='popup-margin'
+        :class='platform'
+        @click='pushPopUp("")'
+      ></div>
     </div>
   </div>
 </template>
@@ -45,19 +58,18 @@ export default class PopUp extends Vue {
   @Mutation pushPopUp!: (compName: string) => void
   @Getter isDesktop!: boolean
   @Getter platform!: 'mobile' | 'desktop'
+
+  get componentClass(): any[] {
+    return [
+      {'round-border': this.isDesktop, 'background-color': !this.isDesktop},
+      this.platform, this.theme,
+    ]
+  }
 }
 
 </script>
 
 <style scoped>
-
-.loading-component {
-  width: 300px;
-  height: 300px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 .wrapper {
   position: fixed;
@@ -103,6 +115,7 @@ export default class PopUp extends Vue {
 }
 
 .pop-up.mobile {
+  position: absolute;
   width: 100%;
   height: 100%;
 }
