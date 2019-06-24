@@ -1,5 +1,5 @@
 <template>
-  <div ref='sortable' class='sort'>
+  <div class='sort'>
     <slot></slot>
   </div>
 </template>
@@ -23,14 +23,12 @@ export default class SortableComponent extends Vue {
   @Prop(String) public readonly group!: string
   @Prop({default: 'sortable-selected'}) selectedClass!: string
 
-  els: any = null
+  els: HTMLElement[] = []
 
   mounted() {
-    const ref: string = 'sortable'
-    const div: any = this.$refs[ref]
     this.els = this.getChilds()
 
-    const sortable: any = new Sortable.create(div, {
+    const sortable: any = new Sortable.create(this.sortableRoot, {
       delayOnTouchOnly: this.delayOnTouchOnly,
       disabled: this.disabled,
       animation: this.animation,
@@ -53,20 +51,30 @@ export default class SortableComponent extends Vue {
       },
     })
   }
-  getChilds(): any[] {
-    const ref: string = 'sortable'
-    const div: any = this.$refs[ref]
-    return Array.prototype.slice.call(div.childNodes).slice()
-  }
   moveElements(): any[] {
-    const childs = this.getChilds()
     const arr: any[] = []
+    const childs: HTMLElement[] = this.getChilds()
     for (let i = 0; i < this.value.length; i++)
       for (let j = 0; j < this.value.length; j++)
         if (childs[i].isEqualNode(this.els[j]))
           arr.push(this.value[j])
     this.els = childs.slice()
     return arr
+  }
+  getChilds(): HTMLElement[] {
+    return Array.prototype.slice.call(this.sortableRoot.childNodes).slice()
+  }
+
+  get sortableRoot(): HTMLElement {
+    const root: HTMLElement = this.$el as HTMLElement
+    if (!this.hasTransitionGroup)
+      return root
+    return root.childNodes[0] as HTMLElement
+  }
+  get hasTransitionGroup(): boolean {
+    if (this.$slots.default && this.$slots.default[0].tag === 'vue-component-19-transition-group')
+      return true
+    return false
   }
 }
 

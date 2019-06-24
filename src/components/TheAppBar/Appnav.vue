@@ -27,10 +27,7 @@
             size='lg'
           ></ft-icon>
         </div>
-        <hr
-          class='border'
-          style='width: 100%;margin-top:13px;'
-        >
+        <div style='height: 12px;'></div>
       </div>
       <div class='list-wrapper scroll'>
         <div class='list'>

@@ -1,7 +1,29 @@
 <template>
   <div>
-    <sortable v-model='arr' :animation='300' @end='update' :disabled='disabled' :multi-drag='true' :delayOnTouchOnly='true' @select='select' @deselect='deselect'>
-      <appnav-link v-for='el in arr' :key='el.id' :obj='el' :content-obj-property-name='contentObjPropertyName' :sub-elements-property-name='subElementsPropertyName' :active-content='activeContent' :left-pan-gesture='leftPanGesture' :right-pan-gesture='rightPanGesture' @update='update' @panevent='panevent' :options='options(el)' :icons='icons(el)' :optionsrender='options' :iconsrender='icons'></appnav-link>
+    <sortable
+      v-model='arr'
+      :animation='300'
+      :disabled='disabled'
+      :multi-drag='true'
+      :delayOnTouchOnly='true'
+      @end='update'
+      @select='select'
+      @deselect='deselect'
+    >
+      <transition-group name='fade'>
+        <appnav-link v-for='el in arr'
+          :key='el.id'
+          :obj='el'
+          :content-obj-property-name='contentObjPropertyName' :sub-elements-property-name='subElementsPropertyName' :active-content='activeContent'
+          :left-pan-gesture='leftPanGesture' :right-pan-gesture='rightPanGesture'
+          :options='options(el)'
+          :icons='icons(el)'
+          :optionsrender='options'
+          :iconsrender='icons'
+          @update='update'
+          @panevent='panevent'
+        ></appnav-link>
+      </transition-group>
     </sortable>
   </div>
 </template>
