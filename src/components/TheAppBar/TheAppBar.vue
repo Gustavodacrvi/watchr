@@ -14,10 +14,21 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 
+import LoadingComponent from '@/components/LoadingComponent.vue'
+import ErrorComponent from '@/components/ErrorComponent.vue'
+
+const AsyncComponent = (compPath: string): any => () => ({
+  component: import(`${compPath}`),
+  loading: LoadingComponent,
+  error: ErrorComponent,
+  delay: 200,
+  timeout: 5000,
+})
+
 @Component({
   components: {
-    appnav: () => import('@/components/TheAppBar/Appnav.vue'),
-    settingsnav: () => import('@/components/TheAppBar/Settingsnav.vue'),
+    appnav: AsyncComponent('./Appnav.vue'),
+    settingsnav: AsyncComponent('./Settingsnav.vue'),
   },
 })
 export default class TheNavBar extends Vue {

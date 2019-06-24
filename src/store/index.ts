@@ -118,8 +118,6 @@ const store: any = new Vuex.Store({
         state.windowWidth = document.body.clientWidth
         if (!getters.isDesktop)
           commit('closeAppBar')
-        else
-          commit('openAppBar')
       })
     },
     showLastAlert({state, commit}) {

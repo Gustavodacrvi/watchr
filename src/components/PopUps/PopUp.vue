@@ -12,22 +12,36 @@
 
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
+
+import LoadingComponent from '@/components/LoadingComponent.vue'
+import ErrorComponent from '@/components/ErrorComponent.vue'
+
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
+import appUtils from '../../utils/app';
+
 library.add(faArrowLeft)
+
+const AsyncComponent = (compPath: string): any => () => ({
+  component: import(`${compPath}`),
+  loading: LoadingComponent,
+  error: ErrorComponent,
+  delay: 200,
+  timeout: 3000,
+})
 
 @Component({
   components: {
-    SignupPopup: () => import('@/components/PopUps/SignupPopup.vue'),
-    SigninPopup: () => import('@/components/PopUps/SigninPopup.vue'),
-    LabeladderPopup: () => import('@/components/PopUps/LabeladderPopup.vue'),
-    SimpleadderPopup: () => import('@/components/PopUps/SimpleadderPopup.vue'),
+    SimpleadderPopup: AsyncComponent('./SimpleadderPopup.vue'),
+    SignupPopup: AsyncComponent('./SignupPopup.vue'),
+    SigninPopup: AsyncComponent('./SigninPopup.vue'),
+    LabeladderPopup: AsyncComponent('./LabeladderPopup.vue'),
   },
 })
 export default class PopUp extends Vue {
   @State theme!: string
-  @State popUp!: string
+  @State popUpComponent!: string
   @Mutation pushPopUp!: (compName: string) => void
   @Getter isDesktop!: boolean
   @Getter platform!: 'mobile' | 'desktop'
@@ -36,6 +50,14 @@ export default class PopUp extends Vue {
 </script>
 
 <style scoped>
+
+.loading-component {
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .wrapper {
   position: fixed;

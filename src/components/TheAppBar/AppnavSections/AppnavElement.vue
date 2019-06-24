@@ -9,8 +9,8 @@
         </div>
         <div class='content gray' ref='content' :class='[theme, {active: obj[content] === active, blinking: blinking}]'>
           <span class='left-icon' v-if='obj.icon'>
-            <ft-icon-dynamic v-if='obj.iconColor' class='margin icon txt pointer' :icon='obj.icon' :style="{color: obj.iconColor}"></ft-icon-dynamic>
-            <ft-icon-dynamic v-else class='margin icon txt pointer' :icon='obj.icon'></ft-icon-dynamic>
+            <ft-icon-dynamic v-if='obj.iconColor' class='margin icon txt pointer' :icon='obj.icon' size='lg' :style="{color: obj.iconColor}"></ft-icon-dynamic>
+            <ft-icon-dynamic v-else class='margin icon txt pointer' :icon='obj.icon' size='lg'></ft-icon-dynamic>
           </span>
           <span class='txt name'>{{ obj[content] }}</span>
           <span class='icons'>

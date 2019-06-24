@@ -34,12 +34,23 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 
+import LoadingComponent from '@/components/LoadingComponent.vue'
+import ErrorComponent from '@/components/ErrorComponent.vue'
+
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAdjust, faCog, faHome, faLayerGroup, faProjectDiagram, faStopwatch,
  faStream, faTags, faChartPie } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faAdjust, faCog, faHome, faLayerGroup, faProjectDiagram,
 faStopwatch, faStream, faTags, faChartPie)
+
+const AsyncComponent = (compPath: string): any => () => ({
+  component: import(`${compPath}`),
+  loading: LoadingComponent,
+  error: ErrorComponent,
+  delay: 200,
+  timeout: 5000,
+})
 
 interface Section {
   icon: string
@@ -48,9 +59,9 @@ interface Section {
 
 @Component({
   components: {
-    overview: () => import('@/components/TheAppBar/AppnavSections/OverviewAppnav.vue'),
-    labels: () => import('@/components/TheAppBar/AppnavSections/LabelAppnav.vue'),
-    perspectives: () => import('@/components/TheAppBar/AppnavSections/PerspectiveAppnav.vue'),
+    overview: AsyncComponent('./AppnavSections/OverviewAppnav.vue'),
+    labels: AsyncComponent('./AppnavSections/LabelAppnav.vue'),
+    perspectives: AsyncComponent('./AppnavSections/PerspectiveAppnav.vue'),
   },
 })
 export default class LoggedAppnav extends Vue {
