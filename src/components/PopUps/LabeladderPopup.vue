@@ -4,10 +4,27 @@
       <h3>Add label</h3>
     </div>
     <div class='content'>
-      <dropdown-input tabindex='1' class='margin' :values='options' @value='v => value = v' :input='input' @update='getOptions' @enter='add' @select='selectValue'></dropdown-input>
-      <button tabindex='2' class='button round-border margin' @click='add'>Add label</button>
-      <span v-show='isDesktop' class='margin txt'>You can open this pop up at any time by clicking the 'L' key.</span><br>
-      <span v-show='isDesktop' class='margin txt'>You can close any pop up at any time by clicking 'H' key.</span>
+      <dropdown-input
+        tabindex='1'
+        class='margin'
+        :values='options'
+        @value='v => value = v'
+        :input='input'
+        @update='getOptions'
+        @enter='add'
+        @select='selectValue'
+      ></dropdown-input>
+      <button
+        tabindex='2'
+        class='button round-border margin'
+        @click='add'
+      >Add label</button>
+      <span v-show='isDesktop'
+        class='margin txt'
+      >You can open this pop up at any time by clicking the 'L' key.</span><br>
+      <span v-show='isDesktop'
+        class='margin txt'
+      >You can close any pop up at any time by clicking 'H' key.</span>
     </div>
   </div>
 </template>
@@ -25,8 +42,6 @@ import { Label, Alert } from '../../interfaces/app'
 
 const labelModule = namespace('label')
 
-const MAXIMUM_LENGTH_OF_LABEL_TREE = 4
-
 @Component({
   components: {
     'dropdown-input': DropdownInput,
@@ -43,6 +58,7 @@ export default class LabelAdder extends Vue {
   @labelModule.Action addLabelFromArrayPath!: (path: string[]) => void
 
   input: string | null = null
+  MAXIMUM_LENGTH_OF_LABEL_TREE: number = 4
   value: string = ''
   options: string[] = []
 
@@ -60,7 +76,7 @@ export default class LabelAdder extends Vue {
           duration: 2.5,
           type: 'error',
         })
-      else if (arr.length > MAXIMUM_LENGTH_OF_LABEL_TREE)
+      else if (arr.length > this.MAXIMUM_LENGTH_OF_LABEL_TREE)
         this.pushAlert({
           name: 'The maximum number of subtasks is 4',
           duration: 2.5,

@@ -1,14 +1,32 @@
 <template>
   <div>
-    <transition name='fade' mode='out-in'>
-      <div v-if='selected.length === 0' class='header title' key='header-title'>
+    <transition
+      name='fade'
+      mode='out-in'
+    >
+      <div v-if='selected.length === 0'
+        class='header title'
+        key='header-title'
+      >
         <span class='title'>PERSPECTIVES</span>
       </div>
-      <div v-else class='header options' key='header-options'>
+      <div v-else
+        class='header options'
+        key='header-options'
+      >
       </div>
     </transition>
-    <renderer :list='smartPerspectives' content-obj-property-name='name' active-content='perspective' @update='update' :right-pan-gesture='rightPanEvent'
-     @panevent='pan' :icons='icons' :options='options' @selected="select"></renderer>
+    <renderer
+      content-obj-property-name='name'
+      active-content='perspective'
+      :list='smartPerspectives'
+      :right-pan-gesture='rightPanEvent'
+      :icons='icons'
+      :options='options'
+      @update='update'
+      @panevent='pan'
+      @selected="select"
+    ></renderer>
   </div>
 </template>
 
@@ -44,6 +62,7 @@ export default class PerspectiveAppnav extends Vue {
     iconColor: 'white',
     distance: 100,
   }
+
   icons(pers: Perspective): ListIcon[] {
     if (pers.binded)
       return [
@@ -71,11 +90,9 @@ export default class PerspectiveAppnav extends Vue {
       },
     ] as ListIcon[]
   }
-
   select(pers: Perspective[]): void {
     this.selected = pers
   }
-
   update({arr}: {arr: Perspective[]}): void {
     this.updatePerspectives(appUtil.updateArrayOrderFromFilteredArray(this.perspectives, arr))
   }

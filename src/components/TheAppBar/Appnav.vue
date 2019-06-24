@@ -1,28 +1,63 @@
 <template>
   <div>
-    <div v-if='!isLogged' class='auth-banner main-color-card' :class='theme'>
-      <button class='auth-button' @click='pushPopUp("SignupPopup")' :class='theme'>SIGN UP</button>
-      <button class='auth-button' @click='pushPopUp("SigninPopup")' :class='theme'>SIGN IN</button>
+    <div v-if='!isLogged'
+      class='auth-banner main-color-card'
+      :class='theme'
+    >
+      <button
+        class='auth-button'
+        @click='pushPopUp("SignupPopup")'
+        :class='theme'
+      >SIGN UP</button>
+      <button
+        class='auth-button'
+        @click='pushPopUp("SigninPopup")'
+        :class='theme'
+      >SIGN IN</button>
     </div>
     <div class='content-wrapper'>
       <div class='content'>
         <div class='navsect'>
-          <ft-icon v-for='sect in sections' :key='sect.comp' class='txt pointer icon' :icon='sect.icon' :style="isActiveClass(sect.comp)" @click='currentSect = sect.comp' size='lg'></ft-icon>
+          <ft-icon v-for='sect in sections'
+            :key='sect.comp'
+            class='txt pointer icon'
+            :icon='sect.icon'
+            :style="isActiveClass(sect.comp)"
+            @click='currentSect = sect.comp'
+            size='lg'
+          ></ft-icon>
         </div>
-        <hr class='border' style='width: 100%;margin-top:13px;'>
-        <transition name='fade' mode='out-in'>
-          <component :is='currentSect'></component>
-        </transition>
+        <div style='height: 12px;'></div>
+      </div>
+      <div class='list-wrapper scroll'>
+        <div class='list'>
+          <transition
+            name='fade'
+            mode='out-in'
+          >
+            <component :is='currentSect'></component>
+          </transition>
+          <div class='list-margin'></div>
+        </div>
       </div>
     </div>
-    <div v-if='!isDesktop' class='footer-wrapper'>
+    <div v-if='!isDesktop'
+      class='footer-wrapper'>
       <hr class='border'>
       <div class='footer'>
         <div class='left'>
-          <ft-icon class='txt pointer icon' icon='cog' @click="$emit('change')"></ft-icon>
+          <ft-icon
+            class='txt pointer icon'
+            icon='cog'
+            @click="$emit('change')"
+          ></ft-icon>
         </div>
         <div class='right'>
-          <ft-icon class='txt pointer icon' icon='adjust' @click="$emit('theme')"></ft-icon>
+          <ft-icon
+            class='txt pointer icon'
+            icon='adjust'
+            @click="$emit('theme')"
+          ></ft-icon>
         </div>
       </div>
     </div>

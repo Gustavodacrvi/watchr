@@ -1,11 +1,29 @@
 <template>
-  <div class='wrapper' :class='platform'>
-    <div class='appbar gray' :class='platform'>
-      <transition name='fade' mode='out-in'>
-        <component class='theappbar gray' :class='theme' :is='appMenu' @change='changeMenu' @theme='changeTheme'></component>
+  <div
+    class='wrapper'
+    :class='platform'
+  >
+    <div
+      class='appbar gray'
+      :class='platform'
+    >
+      <transition
+        name='fade'
+        mode='out-in'
+      >
+        <component
+          class='theappbar gray'
+          :class='theme'
+          :is='appMenu'
+          @change='changeMenu'
+          @theme='changeTheme'
+        ></component>
       </transition>
     </div>
-    <div v-if='!isDesktop' class='appbar-margin' @click='closeAppBar'></div>
+    <div v-if='!isDesktop'
+      class='appbar-margin'
+      @click='closeAppBar'
+    ></div>
   </div>
 </template>
 

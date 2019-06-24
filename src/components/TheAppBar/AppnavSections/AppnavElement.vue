@@ -1,36 +1,105 @@
 <template>
   <div class='list-el' :class='[platform, theme]'>
-    <v-touch :enabled='!isDesktop' @panleft='panLeftEvent' @panright='panRightEvent' @panend='panend' @panstart='panstart' :pan='{direction: "horizontal"}'>
-      <div class='round-border visible' @mouseenter='optionsOnHover = true' @mouseleave='optionsOnHover = false'>
-        <div class='back' v-if='!isDesktop'>
+    <v-touch
+      :enabled='!isDesktop'
+      :pan='{direction: "horizontal"}'
+      @panleft='panLeftEvent'
+      @panright='panRightEvent'
+      @panend='panend'
+      @panstart='panstart'
+    >
+      <div
+        class='round-border visible'
+        @mouseenter='optionsOnHover = true'
+        @mouseleave='optionsOnHover = false'
+      >
+        <div v-if='!isDesktop'
+          class='back'>
           <div class='back-icons'>
-            <ft-icon-dynamic v-if='leftPanGesture' class='margin icon txt pointer' :icon='leftPanGesture.icon' size='1x' :style="{color: leftPanGesture.iconColor}"></ft-icon-dynamic>
+            <ft-icon-dynamic v-if='leftPanGesture'
+              class='margin icon txt pointer'
+              size='1x'
+              :icon='leftPanGesture.icon'
+              :style="{color: leftPanGesture.iconColor}"
+            ></ft-icon-dynamic>
             <span v-else>a</span>
-            <ft-icon-dynamic v-if='rightPanGesture' class='margin icon txt pointer' :icon='rightPanGesture.icon' size='1x' :style="{color: rightPanGesture.iconColor}"></ft-icon-dynamic>
+            <ft-icon-dynamic v-if='rightPanGesture'
+              class='margin icon txt pointer'
+              size='1x'
+              :icon='rightPanGesture.icon'
+              :style="{color: rightPanGesture.iconColor}"
+            ></ft-icon-dynamic>
             <span v-else>a</span>
           </div>
         </div>
-        <div class='content gray' ref='content' :class='[theme, {active: obj[contentObjPropertyName] === activeContent, blinking: blinking}]'>
-          <span class='left-icon' v-if='obj.icon'>
-            <ft-icon-dynamic v-if='obj.iconColor' class='margin icon txt pointer' :icon='obj.icon' size='lg' :style="{color: obj.iconColor}"></ft-icon-dynamic>
-            <ft-icon-dynamic v-else class='margin icon txt pointer' :icon='obj.icon' size='lg'></ft-icon-dynamic>
+        <div
+          class='content gray'
+          ref='content'
+          :class='contentClass'
+        >
+          <span v-if='obj.icon'
+            class='left-icon'>
+            <ft-icon-dynamic v-if='obj.iconColor'
+              class='margin icon txt pointer'
+              size='lg'
+              :icon='obj.icon'
+              :style="{color: obj.iconColor}"
+            ></ft-icon-dynamic>
+            <ft-icon-dynamic v-else
+              class='margin icon txt pointer'
+              size='lg'
+              :icon='obj.icon'
+            ></ft-icon-dynamic>
           </span>
           <span class='txt name'>{{ obj[contentObjPropertyName] }}</span>
           <span class='icons'>
-            <span v-for='i in icons' :key='i.icon' class='nav-icon'>
-              <ft-icon-dynamic class='angle-right margin icon txt pointer' :icon='i.icon' :size='i.size' :class='{sublist: showingSublists}'></ft-icon-dynamic>
+            <span v-for='i in icons'
+              class='nav-icon'
+              :key='i.icon'
+            >
+              <ft-icon-dynamic
+                class='angle-right margin icon txt pointer'
+                :icon='i.icon'
+                :size='i.size'
+                :class='{sublist: showingSublists}'
+              ></ft-icon-dynamic>
             </span>
-            <span v-if='obj[subElementsPropertyName] && obj[subElementsPropertyName].length > 0' class='nav-icon' @click='showingSublists = !showingSublists'>
-              <ft-icon-dynamic class='angle-right margin icon txt pointer' icon='angle-right' :class='{sublist: showingSublists}' size='1x'></ft-icon-dynamic>
+            <span v-if='showAngleRightIcon'
+              class='nav-icon'
+              @click='showingSublists = !showingSublists'
+            >
+              <ft-icon-dynamic
+                class='angle-right margin icon txt pointer'
+                icon='angle-right'
+                size='1x'
+                :class='{sublist: showingSublists}'
+              ></ft-icon-dynamic>
             </span>
             <transition name='fade'>
-              <span v-if='options && options.length > 0 && (!isDesktop || ((isDesktop && optionsOnHover)))' class='nav-icon'>
-                <icon-drop minwidth='150px' handle='ellipsis-v' :expand='true' :click='true'>
+              <span v-if='showOptionsIcon'
+                class='nav-icon'
+              >
+                <icon-drop
+                  minwidth='150px'
+                  handle='ellipsis-v'
+                  :expand='true'
+                  :click='true'
+                >
                   <div class='dropdown round-border'>
                     <div class='wrapper'>
-                      <div v-for='i in options' :key='i.name' class='drop-el' @click='i.callback(obj)' :class='theme'>
+                      <div v-for='i in options'
+                        class='drop-el'
+                        :key='i.name'
+                        :class='theme'
+                        @click='i.callback(obj)'
+                      >
                         <span class='drop-icon'>
-                          <ft-icon-dynamic class='margin icon txt pointer' :icon='i.icon' :size='i.size' :style="{color: i.color}"></ft-icon-dynamic>
+                          <ft-icon-dynamic
+                            class='margin icon txt pointer'
+                            :icon='i.icon'
+                            :size='i.size'
+                            :style="{color: i.color}"
+                          ></ft-icon-dynamic>
                         </span>
                         <span class='drop-name txt'>{{ i.name }}</span>
                       </div>
@@ -44,8 +113,15 @@
       </div>
     </v-touch>
     <transition name='fade'>
-      <div v-if='showingSublists && obj[subElementsPropertyName] && obj[subElementsPropertyName].length > 0' class='drop'>
-        <list-render :sub-elements-property-name='subElementsPropertyName' :content-obj-property-name='contentObjPropertyName' :active-content='activeContent' :list='obj[subElementsPropertyName]' @update='update' :options='optionsrender' :icons='iconsrender'></list-render>
+      <div v-if='renderSublists' class='drop'>
+        <list-render
+          :list='obj[subElementsPropertyName]'
+          :sub-elements-property-name='subElementsPropertyName' :content-obj-property-name='contentObjPropertyName'
+          :active-content='activeContent'
+          :options='optionsrender'
+          :icons='iconsrender'
+          @update='update'
+        ></list-render>
       </div>
     </transition>
   </div>
@@ -139,12 +215,31 @@ export default class AppnavLink extends Vue {
       this.div.style.left = '0px'
     }
   }
-  blink(): void {
+  blink() {
     const BLINK_TRANSITION_DURATION = 200
     this.blinking = true
     setTimeout(() => {
       this.blinking = false
     }, BLINK_TRANSITION_DURATION)
+  }
+
+  get contentClass() {
+    return [
+      this.theme,
+      {active: this.obj[this.contentObjPropertyName] === this.activeContent, blinking: this.blinking},
+    ]
+  }
+  get showAngleRightIcon() {
+    return this.obj[this.subElementsPropertyName] && this.obj
+    [this.subElementsPropertyName].length > 0
+  }
+  get showOptionsIcon() {
+    return this.options && this.options.length > 0 && (!this.isDesktop
+     || ((this.isDesktop && this.optionsOnHover)))
+  }
+  get renderSublists() {
+    return this.showingSublists && this.obj[this.subElementsPropertyName]
+     && this.obj[this.subElementsPropertyName].length > 0
   }
 }
 

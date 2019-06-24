@@ -3,27 +3,60 @@
     <div class='left'>
     </div>
     <div class='center'>
-      <router-link class='link txt' :to="{name: 'Home'}" ref='Home'>Home</router-link>
-      <router-link class='link txt' :to="{name: 'User'}" ref='User'>User</router-link>
-      <router-link class='link txt' :to='{name: "Help"}' ref='Help'>Help</router-link>
+      <router-link
+        class='link txt'
+        :to="{name: 'Home'}"
+        ref='Home'
+      >Home</router-link>
+      <router-link
+        class='link txt'
+        :to="{name: 'User'}"
+        ref='User'
+      >User</router-link>
+      <router-link
+        class='link txt'
+        :to='{name: "Help"}'
+        ref='Help'
+      >Help</router-link>
     </div>
     <div class='right'>
-      <icon-dropdown class='margin' handle='user-alt'>
+      <icon-dropdown
+        class='margin'
+        handle='user-alt'
+      >
         <div class='dual-drop-el'>
-          <span class='drop-el txt' @click="pushPopUp('SigninPopup')">
-            <ft-icon icon='sign-in-alt' size='sm'></ft-icon>
+          <span class='drop-el txt'
+            @click="pushPopUp('SigninPopup')">
+            <ft-icon
+              icon='sign-in-alt'
+              size='sm'
+            ></ft-icon>
             Sign in
           </span>
           <hr class='thematic-break'>
-          <span class='drop-el txt' @click="pushPopUp('SignupPopup')">
-            <ft-icon icon='user-plus' size='sm'></ft-icon>
+          <span
+            class='drop-el txt'
+              @click="pushPopUp('SignupPopup')"
+            >
+            <ft-icon
+              icon='user-plus'
+              size='sm'
+            ></ft-icon>
             Sign up
           </span>
         </div>
       </icon-dropdown>
-      <ft-icon class='txt pointer icon margin' icon='adjust' @click='changeTheme' size='lg'></ft-icon>
+      <ft-icon
+        class='txt pointer icon margin'
+        icon='adjust'
+        @click='changeTheme'
+        size='lg'
+      ></ft-icon>
     </div>
-    <div class='magic-line' :style='magicLineStyles'></div>
+    <div
+      class='magic-line'
+      :style='magicLineStyles'
+    ></div>
   </div>
 </template>
 

@@ -1,5 +1,8 @@
 <template>
-  <ft-icon v-if='fetched' v-bind='$props' v-on='$listeners'></ft-icon>
+  <ft-icon v-if='fetched'
+    v-bind='$props'
+    v-on='$listeners'
+  ></ft-icon>
 </template>
 
 <script lang='ts'>

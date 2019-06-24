@@ -3,11 +3,19 @@
     <div class='margin'></div>
     <div class='header'>
       <span class='name txt'>{{ name }}</span>
-      <ft-icon class='icon txt pointer' :class='{showing: showing}' icon='angle-right' size='1x' @click='showing = !showing'></ft-icon>
+      <ft-icon
+        class='icon txt pointer'
+        icon='angle-right'
+        size='1x'
+        :class='{showing: showing}'
+        @click='showing = !showing'
+      ></ft-icon>
     </div>
     <div class='margin'></div>
     <transition name='fade'>
-      <div v-if='showing' class='content'>
+      <div v-if='showing'
+        class='content'
+      >
         <slot></slot>
       </div>
     </transition>

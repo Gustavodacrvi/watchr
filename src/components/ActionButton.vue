@@ -2,22 +2,51 @@
   <div class='wrapper'>
     <div class='relative-wrapper'>
       <transition name='fade'>
-        <div v-if='showing' class='margin' @click='showing = false'></div>
+        <div v-if='showing'
+          class='margin'
+          @click='showing = false'></div>
       </transition>
-      <span class='main' @click='showing = !showing'>
-        <ft-icon class='icon txt pointer' icon='plus' :style="{color: 'white'}"></ft-icon>
+      <span
+        class='main'
+        @click='showing = !showing'>
+          <ft-icon
+            class='icon txt pointer'
+            icon='plus'
+            :style="{color: 'white'}"
+          ></ft-icon>
       </span>
       <transition name='below-trans'>
-        <div class='left-wrapper' v-if='showing'>
-          <span class='btn left' v-for='btn in leftButtons' :key='btn.icon' :style='`background-color: ${btn.backColor}`' @click='btn.click'>
-            <ft-icon class='icon txt pointer' :icon='btn.icon' :style='{color: btn.iconColor}'></ft-icon>
+        <div v-if='showing'
+          class='left-wrapper' 
+        >
+          <span v-for='btn in leftButtons'
+            class='btn left'
+            :key='btn.icon'
+            :style='`background-color: ${btn.backColor}`'
+            @click='btn.click'
+          >
+            <ft-icon
+              class='icon txt pointer'
+              :icon='btn.icon'
+              :style='{color: btn.iconColor}'
+            ></ft-icon>
           </span>
         </div>
       </transition>
       <transition name='top-trans'>
-        <div v-if='showing' class='top-wrapper'>
-          <span class='btn top' v-for='btn in topButtons' :key='btn.icon' :style='`background-color: ${btn.backColor}`' @click='btn.click'>
-            <ft-icon class='icon txt pointer' :icon='btn.icon' :style='{color: btn.iconColor}'></ft-icon>
+        <div v-if='showing'
+          class='top-wrapper'>
+          <span v-for='btn in topButtons'
+            class='btn top'
+            :key='btn.icon'
+            :style='`background-color: ${btn.backColor}`'
+            @click='btn.click'
+          >
+            <ft-icon
+              class='icon txt pointer'
+              :icon='btn.icon'
+              :style='{color: btn.iconColor}'
+            ></ft-icon>
           </span>
         </div>
       </transition>

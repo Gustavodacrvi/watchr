@@ -1,7 +1,11 @@
 <template>
   <div class='wrapper'>
-    <div class='alert card round-border' :class='[theme, alert.type]'>
-      <span class='txt' v-html='alert.name'></span>
+    <div
+      class='alert card round-border'
+      :class='[theme, alert.type]'>
+      <span
+        class='txt'
+        v-html='alert.name'></span>
     </div>
   </div>
 </template>

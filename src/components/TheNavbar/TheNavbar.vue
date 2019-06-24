@@ -12,10 +12,21 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
 
+import LoadingComponent from '@/components/LoadingComponent.vue'
+import ErrorComponent from '@/components/ErrorComponent.vue'
+
+const AsyncComponent = (compPath: string): any => () => ({
+  component: import(`${compPath}`),
+  loading: LoadingComponent,
+  error: ErrorComponent,
+  delay: 200,
+  timeout: 5000,
+})
+
 @Component({
   components: {
-    desktop: () => import('@/components/TheNavbar/DesktopNavbar.vue'),
-    mobile: () => import('@/components/TheNavbar/MobileNavbar.vue'),
+    desktop: AsyncComponent('./DesktopNavbar.vue'),
+    mobile: AsyncComponent('./MobileNavbar.vue'),
   },
 })
 export default class TheNavbar extends Vue {
