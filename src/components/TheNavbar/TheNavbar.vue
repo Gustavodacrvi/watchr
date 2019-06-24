@@ -25,8 +25,8 @@ const AsyncComponent = (compPath: string): any => () => ({
 
 @Component({
   components: {
-    desktop: AsyncComponent('@/components/TheNavbar/DesktopNavbar.vue'),
-    mobile: AsyncComponent('@/components/TheNavbar/MobileNavbar.vue'),
+    desktop: AsyncComponent('./DesktopNavbar.vue'),
+    mobile: AsyncComponent('./MobileNavbar.vue'),
   },
 })
 export default class TheNavbar extends Vue {

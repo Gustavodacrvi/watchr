@@ -10,7 +10,7 @@
         type='text'
         autocomplete='off'
         :class='usernameClass'
-        v-model='username'
+        v-model.trim='username'
       >
       <div class='margin password'>
         <input
@@ -19,7 +19,7 @@
           :type='passwordType'
           autocomplete='off'
           :class='passwordClass'
-          v-model='password'
+          v-model.trim='password'
         >
         <span class='eyes'>
           <transition

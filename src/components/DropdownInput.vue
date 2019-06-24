@@ -7,7 +7,7 @@
       type='text'
       autocomplete='off'
       :class='inputClass'
-      v-model='value'
+      v-model.trim='value'
       @keydown='keyDown'
       @keypress='keyPressed'
       @focus='focus'

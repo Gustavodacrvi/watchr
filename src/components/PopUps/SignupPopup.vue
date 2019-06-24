@@ -10,7 +10,7 @@
         type='text'
         autocomplete='off'
         :class='usernameClass'
-        v-model='username'
+        v-model.trim='username'
       >
       <input
         class='margin input txt round-border gray'
@@ -18,7 +18,7 @@
         type='text'
         autocomplete='off'
         :class='emailClass'
-        v-model='email'
+        v-model.trim='email'
       >
       <div class='margin password'>
         <input
@@ -27,7 +27,7 @@
           :type='passwordType'
           autocomplete='off'
           :class='newPasswordClass'
-          v-model='password'
+          v-model.trim='password'
         >
         <span class='eyes'>
           <transition
@@ -57,7 +57,7 @@
           placeholder='Confirm password: '
           :type='passwordType'
           autocomplete='off'
-          :class='confirmPasswordClass' v-model='newPassword'>
+          :class='confirmPasswordClass' v-model.trim='newPassword'>
         <span class='eyes'>
           <transition
             name='fade'

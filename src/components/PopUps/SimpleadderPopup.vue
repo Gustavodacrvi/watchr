@@ -10,7 +10,7 @@
         type='text'
         autocomplete='off'
         :class='inputClass'
-        v-model='input'>
+        v-model.trim='input'>
       <button
         class='margin button round-border'
         @click='runCallback'
