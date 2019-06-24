@@ -23,20 +23,25 @@ import appUtils from '../../utils/app';
 
 library.add(faArrowLeft)
 
-const AsyncComponent = (compName: string) => () => ({
-  component: import(`${compName}`),
+const AsyncComponent = (compPath: string) => () => ({
+  component: new Promise(resolve => {
+    const comp = import(`${compPath}`)
+    setTimeout(() => {
+      resolve(comp)
+    }, 3000)
+  }),
   loading: LoadingComponent,
   error: ErrorComponent,
   delay: 200,
-  timeout: 3000,
+  timeout: 5000,
 })
 
 @Component({
   components: {
-    SimpleadderPopup: AsyncComponent('@/components/PopUps/SimpleadderPopup.vue') as any,
-    SignupPopup: AsyncComponent('/src/components/PopUps/SignupPopup.vue') as any,
-    SigninPopup: AsyncComponent('@/components/PopUps/SigninPopup.vue') as any,
-    LabeladderPopup: AsyncComponent('@/components/PopUps/LabeladderPopup.vue') as any,
+    SimpleadderPopup: AsyncComponent('./SimpleadderPopup.vue') as any,
+    SignupPopup: AsyncComponent('./SignupPopup.vue') as any,
+    SigninPopup: AsyncComponent('./SigninPopup.vue') as any,
+    LabeladderPopup: AsyncComponent('./LabeladderPopup.vue') as any,
   },
 })
 export default class PopUp extends Vue {
@@ -50,6 +55,14 @@ export default class PopUp extends Vue {
 </script>
 
 <style scoped>
+
+.loading {
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .wrapper {
   position: fixed;

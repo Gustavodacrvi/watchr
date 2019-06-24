@@ -24,13 +24,4 @@ export default {
   snakeToCamel(s: string) {
     return s.replace(/(\-\w)/g, (m: any) => m[1].toUpperCase())
   },
-  asyncComponent(compPath: string) {
-    return () => ({
-      component: import(`${compPath}`),
-      loading: LoadingComponent,
-      error: ErrorComponent,
-      delay: 200,
-      timeout: 3000,
-    })
-  },
 }
