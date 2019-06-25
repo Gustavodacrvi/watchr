@@ -44,13 +44,13 @@
 <script lang='ts'>
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { Getter, State, namespace } from 'vuex-class'
+import { Getter, State, Mutation, namespace } from 'vuex-class'
 
-import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavListrenderer.vue'
+import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavComponents/AppnavListrenderer.vue'
 
 import appUtil from '@/utils/app'
 
-import { Perspective, ListIcon } from '@/interfaces/app'
+import { Perspective, ListIcon, Alert } from '@/interfaces/app'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faThumbtack, faSlash } from '@fortawesome/free-solid-svg-icons'
@@ -66,6 +66,8 @@ const perspective = namespace('perspective')
 })
 export default class PerspectiveAppnav extends Vue {
   @State theme!: string
+  @Mutation pushAlert!: (alert: Alert) => void
+
   @perspective.State perspectives!: Perspective[]
   @perspective.Getter smartPerspectives!: Perspective[]
   @perspective.Action toggleBindPerspectivesById!: (obj: {ids: string[], binded?: boolean | undefined}) => void
@@ -115,6 +117,11 @@ export default class PerspectiveAppnav extends Vue {
         size: 'lg',
         callback: (per: Perspective) => {
           this.toggleBindPerspectivesById({ids: [per.id]})
+          this.pushAlert({
+            name: `Label <strong>${name}</strong> was successfully added`,
+            duration: 2.5,
+            type: 'error',
+          })
         },
       },
     ] as ListIcon[]

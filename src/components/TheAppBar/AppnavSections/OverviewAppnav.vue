@@ -27,7 +27,7 @@ import { Getter, State, namespace } from 'vuex-class'
 
 import { Perspective } from '@/interfaces/app'
 
-import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavListrenderer.vue'
+import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavComponents/AppnavListrenderer.vue'
 
 const perspective = namespace('perspective')
 

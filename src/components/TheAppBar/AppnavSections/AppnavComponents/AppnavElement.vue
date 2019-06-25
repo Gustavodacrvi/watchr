@@ -72,7 +72,7 @@
                         class='margin icon txt pointer'
                         :icon='i.icon'
                         :size='i.size'
-                        :style="{color: i.color}"
+                        :style='{color: i.iconColor}'
                       ></ft-icon-dynamic>
                     </span>
                     <span class='drop-name txt'>{{ i.name }}</span>
@@ -127,7 +127,8 @@ import { ListIcon } from '@/interfaces/app'
   components: {
     'icon-drop': IconDropdown,
     'ft-icon-dynamic': DynamicFontawesome,
-    'list-render': () => import('@/components/TheAppBar/AppnavSections/AppnavListrenderer.vue'),
+    'list-render': () => import(/* webpackPrefetch: true */
+     '@/components/TheAppBar/AppnavSections/AppnavComponents/AppnavListrenderer.vue'),
   },
 })
 export default class AppnavLink extends Vue {
@@ -260,33 +261,7 @@ export default class AppnavLink extends Vue {
   background-color: #282828 !important;
 }
 
-.dropdown {
-  overflow: hidden;
-}
-
-.drop-el {
-  height: 35px;
-  width: 100%;
-  transition: background-color .3s;
-}
-
-.drop-icon {
-  width: 39px;
-  text-align: center;
-}
-
-.drop-name {
-  white-space: nowrap;
-  margin-right: 12px;
-}
-
-.drop-el.light:hover {
-  background-color: #E6E6E6;
-}
-
-.drop-el.dark:hover {
-  background-color: #282828;
-}
-
 </style>
 
+<style scoped src='@/assets/css/appLists.css'>
+</style>

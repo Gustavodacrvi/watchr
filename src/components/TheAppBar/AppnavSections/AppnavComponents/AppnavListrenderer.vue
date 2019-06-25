@@ -41,7 +41,8 @@ import { ListIcon } from '@/interfaces/app'
 @Component({
   components: {
     'sortable': Sortable,
-    'appnav-link': () => import('@/components/TheAppBar/AppnavSections/AppnavElement.vue'),
+    'appnav-link': () => import(/* webpackPrefetch: true */
+     '@/components/TheAppBar/AppnavSections/AppnavComponents/AppnavElement.vue'),
   },
 })
 export default class AppnavLinkrenderer extends Vue {

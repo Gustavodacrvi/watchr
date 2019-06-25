@@ -48,8 +48,8 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Getter, State, Mutation, namespace } from 'vuex-class'
 
-import Division from '@/components/TheAppBar/AppnavSections/AppnavDivision.vue'
-import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavListrenderer.vue'
+import Division from '@/components/TheAppBar/AppnavSections/AppnavComponents/AppnavDivision.vue'
+import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavComponents/AppnavListrenderer.vue'
 
 import appUtil from '@/utils/app'
 import labelUtil from '@/utils/label'
