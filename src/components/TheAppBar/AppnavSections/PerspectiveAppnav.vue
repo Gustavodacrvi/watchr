@@ -33,11 +33,9 @@
       content-obj-property-name='name'
       active-content='perspective'
       v-model='smart'
-      :right-pan-gesture='rightPanEvent'
       :icons='icons'
       :options='options'
       @input='saveSmart'
-      @panevent='pan'
       @selected="select"
     ></renderer>
   </div>
@@ -52,7 +50,7 @@ import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavListrender
 
 import appUtil from '@/utils/app'
 
-import { Perspective, PanGesture, ListIcon } from '@/interfaces/app'
+import { Perspective, ListIcon } from '@/interfaces/app'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faThumbtack, faSlash } from '@fortawesome/free-solid-svg-icons'
@@ -78,11 +76,6 @@ export default class PerspectiveAppnav extends Vue {
   perspective: string = 'Today'
   smart: Perspective[] = []
   selected: Perspective[] = []
-  rightPanEvent: PanGesture = {
-    icon: 'thumbtack',
-    iconColor: 'white',
-    distance: 100,
-  }
 
   created() {
     this.smart = this.smartPerspectives
@@ -123,10 +116,6 @@ export default class PerspectiveAppnav extends Vue {
   }
   select(pers: Perspective[]) {
     this.selected = pers
-  }
-  pan(obj: any): void {
-    if (obj.type === 'right')
-      this.toggleBindPerspectiveById(obj.id)
   }
   saveSmart() {
     this.updatePerspectives(appUtil.updateArrayOrderFromFilteredArray(this.perspectives, this.smart))

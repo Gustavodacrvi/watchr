@@ -1,7 +1,6 @@
 <template>
   <div class='dropdown-input'>
     <input v-bind='attrs'
-      :tabindex='tabindex'
       class='margin input txt round-border gray'
       :placeholder='placeholder'
       type='text'

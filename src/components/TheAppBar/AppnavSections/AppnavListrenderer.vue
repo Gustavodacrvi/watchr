@@ -3,9 +3,9 @@
     <sortable
       v-model='arr'
       :animation='300'
-      :disabled='disabled'
+      :disabled='!sort'
       :multi-drag='true'
-      :delayOnTouchOnly='true'
+      handle='.handle'
       @input='save'
       @end='update'
       @select='select'
@@ -16,13 +16,10 @@
           :key='el.id'
           :obj='el'
           :content-obj-property-name='contentObjPropertyName' :sub-elements-property-name='subElementsPropertyName' :active-content='activeContent'
-          :left-pan-gesture='leftPanGesture' :right-pan-gesture='rightPanGesture'
-          :options='options(el)'
           :icons='icons(el)'
           :optionsrender='options'
           :iconsrender='icons'
           @update='update'
-          @panevent='panevent'
         ></appnav-link>
       </transition-group>
     </sortable>
@@ -35,7 +32,8 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
 import Sortable from '@/components/Sortablejs.vue'
 
-import { PanGesture, ListIcon } from '@/interfaces/app'
+import { ListIcon } from '@/interfaces/app'
+import { Getter } from 'vuex-class';
 
 @Component({
   components: {
@@ -49,12 +47,13 @@ export default class AppnavLinkrenderer extends Vue {
   @Prop({default: '', type: String}) activeContent!: string
   @Prop({default: '', type: String}) subElementsPropertyName!: string
   @Prop({default: false, type: Boolean}) disabled!: boolean
-  @Prop(Object) leftPanGesture!: PanGesture
-  @Prop(Object) rightPanGesture!: PanGesture
   @Prop({default: () => [], type: Function}) icons!: (obj: any) => ListIcon[]
   @Prop({default: () => [], type: Function}) options!: (obj: any) => ListIcon[]
 
+  @Getter isDesktop!: boolean
+
   arr: any[] = this.value
+  selected: any[] = []
 
   getSelectedElements(event: any): any[] {
     const indexes: number[] = event.newIndicies.map((el: any) => el.index)
@@ -81,10 +80,7 @@ export default class AppnavLinkrenderer extends Vue {
     }
     this.$emit('input', this.arr)
   }
-  panevent(obj: any) {
-    this.$emit('panevent', obj)
-  }
-
+  
   save() {
     this.$emit('input', this.arr)
     this.$emit('update', {arr: this.arr})
