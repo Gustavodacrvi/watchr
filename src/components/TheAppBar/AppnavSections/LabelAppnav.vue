@@ -138,6 +138,11 @@ export default class OverviewAppnav extends Vue {
         size: 'lg',
         callback: (lab: Label) => {
           this.deleteLabelsById([lab.id])
+          this.pushAlert({
+            name: `Label <strong>${lab.name}</strong> was successfully deleted`,
+            duration: 2.5,
+            type: 'success',
+          })
         },
       },
       {
@@ -183,36 +188,45 @@ export default class OverviewAppnav extends Vue {
     let increment: 1 | 0 = 0
     if (position === 'below')
       increment = 1
+    const error = () => {
+      this.pushAlert({
+        name: `There is already another tag with the name ${name}`,
+        duration: 2.5,
+        type: 'error',
+      })
+    }
     if (lab.parentId === null) {
       const subLabel: Label | undefined = this.labels.find((el: Label) => el.name === name)
       if (subLabel)
-        this.pushAlert({
-          name: `There is already another tag with the name <strong>${name}</strong>`,
-          duration: 2.5,
-          type: 'error',
-        })
+        error()
       else {
         const index: number = this.labels.findIndex((el: Label) => el.id === lab.id)
         this.addRootLabel({
           labelName: name,
           position: index + increment,
         })
+        this.pushAlert({
+          name: `Label <strong>${name}</strong> was successfully added`,
+          duration: 2.5,
+          type: 'error',
+        })
       }
     } else {
       const parent: Label = this.getLabelNodeById(lab.parentId) as Label
       const subLabel: Label | undefined = parent.subLabels.find((el: Label) => el.name === name)
       if (subLabel !== undefined)
-        this.pushAlert({
-          name: `There is already another tag with the name ${name}`,
-          duration: 2.5,
-          type: 'error',
-        })
+        error()
       else {
         const index: number = parent.subLabels.findIndex((el: Label) => el.id === lab.id)
         this.addSubLabelById({
           parentId: parent.id,
           subLabelName: name,
           position: index + increment,
+        })
+        this.pushAlert({
+          name: `Sublabel <strong>${name}</strong> was successfully added`,
+          duration: 2.5,
+          type: 'error',
         })
       }
     }
@@ -233,6 +247,11 @@ export default class OverviewAppnav extends Vue {
   }
   deleteSelectedLabels() {
     this.deleteLabelsById(this.selected.map(el => el.id))
+    this.pushAlert({
+      name: `The selected labels were successfully deleted`,
+      duration: 2.5,
+      type: 'success',
+    })
   }
 
   @Watch('labels')
