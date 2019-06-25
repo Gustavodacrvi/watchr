@@ -20,16 +20,26 @@ export default class SortableComponent extends Vue {
   @Prop({default: 150, type: Number}) animation!: number
   @Prop({default: false, type: Boolean}) multiDrag!: boolean
   @Prop({default: 'sortable-selected'}) selectedClass!: string
-  @Prop(String) public readonly group!: string
-  @Prop(String) public readonly handle!: string
+  @Prop(String) group!: string
+  @Prop(String) handle!: string
+  @Prop(Array) selected!: any[]
 
   els: HTMLElement[] = []
+  clickedOnEl: boolean = false
 
   mounted() {
-    this.mount()
+    if (!this.disabled) {
+      this.mount()
+      this.select()
+    }
+  }
+  beforeDestroy() {
+    this.removeEventListeners()
   }
 
   mount() {
+    this.removeEventListeners()
+    this.addEventListeners()
     this.els = this.getChilds()
 
     const obj: any = {
@@ -44,13 +54,6 @@ export default class SortableComponent extends Vue {
       },
       onEnd: (e: any) => {
         this.$emit('end', e)
-      },
-      onSelect: (e: any) => {
-        this.$emit('select', e)
-      },
-
-      onDeselect: (e: any) => {
-        this.$emit('deselect', e)
       },
     }
     if (this.handle)
@@ -83,10 +86,54 @@ export default class SortableComponent extends Vue {
       return true
     return false
   }
+  deselecteAll() {
+    this.els = this.getChilds()
+    for (const el of this.els)
+      Sortable.utils.deselect(el)
+  }
+  select() {
+    for (let i = 0; i < this.value.length; i++)
+      for (const el of this.selected)
+        if (this.value[i].id === el.id)
+          Sortable.utils.select(this.els[i])
+  }
+  addEventListeners() {
+    const childs = this.getChilds()
+    for (const el of childs)
+      el.addEventListener('click', this.elClick)
+    document.addEventListener('click', this.bodyClick)
+  }
+  removeEventListeners() {
+    const childs = this.getChilds()
+    for (const el of childs)
+      el.removeEventListener('click', this.elClick)
+    document.removeEventListener('click', this.bodyClick)
+  }
+  bodyClick() {
+   if (!this.clickedOnEl)
+     this.$emit('empty')
+  }
+  elClick() {
+    const NUMBER_OF_MILISECONDS_TO_WAIT_EL_CLICK = 10
+    this.clickedOnEl = true
+    setTimeout(() => {
+      this.clickedOnEl = false
+    }, NUMBER_OF_MILISECONDS_TO_WAIT_EL_CLICK)
+  }
 
   @Watch('disabled')
   onChange() {
-    this.mount()
+    if (!this.disabled) {
+      this.deselecteAll()
+      this.select()
+    }
+  }
+  @Watch('selected')
+  onSelectedChange() {
+    if (!this.disabled) {
+      this.deselecteAll()
+      this.select()
+    }
   }
 }
 
