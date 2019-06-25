@@ -31,7 +31,7 @@
     </transition>
     <renderer
       content-obj-property-name='name'
-      active-content='perspective'
+      :active-content='perspective'
       v-model='smart'
       :icons='icons'
       :options='options'
@@ -68,8 +68,7 @@ export default class PerspectiveAppnav extends Vue {
   @State theme!: string
   @perspective.State perspectives!: Perspective[]
   @perspective.Getter smartPerspectives!: Perspective[]
-  @perspective.Action toggleBindPerspectiveById!: (id: string) => void
-  @perspective.Action unBindPerspectives!: (ids: string[]) => void
+  @perspective.Action toggleBindPerspectivesById!: (obj: {ids: string[], binded?: boolean | undefined}) => void
   @perspective.Action updatePerspectives!: (perspectives: Perspective[]) => void
   @perspective.Action bindPerspectives!: (ids: string[]) => void
 
@@ -82,10 +81,16 @@ export default class PerspectiveAppnav extends Vue {
   }
 
   unbindSelectedIcons() {
-    this.unBindPerspectives(this.selected.map(el => el.id))
+    this.toggleBindPerspectivesById({
+      ids: this.selected.map(el => el.id),
+      binded: false,
+    })
   }
   bindSelectedIcons() {
-    this.bindPerspectives(this.selected.map(el => el.id))
+    this.toggleBindPerspectivesById({
+      ids: this.selected.map(el => el.id),
+      binded: true,
+    })
   }
   icons(pers: Perspective): ListIcon[] {
     if (pers.binded)
@@ -109,7 +114,7 @@ export default class PerspectiveAppnav extends Vue {
         iconColor: '',
         size: 'lg',
         callback: (per: Perspective) => {
-          this.toggleBindPerspectiveById(per.id)
+          this.toggleBindPerspectivesById({ids: [per.id]})
         },
       },
     ] as ListIcon[]

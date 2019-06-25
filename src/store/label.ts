@@ -39,6 +39,7 @@ interface Actions {
   // tslint:disable-next-line:max-line-length
   addRootLabel: (context: ActionContext, obj: {labelName: string, position: number | undefined}) => void
   setDefaultData: (context: ActionContext) => void
+  editLabelNameById: (context: ActionContext, obj: {id: string, name: string}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -175,6 +176,12 @@ export default {
           state.labels.splice(position, 0, lab)
         commit('save')
       }
+    },
+    editLabelNameById({state, commit, getters}, {id, name}) {
+      const getLabelNodeById = getters.getLabelNodeById as any
+      const label: Label = getLabelNodeById(id)
+      label.name = name
+      commit('save')
     },
   } as Actions,
 } as VuexModule

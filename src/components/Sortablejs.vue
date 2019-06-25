@@ -114,7 +114,7 @@ export default class SortableComponent extends Vue {
      this.$emit('empty')
   }
   elClick() {
-    const NUMBER_OF_MILISECONDS_TO_WAIT_EL_CLICK = 10
+    const NUMBER_OF_MILISECONDS_TO_WAIT_EL_CLICK = 1
     this.clickedOnEl = true
     setTimeout(() => {
       this.clickedOnEl = false

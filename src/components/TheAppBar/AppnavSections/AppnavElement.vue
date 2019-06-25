@@ -7,7 +7,7 @@
       @click="$emit('click', obj)"
     >
       <div
-        class='content gray'
+        class='content content-handle gray'
         ref='content'
         :class='contentClass'
       >
@@ -81,15 +81,15 @@
               </div>
             </icon-drop>
           </span>
-          <transition name='fade'>
-            <span v-if='!isSelectionEmpty' class='nav-icon handle'>
-              <ft-icon-dynamic
-                class='icon margin pointer txt'
-                icon='grip-vertical'
-                size='lg'
-              ></ft-icon-dynamic>
-            </span>
-          </transition>
+        </transition>
+        <transition name='fade'>
+          <span v-if='!isSelectionEmpty' class='nav-icon handle'>
+            <ft-icon-dynamic
+              class='icon margin pointer txt'
+              icon='grip-vertical'
+              size='lg'
+            ></ft-icon-dynamic>
+          </span>
         </transition>
       </span>
     </div>
@@ -171,7 +171,7 @@ export default class AppnavLink extends Vue {
   }
   get showOptionsIcon() {
     return this.options && this.options.length > 0 && (!this.isDesktop
-     || ((this.isDesktop && this.optionsOnHover)))
+     || (this.isDesktop && this.optionsOnHover))
   }
   get renderSublists() {
     return this.showingSublists && this.obj[this.subElementsPropertyName]

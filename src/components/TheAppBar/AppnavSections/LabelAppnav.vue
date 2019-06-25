@@ -1,20 +1,23 @@
 <template>
   <div>
+
     <renderer
       content-obj-property-name='name'
       sub-elements-property-name='subLabels'
       v-model='smart'
       :active-content='label'
       @input='saveSmart'
+      @selected='selectSmart'
     ></renderer>
     <division name='CUSTOM LABELS'>
       <renderer v-if='nonSmartLabels'
         content-obj-property-name='name'
         sub-elements-property-name='subLabels'
         v-model='nonSmart'
-        :active-el='label'
+        :active-content='label'
         :options='options'
         @input='saveNonSmart'
+        @selected='selectNonSmart'
       ></renderer>
     </division>
   </div>
@@ -57,10 +60,13 @@ export default class OverviewAppnav extends Vue {
   @label.Action deleteLabelById!: (id: string) => void
   @label.Action addSubLabelById!: (obj: {parentId: string, subLabelName: string, position?: number}) => void
   @label.Action addRootLabel!: (obj: {labelName: string, position?: number}) => void
+  @label.Action editLabelNameById!: (obj: {id: string, name: string}) => void
 
   label: string = ''
   smart: Label[] = []
   nonSmart: Label[] = []
+  selected: Label[] = []
+  selectedType: 'smart' | 'nonSmart' = 'smart'
 
   created() {
     this.label = this.smartLabels[0].name
@@ -80,6 +86,25 @@ export default class OverviewAppnav extends Vue {
           const strPath: string = labelUtil.getStringPathFromArr(path)
           this.pushPopUp('LabeladderPopup')
           this.pushPopUpPayload(strPath + ':')
+        },
+      },
+      {
+        name: 'edit label name',
+        icon: 'edit',
+        iconColor: '',
+        size: 'lg',
+        callback: (lab: Label) => {
+          this.pushPopUp('SimpleadderPopup')
+          this.pushPopUpPayload({
+            popUpTitle: 'Edit label name',
+            buttonName: 'Edit label',
+            inputPlaceholder: lab.name,
+            inputMaximumCharacters: 50,
+            callback: (input: string): void => {
+              this.editLabelNameById({id: lab.id, name: input})
+              this.pushPopUp('')
+            },
+          } as SimpleAdder)
         },
       },
       {
@@ -174,6 +199,14 @@ export default class OverviewAppnav extends Vue {
   saveSmart() {
     this.updateLabels(appUtil.updateArrayOrderFromFilteredArray(this.labels, this.smart))
   }
+  selectNonSmart(labels: Label[]) {
+    this.selected = labels
+    this.selectedType = 'nonSmart'
+  }
+  selectSmart(labels: Label[]) {
+    this.selected = labels
+    this.selectedType = 'smart'
+  }
 
   @Watch('labels')
   onLabelsChange() {
@@ -183,3 +216,6 @@ export default class OverviewAppnav extends Vue {
 }
 
 </script>
+
+<style scoped src='@/assets/css/appBarMenu.css'>
+</style>

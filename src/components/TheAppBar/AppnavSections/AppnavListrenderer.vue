@@ -17,6 +17,7 @@
           :obj='el'
           :content-obj-property-name='contentObjPropertyName' :sub-elements-property-name='subElementsPropertyName' :active-content='activeContent'
           :icons='icons(el)'
+          :options='options(el)'
           :optionsrender='options'
           :iconsrender='icons'
           :is-selection-empty='isSelectionEmpty'
@@ -87,6 +88,9 @@ export default class AppnavLinkrenderer extends Vue {
       return {
         ['handle']: '.handle',
       }
+    return {
+      ['handle']: '.content-handle',
+    }
   }
 
   update({arr, id}: {arr: any[], id: string}) {

@@ -1,5 +1,16 @@
 <template>
   <div>
+    <transition
+      name='fade'
+      mode='out-in'
+    >
+      <div
+        class='header title'
+        key='header-title'
+      >
+        <span class='title'>OVERVIEW</span>
+      </div>
+    </transition>
     <renderer
       content-obj-property-name='name'
       v-model='smartBindedPerspectives'
@@ -44,3 +55,6 @@ export default class OverviewAppnav extends Vue {
 }
 
 </script>
+
+<style scoped src='@/assets/css/appBarMenu.css'>
+</style>

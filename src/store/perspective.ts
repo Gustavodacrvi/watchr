@@ -28,9 +28,7 @@ interface ActionContext {
 interface Actions {
   setDefaultData: (context: ActionContext) => void
   updatePerspectives: (context: ActionContext, perspectives: Perspective[]) => void
-  toggleBindPerspectiveById: (context: ActionContext, id: string) => void
-  bindPerspectives: (context: ActionContext, ids: string[]) => void
-  unBindPerspectives: (context: ActionContext, ids: string[]) => void
+  toggleBindPerspectiveById: (context: ActionContext, obj: {ids: string[], binded: boolean | undefined}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -41,11 +39,11 @@ export default {
     perspectives: [],
   } as States,
   mutations: {
-    save(state: States): void {
+    save(state: States) {
       if (!localStorage.getItem('watchrIsLogged'))
         localStorage.setItem('watchrPerspectives', JSON.stringify(state.perspectives))
     },
-    getSavedData(state: States): void {
+    getSavedData(state: States) {
       if (!localStorage.getItem('watchrIsLogged'))
         state.perspectives = JSON.parse(localStorage.getItem('watchrPerspectives') as any)
     },
@@ -59,7 +57,7 @@ export default {
     },
   } as Getters,
   actions: {
-    setDefaultData({state, commit}): void {
+    setDefaultData({state, commit}) {
       state.perspectives = [
         {name: 'All stuff', binded: false, smart: true, icon: 'list', iconColor: '#86e283', id: uuid(),
         hasToBeEmpty: [], showTaskNumber: false, showWhenNotEmpty: false},
@@ -78,36 +76,23 @@ export default {
       ]
       commit('save')
     },
-    updatePerspectives({state, commit}, perspectives: Perspective[]): void {
+    updatePerspectives({state, commit}, perspectives: Perspective[]) {
       state.perspectives = perspectives
       commit('save')
     },
-    unBindPerspectives({state, commit}, ids: string[]): void {
+    toggleBindPerspectiveById({state, commit}, {ids, binded}) {
       for (const id of ids) {
         const pers: Perspective | undefined = state.perspectives.find(el => {
           return el.id === id
         })
         if (pers)
-          pers.binded = false
+          if (binded)
+            pers.binded = true
+          else if (binded === false)
+            pers.binded = false
+          else
+            pers.binded = pers.binded
       }
-      commit('save')
-    },
-    bindPerspectives({state, commit}, ids: string[]): void {
-      for (const id of ids) {
-        const pers: Perspective | undefined = state.perspectives.find(el => {
-          return el.id === id
-        })
-        if (pers)
-          pers.binded = true
-      }
-      commit('save')
-    },
-    toggleBindPerspectiveById({state, commit}, id: string): void {
-      const pers: Perspective | undefined = state.perspectives.find((el: Perspective) => {
-        return el.id === id
-      })
-      if (pers)
-        pers.binded = !pers.binded
       commit('save')
     },
   } as Actions,
