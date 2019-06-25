@@ -1,6 +1,26 @@
 <template>
   <div>
-
+    <transition
+      name='fade'
+      mode='out-in'
+    >
+      <div v-if="selected.length === 0 || selectedType === 'smart'"
+        class='header title'
+        key='header-title'
+      >
+        <span class='title'>LABELS</span>
+      </div>
+      <div v-else
+        class='header options'
+        key='header-options'
+      >
+        <ft-icon
+          class='header-icon icon txt pointer'
+          icon='backspace'
+          @click='deleteSelectedLabels'
+        />
+      </div>
+    </transition>
     <renderer
       content-obj-property-name='name'
       sub-elements-property-name='subLabels'
@@ -35,7 +55,11 @@ import appUtil from '@/utils/app'
 import labelUtil from '@/utils/label'
 
 import { Label, ListIcon, SimpleAdder, Alert } from '@/interfaces/app'
-import LabelAdder from '../../Alerts.vue'
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faBackspace } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faBackspace)
 
 const label = namespace('label')
 
@@ -57,7 +81,7 @@ export default class OverviewAppnav extends Vue {
   @label.Getter labelPathById!: (id: string) => string[]
   @label.Getter getLabelNodeById!: (id: string | null) => Label | undefined
   @label.Action updateLabels!: (label: Label[]) => void
-  @label.Action deleteLabelById!: (id: string) => void
+  @label.Action deleteLabelsById!: (ids: string[]) => void
   @label.Action addSubLabelById!: (obj: {parentId: string, subLabelName: string, position?: number}) => void
   @label.Action addRootLabel!: (obj: {labelName: string, position?: number}) => void
   @label.Action editLabelNameById!: (obj: {id: string, name: string}) => void
@@ -113,7 +137,7 @@ export default class OverviewAppnav extends Vue {
         iconColor: '',
         size: 'lg',
         callback: (lab: Label) => {
-          this.deleteLabelById(lab.id)
+          this.deleteLabelsById([lab.id])
         },
       },
       {
@@ -206,6 +230,9 @@ export default class OverviewAppnav extends Vue {
   selectSmart(labels: Label[]) {
     this.selected = labels
     this.selectedType = 'smart'
+  }
+  deleteSelectedLabels() {
+    this.deleteLabelsById(this.selected.map(el => el.id))
   }
 
   @Watch('labels')

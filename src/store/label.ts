@@ -33,13 +33,13 @@ interface ActionContext {
 
 interface Actions {
   addLabelFromArrayPath: (context: ActionContext, path: string[]) => void
-  deleteLabelById: (context: ActionContext, id: string) => void
   // tslint:disable-next-line:max-line-length
   addSubLabelById: (context: ActionContext, {parentId, subLabelName, position}: {parentId: string, subLabelName: string, position: number | undefined}) => void
   // tslint:disable-next-line:max-line-length
   addRootLabel: (context: ActionContext, obj: {labelName: string, position: number | undefined}) => void
   setDefaultData: (context: ActionContext) => void
   editLabelNameById: (context: ActionContext, obj: {id: string, name: string}) => void
+  deleteLabelsById: (context: ActionContext, ids: string[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -137,8 +137,9 @@ export default {
       walk(state.labels, nodePath.slice(), null)
       commit('save')
     },
-    deleteLabelById({state, commit}, id: string) {
-      appUtils.deleteNodeById(state.labels, 'subLabels', id)
+    deleteLabelsById({state, commit}, ids) {
+      for (const id of ids)
+        appUtils.deleteNodeById(state.labels, 'subLabels', id)
       commit('save')
     },
     addSubLabelById({state, commit, getters}, {subLabelName, parentId, position}) {

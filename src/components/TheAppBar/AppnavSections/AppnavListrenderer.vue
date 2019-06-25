@@ -71,7 +71,7 @@ export default class AppnavLinkrenderer extends Vue {
     }
   }
   empty() {
-    if (!this.disabled) {
+    if (!this.disabled && this.selected.size > 0) {
       this.selected.clear()
       this.selectedElements = Array.from(this.selected)
       this.$emit('selected', this.selectedElements)
