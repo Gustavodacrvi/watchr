@@ -36,6 +36,7 @@
       :right-pan-gesture='rightPanEvent'
       :icons='icons'
       :options='options'
+      @input='saveSmart'
       @panevent='pan'
       @selected="select"
     ></renderer>
@@ -127,10 +128,13 @@ export default class PerspectiveAppnav extends Vue {
     if (obj.type === 'right')
       this.toggleBindPerspectiveById(obj.id)
   }
-
-  @Watch('smart')
-  onChange() {
+  saveSmart() {
     this.updatePerspectives(appUtil.updateArrayOrderFromFilteredArray(this.perspectives, this.smart))
+  }
+
+  @Watch('perspectives')
+  onPerspectivesChange() {
+    this.smart = this.smartPerspectives
   }
 }
 

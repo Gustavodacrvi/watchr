@@ -6,6 +6,7 @@
       :disabled='disabled'
       :multi-drag='true'
       :delayOnTouchOnly='true'
+      @input='save'
       @end='update'
       @select='select'
       @deselect='deselect'
@@ -78,17 +79,19 @@ export default class AppnavLinkrenderer extends Vue {
       })
       newObj[this.subElementsPropertyName] = arr
     }
-    this.$emit('update', {arr: this.arr, id})
     this.$emit('input', this.arr)
   }
   panevent(obj: any) {
     this.$emit('panevent', obj)
   }
 
-  @Watch('arr')
-  onReorder() {
+  save() {
     this.$emit('input', this.arr)
     this.$emit('update', {arr: this.arr})
+  }
+  @Watch('value')
+  onValueChange() {
+    this.arr = this.value
   }
 }
 
