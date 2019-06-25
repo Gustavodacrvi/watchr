@@ -1,5 +1,6 @@
 
-import { Label } from '@/interfaces/app'
+import { Label, VuexModule } from '@/interfaces/app'
+import appUtils from '@/utils/app'
 
 import uuid from 'uuid'
 
@@ -17,7 +18,6 @@ interface Getters {
   getLabelNodeFromArrayPath: () => (nodePath: string[]) => Label | undefined
   labelPathById: () => (id: string) => string[] | undefined
   getLabelNodeById: () => (id: string) => Label
-  getParentLabelById: () => (id: string) => Label | undefined
   smartLabels: () => Label[]
   nonSmartLabels: () => Label[]
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
@@ -38,6 +38,7 @@ interface Actions {
   addSubLabelById: (context: ActionContext, {parentId, subLabelName, position}: {parentId: string, subLabelName: string, position: number | undefined}) => void
   // tslint:disable-next-line:max-line-length
   addRootLabel: (context: ActionContext, obj: {labelName: string, position: number | undefined}) => void
+  setDefaultData: (context: ActionContext) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -72,38 +73,7 @@ export default {
       return walk(state.labels, nodePath.slice())
     },
     getLabelNodeById: (state: States) => (id: string): Label | undefined => {
-      const walk = (labels: Label[]): Label | undefined => {
-        for (const lab of labels) {
-          if (lab.id === id)
-            return lab
-          const label: Label | undefined = walk(lab.subLabels)
-          if (label !== undefined)
-            return label
-        }
-        return undefined
-      }
-      return walk(state.labels)
-    },
-    getParentLabelById: (state: States) => (id: string): Label | undefined => {
-      const rootLabel: Label | undefined = state.labels.find((el: Label) => el.id === id)
-      if (rootLabel !== undefined)
-        return undefined
-      const walk = (labels: Label[], parent: Label): Label | undefined => {
-        for (const lab of labels) {
-          if (lab.id === id)
-            return parent
-          const node: Label | undefined = walk(lab.subLabels, lab)
-          if (node !== undefined)
-            return node
-        }
-        return undefined
-      }
-      for (const lab of state.labels) {
-        const node: Label | undefined = walk(lab.subLabels, lab)
-        if (node !== undefined)
-          return node
-      }
-      return undefined
+      return appUtils.getNodeById(state.labels, 'subLabels', id)
     },
     labelPathById: (state: States) => (id: string): string[] | undefined => {
       const walk = (labels: Label[], path: string[]): string[] | undefined => {
@@ -132,8 +102,8 @@ export default {
   actions: {
     setDefaultData({state, commit}) {
       state.labels = [
-        {name: 'Someday', id: uuid(), smart: true, subLabels: []},
-        {name: 'Anytime', id: uuid(), smart: true, subLabels: []},
+        {name: 'Someday', id: uuid(), smart: true, subLabels: [], parentId: null},
+        {name: 'Anytime', id: uuid(), smart: true, subLabels: [], parentId: null},
       ]
       commit('save')
     },
@@ -142,7 +112,7 @@ export default {
       commit('save')
     },
     addLabelFromArrayPath({state, commit}, nodePath: string[]) {
-      const walk = (labels: Label[], path: string[]): void => {
+      const walk = (labels: Label[], path: string[], parentId: string | null): void => {
         const targetLabelName: string | undefined = path.shift()
         if (targetLabelName !== undefined) {
           const label: Label | undefined = labels.find((el: Label) => {
@@ -155,35 +125,22 @@ export default {
                 name: targetLabelName,
                 id: uuid(),
                 subLabels: [],
+                parentId,
               })
-              walk(labels[labels.length - 1].subLabels, path)
+              walk(labels[labels.length - 1].subLabels, path, labels[labels.length - 1].id)
             }
           } else
-            walk(label.subLabels, path)
+            walk(label.subLabels, path, label.id)
         }
       }
-      walk(state.labels, nodePath.slice())
+      walk(state.labels, nodePath.slice(), null)
       commit('save')
     },
     deleteLabelById({state, commit}, id: string) {
-      const walk = (labels: Label[]): boolean => {
-        let i = 0
-        for (const lab of labels) {
-          if (lab.id === id) {
-            labels.splice(i, 1)
-            return true
-          }
-          const found: boolean = walk(lab.subLabels)
-          if (found)
-            return true
-          i++
-        }
-        return false
-      }
-      walk(state.labels)
+      appUtils.deleteNodeById(state.labels, 'subLabels', id)
       commit('save')
     },
-    addSubLabelById({state, commit, getters}, {subLabelName, parentId, position}): void {
+    addSubLabelById({state, commit, getters}, {subLabelName, parentId, position}) {
       const getLabelNodeById = getters.getLabelNodeById as any
       const parentLabel: Label = getLabelNodeById(parentId)
       const subLabel: Label | undefined = parentLabel.subLabels.find((el: Label) => el.name === subLabelName)
@@ -193,6 +150,7 @@ export default {
           name: subLabelName,
           id: uuid(),
           subLabels: [],
+          parentId,
         }
         if (position === undefined)
           parentLabel.subLabels.push(label)
@@ -209,6 +167,7 @@ export default {
           name: labelName,
           id: uuid(),
           subLabels: [],
+          parentId: null,
         }
         if (position === undefined)
           state.labels.push(lab)
@@ -218,4 +177,4 @@ export default {
       }
     },
   } as Actions,
-}
+} as VuexModule
