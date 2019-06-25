@@ -4,6 +4,7 @@
       class='round-border visible'
       @mouseenter='optionsOnHover = true'
       @mouseleave='optionsOnHover = false'
+      @click="$emit('click', obj)"
     >
       <div
         class='content gray'
@@ -26,13 +27,13 @@
         </span>
         <span class='txt name'>{{ obj[contentObjPropertyName] }}</span>
       </div>
-      <span class='icons handle'>
+      <span class='icons'>
         <span v-for='i in icons'
           class='nav-icon'
           :key='i.icon'
         >
           <ft-icon-dynamic
-            class='angle-right margin txt faded'
+            class='angle-right margin txt'
             :icon='i.icon'
             :size='i.size'
             :class='{sublist: showingSublists}'
@@ -80,6 +81,15 @@
               </div>
             </icon-drop>
           </span>
+          <transition name='fade'>
+            <span v-if='!isSelectionEmpty' class='nav-icon handle'>
+              <ft-icon-dynamic
+                class='icon margin pointer txt'
+                icon='grip-vertical'
+                size='lg'
+              ></ft-icon-dynamic>
+            </span>
+          </transition>
         </transition>
       </span>
     </div>
@@ -107,9 +117,9 @@ import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import IconDropdown from '@/components/IconDropdown.vue'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEllipsisV, faAngleRight, faThumbtack, faDownload } from '@fortawesome/free-solid-svg-icons'
+import { faEllipsisV, faAngleRight, faThumbtack, faDownload, faGripVertical } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faEllipsisV, faAngleRight, faThumbtack)
+library.add(faEllipsisV, faAngleRight, faThumbtack, faGripVertical)
 
 import { ListIcon } from '@/interfaces/app'
 
@@ -129,6 +139,7 @@ export default class AppnavLink extends Vue {
   @Prop(Array) options!: ListIcon[]
   @Prop({default: () => [], type: Function}) iconsrender!: (obj: any) => ListIcon[]
   @Prop({default: () => [], type: Function}) optionsrender!: (obj: any) => ListIcon[]
+  @Prop(Boolean) isSelectionEmpty!: boolean
 
   @State theme!: string
   @Getter isDesktop!: boolean

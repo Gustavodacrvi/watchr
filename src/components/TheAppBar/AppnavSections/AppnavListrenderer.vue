@@ -2,14 +2,14 @@
   <div>
     <sortable
       v-model='arr'
+      v-bind='handle'
       :animation='300'
-      :disabled='!sort'
+      :disabled='disabled'
       :multi-drag='true'
-      handle='.handle'
+      :selected='selectedElements'
       @input='save'
       @end='update'
-      @select='select'
-      @deselect='deselect'
+      @empty='empty'
     >
       <transition-group name='fade'>
         <appnav-link v-for='el in arr'
@@ -19,7 +19,9 @@
           :icons='icons(el)'
           :optionsrender='options'
           :iconsrender='icons'
+          :is-selection-empty='isSelectionEmpty'
           @update='update'
+          @click='select'
         ></appnav-link>
       </transition-group>
     </sortable>
@@ -29,11 +31,11 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 
 import Sortable from '@/components/Sortablejs.vue'
 
 import { ListIcon } from '@/interfaces/app'
-import { Getter } from 'vuex-class';
 
 @Component({
   components: {
@@ -53,24 +55,40 @@ export default class AppnavLinkrenderer extends Vue {
   @Getter isDesktop!: boolean
 
   arr: any[] = this.value
-  selected: any[] = []
+  selected: Set<string> = new Set()
+  selectedElements: any[] = []
+  sorting: boolean = true
 
-  getSelectedElements(event: any): any[] {
-    const indexes: number[] = event.newIndicies.map((el: any) => el.index)
-    const els: any[] = []
-    for (const i of indexes)
-      els.push(this.value[i])
-    return els
+  select(obj: any) {
+    if (!this.disabled) {
+      if (this.selected.has(obj))
+        this.selected.delete(obj)
+      else
+        this.selected.add(obj)
+      this.selectedElements = Array.from(this.selected)
+      this.$emit('selected', this.selectedElements)
+    }
   }
-  select(e: any) {
-    this.$emit('selected', this.getSelectedElements(e))
+  empty() {
+    if (!this.disabled) {
+      this.selected.clear()
+      this.selectedElements = Array.from(this.selected)
+      this.$emit('selected', this.selectedElements)
+    }
   }
-  deselect(e: any) {
-    const INTERVAL_REQUIRED_TO_LISTEN_TO_ICON_CLICK_EVENT = 1
-    setTimeout(() => {
-      this.$emit('selected', this.getSelectedElements(e))
-    }, INTERVAL_REQUIRED_TO_LISTEN_TO_ICON_CLICK_EVENT)
+
+  get isSelectionEmpty(): boolean {
+    if (this.isDesktop)
+      return true
+    return this.selectedElements.length === 0
   }
+  get handle(): object | undefined {
+    if (!this.isDesktop)
+      return {
+        ['handle']: '.handle',
+      }
+  }
+
   update({arr, id}: {arr: any[], id: string}) {
     if (id) {
       const newObj = this.arr.find((el: any) => {
@@ -80,7 +98,6 @@ export default class AppnavLinkrenderer extends Vue {
     }
     this.$emit('input', this.arr)
   }
-  
   save() {
     this.$emit('input', this.arr)
     this.$emit('update', {arr: this.arr})

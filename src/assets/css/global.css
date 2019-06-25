@@ -20,17 +20,8 @@ body, button, input {
   cursor: pointer;
 }
 
-.icon:hover .svg-inline--fa {
+.icon:hover .svg-inline--fa, .icon:hover {
   color: #fc7d7d;
-}
-
-.icon:hover {
-  color: #fc7d7d;
-}
-
-.icon.faded .svg-inline--fa {
-  color: #666666 !important;
-  opacity: .4;  
 }
 
 .main-color, h1, h2, h3, h4, h5, h6 {
