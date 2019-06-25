@@ -1,19 +1,19 @@
 
 export interface VuexModule {
   state: {
-    [key: string]: any
+    [key: string]: any,
   },
   mutations: {
-    save: (...any: any[]) => void
-    getSavedData: (...any: any[]) => void
-    [key: string]: any
+    save: (...obj: any[]) => void
+    getSavedData: (...obj: any[]) => void
+    [key: string]: any,
   },
   getters: {
-    [key: string]: any
+    [key: string]: any,
   },
   actions: {
-    setDefaultData: (...any: any[]) => void
-    [key: string]: any
+    setDefaultData: (...obj: any[]) => void
+    [key: string]: any,
   },
 }
 

@@ -34,5 +34,22 @@ export default {
       return undefined
     }
     return walk(tree)
-  }
+  },
+  deleteNodeById(tree: any[], subNodesPropertyName: string, id: string) {
+    const walk = (nodes: any[]): boolean => {
+      let i = 0
+      for (const node of nodes) {
+        if (node.id === id) {
+          nodes.splice(i, 1)
+          return true
+        }
+        const childNode: boolean = walk(node[subNodesPropertyName])
+        if (childNode)
+          return true
+        i++
+      }
+      return false
+    }
+    walk(tree)
+  },
 }

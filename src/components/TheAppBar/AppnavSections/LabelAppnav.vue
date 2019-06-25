@@ -52,7 +52,7 @@ export default class OverviewAppnav extends Vue {
   @label.Getter smartLabels!: Label[]
   @label.Getter nonSmartLabels!: Label[]
   @label.Getter labelPathById!: (id: string) => string[]
-  @label.Getter getParentLabelById!: (id: string) => Label | undefined
+  @label.Getter getLabelNodeById!: (id: string | null) => Label | undefined
   @label.Action updateLabels!: (label: Label[]) => void
   @label.Action deleteLabelById!: (id: string) => void
   @label.Action addSubLabelById!: (obj: {parentId: string, subLabelName: string, position?: number}) => void
@@ -134,8 +134,7 @@ export default class OverviewAppnav extends Vue {
     let increment: 1 | 0 = 0
     if (position === 'below')
       increment = 1
-    const parent: Label | undefined = this.getParentLabelById(lab.id)
-    if (parent === undefined) {
+    if (lab.parentId === null) {
       const subLabel: Label | undefined = this.labels.find((el: Label) => el.name === name)
       if (subLabel)
         this.pushAlert({
@@ -151,6 +150,7 @@ export default class OverviewAppnav extends Vue {
         })
       }
     } else {
+      const parent: Label = this.getLabelNodeById(lab.parentId) as Label
       const subLabel: Label | undefined = parent.subLabels.find((el: Label) => el.name === name)
       if (subLabel !== undefined)
         this.pushAlert({

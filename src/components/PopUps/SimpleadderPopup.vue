@@ -1,12 +1,12 @@
 <template>
   <div class='simple-adder-popup' :class='theme'>
     <div class='title'>
-      <h2>{{ data.popUpTitle }}</h2>
+      <h2>{{ popUpPayload.popUpTitle }}</h2>
     </div>
     <div class='content'>
       <input
         tabindex='1'
-        class='margin input txt round-border gray' :placeholder='data.inputPlaceholder'
+        class='margin input txt round-border gray' :placeholder='popUpPayload.inputPlaceholder'
         type='text'
         autocomplete='off'
         :class='inputClass'
@@ -14,7 +14,7 @@
       <button
         class='margin button round-border'
         @click='runCallback'
-      >{{ data.buttonName }}</button>
+      >{{ popUpPayload.buttonName }}</button>
     </div>
   </div>
 </template>
@@ -30,19 +30,19 @@ import { SimpleAdder } from '@/interfaces/app'
 @Component
 export default class SigninPopUp extends Mixins(Mixin) {
   @State theme!: SimpleAdder
-  @State data!: SimpleAdder
+  @State popUpPayload!: SimpleAdder
 
   input: string | null = null
 
   runCallback() {
-    if (this.input && !this.inputHasError(this.input, this.data.inputMaximumCharacters))
-      this.data.callback(this.input.trim())
+    if (this.input && !this.inputHasError(this.input, this.popUpPayload.inputMaximumCharacters))
+      this.popUpPayload.callback(this.input.trim())
   }
 
   get inputClass() {
     return [
       this.theme,
-      {wrong: this.inputHasError(this.input, this.data.inputMaximumCharacters)},
+      {wrong: this.inputHasError(this.input, this.popUpPayload.inputMaximumCharacters)},
     ]
   }
 }
