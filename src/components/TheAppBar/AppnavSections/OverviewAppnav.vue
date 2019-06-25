@@ -2,7 +2,7 @@
   <div>
     <renderer
       content-obj-property-name='name'
-      :list='smartBindedPerspectives'
+      v-model='smartBindedPerspectives'
       :active-content='perspective'
       :disabled='true'
     ></renderer>
@@ -11,7 +11,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Getter, State, namespace } from 'vuex-class'
 
 import { Perspective } from '@/interfaces/app'
@@ -27,9 +27,20 @@ const perspective = namespace('perspective')
 })
 export default class OverviewAppnav extends Vue {
   @State theme!: string
+  @perspective.State perspectives!: Perspective[]
   @perspective.Getter smartBindedPerspectives!: Perspective[]
 
+  arr: Perspective[] = this.smartBindedPerspectives
   perspective: string = 'Today'
+
+  created() {
+    this.arr = this.smartBindedPerspectives.slice()
+  }
+
+  @Watch('perspectives')
+  onPerspectiveChange() {
+    this.arr = this.perspectives
+  }
 }
 
 </script>

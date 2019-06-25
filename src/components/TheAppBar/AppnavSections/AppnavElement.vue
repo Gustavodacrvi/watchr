@@ -115,7 +115,7 @@
     <transition name='fade'>
       <div v-if='renderSublists' class='drop'>
         <list-render
-          :list='obj[subElementsPropertyName]'
+          v-model='sublist'
           :sub-elements-property-name='subElementsPropertyName' :content-obj-property-name='contentObjPropertyName'
           :active-content='activeContent'
           :options='optionsrender'
@@ -173,6 +173,7 @@ export default class AppnavLink extends Vue {
   div: any = null
   direction: string | null = null
   blinking: boolean = false
+  sublist: any[] = this.obj[this.subElementsPropertyName]
 
   mounted() {
     this.div = this.$refs.content

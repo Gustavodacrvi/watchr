@@ -19,6 +19,7 @@
 }
 
 .list {
+  position: relative;
   margin: 0 14px;
 }
 
@@ -123,4 +124,8 @@
 
 .header.options {
   justify-content: flex-start;
+}
+
+.header-icon + .header-icon {
+  margin-left: 6px;
 }

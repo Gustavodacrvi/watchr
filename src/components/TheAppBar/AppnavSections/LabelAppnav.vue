@@ -3,24 +3,26 @@
     <renderer
       content-obj-property-name='name'
       sub-elements-property-name='subLabels'
-      :list='smartLabels'
+      v-model='smart'
       :active-content='label'
-      @update='update'></renderer>
+      @input='saveSmart'
+    ></renderer>
     <division name='CUSTOM LABELS'>
       <renderer v-if='nonSmartLabels'
         content-obj-property-name='name'
         sub-elements-property-name='subLabels'
-        :list='nonSmartLabels'
+        v-model='nonSmart'
         :active-el='label'
         :options='options'
-        @update='update'></renderer>
+        @input='saveNonSmart'
+      ></renderer>
     </division>
   </div>
 </template>
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Getter, State, Mutation, namespace } from 'vuex-class'
 
 import Division from '@/components/TheAppBar/AppnavSections/AppnavDivision.vue'
@@ -57,9 +59,13 @@ export default class OverviewAppnav extends Vue {
   @label.Action addRootLabel!: (obj: {labelName: string, position?: number}) => void
 
   label: string = ''
+  smart: Label[] = []
+  nonSmart: Label[] = []
 
   created() {
     this.label = this.smartLabels[0].name
+    this.smart = this.smartLabels
+    this.nonSmart = this.nonSmartLabels
   }
 
   options(): ListIcon[] {
@@ -162,8 +168,17 @@ export default class OverviewAppnav extends Vue {
       }
     }
   }
-  update({arr}: {arr: Label[]}) {
-    this.updateLabels(appUtil.updateArrayOrderFromFilteredArray(this.labels, arr))
+  saveNonSmart() {
+    this.updateLabels(appUtil.updateArrayOrderFromFilteredArray(this.labels, this.nonSmart))
+  }
+  saveSmart() {
+    this.updateLabels(appUtil.updateArrayOrderFromFilteredArray(this.labels, this.smart))
+  }
+
+  @Watch('labels')
+  onLabelsChange() {
+    this.smart = this.smartLabels
+    this.nonSmart = this.nonSmartLabels
   }
 }
 

@@ -28,7 +28,7 @@ export default class SortableComponent extends Vue {
   mounted() {
     this.els = this.getChilds()
 
-    const sortable: any = new Sortable.create(this.sortableRoot, {
+    const sortable: any = new Sortable.create(this.sortableRoot(), {
       delayOnTouchOnly: this.delayOnTouchOnly,
       disabled: this.disabled,
       animation: this.animation,
@@ -62,16 +62,16 @@ export default class SortableComponent extends Vue {
     return arr
   }
   getChilds(): HTMLElement[] {
-    return Array.prototype.slice.call(this.sortableRoot.childNodes).slice()
+    return Array.prototype.slice.call(this.sortableRoot().childNodes).slice()
   }
 
-  get sortableRoot(): HTMLElement {
+  sortableRoot(): HTMLElement {
     const root: HTMLElement = this.$el as HTMLElement
     if (!this.hasTransitionGroup)
       return root
     return root.childNodes[0] as HTMLElement
   }
-  get hasTransitionGroup(): boolean {
+  hasTransitionGroup(): boolean {
     if (this.$slots.default && this.$slots.default[0].tag === 'vue-component-19-transition-group')
       return true
     return false

@@ -44,6 +44,7 @@
           <ft-icon
             class='icon txt pointer'
             icon='tasks'
+            size='lg'
             @click="$emit('change')"
           ></ft-icon>
         </div>
@@ -51,6 +52,7 @@
           <ft-icon
             class='icon txt pointer'
             icon='adjust'
+            size='lg'
             @click="$emit('theme')"
           ></ft-icon>
         </div>
@@ -66,8 +68,6 @@ import { State, Getter, Mutation } from 'vuex-class'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAdjust, faTasks } from '@fortawesome/free-solid-svg-icons'
-
-import AppnavElement from '@/components/TheAppBar/AppnavSections/AppnavElement.vue'
 
 library.add(faAdjust, faTasks)
 
