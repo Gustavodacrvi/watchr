@@ -33,7 +33,7 @@
           </div>
         </div>
         <div
-          class='content gray'
+          class='content content-sortable-handle gray'
           ref='content'
           :class='contentClass'
         >
@@ -52,64 +52,63 @@
             ></ft-icon-dynamic>
           </span>
           <span class='txt name'>{{ obj[contentObjPropertyName] }}</span>
-          <span class='icons'>
-            <span v-for='i in icons'
-              class='nav-icon'
-              :key='i.icon'
-            >
-              <ft-icon-dynamic
-                class='angle-right margin icon txt pointer'
-                :icon='i.icon'
-                :size='i.size'
-                :class='{sublist: showingSublists}'
-              ></ft-icon-dynamic>
-            </span>
-            <span v-if='showAngleRightIcon'
-              class='nav-icon'
-              @click='showingSublists = !showingSublists'
-            >
-              <ft-icon-dynamic
-                class='angle-right margin icon txt pointer'
-                icon='angle-right'
-                size='1x'
-                :class='{sublist: showingSublists}'
-              ></ft-icon-dynamic>
-            </span>
-            <transition name='fade'>
-              <span v-if='showOptionsIcon'
+        </div>
+        <span class='icons'>
+          <span v-for='i in icons'
+            class='nav-icon'
+            :key='i.icon'
+          >
+            <ft-icon-dynamic
+              class='angle-right margin txt faded'
+              :icon='i.icon'
+              :size='i.size'
+              :class='{sublist: showingSublists}'
+            ></ft-icon-dynamic>
+          </span>
+          <span v-if='showAngleRightIcon'
+            class='nav-icon'
+            @click='showingSublists = !showingSublists'
+          >
+            <ft-icon-dynamic
+              class='angle-right margin icon txt pointer'
+              icon='angle-right'
+              size='1x'
+              :class='{sublist: showingSublists}'
+            ></ft-icon-dynamic>
+          </span>
+          <transition name='fade'>
+            <span v-if='showOptionsIcon' class='options-icon'>
+              <icon-drop
                 class='nav-icon'
+                minwidth='150px'
+                handle='ellipsis-v'
+                :expand='true'
+                :click='true'
               >
-                <icon-drop
-                  minwidth='150px'
-                  handle='ellipsis-v'
-                  :expand='true'
-                  :click='true'
-                >
-                  <div class='dropdown round-border'>
-                    <div class='wrapper'>
-                      <div v-for='i in options'
-                        class='drop-el'
-                        :key='i.name'
-                        :class='theme'
-                        @click='i.callback(obj)'
-                      >
-                        <span class='drop-icon'>
-                          <ft-icon-dynamic
-                            class='margin icon txt pointer'
-                            :icon='i.icon'
-                            :size='i.size'
-                            :style="{color: i.color}"
-                          ></ft-icon-dynamic>
-                        </span>
-                        <span class='drop-name txt'>{{ i.name }}</span>
-                      </div>
+                <div class='dropdown round-border'>
+                  <div class='wrapper'>
+                    <div v-for='i in options'
+                      class='drop-el'
+                      :key='i.name'
+                      :class='theme'
+                      @click='i.callback(obj)'
+                    >
+                      <span class='drop-icon'>
+                        <ft-icon-dynamic
+                          class='margin icon txt pointer'
+                          :icon='i.icon'
+                          :size='i.size'
+                          :style="{color: i.color}"
+                        ></ft-icon-dynamic>
+                      </span>
+                      <span class='drop-name txt'>{{ i.name }}</span>
                     </div>
                   </div>
-                </icon-drop>
-              </span>
-            </transition>
-          </span>
-        </div>
+                </div>
+              </icon-drop>
+            </span>
+          </transition>
+        </span>
       </div>
     </v-touch>
     <transition name='fade'>
@@ -270,14 +269,26 @@ export default class AppnavLink extends Vue {
   transform: rotate(90deg);
 }
 
+.list-el .icons {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  right: 8px;
+}
+
 .nav-icon {
-  justify-content: flex-end;
+  justify-content: center;
   height: 100%;
   width: 20px;
   cursor: pointer;
+  z-index: 1;
 }
 
-.nav-icon:hover .fas {
+.options-icon {
+  z-index: 2;
+}
+
+.nav-icon:hover > .icon.svg-inline--fa, .nav-icon:hover .handle.svg-inline--fa {
   color: #fc7d7d !important;
 }
 
@@ -325,12 +336,6 @@ export default class AppnavLink extends Vue {
 
 .list-el .name {
   margin-left: 6px;
-}
-
-.list-el .icons {
-  position: absolute;
-  height: 100%;
-  right: 8px;
 }
 
 .list-el .content.light:hover, .list-el .content.light.active, .sortable-selected.light .content {

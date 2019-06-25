@@ -20,15 +20,16 @@ export default class SortableComponent extends Vue {
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({default: 150, type: Number}) animation!: number
   @Prop({default: false, type: Boolean}) multiDrag!: boolean
-  @Prop(String) public readonly group!: string
   @Prop({default: 'sortable-selected'}) selectedClass!: string
+  @Prop(String) public readonly group!: string
+  @Prop(String) public readonly handle!: string
 
   els: HTMLElement[] = []
 
   mounted() {
     this.els = this.getChilds()
 
-    const sortable: any = new Sortable.create(this.sortableRoot(), {
+    const obj: any = {
       delayOnTouchOnly: this.delayOnTouchOnly,
       disabled: this.disabled,
       animation: this.animation,
@@ -49,7 +50,11 @@ export default class SortableComponent extends Vue {
       onDeselect: (e: any) => {
         this.$emit('deselect', e)
       },
-    })
+    }
+    if (this.handle)
+      obj['handle'] = this.handle
+
+    const sortable: any = new Sortable.create(this.sortableRoot(), obj)
   }
   moveElements(): any[] {
     const arr: any[] = []

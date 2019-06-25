@@ -5,7 +5,7 @@
     @mouseleave='showing = false'
   >
     <ft-icon
-      class='pointer icon txt'
+      class='pointer handle icon txt'
       :icon='handle'
       :size='size'
     ></ft-icon>
@@ -43,13 +43,16 @@ export default class TheNavbar extends Vue {
 
 .icon-dropdown {
   position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  z-index: 25;
 }
 
 .content {
   position: absolute;
   top: 100%;
   right: 0;
-  z-index: 25;
 }
 
 </style>

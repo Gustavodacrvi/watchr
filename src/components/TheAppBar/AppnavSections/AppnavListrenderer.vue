@@ -6,6 +6,7 @@
       :disabled='disabled'
       :multi-drag='true'
       :delayOnTouchOnly='true'
+      handle='.content-sortable-handle'
       @input='save'
       @end='update'
       @select='select'
