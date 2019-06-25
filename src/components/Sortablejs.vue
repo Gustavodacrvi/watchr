@@ -6,7 +6,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
 import Sortable, { MultiDrag, Swap } from 'sortablejs'
 import { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
@@ -16,7 +16,6 @@ Sortable.mount(new MultiDrag(), new AutoScroll())
 @Component
 export default class SortableComponent extends Vue {
   @Prop(Array) value!: any[]
-  @Prop({default: false, type: Boolean}) delayOnTouchOnly!: boolean
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({default: 150, type: Number}) animation!: number
   @Prop({default: false, type: Boolean}) multiDrag!: boolean
@@ -27,10 +26,13 @@ export default class SortableComponent extends Vue {
   els: HTMLElement[] = []
 
   mounted() {
+    this.mount()
+  }
+
+  mount() {
     this.els = this.getChilds()
 
     const obj: any = {
-      delayOnTouchOnly: this.delayOnTouchOnly,
       disabled: this.disabled,
       animation: this.animation,
       multiDrag: this.multiDrag,
@@ -80,6 +82,11 @@ export default class SortableComponent extends Vue {
     if (this.$slots.default && this.$slots.default[0].tag === 'vue-component-19-transition-group')
       return true
     return false
+  }
+
+  @Watch('disabled')
+  onChange() {
+    this.mount()
   }
 }
 

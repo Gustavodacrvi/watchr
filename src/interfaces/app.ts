@@ -23,12 +23,6 @@ export interface Alert {
   type: 'error' | 'normal' | 'success' | 'warning'
 }
 
-export interface PanGesture {
-  icon: string
-  iconColor: string
-  distance: number
-}
-
 export interface SimpleAdder {
   popUpTitle: string
   buttonName: string
