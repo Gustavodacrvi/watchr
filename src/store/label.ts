@@ -1,5 +1,6 @@
 
 import { Label } from '@/interfaces/app'
+import appUtils from '@/utils/app'
 
 import uuid from 'uuid'
 
@@ -72,17 +73,7 @@ export default {
       return walk(state.labels, nodePath.slice())
     },
     getLabelNodeById: (state: States) => (id: string): Label | undefined => {
-      const walk = (labels: Label[]): Label | undefined => {
-        for (const lab of labels) {
-          if (lab.id === id)
-            return lab
-          const label: Label | undefined = walk(lab.subLabels)
-          if (label !== undefined)
-            return label
-        }
-        return undefined
-      }
-      return walk(state.labels)
+      return appUtils.getNodeById(state.labels, 'subLabels', id)
     },
     getParentLabelById: (state: States) => (id: string): Label | undefined => {
       const rootLabel: Label | undefined = state.labels.find((el: Label) => el.id === id)
@@ -132,8 +123,8 @@ export default {
   actions: {
     setDefaultData({state, commit}) {
       state.labels = [
-        {name: 'Someday', id: uuid(), smart: true, subLabels: []},
-        {name: 'Anytime', id: uuid(), smart: true, subLabels: []},
+        {name: 'Someday', id: uuid(), smart: true, subLabels: [], parentId: null},
+        {name: 'Anytime', id: uuid(), smart: true, subLabels: [], parentId: null},
       ]
       commit('save')
     },

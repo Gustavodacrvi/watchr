@@ -1,4 +1,22 @@
 
+export interface VuexModule {
+  state: {
+    [key: string]: any
+  },
+  mutations: {
+    save: (...any: any[]) => void
+    getSavedData: (...any: any[]) => void
+    [key: string]: any
+  },
+  getters: {
+    [key: string]: any
+  },
+  actions: {
+    setDefaultData: (...any: any[]) => void
+    [key: string]: any
+  },
+}
+
 export interface Alert {
   name: string
   duration: number
@@ -50,5 +68,6 @@ export interface Label {
   smart: boolean
   name: string
   subLabels: Label[]
+  parentId: string | null
   id: string
 }

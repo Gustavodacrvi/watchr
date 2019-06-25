@@ -1,5 +1,5 @@
 
-import { Perspective } from '@/interfaces/app'
+import { Perspective, VuexModule } from '@/interfaces/app'
 import uuid from 'uuid'
 
 interface States {
@@ -7,7 +7,6 @@ interface States {
 }
 
 interface Mutations {
-  setDefaultData: () => void
   save: () => void
   getSavedData: () => void
   [key: string]: (state: States, payload: any) => any
@@ -112,4 +111,4 @@ export default {
       commit('save')
     },
   } as Actions,
-}
+} as VuexModule

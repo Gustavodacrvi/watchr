@@ -1,6 +1,4 @@
 
-import LoadingComponent from '@/components/LoadingComponent.vue'
-import ErrorComponent from '@/components/ErrorComponent.vue'
 
 export default {
   updateArrayOrderFromFilteredArray(oldArray: any[], filteredArray: any[]): any[] {
@@ -24,4 +22,17 @@ export default {
   snakeToCamel(s: string) {
     return s.replace(/(\-\w)/g, (m: any) => m[1].toUpperCase())
   },
+  getNodeById(tree: any[], subNodesPropertyName: string, id: string): any {
+    const walk = (subNodes: any[]): any | undefined => {
+      for (const node of subNodes) {
+        if (node.id === id)
+          return node
+        const childNode: any | undefined = walk(node[subNodesPropertyName])
+        if (childNode !== undefined)
+          return childNode
+      }
+      return undefined
+    }
+    return walk(tree)
+  }
 }
