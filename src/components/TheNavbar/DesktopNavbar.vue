@@ -24,7 +24,7 @@
         class='margin'
         handle='user-alt'
       >
-        <template v-if='!isLogged()'>
+        <template v-if='!isLogged'>
           <div class='dual-drop-el'>
             <span class='drop-el txt'
               @click="pushPopUp('SigninPopup')">
@@ -96,6 +96,7 @@ library.add(faSignOutAlt)
 })
 export default class DesktopNavbar extends Vue {
   @State theme!: string
+  @State isLogged!: boolean
   @Mutation pushTheme!: (theme: string) => void
   @Mutation pushPopUp!: (compName: string) => void
   @Mutation pushAlert!: (alert: Alert) => void
@@ -130,11 +131,6 @@ export default class DesktopNavbar extends Vue {
   }
   linkRef(ref: string): Vue {
     return this.$refs[ref] as Vue
-  }
-  isLogged(): boolean {
-    if (firebase.auth().currentUser !== null)
-      return true
-    return false
   }
   signOut() {
     firebase.auth().signOut().then(() => {

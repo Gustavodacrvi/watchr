@@ -132,14 +132,16 @@ export default class SigninPopUp extends Mixins(Mixin) {
     else if (!hasError && this.email && this.password && this.newPassword)
       this.waitingResponse = true
       auth.createUserWithEmailAndPassword(this.email as any, this.newPassword as any).then((cred: any) => {
-        this.waitingResponse = false
         this.pushAlert({
           name: 'You have successfully created an account!',
           duration: 3,
           type: 'success',
         })
+        if (auth.currentUser !== null)
+          auth.currentUser.sendEmailVerification()
         this.pushPopUp('')
         this.$router.push('User')
+        this.waitingResponse = false
       }).catch((error: any) => {
         this.waitingResponse = false
         this.pushAlert({

@@ -9,6 +9,7 @@ import label from './label'
 import { SimpleAdder, Alert } from '@/interfaces/app'
 
 import firebase from 'firebase/app'
+const auth = firebase.auth()
 
 Vue.use(Vuex)
 
@@ -21,6 +22,7 @@ interface States {
   popUpPayload: any | SimpleAdder
   appBarState: boolean
   showingAlert: boolean
+  isLogged: boolean
   alerts: Alert[]
   alert: Alert | undefined
 }
@@ -31,6 +33,8 @@ interface Mutations {
   pushAlert: (state: States, alert: Alert) => void
   pushPopUpPayload: (state: States, payload: any) => void
   openAppBar: () => void
+  signOutUser: () => void
+  signInUser: () => void
   closeAppBar: () => void
   hideAlert: () => void
   [key: string]: (state: States, payload: any) => any
@@ -68,6 +72,7 @@ const store: any = new Vuex.Store({
     popUpPayload: null,
     windowWidth: document.body.clientWidth,
     appBarState: false,
+    isLogged: false,
     showingAlert: false,
     alerts: [],
     alert: undefined,
@@ -76,6 +81,12 @@ const store: any = new Vuex.Store({
     pushTheme(state: States, theme: string): void {
       state.theme = theme
       localStorage.setItem('watchrTheme', theme)
+    },
+    signOutUser(state: States) {
+      state.isLogged = false
+    },
+    signInUser(state: States) {
+      state.isLogged = true
     },
     pushPopUp(state: States, compName: string): void {
       state.popUpComponent = compName
@@ -140,5 +151,11 @@ const store: any = new Vuex.Store({
 })
 
 store.dispatch('getWindowWidthOnResize')
+
+auth.onAuthStateChanged((user: any) => {
+  if (user)
+    store.commit('signInUser')
+  else store.commit('signOutUser')
+})
 
 export default store
