@@ -20,7 +20,7 @@ export default class SortableComponent extends Vue {
   @Prop({default: 150, type: Number}) animation!: number
   @Prop({default: false, type: Boolean}) multiDrag!: boolean
   @Prop({default: 'sortable-selected'}) selectedClass!: string
-  @Prop(String) group!: string
+  @Prop() group!: any
   @Prop(String) handle!: string
   @Prop(Array) selected!: any[]
 
@@ -47,7 +47,6 @@ export default class SortableComponent extends Vue {
       animation: this.animation,
       multiDrag: this.multiDrag,
       selectedClass: 'sortable-selected',
-      group: this.group,
 
       onUpdate: (e: any) => {
         this.$emit('input', this.moveElements())
@@ -58,6 +57,8 @@ export default class SortableComponent extends Vue {
     }
     if (this.handle)
       obj['handle'] = this.handle
+    if (this.group)
+      obj['group'] = this.group
 
     const sortable: any = new Sortable.create(this.sortableRoot(), obj)
   }

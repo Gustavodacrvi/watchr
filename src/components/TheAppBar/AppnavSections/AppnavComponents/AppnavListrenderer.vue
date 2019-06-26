@@ -7,6 +7,7 @@
       :disabled='disabled'
       :multi-drag='true'
       :selected='selectedElements'
+      :group='group'
       @input='save'
       @end='update'
       @empty='empty'
@@ -53,6 +54,7 @@ export default class AppnavLinkrenderer extends Vue {
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({default: () => [], type: Function}) icons!: (obj: any) => ListIcon[]
   @Prop({default: () => [], type: Function}) options!: (obj: any) => ListIcon[]
+  @Prop() group: any
 
   @Getter isDesktop!: boolean
 
