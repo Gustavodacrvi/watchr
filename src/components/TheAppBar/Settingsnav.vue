@@ -35,6 +35,32 @@
           :to='{name: "User"}'
           @click.native='closeAppBar'
         >User</router-link>
+        <template v-if='isLogged'>
+          <span
+            class='link txt pointer'
+            :class='theme'
+            @click='signOut'
+          >
+            <ft-icon
+              class='icon txt '
+              icon='sign-out-alt'
+              size='sm'
+            />
+            Sign out
+          </span>
+          <span v-if='!confirmedEmail'
+            class='link txt pointer'
+            :class='theme'
+            @click='resendConfirmationEmail'
+          >
+            <ft-icon
+              class='icon txt '
+              icon='paper-plane'
+              size='sm'
+            />
+            Resend confirmation e-mail
+          </span>
+        </template>
       </div>
     </div>
     <div class='footer-wrapper'>
@@ -63,16 +89,17 @@
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Mixins } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
+import Mixin from '@/mixins/navBar'
 
+import { faAdjust, faTasks, faSignOutAlt, faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faAdjust, faTasks } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faAdjust, faTasks)
+library.add(faAdjust, faTasks, faSignOutAlt, faPaperPlane)
 
 @Component
-export default class LoggedAppnav extends Vue {
+export default class LoggedAppnav extends Mixins(Mixin) {
   @State theme!: string
   @Mutation pushPopUp!: (compName: string) => void
   @Mutation closeAppBar!: () => void

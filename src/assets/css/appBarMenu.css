@@ -45,6 +45,10 @@
   background-color: #282828;
 }
 
+.link:hover .icon {
+  color: #fc7d7d;
+}
+
 .footer-wrapper {
   flex-basis: 60px;
 }

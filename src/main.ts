@@ -1,13 +1,4 @@
 
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store/index'
-import './registerServiceWorker'
-import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faUser, faAdjust, faSignInAlt, faUserAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons'
-import { dom } from '@fortawesome/fontawesome-svg-core'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
@@ -23,6 +14,21 @@ const config = {
 }
 
 firebase.initializeApp(config)
+const auth = firebase.auth()
+
+import Vue from 'vue'
+import App from './App.vue'
+import router from './router'
+import store from './store/index'
+import './registerServiceWorker'
+import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faUser, faAdjust, faSignInAlt, faUserAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons'
+import { dom } from '@fortawesome/fontawesome-svg-core'
+
+auth.onAuthStateChanged(() => {
+  store.commit('saveCurrentUser', firebase.auth().currentUser)
+})
 
 library.add(faUser, faAdjust, faUserAlt, faSignInAlt, faUserPlus)
 

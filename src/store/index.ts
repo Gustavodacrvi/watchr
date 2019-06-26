@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Vuex, { Action } from 'vuex'
+import Vuex from 'vuex'
 
 const MAX_MOBILE_SCREEN_WIDTH = 1024
 
@@ -7,9 +7,6 @@ import perspective from './perspective'
 import label from './label'
 
 import { SimpleAdder, Alert } from '@/interfaces/app'
-
-import firebase from 'firebase/app'
-const auth = firebase.auth()
 
 Vue.use(Vuex)
 
@@ -20,9 +17,9 @@ interface States {
   popUpComponent: string
   windowWidth: number
   popUpPayload: any | SimpleAdder
+  currentUser: firebase.User | null
   appBarState: boolean
   showingAlert: boolean
-  isLogged: boolean
   alerts: Alert[]
   alert: Alert | undefined
 }
@@ -32,9 +29,8 @@ interface Mutations {
   pushPopUp: (state: States, compName: string) => void
   pushAlert: (state: States, alert: Alert) => void
   pushPopUpPayload: (state: States, payload: any) => void
+  saveCurrentUser: (state: States, user: firebase.User) => void
   openAppBar: () => void
-  signOutUser: () => void
-  signInUser: () => void
   closeAppBar: () => void
   hideAlert: () => void
   [key: string]: (state: States, payload: any) => any
@@ -72,7 +68,7 @@ const store: any = new Vuex.Store({
     popUpPayload: null,
     windowWidth: document.body.clientWidth,
     appBarState: false,
-    isLogged: false,
+    currentUser: null,
     showingAlert: false,
     alerts: [],
     alert: undefined,
@@ -82,11 +78,8 @@ const store: any = new Vuex.Store({
       state.theme = theme
       localStorage.setItem('watchrTheme', theme)
     },
-    signOutUser(state: States) {
-      state.isLogged = false
-    },
-    signInUser(state: States) {
-      state.isLogged = true
+    saveCurrentUser(state: States, user: firebase.User) {
+      state.currentUser = user
     },
     pushPopUp(state: States, compName: string): void {
       state.popUpComponent = compName
@@ -151,11 +144,5 @@ const store: any = new Vuex.Store({
 })
 
 store.dispatch('getWindowWidthOnResize')
-
-auth.onAuthStateChanged((user: any) => {
-  if (user)
-    store.commit('signInUser')
-  else store.commit('signOutUser')
-})
 
 export default store

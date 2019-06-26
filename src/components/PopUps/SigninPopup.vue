@@ -97,7 +97,8 @@ export default class SigninPopUp extends Mixins(Mixin) {
      || this.inputHasError(this.password, this.MAXIMUM_NUMBER_OF_CHARACTERS)
 
     if (!hasError && this.email && this.password)
-      firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(() => {
+      this.waitingResponse = true
+      firebase.auth().signInWithEmailAndPassword(this.email as any, this.password as any).then(() => {
         this.pushAlert({
           name: 'You have successfully logged in!',
           duration: 3,
@@ -105,7 +106,9 @@ export default class SigninPopUp extends Mixins(Mixin) {
         })
         this.$router.push({name: 'User'})
         this.pushPopUp('')
+        this.waitingResponse = false
       }).catch((error: any) => {
+        this.waitingResponse = false
         this.pushAlert({
           name: error.message,
           duration: 3,

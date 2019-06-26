@@ -20,45 +20,57 @@
       >Help</router-link>
     </div>
     <div class='right'>
-      <icon-dropdown
+      <icon-dropdown v-if='!isLogged'
         class='margin'
         handle='user-alt'
       >
-        <template v-if='!isLogged'>
-          <div class='dual-drop-el'>
-            <span class='drop-el txt'
-              @click="pushPopUp('SigninPopup')">
-              <ft-icon
-                icon='sign-in-alt'
-                size='sm'
-              ></ft-icon>
-              Sign in
-            </span>
-            <hr class='thematic-break'>
-            <span
-              class='drop-el txt'
-              @click="pushPopUp('SignupPopup')"
-              >
-              <ft-icon
-                icon='user-plus'
-                size='sm'
-              ></ft-icon>
-              Sign up
-            </span>
-          </div>
-        </template>
-        <template v-else>
+        <div class='dual-drop-el'>
+          <span class='drop-el txt'
+            @click="pushPopUp('SigninPopup')">
+            <ft-icon
+              icon='sign-in-alt'
+              size='sm'
+            ></ft-icon>
+            Sign in
+          </span>
+          <hr class='thematic-break'>
           <span
             class='drop-el txt'
-            @click='signOut'
-          >
+            @click="pushPopUp('SignupPopup')"
+            >
             <ft-icon
-              icon='sign-out-alt'
+              icon='user-plus'
               size='sm'
-            />
-            Sign out
+            ></ft-icon>
+            Sign up
           </span>
-        </template>
+        </div>
+      </icon-dropdown>
+      <icon-dropdown v-else
+        class='margin'
+        handle='user-alt'
+        min-width='300px'
+      >
+        <span
+          class='drop-el txt'
+          @click='signOut'
+        >
+          <ft-icon
+            icon='sign-out-alt'
+            size='sm'
+          />
+          Sign out
+        </span>
+        <span v-if='!confirmedEmail'
+          class='drop-el txt'
+          @click='resendConfirmationEmail'
+        >
+          <ft-icon
+            icon='paper-plane'
+            size='sm'
+          />
+          Resend confirmation e-mail
+        </span>
       </icon-dropdown>
       <ft-icon
         class='txt pointer icon margin'
@@ -76,30 +88,26 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue, Watch, Mixins } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
+import Mixin from '@/mixins/navBar'
 
 import IconDropdown from '@/components/IconDropdown.vue'
 
-import firebase from 'firebase/app'
-import { Alert } from '../../interfaces/app'
-
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import { faSignOutAlt, faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faSignOutAlt)
+library.add(faSignOutAlt, faPaperPlane)
 
 @Component({
   components: {
     'icon-dropdown': IconDropdown,
   },
 })
-export default class DesktopNavbar extends Vue {
+export default class DesktopNavbar extends Mixins(Mixin) {
   @State theme!: string
-  @State isLogged!: boolean
   @Mutation pushTheme!: (theme: string) => void
   @Mutation pushPopUp!: (compName: string) => void
-  @Mutation pushAlert!: (alert: Alert) => void
 
   lineLeftPosition: string = ''
   lineWidth: string = ''
@@ -132,17 +140,6 @@ export default class DesktopNavbar extends Vue {
   linkRef(ref: string): Vue {
     return this.$refs[ref] as Vue
   }
-  signOut() {
-    firebase.auth().signOut().then(() => {
-      this.pushAlert({
-        name: 'You have successfully signed out!',
-        duration: 3,
-        type: 'success'
-      })
-      this.$router.push({name: 'Home'})
-      this.$forceUpdate()
-    })
-  }
 
   get magicLineStyles(): object {
     return {
@@ -154,6 +151,10 @@ export default class DesktopNavbar extends Vue {
 
   @Watch('$route')
   onChange() {
+    const RANDOM_NUMBER = 30
+    setTimeout(() => {
+      this.moveMagicLineTo(this.$route.name)
+    }, 30)
     this.moveMagicLineTo(this.$route.name)
   }
 }
