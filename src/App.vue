@@ -42,7 +42,7 @@ import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 import { Alert } from '@/interfaces/app'
 
 const AsyncComponent = (compPath: string): any => () => ({
-  component: import(`${compPath}`),
+  component: import(/* webpackPrefetch: true */ `${compPath}`),
   loading: LoadingComponent,
   error: ErrorComponent,
   delay: 200,

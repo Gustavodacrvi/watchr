@@ -74,7 +74,7 @@
       <button v-if='!waitingResponse'
         class='margin button round-border'
         @click='sendRequest'
-      >Sign in</button>
+      >Sign up</button>
       <button v-else
         class='margin button round-border'
       >
@@ -103,11 +103,13 @@ library.add(faEye, faEyeSlash, faSync)
 const MAXIMUM_NUMBER_OF_CHARACTERS: number = 50
 
 import firebase from 'firebase/app'
+import { Alert } from '../../interfaces/app';
 
 @Component
 export default class SigninPopUp extends Mixins(Mixin) {
   @State theme!: string
   @Mutation pushPopUp!: (compName: string) => void
+  @Mutation pushAlert!: (alert: Alert) => void
 
   email: string | null = null
   password: string | null = null
@@ -121,7 +123,31 @@ export default class SigninPopUp extends Mixins(Mixin) {
     this.inputHasError(this.password, MAXIMUM_NUMBER_OF_CHARACTERS) ||
     this.inputHasError(this.newPassword, MAXIMUM_NUMBER_OF_CHARACTERS)
 
-    console.log(hasError)
+    if (this.password !== this.newPassword)
+      this.pushAlert({
+        name: "Passwords don't match",
+        duration: 3,
+        type: 'error',
+      })
+    else if (!hasError && this.email && this.password && this.newPassword)
+      this.waitingResponse = true
+      auth.createUserWithEmailAndPassword(this.email as any, this.newPassword as any).then((cred: any) => {
+        this.waitingResponse = false
+        this.pushAlert({
+          name: 'You have successfully created an account!',
+          duration: 3,
+          type: 'success',
+        })
+        this.pushPopUp('SigninPopup')
+      }).catch((error: any) => {
+        this.waitingResponse = false
+        console.log(error)
+        this.pushAlert({
+          name: error.message,
+          duration: 3,
+          type: 'error',
+        })
+      })
   }
 
   get emailClass() {
