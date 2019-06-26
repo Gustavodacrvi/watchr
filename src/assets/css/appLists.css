@@ -1,6 +1,22 @@
 
+.nav-icon, .content, .icons, .drop-el {
+  display: flex;
+  align-items: center;
+}
+
 .dropdown {
   overflow: hidden;
+}
+
+.icons {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  right: 8px;
+}
+
+.options-icon {
+  z-index: 2;
 }
 
 .drop-el {
@@ -25,4 +41,17 @@
 
 .drop-el.dark:hover {
   background-color: #282828;
+}
+
+
+.nav-icon {
+  justify-content: center;
+  height: 100%;
+  width: 20px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.nav-icon:hover > .icon.svg-inline--fa, .nav-icon:hover .handle.svg-inline--fa {
+  color: #fc7d7d !important;
 }

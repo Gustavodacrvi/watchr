@@ -184,11 +184,6 @@ export default class AppnavLink extends Vue {
 
 <style scoped>
 
-.nav-icon, .list-el .content, .list-el .icons, .drop-el {
-  display: flex;
-  align-items: center;
-}
-
 .drop {
   margin-left: 10px;
 }
@@ -204,29 +199,6 @@ export default class AppnavLink extends Vue {
 
 .angle-right.sublist {
   transform: rotate(90deg);
-}
-
-.list-el .icons {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  right: 8px;
-}
-
-.nav-icon {
-  justify-content: center;
-  height: 100%;
-  width: 20px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.options-icon {
-  z-index: 2;
-}
-
-.nav-icon:hover > .icon.svg-inline--fa, .nav-icon:hover .handle.svg-inline--fa {
-  color: #fc7d7d !important;
 }
 
 .list-el .visible {

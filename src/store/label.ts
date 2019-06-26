@@ -40,6 +40,7 @@ interface Actions {
   setDefaultData: (context: ActionContext) => void
   editLabelNameById: (context: ActionContext, obj: {id: string, name: string}) => void
   deleteLabelsById: (context: ActionContext, ids: string[]) => void
+  sortCustomLabelsByName: (context: ActionContext) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -182,6 +183,13 @@ export default {
       const getLabelNodeById = getters.getLabelNodeById as any
       const label: Label = getLabelNodeById(id)
       label.name = name
+      commit('save')
+    },
+    sortCustomLabelsByName({state, commit, getters}) {
+      const nonSmartLabels = getters.nonSmartLabels as any
+      const customLabels: Label[] = nonSmartLabels
+      customLabels.sort((a, b) => a.name.localeCompare(b.name))
+      state.labels = appUtils.updateArrayOrderFromFilteredArray(state.labels, customLabels)
       commit('save')
     },
   } as Actions,

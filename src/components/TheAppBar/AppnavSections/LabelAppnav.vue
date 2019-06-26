@@ -29,7 +29,10 @@
       @input='saveSmart'
       @selected='selectSmart'
     ></renderer>
-    <division name='CUSTOM LABELS'>
+    <division
+      name='CUSTOM LABELS'
+      :options='divisionOptions'
+    >
       <renderer v-if='nonSmartLabels'
         content-obj-property-name='name'
         sub-elements-property-name='subLabels'
@@ -57,9 +60,9 @@ import labelUtil from '@/utils/label'
 import { Label, ListIcon, SimpleAdder, Alert } from '@/interfaces/app'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faBackspace } from '@fortawesome/free-solid-svg-icons'
+import { faBackspace, faSortAlphaDown } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faBackspace)
+library.add(faBackspace, faSortAlphaDown)
 
 const label = namespace('label')
 
@@ -85,12 +88,24 @@ export default class OverviewAppnav extends Vue {
   @label.Action addSubLabelById!: (obj: {parentId: string, subLabelName: string, position?: number}) => void
   @label.Action addRootLabel!: (obj: {labelName: string, position?: number}) => void
   @label.Action editLabelNameById!: (obj: {id: string, name: string}) => void
+  @label.Action sortCustomLabelsByName!: () => void
 
   label: string = ''
   smart: Label[] = []
   nonSmart: Label[] = []
   selected: Label[] = []
   selectedType: 'smart' | 'nonSmart' = 'smart'
+  divisionOptions: ListIcon[] = [
+    {
+      name: 'sort by name',
+      iconColor: '',
+      size: 'lg',
+      icon: 'sort-alpha-down',
+      callback: () => {
+        this.sortCustomLabelsByName()
+      },
+    },
+  ]
 
   created() {
     this.label = this.smartLabels[0].name

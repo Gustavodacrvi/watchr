@@ -5,7 +5,7 @@
       <span class='name txt'>{{ name }}</span>
       <span class='icons'>
         <span
-          class='nav-icon'
+          class='options-icon'
         >
           <icon-drop
             class='nav-icon'
@@ -20,15 +20,15 @@
                   class='drop-el'
                   :key='i.name'
                   :class='theme'
-                  @click='i.callback(obj)'
+                  @click='i.callback'
                 >
                   <span class='drop-icon'>
-                    <ft-icon-dynamic
-                      class='margin icon txt pointer'
+                    <ft-icon
+                      class='icon txt pointer'
                       :icon='i.icon'
                       :size='i.size'
                       :style='{color: i.iconColor}'
-                    ></ft-icon-dynamic>
+                    ></ft-icon>
                   </span>
                   <span class='drop-name txt'>{{ i.name }}</span>
                 </div>
@@ -52,7 +52,7 @@
     <div class='margin'></div>
     <transition name='fade'>
       <div v-if='showing'
-        class='content'
+        class='division-content'
       >
         <slot></slot>
       </div>
@@ -63,6 +63,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
+import { State } from 'vuex-class'
 
 import IconDropdown from '@/components/IconDropdown.vue'
 
@@ -79,6 +80,8 @@ library.add(faAngleRight, faEllipsisH)
 export default class AppnavDivision extends Vue {
   @Prop({type: String, required: true}) name!: string
   @Prop({type: Array}) options!: string
+
+  @State theme!: string
 
   showing: boolean = true
 }
@@ -100,26 +103,11 @@ export default class AppnavDivision extends Vue {
 }
 
 .header {
+  position: relative;
   display: flex;
   height: 20px;
   justify-content: space-between;
   align-items: center;
-}
-
-.icons {
-  display: flex;
-}
-
-.nav-icon {
-  width: 25px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.nav-icon:hover .icon {
-  color: #fc7d7d;
 }
 
 .header .name {
