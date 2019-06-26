@@ -22,6 +22,7 @@
       </div>
     </transition>
     <renderer
+      group='labels'
       content-obj-property-name='name'
       sub-elements-property-name='subLabels'
       v-model='smart'
@@ -34,9 +35,11 @@
       :options='divisionOptions'
     >
       <renderer v-if='nonSmartLabels'
+        group='labels'
         content-obj-property-name='name'
         sub-elements-property-name='subLabels'
         v-model='nonSmart'
+        :maximum-tree-height='4'
         :active-content='label'
         :options='options'
         @input='saveNonSmart'

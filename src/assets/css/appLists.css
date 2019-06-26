@@ -9,10 +9,8 @@
 }
 
 .icons {
-  position: absolute;
-  top: 0;
+  position: relative;
   height: 100%;
-  right: 8px;
 }
 
 .options-icon {

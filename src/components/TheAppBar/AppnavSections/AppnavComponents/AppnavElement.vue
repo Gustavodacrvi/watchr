@@ -4,12 +4,12 @@
       class='round-border visible'
       @mouseenter='optionsOnHover = true'
       @mouseleave='optionsOnHover = false'
-      @click="$emit('click', obj)"
     >
       <div
         class='content content-handle gray'
         ref='content'
         :class='contentClass'
+        @click="$emit('click', obj)"
       >
         <span v-if='obj.icon'
           class='left-icon'>
@@ -95,8 +95,11 @@
     </div>
     <transition name='fade'>
       <div v-if='renderSublists' class='drop'>
+        {{maximumTreeHeight - 1}}
         <list-render
           v-model='sublist'
+          :maximum-tree-height='maximumTreeHeight - 1'
+          :group='group'
           :sub-elements-property-name='subElementsPropertyName' :content-obj-property-name='contentObjPropertyName'
           :active-content='activeContent'
           :options='optionsrender'
@@ -141,6 +144,8 @@ export default class AppnavLink extends Vue {
   @Prop({default: () => [], type: Function}) iconsrender!: (obj: any) => ListIcon[]
   @Prop({default: () => [], type: Function}) optionsrender!: (obj: any) => ListIcon[]
   @Prop(Boolean) isSelectionEmpty!: boolean
+  @Prop(Number) maximumTreeHeight!: number
+  @Prop() group!: any
 
   @State theme!: string
   @Getter isDesktop!: boolean
@@ -202,6 +207,7 @@ export default class AppnavLink extends Vue {
 }
 
 .list-el .visible {
+  display: flex;
   position: relative;
   cursor: pointer;
   height: 35px;

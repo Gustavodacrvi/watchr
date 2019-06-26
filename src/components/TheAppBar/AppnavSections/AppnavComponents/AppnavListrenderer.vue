@@ -16,6 +16,8 @@
         <appnav-link v-for='el in arr'
           :key='el.id'
           :obj='el'
+          :group='group'
+          :maximum-tree-height='maximumTreeHeight'
           :content-obj-property-name='contentObjPropertyName' :sub-elements-property-name='subElementsPropertyName' :active-content='activeContent'
           :icons='icons(el)'
           :options='options(el)'
@@ -54,6 +56,7 @@ export default class AppnavLinkrenderer extends Vue {
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({default: () => [], type: Function}) icons!: (obj: any) => ListIcon[]
   @Prop({default: () => [], type: Function}) options!: (obj: any) => ListIcon[]
+  @Prop(Number) maximumTreeHeight!: number 
   @Prop() group: any
 
   @Getter isDesktop!: boolean
@@ -86,7 +89,7 @@ export default class AppnavLinkrenderer extends Vue {
       return true
     return this.selectedElements.length === 0
   }
-  get handle(): object | undefined {
+  get handle(): object {
     if (!this.isDesktop)
       return {
         ['handle']: '.handle',
