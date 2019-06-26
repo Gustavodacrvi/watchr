@@ -138,10 +138,10 @@ export default class SigninPopUp extends Mixins(Mixin) {
           duration: 3,
           type: 'success',
         })
-        this.pushPopUp('SigninPopup')
+        this.pushPopUp('')
+        this.$router.push('User')
       }).catch((error: any) => {
         this.waitingResponse = false
-        console.log(error)
         this.pushAlert({
           name: error.message,
           duration: 3,

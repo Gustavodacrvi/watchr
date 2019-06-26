@@ -24,27 +24,41 @@
         class='margin'
         handle='user-alt'
       >
-        <div class='dual-drop-el'>
-          <span class='drop-el txt'
-            @click="pushPopUp('SigninPopup')">
-            <ft-icon
-              icon='sign-in-alt'
-              size='sm'
-            ></ft-icon>
-            Sign in
-          </span>
-          <hr class='thematic-break'>
+        <template v-if='!isLogged()'>
+          <div class='dual-drop-el'>
+            <span class='drop-el txt'
+              @click="pushPopUp('SigninPopup')">
+              <ft-icon
+                icon='sign-in-alt'
+                size='sm'
+              ></ft-icon>
+              Sign in
+            </span>
+            <hr class='thematic-break'>
+            <span
+              class='drop-el txt'
+              @click="pushPopUp('SignupPopup')"
+              >
+              <ft-icon
+                icon='user-plus'
+                size='sm'
+              ></ft-icon>
+              Sign up
+            </span>
+          </div>
+        </template>
+        <template v-else>
           <span
             class='drop-el txt'
-              @click="pushPopUp('SignupPopup')"
-            >
+            @click='signOut'
+          >
             <ft-icon
-              icon='user-plus'
+              icon='sign-out-alt'
               size='sm'
-            ></ft-icon>
-            Sign up
+            />
+            Sign out
           </span>
-        </div>
+        </template>
       </icon-dropdown>
       <ft-icon
         class='txt pointer icon margin'
@@ -67,6 +81,14 @@ import { State, Mutation } from 'vuex-class'
 
 import IconDropdown from '@/components/IconDropdown.vue'
 
+import firebase from 'firebase/app'
+import { Alert } from '../../interfaces/app';
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faSignOutAlt)
+
 @Component({
   components: {
     'icon-dropdown': IconDropdown,
@@ -76,6 +98,7 @@ export default class DesktopNavbar extends Vue {
   @State theme!: string
   @Mutation pushTheme!: (theme: string) => void
   @Mutation pushPopUp!: (compName: string) => void
+  @Mutation pushAlert!: (alert: Alert) => void
 
   lineLeftPosition: string = ''
   lineWidth: string = ''
@@ -107,6 +130,22 @@ export default class DesktopNavbar extends Vue {
   }
   linkRef(ref: string): Vue {
     return this.$refs[ref] as Vue
+  }
+  isLogged(): boolean {
+    if (firebase.auth().currentUser !== null)
+      return true
+    return false
+  }
+  signOut() {
+    firebase.auth().signOut().then(() => {
+      this.pushAlert({
+        name: 'You have successfully signed out!',
+        duration: 3,
+        type: 'success'
+      })
+      this.$router.push({name: 'Home'})
+      this.$forceUpdate()
+    })
   }
 
   get magicLineStyles(): object {

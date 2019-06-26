@@ -8,6 +8,8 @@ import label from './label'
 
 import { SimpleAdder, Alert } from '@/interfaces/app'
 
+import firebase from 'firebase/app'
+
 Vue.use(Vuex)
 
 const savedTheme: string = localStorage.getItem('watchrTheme') || 'light'
@@ -18,7 +20,6 @@ interface States {
   windowWidth: number
   popUpPayload: any | SimpleAdder
   appBarState: boolean
-  isLogged: boolean
   showingAlert: boolean
   alerts: Alert[]
   alert: Alert | undefined
@@ -67,7 +68,6 @@ const store: any = new Vuex.Store({
     popUpPayload: null,
     windowWidth: document.body.clientWidth,
     appBarState: false,
-    isLogged: false,
     showingAlert: false,
     alerts: [],
     alert: undefined,
