@@ -6,11 +6,11 @@
     <div class='content'>
       <input
         class='margin input txt round-border gray'
-        placeholder='Username: '
+        placeholder='E-mail: '
         type='text'
         autocomplete='off'
-        :class='usernameClass'
-        v-model.trim='username'
+        :class='emailClass'
+        v-model.trim='email'
       >
       <div class='margin password'>
         <input
@@ -59,7 +59,7 @@
         </button>
       <div class='margin links'>
         <span class='link'>Forgot password?</span>
-        <span class='link'>Forgot username?</span>
+        <span class='link'>Forgot email?</span>
       </div>
     </div>
   </div>
@@ -76,27 +76,48 @@ import { faEye, faEyeSlash, faSync } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faEye, faEyeSlash, faSync)
 
+import firebase from 'firebase/app'
+import { Alert } from '../../interfaces/app'
+
 @Component
 export default class SigninPopUp extends Mixins(Mixin) {
   @State theme!: string
   @Mutation pushPopUp!: (compName: string) => void
+  @Mutation pushAlert!: (alert: Alert) => void
 
   MAXIMUM_NUMBER_OF_CHARACTERS: number = 50
 
-  username: string | null = null
+  email: string | null = null
   password: string | null = null
 
   waitingResponse: boolean = false
 
   sendRequest() {
-    const hasError: boolean = this.inputHasError(this.username, this.MAXIMUM_NUMBER_OF_CHARACTERS)
+    const hasError: boolean = this.inputHasError(this.email, this.MAXIMUM_NUMBER_OF_CHARACTERS)
      || this.inputHasError(this.password, this.MAXIMUM_NUMBER_OF_CHARACTERS)
+
+    if (!hasError && this.email && this.password)
+      firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(() => {
+        this.pushAlert({
+          name: 'You have successfully logged in!',
+          duration: 3,
+          type: 'success'
+        })
+        this.$router.push({name: 'User'})
+        this.pushPopUp('')
+      }).catch((error: any) => {
+        this.pushAlert({
+          name: error.message,
+          duration: 3,
+          type: 'error'
+        })
+      })
   }
 
-  get usernameClass(): any[] {
+  get emailClass(): any[] {
     return [
       this.theme,
-      {wrong: this.inputHasError(this.username, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
+      {wrong: this.inputHasError(this.email, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
     ]
   }
   get passwordClass(): any[] {

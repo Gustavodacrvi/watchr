@@ -82,7 +82,7 @@ import { State, Mutation } from 'vuex-class'
 import IconDropdown from '@/components/IconDropdown.vue'
 
 import firebase from 'firebase/app'
-import { Alert } from '../../interfaces/app';
+import { Alert } from '../../interfaces/app'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'

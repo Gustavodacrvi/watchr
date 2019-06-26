@@ -103,7 +103,7 @@ library.add(faEye, faEyeSlash, faSync)
 const MAXIMUM_NUMBER_OF_CHARACTERS: number = 50
 
 import firebase from 'firebase/app'
-import { Alert } from '../../interfaces/app';
+import { Alert } from '../../interfaces/app'
 
 @Component
 export default class SigninPopUp extends Mixins(Mixin) {
