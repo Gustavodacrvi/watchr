@@ -1,3 +1,4 @@
+
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -7,9 +8,13 @@ import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUser, faAdjust, faSignInAlt, faUserAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import { dom } from '@fortawesome/fontawesome-svg-core'
-import firebase from 'firebase'
+import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
+
+console.log(process.env)
+console.log(process.env.NODE_ENV)
+console.log(process.env.API_KEY)
 
 const config = {
   apiKey: process.env.API_KEY,

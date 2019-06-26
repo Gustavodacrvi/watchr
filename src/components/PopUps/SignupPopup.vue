@@ -6,14 +6,6 @@
     <div class='content'>
       <input
         class='margin input txt round-border gray'
-        placeholder='Username: '
-        type='text'
-        autocomplete='off'
-        :class='usernameClass'
-        v-model.trim='username'
-      >
-      <input
-        class='margin input txt round-border gray'
         placeholder='E-mail: '
         type='text'
         autocomplete='off'
@@ -110,30 +102,28 @@ library.add(faEye, faEyeSlash, faSync)
 
 const MAXIMUM_NUMBER_OF_CHARACTERS: number = 50
 
+import firebase from 'firebase/app'
+
 @Component
 export default class SigninPopUp extends Mixins(Mixin) {
   @State theme!: string
   @Mutation pushPopUp!: (compName: string) => void
 
-  username: string | null = null
   email: string | null = null
   password: string | null = null
   newPassword: string | null = null
   waitingResponse: boolean = false
 
   sendRequest() {
-    const hasError: boolean = this.inputHasError(this.username, MAXIMUM_NUMBER_OF_CHARACTERS) ||
-    this.inputHasError(this.email, MAXIMUM_NUMBER_OF_CHARACTERS) ||
+    const auth = firebase.auth()
+    
+    const hasError: boolean = this.inputHasError(this.email, MAXIMUM_NUMBER_OF_CHARACTERS) ||
     this.inputHasError(this.password, MAXIMUM_NUMBER_OF_CHARACTERS) ||
-     this.inputHasError(this.newPassword, MAXIMUM_NUMBER_OF_CHARACTERS)
+    this.inputHasError(this.newPassword, MAXIMUM_NUMBER_OF_CHARACTERS)
+
+    console.log(hasError)
   }
 
-  get usernameClass() {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.username, MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
-  }
   get emailClass() {
     return [
       this.theme,
