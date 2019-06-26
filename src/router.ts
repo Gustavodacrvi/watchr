@@ -33,5 +33,14 @@ export default new Router({
       name: 'Help',
       component: AsyncComponent('./views/Help.vue'),
     },
+    {
+      path: '/action',
+      name: 'Action',
+      component: AsyncComponent('./views/Action.vue'),
+      props: (route: any) => ({
+        mode: route.query.mode,
+        oobCode: route.query.oobCode,
+      }),
+    },
   ],
 })

@@ -76,7 +76,7 @@ import { faEye, faEyeSlash, faSync } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faEye, faEyeSlash, faSync)
 
-import firebase from 'firebase/app'
+import firebase, { auth } from 'firebase/app'
 import { Alert } from '../../interfaces/app'
 
 @Component
@@ -104,6 +104,13 @@ export default class SigninPopUp extends Mixins(Mixin) {
           duration: 3,
           type: 'success'
         })
+        const auth = firebase.auth()
+        if (auth.currentUser && !auth.currentUser.emailVerified)
+          this.pushAlert({
+            name: 'Please confirm your e-mail address',
+            duration: 3,
+            type: 'warning',
+          })
         this.$router.push({name: 'User'})
         this.pushPopUp('')
         this.waitingResponse = false

@@ -137,8 +137,14 @@ export default class SigninPopUp extends Mixins(Mixin) {
           duration: 3,
           type: 'success',
         })
-        if (auth.currentUser !== null)
-          auth.currentUser.sendEmailVerification()
+        if (auth.currentUser)
+          auth.currentUser.sendEmailVerification().then(() => {
+            this.pushAlert({
+              name: 'An email confirmation has been sent to your email address. Please check your inbox and click the confirmation link',
+              duration: 3,
+              type: 'normal',
+            })
+          })
         this.pushPopUp('')
         this.$router.push('User')
         this.waitingResponse = false
