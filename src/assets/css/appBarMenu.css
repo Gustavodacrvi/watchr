@@ -10,18 +10,21 @@
 }
 
 .list-wrapper {
-  flex-basis: 100%;
+  flex-basis: 110%;
+  width: 315px;
   overflow: auto;
+}
+
+.list {
+  position: relative;
+  margin-left: 14px;
+  width: 271.5px;
 }
 
 .list-margin {
   height: 150px;
 }
 
-.list {
-  position: relative;
-  margin: 0 14px;
-}
 
 .link {
   display: block;

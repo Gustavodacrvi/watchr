@@ -33,12 +33,14 @@ interface ActionContext {
 
 interface Actions {
   addLabelFromArrayPath: (context: ActionContext, path: string[]) => void
-  deleteLabelById: (context: ActionContext, id: string) => void
   // tslint:disable-next-line:max-line-length
   addSubLabelById: (context: ActionContext, {parentId, subLabelName, position}: {parentId: string, subLabelName: string, position: number | undefined}) => void
   // tslint:disable-next-line:max-line-length
   addRootLabel: (context: ActionContext, obj: {labelName: string, position: number | undefined}) => void
   setDefaultData: (context: ActionContext) => void
+  editLabelNameById: (context: ActionContext, obj: {id: string, name: string}) => void
+  deleteLabelsById: (context: ActionContext, ids: string[]) => void
+  sortCustomLabelsByName: (context: ActionContext) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -136,8 +138,9 @@ export default {
       walk(state.labels, nodePath.slice(), null)
       commit('save')
     },
-    deleteLabelById({state, commit}, id: string) {
-      appUtils.deleteNodeById(state.labels, 'subLabels', id)
+    deleteLabelsById({state, commit}, ids) {
+      for (const id of ids)
+        appUtils.deleteNodeById(state.labels, 'subLabels', id)
       commit('save')
     },
     addSubLabelById({state, commit, getters}, {subLabelName, parentId, position}) {
@@ -175,6 +178,19 @@ export default {
           state.labels.splice(position, 0, lab)
         commit('save')
       }
+    },
+    editLabelNameById({state, commit, getters}, {id, name}) {
+      const getLabelNodeById = getters.getLabelNodeById as any
+      const label: Label = getLabelNodeById(id)
+      label.name = name
+      commit('save')
+    },
+    sortCustomLabelsByName({state, commit, getters}) {
+      const nonSmartLabels = getters.nonSmartLabels as any
+      const customLabels: Label[] = nonSmartLabels
+      customLabels.sort((a, b) => a.name.localeCompare(b.name))
+      state.labels = appUtils.updateArrayOrderFromFilteredArray(state.labels, customLabels)
+      commit('save')
     },
   } as Actions,
 } as VuexModule

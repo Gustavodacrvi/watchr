@@ -1,5 +1,16 @@
 <template>
   <div>
+    <transition
+      name='fade'
+      mode='out-in'
+    >
+      <div
+        class='header title'
+        key='header-title'
+      >
+        <span class='title'>OVERVIEW</span>
+      </div>
+    </transition>
     <renderer
       content-obj-property-name='name'
       v-model='smartBindedPerspectives'
@@ -16,7 +27,7 @@ import { Getter, State, namespace } from 'vuex-class'
 
 import { Perspective } from '@/interfaces/app'
 
-import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavListrenderer.vue'
+import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavComponents/AppnavListrenderer.vue'
 
 const perspective = namespace('perspective')
 
@@ -44,3 +55,6 @@ export default class OverviewAppnav extends Vue {
 }
 
 </script>
+
+<style scoped src='@/assets/css/appBarMenu.css'>
+</style>

@@ -31,7 +31,7 @@
     </transition>
     <renderer
       content-obj-property-name='name'
-      active-content='perspective'
+      :active-content='perspective'
       v-model='smart'
       :icons='icons'
       :options='options'
@@ -44,13 +44,13 @@
 <script lang='ts'>
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { Getter, State, namespace } from 'vuex-class'
+import { Getter, State, Mutation, namespace } from 'vuex-class'
 
-import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavListrenderer.vue'
+import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavComponents/AppnavListrenderer.vue'
 
 import appUtil from '@/utils/app'
 
-import { Perspective, ListIcon } from '@/interfaces/app'
+import { Perspective, ListIcon, Alert } from '@/interfaces/app'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faThumbtack, faSlash } from '@fortawesome/free-solid-svg-icons'
@@ -66,10 +66,11 @@ const perspective = namespace('perspective')
 })
 export default class PerspectiveAppnav extends Vue {
   @State theme!: string
+  @Mutation pushAlert!: (alert: Alert) => void
+
   @perspective.State perspectives!: Perspective[]
   @perspective.Getter smartPerspectives!: Perspective[]
-  @perspective.Action toggleBindPerspectiveById!: (id: string) => void
-  @perspective.Action unBindPerspectives!: (ids: string[]) => void
+  @perspective.Action toggleBindPerspectivesById!: (obj: {ids: string[], binded?: boolean | undefined}) => void
   @perspective.Action updatePerspectives!: (perspectives: Perspective[]) => void
   @perspective.Action bindPerspectives!: (ids: string[]) => void
 
@@ -82,10 +83,16 @@ export default class PerspectiveAppnav extends Vue {
   }
 
   unbindSelectedIcons() {
-    this.unBindPerspectives(this.selected.map(el => el.id))
+    this.toggleBindPerspectivesById({
+      ids: this.selected.map(el => el.id),
+      binded: false,
+    })
   }
   bindSelectedIcons() {
-    this.bindPerspectives(this.selected.map(el => el.id))
+    this.toggleBindPerspectivesById({
+      ids: this.selected.map(el => el.id),
+      binded: true,
+    })
   }
   icons(pers: Perspective): ListIcon[] {
     if (pers.binded)
@@ -109,7 +116,12 @@ export default class PerspectiveAppnav extends Vue {
         iconColor: '',
         size: 'lg',
         callback: (per: Perspective) => {
-          this.toggleBindPerspectiveById(per.id)
+          this.toggleBindPerspectivesById({ids: [per.id]})
+          this.pushAlert({
+            name: `Label <strong>${name}</strong> was successfully added`,
+            duration: 2.5,
+            type: 'error',
+          })
         },
       },
     ] as ListIcon[]

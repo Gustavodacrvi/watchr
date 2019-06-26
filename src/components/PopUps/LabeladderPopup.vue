@@ -78,7 +78,7 @@ export default class LabelAdder extends Vue {
         })
       else if (arr.length > this.MAXIMUM_LENGTH_OF_LABEL_TREE)
         this.pushAlert({
-          name: 'The maximum number of subtasks is 4',
+          name: 'The maximum number of sublabels is 4',
           duration: 2.5,
           type: 'error',
         })

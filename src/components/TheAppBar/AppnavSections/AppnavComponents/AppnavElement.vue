@@ -4,12 +4,12 @@
       class='round-border visible'
       @mouseenter='optionsOnHover = true'
       @mouseleave='optionsOnHover = false'
-      @click="$emit('click', obj)"
     >
       <div
-        class='content gray'
+        class='content content-handle gray'
         ref='content'
         :class='contentClass'
+        @click="$emit('click', obj)"
       >
         <span v-if='obj.icon'
           class='left-icon'>
@@ -72,7 +72,7 @@
                         class='margin icon txt pointer'
                         :icon='i.icon'
                         :size='i.size'
-                        :style="{color: i.color}"
+                        :style='{color: i.iconColor}'
                       ></ft-icon-dynamic>
                     </span>
                     <span class='drop-name txt'>{{ i.name }}</span>
@@ -81,22 +81,25 @@
               </div>
             </icon-drop>
           </span>
-          <transition name='fade'>
-            <span v-if='!isSelectionEmpty' class='nav-icon handle'>
-              <ft-icon-dynamic
-                class='icon margin pointer txt'
-                icon='grip-vertical'
-                size='lg'
-              ></ft-icon-dynamic>
-            </span>
-          </transition>
+        </transition>
+        <transition name='fade'>
+          <span v-if='!isSelectionEmpty' class='nav-icon handle'>
+            <ft-icon-dynamic
+              class='icon margin pointer txt'
+              icon='grip-vertical'
+              size='lg'
+            ></ft-icon-dynamic>
+          </span>
         </transition>
       </span>
     </div>
     <transition name='fade'>
       <div v-if='renderSublists' class='drop'>
+        {{maximumTreeHeight - 1}}
         <list-render
           v-model='sublist'
+          :maximum-tree-height='maximumTreeHeight - 1'
+          :group='group'
           :sub-elements-property-name='subElementsPropertyName' :content-obj-property-name='contentObjPropertyName'
           :active-content='activeContent'
           :options='optionsrender'
@@ -127,7 +130,8 @@ import { ListIcon } from '@/interfaces/app'
   components: {
     'icon-drop': IconDropdown,
     'ft-icon-dynamic': DynamicFontawesome,
-    'list-render': () => import('@/components/TheAppBar/AppnavSections/AppnavListrenderer.vue'),
+    'list-render': () => import(/* webpackPrefetch: true */
+     '@/components/TheAppBar/AppnavSections/AppnavComponents/AppnavListrenderer.vue'),
   },
 })
 export default class AppnavLink extends Vue {
@@ -140,6 +144,8 @@ export default class AppnavLink extends Vue {
   @Prop({default: () => [], type: Function}) iconsrender!: (obj: any) => ListIcon[]
   @Prop({default: () => [], type: Function}) optionsrender!: (obj: any) => ListIcon[]
   @Prop(Boolean) isSelectionEmpty!: boolean
+  @Prop(Number) maximumTreeHeight!: number
+  @Prop() group!: any
 
   @State theme!: string
   @Getter isDesktop!: boolean
@@ -171,7 +177,7 @@ export default class AppnavLink extends Vue {
   }
   get showOptionsIcon() {
     return this.options && this.options.length > 0 && (!this.isDesktop
-     || ((this.isDesktop && this.optionsOnHover)))
+     || (this.isDesktop && this.optionsOnHover))
   }
   get renderSublists() {
     return this.showingSublists && this.obj[this.subElementsPropertyName]
@@ -182,11 +188,6 @@ export default class AppnavLink extends Vue {
 </script>
 
 <style scoped>
-
-.nav-icon, .list-el .content, .list-el .icons, .drop-el {
-  display: flex;
-  align-items: center;
-}
 
 .drop {
   margin-left: 10px;
@@ -205,30 +206,8 @@ export default class AppnavLink extends Vue {
   transform: rotate(90deg);
 }
 
-.list-el .icons {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  right: 8px;
-}
-
-.nav-icon {
-  justify-content: center;
-  height: 100%;
-  width: 20px;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.options-icon {
-  z-index: 2;
-}
-
-.nav-icon:hover > .icon.svg-inline--fa, .nav-icon:hover .handle.svg-inline--fa {
-  color: #fc7d7d !important;
-}
-
 .list-el .visible {
+  display: flex;
   position: relative;
   cursor: pointer;
   height: 35px;
@@ -260,33 +239,7 @@ export default class AppnavLink extends Vue {
   background-color: #282828 !important;
 }
 
-.dropdown {
-  overflow: hidden;
-}
-
-.drop-el {
-  height: 35px;
-  width: 100%;
-  transition: background-color .3s;
-}
-
-.drop-icon {
-  width: 39px;
-  text-align: center;
-}
-
-.drop-name {
-  white-space: nowrap;
-  margin-right: 12px;
-}
-
-.drop-el.light:hover {
-  background-color: #E6E6E6;
-}
-
-.drop-el.dark:hover {
-  background-color: #282828;
-}
-
 </style>
 
+<style scoped src='@/assets/css/appLists.css'>
+</style>

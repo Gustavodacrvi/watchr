@@ -1,20 +1,49 @@
 <template>
   <div>
+    <transition
+      name='fade'
+      mode='out-in'
+    >
+      <div v-if="selected.length === 0 || selectedType === 'smart'"
+        class='header title'
+        key='header-title'
+      >
+        <span class='title'>LABELS</span>
+      </div>
+      <div v-else
+        class='header options'
+        key='header-options'
+      >
+        <ft-icon
+          class='header-icon icon txt pointer'
+          icon='backspace'
+          @click='deleteSelectedLabels'
+        />
+      </div>
+    </transition>
     <renderer
+      group='labels'
       content-obj-property-name='name'
       sub-elements-property-name='subLabels'
       v-model='smart'
       :active-content='label'
       @input='saveSmart'
+      @selected='selectSmart'
     ></renderer>
-    <division name='CUSTOM LABELS'>
+    <division
+      name='CUSTOM LABELS'
+      :options='divisionOptions'
+    >
       <renderer v-if='nonSmartLabels'
+        group='labels'
         content-obj-property-name='name'
         sub-elements-property-name='subLabels'
         v-model='nonSmart'
-        :active-el='label'
+        :maximum-tree-height='4'
+        :active-content='label'
         :options='options'
         @input='saveNonSmart'
+        @selected='selectNonSmart'
       ></renderer>
     </division>
   </div>
@@ -25,14 +54,18 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Getter, State, Mutation, namespace } from 'vuex-class'
 
-import Division from '@/components/TheAppBar/AppnavSections/AppnavDivision.vue'
-import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavListrenderer.vue'
+import Division from '@/components/TheAppBar/AppnavSections/AppnavComponents/AppnavDivision.vue'
+import ListRenderer from '@/components/TheAppBar/AppnavSections/AppnavComponents/AppnavListrenderer.vue'
 
 import appUtil from '@/utils/app'
 import labelUtil from '@/utils/label'
 
 import { Label, ListIcon, SimpleAdder, Alert } from '@/interfaces/app'
-import LabelAdder from '../../Alerts.vue'
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faBackspace, faSortAlphaDown } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faBackspace, faSortAlphaDown)
 
 const label = namespace('label')
 
@@ -54,13 +87,28 @@ export default class OverviewAppnav extends Vue {
   @label.Getter labelPathById!: (id: string) => string[]
   @label.Getter getLabelNodeById!: (id: string | null) => Label | undefined
   @label.Action updateLabels!: (label: Label[]) => void
-  @label.Action deleteLabelById!: (id: string) => void
+  @label.Action deleteLabelsById!: (ids: string[]) => void
   @label.Action addSubLabelById!: (obj: {parentId: string, subLabelName: string, position?: number}) => void
   @label.Action addRootLabel!: (obj: {labelName: string, position?: number}) => void
+  @label.Action editLabelNameById!: (obj: {id: string, name: string}) => void
+  @label.Action sortCustomLabelsByName!: () => void
 
   label: string = ''
   smart: Label[] = []
   nonSmart: Label[] = []
+  selected: Label[] = []
+  selectedType: 'smart' | 'nonSmart' = 'smart'
+  divisionOptions: ListIcon[] = [
+    {
+      name: 'sort by name',
+      iconColor: '',
+      size: 'lg',
+      icon: 'sort-alpha-down',
+      callback: () => {
+        this.sortCustomLabelsByName()
+      },
+    },
+  ]
 
   created() {
     this.label = this.smartLabels[0].name
@@ -83,12 +131,36 @@ export default class OverviewAppnav extends Vue {
         },
       },
       {
+        name: 'edit label name',
+        icon: 'edit',
+        iconColor: '',
+        size: 'lg',
+        callback: (lab: Label) => {
+          this.pushPopUp('SimpleadderPopup')
+          this.pushPopUpPayload({
+            popUpTitle: 'Edit label name',
+            buttonName: 'Edit label',
+            inputPlaceholder: lab.name,
+            inputMaximumCharacters: 50,
+            callback: (input: string): void => {
+              this.editLabelNameById({id: lab.id, name: input})
+              this.pushPopUp('')
+            },
+          } as SimpleAdder)
+        },
+      },
+      {
         name: 'delete label',
         icon: 'backspace',
         iconColor: '',
         size: 'lg',
         callback: (lab: Label) => {
-          this.deleteLabelById(lab.id)
+          this.deleteLabelsById([lab.id])
+          this.pushAlert({
+            name: `Label <strong>${lab.name}</strong> was successfully deleted`,
+            duration: 2.5,
+            type: 'success',
+          })
         },
       },
       {
@@ -134,36 +206,45 @@ export default class OverviewAppnav extends Vue {
     let increment: 1 | 0 = 0
     if (position === 'below')
       increment = 1
+    const error = () => {
+      this.pushAlert({
+        name: `There is already another tag with the name ${name}`,
+        duration: 2.5,
+        type: 'error',
+      })
+    }
     if (lab.parentId === null) {
       const subLabel: Label | undefined = this.labels.find((el: Label) => el.name === name)
       if (subLabel)
-        this.pushAlert({
-          name: `There is already another tag with the name <strong>${name}</strong>`,
-          duration: 2.5,
-          type: 'error',
-        })
+        error()
       else {
         const index: number = this.labels.findIndex((el: Label) => el.id === lab.id)
         this.addRootLabel({
           labelName: name,
           position: index + increment,
         })
+        this.pushAlert({
+          name: `Label <strong>${name}</strong> was successfully added`,
+          duration: 2.5,
+          type: 'error',
+        })
       }
     } else {
       const parent: Label = this.getLabelNodeById(lab.parentId) as Label
       const subLabel: Label | undefined = parent.subLabels.find((el: Label) => el.name === name)
       if (subLabel !== undefined)
-        this.pushAlert({
-          name: `There is already another tag with the name ${name}`,
-          duration: 2.5,
-          type: 'error',
-        })
+        error()
       else {
         const index: number = parent.subLabels.findIndex((el: Label) => el.id === lab.id)
         this.addSubLabelById({
           parentId: parent.id,
           subLabelName: name,
           position: index + increment,
+        })
+        this.pushAlert({
+          name: `Sublabel <strong>${name}</strong> was successfully added`,
+          duration: 2.5,
+          type: 'error',
         })
       }
     }
@@ -174,6 +255,22 @@ export default class OverviewAppnav extends Vue {
   saveSmart() {
     this.updateLabels(appUtil.updateArrayOrderFromFilteredArray(this.labels, this.smart))
   }
+  selectNonSmart(labels: Label[]) {
+    this.selected = labels
+    this.selectedType = 'nonSmart'
+  }
+  selectSmart(labels: Label[]) {
+    this.selected = labels
+    this.selectedType = 'smart'
+  }
+  deleteSelectedLabels() {
+    this.deleteLabelsById(this.selected.map(el => el.id))
+    this.pushAlert({
+      name: `The selected labels were successfully deleted`,
+      duration: 2.5,
+      type: 'success',
+    })
+  }
 
   @Watch('labels')
   onLabelsChange() {
@@ -183,3 +280,6 @@ export default class OverviewAppnav extends Vue {
 }
 
 </script>
+
+<style scoped src='@/assets/css/appBarMenu.css'>
+</style>

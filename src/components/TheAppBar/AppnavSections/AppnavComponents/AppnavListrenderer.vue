@@ -7,6 +7,7 @@
       :disabled='disabled'
       :multi-drag='true'
       :selected='selectedElements'
+      :group='group'
       @input='save'
       @end='update'
       @empty='empty'
@@ -15,8 +16,11 @@
         <appnav-link v-for='el in arr'
           :key='el.id'
           :obj='el'
+          :group='group'
+          :maximum-tree-height='maximumTreeHeight'
           :content-obj-property-name='contentObjPropertyName' :sub-elements-property-name='subElementsPropertyName' :active-content='activeContent'
           :icons='icons(el)'
+          :options='options(el)'
           :optionsrender='options'
           :iconsrender='icons'
           :is-selection-empty='isSelectionEmpty'
@@ -40,7 +44,8 @@ import { ListIcon } from '@/interfaces/app'
 @Component({
   components: {
     'sortable': Sortable,
-    'appnav-link': () => import('@/components/TheAppBar/AppnavSections/AppnavElement.vue'),
+    'appnav-link': () => import(/* webpackPrefetch: true */
+     '@/components/TheAppBar/AppnavSections/AppnavComponents/AppnavElement.vue'),
   },
 })
 export default class AppnavLinkrenderer extends Vue {
@@ -51,6 +56,8 @@ export default class AppnavLinkrenderer extends Vue {
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({default: () => [], type: Function}) icons!: (obj: any) => ListIcon[]
   @Prop({default: () => [], type: Function}) options!: (obj: any) => ListIcon[]
+  @Prop(Number) maximumTreeHeight!: number 
+  @Prop() group: any
 
   @Getter isDesktop!: boolean
 
@@ -70,7 +77,7 @@ export default class AppnavLinkrenderer extends Vue {
     }
   }
   empty() {
-    if (!this.disabled) {
+    if (!this.disabled && this.selected.size > 0) {
       this.selected.clear()
       this.selectedElements = Array.from(this.selected)
       this.$emit('selected', this.selectedElements)
@@ -82,11 +89,14 @@ export default class AppnavLinkrenderer extends Vue {
       return true
     return this.selectedElements.length === 0
   }
-  get handle(): object | undefined {
+  get handle(): object {
     if (!this.isDesktop)
       return {
         ['handle']: '.handle',
       }
+    return {
+      ['handle']: '.content-handle',
+    }
   }
 
   update({arr, id}: {arr: any[], id: string}) {
