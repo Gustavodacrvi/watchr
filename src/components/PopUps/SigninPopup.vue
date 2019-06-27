@@ -16,20 +16,9 @@
         :max='75'
         @state='e => passwordState = e'
       />
-      <button v-if='!waitingResponse'
-        class='margin button round-border'
-        @click='sendRequest'
-      >Sign in</button>
-      <button v-else
-        class='margin button round-border'
-      >
-        <ft-icon
-          class='icon pointer txt'
-          icon='sync'
-          :style="{color: 'white'}"
-          spin
-        ></ft-icon>
-      </button>
+      <form-button :waiting-response='waitingResponse' @click='sendRequest'>
+        Sign in
+      </form-button>
       <div class='margin links'>
         <span @click='resetPasswordPoUp' class='link'>Forgot password?</span>
       </div>
@@ -39,28 +28,27 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Mixins, Watch } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { State, Mutation, Getter } from 'vuex-class'
-import Mixin from '@/mixins/authPopUp'
 
 import firebase from 'firebase/app'
 import { Alert } from '../../interfaces/app'
 
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 import FormPassword from '@/components/PopUps/FormComponents/FormPassword.vue'
+import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
 @Component({
   components: {
     'form-input': FormInput,
     'form-password': FormPassword,
+    'form-button': FormButton,
   },
 })
-export default class SigninPopUp extends Mixins(Mixin) {
+export default class SigninPopUp extends Vue {
   @State theme!: string
   @Mutation pushPopUp!: (compName: string) => void
   @Mutation pushAlert!: (alert: Alert) => void
-
-  MAXIMUM_NUMBER_OF_CHARACTERS: number = 75
 
   email: string | null = null
   password: string | null = null
@@ -73,10 +61,7 @@ export default class SigninPopUp extends Mixins(Mixin) {
     this.pushPopUp('SendresetpasswordPopup')
   }
   sendRequest() {
-    const hasError: boolean = this.inputHasError(this.email, this.MAXIMUM_NUMBER_OF_CHARACTERS)
-     || this.inputHasError(this.password, this.MAXIMUM_NUMBER_OF_CHARACTERS)
-
-    if (!hasError && this.email && this.password) {
+    if (this.emailState && this.passwordState) {
       this.waitingResponse = true
       firebase.auth().signInWithEmailAndPassword(this.email as any, this.password as any).then(() => {
         this.pushAlert({
@@ -103,15 +88,6 @@ export default class SigninPopUp extends Mixins(Mixin) {
         })
       })
     }
-  }
-
-  @Watch('password')
-  p() {
-    console.log(this.passwordState, this.emailState)
-  }
-  @Watch('email')
-  d() {
-    console.log(this.passwordState, this.emailState)
   }
 }
 
