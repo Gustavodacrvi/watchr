@@ -7,7 +7,7 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
 
-import firebase, { app } from 'firebase/app'
+import firebase from 'firebase/app'
 import { Alert } from '../interfaces/app'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -17,10 +17,11 @@ library.add(faEye, faEyeSlash, faSync)
 
 @Component
 export default class ResetPasswordView extends Vue {
-  @State currentUser!: firebase.User
+  @State currentUser!: firebase.User | null
   @Mutation pushAlert!: (alert: Alert) => void
   @Mutation pushPopUp!: (compName: string) => void
   @Mutation pushPopUpPayload!: (code: string) => void
+  @Mutation saveCurrentUser!: (user: firebase.User | null) => void
   @Prop() mode!: string
   @Prop() oobCode!: string
 
@@ -33,14 +34,14 @@ export default class ResetPasswordView extends Vue {
           duration: 5,
           type: 'success',
         })
-        this.currentUser.reload()
+        this.reload()
       }).catch(error => {
         this.pushAlert({
           name: error.message,
           duration: 8,
           type: 'error',
         })
-        this.currentUser.reload()
+        this.reload()
       })
     else if (this.mode === 'resetPassword')
       firebase.auth().verifyPasswordResetCode(this.oobCode).then(e => {
@@ -52,6 +53,14 @@ export default class ResetPasswordView extends Vue {
           duration: 8,
           type: 'error',
         })
+      })
+  }
+
+  reload() {
+    const auth = firebase.auth()
+    if (auth.currentUser !== null)
+      auth.currentUser.reload().then(() => {
+        this.saveCurrentUser(firebase.auth().currentUser)
       })
   }
 }

@@ -42,9 +42,11 @@ import { State, Getter, Mutation, Action } from 'vuex-class'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
 
-import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
-
 import { Alert } from '@/interfaces/app'
+
+import Alerts from '@/components/Alerts.vue'
+import PopUp from '@/components/PopUps/PopUp.vue'
+import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 
 const AsyncComponent = (compPath: string): any => () => ({
   component: import(/* webpackPrefetch: true */ `${compPath}`),
@@ -58,10 +60,10 @@ const AsyncComponent = (compPath: string): any => () => ({
   components: {
     'loading-component': LoadingComponent,
     'the-nav-bar': TheNavbar,
-    'alerts': AsyncComponent('./components/Alerts.vue'),
-    'pop-up': AsyncComponent('./components/PopUps/PopUp.vue'),
-    'the-app-bar': AsyncComponent('./components/TheAppBar/TheAppBar.vue'),
+    'alerts': Alerts,
+    'pop-up': PopUp,
     'action-button': AsyncComponent('./components/ActionButton.vue'),
+    'the-app-bar': AsyncComponent('./components/TheAppBar/TheAppBar.vue'),
   },
 })
 export default class App extends Vue {

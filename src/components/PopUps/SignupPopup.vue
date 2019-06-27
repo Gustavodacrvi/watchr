@@ -90,7 +90,7 @@ export default class SigninPopUp extends Vue {
             })
           })
         this.pushPopUp('')
-        this.$router.push('User')
+        this.$router.push({name: 'User'})
         this.waitingResponse = false
       }).catch(error => {
         this.waitingResponse = false

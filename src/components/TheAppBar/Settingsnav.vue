@@ -45,7 +45,7 @@
             />
             Sign out
           </span>
-          <span v-if='!confirmedEmail'
+          <span v-if='!emailVerified'
             class='link txt pointer'
             :class='theme'
             @click='resendConfirmationEmail'
@@ -98,6 +98,8 @@ library.add(faAdjust, faTasks, faSignOutAlt, faPaperPlane)
 @Component
 export default class LoggedAppnav extends Mixins(Mixin) {
   @State theme!: string
+  @State isLogged!: boolean
+  @State emailVerified!: boolean
   @Mutation pushPopUp!: (compName: string) => void
   @Mutation closeAppBar!: () => void
   @Getter isDesktop!: boolean

@@ -17,8 +17,10 @@ interface States {
   popUpComponent: string
   windowWidth: number
   popUpPayload: any | SimpleAdder
-  currentUser: firebase.User | null
   appBarState: boolean
+  isLogged: boolean
+  isAnonymous: boolean
+  emailVerified: boolean
   loading: boolean
   showingAlert: boolean
   alerts: Alert[]
@@ -73,7 +75,9 @@ const store: any = new Vuex.Store({
     popUpPayload: null,
     windowWidth: document.body.clientWidth,
     appBarState: false,
-    currentUser: null,
+    isLogged: false,
+    isAnonymous: false,
+    emailVerified: false,
     loading: true,
     showingAlert: false,
     alerts: [],
@@ -84,8 +88,16 @@ const store: any = new Vuex.Store({
       state.theme = theme
       localStorage.setItem('watchrTheme', theme)
     },
-    saveCurrentUser(state: States, user: firebase.User) {
-      state.currentUser = user
+    saveCurrentUser(state: States, user: firebase.User | null) {
+      if (user !== null) {
+        state.isLogged = true
+        state.isAnonymous = user.isAnonymous
+        state.emailVerified = user.emailVerified
+      } else {
+        state.isLogged = false
+        state.isAnonymous = false
+        state .emailVerified = false
+      }
     },
     pushPopUp(state: States, compName: string): void {
       state.popUpComponent = compName
@@ -125,13 +137,13 @@ const store: any = new Vuex.Store({
       return window.matchMedia('(display-mode: standalone)').matches
     },
     loggedAndVerified(state: States) {
-      return state.currentUser && state.currentUser.emailVerified
+      return state.isLogged && state.emailVerified
     },
     loggedAndNotVerified(state: States) {
-      return state.currentUser && !state.currentUser.emailVerified
+      return state.isLogged && !state.emailVerified
     },
     anonymous(state: States) {
-      return state.currentUser && state.currentUser.isAnonymous
+      return state.isLogged && state.isAnonymous
     },
   } as Getters,
   actions: {

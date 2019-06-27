@@ -118,7 +118,7 @@ export default class PerspectiveAppnav extends Vue {
         callback: (per: Perspective) => {
           this.toggleBindPerspectivesById({ids: [per.id]})
           this.pushAlert({
-            name: `Label <strong>${name}</strong> was successfully added`,
+            name: `Label <strong>${name}</strong> was successfully added.`,
             duration: 2.5,
             type: 'error',
           })

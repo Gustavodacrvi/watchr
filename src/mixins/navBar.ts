@@ -8,7 +8,6 @@ import { Alert } from '@/interfaces/app'
 
 @Component
 export default class NavbarMixin extends Vue {
-  @State currentUser!: firebase.User | null
   @Mutation pushAlert!: (alert: Alert) => void
 
   signOut() {
@@ -18,29 +17,37 @@ export default class NavbarMixin extends Vue {
         duration: 3,
         type: 'success',
       })
-      this.$router.push({name: 'Home'})
       this.$forceUpdate()
     })
   }
   resendConfirmationEmail() {
-    if (this.currentUser)
-      this.currentUser.sendEmailVerification().then(() => {
+    const user = firebase.auth().currentUser
+    if (user)
+      user.sendEmailVerification().then(() => {
         this.pushAlert({
           // tslint:disable-next-line:max-line-length
-          name: 'An email confirmation has been sent to your email address. Please check your inbox and click the confirmation link',
-          duration: 3,
+          name: 'An email confirmation has been sent to your email address. Please check your inbox and click the confirmation link.',
+          duration: 4,
           type: 'normal',
+        })
+      }).catch(error => {
+        this.pushAlert({
+          name: error.message,
+          duration: 6,
+          type: 'error',
         })
       })
   }
 
   get isLogged() {
-    if (this.currentUser === null)
+    const user = firebase.auth().currentUser
+    if (user === null)
       return false
     return true
   }
   get confirmedEmail() {
-    if (this.currentUser && this.currentUser.emailVerified)
+    const user = firebase.auth().currentUser
+    if (user && user.emailVerified)
       return true
     return false
   }

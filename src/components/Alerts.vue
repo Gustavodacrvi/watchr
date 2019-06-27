@@ -1,8 +1,8 @@
 <template>
-  <div class='wrapper' :class='platform'>
+  <div class='wrapper'>
     <div
       class='alert card round-border'
-      :class='[theme, alert.type]'>
+      :class='[theme, alert.type, platform]'>
       <span
         class='txt'
         v-html='alert.name'></span>

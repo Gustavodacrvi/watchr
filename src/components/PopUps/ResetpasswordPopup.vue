@@ -57,7 +57,7 @@ export default class ResetPasswordPopUp extends Vue {
     if (this.newPassword !== this.confirmPassword)
       this.pushAlert({
         name: 'The passwords don\'t match.',
-        duration: 8,
+        duration: 3,
         type: 'error',
       })
     else if (this.newPasswordState && this.confirmPasswordState && this.newPassword !== null) {
@@ -65,7 +65,7 @@ export default class ResetPasswordPopUp extends Vue {
       firebase.auth().confirmPasswordReset(this.popUpPayload, this.newPassword).then(() => {
         this.pushAlert({
           name: 'Your password has been reset successfully.',
-          duration: 5,
+          duration: 4,
           type: 'success',
         })
         this.pushPopUp('SigninPopup')
@@ -73,7 +73,7 @@ export default class ResetPasswordPopUp extends Vue {
       }).catch((error: any) => {
         this.pushAlert({
           name: error.message,
-          duration: 8,
+          duration: 6,
           type: 'error',
         })
         this.waitingResponse = false

@@ -73,20 +73,20 @@ export default class LabelAdder extends Vue {
       if (label !== undefined)
         this.pushAlert({
           name: `<strong>${this.value}</strong> already exists.`,
-          duration: 2.5,
+          duration: 4,
           type: 'error',
         })
       else if (arr.length > this.MAXIMUM_LENGTH_OF_LABEL_TREE)
         this.pushAlert({
-          name: 'The maximum number of sublabels is 4',
-          duration: 2.5,
+          name: 'The maximum number of sublabels is 4.',
+          duration: 4,
           type: 'error',
         })
       else {
         this.addLabelFromArrayPath(arr)
         this.pushAlert({
-          name: `<strong>${this.value}</strong> was successfully added`,
-          duration: 2.5,
+          name: `<strong>${this.value}</strong> was successfully added.`,
+          duration: 3,
           type: 'success',
         })
       }

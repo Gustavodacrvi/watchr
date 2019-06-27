@@ -61,7 +61,7 @@
           />
           Sign out
         </span>
-        <span v-if='!confirmedEmail'
+        <span v-if='!emailVerified'
           class='drop-el txt'
           @click='resendConfirmationEmail'
         >
@@ -106,6 +106,8 @@ library.add(faSignOutAlt, faPaperPlane)
 })
 export default class DesktopNavbar extends Mixins(Mixin) {
   @State theme!: string
+  @State isLogged!: boolean
+  @State emailVerified!: boolean
   @Mutation pushTheme!: (theme: string) => void
   @Mutation pushPopUp!: (compName: string) => void
 

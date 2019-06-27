@@ -66,14 +66,14 @@ export default class SigninPopUp extends Vue {
       firebase.auth().signInWithEmailAndPassword(this.email as any, this.password as any).then(() => {
         this.pushAlert({
           name: 'You have successfully logged in!',
-          duration: 5,
+          duration: 3,
           type: 'success',
         })
         const auth = firebase.auth()
         if (auth.currentUser && !auth.currentUser.emailVerified)
           this.pushAlert({
             name: 'Please confirm your e-mail address.',
-            duration: 5,
+            duration: 4,
             type: 'warning',
           })
         this.$router.push({name: 'User'})
@@ -83,7 +83,7 @@ export default class SigninPopUp extends Vue {
         this.waitingResponse = false
         this.pushAlert({
           name: error.message,
-          duration: 8,
+          duration: 6,
           type: 'error',
         })
       })

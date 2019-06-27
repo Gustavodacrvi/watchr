@@ -1,13 +1,15 @@
 <template>
-  <div v-if='loggedAndVerified'>
-    <span class='txt'>not logged and verified</span>    
-  </div>
-  <div v-else-if='loggedAndNotVerified'>
-    <span class='txt'>not logged and not verified</span>
-  </div>
-  <div v-else>
-    <span class='txt'>not logged or anonymous</span>
-  </div>
+  <transition name='fade' mode='out-in'>
+    <div key='loggedAndVerified' v-if='loggedAndVerified'>
+      <span class='txt'>logged and verified</span>    
+    </div>
+    <div key='loggedAndNotVerified' v-else-if='loggedAndNotVerified'>
+      <span class='txt'>logged and not verified</span>
+    </div>
+    <div key='else' v-else>
+      <span class='txt'>not logged or anonymous</span>
+    </div>
+  </transition>
 </template>
 
 <script lang="ts">
@@ -17,12 +19,12 @@ import { Mutation, Getter, State } from 'vuex-class'
 
 @Component
 export default class Guest extends Vue {
-  @State currentUser!: firebase.User
-  @Mutation openAppBar!: () => void
-  @Getter isDesktop!: boolean
   @Getter loggedAndVerified!: boolean
   @Getter loggedAndNotVerified!: boolean
   @Getter anonymous!: boolean
+  @Getter isDesktop!: boolean
+  @Mutation openAppBar!: () => void
+  @Mutation closeAppBar!: () => void
 
   created() {
     this.open()
@@ -31,13 +33,15 @@ export default class Guest extends Vue {
   open() {
     if (this.isDesktop && (this.loggedAndVerified || this.anonymous))
       this.openAppBar()
+    else if (this.isDesktop)
+      this.closeAppBar()
   }
 
   @Watch('isDesktop')
   onResize() {
     this.open()
   }
-  @Watch('currentUser')
+  @Watch('loggedAndVerified')
   onUserChange() {
     this.open()
   }

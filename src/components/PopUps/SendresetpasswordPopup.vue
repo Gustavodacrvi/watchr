@@ -49,7 +49,7 @@ export default class ResetPasswordPopUp extends Vue {
       firebase.auth().sendPasswordResetEmail(this.email).then(() => {
         this.pushAlert({
           name: 'E-mail sent to your e-mail address.',
-          duration: 5,
+          duration: 3,
           type: 'success',
         })
         this.pushPopUp('')
@@ -57,7 +57,7 @@ export default class ResetPasswordPopUp extends Vue {
       }).catch((error: any) => {
         this.pushAlert({
           name: error.message,
-          duration: 8,
+          duration: 6,
           type: 'error',
         })
         this.waitingResponse = false
