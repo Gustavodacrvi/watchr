@@ -4,60 +4,46 @@
       <h2>Send reset password e-mail</h2>
     </div>
     <div class='content'>
-      <input
-        class='margin input txt round-border gray'
-        placeholder='E-mail: '
-        type='text'
-        autocomplete='off'
-        :class='emailClass'
-        v-model.trim='email'
-      >
-      <button v-if='!waitingResponse'
-        class='margin button round-border'
-        @click='sendRequest'
-      >Send reset password e-mail</button>
-      <button v-else
-        class='margin button round-border'
-      >
-        <ft-icon
-          class='icon pointer txt'
-          icon='sync'
-          :style="{color: 'white'}"
-          spin
-        ></ft-icon>
-      </button>
+      <form-input
+        placeholder='E-mail'
+        v-model='email'
+        @state='e => emailState = e'
+      />
+      <form-button :waiting-response='waitingResponse' @click='sendRequest'>
+        Send reset password e-mail
+      </form-button>
     </div>
   </div>
 </template>
 
 <script lang='ts'>
 
-import { Component, Vue, Mixins } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
-import mixin from '@/mixins/authPopUp'
 
 import firebase from 'firebase/app'
 import { Alert } from '@/interfaces/app'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSync } from '@fortawesome/free-solid-svg-icons'
+import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
-library.add(faSync)
-
-@Component
-export default class ResetPasswordPopUp extends Mixins(mixin) {
+@Component({
+  components: {
+    'form-button': FormButton,
+    'form-input': FormInput,
+  },
+})
+export default class ResetPasswordPopUp extends Vue {
   @State theme!: string
   @Mutation pushAlert!: (alert: Alert) => void
   @Mutation pushPopUp!: (compName: string) => void
 
-  waitingResponse: boolean = false
   email: string | null = null
-  MAXIMUM_NUMBER_OF_CHARACTERS: number = 75
+  emailState: boolean = false
 
+  waitingResponse: boolean = false
   sendRequest() {
-    const hasError = this.inputHasError(this.email, this.MAXIMUM_NUMBER_OF_CHARACTERS)
-
-    if (!hasError && this.email) {
+    if (this.emailState && this.email !== null) {
       this.waitingResponse = true
       firebase.auth().sendPasswordResetEmail(this.email).then(() => {
         this.pushAlert({
@@ -76,13 +62,6 @@ export default class ResetPasswordPopUp extends Mixins(mixin) {
         this.waitingResponse = false
       })
     }
-  }
-
-  get emailClass(): any[] {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.email, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
   }
 }
 
