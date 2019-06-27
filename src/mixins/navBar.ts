@@ -26,6 +26,7 @@ export default class NavbarMixin extends Vue {
     if (this.currentUser)
       this.currentUser.sendEmailVerification().then(() => {
         this.pushAlert({
+          // tslint:disable-next-line:max-line-length
           name: 'An email confirmation has been sent to your email address. Please check your inbox and click the confirmation link',
           duration: 3,
           type: 'normal',

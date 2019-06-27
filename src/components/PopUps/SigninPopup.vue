@@ -4,14 +4,11 @@
       <h2>Sign in</h2>
     </div>
     <div class='content'>
-      <input
-        class='margin input txt round-border gray'
+      <form-input
         placeholder='E-mail: '
-        type='text'
-        autocomplete='off'
-        :class='emailClass'
         v-model.trim='email'
-      >
+        @state='e => emailState = e'
+      />
       <div class='margin password'>
         <input
           class='input txt round-border gray'
@@ -66,7 +63,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Mixins } from 'vue-property-decorator'
+import { Component, Vue, Mixins, Watch } from 'vue-property-decorator'
 import { State, Mutation, Getter } from 'vuex-class'
 import Mixin from '@/mixins/authPopUp'
 
@@ -75,10 +72,16 @@ import { faEye, faEyeSlash, faSync } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faEye, faEyeSlash, faSync)
 
-import firebase, { auth } from 'firebase/app'
+import firebase from 'firebase/app'
 import { Alert } from '../../interfaces/app'
 
-@Component
+import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+
+@Component({
+  components: {
+    'form-input': FormInput,
+  },
+})
 export default class SigninPopUp extends Mixins(Mixin) {
   @State theme!: string
   @Mutation pushPopUp!: (compName: string) => void
@@ -88,6 +91,7 @@ export default class SigninPopUp extends Mixins(Mixin) {
 
   email: string | null = null
   password: string | null = null
+  emailState: boolean = false
 
   waitingResponse: boolean = false
 
@@ -104,12 +108,12 @@ export default class SigninPopUp extends Mixins(Mixin) {
         this.pushAlert({
           name: 'You have successfully logged in!',
           duration: 5,
-          type: 'success'
+          type: 'success',
         })
         const auth = firebase.auth()
         if (auth.currentUser && !auth.currentUser.emailVerified)
           this.pushAlert({
-            name: 'Please confirm your e-mail address',
+            name: 'Please confirm your e-mail address.',
             duration: 5,
             type: 'warning',
           })
@@ -121,23 +125,22 @@ export default class SigninPopUp extends Mixins(Mixin) {
         this.pushAlert({
           name: error.message,
           duration: 8,
-          type: 'error'
+          type: 'error',
         })
       })
     }
   }
 
-  get emailClass(): any[] {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.email, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
-  }
   get passwordClass(): any[] {
     return [
       this.theme,
       {wrong: this.inputHasError(this.password, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
     ]
+  }
+
+  @Watch('emailState')
+  onChagne() {
+    console.log(this.emailState)
   }
 }
 

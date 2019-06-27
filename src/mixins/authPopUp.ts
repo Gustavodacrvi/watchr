@@ -11,7 +11,7 @@ export default class AuthPopUpMixin extends Vue {
     if (this.passwordType === 'password')
       this.passwordType = 'text'
     else
-      this.passwordType = 'password'
+      this.passwordType = 'password'  
   }
 
   inputHasError(str: string | null, max: number): boolean {

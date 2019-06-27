@@ -41,6 +41,9 @@ interface Getters {
   isStandAlone: () => boolean
   platform: () => 'mobile' | 'desktop'
   isOnAppRoute: () => boolean
+  loggedAndVerified: () => boolean
+  loggedAndNotVerified: () => boolean
+  anonymous: () => boolean
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
 }
 
@@ -114,6 +117,15 @@ const store: any = new Vuex.Store({
     },
     isStandAlone(state: States): boolean {
       return window.matchMedia('(display-mode: standalone)').matches
+    },
+    loggedAndVerified(state: States) {
+      return state.currentUser && state.currentUser.emailVerified
+    },
+    loggedAndNotVerified(state: States) {
+      return state.currentUser && !state.currentUser.emailVerified
+    },
+    anonymous(state: States) {
+      return state.currentUser && state.currentUser.isAnonymous
     },
   } as Getters,
   actions: {

@@ -69,6 +69,9 @@ export default class App extends Vue {
   @Mutation openAppBar!: () => void
   @Getter isDesktop!: boolean
   @Getter platform!: 'mobile' | 'desktop'
+  @Getter loggedAndVerified!: boolean
+  @Getter loggedAndNotVerified!: boolean
+  @Getter anonymous!: boolean
   @Action showLastAlert!: () => void
   @Action activateKeyShortcut!: (key: string) => void
 
@@ -101,7 +104,8 @@ export default class App extends Vue {
   }
 
   get showActionButton(): boolean {
-    return this.isOnAppRoute && !this.isShowingPopUp && (this.isDesktop || !this.appBarState)
+    // tslint:disable-next-line:max-line-length
+    return (this.isOnAppRoute && !this.isShowingPopUp && (this.isDesktop || !this.appBarState) && (this.loggedAndVerified || this.anonymous))
   }
   get isOnAppRoute(): boolean {
     return this.$route.name === 'User'

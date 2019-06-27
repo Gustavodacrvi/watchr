@@ -49,7 +49,7 @@ export default class ResetPasswordPopUp extends Mixins(mixin) {
   @State theme!: string
   @Mutation pushAlert!: (alert: Alert) => void
   @Mutation pushPopUp!: (compName: string) => void
-  
+
   waitingResponse: boolean = false
   email: string | null = null
   MAXIMUM_NUMBER_OF_CHARACTERS: number = 75
@@ -61,7 +61,7 @@ export default class ResetPasswordPopUp extends Mixins(mixin) {
       this.waitingResponse = true
       firebase.auth().sendPasswordResetEmail(this.email).then(() => {
         this.pushAlert({
-          name: 'E-mail sent',
+          name: 'E-mail sent to your e-mail address.',
           duration: 5,
           type: 'success',
         })

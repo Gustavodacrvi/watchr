@@ -34,7 +34,7 @@ export default class ResetPasswordView extends Vue {
           type: 'success',
         })
         this.currentUser.reload()
-      }).catch((error: any) => {
+      }).catch(error => {
         this.pushAlert({
           name: error.message,
           duration: 8,
@@ -42,18 +42,17 @@ export default class ResetPasswordView extends Vue {
         })
         this.currentUser.reload()
       })
-    else if (this.mode === 'resetPassword') {
-      firebase.auth().verifyPasswordResetCode(this.oobCode).then((e) => {
+    else if (this.mode === 'resetPassword')
+      firebase.auth().verifyPasswordResetCode(this.oobCode).then(e => {
         this.pushPopUp('ResetpasswordPopup')
         this.pushPopUpPayload(this.oobCode)
-      }).catch((error) => {
+      }).catch(error => {
         this.pushAlert({
           name: error.message,
           duration: 8,
           type: 'error',
         })
       })
-    }
   }
 }
 

@@ -117,14 +117,14 @@ export default class SigninPopUp extends Mixins(Mixin) {
 
   sendRequest() {
     const auth = firebase.auth()
-    
+
     const hasError: boolean = this.inputHasError(this.email, this.MAXIMUM_NUMBER_OF_CHARACTERS) ||
     this.inputHasError(this.password, this.MAXIMUM_NUMBER_OF_CHARACTERS) ||
     this.inputHasError(this.newPassword, this.MAXIMUM_NUMBER_OF_CHARACTERS)
 
     if (this.password !== this.newPassword)
       this.pushAlert({
-        name: "Passwords don't match",
+        name: 'Passwords don\'t match',
         duration: 8,
         type: 'error',
       })
@@ -139,7 +139,8 @@ export default class SigninPopUp extends Mixins(Mixin) {
         if (auth.currentUser)
           auth.currentUser.sendEmailVerification().then(() => {
             this.pushAlert({
-              name: 'An email confirmation has been sent to your email address. Please check your inbox and click the confirmation link',
+              // tslint:disable-next-line:max-line-length
+              name: 'An email confirmation has been sent to your email address. Please check your inbox and click the confirmation link.',
               duration: 5,
               type: 'normal',
             })
@@ -147,7 +148,7 @@ export default class SigninPopUp extends Mixins(Mixin) {
         this.pushPopUp('')
         this.$router.push('User')
         this.waitingResponse = false
-      }).catch((error: any) => {
+      }).catch(error => {
         this.waitingResponse = false
         this.pushAlert({
           name: error.message,

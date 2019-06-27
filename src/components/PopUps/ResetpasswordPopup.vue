@@ -101,18 +101,19 @@ export default class ResetPasswordPopUp extends Mixins(mixin) {
   @State popUpPayload!: string
   @Mutation pushAlert!: (alert: Alert) => void
   @Mutation pushPopUp!: (compName: string) => void
-  
+
   waitingResponse: boolean = false
   newPassword: string | null = null
   confirmPassword: string | null = null
   MAXIMUM_NUMBER_OF_CHARACTERS: number = 75
 
   sendRequest() {
+    // tslint:disable-next-line:max-line-length
     const hasError = this.inputHasError(this.newPassword, this.MAXIMUM_NUMBER_OF_CHARACTERS) || this.inputHasError(this.confirmPassword, this.MAXIMUM_NUMBER_OF_CHARACTERS)
 
     if (this.newPassword !== this.confirmPassword)
       this.pushAlert({
-        name: "The passwords don't match.",
+        name: 'The passwords don\'t match.',
         duration: 8,
         type: 'error',
       })
@@ -120,7 +121,7 @@ export default class ResetPasswordPopUp extends Mixins(mixin) {
       this.waitingResponse = true
       firebase.auth().confirmPasswordReset(this.popUpPayload, this.newPassword).then(() => {
         this.pushAlert({
-          name: "Your password has been reset successfully",
+          name: 'Your password has been reset successfully.',
           duration: 5,
           type: 'success',
         })
