@@ -4,120 +4,63 @@
       <h2>Reset password</h2>
     </div>
     <div class='content'>
-      <div class='margin password'>
-        <input
-          class='input txt round-border gray'
-          placeholder='New password: '
-          :type='passwordType'
-          autocomplete='off'
-          :class='newPasswordClass'
-          v-model.trim='newPassword'
-        >
-        <span class='eyes'>
-          <transition
-            name='fade'
-            mode='out-in'
-          >
-            <ft-icon v-if="passwordType === 'text'"
-              key='eye'
-              class='eye txt icon pointer'
-              icon='eye'
-              size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-            <ft-icon v-else
-              key='eye-slash'
-              class='eye txt icon pointer'
-              icon='eye-slash'
-              size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-          </transition>
-        </span>
-      </div>
-      <div class='margin password'>
-        <input
-          class='input txt round-border gray'
-          placeholder='Confirm password: '
-          :type='passwordType'
-          autocomplete='off'
-          :class='confirmPasswordClass' v-model.trim='confirmPassword'>
-        <span class='eyes'>
-          <transition
-            name='fade'
-            mode='out-in'
-          >
-            <ft-icon v-if="passwordType === 'text'"
-              key='eye'
-              class='eye txt icon pointer'
-              icon='eye' size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-            <ft-icon v-else
-              key='eye-slash'
-              class='eye txt icon pointer'
-              icon='eye-slash'
-              size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-          </transition>
-        </span>
-      </div>
-      <button v-if='!waitingResponse'
-        class='margin button round-border'
-        @click='sendRequest'
-      >Sign up</button>
-      <button v-else
-        class='margin button round-border'
-      >
-        <ft-icon
-          class='icon pointer txt'
-          icon='sync'
-          :style="{color: 'white'}"
-          spin
-        ></ft-icon>
-      </button>
+      <form-password
+        placeholder='New password: '
+        v-model='newPassword'
+        :max='75'
+        @state='e => newPasswordState = e'
+      />
+      <form-password
+        placeholder='Confirm password: '
+        v-model='confirmPassword'
+        :max='75'
+        @state='e => confirmPasswordState = e'
+      />
+      <form-button :waiting-response='waitingResponse' @click='sendRequest'>
+        Reset password
+      </form-button>
     </div>
   </div>
 </template>
 
 <script lang='ts'>
 
-import { Component, Vue, Mixins } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
-import mixin from '@/mixins/authPopUp'
 
 import firebase from 'firebase/app'
 import { Alert } from '@/interfaces/app'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSync } from '@fortawesome/free-solid-svg-icons'
+import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
-library.add(faSync)
-
-@Component
-export default class ResetPasswordPopUp extends Mixins(mixin) {
+@Component({
+  components: {
+    'form-input': FormInput,
+    'form-button': FormButton,
+  },
+})
+export default class ResetPasswordPopUp extends Vue {
   @State theme!: string
   @State popUpPayload!: string
   @Mutation pushAlert!: (alert: Alert) => void
   @Mutation pushPopUp!: (compName: string) => void
 
-  waitingResponse: boolean = false
   newPassword: string | null = null
   confirmPassword: string | null = null
-  MAXIMUM_NUMBER_OF_CHARACTERS: number = 75
+  newPasswordState: boolean = false
+  confirmPasswordState: boolean = false
+
+  waitingResponse: boolean = false
 
   sendRequest() {
-    // tslint:disable-next-line:max-line-length
-    const hasError = this.inputHasError(this.newPassword, this.MAXIMUM_NUMBER_OF_CHARACTERS) || this.inputHasError(this.confirmPassword, this.MAXIMUM_NUMBER_OF_CHARACTERS)
-
     if (this.newPassword !== this.confirmPassword)
       this.pushAlert({
         name: 'The passwords don\'t match.',
         duration: 8,
         type: 'error',
       })
-    else if (!hasError && this.newPassword && this.confirmPassword) {
+    else if (this.newPasswordState && this.confirmPasswordState && this.newPassword !== null) {
       this.waitingResponse = true
       firebase.auth().confirmPasswordReset(this.popUpPayload, this.newPassword).then(() => {
         this.pushAlert({
@@ -136,19 +79,6 @@ export default class ResetPasswordPopUp extends Mixins(mixin) {
         this.waitingResponse = false
       })
     }
-  }
-
-  get newPasswordClass() {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.newPassword, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
-  }
-  get confirmPasswordClass() {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.confirmPassword, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
   }
 }
 

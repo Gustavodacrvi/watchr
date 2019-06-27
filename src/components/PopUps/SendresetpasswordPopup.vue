@@ -7,6 +7,7 @@
       <form-input
         placeholder='E-mail'
         v-model='email'
+        :max='75'
         @state='e => emailState = e'
       />
       <form-button :waiting-response='waitingResponse' @click='sendRequest'>
