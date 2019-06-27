@@ -1,8 +1,8 @@
 <template>
   <input
     class='margin input txt round-border gray'
-    placeholder='E-mail: '
-    type='text'
+    :placeholder='placeholder'
+    :type='type'
     autocomplete='off'
     :class='classArr'
     v-model.trim='model'
@@ -17,9 +17,10 @@ import { State, Mutation } from 'vuex-class'
 @Component
 export default class FormInput extends Vue {
   @State theme!: string
-  @Prop(String) value!: string | null
+  @Prop({required: true, type: String}) value!: string | null
+  @Prop({required: true, type: Number}) max!: number
+  @Prop(String) type!: string | null
   @Prop(String) placeholder!: string
-  @Prop(Number) max!: number
 
   model: string | null = null
 

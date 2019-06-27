@@ -1,59 +1,35 @@
 <template>
-  <div class='signin-popup' :class='theme'>
+  <div :class='theme'>
     <div class='title'>
       <h2>Sign in</h2>
     </div>
     <div class='content'>
       <form-input
         placeholder='E-mail: '
-        v-model.trim='email'
+        v-model='email'
+        :max='75'
         @state='e => emailState = e'
       />
-      <div class='margin password'>
-        <input
-          class='input txt round-border gray'
-          placeholder='Password: '
-          :type='passwordType'
-          autocomplete='off'
-          :class='passwordClass'
-          v-model.trim='password'
-        >
-        <span class='eyes'>
-          <transition
-            name='fade'
-            mode='out-in'
-          >
-            <ft-icon v-if="passwordType === 'text'"
-              key='eye'
-              class='eye txt icon pointer'
-              icon='eye'
-              size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-            <ft-icon v-else
-              key='eye-slash'
-              class='eye txt icon pointer'
-              icon='eye-slash'
-              size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-          </transition>
-        </span>
-      </div>
-        <button v-if='!waitingResponse'
-          class='margin button round-border'
-          @click='sendRequest'
-        >Sign in</button>
-        <button v-else
-          class='margin button round-border'
-        >
-          <ft-icon
-            class='icon pointer txt'
-            icon='sync'
-            :style="{color: 'white'}"
-            spin
-          ></ft-icon>
-        </button>
+      <form-password
+        placeholder='Password: '
+        v-model='password'
+        :max='75'
+        @state='e => passwordState = e'
+      />
+      <button v-if='!waitingResponse'
+        class='margin button round-border'
+        @click='sendRequest'
+      >Sign in</button>
+      <button v-else
+        class='margin button round-border'
+      >
+        <ft-icon
+          class='icon pointer txt'
+          icon='sync'
+          :style="{color: 'white'}"
+          spin
+        ></ft-icon>
+      </button>
       <div class='margin links'>
         <span @click='resetPasswordPoUp' class='link'>Forgot password?</span>
       </div>
@@ -67,19 +43,16 @@ import { Component, Vue, Mixins, Watch } from 'vue-property-decorator'
 import { State, Mutation, Getter } from 'vuex-class'
 import Mixin from '@/mixins/authPopUp'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEye, faEyeSlash, faSync } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faEye, faEyeSlash, faSync)
-
 import firebase from 'firebase/app'
 import { Alert } from '../../interfaces/app'
 
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+import FormPassword from '@/components/PopUps/FormComponents/FormPassword.vue'
 
 @Component({
   components: {
     'form-input': FormInput,
+    'form-password': FormPassword,
   },
 })
 export default class SigninPopUp extends Mixins(Mixin) {
@@ -91,6 +64,7 @@ export default class SigninPopUp extends Mixins(Mixin) {
 
   email: string | null = null
   password: string | null = null
+  passwordState: boolean = false
   emailState: boolean = false
 
   waitingResponse: boolean = false
@@ -131,16 +105,13 @@ export default class SigninPopUp extends Mixins(Mixin) {
     }
   }
 
-  get passwordClass(): any[] {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.password, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
+  @Watch('password')
+  p() {
+    console.log(this.passwordState, this.emailState)
   }
-
-  @Watch('emailState')
-  onChagne() {
-    console.log(this.emailState)
+  @Watch('email')
+  d() {
+    console.log(this.passwordState, this.emailState)
   }
 }
 
