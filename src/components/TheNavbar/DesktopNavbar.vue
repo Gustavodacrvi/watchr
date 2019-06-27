@@ -5,18 +5,18 @@
     <div class='center'>
       <router-link
         class='link txt'
-        :to="{name: 'Home'}"
         ref='Home'
+        :to="{name: 'Home'}"
       >Home</router-link>
       <router-link
         class='link txt'
-        :to="{name: 'User'}"
         ref='User'
+        :to="{name: 'User'}"
       >User</router-link>
       <router-link
         class='link txt'
-        :to='{name: "Help"}'
         ref='Help'
+        :to="{name: 'Help'}"
       >Help</router-link>
     </div>
     <div class='right'>
@@ -151,10 +151,10 @@ export default class DesktopNavbar extends Mixins(Mixin) {
 
   @Watch('$route')
   onChange() {
-    const RANDOM_NUMBER = 30
+    const RANDOM_NUMBER = 80
     setTimeout(() => {
       this.moveMagicLineTo(this.$route.name)
-    }, 30)
+    }, RANDOM_NUMBER)
     this.moveMagicLineTo(this.$route.name)
   }
 }

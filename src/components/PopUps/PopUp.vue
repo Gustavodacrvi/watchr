@@ -7,11 +7,13 @@
         size='2x'
         @click="pushPopUp('')"
       />
-      <component
-        class='pop-up card'
-        :class='componentClass'
-        :is='popUpComponent'
-      />
+      <transition name='fade' mode='out-in'>
+        <component
+          class='pop-up card'
+          :class='componentClass'
+          :is='popUpComponent'
+        />
+      </transition>
       <div v-if='isDesktop'
         class='popup-margin'
         :class='platform'
@@ -50,6 +52,8 @@ const AsyncComponent = (compPath: string): any => () => ({
     SignupPopup: AsyncComponent('./SignupPopup.vue'),
     SigninPopup: AsyncComponent('./SigninPopup.vue'),
     LabeladderPopup: AsyncComponent('./LabeladderPopup.vue'),
+    ResetpasswordPopup: AsyncComponent('./ResetpasswordPopup.vue'),
+    SendresetpasswordPopup: AsyncComponent('./SendresetpasswordPopup.vue'),
   },
 })
 export default class PopUp extends Vue {

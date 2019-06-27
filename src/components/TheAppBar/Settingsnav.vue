@@ -21,19 +21,16 @@
           class='link txt'
           :class='theme'
           :to='{name: "Home"}'
-          @click.native='closeAppBar'
         >Home</router-link>
         <router-link
           class='link txt'
           :class='theme'
           :to='{name: "Help"}'
-          @click.native='closeAppBar'
         >Help</router-link>
         <router-link
           class='link txt'
           :class='theme'
           :to='{name: "User"}'
-          @click.native='closeAppBar'
         >User</router-link>
         <template v-if='isLogged'>
           <span

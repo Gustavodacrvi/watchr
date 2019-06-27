@@ -28,7 +28,6 @@ import { dom } from '@fortawesome/fontawesome-svg-core'
 
 auth.onAuthStateChanged(() => {
   store.commit('saveCurrentUser', firebase.auth().currentUser)
-  console.log(firebase.auth().currentUser)
 })
 
 library.add(faUser, faAdjust, faUserAlt, faSignInAlt, faUserPlus)

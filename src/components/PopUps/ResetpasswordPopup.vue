@@ -1,17 +1,9 @@
 <template>
-  <div class='signin-popup' :class='theme'>
+  <div :class='theme'>
     <div class='title'>
-      <h2>Sign up</h2>
+      <h2>Reset password</h2>
     </div>
     <div class='content'>
-      <input
-        class='margin input txt round-border gray'
-        placeholder='E-mail: '
-        type='text'
-        autocomplete='off'
-        :class='emailClass'
-        v-model.trim='email'
-      >
       <div class='margin password'>
         <input
           class='input txt round-border gray'
@@ -19,7 +11,7 @@
           :type='passwordType'
           autocomplete='off'
           :class='newPasswordClass'
-          v-model.trim='password'
+          v-model.trim='newPassword'
         >
         <span class='eyes'>
           <transition
@@ -49,7 +41,7 @@
           placeholder='Confirm password: '
           :type='passwordType'
           autocomplete='off'
-          :class='confirmPasswordClass' v-model.trim='newPassword'>
+          :class='confirmPasswordClass' v-model.trim='confirmPassword'>
         <span class='eyes'>
           <transition
             name='fade'
@@ -92,88 +84,69 @@
 <script lang='ts'>
 
 import { Component, Vue, Mixins } from 'vue-property-decorator'
-import { State, Mutation, Getter } from 'vuex-class'
-import Mixin from '@/mixins/authPopUp'
-
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEye, faEyeSlash, faSync } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faEye, faEyeSlash, faSync)
+import { State, Mutation } from 'vuex-class'
+import mixin from '@/mixins/authPopUp'
 
 import firebase from 'firebase/app'
-import { Alert } from '../../interfaces/app'
+import { Alert } from '@/interfaces/app'
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faSync } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faSync)
 
 @Component
-export default class SigninPopUp extends Mixins(Mixin) {
+export default class ResetPasswordPopUp extends Mixins(mixin) {
   @State theme!: string
-  @Mutation pushPopUp!: (compName: string) => void
+  @State popUpPayload!: string
   @Mutation pushAlert!: (alert: Alert) => void
-
-  email: string | null = null
-  password: string | null = null
-  newPassword: string | null = null
+  @Mutation pushPopUp!: (compName: string) => void
+  
   waitingResponse: boolean = false
+  newPassword: string | null = null
+  confirmPassword: string | null = null
   MAXIMUM_NUMBER_OF_CHARACTERS: number = 75
 
   sendRequest() {
-    const auth = firebase.auth()
-    
-    const hasError: boolean = this.inputHasError(this.email, this.MAXIMUM_NUMBER_OF_CHARACTERS) ||
-    this.inputHasError(this.password, this.MAXIMUM_NUMBER_OF_CHARACTERS) ||
-    this.inputHasError(this.newPassword, this.MAXIMUM_NUMBER_OF_CHARACTERS)
+    const hasError = this.inputHasError(this.newPassword, this.MAXIMUM_NUMBER_OF_CHARACTERS) || this.inputHasError(this.confirmPassword, this.MAXIMUM_NUMBER_OF_CHARACTERS)
 
-    if (this.password !== this.newPassword)
+    if (this.newPassword !== this.confirmPassword)
       this.pushAlert({
-        name: "Passwords don't match",
+        name: "The passwords don't match.",
         duration: 8,
         type: 'error',
       })
-    else if (!hasError && this.email && this.password && this.newPassword) {
+    else if (!hasError && this.newPassword && this.confirmPassword) {
       this.waitingResponse = true
-      auth.createUserWithEmailAndPassword(this.email as any, this.newPassword as any).then((cred: any) => {
+      firebase.auth().confirmPasswordReset(this.popUpPayload, this.newPassword).then(() => {
         this.pushAlert({
-          name: 'You have successfully created an account!',
+          name: "Your password has been reset successfully",
           duration: 5,
           type: 'success',
         })
-        if (auth.currentUser)
-          auth.currentUser.sendEmailVerification().then(() => {
-            this.pushAlert({
-              name: 'An email confirmation has been sent to your email address. Please check your inbox and click the confirmation link',
-              duration: 5,
-              type: 'normal',
-            })
-          })
-        this.pushPopUp('')
-        this.$router.push('User')
+        this.pushPopUp('SigninPopup')
         this.waitingResponse = false
       }).catch((error: any) => {
-        this.waitingResponse = false
         this.pushAlert({
           name: error.message,
           duration: 8,
           type: 'error',
         })
+        this.waitingResponse = false
       })
     }
   }
 
-  get emailClass() {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.email, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
-  }
   get newPasswordClass() {
     return [
       this.theme,
-      {wrong: this.inputHasError(this.password, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
+      {wrong: this.inputHasError(this.newPassword, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
     ]
   }
   get confirmPasswordClass() {
     return [
       this.theme,
-      {wrong: this.inputHasError(this.newPassword, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
+      {wrong: this.inputHasError(this.confirmPassword, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
     ]
   }
 }

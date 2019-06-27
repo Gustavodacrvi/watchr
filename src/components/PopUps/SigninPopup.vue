@@ -58,8 +58,7 @@
           ></ft-icon>
         </button>
       <div class='margin links'>
-        <span class='link'>Forgot password?</span>
-        <span class='link'>Forgot email?</span>
+        <span @click='resetPasswordPoUp' class='link'>Forgot password?</span>
       </div>
     </div>
   </div>
@@ -85,30 +84,33 @@ export default class SigninPopUp extends Mixins(Mixin) {
   @Mutation pushPopUp!: (compName: string) => void
   @Mutation pushAlert!: (alert: Alert) => void
 
-  MAXIMUM_NUMBER_OF_CHARACTERS: number = 50
+  MAXIMUM_NUMBER_OF_CHARACTERS: number = 75
 
   email: string | null = null
   password: string | null = null
 
   waitingResponse: boolean = false
 
+  resetPasswordPoUp() {
+    this.pushPopUp('SendresetpasswordPopup')
+  }
   sendRequest() {
     const hasError: boolean = this.inputHasError(this.email, this.MAXIMUM_NUMBER_OF_CHARACTERS)
      || this.inputHasError(this.password, this.MAXIMUM_NUMBER_OF_CHARACTERS)
 
-    if (!hasError && this.email && this.password)
+    if (!hasError && this.email && this.password) {
       this.waitingResponse = true
       firebase.auth().signInWithEmailAndPassword(this.email as any, this.password as any).then(() => {
         this.pushAlert({
           name: 'You have successfully logged in!',
-          duration: 3,
+          duration: 5,
           type: 'success'
         })
         const auth = firebase.auth()
         if (auth.currentUser && !auth.currentUser.emailVerified)
           this.pushAlert({
             name: 'Please confirm your e-mail address',
-            duration: 3,
+            duration: 5,
             type: 'warning',
           })
         this.$router.push({name: 'User'})
@@ -118,10 +120,11 @@ export default class SigninPopUp extends Mixins(Mixin) {
         this.waitingResponse = false
         this.pushAlert({
           name: error.message,
-          duration: 3,
+          duration: 8,
           type: 'error'
         })
       })
+    }
   }
 
   get emailClass(): any[] {

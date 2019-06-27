@@ -8,7 +8,7 @@ import { Alert } from '@/interfaces/app'
 
 @Component
 export default class NavbarMixin extends Vue {
-  @State currentUser!: firebase.User
+  @State currentUser!: firebase.User | null
   @Mutation pushAlert!: (alert: Alert) => void
 
   signOut() {
