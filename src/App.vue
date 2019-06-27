@@ -1,30 +1,35 @@
 <template>
   <div class='app-wrapper'>
     <div class='app background-color' :class='theme'>
-      <div class='visible'>
-        <div class='navbar' :class='platform'>
-          <the-nav-bar></the-nav-bar>
-        </div>
-        <transition name='fade' mode='out-in'>
-          <router-view class='content' />
-        </transition>
-        <transition name='pop-up-trans' mode='out-in'>
-          <pop-up v-if='isShowingPopUp'></pop-up>
-        </transition>
-        <transition name='appbar-trans'>
-          <keep-alive>
-            <the-app-bar v-if='appBarState'></the-app-bar>
-          </keep-alive>
-        </transition>
-        <transition name='fade'>
-          <action-button v-if='showActionButton'></action-button>
-        </transition>
-        <div class='alert-wrapper'>
-          <transition name='alert-trans' @after-leave='closeAlert'>
-            <alerts v-if='showingAlert'></alerts>
+      <transition name='fade' mode='out-in'>
+        <div key='app' v-if='!loading' class='visible'>
+          <div class='navbar' :class='platform'>
+            <the-nav-bar></the-nav-bar>
+          </div>
+          <transition name='fade' mode='out-in'>
+            <router-view class='content' />
           </transition>
+          <transition name='pop-up-trans' mode='out-in'>
+            <pop-up v-if='isShowingPopUp'></pop-up>
+          </transition>
+          <transition name='appbar-trans'>
+            <keep-alive>
+              <the-app-bar v-if='appBarState'></the-app-bar>
+            </keep-alive>
+          </transition>
+          <transition name='fade'>
+            <action-button v-if='showActionButton'></action-button>
+          </transition>
+          <div class='alert-wrapper'>
+            <transition name='alert-trans' @after-leave='closeAlert'>
+              <alerts v-if='showingAlert'></alerts>
+            </transition>
+          </div>
         </div>
-      </div>
+        <div key='loading' v-else class='visible loading'>
+          <loading-component></loading-component>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -51,6 +56,7 @@ const AsyncComponent = (compPath: string): any => () => ({
 
 @Component({
   components: {
+    'loading-component': LoadingComponent,
     'the-nav-bar': TheNavbar,
     'alerts': AsyncComponent('./components/Alerts.vue'),
     'pop-up': AsyncComponent('./components/PopUps/PopUp.vue'),
@@ -60,6 +66,7 @@ const AsyncComponent = (compPath: string): any => () => ({
 })
 export default class App extends Vue {
   @State theme!: string
+  @State loading!: boolean
   @State popUpComponent!: string
   @State alerts!: Alert[]
   @State appBarState!: boolean
@@ -147,6 +154,12 @@ export default class App extends Vue {
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .navbar {

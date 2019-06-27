@@ -26,7 +26,13 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUser, faAdjust, faSignInAlt, faUserAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import { dom } from '@fortawesome/fontawesome-svg-core'
 
+let firstTimeLoading = true
+
 auth.onAuthStateChanged(() => {
+  if (firstTimeLoading) {
+    firstTimeLoading = false
+    store.commit('showApp')
+  }
   store.commit('saveCurrentUser', firebase.auth().currentUser)
 })
 

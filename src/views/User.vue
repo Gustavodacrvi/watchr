@@ -1,11 +1,12 @@
 <template>
   <div v-if='loggedAndVerified'>
-    
+    <span class='txt'>not logged and verified</span>    
   </div>
   <div v-else-if='loggedAndNotVerified'>
+    <span class='txt'>not logged and not verified</span>
   </div>
   <div v-else>
-    sadf
+    <span class='txt'>not logged or anonymous</span>
   </div>
 </template>
 

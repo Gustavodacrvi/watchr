@@ -68,8 +68,8 @@ export default class SigninPopUp extends Vue {
 
     if (this.password !== this.confirmPassword)
       this.pushAlert({
-        name: 'Passwords don\'t match',
-        duration: 8,
+        name: 'Passwords don\'t match.',
+        duration: 4,
         type: 'error',
       })
     else if (this.emailState && this.passwordState && this.confirmPasswordState) {
@@ -77,7 +77,7 @@ export default class SigninPopUp extends Vue {
       auth.createUserWithEmailAndPassword(this.email as any, this.password as any).then((cred: any) => {
         this.pushAlert({
           name: 'You have successfully created an account!',
-          duration: 5,
+          duration: 3,
           type: 'success',
         })
         if (auth.currentUser)
@@ -85,7 +85,7 @@ export default class SigninPopUp extends Vue {
             this.pushAlert({
               // tslint:disable-next-line:max-line-length
               name: 'An email confirmation has been sent to your email address. Please check your inbox and click the confirmation link.',
-              duration: 5,
+              duration: 8,
               type: 'normal',
             })
           })
@@ -96,7 +96,7 @@ export default class SigninPopUp extends Vue {
         this.waitingResponse = false
         this.pushAlert({
           name: error.message,
-          duration: 8,
+          duration: 4,
           type: 'error',
         })
       })

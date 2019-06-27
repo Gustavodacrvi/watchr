@@ -19,6 +19,7 @@ interface States {
   popUpPayload: any | SimpleAdder
   currentUser: firebase.User | null
   appBarState: boolean
+  loading: boolean
   showingAlert: boolean
   alerts: Alert[]
   alert: Alert | undefined
@@ -30,6 +31,7 @@ interface Mutations {
   pushAlert: (state: States, alert: Alert) => void
   pushPopUpPayload: (state: States, payload: any) => void
   saveCurrentUser: (state: States, user: firebase.User) => void
+  showApp: () => void
   openAppBar: () => void
   closeAppBar: () => void
   hideAlert: () => void
@@ -72,6 +74,7 @@ const store: any = new Vuex.Store({
     windowWidth: document.body.clientWidth,
     appBarState: false,
     currentUser: null,
+    loading: true,
     showingAlert: false,
     alerts: [],
     alert: undefined,
@@ -90,6 +93,9 @@ const store: any = new Vuex.Store({
     },
     pushPopUpPayload(state: States, payload: any | SimpleAdder): void {
       state.popUpPayload = payload
+    },
+    showApp(state: States) {
+      state.loading = false
     },
     pushAlert(state: States, alert: Alert): void {
       state.alerts.push(alert)
