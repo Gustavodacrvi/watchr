@@ -4,133 +4,77 @@
       <h2>Sign up</h2>
     </div>
     <div class='content'>
-      <input
-        class='margin input txt round-border gray'
+      <form-input
         placeholder='E-mail: '
-        type='text'
-        autocomplete='off'
-        :class='emailClass'
-        v-model.trim='email'
-      >
-      <div class='margin password'>
-        <input
-          class='input txt round-border gray'
-          placeholder='New password: '
-          :type='passwordType'
-          autocomplete='off'
-          :class='newPasswordClass'
-          v-model.trim='password'
-        >
-        <span class='eyes'>
-          <transition
-            name='fade'
-            mode='out-in'
-          >
-            <ft-icon v-if="passwordType === 'text'"
-              key='eye'
-              class='eye txt icon pointer'
-              icon='eye'
-              size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-            <ft-icon v-else
-              key='eye-slash'
-              class='eye txt icon pointer'
-              icon='eye-slash'
-              size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-          </transition>
-        </span>
-      </div>
-      <div class='margin password'>
-        <input
-          class='input txt round-border gray'
-          placeholder='Confirm password: '
-          :type='passwordType'
-          autocomplete='off'
-          :class='confirmPasswordClass' v-model.trim='newPassword'>
-        <span class='eyes'>
-          <transition
-            name='fade'
-            mode='out-in'
-          >
-            <ft-icon v-if="passwordType === 'text'"
-              key='eye'
-              class='eye txt icon pointer'
-              icon='eye' size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-            <ft-icon v-else
-              key='eye-slash'
-              class='eye txt icon pointer'
-              icon='eye-slash'
-              size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-          </transition>
-        </span>
-      </div>
-      <button v-if='!waitingResponse'
-        class='margin button round-border'
-        @click='sendRequest'
-      >Sign up</button>
-      <button v-else
-        class='margin button round-border'
-      >
-        <ft-icon
-          class='icon pointer txt'
-          icon='sync'
-          :style="{color: 'white'}"
-          spin
-        ></ft-icon>
-      </button>
+        v-model='email'
+        :max='75'
+        @state='e => emailState = e'
+      />
+      <form-password
+        placeholder='New password: '
+        v-model='password'
+        :max='75'
+        @state='e => passwordState = e'
+      />
+      <form-password
+        placeholder='Confirm password: '
+        v-model='confirmPassword'
+        :max='75'
+        @state='e => confirmPasswordState = e'
+      />
+      <form-button :waiting-response='waitingResponse' @click='sendRequest'>
+        Sign up
+      </form-button>
     </div>
   </div>
 </template>
 
 <script lang='ts'>
 
-import { Component, Vue, Mixins } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { State, Mutation, Getter } from 'vuex-class'
-import Mixin from '@/mixins/authPopUp'
-
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEye, faEyeSlash, faSync } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faEye, faEyeSlash, faSync)
 
 import firebase from 'firebase/app'
 import { Alert } from '../../interfaces/app'
 
-@Component
-export default class SigninPopUp extends Mixins(Mixin) {
+import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+import FormPassword from '@/components/PopUps/FormComponents/FormPassword.vue'
+import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
+
+@Component({
+  components: {
+    'form-input': FormInput,
+    'form-password': FormPassword,
+    'form-button': FormButton,
+  },
+})
+export default class SigninPopUp extends Vue {
   @State theme!: string
   @Mutation pushPopUp!: (compName: string) => void
   @Mutation pushAlert!: (alert: Alert) => void
 
   email: string | null = null
   password: string | null = null
-  newPassword: string | null = null
+  confirmPassword: string | null = null
+  emailState: boolean = false
+  passwordState: boolean = false
+  confirmPasswordState: boolean = false
+
   waitingResponse: boolean = false
-  MAXIMUM_NUMBER_OF_CHARACTERS: number = 75
+
 
   sendRequest() {
     const auth = firebase.auth()
 
-    const hasError: boolean = this.inputHasError(this.email, this.MAXIMUM_NUMBER_OF_CHARACTERS) ||
-    this.inputHasError(this.password, this.MAXIMUM_NUMBER_OF_CHARACTERS) ||
-    this.inputHasError(this.newPassword, this.MAXIMUM_NUMBER_OF_CHARACTERS)
-
-    if (this.password !== this.newPassword)
+    if (this.password !== this.confirmPassword)
       this.pushAlert({
         name: 'Passwords don\'t match',
         duration: 8,
         type: 'error',
       })
-    else if (!hasError && this.email && this.password && this.newPassword) {
+    else if (this.emailState && this.passwordState && this.confirmPasswordState) {
       this.waitingResponse = true
-      auth.createUserWithEmailAndPassword(this.email as any, this.newPassword as any).then((cred: any) => {
+      auth.createUserWithEmailAndPassword(this.email as any, this.password as any).then((cred: any) => {
         this.pushAlert({
           name: 'You have successfully created an account!',
           duration: 5,
@@ -157,25 +101,6 @@ export default class SigninPopUp extends Mixins(Mixin) {
         })
       })
     }
-  }
-
-  get emailClass() {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.email, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
-  }
-  get newPasswordClass() {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.password, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
-  }
-  get confirmPasswordClass() {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.newPassword, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
   }
 }
 
