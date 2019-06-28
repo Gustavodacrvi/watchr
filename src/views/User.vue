@@ -24,9 +24,10 @@
     >
       <div class='slider'>
         <tab-slider
-          width='700px'
+          flex-basis='700px'
           :options="[
-            {name: 'Create account', comp: 'UserCreateaccount'},
+            {name: 'Premium', comp: 'UserPremium'},
+            {name: 'Normal', comp: 'UserCreateaccount'},
             {name: 'Anonymous', comp: 'UserAnonymous'},
           ]"
         />

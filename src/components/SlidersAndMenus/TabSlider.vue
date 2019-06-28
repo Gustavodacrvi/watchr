@@ -3,7 +3,7 @@
     <div
       class='slider gray round-border'
       :class='theme'
-      :style='{width: width}'
+      :style="{'flex-basis': flexBasis}"
     >
       <div class='header'>
         <span v-for='o in options'
@@ -38,7 +38,7 @@ interface Option {
 export default class TabSlider extends Vue {
   @State theme!: string
   @Prop(Array) options!: Option[]
-  @Prop(String) width!: string
+  @Prop(String) flexBasis!: string
 
   comp: string | null = null
   components: any = {}
@@ -57,6 +57,10 @@ export default class TabSlider extends Vue {
 </script>
 
 <style scoped>
+
+.wrapper {
+  margin: 0 10px;
+}
 
 .slider {
   overflow: hidden;
