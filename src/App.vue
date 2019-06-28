@@ -40,7 +40,6 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 import { State, Getter, Mutation, Action } from 'vuex-class'
 
 import LoadingComponent from '@/components/LoadingComponent.vue'
-import ErrorComponent from '@/components/ErrorComponent.vue'
 
 import { Alert } from '@/interfaces/app'
 
@@ -48,13 +47,7 @@ import Alerts from '@/components/Alerts.vue'
 import PopUp from '@/components/PopUps/PopUp.vue'
 import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 
-const AsyncComponent = (compPath: string): any => () => ({
-  component: import(/* webpackPrefetch: true */ `${compPath}`),
-  loading: LoadingComponent,
-  error: ErrorComponent,
-  delay: 200,
-  timeout: 5000,
-})
+import appUtils from '@/utils/app'
 
 @Component({
   components: {
@@ -62,8 +55,8 @@ const AsyncComponent = (compPath: string): any => () => ({
     'the-nav-bar': TheNavbar,
     'alerts': Alerts,
     'pop-up': PopUp,
-    'action-button': AsyncComponent('./components/ActionButton.vue'),
-    'the-app-bar': AsyncComponent('./components/TheAppBar/TheAppBar.vue'),
+    'action-button': appUtils.AsyncComponent(import(/* webpackPrefetch: true */  '@/components/ActionButton.vue')),
+    'the-app-bar': appUtils.AsyncComponent(import(/* webpackPrefetch: true */ '@/components/TheAppBar/TheAppBar.vue')),
   },
 })
 export default class App extends Vue {

@@ -1,16 +1,31 @@
 <template>
   <transition name='fade' mode='out-in'>
-    <div key='loggedAndVerified' v-if='loggedAndVerified'>
+    <div v-if='loggedAndVerified'
+      class='app'
+      key='loggedAndVerified'
+    >
       <span class='txt'>logged and verified</span>    
     </div>
-    <div key='loggedAndNotVerified' v-else-if='loggedAndNotVerified'>
+    <div v-else-if='loggedAndNotVerified'
+      class='app'
+      key='loggedAndNotVerified'
+    >
       <span class='txt'>logged and not verified</span>
     </div>
-    <div key='anonymouse' v-else-if='anonymous'>
+    <div v-else-if='anonymous'
+      class='app'
+      key='anonymouse'
+    >
       <span class='txt'>logged as anonymous</span>
     </div>
-    <div key='not logged' v-else>
-      <span class='txt'>not logged</span>
+    <div v-else
+      class='app'
+      key='not logged'
+    >
+      <div class='slider'>
+        <tab-slider
+        />
+      </div>
     </div>
   </transition>
 </template>
@@ -20,8 +35,15 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { Mutation, Getter, State } from 'vuex-class'
 
-@Component
+import appUtils from '@/utils/app'
+
+@Component({
+  components: {
+    'tab-slider': appUtils.AsyncComponent(import('@/components/SlidersAndMenus/TabSlider.vue')),
+  },
+})
 export default class Guest extends Vue {
+  @State theme!: string
   @Getter loggedAndVerified!: boolean
   @Getter loggedAndNotVerified!: boolean
   @Getter anonymous!: boolean
@@ -51,3 +73,19 @@ export default class Guest extends Vue {
 }
 
 </script>
+
+<style scoped>
+
+.app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.slider {
+  margin-top: 60px;
+}
+
+</style>

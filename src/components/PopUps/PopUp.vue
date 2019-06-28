@@ -28,9 +28,6 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 
-import LoadingComponent from '@/components/LoadingComponent.vue'
-import ErrorComponent from '@/components/ErrorComponent.vue'
-
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
@@ -38,22 +35,14 @@ import appUtils from '../../utils/app'
 
 library.add(faArrowLeft)
 
-const AsyncComponent = (compPath: string): any => () => ({
-  component: import(`${compPath}`),
-  loading: LoadingComponent,
-  error: ErrorComponent,
-  delay: 200,
-  timeout: 3000,
-})
-
 @Component({
   components: {
-    SimpleadderPopup: AsyncComponent('./SimpleadderPopup.vue'),
-    SignupPopup: AsyncComponent('./SignupPopup.vue'),
-    SigninPopup: AsyncComponent('./SigninPopup.vue'),
-    LabeladderPopup: AsyncComponent('./LabeladderPopup.vue'),
-    ResetpasswordPopup: AsyncComponent('./ResetpasswordPopup.vue'),
-    SendresetpasswordPopup: AsyncComponent('./SendresetpasswordPopup.vue'),
+    SimpleadderPopup: appUtils.AsyncComponent(import('./SimpleadderPopup.vue')),
+    SignupPopup: appUtils.AsyncComponent(import('./SignupPopup.vue')),
+    SigninPopup: appUtils.AsyncComponent(import('./SigninPopup.vue')),
+    LabeladderPopup: appUtils.AsyncComponent(import('./LabeladderPopup.vue')),
+    ResetpasswordPopup: appUtils.AsyncComponent(import('./ResetpasswordPopup.vue')),
+    SendresetpasswordPopup: appUtils.AsyncComponent(import('./SendresetpasswordPopup.vue')),
   },
 })
 export default class PopUp extends Vue {
