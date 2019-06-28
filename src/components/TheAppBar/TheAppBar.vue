@@ -29,7 +29,7 @@
 
 <script lang="ts">
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 
 import LoadingComponent from '@/components/LoadingComponent.vue'
@@ -51,19 +51,19 @@ const AsyncComponent = (compPath: string): any => () => ({
 })
 export default class TheNavBar extends Vue {
   @State theme!: string
+  @State isLogged!: boolean
+  @State emailVerified!: boolean
   @Mutation pushTheme!: (theme: string) => void
   @Mutation closeAppBar!: () => void
   @Getter isDesktop!: boolean
+  @Getter loggedAndVerified!: boolean
   @Getter platform!: 'mobile' | 'desktop'
   @Getter isStandAlone!: boolean
 
-  settings: boolean = !this.isStandAlone
-  appMenu: string = ''
+  appMenu: 'settingsnav' | 'appnav' = 'settingsnav'
 
   created() {
-    this.settings = !this.isStandAlone
-
-    if (this.isDesktop || !this.settings)
+    if ((this.isDesktop || this.isStandAlone) && this.loggedAndVerified)
       this.appMenu = 'appnav'
     else
       this.appMenu = 'settingsnav'
@@ -80,6 +80,13 @@ export default class TheNavBar extends Vue {
       this.appMenu = 'settingsnav'
     else
       this.appMenu = 'appnav'
+  }
+
+  @Watch('isLogged')
+  onAuthChange() {
+    if (!this.loggedAndVerified)
+      this.appMenu = 'settingsnav'
+    else this.appMenu = 'appnav'
   }
 }
 

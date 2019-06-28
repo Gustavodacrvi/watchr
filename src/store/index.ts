@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Vuex, { Action } from 'vuex'
+import Vuex from 'vuex'
 
 const MAX_MOBILE_SCREEN_WIDTH = 1024
 
@@ -19,6 +19,9 @@ interface States {
   popUpPayload: any | SimpleAdder
   appBarState: boolean
   isLogged: boolean
+  isAnonymous: boolean
+  emailVerified: boolean
+  loading: boolean
   showingAlert: boolean
   alerts: Alert[]
   alert: Alert | undefined
@@ -29,6 +32,8 @@ interface Mutations {
   pushPopUp: (state: States, compName: string) => void
   pushAlert: (state: States, alert: Alert) => void
   pushPopUpPayload: (state: States, payload: any) => void
+  saveCurrentUser: (state: States, user: firebase.User) => void
+  showApp: () => void
   openAppBar: () => void
   closeAppBar: () => void
   hideAlert: () => void
@@ -40,6 +45,9 @@ interface Getters {
   isStandAlone: () => boolean
   platform: () => 'mobile' | 'desktop'
   isOnAppRoute: () => boolean
+  loggedAndVerified: () => boolean
+  loggedAndNotVerified: () => boolean
+  anonymous: () => boolean
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
 }
 
@@ -68,6 +76,9 @@ const store: any = new Vuex.Store({
     windowWidth: document.body.clientWidth,
     appBarState: false,
     isLogged: false,
+    isAnonymous: false,
+    emailVerified: false,
+    loading: true,
     showingAlert: false,
     alerts: [],
     alert: undefined,
@@ -77,12 +88,26 @@ const store: any = new Vuex.Store({
       state.theme = theme
       localStorage.setItem('watchrTheme', theme)
     },
+    saveCurrentUser(state: States, user: firebase.User | null) {
+      if (user !== null) {
+        state.isLogged = true
+        state.isAnonymous = user.isAnonymous
+        state.emailVerified = user.emailVerified
+      } else {
+        state.isLogged = false
+        state.isAnonymous = false
+        state .emailVerified = false
+      }
+    },
     pushPopUp(state: States, compName: string): void {
       state.popUpComponent = compName
       state.popUpPayload = null
     },
     pushPopUpPayload(state: States, payload: any | SimpleAdder): void {
       state.popUpPayload = payload
+    },
+    showApp(state: States) {
+      state.loading = false
     },
     pushAlert(state: States, alert: Alert): void {
       state.alerts.push(alert)
@@ -111,6 +136,15 @@ const store: any = new Vuex.Store({
     isStandAlone(state: States): boolean {
       return window.matchMedia('(display-mode: standalone)').matches
     },
+    loggedAndVerified(state: States) {
+      return state.isLogged && state.emailVerified
+    },
+    loggedAndNotVerified(state: States) {
+      return state.isLogged && !state.emailVerified
+    },
+    anonymous(state: States) {
+      return state.isLogged && state.isAnonymous
+    },
   } as Getters,
   actions: {
     getWindowWidthOnResize({state, getters, commit}) {
@@ -130,11 +164,12 @@ const store: any = new Vuex.Store({
         }, state.alert.duration * NUMBER_OF_MILISECONDS_IN_ONE_SECOND)
       }
     },
-    activateKeyShortcut({state, commit}, key) {
-      switch (key) {
-        case 'l': commit('pushPopUp', 'LabeladderPopup'); break
-        case 'h': commit('pushPopUp', ''); break
-      }
+    activateKeyShortcut({state, commit, getters}, key) {
+      if ((getters.loggedAndVerified || getters.anonymous) && getters.isDesktop)
+        switch (key) {
+          case 'l': commit('pushPopUp', 'LabeladderPopup'); break
+          case 'h': commit('pushPopUp', ''); break
+        }
     },
   } as Actions,
 })

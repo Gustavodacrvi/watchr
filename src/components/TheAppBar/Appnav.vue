@@ -49,6 +49,7 @@
           <ft-icon
             class='txt pointer icon'
             icon='cog'
+            size='lg'
             @click="$emit('change')"
           ></ft-icon>
         </div>
@@ -56,6 +57,7 @@
           <ft-icon
             class='txt pointer icon'
             icon='adjust'
+            size='lg'
             @click="$emit('theme')"
           ></ft-icon>
         </div>

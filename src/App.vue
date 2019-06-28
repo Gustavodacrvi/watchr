@@ -1,30 +1,35 @@
 <template>
   <div class='app-wrapper'>
     <div class='app background-color' :class='theme'>
-      <div class='visible'>
-        <div class='navbar' :class='platform'>
-          <the-nav-bar></the-nav-bar>
-        </div>
-        <transition name='fade' mode='out-in'>
-          <router-view class='content' />
-        </transition>
-        <transition name='pop-up-trans' mode='out-in'>
-          <pop-up v-if='isShowingPopUp'></pop-up>
-        </transition>
-        <transition name='appbar-trans'>
-          <keep-alive>
-            <the-app-bar v-if='appBarState'></the-app-bar>
-          </keep-alive>
-        </transition>
-        <transition name='fade'>
-          <action-button v-if='showActionButton'></action-button>
-        </transition>
-        <div class='alert-wrapper'>
-          <transition name='alert-trans' @after-leave='closeAlert'>
-            <alerts v-if='showingAlert'></alerts>
+      <transition name='fade' mode='out-in'>
+        <div key='app' v-if='!loading' class='visible'>
+          <div class='navbar' :class='platform'>
+            <the-nav-bar></the-nav-bar>
+          </div>
+          <transition name='fade' mode='out-in'>
+            <router-view class='content' />
           </transition>
+          <transition name='pop-up-trans' mode='out-in'>
+            <pop-up v-if='isShowingPopUp'></pop-up>
+          </transition>
+          <transition name='appbar-trans'>
+            <keep-alive>
+              <the-app-bar v-if='appBarState'></the-app-bar>
+            </keep-alive>
+          </transition>
+          <transition name='fade'>
+            <action-button v-if='showActionButton'></action-button>
+          </transition>
+          <div class='alert-wrapper'>
+            <transition name='alert-trans' @after-leave='closeAlert'>
+              <alerts v-if='showingAlert'></alerts>
+            </transition>
+          </div>
         </div>
-      </div>
+        <div key='loading' v-else class='visible loading'>
+          <loading-component></loading-component>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -35,31 +40,28 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 import { State, Getter, Mutation, Action } from 'vuex-class'
 
 import LoadingComponent from '@/components/LoadingComponent.vue'
-import ErrorComponent from '@/components/ErrorComponent.vue'
-
-import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 
 import { Alert } from '@/interfaces/app'
 
-const AsyncComponent = (compPath: string): any => () => ({
-  component: import(`${compPath}`),
-  loading: LoadingComponent,
-  error: ErrorComponent,
-  delay: 200,
-  timeout: 5000,
-})
+import Alerts from '@/components/Alerts.vue'
+import PopUp from '@/components/PopUps/PopUp.vue'
+import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
+
+import appUtils from '@/utils/app'
 
 @Component({
   components: {
+    'loading-component': LoadingComponent,
     'the-nav-bar': TheNavbar,
-    'alerts': AsyncComponent('./components/Alerts.vue'),
-    'pop-up': AsyncComponent('./components/PopUps/PopUp.vue'),
-    'the-app-bar': AsyncComponent('./components/TheAppBar/TheAppBar.vue'),
-    'action-button': AsyncComponent('./components/ActionButton.vue'),
+    'alerts': Alerts,
+    'pop-up': PopUp,
+    'action-button': appUtils.AsyncComponent(import(/* webpackPrefetch: true */  '@/components/ActionButton.vue')),
+    'the-app-bar': appUtils.AsyncComponent(import(/* webpackPrefetch: true */ '@/components/TheAppBar/TheAppBar.vue')),
   },
 })
 export default class App extends Vue {
   @State theme!: string
+  @State loading!: boolean
   @State popUpComponent!: string
   @State alerts!: Alert[]
   @State appBarState!: boolean
@@ -69,6 +71,9 @@ export default class App extends Vue {
   @Mutation openAppBar!: () => void
   @Getter isDesktop!: boolean
   @Getter platform!: 'mobile' | 'desktop'
+  @Getter loggedAndVerified!: boolean
+  @Getter loggedAndNotVerified!: boolean
+  @Getter anonymous!: boolean
   @Action showLastAlert!: () => void
   @Action activateKeyShortcut!: (key: string) => void
 
@@ -96,12 +101,13 @@ export default class App extends Vue {
   }
   keyPressed({key}: {key: string}) {
     const active = document.activeElement
-    if (active && active.nodeName !== 'INPUT')
+    if (active && active.nodeName !== 'INPUT' && this.isOnAppRoute)
       this.activateKeyShortcut(key)
   }
 
   get showActionButton(): boolean {
-    return this.isOnAppRoute && !this.isShowingPopUp && (this.isDesktop || !this.appBarState)
+    // tslint:disable-next-line:max-line-length
+    return (this.isOnAppRoute && !this.isShowingPopUp && (this.isDesktop || !this.appBarState) && (this.loggedAndVerified || this.anonymous))
   }
   get isOnAppRoute(): boolean {
     return this.$route.name === 'User'
@@ -143,6 +149,12 @@ export default class App extends Vue {
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .navbar {

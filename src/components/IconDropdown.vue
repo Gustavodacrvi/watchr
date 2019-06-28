@@ -13,7 +13,7 @@
       <div v-show='showing'
         class='card round-border content'
         :class='theme'
-        :style='`min-width: ${minwidth}`'
+        :style='`min-width: ${minWidth}`'
       >
         <slot></slot>
       </div>
@@ -30,7 +30,7 @@ import { State } from 'vuex-class'
 export default class TheNavbar extends Vue {
   @Prop({required: true, type: String}) handle!: string
   @Prop({default: 'lg', type: String}) size!: string
-  @Prop({default: '250px', type: String}) minwidth!: string
+  @Prop({default: '250px', type: String}) minWidth!: string
 
   @State theme!: string
 

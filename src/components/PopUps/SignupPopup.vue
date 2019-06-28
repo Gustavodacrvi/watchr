@@ -4,153 +4,103 @@
       <h2>Sign up</h2>
     </div>
     <div class='content'>
-      <input
-        class='margin input txt round-border gray'
-        placeholder='Username: '
-        type='text'
-        autocomplete='off'
-        :class='usernameClass'
-        v-model.trim='username'
-      >
-      <input
-        class='margin input txt round-border gray'
+      <form-input
         placeholder='E-mail: '
-        type='text'
-        autocomplete='off'
-        :class='emailClass'
-        v-model.trim='email'
-      >
-      <div class='margin password'>
-        <input
-          class='input txt round-border gray'
-          placeholder='New password: '
-          :type='passwordType'
-          autocomplete='off'
-          :class='newPasswordClass'
-          v-model.trim='password'
-        >
-        <span class='eyes'>
-          <transition
-            name='fade'
-            mode='out-in'
-          >
-            <ft-icon v-if="passwordType === 'text'"
-              key='eye'
-              class='eye txt icon pointer'
-              icon='eye'
-              size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-            <ft-icon v-else
-              key='eye-slash'
-              class='eye txt icon pointer'
-              icon='eye-slash'
-              size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-          </transition>
-        </span>
-      </div>
-      <div class='margin password'>
-        <input
-          class='input txt round-border gray'
-          placeholder='Confirm password: '
-          :type='passwordType'
-          autocomplete='off'
-          :class='confirmPasswordClass' v-model.trim='newPassword'>
-        <span class='eyes'>
-          <transition
-            name='fade'
-            mode='out-in'
-          >
-            <ft-icon v-if="passwordType === 'text'"
-              key='eye'
-              class='eye txt icon pointer'
-              icon='eye' size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-            <ft-icon v-else
-              key='eye-slash'
-              class='eye txt icon pointer'
-              icon='eye-slash'
-              size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-          </transition>
-        </span>
-      </div>
-      <button v-if='!waitingResponse'
-        class='margin button round-border'
-        @click='sendRequest'
-      >Sign in</button>
-      <button v-else
-        class='margin button round-border'
-      >
-          <ft-icon
-            class='icon pointer txt'
-            icon='sync'
-            :style="{color: 'white'}"
-            spin
-          ></ft-icon>
-      </button>
+        v-model='email'
+        :max='75'
+        @state='e => emailState = e'
+      />
+      <form-password
+        placeholder='New password: '
+        v-model='password'
+        :max='75'
+        @state='e => passwordState = e'
+      />
+      <form-password
+        placeholder='Confirm password: '
+        v-model='confirmPassword'
+        :max='75'
+        @state='e => confirmPasswordState = e'
+      />
+      <form-button :waiting-response='waitingResponse' @click='sendRequest'>
+        Sign up
+      </form-button>
     </div>
   </div>
 </template>
 
 <script lang='ts'>
 
-import { Component, Vue, Mixins } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { State, Mutation, Getter } from 'vuex-class'
-import Mixin from '@/mixins/authPopUp'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEye, faEyeSlash, faSync } from '@fortawesome/free-solid-svg-icons'
+import firebase from 'firebase/app'
+import { Alert } from '../../interfaces/app'
 
-library.add(faEye, faEyeSlash, faSync)
+import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+import FormPassword from '@/components/PopUps/FormComponents/FormPassword.vue'
+import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
-const MAXIMUM_NUMBER_OF_CHARACTERS: number = 50
-
-@Component
-export default class SigninPopUp extends Mixins(Mixin) {
+@Component({
+  components: {
+    'form-input': FormInput,
+    'form-password': FormPassword,
+    'form-button': FormButton,
+  },
+})
+export default class SigninPopUp extends Vue {
   @State theme!: string
   @Mutation pushPopUp!: (compName: string) => void
+  @Mutation pushAlert!: (alert: Alert) => void
 
-  username: string | null = null
   email: string | null = null
   password: string | null = null
-  newPassword: string | null = null
+  confirmPassword: string | null = null
+  emailState: boolean = false
+  passwordState: boolean = false
+  confirmPasswordState: boolean = false
+
   waitingResponse: boolean = false
 
-  sendRequest() {
-    const hasError: boolean = this.inputHasError(this.username, MAXIMUM_NUMBER_OF_CHARACTERS) ||
-    this.inputHasError(this.email, MAXIMUM_NUMBER_OF_CHARACTERS) ||
-    this.inputHasError(this.password, MAXIMUM_NUMBER_OF_CHARACTERS) ||
-     this.inputHasError(this.newPassword, MAXIMUM_NUMBER_OF_CHARACTERS)
-  }
 
-  get usernameClass() {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.username, MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
-  }
-  get emailClass() {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.email, MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
-  }
-  get newPasswordClass() {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.password, MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
-  }
-  get confirmPasswordClass() {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.newPassword, MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
+  sendRequest() {
+    const auth = firebase.auth()
+
+    if (this.password !== this.confirmPassword)
+      this.pushAlert({
+        name: 'Passwords don\'t match.',
+        duration: 4,
+        type: 'error',
+      })
+    else if (this.emailState && this.passwordState && this.confirmPasswordState) {
+      this.waitingResponse = true
+      auth.createUserWithEmailAndPassword(this.email as any, this.password as any).then((cred: any) => {
+        this.pushAlert({
+          name: 'You have successfully created an account!',
+          duration: 3,
+          type: 'success',
+        })
+        if (auth.currentUser)
+          auth.currentUser.sendEmailVerification().then(() => {
+            this.pushAlert({
+              // tslint:disable-next-line:max-line-length
+              name: 'An email confirmation has been sent to your email address. Please check your inbox and click the confirmation link.',
+              duration: 8,
+              type: 'normal',
+            })
+          })
+        this.pushPopUp('')
+        this.$router.push({name: 'User'})
+        this.waitingResponse = false
+      }).catch(error => {
+        this.waitingResponse = false
+        this.pushAlert({
+          name: error.message,
+          duration: 4,
+          type: 'error',
+        })
+      })
+    }
   }
 }
 

@@ -5,22 +5,22 @@
     <div class='center'>
       <router-link
         class='link txt'
-        :to="{name: 'Home'}"
         ref='Home'
+        :to="{name: 'Home'}"
       >Home</router-link>
       <router-link
         class='link txt'
-        :to="{name: 'User'}"
         ref='User'
+        :to="{name: 'User'}"
       >User</router-link>
       <router-link
         class='link txt'
-        :to='{name: "Help"}'
         ref='Help'
+        :to="{name: 'Help'}"
       >Help</router-link>
     </div>
     <div class='right'>
-      <icon-dropdown
+      <icon-dropdown v-if='!isLogged'
         class='margin'
         handle='user-alt'
       >
@@ -36,7 +36,7 @@
           <hr class='thematic-break'>
           <span
             class='drop-el txt'
-              @click="pushPopUp('SignupPopup')"
+            @click="pushPopUp('SignupPopup')"
             >
             <ft-icon
               icon='user-plus'
@@ -45,6 +45,32 @@
             Sign up
           </span>
         </div>
+      </icon-dropdown>
+      <icon-dropdown v-else
+        class='margin'
+        handle='user-alt'
+        min-width='300px'
+      >
+        <span
+          class='drop-el txt'
+          @click='signOut'
+        >
+          <ft-icon
+            icon='sign-out-alt'
+            size='sm'
+          />
+          Sign out
+        </span>
+        <span v-if='!emailVerified'
+          class='drop-el txt'
+          @click='resendConfirmationEmail'
+        >
+          <ft-icon
+            icon='paper-plane'
+            size='sm'
+          />
+          Resend confirmation e-mail
+        </span>
       </icon-dropdown>
       <ft-icon
         class='txt pointer icon margin'
@@ -62,18 +88,26 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue, Watch, Mixins } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
+import Mixin from '@/mixins/navBar'
 
 import IconDropdown from '@/components/IconDropdown.vue'
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faSignOutAlt, faPaperPlane } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faSignOutAlt, faPaperPlane)
 
 @Component({
   components: {
     'icon-dropdown': IconDropdown,
   },
 })
-export default class DesktopNavbar extends Vue {
+export default class DesktopNavbar extends Mixins(Mixin) {
   @State theme!: string
+  @State isLogged!: boolean
+  @State emailVerified!: boolean
   @Mutation pushTheme!: (theme: string) => void
   @Mutation pushPopUp!: (compName: string) => void
 
@@ -119,6 +153,10 @@ export default class DesktopNavbar extends Vue {
 
   @Watch('$route')
   onChange() {
+    const RANDOM_NUMBER = 80
+    setTimeout(() => {
+      this.moveMagicLineTo(this.$route.name)
+    }, RANDOM_NUMBER)
     this.moveMagicLineTo(this.$route.name)
   }
 }

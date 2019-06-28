@@ -1,6 +1,17 @@
 
+import LoadingComponent from '@/components/LoadingComponent.vue'
+import ErrorComponent from '@/components/ErrorComponent.vue'
 
 export default {
+  AsyncComponent(comp: any): any {
+    return () => ({
+      component: comp,
+      loading: LoadingComponent,
+      error: ErrorComponent,
+      delay: 200,
+      timeout: 5000,
+    })
+  },
   updateArrayOrderFromFilteredArray(oldArray: any[], filteredArray: any[]): any[] {
     const ids: Set<string> = new Set()
 

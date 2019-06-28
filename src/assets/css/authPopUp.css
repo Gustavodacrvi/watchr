@@ -14,20 +14,6 @@
   text-align: center;
 }
 
-.input {
-  padding: 10px;
-  outline: none;
-  border: none;
-  box-sizing: border-box;
-  width: 100%;
-  transition: border .3s, background-color .3s;
-  font-size: 1em;
-}
-
-.input.wrong {
-  border: 2px solid #FC7C85;
-}
-
 .margin + .margin {
   margin-top: 8px;
 }
@@ -56,7 +42,7 @@
 }
 
 .button:hover {
-  background-color: #bd9bfd;
+  background-color: #fc9c9c;
 }
 
 .links {
@@ -68,4 +54,18 @@
   font-size: .9em;
   color: #2599fe;
   cursor: pointer;
+}
+
+.input {
+  padding: 10px;
+  outline: none;
+  border: none;
+  box-sizing: border-box;
+  width: 100%;
+  transition: border .3s, background-color .3s;
+  font-size: 1em;
+}
+
+.input.wrong {
+  border: 2px solid #FC7C85;
 }

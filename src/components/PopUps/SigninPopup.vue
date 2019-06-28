@@ -1,65 +1,26 @@
 <template>
-  <div class='signin-popup' :class='theme'>
+  <div :class='theme'>
     <div class='title'>
       <h2>Sign in</h2>
     </div>
     <div class='content'>
-      <input
-        class='margin input txt round-border gray'
-        placeholder='Username: '
-        type='text'
-        autocomplete='off'
-        :class='usernameClass'
-        v-model.trim='username'
-      >
-      <div class='margin password'>
-        <input
-          class='input txt round-border gray'
-          placeholder='Password: '
-          :type='passwordType'
-          autocomplete='off'
-          :class='passwordClass'
-          v-model.trim='password'
-        >
-        <span class='eyes'>
-          <transition
-            name='fade'
-            mode='out-in'
-          >
-            <ft-icon v-if="passwordType === 'text'"
-              key='eye'
-              class='eye txt icon pointer'
-              icon='eye'
-              size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-            <ft-icon v-else
-              key='eye-slash'
-              class='eye txt icon pointer'
-              icon='eye-slash'
-              size='1x'
-              @click='togglePassword'
-            ></ft-icon>
-          </transition>
-        </span>
-      </div>
-        <button v-if='!waitingResponse'
-          class='margin button round-border'
-          @click='sendRequest'
-        >Sign in</button>
-        <button v-else
-          class='margin button round-border'
-        >
-          <ft-icon
-            class='icon pointer txt'
-            icon='sync'
-            :style="{color: 'white'}"
-            spin
-          ></ft-icon>
-        </button>
+      <form-input
+        placeholder='E-mail: '
+        v-model='email'
+        :max='75'
+        @state='e => emailState = e'
+      />
+      <form-password
+        placeholder='Password: '
+        v-model='password'
+        :max='75'
+        @state='e => passwordState = e'
+      />
+      <form-button :waiting-response='waitingResponse' @click='sendRequest'>
+        Sign in
+      </form-button>
       <div class='margin links'>
-        <span class='link'>Forgot password?</span>
-        <span class='link'>Forgot username?</span>
+        <span @click='resetPasswordPoUp' class='link'>Forgot password?</span>
       </div>
     </div>
   </div>
@@ -67,43 +28,66 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Mixins } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { State, Mutation, Getter } from 'vuex-class'
-import Mixin from '@/mixins/authPopUp'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEye, faEyeSlash, faSync } from '@fortawesome/free-solid-svg-icons'
+import firebase from 'firebase/app'
+import { Alert } from '../../interfaces/app'
 
-library.add(faEye, faEyeSlash, faSync)
+import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+import FormPassword from '@/components/PopUps/FormComponents/FormPassword.vue'
+import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
-@Component
-export default class SigninPopUp extends Mixins(Mixin) {
+@Component({
+  components: {
+    'form-input': FormInput,
+    'form-password': FormPassword,
+    'form-button': FormButton,
+  },
+})
+export default class SigninPopUp extends Vue {
   @State theme!: string
   @Mutation pushPopUp!: (compName: string) => void
+  @Mutation pushAlert!: (alert: Alert) => void
 
-  MAXIMUM_NUMBER_OF_CHARACTERS: number = 50
-
-  username: string | null = null
+  email: string | null = null
   password: string | null = null
+  passwordState: boolean = false
+  emailState: boolean = false
 
   waitingResponse: boolean = false
 
+  resetPasswordPoUp() {
+    this.pushPopUp('SendresetpasswordPopup')
+  }
   sendRequest() {
-    const hasError: boolean = this.inputHasError(this.username, this.MAXIMUM_NUMBER_OF_CHARACTERS)
-     || this.inputHasError(this.password, this.MAXIMUM_NUMBER_OF_CHARACTERS)
-  }
-
-  get usernameClass(): any[] {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.username, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
-  }
-  get passwordClass(): any[] {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.password, this.MAXIMUM_NUMBER_OF_CHARACTERS)},
-    ]
+    if (this.emailState && this.passwordState) {
+      this.waitingResponse = true
+      firebase.auth().signInWithEmailAndPassword(this.email as any, this.password as any).then(() => {
+        this.pushAlert({
+          name: 'You have successfully logged in!',
+          duration: 3,
+          type: 'success',
+        })
+        const auth = firebase.auth()
+        if (auth.currentUser && !auth.currentUser.emailVerified)
+          this.pushAlert({
+            name: 'Please confirm your e-mail address.',
+            duration: 4,
+            type: 'warning',
+          })
+        this.$router.push({name: 'User'})
+        this.pushPopUp('')
+        this.waitingResponse = false
+      }).catch((error: any) => {
+        this.waitingResponse = false
+        this.pushAlert({
+          name: error.message,
+          duration: 6,
+          type: 'error',
+        })
+      })
+    }
   }
 }
 

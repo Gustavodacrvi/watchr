@@ -56,7 +56,7 @@ export default class AppnavLinkrenderer extends Vue {
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({default: () => [], type: Function}) icons!: (obj: any) => ListIcon[]
   @Prop({default: () => [], type: Function}) options!: (obj: any) => ListIcon[]
-  @Prop(Number) maximumTreeHeight!: number 
+  @Prop(Number) maximumTreeHeight!: number
   @Prop() group: any
 
   @Getter isDesktop!: boolean

@@ -4,13 +4,13 @@
       <h2>{{ popUpPayload.popUpTitle }}</h2>
     </div>
     <div class='content'>
-      <input
+      <form-input
         tabindex='1'
-        class='margin input txt round-border gray' :placeholder='popUpPayload.inputPlaceholder'
-        type='text'
-        autocomplete='off'
-        :class='inputClass'
-        v-model.trim='input'>
+        :placeholder='popUpPayload.inputPlaceholder'
+        v-model='input'
+        :max='100'
+        @state='e => inputState = e'
+      />
       <button
         class='margin button round-border'
         @click='runCallback'
@@ -21,29 +21,28 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Mixins } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
-import Mixin from '@/mixins/authPopUp'
 
 import { SimpleAdder } from '@/interfaces/app'
 
-@Component
-export default class SigninPopUp extends Mixins(Mixin) {
+import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+
+@Component({
+  components: {
+    'form-input': FormInput,
+  },
+})
+export default class SigninPopUp extends Vue {
   @State theme!: SimpleAdder
   @State popUpPayload!: SimpleAdder
 
   input: string | null = null
+  inputState: boolean = false
 
   runCallback() {
-    if (this.input && !this.inputHasError(this.input, this.popUpPayload.inputMaximumCharacters))
-      this.popUpPayload.callback(this.input.trim())
-  }
-
-  get inputClass() {
-    return [
-      this.theme,
-      {wrong: this.inputHasError(this.input, this.popUpPayload.inputMaximumCharacters)},
-    ]
+    if (this.inputState && this.input !== null)
+      this.popUpPayload.callback(this.input)
   }
 }
 
