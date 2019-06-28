@@ -24,6 +24,10 @@
     >
       <div class='slider'>
         <tab-slider
+          width='600px'
+          :options="[
+            {name: '', comp: ''},
+          ]"
         />
       </div>
     </div>
