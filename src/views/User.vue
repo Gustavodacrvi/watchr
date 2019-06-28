@@ -24,7 +24,7 @@
     >
       <div class='slider'>
         <tab-slider
-          width='600px'
+          width='700px'
           :options="[
             {name: 'Create account', comp: 'UserCreateaccount'},
             {name: 'Anonymous', comp: 'UserAnonymous'},

@@ -1,6 +1,9 @@
 <template>
-  <div>
-    SlideAnonymous
+  <div class='content'>
+    <p class='txt'> CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT</p>    
+    <form-button :waiting-response='waitingResponse' @click='sendRequest'>
+      Use anonymously
+    </form-button>
   </div>
 </template>
 
@@ -8,11 +11,22 @@
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
-@Component
+import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
+
+@Component({
+  components: {
+    'form-button': FormButton,
+  },
+})
 export default class SlideAnonymous extends Vue {}
 
 </script>
 
 <style scoped>
+
+.content {
+  margin: 16px;
+  height: 100%;
+}
 
 </style>

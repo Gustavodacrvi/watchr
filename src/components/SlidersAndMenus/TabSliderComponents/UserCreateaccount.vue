@@ -1,6 +1,9 @@
 <template>
-  <div>
-    SlideCreateaccount
+  <div class='content'>
+    <p class='txt'> CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT CONTENT</p>
+    <form-button :waiting-response='waitingResponse' @click='sendRequest'>
+      Create account
+    </form-button>
   </div>
 </template>
 
@@ -8,11 +11,29 @@
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
-@Component
-export default class SlideCreateaccount extends Vue {}
+import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
+
+@Component({
+  components: {
+    'form-button': FormButton,
+  },
+})
+export default class SlideCreateaccount extends Vue {
+
+  waitingResponse: boolean = false
+
+  sendRequest() {
+    
+  }
+}
 
 </script>
 
 <style scoped>
+
+.content {
+  height: 100%;
+  margin: 16px;
+}
 
 </style>
