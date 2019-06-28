@@ -1,14 +1,15 @@
 <template>
   <div class='wrapper'>
     <div
-      class='slider gray'
+      class='slider gray round-border'
       :class='theme'
       :style='{width: width}'
     >
       <div class='header'>
         <span v-for='o in options'
           :key='o.name'
-          class='option'
+          class='option txt border'
+          :class='[{active: o.comp === comp}, theme]'
           @click='navigate(o.comp)'
         >{{ o.name }}</span>
       </div>
@@ -54,3 +55,43 @@ export default class TabSlider extends Vue {
 }
 
 </script>
+
+<style scoped>
+
+.slider {
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  height: 40px;
+}
+
+.option {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-basis: 100%;
+  transition: background-color .3s;
+  cursor: pointer;
+  border-left: none;
+  border-top: none;
+}
+
+.option + .option {
+  border-right: none;
+}
+
+.option.active {
+  color: #FF6B66;
+}
+
+.option.dark:hover, .option.dark.active {
+  background-color: #282828;
+}
+
+.option.light:hover, .option.light.active {
+  background-color: #E6E6E6;
+}
+
+</style>
