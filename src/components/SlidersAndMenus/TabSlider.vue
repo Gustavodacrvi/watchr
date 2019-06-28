@@ -1,9 +1,11 @@
 <template>
-  <div class='wrapper'>
+  <div
+    class='wrapper'
+    :style="{'flex-basis': flexBasis}"
+  >
     <div
       class='slider gray round-border'
       :class='theme'
-      :style="{'flex-basis': flexBasis}"
     >
       <div class='header'>
         <span v-for='o in options'
@@ -96,6 +98,10 @@ export default class TabSlider extends Vue {
 
 .option.light:hover, .option.light.active {
   background-color: #E6E6E6;
+}
+
+.content {
+  position: relative;
 }
 
 </style>
