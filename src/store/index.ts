@@ -164,11 +164,12 @@ const store: any = new Vuex.Store({
         }, state.alert.duration * NUMBER_OF_MILISECONDS_IN_ONE_SECOND)
       }
     },
-    activateKeyShortcut({state, commit}, key) {
-      switch (key) {
-        case 'l': commit('pushPopUp', 'LabeladderPopup'); break
-        case 'h': commit('pushPopUp', ''); break
-      }
+    activateKeyShortcut({state, commit, getters}, key) {
+      if ((getters.loggedAndVerified || getters.anonymous) && getters.isDesktop)
+        switch (key) {
+          case 'l': commit('pushPopUp', 'LabeladderPopup'); break
+          case 'h': commit('pushPopUp', ''); break
+        }
     },
   } as Actions,
 })

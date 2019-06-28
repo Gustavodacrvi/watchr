@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div
+    <div v-if='!isLogged'
       class='auth-banner main-color-card'
       :class='theme'
     >
@@ -63,7 +63,7 @@
     <div class='footer-wrapper'>
       <hr class='border'>
       <div class='footer'>
-        <div class='left'>
+        <div v-if='loggedAndVerified' class='left'>
           <ft-icon
             class='icon txt pointer'
             icon='tasks'
@@ -103,6 +103,7 @@ export default class LoggedAppnav extends Mixins(Mixin) {
   @Mutation pushPopUp!: (compName: string) => void
   @Mutation closeAppBar!: () => void
   @Getter isDesktop!: boolean
+  @Getter loggedAndVerified!: boolean
 }
 
 </script>

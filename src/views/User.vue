@@ -6,8 +6,11 @@
     <div key='loggedAndNotVerified' v-else-if='loggedAndNotVerified'>
       <span class='txt'>logged and not verified</span>
     </div>
-    <div key='else' v-else>
-      <span class='txt'>not logged or anonymous</span>
+    <div key='anonymouse' v-else-if='anonymous'>
+      <span class='txt'>logged as anonymous</span>
+    </div>
+    <div key='not logged' v-else>
+      <span class='txt'>not logged</span>
     </div>
   </transition>
 </template>

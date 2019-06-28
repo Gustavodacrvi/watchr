@@ -46,7 +46,7 @@ export default class LabelAdder extends Vue {
   padding: 16px;
   box-sizing: border-box;
   align-items: center;
-  height: 55px;
+  min-height: 55px;
   z-index: 100;
 }
 

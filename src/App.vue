@@ -108,7 +108,7 @@ export default class App extends Vue {
   }
   keyPressed({key}: {key: string}) {
     const active = document.activeElement
-    if (active && active.nodeName !== 'INPUT')
+    if (active && active.nodeName !== 'INPUT' && this.isOnAppRoute)
       this.activateKeyShortcut(key)
   }
 
