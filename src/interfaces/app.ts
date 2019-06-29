@@ -19,8 +19,10 @@ export interface VuexModule {
 
 export interface Alert {
   name: string
-  duration: number
+  duration: number | null
   type: 'error' | 'normal' | 'success' | 'warning'
+  btn?: string
+  callback?: () => void
 }
 
 export interface SimpleAdder {

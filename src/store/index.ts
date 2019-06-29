@@ -159,9 +159,10 @@ const store: any = new Vuex.Store({
       if (state.alerts.length !== 0 && !state.showingAlert) {
         state.alert = state.alerts.shift() as Alert
         state.showingAlert = true
-        setTimeout(() => {
-          state.showingAlert = false
-        }, state.alert.duration * NUMBER_OF_MILISECONDS_IN_ONE_SECOND)
+        if (state.alert.duration)
+          setTimeout(() => {
+            state.showingAlert = false
+          }, state.alert.duration * NUMBER_OF_MILISECONDS_IN_ONE_SECOND)
       }
     },
     activateKeyShortcut({state, commit, getters}, key) {

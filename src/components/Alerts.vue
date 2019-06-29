@@ -2,10 +2,19 @@
   <div class='wrapper'>
     <div
       class='alert card round-border'
-      :class='[theme, alert.type, platform]'>
+      :class='[theme, alert.type, platform]'
+    >
       <span
         class='txt'
-        v-html='alert.name'></span>
+        v-html='alert.name'
+      ></span>
+      <form-button v-if='alert.btn'
+        class='btn'
+        :waiting-response='false'
+        @click='alert.callback'
+      >
+        {{ alert.btn }}
+      </form-button>
     </div>
   </div>
 </template>
@@ -15,9 +24,15 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, Getter } from 'vuex-class'
 
+import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
+
 import { Alert } from '@/interfaces/app'
 
-@Component
+@Component({
+  components: {
+    'form-button': FormButton,
+  },
+})
 export default class LabelAdder extends Vue {
   @State theme!: string
   @State alert!: Alert
@@ -46,6 +61,7 @@ export default class LabelAdder extends Vue {
   padding: 16px;
   box-sizing: border-box;
   align-items: center;
+  flex-direction: column;
   min-height: 55px;
   z-index: 100;
 }
@@ -68,6 +84,10 @@ export default class LabelAdder extends Vue {
 
 .alert.warning {
   border: 1px solid #FFE366;
+}
+
+.btn {
+  margin-top: 10px;
 }
 
 </style>

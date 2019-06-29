@@ -25,10 +25,6 @@ import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUser, faAdjust, faSignInAlt, faUserAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import { dom } from '@fortawesome/fontawesome-svg-core'
-if ('serviceWorker'in navigator)
-  navigator.serviceWorker.register(`${process.env.BASE_URL}service-worker.js`)
-    .then(reg => console.log('service worker registered', reg))
-    .catch(err => console.log('service worker not registered', err))
 
 let firstTimeLoading = true
 

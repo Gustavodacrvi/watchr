@@ -1,4 +1,4 @@
-const cacheName = 'cache2'
+const cacheName = 'cache'
 
 self.addEventListener('activate', evt => {
   evt.waitUntil(
@@ -12,14 +12,15 @@ self.addEventListener('activate', evt => {
 })
 
 self.addEventListener('fetch', evt => {
-  evt.respondWith(
-    caches.match(evt.request).then(cacheRes => {
-      return cacheRes || fetch(evt.request).then(fetchRes => {
-        return caches.open(cacheName).then(cache => {
-          cache.put(evt.request.url, fetchRes.clone())
-          return fetchRes
+  if (evt.request.url.indexOf('firestore.googleapis.com') === -1)
+    evt.respondWith(
+      caches.match(evt.request).then(cacheRes => {
+        return cacheRes || fetch(evt.request).then(fetchRes => {
+          return caches.open(cacheName).then(cache => {
+            cache.put(evt.request.url, fetchRes.clone())
+            return fetchRes
+          })
         })
       })
-    })
-  )
+    )
 })
