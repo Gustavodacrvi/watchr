@@ -12,11 +12,11 @@ const notifyUserAboutUpdate = (worker: ServiceWorker | null) => {
       btn: 'Refresh',
       callback: () => {
         worker.postMessage({ action: 'skipWaiting' })
-      }
+      },
     })
 }
 
-if (process.env.NODE_ENV === 'production')
+if (process.env.NODE_ENV === 'production') {
   register(`${process.env.BASE_URL}service-worker.js`, {
     ready() {
       console.log(
@@ -44,3 +44,11 @@ if (process.env.NODE_ENV === 'production')
       console.error('Error during service worker registration:', error)
     },
   })
+  let refreshing: boolean = false
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      window.location.reload()
+      refreshing = true
+    }
+  })
+}

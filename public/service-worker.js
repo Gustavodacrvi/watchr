@@ -1,4 +1,10 @@
-const cacheName = 'cache'
+
+const cacheName = 'dynamic-cache'
+
+self.addEventListener('message', msg => {
+  if (msg.data.action === 'skipWaiting')
+    self.skipWaiting()
+})
 
 self.addEventListener('activate', evt => {
   evt.waitUntil(

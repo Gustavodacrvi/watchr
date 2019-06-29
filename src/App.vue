@@ -66,7 +66,6 @@ export default class App extends Vue {
   @State showingAlert!: boolean
   @Mutation hideAlert!: () => void
   @Mutation closeAppBar!: () => void
-  @Mutation pushAlert!: (alert: Alert) => void
   @Mutation openAppBar!: () => void
   @Getter isDesktop!: boolean
   @Getter platform!: 'mobile' | 'desktop'
@@ -77,28 +76,6 @@ export default class App extends Vue {
   @Action activateKeyShortcut!: (key: string) => void
 
   created() {
-    setTimeout(() => {
-      this.pushAlert({
-        name: 'New   please refresh.',
-        duration: 2,
-        type: 'success',
-      })
-      this.pushAlert({
-        name: 'New content is available please refresh.',
-        duration: null,
-        type: 'normal',
-        btn: 'Refresh',
-        callback: () => {
-          console.log('dd')
-          // worker.postMessage({ action: 'skipWaiting' })
-        }
-      })
-      this.pushAlert({
-        name: 'New c.',
-        duration: 1.5,
-        type: 'normal',
-      })
-    }, 5000)
     if (!localStorage.getItem('watchrFirstTimeIn')) {
       this.$store.dispatch('perspective/setDefaultData')
       this.$store.dispatch('label/setDefaultData')
