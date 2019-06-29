@@ -12,7 +12,7 @@
     >
       <span class='txt'>logged as anonymous</span>
     </div>
-    <div v-else-if='true'
+    <div v-else-if='loggedAndNotVerified'
       class='app'
       key='loggedAndNotVerified'
     >

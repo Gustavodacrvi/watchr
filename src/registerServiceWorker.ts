@@ -2,7 +2,9 @@
 
 import { register } from 'register-service-worker'
 
-if (process.env.NODE_ENV === 'production')
+// process.env.NODE_ENV === 'production'
+
+if (true)
   register(`${process.env.BASE_URL}service-worker.js`, {
     ready() {
       console.log(
@@ -10,8 +12,8 @@ if (process.env.NODE_ENV === 'production')
         'For more details, visit https://goo.gl/AFskqB',
       )
     },
-    registered() {
-      console.log('Service worker has been registered.')
+    registered(reg: ServiceWorkerRegistration) {
+      console.log('Service worker has been registered.', reg)
     },
     cached() {
       console.log('Content has been cached for offline use.')
