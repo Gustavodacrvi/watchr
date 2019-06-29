@@ -1,4 +1,4 @@
-const cacheName = 'cache'
+const cacheName = 'cache2'
 
 self.addEventListener('activate', evt => {
   evt.waitUntil(
