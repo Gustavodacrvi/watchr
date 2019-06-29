@@ -2,7 +2,7 @@
 
 import { register } from 'register-service-worker'
 
-console.log(`${process.env.BASE_URL}service-worker.js`)
+// process.env.NODE_ENV === 'production'
 
 if (true)
   register(`${process.env.BASE_URL}service-worker.js`, {
