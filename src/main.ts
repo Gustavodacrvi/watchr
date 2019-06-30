@@ -15,9 +15,9 @@ const config = {
 
 firebase.initializeApp(config)
 
-const messaging = firebase.messaging()
-
-messaging.usePublicVapidKey(process.env.VUE_APP_PUBLIC_KEY_PAIR)
+// test
+import appUtils from './utils/app'
+console.log(appUtils.askForPermissioToReceiveNotifications())
 
 const auth = firebase.auth()
 

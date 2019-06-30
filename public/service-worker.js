@@ -1,3 +1,5 @@
+importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js');
 
 const cacheName = 'dynamic-cache'
 
@@ -30,3 +32,7 @@ self.addEventListener('fetch', evt => {
       })
     )
 })
+
+const messaging = firebase.messaging()
+
+messaging.usePublicVapidKey(process.env.VUE_APP_PUBLIC_KEY_PAIR)
