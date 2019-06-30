@@ -14,6 +14,11 @@ const config = {
 }
 
 firebase.initializeApp(config)
+
+const messaging = firebase.messaging()
+
+messaging.usePublicVapidKey(process.env.VUE_APP_PUBLIC_KEY_PAIR)
+
 const auth = firebase.auth()
 
 import Vue from 'vue'
@@ -26,6 +31,8 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUser, faAdjust, faSignInAlt, faUserAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import { dom } from '@fortawesome/fontawesome-svg-core'
 
+library.add(faUser, faAdjust, faUserAlt, faSignInAlt, faUserPlus)
+
 let firstTimeLoading = true
 
 auth.onAuthStateChanged(() => {
@@ -35,8 +42,6 @@ auth.onAuthStateChanged(() => {
   }
   store.commit('saveCurrentUser', firebase.auth().currentUser)
 })
-
-library.add(faUser, faAdjust, faUserAlt, faSignInAlt, faUserPlus)
 
 dom.watch()
 
