@@ -43,8 +43,6 @@ import LoadingComponent from '@/components/LoadingComponent.vue'
 
 import { Alert } from '@/interfaces/app'
 
-import Alerts from '@/components/Alerts.vue'
-import PopUp from '@/components/PopUps/PopUp.vue'
 import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 
 import appUtils from '@/utils/app'
@@ -53,9 +51,9 @@ import appUtils from '@/utils/app'
   components: {
     'loading-component': LoadingComponent,
     'the-nav-bar': TheNavbar,
-    'alerts': Alerts,
-    'pop-up': PopUp,
-    'action-button': appUtils.AsyncComponent(import(/* webpackPrefetch: true */  '@/components/ActionButton.vue')),
+    'alerts': appUtils.AsyncComponent(import(/* webpackPrefetch: true */ '@/components/Alerts.vue')),
+    'pop-up': appUtils.AsyncComponent(import('@/components/PopUps/PopUp.vue')),
+    'action-button': appUtils.AsyncComponent(import('@/components/ActionButton.vue')),
     'the-app-bar': appUtils.AsyncComponent(import(/* webpackPrefetch: true */ '@/components/TheAppBar/TheAppBar.vue')),
   },
 })

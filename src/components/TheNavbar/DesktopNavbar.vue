@@ -116,6 +116,10 @@ export default class DesktopNavbar extends Mixins(Mixin) {
 
   mounted() {
     this.moveMagicLineTo(this.$route.name)
+    const RANDOM_NUMBER = 80
+    setTimeout(() => {
+      this.moveMagicLineTo(this.$route.name)
+    }, RANDOM_NUMBER)
     window.addEventListener('resize', this.windowEventListener)
   }
   beforeDestroy() {
@@ -153,10 +157,6 @@ export default class DesktopNavbar extends Mixins(Mixin) {
 
   @Watch('$route')
   onChange() {
-    const RANDOM_NUMBER = 80
-    setTimeout(() => {
-      this.moveMagicLineTo(this.$route.name)
-    }, RANDOM_NUMBER)
     this.moveMagicLineTo(this.$route.name)
   }
 }

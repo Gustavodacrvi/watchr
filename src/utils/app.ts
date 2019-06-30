@@ -1,6 +1,7 @@
 
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
+import firebase from 'firebase'
 
 export default {
   AsyncComponent(comp: any): any {
@@ -62,5 +63,14 @@ export default {
       return false
     }
     walk(tree)
+  },
+  askForPermissioToReceiveNotifications: async () => {
+    try {
+      const messaging = firebase.messaging()
+      await messaging.requestPermission()
+      const token = await messaging.getToken()
+      
+      return token
+    } catch (error) {}
   },
 }

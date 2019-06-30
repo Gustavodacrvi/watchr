@@ -1,5 +1,34 @@
-self.__precacheManifest = [].concat(self.__precacheManifest || [])
-workbox.precaching.suppressWarnings()
-workbox.precaching.precacheAndRoute(self.__precacheManifest, {})
+importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js');
 
-console.log(5)
+const cacheName = 'dynamic-cache'
+
+self.addEventListener('message', msg => {
+  if (msg.data.action === 'skipWaiting')
+    self.skipWaiting()
+})
+
+self.addEventListener('activate', evt => {
+  evt.waitUntil(
+    caches.keys().then(keys => {
+      return Promise.all(keys
+        .filter(key => key !== cacheName)
+        .map(key => caches.delete(key))
+      )
+    })
+  )
+})
+
+self.addEventListener('fetch', evt => {
+  if (evt.request.url.indexOf('firestore.googleapis.com') === -1)
+    evt.respondWith(
+      caches.match(evt.request).then(cacheRes => {
+        return cacheRes || fetch(evt.request).then(fetchRes => {
+          return caches.open(cacheName).then(cache => {
+            cache.put(evt.request.url, fetchRes.clone())
+            return fetchRes
+          })
+        })
+      })
+    )
+})
