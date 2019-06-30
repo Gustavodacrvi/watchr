@@ -32,7 +32,3 @@ self.addEventListener('fetch', evt => {
       })
     )
 })
-
-const messaging = firebase.messaging()
-
-messaging.usePublicVapidKey(process.env.VUE_APP_PUBLIC_KEY_PAIR)

@@ -67,3 +67,64 @@ export interface Label {
   parentId: string | null
   id: string
 }
+
+
+
+
+
+
+
+/* 
+  smartPerspectives: {
+    pin: boolean
+    taskNumber: boolean
+    name: string
+    icon: string
+    iconColor: string
+    id: string
+    userId: string
+  }
+  customPerspectives: {
+    pin: boolean
+    taskNumber: boolean
+    name: string
+    hasToBeEmpty: array of ids
+    icon: string
+    iconColor: string
+    filters: {
+      labels: array of label ids
+      notLabels: array of label ids
+      dates: [
+        {start: date, end: date}
+      ]
+      notDates: 
+        {start: date, end: date}
+      ]
+      intervals: array of interval ids
+      notIntervals: array of interval ids
+    }
+    order: array of tasks id and its orders
+    id: string
+    userId: string
+  }
+*/
+
+/* 
+  labels: {
+
+  }
+  tasks: {
+    
+  }
+ */
+
+
+/* 
+  1000000 - 0,40
+  X       - Y
+  x0,40 = 1000000y
+  x0,40 / 1000000 = y
+ */
+
+
+
