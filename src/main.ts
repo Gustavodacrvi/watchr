@@ -15,10 +15,6 @@ const config = {
 
 firebase.initializeApp(config)
 
-const messaging = firebase.messaging()
-
-messaging.usePublicVapidKey(process.env.VUE_APP_PUBLIC_KEY_PAIR)
-
 const auth = firebase.auth()
 
 import Vue from 'vue'

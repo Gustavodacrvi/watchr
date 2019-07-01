@@ -64,6 +64,7 @@ export default class App extends Vue {
   @State alerts!: Alert[]
   @State appBarState!: boolean
   @State showingAlert!: boolean
+  @State isLogged!: boolean
   @Mutation hideAlert!: () => void
   @Mutation closeAppBar!: () => void
   @Mutation openAppBar!: () => void
@@ -107,6 +108,11 @@ export default class App extends Vue {
   onAlertsChange(alerts: Alert[]): void {
     if (!this.showingAlert)
       this.showLastAlert()
+  }
+  @Watch('isLogged')
+  onChange() {
+    if (this.loggedAndVerified || this.anonymous)
+      this.$store.dispatch('label/getData')
   }
 }
 

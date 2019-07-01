@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
+import label from '@/store/label'
+
 const MAX_MOBILE_SCREEN_WIDTH = 1024
 
 import { SimpleAdder, Alert } from '@/interfaces/app'
@@ -9,7 +11,7 @@ Vue.use(Vuex)
 
 const savedTheme: string = localStorage.getItem('watchrTheme') || 'light'
 
-interface States {
+export interface States {
   theme: string
   popUpComponent: string
   windowWidth: number
@@ -65,6 +67,9 @@ interface Actions {
 }
 
 const store: any = new Vuex.Store({
+  modules: {
+    label,
+  } as any,
   state: {
     theme: savedTheme,
     popUpComponent: '',

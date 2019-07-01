@@ -21,3 +21,11 @@ export interface FloatingButton {
   backColor: string
   click?: () => void
 }
+
+export interface Label {
+  name: string
+  id: string
+  hasParent: boolean
+  subLabels: string[]
+  parentId: string
+}
