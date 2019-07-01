@@ -2,7 +2,11 @@
   <div class='app-wrapper'>
     <div class='app background-color' :class='theme'>
       <transition name='fade' mode='out-in'>
-        <div key='app' v-if='!loading' class='visible'>
+        <div key='error-comp' v-if='appError' class='visible loading'>
+          <error-component class='waiting-component'></error-component>
+          <span class='txt another-tab'>This app is already being used in another tab.</span>
+        </div>
+        <div key='app' v-else-if='!loading' class='visible'>
           <div class='navbar' :class='platform'>
             <the-nav-bar></the-nav-bar>
           </div>
@@ -27,7 +31,7 @@
           </div>
         </div>
         <div key='loading' v-else class='visible loading'>
-          <loading-component></loading-component>
+          <loading-component class='waiting-component'></loading-component>
         </div>
       </transition>
     </div>
@@ -40,6 +44,7 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 import { State, Getter, Mutation, Action } from 'vuex-class'
 
 import LoadingComponent from '@/components/LoadingComponent.vue'
+import ErrorComponent from '@/components/ErrorComponent.vue'
 
 import { Alert } from '@/interfaces/app'
 
@@ -50,6 +55,7 @@ import appUtils from '@/utils/app'
 @Component({
   components: {
     'loading-component': LoadingComponent,
+    'error-component': ErrorComponent,
     'the-nav-bar': TheNavbar,
     'alerts': appUtils.AsyncComponent(import(/* webpackPrefetch: true */ '@/components/Alerts.vue')),
     'pop-up': appUtils.AsyncComponent(import('@/components/PopUps/PopUp.vue')),
@@ -65,6 +71,7 @@ export default class App extends Vue {
   @State appBarState!: boolean
   @State showingAlert!: boolean
   @State isLogged!: boolean
+  @State appError!: boolean
   @Mutation hideAlert!: () => void
   @Mutation closeAppBar!: () => void
   @Mutation openAppBar!: () => void
@@ -121,9 +128,13 @@ export default class App extends Vue {
 
 <style scoped>
 
-.loading-component {
+.waiting-component {
   position: absolute;
-  z-index: 999;
+  z-index: 998;
+}
+
+.another-tab {
+  font-size: 1.3em;
 }
 
 .app-wrapper {
@@ -208,11 +219,11 @@ export default class App extends Vue {
 }
 
 .alert-trans-enter-active, .alert-trans-leave-active {
-  transition: bottom .3s !important;
+  transition: bottom .4s !important;
 } 
 
 .alert-trans-enter, .alert-trans-leave-to {
-  bottom: -100px !important;
+  bottom: -200px !important;
 }
 
 .alert-trans-enter-to, .alert-trans-leave {

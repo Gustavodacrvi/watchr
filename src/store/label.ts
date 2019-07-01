@@ -44,11 +44,9 @@ export default {
       if (rootState.firestore)
         // I am inevitable
         rootState.firestore.collection('labels').onSnapshot(snap => {
-          console.log(snap)
-          for (const change of snap.docChanges()) {
+          for (const change of snap.docChanges())
             if (change.type === 'added')
               state.labels.push({...change.doc.data(), id: change.doc.id} as any)
-          }
         })
     },
   } as Actions,

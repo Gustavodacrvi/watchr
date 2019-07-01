@@ -21,6 +21,7 @@ export interface States {
   isLogged: boolean
   isAnonymous: boolean
   emailVerified: boolean
+  appError: boolean
   loading: boolean
   showingAlert: boolean
   alerts: Alert[]
@@ -81,6 +82,7 @@ const store: any = new Vuex.Store({
     isAnonymous: false,
     emailVerified: false,
     loading: true,
+    appError: false,
     showingAlert: false,
     alerts: [],
     alert: undefined,
@@ -90,11 +92,14 @@ const store: any = new Vuex.Store({
       state.firestore = firestore
       state.firestore.enablePersistence()
         .catch(err => {
-          if (err.code === 'failed-precondition') {
-            console.log('probably multiple tabs')
-          } else if (err.code === 'unimplemented') {
-            console.log('persistence is not available')
-          }
+          if (err.code === 'failed-precondition')
+            state.appError = true
+          else if (err.code === 'unimplemented')
+            state.alerts.push({
+              name: `Firestore's persistence is not available on your browser, therefore you won't be able to use this app offline.</br>Please chose a better browser or update the current one to the latest version.`,
+              duration: 12,
+              type: 'error',
+            })
         })
     },
     pushTheme(state: States, theme: string): void {
