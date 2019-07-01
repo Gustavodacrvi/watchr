@@ -19,10 +19,6 @@ const messaging = firebase.messaging()
 
 messaging.usePublicVapidKey(process.env.VUE_APP_PUBLIC_KEY_PAIR)
 
-// test
-import appUtils from './utils/app'
-console.log(appUtils.askForPermissioToReceiveNotifications())
-
 const auth = firebase.auth()
 
 import Vue from 'vue'
@@ -36,6 +32,8 @@ import { faUser, faAdjust, faSignInAlt, faUserAlt, faUserPlus } from '@fortaweso
 import { dom } from '@fortawesome/fontawesome-svg-core'
 
 library.add(faUser, faAdjust, faUserAlt, faSignInAlt, faUserPlus)
+
+store.commit('saveFirestore', firebase.firestore())
 
 let firstTimeLoading = true
 

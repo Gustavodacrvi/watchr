@@ -3,9 +3,6 @@ import Vuex from 'vuex'
 
 const MAX_MOBILE_SCREEN_WIDTH = 1024
 
-import perspective from './perspective'
-import label from './label'
-
 import { SimpleAdder, Alert } from '@/interfaces/app'
 
 Vue.use(Vuex)
@@ -18,6 +15,7 @@ interface States {
   windowWidth: number
   popUpPayload: any | SimpleAdder
   appBarState: boolean
+  firestore: firebase.firestore.Firestore | null
   isLogged: boolean
   isAnonymous: boolean
   emailVerified: boolean
@@ -33,6 +31,7 @@ interface Mutations {
   pushAlert: (state: States, alert: Alert) => void
   pushPopUpPayload: (state: States, payload: any) => void
   saveCurrentUser: (state: States, user: firebase.User) => void
+  saveFirestore: (state: States, firestore: firebase.firestore.Firestore) => void
   showApp: () => void
   openAppBar: () => void
   closeAppBar: () => void
@@ -66,9 +65,6 @@ interface Actions {
 }
 
 const store: any = new Vuex.Store({
-  modules: {
-    perspective, label,
-  } as any,
   state: {
     theme: savedTheme,
     popUpComponent: '',
@@ -76,6 +72,7 @@ const store: any = new Vuex.Store({
     windowWidth: document.body.clientWidth,
     appBarState: false,
     isLogged: false,
+    firestore: null,
     isAnonymous: false,
     emailVerified: false,
     loading: true,
@@ -84,6 +81,9 @@ const store: any = new Vuex.Store({
     alert: undefined,
   } as States,
   mutations: {
+    saveFirestore(state: States, firestore: firebase.firestore.Firestore) {
+      state.firestore = firestore
+    },
     pushTheme(state: States, theme: string): void {
       state.theme = theme
       localStorage.setItem('watchrTheme', theme)
@@ -134,7 +134,9 @@ const store: any = new Vuex.Store({
       return 'mobile'
     },
     isStandAlone(state: States): boolean {
-      return window.matchMedia('(display-mode: standalone)').matches
+      const navigator: any = window.navigator
+      return (navigator.standalone === true)
+      || (window.matchMedia('(display-mode: standalone)').matches)
     },
     loggedAndVerified(state: States) {
       return state.isLogged && state.emailVerified

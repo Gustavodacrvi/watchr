@@ -79,21 +79,6 @@ export default class SigninPopUp extends Vue {
         this.$router.push({name: 'User'})
         this.pushPopUp('')
         this.waitingResponse = false
-
-        const messaging = firebase.messaging()
-        Notification.requestPermission().then(permission => {
-          if (permission === 'granted') {
-            console.log('granted')
-          } else {
-            console.log('unable to get permission')
-          }
-        })
-
-        messaging.getToken().then(currentToken => {
-          if (currentToken) {
-            
-          }
-        })
       }).catch((error: any) => {
         this.waitingResponse = false
         this.pushAlert({

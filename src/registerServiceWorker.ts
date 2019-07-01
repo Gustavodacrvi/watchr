@@ -2,7 +2,6 @@
 
 import { register } from 'register-service-worker'
 import store from './store/index'
-import firebase from 'firebase'
 
 const notifyUserAboutUpdate = (worker: ServiceWorker | null) => {
   if (worker !== null)
@@ -27,7 +26,6 @@ if (process.env.NODE_ENV === 'production') {
     },
     registered(reg: ServiceWorkerRegistration) {
       console.log('Service worker has been registered.', reg)
-      firebase.messaging().useServiceWorker(reg)
     },
     cached() {
       console.log('Content has been cached for offline use.')

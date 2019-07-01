@@ -7,17 +7,14 @@
       <dropdown-input
         tabindex='1'
         class='margin'
-        :values='options'
         @value='v => value = v'
         :input='input'
         @update='getOptions'
-        @enter='add'
         @select='selectValue'
       ></dropdown-input>
       <button
         tabindex='2'
         class='button round-border margin'
-        @click='add'
       >Add label</button>
       <span v-show='isDesktop'
         class='margin txt'
@@ -38,7 +35,7 @@ import DropdownInput from '@/components/DropdownInput.vue'
 
 import labelUtil from '@/utils/label'
 
-import { Label, Alert } from '../../interfaces/app'
+import { Alert } from '../../interfaces/app'
 
 const labelModule = namespace('label')
 
@@ -53,10 +50,6 @@ export default class LabelAdder extends Vue {
   @Getter isDesktop!: boolean
   @Mutation pushAlert!: (alert: Alert) => void
 
-  @labelModule.State labels!: Label[]
-  @labelModule.Getter getLabelNodeFromArrayPath!: (path: string[]) => Label | undefined
-  @labelModule.Action addLabelFromArrayPath!: (path: string[]) => void
-
   input: string | null = null
   MAXIMUM_LENGTH_OF_LABEL_TREE: number = 4
   value: string = ''
@@ -64,56 +57,6 @@ export default class LabelAdder extends Vue {
 
   created() {
     this.input = this.popUpPayload
-  }
-
-  add() {
-    if (this.value !== '') {
-      const arr: string[] = labelUtil.getArrFromStringPath(this.value)
-      const label: Label | undefined = this.getLabelNodeFromArrayPath(arr)
-      if (label !== undefined)
-        this.pushAlert({
-          name: `<strong>${this.value}</strong> already exists.`,
-          duration: 4,
-          type: 'error',
-        })
-      else if (arr.length > this.MAXIMUM_LENGTH_OF_LABEL_TREE)
-        this.pushAlert({
-          name: 'The maximum number of sublabels is 4.',
-          duration: 4,
-          type: 'error',
-        })
-      else {
-        this.addLabelFromArrayPath(arr)
-        this.pushAlert({
-          name: `<strong>${this.value}</strong> was successfully added.`,
-          duration: 3,
-          type: 'success',
-        })
-      }
-    }
-  }
-  getOptions() {
-    const arr: string[] = labelUtil.getArrFromStringPath(this.value, false)
-    let labels: Label[] = this.labels
-    const search: string = arr[arr.length - 1]
-    if (arr.length > 1) {
-      arr.pop()
-      const label: Label | undefined = this.getLabelNodeFromArrayPath(arr)
-      if (label !== undefined)
-        labels = label.subLabels
-    }
-    const names: string[] = labels.map((el: Label) => el.name)
-    this.options = names.filter((el: string) => el.includes(search))
-  }
-  selectValue(value: string) {
-    const arr: string[] = labelUtil.getArrFromStringPath(this.value)
-    arr.push(value)
-    this.input = labelUtil.getStringPathFromArr(arr)
-  }
-
-  @Watch('value')
-  onChange() {
-    this.getOptions()
   }
 }
 
