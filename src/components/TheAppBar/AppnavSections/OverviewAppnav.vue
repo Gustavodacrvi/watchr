@@ -1,6 +1,6 @@
 <template>
   <span class='txt'>
-    <span v-for='lab in labels' :key='lab' class='span'>
+    <span v-for='lab in labels' :key='lab.id' class='span'>
       {{ lab.name }}
       {{ lab.id }}
     </span>

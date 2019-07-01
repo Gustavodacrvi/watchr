@@ -88,6 +88,14 @@ const store: any = new Vuex.Store({
   mutations: {
     saveFirestore(state: States, firestore: firebase.firestore.Firestore) {
       state.firestore = firestore
+      state.firestore.enablePersistence()
+        .catch(err => {
+          if (err.code === 'failed-precondition') {
+            console.log('probably multiple tabs')
+          } else if (err.code === 'unimplemented') {
+            console.log('persistence is not available')
+          }
+        })
     },
     pushTheme(state: States, theme: string): void {
       state.theme = theme
