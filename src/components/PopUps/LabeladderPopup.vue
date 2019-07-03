@@ -135,8 +135,10 @@ export default class LabelAdder extends Vue {
     return []
   }
 
-  select() {
-
+  select(value: string) {
+    const arr: string[] = labelUtil.getArrFromStringPath(this.value, false)
+    arr[arr.length - 1] = value
+    this.input = labelUtil.getStringPathFromArr(arr)
   }
 
   @Watch('value')
