@@ -129,6 +129,7 @@ export default class DropdownInput extends Vue {
     this.selected = ''
   }
   focus() {
+    this.$emit('focus')
     this.showing = true
     this.selected = ''
   }

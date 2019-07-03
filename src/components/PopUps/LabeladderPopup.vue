@@ -8,8 +8,11 @@
         tabindex='1'
         class='margin'
         :input='input'
+        :values='options'
         @enter='add'
         @value='v => value = v'
+        @select='select'
+        @focus='options = getOptions()'
       ></dropdown-input>
       <button
         tabindex='2'
@@ -69,7 +72,6 @@ export default class LabelAdder extends Vue {
   add() {
     const arr: string[] = labelUtil.getArrFromStringPath(this.value, true)
     const newLabels: Label[] = []
-    console.log(arr)
     let i = 0
     let parentId = ''
     for (const name of arr) {
@@ -90,7 +92,6 @@ export default class LabelAdder extends Vue {
         }
       } else {
         const parentLabel: Label | undefined = this.labels.find(el => el.id === parentId)
-        console.log(parentId)
         if (parentLabel) {
           const children: Label[] = this.labels.filter(el => parentLabel.subLabels.includes(el.id))
           const targetLabel: Label | undefined = children.find(el => el.name === name)
@@ -112,7 +113,6 @@ export default class LabelAdder extends Vue {
       
       i++
     }
-    console.log(newLabels)
     let childId = newLabels[newLabels.length - 1].id
     for (let i = newLabels.length - 2;i >= 0;i--) {
       if (!newLabels[i].subLabels.includes(childId))
@@ -120,6 +120,28 @@ export default class LabelAdder extends Vue {
       childId = newLabels[i].id
     }
     this.updateLabels(newLabels)
+  }
+  
+  getOptions(): string[] {
+    const arr: string[] = labelUtil.getArrFromStringPath(this.value, false)
+    let options: string[] = []
+    if (arr.length === 1) {
+      return this.labels.filter(el => el.name.includes(arr[0]) && el.level === 0).map(el => el.name)
+    } else {
+      const label: Label | undefined = this.labels.find(el => el.name === arr[arr.length - 2] && el.level === arr.length - 2)
+      if (label)
+        return this.labels.filter(el => label.subLabels.includes(el.id)).filter(el => el.name.includes(arr[arr.length - 1])).map(el => el.name)
+    }
+    return []
+  }
+
+  select() {
+
+  }
+
+  @Watch('value')
+  onChange() {
+    this.options = this.getOptions()
   }
 }
 
