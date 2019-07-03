@@ -63,7 +63,7 @@ export default class LabelAdder extends Vue {
   align-items: center;
   flex-direction: column;
   min-height: 55px;
-  z-index: 100;
+  z-index: 999;
 }
 
 .alert.mobile {
@@ -71,19 +71,19 @@ export default class LabelAdder extends Vue {
 }
 
 .alert.desktop {
-  max-width: 640px;
+  max-width: 700px;
 }
 
 .alert.error {
-  border: 1px solid #fc7d7d;
+  border: 2px solid #fc7d7d;
 }
 
 .alert.success {
-  border: 1px solid #70FF66;
+  border: 2px solid #70FF66;
 }
 
 .alert.warning {
-  border: 1px solid #FFE366;
+  border: 2px solid #FFE366;
 }
 
 .btn {

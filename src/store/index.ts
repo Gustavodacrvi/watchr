@@ -1,10 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-const MAX_MOBILE_SCREEN_WIDTH = 1024
+import label from '@/store/label'
 
-import perspective from './perspective'
-import label from './label'
+const MAX_MOBILE_SCREEN_WIDTH = 1024
 
 import { SimpleAdder, Alert } from '@/interfaces/app'
 
@@ -12,15 +11,17 @@ Vue.use(Vuex)
 
 const savedTheme: string = localStorage.getItem('watchrTheme') || 'light'
 
-interface States {
+export interface States {
   theme: string
   popUpComponent: string
   windowWidth: number
   popUpPayload: any | SimpleAdder
   appBarState: boolean
+  firestore: firebase.firestore.Firestore | null
   isLogged: boolean
   isAnonymous: boolean
   emailVerified: boolean
+  appError: boolean
   loading: boolean
   showingAlert: boolean
   alerts: Alert[]
@@ -33,6 +34,7 @@ interface Mutations {
   pushAlert: (state: States, alert: Alert) => void
   pushPopUpPayload: (state: States, payload: any) => void
   saveCurrentUser: (state: States, user: firebase.User) => void
+  saveFirestore: (state: States, firestore: firebase.firestore.Firestore) => void
   showApp: () => void
   openAppBar: () => void
   closeAppBar: () => void
@@ -67,7 +69,7 @@ interface Actions {
 
 const store: any = new Vuex.Store({
   modules: {
-    perspective, label,
+    label,
   } as any,
   state: {
     theme: savedTheme,
@@ -76,14 +78,30 @@ const store: any = new Vuex.Store({
     windowWidth: document.body.clientWidth,
     appBarState: false,
     isLogged: false,
+    firestore: null,
     isAnonymous: false,
     emailVerified: false,
     loading: true,
+    appError: false,
     showingAlert: false,
     alerts: [],
     alert: undefined,
   } as States,
   mutations: {
+    saveFirestore(state: States, firestore: firebase.firestore.Firestore) {
+      state.firestore = firestore
+      state.firestore.enablePersistence()
+        .catch(err => {
+          if (err.code === 'failed-precondition')
+            state.appError = true
+          else if (err.code === 'unimplemented')
+            state.alerts.push({
+              name: `Firestore's persistence is not available on your browser, therefore you won't be able to use this app offline.</br>Please chose a better browser or update the current one to the latest version.`,
+              duration: 12,
+              type: 'error',
+            })
+        })
+    },
     pushTheme(state: States, theme: string): void {
       state.theme = theme
       localStorage.setItem('watchrTheme', theme)
@@ -134,7 +152,9 @@ const store: any = new Vuex.Store({
       return 'mobile'
     },
     isStandAlone(state: States): boolean {
-      return window.matchMedia('(display-mode: standalone)').matches
+      const navigator: any = window.navigator
+      return (navigator.standalone === true)
+      || (window.matchMedia('(display-mode: standalone)').matches)
     },
     loggedAndVerified(state: States) {
       return state.isLogged && state.emailVerified

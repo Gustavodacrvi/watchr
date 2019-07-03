@@ -4,13 +4,11 @@
       class='app'
       key='loggedAndVerified'
     >
-      <span class='txt'>logged and verified</span>    
     </div>
     <div v-else-if='anonymous'
       class='app'
       key='anonymouse'
     >
-      <span class='txt'>logged as anonymous</span>
     </div>
     <div v-else-if='loggedAndNotVerified'
       class='app'

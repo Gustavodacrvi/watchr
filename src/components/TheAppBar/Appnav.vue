@@ -15,7 +15,10 @@
         :class='theme'
       >SIGN IN</button>
     </div>
-    <div class='content-wrapper'>
+    <div
+      class='content-wrapper'
+      :class='{topmargin: isLogged}'
+    >
       <div class='content'>
         <div class='navsect'>
           <ft-icon v-for='sect in sections'
@@ -97,8 +100,6 @@ interface Section {
 @Component({
   components: {
     overview: AsyncComponent('./AppnavSections/OverviewAppnav.vue'),
-    labels: AsyncComponent('./AppnavSections/LabelAppnav.vue'),
-    perspectives: AsyncComponent('./AppnavSections/PerspectiveAppnav.vue'),
   },
 })
 export default class LoggedAppnav extends Vue {
@@ -131,4 +132,12 @@ export default class LoggedAppnav extends Vue {
 </script>
 
 <style scoped src='@/assets/css/appBarMenu.css'>
+</style>
+
+<style scoped>
+
+.topmargin {
+  margin-top: 50px;
+}
+
 </style>
