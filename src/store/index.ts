@@ -19,6 +19,7 @@ export interface States {
   appBarState: boolean
   firestore: firebase.firestore.Firestore | null
   isLogged: boolean
+  uid: string | null
   isAnonymous: boolean
   emailVerified: boolean
   appError: boolean
@@ -83,6 +84,7 @@ const store: any = new Vuex.Store({
     emailVerified: false,
     loading: true,
     appError: false,
+    uid: null,
     showingAlert: false,
     alerts: [],
     alert: undefined,
@@ -111,10 +113,12 @@ const store: any = new Vuex.Store({
         state.isLogged = true
         state.isAnonymous = user.isAnonymous
         state.emailVerified = user.emailVerified
+        state.uid = user.uid
       } else {
         state.isLogged = false
         state.isAnonymous = false
         state .emailVerified = false
+        state.uid = null
       }
     },
     pushPopUp(state: States, compName: string): void {

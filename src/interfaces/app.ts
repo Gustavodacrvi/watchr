@@ -23,9 +23,9 @@ export interface FloatingButton {
 }
 
 export interface Label {
+  level: number
+  userId: string
   name: string
   id: string
-  hasParent: boolean
   subLabels: string[]
-  parentId: string
 }

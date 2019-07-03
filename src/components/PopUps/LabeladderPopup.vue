@@ -7,14 +7,14 @@
       <dropdown-input
         tabindex='1'
         class='margin'
-        @value='v => value = v'
         :input='input'
-        @update='getOptions'
-        @select='selectValue'
+        @enter='add'
+        @value='v => value = v'
       ></dropdown-input>
       <button
         tabindex='2'
         class='button round-border margin'
+        @click='add'
       >Add label</button>
       <span v-show='isDesktop'
         class='margin txt'
@@ -30,12 +30,15 @@
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { State, Getter, Mutation, Action, namespace } from 'vuex-class'
+import getUid from 'uuid'
 
 import DropdownInput from '@/components/DropdownInput.vue'
 
+const label = namespace('label')
+
 import labelUtil from '@/utils/label'
 
-import { Alert } from '../../interfaces/app'
+import { Alert, Label } from '../../interfaces/app'
 
 const labelModule = namespace('label')
 
@@ -46,9 +49,13 @@ const labelModule = namespace('label')
 })
 export default class LabelAdder extends Vue {
   @State theme!: string
+  @State uid!: string
   @State popUpPayload!: any
   @Getter isDesktop!: boolean
   @Mutation pushAlert!: (alert: Alert) => void
+
+  @label.State labels!: Label[]
+  @label.Action updateLabels!: (labels: Label[]) => void
 
   input: string | null = null
   MAXIMUM_LENGTH_OF_LABEL_TREE: number = 4
@@ -57,6 +64,62 @@ export default class LabelAdder extends Vue {
 
   created() {
     this.input = this.popUpPayload
+  }
+
+  add() {
+    const arr: string[] = labelUtil.getArrFromStringPath(this.value, true)
+    const newLabels: Label[] = []
+    console.log(arr)
+    let i = 0
+    let parentId = ''
+    for (const name of arr) {
+      if (i === 0) {
+        parentId = getUid()
+        const rootLabel: Label | undefined = this.labels.find(el => el.name === name && el.level === 0)
+        if (!rootLabel)
+          newLabels.push({
+            id: parentId,
+            name: name,
+            userId: this.uid,
+            level: 0,
+            subLabels: [],
+          })
+        else {
+          parentId = rootLabel.id
+          newLabels.push(rootLabel)
+        }
+      } else {
+        const parentLabel: Label | undefined = this.labels.find(el => el.id === parentId)
+        console.log(parentId)
+        if (parentLabel) {
+          const children: Label[] = this.labels.filter(el => parentLabel.subLabels.includes(el.id))
+          const targetLabel: Label | undefined = children.find(el => el.name === name)
+          if (!targetLabel) {
+            parentId = getUid()
+            newLabels.push({
+              id: parentId,
+              name: name,
+              userId: this.uid,
+              level: i,
+              subLabels: [],
+            })
+          } else {
+            parentId = targetLabel.id
+            newLabels.push(targetLabel)
+          }
+        }
+      }
+      
+      i++
+    }
+    console.log(newLabels)
+    let childId = newLabels[newLabels.length - 1].id
+    for (let i = newLabels.length - 2;i >= 0;i--) {
+      if (!newLabels[i].subLabels.includes(childId))
+        newLabels[i].subLabels.push(childId)
+      childId = newLabels[i].id
+    }
+    this.updateLabels(newLabels)
   }
 }
 

@@ -25,6 +25,7 @@ interface ActionContext {
 
 interface Actions {
   getData: (context: ActionContext) => void
+  updateLabels: (context: ActionContext) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -41,13 +42,31 @@ export default {
   } as Getters,
   actions: {
     getData({ rootState, state }) {
-      if (rootState.firestore)
-        // I am inevitable
-        rootState.firestore.collection('labels').onSnapshot(snap => {
+      if (rootState.firestore && rootState.uid) {
+        rootState.firestore.collection('labels')
+          .where('userId', '==', rootState.uid).onSnapshot(snap => {
           for (const change of snap.docChanges())
             if (change.type === 'added')
               state.labels.push({...change.doc.data(), id: change.doc.id} as any)
         })
+      }
     },
+    updateLabels({ rootState }: ActionContext, newLabels: Label[]) {
+      if (rootState.firestore) {
+        const batch = rootState.firestore.batch()
+
+        for (const label of newLabels) {
+          const ref = rootState.firestore.collection('labels').doc(label.id)
+          batch.set(ref, {
+            name: label.name,
+            level: label.level,
+            userId: label.userId,
+            subLabels: label.subLabels,
+          } as Label)
+        }
+        
+        batch.commit()
+      }
+    }
   } as Actions,
 }
