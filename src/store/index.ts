@@ -98,6 +98,7 @@ const store: any = new Vuex.Store({
             state.appError = true
           else if (err.code === 'unimplemented')
             state.alerts.push({
+              // tslint:disable-next-line:max-line-length
               name: `Firestore's persistence is not available on your browser, therefore you won't be able to use this app offline.</br>Please chose a better browser or update the current one to the latest version.`,
               duration: 12,
               type: 'error',

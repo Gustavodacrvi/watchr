@@ -74,63 +74,73 @@ export default class LabelAdder extends Vue {
     const newLabels: Label[] = []
     let i = 0
     let parentId = ''
-    for (const name of arr) {
-      if (i === 0) {
-        parentId = getUid()
-        const rootLabel: Label | undefined = this.labels.find(el => el.name === name && el.level === 0)
-        if (!rootLabel)
-          newLabels.push({
-            id: parentId,
-            name: name,
-            userId: this.uid,
-            level: 0,
-            subLabels: [],
-          })
-        else {
-          parentId = rootLabel.id
-          newLabels.push(rootLabel)
-        }
-      } else {
-        const parentLabel: Label | undefined = this.labels.find(el => el.id === parentId)
-        if (parentLabel) {
-          const children: Label[] = this.labels.filter(el => parentLabel.subLabels.includes(el.id))
-          const targetLabel: Label | undefined = children.find(el => el.name === name)
-          if (!targetLabel) {
-            parentId = getUid()
+    if (arr.length === 1 && arr[0] === '')
+      return undefined
+    if (arr.length <= 4) {
+      for (const name of arr) {
+        if (i === 0) {
+          parentId = getUid()
+          const rootLabel: Label | undefined = this.labels.find(el => el.name === name && el.level === 0)
+          if (!rootLabel)
             newLabels.push({
               id: parentId,
-              name: name,
+              name,
               userId: this.uid,
-              level: i,
+              level: 0,
               subLabels: [],
             })
-          } else {
-            parentId = targetLabel.id
-            newLabels.push(targetLabel)
+          else {
+            parentId = rootLabel.id
+            newLabels.push(rootLabel)
+          }
+        } else {
+          const parentLabel: Label | undefined = this.labels.find(el => el.id === parentId)
+          if (parentLabel) {
+            const children: Label[] = this.labels.filter(el => parentLabel.subLabels.includes(el.id))
+            const targetLabel: Label | undefined = children.find(el => el.name === name)
+            if (!targetLabel) {
+              parentId = getUid()
+              newLabels.push({
+                id: parentId,
+                name,
+                userId: this.uid,
+                level: i,
+                subLabels: [],
+              })
+            } else {
+              parentId = targetLabel.id
+              newLabels.push(targetLabel)
+            }
           }
         }
+
+        i++
       }
-      
-      i++
-    }
-    let childId = newLabels[newLabels.length - 1].id
-    for (let i = newLabels.length - 2;i >= 0;i--) {
-      if (!newLabels[i].subLabels.includes(childId))
-        newLabels[i].subLabels.push(childId)
-      childId = newLabels[i].id
-    }
-    this.updateLabels(newLabels)
+      let childId = newLabels[newLabels.length - 1].id
+      for (let j = newLabels.length - 2; j >= 0; j--) {
+        if (!newLabels[j].subLabels.includes(childId))
+          newLabels[j].subLabels.push(childId)
+        childId = newLabels[j].id
+      }
+      this.updateLabels(newLabels)
+    } else
+      this.pushAlert({
+        name: 'The height of sub-labels is 4.',
+        duration: 3,
+        type: 'error',
+      })
   }
-  
+
   getOptions(): string[] {
     const arr: string[] = labelUtil.getArrFromStringPath(this.value, false)
-    let options: string[] = []
-    if (arr.length === 1) {
+    if (arr.length === 1)
       return this.labels.filter(el => el.name.includes(arr[0]) && el.level === 0).map(el => el.name)
-    } else {
-      const label: Label | undefined = this.labels.find(el => el.name === arr[arr.length - 2] && el.level === arr.length - 2)
-      if (label)
-        return this.labels.filter(el => label.subLabels.includes(el.id)).filter(el => el.name.includes(arr[arr.length - 1])).map(el => el.name)
+    else {
+      // tslint:disable-next-line:max-line-length
+      const lab: Label | undefined = this.labels.find(el => el.name === arr[arr.length - 2] && el.level === arr.length - 2)
+      if (lab)
+        // tslint:disable-next-line:max-line-length
+        return this.labels.filter(el => lab.subLabels.includes(el.id)).filter(el => el.name.includes(arr[arr.length - 1])).map(el => el.name)
     }
     return []
   }

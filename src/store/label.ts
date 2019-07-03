@@ -42,14 +42,13 @@ export default {
   } as Getters,
   actions: {
     getData({ rootState, state }) {
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('labels')
           .where('userId', '==', rootState.uid).onSnapshot(snap => {
           for (const change of snap.docChanges())
             if (change.type === 'added')
               state.labels.push({...change.doc.data(), id: change.doc.id} as any)
         })
-      }
     },
     updateLabels({ rootState }: ActionContext, newLabels: Label[]) {
       if (rootState.firestore) {
@@ -64,9 +63,9 @@ export default {
             subLabels: label.subLabels,
           } as Label)
         }
-        
+
         batch.commit()
       }
-    }
+    },
   } as Actions,
 }
