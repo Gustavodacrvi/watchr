@@ -81,16 +81,10 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAdjust, faCog, faHome, faLayerGroup, faProjectDiagram, faStopwatch,
  faStream, faTags, faChartPie } from '@fortawesome/free-solid-svg-icons'
 
+import appUtil from '@/utils/app'
+
 library.add(faAdjust, faCog, faHome, faLayerGroup, faProjectDiagram,
 faStopwatch, faStream, faTags, faChartPie)
-
-const AsyncComponent = (compPath: string): any => () => ({
-  component: import(`${compPath}`),
-  loading: LoadingComponent,
-  error: ErrorComponent,
-  delay: 200,
-  timeout: 5000,
-})
 
 interface Section {
   icon: string
@@ -99,7 +93,8 @@ interface Section {
 
 @Component({
   components: {
-    overview: AsyncComponent('./AppnavSections/OverviewAppnav.vue'),
+    overview: appUtil.AsyncComponent(import('./AppnavSections/OverviewAppnav.vue')),
+    labels: appUtil.AsyncComponent(import('./AppnavSections/LabelAppnav.vue')),
   },
 })
 export default class LoggedAppnav extends Vue {
