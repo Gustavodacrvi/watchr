@@ -4,8 +4,10 @@
       <span class='title'>LABELS</span>
     </div>
     <list-renderer
-      object-title-property-name='subLabels'
+      object-title-property-name='name'
+      object-sublist-property-name='subLabels'
       :list='rootLabels'
+      :get-sublist='getSubLabels'
     />
   </div>
 </template>
@@ -27,6 +29,11 @@ const label = namespace('label')
 })
 export default class LabelAppnav extends Vue {
   @label.Getter rootLabels!: Label[]
+  @label.Getter getSubLabelsFromIds!: (ids: string[]) => Label[]
+
+  getSubLabels(ids: string[]): Label[] {
+    return this.getSubLabelsFromIds(ids)
+  }
 }
 
 </script>
