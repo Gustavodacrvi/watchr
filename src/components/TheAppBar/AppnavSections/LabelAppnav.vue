@@ -4,7 +4,8 @@
       <span class='title'>LABELS</span>
     </div>
     <list-renderer
-      :list='labels'
+      object-title-property-name='subLabels'
+      :list='rootLabels'
     />
   </div>
 </template>
@@ -25,7 +26,7 @@ const label = namespace('label')
   },
 })
 export default class LabelAppnav extends Vue {
-  @label.State labels!: Label[]
+  @label.Getter rootLabels!: Label[]
 }
 
 </script>

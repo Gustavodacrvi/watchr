@@ -1,6 +1,4 @@
 
-import { Label } from '@/interfaces/app'
-
 import { States as RootState } from '@/store/index'
 
 interface States {
@@ -30,7 +28,7 @@ interface Actions {
 export default {
   namespaced: true,
   state: {
-    
+
   } as States,
   mutations: {
 

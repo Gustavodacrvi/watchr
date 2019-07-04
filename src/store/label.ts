@@ -12,7 +12,7 @@ interface Mutations {
 }
 
 interface Getters {
-
+  rootLabels: () => Label[]
 }
 
 interface ActionContext {
@@ -38,7 +38,9 @@ export default {
 
   } as Mutations,
   getters: {
-
+    rootLabels(state: States): Label[] {
+      return state.labels.filter(el => el.level === 0)
+    },
   } as Getters,
   actions: {
     getData({ rootState, state }) {
