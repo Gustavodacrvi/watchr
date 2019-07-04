@@ -64,7 +64,7 @@ export default class ListRenderer extends Vue {
             level: this.level,
             parentId: this.parentId,
           }, oldList: {
-            level: el.dataset.level as any,
+            level: parseInt(el.dataset.level as any),
             parentId: el.dataset.parentId as any,
             elementId: el.dataset.id as any,
           },

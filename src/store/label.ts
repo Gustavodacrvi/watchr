@@ -12,6 +12,7 @@ interface States {
 interface Getters {
   rootLabels: () => Label[]
   getSubLabelsFromIds: () => (ids: string[]) => Label[]
+  getNodeHeight: () => (id: string, level: number) => number
 }
 
 interface Mutations {
@@ -49,6 +50,25 @@ export default {
     getSubLabelsFromIds: (state: States) => (ids: string[]): Label[] => {
       return state.labels.filter(el => ids.includes(el.id))
     },
+    getNodeHeight: (state: States, getters: Getters) => (labelId: string, labelLevel: number): number => {
+      const getHeight: any = getters.getNodeHeight
+      const walk = (id: string, level: number): number => {
+        const label: Label = state.labels.find(el => el.id === id) as Label
+        if (label.subLabels.length === 0) {
+          return level
+        } else {
+          const heights: number[] = []
+          for (const labId of label.subLabels)
+            heights.push(getHeight(labId, level + 1))
+          let max: number = 0
+          for (const height of heights)
+            if (height > max)
+              max = height
+          return max
+        }
+      }
+      return walk(labelId, labelLevel)
+    },
   } as Getters,
   actions: {
     getData({ rootState, state }) {
@@ -78,8 +98,15 @@ export default {
         batch.commit()
       }
     },
-    moveLabelBetweenLists({ rootState, state }: ActionContext, obj) {
-      state.update = !state.update
+    moveLabelBetweenLists({ rootState, state, getters }: ActionContext, obj) {
+      let error: boolean = false
+      if (obj.newList.level > obj.oldList.level) {
+        const getHeight: any = getters.getNodeHeight as any
+        const height: number = getHeight(obj.oldList.elementId, obj.oldList.level)
+        if (obj.newList.level + height - obj.oldList.level === 4) {
+          error = true
+        }
+      }
     },
   } as Actions,
 }
