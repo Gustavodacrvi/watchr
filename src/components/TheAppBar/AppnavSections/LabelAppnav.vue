@@ -20,7 +20,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
-import { Label, List } from '../../../interfaces/app';
+import { Label, List } from '../../../interfaces/app'
 
 const label = namespace('label')
 

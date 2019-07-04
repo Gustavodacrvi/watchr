@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 import label from '@/store/label'
 import appnav from '@/store/appnav'
 
-const MAX_MOBILE_SCREEN_WIDTH = 1024
+const MAX_MOBILE_SCREEN_WIDTH = 824
 
 import { SimpleAdder, Alert } from '@/interfaces/app'
 

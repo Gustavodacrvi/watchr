@@ -100,12 +100,16 @@ export default {
     },
     moveLabelBetweenLists({ rootState, state, getters }: ActionContext, obj) {
       let error: boolean = false
+      console.log(obj)
       if (obj.newList.level > obj.oldList.level) {
         const getHeight: any = getters.getNodeHeight as any
         const height: number = getHeight(obj.oldList.elementId, obj.oldList.level)
-        if (obj.newList.level + height - obj.oldList.level === 4) {
+        if (obj.newList.level + height - obj.oldList.level === 4)
           error = true
-        }
+      }
+      if (!error && rootState.firestore) {
+
+
       }
     },
   } as Actions,

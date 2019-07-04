@@ -11,9 +11,9 @@
         :sublist='getSublist(obj[objectSublistPropertyName])'
         :get-sublist='getSublist'
 
-        :data-parentId='parentId'
-        :data-id='obj.id'
-        :data-level='level'
+        :data-vparentId='parentId'
+        :data-vid='obj.id'
+        :data-vlevel='level'
 
         @listtolist='listtolist'
       />
@@ -28,11 +28,12 @@ import { namespace } from 'vuex-class'
 
 const appnav = namespace('appnav')
 
-import Sortable, { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
-import { MultiDrag } from 'sortablejs'
-import { List } from '../../../interfaces/app';
+import Sortable, { MultiDrag } from 'sortablejs'
+import { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
 
-Sortable.mount(new AutoScroll(), new MultiDrag())
+Sortable.mount(new MultiDrag(), new AutoScroll())
+
+import { List } from '../../../interfaces/app'
 
 @Component({
   components: {
@@ -48,25 +49,35 @@ export default class ListRenderer extends Vue {
   @Prop({default: 0, type: Number}) level!: number
   @Prop({default: null}) parentId!: string | null
 
+  sortable: any = null
+
   mounted() {
     this.mount()
   }
 
   mount() {
-    const sortable = new Sortable(this.rootComponent, {
+    console.log(3)
+    if (this.sortable)
+      this.sortable.destroy()
+    this.sortable = new Sortable(this.rootComponent, {
+      disabled: false,
       animation: 150,
       group: this.group,
+      selectedClass: 'sortable-selected',
+      multiDrag: true,
+      dataIdAttr: 'data-sortableid',
 
       onAdd: (d: any) => {
+        console.log(d)
         const el: HTMLElement = d.item
         this.$emit('listtolist', {
           newList: {
             level: this.level,
             parentId: this.parentId,
           }, oldList: {
-            level: parseInt(el.dataset.level as any),
-            parentId: el.dataset.parentId as any,
-            elementId: el.dataset.id as any,
+            level: parseInt(el.dataset.vlevel as any),
+            parentId: el.dataset.vparentId as any,
+            elementId: el.dataset.vid as any,
           },
         })
       }
@@ -81,15 +92,14 @@ export default class ListRenderer extends Vue {
     const root: HTMLElement = this.$el as HTMLElement
     return root.childNodes[0] as HTMLElement
   }
-
-  @Watch('list')
-  onChange() {
-    this.mount()
-  }
 }
 
 </script>
 
 <style scoped>
+
+.sortable-selected {
+  background-color: red;
+}
 
 </style>
