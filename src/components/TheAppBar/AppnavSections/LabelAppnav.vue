@@ -4,21 +4,23 @@
       <span class='title'>LABELS</span>
     </div>
     <list-renderer
+      group='label appnav'
       object-title-property-name='name'
       object-sublist-property-name='subLabels'
-      :list='rootLabels'
+      :list='list'
       :get-sublist='getSubLabels'
+      @listtolist='listToList'
     />
   </div>
 </template>
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
-import { Label } from '../../../interfaces/app';
+import { Label, List } from '../../../interfaces/app';
 
 const label = namespace('label')
 
@@ -28,11 +30,31 @@ const label = namespace('label')
   },
 })
 export default class LabelAppnav extends Vue {
+  @label.State update!: boolean
   @label.Getter rootLabels!: Label[]
   @label.Getter getSubLabelsFromIds!: (ids: string[]) => Label[]
+  @label.Action moveLabelBetweenLists!: (obj: {newList: List, oldList: List}) => void
+
+  list: Label[] = []
+
+  created() {
+    this.list = this.rootLabels
+  }
 
   getSubLabels(ids: string[]): Label[] {
     return this.getSubLabelsFromIds(ids)
+  }
+
+  listToList(obj: {newList: List, oldList: List}) {
+    this.moveLabelBetweenLists(obj)
+  }
+
+  @Watch('update')
+  onChange() {
+    this.list = []
+    this.$nextTick(() => {
+      this.list = this.rootLabels
+    })
   }
 }
 

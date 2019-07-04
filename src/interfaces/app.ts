@@ -29,3 +29,9 @@ export interface Label {
   id: string
   subLabels: string[]
 }
+
+export interface List {
+  parentId: string | null
+  elementId?: string
+  level: number
+}

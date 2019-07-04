@@ -99,3 +99,10 @@ body, button, input {
 .fade-enter, .fade-leave-to {
   opacity: 0 !important;
 }
+
+.fade-fast-enter-active, .fade-fast-leave-active {
+  transition: opacity .1s !important;
+}
+.fade-fast-enter, .fade-fast-leave-to {
+  opacity: 0 !important;
+}

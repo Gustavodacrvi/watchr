@@ -1,19 +1,21 @@
 
-import { Label } from '@/interfaces/app'
+import { Label, List } from '@/interfaces/app'
 
 import { States as RootState } from '@/store/index'
 
 interface States {
   labels: Label[]
+  update: boolean
 }
 
-interface Mutations {
-
-}
 
 interface Getters {
   rootLabels: () => Label[]
   getSubLabelsFromIds: () => (ids: string[]) => Label[]
+}
+
+interface Mutations {
+
 }
 
 interface ActionContext {
@@ -27,6 +29,7 @@ interface ActionContext {
 interface Actions {
   getData: (context: ActionContext) => void
   updateLabels: (context: ActionContext) => void
+  moveLabelBetweenLists: (context: ActionContext, obj: {newList: List, oldList: List}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -34,6 +37,7 @@ export default {
   namespaced: true,
   state: {
     labels: [],
+    update: false,
   } as States,
   mutations: {
 
@@ -50,7 +54,8 @@ export default {
     getData({ rootState, state }) {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('labels')
-          .where('userId', '==', rootState.uid).onSnapshot(snap => {
+          .where('userId', '==', rootState.uid).orderBy('name')
+          .onSnapshot(snap => {
           for (const change of snap.docChanges())
             if (change.type === 'added')
               state.labels.push({...change.doc.data(), id: change.doc.id} as any)
@@ -72,6 +77,9 @@ export default {
 
         batch.commit()
       }
+    },
+    moveLabelBetweenLists({ rootState, state }: ActionContext, obj) {
+      state.update = !state.update
     },
   } as Actions,
 }

@@ -9,10 +9,13 @@
     <div v-if='showing' class='drop'>
       <list-render
         :level='level'
+        :parent-id='obj.id'
+        :group='group'
         :object-title-property-name='objectTitlePropertyName'
         :object-sublist-property-name='objectSublistPropertyName'
         :list='sublist'
         :get-sublist='getSublist'
+        @listtolist='listtolist'
       />
     </div>
   </div>
@@ -20,9 +23,10 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
 import FontAwesome from '@/components/DynamicFontawesome.vue'
+import { List } from '../../../interfaces/app';
 
 @Component({
   components: {
@@ -32,6 +36,7 @@ import FontAwesome from '@/components/DynamicFontawesome.vue'
 })
 export default class ListRenderer extends Vue {
   @Prop(Object) obj!: object
+  @Prop({required: true, type: String}) group!: string
   @Prop({default: 0, type: Number}) level!: number
   @Prop(String) objectTitlePropertyName!: string
   @Prop(String) objectSublistPropertyName!: string
@@ -39,6 +44,10 @@ export default class ListRenderer extends Vue {
   @Prop(Function) getSublist!: (ids: string[]) => any[]
 
   showing: boolean = true
+
+  listtolist(obj: {newList: List, oldList: List}) {
+    this.$emit('listtolist', obj)
+  }
 }
 
 </script>
