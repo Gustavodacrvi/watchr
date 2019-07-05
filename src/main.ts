@@ -39,6 +39,7 @@ auth.onAuthStateChanged(() => {
     store.commit('showApp')
   }
   store.commit('saveCurrentUser', firebase.auth().currentUser)
+  store.commit('saveFirebase', firebase)
 })
 
 dom.watch()

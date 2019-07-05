@@ -111,6 +111,15 @@ export default class LabelAdder extends Vue {
               parentId = targetLabel.id
               newLabels.push(targetLabel)
             }
+          } else {
+            parentId = getUid()
+            newLabels.push({
+              id: parentId,
+              name,
+              userId: this.uid,
+              level: i,
+              subLabels: [],
+            })
           }
         }
 
@@ -118,10 +127,10 @@ export default class LabelAdder extends Vue {
       }
       let childId = newLabels[newLabels.length - 1].id
       for (let j = newLabels.length - 2; j >= 0; j--) {
-        if (!newLabels[j].subLabels.includes(childId))
-          newLabels[j].subLabels.push(childId)
+        newLabels[j].subLabels.push(childId)
         childId = newLabels[j].id
       }
+      console.log(newLabels)
       this.updateLabels(newLabels)
     } else
       this.pushAlert({

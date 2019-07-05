@@ -56,7 +56,6 @@ export default class ListRenderer extends Vue {
   }
 
   mount() {
-    console.log(3)
     if (this.sortable)
       this.sortable.destroy()
     this.sortable = new Sortable(this.rootComponent, {
@@ -68,24 +67,29 @@ export default class ListRenderer extends Vue {
       dataIdAttr: 'data-sortableid',
 
       onAdd: (d: any) => {
-        console.log(d)
         const el: HTMLElement = d.item
-        this.$emit('listtolist', {
-          newList: {
-            level: this.level,
-            parentId: this.parentId,
-          }, oldList: {
-            level: parseInt(el.dataset.vlevel as any),
-            parentId: el.dataset.vparentId as any,
-            elementId: el.dataset.vid as any,
-          },
-        })
+        let items: HTMLElement[] = [el]
+        if (d.items.length > 0)
+          items = d.items
+        const event: any[] = []
+        for (const item of items)
+          event.push({
+              newList: {
+              level: this.level,
+              parentId: this.parentId,
+            }, oldList: {
+              level: parseInt(item.dataset.vlevel as any),
+              parentId: item.dataset.vparentId as any,
+              elementId: item.dataset.vid as any,
+            },
+          })
+        this.$emit('listtolist', event)
       }
     })
   }
 
-  listtolist(obj: {oldList: List, newList: List}) {
-    this.$emit('listtolist', obj)
+  listtolist(arr: {oldList: List, newList: List}[]) {
+    this.$emit('listtolist', arr)
   }
 
   get rootComponent(): HTMLElement {

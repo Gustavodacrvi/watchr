@@ -30,7 +30,7 @@ interface ActionContext {
 interface Actions {
   getData: (context: ActionContext) => void
   updateLabels: (context: ActionContext) => void
-  moveLabelBetweenLists: (context: ActionContext, obj: {newList: List, oldList: List}) => void
+  moveLabelBetweenLists: (context: ActionContext, arr: {newList: List, oldList: List}[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -76,9 +76,19 @@ export default {
         rootState.firestore.collection('labels')
           .where('userId', '==', rootState.uid).orderBy('name')
           .onSnapshot(snap => {
-          for (const change of snap.docChanges())
-            if (change.type === 'added')
+          for (const change of snap.docChanges()) {
+            if (change.type === 'added') {
               state.labels.push({...change.doc.data(), id: change.doc.id} as any)
+            }
+            else if (change.type === 'removed') {
+              const index = state.labels.findIndex(el => el.id === change.doc.id)
+              state.labels.splice(index, 1)
+            } else {
+              console.log(3)
+              const index = state.labels.findIndex(el => el.id === change.doc.id)
+              state.labels[index] = {...change.doc.data(), id: change.doc.id} as any
+            }
+          }
         })
     },
     updateLabels({ rootState }: ActionContext, newLabels: Label[]) {
@@ -98,18 +108,35 @@ export default {
         batch.commit()
       }
     },
-    moveLabelBetweenLists({ rootState, state, getters }: ActionContext, obj) {
-      let error: boolean = false
-      console.log(obj)
-      if (obj.newList.level > obj.oldList.level) {
-        const getHeight: any = getters.getNodeHeight as any
-        const height: number = getHeight(obj.oldList.elementId, obj.oldList.level)
-        if (obj.newList.level + height - obj.oldList.level === 4)
-          error = true
-      }
-      if (!error && rootState.firestore) {
-
-
+    moveLabelBetweenLists({ rootState, state, getters }: ActionContext, movements) {
+      if (rootState.firestore && rootState.firebase) {
+        const batch = rootState.firestore.batch()
+        for (const move of movements) {
+          let error: boolean = false
+          if (move.newList.level > move.oldList.level) {
+            const getHeight: any = getters.getNodeHeight as any
+            const height: number = getHeight(move.oldList.elementId, move.oldList.level)
+            if (move.newList.level + height - move.oldList.level === 4)
+              error = true
+          }
+          if (!error && rootState.firestore) {
+            const fire: any = rootState.firebase.firestore
+            if (move.newList.parentId) {
+              rootState.firestore.collection('labels').doc(move.newList.parentId).update({
+                subLabels: fire.FieldValue.arrayUnion(move.oldList.elementId)
+              })
+            }
+            if (move.oldList.parentId) {
+              rootState.firestore.collection('labels').doc(move.oldList.parentId).update({
+                subLabels: fire.FieldValue.arrayRemove(move.oldList.elementId)
+              })
+            }
+            rootState.firestore.collection('labels').doc(move.oldList.elementId).update({
+              level: move.newList.level
+            })
+          }
+        }
+        batch.commit()
       }
     },
   } as Actions,

@@ -30,10 +30,11 @@ const label = namespace('label')
   },
 })
 export default class LabelAppnav extends Vue {
+  @label.State labels!: Label[]
   @label.State update!: boolean
   @label.Getter rootLabels!: Label[]
   @label.Getter getSubLabelsFromIds!: (ids: string[]) => Label[]
-  @label.Action moveLabelBetweenLists!: (obj: {newList: List, oldList: List}) => void
+  @label.Action moveLabelBetweenLists!: (arr: {newList: List, oldList: List}[]) => void
 
   list: Label[] = []
 
@@ -45,8 +46,8 @@ export default class LabelAppnav extends Vue {
     return this.getSubLabelsFromIds(ids)
   }
 
-  listToList(obj: {newList: List, oldList: List}) {
-    this.moveLabelBetweenLists(obj)
+  listToList(arr: {newList: List, oldList: List}[]) {
+    this.moveLabelBetweenLists(arr)
   }
 
   @Watch('update')
@@ -55,6 +56,10 @@ export default class LabelAppnav extends Vue {
     this.$nextTick(() => {
       this.list = this.rootLabels
     })
+  }
+  @Watch('labels')
+  onStateChange() {
+    this.list = this.rootLabels
   }
 }
 

@@ -45,8 +45,8 @@ export default class ListRenderer extends Vue {
 
   showing: boolean = true
 
-  listtolist(obj: {newList: List, oldList: List}) {
-    this.$emit('listtolist', obj)
+  listtolist(arr: {newList: List, oldList: List}[]) {
+    this.$emit('listtolist', arr)
   }
 }
 
