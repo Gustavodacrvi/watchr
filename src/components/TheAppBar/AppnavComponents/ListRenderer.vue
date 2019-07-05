@@ -14,8 +14,6 @@
         :data-vparentid='parentId'
         :data-vid='obj.id'
         :data-vlevel='level'
-
-        @listtolist='listtolist'
       />
     </transition-group>
   </div>
@@ -26,8 +24,7 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 
-const appnav = namespace('appnav')
-const label = namespace('label')
+const list = namespace('list')
 
 import Sortable, { MultiDrag } from 'sortablejs'
 import { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
@@ -50,7 +47,7 @@ export default class ListRenderer extends Vue {
   @Prop({default: 0, type: Number}) level!: number
   @Prop({default: null}) parentId!: string | null
 
-  @label.Action savePosition!: () => void
+  @list.Mutation moveElement!: (obj: {moves: {newList: List, oldList: List}[], movedList: string}) => void
 
   sortable: any = null
 
@@ -72,7 +69,6 @@ export default class ListRenderer extends Vue {
       onAdd: (d: any) => {
         const el: HTMLElement = d.item
         let items: HTMLElement[] = [el]
-        console.log(d)
         if (d.items.length > 0)
           items = d.items
         const event: any[] = []
@@ -87,17 +83,17 @@ export default class ListRenderer extends Vue {
               elementId: item.dataset.vid as any,
             },
           })
-        this.$emit('listtolist', event)
+        this.moveElement({
+          moves: event,
+          movedList: this.group,
+        })
       },
 
       onMove: (d: any) => {
-        
+        console.log(d)
+        this.$emit('move', event)
       }
     })
-  }
-
-  listtolist(arr: {oldList: List, newList: List}[]) {
-    this.$emit('listtolist', arr)
   }
 
   get rootComponent(): HTMLElement {

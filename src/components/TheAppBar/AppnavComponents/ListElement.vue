@@ -15,7 +15,6 @@
         :object-sublist-property-name='objectSublistPropertyName'
         :list='sublist'
         :get-sublist='getSublist'
-        @listtolist='listtolist'
       />
     </div>
   </div>
@@ -44,10 +43,6 @@ export default class ListRenderer extends Vue {
   @Prop(Function) getSublist!: (ids: string[]) => any[]
 
   showing: boolean = true
-
-  listtolist(arr: {newList: List, oldList: List}[]) {
-    this.$emit('listtolist', arr)
-  }
 }
 
 </script>

@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import label from '@/store/label'
-import appnav from '@/store/appnav'
+import list from '@/store/list'
 
 const MAX_MOBILE_SCREEN_WIDTH = 824
 
@@ -73,7 +73,7 @@ interface Actions {
 
 const store: any = new Vuex.Store({
   modules: {
-    label, appnav,
+    label, list,
   } as any,
   state: {
     theme: savedTheme,

@@ -3,11 +3,13 @@ import { States as RootState } from '@/store/index'
 import { List } from '@/interfaces/app';
 
 interface States {
-
+  transactionBetweenList: boolean
+  transactionListName: string
+  movements: {newList: List, oldList: List}[]
 }
 
 interface Mutations {
-  moveElement: (state: States, obj: {newList: List, oldList: List}) => void
+  moveElement: (state: States, obj: {moves: {newList: List, oldList: List}[], movedList: string}) => void
 }
 
 interface Getters {
@@ -29,12 +31,15 @@ interface Actions {
 export default {
   namespaced: true,
   state: {
-
+    transactionBetweenList: false,
+    transactionListName: '',
+    movements: [],
   } as States,
   mutations: {
-    moveElement(state: States, {oldList, newList}) {
-      console.log('old', oldList.level, oldList.elementId, oldList.parentId)
-      console.log('new', newList.level, newList.elementId, newList.parentId)
+    moveElement(state: States, movements) {
+      state.transactionListName = movements.movedList
+      state.transactionBetweenList = !state.transactionBetweenList
+      state.movements = movements.moves
     },
   } as Mutations,
   getters: {

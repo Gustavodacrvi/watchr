@@ -9,7 +9,6 @@
       object-sublist-property-name='subLabels'
       :list='list'
       :get-sublist='getSubLabels'
-      @listtolist='listToList'
     />
   </div>
 </template>
@@ -23,6 +22,7 @@ import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.v
 import { Label, List } from '../../../interfaces/app'
 
 const label = namespace('label')
+const list = namespace('list')
 
 @Component({
   components: {
@@ -35,6 +35,9 @@ export default class LabelAppnav extends Vue {
   @label.Getter rootLabels!: Label[]
   @label.Getter getSubLabelsFromIds!: (ids: string[]) => Label[]
   @label.Action moveLabelBetweenLists!: (arr: {newList: List, oldList: List}[]) => void
+  @list.State transactionBetweenList!: boolean
+  @list.State transactionListName!: string
+  @list.State movements!: {newList: List, oldList: List}[]
 
   list: Label[] = []
 
@@ -46,10 +49,11 @@ export default class LabelAppnav extends Vue {
     return this.getSubLabelsFromIds(ids)
   }
 
-  listToList(arr: {newList: List, oldList: List}[]) {
-    this.moveLabelBetweenLists(arr)
+  @Watch('transactionBetweenList')
+  onTrans() {
+    if (this.transactionListName === 'label appnav')
+      this.moveLabelBetweenLists(this.movements)
   }
-
   @Watch('update')
   onChange() {
     this.list = []
