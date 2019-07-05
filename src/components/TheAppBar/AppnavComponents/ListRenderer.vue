@@ -11,7 +11,7 @@
         :sublist='getSublist(obj[objectSublistPropertyName])'
         :get-sublist='getSublist'
 
-        :data-vparentId='parentId'
+        :data-vparentid='parentId'
         :data-vid='obj.id'
         :data-vlevel='level'
 
@@ -69,6 +69,7 @@ export default class ListRenderer extends Vue {
       onAdd: (d: any) => {
         const el: HTMLElement = d.item
         let items: HTMLElement[] = [el]
+        console.log(d)
         if (d.items.length > 0)
           items = d.items
         const event: any[] = []
@@ -79,12 +80,12 @@ export default class ListRenderer extends Vue {
               parentId: this.parentId,
             }, oldList: {
               level: parseInt(item.dataset.vlevel as any),
-              parentId: item.dataset.vparentId as any,
+              parentId: item.dataset.vparentid as any,
               elementId: item.dataset.vid as any,
             },
           })
         this.$emit('listtolist', event)
-      }
+      },
     })
   }
 

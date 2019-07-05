@@ -130,7 +130,6 @@ export default class LabelAdder extends Vue {
         newLabels[j].subLabels.push(childId)
         childId = newLabels[j].id
       }
-      console.log(newLabels)
       this.updateLabels(newLabels)
     } else
       this.pushAlert({

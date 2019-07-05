@@ -76,17 +76,20 @@ export default {
         rootState.firestore.collection('labels')
           .where('userId', '==', rootState.uid).orderBy('name')
           .onSnapshot(snap => {
-          for (const change of snap.docChanges()) {
+          const changes = snap.docChanges()
+          for (const change of changes) {
             if (change.type === 'added') {
+              console.log('added')
               state.labels.push({...change.doc.data(), id: change.doc.id} as any)
             }
             else if (change.type === 'removed') {
+              console.log('removed')
               const index = state.labels.findIndex(el => el.id === change.doc.id)
               state.labels.splice(index, 1)
             } else {
-              console.log(3)
+              console.log('changed')
               const index = state.labels.findIndex(el => el.id === change.doc.id)
-              state.labels[index] = {...change.doc.data(), id: change.doc.id} as any
+              state.labels.splice(index, 1, {...change.doc.data(), id: change.doc.id} as any)
             }
           }
         })
@@ -116,25 +119,44 @@ export default {
           if (move.newList.level > move.oldList.level) {
             const getHeight: any = getters.getNodeHeight as any
             const height: number = getHeight(move.oldList.elementId, move.oldList.level)
-            if (move.newList.level + height - move.oldList.level === 4)
+            console.log(move.newList.level, height, move.oldList.level)
+            if (move.newList.level + height - move.oldList.level > 3)
               error = true
           }
+          console.log(move)
           if (!error && rootState.firestore) {
             const fire: any = rootState.firebase.firestore
             if (move.newList.parentId) {
-              rootState.firestore.collection('labels').doc(move.newList.parentId).update({
+              console.log('new parentid')
+              const ref = rootState.firestore.collection('labels').doc(move.newList.parentId)
+              batch.update(ref, {
                 subLabels: fire.FieldValue.arrayUnion(move.oldList.elementId)
               })
             }
             if (move.oldList.parentId) {
-              rootState.firestore.collection('labels').doc(move.oldList.parentId).update({
+              console.log('old parentId')
+              const ref = rootState.firestore.collection('labels').doc(move.oldList.parentId)
+              batch.update(ref, {
                 subLabels: fire.FieldValue.arrayRemove(move.oldList.elementId)
               })
             }
-            rootState.firestore.collection('labels').doc(move.oldList.elementId).update({
+            const ref = rootState.firestore.collection('labels').doc(move.oldList.elementId)
+            batch.update(ref, {
               level: move.newList.level
             })
-          }
+            const updateInnerLevels = (id: string, level: number) => {
+              const parent: Label = state.labels.find(el => el.id === id) as Label
+              const firestore: firebase.firestore.Firestore = rootState.firestore as any
+              for (const id of parent.subLabels) {
+                const docRef = firestore.collection('labels').doc(id)
+                batch.update(docRef, {
+                  level: level
+                })
+                updateInnerLevels(id, level + 1)
+              }
+            }
+            updateInnerLevels(move.oldList.elementId as string, move.newList.level + 1)
+          } else state.update = !state.update
         }
         batch.commit()
       }
