@@ -27,6 +27,7 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 
 const appnav = namespace('appnav')
+const label = namespace('label')
 
 import Sortable, { MultiDrag } from 'sortablejs'
 import { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
@@ -48,6 +49,8 @@ export default class ListRenderer extends Vue {
   @Prop({required: true, type: Function}) getSublist!: (ids: string[]) => any[]
   @Prop({default: 0, type: Number}) level!: number
   @Prop({default: null}) parentId!: string | null
+
+  @label.Action savePosition!: () => void
 
   sortable: any = null
 
@@ -86,6 +89,10 @@ export default class ListRenderer extends Vue {
           })
         this.$emit('listtolist', event)
       },
+
+      onMove: (d: any) => {
+        
+      }
     })
   }
 
