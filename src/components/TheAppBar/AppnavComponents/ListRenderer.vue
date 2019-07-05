@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class='`${group}-${level}`'>
     <transition-group name='fade-fast'>
       <list-element v-for='obj in list'
         :key='obj.id'
@@ -47,7 +47,10 @@ export default class ListRenderer extends Vue {
   @Prop({default: 0, type: Number}) level!: number
   @Prop({default: null}) parentId!: string | null
 
-  @list.Mutation moveElement!: (obj: {moves: {newList: List, oldList: List}[], movedList: string}) => void
+  @list.State getIds!: boolean
+  @list.Mutation movedElement!: boolean
+  @list.Mutation transfereElement!: (obj: {moves: {newList: List, oldList: List}[], movedList: string}) => void
+  @list.Mutation saveIds!: (obj: {ids: string[], group: string}) => void
 
   sortable: any = null
 
@@ -83,22 +86,42 @@ export default class ListRenderer extends Vue {
               elementId: item.dataset.vid as any,
             },
           })
-        this.moveElement({
+        this.transfereElement({
           moves: event,
           movedList: this.group,
         })
       },
 
-      onMove: (d: any) => {
-        console.log(d)
-        this.$emit('move', event)
+      onSort: () => {
+        this.getIdsFromElements()
       }
     })
+  }
+
+  getIdsFromElements() {
+    if (this.level === 0) {
+      const root = document.querySelector(`.${this.group}-${this.level}`)
+      if (root) {
+        const arr = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
+        const ids: string[] = []
+        for (const el of arr)
+          ids.push(el.dataset.vid)
+        this.saveIds({
+          ids,
+          group: this.group,
+        })
+      }
+    }
   }
 
   get rootComponent(): HTMLElement {
     const root: HTMLElement = this.$el as HTMLElement
     return root.childNodes[0] as HTMLElement
+  }
+
+  @Watch('getIds')
+  onGetIds() {
+    this.getIdsFromElements()
   }
 }
 

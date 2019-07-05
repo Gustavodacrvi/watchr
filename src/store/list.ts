@@ -4,12 +4,18 @@ import { List } from '@/interfaces/app';
 
 interface States {
   transactionBetweenList: boolean
+  movedElement: boolean
+  getIds: boolean
+  movedElementGroup: string
   transactionListName: string
+  order: string[]
   movements: {newList: List, oldList: List}[]
 }
 
 interface Mutations {
-  moveElement: (state: States, obj: {moves: {newList: List, oldList: List}[], movedList: string}) => void
+  transfereElement: (state: States, obj: {moves: {newList: List, oldList: List}[], movedList: string}) => void
+  saveIds: (state: States, obj: {ids: string[], group: string}) => void
+  saveNewPosition: (state: States) => void
 }
 
 interface Getters {
@@ -34,12 +40,25 @@ export default {
     transactionBetweenList: false,
     transactionListName: '',
     movements: [],
+
+    getIds: false,
+    movedElement: false,
+    movedElementGroup: '',
+    order: [],
   } as States,
   mutations: {
-    moveElement(state: States, movements) {
+    transfereElement(state: States, movements) {
       state.transactionListName = movements.movedList
       state.transactionBetweenList = !state.transactionBetweenList
       state.movements = movements.moves
+    },
+    saveIds(state: States, obj) {
+      state.order = obj.ids
+      state.movedElementGroup = obj.group
+      state.movedElement = !state.movedElement
+    },
+    saveNewPosition(state: States) {
+      state.getIds = !state.getIds
     },
   } as Mutations,
   getters: {

@@ -4,7 +4,7 @@
       <span class='title'>LABELS</span>
     </div>
     <list-renderer
-      group='label appnav'
+      group='labelAppnav'
       object-title-property-name='name'
       object-sublist-property-name='subLabels'
       :list='list'
@@ -35,9 +35,16 @@ export default class LabelAppnav extends Vue {
   @label.Getter rootLabels!: Label[]
   @label.Getter getSubLabelsFromIds!: (ids: string[]) => Label[]
   @label.Action moveLabelBetweenLists!: (arr: {newList: List, oldList: List}[]) => void
+  @label.Action savePosition!: (ids: string[]) => void
+
   @list.State transactionBetweenList!: boolean
   @list.State transactionListName!: string
   @list.State movements!: {newList: List, oldList: List}[]
+
+  @list.State movedElement!: boolean
+  @list.State movedElementGroup!: string
+  @list.State order!: string[]
+  @list.Mutation saveNewPosition!: () => void
 
   list: Label[] = []
 
@@ -49,9 +56,14 @@ export default class LabelAppnav extends Vue {
     return this.getSubLabelsFromIds(ids)
   }
 
+  @Watch('movedElement')
+  onMove() {
+    if (this.movedElementGroup === 'labelAppnav')
+      this.savePosition(this.order)
+  }
   @Watch('transactionBetweenList')
   onTrans() {
-    if (this.transactionListName === 'label appnav')
+    if (this.transactionListName === 'labelAppnav')
       this.moveLabelBetweenLists(this.movements)
   }
   @Watch('update')
@@ -64,6 +76,9 @@ export default class LabelAppnav extends Vue {
   @Watch('labels')
   onStateChange() {
     this.list = this.rootLabels
+    this.$nextTick(() => {
+      this.saveNewPosition()
+    })
   }
 }
 

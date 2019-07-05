@@ -34,7 +34,7 @@ interface Actions {
   updateLabels: (context: ActionContext) => void
   moveLabelBetweenLists: (context: ActionContext, arr: {newList: List, oldList: List}[]) => void
   sort: (context: ActionContext) => void
-  savePosition: (context: ActionContext) => void
+  savePosition: (context: ActionContext, ids: string[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -85,10 +85,7 @@ export default {
       }
       state.labels = sorted
     },
-    savePosition({ state, rootState }) {
-      const ids: string[] = []
-      for (const lab of state.labels)
-        ids.push(lab.id)
+    savePosition({ state, rootState }, ids) {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('labelsOrder').doc(rootState.uid)
           .update({
