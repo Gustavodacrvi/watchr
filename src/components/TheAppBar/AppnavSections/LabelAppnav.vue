@@ -11,7 +11,6 @@
       :get-sublist='getSubLabels'
 
       @update='onUpdate'
-      @push='onPush'
     />
   </div>
 </template>
@@ -34,7 +33,6 @@ const list = namespace('list')
 })
 export default class LabelAppnav extends Vue {
   @label.State labels!: Label[]
-  @label.State update!: boolean
   @label.Getter rootLabels!: Label[]
   @label.Getter getSubLabelsFromIds!: (ids: string[]) => Label[]
   @label.Action moveLabelBetweenLists!: (obj: {movements: {newList: List, oldList: List}[], ids: string[]}) => void
@@ -45,9 +43,6 @@ export default class LabelAppnav extends Vue {
   created() {
     this.list = this.rootLabels
   }
-  errorCaptured() {
-    console.log('appnav')
-  }
 
   getSubLabels(ids: string[]): Label[] {
     return this.getSubLabelsFromIds(ids)
@@ -57,18 +52,7 @@ export default class LabelAppnav extends Vue {
     console.log('onUpdate')
     // this.saveLabelPosition(ids)
   }
-  onPush(obj: any) {
-    console.log('onPush')
-    // this.moveLabelBetweenLists(obj)
-  }
 
-  @Watch('update')
-  onChange() {
-    this.list = []
-    this.$nextTick(() => {
-      this.list = this.rootLabels
-    })
-  }
   @Watch('labels')
   onStateChange() {
     this.list = this.rootLabels

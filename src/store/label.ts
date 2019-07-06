@@ -7,7 +7,6 @@ import { State } from 'vuex-class';
 interface States {
   labels: Label[]
   order: string[]
-  update: boolean
 }
 
 
@@ -31,8 +30,7 @@ interface ActionContext {
 
 interface Actions {
   getData: (context: ActionContext) => void
-  updateLabels: (context: ActionContext) => void
-  moveLabelBetweenLists: (context: ActionContext, obj: {movements: {newList: List, oldList: List}[], ids: string[]}) => void
+  addLabels: (context: ActionContext) => void
   saveLabelPosition: (context: ActionContext, ids: string[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
@@ -42,7 +40,6 @@ export default {
   state: {
     labels: [],
     order: [],
-    update: false,
   } as States,
   mutations: {
 
@@ -126,95 +123,24 @@ export default {
         })
       }
     },
-    updateLabels({ rootState, state }: ActionContext, newLabels: Label[]) {
+    addLabels({ rootState, state }: ActionContext, name: string) {
       if (rootState.firestore && rootState.uid) {
         const batch = rootState.firestore.batch()
 
-        const ids: string[] = []
+        const ref = rootState.firestore.collection('labels').doc()
+        batch.set(ref, {
+          name: name,
+          userId: rootState.uid
+        })
+
         const fire: any = rootState.firebase.firestore
-        for (const label of newLabels) {
-          const ref = rootState.firestore.collection('labels').doc(label.id)
-          batch.set(ref, {
-            name: label.name,
-            level: label.level,
-            userId: label.userId,
-            subLabels: label.subLabels,
-          } as Label)
-          ids.push(label.id)
-        }
-        const ref = rootState.firestore.collection('labelsOrder').doc(rootState.uid)
-        if (state.order.length === 0)
-          batch.set(ref, {
-            userId: rootState.uid,
-            order: fire.FieldValue.arrayUnion(...ids),
-          })
-        else
-          batch.update(ref, {
-            order: fire.FieldValue.arrayUnion(...ids),
-          })
-        
-        console.log('add labels')
-        batch.commit()
-      }
-    },
-    moveLabelBetweenLists({ rootState, state, getters }: ActionContext, movements) {
-      if (rootState.firestore && rootState.firebase) {
-        const batch = rootState.firestore.batch()
-        for (const move of movements.movements) {
-          let error: boolean = false
-          if (move.newList.level > move.oldList.level) {
-            const getHeight: any = getters.getNodeHeight as any
-            const height: number = getHeight(move.oldList.elementId, move.oldList.level)
-            if (move.newList.level + height - move.oldList.level > 3)
-              error = true
-          }
-          if (!error && rootState.firestore) {
-            const fire: any = rootState.firebase.firestore
-            if (move.newList.parentId) {
-              const ref = rootState.firestore.collection('labels').doc(move.newList.parentId)
-              batch.update(ref, {
-                subLabels: fire.FieldValue.arrayUnion(move.oldList.elementId)
-              })
-            }
-            if (move.oldList.parentId) {
-              const ref = rootState.firestore.collection('labels').doc(move.oldList.parentId)
-              batch.update(ref, {
-                subLabels: fire.FieldValue.arrayRemove(move.oldList.elementId)
-              })
-            }
-            const ref = rootState.firestore.collection('labels').doc(move.oldList.elementId)
-            batch.update(ref, {
-              level: move.newList.level
-            })
-            const updateInnerLevels = (id: string, level: number) => {
-              const parent: Label = state.labels.find(el => el.id === id) as Label
-              const firestore: firebase.firestore.Firestore = rootState.firestore as any
-              for (const id of parent.subLabels) {
-                const docRef = firestore.collection('labels').doc(id)
-                batch.update(docRef, {
-                  level: level
-                })
-                updateInnerLevels(id, level + 1)
-              }
-            }
-            updateInnerLevels(move.oldList.elementId as string, move.newList.level + 1)
-          } else state.update = !state.update
-        }
-        if (rootState.uid) {
-          const ref = rootState.firestore.collection('labelsOrder').doc(rootState.uid)
-          if (state.order.length === 0)
-            batch.set(ref, {
-              userId: rootState.uid,
-              order: movements.ids,
-            })
-          else {
-            console.log('between else', movements.ids)
-            batch.update(ref, {
-              order: movements.ids,
-            })
-          }
-        }
-        console.log('between lists')
+        const orderRef = rootState.firestore.collection('labelsOrder').doc(rootState.uid)
+        batch.set(orderRef, {
+          userId: rootState.uid,
+          order: fire.FieldValue.arrayUnion(ref.id)
+        })
+
+        console.log('add tag')
         batch.commit()
       }
     },

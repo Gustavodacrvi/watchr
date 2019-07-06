@@ -15,8 +15,6 @@
         :object-sublist-property-name='objectSublistPropertyName'
         :list='sublist'
         :get-sublist='getSublist'
-        @update="$emit('update')"
-        @push='push'
       />
     </div>
   </div>
@@ -45,10 +43,6 @@ export default class ListRenderer extends Vue {
   @Prop(Function) getSublist!: (ids: string[]) => any[]
 
   showing: boolean = true
-
-  errorCaptured() {
-    console.log('list')
-  }
 
   push(obj: any) {
     this.$emit('push', obj)
