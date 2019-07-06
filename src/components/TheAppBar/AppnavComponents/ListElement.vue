@@ -1,11 +1,24 @@
 <template>
-  <div class='element round-border' :class='theme'>
-    <div class='left-icon'>
+  <div
+    class='element round-border'
+    :class='theme'
+    @mouseenter='onHover = true'
+    @mouseleave='onHover = false'
+  >
+    <div
+      class='left-icon'
+      :class='{handle: showHandle && !isDesktop}'
+      @click='toggleElement'
+    >
     </div>
-    <div class='content'>
+    <div
+      class='content'
+      :class='{handle: showHandle && !isDesktop}'
+      @click='toggleElement'
+    >
       <span class='txt name'>{{ name }}</span>
     </div>
-    <div v-if='options && options.length > 0'
+    <div v-if='showOptionsMobile || showOptionsDesktop'
       class='options'
     >
       <icon-dropdown
@@ -41,7 +54,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { State } from 'vuex-class'
+import { State, Getter } from 'vuex-class'
 
 import FontAwesome from '@/components/DynamicFontawesome.vue'
 import IconDropdown from '@/components/IconDropdown.vue'
@@ -60,11 +73,37 @@ import { List, ListIcon } from '../../../interfaces/app'
   },
 })
 export default class ListRenderer extends Vue {
-  @State theme!: string
   @Prop(String) name!: string
   @Prop(Array) options!: ListIcon[]
+  @Prop(Boolean) showHandle!: boolean
+  @Prop(Boolean) deselectAll!: boolean
 
-  showing: boolean = true
+  @State theme!: string
+  @Getter isDesktop!: boolean
+
+  onHover: boolean = false
+  clicked: boolean = false
+
+  toggleElement() {
+    this.clicked = !this.clicked
+    const el: HTMLElement = this.$el as HTMLElement
+    this.$emit('toggle', {
+      el,
+      select: this.clicked,
+    })
+  }
+
+  get showOptionsMobile(): boolean {
+    return !this.isDesktop && this.options && this.options.length > 0 && !this.showHandle
+  }
+  get showOptionsDesktop(): boolean {
+    return this.isDesktop && this.onHover
+  }
+
+  @Watch('deselectAll')
+  onChange() {
+    this.clicked = false
+  }
 }
 
 </script>
@@ -91,7 +130,7 @@ export default class ListRenderer extends Vue {
 }
 
 .options {
-  flex-basis: 30px;
+  flex-basis: 35px;
   height: 100%;
 }
 
@@ -115,6 +154,10 @@ export default class ListRenderer extends Vue {
 
 
 
+.el, .el-icon, .el-name {
+  display: flex;
+} 
+
 .drop {
   z-index: 5;
   overflow: hidden;
@@ -123,7 +166,6 @@ export default class ListRenderer extends Vue {
 .el {
   transition: background-color .25s;
   height: 35px;
-  display: flex;
 }
 
 .el.dark:hover {
@@ -137,14 +179,12 @@ export default class ListRenderer extends Vue {
 .el-icon {
   height: 100%;
   flex-basis: 33px;
-  display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .el-name {
   flex-basis: 100%;
-  display: flex;
   align-items: center;
 }
 
