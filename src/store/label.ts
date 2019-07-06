@@ -1,17 +1,19 @@
 
-import { Label } from '@/interfaces/app'
+import { Label, List } from '@/interfaces/app'
 
 import { States as RootState } from '@/store/index'
 
 interface States {
   labels: Label[]
+  order: string[]
+}
+
+
+interface Getters {
+  sortedLabels: () => Label[]
 }
 
 interface Mutations {
-
-}
-
-interface Getters {
 
 }
 
@@ -25,7 +27,8 @@ interface ActionContext {
 
 interface Actions {
   getData: (context: ActionContext) => void
-  updateLabels: (context: ActionContext) => void
+  addLabels: (context: ActionContext) => void
+  saveLabelPosition: (context: ActionContext, ids: string[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -33,36 +36,74 @@ export default {
   namespaced: true,
   state: {
     labels: [],
+    order: [],
   } as States,
   mutations: {
 
   } as Mutations,
   getters: {
-
+    sortedLabels(state: States): Label[] {
+      const sorted: Label[] = []
+      for (const id of state.order) {
+        const lab: Label | undefined = state.labels.find(el => el.id === id)
+        if (lab)
+          sorted.push(lab)
+      }
+      return sorted
+    },
   } as Getters,
   actions: {
-    getData({ rootState, state }) {
+    saveLabelPosition({ state, rootState }, ids) {
       if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('labels')
-          .where('userId', '==', rootState.uid).onSnapshot(snap => {
-          for (const change of snap.docChanges())
-            if (change.type === 'added')
-              state.labels.push({...change.doc.data(), id: change.doc.id} as any)
-        })
+        rootState.firestore.collection('labelsOrder').doc(rootState.uid)
+          .update({
+            order: ids,
+          })
     },
-    updateLabels({ rootState }: ActionContext, newLabels: Label[]) {
-      if (rootState.firestore) {
+    getData({ rootState, state, dispatch }) {
+      if (rootState.firestore && rootState.uid) {
+        rootState.firestore.collection('labelsOrder').where('userId', '==', rootState.uid)
+          .onSnapshot(snap => {
+            const changes = snap.docChanges()
+            for (const change of changes)
+              state.order = change.doc.data().order
+          })
+        rootState.firestore.collection('labels').where('userId', '==', rootState.uid)
+          .onSnapshot(snap => {
+          const changes = snap.docChanges()
+          for (const change of changes)
+            if (change.type === 'added') {
+              const lab = state.labels.find(el => el.id === change.doc.id)
+              if (!lab)
+                state.labels.push({...change.doc.data(), id: change.doc.id} as any)
+            } else if (change.type === 'removed') {
+              const index = state.labels.findIndex(el => el.id === change.doc.id)
+              state.labels.splice(index, 1)
+            } else {
+              const index = state.labels.findIndex(el => el.id === change.doc.id)
+              state.labels.splice(index, 1, {...change.doc.data(), id: change.doc.id} as any)
+            }
+        })
+      }
+    },
+    addLabels({ rootState, state }: ActionContext, name: string) {
+      if (rootState.firestore && rootState.uid) {
         const batch = rootState.firestore.batch()
 
-        for (const label of newLabels) {
-          const ref = rootState.firestore.collection('labels').doc(label.id)
-          batch.set(ref, {
-            name: label.name,
-            level: label.level,
-            userId: label.userId,
-            subLabels: label.subLabels,
-          } as Label)
-        }
+        const ref = rootState.firestore.collection('labels').doc()
+        batch.set(ref, {
+          ,
+          userId: rootState.uid,
+        })
+
+        const fire: any = rootState.firebase.firestore
+        const orderRef = rootState.firestore.collection('labelsOrder').doc(rootState.uid)
+        const arr: string[] = state.order
+        arr.push(ref.id)
+        batch.set(orderRef, {
+          userId: rootState.uid,
+          order: fire.FieldValue.arrayUnion(...arr),
+        })
 
         batch.commit()
       }

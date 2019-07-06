@@ -1,9 +1,6 @@
 <template>
   <span class='txt'>
-    <span v-for='lab in labels' :key='lab.id' class='span'>
-      {{ lab.name }}
-      {{ lab.id }}
-    </span>
+    asdf
   </span>
 </template>
 
@@ -17,9 +14,7 @@ import { Label } from '@/interfaces/app'
 const label = namespace('label')
 
 @Component
-export default class OverviewAppnav extends Vue {
-  @label.State labels!: Label[]
-}
+export default class OverviewAppnav extends Vue {}
 
 </script>
 

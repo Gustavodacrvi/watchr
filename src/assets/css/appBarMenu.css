@@ -113,26 +113,3 @@
   display: flex;
   justify-content: space-between;
 }
-
-.header {
-  height: 32px;
-  display: flex;
-  align-items: center;
-}
-
-.header.title {
-  justify-content: center;
-}
-
-.header .title {
-  color: #fc7d7d;
-  font-size: 1.1em;
-}
-
-.header.options {
-  justify-content: flex-start;
-}
-
-.header-icon + .header-icon {
-  margin-left: 6px;
-}

@@ -33,13 +33,10 @@
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { State, Getter, Mutation, Action, namespace } from 'vuex-class'
-import getUid from 'uuid'
 
 import DropdownInput from '@/components/DropdownInput.vue'
 
-const label = namespace('label')
-
-import labelUtil from '@/utils/label'
+const labelStore = namespace('label')
 
 import { Alert, Label } from '../../interfaces/app'
 
@@ -57,8 +54,8 @@ export default class LabelAdder extends Vue {
   @Getter isDesktop!: boolean
   @Mutation pushAlert!: (alert: Alert) => void
 
-  @label.State labels!: Label[]
-  @label.Action updateLabels!: (labels: Label[]) => void
+  @labelStore.State labels!: Label[]
+  @labelStore.Action addLabels!: (name: string) => void
 
   input: string | null = null
   MAXIMUM_LENGTH_OF_LABEL_TREE: number = 4
@@ -70,85 +67,25 @@ export default class LabelAdder extends Vue {
   }
 
   add() {
-    const arr: string[] = labelUtil.getArrFromStringPath(this.value, true)
-    const newLabels: Label[] = []
-    let i = 0
-    let parentId = ''
-    if (arr.length === 1 && arr[0] === '')
-      return undefined
-    if (arr.length <= 4) {
-      for (const name of arr) {
-        if (i === 0) {
-          parentId = getUid()
-          const rootLabel: Label | undefined = this.labels.find(el => el.name === name && el.level === 0)
-          if (!rootLabel)
-            newLabels.push({
-              id: parentId,
-              name,
-              userId: this.uid,
-              level: 0,
-              subLabels: [],
-            })
-          else {
-            parentId = rootLabel.id
-            newLabels.push(rootLabel)
-          }
-        } else {
-          const parentLabel: Label | undefined = this.labels.find(el => el.id === parentId)
-          if (parentLabel) {
-            const children: Label[] = this.labels.filter(el => parentLabel.subLabels.includes(el.id))
-            const targetLabel: Label | undefined = children.find(el => el.name === name)
-            if (!targetLabel) {
-              parentId = getUid()
-              newLabels.push({
-                id: parentId,
-                name,
-                userId: this.uid,
-                level: i,
-                subLabels: [],
-              })
-            } else {
-              parentId = targetLabel.id
-              newLabels.push(targetLabel)
-            }
-          }
-        }
-
-        i++
-      }
-      let childId = newLabels[newLabels.length - 1].id
-      for (let j = newLabels.length - 2; j >= 0; j--) {
-        if (!newLabels[j].subLabels.includes(childId))
-          newLabels[j].subLabels.push(childId)
-        childId = newLabels[j].id
-      }
-      this.updateLabels(newLabels)
-    } else
-      this.pushAlert({
-        name: 'The height of sub-labels is 4.',
-        duration: 3,
-        type: 'error',
-      })
+    if (this.value !== '') {
+      const label: Label | undefined = this.labels.find(el => el.name === this.value)
+      if (label)
+        this.pushAlert({
+          name: `<strong>${this.value}</strong> already exists.`,
+          duration: 3,
+          type: 'error',
+        })
+      else
+        this.addLabels(this.value)
+    }
   }
 
   getOptions(): string[] {
-    const arr: string[] = labelUtil.getArrFromStringPath(this.value, false)
-    if (arr.length === 1)
-      return this.labels.filter(el => el.name.includes(arr[0]) && el.level === 0).map(el => el.name)
-    else {
-      // tslint:disable-next-line:max-line-length
-      const lab: Label | undefined = this.labels.find(el => el.name === arr[arr.length - 2] && el.level === arr.length - 2)
-      if (lab)
-        // tslint:disable-next-line:max-line-length
-        return this.labels.filter(el => lab.subLabels.includes(el.id)).filter(el => el.name.includes(arr[arr.length - 1])).map(el => el.name)
-    }
-    return []
+    return this.labels.filter(el => el.name.includes(this.value)).map(el => el.name)
   }
 
   select(value: string) {
-    const arr: string[] = labelUtil.getArrFromStringPath(this.value, false)
-    arr[arr.length - 1] = value
-    this.input = labelUtil.getStringPathFromArr(arr)
+    this.input = this.value
   }
 
   @Watch('value')

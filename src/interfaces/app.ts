@@ -23,9 +23,13 @@ export interface FloatingButton {
 }
 
 export interface Label {
-  level: number
   userId: string
   name: string
   id: string
-  subLabels: string[]
+}
+
+export interface List {
+  parentId: string | null
+  elementId?: string
+  level: number
 }

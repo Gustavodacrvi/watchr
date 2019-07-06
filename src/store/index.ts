@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 
 import label from '@/store/label'
 
-const MAX_MOBILE_SCREEN_WIDTH = 1024
+const MAX_MOBILE_SCREEN_WIDTH = 824
 
 import { SimpleAdder, Alert } from '@/interfaces/app'
 
@@ -20,6 +20,7 @@ export interface States {
   firestore: firebase.firestore.Firestore | null
   isLogged: boolean
   uid: string | null
+  firebase: any
   isAnonymous: boolean
   emailVerified: boolean
   appError: boolean
@@ -36,6 +37,7 @@ interface Mutations {
   pushPopUpPayload: (state: States, payload: any) => void
   saveCurrentUser: (state: States, user: firebase.User) => void
   saveFirestore: (state: States, firestore: firebase.firestore.Firestore) => void
+  saveFirebase: (state: States, firebase: any) => void
   showApp: () => void
   openAppBar: () => void
   closeAppBar: () => void
@@ -83,6 +85,7 @@ const store: any = new Vuex.Store({
     isAnonymous: false,
     emailVerified: false,
     loading: true,
+    firebase: null,
     appError: false,
     uid: null,
     showingAlert: false,
@@ -104,6 +107,9 @@ const store: any = new Vuex.Store({
               type: 'error',
             })
         })
+    },
+    saveFirebase(state: States, firebase) {
+      state.firebase = firebase
     },
     pushTheme(state: States, theme: string): void {
       state.theme = theme
