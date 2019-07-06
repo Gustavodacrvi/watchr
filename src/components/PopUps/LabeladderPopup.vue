@@ -82,7 +82,7 @@ export default class LabelAdder extends Vue {
   }
 
   getOptions(): string[] {
-    return [] 
+    return this.labels.filter(el => el.name.includes(this.value)).map(el => el.name)
   }
 
   select(value: string) {
