@@ -9,6 +9,7 @@
         :show-handle='numberOfSelected > 0'
         :deselect-all='deselectAll'
         @toggle='toggleElement'
+        @clearselected='clearSlected'
 
         :data-vid='obj.id'
       />
@@ -123,7 +124,12 @@ export default class ListRenderer extends Vue {
     }
     
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
-    this.$emit('selected', this.getIdsFromSelectedElements())
+    setTimeout(() => {
+      this.$emit('selected', this.getIdsFromSelectedElements())
+    }, 1)
+  }
+  clearSlected() {
+    this.$emit('selected', [])
   }
 
   get rootComponent(): HTMLElement {

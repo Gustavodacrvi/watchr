@@ -32,7 +32,7 @@
             class='el'
             :key='i.name'
             :class='theme'
-            @click='i.callback(id)'
+            @click='optionClick(i.callback)'
           >
             <span class='el-icon'>
               <dynamic-ft-icon
@@ -92,6 +92,10 @@ export default class ListRenderer extends Vue {
       el,
       select: this.clicked,
     })
+  }
+  optionClick(callback: (id: string) => void) {
+    this.$emit('clearselected')
+    callback(this.id)
   }
 
   get showOptionsMobile(): boolean {

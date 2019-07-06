@@ -123,7 +123,6 @@ export default {
           order: fire.FieldValue.arrayRemove(...ids)
         })
 
-        console.log('deleted labels')
         batch.commit()
       }
     },
