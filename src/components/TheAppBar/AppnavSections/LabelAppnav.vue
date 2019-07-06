@@ -54,10 +54,12 @@ export default class LabelAppnav extends Vue {
   }
 
   onUpdate(ids: string[]) {
-    this.saveLabelPosition(ids)
+    console.log('onUpdate')
+    // this.saveLabelPosition(ids)
   }
   onPush(obj: any) {
-    this.moveLabelBetweenLists(obj)
+    console.log('onPush')
+    // this.moveLabelBetweenLists(obj)
   }
 
   @Watch('update')
