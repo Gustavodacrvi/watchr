@@ -92,7 +92,7 @@ export default {
 
         const ref = rootState.firestore.collection('labels').doc()
         batch.set(ref, {
-          ,
+          name,
           userId: rootState.uid,
         })
 

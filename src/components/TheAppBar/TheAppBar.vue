@@ -106,15 +106,7 @@ export default class TheNavBar extends Vue {
   width: 100%;
 }
 
-.wrapper.desktop {
-  width: 320px;
-}
-
-.appbar.mobile {
-  flex-basis: 300px;
-}
-
-.appbar.desktop {
+.appbar {
   width: 300px;
 }
 

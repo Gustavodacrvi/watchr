@@ -6,6 +6,7 @@
     <list-renderer
       group='appnavLabels'
       :list='sortedLabels'
+      :options='getOptions'
       @update='onUpdate'
     />
   </div>
@@ -17,7 +18,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
-import { Label, List } from '../../../interfaces/app'
+import { Label, List, ListIcon } from '../../../interfaces/app'
 
 const label = namespace('label')
 const list = namespace('list')
@@ -30,6 +31,20 @@ const list = namespace('list')
 export default class LabelAppnav extends Vue {
   @label.Getter sortedLabels!: Label[]
   @label.Action saveLabelPosition!: (ids: string[]) => void
+
+  getOptions(obj: Label[]): ListIcon[] {
+    return [
+      {
+        icon: 'trash',
+        iconColor: '',
+        size: 'lg',
+        name: 'Delete label',
+        callback: (id: string) => {
+          console.log(3)
+        },
+      }
+    ]
+  }
 
   onUpdate(ids: string[]) {
     this.saveLabelPosition(ids)
