@@ -1,6 +1,6 @@
 <template>
   <div :class='`sort-${group}`'>
-    <transition-group name='fade-fast'>
+    <transition-group name='fade'>
       <list-element v-for='obj in list'
         :key='obj.id'
         :name='obj.name'
@@ -68,11 +68,3 @@ export default class ListRenderer extends Vue {
 }
 
 </script>
-
-<style scoped>
-
-.sortable-selected {
-  background-color: red;
-}
-
-</style>
