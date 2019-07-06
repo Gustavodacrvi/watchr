@@ -33,3 +33,11 @@ export interface List {
   elementId?: string
   level: number
 }
+
+export interface ListIcon {
+  icon: string
+  iconColor: string
+  size: string
+  name?: string
+  callback?: (...arr: any[]) => void
+}

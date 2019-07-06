@@ -3,6 +3,7 @@
     class='icon-dropdown'
     @mouseenter='showing = true'
     @mouseleave='showing = false'
+    :class="{'color-on-hover': changeColorOnHover}"
   >
     <ft-icon
       class='pointer handle icon txt'
@@ -31,6 +32,7 @@ export default class TheNavbar extends Vue {
   @Prop({required: true, type: String}) handle!: string
   @Prop({default: 'lg', type: String}) size!: string
   @Prop({default: '250px', type: String}) minWidth!: string
+  @Prop({default: false, type: Boolean}) changeColorOnHover!: boolean
 
   @State theme!: string
 
@@ -47,6 +49,10 @@ export default class TheNavbar extends Vue {
   width: 100%;
   height: 100%;
   z-index: 25;
+}
+
+.icon-dropdown:hover .icon {
+  color: #fc7d7d !important;
 }
 
 .content {

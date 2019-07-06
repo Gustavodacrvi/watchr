@@ -4,6 +4,7 @@
       <list-element v-for='obj in list'
         :key='obj.id'
         :name='obj.name'
+        :options='options(obj)'
 
         :data-vid='obj.id'
       />
@@ -20,16 +21,21 @@ import { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
 
 Sortable.mount(new MultiDrag(), new AutoScroll())
 
-import { List } from '../../../interfaces/app'
+import ListElement from '@/components/TheAppBar/AppnavComponents/ListElement.vue'
+
+import { List, ListIcon } from '../../../interfaces/app'
 
 @Component({
   components: {
-    'list-element': () => import('@/components/TheAppBar/AppnavComponents/ListElement.vue'),
+    'list-element': ListElement,
   },
 })
 export default class ListRenderer extends Vue {
   @Prop({required: true, type: Array}) list!: any[]
   @Prop({required: true, type: String}) group!: string
+  @Prop({default: () => () => {
+    return []
+  },type: Function}) options!: (obj: any) => ListIcon[]
 
   mounted() {
     this.mount()
