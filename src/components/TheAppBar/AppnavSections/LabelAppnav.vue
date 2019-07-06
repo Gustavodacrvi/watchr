@@ -8,7 +8,9 @@
       :list='sortedLabels'
       :options='getOptions'
       @update='onUpdate'
+      @selected='v => selected = v'
     />
+    {{selected}}
   </div>
 </template>
 
@@ -37,6 +39,8 @@ export default class LabelAppnav extends Vue {
   @label.Action deleteLabelsById!: (ids: string[]) => void
   @label.Action editLabelNameById!: (obj: {id: string, name: string}) => void
 
+  selected: string[] = []
+
   getOptions(obj: Label[]): ListIcon[] {
     return [
       {
@@ -48,7 +52,7 @@ export default class LabelAppnav extends Vue {
           this.deleteLabelsById([id])
         },
       },
-      {// 
+      {
         icon: 'edit',
         iconColor: '',
         size: 'lg',

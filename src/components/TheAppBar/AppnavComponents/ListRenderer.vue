@@ -87,6 +87,18 @@ export default class ListRenderer extends Vue {
     }
     return []
   }
+  getIdsFromSelectedElements(): string[] {
+    const root = document.querySelector(`.sort-${this.group}`)
+    if (root) {
+      const arr: HTMLElement[] = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
+      const ids: string[] = []
+      for (const el of arr)
+        if (el.dataset.vid && el.classList.contains('sortable-selected'))
+          ids.push(el.dataset.vid)
+      return ids
+    }
+    return []
+  }
   toggleElement({el, select}: {el: HTMLElement, select: boolean}) {
     if (!this.isDesktop) {
       if (select)
@@ -111,6 +123,7 @@ export default class ListRenderer extends Vue {
     }
     
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
+    this.$emit('selected', this.getIdsFromSelectedElements())
   }
 
   get rootComponent(): HTMLElement {
