@@ -50,7 +50,10 @@ export default class ListRenderer extends Vue {
   mounted() {
     this.mount()
   }
-
+  errorCaptured() {
+    console.log('renderer')
+  }
+  
   mount() {
     new Sortable(this.rootComponent, {
       disabled: false,

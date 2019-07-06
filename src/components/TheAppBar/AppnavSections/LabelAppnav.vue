@@ -45,6 +45,9 @@ export default class LabelAppnav extends Vue {
   created() {
     this.list = this.rootLabels
   }
+  errorCaptured() {
+    console.log('appnav')
+  }
 
   getSubLabels(ids: string[]): Label[] {
     return this.getSubLabelsFromIds(ids)

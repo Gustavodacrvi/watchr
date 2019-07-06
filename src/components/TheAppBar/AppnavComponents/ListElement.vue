@@ -46,6 +46,10 @@ export default class ListRenderer extends Vue {
 
   showing: boolean = true
 
+  errorCaptured() {
+    console.log('list')
+  }
+
   push(obj: any) {
     this.$emit('push', obj)
   }
