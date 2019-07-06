@@ -32,9 +32,8 @@ interface ActionContext {
 interface Actions {
   getData: (context: ActionContext) => void
   updateLabels: (context: ActionContext) => void
-  moveLabelBetweenLists: (context: ActionContext, arr: {newList: List, oldList: List}[]) => void
-  sort: (context: ActionContext) => void
-  savePosition: (context: ActionContext, ids: string[]) => void
+  moveLabelBetweenLists: (context: ActionContext, obj: {movements: {newList: List, oldList: List}[], ids: string[]}) => void
+  saveLabelPosition: (context: ActionContext, ids: string[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -42,18 +41,32 @@ export default {
   namespaced: true,
   state: {
     labels: [],
-    update: false,
     order: [],
+    update: false,
   } as States,
   mutations: {
 
   } as Mutations,
   getters: {
     rootLabels(state: States): Label[] {
-      return state.labels.filter(el => el.level === 0)
+      const labels: Label[] = state.labels.filter(el => el.level === 0)
+      const sorted: Label[] = []
+      for (const id of state.order) {
+        const lab: Label | undefined = labels.find(el => el.id === id)
+        if (lab)
+          sorted.push(lab)
+      }
+      return sorted
     },
     getSubLabelsFromIds: (state: States) => (ids: string[]): Label[] => {
-      return state.labels.filter(el => ids.includes(el.id))
+      const labels: Label[] = state.labels.filter(el => ids.includes(el.id))
+      const sorted: Label[] = []
+      for (const id of state.order) {
+        const lab: Label | undefined = labels.find(el => el.id === id)
+        if (lab)
+          sorted.push(lab)
+      }
+      return sorted
     },
     getNodeHeight: (state: States, getters: Getters) => (labelId: string, labelLevel: number): number => {
       const getHeight: any = getters.getNodeHeight
@@ -76,16 +89,8 @@ export default {
     },
   } as Getters,
   actions: {
-    sort({ state }) {
-      const sorted: Label[] = []
-      for (const id of state.order) {
-        const lab: Label | undefined = state.labels.find(el => el.id === id)
-        if (lab)
-          sorted.push(lab)
-      }
-      state.labels = sorted
-    },
-    savePosition({ state, rootState }, ids) {
+    saveLabelPosition({ state, rootState }, ids) {
+      console.log('save position')
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('labelsOrder').doc(rootState.uid)
           .update({
@@ -96,18 +101,21 @@ export default {
       if (rootState.firestore && rootState.uid) {
         rootState.firestore.collection('labelsOrder').where('userId', '==', rootState.uid)
           .onSnapshot(snap => {
+            console.log('order snap')
             const changes = snap.docChanges()
             for (const change of changes)
               state.order = change.doc.data().order
-            dispatch('sort')
           })
         rootState.firestore.collection('labels').where('userId', '==', rootState.uid)
           .onSnapshot(snap => {
+          console.log('labels snap')
           const changes = snap.docChanges()
           for (const change of changes) {
-            if (change.type === 'added')
-              state.labels.push({...change.doc.data(), id: change.doc.id} as any)
-            else if (change.type === 'removed') {
+            if (change.type === 'added') {
+              const lab = state.labels.find(el => el.id === change.doc.id)
+              if (!lab)
+                state.labels.push({...change.doc.data(), id: change.doc.id} as any)
+            } else if (change.type === 'removed') {
               const index = state.labels.findIndex(el => el.id === change.doc.id)
               state.labels.splice(index, 1)
             } else {
@@ -144,14 +152,15 @@ export default {
           batch.update(ref, {
             order: fire.FieldValue.arrayUnion(...ids),
           })
-
+        
+        console.log('add labels')
         batch.commit()
       }
     },
     moveLabelBetweenLists({ rootState, state, getters }: ActionContext, movements) {
       if (rootState.firestore && rootState.firebase) {
         const batch = rootState.firestore.batch()
-        for (const move of movements) {
+        for (const move of movements.movements) {
           let error: boolean = false
           if (move.newList.level > move.oldList.level) {
             const getHeight: any = getters.getNodeHeight as any
@@ -191,6 +200,21 @@ export default {
             updateInnerLevels(move.oldList.elementId as string, move.newList.level + 1)
           } else state.update = !state.update
         }
+        if (rootState.uid) {
+          const ref = rootState.firestore.collection('labelsOrder').doc(rootState.uid)
+          if (state.order.length === 0)
+            batch.set(ref, {
+              userId: rootState.uid,
+              order: movements.ids,
+            })
+          else {
+            console.log('between else', movements.ids)
+            batch.update(ref, {
+              order: movements.ids,
+            })
+          }
+        }
+        console.log('between lists')
         batch.commit()
       }
     },

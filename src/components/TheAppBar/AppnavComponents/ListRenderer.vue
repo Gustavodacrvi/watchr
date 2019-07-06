@@ -14,6 +14,9 @@
         :data-vparentid='parentId'
         :data-vid='obj.id'
         :data-vlevel='level'
+
+        @update='update'
+        @push='push'
       />
     </transition-group>
   </div>
@@ -22,9 +25,6 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { namespace } from 'vuex-class'
-
-const list = namespace('list')
 
 import Sortable, { MultiDrag } from 'sortablejs'
 import { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
@@ -47,21 +47,12 @@ export default class ListRenderer extends Vue {
   @Prop({default: 0, type: Number}) level!: number
   @Prop({default: null}) parentId!: string | null
 
-  @list.State getIds!: boolean
-  @list.Mutation movedElement!: boolean
-  @list.Mutation transfereElement!: (obj: {moves: {newList: List, oldList: List}[], movedList: string}) => void
-  @list.Mutation saveIds!: (obj: {ids: string[], group: string}) => void
-
-  sortable: any = null
-
   mounted() {
     this.mount()
   }
 
   mount() {
-    if (this.sortable)
-      this.sortable.destroy()
-    this.sortable = new Sortable(this.rootComponent, {
+    new Sortable(this.rootComponent, {
       disabled: false,
       animation: 150,
       group: this.group,
@@ -86,42 +77,46 @@ export default class ListRenderer extends Vue {
               elementId: item.dataset.vid as any,
             },
           })
-        this.transfereElement({
-          moves: event,
-          movedList: this.group,
-        })
+        this.push(event as any)
       },
-
-      onSort: () => {
-        this.getIdsFromElements()
+      
+      onUpdate: () => {
+        this.update()
       }
     })
   }
 
-  getIdsFromElements() {
-    if (this.level === 0) {
-      const root = document.querySelector(`.${this.group}-${this.level}`)
-      if (root) {
-        const arr = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
-        const ids: string[] = []
-        for (const el of arr)
-          ids.push(el.dataset.vid)
-        this.saveIds({
-          ids,
-          group: this.group,
-        })
-      }
+  getIdsFromElements(): string[] {
+    const root = document.querySelector(`.${this.group}-${this.level}`)
+    if (root) {
+      const arr = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
+      const ids: string[] = []
+      for (const el of arr)
+        ids.push(el.dataset.vid)
+      return ids
     }
+    return []
+  }
+
+  update() {
+    if (this.level === 0) {
+      const ids: string[] = this.getIdsFromElements()
+      this.$emit('update', ids)
+    } else this.$emit('update')
+  }
+  push(moves: {oldList: List, newList: List}) {
+    if (this.level === 0) {
+      const ids: string[] = this.getIdsFromElements()
+      this.$emit('push', {
+        movements: moves,
+        ids,
+      })
+    } else this.$emit('push', moves)
   }
 
   get rootComponent(): HTMLElement {
     const root: HTMLElement = this.$el as HTMLElement
     return root.childNodes[0] as HTMLElement
-  }
-
-  @Watch('getIds')
-  onGetIds() {
-    this.getIdsFromElements()
   }
 }
 

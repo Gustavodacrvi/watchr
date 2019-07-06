@@ -73,7 +73,7 @@ interface Actions {
 
 const store: any = new Vuex.Store({
   modules: {
-    label, list,
+    label,
   } as any,
   state: {
     theme: savedTheme,
