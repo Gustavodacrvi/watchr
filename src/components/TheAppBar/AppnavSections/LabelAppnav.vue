@@ -15,10 +15,10 @@
 <script lang='ts'>
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { namespace } from 'vuex-class'
+import { namespace, Mutation } from 'vuex-class'
 
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
-import { Label, List, ListIcon } from '../../../interfaces/app'
+import { Label, List, ListIcon, SimpleAdder } from '../../../interfaces/app'
 
 const label = namespace('label')
 const list = namespace('list')
@@ -29,9 +29,13 @@ const list = namespace('list')
   },
 })
 export default class LabelAppnav extends Vue {
+  @Mutation pushPopUpPayload!: (obj: SimpleAdder) => void
+  @Mutation pushPopUp!: (comp: string) => void
+  
   @label.Getter sortedLabels!: Label[]
   @label.Action saveLabelPosition!: (ids: string[]) => void
   @label.Action deleteLabelsById!: (ids: string[]) => void
+  @label.Action editLabelNameById!: (obj: {id: string, name: string}) => void
 
   getOptions(obj: Label[]): ListIcon[] {
     return [
@@ -43,7 +47,29 @@ export default class LabelAppnav extends Vue {
         callback: (id: string) => {
           this.deleteLabelsById([id])
         },
-      }
+      },
+      {// 
+        icon: 'edit',
+        iconColor: '',
+        size: 'lg',
+        name: 'Edit label',
+        callback: (id: string) => {
+          this.pushPopUp('SimpleadderPopup')
+          this.pushPopUpPayload({
+            popUpTitle: 'Edit label name',
+            inputMaximumCharacters: 40,
+            buttonName: 'Save new label name',
+            inputPlaceholder: 'Label name',
+            callback: (name) => {
+              this.pushPopUp('')
+              this.editLabelNameById({
+                id,
+                name,
+              })
+            }
+          })
+        },
+      },
     ]
   }
 

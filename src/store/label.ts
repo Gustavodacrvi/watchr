@@ -30,6 +30,7 @@ interface Actions {
   addLabels: (context: ActionContext) => void
   saveLabelPosition: (context: ActionContext, ids: string[]) => void
   deleteLabelsById: (context: ActionContext, ids: string[]) => void
+  editLabelNameById: (context: ActionContext, obj: {id: string, name: string}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -125,6 +126,12 @@ export default {
         console.log('deleted labels')
         batch.commit()
       }
+    },
+    editLabelNameById({ rootState }, {id, name}) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('labels').doc(id).update({
+          name,
+        })
     },
   } as Actions,
 }

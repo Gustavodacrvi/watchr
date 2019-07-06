@@ -27,9 +27,9 @@
         :change-color-on-hover='true'
         min-width='200px'
       >
-        <div class='drop'>
+        <div class='drop round-border'>
           <div v-for='i in options'
-            class='el round-border'
+            class='el'
             :key='i.name'
             :class='theme'
             @click='i.callback(id)'
@@ -166,7 +166,7 @@ export default class ListRenderer extends Vue {
 
 .el {
   transition: background-color .25s;
-  height: 35px;
+  height: 38px;
 }
 
 .el.dark:hover {
@@ -179,7 +179,7 @@ export default class ListRenderer extends Vue {
 
 .el-icon {
   height: 100%;
-  flex-basis: 33px;
+  flex-basis: 35px;
   justify-content: center;
   align-items: center;
 }

@@ -12,7 +12,7 @@ export interface SimpleAdder {
   buttonName: string
   inputPlaceholder: string
   inputMaximumCharacters: number
-  callback: (input: string | null) => void
+  callback: (input: string) => void
 }
 
 export interface FloatingButton {
