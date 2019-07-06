@@ -14,12 +14,25 @@
         :change-color-on-hover='true'
         min-width='200px'
       >
-        <dynamic-ft-icon v-for='i in options'
-          class='txt'
-          :key='i.name'
-          :icon='i.icon'
-          :size='i.size'
-        ></dynamic-ft-icon>
+        <div class='drop'>
+          <div v-for='i in options'
+            class='el round-border'
+            :key='i.name'
+            :class='theme'
+            @click='i.callback'
+          >
+            <span class='el-icon'>
+              <dynamic-ft-icon
+                class='txt'
+                :icon='i.icon'
+                :size='i.size'
+              />
+            </span>
+            <span class='el-name txt'>
+              {{ i.name }}
+            </span>
+          </div>
+        </div>
       </icon-dropdown>
     </div>
   </div>
@@ -98,6 +111,41 @@ export default class ListRenderer extends Vue {
 
 .sortable-selected {
   background-color: red;
+}
+
+
+
+.drop {
+  z-index: 5;
+  overflow: hidden;
+}
+
+.el {
+  transition: background-color .25s;
+  height: 35px;
+  display: flex;
+}
+
+.el.dark:hover {
+  background-color: #282828;
+}
+
+.el.light:hover {
+  background-color: #E6E6E6;
+}
+
+.el-icon {
+  height: 100%;
+  flex-basis: 33px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.el-name {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
 }
 
 </style>
