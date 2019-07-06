@@ -1,17 +1,19 @@
 <template>
   <div>
-    <div v-show='showTitle' class='header title'>
-      <span class='title'>{{ name }}</span>
-    </div>
-    <div v-show='!showTitle' class='header options'>
-      <dynamic-ft-icon v-for='i in icons'
-        class='icon pointer header-icon'
-        :key='i.name'
-        :icon='i.icon'
-        :size='i.size'
-        @click='i.callback(selected)'
-      />
-    </div>
+    <transition name='fade' mode='out-in'>
+      <div key='header' v-if='showTitle' class='header title'>
+        <span class='title'>{{ name }}</span>
+      </div>
+      <div key='options' v-else class='header options'>
+        <dynamic-ft-icon v-for='i in icons'
+          class='icon pointer header-icon'
+          :key='i.name'
+          :icon='i.icon'
+          :size='i.size'
+          @click='i.callback(selected)'
+        />
+      </div>
+    </transition>
   </div>
 </template>
 

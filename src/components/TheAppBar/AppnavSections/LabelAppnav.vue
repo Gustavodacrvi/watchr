@@ -38,7 +38,7 @@ const list = namespace('list')
 export default class LabelAppnav extends Vue {
   @Mutation pushPopUpPayload!: (obj: SimpleAdder) => void
   @Mutation pushPopUp!: (comp: string) => void
-  
+
   @label.Getter sortedLabels!: Label[]
   @label.Action saveLabelPosition!: (ids: string[]) => void
   @label.Action deleteLabelsById!: (ids: string[]) => void
@@ -80,13 +80,13 @@ export default class LabelAppnav extends Vue {
             inputMaximumCharacters: 40,
             buttonName: 'Save new label name',
             inputPlaceholder: 'Label name',
-            callback: (name) => {
+            callback: name => {
               this.pushPopUp('')
               this.editLabelNameById({
                 id,
                 name,
               })
-            }
+            },
           })
         },
       },

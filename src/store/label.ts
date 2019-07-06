@@ -117,10 +117,10 @@ export default {
         for (const id of ids)
           batch.delete(rootState.firestore.collection('labels').doc(id))
 
-        const fire: any = rootState.firebase.firestore 
+        const fire: any = rootState.firebase.firestore
         const ref = rootState.firestore.collection('labelsOrder').doc(rootState.uid)
         batch.update(ref, {
-          order: fire.FieldValue.arrayRemove(...ids)
+          order: fire.FieldValue.arrayRemove(...ids),
         })
 
         batch.commit()

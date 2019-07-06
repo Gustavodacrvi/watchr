@@ -41,7 +41,7 @@ export default class ListRenderer extends Vue {
   @Prop({required: true, type: String}) group!: string
   @Prop({default: () => () => {
     return []
-  },type: Function}) options!: (obj: any) => ListIcon[]
+  }, type: Function}) options!: (obj: any) => ListIcon[]
 
   @Getter isDesktop!: boolean
 
@@ -68,7 +68,7 @@ export default class ListRenderer extends Vue {
       onUpdate: () => {
         const ids: string[] = this.getIdsFromElements()
         this.$emit('update', ids)
-      }
+      },
     }
 
     if (!this.isDesktop)
@@ -122,7 +122,7 @@ export default class ListRenderer extends Vue {
         this.deselectAll = !this.deselectAll
       }
     }
-    
+
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
     setTimeout(() => {
       this.$emit('selected', this.getIdsFromSelectedElements())
