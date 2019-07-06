@@ -31,6 +31,7 @@ const list = namespace('list')
 export default class LabelAppnav extends Vue {
   @label.Getter sortedLabels!: Label[]
   @label.Action saveLabelPosition!: (ids: string[]) => void
+  @label.Action deleteLabelsById!: (ids: string[]) => void
 
   getOptions(obj: Label[]): ListIcon[] {
     return [
@@ -40,7 +41,7 @@ export default class LabelAppnav extends Vue {
         size: 'lg',
         name: 'Delete label',
         callback: (id: string) => {
-          console.log(3)
+          this.deleteLabelsById([id])
         },
       }
     ]

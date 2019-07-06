@@ -29,6 +29,7 @@ interface Actions {
   getData: (context: ActionContext) => void
   addLabels: (context: ActionContext) => void
   saveLabelPosition: (context: ActionContext, ids: string[]) => void
+  deleteLabelsById: (context: ActionContext, ids: string[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -105,6 +106,23 @@ export default {
           order: fire.FieldValue.arrayUnion(...arr),
         })
 
+        batch.commit()
+      }
+    },
+    deleteLabelsById({ rootState, state }: ActionContext, ids: string[]) {
+      if (rootState.firestore && rootState.uid) {
+        const batch = rootState.firestore.batch()
+
+        for (const id of ids)
+          batch.delete(rootState.firestore.collection('labels').doc(id))
+
+        const fire: any = rootState.firebase.firestore 
+        const ref = rootState.firestore.collection('labelsOrder').doc(rootState.uid)
+        batch.update(ref, {
+          order: fire.FieldValue.arrayRemove(...ids)
+        })
+
+        console.log('deleted labels')
         batch.commit()
       }
     },

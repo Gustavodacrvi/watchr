@@ -32,7 +32,7 @@
             class='el round-border'
             :key='i.name'
             :class='theme'
-            @click='i.callback'
+            @click='i.callback(id)'
           >
             <span class='el-icon'>
               <dynamic-ft-icon
@@ -74,6 +74,7 @@ import { List, ListIcon } from '../../../interfaces/app'
 })
 export default class ListRenderer extends Vue {
   @Prop(String) name!: string
+  @Prop(String) id!: string
   @Prop(Array) options!: ListIcon[]
   @Prop(Boolean) showHandle!: boolean
   @Prop(Boolean) deselectAll!: boolean

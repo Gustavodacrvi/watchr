@@ -3,6 +3,7 @@
     <transition-group name='fade'>
       <list-element v-for='obj in list'
         :key='obj.id'
+        :id='obj.id'
         :name='obj.name'
         :options='options(obj)'
         :show-handle='numberOfSelected > 0'
