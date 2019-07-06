@@ -3,11 +3,13 @@
     <transition-group name='fade'>
       <list-element v-for='obj in list'
         :key='obj.id'
+        :id='obj.id'
         :name='obj.name'
         :options='options(obj)'
         :show-handle='numberOfSelected > 0'
         :deselect-all='deselectAll'
         @toggle='toggleElement'
+        @clearselected='clearSlected'
 
         :data-vid='obj.id'
       />
@@ -39,7 +41,7 @@ export default class ListRenderer extends Vue {
   @Prop({required: true, type: String}) group!: string
   @Prop({default: () => () => {
     return []
-  },type: Function}) options!: (obj: any) => ListIcon[]
+  }, type: Function}) options!: (obj: any) => ListIcon[]
 
   @Getter isDesktop!: boolean
 
@@ -66,7 +68,7 @@ export default class ListRenderer extends Vue {
       onUpdate: () => {
         const ids: string[] = this.getIdsFromElements()
         this.$emit('update', ids)
-      }
+      },
     }
 
     if (!this.isDesktop)
@@ -82,6 +84,18 @@ export default class ListRenderer extends Vue {
       const ids: string[] = []
       for (const el of arr)
         ids.push(el.dataset.vid)
+      return ids
+    }
+    return []
+  }
+  getIdsFromSelectedElements(): string[] {
+    const root = document.querySelector(`.sort-${this.group}`)
+    if (root) {
+      const arr: HTMLElement[] = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
+      const ids: string[] = []
+      for (const el of arr)
+        if (el.dataset.vid && el.classList.contains('sortable-selected'))
+          ids.push(el.dataset.vid)
       return ids
     }
     return []
@@ -108,8 +122,14 @@ export default class ListRenderer extends Vue {
         this.deselectAll = !this.deselectAll
       }
     }
-    
+
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
+    setTimeout(() => {
+      this.$emit('selected', this.getIdsFromSelectedElements())
+    }, 1)
+  }
+  clearSlected() {
+    this.$emit('selected', [])
   }
 
   get rootComponent(): HTMLElement {

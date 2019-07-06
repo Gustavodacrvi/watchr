@@ -12,6 +12,7 @@
         @state='e => inputState = e'
       />
       <button
+        tabindex='2'
         class='margin button round-border'
         @click='runCallback'
       >{{ popUpPayload.buttonName }}</button>

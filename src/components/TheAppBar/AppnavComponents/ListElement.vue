@@ -27,12 +27,12 @@
         :change-color-on-hover='true'
         min-width='200px'
       >
-        <div class='drop'>
+        <div class='drop round-border'>
           <div v-for='i in options'
-            class='el round-border'
+            class='el'
             :key='i.name'
             :class='theme'
-            @click='i.callback'
+            @click='optionClick(i.callback)'
           >
             <span class='el-icon'>
               <dynamic-ft-icon
@@ -74,6 +74,7 @@ import { List, ListIcon } from '../../../interfaces/app'
 })
 export default class ListRenderer extends Vue {
   @Prop(String) name!: string
+  @Prop(String) id!: string
   @Prop(Array) options!: ListIcon[]
   @Prop(Boolean) showHandle!: boolean
   @Prop(Boolean) deselectAll!: boolean
@@ -91,6 +92,10 @@ export default class ListRenderer extends Vue {
       el,
       select: this.clicked,
     })
+  }
+  optionClick(callback: (id: string) => void) {
+    this.$emit('clearselected')
+    callback(this.id)
   }
 
   get showOptionsMobile(): boolean {
@@ -165,7 +170,7 @@ export default class ListRenderer extends Vue {
 
 .el {
   transition: background-color .25s;
-  height: 35px;
+  height: 38px;
 }
 
 .el.dark:hover {
@@ -178,7 +183,7 @@ export default class ListRenderer extends Vue {
 
 .el-icon {
   height: 100%;
-  flex-basis: 33px;
+  flex-basis: 35px;
   justify-content: center;
   align-items: center;
 }
