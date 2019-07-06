@@ -2,7 +2,6 @@
 import { Label, List } from '@/interfaces/app'
 
 import { States as RootState } from '@/store/index'
-import { State } from 'vuex-class';
 
 interface States {
   labels: Label[]

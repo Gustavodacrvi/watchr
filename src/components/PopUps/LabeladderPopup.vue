@@ -33,7 +33,6 @@
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { State, Getter, Mutation, Action, namespace } from 'vuex-class'
-import getUid from 'uuid'
 
 import DropdownInput from '@/components/DropdownInput.vue'
 
