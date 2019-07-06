@@ -36,7 +36,7 @@ import { State, Getter, Mutation, Action, namespace } from 'vuex-class'
 
 import DropdownInput from '@/components/DropdownInput.vue'
 
-const label = namespace('label')
+const labelStore = namespace('label')
 
 import { Alert, Label } from '../../interfaces/app'
 
@@ -54,8 +54,8 @@ export default class LabelAdder extends Vue {
   @Getter isDesktop!: boolean
   @Mutation pushAlert!: (alert: Alert) => void
 
-  @label.State labels!: Label[]
-  @label.Action addLabels!: (name: string) => void
+  @labelStore.State labels!: Label[]
+  @labelStore.Action addLabels!: (name: string) => void
 
   input: string | null = null
   MAXIMUM_LENGTH_OF_LABEL_TREE: number = 4
@@ -69,15 +69,14 @@ export default class LabelAdder extends Vue {
   add() {
     if (this.value !== '') {
       const label: Label | undefined = this.labels.find(el => el.name === this.value)
-      if (label) {
+      if (label)
         this.pushAlert({
           name: `<strong>${this.value}</strong> already exists.`,
           duration: 3,
           type: 'error',
         })
-      } else {
+      else
         this.addLabels(this.value)
-      }
     }
   }
 

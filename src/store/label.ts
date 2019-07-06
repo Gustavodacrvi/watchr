@@ -54,7 +54,6 @@ export default {
   } as Getters,
   actions: {
     saveLabelPosition({ state, rootState }, ids) {
-      console.log('save position')
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('labelsOrder').doc(rootState.uid)
           .update({
@@ -65,16 +64,14 @@ export default {
       if (rootState.firestore && rootState.uid) {
         rootState.firestore.collection('labelsOrder').where('userId', '==', rootState.uid)
           .onSnapshot(snap => {
-            console.log('order snap')
             const changes = snap.docChanges()
             for (const change of changes)
               state.order = change.doc.data().order
           })
         rootState.firestore.collection('labels').where('userId', '==', rootState.uid)
           .onSnapshot(snap => {
-          console.log('labels snap')
           const changes = snap.docChanges()
-          for (const change of changes) {
+          for (const change of changes)
             if (change.type === 'added') {
               const lab = state.labels.find(el => el.id === change.doc.id)
               if (!lab)
@@ -86,7 +83,6 @@ export default {
               const index = state.labels.findIndex(el => el.id === change.doc.id)
               state.labels.splice(index, 1, {...change.doc.data(), id: change.doc.id} as any)
             }
-          }
         })
       }
     },
@@ -96,8 +92,8 @@ export default {
 
         const ref = rootState.firestore.collection('labels').doc()
         batch.set(ref, {
-          name: name,
-          userId: rootState.uid
+          ,
+          userId: rootState.uid,
         })
 
         const fire: any = rootState.firebase.firestore
@@ -106,10 +102,9 @@ export default {
         arr.push(ref.id)
         batch.set(orderRef, {
           userId: rootState.uid,
-          order: fire.FieldValue.arrayUnion(...arr)
+          order: fire.FieldValue.arrayUnion(...arr),
         })
 
-        console.log('add tag')
         batch.commit()
       }
     },

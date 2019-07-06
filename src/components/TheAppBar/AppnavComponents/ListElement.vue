@@ -14,7 +14,7 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
 import FontAwesome from '@/components/DynamicFontawesome.vue'
-import { List } from '../../../interfaces/app';
+import { List } from '../../../interfaces/app'
 
 @Component({
   components: {

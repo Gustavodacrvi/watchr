@@ -24,7 +24,7 @@ import { List } from '../../../interfaces/app'
 
 @Component({
   components: {
-    'list-element': () => import('@/components/TheAppBar/AppnavComponents/ListElement.vue')
+    'list-element': () => import('@/components/TheAppBar/AppnavComponents/ListElement.vue'),
   },
 })
 export default class ListRenderer extends Vue {
@@ -34,18 +34,18 @@ export default class ListRenderer extends Vue {
   mounted() {
     this.mount()
   }
-  
+
   mount() {
-    new Sortable(this.rootComponent, {
+    const sort = new Sortable(this.rootComponent, {
       animation: 150,
       selectedClass: 'sortable-selected',
       multiDrag: true,
       dataIdAttr: 'data-sortableid',
-      
+
       onUpdate: () => {
         const ids: string[] = this.getIdsFromElements()
         this.$emit('update', ids)
-      }
+      },
     })
   }
 

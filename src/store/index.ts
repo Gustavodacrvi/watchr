@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import label from '@/store/label'
-import list from '@/store/list'
 
 const MAX_MOBILE_SCREEN_WIDTH = 824
 
