@@ -102,9 +102,11 @@ export default {
 
         const fire: any = rootState.firebase.firestore
         const orderRef = rootState.firestore.collection('labelsOrder').doc(rootState.uid)
+        const arr: string[] = state.order
+        arr.push(ref.id)
         batch.set(orderRef, {
           userId: rootState.uid,
-          order: fire.FieldValue.arrayUnion(ref.id)
+          order: fire.FieldValue.arrayUnion(...arr)
         })
 
         console.log('add tag')

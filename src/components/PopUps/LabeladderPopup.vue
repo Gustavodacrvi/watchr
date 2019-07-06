@@ -86,7 +86,7 @@ export default class LabelAdder extends Vue {
   }
 
   select(value: string) {
-    
+    this.input = this.value
   }
 
   @Watch('value')

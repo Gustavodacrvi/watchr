@@ -1,22 +1,11 @@
 <template>
-  <div :class='`${group}-${level}`'>
+  <div :class='`sort-${group}`'>
     <transition-group name='fade-fast'>
       <list-element v-for='obj in list'
         :key='obj.id'
-        :group='group'
-        :level='level + 1'
-        :object-title-property-name='objectTitlePropertyName'
-        :object-sublist-property-name='objectSublistPropertyName'
-        :obj='obj'
-        :sublist='getSublist(obj[objectSublistPropertyName])'
-        :get-sublist='getSublist'
+        :name='obj.name'
 
-        :data-vparentid='parentId'
         :data-vid='obj.id'
-        :data-vlevel='level'
-
-        @update='update'
-        @push='push'
       />
     </transition-group>
   </div>
@@ -41,56 +30,27 @@ import { List } from '../../../interfaces/app'
 export default class ListRenderer extends Vue {
   @Prop({required: true, type: Array}) list!: any[]
   @Prop({required: true, type: String}) group!: string
-  @Prop({required: true, type: String}) objectTitlePropertyName!: string
-  @Prop({required: true, type: String}) objectSublistPropertyName!: string
-  @Prop({required: true, type: Function}) getSublist!: (ids: string[]) => any[]
-  @Prop({default: 0, type: Number}) level!: number
-  @Prop({default: null}) parentId!: string | null
 
   mounted() {
     this.mount()
   }
-  errorCaptured() {
-    console.log('renderer')
-  }
   
   mount() {
     new Sortable(this.rootComponent, {
-      disabled: false,
       animation: 150,
-      group: this.group,
       selectedClass: 'sortable-selected',
       multiDrag: true,
       dataIdAttr: 'data-sortableid',
-
-      onAdd: (d: any) => {
-        const el: HTMLElement = d.item
-        let items: HTMLElement[] = [el]
-        if (d.items.length > 0)
-          items = d.items
-        const event: any[] = []
-        for (const item of items)
-          event.push({
-              newList: {
-              level: this.level,
-              parentId: this.parentId,
-            }, oldList: {
-              level: parseInt(item.dataset.vlevel as any),
-              parentId: item.dataset.vparentid as any,
-              elementId: item.dataset.vid as any,
-            },
-          })
-        this.push(event as any)
-      },
       
       onUpdate: () => {
-        this.update()
+        const ids: string[] = this.getIdsFromElements()
+        this.$emit('update', ids)
       }
     })
   }
 
   getIdsFromElements(): string[] {
-    const root = document.querySelector(`.${this.group}-${this.level}`)
+    const root = document.querySelector(`.sort-${this.group}`)
     if (root) {
       const arr = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
       const ids: string[] = []
@@ -99,22 +59,6 @@ export default class ListRenderer extends Vue {
       return ids
     }
     return []
-  }
-
-  update() {
-    if (this.level === 0) {
-      const ids: string[] = this.getIdsFromElements()
-      this.$emit('update', ids)
-    } else this.$emit('update')
-  }
-  push(moves: {oldList: List, newList: List}) {
-    if (this.level === 0) {
-      const ids: string[] = this.getIdsFromElements()
-      this.$emit('push', {
-        movements: moves,
-        ids,
-      })
-    } else this.$emit('push', moves)
   }
 
   get rootComponent(): HTMLElement {

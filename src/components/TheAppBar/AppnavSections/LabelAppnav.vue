@@ -4,12 +4,8 @@
       <span class='title'>LABELS</span>
     </div>
     <list-renderer
-      group='labelAppnav'
-      object-title-property-name='name'
-      object-sublist-property-name='subLabels'
-      :list='list'
-      :get-sublist='getSubLabels'
-
+      group='appnavLabels'
+      :list='sortedLabels'
       @update='onUpdate'
     />
   </div>
@@ -32,30 +28,11 @@ const list = namespace('list')
   },
 })
 export default class LabelAppnav extends Vue {
-  @label.State labels!: Label[]
-  @label.Getter rootLabels!: Label[]
-  @label.Getter getSubLabelsFromIds!: (ids: string[]) => Label[]
-  @label.Action moveLabelBetweenLists!: (obj: {movements: {newList: List, oldList: List}[], ids: string[]}) => void
+  @label.Getter sortedLabels!: Label[]
   @label.Action saveLabelPosition!: (ids: string[]) => void
 
-  list: Label[] = []
-
-  created() {
-    this.list = this.rootLabels
-  }
-
-  getSubLabels(ids: string[]): Label[] {
-    return this.getSubLabelsFromIds(ids)
-  }
-
   onUpdate(ids: string[]) {
-    console.log('onUpdate')
-    // this.saveLabelPosition(ids)
-  }
-
-  @Watch('labels')
-  onStateChange() {
-    this.list = this.rootLabels
+    this.saveLabelPosition(ids)
   }
 }
 

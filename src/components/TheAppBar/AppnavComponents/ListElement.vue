@@ -1,21 +1,10 @@
 <template>
   <div class='element'>
     <div class='content'>
-      <span class='txt'>{{ obj[objectTitlePropertyName] }}</span>
+      <span class='txt'>{{ name }}</span>
       <div class='icons'>
         
       </div>
-    </div>
-    <div v-if='showing' class='drop'>
-      <list-render
-        :level='level'
-        :parent-id='obj.id'
-        :group='group'
-        :object-title-property-name='objectTitlePropertyName'
-        :object-sublist-property-name='objectSublistPropertyName'
-        :list='sublist'
-        :get-sublist='getSublist'
-      />
     </div>
   </div>
 </template>
@@ -34,19 +23,9 @@ import { List } from '../../../interfaces/app';
   },
 })
 export default class ListRenderer extends Vue {
-  @Prop(Object) obj!: object
-  @Prop({required: true, type: String}) group!: string
-  @Prop({default: 0, type: Number}) level!: number
-  @Prop(String) objectTitlePropertyName!: string
-  @Prop(String) objectSublistPropertyName!: string
-  @Prop(Array) sublist!: any[]
-  @Prop(Function) getSublist!: (ids: string[]) => any[]
+  @Prop(String) name!: string
 
   showing: boolean = true
-
-  push(obj: any) {
-    this.$emit('push', obj)
-  }
 }
 
 </script>
