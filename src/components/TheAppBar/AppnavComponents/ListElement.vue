@@ -157,40 +157,7 @@ export default class ListRenderer extends Vue {
   background-color: red;
 }
 
+</style>
 
-
-.el, .el-icon, .el-name {
-  display: flex;
-} 
-
-.drop {
-  z-index: 5;
-  overflow: hidden;
-}
-
-.el {
-  transition: background-color .25s;
-  height: 38px;
-}
-
-.el.dark:hover {
-  background-color: #282828;
-}
-
-.el.light:hover {
-  background-color: #E6E6E6;
-}
-
-.el-icon {
-  height: 100%;
-  flex-basis: 35px;
-  justify-content: center;
-  align-items: center;
-}
-
-.el-name {
-  flex-basis: 100%;
-  align-items: center;
-}
-
+<style scoped src='@/assets/css/drop.css'>
 </style>

@@ -61,7 +61,7 @@
       </div>
     </div>
     <div class='footer-wrapper'>
-      <hr class='border'>
+      <hr class='border hr' :class='theme'>
       <div class='footer'>
         <div v-if='loggedAndVerified' class='left'>
           <ft-icon

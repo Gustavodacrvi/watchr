@@ -16,6 +16,12 @@ body, button, input {
   color: #8C8C8C;
 }
 
+.hr.dark {
+  background-color: #282828;
+  height: .5px;
+  border: 0;
+}
+
 .pointer {
   cursor: pointer;
 }

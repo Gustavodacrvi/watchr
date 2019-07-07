@@ -21,7 +21,7 @@ interface ActionContext {
   state: States
   getters: Getters
   commit: (mutation: string, payload?: any) => void
-  dispatch: (action: string) => void
+  dispatch: (action: string, payload?: any) => void
   rootState: RootState
 }
 
@@ -31,6 +31,7 @@ interface Actions {
   saveLabelPosition: (context: ActionContext, ids: string[]) => void
   deleteLabelsById: (context: ActionContext, ids: string[]) => void
   editLabelNameById: (context: ActionContext, obj: {id: string, name: string}) => void
+  sortLabelsByName: (context: ActionContext) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -61,6 +62,14 @@ export default {
           .update({
             order: ids,
           })
+    },
+    sortLabelsByName({ state, dispatch }) {
+      const labels: Label[] = state.labels.slice()
+      labels.sort((a, b) => a.name.localeCompare(b.name))
+      const ids: string[] = []
+      for (const el of labels)
+        ids.push(el.id)
+      dispatch('saveLabelPosition', ids)
     },
     getData({ rootState, state, dispatch }) {
       if (rootState.firestore && rootState.uid) {
