@@ -9,7 +9,7 @@
     <list-renderer
       group='appnavOverview'
       :disabled='true'
-      :list='sortedSmartPerspectives'
+      :list='pinedSmartPerspectives'
     />
   </span>
 </template>
@@ -33,7 +33,7 @@ const persVuex = namespace('perspective')
   },
 })
 export default class OverviewAppnav extends Vue {
-  @persVuex.Getter sortedSmartPerspectives!: SmartPerspective[]
+  @persVuex.Getter pinedSmartPerspectives!: SmartPerspective[]
 }
 
 </script>

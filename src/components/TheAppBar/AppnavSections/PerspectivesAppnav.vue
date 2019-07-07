@@ -9,6 +9,7 @@
     <list-renderer
       group='appnavPerspectives'
       :list='sortedSmartPerspectives'
+      :options='getOptions'
       :help-icons='helpIcons'
       @update='onUpdate'
     />
@@ -37,11 +38,28 @@ export default class OverviewAppnav extends Vue {
   @persVuex.State smartOrder!: SmartPerspective[]
   @persVuex.Getter sortedSmartPerspectives!: SmartPerspective[]
   @persVuex.Action saveSmartOrder!: (ids: string[]) => void
+  @persVuex.Action togglePerspectivePin!: (obj: {id: string, pin?: boolean}) => void
 
   onUpdate(ids: string[]) {
     this.saveSmartOrder(ids)
   }
 
+  getOptions(per: SmartPerspective) {
+    const icons: ListIcon[] = [
+      {
+        name: 'pin perspective',
+        icon: 'thumbtack',
+        iconColor: '',
+        size: 'lg',
+        callback: (id: string) => {
+          this.togglePerspectivePin({id})
+        },
+      },
+    ]
+    if (per.pin)
+      icons[0].name = 'unpin perspective'
+    return icons
+  }
   helpIcons(per: SmartPerspective) {
     const icons: ListIcon[] = []
     if (per.pin)

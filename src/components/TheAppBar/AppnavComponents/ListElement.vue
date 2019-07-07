@@ -37,7 +37,8 @@
           />
         </span>
       </template>
-      <icon-dropdown v-if='showOptionsMobile || showOptionsDesktop && options.length > 0'
+      <span v-if='showOptionsMobile || showOptionsDesktop && options.length > 0' class='help-icon'>
+      <icon-dropdown
         handle='ellipsis-v'
         size='lg'
         :change-color-on-hover='true'
@@ -63,6 +64,7 @@
           </div>
         </div>
       </icon-dropdown>
+      </span>
     </div>
   </div>
 </template>
@@ -153,8 +155,19 @@ export default class ListRenderer extends Vue {
   margin-left: 6px;
 }
 
-.options, .left-icon, .help-icon {
+.options {
+  display: flex;
+  height: 100%;
+}
+
+.left-icon {
   flex-basis: 35px;
+  height: 100%;
+}
+
+.help-icon {
+  display: block;
+  width: 20px;
   height: 100%;
 }
 
@@ -170,10 +183,6 @@ export default class ListRenderer extends Vue {
 
 .element.light:hover, .sortable-selected.light {
   background-color: #E6E6E6;
-}
-
-.sortable-selected {
-  background-color: red;
 }
 
 .fade {

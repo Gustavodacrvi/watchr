@@ -5,6 +5,7 @@ import { States as RootState } from '@/store/index'
 
 interface States {
   smartPerspectives: SmartPerspective[]
+  customPerspectives: SmartPerspective[]
   smartOrder: string[]
   customOrder: string[]
 }
@@ -12,6 +13,7 @@ interface States {
 
 interface Getters {
   sortedSmartPerspectives: (state: States) => void
+  pinedSmartPerspectives: (state: States, getters: Getters) => void
 }
 
 interface Mutations {
@@ -30,6 +32,7 @@ interface Actions {
   getData: (context: ActionContext) => void
   addDefaultSmartPerspectives: (context: ActionContext) => void
   saveSmartOrder: (context: ActionContext, ids: string[]) => void
+  togglePerspectivePin: (context: ActionContext, obj: {id: string, pin: boolean}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -39,6 +42,7 @@ export default {
     smartPerspectives: [],
     smartOrder: [],
     customOrder: [],
+    customPerspectives: [],
   } as States,
   mutations: {
 
@@ -53,6 +57,10 @@ export default {
       }
       return sorted
     },
+    pinedSmartPerspectives(state: States, getters: Getters): SmartPerspective[] {
+      const pers: SmartPerspective[] = getters.sortedSmartPerspectives as any
+      return pers.filter(el => el.pin)
+    },
   } as Getters,
   actions: {
     saveSmartOrder({ rootState, state }, ids) {
@@ -62,6 +70,24 @@ export default {
         .update({
           smartOrder: ids,
         })
+    },
+    togglePerspectivePin({ rootState, state }, {id, pin}) {
+      if (rootState.firestore && rootState.uid) {
+        let collection: 'smartPerspectives' | 'customPerspectives' = 'smartPerspectives'
+        let per: any = state.smartPerspectives.find(el => el.id === id)
+        let finalPin: boolean = false
+        if (!per) { {
+          collection = 'customPerspectives'
+          per = state.customPerspectives.find(el => el.id === id)
+        }
+        }
+        finalPin = !per.pin
+        if (pin)
+          finalPin = pin
+        rootState.firestore.collection(collection).doc(id).update({
+          pin: finalPin,
+        })
+      }
     },
     getData({ rootState, state, dispatch }) {
       if (rootState.firestore && rootState.uid) {
