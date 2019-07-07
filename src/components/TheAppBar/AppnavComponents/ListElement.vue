@@ -5,11 +5,17 @@
     @mouseenter='onHover = true'
     @mouseleave='onHover = false'
   >
-    <div
+    <div v-if='icon && iconColor'
       class='left-icon'
       :class='{handle: showHandle && !isDesktop}'
       @click='toggleElement'
     >
+      <dynamic-ft-icon
+        class='txt'
+        size='lg'
+        :icon='icon'
+        :style='{color: iconColor}'
+      />
     </div>
     <div
       class='content'
@@ -18,9 +24,20 @@
     >
       <span class='txt name'>{{ name }}</span>
     </div>
-    <div v-if='showOptionsMobile || showOptionsDesktop'
-      class='options'
-    >
+    <div class='options'>
+      <template v-if='helpIcons && helpIcons.length > 0'>
+        <span v-for='i in helpIcons'
+          class='help-icon'
+          :key='i.icon'
+        >
+          <dynamic-ft-icon
+            class='txt fade'
+            :icon='i.icon'
+            :size='i.size'
+          />
+        </span>
+      </template>
+      <span v-if='showOptionsMobile || showOptionsDesktop && options.length > 0' class='help-icon'>
       <icon-dropdown
         handle='ellipsis-v'
         size='lg'
@@ -47,6 +64,7 @@
           </div>
         </div>
       </icon-dropdown>
+      </span>
     </div>
   </div>
 </template>
@@ -64,7 +82,7 @@ import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faEllipsisV)
 
-import { List, ListIcon } from '../../../interfaces/app'
+import { ListIcon } from '../../../interfaces/app'
 
 @Component({
   components: {
@@ -75,7 +93,10 @@ import { List, ListIcon } from '../../../interfaces/app'
 export default class ListRenderer extends Vue {
   @Prop(String) name!: string
   @Prop(String) id!: string
+  @Prop(String) icon!: string
+  @Prop(String) iconColor!: string
   @Prop(Array) options!: ListIcon[]
+  @Prop(Array) helpIcons!: ListIcon[]
   @Prop(Boolean) showHandle!: boolean
   @Prop(Boolean) deselectAll!: boolean
 
@@ -131,15 +152,26 @@ export default class ListRenderer extends Vue {
 }
 
 .name {
-  margin-left: 12px;
+  margin-left: 6px;
 }
 
 .options {
+  display: flex;
+  height: 100%;
+}
+
+.left-icon {
   flex-basis: 35px;
   height: 100%;
 }
 
-.icon-dropdown {
+.help-icon {
+  display: block;
+  width: 20px;
+  height: 100%;
+}
+
+.icon-dropdown, .left-icon, .help-icon {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -153,8 +185,8 @@ export default class ListRenderer extends Vue {
   background-color: #E6E6E6;
 }
 
-.sortable-selected {
-  background-color: red;
+.fade {
+  opacity: .6;
 }
 
 </style>

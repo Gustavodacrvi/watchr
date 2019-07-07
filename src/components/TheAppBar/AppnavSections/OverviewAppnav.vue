@@ -1,6 +1,16 @@
 <template>
   <span class='txt'>
-    asdf
+    <appnav-header
+      name='OVERVIEW'
+      :show-title='true'
+      :icons='[]'
+      :selected='[]'
+    />
+    <list-renderer
+      group='appnavOverview'
+      :disabled='true'
+      :list='pinedSmartPerspectives'
+    />
   </span>
 </template>
 
@@ -9,12 +19,22 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, namespace } from 'vuex-class'
 
-import { Label } from '@/interfaces/app'
+import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
+import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
 
-const label = namespace('label')
+import { Label, SmartPerspective } from '@/interfaces/app'
 
-@Component
-export default class OverviewAppnav extends Vue {}
+const persVuex = namespace('perspective')
+
+@Component({
+  components: {
+    'list-renderer': ListRenderer,
+    'appnav-header': AppnavHeader,
+  },
+})
+export default class OverviewAppnav extends Vue {
+  @persVuex.Getter pinedSmartPerspectives!: SmartPerspective[]
+}
 
 </script>
 

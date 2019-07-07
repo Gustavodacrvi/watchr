@@ -58,33 +58,35 @@
           ></ft-icon>
         </div>
         <div class='right'>
-          <icon-dropdown v-if='options && options.length > 0'
-            handle='ellipsis-h'
-            size='lg'
-            :change-color-on-hover='true'
-            min-width='200px'
-            :float-top='true'
-          >
-            <div class='drop round-border'>
-              <div v-for='i in options'
-                class='el'
-                :key='i.name'
-                :class='theme'
-                @click='i.callback'
-              >
-                <span class='el-icon'>
-                  <ft-icon
-                    class='txt'
-                    :icon='i.icon'
-                    :size='i.size'
-                  />
-                </span>
-                <span class='el-name txt'>
-                  {{ i.name }}
-                </span>
+          <transition name='fade'>
+            <icon-dropdown v-if='options && options.length > 0'
+              handle='ellipsis-h'
+              size='lg'
+              :change-color-on-hover='true'
+              min-width='200px'
+              :float-top='true'
+            >
+              <div class='drop round-border'>
+                <div v-for='i in options'
+                  class='el'
+                  :key='i.name'
+                  :class='theme'
+                  @click='i.callback'
+                >
+                  <span class='el-icon'>
+                    <ft-icon
+                      class='txt'
+                      :icon='i.icon'
+                      :size='i.size'
+                    />
+                  </span>
+                  <span class='el-name txt'>
+                    {{ i.name }}
+                  </span>
+                </div>
               </div>
-            </div>
-          </icon-dropdown>
+            </icon-dropdown>
+          </transition>
         </div>
       </div>
     </div>
@@ -122,6 +124,7 @@ interface Section {
   components: {
     'overview': appUtil.AsyncComponent(import('./AppnavSections/OverviewAppnav.vue')),
     'labels': appUtil.AsyncComponent(import('./AppnavSections/LabelAppnav.vue')),
+    'perspectives': appUtil.AsyncComponent(import('./AppnavSections/PerspectivesAppnav.vue')),
     'icon-dropdown': IconDropdown,
   },
 })

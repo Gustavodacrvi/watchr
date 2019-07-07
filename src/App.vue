@@ -118,8 +118,10 @@ export default class App extends Vue {
   }
   @Watch('isLogged')
   onChange() {
-    if (this.loggedAndVerified || this.anonymous)
+    if (this.loggedAndVerified || this.anonymous) {
       this.$store.dispatch('label/getData')
+      this.$store.dispatch('perspective/getData')
+    }
   }
 }
 

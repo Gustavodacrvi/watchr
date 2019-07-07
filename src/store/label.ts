@@ -1,5 +1,5 @@
 
-import { Label, List } from '@/interfaces/app'
+import { Label } from '@/interfaces/app'
 
 import { States as RootState } from '@/store/index'
 
@@ -73,11 +73,11 @@ export default {
     },
     getData({ rootState, state, dispatch }) {
       if (rootState.firestore && rootState.uid) {
-        rootState.firestore.collection('labelsOrder').where('userId', '==', rootState.uid)
+        rootState.firestore.collection('labelsOrder').doc(rootState.uid)
           .onSnapshot(snap => {
-            const changes = snap.docChanges()
-            for (const change of changes)
-              state.order = change.doc.data().order
+            const data = snap.data()
+            if (data)
+              state.order = data.order
           })
         rootState.firestore.collection('labels').where('userId', '==', rootState.uid)
           .onSnapshot(snap => {
