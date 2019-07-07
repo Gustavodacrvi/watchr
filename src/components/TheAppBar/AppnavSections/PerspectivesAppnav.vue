@@ -2,9 +2,9 @@
   <span class='txt'>
     <appnav-header
       name='PERSPECTIVES'
-      :show-title='true'
-      :icons='[]'
-      :selected='[]'
+      :show-title='selected.length === 0'
+      :icons='headerIcons'
+      :selected='selected'
     />
     <list-renderer
       group='appnavPerspectives'
@@ -12,6 +12,7 @@
       :options='getOptions'
       :help-icons='helpIcons'
       @update='onUpdate'
+      @selected='v => selected = v'
     />
   </span>
 </template>
@@ -38,12 +39,27 @@ export default class OverviewAppnav extends Vue {
   @persVuex.State smartOrder!: SmartPerspective[]
   @persVuex.Getter sortedSmartPerspectives!: SmartPerspective[]
   @persVuex.Action saveSmartOrder!: (ids: string[]) => void
-  @persVuex.Action togglePerspectivePin!: (obj: {id: string, pin?: boolean}) => void
+  @persVuex.Action togglePerspectivesPin!: (obj: {id: string, pin?: boolean}[]) => void
+
+  selected: SmartPerspective[] = []
+  headerIcons: ListIcon[] = [
+    {
+      name: '',
+      icon: 'thumbtack',
+      iconColor: '',
+      size: 'lg',
+      callback: (selected: string[]) => {
+        const arr: any = []
+        for (const el of selected)
+          arr.push({id: el})
+        this.togglePerspectivesPin(arr)
+      },
+    },
+  ]
 
   onUpdate(ids: string[]) {
     this.saveSmartOrder(ids)
   }
-
   getOptions(per: SmartPerspective) {
     const icons: ListIcon[] = [
       {
@@ -52,7 +68,7 @@ export default class OverviewAppnav extends Vue {
         iconColor: '',
         size: 'lg',
         callback: (id: string) => {
-          this.togglePerspectivePin({id})
+          this.togglePerspectivesPin([{id}])
         },
       },
     ]

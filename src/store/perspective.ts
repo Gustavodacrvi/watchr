@@ -32,7 +32,7 @@ interface Actions {
   getData: (context: ActionContext) => void
   addDefaultSmartPerspectives: (context: ActionContext) => void
   saveSmartOrder: (context: ActionContext, ids: string[]) => void
-  togglePerspectivePin: (context: ActionContext, obj: {id: string, pin: boolean}) => void
+  togglePerspectivesPin: (context: ActionContext, arr: {id: string, pin: boolean}[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -71,22 +71,28 @@ export default {
           smartOrder: ids,
         })
     },
-    togglePerspectivePin({ rootState, state }, {id, pin}) {
+    togglePerspectivesPin({ rootState, state }, pins) {
       if (rootState.firestore && rootState.uid) {
-        let collection: 'smartPerspectives' | 'customPerspectives' = 'smartPerspectives'
-        let per: any = state.smartPerspectives.find(el => el.id === id)
-        let finalPin: boolean = false
-        if (!per) { {
-          collection = 'customPerspectives'
-          per = state.customPerspectives.find(el => el.id === id)
+        const batch = rootState.firestore.batch()
+        
+        for (const pin of pins) {
+          let collection: 'smartPerspectives' | 'customPerspectives' = 'smartPerspectives'
+          let per: any = state.smartPerspectives.find(el => el.id === pin.id)
+          let finalPin: boolean = false
+          if (!per) {
+            collection = 'customPerspectives'
+            per = state.customPerspectives.find(el => el.id === pin.id)
+          }
+          finalPin = !per.pin
+          if (pin.pin)
+            finalPin = pin.pin
+          const ref = rootState.firestore.collection(collection).doc(pin.id)
+          batch.update(ref, {
+            pin: finalPin,
+          })
         }
-        }
-        finalPin = !per.pin
-        if (pin)
-          finalPin = pin
-        rootState.firestore.collection(collection).doc(id).update({
-          pin: finalPin,
-        })
+
+        batch.commit()
       }
     },
     getData({ rootState, state, dispatch }) {
