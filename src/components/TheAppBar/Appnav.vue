@@ -26,7 +26,7 @@
             class='txt pointer icon'
             :icon='sect.icon'
             :style="isActiveClass(sect.comp)"
-            @click='currentSect = sect.comp'
+            @click='select(sect)'
             size='lg'
           ></ft-icon>
         </div>
@@ -44,12 +44,13 @@
         </div>
       </div>
     </div>
-    <div v-if='!isDesktop'
-      class='footer-wrapper'>
-      <hr class='border'>
+    <div
+      class='footer-wrapper'
+    >
+      <hr class='border hr' :class='theme'>
       <div class='footer'>
         <div class='left'>
-          <ft-icon
+          <ft-icon v-if='!isDesktop'
             class='txt pointer icon'
             icon='cog'
             size='lg'
@@ -57,12 +58,33 @@
           ></ft-icon>
         </div>
         <div class='right'>
-          <ft-icon
-            class='txt pointer icon'
-            icon='adjust'
+          <icon-dropdown v-if='options && options.length > 0'
+            handle='ellipsis-h'
             size='lg'
-            @click="$emit('theme')"
-          ></ft-icon>
+            :change-color-on-hover='true'
+            min-width='200px'
+            :float-top='true'
+          >
+            <div class='drop round-border'>
+              <div v-for='i in options'
+                class='el'
+                :key='i.name'
+                :class='theme'
+                @click='i.callback'
+              >
+                <span class='el-icon'>
+                  <ft-icon
+                    class='txt'
+                    :icon='i.icon'
+                    :size='i.size'
+                  />
+                </span>
+                <span class='el-name txt'>
+                  {{ i.name }}
+                </span>
+              </div>
+            </div>
+          </icon-dropdown>
         </div>
       </div>
     </div>
@@ -76,25 +98,29 @@ import { State, Getter, Mutation } from 'vuex-class'
 
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
+import IconDropdown from '@/components/IconDropdown.vue'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAdjust, faCog, faHome, faLayerGroup, faProjectDiagram, faStopwatch,
- faStream, faTags, faChartPie } from '@fortawesome/free-solid-svg-icons'
+ faStream, faTags, faChartPie, faEllipsisH, faSortAlphaDown } from '@fortawesome/free-solid-svg-icons'
 
 import appUtil from '@/utils/app'
+import { ListIcon } from '../../interfaces/app';
 
 library.add(faAdjust, faCog, faHome, faLayerGroup, faProjectDiagram,
-faStopwatch, faStream, faTags, faChartPie)
+faStopwatch, faStream, faTags, faChartPie, faEllipsisH, faSortAlphaDown)
 
 interface Section {
   icon: string
   comp: string
+  options?: ListIcon[]
 }
 
 @Component({
   components: {
-    overview: appUtil.AsyncComponent(import('./AppnavSections/OverviewAppnav.vue')),
-    labels: appUtil.AsyncComponent(import('./AppnavSections/LabelAppnav.vue')),
+    'overview': appUtil.AsyncComponent(import('./AppnavSections/OverviewAppnav.vue')),
+    'labels': appUtil.AsyncComponent(import('./AppnavSections/LabelAppnav.vue')),
+    'icon-dropdown': IconDropdown,
   },
 })
 export default class LoggedAppnav extends Vue {
@@ -109,11 +135,28 @@ export default class LoggedAppnav extends Vue {
     {icon: 'project-diagram', comp: 'projects'},
     {icon: 'stopwatch', comp: 'timetracking'},
     {icon: 'stream', comp: 'intervalsandroutines'},
-    {icon: 'tags', comp: 'labels'},
+    {icon: 'tags', comp: 'labels', options: [
+      {
+        name: 'Sort labels by name',
+        icon: 'sort-alpha-down',
+        iconColor: '',
+        size: 'lg',
+        callback: () => {
+          console.log(3)
+        }
+      },
+    ]},
     {icon: 'chart-pie', comp: 'statistics'},
   ]
   currentSect: string = 'overview'
+  options: ListIcon[] = []
 
+  select(comp: Section) {
+    this.currentSect = comp.comp
+    if (comp.options)
+      this.options = comp.options
+    else this.options = []
+  }
   isActiveClass(comp: string): object {
     let mainColor: string = ''
     if (this.currentSect === comp)
@@ -127,6 +170,9 @@ export default class LoggedAppnav extends Vue {
 </script>
 
 <style scoped src='@/assets/css/appBarMenu.css'>
+</style>
+
+<style scoped src='@/assets/css/drop.css'>
 </style>
 
 <style scoped>

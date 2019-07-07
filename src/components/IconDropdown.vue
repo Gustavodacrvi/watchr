@@ -13,7 +13,7 @@
     <transition name='fade'>
       <div v-show='showing'
         class='card round-border content'
-        :class='theme'
+        :class="[theme, {'float-top': floatTop}]"
         :style='`min-width: ${minWidth}`'
       >
         <slot></slot>
@@ -33,6 +33,7 @@ export default class TheNavbar extends Vue {
   @Prop({default: 'lg', type: String}) size!: string
   @Prop({default: '250px', type: String}) minWidth!: string
   @Prop({default: false, type: Boolean}) changeColorOnHover!: boolean
+  @Prop({default: false, type: Boolean}) floatTop!: boolean
 
   @State theme!: string
 
@@ -48,7 +49,6 @@ export default class TheNavbar extends Vue {
   display: inline-block;
   width: 100%;
   height: 100%;
-  z-index: 25;
 }
 
 .icon-dropdown:hover .icon {
@@ -59,6 +59,13 @@ export default class TheNavbar extends Vue {
   position: absolute;
   top: 100%;
   right: 0;
+  z-index: 25;
+}
+
+.float-top {
+  right: 0;
+  top: initial;
+  bottom: 100%;
 }
 
 </style>

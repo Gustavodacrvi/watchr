@@ -20,6 +20,7 @@
       >Help</router-link>
     </div>
     <div class='right'>
+      <span>
       <icon-dropdown v-if='!isLogged'
         class='margin'
         handle='user-alt'
@@ -72,6 +73,7 @@
           Resend confirmation e-mail
         </span>
       </icon-dropdown>
+      </span>
       <ft-icon
         class='txt pointer icon margin'
         icon='adjust'
@@ -174,6 +176,7 @@ export default class DesktopNavbar extends Mixins(Mixin) {
   width: 100%;
   height: 100%;
   min-height: 20px;
+  z-index: 30;
 }
 
 .right {
