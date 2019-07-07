@@ -39,7 +39,7 @@ export default class OverviewAppnav extends Vue {
   @persVuex.State smartOrder!: SmartPerspective[]
   @persVuex.Getter sortedSmartPerspectives!: SmartPerspective[]
   @persVuex.Action saveSmartOrder!: (ids: string[]) => void
-  @persVuex.Action togglePerspectivesPin!: (obj: {id: string, pin?: boolean}[]) => void
+  @persVuex.Action togglePerspectivesPin!: (obj: Array<{id: string, pin?: boolean}>) => void
 
   selected: SmartPerspective[] = []
   headerIcons: ListIcon[] = [
