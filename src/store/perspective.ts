@@ -29,6 +29,7 @@ interface ActionContext {
 interface Actions {
   getData: (context: ActionContext) => void
   addDefaultSmartPerspectives: (context: ActionContext) => void
+  saveSmartOrder: (context: ActionContext, ids: string[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -54,6 +55,14 @@ export default {
     },
   } as Getters,
   actions: {
+    saveSmartOrder({ rootState, state }, ids) {
+      console.log('save smart order')
+      if (rootState.firestore && rootState.uid)
+      rootState.firestore.collection('perspectivesOrder').doc(rootState.uid)
+        .update({
+          smartOrder: ids,
+        })
+    },
     getData({ rootState, state, dispatch }) {
       if (rootState.firestore && rootState.uid) {
         const ordersRef = rootState.firestore.collection('perspectivesOrder').where('userId', '==', rootState.uid)
@@ -63,17 +72,15 @@ export default {
             state.smartOrder = change.doc.data().smartOrder
             state.customOrder = change.doc.data().customOrder
           }
-          if (state.smartOrder.length === 0 && rootState.firestore) {
+          if (state.smartOrder.length === 0)
             dispatch('addDefaultSmartPerspectives')
-            const ordersRef = rootState.firestore.collection('perspectivesOrder').where('userId', '==', rootState.uid)
-            ordersRef.get().then(snap => {
-              const changes = snap.docChanges()
-              for (const change of changes) {
-                state.smartOrder = change.doc.data().smartOrder
-                state.customOrder = change.doc.data().customOrder
-              }
-            })
-          }
+          ordersRef.onSnapshot(snap => {
+            const changes = snap.docChanges()
+            for (const change of changes) {
+              state.smartOrder = change.doc.data().smartOrder
+              state.customOrder = change.doc.data().customOrder
+            }
+          })
         })
         rootState.firestore.collection('smartPerspectives').where('userId', '==', rootState.uid).onSnapshot(snap => {
           const changes = snap.docChanges()
