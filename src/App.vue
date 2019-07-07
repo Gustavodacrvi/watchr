@@ -116,7 +116,7 @@ export default class App extends Vue {
     if (!this.showingAlert)
       this.showLastAlert()
   }
-  @Watch('isLogged')
+  @Watch('loggedAndVerified')
   onChange() {
     if (this.loggedAndVerified || this.anonymous) {
       this.$store.dispatch('label/getData')

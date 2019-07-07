@@ -6,6 +6,7 @@ import { States as RootState } from '@/store/index'
 interface States {
   labels: Label[]
   order: string[]
+  smartLabels: Label[]
 }
 
 
@@ -40,6 +41,7 @@ export default {
   state: {
     labels: [],
     order: [],
+    smartLabels: [],
   } as States,
   mutations: {
 
@@ -76,8 +78,9 @@ export default {
         rootState.firestore.collection('labelsOrder').doc(rootState.uid)
           .onSnapshot(snap => {
             const data = snap.data()
-            if (data)
+            if (data) {
               state.order = data.order
+            }
           })
         rootState.firestore.collection('labels').where('userId', '==', rootState.uid)
           .onSnapshot(snap => {

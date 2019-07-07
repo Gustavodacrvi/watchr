@@ -30,7 +30,7 @@ interface ActionContext {
 
 interface Actions {
   getData: (context: ActionContext) => void
-  addDefaultSmartPerspectives: (context: ActionContext) => void
+  addDefaultSmartPerspectives: (context: ActionContext, id: string) => void
   saveSmartOrder: (context: ActionContext, ids: string[]) => void
   togglePerspectivesPin: (context: ActionContext, arr: Array<{id: string, pin: boolean}>) => void
   [key: string]: (context: ActionContext, payload: any) => any
@@ -96,24 +96,16 @@ export default {
     },
     getData({ rootState, state, dispatch }) {
       if (rootState.firestore && rootState.uid) {
-        const ordersRef = rootState.firestore.collection('perspectivesOrder').where('userId', '==', rootState.uid)
-        ordersRef.get().then(snap => {
-          const changes = snap.docChanges()
-          for (const change of changes) {
+        rootState.firestore.collection('perspectivesOrder').where('userId', '==', rootState.uid).onSnapshot(snapS => {
+          console.log(3)
+          const changs = snapS.docChanges()
+          for (const change of changs) {
             state.smartOrder = change.doc.data().smartOrder
             state.customOrder = change.doc.data().customOrder
           }
-          if (state.smartOrder.length === 0)
-            dispatch('addDefaultSmartPerspectives')
-          ordersRef.onSnapshot(snapS => {
-            const changs = snapS.docChanges()
-            for (const change of changs) {
-              state.smartOrder = change.doc.data().smartOrder
-              state.customOrder = change.doc.data().customOrder
-            }
-          })
         })
         rootState.firestore.collection('smartPerspectives').where('userId', '==', rootState.uid).onSnapshot(snap => {
+          console.log(2)
           const changes = snap.docChanges()
           for (const change of changes)
             if (change.type === 'added') {
@@ -130,8 +122,8 @@ export default {
         })
       }
     },
-    addDefaultSmartPerspectives({ rootState }) {
-      if (rootState.firestore && rootState.uid) {
+    addDefaultSmartPerspectives({ rootState }, id) {
+      if (rootState.firestore) {
         const batch = rootState.firestore.batch()
 
         const perspectives: any[] = [
@@ -177,7 +169,7 @@ export default {
           const ref = rootState.firestore.collection('smartPerspectives').doc()
           ids.push(ref.id)
           batch.set(ref, {
-            userId: rootState.uid,
+            userId: id,
             name: per.name,
             numberOfTasks: per.numberOfTasks,
             pin: per.pin,
@@ -185,9 +177,9 @@ export default {
             iconColor: per.iconColor,
           } as SmartPerspective)
         }
-        const orderRef = rootState.firestore.collection('perspectivesOrder').doc(rootState.uid)
+        const orderRef = rootState.firestore.collection('perspectivesOrder').doc(id)
         batch.set(orderRef, {
-          userId: rootState.uid,
+          userId: id,
           smartOrder: ids,
           customOrder: [],
         })
