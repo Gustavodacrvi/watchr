@@ -28,10 +28,14 @@ export interface Label {
   id: string
 }
 
-export interface List {
-  parentId: string | null
-  elementId?: string
-  level: number
+export interface SmartPerspective {
+  userId: string
+  name: string
+  id: string
+  icon: string
+  iconColor: string
+  pin: boolean
+  numberOfTasks: boolean
 }
 
 export interface ListIcon {

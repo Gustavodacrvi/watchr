@@ -1,6 +1,8 @@
 <template>
   <span class='txt'>
-    asdf
+    {{smartPerspectives}}
+    <div style='height: 100px'></div>
+    {{smartOrder}}
   </span>
 </template>
 
@@ -9,12 +11,15 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { State, namespace } from 'vuex-class'
 
-import { Label } from '@/interfaces/app'
+import { Label, SmartPerspective } from '@/interfaces/app'
 
-const label = namespace('label')
+const persVuex = namespace('perspective')
 
 @Component
-export default class OverviewAppnav extends Vue {}
+export default class OverviewAppnav extends Vue {
+  @persVuex.State smartPerspectives!: SmartPerspective[]
+  @persVuex.State smartOrder!: string[]
+}
 
 </script>
 
