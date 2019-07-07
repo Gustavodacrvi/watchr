@@ -105,7 +105,7 @@ import { faAdjust, faCog, faHome, faLayerGroup, faProjectDiagram, faStopwatch,
  faStream, faTags, faChartPie, faEllipsisH, faSortAlphaDown } from '@fortawesome/free-solid-svg-icons'
 
 import appUtil from '@/utils/app'
-import { ListIcon } from '../../interfaces/app';
+import { ListIcon } from '../../interfaces/app'
 
 const label = namespace('label')
 
@@ -147,7 +147,7 @@ export default class LoggedAppnav extends Vue {
         size: 'lg',
         callback: () => {
           this.sortLabelsByName()
-        }
+        },
       },
     ]},
     {icon: 'chart-pie', comp: 'statistics'},

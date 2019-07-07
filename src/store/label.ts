@@ -64,7 +64,7 @@ export default {
           })
     },
     sortLabelsByName({ state, dispatch }) {
-      let labels: Label[] = state.labels.slice()
+      const labels: Label[] = state.labels.slice()
       labels.sort((a, b) => a.name.localeCompare(b.name))
       const ids: string[] = []
       for (const el of labels)
