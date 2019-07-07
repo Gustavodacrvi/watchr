@@ -24,10 +24,20 @@
     >
       <span class='txt name'>{{ name }}</span>
     </div>
-    <div v-if='showOptionsMobile || showOptionsDesktop && options.length > 0'
-      class='options'
-    >
-      <icon-dropdown
+    <div class='options'>
+      <template v-if='helpIcons && helpIcons.length > 0'>
+        <span v-for='i in helpIcons'
+          class='help-icon'
+          :key='i.icon'
+        >
+          <dynamic-ft-icon
+            class='txt fade'
+            :icon='i.icon'
+            :size='i.size'
+          />
+        </span>
+      </template>
+      <icon-dropdown v-if='showOptionsMobile || showOptionsDesktop && options.length > 0'
         handle='ellipsis-v'
         size='lg'
         :change-color-on-hover='true'
@@ -84,6 +94,7 @@ export default class ListRenderer extends Vue {
   @Prop(String) icon!: string
   @Prop(String) iconColor!: string
   @Prop(Array) options!: ListIcon[]
+  @Prop(Array) helpIcons!: ListIcon[]
   @Prop(Boolean) showHandle!: boolean
   @Prop(Boolean) deselectAll!: boolean
 
@@ -142,12 +153,12 @@ export default class ListRenderer extends Vue {
   margin-left: 6px;
 }
 
-.options, .left-icon {
+.options, .left-icon, .help-icon {
   flex-basis: 35px;
   height: 100%;
 }
 
-.icon-dropdown, .left-icon {
+.icon-dropdown, .left-icon, .help-icon {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -163,6 +174,10 @@ export default class ListRenderer extends Vue {
 
 .sortable-selected {
   background-color: red;
+}
+
+.fade {
+  opacity: .6;
 }
 
 </style>

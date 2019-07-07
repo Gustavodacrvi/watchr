@@ -8,6 +8,7 @@
         :icon='obj.icon'
         :iconColor='obj.iconColor'
         :options='options(obj)'
+        :help-icons='helpIcons(obj)'
         :show-handle='numberOfSelected > 0'
         :deselect-all='deselectAll'
         @toggle='toggleElement'
@@ -43,6 +44,7 @@ export default class ListRenderer extends Vue {
   @Prop({required: true, type: String}) group!: string
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({default: () => [], type: Function}) options!: (obj: any) => ListIcon[]
+  @Prop({default: () => [], type: Function}) helpIcons!: (obj: any) => ListIcon[]
 
   @Getter isDesktop!: boolean
 

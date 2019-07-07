@@ -9,6 +9,7 @@
     <list-renderer
       group='appnavPerspectives'
       :list='sortedSmartPerspectives'
+      :help-icons='helpIcons'
       @update='onUpdate'
     />
   </span>
@@ -22,7 +23,7 @@ import { State, namespace } from 'vuex-class'
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
 
-import { Label, SmartPerspective } from '@/interfaces/app'
+import { Label, SmartPerspective, ListIcon } from '@/interfaces/app'
 
 const persVuex = namespace('perspective')
 
@@ -39,6 +40,18 @@ export default class OverviewAppnav extends Vue {
 
   onUpdate(ids: string[]) {
     this.saveSmartOrder(ids)
+  }
+
+  helpIcons(per: SmartPerspective) {
+    const icons: ListIcon[] = []
+    if (per.pin)
+      icons.push({
+        icon: 'thumbtack',
+        iconColor: '',
+        name: '',
+        size: 'xs',
+      })
+    return icons
   }
 }
 
