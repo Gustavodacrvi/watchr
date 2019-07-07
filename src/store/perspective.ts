@@ -11,7 +11,7 @@ interface States {
 
 
 interface Getters {
-
+  sortedSmartPerspectives: (state: States) => void
 }
 
 interface Mutations {
@@ -43,7 +43,15 @@ export default {
 
   } as Mutations,
   getters: {
-
+    sortedSmartPerspectives(state: States): SmartPerspective[] {
+      const sorted: SmartPerspective[] = []
+      for (const id of state.smartOrder) {
+        const lab: SmartPerspective | undefined = state.smartPerspectives.find(el => el.id === id)
+        if (lab)
+          sorted.push(lab)
+      }
+      return sorted
+    },
   } as Getters,
   actions: {
     getData({ rootState, state, dispatch }) {
@@ -51,7 +59,6 @@ export default {
         const ordersRef = rootState.firestore.collection('perspectivesOrder').where('userId', '==', rootState.uid)
         ordersRef.get().then(snap => {
           const changes = snap.docChanges()
-          console.log('first snap')
           for (const change of changes) {
             state.smartOrder = change.doc.data().smartOrder
             state.customOrder = change.doc.data().customOrder
@@ -61,7 +68,6 @@ export default {
             const ordersRef = rootState.firestore.collection('perspectivesOrder').where('userId', '==', rootState.uid)
             ordersRef.get().then(snap => {
               const changes = snap.docChanges()
-              console.log('actual snap')
               for (const change of changes) {
                 state.smartOrder = change.doc.data().smartOrder
                 state.customOrder = change.doc.data().customOrder

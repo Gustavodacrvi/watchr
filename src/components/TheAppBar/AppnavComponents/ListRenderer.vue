@@ -5,6 +5,8 @@
         :key='obj.id'
         :id='obj.id'
         :name='obj.name'
+        :icon='obj.icon'
+        :iconColor='obj.iconColor'
         :options='options(obj)'
         :show-handle='numberOfSelected > 0'
         :deselect-all='deselectAll'
@@ -29,7 +31,7 @@ Sortable.mount(new MultiDrag(), new AutoScroll())
 
 import ListElement from '@/components/TheAppBar/AppnavComponents/ListElement.vue'
 
-import { List, ListIcon } from '../../../interfaces/app'
+import { ListIcon } from '../../../interfaces/app'
 
 @Component({
   components: {
@@ -39,9 +41,8 @@ import { List, ListIcon } from '../../../interfaces/app'
 export default class ListRenderer extends Vue {
   @Prop({required: true, type: Array}) list!: any[]
   @Prop({required: true, type: String}) group!: string
-  @Prop({default: () => () => {
-    return []
-  }, type: Function}) options!: (obj: any) => ListIcon[]
+  @Prop({default: false, type: Boolean}) disabled!: boolean
+  @Prop({default: () => [], type: Function}) options!: (obj: any) => ListIcon[]
 
   @Getter isDesktop!: boolean
 
@@ -60,6 +61,7 @@ export default class ListRenderer extends Vue {
 
   mount() {
     const options: any = {
+      disabled: this.disabled,
       animation: 150,
       selectedClass: 'sortable-selected',
       multiDrag: true,
@@ -101,7 +103,7 @@ export default class ListRenderer extends Vue {
     return []
   }
   toggleElement({el, select}: {el: HTMLElement, select: boolean}) {
-    if (!this.isDesktop) {
+    if (!this.isDesktop && !this.disabled) {
       if (select)
         Sortable.utils.select(el)
       else Sortable.utils.deselect(el)

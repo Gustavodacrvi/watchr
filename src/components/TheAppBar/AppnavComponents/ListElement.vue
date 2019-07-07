@@ -5,11 +5,17 @@
     @mouseenter='onHover = true'
     @mouseleave='onHover = false'
   >
-    <div
+    <div v-if='icon && iconColor'
       class='left-icon'
       :class='{handle: showHandle && !isDesktop}'
       @click='toggleElement'
     >
+      <dynamic-ft-icon
+        class='txt'
+        size='lg'
+        :icon='icon'
+        :style='{color: iconColor}'
+      />
     </div>
     <div
       class='content'
@@ -18,7 +24,7 @@
     >
       <span class='txt name'>{{ name }}</span>
     </div>
-    <div v-if='showOptionsMobile || showOptionsDesktop'
+    <div v-if='showOptionsMobile || showOptionsDesktop && options.length > 0'
       class='options'
     >
       <icon-dropdown
@@ -64,7 +70,7 @@ import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faEllipsisV)
 
-import { List, ListIcon } from '../../../interfaces/app'
+import { ListIcon } from '../../../interfaces/app'
 
 @Component({
   components: {
@@ -75,6 +81,8 @@ import { List, ListIcon } from '../../../interfaces/app'
 export default class ListRenderer extends Vue {
   @Prop(String) name!: string
   @Prop(String) id!: string
+  @Prop(String) icon!: string
+  @Prop(String) iconColor!: string
   @Prop(Array) options!: ListIcon[]
   @Prop(Boolean) showHandle!: boolean
   @Prop(Boolean) deselectAll!: boolean
@@ -131,15 +139,15 @@ export default class ListRenderer extends Vue {
 }
 
 .name {
-  margin-left: 12px;
+  margin-left: 6px;
 }
 
-.options {
+.options, .left-icon {
   flex-basis: 35px;
   height: 100%;
 }
 
-.icon-dropdown {
+.icon-dropdown, .left-icon {
   display: flex;
   justify-content: center;
   align-items: center;

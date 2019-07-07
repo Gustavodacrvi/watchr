@@ -24,7 +24,7 @@ import { namespace, Mutation } from 'vuex-class'
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
 
-import { Label, List, ListIcon, SimpleAdder } from '../../../interfaces/app'
+import { Label, ListIcon, SimpleAdder } from '../../../interfaces/app'
 
 const label = namespace('label')
 const list = namespace('list')
