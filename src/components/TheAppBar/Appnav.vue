@@ -94,7 +94,7 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { State, Getter, Mutation } from 'vuex-class'
+import { State, Getter, Mutation, namespace } from 'vuex-class'
 
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
@@ -106,6 +106,8 @@ import { faAdjust, faCog, faHome, faLayerGroup, faProjectDiagram, faStopwatch,
 
 import appUtil from '@/utils/app'
 import { ListIcon } from '../../interfaces/app';
+
+const label = namespace('label')
 
 library.add(faAdjust, faCog, faHome, faLayerGroup, faProjectDiagram,
 faStopwatch, faStream, faTags, faChartPie, faEllipsisH, faSortAlphaDown)
@@ -129,6 +131,8 @@ export default class LoggedAppnav extends Vue {
   @Mutation pushPopUp!: (compName: string) => void
   @Getter isDesktop!: boolean
 
+  @label.Action sortLabelsByName!: () => void
+
   sections: Section[] = [
     {icon: 'home', comp: 'overview'},
     {icon: 'layer-group', comp: 'perspectives'},
@@ -142,7 +146,7 @@ export default class LoggedAppnav extends Vue {
         iconColor: '',
         size: 'lg',
         callback: () => {
-          console.log(3)
+          this.sortLabelsByName()
         }
       },
     ]},
