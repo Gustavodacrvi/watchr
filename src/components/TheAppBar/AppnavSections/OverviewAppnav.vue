@@ -1,5 +1,5 @@
 <template>
-  <span class='txt'>
+  <div>
     <appnav-header
       name='OVERVIEW'
       :show-title='true'
@@ -10,14 +10,15 @@
       group='appnavOverview'
       :disabled='true'
       :list='pinedSmartPerspectives'
+      :active='active'
     />
-  </span>
+  </div>
 </template>
 
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { State, namespace } from 'vuex-class'
+import { State, Mutation, namespace } from 'vuex-class'
 
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
@@ -33,7 +34,25 @@ const persVuex = namespace('perspective')
   },
 })
 export default class OverviewAppnav extends Vue {
+  @State appViewComponent!: string
+  @State perspectiveData!: SmartPerspective
+  @Mutation pushAppView!: (compName: string) => void
+  @Mutation pushPerspective!: (payload?: any) => void
+
   @persVuex.Getter pinedSmartPerspectives!: SmartPerspective[]
+
+  created() {
+    if (!this.pinedSmartPerspectives[0].smartPerspective) {
+      this.pushAppView('PerspectiveAppview')
+      this.pushPerspective(this.pinedSmartPerspectives[0])
+    }
+  }
+
+  get active(): string {
+    if (this.perspectiveData && this.perspectiveData.smartPerspective)
+      return this.perspectiveData.name
+    return ''
+  }
 }
 
 </script>

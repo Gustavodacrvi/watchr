@@ -4,6 +4,13 @@
       class='app'
       key='loggedAndVerified'
     >
+      <div class='view-wrapper background-color' :class='[platform, theme]'>
+        <div class='view' :class='platform'>
+          <transition name='fade'>
+            <component :is='getComp' />
+          </transition>
+        </div>
+      </div>
     </div>
     <div v-else-if='anonymous'
       class='app'
@@ -52,19 +59,24 @@ import Mixin from '@/mixins/navBar'
 import appUtils from '@/utils/app'
 
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
+import { SmartPerspective } from '../interfaces/app'
 
 @Component({
   components: {
     'tab-slider': appUtils.AsyncComponent(import('@/components/SlidersAndMenus/TabSlider.vue')),
+    'perspectiveappview': appUtils.AsyncComponent(import('@/components/AppViews/PerspectiveAppview.vue')),
     'form-button': FormButton,
   },
 })
 export default class Guest extends Mixins(Mixin) {
   @State theme!: string
+  @State appViewComponent!: string
+  @State perspectiveData!: SmartPerspective
   @Getter loggedAndVerified!: boolean
   @Getter loggedAndNotVerified!: boolean
   @Getter anonymous!: boolean
   @Getter isDesktop!: boolean
+  @Getter platform!: boolean
   @Mutation openAppBar!: () => void
   @Mutation closeAppBar!: () => void
 
@@ -81,6 +93,12 @@ export default class Guest extends Mixins(Mixin) {
       this.closeAppBar()
   }
 
+  get getComp() {
+    if (this.perspectiveData && this.perspectiveData.smartPerspective)
+      return this.appViewComponent.toLowerCase()
+    return this.appViewComponent.toLowerCase()
+  }
+
   @Watch('isDesktop')
   onResize() {
     this.open()
@@ -95,16 +113,33 @@ export default class Guest extends Mixins(Mixin) {
 
 <style scoped>
 
+.view-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+}
+
+.view-wrapper.desktop {
+  margin-left: 300px;
+  z-index: 20;
+}
+
+.view {
+  margin: 0 15px;
+}
+
+.view.desktop {
+  margin: 0 60px;
+}
+
 .app {
   position: relative;
   width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
 }
 
 .content {
-  margin-top: 60px;
   display: flex;
   justify-content: center;
   align-items: flex-start;

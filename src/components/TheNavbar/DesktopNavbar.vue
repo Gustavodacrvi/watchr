@@ -118,8 +118,8 @@ export default class DesktopNavbar extends Mixins(Mixin) {
 
   mounted() {
     this.moveMagicLineTo(this.$route.name)
-    const RANDOM_NUMBER = 80
-    setTimeout(() => {
+    const RANDOM_NUMBER = 200
+    setInterval(() => {
       this.moveMagicLineTo(this.$route.name)
     }, RANDOM_NUMBER)
     window.addEventListener('resize', this.windowEventListener)

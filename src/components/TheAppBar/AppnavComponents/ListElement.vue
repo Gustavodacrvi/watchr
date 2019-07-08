@@ -1,7 +1,7 @@
 <template>
   <div
     class='element round-border'
-    :class='theme'
+    :class='[theme, {active: active === name}]'
     @mouseenter='onHover = true'
     @mouseleave='onHover = false'
   >
@@ -93,6 +93,7 @@ import { ListIcon } from '../../../interfaces/app'
 export default class ListRenderer extends Vue {
   @Prop(String) name!: string
   @Prop(String) id!: string
+  @Prop(String) active!: string
   @Prop(String) icon!: string
   @Prop(String) iconColor!: string
   @Prop(Array) options!: ListIcon[]
@@ -177,11 +178,11 @@ export default class ListRenderer extends Vue {
   align-items: center;
 }
 
-.element.dark:hover, .sortable-selected.dark {
+.element.dark:hover, .sortable-selected.dark, .active.dark {
   background-color: #282828;
 }
 
-.element.light:hover, .sortable-selected.light {
+.element.light:hover, .sortable-selected.light, .active.light {
   background-color: #E6E6E6;
 }
 

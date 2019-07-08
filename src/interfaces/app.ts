@@ -36,6 +36,13 @@ export interface SmartPerspective {
   iconColor: string
   pin: boolean
   numberOfTasks: boolean
+  description: string
+  order: string[]
+  smartPerspective: boolean,
+  excludeSmartLabels: string[]
+  includeSmartLabels: string[]
+  excludeCustomLabels: string[]
+  includeCustomLabels: string[]
 }
 
 export interface ListIcon {

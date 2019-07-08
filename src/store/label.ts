@@ -6,11 +6,13 @@ import { States as RootState } from '@/store/index'
 interface States {
   labels: Label[]
   order: string[]
+  smartLabels: Label[]
 }
 
 
 interface Getters {
   sortedLabels: () => Label[]
+  getLabelsByIds: () => (ids: string[]) => Label[]
 }
 
 interface Mutations {
@@ -32,6 +34,8 @@ interface Actions {
   deleteLabelsById: (context: ActionContext, ids: string[]) => void
   editLabelNameById: (context: ActionContext, obj: {id: string, name: string}) => void
   sortLabelsByName: (context: ActionContext) => void
+  addDefaultSmartLabels: (context: ActionContext) => void
+  addLabelsOrder: (context: ActionContext, id: string) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -40,6 +44,7 @@ export default {
   state: {
     labels: [],
     order: [],
+    smartLabels: [],
   } as States,
   mutations: {
 
@@ -53,6 +58,9 @@ export default {
           sorted.push(lab)
       }
       return sorted
+    },
+    getLabelsByIds: (state: States) => (ids: string[]) => {
+      return state.labels.filter(el => ids.includes(el.id))
     },
   } as Getters,
   actions: {
@@ -139,6 +147,13 @@ export default {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('labels').doc(id).update({
           name,
+        })
+    },
+    addLabelsOrder({ rootState }, id: string) {
+      if (rootState.firestore)
+        rootState.firestore.collection('labelsOrder').doc(id).set({
+          userId: id,
+          order: [],
         })
     },
   } as Actions,
