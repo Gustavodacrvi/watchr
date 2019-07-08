@@ -12,6 +12,7 @@ interface States {
 
 interface Getters {
   sortedLabels: () => Label[]
+  getLabelsByIds: () => (ids: string[]) => Label[]
 }
 
 interface Mutations {
@@ -57,6 +58,9 @@ export default {
           sorted.push(lab)
       }
       return sorted
+    },
+    getLabelsByIds: (state: States) => (ids: string[]) => {
+      return state.labels.filter(el => ids.includes(el.id))
     },
   } as Getters,
   actions: {

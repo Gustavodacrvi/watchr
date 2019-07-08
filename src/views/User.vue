@@ -94,7 +94,7 @@ export default class Guest extends Mixins(Mixin) {
   }
 
   get getComp() {
-    if (this.perspectiveData)
+    if (this.perspectiveData.smartPerspective)
       return this.appViewComponent.toLowerCase()
     return this.appViewComponent.toLowerCase()
   }

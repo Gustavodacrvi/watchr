@@ -92,7 +92,7 @@ export default class OverviewAppnav extends Vue {
   }
 
   get active(): string {
-    if (this.perspectiveData)
+    if (this.perspectiveData.smartPerspective)
       return this.perspectiveData.name
     return ''
   }

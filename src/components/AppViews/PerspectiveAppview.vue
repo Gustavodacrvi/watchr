@@ -13,17 +13,20 @@
     <p class='description txt'>
       {{ pers.description }}
     </p>
+    {{getLabels}}
   </div>
 </template>
 
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { State, Getter } from 'vuex-class'
+import { State, Getter, namespace } from 'vuex-class'
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 
-import { SmartPerspective } from '../../interfaces/app'
+import { SmartPerspective, Label } from '../../interfaces/app'
+
+const labelVuex = namespace('label')
 
 @Component({
   components: {
@@ -33,6 +36,19 @@ import { SmartPerspective } from '../../interfaces/app'
 export default class PerspectiveAppview extends Vue {
   @State('perspectiveData') pers!: SmartPerspective
   @Getter isDesktop!: boolean
+
+  @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
+
+  labels: string[] = []
+  
+  get getLabels(): Label[] {
+    const labels: any[] = this.getLabelsByIds(this.labels)
+    if (this.pers.name === 'Inbox')
+      labels.push({
+        name: 'Inbox',
+      })
+    return labels
+  }
 }
 
 </script>
@@ -49,7 +65,7 @@ export default class PerspectiveAppview extends Vue {
 }
 
 .description {
-  margin: 20px 0;
+  margin: 25px 0;
 }
 
 .title {

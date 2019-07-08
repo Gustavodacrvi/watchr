@@ -34,7 +34,6 @@
       </div>
       <div class='list-wrapper scroll'>
         <div class='list'>
-          {{currentSect}}
           <transition
             name='fade'
             mode='out-in'
