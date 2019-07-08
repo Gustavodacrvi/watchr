@@ -9,6 +9,15 @@
       <span class='title'>
         {{ pers.name }}
       </span>
+      <div class='right'>
+        <drop-finder
+          class='icon pointer txt'
+          handle='tags'
+          size='lg'
+          min-width='300px'
+          :list='labelList'
+        />
+      </div>
     </div>
     <p class='description txt'>
       {{ pers.description }}
@@ -33,6 +42,7 @@ import { State, Getter, namespace } from 'vuex-class'
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import Tag from '@/components/AppViews/AppviewComponents/AppviewIcon.vue'
+import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
 
 import { SmartPerspective, Label } from '../../interfaces/app'
 
@@ -42,12 +52,14 @@ const labelVuex = namespace('label')
   components: {
     'dynamic-ft-icon': DynamicFontawesome,
     'view-tag': Tag,
+    'drop-finder': DropdownFinder,
   },
 })
 export default class PerspectiveAppview extends Vue {
   @State('perspectiveData') pers!: SmartPerspective
   @Getter isDesktop!: boolean
 
+  @labelVuex.Getter sortedLabels!: Label[]
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
   labels: string[] = []
@@ -61,6 +73,9 @@ export default class PerspectiveAppview extends Vue {
       })
     return labels
   }
+  get labelList(): string[] {
+    return this.sortedLabels.map(el => el.name)
+  }
 }
 
 </script>
@@ -72,8 +87,14 @@ export default class PerspectiveAppview extends Vue {
 }
 
 .header {
-  display: flex;
-  align-items: center;
+  position: relative;
+}
+
+.right {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
 }
 
 .description {
