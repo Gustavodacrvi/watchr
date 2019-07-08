@@ -35,6 +35,13 @@
             Add task
           </view-btn>
           <span class='cancel pointer' @click='showing = false'>Cancel</span>
+          <div class='right'>
+            <dynamic-ft-icon
+              class='icon pointer txt'
+              icon='exclamation'
+              size='lg'
+            />
+          </div>
         </div>
       </div>
     </transition>
@@ -77,6 +84,16 @@ export default class TaskAdder extends Vue {
 
 <style scoped>
 
+.right {
+  position: absolute;
+  right: 0;
+  display: inline-block;
+}
+
+.right .icon {
+  margin-left: 6px;
+}
+
 .msg {
   height: 25px;
   padding: 8px;
@@ -94,6 +111,7 @@ export default class TaskAdder extends Vue {
 }
 
 .options {
+  position: relative;
   display: flex;
   align-items: center;
 }

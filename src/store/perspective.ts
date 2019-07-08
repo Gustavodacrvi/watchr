@@ -150,22 +150,6 @@ export default {
             icon: 'calendar-alt',
             iconColor: '#FF6B66',
           },
-          {
-            name: 'Anytime',
-            pin: true,
-            numberOfTasks: false,
-            smartPerspective: true,
-            icon: 'layer-group',
-            iconColor: '#88DDB7',
-          },
-          {
-            name: 'Someday',
-            pin: true,
-            numberOfTasks: false,
-            smartPerspective: true,
-            icon: 'archive',
-            iconColor: '#E2B983',
-          },
         ]
 
         const ids: string[] = []

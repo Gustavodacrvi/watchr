@@ -52,3 +52,11 @@ export interface ListIcon {
   name?: string
   callback?: (...arr: any[]) => void
 }
+
+export interface Task {
+  userId: string
+  id: string
+  name: string
+  priority: 'no' | 'high' | 'medium' | 'low'
+  labels: string[]
+}
