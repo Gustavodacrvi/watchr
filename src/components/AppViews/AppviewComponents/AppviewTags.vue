@@ -40,7 +40,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
 import Tag from '@/components/AppViews/AppviewComponents/AppviewIcon.vue'
-import { Label, SmartPerspective } from '../../../interfaces/app';
+import { Label, SmartPerspective } from '../../../interfaces/app'
 
 @Component({
   components: {
