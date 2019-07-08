@@ -20,7 +20,7 @@
             />
           </div>
           <transition name='fade'>
-            <div v-if='priority'>
+            <div v-if='allowPriority && priority'>
               <view-tag v-if='fixedTag'
                 :name='priority'
                 :fixed='false'
@@ -49,7 +49,7 @@
           </view-btn>
           <span class='cancel pointer' @click='showing = false'>Cancel</span>
           <div class='right'>
-            <view-options
+            <view-options v-if='allowPriority'
               handle='exclamation'
               size='lg'
               min-width='200px'
@@ -65,7 +65,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
@@ -86,6 +86,7 @@ import { ListIcon } from '../../../interfaces/app'
 })
 export default class TaskAdder extends Vue {
   @Prop() fixedTag!: string
+  @Prop({default: false}) allowPriority!: boolean
 
   value: string = ''
   showing: boolean = false
@@ -120,6 +121,22 @@ export default class TaskAdder extends Vue {
   }
   chosePriority(priority: 'Low priority' | 'High priority' | 'Medium priority') {
     this.priority = priority
+  }
+
+  @Watch('value')
+  onValue() {
+    if (this.allowPriority) {
+      if (this.value.includes(' !high')) {
+        this.priority = 'High priority'
+        this.value = this.value.replace(' !high', '')
+      } else if (this.value.includes(' !medium')) {
+        this.priority = 'Medium priority'
+        this.value = this.value.replace(' !medium', '')
+      } else if (this.value.includes(' !low')) {
+        this.priority = 'Low priority'
+        this.value = this.value.replace(' !low', '')
+      }
+    }
   }
 }
 

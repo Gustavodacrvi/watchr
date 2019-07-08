@@ -32,6 +32,7 @@
     <div class='margin'></div>
     <task-adder
       v-bind='fixedTags'
+      :allow-priority='true'
     />
   </div>
 </template>
