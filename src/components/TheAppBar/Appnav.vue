@@ -34,11 +34,12 @@
       </div>
       <div class='list-wrapper scroll'>
         <div class='list'>
+          {{currentSect}}
           <transition
             name='fade'
             mode='out-in'
           >
-            <component :is='currentSect'></component>
+            <component :is='currentSect'/>
           </transition>
           <div class='list-margin'></div>
         </div>

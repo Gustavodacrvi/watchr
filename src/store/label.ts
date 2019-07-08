@@ -150,6 +150,7 @@ export default {
       if (rootState.firestore)
         rootState.firestore.collection('labelsOrder').doc(id).set({
           userId: id,
+          order: [],
         })
     },
   } as Actions,

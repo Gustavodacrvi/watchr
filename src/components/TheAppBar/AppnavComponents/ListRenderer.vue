@@ -6,6 +6,7 @@
         :id='obj.id'
         :name='obj.name'
         :icon='obj.icon'
+        :active='active'
         :iconColor='obj.iconColor'
         :options='options(obj)'
         :help-icons='helpIcons(obj)'
@@ -42,6 +43,7 @@ import { ListIcon } from '../../../interfaces/app'
 export default class ListRenderer extends Vue {
   @Prop({required: true, type: Array}) list!: any[]
   @Prop({required: true, type: String}) group!: string
+  @Prop({required: true, type: String}) active!: string
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({default: () => [], type: Function}) options!: (obj: any) => ListIcon[]
   @Prop({default: () => [], type: Function}) helpIcons!: (obj: any) => ListIcon[]

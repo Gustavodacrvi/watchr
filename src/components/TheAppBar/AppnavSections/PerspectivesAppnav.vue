@@ -1,5 +1,5 @@
 <template>
-  <span class='txt'>
+  <div>
     <appnav-header
       name='PERSPECTIVES'
       :show-title='selected.length === 0'
@@ -11,10 +11,11 @@
       :list='sortedSmartPerspectives'
       :options='getOptions'
       :help-icons='helpIcons'
+      :active='active'
       @update='onUpdate'
       @selected='v => selected = v'
     />
-  </span>
+  </div>
 </template>
 
 <script lang='ts'>
@@ -36,6 +37,8 @@ const persVuex = namespace('perspective')
   },
 })
 export default class OverviewAppnav extends Vue {
+  @State perspectiveData!: SmartPerspective
+
   @persVuex.State smartOrder!: SmartPerspective[]
   @persVuex.Getter sortedSmartPerspectives!: SmartPerspective[]
   @persVuex.Action saveSmartOrder!: (ids: string[]) => void
@@ -86,6 +89,12 @@ export default class OverviewAppnav extends Vue {
         size: 'xs',
       })
     return icons
+  }
+
+  get active(): string {
+    if (this.perspectiveData)
+      return this.perspectiveData.name
+    return ''
   }
 }
 

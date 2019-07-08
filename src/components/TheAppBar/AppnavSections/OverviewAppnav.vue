@@ -1,5 +1,5 @@
 <template>
-  <span class='txt'>
+  <div>
     <appnav-header
       name='OVERVIEW'
       :show-title='true'
@@ -10,8 +10,9 @@
       group='appnavOverview'
       :disabled='true'
       :list='pinedSmartPerspectives'
+      :active='active'
     />
-  </span>
+  </div>
 </template>
 
 <script lang='ts'>
@@ -33,6 +34,8 @@ const persVuex = namespace('perspective')
   },
 })
 export default class OverviewAppnav extends Vue {
+  @State appViewComponent!: string
+  @State perspectiveData!: SmartPerspective
   @Mutation pushAppView!: (compName: string) => void
   @Mutation pushPerspective!: (payload?: any) => void  
 
@@ -43,6 +46,12 @@ export default class OverviewAppnav extends Vue {
       this.pushAppView('PerspectiveAppview')
       this.pushPerspective(this.pinedSmartPerspectives[0])
     }
+  }
+
+  get active(): string {
+    if (this.perspectiveData)
+      return this.perspectiveData.name
+    return ''
   }
 }
 
