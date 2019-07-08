@@ -35,6 +35,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { State, Mutation, Getter, namespace } from 'vuex-class'
 
 const persVuex = namespace('perspective')
+const label = namespace('label')
 
 import firebase from 'firebase/app'
 import { Alert } from '../../interfaces/app'
@@ -56,6 +57,7 @@ export default class SigninPopUp extends Vue {
   @Mutation pushAlert!: (alert: Alert) => void
 
   @persVuex.Action addDefaultSmartPerspectives!: (id: string) => void
+  @label.Action addLabelsOrder!: (id: string) => void
 
   email: string | null = null
   password: string | null = null
@@ -79,8 +81,10 @@ export default class SigninPopUp extends Vue {
     else if (this.emailState && this.passwordState && this.confirmPasswordState) {
       this.waitingResponse = true
       auth.createUserWithEmailAndPassword(this.email as any, this.password as any).then((cred: firebase.auth.UserCredential) => {
-        if (cred.user)
+        if (cred.user) {
           this.addDefaultSmartPerspectives(cred.user.uid)
+          this.addLabelsOrder(cred.user.uid)
+        }
         this.pushAlert({
           name: 'You have successfully created an account!',
           duration: 3,

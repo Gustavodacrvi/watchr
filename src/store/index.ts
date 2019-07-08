@@ -15,6 +15,8 @@ const savedTheme: string = localStorage.getItem('watchrTheme') || 'light'
 export interface States {
   theme: string
   popUpComponent: string
+  appViewComponent: string
+  perspectiveData: any
   windowWidth: number
   popUpPayload: any | SimpleAdder
   appBarState: boolean
@@ -39,6 +41,8 @@ interface Mutations {
   saveCurrentUser: (state: States, user: firebase.User) => void
   saveFirestore: (state: States, firestore: firebase.firestore.Firestore) => void
   saveFirebase: (state: States, firebase: any) => void
+  pushAppView: (state: States, comp: string) => void
+  pushPerspective: (state: States, payload?: any) => void
   showApp: () => void
   openAppBar: () => void
   closeAppBar: () => void
@@ -78,11 +82,13 @@ const store: any = new Vuex.Store({
   state: {
     theme: savedTheme,
     popUpComponent: '',
+    appViewComponent: '',
     popUpPayload: null,
     windowWidth: document.body.clientWidth,
     appBarState: false,
     isLogged: false,
     firestore: null,
+    perspectiveData: null,
     isAnonymous: false,
     emailVerified: false,
     loading: true,
@@ -112,7 +118,7 @@ const store: any = new Vuex.Store({
     saveFirebase(state: States, firebase) {
       state.firebase = firebase
     },
-    pushTheme(state: States, theme: string): void {
+    pushTheme(state: States, theme: string) {
       state.theme = theme
       localStorage.setItem('watchrTheme', theme)
     },
@@ -129,27 +135,33 @@ const store: any = new Vuex.Store({
         state.uid = null
       }
     },
-    pushPopUp(state: States, compName: string): void {
+    pushPopUp(state: States, compName: string) {
       state.popUpComponent = compName
       state.popUpPayload = null
     },
-    pushPopUpPayload(state: States, payload: any | SimpleAdder): void {
+    pushPopUpPayload(state: States, payload: any | SimpleAdder) {
       state.popUpPayload = payload
     },
     showApp(state: States) {
       state.loading = false
     },
-    pushAlert(state: States, alert: Alert): void {
+    pushAlert(state: States, alert: Alert) {
       state.alerts.push(alert)
     },
-    hideAlert(state: States): void {
+    hideAlert(state: States) {
       state.showingAlert = false
     },
-    openAppBar(state: States): void {
+    openAppBar(state: States) {
       state.appBarState = true
     },
-    closeAppBar(state: States): void {
+    closeAppBar(state: States) {
       state.appBarState = false
+    },
+    pushAppView(state: States, comp: string) {
+      state.appViewComponent = comp
+    },
+    pushPerspective(state: States, perspective: any) {
+      state.perspectiveData = perspective
     },
   } as Mutations,
   getters: {

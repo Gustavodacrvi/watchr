@@ -33,6 +33,8 @@ interface Actions {
   deleteLabelsById: (context: ActionContext, ids: string[]) => void
   editLabelNameById: (context: ActionContext, obj: {id: string, name: string}) => void
   sortLabelsByName: (context: ActionContext) => void
+  addDefaultSmartLabels: (context: ActionContext) => void
+  addLabelsOrder: (context: ActionContext, id: string) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -142,6 +144,12 @@ export default {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('labels').doc(id).update({
           name,
+        })
+    },
+    addLabelsOrder({ rootState }, id: string) {
+      if (rootState.firestore)
+        rootState.firestore.collection('labelsOrder').doc(id).set({
+          userId: id,
         })
     },
   } as Actions,

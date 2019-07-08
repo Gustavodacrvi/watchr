@@ -131,7 +131,6 @@ interface Section {
 export default class LoggedAppnav extends Vue {
   @State theme!: string
   @State isLogged!: boolean
-  @Mutation pushPopUp!: (compName: string) => void
   @Getter isDesktop!: boolean
 
   @label.Action sortLabelsByName!: () => void
@@ -157,6 +156,10 @@ export default class LoggedAppnav extends Vue {
   ]
   currentSect: string = 'overview'
   options: ListIcon[] = []
+
+  created() {
+    this.currentSect = this.sections[0].comp
+  }
 
   select(comp: Section) {
     this.currentSect = comp.comp

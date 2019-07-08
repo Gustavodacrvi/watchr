@@ -11,7 +11,7 @@
             <the-nav-bar></the-nav-bar>
           </div>
           <transition name='fade' mode='out-in'>
-            <router-view class='content' />
+            <router-view class='content'/>
           </transition>
           <transition name='pop-up-trans' mode='out-in'>
             <pop-up v-if='isShowingPopUp'></pop-up>
