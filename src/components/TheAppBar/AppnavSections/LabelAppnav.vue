@@ -96,7 +96,7 @@ export default class LabelAppnav extends Vue {
   }
 
   get active(): string {
-    if (this.perspectiveData.smartPerspective)
+    if (this.perspectiveData && this.perspectiveData.smartPerspective)
       return this.perspectiveData.name
     return ''
   }

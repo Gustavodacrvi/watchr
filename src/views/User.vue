@@ -94,7 +94,7 @@ export default class Guest extends Mixins(Mixin) {
   }
 
   get getComp() {
-    if (this.perspectiveData.smartPerspective)
+    if (this.perspectiveData && this.perspectiveData.smartPerspective)
       return this.appViewComponent.toLowerCase()
     return this.appViewComponent.toLowerCase()
   }
@@ -121,6 +121,7 @@ export default class Guest extends Mixins(Mixin) {
 
 .view-wrapper.desktop {
   margin-left: 300px;
+  z-index: 20;
 }
 
 .view {

@@ -13,7 +13,16 @@
     <p class='description txt'>
       {{ pers.description }}
     </p>
-    {{getLabels}}
+    <transition-group>
+      <div v-for='tag in getLabels'
+        :key='tag.name'
+      >
+        <view-tag
+          :name='tag.name'
+          icon='tag'
+        />
+      </div>
+    </transition-group>
   </div>
 </template>
 
@@ -23,6 +32,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { State, Getter, namespace } from 'vuex-class'
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
+import Tag from '@/components/AppViews/AppviewComponents/AppviewIcon.vue'
 
 import { SmartPerspective, Label } from '../../interfaces/app'
 
@@ -31,6 +41,7 @@ const labelVuex = namespace('label')
 @Component({
   components: {
     'dynamic-ft-icon': DynamicFontawesome,
+    'view-tag': Tag,
   },
 })
 export default class PerspectiveAppview extends Vue {
