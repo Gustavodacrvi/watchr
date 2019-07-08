@@ -11,7 +11,7 @@
       :list='sortedSmartPerspectives'
       :options='getOptions'
       :help-icons='helpIcons'
-      :active='active'
+      :active='activePerspective'
       @update='onUpdate'
       @selected='v => selected = v'
     />
@@ -21,7 +21,7 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { State, namespace } from 'vuex-class'
+import { State, namespace, Getter } from 'vuex-class'
 
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
@@ -38,6 +38,7 @@ const persVuex = namespace('perspective')
 })
 export default class OverviewAppnav extends Vue {
   @State perspectiveData!: SmartPerspective
+  @Getter activePerspective!: string
 
   @persVuex.State smartOrder!: SmartPerspective[]
   @persVuex.Getter sortedSmartPerspectives!: SmartPerspective[]
@@ -89,12 +90,6 @@ export default class OverviewAppnav extends Vue {
         size: 'xs',
       })
     return icons
-  }
-
-  get active(): string {
-    if (this.perspectiveData && this.perspectiveData.smartPerspective)
-      return this.perspectiveData.name
-    return ''
   }
 }
 

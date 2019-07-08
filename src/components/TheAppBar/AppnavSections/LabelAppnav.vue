@@ -10,7 +10,7 @@
       group='appnavLabels'
       :list='sortedLabels'
       :options='getOptions'
-      :active='active'
+      :active='activePerspective'
       @update='onUpdate'
       @selected='v => selected = v'
     />
@@ -20,7 +20,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { namespace, Mutation, State } from 'vuex-class'
+import { namespace, Mutation, State, Getter } from 'vuex-class'
 
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
@@ -38,6 +38,7 @@ const list = namespace('list')
 })
 export default class LabelAppnav extends Vue {
   @State perspectiveData!: SmartPerspective
+  @Getter activePerspective!: string
   @Mutation pushPopUpPayload!: (obj: SimpleAdder) => void
   @Mutation pushPopUp!: (comp: string) => void
 
@@ -93,12 +94,6 @@ export default class LabelAppnav extends Vue {
         },
       },
     ]
-  }
-
-  get active(): string {
-    if (this.perspectiveData && this.perspectiveData.smartPerspective)
-      return this.perspectiveData.name
-    return ''
   }
 
   onUpdate(ids: string[]) {

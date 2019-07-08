@@ -183,7 +183,7 @@ export default class ListRenderer extends Vue {
 }
 
 .element.light:hover, .sortable-selected.light, .active.light {
-  background-color: #E6E6E6;
+  background-color: #e3e3e3;
 }
 
 .fade {
