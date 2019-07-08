@@ -117,7 +117,6 @@ export default class Guest extends Mixins(Mixin) {
   position: relative;
   height: 100%;
   width: 100%;
-  margin-left: 300px;
 }
 
 .view-wrapper.desktop {
@@ -126,11 +125,11 @@ export default class Guest extends Mixins(Mixin) {
 
 .view {
   height: 10px;
-  margin: 0 10px;
+  margin: 0 15px;
 }
 
 .view.desktop {
-  margin: 0 40px;
+  margin: 0 60px;
 }
 
 .app {
