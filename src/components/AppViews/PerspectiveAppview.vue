@@ -13,16 +13,16 @@
     <p class='description txt'>
       {{ pers.description }}
     </p>
-    <transition-group>
-      <div v-for='tag in getLabels'
-        :key='tag.name'
-      >
-        <view-tag
+    <div class='tags'>
+      <transition-group name='fade'>
+        <view-tag v-for='tag in getLabels'
+          :key='tag.name'
           :name='tag.name'
+          :fixed='tag.fixed'
           icon='tag'
         />
-      </div>
-    </transition-group>
+      </transition-group>
+    </div>
   </div>
 </template>
 
@@ -51,12 +51,13 @@ export default class PerspectiveAppview extends Vue {
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
   labels: string[] = []
-  
+
   get getLabels(): Label[] {
     const labels: any[] = this.getLabelsByIds(this.labels)
     if (this.pers.name === 'Inbox')
       labels.push({
         name: 'Inbox',
+        fixed: true,
       })
     return labels
   }
@@ -76,7 +77,11 @@ export default class PerspectiveAppview extends Vue {
 }
 
 .description {
-  margin: 25px 0;
+  margin: 30px 0;
+}
+
+.tags {
+  margin-bottom: 30px;
 }
 
 .title {

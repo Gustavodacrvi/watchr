@@ -80,6 +80,7 @@ export default class SigninPopUp extends Vue {
       })
     else if (this.emailState && this.passwordState && this.confirmPasswordState) {
       this.waitingResponse = true
+      // tslint:disable-next-line:max-line-length
       auth.createUserWithEmailAndPassword(this.email as any, this.password as any).then((cred: firebase.auth.UserCredential) => {
         if (cred.user) {
           this.addDefaultSmartPerspectives(cred.user.uid)

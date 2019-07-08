@@ -4,7 +4,7 @@
       class='app'
       key='loggedAndVerified'
     >
-      <div class='view-wrapper' :class='platform'>
+      <div class='view-wrapper background-color' :class='[platform, theme]'>
         <div class='view' :class='platform'>
           <transition name='fade'>
             <component :is='getComp' />
@@ -115,8 +115,8 @@ export default class Guest extends Mixins(Mixin) {
 
 .view-wrapper {
   position: relative;
-  height: 100%;
   width: 100%;
+  min-height: 100%;
 }
 
 .view-wrapper.desktop {
@@ -125,7 +125,6 @@ export default class Guest extends Mixins(Mixin) {
 }
 
 .view {
-  height: 10px;
   margin: 0 15px;
 }
 
@@ -136,7 +135,6 @@ export default class Guest extends Mixins(Mixin) {
 .app {
   position: relative;
   width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
 }

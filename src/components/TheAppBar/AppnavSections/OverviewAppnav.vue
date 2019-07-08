@@ -37,7 +37,7 @@ export default class OverviewAppnav extends Vue {
   @State appViewComponent!: string
   @State perspectiveData!: SmartPerspective
   @Mutation pushAppView!: (compName: string) => void
-  @Mutation pushPerspective!: (payload?: any) => void  
+  @Mutation pushPerspective!: (payload?: any) => void
 
   @persVuex.Getter pinedSmartPerspectives!: SmartPerspective[]
 

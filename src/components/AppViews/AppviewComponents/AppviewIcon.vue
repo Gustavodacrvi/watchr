@@ -1,5 +1,5 @@
 <template>
-  <div class='tag' :class='style' @click="$emit('click', {name, icon})">
+  <div class='tag' :class='style' @click='click'>
     <div class='icon'>
       <dynamic-ft-icon
         :icon='icon'
@@ -8,7 +8,14 @@
       />
     </div>
     <div class='name-wrapper'>
-      <span class='name'>{{ name }}</span>
+      <span class='name' :class="{'not-fixed': !fixed}">{{ name }}</span>
+    </div>
+    <div class='icon'>
+      <dynamic-ft-icon
+        icon='thumbtack'
+        size='sm'
+        :style="{color: 'white'}"
+      />
     </div>
   </div>
 </template>
@@ -27,8 +34,16 @@ import FontAwesome from '@/components/DynamicFontawesome.vue'
 export default class AppviewIcon extends Vue {
   @Prop(String) name!: string
   @Prop(String) icon!: string
+  @Prop(Boolean) fixed!: boolean
+
+  click() {
+    if (!this.fixed)
+      this.$emit('click', {name: this.name, icon: this.icon})
+  }
 
   get style() {
+    if (this.name === 'Inbox')
+      return ['smart-tag']
     if (this.icon === 'tag')
       return ['label']
   }
@@ -70,12 +85,19 @@ export default class AppviewIcon extends Vue {
 
 .name {
   position: relative;
-  margin-right: 10px;
   bottom: 1.5px;
+}
+
+.not-fixed {
+  margin-right: 10px;
 }
 
 .label {
   background-color: #FF6B66;
+}
+
+.smart-tag {
+  background-color: #83B7E2;
 }
 
 </style>

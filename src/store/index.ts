@@ -160,8 +160,8 @@ const store: any = new Vuex.Store({
     pushAppView(state: States, comp: string) {
       state.appViewComponent = comp
     },
-    pushPerspective(state: States, perspective: any) {
-      state.perspectiveData = perspective
+    pushPerspective(state: States, pers: any) {
+      state.perspectiveData = pers
     },
   } as Mutations,
   getters: {
