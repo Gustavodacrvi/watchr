@@ -97,7 +97,7 @@ export default class TabSlider extends Vue {
 }
 
 .option.light:hover, .option.light.active {
-  background-color: #E6E6E6;
+  background-color: #e3e3e3;
 }
 
 .content {

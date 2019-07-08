@@ -19,13 +19,19 @@
         />
       </div>
     </div>
+    <div class='margin'></div>
     <p class='description txt'>
       {{ pers.description }}
     </p>
+    <div class='margin'></div>
     <view-tags
       :is-default-perspective='isDefaultPerspective'
       :search='search'
       @clearsearch="v => search = ''"
+    />
+    <div class='margin'></div>
+    <task-adder
+      v-bind='fixedTags'
     />
   </div>
 </template>
@@ -38,6 +44,7 @@ import { State, Getter, namespace } from 'vuex-class'
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
+import TaskAdder from '@/components/AppViews/AppviewComponents/AppviewTaskAdder.vue'
 
 import { SmartPerspective, Label } from '../../interfaces/app'
 
@@ -53,6 +60,7 @@ library.add(faSearch)
     'dynamic-ft-icon': DynamicFontawesome,
     'drop-finder': DropdownFinder,
     'view-tags': AppviewTags,
+    'task-adder': TaskAdder,
   },
 })
 export default class PerspectiveAppview extends Vue {
@@ -64,14 +72,21 @@ export default class PerspectiveAppview extends Vue {
 
   @labelVuex.Getter sortedLabels!: Label[]
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
+
+  get fixedTags() {
+    if (this.isDefaultPerspective && this.pers)
+      return {
+        ['fixed-tag']: this.pers.name,
+      }
+  }
 }
 
 </script>
 
 <style scoped>
 
-.description {
-  margin: 30px 0;
+.margin {
+  height: 30px;
 }
 
 .component {

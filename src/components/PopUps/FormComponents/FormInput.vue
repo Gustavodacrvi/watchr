@@ -21,6 +21,7 @@ export default class FormInput extends Vue {
   @Prop({required: true, type: Number}) max!: number
   @Prop(String) type!: string | null
   @Prop(String) placeholder!: string
+  @Prop(Boolean) disabled!: boolean
 
   model: string | null = null
 
@@ -34,7 +35,7 @@ export default class FormInput extends Vue {
     const length = this.model.length
     return [
       this.theme,
-      {wrong: this.isWrong},
+      {wrong: this.isWrong && !this.disabled},
     ]
   }
   get isWrong() {

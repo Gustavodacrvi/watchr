@@ -45,6 +45,11 @@
   background-color: #fc9c9c;
 }
 
+.button.tiny {
+  width: initial;
+  padding: 6px;
+}
+
 .links {
   display: flex;
   justify-content: space-around;
