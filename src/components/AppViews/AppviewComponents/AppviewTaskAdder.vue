@@ -11,16 +11,29 @@
       </div>
       <div v-else key='showing' class='task-adder'>
         <div>
-          <view-tag v-if='fixedTag'
-            :name='fixedTag'
-            :fixed='true'
-            icon='tag'
-            back-color='#83B7E2'
-          />
+          <div v-if='fixedTag'>
+            <view-tag
+              :name='fixedTag'
+              :fixed='true'
+              icon='tag'
+              back-color='#83B7E2'
+            />
+          </div>
+          <transition name='fade'>
+            <div v-if='priority'>
+              <view-tag v-if='fixedTag'
+                :name='priority'
+                :fixed='false'
+                icon='exclamation'
+                back-color='#70ff66'
+                @click="v => priority = ''"
+              />
+            </div>
+          </transition>
         </div>
         <div class='margin'>
           <form-input
-            placeholder='Do something #label'
+            placeholder='Do something #label !high !medium !low'
             v-model='value'
             :max='200'
             :disabled='true'
@@ -36,10 +49,12 @@
           </view-btn>
           <span class='cancel pointer' @click='showing = false'>Cancel</span>
           <div class='right'>
-            <dynamic-ft-icon
-              class='icon pointer txt'
-              icon='exclamation'
+            <view-options
+              handle='exclamation'
               size='lg'
+              min-width='200px'
+              :options='icons'
+              @click='chosePriority'
             />
           </div>
         </div>
@@ -53,9 +68,12 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
+import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 import Tag from '@/components/AppViews/AppviewComponents/AppviewIcon.vue'
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
+
+import { ListIcon } from '../../../interfaces/app'
 
 @Component({
   components: {
@@ -63,6 +81,7 @@ import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
     'view-tag': Tag,
     'form-input': FormInput,
     'view-btn': FormButton,
+    'view-options': AppviewIconoptions,
   },
 })
 export default class TaskAdder extends Vue {
@@ -70,6 +89,27 @@ export default class TaskAdder extends Vue {
 
   value: string = ''
   showing: boolean = false
+  priority: '' | 'Low priority' | 'High priority' | 'Medium priority' = ''
+  icons: ListIcon[] = [
+    {
+      name: 'High priority',
+      icon: 'exclamation',
+      iconColor: '#FF6B66',
+      size: 'lg',
+    },
+    {
+      name: 'Medium priority',
+      icon: 'exclamation',
+      iconColor: '#fff566',
+      size: 'lg',
+    },
+    {
+      name: 'Low priority',
+      icon: 'exclamation',
+      iconColor: '#70ff66',
+      size: 'lg',
+    },
+  ]
 
   add() {
     if (this.value)
@@ -77,6 +117,9 @@ export default class TaskAdder extends Vue {
         value: this.value,
         fixedTag: this.fixedTag,
       })
+  }
+  chosePriority(priority: 'Low priority' | 'High priority' | 'Medium priority') {
+    this.priority = priority
   }
 }
 
