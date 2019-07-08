@@ -16,16 +16,18 @@
           v-model='search'
           :class='theme'
         >
-        <transition-group name='fade'>
-          <div v-for='el in filteredArray'
-            :key='el'
-            class='element txt round-border'
-            :class='theme'
-            @click='select(el)'
-          >
-            {{ el }}
-          </div>
-        </transition-group>
+        <template v-if='list && list.length > 0'>
+          <transition-group name='fade'>
+            <div v-for='el in filteredArray'
+              :key='el.id'
+              class='element txt round-border'
+              :class='theme'
+              @click='select(el)'
+            >
+              {{ el.name }}
+            </div>
+          </transition-group>
+        </template>
       </div>
     </div>
   </icon-dropdown>
@@ -33,7 +35,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
 import IconDropdown from '@/components/IconDropdown.vue'
@@ -46,8 +48,9 @@ import IconDropdown from '@/components/IconDropdown.vue'
 export default class DropdownFinder extends Vue {
   @State theme!: string
 
+  @Prop(String) value!: string
+  @Prop(Array) list!: Array<{id: string, name: string}>
   @Prop({required: true, type: String}) handle!: string
-  @Prop({required: true, type: Array}) list!: string[]
   @Prop({default: 'lg', type: String}) size!: string
   @Prop({default: '250px', type: String}) minWidth!: string
   @Prop({default: false, type: Boolean}) changeColorOnHover!: boolean
@@ -55,14 +58,27 @@ export default class DropdownFinder extends Vue {
 
   search: string | null = null
 
-  select(value: string) {
+  select(value: {id: string, name: string}) {
     this.$emit('select', value)
   }
 
-  get filteredArray(): string[] {
+  created() {
+    this.search = this.value
+  }
+
+  get filteredArray(): Array<{id: string, name: string}> {
     if (this.search !== null)
-      return this.list.filter(el => el.includes(this.search as any))
+      return this.list.filter(el => el.name.includes(this.search as any))
     return this.list
+  }
+
+  @Watch('search')
+  onChange() {
+    this.$emit('input', this.search)
+  }
+  @Watch('value')
+  onChange2() {
+    this.search = this.value
   }
 }
 

@@ -12,32 +12,58 @@
       <div class='right'>
         <drop-finder
           class='icon pointer txt'
-          handle='tags'
+          handle='search'
           size='lg'
           min-width='300px'
-          :list='labelList'
+          v-model='search'
         />
       </div>
     </div>
     <p class='description txt'>
       {{ pers.description }}
     </p>
-    <div class='tags'>
-      <transition-group name='fade'>
-        <view-tag v-for='tag in getLabels'
-          :key='tag.name'
-          :name='tag.name'
-          :fixed='tag.fixed'
-          icon='tag'
-        />
-      </transition-group>
+    <div class='tags-wrapper'>
+      <div class='tags'>
+        <transition-group name='fade'>
+          <view-tag v-for='tag in getSmartLabels'
+            :key='tag.name'
+            :name='tag.name'
+            :fixed='tag.fixed'
+            icon='tag'
+            back-color='#83B7E2'
+          />
+        </transition-group>
+      </div>
+      <transition name='fade'>
+        <div class='tags' v-if="search && search !== ''">
+          <view-tag
+            icon='search'
+            back-color='#88DDB7'
+            :name='search'
+            :fixed='false'
+            @click="v => search = ''"
+          />
+        </div>
+      </transition>
+      <div class='tags'>
+        <transition-group name='fade'>
+          <view-tag v-for='tag in labels'
+            :key='tag.name'
+            :name='tag.name'
+            :fixed='false'
+            icon='tag'
+            @click='deselect'
+            back-color='#FF6B66'
+          />
+        </transition-group>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { State, Getter, namespace } from 'vuex-class'
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
@@ -47,6 +73,11 @@ import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFind
 import { SmartPerspective, Label } from '../../interfaces/app'
 
 const labelVuex = namespace('label')
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faSearch)
 
 @Component({
   components: {
@@ -62,19 +93,28 @@ export default class PerspectiveAppview extends Vue {
   @labelVuex.Getter sortedLabels!: Label[]
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
-  labels: string[] = []
+  labels: Label[] = []
+  search: string = ''
 
-  get getLabels(): Label[] {
-    const labels: any[] = this.getLabelsByIds(this.labels)
+  select(lab: Label) {
+    if (!this.labels.find(el => el.id === lab.id))
+      this.labels.push(lab)
+  }
+  deselect({name, icon}: {name: string, icon: string}) {
+    if (icon === 'tag') {
+      const index = this.labels.findIndex(el => el.name === name)
+      this.labels.splice(index, 1)
+    }
+  }
+
+  get getSmartLabels(): Label[] {
+    const labels: any[] = []
     if (this.pers.name === 'Inbox')
       labels.push({
         name: 'Inbox',
         fixed: true,
       })
     return labels
-  }
-  get labelList(): string[] {
-    return this.sortedLabels.map(el => el.name)
   }
 }
 
@@ -101,8 +141,16 @@ export default class PerspectiveAppview extends Vue {
   margin: 30px 0;
 }
 
-.tags {
+.tags-wrapper {
   margin-bottom: 30px;
+}
+
+.tags + .tags {
+  margin-top: 6px;
+}
+
+.tag + .tag {
+  margin-left: 4px;
 }
 
 .title {
