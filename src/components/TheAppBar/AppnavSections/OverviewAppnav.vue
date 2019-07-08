@@ -36,17 +36,8 @@ const persVuex = namespace('perspective')
 export default class OverviewAppnav extends Vue {
   @State appViewComponent!: string
   @State perspectiveData!: SmartPerspective
-  @Mutation pushAppView!: (compName: string) => void
-  @Mutation pushPerspective!: (payload?: any) => void
 
   @persVuex.Getter pinedSmartPerspectives!: SmartPerspective[]
-
-  created() {
-    if (!this.pinedSmartPerspectives[0].smartPerspective) {
-      this.pushAppView('PerspectiveAppview')
-      this.pushPerspective(this.pinedSmartPerspectives[0])
-    }
-  }
 
   get active(): string {
     if (this.perspectiveData && this.perspectiveData.smartPerspective)

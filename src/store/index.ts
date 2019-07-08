@@ -58,6 +58,7 @@ interface Getters {
   loggedAndVerified: () => boolean
   loggedAndNotVerified: () => boolean
   anonymous: () => boolean
+  isDefaultPerspective: () => boolean
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
 }
 
@@ -188,6 +189,12 @@ const store: any = new Vuex.Store({
     },
     anonymous(state: States) {
       return state.isLogged && state.isAnonymous
+    },
+    isDefaultPerspective(state: States) {
+      if (state.perspectiveData)
+        if (state.perspectiveData.name === 'Inbox')
+          return true
+      return false
     },
   } as Getters,
   actions: {

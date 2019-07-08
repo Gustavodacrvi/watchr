@@ -53,13 +53,15 @@
 <script lang="ts">
 
 import { Component, Prop, Watch, Mixins } from 'vue-property-decorator'
-import { Mutation, Getter, State } from 'vuex-class'
+import { Mutation, Getter, State, namespace } from 'vuex-class'
 import Mixin from '@/mixins/navBar'
 
 import appUtils from '@/utils/app'
 
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 import { SmartPerspective } from '../interfaces/app'
+
+const persVuex = namespace('perspective')
 
 @Component({
   components: {
@@ -79,11 +81,19 @@ export default class Guest extends Mixins(Mixin) {
   @Getter platform!: boolean
   @Mutation openAppBar!: () => void
   @Mutation closeAppBar!: () => void
+  @Mutation pushAppView!: (compName: string) => void
+  @Mutation pushPerspective!: (payload?: any) => void
+
+  @persVuex.Getter pinedSmartPerspectives!: SmartPerspective[]
 
   waitingResponse: boolean = false
 
   created() {
     this.open()
+    if (!this.pinedSmartPerspectives[0].smartPerspective) {
+      this.pushAppView('PerspectiveAppview')
+      this.pushPerspective(this.pinedSmartPerspectives[0])
+    }
   }
 
   open() {
