@@ -57,6 +57,6 @@ export interface Task {
   userId: string
   id: string
   name: string
-  priority: 'no' | 'high' | 'medium' | 'low'
+  priority: 'Low priority' | 'High priority' | 'Medium priority' | ''
   labels: string[]
 }

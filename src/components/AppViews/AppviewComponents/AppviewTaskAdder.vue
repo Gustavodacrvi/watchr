@@ -66,6 +66,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { namespace } from 'vuex-class'
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
@@ -73,7 +74,9 @@ import Tag from '@/components/AppViews/AppviewComponents/AppviewIcon.vue'
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
-import { ListIcon } from '../../../interfaces/app'
+import { ListIcon, Task } from '../../../interfaces/app'
+
+const taskVuex = namespace('task')
 
 @Component({
   components: {
@@ -87,6 +90,8 @@ import { ListIcon } from '../../../interfaces/app'
 export default class TaskAdder extends Vue {
   @Prop() fixedTag!: string
   @Prop({default: false}) allowPriority!: boolean
+
+  @taskVuex.Action addTask!: (task: Task) => void
 
   value: string = ''
   showing: boolean = false
@@ -114,10 +119,11 @@ export default class TaskAdder extends Vue {
 
   add() {
     if (this.value)
-      this.$emit('add', {
-        value: this.value,
-        fixedTag: this.fixedTag,
-      })
+      this.addTask({
+        name: this.value,
+        priority: this.priority,
+      } as any)
+    this.value = ''
   }
   chosePriority(priority: 'Low priority' | 'High priority' | 'Medium priority') {
     this.priority = priority
