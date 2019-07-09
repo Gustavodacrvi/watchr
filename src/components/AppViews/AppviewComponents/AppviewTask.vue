@@ -1,6 +1,6 @@
 <template>
   <div class='task round-border' :class='theme'>
-    <div class='content'>
+    <div class='content' @click='toggleElement'>
       <span class='txt'>{{ task.name }}</span>
       <dynamic-ft-icon v-if='task.priority'
         class='content-icon'
@@ -16,7 +16,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
 import FontAwesome from '@/components/DynamicFontawesome.vue'
@@ -29,9 +29,21 @@ import { Task } from '../../../interfaces/app'
   },
 })
 export default class AppviewTask extends Vue {
-  @State theme!: string
-  
   @Prop(Object) task!: Task
+  @Prop(Boolean) deselectAll!: boolean
+  
+  @State theme!: string
+
+  clicked: boolean = false
+
+  toggleElement() {
+    this.clicked = !this.clicked
+    const el: HTMLElement = this.$el as HTMLElement
+    this.$emit('toggle', {
+      el,
+      select: this.clicked,
+    })
+  }
 
   get exclamationColor() {
     switch (this.task.priority) {
@@ -39,6 +51,11 @@ export default class AppviewTask extends Vue {
       case 'Medium priority': return '#fff566'
       case 'High priority': return '#FF6B66'
     }
+  }
+
+  @Watch('deselectAll')
+  onChange() {
+    this.clicked = false
   }
 }
 
@@ -58,6 +75,14 @@ export default class AppviewTask extends Vue {
   margin-left: 6px;
   display: flex;
   align-items: center;
+}
+
+.sortable-selected.light {
+  background-color: #ffbfbd;
+}
+
+.sortable-selected.dark {
+  background-color: #3B2B2A;
 }
 
 .task.light:hover {

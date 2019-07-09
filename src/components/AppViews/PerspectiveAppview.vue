@@ -45,6 +45,10 @@
     <div class='margin'></div>
     <task-renderer
       :tasks='getTasks'
+      group='inbox'
+      id='appnavinbox'
+      @update='onUpdate'
+      @selected='onSelect'
     />
     <task-adder
       v-bind='fixedTags'
@@ -133,6 +137,12 @@ export default class PerspectiveAppview extends Vue {
 
   selectPriority(value: string) {
     this.priority = value
+  }
+  onUpdate(ids: string) {
+    console.log('update', ids)
+  }
+  onSelect(ids: string) {
+    console.log('select', ids)
   }
 
   get fixedTags() {
