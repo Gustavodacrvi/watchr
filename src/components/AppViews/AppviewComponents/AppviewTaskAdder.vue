@@ -131,7 +131,7 @@ export default class TaskAdder extends Vue {
 
   @Watch('value')
   onValue() {
-    if (this.allowPriority) {
+    if (this.allowPriority)
       if (this.value.includes(' !high')) {
         this.priority = 'High priority'
         this.value = this.value.replace(' !high', '')
@@ -142,7 +142,6 @@ export default class TaskAdder extends Vue {
         this.priority = 'Low priority'
         this.value = this.value.replace(' !low', '')
       }
-    }
   }
 }
 

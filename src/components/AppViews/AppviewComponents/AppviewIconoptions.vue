@@ -56,7 +56,7 @@ library.add(faExclamation)
 })
 export default class AppviewIconoptions extends Vue {
   @State theme!: string
-  
+
   @Prop(String) handle!: string
   @Prop(String) size!: string
   @Prop(String) minWidth!: string
@@ -65,7 +65,7 @@ export default class AppviewIconoptions extends Vue {
   optionClick(value: string, callback?: () => void) {
     this.$emit('click', value)
     if (callback)
-      callback
+      callback()
   }
 }
 
