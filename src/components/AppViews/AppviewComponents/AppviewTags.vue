@@ -1,16 +1,21 @@
 <template>
   <div class='tags-wrapper'>
-    <div class='tags' v-if='isDefaultPerspective'>
-      <view-tag
-        :name='pers.name'
-        :fixed='true'
-        icon='tag'
-        back-color='#83B7E2'
-      />
-    </div>
     <transition name='fade'>
-      <div class='tags' v-if="search && search !== ''">
-        <view-tag
+      <div class='tags'>
+        <view-tag v-if='isDefaultPerspective'
+          :name='pers.name'
+          :fixed='true'
+          icon='tag'
+          back-color='#83B7E2'
+        />
+        <view-tag v-if="priority && priority !== ''"
+          icon='exclamation'
+          back-color='#70ff66'
+          :name='priority'
+          :fixed='false'
+          @click="$emit('clearpriority')"
+        />
+        <view-tag v-if="search && search !== ''"
           icon='search'
           back-color='#88DDB7'
           :name='search'
@@ -39,7 +44,7 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
-import Tag from '@/components/AppViews/AppviewComponents/AppviewIcon.vue'
+import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 import { Label, SmartPerspective } from '../../../interfaces/app'
 
 @Component({
@@ -51,6 +56,7 @@ export default class AppviewTags extends Vue {
   @State('perspectiveData') pers!: SmartPerspective
 
   @Prop(String) search!: string
+  @Prop(String) priority!: string
   @Prop(Boolean) isDefaultPerspective!: boolean
 
   labels: Label[] = []
@@ -72,7 +78,7 @@ export default class AppviewTags extends Vue {
 <style scoped>
 
 .tags-wrapper {
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
 .tags + .tags {

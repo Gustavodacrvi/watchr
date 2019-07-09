@@ -1,7 +1,11 @@
 <template>
   <div>
-    <view-task
-    />
+    <transition-group name='fade'>
+      <view-task v-for='task in tasks'
+        :key='task.id'
+        :task='task'
+      />
+    </transition-group>
   </div>
 </template>
 

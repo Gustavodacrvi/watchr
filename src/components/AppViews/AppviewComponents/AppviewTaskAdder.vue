@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class='wrapper'>
     <transition name='fade' mode='out-in'>
       <div v-if='!showing' @click='showing = true' key='notshowing' class='msg'>
         <dynamic-ft-icon
@@ -70,7 +70,7 @@ import { namespace } from 'vuex-class'
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
-import Tag from '@/components/AppViews/AppviewComponents/AppviewIcon.vue'
+import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
@@ -148,6 +148,10 @@ export default class TaskAdder extends Vue {
 </script>
 
 <style scoped>
+
+.wrapper {
+  margin-top: 30px;
+}
 
 .right {
   position: absolute;
