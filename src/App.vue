@@ -121,6 +121,7 @@ export default class App extends Vue {
     if (this.loggedAndVerified || this.anonymous) {
       this.$store.dispatch('label/getData')
       this.$store.dispatch('perspective/getData')
+      this.$store.dispatch('task/getData')
     }
   }
 }

@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import label from '@/store/label'
 import perspective from '@/store/perspective'
+import task from '@/store/task'
 
 const MAX_MOBILE_SCREEN_WIDTH = 824
 
@@ -79,7 +80,7 @@ interface Actions {
 
 const store: any = new Vuex.Store({
   modules: {
-    label, perspective,
+    label, perspective, task,
   } as any,
   state: {
     theme: savedTheme,

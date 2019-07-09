@@ -30,8 +30,12 @@
       @clearsearch="v => search = ''"
     />
     <div class='margin'></div>
+    <task-renderer
+      :tasks='getTasks'
+    />
     <task-adder
       v-bind='fixedTags'
+      :allow-priority='true'
     />
   </div>
 </template>
@@ -45,10 +49,12 @@ import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
 import TaskAdder from '@/components/AppViews/AppviewComponents/AppviewTaskAdder.vue'
+import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
 
-import { SmartPerspective, Label } from '../../interfaces/app'
+import { SmartPerspective, Label, Task } from '../../interfaces/app'
 
 const labelVuex = namespace('label')
+const taskVuex = namespace('task')
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
@@ -61,12 +67,15 @@ library.add(faSearch)
     'drop-finder': DropdownFinder,
     'view-tags': AppviewTags,
     'task-adder': TaskAdder,
+    'task-renderer': AppviewTaskrenderer,
   },
 })
 export default class PerspectiveAppview extends Vue {
   @State('perspectiveData') pers!: SmartPerspective
   @Getter isDesktop!: boolean
   @Getter isDefaultPerspective!: boolean
+
+  @taskVuex.State tasks!: Task[]
 
   search: string = ''
 
@@ -78,6 +87,10 @@ export default class PerspectiveAppview extends Vue {
       return {
         ['fixed-tag']: this.pers.name,
       }
+  }
+  get getTasks() {
+    if (this.pers && this.isDefaultPerspective && this.pers.name === 'Inbox')
+      return this.tasks.filter(el => el.labels.length === 0)
   }
 }
 

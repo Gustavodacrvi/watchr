@@ -39,6 +39,7 @@ export interface SmartPerspective {
   description: string
   order: string[]
   smartPerspective: boolean,
+  priority: 'Low priority' | 'High priority' | 'Medium priority' | ''
   excludeSmartLabels: string[]
   includeSmartLabels: string[]
   excludeCustomLabels: string[]
@@ -51,4 +52,12 @@ export interface ListIcon {
   size: string
   name?: string
   callback?: (...arr: any[]) => void
+}
+
+export interface Task {
+  userId: string
+  id: string
+  name: string
+  priority: 'Low priority' | 'High priority' | 'Medium priority' | ''
+  labels: string[]
 }
