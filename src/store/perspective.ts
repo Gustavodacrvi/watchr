@@ -166,6 +166,7 @@ export default {
             description: '',
             order: [],
             smartPerspective: per.smartPerspective,
+            priority: '',
             excludeSmartLabels: [],
             includeSmartLabels: [],
             excludeCustomLabels: [],

@@ -8,7 +8,7 @@ interface States {
 }
 
 interface Getters {
-
+  inboxTasks: () => Task[]
 }
 
 interface Mutations {
@@ -31,13 +31,15 @@ interface Actions {
 export default {
   namespaced: true,
   state: {
-
+    tasks: [],
   } as States,
   mutations: {
 
   } as Mutations,
   getters: {
-
+    inboxTasks(state: States) {
+      return state.tasks.filter(el => el.labels.length === 0)
+    },
   } as Getters,
   actions: {
     getData({ rootState, state }) {

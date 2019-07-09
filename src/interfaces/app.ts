@@ -39,6 +39,7 @@ export interface SmartPerspective {
   description: string
   order: string[]
   smartPerspective: boolean,
+  priority: 'Low priority' | 'High priority' | 'Medium priority' | ''
   excludeSmartLabels: string[]
   includeSmartLabels: string[]
   excludeCustomLabels: string[]
