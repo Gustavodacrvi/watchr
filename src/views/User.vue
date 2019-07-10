@@ -7,7 +7,7 @@
       <div class='view-wrapper background-color' :class='[platform, theme]'>
         <div class='view' :class='platform'>
           <transition name='fade'>
-            <component :is='getComp' />
+            <component :is='appViewComponent'/>
           </transition>
         </div>
       </div>
@@ -59,21 +59,22 @@ import Mixin from '@/mixins/navBar'
 import appUtils from '@/utils/app'
 
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
-import { SmartPerspective } from '../interfaces/app'
+import { Perspective } from '../interfaces/app'
 
 const persVuex = namespace('perspective')
 
 @Component({
   components: {
     'tab-slider': appUtils.AsyncComponent(import('@/components/SlidersAndMenus/TabSlider.vue')),
-    'perspectiveappview': appUtils.AsyncComponent(import('@/components/AppViews/PerspectiveAppview.vue')),
+    'perspective-appview': appUtils.AsyncComponent(import('@/components/AppViews/PerspectiveAppview.vue')),
+    'appview-inbox': appUtils.AsyncComponent(import('@/components/AppViews/AppviewInbox.vue')),
     'form-button': FormButton,
   },
 })
 export default class Guest extends Mixins(Mixin) {
   @State theme!: string
   @State appViewComponent!: string
-  @State perspectiveData!: SmartPerspective
+  @State perspectiveData!: Perspective
   @Getter loggedAndVerified!: boolean
   @Getter loggedAndNotVerified!: boolean
   @Getter anonymous!: boolean
@@ -84,16 +85,16 @@ export default class Guest extends Mixins(Mixin) {
   @Mutation pushAppView!: (compName: string) => void
   @Mutation pushPerspective!: (payload?: any) => void
 
-  @persVuex.Getter pinedSmartPerspectives!: SmartPerspective[]
+  @persVuex.Getter pinedSmartPerspectives!: Perspective[]
 
   waitingResponse: boolean = false
 
   created() {
     this.open()
-    if (!this.pinedSmartPerspectives[0].smartPerspective) {
-      this.pushAppView('PerspectiveAppview')
-      this.pushPerspective(this.pinedSmartPerspectives[0])
-    }
+    if (this.pinedSmartPerspectives[0].isSmart)
+      this.pushAppView('appview-' + this.pinedSmartPerspectives[0].name.toLowerCase())
+    else this.pushAppView('perspective-appview')
+    this.pushPerspective(this.pinedSmartPerspectives[0])
   }
 
   open() {
@@ -101,12 +102,6 @@ export default class Guest extends Mixins(Mixin) {
       this.openAppBar()
     else if (this.isDesktop)
       this.closeAppBar()
-  }
-
-  get getComp() {
-    if (this.perspectiveData && this.perspectiveData.smartPerspective)
-      return this.appViewComponent.toLowerCase()
-    return this.appViewComponent.toLowerCase()
   }
 
   @Watch('isDesktop')

@@ -16,4 +16,13 @@ export default {
   snakeToCamel(s: string) {
     return s.replace(/(\-\w)/g, (m: any) => m[1].toUpperCase())
   },
+  sortArrayByIds(arr: Array<{id: string, [key: string]: any}>, order: string[]): any[] {
+    const sorted: any[] = []
+      for (const id of order) {
+        const lab: any | undefined = arr.find(el => el.id === id)
+        if (lab)
+          sorted.push(lab)
+      }
+      return sorted
+  },
 }

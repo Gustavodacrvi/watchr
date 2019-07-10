@@ -82,10 +82,12 @@ import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue
 import TaskAdder from '@/components/AppViews/AppviewComponents/AppviewTaskAdder.vue'
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
 
-import { SmartPerspective, Label, Task, ListIcon } from '../../interfaces/app'
+import { Perspective, Label, Task, ListIcon } from '../../interfaces/app'
+import appUtils from '@/utils/app'
 
 const labelVuex = namespace('label')
 const taskVuex = namespace('task')
+const persVuex = namespace('perspective')
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
@@ -103,7 +105,7 @@ library.add(faSearch)
   },
 })
 export default class PerspectiveAppview extends Vue {
-  @State('perspectiveData') pers!: SmartPerspective
+  @State('perspectiveData') pers!: Perspective
   @Getter isDesktop!: boolean
   @Getter isDefaultPerspective!: boolean
 
@@ -111,6 +113,8 @@ export default class PerspectiveAppview extends Vue {
 
   @labelVuex.Getter sortedLabels!: Label[]
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
+
+  @persVuex.Action saveTaskOrder!: (obj: {id: string, order: string[], collection: string}) => void
 
   search: string = ''
   priority: string = ''
@@ -151,10 +155,46 @@ export default class PerspectiveAppview extends Vue {
         ['fixed-tag']: this.pers.name,
       }
   }
-  get getTasks() {
-    let tasks: Task[] = this.tasks
+  get viewTasks(): Task[] {
     if (this.pers && this.isDefaultPerspective && this.pers.name === 'Inbox')
-      tasks = tasks.filter(el => el.labels.length === 0)
+      return this.tasks.filter(el => el.labels.length === 0)
+    return this.tasks
+  }
+  get sortedTasks(): Task[] {
+    if (this.pers) {
+      const tasks = this.viewTasks
+      const order = this.pers.order
+      let orderChanged: boolean = false
+      for (const task of tasks)
+        if (!order.includes(task.id)) {
+          order.push(task.id)
+          orderChanged = true
+        }
+      
+      const idsToRemove: string[] = []
+      for (const id of order) {
+        const task = tasks.find(el => el.id === id)
+        if (!task) {
+          orderChanged = true
+          idsToRemove.push(id)
+        }
+      }
+      for (const id of idsToRemove) {
+        const index = order.indexOf(id)
+        order.splice(index, 1)
+      }
+      if (orderChanged)
+        this.saveTaskOrder({
+          id: this.pers.id,
+          collection: this.pers.isSmart || this.pers.name === 'Inbox' ? 'smartPerspectives' : 'customPerspectives',
+          order,
+        })
+      return appUtils.sortArrayByIds(tasks, order)
+    }
+    return []
+  }
+  get getTasks(): Task[] {
+    let tasks: Task[] = this.sortedTasks
     if (this.search)
       tasks = tasks.filter(el => el.name.includes(this.search))
     if (this.priority)

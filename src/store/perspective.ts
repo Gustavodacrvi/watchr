@@ -1,11 +1,12 @@
 
-import { SmartPerspective } from '@/interfaces/app'
+import { Perspective } from '@/interfaces/app'
 
 import { States as RootState } from '@/store/index'
+import appUtils from '@/utils/app'
 
 interface States {
-  smartPerspectives: SmartPerspective[]
-  customPerspectives: SmartPerspective[]
+  smartPerspectives: Perspective[]
+  customPerspectives: Perspective[]
   smartOrder: string[]
   customOrder: string[]
 }
@@ -33,6 +34,7 @@ interface Actions {
   addDefaultSmartPerspectives: (context: ActionContext, id: string) => void
   saveSmartOrder: (context: ActionContext, ids: string[]) => void
   togglePerspectivesPin: (context: ActionContext, arr: Array<{id: string, pin: boolean}>) => void
+  saveTaskOrder: (context: ActionContext, obj: {id: string, order: string[], collection: string}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -48,17 +50,11 @@ export default {
 
   } as Mutations,
   getters: {
-    sortedSmartPerspectives(state: States): SmartPerspective[] {
-      const sorted: SmartPerspective[] = []
-      for (const id of state.smartOrder) {
-        const lab: SmartPerspective | undefined = state.smartPerspectives.find(el => el.id === id)
-        if (lab)
-          sorted.push(lab)
-      }
-      return sorted
+    sortedSmartPerspectives(state: States): Perspective[] {
+      return appUtils.sortArrayByIds(state.smartPerspectives, state.smartOrder)
     },
-    pinedSmartPerspectives(state: States, getters: Getters): SmartPerspective[] {
-      const pers: SmartPerspective[] = getters.sortedSmartPerspectives as any
+    pinedSmartPerspectives(state: States, getters: Getters): Perspective[] {
+      const pers: Perspective[] = getters.sortedSmartPerspectives as any
       return pers.filter(el => el.pin)
     },
   } as Getters,
@@ -93,6 +89,12 @@ export default {
 
         batch.commit()
       }
+    },
+    saveTaskOrder({ rootState, state }, {id, order, collection}) {
+      if (rootState.firestore && rootState.uid) 
+        rootState.firestore.collection('customPerspectives').doc(id).update({
+          order: order,
+        })
     },
     getData({ rootState, state, dispatch }) {
       if (rootState.firestore && rootState.uid) {
@@ -129,7 +131,7 @@ export default {
             name: 'Today',
             pin: true,
             numberOfTasks: true,
-            smartPerspective: true,
+            isSmart: true,
             icon: 'star',
             iconColor: '#FFE366',
           },
@@ -138,7 +140,7 @@ export default {
             pin: true,
             numberOfTasks: true,
             icon: 'inbox',
-            smartPerspective: false,
+            isSmart: true,
             iconColor: '#83B7E2',
             description: `All of your inbox tasks will be shown here.`,
           },
@@ -146,7 +148,7 @@ export default {
             name: 'Upcoming',
             pin: true,
             numberOfTasks: false,
-            smartPerspective: false,
+            isSmart: false,
             icon: 'calendar-alt',
             iconColor: '#FF6B66',
           },
@@ -165,15 +167,13 @@ export default {
             iconColor: per.iconColor,
             description: '',
             order: [],
-            smartPerspective: per.smartPerspective,
+            isSmart: per.isSmart,
             priority: '',
             excludeSmartLabels: [],
             includeSmartLabels: [],
             excludeCustomLabels: [],
             includeCustomLabels: [],
           }
-          if (per.smartPerspective)
-            obj.includeSmartLabels.push(per.name)
           if (per.description)
             obj.description = per.description
           batch.set(ref, obj)
