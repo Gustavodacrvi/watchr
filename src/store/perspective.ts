@@ -116,7 +116,6 @@ export default {
               const index = state.smartPerspectives.findIndex(el => el.id === change.doc.id)
               state.smartPerspectives.splice(index, 1)
             } else {
-              console.log(3)
               const index = state.smartPerspectives.findIndex(el => el.id === change.doc.id)
               state.smartPerspectives.splice(index, 1, {...change.doc.data(), id: change.doc.id} as any)
             }

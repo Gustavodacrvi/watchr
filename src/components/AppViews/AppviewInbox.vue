@@ -177,7 +177,43 @@ export default class PerspectiveAppview extends Vue {
         collection: 'smartPerspectives',
       })
     } else if (value === 'Sort inbox tasks by priority') {
-
+      const tasks = this.viewTasks
+      tasks.sort((a, b) => {
+        let priA = a.priority
+        let priB = b.priority
+        switch (priA) {
+          case 'Low priority':
+            switch (priB) {
+              case 'Low priority': return 0
+              case 'Medium priority': return 1
+              case 'High priority': return 1
+              default: return -1
+            }
+          case 'Medium priority':
+            switch (priB) {
+              case 'Medium priority': return 0
+              case 'High priority': return 1
+              case 'Low priority': return -1
+              default: return -1
+            }
+          case 'High priority':
+            switch (priB) {
+              case 'High priority': return 0
+              case 'Low priority': return -1
+              case 'Medium priority': return -1
+              default: return -1
+            }
+        }
+        return 0
+      })
+      const ids: string[] = []
+      for (const el of tasks)
+        ids.push(el.id)
+      this.saveTaskOrder({
+        id: this.activePers.id,
+        order: ids,
+        collection: 'smartPerspectives',
+      })
     }
   }
   onUpdate(ids: string[]) {
