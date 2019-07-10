@@ -205,36 +205,5 @@ export default class PerspectiveAppview extends Vue {
 
 </script>
 
-<style scoped>
-
-.margin {
-  height: 25px;
-}
-
-.component {
-  padding-top: 20px;
-}
-
-.header {
-  position: relative;
-}
-
-.right {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  display: flex;
-}
-
-.header-option {
-  margin-right: 10px;
-}
-
-.title {
-  font-size: 1.5em;
-  margin-left: 12px;
-  color: #FF6B66;
-}
-
+<style scoped src='@/assets/css/appView.css'>
 </style>

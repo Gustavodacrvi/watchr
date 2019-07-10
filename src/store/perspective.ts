@@ -92,7 +92,7 @@ export default {
     },
     saveTaskOrder({ rootState, state }, {id, order, collection}) {
       if (rootState.firestore && rootState.uid) 
-        rootState.firestore.collection('customPerspectives').doc(id).update({
+        rootState.firestore.collection(collection).doc(id).update({
           order: order,
         })
     },
