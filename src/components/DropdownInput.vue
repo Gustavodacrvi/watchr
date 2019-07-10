@@ -51,6 +51,7 @@ interface RefsPositions {
 @Component
 export default class DropdownInput extends Vue {
   @State theme!: string
+  @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({default: null, type: String}) input!: string
   @Prop({default: () => [], type: Array}) values!: string[]
   @Prop({type: String}) tabindex!: string
@@ -140,7 +141,7 @@ export default class DropdownInput extends Vue {
   get inputClass() {
     return [
       this.theme,
-      {wrong: this.hasError},
+      {wrong: this.hasError && !this.disabled},
     ]
   }
   get attrs() {
