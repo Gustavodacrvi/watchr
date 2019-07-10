@@ -141,8 +141,12 @@ export default class PerspectiveAppview extends Vue {
   selectPriority(value: string) {
     this.priority = value
   }
-  onUpdate(ids: string) {
-    console.log('update', ids)
+  onUpdate(ids: string[]) {
+    this.saveTaskOrder({
+      id: this.pers.id,
+      order: ids,
+      collection: 'smartPerspectives',
+    })
   }
   onSelect(ids: string) {
     console.log('select', ids)

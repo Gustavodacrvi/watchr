@@ -78,11 +78,11 @@ export default class AppviewTask extends Vue {
 }
 
 .sortable-selected.light {
-  background-color: #ffbfbd;
+  background-color: #ffbfbd !important;
 }
 
 .sortable-selected.dark {
-  background-color: #3B2B2A;
+  background-color: #3B2B2A !important;
 }
 
 .task.light:hover {
