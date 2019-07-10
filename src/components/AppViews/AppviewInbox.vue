@@ -2,12 +2,12 @@
   <div class='component'>
     <div class='header'>
       <dynamic-ft-icon
-        :icon='pers.icon'
-        :style='{color: pers.iconColor}'
+        :icon='activePers.icon'
+        :style='{color: activePers.iconColor}'
         size='2x'
       />
       <span class='title'>
-        {{ pers.name }}
+        {{ activePers.name }}
       </span>
       <div class='right'>
         <span class='header-option'>
@@ -28,11 +28,20 @@
             @click='selectPriority'
           />
         </span>
+        <span class='header-options'>
+          <icon-options
+            handle='ellipsis-h'
+            size='lg'
+            min-width='300px'
+            :options='settingsOptions'
+            @click='selectSettingsOption'
+          />
+        </span>
       </div>
     </div>
     <div class='margin'></div>
     <p class='description txt'>
-      {{ pers.description }}
+      {{ activePers.description }}
     </p>
     <div class='margin'></div>
     <view-tags
@@ -90,9 +99,9 @@ const taskVuex = namespace('task')
 const persVuex = namespace('perspective')
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faSearch)
+library.add(faSearch, faEllipsisH)
 
 @Component({
   components: {
@@ -105,7 +114,7 @@ library.add(faSearch)
   },
 })
 export default class PerspectiveAppview extends Vue {
-  @State('perspectiveData') pers!: Perspective
+  @Getter activePers!: Perspective
   @Getter isDesktop!: boolean
 
   @taskVuex.State tasks!: Task[]
@@ -137,28 +146,58 @@ export default class PerspectiveAppview extends Vue {
       size: 'lg',
     }, 
   ]
+  settingsOptions: ListIcon[] = [
+   {
+      name: 'Sort inbox tasks by name',
+      icon: 'sort-alpha-down',
+      iconColor: '',
+      size: 'lg',
+    },
+    {
+      name: 'Sort inbox tasks by priority',
+      icon: 'exclamation',
+      iconColor: '',
+      size: 'lg',
+    },
+  ]
 
   selectPriority(value: string) {
     this.priority = value
   }
+  selectSettingsOption(value: string) {
+    if (value === 'Sort inbox tasks by name') {
+      const tasks: Task[] = this.viewTasks
+      tasks.sort((a, b) => a.name.localeCompare(b.name))
+      const ids: string[] = []
+      for (const el of tasks)
+        ids.push(el.id)
+      this.saveTaskOrder({
+        id: this.activePers.id,
+        order: ids,
+        collection: 'smartPerspectives',
+      })
+    } else if (value === 'Sort inbox tasks by priority') {
+
+    }
+  }
   onUpdate(ids: string[]) {
     this.saveTaskOrder({
-      id: this.pers.id,
+      id: this.activePers.id,
       order: ids,
       collection: 'smartPerspectives',
     })
   }
   onSelect(ids: string) {
-    console.log('select', ids)
+
   }
 
   get viewTasks(): Task[] {
     return this.tasks.filter(el => el.labels.length === 0)
   }
   get sortedTasks(): Task[] {
-    if (this.pers) {
+    if (this.activePers) {
       const tasks = this.viewTasks
-      const order = this.pers.order
+      const order = this.activePers.order
       let orderChanged: boolean = false
       for (const task of tasks)
         if (!order.includes(task.id)) {
@@ -180,7 +219,7 @@ export default class PerspectiveAppview extends Vue {
       }
       if (orderChanged)
         this.saveTaskOrder({
-          id: this.pers.id,
+          id: this.activePers.id,
           collection: 'smartPerspectives',
           order,
         })

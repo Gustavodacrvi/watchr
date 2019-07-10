@@ -74,7 +74,6 @@ const persVuex = namespace('perspective')
 export default class Guest extends Mixins(Mixin) {
   @State theme!: string
   @State appViewComponent!: string
-  @State perspectiveData!: Perspective
   @Getter loggedAndVerified!: boolean
   @Getter loggedAndNotVerified!: boolean
   @Getter anonymous!: boolean

@@ -10,7 +10,7 @@
       group='appnavOverview'
       :disabled='true'
       :list='pinedSmartPerspectives'
-      :active='activePerspective'
+      :active='activePers.name'
     />
   </div>
 </template>
@@ -23,7 +23,7 @@ import { State, Mutation, namespace, Getter } from 'vuex-class'
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
 
-import { Label, SmartPerspective } from '@/interfaces/app'
+import { Label, Perspective } from '@/interfaces/app'
 
 const persVuex = namespace('perspective')
 
@@ -35,10 +35,9 @@ const persVuex = namespace('perspective')
 })
 export default class OverviewAppnav extends Vue {
   @State appViewComponent!: string
-  @State perspectiveData!: SmartPerspective
-  @Getter activePerspective!: string
+  @Getter activePers!: Perspective
 
-  @persVuex.Getter pinedSmartPerspectives!: SmartPerspective[]
+  @persVuex.Getter pinedSmartPerspectives!: Perspective[]
 }
 
 </script>

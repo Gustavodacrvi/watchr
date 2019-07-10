@@ -7,7 +7,7 @@ import task from '@/store/task'
 
 const MAX_MOBILE_SCREEN_WIDTH = 824
 
-import { SimpleAdder, Alert } from '@/interfaces/app'
+import { SimpleAdder, Alert, Perspective } from '@/interfaces/app'
 
 Vue.use(Vuex)
 
@@ -17,7 +17,7 @@ export interface States {
   theme: string
   popUpComponent: string
   appViewComponent: string
-  perspectiveData: any
+  perspectiveId: any
   windowWidth: number
   popUpPayload: any | SimpleAdder
   appBarState: boolean
@@ -59,7 +59,7 @@ interface Getters {
   loggedAndVerified: () => boolean
   loggedAndNotVerified: () => boolean
   anonymous: () => boolean
-  activePerspective: () => boolean
+  activePers: () => Perspective
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
 }
 
@@ -90,7 +90,7 @@ const store: any = new Vuex.Store({
     appBarState: false,
     isLogged: false,
     firestore: null,
-    perspectiveData: null,
+    perspectiveId: null,
     isAnonymous: false,
     emailVerified: false,
     loading: true,
@@ -163,7 +163,7 @@ const store: any = new Vuex.Store({
       state.appViewComponent = comp
     },
     pushPerspective(state: States, pers: any) {
-      state.perspectiveData = pers
+      state.perspectiveId = pers.id
     },
   } as Mutations,
   getters: {
@@ -191,10 +191,12 @@ const store: any = new Vuex.Store({
     anonymous(state: States) {
       return state.isLogged && state.isAnonymous
     },
-    activePerspective(state: States) {
-      if (state.perspectiveData)
-        return state.perspectiveData.name
-      return ''
+    activePers(state: States) {
+      const st = state as any
+      let pers = st.perspective.smartPerspectives.find((el: Perspective) => el.id === state.perspectiveId)
+      if (!pers)
+        pers = st.perspective.customPerspectives.find((el: Perspective) => el.id === state.perspectiveId)
+      return pers
     },
   } as Getters,
   actions: {
