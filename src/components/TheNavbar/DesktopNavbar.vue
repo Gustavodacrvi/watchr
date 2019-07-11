@@ -16,7 +16,7 @@
       <router-link
         class='link txt'
         ref='Settings'
-        to='/settings/about'
+        :to="{name: 'Settings'}"
       >Settings</router-link>
     </div>
     <div class='right'>

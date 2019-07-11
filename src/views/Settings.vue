@@ -54,7 +54,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { State, Getter } from 'vuex-class'
 
 @Component
@@ -64,7 +64,20 @@ export default class Help extends Vue {
 
   interval: any = null
 
+  created() {
+    if (this.$route.name === 'Settings')
+      this.$router.push('settings/about')
+  }
+
   mounted() {
+    if (this.isDesktop)
+      this.addDesktopInterval()
+  }
+  beforeDestroy() {
+    clearInterval(this.interval)
+  }
+
+  addDesktopInterval() {
     this.interval = setInterval(() => {
       if (this.$route.name) {
         const vue: any = this.$refs[this.$route.name] as any
@@ -76,8 +89,12 @@ export default class Help extends Vue {
       }
     }, 100)
   }
-  beforeDestroy() {
-    clearInterval(this.interval)
+
+  @Watch('isDesktop')
+  onChange() {
+    if (this.isDesktop)
+      this.addDesktopInterval()
+    else clearInterval(this.interval)
   }
 }
 
