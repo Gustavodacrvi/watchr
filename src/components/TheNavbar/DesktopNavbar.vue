@@ -15,9 +15,9 @@
       >User</router-link>
       <router-link
         class='link txt'
-        ref='Help'
-        :to="{name: 'Help'}"
-      >Help</router-link>
+        ref='Settings'
+        :to="{name: 'Settings'}"
+      >Settings</router-link>
     </div>
     <div class='right'>
       <span>

@@ -29,9 +29,9 @@ export default new Router({
       component: AsyncComponent('./views/User.vue'),
     },
     {
-      path: '/help',
-      name: 'Help',
-      component: AsyncComponent('./views/Help.vue'),
+      path: '/settings',
+      name: 'Settings',
+      component: AsyncComponent('./views/Settings.vue'),
     },
     {
       path: '/action',
