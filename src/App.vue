@@ -50,6 +50,7 @@ import ErrorComponent from '@/components/ErrorComponent.vue'
 import { Alert } from '@/interfaces/app'
 
 import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
+import TheAppbar from '@/components/TheAppBar/TheAppBar.vue'
 
 import appUtils from '@/utils/app'
 
@@ -58,10 +59,10 @@ import appUtils from '@/utils/app'
     'loading-component': LoadingComponent,
     'error-component': ErrorComponent,
     'the-nav-bar': TheNavbar,
+    'the-app-bar': TheAppbar,
     'alerts': appUtils.AsyncComponent(import(/* webpackPrefetch: true */ '@/components/Alerts.vue')),
     'pop-up': appUtils.AsyncComponent(import(/* webpackPrefetch: true */ '@/components/PopUps/PopUp.vue')),
     'action-button': appUtils.AsyncComponent(import('@/components/ActionButton.vue')),
-    'the-app-bar': appUtils.AsyncComponent(import(/* webpackPrefetch: true */ '@/components/TheAppBar/TheAppBar.vue')),
   },
 })
 export default class App extends Vue {

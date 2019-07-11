@@ -74,5 +74,10 @@ export default new Router({
       name: 'Popup',
       component: AsyncComponent('./components/PopUps/PopUp.vue'),
     },
+    {
+      path: '*',
+      name: 'Not found',
+      component: AsyncComponent('./views/NotFound.vue'),
+    },
   ],
 })
