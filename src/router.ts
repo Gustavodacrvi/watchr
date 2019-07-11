@@ -19,7 +19,7 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'Home',
       component: AsyncComponent(`./views/Home.vue`),
     },
@@ -32,6 +32,13 @@ export default new Router({
       path: '/settings',
       name: 'Settings',
       component: AsyncComponent('./views/Settings.vue'),
+      children: [
+        {
+          path: 'about',
+          name: 'About',
+          component: AsyncComponent('./views/Settings/About.vue'),
+        },
+      ],
     },
     {
       path: '/action',

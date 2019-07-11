@@ -2,8 +2,14 @@
   <div class='settings'>
     <div class='center'>
       <div class='menu'>
+        <div class='txt'>About</div>
+        <div class='txt'>General</div>
+        <div class='txt'>Privacy policy</div>
+        <div class='txt'>Security policy</div>
+        <div class='txt'>Terms of service</div>
       </div>
-      <div class='text'>
+      <div class='text txt'>
+        <router-view/>
       </div>
     </div>
   </div>
@@ -21,7 +27,9 @@ export default class Help extends Vue {}
 <style scoped>
 
 .settings {
-  height: 100%;
+  position: relative;
+  width: 100%;
+  min-height: 100%;
   display: flex;
   justify-content: center;
 }
@@ -29,7 +37,7 @@ export default class Help extends Vue {}
 .center {
   flex-basis: 1000px;
   margin: 0 10px;
-  margin-top: 40px;
+  margin-top: 60px;
   display: flex;
 }
 
@@ -39,6 +47,8 @@ export default class Help extends Vue {}
 
 .text {
   flex-basis: 775px;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 </style>

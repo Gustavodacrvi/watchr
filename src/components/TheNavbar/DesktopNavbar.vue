@@ -208,7 +208,7 @@ export default class DesktopNavbar extends Mixins(Mixin) {
   transition: color .3s;
 }
 
-.link:hover , .router-link-exact-active {
+.link:hover , .router-link-active {
   color: #fc7d7d;
   text-shadow: 0 0 1px #fc7d7d;
 }

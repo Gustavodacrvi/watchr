@@ -153,6 +153,7 @@ export default class App extends Vue {
 }
 
 .visible {
+  position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -168,6 +169,7 @@ export default class App extends Vue {
   position: relative;
   width: 100%;
   transition: flex-basis .3s;
+  flex-shrink: 0;
 }
 
 .navbar.desktop {
