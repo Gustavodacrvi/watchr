@@ -16,7 +16,7 @@
       <router-link
         class='link txt'
         ref='Settings'
-        :to="{name: 'Settings'}"
+        to='/settings/about'
       >Settings</router-link>
     </div>
     <div class='right'>
@@ -117,10 +117,10 @@ export default class DesktopNavbar extends Mixins(Mixin) {
   lineWidth: string = ''
 
   mounted() {
-    this.moveMagicLineTo(this.$route.matched[0].name)
+    this.moveMagicLineTo(this.route)
     const RANDOM_NUMBER = 200
     setInterval(() => {
-      this.moveMagicLineTo(this.$route.matched[0].name)
+      this.moveMagicLineTo(this.route)
     }, RANDOM_NUMBER)
     window.addEventListener('resize', this.windowEventListener)
   }
@@ -129,7 +129,7 @@ export default class DesktopNavbar extends Mixins(Mixin) {
   }
 
   windowEventListener() {
-    this.moveMagicLineTo(this.$route.matched[0].name)
+    this.moveMagicLineTo(this.route)
   }
   moveMagicLineTo(ref: string | undefined) {
     if (ref && this.$refs[ref]) {
@@ -156,10 +156,15 @@ export default class DesktopNavbar extends Mixins(Mixin) {
       transitionDuration: '.3s',
     }
   }
+  get route(): string {
+    if (this.$route.matched[0].name)
+      return this.$route.matched[0].name
+    return this.$route.name as string
+  }
 
   @Watch('$route')
   onChange() {
-    this.moveMagicLineTo(this.$route.matched[0].name)
+    this.moveMagicLineTo(this.route)
   }
 }
 
