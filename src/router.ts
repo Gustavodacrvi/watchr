@@ -69,5 +69,10 @@ export default new Router({
         oobCode: route.query.oobCode,
       }),
     },
+    {
+      path: '/pop-up',
+      name: 'Popup',
+      component: AsyncComponent('./components/PopUps/PopUp.vue'),
+    },
   ],
 })

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import router from './../router'
 
 import label from '@/store/label'
 import perspective from '@/store/perspective'
@@ -47,6 +48,7 @@ interface Mutations {
   showApp: () => void
   openAppBar: () => void
   closeAppBar: () => void
+  resetPopUpState: () => void
   hideAlert: () => void
   [key: string]: (state: States, payload: any) => any
 }
@@ -137,7 +139,16 @@ const store: any = new Vuex.Store({
         state.uid = null
       }
     },
+    resetPopUpState(state: States) {
+      state.popUpComponent = ''
+      state.popUpPayload = null
+    },
     pushPopUp(state: States, compName: string) {
+      const isDesktop = state.windowWidth > MAX_MOBILE_SCREEN_WIDTH
+      if (!isDesktop && compName === '' && state.popUpComponent !== '')
+        router.go(-1)
+      if (!isDesktop && compName !== '' && state.popUpComponent === '')
+        router.push({ name: 'Popup' })
       state.popUpComponent = compName
       state.popUpPayload = null
     },

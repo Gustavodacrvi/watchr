@@ -3,35 +3,36 @@
     <div class='app background-color' :class='theme'>
       <transition name='fade' mode='out-in'>
         <div key='error-comp' v-if='appError' class='visible loading'>
-          <error-component class='waiting-component'></error-component>
+          <error-component class='waiting-component'/>
           <span class='txt another-tab'>This app is already being used in another tab.</span>
         </div>
         <div key='app' v-else-if='!loading' class='visible'>
           <div class='navbar' :class='platform'>
-            <the-nav-bar></the-nav-bar>
+            <the-nav-bar/>
           </div>
           <transition name='fade' mode='out-in'>
-            <router-view class='content'/>
+            <router-view v-if='!isShowingPopUp || isDesktop' class='content'/>
           </transition>
           <transition name='pop-up-trans' mode='out-in'>
-            <pop-up v-if='isShowingPopUp'></pop-up>
+            <pop-up v-if='isShowingPopUp && isDesktop'/>
+            <router-view v-if='isShowingPopUp && !isDesktop'/>
           </transition>
           <transition name='appbar-trans'>
             <keep-alive>
-              <the-app-bar v-if='appBarState'></the-app-bar>
+              <the-app-bar v-if='appBarState'/>
             </keep-alive>
           </transition>
           <transition name='fade'>
-            <action-button v-if='showActionButton'></action-button>
+            <action-button v-if='showActionButton'/>
           </transition>
           <div class='alert-wrapper'>
             <transition name='alert-trans' @after-leave='closeAlert'>
-              <alerts v-if='showingAlert'></alerts>
+              <alerts v-if='showingAlert'/>
             </transition>
           </div>
         </div>
         <div key='loading' v-else class='visible loading'>
-          <loading-component class='waiting-component'></loading-component>
+          <loading-component class='waiting-component'/>
         </div>
       </transition>
     </div>
@@ -58,7 +59,7 @@ import appUtils from '@/utils/app'
     'error-component': ErrorComponent,
     'the-nav-bar': TheNavbar,
     'alerts': appUtils.AsyncComponent(import(/* webpackPrefetch: true */ '@/components/Alerts.vue')),
-    'pop-up': appUtils.AsyncComponent(import('@/components/PopUps/PopUp.vue')),
+    'pop-up': appUtils.AsyncComponent(import(/* webpackPrefetch: true */ '@/components/PopUps/PopUp.vue')),
     'action-button': appUtils.AsyncComponent(import('@/components/ActionButton.vue')),
     'the-app-bar': appUtils.AsyncComponent(import(/* webpackPrefetch: true */ '@/components/TheAppBar/TheAppBar.vue')),
   },
@@ -74,6 +75,7 @@ export default class App extends Vue {
   @State appError!: boolean
   @Mutation hideAlert!: () => void
   @Mutation closeAppBar!: () => void
+  @Mutation resetPopUpState!: () => void
   @Mutation openAppBar!: () => void
   @Getter isDesktop!: boolean
   @Getter platform!: 'mobile' | 'desktop'
@@ -123,6 +125,11 @@ export default class App extends Vue {
       this.$store.dispatch('perspective/getData')
       this.$store.dispatch('task/getData')
     }
+  }
+  @Watch('$route')
+  onRouteChange(to: any, from: any) {
+    if (from.name === 'Popup')
+      this.resetPopUpState()
   }
 }
 

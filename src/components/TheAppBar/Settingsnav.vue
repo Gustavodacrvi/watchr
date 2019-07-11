@@ -31,6 +31,7 @@
           class='link txt'
           :class='theme'
           :to='{name: "User"}'
+          @click.native='closeAppBar'
         >User</router-link>
         <template v-if='isLogged'>
           <span
