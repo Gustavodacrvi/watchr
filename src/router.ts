@@ -38,6 +38,26 @@ export default new Router({
           name: 'About',
           component: AsyncComponent('./views/Settings/About.vue'),
         },
+        {
+          path: 'general',
+          name: 'General',
+          component: AsyncComponent('./views/Settings/General.vue'),
+        },
+        {
+          path: 'privacy-policy',
+          name: 'Privacy policy',
+          component: AsyncComponent('./views/Settings/PrivacyPolicy.vue'),
+        },
+        {
+          path: 'security-policy',
+          name: 'Security policy',
+          component: AsyncComponent('./views/Settings/SecurityPolicy.vue'),
+        },
+        {
+          path: 'terms-of-service',
+          name: 'Terms of service',
+          component: AsyncComponent('./views/Settings/TermsofService.vue'),
+        },
       ],
     },
     {

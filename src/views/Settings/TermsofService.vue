@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>About</h1>
+    <h1>Terms of service</h1>
     <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque nec consectetur arcu. Suspendisse purus enim, auctor eget nunc at, aliquet fermentum eros. Ut cursus eros nibh, a commodo tortor lacinia vel. Aliquam sit amet consequat lectus. Nullam eget erat quis ipsum sollicitudin posuere sit amet nec augue. Nulla facilisi. Curabitur nibh massa, suscipit nec felis vel, molestie tincidunt justo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed hendrerit metus in mauris sodales, quis fermentum eros aliquam.</p>
 
@@ -19,6 +19,6 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component
-export default class AboutSubView extends Vue {}
+export default class TermsofServiceSubView extends Vue {}
 
 </script>

@@ -2,14 +2,36 @@
   <div class='settings'>
     <div class='center'>
       <div class='menu'>
-        <div class='txt'>About</div>
-        <div class='txt'>General</div>
-        <div class='txt'>Privacy policy</div>
-        <div class='txt'>Security policy</div>
-        <div class='txt'>Terms of service</div>
+        <router-link
+          class='txt el'
+          ref='About'
+          :to="{name: 'About'}"
+        >About</router-link>
+        <router-link
+          class='txt el'
+          ref='General'
+          :to="{name: 'General'}"
+        >General</router-link>
+        <router-link
+          class='txt el'
+          ref='Privacy policy'
+          :to="{name: 'Privacy policy'}"
+        >Privacy policy</router-link>
+        <router-link
+          class='txt el'
+          ref='Security policy'
+          :to="{name: 'Security policy'}"
+        >Security policy</router-link>
+        <router-link
+          class='txt el'
+          ref='Terms of service'
+          :to="{name: 'Terms of service'}"
+        >Terms of service</router-link>
       </div>
       <div class='text txt'>
-        <router-view/>
+        <transition name='fade' mode='out-in'>
+          <router-view/>
+        </transition>
       </div>
     </div>
   </div>

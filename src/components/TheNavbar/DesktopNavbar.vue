@@ -117,10 +117,10 @@ export default class DesktopNavbar extends Mixins(Mixin) {
   lineWidth: string = ''
 
   mounted() {
-    this.moveMagicLineTo(this.$route.name)
+    this.moveMagicLineTo(this.$route.matched[0].name)
     const RANDOM_NUMBER = 200
     setInterval(() => {
-      this.moveMagicLineTo(this.$route.name)
+      this.moveMagicLineTo(this.$route.matched[0].name)
     }, RANDOM_NUMBER)
     window.addEventListener('resize', this.windowEventListener)
   }
@@ -129,7 +129,7 @@ export default class DesktopNavbar extends Mixins(Mixin) {
   }
 
   windowEventListener() {
-    this.moveMagicLineTo(this.$route.name)
+    this.moveMagicLineTo(this.$route.matched[0].name)
   }
   moveMagicLineTo(ref: string | undefined) {
     if (ref && this.$refs[ref]) {
@@ -159,7 +159,7 @@ export default class DesktopNavbar extends Mixins(Mixin) {
 
   @Watch('$route')
   onChange() {
-    this.moveMagicLineTo(this.$route.name)
+    this.moveMagicLineTo(this.$route.matched[0].name)
   }
 }
 
