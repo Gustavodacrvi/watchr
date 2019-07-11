@@ -52,7 +52,6 @@ export default class ListRenderer extends Vue {
 
   numberOfSelected: number = 0
   sortable: any = null
-  test: any = null
   deselectAll: boolean = false
 
   mounted() {
@@ -70,6 +69,7 @@ export default class ListRenderer extends Vue {
       selectedClass: 'sortable-selected',
       multiDrag: true,
       dataIdAttr: 'data-sortableid',
+      group: this.group,
 
       onUpdate: () => {
         const ids: string[] = this.getIdsFromElements()
@@ -107,21 +107,18 @@ export default class ListRenderer extends Vue {
     return []
   }
   toggleElement({el, select}: {el: HTMLElement, select: boolean}) {
-    if (!this.isDesktop && !this.disabled) {
-      if (select)
-        Sortable.utils.select(el)
-      else Sortable.utils.deselect(el)
-      this.calcSelectedElements()
-    }
+    if (select)
+      Sortable.utils.select(el)
+    else Sortable.utils.deselect(el)
+    this.calcSelectedElements()
   }
   calcSelectedElements(evt?: any) {
-    if (evt && !this.isDesktop) {
+    if (evt) {
       const children = this.rootComponent.childNodes
       let deSelectAll = true
       for (const child of children)
         if (evt.path.includes(child))
           deSelectAll = false
-      this.test = deSelectAll
       if (deSelectAll) {
         for (const child of children)
           Sortable.utils.deselect(child)

@@ -11,7 +11,7 @@
       :list='sortedSmartPerspectives'
       :options='getOptions'
       :help-icons='helpIcons'
-      :active='activePerspective'
+      :active='activePers.name'
       @update='onUpdate'
       @selected='v => selected = v'
     />
@@ -26,7 +26,7 @@ import { State, namespace, Getter } from 'vuex-class'
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
 
-import { Label, SmartPerspective, ListIcon } from '@/interfaces/app'
+import { Label, Perspective, ListIcon } from '@/interfaces/app'
 
 const persVuex = namespace('perspective')
 
@@ -37,15 +37,14 @@ const persVuex = namespace('perspective')
   },
 })
 export default class OverviewAppnav extends Vue {
-  @State perspectiveData!: SmartPerspective
-  @Getter activePerspective!: string
+  @Getter activePers!: Perspective
 
-  @persVuex.State smartOrder!: SmartPerspective[]
-  @persVuex.Getter sortedSmartPerspectives!: SmartPerspective[]
+  @persVuex.State smartOrder!: Perspective[]
+  @persVuex.Getter sortedSmartPerspectives!: Perspective[]
   @persVuex.Action saveSmartOrder!: (ids: string[]) => void
   @persVuex.Action togglePerspectivesPin!: (obj: Array<{id: string, pin?: boolean}>) => void
 
-  selected: SmartPerspective[] = []
+  selected: Perspective[] = []
   headerIcons: ListIcon[] = [
     {
       name: '',
@@ -64,7 +63,7 @@ export default class OverviewAppnav extends Vue {
   onUpdate(ids: string[]) {
     this.saveSmartOrder(ids)
   }
-  getOptions(per: SmartPerspective) {
+  getOptions(per: Perspective) {
     const icons: ListIcon[] = [
       {
         name: 'pin perspective',
@@ -80,7 +79,7 @@ export default class OverviewAppnav extends Vue {
       icons[0].name = 'unpin perspective'
     return icons
   }
-  helpIcons(per: SmartPerspective) {
+  helpIcons(per: Perspective) {
     const icons: ListIcon[] = []
     if (per.pin)
       icons.push({

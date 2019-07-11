@@ -2,6 +2,7 @@
 import { Label } from '@/interfaces/app'
 
 import { States as RootState } from '@/store/index'
+import appUtils from '@/utils/app'
 
 interface States {
   labels: Label[]
@@ -51,13 +52,7 @@ export default {
   } as Mutations,
   getters: {
     sortedLabels(state: States): Label[] {
-      const sorted: Label[] = []
-      for (const id of state.order) {
-        const lab: Label | undefined = state.labels.find(el => el.id === id)
-        if (lab)
-          sorted.push(lab)
-      }
-      return sorted
+      return appUtils.sortArrayByIds(state.labels, state.order)
     },
     getLabelsByIds: (state: States) => (ids: string[]) => {
       return state.labels.filter(el => ids.includes(el.id))

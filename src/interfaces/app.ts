@@ -28,7 +28,7 @@ export interface Label {
   id: string
 }
 
-export interface SmartPerspective {
+export interface Perspective {
   userId: string
   name: string
   id: string
@@ -38,7 +38,7 @@ export interface SmartPerspective {
   numberOfTasks: boolean
   description: string
   order: string[]
-  smartPerspective: boolean,
+  isSmart: boolean,
   priority: 'Low priority' | 'High priority' | 'Medium priority' | ''
   excludeSmartLabels: string[]
   includeSmartLabels: string[]

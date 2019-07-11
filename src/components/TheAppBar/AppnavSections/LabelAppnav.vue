@@ -10,7 +10,7 @@
       group='appnavLabels'
       :list='sortedLabels'
       :options='getOptions'
-      :active='activePerspective'
+      :active='activePers.name'
       @update='onUpdate'
       @selected='v => selected = v'
     />
@@ -25,7 +25,7 @@ import { namespace, Mutation, State, Getter } from 'vuex-class'
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
 
-import { Label, ListIcon, SimpleAdder, SmartPerspective } from '../../../interfaces/app'
+import { Label, ListIcon, SimpleAdder, Perspective } from '../../../interfaces/app'
 
 const label = namespace('label')
 const list = namespace('list')
@@ -37,8 +37,7 @@ const list = namespace('list')
   },
 })
 export default class LabelAppnav extends Vue {
-  @State perspectiveData!: SmartPerspective
-  @Getter activePerspective!: string
+  @State activePers!: Perspective
   @Mutation pushPopUpPayload!: (obj: SimpleAdder) => void
   @Mutation pushPopUp!: (comp: string) => void
 
