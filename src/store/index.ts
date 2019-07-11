@@ -5,7 +5,7 @@ import label from '@/store/label'
 import perspective from '@/store/perspective'
 import task from '@/store/task'
 
-const MAX_MOBILE_SCREEN_WIDTH = 824
+const MAX_MOBILE_SCREEN_WIDTH = 992
 
 import { SimpleAdder, Alert, Perspective } from '@/interfaces/app'
 

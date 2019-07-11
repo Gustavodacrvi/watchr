@@ -15,9 +15,9 @@
       >User</router-link>
       <router-link
         class='link txt'
-        ref='Help'
-        :to="{name: 'Help'}"
-      >Help</router-link>
+        ref='Settings'
+        :to="{name: 'Settings'}"
+      >Settings</router-link>
     </div>
     <div class='right'>
       <span>
@@ -117,10 +117,10 @@ export default class DesktopNavbar extends Mixins(Mixin) {
   lineWidth: string = ''
 
   mounted() {
-    this.moveMagicLineTo(this.$route.name)
+    this.moveMagicLineTo(this.route)
     const RANDOM_NUMBER = 200
     setInterval(() => {
-      this.moveMagicLineTo(this.$route.name)
+      this.moveMagicLineTo(this.route)
     }, RANDOM_NUMBER)
     window.addEventListener('resize', this.windowEventListener)
   }
@@ -129,7 +129,7 @@ export default class DesktopNavbar extends Mixins(Mixin) {
   }
 
   windowEventListener() {
-    this.moveMagicLineTo(this.$route.name)
+    this.moveMagicLineTo(this.route)
   }
   moveMagicLineTo(ref: string | undefined) {
     if (ref && this.$refs[ref]) {
@@ -156,10 +156,15 @@ export default class DesktopNavbar extends Mixins(Mixin) {
       transitionDuration: '.3s',
     }
   }
+  get route(): string {
+    if (this.$route.matched[0].name)
+      return this.$route.matched[0].name
+    return this.$route.name as string
+  }
 
   @Watch('$route')
   onChange() {
-    this.moveMagicLineTo(this.$route.name)
+    this.moveMagicLineTo(this.route)
   }
 }
 
@@ -208,7 +213,7 @@ export default class DesktopNavbar extends Mixins(Mixin) {
   transition: color .3s;
 }
 
-.link:hover , .router-link-exact-active {
+.link:hover , .router-link-active {
   color: #fc7d7d;
   text-shadow: 0 0 1px #fc7d7d;
 }

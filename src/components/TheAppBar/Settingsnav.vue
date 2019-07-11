@@ -25,8 +25,8 @@
         <router-link
           class='link txt'
           :class='theme'
-          :to='{name: "Help"}'
-        >Help</router-link>
+          :to='{name: "Settings"}'
+        >Settings</router-link>
         <router-link
           class='link txt'
           :class='theme'

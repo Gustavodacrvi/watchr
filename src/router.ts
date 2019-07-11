@@ -19,7 +19,7 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'Home',
       component: AsyncComponent(`./views/Home.vue`),
     },
@@ -29,9 +29,36 @@ export default new Router({
       component: AsyncComponent('./views/User.vue'),
     },
     {
-      path: '/help',
-      name: 'Help',
-      component: AsyncComponent('./views/Help.vue'),
+      path: '/settings',
+      name: 'Settings',
+      component: AsyncComponent('./views/Settings.vue'),
+      children: [
+        {
+          path: 'about',
+          name: 'About',
+          component: AsyncComponent('./views/Settings/About.vue'),
+        },
+        {
+          path: 'general',
+          name: 'General',
+          component: AsyncComponent('./views/Settings/General.vue'),
+        },
+        {
+          path: 'privacy-policy',
+          name: 'Privacy policy',
+          component: AsyncComponent('./views/Settings/PrivacyPolicy.vue'),
+        },
+        {
+          path: 'security-policy',
+          name: 'Security policy',
+          component: AsyncComponent('./views/Settings/SecurityPolicy.vue'),
+        },
+        {
+          path: 'terms-of-service',
+          name: 'Terms of service',
+          component: AsyncComponent('./views/Settings/TermsofService.vue'),
+        },
+      ],
     },
     {
       path: '/action',
