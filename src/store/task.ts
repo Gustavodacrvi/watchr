@@ -1,5 +1,5 @@
 
-import { SmartPerspective, Task } from '@/interfaces/app'
+import { Task } from '@/interfaces/app'
 
 import { States as RootState } from '@/store/index'
 

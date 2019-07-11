@@ -144,7 +144,7 @@ export default class PerspectiveAppview extends Vue {
       icon: 'exclamation',
       iconColor: '#70ff66',
       size: 'lg',
-    }, 
+    },
   ]
   settingsOptions: ListIcon[] = [
    {
@@ -179,8 +179,8 @@ export default class PerspectiveAppview extends Vue {
     } else if (value === 'Sort inbox tasks by priority') {
       const tasks = this.viewTasks
       tasks.sort((a, b) => {
-        let priA = a.priority
-        let priB = b.priority
+        const priA = a.priority
+        const priB = b.priority
         switch (priA) {
           case 'Low priority':
             switch (priB) {
@@ -240,7 +240,7 @@ export default class PerspectiveAppview extends Vue {
           order.push(task.id)
           orderChanged = true
         }
-      
+
       const idsToRemove: string[] = []
       for (const id of order) {
         const task = tasks.find(el => el.id === id)

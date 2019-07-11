@@ -163,13 +163,13 @@ export default class TaskAdder extends Vue {
         this.optionsType = '!'
         const word = lastWord.substr(1)
 
-        const arr = []
+        const options = []
         for (const i of this.icons)
           if (i.name && i.name === 'Low priority')
-            arr.push('low')
+            options.push('low')
           else if (i.name && i.name === 'High priority')
-            arr.push('high')
-          else arr.push('medium')
+            options.push('high')
+          else options.push('medium')
 
         this.options = arr
       } else this.options = []

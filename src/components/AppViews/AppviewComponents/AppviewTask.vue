@@ -31,7 +31,7 @@ import { Task } from '../../../interfaces/app'
 export default class AppviewTask extends Vue {
   @Prop(Object) task!: Task
   @Prop(Boolean) deselectAll!: boolean
-  
+
   @State theme!: string
 
   clicked: boolean = false
