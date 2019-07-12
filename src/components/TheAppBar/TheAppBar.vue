@@ -40,7 +40,6 @@ const AsyncComponent = (compPath: string): any => () => ({
   loading: LoadingComponent,
   error: ErrorComponent,
   delay: 200,
-  timeout: 5000,
 })
 
 @Component({
