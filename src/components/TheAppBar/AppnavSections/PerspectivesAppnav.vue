@@ -11,7 +11,7 @@
       :list='sortedSmartPerspectives'
       :options='getOptions'
       :help-icons='helpIcons'
-      :active='activePers.name'
+      :active='active'
       @update='onUpdate'
       @selected='v => selected = v'
     />
@@ -37,7 +37,8 @@ const persVuex = namespace('perspective')
   },
 })
 export default class OverviewAppnav extends Vue {
-  @Getter activePers!: Perspective
+  @State viewName!: string
+  @State viewSect!: string
 
   @persVuex.State smartOrder!: Perspective[]
   @persVuex.Getter sortedSmartPerspectives!: Perspective[]
@@ -59,6 +60,12 @@ export default class OverviewAppnav extends Vue {
       },
     },
   ]
+
+  get active(): string {
+    if (this.viewSect === 'overview')
+      return this.viewName
+    return ''
+  }
 
   onUpdate(ids: string[]) {
     this.saveSmartOrder(ids)

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import router from './../router'
 
 import label from '@/store/label'
 import perspective from '@/store/perspective'
@@ -16,13 +17,13 @@ const savedTheme: string = localStorage.getItem('watchrTheme') || 'light'
 export interface States {
   theme: string
   popUpComponent: string
-  appViewComponent: string
-  perspectiveId: any
   windowWidth: number
   popUpPayload: any | SimpleAdder
   appBarState: boolean
   firestore: firebase.firestore.Firestore | null
   isLogged: boolean
+  viewName: string
+  viewSect: string
   uid: string | null
   firebase: any
   isAnonymous: boolean
@@ -44,9 +45,11 @@ interface Mutations {
   saveFirebase: (state: States, firebase: any) => void
   pushAppView: (state: States, comp: string) => void
   pushPerspective: (state: States, payload?: any) => void
+  pushView: (state: States, obj: {view: string, section: string}) => void
   showApp: () => void
   openAppBar: () => void
   closeAppBar: () => void
+  resetPopUpState: () => void
   hideAlert: () => void
   [key: string]: (state: States, payload: any) => any
 }
@@ -59,7 +62,6 @@ interface Getters {
   loggedAndVerified: () => boolean
   loggedAndNotVerified: () => boolean
   anonymous: () => boolean
-  activePers: () => Perspective
   [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
 }
 
@@ -84,13 +86,13 @@ const store: any = new Vuex.Store({
   state: {
     theme: savedTheme,
     popUpComponent: '',
-    appViewComponent: '',
     popUpPayload: null,
     windowWidth: document.body.clientWidth,
     appBarState: false,
     isLogged: false,
     firestore: null,
-    perspectiveId: null,
+    viewName: '',
+    viewSect: '',
     isAnonymous: false,
     emailVerified: false,
     loading: true,
@@ -137,7 +139,16 @@ const store: any = new Vuex.Store({
         state.uid = null
       }
     },
+    resetPopUpState(state: States) {
+      state.popUpComponent = ''
+      state.popUpPayload = null
+    },
     pushPopUp(state: States, compName: string) {
+      const isDesktop = state.windowWidth > MAX_MOBILE_SCREEN_WIDTH
+      if (!isDesktop && compName === '' && state.popUpComponent !== '')
+        router.go(-1)
+      if (!isDesktop && compName !== '' && state.popUpComponent === '')
+        router.push({ name: 'Popup' })
       state.popUpComponent = compName
       state.popUpPayload = null
     },
@@ -159,11 +170,9 @@ const store: any = new Vuex.Store({
     closeAppBar(state: States) {
       state.appBarState = false
     },
-    pushAppView(state: States, comp: string) {
-      state.appViewComponent = comp
-    },
-    pushPerspective(state: States, pers: any) {
-      state.perspectiveId = pers.id
+    pushView(state: States, {view, section}) {
+      state.viewName = view
+      state.viewSect = section
     },
   } as Mutations,
   getters: {
@@ -190,13 +199,6 @@ const store: any = new Vuex.Store({
     },
     anonymous(state: States) {
       return state.isLogged && state.isAnonymous
-    },
-    activePers(state: States) {
-      const st = state as any
-      let pers = st.perspective.smartPerspectives.find((el: Perspective) => el.id === state.perspectiveId)
-      if (!pers)
-        pers = st.perspective.customPerspectives.find((el: Perspective) => el.id === state.perspectiveId)
-      return pers
     },
   } as Getters,
   actions: {

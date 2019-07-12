@@ -10,7 +10,7 @@
       group='appnavLabels'
       :list='sortedLabels'
       :options='getOptions'
-      :active='activePers.name'
+      :active='active'
       @update='onUpdate'
       @selected='v => selected = v'
     />
@@ -37,7 +37,8 @@ const list = namespace('list')
   },
 })
 export default class LabelAppnav extends Vue {
-  @State activePers!: Perspective
+  @State viewName!: string
+  @State viewSect!: string
   @Mutation pushPopUpPayload!: (obj: SimpleAdder) => void
   @Mutation pushPopUp!: (comp: string) => void
 
@@ -58,6 +59,12 @@ export default class LabelAppnav extends Vue {
         },
     },
   ]
+
+  get active(): string {
+    if (this.viewSect === 'overview')
+      return this.viewName
+    return ''
+  }
 
   getOptions(obj: Label[]): ListIcon[] {
     return [

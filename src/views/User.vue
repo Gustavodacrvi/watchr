@@ -7,7 +7,7 @@
       <div class='view-wrapper background-color' :class='[platform, theme]'>
         <div class='view' :class='platform'>
           <transition name='fade'>
-            <component :is='appViewComponent'/>
+            <router-view/>
           </transition>
         </div>
       </div>
@@ -66,14 +66,11 @@ const persVuex = namespace('perspective')
 @Component({
   components: {
     'tab-slider': appUtils.AsyncComponent(import('@/components/SlidersAndMenus/TabSlider.vue')),
-    'perspective-appview': appUtils.AsyncComponent(import('@/components/AppViews/PerspectiveAppview.vue')),
-    'appview-inbox': appUtils.AsyncComponent(import('@/components/AppViews/AppviewInbox.vue')),
     'form-button': FormButton,
   },
 })
 export default class Guest extends Mixins(Mixin) {
   @State theme!: string
-  @State appViewComponent!: string
   @Getter loggedAndVerified!: boolean
   @Getter loggedAndNotVerified!: boolean
   @Getter anonymous!: boolean
@@ -81,19 +78,15 @@ export default class Guest extends Mixins(Mixin) {
   @Getter platform!: boolean
   @Mutation openAppBar!: () => void
   @Mutation closeAppBar!: () => void
-  @Mutation pushAppView!: (compName: string) => void
-  @Mutation pushPerspective!: (payload?: any) => void
 
   @persVuex.Getter pinedSmartPerspectives!: Perspective[]
 
   waitingResponse: boolean = false
-
+  
   created() {
-    this.open()
-    if (this.pinedSmartPerspectives[0].isSmart)
-      this.pushAppView('appview-' + this.pinedSmartPerspectives[0].name.toLowerCase())
-    else this.pushAppView('perspective-appview')
-    this.pushPerspective(this.pinedSmartPerspectives[0])
+    if (this.$route.name === 'User')
+      this.$router.replace('user/pers/' + this.pinedSmartPerspectives[0].name.toLowerCase())
+    this.open()    
   }
 
   open() {

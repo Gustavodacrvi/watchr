@@ -1,0 +1,33 @@
+<template>
+  <component :is='getComp'/>
+</template>
+
+<script lang='ts'>
+
+import { Component, Vue } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
+
+import appUtils from '@/utils/app'
+
+import { Perspective } from '../../../interfaces/app'
+
+@Component({
+  components: {
+    'app-inbox': appUtils.AsyncComponent(import('./AppviewInbox.vue')),
+    'app-custom': appUtils.AsyncComponent(import('./CustomPerspective.vue')),
+  },
+})
+export default class PerspectiveView extends Vue {
+  @Getter activePers!: Perspective
+
+  get getComp() {
+    if (this.comp === 'inbox')
+      return 'app-' + this.comp
+    return 'app-custom'
+  }
+  get comp() {
+    return this.$route.params.persname
+  }
+}
+
+</script>

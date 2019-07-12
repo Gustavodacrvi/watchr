@@ -66,7 +66,7 @@ export default class Help extends Vue {
 
   created() {
     if (this.$route.name === 'Settings')
-      this.$router.push('settings/about')
+      this.$router.replace('settings/about')
   }
 
   mounted() {
