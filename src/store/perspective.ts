@@ -13,7 +13,8 @@ interface States {
 
 
 interface Getters {
-  sortedSmartPerspectives: (state: States) => void
+  sortedSmartPerspectives: (state: States) => Perspective[]
+  inboxPers: (state: States) => Perspective
   pinedSmartPerspectives: (state: States, getters: Getters) => void
 }
 
@@ -50,6 +51,9 @@ export default {
 
   } as Mutations,
   getters: {
+    inboxPers(state: States): Perspective {
+      return state.smartPerspectives.find(el => el.name === 'Inbox') as Perspective
+    },
     sortedSmartPerspectives(state: States): Perspective[] {
       return appUtils.sortArrayByIds(state.smartPerspectives, state.smartOrder)
     },

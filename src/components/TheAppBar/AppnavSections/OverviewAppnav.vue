@@ -10,7 +10,7 @@
       group='appnavOverview'
       :disabled='true'
       :list='pinedSmartPerspectives'
-      :active='activePers.name'
+      :active='active'
     />
   </div>
 </template>
@@ -34,10 +34,15 @@ const persVuex = namespace('perspective')
   },
 })
 export default class OverviewAppnav extends Vue {
-  @State appViewComponent!: string
-  @Getter activePers!: Perspective
-
+  @State viewName!: string
+  @State viewSect!: string
   @persVuex.Getter pinedSmartPerspectives!: Perspective[]
+
+  get active(): string {
+    if (this.viewSect === 'overview')
+      return this.viewName
+    return ''
+  }
 }
 
 </script>

@@ -2,12 +2,12 @@
   <div class='component'>
     <div class='header'>
       <dynamic-ft-icon
-        :icon='activePers.icon'
-        :style='{color: activePers.iconColor}'
+        :icon='inboxPers.icon'
+        :style='{color: inboxPers.iconColor}'
         size='2x'
       />
       <span class='title'>
-        {{ activePers.name }}
+        {{ inboxPers.name }}
       </span>
       <div class='right'>
         <span class='header-option'>
@@ -41,7 +41,7 @@
     </div>
     <div class='margin'></div>
     <p class='description txt'>
-      {{ activePers.description }}
+      {{ inboxPers.description }}
     </p>
     <div class='margin'></div>
     <view-tags
@@ -82,7 +82,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { State, Getter, namespace } from 'vuex-class'
+import { State, Getter, Mutation, namespace } from 'vuex-class'
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
@@ -91,7 +91,7 @@ import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue
 import TaskAdder from '@/components/AppViews/AppviewComponents/AppviewTaskAdder.vue'
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
 
-import { Perspective, Label, Task, ListIcon } from '../../interfaces/app'
+import { Perspective, Label, Task, ListIcon } from '../../../interfaces/app'
 import appUtils from '@/utils/app'
 
 const labelVuex = namespace('label')
@@ -114,14 +114,15 @@ library.add(faSearch, faEllipsisH)
   },
 })
 export default class PerspectiveAppview extends Vue {
-  @Getter activePers!: Perspective
   @Getter isDesktop!: boolean
+  @Mutation pushView!: (obj: {view: string, section: string}) => void
 
   @taskVuex.State tasks!: Task[]
 
   @labelVuex.Getter sortedLabels!: Label[]
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
+  @persVuex.Getter inboxPers!: Perspective
   @persVuex.Action saveTaskOrder!: (obj: {id: string, order: string[], collection: string}) => void
 
   search: string = ''
@@ -161,6 +162,13 @@ export default class PerspectiveAppview extends Vue {
     },
   ]
 
+  created() {
+    this.pushView({
+      view: 'Inbox',
+      section: 'overview',
+    })
+  }
+
   selectPriority(value: string) {
     this.priority = value
   }
@@ -172,7 +180,7 @@ export default class PerspectiveAppview extends Vue {
       for (const el of tasks)
         ids.push(el.id)
       this.saveTaskOrder({
-        id: this.activePers.id,
+        id: this.inboxPers.id,
         order: ids,
         collection: 'smartPerspectives',
       })
@@ -210,7 +218,7 @@ export default class PerspectiveAppview extends Vue {
       for (const el of tasks)
         ids.push(el.id)
       this.saveTaskOrder({
-        id: this.activePers.id,
+        id: this.inboxPers.id,
         order: ids,
         collection: 'smartPerspectives',
       })
@@ -218,7 +226,7 @@ export default class PerspectiveAppview extends Vue {
   }
   onUpdate(ids: string[]) {
     this.saveTaskOrder({
-      id: this.activePers.id,
+      id: this.inboxPers.id,
       order: ids,
       collection: 'smartPerspectives',
     })
@@ -231,9 +239,9 @@ export default class PerspectiveAppview extends Vue {
     return this.tasks.filter(el => el.labels.length === 0)
   }
   get sortedTasks(): Task[] {
-    if (this.activePers) {
+    if (this.inboxPers) {
       const tasks = this.viewTasks
-      const order = this.activePers.order
+      const order = this.inboxPers.order
       let orderChanged: boolean = false
       for (const task of tasks)
         if (!order.includes(task.id)) {
@@ -255,7 +263,7 @@ export default class PerspectiveAppview extends Vue {
       }
       if (orderChanged)
         this.saveTaskOrder({
-          id: this.activePers.id,
+          id: this.inboxPers.id,
           collection: 'smartPerspectives',
           order,
         })

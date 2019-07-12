@@ -19,6 +19,10 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
+      path: '/',
+      beforeEnter: (to, from, next) => next({ path: '/home', replace: true }),
+    },
+    {
       path: '/home',
       name: 'Home',
       component: AsyncComponent(`./views/Home.vue`),
@@ -27,6 +31,17 @@ export default new Router({
       path: '/user',
       name: 'User',
       component: AsyncComponent('./views/User.vue'),
+      children: [
+        {
+          path: 'pers/:persname',
+          name: 'Perspective',
+          component: AsyncComponent('./components/AppViews/Perspectives/Perspective.vue'),
+        },
+        {
+          path: '*',
+          beforeEnter: (to, from, next) => next({ path: '/user', replace: true}),
+        },
+      ],
     },
     {
       path: '/settings',
