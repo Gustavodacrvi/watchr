@@ -74,6 +74,11 @@ export default class PopUp extends Vue {
   overflow: auto;
 }
 
+.wrapper::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
 .relative-wrapper {
   position: relative;
   height: 130%;
