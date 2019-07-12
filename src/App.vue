@@ -7,9 +7,10 @@
           <span class='txt another-tab'>This app is already being used in another tab.</span>
         </div>
         <div key='app' v-else-if='!loading' class='visible'>
-          <div class='navbar' :class='platform'>
+          <div class='navbar' :class="[platform, theme, {'background-color':!isDesktop}]">
             <the-nav-bar/>
           </div>
+          <div v-if='!isDesktop' style='flex-basis: 50px'></div>
           <transition name='fade' mode='out-in'>
             <router-view v-if='!isShowingPopUp || isDesktop' class='content'/>
           </transition>
@@ -187,7 +188,17 @@ export default class App extends Vue {
 }
 
 .navbar.mobile {
-  flex-basis: 50px;
+  height: 50px;
+  position: fixed;
+  z-index: 900;
+}
+
+.navbar.mobile.light {
+  box-shadow: 0 0 15px 10px #F8F7F6;
+}
+
+.navbar.mobile.dark {
+  box-shadow: 0 0 15px 10px #121212;
 }
 
 .content {

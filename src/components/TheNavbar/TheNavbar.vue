@@ -1,5 +1,5 @@
 <template>
-  <div class='navbar-wrapper' :class='isDesktop ? "desktop" : "mobile"'>
+  <div class='navbar-wrapper' :class='platform'>
     <desktop v-if='isDesktop'></desktop>
     <keep-alive>
       <mobile v-if='!isDesktop'></mobile>
@@ -22,6 +22,7 @@ import appUtils from '@/utils/app'
 })
 export default class TheNavbar extends Vue {
   @Getter isDesktop!: boolean
+  @Getter platform!: boolean
 }
 
 </script>
