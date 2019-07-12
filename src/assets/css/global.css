@@ -95,7 +95,7 @@ body, button, input {
 }
 
 .scroll::-webkit-scrollbar-thumb {
-  background-color: #fc7d7d; 
+  background-color: #fc7d7d;
   border-radius: 10px;
 }
 

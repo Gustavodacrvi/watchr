@@ -46,8 +46,34 @@
         <div class='margin'></div>
       </div>
     </div>
-    <div v-if='!isDesktop' class='mobile-menu'>
-      <span>asdfasfd</span>
+    <div v-if='!isDesktop' class='mobile-menu background-color' :class='theme'>
+      <div class='align'>
+        <router-link
+          class='txt mob-el'
+          ref='About'
+          :to="{name: 'About'}"
+        >About</router-link>
+        <router-link
+          class='txt mob-el'
+          ref='General'
+          :to="{name: 'General'}"
+        >General</router-link>
+        <router-link
+          class='txt mob-el'
+          ref='Privacy policy'
+          :to="{name: 'Privacy policy'}"
+        >Privacy policy</router-link>
+        <router-link
+          class='txt mob-el'
+          ref='Security policy'
+          :to="{name: 'Security policy'}"
+        >Security policy</router-link>
+        <router-link
+          class='txt mob-el'
+          ref='Terms of service'
+          :to="{name: 'Terms of service'}"
+        >Terms of service</router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -125,10 +151,44 @@ export default class Help extends Vue {
 }
 
 .mobile-menu {
+  width: 100%;
   position: fixed;
   bottom: 0;
-  height: 40px;
-  background-color: red;
+  height: 60px;
+  box-shadow: 0 0 5px 10px #555;
+  font-size: 1.1em;
+  overflow: auto;
+}
+
+.align {
+  position: absolute;
+  top: 50%;
+  margin: 0 6px;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.mob-el {
+  padding: 0 8px;
+  text-decoration: none;
+  transition: color .3s;
+}
+
+.mob-el:hover, .mob-el.router-link-exact-active {
+  color: #fc7d7d;
+}
+
+.mobile-menu.light {
+  box-shadow: 0 0 15px 10px #F8F7F6;
+}
+
+.mobile-menu.dark {
+  box-shadow: 0 0 15px 10px #121212;
+}
+
+.mobile-menu::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
 }
 
 .menu-wrapper {

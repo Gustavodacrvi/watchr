@@ -108,6 +108,8 @@ export default class App extends Vue {
     return (this.isOnAppRoute && !this.isShowingPopUp && (this.isDesktop || !this.appBarState) && (this.loggedAndVerified || this.anonymous))
   }
   get isOnAppRoute(): boolean {
+    if (this.$route.matched[0] && this.$route.matched[0].name)
+      return this.$route.matched[0].name === 'User'
     return this.$route.name === 'User'
   }
   get isShowingPopUp(): boolean {
