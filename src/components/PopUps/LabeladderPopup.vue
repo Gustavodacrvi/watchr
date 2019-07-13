@@ -55,7 +55,7 @@ export default class LabelAdder extends Vue {
   @Mutation pushAlert!: (alert: Alert) => void
 
   @labelStore.State labels!: Label[]
-  @labelStore.Action addLabels!: (name: string) => void
+  @labelStore.Action addLabel!: (name: string) => void
 
   input: string | null = null
   MAXIMUM_LENGTH_OF_LABEL_TREE: number = 4
@@ -76,7 +76,7 @@ export default class LabelAdder extends Vue {
           type: 'error',
         })
       else
-        this.addLabels(this.value)
+        this.addLabel(this.value)
     }
   }
 

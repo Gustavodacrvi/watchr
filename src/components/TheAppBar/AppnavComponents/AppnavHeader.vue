@@ -5,12 +5,11 @@
         <span class='title'>{{ name }}</span>
       </div>
       <div key='options' v-else class='header options'>
-        <span @click='i.callback(selected)'>
         <i v-for='i in icons'
           :key='i.name'
           :class='`icon pointer header-icon fas fa-${i.icon} fa-${i.size}`'
+          @click='i.callback(selected)'
         ></i>
-        </span>
       </div>
     </transition>
   </div>

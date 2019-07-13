@@ -25,4 +25,22 @@ export default {
     }
     return sorted
   },
+  fixOrder(arrOfObjects: Array<{id: string, [key: string]: any}>, orderOfObjects: string[]) {
+    const arr = arrOfObjects.slice()
+    const order = orderOfObjects.slice()
+    for (const el of arr)
+      if (!order.includes(el.id))
+        order.push(el.id)
+    const idsToRemove: string[] = []
+    for (const id of order) {
+      const task = arr.find(el => el.id === id)
+      if (!task)
+        idsToRemove.push(id)
+    }
+    for (const id of idsToRemove) {
+      const index = order.indexOf(id)
+      order.splice(index, 1)
+    }
+    return order
+  },
 }

@@ -30,7 +30,7 @@ interface ActionContext {
 
 interface Actions {
   getData: (context: ActionContext) => void
-  addLabels: (context: ActionContext) => void
+  addLabel: (context: ActionContext) => void
   saveLabelPosition: (context: ActionContext, ids: string[]) => void
   deleteLabelsById: (context: ActionContext, ids: string[]) => void
   editLabelNameById: (context: ActionContext, obj: {id: string, name: string}) => void
@@ -52,7 +52,8 @@ export default {
   } as Mutations,
   getters: {
     sortedLabels(state: States): Label[] {
-      return appUtils.sortArrayByIds(state.labels, state.order)
+      const order: string[] = appUtils.fixOrder(state.labels, state.order)
+      return appUtils.sortArrayByIds(state.labels, order)
     },
     getLabelsByIds: (state: States) => (ids: string[]) => {
       return state.labels.filter(el => ids.includes(el.id))
@@ -60,6 +61,7 @@ export default {
   } as Getters,
   actions: {
     saveLabelPosition({ state, rootState }, ids) {
+      console.log('save position')
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('labelsOrder').doc(rootState.uid)
           .update({
@@ -72,6 +74,7 @@ export default {
       const ids: string[] = []
       for (const el of labels)
         ids.push(el.id)
+      console.log('sort labels by name')      
       dispatch('saveLabelPosition', ids)
     },
     getData({ rootState, state, dispatch }) {
@@ -79,12 +82,14 @@ export default {
         rootState.firestore.collection('labelsOrder').doc(rootState.uid)
           .onSnapshot(snap => {
             const data = snap.data()
+            console.log('read labels order')
             if (data)
               state.order = data.order
           })
         rootState.firestore.collection('labels').where('userId', '==', rootState.uid)
           .onSnapshot(snap => {
           const changes = snap.docChanges()
+          console.log('read labels')
           for (const change of changes)
             if (change.type === 'added') {
               const lab = state.labels.find(el => el.id === change.doc.id)
@@ -100,51 +105,34 @@ export default {
         })
       }
     },
-    addLabels({ rootState, state }: ActionContext, name: string) {
-      if (rootState.firestore && rootState.uid) {
-        const batch = rootState.firestore.batch()
-
-        const ref = rootState.firestore.collection('labels').doc()
-        batch.set(ref, {
+    addLabel({ rootState, state }: ActionContext, name: string) {
+      console.log('add label')
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('labels').add({
           name,
           userId: rootState.uid,
         })
-
-        const fire: any = rootState.firebase.firestore
-        const orderRef = rootState.firestore.collection('labelsOrder').doc(rootState.uid)
-        const arr: string[] = state.order
-        arr.push(ref.id)
-        batch.set(orderRef, {
-          userId: rootState.uid,
-          order: fire.FieldValue.arrayUnion(...arr),
-        })
-
-        batch.commit()
-      }
     },
     deleteLabelsById({ rootState, state }: ActionContext, ids: string[]) {
+      console.log('delete labels by id')
       if (rootState.firestore && rootState.uid) {
         const batch = rootState.firestore.batch()
 
         for (const id of ids)
           batch.delete(rootState.firestore.collection('labels').doc(id))
 
-        const fire: any = rootState.firebase.firestore
-        const ref = rootState.firestore.collection('labelsOrder').doc(rootState.uid)
-        batch.update(ref, {
-          order: fire.FieldValue.arrayRemove(...ids),
-        })
-
         batch.commit()
       }
     },
     editLabelNameById({ rootState }, {id, name}) {
+      console.log('edit label name by id')
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('labels').doc(id).update({
           name,
         })
     },
     addLabelsOrder({ rootState }, id: string) {
+      console.log('add labels order')
       if (rootState.firestore)
         rootState.firestore.collection('labelsOrder').doc(id).set({
           userId: id,
