@@ -35,6 +35,7 @@
             :values='options'
             :input='value'
             @value="v => value = v"
+            @enter='add'
             @select='selectDropValue'
           />
         </div>
@@ -88,8 +89,6 @@ export default class TaskAdder extends Vue {
   @Prop() fixedTag!: string
   @Prop({default: false}) allowPriority!: boolean
 
-  @taskVuex.Action addTask!: (task: Task) => void
-
   value: string = ''
   showing: boolean = false
   options: string[] = []
@@ -118,10 +117,7 @@ export default class TaskAdder extends Vue {
 
   add() {
     if (this.value)
-      this.addTask({
-        name: this.value,
-        priority: this.priority,
-      } as any)
+      this.$emit('add', {name: this.value, priority: this.priority})
     this.value = ''
   }
   chosePriority(priority: 'Low priority' | 'High priority' | 'Medium priority') {
@@ -174,10 +170,6 @@ export default class TaskAdder extends Vue {
 </script>
 
 <style scoped>
-
-.wrapper {
-  margin-top: 30px;
-}
 
 .right {
   position: absolute;

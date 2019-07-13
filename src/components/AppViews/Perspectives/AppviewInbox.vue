@@ -60,12 +60,9 @@
         id='appnavinbox'
         @update='onUpdate'
         @selected='onSelect'
+        @add='addInboxTask'
       />
     </div>
-    <task-adder
-      fixed-tag='Inbox'
-      :allow-priority='true'
-    />
     <div class='margin-task' :class='platform'></div>
   </div>
 </template>
@@ -79,7 +76,6 @@ import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
 import IconOptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
-import TaskAdder from '@/components/AppViews/AppviewComponents/AppviewTaskAdder.vue'
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 
@@ -94,7 +90,6 @@ const persVuex = namespace('perspective')
   components: {
     'drop-finder': DropdownFinder,
     'view-tags': AppviewTags,
-    'task-adder': TaskAdder,
     'task-renderer': AppviewTaskrenderer,
     'icon-options': IconOptions,
     'header-title': HeaderTitle,
@@ -106,6 +101,7 @@ export default class PerspectiveAppview extends Vue {
   @Mutation pushView!: (obj: {view: string, section: string}) => void
 
   @taskVuex.State tasks!: Task[]
+  @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, collection: string, order: string[], position: number}) => void
 
   @labelVuex.Getter sortedLabels!: Label[]
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
@@ -159,6 +155,18 @@ export default class PerspectiveAppview extends Vue {
     })
   }
 
+  addInboxTask({name, priority, position}: {name: string, priority: string, position: number}) {
+    this.addTask({
+      task: {
+        name,
+        priority,
+        labels: [],
+      },
+      perspectiveId: this.inboxPers.id,
+      collection: 'smartPerspectives',
+      position, order: this.inboxPers.order,
+    } as any)
+  }
   selectPriority(value: string) {
     this.priority = value
   }
@@ -214,12 +222,23 @@ export default class PerspectiveAppview extends Vue {
       })
     }
   }
+  arraysEqual(arr1: any[], arr2: any[]): boolean {
+    if(arr1.length !== arr2.length)
+      return false
+    for(let i = arr1.length; i--;) {
+      if(arr1[i] !== arr2[i])
+        return false
+    }
+    return true
+  }
   onUpdate(ids: string[]) {
-    this.saveTaskOrder({
-      id: this.inboxPers.id,
-      order: ids,
-      collection: 'smartPerspectives',
-    })
+    const filtered = ids.filter(el => el !== 'task-adder')
+    if (!this.arraysEqual(filtered, this.inboxPers.order))
+      this.saveTaskOrder({
+        id: this.inboxPers.id,
+        order: ids.filter(el => el !== 'task-adder'),
+        collection: 'smartPerspectives',
+      })
   }
   onSelect(ids: string) {
 
@@ -251,12 +270,6 @@ export default class PerspectiveAppview extends Vue {
         const index = order.indexOf(id)
         order.splice(index, 1)
       }
-      if (orderChanged)
-        this.saveTaskOrder({
-          id: this.inboxPers.id,
-          collection: 'smartPerspectives',
-          order,
-        })
       return appUtils.sortArrayByIds(tasks, order)
     }
     return []
