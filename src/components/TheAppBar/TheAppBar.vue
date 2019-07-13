@@ -35,17 +35,12 @@ import { State, Getter, Mutation } from 'vuex-class'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
 
-const AsyncComponent = (compPath: string): any => () => ({
-  component: import(`${compPath}`),
-  loading: LoadingComponent,
-  error: ErrorComponent,
-  delay: 200,
-})
+import appUtils from '@/utils/app'
 
 @Component({
   components: {
-    appnav: AsyncComponent('./Appnav.vue'),
-    settingsnav: AsyncComponent('./Settingsnav.vue'),
+    appnav: appUtils.AsyncComponent(import(/* webpackChunkName: "appnav-app" */ './Appnav.vue')),
+    settingsnav: appUtils.AsyncComponent(/* webpackChunkName: "appnav-settings" */ import('./Settingsnav.vue')),
   },
 })
 export default class TheNavBar extends Vue {

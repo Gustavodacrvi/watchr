@@ -1,10 +1,11 @@
 <template>
   <div class='component'>
     <div class='header'>
-      <i :class='`fas fa-${inboxPers.icon} fa-2x`' :style='{color: inboxPers.iconColor}'></i>
-      <span class='title'>
-        {{ inboxPers.name }}
-      </span>
+      <header-title
+        :value='inboxPers.name'
+        :icon='inboxPers.icon'
+        :icon-color='inboxPers.iconColor'
+      />
       <div class='right'>
         <span class='header-option'>
           <drop-finder
@@ -86,6 +87,7 @@ import IconOptions from '@/components/AppViews/AppviewComponents/AppviewIconopti
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
 import TaskAdder from '@/components/AppViews/AppviewComponents/AppviewTaskAdder.vue'
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
+import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 
 import { Perspective, Label, Task, ListIcon } from '../../../interfaces/app'
 import appUtils from '@/utils/app'
@@ -101,6 +103,7 @@ const persVuex = namespace('perspective')
     'task-adder': TaskAdder,
     'task-renderer': AppviewTaskrenderer,
     'icon-options': IconOptions,
+    'header-title': HeaderTitle,
   },
 })
 export default class PerspectiveAppview extends Vue {
@@ -272,6 +275,14 @@ export default class PerspectiveAppview extends Vue {
 }
 
 </script>
+
+<style scoped>
+
+.header {
+  height: 30px;
+}
+
+</style>
 
 <style scoped src='@/assets/css/appView.css'>
 </style>

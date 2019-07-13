@@ -63,6 +63,7 @@ export default class TabSlider extends Vue {
 
 .wrapper {
   margin: 0 10px;
+  min-height: 300px;
 }
 
 .slider {
