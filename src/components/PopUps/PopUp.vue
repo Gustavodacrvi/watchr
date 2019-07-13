@@ -1,13 +1,11 @@
 <template>
   <div class='wrapper'>
     <div class='relative-wrapper'>
-      <span @click="pushPopUp('')">
-      <i class='close-icon icon pointer txt fas fa-arrow-left fa-2x'></i>
-      </span>
+      <i v-if='!isDesktop' @click="pushPopUp('')" class='close-icon icon pointer txt fas fa-arrow-left fa-2x'></i>
       <transition name='fade' mode='out-in'>
         <component
           class='pop-up card'
-          :class='componentClass'
+          :class="[componentClass, {'stand-alone': isStandAlone}]"
           :is='popUpComponent'
         />
       </transition>
@@ -48,6 +46,7 @@ export default class PopUp extends Vue {
   @State popUpComponent!: string
   @Mutation pushPopUp!: (compName: string) => void
   @Getter isDesktop!: boolean
+  @Getter isStandAlone!: boolean
   @Getter platform!: 'mobile' | 'desktop'
 
   get componentClass(): any[] {
@@ -108,6 +107,10 @@ export default class PopUp extends Vue {
   z-index: 60;
   margin-top: 60px;
   flex-basis: 700px;
+}
+
+.pop-up.desktop.stand-alone.desktop {
+  margin-top: 160px;
 }
 
 .pop-up.mobile {
