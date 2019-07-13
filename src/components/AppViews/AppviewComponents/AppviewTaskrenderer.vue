@@ -95,7 +95,7 @@ export default class AppviewTaskrenderer extends Vue {
       }
       i++
     }
-    let ids = els.filter(el => el !== 'task-adder')
+    const ids = els.filter(el => el !== 'task-adder')
     this.$emit('add', {position, ...obj})
   }
   getIdsFromElements(): string[] {

@@ -101,6 +101,7 @@ export default class PerspectiveAppview extends Vue {
   @Mutation pushView!: (obj: {view: string, section: string}) => void
 
   @taskVuex.State tasks!: Task[]
+  // tslint:disable-next-line:max-line-length
   @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, collection: string, order: string[], position: number}) => void
 
   @labelVuex.Getter sortedLabels!: Label[]
@@ -223,10 +224,10 @@ export default class PerspectiveAppview extends Vue {
     }
   }
   arraysEqual(arr1: any[], arr2: any[]): boolean {
-    if(arr1.length !== arr2.length)
+    if (arr1.length !== arr2.length)
       return false
-    for(let i = arr1.length; i--;) {
-      if(arr1[i] !== arr2[i])
+    for (let i = arr1.length; i--;) {
+      if (arr1[i] !== arr2[i])
         return false
     }
     return true

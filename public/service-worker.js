@@ -1,5 +1,5 @@
 
-const cacheName = 'cache'
+const cacheName = 'watchr-cache'
 
 self.addEventListener('message', msg => {
   if (msg.data.action === 'skipWaiting')

@@ -28,7 +28,7 @@ export default class AppviewHeadertitle extends Vue {
   created() {
     this.addToTitle()
   }
-  
+
   addToTitle() {
     this.addNavBarTitle(this.value)
   }

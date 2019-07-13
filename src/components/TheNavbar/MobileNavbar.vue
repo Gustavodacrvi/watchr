@@ -24,7 +24,6 @@ import { Mutation, State } from 'vuex-class'
 @Component
 export default class MobileNavbar extends Vue {
   @State navBarTitle!: string
-  
   @Mutation openAppBar!: () => void
 }
 

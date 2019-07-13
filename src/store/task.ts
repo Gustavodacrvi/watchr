@@ -24,6 +24,7 @@ interface ActionContext {
 }
 
 interface Actions {
+  // tslint:disable-next-line:max-line-length
   addTask: (context: ActionContext, obj: {task: Task, perspectiveId: string, collection: string, order: string[], position: number}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
@@ -46,7 +47,6 @@ export default {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('tasks').where('userId', '==', rootState.uid).onSnapshot(snap => {
           const changes = snap.docChanges()
-          console.log('read')
           for (const change of changes)
             if (change.type === 'added') {
               const lab = state.tasks.find(el => el.id === change.doc.id)
