@@ -12,20 +12,19 @@
         name='fade'
         mode='out-in'
       >
-        <ft-icon v-if="passwordType === 'text'"
+        <span v-if="passwordType === 'text'" @click='togglePassword'>
+        <i
           key='eye'
-          class='eye txt icon pointer'
-          icon='eye'
-          size='1x'
-          @click='togglePassword'
-        ></ft-icon>
-        <ft-icon v-else
+          class='eye txt icon pointer fas fa-eye fa-1x'
+        ></i>
+        </span>
+        <span v-else @click='togglePassword'>
+        <i
           key='eye-slash'
-          class='eye txt icon pointer'
-          icon='eye-slash'
-          size='1x'
+          class='eye txt icon pointer fas fa-eye-slash fa-1x'
           @click='togglePassword'
-        ></ft-icon>
+        ></i>
+        </span>
       </transition>
     </span>
   </div>
@@ -37,11 +36,6 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
 
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
-
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEye, faEyeSlash, faSync } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faEye, faEyeSlash, faSync)
 
 @Component({
   components: {

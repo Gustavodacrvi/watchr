@@ -1,14 +1,13 @@
 <template>
   <div class='component'>
-    <div class='header'>
-      <dynamic-ft-icon
+    <div class='header pointer' @dblclick='hided = !hided'>
+      <header-title
+        :value='inboxPers.name'
         :icon='inboxPers.icon'
-        :style='{color: inboxPers.iconColor}'
-        size='2x'
+        :icon-color='inboxPers.iconColor'
+        :showing='showing'
+        @toggle='v => showing = !showing'
       />
-      <span class='title'>
-        {{ inboxPers.name }}
-      </span>
       <div class='right'>
         <span class='header-option'>
           <drop-finder
@@ -40,42 +39,31 @@
       </div>
     </div>
     <div class='margin'></div>
-    <p class='description txt'>
-      {{ inboxPers.description }}
-    </p>
-    <div class='margin'></div>
-    <view-tags
-      fixed-tag='Inbox'
-      :search='search'
-      :priority='priority'
-      @clearsearch="v => search = ''"
-      @clearpriority="v => priority = ''"
-    />
-    <div class='margin'></div>
-    <task-renderer
-      :tasks='getTasks'
-      group='inbox'
-      id='appnavinbox'
-      @update='onUpdate'
-      @selected='onSelect'
-    />
-    <task-adder
-      fixed-tag='Inbox'
-      :allow-priority='true'
-    />
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
+    <div v-if='!hided'>
+      <div v-if='showing'>
+        <p class='description txt'>
+          {{ inboxPers.description }}
+        </p>
+        <div class='margin'></div>
+        <view-tags
+          fixed-tag='Inbox'
+          :search='search'
+          :priority='priority'
+          @clearsearch="v => search = ''"
+          @clearpriority="v => priority = ''"
+        />
+        <div class='margin'></div>
+      </div>
+      <task-renderer
+        :tasks='getTasks'
+        group='inbox'
+        id='appnavinbox'
+        @update='onUpdate'
+        @selected='onSelect'
+        @add='addInboxTask'
+      />
+    </div>
+    <div class='margin-task' :class='platform'></div>
   </div>
 </template>
 
@@ -88,8 +76,8 @@ import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
 import IconOptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
-import TaskAdder from '@/components/AppViews/AppviewComponents/AppviewTaskAdder.vue'
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
+import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 
 import { Perspective, Label, Task, ListIcon } from '../../../interfaces/app'
 import appUtils from '@/utils/app'
@@ -98,26 +86,23 @@ const labelVuex = namespace('label')
 const taskVuex = namespace('task')
 const persVuex = namespace('perspective')
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSearch, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faSearch, faEllipsisH)
-
 @Component({
   components: {
-    'dynamic-ft-icon': DynamicFontawesome,
     'drop-finder': DropdownFinder,
     'view-tags': AppviewTags,
-    'task-adder': TaskAdder,
     'task-renderer': AppviewTaskrenderer,
     'icon-options': IconOptions,
+    'header-title': HeaderTitle,
   },
 })
 export default class PerspectiveAppview extends Vue {
   @Getter isDesktop!: boolean
+  @Getter platform!: string
   @Mutation pushView!: (obj: {view: string, section: string}) => void
 
   @taskVuex.State tasks!: Task[]
+  // tslint:disable-next-line:max-line-length
+  @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, collection: string, order: string[], position: number}) => void
 
   @labelVuex.Getter sortedLabels!: Label[]
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
@@ -127,6 +112,8 @@ export default class PerspectiveAppview extends Vue {
 
   search: string = ''
   priority: string = ''
+  hided: boolean = false
+  showing: boolean = true
   priorityOptions: ListIcon[] = [
    {
       name: 'High priority',
@@ -169,6 +156,18 @@ export default class PerspectiveAppview extends Vue {
     })
   }
 
+  addInboxTask({name, priority, position}: {name: string, priority: string, position: number}) {
+    this.addTask({
+      task: {
+        name,
+        priority,
+        labels: [],
+      },
+      perspectiveId: this.inboxPers.id,
+      collection: 'smartPerspectives',
+      position, order: this.inboxPers.order,
+    } as any)
+  }
   selectPriority(value: string) {
     this.priority = value
   }
@@ -224,12 +223,23 @@ export default class PerspectiveAppview extends Vue {
       })
     }
   }
+  arraysEqual(arr1: any[], arr2: any[]): boolean {
+    if (arr1.length !== arr2.length)
+      return false
+    for (let i = arr1.length; i--;) {
+      if (arr1[i] !== arr2[i])
+        return false
+    }
+    return true
+  }
   onUpdate(ids: string[]) {
-    this.saveTaskOrder({
-      id: this.inboxPers.id,
-      order: ids,
-      collection: 'smartPerspectives',
-    })
+    const filtered = ids.filter(el => el !== 'task-adder')
+    if (!this.arraysEqual(filtered, this.inboxPers.order))
+      this.saveTaskOrder({
+        id: this.inboxPers.id,
+        order: ids.filter(el => el !== 'task-adder'),
+        collection: 'smartPerspectives',
+      })
   }
   onSelect(ids: string) {
 
@@ -261,12 +271,6 @@ export default class PerspectiveAppview extends Vue {
         const index = order.indexOf(id)
         order.splice(index, 1)
       }
-      if (orderChanged)
-        this.saveTaskOrder({
-          id: this.inboxPers.id,
-          collection: 'smartPerspectives',
-          order,
-        })
       return appUtils.sortArrayByIds(tasks, order)
     }
     return []
@@ -282,6 +286,14 @@ export default class PerspectiveAppview extends Vue {
 }
 
 </script>
+
+<style scoped>
+
+.header {
+  height: 30px;
+}
+
+</style>
 
 <style scoped src='@/assets/css/appView.css'>
 </style>

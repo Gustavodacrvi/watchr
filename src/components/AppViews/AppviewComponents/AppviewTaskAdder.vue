@@ -2,11 +2,7 @@
   <div class='wrapper'>
     <transition name='fade' mode='out-in'>
       <div v-if='!showing' @click='showing = true' key='notshowing' class='msg'>
-        <dynamic-ft-icon
-          class='icon pointer txt'
-          icon='plus'
-          size='lg'
-        />
+        <i class='icon pointer txt fas fa-plus fa-lg'></i>
         <span class='txt name'>Add task</span>
       </div>
       <div v-else key='showing' class='task-adder'>
@@ -39,6 +35,7 @@
             :values='options'
             :input='value'
             @value="v => value = v"
+            @enter='add'
             @select='selectDropValue'
           />
         </div>
@@ -71,7 +68,6 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 
-import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
@@ -83,7 +79,6 @@ const taskVuex = namespace('task')
 
 @Component({
   components: {
-    'dynamic-ft-icon': DynamicFontawesome,
     'view-tag': Tag,
     'view-btn': FormButton,
     'view-options': AppviewIconoptions,
@@ -93,8 +88,6 @@ const taskVuex = namespace('task')
 export default class TaskAdder extends Vue {
   @Prop() fixedTag!: string
   @Prop({default: false}) allowPriority!: boolean
-
-  @taskVuex.Action addTask!: (task: Task) => void
 
   value: string = ''
   showing: boolean = false
@@ -124,10 +117,7 @@ export default class TaskAdder extends Vue {
 
   add() {
     if (this.value)
-      this.addTask({
-        name: this.value,
-        priority: this.priority,
-      } as any)
+      this.$emit('add', {name: this.value, priority: this.priority})
     this.value = ''
   }
   chosePriority(priority: 'Low priority' | 'High priority' | 'Medium priority') {
@@ -180,10 +170,6 @@ export default class TaskAdder extends Vue {
 </script>
 
 <style scoped>
-
-.wrapper {
-  margin-top: 30px;
-}
 
 .right {
   position: absolute;

@@ -6,12 +6,7 @@
   <button v-else
     class='margin button round-border'
   >
-    <ft-icon
-      class='icon pointer txt'
-      icon='sync'
-      :style="{color: 'white'}"
-      spin
-    />
+    <i class='icon pointer txt fas fa-sync fa-spin' :style="{color: 'white'}"></i>
   </button>
 </template>
 

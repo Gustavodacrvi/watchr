@@ -7,9 +7,10 @@
           <div class='line middle'></div>
           <div class='line'></div>
         </div>
+        <span class='title'>{{ navBarTitle }}</span>
       </div>
       <div class='right'>
-        <span>right</span>
+        
       </div>
     </div>
   </div>
@@ -18,10 +19,11 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { Mutation } from 'vuex-class'
+import { Mutation, State } from 'vuex-class'
 
 @Component
 export default class MobileNavbar extends Vue {
+  @State navBarTitle!: string
   @Mutation openAppBar!: () => void
 }
 
@@ -46,6 +48,8 @@ export default class MobileNavbar extends Vue {
 .left {
   float: left;
   clear: left;
+  display: flex;
+  align-items: center;
 }
 
 .right {
@@ -81,6 +85,14 @@ export default class MobileNavbar extends Vue {
 
 .icon:hover .line {
   background-color: #fc7d7d;
+}
+
+.title {
+  margin-left: 25px;
+  color: #fc7d7d;
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.5em;
 }
 
 </style>

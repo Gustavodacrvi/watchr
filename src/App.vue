@@ -7,9 +7,10 @@
           <span class='txt another-tab'>This app is already being used in another tab.</span>
         </div>
         <div key='app' v-else-if='!loading' class='visible'>
-          <div class='navbar' :class='platform'>
+          <div class='navbar' :class="[platform, theme, {'background-color':!isDesktop}]">
             <the-nav-bar/>
           </div>
+          <div v-if='!isDesktop' style='flex-basis: 50px'></div>
           <transition name='fade' mode='out-in'>
             <router-view v-if='!isShowingPopUp || isDesktop' class='content'/>
           </transition>
@@ -60,8 +61,10 @@ import appUtils from '@/utils/app'
     'error-component': ErrorComponent,
     'the-nav-bar': TheNavbar,
     'the-app-bar': TheAppbar,
-    'alerts': appUtils.AsyncComponent(import(/* webpackPrefetch: true */ '@/components/Alerts.vue')),
-    'pop-up': appUtils.AsyncComponent(import(/* webpackPrefetch: true */ '@/components/PopUps/PopUp.vue')),
+    // tslint:disable-next-line:max-line-length
+    'alerts': appUtils.AsyncComponent(import(/* webpackPrefetch: true */ /* webpackChunkName: "alerts" */ '@/components/Alerts.vue')),
+    // tslint:disable-next-line:max-line-length
+    'pop-up': appUtils.AsyncComponent(import(/* webpackChunkName: "pop-ups" */ '@/components/PopUps/PopUp.vue')),
     'action-button': appUtils.AsyncComponent(import('@/components/ActionButton.vue')),
   },
 })
@@ -121,14 +124,6 @@ export default class App extends Vue {
     if (!this.showingAlert)
       this.showLastAlert()
   }
-  @Watch('loggedAndVerified')
-  onChange() {
-    if (this.loggedAndVerified || this.anonymous) {
-      this.$store.dispatch('label/getData')
-      this.$store.dispatch('perspective/getData')
-      this.$store.dispatch('task/getData')
-    }
-  }
   @Watch('$route')
   onRouteChange(to: any, from: any) {
     if (from.name === 'Popup')
@@ -187,7 +182,17 @@ export default class App extends Vue {
 }
 
 .navbar.mobile {
-  flex-basis: 50px;
+  height: 50px;
+  position: fixed;
+  z-index: 900;
+}
+
+.navbar.mobile.light {
+  box-shadow: 0 0 15px 10px #F8F7F6;
+}
+
+.navbar.mobile.dark {
+  box-shadow: 0 0 15px 10px #121212;
 }
 
 .content {

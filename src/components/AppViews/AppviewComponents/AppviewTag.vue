@@ -1,21 +1,13 @@
 <template>
   <div class='tag' @click='click' :style='{backgroundColor: backColor}'>
     <div class='icon'>
-      <dynamic-ft-icon
-        :icon='icon'
-        size='sm'
-        :style="{color: 'white'}"
-      />
+      <i :class='`fas fa-${icon} fa-sm`' :style="{color: 'white'}"></i>
     </div>
     <div class='name-wrapper'>
       <span class='name' :class="{'not-fixed': !fixed}">{{ name }}</span>
     </div>
     <div class='icon' v-if='fixed'>
-      <dynamic-ft-icon
-        icon='thumbtack'
-        size='sm'
-        :style="{color: 'white'}"
-      />
+      <i class='fas fa-thumbtack fa-sm' :style="{color: 'white'}"></i>
     </div>
   </div>
 </template>
@@ -24,13 +16,7 @@
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
-import FontAwesome from '@/components/DynamicFontawesome.vue'
-
-@Component({
-  components: {
-    'dynamic-ft-icon': FontAwesome,
-  },
-})
+@Component
 export default class AppviewIcon extends Vue {
   @Prop(String) backColor!: string
   @Prop(String) name!: string

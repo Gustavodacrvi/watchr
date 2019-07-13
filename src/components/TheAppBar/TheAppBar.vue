@@ -1,7 +1,7 @@
 <template>
   <div
     class='wrapper'
-    :class='platform'
+    :class='[platform, {zindex: activeZindex && !isDesktop}]'
   >
     <div
       class='appbar gray'
@@ -35,22 +35,17 @@ import { State, Getter, Mutation } from 'vuex-class'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
 
-const AsyncComponent = (compPath: string): any => () => ({
-  component: import(`${compPath}`),
-  loading: LoadingComponent,
-  error: ErrorComponent,
-  delay: 200,
-  timeout: 5000,
-})
+import appUtils from '@/utils/app'
 
 @Component({
   components: {
-    appnav: AsyncComponent('./Appnav.vue'),
-    settingsnav: AsyncComponent('./Settingsnav.vue'),
+    appnav: appUtils.AsyncComponent(import(/* webpackChunkName: "appnav-app" */ './Appnav.vue')),
+    settingsnav: appUtils.AsyncComponent(/* webpackChunkName: "appnav-settings" */ import('./Settingsnav.vue')),
   },
 })
 export default class TheNavBar extends Vue {
   @State theme!: string
+  @State appBarState!: string
   @State isLogged!: boolean
   @State emailVerified!: boolean
   @Mutation pushTheme!: (theme: string) => void
@@ -61,6 +56,7 @@ export default class TheNavBar extends Vue {
   @Getter isStandAlone!: boolean
 
   appMenu: 'settingsnav' | 'appnav' = 'settingsnav'
+  activeZindex: boolean = true
 
   created() {
     if ((this.isDesktop || this.isStandAlone) && this.loggedAndVerified)
@@ -88,6 +84,19 @@ export default class TheNavBar extends Vue {
       this.appMenu = 'settingsnav'
     else this.appMenu = 'appnav'
   }
+  @Watch('appBarState')
+  onChange() {
+    if (this.appBarState)
+      this.activeZindex = true
+    else setTimeout(() => {
+      this.activeZindex = false
+    }, 300)
+  }
+  @Watch('isDesktop')
+  onChange3() {
+    if (this.isDesktop)
+      this.appMenu = 'appnav'
+  }
 }
 
 </script>
@@ -104,6 +113,15 @@ export default class TheNavBar extends Vue {
   left: 0;
   height: 100%;
   width: 100%;
+  z-index: 35;
+}
+
+.wrapper.desktop {
+  width: 300px;
+}
+
+.zindex {
+  z-index: 950;
 }
 
 .appbar {

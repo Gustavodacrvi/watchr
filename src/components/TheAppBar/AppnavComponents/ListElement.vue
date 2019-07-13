@@ -10,12 +10,7 @@
       :class='{handle: showHandle && !isDesktop}'
       @click='toggleElement'
     >
-      <dynamic-ft-icon
-        class='txt'
-        size='lg'
-        :icon='icon'
-        :style='{color: iconColor}'
-      />
+      <i :class='`txt fas fa-lg fa-${icon}`' :style='{color: iconColor}'></i>
     </div>
     <div
       class='content'
@@ -30,11 +25,7 @@
           class='help-icon'
           :key='i.icon'
         >
-          <dynamic-ft-icon
-            class='txt fade'
-            :icon='i.icon'
-            :size='i.size'
-          />
+          <i :class='`txt fade fas fa-${i.icon} fa-${i.size}`'></i>
         </span>
       </template>
       <span v-if='showOptionsMobile || showOptionsDesktop && options.length > 0' class='help-icon'>
@@ -52,11 +43,7 @@
             @click='optionClick(i.callback)'
           >
             <span class='el-icon'>
-              <dynamic-ft-icon
-                class='txt'
-                :icon='i.icon'
-                :size='i.size'
-              />
+              <i :class='`txt fas fa-${i.icon} fa-${i.size}`'></i>
             </span>
             <span class='el-name txt'>
               {{ i.name }}
@@ -74,19 +61,12 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter } from 'vuex-class'
 
-import FontAwesome from '@/components/DynamicFontawesome.vue'
 import IconDropdown from '@/components/IconDropdown.vue'
-
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faEllipsisV)
 
 import { ListIcon } from '../../../interfaces/app'
 
 @Component({
   components: {
-    'dynamic-ft-icon': FontAwesome,
     'icon-dropdown': IconDropdown,
   },
 })

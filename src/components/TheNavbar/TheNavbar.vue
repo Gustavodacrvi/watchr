@@ -1,5 +1,5 @@
 <template>
-  <div class='navbar-wrapper' :class='isDesktop ? "desktop" : "mobile"'>
+  <div class='navbar-wrapper' :class='platform'>
     <desktop v-if='isDesktop'></desktop>
     <keep-alive>
       <mobile v-if='!isDesktop'></mobile>
@@ -16,12 +16,13 @@ import appUtils from '@/utils/app'
 
 @Component({
   components: {
-    desktop: appUtils.AsyncComponent(import('./DesktopNavbar.vue')),
-    mobile: appUtils.AsyncComponent(import('./MobileNavbar.vue')),
+    desktop: appUtils.AsyncComponent(import(/* webpackChunkName: "desktop-navbar" */ './DesktopNavbar.vue')),
+    mobile: appUtils.AsyncComponent(import(/* webpackChunkName: "mobile-navbar" */ './MobileNavbar.vue')),
   },
 })
 export default class TheNavbar extends Vue {
   @Getter isDesktop!: boolean
+  @Getter platform!: boolean
 }
 
 </script>

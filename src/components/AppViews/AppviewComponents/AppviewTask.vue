@@ -2,12 +2,10 @@
   <div class='task round-border' :class='theme'>
     <div class='content' @click='toggleElement'>
       <span class='txt'>{{ task.name }}</span>
-      <dynamic-ft-icon v-if='task.priority'
-        class='content-icon'
-        icon='exclamation'
-        size='sm'
+      <i v-if='task.priority'
+        class='content-icon fas fa-exclamation fa-sm'
         :style='{color: exclamationColor}'
-      />
+      ></i>
     </div>
     <div class='options'>
     </div>
@@ -19,15 +17,9 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
-import FontAwesome from '@/components/DynamicFontawesome.vue'
-
 import { Task } from '../../../interfaces/app'
 
-@Component({
-  components: {
-    'dynamic-ft-icon': FontAwesome,
-  },
-})
+@Component
 export default class AppviewTask extends Vue {
   @Prop(Object) task!: Task
   @Prop(Boolean) deselectAll!: boolean
@@ -67,11 +59,12 @@ export default class AppviewTask extends Vue {
   display: flex;
   transition: background-color .3s;
   cursor: pointer;
-  height: 40px;
+  min-height: 40px;
 }
 
 .content {
   flex-basis: 100%;
+  margin: 6px 0;
   margin-left: 6px;
   display: flex;
   align-items: center;

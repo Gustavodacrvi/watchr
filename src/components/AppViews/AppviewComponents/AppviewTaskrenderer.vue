@@ -10,6 +10,14 @@
 
         @toggle='toggleElement'
       />
+      <task-adder
+        key='task-adder'
+        fixed-tag='Inbox'
+        :allow-priority='true'
+        @add='add'
+
+        data-vid='task-adder'
+      />
     </transition-group>
   </div>
 </template>
@@ -23,6 +31,7 @@ import ViewTask from '@/components/AppViews/AppviewComponents/AppviewTask.vue'
 
 import Sortable, { MultiDrag } from 'sortablejs'
 import { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
+import TaskAdder from '@/components/AppViews/AppviewComponents/AppviewTaskAdder.vue'
 
 Sortable.mount(new MultiDrag(), new AutoScroll())
 
@@ -31,6 +40,7 @@ import { Task } from '../../../interfaces/app'
 @Component({
   components: {
     'view-task': ViewTask,
+    'task-adder': TaskAdder,
   },
 })
 export default class AppviewTaskrenderer extends Vue {
@@ -74,6 +84,20 @@ export default class AppviewTaskrenderer extends Vue {
     this.sortable = new Sortable(this.rootComponent, options)
   }
 
+  add(obj: {name: string, priority: string}) {
+    const els: string[] = this.getIdsFromElements()
+    let i = 0
+    let position: number = 0
+    for (const id of els) {
+      if (id === 'task-adder') {
+        position = i
+        break
+      }
+      i++
+    }
+    const ids = els.filter(el => el !== 'task-adder')
+    this.$emit('add', {position, ...obj})
+  }
   getIdsFromElements(): string[] {
     const root = document.querySelector(`.task-${this.group}-${this.id}`)
     if (root) {

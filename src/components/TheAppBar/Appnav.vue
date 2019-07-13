@@ -21,14 +21,12 @@
     >
       <div class='content'>
         <div class='navsect'>
-          <ft-icon v-for='sect in sections'
-            :key='sect.comp'
-            class='txt pointer icon'
-            :icon='sect.icon'
+          <span v-for='sect in sections' :key='sect.comp' @click='select(sect)'>
+          <i
+            :class='`txt pointer icon fas fa-${sect.icon} fa-lg`'
             :style="isActiveClass(sect.comp)"
-            @click='select(sect)'
-            size='lg'
-          ></ft-icon>
+          ></i>
+          </span>
         </div>
         <div style='height: 12px;'></div>
       </div>
@@ -47,15 +45,12 @@
     <div
       class='footer-wrapper'
     >
-      <hr class='border hr' :class='theme'>
+      <hr class='border hr' v-if='showFooter' :class='theme'>
       <div class='footer'>
-        <div class='left'>
-          <ft-icon v-if='!isDesktop'
-            class='txt pointer icon'
-            icon='cog'
-            size='lg'
-            @click="$emit('change')"
-          ></ft-icon>
+        <div class='left' v-if='!isDesktop'>
+          <span @click="$emit('change')">
+          <i class='txt pointer icon fas fa-cog fa-lg'></i>
+          </span>
         </div>
         <div class='right'>
           <transition name='fade'>
@@ -74,11 +69,7 @@
                   @click='i.callback'
                 >
                   <span class='el-icon'>
-                    <ft-icon
-                      class='txt'
-                      :icon='i.icon'
-                      :size='i.size'
-                    />
+                    <i :class='`txt fas fa-${i.icon} fa-${i.size}`'></i>
                   </span>
                   <span class='el-name txt'>
                     {{ i.name }}
@@ -102,17 +93,10 @@ import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
 import IconDropdown from '@/components/IconDropdown.vue'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faAdjust, faCog, faHome, faLayerGroup, faProjectDiagram, faStopwatch,
- faStream, faTags, faChartPie, faEllipsisH, faSortAlphaDown } from '@fortawesome/free-solid-svg-icons'
-
 import appUtil from '@/utils/app'
 import { ListIcon } from '../../interfaces/app'
 
 const label = namespace('label')
-
-library.add(faAdjust, faCog, faHome, faLayerGroup, faProjectDiagram,
-faStopwatch, faStream, faTags, faChartPie, faEllipsisH, faSortAlphaDown)
 
 interface Section {
   icon: string
@@ -122,9 +106,13 @@ interface Section {
 
 @Component({
   components: {
-    'overview': appUtil.AsyncComponent(import('./AppnavSections/OverviewAppnav.vue')),
-    'labels': appUtil.AsyncComponent(import('./AppnavSections/LabelAppnav.vue')),
-    'perspectives': appUtil.AsyncComponent(import('./AppnavSections/PerspectivesAppnav.vue')),
+    // tslint:disable-next-line:max-line-length
+    'overview': appUtil.AsyncComponent(import(/* webpackChunkName: "overview-section" */ './AppnavSections/OverviewAppnav.vue')),
+    // tslint:disable-next-line:max-line-length
+    'labels': appUtil.AsyncComponent(import(/* webpackChunkName: "label-section" */ './AppnavSections/LabelAppnav.vue')),
+    // tslint:disable-next-line:max-line-length
+    'perspectives': appUtil.AsyncComponent(import(/* webpackChunkName: "perspective-section" */ './AppnavSections/PerspectivesAppnav.vue')),
+    // tslint:disable-next-line:max-line-length
     'icon-dropdown': IconDropdown,
   },
 })
@@ -174,6 +162,9 @@ export default class LoggedAppnav extends Vue {
     return {
       color: mainColor,
     }
+  }
+  get showFooter() {
+    return !this.isDesktop || (this.options && this.options.length > 0 && this.isDesktop)
   }
 }
 

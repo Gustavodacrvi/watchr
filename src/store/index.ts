@@ -27,6 +27,7 @@ export interface States {
   uid: string | null
   firebase: any
   isAnonymous: boolean
+  navBarTitle: string
   emailVerified: boolean
   appError: boolean
   loading: boolean
@@ -46,6 +47,7 @@ interface Mutations {
   pushAppView: (state: States, comp: string) => void
   pushPerspective: (state: States, payload?: any) => void
   pushView: (state: States, obj: {view: string, section: string}) => void
+  addNavBarTitle: (state: States, title: string) => void
   showApp: () => void
   openAppBar: () => void
   closeAppBar: () => void
@@ -87,6 +89,7 @@ const store: any = new Vuex.Store({
     theme: savedTheme,
     popUpComponent: '',
     popUpPayload: null,
+    navBarTitle: '',
     windowWidth: document.body.clientWidth,
     appBarState: false,
     isLogged: false,
@@ -173,6 +176,9 @@ const store: any = new Vuex.Store({
     pushView(state: States, {view, section}) {
       state.viewName = view
       state.viewSect = section
+    },
+    addNavBarTitle(state: States, title: string) {
+      state.navBarTitle = title
     },
   } as Mutations,
   getters: {

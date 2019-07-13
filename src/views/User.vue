@@ -58,6 +58,8 @@ import Mixin from '@/mixins/navBar'
 
 import appUtils from '@/utils/app'
 
+import TabSlider from '@/components/SlidersAndMenus/TabSlider.vue'
+
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 import { Perspective } from '../interfaces/app'
 
@@ -65,7 +67,7 @@ const persVuex = namespace('perspective')
 
 @Component({
   components: {
-    'tab-slider': appUtils.AsyncComponent(import('@/components/SlidersAndMenus/TabSlider.vue')),
+    'tab-slider': TabSlider,
     'form-button': FormButton,
   },
 })
@@ -82,11 +84,16 @@ export default class Guest extends Mixins(Mixin) {
   @persVuex.Getter pinedSmartPerspectives!: Perspective[]
 
   waitingResponse: boolean = false
-  
+  loaded: boolean = false
+
   created() {
-    if (this.$route.name === 'User')
+    if (this.$route.name === 'User' && !this.loaded) {
       this.$router.replace('user/pers/' + this.pinedSmartPerspectives[0].name.toLowerCase())
-    this.open()    
+      this.loaded = true
+    }
+    if (this.$route.name !== 'User' && !this.loaded)
+      this.loaded = true
+    this.open()
   }
 
   open() {
@@ -103,6 +110,13 @@ export default class Guest extends Mixins(Mixin) {
   @Watch('loggedAndVerified')
   onUserChange() {
     this.open()
+  }
+  @Watch('pinedSmartPerspectives')
+  onChange() {
+    if (!this.loaded && this.pinedSmartPerspectives[0]) {
+      this.$router.replace('user/pers/' + this.pinedSmartPerspectives[0].name.toLowerCase())
+      this.loaded = true
+    }
   }
 }
 

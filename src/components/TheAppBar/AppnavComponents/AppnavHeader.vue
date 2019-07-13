@@ -5,13 +5,12 @@
         <span class='title'>{{ name }}</span>
       </div>
       <div key='options' v-else class='header options'>
-        <dynamic-ft-icon v-for='i in icons'
-          class='icon pointer header-icon'
+        <span @click='i.callback(selected)'>
+        <i v-for='i in icons'
           :key='i.name'
-          :icon='i.icon'
-          :size='i.size'
-          @click='i.callback(selected)'
-        />
+          :class='`icon pointer header-icon fas fa-${i.icon} fa-${i.size}`'
+        ></i>
+        </span>
       </div>
     </transition>
   </div>
@@ -21,15 +20,9 @@
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
-import FontAwesome from '@/components/DynamicFontawesome.vue'
-
 import { ListIcon } from '../../../interfaces/app'
 
-@Component({
-  components: {
-    'dynamic-ft-icon': FontAwesome,
-  },
-})
+@Component
 export default class AppnavHeader extends Vue {
   @Prop({type: String, required: true}) name!: string
   @Prop({type: Boolean, required: true}) showTitle!: boolean

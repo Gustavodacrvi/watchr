@@ -39,11 +39,7 @@
             :class='theme'
             @click='signOut'
           >
-            <ft-icon
-              class='icon txt '
-              icon='sign-out-alt'
-              size='sm'
-            />
+            <i class='icon txt fa-sign-out-alt fas fa-sm'></i>
             Sign out
           </span>
           <span v-if='!emailVerified'
@@ -51,11 +47,7 @@
             :class='theme'
             @click='resendConfirmationEmail'
           >
-            <ft-icon
-              class='icon txt '
-              icon='paper-plane'
-              size='sm'
-            />
+            <i class='icon txt fa-paper-plane fas fa-sm'></i>
             Resend confirmation e-mail
           </span>
         </template>
@@ -65,20 +57,14 @@
       <hr class='border hr' :class='theme'>
       <div class='footer'>
         <div v-if='loggedAndVerified' class='left'>
-          <ft-icon
-            class='icon txt pointer'
-            icon='tasks'
-            size='lg'
-            @click="$emit('change')"
-          ></ft-icon>
+          <span @click="$emit('change')">
+          <i class='icon txt pointer fa-tasks fas fa-lg'></i>
+          </span>
         </div>
         <div class='right'>
-          <ft-icon
-            class='icon txt pointer'
-            icon='adjust'
-            size='lg'
-            @click="$emit('theme')"
-          ></ft-icon>
+          <span @click="$emit('theme')">
+          <i class='icon txt pointer fas fa-adjust fas fa-lg'></i>
+          </span>
         </div>
       </div>
     </div>
@@ -90,11 +76,6 @@
 import { Component, Vue, Mixins } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 import Mixin from '@/mixins/navBar'
-
-import { faAdjust, faTasks, faSignOutAlt, faPaperPlane } from '@fortawesome/free-solid-svg-icons'
-import { library } from '@fortawesome/fontawesome-svg-core'
-
-library.add(faAdjust, faTasks, faSignOutAlt, faPaperPlane)
 
 @Component
 export default class LoggedAppnav extends Mixins(Mixin) {

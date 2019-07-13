@@ -24,7 +24,8 @@ interface ActionContext {
 }
 
 interface Actions {
-  addTask: (context: ActionContext, task: {name: string, priority: string}) => void
+  // tslint:disable-next-line:max-line-length
+  addTask: (context: ActionContext, obj: {task: Task, perspectiveId: string, collection: string, order: string[], position: number}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -60,14 +61,25 @@ export default {
             }
         })
     },
-    addTask({ rootState }, task) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('tasks').add({
+    addTask({ rootState }, {task, perspectiveId, order, collection, position}) {
+      if (rootState.firestore && rootState.uid) {
+        const batch = rootState.firestore.batch()
+
+        const ord = order.slice()
+        const ref = rootState.firestore.collection('tasks').doc()
+        ord.splice(position, 0, ref.id)
+        batch.set(ref, {
           name: task.name,
           priority: task.priority,
           userId: rootState.uid,
-          labels: [],
+          labels: task.labels,
         })
+        rootState.firestore.collection(collection).doc(perspectiveId).update({
+          order: ord,
+        })
+
+        batch.commit()
+      }
     },
   } as Actions,
 }

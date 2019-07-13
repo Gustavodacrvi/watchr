@@ -47,7 +47,8 @@ export default class TabSlider extends Vue {
 
   created() {
     for (const o of this.options)
-      this.components[o.comp] = appUtils.AsyncComponent(import(`./TabSliderComponents/${o.comp}.vue`))
+      // tslint:disable-next-line:max-line-length
+      this.components[o.comp] = appUtils.AsyncComponent(import(/* webpackChunkName: "tab-slider" */ `./TabSliderComponents/${o.comp}.vue`))
     this.comp = this.options[0].comp
   }
 
@@ -62,6 +63,7 @@ export default class TabSlider extends Vue {
 
 .wrapper {
   margin: 0 10px;
+  min-height: 300px;
 }
 
 .slider {
