@@ -1,10 +1,7 @@
 <template>
   <div class='tags-wrapper'>
-    <span @click='showing = !showing'>
-    <i class='toggle-icon pointer icon fas fa-bars fa-lg'></i>
-    </span>
     <transition name='fade'>
-      <div v-if='showing' class='tags'>
+      <div class='tags'>
         <view-tag v-if='fixedTag'
           :name='fixedTag'
           :fixed='true'
@@ -46,8 +43,6 @@ export default class AppviewTags extends Vue {
   @Prop(String) fixedTag!: string
   @Prop(String) search!: string
   @Prop(String) priority!: string
-
-  showing: boolean = true
 }
 
 </script>

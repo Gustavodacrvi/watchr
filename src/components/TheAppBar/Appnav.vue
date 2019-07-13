@@ -45,9 +45,9 @@
     <div
       class='footer-wrapper'
     >
-      <hr class='border hr' :class='theme'>
+      <hr class='border hr' v-if='showFooter' :class='theme'>
       <div class='footer'>
-        <div class='left'>
+        <div class='left' v-if='!isDesktop'>
           <span @click="$emit('change')">
           <i class='txt pointer icon fas fa-cog fa-lg'></i>
           </span>
@@ -69,11 +69,7 @@
                   @click='i.callback'
                 >
                   <span class='el-icon'>
-                    <ft-icon
-                      class='txt'
-                      :icon='i.icon'
-                      :size='i.size'
-                    />
+                    <i :class='`txt fas fa-${i.icon} fa-${i.size}`'></i>
                   </span>
                   <span class='el-name txt'>
                     {{ i.name }}
@@ -166,6 +162,9 @@ export default class LoggedAppnav extends Vue {
     return {
       color: mainColor,
     }
+  }
+  get showFooter() {
+    return !this.isDesktop || (this.options && this.options.length > 0 && this.isDesktop)
   }
 }
 

@@ -5,6 +5,9 @@
       {{ value }}
     </span>
   </div>
+  <span v-else @click="$emit('toggle')" class='left'>
+    <i class='txt angle icon pointer fas fa-angle-down fa-lg' :class="{'rotate': !showing}"></i>
+  </span>
 </template>
 
 <script lang='ts'>
@@ -19,6 +22,7 @@ export default class AppviewHeadertitle extends Vue {
 
   @Prop(String) value!: string
   @Prop(String) icon!: string
+  @Prop(Boolean) showing!: boolean
   @Prop(String) iconColor!: string
 
   created() {
@@ -37,6 +41,24 @@ export default class AppviewHeadertitle extends Vue {
 }
 
 </script>
+
+<style scoped>
+
+.angle {
+  transition: transform .3s;
+}
+
+.rotate {
+  transform: rotate(-90deg);
+}
+
+.left {
+  display: inline-flex;
+  height: 100%;
+  align-items: center;
+}
+
+</style>
 
 <style scoped src='@/assets/css/appView.css'>
 </style>

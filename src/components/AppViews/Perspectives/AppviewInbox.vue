@@ -1,10 +1,12 @@
 <template>
   <div class='component'>
-    <div class='header'>
+    <div class='header pointer' @dblclick='hided = !hided'>
       <header-title
         :value='inboxPers.name'
         :icon='inboxPers.icon'
         :icon-color='inboxPers.iconColor'
+        :showing='showing'
+        @toggle='v => showing = !showing'
       />
       <div class='right'>
         <span class='header-option'>
@@ -37,42 +39,34 @@
       </div>
     </div>
     <div class='margin'></div>
-    <p class='description txt'>
-      {{ inboxPers.description }}
-    </p>
-    <div class='margin'></div>
-    <view-tags
-      fixed-tag='Inbox'
-      :search='search'
-      :priority='priority'
-      @clearsearch="v => search = ''"
-      @clearpriority="v => priority = ''"
-    />
-    <div class='margin'></div>
-    <task-renderer
-      :tasks='getTasks'
-      group='inbox'
-      id='appnavinbox'
-      @update='onUpdate'
-      @selected='onSelect'
-    />
+    <div v-if='!hided'>
+      <div v-if='showing'>
+        <p class='description txt'>
+          {{ inboxPers.description }}
+        </p>
+        <div class='margin'></div>
+        <view-tags
+          fixed-tag='Inbox'
+          :search='search'
+          :priority='priority'
+          @clearsearch="v => search = ''"
+          @clearpriority="v => priority = ''"
+        />
+        <div class='margin'></div>
+      </div>
+      <task-renderer
+        :tasks='getTasks'
+        group='inbox'
+        id='appnavinbox'
+        @update='onUpdate'
+        @selected='onSelect'
+      />
+    </div>
     <task-adder
       fixed-tag='Inbox'
       :allow-priority='true'
     />
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
-    <div class='margin'></div>
+    <div class='margin-task' :class='platform'></div>
   </div>
 </template>
 
@@ -108,6 +102,7 @@ const persVuex = namespace('perspective')
 })
 export default class PerspectiveAppview extends Vue {
   @Getter isDesktop!: boolean
+  @Getter platform!: string
   @Mutation pushView!: (obj: {view: string, section: string}) => void
 
   @taskVuex.State tasks!: Task[]
@@ -120,6 +115,8 @@ export default class PerspectiveAppview extends Vue {
 
   search: string = ''
   priority: string = ''
+  hided: boolean = false
+  showing: boolean = true
   priorityOptions: ListIcon[] = [
    {
       name: 'High priority',

@@ -10,7 +10,7 @@
         <span class='title'>{{ navBarTitle }}</span>
       </div>
       <div class='right'>
-        <span>right</span>
+        
       </div>
     </div>
   </div>

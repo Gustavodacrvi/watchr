@@ -59,11 +59,12 @@ export default class AppviewTask extends Vue {
   display: flex;
   transition: background-color .3s;
   cursor: pointer;
-  height: 40px;
+  min-height: 40px;
 }
 
 .content {
   flex-basis: 100%;
+  margin: 6px 0;
   margin-left: 6px;
   display: flex;
   align-items: center;

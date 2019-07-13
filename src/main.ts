@@ -34,6 +34,9 @@ auth.onAuthStateChanged(() => {
   }
   store.commit('saveCurrentUser', firebase.auth().currentUser)
   store.commit('saveFirebase', firebase)
+  store.dispatch('label/getData')
+  store.dispatch('perspective/getData')
+  store.dispatch('task/getData')
 })
 
 Vue.config.productionTip = false

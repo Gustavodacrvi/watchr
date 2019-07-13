@@ -28,3 +28,11 @@
   margin-left: 12px;
   color: #FF6B66;
 }
+
+.margin-task.desktop {
+  height: 80px;
+}
+
+.margin-task.mobile {
+  height: 40px;
+}

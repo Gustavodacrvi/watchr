@@ -92,6 +92,11 @@ export default class TheNavBar extends Vue {
       this.activeZindex = false
     }, 300)
   }
+  @Watch('isDesktop')
+  onChange3() {
+    if (this.isDesktop)
+      this.appMenu = 'appnav'
+  }
 }
 
 </script>

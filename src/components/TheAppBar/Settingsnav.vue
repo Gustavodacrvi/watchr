@@ -57,10 +57,14 @@
       <hr class='border hr' :class='theme'>
       <div class='footer'>
         <div v-if='loggedAndVerified' class='left'>
-          <i class='icon txt pointer fa-tasks fas fa-lg' @click="$emit('change')"></i>
+          <span @click="$emit('change')">
+          <i class='icon txt pointer fa-tasks fas fa-lg'></i>
+          </span>
         </div>
         <div class='right'>
-          <i class='icon txt pointer fas fa-adjust fas fa-lg' @click="$emit('change')"></i>
+          <span @click="$emit('theme')">
+          <i class='icon txt pointer fas fa-adjust fas fa-lg'></i>
+          </span>
         </div>
       </div>
     </div>
