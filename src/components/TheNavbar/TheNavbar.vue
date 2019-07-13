@@ -16,8 +16,8 @@ import appUtils from '@/utils/app'
 
 @Component({
   components: {
-    desktop: appUtils.AsyncComponent(import('./DesktopNavbar.vue')),
-    mobile: appUtils.AsyncComponent(import('./MobileNavbar.vue')),
+    desktop: appUtils.AsyncComponent(import(/* webpackChunkName: "desktop-navbar" */ './DesktopNavbar.vue')),
+    mobile: appUtils.AsyncComponent(import(/* webpackChunkName: "mobile-navbar" */ './MobileNavbar.vue')),
   },
 })
 export default class TheNavbar extends Vue {

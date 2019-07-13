@@ -28,10 +28,7 @@
         <div class='dual-drop-el'>
           <span class='drop-el txt'
             @click="pushPopUp('SigninPopup')">
-            <ft-icon
-              icon='sign-in-alt'
-              size='sm'
-            ></ft-icon>
+            <i class='fa sign-in-alt fas fa-sm'></i>
             Sign in
           </span>
           <hr class='thematic-break'>
@@ -39,10 +36,7 @@
             class='drop-el txt'
             @click="pushPopUp('SignupPopup')"
             >
-            <ft-icon
-              icon='user-plus'
-              size='sm'
-            ></ft-icon>
+            <i class='fa-user-plus fas fa-sm'></i>
             Sign up
           </span>
         </div>
@@ -56,30 +50,21 @@
           class='drop-el txt'
           @click='signOut'
         >
-          <ft-icon
-            icon='sign-out-alt'
-            size='sm'
-          />
+          <i class='fa-sign-out-alt fas fa-sm'></i>
           Sign out
         </span>
         <span v-if='!emailVerified'
           class='drop-el txt'
           @click='resendConfirmationEmail'
         >
-          <ft-icon
-            icon='paper-plane'
-            size='sm'
-          />
+          <i class='fa-paper-plane fas fa-sm'></i>
           Resend confirmation e-mail
         </span>
       </icon-dropdown>
       </span>
-      <ft-icon
-        class='txt pointer icon margin'
-        icon='adjust'
-        @click='changeTheme'
-        size='lg'
-      ></ft-icon>
+        <span @click='changeTheme'>
+        <i class='fa-adjust fa-lg txt pointer fas icon margin'></i>
+        </span>
     </div>
     <div
       class='magic-line'
@@ -95,11 +80,6 @@ import { State, Mutation } from 'vuex-class'
 import Mixin from '@/mixins/navBar'
 
 import IconDropdown from '@/components/IconDropdown.vue'
-
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSignOutAlt, faPaperPlane } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faSignOutAlt, faPaperPlane)
 
 @Component({
   components: {

@@ -13,8 +13,10 @@ import { Perspective } from '../../../interfaces/app'
 
 @Component({
   components: {
-    'app-inbox': appUtils.AsyncComponent(import('./AppviewInbox.vue')),
-    'app-custom': appUtils.AsyncComponent(import('./CustomPerspective.vue')),
+    // tslint:disable-next-line:max-line-length
+    'app-inbox': appUtils.AsyncComponent(import(/* webpackChunkName: "app-view-inbox" */ './AppviewInbox.vue')),
+    // tslint:disable-next-line:max-line-length
+    'app-custom': appUtils.AsyncComponent(import(/* webpackChunkName: "app-view-perspective" */ './CustomPerspective.vue')),
   },
 })
 export default class PerspectiveView extends Vue {

@@ -13,17 +13,8 @@
         @click='optionClick(i.name, i.callback)'
       >
         <span class='el-icon'>
-          <dynamic-ft-icon v-if='!i.iconColor'
-            class='txt'
-            :icon='i.icon'
-            :size='i.size'
-          />
-          <dynamic-ft-icon v-else
-            class='txt'
-            :icon='i.icon'
-            :size='i.size'
-            :style='{color: i.iconColor}'
-          />
+          <i v-if='!i.iconColor' :class='`txt fas fa-${i.icon} fa-${i.size}`'></i>
+          <i v-else :class='`txt fas fa-${i.icon} fa-${i.size}`' :style='{color: i.iconColor}'></i>
         </span>
         <span class='el-name txt'>
           {{ i.name }}
@@ -38,19 +29,12 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
-import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import IconDropdown from '@/components/IconDropdown.vue'
 
 import { ListIcon } from '../../../interfaces/app'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faExclamation } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faExclamation)
-
 @Component({
   components: {
-    'dynamic-ft-icon': DynamicFontawesome,
     'icon-dropdown': IconDropdown,
   },
 })

@@ -9,11 +9,7 @@
       <span
         class='main'
         @click='showing = !showing'>
-          <ft-icon
-            class='icon txt pointer'
-            icon='plus'
-            :style="{color: 'white'}"
-          ></ft-icon>
+        <i class='icon txt pointer fas fa-plus' :style="{color: 'white'}"></i>
       </span>
       <transition name='below-trans'>
         <div v-if='showing'
@@ -25,11 +21,7 @@
             :style='`background-color: ${btn.backColor}`'
             @click='btn.click'
           >
-            <ft-icon
-              class='icon txt pointer'
-              :icon='btn.icon'
-              :style='{color: btn.iconColor}'
-            ></ft-icon>
+            <i :class='`icon txt pointer fas fa-${btn.icon}`' :style='{color: btn.iconColor}'></i>
           </span>
         </div>
       </transition>
@@ -42,11 +34,7 @@
             :style='`background-color: ${btn.backColor}`'
             @click='btn.click'
           >
-            <ft-icon
-              class='icon txt pointer'
-              :icon='btn.icon'
-              :style='{color: btn.iconColor}'
-            ></ft-icon>
+            <i :class='`icon txt pointer fas fa-${btn.icon}`' :style='{color: btn.iconColor}'></i>
           </span>
         </div>
       </transition>
@@ -60,14 +48,6 @@ import { Component, Vue } from 'vue-property-decorator'
 import { Mutation } from 'vuex-class'
 
 import { FloatingButton } from '@/interfaces/app'
-
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEye, faEyeSlash, faSync, faInbox, faCalendarDay,
- faCalendarAlt, faStopwatch, faTags, faPlus,
- } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faEye, faEyeSlash, faSync, faInbox, faCalendarDay,
- faCalendarAlt, faStopwatch, faTags, faPlus)
 
 @Component
 export default class ActionButtonComp extends Vue {

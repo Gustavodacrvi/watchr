@@ -85,7 +85,7 @@ export default class Guest extends Mixins(Mixin) {
 
   waitingResponse: boolean = false
   loaded: boolean = false
-  
+
   created() {
     if (this.$route.name === 'User' && !this.loaded)
       this.$router.replace('user/pers/' + this.pinedSmartPerspectives[0].name.toLowerCase())

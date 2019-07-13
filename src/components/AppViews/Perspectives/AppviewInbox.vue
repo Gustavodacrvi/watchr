@@ -1,11 +1,7 @@
 <template>
   <div class='component'>
     <div class='header'>
-      <dynamic-ft-icon
-        :icon='inboxPers.icon'
-        :style='{color: inboxPers.iconColor}'
-        size='2x'
-      />
+      <i :class='`fas fa-${inboxPers.icon} fa-2x`' :style='{color: inboxPers.iconColor}'></i>
       <span class='title'>
         {{ inboxPers.name }}
       </span>
@@ -98,14 +94,8 @@ const labelVuex = namespace('label')
 const taskVuex = namespace('task')
 const persVuex = namespace('perspective')
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSearch, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faSearch, faEllipsisH)
-
 @Component({
   components: {
-    'dynamic-ft-icon': DynamicFontawesome,
     'drop-finder': DropdownFinder,
     'view-tags': AppviewTags,
     'task-adder': TaskAdder,

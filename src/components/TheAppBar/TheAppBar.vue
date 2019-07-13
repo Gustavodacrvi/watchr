@@ -1,7 +1,7 @@
 <template>
   <div
     class='wrapper'
-    :class='platform'
+    :class='[platform, {zindex: activeZindex && !isDesktop}]'
   >
     <div
       class='appbar gray'
@@ -50,6 +50,7 @@ const AsyncComponent = (compPath: string): any => () => ({
 })
 export default class TheNavBar extends Vue {
   @State theme!: string
+  @State appBarState!: string
   @State isLogged!: boolean
   @State emailVerified!: boolean
   @Mutation pushTheme!: (theme: string) => void
@@ -60,6 +61,7 @@ export default class TheNavBar extends Vue {
   @Getter isStandAlone!: boolean
 
   appMenu: 'settingsnav' | 'appnav' = 'settingsnav'
+  activeZindex: boolean = true
 
   created() {
     if ((this.isDesktop || this.isStandAlone) && this.loggedAndVerified)
@@ -87,6 +89,14 @@ export default class TheNavBar extends Vue {
       this.appMenu = 'settingsnav'
     else this.appMenu = 'appnav'
   }
+  @Watch('appBarState')
+  onChange() {
+    if (this.appBarState)
+      this.activeZindex = true
+    else setTimeout(() => {
+      this.activeZindex = false
+    }, 300)
+  }
 }
 
 </script>
@@ -103,6 +113,14 @@ export default class TheNavBar extends Vue {
   left: 0;
   height: 100%;
   width: 100%;
+  z-index: 35;
+}
+
+.wrapper.desktop {
+  width: 300px;
+}
+
+.zindex {
   z-index: 950;
 }
 

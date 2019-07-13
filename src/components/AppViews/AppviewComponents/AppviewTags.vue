@@ -1,11 +1,8 @@
 <template>
   <div class='tags-wrapper'>
-    <dynamic-ft-icon
-      class='toggle-icon pointer icon'
-      icon='bars'
-      size='lg'
-      @click='showing = !showing'
-    />
+    <span @click='showing = !showing'>
+    <i class='toggle-icon pointer icon fas fa-bars fa-lg'></i>
+    </span>
     <transition name='fade'>
       <div v-if='showing' class='tags'>
         <view-tag v-if='fixedTag'
@@ -39,12 +36,10 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
 import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
-import FontAwesome from '@/components/DynamicFontawesome.vue'
 
 @Component({
   components: {
     'view-tag': Tag,
-    'dynamic-ft-icon': FontAwesome,
   },
 })
 export default class AppviewTags extends Vue {

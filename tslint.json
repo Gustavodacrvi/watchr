@@ -13,7 +13,6 @@
     "indent": [true, "spaces", 2],
     "interface-name": false,
     "ordered-imports": false,
-    "no-duplicate-value": true,
     "triple-equals": true,
     "only-arrow-functions": true,
     "prefer-for-of": true,

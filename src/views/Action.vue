@@ -10,11 +10,6 @@ import { State, Mutation } from 'vuex-class'
 import firebase from 'firebase/app'
 import { Alert } from '../interfaces/app'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEye, faEyeSlash, faSync } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faEye, faEyeSlash, faSync)
-
 @Component
 export default class ResetPasswordView extends Vue {
   @State currentUser!: firebase.User | null

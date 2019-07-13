@@ -2,11 +2,7 @@
   <div class='wrapper'>
     <transition name='fade' mode='out-in'>
       <div v-if='!showing' @click='showing = true' key='notshowing' class='msg'>
-        <dynamic-ft-icon
-          class='icon pointer txt'
-          icon='plus'
-          size='lg'
-        />
+        <i class='icon pointer txt fas fa-plus fa-lg'></i>
         <span class='txt name'>Add task</span>
       </div>
       <div v-else key='showing' class='task-adder'>
@@ -71,7 +67,6 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 
-import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
@@ -83,7 +78,6 @@ const taskVuex = namespace('task')
 
 @Component({
   components: {
-    'dynamic-ft-icon': DynamicFontawesome,
     'view-tag': Tag,
     'view-btn': FormButton,
     'view-options': AppviewIconoptions,
