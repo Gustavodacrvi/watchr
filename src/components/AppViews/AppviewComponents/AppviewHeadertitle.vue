@@ -10,11 +10,12 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { State, Getter } from 'vuex-class'
+import { State, Getter, Mutation } from 'vuex-class'
 
 @Component
 export default class AppviewHeadertitle extends Vue {
   @Getter isDesktop!: boolean
+  @Mutation addNavBarTitle!: (title: string) => void
 
   @Prop(String) value!: string
   @Prop(String) icon!: string
@@ -25,7 +26,7 @@ export default class AppviewHeadertitle extends Vue {
   }
   
   addToTitle() {
-    
+    this.addNavBarTitle(this.value)
   }
 
   @Watch('isDesktop')
