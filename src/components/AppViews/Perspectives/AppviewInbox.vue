@@ -1,6 +1,6 @@
 <template>
   <div class='component'>
-    <div class='header pointer' @dblclick='hided = !hided'>
+    <div class='header' :class='{pointer: !isDesktop}' @dblclick='toggleHide'>
       <header-title
         :value='inboxPers.name'
         :icon='inboxPers.icon'
@@ -9,6 +9,14 @@
         @toggle='v => showing = !showing'
       />
       <div class='right'>
+        <transition name='fade'>
+        <template v-if='selected && selected.length > 0'>
+            <span class='header-options'>
+              <i class='fas icon pointer trash fa-trash fa-lg' @click='deleteSelected'></i>
+            </span>
+          </template>
+        </transition>
+        <span style='width: 35px'></span>
         <span class='header-option'>
           <drop-finder
             class='icon pointer txt'
@@ -105,6 +113,7 @@ export default class PerspectiveAppview extends Vue {
   @taskVuex.State tasks!: Task[]
   // tslint:disable-next-line:max-line-length
   @taskVuex.Action addInboxTaskWithPosition!: (obj: {task: Task, perspectiveId: string, collection: string, order: string[], position: number}) => void
+  @taskVuex.Action deleteTasksById!: (ids: string[]) => void
 
   @labelVuex.Getter sortedLabels!: Label[]
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
@@ -116,6 +125,7 @@ export default class PerspectiveAppview extends Vue {
   priority: string = ''
   hided: boolean = false
   showing: boolean = true
+  selected: string[] = []
   priorityOptions: ListIcon[] = [
    {
       name: 'High priority',
@@ -225,6 +235,10 @@ export default class PerspectiveAppview extends Vue {
       })
     }
   }
+  toggleHide() {
+    if (!this.isDesktop)
+      this.hided = !this.hided
+  }
   onUpdate(ids: string[]) {
     const filtered = ids.filter(el => el !== 'task-adder')
     if (!appUtils.arraysEqual(filtered, this.inboxPers.order))
@@ -234,8 +248,11 @@ export default class PerspectiveAppview extends Vue {
         collection: 'smartPerspectives',
       })
   }
-  onSelect(ids: string) {
-
+  onSelect(ids: string[]) {
+    this.selected = ids
+  }
+  deleteSelected() {
+    this.deleteTasksById(this.selected)
   }
 
   get viewTasks(): Task[] {

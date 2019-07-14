@@ -68,7 +68,7 @@ export default class AppviewTask extends Vue {
   @State theme!: string
   @Getter isDesktop!: boolean
 
-  @taskVuex.Action deleteLabelsById!: (ids: string[]) => void
+  @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   @taskVuex.Action updateLabel!: (obj: {name: string, priority: string, id: string}) => void
 
   clicked: boolean = false
@@ -81,7 +81,7 @@ export default class AppviewTask extends Vue {
       size: 'lg',
       iconColor: '',
       callback: () => {
-        this.deleteLabelsById([this.task.id])
+        this.deleteTasksById([this.task.id])
       },
     },
     {

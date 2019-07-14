@@ -27,7 +27,7 @@ interface Actions {
   // tslint:disable-next-line:max-line-length
   addInboxTaskWithPosition: (context: ActionContext, obj: {task: Task, perspectiveId: string, collection: string, order: string[], position: number}) => void
   updateLabel: (context: ActionContext, obj: {name: string, priority: string, id: string}) => void
-  deleteLabelsById: (context: ActionContext, ids: string[]) => void
+  deleteTasksById: (context: ActionContext, ids: string[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -69,7 +69,7 @@ export default {
           name, priority,
         })
     },
-    deleteLabelsById({ rootState }, ids: string[]) {
+    deleteTasksById({ rootState }, ids: string[]) {
       if (rootState.firestore && rootState.uid) {
         const batch = rootState.firestore.batch()
 

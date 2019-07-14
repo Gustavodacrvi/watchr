@@ -120,7 +120,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
     setTimeout(() => {
-      this.$emit('selected', this.getIdsFromSelectedElements(this.rootSelector))
+      this.$emit('selected', this.getIdsFromSelectedElements(this.rootSelector).filter(el => el !== 'task-adder'))
     }, 1)
   }
   toggleElement({el, select}: {el: HTMLElement, select: boolean}) {
