@@ -7,7 +7,7 @@
       @mouseenter='onHover = true'
       @mouseleave='onHover = false'
     >
-      <div class='content' @click='toggleElement'>
+      <div class='content' @click='toggleElement' :class='{handle: allowDragAndDrop}'>
         <span class='txt'>{{ task.name }}
           <i v-if='task.priority'
             class='content-icon fas fa-exclamation fa-sm'
@@ -15,7 +15,7 @@
           ></i>
         </span>
       </div>
-      <div class='task-options'>
+      <div class='task-options' :class='{handle: allowDragAndDrop}'>
         <transition name='fade'>
           <span class='option' v-if='showOptionsIconDrop'>
             <icon-option
@@ -63,6 +63,7 @@ export default class AppviewTask extends Vue {
   @Prop(Object) task!: Task
   @Prop(Boolean) deselectAll!: boolean
   @Prop(Boolean) allowPriority!: boolean
+  @Prop(Boolean) allowDrag!: boolean
   @Prop(String) fixedTag!: string
 
   @State theme!: string
@@ -120,6 +121,9 @@ export default class AppviewTask extends Vue {
   }
   get showOptionsIconDrop(): boolean {
     return !this.isDesktop || (this.onHover && this.isDesktop)
+  }
+  get allowDragAndDrop(): boolean {
+    return this.allowDrag && !this.isDesktop
   }
 
   @Watch('deselectAll')
