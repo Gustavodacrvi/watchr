@@ -33,6 +33,7 @@
         :task='task'
         :fixed-tag='fixedTag'
         :allow-priority='allowPriority'
+        btn='Edit task'
         @cancel='editing = false'
         @enter='enter'
       />
@@ -68,6 +69,7 @@ export default class AppviewTask extends Vue {
   @Getter isDesktop!: boolean
 
   @taskVuex.Action deleteLabelsById!: (ids: string[]) => void
+  @taskVuex.Action updateLabel!: (obj: {name: string, priority: string, id: string}) => void
 
   clicked: boolean = false
   onHover: boolean = false
@@ -101,8 +103,12 @@ export default class AppviewTask extends Vue {
       select: this.clicked,
     })
   }
-  enter() {
-
+  enter(obj: {name: string, priority: string}) {
+    this.updateLabel({
+      ...obj,
+      id: this.task.id,
+    })
+    this.editing = false
   }
 
   get exclamationColor() {

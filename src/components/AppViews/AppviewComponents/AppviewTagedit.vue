@@ -39,7 +39,7 @@
         :waiting-response='false'
         @click="enter"
       >
-        Add task
+        {{ btn }}
       </view-btn>
       <span class='cancel pointer' @click="$emit('cancel')">Cancel</span>
       <div class='right'>
@@ -76,6 +76,8 @@ import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
   },
 })
 export default class AppviewTagedit extends Vue {
+  @Prop({default: 'Add task', type: String}) btn!: string
+  @Prop({default: false, type: Boolean}) closeOnSave!: boolean
   @Prop(Object) task!: Task
   @Prop(String) fixedTag!: string
   @Prop(Boolean) allowPriority!: boolean

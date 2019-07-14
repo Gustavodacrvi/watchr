@@ -26,6 +26,7 @@ interface ActionContext {
 interface Actions {
   // tslint:disable-next-line:max-line-length
   addInboxTaskWithPosition: (context: ActionContext, obj: {task: Task, perspectiveId: string, collection: string, order: string[], position: number}) => void
+  updateLabel: (context: ActionContext, obj: {name: string, priority: string, id: string}) => void
   deleteLabelsById: (context: ActionContext, ids: string[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
@@ -60,6 +61,12 @@ export default {
               const index = state.tasks.findIndex(el => el.id === change.doc.id)
               state.tasks.splice(index, 1, {...change.doc.data(), id: change.doc.id} as any)
             }
+        })
+    },
+    updateLabel({ rootState }, {name, priority, id}) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('tasks').doc(id).update({
+          name, priority, 
         })
     },
     deleteLabelsById({ rootState }, ids: string[]) {
