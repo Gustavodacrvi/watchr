@@ -7,6 +7,7 @@
         :deselect-all='deselectAll'
         :allow-priority='allowPriority'
         :fixed-tag='fixedTag'
+        :allow-drag='numberOfSelected > 0'
 
         :data-vid='task.id'
 
@@ -109,8 +110,16 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       const children = this.rootComponent.childNodes
       let deSelectAll = true
       for (const child of children)
-        if (evt.path.includes(child))
+        if (evt.path.includes(child)) {
           deSelectAll = false
+          break
+        }
+      if (deSelectAll)
+        for (const el of evt.path)
+        if (el.classList && el.classList.contains('cancel-sortable-unselect')) {
+          deSelectAll = false
+          break
+        }
       if (deSelectAll) {
         for (const child of children)
           Sortable.utils.deselect(child)

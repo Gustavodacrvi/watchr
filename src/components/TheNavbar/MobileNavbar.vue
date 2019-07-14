@@ -13,6 +13,7 @@
         <transition name='fade'>
           <span class='nav-options'>
             <icon-options v-if='navBarOptions && navBarOptions.length > 0'
+              class='cancel-sortable-unselect'
               handle='ellipsis-v'
               size='lg'
               min-width='225px'
