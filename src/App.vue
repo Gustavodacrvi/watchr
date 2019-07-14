@@ -62,9 +62,9 @@ import appUtils from '@/utils/app'
     'the-nav-bar': TheNavbar,
     'the-app-bar': TheAppbar,
     // tslint:disable-next-line:max-line-length
-    'alerts': appUtils.AsyncComponent(import(/* webpackPrefetch: true */ /* webpackChunkName: "alerts" */ '@/components/Alerts.vue')),
+    'alerts': appUtils.AsyncComponent(import(/* webpackPrefetch: true */'@/components/Alerts.vue')),
     // tslint:disable-next-line:max-line-length
-    'pop-up': appUtils.AsyncComponent(import(/* webpackChunkName: "pop-ups" */ '@/components/PopUps/PopUp.vue')),
+    'pop-up': appUtils.AsyncComponent(import('@/components/PopUps/PopUp.vue')),
     'action-button': appUtils.AsyncComponent(import('@/components/ActionButton.vue')),
   },
 })

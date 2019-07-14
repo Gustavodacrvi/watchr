@@ -106,13 +106,9 @@ interface Section {
 
 @Component({
   components: {
-    // tslint:disable-next-line:max-line-length
-    'overview': appUtil.AsyncComponent(import(/* webpackChunkName: "overview-section" */ './AppnavSections/OverviewAppnav.vue')),
-    // tslint:disable-next-line:max-line-length
-    'labels': appUtil.AsyncComponent(import(/* webpackChunkName: "label-section" */ './AppnavSections/LabelAppnav.vue')),
-    // tslint:disable-next-line:max-line-length
-    'perspectives': appUtil.AsyncComponent(import(/* webpackChunkName: "perspective-section" */ './AppnavSections/PerspectivesAppnav.vue')),
-    // tslint:disable-next-line:max-line-length
+    'overview': appUtil.AsyncComponent(import('./AppnavSections/OverviewAppnav.vue')),
+    'labels': appUtil.AsyncComponent(import('./AppnavSections/LabelAppnav.vue')),
+    'perspectives': appUtil.AsyncComponent(import('./AppnavSections/PerspectivesAppnav.vue')),
     'icon-dropdown': IconDropdown,
   },
 })
