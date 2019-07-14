@@ -12,17 +12,27 @@
     </div>
     <transition name='fade'>
       <div v-if='showing'
-        class='drop card round-border scroll'
+        class='drop wrapper card round-border scroll'
         :class='theme'
         :style="{'max-height': maxHeight}"
       >
-        <div v-for='str in options'
-          class='el'
-          :class='[theme, {selected: str === selected}]'
-          :key='str'
-          @click="$emit('select', str)"
-        >
-          <span class='el-name' style='margin-left: 4px'>{{ str }}</span>
+        <div class='inner'>
+          <input v-if='enableSearch'
+            class='margin input txt round-border gray'
+            type='text'
+            autocomplete='off'
+            placeholder='Search...'
+            v-model='search'
+            :class='theme'
+          >
+          <div v-for='str in getOptions'
+            class='el round-border'
+            :class='[theme, {selected: str === selected}]'
+            :key='str'
+            @click="$emit('select', str)"
+          >
+            <span class='el-name' style='margin-left: 4px'>{{ str }}</span>
+          </div>
         </div>
       </div>
     </transition>
@@ -34,15 +44,36 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
+import appUtils from '@/utils/app'
+
 @Component
 export default class FormOptions extends Vue {
   @State theme!: string
-  
+
+  @Prop({default: false, type: Boolean}) enableSearch!: boolean
   @Prop(String) selected!: string
   @Prop(String) maxHeight!: string
   @Prop(Array) options!: string[]
 
   showing: boolean = false
+  search: string = ''
+
+  created() {
+    window.addEventListener('click', this.click)  
+  }
+  beforeDestroy() {
+    window.removeEventListener('click', this.click)
+  }
+
+  click(evt: any) {
+    const el = this.$el
+    if (!evt.path.includes(el))
+      this.showing = false
+  }
+
+  get getOptions(): string[] {
+    return this.options.filter(el => el.includes(this.search)).map(el => appUtils.parseMomentTimeZone(el))
+  }
 }
 
 </script>
@@ -66,8 +97,12 @@ export default class FormOptions extends Vue {
   transition: background-color .3s;
 }
 
-.drop {
+.drop.wrapper {
   overflow: auto !important;
+}
+
+.inner {
+  margin: 6px;
 }
 
 .header {
@@ -96,6 +131,9 @@ export default class FormOptions extends Vue {
   top: 115%;
 }
 
+</style>
+
+<style scoped src='@/assets/css/authPopUp.css'>
 </style>
 
 <style scoped src='@/assets/css/drop.css'>

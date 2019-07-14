@@ -8,9 +8,10 @@
         </div>
         <div class='content'>
           <form-options
+            max-height='300px'
+            :enable-search='true'
             :selected='selected'
-            :options='options'
-            max-height='100px'
+            :options='timeZones'
             @select='v => selected = v'
           />
         </div>
@@ -21,22 +22,22 @@
         </div>
         <div class='content'>
           <form-options
-            :selected='selected'
-            :options='options'
             max-height='100px'
+            :options="['DD-MM-YYYY', 'MM-DD-YYYY']"
+            :selected='selected'
             @select='v => selected = v'
           />
         </div>
       </div>
       <div class='line' :class='platform'>
         <div class='text'>
-          <span class='txt'>Date format</span>
+          <span class='txt'>Time format</span>
         </div>
         <div class='content'>
           <form-options
-            :selected='selected'
-            :options='options'
             max-height='100px'
+            :options="['1:00pm', '13:00']"
+            :selected='selected'
             @select='v => selected = v'
           />
         </div>
@@ -50,9 +51,9 @@
         </div>
         <div class='content'>
           <form-options
+            max-height='300px'
             :selected='selected'
-            :options='options'
-            max-height='100px'
+            :options='weeks'
             @select='v => selected = v'
           />
         </div>
@@ -64,8 +65,8 @@
         <div class='content'>
           <form-options
             :selected='selected'
-            :options='options'
-            max-height='100px'
+            :options='weeks'
+            max-height='300px'
             @select='v => selected = v'
           />
         </div>
@@ -96,6 +97,9 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Getter, State } from 'vuex-class'
 
+import Moment from 'moment'
+import 'moment-timezone/builds/moment-timezone-with-data'
+
 import FormOptions from '@/components/PopUps/FormComponents/FormOptions.vue'
 
 @Component({
@@ -108,6 +112,29 @@ export default class GeneralSubView extends Vue {
   @Getter platform!: string
   
   selected: string = 'option 1'
+
+  timeZone: string = ''
+  dateFormat: string = ''
+  timeFormat: string = ''
+
+  startOfTheWeek: string = ''
+  nextWeek: string = ''
+
+  get timeZones(): string[] {
+    const m = Moment as any
+    return m.tz.names()
+  }
+  get weeks(): string[] {
+    return [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ]
+  }
 
   options: string[] = ['option 1', 'option 2', 'option 3', 'option 4']
 }

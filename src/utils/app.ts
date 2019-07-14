@@ -1,7 +1,6 @@
 
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
-import firebase from 'firebase/app'
 
 export default {
   AsyncComponent(comp: any): any {
@@ -50,5 +49,11 @@ export default {
       order.splice(index, 1)
     }
     return order
+  },
+  parseMomentTimeZone(str: string): string {
+    return str.replace('/', ', ').replace('_', ' ')
+  },
+  deParseMomentTimeZone(str: string): string {
+    return str.replace(', ', '/').replace(' ', '_')
   },
 }
