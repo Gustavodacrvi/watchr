@@ -59,7 +59,7 @@ export default class FormOptions extends Vue {
   search: string = ''
 
   created() {
-    window.addEventListener('click', this.click)  
+    window.addEventListener('click', this.click)
   }
   beforeDestroy() {
     window.removeEventListener('click', this.click)

@@ -75,6 +75,7 @@
     <form-button class='tiny right' :waiting-response='false' :block-button='!hasChange' @click='save'>
       Save settings
     </form-button>
+    <span></span>
     <form-button class='tiny left' :waiting-response='false' @click='reset'>
       Reset settings
     </form-button>
@@ -105,7 +106,7 @@ import appUtils from '@/utils/app'
 export default class GeneralSubView extends Vue {
   @State theme!: string
   @Getter platform!: string
-  
+
   @settingsVuex.State('timeZone') savedTimeZone!: string
   @settingsVuex.State('dateFormat') savedDateFormat!: string
   @settingsVuex.State('timeFormat') savedTimeFormat!: string
@@ -136,7 +137,7 @@ export default class GeneralSubView extends Vue {
 
   getData() {
     const m = Moment as any
-    
+
     this.timeZone = this.savedTimeZone
     this.dateFormat = this.savedDateFormat
     this.timeFormat = this.savedTimeFormat

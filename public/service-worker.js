@@ -1,5 +1,5 @@
 
-const cacheName = 'watchr-dynamic-cache'
+const cacheName = 'cache2'
 
 self.addEventListener('message', msg => {
   if (msg.data.action === 'skipWaiting')
