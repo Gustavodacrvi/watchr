@@ -1,7 +1,8 @@
 <template>
   <button v-if='!waitingResponse'
     class='margin button round-border'
-    @click="$emit('click')"
+    :class='{block: blockButton}'
+    @click="click"
   ><slot></slot></button>
   <button v-else
     class='margin button round-border'
@@ -16,7 +17,13 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component
 export default class FormButtom extends Vue {
-  @Prop(Boolean) waitingResponse!: boolean
+  @Prop({default: false, type: Boolean}) waitingResponse!: boolean
+  @Prop({default: false, type: Boolean}) blockButton!: boolean
+
+  click() {
+    if (!this.blockButton)
+      this.$emit('click')
+  }
 }
 
 </script>

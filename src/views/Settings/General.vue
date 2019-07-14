@@ -72,6 +72,12 @@
         </div>
       </div>
     </div>
+    <form-button class='tiny right' :waiting-response='false' :block-button='!hasChange' @click='save'>
+      Save settings
+    </form-button>
+    <form-button class='tiny left' :waiting-response='false' @click='reset'>
+      Reset settings
+    </form-button>
   </div>
 </template>
 
@@ -86,12 +92,14 @@ import Moment from 'moment'
 import 'moment-timezone/builds/moment-timezone-with-data'
 
 import FormOptions from '@/components/PopUps/FormComponents/FormOptions.vue'
+import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
 import appUtils from '@/utils/app'
 
 @Component({
   components: {
     'form-options': FormOptions,
+    'form-button': FormButton,
   },
 })
 export default class GeneralSubView extends Vue {
@@ -126,6 +134,13 @@ export default class GeneralSubView extends Vue {
       this.timeZone = m.tz.guess()
   }
 
+  save() {
+
+  }
+  reset() {
+    
+  }
+
   get timeZones(): string[] {
     const m = Moment as any
     return m.tz.names()
@@ -147,13 +162,26 @@ export default class GeneralSubView extends Vue {
   get deParsedTimeZone(): string {
     return appUtils.deParseMomentTimeZone(this.timeZone)
   }
-
-  options: string[] = ['option 1', 'option 2', 'option 3', 'option 4']
+  get hasChange(): boolean {
+    if (this.deParsedTimeZone !== this.timeZone) return true
+    else if (this.dateFormat !== this.savedDateFormat) return true
+    else if (this.startOfTheWeek !== this.savedStartOfTheWeek) return true
+    else if (this.nextWeek !== this.savedNextWeek) return true
+    return false
+  }
 }
 
 </script>
 
 <style scoped>
+
+.right {
+  float: right;
+}
+
+.left {
+  float: left;
+}
 
 .hr {
   width: 95%;

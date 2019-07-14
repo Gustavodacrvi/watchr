@@ -50,6 +50,12 @@
   padding: 6px;
 }
 
+.button.block {
+  opacity: .5;
+  background-color: #fc7d7d !important;
+  cursor: initial;
+}
+
 .links {
   display: flex;
   justify-content: space-around;
