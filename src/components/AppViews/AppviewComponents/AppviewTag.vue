@@ -66,7 +66,6 @@ export default class AppviewIcon extends Vue {
 
 .name {
   position: relative;
-  bottom: 1.5px;
 }
 
 .not-fixed {

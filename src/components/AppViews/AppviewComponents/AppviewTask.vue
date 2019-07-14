@@ -26,11 +26,13 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { State, Getter } from 'vuex-class'
+import { State, Getter, namespace } from 'vuex-class'
 
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 
 import { Task, ListIcon } from '../../../interfaces/app'
+
+const taskVuex = namespace('task')
 
 @Component({
   components: {
@@ -43,6 +45,8 @@ export default class AppviewTask extends Vue {
 
   @State theme!: string
   @Getter isDesktop!: boolean
+
+  @taskVuex.Action deleteLabelsById!: (ids: string[]) => void
 
   clicked: boolean = false
   onHover: boolean = false
@@ -62,7 +66,7 @@ export default class AppviewTask extends Vue {
       size: 'lg',
       iconColor: '',
       callback: () => {
-
+        this.deleteLabelsById([this.task.id])
       }
     },
   ]

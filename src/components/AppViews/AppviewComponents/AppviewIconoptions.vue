@@ -48,6 +48,7 @@ export default class AppviewIconoptions extends Vue {
 
   optionClick(value: string, callback?: () => void) {
     this.$emit('click', value)
+    console.log(3)
     if (callback)
       callback()
   }
