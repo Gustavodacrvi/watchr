@@ -11,7 +11,11 @@
       </div>
     </div>
     <transition name='fade'>
-      <div v-if='showing' class='drop card round-border' :class='theme'>
+      <div v-if='showing'
+        class='drop card round-border scroll'
+        :class='theme'
+        :style="{'max-height': maxHeight}"
+      >
         <div v-for='str in options'
           class='el'
           :class='[theme, {selected: str === selected}]'
@@ -60,6 +64,10 @@ export default class FormOptions extends Vue {
 .header-wrapper {
   cursor: pointer;
   transition: background-color .3s;
+}
+
+.drop {
+  overflow: auto !important;
 }
 
 .header {
