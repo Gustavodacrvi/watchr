@@ -66,7 +66,7 @@ export default {
     updateLabel({ rootState }, {name, priority, id}) {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('tasks').doc(id).update({
-          name, priority, 
+          name, priority,
         })
     },
     deleteLabelsById({ rootState }, ids: string[]) {

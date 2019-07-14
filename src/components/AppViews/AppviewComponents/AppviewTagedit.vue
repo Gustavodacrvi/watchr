@@ -133,7 +133,7 @@ export default class AppviewTagedit extends Vue {
   chosePriority(priority: 'Low priority' | 'High priority' | 'Medium priority') {
     this.priority = priority
   }
-  
+
   @Watch('value')
   onValue() {
     if (this.allowPriority) {

@@ -82,7 +82,7 @@ export default class AppviewTask extends Vue {
       iconColor: '',
       callback: () => {
         this.deleteLabelsById([this.task.id])
-      }
+      },
     },
     {
       name: 'Edit task',
@@ -91,7 +91,7 @@ export default class AppviewTask extends Vue {
       iconColor: '',
       callback: () => {
         this.editing = true
-      }
+      },
     },
   ]
 
