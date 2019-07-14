@@ -29,7 +29,7 @@
             class='el round-border'
             :class='[theme, {selected: str === selected}]'
             :key='str'
-            @click="$emit('select', str)"
+            @click="$emit('select', str);showing = false"
           >
             <span class='el-name' style='margin-left: 4px'>{{ str }}</span>
           </div>

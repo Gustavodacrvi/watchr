@@ -1,7 +1,6 @@
 
 import { States as RootState } from '@/store/index'
 
-import Moment from 'moment'
 import 'moment-timezone/builds/moment-timezone-with-data'
 
 interface States {
@@ -37,6 +36,7 @@ interface Actions {
     startOfTheWeek: string,
     nextWeek: string,
   }) => void
+  setDefaultSettings: (context: ActionContext) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -69,7 +69,7 @@ export default {
           }
         })
     },
-    saveSettings({ rootState, state }, s) {
+    saveSettings({ rootState }, s) {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('settings').doc(rootState.uid).update({
           timeZone: s.timeZone,
@@ -79,8 +79,11 @@ export default {
           startOfTheWeek: s.startOfTheWeek,
         })
     },
+    setDefaultSettings({ rootState, dispatch }) {
+      if (rootState.uid)
+        dispatch('addDefaultSettings', rootState.uid)
+    },
     addDefaultSettings({ rootState }, id: string) {
-      const m = Moment as any
       if (rootState.firestore)
         rootState.firestore.collection('settings').doc(id).set({
           userId: id,

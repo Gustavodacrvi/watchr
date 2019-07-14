@@ -83,7 +83,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Getter, State, namespace } from 'vuex-class'
 
 const settingsVuex = namespace('settings')
@@ -119,6 +119,7 @@ export default class GeneralSubView extends Vue {
     startOfTheWeek: string,
     nextWeek: string,
   }) => void
+  @settingsVuex.Action setDefaultSettings!: () => void
 
   selected: string = 'option 1'
 
@@ -130,6 +131,10 @@ export default class GeneralSubView extends Vue {
   nextWeek: string = ''
 
   created() {
+    this.getData()
+  }
+
+  getData() {
     const m = Moment as any
     
     this.timeZone = this.savedTimeZone
@@ -141,7 +146,6 @@ export default class GeneralSubView extends Vue {
     if (this.timeZone === '')
       this.timeZone = m.tz.guess()
   }
-
   save() {
     this.saveSettings({
       timeZone: this.deParsedTimeZone,
@@ -152,7 +156,7 @@ export default class GeneralSubView extends Vue {
     })
   }
   reset() {
-
+    this.setDefaultSettings()
   }
 
   get timeZones(): string[] {
@@ -183,18 +187,29 @@ export default class GeneralSubView extends Vue {
     else if (this.nextWeek !== this.savedNextWeek) return true
     return false
   }
+
+  @Watch('savedTimeZone')
+  onChange() {
+    this.getData()
+  }
 }
 
 </script>
 
 <style scoped>
 
+.tiny {
+  margin: 0 !important;
+}
+
 .right {
   float: right;
+  clear: right;
 }
 
 .left {
   float: left;
+  clear: left;
 }
 
 .hr {
