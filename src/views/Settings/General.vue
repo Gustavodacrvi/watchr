@@ -112,6 +112,14 @@ export default class GeneralSubView extends Vue {
   @settingsVuex.State('startOfTheWeek') savedStartOfTheWeek!: string
   @settingsVuex.State('nextWeek') savedNextWeek!: string
 
+  @settingsVuex.Action saveSettings!: (obj: {
+    timeZone: string,
+    dateFormat: string,
+    timeFormat: string,
+    startOfTheWeek: string,
+    nextWeek: string,
+  }) => void
+
   selected: string = 'option 1'
 
   timeZone: string = ''
@@ -135,10 +143,16 @@ export default class GeneralSubView extends Vue {
   }
 
   save() {
-
+    this.saveSettings({
+      timeZone: this.deParsedTimeZone,
+      dateFormat: this.dateFormat,
+      timeFormat: this.timeFormat,
+      nextWeek: this.nextWeek,
+      startOfTheWeek: this.startOfTheWeek,
+    })
   }
   reset() {
-    
+
   }
 
   get timeZones(): string[] {

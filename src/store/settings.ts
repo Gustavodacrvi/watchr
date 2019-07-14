@@ -30,6 +30,13 @@ interface ActionContext {
 
 interface Actions {
   getData: (context: ActionContext) => void
+  saveSettings: (context: ActionContext, obj: {
+    timeZone: string,
+    dateFormat: string,
+    timeFormat: string,
+    startOfTheWeek: string,
+    nextWeek: string,
+  }) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -60,6 +67,16 @@ export default {
             state.startOfTheWeek = data.startOfTheWeek
             state.nextWeek = data.nextWeek
           }
+        })
+    },
+    saveSettings({ rootState, state }, s) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('settings').doc(rootState.uid).update({
+          timeZone: s.timeZone,
+          dateFormat: s.dateFormat,
+          timeFormat: s.timeFormat,
+          nextWeek: s.nextWeek,
+          startOfTheWeek: s.startOfTheWeek,
         })
     },
     addDefaultSettings({ rootState }, id: string) {
