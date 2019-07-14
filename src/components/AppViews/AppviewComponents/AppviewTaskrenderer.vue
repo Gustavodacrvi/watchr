@@ -5,6 +5,8 @@
         :key='task.id'
         :task='task'
         :deselect-all='deselectAll'
+        :allow-priority='allowPriority'
+        :fixed-tag='fixedTag'
 
         :data-vid='task.id'
 
@@ -12,9 +14,9 @@
       />
       <task-adder
         key='task-adder'
-        fixed-tag='Inbox'
-        :allow-priority='true'
-        @add='add'
+        :fixed-tag='fixedTag'
+        :allow-priority='allowPriority'
+        @enter='add'
 
         data-vid='task-adder'
       />
@@ -47,7 +49,9 @@ import { Task } from '../../../interfaces/app'
 export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({required: true, type: String}) group!: string
+  @Prop({required: true, type: String}) fixedTag!: string
   @Prop({required: true, type: String}) id!: string
+  @Prop(Boolean) allowPriority!: boolean
   @Prop(Array) tasks!: Task[]
 
   @Getter isDesktop!: boolean

@@ -1,32 +1,99 @@
 <template>
-  <div class='task round-border' :class='theme'>
-    <div class='content' @click='toggleElement'>
-      <span class='txt'>{{ task.name }}</span>
-      <i v-if='task.priority'
-        class='content-icon fas fa-exclamation fa-sm'
-        :style='{color: exclamationColor}'
-      ></i>
+  <transition>
+    <div v-if='!editing' key='task'
+      class='task round-border'
+      :class='theme'
+      @dblclick='editing = true'
+      @mouseenter='onHover = true'
+      @mouseleave='onHover = false'
+    >
+      <div class='content' @click='toggleElement'>
+        <span class='txt'>{{ task.name }}
+          <i v-if='task.priority'
+            class='content-icon fas fa-exclamation fa-sm'
+            :style='{color: exclamationColor}'
+          ></i>
+        </span>
+      </div>
+      <div class='task-options'>
+        <transition name='fade'>
+          <span class='option' v-if='showOptionsIconDrop'>
+            <icon-option
+              handle='ellipsis-v'
+              size='lg'
+              min-width='200px'
+              :options='options'
+            />
+          </span>
+        </transition>
+      </div>
     </div>
-    <div class='options'>
+    <div key='editing' v-else>
+      <task-edit key='showing'
+        :task='task'
+        :fixed-tag='fixedTag'
+        :allow-priority='allowPriority'
+        btn='Edit task'
+        @cancel='editing = false'
+        @enter='enter'
+      />
     </div>
-  </div>
+  </transition>
 </template>
 
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { State } from 'vuex-class'
+import { State, Getter, namespace } from 'vuex-class'
 
-import { Task } from '../../../interfaces/app'
+import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
+import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTagedit.vue'
 
-@Component
+import { Task, ListIcon } from '../../../interfaces/app'
+
+const taskVuex = namespace('task')
+
+@Component({
+  components: {
+    'icon-option': AppviewIconoptions,
+    'task-edit': TaskEditTemplate,
+  },
+})
 export default class AppviewTask extends Vue {
   @Prop(Object) task!: Task
   @Prop(Boolean) deselectAll!: boolean
+  @Prop(Boolean) allowPriority!: boolean
+  @Prop(String) fixedTag!: string
 
   @State theme!: string
+  @Getter isDesktop!: boolean
+
+  @taskVuex.Action deleteLabelsById!: (ids: string[]) => void
+  @taskVuex.Action updateLabel!: (obj: {name: string, priority: string, id: string}) => void
 
   clicked: boolean = false
+  onHover: boolean = false
+  editing: boolean = false
+  options: ListIcon[] = [
+    {
+      name: 'Delete task',
+      icon: 'trash',
+      size: 'lg',
+      iconColor: '',
+      callback: () => {
+        this.deleteLabelsById([this.task.id])
+      },
+    },
+    {
+      name: 'Edit task',
+      icon: 'edit',
+      size: 'lg',
+      iconColor: '',
+      callback: () => {
+        this.editing = true
+      },
+    },
+  ]
 
   toggleElement() {
     this.clicked = !this.clicked
@@ -36,6 +103,13 @@ export default class AppviewTask extends Vue {
       select: this.clicked,
     })
   }
+  enter(obj: {name: string, priority: string}) {
+    this.updateLabel({
+      ...obj,
+      id: this.task.id,
+    })
+    this.editing = false
+  }
 
   get exclamationColor() {
     switch (this.task.priority) {
@@ -43,6 +117,9 @@ export default class AppviewTask extends Vue {
       case 'Medium priority': return '#fff566'
       case 'High priority': return '#FF6B66'
     }
+  }
+  get showOptionsIconDrop(): boolean {
+    return !this.isDesktop || (this.onHover && this.isDesktop)
   }
 
   @Watch('deselectAll')
@@ -62,12 +139,19 @@ export default class AppviewTask extends Vue {
   min-height: 40px;
 }
 
+.content, .task-options {
+  display: flex;
+  align-items: center;
+}
+
+.option {
+  margin: 0 6px;
+}
+
 .content {
   flex-basis: 100%;
   margin: 6px 0;
   margin-left: 6px;
-  display: flex;
-  align-items: center;
 }
 
 .sortable-selected.light {

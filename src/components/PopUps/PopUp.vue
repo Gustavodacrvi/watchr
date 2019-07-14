@@ -27,18 +27,12 @@ import appUtils from '../../utils/app'
 
 @Component({
   components: {
-    // tslint:disable-next-line:max-line-length
-    SimpleadderPopup: appUtils.AsyncComponent(import(/* webpackChunkName: "simple-adder-popup" */ './SimpleadderPopup.vue')),
-    // tslint:disable-next-line:max-line-length
-    SignupPopup: appUtils.AsyncComponent(import(/* webpackChunkName: "signup-section" */ './SignupPopup.vue')),
-    // tslint:disable-next-line:max-line-length
-    SigninPopup: appUtils.AsyncComponent(import(/* webpackChunkName: "signin-popup" */ './SigninPopup.vue')),
-    // tslint:disable-next-line:max-line-length
-    LabeladderPopup: appUtils.AsyncComponent(import(/* webpackChunkName: "label-adder-popup" */ './LabeladderPopup.vue')),
-    // tslint:disable-next-line:max-line-length
-    ResetpasswordPopup: appUtils.AsyncComponent(import(/* webpackChunkName: "reset-password-popup" */ './ResetpasswordPopup.vue')),
-    // tslint:disable-next-line:max-line-length
-    SendresetpasswordPopup: appUtils.AsyncComponent(import(/* webpackChunkName: "send-reset-password-popup" */ './SendresetpasswordPopup.vue')),
+    SimpleadderPopup: appUtils.AsyncComponent(import('./SimpleadderPopup.vue')),
+    SignupPopup: appUtils.AsyncComponent(import('./SignupPopup.vue')),
+    SigninPopup: appUtils.AsyncComponent(import('./SigninPopup.vue')),
+    LabeladderPopup: appUtils.AsyncComponent(import('./LabeladderPopup.vue')),
+    ResetpasswordPopup: appUtils.AsyncComponent(import('./ResetpasswordPopup.vue')),
+    SendresetpasswordPopup: appUtils.AsyncComponent(import('./SendresetpasswordPopup.vue')),
   },
 })
 export default class PopUp extends Vue {
