@@ -8,7 +8,7 @@ import task from '@/store/task'
 
 const MAX_MOBILE_SCREEN_WIDTH = 992
 
-import { SimpleAdder, Alert, Perspective } from '@/interfaces/app'
+import { SimpleAdder, Alert, Perspective, ListIcon } from '@/interfaces/app'
 
 Vue.use(Vuex)
 
@@ -28,6 +28,7 @@ export interface States {
   firebase: any
   isAnonymous: boolean
   navBarTitle: string
+  navBarOptions: ListIcon[]
   emailVerified: boolean
   appError: boolean
   loading: boolean
@@ -48,7 +49,9 @@ interface Mutations {
   pushPerspective: (state: States, payload?: any) => void
   pushView: (state: States, obj: {view: string, section: string}) => void
   addNavBarTitle: (state: States, title: string) => void
+  sendOptionsToNavbar: (state: States, options: ListIcon[]) => void
   showApp: () => void
+  hideNavBarOptions: () => void
   openAppBar: () => void
   closeAppBar: () => void
   resetPopUpState: () => void
@@ -100,6 +103,7 @@ const store: any = new Vuex.Store({
     emailVerified: false,
     loading: true,
     firebase: null,
+    navBarOptions: [],
     appError: false,
     uid: null,
     showingAlert: false,
@@ -179,6 +183,12 @@ const store: any = new Vuex.Store({
     },
     addNavBarTitle(state: States, title: string) {
       state.navBarTitle = title
+    },
+    sendOptionsToNavbar(state: States, options: ListIcon[]) {
+      state.navBarOptions = options
+    },
+    hideNavBarOptions(state: States) {
+      state.navBarOptions = []
     },
   } as Mutations,
   getters: {

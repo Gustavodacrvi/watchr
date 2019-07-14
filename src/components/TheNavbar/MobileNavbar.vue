@@ -10,7 +10,16 @@
         <span class='title'>{{ navBarTitle }}</span>
       </div>
       <div class='right'>
-        
+        <transition name='fade'>
+          <span class='nav-options'>
+            <icon-options v-if='navBarOptions && navBarOptions.length > 0'
+              handle='ellipsis-v'
+              size='lg'
+              min-width='225px'
+              :options='navBarOptions'
+            />
+          </span>
+        </transition>
       </div>
     </div>
   </div>
@@ -21,9 +30,18 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Mutation, State } from 'vuex-class'
 
-@Component
+import IconOptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
+
+import { ListIcon } from '../../interfaces/app'
+
+@Component({
+  components: {
+    'icon-options': IconOptions,
+  },
+})
 export default class MobileNavbar extends Vue {
   @State navBarTitle!: string
+  @State navBarOptions!: ListIcon[]
   @Mutation openAppBar!: () => void
 }
 
@@ -31,13 +49,16 @@ export default class MobileNavbar extends Vue {
 
 <style scoped>
 
+.navbar, .left, .right, .title {
+  display: flex;
+  align-items: center;
+}
+
 .navbar {
   position: relative;
   width: 100%;
   height: 100%;
   min-height: 20px;
-  display: flex;
-  align-items: center;
 }
 
 .relatives {
@@ -48,13 +69,16 @@ export default class MobileNavbar extends Vue {
 .left {
   float: left;
   clear: left;
-  display: flex;
-  align-items: center;
+}
+
+.nav-options {
+  margin: 0 6px;
 }
 
 .right {
-  float: right;
-  clear: right;
+  position: absolute;
+  right: 0;
+  height: 100%;
 }
 
 .icon {
@@ -90,8 +114,6 @@ export default class MobileNavbar extends Vue {
 .title {
   margin-left: 25px;
   color: #fc7d7d;
-  display: inline-flex;
-  align-items: center;
   font-size: 1.5em;
 }
 

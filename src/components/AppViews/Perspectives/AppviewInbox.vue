@@ -10,7 +10,7 @@
       />
       <div class='right'>
         <transition name='fade'>
-        <template v-if='selected && selected.length > 0'>
+        <template v-if='selected && selected.length > 0 && isDesktop'>
             <span class='header-options'>
               <i class='fas icon pointer trash fa-trash fa-lg' @click='deleteSelected'></i>
             </span>
@@ -109,6 +109,8 @@ export default class PerspectiveAppview extends Vue {
   @Getter isDesktop!: boolean
   @Getter platform!: string
   @Mutation pushView!: (obj: {view: string, section: string}) => void
+  @Mutation sendOptionsToNavbar!: (options: ListIcon[]) => void
+  @Mutation hideNavBarOptions!: () => void
 
   @taskVuex.State tasks!: Task[]
   // tslint:disable-next-line:max-line-length
@@ -160,6 +162,14 @@ export default class PerspectiveAppview extends Vue {
       size: 'lg',
     },
   ]
+  mobileSelectedOptions: ListIcon[] = [
+    {
+      name: 'Delete selected tasks',
+      icon: 'trash',
+      iconColor: '',
+      size: '',
+    },
+  ]
 
   created() {
     this.pushView({
@@ -168,6 +178,13 @@ export default class PerspectiveAppview extends Vue {
     })
   }
 
+  getMobileSelectedOptions(): ListIcon[] {
+    for (const icon of this.mobileSelectedOptions)
+      icon['callback'] = () => {
+        this.deleteTasksById(this.selected)
+      }
+    return this.mobileSelectedOptions
+  }
   addInboxTask({name, priority, position}: {name: string, priority: string, position: number}) {
     this.addInboxTaskWithPosition({
       task: {
@@ -272,6 +289,15 @@ export default class PerspectiveAppview extends Vue {
     if (this.priority)
       tasks = tasks.filter(el => el.priority === this.priority)
     return tasks
+  }
+
+  @Watch('selected')
+  onChange() {
+    if (!this.isDesktop) {
+      if (this.selected.length > 0)
+        this.sendOptionsToNavbar(this.getMobileSelectedOptions())
+      else this.hideNavBarOptions()
+    }
   }
 }
 
