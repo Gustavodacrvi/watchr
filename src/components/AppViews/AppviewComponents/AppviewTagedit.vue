@@ -58,7 +58,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { ListIcon } from '../../../interfaces/app'
+import { ListIcon, Task } from '../../../interfaces/app'
 
 import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
@@ -76,6 +76,7 @@ import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
   },
 })
 export default class AppviewTagedit extends Vue {
+  @Prop(Object) task!: Task
   @Prop(String) fixedTag!: string
   @Prop(Boolean) allowPriority!: boolean
 
@@ -104,6 +105,15 @@ export default class AppviewTagedit extends Vue {
     },
   ]
 
+  created() {
+    if (this.task)
+      this.getDataFromTask()
+  }
+
+  getDataFromTask() {
+    this.value = this.task.name
+    this.priority = this.task.priority
+  }
   selectDropValue(value: string) {
     const arr = this.value.split(' ')
     arr[arr.length - 1] = this.optionsType + value
@@ -113,7 +123,6 @@ export default class AppviewTagedit extends Vue {
     str = str.slice(0, -1)
     this.value = str
   }
-
   enter() {
     if (this.value)
       this.$emit('enter', {name: this.value, priority: this.priority})
@@ -153,6 +162,11 @@ export default class AppviewTagedit extends Vue {
         this.options = options
       } else this.options = []
     }
+  }
+  @Watch('task')
+  onChange() {
+    if (this.task)
+      this.getDataFromTask()
   }
 }
 

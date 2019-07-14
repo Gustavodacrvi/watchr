@@ -1,26 +1,43 @@
 <template>
-  <div class='task round-border' :class='theme' @mouseenter='onHover = true' @mouseleave='onHover = false'>
-    <div class='content' @click='toggleElement'>
-      <span class='txt'>{{ task.name }}
-        <i v-if='task.priority'
-          class='content-icon fas fa-exclamation fa-sm'
-          :style='{color: exclamationColor}'
-        ></i>
-      </span>
-    </div>
-    <div class='task-options'>
-      <transition name='fade'>
-        <span class='option' v-if='showOptionsIconDrop'>
-          <icon-option
-            handle='ellipsis-v'
-            size='lg'
-            min-width='200px'
-            :options='options'
-          />
+  <transition>
+    <div v-if='!editing' key='task'
+      class='task round-border'
+      :class='theme'
+      @dblclick='editing = true'
+      @mouseenter='onHover = true'
+      @mouseleave='onHover = false'
+    >
+      <div class='content' @click='toggleElement'>
+        <span class='txt'>{{ task.name }}
+          <i v-if='task.priority'
+            class='content-icon fas fa-exclamation fa-sm'
+            :style='{color: exclamationColor}'
+          ></i>
         </span>
-      </transition>
+      </div>
+      <div class='task-options'>
+        <transition name='fade'>
+          <span class='option' v-if='showOptionsIconDrop'>
+            <icon-option
+              handle='ellipsis-v'
+              size='lg'
+              min-width='200px'
+              :options='options'
+            />
+          </span>
+        </transition>
+      </div>
     </div>
-  </div>
+    <div key='editing' v-else>
+      <task-edit key='showing'
+        :task='task'
+        :fixed-tag='fixedTag'
+        :allow-priority='allowPriority'
+        @cancel='editing = false'
+        @enter='enter'
+      />
+    </div>
+  </transition>
 </template>
 
 <script lang='ts'>
@@ -29,6 +46,7 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter, namespace } from 'vuex-class'
 
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
+import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTagedit.vue'
 
 import { Task, ListIcon } from '../../../interfaces/app'
 
@@ -37,11 +55,14 @@ const taskVuex = namespace('task')
 @Component({
   components: {
     'icon-option': AppviewIconoptions,
+    'task-edit': TaskEditTemplate,
   },
 })
 export default class AppviewTask extends Vue {
   @Prop(Object) task!: Task
   @Prop(Boolean) deselectAll!: boolean
+  @Prop(Boolean) allowPriority!: boolean
+  @Prop(String) fixedTag!: string
 
   @State theme!: string
   @Getter isDesktop!: boolean
@@ -50,15 +71,7 @@ export default class AppviewTask extends Vue {
 
   clicked: boolean = false
   onHover: boolean = false
-
-  toggleElement() {
-    this.clicked = !this.clicked
-    const el: HTMLElement = this.$el as HTMLElement
-    this.$emit('toggle', {
-      el,
-      select: this.clicked,
-    })
-  }
+  editing: boolean = false
   options: ListIcon[] = [
     {
       name: 'Delete task',
@@ -69,7 +82,28 @@ export default class AppviewTask extends Vue {
         this.deleteLabelsById([this.task.id])
       }
     },
+    {
+      name: 'Edit task',
+      icon: 'edit',
+      size: 'lg',
+      iconColor: '',
+      callback: () => {
+        this.editing = true
+      }
+    },
   ]
+
+  toggleElement() {
+    this.clicked = !this.clicked
+    const el: HTMLElement = this.$el as HTMLElement
+    this.$emit('toggle', {
+      el,
+      select: this.clicked,
+    })
+  }
+  enter() {
+
+  }
 
   get exclamationColor() {
     switch (this.task.priority) {

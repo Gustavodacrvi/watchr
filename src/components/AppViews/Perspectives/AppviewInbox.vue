@@ -58,6 +58,8 @@
         :tasks='getTasks'
         group='inbox'
         id='appnavinbox'
+        fixed-tag='Inbox'
+        :allow-priority='true'
         @update='onUpdate'
         @selected='onSelect'
         @add='addInboxTask'
