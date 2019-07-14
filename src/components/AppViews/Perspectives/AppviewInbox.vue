@@ -293,11 +293,10 @@ export default class PerspectiveAppview extends Vue {
 
   @Watch('selected')
   onChange() {
-    if (!this.isDesktop) {
+    if (!this.isDesktop)
       if (this.selected.length > 0)
         this.sendOptionsToNavbar(this.getMobileSelectedOptions())
       else this.hideNavBarOptions()
-    }
   }
 }
 
