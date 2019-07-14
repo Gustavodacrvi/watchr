@@ -24,8 +24,9 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Mixins } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
+import Mixin from '@/mixins/sortable'
 
 import ViewTask from '@/components/AppViews/AppviewComponents/AppviewTask.vue'
 
@@ -43,7 +44,7 @@ import { Task } from '../../../interfaces/app'
     'task-adder': TaskAdder,
   },
 })
-export default class AppviewTaskrenderer extends Vue {
+export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({required: true, type: String}) group!: string
   @Prop({required: true, type: String}) id!: string
@@ -54,6 +55,7 @@ export default class AppviewTaskrenderer extends Vue {
   sortable: any = null
   numberOfSelected: number = 0
   deselectAll: boolean = false
+  rootSelector: string = `.task-${this.group}-${this.id}`
 
   mounted() {
     this.mount()
@@ -73,7 +75,7 @@ export default class AppviewTaskrenderer extends Vue {
       group: this.group,
 
       onUpdate: () => {
-        const ids: string[] = this.getIdsFromElements()
+        const ids: string[] = this.getIdsFromElements(this.rootSelector)
         this.$emit('update', ids)
       },
     }
@@ -85,7 +87,7 @@ export default class AppviewTaskrenderer extends Vue {
   }
 
   add(obj: {name: string, priority: string}) {
-    const els: string[] = this.getIdsFromElements()
+    const els: string[] = this.getIdsFromElements(this.rootSelector)
     let i = 0
     let position: number = 0
     for (const id of els) {
@@ -97,29 +99,6 @@ export default class AppviewTaskrenderer extends Vue {
     }
     const ids = els.filter(el => el !== 'task-adder')
     this.$emit('add', {position, ...obj})
-  }
-  getIdsFromElements(): string[] {
-    const root = document.querySelector(`.task-${this.group}-${this.id}`)
-    if (root) {
-      const arr = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
-      const ids: string[] = []
-      for (const el of arr)
-        ids.push(el.dataset.vid)
-      return ids
-    }
-    return []
-  }
-  getIdsFromSelectedElements(): string[] {
-    const root = document.querySelector(`.task-${this.group}-${this.id}`)
-    if (root) {
-      const arr: HTMLElement[] = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
-      const ids: string[] = []
-      for (const el of arr)
-        if (el.dataset.vid && el.classList.contains('sortable-selected'))
-          ids.push(el.dataset.vid)
-      return ids
-    }
-    return []
   }
   calcSelectedElements(evt?: any) {
     if (evt) {
@@ -137,7 +116,7 @@ export default class AppviewTaskrenderer extends Vue {
 
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
     setTimeout(() => {
-      this.$emit('selected', this.getIdsFromSelectedElements())
+      this.$emit('selected', this.getIdsFromSelectedElements(this.rootSelector))
     }, 1)
   }
   toggleElement({el, select}: {el: HTMLElement, select: boolean}) {

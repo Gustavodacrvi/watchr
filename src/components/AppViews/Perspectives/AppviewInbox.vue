@@ -102,7 +102,7 @@ export default class PerspectiveAppview extends Vue {
 
   @taskVuex.State tasks!: Task[]
   // tslint:disable-next-line:max-line-length
-  @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, collection: string, order: string[], position: number}) => void
+  @taskVuex.Action addInboxTaskWithPosition!: (obj: {task: Task, perspectiveId: string, collection: string, order: string[], position: number}) => void
 
   @labelVuex.Getter sortedLabels!: Label[]
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
@@ -157,7 +157,7 @@ export default class PerspectiveAppview extends Vue {
   }
 
   addInboxTask({name, priority, position}: {name: string, priority: string, position: number}) {
-    this.addTask({
+    this.addInboxTaskWithPosition({
       task: {
         name,
         priority,
@@ -223,18 +223,9 @@ export default class PerspectiveAppview extends Vue {
       })
     }
   }
-  arraysEqual(arr1: any[], arr2: any[]): boolean {
-    if (arr1.length !== arr2.length)
-      return false
-    for (let i = arr1.length; i--;) {
-      if (arr1[i] !== arr2[i])
-        return false
-    }
-    return true
-  }
   onUpdate(ids: string[]) {
     const filtered = ids.filter(el => el !== 'task-adder')
-    if (!this.arraysEqual(filtered, this.inboxPers.order))
+    if (!appUtils.arraysEqual(filtered, this.inboxPers.order))
       this.saveTaskOrder({
         id: this.inboxPers.id,
         order: ids.filter(el => el !== 'task-adder'),
@@ -250,28 +241,8 @@ export default class PerspectiveAppview extends Vue {
   }
   get sortedTasks(): Task[] {
     if (this.inboxPers) {
-      const tasks = this.viewTasks
-      const order = this.inboxPers.order
-      let orderChanged: boolean = false
-      for (const task of tasks)
-        if (!order.includes(task.id)) {
-          order.push(task.id)
-          orderChanged = true
-        }
-
-      const idsToRemove: string[] = []
-      for (const id of order) {
-        const task = tasks.find(el => el.id === id)
-        if (!task) {
-          orderChanged = true
-          idsToRemove.push(id)
-        }
-      }
-      for (const id of idsToRemove) {
-        const index = order.indexOf(id)
-        order.splice(index, 1)
-      }
-      return appUtils.sortArrayByIds(tasks, order)
+      const ord = appUtils.fixOrder(this.viewTasks, this.inboxPers.order)
+      return appUtils.sortArrayByIds(this.viewTasks, ord)
     }
     return []
   }

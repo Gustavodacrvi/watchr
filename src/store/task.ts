@@ -25,7 +25,7 @@ interface ActionContext {
 
 interface Actions {
   // tslint:disable-next-line:max-line-length
-  addTask: (context: ActionContext, obj: {task: Task, perspectiveId: string, collection: string, order: string[], position: number}) => void
+  addInboxTaskWithPosition: (context: ActionContext, obj: {task: Task, perspectiveId: string, collection: string, order: string[], position: number}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -61,7 +61,7 @@ export default {
             }
         })
     },
-    addTask({ rootState }, {task, perspectiveId, order, collection, position}) {
+    addInboxTaskWithPosition({ rootState }, {task, perspectiveId, order, collection, position}) {
       if (rootState.firestore && rootState.uid) {
         const batch = rootState.firestore.batch()
 

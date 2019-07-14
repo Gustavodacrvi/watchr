@@ -25,6 +25,14 @@ export default {
     }
     return sorted
   },
+  arraysEqual(arr1: any[], arr2: any[]): boolean {
+    if (arr1.length !== arr2.length)
+      return false
+    for (let i = arr1.length; i--;)
+      if (arr1[i] !== arr2[i])
+        return false
+    return true
+  },
   fixOrder(arrOfObjects: Array<{id: string, [key: string]: any}>, orderOfObjects: string[]) {
     const arr = arrOfObjects.slice()
     const order = orderOfObjects.slice()

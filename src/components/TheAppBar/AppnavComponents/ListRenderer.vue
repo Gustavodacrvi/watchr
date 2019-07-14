@@ -23,8 +23,9 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch, Mixins } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
+import Mixin from '@/mixins/sortable'
 
 import Sortable, { MultiDrag } from 'sortablejs'
 import { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
@@ -40,7 +41,7 @@ import { ListIcon } from '../../../interfaces/app'
     'list-element': ListElement,
   },
 })
-export default class ListRenderer extends Vue {
+export default class ListRenderer extends Mixins(Mixin) {
   @Prop({required: true, type: Array}) list!: any[]
   @Prop({required: true, type: String}) group!: string
   @Prop({required: true, type: String}) active!: string
@@ -53,6 +54,7 @@ export default class ListRenderer extends Vue {
   numberOfSelected: number = 0
   sortable: any = null
   deselectAll: boolean = false
+  rootSelector: string = `.sort-${this.group}`
 
   mounted() {
     this.mount()
@@ -72,7 +74,7 @@ export default class ListRenderer extends Vue {
       group: this.group,
 
       onUpdate: () => {
-        const ids: string[] = this.getIdsFromElements()
+        const ids: string[] = this.getIdsFromElements(this.rootSelector)
         this.$emit('update', ids)
       },
     }
@@ -83,29 +85,6 @@ export default class ListRenderer extends Vue {
     this.sortable = new Sortable(this.rootComponent, options)
   }
 
-  getIdsFromElements(): string[] {
-    const root = document.querySelector(`.sort-${this.group}`)
-    if (root) {
-      const arr = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
-      const ids: string[] = []
-      for (const el of arr)
-        ids.push(el.dataset.vid)
-      return ids
-    }
-    return []
-  }
-  getIdsFromSelectedElements(): string[] {
-    const root = document.querySelector(`.sort-${this.group}`)
-    if (root) {
-      const arr: HTMLElement[] = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
-      const ids: string[] = []
-      for (const el of arr)
-        if (el.dataset.vid && el.classList.contains('sortable-selected'))
-          ids.push(el.dataset.vid)
-      return ids
-    }
-    return []
-  }
   toggleElement({el, select}: {el: HTMLElement, select: boolean}) {
     if (select)
       Sortable.utils.select(el)
@@ -128,7 +107,7 @@ export default class ListRenderer extends Vue {
 
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
     setTimeout(() => {
-      this.$emit('selected', this.getIdsFromSelectedElements())
+      this.$emit('selected', this.getIdsFromSelectedElements(this.rootSelector))
     }, 1)
   }
   clearSlected() {
