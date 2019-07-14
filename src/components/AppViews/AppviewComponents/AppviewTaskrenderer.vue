@@ -14,7 +14,7 @@
         key='task-adder'
         fixed-tag='Inbox'
         :allow-priority='true'
-        @add='add'
+        @enter='add'
 
         data-vid='task-adder'
       />
