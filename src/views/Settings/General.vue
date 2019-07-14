@@ -5,6 +5,7 @@
       :selected='selected'
       :options='options'
       max-height='300px'
+      @select='v => selected = v'
     />
   </div>
 </template>

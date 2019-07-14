@@ -51,6 +51,16 @@ body, button, input {
   background-color: #242424;
 }
 
+.border-card.light {
+  background-color: #F8F7F6;
+  border: .5px solid #dbdbdb;
+}
+
+.border-card.dark {
+  background-color: #191919;
+  border: .5px solid #292929;
+}
+
 .main-color-card.light {
   background-color: #fc7d7d;
 }

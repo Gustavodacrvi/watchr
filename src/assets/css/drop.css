@@ -15,11 +15,11 @@
   cursor: pointer;
 }
 
-.el.dark:hover {
+.el.dark:hover, .el.selected.dark {
   background-color: #282828;
 }
 
-.el.light:hover {
+.el.light:hover, .el.selected.light {
   background-color: #E6E6E6;
 }
 
