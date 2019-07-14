@@ -14,6 +14,7 @@
         @toggle='toggleElement'
       />
       <task-adder
+        class='handle'
         key='task-adder'
         :fixed-tag='fixedTag'
         :allow-priority='allowPriority'

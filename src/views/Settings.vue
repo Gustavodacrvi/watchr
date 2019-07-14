@@ -6,15 +6,25 @@
         <div ref='line' class='line'></div>
         <div class='menu'>
           <router-link
-            class='txt el'
+            class='txt el icon-el'
             ref='About'
             :to="{name: 'About'}"
-          >About</router-link>
+          >
+            <span class='el-icon'>
+              <i class='fas fa-info fa-sm'></i>
+            </span>
+            <span class='el-txt'>About</span>
+          </router-link>
           <router-link
             class='txt el'
             ref='General'
             :to="{name: 'General'}"
-          >General</router-link>
+          >
+            <span class='el-icon'>
+              <i class='fas fa-cog fa-sm'></i>
+            </span>
+            <span class='el-txt'>General</span>
+          </router-link>
           <div class='margin'></div>
           <router-link
             class='txt el'
@@ -208,6 +218,12 @@ export default class Help extends Vue {
   border-left: 2px solid #D9D9D9;
 }
 
+.fas {
+  position: relative;
+  bottom: 1.5px;
+  margin-right: 8px;
+}
+
 .menu {
   position: relative;
   left: -1px;
@@ -220,6 +236,7 @@ export default class Help extends Vue {
 .el {
   display: block;
   padding: 6px;
+  width: 100%;
   padding-left: 12px;
   text-decoration: none;
   font-size: 1.1em;
@@ -239,6 +256,20 @@ export default class Help extends Vue {
   background-color: #fc7d7d;
   left: -2px;
   transition: top .3s, height .3s;
+}
+
+.icon-el {
+  display: flex;
+  width: 100%;
+}
+
+.el-icon {
+  flex-basis: 30px;
+  text-align: center;
+}
+
+.el-txt {
+  flex-basis: 100%;
 }
 
 </style>
