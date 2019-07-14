@@ -10,9 +10,9 @@
           <form-options
             max-height='300px'
             :enable-search='true'
-            :selected='selected'
+            :selected='parsedTimeZone'
             :options='timeZones'
-            @select='v => selected = v'
+            @select='v => timeZone = v'
           />
         </div>
       </div>
@@ -24,8 +24,8 @@
           <form-options
             max-height='100px'
             :options="['DD-MM-YYYY', 'MM-DD-YYYY']"
-            :selected='selected'
-            @select='v => selected = v'
+            :selected='dateFormat'
+            @select='v => dateFormat = v'
           />
         </div>
       </div>
@@ -37,8 +37,8 @@
           <form-options
             max-height='100px'
             :options="['1:00pm', '13:00']"
-            :selected='selected'
-            @select='v => selected = v'
+            :selected='timeFormat'
+            @select='v => timeFormat = v'
           />
         </div>
       </div>
@@ -52,9 +52,9 @@
         <div class='content'>
           <form-options
             max-height='300px'
-            :selected='selected'
+            :selected='startOfTheWeek'
             :options='weeks'
-            @select='v => selected = v'
+            @select='v => startOfTheWeek = v'
           />
         </div>
       </div>
@@ -64,27 +64,10 @@
         </div>
         <div class='content'>
           <form-options
-            :selected='selected'
+            :selected='nextWeek'
             :options='weeks'
             max-height='300px'
-            @select='v => selected = v'
-          />
-        </div>
-      </div>
-    </div>
-    <hr class='border themeatic-break hr' :class='theme'>
-    <h2>Push notifications</h2>
-    <div class='table'>
-      <div class='line' :class='platform'>
-        <div class='text'>
-          <span class='txt'>Daily notification</span>
-        </div>
-        <div class='content'>
-          <form-options
-            :selected='selected'
-            :options='options'
-            max-height='100px'
-            @select='v => selected = v'
+            @select='v => nextWeek = v'
           />
         </div>
       </div>
@@ -95,12 +78,16 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { Getter, State } from 'vuex-class'
+import { Getter, State, namespace } from 'vuex-class'
+
+const settingsVuex = namespace('settings')
 
 import Moment from 'moment'
 import 'moment-timezone/builds/moment-timezone-with-data'
 
 import FormOptions from '@/components/PopUps/FormComponents/FormOptions.vue'
+
+import appUtils from '@/utils/app'
 
 @Component({
   components: {
@@ -111,6 +98,12 @@ export default class GeneralSubView extends Vue {
   @State theme!: string
   @Getter platform!: string
   
+  @settingsVuex.State('timeZone') savedTimeZone!: string
+  @settingsVuex.State('dateFormat') savedDateFormat!: string
+  @settingsVuex.State('timeFormat') savedTimeFormat!: string
+  @settingsVuex.State('startOfTheWeek') savedStartOfTheWeek!: string
+  @settingsVuex.State('nextWeek') savedNextWeek!: string
+
   selected: string = 'option 1'
 
   timeZone: string = ''
@@ -119,6 +112,19 @@ export default class GeneralSubView extends Vue {
 
   startOfTheWeek: string = ''
   nextWeek: string = ''
+
+  created() {
+    const m = Moment as any
+    
+    this.timeZone = this.savedTimeZone
+    this.dateFormat = this.savedDateFormat
+    this.timeFormat = this.savedTimeFormat
+    this.startOfTheWeek = this.savedStartOfTheWeek
+    this.nextWeek = this.savedNextWeek
+
+    if (this.timeZone === '')
+      this.timeZone = m.tz.guess()
+  }
 
   get timeZones(): string[] {
     const m = Moment as any
@@ -134,6 +140,12 @@ export default class GeneralSubView extends Vue {
       'Saturday',
       'Sunday',
     ]
+  }
+  get parsedTimeZone(): string {
+    return appUtils.parseMomentTimeZone(this.timeZone)
+  }
+  get deParsedTimeZone(): string {
+    return appUtils.deParseMomentTimeZone(this.timeZone)
   }
 
   options: string[] = ['option 1', 'option 2', 'option 3', 'option 4']
