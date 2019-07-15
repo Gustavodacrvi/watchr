@@ -241,6 +241,7 @@ const store: any = new Vuex.Store({
       if ((getters.loggedAndVerified || getters.anonymous) && getters.isDesktop)
         switch (key) {
           case 'l': commit('pushPopUp', 'LabeladderPopup'); break
+          case 'p': commit('pushPopUp', 'PerspectiveAdderPopup'); break
           case 'h': commit('pushPopUp', ''); break
         }
     },

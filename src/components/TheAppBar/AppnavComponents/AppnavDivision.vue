@@ -1,8 +1,8 @@
 <template>
   <div class='division'>
-    <div class='header' @click='showing = !showing'>
+    <div class='header'>
       <span class='txt'>{{ name }}</span>
-      <span class='right'>
+      <span class='right' @click='showing = !showing'>
         <i class='fas pointer icon fa-angle-down fa-lg txt' :class='{rotate: showing}'></i>
       </span>
     </div>
@@ -20,7 +20,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 export default class TodayView extends Vue {
   @Prop(String) name!: string
 
-  showing: boolean = false
+  showing: boolean = true
 }
 
 </script>

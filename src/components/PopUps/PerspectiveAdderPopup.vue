@@ -1,12 +1,13 @@
 <template>
   <div class='label-adder'>
     <div class='title'>
-      <h3>Add label</h3>
+      <h3>Add perspective</h3>
     </div>
     <div class='content'>
       <dropdown-input
         tabindex='1'
         class='margin'
+        placeholder='Perspective title...'
         :input='input'
         :values='options'
         @enter='add'
@@ -18,10 +19,10 @@
         tabindex='2'
         class='button round-border margin'
         @click='add'
-      >Add label</button>
+      >Add perspective</button>
       <span v-show='isDesktop'
         class='margin txt'
-      >You can open this pop up at any time by clicking the 'L' key.</span><br>
+      >You can open this pop up at any time by clicking the 'P' key.</span><br>
       <span v-show='isDesktop'
         class='margin txt'
       >You can close any pop up at any time by clicking 'H' key.</span>
@@ -38,9 +39,9 @@ import DropdownInput from '@/components/DropdownInput.vue'
 
 const labelStore = namespace('label')
 
-import { Alert, Label } from '../../interfaces/app'
+import { Alert, Perspective } from '../../interfaces/app'
 
-const labelModule = namespace('label')
+const perspectiveModule = namespace('perspective')
 
 @Component({
   components: {
@@ -54,8 +55,8 @@ export default class LabelAdder extends Vue {
   @Getter isDesktop!: boolean
   @Mutation pushAlert!: (alert: Alert) => void
 
-  @labelStore.State labels!: Label[]
-  @labelStore.Action addLabel!: (name: string) => void
+  @perspectiveModule.State smartPerspectives!: Perspective[]
+  @perspectiveModule.State customPerspectives!: Perspective[]
 
   input: string | null = null
   value: string = ''
@@ -67,20 +68,13 @@ export default class LabelAdder extends Vue {
 
   add() {
     if (this.value !== '') {
-      const label: Label | undefined = this.labels.find(el => el.name === this.value)
-      if (label)
-        this.pushAlert({
-          name: `<strong>${this.value}</strong> already exists.`,
-          duration: 3,
-          type: 'error',
-        })
-      else
-        this.addLabel(this.value)
+      
     }
   }
 
   getOptions(): string[] {
-    return this.labels.filter(el => el.name.includes(this.value)).map(el => el.name)
+    const merge = this.customPerspectives.concat(this.smartPerspectives)
+    return merge.filter(el => el.name.includes(this.value)).map(el => el.name)
   }
 
   select(value: string) {

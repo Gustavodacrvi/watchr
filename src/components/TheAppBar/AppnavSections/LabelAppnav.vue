@@ -15,12 +15,7 @@
       @update='onUpdate'
       @selected='v => selected = v'
     />
-    <div v-else class='add-label-alert' @click="pushPopUp('LabeladderPopup')">
-      <span class='txt pointer icon'>
-        <i class='fas fa-plus fa-lg'></i>
-        <span>Add label</span>
-      </span>
-    </div>
+    <appnav-message v-else @click="pushPopUp('LabeladderPopup')" name='Add label'/>
   </div>
 </template>
 
@@ -31,6 +26,7 @@ import { namespace, Mutation, State, Getter } from 'vuex-class'
 
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
+import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmessage.vue'
 
 import { Label, ListIcon, SimpleAdder, Perspective } from '../../../interfaces/app'
 
@@ -41,6 +37,7 @@ const list = namespace('list')
   components: {
     'list-renderer': ListRenderer,
     'appnav-header': AppnavHeader,
+    'appnav-message': AppnavMessage,
   },
 })
 export default class LabelAppnav extends Vue {
@@ -116,16 +113,3 @@ export default class LabelAppnav extends Vue {
 
 </script>
 
-<style scoped>
-
-.fas {
-  margin-right: 20px;
-}
-
-.add-label-alert {
-  margin-top: 30px;
-  display: flex;
-  justify-content: center;
-}
-
-</style>

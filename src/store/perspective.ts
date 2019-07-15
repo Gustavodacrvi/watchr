@@ -14,6 +14,7 @@ interface States {
 
 interface Getters {
   sortedSmartPerspectives: (state: States) => Perspective[]
+  sortedCustomPerspectives: (state: States) => Perspective[]
   inboxPers: (state: States) => Perspective
   pinedSmartPerspectives: (state: States, getters: Getters) => void
 }
@@ -60,6 +61,9 @@ export default {
     pinedSmartPerspectives(state: States, getters: Getters): Perspective[] {
       const pers: Perspective[] = getters.sortedSmartPerspectives as any
       return pers.filter(el => el.pin)
+    },
+    sortedCustomPerspectives(state: States): Perspective[] {
+      return appUtils.sortArrayByIds(state.customPerspectives, state.customOrder)
     },
   } as Getters,
   actions: {
@@ -110,6 +114,21 @@ export default {
           }
         })
         rootState.firestore.collection('smartPerspectives').where('userId', '==', rootState.uid).onSnapshot(snap => {
+          const changes = snap.docChanges()
+          for (const change of changes)
+            if (change.type === 'added') {
+              const lab = state.smartPerspectives.find(el => el.id === change.doc.id)
+              if (!lab)
+                state.smartPerspectives.push({...change.doc.data(), id: change.doc.id} as any)
+            } else if (change.type === 'removed') {
+              const index = state.smartPerspectives.findIndex(el => el.id === change.doc.id)
+              state.smartPerspectives.splice(index, 1)
+            } else {
+              const index = state.smartPerspectives.findIndex(el => el.id === change.doc.id)
+              state.smartPerspectives.splice(index, 1, {...change.doc.data(), id: change.doc.id} as any)
+            }
+        })
+        rootState.firestore.collection('customPerspectives').where('userId', '==', rootState.uid).onSnapshot(snap => {
           const changes = snap.docChanges()
           for (const change of changes)
             if (change.type === 'added') {
