@@ -19,15 +19,9 @@
         tabindex='2'
         class='margin gray round-border input textarea txt scroll'
         placeholder='Perspective description...'
+        v-model='description'
         :class='theme'
       ></textarea>
-      <div class='margin'>
-        <form-checkbox v-model='pinOnOverview' name='Pin on overview'/>
-        <form-checkbox v-model='showNumberOfTasks' name='Show number of tasks'/>
-      </div>
-      <div v-if='pinOnOverview' class='margin'>
-        <form-checkbox v-model='showWhenNotEmpty' name='Show only when not empty'/>
-      </div>
       <button
         tabindex='2'
         class='button round-border margin'
@@ -50,6 +44,7 @@ import { State, Getter, Mutation, Action, namespace } from 'vuex-class'
 
 import DropdownInput from '@/components/DropdownInput.vue'
 import FormCheck from '@/components/PopUps/FormComponents/FormCheckbox.vue'
+import FormOptions from '@/components/PopUps/FormComponents/FormOptions.vue'
 
 const labelStore = namespace('label')
 
@@ -61,6 +56,7 @@ const perspectiveModule = namespace('perspective')
   components: {
     'dropdown-input': DropdownInput,
     'form-checkbox': FormCheck,
+    'form-options': FormOptions,
   },
 })
 export default class LabelAdder extends Vue {
@@ -69,14 +65,14 @@ export default class LabelAdder extends Vue {
   @State popUpPayload!: any
   @Getter isDesktop!: boolean
   @Mutation pushAlert!: (alert: Alert) => void
+  @Mutation pushPopUp!: (compName: string) => void
 
   @perspectiveModule.State smartPerspectives!: Perspective[]
   @perspectiveModule.State customPerspectives!: Perspective[]
+  @perspectiveModule.Action addPerspective!: (obj: {name: string, description: string}) => void
 
   input: string | null = null
-  showNumberOfTasks: boolean = false
-  showWhenNotEmpty: boolean = false
-  pinOnOverview: boolean = false
+  description: string = ''
   value: string = ''
   options: string[] = []
 
@@ -86,7 +82,21 @@ export default class LabelAdder extends Vue {
 
   add() {
     if (this.value !== '') {
-      
+      const pers = this.smartPerspectives.find(el => el.name === this.value)
+      const pers2 = this.customPerspectives.find(el => el.name === this.value)
+      if (pers || pers2)
+        this.pushAlert({
+          name: `<strong>${this.value}</strong> already exists.`,
+          duration: 3,
+          type: 'error',
+        })
+      else {
+        this.addPerspective({
+          name: this.value,
+          description: this.description,
+        })
+        this.pushPopUp('')
+      }
     }
   }
 

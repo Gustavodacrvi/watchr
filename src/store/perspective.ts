@@ -37,6 +37,7 @@ interface Actions {
   saveSmartOrder: (context: ActionContext, ids: string[]) => void
   togglePerspectivesPin: (context: ActionContext, arr: Array<{id: string, pin: boolean}>) => void
   saveTaskOrder: (context: ActionContext, obj: {id: string, order: string[], collection: string}) => void
+  addPerspective: (context: ActionContext, obj: {name: string, description: string}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -56,18 +57,39 @@ export default {
       return state.smartPerspectives.find(el => el.name === 'Inbox') as Perspective
     },
     sortedSmartPerspectives(state: States): Perspective[] {
-      return appUtils.sortArrayByIds(state.smartPerspectives, state.smartOrder)
+      return appUtils.sortArrayByIds(state.smartPerspectives, appUtils.fixOrder(state.smartPerspectives, state.smartOrder))
     },
     pinedSmartPerspectives(state: States, getters: Getters): Perspective[] {
       const pers: Perspective[] = getters.sortedSmartPerspectives as any
       return pers.filter(el => el.pin)
     },
     sortedCustomPerspectives(state: States): Perspective[] {
-      return appUtils.sortArrayByIds(state.customPerspectives, state.customOrder)
+      return appUtils.sortArrayByIds(state.customPerspectives, appUtils.fixOrder(state.customPerspectives, state.customOrder))
     },
   } as Getters,
   actions: {
-    saveSmartOrder({ rootState, state }, ids) {
+    addPerspective({ rootState }, {name, description}) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('customPerspectives').add({
+          userId: rootState.uid,
+          name,
+          icon: 'layer-group',
+          iconColor: '#737373',
+          description,
+          order: [],
+          size: 'lg',
+          isSmart: false,
+          priority: '',
+          pin: false,
+          numberOfTasks: false,
+          showWhenNotEmpty: false,
+          excludeSmartLabels: [],
+          includeSmartLabels: [],
+          excludeCustomLabels: [],
+          includeCustomLabels: [],
+        })
+    },
+    saveSmartOrder({ rootState }, ids) {
       if (rootState.firestore && rootState.uid)
       rootState.firestore.collection('perspectivesOrder').doc(rootState.uid)
         .update({
@@ -132,15 +154,15 @@ export default {
           const changes = snap.docChanges()
           for (const change of changes)
             if (change.type === 'added') {
-              const lab = state.smartPerspectives.find(el => el.id === change.doc.id)
+              const lab = state.customPerspectives.find(el => el.id === change.doc.id)
               if (!lab)
-                state.smartPerspectives.push({...change.doc.data(), id: change.doc.id} as any)
+                state.customPerspectives.push({...change.doc.data(), id: change.doc.id} as any)
             } else if (change.type === 'removed') {
-              const index = state.smartPerspectives.findIndex(el => el.id === change.doc.id)
-              state.smartPerspectives.splice(index, 1)
+              const index = state.customPerspectives.findIndex(el => el.id === change.doc.id)
+              state.customPerspectives.splice(index, 1)
             } else {
-              const index = state.smartPerspectives.findIndex(el => el.id === change.doc.id)
-              state.smartPerspectives.splice(index, 1, {...change.doc.data(), id: change.doc.id} as any)
+              const index = state.customPerspectives.findIndex(el => el.id === change.doc.id)
+              state.customPerspectives.splice(index, 1, {...change.doc.data(), id: change.doc.id} as any)
             }
         })
       }
