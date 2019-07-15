@@ -7,10 +7,11 @@
       :selected='[]'
     />
     <list-renderer
-      group='appnavOverview'
+      group='appnavoverview'
+      route='pers'
       :disabled='true'
       :list='pinedSmartPerspectives'
-      :active='active'
+      :active='activePers'
     />
   </div>
 </template>
@@ -35,11 +36,11 @@ const persVuex = namespace('perspective')
 })
 export default class OverviewAppnav extends Vue {
   @State viewName!: string
-  @State viewSect!: string
+  @State viewType!: string
   @persVuex.Getter pinedSmartPerspectives!: Perspective[]
 
-  get active(): string {
-    if (this.viewSect === 'overview')
+  get activePers(): string {
+    if (this.viewType === 'perspective')
       return this.viewName
     return ''
   }

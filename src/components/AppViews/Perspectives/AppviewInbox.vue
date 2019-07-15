@@ -108,7 +108,7 @@ const persVuex = namespace('perspective')
 export default class PerspectiveAppview extends Vue {
   @Getter isDesktop!: boolean
   @Getter platform!: string
-  @Mutation pushView!: (obj: {view: string, section: string}) => void
+  @Mutation pushView!: (obj: {view: string, viewType: string}) => void
   @Mutation sendOptionsToNavbar!: (options: ListIcon[]) => void
   @Mutation hideNavBarOptions!: () => void
 
@@ -174,7 +174,7 @@ export default class PerspectiveAppview extends Vue {
   created() {
     this.pushView({
       view: 'Inbox',
-      section: 'overview',
+      viewType: 'perspective',
     })
   }
 

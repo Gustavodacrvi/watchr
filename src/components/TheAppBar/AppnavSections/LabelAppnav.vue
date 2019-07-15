@@ -6,14 +6,21 @@
       :icons='headerIcons'
       :selected='selected'
     />
-    <list-renderer
-      group='appnavLabels'
+    <list-renderer v-if='sortedLabels && sortedLabels.length > 0'
+      group='appnavlabels'
+      route='labels'
       :list='sortedLabels'
       :options='getOptions'
-      :active='active'
+      :active='activePers'
       @update='onUpdate'
       @selected='v => selected = v'
     />
+    <div v-else class='add-label-alert' @click="pushPopUp('LabeladderPopup')">
+      <span class='txt pointer icon'>
+        <i class='fas fa-plus fa-lg'></i>
+        <span>Add label</span>
+      </span>
+    </div>
   </div>
 </template>
 
@@ -38,7 +45,7 @@ const list = namespace('list')
 })
 export default class LabelAppnav extends Vue {
   @State viewName!: string
-  @State viewSect!: string
+  @State viewType!: string
   @Mutation pushPopUpPayload!: (obj: SimpleAdder) => void
   @Mutation pushPopUp!: (comp: string) => void
 
@@ -60,8 +67,8 @@ export default class LabelAppnav extends Vue {
     },
   ]
 
-  get active(): string {
-    if (this.viewSect === 'overview')
+  get activePers(): string {
+    if (this.viewType === 'perspective')
       return this.viewName
     return ''
   }
@@ -108,3 +115,17 @@ export default class LabelAppnav extends Vue {
 }
 
 </script>
+
+<style scoped>
+
+.fas {
+  margin-right: 20px;
+}
+
+.add-label-alert {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+</style>

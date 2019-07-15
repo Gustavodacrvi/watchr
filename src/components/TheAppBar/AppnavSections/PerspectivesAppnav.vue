@@ -7,11 +7,12 @@
       :selected='selected'
     />
     <list-renderer
-      group='appnavPerspectives'
+      group='appnavperspectives'
+      route='pers'
       :list='sortedSmartPerspectives'
       :options='getOptions'
       :help-icons='helpIcons'
-      :active='active'
+      :active='activePers'
       @update='onUpdate'
       @selected='v => selected = v'
     />
@@ -38,7 +39,7 @@ const persVuex = namespace('perspective')
 })
 export default class OverviewAppnav extends Vue {
   @State viewName!: string
-  @State viewSect!: string
+  @State viewType!: string
 
   @persVuex.State smartOrder!: Perspective[]
   @persVuex.Getter sortedSmartPerspectives!: Perspective[]
@@ -61,8 +62,8 @@ export default class OverviewAppnav extends Vue {
     },
   ]
 
-  get active(): string {
-    if (this.viewSect === 'overview')
+  get activePers(): string {
+    if (this.viewType === 'perspective')
       return this.viewName
     return ''
   }

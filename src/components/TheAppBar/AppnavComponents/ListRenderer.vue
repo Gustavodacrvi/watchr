@@ -9,11 +9,12 @@
         :active='active'
         :iconColor='obj.iconColor'
         :options='options(obj)'
+        :route='route'
         :help-icons='helpIcons(obj)'
         :show-handle='numberOfSelected > 0'
         :deselect-all='deselectAll'
         @toggle='toggleElement'
-        @clearselected='clearSlected'
+        @clearselected='clearSelected'
 
         :data-vid='obj.id'
       />
@@ -45,6 +46,7 @@ export default class ListRenderer extends Mixins(Mixin) {
   @Prop({required: true, type: Array}) list!: any[]
   @Prop({required: true, type: String}) group!: string
   @Prop({required: true, type: String}) active!: string
+  @Prop({required: true, type: String}) route!: string
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({default: () => [], type: Function}) options!: (obj: any) => ListIcon[]
   @Prop({default: () => [], type: Function}) helpIcons!: (obj: any) => ListIcon[]
@@ -86,7 +88,7 @@ export default class ListRenderer extends Mixins(Mixin) {
   }
 
   toggleElement({el, select}: {el: HTMLElement, select: boolean}) {
-    if (select)
+    if (select && !this.disabled)
       Sortable.utils.select(el)
     else Sortable.utils.deselect(el)
     this.calcSelectedElements()
@@ -110,7 +112,7 @@ export default class ListRenderer extends Mixins(Mixin) {
       this.$emit('selected', this.getIdsFromSelectedElements(this.rootSelector))
     }, 1)
   }
-  clearSlected() {
+  clearSelected() {
     this.$emit('selected', [])
   }
 

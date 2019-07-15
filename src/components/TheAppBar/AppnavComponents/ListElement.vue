@@ -8,14 +8,16 @@
     <div v-if='icon && iconColor'
       class='left-icon'
       :class='{handle: showHandle && !isDesktop}'
-      @click='toggleElement'
+      @click="toggleElement(false)"
+      @dblclick='toggleElement(true)'
     >
       <i :class='`txt fas fa-lg fa-${icon}`' :style='{color: iconColor}'></i>
     </div>
     <div
       class='content'
       :class='{handle: showHandle && !isDesktop}'
-      @click='toggleElement'
+      @click="toggleElement(false)"
+      @dblclick="toggleElement(true)"
     >
       <span class='txt name'>{{ name }}</span>
     </div>
@@ -76,6 +78,7 @@ export default class ListRenderer extends Vue {
   @Prop(String) active!: string
   @Prop(String) icon!: string
   @Prop(String) iconColor!: string
+  @Prop(String) route!: string
   @Prop(Array) options!: ListIcon[]
   @Prop(Array) helpIcons!: ListIcon[]
   @Prop(Boolean) showHandle!: boolean
@@ -87,17 +90,24 @@ export default class ListRenderer extends Vue {
   onHover: boolean = false
   clicked: boolean = false
 
-  toggleElement() {
-    this.clicked = !this.clicked
-    const el: HTMLElement = this.$el as HTMLElement
-    this.$emit('toggle', {
-      el,
-      select: this.clicked,
-    })
+  toggleElement(isDoubleClick: boolean) {
+    this.go()
+    if (!this.showHandle && isDoubleClick || this.showHandle) {
+      this.clicked = !this.clicked
+      const el: HTMLElement = this.$el as HTMLElement
+      this.$emit('toggle', {
+        el,
+        select: this.clicked,
+      })
+    }
   }
   optionClick(callback: (id: string) => void) {
     this.$emit('clearselected')
     callback(this.id)
+  }
+  go() {
+    if (!this.showHandle)
+      this.$router.push(`/user/${this.route}/${this.name.toLowerCase()}`)
   }
 
   get showOptionsMobile(): boolean {
@@ -158,12 +168,20 @@ export default class ListRenderer extends Vue {
   align-items: center;
 }
 
-.element.dark:hover, .sortable-selected.dark, .active.dark {
+.element.dark:hover, .active.dark {
   background-color: #282828;
 }
 
-.element.light:hover, .sortable-selected.light, .active.light {
+.element.light:hover, .active.light {
   background-color: #e3e3e3;
+}
+
+.sortable-selected.light {
+  background-color: #ffbfbd !important;
+}
+
+.sortable-selected.dark {
+  background-color: #3B2B2A !important;
 }
 
 .fade {

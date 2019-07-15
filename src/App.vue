@@ -78,7 +78,6 @@ export default class App extends Vue {
   @State isLogged!: boolean
   @State appError!: boolean
   @Mutation hideAlert!: () => void
-  @Mutation closeAppBar!: () => void
   @Mutation resetPopUpState!: () => void
   @Mutation openAppBar!: () => void
   @Getter isDesktop!: boolean
