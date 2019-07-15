@@ -34,7 +34,7 @@ export default class TodayView extends Vue {
   opacity: .6;
   margin-left: -12px;
   font-size: .8em;
-  margin: 6px 0;
+  margin: 10px 0;
   position: relative;
 }
 

@@ -3,7 +3,7 @@
     <appnav-header
       name='PERSPECTIVES'
       :show-title='selected.length === 0'
-      :icons='headerIcons'
+      :icons='getHeaderOptions'
       :selected='selected'
     />
     <appnav-division name='SMART PERSPECTIVES'>
@@ -15,7 +15,7 @@
         :help-icons='helpIcons'
         :active='activePers'
         @update='onUpdate'
-        @selected='v => selected = v'
+        @selected='select'
       />
     </appnav-division>
     <appnav-division name='CUSTOM PERSPECTIVES'>
@@ -27,7 +27,7 @@
         :help-icons='helpIconsCustom'
         :active='activePers'
         @update='onCustomUpdate'
-        @selected='v => selected = v'
+        @selected='selectCustom'
       />
       <appnav-message v-else @click="pushPopUp('PerspectiveAdderPopup')" name='Add custom perspective'/>
     </appnav-division>
@@ -72,7 +72,8 @@ export default class OverviewAppnav extends Vue {
   @persVuex.Action togglePerspectivesShowWhenNotEmpty!: (obj: Array<{id: string, show?: boolean}>) => void
   @persVuex.Action deletePerspectivesById!: (ids: string[]) => void
 
-  selected: Perspective[] = []
+  selected: string[] = []
+  selectedType: 'custom' | 'smart' = 'custom'
   headerIcons: ListIcon[] = [
     {
       name: '',
@@ -87,20 +88,59 @@ export default class OverviewAppnav extends Vue {
       },
     },
   ]
+  headerCustomIcons: ListIcon[] = [
+    {
+      name: '',
+      icon: 'thumbtack',
+      iconColor: '',
+      size: 'lg',
+      callback: (selected: string[]) => {
+        const arr: any = []
+        for (const el of selected)
+          arr.push({id: el})
+        this.togglePerspectivesPin(arr)
+      },
+    },
+    {
+      name: 'f',
+      icon: 'eye',
+      iconColor: '',
+      size: 'lg',
+      callback: (selected: string[]) => {
+        const arr: any = []
+        for (const el of selected)
+          arr.push({id: el})
+        this.togglePerspectivesNumberOfTasks(arr)
+      },
+    },
+    {
+      name: 'd',
+      icon: 'exclamation',
+      iconColor: '',
+      size: 'lg',
+      callback: (selected: string[]) => {
+        const arr: any = []
+        for (const el of selected)
+          arr.push({id: el})
+        this.togglePerspectivesShowWhenNotEmpty(arr)
+      },
+    },
+  ]
 
-  get activePers(): string {
-    if (this.viewType === 'perspective')
-      return this.viewName
-    return ''
+  select(selected: string[]) {
+    this.selectedType = 'smart'
+    this.selected = selected
   }
-
+  selectCustom(selected: string[]) {
+    this.selectedType = 'custom'
+    this.selected = selected
+  }
   onUpdate(ids: string[]) {
     this.saveSmartOrder(ids)
   }
   onCustomUpdate(ids: string[]) {
     this.saveCustomOrder(ids)
   }
-
   getOptionsCustom(per: Perspective) {
     const icons: ListIcon[] = [
       {
@@ -175,7 +215,6 @@ export default class OverviewAppnav extends Vue {
       })
     return icons
   }
-
   getOptions(per: Perspective) {
     const icons: ListIcon[] = [
       {
@@ -202,6 +241,17 @@ export default class OverviewAppnav extends Vue {
         size: 'xs',
       })
     return icons
+  }
+
+  get activePers(): string {
+    if (this.viewType === 'perspective')
+      return this.viewName
+    return ''
+  }
+  get getHeaderOptions(): ListIcon[] {
+    if (this.selectedType === 'smart')
+      return this.headerIcons
+    else return this.headerCustomIcons
   }
 }
 
