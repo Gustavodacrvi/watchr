@@ -13,9 +13,9 @@ import { Perspective } from '../../../interfaces/app'
 
 @Component({
   components: {
-    'app-inbox': appUtils.AsyncComponent(import('./AppviewInbox.vue')),
-    'app-upcoming': appUtils.AsyncComponent(import('./AppviewUpcoming.vue')),
-    'app-today': appUtils.AsyncComponent(import('./AppviewToday.vue')),
+    'app-Inbox': appUtils.AsyncComponent(import('./AppviewInbox.vue')),
+    'app-Upcoming': appUtils.AsyncComponent(import('./AppviewUpcoming.vue')),
+    'app-Today': appUtils.AsyncComponent(import('./AppviewToday.vue')),
     'app-custom': appUtils.AsyncComponent(import('./CustomPerspective.vue')),
   },
 })
@@ -24,9 +24,9 @@ export default class PerspectiveView extends Vue {
 
   get getComp() {
     switch (this.comp) {
-      case 'inbox': return 'app-' + this.comp
-      case 'upcoming': return 'app-' + this.comp
-      case 'today': return 'app-' + this.comp
+      case 'Inbox': return 'app-' + this.comp
+      case 'Upcoming': return 'app-' + this.comp
+      case 'Today': return 'app-' + this.comp
     }
     return 'app-custom'
   }

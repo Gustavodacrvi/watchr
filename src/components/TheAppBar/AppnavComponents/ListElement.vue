@@ -137,16 +137,21 @@ export default class ListRenderer extends Vue {
 
 .content {
   height: 100%;
-  flex-basis: 100%;
+  width: 200px;
   display: flex;
   align-items: center;
 }
 
 .name {
   margin-left: 6px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .options {
+  position: absolute;
+  right: 0;
   display: flex;
   height: 100%;
 }

@@ -6,7 +6,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Mutation, Getter } from 'vuex-class'
 
 import { Perspective } from '../../../interfaces/app'
@@ -17,6 +17,14 @@ export default class PerspectiveAppview extends Vue {
   @Mutation pushView!: (obj: {view: string, viewType: string}) => void
 
   created() {
+    this.pushView({
+      view: this.$route.params.persname,
+      viewType: 'perspective',
+    })
+  }
+
+  @Watch('$route')
+  onChange() {
     this.pushView({
       view: this.$route.params.persname,
       viewType: 'perspective',

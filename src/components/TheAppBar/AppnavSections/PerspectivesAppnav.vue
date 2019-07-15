@@ -65,6 +65,7 @@ export default class OverviewAppnav extends Vue {
   @persVuex.Getter sortedSmartPerspectives!: Perspective[]
   @persVuex.Getter sortedCustomPerspectives!: Perspective[]
   @persVuex.Action saveSmartOrder!: (ids: string[]) => void
+  @persVuex.Action saveCustomOrder!: (ids: string[]) => void
   @persVuex.Action togglePerspectivesPin!: (obj: Array<{id: string, pin?: boolean}>) => void
 
   selected: Perspective[] = []
@@ -93,6 +94,12 @@ export default class OverviewAppnav extends Vue {
     this.saveSmartOrder(ids)
   }
   onCustomUpdate(ids: string[]) {
+    this.saveCustomOrder(ids)
+  }
+  getOptionsCustom(per: Perspective) {
+
+  }
+  helpIconsCustom(per: Perspective) {
 
   }
   getOptions(per: Perspective) {

@@ -36,6 +36,7 @@ interface Actions {
   getData: (context: ActionContext) => void
   addDefaultSmartPerspectives: (context: ActionContext, id: string) => void
   saveSmartOrder: (context: ActionContext, ids: string[]) => void
+  saveCustomOrder: (context: ActionContext, ids: string[]) => void
   togglePerspectivesPin: (context: ActionContext, arr: Array<{id: string, pin: boolean}>) => void
   saveTaskOrder: (context: ActionContext, obj: {id: string, order: string[], collection: string}) => void
   addPerspective: (context: ActionContext, obj: {name: string, description: string}) => void
@@ -100,6 +101,13 @@ export default {
         .update({
           smartOrder: ids,
         })
+    },
+    saveCustomOrder({ rootState }, ids) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('perspectivesOrder').doc(rootState.uid)
+          .update({
+            customOrder: ids,
+          })
     },
     togglePerspectivesPin({ rootState, state }, pins) {
       if (rootState.firestore && rootState.uid) {
