@@ -35,7 +35,7 @@
         handle='ellipsis-v'
         size='lg'
         :change-color-on-hover='true'
-        min-width='200px'
+        min-width='225px'
       >
         <div class='drop round-border'>
           <div v-for='i in options'

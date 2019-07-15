@@ -20,6 +20,7 @@
         class='margin gray round-border input textarea txt scroll'
         placeholder='Perspective description...'
         v-model='description'
+        style='height: 100px;'
         :class='theme'
       ></textarea>
       <button

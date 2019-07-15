@@ -18,7 +18,7 @@
         @selected='v => selected = v'
       />
     </appnav-division>
-    <appnav-division name='CUSTOM PERSPECTIVE'>
+    <appnav-division name='CUSTOM PERSPECTIVES'>
       <list-renderer v-if='sortedCustomPerspectives && sortedCustomPerspectives.length > 0'
         group='appnavcustomperspectives'
         route='pers'
@@ -44,7 +44,7 @@ import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.v
 import AppnavDivision from '@/components/TheAppBar/AppnavComponents/AppnavDivision.vue'
 import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmessage.vue'
 
-import { Label, Perspective, ListIcon } from '@/interfaces/app'
+import { Label, Perspective, ListIcon, SimpleAdder } from '@/interfaces/app'
 
 const persVuex = namespace('perspective')
 
@@ -60,6 +60,7 @@ export default class OverviewAppnav extends Vue {
   @State viewName!: string
   @State viewType!: string
   @Mutation pushPopUp!: (comp: string) => void
+  @Mutation pushPopUpPayload!: (obj: SimpleAdder) => void
 
   @persVuex.State smartOrder!: Perspective[]
   @persVuex.Getter sortedSmartPerspectives!: Perspective[]
@@ -68,6 +69,7 @@ export default class OverviewAppnav extends Vue {
   @persVuex.Action saveCustomOrder!: (ids: string[]) => void
   @persVuex.Action togglePerspectivesPin!: (obj: Array<{id: string, pin?: boolean}>) => void
   @persVuex.Action togglePerspectivesNumberOfTasks!: (obj: Array<{id: string, show?: boolean}>) => void
+  @persVuex.Action togglePerspectivesShowWhenNotEmpty!: (obj: Array<{id: string, show?: boolean}>) => void
   @persVuex.Action deletePerspectivesById!: (ids: string[]) => void
 
   selected: Perspective[] = []
@@ -98,6 +100,7 @@ export default class OverviewAppnav extends Vue {
   onCustomUpdate(ids: string[]) {
     this.saveCustomOrder(ids)
   }
+
   getOptionsCustom(per: Perspective) {
     const icons: ListIcon[] = [
       {
@@ -119,6 +122,15 @@ export default class OverviewAppnav extends Vue {
         },
       },
       {
+        name: 'Only show when not empty',
+        icon: 'exclamation',
+        iconColor: '',
+        size: 'lg',
+        callback: (id: string) => {
+          this.togglePerspectivesShowWhenNotEmpty([{id}])
+        },
+      },
+      {
         name: 'Delete perspective',
         icon: 'trash',
         iconColor: '',
@@ -129,11 +141,13 @@ export default class OverviewAppnav extends Vue {
       },
     ]
     if (per.pin)
-      icons[0].name = 'unpin perspective'
+      icons[0].name = 'Unpin perspective'
     if (per.numberOfTasks) {
       icons[1].name = 'Hide number of tasks'
       icons[1].icon = 'eye-slash'
     }
+    if (per.showWhenNotEmpty)
+      icons[2].name = 'Always show perspective'
     return icons
   }
   helpIconsCustom(per: Perspective) {
@@ -145,12 +159,27 @@ export default class OverviewAppnav extends Vue {
         name: '',
         size: 'xs',
       })
+    if (per.numberOfTasks)
+      icons.push({
+        icon: 'eye',
+        iconColor: '',
+        name: '',
+        size: 'sx',
+      })
+    if (per.showWhenNotEmpty)
+      icons.push({
+        icon: 'exclamation',
+        iconColor: '',
+        name: '',
+        size: 'sx',
+      })
     return icons
   }
+
   getOptions(per: Perspective) {
     const icons: ListIcon[] = [
       {
-        name: 'pin perspective',
+        name: 'Pin perspective',
         icon: 'thumbtack',
         iconColor: '',
         size: 'lg',
@@ -160,7 +189,7 @@ export default class OverviewAppnav extends Vue {
       },
     ]
     if (per.pin)
-      icons[0].name = 'unpin perspective'
+      icons[0].name = 'Unpin perspective'
     return icons
   }
   helpIcons(per: Perspective) {
