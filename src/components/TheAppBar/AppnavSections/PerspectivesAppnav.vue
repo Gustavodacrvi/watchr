@@ -6,16 +6,18 @@
       :icons='headerIcons'
       :selected='selected'
     />
-    <list-renderer
-      group='appnavperspectives'
-      route='pers'
-      :list='sortedSmartPerspectives'
-      :options='getOptions'
-      :help-icons='helpIcons'
-      :active='activePers'
-      @update='onUpdate'
-      @selected='v => selected = v'
-    />
+    <appnav-division name='SMART PERSPECTIVES'>
+      <list-renderer
+        group='appnavperspectives'
+        route='pers'
+        :list='sortedSmartPerspectives'
+        :options='getOptions'
+        :help-icons='helpIcons'
+        :active='activePers'
+        @update='onUpdate'
+        @selected='v => selected = v'
+      />
+    </appnav-division>
   </div>
 </template>
 
@@ -26,6 +28,7 @@ import { State, namespace, Getter } from 'vuex-class'
 
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
+import AppnavDivision from '@/components/TheAppBar/AppnavComponents/AppnavDivision.vue'
 
 import { Label, Perspective, ListIcon } from '@/interfaces/app'
 
@@ -35,6 +38,7 @@ const persVuex = namespace('perspective')
   components: {
     'list-renderer': ListRenderer,
     'appnav-header': AppnavHeader,
+    'appnav-division': AppnavDivision,
   },
 })
 export default class OverviewAppnav extends Vue {
