@@ -34,12 +34,13 @@ export interface Perspective {
   id: string
   icon: string
   iconColor: string
-  pin: boolean
-  numberOfTasks: boolean
   description: string
   order: string[]
   isSmart: boolean,
   priority: 'Low priority' | 'High priority' | 'Medium priority' | ''
+  pin: boolean
+  numberOfTasks: boolean
+  showWhenNotEmpty: boolean
   excludeSmartLabels: string[]
   includeSmartLabels: string[]
   excludeCustomLabels: string[]

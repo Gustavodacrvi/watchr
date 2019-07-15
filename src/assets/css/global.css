@@ -8,7 +8,7 @@ body {
   margin: 0;
 }
 
-body, button, input {
+body, button, input, textarea {
   font-family: 'Work Sans';
 }
 

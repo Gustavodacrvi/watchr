@@ -14,7 +14,20 @@
         @value='v => value = v'
         @select='select'
         @focus='options = getOptions()'
-      ></dropdown-input>
+      />
+      <textarea
+        tabindex='2'
+        class='margin gray round-border input textarea txt scroll'
+        placeholder='Perspective description...'
+        :class='theme'
+      ></textarea>
+      <div class='margin'>
+        <form-checkbox v-model='pinOnOverview' name='Pin on overview'/>
+        <form-checkbox v-model='showNumberOfTasks' name='Show number of tasks'/>
+      </div>
+      <div v-if='pinOnOverview' class='margin'>
+        <form-checkbox v-model='showWhenNotEmpty' name='Show only when not empty'/>
+      </div>
       <button
         tabindex='2'
         class='button round-border margin'
@@ -36,6 +49,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { State, Getter, Mutation, Action, namespace } from 'vuex-class'
 
 import DropdownInput from '@/components/DropdownInput.vue'
+import FormCheck from '@/components/PopUps/FormComponents/FormCheckbox.vue'
 
 const labelStore = namespace('label')
 
@@ -46,6 +60,7 @@ const perspectiveModule = namespace('perspective')
 @Component({
   components: {
     'dropdown-input': DropdownInput,
+    'form-checkbox': FormCheck,
   },
 })
 export default class LabelAdder extends Vue {
@@ -59,6 +74,9 @@ export default class LabelAdder extends Vue {
   @perspectiveModule.State customPerspectives!: Perspective[]
 
   input: string | null = null
+  showNumberOfTasks: boolean = false
+  showWhenNotEmpty: boolean = false
+  pinOnOverview: boolean = false
   value: string = ''
   options: string[] = []
 

@@ -77,6 +77,11 @@
   font-size: 1em;
 }
 
+.textarea {
+  resize: none;
+  width: 100%;
+}
+
 .input.wrong {
   border: 2px solid #FC7C85;
 }
