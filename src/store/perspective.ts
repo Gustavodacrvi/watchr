@@ -21,7 +21,7 @@ interface Getters {
 }
 
 interface Mutations {
-
+  
 }
 
 interface ActionContext {
@@ -33,6 +33,7 @@ interface ActionContext {
 }
 
 interface Actions {
+  deletePerspectivesById: (context: ActionContext, ids: string[]) => void
   getData: (context: ActionContext) => void
   addDefaultSmartPerspectives: (context: ActionContext, id: string) => void
   saveSmartOrder: (context: ActionContext, ids: string[]) => void
@@ -129,6 +130,24 @@ export default {
           batch.update(ref, {
             pin: finalPin,
           })
+        }
+
+        batch.commit()
+      }
+    },
+    deletePerspectivesById({ rootState, state }, ids) {
+      if (rootState.firestore && rootState.uid) {
+        const batch = rootState.firestore.batch()
+
+        for (const id of ids) {
+          let collection: 'smartPerspectives' | 'customPerspectives' = 'smartPerspectives'
+          let per: any = state.smartPerspectives.find(el => el.id === id)
+          if (!per) {
+            collection = 'customPerspectives'
+            per = state.customPerspectives.find(el => el.id === id)
+          }
+          const ref = rootState.firestore.collection(collection).doc(id)
+          batch.delete(ref)
         }
 
         batch.commit()

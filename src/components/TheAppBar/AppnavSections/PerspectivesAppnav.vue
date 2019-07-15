@@ -68,6 +68,7 @@ export default class OverviewAppnav extends Vue {
   @persVuex.Action saveCustomOrder!: (ids: string[]) => void
   @persVuex.Action togglePerspectivesPin!: (obj: Array<{id: string, pin?: boolean}>) => void
   @persVuex.Action togglePerspectivesNumberOfTasks!: (obj: Array<{id: string, show?: boolean}>) => void
+  @persVuex.Action deletePerspectivesById!: (ids: string[]) => void
 
   selected: Perspective[] = []
   headerIcons: ListIcon[] = [
@@ -115,6 +116,15 @@ export default class OverviewAppnav extends Vue {
         size: 'lg',
         callback: (id: string) => {
           this.togglePerspectivesNumberOfTasks([{id}])
+        },
+      },
+      {
+        name: 'Delete perspective',
+        icon: 'trash',
+        iconColor: '',
+        size: 'lg',
+        callback: (id: string) => {
+          this.deletePerspectivesById([id])
         },
       },
     ]
