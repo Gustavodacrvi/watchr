@@ -38,6 +38,7 @@ interface Actions {
   saveSmartOrder: (context: ActionContext, ids: string[]) => void
   saveCustomOrder: (context: ActionContext, ids: string[]) => void
   togglePerspectivesPin: (context: ActionContext, arr: Array<{id: string, pin: boolean}>) => void
+  togglePerspectivesNumberOfTasks: (context: ActionContext, arr: Array<{id: string, show: boolean}>) => void
   saveTaskOrder: (context: ActionContext, obj: {id: string, order: string[], collection: string}) => void
   addPerspective: (context: ActionContext, obj: {name: string, description: string}) => void
   [key: string]: (context: ActionContext, payload: any) => any
@@ -127,6 +128,30 @@ export default {
           const ref = rootState.firestore.collection(collection).doc(pin.id)
           batch.update(ref, {
             pin: finalPin,
+          })
+        }
+
+        batch.commit()
+      }
+    },
+    togglePerspectivesNumberOfTasks({ rootState, state }, arr) {
+      if (rootState.firestore && rootState.uid) {
+        const batch = rootState.firestore.batch()
+
+        for (const show of arr) {
+          let collection: 'smartPerspectives' | 'customPerspectives' = 'smartPerspectives'
+          let per: any = state.smartPerspectives.find(el => el.id === show.id)
+          let finalShow: boolean = false
+          if (!per) {
+            collection = 'customPerspectives'
+            per = state.customPerspectives.find(el => el.id === show.id)
+          }
+          finalShow = !per.numberOfTasks
+          if (show.show)
+            finalShow = show.show
+          const ref = rootState.firestore.collection(collection).doc(show.id)
+          batch.update(ref, {
+            numberOfTasks: finalShow,
           })
         }
 

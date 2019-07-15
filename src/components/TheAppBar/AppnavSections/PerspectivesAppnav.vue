@@ -23,8 +23,8 @@
         group='appnavcustomperspectives'
         route='pers'
         :list='sortedCustomPerspectives'
-        :options='getOptions'
-        :help-icons='helpIcons'
+        :options='getOptionsCustom'
+        :help-icons='helpIconsCustom'
         :active='activePers'
         @update='onCustomUpdate'
         @selected='v => selected = v'
@@ -67,6 +67,7 @@ export default class OverviewAppnav extends Vue {
   @persVuex.Action saveSmartOrder!: (ids: string[]) => void
   @persVuex.Action saveCustomOrder!: (ids: string[]) => void
   @persVuex.Action togglePerspectivesPin!: (obj: Array<{id: string, pin?: boolean}>) => void
+  @persVuex.Action togglePerspectivesNumberOfTasks!: (obj: Array<{id: string, show?: boolean}>) => void
 
   selected: Perspective[] = []
   headerIcons: ListIcon[] = [
@@ -97,10 +98,44 @@ export default class OverviewAppnav extends Vue {
     this.saveCustomOrder(ids)
   }
   getOptionsCustom(per: Perspective) {
-
+    const icons: ListIcon[] = [
+      {
+        name: 'Pin perspective',
+        icon: 'thumbtack',
+        iconColor: '',
+        size: 'lg',
+        callback: (id: string) => {
+          this.togglePerspectivesPin([{id}])
+        },
+      },
+      {
+        name: 'Show number of tasks',
+        icon: 'eye',
+        iconColor: '',
+        size: 'lg',
+        callback: (id: string) => {
+          this.togglePerspectivesNumberOfTasks([{id}])
+        },
+      },
+    ]
+    if (per.pin)
+      icons[0].name = 'unpin perspective'
+    if (per.numberOfTasks) {
+      icons[1].name = 'Hide number of tasks'
+      icons[1].icon = 'eye-slash'
+    }
+    return icons
   }
   helpIconsCustom(per: Perspective) {
-
+    const icons: ListIcon[] = []
+    if (per.pin)
+      icons.push({
+        icon: 'thumbtack',
+        iconColor: '',
+        name: '',
+        size: 'xs',
+      })
+    return icons
   }
   getOptions(per: Perspective) {
     const icons: ListIcon[] = [
