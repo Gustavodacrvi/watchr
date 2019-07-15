@@ -65,6 +65,7 @@ interface Getters {
   isStandAlone: () => boolean
   platform: () => 'mobile' | 'desktop'
   isOnAppRoute: () => boolean
+  perspectiveData: () => Perspective
   loggedAndVerified: () => boolean
   loggedAndNotVerified: () => boolean
   anonymous: () => boolean
@@ -216,6 +217,10 @@ const store: any = new Vuex.Store({
     },
     anonymous(state: States) {
       return state.isLogged && state.isAnonymous
+    },
+    perspectiveData(state: States) {
+      const s = state as any
+      return s.perspective.customPerspectives.find((el: Perspective) => el.name === state.viewName)
     },
   } as Getters,
   actions: {

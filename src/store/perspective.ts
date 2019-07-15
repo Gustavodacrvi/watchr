@@ -17,6 +17,7 @@ interface Getters {
   sortedCustomPerspectives: (state: States) => Perspective[]
   inboxPers: (state: States) => Perspective
   pinedSmartPerspectives: (state: States, getters: Getters) => void
+  pinedCustomPerspectives: (state: States, getters: Getters) => void
 }
 
 interface Mutations {
@@ -61,6 +62,10 @@ export default {
     },
     pinedSmartPerspectives(state: States, getters: Getters): Perspective[] {
       const pers: Perspective[] = getters.sortedSmartPerspectives as any
+      return pers.filter(el => el.pin)
+    },
+    pinedCustomPerspectives(state: States, getters: Getters): Perspective[] {
+      const pers: Perspective[] = getters.sortedCustomPerspectives as any
       return pers.filter(el => el.pin)
     },
     sortedCustomPerspectives(state: States): Perspective[] {

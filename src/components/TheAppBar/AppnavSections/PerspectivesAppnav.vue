@@ -23,6 +23,8 @@
         group='appnavcustomperspectives'
         route='pers'
         :list='sortedCustomPerspectives'
+        :options='getOptions'
+        :help-icons='helpIcons'
         :active='activePers'
         @update='onCustomUpdate'
         @selected='v => selected = v'

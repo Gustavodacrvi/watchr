@@ -1,13 +1,28 @@
 <template>
-
+  <div>
+    {{ perspectiveData }}
+  </div>
 </template>
 
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
+import { Mutation, Getter } from 'vuex-class'
+
+import { Perspective } from '../../../interfaces/app'
 
 @Component
-export default class PerspectiveAppview extends Vue {}
+export default class PerspectiveAppview extends Vue {
+  @Getter perspectiveData!: Perspective | undefined
+  @Mutation pushView!: (obj: {view: string, viewType: string}) => void
+
+  created() {
+    this.pushView({
+      view: this.$route.params.persname,
+      viewType: 'perspective',
+    })
+  }
+}
 
 </script>
 

@@ -13,6 +13,14 @@
       :list='pinedSmartPerspectives'
       :active='activePers'
     />
+    <div class='margin'></div>
+    <list-renderer
+      group='appnavoverviewcustompers'
+      route='pers'
+      :disabled='true'
+      :list='pinedCustomPerspectives'
+      :active='activePers'
+    />
   </div>
 </template>
 
@@ -37,7 +45,9 @@ const persVuex = namespace('perspective')
 export default class OverviewAppnav extends Vue {
   @State viewName!: string
   @State viewType!: string
+
   @persVuex.Getter pinedSmartPerspectives!: Perspective[]
+  @persVuex.Getter pinedCustomPerspectives!: Perspective[]
 
   get activePers(): string {
     if (this.viewType === 'perspective')
@@ -49,5 +59,9 @@ export default class OverviewAppnav extends Vue {
 </script>
 
 <style scoped>
+
+.margin {
+  height: 30px;
+}
 
 </style>
