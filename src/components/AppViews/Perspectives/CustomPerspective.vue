@@ -119,7 +119,7 @@ export default class PerspectiveAppview extends Vue {
   search: string = ''
   selected: string[] = []
   priority: string = ''
-  showing: boolean = true
+  showing: boolean = false
   hided: boolean = false
   priorityOptions: ListIcon[] = [
    {

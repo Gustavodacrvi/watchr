@@ -23,6 +23,25 @@
         style='height: 100px;'
         :class='theme'
       ></textarea>
+      <div class='flex margin'>
+        <div class='flex-el'>
+          <form-input
+            type='text'
+            placeholder='Font awesome icon class...'
+            :value='icon'
+            :max='30'
+          />
+        </div>
+        <div style='flex-basis: 10px'></div>
+        <div class='flex-el'>
+          <form-input
+            type='text'
+            placeholder='Font awesome icon color...'
+            :value='color'
+            :max='30'
+          />
+        </div>
+      </div>
       <button
         tabindex='2'
         class='button round-border margin'
@@ -46,6 +65,7 @@ import { State, Getter, Mutation, Action, namespace } from 'vuex-class'
 import DropdownInput from '@/components/DropdownInput.vue'
 import FormCheck from '@/components/PopUps/FormComponents/FormCheckbox.vue'
 import FormOptions from '@/components/PopUps/FormComponents/FormOptions.vue'
+import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 
 const labelStore = namespace('label')
 
@@ -58,6 +78,7 @@ const perspectiveModule = namespace('perspective')
     'dropdown-input': DropdownInput,
     'form-checkbox': FormCheck,
     'form-options': FormOptions,
+    'form-input': FormInput,
   },
 })
 export default class LabelAdder extends Vue {
@@ -73,6 +94,8 @@ export default class LabelAdder extends Vue {
   @perspectiveModule.Action addPerspective!: (obj: {name: string, description: string}) => void
 
   input: string | null = null
+  icon: string = 'layer-group'
+  color: string = '#737373'
   description: string = ''
   value: string = ''
   options: string[] = []
@@ -117,6 +140,18 @@ export default class LabelAdder extends Vue {
 }
 
 </script>
+
+<style scoped>
+
+.flex {
+  display: flex;
+}
+
+.flex-el {
+  flex-basis: 50%;
+}
+
+</style>
 
 <style scoped src='@/assets/css/authPopUp.css'>
 </style>

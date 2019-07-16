@@ -115,7 +115,6 @@ interface Section {
 export default class LoggedAppnav extends Vue {
   @State theme!: string
   @State isLogged!: boolean
-  @Mutation pushAppBarSection!: (section: string) => void
   @Getter isDesktop!: boolean
 
   @label.Action sortLabelsByName!: () => void
@@ -144,12 +143,10 @@ export default class LoggedAppnav extends Vue {
 
   created() {
     this.currentSect = this.sections[0].comp
-    this.pushAppBarSection(this.currentSect)
   }
 
   select(comp: Section) {
     this.currentSect = comp.comp
-    this.pushAppBarSection(this.currentSect)
     if (comp.options)
       this.options = comp.options
     else this.options = []

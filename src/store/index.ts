@@ -28,7 +28,6 @@ export interface States {
   uid: string | null
   firebase: any
   isAnonymous: boolean
-  appBarSection: string
   navBarTitle: string
   navBarOptions: ListIcon[]
   emailVerified: boolean
@@ -52,7 +51,6 @@ interface Mutations {
   pushView: (state: States, obj: {view: string, viewType: string}) => void
   addNavBarTitle: (state: States, title: string) => void
   sendOptionsToNavbar: (state: States, options: ListIcon[]) => void
-  pushAppBarSection: (state: States, section: string) => void
   showApp: () => void
   hideNavBarOptions: () => void
   openAppBar: () => void
@@ -110,15 +108,11 @@ const store: any = new Vuex.Store({
     navBarOptions: [],
     appError: false,
     uid: null,
-    appBarSection: '',
     showingAlert: false,
     alerts: [],
     alert: undefined,
   } as States,
   mutations: {
-    pushAppBarSection(state: States, section: string) {
-      state.appBarSection = section
-    },
     saveFirestore(state: States, firestore: firebase.firestore.Firestore) {
       state.firestore = firestore
       state.firestore.enablePersistence()
