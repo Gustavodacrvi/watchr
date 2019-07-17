@@ -62,12 +62,12 @@
           {{ perspectiveData.description }}
         </p>
         <transition name='fade'>
-          <div v-if='search || priority || labels.length > 0'>
+          <div v-if='search || priority || getPersLabels.length > 0'>
             <div class='margin'></div>
             <view-tags
               :search='search'
               :priority='priority'
-              :labels='labels'
+              :labels='getPersLabels'
               @clearsearch="v => search = ''"
               @clearpriority="v => priority = ''"
               @removelabel='removeLabel'
@@ -96,6 +96,7 @@ import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import { Mutation, Getter, State, namespace } from 'vuex-class'
 
 const labelsVuex = namespace('label')
+const persVuex = namespace('perspective')
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
@@ -103,6 +104,8 @@ import IconOptions from '@/components/AppViews/AppviewComponents/AppviewIconopti
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
+
+import appUtils from '@/utils/app'
 
 import { Perspective, ListIcon, Label } from '../../../interfaces/app'
 
@@ -123,6 +126,9 @@ export default class PerspectiveAppview extends Vue {
   @Mutation pushView!: (obj: {view: string, viewType: string}) => void
 
   @labelsVuex.State('labels') savedLabels!: Label[]
+  @labelsVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
+
+  @persVuex.Action addLabelToPerspective!: (obj: {id: string, labelId: string}) => Label[]
 
   @Prop(String) pers!: string
 
@@ -135,7 +141,6 @@ export default class PerspectiveAppview extends Vue {
 
   search: string = ''
   selected: string[] = []
-  labels: string[] = []
   priority: string = ''
   showing: boolean = true
   hided: boolean = false
@@ -183,11 +188,13 @@ export default class PerspectiveAppview extends Vue {
     this.priority = value
   }
   removeLabel(value: string) {
-    const index = this.labels.findIndex(el => el === value)
-    this.labels.splice(index, 1)
   }
   selectLabel(label: Label) {
-    this.labels.push(label.name)
+    if (this.perspectiveData)
+      this.addLabelToPerspective({
+        id: this.perspectiveData.id,
+        labelId: label.id,
+      })
   }
   onSelect(ids: string[]) {
     this.selected = ids
@@ -203,6 +210,11 @@ export default class PerspectiveAppview extends Vue {
   }
 
   get getTasks() {
+    return []
+  }
+  get getPersLabels() {
+    if (this.perspectiveData)
+      return this.getLabelsByIds(appUtils.fixOrder(this.savedLabels, this.perspectiveData.includeCustomLabels, true))
     return []
   }
 

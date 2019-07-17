@@ -27,12 +27,12 @@
     <div v-if='labels && labels.length > 0' class='tags'>
       <transition-group name='fade'>
         <view-tag v-for='lab in labels'
-          :key='lab'
+          :key='lab.id'
           icon='tag'
           back-color='#FF6B66'
-          :name='lab'
+          :name='lab.name'
           :fixed='false'
-          @click="$emit('removelabel', lab)"
+          @click="$emit('removelabel', lab.id)"
         />
       </transition-group>
     </div>
@@ -46,6 +46,8 @@ import { State } from 'vuex-class'
 
 import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 
+import { Label } from '../../../interfaces/app'
+
 @Component({
   components: {
     'view-tag': Tag,
@@ -55,7 +57,7 @@ export default class AppviewTags extends Vue {
   @Prop(String) fixedTag!: string
   @Prop(String) search!: string
   @Prop(String) priority!: string
-  @Prop(Array) labels!: string[]
+  @Prop(Array) labels!: Label[]
 }
 
 </script>

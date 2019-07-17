@@ -32,12 +32,13 @@ export default {
         return false
     return true
   },
-  fixOrder(arrOfObjects: Array<{id: string, [key: string]: any}>, orderOfObjects: string[]) {
+  fixOrder(arrOfObjects: Array<{id: string, [key: string]: any}>, orderOfObjects: string[], notIncludeMissingIds: boolean = false) {
     const arr = arrOfObjects.slice()
     const order = orderOfObjects.slice()
-    for (const el of arr)
-      if (!order.includes(el.id))
-        order.push(el.id)
+    if (!notIncludeMissingIds)
+      for (const el of arr)
+        if (!order.includes(el.id))
+          order.push(el.id)
     const idsToRemove: string[] = []
     for (const id of order) {
       const task = arr.find(el => el.id === id)

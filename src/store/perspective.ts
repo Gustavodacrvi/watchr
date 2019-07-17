@@ -43,6 +43,7 @@ interface Actions {
   togglePerspectivesNumberOfTasks: (context: ActionContext, arr: Array<{id: string, show: boolean}>) => void
   togglePerspectivesShowWhenNotEmpty: (context: ActionContext, arr: Array<{id: string, show: boolean}>) => void
   saveTaskOrder: (context: ActionContext, obj: {id: string, order: string[], collection: string}) => void
+  addLabelToPerspective: (context: ActionContext, obj: {id: string, labelId: string}) => void
   addPerspective: (context: ActionContext, obj: {name: string, description: string, iconColor: string, icon: string}) => void
   editPerspective: (context: ActionContext, obj: {name: string, description: string, iconColor: string, icon: string, id: string}) => void
   [key: string]: (context: ActionContext, payload: any) => any
@@ -118,6 +119,13 @@ export default {
             iconColor,
           })
       }
+    },
+    addLabelToPerspective({ rootState, state }, {id, labelId}) {
+      const fire = rootState.firebase.firestore.FieldValue as any
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('customPerspectives').doc(id).update({
+          includeCustomLabels: fire.arrayUnion(labelId)
+        })
     },
     saveSmartOrder({ rootState }, ids) {
       if (rootState.firestore && rootState.uid)
