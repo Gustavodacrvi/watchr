@@ -138,6 +138,7 @@ export default class PerspectiveAppview extends Vue {
   @persVuex.Action addLabelToPerspective!: (obj: {id: string, labelId: string}) => Label[]
   @persVuex.Action removeLabelFromPerspective!: (obj: {id: string, labelId: string}) => Label[]
   @persVuex.Action savePerspectivePriority!: (obj: {id: string, priority: string}) => Label[]
+  @persVuex.Action saveTaskOrder!: (obj: {order: string[], id: string, collection: string}) => void
 
   @Prop(String) pers!: string
 
@@ -220,8 +221,13 @@ export default class PerspectiveAppview extends Vue {
   onSelect(ids: string[]) {
     this.selected = ids
   }
-  onUpdate(ids: string) {
-
+  onUpdate(ids: string[]) {
+    if (this.perspectiveData)
+      this.saveTaskOrder({
+        order: ids,
+        id: this.perspectiveData.id,
+        collection: 'customPerspectives',
+      })
   }
   addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
     if (this.perspectiveData)
