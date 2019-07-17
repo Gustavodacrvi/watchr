@@ -129,6 +129,7 @@ export default class PerspectiveAppview extends Vue {
   @labelsVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
   @persVuex.Action addLabelToPerspective!: (obj: {id: string, labelId: string}) => Label[]
+  @persVuex.Action removeLabelFromPerspective!: (obj: {id: string, labelId: string}) => Label[]
 
   @Prop(String) pers!: string
 
@@ -187,7 +188,12 @@ export default class PerspectiveAppview extends Vue {
   selectPriority(value: string) {
     this.priority = value
   }
-  removeLabel(value: string) {
+  removeLabel(id: string) {
+    if (this.perspectiveData)
+      this.removeLabelFromPerspective({
+        id: this.perspectiveData.id,
+        labelId: id,
+      })
   }
   selectLabel(label: Label) {
     if (this.perspectiveData)
