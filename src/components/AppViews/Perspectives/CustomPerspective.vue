@@ -62,11 +62,11 @@
           {{ perspectiveData.description }}
         </p>
         <transition name='fade'>
-          <div v-if='search || priority || getPersLabels.length > 0'>
+          <div v-if='search || perspectiveData.priority || getPersLabels.length > 0'>
             <div class='margin'></div>
             <view-tags
               :search='search'
-              :priority='priority'
+              :priority='perspectiveData.priority'
               :labels='getPersLabels'
               @clearsearch="v => search = ''"
               @clearpriority="v => priority = ''"
@@ -80,7 +80,7 @@
         group='inbox'
         id='appnavinbox'
         :default-labels='getPersLabels'
-        :default-priority='priority'
+        :default-priority='perspectiveData.priority'
         :tasks='getTasks'
         :allow-priority='true'
         :allow-labels='true'
@@ -133,12 +133,12 @@ export default class PerspectiveAppview extends Vue {
 
   @persVuex.Action addLabelToPerspective!: (obj: {id: string, labelId: string}) => Label[]
   @persVuex.Action removeLabelFromPerspective!: (obj: {id: string, labelId: string}) => Label[]
+  @persVuex.Action savePerspectivePriority!: (obj: {id: string, priority: string}) => Label[]
 
   @Prop(String) pers!: string
 
   search: string = ''
   selected: string[] = []
-  priority: string = ''
   showing: boolean = true
   hided: boolean = false
 
@@ -189,7 +189,11 @@ export default class PerspectiveAppview extends Vue {
       this.hided = !this.hided
   }
   selectPriority(value: string) {
-    this.priority = value
+    if (this.perspectiveData)
+      this.savePerspectivePriority({
+        id: this.perspectiveData.id,
+        priority: value,
+      })
   }
   removeLabel(id: string) {
     if (this.perspectiveData)
@@ -214,8 +218,8 @@ export default class PerspectiveAppview extends Vue {
   selectSettingsOption(value: string) {
 
   }
-  addTask({name, priority, position}: {name: string, priority: string, position: number}) {
-
+  addTask(obj: {name: string, priority: string, position: number, labels: string[]}) {
+    console.log(obj)
   }
 
   get getTasks() {

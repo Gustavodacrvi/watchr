@@ -45,6 +45,7 @@ interface Actions {
   saveTaskOrder: (context: ActionContext, obj: {id: string, order: string[], collection: string}) => void
   addLabelToPerspective: (context: ActionContext, obj: {id: string, labelId: string}) => void
   removeLabelFromPerspective: (context: ActionContext, obj: {id: string, labelId: string}) => void
+  savePerspectivePriority: (context: ActionContext, obj: {id: string, priority: string}) => void
   addPerspective: (context: ActionContext, obj: {name: string, description: string, iconColor: string, icon: string}) => void
   editPerspective: (context: ActionContext, obj: {name: string, description: string, iconColor: string, icon: string, id: string}) => void
   [key: string]: (context: ActionContext, payload: any) => any
@@ -126,6 +127,12 @@ export default {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('customPerspectives').doc(id).update({
           includeCustomLabels: fire.arrayUnion(labelId)
+        })
+    },
+    savePerspectivePriority({ rootState }, {id, priority}) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('customPerspectives').doc(id).update({
+          priority,
         })
     },
     removeLabelFromPerspective({ rootState }, {id, labelId}) {
