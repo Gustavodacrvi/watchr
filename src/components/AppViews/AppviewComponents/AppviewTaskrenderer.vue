@@ -108,8 +108,8 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       }
       i++
     }
-    const ids = els.filter(el => el !== 'task-adder')
-    this.$emit('add', {position, ...obj})
+    const order = els.filter(el => el !== 'task-adder')
+    this.$emit('add', {position, order, ...obj})
   }
   calcSelectedElements(evt?: any) {
     if (evt) {

@@ -87,6 +87,7 @@ import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue
 export default class AppviewTaskedit extends Vue {
   @Prop({default: 'Add task', type: String}) btn!: string
   @Prop({default: false, type: Boolean}) closeOnSave!: boolean
+  @Prop(String) defaultValue!: string
   @Prop(String) fixedPers!: string
   @Prop(String) defaultPriority!: string
   @Prop(Array) defaultLabels!: string[]
@@ -124,9 +125,11 @@ export default class AppviewTaskedit extends Vue {
 
   created() {
     if (this.defaultLabels)
-      this.labels = this.defaultLabels
+      this.labels = this.defaultLabels.slice()
     if (this.defaultPriority)
       this.priority = this.defaultPriority as any
+    if (this.defaultValue)
+      this.value = this.defaultValue
   }
 
   selectDropValue(value: string) {

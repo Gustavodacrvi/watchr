@@ -116,7 +116,7 @@ export default class PerspectiveAppview extends Vue {
 
   @taskVuex.State tasks!: Task[]
   // tslint:disable-next-line:max-line-length
-  @taskVuex.Action addInboxTaskWithPosition!: (obj: {task: Task, perspectiveId: string, collection: string, order: string[], position: number}) => void
+  @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, position: number, order: string[], collection: string}) => void
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
 
   @labelVuex.Getter sortedLabels!: Label[]
@@ -192,16 +192,16 @@ export default class PerspectiveAppview extends Vue {
       }
     return this.mobileSelectedOptions
   }
-  addInboxTask({name, priority, position}: {name: string, priority: string, position: number}) {
-    this.addInboxTaskWithPosition({
+  addInboxTask({name, priority, position, order}: {name: string, priority: string, position: number, order: string[]}) {
+    this.addTask({
       task: {
         name,
         priority,
         labels: [],
       },
       perspectiveId: this.inboxPers.id,
+      position, order,
       collection: 'smartPerspectives',
-      position, order: this.inboxPers.order,
     } as any)
   }
   selectPriority(value: string) {
