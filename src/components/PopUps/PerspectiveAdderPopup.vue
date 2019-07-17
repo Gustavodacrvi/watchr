@@ -128,6 +128,7 @@ export default class LabelAdder extends Vue {
           iconColor: this.color,
         })
         this.pushPopUp('')
+        this.$router.push('/user/pers?pers=' + this.value)
       } else {
         this.editPerspective({
           id: this.pers.id,
@@ -137,7 +138,6 @@ export default class LabelAdder extends Vue {
           iconColor: this.color,
         })
         this.pushPopUp('')
-        this.$router.push('/user/pers/' + this.value)
       }
     }
   }

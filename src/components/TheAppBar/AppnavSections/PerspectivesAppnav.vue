@@ -19,7 +19,7 @@
       />
     </appnav-division>
     <appnav-division name='CUSTOM PERSPECTIVES'>
-      <list-renderer v-if='sortedCustomPerspectives && sortedCustomPerspectives.length > 0'
+      <list-renderer key='list' v-if='sortedCustomPerspectives && sortedCustomPerspectives.length > 0'
         group='appnavcustomperspectives'
         route='pers'
         :list='sortedCustomPerspectives'
@@ -29,7 +29,7 @@
         @update='onCustomUpdate'
         @selected='selectCustom'
       />
-      <appnav-message v-else @click="pushPopUp('PerspectiveAdderPopup')" name='Add custom perspective'/>
+      <appnav-message key='msg' v-else @click="pushPopUp('PerspectiveAdderPopup')" name='Add custom perspective'/>
     </appnav-division>
   </div>
 </template>
@@ -190,7 +190,9 @@ export default class OverviewAppnav extends Vue {
         size: 'lg',
         callback: (id: string) => {
           this.deletePerspectivesById([id])
-          this.$router.replace('user/pers/' + this.pinedSmartPerspectives[0].name)
+          const pers = this.getCustomPerspectiveById(id)
+          if (pers && pers.name === this.viewName)
+            this.$router.replace('/user/pers?pers=Inbox')
         },
       },
     ]

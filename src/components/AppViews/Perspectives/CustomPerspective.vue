@@ -35,7 +35,16 @@
             @click='selectPriority'
           />
         </span>
-        <span class='header-options'>
+        <span class='header-option'>
+          <drop-finder
+            handle='tags'
+            size='lg'
+            min-width='300px'
+            :list='savedLabels'
+            @select='selectLabel'
+          />
+        </span>
+        <span class='header-option'>
           <icon-options
             handle='ellipsis-h'
             size='lg'
@@ -53,15 +62,17 @@
           {{ perspectiveData.description }}
         </p>
         <transition name='fade'>
-          <template v-if='search && priority'>
+          <div v-if='search || priority || labels.length > 0'>
             <div class='margin'></div>
             <view-tags
               :search='search'
               :priority='priority'
+              :labels='labels'
               @clearsearch="v => search = ''"
               @clearpriority="v => priority = ''"
+              @removelabel='removeLabel'
             />
-          </template>
+          </div>
         </transition>
         <div class='margin'></div>
       </div>
@@ -82,7 +93,9 @@
 <script lang='ts'>
 
 import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
-import { Mutation, Getter, State } from 'vuex-class'
+import { Mutation, Getter, State, namespace } from 'vuex-class'
+
+const labelsVuex = namespace('label')
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
@@ -91,7 +104,7 @@ import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 
-import { Perspective, ListIcon } from '../../../interfaces/app'
+import { Perspective, ListIcon, Label } from '../../../interfaces/app'
 
 @Component({
   components: {
@@ -109,6 +122,8 @@ export default class PerspectiveAppview extends Vue {
   @Getter perspectiveData!: Perspective | undefined
   @Mutation pushView!: (obj: {view: string, viewType: string}) => void
 
+  @labelsVuex.State('labels') savedLabels!: Label[]
+
   @Prop(String) pers!: string
 
   created() {
@@ -120,6 +135,7 @@ export default class PerspectiveAppview extends Vue {
 
   search: string = ''
   selected: string[] = []
+  labels: string[] = []
   priority: string = ''
   showing: boolean = true
   hided: boolean = false
@@ -165,6 +181,13 @@ export default class PerspectiveAppview extends Vue {
   }
   selectPriority(value: string) {
     this.priority = value
+  }
+  removeLabel(value: string) {
+    const index = this.labels.findIndex(el => el === value)
+    this.labels.splice(index, 1)
+  }
+  selectLabel(label: Label) {
+    this.labels.push(label.name)
   }
   onSelect(ids: string[]) {
     this.selected = ids
