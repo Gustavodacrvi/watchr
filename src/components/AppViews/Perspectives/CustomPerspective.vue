@@ -131,6 +131,7 @@ export default class PerspectiveAppview extends Vue {
 
   @taskVuex.State tasks!: Task[]
   @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, position: number, order: string[], collection: string}) => void
+  @taskVuex.Action deleteTasksById!: (ids: string[]) => void
 
   @labelsVuex.State('labels') savedLabels!: Label[]
   @labelsVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
@@ -244,7 +245,60 @@ export default class PerspectiveAppview extends Vue {
       } as any)
   }
   selectSettingsOption(value: string) {
-
+    const pers = this.perspectiveData as Perspective
+    if (value === 'Sort inbox tasks by name') {
+      const tasks: Task[] = this.viewTasks
+      tasks.sort((a, b) => a.name.localeCompare(b.name))
+      const ids: string[] = []
+      for (const el of tasks)
+        ids.push(el.id)
+      this.saveTaskOrder({
+        id: pers.id,
+        order: ids,
+        collection: 'customPerspectives',
+      })
+    } else if (value === 'Sort inbox tasks by priority') {
+      const tasks = this.viewTasks
+      tasks.sort((a, b) => {
+        const priA = a.priority
+        const priB = b.priority
+        switch (priA) {
+          case 'Low priority':
+            switch (priB) {
+              case 'Low priority': return 0
+              case 'Medium priority': return 1
+              case 'High priority': return 1
+              default: return -1
+            }
+          case 'Medium priority':
+            switch (priB) {
+              case 'Medium priority': return 0
+              case 'High priority': return 1
+              case 'Low priority': return -1
+              default: return -1
+            }
+          case 'High priority':
+            switch (priB) {
+              case 'High priority': return 0
+              case 'Low priority': return -1
+              case 'Medium priority': return -1
+              default: return -1
+            }
+        }
+        return 0
+      })
+      const ids: string[] = []
+      for (const el of tasks)
+        ids.push(el.id)
+      this.saveTaskOrder({
+        id: pers.id,
+        order: ids,
+        collection: 'customPerspectives',
+      })
+    }
+  }
+  deleteSelected() {
+    this.deleteTasksById(this.selected)
   }
 
   get viewTasks() {
@@ -293,7 +347,7 @@ export default class PerspectiveAppview extends Vue {
     if (!this.loaded && this.currentAppSection !== 'overview' && this.isDesktop) {
       this.showing = true
       this.loaded = true
-    }
+    } else this.showing = false
   }
 }
 

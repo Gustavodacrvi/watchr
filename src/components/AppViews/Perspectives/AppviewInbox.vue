@@ -310,7 +310,7 @@ export default class PerspectiveAppview extends Vue {
     if (!this.loaded && this.currentAppSection !== 'overview' && this.isDesktop) {
       this.showing = true
       this.loaded = true
-    }
+    } else this.showing = false
   }
 }
 
