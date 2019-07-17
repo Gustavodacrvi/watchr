@@ -38,7 +38,7 @@ export default new Router({
           component: AsyncComponent('./components/AppViews/Perspectives/Perspective.vue'),
           props: (route: any) => ({
             pers: route.query.pers,
-          })
+          }),
         },
         {
           path: '*',

@@ -52,10 +52,6 @@ export default class LabelAppnav extends Vue {
   @label.Action deleteLabelsById!: (ids: string[]) => void
   @label.Action editLabelNameById!: (obj: {id: string, name: string}) => void
 
-  created() {
-    this.openSection('labels')
-  }
-
   selected: string[] = []
   headerIcons: ListIcon[] = [
     {
@@ -68,6 +64,10 @@ export default class LabelAppnav extends Vue {
         },
     },
   ]
+
+  created() {
+    this.openSection('labels')
+  }
 
   get activePers(): string {
     if (this.viewType === 'perspective')

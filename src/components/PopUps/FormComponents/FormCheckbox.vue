@@ -16,7 +16,7 @@ import { State } from 'vuex-class'
 @Component
 export default class FormCheckbox extends Vue {
   @State theme!: string
-  
+
   @Prop(Boolean) value!: boolean
   @Prop(String) name!: string
 }

@@ -91,7 +91,9 @@ export default class LabelAdder extends Vue {
 
   @perspectiveModule.State smartPerspectives!: Perspective[]
   @perspectiveModule.State customPerspectives!: Perspective[]
+  // tslint:disable-next-line:max-line-length
   @perspectiveModule.Action addPerspective!: (obj: {name: string, description: string, iconColor: string, icon: string}) => void
+  // tslint:disable-next-line:max-line-length
   @perspectiveModule.Action editPerspective!: (obj: {name: string, description: string, iconColor: string, icon: string, id: string}) => void
 
   input: string | null = null
@@ -154,7 +156,7 @@ export default class LabelAdder extends Vue {
       return 'Add perspective'
     return 'Save perspective'
   }
-  
+
   @Watch('value')
   onChange() {
     this.options = this.getOptions()

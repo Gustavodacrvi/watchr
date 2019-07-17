@@ -46,7 +46,9 @@ interface Actions {
   addLabelToPerspective: (context: ActionContext, obj: {id: string, labelId: string}) => void
   removeLabelFromPerspective: (context: ActionContext, obj: {id: string, labelId: string}) => void
   savePerspectivePriority: (context: ActionContext, obj: {id: string, priority: string}) => void
+  // tslint:disable-next-line:max-line-length
   addPerspective: (context: ActionContext, obj: {name: string, description: string, iconColor: string, icon: string}) => void
+  // tslint:disable-next-line:max-line-length
   editPerspective: (context: ActionContext, obj: {name: string, description: string, iconColor: string, icon: string, id: string}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
@@ -67,6 +69,7 @@ export default {
       return state.smartPerspectives.find(el => el.name === 'Inbox') as Perspective
     },
     sortedSmartPerspectives(state: States): Perspective[] {
+      // tslint:disable-next-line:max-line-length
       return appUtils.sortArrayByIds(state.smartPerspectives, appUtils.fixOrder(state.smartPerspectives, state.smartOrder))
     },
     pinedSmartPerspectives(state: States, getters: Getters): Perspective[] {
@@ -78,6 +81,7 @@ export default {
       return pers.filter(el => el.pin)
     },
     sortedCustomPerspectives(state: States): Perspective[] {
+      // tslint:disable-next-line:max-line-length
       return appUtils.sortArrayByIds(state.customPerspectives, appUtils.fixOrder(state.customPerspectives, state.customOrder))
     },
     getCustomPerspectiveById: (state: States) => (id: string) => {
@@ -126,7 +130,7 @@ export default {
       const fire = rootState.firebase.firestore.FieldValue as any
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('customPerspectives').doc(id).update({
-          includeCustomLabels: fire.arrayUnion(labelId)
+          includeCustomLabels: fire.arrayUnion(labelId),
         })
     },
     savePerspectivePriority({ rootState }, {id, priority}) {
@@ -140,7 +144,7 @@ export default {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('customPerspectives').doc(id).update({
           includeCustomLabels: fire.arrayRemove(labelId),
-        })      
+        })
     },
     saveSmartOrder({ rootState }, ids) {
       if (rootState.firestore && rootState.uid)

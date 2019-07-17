@@ -142,18 +142,6 @@ export default class PerspectiveAppview extends Vue {
   loaded: boolean = false
   showing: boolean = false
   hided: boolean = false
-
-  created() {
-    if (!this.loaded && this.currentAppSection !== 'overview' && this.isDesktop) {
-      this.showing = true
-      this.loaded = true
-    }
-    this.pushView({
-      view: this.pers,
-      viewType: 'perspective',
-    })
-  }
-
   priorityOptions: ListIcon[] = [
    {
       name: 'High priority',
@@ -188,7 +176,18 @@ export default class PerspectiveAppview extends Vue {
       size: 'lg',
     },
   ]
-  
+
+  created() {
+    if (!this.loaded && this.currentAppSection !== 'overview' && this.isDesktop) {
+      this.showing = true
+      this.loaded = true
+    }
+    this.pushView({
+      view: this.pers,
+      viewType: 'perspective',
+    })
+  }
+
   toggleHide() {
     if (!this.isDesktop)
       this.hided = !this.hided
@@ -224,7 +223,7 @@ export default class PerspectiveAppview extends Vue {
 
   }
   addTask(obj: {name: string, priority: string, position: number, labels: string[]}) {
-    console.log(obj)
+
   }
 
   get getTasks() {
@@ -243,7 +242,7 @@ export default class PerspectiveAppview extends Vue {
       viewType: 'perspective',
     })
   }
-  
+
   @Watch('currentAppSection')
   onChange2() {
     if (!this.loaded && this.currentAppSection !== 'overview' && this.isDesktop) {

@@ -32,6 +32,7 @@ export default {
         return false
     return true
   },
+  // tslint:disable-next-line:max-line-length
   fixOrder(arrOfObjects: Array<{id: string, [key: string]: any}>, orderOfObjects: string[], notIncludeMissingIds: boolean = false) {
     const arr = arrOfObjects.slice()
     const order = orderOfObjects.slice()

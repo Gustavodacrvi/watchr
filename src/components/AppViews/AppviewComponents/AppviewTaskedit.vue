@@ -200,19 +200,18 @@ export default class AppviewTaskedit extends Vue {
     }
     if (this.allowLabels) {
       const labels = this.savedLabels
-      for (const lab of labels) {
+      for (const lab of labels)
         if (this.value.includes(` #${lab.name}`)) {
           this.value = this.value.replace(` #${lab.name}`, '')
           this.labels.push(lab.id)
           break
-        }
       }
       const arr = this.value.split(' ')
       const lastWord = arr[arr.length - 1]
       if (lastWord[0] === '#') {
         this.optionsType = '#'
         const word = lastWord.substr(1)
-        
+
         this.options = labels.map(el => el.name).filter(el => el.includes(word))
         changedOptions = true
       }
