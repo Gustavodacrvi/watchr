@@ -87,10 +87,9 @@ import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue
 export default class AppviewTaskedit extends Vue {
   @Prop({default: 'Add task', type: String}) btn!: string
   @Prop({default: false, type: Boolean}) closeOnSave!: boolean
-  @Prop(Object) task!: Task
   @Prop(String) fixedPers!: string
   @Prop(String) defaultPriority!: string
-  @Prop(Array) defaultLabels!: Label[]
+  @Prop(Array) defaultLabels!: string[]
   @Prop({default: false, type: Boolean}) allowPriority!: boolean
   @Prop({default: false, type: Boolean}) allowLabels!: boolean
 
@@ -124,18 +123,12 @@ export default class AppviewTaskedit extends Vue {
   ]
 
   created() {
-    if (this.task)
-      this.getDataFromTask()
     if (this.defaultLabels)
-      this.labels = this.defaultLabels.map(el => el.id)
+      this.labels = this.defaultLabels
     if (this.defaultPriority)
       this.priority = this.defaultPriority as any
   }
 
-  getDataFromTask() {
-    this.value = this.task.name
-    this.priority = this.task.priority
-  }
   selectDropValue(value: string) {
     const arr = this.value.split(' ')
     arr[arr.length - 1] = this.optionsType + value
@@ -226,11 +219,6 @@ export default class AppviewTaskedit extends Vue {
     }
     if (!changedOptions)
       this.options = []
-  }
-  @Watch('task')
-  onChange() {
-    if (this.task)
-      this.getDataFromTask()
   }
 }
 

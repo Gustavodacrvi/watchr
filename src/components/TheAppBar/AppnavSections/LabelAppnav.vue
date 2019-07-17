@@ -45,11 +45,16 @@ export default class LabelAppnav extends Vue {
   @State viewType!: string
   @Mutation pushPopUpPayload!: (obj: SimpleAdder) => void
   @Mutation pushPopUp!: (comp: string) => void
+  @Mutation openSection!: (section: string) => void
 
   @label.Getter sortedLabels!: Label[]
   @label.Action saveLabelPosition!: (ids: string[]) => void
   @label.Action deleteLabelsById!: (ids: string[]) => void
   @label.Action editLabelNameById!: (obj: {id: string, name: string}) => void
+
+  created() {
+    this.openSection('labels')
+  }
 
   selected: string[] = []
   headerIcons: ListIcon[] = [

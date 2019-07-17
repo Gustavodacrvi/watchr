@@ -45,9 +45,14 @@ const persVuex = namespace('perspective')
 export default class OverviewAppnav extends Vue {
   @State viewName!: string
   @State viewType!: string
+  @Mutation openSection!: (section: string) => void
 
   @persVuex.Getter pinedSmartPerspectives!: Perspective[]
   @persVuex.Getter pinedCustomPerspectives!: Perspective[]
+
+  created() {
+    this.openSection('overview')
+  }
 
   get activePers(): string {
     if (this.viewType === 'perspective')

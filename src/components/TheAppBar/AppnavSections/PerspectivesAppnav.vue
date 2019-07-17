@@ -61,6 +61,7 @@ export default class OverviewAppnav extends Vue {
   @State viewType!: string
   @Mutation pushPopUp!: (comp: string) => void
   @Mutation pushPopUpPayload!: (obj: SimpleAdder | any) => void
+  @Mutation openSection!: (section: string) => void
   @Getter initialAppViewRoute!: string
 
   @persVuex.State smartOrder!: Perspective[]
@@ -129,6 +130,10 @@ export default class OverviewAppnav extends Vue {
       },
     },
   ]
+
+  created() {
+    this.openSection('labels')
+  }
 
   select(selected: string[]) {
     this.selectedType = 'smart'

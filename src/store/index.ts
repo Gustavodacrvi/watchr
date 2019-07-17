@@ -25,6 +25,7 @@ export interface States {
   isLogged: boolean
   viewName: string
   viewType: string
+  currentAppSection: string
   uid: string | null
   firebase: any
   isAnonymous: boolean
@@ -45,6 +46,7 @@ interface Mutations {
   pushPopUpPayload: (state: States, payload: any) => void
   saveCurrentUser: (state: States, user: firebase.User) => void
   saveFirestore: (state: States, firestore: firebase.firestore.Firestore) => void
+  openSection: (state: States, currentAppSection: string) => void
   saveFirebase: (state: States, firebase: any) => void
   pushAppView: (state: States, comp: string) => void
   pushPerspective: (state: States, payload?: any) => void
@@ -105,6 +107,7 @@ const store: any = new Vuex.Store({
     emailVerified: false,
     loading: true,
     firebase: null,
+    currentAppSection: '',
     navBarOptions: [],
     appError: false,
     uid: null,
@@ -113,6 +116,9 @@ const store: any = new Vuex.Store({
     alert: undefined,
   } as States,
   mutations: {
+    openSection(state: States, currentAppSection: string) {
+      state.currentAppSection = currentAppSection
+    },
     saveFirestore(state: States, firestore: firebase.firestore.Firestore) {
       state.firestore = firestore
       state.firestore.enablePersistence()

@@ -52,18 +52,14 @@
         <p class='description txt'>
           {{ inboxPers.description }}
         </p>
-        <transition name='fade'>
-          <div v-if='search || priority'>
-            <div class='margin'></div>
-            <view-tags
-              fixed-tag='Inbox'
-              :search='search'
-              :priority='priority'
-              @clearsearch="v => search = ''"
-              @clearpriority="v => priority = ''"
-            />
-          </div>
-        </transition>
+        <div class='margin'></div>
+        <view-tags
+          fixed-pers='Inbox'
+          :search='search'
+          :priority='priority'
+          @clearsearch="v => search = ''"
+          @clearpriority="v => priority = ''"
+        />
         <div class='margin'></div>
       </div>
       <task-renderer
@@ -111,6 +107,7 @@ const persVuex = namespace('perspective')
   },
 })
 export default class PerspectiveAppview extends Vue {
+  @State currentAppSection!: string
   @Getter isDesktop!: boolean
   @Getter platform!: string
   @Mutation pushView!: (obj: {view: string, viewType: string}) => void
@@ -131,7 +128,8 @@ export default class PerspectiveAppview extends Vue {
   search: string = ''
   priority: string = ''
   hided: boolean = false
-  showing: boolean = true
+  showing: boolean = false
+  loaded: boolean = false
   selected: string[] = []
   priorityOptions: ListIcon[] = [
    {
@@ -177,6 +175,10 @@ export default class PerspectiveAppview extends Vue {
   ]
 
   created() {
+    if (!this.loaded && this.currentAppSection !== 'overview' && this.isDesktop) {
+      this.showing = true
+      this.loaded = true
+    }
     this.pushView({
       view: 'Inbox',
       viewType: 'perspective',
@@ -302,6 +304,13 @@ export default class PerspectiveAppview extends Vue {
       if (this.selected.length > 0)
         this.sendOptionsToNavbar(this.getMobileSelectedOptions())
       else this.hideNavBarOptions()
+  }
+  @Watch('currentAppSection')
+  onChange2() {
+    if (!this.loaded && this.currentAppSection !== 'overview' && this.isDesktop) {
+      this.showing = true
+      this.loaded = true
+    }
   }
 }
 

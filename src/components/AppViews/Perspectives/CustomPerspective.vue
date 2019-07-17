@@ -79,7 +79,7 @@
       <task-renderer
         group='inbox'
         id='appnavinbox'
-        :default-labels='getPersLabels'
+        :default-labels='perspectiveData.includeCustomLabels'
         :default-priority='perspectiveData.priority'
         :tasks='getTasks'
         :allow-priority='true'
@@ -122,7 +122,7 @@ import { Perspective, ListIcon, Label } from '../../../interfaces/app'
   },
 })
 export default class PerspectiveAppview extends Vue {
-  @State appBarSection!: string
+  @State currentAppSection!: string
   @Getter platform!: string
   @Getter isDesktop!: Perspective | undefined
   @Getter perspectiveData!: Perspective | undefined
@@ -139,10 +139,15 @@ export default class PerspectiveAppview extends Vue {
 
   search: string = ''
   selected: string[] = []
-  showing: boolean = true
+  loaded: boolean = false
+  showing: boolean = false
   hided: boolean = false
 
   created() {
+    if (!this.loaded && this.currentAppSection !== 'overview' && this.isDesktop) {
+      this.showing = true
+      this.loaded = true
+    }
     this.pushView({
       view: this.pers,
       viewType: 'perspective',
@@ -237,6 +242,14 @@ export default class PerspectiveAppview extends Vue {
       view: this.$route.params.persname,
       viewType: 'perspective',
     })
+  }
+  
+  @Watch('currentAppSection')
+  onChange2() {
+    if (!this.loaded && this.currentAppSection !== 'overview' && this.isDesktop) {
+      this.showing = true
+      this.loaded = true
+    }
   }
 }
 

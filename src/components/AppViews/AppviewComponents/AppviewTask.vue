@@ -30,8 +30,9 @@
     </div>
     <div key='editing' v-else>
       <task-edit key='showing'
-        :task='task'
         :fixed-tag='fixedPers'
+        :default-labels='task.labels'
+        :default-priority='task.priority'
         :allow-priority='true'
         :allow-labels='true'
         btn='Edit task'
