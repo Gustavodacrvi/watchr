@@ -51,8 +51,8 @@ import { Task } from '../../../interfaces/app'
 export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({required: true, type: String}) group!: string
-  @Prop({required: true, type: String}) fixedTag!: string
   @Prop({required: true, type: String}) id!: string
+  @Prop(String) fixedTag!: string
   @Prop(Boolean) allowPriority!: boolean
   @Prop(Array) tasks!: Task[]
 

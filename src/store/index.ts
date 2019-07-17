@@ -220,6 +220,7 @@ const store: any = new Vuex.Store({
     },
     perspectiveData(state: States) {
       const s = state as any
+      console.log(s.viewName)
       return s.perspective.customPerspectives.find((el: Perspective) => el.name === state.viewName)
     },
   } as Getters,

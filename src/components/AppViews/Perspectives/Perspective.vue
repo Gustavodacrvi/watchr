@@ -1,10 +1,10 @@
 <template>
-  <component :is='getComp'/>
+  <component :pers='pers' :is='getComp'/>
 </template>
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
 
 import appUtils from '@/utils/app'
@@ -22,16 +22,15 @@ import { Perspective } from '../../../interfaces/app'
 export default class PerspectiveView extends Vue {
   @Getter activePers!: Perspective
 
+  @Prop(String) pers!: string
+
   get getComp() {
-    switch (this.comp) {
-      case 'Inbox': return 'app-' + this.comp
-      case 'Upcoming': return 'app-' + this.comp
-      case 'Today': return 'app-' + this.comp
+    switch (this.pers) {
+      case 'Inbox': return 'app-' + this.pers
+      case 'Upcoming': return 'app-' + this.pers
+      case 'Today': return 'app-' + this.pers
     }
     return 'app-custom'
-  }
-  get comp() {
-    return this.$route.params.persname
   }
 }
 

@@ -18,6 +18,7 @@ interface Getters {
   inboxPers: (state: States) => Perspective
   pinedSmartPerspectives: (state: States, getters: Getters) => void
   pinedCustomPerspectives: (state: States, getters: Getters) => void
+  getCustomPerspectiveById: (state: States) => (id: string) => Perspective
 }
 
 interface Mutations {
@@ -42,7 +43,8 @@ interface Actions {
   togglePerspectivesNumberOfTasks: (context: ActionContext, arr: Array<{id: string, show: boolean}>) => void
   togglePerspectivesShowWhenNotEmpty: (context: ActionContext, arr: Array<{id: string, show: boolean}>) => void
   saveTaskOrder: (context: ActionContext, obj: {id: string, order: string[], collection: string}) => void
-  addPerspective: (context: ActionContext, obj: {name: string, description: string}) => void
+  addPerspective: (context: ActionContext, obj: {name: string, description: string, iconColor: string, icon: string}) => void
+  editPerspective: (context: ActionContext, obj: {name: string, description: string, iconColor: string, icon: string, id: string}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -75,15 +77,18 @@ export default {
     sortedCustomPerspectives(state: States): Perspective[] {
       return appUtils.sortArrayByIds(state.customPerspectives, appUtils.fixOrder(state.customPerspectives, state.customOrder))
     },
+    getCustomPerspectiveById: (state: States) => (id: string) => {
+      return state.customPerspectives.find(el => el.id === id)
+    },
   } as Getters,
   actions: {
-    addPerspective({ rootState }, {name, description}) {
+    addPerspective({ rootState }, {name, description, icon, iconColor}) {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('customPerspectives').add({
           userId: rootState.uid,
           name,
-          icon: 'layer-group',
-          iconColor: '#737373',
+          icon,
+          iconColor,
           description,
           order: [],
           size: 'lg',
@@ -97,6 +102,22 @@ export default {
           excludeCustomLabels: [],
           includeCustomLabels: [],
         })
+    },
+    editPerspective({ rootState, state }, {name, description, icon, iconColor, id}) {
+      if (rootState.firestore && rootState.uid) {
+          let collection: 'smartPerspectives' | 'customPerspectives' = 'smartPerspectives'
+          let per: any = state.smartPerspectives.find(el => el.id === id)
+          if (!per) {
+            collection = 'customPerspectives'
+            per = state.customPerspectives.find(el => el.id === id)
+          }
+          rootState.firestore.collection(collection).doc(id).update({
+            name,
+            description,
+            icon,
+            iconColor,
+          })
+      }
     },
     saveSmartOrder({ rootState }, ids) {
       if (rootState.firestore && rootState.uid)

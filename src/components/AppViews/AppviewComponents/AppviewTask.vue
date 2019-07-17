@@ -47,7 +47,7 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter, namespace } from 'vuex-class'
 
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
-import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTagedit.vue'
+import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
 
 import { Task, ListIcon } from '../../../interfaces/app'
 

@@ -28,7 +28,7 @@
           <form-input
             type='text'
             placeholder='Font awesome icon class...'
-            :value='icon'
+            v-model='icon'
             :max='30'
           />
         </div>
@@ -37,7 +37,7 @@
           <form-input
             type='text'
             placeholder='Font awesome icon color...'
-            :value='color'
+            v-model='color'
             :max='30'
           />
         </div>
@@ -46,7 +46,7 @@
         tabindex='2'
         class='button round-border margin'
         @click='add'
-      >Add perspective</button>
+      >{{ buttonPlaceholder }}</button>
       <span v-show='isDesktop'
         class='margin txt'
       >You can open this pop up at any time by clicking the 'P' key.</span><br>
@@ -84,24 +84,30 @@ const perspectiveModule = namespace('perspective')
 export default class LabelAdder extends Vue {
   @State theme!: string
   @State uid!: string
-  @State popUpPayload!: any
+  @State('popUpPayload') pers!: Perspective
   @Getter isDesktop!: boolean
   @Mutation pushAlert!: (alert: Alert) => void
   @Mutation pushPopUp!: (compName: string) => void
 
   @perspectiveModule.State smartPerspectives!: Perspective[]
   @perspectiveModule.State customPerspectives!: Perspective[]
-  @perspectiveModule.Action addPerspective!: (obj: {name: string, description: string}) => void
+  @perspectiveModule.Action addPerspective!: (obj: {name: string, description: string, iconColor: string, icon: string}) => void
+  @perspectiveModule.Action editPerspective!: (obj: {name: string, description: string, iconColor: string, icon: string, id: string}) => void
 
   input: string | null = null
   icon: string = 'layer-group'
-  color: string = '#737373'
+  color: string = '#FF6B66'
   description: string = ''
   value: string = ''
   options: string[] = []
 
   created() {
-    this.input = this.popUpPayload
+    if (this.pers) {
+      this.input = this.pers.name
+      this.icon = this.pers.icon
+      this.color = this.pers.iconColor
+      this.description = this.pers.description
+    }
   }
 
   add() {
@@ -114,25 +120,41 @@ export default class LabelAdder extends Vue {
           duration: 3,
           type: 'error',
         })
-      else {
+      else if (!this.pers) {
         this.addPerspective({
           name: this.value,
           description: this.description,
+          icon: this.icon,
+          iconColor: this.color,
         })
         this.pushPopUp('')
+      } else {
+        this.editPerspective({
+          id: this.pers.id,
+          name: this.value,
+          description: this.description,
+          icon: this.icon,
+          iconColor: this.color,
+        })
+        this.pushPopUp('')
+        this.$router.push('/user/pers/' + this.value)
       }
     }
   }
-
   getOptions(): string[] {
     const merge = this.customPerspectives.concat(this.smartPerspectives)
     return merge.filter(el => el.name.includes(this.value)).map(el => el.name)
   }
-
   select(value: string) {
     this.input = this.value
   }
 
+  get buttonPlaceholder(): string {
+    if (!this.pers)
+      return 'Add perspective'
+    return 'Save perspective'
+  }
+  
   @Watch('value')
   onChange() {
     this.options = this.getOptions()

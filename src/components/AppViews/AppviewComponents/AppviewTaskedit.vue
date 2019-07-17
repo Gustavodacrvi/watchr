@@ -5,7 +5,7 @@
         <view-tag
           :name='fixedTag'
           :fixed='true'
-          icon='tag'
+          icon='layer-group'
           back-color='#83B7E2'
         />
       </div>
@@ -62,7 +62,7 @@ import { ListIcon, Task } from '../../../interfaces/app'
 
 import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
-import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTagedit.vue'
+import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
 import DropdownInput from '@/components/DropdownInput.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
@@ -75,7 +75,7 @@ import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
     'view-tag': Tag,
   },
 })
-export default class AppviewTagedit extends Vue {
+export default class AppviewTaskedit extends Vue {
   @Prop({default: 'Add task', type: String}) btn!: string
   @Prop({default: false, type: Boolean}) closeOnSave!: boolean
   @Prop(Object) task!: Task
@@ -198,7 +198,7 @@ export default class AppviewTagedit extends Vue {
 }
 
 .margin {
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .input-div {

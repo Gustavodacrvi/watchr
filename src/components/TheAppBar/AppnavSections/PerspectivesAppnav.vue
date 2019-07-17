@@ -60,11 +60,14 @@ export default class OverviewAppnav extends Vue {
   @State viewName!: string
   @State viewType!: string
   @Mutation pushPopUp!: (comp: string) => void
-  @Mutation pushPopUpPayload!: (obj: SimpleAdder) => void
+  @Mutation pushPopUpPayload!: (obj: SimpleAdder | any) => void
+  @Getter initialAppViewRoute!: string
 
   @persVuex.State smartOrder!: Perspective[]
   @persVuex.Getter sortedSmartPerspectives!: Perspective[]
+  @persVuex.Getter pinedSmartPerspectives!: Perspective[]
   @persVuex.Getter sortedCustomPerspectives!: Perspective[]
+  @persVuex.Getter getCustomPerspectiveById!: (id: string) => Perspective
   @persVuex.Action saveSmartOrder!: (ids: string[]) => void
   @persVuex.Action saveCustomOrder!: (ids: string[]) => void
   @persVuex.Action togglePerspectivesPin!: (obj: Array<{id: string, pin?: boolean}>) => void
@@ -171,12 +174,23 @@ export default class OverviewAppnav extends Vue {
         },
       },
       {
+        name: 'Edit perspective',
+        icon: 'edit',
+        iconColor: '',
+        size: 'lg',
+        callback: (id: string) => {
+          this.pushPopUp('PerspectiveAdderPopup')
+          this.pushPopUpPayload(this.getCustomPerspectiveById(id))
+        },
+      },
+      {
         name: 'Delete perspective',
         icon: 'trash',
         iconColor: '',
         size: 'lg',
         callback: (id: string) => {
           this.deletePerspectivesById([id])
+          this.$router.replace('user/pers/' + this.pinedSmartPerspectives[0].name)
         },
       },
     ]

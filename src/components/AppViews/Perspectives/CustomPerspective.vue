@@ -1,5 +1,5 @@
 <template>
-  <div class='component'>
+  <div class='component' v-if='perspectiveData'>
     <div class='header' :class='{pointer: !isDesktop}' @dblclick='toggleHide'>
       <header-title
         :value='perspectiveData.name'
@@ -52,21 +52,23 @@
         <p class='description txt'>
           {{ perspectiveData.description }}
         </p>
-        <div class='margin'></div>
-        <view-tags
-          fixed-tag='Inbox'
-          :search='search'
-          :priority='priority'
-          @clearsearch="v => search = ''"
-          @clearpriority="v => priority = ''"
-        />
+        <transition name='fade'>
+          <template v-if='search && priority'>
+            <div class='margin'></div>
+            <view-tags
+              :search='search'
+              :priority='priority'
+              @clearsearch="v => search = ''"
+              @clearpriority="v => priority = ''"
+            />
+          </template>
+        </transition>
         <div class='margin'></div>
       </div>
       <task-renderer
         :tasks='getTasks'
         group='inbox'
         id='appnavinbox'
-        fixed-tag='Inbox'
         :allow-priority='true'
         @update='onUpdate'
         @selected='onSelect'
@@ -79,7 +81,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import { Mutation, Getter, State } from 'vuex-class'
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
@@ -107,11 +109,11 @@ export default class PerspectiveAppview extends Vue {
   @Getter perspectiveData!: Perspective | undefined
   @Mutation pushView!: (obj: {view: string, viewType: string}) => void
 
+  @Prop(String) pers!: string
+
   created() {
-    if (this.appBarSection === 'overview')
-      this.showing = false
     this.pushView({
-      view: this.$route.params.persname,
+      view: this.pers,
       viewType: 'perspective',
     })
   }
@@ -119,8 +121,9 @@ export default class PerspectiveAppview extends Vue {
   search: string = ''
   selected: string[] = []
   priority: string = ''
-  showing: boolean = false
+  showing: boolean = true
   hided: boolean = false
+
   priorityOptions: ListIcon[] = [
    {
       name: 'High priority',

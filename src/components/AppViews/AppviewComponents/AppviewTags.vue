@@ -5,7 +5,7 @@
         <view-tag v-if='fixedTag'
           :name='fixedTag'
           :fixed='true'
-          icon='tag'
+          icon='layer-group'
           back-color='#83B7E2'
         />
         <view-tag v-if="priority && priority !== ''"
