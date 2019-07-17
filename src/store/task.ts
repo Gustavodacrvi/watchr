@@ -26,7 +26,7 @@ interface ActionContext {
 interface Actions {
   // tslint:disable-next-line:max-line-length
   addInboxTaskWithPosition: (context: ActionContext, obj: {task: Task, perspectiveId: string, collection: string, order: string[], position: number}) => void
-  updateLabel: (context: ActionContext, obj: {name: string, priority: string, id: string}) => void
+  updateTask: (context: ActionContext, obj: {name: string, priority: string, id: string, labels: []}) => void
   deleteTasksById: (context: ActionContext, ids: string[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
@@ -63,10 +63,10 @@ export default {
             }
         })
     },
-    updateLabel({ rootState }, {name, priority, id}) {
+    updateTask({ rootState }, {name, priority, id, labels}) {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('tasks').doc(id).update({
-          name, priority,
+          name, priority, labels,
         })
     },
     deleteTasksById({ rootState }, ids: string[]) {

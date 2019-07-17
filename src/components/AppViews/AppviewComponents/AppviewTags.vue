@@ -2,10 +2,10 @@
   <div class='tags-wrapper'>
     <transition name='fade'>
       <div class='tags'>
-        <view-tag v-if='fixedTag'
-          :name='fixedTag'
+        <view-tag v-if='fixedPers'
+          :name='fixedPers'
           :fixed='true'
-          icon='tag'
+          icon='layer-group'
           back-color='#83B7E2'
         />
         <view-tag v-if="priority && priority !== ''"
@@ -24,6 +24,18 @@
         />
       </div>
     </transition>
+    <div v-if='labels && labels.length > 0' class='tags'>
+      <transition-group name='fade'>
+        <view-tag v-for='lab in labels'
+          :key='lab.id'
+          icon='tag'
+          back-color='#FF6B66'
+          :name='lab.name'
+          :fixed='false'
+          @click="$emit('removelabel', lab.id)"
+        />
+      </transition-group>
+    </div>
   </div>
 </template>
 
@@ -34,15 +46,18 @@ import { State } from 'vuex-class'
 
 import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 
+import { Label } from '../../../interfaces/app'
+
 @Component({
   components: {
     'view-tag': Tag,
   },
 })
 export default class AppviewTags extends Vue {
-  @Prop(String) fixedTag!: string
-  @Prop(String) search!: string
-  @Prop(String) priority!: string
+  @Prop({default: undefined, type: String}) search!: string
+  @Prop({default: undefined, type: String}) fixedPers!: string
+  @Prop({default: undefined, type: String}) priority!: string
+  @Prop({default: undefined, type: Array}) labels!: Label[]
 }
 
 </script>
@@ -52,10 +67,6 @@ export default class AppviewTags extends Vue {
 .toggle-icon {
   float: right;
   margin-bottom: 5px;
-}
-
-.tags {
-  margin-bottom: 25px;
 }
 
 .tags + .tags {

@@ -31,6 +31,7 @@ import appUtils from '../../utils/app'
     SignupPopup: appUtils.AsyncComponent(import('./SignupPopup.vue')),
     SigninPopup: appUtils.AsyncComponent(import('./SigninPopup.vue')),
     LabeladderPopup: appUtils.AsyncComponent(import('./LabeladderPopup.vue')),
+    PerspectiveAdderPopup: appUtils.AsyncComponent(import('./PerspectiveAdderPopup.vue')),
     ResetpasswordPopup: appUtils.AsyncComponent(import('./ResetpasswordPopup.vue')),
     SendresetpasswordPopup: appUtils.AsyncComponent(import('./SendresetpasswordPopup.vue')),
   },

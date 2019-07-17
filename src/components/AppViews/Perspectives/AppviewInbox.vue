@@ -54,7 +54,7 @@
         </p>
         <div class='margin'></div>
         <view-tags
-          fixed-tag='Inbox'
+          fixed-pers='Inbox'
           :search='search'
           :priority='priority'
           @clearsearch="v => search = ''"
@@ -66,7 +66,8 @@
         :tasks='getTasks'
         group='inbox'
         id='appnavinbox'
-        fixed-tag='Inbox'
+        fixed-pers='Inbox'
+        :default-priority='priority'
         :allow-priority='true'
         @update='onUpdate'
         @selected='onSelect'
@@ -106,9 +107,10 @@ const persVuex = namespace('perspective')
   },
 })
 export default class PerspectiveAppview extends Vue {
+  @State currentAppSection!: string
   @Getter isDesktop!: boolean
   @Getter platform!: string
-  @Mutation pushView!: (obj: {view: string, section: string}) => void
+  @Mutation pushView!: (obj: {view: string, viewType: string}) => void
   @Mutation sendOptionsToNavbar!: (options: ListIcon[]) => void
   @Mutation hideNavBarOptions!: () => void
 
@@ -126,7 +128,8 @@ export default class PerspectiveAppview extends Vue {
   search: string = ''
   priority: string = ''
   hided: boolean = false
-  showing: boolean = true
+  showing: boolean = false
+  loaded: boolean = false
   selected: string[] = []
   priorityOptions: ListIcon[] = [
    {
@@ -172,9 +175,13 @@ export default class PerspectiveAppview extends Vue {
   ]
 
   created() {
+    if (!this.loaded && this.currentAppSection !== 'overview' && this.isDesktop) {
+      this.showing = true
+      this.loaded = true
+    }
     this.pushView({
       view: 'Inbox',
-      section: 'overview',
+      viewType: 'perspective',
     })
   }
 
@@ -297,6 +304,13 @@ export default class PerspectiveAppview extends Vue {
       if (this.selected.length > 0)
         this.sendOptionsToNavbar(this.getMobileSelectedOptions())
       else this.hideNavBarOptions()
+  }
+  @Watch('currentAppSection')
+  onChange2() {
+    if (!this.loaded && this.currentAppSection !== 'overview' && this.isDesktop) {
+      this.showing = true
+      this.loaded = true
+    }
   }
 }
 

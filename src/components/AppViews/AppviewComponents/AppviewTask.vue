@@ -30,9 +30,11 @@
     </div>
     <div key='editing' v-else>
       <task-edit key='showing'
-        :task='task'
-        :fixed-tag='fixedTag'
-        :allow-priority='allowPriority'
+        :fixed-tag='fixedPers'
+        :default-labels='task.labels'
+        :default-priority='task.priority'
+        :allow-priority='true'
+        :allow-labels='true'
         btn='Edit task'
         @cancel='editing = false'
         @enter='enter'
@@ -47,7 +49,7 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter, namespace } from 'vuex-class'
 
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
-import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTagedit.vue'
+import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
 
 import { Task, ListIcon } from '../../../interfaces/app'
 
@@ -62,15 +64,14 @@ const taskVuex = namespace('task')
 export default class AppviewTask extends Vue {
   @Prop(Object) task!: Task
   @Prop(Boolean) deselectAll!: boolean
-  @Prop(Boolean) allowPriority!: boolean
   @Prop(Boolean) allowDrag!: boolean
-  @Prop(String) fixedTag!: string
+  @Prop(String) fixedPers!: string
 
   @State theme!: string
   @Getter isDesktop!: boolean
 
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
-  @taskVuex.Action updateLabel!: (obj: {name: string, priority: string, id: string}) => void
+  @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string}) => void
 
   clicked: boolean = false
   onHover: boolean = false
@@ -105,7 +106,7 @@ export default class AppviewTask extends Vue {
     })
   }
   enter(obj: {name: string, priority: string}) {
-    this.updateLabel({
+    this.updateTask({
       ...obj,
       id: this.task.id,
     })

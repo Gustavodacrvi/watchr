@@ -1,30 +1,20 @@
 <template>
   <div class='task-adder'>
     <div>
-      <div v-if='fixedTag'>
-        <view-tag
-          :name='fixedTag'
-          :fixed='true'
-          icon='tag'
-          back-color='#83B7E2'
-        />
-      </div>
       <transition name='fade'>
-        <div v-if='allowPriority && priority'>
-          <view-tag v-if='fixedTag'
-            :name='priority'
-            :fixed='false'
-            icon='exclamation'
-            back-color='#70ff66'
-            @click="v => priority = ''"
-          />
-        </div>
+        <view-tags v-if='priority || fixedPers || getLabels.length > 0'
+          :fixed-pers='fixedPers'
+          :priority='priority'
+          :labels='getLabels'
+          @clearpriority="v => priority = ''"
+          @removelabel='removeLabel'
+        />
       </transition>
     </div>
     <div class='margin input-div'>
       <drop-input
         tabindex='1'
-        placeholder='Do something #label !high !medium !low'
+        :placeholder='inputPlaceholder'
         :disabled='true'
         :values='options'
         :input='value'
@@ -43,13 +33,24 @@
       </view-btn>
       <span class='cancel pointer' @click="$emit('cancel')">Cancel</span>
       <div class='right'>
-        <view-options v-if='allowPriority'
-          handle='exclamation'
-          size='lg'
-          min-width='200px'
-          :options='icons'
-          @click="chosePriority"
-        />
+        <div v-if='allowLabels' class='header-option'>
+          <drop-finder
+            handle='tags'
+            size='lg'
+            min-width='300px'
+            :list='savedLabels'
+            @select='selectLabel'
+          />
+        </div>
+        <div v-if='allowPriority' class='header-option'>
+          <view-options
+            handle='exclamation'
+            size='lg'
+            min-width='200px'
+            :options='priorityIcons'
+            @click="chosePriority"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -58,13 +59,19 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { ListIcon, Task } from '../../../interfaces/app'
+import { namespace } from 'vuex-class'
+
+const labelsVuex = namespace('label')
+
+import { ListIcon, Task, Label } from '../../../interfaces/app'
 
 import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
-import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTagedit.vue'
+import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
 import DropdownInput from '@/components/DropdownInput.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
+import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
+import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
 
 @Component({
   components: {
@@ -73,20 +80,28 @@ import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
     'task-edit': TaskEditTemplate,
     'view-options': AppviewIconoptions,
     'view-tag': Tag,
+    'drop-finder': DropdownFinder,
+    'view-tags': AppviewTags,
   },
 })
-export default class AppviewTagedit extends Vue {
+export default class AppviewTaskedit extends Vue {
   @Prop({default: 'Add task', type: String}) btn!: string
   @Prop({default: false, type: Boolean}) closeOnSave!: boolean
-  @Prop(Object) task!: Task
-  @Prop(String) fixedTag!: string
-  @Prop(Boolean) allowPriority!: boolean
+  @Prop(String) fixedPers!: string
+  @Prop(String) defaultPriority!: string
+  @Prop(Array) defaultLabels!: string[]
+  @Prop({default: false, type: Boolean}) allowPriority!: boolean
+  @Prop({default: false, type: Boolean}) allowLabels!: boolean
+
+  @labelsVuex.State('labels') savedLabels!: Label[]
+  @labelsVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
   value: string = ''
   optionsType: string = ''
   priority: '' | 'Low priority' | 'High priority' | 'Medium priority' = ''
   options: string[] = []
-  icons: ListIcon[] = [
+  labels: string[] = []
+  priorityIcons: ListIcon[] = [
     {
       name: 'High priority',
       icon: 'exclamation',
@@ -108,14 +123,12 @@ export default class AppviewTagedit extends Vue {
   ]
 
   created() {
-    if (this.task)
-      this.getDataFromTask()
+    if (this.defaultLabels)
+      this.labels = this.defaultLabels
+    if (this.defaultPriority)
+      this.priority = this.defaultPriority as any
   }
 
-  getDataFromTask() {
-    this.value = this.task.name
-    this.priority = this.task.priority
-  }
   selectDropValue(value: string) {
     const arr = this.value.split(' ')
     arr[arr.length - 1] = this.optionsType + value
@@ -127,15 +140,35 @@ export default class AppviewTagedit extends Vue {
   }
   enter() {
     if (this.value)
-      this.$emit('enter', {name: this.value, priority: this.priority})
+      this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels})
     this.value = ''
+  }
+  removeLabel(id: string) {
+    const index = this.labels.findIndex(el => el === id)
+    this.labels.splice(index, 1)
+  }
+  selectLabel(label: Label) {
+    this.labels.push(label.id)
   }
   chosePriority(priority: 'Low priority' | 'High priority' | 'Medium priority') {
     this.priority = priority
   }
 
+  get getLabels(): Label[] {
+    return this.getLabelsByIds(this.labels)
+  }
+  get inputPlaceholder(): string {
+    let str = 'Do something'
+    if (this.allowPriority)
+      str += ' !high !medium !low'
+    if (this.allowLabels)
+      str += ' #label'
+    return str
+  }
+
   @Watch('value')
   onValue() {
+    let changedOptions: boolean = false
     if (this.allowPriority) {
       if (this.value.includes(' !high')) {
         this.priority = 'High priority'
@@ -154,21 +187,37 @@ export default class AppviewTagedit extends Vue {
         const word = lastWord.substr(1)
 
         const options = []
-        for (const i of this.icons)
+        for (const i of this.priorityIcons)
           if (i.name && i.name === 'Low priority')
             options.push('low')
           else if (i.name && i.name === 'High priority')
             options.push('high')
           else options.push('medium')
 
-        this.options = options
-      } else this.options = []
+        this.options = options.filter(el => el.includes(word))
+        changedOptions = true
+      }
     }
-  }
-  @Watch('task')
-  onChange() {
-    if (this.task)
-      this.getDataFromTask()
+    if (this.allowLabels) {
+      const labels = this.savedLabels
+      for (const lab of labels)
+        if (this.value.includes(` #${lab.name}`)) {
+          this.value = this.value.replace(` #${lab.name}`, '')
+          this.labels.push(lab.id)
+          break
+      }
+      const arr = this.value.split(' ')
+      const lastWord = arr[arr.length - 1]
+      if (lastWord[0] === '#') {
+        this.optionsType = '#'
+        const word = lastWord.substr(1)
+
+        this.options = labels.map(el => el.name).filter(el => el.includes(word))
+        changedOptions = true
+      }
+    }
+    if (!changedOptions)
+      this.options = []
   }
 }
 
@@ -182,8 +231,9 @@ export default class AppviewTagedit extends Vue {
   display: inline-block;
 }
 
-.right .icon {
-  margin-left: 6px;
+.header-option {
+  display: inline-block;
+  margin-right: 10px;
 }
 
 .cancel {
@@ -198,7 +248,7 @@ export default class AppviewTagedit extends Vue {
 }
 
 .margin {
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .input-div {

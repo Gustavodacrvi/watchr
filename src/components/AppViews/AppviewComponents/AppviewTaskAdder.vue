@@ -6,8 +6,11 @@
         <span class='txt name'>Add task</span>
       </div>
       <task-edit key='showing' v-else
-        :fixed-tag='fixedTag'
+        :fixed-pers='fixedPers'
+        :default-labels='defaultLabels'
+        :default-priority='defaultPriority'
         :allow-priority='allowPriority'
+        :allow-labels='allowLabels'
         @cancel='showing = false'
         @enter='enter'
       />
@@ -20,7 +23,7 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 
-import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTagedit.vue'
+import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
 
 import { ListIcon, Task } from '../../../interfaces/app'
 
@@ -32,8 +35,11 @@ const taskVuex = namespace('task')
   },
 })
 export default class TaskAdder extends Vue {
-  @Prop() fixedTag!: string
-  @Prop({default: false}) allowPriority!: boolean
+  @Prop(String) fixedPers!: string
+  @Prop(Array) defaultLabels!: string
+  @Prop(String) defaultPriority!: string
+  @Prop({default: false, type: Boolean}) allowPriority!: boolean
+  @Prop({default: false, type: Boolean}) allowLabels!: boolean
 
   showing: boolean = false
 

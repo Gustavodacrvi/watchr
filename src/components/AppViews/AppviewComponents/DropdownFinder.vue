@@ -48,7 +48,7 @@ import IconDropdown from '@/components/IconDropdown.vue'
 export default class DropdownFinder extends Vue {
   @State theme!: string
 
-  @Prop(String) value!: string
+  @Prop({default: '', type: String}) value!: string
   @Prop(Array) list!: Array<{id: string, name: string}>
   @Prop({required: true, type: String}) handle!: string
   @Prop({default: 'lg', type: String}) size!: string

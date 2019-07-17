@@ -58,7 +58,6 @@ export default class LabelAdder extends Vue {
   @labelStore.Action addLabel!: (name: string) => void
 
   input: string | null = null
-  MAXIMUM_LENGTH_OF_LABEL_TREE: number = 4
   value: string = ''
   options: string[] = []
 

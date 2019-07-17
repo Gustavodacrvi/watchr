@@ -78,7 +78,6 @@ export default class App extends Vue {
   @State isLogged!: boolean
   @State appError!: boolean
   @Mutation hideAlert!: () => void
-  @Mutation closeAppBar!: () => void
   @Mutation resetPopUpState!: () => void
   @Mutation openAppBar!: () => void
   @Getter isDesktop!: boolean
@@ -102,7 +101,7 @@ export default class App extends Vue {
   }
   keyPressed({key}: {key: string}) {
     const active = document.activeElement
-    if (active && active.nodeName !== 'INPUT' && this.isOnAppRoute)
+    if (active && active.nodeName !== 'INPUT' && active.nodeName !== 'TEXTAREA' && this.isOnAppRoute)
       this.activateKeyShortcut(key)
   }
 

@@ -33,9 +33,12 @@ export default new Router({
       component: AsyncComponent('./views/User.vue'),
       children: [
         {
-          path: 'pers/:persname',
+          path: 'pers',
           name: 'Perspective',
           component: AsyncComponent('./components/AppViews/Perspectives/Perspective.vue'),
+          props: (route: any) => ({
+            pers: route.query.pers,
+          }),
         },
         {
           path: '*',

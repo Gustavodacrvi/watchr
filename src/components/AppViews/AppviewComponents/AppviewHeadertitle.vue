@@ -4,6 +4,8 @@
     <span class='title'>
       {{ value }}
     </span>
+    <span style='width: 15px'></span>
+    <i class='txt angle icon pointer fas fa-angle-down fa-lg' :class="{'rotate': !showing}" @click="$emit('toggle')"></i>
   </div>
   <span v-else @click="$emit('toggle')" class='left'>
     <i class='txt angle icon pointer fas fa-angle-down fa-lg' :class="{'rotate': !showing}"></i>

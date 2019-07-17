@@ -53,7 +53,7 @@ if (store.getters.isStandAlone)
   router.replace({name: 'User'})
 
 router.beforeEach((to: any, from: any, next: any) => {
-  if (to.name !== 'User')
+  if (to.name !== 'User' && to.matched[0] !== undefined && to.matched[0].name !== 'User')
     store.commit('closeAppBar')
 
   next()

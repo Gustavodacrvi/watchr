@@ -6,14 +6,16 @@
       :icons='headerIcons'
       :selected='selected'
     />
-    <list-renderer
-      group='appnavLabels'
+    <list-renderer v-if='sortedLabels && sortedLabels.length > 0'
+      group='appnavlabels'
+      route='labels'
       :list='sortedLabels'
       :options='getOptions'
-      :active='active'
+      :active='activePers'
       @update='onUpdate'
       @selected='v => selected = v'
     />
+    <appnav-message v-else @click="pushPopUp('LabeladderPopup')" name='Add label'/>
   </div>
 </template>
 
@@ -24,6 +26,7 @@ import { namespace, Mutation, State, Getter } from 'vuex-class'
 
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
+import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmessage.vue'
 
 import { Label, ListIcon, SimpleAdder, Perspective } from '../../../interfaces/app'
 
@@ -34,13 +37,15 @@ const list = namespace('list')
   components: {
     'list-renderer': ListRenderer,
     'appnav-header': AppnavHeader,
+    'appnav-message': AppnavMessage,
   },
 })
 export default class LabelAppnav extends Vue {
   @State viewName!: string
-  @State viewSect!: string
+  @State viewType!: string
   @Mutation pushPopUpPayload!: (obj: SimpleAdder) => void
   @Mutation pushPopUp!: (comp: string) => void
+  @Mutation openSection!: (section: string) => void
 
   @label.Getter sortedLabels!: Label[]
   @label.Action saveLabelPosition!: (ids: string[]) => void
@@ -60,8 +65,12 @@ export default class LabelAppnav extends Vue {
     },
   ]
 
-  get active(): string {
-    if (this.viewSect === 'overview')
+  created() {
+    this.openSection('labels')
+  }
+
+  get activePers(): string {
+    if (this.viewType === 'perspective')
       return this.viewName
     return ''
   }
@@ -108,3 +117,4 @@ export default class LabelAppnav extends Vue {
 }
 
 </script>
+

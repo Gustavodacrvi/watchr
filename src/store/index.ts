@@ -24,7 +24,8 @@ export interface States {
   firestore: firebase.firestore.Firestore | null
   isLogged: boolean
   viewName: string
-  viewSect: string
+  viewType: string
+  currentAppSection: string
   uid: string | null
   firebase: any
   isAnonymous: boolean
@@ -45,10 +46,11 @@ interface Mutations {
   pushPopUpPayload: (state: States, payload: any) => void
   saveCurrentUser: (state: States, user: firebase.User) => void
   saveFirestore: (state: States, firestore: firebase.firestore.Firestore) => void
+  openSection: (state: States, currentAppSection: string) => void
   saveFirebase: (state: States, firebase: any) => void
   pushAppView: (state: States, comp: string) => void
   pushPerspective: (state: States, payload?: any) => void
-  pushView: (state: States, obj: {view: string, section: string}) => void
+  pushView: (state: States, obj: {view: string, viewType: string}) => void
   addNavBarTitle: (state: States, title: string) => void
   sendOptionsToNavbar: (state: States, options: ListIcon[]) => void
   showApp: () => void
@@ -65,6 +67,7 @@ interface Getters {
   isStandAlone: () => boolean
   platform: () => 'mobile' | 'desktop'
   isOnAppRoute: () => boolean
+  perspectiveData: () => Perspective
   loggedAndVerified: () => boolean
   loggedAndNotVerified: () => boolean
   anonymous: () => boolean
@@ -99,11 +102,12 @@ const store: any = new Vuex.Store({
     isLogged: false,
     firestore: null,
     viewName: '',
-    viewSect: '',
+    viewType: '',
     isAnonymous: false,
     emailVerified: false,
     loading: true,
     firebase: null,
+    currentAppSection: '',
     navBarOptions: [],
     appError: false,
     uid: null,
@@ -112,6 +116,9 @@ const store: any = new Vuex.Store({
     alert: undefined,
   } as States,
   mutations: {
+    openSection(state: States, currentAppSection: string) {
+      state.currentAppSection = currentAppSection
+    },
     saveFirestore(state: States, firestore: firebase.firestore.Firestore) {
       state.firestore = firestore
       state.firestore.enablePersistence()
@@ -178,9 +185,9 @@ const store: any = new Vuex.Store({
     closeAppBar(state: States) {
       state.appBarState = false
     },
-    pushView(state: States, {view, section}) {
+    pushView(state: States, {view, viewType}) {
       state.viewName = view
-      state.viewSect = section
+      state.viewType = viewType
     },
     addNavBarTitle(state: States, title: string) {
       state.navBarTitle = title
@@ -217,6 +224,10 @@ const store: any = new Vuex.Store({
     anonymous(state: States) {
       return state.isLogged && state.isAnonymous
     },
+    perspectiveData(state: States) {
+      const s = state as any
+      return s.perspective.customPerspectives.find((el: Perspective) => el.name === state.viewName)
+    },
   } as Getters,
   actions: {
     getWindowWidthOnResize({state, getters, commit}) {
@@ -241,6 +252,7 @@ const store: any = new Vuex.Store({
       if ((getters.loggedAndVerified || getters.anonymous) && getters.isDesktop)
         switch (key) {
           case 'l': commit('pushPopUp', 'LabeladderPopup'); break
+          case 'p': commit('pushPopUp', 'PerspectiveAdderPopup'); break
           case 'h': commit('pushPopUp', ''); break
         }
     },
