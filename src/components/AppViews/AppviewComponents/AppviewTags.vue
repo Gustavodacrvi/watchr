@@ -54,10 +54,10 @@ import { Label } from '../../../interfaces/app'
   },
 })
 export default class AppviewTags extends Vue {
-  @Prop(String) fixedTag!: string
-  @Prop(String) search!: string
-  @Prop(String) priority!: string
-  @Prop(Array) labels!: Label[]
+  @Prop({default: undefined, type: String}) search!: string
+  @Prop({default: undefined, type: String}) fixedTag!: string
+  @Prop({default: undefined, type: String}) priority!: string
+  @Prop({default: undefined, type: Array}) labels!: Label[]
 }
 
 </script>

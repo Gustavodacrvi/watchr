@@ -81,6 +81,7 @@
         group='inbox'
         id='appnavinbox'
         :allow-priority='true'
+        :allow-labels='true'
         @update='onUpdate'
         @selected='onSelect'
         @add='addTask'

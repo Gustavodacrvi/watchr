@@ -18,6 +18,7 @@
         key='task-adder'
         :fixed-tag='fixedTag'
         :allow-priority='allowPriority'
+        :allow-labels='allowLabels'
         @enter='add'
 
         data-vid='task-adder'
@@ -53,7 +54,8 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop({required: true, type: String}) group!: string
   @Prop({required: true, type: String}) id!: string
   @Prop(String) fixedTag!: string
-  @Prop(Boolean) allowPriority!: boolean
+  @Prop({default: false, type: Boolean}) allowPriority!: boolean
+  @Prop({default: false, type: Boolean}) allowLabels!: boolean
   @Prop(Array) tasks!: Task[]
 
   @Getter isDesktop!: boolean
