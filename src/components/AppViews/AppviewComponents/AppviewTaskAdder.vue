@@ -6,7 +6,8 @@
         <span class='txt name'>Add task</span>
       </div>
       <task-edit key='showing' v-else
-        :fixed-tag='fixedTag'
+        :fixed-pers='fixedPers'
+        :default-labels='defaultLabels'
         :allow-priority='allowPriority'
         :allow-labels='allowLabels'
         @cancel='showing = false'
@@ -33,7 +34,8 @@ const taskVuex = namespace('task')
   },
 })
 export default class TaskAdder extends Vue {
-  @Prop() fixedTag!: string
+  @Prop(String) fixedPers!: string
+  @Prop(Array) defaultLabels!: string
   @Prop({default: false, type: Boolean}) allowPriority!: boolean
   @Prop({default: false, type: Boolean}) allowLabels!: boolean
 

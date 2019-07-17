@@ -77,9 +77,10 @@
         <div class='margin'></div>
       </div>
       <task-renderer
-        :tasks='getTasks'
         group='inbox'
         id='appnavinbox'
+        :default-labels='getPersLabels'
+        :tasks='getTasks'
         :allow-priority='true'
         :allow-labels='true'
         @update='onUpdate'

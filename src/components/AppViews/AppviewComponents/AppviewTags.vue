@@ -2,8 +2,8 @@
   <div class='tags-wrapper'>
     <transition name='fade'>
       <div class='tags'>
-        <view-tag v-if='fixedTag'
-          :name='fixedTag'
+        <view-tag v-if='fixedPers'
+          :name='fixedPers'
           :fixed='true'
           icon='layer-group'
           back-color='#83B7E2'
@@ -55,7 +55,7 @@ import { Label } from '../../../interfaces/app'
 })
 export default class AppviewTags extends Vue {
   @Prop({default: undefined, type: String}) search!: string
-  @Prop({default: undefined, type: String}) fixedTag!: string
+  @Prop({default: undefined, type: String}) fixedPers!: string
   @Prop({default: undefined, type: String}) priority!: string
   @Prop({default: undefined, type: Array}) labels!: Label[]
 }

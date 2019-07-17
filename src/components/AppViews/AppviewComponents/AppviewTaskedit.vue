@@ -2,7 +2,8 @@
   <div class='task-adder'>
     <div>
       <transition name='fade'>
-        <view-tags v-if='priority || getLabels.length > 0'
+        <view-tags v-if='priority || fixedPers || getLabels.length > 0'
+          :fixed-pers='fixedPers'
           :priority='priority'
           :labels='getLabels'
           @clearpriority="v => priority = ''"
@@ -87,7 +88,8 @@ export default class AppviewTaskedit extends Vue {
   @Prop({default: 'Add task', type: String}) btn!: string
   @Prop({default: false, type: Boolean}) closeOnSave!: boolean
   @Prop(Object) task!: Task
-  @Prop(String) fixedTag!: string
+  @Prop(String) fixedPers!: string
+  @Prop(Array) defaultLabels!: Label[]
   @Prop({default: false, type: Boolean}) allowPriority!: boolean
   @Prop({default: false, type: Boolean}) allowLabels!: boolean
 
@@ -123,6 +125,8 @@ export default class AppviewTaskedit extends Vue {
   created() {
     if (this.task)
       this.getDataFromTask()
+    if (this.defaultLabels)
+      this.labels = this.defaultLabels.map(el => el.id)
   }
 
   getDataFromTask() {
@@ -140,7 +144,7 @@ export default class AppviewTaskedit extends Vue {
   }
   enter() {
     if (this.value)
-      this.$emit('enter', {name: this.value, priority: this.priority})
+      this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels})
     this.value = ''
   }
   removeLabel(id: string) {

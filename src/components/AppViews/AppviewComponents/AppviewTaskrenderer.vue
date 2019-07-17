@@ -6,7 +6,6 @@
         :task='task'
         :deselect-all='deselectAll'
         :allow-priority='allowPriority'
-        :fixed-tag='fixedTag'
         :allow-drag='numberOfSelected > 0'
 
         :data-vid='task.id'
@@ -16,7 +15,8 @@
       <task-adder
         class='handle'
         key='task-adder'
-        :fixed-tag='fixedTag'
+        :fixed-pers='fixedPers'
+        :default-labels='defaultLabels'
         :allow-priority='allowPriority'
         :allow-labels='allowLabels'
         @enter='add'
@@ -41,7 +41,7 @@ import TaskAdder from '@/components/AppViews/AppviewComponents/AppviewTaskAdder.
 
 Sortable.mount(new MultiDrag(), new AutoScroll())
 
-import { Task } from '../../../interfaces/app'
+import { Task, Label } from '../../../interfaces/app'
 
 @Component({
   components: {
@@ -53,9 +53,10 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({required: true, type: String}) group!: string
   @Prop({required: true, type: String}) id!: string
-  @Prop(String) fixedTag!: string
   @Prop({default: false, type: Boolean}) allowPriority!: boolean
   @Prop({default: false, type: Boolean}) allowLabels!: boolean
+  @Prop({default: undefined, type: Array}) defaultLabels!: Label[]
+  @Prop(String) fixedPers!: string
   @Prop(Array) tasks!: Task[]
 
   @Getter isDesktop!: boolean
