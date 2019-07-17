@@ -77,16 +77,16 @@
         <div class='margin'></div>
       </div>
       <task-renderer
-        group='inbox'
-        id='appnavinbox'
+        group='customperspective'
+        id='customperspectiveview'
         :default-labels='perspectiveData.includeCustomLabels'
         :default-priority='perspectiveData.priority'
-        :tasks='getTasks'
+        :tasks='sortedViewTasks'
         :allow-priority='true'
         :allow-labels='true'
         @update='onUpdate'
         @selected='onSelect'
-        @add='addTask'
+        @add='addPersTask'
       />
     </div>
     <div class='margin-task' :class='platform'></div>
@@ -100,6 +100,7 @@ import { Mutation, Getter, State, namespace } from 'vuex-class'
 
 const labelsVuex = namespace('label')
 const persVuex = namespace('perspective')
+const taskVuex = namespace('task')
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
@@ -110,7 +111,7 @@ import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeaderti
 
 import appUtils from '@/utils/app'
 
-import { Perspective, ListIcon, Label } from '../../../interfaces/app'
+import { Perspective, ListIcon, Label, Task } from '../../../interfaces/app'
 
 @Component({
   components: {
@@ -128,12 +129,17 @@ export default class PerspectiveAppview extends Vue {
   @Getter perspectiveData!: Perspective | undefined
   @Mutation pushView!: (obj: {view: string, viewType: string}) => void
 
+  @taskVuex.State tasks!: Task[]
+  @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, position: number, order: string[], collection: string}) => void
+  @taskVuex.Action deleteTasksById!: (ids: string[]) => void
+
   @labelsVuex.State('labels') savedLabels!: Label[]
   @labelsVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
   @persVuex.Action addLabelToPerspective!: (obj: {id: string, labelId: string}) => Label[]
   @persVuex.Action removeLabelFromPerspective!: (obj: {id: string, labelId: string}) => Label[]
   @persVuex.Action savePerspectivePriority!: (obj: {id: string, priority: string}) => Label[]
+  @persVuex.Action saveTaskOrder!: (obj: {order: string[], id: string, collection: string}) => void
 
   @Prop(String) pers!: string
 
@@ -216,17 +222,110 @@ export default class PerspectiveAppview extends Vue {
   onSelect(ids: string[]) {
     this.selected = ids
   }
-  onUpdate(ids: string) {
-
+  onUpdate(ids: string[]) {
+    if (this.perspectiveData)
+      this.saveTaskOrder({
+        order: ids,
+        id: this.perspectiveData.id,
+        collection: 'customPerspectives',
+      })
+  }
+  addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
+    if (this.perspectiveData)
+      this.addTask({
+        task: {
+          name: obj.name,
+          priority: obj.priority as any,
+          labels: obj.labels,
+        },
+        position: obj.position,
+        perspectiveId: this.perspectiveData.id,
+        order: obj.order,
+        collection: 'customPerspectives',
+      } as any)
   }
   selectSettingsOption(value: string) {
-
+    const pers = this.perspectiveData as Perspective
+    if (value === 'Sort inbox tasks by name') {
+      const tasks: Task[] = this.viewTasks
+      tasks.sort((a, b) => a.name.localeCompare(b.name))
+      const ids: string[] = []
+      for (const el of tasks)
+        ids.push(el.id)
+      this.saveTaskOrder({
+        id: pers.id,
+        order: ids,
+        collection: 'customPerspectives',
+      })
+    } else if (value === 'Sort inbox tasks by priority') {
+      const tasks = this.viewTasks
+      tasks.sort((a, b) => {
+        const priA = a.priority
+        const priB = b.priority
+        switch (priA) {
+          case 'Low priority':
+            switch (priB) {
+              case 'Low priority': return 0
+              case 'Medium priority': return 1
+              case 'High priority': return 1
+              default: return -1
+            }
+          case 'Medium priority':
+            switch (priB) {
+              case 'Medium priority': return 0
+              case 'High priority': return 1
+              case 'Low priority': return -1
+              default: return -1
+            }
+          case 'High priority':
+            switch (priB) {
+              case 'High priority': return 0
+              case 'Low priority': return -1
+              case 'Medium priority': return -1
+              default: return -1
+            }
+        }
+        return 0
+      })
+      const ids: string[] = []
+      for (const el of tasks)
+        ids.push(el.id)
+      this.saveTaskOrder({
+        id: pers.id,
+        order: ids,
+        collection: 'customPerspectives',
+      })
+    }
   }
-  addTask(obj: {name: string, priority: string, position: number, labels: string[]}) {
-
+  deleteSelected() {
+    this.deleteTasksById(this.selected)
   }
 
-  get getTasks() {
+  get viewTasks() {
+    if (this.perspectiveData) {
+      let tasks = this.tasks
+      const pers = this.perspectiveData as Perspective
+      if (pers.priority !== '')
+        tasks = tasks.filter(el => el.priority === pers.priority)
+      if (pers.includeCustomLabels.length > 0)
+        tasks = tasks.filter(el => {
+          let contains = false
+          for (const id of pers.includeCustomLabels)
+            if (el.labels.includes(id)) {
+              contains = true
+              break
+            }
+          return contains
+        })
+      return tasks
+    }
+    return []
+  }
+  get sortedViewTasks() {
+    if (this.perspectiveData) {
+      const ord = appUtils.fixOrder(this.viewTasks, this.perspectiveData.order)
+      return appUtils.sortArrayByIds(this.viewTasks, ord)
+    }
     return []
   }
   get getPersLabels() {
@@ -248,7 +347,7 @@ export default class PerspectiveAppview extends Vue {
     if (!this.loaded && this.currentAppSection !== 'overview' && this.isDesktop) {
       this.showing = true
       this.loaded = true
-    }
+    } else this.showing = false
   }
 }
 

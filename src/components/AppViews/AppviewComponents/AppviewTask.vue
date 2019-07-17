@@ -32,6 +32,7 @@
       <task-edit key='showing'
         :fixed-tag='fixedPers'
         :default-labels='task.labels'
+        :default-value='task.name'
         :default-priority='task.priority'
         :allow-priority='true'
         :allow-labels='true'
