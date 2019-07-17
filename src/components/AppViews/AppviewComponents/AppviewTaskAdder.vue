@@ -8,6 +8,7 @@
       <task-edit key='showing' v-else
         :fixed-pers='fixedPers'
         :default-labels='defaultLabels'
+        :default-priority='defaultPriority'
         :allow-priority='allowPriority'
         :allow-labels='allowLabels'
         @cancel='showing = false'
@@ -36,6 +37,7 @@ const taskVuex = namespace('task')
 export default class TaskAdder extends Vue {
   @Prop(String) fixedPers!: string
   @Prop(Array) defaultLabels!: string
+  @Prop(String) defaultPriority!: string
   @Prop({default: false, type: Boolean}) allowPriority!: boolean
   @Prop({default: false, type: Boolean}) allowLabels!: boolean
 

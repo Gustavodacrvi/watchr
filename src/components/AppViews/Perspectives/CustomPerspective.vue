@@ -80,6 +80,7 @@
         group='inbox'
         id='appnavinbox'
         :default-labels='getPersLabels'
+        :default-priority='priority'
         :tasks='getTasks'
         :allow-priority='true'
         :allow-labels='true'
@@ -135,18 +136,18 @@ export default class PerspectiveAppview extends Vue {
 
   @Prop(String) pers!: string
 
+  search: string = ''
+  selected: string[] = []
+  priority: string = ''
+  showing: boolean = true
+  hided: boolean = false
+
   created() {
     this.pushView({
       view: this.pers,
       viewType: 'perspective',
     })
   }
-
-  search: string = ''
-  selected: string[] = []
-  priority: string = ''
-  showing: boolean = true
-  hided: boolean = false
 
   priorityOptions: ListIcon[] = [
    {

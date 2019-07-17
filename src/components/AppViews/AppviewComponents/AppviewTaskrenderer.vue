@@ -17,6 +17,7 @@
         key='task-adder'
         :fixed-pers='fixedPers'
         :default-labels='defaultLabels'
+        :default-priority='defaultPriority'
         :allow-priority='allowPriority'
         :allow-labels='allowLabels'
         @enter='add'
@@ -55,6 +56,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop({required: true, type: String}) id!: string
   @Prop({default: false, type: Boolean}) allowPriority!: boolean
   @Prop({default: false, type: Boolean}) allowLabels!: boolean
+  @Prop({default: undefined, type: String}) defaultPriority!: string
   @Prop({default: undefined, type: Array}) defaultLabels!: Label[]
   @Prop(String) fixedPers!: string
   @Prop(Array) tasks!: Task[]

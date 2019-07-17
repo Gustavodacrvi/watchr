@@ -89,6 +89,7 @@ export default class AppviewTaskedit extends Vue {
   @Prop({default: false, type: Boolean}) closeOnSave!: boolean
   @Prop(Object) task!: Task
   @Prop(String) fixedPers!: string
+  @Prop(String) defaultPriority!: string
   @Prop(Array) defaultLabels!: Label[]
   @Prop({default: false, type: Boolean}) allowPriority!: boolean
   @Prop({default: false, type: Boolean}) allowLabels!: boolean
@@ -127,6 +128,8 @@ export default class AppviewTaskedit extends Vue {
       this.getDataFromTask()
     if (this.defaultLabels)
       this.labels = this.defaultLabels.map(el => el.id)
+    if (this.defaultPriority)
+      this.priority = this.defaultPriority as any
   }
 
   getDataFromTask() {

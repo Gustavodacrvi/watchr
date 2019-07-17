@@ -52,14 +52,18 @@
         <p class='description txt'>
           {{ inboxPers.description }}
         </p>
-        <div class='margin'></div>
-        <view-tags
-          fixed-tag='Inbox'
-          :search='search'
-          :priority='priority'
-          @clearsearch="v => search = ''"
-          @clearpriority="v => priority = ''"
-        />
+        <transition name='fade'>
+          <div v-if='search || priority'>
+            <div class='margin'></div>
+            <view-tags
+              fixed-tag='Inbox'
+              :search='search'
+              :priority='priority'
+              @clearsearch="v => search = ''"
+              @clearpriority="v => priority = ''"
+            />
+          </div>
+        </transition>
         <div class='margin'></div>
       </div>
       <task-renderer
@@ -67,6 +71,7 @@
         group='inbox'
         id='appnavinbox'
         fixed-pers='Inbox'
+        :default-priority='priority'
         :allow-priority='true'
         @update='onUpdate'
         @selected='onSelect'
