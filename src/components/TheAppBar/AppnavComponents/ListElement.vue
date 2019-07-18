@@ -110,7 +110,7 @@ export default class ListRenderer extends Vue {
   }
   go() {
     if (!this.showHandle)
-      this.$router.push(`/user/${this.route}?pers=${this.name}`)
+      this.$router.push(`/user?${this.route}=${this.name}`)
   }
 
   get showOptionsMobile(): boolean {

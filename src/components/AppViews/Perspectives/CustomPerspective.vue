@@ -313,10 +313,7 @@ export default class PerspectiveAppview extends Vue {
 
   @Watch('$route')
   onChange() {
-    this.pushView({
-      view: this.$route.params.persname,
-      viewType: 'perspective',
-    })
+    this.updateView()
   }
 
   @Watch('currentAppSection')

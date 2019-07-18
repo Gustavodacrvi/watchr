@@ -90,7 +90,7 @@ import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 
-import { Perspective, Label, Task, ListIcon } from '../../../interfaces/app'
+import { Perspective, Label, Task, ListIcon } from '../../../../interfaces/app'
 import appUtils from '@/utils/app'
 
 const labelVuex = namespace('label')
