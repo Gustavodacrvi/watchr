@@ -70,7 +70,7 @@ export default class LabelAppnav extends Vue {
   }
 
   get activePers(): string {
-    if (this.viewType === 'perspective')
+    if (this.viewType === 'label')
       return this.viewName
     return ''
   }

@@ -35,7 +35,6 @@ interface Actions {
   deleteLabelsById: (context: ActionContext, ids: string[]) => void
   editLabelNameById: (context: ActionContext, obj: {id: string, name: string}) => void
   sortLabelsByName: (context: ActionContext) => void
-  addDefaultSmartLabels: (context: ActionContext) => void
   addLabelsOrder: (context: ActionContext, id: string) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
@@ -125,11 +124,32 @@ export default {
         })
     },
     addLabelsOrder({ rootState }, id: string) {
-      if (rootState.firestore)
-        rootState.firestore.collection('labelsOrder').doc(id).set({
+      if (rootState.firestore) {
+        const batch = rootState.firestore.batch()
+
+        let ref = rootState.firestore.collection('labels').doc()
+        const somedayId = ref.id
+        batch.set(ref, {
           userId: id,
-          order: [],
+          name: 'Someday',
         })
+
+        ref = rootState.firestore.collection('labels').doc()
+        const anytimeId = ref.id
+        batch.set(ref, {
+          userId: id,
+          name: 'Anytime',
+        }) 
+
+        const orderRef = rootState.firestore.collection('labelsOrder').doc(id)
+        batch.set(orderRef, {
+          userId: id,
+          order: [anytimeId, somedayId],
+        })
+
+        batch.commit()
+        return {somedayId, anytimeId}
+      }
     },
   } as Actions,
 }

@@ -189,12 +189,15 @@ export default class PerspectiveAppview extends Vue {
       this.showing = true
       this.loaded = true
     }
+    this.updateView()
+  }
+
+  updateView() {
     this.pushView({
       view: this.pers,
       viewType: 'perspective',
     })
   }
-
   toggleHide() {
     if (!this.isDesktop)
       this.hided = !this.hided
@@ -322,6 +325,10 @@ export default class PerspectiveAppview extends Vue {
       this.showing = true
       this.loaded = true
     } else this.showing = false
+  }
+  @Watch('perspectiveData')
+  onChange3() {
+    this.updateView()
   }
 }
 

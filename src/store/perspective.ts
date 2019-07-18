@@ -38,7 +38,7 @@ interface ActionContext {
 interface Actions {
   deletePerspectivesById: (context: ActionContext, ids: string[]) => void
   getData: (context: ActionContext) => void
-  addDefaultSmartPerspectives: (context: ActionContext, id: string) => void
+  addDefaultSmartPerspectives: (context: ActionContext, {id: string, someday: string, anytime: string}) => void
   saveSmartOrder: (context: ActionContext, ids: string[]) => void
   saveCustomOrder: (context: ActionContext, ids: string[]) => void
   togglePerspectivesPin: (context: ActionContext, arr: Array<{id: string, pin: boolean}>) => void
@@ -330,7 +330,7 @@ export default {
         })
       }
     },
-    addDefaultSmartPerspectives({ rootState }, id) {
+    addDefaultSmartPerspectives({ rootState }, {id, someday, anytime}) {
       if (rootState.firestore) {
         const batch = rootState.firestore.batch()
 
@@ -356,9 +356,27 @@ export default {
             name: 'Upcoming',
             pin: true,
             numberOfTasks: false,
-            isSmart: false,
+            isSmart: true,
             icon: 'calendar-alt',
             iconColor: '#FF6B66',
+          },
+        ]
+        const customPerspectives: any = [
+          {
+            name: 'Anytime',
+            pin: true,
+            numberOfTasks: true,
+            isSmart: false,
+            icon: 'layer-group',
+            iconColor: '#88DDB7',
+          },
+          {
+            name: 'Someday',
+            pin: true,
+            numberOfTasks: false,
+            isSmart: false,
+            icon: 'archive',
+            iconColor: '#E2B983',
           },
         ]
 
@@ -386,11 +404,40 @@ export default {
             obj.description = per.description
           batch.set(ref, obj)
         }
-        const orderRef = rootState.firestore.collection('perspectivesOrder').doc(id)
-        batch.set(orderRef, {
+        let orderRef = rootState.firestore.collection('perspectivesOrder').doc(id)
+        const ids2 = []
+        for (const per of customPerspectives) {
+          const ref = rootState.firestore.collection('customPerspectives').doc()
+          ids2.push(ref.id)
+          const obj: any = {
+            userId: id,
+            name: per.name,
+            numberOfTasks: per.numberOfTasks,
+            pin: per.pin,
+            icon: per.icon,
+            iconColor: per.iconColor,
+            description: '',
+            order: [],
+            isSmart: per.isSmart,
+            priority: '',
+            excludeSmartLabels: [],
+            includeSmartLabels: [],
+            excludeCustomLabels: [],
+            includeCustomLabels: [],
+          }
+          if (per.description)
+            obj.description = per.description
+          if (per.name === 'Someday')
+            per.includeCustomLabels = [someday]
+          else if (per.name === 'Anytime')
+            per.includeCustomLabels = [anytime]
+          batch.set(ref, obj)
+        }
+        orderRef = rootState.firestore.collection('perspectivesOrder').doc(id)
+        batch.update(orderRef, {
           userId: id,
           smartOrder: ids,
-          customOrder: [],
+          customOrder: ids2,
         })
 
         batch.commit()
