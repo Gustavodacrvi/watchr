@@ -13,7 +13,17 @@
             class='content-icon fas fa-exclamation fa-sm'
             :style='{color: exclamationColor}'
           ></i>
+          <i v-if='taskLabels && taskLabels.length > 0'
+            class='fade content-icon fas fa-tags fa-sm'
+          ></i>
         </span>
+        <transition name='fade'>
+          <span v-if='onHover && taskLabels && taskLabels.length > 0' class='txt fade'>
+            <span v-for='lab in taskLabels'
+              :key='lab'
+            >{{ lab }}</span>
+          </span>
+        </transition>
       </div>
       <div class='task-options' :class='{handle: allowDragAndDrop}'>
         <transition name='fade'>
@@ -52,9 +62,10 @@ import { State, Getter, namespace } from 'vuex-class'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
 
-import { Task, ListIcon } from '../../../interfaces/app'
+import { Task, ListIcon, Label } from '../../../interfaces/app'
 
 const taskVuex = namespace('task')
+const labelVuex = namespace('label')
 
 @Component({
   components: {
@@ -73,6 +84,8 @@ export default class AppviewTask extends Vue {
 
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string}) => void
+
+  @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
   clicked: boolean = false
   onHover: boolean = false
@@ -127,6 +140,9 @@ export default class AppviewTask extends Vue {
   get allowDragAndDrop(): boolean {
     return this.allowDrag && !this.isDesktop
   }
+  get taskLabels(): string[] {
+    return this.getLabelsByIds(this.task.labels).map(el => el.name)
+  }
 
   @Watch('deselectAll')
   onChange() {
@@ -154,10 +170,18 @@ export default class AppviewTask extends Vue {
   margin: 0 6px;
 }
 
+.fade {
+  font-size: .75em;
+  opacity: .5;
+}
+
 .content {
   flex-basis: 100%;
   margin: 6px 0;
   margin-left: 6px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
 }
 
 .sortable-selected.light {

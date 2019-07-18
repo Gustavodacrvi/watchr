@@ -38,7 +38,7 @@ interface ActionContext {
 interface Actions {
   deletePerspectivesById: (context: ActionContext, ids: string[]) => void
   getData: (context: ActionContext) => void
-  addDefaultSmartPerspectives: (context: ActionContext, {id: string, someday: string, anytime: string}) => void
+  addDefaultSmartPerspectives: (context: ActionContext, obj: {id: string, someday: string, anytime: string}) => void
   saveSmartOrder: (context: ActionContext, ids: string[]) => void
   saveCustomOrder: (context: ActionContext, ids: string[]) => void
   togglePerspectivesPin: (context: ActionContext, arr: Array<{id: string, pin: boolean}>) => void
