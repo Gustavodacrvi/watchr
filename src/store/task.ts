@@ -26,6 +26,7 @@ interface ActionContext {
 interface Actions {
   // tslint:disable-next-line:max-line-length
   updateTask: (context: ActionContext, obj: {name: string, priority: string, id: string, labels: []}) => void
+  // tslint:disable-next-line:max-line-length
   addTask: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[], collection: string}) => void
   deleteTasksById: (context: ActionContext, ids: string[]) => void
   [key: string]: (context: ActionContext, payload: any) => any

@@ -2,6 +2,8 @@
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
 
+import { Task } from '@/interfaces/app'
+
 export default {
   AsyncComponent(comp: any): any {
     return () => ({
@@ -57,5 +59,35 @@ export default {
   },
   deParseMomentTimeZone(str: string): string {
     return str.replace(', ', '/').replace(' ', '_')
+  },
+  sortTasksByPriority(tasks: Task[]) {
+    tasks.sort((a, b) => {
+      const priA = a.priority
+      const priB = b.priority
+      switch (priA) {
+        case 'Low priority':
+          switch (priB) {
+            case 'Low priority': return 0
+            case 'Medium priority': return 1
+            case 'High priority': return 1
+            default: return -1
+          }
+        case 'Medium priority':
+          switch (priB) {
+            case 'Medium priority': return 0
+            case 'High priority': return 1
+            case 'Low priority': return -1
+            default: return -1
+          }
+        case 'High priority':
+          switch (priB) {
+            case 'High priority': return 0
+            case 'Low priority': return -1
+            case 'Medium priority': return -1
+            default: return -1
+          }
+      }
+      return 0
+    })
   },
 }

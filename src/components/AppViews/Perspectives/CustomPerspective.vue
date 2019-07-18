@@ -130,6 +130,7 @@ export default class PerspectiveAppview extends Vue {
   @Mutation pushView!: (obj: {view: string, viewType: string}) => void
 
   @taskVuex.State tasks!: Task[]
+  // tslint:disable-next-line:max-line-length
   @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, position: number, order: string[], collection: string}) => void
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
 
@@ -259,34 +260,7 @@ export default class PerspectiveAppview extends Vue {
       })
     } else if (value === 'Sort inbox tasks by priority') {
       const tasks = this.viewTasks
-      tasks.sort((a, b) => {
-        const priA = a.priority
-        const priB = b.priority
-        switch (priA) {
-          case 'Low priority':
-            switch (priB) {
-              case 'Low priority': return 0
-              case 'Medium priority': return 1
-              case 'High priority': return 1
-              default: return -1
-            }
-          case 'Medium priority':
-            switch (priB) {
-              case 'Medium priority': return 0
-              case 'High priority': return 1
-              case 'Low priority': return -1
-              default: return -1
-            }
-          case 'High priority':
-            switch (priB) {
-              case 'High priority': return 0
-              case 'Low priority': return -1
-              case 'Medium priority': return -1
-              default: return -1
-            }
-        }
-        return 0
-      })
+      appUtils.sortTasksByPriority(tasks)
       const ids: string[] = []
       for (const el of tasks)
         ids.push(el.id)
