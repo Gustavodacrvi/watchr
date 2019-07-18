@@ -9,41 +9,17 @@
         @toggle='v => showing = !showing'
       />
       <div class='right'>
-        <transition name='fade'>
-        <template v-if='selected && selected.length > 0 && isDesktop'>
-            <span class='header-options'>
-              <i class='fas icon pointer trash fa-trash fa-lg' @click='deleteSelected'></i>
-            </span>
-          </template>
-        </transition>
-        <span style='width: 35px'></span>
-        <span class='header-option'>
-          <drop-finder
-            class='icon pointer txt'
-            handle='search'
-            size='lg'
-            min-width='300px'
-            v-model='search'
-          />
-        </span>
-        <span class='header-option'>
-          <icon-options
-            handle='exclamation'
-            size='lg'
-            min-width='200px'
-            :options='priorityOptions'
-            @click='selectPriority'
-          />
-        </span>
-        <span class='header-options'>
-          <icon-options
-            handle='ellipsis-h'
-            size='lg'
-            min-width='300px'
-            :options='settingsOptions'
-            @click='selectSettingsOption'
-          />
-        </span>
+        <view-header-icons
+          v-model='search'
+          :show-task-options='selected && selected.length > 0'
+          :allow-search='true'
+          :allow-settings='true'
+          :allow-priority='true'
+
+          @delete='deleteSelected'
+          @priority='selectPriority'
+          @settings='selectSettingsOption'
+        />
       </div>
     </div>
     <div class='margin'></div>
@@ -52,14 +28,16 @@
         <p class='description txt'>
           {{ inboxPers.description }}
         </p>
-        <div class='margin'></div>
-        <view-tags
-          fixed-pers='Inbox'
-          :search='search'
-          :priority='priority'
-          @clearsearch="v => search = ''"
-          @clearpriority="v => priority = ''"
-        />
+        <div v-if='search || priority'>
+          <div class='margin'></div>
+          <view-tags
+            fixed-pers='Inbox'
+            :search='search'
+            :priority='priority'
+            @clearsearch="v => search = ''"
+            @clearpriority="v => priority = ''"
+          />
+        </div>
         <div class='margin'></div>
       </div>
       <task-renderer
@@ -80,13 +58,12 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import { State, Getter, Mutation, namespace } from 'vuex-class'
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
-import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
-import IconOptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
+import AppviewHeaderIcons from '@/components/AppViews/AppviewComponents/AppviewHeadericons.vue'
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 
@@ -99,10 +76,9 @@ const persVuex = namespace('perspective')
 
 @Component({
   components: {
-    'drop-finder': DropdownFinder,
     'view-tags': AppviewTags,
     'task-renderer': AppviewTaskrenderer,
-    'icon-options': IconOptions,
+    'view-header-icons': AppviewHeaderIcons,
     'header-title': HeaderTitle,
   },
 })
@@ -125,46 +101,14 @@ export default class PerspectiveAppview extends Vue {
   @persVuex.Getter inboxPers!: Perspective
   @persVuex.Action saveTaskOrder!: (obj: {id: string, order: string[], collection: string}) => void
 
+  @Prop(Boolean) value!: boolean
+
   search: string = ''
   priority: string = ''
   hided: boolean = false
   showing: boolean = false
   loaded: boolean = false
   selected: string[] = []
-  priorityOptions: ListIcon[] = [
-   {
-      name: 'High priority',
-      icon: 'exclamation',
-      iconColor: '#FF6B66',
-      size: 'lg',
-    },
-    {
-      name: 'Medium priority',
-      icon: 'exclamation',
-      iconColor: '#fff566',
-      size: 'lg',
-    },
-    {
-      name: 'Low priority',
-      icon: 'exclamation',
-      iconColor: '#70ff66',
-      size: 'lg',
-    },
-  ]
-  settingsOptions: ListIcon[] = [
-   {
-      name: 'Sort inbox tasks by name',
-      icon: 'sort-alpha-down',
-      iconColor: '',
-      size: 'lg',
-    },
-    {
-      name: 'Sort inbox tasks by priority',
-      icon: 'exclamation',
-      iconColor: '',
-      size: 'lg',
-    },
-  ]
   mobileSelectedOptions: ListIcon[] = [
     {
       name: 'Delete selected tasks',
@@ -175,10 +119,6 @@ export default class PerspectiveAppview extends Vue {
   ]
 
   created() {
-    if (!this.loaded && this.currentAppSection !== 'overview' && this.isDesktop) {
-      this.showing = true
-      this.loaded = true
-    }
     this.pushView({
       view: 'Inbox',
       viewType: 'perspective',
@@ -278,12 +218,9 @@ export default class PerspectiveAppview extends Vue {
         this.sendOptionsToNavbar(this.getMobileSelectedOptions())
       else this.hideNavBarOptions()
   }
-  @Watch('currentAppSection')
+  @Watch('value')
   onChange2() {
-    if (!this.loaded && this.currentAppSection !== 'overview' && this.isDesktop) {
-      this.showing = true
-      this.loaded = true
-    } else this.showing = false
+    this.showing = this.value
   }
 }
 

@@ -8,6 +8,7 @@
         <div class='view' :class='platform'>
           <transition name='fade' mode='out-in'>
             <component
+              v-model='showing'
               :is='getComp'
               :pers='pers'
               :label='label'
@@ -82,6 +83,7 @@ const persVuex = namespace('perspective')
 })
 export default class Guest extends Mixins(Mixin) {
   @State theme!: string
+  @State currentAppSection!: string
   @Getter loggedAndVerified!: boolean
   @Getter loggedAndNotVerified!: boolean
   @Getter anonymous!: boolean
@@ -97,11 +99,14 @@ export default class Guest extends Mixins(Mixin) {
   @Prop(String) label!: string
 
   waitingResponse: boolean = false
+  showing: boolean = false
 
   created() {
     if (this.undefinedPers)
       this.$router.replace('user?pers=' + this.initialPerspective)
     this.open()
+    if (this.currentAppSection !== 'overview' && this.isDesktop)
+      this.showing = true
   }
 
   open() {
@@ -139,6 +144,12 @@ export default class Guest extends Mixins(Mixin) {
     if (this.undefinedPers)
       this.$router.replace('user?pers=' + this.initialPerspective)
     this.open()
+  }
+  @Watch('currentAppSection')
+  onChange2() {
+    if (this.currentAppSection !== 'overview' && this.isDesktop)
+      this.showing = true
+    else this.showing = false
   }
 }
 
