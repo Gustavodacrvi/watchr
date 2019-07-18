@@ -81,14 +81,14 @@ export default class Guest extends Mixins(Mixin) {
   @Mutation openAppBar!: () => void
   @Mutation closeAppBar!: () => void
 
-  @persVuex.Getter pinedSmartPerspectives!: Perspective[]
+  @persVuex.Getter initialPerspective!: string
 
   waitingResponse: boolean = false
   loaded: boolean = false
 
   created() {
     if (this.$route.name === 'User' && !this.loaded) {
-      this.$router.replace('user/pers?pers=' + this.pinedSmartPerspectives[0].name)
+      this.$router.replace('user/pers?pers=' + this.initialPerspective)
       this.loaded = true
     }
     if (this.$route.name !== 'User' && !this.loaded)
@@ -113,8 +113,8 @@ export default class Guest extends Mixins(Mixin) {
   }
   @Watch('pinedSmartPerspectives')
   onChange() {
-    if (!this.loaded && this.pinedSmartPerspectives[0]) {
-      this.$router.replace('user/pers/' + this.pinedSmartPerspectives[0].name.toLowerCase())
+    if (!this.loaded && this.initialPerspective) {
+      this.$router.replace('user/pers?pers=' + this.initialPerspective)
       this.loaded = true
     }
   }

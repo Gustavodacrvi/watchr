@@ -18,6 +18,7 @@ interface Getters {
   inboxPers: (state: States) => Perspective
   pinedSmartPerspectives: (state: States, getters: Getters) => void
   pinedCustomPerspectives: (state: States, getters: Getters) => void
+  initialPerspective: (state: States, getters: Getters) => void
   getCustomPerspectiveById: (state: States) => (id: string) => Perspective
   getNumberOfTasksByPerspectiveId: (state: States) => (id: string, tasks: Task[]) => number
 }
@@ -112,6 +113,12 @@ export default {
     },
     getCustomPerspectiveById: (state: States) => (id: string) => {
       return state.customPerspectives.find(el => el.id === id)
+    },
+    initialPerspective(state: States, getters: any) {
+      if (getters.pinedSmartPerspectives[0])
+        return getters.pinedSmartPerspectives[0].name
+      else if (getters.pinedCustomPerspectives[0])
+        return getters.pinedCustomPerspectives[0].name
     },
   } as Getters,
   actions: {

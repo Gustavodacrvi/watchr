@@ -69,6 +69,7 @@ export default class OverviewAppnav extends Vue {
   @persVuex.Getter sortedSmartPerspectives!: Perspective[]
   @persVuex.Getter pinedSmartPerspectives!: Perspective[]
   @persVuex.Getter sortedCustomPerspectives!: Perspective[]
+  @persVuex.Getter initialPerspective!: string
   @persVuex.Getter getNumberOfTasksByPerspectiveId!: (id: string, tasks: Task[]) => number
   @persVuex.Getter getCustomPerspectiveById!: (id: string) => Perspective
   @persVuex.Action saveSmartOrder!: (ids: string[]) => void
@@ -201,7 +202,7 @@ export default class OverviewAppnav extends Vue {
           this.deletePerspectivesById([id])
           const pers = this.getCustomPerspectiveById(id)
           if (pers && pers.name === this.viewName)
-            this.$router.replace('/user/pers?pers=Inbox')
+            this.$router.replace('/user/pers?pers=' + this.initialPerspective)
         },
       },
     ]
@@ -292,21 +293,19 @@ export default class OverviewAppnav extends Vue {
     return icons
   }
 
-get smartPers(): ListElement[] {
-    const els: ListElement[] = []
-    for (const per of this.pinedSmartPerspectives) {
-      let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
-      let show = true
-      if (per.showWhenNotEmpty && numberOfTasks === 0)
-        show = false
-      if (!per.numberOfTasks)
-        numberOfTasks = 0
-      els.push({
-        ...per, show, number: numberOfTasks,
-      })
+  get smartPers(): ListElement[] {
+      const els: ListElement[] = []
+      for (const per of this.pinedSmartPerspectives) {
+        let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
+        let show = true
+        if (!per.numberOfTasks)
+          numberOfTasks = 0
+        els.push({
+          ...per, show, number: numberOfTasks,
+        })
+      }
+      return els
     }
-    return els
-  }
   get customPers(): ListElement[] {
     const els: ListElement[] = []
     for (const per of this.sortedCustomPerspectives) {
@@ -330,7 +329,7 @@ get smartPers(): ListElement[] {
       return this.headerIcons
     else return this.headerCustomIcons
   }
-}
+  }
 
 </script>
 

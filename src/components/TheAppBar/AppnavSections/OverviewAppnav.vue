@@ -6,14 +6,16 @@
       :icons='[]'
       :selected='[]'
     />
-    <list-renderer
-      group='appnavoverview'
-      route='pers'
-      :disabled='true'
-      :list='smartPers'
-      :active='activePers'
-    />
-    <div class='margin'></div>
+    <div v-if='smartPers && smartPers.length > 0'>
+      <list-renderer
+        group='appnavoverview'
+        route='pers'
+        :disabled='true'
+        :list='smartPers'
+        :active='activePers'
+      />
+      <div class='margin'></div>
+    </div>
     <list-renderer
       group='appnavoverviewcustompers'
       route='pers'
