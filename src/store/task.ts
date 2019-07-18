@@ -28,6 +28,7 @@ interface Actions {
   updateTask: (context: ActionContext, obj: {name: string, priority: string, id: string, labels: []}) => void
   // tslint:disable-next-line:max-line-length
   addTask: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[], collection: string}) => void
+  addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[]}) => void
   deleteTasksById: (context: ActionContext, ids: string[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
@@ -96,6 +97,27 @@ export default {
           labels: task.labels,
         })
         const persRef = rootState.firestore.collection(collection).doc(perspectiveId)
+        batch.update(persRef, {
+          order: ord,
+        })
+
+        batch.commit()
+      }
+    },
+    addTaskLabel({ rootState }, {task, labelId, order, position}) {
+      if (rootState.firestore && rootState.uid) {
+        const batch = rootState.firestore.batch()
+
+        const ord = order.slice()
+        const ref = rootState.firestore.collection('tasks').doc()
+        ord.splice(position, 0, ref.id)
+        batch.set(ref, {
+          name: task.name,
+          priority: task.priority,
+          userId: rootState.uid,
+          labels: task.labels,
+        })
+        const persRef = rootState.firestore.collection('labels').doc(labelId)
         batch.update(persRef, {
           order: ord,
         })

@@ -67,7 +67,6 @@ const labelsVuex = namespace('label')
 const persVuex = namespace('perspective')
 const taskVuex = namespace('task')
 
-import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import AppviewHeaderIcons from '@/components/AppViews/AppviewComponents/AppviewHeadericons.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
@@ -177,7 +176,7 @@ export default class PerspectiveAppview extends Vue {
   }
   selectSettingsOption(value: string) {
     const pers = this.perspectiveData as Perspective
-    if (value === 'Sort inbox tasks by name') {
+    if (value === 'Sort tasks by name') {
       const tasks: Task[] = this.viewTasks
       tasks.sort((a, b) => a.name.localeCompare(b.name))
       const ids: string[] = []
@@ -188,7 +187,7 @@ export default class PerspectiveAppview extends Vue {
         order: ids,
         collection: 'customPerspectives',
       })
-    } else if (value === 'Sort inbox tasks by priority') {
+    } else if (value === 'Sort tasks by priority') {
       const tasks = this.viewTasks
       appUtils.sortTasksByPriority(tasks)
       const ids: string[] = []
@@ -212,15 +211,7 @@ export default class PerspectiveAppview extends Vue {
       if (pers.priority !== '')
         tasks = tasks.filter(el => el.priority === pers.priority)
       if (pers.includeCustomLabels.length > 0)
-        tasks = tasks.filter(el => {
-          let contains = false
-          for (const id of pers.includeCustomLabels)
-            if (el.labels.includes(id)) {
-              contains = true
-              break
-            }
-          return contains
-        })
+        tasks = appUtils.filterTasksByLabels(tasks, pers.includeCustomLabels)
       return tasks
     }
     return []

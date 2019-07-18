@@ -16,6 +16,7 @@
         class='handle'
         key='task-adder'
         :fixed-pers='fixedPers'
+        :fixed-label='fixedLabel'
         :default-labels='defaultLabels'
         :default-priority='defaultPriority'
         :allow-priority='allowPriority'
@@ -59,6 +60,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop({default: undefined, type: String}) defaultPriority!: string
   @Prop({default: undefined, type: Array}) defaultLabels!: string[]
   @Prop(String) fixedPers!: string
+  @Prop(String) fixedLabel!: string
   @Prop(Array) tasks!: Task[]
 
   @Getter isDesktop!: boolean

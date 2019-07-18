@@ -31,6 +31,7 @@ export interface FloatingButton {
 export interface Label {
   userId: string
   name: string
+  order: string[]
   id: string
 }
 

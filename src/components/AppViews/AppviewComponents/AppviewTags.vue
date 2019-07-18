@@ -24,7 +24,7 @@
         />
       </transition-group>
     </div>
-    <div v-if='labels && labels.length > 0' class='tags'>
+    <div class='tags'>
       <transition name='fade' mode='out-in'>
         <view-tag v-for='lab in labels'
           :key='lab.id'
@@ -35,6 +35,12 @@
           @click="$emit('removelabel', lab.id)"
         />
       </transition>
+      <view-tag key='fixedlabel' v-if='fixedLabel'
+        :name='fixedLabel'
+        :fixed='true'
+        icon='tag'
+        back-color='#FF6B66'
+      />
     </div>
   </div>
 </template>
@@ -54,10 +60,11 @@ import { Label } from '../../../interfaces/app'
   },
 })
 export default class AppviewTags extends Vue {
-  @Prop({default: undefined, type: String}) search!: string
-  @Prop({default: undefined, type: String}) fixedPers!: string
-  @Prop({default: undefined, type: String}) priority!: string
-  @Prop({default: undefined, type: Array}) labels!: Label[]
+  @Prop(String) search!: string
+  @Prop(String) fixedPers!: string
+  @Prop(String) fixedLabel!: string
+  @Prop(String) priority!: string
+  @Prop(Array) labels!: Label[]
 }
 
 </script>

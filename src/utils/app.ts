@@ -90,4 +90,15 @@ export default {
       return 0
     })
   },
+  filterTasksByLabels(tasks: Task[], labels: string[]) {
+    return tasks.filter(el => {
+      let contains = false
+      for (const id of labels)
+        if (el.labels.includes(id)) {
+          contains = true
+          break
+        }
+      return contains
+    })
+  }
 }

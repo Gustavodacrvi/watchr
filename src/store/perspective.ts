@@ -76,15 +76,7 @@ export default {
         if (pers.priority !== '')
           tasks = tasks.filter(el => el.priority === pers.priority)
         if (pers.includeCustomLabels.length > 0)
-          tasks = tasks.filter(el => {
-            let contains = false
-            for (const id of pers.includeCustomLabels)
-              if (el.labels.includes(id)) {
-                contains = true
-                break
-              }
-            return contains
-          })
+          tasks = appUtils.filterTasksByLabels(tasks, pers.includeCustomLabels)
         return tasks.length
       } else if (per.name === 'Inbox') {
         tasks = tasks.filter(el => el.labels.length === 0)

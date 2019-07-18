@@ -148,7 +148,7 @@ export default class PerspectiveAppview extends Vue {
     this.priority = value
   }
   selectSettingsOption(value: string) {
-    if (value === 'Sort inbox tasks by name') {
+    if (value === 'Sort tasks by name') {
       const tasks: Task[] = this.viewTasks
       tasks.sort((a, b) => a.name.localeCompare(b.name))
       const ids: string[] = []
@@ -159,7 +159,7 @@ export default class PerspectiveAppview extends Vue {
         order: ids,
         collection: 'smartPerspectives',
       })
-    } else if (value === 'Sort inbox tasks by priority') {
+    } else if (value === 'Sort tasks by priority') {
       const tasks = this.viewTasks
       appUtils.sortTasksByPriority(tasks)
       const ids: string[] = []

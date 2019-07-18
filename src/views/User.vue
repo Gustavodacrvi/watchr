@@ -64,6 +64,7 @@ import Mixin from '@/mixins/navBar'
 import appUtils from '@/utils/app'
 
 import TabSlider from '@/components/SlidersAndMenus/TabSlider.vue'
+import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 import { Perspective } from '../interfaces/app'
