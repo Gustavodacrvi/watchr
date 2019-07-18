@@ -14,11 +14,13 @@
           :show-task-options='selected && selected.length > 0'
           :allow-search='true'
           :allow-settings='true'
+          :allow-labels='true'
           :allow-priority='true'
 
           @delete='deleteSelected'
           @priority='selectPriority'
           @settings='selectSettingsOption'
+          @label='addLabel'
         />
       </div>
     </div>
@@ -33,21 +35,24 @@
           :fixed-pers='pers.name'
           :search='search'
           :priority='priority'
+          :labels='getLabels'
           @clearsearch="v => search = ''"
           @clearpriority="v => priority = ''"
+          @removelabel='removeLabel'
         />
         <div class='margin'></div>
       </div>
       <task-renderer
-        group='appnavinbox'
-        :id='`appnavinbox`'
-        :fixed-pers='pers.name'
+        group='appnavalltasks'
+        id='appnavalltasks'
         :tasks='getTasks'
+        :fixed-pers='pers.name'
         :default-priority='priority'
         :allow-priority='true'
+        :allow-labels='true'
         @update='onUpdate'
         @selected='onSelect'
-        @add='addInboxTask'
+        @add='addPersTask'
       />
     </div>
     <div class='margin-task' :class='platform'></div>
@@ -102,6 +107,7 @@ export default class PerspectiveAppview extends Vue {
 
   search: string = ''
   priority: string = ''
+  labels: string[] = []
   hided: boolean = false
   showing: boolean = false
   loaded: boolean = false
@@ -118,7 +124,7 @@ export default class PerspectiveAppview extends Vue {
   created() {
     this.showing = this.value
     this.pushView({
-      view: 'Inbox',
+      view: 'All tasks',
       viewType: 'perspective',
     })
   }
@@ -130,15 +136,22 @@ export default class PerspectiveAppview extends Vue {
       }
     return this.mobileSelectedOptions
   }
-  addInboxTask({name, priority, position, order}: {name: string, priority: string, position: number, order: string[]}) {
+  addLabel(label: Label) {
+    this.labels.push(label.id)
+  }
+  removeLabel(id: string) {
+    const index = this.labels.findIndex(el => el === id)
+    this.labels.splice(index, 1)
+  }
+  addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
     this.addTask({
       task: {
-        name,
-        priority,
-        labels: [],
+        name: obj.name,
+        priority: obj.priority,
+        labels: obj.labels,
       },
       perspectiveId: this.pers.id,
-      position, order,
+      position: obj.position, order: obj.order,
       collection: 'smartPerspectives',
     } as any)
   }
@@ -191,10 +204,10 @@ export default class PerspectiveAppview extends Vue {
   }
 
   get pers() {
-    return this.smartPerspective('Inbox')
+    return this.smartPerspective('Have tags')
   }
   get viewTasks(): Task[] {
-    return this.tasks.filter(el => el.labels.length === 0)
+    return this.tasks.filter(el => el.labels.length > 0)
   }
   get sortedTasks(): Task[] {
     if (this.pers) {
@@ -209,7 +222,12 @@ export default class PerspectiveAppview extends Vue {
       tasks = tasks.filter(el => el.name.includes(this.search))
     if (this.priority)
       tasks = tasks.filter(el => el.priority === this.priority)
+    if (this.labels && this.labels.length > 0)
+      tasks = appUtils.filterTasksByLabels(tasks, this.labels)
     return tasks
+  }
+  get getLabels(): Label[] {
+    return this.getLabelsByIds(this.labels)
   }
 
   @Watch('selected')

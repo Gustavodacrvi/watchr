@@ -2,9 +2,9 @@
   <div class='component'>
     <div class='header' :class='{pointer: !isDesktop}' @dblclick='toggleHide'>
       <header-title
-        :value='allTasksPers.name'
-        :icon='allTasksPers.icon'
-        :icon-color='allTasksPers.iconColor'
+        :value='pers.name'
+        :icon='pers.icon'
+        :icon-color='pers.iconColor'
         :showing='showing'
         @toggle='v => showing = !showing'
       />
@@ -27,12 +27,12 @@
     <div class='margin'></div>
     <div v-if='!hided'>
       <div v-if='showing'>
-        <p v-if='allTasksPers.description' class='description txt'>
-          {{ allTasksPers.description }}
+        <p v-if='pers.description' class='description txt'>
+          {{ pers.description }}
         </p>
         <div class='margin'></div>
         <view-tags
-          :fixed-pers='allTasksPers.name'
+          :fixed-pers='pers.name'
           :search='search'
           :priority='priority'
           :labels='getLabels'
@@ -46,7 +46,7 @@
         group='appnavalltasks'
         id='appnavalltasks'
         :tasks='getTasks'
-        :fixed-pers='allTasksPers.name'
+        :fixed-pers='pers.name'
         :default-priority='priority'
         :allow-priority='true'
         :allow-labels='true'
@@ -100,7 +100,7 @@ export default class PerspectiveAppview extends Vue {
 
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
-  @persVuex.Getter allTasksPers!: Perspective
+  @persVuex.Getter smartPerspective!: (name: string) => Perspective
   @persVuex.Action saveTaskOrder!: (obj: {id: string, order: string[], collection: string}) => void
 
   @Prop(Boolean) value!: boolean
@@ -150,7 +150,7 @@ export default class PerspectiveAppview extends Vue {
         priority: obj.priority,
         labels: obj.labels,
       },
-      perspectiveId: this.allTasksPers.id,
+      perspectiveId: this.pers.id,
       position: obj.position, order: obj.order,
       collection: 'smartPerspectives',
     } as any)
@@ -166,7 +166,7 @@ export default class PerspectiveAppview extends Vue {
       for (const el of tasks)
         ids.push(el.id)
       this.saveTaskOrder({
-        id: this.allTasksPers.id,
+        id: this.pers.id,
         order: ids,
         collection: 'smartPerspectives',
       })
@@ -177,7 +177,7 @@ export default class PerspectiveAppview extends Vue {
       for (const el of tasks)
         ids.push(el.id)
       this.saveTaskOrder({
-        id: this.allTasksPers.id,
+        id: this.pers.id,
         order: ids,
         collection: 'smartPerspectives',
       })
@@ -189,9 +189,9 @@ export default class PerspectiveAppview extends Vue {
   }
   onUpdate(ids: string[]) {
     const filtered = ids.filter(el => el !== 'task-adder')
-    if (!appUtils.arraysEqual(filtered, this.allTasksPers.order))
+    if (!appUtils.arraysEqual(filtered, this.pers.order))
       this.saveTaskOrder({
-        id: this.allTasksPers.id,
+        id: this.pers.id,
         order: ids.filter(el => el !== 'task-adder'),
         collection: 'smartPerspectives',
       })
@@ -203,12 +203,15 @@ export default class PerspectiveAppview extends Vue {
     this.deleteTasksById(this.selected)
   }
 
+  get pers() {
+    return this.smartPerspective('All tasks')
+  }
   get viewTasks(): Task[] {
     return this.tasks
   }
   get sortedTasks(): Task[] {
-    if (this.allTasksPers) {
-      const ord = appUtils.fixOrder(this.viewTasks, this.allTasksPers.order)
+    if (this.pers) {
+      const ord = appUtils.fixOrder(this.viewTasks, this.pers.order)
       return appUtils.sortArrayByIds(this.viewTasks, ord)
     }
     return []

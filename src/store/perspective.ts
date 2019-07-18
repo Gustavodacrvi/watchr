@@ -15,8 +15,7 @@ interface States {
 interface Getters {
   sortedSmartPerspectives: (state: States) => Perspective[]
   sortedCustomPerspectives: (state: States) => Perspective[]
-  inboxPers: (state: States) => Perspective
-  allTasksPers: (state: States) => Perspective
+  smartPerspective: (state: States) => (name: string) => Perspective
   pinedSmartPerspectives: (state: States, getters: Getters) => void
   pinedCustomPerspectives: (state: States, getters: Getters) => void
   initialPerspective: (state: States, getters: Getters) => void
@@ -82,14 +81,16 @@ export default {
       } else if (per.name === 'Inbox') {
         tasks = tasks.filter(el => el.labels.length === 0)
         return tasks.length
+      } else if (per.name === 'All tasks')
+        return tasks.length
+      else if (per.name === 'Have tags') {
+        tasks = tasks.filter(el => el.labels.length > 0)
+        return tasks.length
       }
       return 0
     },
-    inboxPers(state: States): Perspective {
-      return state.smartPerspectives.find(el => el.name === 'Inbox') as Perspective
-    },
-    allTasksPers(state: States): Perspective {
-      return state.smartPerspectives.find(el => el.name === 'All tasks') as Perspective
+    smartPerspective: (state: States) => (name: string): Perspective => {
+      return state.smartPerspectives.find(el => el.name === name) as Perspective
     },
     sortedSmartPerspectives(state: States): Perspective[] {
       // tslint:disable-next-line:max-line-length
@@ -345,7 +346,7 @@ export default {
             numberOfTasks: false,
             icon: 'tasks',
             isSmart: true,
-            iconColor: '#FF6B66',
+            iconColor: '#9CE283',
           },
           {
             name: 'Inbox',
@@ -362,6 +363,22 @@ export default {
             numberOfTasks: false,
             isSmart: true,
             icon: 'calendar-alt',
+            iconColor: '#FF6B66',
+          },
+          {
+            name: 'Have tags',
+            pin: false,
+            numberOfTasks: false,
+            isSmart: true,
+            icon: 'tags',
+            iconColor: '#FF6B66',
+          },
+          {
+            name: `Doesn't have tags`,
+            pin: false,
+            numberOfTasks: false,
+            isSmart: true,
+            icon: 'backspace',
             iconColor: '#FF6B66',
           },
         ]
