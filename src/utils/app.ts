@@ -100,5 +100,5 @@ export default {
         }
       return contains
     })
-  }
+  },
 }

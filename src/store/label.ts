@@ -147,7 +147,7 @@ export default {
           userId: id,
           name: 'Anytime',
           order: [],
-        }) 
+        })
 
         const orderRef = rootState.firestore.collection('labelsOrder').doc(id)
         batch.set(orderRef, {

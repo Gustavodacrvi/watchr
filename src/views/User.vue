@@ -124,8 +124,7 @@ export default class Guest extends Mixins(Mixin) {
         case 'Today': return 'app-' + this.pers
       }
       return 'app-custom-pers'
-    }
-    else if (this.label)
+    } else if (this.label)
       return 'app-custom-label'
   }
   get undefinedPers() {

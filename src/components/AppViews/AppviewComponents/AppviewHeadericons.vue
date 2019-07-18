@@ -69,7 +69,7 @@ export default class AppviewHeadericons extends Vue {
   @Getter isDesktop!: boolean
 
   @labelsVuex.State labels!: Label[]
-  
+
   @Prop(String) value!: string
   @Prop(Boolean) showTaskOptions!: boolean
   @Prop(Boolean) allowSearch!: boolean

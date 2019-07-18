@@ -297,7 +297,7 @@ export default class OverviewAppnav extends Vue {
       const els: ListElement[] = []
       for (const per of this.pinedSmartPerspectives) {
         let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
-        let show = true
+        const show = true
         if (!per.numberOfTasks)
           numberOfTasks = 0
         els.push({
@@ -310,7 +310,7 @@ export default class OverviewAppnav extends Vue {
     const els: ListElement[] = []
     for (const per of this.sortedCustomPerspectives) {
       let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
-      let show = true
+      const show = true
       if (!per.numberOfTasks)
         numberOfTasks = 0
       els.push({

@@ -85,7 +85,7 @@ import { Task, Label } from '../../../interfaces/app'
 export default class LabelPerspective extends Vue {
   @Getter isDesktop!: boolean
   @Getter platform!: string
-  
+
   @Prop(String) label!: string
 
   @labelVuex.State('labels') savedLabels!: Label[]
