@@ -16,6 +16,7 @@ interface Getters {
   sortedSmartPerspectives: (state: States) => Perspective[]
   sortedCustomPerspectives: (state: States) => Perspective[]
   inboxPers: (state: States) => Perspective
+  allTasksPers: (state: States) => Perspective
   pinedSmartPerspectives: (state: States, getters: Getters) => void
   pinedCustomPerspectives: (state: States, getters: Getters) => void
   initialPerspective: (state: States, getters: Getters) => void
@@ -86,6 +87,9 @@ export default {
     },
     inboxPers(state: States): Perspective {
       return state.smartPerspectives.find(el => el.name === 'Inbox') as Perspective
+    },
+    allTasksPers(state: States): Perspective {
+      return state.smartPerspectives.find(el => el.name === 'All tasks') as Perspective
     },
     sortedSmartPerspectives(state: States): Perspective[] {
       // tslint:disable-next-line:max-line-length
@@ -427,9 +431,10 @@ export default {
           }
           if (per.description)
             obj.description = per.description
-          if (per.name === 'Someday') {
-            per.includeCustomLabels = [someday, anytime]
-          }
+          if (per.name === 'Someday')
+            per.includeCustomLabels = [someday]
+          else if (per.name === 'Anytime')
+            per.includeCustomLabels = [anytime]
           batch.set(ref, obj)
         }
         orderRef = rootState.firestore.collection('perspectivesOrder').doc(id)

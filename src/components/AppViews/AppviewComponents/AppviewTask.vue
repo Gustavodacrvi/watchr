@@ -7,23 +7,26 @@
       @mouseenter='onHover = true'
       @mouseleave='onHover = false'
     >
-      <div class='content' @click='toggleElement' :class='{handle: allowDragAndDrop}'>
-        <span class='txt'>{{ task.name }}
-          <i v-if='task.priority'
-            class='content-icon fas fa-exclamation fa-sm'
-            :style='{color: exclamationColor}'
-          ></i>
-          <i v-if='taskLabels && taskLabels.length > 0'
-            class='fade content-icon fas fa-tags fa-sm'
-          ></i>
-        </span>
-        <transition name='fade'>
-          <span v-if='onHover && taskLabels && taskLabels.length > 0' class='txt fade'>
-            <span v-for='lab in taskLabels'
-              :key='lab'
-            >{{ lab }}</span>
-          </span>
-        </transition>
+      <div class='content-wrapper' @click='toggleElement' :class='{handle: allowDragAndDrop}'>
+        <div class='content'>
+          <div class='txt'>{{ task.name }}
+            <i v-if='task.priority'
+              class='content-icon fas fa-exclamation fa-sm'
+              :style='{color: exclamationColor}'
+            ></i>
+            <i v-if='taskLabels && taskLabels.length > 0'
+              class='fade content-icon fas fa-tags fa-sm'
+            ></i>
+          </div>
+          <transition name='fade'>
+            <div v-if='onHover && taskLabels && taskLabels.length > 0' class='txt fade'>
+              <span v-for='lab in taskLabels'
+                :key='lab'
+                class='lab'
+              >{{ lab }}</span>
+            </div>
+          </transition>
+        </div>
       </div>
       <div class='task-options' :class='{handle: allowDragAndDrop}'>
         <transition name='fade'>
@@ -161,7 +164,7 @@ export default class AppviewTask extends Vue {
   min-height: 40px;
 }
 
-.content, .task-options {
+.task-options {
   display: flex;
   align-items: center;
 }
@@ -170,18 +173,26 @@ export default class AppviewTask extends Vue {
   margin: 0 6px;
 }
 
+.lab {
+  margin-left: 4px;
+}
+
 .fade {
   font-size: .75em;
   opacity: .5;
 }
 
-.content {
+.content-wrapper {
   flex-basis: 100%;
   margin: 6px 0;
   margin-left: 6px;
-  justify-content: flex-start;
-  align-items: flex-start;
-  flex-direction: column;
+  position: relative;
+}
+
+.content {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .sortable-selected.light {

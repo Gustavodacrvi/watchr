@@ -25,16 +25,14 @@
       </transition-group>
     </div>
     <div class='tags'>
-      <transition name='fade' mode='out-in'>
-        <view-tag v-for='lab in labels'
-          :key='lab.id'
-          icon='tag'
-          back-color='#FF6B66'
-          :name='lab.name'
-          :fixed='false'
-          @click="$emit('removelabel', lab.id)"
-        />
-      </transition>
+      <view-tag v-for='lab in labels'
+        :key='lab.id'
+        icon='tag'
+        back-color='#FF6B66'
+        :name='lab.name'
+        :fixed='false'
+        @click="$emit('removelabel', lab.id)"
+      />
       <view-tag key='fixedlabel' v-if='fixedLabel'
         :name='fixedLabel'
         :fixed='true'

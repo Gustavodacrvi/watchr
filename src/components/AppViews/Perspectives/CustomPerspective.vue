@@ -25,7 +25,7 @@
     <div class='margin'></div>
     <div v-if='!hided'>
       <div v-if='showing'>
-        <p class='description txt'>
+        <p v-if='perspectiveData.description' class='description txt'>
           {{ perspectiveData.description }}
         </p>
         <div v-if='search || perspectiveData.priority || getPersLabels.length > 0'>

@@ -1,5 +1,5 @@
 <template>
-  <div class='right'>
+  <div class='right view-header-icons'>
     <transition name='fade'>
     <template v-if='showTaskOptions && isDesktop'>
         <span class='header-options'>

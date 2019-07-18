@@ -9,6 +9,7 @@
 
 .header {
   position: relative;
+  z-index: 50;
 }
 
 .right {

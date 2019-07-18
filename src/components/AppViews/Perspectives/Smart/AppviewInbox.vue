@@ -25,26 +25,24 @@
     <div class='margin'></div>
     <div v-if='!hided'>
       <div v-if='showing'>
-        <p class='description txt'>
+        <p v-if='inboxPers.description' class='description txt'>
           {{ inboxPers.description }}
         </p>
-        <div v-if='search || priority'>
-          <div class='margin'></div>
-          <view-tags
-            fixed-pers='Inbox'
-            :search='search'
-            :priority='priority'
-            @clearsearch="v => search = ''"
-            @clearpriority="v => priority = ''"
-          />
-        </div>
+        <div class='margin'></div>
+        <view-tags
+          :fixed-pers='inboxPers.name'
+          :search='search'
+          :priority='priority'
+          @clearsearch="v => search = ''"
+          @clearpriority="v => priority = ''"
+        />
         <div class='margin'></div>
       </div>
       <task-renderer
+        group='appnavinbox'
+        :id='`appnavinbox`'
+        :fixed-pers='inboxPers.name'
         :tasks='getTasks'
-        group='inbox'
-        id='appnavinbox'
-        fixed-pers='Inbox'
         :default-priority='priority'
         :allow-priority='true'
         @update='onUpdate'
@@ -95,7 +93,6 @@ export default class PerspectiveAppview extends Vue {
   @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, position: number, order: string[], collection: string}) => void
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
 
-  @labelVuex.Getter sortedLabels!: Label[]
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
   @persVuex.Getter inboxPers!: Perspective
@@ -119,6 +116,7 @@ export default class PerspectiveAppview extends Vue {
   ]
 
   created() {
+    this.showing = this.value
     this.pushView({
       view: 'Inbox',
       viewType: 'perspective',

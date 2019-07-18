@@ -67,7 +67,6 @@ export default class OverviewAppnav extends Vue {
 
   @persVuex.State smartOrder!: Perspective[]
   @persVuex.Getter sortedSmartPerspectives!: Perspective[]
-  @persVuex.Getter pinedSmartPerspectives!: Perspective[]
   @persVuex.Getter sortedCustomPerspectives!: Perspective[]
   @persVuex.Getter initialPerspective!: string
   @persVuex.Getter getNumberOfTasksByPerspectiveId!: (id: string, tasks: Task[]) => number
@@ -295,7 +294,7 @@ export default class OverviewAppnav extends Vue {
 
   get smartPers(): ListElement[] {
       const els: ListElement[] = []
-      for (const per of this.pinedSmartPerspectives) {
+      for (const per of this.sortedSmartPerspectives) {
         let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
         const show = true
         if (!per.numberOfTasks)
