@@ -1,5 +1,5 @@
 
-import { Perspective } from '@/interfaces/app'
+import { Perspective, Task } from '@/interfaces/app'
 
 import { States as RootState } from '@/store/index'
 import appUtils from '@/utils/app'
@@ -19,6 +19,7 @@ interface Getters {
   pinedSmartPerspectives: (state: States, getters: Getters) => void
   pinedCustomPerspectives: (state: States, getters: Getters) => void
   getCustomPerspectiveById: (state: States) => (id: string) => Perspective
+  getNumberOfTasksByPerspectiveId: (state: States) => (id: string, tasks: Task[]) => number
 }
 
 interface Mutations {
@@ -65,6 +66,31 @@ export default {
 
   } as Mutations,
   getters: {
+    getNumberOfTasksByPerspectiveId: (state: States) => (id: string, tasks: Task[]) => {
+      let per: Perspective | undefined = state.smartPerspectives.find(el => el.id === id)
+      if (!per)
+        per = state.customPerspectives.find(el => el.id === id) as Perspective
+      if (!per.isSmart) {
+        const pers = per as Perspective
+        if (pers.priority !== '')
+          tasks = tasks.filter(el => el.priority === pers.priority)
+        if (pers.includeCustomLabels.length > 0)
+          tasks = tasks.filter(el => {
+            let contains = false
+            for (const id of pers.includeCustomLabels)
+              if (el.labels.includes(id)) {
+                contains = true
+                break
+              }
+            return contains
+          })
+        return tasks.length
+      } else if (per.name === 'Inbox') {
+        tasks = tasks.filter(el => el.labels.length === 0)
+        return tasks.length
+      }
+      return 0
+    },
     inboxPers(state: States): Perspective {
       return state.smartPerspectives.find(el => el.name === 'Inbox') as Perspective
     },

@@ -4,6 +4,8 @@
       <list-element v-for='obj in list'
         :key='obj.id'
         :id='obj.id'
+        :show='obj.show'
+        :number='obj.number'
         :name='obj.name'
         :icon='obj.icon'
         :active='active'

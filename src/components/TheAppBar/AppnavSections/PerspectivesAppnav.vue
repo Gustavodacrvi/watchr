@@ -10,7 +10,7 @@
       <list-renderer
         group='appnavperspectives'
         route='pers'
-        :list='sortedSmartPerspectives'
+        :list='smartPers'
         :options='getOptions'
         :help-icons='helpIcons'
         :active='activePers'
@@ -22,7 +22,7 @@
       <list-renderer key='list' v-if='sortedCustomPerspectives && sortedCustomPerspectives.length > 0'
         group='appnavcustomperspectives'
         route='pers'
-        :list='sortedCustomPerspectives'
+        :list='customPers'
         :options='getOptionsCustom'
         :help-icons='helpIconsCustom'
         :active='activePers'
@@ -44,9 +44,10 @@ import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.v
 import AppnavDivision from '@/components/TheAppBar/AppnavComponents/AppnavDivision.vue'
 import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmessage.vue'
 
-import { Label, Perspective, ListIcon, SimpleAdder } from '@/interfaces/app'
+import { Label, Perspective, ListIcon, SimpleAdder, ListElement, Task } from '@/interfaces/app'
 
 const persVuex = namespace('perspective')
+const taskVuex = namespace('task')
 
 @Component({
   components: {
@@ -68,6 +69,7 @@ export default class OverviewAppnav extends Vue {
   @persVuex.Getter sortedSmartPerspectives!: Perspective[]
   @persVuex.Getter pinedSmartPerspectives!: Perspective[]
   @persVuex.Getter sortedCustomPerspectives!: Perspective[]
+  @persVuex.Getter getNumberOfTasksByPerspectiveId!: (id: string, tasks: Task[]) => number
   @persVuex.Getter getCustomPerspectiveById!: (id: string) => Perspective
   @persVuex.Action saveSmartOrder!: (ids: string[]) => void
   @persVuex.Action saveCustomOrder!: (ids: string[]) => void
@@ -75,6 +77,8 @@ export default class OverviewAppnav extends Vue {
   @persVuex.Action togglePerspectivesNumberOfTasks!: (obj: Array<{id: string, show?: boolean}>) => void
   @persVuex.Action togglePerspectivesShowWhenNotEmpty!: (obj: Array<{id: string, show?: boolean}>) => void
   @persVuex.Action deletePerspectivesById!: (ids: string[]) => void
+
+  @taskVuex.State tasks!: Task[]
 
   selected: string[] = []
   selectedType: 'custom' | 'smart' = 'custom'
@@ -237,7 +241,7 @@ export default class OverviewAppnav extends Vue {
     return icons
   }
   getOptions(per: Perspective) {
-    const icons: ListIcon[] = [
+        const icons: ListIcon[] = [
       {
         name: 'Pin perspective',
         icon: 'thumbtack',
@@ -247,9 +251,33 @@ export default class OverviewAppnav extends Vue {
           this.togglePerspectivesPin([{id}])
         },
       },
+      {
+        name: 'Show number of tasks',
+        icon: 'eye',
+        iconColor: '',
+        size: 'lg',
+        callback: (id: string) => {
+          this.togglePerspectivesNumberOfTasks([{id}])
+        },
+      },
+      {
+        name: 'Only show when not empty',
+        icon: 'exclamation',
+        iconColor: '',
+        size: 'lg',
+        callback: (id: string) => {
+          this.togglePerspectivesShowWhenNotEmpty([{id}])
+        },
+      },
     ]
     if (per.pin)
       icons[0].name = 'Unpin perspective'
+    if (per.numberOfTasks) {
+      icons[1].name = 'Hide number of tasks'
+      icons[1].icon = 'eye-slash'
+    }
+    if (per.showWhenNotEmpty)
+      icons[2].name = 'Always show perspective'
     return icons
   }
   helpIcons(per: Perspective) {
@@ -264,6 +292,34 @@ export default class OverviewAppnav extends Vue {
     return icons
   }
 
+get smartPers(): ListElement[] {
+    const els: ListElement[] = []
+    for (const per of this.pinedSmartPerspectives) {
+      let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
+      let show = true
+      if (per.showWhenNotEmpty && numberOfTasks === 0)
+        show = false
+      if (!per.numberOfTasks)
+        numberOfTasks = 0
+      els.push({
+        ...per, show, number: numberOfTasks,
+      })
+    }
+    return els
+  }
+  get customPers(): ListElement[] {
+    const els: ListElement[] = []
+    for (const per of this.sortedCustomPerspectives) {
+      let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
+      let show = true
+      if (!per.numberOfTasks)
+        numberOfTasks = 0
+      els.push({
+        ...per, show, number: numberOfTasks,
+      })
+    }
+    return els
+  }
   get activePers(): string {
     if (this.viewType === 'perspective')
       return this.viewName
