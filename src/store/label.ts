@@ -131,32 +131,35 @@ export default {
     },
     addLabelsOrder({ rootState }, id: string) {
       if (rootState.firestore) {
-        const batch = rootState.firestore.batch()
-
-        let ref = rootState.firestore.collection('labels').doc()
-        const somedayId = ref.id
-        batch.set(ref, {
-          userId: id,
-          name: 'Someday',
-          order: [],
+        return new Promise(resolve => {
+          const fire = rootState.firestore as any
+          const batch = fire.batch()
+  
+          let ref = fire.collection('labels').doc()
+          const somedayId = ref.id
+          batch.set(ref, {
+            userId: id,
+            name: 'Someday',
+            order: [],
+          })
+  
+          ref = fire.collection('labels').doc()
+          const anytimeId = ref.id
+          batch.set(ref, {
+            userId: id,
+            name: 'Anytime',
+            order: [],
+          })
+  
+          const orderRef = fire.collection('labelsOrder').doc(id)
+          batch.set(orderRef, {
+            userId: id,
+            order: [anytimeId, somedayId],
+          })
+  
+          batch.commit()
+          resolve({somedayId, anytimeId})
         })
-
-        ref = rootState.firestore.collection('labels').doc()
-        const anytimeId = ref.id
-        batch.set(ref, {
-          userId: id,
-          name: 'Anytime',
-          order: [],
-        })
-
-        const orderRef = rootState.firestore.collection('labelsOrder').doc(id)
-        batch.set(orderRef, {
-          userId: id,
-          order: [anytimeId, somedayId],
-        })
-
-        batch.commit()
-        return {somedayId, anytimeId}
       }
     },
   } as Actions,

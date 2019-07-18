@@ -28,7 +28,7 @@
         <div class='dual-drop-el'>
           <span class='drop-el txt'
             @click="pushPopUp('SigninPopup')">
-            <i class='fa sign-in-alt fas fa-sm'></i>
+            <i class='fa fas fa-sign-in-alt fa-sm'></i>
             Sign in
           </span>
           <hr class='thematic-break'>

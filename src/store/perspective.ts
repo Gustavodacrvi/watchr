@@ -336,6 +336,14 @@ export default {
             iconColor: '#FFE366',
           },
           {
+            name: 'All tasks',
+            pin: false,
+            numberOfTasks: false,
+            icon: 'tasks',
+            isSmart: true,
+            iconColor: '#FF6B66',
+          },
+          {
             name: 'Inbox',
             pin: true,
             numberOfTasks: true,
@@ -419,14 +427,13 @@ export default {
           }
           if (per.description)
             obj.description = per.description
-          if (per.name === 'Someday')
-            per.includeCustomLabels = [someday]
-          else if (per.name === 'Anytime')
-            per.includeCustomLabels = [anytime]
+          if (per.name === 'Someday') {
+            per.includeCustomLabels = [someday, anytime]
+          }
           batch.set(ref, obj)
         }
         orderRef = rootState.firestore.collection('perspectivesOrder').doc(id)
-        batch.update(orderRef, {
+        batch.set(orderRef, {
           userId: id,
           smartOrder: ids,
           customOrder: ids2,
