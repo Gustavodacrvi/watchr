@@ -33,6 +33,7 @@ export default new Router({
       component: AsyncComponent('./views/User.vue'),
       props: (route: any) => ({
         pers: route.query.pers,
+        label: route.query.label,
       }),
     },
     {

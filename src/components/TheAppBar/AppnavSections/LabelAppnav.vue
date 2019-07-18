@@ -8,7 +8,7 @@
     />
     <list-renderer v-if='sortedLabels && sortedLabels.length > 0'
       group='appnavlabels'
-      route='labels'
+      route='label'
       :list='sortedLabels'
       :options='getOptions'
       :active='activePers'

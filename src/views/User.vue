@@ -7,7 +7,11 @@
       <div class='view-wrapper background-color' :class='[platform, theme]'>
         <div class='view' :class='platform'>
           <transition name='fade' mode='out-in'>
-            <component :key='getComp' :pers='pers' :is='getComp'/>
+            <component
+              :is='getComp'
+              :pers='pers'
+              :label='label'
+            />
           </transition>
         </div>
       </div>
@@ -71,8 +75,9 @@ const persVuex = namespace('perspective')
     'form-button': FormButton,
     'app-Inbox': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewInbox.vue')),
     'app-Upcoming': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewUpcoming.vue')),
-    'app-custom': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/CustomPerspective.vue')),
     'app-Today': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewToday.vue')),
+    'app-custom-pers': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/CustomPerspective.vue')),
+    'app-custom-label': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/LabelPerspective.vue')),
   },
 })
 export default class Guest extends Mixins(Mixin) {
@@ -89,11 +94,12 @@ export default class Guest extends Mixins(Mixin) {
   @persVuex.Getter initialPerspective!: string
 
   @Prop(String) pers!: string
+  @Prop(String) label!: string
 
   waitingResponse: boolean = false
 
   created() {
-    if (!this.pers)
+    if (this.undefinedPers)
       this.$router.replace('user?pers=' + this.initialPerspective)
     this.open()
   }
@@ -105,12 +111,19 @@ export default class Guest extends Mixins(Mixin) {
       this.closeAppBar()
   }
   get getComp() {
-    switch (this.pers) {
-      case 'Inbox': return 'app-' + this.pers
-      case 'Upcoming': return 'app-' + this.pers
-      case 'Today': return 'app-' + this.pers
+    if (this.pers) {
+      switch (this.pers) {
+        case 'Inbox': return 'app-' + this.pers
+        case 'Upcoming': return 'app-' + this.pers
+        case 'Today': return 'app-' + this.pers
+      }
+      return 'app-custom-pers'
     }
-    return 'app-custom'
+    else if (this.label)
+      return 'app-custom-label'
+  }
+  get undefinedPers() {
+    return !this.pers && !this.label
   }
 
   @Watch('isDesktop')
@@ -123,7 +136,7 @@ export default class Guest extends Mixins(Mixin) {
   }
   @Watch('pinedSmartPerspectives')
   onChange() {
-    if (!this.pers)
+    if (this.undefinedPers)
       this.$router.replace('user?pers=' + this.initialPerspective)
     this.open()
   }
