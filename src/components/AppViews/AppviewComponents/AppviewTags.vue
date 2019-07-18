@@ -1,31 +1,31 @@
 <template>
   <div class='tags-wrapper'>
-    <transition name='fade'>
-      <div class='tags'>
-        <view-tag v-if='fixedPers'
+    <div class='tags'>
+      <transition-group name='fade'>
+        <view-tag key='fixed' v-if='fixedPers'
           :name='fixedPers'
           :fixed='true'
           icon='layer-group'
           back-color='#83B7E2'
         />
-        <view-tag v-if="priority && priority !== ''"
+        <view-tag key='priority' v-if="priority && priority !== ''"
           icon='exclamation'
           back-color='#70ff66'
           :name='priority'
           :fixed='false'
           @click="$emit('clearpriority')"
         />
-        <view-tag v-if="search && search !== ''"
+        <view-tag key='search' v-if="search && search !== ''"
           icon='search'
           back-color='#88DDB7'
           :name='search'
           :fixed='false'
           @click="$emit('clearsearch')"
         />
-      </div>
-    </transition>
-    <div v-if='labels && labels.length > 0' class='tags'>
-      <transition-group name='fade'>
+      </transition-group>
+    </div>
+    <div class='tags'>
+      <transition name='fade' mode='out-in'>
         <view-tag v-for='lab in labels'
           :key='lab.id'
           icon='tag'
@@ -34,7 +34,13 @@
           :fixed='false'
           @click="$emit('removelabel', lab.id)"
         />
-      </transition-group>
+      </transition>
+      <view-tag key='fixedlabel' v-if='fixedLabel'
+        :name='fixedLabel'
+        :fixed='true'
+        icon='tag'
+        back-color='#FF6B66'
+      />
     </div>
   </div>
 </template>
@@ -54,10 +60,11 @@ import { Label } from '../../../interfaces/app'
   },
 })
 export default class AppviewTags extends Vue {
-  @Prop({default: undefined, type: String}) search!: string
-  @Prop({default: undefined, type: String}) fixedPers!: string
-  @Prop({default: undefined, type: String}) priority!: string
-  @Prop({default: undefined, type: Array}) labels!: Label[]
+  @Prop(String) search!: string
+  @Prop(String) fixedPers!: string
+  @Prop(String) fixedLabel!: string
+  @Prop(String) priority!: string
+  @Prop(Array) labels!: Label[]
 }
 
 </script>

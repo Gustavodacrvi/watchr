@@ -1,10 +1,10 @@
 <template>
   <div v-if='isDesktop'>
-    <i :class='`fas fa-${icon} fa-2x`' :style='{color: iconColor}'></i>
+    <i v-if='icon' :class='`fas fa-${icon} fa-2x`' :style='{color: iconColor}'></i>
     <span class='title'>
       {{ value }}
     </span>
-    <span style='width: 15px'></span>
+    <span v-if='icon' style='width: 15px'></span>
     <i class='txt angle icon pointer fas fa-angle-down fa-lg' :class="{'rotate': !showing}" @click="$emit('toggle')"></i>
   </div>
   <span v-else @click="$emit('toggle')" class='left'>

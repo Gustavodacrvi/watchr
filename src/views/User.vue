@@ -6,8 +6,13 @@
     >
       <div class='view-wrapper background-color' :class='[platform, theme]'>
         <div class='view' :class='platform'>
-          <transition name='fade'>
-            <router-view/>
+          <transition name='fade' mode='out-in'>
+            <component
+              v-model='showing'
+              :is='getComp'
+              :pers='pers'
+              :label='label'
+            />
           </transition>
         </div>
       </div>
@@ -59,6 +64,7 @@ import Mixin from '@/mixins/navBar'
 import appUtils from '@/utils/app'
 
 import TabSlider from '@/components/SlidersAndMenus/TabSlider.vue'
+import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 import { Perspective } from '../interfaces/app'
@@ -69,31 +75,39 @@ const persVuex = namespace('perspective')
   components: {
     'tab-slider': TabSlider,
     'form-button': FormButton,
+    'app-Inbox': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewInbox.vue')),
+    'app-Upcoming': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewUpcoming.vue')),
+    'app-Today': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewToday.vue')),
+    'app-custom-pers': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/CustomPerspective.vue')),
+    'app-custom-label': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/LabelPerspective.vue')),
   },
 })
 export default class Guest extends Mixins(Mixin) {
   @State theme!: string
+  @State currentAppSection!: string
   @Getter loggedAndVerified!: boolean
   @Getter loggedAndNotVerified!: boolean
   @Getter anonymous!: boolean
   @Getter isDesktop!: boolean
+  @Getter activePers!: Perspective
   @Getter platform!: boolean
   @Mutation openAppBar!: () => void
   @Mutation closeAppBar!: () => void
 
-  @persVuex.Getter pinedSmartPerspectives!: Perspective[]
+  @persVuex.Getter initialPerspective!: string
+
+  @Prop(String) pers!: string
+  @Prop(String) label!: string
 
   waitingResponse: boolean = false
-  loaded: boolean = false
+  showing: boolean = false
 
   created() {
-    if (this.$route.name === 'User' && !this.loaded) {
-      this.$router.replace('user/pers?pers=' + this.pinedSmartPerspectives[0].name)
-      this.loaded = true
-    }
-    if (this.$route.name !== 'User' && !this.loaded)
-      this.loaded = true
+    if (this.undefinedPers)
+      this.$router.replace('user?pers=' + this.initialPerspective)
     this.open()
+    if (this.currentAppSection !== 'overview' && this.isDesktop)
+      this.showing = true
   }
 
   open() {
@@ -101,6 +115,20 @@ export default class Guest extends Mixins(Mixin) {
       this.openAppBar()
     else if (this.isDesktop)
       this.closeAppBar()
+  }
+  get getComp() {
+    if (this.pers) {
+      switch (this.pers) {
+        case 'Inbox': return 'app-' + this.pers
+        case 'Upcoming': return 'app-' + this.pers
+        case 'Today': return 'app-' + this.pers
+      }
+      return 'app-custom-pers'
+    } else if (this.label)
+      return 'app-custom-label'
+  }
+  get undefinedPers() {
+    return !this.pers && !this.label
   }
 
   @Watch('isDesktop')
@@ -113,10 +141,15 @@ export default class Guest extends Mixins(Mixin) {
   }
   @Watch('pinedSmartPerspectives')
   onChange() {
-    if (!this.loaded && this.pinedSmartPerspectives[0]) {
-      this.$router.replace('user/pers/' + this.pinedSmartPerspectives[0].name.toLowerCase())
-      this.loaded = true
-    }
+    if (this.undefinedPers)
+      this.$router.replace('user?pers=' + this.initialPerspective)
+    this.open()
+  }
+  @Watch('currentAppSection')
+  onChange2() {
+    if (this.currentAppSection !== 'overview' && this.isDesktop)
+      this.showing = true
+    else this.showing = false
   }
 }
 

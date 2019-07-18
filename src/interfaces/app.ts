@@ -7,6 +7,12 @@ export interface Alert {
   callback?: () => void
 }
 
+export interface ListElement {
+  show: boolean
+  number: number
+  [key: string]: any
+}
+
 export interface SimpleAdder {
   popUpTitle: string
   buttonName: string
@@ -25,6 +31,7 @@ export interface FloatingButton {
 export interface Label {
   userId: string
   name: string
+  order: string[]
   id: string
 }
 

@@ -4,6 +4,7 @@
       <transition name='fade'>
         <view-tags v-if='priority || fixedPers || getLabels.length > 0'
           :fixed-pers='fixedPers'
+          :fixed-label='fixedLabel'
           :priority='priority'
           :labels='getLabels'
           @clearpriority="v => priority = ''"
@@ -89,6 +90,7 @@ export default class AppviewTaskedit extends Vue {
   @Prop({default: false, type: Boolean}) closeOnSave!: boolean
   @Prop(String) defaultValue!: string
   @Prop(String) fixedPers!: string
+  @Prop(String) fixedLabel!: string
   @Prop(String) defaultPriority!: string
   @Prop(Array) defaultLabels!: string[]
   @Prop({default: false, type: Boolean}) allowPriority!: boolean

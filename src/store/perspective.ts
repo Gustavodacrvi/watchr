@@ -1,5 +1,5 @@
 
-import { Perspective } from '@/interfaces/app'
+import { Perspective, Task } from '@/interfaces/app'
 
 import { States as RootState } from '@/store/index'
 import appUtils from '@/utils/app'
@@ -18,7 +18,9 @@ interface Getters {
   inboxPers: (state: States) => Perspective
   pinedSmartPerspectives: (state: States, getters: Getters) => void
   pinedCustomPerspectives: (state: States, getters: Getters) => void
+  initialPerspective: (state: States, getters: Getters) => void
   getCustomPerspectiveById: (state: States) => (id: string) => Perspective
+  getNumberOfTasksByPerspectiveId: (state: States) => (id: string, tasks: Task[]) => number
 }
 
 interface Mutations {
@@ -36,7 +38,7 @@ interface ActionContext {
 interface Actions {
   deletePerspectivesById: (context: ActionContext, ids: string[]) => void
   getData: (context: ActionContext) => void
-  addDefaultSmartPerspectives: (context: ActionContext, id: string) => void
+  addDefaultSmartPerspectives: (context: ActionContext, obj: {id: string, someday: string, anytime: string}) => void
   saveSmartOrder: (context: ActionContext, ids: string[]) => void
   saveCustomOrder: (context: ActionContext, ids: string[]) => void
   togglePerspectivesPin: (context: ActionContext, arr: Array<{id: string, pin: boolean}>) => void
@@ -65,6 +67,23 @@ export default {
 
   } as Mutations,
   getters: {
+    getNumberOfTasksByPerspectiveId: (state: States) => (id: string, tasks: Task[]) => {
+      let per: Perspective | undefined = state.smartPerspectives.find(el => el.id === id)
+      if (!per)
+        per = state.customPerspectives.find(el => el.id === id) as Perspective
+      if (!per.isSmart) {
+        const pers = per as Perspective
+        if (pers.priority !== '')
+          tasks = tasks.filter(el => el.priority === pers.priority)
+        if (pers.includeCustomLabels.length > 0)
+          tasks = appUtils.filterTasksByLabels(tasks, pers.includeCustomLabels)
+        return tasks.length
+      } else if (per.name === 'Inbox') {
+        tasks = tasks.filter(el => el.labels.length === 0)
+        return tasks.length
+      }
+      return 0
+    },
     inboxPers(state: States): Perspective {
       return state.smartPerspectives.find(el => el.name === 'Inbox') as Perspective
     },
@@ -86,6 +105,12 @@ export default {
     },
     getCustomPerspectiveById: (state: States) => (id: string) => {
       return state.customPerspectives.find(el => el.id === id)
+    },
+    initialPerspective(state: States, getters: any) {
+      if (getters.pinedSmartPerspectives[0])
+        return getters.pinedSmartPerspectives[0].name
+      else if (getters.pinedCustomPerspectives[0])
+        return getters.pinedCustomPerspectives[0].name
     },
   } as Getters,
   actions: {
@@ -297,7 +322,7 @@ export default {
         })
       }
     },
-    addDefaultSmartPerspectives({ rootState }, id) {
+    addDefaultSmartPerspectives({ rootState }, {id, someday, anytime}) {
       if (rootState.firestore) {
         const batch = rootState.firestore.batch()
 
@@ -323,9 +348,27 @@ export default {
             name: 'Upcoming',
             pin: true,
             numberOfTasks: false,
-            isSmart: false,
+            isSmart: true,
             icon: 'calendar-alt',
             iconColor: '#FF6B66',
+          },
+        ]
+        const customPerspectives: any = [
+          {
+            name: 'Anytime',
+            pin: true,
+            numberOfTasks: true,
+            isSmart: false,
+            icon: 'layer-group',
+            iconColor: '#88DDB7',
+          },
+          {
+            name: 'Someday',
+            pin: true,
+            numberOfTasks: false,
+            isSmart: false,
+            icon: 'archive',
+            iconColor: '#E2B983',
           },
         ]
 
@@ -353,11 +396,40 @@ export default {
             obj.description = per.description
           batch.set(ref, obj)
         }
-        const orderRef = rootState.firestore.collection('perspectivesOrder').doc(id)
-        batch.set(orderRef, {
+        let orderRef = rootState.firestore.collection('perspectivesOrder').doc(id)
+        const ids2 = []
+        for (const per of customPerspectives) {
+          const ref = rootState.firestore.collection('customPerspectives').doc()
+          ids2.push(ref.id)
+          const obj: any = {
+            userId: id,
+            name: per.name,
+            numberOfTasks: per.numberOfTasks,
+            pin: per.pin,
+            icon: per.icon,
+            iconColor: per.iconColor,
+            description: '',
+            order: [],
+            isSmart: per.isSmart,
+            priority: '',
+            excludeSmartLabels: [],
+            includeSmartLabels: [],
+            excludeCustomLabels: [],
+            includeCustomLabels: [],
+          }
+          if (per.description)
+            obj.description = per.description
+          if (per.name === 'Someday')
+            per.includeCustomLabels = [someday]
+          else if (per.name === 'Anytime')
+            per.includeCustomLabels = [anytime]
+          batch.set(ref, obj)
+        }
+        orderRef = rootState.firestore.collection('perspectivesOrder').doc(id)
+        batch.update(orderRef, {
           userId: id,
           smartOrder: ids,
-          customOrder: [],
+          customOrder: ids2,
         })
 
         batch.commit()

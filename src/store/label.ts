@@ -7,7 +7,6 @@ import appUtils from '@/utils/app'
 interface States {
   labels: Label[]
   order: string[]
-  smartLabels: Label[]
 }
 
 
@@ -34,8 +33,8 @@ interface Actions {
   saveLabelPosition: (context: ActionContext, ids: string[]) => void
   deleteLabelsById: (context: ActionContext, ids: string[]) => void
   editLabelNameById: (context: ActionContext, obj: {id: string, name: string}) => void
+  saveLabelTaskOrder: (context: ActionContext, obj: {id: string, order: string[]}) => void
   sortLabelsByName: (context: ActionContext) => void
-  addDefaultSmartLabels: (context: ActionContext) => void
   addLabelsOrder: (context: ActionContext, id: string) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
@@ -45,7 +44,6 @@ export default {
   state: {
     labels: [],
     order: [],
-    smartLabels: [],
   } as States,
   mutations: {
 
@@ -74,6 +72,12 @@ export default {
       for (const el of labels)
         ids.push(el.id)
       dispatch('saveLabelPosition', ids)
+    },
+    saveLabelTaskOrder({ rootState }, {id, order}) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('labels').doc(id).update({
+          order,
+        })
     },
     getData({ rootState, state, dispatch }) {
       if (rootState.firestore && rootState.uid) {
@@ -106,6 +110,7 @@ export default {
         rootState.firestore.collection('labels').add({
           name,
           userId: rootState.uid,
+          order: [],
         })
     },
     deleteLabelsById({ rootState, state }: ActionContext, ids: string[]) {
@@ -125,11 +130,34 @@ export default {
         })
     },
     addLabelsOrder({ rootState }, id: string) {
-      if (rootState.firestore)
-        rootState.firestore.collection('labelsOrder').doc(id).set({
+      if (rootState.firestore) {
+        const batch = rootState.firestore.batch()
+
+        let ref = rootState.firestore.collection('labels').doc()
+        const somedayId = ref.id
+        batch.set(ref, {
           userId: id,
+          name: 'Someday',
           order: [],
         })
+
+        ref = rootState.firestore.collection('labels').doc()
+        const anytimeId = ref.id
+        batch.set(ref, {
+          userId: id,
+          name: 'Anytime',
+          order: [],
+        })
+
+        const orderRef = rootState.firestore.collection('labelsOrder').doc(id)
+        batch.set(orderRef, {
+          userId: id,
+          order: [anytimeId, somedayId],
+        })
+
+        batch.commit()
+        return {somedayId, anytimeId}
+      }
     },
   } as Actions,
 }

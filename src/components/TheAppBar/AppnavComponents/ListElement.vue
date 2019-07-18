@@ -1,5 +1,5 @@
 <template>
-  <div
+  <div v-show='show'
     class='element round-border'
     :class='[theme, {active: active === name}]'
     @mouseenter='onHover = true'
@@ -22,6 +22,7 @@
       <span class='txt name'>{{ name }}</span>
     </div>
     <div class='options'>
+      <span v-if='number' class='help-icon number'>{{ number }}</span>
       <template v-if='helpIcons && helpIcons.length > 0'>
         <span v-for='i in helpIcons'
           class='help-icon'
@@ -73,6 +74,8 @@ import { ListIcon } from '../../../interfaces/app'
   },
 })
 export default class ListRenderer extends Vue {
+  @Prop({default: true, type: Boolean}) show!: boolean
+  @Prop({default: 0, type: Number}) number!: boolean
   @Prop(String) name!: string
   @Prop(String) id!: string
   @Prop(String) active!: string
@@ -107,7 +110,7 @@ export default class ListRenderer extends Vue {
   }
   go() {
     if (!this.showHandle)
-      this.$router.push(`/user/${this.route}?pers=${this.name}`)
+      this.$router.push(`/user?${this.route}=${this.name}`)
   }
 
   get showOptionsMobile(): boolean {
@@ -191,6 +194,10 @@ export default class ListRenderer extends Vue {
 
 .fade {
   opacity: .6;
+}
+
+.number {
+  color: #FF6B66;
 }
 
 </style>

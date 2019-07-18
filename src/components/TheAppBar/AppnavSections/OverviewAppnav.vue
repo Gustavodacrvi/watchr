@@ -6,19 +6,21 @@
       :icons='[]'
       :selected='[]'
     />
-    <list-renderer
-      group='appnavoverview'
-      route='pers'
-      :disabled='true'
-      :list='pinedSmartPerspectives'
-      :active='activePers'
-    />
-    <div class='margin'></div>
+    <div v-if='smartPers && smartPers.length > 0'>
+      <list-renderer
+        group='appnavoverview'
+        route='pers'
+        :disabled='true'
+        :list='smartPers'
+        :active='activePers'
+      />
+      <div class='margin'></div>
+    </div>
     <list-renderer
       group='appnavoverviewcustompers'
       route='pers'
       :disabled='true'
-      :list='pinedCustomPerspectives'
+      :list='customPers'
       :active='activePers'
     />
   </div>
@@ -32,9 +34,10 @@ import { State, Mutation, namespace, Getter } from 'vuex-class'
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
 
-import { Label, Perspective } from '@/interfaces/app'
+import { Label, Perspective, Task, ListIcon, ListElement } from '@/interfaces/app'
 
 const persVuex = namespace('perspective')
+const taskVuex = namespace('task')
 
 @Component({
   components: {
@@ -49,11 +52,44 @@ export default class OverviewAppnav extends Vue {
 
   @persVuex.Getter pinedSmartPerspectives!: Perspective[]
   @persVuex.Getter pinedCustomPerspectives!: Perspective[]
+  @persVuex.Getter getNumberOfTasksByPerspectiveId!: (id: string, tasks: Task[]) => number
+
+  @taskVuex.State tasks!: Task[]
 
   created() {
     this.openSection('overview')
   }
 
+  get smartPers(): ListElement[] {
+    const els: ListElement[] = []
+    for (const per of this.pinedSmartPerspectives) {
+      let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
+      let show = true
+      if (per.showWhenNotEmpty && numberOfTasks === 0)
+        show = false
+      if (!per.numberOfTasks)
+        numberOfTasks = 0
+      els.push({
+        ...per, show, number: numberOfTasks,
+      })
+    }
+    return els
+  }
+  get customPers(): ListElement[] {
+    const els: ListElement[] = []
+    for (const per of this.pinedCustomPerspectives) {
+      let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
+      let show = true
+      if (per.showWhenNotEmpty && numberOfTasks === 0)
+        show = false
+      if (!per.numberOfTasks)
+        numberOfTasks = 0
+      els.push({
+        ...per, show, number: numberOfTasks,
+      })
+    }
+    return els
+  }
   get activePers(): string {
     if (this.viewType === 'perspective')
       return this.viewName
