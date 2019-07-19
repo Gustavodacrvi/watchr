@@ -34,10 +34,10 @@
         <view-tags
           :fixed-pers='pers.name'
           :search='search'
-          :priority='priority'
+          :priority='getPriority'
           :labels='getLabels'
           @clearsearch="v => search = ''"
-          @clearpriority="v => priority = ''"
+          @clearpriority="selectPriority('')"
           @removelabel='removeLabel'
         />
         <div class='margin'></div>
@@ -47,8 +47,9 @@
         id='appnavalltasks'
         :tasks='getTasks'
         :fixed-pers='pers.name'
-        :default-priority='priority'
+        :default-priority='getPriority'
         :allow-priority='true'
+        :insert-before='true'
         :allow-labels='allowLabels'
         @update='onUpdate'
         @selected='onSelect'
@@ -95,16 +96,20 @@ export default class PerspectiveAppview extends Vue {
 
   @taskVuex.State tasks!: Task[]
   // tslint:disable-next-line:max-line-length
-  @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, position: number, order: string[], collection: string}) => void
+  @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
 
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
-  @persVuex.Getter smartPerspective!: (name: string) => Perspective
-  @persVuex.Action saveTaskOrder!: (obj: {id: string, order: string[], collection: string}) => void
+  @persVuex.Getter getPerspectiveByName!: (name: string) => Perspective
+  @persVuex.Action saveTaskOrder!: (obj: {id: string, order: string[]}) => void
+  @persVuex.Action addLabelToPerspective!: (obj: {id: string, labelId: string}) => Label[]
+  @persVuex.Action removeLabelFromPerspective!: (obj: {id: string, labelId: string}) => Label[]
+  @persVuex.Action savePerspectivePriority!: (obj: {id: string, priority: string}) => Label[]
 
   @Prop({default: true, type: Boolean}) allowLabels!: boolean
   @Prop(Boolean) value!: boolean
+  @Prop(Boolean) save!: boolean
   @Prop(String) persName!: string
   @Prop(Array) baseTasks!: Task[]
 
@@ -126,10 +131,7 @@ export default class PerspectiveAppview extends Vue {
 
   created() {
     this.showing = this.value
-    this.pushView({
-      view: this.persName,
-      viewType: 'perspective',
-    })
+    this.updateView()
   }
 
   getMobileSelectedOptions(): ListIcon[] {
@@ -140,11 +142,21 @@ export default class PerspectiveAppview extends Vue {
     return this.mobileSelectedOptions
   }
   addLabel(label: Label) {
-    this.labels.push(label.id)
+    if (!this.save)
+      this.labels.push(label.id)
+    else this.addLabelToPerspective({
+        id: this.pers.id,
+        labelId: label.id,
+      })
   }
   removeLabel(id: string) {
-    const index = this.labels.findIndex(el => el === id)
-    this.labels.splice(index, 1)
+    if (!this.save) {
+      const index = this.labels.findIndex(el => el === id)
+      this.labels.splice(index, 1)
+    } else this.removeLabelFromPerspective({
+        id: this.pers.id,
+        labelId: id,
+      })
   }
   addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
     this.addTask({
@@ -155,11 +167,15 @@ export default class PerspectiveAppview extends Vue {
       },
       perspectiveId: this.pers.id,
       position: obj.position, order: obj.order,
-      collection: 'smartPerspectives',
     } as any)
   }
   selectPriority(value: string) {
-    this.priority = value
+    if (!this.save)
+      this.priority = value
+    else this.savePerspectivePriority({
+        id: this.pers.id,
+        priority: value,
+      })
   }
   selectSettingsOption(value: string) {
     if (value === 'Sort tasks by name') {
@@ -171,7 +187,6 @@ export default class PerspectiveAppview extends Vue {
       this.saveTaskOrder({
         id: this.pers.id,
         order: ids,
-        collection: 'smartPerspectives',
       })
     } else if (value === 'Sort tasks by priority') {
       const tasks = this.viewTasks
@@ -182,7 +197,6 @@ export default class PerspectiveAppview extends Vue {
       this.saveTaskOrder({
         id: this.pers.id,
         order: ids,
-        collection: 'smartPerspectives',
       })
     }
   }
@@ -196,7 +210,6 @@ export default class PerspectiveAppview extends Vue {
       this.saveTaskOrder({
         id: this.pers.id,
         order: ids.filter(el => el !== 'task-adder'),
-        collection: 'smartPerspectives',
       })
   }
   onSelect(ids: string[]) {
@@ -205,32 +218,44 @@ export default class PerspectiveAppview extends Vue {
   deleteSelected() {
     this.deleteTasksById(this.selected)
   }
+  updateView() {
+    this.pushView({
+      view: this.pers.name,
+      viewType: 'perspective',
+    })
+  }
 
-  get pers() {
-    return this.smartPerspective(this.persName)
+  get pers(): Perspective {
+    return this.getPerspectiveByName(this.persName)
   }
   get viewTasks(): Task[] {
     return this.baseTasks
   }
   get sortedTasks(): Task[] {
-    if (this.pers) {
-      const ord = appUtils.fixOrder(this.viewTasks, this.pers.order)
-      return appUtils.sortArrayByIds(this.viewTasks, ord)
-    }
-    return []
+    const ord = appUtils.fixOrder(this.viewTasks, this.pers.order)
+    return appUtils.sortArrayByIds(this.viewTasks, ord)
   }
   get getTasks(): Task[] {
     let tasks: Task[] = this.sortedTasks
-    if (this.search)
-      tasks = tasks.filter(el => el.name.includes(this.search))
-    if (this.priority)
-      tasks = tasks.filter(el => el.priority === this.priority)
-    if (this.labels && this.labels.length > 0)
-      tasks = appUtils.filterTasksByLabels(tasks, this.labels)
+    if (!this.save) {
+      if (this.search)
+        tasks = tasks.filter(el => el.name.includes(this.search))
+      if (this.priority)
+        tasks = tasks.filter(el => el.priority === this.priority)
+      if (this.labels && this.labels.length > 0)
+        tasks = appUtils.filterTasksByLabels(tasks, this.labels)
+    }
     return tasks
   }
   get getLabels(): Label[] {
-    return this.getLabelsByIds(this.labels)
+    if (!this.save)
+      return this.getLabelsByIds(this.labels)
+    else return this.getLabelsByIds(this.pers.includeAndLabels)
+  }
+  get getPriority(): string {
+    if (!this.save)
+      return this.priority
+    else return this.pers.priority
   }
 
   @Watch('selected')
@@ -243,6 +268,14 @@ export default class PerspectiveAppview extends Vue {
   @Watch('value')
   onChange2() {
     this.showing = this.value
+  }
+  @Watch('$route')
+  onChange4() {
+    this.updateView()
+  }
+  @Watch('perspectiveData')
+  onChange3() {
+    this.updateView()
   }
 }
 

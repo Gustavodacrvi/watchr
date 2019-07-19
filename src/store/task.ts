@@ -27,7 +27,7 @@ interface Actions {
   // tslint:disable-next-line:max-line-length
   updateTask: (context: ActionContext, obj: {name: string, priority: string, id: string, labels: []}) => void
   // tslint:disable-next-line:max-line-length
-  addTask: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[], collection: string}) => void
+  addTask: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
   addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[]}) => void
   deleteTasksById: (context: ActionContext, ids: string[]) => void
   [key: string]: (context: ActionContext, payload: any) => any
@@ -83,7 +83,7 @@ export default {
         batch.commit()
       }
     },
-    addTask({ rootState }, {task, perspectiveId, order, position, collection}) {
+    addTask({ rootState }, {task, perspectiveId, order, position}) {
       if (rootState.firestore && rootState.uid) {
         const batch = rootState.firestore.batch()
 
@@ -96,7 +96,7 @@ export default {
           userId: rootState.uid,
           labels: task.labels,
         })
-        const persRef = rootState.firestore.collection(collection).doc(perspectiveId)
+        const persRef = rootState.firestore.collection('perspectives').doc(perspectiveId)
         batch.update(persRef, {
           order: ord,
         })

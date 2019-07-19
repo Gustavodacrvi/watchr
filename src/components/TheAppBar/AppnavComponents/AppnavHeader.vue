@@ -8,7 +8,7 @@
         <i v-for='i in icons'
           :key='i.name'
           :class='`icon pointer header-icon fas fa-${i.icon} fa-${i.size}`'
-          @click='i.callback(selected)'
+          @click='i.callback'
         ></i>
       </div>
     </transition>
@@ -26,7 +26,6 @@ export default class AppnavHeader extends Vue {
   @Prop({type: String, required: true}) name!: string
   @Prop({type: Boolean, required: true}) showTitle!: boolean
   @Prop({type: Array, required: true}) icons!: ListIcon[]
-  @Prop({type: Array, required: true}) selected!: string[]
 }
 
 </script>

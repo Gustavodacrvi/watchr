@@ -59,8 +59,8 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Prop } from 'vue-property-decorator'
-import { Getter, namespace } from 'vuex-class'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { Getter, namespace, Mutation } from 'vuex-class'
 
 const taskVuex = namespace('task')
 const labelVuex = namespace('label')
@@ -83,6 +83,7 @@ import { Task, Label } from '../../../interfaces/app'
   },
 })
 export default class LabelPerspective extends Vue {
+  @Mutation pushView!: (obj: {view: string, viewType: string}) => void
   @Getter isDesktop!: boolean
   @Getter platform!: string
 
@@ -103,10 +104,19 @@ export default class LabelPerspective extends Vue {
   showing: boolean = false
   hided: boolean = false
 
+  created() {
+    this.updateView()
+  }
+
+  updateView() {
+    this.pushView({
+      view: this.label,
+      viewType: 'label',
+    })
+  }
   onSelect(ids: string[]) {
     this.selected = ids
   }
-
   deleteSelected() {
     this.deleteTasksById(this.selected)
   }
@@ -182,6 +192,15 @@ export default class LabelPerspective extends Vue {
     if (this.labels && this.labels.length > 0)
       tasks = appUtils.filterTasksByLabels(tasks, this.labels)
     return tasks
+  }
+
+  @Watch('$route')
+  onChange4() {
+    this.updateView()
+  }
+  @Watch('perspectiveData')
+  onChange3() {
+    this.updateView()
   }
 }
 

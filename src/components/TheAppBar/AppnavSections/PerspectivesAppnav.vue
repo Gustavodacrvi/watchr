@@ -4,7 +4,6 @@
       name='PERSPECTIVES'
       :show-title='selected.length === 0'
       :icons='getHeaderOptions'
-      :selected='selected'
     />
     <appnav-division name='SMART PERSPECTIVES'>
       <list-renderer
@@ -70,7 +69,7 @@ export default class OverviewAppnav extends Vue {
   @persVuex.Getter sortedCustomPerspectives!: Perspective[]
   @persVuex.Getter initialPerspective!: string
   @persVuex.Getter getNumberOfTasksByPerspectiveId!: (id: string, tasks: Task[]) => number
-  @persVuex.Getter getCustomPerspectiveById!: (id: string) => Perspective
+  @persVuex.Getter getPerspectiveById!: (id: string) => Perspective
   @persVuex.Action saveSmartOrder!: (ids: string[]) => void
   @persVuex.Action saveCustomOrder!: (ids: string[]) => void
   @persVuex.Action togglePerspectivesPin!: (obj: Array<{id: string, pin?: boolean}>) => void
@@ -82,58 +81,6 @@ export default class OverviewAppnav extends Vue {
 
   selected: string[] = []
   selectedType: 'custom' | 'smart' = 'custom'
-  headerIcons: ListIcon[] = [
-    {
-      name: '',
-      icon: 'thumbtack',
-      iconColor: '',
-      size: 'lg',
-      callback: (selected: string[]) => {
-        const arr: any = []
-        for (const el of selected)
-          arr.push({id: el})
-        this.togglePerspectivesPin(arr)
-      },
-    },
-  ]
-  headerCustomIcons: ListIcon[] = [
-    {
-      name: '',
-      icon: 'thumbtack',
-      iconColor: '',
-      size: 'lg',
-      callback: (selected: string[]) => {
-        const arr: any = []
-        for (const el of selected)
-          arr.push({id: el})
-        this.togglePerspectivesPin(arr)
-      },
-    },
-    {
-      name: 'f',
-      icon: 'eye',
-      iconColor: '',
-      size: 'lg',
-      callback: (selected: string[]) => {
-        const arr: any = []
-        for (const el of selected)
-          arr.push({id: el})
-        this.togglePerspectivesNumberOfTasks(arr)
-      },
-    },
-    {
-      name: 'd',
-      icon: 'exclamation',
-      iconColor: '',
-      size: 'lg',
-      callback: (selected: string[]) => {
-        const arr: any = []
-        for (const el of selected)
-          arr.push({id: el})
-        this.togglePerspectivesShowWhenNotEmpty(arr)
-      },
-    },
-  ]
 
   created() {
     this.openSection('labels')
@@ -189,7 +136,7 @@ export default class OverviewAppnav extends Vue {
         size: 'lg',
         callback: (id: string) => {
           this.pushPopUp('PerspectiveAdderPopup')
-          this.pushPopUpPayload(this.getCustomPerspectiveById(id))
+          this.pushPopUpPayload(this.getPerspectiveById(id))
         },
       },
       {
@@ -199,9 +146,9 @@ export default class OverviewAppnav extends Vue {
         size: 'lg',
         callback: (id: string) => {
           this.deletePerspectivesById([id])
-          const pers = this.getCustomPerspectiveById(id)
+          const pers = this.getPerspectiveById(id)
           if (pers && pers.name === this.viewName)
-            this.$router.replace('/user/pers?pers=' + this.initialPerspective)
+            this.$router.replace('/user?pers=' + this.initialPerspective)
         },
       },
     ]
@@ -325,10 +272,74 @@ export default class OverviewAppnav extends Vue {
   }
   get getHeaderOptions(): ListIcon[] {
     if (this.selectedType === 'smart')
-      return this.headerIcons
-    else return this.headerCustomIcons
+      return [
+        {
+          name: '',
+          icon: 'thumbtack',
+          iconColor: '',
+          size: 'lg',
+          callback: () => {
+            const arr: any = []
+            for (const el of this.selected)
+              arr.push({id: el})
+            this.togglePerspectivesPin(arr)
+          },
+        },
+      ]
+    else return [
+      {
+        name: '',
+        icon: 'thumbtack',
+        iconColor: '',
+        size: 'lg',
+        callback: () => {
+          const arr: any = []
+          for (const el of this.selected)
+            arr.push({id: el})
+          this.togglePerspectivesPin(arr)
+        },
+      },
+      {
+        name: 'f',
+        icon: 'eye',
+        iconColor: '',
+        size: 'lg',
+        callback: () => {
+          const arr: any = []
+          for (const el of this.selected)
+            arr.push({id: el})
+          this.togglePerspectivesNumberOfTasks(arr)
+        },
+      },
+      {
+        name: 'd',
+        icon: 'exclamation',
+        iconColor: '',
+        size: 'lg',
+        callback: () => {
+          const arr: any = []
+          for (const el of this.selected)
+            arr.push({id: el})
+          this.togglePerspectivesShowWhenNotEmpty(arr)
+        },
+      },
+      {
+        name: 'k',
+        icon: 'trash',
+        iconColor: '',
+        size: 'lg',
+        callback: () => {
+          for (const id of this.selected)
+            if (this.getPerspectiveById(id).name === this.activePers) {
+              this.$router.push('/user?pers=' + this.initialPerspective)
+              break
+            }
+          this.deletePerspectivesById(this.selected)
+        },
+      },
+    ]
   }
-  }
+}
 
 </script>
 

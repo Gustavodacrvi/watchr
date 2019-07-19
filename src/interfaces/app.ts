@@ -48,10 +48,9 @@ export interface Perspective {
   pin: boolean
   numberOfTasks: boolean
   showWhenNotEmpty: boolean
-  excludeSmartLabels: string[]
-  includeSmartLabels: string[]
-  excludeCustomLabels: string[]
-  includeCustomLabels: string[]
+  excludeLabels: string[]
+  includeAndLabels: string[]
+  includeOrLabels: string[]
 }
 
 export interface ListIcon {

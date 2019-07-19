@@ -31,7 +31,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Prop, Mixins } from 'vue-property-decorator'
+import { Component, Vue, Prop, Mixins, Watch } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
 import Mixin from '@/mixins/sortable'
 
@@ -62,13 +62,16 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop(String) fixedPers!: string
   @Prop(String) fixedLabel!: string
   @Prop(Array) tasks!: Task[]
+  @Prop({default: false, type: Boolean}) insertBefore!: boolean
 
   @Getter isDesktop!: boolean
 
   sortable: any = null
   numberOfSelected: number = 0
   deselectAll: boolean = false
+  added: boolean = false
   rootSelector: string = `.task-${this.group}-${this.id}`
+  taskAdderPosition: number = 0
 
   mounted() {
     this.mount()
@@ -101,17 +104,10 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 
   add(obj: {name: string, priority: string}) {
     const els: string[] = this.getIdsFromElements(this.rootSelector)
-    let i = 0
-    let position: number = 0
-    for (const id of els) {
-      if (id === 'task-adder') {
-        position = i
-        break
-      }
-      i++
-    }
+    this.getTaskAdderPosition()
     const order = els.filter(el => el !== 'task-adder')
-    this.$emit('add', {position, order, ...obj})
+    this.$emit('add', {position: this.taskAdderPosition, order, ...obj})
+    this.added = true
   }
   calcSelectedElements(evt?: any) {
     if (evt) {
@@ -146,10 +142,34 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     else Sortable.utils.deselect(el)
     this.calcSelectedElements()
   }
+  getTaskAdderPosition() {
+    const els: string[] = this.getIdsFromElements(this.rootSelector)
+    let i = 0
+    for (const id of els)
+      if (id === 'task-adder') {
+        this.taskAdderPosition = i
+        break
+      } else i++
+  }
 
   get rootComponent(): HTMLElement {
     const root: HTMLElement = this.$el as HTMLElement
     return root.childNodes[0] as HTMLElement
+  }
+
+  @Watch('tasks')
+  onChange(j: any, l: any) {
+    if (this.added && this.insertBefore) {
+      setTimeout(() => {
+        this.getTaskAdderPosition()
+        const childNodes = this.rootComponent.childNodes
+        const p = this.taskAdderPosition
+        const adder = childNodes[p] as any
+        const newTask = childNodes[p + 1]
+        this.rootComponent.insertBefore(newTask, adder)
+      }, 10)
+      this.added = false
+    }
   }
 }
 

@@ -7,6 +7,7 @@
       <dropdown-input
         tabindex='1'
         class='margin'
+        placeholder='Label name...'
         :input='input'
         :values='options'
         @enter='add'
@@ -84,7 +85,7 @@ export default class LabelAdder extends Vue {
   }
 
   select(value: string) {
-    this.input = this.value
+    this.input = value
   }
 
   @Watch('value')
