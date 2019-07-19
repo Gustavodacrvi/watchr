@@ -14,7 +14,7 @@
           :show-task-options='selected && selected.length > 0'
           :allow-search='true'
           :allow-settings='true'
-          :allow-labels='true'
+          :allow-labels='allowLabels'
           :allow-priority='true'
 
           @delete='deleteSelected'
@@ -49,7 +49,7 @@
         :fixed-pers='pers.name'
         :default-priority='priority'
         :allow-priority='true'
-        :allow-labels='true'
+        :allow-labels='allowLabels'
         @update='onUpdate'
         @selected='onSelect'
         @add='addPersTask'
@@ -103,6 +103,7 @@ export default class PerspectiveAppview extends Vue {
   @persVuex.Getter smartPerspective!: (name: string) => Perspective
   @persVuex.Action saveTaskOrder!: (obj: {id: string, order: string[], collection: string}) => void
 
+  @Prop({default: true, type: Boolean}) allowLabels!: boolean
   @Prop(Boolean) value!: boolean
   @Prop(String) persName!: string
   @Prop(Array) baseTasks!: Task[]
@@ -126,7 +127,7 @@ export default class PerspectiveAppview extends Vue {
   created() {
     this.showing = this.value
     this.pushView({
-      view: 'All tasks',
+      view: this.persName,
       viewType: 'perspective',
     })
   }
@@ -206,7 +207,7 @@ export default class PerspectiveAppview extends Vue {
   }
 
   get pers() {
-    return this.smartPerspective('All tasks')
+    return this.smartPerspective(this.persName)
   }
   get viewTasks(): Task[] {
     return this.baseTasks

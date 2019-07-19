@@ -1,8 +1,9 @@
 <template>
   <base-pers
-    pers-name='Have tags'
+    pers-name="Doesn't have tags"
     :value='value'
     :base-tasks='baseTasks'
+    :allow-labels='false'
 
     @input="$emit('input', !value)"
   />
@@ -24,13 +25,13 @@ import { Task } from '../../../../interfaces/app'
     'base-pers': BasePerspective,
   },
 })
-export default class ViewHaveTags extends Vue {
+export default class ViewDoesntAlltasks extends Vue {
   @taskVuex.State tasks!: Task[]
   
   @Prop(Boolean) value!: string
 
   get baseTasks() {
-    return this.tasks.filter(el => el.labels.length > 0)
+    return this.tasks.filter(el => el.labels.length === 0)
   }
 }
 

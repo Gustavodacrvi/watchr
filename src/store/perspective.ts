@@ -86,6 +86,9 @@ export default {
       else if (per.name === 'Have tags') {
         tasks = tasks.filter(el => el.labels.length > 0)
         return tasks.length
+      } else if (per.name === `Doesn't have tags`) {
+        tasks = tasks.filter(el => el.labels.length === 0)
+        return tasks.length
       }
       return 0
     },

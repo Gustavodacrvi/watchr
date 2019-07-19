@@ -81,6 +81,7 @@ const persVuex = namespace('perspective')
     'app-upcoming': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewUpcoming.vue')),
     'app-today': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewToday.vue')),
     'app-have-tags': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewHavetags.vue')),
+    'app-doesnt-have-tags': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewDoesnthavetags.vue')),
     'app-custom-pers': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/CustomPerspective.vue')),
     'app-custom-label': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/LabelPerspective.vue')),
   },
@@ -127,6 +128,7 @@ export default class Guest extends Mixins(Mixin) {
         case 'Today': return 'app-today'
         case 'All tasks': return 'app-all-tasks'
         case 'Have tags': return 'app-have-tags'
+        case "Doesn't have tags": return 'app-doesnt-have-tags'
       }
       return 'app-custom-pers'
     } else if (this.label)
