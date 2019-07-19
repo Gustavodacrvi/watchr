@@ -70,7 +70,7 @@ export default class OverviewAppnav extends Vue {
   @persVuex.Getter sortedCustomPerspectives!: Perspective[]
   @persVuex.Getter initialPerspective!: string
   @persVuex.Getter getNumberOfTasksByPerspectiveId!: (id: string, tasks: Task[]) => number
-  @persVuex.Getter getCustomPerspectiveById!: (id: string) => Perspective
+  @persVuex.Getter getPerspectiveById!: (id: string) => Perspective
   @persVuex.Action saveSmartOrder!: (ids: string[]) => void
   @persVuex.Action saveCustomOrder!: (ids: string[]) => void
   @persVuex.Action togglePerspectivesPin!: (obj: Array<{id: string, pin?: boolean}>) => void
@@ -189,7 +189,7 @@ export default class OverviewAppnav extends Vue {
         size: 'lg',
         callback: (id: string) => {
           this.pushPopUp('PerspectiveAdderPopup')
-          this.pushPopUpPayload(this.getCustomPerspectiveById(id))
+          this.pushPopUpPayload(this.getPerspectiveById(id))
         },
       },
       {
@@ -199,7 +199,7 @@ export default class OverviewAppnav extends Vue {
         size: 'lg',
         callback: (id: string) => {
           this.deletePerspectivesById([id])
-          const pers = this.getCustomPerspectiveById(id)
+          const pers = this.getPerspectiveById(id)
           if (pers && pers.name === this.viewName)
             this.$router.replace('/user/pers?pers=' + this.initialPerspective)
         },

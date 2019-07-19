@@ -1,7 +1,6 @@
 <template>
   <base-pers
     :pers-name='pers'
-    collection='customPerspectives'
     :value='value'
     :base-tasks='baseTasks'
     :save='true'
@@ -32,7 +31,7 @@ import { Task, Perspective } from '../../../interfaces/app'
 export default class ViewAlltasks extends Vue {
   @Mutation pushView!: (obj: {view: string, viewType: string}) => void
 
-  @persVuex.Getter customPerspective!: (name: string) => Perspective
+  @persVuex.Getter getperspectiveByName!: (name: string) => Perspective
   
   @taskVuex.State tasks!: Task[]
 
@@ -40,15 +39,15 @@ export default class ViewAlltasks extends Vue {
   @Prop(String) pers!: string
 
   get perspectiveData() {
-    return this.customPerspective(this.pers)
+    return this.getperspectiveByName(this.pers)
   }
   get baseTasks() {
     let tasks = this.tasks
     const pers = this.perspectiveData as Perspective
     if (pers.priority !== '')
       tasks = tasks.filter(el => el.priority === pers.priority)
-    if (pers.includeCustomLabels.length > 0)
-      tasks = appUtils.filterTasksByLabels(tasks, pers.includeCustomLabels)
+    if (pers.includeAndLabels.length > 0)
+      tasks = appUtils.filterTasksByLabels(tasks, pers.includeAndLabels)
     return tasks
   }
 }

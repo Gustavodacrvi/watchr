@@ -95,14 +95,13 @@ export default class PerspectiveAppview extends Vue {
 
   @taskVuex.State tasks!: Task[]
   // tslint:disable-next-line:max-line-length
-  @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, position: number, order: string[], collection: string}) => void
+  @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
 
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
-  @persVuex.Getter smartPerspective!: (name: string) => Perspective
-  @persVuex.Getter customPerspective!: (name: string) => Perspective
-  @persVuex.Action saveTaskOrder!: (obj: {id: string, order: string[], collection: string}) => void
+  @persVuex.Getter getPerspectiveByName!: (name: string) => Perspective
+  @persVuex.Action saveTaskOrder!: (obj: {id: string, order: string[]}) => void
   @persVuex.Action addLabelToPerspective!: (obj: {id: string, labelId: string}) => Label[]
   @persVuex.Action removeLabelFromPerspective!: (obj: {id: string, labelId: string}) => Label[]
   @persVuex.Action savePerspectivePriority!: (obj: {id: string, priority: string}) => Label[]
@@ -111,7 +110,6 @@ export default class PerspectiveAppview extends Vue {
   @Prop(Boolean) value!: boolean
   @Prop(Boolean) save!: boolean
   @Prop(String) persName!: string
-  @Prop(String) collection!: string
   @Prop(Array) baseTasks!: Task[]
 
   search: string = ''
@@ -168,7 +166,6 @@ export default class PerspectiveAppview extends Vue {
       },
       perspectiveId: this.pers.id,
       position: obj.position, order: obj.order,
-      collection: this.collection,
     } as any)
   }
   selectPriority(value: string) {
@@ -189,7 +186,6 @@ export default class PerspectiveAppview extends Vue {
       this.saveTaskOrder({
         id: this.pers.id,
         order: ids,
-        collection: this.collection,
       })
     } else if (value === 'Sort tasks by priority') {
       const tasks = this.viewTasks
@@ -200,7 +196,6 @@ export default class PerspectiveAppview extends Vue {
       this.saveTaskOrder({
         id: this.pers.id,
         order: ids,
-        collection: this.collection,
       })
     }
   }
@@ -214,7 +209,6 @@ export default class PerspectiveAppview extends Vue {
       this.saveTaskOrder({
         id: this.pers.id,
         order: ids.filter(el => el !== 'task-adder'),
-        collection: this.collection,
       })
   }
   onSelect(ids: string[]) {
@@ -231,9 +225,7 @@ export default class PerspectiveAppview extends Vue {
   }
 
   get pers(): Perspective {
-    if (this.collection === 'smartPerspectives')
-      return this.smartPerspective(this.persName)
-    else return this.customPerspective(this.persName)
+    return this.getPerspectiveByName(this.persName)
   }
   get viewTasks(): Task[] {
     return this.baseTasks
@@ -260,7 +252,7 @@ export default class PerspectiveAppview extends Vue {
   get getLabels(): Label[] {
     if (!this.save)
       return this.getLabelsByIds(this.labels)
-    else return this.getLabelsByIds(this.pers.includeCustomLabels)
+    else return this.getLabelsByIds(this.pers.includeAndLabels)
   }
   get getPriority(): string {
     if (!this.save)

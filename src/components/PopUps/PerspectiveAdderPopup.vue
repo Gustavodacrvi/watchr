@@ -89,8 +89,7 @@ export default class LabelAdder extends Vue {
   @Mutation pushAlert!: (alert: Alert) => void
   @Mutation pushPopUp!: (compName: string) => void
 
-  @perspectiveModule.State smartPerspectives!: Perspective[]
-  @perspectiveModule.State customPerspectives!: Perspective[]
+  @perspectiveModule.State perspectives!: Perspective[]
   // tslint:disable-next-line:max-line-length
   @perspectiveModule.Action addPerspective!: (obj: {name: string, description: string, iconColor: string, icon: string}) => void
   // tslint:disable-next-line:max-line-length
@@ -114,9 +113,8 @@ export default class LabelAdder extends Vue {
 
   add() {
     if (this.value !== '') {
-      const pers = this.smartPerspectives.find(el => el.name === this.value)
-      const pers2 = this.customPerspectives.find(el => el.name === this.value)
-      if (pers || pers2)
+      const pers = this.perspectives.find(el => el.name === this.value)
+      if (pers)
         this.pushAlert({
           name: `<strong>${this.value}</strong> already exists.`,
           duration: 3,
@@ -144,8 +142,7 @@ export default class LabelAdder extends Vue {
     }
   }
   getOptions(): string[] {
-    const merge = this.customPerspectives.concat(this.smartPerspectives)
-    return merge.filter(el => el.name.includes(this.value)).map(el => el.name)
+    return this.perspectives.filter(el => el.name.includes(this.value)).map(el => el.name)
   }
   select(value: string) {
     this.input = this.value

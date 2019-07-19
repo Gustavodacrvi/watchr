@@ -57,7 +57,7 @@ export default class SigninPopUp extends Vue {
   @Mutation pushPopUp!: (compName: string) => void
   @Mutation pushAlert!: (alert: Alert) => void
 
-  @persVuex.Action addDefaultSmartPerspectives!: (obj: {id: string, someday: string, anytime: string}) => void
+  @persVuex.Action addDefaultPerspectives!: (obj: {id: string, someday: string, anytime: string}) => void
   @label.Action addLabelsOrder!: (id: string) => any
   @settings.Action addDefaultSettings!: (id: string) => void
 
@@ -87,7 +87,7 @@ export default class SigninPopUp extends Vue {
         if (cred.user) {
           const id = cred.user.uid
           this.addLabelsOrder(cred.user.uid).then((obj: any) => {
-            this.addDefaultSmartPerspectives({
+            this.addDefaultPerspectives({
               id,
               someday: obj.somedayId,
               anytime: obj.anytimeId,
