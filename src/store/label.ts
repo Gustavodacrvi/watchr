@@ -130,11 +130,11 @@ export default {
         })
     },
     addLabelsOrder({ rootState }, id: string) {
-      if (rootState.firestore) {
+      if (rootState.firestore)
         return new Promise(resolve => {
           const fire = rootState.firestore as any
           const batch = fire.batch()
-  
+
           let ref = fire.collection('labels').doc()
           const somedayId = ref.id
           batch.set(ref, {
@@ -142,7 +142,7 @@ export default {
             name: 'Someday',
             order: [],
           })
-  
+
           ref = fire.collection('labels').doc()
           const anytimeId = ref.id
           batch.set(ref, {
@@ -150,17 +150,16 @@ export default {
             name: 'Anytime',
             order: [],
           })
-  
+
           const orderRef = fire.collection('labelsOrder').doc(id)
           batch.set(orderRef, {
             userId: id,
             order: [anytimeId, somedayId],
           })
-  
+
           batch.commit()
           resolve({somedayId, anytimeId})
         })
-      }
     },
   } as Actions,
 }

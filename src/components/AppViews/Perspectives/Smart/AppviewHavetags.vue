@@ -26,7 +26,7 @@ import { Task } from '../../../../interfaces/app'
 })
 export default class ViewHaveTags extends Vue {
   @taskVuex.State tasks!: Task[]
-  
+
   @Prop(Boolean) value!: string
 
   get baseTasks() {

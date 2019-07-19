@@ -241,7 +241,7 @@ export default class OverviewAppnav extends Vue {
     return icons
   }
   getOptions(per: Perspective) {
-        const icons: ListIcon[] = [
+    const icons: ListIcon[] = [
       {
         name: 'Pin perspective',
         icon: 'thumbtack',

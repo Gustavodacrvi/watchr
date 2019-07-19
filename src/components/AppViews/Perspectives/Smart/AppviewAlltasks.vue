@@ -26,11 +26,11 @@ import { Task } from '../../../../interfaces/app'
 })
 export default class ViewAlltasks extends Vue {
   @taskVuex.State tasks!: Task[]
-  
+
   @Prop(Boolean) value!: string
 
   get baseTasks() {
-    return this.tasks 
+    return this.tasks
   }
 }
 
