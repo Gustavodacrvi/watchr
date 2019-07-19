@@ -66,7 +66,7 @@ export default {
   } as Mutations,
   getters: {
     getNumberOfTasksByPerspectiveId: (state: States) => (id: string, tasks: Task[]) => {
-      let per: Perspective = state.perspectives.find(el => el.id === id) as Perspective
+      const per: Perspective = state.perspectives.find(el => el.id === id) as Perspective
       if (!per.isSmart) {
         const pers = per as Perspective
         if (pers.priority !== '')
@@ -141,14 +141,13 @@ export default {
         })
     },
     editPerspective({ rootState, state }, {name, description, icon, iconColor, id}) {
-      if (rootState.firestore && rootState.uid) {
-          rootState.firestore.collection('perspectives').doc(id).update({
-            name,
-            description,
-            icon,
-            iconColor,
-          })
-      }
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('perspectives').doc(id).update({
+          name,
+          description,
+          icon,
+          iconColor,
+        })
     },
     addLabelToPerspective({ rootState }, {id, labelId}) {
       const fire = rootState.firebase.firestore.FieldValue as any
@@ -189,7 +188,7 @@ export default {
         const batch = rootState.firestore.batch()
 
         for (const pin of pins) {
-          let per: any = state.perspectives.find(el => el.id === pin.id)
+          const per: any = state.perspectives.find(el => el.id === pin.id)
           let finalPin: boolean = !per.pin
           if (pin.pin)
             finalPin = pin.pin
@@ -219,7 +218,7 @@ export default {
         const batch = rootState.firestore.batch()
 
         for (const show of arr) {
-          let per: any = state.perspectives.find(el => el.id === show.id)
+          const per: any = state.perspectives.find(el => el.id === show.id)
           let finalShow = !per.numberOfTasks
           if (show.show)
             finalShow = show.show
@@ -237,7 +236,7 @@ export default {
         const batch = rootState.firestore.batch()
 
         for (const show of arr) {
-          let per: any = state.perspectives.find(el => el.id === show.id)
+          const per: any = state.perspectives.find(el => el.id === show.id)
           let finalShow = !per.showWhenNotEmpty
           if (show.show)
             finalShow = show.show
@@ -291,6 +290,7 @@ export default {
             name: 'Today',
             pin: true,
             numberOfTasks: true,
+            showWhenNotEmpty: false,
             icon: 'star',
             iconColor: '#FFE366',
           },
@@ -298,6 +298,7 @@ export default {
             name: 'All tasks',
             pin: false,
             numberOfTasks: false,
+            showWhenNotEmpty: false,
             icon: 'tasks',
             iconColor: '#9CE283',
           },
@@ -305,6 +306,7 @@ export default {
             name: 'Inbox',
             pin: true,
             numberOfTasks: true,
+            showWhenNotEmpty: false,
             icon: 'inbox',
             iconColor: '#83B7E2',
             description: `All of your inbox tasks will be shown here.`,
@@ -313,6 +315,7 @@ export default {
             name: 'Upcoming',
             pin: true,
             numberOfTasks: false,
+            showWhenNotEmpty: false,
             icon: 'calendar-alt',
             iconColor: '#FF6B66',
           },
@@ -320,6 +323,7 @@ export default {
             name: 'Have tags',
             pin: false,
             numberOfTasks: false,
+            showWhenNotEmpty: false,
             icon: 'tags',
             iconColor: '#FF6B66',
           },
@@ -327,6 +331,7 @@ export default {
             name: `Doesn't have tags`,
             pin: false,
             numberOfTasks: false,
+            showWhenNotEmpty: false,
             icon: 'backspace',
             iconColor: '#FF6B66',
           },
@@ -336,6 +341,7 @@ export default {
             name: 'Anytime',
             pin: true,
             numberOfTasks: true,
+            showWhenNotEmpty: false,
             icon: 'layer-group',
             iconColor: '#88DDB7',
           },
@@ -343,6 +349,7 @@ export default {
             name: 'Someday',
             pin: true,
             numberOfTasks: false,
+            showWhenNotEmpty: false,
             icon: 'archive',
             iconColor: '#E2B983',
           },
@@ -361,6 +368,7 @@ export default {
             iconColor: per.iconColor,
             description: '',
             order: [],
+            showWhenNotEmpty: per.showWhenNotEmpty,
             isSmart: true,
             priority: '',
             excludeLabels: [],
@@ -384,6 +392,7 @@ export default {
             icon: per.icon,
             iconColor: per.iconColor,
             description: '',
+            showWhenNotEmpty: per.showWhenNotEmpty,
             order: [],
             isSmart: false,
             priority: '',

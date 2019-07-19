@@ -49,6 +49,7 @@
         :fixed-pers='pers.name'
         :default-priority='getPriority'
         :allow-priority='true'
+        :insert-before='true'
         :allow-labels='allowLabels'
         @update='onUpdate'
         @selected='onSelect'
@@ -231,11 +232,8 @@ export default class PerspectiveAppview extends Vue {
     return this.baseTasks
   }
   get sortedTasks(): Task[] {
-    if (this.pers) {
-      const ord = appUtils.fixOrder(this.viewTasks, this.pers.order)
-      return appUtils.sortArrayByIds(this.viewTasks, ord)
-    }
-    return []
+    const ord = appUtils.fixOrder(this.viewTasks, this.pers.order)
+    return appUtils.sortArrayByIds(this.viewTasks, ord)
   }
   get getTasks(): Task[] {
     let tasks: Task[] = this.sortedTasks

@@ -32,7 +32,7 @@ export default class ViewAlltasks extends Vue {
   @Mutation pushView!: (obj: {view: string, viewType: string}) => void
 
   @persVuex.Getter getPerspectiveByName!: (name: string) => Perspective
-  
+
   @taskVuex.State tasks!: Task[]
 
   @Prop(Boolean) value!: string

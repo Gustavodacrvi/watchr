@@ -62,6 +62,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop(String) fixedPers!: string
   @Prop(String) fixedLabel!: string
   @Prop(Array) tasks!: Task[]
+  @Prop({default: false, type: Boolean}) insertBefore!: boolean
 
   @Getter isDesktop!: boolean
 
@@ -144,12 +145,11 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   getTaskAdderPosition() {
     const els: string[] = this.getIdsFromElements(this.rootSelector)
     let i = 0
-    for (const id of els) {
+    for (const id of els)
       if (id === 'task-adder') {
         this.taskAdderPosition = i
         break
       } else i++
-    }
   }
 
   get rootComponent(): HTMLElement {
@@ -158,13 +158,13 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   }
 
   @Watch('tasks')
-  onChange() {
-    if (this.added) {
+  onChange(j: any, l: any) {
+    if (this.added && this.insertBefore) {
       setTimeout(() => {
         this.getTaskAdderPosition()
         const childNodes = this.rootComponent.childNodes
         const p = this.taskAdderPosition
-        const adder = childNodes[p]
+        const adder = childNodes[p] as any
         const newTask = childNodes[p + 1]
         this.rootComponent.insertBefore(newTask, adder)
       }, 10)

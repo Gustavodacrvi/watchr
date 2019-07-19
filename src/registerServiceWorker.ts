@@ -46,9 +46,8 @@ if (process.env.NODE_ENV === 'production') {
   })
   let refreshing: boolean = false
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (!refreshing) {
-      window.location.reload()
-      refreshing = true
-    }
+    if (!refreshing) return undefined
+    window.location.reload()
+    refreshing = true
   })
 }
