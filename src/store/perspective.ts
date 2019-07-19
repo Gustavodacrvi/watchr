@@ -16,6 +16,7 @@ interface Getters {
   sortedSmartPerspectives: (state: States) => Perspective[]
   sortedCustomPerspectives: (state: States) => Perspective[]
   smartPerspective: (state: States) => (name: string) => Perspective
+  customPerspective: (state: States) => (name: string) => Perspective
   pinedSmartPerspectives: (state: States, getters: Getters) => void
   pinedCustomPerspectives: (state: States, getters: Getters) => void
   initialPerspective: (state: States, getters: Getters) => void
@@ -94,6 +95,9 @@ export default {
     },
     smartPerspective: (state: States) => (name: string): Perspective => {
       return state.smartPerspectives.find(el => el.name === name) as Perspective
+    },
+    customPerspective: (state: States) => (name: string): Perspective => {
+      return state.customPerspectives.find(el => el.name === name) as Perspective
     },
     sortedSmartPerspectives(state: States): Perspective[] {
       // tslint:disable-next-line:max-line-length
