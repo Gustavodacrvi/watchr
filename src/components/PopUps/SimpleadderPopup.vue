@@ -6,7 +6,6 @@
     <div class='content'>
       <form-input
         tabindex='1'
-        :placeholder='popUpPayload.inputPlaceholder'
         v-model='input'
         :max='100'
         @state='e => inputState = e'
@@ -40,6 +39,10 @@ export default class SigninPopUp extends Vue {
 
   input: string | null = null
   inputState: boolean = false
+
+  created() {
+    this.input = this.popUpPayload.inputPlaceholder
+  }
 
   runCallback() {
     if (this.inputState && this.input !== null)

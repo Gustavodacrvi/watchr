@@ -31,7 +31,7 @@ import { Task, Perspective } from '../../../interfaces/app'
 export default class ViewAlltasks extends Vue {
   @Mutation pushView!: (obj: {view: string, viewType: string}) => void
 
-  @persVuex.Getter getperspectiveByName!: (name: string) => Perspective
+  @persVuex.Getter getPerspectiveByName!: (name: string) => Perspective
   
   @taskVuex.State tasks!: Task[]
 
@@ -39,7 +39,7 @@ export default class ViewAlltasks extends Vue {
   @Prop(String) pers!: string
 
   get perspectiveData() {
-    return this.getperspectiveByName(this.pers)
+    return this.getPerspectiveByName(this.pers)
   }
   get baseTasks() {
     let tasks = this.tasks

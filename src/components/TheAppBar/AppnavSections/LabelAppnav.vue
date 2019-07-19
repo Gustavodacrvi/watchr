@@ -4,7 +4,6 @@
       name='LABELS'
       :show-title='selected.length === 0'
       :icons='headerIcons'
-      :selected='selected'
     />
     <list-renderer v-if='sortedLabels && sortedLabels.length > 0'
       group='appnavlabels'
@@ -32,6 +31,7 @@ import { Label, ListIcon, SimpleAdder, Perspective } from '../../../interfaces/a
 
 const label = namespace('label')
 const list = namespace('list')
+const pers = namespace('perspective')
 
 @Component({
   components: {
@@ -48,22 +48,14 @@ export default class LabelAppnav extends Vue {
   @Mutation openSection!: (section: string) => void
 
   @label.Getter sortedLabels!: Label[]
+  @label.Getter getLabelsByIds!: (ids: string[]) => Label[]
   @label.Action saveLabelPosition!: (ids: string[]) => void
   @label.Action deleteLabelsById!: (ids: string[]) => void
   @label.Action editLabelNameById!: (obj: {id: string, name: string}) => void
 
+  @pers.Getter initialPerspective!: string
+
   selected: string[] = []
-  headerIcons: ListIcon[] = [
-    {
-      icon: 'trash',
-        iconColor: '',
-        size: 'lg',
-        name: 'Delete label',
-        callback: (selected: string[]) => {
-          this.deleteLabelsById(selected)
-        },
-    },
-  ]
 
   created() {
     this.openSection('labels')
@@ -75,6 +67,21 @@ export default class LabelAppnav extends Vue {
     return ''
   }
 
+  get headerIcons(): ListIcon[] {
+    return [
+      {
+        icon: 'trash',
+        iconColor: '',
+        size: 'lg',
+        name: 'Delete label',
+        callback: () => {
+          for (const id of this.selected)
+            this.activeLabel(this.getLabelsByIds([id])[0].name)
+          this.deleteLabelsById(this.selected)
+        },
+      },
+    ]
+  }
   getOptions(obj: Label[]): ListIcon[] {
     return [
       {
@@ -83,6 +90,7 @@ export default class LabelAppnav extends Vue {
         size: 'lg',
         name: 'Delete label',
         callback: (id: string) => {
+          this.activeLabel(this.getLabelsByIds([id])[0].name)
           this.deleteLabelsById([id])
         },
       },
@@ -97,7 +105,7 @@ export default class LabelAppnav extends Vue {
             popUpTitle: 'Edit label name',
             inputMaximumCharacters: 40,
             buttonName: 'Save new label name',
-            inputPlaceholder: 'Label name',
+            inputPlaceholder: this.getLabelsByIds([id])[0].name,
             callback: name => {
               this.pushPopUp('')
               this.editLabelNameById({
@@ -109,6 +117,10 @@ export default class LabelAppnav extends Vue {
         },
       },
     ]
+  }
+  activeLabel(name: string) {
+    if (name === this.activePers)
+        this.$router.push('/user?pers=' + this.initialPerspective)
   }
 
   onUpdate(ids: string[]) {

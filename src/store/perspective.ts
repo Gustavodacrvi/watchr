@@ -250,7 +250,7 @@ export default {
         batch.commit()
       }
     },
-    saveTaskOrder({ rootState, state }, {id, order}) {
+    saveTaskOrder({ rootState }, {id, order}) {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('perspectives').doc(id).update({
           order,

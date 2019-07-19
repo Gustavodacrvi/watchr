@@ -97,7 +97,7 @@ export default class LabelAdder extends Vue {
 
   input: string | null = null
   icon: string = 'layer-group'
-  color: string = '#FF6B66'
+  color: string = '#8C8C8C'
   description: string = ''
   value: string = ''
   options: string[] = []
@@ -120,16 +120,14 @@ export default class LabelAdder extends Vue {
           duration: 3,
           type: 'error',
         })
-      else if (!this.pers) {
+      else if (!this.pers)
         this.addPerspective({
           name: this.value,
           description: this.description,
           icon: this.icon,
           iconColor: this.color,
         })
-        this.pushPopUp('')
-        this.$router.push('/user/pers?pers=' + this.value)
-      } else {
+      else {
         this.editPerspective({
           id: this.pers.id,
           name: this.value,
@@ -145,7 +143,7 @@ export default class LabelAdder extends Vue {
     return this.perspectives.filter(el => el.name.includes(this.value)).map(el => el.name)
   }
   select(value: string) {
-    this.input = this.value
+    this.input = value
   }
 
   get buttonPlaceholder(): string {

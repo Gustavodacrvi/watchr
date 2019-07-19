@@ -42,10 +42,10 @@
         </div>
       </div>
     </div>
-    <div
+    <div v-if='showFooter'
       class='footer-wrapper'
     >
-      <hr class='border hr' v-if='showFooter' :class='theme'>
+      <hr class='border hr' :class='theme'>
       <div class='footer'>
         <div class='left' v-if='!isDesktop'>
           <span @click="$emit('change')">
