@@ -184,6 +184,7 @@ export default class AppviewTask extends Vue {
 
 .content-wrapper {
   flex-basis: 100%;
+  line-height: 100%;
   margin: 6px 0;
   margin-left: 6px;
   position: relative;

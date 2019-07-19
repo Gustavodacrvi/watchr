@@ -1,11 +1,20 @@
 <template>
-  <div class='right view-header-icons'>
+  <div class='right'>
     <transition name='fade'>
-    <template v-if='showTaskOptions && isDesktop'>
-        <span class='header-options'>
-          <i class='fas icon pointer trash fa-trash fa-lg' @click="$emit('delete')"></i>
-        </span>
-      </template>
+      <span v-if='showTaskOptions && isDesktop' class='header-option'>
+        <icon-options
+          handle='exclamation'
+          size='lg'
+          min-width='200px'
+          :options='priorityOptions'
+          @click='multiplePriority'
+        />
+      </span>
+    </transition>
+    <transition name='fade'>
+      <span v-if='showTaskOptions && isDesktop' class='header-option'>
+        <i class='fas icon pointer trash fa-trash fa-lg' @click="$emit('delete')"></i>
+      </span>
     </transition>
     <span style='width: 35px'></span>
     <span v-if='allowSearch' class='header-option'>
@@ -122,6 +131,9 @@ export default class AppviewHeadericons extends Vue {
   }
   selectPriority(value: string) {
     this.$emit('priority', value)
+  }
+  multiplePriority(value: string) {
+    this.$emit('selectedpriority', value)
   }
   selectLabel(value: string) {
     this.$emit('label', value)

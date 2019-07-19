@@ -19,6 +19,7 @@
 
           @delete='deleteSelected'
           @priority='selectPriority'
+          @selectedpriority='selectedPriority'
           @settings='selectSettingsOption'
           @label='addLabel'
         />
@@ -98,6 +99,7 @@ export default class PerspectiveAppview extends Vue {
   // tslint:disable-next-line:max-line-length
   @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
+  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
 
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
@@ -217,6 +219,12 @@ export default class PerspectiveAppview extends Vue {
   }
   deleteSelected() {
     this.deleteTasksById(this.selected)
+  }
+  selectedPriority(value: string) {
+    this.changePrioritysByIds({
+      ids: this.selected,
+      priority: value,
+    })
   }
   updateView() {
     this.pushView({

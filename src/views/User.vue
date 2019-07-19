@@ -172,7 +172,7 @@ export default class Guest extends Mixins(Mixin) {
 }
 
 .view-wrapper.desktop {
-  margin-left: 300px;
+  margin-left: 280px;
   z-index: 20;
 }
 
