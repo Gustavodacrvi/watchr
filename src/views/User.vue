@@ -27,7 +27,7 @@
       key='loggedAndNotVerified'
     >
       <div class='content'>
-        <div class='gray user-card-wrapper round-border' :class='theme'>
+        <div style='margin-top: 50px' class='gray user-card-wrapper round-border' :class='theme'>
           <div class='user-card'>
             <span class='txt msg'>Please confirm your e-mail before continuing.</span>
             <form-button :waiting-response='waitingResponse' @click='resendConfirmationEmail'>
@@ -43,6 +43,7 @@
     >
       <div class='content'>
         <tab-slider
+          style='margin-top: 50px'
           flex-basis='700px'
           :options="[
             {name: 'Premium', comp: 'UserPremium'},
@@ -75,9 +76,13 @@ const persVuex = namespace('perspective')
   components: {
     'tab-slider': TabSlider,
     'form-button': FormButton,
-    'app-Inbox': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewInbox.vue')),
-    'app-Upcoming': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewUpcoming.vue')),
-    'app-Today': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewToday.vue')),
+    'app-inbox': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewInbox.vue')),
+    'app-all-tasks': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewAlltasks.vue')),
+    'app-upcoming': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewUpcoming.vue')),
+    'app-today': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewToday.vue')),
+    'app-have-tags': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewHavetags.vue')),
+    // tslint:disable-next-line:max-line-length
+    'app-doesnt-have-tags': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewDoesnthavetags.vue')),
     'app-custom-pers': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/CustomPerspective.vue')),
     'app-custom-label': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/LabelPerspective.vue')),
   },
@@ -103,7 +108,7 @@ export default class Guest extends Mixins(Mixin) {
   showing: boolean = false
 
   created() {
-    if (this.undefinedPers)
+    if (this.undefinedPers && this.loggedAndVerified || this.anonymous)
       this.$router.replace('user?pers=' + this.initialPerspective)
     this.open()
     if (this.currentAppSection !== 'overview' && this.isDesktop)
@@ -119,9 +124,12 @@ export default class Guest extends Mixins(Mixin) {
   get getComp() {
     if (this.pers) {
       switch (this.pers) {
-        case 'Inbox': return 'app-' + this.pers
-        case 'Upcoming': return 'app-' + this.pers
-        case 'Today': return 'app-' + this.pers
+        case 'Inbox': return 'app-inbox'
+        case 'Upcoming': return 'app-upcoming'
+        case 'Today': return 'app-today'
+        case 'All tasks': return 'app-all-tasks'
+        case 'Have tags': return 'app-have-tags'
+        case `Doesn't have tags`: return 'app-doesnt-have-tags'
       }
       return 'app-custom-pers'
     } else if (this.label)
@@ -141,7 +149,7 @@ export default class Guest extends Mixins(Mixin) {
   }
   @Watch('pinedSmartPerspectives')
   onChange() {
-    if (this.undefinedPers)
+    if (this.undefinedPers && this.loggedAndVerified || this.anonymous)
       this.$router.replace('user?pers=' + this.initialPerspective)
     this.open()
   }

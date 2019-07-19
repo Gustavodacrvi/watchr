@@ -58,7 +58,7 @@ export default class SigninPopUp extends Vue {
   @Mutation pushAlert!: (alert: Alert) => void
 
   @persVuex.Action addDefaultSmartPerspectives!: (obj: {id: string, someday: string, anytime: string}) => void
-  @label.Action addLabelsOrder!: (id: string) => {somedayId: string, anytimeId: string}
+  @label.Action addLabelsOrder!: (id: string) => any
   @settings.Action addDefaultSettings!: (id: string) => void
 
   email: string | null = null
@@ -85,13 +85,15 @@ export default class SigninPopUp extends Vue {
       // tslint:disable-next-line:max-line-length
       auth.createUserWithEmailAndPassword(this.email as any, this.password as any).then((cred: firebase.auth.UserCredential) => {
         if (cred.user) {
-          const obj = this.addLabelsOrder(cred.user.uid)
-          this.addDefaultSmartPerspectives({
-            id: cred.user.uid,
-            someday: obj.somedayId,
-            anytime: obj.anytimeId,
+          const id = cred.user.uid
+          this.addLabelsOrder(cred.user.uid).then((obj: any) => {
+            this.addDefaultSmartPerspectives({
+              id,
+              someday: obj.somedayId,
+              anytime: obj.anytimeId,
+            })
+            this.addDefaultSettings(id)
           })
-          this.addDefaultSettings(cred.user.uid)
         }
         this.pushAlert({
           name: 'You have successfully created an account!',
