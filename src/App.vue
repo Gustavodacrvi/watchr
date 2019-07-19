@@ -16,7 +16,7 @@
           </transition>
           <transition name='pop-up-trans' mode='out-in'>
             <pop-up v-if='isShowingPopUp && isDesktop'/>
-            <router-view v-if='isShowingPopUp && !isDesktop'/>
+            <router-view style='z-index: 901' v-if='isShowingPopUp && !isDesktop'/>
           </transition>
           <transition name='appbar-trans'>
             <keep-alive>
