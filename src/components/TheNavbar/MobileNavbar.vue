@@ -10,17 +10,14 @@
         <span class='title'>{{ navBarTitle }}</span>
       </div>
       <div class='right'>
-        <transition name='fade'>
-          <span class='nav-options'>
-            <icon-options v-if='navBarOptions && navBarOptions.length > 0'
-              class='cancel-sortable-unselect'
-              handle='ellipsis-v'
-              size='lg'
-              min-width='225px'
-              :options='navBarOptions'
-            />
-          </span>
-        </transition>
+        <span class='nav-options cancel-sortable-unselect'>
+          <icon-options v-if='navBarOptions && navBarOptions.length > 0'
+            handle='ellipsis-v'
+            size='lg'
+            min-width='225px'
+            :options='navBarOptions'
+          />
+        </span>
       </div>
     </div>
   </div>

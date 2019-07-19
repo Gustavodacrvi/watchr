@@ -129,6 +129,12 @@ export default class PerspectiveAppview extends Vue {
       iconColor: '',
       size: '',
     },
+    {
+      name: 'Change priority of tasks',
+      icon: 'exclamation',
+      iconColor: '',
+      size: '',
+    },
   ]
 
   created() {
@@ -137,10 +143,54 @@ export default class PerspectiveAppview extends Vue {
   }
 
   getMobileSelectedOptions(): ListIcon[] {
-    for (const icon of this.mobileSelectedOptions)
-      icon['callback'] = () => {
-        this.deleteTasksById(this.selected)
-      }
+    this.mobileSelectedOptions[0]['callback'] = () => {
+      this.deleteTasksById(this.selected)
+    }
+    this.mobileSelectedOptions[1]['callback'] = () => {
+      setTimeout(() => {
+        this.sendOptionsToNavbar([
+          {
+            name: 'High priority',
+            icon: 'exclamation',
+            iconColor: '#FF6B66',
+            size: 'lg',
+            callback: () => {
+              this.changePrioritysByIds({
+                ids: this.selected,
+                priority: 'High priority',
+              })
+              this.sendOptionsToNavbar([])
+            },
+          },
+          {
+            name: 'Medium priority',
+            icon: 'exclamation',
+            iconColor: '#fff566',
+            size: 'lg',
+            callback: () => {
+              this.changePrioritysByIds({
+                ids: this.selected,
+                priority: 'Medium priority',
+              })
+              this.sendOptionsToNavbar([])
+            },
+          },
+          {
+            name: 'Low priority',
+            icon: 'exclamation',
+            iconColor: '#70ff66',
+            size: 'lg',
+            callback: () => {
+              this.changePrioritysByIds({
+                ids: this.selected,
+                priority: 'Low priority',
+              })
+              this.sendOptionsToNavbar([])
+            },
+          },
+        ])      
+      }, 80)
+    }
     return this.mobileSelectedOptions
   }
   addLabel(label: Label) {
