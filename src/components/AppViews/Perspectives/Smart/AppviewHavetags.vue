@@ -3,6 +3,7 @@
     pers-name='Have tags'
     :value='value'
     :base-tasks='baseTasks'
+    :fixed-tag="{name: 'Have tags', icon: 'layer-group', backColor: '#83B7E2'}"
 
     @input="$emit('input', !value)"
   />

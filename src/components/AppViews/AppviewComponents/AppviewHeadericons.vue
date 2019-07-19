@@ -1,6 +1,17 @@
 <template>
   <div class='right'>
     <transition name='fade'>
+      <span v-if='allowLabels' class='header-option'>
+        <drop-finder
+          handle='tag'
+          size='lg'
+          min-width='300px'
+          :list='labels'
+          @select='multipleLabel'
+        />
+      </span>
+    </transition>
+    <transition name='fade'>
       <span v-if='showTaskOptions && isDesktop' class='header-option'>
         <icon-options
           handle='exclamation'
@@ -135,8 +146,11 @@ export default class AppviewHeadericons extends Vue {
   multiplePriority(value: string) {
     this.$emit('selectedpriority', value)
   }
-  selectLabel(value: string) {
-    this.$emit('label', value)
+  multipleLabel(label: Label) {
+    this.$emit('selectedlabel', label)
+  }
+  selectLabel(label: Label) {
+    this.$emit('label', label)
   }
 
   @Watch('search')

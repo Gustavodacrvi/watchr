@@ -30,7 +30,7 @@
       <div v-if='showing'>
         <div class='margin'></div>
         <view-tags
-          :fixed-label='label'
+          :fixed-tag="{name: label, icon: 'tag', backColor: '#FF6B66'}"
           :search='search'
           :labels='getLabels'
           :priority='priority'
@@ -72,7 +72,7 @@ import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeaderti
 
 import appUtils from '@/utils/app'
 
-import { Task, Label } from '../../../interfaces/app'
+import { Task, Label, ListIcon } from '../../../interfaces/app'
 
 @Component({
   components: {
@@ -86,12 +86,15 @@ export default class LabelPerspective extends Vue {
   @Mutation pushView!: (obj: {view: string, viewType: string}) => void
   @Getter isDesktop!: boolean
   @Getter platform!: string
+  @Mutation sendOptionsToNavbar!: (options: ListIcon[]) => void
+  @Mutation hideNavBarOptions!: () => void
 
   @Prop(String) label!: string
 
   @labelVuex.State('labels') savedLabels!: Label[]
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
   @labelVuex.Action saveLabelTaskOrder!: (obj: {id: string, order: string[]}) => void
+  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
 
   @taskVuex.State tasks!: Task[]
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
@@ -103,11 +106,76 @@ export default class LabelPerspective extends Vue {
   labels: string[] = []
   showing: boolean = false
   hided: boolean = false
+  mobileSelectedOptions: ListIcon[] = [
+    {
+      name: 'Delete selected tasks',
+      icon: 'trash',
+      iconColor: '',
+      size: '',
+    },
+    {
+      name: 'Change priority of tasks',
+      icon: 'exclamation',
+      iconColor: '',
+      size: '',
+    },
+  ]
 
   created() {
     this.updateView()
   }
 
+  getMobileSelectedOptions(): ListIcon[] {
+    this.mobileSelectedOptions[0]['callback'] = () => {
+      this.deleteTasksById(this.selected)
+    }
+    this.mobileSelectedOptions[1]['callback'] = () => {
+      setTimeout(() => {
+        this.sendOptionsToNavbar([
+          {
+            name: 'High priority',
+            icon: 'exclamation',
+            iconColor: '#FF6B66',
+            size: 'lg',
+            callback: () => {
+              this.changePrioritysByIds({
+                ids: this.selected,
+                priority: 'High priority',
+              })
+              this.sendOptionsToNavbar([])
+            },
+          },
+          {
+            name: 'Medium priority',
+            icon: 'exclamation',
+            iconColor: '#fff566',
+            size: 'lg',
+            callback: () => {
+              this.changePrioritysByIds({
+                ids: this.selected,
+                priority: 'Medium priority',
+              })
+              this.sendOptionsToNavbar([])
+            },
+          },
+          {
+            name: 'Low priority',
+            icon: 'exclamation',
+            iconColor: '#70ff66',
+            size: 'lg',
+            callback: () => {
+              this.changePrioritysByIds({
+                ids: this.selected,
+                priority: 'Low priority',
+              })
+              this.sendOptionsToNavbar([])
+            },
+          },
+        ])      
+      }, 80)
+    }
+    return this.mobileSelectedOptions
+  }
   updateView() {
     this.pushView({
       view: this.label,
@@ -194,6 +262,13 @@ export default class LabelPerspective extends Vue {
     return tasks
   }
 
+  @Watch('selected')
+  onChange() {
+    if (!this.isDesktop)
+      if (this.selected.length > 0)
+        this.sendOptionsToNavbar(this.getMobileSelectedOptions())
+      else this.hideNavBarOptions()
+  }
   @Watch('$route')
   onChange4() {
     this.updateView()

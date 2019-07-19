@@ -31,6 +31,7 @@ interface Actions {
   addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[]}) => void
   deleteTasksById: (context: ActionContext, ids: string[]) => void
   changePrioritysByIds: (context: ActionContext, obj: {ids: string[], priority: string}) => void
+  addLabelByTaskIds: (context: ActionContext, obj: {ids: string[], labelId: string}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -113,6 +114,21 @@ export default {
           const ref = rootState.firestore.collection('tasks').doc(id)
           batch.update(ref, {
             priority,
+          })
+        }
+
+        batch.commit()
+      }
+    },
+    addLabelByTaskIds({ rootState }, {ids, labelId}) {
+      if (rootState.firestore && rootState.uid) {
+        const batch = rootState.firestore.batch()
+
+        const fire = rootState.firebase.firestore.FieldValue as any
+        for (const id of ids) {
+          const ref = rootState.firestore.collection('tasks').doc(id)
+          batch.update(ref, {
+            labels: fire.arrayUnion(labelId)
           })
         }
 

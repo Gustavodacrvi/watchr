@@ -20,6 +20,7 @@
           @delete='deleteSelected'
           @priority='selectPriority'
           @selectedpriority='selectedPriority'
+          @selectedlabel='selectLabel'
           @settings='selectSettingsOption'
           @label='addLabel'
         />
@@ -33,7 +34,7 @@
         </p>
         <div class='margin'></div>
         <view-tags
-          :fixed-pers='pers.name'
+          :fixed-tag='fixedTag'
           :search='search'
           :priority='getPriority'
           :labels='getLabels'
@@ -100,6 +101,7 @@ export default class PerspectiveAppview extends Vue {
   @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
+  @taskVuex.Action addLabelByTaskIds!: (obj: {ids: string[], labelId: string}) => void
 
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
@@ -113,6 +115,7 @@ export default class PerspectiveAppview extends Vue {
   @Prop(Boolean) value!: boolean
   @Prop(Boolean) save!: boolean
   @Prop(String) persName!: string
+  @Prop(Object) fixedTag!: object
   @Prop(Array) baseTasks!: Task[]
 
   search: string = ''
@@ -274,6 +277,12 @@ export default class PerspectiveAppview extends Vue {
     this.changePrioritysByIds({
       ids: this.selected,
       priority: value,
+    })
+  }
+  selectLabel(label: Label) {
+    this.addLabelByTaskIds({
+      ids: this.selected,
+      labelId: label.id,
     })
   }
   updateView() {

@@ -6,6 +6,7 @@
     :base-tasks='baseTasks'
     :save='false'
     :allow-labels='false'
+    :fixed-tag="{name: 'Inbox', icon: 'layer-group', backColor: '#83B7E2'}"
 
     @input="$emit('input', !value)"
   />
