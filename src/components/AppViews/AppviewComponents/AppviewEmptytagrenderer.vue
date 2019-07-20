@@ -1,9 +1,10 @@
 <template>
-  <div :class='rootSelector'>
+  <div class='sort-list' :class='rootSelector'>
     <transition-group name='fade'>
       <empty-tag v-for='sort of list'
         :key='sort'
         :name='sort'
+        @click='removeLabel'
 
         :data-vid='sort'
       />
@@ -47,10 +48,15 @@ export default class AppviewEmptytag extends Mixins(Mixin) {
 
       onUpdate: () => {
         const ids: string[] = this.getIdsFromElements('.' + this.rootSelector)
-        console.log('update', ids)
         this.$emit('update', ids)
       },
     })
+  }
+  removeLabel(name: string) {
+    const list = this.list.slice()
+    const index = list.findIndex(el => el === name)
+    list.splice(index, 1)
+    this.$emit('update', list)
   }
 
   get rootComponent(): HTMLElement {
@@ -62,5 +68,13 @@ export default class AppviewEmptytag extends Mixins(Mixin) {
 </script>
 
 <style scoped>
+
+</style>
+
+<style scoped>
+
+.sort-list {
+  margin: 8px 0;
+}
 
 </style>
