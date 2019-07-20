@@ -1,6 +1,6 @@
 <template>
   <div class='task-adder'>
-    <div>
+    <div class='view-tags'>
       <transition name='fade'>
         <view-tags v-if='priority || fixedPers || getLabels.length > 0'
           :fixed-pers='fixedPers'
@@ -11,6 +11,12 @@
           @removelabel='removeLabel'
         />
       </transition>
+      <div v-if='lock' class='lock right pointer' @click='toggleLock'>
+        <transition name='fade' mode='out-in'>
+          <i v-if='isLocked' key='lock' class='fas txt fa-lock fa-sm'></i>
+          <i v-else key='unlock' class='fas txt fa-unlock fa-sm'></i>
+        </transition>
+      </div>
     </div>
     <div class='margin input-div'>
       <drop-input
@@ -95,15 +101,19 @@ export default class AppviewTaskedit extends Vue {
   @Prop(Array) defaultLabels!: string[]
   @Prop({default: false, type: Boolean}) allowPriority!: boolean
   @Prop({default: false, type: Boolean}) allowLabels!: boolean
+  @Prop({default: false, type: Boolean}) lock!: boolean
 
   @labelsVuex.State('labels') savedLabels!: Label[]
   @labelsVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
   value: string = ''
   optionsType: string = ''
+  isLocked: boolean = false
   priority: '' | 'Low priority' | 'High priority' | 'Medium priority' = ''
-  options: string[] = []
+  lockPriority: '' | 'Low priority' | 'High priority' | 'Medium priority' = ''
   labels: string[] = []
+  lockLabels: string[] = []
+  options: string[] = []
   priorityIcons: ListIcon[] = [
     {
       name: 'High priority',
@@ -134,6 +144,11 @@ export default class AppviewTaskedit extends Vue {
       this.value = this.defaultValue
   }
 
+  toggleLock() {
+    this.isLocked = !this.isLocked
+    this.lockPriority = this.priority
+    this.lockLabels = this.labels.slice()
+  }
   selectDropValue(value: string) {
     const arr = this.value.split(' ')
     arr[arr.length - 1] = this.optionsType + value
@@ -144,8 +159,13 @@ export default class AppviewTaskedit extends Vue {
     this.value = str
   }
   enter() {
-    if (this.value)
+    if (this.value) {
       this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels})
+      if (this.lock && this.isLocked) {
+        this.priority = this.lockPriority
+        this.labels = this.lockLabels.slice()
+      }
+    }
     this.value = ''
   }
   removeLabel(id: string) {
@@ -229,6 +249,14 @@ export default class AppviewTaskedit extends Vue {
 </script>
 
 <style scoped>
+
+.view-tags {
+  position: relative;
+}
+
+.lock {
+  bottom: 0;
+}
 
 .right {
   position: absolute;

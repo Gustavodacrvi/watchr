@@ -12,6 +12,7 @@
         :default-priority='defaultPriority'
         :allow-priority='allowPriority'
         :allow-labels='allowLabels'
+        :lock='true'
         @cancel='showing = false'
         @enter='enter'
       />
