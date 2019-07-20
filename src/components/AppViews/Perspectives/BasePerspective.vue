@@ -293,6 +293,8 @@ export default class PerspectiveAppview extends Vue {
     })
   }
   updateView() {
+    this.priority = this.pers.priority
+    this.labels = this.pers.includeAndLabels.slice()
     this.pushView({
       view: this.pers.name,
       viewType: 'perspective',
