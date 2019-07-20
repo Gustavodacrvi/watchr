@@ -51,6 +51,7 @@ export default class FormOptions extends Vue {
   @State theme!: string
 
   @Prop({default: false, type: Boolean}) enableSearch!: boolean
+  @Prop({default: false, type: Boolean}) parse!: Boolean
   @Prop(String) selected!: string
   @Prop(String) maxHeight!: string
   @Prop(Array) options!: string[]
@@ -72,6 +73,8 @@ export default class FormOptions extends Vue {
   }
 
   get getOptions(): string[] {
+    if (!this.parse)
+      return this.options.filter(el => el.includes(this.search))
     return this.options.filter(el => el.includes(this.search)).map(el => appUtils.parseMomentTimeZone(el))
   }
 }

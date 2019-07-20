@@ -15,7 +15,7 @@
             </span>
             <span class='el-txt'>About</span>
           </router-link>
-          <router-link
+          <router-link v-if='isLogged'
             class='txt el'
             ref='General'
             :to="{name: 'General'}"
@@ -63,7 +63,7 @@
           ref='About'
           :to="{name: 'About'}"
         >About</router-link>
-        <router-link
+        <router-link v-if='isLogged'
           class='txt mob-el'
           ref='General'
           :to="{name: 'General'}"
@@ -96,6 +96,7 @@ import { State, Getter } from 'vuex-class'
 @Component
 export default class Help extends Vue {
   @State theme!: string
+  @State isLogged!: boolean
   @Getter isDesktop!: boolean
 
   interval: any = null
@@ -104,7 +105,6 @@ export default class Help extends Vue {
     if (this.$route.name === 'Settings')
       this.$router.replace('settings/about')
   }
-
   mounted() {
     if (this.isDesktop)
       this.addDesktopInterval()

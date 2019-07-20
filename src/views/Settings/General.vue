@@ -1,5 +1,38 @@
 <template>
   <div>
+    <h2>View</h2>
+    <h3>Desktop</h3>
+    <div class='table'>
+      <div class='line' :class='platform'>
+        <div class='text'>
+          <span class='txt'>Task labels</span>
+        </div>
+        <div class='content'>
+          <form-options
+            max-height='300px'
+            :selected='desktopTaskLabels'
+            :options='taskLabelOptions'
+            @select='v => desktopTaskLabels = v'
+          />
+        </div>
+      </div>
+    </div>
+    <h3>Mobile</h3>
+    <div class='table'>
+      <div class='line' :class='platform'>
+        <div class='text'>
+          <span class='txt'>Task labels</span>
+        </div>
+        <div class='content'>
+          <form-options
+            max-height='300px'
+            :selected='mobileTaskLabels'
+            :options='taskLabelOptions'
+            @select='v => mobileTaskLabels = v'
+          />
+        </div>
+      </div>
+    </div>
     <h2>Date and Time</h2>
     <div class='table'>
       <div class='line' :class='platform'>
@@ -10,6 +43,7 @@
           <form-options
             max-height='300px'
             :enable-search='true'
+            :parse='true'
             :selected='parsedTimeZone'
             :options='timeZones'
             @select='v => timeZone = v'
@@ -112,6 +146,8 @@ export default class GeneralSubView extends Vue {
   @settingsVuex.State('timeFormat') savedTimeFormat!: string
   @settingsVuex.State('startOfTheWeek') savedStartOfTheWeek!: string
   @settingsVuex.State('nextWeek') savedNextWeek!: string
+  @settingsVuex.State('mobileTaskLabels') savedMobileTaskLabels!: string
+  @settingsVuex.State('desktopTaskLabels') savedDesktopTaskLabels!: string
 
   @settingsVuex.Action saveSettings!: (obj: {
     timeZone: string,
@@ -119,6 +155,8 @@ export default class GeneralSubView extends Vue {
     timeFormat: string,
     startOfTheWeek: string,
     nextWeek: string,
+    desktopTaskLabels: string,
+    mobileTaskLabels: string,
   }) => void
   @settingsVuex.Action setDefaultSettings!: () => void
 
@@ -130,6 +168,12 @@ export default class GeneralSubView extends Vue {
 
   startOfTheWeek: string = ''
   nextWeek: string = ''
+  mobileTaskLabels: string = ''
+  desktopTaskLabels: string = ''
+
+  taskLabelOptions: string[] = [
+    'Always show', 'Show on mouse/touch hover',
+  ]
 
   created() {
     this.getData()
@@ -143,6 +187,8 @@ export default class GeneralSubView extends Vue {
     this.timeFormat = this.savedTimeFormat
     this.startOfTheWeek = this.savedStartOfTheWeek
     this.nextWeek = this.savedNextWeek
+    this.mobileTaskLabels = this.savedMobileTaskLabels
+    this.desktopTaskLabels = this.savedDesktopTaskLabels
 
     if (this.timeZone === '')
       this.timeZone = m.tz.guess()
@@ -154,6 +200,8 @@ export default class GeneralSubView extends Vue {
       timeFormat: this.timeFormat,
       nextWeek: this.nextWeek,
       startOfTheWeek: this.startOfTheWeek,
+      mobileTaskLabels: this.mobileTaskLabels,
+      desktopTaskLabels: this.desktopTaskLabels,
     })
   }
   reset() {
@@ -186,6 +234,8 @@ export default class GeneralSubView extends Vue {
     else if (this.dateFormat !== this.savedDateFormat) return true
     else if (this.startOfTheWeek !== this.savedStartOfTheWeek) return true
     else if (this.nextWeek !== this.savedNextWeek) return true
+    else if (this.mobileTaskLabels !== this.savedMobileTaskLabels) return true
+    else if (this.desktopTaskLabels !== this.savedDesktopTaskLabels) return true
     return false
   }
 
