@@ -70,6 +70,7 @@ import { State, Getter, Mutation, namespace } from 'vuex-class'
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
+import EmptyTag from '@/components/AppViews/AppviewComponents/AppviewEmptytag.vue'
 import AppviewHeaderIcons from '@/components/AppViews/AppviewComponents/AppviewHeadericons.vue'
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
@@ -87,6 +88,7 @@ const persVuex = namespace('perspective')
     'task-renderer': AppviewTaskrenderer,
     'view-header-icons': AppviewHeaderIcons,
     'header-title': HeaderTitle,
+    'empty-tag': EmptyTag,
   },
 })
 export default class PerspectiveAppview extends Vue {
