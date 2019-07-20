@@ -28,8 +28,9 @@ interface Actions {
   // tslint:disable-next-line:max-line-length
   updateTask: (context: ActionContext, obj: {name: string, priority: string, id: string, labels: []}) => void
   // tslint:disable-next-line:max-line-length
-  addTask: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
+  addTaskPerspective: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
   addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[]}) => void
+  addTask: (context: ActionContext, obj: {name: string, priority: string, labels: string[]}) => void
   deleteTasksById: (context: ActionContext, ids: string[]) => void
   changePrioritysByIds: (context: ActionContext, obj: {ids: string[], priority: string}) => void
   addLabelByTaskIds: (context: ActionContext, obj: {ids: string[], labelId: string}) => void
@@ -90,7 +91,7 @@ export default {
         batch.commit()
       }
     },
-    addTask({ rootState }, {task, perspectiveId, order, position}) {
+    addTaskPerspective({ rootState }, {task, perspectiveId, order, position}) {
       if (rootState.firestore && rootState.uid) {
         const batch = rootState.firestore.batch()
 
@@ -110,6 +111,14 @@ export default {
 
         batch.commit()
       }
+    },
+    addTask({ rootState }, {priority, name, labels}) {
+      console.log(rootState.firestore && rootState.uid)
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('tasks').add({
+          name, labels, priority,
+          userId: rootState.uid,
+        })
     },
     changePrioritysByIds({ rootState }, {ids, priority}) {
       if (rootState.firestore && rootState.uid) {

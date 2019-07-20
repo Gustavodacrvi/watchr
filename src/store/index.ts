@@ -253,6 +253,7 @@ const store: any = new Vuex.Store({
         switch (key) {
           case 'l': commit('pushPopUp', 'LabeladderPopup'); break
           case 'p': commit('pushPopUp', 'PerspectiveAdderPopup'); break
+          case 't': commit('pushPopUp', 'TaskadderPopup'); break
           case 'h': commit('pushPopUp', ''); break
         }
     },

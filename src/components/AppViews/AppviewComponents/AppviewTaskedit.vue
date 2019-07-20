@@ -38,7 +38,7 @@
       >
         {{ btn }}
       </view-btn>
-      <span class='cancel pointer' @click="$emit('cancel')">Cancel</span>
+      <span v-if='showCancel' class='cancel pointer' @click="$emit('cancel')">Cancel</span>
       <div class='right'>
         <div v-if='allowLabels' class='header-option'>
           <drop-finder
@@ -102,6 +102,7 @@ export default class AppviewTaskedit extends Vue {
   @Prop({default: false, type: Boolean}) allowPriority!: boolean
   @Prop({default: false, type: Boolean}) allowLabels!: boolean
   @Prop({default: false, type: Boolean}) lock!: boolean
+  @Prop({default: true, type: Boolean}) showCancel!: boolean
 
   @labelsVuex.State('labels') savedLabels!: Label[]
   @labelsVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]

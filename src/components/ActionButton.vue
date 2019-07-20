@@ -57,7 +57,7 @@ export default class ActionButtonComp extends Vue {
   ]
   topButtons: FloatingButton[] = [
     {icon: 'tags', iconColor: 'white', backColor: '#fc7d7d', click: this.popUp('LabeladderPopup')},
-    {icon: 'bolt', iconColor: 'white', backColor: '#FFE366', click: this.popUp('LabeladderPopup')},
+    {icon: 'bolt', iconColor: 'white', backColor: '#FFE366', click: this.popUp('TaskadderPopup')},
   ]
   showing: boolean = false
 
