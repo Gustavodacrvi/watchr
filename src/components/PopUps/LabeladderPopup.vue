@@ -75,8 +75,14 @@ export default class LabelAdder extends Vue {
           duration: 3,
           type: 'error',
         })
-      else
+      else {
         this.addLabel(this.value)
+        this.pushAlert({
+          name: `<strong>${this.value}</strong> label was successfully added.`,
+          duration: 2.5,
+          type: 'success',
+        })
+      }
     }
   }
 

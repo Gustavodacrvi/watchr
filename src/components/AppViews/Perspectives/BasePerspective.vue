@@ -20,7 +20,6 @@
           @delete='deleteSelected'
           @priority='selectPriority'
           @selectedpriority='selectedPriority'
-          @selectedlabel='selectLabel'
           @settings='selectSettingsOption'
           @label='addLabel'
         />
@@ -136,12 +135,6 @@ export default class PerspectiveAppview extends Vue {
     {
       name: 'Change priority of tasks',
       icon: 'exclamation',
-      iconColor: '',
-      size: '',
-    },
-    {
-      name: 'Add label',
-      icon: 'tags',
       iconColor: '',
       size: '',
     },
@@ -284,12 +277,6 @@ export default class PerspectiveAppview extends Vue {
     this.changePrioritysByIds({
       ids: this.selected,
       priority: value,
-    })
-  }
-  selectLabel(label: Label) {
-    this.addLabelByTaskIds({
-      ids: this.selected,
-      labelId: label.id,
     })
   }
   updateView() {

@@ -10,7 +10,7 @@
             <component
               v-model='showing'
               :is='getComp'
-              :pers='pers'
+              :pers='per'
               :label='label'
             />
           </transition>
@@ -92,6 +92,7 @@ export default class Guest extends Mixins(Mixin) {
   @State currentAppSection!: string
   @Getter loggedAndVerified!: boolean
   @Getter loggedAndNotVerified!: boolean
+  @Getter isStandAlone!: boolean
   @Getter anonymous!: boolean
   @Getter isDesktop!: boolean
   @Getter activePers!: Perspective
@@ -106,10 +107,15 @@ export default class Guest extends Mixins(Mixin) {
 
   waitingResponse: boolean = false
   showing: boolean = false
+  per: string = ''
+  loaded: boolean = false
 
   created() {
-    if (this.undefinedPers && this.loggedAndVerified || this.anonymous)
+    this.per = this.pers
+    if (this.ready && !this.isStandAlone) {
       this.$router.replace('user?pers=' + this.initialPerspective)
+      this.loaded = true
+    }
     this.open()
     if (this.currentAppSection !== 'overview' && this.isDesktop)
       this.showing = true
@@ -121,9 +127,9 @@ export default class Guest extends Mixins(Mixin) {
     else if (this.isDesktop)
       this.closeAppBar()
   }
-  get getComp() {
-    if (this.pers) {
-      switch (this.pers) {
+  get getComp(): string {
+    if (this.per) {
+      switch (this.per) {
         case 'Inbox': return 'app-inbox'
         case 'Upcoming': return 'app-upcoming'
         case 'Today': return 'app-today'
@@ -134,11 +140,26 @@ export default class Guest extends Mixins(Mixin) {
       return 'app-custom-pers'
     } else if (this.label)
       return 'app-custom-label'
+    return ''
+  }
+  get ready(): boolean {
+    return this.undefinedPers && this.loggedAndVerified || this.anonymous
   }
   get undefinedPers() {
     return !this.pers && !this.label
   }
 
+  @Watch('pers')
+  onChange6() {
+    this.per = this.pers
+  }
+  @Watch('initialPerspective')
+  onChange5() {
+    if (!this.loaded) {
+      this.per = this.initialPerspective
+      this.loaded = true
+    }
+  }
   @Watch('isDesktop')
   onResize() {
     this.open()

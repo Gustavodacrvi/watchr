@@ -27,7 +27,7 @@ import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.v
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
 import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmessage.vue'
 
-import { Label, ListIcon, SimpleAdder, Perspective, ListElement } from '../../../interfaces/app'
+import { Label, ListIcon, SimpleAdder, Perspective, ListElement, Alert } from '../../../interfaces/app'
 
 const label = namespace('label')
 const task = namespace('task')
@@ -45,6 +45,7 @@ export default class LabelAppnav extends Vue {
   @State viewType!: string
   @Mutation pushPopUpPayload!: (obj: SimpleAdder) => void
   @Mutation pushPopUp!: (comp: string) => void
+  @Mutation pushAlert!: (alert: Alert) => void
   @Mutation openSection!: (section: string) => void
 
   @label.Getter sortedLabels!: Label[]
@@ -89,6 +90,11 @@ export default class LabelAppnav extends Vue {
             inputPlaceholder: this.getLabelsByIds([id])[0].name,
             callback: name => {
               this.pushPopUp('')
+              this.pushAlert({
+                name: `<strong>${name}</strong> label was successfully saved.`,
+                duration: 2.5,
+                type: 'success',
+              })
               this.editLabelNameById({
                 id,
                 name,

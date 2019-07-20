@@ -120,13 +120,19 @@ export default class LabelAdder extends Vue {
           duration: 3,
           type: 'error',
         })
-      else if (!this.pers)
+      else if (!this.pers) {
         this.addPerspective({
           name: this.value,
           description: this.description,
           icon: this.icon,
           iconColor: this.color,
         })
+        this.pushAlert({
+          name: `<strong>${this.value}</strong> perspective was successfully added.`,
+          duration: 2.5,
+          type: 'success',
+        })
+      }
       else {
         this.editPerspective({
           id: this.pers.id,
@@ -134,6 +140,11 @@ export default class LabelAdder extends Vue {
           description: this.description,
           icon: this.icon,
           iconColor: this.color,
+        })
+        this.pushAlert({
+          name: `<strong>${this.value}</strong> perspective was successfully edited.`,
+          duration: 2.5,
+          type: 'success',
         })
         this.pushPopUp('')
       }
