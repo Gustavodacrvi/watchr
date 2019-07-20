@@ -45,8 +45,12 @@ export default class LabelAdder extends Vue {
   @taskVuex.Action addTask!: (obj: {name: string, priority: string, labels: string[]}) => void
 
   add(obj: {name: string, priority: string, labels: string[]}) {
-    console.log(obj)
     this.addTask(obj)
+    this.pushAlert({
+      name: 'Task successfully added.',
+      duration: 2.5,
+      type: 'success',
+    })
   }
 }
 

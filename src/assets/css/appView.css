@@ -7,6 +7,10 @@
   padding-top: 20px;
 }
 
+.description {
+  margin: 0;
+}
+
 .header {
   position: relative;
   z-index: 50;

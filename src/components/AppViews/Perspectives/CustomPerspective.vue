@@ -4,6 +4,7 @@
     :value='value'
     :base-tasks='baseTasks'
     :save='!isOnOverview'
+    :save-sort='!isOnOverview'
 
     @input="$emit('input', !value)"
   />

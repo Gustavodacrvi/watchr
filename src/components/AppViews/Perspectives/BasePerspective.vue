@@ -114,6 +114,7 @@ export default class PerspectiveAppview extends Vue {
   @Prop({default: true, type: Boolean}) allowLabels!: boolean
   @Prop(Boolean) value!: boolean
   @Prop(Boolean) save!: boolean
+  @Prop(Boolean) saveSort!: boolean
   @Prop(String) persName!: string
   @Prop(Object) fixedTag!: object
   @Prop(Array) baseTasks!: Task[]
@@ -121,6 +122,7 @@ export default class PerspectiveAppview extends Vue {
   search: string = ''
   priority: string = ''
   labels: string[] = []
+  sort: string[] = []
   hided: boolean = false
   showing: boolean = false
   loaded: boolean = false
@@ -234,25 +236,11 @@ export default class PerspectiveAppview extends Vue {
   }
   selectSettingsOption(value: string) {
     if (value === 'Sort tasks by name') {
-      const tasks: Task[] = this.viewTasks
-      tasks.sort((a, b) => a.name.localeCompare(b.name))
-      const ids: string[] = []
-      for (const el of tasks)
-        ids.push(el.id)
-      this.saveTaskOrder({
-        id: this.pers.id,
-        order: ids,
-      })
+      this.sort.push('name')
+      this.addPerspectiveSort('name')
     } else if (value === 'Sort tasks by priority') {
-      const tasks = this.viewTasks
-      appUtils.sortTasksByPriority(tasks)
-      const ids: string[] = []
-      for (const el of tasks)
-        ids.push(el.id)
-      this.saveTaskOrder({
-        id: this.pers.id,
-        order: ids,
-      })
+      this.sort.push('priority')
+      this.addPerspectiveSort('priority')
     }
   }
   toggleHide() {
@@ -282,6 +270,7 @@ export default class PerspectiveAppview extends Vue {
   updateView() {
     this.priority = this.pers.priority
     this.labels = this.pers.includeAndLabels.slice()
+    this.sort = this.pers.sort.slice()
     this.pushView({
       view: this.pers.name,
       viewType: 'perspective',
@@ -300,14 +289,14 @@ export default class PerspectiveAppview extends Vue {
   }
   get getTasks(): Task[] {
     let tasks: Task[] = this.sortedTasks
-    if (!this.save) {
-      if (this.search)
-        tasks = tasks.filter(el => el.name.includes(this.search))
-      if (this.priority)
-        tasks = tasks.filter(el => el.priority === this.priority)
-      if (this.labels && this.labels.length > 0)
-        tasks = appUtils.filterTasksByLabels(tasks, this.labels)
-    }
+    if (this.search)
+      tasks = tasks.filter(el => el.name.includes(this.search))
+    if (this.priority)
+      tasks = tasks.filter(el => el.priority === this.priority)
+    if (this.labels && this.labels.length > 0)
+      tasks = appUtils.filterTasksByLabels(tasks, this.labels)
+    if (this.sort && this.sort.length > 0)
+      tasks = appUtils.sortTasksByMultipleCriteria(tasks, this.sort)
     return tasks
   }
   get getLabels(): Label[] {

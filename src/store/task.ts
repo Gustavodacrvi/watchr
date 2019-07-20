@@ -113,7 +113,6 @@ export default {
       }
     },
     addTask({ rootState }, {priority, name, labels}) {
-      console.log(rootState.firestore && rootState.uid)
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('tasks').add({
           name, labels, priority,
