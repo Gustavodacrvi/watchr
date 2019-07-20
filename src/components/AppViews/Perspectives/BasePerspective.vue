@@ -27,6 +27,9 @@
       </div>
     </div>
     <div class='margin'></div>
+    <empty-tag-renderer v-if='sort && sort.length > 0'
+      :list='sort'
+    />
     <div v-if='!hided'>
       <div v-if='showing'>
         <p v-if='pers.description' class='description txt'>
@@ -70,7 +73,7 @@ import { State, Getter, Mutation, namespace } from 'vuex-class'
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
-import EmptyTag from '@/components/AppViews/AppviewComponents/AppviewEmptytag.vue'
+import EmptyTagsRenderer from '@/components/AppViews/AppviewComponents/AppviewEmptytagrenderer.vue'
 import AppviewHeaderIcons from '@/components/AppViews/AppviewComponents/AppviewHeadericons.vue'
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
@@ -88,7 +91,7 @@ const persVuex = namespace('perspective')
     'task-renderer': AppviewTaskrenderer,
     'view-header-icons': AppviewHeaderIcons,
     'header-title': HeaderTitle,
-    'empty-tag': EmptyTag,
+    'empty-tag-renderer': EmptyTagsRenderer,
   },
 })
 export default class PerspectiveAppview extends Vue {
