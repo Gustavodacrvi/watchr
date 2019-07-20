@@ -352,10 +352,6 @@ export default class PerspectiveAppview extends Vue {
   onChange2() {
     this.showing = this.value
   }
-  @Watch('$route')
-  onChange4() {
-    this.updateView()
-  }
   @Watch('perspectiveData')
   onChange3() {
     this.updateView()
