@@ -1,5 +1,5 @@
 
-import { Task } from '@/interfaces/app'
+import { Task, Label } from '@/interfaces/app'
 
 import { States as RootState } from '@/store/index'
 
@@ -8,7 +8,8 @@ interface States {
 }
 
 interface Getters {
-  inboxTasks: () => Task[]
+  inboxTasks: (state: States) => Task[]
+  getNumberOfTasksByLabel: (state: States) => (labelId: string) => number
 }
 
 interface Mutations {
@@ -46,6 +47,10 @@ export default {
   getters: {
     inboxTasks(state: States) {
       return state.tasks.filter(el => el.labels.length === 0)
+    },
+    getNumberOfTasksByLabel: (state: States) => (labelId: string): number => {
+      const tasks = state.tasks.filter(el => el.labels.includes(labelId))
+      return tasks.length
     },
   } as Getters,
   actions: {

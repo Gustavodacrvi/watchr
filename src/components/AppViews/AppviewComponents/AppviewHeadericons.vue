@@ -1,7 +1,7 @@
 <template>
   <div class='right'>
     <transition name='fade'>
-      <span v-if='allowLabels' class='header-option'>
+      <span v-if='showTaskOptions && isDesktop' class='header-option'>
         <drop-finder
           handle='tag'
           size='lg'

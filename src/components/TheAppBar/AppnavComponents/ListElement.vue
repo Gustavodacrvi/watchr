@@ -62,7 +62,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { State, Getter } from 'vuex-class'
+import { State, Getter, Mutation } from 'vuex-class'
 
 import IconDropdown from '@/components/IconDropdown.vue'
 
@@ -74,6 +74,8 @@ import { ListIcon } from '../../../interfaces/app'
   },
 })
 export default class ListRenderer extends Vue {
+  @Mutation closeAppBar!: () => void
+  
   @Prop({default: true, type: Boolean}) show!: boolean
   @Prop({default: 0, type: Number}) number!: boolean
   @Prop(String) name!: string
@@ -111,6 +113,8 @@ export default class ListRenderer extends Vue {
   go() {
     if (!this.showHandle)
       this.$router.push(`/user?${this.route}=${this.name}`)
+    if (!this.isDesktop)
+      this.closeAppBar()
   }
 
   get showOptionsMobile(): boolean {

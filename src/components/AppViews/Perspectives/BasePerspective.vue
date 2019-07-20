@@ -50,6 +50,7 @@
         :tasks='getTasks'
         :fixed-pers='pers.name'
         :default-priority='getPriority'
+        :default-labels='defaultLabels'
         :allow-priority='true'
         :insert-before='true'
         :allow-labels='allowLabels'
@@ -135,6 +136,12 @@ export default class PerspectiveAppview extends Vue {
     {
       name: 'Change priority of tasks',
       icon: 'exclamation',
+      iconColor: '',
+      size: '',
+    },
+    {
+      name: 'Add label',
+      icon: 'tags',
       iconColor: '',
       size: '',
     },
@@ -323,6 +330,11 @@ export default class PerspectiveAppview extends Vue {
     if (!this.save)
       return this.priority
     else return this.pers.priority
+  }
+  get defaultLabels(): string[] {
+    if (!this.save)
+      return []
+    return this.pers.includeAndLabels
   }
 
   @Watch('selected')

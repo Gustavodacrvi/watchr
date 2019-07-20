@@ -19,6 +19,8 @@
           :allow-priority='true'
 
           @delete='deleteSelected'
+          @selectedpriority='selectedPriority'
+          @selectedlabel='selectLabel'
           @priority='v => priority = v'
           @label='v => labels.push(v.id)'
           @settings='selectSettingsOption'
@@ -95,6 +97,8 @@ export default class LabelPerspective extends Vue {
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
   @labelVuex.Action saveLabelTaskOrder!: (obj: {id: string, order: string[]}) => void
   @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
+  @taskVuex.Action addLabelByTaskIds!: (obj: {ids: string[], labelId: string}) => void
+
 
   @taskVuex.State tasks!: Task[]
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
@@ -187,6 +191,18 @@ export default class LabelPerspective extends Vue {
   }
   deleteSelected() {
     this.deleteTasksById(this.selected)
+  }
+  selectedPriority(value: string) {
+    this.changePrioritysByIds({
+      ids: this.selected,
+      priority: value,
+    })
+  }
+  selectLabel(label: Label) {
+    this.addLabelByTaskIds({
+      ids: this.selected,
+      labelId: label.id,
+    })
   }
   toggleHide() {
     this.hided = !this.hided

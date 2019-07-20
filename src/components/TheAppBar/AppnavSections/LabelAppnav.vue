@@ -8,7 +8,7 @@
     <list-renderer v-if='sortedLabels && sortedLabels.length > 0'
       group='appnavlabels'
       route='label'
-      :list='sortedLabels'
+      :list='getLabels'
       :options='getOptions'
       :active='activePers'
       @update='onUpdate'
@@ -27,10 +27,10 @@ import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.v
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
 import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmessage.vue'
 
-import { Label, ListIcon, SimpleAdder, Perspective } from '../../../interfaces/app'
+import { Label, ListIcon, SimpleAdder, Perspective, ListElement } from '../../../interfaces/app'
 
 const label = namespace('label')
-const list = namespace('list')
+const task = namespace('task')
 const pers = namespace('perspective')
 
 @Component({
@@ -53,6 +53,8 @@ export default class LabelAppnav extends Vue {
   @label.Action deleteLabelsById!: (ids: string[]) => void
   @label.Action editLabelNameById!: (obj: {id: string, name: string}) => void
 
+  @task.Getter getNumberOfTasksByLabel!: (labelId: string) => number
+
   @pers.Getter initialPerspective!: string
 
   selected: string[] = []
@@ -61,27 +63,6 @@ export default class LabelAppnav extends Vue {
     this.openSection('labels')
   }
 
-  get activePers(): string {
-    if (this.viewType === 'label')
-      return this.viewName
-    return ''
-  }
-
-  get headerIcons(): ListIcon[] {
-    return [
-      {
-        icon: 'trash',
-        iconColor: '',
-        size: 'lg',
-        name: 'Delete label',
-        callback: () => {
-          for (const id of this.selected)
-            this.activeLabel(this.getLabelsByIds([id])[0].name)
-          this.deleteLabelsById(this.selected)
-        },
-      },
-    ]
-  }
   getOptions(obj: Label[]): ListIcon[] {
     return [
       {
@@ -121,6 +102,37 @@ export default class LabelAppnav extends Vue {
   activeLabel(name: string) {
     if (name === this.activePers)
         this.$router.push('/user?pers=' + this.initialPerspective)
+  }
+
+  get activePers(): string {
+    if (this.viewType === 'label')
+      return this.viewName
+    return ''
+  }
+  get headerIcons(): ListIcon[] {
+    return [
+      {
+        icon: 'trash',
+        iconColor: '',
+        size: 'lg',
+        name: 'Delete label',
+        callback: () => {
+          for (const id of this.selected)
+            this.activeLabel(this.getLabelsByIds([id])[0].name)
+          this.deleteLabelsById(this.selected)
+        },
+      },
+    ]
+  }
+  get getLabels(): ListElement[] {
+    const els: ListElement[] = []
+    for (const lab of this.sortedLabels) {
+      const number = this.getNumberOfTasksByLabel(lab.id)
+      els.push({
+        ...lab, show: true, number,
+      })
+    }
+    return els
   }
 
   onUpdate(ids: string[]) {
