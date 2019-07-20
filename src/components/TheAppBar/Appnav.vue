@@ -25,6 +25,7 @@
           <i
             :class='`txt pointer icon fas fa-${sect.icon} fa-lg`'
             :style="isActiveClass(sect.comp)"
+            :title='sect.title'
           ></i>
           </span>
         </div>
@@ -101,6 +102,7 @@ const label = namespace('label')
 interface Section {
   icon: string
   comp: string
+  title: string
   options?: ListIcon[]
 }
 
@@ -120,12 +122,9 @@ export default class LoggedAppnav extends Vue {
   @label.Action sortLabelsByName!: () => void
 
   sections: Section[] = [
-    {icon: 'home', comp: 'overview'},
-    {icon: 'layer-group', comp: 'perspectives'},
-    {icon: 'project-diagram', comp: 'projects'},
-    {icon: 'stopwatch', comp: 'timetracking'},
-    {icon: 'stream', comp: 'intervalsandroutines'},
-    {icon: 'tags', comp: 'labels', options: [
+    {icon: 'home', comp: 'overview', title: 'OVERVIEW'},
+    {icon: 'layer-group', comp: 'perspectives', title: 'PERSPECTIVES'},
+    {icon: 'tags', comp: 'labels', title: 'LABELS', options: [
       {
         name: 'Sort labels by name',
         icon: 'sort-alpha-down',
@@ -136,7 +135,6 @@ export default class LoggedAppnav extends Vue {
         },
       },
     ]},
-    {icon: 'chart-pie', comp: 'statistics'},
   ]
   currentSect: string = 'overview'
   options: ListIcon[] = []

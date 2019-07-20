@@ -188,12 +188,8 @@ export default class AppviewTask extends Vue {
   margin: 6px 0;
   margin-left: 6px;
   position: relative;
-}
-
-.content {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
 }
 
 .sortable-selected.light {

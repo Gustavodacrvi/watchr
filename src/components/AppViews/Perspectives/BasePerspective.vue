@@ -335,7 +335,7 @@ export default class PerspectiveAppview extends Vue {
   }
   get defaultLabels(): string[] {
     if (!this.save)
-      return []
+      return this.labels
     return this.pers.includeAndLabels
   }
 

@@ -6,6 +6,7 @@
           handle='tag'
           size='lg'
           min-width='300px'
+          title='Add label to tasks'
           :list='labels'
           @select='multipleLabel'
         />
@@ -17,6 +18,7 @@
           handle='exclamation'
           size='lg'
           min-width='200px'
+          title='Change priority'
           :options='priorityOptions'
           @click='multiplePriority'
         />
@@ -24,7 +26,11 @@
     </transition>
     <transition name='fade'>
       <span v-if='showTaskOptions && isDesktop' class='header-option'>
-        <i class='fas icon pointer trash fa-trash fa-lg' @click="$emit('delete')"></i>
+        <i
+          class='fas icon pointer trash fa-trash fa-lg'
+          title='Delete tasks'
+          @click="$emit('delete')"
+        ></i>
       </span>
     </transition>
     <span style='width: 35px'></span>
@@ -34,6 +40,7 @@
         handle='search'
         size='lg'
         min-width='300px'
+        title='Search tasks'
         v-model='search'
       />
     </span>
@@ -42,6 +49,7 @@
         handle='exclamation'
         size='lg'
         min-width='200px'
+        title='Priority'
         :options='priorityOptions'
         @click='selectPriority'
       />
@@ -51,6 +59,7 @@
         handle='tags'
         size='lg'
         min-width='300px'
+        title='Labels'
         :list='labels'
         @select='selectLabel'
       />

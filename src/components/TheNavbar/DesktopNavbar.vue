@@ -42,6 +42,7 @@
         </div>
       </icon-dropdown>
       <icon-dropdown v-else
+        title='User options'
         class='margin'
         handle='user-alt'
         min-width='300px'
@@ -63,7 +64,7 @@
       </icon-dropdown>
       </span>
         <span @click='changeTheme'>
-        <i class='fa-adjust fa-lg txt pointer fas icon margin'></i>
+        <i class='fa-adjust fa-lg txt pointer fas icon margin' title='Change theme'></i>
         </span>
     </div>
     <div
