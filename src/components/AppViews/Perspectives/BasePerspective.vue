@@ -1,5 +1,6 @@
 <template>
   <div class='component'>
+    {{sort}}
     <div class='header' :class='{pointer: !isDesktop}' @dblclick='toggleHide'>
       <header-title
         :value='pers.name'
@@ -110,6 +111,7 @@ export default class PerspectiveAppview extends Vue {
   @persVuex.Action addLabelToPerspective!: (obj: {id: string, labelId: string}) => Label[]
   @persVuex.Action removeLabelFromPerspective!: (obj: {id: string, labelId: string}) => Label[]
   @persVuex.Action savePerspectivePriority!: (obj: {id: string, priority: string}) => Label[]
+  @persVuex.Action addPerspectiveSort!: (obj: {sort: string, perspectiveId: string}) => Label[]
 
   @Prop({default: true, type: Boolean}) allowLabels!: boolean
   @Prop(Boolean) value!: boolean
@@ -237,10 +239,18 @@ export default class PerspectiveAppview extends Vue {
   selectSettingsOption(value: string) {
     if (value === 'Sort tasks by name') {
       this.sort.push('name')
-      this.addPerspectiveSort('name')
+      if (this.saveSort)
+        this.addPerspectiveSort({
+          sort: 'name',
+          perspectiveId: this.pers.id,
+        })
     } else if (value === 'Sort tasks by priority') {
       this.sort.push('priority')
-      this.addPerspectiveSort('priority')
+      if (this.saveSort)
+        this.addPerspectiveSort({
+          sort: 'priority',
+          perspectiveId: this.pers.id,
+        })
     }
   }
   toggleHide() {
