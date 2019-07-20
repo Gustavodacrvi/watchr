@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h2>View</h2>
-    <h3>Desktop</h3>
+    <h2 id='View'>View</h2>
+    <h3 id='Desktop'>Desktop</h3>
     <div class='table'>
       <div class='line' :class='platform'>
         <div class='text'>
@@ -17,7 +17,7 @@
         </div>
       </div>
     </div>
-    <h3>Mobile</h3>
+    <h3 id='Mobile'>Mobile</h3>
     <div class='table'>
       <div class='line' :class='platform'>
         <div class='text'>
@@ -33,7 +33,7 @@
         </div>
       </div>
     </div>
-    <h2>Date and Time</h2>
+    <h2 id='DateandTime'>Date and Time</h2>
     <div class='table'>
       <div class='line' :class='platform'>
         <div class='text'>

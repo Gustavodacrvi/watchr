@@ -19,7 +19,7 @@
             ></i>
           </div>
           <transition name='fade'>
-            <div v-if='onHover && taskLabels && taskLabels.length > 0' class='txt fade'>
+            <div v-if='showLabels' class='txt fade'>
               <span v-for='lab in taskLabels'
                 :key='lab'
                 class='lab'
@@ -69,6 +69,7 @@ import { Task, ListIcon, Label } from '../../../interfaces/app'
 
 const taskVuex = namespace('task')
 const labelVuex = namespace('label')
+const settingsVuex = namespace('settings')
 
 @Component({
   components: {
@@ -87,6 +88,9 @@ export default class AppviewTask extends Vue {
 
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string}) => void
+
+  @settingsVuex.State mobileTaskLabels!: string
+  @settingsVuex.State desktopTaskLabels!: string
 
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
@@ -145,6 +149,14 @@ export default class AppviewTask extends Vue {
   }
   get taskLabels(): string[] {
     return this.getLabelsByIds(this.task.labels).map(el => el.name)
+  }
+  get showLabels(): boolean {
+    const isNotEmpty = this.taskLabels && this.taskLabels.length > 0
+    if (!isNotEmpty)
+      return false
+    if (this.isDesktop)
+      return this.onHover && this.desktopTaskLabels !== 'Always show' ||this.desktopTaskLabels === 'Always show'
+    else return this.onHover && this.mobileTaskLabels !== 'Always show' || this.mobileTaskLabels === 'Always show'
   }
 
   @Watch('deselectAll')
