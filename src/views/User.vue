@@ -115,7 +115,8 @@ export default class Guest extends Mixins(Mixin) {
     if (this.ready && !this.isStandAlone) {
       this.$router.replace('user?pers=' + this.initialPerspective)
       this.loaded = true
-    }
+    } else if (this.isStandAlone)
+      this.per = this.initialPerspective
     this.open()
     if (this.currentAppSection !== 'overview' && this.isDesktop)
       this.showing = true
@@ -202,7 +203,7 @@ export default class Guest extends Mixins(Mixin) {
 }
 
 .view.desktop {
-  margin: 0 60px;
+  margin: 0 70px;
 }
 
 .app {

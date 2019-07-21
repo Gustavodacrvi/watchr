@@ -1,32 +1,42 @@
 <template>
-  <transition>
-    <div v-if='!editing' key='task'
-      class='task round-border'
-      :class='theme'
+  <div v-if='!editing' key='task' class='round-border' :class="[theme, completed ? 'completed' : 'not-completed']">
+    <div
+      class='round-border task'
+      :class="[theme, {'not-completed': !completed}]"
       @dblclick='editing = true'
       @mouseenter='onHover = true'
       @mouseleave='onHover = false'
     >
-      <div class='content-wrapper' @click='toggleElement' :class='{handle: allowDragAndDrop}'>
-        <div class='content'>
-          <div class='txt'>{{ task.name }}
-            <i v-if='task.priority'
-              class='content-icon fas fa-exclamation fa-sm'
-              :style='{color: exclamationColor}'
-            ></i>
-            <i v-if='taskLabels && taskLabels.length > 0'
-              class='fade content-icon fas fa-tags fa-sm'
-            ></i>
-          </div>
-          <transition name='fade'>
-            <div v-if='showLabels' class='txt fade'>
-              <span v-for='lab in taskLabels'
-                :key='lab'
-                class='lab'
-              >{{ lab }}</span>
+      <div class='content-wrapper' @click='toggleElement'>
+        <span class='circles'>
+          <i v-if='!completed' @click='v => completed = true' key='notco' class='far circle icon txt fa-circle fa-sm'></i>
+          <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm'></i>
+        </span>
+        <transition name='check-trans' mode='out-in'>
+          <div v-if='!completed' key='cont' class='content' :class='{handle: allowDragAndDrop}'>
+            <div class='txt'>
+              {{ task.name }}
+              <i v-if='task.priority'
+                class='content-icon fas fa-exclamation fa-sm'
+                :style='{color: exclamationColor}'
+              ></i>
+              <i v-if='taskLabels && taskLabels.length > 0'
+                class='fade content-icon fas fa-tags fa-sm'
+              ></i>
             </div>
-          </transition>
-        </div>
+            <transition name='fade'>
+              <div v-if='showLabels' class='txt fade'>
+                <span v-for='lab in taskLabels'
+                  :key='lab'
+                  class='lab'
+                >{{ lab }}</span>
+              </div>
+            </transition>
+          </div>
+          <div v-else class='content'>
+            <span key='compl' class='txt'>Task completed</span>
+          </div>
+        </transition>
       </div>
       <div class='task-options' :class='{handle: allowDragAndDrop}'>
         <transition name='fade'>
@@ -41,20 +51,20 @@
         </transition>
       </div>
     </div>
-    <div key='editing' v-else>
-      <task-edit key='showing'
-        :fixed-tag='fixedPers'
-        :default-labels='task.labels'
-        :default-value='task.name'
-        :default-priority='task.priority'
-        :allow-priority='true'
-        :allow-labels='true'
-        btn='Edit task'
-        @cancel='editing = false'
-        @enter='enter'
-      />
-    </div>
-  </transition>
+  </div>
+  <div key='editing' v-else>
+    <task-edit key='showing'
+      :fixed-tag='fixedPers'
+      :default-labels='task.labels'
+      :default-value='task.name'
+      :default-priority='task.priority'
+      :allow-priority='true'
+      :allow-labels='true'
+      btn='Edit task'
+      @cancel='editing = false'
+      @enter='enter'
+    />
+  </div>
 </template>
 
 <script lang='ts'>
@@ -96,6 +106,7 @@ export default class AppviewTask extends Vue {
 
   clicked: boolean = false
   onHover: boolean = false
+  completed: boolean = false
   editing: boolean = false
   options: ListIcon[] = [
     {
@@ -163,11 +174,47 @@ export default class AppviewTask extends Vue {
   onChange() {
     this.clicked = false
   }
+  @Watch('completed')
+  onChange2() {
+    setTimeout(() => {
+      this.deleteTasksById([this.task.id])
+    }, 1000)
+  }
 }
 
 </script>
 
 <style scoped>
+
+.check-trans-leave-active, .check-trans-enter-active {
+  transition-duration: .3s;
+}
+
+.check-trans-leave, .check-trans-enter-to {
+  position: relative;
+  bottom: 0;
+  opacity: 1;
+}
+
+.check-trans-leave-to, .check-trans-enter {
+  position: relative;
+  bottom: 10px;
+  opacity: 0;
+}
+
+.completed {
+  background-color: #c4ffbd !important;
+}
+
+.circles {
+  margin: 0 8px;
+  margin-left: 4px;
+  font-size: 1.2em;
+}
+
+.circle {
+  transition: color .3s;
+}
 
 .task {
   display: flex;
@@ -204,19 +251,19 @@ export default class AppviewTask extends Vue {
   align-items: center;
 }
 
-.sortable-selected.light {
+.sortable-selected.not-completed.light {
   background-color: #ffbfbd !important;
 }
 
-.sortable-selected.dark {
+.sortable-selected.not-completed.dark {
   background-color: #3B2B2A !important;
 }
 
-.task.light:hover {
+.task.not-completed.light:hover {
   background-color: #e3e3e3;
 }
 
-.task.dark:hover {
+.task.not-completed.dark:hover {
   background-color: #282828;
 }
 

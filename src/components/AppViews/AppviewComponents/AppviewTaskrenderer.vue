@@ -1,6 +1,6 @@
 <template>
   <div :class='`task-${group}-${id}`'>
-    <transition-group name='fade'>
+    <transition-group name='list'>
       <view-task v-for='task in tasks'
         :key='task.id'
         :task='task'
@@ -176,5 +176,29 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 </script>
 
 <style scoped>
+
+.list-enter {
+  transform: scale(1.08,1.18);
+  background-color: #191919;
+}
+
+.list-enter-to {
+  transition: transform .4s, background-color .6s;
+  transition-timing-function: ease;
+  transform: scale(1,1);
+  background-color: initial;
+}
+
+.list-leave-active {
+  transition: opacity .5s;
+}
+
+.list-leave {
+  opacity: 1;
+}
+
+.list-leave-to {
+  opacity: 0;
+}
 
 </style>
