@@ -47,6 +47,8 @@ interface Actions {
   addLabelToPerspective: (context: ActionContext, obj: {id: string, labelId: string}) => void
   removeLabelFromPerspective: (context: ActionContext, obj: {id: string, labelId: string}) => void
   savePerspectivePriority: (context: ActionContext, obj: {id: string, priority: string}) => void
+  addPerspectiveSort: (context: ActionContext, obj: {sort: string, perspectiveId: string}) => void
+  savePerspectiveTaskSort: (context: ActionContext, obj: {sort: string[], perspectiveId: string}) => void
   // tslint:disable-next-line:max-line-length
   addPerspective: (context: ActionContext, obj: {name: string, description: string, iconColor: string, icon: string}) => void
   // tslint:disable-next-line:max-line-length
@@ -281,6 +283,19 @@ export default {
         })
       }
     },
+    savePerspectiveTaskSort({ rootState }, {perspectiveId, sort}) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('perspectives').doc(perspectiveId).update({
+          sort,
+        })
+    },
+    addPerspectiveSort({ rootState }, {perspectiveId, sort}) {
+      const fire = rootState.firebase.firestore.FieldValue as any
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('perspectives').doc(perspectiveId).update({
+          sort: fire.arrayUnion(sort),
+        })
+    },
     addDefaultPerspectives({ rootState }, {id, someday, anytime}) {
       if (rootState.firestore) {
         const batch = rootState.firestore.batch()
@@ -364,6 +379,7 @@ export default {
             name: per.name,
             numberOfTasks: per.numberOfTasks,
             pin: per.pin,
+            sort: [],
             icon: per.icon,
             iconColor: per.iconColor,
             description: '',
@@ -388,6 +404,7 @@ export default {
             userId: id,
             name: per.name,
             numberOfTasks: per.numberOfTasks,
+            sort: [],
             pin: per.pin,
             icon: per.icon,
             iconColor: per.iconColor,

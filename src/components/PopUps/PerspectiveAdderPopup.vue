@@ -8,6 +8,7 @@
         tabindex='1'
         class='margin'
         placeholder='Perspective title...'
+        focus-class='persadder'
         :input='input'
         :values='options'
         @enter='add'
@@ -17,11 +18,10 @@
       />
       <textarea
         tabindex='2'
-        class='margin gray round-border input textarea txt scroll'
+        class='margin gray round-border input textarea txt scroll gray dark'
         placeholder='Perspective description...'
         v-model='description'
         style='height: 100px;'
-        :class='theme'
       ></textarea>
       <div class='flex margin'>
         <div class='flex-el'>
@@ -48,10 +48,11 @@
         @click='add'
       >{{ buttonPlaceholder }}</button>
       <span v-show='isDesktop'
-        class='margin txt'
+        class='margin txt' :class='theme'
       >You can open this pop up at any time by clicking the 'P' key.</span><br>
       <span v-show='isDesktop'
         class='margin txt'
+        :class='theme'
       >You can close any pop up at any time by clicking 'H' key.</span>
     </div>
   </div>
@@ -110,6 +111,13 @@ export default class LabelAdder extends Vue {
       this.description = this.pers.description
     }
   }
+  mounted() {
+    const el = document.querySelectorAll('.persadder')[0] as any
+    el.focus()
+    setTimeout(() => {
+      this.input = ''
+    }, 100)
+  }
 
   add() {
     if (this.value !== '') {
@@ -120,20 +128,30 @@ export default class LabelAdder extends Vue {
           duration: 3,
           type: 'error',
         })
-      else if (!this.pers)
+      else if (!this.pers) {
         this.addPerspective({
           name: this.value,
           description: this.description,
           icon: this.icon,
           iconColor: this.color,
         })
-      else {
+        this.pushAlert({
+          name: `<strong>${this.value}</strong> perspective was successfully added.`,
+          duration: 2.5,
+          type: 'success',
+        })
+      } else {
         this.editPerspective({
           id: this.pers.id,
           name: this.value,
           description: this.description,
           icon: this.icon,
           iconColor: this.color,
+        })
+        this.pushAlert({
+          name: `<strong>${this.value}</strong> perspective was successfully edited.`,
+          duration: 2.5,
+          type: 'success',
         })
         this.pushPopUp('')
       }

@@ -7,7 +7,7 @@
           @click='showing = false'></div>
       </transition>
       <span
-        class='main'
+        class='main floating-btn'
         @click='showing = !showing'>
         <i class='icon txt pointer fas fa-plus' :style="{color: 'white'}"></i>
       </span>
@@ -16,7 +16,7 @@
           class='left-wrapper' 
         >
           <span v-for='btn in leftButtons'
-            class='btn left'
+            class='btn left floating-btn'
             :key='btn.icon'
             :style='`background-color: ${btn.backColor}`'
             @click='btn.click'
@@ -29,7 +29,7 @@
         <div v-if='showing'
           class='top-wrapper'>
           <span v-for='btn in topButtons'
-            class='btn top'
+            class='btn top floating-btn'
             :key='btn.icon'
             :style='`background-color: ${btn.backColor}`'
             @click='btn.click'
@@ -54,13 +54,10 @@ export default class ActionButtonComp extends Vue {
   @Mutation pushPopUp!: (compName: string) => void
 
   leftButtons: FloatingButton[] = [
-    {icon: 'inbox', iconColor: 'white', backColor: '#83B7E2'},
-    {icon: 'calendar-day', iconColor: 'white', backColor: '#FFE366'},
-    {icon: 'calendar-alt', iconColor: 'white', backColor: '#fc7d7d'},
   ]
   topButtons: FloatingButton[] = [
-    {icon: 'stopwatch', iconColor: 'white', backColor: '#70FF66'},
-    {icon: 'tags', iconColor: 'white', backColor: '#fc7d7d', click: this.popUp('LabeladderPopup')},
+    {icon: 'tags', iconColor: 'white', backColor: '#83B7E2', click: this.popUp('LabeladderPopup')},
+    {icon: 'bolt', iconColor: 'white', backColor: '#FFE366', click: this.popUp('TaskadderPopup')},
   ]
   showing: boolean = false
 
@@ -113,7 +110,7 @@ export default class ActionButtonComp extends Vue {
   cursor: pointer;
   justify-content: center;
   border-radius: 100px;
-  background-color: #fc7d7d;
+  background-color: #83B7E2;
   transition-duration: .3s;
 }
 
@@ -143,6 +140,15 @@ export default class ActionButtonComp extends Vue {
   align-items: center;
   cursor: pointer;
   pointer-events: all;
+}
+
+.floating-btn {
+  transition: filter .2s, transform .2s;
+}
+
+.floating-btn:hover {
+  transform: scale(1.05, 1.05);
+  filter: brightness(1.1);
 }
 
 .btn.left {

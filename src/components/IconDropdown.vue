@@ -5,7 +5,7 @@
     @mouseleave='showing = false'
     :class="{'color-on-hover': changeColorOnHover}"
   >
-    <i :class='`pointer handle icon txt fas fa-${handle} fa-${size}`'></i>
+    <i :class='[`pointer handle icon txt fas fa-${handle} fa-${size}`, theme]'></i>
     <transition name='fade'>
       <div v-show='showing'
         class='card round-border content'
@@ -25,13 +25,13 @@ import { State } from 'vuex-class'
 
 @Component
 export default class TheNavbar extends Vue {
+  @State theme!: string
+
   @Prop({required: true, type: String}) handle!: string
   @Prop({default: 'lg', type: String}) size!: string
   @Prop({default: '250px', type: String}) minWidth!: string
   @Prop({default: false, type: Boolean}) changeColorOnHover!: boolean
   @Prop({default: false, type: Boolean}) floatTop!: boolean
-
-  @State theme!: string
 
   public showing: boolean = false
 }
@@ -48,7 +48,7 @@ export default class TheNavbar extends Vue {
 }
 
 .icon-dropdown:hover .icon {
-  color: #fc7d7d !important;
+  color: #83B7E2 !important;
 }
 
 .content {

@@ -5,7 +5,7 @@
       :placeholder='placeholder'
       type='text'
       autocomplete='off'
-      :class='inputClass'
+      :class='[inputClass, inputTheme, focusClass]'
       v-model.trim='value'
       @keydown='keyDown'
       @keypress='keyPressed'
@@ -14,15 +14,14 @@
     >
     <transition name='fade'>
       <div v-if='showing && values.length > 0'
-        class='dropdown round-border gray border scroll'
-        :class='theme'
+        class='dropdown round-border gray border dark scroll'
         ref='dropdown'
       >
         <transition-group name='fade'>
           <span v-for='option in values'
             :ref='option'
-            class='option txt'
-            :class='[theme,{active: selected === option}]'
+            class='option txt dark'
+            :class='[{active: selected === option}, theme]'
             :key='option'
             @click='select(option)'
           >{{ option }}</span>
@@ -51,7 +50,10 @@ interface RefsPositions {
 @Component
 export default class DropdownInput extends Vue {
   @State theme!: string
+
+  @Prop(String) focusClass!: boolean
   @Prop({default: false, type: Boolean}) disabled!: boolean
+  @Prop({default: 'dark', type: String}) inputTheme!: string
   @Prop({default: null, type: String}) input!: string
   @Prop({default: () => [], type: Array}) values!: string[]
   @Prop({type: String}) tabindex!: string
@@ -182,10 +184,6 @@ export default class DropdownInput extends Vue {
   overflow: auto;
 }
 
-.dropdown.light {
-  background-color: #FEFEFE;
-}
-
 .option {
   display: block;
   padding: 10px;
@@ -193,21 +191,12 @@ export default class DropdownInput extends Vue {
   transition: background-color .3s;
 }
 
-.option.dark:hover, .option.dark.active {
+.option:hover, .option.active {
   background-color: #292929;
 }
 
-.option.light:hover, .option.light.active {
-  background-color: #fc7d7d;
-  color: white;
-}
-
-.option.dark + .option.dark {
+.option + .option {
   border-top: .5px solid #292929;
-}
-
-.option.light + .option.light {
-  border-top: .5px solid #D9D9D9;
 }
 
 </style>

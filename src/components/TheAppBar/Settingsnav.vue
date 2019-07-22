@@ -47,7 +47,7 @@
             :class='theme'
             @click='resendConfirmationEmail'
           >
-            <i class='icon txt fa-paper-plane fas fa-sm'></i>
+            <i class='icon txt fa-paper-plane fas fa-sm' :class='theme'></i>
             Resend confirmation e-mail
           </span>
         </template>
@@ -58,12 +58,12 @@
       <div class='footer'>
         <div v-if='loggedAndVerified' class='left'>
           <span @click="$emit('change')">
-          <i class='icon txt pointer fa-tasks fas fa-lg'></i>
+          <i class='icon txt pointer fa-tasks fas fa-lg' :class='theme'></i>
           </span>
         </div>
         <div class='right'>
           <span @click="$emit('theme')">
-          <i class='icon txt pointer fas fa-adjust fas fa-lg'></i>
+          <i class='icon txt pointer fas fa-adjust fas fa-lg' :class='theme'></i>
           </span>
         </div>
       </div>

@@ -12,14 +12,14 @@
 
 .list-wrapper {
   flex-basis: 110%;
-  width: 315px;
+  width: 305px;
   overflow: auto;
 }
 
 .list {
   position: relative;
   margin-left: 14px;
-  width: 271.5px;
+  width: 251.5px;
 }
 
 .list-margin {
@@ -37,17 +37,17 @@
 }
 
 .link.light:hover, .router-link-exact-active.light {
-  color: #fc7d7d;
+  color: #83B7E2;
   background-color: #E6E6E6;
 }
 
 .link.dark:hover, .router-link-exact-active.dark {
-  color: #fc7d7d;
+  color: #83B7E2;
   background-color: #282828;
 }
 
 .link:hover .icon {
-  color: #fc7d7d;
+  color: #83B7E2;
 }
 
 .footer-wrapper {
@@ -92,13 +92,13 @@
 }
 
 .auth-button.dark {
-  background-color: #fc7d7d;
+  background-color: #83B7E2;
   color: white;
   transition: background-color .3s;
 }
 
 .auth-button.dark:hover {
-  background-color: #fc7d7d;
+  background-color: #83B7E2;
 }
 
 .auth-button.light {
@@ -107,7 +107,7 @@
 }
 
 .auth-button.light:hover {
-  color: #fc7d7d;
+  color: #83B7E2;
 }
 
 .navsect {

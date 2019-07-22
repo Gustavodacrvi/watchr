@@ -3,7 +3,8 @@
     :pers-name='pers'
     :value='value'
     :base-tasks='baseTasks'
-    :save='true'
+    :save='!isOnOverview'
+    :save-sort='!isOnOverview'
 
     @input="$emit('input', !value)"
   />
@@ -12,7 +13,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { namespace, Getter, Mutation } from 'vuex-class'
+import { namespace, Getter, Mutation, State } from 'vuex-class'
 
 const taskVuex = namespace('task')
 const persVuex = namespace('perspective')
@@ -29,6 +30,7 @@ import { Task, Perspective } from '../../../interfaces/app'
   },
 })
 export default class ViewAlltasks extends Vue {
+  @State currentAppSection!: string
   @Mutation pushView!: (obj: {view: string, viewType: string}) => void
 
   @persVuex.Getter getPerspectiveByName!: (name: string) => Perspective
@@ -38,6 +40,9 @@ export default class ViewAlltasks extends Vue {
   @Prop(Boolean) value!: string
   @Prop(String) pers!: string
 
+  get isOnOverview(): boolean {
+    return this.currentAppSection === 'overview'
+  }
   get perspectiveData() {
     return this.getPerspectiveByName(this.pers)
   }

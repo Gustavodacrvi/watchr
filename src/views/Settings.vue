@@ -7,15 +7,17 @@
         <div class='menu'>
           <router-link
             class='txt el icon-el'
+            :class='theme'
             ref='About'
             :to="{name: 'About'}"
           >
             <span class='el-icon'>
               <i class='fas fa-info fa-sm'></i>
             </span>
-            <span class='el-txt'>About</span>
+            <span class='el-txt' :class='theme'>About</span>
           </router-link>
-          <router-link
+          <router-link v-if='isLogged'
+            :class='theme'
             class='txt el'
             ref='General'
             :to="{name: 'General'}"
@@ -23,27 +25,30 @@
             <span class='el-icon'>
               <i class='fas fa-cog fa-sm'></i>
             </span>
-            <span class='el-txt'>General</span>
+            <span class='el-txt' :class='theme'>General</span>
           </router-link>
           <div class='margin'></div>
           <router-link
             class='txt el'
+            :class='theme'
             ref='Privacy policy'
             :to="{name: 'Privacy policy'}"
           >Privacy policy</router-link>
           <router-link
             class='txt el'
+            :class='theme'
             ref='Security policy'
             :to="{name: 'Security policy'}"
           >Security policy</router-link>
           <router-link
             class='txt el'
+            :class='theme'
             ref='Terms of service'
             :to="{name: 'Terms of service'}"
           >Terms of service</router-link>
         </div>
       </div>
-      <div class='text txt'>
+      <div class='text txt' :class='theme'>
         <transition name='fade' mode='out-in'>
           <router-view/>
         </transition>
@@ -60,25 +65,30 @@
       <div class='align'>
         <router-link
           class='txt mob-el'
+          :class='theme'
           ref='About'
           :to="{name: 'About'}"
         >About</router-link>
-        <router-link
+        <router-link v-if='isLogged'
           class='txt mob-el'
+          :class='theme'
           ref='General'
           :to="{name: 'General'}"
         >General</router-link>
         <router-link
           class='txt mob-el'
+          :class='theme'
           ref='Privacy policy'
           :to="{name: 'Privacy policy'}"
         >Privacy policy</router-link>
         <router-link
           class='txt mob-el'
           ref='Security policy'
+          :class='theme'
           :to="{name: 'Security policy'}"
         >Security policy</router-link>
         <router-link
+          :class='theme'
           class='txt mob-el'
           ref='Terms of service'
           :to="{name: 'Terms of service'}"
@@ -96,6 +106,7 @@ import { State, Getter } from 'vuex-class'
 @Component
 export default class Help extends Vue {
   @State theme!: string
+  @State isLogged!: boolean
   @Getter isDesktop!: boolean
 
   interval: any = null
@@ -104,7 +115,6 @@ export default class Help extends Vue {
     if (this.$route.name === 'Settings')
       this.$router.replace('settings/about')
   }
-
   mounted() {
     if (this.isDesktop)
       this.addDesktopInterval()
@@ -185,7 +195,7 @@ export default class Help extends Vue {
 }
 
 .mob-el:hover, .mob-el.router-link-exact-active {
-  color: #fc7d7d;
+  color: #83B7E2;
 }
 
 .mobile-menu.light {
@@ -244,7 +254,7 @@ export default class Help extends Vue {
 }
 
 .el:hover, .el.router-link-exact-active {
-  color: #fc7d7d;
+  color: #83B7E2;
   position: relative;
   left: -1px;
   padding-left: 13px;
@@ -253,7 +263,7 @@ export default class Help extends Vue {
 .line {
   position: absolute;
   width: 2px;
-  background-color: #fc7d7d;
+  background-color: #83B7E2;
   left: -2px;
   transition: top .3s, height .3s;
 }

@@ -23,14 +23,15 @@
         <div class='navsect'>
           <span v-for='sect in sections' :key='sect.comp' @click='select(sect)'>
           <i
-            :class='`txt pointer icon fas fa-${sect.icon} fa-lg`'
+            :class='[`txt pointer icon fas fa-${sect.icon} fa-lg`, theme]'
             :style="isActiveClass(sect.comp)"
+            :title='sect.title'
           ></i>
           </span>
         </div>
         <div style='height: 12px;'></div>
       </div>
-      <div class='list-wrapper scroll'>
+      <div class='list-wrapper scroll' :class='theme'>
         <div class='list'>
           <transition
             name='fade'
@@ -49,7 +50,7 @@
       <div class='footer'>
         <div class='left' v-if='!isDesktop'>
           <span @click="$emit('change')">
-          <i class='txt pointer icon fas fa-cog fa-lg'></i>
+          <i class='txt pointer icon fas fa-cog fa-lg' :class='theme'></i>
           </span>
         </div>
         <div class='right'>
@@ -69,9 +70,9 @@
                   @click='i.callback'
                 >
                   <span class='el-icon'>
-                    <i :class='`txt fas fa-${i.icon} fa-${i.size}`'></i>
+                    <i :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]'></i>
                   </span>
-                  <span class='el-name txt'>
+                  <span class='el-name txt' :class='theme'>
                     {{ i.name }}
                   </span>
                 </div>
@@ -101,6 +102,7 @@ const label = namespace('label')
 interface Section {
   icon: string
   comp: string
+  title: string
   options?: ListIcon[]
 }
 
@@ -115,17 +117,15 @@ interface Section {
 export default class LoggedAppnav extends Vue {
   @State theme!: string
   @State isLogged!: boolean
+  @Mutation pushPopUp!: (comp: string) => void
   @Getter isDesktop!: boolean
 
   @label.Action sortLabelsByName!: () => void
 
   sections: Section[] = [
-    {icon: 'home', comp: 'overview'},
-    {icon: 'layer-group', comp: 'perspectives'},
-    {icon: 'project-diagram', comp: 'projects'},
-    {icon: 'stopwatch', comp: 'timetracking'},
-    {icon: 'stream', comp: 'intervalsandroutines'},
-    {icon: 'tags', comp: 'labels', options: [
+    {icon: 'home', comp: 'overview', title: 'OVERVIEW'},
+    {icon: 'layer-group', comp: 'perspectives', title: 'PERSPECTIVES'},
+    {icon: 'tags', comp: 'labels', title: 'LABELS', options: [
       {
         name: 'Sort labels by name',
         icon: 'sort-alpha-down',
@@ -135,8 +135,16 @@ export default class LoggedAppnav extends Vue {
           this.sortLabelsByName()
         },
       },
+      {
+        name: 'Add label',
+        icon: 'tag',
+        iconColor: '',
+        size: 'lg',
+        callback: () => {
+          this.pushPopUp('LabeladderPopup')
+        },
+      },
     ]},
-    {icon: 'chart-pie', comp: 'statistics'},
   ]
   currentSect: string = 'overview'
   options: ListIcon[] = []
@@ -154,7 +162,7 @@ export default class LoggedAppnav extends Vue {
   isActiveClass(comp: string): object {
     let mainColor: string = ''
     if (this.currentSect === comp)
-      mainColor = '#fc7d7d'
+      mainColor = '#83B7E2'
     return {
       color: mainColor,
     }

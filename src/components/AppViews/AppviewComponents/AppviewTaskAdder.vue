@@ -2,8 +2,8 @@
   <div class='wrapper'>
     <transition name='fade' mode='out-in'>
       <div v-if='!showing' @click='showing = true' key='notshowing' class='msg'>
-        <i class='icon pointer txt fas fa-plus fa-lg'></i>
-        <span class='txt name'>Add task</span>
+        <i class='icon pointer txt fas fa-plus fa-lg' :class='theme'></i>
+        <span class='txt name' :class='theme'>Add task</span>
       </div>
       <task-edit key='showing' v-else
         :fixed-pers='fixedPers'
@@ -12,6 +12,7 @@
         :default-priority='defaultPriority'
         :allow-priority='allowPriority'
         :allow-labels='allowLabels'
+        :lock='true'
         @cancel='showing = false'
         @enter='enter'
       />
@@ -22,7 +23,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { namespace } from 'vuex-class'
+import { namespace, State } from 'vuex-class'
 
 import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
 
@@ -36,6 +37,8 @@ const taskVuex = namespace('task')
   },
 })
 export default class TaskAdder extends Vue {
+  @State theme!: string
+
   @Prop(String) fixedPers!: string
   @Prop(String) fixedLabel!: string
   @Prop(Array) defaultLabels!: string
@@ -63,7 +66,7 @@ export default class TaskAdder extends Vue {
 }
 
 .msg:hover .name, .msg:hover .icon {
-  color: #FF6B66;
+  color: #83B7E2;
 }
 
 .name {

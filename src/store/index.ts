@@ -249,10 +249,11 @@ const store: any = new Vuex.Store({
       }
     },
     activateKeyShortcut({state, commit, getters}, key) {
-      if ((getters.loggedAndVerified || getters.anonymous) && getters.isDesktop)
+      if ((getters.loggedAndVerified || getters.anonymous))
         switch (key) {
           case 'l': commit('pushPopUp', 'LabeladderPopup'); break
           case 'p': commit('pushPopUp', 'PerspectiveAdderPopup'); break
+          case 't': commit('pushPopUp', 'TaskadderPopup'); break
           case 'h': commit('pushPopUp', ''); break
         }
     },

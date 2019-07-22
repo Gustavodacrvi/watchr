@@ -60,39 +60,62 @@ export default {
   deParseMomentTimeZone(str: string): string {
     return str.replace(', ', '/').replace(' ', '_')
   },
-  sortTasksByPriority(tasks: Task[]) {
-    tasks.sort((a, b) => {
-      const priA = a.priority
-      const priB = b.priority
-      switch (priA) {
-        case 'Low priority':
-          switch (priB) {
-            case 'Low priority': return 0
-            case 'Medium priority': return 1
-            case 'High priority': return 1
-            default: return -1
-          }
-        case 'Medium priority':
-          switch (priB) {
-            case 'Medium priority': return 0
-            case 'High priority': return 1
-            case 'Low priority': return -1
-            default: return -1
-          }
-        case 'High priority':
-          switch (priB) {
-            case 'High priority': return 0
-            case 'Low priority': return -1
-            case 'Medium priority': return -1
-            default: return -1
-          }
-      }
-      return 0
-    })
-  },
   filterTasksByLabels(tasks: Task[], labels: string[]) {
     for (const id of labels)
       tasks = tasks.filter(el => el.labels.includes(id))
+    return tasks
+  },
+  sortTasksByMultipleCriteria(tasks: Task[], sort: string[]): Task[] {
+    const obj: {[key: string]: (task1: Task, task2: Task) => number} = {
+      name: (task1: Task, task2: Task) => {
+        return task1.name.localeCompare(task2.name)
+      },
+      priority: (task1: Task, task2: Task) => {
+        const priA = task1.priority
+        const priB = task2.priority
+        switch (priA) {
+          case 'Low priority':
+            switch (priB) {
+              case 'Low priority': return 0
+              case 'Medium priority': return 1
+              case 'High priority': return 1
+              default: return -1
+            }
+          case 'Medium priority':
+            switch (priB) {
+              case 'Medium priority': return 0
+              case 'High priority': return 1
+              case 'Low priority': return -1
+              default: return -1
+            }
+          case 'High priority':
+            switch (priB) {
+              case 'High priority': return 0
+              case 'Low priority': return -1
+              case 'Medium priority': return -1
+              default: return -1
+            }
+        }
+        return 0
+      },
+    }
+
+    tasks.sort((task1: Task, task2: Task) => {
+
+      let compare = obj[sort[0]]
+      if (compare) {
+        const result = compare(task1, task2)
+        if (result) return result
+      }
+      compare = obj[sort[1]]
+      if (compare) {
+        const result = compare(task1, task2)
+        if (result !== undefined) return result
+      }
+
+      return 0
+    })
+
     return tasks
   },
 }

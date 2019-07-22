@@ -1,5 +1,5 @@
 
-import { Task } from '@/interfaces/app'
+import { Task, Label } from '@/interfaces/app'
 
 import { States as RootState } from '@/store/index'
 
@@ -8,7 +8,8 @@ interface States {
 }
 
 interface Getters {
-  inboxTasks: () => Task[]
+  inboxTasks: (state: States) => Task[]
+  getNumberOfTasksByLabel: (state: States) => (labelId: string) => number
 }
 
 interface Mutations {
@@ -27,9 +28,12 @@ interface Actions {
   // tslint:disable-next-line:max-line-length
   updateTask: (context: ActionContext, obj: {name: string, priority: string, id: string, labels: []}) => void
   // tslint:disable-next-line:max-line-length
-  addTask: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
+  addTaskPerspective: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
   addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[]}) => void
+  addTask: (context: ActionContext, obj: {name: string, priority: string, labels: string[]}) => void
   deleteTasksById: (context: ActionContext, ids: string[]) => void
+  changePrioritysByIds: (context: ActionContext, obj: {ids: string[], priority: string}) => void
+  addLabelByTaskIds: (context: ActionContext, obj: {ids: string[], labelId: string}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -44,6 +48,10 @@ export default {
   getters: {
     inboxTasks(state: States) {
       return state.tasks.filter(el => el.labels.length === 0)
+    },
+    getNumberOfTasksByLabel: (state: States) => (labelId: string): number => {
+      const tasks = state.tasks.filter(el => el.labels.includes(labelId))
+      return tasks.length
     },
   } as Getters,
   actions: {
@@ -83,7 +91,7 @@ export default {
         batch.commit()
       }
     },
-    addTask({ rootState }, {task, perspectiveId, order, position}) {
+    addTaskPerspective({ rootState }, {task, perspectiveId, order, position}) {
       if (rootState.firestore && rootState.uid) {
         const batch = rootState.firestore.batch()
 
@@ -100,6 +108,42 @@ export default {
         batch.update(persRef, {
           order: ord,
         })
+
+        batch.commit()
+      }
+    },
+    addTask({ rootState }, {priority, name, labels}) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('tasks').add({
+          name, labels, priority,
+          userId: rootState.uid,
+        })
+    },
+    changePrioritysByIds({ rootState }, {ids, priority}) {
+      if (rootState.firestore && rootState.uid) {
+        const batch = rootState.firestore.batch()
+
+        for (const id of ids) {
+          const ref = rootState.firestore.collection('tasks').doc(id)
+          batch.update(ref, {
+            priority,
+          })
+        }
+
+        batch.commit()
+      }
+    },
+    addLabelByTaskIds({ rootState }, {ids, labelId}) {
+      if (rootState.firestore && rootState.uid) {
+        const batch = rootState.firestore.batch()
+
+        const fire = rootState.firebase.firestore.FieldValue as any
+        for (const id of ids) {
+          const ref = rootState.firestore.collection('tasks').doc(id)
+          batch.update(ref, {
+            labels: fire.arrayUnion(labelId),
+          })
+        }
 
         batch.commit()
       }

@@ -59,7 +59,7 @@ export default class LoadingComponent extends Vue {
     fill: #191919;
   }
   50% {
-    fill: #fc7d7d;
+    fill: #83B7E2;
   }
   100% {
     fill: #191919;
@@ -82,7 +82,7 @@ export default class LoadingComponent extends Vue {
     fill: #F0F0F0;
   }
   50% {
-    fill: #fc7d7d;
+    fill: #83B7E2;
   }
   100% {
     fill: #F0F0F0;

@@ -7,7 +7,7 @@
       <div key='options' v-else class='header options'>
         <i v-for='i in icons'
           :key='i.name'
-          :class='`icon pointer header-icon fas fa-${i.icon} fa-${i.size}`'
+          :class='[`icon txt pointer header-icon fas fa-${i.icon} fa-${i.size}`, theme]'
           @click='i.callback'
         ></i>
       </div>
@@ -18,11 +18,14 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
+import { State } from 'vuex-class'
 
 import { ListIcon } from '../../../interfaces/app'
 
 @Component
 export default class AppnavHeader extends Vue {
+  @State theme!: string
+
   @Prop({type: String, required: true}) name!: string
   @Prop({type: Boolean, required: true}) showTitle!: boolean
   @Prop({type: Array, required: true}) icons!: ListIcon[]
@@ -52,7 +55,7 @@ export default class AppnavHeader extends Vue {
 }
 
 .header .title {
-  color: #fc7d7d;
+  color: #83B7E2;
   font-size: 1.1em;
 }
 

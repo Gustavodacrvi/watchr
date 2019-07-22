@@ -3,6 +3,8 @@
     pers-name='Have tags'
     :value='value'
     :base-tasks='baseTasks'
+    :fixed-tag="{name: 'Have tags', icon: 'layer-group', backColor: '#83B7E2'}"
+    :save-sort='!isOnOverview'
 
     @input="$emit('input', !value)"
   />
@@ -11,7 +13,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { namespace } from 'vuex-class'
+import { namespace, State } from 'vuex-class'
 
 const taskVuex = namespace('task')
 
@@ -25,10 +27,15 @@ import { Task } from '../../../../interfaces/app'
   },
 })
 export default class ViewHaveTags extends Vue {
+  @State currentAppSection!: string
+
   @taskVuex.State tasks!: Task[]
 
   @Prop(Boolean) value!: string
 
+  get isOnOverview(): boolean {
+    return this.currentAppSection === 'overview'
+  }
   get baseTasks() {
     return this.tasks.filter(el => el.labels.length > 0)
   }

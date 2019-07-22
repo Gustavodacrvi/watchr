@@ -19,20 +19,25 @@
 
           @delete='deleteSelected'
           @priority='selectPriority'
+          @selectedpriority='selectedPriority'
           @settings='selectSettingsOption'
           @label='addLabel'
         />
       </div>
     </div>
     <div class='margin'></div>
+    <empty-tag-renderer v-if='sort && sort.length > 0'
+      :list='sort'
+      @update='saveNewSortOrder'
+    />
     <div v-if='!hided'>
       <div v-if='showing'>
-        <p v-if='pers.description' class='description txt'>
+        <p v-if='pers.description' class='description txt' :class='theme'>
           {{ pers.description }}
         </p>
         <div class='margin'></div>
         <view-tags
-          :fixed-pers='pers.name'
+          :fixed-tag='fixedTag'
           :search='search'
           :priority='getPriority'
           :labels='getLabels'
@@ -48,6 +53,7 @@
         :tasks='getTasks'
         :fixed-pers='pers.name'
         :default-priority='getPriority'
+        :default-labels='defaultLabels'
         :allow-priority='true'
         :insert-before='true'
         :allow-labels='allowLabels'
@@ -67,6 +73,7 @@ import { State, Getter, Mutation, namespace } from 'vuex-class'
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
+import EmptyTagsRenderer from '@/components/AppViews/AppviewComponents/AppviewEmptytagrenderer.vue'
 import AppviewHeaderIcons from '@/components/AppViews/AppviewComponents/AppviewHeadericons.vue'
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
@@ -84,9 +91,11 @@ const persVuex = namespace('perspective')
     'task-renderer': AppviewTaskrenderer,
     'view-header-icons': AppviewHeaderIcons,
     'header-title': HeaderTitle,
+    'empty-tag-renderer': EmptyTagsRenderer,
   },
 })
 export default class PerspectiveAppview extends Vue {
+  @State theme!: string
   @State currentAppSection!: string
   @Getter isDesktop!: boolean
   @Getter platform!: string
@@ -96,8 +105,10 @@ export default class PerspectiveAppview extends Vue {
 
   @taskVuex.State tasks!: Task[]
   // tslint:disable-next-line:max-line-length
-  @taskVuex.Action addTask!: (obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
+  @taskVuex.Action addTaskPerspective!: (obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
+  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
+  @taskVuex.Action addLabelByTaskIds!: (obj: {ids: string[], labelId: string}) => void
 
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
@@ -106,16 +117,21 @@ export default class PerspectiveAppview extends Vue {
   @persVuex.Action addLabelToPerspective!: (obj: {id: string, labelId: string}) => Label[]
   @persVuex.Action removeLabelFromPerspective!: (obj: {id: string, labelId: string}) => Label[]
   @persVuex.Action savePerspectivePriority!: (obj: {id: string, priority: string}) => Label[]
+  @persVuex.Action addPerspectiveSort!: (obj: {sort: string, perspectiveId: string}) => Label[]
+  @persVuex.Action savePerspectiveTaskSort!: (obj: {sort: string[], perspectiveId: string}) => Label[]
 
   @Prop({default: true, type: Boolean}) allowLabels!: boolean
   @Prop(Boolean) value!: boolean
   @Prop(Boolean) save!: boolean
+  @Prop(Boolean) saveSort!: boolean
   @Prop(String) persName!: string
+  @Prop(Object) fixedTag!: object
   @Prop(Array) baseTasks!: Task[]
 
   search: string = ''
   priority: string = ''
   labels: string[] = []
+  sort: string[] = []
   hided: boolean = false
   showing: boolean = false
   loaded: boolean = false
@@ -127,6 +143,12 @@ export default class PerspectiveAppview extends Vue {
       iconColor: '',
       size: '',
     },
+    {
+      name: 'Change priority of tasks',
+      icon: 'exclamation',
+      iconColor: '',
+      size: '',
+    },
   ]
 
   created() {
@@ -135,10 +157,54 @@ export default class PerspectiveAppview extends Vue {
   }
 
   getMobileSelectedOptions(): ListIcon[] {
-    for (const icon of this.mobileSelectedOptions)
-      icon['callback'] = () => {
-        this.deleteTasksById(this.selected)
-      }
+    this.mobileSelectedOptions[0]['callback'] = () => {
+      this.deleteTasksById(this.selected)
+    }
+    this.mobileSelectedOptions[1]['callback'] = () => {
+      setTimeout(() => {
+        this.sendOptionsToNavbar([
+          {
+            name: 'High priority',
+            icon: 'exclamation',
+            iconColor: '#FF6B66',
+            size: 'lg',
+            callback: () => {
+              this.changePrioritysByIds({
+                ids: this.selected,
+                priority: 'High priority',
+              })
+              this.sendOptionsToNavbar([])
+            },
+          },
+          {
+            name: 'Medium priority',
+            icon: 'exclamation',
+            iconColor: '#fff566',
+            size: 'lg',
+            callback: () => {
+              this.changePrioritysByIds({
+                ids: this.selected,
+                priority: 'Medium priority',
+              })
+              this.sendOptionsToNavbar([])
+            },
+          },
+          {
+            name: 'Low priority',
+            icon: 'exclamation',
+            iconColor: '#70ff66',
+            size: 'lg',
+            callback: () => {
+              this.changePrioritysByIds({
+                ids: this.selected,
+                priority: 'Low priority',
+              })
+              this.sendOptionsToNavbar([])
+            },
+          },
+        ])
+      }, 80)
+    }
     return this.mobileSelectedOptions
   }
   addLabel(label: Label) {
@@ -159,7 +225,7 @@ export default class PerspectiveAppview extends Vue {
       })
   }
   addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
-    this.addTask({
+    this.addTaskPerspective({
       task: {
         name: obj.name,
         priority: obj.priority,
@@ -177,27 +243,30 @@ export default class PerspectiveAppview extends Vue {
         priority: value,
       })
   }
+  saveNewSortOrder(names: string[]) {
+    this.sort = names
+    if (this.saveSort)
+      this.savePerspectiveTaskSort({
+        sort: names,
+        perspectiveId: this.pers.id,
+      })
+  }
   selectSettingsOption(value: string) {
-    if (value === 'Sort tasks by name') {
-      const tasks: Task[] = this.viewTasks
-      tasks.sort((a, b) => a.name.localeCompare(b.name))
-      const ids: string[] = []
-      for (const el of tasks)
-        ids.push(el.id)
-      this.saveTaskOrder({
-        id: this.pers.id,
-        order: ids,
-      })
-    } else if (value === 'Sort tasks by priority') {
-      const tasks = this.viewTasks
-      appUtils.sortTasksByPriority(tasks)
-      const ids: string[] = []
-      for (const el of tasks)
-        ids.push(el.id)
-      this.saveTaskOrder({
-        id: this.pers.id,
-        order: ids,
-      })
+    if (!this.sort.find(el => el === value))
+      if (value === 'Sort tasks by name') {
+        this.sort.push('name')
+        if (this.saveSort)
+          this.addPerspectiveSort({
+            sort: 'name',
+            perspectiveId: this.pers.id,
+          })
+      } else if (value === 'Sort tasks by priority') {
+        this.sort.push('priority')
+        if (this.saveSort)
+          this.addPerspectiveSort({
+            sort: 'priority',
+            perspectiveId: this.pers.id,
+          })
     }
   }
   toggleHide() {
@@ -218,7 +287,16 @@ export default class PerspectiveAppview extends Vue {
   deleteSelected() {
     this.deleteTasksById(this.selected)
   }
+  selectedPriority(value: string) {
+    this.changePrioritysByIds({
+      ids: this.selected,
+      priority: value,
+    })
+  }
   updateView() {
+    this.priority = this.pers.priority
+    this.labels = this.pers.includeAndLabels.slice()
+    this.sort = this.pers.sort.slice()
     this.pushView({
       view: this.pers.name,
       viewType: 'perspective',
@@ -237,14 +315,14 @@ export default class PerspectiveAppview extends Vue {
   }
   get getTasks(): Task[] {
     let tasks: Task[] = this.sortedTasks
-    if (!this.save) {
-      if (this.search)
-        tasks = tasks.filter(el => el.name.includes(this.search))
-      if (this.priority)
-        tasks = tasks.filter(el => el.priority === this.priority)
-      if (this.labels && this.labels.length > 0)
-        tasks = appUtils.filterTasksByLabels(tasks, this.labels)
-    }
+    if (this.search)
+      tasks = tasks.filter(el => el.name.includes(this.search))
+    if (this.priority)
+      tasks = tasks.filter(el => el.priority === this.priority)
+    if (this.labels && this.labels.length > 0)
+      tasks = appUtils.filterTasksByLabels(tasks, this.labels)
+    if (this.sort && this.sort.length > 0)
+      tasks = appUtils.sortTasksByMultipleCriteria(tasks, this.sort)
     return tasks
   }
   get getLabels(): Label[] {
@@ -256,6 +334,11 @@ export default class PerspectiveAppview extends Vue {
     if (!this.save)
       return this.priority
     else return this.pers.priority
+  }
+  get defaultLabels(): string[] {
+    if (!this.save)
+      return this.labels
+    return this.pers.includeAndLabels
   }
 
   @Watch('selected')
@@ -269,12 +352,12 @@ export default class PerspectiveAppview extends Vue {
   onChange2() {
     this.showing = this.value
   }
-  @Watch('$route')
-  onChange4() {
+  @Watch('pers')
+  onChange3() {
     this.updateView()
   }
-  @Watch('perspectiveData')
-  onChange3() {
+  @Watch('currentAppSection')
+  onChange6() {
     this.updateView()
   }
 }

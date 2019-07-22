@@ -6,15 +6,18 @@
       <router-link
         class='link txt'
         ref='Home'
+        :class='theme'
         :to="{name: 'Home'}"
       >Home</router-link>
       <router-link
         class='link txt'
+        :class='theme'
         ref='User'
         :to="{name: 'User'}"
       >User</router-link>
       <router-link
         class='link txt'
+        :class='theme'
         ref='Settings'
         :to="{name: 'Settings'}"
       >Settings</router-link>
@@ -27,6 +30,7 @@
       >
         <div class='dual-drop-el'>
           <span class='drop-el txt'
+            :class='theme'
             @click="pushPopUp('SigninPopup')">
             <i class='fa fas fa-sign-in-alt fa-sm'></i>
             Sign in
@@ -34,6 +38,7 @@
           <hr class='thematic-break'>
           <span
             class='drop-el txt'
+            :class='theme'
             @click="pushPopUp('SignupPopup')"
             >
             <i class='fa-user-plus fas fa-sm'></i>
@@ -42,12 +47,14 @@
         </div>
       </icon-dropdown>
       <icon-dropdown v-else
+        title='User options'
         class='margin'
         handle='user-alt'
         min-width='300px'
       >
         <span
           class='drop-el txt'
+          :class='theme'
           @click='signOut'
         >
           <i class='fa-sign-out-alt fas fa-sm'></i>
@@ -55,6 +62,7 @@
         </span>
         <span v-if='!emailVerified'
           class='drop-el txt'
+          :class='theme'
           @click='resendConfirmationEmail'
         >
           <i class='fa-paper-plane fas fa-sm'></i>
@@ -63,7 +71,7 @@
       </icon-dropdown>
       </span>
         <span @click='changeTheme'>
-        <i class='fa-adjust fa-lg txt pointer fas icon margin'></i>
+        <i class='fa-adjust fa-lg txt pointer fas icon margin' :class='theme' title='Change theme'></i>
         </span>
     </div>
     <div
@@ -178,10 +186,10 @@ export default class DesktopNavbar extends Mixins(Mixin) {
 .magic-line {
   position: absolute;
   bottom: 0;
-  background-color: #fc7d7d;
+  background-color: #83B7E2;
   height: 2px;
   border-radius: 2px;
-  box-shadow: 0 1px 1px #fc7d7d;
+  box-shadow: 0 1px 1px #83B7E2;
 }
 
 .link {
@@ -194,8 +202,8 @@ export default class DesktopNavbar extends Mixins(Mixin) {
 }
 
 .link:hover , .router-link-active {
-  color: #fc7d7d;
-  text-shadow: 0 0 1px #fc7d7d;
+  color: #83B7E2;
+  text-shadow: 0 0 1px #83B7E2;
 }
 
 .margin {
@@ -210,7 +218,7 @@ export default class DesktopNavbar extends Mixins(Mixin) {
 }
 
 .drop-el:hover, .drop-el:hover .fontawesome-icon {
-  color: #fc7d7d;
+  color: #83B7E2;
 }
 
 .dual-drop-el {

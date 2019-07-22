@@ -187,7 +187,7 @@ export default class App extends Vue {
 }
 
 .navbar.mobile.light {
-  box-shadow: 0 0 15px 10px #F8F7F6;
+  box-shadow: 0 0 15px 10px #fff;
 }
 
 .navbar.mobile.dark {

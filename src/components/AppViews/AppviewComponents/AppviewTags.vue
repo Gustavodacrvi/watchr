@@ -2,11 +2,11 @@
   <div class='tags-wrapper'>
     <div class='tags'>
       <transition-group name='fade'>
-        <view-tag key='fixed' v-if='fixedPers'
-          :name='fixedPers'
+        <view-tag key='fixed' v-if='fixedTag'
+          :name='fixedTag.name'
           :fixed='true'
-          icon='layer-group'
-          back-color='#83B7E2'
+          :icon='fixedTag.icon'
+          :back-color='fixedTag.backColor'
         />
         <view-tag key='priority' v-if="priority && priority !== ''"
           icon='exclamation'
@@ -28,16 +28,10 @@
       <view-tag v-for='lab in labels'
         :key='lab.id'
         icon='tag'
-        back-color='#FF6B66'
+        back-color='#83B7E2'
         :name='lab.name'
         :fixed='false'
         @click="$emit('removelabel', lab.id)"
-      />
-      <view-tag key='fixedlabel' v-if='fixedLabel'
-        :name='fixedLabel'
-        :fixed='true'
-        icon='tag'
-        back-color='#FF6B66'
       />
     </div>
   </div>
@@ -59,8 +53,7 @@ import { Label } from '../../../interfaces/app'
 })
 export default class AppviewTags extends Vue {
   @Prop(String) search!: string
-  @Prop(String) fixedPers!: string
-  @Prop(String) fixedLabel!: string
+  @Prop(Object) fixedTag!: object
   @Prop(String) priority!: string
   @Prop(Array) labels!: Label[]
 }

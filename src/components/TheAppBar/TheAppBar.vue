@@ -117,7 +117,7 @@ export default class TheNavBar extends Vue {
 }
 
 .wrapper.desktop {
-  width: 300px;
+  width: 280px;
 }
 
 .zindex {
@@ -125,7 +125,7 @@ export default class TheNavBar extends Vue {
 }
 
 .appbar {
-  width: 300px;
+  width: 280px;
 }
 
 .appbar-margin {

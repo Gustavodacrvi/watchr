@@ -16,12 +16,14 @@
         <i
           key='eye'
           class='eye txt icon pointer fas fa-eye fa-1x'
+          :class='theme'
         ></i>
         </span>
         <span v-else @click='togglePassword'>
         <i
           key='eye-slash'
           class='eye txt icon pointer fas fa-eye-slash fa-1x'
+          :class='theme'
           @click='togglePassword'
         ></i>
         </span>

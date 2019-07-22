@@ -10,17 +10,14 @@
         <span class='title'>{{ navBarTitle }}</span>
       </div>
       <div class='right'>
-        <transition name='fade'>
-          <span class='nav-options'>
-            <icon-options v-if='navBarOptions && navBarOptions.length > 0'
-              class='cancel-sortable-unselect'
-              handle='ellipsis-v'
-              size='lg'
-              min-width='225px'
-              :options='navBarOptions'
-            />
-          </span>
-        </transition>
+        <span class='nav-options cancel-sortable-unselect'>
+          <icon-options v-if='navBarOptions && navBarOptions.length > 0'
+            handle='ellipsis-v'
+            size='lg'
+            min-width='225px'
+            :options='navBarOptions'
+          />
+        </span>
       </div>
     </div>
   </div>
@@ -109,13 +106,18 @@ export default class MobileNavbar extends Vue {
 }
 
 .icon:hover .line {
-  background-color: #fc7d7d;
+  background-color: #83B7E2;
 }
 
 .title {
   margin-left: 25px;
-  color: #fc7d7d;
+  color: #83B7E2;
   font-size: 1.5em;
+  display: inline-block;
+  max-width: 240px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 </style>

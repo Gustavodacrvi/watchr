@@ -11,7 +11,7 @@
       @click="toggleElement(false)"
       @dblclick='toggleElement(true)'
     >
-      <i :class='`txt fas fa-lg fa-${icon}`' :style='{color: iconColor}'></i>
+      <i :class='`txt fas fa-lg fa-${icon}`' :style='[{color: iconColor}, theme]'></i>
     </div>
     <div
       class='content'
@@ -19,16 +19,16 @@
       @click="toggleElement(false)"
       @dblclick="toggleElement(true)"
     >
-      <span class='txt name'>{{ name }}</span>
+      <span class='txt name' :class='[{showall: helpIcons.length === 0}, theme]'>{{ name }}</span>
     </div>
-    <div class='options'>
+    <div class='options' :class='theme'>
       <span v-if='number' class='help-icon number'>{{ number }}</span>
       <template v-if='helpIcons && helpIcons.length > 0'>
         <span v-for='i in helpIcons'
           class='help-icon'
           :key='i.icon'
         >
-          <i :class='`txt fade fas fa-${i.icon} fa-${i.size}`'></i>
+          <i :class='[`txt fade fas fa-${i.icon} fa-${i.size}`, theme]'></i>
         </span>
       </template>
       <span v-if='showOptionsMobile || showOptionsDesktop && options.length > 0' class='help-icon'>
@@ -46,9 +46,9 @@
             @click='optionClick(i.callback)'
           >
             <span class='el-icon'>
-              <i :class='`txt fas fa-${i.icon} fa-${i.size}`'></i>
+              <i :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]'></i>
             </span>
-            <span class='el-name txt'>
+            <span class='el-name txt' :class='theme'>
               {{ i.name }}
             </span>
           </div>
@@ -62,7 +62,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { State, Getter } from 'vuex-class'
+import { State, Getter, Mutation } from 'vuex-class'
 
 import IconDropdown from '@/components/IconDropdown.vue'
 
@@ -74,6 +74,8 @@ import { ListIcon } from '../../../interfaces/app'
   },
 })
 export default class ListRenderer extends Vue {
+  @Mutation closeAppBar!: () => void
+
   @Prop({default: true, type: Boolean}) show!: boolean
   @Prop({default: 0, type: Number}) number!: boolean
   @Prop(String) name!: string
@@ -111,6 +113,8 @@ export default class ListRenderer extends Vue {
   go() {
     if (!this.showHandle)
       this.$router.push(`/user?${this.route}=${this.name}`)
+    if (!this.isDesktop)
+      this.closeAppBar()
   }
 
   get showOptionsMobile(): boolean {
@@ -147,9 +151,14 @@ export default class ListRenderer extends Vue {
 
 .name {
   margin-left: 6px;
+  max-width: 120px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.showall {
+  max-width: 190px !important;
 }
 
 .options {
@@ -185,11 +194,11 @@ export default class ListRenderer extends Vue {
 }
 
 .sortable-selected.light {
-  background-color: #ffbfbd !important;
+  background-color: #83B7E2 !important;
 }
 
 .sortable-selected.dark {
-  background-color: #3B2B2A !important;
+  background-color: #3287cd !important;
 }
 
 .fade {
@@ -197,7 +206,7 @@ export default class ListRenderer extends Vue {
 }
 
 .number {
-  color: #FF6B66;
+  color: #83B7E2;
 }
 
 </style>

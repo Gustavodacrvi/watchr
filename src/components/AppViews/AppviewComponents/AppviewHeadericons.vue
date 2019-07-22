@@ -1,19 +1,36 @@
 <template>
-  <div class='right view-header-icons'>
+  <div class='right'>
     <transition name='fade'>
-    <template v-if='showTaskOptions && isDesktop'>
-        <span class='header-options'>
-          <i class='fas icon pointer trash fa-trash fa-lg' @click="$emit('delete')"></i>
-        </span>
-      </template>
+      <span v-if='showTaskOptions && isDesktop' class='header-option'>
+        <icon-options
+          handle='exclamation'
+          size='lg'
+          min-width='200px'
+          title='Change priority'
+          :options='priorityOptions'
+          @click='multiplePriority'
+        />
+      </span>
+    </transition>
+    <transition name='fade'>
+      <span v-if='showTaskOptions && isDesktop' class='header-option'>
+        <i
+          class='fas icon pointer trash fa-trash fa-lg'
+          :class='theme'
+          title='Delete tasks'
+          @click="$emit('delete')"
+        ></i>
+      </span>
     </transition>
     <span style='width: 35px'></span>
     <span v-if='allowSearch' class='header-option'>
       <drop-finder
         class='icon pointer txt'
         handle='search'
+        :class='theme'
         size='lg'
         min-width='300px'
+        title='Search tasks'
         v-model='search'
       />
     </span>
@@ -22,6 +39,7 @@
         handle='exclamation'
         size='lg'
         min-width='200px'
+        title='Priority'
         :options='priorityOptions'
         @click='selectPriority'
       />
@@ -31,6 +49,7 @@
         handle='tags'
         size='lg'
         min-width='300px'
+        title='Labels'
         :list='labels'
         @select='selectLabel'
       />
@@ -50,7 +69,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { Getter, namespace } from 'vuex-class'
+import { Getter, namespace, State } from 'vuex-class'
 
 import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
 import IconOptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
@@ -66,6 +85,7 @@ import { ListIcon, Label } from '../../../interfaces/app'
   },
 })
 export default class AppviewHeadericons extends Vue {
+  @State theme!: string
   @Getter isDesktop!: boolean
 
   @labelsVuex.State labels!: Label[]
@@ -123,8 +143,11 @@ export default class AppviewHeadericons extends Vue {
   selectPriority(value: string) {
     this.$emit('priority', value)
   }
-  selectLabel(value: string) {
-    this.$emit('label', value)
+  multiplePriority(value: string) {
+    this.$emit('selectedpriority', value)
+  }
+  selectLabel(label: Label) {
+    this.$emit('label', label)
   }
 
   @Watch('search')

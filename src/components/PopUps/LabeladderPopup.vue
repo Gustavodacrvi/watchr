@@ -7,6 +7,7 @@
       <dropdown-input
         tabindex='1'
         class='margin'
+        focus-class='labeladder'
         placeholder='Label name...'
         :input='input'
         :values='options'
@@ -22,9 +23,11 @@
       >Add label</button>
       <span v-show='isDesktop'
         class='margin txt'
+        :class='theme'
       >You can open this pop up at any time by clicking the 'L' key.</span><br>
       <span v-show='isDesktop'
         class='margin txt'
+        :class='theme'
       >You can close any pop up at any time by clicking 'H' key.</span>
     </div>
   </div>
@@ -62,8 +65,14 @@ export default class LabelAdder extends Vue {
   value: string = ''
   options: string[] = []
 
-  created() {
-    this.input = this.popUpPayload
+  mounted() {
+    const el = document.querySelectorAll('.labeladder')[0] as any
+    el.focus()
+    setTimeout(() => {
+      if (this.popUpPayload)
+        this.input = this.popUpPayload
+      else this.input = ''
+    }, 100)
   }
 
   add() {
@@ -75,8 +84,14 @@ export default class LabelAdder extends Vue {
           duration: 3,
           type: 'error',
         })
-      else
+      else {
         this.addLabel(this.value)
+        this.pushAlert({
+          name: `<strong>${this.value}</strong> label was successfully added.`,
+          duration: 2.5,
+          type: 'success',
+        })
+      }
     }
   }
 

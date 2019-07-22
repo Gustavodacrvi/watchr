@@ -1,6 +1,6 @@
 <template>
   <div class='task-adder'>
-    <div>
+    <div class='view-tags'>
       <transition name='fade'>
         <view-tags v-if='priority || fixedPers || getLabels.length > 0'
           :fixed-pers='fixedPers'
@@ -11,10 +11,18 @@
           @removelabel='removeLabel'
         />
       </transition>
+      <div v-if='lock' class='lock right pointer' @click='toggleLock'>
+        <transition name='fade' mode='out-in'>
+          <i v-if='isLocked' key='lock' class='fas txt fa-lock fa-sm' :class='theme'></i>
+          <i v-else key='unlock' class='fas txt fa-unlock fa-sm' :class='theme'></i>
+        </transition>
+      </div>
     </div>
     <div class='margin input-div'>
       <drop-input
         tabindex='1'
+        focus-class='taskedit'
+        :input-theme='theme'
         :placeholder='inputPlaceholder'
         :disabled='true'
         :values='options'
@@ -32,7 +40,7 @@
       >
         {{ btn }}
       </view-btn>
-      <span class='cancel pointer' @click="$emit('cancel')">Cancel</span>
+      <span v-if='showCancel' class='cancel pointer' @click="$emit('cancel')">Cancel</span>
       <div class='right'>
         <div v-if='allowLabels' class='header-option'>
           <drop-finder
@@ -60,7 +68,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { namespace } from 'vuex-class'
+import { namespace, State } from 'vuex-class'
 
 const labelsVuex = namespace('label')
 
@@ -86,6 +94,8 @@ import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue
   },
 })
 export default class AppviewTaskedit extends Vue {
+  @State theme!: string
+
   @Prop({default: 'Add task', type: String}) btn!: string
   @Prop({default: false, type: Boolean}) closeOnSave!: boolean
   @Prop(String) defaultValue!: string
@@ -95,20 +105,25 @@ export default class AppviewTaskedit extends Vue {
   @Prop(Array) defaultLabels!: string[]
   @Prop({default: false, type: Boolean}) allowPriority!: boolean
   @Prop({default: false, type: Boolean}) allowLabels!: boolean
+  @Prop({default: false, type: Boolean}) lock!: boolean
+  @Prop({default: true, type: Boolean}) showCancel!: boolean
 
   @labelsVuex.State('labels') savedLabels!: Label[]
   @labelsVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
   value: string = ''
   optionsType: string = ''
+  isLocked: boolean = false
   priority: '' | 'Low priority' | 'High priority' | 'Medium priority' = ''
-  options: string[] = []
+  lockPriority: '' | 'Low priority' | 'High priority' | 'Medium priority' = ''
   labels: string[] = []
+  lockLabels: string[] = []
+  options: string[] = []
   priorityIcons: ListIcon[] = [
     {
       name: 'High priority',
       icon: 'exclamation',
-      iconColor: '#FF6B66',
+      iconColor: '#83B7E2',
       size: 'lg',
     },
     {
@@ -133,7 +148,16 @@ export default class AppviewTaskedit extends Vue {
     if (this.defaultValue)
       this.value = this.defaultValue
   }
+  mounted() {
+    const el = document.querySelectorAll('.taskedit')[0] as any
+    el.focus()
+  }
 
+  toggleLock() {
+    this.isLocked = !this.isLocked
+    this.lockPriority = this.priority
+    this.lockLabels = this.labels.slice()
+  }
   selectDropValue(value: string) {
     const arr = this.value.split(' ')
     arr[arr.length - 1] = this.optionsType + value
@@ -144,8 +168,13 @@ export default class AppviewTaskedit extends Vue {
     this.value = str
   }
   enter() {
-    if (this.value)
+    if (this.value) {
       this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels})
+      if (this.lock && this.isLocked) {
+        this.priority = this.lockPriority
+        this.labels = this.lockLabels.slice()
+      }
+    }
     this.value = ''
   }
   removeLabel(id: string) {
@@ -230,6 +259,14 @@ export default class AppviewTaskedit extends Vue {
 
 <style scoped>
 
+.view-tags {
+  position: relative;
+}
+
+.lock {
+  bottom: 0;
+}
+
 .right {
   position: absolute;
   right: 0;
@@ -244,6 +281,10 @@ export default class AppviewTaskedit extends Vue {
 .cancel {
   margin-left: 6px;
   color: #FF6B66;
+}
+
+.cancel:hover {
+  text-decoration: underline;
 }
 
 .options {
