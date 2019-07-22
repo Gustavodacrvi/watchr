@@ -1,9 +1,9 @@
 <template>
   <div class='division'>
     <div class='header'>
-      <span class='txt'>{{ name }}</span>
+      <span class='txt' :class='theme'>{{ name }}</span>
       <span class='right' @click='showing = !showing'>
-        <i class='fas pointer icon fa-angle-down fa-lg txt' :class='{rotate: showing}'></i>
+        <i class='fas pointer icon fa-angle-down fa-lg txt' :class='[{rotate: showing}, theme]'></i>
       </span>
     </div>
     <transition name='fade'>
@@ -15,9 +15,12 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
+import { State } from 'vuex-class'
 
 @Component
 export default class TodayView extends Vue {
+  @State theme!: string
+  
   @Prop(String) name!: string
 
   showing: boolean = true

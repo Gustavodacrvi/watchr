@@ -47,7 +47,7 @@
             :class='theme'
             @click='resendConfirmationEmail'
           >
-            <i class='icon txt fa-paper-plane fas fa-sm'></i>
+            <i class='icon txt fa-paper-plane fas fa-sm' :class='theme'></i>
             Resend confirmation e-mail
           </span>
         </template>

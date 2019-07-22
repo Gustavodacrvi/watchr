@@ -9,12 +9,12 @@
     >
       <div class='content-wrapper' @click='toggleElement'>
         <span class='circles'>
-          <i v-if='!completed' @click='v => completed = true' key='notco' class='far circle icon txt fa-circle fa-sm'></i>
-          <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm'></i>
+          <i v-if='!completed' @click='v => completed = true' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
+          <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
         </span>
         <transition name='check-trans' mode='out-in'>
           <div v-if='!completed' key='cont' class='content' :class='{handle: allowDragAndDrop}'>
-            <div class='txt'>
+            <div class='txt' :class='theme'>
               {{ task.name }}
               <i v-if='task.priority'
                 class='content-icon fas fa-exclamation fa-sm'
@@ -25,7 +25,7 @@
               ></i>
             </div>
             <transition name='fade'>
-              <div v-if='showLabels' class='txt fade'>
+              <div v-if='showLabels' class='txt fade' :class='theme'>
                 <span v-for='lab in taskLabels'
                   :key='lab'
                   class='lab'
@@ -34,7 +34,7 @@
             </transition>
           </div>
           <div v-else class='content'>
-            <span key='compl' class='txt'>Task completed</span>
+            <span key='compl' class='txt' :class='theme'>Task completed</span>
           </div>
         </transition>
       </div>
@@ -88,11 +88,6 @@ const settingsVuex = namespace('settings')
   },
 })
 export default class AppviewTask extends Vue {
-  @Prop(Object) task!: Task
-  @Prop(Boolean) deselectAll!: boolean
-  @Prop(Boolean) allowDrag!: boolean
-  @Prop(String) fixedPers!: string
-
   @State theme!: string
   @Getter isDesktop!: boolean
 
@@ -103,6 +98,11 @@ export default class AppviewTask extends Vue {
   @settingsVuex.State desktopTaskLabels!: string
 
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
+
+  @Prop(Object) task!: Task
+  @Prop(Boolean) deselectAll!: boolean
+  @Prop(Boolean) allowDrag!: boolean
+  @Prop(String) fixedPers!: string
 
   clicked: boolean = false
   onHover: boolean = false
@@ -149,7 +149,7 @@ export default class AppviewTask extends Vue {
     switch (this.task.priority) {
       case 'Low priority': return '#70ff66'
       case 'Medium priority': return '#fff566'
-      case 'High priority': return '#83B7E2'
+      case 'High priority': return '#FF6B66'
     }
   }
   get showOptionsIconDrop(): boolean {
@@ -251,20 +251,20 @@ export default class AppviewTask extends Vue {
   align-items: center;
 }
 
-.sortable-selected.not-completed.light {
-  background-color: #ffbfbd !important;
-}
-
-.sortable-selected.not-completed.dark {
-  background-color: #3B2B2A !important;
-}
-
 .task.not-completed.light:hover {
   background-color: #e3e3e3;
 }
 
 .task.not-completed.dark:hover {
   background-color: #282828;
+}
+
+.sortable-selected.not-completed.light {
+  background-color: #83B7E2 !important;
+}
+
+.sortable-selected.not-completed.dark {
+  background-color: #3287cd !important;
 }
 
 .content-icon {

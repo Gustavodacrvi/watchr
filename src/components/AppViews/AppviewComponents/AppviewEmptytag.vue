@@ -1,6 +1,6 @@
 <template>
   <span class='tag-wrapper border-card' @click="$emit('click', name)" :class='theme'>
-    <span class='txt name fade'>{{ getName }}</span>
+    <span class='txt name fade' :class='theme'>{{ getName }}</span>
   </span>
 </template>
 

@@ -91,6 +91,7 @@ import { Task, Label, ListIcon } from '../../../interfaces/app'
   },
 })
 export default class LabelPerspective extends Vue {
+  @State theme!: string
   @State currentAppSection!: string
   @Mutation pushView!: (obj: {view: string, viewType: string}) => void
   @Getter isDesktop!: boolean

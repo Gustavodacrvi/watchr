@@ -2,7 +2,7 @@
   <div class='form-options'>
     <div class='header-wrapper round-border border-card' :class='[theme, {open: showing}]' @click='showing = !showing'>
       <div class='header'>
-        <span class='txt'>
+        <span class='txt' :class='theme'>
           {{ selected }}
         </span>
         <span class='icon'>

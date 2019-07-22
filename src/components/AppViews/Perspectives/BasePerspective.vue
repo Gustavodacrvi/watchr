@@ -32,7 +32,7 @@
     />
     <div v-if='!hided'>
       <div v-if='showing'>
-        <p v-if='pers.description' class='description txt'>
+        <p v-if='pers.description' class='description txt' :class='theme'>
           {{ pers.description }}
         </p>
         <div class='margin'></div>
@@ -95,6 +95,7 @@ const persVuex = namespace('perspective')
   },
 })
 export default class PerspectiveAppview extends Vue {
+  @State theme!: string
   @State currentAppSection!: string
   @Getter isDesktop!: boolean
   @Getter platform!: string
@@ -165,7 +166,7 @@ export default class PerspectiveAppview extends Vue {
           {
             name: 'High priority',
             icon: 'exclamation',
-            iconColor: '#83B7E2',
+            iconColor: '#FF6B66',
             size: 'lg',
             callback: () => {
               this.changePrioritysByIds({

@@ -16,6 +16,7 @@
       <span v-if='showTaskOptions && isDesktop' class='header-option'>
         <i
           class='fas icon pointer trash fa-trash fa-lg'
+          :class='theme'
           title='Delete tasks'
           @click="$emit('delete')"
         ></i>
@@ -26,6 +27,7 @@
       <drop-finder
         class='icon pointer txt'
         handle='search'
+        :class='theme'
         size='lg'
         min-width='300px'
         title='Search tasks'
@@ -67,7 +69,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { Getter, namespace } from 'vuex-class'
+import { Getter, namespace, State } from 'vuex-class'
 
 import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
 import IconOptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
@@ -83,6 +85,7 @@ import { ListIcon, Label } from '../../../interfaces/app'
   },
 })
 export default class AppviewHeadericons extends Vue {
+  @State theme!: string
   @Getter isDesktop!: boolean
 
   @labelsVuex.State labels!: Label[]
@@ -99,7 +102,7 @@ export default class AppviewHeadericons extends Vue {
    {
       name: 'High priority',
       icon: 'exclamation',
-      iconColor: '#83B7E2',
+      iconColor: '#FF6B66',
       size: 'lg',
     },
     {

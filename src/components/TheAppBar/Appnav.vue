@@ -23,7 +23,7 @@
         <div class='navsect'>
           <span v-for='sect in sections' :key='sect.comp' @click='select(sect)'>
           <i
-            :class='`txt pointer icon fas fa-${sect.icon} fa-lg`'
+            :class='[`txt pointer icon fas fa-${sect.icon} fa-lg`, theme]'
             :style="isActiveClass(sect.comp)"
             :title='sect.title'
           ></i>
@@ -50,7 +50,7 @@
       <div class='footer'>
         <div class='left' v-if='!isDesktop'>
           <span @click="$emit('change')">
-          <i class='txt pointer icon fas fa-cog fa-lg'></i>
+          <i class='txt pointer icon fas fa-cog fa-lg' :class='theme'></i>
           </span>
         </div>
         <div class='right'>
@@ -70,9 +70,9 @@
                   @click='i.callback'
                 >
                   <span class='el-icon'>
-                    <i :class='`txt fas fa-${i.icon} fa-${i.size}`'></i>
+                    <i :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]'></i>
                   </span>
-                  <span class='el-name txt'>
+                  <span class='el-name txt' :class='theme'>
                     {{ i.name }}
                   </span>
                 </div>

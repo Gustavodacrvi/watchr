@@ -1,6 +1,6 @@
 <template>
   <div class='add-label-alert' @click="$emit('click')">
-    <span class='txt pointer icon'>
+    <span class='txt pointer icon' :class='theme'>
       <i class='fas fa-plus fa-lg'></i>
       <span>{{ name }}</span>
     </span>

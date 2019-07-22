@@ -6,15 +6,18 @@
       <router-link
         class='link txt'
         ref='Home'
+        :class='theme'
         :to="{name: 'Home'}"
       >Home</router-link>
       <router-link
         class='link txt'
+        :class='theme'
         ref='User'
         :to="{name: 'User'}"
       >User</router-link>
       <router-link
         class='link txt'
+        :class='theme'
         ref='Settings'
         :to="{name: 'Settings'}"
       >Settings</router-link>
@@ -27,6 +30,7 @@
       >
         <div class='dual-drop-el'>
           <span class='drop-el txt'
+            :class='theme'
             @click="pushPopUp('SigninPopup')">
             <i class='fa fas fa-sign-in-alt fa-sm'></i>
             Sign in
@@ -34,6 +38,7 @@
           <hr class='thematic-break'>
           <span
             class='drop-el txt'
+            :class='theme'
             @click="pushPopUp('SignupPopup')"
             >
             <i class='fa-user-plus fas fa-sm'></i>
@@ -49,6 +54,7 @@
       >
         <span
           class='drop-el txt'
+          :class='theme'
           @click='signOut'
         >
           <i class='fa-sign-out-alt fas fa-sm'></i>
@@ -56,6 +62,7 @@
         </span>
         <span v-if='!emailVerified'
           class='drop-el txt'
+          :class='theme'
           @click='resendConfirmationEmail'
         >
           <i class='fa-paper-plane fas fa-sm'></i>
@@ -64,7 +71,7 @@
       </icon-dropdown>
       </span>
         <span @click='changeTheme'>
-        <i class='fa-adjust fa-lg txt pointer fas icon margin' title='Change theme'></i>
+        <i class='fa-adjust fa-lg txt pointer fas icon margin' :class='theme' title='Change theme'></i>
         </span>
     </div>
     <div

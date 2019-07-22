@@ -5,7 +5,7 @@
     <div class='table'>
       <div class='line' :class='platform'>
         <div class='text'>
-          <span class='txt'>Task labels</span>
+          <span class='txt' :class='theme'>Task labels</span>
         </div>
         <div class='content'>
           <form-options
@@ -21,7 +21,7 @@
     <div class='table'>
       <div class='line' :class='platform'>
         <div class='text'>
-          <span class='txt'>Task labels</span>
+          <span class='txt' :class='theme'>Task labels</span>
         </div>
         <div class='content'>
           <form-options
@@ -37,7 +37,7 @@
     <div class='table'>
       <div class='line' :class='platform'>
         <div class='text'>
-          <span class='txt'>Time zone</span>
+          <span class='txt' :class='theme'>Time zone</span>
         </div>
         <div class='content'>
           <form-options
@@ -52,7 +52,7 @@
       </div>
       <div class='line' :class='platform'>
         <div class='text'>
-          <span class='txt'>Date format</span>
+          <span class='txt' :class='theme'>Date format</span>
         </div>
         <div class='content'>
           <form-options
@@ -65,7 +65,7 @@
       </div>
       <div class='line' :class='platform'>
         <div class='text'>
-          <span class='txt'>Time format</span>
+          <span class='txt' :class='theme'>Time format</span>
         </div>
         <div class='content'>
           <form-options

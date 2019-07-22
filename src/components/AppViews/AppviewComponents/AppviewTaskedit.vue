@@ -13,14 +13,15 @@
       </transition>
       <div v-if='lock' class='lock right pointer' @click='toggleLock'>
         <transition name='fade' mode='out-in'>
-          <i v-if='isLocked' key='lock' class='fas txt fa-lock fa-sm'></i>
-          <i v-else key='unlock' class='fas txt fa-unlock fa-sm'></i>
+          <i v-if='isLocked' key='lock' class='fas txt fa-lock fa-sm' :class='theme'></i>
+          <i v-else key='unlock' class='fas txt fa-unlock fa-sm' :class='theme'></i>
         </transition>
       </div>
     </div>
     <div class='margin input-div'>
       <drop-input
         tabindex='1'
+        :input-theme='theme'
         :placeholder='inputPlaceholder'
         :disabled='true'
         :values='options'
@@ -66,7 +67,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { namespace } from 'vuex-class'
+import { namespace, State } from 'vuex-class'
 
 const labelsVuex = namespace('label')
 
@@ -92,6 +93,8 @@ import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue
   },
 })
 export default class AppviewTaskedit extends Vue {
+  @State theme!: string
+  
   @Prop({default: 'Add task', type: String}) btn!: string
   @Prop({default: false, type: Boolean}) closeOnSave!: boolean
   @Prop(String) defaultValue!: string

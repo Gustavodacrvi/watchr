@@ -1,6 +1,6 @@
 <template>
   <div :class='`task-${group}-${id}`'>
-    <transition-group name='list'>
+    <transition-group name='list' :class='theme'>
       <view-task v-for='task in tasks'
         :key='task.id'
         :task='task'
@@ -32,7 +32,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Mixins, Watch } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Getter, State } from 'vuex-class'
 import Mixin from '@/mixins/sortable'
 
 import ViewTask from '@/components/AppViews/AppviewComponents/AppviewTask.vue'
@@ -52,6 +52,8 @@ import { Task, Label } from '../../../interfaces/app'
   },
 })
 export default class AppviewTaskrenderer extends Mixins(Mixin) {
+  @State theme!: string
+  
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({required: true, type: String}) group!: string
   @Prop({required: true, type: String}) id!: string
@@ -179,7 +181,6 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 
 .list-enter {
   transform: scale(1.08,1.18);
-  background-color: #191919;
 }
 
 .list-enter-to {
@@ -187,6 +188,14 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   transition-timing-function: ease;
   transform: scale(1,1);
   background-color: initial;
+}
+
+.list-enter.dark {
+  background-color: #191919;
+}
+
+.list-enter.light {
+  background-color: #f5f5f5;
 }
 
 .list-leave-active {

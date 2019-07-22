@@ -1,7 +1,7 @@
 <template>
   <div class='wrapper'>
     <div class='relative-wrapper'>
-      <i v-if='!isDesktop' @click="pushPopUp('')" class='close-icon icon pointer txt fas fa-arrow-left fa-2x'></i>
+      <i v-if='!isDesktop' @click="pushPopUp('')" class='close-icon icon pointer txt fas fa-arrow-left fa-2x' :class='theme'></i>
       <transition name='fade' mode='out-in'>
         <component
           class='pop-up card'

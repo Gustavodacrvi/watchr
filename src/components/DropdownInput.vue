@@ -1,11 +1,11 @@
 <template>
   <div class='dropdown-input'>
     <input v-bind='attrs'
-      class='margin input txt round-border gray dark'
+      class='margin input txt round-border gray'
       :placeholder='placeholder'
       type='text'
       autocomplete='off'
-      :class='inputClass'
+      :class='[inputClass, inputTheme]'
       v-model.trim='value'
       @keydown='keyDown'
       @keypress='keyPressed'
@@ -21,7 +21,7 @@
           <span v-for='option in values'
             :ref='option'
             class='option txt dark'
-            :class='[{active: selected === option}]'
+            :class='[{active: selected === option}, theme]'
             :key='option'
             @click='select(option)'
           >{{ option }}</span>
@@ -50,7 +50,9 @@ interface RefsPositions {
 @Component
 export default class DropdownInput extends Vue {
   @State theme!: string
+
   @Prop({default: false, type: Boolean}) disabled!: boolean
+  @Prop({default: 'dark', type: String}) inputTheme!: string
   @Prop({default: null, type: String}) input!: string
   @Prop({default: () => [], type: Array}) values!: string[]
   @Prop({type: String}) tabindex!: string

@@ -11,7 +11,7 @@
       @click="toggleElement(false)"
       @dblclick='toggleElement(true)'
     >
-      <i :class='`txt fas fa-lg fa-${icon}`' :style='{color: iconColor}'></i>
+      <i :class='`txt fas fa-lg fa-${icon}`' :style='[{color: iconColor}, theme]'></i>
     </div>
     <div
       class='content'
@@ -19,7 +19,7 @@
       @click="toggleElement(false)"
       @dblclick="toggleElement(true)"
     >
-      <span class='txt name' :class='{showall: helpIcons.length === 0}'>{{ name }}</span>
+      <span class='txt name' :class='[{showall: helpIcons.length === 0}, theme]'>{{ name }}</span>
     </div>
     <div class='options' :class='theme'>
       <span v-if='number' class='help-icon number'>{{ number }}</span>
@@ -28,7 +28,7 @@
           class='help-icon'
           :key='i.icon'
         >
-          <i :class='`txt fade fas fa-${i.icon} fa-${i.size}`'></i>
+          <i :class='[`txt fade fas fa-${i.icon} fa-${i.size}`, theme]'></i>
         </span>
       </template>
       <span v-if='showOptionsMobile || showOptionsDesktop && options.length > 0' class='help-icon'>
@@ -46,9 +46,9 @@
             @click='optionClick(i.callback)'
           >
             <span class='el-icon'>
-              <i :class='`txt fas fa-${i.icon} fa-${i.size}`'></i>
+              <i :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]'></i>
             </span>
-            <span class='el-name txt'>
+            <span class='el-name txt' :class='theme'>
               {{ i.name }}
             </span>
           </div>
@@ -194,11 +194,11 @@ export default class ListRenderer extends Vue {
 }
 
 .sortable-selected.light {
-  background-color: #ffbfbd !important;
+  background-color: #83B7E2 !important;
 }
 
 .sortable-selected.dark {
-  background-color: #3B2B2A !important;
+  background-color: #3287cd !important;
 }
 
 .fade {
@@ -206,7 +206,7 @@ export default class ListRenderer extends Vue {
 }
 
 .number {
-  color: #FF6B66;
+  color: #83B7E2;
 }
 
 </style>

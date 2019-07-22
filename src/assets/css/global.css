@@ -12,8 +12,12 @@ body, button, input, textarea {
   font-family: 'Work Sans';
 }
 
-.txt, .icon {
-  color: #919191;
+.txt.light, .icon.light {
+  color: #808080;
+}
+
+.txt.dark, .icon.dark {
+  color: #b3b3b3;
 }
 
 .hr.dark {
@@ -35,7 +39,7 @@ body, button, input, textarea {
 }
 
 .background-color.light {
-  background-color: #fcfdfd;
+  background-color: #fff;
 }
 
 .background-color.dark {

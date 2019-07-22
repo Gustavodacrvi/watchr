@@ -5,10 +5,10 @@
       {{ value }}
     </span>
     <span v-if='icon' style='width: 15px'></span>
-    <i class='txt angle icon pointer fas fa-angle-down fa-lg' :class="{'rotate': !showing}" @click="$emit('toggle')"></i>
+    <i class='txt angle icon pointer fas fa-angle-down fa-lg' :class="[{'rotate': !showing}, theme]" @click="$emit('toggle')"></i>
   </div>
   <span v-else @click="$emit('toggle')" class='left'>
-    <i class='txt angle icon pointer fas fa-angle-down fa-lg' :class="{'rotate': !showing}"></i>
+    <i class='txt angle icon pointer fas fa-angle-down fa-lg' :class="[{'rotate': !showing}, theme]"></i>
   </span>
 </template>
 
@@ -19,6 +19,7 @@ import { State, Getter, Mutation } from 'vuex-class'
 
 @Component
 export default class AppviewHeadertitle extends Vue {
+  @State theme!: string
   @Getter isDesktop!: boolean
   @Mutation addNavBarTitle!: (title: string) => void
 

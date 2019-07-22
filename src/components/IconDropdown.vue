@@ -5,7 +5,7 @@
     @mouseleave='showing = false'
     :class="{'color-on-hover': changeColorOnHover}"
   >
-    <i :class='`pointer handle icon txt fas fa-${handle} fa-${size}`'></i>
+    <i :class='[`pointer handle icon txt fas fa-${handle} fa-${size}`, theme]'></i>
     <transition name='fade'>
       <div v-show='showing'
         class='card round-border content'

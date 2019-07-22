@@ -4,7 +4,7 @@
     :placeholder='placeholder'
     :type='type'
     autocomplete='off'
-    :class='classArr'
+    :class='[classArr, theme]'
     v-model.trim='model'
   >
 </template>

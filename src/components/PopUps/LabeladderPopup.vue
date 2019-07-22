@@ -22,9 +22,11 @@
       >Add label</button>
       <span v-show='isDesktop'
         class='margin txt'
+        :class='theme'
       >You can open this pop up at any time by clicking the 'L' key.</span><br>
       <span v-show='isDesktop'
         class='margin txt'
+        :class='theme'
       >You can close any pop up at any time by clicking 'H' key.</span>
     </div>
   </div>

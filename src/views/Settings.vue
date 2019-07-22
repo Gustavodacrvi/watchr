@@ -7,15 +7,17 @@
         <div class='menu'>
           <router-link
             class='txt el icon-el'
+            :class='theme'
             ref='About'
             :to="{name: 'About'}"
           >
             <span class='el-icon'>
               <i class='fas fa-info fa-sm'></i>
             </span>
-            <span class='el-txt'>About</span>
+            <span class='el-txt' :class='theme'>About</span>
           </router-link>
           <router-link v-if='isLogged'
+            :class='theme'
             class='txt el'
             ref='General'
             :to="{name: 'General'}"
@@ -23,27 +25,30 @@
             <span class='el-icon'>
               <i class='fas fa-cog fa-sm'></i>
             </span>
-            <span class='el-txt'>General</span>
+            <span class='el-txt' :class='theme'>General</span>
           </router-link>
           <div class='margin'></div>
           <router-link
             class='txt el'
+            :class='theme'
             ref='Privacy policy'
             :to="{name: 'Privacy policy'}"
           >Privacy policy</router-link>
           <router-link
             class='txt el'
+            :class='theme'
             ref='Security policy'
             :to="{name: 'Security policy'}"
           >Security policy</router-link>
           <router-link
             class='txt el'
+            :class='theme'
             ref='Terms of service'
             :to="{name: 'Terms of service'}"
           >Terms of service</router-link>
         </div>
       </div>
-      <div class='text txt'>
+      <div class='text txt' :class='theme'>
         <transition name='fade' mode='out-in'>
           <router-view/>
         </transition>
@@ -60,25 +65,30 @@
       <div class='align'>
         <router-link
           class='txt mob-el'
+          :class='theme'
           ref='About'
           :to="{name: 'About'}"
         >About</router-link>
         <router-link v-if='isLogged'
           class='txt mob-el'
+          :class='theme'
           ref='General'
           :to="{name: 'General'}"
         >General</router-link>
         <router-link
           class='txt mob-el'
+          :class='theme'
           ref='Privacy policy'
           :to="{name: 'Privacy policy'}"
         >Privacy policy</router-link>
         <router-link
           class='txt mob-el'
           ref='Security policy'
+          :class='theme'
           :to="{name: 'Security policy'}"
         >Security policy</router-link>
         <router-link
+          :class='theme'
           class='txt mob-el'
           ref='Terms of service'
           :to="{name: 'Terms of service'}"
