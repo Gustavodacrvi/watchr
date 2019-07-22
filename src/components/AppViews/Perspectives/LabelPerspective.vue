@@ -183,7 +183,7 @@ export default class LabelPerspective extends Vue {
               this.sendOptionsToNavbar([])
             },
           },
-        ])      
+        ])
       }, 80)
     }
     return this.mobileSelectedOptions
@@ -226,12 +226,11 @@ export default class LabelPerspective extends Vue {
     })
   }
   selectSettingsOption(value: string) {
-    if (!this.sort.find(el => el === value)) {
+    if (!this.sort.find(el => el === value))
       if (value === 'Sort tasks by name')
         this.sort.push('name')
       else if (value === 'Sort tasks by priority')
         this.sort.push('priority')
-    }
   }
   addLabelTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
     this.addTaskLabel({

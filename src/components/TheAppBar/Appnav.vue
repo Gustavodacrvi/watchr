@@ -142,7 +142,7 @@ export default class LoggedAppnav extends Vue {
         size: 'lg',
         callback: () => {
           this.pushPopUp('LabeladderPopup')
-        }
+        },
       },
     ]},
   ]

@@ -252,7 +252,7 @@ export default class PerspectiveAppview extends Vue {
       })
   }
   selectSettingsOption(value: string) {
-    if (!this.sort.find(el => el === value)) {
+    if (!this.sort.find(el => el === value))
       if (value === 'Sort tasks by name') {
         this.sort.push('name')
         if (this.saveSort)
@@ -267,7 +267,6 @@ export default class PerspectiveAppview extends Vue {
             sort: 'priority',
             perspectiveId: this.pers.id,
           })
-      }
     }
   }
   toggleHide() {

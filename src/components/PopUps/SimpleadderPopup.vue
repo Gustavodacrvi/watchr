@@ -45,7 +45,7 @@ export default class SigninPopUp extends Vue {
     const el = document.querySelectorAll('.simpleadder')[0] as any
     el.focus()
     setTimeout(() => {
-      this.popUpPayload.inputPlaceholder
+      this.input = this.popUpPayload.inputPlaceholder
     }, 100)
   }
 

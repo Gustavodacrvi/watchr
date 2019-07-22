@@ -25,7 +25,7 @@ import { ListIcon } from '../../../interfaces/app'
 @Component
 export default class AppnavHeader extends Vue {
   @State theme!: string
-  
+
   @Prop({type: String, required: true}) name!: string
   @Prop({type: Boolean, required: true}) showTitle!: boolean
   @Prop({type: Array, required: true}) icons!: ListIcon[]

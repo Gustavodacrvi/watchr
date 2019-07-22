@@ -140,8 +140,7 @@ export default class LabelAdder extends Vue {
           duration: 2.5,
           type: 'success',
         })
-      }
-      else {
+      } else {
         this.editPerspective({
           id: this.pers.id,
           name: this.value,

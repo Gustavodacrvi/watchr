@@ -141,7 +141,7 @@ export default {
         for (const id of ids) {
           const ref = rootState.firestore.collection('tasks').doc(id)
           batch.update(ref, {
-            labels: fire.arrayUnion(labelId)
+            labels: fire.arrayUnion(labelId),
           })
         }
 

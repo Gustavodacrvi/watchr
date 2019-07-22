@@ -95,7 +95,7 @@ import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue
 })
 export default class AppviewTaskedit extends Vue {
   @State theme!: string
-  
+
   @Prop({default: 'Add task', type: String}) btn!: string
   @Prop({default: false, type: Boolean}) closeOnSave!: boolean
   @Prop(String) defaultValue!: string

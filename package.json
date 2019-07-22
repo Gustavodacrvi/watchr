@@ -9,6 +9,9 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
+    "lodash": ">=4.17.13",
+    "lodash.template": ">=4.5.0",
+    "lodash.defaultsdeep": ">=4.6.1",
     "firebase": "^6.2.3",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",

@@ -53,7 +53,7 @@ import { Task, Label } from '../../../interfaces/app'
 })
 export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @State theme!: string
-  
+
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({required: true, type: String}) group!: string
   @Prop({required: true, type: String}) id!: string

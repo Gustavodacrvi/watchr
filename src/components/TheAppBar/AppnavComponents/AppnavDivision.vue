@@ -31,7 +31,7 @@ import { ListIcon } from '../../../interfaces/app'
 @Component
 export default class TodayView extends Vue {
   @State theme!: string
-  
+
   @Prop(String) name!: string
   @Prop(Array) icons!: ListIcon[]
 

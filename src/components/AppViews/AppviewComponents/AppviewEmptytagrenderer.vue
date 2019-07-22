@@ -29,7 +29,7 @@ import Sortable from 'sortablejs'
 })
 export default class AppviewEmptytag extends Mixins(Mixin) {
   @State theme!: string
-  
+
   @Prop(Array) list!: string[]
 
   rootSelector: string = 'sort-list-sortable'

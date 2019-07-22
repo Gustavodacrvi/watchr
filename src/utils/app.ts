@@ -66,9 +66,7 @@ export default {
     return tasks
   },
   sortTasksByMultipleCriteria(tasks: Task[], sort: string[]): Task[] {
-    const obj: {
-      [key: string]: (task1: Task, task2: Task) => number
-    } = {
+    const obj: {[key: string]: (task1: Task, task2: Task) => number} = {
       name: (task1: Task, task2: Task) => {
         return task1.name.localeCompare(task2.name)
       },
@@ -99,7 +97,7 @@ export default {
             }
         }
         return 0
-      }
+      },
     }
 
     tasks.sort((task1: Task, task2: Task) => {

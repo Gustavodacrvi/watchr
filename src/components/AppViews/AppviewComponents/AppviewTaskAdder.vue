@@ -38,7 +38,7 @@ const taskVuex = namespace('task')
 })
 export default class TaskAdder extends Vue {
   @State theme!: string
-  
+
   @Prop(String) fixedPers!: string
   @Prop(String) fixedLabel!: string
   @Prop(Array) defaultLabels!: string

@@ -133,9 +133,9 @@ export default class LabelAppnav extends Vue {
   get getLabels(): ListElement[] {
     const els: ListElement[] = []
     for (const lab of this.sortedLabels) {
-      const number = this.getNumberOfTasksByLabel(lab.id)
+      const num = this.getNumberOfTasksByLabel(lab.id)
       els.push({
-        ...lab, show: true, number,
+        ...lab, show: true, number: num,
       })
     }
     return els

@@ -166,7 +166,7 @@ export default class AppviewTask extends Vue {
     if (!isNotEmpty)
       return false
     if (this.isDesktop)
-      return this.onHover && this.desktopTaskLabels !== 'Always show' ||this.desktopTaskLabels === 'Always show'
+      return this.onHover && this.desktopTaskLabels !== 'Always show' || this.desktopTaskLabels === 'Always show'
     else return this.onHover && this.mobileTaskLabels !== 'Always show' || this.mobileTaskLabels === 'Always show'
   }
 

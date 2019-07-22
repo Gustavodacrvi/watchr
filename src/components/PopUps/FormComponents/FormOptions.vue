@@ -51,7 +51,7 @@ export default class FormOptions extends Vue {
   @State theme!: string
 
   @Prop({default: false, type: Boolean}) enableSearch!: boolean
-  @Prop({default: false, type: Boolean}) parse!: Boolean
+  @Prop({default: false, type: Boolean}) parse!: boolean
   @Prop(String) selected!: string
   @Prop(String) maxHeight!: string
   @Prop(Array) options!: string[]

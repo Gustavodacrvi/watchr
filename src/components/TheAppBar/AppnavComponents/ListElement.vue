@@ -75,7 +75,7 @@ import { ListIcon } from '../../../interfaces/app'
 })
 export default class ListRenderer extends Vue {
   @Mutation closeAppBar!: () => void
-  
+
   @Prop({default: true, type: Boolean}) show!: boolean
   @Prop({default: 0, type: Number}) number!: boolean
   @Prop(String) name!: string

@@ -12,7 +12,7 @@ import { State } from 'vuex-class'
 @Component
 export default class AppviewEmptytag extends Vue {
   @State theme!: string
-  
+
   @Prop(String) name!: string
 
   get getName(): string {
