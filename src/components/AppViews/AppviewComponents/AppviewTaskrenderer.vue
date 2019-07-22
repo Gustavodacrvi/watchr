@@ -14,7 +14,7 @@
       />
     </transition-group>
     <transition name='fade'>
-      <div v-if='tasks.length === 0 && numberOfAdders === 0' class='no-task round-border dotted-border gray' :class='theme'>
+      <div v-if='tasks.length === 0 && numberOfAdders === 0' class='no-task round-border gray' :class='theme'>
         <span class='txt' :class='theme'>
           Drag and drop the floating action button to add tasks
         </span>
@@ -94,19 +94,6 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
         this.$emit('update', ids)
       },
       onAdd: (evt: any) => {
-        /* <task-adder
-        :fixed-pers='fixedPers'
-        :fixed-label='fixedLabel'
-        :default-labels='defaultLabels'
-        :default-priority='defaultPriority'
-        :allow-priority='allowPriority'
-        :allow-labels='allowLabels'
-        :lock='true'
-        @cancel='showing = false'
-        @enter='enter'
-
-        data-vid='task-adder'
-      /> */
         const Constructor = Vue.extend(TaskEditTemplate)
         const instance = new Constructor({
           created() {
@@ -128,11 +115,11 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
         instance.$on('enter', this.add)
         instance.$on('cancel', () => {
           instance.$destroy()
-          const el = instance.$el as any
+          const $el = instance.$el as any
           this.numberOfAdders--
-          el.parentNode.removeChild(el)
+          $el.parentNode.removeChild($el)
         })
-      }
+      },
     }
 
     if (!this.isDesktop)
@@ -256,7 +243,6 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   top: -150px;
   padding: 0 30px;
   height: 150px;
-  border-style: dotted;
   display: flex;
   justify-content: center;
   align-items: center;

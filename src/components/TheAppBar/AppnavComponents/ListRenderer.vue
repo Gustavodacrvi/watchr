@@ -100,9 +100,8 @@ export default class ListRenderer extends Mixins(Mixin) {
       const children = this.rootComponent.childNodes
       let deSelectAll = true
       for (const child of children)
-        if (evt.path.includes(child)) {
+        if (evt.path.includes(child))
           deSelectAll = false
-        }
       if (deSelectAll) {
         for (const child of children)
           Sortable.utils.deselect(child)

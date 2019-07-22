@@ -69,7 +69,7 @@ export default class ActionButtonComp extends Vue {
   showing: boolean = false
 
   mounted() {
-    this.mount()    
+    this.mount()
   }
 
   mount() {
