@@ -17,7 +17,10 @@
         @selected='select'
       />
     </appnav-division>
-    <appnav-division name='CUSTOM PERSPECTIVES'>
+    <appnav-division
+      name='CUSTOM PERSPECTIVES'
+      :icons='getDivisionIcons'
+    >
       <list-renderer key='list' v-if='sortedCustomPerspectives && sortedCustomPerspectives.length > 0'
         group='appnavcustomperspectives'
         route='pers'
@@ -335,6 +338,19 @@ export default class OverviewAppnav extends Vue {
               break
             }
           this.deletePerspectivesById(this.selected)
+        },
+      },
+    ]
+  }
+  get getDivisionIcons(): ListIcon[] {
+    return [
+      {
+        name: 'asdf',
+        icon: 'plus',
+        iconColor: '',
+        size: 'lg',
+        callback: () => {
+          this.pushPopUp('PerspectiveAdderPopup')
         },
       },
     ]
