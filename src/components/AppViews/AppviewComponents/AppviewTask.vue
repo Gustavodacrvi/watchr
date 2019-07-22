@@ -1,8 +1,7 @@
 <template>
-  <div v-if='!editing' key='task' class='round-border' :class="[theme, completed ? 'completed' : 'not-completed']">
+  <div v-if='!editing' key='task' class='round-border wrapper' :class="[theme, completed ? 'completed' : 'not-completed']">
     <div
       class='round-border task'
-      :class="[theme, {'not-completed': !completed}]"
       @dblclick='editing = true'
       @mouseenter='onHover = true'
       @mouseleave='onHover = false'
@@ -216,9 +215,12 @@ export default class AppviewTask extends Vue {
   transition: color .3s;
 }
 
+.wrapper {
+  transition: background-color .3s;
+}
+
 .task {
   display: flex;
-  transition: background-color .3s;
   cursor: pointer;
   min-height: 40px;
 }
@@ -251,11 +253,11 @@ export default class AppviewTask extends Vue {
   align-items: center;
 }
 
-.task.not-completed.light:hover {
+.wrapper.not-completed.light:hover {
   background-color: #f0f0f0;
 }
 
-.task.not-completed.dark:hover {
+.wrapper.not-completed.dark:hover {
   background-color: #282828;
 }
 

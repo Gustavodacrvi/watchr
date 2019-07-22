@@ -5,10 +5,10 @@
       {{ value }}
     </span>
     <span v-if='icon' style='width: 15px'></span>
-    <i class='txt angle icon pointer fas fa-angle-down fa-lg' :class="[{'rotate': !showing}, theme]" @click="$emit('toggle')"></i>
+    <i class='txt angle icon pointer fas fa-angle-down fa-sm' :class="[{'rotate': !showing}, theme]" @click="$emit('toggle')"></i>
   </div>
   <span v-else @click="$emit('toggle')" class='left'>
-    <i class='txt angle icon pointer fas fa-angle-down fa-lg' :class="[{'rotate': !showing}, theme]"></i>
+    <i class='txt angle icon pointer fas fa-angle-down fa-sm' :class="[{'rotate': !showing}, theme]"></i>
   </span>
 </template>
 

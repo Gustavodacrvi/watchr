@@ -6,6 +6,7 @@
     >
       <span
         class='txt'
+        :class='theme'
         v-html='alert.name'
       ></span>
       <form-button v-if='alert.btn'

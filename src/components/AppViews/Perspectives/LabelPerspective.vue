@@ -47,12 +47,12 @@
         <div class='margin'></div>
       </div>
       <task-renderer
-        group='label'
         id='appnavlabel'
         :tasks='getTasks'
         :default-priority='priority'
         :default-labels='getLabels.concat([getLabel.id])'
         :allow-priority='true'
+        :fix-adder-position='sort.length === 0'
         :allow-labels='true'
         @update='onUpdate'
         @selected='onSelect'

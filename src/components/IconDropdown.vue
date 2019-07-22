@@ -5,7 +5,7 @@
     @mouseleave='showing = false'
     :class="{'color-on-hover': changeColorOnHover}"
   >
-    <i :class='[`pointer handle icon txt fas fa-${handle} fa-${size}`, theme]'></i>
+    <i :class='[`pointer handle icon txt fas fa-${handle} fa-${size}`, theme, {centralize: centralize}]'></i>
     <transition name='fade'>
       <div v-show='showing'
         class='card round-border content'
@@ -31,6 +31,7 @@ export default class TheNavbar extends Vue {
   @Prop({default: 'lg', type: String}) size!: string
   @Prop({default: '250px', type: String}) minWidth!: string
   @Prop({default: false, type: Boolean}) changeColorOnHover!: boolean
+  @Prop({default: false, type: Boolean}) centralize!: boolean
   @Prop({default: false, type: Boolean}) floatTop!: boolean
 
   public showing: boolean = false
@@ -45,6 +46,13 @@ export default class TheNavbar extends Vue {
   display: inline-block;
   width: 100%;
   height: 100%;
+}
+
+.centralize {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%); 
 }
 
 .icon-dropdown:hover .icon {
