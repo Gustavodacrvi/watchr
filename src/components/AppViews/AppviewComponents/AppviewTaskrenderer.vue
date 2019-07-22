@@ -13,6 +13,13 @@
         @toggle='toggleElement'
       />
     </transition-group>
+    <transition name='fade'>
+      <div v-if='tasks.length === 0 && numberOfAdders === 0' class='no-task round-border dotted-border gray' :class='theme'>
+        <span class='txt' :class='theme'>
+          Drag and drop the floating action button to add tasks
+        </span>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -58,6 +65,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   numberOfSelected: number = 0
   deselectAll: boolean = false
   added: boolean = false
+  numberOfAdders: number = 0
   rootSelector: string = `.task-taskrenderer-${this.id}`
   taskAdderPosition: number = 0
 
@@ -116,10 +124,12 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
         const el = this.rootComponent.querySelector('.main-button') as HTMLElement
         el.setAttribute('id', 'main-button')
         instance.$mount('#main-button')
+        this.numberOfAdders++
         instance.$on('enter', this.add)
         instance.$on('cancel', () => {
           instance.$destroy()
           const el = instance.$el as any
+          this.numberOfAdders--
           el.parentNode.removeChild(el)
         })
       }
@@ -238,7 +248,18 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 }
 
 .list.isempty {
-  height: 50px;
+  height: 150px;
+}
+
+.no-task {
+  position: relative;
+  top: -150px;
+  padding: 0 30px;
+  height: 150px;
+  border-style: dotted;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 </style>

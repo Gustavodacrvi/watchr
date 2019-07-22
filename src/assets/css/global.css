@@ -26,6 +26,16 @@ body, button, input, textarea {
   border: 0;
 }
 
+.dotted-border.dark {
+  border-style: dotted;
+  border: 1px solid #b3b3b3;
+}
+
+.dotted-border.light {
+  border-style: dotted;
+  border: 1px solid #808080;
+}
+
 .pointer {
   cursor: pointer;
 }
