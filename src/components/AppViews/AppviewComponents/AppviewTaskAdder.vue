@@ -64,7 +64,7 @@ export default class TaskAdder extends Vue {
 }
 
 .msg:hover .name, .msg:hover .icon {
-  color: #FF6B66;
+  color: #83B7E2;
 }
 
 .name {

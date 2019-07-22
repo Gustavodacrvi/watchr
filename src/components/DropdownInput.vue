@@ -1,7 +1,7 @@
 <template>
   <div class='dropdown-input'>
     <input v-bind='attrs'
-      class='margin input txt round-border gray'
+      class='margin input txt round-border gray dark'
       :placeholder='placeholder'
       type='text'
       autocomplete='off'
@@ -14,15 +14,14 @@
     >
     <transition name='fade'>
       <div v-if='showing && values.length > 0'
-        class='dropdown round-border gray border scroll'
-        :class='theme'
+        class='dropdown round-border gray border dark scroll'
         ref='dropdown'
       >
         <transition-group name='fade'>
           <span v-for='option in values'
             :ref='option'
-            class='option txt'
-            :class='[theme,{active: selected === option}]'
+            class='option txt dark'
+            :class='[{active: selected === option}]'
             :key='option'
             @click='select(option)'
           >{{ option }}</span>
@@ -182,10 +181,6 @@ export default class DropdownInput extends Vue {
   overflow: auto;
 }
 
-.dropdown.light {
-  background-color: #FEFEFE;
-}
-
 .option {
   display: block;
   padding: 10px;
@@ -198,7 +193,7 @@ export default class DropdownInput extends Vue {
 }
 
 .option.light:hover, .option.light.active {
-  background-color: #fc7d7d;
+  background-color: #83B7E2;
   color: white;
 }
 

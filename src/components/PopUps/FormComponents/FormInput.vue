@@ -1,6 +1,6 @@
 <template>
   <input
-    class='margin input txt round-border gray'
+    class='margin input txt round-border gray dark'
     :placeholder='placeholder'
     :type='type'
     autocomplete='off'

@@ -28,7 +28,7 @@
       <view-tag v-for='lab in labels'
         :key='lab.id'
         icon='tag'
-        back-color='#FF6B66'
+        back-color='#83B7E2'
         :name='lab.name'
         :fixed='false'
         @click="$emit('removelabel', lab.id)"

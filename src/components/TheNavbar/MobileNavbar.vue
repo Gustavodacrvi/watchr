@@ -106,12 +106,12 @@ export default class MobileNavbar extends Vue {
 }
 
 .icon:hover .line {
-  background-color: #fc7d7d;
+  background-color: #83B7E2;
 }
 
 .title {
   margin-left: 25px;
-  color: #fc7d7d;
+  color: #83B7E2;
   font-size: 1.5em;
 }
 

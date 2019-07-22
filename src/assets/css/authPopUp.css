@@ -32,7 +32,7 @@
 .button {
   color: white;
   text-align: center;
-  background-color: #fc7d7d;
+  background-color: #83B7E2;
   border: none;
   padding: 8px;
   cursor: pointer;
@@ -42,7 +42,7 @@
 }
 
 .button:hover {
-  background-color: #fc9c9c;
+  background-color: #accfec;
 }
 
 .button.tiny {
@@ -52,7 +52,7 @@
 
 .button.block {
   opacity: .5;
-  background-color: #fc7d7d !important;
+  background-color: #83B7E2 !important;
   cursor: initial;
 }
 
@@ -83,5 +83,5 @@
 }
 
 .input.wrong {
-  border: 2px solid #FC7C85;
+  border: 2px solid #accfec;
 }

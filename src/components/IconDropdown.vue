@@ -48,7 +48,7 @@ export default class TheNavbar extends Vue {
 }
 
 .icon-dropdown:hover .icon {
-  color: #fc7d7d !important;
+  color: #83B7E2 !important;
 }
 
 .content {

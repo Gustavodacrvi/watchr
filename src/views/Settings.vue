@@ -185,7 +185,7 @@ export default class Help extends Vue {
 }
 
 .mob-el:hover, .mob-el.router-link-exact-active {
-  color: #fc7d7d;
+  color: #83B7E2;
 }
 
 .mobile-menu.light {
@@ -244,7 +244,7 @@ export default class Help extends Vue {
 }
 
 .el:hover, .el.router-link-exact-active {
-  color: #fc7d7d;
+  color: #83B7E2;
   position: relative;
   left: -1px;
   padding-left: 13px;
@@ -253,7 +253,7 @@ export default class Help extends Vue {
 .line {
   position: absolute;
   width: 2px;
-  background-color: #fc7d7d;
+  background-color: #83B7E2;
   left: -2px;
   transition: top .3s, height .3s;
 }

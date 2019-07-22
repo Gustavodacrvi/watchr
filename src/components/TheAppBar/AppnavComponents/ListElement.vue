@@ -19,9 +19,9 @@
       @click="toggleElement(false)"
       @dblclick="toggleElement(true)"
     >
-      <span class='txt name'>{{ name }}</span>
+      <span class='txt name' :class='{showall: helpIcons.length === 0}'>{{ name }}</span>
     </div>
-    <div class='options'>
+    <div class='options' :class='theme'>
       <span v-if='number' class='help-icon number'>{{ number }}</span>
       <template v-if='helpIcons && helpIcons.length > 0'>
         <span v-for='i in helpIcons'
@@ -151,9 +151,14 @@ export default class ListRenderer extends Vue {
 
 .name {
   margin-left: 6px;
+  max-width: 120px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.showall {
+  max-width: 190px !important;
 }
 
 .options {

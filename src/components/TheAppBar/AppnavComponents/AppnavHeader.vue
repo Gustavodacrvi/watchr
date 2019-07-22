@@ -52,7 +52,7 @@ export default class AppnavHeader extends Vue {
 }
 
 .header .title {
-  color: #fc7d7d;
+  color: #83B7E2;
   font-size: 1.1em;
 }
 

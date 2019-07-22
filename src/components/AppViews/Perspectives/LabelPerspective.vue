@@ -36,7 +36,7 @@
       <div v-if='showing'>
         <div class='margin'></div>
         <view-tags
-          :fixed-tag="{name: label, icon: 'tag', backColor: '#FF6B66'}"
+          :fixed-tag="{name: label, icon: 'tag', backColor: '#83B7E2'}"
           :search='search'
           :labels='getLabels'
           :priority='priority'
@@ -146,7 +146,7 @@ export default class LabelPerspective extends Vue {
           {
             name: 'High priority',
             icon: 'exclamation',
-            iconColor: '#FF6B66',
+            iconColor: '#83B7E2',
             size: 'lg',
             callback: () => {
               this.changePrioritysByIds({
@@ -279,7 +279,7 @@ export default class LabelPerspective extends Vue {
         this.sendOptionsToNavbar(this.getMobileSelectedOptions())
       else this.hideNavBarOptions()
   }
-  @Watch('perspectiveData')
+  @Watch('label')
   onChange3() {
     this.updateView()
   }

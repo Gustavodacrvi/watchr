@@ -90,7 +90,7 @@ export default class TabSlider extends Vue {
 }
 
 .option.active {
-  color: #FF6B66;
+  color: #83B7E2;
 }
 
 .option.dark:hover, .option.dark.active {

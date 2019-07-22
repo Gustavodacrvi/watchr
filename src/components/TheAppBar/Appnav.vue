@@ -31,7 +31,7 @@
         </div>
         <div style='height: 12px;'></div>
       </div>
-      <div class='list-wrapper scroll'>
+      <div class='list-wrapper scroll' :class='theme'>
         <div class='list'>
           <transition
             name='fade'
@@ -152,7 +152,7 @@ export default class LoggedAppnav extends Vue {
   isActiveClass(comp: string): object {
     let mainColor: string = ''
     if (this.currentSect === comp)
-      mainColor = '#fc7d7d'
+      mainColor = '#83B7E2'
     return {
       color: mainColor,
     }

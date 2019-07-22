@@ -149,7 +149,7 @@ export default class AppviewTask extends Vue {
     switch (this.task.priority) {
       case 'Low priority': return '#70ff66'
       case 'Medium priority': return '#fff566'
-      case 'High priority': return '#FF6B66'
+      case 'High priority': return '#83B7E2'
     }
   }
   get showOptionsIconDrop(): boolean {

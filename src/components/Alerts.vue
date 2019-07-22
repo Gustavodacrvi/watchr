@@ -75,7 +75,7 @@ export default class LabelAdder extends Vue {
 }
 
 .alert.error {
-  border: 2px solid #fc7d7d;
+  border: 2px solid #83B7E2;
 }
 
 .alert.success {

@@ -1,7 +1,7 @@
 
 module.exports = {
   pwa: {
-    themeColor: '#fc7d7d',
+    themeColor: '#83B7E2',
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: 'black',
     workboxPluginMode: 'InjectManifest',

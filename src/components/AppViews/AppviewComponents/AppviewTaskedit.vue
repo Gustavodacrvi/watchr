@@ -119,7 +119,7 @@ export default class AppviewTaskedit extends Vue {
     {
       name: 'High priority',
       icon: 'exclamation',
-      iconColor: '#FF6B66',
+      iconColor: '#83B7E2',
       size: 'lg',
     },
     {
@@ -273,6 +273,10 @@ export default class AppviewTaskedit extends Vue {
 .cancel {
   margin-left: 6px;
   color: #FF6B66;
+}
+
+.cancel:hover {
+  text-decoration: underline;
 }
 
 .options {

@@ -99,7 +99,7 @@ export default class AppviewHeadericons extends Vue {
    {
       name: 'High priority',
       icon: 'exclamation',
-      iconColor: '#FF6B66',
+      iconColor: '#83B7E2',
       size: 'lg',
     },
     {

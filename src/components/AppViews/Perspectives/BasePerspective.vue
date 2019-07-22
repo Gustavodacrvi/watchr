@@ -165,7 +165,7 @@ export default class PerspectiveAppview extends Vue {
           {
             name: 'High priority',
             icon: 'exclamation',
-            iconColor: '#FF6B66',
+            iconColor: '#83B7E2',
             size: 'lg',
             callback: () => {
               this.changePrioritysByIds({
@@ -352,7 +352,7 @@ export default class PerspectiveAppview extends Vue {
   onChange2() {
     this.showing = this.value
   }
-  @Watch('perspectiveData')
+  @Watch('pers')
   onChange3() {
     this.updateView()
   }

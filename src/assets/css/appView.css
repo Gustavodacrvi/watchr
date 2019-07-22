@@ -1,6 +1,6 @@
 
 .margin {
-  height: 25px;
+  height: 30px;
 }
 
 .component {
@@ -31,7 +31,7 @@
 .title {
   font-size: 1.5em;
   margin-left: 12px;
-  color: #FF6B66;
+  color: #83B7E2;
 }
 
 .margin-task.desktop {

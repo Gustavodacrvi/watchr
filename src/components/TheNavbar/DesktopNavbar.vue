@@ -179,10 +179,10 @@ export default class DesktopNavbar extends Mixins(Mixin) {
 .magic-line {
   position: absolute;
   bottom: 0;
-  background-color: #fc7d7d;
+  background-color: #83B7E2;
   height: 2px;
   border-radius: 2px;
-  box-shadow: 0 1px 1px #fc7d7d;
+  box-shadow: 0 1px 1px #83B7E2;
 }
 
 .link {
@@ -195,8 +195,8 @@ export default class DesktopNavbar extends Mixins(Mixin) {
 }
 
 .link:hover , .router-link-active {
-  color: #fc7d7d;
-  text-shadow: 0 0 1px #fc7d7d;
+  color: #83B7E2;
+  text-shadow: 0 0 1px #83B7E2;
 }
 
 .margin {
@@ -211,7 +211,7 @@ export default class DesktopNavbar extends Mixins(Mixin) {
 }
 
 .drop-el:hover, .drop-el:hover .fontawesome-icon {
-  color: #fc7d7d;
+  color: #83B7E2;
 }
 
 .dual-drop-el {

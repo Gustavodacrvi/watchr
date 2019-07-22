@@ -203,7 +203,7 @@ export default class Guest extends Mixins(Mixin) {
 }
 
 .view.desktop {
-  margin: 0 70px;
+  margin: 0 80px;
 }
 
 .app {
