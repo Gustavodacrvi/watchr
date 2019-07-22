@@ -8,6 +8,7 @@
         tabindex='1'
         class='margin'
         placeholder='Perspective title...'
+        focus-class='persadder'
         :input='input'
         :values='options'
         @enter='add'
@@ -109,6 +110,13 @@ export default class LabelAdder extends Vue {
       this.color = this.pers.iconColor
       this.description = this.pers.description
     }
+  }
+  mounted() {
+    const el = document.querySelectorAll('.persadder')[0] as any
+    el.focus()
+    setTimeout(() => {
+      this.input = ''
+    }, 100)
   }
 
   add() {

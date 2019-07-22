@@ -14,7 +14,7 @@
           autocomplete='off'
           placeholder='Search...'
           v-model='search'
-          :class='theme'
+          :class='inputTheme'
         >
         <template v-if='list && list.length > 0'>
           <transition-group name='fade'>
@@ -49,6 +49,7 @@ export default class DropdownFinder extends Vue {
   @State theme!: string
 
   @Prop({default: '', type: String}) value!: string
+  @Prop({default: 'dark', type: String}) inputTheme!: string
   @Prop(Array) list!: Array<{id: string, name: string}>
   @Prop({required: true, type: String}) handle!: string
   @Prop({default: 'lg', type: String}) size!: string

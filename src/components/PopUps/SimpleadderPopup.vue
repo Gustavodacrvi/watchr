@@ -8,6 +8,7 @@
         tabindex='1'
         v-model='input'
         :max='100'
+        class='simpleadder'
         @state='e => inputState = e'
       />
       <button
@@ -40,8 +41,12 @@ export default class SigninPopUp extends Vue {
   input: string | null = null
   inputState: boolean = false
 
-  created() {
-    this.input = this.popUpPayload.inputPlaceholder
+  mounted() {
+    const el = document.querySelectorAll('.simpleadder')[0] as any
+    el.focus()
+    setTimeout(() => {
+      this.popUpPayload.inputPlaceholder
+    }, 100)
   }
 
   runCallback() {

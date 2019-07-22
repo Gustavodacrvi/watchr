@@ -5,7 +5,7 @@
       :placeholder='placeholder'
       type='text'
       autocomplete='off'
-      :class='[inputClass, inputTheme]'
+      :class='[inputClass, inputTheme, focusClass]'
       v-model.trim='value'
       @keydown='keyDown'
       @keypress='keyPressed'
@@ -51,6 +51,7 @@ interface RefsPositions {
 export default class DropdownInput extends Vue {
   @State theme!: string
 
+  @Prop(String) focusClass!: boolean
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({default: 'dark', type: String}) inputTheme!: string
   @Prop({default: null, type: String}) input!: string
@@ -190,21 +191,12 @@ export default class DropdownInput extends Vue {
   transition: background-color .3s;
 }
 
-.option.dark:hover, .option.dark.active {
+.option:hover, .option.active {
   background-color: #292929;
 }
 
-.option.light:hover, .option.light.active {
-  background-color: #83B7E2;
-  color: white;
-}
-
-.option.dark + .option.dark {
+.option + .option {
   border-top: .5px solid #292929;
-}
-
-.option.light + .option.light {
-  border-top: .5px solid #D9D9D9;
 }
 
 </style>

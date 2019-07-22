@@ -7,7 +7,7 @@
   >
     <div class='drop round-border'>
       <div v-for='i in options'
-        class='el'
+        class='el cancel-sortable-unselect'
         :key='i.name'
         :class='theme'
         @click='optionClick(i.name, i.callback)'

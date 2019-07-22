@@ -252,7 +252,7 @@ export default class AppviewTask extends Vue {
 }
 
 .task.not-completed.light:hover {
-  background-color: #e3e3e3;
+  background-color: #f0f0f0;
 }
 
 .task.not-completed.dark:hover {

@@ -113,6 +113,11 @@ export default class MobileNavbar extends Vue {
   margin-left: 25px;
   color: #83B7E2;
   font-size: 1.5em;
+  display: inline-block;
+  max-width: 240px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 </style>

@@ -7,6 +7,7 @@
       <dropdown-input
         tabindex='1'
         class='margin'
+        focus-class='labeladder'
         placeholder='Label name...'
         :input='input'
         :values='options'
@@ -64,8 +65,14 @@ export default class LabelAdder extends Vue {
   value: string = ''
   options: string[] = []
 
-  created() {
-    this.input = this.popUpPayload
+  mounted() {
+    const el = document.querySelectorAll('.labeladder')[0] as any
+    el.focus()
+    setTimeout(() => {
+      if (this.popUpPayload)
+        this.input = this.popUpPayload
+      else this.input = ''
+    }, 100)
   }
 
   add() {

@@ -21,6 +21,7 @@
     <div class='margin input-div'>
       <drop-input
         tabindex='1'
+        focus-class='taskedit'
         :input-theme='theme'
         :placeholder='inputPlaceholder'
         :disabled='true'
@@ -146,6 +147,10 @@ export default class AppviewTaskedit extends Vue {
       this.priority = this.defaultPriority as any
     if (this.defaultValue)
       this.value = this.defaultValue
+  }
+  mounted() {
+    const el = document.querySelectorAll('.taskedit')[0] as any
+    el.focus()
   }
 
   toggleLock() {

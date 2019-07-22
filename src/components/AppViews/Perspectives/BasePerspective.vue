@@ -202,7 +202,7 @@ export default class PerspectiveAppview extends Vue {
               this.sendOptionsToNavbar([])
             },
           },
-        ])      
+        ])
       }, 80)
     }
     return this.mobileSelectedOptions
