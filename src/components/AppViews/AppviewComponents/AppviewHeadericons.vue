@@ -4,7 +4,7 @@
       <span v-if='showTaskOptions && isDesktop' class='header-option'>
         <icon-options
           handle='exclamation'
-          size='lg'
+          :size='size'
           min-width='200px'
           title='Change priority'
           :options='priorityOptions'
@@ -28,7 +28,7 @@
         class='icon pointer txt'
         handle='search'
         :class='theme'
-        size='lg'
+        :size='size'
         min-width='300px'
         title='Search tasks'
         v-model='search'
@@ -37,7 +37,7 @@
     <span v-if='allowPriority' class='header-option'>
       <icon-options
         handle='exclamation'
-        size='lg'
+        :size='size'
         min-width='200px'
         title='Priority'
         :options='priorityOptions'
@@ -47,7 +47,7 @@
     <span v-if='allowLabels' class='header-option'>
       <drop-finder
         handle='tags'
-        size='lg'
+        :size='size'
         min-width='300px'
         title='Labels'
         :list='labels'
@@ -57,7 +57,7 @@
     <span v-if='allowSettings' class='header-option'>
       <icon-options
         handle='ellipsis-h'
-        size='lg'
+        :size='size'
         min-width='300px'
         :options='settingsOptions'
         @click='selectSettingsOption'
@@ -123,13 +123,13 @@ export default class AppviewHeadericons extends Vue {
       name: 'Sort tasks by name',
       icon: 'sort-alpha-down',
       iconColor: '',
-      size: 'lg',
+      size: 'size',
     },
     {
       name: 'Sort tasks by priority',
       icon: 'exclamation',
       iconColor: '',
-      size: 'lg',
+      size: 'size',
     },
   ]
 
@@ -148,6 +148,12 @@ export default class AppviewHeadericons extends Vue {
   }
   selectLabel(label: Label) {
     this.$emit('label', label)
+  }
+
+  get size(): string {
+    if (this.isDesktop)
+      return 'lg'
+    else return 'sm'
   }
 
   @Watch('search')

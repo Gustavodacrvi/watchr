@@ -80,6 +80,7 @@ export default class App extends Vue {
   @Mutation hideAlert!: () => void
   @Mutation resetPopUpState!: () => void
   @Mutation openAppBar!: () => void
+  @Mutation pushAlert!: (alert: Alert) => void
   @Getter isDesktop!: boolean
   @Getter platform!: 'mobile' | 'desktop'
   @Getter loggedAndVerified!: boolean

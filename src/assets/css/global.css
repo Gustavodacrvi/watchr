@@ -64,6 +64,45 @@ body, button, input, textarea {
   border: .5px solid #292929;
 }
 
+.action-comp .main-button .msg, .task-renderer .main-button .icon {
+  display: none;
+}
+
+.task-renderer .main-button .msg, .task-renderer .main-button .msg {
+  display: block;
+}
+
+.action-comp .main-button {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 45px;
+  height: 45px;
+  border-radius: 100px;
+  background-color: #83B7E2;
+}
+
+.task-renderer .main-button {
+  height: 40px;
+  border: 1px solid #dbdbdb;
+  border-radius: 12px;
+}
+
+.main-button {
+  transition: filter .2s, transform .2s;  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: all;
+  cursor: pointer;
+  transition-duration: .3s;
+}
+
+.main-button:hover {
+  transform: scale(1.05, 1.05);
+  filter: brightness(1.1);
+}
+
 .main-color-card.light {
   background-color: #83B7E2;
 }

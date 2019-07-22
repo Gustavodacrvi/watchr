@@ -1,15 +1,19 @@
 <template>
   <div class='wrapper'>
-    <div class='relative-wrapper'>
+    <div class='relative-wrapper action-comp'>
       <transition name='fade'>
         <div v-if='showing'
           class='margin'
           @click='showing = false'></div>
       </transition>
-      <span
-        class='main floating-btn'
-        @click='showing = !showing'>
-        <i class='icon txt pointer fas fa-plus' :style="{color: 'white'}"></i>
+      <span id='floating-btn'>
+        <span
+          class='main-button'
+          @click='showing = !showing'
+        >
+          <i class='icon txt pointer fas fa-plus' :style="{color: 'white'}"></i>
+          <span class='txt msg' :class='theme'>Add task</span>
+        </span>
       </span>
       <transition name='below-trans'>
         <div v-if='showing'
@@ -45,12 +49,15 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { Mutation } from 'vuex-class'
+import { Mutation, State } from 'vuex-class'
 
 import { FloatingButton } from '@/interfaces/app'
 
+import Sortable from 'sortablejs'
+
 @Component
 export default class ActionButtonComp extends Vue {
+  @State theme!: string
   @Mutation pushPopUp!: (compName: string) => void
 
   leftButtons: FloatingButton[] = [
@@ -61,6 +68,18 @@ export default class ActionButtonComp extends Vue {
   ]
   showing: boolean = false
 
+  mounted() {
+    this.mount()    
+  }
+
+  mount() {
+    const el = document.getElementById('floating-btn')
+    const sort = new Sortable(el, {
+      disabled: false,
+      group: {name: 'floatbutton', pull: 'clone', put: false},
+      animation: 150,
+    })
+  }
   popUp(compName: string): () => void {
     return () => {
       this.pushPopUp(compName)
@@ -72,7 +91,7 @@ export default class ActionButtonComp extends Vue {
 
 <style scoped>
 
-.main, .left-wrapper, .top-wrapper {
+.left-wrapper, .top-wrapper {
   display: flex;
   align-items: center;
 }
@@ -98,20 +117,6 @@ export default class ActionButtonComp extends Vue {
   height: 100%;
   pointer-events: all;
   background-color: rgba(0, 0, 0, .4);
-}
-
-.main {
-  pointer-events: all;
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
-  width: 45px;
-  height: 45px;
-  cursor: pointer;
-  justify-content: center;
-  border-radius: 100px;
-  background-color: #83B7E2;
-  transition-duration: .3s;
 }
 
 .left-wrapper {

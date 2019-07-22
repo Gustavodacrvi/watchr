@@ -1,27 +1,29 @@
 <template>
-  <icon-dropdown
-    :handle='handle'
-    :size='size'
-    :change-color-on-hover='true'
-    :min-width='minWidth'
-  >
-    <div class='drop round-border'>
-      <div v-for='i in options'
-        class='el cancel-sortable-unselect'
-        :key='i.name'
-        :class='theme'
-        @click='optionClick(i.name, i.callback)'
-      >
-        <span class='el-icon'>
-          <i v-if='!i.iconColor' :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]'></i>
-          <i v-else :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]' :style='{color: i.iconColor}'></i>
-        </span>
-        <span class='el-name txt' :class='theme'>
-          {{ i.name }}
-        </span>
+  <span class='icon-options'>
+    <icon-dropdown
+      :handle='handle'
+      :size='size'
+      :change-color-on-hover='true'
+      :min-width='minWidth'
+    >
+      <div class='drop round-border'>
+        <div v-for='i in options'
+          class='el cancel-sortable-unselect'
+          :key='i.name'
+          :class='theme'
+          @click='optionClick(i.name, i.callback)'
+        >
+          <span class='el-icon'>
+            <i v-if='!i.iconColor' :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]'></i>
+            <i v-else :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]' :style='{color: i.iconColor}'></i>
+          </span>
+          <span class='el-name txt' :class='theme'>
+            {{ i.name }}
+          </span>
+        </div>
       </div>
-    </div>
-  </icon-dropdown>  
+    </icon-dropdown>  
+  </span>
 </template>
 
 <script lang='ts'>

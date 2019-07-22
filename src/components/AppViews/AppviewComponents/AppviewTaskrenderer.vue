@@ -1,6 +1,6 @@
 <template>
-  <div :class='`task-${group}-${id}`'>
-    <transition-group name='list' :class='theme'>
+  <div :class='`task-taskrenderer-${id} task-renderer`'>
+    <transition-group name='list' class='list' tag='div' :class='[theme, {isempty: tasks.length === 0}]'>
       <view-task v-for='task in tasks'
         :key='task.id'
         :task='task'
@@ -11,19 +11,6 @@
         :data-vid='task.id'
 
         @toggle='toggleElement'
-      />
-      <task-adder
-        class='handle'
-        key='task-adder'
-        :fixed-pers='fixedPers'
-        :fixed-label='fixedLabel'
-        :default-labels='defaultLabels'
-        :default-priority='defaultPriority'
-        :allow-priority='allowPriority'
-        :allow-labels='allowLabels'
-        @enter='add'
-
-        data-vid='task-adder'
       />
     </transition-group>
   </div>
@@ -39,7 +26,7 @@ import ViewTask from '@/components/AppViews/AppviewComponents/AppviewTask.vue'
 
 import Sortable, { MultiDrag } from 'sortablejs'
 import { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
-import TaskAdder from '@/components/AppViews/AppviewComponents/AppviewTaskAdder.vue'
+import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
 
 Sortable.mount(new MultiDrag(), new AutoScroll())
 
@@ -48,14 +35,13 @@ import { Task, Label } from '../../../interfaces/app'
 @Component({
   components: {
     'view-task': ViewTask,
-    'task-adder': TaskAdder,
   },
 })
 export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @State theme!: string
 
   @Prop({default: false, type: Boolean}) disabled!: boolean
-  @Prop({required: true, type: String}) group!: string
+  @Prop({default: false, type: Boolean}) fixAdderPosition!: boolean
   @Prop({required: true, type: String}) id!: string
   @Prop({default: false, type: Boolean}) allowPriority!: boolean
   @Prop({default: false, type: Boolean}) allowLabels!: boolean
@@ -72,9 +58,12 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   numberOfSelected: number = 0
   deselectAll: boolean = false
   added: boolean = false
-  rootSelector: string = `.task-${this.group}-${this.id}`
+  rootSelector: string = `.task-taskrenderer-${this.id}`
   taskAdderPosition: number = 0
 
+  created() {
+    this.$on('enter', this.add)
+  }
   mounted() {
     this.mount()
     document.addEventListener('click', this.calcSelectedElements)
@@ -90,12 +79,50 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       selectedClass: 'sortable-selected',
       multiDrag: true,
       dataIdAttr: 'data-sortableid',
-      group: this.group,
+      group: {name: 'taskrenderer', pull: false, put: ['floatbutton']},
 
       onUpdate: () => {
         const ids: string[] = this.getIdsFromElements(this.rootSelector)
         this.$emit('update', ids)
       },
+      onAdd: (evt: any) => {
+        /* <task-adder
+        :fixed-pers='fixedPers'
+        :fixed-label='fixedLabel'
+        :default-labels='defaultLabels'
+        :default-priority='defaultPriority'
+        :allow-priority='allowPriority'
+        :allow-labels='allowLabels'
+        :lock='true'
+        @cancel='showing = false'
+        @enter='enter'
+
+        data-vid='task-adder'
+      /> */
+        const Constructor = Vue.extend(TaskEditTemplate)
+        const instance = new Constructor({
+          created() {
+            this.$emit('enter')
+          },
+          parent: this,
+          propsData: {
+            class: 'handle', key: 'task-adder',
+            fixedPers: this.fixedPers, fixedLabel: this.fixedLabel,
+            defaultLabels: this.defaultLabels, defaultPriority: this.defaultPriority,
+            allowPriority: this.allowPriority, allowLabels: this.allowLabels,
+            dataVid: 'task-adder', lock: true,
+          },
+        })
+        const el = this.rootComponent.querySelector('.main-button') as HTMLElement
+        el.setAttribute('id', 'main-button')
+        instance.$mount('#main-button')
+        instance.$on('enter', this.add)
+        instance.$on('cancel', () => {
+          instance.$destroy()
+          const el = instance.$el as any
+          el.parentNode.removeChild(el)
+        })
+      }
     }
 
     if (!this.isDesktop)
@@ -161,7 +188,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 
   @Watch('tasks')
   onChange(j: any, l: any) {
-    if (this.added && this.insertBefore) {
+    if (this.fixAdderPosition && this.added && this.insertBefore) {
       setTimeout(() => {
         this.getTaskAdderPosition()
         const childNodes = this.rootComponent.childNodes
@@ -208,6 +235,10 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 
 .list-leave-to {
   opacity: 0;
+}
+
+.list.isempty {
+  height: 50px;
 }
 
 </style>

@@ -32,28 +32,29 @@
         </span>
       </template>
       <span v-if='showOptionsMobile || showOptionsDesktop && options.length > 0' class='help-icon'>
-      <icon-dropdown
-        handle='ellipsis-v'
-        size='lg'
-        :change-color-on-hover='true'
-        min-width='225px'
-      >
-        <div class='drop round-border'>
-          <div v-for='i in options'
-            class='el'
-            :key='i.name'
-            :class='theme'
-            @click='optionClick(i.callback)'
-          >
-            <span class='el-icon'>
-              <i :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]'></i>
-            </span>
-            <span class='el-name txt' :class='theme'>
-              {{ i.name }}
-            </span>
+        <icon-dropdown
+          handle='ellipsis-v'
+          size='lg'
+          :change-color-on-hover='true'
+          :centralize='true'
+          min-width='225px'
+        >
+          <div class='drop round-border'>
+            <div v-for='i in options'
+              class='el'
+              :key='i.name'
+              :class='theme'
+              @click='optionClick(i.callback)'
+            >
+              <span class='el-icon'>
+                <i :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]'></i>
+              </span>
+              <span class='el-name txt' :class='theme'>
+                {{ i.name }}
+              </span>
+            </div>
           </div>
-        </div>
-      </icon-dropdown>
+        </icon-dropdown>
       </span>
     </div>
   </div>
@@ -179,7 +180,7 @@ export default class ListRenderer extends Vue {
   height: 100%;
 }
 
-.icon-dropdown, .left-icon, .help-icon {
+.left-icon, .help-icon {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -193,11 +194,11 @@ export default class ListRenderer extends Vue {
   background-color: #e3e3e3;
 }
 
-.sortable-selected.light {
+.element.sortable-selected.light {
   background-color: #83B7E2 !important;
 }
 
-.sortable-selected.dark {
+.element.sortable-selected.dark {
   background-color: #3287cd !important;
 }
 

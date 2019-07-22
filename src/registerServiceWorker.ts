@@ -44,10 +44,8 @@ if (process.env.NODE_ENV === 'production') {
       console.error('Error during service worker registration:', error)
     },
   })
-  let refreshing: boolean = false
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (!refreshing) return undefined
+    console.log('I should freaking reload')
     window.location.reload()
-    refreshing = true
   })
 }

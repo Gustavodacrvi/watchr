@@ -24,8 +24,8 @@
   display: flex;
 }
 
-.header-option {
-  margin-right: 10px;
+.header-option + .header-option {
+  margin-left: 20px;
 }
 
 .title {
