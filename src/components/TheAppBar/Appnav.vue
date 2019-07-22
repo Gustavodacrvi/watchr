@@ -117,6 +117,7 @@ interface Section {
 export default class LoggedAppnav extends Vue {
   @State theme!: string
   @State isLogged!: boolean
+  @Mutation pushPopUp!: (comp: string) => void
   @Getter isDesktop!: boolean
 
   @label.Action sortLabelsByName!: () => void
@@ -133,6 +134,15 @@ export default class LoggedAppnav extends Vue {
         callback: () => {
           this.sortLabelsByName()
         },
+      },
+      {
+        name: 'Add label',
+        icon: 'tag',
+        iconColor: '',
+        size: 'lg',
+        callback: () => {
+          this.pushPopUp('LabeladderPopup')
+        }
       },
     ]},
   ]
