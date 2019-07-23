@@ -94,10 +94,11 @@
 .auth-button.dark {
   background-color: #83B7E2;
   color: white;
-  transition: background-color .3s;
+  transition: background-color .3s ease-in;
 }
 
 .auth-button.dark:hover {
+  transition: background-color .3s ease-out;
   background-color: #83B7E2;
 }
 

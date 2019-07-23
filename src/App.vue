@@ -212,8 +212,12 @@ export default class App extends Vue {
   left: -300px !important;
 }
 
-.appbar-trans-enter-to, .appbar-trans-leave-active {
-  transition: left .3s !important;
+.appbar-trans-enter-to {
+  transition: left .3s ease-out !important;
+}
+
+.appbar-trans-leave-active {
+  transition: left .3s ease-in !important;
 }
 
 .appbar-trans-enter-to {
@@ -224,9 +228,13 @@ export default class App extends Vue {
   left: -300px !important;
 }
 
-.pop-up-trans-enter-active, .pop-up-trans-leave-active {
-  transition: top .3s, opacity .3s !important;
-} 
+.pop-up-trans-enter-active {
+  transition: top .3s ease-out, opacity .3s ease-out !important;
+}
+
+.pop-up-trans-leave-active {
+  transition: top .3s ease-in, opacity .3s ease-in !important;
+}
 
 .pop-up-trans-enter, .pop-up-trans-leave-to {
   top: 15px;
@@ -238,9 +246,13 @@ export default class App extends Vue {
   opacity: 1;
 }
 
-.alert-trans-enter-active, .alert-trans-leave-active {
-  transition: bottom .4s !important;
-} 
+.alert-trans-enter-active {
+  transition: bottom .4s ease-out !important;
+}
+
+.alert-trans-leave-active {
+  transition: bottom .4s ease-in !important;
+}
 
 .alert-trans-enter, .alert-trans-leave-to {
   bottom: -200px !important;

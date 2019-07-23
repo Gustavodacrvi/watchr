@@ -165,8 +165,12 @@ export default class ActionButtonComp extends Vue {
   margin: 6px 0;
 }
 
-.below-trans-enter-active, .below-trans-leave-active {
-  transition: bottom .3s;
+.below-trans-enter-active {
+  transition: bottom .3s ease-in;
+}
+
+.below-trans-leave-active {
+  transition: bottom .3s ease-out;
 }
 
 .below-trans-enter {

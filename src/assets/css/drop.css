@@ -11,12 +11,13 @@
 }
 
 .el {
-  transition: background-color .25s;
+  transition: background-color .25s ease-in;
   height: 38px;
   cursor: pointer;
 }
 
 .el:hover, .el.selected {
+  transition: background-color .25s ease-out;
   background-color: #282828;
 }
 
