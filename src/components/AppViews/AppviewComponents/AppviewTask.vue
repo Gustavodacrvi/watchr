@@ -6,13 +6,11 @@
       @mouseenter='onHover = true'
       @mouseleave='onHover = false'
     >
-    {{test}}
       <div
         class='content-wrapper'
-        @click='toggleElement'
-        v-long-press="1000"
-        @long-press-start="onLongPressStart"
-        @long-press-stop="onLongPressStop"
+        @click='seeChecklist'
+        v-long-press='700'
+        @long-press-start='toggleElement'
       >
         <span class='circles'>
           <i v-if='!completed' @click='v => completed = true' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
@@ -118,6 +116,7 @@ export default class AppviewTask extends Vue {
   onHover: boolean = false
   completed: boolean = false
   test: string = ''
+  justLongPressed: boolean = false
   editing: boolean = false
   options: ListIcon[] = [
     {
@@ -141,18 +140,23 @@ export default class AppviewTask extends Vue {
   ]
 
   toggleElement() {
+    this.justLongPressed = true
+    if (!this.allowDrag)
+      this.select()
+  }
+  seeChecklist() {
+    if (this.allowDrag && !this.justLongPressed)
+      this.select()
+    else console.log('see details')
+    this.justLongPressed = false
+  }
+  select() {
     this.clicked = !this.clicked
     const el: HTMLElement = this.$el as HTMLElement
     this.$emit('toggle', {
       el,
       select: this.clicked,
     })
-  }
-  onLongPressStart() {
-    this.test = 'begin'
-  }
-  onLongPressStop() {
-    this.test = 'end'
   }
   enter(obj: {name: string, priority: string}) {
     this.updateTask({

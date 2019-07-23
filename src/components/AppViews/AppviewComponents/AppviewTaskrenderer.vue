@@ -104,13 +104,13 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
             class: 'handle', key: 'task-adder',
             fixedPers: this.fixedPers, fixedLabel: this.fixedLabel,
             defaultLabels: this.defaultLabels, defaultPriority: this.defaultPriority,
-            allowPriority: this.allowPriority, allowLabels: this.allowLabels,
-            dataVid: 'task-adder', lock: true,
+            allowPriority: this.allowPriority, allowLabels: this.allowLabels, lock: true,
           },
         })
         const el = this.rootComponent.querySelector('.main-button') as HTMLElement
         el.setAttribute('id', 'main-button')
         instance.$mount('#main-button')
+        this.rootComponent.getElementsByClassName('task-adder')[0].setAttribute('data-vid', 'task-adder')
         this.numberOfAdders++
         instance.$on('enter', this.add)
         instance.$on('cancel', () => {
@@ -185,7 +185,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 
   @Watch('tasks')
   onChange(j: any, l: any) {
-    if (this.fixAdderPosition && this.added && this.insertBefore) {
+    if (!this.fixAdderPosition && this.added && this.insertBefore) {
       setTimeout(() => {
         this.getTaskAdderPosition()
         const childNodes = this.rootComponent.childNodes

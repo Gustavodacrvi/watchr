@@ -54,7 +54,7 @@
         :default-priority='getPriority'
         :default-labels='defaultLabels'
         :allow-priority='true'
-        :fix-adder-position='sort.length === 0'
+        :fix-adder-position='sort.length !== 0'
         :insert-before='true'
         :allow-labels='allowLabels'
         @update='onUpdate'
