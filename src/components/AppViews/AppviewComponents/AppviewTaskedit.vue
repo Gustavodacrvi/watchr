@@ -22,7 +22,7 @@
       <drop-input
         tabindex='1'
         focus-class='taskedit'
-        :input-theme='theme'
+        :input-theme='inputTheme ? inputTheme : theme'
         :placeholder='inputPlaceholder'
         :disabled='true'
         :values='options'
@@ -96,20 +96,22 @@ import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue
 export default class AppviewTaskedit extends Vue {
   @State theme!: string
 
+  @labelsVuex.State('labels') savedLabels!: Label[]
+  @labelsVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
+
   @Prop({default: 'Add task', type: String}) btn!: string
   @Prop({default: false, type: Boolean}) closeOnSave!: boolean
   @Prop(String) defaultValue!: string
   @Prop(String) fixedPers!: string
   @Prop(String) fixedLabel!: string
+  @Prop(String) input!: string
   @Prop(String) defaultPriority!: string
   @Prop(Array) defaultLabels!: string[]
+  @Prop(String) inputTheme!: string
   @Prop({default: false, type: Boolean}) allowPriority!: boolean
   @Prop({default: false, type: Boolean}) allowLabels!: boolean
   @Prop({default: false, type: Boolean}) lock!: boolean
   @Prop({default: true, type: Boolean}) showCancel!: boolean
-
-  @labelsVuex.State('labels') savedLabels!: Label[]
-  @labelsVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
   value: string = ''
   optionsType: string = ''
@@ -150,7 +152,9 @@ export default class AppviewTaskedit extends Vue {
   }
   mounted() {
     const el = document.querySelectorAll('.taskedit')[0] as any
-    el.focus()
+    setTimeout(() => {
+      el.focus()
+    }, 80)
   }
 
   toggleLock() {
@@ -252,6 +256,12 @@ export default class AppviewTaskedit extends Vue {
     }
     if (!changedOptions)
       this.options = []
+  }
+  @Watch('input')
+  onInput() {
+    console.log(3)
+    if (this.input)
+      this.value = this.input
   }
 }
 

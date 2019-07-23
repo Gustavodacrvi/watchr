@@ -29,7 +29,7 @@
       <div class='content'>
         <div style='margin-top: 50px' class='gray user-card-wrapper round-border' :class='theme'>
           <div class='user-card'>
-            <span class='txt msg'>Please confirm your e-mail before continuing.</span>
+            <span class='txt msg' :class='theme'>Please confirm your e-mail before continuing.</span>
             <form-button :waiting-response='waitingResponse' @click='resendConfirmationEmail'>
               Resend confirmation e-mail
             </form-button>

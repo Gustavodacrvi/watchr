@@ -102,6 +102,7 @@ export default class ActionButtonComp extends Vue {
   height: 100%;
   z-index: 50;
   pointer-events: none;
+  z-index: 999;
 }
 
 .relative-wrapper {
