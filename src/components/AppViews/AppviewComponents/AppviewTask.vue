@@ -6,7 +6,14 @@
       @mouseenter='onHover = true'
       @mouseleave='onHover = false'
     >
-      <div class='content-wrapper' @click='toggleElement'>
+    {{test}}
+      <div
+        class='content-wrapper'
+        @click='toggleElement'
+        v-long-press="1000"
+        @long-press-start="onLongPressStart"
+        @long-press-stop="onLongPressStop"
+      >
         <span class='circles'>
           <i v-if='!completed' @click='v => completed = true' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
           <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
@@ -80,6 +87,10 @@ const taskVuex = namespace('task')
 const labelVuex = namespace('label')
 const settingsVuex = namespace('settings')
 
+import LongPress from 'vue-directive-long-press'
+ 
+Vue.directive('long-press', LongPress)
+
 @Component({
   components: {
     'icon-option': AppviewIconoptions,
@@ -106,6 +117,7 @@ export default class AppviewTask extends Vue {
   clicked: boolean = false
   onHover: boolean = false
   completed: boolean = false
+  test: string = ''
   editing: boolean = false
   options: ListIcon[] = [
     {
@@ -135,6 +147,12 @@ export default class AppviewTask extends Vue {
       el,
       select: this.clicked,
     })
+  }
+  onLongPressStart() {
+    this.test = 'begin'
+  }
+  onLongPressStop() {
+    this.test = 'end'
   }
   enter(obj: {name: string, priority: string}) {
     this.updateTask({

@@ -131,6 +131,7 @@ export default {
           iconColor,
           description,
           order: [],
+          sort: [],
           size: 'lg',
           isSmart: false,
           priority: '',
