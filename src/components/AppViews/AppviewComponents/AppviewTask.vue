@@ -2,13 +2,14 @@
   <div v-if='!editing' key='task' class='round-border wrapper' :class="[theme, completed ? 'completed' : 'not-completed']">
     <div
       class='round-border task'
-      @dblclick='editing = true'
+      :class="[theme, completed ? 'completed' : 'not-completed', {'not-selected': !clicked}]"
+      @dblclick='toggleEditing'
       @mouseenter='onHover = true'
       @mouseleave='onHover = false'
     >
       <div
         class='content-wrapper'
-        @click='seeChecklist'
+        @click='toggleChecklist'
         v-long-press='700'
         @long-press-start='toggleElement'
       >
@@ -55,6 +56,32 @@
         </transition>
       </div>
     </div>
+    <transition name='fade' mode='out-in'>
+      <div v-show='showChecklist' class='details'>
+        <span class='txt task-desc' :class='theme'>
+          I am the freaking description mother fucker!
+        </span>
+        <transition name='fade' mode='out-in'>
+          <div v-if='checklist.length > 0' class='checklist'>
+            <transition-group name='fade' tag='div' class='subtasks-transition'>
+              <div v-for='todo in checklist'
+                :key='todo.id'
+              >
+                <div class='subtask'>
+                  <span class='circles'>
+                    <i v-if='!completed' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
+                    <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
+                  </span>
+                  <span class='txt' :class='theme'>{{ todo.name }}</span>
+                </div>
+              </div>
+            </transition-group>
+          </div>
+          <div v-else class='checklist'>
+          </div>
+        </transition>
+      </div>
+    </transition>
   </div>
   <div key='editing' v-else>
     <task-edit key='showing'
@@ -86,6 +113,8 @@ const labelVuex = namespace('label')
 const settingsVuex = namespace('settings')
 
 import LongPress from 'vue-directive-long-press'
+
+import Sortable from 'sortablejs'
  
 Vue.directive('long-press', LongPress)
 
@@ -116,8 +145,37 @@ export default class AppviewTask extends Vue {
   onHover: boolean = false
   completed: boolean = false
   test: string = ''
+  showChecklist: boolean = false
   justLongPressed: boolean = false
   editing: boolean = false
+  sortable: any = null
+  checklist: any = [
+    {
+      name: 'Subtask 1',
+      completed: false,
+      id: 0,
+    },
+    {
+      name: 'Subtask 2',
+      completed: false,
+      id: 1,
+    },
+    {
+      name: 'Subtask 3',
+      completed: false,
+      id: 2,
+    },
+    {
+      name: 'Subtask 4',
+      completed: false,
+      id: 3,
+    },
+    {
+      name: 'Subtask 5',
+      completed: false,
+      id: 4,
+    },
+  ]
   options: ListIcon[] = [
     {
       name: 'Delete task',
@@ -139,16 +197,32 @@ export default class AppviewTask extends Vue {
     },
   ]
 
+  mounted() {
+    this.mount()
+  }
+
+  mount() {
+    console.log(this.rootSubtaskSelector)
+    this.sortable = new Sortable(this.rootSubtaskSelector, {
+      disabled: false,
+      group: {name: 'subtasks', pull: false, put: false},
+      animation: 150,
+      dataIdAttr: 'data-sortableid',
+    })
+  }
   toggleElement() {
     this.justLongPressed = true
     if (!this.allowDrag)
       this.select()
   }
-  seeChecklist() {
+  toggleChecklist() {
     if (this.allowDrag && !this.justLongPressed)
       this.select()
-    else console.log('see details')
+    else this.showChecklist = !this.showChecklist
     this.justLongPressed = false
+  }
+  toggleEditing() {
+    this.editing = !this.editing
   }
   select() {
     this.clicked = !this.clicked
@@ -190,6 +264,9 @@ export default class AppviewTask extends Vue {
       return this.onHover && this.desktopTaskLabels !== 'Always show' || this.desktopTaskLabels === 'Always show'
     else return this.onHover && this.mobileTaskLabels !== 'Always show' || this.mobileTaskLabels === 'Always show'
   }
+  get rootSubtaskSelector(): HTMLElement {
+    return this.$el.getElementsByClassName('subtasks-transition')[0] as HTMLElement
+  }
 
   @Watch('deselectAll')
   onChange() {
@@ -206,6 +283,25 @@ export default class AppviewTask extends Vue {
 </script>
 
 <style scoped>
+
+.subtask {
+  position: relative;
+  cursor: pointer;
+  height: 30px;
+}
+
+.handle {
+  float: right;
+  margin-right: 12px;
+}
+
+.checklist {
+  margin-top: 10px;
+}
+
+.details {
+  margin-left: 36px;
+}
 
 .check-trans-leave-active, .check-trans-enter-active {
   transition-duration: .3s;
@@ -237,7 +333,7 @@ export default class AppviewTask extends Vue {
   transition: color .3s;
 }
 
-.wrapper {
+.wrapper, .task {
   transition: background-color .3s;
 }
 
@@ -275,11 +371,11 @@ export default class AppviewTask extends Vue {
   align-items: center;
 }
 
-.wrapper.not-completed.light:hover {
+.task.not-completed.not-selected.light:hover {
   background-color: #f0f0f0;
 }
 
-.wrapper.not-completed.dark:hover {
+.task.not-completed.not-selected.dark:hover {
   background-color: #282828;
 }
 
