@@ -61,25 +61,23 @@
         <span class='txt task-desc' :class='theme'>
           I am the freaking description mother fucker!
         </span>
-        <transition name='fade' mode='out-in'>
-          <div v-if='checklist.length > 0' class='checklist'>
-            <transition-group name='fade' tag='div' class='subtasks-transition'>
-              <div v-for='todo in checklist'
-                :key='todo.id'
-              >
-                <div class='subtask'>
-                  <span class='circles'>
-                    <i v-if='!completed' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
-                    <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
-                  </span>
-                  <span class='txt' :class='theme'>{{ todo.name }}</span>
-                </div>
-              </div>
-            </transition-group>
-          </div>
-          <div v-else class='checklist'>
-          </div>
-        </transition>
+          <div class='checklist'>
+          <transition-group name='fade' tag='div' class='subtasks-transition'>
+            <div v-for='todo in checklist'
+              class='subtask'
+              :key='todo.id'
+
+              :data-vid='todo.id'
+            >
+              <span class='circles'>
+                <i v-if='!completed' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
+                <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
+              </span>
+              <span class='txt' :class='theme'>{{ todo.name }}</span>
+            </div>
+            <div></div>
+          </transition-group>
+        </div>
       </div>
     </transition>
   </div>
@@ -202,13 +200,27 @@ export default class AppviewTask extends Vue {
   }
 
   mount() {
-    console.log(this.rootSubtaskSelector)
     this.sortable = new Sortable(this.rootSubtaskSelector, {
       disabled: false,
       group: {name: 'subtasks', pull: false, put: false},
       animation: 150,
       dataIdAttr: 'data-sortableid',
+
+      onUpdate: () => {
+        console.log(this.getSubtasksIds())
+      }
     })
+  }
+  getSubtasksIds(): string[] {
+    const root = this.$el.querySelector('.subtasks-transition')
+    if (root) {
+      const arr = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
+      const ids: string[] = []
+      for (const el of arr)
+        ids.push(el.dataset.vid)
+      return ids
+    }
+    return []
   }
   toggleElement() {
     this.justLongPressed = true
