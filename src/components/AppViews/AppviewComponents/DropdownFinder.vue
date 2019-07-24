@@ -109,13 +109,8 @@ export default class DropdownFinder extends Vue {
   cursor: pointer;
 }
 
-.element.dark:hover {
+.element:hover {
   background-color: #282828;
 }
-
-.element.light:hover {
-  background-color: #E6E6E6;
-}
-
 
 </style>

@@ -68,20 +68,10 @@ export interface Task {
   name: string
   priority: 'Low priority' | 'High priority' | 'Medium priority' | ''
   labels: string[]
-}
-
-/* 
-export interface Task {
-  userId: string
-  id: string
-  name: string
-  priority: 'Low priority' | 'High priority' | 'Medium priority' | ''
   checklistOrder: string[]
   checklist: Array<{
     completed: boolean,
     name: string,
     id: number,
   }>
-  labels: string[]
 }
- */

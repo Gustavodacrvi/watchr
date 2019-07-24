@@ -33,6 +33,7 @@ interface Actions {
   addTask: (context: ActionContext, obj: {name: string, priority: string, labels: string[]}) => void
   deleteTasksById: (context: ActionContext, ids: string[]) => void
   changePrioritysByIds: (context: ActionContext, obj: {ids: string[], priority: string}) => void
+  addSubTask: (context: ActionContext, obj: {name: string, taskId: string, position: number, order: string[]}) => void
   addLabelByTaskIds: (context: ActionContext, obj: {ids: string[], labelId: string}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
@@ -103,6 +104,8 @@ export default {
           priority: task.priority,
           userId: rootState.uid,
           labels: task.labels,
+          checklist: [],
+          checklistOrder: [],
         })
         const persRef = rootState.firestore.collection('perspectives').doc(perspectiveId)
         batch.update(persRef, {
@@ -117,6 +120,8 @@ export default {
         rootState.firestore.collection('tasks').add({
           name, labels, priority,
           userId: rootState.uid,
+          checklist: [],
+          checklistOrder: [],
         })
     },
     changePrioritysByIds({ rootState }, {ids, priority}) {
@@ -160,6 +165,8 @@ export default {
           priority: task.priority,
           userId: rootState.uid,
           labels: task.labels,
+          checklist: [],
+          checklistOrder: [],
         })
         const persRef = rootState.firestore.collection('labels').doc(labelId)
         batch.update(persRef, {
@@ -169,5 +176,32 @@ export default {
         batch.commit()
       }
     },
+    addSubTask({ rootState }, {taskId, order, position, name}) {
+      if (rootState.firestore && rootState.uid) {
+        const fire = rootState.firebase.firestore.FieldValue as any
+        let timesRun = 0
+        let newId!: string
+        while (true) {
+          newId = '' + order.length + timesRun
+          let found = false
+          for (const id of order)
+            if (id === newId) {
+              found = true
+              break
+            }
+          timesRun++
+          if (!found) break
+        }
+        let subtask = {
+          completed: false,
+          name, id: newId,
+        }
+        order.splice(position, 0, newId)
+        rootState.firestore.collection('tasks').doc(taskId).update({
+          checklistOrder: order,
+          checklist: fire.arrayUnion(subtask),
+        })
+      }
+    }
   } as Actions,
 }

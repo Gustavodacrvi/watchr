@@ -59,13 +59,14 @@
     <transition name='fade' mode='out-in'>
       <div v-show='showChecklist' class='details'>
         <span class='txt task-desc' :class='theme'>
-          I am the freaking description mother fucker!
+          I am the freaking notes!
         </span>
           <div class='checklist'>
           <transition-group name='fade' tag='div' class='subtasks-transition'>
             <div v-for='todo in checklist'
-              class='subtask'
+              class='subtask round-border'
               :key='todo.id'
+              :class='theme'
 
               :data-vid='todo.id'
             >
@@ -75,7 +76,26 @@
               </span>
               <span class='txt' :class='theme'>{{ todo.name }}</span>
             </div>
-            <div></div>
+            <div key='task-adder' class='subtask-adder pointer' data-vid='task-adder'>
+              <transition name='fade' mode='out-in'>
+                <div v-if='addingSubtask' key='adding' class='adding-wrapper'>
+                  <div class='adding'>
+                    <form-input
+                      type='text'
+                      placeholder='Subtask...'
+                      v-model='subtaskValue'
+                      :max='200'
+                    />
+                  </div>
+                  <form-btn class='tiny' @click='addSubtask'>Add subtask</form-btn>
+                  <span class='txt cancel pointer' :class='theme' @click='addingSubtask = false'>Cancel</span>
+                </div>
+                <div v-else key='not-adding' class='txt not-adding' :class='theme' @click='addingSubtask = true'>
+                  <i class='fas fa-plus fa-sm'></i>
+                  <span>Add subtask</span>
+                </div>
+              </transition>
+            </div>
           </transition-group>
         </div>
       </div>
@@ -103,6 +123,8 @@ import { State, Getter, namespace } from 'vuex-class'
 
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
+import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
 import { Task, ListIcon, Label } from '../../../interfaces/app'
 
@@ -120,6 +142,8 @@ Vue.directive('long-press', LongPress)
   components: {
     'icon-option': AppviewIconoptions,
     'task-edit': TaskEditTemplate,
+    'form-input': FormInput,
+    'form-btn': FormButton,
   },
 })
 export default class AppviewTask extends Vue {
@@ -128,6 +152,7 @@ export default class AppviewTask extends Vue {
 
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string}) => void
+  @taskVuex.Action addSubTask!: (obj: {name: string, taskId: string, position: number, order: string[]}) => void
 
   @settingsVuex.State mobileTaskLabels!: string
   @settingsVuex.State desktopTaskLabels!: string
@@ -142,9 +167,10 @@ export default class AppviewTask extends Vue {
   clicked: boolean = false
   onHover: boolean = false
   completed: boolean = false
-  test: string = ''
+  subtaskValue: string = ''
   showChecklist: boolean = false
   justLongPressed: boolean = false
+  addingSubtask: boolean = false
   editing: boolean = false
   sortable: any = null
   checklist: any = [
@@ -207,8 +233,25 @@ export default class AppviewTask extends Vue {
       dataIdAttr: 'data-sortableid',
 
       onUpdate: () => {
-        console.log(this.getSubtasksIds())
+        console.log(this.getSubtasksIds().filter(el => el !== 'task-adder'))
       }
+    })
+  }
+  addSubtask() {
+    const ids = this.getSubtasksIds()
+    let position = 0
+    let i = 0
+    for (const id of ids)
+      if (id === 'task-adder') {
+        position = i
+        break
+      } else i++
+    const order = ids.filter(el => el !== 'task-adder')
+    this.addSubTask({
+      name: this.subtaskValue,
+      position,
+      taskId: this.task.id,
+      order: this.task.checklistOrder,
     })
   }
   getSubtasksIds(): string[] {
@@ -296,10 +339,30 @@ export default class AppviewTask extends Vue {
 
 <style scoped>
 
+.adding {
+  margin-bottom: 4px;
+}
+
+.cancel {
+  margin-left: 4px;
+}
+
+.not-adding {
+  margin: 6px;
+}
+
+.not-adding .fas {
+  margin-right: 10px;
+}
+
+.cancel {
+  color: #FF6B66;
+}
+
 .subtask {
   position: relative;
+  padding: 4px;
   cursor: pointer;
-  height: 30px;
 }
 
 .handle {
@@ -383,11 +446,11 @@ export default class AppviewTask extends Vue {
   align-items: center;
 }
 
-.task.not-completed.not-selected.light:hover {
+.task.not-completed.not-selected.light:hover, .subtask.light:hover {
   background-color: #f0f0f0;
 }
 
-.task.not-completed.not-selected.dark:hover {
+.task.not-completed.not-selected.dark:hover, .subtask.dark:hover {
   background-color: #282828;
 }
 
