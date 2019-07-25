@@ -1,7 +1,7 @@
 <template>
   <div class='subtask-adder pointer'>
     <transition name='fade' mode='out-in'>
-      <div v-if='addingSubtask' key='adding' class='adding-wrapper'>
+      <div v-if='addingSubtask || onlyEdit' key='adding' class='adding-wrapper'>
         <div class='adding'>
           <form-input
             class='subtask-input'
@@ -16,7 +16,7 @@
           />
         </div>
         <form-btn class='tiny' @click="$emit('add')">Add subtask</form-btn>
-        <span class='txt cancel pointer' :class='theme' @click='addingSubtask = false'>Cancel</span>
+        <span class='txt cancel pointer' :class='theme' @click='addingSubtask = false;$emit("cancel")'>Cancel</span>
       </div>
       <div v-else key='not-adding' class='txt not-adding' :class='theme' @click='addingSubtask = true'>
         <i class='fas fa-plus fa-sm'></i>
@@ -44,6 +44,7 @@ export default class SubtaskEdit extends Vue {
   @State theme!: string
 
   @Prop(String) value!: string
+  @Prop(Boolean) onlyEdit!: boolean
 
   val: string = ''
   addingSubtask: boolean = false

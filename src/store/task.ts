@@ -202,6 +202,7 @@ export default {
         let subtask = {
           completed: false,
           name, id: newId,
+          taskId,
         }
         order.splice(position, 0, newId)
         rootState.firestore.collection('tasks').doc(taskId).update({

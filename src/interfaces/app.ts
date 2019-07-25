@@ -73,5 +73,6 @@ export interface Task {
     completed: boolean,
     name: string,
     id: number,
+    taskId: string,
   }>
 }
