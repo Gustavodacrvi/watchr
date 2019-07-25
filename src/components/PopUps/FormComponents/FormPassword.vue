@@ -12,20 +12,21 @@
         name='fade'
         mode='out-in'
       >
-        <span v-if="passwordType === 'text'" @click='togglePassword'>
-        <i
-          key='eye'
-          class='eye txt icon pointer fas fa-eye fa-1x'
-          :class='theme'
-        ></i>
+        <span v-if="passwordType === 'text'">
+          <i
+            key='eye'
+            class='eye txt icon pointer fas fa-eye fa-1x'
+            @click='togglePassword'
+            :class='theme'
+          ></i>
         </span>
-        <span v-else @click='togglePassword'>
-        <i
-          key='eye-slash'
-          class='eye txt icon pointer fas fa-eye-slash fa-1x'
-          :class='theme'
-          @click='togglePassword'
-        ></i>
+        <span v-else>
+          <i
+            key='eye-slash'
+            class='eye txt icon pointer fas fa-eye-slash fa-1x'
+            :class='theme'
+            @click='togglePassword'
+          ></i>
         </span>
       </transition>
     </span>

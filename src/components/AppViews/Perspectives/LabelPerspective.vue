@@ -52,7 +52,7 @@
         :default-priority='priority'
         :default-labels='getLabels.concat([getLabel.id])'
         :allow-priority='true'
-        :fix-adder-position='sort.length === 0'
+        :fix-adder-position='sort.length !== 0'
         :allow-labels='true'
         @update='onUpdate'
         @selected='onSelect'
@@ -73,7 +73,7 @@ const labelVuex = namespace('label')
 
 import AppviewHeaderIcons from '@/components/AppViews/AppviewComponents/AppviewHeadericons.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
-import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
+import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskrenderer.vue'
 import EmptyTagsRenderer from '@/components/AppViews/AppviewComponents/AppviewEmptytagrenderer.vue'
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 
@@ -220,10 +220,12 @@ export default class LabelPerspective extends Vue {
     this.labels.splice(index, 1)
   }
   onUpdate(ids: string[]) {
-    this.saveLabelTaskOrder({
-      order: ids,
-      id: this.getLabel.id,
-    })
+    const lab = this.getLabel
+    if (lab)
+      this.saveLabelTaskOrder({
+        order: ids,
+        id: lab.id,
+      })
   }
   selectSettingsOption(value: string) {
     if (!this.sort.find(el => el === value))
@@ -233,31 +235,40 @@ export default class LabelPerspective extends Vue {
         this.sort.push('priority')
   }
   addLabelTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
-    this.addTaskLabel({
-      task: {
-        name: obj.name,
-        priority: obj.priority as any,
-        labels: obj.labels.concat([this.getLabel.id]),
-      },
-      position: obj.position,
-      labelId: this.getLabel.id,
-      order: obj.order,
-    } as any)
+    const lab = this.getLabel
+    if (lab)
+      this.addTaskLabel({
+        task: {
+          name: obj.name,
+          priority: obj.priority as any,
+          labels: obj.labels.concat([lab.id]),
+        },
+        position: obj.position,
+        labelId: lab.id,
+        order: obj.order,
+      } as any)
   }
 
-  get getLabel(): Label {
+  get getLabel(): Label | undefined {
     const lab: Label = this.savedLabels.find(el => el.name === this.label) as any
     return lab
   }
   get viewTasks(): Task[] {
-    return this.tasks.filter(el => el.labels.includes(this.getLabel.id))
+    const lab = this.getLabel
+    if (lab)
+      return this.tasks.filter(el => el.labels.includes(lab.id))
+    else return []
   }
   get getLabels(): Label[] {
     return this.getLabelsByIds(this.labels)
   }
   get sortedTasks(): Task[] {
-    const ord = appUtils.fixOrder(this.viewTasks, this.getLabel.order)
-    return appUtils.sortArrayByIds(this.viewTasks, ord)
+    const lab = this.getLabel
+    if (lab) {
+      const ord = appUtils.fixOrder(this.viewTasks, lab.order)
+      return appUtils.sortArrayByIds(this.viewTasks, ord)
+    }
+    return []
   }
   get getTasks(): Task[] {
     let tasks = this.viewTasks

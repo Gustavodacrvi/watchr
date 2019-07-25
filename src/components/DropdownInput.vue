@@ -188,10 +188,11 @@ export default class DropdownInput extends Vue {
   display: block;
   padding: 10px;
   cursor: pointer;
-  transition: background-color .3s;
+  transition: background-color .3s ease-in;
 }
 
 .option:hover, .option.active {
+  transition: background-color .3s ease-out;
   background-color: #292929;
 }
 

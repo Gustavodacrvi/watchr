@@ -38,10 +38,11 @@
   cursor: pointer;
   font-size: 1em;
   width: 100%;
-  transition: background-color .3s;
+  transition: background-color .3s ease-in;
 }
 
 .button:hover {
+  transition: background-color .3s ease-out;
   background-color: #accfec;
 }
 
@@ -75,6 +76,11 @@
   width: 100%;
   transition: border .3s, background-color .3s;
   font-size: 1em;
+}
+
+.input.tiny {
+  padding: 6px;
+  font-size: .9em;
 }
 
 .textarea {

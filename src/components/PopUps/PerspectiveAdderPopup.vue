@@ -114,9 +114,10 @@ export default class LabelAdder extends Vue {
   mounted() {
     const el = document.querySelectorAll('.persadder')[0] as any
     el.focus()
-    setTimeout(() => {
-      this.input = ''
-    }, 100)
+    if (!this.pers)
+      setTimeout(() => {
+        this.input = ''
+      }, 100)
   }
 
   add() {
@@ -148,6 +149,7 @@ export default class LabelAdder extends Vue {
           icon: this.icon,
           iconColor: this.color,
         })
+        this.$router.push('user?pers=' + this.value)
         this.pushAlert({
           name: `<strong>${this.value}</strong> perspective was successfully edited.`,
           duration: 2.5,

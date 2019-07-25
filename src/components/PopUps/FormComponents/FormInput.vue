@@ -1,11 +1,12 @@
 <template>
   <input
-    class='margin input txt round-border gray dark'
+    class='margin input txt round-border gray'
     :placeholder='placeholder'
     :type='type'
     autocomplete='off'
-    :class='[classArr, theme]'
+    :class='[classArr, inputTheme ? inputTheme : theme]'
     v-model.trim='model'
+    @keydown='onKeydown'
   >
 </template>
 
@@ -17,16 +18,30 @@ import { State, Mutation } from 'vuex-class'
 @Component
 export default class FormInput extends Vue {
   @State theme!: string
+
   @Prop({required: true}) value!: string | null
   @Prop({required: true, type: Number}) max!: number
   @Prop(String) type!: string | null
+  @Prop(String) inputTheme!: string | null
   @Prop(String) placeholder!: string
   @Prop(Boolean) disabled!: boolean
+  @Prop(Boolean) focus!: boolean
+  @Prop(Boolean) keydown!: boolean
 
   model: string | null = null
 
   created() {
     this.model = this.value
+  }
+  mounted() {
+    if (this.focus) {
+      const el = this.$el as any
+      el.focus()
+    }
+  }
+
+  onKeydown(key: any) {
+    if (this.keydown && key.key === 'Enter') this.$emit('enter')
   }
 
   get classArr(): any[] {

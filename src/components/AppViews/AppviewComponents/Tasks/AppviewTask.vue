@@ -2,17 +2,27 @@
   <div v-if='!editing' key='task' class='round-border wrapper' :class="[theme, completed ? 'completed' : 'not-completed']">
     <div
       class='round-border task'
-      @dblclick='editing = true'
+      :class="[theme, completed ? 'completed' : 'not-completed', {'not-selected': !clicked}]"
+      @dblclick='toggleEditing'
       @mouseenter='onHover = true'
       @mouseleave='onHover = false'
     >
-      <div class='content-wrapper' @click='toggleElement'>
+      <div
+        class='content-wrapper'
+      >
         <span class='circles'>
           <i v-if='!completed' @click='v => completed = true' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
           <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
         </span>
         <transition name='check-trans' mode='out-in'>
-          <div v-if='!completed' key='cont' class='content' :class='{handle: allowDragAndDrop}'>
+          <div v-if='!completed'
+            key='cont'
+            class='content'
+            :class='{handle: allowDragAndDrop}'
+            v-long-press='700'
+            @long-press-start='toggleElement'
+            @click='toggleChecklist'
+          >
             <div class='txt' :class='theme'>
               {{ task.name }}
               <i v-if='task.priority'
@@ -50,6 +60,25 @@
         </transition>
       </div>
     </div>
+    <transition name='fade' mode='out-in'>
+      <div v-show='showChecklist' class='details'>
+        <div class='checklist'>
+        <transition-group name='fade' tag='div' class='subtasks-transition'>
+          <sub-task v-for='todo in getChecklist'
+            :key='todo.id'
+            :class='theme'
+            :task='todo'
+
+            :data-vid='todo.id'
+          />
+          <sub-task-edit key='task-adder' data-vid='task-adder'
+            v-model='subtaskValue'
+            @add='addTaskSubtask'
+          />
+        </transition-group>
+        </div>
+      </div>
+    </transition>
   </div>
   <div key='editing' v-else>
     <task-edit key='showing'
@@ -72,18 +101,30 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter, namespace } from 'vuex-class'
 
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
-import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
+import TaskEditTemplate from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskedit.vue'
+import SubTask from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtask.vue'
+import SubTaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtaskEdit.vue'
 
-import { Task, ListIcon, Label } from '../../../interfaces/app'
+import { Task, ListIcon, Label } from '../../../../interfaces/app'
+
+import appUtils from '@/utils/app'
 
 const taskVuex = namespace('task')
 const labelVuex = namespace('label')
 const settingsVuex = namespace('settings')
 
+import LongPress from 'vue-directive-long-press'
+
+import Sortable from 'sortablejs'
+
+Vue.directive('long-press', LongPress)
+
 @Component({
   components: {
     'icon-option': AppviewIconoptions,
     'task-edit': TaskEditTemplate,
+    'sub-task': SubTask,
+    'sub-task-edit': SubTaskEdit,
   },
 })
 export default class AppviewTask extends Vue {
@@ -92,6 +133,8 @@ export default class AppviewTask extends Vue {
 
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string}) => void
+  @taskVuex.Action addSubTask!: (obj: {name: string, taskId: string, position: number, order: string[]}) => void
+  @taskVuex.Action saveSubtaskOrder!: (obj: {taskId: string, order: string[]}) => void
 
   @settingsVuex.State mobileTaskLabels!: string
   @settingsVuex.State desktopTaskLabels!: string
@@ -106,7 +149,13 @@ export default class AppviewTask extends Vue {
   clicked: boolean = false
   onHover: boolean = false
   completed: boolean = false
+  subtaskValue: string = ''
+  showChecklist: boolean = false
+  justLongPressed: boolean = false
+  added: boolean = false
+  subTaskAdderPoition: number = 0
   editing: boolean = false
+  sortable: any = null
   options: ListIcon[] = [
     {
       name: 'Delete task',
@@ -128,7 +177,63 @@ export default class AppviewTask extends Vue {
     },
   ]
 
+  mounted() {
+    this.mount()
+  }
+  mount() {
+    this.sortable = new Sortable(this.rootSubtaskComponent, {
+      disabled: false,
+      group: {name: 'subtasks', pull: false, put: false},
+      animation: 150,
+      dataIdAttr: 'data-sortableid',
+
+      onUpdate: () => {
+        this.saveSubtaskOrder({
+          taskId: this.task.id,
+          order: this.getSubtasksIds().filter(el => el !== 'task-adder'),
+        })
+      },
+    })
+  }
+  addTaskSubtask() {
+    const ids = this.getSubtasksIds()
+    this.getSubTaskAdderPosition()
+    const order = ids.filter(el => el !== 'task-adder')
+    this.addSubTask({
+      name: this.subtaskValue,
+      position: this.subTaskAdderPoition,
+      taskId: this.task.id,
+      order: this.task.checklistOrder,
+    })
+    this.added = true
+    this.subtaskValue = ''
+  }
+  getSubtasksIds(): string[] {
+    const root = this.$el.querySelector('.subtasks-transition')
+    if (root) {
+      const arr = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
+      const ids: string[] = []
+      for (const el of arr)
+        ids.push(el.dataset.vid)
+      return ids
+    }
+    return []
+  }
   toggleElement() {
+    this.justLongPressed = true
+    if (!this.allowDrag)
+      this.select()
+  }
+  toggleChecklist() {
+    if (this.allowDrag && !this.justLongPressed)
+      this.select()
+    else this.showChecklist = !this.showChecklist
+    this.justLongPressed = false
+  }
+  toggleEditing() {
+    this.editing = !this.editing
+  }
+  select() {
     this.clicked = !this.clicked
     const el: HTMLElement = this.$el as HTMLElement
     this.$emit('toggle', {
@@ -142,6 +247,17 @@ export default class AppviewTask extends Vue {
       id: this.task.id,
     })
     this.editing = false
+  }
+  getSubTaskAdderPosition() {
+    const ids = this.getSubtasksIds()
+    let position = 0
+    let i = 0
+    for (const id of ids)
+      if (id === 'task-adder') {
+        position = i
+        break
+      } else i++
+    this.subTaskAdderPoition = position
   }
 
   get exclamationColor() {
@@ -168,7 +284,27 @@ export default class AppviewTask extends Vue {
       return this.onHover && this.desktopTaskLabels !== 'Always show' || this.desktopTaskLabels === 'Always show'
     else return this.onHover && this.mobileTaskLabels !== 'Always show' || this.mobileTaskLabels === 'Always show'
   }
+  get rootSubtaskComponent(): HTMLElement {
+    return this.$el.getElementsByClassName('subtasks-transition')[0] as HTMLElement
+  }
+  get getChecklist(): any[] {
+    return appUtils.sortArrayByIds(this.task.checklist as any, this.task.checklistOrder)
+  }
 
+  @Watch('task')
+  onChange3() {
+    if (this.added) {
+      setTimeout(() => {
+        this.getSubTaskAdderPosition()
+        const childNodes = this.rootSubtaskComponent.childNodes
+        const p = this.subTaskAdderPoition
+        const adder = childNodes[p] as any
+        const newTask = childNodes[p + 1]
+        this.rootSubtaskComponent.insertBefore(newTask, adder)
+      }, 10)
+      this.added = false
+    }
+  }
   @Watch('deselectAll')
   onChange() {
     this.clicked = false
@@ -184,6 +320,19 @@ export default class AppviewTask extends Vue {
 </script>
 
 <style scoped>
+
+.handle {
+  float: right;
+  margin-right: 12px;
+}
+
+.checklist {
+  margin-top: 10px;
+}
+
+.details {
+  margin-left: 20px;
+}
 
 .check-trans-leave-active, .check-trans-enter-active {
   transition-duration: .3s;
@@ -201,7 +350,7 @@ export default class AppviewTask extends Vue {
   opacity: 0;
 }
 
-.completed {
+.completed.task {
   background-color: #c4ffbd !important;
 }
 
@@ -215,7 +364,7 @@ export default class AppviewTask extends Vue {
   transition: color .3s;
 }
 
-.wrapper {
+.wrapper, .task {
   transition: background-color .3s;
 }
 
@@ -253,11 +402,11 @@ export default class AppviewTask extends Vue {
   align-items: center;
 }
 
-.wrapper.not-completed.light:hover {
+.task.not-completed.not-selected.light:hover {
   background-color: #f0f0f0;
 }
 
-.wrapper.not-completed.dark:hover {
+.task.not-completed.not-selected.dark:hover {
   background-color: #282828;
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <base-pers
+  <base-pers v-if='perspectiveData'
     :pers-name='pers'
     :value='value'
     :base-tasks='baseTasks'
@@ -29,7 +29,7 @@ import { Task, Perspective } from '../../../interfaces/app'
     'base-pers': BasePerspective,
   },
 })
-export default class ViewAlltasks extends Vue {
+export default class CustomPerspectives extends Vue {
   @State currentAppSection!: string
   @Mutation pushView!: (obj: {view: string, viewType: string}) => void
 
@@ -49,10 +49,12 @@ export default class ViewAlltasks extends Vue {
   get baseTasks() {
     let tasks = this.tasks
     const pers = this.perspectiveData as Perspective
-    if (pers.priority !== '')
-      tasks = tasks.filter(el => el.priority === pers.priority)
-    if (pers.includeAndLabels.length > 0)
-      tasks = appUtils.filterTasksByLabels(tasks, pers.includeAndLabels)
+    if (pers) {
+      if (pers.priority !== '')
+        tasks = tasks.filter(el => el.priority === pers.priority)
+      if (pers.includeAndLabels.length > 0)
+        tasks = appUtils.filterTasksByLabels(tasks, pers.includeAndLabels)
+    }
     return tasks
   }
 }

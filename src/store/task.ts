@@ -33,7 +33,11 @@ interface Actions {
   addTask: (context: ActionContext, obj: {name: string, priority: string, labels: string[]}) => void
   deleteTasksById: (context: ActionContext, ids: string[]) => void
   changePrioritysByIds: (context: ActionContext, obj: {ids: string[], priority: string}) => void
+  addSubTask: (context: ActionContext, obj: {name: string, taskId: string, position: number, order: string[]}) => void
   addLabelByTaskIds: (context: ActionContext, obj: {ids: string[], labelId: string}) => void
+  saveSubTask: (context: ActionContext, obj: {name: string, taskId: string, completed: boolean, id: string}) => void
+  saveSubtaskOrder: (context: ActionContext, obj: {taskId: string, order: string[]}) => void
+  deleteSubTaskFromTask: (context: ActionContext, obj: {taskId: string, id: string}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -103,6 +107,8 @@ export default {
           priority: task.priority,
           userId: rootState.uid,
           labels: task.labels,
+          checklist: [],
+          checklistOrder: [],
         })
         const persRef = rootState.firestore.collection('perspectives').doc(perspectiveId)
         batch.update(persRef, {
@@ -117,6 +123,8 @@ export default {
         rootState.firestore.collection('tasks').add({
           name, labels, priority,
           userId: rootState.uid,
+          checklist: [],
+          checklistOrder: [],
         })
     },
     changePrioritysByIds({ rootState }, {ids, priority}) {
@@ -160,6 +168,8 @@ export default {
           priority: task.priority,
           userId: rootState.uid,
           labels: task.labels,
+          checklist: [],
+          checklistOrder: [],
         })
         const persRef = rootState.firestore.collection('labels').doc(labelId)
         batch.update(persRef, {
@@ -167,6 +177,66 @@ export default {
         })
 
         batch.commit()
+      }
+    },
+    saveSubtaskOrder({ rootState }, {taskId, order}) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('tasks').doc(taskId).update({
+          checklistOrder: order,
+        })
+    },
+    saveSubTask({ rootState, state }, {taskId, name, id, completed}) {
+      if (rootState.firestore && rootState.uid) {
+        const task = state.tasks.find(el => el.id === taskId) as Task
+        const i = task.checklist.findIndex(el => el.id === id) as any
+        task.checklist[i] = {
+          completed, name, id, taskId,
+        }
+        rootState.firestore.collection('tasks').doc(taskId).update({
+          checklist: task.checklist,
+        })
+      }
+    },
+    deleteSubTaskFromTask({ rootState, state }, {taskId, id}) {
+      if (rootState.firestore && rootState.uid) {
+        const task = state.tasks.find(el => el.id === taskId) as Task
+        let i = task.checklist.findIndex(el => el.id === id) as any
+        task.checklist.splice(i, 1)
+
+        i = task.checklistOrder.findIndex(el => el === id)
+        task.checklistOrder.splice(i, 1)
+        rootState.firestore.collection('tasks').doc(taskId).update({
+          checklist: task.checklist,
+          checklistOrder: task.checklistOrder,
+        })
+      }
+    },
+    addSubTask({ rootState }, {taskId, order, position, name}) {
+      if (rootState.firestore && rootState.uid) {
+        const fire = rootState.firebase.firestore.FieldValue as any
+        let timesRun = 0
+        let newId!: string
+        while (true) {
+          newId = '' + (order.length + timesRun)
+          let found = false
+          for (const id of order)
+            if (id === newId) {
+              found = true
+              break
+            }
+          timesRun++
+          if (!found) break
+        }
+        const subtask = {
+          completed: false,
+          name, id: newId,
+          taskId,
+        }
+        order.splice(position, 0, newId)
+        rootState.firestore.collection('tasks').doc(taskId).update({
+          checklistOrder: order,
+          checklist: fire.arrayUnion(subtask),
+        })
       }
     },
   } as Actions,

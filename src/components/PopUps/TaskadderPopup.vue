@@ -9,6 +9,8 @@
         :allow-priority='true'
         :allow-labels='true'
         :show-cancel='false'
+        :input='input'
+        input-theme='dark'
         @enter='add'
       />
       <span v-show='isDesktop'
@@ -30,7 +32,7 @@ import { State, Getter, Mutation, Action, namespace } from 'vuex-class'
 
 const taskVuex = namespace('task')
 
-import TaskEdit from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
+import TaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskedit.vue'
 
 import { Alert, Perspective } from '../../interfaces/app'
 
@@ -46,6 +48,13 @@ export default class LabelAdder extends Vue {
 
   @taskVuex.Action addTask!: (obj: {name: string, priority: string, labels: string[]}) => void
 
+  input: string = ''
+
+  mounted() {
+    setTimeout(() => {
+      this.input = ''
+    }, 80)
+  }
   add(obj: {name: string, priority: string, labels: string[]}) {
     this.addTask(obj)
     this.pushAlert({

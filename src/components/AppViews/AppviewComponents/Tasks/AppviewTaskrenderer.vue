@@ -29,15 +29,15 @@ import { Component, Vue, Prop, Mixins, Watch } from 'vue-property-decorator'
 import { Getter, State } from 'vuex-class'
 import Mixin from '@/mixins/sortable'
 
-import ViewTask from '@/components/AppViews/AppviewComponents/AppviewTask.vue'
+import ViewTask from '@/components/AppViews/AppviewComponents/Tasks/AppviewTask.vue'
 
 import Sortable, { MultiDrag } from 'sortablejs'
 import { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
-import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
+import TaskEditTemplate from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskedit.vue'
 
 Sortable.mount(new MultiDrag(), new AutoScroll())
 
-import { Task, Label } from '../../../interfaces/app'
+import { Task, Label } from '../../../../interfaces/app'
 
 @Component({
   components: {
@@ -104,13 +104,13 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
             class: 'handle', key: 'task-adder',
             fixedPers: this.fixedPers, fixedLabel: this.fixedLabel,
             defaultLabels: this.defaultLabels, defaultPriority: this.defaultPriority,
-            allowPriority: this.allowPriority, allowLabels: this.allowLabels,
-            dataVid: 'task-adder', lock: true,
+            allowPriority: this.allowPriority, allowLabels: this.allowLabels, lock: true,
           },
         })
         const el = this.rootComponent.querySelector('.main-button') as HTMLElement
         el.setAttribute('id', 'main-button')
         instance.$mount('#main-button')
+        this.rootComponent.getElementsByClassName('task-adder')[0].setAttribute('data-vid', 'task-adder')
         this.numberOfAdders++
         instance.$on('enter', this.add)
         instance.$on('cancel', () => {
@@ -184,8 +184,8 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   }
 
   @Watch('tasks')
-  onChange(j: any, l: any) {
-    if (this.fixAdderPosition && this.added && this.insertBefore) {
+  onChange() {
+    if (!this.fixAdderPosition && this.added && this.insertBefore) {
       setTimeout(() => {
         this.getTaskAdderPosition()
         const childNodes = this.rootComponent.childNodes
