@@ -9,16 +9,20 @@
     >
       <div
         class='content-wrapper'
-        @click='toggleChecklist'
-        v-long-press='700'
-        @long-press-start='toggleElement'
       >
         <span class='circles'>
           <i v-if='!completed' @click='v => completed = true' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
           <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
         </span>
         <transition name='check-trans' mode='out-in'>
-          <div v-if='!completed' key='cont' class='content' :class='{handle: allowDragAndDrop}'>
+          <div v-if='!completed'
+            key='cont'
+            class='content'
+            :class='{handle: allowDragAndDrop}'
+            v-long-press='700'
+            @long-press-start='toggleElement'
+            @click='toggleChecklist'
+          >
             <div class='txt' :class='theme'>
               {{ task.name }}
               <i v-if='task.priority'
@@ -112,7 +116,7 @@ const settingsVuex = namespace('settings')
 import LongPress from 'vue-directive-long-press'
 
 import Sortable from 'sortablejs'
- 
+
 Vue.directive('long-press', LongPress)
 
 @Component({
@@ -188,7 +192,7 @@ export default class AppviewTask extends Vue {
           taskId: this.task.id,
           order: this.getSubtasksIds().filter(el => el !== 'task-adder'),
         })
-      }
+      },
     })
   }
   addTaskSubtask() {

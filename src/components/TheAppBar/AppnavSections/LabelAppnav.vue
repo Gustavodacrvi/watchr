@@ -99,6 +99,7 @@ export default class LabelAppnav extends Vue {
                 id,
                 name,
               })
+              this.$router.push('user?label=' + name)
             },
           })
         },

@@ -59,7 +59,7 @@ export default class SubtaskEdit extends Vue {
     this.val = ''
   }
   cancel() {
-    this.$emit("cancel")
+    this.$emit('cancel')
     this.val = ''
   }
 

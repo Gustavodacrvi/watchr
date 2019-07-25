@@ -188,7 +188,7 @@ export default {
     saveSubTask({ rootState, state }, {taskId, name, id, completed}) {
       if (rootState.firestore && rootState.uid) {
         const task = state.tasks.find(el => el.id === taskId) as Task
-        let i = task.checklist.findIndex(el => el.id === id) as any
+        const i = task.checklist.findIndex(el => el.id === id) as any
         task.checklist[i] = {
           completed, name, id, taskId,
         }
@@ -201,11 +201,13 @@ export default {
       if (rootState.firestore && rootState.uid) {
         const task = state.tasks.find(el => el.id === taskId) as Task
         let i = task.checklist.findIndex(el => el.id === id) as any
-
         task.checklist.splice(i, 1)
-        
+
+        i = task.checklistOrder.findIndex(el => el === id)
+        task.checklistOrder.splice(i, 1)
         rootState.firestore.collection('tasks').doc(taskId).update({
           checklist: task.checklist,
+          checklistOrder: task.checklistOrder,
         })
       }
     },
@@ -225,7 +227,7 @@ export default {
           timesRun++
           if (!found) break
         }
-        let subtask = {
+        const subtask = {
           completed: false,
           name, id: newId,
           taskId,

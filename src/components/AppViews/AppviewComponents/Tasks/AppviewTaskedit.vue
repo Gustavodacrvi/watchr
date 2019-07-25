@@ -257,7 +257,6 @@ export default class AppviewTaskedit extends Vue {
   }
   @Watch('input')
   onInput() {
-    console.log(3)
     if (this.input)
       this.value = this.input
   }

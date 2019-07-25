@@ -220,10 +220,12 @@ export default class LabelPerspective extends Vue {
     this.labels.splice(index, 1)
   }
   onUpdate(ids: string[]) {
-    this.saveLabelTaskOrder({
-      order: ids,
-      id: this.getLabel.id,
-    })
+    const lab = this.getLabel
+    if (lab)
+      this.saveLabelTaskOrder({
+        order: ids,
+        id: lab.id,
+      })
   }
   selectSettingsOption(value: string) {
     if (!this.sort.find(el => el === value))
@@ -233,31 +235,40 @@ export default class LabelPerspective extends Vue {
         this.sort.push('priority')
   }
   addLabelTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
-    this.addTaskLabel({
-      task: {
-        name: obj.name,
-        priority: obj.priority as any,
-        labels: obj.labels.concat([this.getLabel.id]),
-      },
-      position: obj.position,
-      labelId: this.getLabel.id,
-      order: obj.order,
-    } as any)
+    const lab = this.getLabel
+    if (lab)
+      this.addTaskLabel({
+        task: {
+          name: obj.name,
+          priority: obj.priority as any,
+          labels: obj.labels.concat([lab.id]),
+        },
+        position: obj.position,
+        labelId: lab.id,
+        order: obj.order,
+      } as any)
   }
 
-  get getLabel(): Label {
+  get getLabel(): Label | undefined {
     const lab: Label = this.savedLabels.find(el => el.name === this.label) as any
     return lab
   }
   get viewTasks(): Task[] {
-    return this.tasks.filter(el => el.labels.includes(this.getLabel.id))
+    const lab = this.getLabel
+    if (lab)
+      return this.tasks.filter(el => el.labels.includes(lab.id))
+    else return []
   }
   get getLabels(): Label[] {
     return this.getLabelsByIds(this.labels)
   }
   get sortedTasks(): Task[] {
-    const ord = appUtils.fixOrder(this.viewTasks, this.getLabel.order)
-    return appUtils.sortArrayByIds(this.viewTasks, ord)
+    const lab = this.getLabel
+    if (lab) {
+      const ord = appUtils.fixOrder(this.viewTasks, lab.order)
+      return appUtils.sortArrayByIds(this.viewTasks, ord)
+    }
+    return []
   }
   get getTasks(): Task[] {
     let tasks = this.viewTasks

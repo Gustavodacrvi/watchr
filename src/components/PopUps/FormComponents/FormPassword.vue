@@ -60,12 +60,10 @@ export default class FormPassword extends Vue {
   }
 
   togglePassword() {
-    console.log(this.passwordType)
     if (this.passwordType === 'text')
       this.passwordType = 'password'
     else
       this.passwordType = 'text'
-    console.log(this.passwordType)    
   }
 
   @Watch('value')
