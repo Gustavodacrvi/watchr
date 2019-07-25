@@ -184,7 +184,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   }
 
   @Watch('tasks')
-  onChange(j: any, l: any) {
+  onChange() {
     if (!this.fixAdderPosition && this.added && this.insertBefore) {
       setTimeout(() => {
         this.getTaskAdderPosition()

@@ -151,6 +151,8 @@ export default class AppviewTask extends Vue {
   subtaskValue: string = ''
   showChecklist: boolean = false
   justLongPressed: boolean = false
+  added: boolean = false
+  subTaskAdderPoition: number = 0
   editing: boolean = false
   sortable: any = null
   options: ListIcon[] = [
@@ -178,7 +180,7 @@ export default class AppviewTask extends Vue {
     this.mount()
   }
   mount() {
-    this.sortable = new Sortable(this.rootSubtaskSelector, {
+    this.sortable = new Sortable(this.rootSubtaskComponent, {
       disabled: false,
       group: {name: 'subtasks', pull: false, put: false},
       animation: 150,
@@ -194,20 +196,15 @@ export default class AppviewTask extends Vue {
   }
   addTaskSubtask() {
     const ids = this.getSubtasksIds()
-    let position = 0
-    let i = 0
-    for (const id of ids)
-      if (id === 'task-adder') {
-        position = i
-        break
-      } else i++
+    this.getSubTaskAdderPosition()
     const order = ids.filter(el => el !== 'task-adder')
     this.addSubTask({
       name: this.subtaskValue,
-      position,
+      position: this.subTaskAdderPoition,
       taskId: this.task.id,
       order: this.task.checklistOrder,
     })
+    this.added = true
     this.subtaskValue = ''
   }
   getSubtasksIds(): string[] {
@@ -250,6 +247,17 @@ export default class AppviewTask extends Vue {
     })
     this.editing = false
   }
+  getSubTaskAdderPosition() {
+    const ids = this.getSubtasksIds()
+    let position = 0
+    let i = 0
+    for (const id of ids)
+      if (id === 'task-adder') {
+        position = i
+        break
+      } else i++
+    this.subTaskAdderPoition = position
+  }
 
   get exclamationColor() {
     switch (this.task.priority) {
@@ -275,13 +283,27 @@ export default class AppviewTask extends Vue {
       return this.onHover && this.desktopTaskLabels !== 'Always show' || this.desktopTaskLabels === 'Always show'
     else return this.onHover && this.mobileTaskLabels !== 'Always show' || this.mobileTaskLabels === 'Always show'
   }
-  get rootSubtaskSelector(): HTMLElement {
+  get rootSubtaskComponent(): HTMLElement {
     return this.$el.getElementsByClassName('subtasks-transition')[0] as HTMLElement
   }
   get getChecklist(): any[] {
     return appUtils.sortArrayByIds(this.task.checklist as any, this.task.checklistOrder)
   }
 
+  @Watch('task')
+  onChange3() {
+    if (this.added) {
+      setTimeout(() => {
+        this.getSubTaskAdderPosition()
+        const childNodes = this.rootSubtaskComponent.childNodes
+        const p = this.subTaskAdderPoition
+        const adder = childNodes[p] as any
+        const newTask = childNodes[p + 1]
+        this.rootSubtaskComponent.insertBefore(newTask, adder)
+      }, 10)
+      this.added = false
+    }
+  }
   @Watch('deselectAll')
   onChange() {
     this.clicked = false
