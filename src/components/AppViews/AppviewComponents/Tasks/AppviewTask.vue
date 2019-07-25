@@ -70,31 +70,10 @@
 
               :data-vid='todo.id'
             />
-            <div key='task-adder' class='subtask-adder pointer' data-vid='task-adder'>
-              <transition name='fade' mode='out-in'>
-                <div v-if='addingSubtask' key='adding' class='adding-wrapper'>
-                  <div class='adding'>
-                    <form-input
-                      class='subtask-input'
-                      type='text'
-                      placeholder='Subtask...'
-                      v-model='subtaskValue'
-                      :disabled='true'
-                      :focus='true'
-                      :keydown='true'
-                      :max='200'
-                      @enter='addSubtask'
-                    />
-                  </div>
-                  <form-btn class='tiny' @click='addSubtask'>Add subtask</form-btn>
-                  <span class='txt cancel pointer' :class='theme' @click='toggleAddSubtask'>Cancel</span>
-                </div>
-                <div v-else key='not-adding' class='txt not-adding' :class='theme' @click='toggleAddSubtask'>
-                  <i class='fas fa-plus fa-sm'></i>
-                  <span>Add subtask</span>
-                </div>
-              </transition>
-            </div>
+            <sub-task-edit key='task-adder' data-vid='task-adder'
+              v-model='subtaskValue'
+              @add='addTaskSubtask'
+            />
           </transition-group>
         </div>
       </div>
@@ -123,8 +102,7 @@ import { State, Getter, namespace } from 'vuex-class'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 import TaskEditTemplate from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskedit.vue'
 import SubTask from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtask.vue'
-import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
-import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
+import SubTaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtaskEdit.vue'
 
 import { Task, ListIcon, Label } from '../../../../interfaces/app'
 
@@ -145,8 +123,7 @@ Vue.directive('long-press', LongPress)
     'icon-option': AppviewIconoptions,
     'task-edit': TaskEditTemplate,
     'sub-task': SubTask,
-    'form-input': FormInput,
-    'form-btn': FormButton,
+    'sub-task-edit': SubTaskEdit,
   },
 })
 export default class AppviewTask extends Vue {
@@ -173,7 +150,6 @@ export default class AppviewTask extends Vue {
   subtaskValue: string = ''
   showChecklist: boolean = false
   justLongPressed: boolean = false
-  addingSubtask: boolean = false
   editing: boolean = false
   sortable: any = null
   options: ListIcon[] = [
@@ -200,10 +176,6 @@ export default class AppviewTask extends Vue {
   mounted() {
     this.mount()
   }
-
-  toggleAddSubtask() {
-    this.addingSubtask = !this.addingSubtask
-  }
   mount() {
     this.sortable = new Sortable(this.rootSubtaskSelector, {
       disabled: false,
@@ -216,7 +188,7 @@ export default class AppviewTask extends Vue {
       }
     })
   }
-  addSubtask() {
+  addTaskSubtask() {
     const ids = this.getSubtasksIds()
     let position = 0
     let i = 0
@@ -321,26 +293,6 @@ export default class AppviewTask extends Vue {
 </script>
 
 <style scoped>
-
-.adding {
-  margin-bottom: 4px;
-}
-
-.cancel {
-  margin-left: 4px;
-}
-
-.not-adding {
-  margin: 6px;
-}
-
-.not-adding .fas {
-  margin-right: 10px;
-}
-
-.cancel {
-  color: #FF6B66;
-}
 
 .handle {
   float: right;
