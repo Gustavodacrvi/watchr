@@ -182,7 +182,7 @@ export default {
         let timesRun = 0
         let newId!: string
         while (true) {
-          newId = '' + order.length + timesRun
+          newId = '' + (order.length + timesRun)
           let found = false
           for (const id of order)
             if (id === newId) {

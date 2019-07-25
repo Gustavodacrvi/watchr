@@ -6,6 +6,7 @@
     autocomplete='off'
     :class='[classArr, theme]'
     v-model.trim='model'
+    @keydown='onKeydown'
   >
 </template>
 
@@ -23,11 +24,23 @@ export default class FormInput extends Vue {
   @Prop(String) type!: string | null
   @Prop(String) placeholder!: string
   @Prop(Boolean) disabled!: boolean
+  @Prop(Boolean) focus!: boolean
+  @Prop(Boolean) keydown!: boolean
 
   model: string | null = null
 
   created() {
     this.model = this.value
+  }
+  mounted() {
+    if (this.focus) {
+      const el = this.$el as any
+      el.focus()
+    }
+  }
+
+  onKeydown(key: any) {
+    if (this.keydown && key.key === 'Enter') this.$emit('enter')
   }
 
   get classArr(): any[] {

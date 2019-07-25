@@ -75,10 +75,10 @@ import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
 import EmptyTagsRenderer from '@/components/AppViews/AppviewComponents/AppviewEmptytagrenderer.vue'
 import AppviewHeaderIcons from '@/components/AppViews/AppviewComponents/AppviewHeadericons.vue'
-import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/AppviewTaskrenderer.vue'
+import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskrenderer.vue'
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 
-import { Perspective, Label, Task, ListIcon } from '../../../interfaces/app'
+import { Perspective, Label, Task, ListIcon, Alert } from '../../../interfaces/app'
 import appUtils from '@/utils/app'
 
 const labelVuex = namespace('label')
@@ -102,6 +102,7 @@ export default class PerspectiveAppview extends Vue {
   @Mutation pushView!: (obj: {view: string, viewType: string}) => void
   @Mutation sendOptionsToNavbar!: (options: ListIcon[]) => void
   @Mutation hideNavBarOptions!: () => void
+  @Mutation pushAlert!: (alert: Alert) => void
 
   @taskVuex.State tasks!: Task[]
   // tslint:disable-next-line:max-line-length
@@ -234,6 +235,11 @@ export default class PerspectiveAppview extends Vue {
       perspectiveId: this.pers.id,
       position: obj.position, order: obj.order,
     } as any)
+    this.pushAlert({
+      name: 'The task was successfully added.',
+      duration: 1.5,
+      type: 'success',
+    })
   }
   selectPriority(value: string) {
     if (!this.save)

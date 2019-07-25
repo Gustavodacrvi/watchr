@@ -72,11 +72,10 @@ import { namespace, State } from 'vuex-class'
 
 const labelsVuex = namespace('label')
 
-import { ListIcon, Task, Label } from '../../../interfaces/app'
+import { ListIcon, Task, Label } from '../../../../interfaces/app'
 
 import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
-import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
 import DropdownInput from '@/components/DropdownInput.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
@@ -86,7 +85,6 @@ import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue
   components: {
     'view-btn': FormButton,
     'drop-input': DropdownInput,
-    'task-edit': TaskEditTemplate,
     'view-options': AppviewIconoptions,
     'view-tag': Tag,
     'drop-finder': DropdownFinder,

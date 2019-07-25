@@ -63,34 +63,33 @@
         </span>
           <div class='checklist'>
           <transition-group name='fade' tag='div' class='subtasks-transition'>
-            <div v-for='todo in checklist'
-              class='subtask round-border'
+            <sub-task v-for='todo in getChecklist'
               :key='todo.id'
               :class='theme'
+              :task='todo'
 
               :data-vid='todo.id'
-            >
-              <span class='circles'>
-                <i v-if='!completed' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
-                <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
-              </span>
-              <span class='txt' :class='theme'>{{ todo.name }}</span>
-            </div>
+            />
             <div key='task-adder' class='subtask-adder pointer' data-vid='task-adder'>
               <transition name='fade' mode='out-in'>
                 <div v-if='addingSubtask' key='adding' class='adding-wrapper'>
                   <div class='adding'>
                     <form-input
+                      class='subtask-input'
                       type='text'
                       placeholder='Subtask...'
                       v-model='subtaskValue'
+                      :disabled='true'
+                      :focus='true'
+                      :keydown='true'
                       :max='200'
+                      @enter='addSubtask'
                     />
                   </div>
                   <form-btn class='tiny' @click='addSubtask'>Add subtask</form-btn>
-                  <span class='txt cancel pointer' :class='theme' @click='addingSubtask = false'>Cancel</span>
+                  <span class='txt cancel pointer' :class='theme' @click='toggleAddSubtask'>Cancel</span>
                 </div>
-                <div v-else key='not-adding' class='txt not-adding' :class='theme' @click='addingSubtask = true'>
+                <div v-else key='not-adding' class='txt not-adding' :class='theme' @click='toggleAddSubtask'>
                   <i class='fas fa-plus fa-sm'></i>
                   <span>Add subtask</span>
                 </div>
@@ -122,11 +121,14 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter, namespace } from 'vuex-class'
 
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
-import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
+import TaskEditTemplate from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskedit.vue'
+import SubTask from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtask.vue'
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
-import { Task, ListIcon, Label } from '../../../interfaces/app'
+import { Task, ListIcon, Label } from '../../../../interfaces/app'
+
+import appUtils from '@/utils/app'
 
 const taskVuex = namespace('task')
 const labelVuex = namespace('label')
@@ -142,6 +144,7 @@ Vue.directive('long-press', LongPress)
   components: {
     'icon-option': AppviewIconoptions,
     'task-edit': TaskEditTemplate,
+    'sub-task': SubTask,
     'form-input': FormInput,
     'form-btn': FormButton,
   },
@@ -173,33 +176,6 @@ export default class AppviewTask extends Vue {
   addingSubtask: boolean = false
   editing: boolean = false
   sortable: any = null
-  checklist: any = [
-    {
-      name: 'Subtask 1',
-      completed: false,
-      id: 0,
-    },
-    {
-      name: 'Subtask 2',
-      completed: false,
-      id: 1,
-    },
-    {
-      name: 'Subtask 3',
-      completed: false,
-      id: 2,
-    },
-    {
-      name: 'Subtask 4',
-      completed: false,
-      id: 3,
-    },
-    {
-      name: 'Subtask 5',
-      completed: false,
-      id: 4,
-    },
-  ]
   options: ListIcon[] = [
     {
       name: 'Delete task',
@@ -225,6 +201,9 @@ export default class AppviewTask extends Vue {
     this.mount()
   }
 
+  toggleAddSubtask() {
+    this.addingSubtask = !this.addingSubtask
+  }
   mount() {
     this.sortable = new Sortable(this.rootSubtaskSelector, {
       disabled: false,
@@ -253,6 +232,7 @@ export default class AppviewTask extends Vue {
       taskId: this.task.id,
       order: this.task.checklistOrder,
     })
+    this.subtaskValue = ''
   }
   getSubtasksIds(): string[] {
     const root = this.$el.querySelector('.subtasks-transition')
@@ -322,6 +302,9 @@ export default class AppviewTask extends Vue {
   get rootSubtaskSelector(): HTMLElement {
     return this.$el.getElementsByClassName('subtasks-transition')[0] as HTMLElement
   }
+  get getChecklist(): any[] {
+    return appUtils.sortArrayByIds(this.task.checklist as any, this.task.checklistOrder)
+  }
 
   @Watch('deselectAll')
   onChange() {
@@ -357,12 +340,6 @@ export default class AppviewTask extends Vue {
 
 .cancel {
   color: #FF6B66;
-}
-
-.subtask {
-  position: relative;
-  padding: 4px;
-  cursor: pointer;
 }
 
 .handle {
@@ -446,11 +423,11 @@ export default class AppviewTask extends Vue {
   align-items: center;
 }
 
-.task.not-completed.not-selected.light:hover, .subtask.light:hover {
+.task.not-completed.not-selected.light:hover {
   background-color: #f0f0f0;
 }
 
-.task.not-completed.not-selected.dark:hover, .subtask.dark:hover {
+.task.not-completed.not-selected.dark:hover {
   background-color: #282828;
 }
 

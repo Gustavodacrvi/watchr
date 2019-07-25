@@ -29,15 +29,15 @@ import { Component, Vue, Prop, Mixins, Watch } from 'vue-property-decorator'
 import { Getter, State } from 'vuex-class'
 import Mixin from '@/mixins/sortable'
 
-import ViewTask from '@/components/AppViews/AppviewComponents/AppviewTask.vue'
+import ViewTask from '@/components/AppViews/AppviewComponents/Tasks/AppviewTask.vue'
 
 import Sortable, { MultiDrag } from 'sortablejs'
 import { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
-import TaskEditTemplate from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
+import TaskEditTemplate from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskedit.vue'
 
 Sortable.mount(new MultiDrag(), new AutoScroll())
 
-import { Task, Label } from '../../../interfaces/app'
+import { Task, Label } from '../../../../interfaces/app'
 
 @Component({
   components: {

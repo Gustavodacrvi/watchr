@@ -32,7 +32,7 @@ import { State, Getter, Mutation, Action, namespace } from 'vuex-class'
 
 const taskVuex = namespace('task')
 
-import TaskEdit from '@/components/AppViews/AppviewComponents/AppviewTaskedit.vue'
+import TaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskedit.vue'
 
 import { Alert, Perspective } from '../../interfaces/app'
 
