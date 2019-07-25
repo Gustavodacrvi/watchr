@@ -133,6 +133,7 @@ export default class AppviewTask extends Vue {
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string}) => void
   @taskVuex.Action addSubTask!: (obj: {name: string, taskId: string, position: number, order: string[]}) => void
+  @taskVuex.Action saveSubtaskOrder!: (obj: {taskId: string, order: string[]}) => void
 
   @settingsVuex.State mobileTaskLabels!: string
   @settingsVuex.State desktopTaskLabels!: string
@@ -184,7 +185,10 @@ export default class AppviewTask extends Vue {
       dataIdAttr: 'data-sortableid',
 
       onUpdate: () => {
-        console.log(this.getSubtasksIds().filter(el => el !== 'task-adder'))
+        this.saveSubtaskOrder({
+          taskId: this.task.id,
+          order: this.getSubtasksIds().filter(el => el !== 'task-adder'),
+        })
       }
     })
   }

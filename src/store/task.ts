@@ -35,6 +35,7 @@ interface Actions {
   changePrioritysByIds: (context: ActionContext, obj: {ids: string[], priority: string}) => void
   addSubTask: (context: ActionContext, obj: {name: string, taskId: string, position: number, order: string[]}) => void
   addLabelByTaskIds: (context: ActionContext, obj: {ids: string[], labelId: string}) => void
+  saveSubtaskOrder: (context: ActionContext, obj: {taskId: string, order: string[]}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -175,6 +176,12 @@ export default {
 
         batch.commit()
       }
+    },
+    saveSubtaskOrder({ rootState }, {taskId, order}) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('tasks').doc(taskId).update({
+          checklistOrder: order,
+        })
     },
     addSubTask({ rootState }, {taskId, order, position, name}) {
       if (rootState.firestore && rootState.uid) {
