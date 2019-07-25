@@ -1,20 +1,22 @@
 <template>
-  <transition name='fade' mode='out-in'>
-    <div v-if='!editing' key='not-edit' class='subtask round-border' :class='[theme, {completed: task.completed}]' @dblclick='editing = true'>
-      <span class='circles' @click='completeSubTask'>
-        <i v-if='!task.completed' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
-        <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
-      </span>
-      <span class='txt' :class='theme'>{{ task.name }}</span>
-      <i class='fas right fa-trash fa-sm icon txt' :class='theme' @click='deleteSubTask'></i>
-    </div>
-    <task-edit v-else key='editing'
-      v-model='subtaskVal'
-      :only-edit='true'
-      @add='saveNewSubTaskName'
-      @cancel='editing = false'
-    />
-  </transition>
+  <div>
+    <transition name='fade' mode='out-in'>
+      <div v-if='!editing' key='not-edit' class='subtask round-border' :class='[theme, {completed: task.completed}]' @dblclick='editing = true'>
+        <span class='circles' @click='completeSubTask'>
+          <i v-if='!task.completed' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
+          <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
+        </span>
+        <span class='txt' :class='theme'>{{ task.name }}</span>
+        <i class='fas right fa-trash fa-sm icon txt' :class='theme' @click='deleteSubTask'></i>
+      </div>
+      <task-edit v-else key='editing'
+        v-model='subtaskVal'
+        :only-edit='true'
+        @add='saveNewSubTaskName'
+        @cancel='editing = false'
+      />
+    </transition>
+  </div>
 </template>
 
 <script lang='ts'>
@@ -37,6 +39,7 @@ export default class AppviewSubtask extends Vue {
   @Prop(Object) task!: any
 
   @taskVuex.Action saveSubTask!: (obj: {name: string, taskId: string, completed: boolean, id: string}) => void
+  @taskVuex.Action deleteSubTaskFromTask!: (obj: {taskId: string, id: string}) => void
 
   editing: boolean = false
   subtaskVal: string = ''
@@ -64,7 +67,10 @@ export default class AppviewSubtask extends Vue {
       })
   }
   deleteSubTask() {
-
+    this.deleteSubTaskFromTask({
+      id: this.task.id,
+      taskId: this.task.taskId,
+    })
   }
 }
 

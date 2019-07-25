@@ -58,23 +58,20 @@
     </div>
     <transition name='fade' mode='out-in'>
       <div v-show='showChecklist' class='details'>
-        <span class='txt task-desc' :class='theme'>
-          I am the freaking notes!
-        </span>
-          <div class='checklist'>
-          <transition-group name='fade' tag='div' class='subtasks-transition'>
-            <sub-task v-for='todo in getChecklist'
-              :key='todo.id'
-              :class='theme'
-              :task='todo'
+        <div class='checklist'>
+        <transition-group name='fade' tag='div' class='subtasks-transition'>
+          <sub-task v-for='todo in getChecklist'
+            :key='todo.id'
+            :class='theme'
+            :task='todo'
 
-              :data-vid='todo.id'
-            />
-            <sub-task-edit key='task-adder' data-vid='task-adder'
-              v-model='subtaskValue'
-              @add='addTaskSubtask'
-            />
-          </transition-group>
+            :data-vid='todo.id'
+          />
+          <sub-task-edit key='task-adder' data-vid='task-adder'
+            v-model='subtaskValue'
+            @add='addTaskSubtask'
+          />
+        </transition-group>
         </div>
       </div>
     </transition>
@@ -330,7 +327,7 @@ export default class AppviewTask extends Vue {
 }
 
 .details {
-  margin-left: 36px;
+  margin-left: 20px;
 }
 
 .check-trans-leave-active, .check-trans-enter-active {

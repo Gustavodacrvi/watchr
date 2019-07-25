@@ -37,6 +37,7 @@ interface Actions {
   addLabelByTaskIds: (context: ActionContext, obj: {ids: string[], labelId: string}) => void
   saveSubTask: (context: ActionContext, obj: {name: string, taskId: string, completed: boolean, id: string}) => void
   saveSubtaskOrder: (context: ActionContext, obj: {taskId: string, order: string[]}) => void
+  deleteSubTaskFromTask: (context: ActionContext, obj: {taskId: string, id: string}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -191,6 +192,18 @@ export default {
         task.checklist[i] = {
           completed, name, id, taskId,
         }
+        rootState.firestore.collection('tasks').doc(taskId).update({
+          checklist: task.checklist,
+        })
+      }
+    },
+    deleteSubTaskFromTask({ rootState, state }, {taskId, id}) {
+      if (rootState.firestore && rootState.uid) {
+        const task = state.tasks.find(el => el.id === taskId) as Task
+        let i = task.checklist.findIndex(el => el.id === id) as any
+
+        task.checklist.splice(i, 1)
+        
         rootState.firestore.collection('tasks').doc(taskId).update({
           checklist: task.checklist,
         })
