@@ -10,7 +10,7 @@
     <task-edit v-else key='editing'
       v-model='subtaskVal'
       :only-edit='true'
-      @add='saveSubTask'
+      @add='saveNewSubTaskName'
       @cancel='editing = false'
     />
   </transition>
@@ -19,7 +19,9 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { State } from 'vuex-class'
+import { State, namespace } from 'vuex-class'
+
+const taskVuex = namespace('task')
 
 import SubTaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtaskEdit.vue'
 
@@ -33,15 +35,25 @@ export default class AppviewSubtask extends Vue {
 
   @Prop(Object) task!: any
 
+  @taskVuex.Action saveSubTask!: (obj: {name: string, taskId: string, completed: boolean, id: string}) => void
+
   editing: boolean = false
+  completed: boolean = false
   subtaskVal: string = ''
 
   created() {
     this.subtaskVal = this.task.name
+    this.completed = this.task.completed
   }
 
-  saveSubTask() {
-    console.log(this.task)
+  saveNewSubTaskName() {
+    this.saveSubTask({
+      name: this.subtaskVal,
+      completed: this.completed,
+      taskId: this.task.taskId,
+      id: this.task.id,
+    })
+    this.editing = false
   }
 }
 

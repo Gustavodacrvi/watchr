@@ -72,7 +72,7 @@ export interface Task {
   checklist: Array<{
     completed: boolean,
     name: string,
-    id: number,
+    id: string,
     taskId: string,
   }>
 }

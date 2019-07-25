@@ -35,6 +35,7 @@ interface Actions {
   changePrioritysByIds: (context: ActionContext, obj: {ids: string[], priority: string}) => void
   addSubTask: (context: ActionContext, obj: {name: string, taskId: string, position: number, order: string[]}) => void
   addLabelByTaskIds: (context: ActionContext, obj: {ids: string[], labelId: string}) => void
+  saveSubTask: (context: ActionContext, obj: {name: string, taskId: string, completed: boolean, id: string}) => void
   saveSubtaskOrder: (context: ActionContext, obj: {taskId: string, order: string[]}) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
@@ -183,6 +184,19 @@ export default {
           checklistOrder: order,
         })
     },
+    saveSubTask({ rootState, state }, {taskId, name, id, completed}) {
+      if (rootState.firestore && rootState.uid) {
+        const task = state.tasks.find(el => el.id === taskId) as Task
+        let i = task.checklist.findIndex(el => el.id === id) as any
+        task.checklist[i] = {
+          completed, name, id, taskId,
+        }
+        console.log(task.checklist)
+        rootState.firestore.collection('tasks').doc(taskId).update({
+          checklist: task.checklist,
+        })
+      }
+    },
     addSubTask({ rootState }, {taskId, order, position, name}) {
       if (rootState.firestore && rootState.uid) {
         const fire = rootState.firebase.firestore.FieldValue as any
@@ -210,6 +224,6 @@ export default {
           checklist: fire.arrayUnion(subtask),
         })
       }
-    }
+    },
   } as Actions,
 }
