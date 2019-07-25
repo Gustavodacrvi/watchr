@@ -1,10 +1,10 @@
 <template>
   <input
-    class='margin input txt round-border gray dark'
+    class='margin input txt round-border gray'
     :placeholder='placeholder'
     :type='type'
     autocomplete='off'
-    :class='[classArr, theme]'
+    :class='[classArr, inputTheme ? inputTheme : theme]'
     v-model.trim='model'
     @keydown='onKeydown'
   >
@@ -22,6 +22,7 @@ export default class FormInput extends Vue {
   @Prop({required: true}) value!: string | null
   @Prop({required: true, type: Number}) max!: number
   @Prop(String) type!: string | null
+  @Prop(String) inputTheme!: string | null
   @Prop(String) placeholder!: string
   @Prop(Boolean) disabled!: boolean
   @Prop(Boolean) focus!: boolean

@@ -11,12 +11,13 @@
             :disabled='true'
             :focus='true'
             :keydown='true'
+            :input-theme='theme'
             :max='200'
-            @enter="$emit('add')"
+            @enter='add'
           />
         </div>
-        <form-btn class='tiny' @click="$emit('add')">Add subtask</form-btn>
-        <span class='txt cancel pointer' :class='theme' @click='addingSubtask = false;$emit("cancel")'>Cancel</span>
+        <form-btn class='tiny' @click='add'>Add subtask</form-btn>
+        <span class='txt cancel pointer' :class='theme' @click='addingSubtask = false;cancel()'>Cancel</span>
       </div>
       <div v-else key='not-adding' class='txt not-adding' :class='theme' @click='addingSubtask = true'>
         <i class='fas fa-plus fa-sm'></i>
@@ -51,6 +52,15 @@ export default class SubtaskEdit extends Vue {
 
   created() {
     this.val = this.value
+  }
+
+  add() {
+    this.$emit('add')
+    this.val = ''
+  }
+  cancel() {
+    this.$emit("cancel")
+    this.val = ''
   }
 
   @Watch('val')

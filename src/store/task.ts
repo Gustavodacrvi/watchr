@@ -191,7 +191,6 @@ export default {
         task.checklist[i] = {
           completed, name, id, taskId,
         }
-        console.log(task.checklist)
         rootState.firestore.collection('tasks').doc(taskId).update({
           checklist: task.checklist,
         })

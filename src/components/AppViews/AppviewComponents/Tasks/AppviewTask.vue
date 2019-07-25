@@ -349,7 +349,7 @@ export default class AppviewTask extends Vue {
   opacity: 0;
 }
 
-.completed {
+.completed.task {
   background-color: #c4ffbd !important;
 }
 

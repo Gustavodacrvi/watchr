@@ -1,11 +1,12 @@
 <template>
   <transition name='fade' mode='out-in'>
-    <div v-if='!editing' key='not-edit' class='subtask round-border' :class='theme' @dblclick='editing = true'>
-      <span class='circles'>
+    <div v-if='!editing' key='not-edit' class='subtask round-border' :class='[theme, {completed: task.completed}]' @dblclick='editing = true'>
+      <span class='circles' @click='completeSubTask'>
         <i v-if='!task.completed' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
         <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
       </span>
       <span class='txt' :class='theme'>{{ task.name }}</span>
+      <i class='fas right fa-trash fa-sm icon txt' :class='theme' @click='deleteSubTask'></i>
     </div>
     <task-edit v-else key='editing'
       v-model='subtaskVal'
@@ -38,28 +39,47 @@ export default class AppviewSubtask extends Vue {
   @taskVuex.Action saveSubTask!: (obj: {name: string, taskId: string, completed: boolean, id: string}) => void
 
   editing: boolean = false
-  completed: boolean = false
   subtaskVal: string = ''
 
   created() {
     this.subtaskVal = this.task.name
-    this.completed = this.task.completed
   }
 
   saveNewSubTaskName() {
     this.saveSubTask({
       name: this.subtaskVal,
-      completed: this.completed,
+      completed: this.task.completed,
       taskId: this.task.taskId,
       id: this.task.id,
     })
     this.editing = false
+  }
+  completeSubTask() {
+    if (!this.task.completed)
+      this.saveSubTask({
+        name: this.task.name,
+        completed: true,
+        taskId: this.task.taskId,
+        id: this.task.id,
+      })
+  }
+  deleteSubTask() {
+
   }
 }
 
 </script>
 
 <style scoped>
+
+.completed {
+  opacity: .4;
+}
+
+.right {
+  position: absolute;
+  right: 10px;
+}
 
 .circle {
   transition: color .3s;
@@ -75,6 +95,9 @@ export default class AppviewSubtask extends Vue {
   position: relative;
   padding: 4px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color .3s;
 }
 
 .subtask.light:hover {
