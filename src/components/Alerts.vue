@@ -50,10 +50,11 @@ export default class LabelAdder extends Vue {
 
 .wrapper {
   justify-content: center;
-  position: absolute;
+  position: fixed;
   pointer-events: none;
   width: 100%;
   bottom: 0;
+  z-index: 999;
 }
 
 .alert {
