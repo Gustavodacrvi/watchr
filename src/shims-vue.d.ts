@@ -6,4 +6,4 @@ declare module '*.vue' {
 
 declare module 'sortablejs'
 declare module 'sortablejs/modular/sortable.core.esm.js'
-declare module 'vue-directive-long-press'
+declare module 'vue-long-click'

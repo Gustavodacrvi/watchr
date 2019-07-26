@@ -19,8 +19,7 @@
             key='cont'
             class='content'
             :class='{handle: allowDragAndDrop}'
-            v-long-press='700'
-            @long-press-start='toggleElement'
+            v-longpress='toggleElement'
             @click='toggleChecklist'
           >
             <div class='txt' :class='theme'>
@@ -113,11 +112,13 @@ const taskVuex = namespace('task')
 const labelVuex = namespace('label')
 const settingsVuex = namespace('settings')
 
-import LongPress from 'vue-directive-long-press'
-
 import Sortable from 'sortablejs'
 
-Vue.directive('long-press', LongPress)
+import { longClickDirective } from 'vue-long-click'
+
+const longPress = longClickDirective({delay: 1750, interval: 5000})
+
+Vue.directive('longpress', longPress)
 
 @Component({
   components: {
@@ -320,6 +321,10 @@ export default class AppviewTask extends Vue {
 </script>
 
 <style scoped>
+
+.content {
+  width: 100%;
+}
 
 .handle {
   float: right;
