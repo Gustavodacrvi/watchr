@@ -38,6 +38,7 @@ interface Actions {
   saveSubTask: (context: ActionContext, obj: {name: string, taskId: string, completed: boolean, id: string}) => void
   saveSubtaskOrder: (context: ActionContext, obj: {taskId: string, order: string[]}) => void
   deleteSubTaskFromTask: (context: ActionContext, obj: {taskId: string, id: string}) => void
+  unCompleteSubtasks: (context: ActionContext, taskId: string) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -237,6 +238,18 @@ export default {
           checklistOrder: order,
           checklist: fire.arrayUnion(subtask),
         })
+      }
+    },
+    unCompleteSubtasks({ rootState, state }, taskId) {
+      if (rootState.firestore && rootState.uid) {
+        const task = state.tasks.find(el => el.id === taskId)
+        if (task) {
+          for (const sub of task.checklist)
+            sub.completed = false
+          rootState.firestore.collection('tasks').doc(taskId).update({
+            checklist: task.checklist,
+          })
+        }
       }
     },
   } as Actions,

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class='subtask-wrapper' @mouseenter='onHover = true' @mouseleave='onHover = false'>
     <transition name='fade' mode='out-in'>
       <div v-if='!editing' key='not-edit' class='subtask round-border' :class='[theme, {completed: task.completed}]' @dblclick='editing = true'>
         <span class='circles' @click='completeSubTask'>
@@ -7,7 +7,9 @@
           <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
         </span>
         <span class='txt' :class='theme'>{{ task.name }}</span>
-        <i class='fas right fa-trash fa-sm icon txt' :class='theme' @click='deleteSubTask'></i>
+        <transition name='fade'>
+          <i v-if='showTrashIcons' class='fas right fa-trash fa-sm icon txt' :class='theme' @click='deleteSubTask'></i>
+        </transition>
       </div>
       <task-edit v-else key='editing'
         v-model='subtaskVal'
@@ -22,7 +24,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { State, namespace } from 'vuex-class'
+import { State, Getter, namespace } from 'vuex-class'
 
 const taskVuex = namespace('task')
 
@@ -35,6 +37,7 @@ import SubTaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewSu
 })
 export default class AppviewSubtask extends Vue {
   @State theme!: string
+  @Getter isDesktop!: boolean
 
   @Prop(Object) task!: any
 
@@ -42,6 +45,7 @@ export default class AppviewSubtask extends Vue {
   @taskVuex.Action deleteSubTaskFromTask!: (obj: {taskId: string, id: string}) => void
 
   editing: boolean = false
+  onHover: boolean = false
   subtaskVal: string = ''
 
   created() {
@@ -72,6 +76,10 @@ export default class AppviewSubtask extends Vue {
       taskId: this.task.taskId,
     })
   }
+
+  get showTrashIcons(): boolean {
+    return !this.isDesktop || (this.isDesktop && this.onHover)
+  }
 }
 
 </script>
@@ -84,7 +92,7 @@ export default class AppviewSubtask extends Vue {
 
 .right {
   position: absolute;
-  right: 10px;
+  right: 5px;
 }
 
 .circle {
@@ -99,6 +107,7 @@ export default class AppviewSubtask extends Vue {
 
 .subtask {
   position: relative;
+  width: 100%;
   padding: 4px;
   cursor: pointer;
   display: flex;

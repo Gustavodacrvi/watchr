@@ -112,7 +112,7 @@ export default class Guest extends Mixins(Mixin) {
 
   created() {
     this.per = this.pers
-    if (this.ready && !this.isStandAlone) {
+    if (this.ready && !this.isStandAlone && this.initialPerspective && !this.per) {
       this.$router.replace('user?pers=' + this.initialPerspective)
       this.loaded = true
     } else if (this.isStandAlone)
@@ -156,8 +156,8 @@ export default class Guest extends Mixins(Mixin) {
   }
   @Watch('initialPerspective')
   onChange5() {
-    if (!this.loaded) {
-      this.per = this.initialPerspective
+    if (!this.loaded && !this.pers) {
+      this.$router.replace('user?pers=' + this.initialPerspective)
       this.loaded = true
     }
   }

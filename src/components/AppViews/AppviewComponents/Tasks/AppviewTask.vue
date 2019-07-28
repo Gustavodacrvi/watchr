@@ -52,7 +52,7 @@
             <icon-option
               handle='ellipsis-v'
               size='lg'
-              min-width='200px'
+              min-width='250px'
               :options='options'
             />
           </span>
@@ -136,6 +136,7 @@ export default class AppviewTask extends Vue {
   @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string}) => void
   @taskVuex.Action addSubTask!: (obj: {name: string, taskId: string, position: number, order: string[]}) => void
   @taskVuex.Action saveSubtaskOrder!: (obj: {taskId: string, order: string[]}) => void
+  @taskVuex.Action unCompleteSubtasks!: (taskId: string) => void
 
   @settingsVuex.State mobileTaskLabels!: string
   @settingsVuex.State desktopTaskLabels!: string
@@ -159,15 +160,6 @@ export default class AppviewTask extends Vue {
   sortable: any = null
   options: ListIcon[] = [
     {
-      name: 'Delete task',
-      icon: 'trash',
-      size: 'lg',
-      iconColor: '',
-      callback: () => {
-        this.deleteTasksById([this.task.id])
-      },
-    },
-    {
       name: 'Edit task',
       icon: 'edit',
       size: 'lg',
@@ -176,16 +168,35 @@ export default class AppviewTask extends Vue {
         this.editing = true
       },
     },
+    {
+      name: 'Uncomplete subtasks',
+      icon: 'list-ul',
+      size: 'lg',
+      iconColor: '',
+      callback: () => {
+        this.unCompleteSubtasks(this.task.id)
+      },
+    },
+    {
+      name: 'Delete task',
+      icon: 'trash',
+      size: 'lg',
+      iconColor: '',
+      callback: () => {
+        this.deleteTasksById([this.task.id])
+      },
+    },
   ]
 
   mounted() {
     this.mount()
   }
   mount() {
-    this.sortable = new Sortable(this.rootSubtaskComponent, {
+    const obj = {
       disabled: false,
       group: {name: 'subtasks', pull: false, put: false},
       animation: 150,
+      multiDrag: true,
       dataIdAttr: 'data-sortableid',
 
       onUpdate: () => {
@@ -194,7 +205,9 @@ export default class AppviewTask extends Vue {
           order: this.getSubtasksIds().filter(el => el !== 'task-adder'),
         })
       },
-    })
+    }
+    
+    this.sortable = new Sortable(this.rootSubtaskComponent, obj)
   }
   addTaskSubtask() {
     const ids = this.getSubtasksIds()
@@ -331,10 +344,6 @@ export default class AppviewTask extends Vue {
   margin-right: 12px;
 }
 
-.checklist {
-  margin-top: 10px;
-}
-
 .details {
   margin-left: 20px;
 }
@@ -415,11 +424,11 @@ export default class AppviewTask extends Vue {
   background-color: #282828;
 }
 
-.sortable-selected.not-completed.light {
+.sortable-selected.not-completed.light, .sortable-selected.subtask {
   background-color: #83B7E2 !important;
 }
 
-.sortable-selected.not-completed.dark {
+.sortable-selected.not-completed.dark, .sortable-selected.subtask {
   background-color: #3287cd !important;
 }
 
