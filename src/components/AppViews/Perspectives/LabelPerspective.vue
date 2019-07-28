@@ -52,7 +52,8 @@
         :default-priority='priority'
         :default-labels='getLabels.concat([getLabel.id])'
         :allow-priority='true'
-        :fix-adder-position='sort.length !== 0'
+        :fix-adder-position='sort.length === 0'
+        :insert-before='true'
         :allow-labels='true'
         @update='onUpdate'
         @selected='onSelect'
@@ -249,7 +250,7 @@ export default class LabelPerspective extends Vue {
       } as any)
   }
 
-  get getLabel(): Label | undefined {
+  get getLabel(): Label {
     const lab: Label = this.savedLabels.find(el => el.name === this.label) as any
     return lab
   }
@@ -278,6 +279,10 @@ export default class LabelPerspective extends Vue {
       tasks = tasks.filter(el => el.priority === this.priority)
     if (this.labels && this.labels.length > 0)
       tasks = appUtils.filterTasksByLabels(tasks, this.labels)
+    if (this.getLabel.order && this.getLabel.order.length > 0) {
+      const ord = appUtils.fixOrder(tasks, this.getLabel.order)
+      tasks = appUtils.sortArrayByIds(tasks, ord)
+    }
     if (this.sort && this.sort.length > 0)
       tasks = appUtils.sortTasksByMultipleCriteria(tasks, this.sort)
     return tasks

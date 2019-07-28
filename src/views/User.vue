@@ -129,7 +129,7 @@ export default class Guest extends Mixins(Mixin) {
       this.closeAppBar()
   }
   get getComp(): string {
-    if (this.per) {
+    if (this.per && !this.label) {
       switch (this.per) {
         case 'Inbox': return 'app-inbox'
         case 'Upcoming': return 'app-upcoming'

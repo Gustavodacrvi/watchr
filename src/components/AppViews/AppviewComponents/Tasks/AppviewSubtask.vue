@@ -1,7 +1,18 @@
 <template>
-  <div class='subtask-wrapper' @mouseenter='onHover = true' @mouseleave='onHover = false'>
+  <div
+    class='subtask-wrapper round-border cancel-getidsfromelements'
+    @mouseenter='onHover = true'
+    @mouseleave='onHover = false'
+    @dblclick='editing = true'
+  >
     <transition name='fade' mode='out-in'>
-      <div v-if='!editing' key='not-edit' class='subtask round-border' :class='[theme, {completed: task.completed}]' @dblclick='editing = true'>
+      <div v-if='!editing'
+        key='not-edit'
+        class='subtask round-border'
+        :class='[theme, {completed: task.completed}, {draghandle: allowDragAndDrop}]'
+        v-longpress='longPress'
+        @click='elClick'
+      >
         <span class='circles' @click='completeSubTask'>
           <i v-if='!task.completed' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
           <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
@@ -23,12 +34,18 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter, namespace } from 'vuex-class'
 
 const taskVuex = namespace('task')
 
 import SubTaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtaskEdit.vue'
+
+import { longClickDirective } from 'vue-long-click'
+
+const longPress = longClickDirective({delay: 1500, interval: 5000})
+
+Vue.directive('longpress', longPress)
 
 @Component({
   components: {
@@ -44,17 +61,42 @@ export default class AppviewSubtask extends Vue {
   @taskVuex.Action saveSubTask!: (obj: {name: string, taskId: string, completed: boolean, id: string}) => void
   @taskVuex.Action deleteSubTaskFromTask!: (obj: {taskId: string, id: string}) => void
 
+  @Prop(Boolean) allowDrag!: boolean
+  @Prop(Boolean) deselectAll!: boolean
+
   editing: boolean = false
   onHover: boolean = false
+  clicked: boolean = false
   subtaskVal: string = ''
+  justLongPressed = false
 
   created() {
     this.subtaskVal = this.task.name
   }
 
-  saveNewSubTaskName() {
+  longPress() {
+    console.log('press')
+    this.justLongPressed = true
+    if (!this.allowDrag)
+      this.select()
+  }
+  elClick() {
+    console.log('click')
+    if (this.allowDrag && !this.justLongPressed)
+      this.select()
+    this.justLongPressed = false
+  }
+  select() {
+    this.clicked = !this.clicked
+    const el: HTMLElement = this.$el as HTMLElement
+    this.$emit('toggle', {
+      el,
+      select: this.clicked,
+    })
+  }
+  saveNewSubTaskName(val: string) {
     this.saveSubTask({
-      name: this.subtaskVal,
+      name: val,
       completed: this.task.completed,
       taskId: this.task.taskId,
       id: this.task.id,
@@ -80,6 +122,14 @@ export default class AppviewSubtask extends Vue {
   get showTrashIcons(): boolean {
     return !this.isDesktop || (this.isDesktop && this.onHover)
   }
+  get allowDragAndDrop(): boolean {
+    return this.allowDrag && !this.isDesktop
+  }
+
+  @Watch('deselectAll')
+  onChange() {
+    this.clicked = false
+  }
 }
 
 </script>
@@ -92,7 +142,7 @@ export default class AppviewSubtask extends Vue {
 
 .right {
   position: absolute;
-  right: 5px;
+  right: 15px;
 }
 
 .circle {
@@ -112,15 +162,26 @@ export default class AppviewSubtask extends Vue {
   cursor: pointer;
   display: flex;
   align-items: center;
+}
+
+.subtask-wrapper {
   transition: background-color .3s;
 }
 
-.subtask.light:hover {
+.subtask-wrapper.light:hover {
   background-color: #f0f0f0;
 }
 
-.subtask.dark:hover {
+.subtask-wrapper.dark:hover {
   background-color: #282828;
+}
+
+.sortable-selected.light {
+  background-color: #83B7E2 !important;
+}
+
+.sortable-selected.dark {
+  background-color: #3287cd !important;
 }
 
 </style>
