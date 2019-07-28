@@ -75,13 +75,11 @@ export default class AppviewSubtask extends Vue {
   }
 
   longPress() {
-    console.log('press')
     this.justLongPressed = true
     if (!this.allowDrag)
       this.select()
   }
   elClick() {
-    console.log('click')
     if (this.allowDrag && !this.justLongPressed)
       this.select()
     this.justLongPressed = false

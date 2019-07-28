@@ -204,6 +204,10 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 
 <style scoped>
 
+.task-renderer {
+  position: relative;
+}
+
 .list-enter {
   transform: scale(1.08,1.18);
 }
@@ -224,6 +228,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 }
 
 .list-leave-active {
+  width: 100%;
   position: absolute;
   transition: opacity .5s;
 }

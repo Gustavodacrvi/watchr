@@ -144,7 +144,6 @@ export default {
         })
     },
     editPerspective({ rootState, state }, {name, description, icon, iconColor, id}) {
-      console.log(name, description, icon, iconColor)
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('perspectives').doc(id).update({
           name,

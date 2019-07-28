@@ -9,10 +9,11 @@ export default class SortableMixin extends Vue {
     if (root) {
       const els = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
       const arr = []
-      if (requiredClass)
-        for (const el of els)
-          if (el.classList.contains(requiredClass) || el.classList.contains('task-adder'))
-            arr.push(el)
+      for (const el of els)
+        if (requiredClass && el.classList.contains(requiredClass) || el.classList.contains('task-adder'))
+          arr.push(el)
+        else if (!requiredClass)
+          arr.push(el)
       const ids: string[] = []
       for (const el of arr)
         ids.push(el.dataset.vid)
@@ -25,11 +26,10 @@ export default class SortableMixin extends Vue {
     if (root) {
       const arr: HTMLElement[] = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
       const ids: string[] = []
-      for (const el of arr) {
+      for (const el of arr)
         if (allowCancel && !el.classList.contains('cancel-getidsfromelements') || !allowCancel)
           if ((el.dataset.vid && el.classList.contains('sortable-selected')))
             ids.push(el.dataset.vid)
-      }
       return ids
     }
     return []

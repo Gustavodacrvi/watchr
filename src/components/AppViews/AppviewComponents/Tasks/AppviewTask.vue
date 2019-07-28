@@ -220,7 +220,7 @@ export default class AppviewTask extends Vue {
 
     if (!this.isDesktop)
       obj['handle'] = '.draghandle'
-    
+
     this.sortable = new Sortable(this.rootSubtaskComponent, obj)
   }
   addTaskSubtask(val: string) {
@@ -314,7 +314,7 @@ export default class AppviewTask extends Vue {
         this.deselect = !this.deselect
       }
     }
-    
+
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
   }
 
