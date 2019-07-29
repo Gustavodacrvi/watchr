@@ -2,6 +2,7 @@
   <div :class='`task-taskrenderer-${id} task-renderer`'>
     <transition-group name='list' class='list' tag='div' :class='[theme, {isempty: tasks.length === 0}]'>
       <view-task v-for='task in tasks'
+        class='root-task'
         :key='task.id'
         :task='task'
         :deselect-all='deselectAll'
@@ -90,7 +91,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       group: {name: 'taskrenderer', pull: false, put: ['floatbutton']},
 
       onUpdate: () => {
-        const ids: string[] = this.getIdsFromElements(this.rootSelector)
+        const ids: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
         this.$emit('update', ids)
       },
       onAdd: (evt: any) => {
@@ -129,7 +130,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   }
 
   add(obj: {name: string, priority: string}) {
-    const els: string[] = this.getIdsFromElements(this.rootSelector)
+    const els: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
     this.getTaskAdderPosition()
     const order = els.filter(el => el !== 'task-adder')
     this.$emit('add', {position: this.taskAdderPosition, order, ...obj})
@@ -169,7 +170,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     this.calcSelectedElements()
   }
   getTaskAdderPosition() {
-    const els: string[] = this.getIdsFromElements(this.rootSelector)
+    const els: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
     let i = 0
     for (const id of els)
       if (id === 'task-adder') {
@@ -185,7 +186,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 
   @Watch('tasks')
   onChange() {
-    if (!this.fixAdderPosition && this.added && this.insertBefore) {
+    if (this.fixAdderPosition && this.added && this.insertBefore) {
       setTimeout(() => {
         this.getTaskAdderPosition()
         const childNodes = this.rootComponent.childNodes
@@ -202,6 +203,10 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 </script>
 
 <style scoped>
+
+.task-renderer {
+  position: relative;
+}
 
 .list-enter {
   transform: scale(1.08,1.18);
@@ -223,10 +228,13 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 }
 
 .list-leave-active {
+  width: 100%;
+  position: absolute;
   transition: opacity .5s;
 }
 
 .list-leave {
+  position: absolute;
   opacity: 1;
 }
 

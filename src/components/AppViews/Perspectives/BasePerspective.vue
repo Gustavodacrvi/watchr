@@ -54,7 +54,7 @@
         :default-priority='getPriority'
         :default-labels='defaultLabels'
         :allow-priority='true'
-        :fix-adder-position='sort.length !== 0'
+        :fix-adder-position='sort.length === 0'
         :insert-before='true'
         :allow-labels='allowLabels'
         @update='onUpdate'
@@ -133,6 +133,7 @@ export default class PerspectiveAppview extends Vue {
   priority: string = ''
   labels: string[] = []
   sort: string[] = []
+  order: string[] = []
   hided: boolean = false
   showing: boolean = false
   loaded: boolean = false
@@ -303,6 +304,7 @@ export default class PerspectiveAppview extends Vue {
     this.priority = this.pers.priority
     this.labels = this.pers.includeAndLabels.slice()
     this.sort = this.pers.sort.slice()
+    this.order = this.pers.order.slice()
     this.pushView({
       view: this.pers.name,
       viewType: 'perspective',
@@ -327,6 +329,10 @@ export default class PerspectiveAppview extends Vue {
       tasks = tasks.filter(el => el.priority === this.priority)
     if (this.labels && this.labels.length > 0)
       tasks = appUtils.filterTasksByLabels(tasks, this.labels)
+    if (this.order && this.order.length > 0) {
+      const ord = appUtils.fixOrder(tasks, this.order)
+      tasks = appUtils.sortArrayByIds(tasks, ord)
+    }
     if (this.sort && this.sort.length > 0)
       tasks = appUtils.sortTasksByMultipleCriteria(tasks, this.sort)
     return tasks

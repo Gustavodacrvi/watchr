@@ -19,8 +19,7 @@
             key='cont'
             class='content'
             :class='{handle: allowDragAndDrop}'
-            v-long-press='700'
-            @long-press-start='toggleElement'
+            v-longpress='toggleElement'
             @click='toggleChecklist'
           >
             <div class='txt' :class='theme'>
@@ -53,7 +52,7 @@
             <icon-option
               handle='ellipsis-v'
               size='lg'
-              min-width='200px'
+              min-width='250px'
               :options='options'
             />
           </span>
@@ -68,8 +67,11 @@
             :key='todo.id'
             :class='theme'
             :task='todo'
+            :allow-drag='numberOfSelected > 0'
+            :deselect-all='deselect'
 
             :data-vid='todo.id'
+            @toggle='toggleElementSubtask'
           />
           <sub-task-edit key='task-adder' data-vid='task-adder'
             v-model='subtaskValue'
@@ -113,11 +115,13 @@ const taskVuex = namespace('task')
 const labelVuex = namespace('label')
 const settingsVuex = namespace('settings')
 
-import LongPress from 'vue-directive-long-press'
-
 import Sortable from 'sortablejs'
 
-Vue.directive('long-press', LongPress)
+import { longClickDirective } from 'vue-long-click'
+
+const longPress = longClickDirective({delay: 1500, interval: 5000})
+
+Vue.directive('longpress', longPress)
 
 @Component({
   components: {
@@ -135,6 +139,7 @@ export default class AppviewTask extends Vue {
   @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string}) => void
   @taskVuex.Action addSubTask!: (obj: {name: string, taskId: string, position: number, order: string[]}) => void
   @taskVuex.Action saveSubtaskOrder!: (obj: {taskId: string, order: string[]}) => void
+  @taskVuex.Action unCompleteSubtasks!: (taskId: string) => void
 
   @settingsVuex.State mobileTaskLabels!: string
   @settingsVuex.State desktopTaskLabels!: string
@@ -150,22 +155,15 @@ export default class AppviewTask extends Vue {
   onHover: boolean = false
   completed: boolean = false
   subtaskValue: string = ''
+  deselect: boolean = false
   showChecklist: boolean = false
   justLongPressed: boolean = false
   added: boolean = false
   subTaskAdderPoition: number = 0
+  numberOfSelected: number = 0
   editing: boolean = false
   sortable: any = null
   options: ListIcon[] = [
-    {
-      name: 'Delete task',
-      icon: 'trash',
-      size: 'lg',
-      iconColor: '',
-      callback: () => {
-        this.deleteTasksById([this.task.id])
-      },
-    },
     {
       name: 'Edit task',
       icon: 'edit',
@@ -175,16 +173,42 @@ export default class AppviewTask extends Vue {
         this.editing = true
       },
     },
+    {
+      name: 'Uncomplete subtasks',
+      icon: 'list-ul',
+      size: 'lg',
+      iconColor: '',
+      callback: () => {
+        this.unCompleteSubtasks(this.task.id)
+      },
+    },
+    {
+      name: 'Delete task',
+      icon: 'trash',
+      size: 'lg',
+      iconColor: '',
+      callback: () => {
+        this.deleteTasksById([this.task.id])
+      },
+    },
   ]
 
   mounted() {
     this.mount()
+    document.addEventListener('click', this.calcSelectedElements)
   }
+  beforeDestroy() {
+    document.removeEventListener('click', this.calcSelectedElements)
+  }
+
   mount() {
-    this.sortable = new Sortable(this.rootSubtaskComponent, {
+    const obj: any = {
       disabled: false,
       group: {name: 'subtasks', pull: false, put: false},
       animation: 150,
+      multiDrag: true,
+      scroll: true,
+      selectedClass: 'sortable-selected',
       dataIdAttr: 'data-sortableid',
 
       onUpdate: () => {
@@ -193,14 +217,19 @@ export default class AppviewTask extends Vue {
           order: this.getSubtasksIds().filter(el => el !== 'task-adder'),
         })
       },
-    })
+    }
+
+    if (!this.isDesktop)
+      obj['handle'] = '.draghandle'
+
+    this.sortable = new Sortable(this.rootSubtaskComponent, obj)
   }
-  addTaskSubtask() {
+  addTaskSubtask(val: string) {
     const ids = this.getSubtasksIds()
     this.getSubTaskAdderPosition()
     const order = ids.filter(el => el !== 'task-adder')
     this.addSubTask({
-      name: this.subtaskValue,
+      name: val,
       position: this.subTaskAdderPoition,
       taskId: this.task.id,
       order: this.task.checklistOrder,
@@ -258,6 +287,36 @@ export default class AppviewTask extends Vue {
         break
       } else i++
     this.subTaskAdderPoition = position
+  }
+  toggleElementSubtask({el, select}: {el: HTMLElement, select: boolean}) {
+    if (select)
+      Sortable.utils.select(el)
+    else Sortable.utils.deselect(el)
+    this.calcSelectedElements()
+  }
+  calcSelectedElements(evt?: any) {
+    if (evt) {
+      const children = this.rootSubtaskComponent.childNodes
+      let deSelectAll = true
+      for (const child of children)
+        if (evt.path.includes(child)) {
+          deSelectAll = false
+          break
+        }
+      if (deSelectAll)
+        for (const el of evt.path)
+        if (el.classList && el.classList.contains('cancel-sortable-unselect')) {
+          deSelectAll = false
+          break
+        }
+      if (deSelectAll) {
+        for (const child of children)
+          Sortable.utils.deselect(child)
+        this.deselect = !this.deselect
+      }
+    }
+
+    this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
   }
 
   get exclamationColor() {
@@ -321,13 +380,13 @@ export default class AppviewTask extends Vue {
 
 <style scoped>
 
+.content {
+  width: 100%;
+}
+
 .handle {
   float: right;
   margin-right: 12px;
-}
-
-.checklist {
-  margin-top: 10px;
 }
 
 .details {

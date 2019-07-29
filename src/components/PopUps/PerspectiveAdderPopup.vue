@@ -1,7 +1,8 @@
 <template>
   <div class='label-adder'>
     <div class='title'>
-      <h3>Add perspective</h3>
+      <h3 v-if='!pers'>Add perspective</h3>
+      <h3 v-else>Edit perspective</h3>
     </div>
     <div class='content'>
       <dropdown-input
@@ -106,6 +107,7 @@ export default class LabelAdder extends Vue {
   created() {
     if (this.pers) {
       this.input = this.pers.name
+      this.value = this.input
       this.icon = this.pers.icon
       this.color = this.pers.iconColor
       this.description = this.pers.description
@@ -123,7 +125,7 @@ export default class LabelAdder extends Vue {
   add() {
     if (this.value !== '') {
       const pers = this.perspectives.find(el => el.name === this.value)
-      if (pers)
+      if (pers && !this.pers)
         this.pushAlert({
           name: `<strong>${this.value}</strong> already exists.`,
           duration: 3,

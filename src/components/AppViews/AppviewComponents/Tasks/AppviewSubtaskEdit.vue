@@ -55,8 +55,10 @@ export default class SubtaskEdit extends Vue {
   }
 
   add() {
-    this.$emit('add')
-    this.val = ''
+    setTimeout(() => {
+      this.$emit('add', this.val)
+      this.val = ''
+    }, 80)
   }
   cancel() {
     this.$emit('cancel')

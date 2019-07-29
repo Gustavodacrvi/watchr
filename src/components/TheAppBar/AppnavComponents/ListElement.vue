@@ -8,16 +8,14 @@
     <div v-if='icon && iconColor'
       class='left-icon'
       :class='{handle: showHandle && !isDesktop}'
-      @click="toggleElement(false)"
-      @dblclick='toggleElement(true)'
     >
       <i :class='`txt fas fa-lg fa-${icon}`' :style='[{color: iconColor}, theme]'></i>
     </div>
     <div
       class='content'
       :class='{handle: showHandle && !isDesktop}'
-      @click="toggleElement(false)"
-      @dblclick="toggleElement(true)"
+      v-longpress='longPress'      
+      @click='singleClick'
     >
       <span class='txt name' :class='[{showall: helpIcons.length === 0}, theme]'>{{ name }}</span>
     </div>
@@ -69,6 +67,12 @@ import IconDropdown from '@/components/IconDropdown.vue'
 
 import { ListIcon } from '../../../interfaces/app'
 
+import { longClickDirective } from 'vue-long-click'
+
+const longPress = longClickDirective({delay: 1500, interval: 5000})
+
+Vue.directive('longpress', longPress)
+
 @Component({
   components: {
     'icon-dropdown': IconDropdown,
@@ -95,17 +99,27 @@ export default class ListRenderer extends Vue {
 
   onHover: boolean = false
   clicked: boolean = false
+  justLongPressed: boolean = false
 
-  toggleElement(isDoubleClick: boolean) {
-    this.go()
-    if (!this.showHandle && isDoubleClick || this.showHandle) {
-      this.clicked = !this.clicked
-      const el: HTMLElement = this.$el as HTMLElement
-      this.$emit('toggle', {
-        el,
-        select: this.clicked,
-      })
-    }
+  longPress() {
+    this.justLongPressed = true
+    if (!this.showHandle)
+      this.select()
+  }
+  singleClick() {
+    if (this.showHandle && !this.justLongPressed)
+      this.select()
+    else if (!this.showHandle && !this.justLongPressed)
+      this.go()
+    this.justLongPressed = false
+  }
+  select() {
+    this.clicked = !this.clicked
+    const el: HTMLElement = this.$el as HTMLElement
+    this.$emit('toggle', {
+      el,
+      select: this.clicked,
+    })
   }
   optionClick(callback: (id: string) => void) {
     this.$emit('clearselected')

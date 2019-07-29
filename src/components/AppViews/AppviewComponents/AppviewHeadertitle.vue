@@ -41,6 +41,11 @@ export default class AppviewHeadertitle extends Vue {
     if (!this.isDesktop)
       this.addToTitle()
   }
+  @Watch('value')
+  onChange2() {
+    if (!this.isDesktop)
+      this.addToTitle()
+  }
 }
 
 </script>
