@@ -207,6 +207,7 @@ export default class AppviewTask extends Vue {
       group: {name: 'subtasks', pull: false, put: false},
       animation: 150,
       multiDrag: true,
+      scroll: true,
       selectedClass: 'sortable-selected',
       dataIdAttr: 'data-sortableid',
 
