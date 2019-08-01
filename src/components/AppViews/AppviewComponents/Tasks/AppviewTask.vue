@@ -119,9 +119,9 @@ import Sortable from 'sortablejs'
 
 import { longClickDirective } from 'vue-long-click'
 
-const longPress = longClickDirective({delay: 1500, interval: 5000})
-
-Vue.directive('longpress', longPress)
+if (document.body.clientWidth > 992)
+  Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
+else Vue.directive('longpress', longClickDirective({delay: 1500, interval: 5000}))
 
 @Component({
   components: {
@@ -348,6 +348,11 @@ export default class AppviewTask extends Vue {
   }
   get getChecklist(): any[] {
     return appUtils.sortArrayByIds(this.task.checklist as any, this.task.checklistOrder)
+  }
+  get press(): string {
+    if (this.isDesktop)
+      return 'longpressdesktop'
+    return 'longpressmobile'
   }
 
   @Watch('task')
