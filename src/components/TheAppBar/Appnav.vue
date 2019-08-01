@@ -31,7 +31,7 @@
         </div>
         <div style='height: 12px;'></div>
       </div>
-      <div class='list-wrapper scroll' :class='theme'>
+      <div class='list-wrapper scroll' :class='[theme, platform]'>
         <div class='list'>
           <transition
             name='fade'
@@ -44,7 +44,8 @@
       </div>
     </div>
     <div v-if='showFooter'
-      class='footer-wrapper'
+      class='footer-wrapper gray'
+      :class='theme'
     >
       <hr class='border hr' :class='theme'>
       <div class='footer'>
@@ -119,6 +120,7 @@ export default class LoggedAppnav extends Vue {
   @State isLogged!: boolean
   @Mutation pushPopUp!: (comp: string) => void
   @Getter isDesktop!: boolean
+  @Getter platform!: string
 
   @label.Action sortLabelsByName!: () => void
 

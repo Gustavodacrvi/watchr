@@ -69,9 +69,9 @@ import { ListIcon } from '../../../interfaces/app'
 
 import { longClickDirective } from 'vue-long-click'
 
-const longPress = longClickDirective({delay: 1500, interval: 5000})
-
-Vue.directive('longpress', longPress)
+if (document.body.clientWidth > 992)
+  Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
+else Vue.directive('longpress', longClickDirective({delay: 1500, interval: 5000}))
 
 @Component({
   components: {
