@@ -19,6 +19,17 @@
       class='content-wrapper'
       :class='{topmargin: isLogged}'
     >
+      <div id='search-bar-wrapper'>
+        <form-input
+          id='search-bar'
+          class='medium'
+          v-model='search'
+          placeholder='Search...'
+          :backcolor='true'
+          :disabled='true'
+          :max='50'
+        />
+      </div>
       <div class='content'>
         <div class='navsect'>
           <span v-for='sect in sections' :key='sect.comp' @click='select(sect)'>
@@ -37,7 +48,7 @@
             name='fade'
             mode='out-in'
           >
-            <component :is='currentSect'/>
+            <component :is='currentSect' :search='search'/>
           </transition>
           <div class='list-margin'></div>
         </div>
@@ -94,6 +105,7 @@ import { State, Getter, Mutation, namespace } from 'vuex-class'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
 import IconDropdown from '@/components/IconDropdown.vue'
+import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 
 import appUtil from '@/utils/app'
 import { ListIcon } from '../../interfaces/app'
@@ -113,6 +125,7 @@ interface Section {
     'labels': appUtil.AsyncComponent(import('./AppnavSections/LabelAppnav.vue')),
     'perspectives': appUtil.AsyncComponent(import('./AppnavSections/PerspectivesAppnav.vue')),
     'icon-dropdown': IconDropdown,
+    'form-input': FormInput,
   },
 })
 export default class LoggedAppnav extends Vue {
@@ -149,6 +162,7 @@ export default class LoggedAppnav extends Vue {
     ]},
   ]
   currentSect: string = 'overview'
+  search: string = ''
   options: ListIcon[] = []
 
   created() {
@@ -176,16 +190,21 @@ export default class LoggedAppnav extends Vue {
 
 </script>
 
+<style scoped>
+
+#search-bar-wrapper {
+  margin: 6px 14px;
+  margin-top: 14px;
+}
+
+#search-bar.dark {
+  background-color: #121212;
+}
+
+</style>
+
 <style scoped src='@/assets/css/appBarMenu.css'>
 </style>
 
 <style scoped src='@/assets/css/drop.css'>
-</style>
-
-<style scoped>
-
-.topmargin {
-  margin-top: 50px;
-}
-
 </style>

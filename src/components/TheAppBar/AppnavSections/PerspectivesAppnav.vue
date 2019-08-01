@@ -38,7 +38,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State, namespace, Getter, Mutation } from 'vuex-class'
 
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
@@ -81,6 +81,8 @@ export default class OverviewAppnav extends Vue {
   @persVuex.Action deletePerspectivesById!: (ids: string[]) => void
 
   @taskVuex.State tasks!: Task[]
+
+  @Prop(String) search!: string
 
   selected: string[] = []
   selectedType: 'custom' | 'smart' = 'custom'
@@ -244,7 +246,8 @@ export default class OverviewAppnav extends Vue {
 
   get smartPers(): ListElement[] {
       const els: ListElement[] = []
-      for (const per of this.sortedSmartPerspectives) {
+      const pers = this.sortedSmartPerspectives.filter(el => el.name.includes(this.search))
+      for (const per of pers) {
         let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
         const show = true
         if (!per.numberOfTasks)
@@ -257,7 +260,8 @@ export default class OverviewAppnav extends Vue {
     }
   get customPers(): ListElement[] {
     const els: ListElement[] = []
-    for (const per of this.sortedCustomPerspectives) {
+    const pers = this.sortedCustomPerspectives.filter(el => el.name.includes(this.search))
+    for (const per of pers) {
       let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
       const show = true
       if (!per.numberOfTasks)

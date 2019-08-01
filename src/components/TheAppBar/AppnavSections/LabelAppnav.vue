@@ -20,7 +20,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import { namespace, Mutation, State, Getter } from 'vuex-class'
 
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
@@ -57,6 +57,8 @@ export default class LabelAppnav extends Vue {
   @task.Getter getNumberOfTasksByLabel!: (labelId: string) => number
 
   @pers.Getter initialPerspective!: string
+
+  @Prop(String) search!: string
 
   selected: string[] = []
 
@@ -133,7 +135,8 @@ export default class LabelAppnav extends Vue {
   }
   get getLabels(): ListElement[] {
     const els: ListElement[] = []
-    for (const lab of this.sortedLabels) {
+    const pers = this.sortedLabels.filter(el => el.name.includes(this.search))
+    for (const lab of pers) {
       const num = this.getNumberOfTasksByLabel(lab.id)
       els.push({
         ...lab, show: true, number: num,
