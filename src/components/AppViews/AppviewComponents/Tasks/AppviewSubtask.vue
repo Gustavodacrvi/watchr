@@ -3,7 +3,7 @@
     class='subtask-wrapper round-border cancel-getidsfromelements'
     @mouseenter='onHover = true'
     @mouseleave='onHover = false'
-    @dblclick='editing = true'
+    @dblclick='toggleEditing'
   >
     <transition name='fade' mode='out-in'>
       <div v-if='!editing'
@@ -26,7 +26,7 @@
         v-model='subtaskVal'
         :only-edit='true'
         @add='saveNewSubTaskName'
-        @cancel='editing = false'
+        @cancel='toggleEditing'
       />
     </transition>
   </div>
@@ -115,6 +115,10 @@ export default class AppviewSubtask extends Vue {
       id: this.task.id,
       taskId: this.task.taskId,
     })
+  }
+  toggleEditing() {
+    if (!this.allowDrag)
+      this.editing != !this.editing
   }
 
   get showTrashIcons(): boolean {
