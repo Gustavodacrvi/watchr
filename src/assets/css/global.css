@@ -89,7 +89,7 @@ body, button, input, textarea {
 }
 
 .main-button {
-  transition: filter .2s, transform .2s ease-in;
+  transition: filter .2s;
   display: flex;
   align-items: center;
   justify-content: center;
