@@ -54,6 +54,7 @@
         :default-priority='getPriority'
         :default-labels='defaultLabels'
         :allow-priority='true'
+        :allow-date='allowDate'
         :fix-adder-position='sort.length === 0'
         :insert-before='true'
         :allow-labels='allowLabels'
@@ -122,6 +123,7 @@ export default class PerspectiveAppview extends Vue {
   @persVuex.Action savePerspectiveTaskSort!: (obj: {sort: string[], perspectiveId: string}) => Label[]
 
   @Prop({default: true, type: Boolean}) allowLabels!: boolean
+  @Prop({default: true, type: Boolean}) allowDate!: boolean
   @Prop(Boolean) value!: boolean
   @Prop(Boolean) save!: boolean
   @Prop(Boolean) saveSort!: boolean

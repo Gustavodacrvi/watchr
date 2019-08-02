@@ -90,6 +90,7 @@
       :default-priority='task.priority'
       :allow-priority='true'
       :allow-labels='true'
+      :allow-date='true'
       btn='Edit task'
       @cancel='editing = false'
       @enter='enter'

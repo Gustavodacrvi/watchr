@@ -81,6 +81,8 @@ import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
 
+import appUtils from '@/utils/app'
+
 @Component({
   components: {
     'view-btn': FormButton,
@@ -106,10 +108,11 @@ export default class AppviewTaskedit extends Vue {
   @Prop(String) defaultPriority!: string
   @Prop(Array) defaultLabels!: string[]
   @Prop(String) inputTheme!: string
-  @Prop({default: false, type: Boolean}) allowPriority!: boolean
-  @Prop({default: false, type: Boolean}) allowLabels!: boolean
-  @Prop({default: false, type: Boolean}) lock!: boolean
-  @Prop({default: true, type: Boolean}) showCancel!: boolean
+  @Prop(Boolean) allowPriority!: boolean
+  @Prop(Boolean) allowLabels!: boolean
+  @Prop(Boolean) lock!: boolean
+  @Prop(Boolean) showCancel!: boolean
+  @Prop(Boolean) allowDate!: boolean
 
   value: string = ''
   optionsType: string = ''
@@ -251,6 +254,10 @@ export default class AppviewTaskedit extends Vue {
         this.options = labels.map(el => el.name).filter(el => el.includes(word))
         changedOptions = true
       }
+    }
+    if (this.allowDate) {
+      if (this.value.includes(' $'))
+        appUtils.parseTaskSpecificTime(this.value)
     }
     if (!changedOptions)
       this.options = []

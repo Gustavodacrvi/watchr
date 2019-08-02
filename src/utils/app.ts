@@ -118,4 +118,42 @@ export default {
 
     return tasks
   },
+  parseTaskSpecificTime(input: string) {
+    const isValidSpecificDate = (val: string, callback: (isValid: boolean, day?: number, month?: string) => void) => {
+      const i = input.indexOf(' $')
+      if (i > 0) {
+        const str = input.substr(i).replace(' $', '')
+        const values = str.split(' ')
+        if (values.length < 3) {
+          let month!: string
+          let day!: number
+          let value1 = values[0]
+          let value2 = values[1]
+          let isValue1Number = !isNaN(parseInt(value1))
+          let isValue2Number = !isNaN(parseInt(value2))
+          let areBothNumbers = isValue1Number && isValue2Number
+          let atLeastOneIsaNumber = isValue1Number || isValue2Number
+          let atLeastOneIsUndefined = value1 === undefined || value2 === undefined
+          if (!areBothNumbers && atLeastOneIsaNumber && !atLeastOneIsUndefined) {
+            if (isValue1Number) {
+              day = parseInt(value1)
+              month = value2
+            } else {
+              day = parseInt(value2)
+              month = value1
+            }
+            callback(true, day, month)
+          } else callback(false)
+        } else callback(false)
+      } else callback(false)
+    }
+    
+    if (input.includes(' $every')) {
+      
+    } else {
+      isValidSpecificDate(input, (isValid, day, month) => {
+        console.log(isValid, day, month)
+      })
+    }
+  },
 }
