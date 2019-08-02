@@ -164,7 +164,8 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     }, 1)
   }
   toggleElement({el, select}: {el: HTMLElement, select: boolean}) {
-    navigator.vibrate(200)
+    if (this.numberOfSelected === 0)
+      window.navigator.vibrate(50)
     if (select)
       Sortable.utils.select(el)
     else Sortable.utils.deselect(el)
