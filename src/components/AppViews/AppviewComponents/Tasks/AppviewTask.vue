@@ -256,7 +256,8 @@ export default class AppviewTask extends Vue {
   toggleChecklist() {
     if (this.allowDrag && !this.justLongPressed)
       this.select()
-    else this.showChecklist = !this.showChecklist
+    if (!this.allowDrag)
+      this.showChecklist = !this.showChecklist
     this.justLongPressed = false
   }
   toggleEditing() {
@@ -330,7 +331,7 @@ export default class AppviewTask extends Vue {
     return !this.isDesktop || (this.onHover && this.isDesktop)
   }
   get allowDragAndDrop(): boolean {
-    return this.allowDrag && !this.isDesktop
+    return this.allowDrag && !this.isDesktop && this.clicked
   }
   get taskLabels(): string[] {
     return this.getLabelsByIds(this.task.labels).map(el => el.name)

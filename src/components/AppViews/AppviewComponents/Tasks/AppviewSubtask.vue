@@ -43,9 +43,9 @@ import SubTaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewSu
 
 import { longClickDirective } from 'vue-long-click'
 
-const longPress = longClickDirective({delay: 1500, interval: 5000})
-
-Vue.directive('longpress', longPress)
+if (document.body.clientWidth > 992)
+  Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
+else Vue.directive('longpress', longClickDirective({delay: 1500, interval: 5000}))
 
 @Component({
   components: {
@@ -121,7 +121,7 @@ export default class AppviewSubtask extends Vue {
     return !this.isDesktop || (this.isDesktop && this.onHover)
   }
   get allowDragAndDrop(): boolean {
-    return this.allowDrag && !this.isDesktop
+    return this.allowDrag && !this.isDesktop && this.clicked
   }
 
   @Watch('deselectAll')

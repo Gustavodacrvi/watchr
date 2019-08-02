@@ -7,13 +7,13 @@
   >
     <div v-if='icon && iconColor'
       class='left-icon'
-      :class='{handle: showHandle && !isDesktop}'
+      :class='{handle: allowDragAndDrop}'
     >
       <i :class='`txt fas fa-lg fa-${icon}`' :style='[{color: iconColor}, theme]'></i>
     </div>
     <div
       class='content'
-      :class='{handle: showHandle && !isDesktop}'
+      :class='{handle: allowDragAndDrop}'
       v-longpress='longPress'      
       @click='singleClick'
     >
@@ -132,6 +132,9 @@ export default class ListRenderer extends Vue {
       this.closeAppBar()
   }
 
+  get allowDragAndDrop(): boolean {
+    return this.showHandle && !this.isDesktop && this.clicked
+  }
   get showOptionsMobile(): boolean {
     return !this.isDesktop && this.options && this.options.length > 0 && !this.showHandle
   }
