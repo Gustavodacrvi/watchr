@@ -261,7 +261,8 @@ export default class AppviewTask extends Vue {
     this.justLongPressed = false
   }
   toggleEditing() {
-    this.editing = !this.editing
+    if (!this.allowDrag)
+      this.editing = !this.editing
   }
   select() {
     this.clicked = !this.clicked
