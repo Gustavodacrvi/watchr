@@ -63,7 +63,6 @@ export default class TheNavBar extends Vue {
       this.appMenu = 'appnav'
     else
       this.appMenu = 'settingsnav'
-    this.appMenu = 'appnav'
   }
 
   changeTheme() {

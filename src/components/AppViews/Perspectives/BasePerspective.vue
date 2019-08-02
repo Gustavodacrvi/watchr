@@ -138,6 +138,7 @@ export default class PerspectiveAppview extends Vue {
   showing: boolean = false
   loaded: boolean = false
   selected: string[] = []
+  justUpdated: boolean = false
   mobileSelectedOptions: ListIcon[] = [
     {
       name: 'Delete selected tasks',
@@ -287,6 +288,7 @@ export default class PerspectiveAppview extends Vue {
         id: this.pers.id,
         order: ids.filter(el => el !== 'task-adder'),
       })
+    this.justUpdated = true
   }
   onSelect(ids: string[]) {
     this.selected = ids
@@ -302,9 +304,12 @@ export default class PerspectiveAppview extends Vue {
   }
   updateView() {
     this.priority = this.pers.priority
-    this.labels = this.pers.includeAndLabels.slice()
-    this.sort = this.pers.sort.slice()
-    this.order = this.pers.order.slice()
+    if (!this.justUpdated && !this.save || this.save) {
+      this.labels = this.pers.includeAndLabels.slice()
+      this.sort = this.pers.sort.slice()
+      this.order = this.pers.order.slice()
+    }
+    this.justUpdated = false
     this.pushView({
       view: this.pers.name,
       viewType: 'perspective',
