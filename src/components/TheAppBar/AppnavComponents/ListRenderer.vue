@@ -90,6 +90,8 @@ export default class ListRenderer extends Mixins(Mixin) {
   }
 
   toggleElement({el, select}: {el: HTMLElement, select: boolean}) {
+    if (this.numberOfSelected === 0)
+      window.navigator.vibrate(50)
     if (select && !this.disabled)
       Sortable.utils.select(el)
     else Sortable.utils.deselect(el)

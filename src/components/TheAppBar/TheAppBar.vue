@@ -55,7 +55,7 @@ export default class TheNavBar extends Vue {
   @Getter platform!: 'mobile' | 'desktop'
   @Getter isStandAlone!: boolean
 
-  appMenu: 'settingsnav' | 'appnav' = 'settingsnav'
+  appMenu: 'settingsnav' | 'appnav' = 'appnav'
   activeZindex: boolean = true
 
   created() {
@@ -134,7 +134,6 @@ export default class TheNavBar extends Vue {
 
 .theappbar {
   position: relative;
-  height: 100%;
   height: 100%;
   flex-direction: column;
 }

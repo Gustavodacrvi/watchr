@@ -28,7 +28,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State, Mutation, namespace, Getter } from 'vuex-class'
 
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
@@ -56,13 +56,16 @@ export default class OverviewAppnav extends Vue {
 
   @taskVuex.State tasks!: Task[]
 
+  @Prop(String) search!: string
+
   created() {
     this.openSection('overview')
   }
 
   get smartPers(): ListElement[] {
     const els: ListElement[] = []
-    for (const per of this.pinedSmartPerspectives) {
+    const pers = this.pinedSmartPerspectives.filter(el => el.name.includes(this.search))
+    for (const per of pers) {
       let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
       let show = true
       if (per.showWhenNotEmpty && numberOfTasks === 0)
@@ -77,7 +80,8 @@ export default class OverviewAppnav extends Vue {
   }
   get customPers(): ListElement[] {
     const els: ListElement[] = []
-    for (const per of this.pinedCustomPerspectives) {
+    const pers = this.pinedCustomPerspectives.filter(el => el.name.includes(this.search))
+    for (const per of pers) {
       let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
       let show = true
       if (per.showWhenNotEmpty && numberOfTasks === 0)

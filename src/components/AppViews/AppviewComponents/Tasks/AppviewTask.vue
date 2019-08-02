@@ -119,9 +119,9 @@ import Sortable from 'sortablejs'
 
 import { longClickDirective } from 'vue-long-click'
 
-const longPress = longClickDirective({delay: 1500, interval: 5000})
-
-Vue.directive('longpress', longPress)
+if (document.body.clientWidth > 992)
+  Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
+else Vue.directive('longpress', longClickDirective({delay: 1500, interval: 5000}))
 
 @Component({
   components: {
@@ -256,7 +256,8 @@ export default class AppviewTask extends Vue {
   toggleChecklist() {
     if (this.allowDrag && !this.justLongPressed)
       this.select()
-    else this.showChecklist = !this.showChecklist
+    if (!this.allowDrag)
+      this.showChecklist = !this.showChecklist
     this.justLongPressed = false
   }
   toggleEditing() {
@@ -289,6 +290,8 @@ export default class AppviewTask extends Vue {
     this.subTaskAdderPoition = position
   }
   toggleElementSubtask({el, select}: {el: HTMLElement, select: boolean}) {
+    if (this.numberOfSelected === 0)
+      window.navigator.vibrate(50)
     if (select)
       Sortable.utils.select(el)
     else Sortable.utils.deselect(el)
@@ -330,7 +333,7 @@ export default class AppviewTask extends Vue {
     return !this.isDesktop || (this.onHover && this.isDesktop)
   }
   get allowDragAndDrop(): boolean {
-    return this.allowDrag && !this.isDesktop
+    return this.allowDrag && !this.isDesktop && this.clicked
   }
   get taskLabels(): string[] {
     return this.getLabelsByIds(this.task.labels).map(el => el.name)
@@ -348,6 +351,11 @@ export default class AppviewTask extends Vue {
   }
   get getChecklist(): any[] {
     return appUtils.sortArrayByIds(this.task.checklist as any, this.task.checklistOrder)
+  }
+  get press(): string {
+    if (this.isDesktop)
+      return 'longpressdesktop'
+    return 'longpressmobile'
   }
 
   @Watch('task')
