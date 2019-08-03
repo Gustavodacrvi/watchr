@@ -260,7 +260,7 @@ export default class AppviewTaskedit extends Vue {
     if (this.allowDate) {
       if (this.value.includes(' $')) {
         const obj = appUtils.parseTaskInputTime(this.value, this.timeFormat)
-        console.log(obj)
+        console.log(appUtils.parseTaskInputObjectToString(obj))
       }
     }
     if (!changedOptions)

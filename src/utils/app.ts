@@ -4,7 +4,7 @@ import ErrorComponent from '@/components/ErrorComponent.vue'
 
 import { Task } from '@/interfaces/app'
 
-import moment from 'moment'
+import moment, { months } from 'moment'
 
 export default {
   AsyncComponent(comp: any): any {
@@ -120,40 +120,8 @@ export default {
 
     return tasks
   },
-  getMonthByName(input: string): number | undefined {
-    const str = input.toLowerCase()
-    switch(str) {
-      case 'jan': return 1
-      case 'feb': return 2
-      case 'mar': return 3
-      case 'apr': return 4
-      case 'may': return 5
-      case 'jun': return 6
-      case 'jul': return 7
-      case 'aug': return 8
-      case 'sep': return 9
-      case 'oct': return 10
-      case 'nov': return 11
-      case 'dec': return 12
-    }
-    switch(str) {
-      case 'january': return 1
-      case 'february': return 2
-      case 'march': return 3
-      case 'april': return 4
-      case 'may': return 5
-      case 'june': return 6
-      case 'july': return 7
-      case 'august': return 8
-      case 'september': return 9
-      case 'october': return 10
-      case 'november': return 11
-      case 'december': return 12
-    }
-    return undefined
-  },
-  parseTaskInputTime(input: string, timeFormat: '13:00' | '1:00pm') {
-    const parseDateInput = (input: string, callback: (str: string | null) => void) => {
+  parseTaskInputTime(input: string, timeFormat: '13:00' | '1:00pm'): {day: number, month: number, year: number, time: string | null} {
+    const parseDateInput = (input: string, callback: (str: string | null) => void): any => {
       const exists = input.includes(' $')
       let str: string | null = null
       if (exists) {
@@ -164,7 +132,7 @@ export default {
     const isNumber = (num: any): boolean => {
       return !isNaN(parseInt(num))
     }
-    const getTime = (values: string[]): string | undefined => {
+    const getTime = (values: string[]): string | null => {
       const isValidTime = (time: string): boolean => {
         const twelveHourFormat = timeFormat === '1:00pm'
         const format = twelveHourFormat ? 'YYYY-MM-DD LT' : 'YYYY-MM-DD HH:mm'
@@ -177,11 +145,10 @@ export default {
 
         return moment(momentStr, format, true).isValid()
       }
-      
       for (let i = 0; i < values.length;i++)
         if (values[i] && isValidTime(values[i]))
           return values[i]
-      return undefined
+      return null
     }
     const getYear = (values: string[]): number => {
       for (let i = 0; i < values.length;i++)
@@ -223,20 +190,19 @@ export default {
       }
       return moment().month() + 1
     }
-    const getDay = (values: string[], month: number, year: number): number | undefined => {
+    const getDay = (values: string[], month: number, year: number): number => {
       for (let i = 0; i < values.length;i++) {
         const v = values[i]
         if (isNumber(v) && v.length < 3 && parseInt(v) < 32 && parseInt(v) > 0) {
-          console.log(moment(`${v}-${month}-${year}`, 'D-M-Y', true).isValid())
           if (moment(`${v}-${month}-${year}`, 'D-M-Y', true).isValid()) {
             return parseInt(v)
           }
         }
       }
-      return undefined
+      return parseInt(moment().format('D'))
     }
 
-    return parseDateInput(input, (str) => {
+    return parseDateInput(input, (str): any => {
       if (str) {
         const values = str.split(' ')
         
@@ -253,5 +219,15 @@ export default {
         }
       }
     })
+  },
+  parseTaskInputObjectToString(obj: {day: number, month: number, year: number, time: string | null} | undefined): string {
+    if (obj) {
+      let str = `${moment().month(obj.month).format('MMMM').toLowerCase()} ${obj.day}th`
+  
+      if (obj.time) str += ` at ${obj.time}`
+      
+      return str
+    }
+    return ''
   },
 }
