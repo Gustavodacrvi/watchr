@@ -76,3 +76,10 @@ export interface Task {
     taskId: string,
   }>
 }
+
+export interface TaskInputObj {
+  day: number,
+  month: number,
+  year: number,
+  time: string | null,
+}

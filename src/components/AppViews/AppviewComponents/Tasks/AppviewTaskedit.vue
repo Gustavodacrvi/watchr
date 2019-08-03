@@ -7,16 +7,12 @@
           :fixed-label='fixedLabel'
           :priority='priority'
           :labels='getLabels'
+          :calendar='calendarString'
           @clearpriority="v => priority = ''"
           @removelabel='removeLabel'
+          @removecalendar='removeCalendar'
         />
       </transition>
-      <div v-if='lock' class='lock right pointer' @click='toggleLock'>
-        <transition name='fade' mode='out-in'>
-          <i v-if='isLocked' key='lock' class='fas txt fa-lock fa-sm' :class='theme'></i>
-          <i v-else key='unlock' class='fas txt fa-unlock fa-sm' :class='theme'></i>
-        </transition>
-      </div>
     </div>
     <div class='margin input-div'>
       <drop-input
@@ -73,7 +69,7 @@ import { namespace, State } from 'vuex-class'
 const labelsVuex = namespace('label')
 const set = namespace('settings')
 
-import { ListIcon, Task, Label } from '../../../../interfaces/app'
+import { ListIcon, Task, Label, TaskInputObj } from '../../../../interfaces/app'
 
 import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
@@ -113,16 +109,14 @@ export default class AppviewTaskedit extends Vue {
   @Prop(String) inputTheme!: string
   @Prop(Boolean) allowPriority!: boolean
   @Prop(Boolean) allowLabels!: boolean
-  @Prop(Boolean) lock!: boolean
   @Prop(Boolean) allowDate!: boolean
 
   value: string = ''
   optionsType: string = ''
-  isLocked: boolean = false
   priority: '' | 'Low priority' | 'High priority' | 'Medium priority' = ''
-  lockPriority: '' | 'Low priority' | 'High priority' | 'Medium priority' = ''
   labels: string[] = []
-  lockLabels: string[] = []
+  calendarString: string = ''
+  calendarObj: any = null
   options: string[] = []
   priorityIcons: ListIcon[] = [
     {
@@ -160,11 +154,6 @@ export default class AppviewTaskedit extends Vue {
     }, 80)
   }
 
-  toggleLock() {
-    this.isLocked = !this.isLocked
-    this.lockPriority = this.priority
-    this.lockLabels = this.labels.slice()
-  }
   selectDropValue(value: string) {
     const arr = this.value.split(' ')
     arr[arr.length - 1] = this.optionsType + value
@@ -175,13 +164,8 @@ export default class AppviewTaskedit extends Vue {
     this.value = str
   }
   enter() {
-    if (this.value) {
+    if (this.value)
       this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels})
-      if (this.lock && this.isLocked) {
-        this.priority = this.lockPriority
-        this.labels = this.lockLabels.slice()
-      }
-    }
     this.value = ''
   }
   removeLabel(id: string) {
@@ -193,6 +177,10 @@ export default class AppviewTaskedit extends Vue {
   }
   chosePriority(priority: 'Low priority' | 'High priority' | 'Medium priority') {
     this.priority = priority
+  }
+  removeCalendar() {
+    this.calendarString = ''
+    this.calendarObj = null
   }
 
   get getLabels(): Label[] {
@@ -260,7 +248,11 @@ export default class AppviewTaskedit extends Vue {
     if (this.allowDate) {
       if (this.value.includes(' $')) {
         const obj = appUtils.parseTaskInputTime(this.value, this.timeFormat)
-        console.log(appUtils.parseTaskInputObjectToString(obj))
+        const str = appUtils.parseTaskInputObjectToString(obj)
+        if (obj) {
+          this.calendarObj = obj
+          this.calendarString = str
+        }
       }
     }
     if (!changedOptions)
@@ -279,10 +271,6 @@ export default class AppviewTaskedit extends Vue {
 
 .view-tags {
   position: relative;
-}
-
-.lock {
-  bottom: 0;
 }
 
 .right {
