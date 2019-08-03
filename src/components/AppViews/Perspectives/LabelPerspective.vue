@@ -46,7 +46,7 @@
         />
         <div class='margin'></div>
       </div>
-      <task-renderer
+      <task-renderer v-if='getLabel'
         id='appnavlabel'
         :tasks='getTasks'
         :default-priority='priority'
@@ -273,18 +273,20 @@ export default class LabelPerspective extends Vue {
   }
   get getTasks(): Task[] {
     let tasks = this.viewTasks
-    if (this.search)
-      tasks = tasks.filter(el => this.search.includes(el.name))
-    if (this.priority)
-      tasks = tasks.filter(el => el.priority === this.priority)
-    if (this.labels && this.labels.length > 0)
-      tasks = appUtils.filterTasksByLabels(tasks, this.labels)
-    if (this.getLabel.order && this.getLabel.order.length > 0) {
-      const ord = appUtils.fixOrder(tasks, this.getLabel.order)
-      tasks = appUtils.sortArrayByIds(tasks, ord)
+    if (this.getLabel) {
+      if (this.search)
+        tasks = tasks.filter(el => this.search.includes(el.name))
+      if (this.priority)
+        tasks = tasks.filter(el => el.priority === this.priority)
+      if (this.labels && this.labels.length > 0)
+        tasks = appUtils.filterTasksByLabels(tasks, this.labels)
+      if (this.getLabel.order && this.getLabel.order.length > 0) {
+        const ord = appUtils.fixOrder(tasks, this.getLabel.order)
+        tasks = appUtils.sortArrayByIds(tasks, ord)
+      }
+      if (this.sort && this.sort.length > 0)
+        tasks = appUtils.sortTasksByMultipleCriteria(tasks, this.sort)
     }
-    if (this.sort && this.sort.length > 0)
-      tasks = appUtils.sortTasksByMultipleCriteria(tasks, this.sort)
     return tasks
   }
 
