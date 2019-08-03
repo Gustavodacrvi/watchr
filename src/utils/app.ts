@@ -4,6 +4,8 @@ import ErrorComponent from '@/components/ErrorComponent.vue'
 
 import { Task } from '@/interfaces/app'
 
+import moment from 'moment'
+
 export default {
   AsyncComponent(comp: any): any {
     return () => ({
@@ -118,42 +120,138 @@ export default {
 
     return tasks
   },
-  parseTaskSpecificTime(input: string) {
-    const isValidSpecificDate = (val: string, callback: (isValid: boolean, day?: number, month?: string) => void) => {
-      const i = input.indexOf(' $')
-      if (i > 0) {
-        const str = input.substr(i).replace(' $', '')
-        const values = str.split(' ')
-        if (values.length < 3) {
-          let month!: string
-          let day!: number
-          let value1 = values[0]
-          let value2 = values[1]
-          let isValue1Number = !isNaN(parseInt(value1))
-          let isValue2Number = !isNaN(parseInt(value2))
-          let areBothNumbers = isValue1Number && isValue2Number
-          let atLeastOneIsaNumber = isValue1Number || isValue2Number
-          let atLeastOneIsUndefined = value1 === undefined || value2 === undefined
-          if (!areBothNumbers && atLeastOneIsaNumber && !atLeastOneIsUndefined) {
-            if (isValue1Number) {
-              day = parseInt(value1)
-              month = value2
-            } else {
-              day = parseInt(value2)
-              month = value1
-            }
-            callback(true, day, month)
-          } else callback(false)
-        } else callback(false)
-      } else callback(false)
+  getMonthByName(input: string): number | undefined {
+    const str = input.toLowerCase()
+    switch(str) {
+      case 'jan': return 1
+      case 'feb': return 2
+      case 'mar': return 3
+      case 'apr': return 4
+      case 'may': return 5
+      case 'jun': return 6
+      case 'jul': return 7
+      case 'aug': return 8
+      case 'sep': return 9
+      case 'oct': return 10
+      case 'nov': return 11
+      case 'dec': return 12
     }
-    
-    if (input.includes(' $every')) {
+    switch(str) {
+      case 'january': return 1
+      case 'february': return 2
+      case 'march': return 3
+      case 'april': return 4
+      case 'may': return 5
+      case 'june': return 6
+      case 'july': return 7
+      case 'august': return 8
+      case 'september': return 9
+      case 'october': return 10
+      case 'november': return 11
+      case 'december': return 12
+    }
+    return undefined
+  },
+  parseTaskInputTime(input: string, timeFormat: '13:00' | '1:00pm') {
+    const parseDateInput = (input: string, callback: (str: string | null) => void) => {
+      const exists = input.includes(' $')
+      let str: string | null = null
+      if (exists) {
+        str = input.substr(input.indexOf(' $')).replace(' $', '')
+      }
+      return callback(str)
+    }
+    const isNumber = (num: any): boolean => {
+      return !isNaN(parseInt(num))
+    }
+    const getTime = (values: string[]): string | undefined => {
+      const isValidTime = (time: string): boolean => {
+        const twelveHourFormat = timeFormat === '1:00pm'
+        const format = twelveHourFormat ? 'YYYY-MM-DD LT' : 'YYYY-MM-DD HH:mm'
+        let momentStr = ''
+        if (time.includes('pm')) {
+          momentStr = `2014-12-13 ${time.replace('pm', '')} pm`
+        } else if (time.includes('am')) {
+          momentStr = `2014-12-13 ${time.replace('am', '')} am`
+        } else momentStr = `2014-12-13 ${time}`
+
+        return moment(momentStr, format, true).isValid()
+      }
       
-    } else {
-      isValidSpecificDate(input, (isValid, day, month) => {
-        console.log(isValid, day, month)
-      })
+      for (let i = 0; i < values.length;i++)
+        if (values[i] && isValidTime(values[i]))
+          return values[i]
+      return undefined
     }
+    const getYear = (values: string[]): number => {
+      for (let i = 0; i < values.length;i++)
+        if (isNumber(values[i]) && values[i].length > 3)
+          return parseInt(values[i])
+      return moment().year()
+    }
+    const getMonth = (values: string[]): number => {
+      for (let i = 0; i < values.length;i++) {
+        const str = values[i].toLocaleLowerCase()
+        switch(str) {
+          case 'jan': return 1
+          case 'feb': return 2
+          case 'mar': return 3
+          case 'apr': return 4
+          case 'may': return 5
+          case 'jun': return 6
+          case 'jul': return 7
+          case 'aug': return 8
+          case 'sep': return 9
+          case 'oct': return 10
+          case 'nov': return 11
+          case 'dec': return 12
+        }
+        switch(str) {
+          case 'january': return 1
+          case 'february': return 2
+          case 'march': return 3
+          case 'april': return 4
+          case 'may': return 5
+          case 'june': return 6
+          case 'july': return 7
+          case 'august': return 8
+          case 'september': return 9
+          case 'october': return 10
+          case 'november': return 11
+          case 'december': return 12
+        }
+      }
+      return moment().month() + 1
+    }
+    const getDay = (values: string[], month: number, year: number): number | undefined => {
+      for (let i = 0; i < values.length;i++) {
+        const v = values[i]
+        if (isNumber(v) && v.length < 3 && parseInt(v) < 32 && parseInt(v) > 0) {
+          console.log(moment(`${v}-${month}-${year}`, 'D-M-Y', true).isValid())
+          if (moment(`${v}-${month}-${year}`, 'D-M-Y', true).isValid()) {
+            return parseInt(v)
+          }
+        }
+      }
+      return undefined
+    }
+
+    return parseDateInput(input, (str) => {
+      if (str) {
+        const values = str.split(' ')
+        
+        let month = getMonth(values)
+        let year = getYear(values)
+        let day = getDay(values, month, year)
+        let time = getTime(values)
+  
+        return {
+          year,
+          day,
+          time,
+          month,
+        }
+      }
+    })
   },
 }

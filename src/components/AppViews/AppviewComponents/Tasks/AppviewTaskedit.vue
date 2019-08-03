@@ -71,6 +71,7 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { namespace, State } from 'vuex-class'
 
 const labelsVuex = namespace('label')
+const set = namespace('settings')
 
 import { ListIcon, Task, Label } from '../../../../interfaces/app'
 
@@ -95,6 +96,8 @@ import appUtils from '@/utils/app'
 })
 export default class AppviewTaskedit extends Vue {
   @State theme!: string
+
+  @set.State timeFormat!: '13:00' | '1:00pm'
 
   @labelsVuex.State('labels') savedLabels!: Label[]
   @labelsVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
@@ -255,8 +258,10 @@ export default class AppviewTaskedit extends Vue {
       }
     }
     if (this.allowDate) {
-      if (this.value.includes(' $'))
-        appUtils.parseTaskSpecificTime(this.value)
+      if (this.value.includes(' $')) {
+        const obj = appUtils.parseTaskInputTime(this.value, this.timeFormat)
+        console.log(obj)
+      }
     }
     if (!changedOptions)
       this.options = []

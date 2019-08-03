@@ -232,6 +232,7 @@ export default class GeneralSubView extends Vue {
   get hasChange(): boolean {
     if (this.deParsedTimeZone !== this.timeZone) return true
     else if (this.dateFormat !== this.savedDateFormat) return true
+    else if (this.timeFormat !== this.savedTimeFormat) return true
     else if (this.startOfTheWeek !== this.savedStartOfTheWeek) return true
     else if (this.nextWeek !== this.savedNextWeek) return true
     else if (this.mobileTaskLabels !== this.savedMobileTaskLabels) return true
