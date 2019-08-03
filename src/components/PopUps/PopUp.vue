@@ -4,8 +4,8 @@
       <i v-if='!isDesktop' @click="pushPopUp('')" class='close-icon icon pointer txt fas fa-arrow-left fa-2x' :class='theme'></i>
       <transition name='fade' mode='out-in'>
         <component
-          class='pop-up card'
-          :class="[componentClass, {'stand-alone': isStandAlone}]"
+          class='pop-up'
+          :class="[componentClass, {'stand-alone': isStandAlone}, isDesktop ? 'card' : 'background-color']"
           :is='popUpComponent'
         />
       </transition>
