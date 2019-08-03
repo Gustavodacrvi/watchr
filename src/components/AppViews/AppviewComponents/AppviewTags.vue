@@ -34,6 +34,17 @@
         @click="$emit('removelabel', lab.id)"
       />
     </div>
+    <div class='tags'>
+      <transition name='fade'>
+        <view-tag v-if='calendar'
+          icon='calendar-day'
+          back-color='#9CE283'
+          :name='calendar'
+          :fixed='false'
+          @click="$emit('removecalendar')"
+        />
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -55,6 +66,7 @@ export default class AppviewTags extends Vue {
   @Prop(String) search!: string
   @Prop(Object) fixedTag!: object
   @Prop(String) priority!: string
+  @Prop(String) calendar!: string
   @Prop(Array) labels!: Label[]
 }
 

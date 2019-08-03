@@ -70,7 +70,7 @@ import { ListIcon } from '../../../interfaces/app'
 import { longClickDirective } from 'vue-long-click'
 
 if (document.body.clientWidth > 992)
-  Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
+  Vue.directive('longpress', longClickDirective({delay: 400, interval: 5000}))
 else Vue.directive('longpress', longClickDirective({delay: 1500, interval: 5000}))
 
 @Component({
@@ -93,6 +93,7 @@ export default class ListRenderer extends Vue {
   @Prop(Array) helpIcons!: ListIcon[]
   @Prop(Boolean) showHandle!: boolean
   @Prop(Boolean) deselectAll!: boolean
+  @Prop(Boolean) dragging!: boolean
 
   @State theme!: string
   @Getter isDesktop!: boolean
@@ -102,9 +103,11 @@ export default class ListRenderer extends Vue {
   justLongPressed: boolean = false
 
   longPress() {
-    this.justLongPressed = true
-    if (!this.showHandle)
-      this.select()
+    if (!this.dragging) {
+      this.justLongPressed = true
+      if (!this.showHandle)
+        this.select()
+    }
   }
   singleClick() {
     if (this.showHandle && !this.justLongPressed)

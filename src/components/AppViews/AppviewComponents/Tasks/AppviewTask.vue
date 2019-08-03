@@ -90,6 +90,7 @@
       :default-priority='task.priority'
       :allow-priority='true'
       :allow-labels='true'
+      :allow-date='true'
       btn='Edit task'
       @cancel='editing = false'
       @enter='enter'
@@ -120,7 +121,7 @@ import Sortable from 'sortablejs'
 import { longClickDirective } from 'vue-long-click'
 
 if (document.body.clientWidth > 992)
-  Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
+  Vue.directive('longpress', longClickDirective({delay: 400, interval: 5000}))
 else Vue.directive('longpress', longClickDirective({delay: 1500, interval: 5000}))
 
 @Component({
@@ -149,6 +150,7 @@ export default class AppviewTask extends Vue {
   @Prop(Object) task!: Task
   @Prop(Boolean) deselectAll!: boolean
   @Prop(Boolean) allowDrag!: boolean
+  @Prop(Boolean) dragging!: boolean
   @Prop(String) fixedPers!: string
 
   clicked: boolean = false
@@ -249,9 +251,11 @@ export default class AppviewTask extends Vue {
     return []
   }
   toggleElement() {
-    this.justLongPressed = true
-    if (!this.allowDrag)
-      this.select()
+    if (!this.dragging) {
+      this.justLongPressed = true
+      if (!this.allowDrag)
+        this.select()
+    }
   }
   toggleChecklist() {
     if (this.allowDrag && !this.justLongPressed)

@@ -4,6 +4,10 @@ import ErrorComponent from '@/components/ErrorComponent.vue'
 
 import { Task } from '@/interfaces/app'
 
+import moment from 'moment'
+
+import { TaskInputObj } from '@/interfaces/app'
+
 export default {
   AsyncComponent(comp: any): any {
     return () => ({
@@ -117,5 +121,169 @@ export default {
     })
 
     return tasks
+  },
+  parseTaskInputTime(input: string, timeFormat: '13:00' | '1:00pm'): TaskInputObj {
+    const parseDateInput = (input: string, callback: (str: string | null) => void): any => {
+      const exists = input.includes(' $')
+      let str: string | null = null
+      if (exists) {
+        str = input.substr(input.indexOf(' $')).replace(' $', '')
+      }
+      return callback(str)
+    }
+    const isNumber = (num: any): boolean => {
+      return !isNaN(parseInt(num))
+    }
+    const getTime = (values: string[]): string | null => {
+      const parseTime = (time: string): string => {
+        return moment(time, 'H:m').format('HH:mm')
+      }
+      const isValidTime = (str: string): boolean => {
+        const time = parseTime(str)
+        const twelveHourFormat = timeFormat === '1:00pm'
+        const format = twelveHourFormat ? 'Y-M-D LT' : 'Y-M-D HH:mm'
+        let momentStr = ''
+        if (time.includes('pm')) {
+          momentStr = `2014-12-13 ${time.replace('pm', '')} pm`
+        } else if (time.includes('am')) {
+          momentStr = `2014-12-13 ${time.replace('am', '')} am`
+        } else momentStr = `2014-12-13 ${time}`
+
+        return moment(momentStr, format, true).isValid()
+      }
+      for (let i = 0; i < values.length;i++) {
+        const v = values[i]
+        if (v && v.includes(':') && isValidTime(v.toLowerCase()) && !v.includes('24:00'))
+          return values[i]
+      }
+      return null
+    }
+    const getYear = (values: string[]): number => {
+      for (let i = 0; i < values.length;i++) {
+        const v = values[i]
+        if (isNumber(v) && v.length > 3 && !v.includes(':'))
+          return parseInt(values[i])
+      }
+      return moment().year()
+    }
+    const getMonth = (values: string[]): number => {
+      for (let i = 0; i < values.length;i++) {
+        const str = values[i].toLocaleLowerCase()
+        switch(str) {
+          case 'jan': return 1
+          case 'feb': return 2
+          case 'mar': return 3
+          case 'apr': return 4
+          case 'may': return 5
+          case 'jun': return 6
+          case 'jul': return 7
+          case 'aug': return 8
+          case 'sep': return 9
+          case 'oct': return 10
+          case 'nov': return 11
+          case 'dec': return 12
+        }
+        switch(str) {
+          case 'january': return 1
+          case 'february': return 2
+          case 'march': return 3
+          case 'april': return 4
+          case 'may': return 5
+          case 'june': return 6
+          case 'july': return 7
+          case 'august': return 8
+          case 'september': return 9
+          case 'october': return 10
+          case 'november': return 11
+          case 'december': return 12
+        }
+      }
+      return moment().month() + 1
+    }
+    const getDay = (values: string[], month: number, year: number): number => {
+      for (let i = 0; i < values.length;i++) {
+        const v = values[i]
+        if (isNumber(v) && v.length < 3 && parseInt(v) < 32 && parseInt(v) > 0) {
+          if (moment(`${v}-${month}-${year}`, 'D-M-Y', true).isValid()) {
+            return parseInt(v)
+          }
+        }
+      }
+      return parseInt(moment().format('D'))
+    }
+    const searchKeyWords = (str: string, obj: TaskInputObj): TaskInputObj => {
+      const values = str.split(' ')
+      const tod = moment()
+      let m = moment(`${obj.day}-${obj.month}-${obj.year} ${obj.time}`, 'D-M-Y HH:mm')
+      let inKeyword = false
+      let inHours = false
+
+      if (str.includes('next ')) {
+        for (let i = 0; i < values.length;i++) {
+          if (values[i] === 'next' && values[i + 1]) {
+            switch (values[i + 1]) {
+              case 'day': m.add(1, 'd'); break
+              case 'month': m.add(1, 'M'); break
+              case 'year': m.add(1, 'y'); break
+            }
+          }
+        }
+      } else if (str.includes('tomorrow ')) {
+        m.add(1, 'd')
+      } else if (str.includes('in ')) {
+        for (let i = 0; i < values.length;i++) {
+          const q = values[i + 1]
+          const k = values[i + 2]
+          if (values[i] === 'in' && q && isNumber(q) && k) {
+            switch(k) {
+              case 'days': tod.add(q, 'd');inKeyword = true; break
+              case 'months': tod.add(q, 'M');inKeyword = true; break
+              case 'weeks': tod.add(q, 'w');inKeyword = true; break
+              case 'years': tod.add(q, 'y');inKeyword = true; break
+              case 'hours': tod.add(q, 'h');inKeyword = true;inHours = true; break
+            }
+          }
+        }
+      }
+      if (inKeyword) m = tod
+
+      const o: TaskInputObj = {
+        year: parseInt(m.format('Y')),
+        month: parseInt(m.format('M')),
+        day: parseInt(m.format('D')),
+        time: m.format('HH:mm'),
+      }
+      if (!obj.time)
+        o['time'] = null
+      if (inHours)
+        o['time'] = m.format('HH:mm')
+
+      return o
+    }
+
+    return parseDateInput(input, (str): any => {
+      if (str) {
+        const values = str.split(' ')
+        
+        let month = getMonth(values)
+        let year = getYear(values)
+        let day = getDay(values, month, year)
+        let time = getTime(values)
+        
+        const obj = searchKeyWords(str, {month, year, day, time})
+
+        return obj
+      }
+    })
+  },
+  parseTaskInputObjectToString(obj: TaskInputObj | undefined): string {
+    if (obj) {
+      let str = `${moment().month(obj.month - 1).format('MMMM')} ${obj.day}, ${obj.year}`
+  
+      if (obj.time) str += ` at ${obj.time}`
+      
+      return str
+    }
+    return ''
   },
 }

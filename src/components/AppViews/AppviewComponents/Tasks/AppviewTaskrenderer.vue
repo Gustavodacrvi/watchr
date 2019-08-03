@@ -6,8 +6,8 @@
         :key='task.id'
         :task='task'
         :deselect-all='deselectAll'
-        :allow-priority='allowPriority'
         :allow-drag='numberOfSelected > 0'
+        :dragging='dragging'
 
         :data-vid='task.id'
 
@@ -53,6 +53,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop({required: true, type: String}) id!: string
   @Prop({default: false, type: Boolean}) allowPriority!: boolean
   @Prop({default: false, type: Boolean}) allowLabels!: boolean
+  @Prop({default: false, type: Boolean}) allowDate!: boolean
   @Prop({default: undefined, type: String}) defaultPriority!: string
   @Prop({default: undefined, type: Array}) defaultLabels!: string[]
   @Prop(String) fixedPers!: string
@@ -66,6 +67,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   numberOfSelected: number = 0
   deselectAll: boolean = false
   added: boolean = false
+  dragging: boolean = false
   numberOfAdders: number = 0
   rootSelector: string = `.task-taskrenderer-${this.id}`
   taskAdderPosition: number = 0
@@ -105,7 +107,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
             class: 'handle', key: 'task-adder',
             fixedPers: this.fixedPers, fixedLabel: this.fixedLabel,
             defaultLabels: this.defaultLabels, defaultPriority: this.defaultPriority,
-            allowPriority: this.allowPriority, allowLabels: this.allowLabels, lock: true,
+            allowPriority: this.allowPriority, allowLabels: this.allowLabels, lock: true, allowDate: this.allowDate,
           },
         })
         const el = this.rootComponent.querySelector('.main-button') as HTMLElement
@@ -120,6 +122,12 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
           this.numberOfAdders--
           $el.parentNode.removeChild($el)
         })
+      },
+      onStart: () => {
+        this.dragging = true
+      },
+      onEnd: () => {
+        this.dragging = false
       },
     }
 

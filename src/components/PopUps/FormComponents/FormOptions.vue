@@ -102,6 +102,7 @@ export default class FormOptions extends Vue {
 
 .drop.wrapper {
   overflow: auto !important;
+  position: absolute;
 }
 
 .inner {

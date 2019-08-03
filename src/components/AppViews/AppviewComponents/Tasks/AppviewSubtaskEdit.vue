@@ -1,5 +1,5 @@
 <template>
-  <div class='subtask-adder pointer'>
+  <div class='subtask-adder'>
     <transition name='fade' mode='out-in'>
       <div v-if='addingSubtask || onlyEdit' key='adding' class='adding-wrapper'>
         <div class='adding'>
@@ -30,7 +30,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { State } from 'vuex-class'
+import { State, namespace } from 'vuex-class'
 
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
