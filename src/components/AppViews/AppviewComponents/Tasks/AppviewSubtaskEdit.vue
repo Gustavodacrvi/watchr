@@ -1,5 +1,5 @@
 <template>
-  <div class='subtask-adder pointer'>
+  <div class='subtask-adder'>
     <transition name='fade' mode='out-in'>
       <div v-if='addingSubtask || onlyEdit' key='adding' class='adding-wrapper'>
         <div class='adding'>

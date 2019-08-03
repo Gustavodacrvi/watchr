@@ -1,6 +1,7 @@
 <template>
   <div
     class='subtask-wrapper round-border cancel-getidsfromelements'
+    :class="{'not-editing': !editing}"
     @mouseenter='onHover = true'
     @mouseleave='onHover = false'
     @dblclick='toggleEditing'
@@ -8,7 +9,7 @@
     <transition name='fade' mode='out-in'>
       <div v-if='!editing'
         key='not-edit'
-        class='subtask round-border'
+        class='subtask round-border pointer'
         :class='[theme, {completed: task.completed}, {draghandle: allowDragAndDrop}]'
         v-longpress='longPress'
         @click='elClick'
@@ -118,7 +119,7 @@ export default class AppviewSubtask extends Vue {
   }
   toggleEditing() {
     if (!this.allowDrag)
-      this.editing != !this.editing
+      this.editing = !this.editing
   }
 
   get showTrashIcons(): boolean {
@@ -161,7 +162,6 @@ export default class AppviewSubtask extends Vue {
   position: relative;
   width: 100%;
   padding: 4px;
-  cursor: pointer;
   display: flex;
   align-items: center;
 }
@@ -170,11 +170,11 @@ export default class AppviewSubtask extends Vue {
   transition: background-color .3s;
 }
 
-.subtask-wrapper.light:hover {
+.subtask-wrapper.not-editing.light:hover {
   background-color: #f0f0f0;
 }
 
-.subtask-wrapper.dark:hover {
+.subtask-wrapper.not-editing.dark:hover {
   background-color: #282828;
 }
 
