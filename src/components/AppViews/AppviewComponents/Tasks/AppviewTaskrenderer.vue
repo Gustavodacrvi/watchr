@@ -7,6 +7,7 @@
         :task='task'
         :deselect-all='deselectAll'
         :allow-drag='numberOfSelected > 0'
+        :dragging='dragging'
 
         :data-vid='task.id'
 
@@ -66,6 +67,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   numberOfSelected: number = 0
   deselectAll: boolean = false
   added: boolean = false
+  dragging: boolean = false
   numberOfAdders: number = 0
   rootSelector: string = `.task-taskrenderer-${this.id}`
   taskAdderPosition: number = 0
@@ -120,6 +122,12 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
           this.numberOfAdders--
           $el.parentNode.removeChild($el)
         })
+      },
+      onStart: () => {
+        this.dragging = true
+      },
+      onEnd: () => {
+        this.dragging = false
       },
     }
 

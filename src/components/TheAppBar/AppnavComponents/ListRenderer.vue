@@ -12,6 +12,7 @@
         :iconColor='obj.iconColor'
         :options='options(obj)'
         :route='route'
+        :dragging='dragging'
         :help-icons='helpIcons(obj)'
         :show-handle='numberOfSelected > 0'
         :deselect-all='deselectAll'
@@ -58,6 +59,7 @@ export default class ListRenderer extends Mixins(Mixin) {
   numberOfSelected: number = 0
   sortable: any = null
   deselectAll: boolean = false
+  dragging: boolean = false
   rootSelector: string = `.sort-${this.group}`
 
   mounted() {
@@ -80,6 +82,12 @@ export default class ListRenderer extends Mixins(Mixin) {
       onUpdate: () => {
         const ids: string[] = this.getIdsFromElements(this.rootSelector)
         this.$emit('update', ids)
+      },
+      onStart: () => {
+        this.dragging = true
+      },
+      onEnd: () => {
+        this.dragging = false
       },
     }
 
