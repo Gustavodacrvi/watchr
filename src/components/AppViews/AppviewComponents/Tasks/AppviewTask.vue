@@ -49,7 +49,7 @@
       <div class='task-options' :class='{handle: allowDragAndDrop}'>
         <transition name='fade'>
           <span class='option' v-if='showOptionsIconDrop'>
-            <icon-option
+            <icon-options
               handle='ellipsis-v'
               size='lg'
               min-width='250px'
@@ -126,7 +126,7 @@ else Vue.directive('longpress', longClickDirective({delay: 1500, interval: 5000}
 
 @Component({
   components: {
-    'icon-option': AppviewIconoptions,
+    'icon-options': AppviewIconoptions,
     'task-edit': TaskEditTemplate,
     'sub-task': SubTask,
     'sub-task-edit': SubTaskEdit,

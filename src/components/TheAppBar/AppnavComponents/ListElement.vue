@@ -30,29 +30,13 @@
         </span>
       </template>
       <span v-if='showOptionsMobile || showOptionsDesktop && options.length > 0' class='help-icon'>
-        <icon-dropdown
+        <icon-options v-if='options && options.length > 0'
           handle='ellipsis-v'
           size='lg'
-          :change-color-on-hover='true'
-          :centralize='true'
           min-width='225px'
-        >
-          <div class='drop round-border'>
-            <div v-for='i in options'
-              class='el'
-              :key='i.name'
-              :class='theme'
-              @click='optionClick(i.callback)'
-            >
-              <span class='el-icon'>
-                <i :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]'></i>
-              </span>
-              <span class='el-name txt' :class='theme'>
-                {{ i.name }}
-              </span>
-            </div>
-          </div>
-        </icon-dropdown>
+          :change-color-on-hover='true'
+          :options='options'
+        />
       </span>
     </div>
   </div>
@@ -64,6 +48,7 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 
 import IconDropdown from '@/components/IconDropdown.vue'
+import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 
 import { ListIcon } from '../../../interfaces/app'
 
@@ -75,6 +60,7 @@ else Vue.directive('longpress', longClickDirective({delay: 1500, interval: 5000}
 
 @Component({
   components: {
+    'icon-options': AppviewIconoptions,
     'icon-dropdown': IconDropdown,
   },
 })

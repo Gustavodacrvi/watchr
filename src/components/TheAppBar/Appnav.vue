@@ -58,7 +58,7 @@
       class='footer-wrapper gray'
       :class='theme'
     >
-      <hr class='border hr' :class='theme'>
+      <div style='height: 18px;'></div>
       <div class='footer'>
         <div class='left' v-if='!isDesktop'>
           <span @click="$emit('change')">
@@ -67,29 +67,13 @@
         </div>
         <div class='right'>
           <transition name='fade'>
-            <icon-dropdown v-if='options && options.length > 0'
+            <icon-options v-if='options && options.length > 0'
               handle='ellipsis-h'
               size='lg'
-              :change-color-on-hover='true'
               min-width='200px'
+              :options='options'
               :float-top='true'
-            >
-              <div class='drop round-border'>
-                <div v-for='i in options'
-                  class='el'
-                  :key='i.name'
-                  :class='theme'
-                  @click='i.callback'
-                >
-                  <span class='el-icon'>
-                    <i :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]'></i>
-                  </span>
-                  <span class='el-name txt' :class='theme'>
-                    {{ i.name }}
-                  </span>
-                </div>
-              </div>
-            </icon-dropdown>
+            />
           </transition>
         </div>
       </div>
@@ -106,6 +90,7 @@ import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
 import IconDropdown from '@/components/IconDropdown.vue'
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 
 import appUtil from '@/utils/app'
 import { ListIcon } from '../../interfaces/app'
@@ -121,6 +106,7 @@ interface Section {
 
 @Component({
   components: {
+    'icon-options': AppviewIconoptions,
     'overview': appUtil.AsyncComponent(import('./AppnavSections/OverviewAppnav.vue')),
     'labels': appUtil.AsyncComponent(import('./AppnavSections/LabelAppnav.vue')),
     'perspectives': appUtil.AsyncComponent(import('./AppnavSections/PerspectivesAppnav.vue')),

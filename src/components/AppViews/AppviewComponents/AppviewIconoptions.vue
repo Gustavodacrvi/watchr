@@ -6,6 +6,8 @@
       :change-color-on-hover='true'
       :min-width='minWidth'
       @click='pushIcons'
+      :float-top='floatTop'
+      :centralize='centralize'
     >
       <div v-if='isDesktop' class='drop round-border'>
         <div v-for='i in options'
@@ -51,6 +53,8 @@ export default class AppviewIconoptions extends Vue {
   @Prop(String) handle!: string
   @Prop(String) size!: string
   @Prop(String) minWidth!: string
+  @Prop(Boolean) floatTop!: boolean
+  @Prop(Boolean) centralize!: boolean
   @Prop(Array) options!: ListIcon[]
 
   pushIcons() {
