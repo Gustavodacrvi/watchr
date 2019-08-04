@@ -29,7 +29,7 @@
         handle='search'
         :class='theme'
         :size='size'
-        min-width='300px'
+        min-width='250px'
         title='Search tasks'
         v-model='search'
       />
