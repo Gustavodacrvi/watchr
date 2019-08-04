@@ -36,6 +36,7 @@
           min-width='225px'
           :change-color-on-hover='true'
           :options='options'
+          :payload='id'
         />
       </span>
     </div>

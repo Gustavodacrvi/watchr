@@ -56,20 +56,22 @@ export default class AppviewIconoptions extends Vue {
   @Prop(Boolean) floatTop!: boolean
   @Prop(Boolean) centralize!: boolean
   @Prop(Array) options!: ListIcon[]
+  @Prop() payload!: any
 
   pushIcons() {
-    this.pushCenteredCard({
-      listIcons: this.options,
-      type: 'ListIcons',
-      flexBasis: '250px',
-      compName: '',
-      listIconHandler: (name: string, callback: () => void) => this.optionClick(name, callback)
-    })
+    if (!this.isDesktop)
+      this.pushCenteredCard({
+        listIcons: this.options,
+        type: 'ListIcons',
+        flexBasis: '250px',
+        compName: '',
+        listIconHandler: (name: string, callback: () => void) => this.optionClick(name, callback)
+      })
   }
-  optionClick(value: string, callback?: () => void) {
+  optionClick(value: string, callback?: (payload: any) => void) {
     this.$emit('click', value)
     if (callback)
-      callback()
+      callback(this.payload)
   }
 }
 
