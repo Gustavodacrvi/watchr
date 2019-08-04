@@ -13,6 +13,13 @@ import { SimpleAdder, Alert, Perspective, ListIcon } from '@/interfaces/app'
 
 Vue.use(Vuex)
 
+export interface CenteredCard {
+  isListIcon: boolean,
+  flexBasis: string,
+  listIcons: ListIcon[],
+  compName: string
+}
+
 const savedTheme: string = localStorage.getItem('watchrTheme') || 'light'
 
 export interface States {
@@ -24,6 +31,7 @@ export interface States {
   firestore: firebase.firestore.Firestore | null
   isLogged: boolean
   viewName: string
+  centeredCard: CenteredCard | null
   viewType: string
   currentAppSection: string
   uid: string | null
@@ -46,6 +54,7 @@ interface Mutations {
   pushPopUpPayload: (state: States, payload: any) => void
   saveCurrentUser: (state: States, user: firebase.User) => void
   saveFirestore: (state: States, firestore: firebase.firestore.Firestore) => void
+  pushCenteredCard: (state: States, centeredCardPopUp: {isListIcon: boolean, listIcons: ListIcon[], compName: string} | null) => void
   openSection: (state: States, currentAppSection: string) => void
   saveFirebase: (state: States, firebase: any) => void
   pushAppView: (state: States, comp: string) => void
@@ -101,6 +110,37 @@ const store: any = new Vuex.Store({
     appBarState: false,
     isLogged: false,
     firestore: null,
+    centeredCard: {
+      isListIcon: true,
+      flexBasis: '250px;',
+      listIcons: [
+        {
+          name: 'option 1',
+          icon: 'trash',
+          size: 'lg',
+          iconColor: '',
+        },
+        {
+          name: 'option 2',
+          icon: 'trash',
+          size: 'lg',
+          iconColor: '',
+        },
+        {
+          name: 'option 3',
+          icon: 'trash',
+          size: 'lg',
+          iconColor: '',
+        },
+        {
+          name: 'option 4',
+          icon: 'trash',
+          size: 'lg',
+          iconColor: '',
+        },
+      ],
+      compName: '',
+    },
     viewName: '',
     viewType: '',
     isAnonymous: false,
@@ -157,6 +197,9 @@ const store: any = new Vuex.Store({
     resetPopUpState(state: States) {
       state.popUpComponent = ''
       state.popUpPayload = null
+    },
+    pushCenteredCard(state: States, centeredCardPopUp) {
+      state.centeredCard = centeredCardPopUp
     },
     pushPopUp(state: States, compName: string) {
       const isDesktop = state.windowWidth > MAX_MOBILE_SCREEN_WIDTH
