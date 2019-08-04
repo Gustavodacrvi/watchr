@@ -1,6 +1,6 @@
 <template>
   <div class='dropdown-input'>
-    <input v-bind='attrs'
+    <input v-if='!allowTextArea' v-bind='attrs'
       class='margin input txt round-border gray'
       :placeholder='placeholder'
       type='text'
@@ -12,6 +12,19 @@
       @focus='focus'
       @blur='blur'
     >
+    <textarea v-else v-bind='attrs'
+      class='margin input txt round-border gray area'
+      :placeholder='placeholder'
+      rows='1'
+      type='text'
+      autocomplete='off'
+      :class='[inputClass, inputTheme, focusClass]'
+      v-model.trim='value'
+      @keydown='keyDown'
+      @keypress='keyPressed'
+      @focus='focus'
+      @blur='blur'
+    ></textarea>
     <transition name='fade'>
       <div v-if='showing && values.length > 0'
         class='dropdown round-border gray border dark scroll'
@@ -51,8 +64,9 @@ interface RefsPositions {
 export default class DropdownInput extends Vue {
   @State theme!: string
 
-  @Prop(String) focusClass!: boolean
-  @Prop({default: false, type: Boolean}) disabled!: boolean
+  @Prop(String) focusClass!: string
+  @Prop(Boolean) disabled!: boolean
+  @Prop({default: true, type: Boolean}) allowTextArea!: boolean
   @Prop({default: 'dark', type: String}) inputTheme!: string
   @Prop({default: null, type: String}) input!: string
   @Prop({default: () => [], type: Array}) values!: string[]
@@ -63,7 +77,12 @@ export default class DropdownInput extends Vue {
   value: string | null = this.input
   selected: string = ''
 
+  autoGrowTextarea(el: any) {
+    el.style.height = '5px'
+    el.style.height = (el.scrollHeight) + 'px'
+  }
   keyPressed({key}: {key: string}) {
+    this.autoGrowTextarea(this.$el.getElementsByClassName('area')[0])
     if (key === 'Enter' && this.selected === '')
       this.$emit('enter')
     else if (key === 'Enter')
@@ -71,6 +90,7 @@ export default class DropdownInput extends Vue {
     this.$emit('update')
   }
   keyDown({key}: {key: string}) {
+    this.autoGrowTextarea(this.$el.getElementsByClassName('area')[0])
     if (key === 'ArrowDown' || key === 'ArrowUp')
       this.moveSelection(key)
     else if (key === 'ArrowLeft' || key === 'ArrowRight')
@@ -171,6 +191,13 @@ export default class DropdownInput extends Vue {
 </style>
 
 <style scoped>
+
+.area {
+  resize: none;
+  overflow: hidden;
+  min-height: 38px;
+  max-height: 100%;
+}
 
 .dropdown-input {
   position: relative;
