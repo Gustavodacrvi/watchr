@@ -6,23 +6,31 @@
         @click='closeCard'
       ></div>
       <div class='content'
-        :style='`flex-basis: ${card.flexBasis}`'
+        :style='`flex-basis: ${card.flexBasis};max-height: ${card.maxHeight}`'
       >
-        <div v-if='card.isListIcon'
-          class='gray round-border list-icons'
-          :class='theme'
+        <div v-if='card.type === "ListIcons"'
+          class='background-color round-border list-icons dark'
         >
-          <div v-for='i in card.listIcons'
-            class='el cancel-sortable-unselect'
+          <div v-if='card.search' class='margin'>
+            <input
+              class='input txt round-border gray dark'
+              type='text'
+              autocomplete='off'
+              placeholder='Search...'
+              v-model='search'
+            >
+          </div>
+          <div v-for='i in list'
+            class='el cancel-sortable-unselect dark'
             :key='i.name'
-            :class='theme'
-            @click='optionClick(i.name, i.callback)'
+            @click='card.listIconHandler(i.name, i.callback);pushCenteredCard(null)'
           >
-            <span class='el-icon'>
-              <i v-if='!i.iconColor' :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]'></i>
-              <i v-else :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]' :style='{color: i.iconColor}'></i>
+            <span v-if='i.icon' class='el-icon'>
+              <i v-if='!i.iconColor' :class='`txt dark fas fa-${i.icon} fa-${i.size}`'></i>
+              <i v-else :class='`txt fas fa-${i.icon} fa-${i.size} dark`' :style='{color: i.iconColor}'></i>
             </span>
-            <span class='el-name txt' :class='theme'>
+            <span v-else style='width: 10px'  ></span>
+            <span class='el-name txt dark'>
               {{ i.name }}
             </span>
           </div>
@@ -46,9 +54,15 @@ export default class CenteredCardComp extends Vue {
   @State('centeredCard') card!: CenteredCard | null
   @Mutation pushCenteredCard!: (card: CenteredCard | null) => void
 
+  search: string = ''
+
   closeCard() {
-    console.log(3)
     this.pushCenteredCard(null)
+  }
+  get list(): ListIcon[] {
+    if (!this.card) return []
+    if (!this.search) return this.card.listIcons
+    return this.card.listIcons.filter((el: any) => el.name.includes(this.search))
   }
 }
 
@@ -57,15 +71,19 @@ export default class CenteredCardComp extends Vue {
 <style scoped>
 
 .wrapper-wrapper {
-  position: absolute;
+  position: fixed;
   width: 100%;
-  background-color: rgba(0, 0, 0, .4);
   height: 100%;
+  background-color: rgba(0, 0, 0, .4);
   z-index: 999;
 }
 
 .list-icons {
   overflow: hidden;
+}
+
+.margin {
+  margin: 8px;
 }
 
 .wrapper {
@@ -80,13 +98,14 @@ export default class CenteredCardComp extends Vue {
   height: 100%;
   width: 100%;
   top: 0;
-  position: absolute;
+  position: fixed;
   z-index: 1;
 }
 
 .content {
   position: relative;
   z-index: 2;
+  overflow: auto;
 }
 
 .el {
@@ -95,5 +114,8 @@ export default class CenteredCardComp extends Vue {
 
 </style>
 
-<style scoped src='@/assets/css/drop.css'></style>
+<style scoped src='@/assets/css/drop.css'>
+</style>
 
+<style scoped src='@/assets/css/authPopUp.css'>
+</style>

@@ -5,8 +5,9 @@
     :min-width='minWidth'
     :change-color-on-hover='changeColorOnHover'
     :float-top='floatTop'
+    @click='pushCard'
   >
-    <div class='drop'>
+    <div v-if='isDesktop || disableCenteredCard' class='drop'>
       <div class='input-wrapper scroll'>
         <input
           class='margin input txt round-border gray'
@@ -36,9 +37,12 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { State } from 'vuex-class'
+import { State, Getter, Mutation } from 'vuex-class'
 
 import IconDropdown from '@/components/IconDropdown.vue'
+
+import { CenteredCard } from '../../../store'
+import { ListIcon } from '../../../interfaces/app'
 
 @Component({
   components: {
@@ -47,6 +51,9 @@ import IconDropdown from '@/components/IconDropdown.vue'
 })
 export default class DropdownFinder extends Vue {
   @State theme!: string
+  @State centeredCard!: CenteredCard
+  @Mutation pushCenteredCard!: (obj: CenteredCard) => void
+  @Getter isDesktop!: boolean
 
   @Prop({default: '', type: String}) value!: string
   @Prop({default: 'dark', type: String}) inputTheme!: string
@@ -54,23 +61,52 @@ export default class DropdownFinder extends Vue {
   @Prop({required: true, type: String}) handle!: string
   @Prop({default: 'lg', type: String}) size!: string
   @Prop({default: '250px', type: String}) minWidth!: string
-  @Prop({default: false, type: Boolean}) changeColorOnHover!: boolean
-  @Prop({default: false, type: Boolean}) floatTop!: boolean
+  @Prop(Boolean) changeColorOnHover!: boolean
+  @Prop(Boolean) floatTop!: boolean
+  @Prop(Boolean) disableCenteredCard!: boolean
 
   search: string | null = null
-
-  select(value: {id: string, name: string}) {
-    this.$emit('select', value)
-  }
 
   created() {
     this.search = this.value
   }
 
+  select(value: {id: string, name: string}) {
+    this.$emit('select', value)
+  }
+  pushCard() {
+    if (!this.disableCenteredCard)
+      this.pushCenteredCard({
+        type: 'ListIcons',
+        search: true,
+        compName: '',
+        listIcons: this.listIconFromList,
+        flexBasis: '250px',
+        maxHeight: '240px',
+        listIconHandler: (name: string) => {
+          const el = this.list.find(el => el.name === name)
+          if (el)
+            this.select(el)
+        }
+      })
+  }
   get filteredArray(): Array<{id: string, name: string}> {
     if (this.search !== null)
       return this.list.filter(el => el.name.includes(this.search as any))
     return this.list
+  }
+  get listIconFromList(): ListIcon[] {
+    const els: ListIcon[] = []
+    for (const val of this.list) {
+      els.push({
+        name: val.name,
+        icon: '',
+        iconColor: '',
+        size: 'lg',
+      })
+    }
+    els.sort((a: any, b: any) => a.name.localeCompare(b.name))
+    return els
   }
 
   @Watch('search')

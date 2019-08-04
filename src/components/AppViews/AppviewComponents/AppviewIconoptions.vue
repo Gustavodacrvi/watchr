@@ -5,8 +5,9 @@
       :size='size'
       :change-color-on-hover='true'
       :min-width='minWidth'
+      @click='pushIcons'
     >
-      <div class='drop round-border'>
+      <div v-if='isDesktop' class='drop round-border'>
         <div v-for='i in options'
           class='el cancel-sortable-unselect'
           :key='i.name'
@@ -29,11 +30,12 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { State } from 'vuex-class'
+import { State, Mutation, Getter } from 'vuex-class'
 
 import IconDropdown from '@/components/IconDropdown.vue'
 
 import { ListIcon } from '../../../interfaces/app'
+import { CenteredCard } from '../../../store'
 
 @Component({
   components: {
@@ -42,12 +44,24 @@ import { ListIcon } from '../../../interfaces/app'
 })
 export default class AppviewIconoptions extends Vue {
   @State theme!: string
+  @State('centeredCard') card!: CenteredCard | null
+  @Getter isDesktop!: boolean
+  @Mutation pushCenteredCard!: (card: CenteredCard | null) => void
 
   @Prop(String) handle!: string
   @Prop(String) size!: string
   @Prop(String) minWidth!: string
   @Prop(Array) options!: ListIcon[]
 
+  pushIcons() {
+    this.pushCenteredCard({
+      listIcons: this.options,
+      type: 'ListIcons',
+      flexBasis: '250px',
+      compName: '',
+      listIconHandler: (name: string, callback: () => void) => this.optionClick(name, callback)
+    })
+  }
   optionClick(value: string, callback?: () => void) {
     this.$emit('click', value)
     if (callback)

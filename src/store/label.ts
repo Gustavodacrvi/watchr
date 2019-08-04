@@ -12,6 +12,7 @@ interface States {
 
 interface Getters {
   sortedLabels: () => Label[]
+  sortedLabelsByName: () => Label[]
   getLabelsByIds: () => (ids: string[]) => Label[]
 }
 
@@ -49,6 +50,11 @@ export default {
 
   } as Mutations,
   getters: {
+    sortedLabelsByName(state: States): Label[] {
+      const labs = state.labels.slice()
+      labs.sort((a, b) => a.name.localeCompare(b.name))
+      return labs
+    },
     sortedLabels(state: States): Label[] {
       const order: string[] = appUtils.fixOrder(state.labels, state.order)
       return appUtils.sortArrayByIds(state.labels, order)

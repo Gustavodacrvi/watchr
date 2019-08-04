@@ -125,8 +125,7 @@ export default class App extends Vue {
     return this.popUpComponent !== ''
   }
   get isShowingCenteredCard(): boolean {
-    return true
-    // return this.centeredCard !== null
+    return this.centeredCard !== null
   }
 
   @Watch('alerts')

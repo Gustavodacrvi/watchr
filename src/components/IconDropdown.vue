@@ -3,6 +3,7 @@
     class='icon-dropdown'
     @mouseenter='showing = true'
     @mouseleave='showing = false'
+    @click="$emit('click')"
     :class="{'color-on-hover': changeColorOnHover}"
   >
     <i :class='[`pointer handle icon txt fas fa-${handle} fa-${size}`, theme, {centralize: centralize}]'></i>
@@ -20,7 +21,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
 @Component
