@@ -84,10 +84,10 @@ export default class DropdownFinder extends Vue {
         flexBasis: '250px',
         maxHeight: '240px',
         listIconHandler: (name: string) => {
-          const el = this.list.find(el => el.name === name)
+          const el = this.list.find(e => e.name === name)
           if (el)
             this.select(el)
-        }
+        },
       })
   }
   get filteredArray(): Array<{id: string, name: string}> {
@@ -97,14 +97,13 @@ export default class DropdownFinder extends Vue {
   }
   get listIconFromList(): ListIcon[] {
     const els: ListIcon[] = []
-    for (const val of this.list) {
+    for (const val of this.list)
       els.push({
         name: val.name,
         icon: '',
         iconColor: '',
         size: 'lg',
       })
-    }
     els.sort((a: any, b: any) => a.name.localeCompare(b.name))
     return els
   }

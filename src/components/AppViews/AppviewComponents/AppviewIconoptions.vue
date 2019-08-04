@@ -65,7 +65,7 @@ export default class AppviewIconoptions extends Vue {
         type: 'ListIcons',
         flexBasis: '250px',
         compName: '',
-        listIconHandler: (name: string, callback: () => void) => this.optionClick(name, callback)
+        listIconHandler: (name: string, callback: () => void) => this.optionClick(name, callback),
       })
   }
   optionClick(value: string, callback?: (payload: any) => void) {
