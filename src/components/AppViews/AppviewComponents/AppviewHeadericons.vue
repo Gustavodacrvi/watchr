@@ -29,6 +29,8 @@
         handle='search'
         :class='theme'
         :size='size'
+        :list='[]'
+        :disable-centered-card='true'
         min-width='250px'
         title='Search tasks'
         v-model='search'
@@ -50,7 +52,7 @@
         :size='size'
         min-width='300px'
         title='Labels'
-        :list='labels'
+        :list='sortedLabelsByName'
         @select='selectLabel'
       />
     </span>
@@ -88,7 +90,7 @@ export default class AppviewHeadericons extends Vue {
   @State theme!: string
   @Getter isDesktop!: boolean
 
-  @labelsVuex.State labels!: Label[]
+  @labelsVuex.Getter sortedLabelsByName!: Label[]
 
   @Prop(String) value!: string
   @Prop(Boolean) showTaskOptions!: boolean

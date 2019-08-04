@@ -4,8 +4,8 @@
       <i v-if='!isDesktop' @click="pushPopUp('')" class='close-icon icon pointer txt fas fa-arrow-left fa-2x' :class='theme'></i>
       <transition name='fade' mode='out-in'>
         <component
-          class='pop-up'
-          :class="[componentClass, {'stand-alone': isStandAlone}, isDesktop ? 'card' : 'background-color']"
+          class='pop-up background-color dark'
+          :class="[componentClass, {'stand-alone': isStandAlone}]"
           :is='popUpComponent'
         />
       </transition>
@@ -48,7 +48,7 @@ export default class PopUp extends Vue {
   get componentClass(): any[] {
     return [
       {'round-border': this.isDesktop, 'background-color': !this.isDesktop},
-      this.platform, this.theme,
+      this.platform,
     ]
   }
 }

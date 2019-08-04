@@ -18,6 +18,9 @@
             <pop-up v-if='isShowingPopUp && isDesktop'/>
             <router-view style='z-index: 901' v-if='isShowingPopUp && !isDesktop'/>
           </transition>
+          <transition name='pop-up-trans' mode='out-in'>
+            <centered-card v-if='isShowingCenteredCard'/>
+          </transition>
           <transition name='appbar-trans'>
             <keep-alive>
               <the-app-bar v-if='appBarState'/>
@@ -65,6 +68,7 @@ import appUtils from '@/utils/app'
     'alerts': appUtils.AsyncComponent(import(/* webpackPrefetch: true */'@/components/Alerts.vue')),
     // tslint:disable-next-line:max-line-length
     'pop-up': appUtils.AsyncComponent(import('@/components/PopUps/PopUp.vue')),
+    'centered-card': appUtils.AsyncComponent(import('@/components/CenteredCard/CenteredCard.vue')),
     'action-button': appUtils.AsyncComponent(import('@/components/ActionButton.vue')),
   },
 })
@@ -72,6 +76,7 @@ export default class App extends Vue {
   @State theme!: string
   @State loading!: boolean
   @State popUpComponent!: string
+  @State centeredCard!: string
   @State alerts!: Alert[]
   @State appBarState!: boolean
   @State showingAlert!: boolean
@@ -108,7 +113,8 @@ export default class App extends Vue {
 
   get showActionButton(): boolean {
     // tslint:disable-next-line:max-line-length
-    return (this.isOnAppRoute && !this.isShowingPopUp && (this.isDesktop || !this.appBarState) && (this.loggedAndVerified || this.anonymous))
+    return (this.isOnAppRoute && !this.isShowingPopUp && !this.isShowingCenteredCard &&
+     (this.isDesktop || !this.appBarState) && (this.loggedAndVerified || this.anonymous))
   }
   get isOnAppRoute(): boolean {
     if (this.$route.matched[0] && this.$route.matched[0].name)
@@ -117,6 +123,9 @@ export default class App extends Vue {
   }
   get isShowingPopUp(): boolean {
     return this.popUpComponent !== ''
+  }
+  get isShowingCenteredCard(): boolean {
+    return this.centeredCard !== null
   }
 
   @Watch('alerts')

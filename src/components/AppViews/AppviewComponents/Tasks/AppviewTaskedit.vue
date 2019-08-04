@@ -245,7 +245,7 @@ export default class AppviewTaskedit extends Vue {
         changedOptions = true
       }
     }
-    if (this.allowDate) {
+    if (this.allowDate)
       if (this.value.includes(' $')) {
         const obj = appUtils.parseTaskInputTime(this.value, this.timeFormat)
         const str = appUtils.parseTaskInputObjectToString(obj)
@@ -254,7 +254,6 @@ export default class AppviewTaskedit extends Vue {
           this.calendarString = str
         }
       }
-    }
     if (!changedOptions)
       this.options = []
   }
