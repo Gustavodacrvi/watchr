@@ -75,7 +75,7 @@ export default class DropdownFinder extends Vue {
     this.$emit('select', value)
   }
   pushCard() {
-    if (!this.disableCenteredCard)
+    if (!this.disableCenteredCard && !this.isDesktop)
       this.pushCenteredCard({
         type: 'ListIcons',
         search: true,
