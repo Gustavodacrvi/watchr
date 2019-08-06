@@ -22,7 +22,7 @@ import CalendarInputComp from '@/components/AppViews/AppviewComponents/Tasks/App
 export default class CalendarInputIcon extends Vue {
   @State theme!: string
 
-  showing: boolean = false
+  showing: boolean = true
 }
 
 </script>

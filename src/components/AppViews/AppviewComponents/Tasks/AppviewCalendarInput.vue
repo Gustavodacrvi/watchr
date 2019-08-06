@@ -65,6 +65,15 @@
         <span class='txt dark date'><span class='number'>28</span></span>
         <span class='txt dark date'><span class='number'>29</span></span>
       </div>
+      <span v-if='isDesktop'>
+        <form-input class='add-time tiny'
+          input-theme='dark'
+          :disabled='true'
+          placeholder='Add time...'
+          v-model='time'
+        />
+      </span>
+      <span v-else class='add-time red'>Add time</span>
     </div>
   </div>
 </template>
@@ -72,10 +81,20 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 
-@Component
+import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+
+@Component({
+  components: {
+    'form-input': FormInput,
+  },
+})
 export default class CalendarInput extends Vue {
+  @Getter isDesktop!: boolean
+  
   month: number = 1
+  time: string = ''
 }
 
 </script>
@@ -119,6 +138,11 @@ export default class CalendarInput extends Vue {
   display: grid;
   grid-template-columns: auto auto auto auto auto auto auto;
   justify-content: space-between;
+}
+
+.add-time {
+  margin-top: 4px;
+  color: #FF6B66;
 }
 
 .date {
