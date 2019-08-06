@@ -2,7 +2,7 @@
   <div class='calendar-input-tag' @mouseenter='showing = true' @mouseleave='showing = false'>
     <i class='fas icon fa-calendar-alt fa-lg pointer' :class='theme'></i>
     <transition name='fade'>
-      <calendar-input v-if='showing' class='calendar'/>
+      <calendar-input class='calendar'/>
     </transition>
   </div>
 </template>
@@ -22,7 +22,7 @@ import CalendarInputComp from '@/components/AppViews/AppviewComponents/Tasks/App
 export default class CalendarInputIcon extends Vue {
   @State theme!: string
 
-  showing: boolean = true
+  showing: boolean = false
 }
 
 </script>

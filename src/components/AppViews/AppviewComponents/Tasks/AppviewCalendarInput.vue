@@ -2,11 +2,17 @@
   <div class='calendar-selection dark card round-border'>
     <div class='el cancel-sortable-unselect dark'>
       <span class='el-icon'><i class='txt fas fa-star fa-lg' style='color: #FFE366'></i></span>
-      <span class='el-name txt dark'>Start</span>
+      <span class='el-name txt dark'>
+        <span>Today</span>
+        <span class='fade'>{{ weekDayFromToday }}</span>
+      </span>
     </div>
     <div class='el cancel-sortable-unselect dark'>
       <span class='el-icon'><i class='txt fas fa-sun fa-lg' style='color: #FF7B66'></i></span>
-      <span class='el-name txt dark'>Tomorrow</span>
+      <span class='el-name txt dark'>
+        <span>Tomorrow</span>
+        <span class='fade'>{{ weekDayFromTomorrow }}</span>
+      </span>
     </div>
     <div class='el cancel-sortable-unselect dark'>
       <span class='el-icon'><i class='txt fas fa-calendar-week fa-lg' style='color: #88DDB7'></i></span>
@@ -16,7 +22,7 @@
       <div class='calendar-header'>
         <div class='header-row'>
           <span class='txt dark'>
-            Aug 2019
+            {{ monthName }} {{ year }}
           </span>
           <span class='select'>
             <i class='fas fa-angle-left fa-sm icon icon-calendar dark'></i>
@@ -35,42 +41,23 @@
         </div>
       </div>
       <div class='dates'>
-        <span class='txt dark date'><span class='number'>1</span></span>
-        <span class='txt dark date'><span class='number'>2</span></span>
-        <span class='txt dark date'><span class='number'>3</span></span>
-        <span class='txt dark date'><span class='number'>4</span></span>
-        <span class='txt dark date'><span class='number'>5</span></span>
-        <span class='txt dark date'><span class='number'>6</span></span>
-        <span class='txt dark date'><span class='number'>7</span></span>
-        <span class='txt dark date'><span class='number'>8</span></span>
-        <span class='txt dark date'><span class='number'>9</span></span>
-        <span class='txt dark date'><span class='number'>10</span></span>
-        <span class='txt dark date'><span class='number'>11</span></span>
-        <span class='txt dark date'><span class='number'>12</span></span>
-        <span class='txt dark date'><span class='number'>13</span></span>
-        <span class='txt dark date'><span class='number'>14</span></span>
-        <span class='txt dark date'><span class='number'>15</span></span>
-        <span class='txt dark date'><span class='number'>16</span></span>
-        <span class='txt dark date'><span class='number'>17</span></span>
-        <span class='txt dark date'><span class='number'>18</span></span>
-        <span class='txt dark date'><span class='number'>19</span></span>
-        <span class='txt dark date'><span class='number'>20</span></span>
-        <span class='txt dark date'><span class='number'>21</span></span>
-        <span class='txt dark date'><span class='number'>22</span></span>
-        <span class='txt dark date'><span class='number'>23</span></span>
-        <span class='txt dark date'><span class='number'>24</span></span>
-        <span class='txt dark date'><span class='number'>25</span></span>
-        <span class='txt dark date'><span class='number'>26</span></span>
-        <span class='txt dark date'><span class='number'>27</span></span>
-        <span class='txt dark date'><span class='number'>28</span></span>
-        <span class='txt dark date'><span class='number'>29</span></span>
+        <span v-for='i in firstWeekDayRange' :key='i + 100'></span>
+        <span v-for='i in monthDays'
+          class='txt dark date'
+          :key='i'
+          :class='{active: i === day}'
+          @click='selectDay(i)'
+        >
+          <span class='number'>{{ i }}</span>
+        </span>
       </div>
       <span v-if='isDesktop'>
         <form-input class='add-time tiny'
           input-theme='dark'
-          :disabled='true'
           placeholder='Add time...'
           v-model='time'
+          :disabled='true'
+          :max='10'
         />
       </span>
       <span v-else class='add-time red'>Add time</span>
@@ -85,6 +72,8 @@ import { Getter } from 'vuex-class'
 
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 
+import moment from 'moment'
+
 @Component({
   components: {
     'form-input': FormInput,
@@ -93,8 +82,59 @@ import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 export default class CalendarInput extends Vue {
   @Getter isDesktop!: boolean
   
+  moment: any = null
+  day: number = 1
   month: number = 1
+  year: number = 2019
   time: string = ''
+
+  created() {
+    this.moment = moment()
+
+    this.month = parseInt(this.moment.format('M'), 10)
+    this.year = parseInt(this.moment.format('Y'), 10)
+    this.day = parseInt(this.moment.format('D'), 10)
+  }
+
+  selectDay(num: number) {
+    this.day = num
+    this.updateMoment()
+  }
+  selectMonth(num: number) {
+    this.month = num
+    this.updateMoment()
+  }
+  selectYear(num: number) {
+    this.year = num
+    this.updateMoment()
+  }
+  updateMoment() {
+    this.moment = moment(`${this.day}-${this.month}-${this.year}`, 'D-M-Y', true)
+  }
+
+  get firstWeekDayRange(): number[] {
+    const num = parseInt(moment().startOf('month').format('d'), 10)
+    const arr = []
+    for (let i = 1;i <= num;i++)
+      arr.push(i)
+    return arr
+  }
+  get monthDays(): number[] {
+    const arr = []
+    const daysInMonth = this.moment.daysInMonth()
+    for (let i = 1;i <= daysInMonth; i++)
+      arr.push(i)
+    return arr
+  }
+  get monthName(): string {
+    return moment().month(this.month - 1).format('MMM')
+  }
+  get weekDayFromTomorrow(): string {
+    return moment().day(this.day + 1).format('ddd')
+  }
+  get weekDayFromToday(): string {
+    return moment().day(this.day).format('ddd')
+  }
 }
 
 </script>
@@ -112,6 +152,16 @@ export default class CalendarInput extends Vue {
 
 .drop {
   margin: 12px;
+}
+
+.el-name {
+  display: flex;
+  justify-content: space-between;
+  padding-right: 10px;
+}
+
+.fade {
+  opacity: .5;
 }
 
 .week {
@@ -163,7 +213,7 @@ export default class CalendarInput extends Vue {
   transform: translate(-50%,-50%);
 }
 
-.date:hover {
+.date:hover, .active {
   color: white;
   background-color: #FF6B66;
 }
