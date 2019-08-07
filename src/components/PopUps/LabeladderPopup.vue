@@ -9,7 +9,7 @@
         class='margin'
         focus-class='labeladder'
         placeholder='Label name...'
-        :input='input'
+        :input='value'
         :values='options'
         @enter='add'
         @value='v => value = v'
@@ -91,6 +91,7 @@ export default class LabelAdder extends Vue {
           duration: 2.5,
           type: 'success',
         })
+        this.value = ''
       }
     }
   }
