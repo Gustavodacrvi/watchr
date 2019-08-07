@@ -31,6 +31,9 @@
               <i v-if='taskLabels && taskLabels.length > 0'
                 class='fade content-icon fas fa-tags fa-sm'
               ></i>
+              <i v-if='getChecklist && getChecklist.length > 0'
+                class='fade content-icon fas fa-checklist fa-list-ul'
+              ></i>
             </div>
             <transition name='fade'>
               <div v-if='showLabels' class='txt fade' :class='theme'>
