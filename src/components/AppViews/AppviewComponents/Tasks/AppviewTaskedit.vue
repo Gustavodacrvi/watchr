@@ -2,7 +2,7 @@
   <div class='task-adder'>
     <div class='view-tags'>
       <transition name='fade'>
-        <view-tags v-if='priority || fixedPers || getLabels.length > 0'
+        <view-tags v-if='priority || fixedPers || getLabels.length > 0 || calendarString'
           :fixed-pers='fixedPers'
           :fixed-label='fixedLabel'
           :priority='priority'
@@ -39,7 +39,7 @@
       <span v-if='showCancel' class='cancel pointer' @click="$emit('cancel')">Cancel</span>
       <div class='right'>
         <div v-if='allowDate' class='header-option'>
-          <calendar-input/>
+          <calendar-input @select='getDate' />
         </div>
         <div v-if='allowLabels' class='header-option'>
           <drop-finder
@@ -187,6 +187,11 @@ export default class AppviewTaskedit extends Vue {
   removeCalendar() {
     this.calendarString = ''
     this.calendarObj = null
+  }
+  getDate(obj: any) {
+    this.calendarString = obj.parsed
+    this.calendarObj = obj
+    console.log(this.calendarString)
   }
 
   get getLabels(): Label[] {

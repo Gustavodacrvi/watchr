@@ -4,7 +4,7 @@ import { States as RootState } from '@/store/index'
 import 'moment-timezone/builds/moment-timezone-with-data'
 
 interface States {
-  timeZone: string
+  timeZone: '13:00' | '1:00pm' | string
   dateFormat: string
   timeFormat: string
   startOfTheWeek: string

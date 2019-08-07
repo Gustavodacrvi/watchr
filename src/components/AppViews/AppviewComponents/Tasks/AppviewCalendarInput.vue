@@ -1,20 +1,20 @@
 <template>
   <div class='calendar-selection dark card round-border'>
-    <div class='el cancel-sortable-unselect dark'>
+    <div class='el cancel-sortable-unselect dark' @click='selectToday'>
       <span class='el-icon'><i class='txt fas fa-star fa-lg' style='color: #FFE366'></i></span>
       <span class='el-name txt dark'>
         <span>Today</span>
-        <span class='fade'>{{ weekDayFromToday }}</span>
+        <span class='fade'>{{ weekDayFromToday() }}</span>
       </span>
     </div>
-    <div class='el cancel-sortable-unselect dark'>
+    <div class='el cancel-sortable-unselect dark' @click='selectTomorrow'>
       <span class='el-icon'><i class='txt fas fa-sun fa-lg' style='color: #FF7B66'></i></span>
       <span class='el-name txt dark'>
         <span>Tomorrow</span>
-        <span class='fade'>{{ weekDayFromTomorrow }}</span>
+        <span class='fade'>{{ weekDayFromTomorrow() }}</span>
       </span>
     </div>
-    <div class='el cancel-sortable-unselect dark'>
+    <div class='el cancel-sortable-unselect dark' @click='selectNextweek'>
       <span class='el-icon'><i class='txt fas fa-calendar-week fa-lg' style='color: #88DDB7'></i></span>
       <span class='el-name txt dark'>Next week</span>
     </div>
@@ -22,30 +22,30 @@
       <div class='calendar-header'>
         <div class='header-row'>
           <span class='txt dark'>
-            {{ monthName }} {{ year }}
+            {{ monthName() }} {{ year() }}
           </span>
           <span class='select'>
-            <i class='fas fa-angle-left fa-sm icon icon-calendar dark'></i>
-            <i class='fas fa-circle fa-sm icon icon-calendar dark'></i>
-            <i class='fas fa-angle-right fa-sm icon icon-calendar dark'></i>
+            <i class='fas fa-angle-left fa-sm icon icon-calendar pointer dark' @click='previousMonth'></i>
+            <i class='fas fa-circle fa-sm icon icon-calendar pointer dark' @click='goToOriginalDate'></i>
+            <i class='fas fa-angle-right fa-sm icon icon-calendar pointer dark' @click='nextMonth'></i>
           </span>
         </div>
         <div class='header-row weeks'>
-          <span class='txt dark week'>S</span>
-          <span class='txt dark week'>M</span>
-          <span class='txt dark week'>T</span>
-          <span class='txt dark week'>W</span>
-          <span class='txt dark week'>T</span>
-          <span class='txt dark week'>F</span>
-          <span class='txt dark week'>S</span>
+          <span class='txt dark week fade'>S</span>
+          <span class='txt dark week fade'>M</span>
+          <span class='txt dark week fade'>T</span>
+          <span class='txt dark week fade'>W</span>
+          <span class='txt dark week fade'>T</span>
+          <span class='txt dark week fade'>F</span>
+          <span class='txt dark week fade'>S</span>
         </div>
       </div>
       <div class='dates'>
-        <span v-for='i in firstWeekDayRange' :key='i + 100'></span>
-        <span v-for='i in monthDays'
+        <span v-for='i in firstWeekDayRange()' :key='i + 100'></span>
+        <span v-for='i in monthDays()'
           class='txt dark date'
           :key='i'
-          :class='{active: i === day}'
+          :class='{active: isSelectedDate(i)}'
           @click='selectDay(i)'
         >
           <span class='number'>{{ i }}</span>
@@ -67,12 +67,16 @@
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Getter, namespace } from 'vuex-class'
+
+const set = namespace('settings')
 
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 
 import moment from 'moment'
+
+import appUtils from '@/utils/app'
 
 @Component({
   components: {
@@ -81,59 +85,102 @@ import moment from 'moment'
 })
 export default class CalendarInput extends Vue {
   @Getter isDesktop!: boolean
+
+  @set.State timeFormat!: '13:00' | '1:00pm'
+  @set.State nextWeek!: string
   
-  moment: any = null
-  day: number = 1
-  month: number = 1
-  year: number = 2019
+  originalMoment: any = null
+  selectedMoment: any = null
   time: string = ''
 
   created() {
-    this.moment = moment()
-
-    this.month = parseInt(this.moment.format('M'), 10)
-    this.year = parseInt(this.moment.format('Y'), 10)
-    this.day = parseInt(this.moment.format('D'), 10)
+    this.originalMoment = moment()
+    this.selectedMoment = this.originalMoment.clone()
   }
 
   selectDay(num: number) {
-    this.day = num
-    this.updateMoment()
+    this.selectedMoment.date(num)
+    this.$forceUpdate()
+    this.emitEvent()
   }
-  selectMonth(num: number) {
-    this.month = num
-    this.updateMoment()
+  selectToday() {
+    this.emitEvent(this.originalMoment)
   }
-  selectYear(num: number) {
-    this.year = num
-    this.updateMoment()
+  selectTomorrow() {
+    const clone = this.originalMoment.clone()
+    this.emitEvent(clone.add(1, 'd'))
   }
-  updateMoment() {
-    this.moment = moment(`${this.day}-${this.month}-${this.year}`, 'D-M-Y', true)
+  selectNextweek() {
+    this.emitEvent(appUtils.getNextWeek(this.originalMoment.clone(), this.nextWeek))
+  }
+  emitEvent(moment?: any) {
+    if (!moment)
+      moment = this.selectedMoment
+    const time = appUtils.getTaskInputTime(this.time.split(' '), this.timeFormat)
+    const day = moment.format('D')
+    const month = moment.format('M')
+    const year = moment.format('Y')
+    this.$emit('select', {
+      time, day, month, year,
+      parsed: appUtils.parseTaskInputObjectToString({
+        time, day, month, year,
+      }),
+    })
+  }
+  nextMonth() {
+    this.selectedMoment.add(1, 'M')
+    this.$forceUpdate()
+  }
+  previousMonth() {
+    this.selectedMoment.subtract(1, 'M')
+    this.$forceUpdate()
   }
 
-  get firstWeekDayRange(): number[] {
-    const num = parseInt(moment().startOf('month').format('d'), 10)
+  goToOriginalDate() {
+    this.selectedMoment = this.originalMoment.clone()
+  }
+  isSelectedDate(day: number): boolean {
+    const clone = this.selectedMoment.clone().date(day)
+    return clone.isSame(this.selectedMoment)
+  }
+  monthDays(): number[] {
+    const arr = []
+    const daysInMonth = this.selectedMoment.daysInMonth()
+    for (let i = 1;i <= daysInMonth; i++)
+      arr.push(i)
+    return arr
+  }
+  firstWeekDayRange(): number[] {
+    const clone = this.selectedMoment.clone()
+    const num = parseInt(clone.startOf('month').format('d'), 10)
     const arr = []
     for (let i = 1;i <= num;i++)
       arr.push(i)
     return arr
   }
-  get monthDays(): number[] {
-    const arr = []
-    const daysInMonth = this.moment.daysInMonth()
-    for (let i = 1;i <= daysInMonth; i++)
-      arr.push(i)
-    return arr
+  monthName(): string {
+    return this.selectedMoment.format('MMM')
   }
-  get monthName(): string {
-    return moment().month(this.month - 1).format('MMM')
+  weekDayFromTomorrow(): string {
+    const mom = this.originalMoment.clone()
+    return mom.add(1, 'd').format('ddd')
   }
-  get weekDayFromTomorrow(): string {
-    return moment().day(this.day + 1).format('ddd')
+  weekDayFromToday(): string {
+    return this.originalMoment.format('ddd')
   }
-  get weekDayFromToday(): string {
-    return moment().day(this.day).format('ddd')
+  year() {
+    return this.selectedMoment.format('Y')
+  }
+  month() {
+    return this.selectedMoment.format('M')
+  }
+  day() {
+    return this.selectedMoment.format('D')
+  }
+
+  @Watch('time')
+  onChange() {
+    this.emitEvent()
   }
 }
 
@@ -169,10 +216,6 @@ export default class CalendarInput extends Vue {
   text-align: center;
 }
 
-.weeks {
-  font-size: .8em;
-}
-
 .dates {
   display: grid;
   grid-template-columns: auto auto auto auto auto auto auto;
@@ -186,13 +229,15 @@ export default class CalendarInput extends Vue {
 
 .weeks {
   display: grid;
+  font-size: .8em;
+  margin-top: 18px !important;
   grid-template-columns: auto auto auto auto auto auto auto;
   justify-content: space-between;
 }
 
 .add-time {
   margin-top: 4px;
-  color: #FF6B66;
+  color: #83B7E2;
 }
 
 .date {
@@ -215,7 +260,7 @@ export default class CalendarInput extends Vue {
 
 .date:hover, .active {
   color: white;
-  background-color: #FF6B66;
+  background-color: #83B7E2;
 }
 
 .header-row + .header-row {
@@ -223,7 +268,7 @@ export default class CalendarInput extends Vue {
 }
 
 .icon-calendar + .icon-calendar {
-  margin-left: 14px;
+  margin-left: 18px;
 }
 
 .fa-circle {

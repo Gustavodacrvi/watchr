@@ -122,6 +122,38 @@ export default {
 
     return tasks
   },
+  getTaskInputTime(values: string[], timeFormat: '13:00' | '1:00pm') {
+    const parseTime = (time: string): string => {
+      return moment(time, 'H:m').format('HH:mm')
+    }
+    const isValidTime = (str: string): boolean => {
+      const time = parseTime(str)
+      const twelveHourFormat = timeFormat === '1:00pm'
+      const format = twelveHourFormat ? 'Y-M-D LT' : 'Y-M-D HH:mm'
+      let momentStr = ''
+      if (time.includes('pm'))
+        momentStr = `2014-12-13 ${time.replace('pm', '')} pm`
+      else if (time.includes('am'))
+        momentStr = `2014-12-13 ${time.replace('am', '')} am`
+      else momentStr = `2014-12-13 ${time}`
+      console.log(momentStr, format)
+      return moment(momentStr, format, true).isValid()
+    }
+    for (const v of values)
+      if (v && v.includes(':') && isValidTime(v.toLowerCase()) && !v.includes('24:00'))
+        return parseTime(v)
+    return null
+  },
+  getNextWeek(moment: any, nextWeek: string) {
+    const clone = moment.clone()
+    while (true) {
+      clone.add(1, 'd')
+      const week = clone.format('dddd')
+      if (week === nextWeek)
+        break
+    }
+    return clone
+  },
   parseTaskInputTime(input: string, timeFormat: '13:00' | '1:00pm'): TaskInputObj {
     const parseDateInput = (value: string, callback: (str: string | null) => void): any => {
       const exists = value.includes(' $')
@@ -132,28 +164,6 @@ export default {
     }
     const isNumber = (num: any): boolean => {
       return !isNaN(parseInt(num, 10))
-    }
-    const getTime = (values: string[]): string | null => {
-      const parseTime = (time: string): string => {
-        return moment(time, 'H:m').format('HH:mm')
-      }
-      const isValidTime = (str: string): boolean => {
-        const time = parseTime(str)
-        const twelveHourFormat = timeFormat === '1:00pm'
-        const format = twelveHourFormat ? 'Y-M-D LT' : 'Y-M-D HH:mm'
-        let momentStr = ''
-        if (time.includes('pm'))
-          momentStr = `2014-12-13 ${time.replace('pm', '')} pm`
-        else if (time.includes('am'))
-          momentStr = `2014-12-13 ${time.replace('am', '')} am`
-        else momentStr = `2014-12-13 ${time}`
-
-        return moment(momentStr, format, true).isValid()
-      }
-      for (const v of values)
-        if (v && v.includes(':') && isValidTime(v.toLowerCase()) && !v.includes('24:00'))
-          return v
-      return null
     }
     const getYear = (values: string[]): number => {
       for (const v of values)
@@ -254,7 +264,7 @@ export default {
         const month = getMonth(values)
         const year = getYear(values)
         const day = getDay(values, month, year)
-        const time = getTime(values)
+        const time = this.getTaskInputTime(values, timeFormat)
 
         const obj = searchKeyWords(str, {month, year, day, time})
 
