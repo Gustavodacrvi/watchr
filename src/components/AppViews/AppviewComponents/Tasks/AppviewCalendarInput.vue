@@ -88,7 +88,7 @@ export default class CalendarInput extends Vue {
 
   @set.State timeFormat!: '13:00' | '1:00pm'
   @set.State nextWeek!: string
-  
+
   originalMoment: any = null
   selectedMoment: any = null
   time: string = ''
@@ -113,13 +113,13 @@ export default class CalendarInput extends Vue {
   selectNextweek() {
     this.emitEvent(appUtils.getNextWeek(this.originalMoment.clone(), this.nextWeek))
   }
-  emitEvent(moment?: any) {
-    if (!moment)
-      moment = this.selectedMoment
+  emitEvent(mom?: any) {
+    if (!mom)
+      mom = this.selectedMoment
     const time = appUtils.getTaskInputTime(this.time.split(' '), this.timeFormat)
-    const day = moment.format('D')
-    const month = moment.format('M')
-    const year = moment.format('Y')
+    const day = mom.format('D')
+    const month = mom.format('M')
+    const year = mom.format('Y')
     this.$emit('select', {
       time, day, month, year,
       parsed: appUtils.parseTaskInputObjectToString({
@@ -146,7 +146,7 @@ export default class CalendarInput extends Vue {
   monthDays(): number[] {
     const arr = []
     const daysInMonth = this.selectedMoment.daysInMonth()
-    for (let i = 1;i <= daysInMonth; i++)
+    for (let i = 1; i <= daysInMonth; i++)
       arr.push(i)
     return arr
   }
@@ -154,7 +154,7 @@ export default class CalendarInput extends Vue {
     const clone = this.selectedMoment.clone()
     const num = parseInt(clone.startOf('month').format('d'), 10)
     const arr = []
-    for (let i = 1;i <= num;i++)
+    for (let i = 1; i <= num; i++)
       arr.push(i)
     return arr
   }

@@ -136,7 +136,6 @@ export default {
       else if (time.includes('am'))
         momentStr = `2014-12-13 ${time.replace('am', '')} am`
       else momentStr = `2014-12-13 ${time}`
-      console.log(momentStr, format)
       return moment(momentStr, format, true).isValid()
     }
     for (const v of values)
@@ -144,8 +143,8 @@ export default {
         return parseTime(v)
     return null
   },
-  getNextWeek(moment: any, nextWeek: string) {
-    const clone = moment.clone()
+  getNextWeek(mom: any, nextWeek: string) {
+    const clone = mom.clone()
     while (true) {
       clone.add(1, 'd')
       const week = clone.format('dddd')

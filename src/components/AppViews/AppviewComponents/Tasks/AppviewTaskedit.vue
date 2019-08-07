@@ -191,7 +191,6 @@ export default class AppviewTaskedit extends Vue {
   getDate(obj: any) {
     this.calendarString = obj.parsed
     this.calendarObj = obj
-    console.log(this.calendarString)
   }
 
   get getLabels(): Label[] {
