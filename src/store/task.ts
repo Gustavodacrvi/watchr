@@ -27,6 +27,7 @@ interface ActionContext {
 interface Actions {
   // tslint:disable-next-line:max-line-length
   updateTask: (context: ActionContext, obj: {name: string, priority: string, id: string, labels: []}) => void
+  copyTask: (context: ActionContext, id: string) => void
   // tslint:disable-next-line:max-line-length
   addTaskPerspective: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
   addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[]}) => void
@@ -238,6 +239,24 @@ export default {
           checklistOrder: order,
           checklist: fire.arrayUnion(subtask),
         })
+      }
+    },
+    copyTask({ rootState, state }, taskId) {
+      if (rootState.firestore && rootState.uid) {
+        const task = state.tasks.find(el => el.id === taskId)
+        if (task) {
+          const batch = rootState.firestore.batch()
+          const ref = rootState.firestore.collection('tasks').doc()
+          batch.set(ref, {
+            checklist: task.checklist,
+            checklistOrder: task.checklistOrder,
+            labels: task.labels,
+            name: task.name,
+            priority: task.priority,
+            userId: task.userId,
+          } as Task)
+          batch.commit()
+        }
       }
     },
     unCompleteSubtasks({ rootState, state }, taskId) {

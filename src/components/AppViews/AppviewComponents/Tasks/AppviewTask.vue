@@ -144,6 +144,7 @@ export default class AppviewTask extends Vue {
   @taskVuex.Action addSubTask!: (obj: {name: string, taskId: string, position: number, order: string[]}) => void
   @taskVuex.Action saveSubtaskOrder!: (obj: {taskId: string, order: string[]}) => void
   @taskVuex.Action unCompleteSubtasks!: (taskId: string) => void
+  @taskVuex.Action copyTask!: (taskId: string) => void
 
   @settingsVuex.State mobileTaskLabels!: string
   @settingsVuex.State desktopTaskLabels!: string
@@ -176,6 +177,15 @@ export default class AppviewTask extends Vue {
       iconColor: '',
       callback: () => {
         this.editing = true
+      },
+    },
+    {
+      name: 'Copy task',
+      icon: 'copy',
+      size: 'lg',
+      iconColor: '',
+      callback: () => {
+        this.copyTask(this.task.id)
       },
     },
     {
