@@ -7,6 +7,7 @@
     :save='false'
     :save-sort='!isOnOverview'
     :allow-labels='false'
+    :allow-date='false'
     :fixed-tag="{name: 'Inbox', icon: 'layer-group', backColor: '#83B7E2'}"
 
     @input="$emit('input', !value)"

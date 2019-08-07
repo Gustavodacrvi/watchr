@@ -2,7 +2,7 @@
   <div class='task-adder'>
     <div class='view-tags'>
       <transition name='fade'>
-        <view-tags v-if='priority || fixedPers || getLabels.length > 0'
+        <view-tags v-if='priority || fixedPers || getLabels.length > 0 || calendarString'
           :fixed-pers='fixedPers'
           :fixed-label='fixedLabel'
           :priority='priority'
@@ -36,8 +36,11 @@
       >
         {{ btn }}
       </view-btn>
-      <span class='cancel pointer' @click="$emit('cancel')">Cancel</span>
+      <span v-if='showCancel' class='cancel pointer' @click="$emit('cancel')">Cancel</span>
       <div class='right'>
+        <div v-if='allowDate' class='header-option'>
+          <calendar-input @select='getDate' />
+        </div>
         <div v-if='allowLabels' class='header-option'>
           <drop-finder
             handle='tags'
@@ -77,11 +80,13 @@ import DropdownInput from '@/components/DropdownInput.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
+import CalendarInput from '@/components/AppViews/AppviewComponents/Tasks/AppviewCalendarInputIcon.vue'
 
 import appUtils from '@/utils/app'
 
 @Component({
   components: {
+    'calendar-input': CalendarInput,
     'view-btn': FormButton,
     'drop-input': DropdownInput,
     'view-options': AppviewIconoptions,
@@ -110,6 +115,7 @@ export default class AppviewTaskedit extends Vue {
   @Prop(Boolean) allowPriority!: boolean
   @Prop(Boolean) allowLabels!: boolean
   @Prop(Boolean) allowDate!: boolean
+  @Prop({default: true, type: Boolean}) showCancel!: boolean
 
   value: string = ''
   optionsType: string = ''
@@ -181,6 +187,11 @@ export default class AppviewTaskedit extends Vue {
   removeCalendar() {
     this.calendarString = ''
     this.calendarObj = null
+  }
+  getDate(obj: any) {
+    this.calendarString = obj.parsed
+    this.calendarObj = obj
+    console.log(this.calendarString)
   }
 
   get getLabels(): Label[] {

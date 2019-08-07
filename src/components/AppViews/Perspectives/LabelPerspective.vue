@@ -55,6 +55,7 @@
         :fix-adder-position='sort.length === 0'
         :insert-before='true'
         :allow-labels='true'
+        :allow-date='true'
         @update='onUpdate'
         @selected='onSelect'
         @add='addLabelTask'

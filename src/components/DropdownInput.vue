@@ -82,15 +82,20 @@ export default class DropdownInput extends Vue {
     el.style.height = (el.scrollHeight) + 'px'
   }
   keyPressed({key}: {key: string}) {
-    this.autoGrowTextarea(this.$el.getElementsByClassName('area')[0])
+    this.fixTextAreadHeight()
     if (key === 'Enter' && this.selected === '')
       this.$emit('enter')
     else if (key === 'Enter')
       this.select(this.selected)
     this.$emit('update')
   }
+  fixTextAreadHeight() {
+    setTimeout(() => {
+      this.autoGrowTextarea(this.$el.getElementsByClassName('area')[0])
+    }, 5)
+  }
   keyDown({key}: {key: string}) {
-    this.autoGrowTextarea(this.$el.getElementsByClassName('area')[0])
+    this.fixTextAreadHeight()
     if (key === 'ArrowDown' || key === 'ArrowUp')
       this.moveSelection(key)
     else if (key === 'ArrowLeft' || key === 'ArrowRight')
@@ -175,7 +180,10 @@ export default class DropdownInput extends Vue {
 
   @Watch('input')
   onInput() {
-    this.value = this.input
+    setTimeout(() => {
+      this.value = this.input
+    }, 1)
+    this.fixTextAreadHeight()
   }
   @Watch('value')
   onValue() {
