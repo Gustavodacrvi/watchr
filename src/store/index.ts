@@ -14,12 +14,12 @@ import { SimpleAdder, Alert, Perspective, ListIcon } from '@/interfaces/app'
 Vue.use(Vuex)
 
 export interface CenteredCard {
-  type: 'ListIcons',
+  type: 'ListIcons' | 'Component',
   flexBasis: string,
   search?: boolean
   maxHeight?: string
   listIcons: ListIcon[],
-  listIconHandler: (name: string, callback: () => any) => any
+  listIconHandler: (...arr: any[]) => any
   compName: string
 }
 

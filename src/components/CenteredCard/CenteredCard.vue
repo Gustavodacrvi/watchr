@@ -35,6 +35,10 @@
             </span>
           </div>
         </div>
+        <component v-else-if='card.type === "Component"'
+          class='background-color round-border list-icons dark'
+          :is='card.compName'
+        />
       </div>
     </div>
   </div>
@@ -48,7 +52,13 @@ import { Mutation, State } from 'vuex-class'
 import { ListIcon } from '../../interfaces/app'
 import { CenteredCard } from '@/store/index'
 
-@Component
+import appUtils from '@/utils/app'
+
+@Component({
+  components: {
+    'CalendarInput': appUtils.AsyncComponent(import('./CalendarInput.vue')),
+  },
+})
 export default class CenteredCardComp extends Vue {
   @State theme!: string
   @State('centeredCard') card!: CenteredCard | null

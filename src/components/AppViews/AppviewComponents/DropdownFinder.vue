@@ -91,8 +91,9 @@ export default class DropdownFinder extends Vue {
       })
   }
   get filteredArray(): Array<{id: string, name: string}> {
-    if (this.search !== null)
-      return this.list.filter(el => el.name.includes(this.search as any))
+    const s = this.search
+    if (s !== null)
+      return this.list.filter(el => el.name.includes(s.toLowerCase()))
     return this.list
   }
   get listIconFromList(): ListIcon[] {
