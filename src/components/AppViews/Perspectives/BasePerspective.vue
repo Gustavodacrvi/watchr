@@ -86,6 +86,7 @@ import appUtils from '@/utils/app'
 const labelVuex = namespace('label')
 const taskVuex = namespace('task')
 const persVuex = namespace('perspective')
+const set = namespace('settings')
 
 @Component({
   components: {
@@ -108,7 +109,7 @@ export default class PerspectiveAppview extends Vue {
 
   @taskVuex.State tasks!: Task[]
   // tslint:disable-next-line:max-line-length
-  @taskVuex.Action addTaskPerspective!: (obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
+  @taskVuex.Action addTaskPerspective!: (obj: {task: Task, perspectiveId: string, position: number, order: string[], timeZone: string}) => void
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
   @taskVuex.Action addLabelByTaskIds!: (obj: {ids: string[], labelId: string}) => void
@@ -122,6 +123,8 @@ export default class PerspectiveAppview extends Vue {
   @persVuex.Action savePerspectivePriority!: (obj: {id: string, priority: string}) => Label[]
   @persVuex.Action addPerspectiveSort!: (obj: {sort: string, perspectiveId: string}) => Label[]
   @persVuex.Action savePerspectiveTaskSort!: (obj: {sort: string[], perspectiveId: string}) => Label[]
+
+  @set.State timeZone!: string
 
   @Prop({default: true, type: Boolean}) allowLabels!: boolean
   @Prop({default: true, type: Boolean}) allowDate!: boolean
@@ -237,6 +240,7 @@ export default class PerspectiveAppview extends Vue {
         priority: obj.priority,
         labels: obj.labels,
       },
+      timeZone: this.timeZone,
       perspectiveId: this.pers.id,
       position: obj.position, order: obj.order,
     } as any)

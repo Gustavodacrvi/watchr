@@ -74,6 +74,7 @@ import { Getter, namespace, Mutation, State } from 'vuex-class'
 
 const taskVuex = namespace('task')
 const labelVuex = namespace('label')
+const set = namespace('settings')
 
 import AppviewHeaderIcons from '@/components/AppViews/AppviewComponents/AppviewHeadericons.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
@@ -113,7 +114,9 @@ export default class LabelPerspective extends Vue {
 
   @taskVuex.State tasks!: Task[]
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
-  @taskVuex.Action addTaskLabel!: (obj: {task: Task, labelId: string, position: number, order: string[]}) => void
+  @taskVuex.Action addTaskLabel!: (obj: {task: Task, labelId: string, position: number, order: string[], timeZone: string}) => void
+
+  @set.State timeZone!: string
 
   search: string = ''
   priority: string = ''
@@ -247,6 +250,7 @@ export default class LabelPerspective extends Vue {
           priority: obj.priority as any,
           labels: obj.labels.concat([lab.id]),
         },
+        timeZone: this.timeZone,
         position: obj.position,
         labelId: lab.id,
         order: obj.order,

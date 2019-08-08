@@ -3,6 +3,8 @@ import { Task, Label } from '@/interfaces/app'
 
 import { States as RootState } from '@/store/index'
 
+import timezone from 'moment-timezone'
+
 interface States {
   tasks: Task[]
 }
@@ -29,9 +31,9 @@ interface Actions {
   updateTask: (context: ActionContext, obj: {name: string, priority: string, id: string, labels: []}) => void
   copyTask: (context: ActionContext, id: string) => void
   // tslint:disable-next-line:max-line-length
-  addTaskPerspective: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
-  addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[]}) => void
-  addTask: (context: ActionContext, obj: {name: string, priority: string, labels: string[]}) => void
+  addTaskPerspective: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[], timeZone: string}) => void
+  addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[], timeZone: string}) => void
+  addTask: (context: ActionContext, obj: {name: string, priority: string, labels: string[], timeZone: string}) => void
   deleteTasksById: (context: ActionContext, ids: string[]) => void
   changePrioritysByIds: (context: ActionContext, obj: {ids: string[], priority: string}) => void
   addSubTask: (context: ActionContext, obj: {name: string, taskId: string, position: number, order: string[]}) => void
@@ -97,8 +99,10 @@ export default {
         batch.commit()
       }
     },
-    addTaskPerspective({ rootState }, {task, perspectiveId, order, position}) {
-      if (rootState.firestore && rootState.uid) {
+    addTaskPerspective({ rootState }, {task, perspectiveId, order, position, timeZone}) {
+      timezone.tz.setDefault(timeZone)
+      const utc = timezone().clone().utc()
+      if (rootState.firestore && rootState.uid && timeZone) {
         const batch = rootState.firestore.batch()
 
         const ord = order.slice()
@@ -108,6 +112,8 @@ export default {
           name: task.name,
           priority: task.priority,
           userId: rootState.uid,
+          creationDate: utc.format('Y-M-D'),
+          creationTime: utc.format('HH:mm'),
           labels: task.labels,
           checklist: [],
           checklistOrder: [],
@@ -120,7 +126,7 @@ export default {
         batch.commit()
       }
     },
-    addTask({ rootState }, {priority, name, labels}) {
+    addTask({ rootState }, {priority, name, labels, timeZone}) {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('tasks').add({
           name, labels, priority,
@@ -158,8 +164,10 @@ export default {
         batch.commit()
       }
     },
-    addTaskLabel({ rootState }, {task, labelId, order, position}) {
-      if (rootState.firestore && rootState.uid) {
+    addTaskLabel({ rootState }, {task, labelId, order, position, timeZone}) {
+      timezone.tz.setDefault(timeZone)
+      const utc = timezone().clone().utc()
+      if (rootState.firestore && rootState.uid && timezone) {
         const batch = rootState.firestore.batch()
 
         const ord = order.slice()
@@ -170,6 +178,8 @@ export default {
           priority: task.priority,
           userId: rootState.uid,
           labels: task.labels,
+          creationDate: utc.format('Y-M-D'),
+          creationTime: utc.format('HH:mm'),
           checklist: [],
           checklistOrder: [],
         })
