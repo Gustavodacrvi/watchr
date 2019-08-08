@@ -9,10 +9,12 @@
         icon-color=''
         icon=''
       />
+      <div class='margin'></div>
       <empty-tag-renderer v-if='sort && sort.length > 0'
         :list='sort'
         @update='v => sort = v'
       />
+      <div class='margin'></div>
       <div class='right'>
         <view-header-icons
           v-model='search'

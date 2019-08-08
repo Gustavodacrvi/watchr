@@ -28,7 +28,7 @@
         @select='selectDropValue'
       />
     </div>
-    <div class='margin options'>
+    <div class='options'>
       <view-btn
         class='tiny'
         :waiting-response='false'
@@ -309,7 +309,7 @@ export default class AppviewTaskedit extends Vue {
 }
 
 .margin {
-  margin-top: 4px;
+  margin-top: 1.5px !important;
 }
 
 .input-div {

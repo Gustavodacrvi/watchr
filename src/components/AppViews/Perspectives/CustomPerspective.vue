@@ -3,7 +3,7 @@
     :pers-name='pers'
     :value='value'
     :base-tasks='baseTasks'
-    :save='!isOnOverview'
+    :save='true'
     :save-sort='!isOnOverview'
 
     @input="$emit('input', !value)"

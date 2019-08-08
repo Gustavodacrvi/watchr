@@ -62,7 +62,7 @@ export default class CenteredCardComp extends Vue {
   get list(): ListIcon[] {
     if (!this.card) return []
     if (!this.search) return this.card.listIcons
-    return this.card.listIcons.filter((el: any) => el.name.includes(this.search))
+    return this.card.listIcons.filter((el: any) => el.name.includes(this.search.toLowerCase()))
   }
 }
 

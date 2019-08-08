@@ -30,6 +30,7 @@
       :list='sort'
       @update='saveNewSortOrder'
     />
+    <div class='margin'></div>
     <div v-if='!hided'>
       <div v-if='showing'>
         <p v-if='pers.description' class='description txt' :class='theme'>

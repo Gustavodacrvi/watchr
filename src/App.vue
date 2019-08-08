@@ -97,6 +97,9 @@ export default class App extends Vue {
   mounted() {
     window.addEventListener('keypress', this.keyPressed)
   }
+  created() {
+    document.body.classList.add(this.theme)
+  }
   beforeDestroy() {
     window.removeEventListener('keypress', this.keyPressed)
   }
@@ -137,6 +140,11 @@ export default class App extends Vue {
   onRouteChange(to: any, from: any) {
     if (from.name === 'Popup')
       this.resetPopUpState()
+  }
+  @Watch('theme')
+  onChange(newStr: string, oldStr: string) {
+    document.body.classList.remove(oldStr)
+    document.body.classList.add(newStr)
   }
 }
 
