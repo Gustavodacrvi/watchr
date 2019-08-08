@@ -37,10 +37,11 @@
             </div>
             <transition name='fade'>
               <div v-if='showLabels' class='txt fade' :class='theme'>
-                <span v-for='lab in taskLabels'
+                <span v-for='(item, index) in taskLabels'
                   :key='lab'
                   class='lab'
-                >{{ lab }}</span>
+                >{{ item }}<span v-if='index !== taskLabels.length - 1'>,</span>
+                </span>
               </div>
             </transition>
           </div>

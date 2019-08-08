@@ -51,7 +51,7 @@
           <span class='number'>{{ i }}</span>
         </span>
       </div>
-      <span v-if='isDesktop'>
+      <span>
         <form-input class='add-time tiny'
           input-theme='dark'
           placeholder='Add time...'
@@ -60,7 +60,6 @@
           :max='10'
         />
       </span>
-      <span v-else class='add-time red pointer'>Add time</span>
     </div>
   </div>
 </template>
@@ -75,6 +74,7 @@ const set = namespace('settings')
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 
 import moment from 'moment'
+import timezone from 'moment-timezone'
 
 import appUtils from '@/utils/app'
 
@@ -95,6 +95,8 @@ export default class CalendarInput extends Vue {
   time: string = ''
 
   created() {
+    console.log(timezone())
+    
     this.originalMoment = moment()
     this.selectedMoment = this.originalMoment.clone()
     this.visualMoment = this.originalMoment.clone()
