@@ -60,7 +60,7 @@
           :max='10'
         />
       </span>
-      <span v-else class='add-time red'>Add time</span>
+      <span v-else class='add-time red pointer'>Add time</span>
     </div>
   </div>
 </template>
@@ -91,15 +91,17 @@ export default class CalendarInput extends Vue {
 
   originalMoment: any = null
   selectedMoment: any = null
+  visualMoment: any = null
   time: string = ''
 
   created() {
     this.originalMoment = moment()
     this.selectedMoment = this.originalMoment.clone()
+    this.visualMoment = this.originalMoment.clone()
   }
 
   selectDay(num: number) {
-    this.selectedMoment.date(num)
+    this.selectedMoment = this.visualMoment.clone().date(num)
     this.$forceUpdate()
     this.emitEvent()
   }
@@ -128,30 +130,31 @@ export default class CalendarInput extends Vue {
     })
   }
   nextMonth() {
-    this.selectedMoment.add(1, 'M')
+    this.visualMoment.add(1, 'M')
     this.$forceUpdate()
   }
   previousMonth() {
-    this.selectedMoment.subtract(1, 'M')
+    this.visualMoment.subtract(1, 'M')
     this.$forceUpdate()
   }
 
   goToOriginalDate() {
     this.selectedMoment = this.originalMoment.clone()
+    this.visualMoment = this.originalMoment.clone()
   }
   isSelectedDate(day: number): boolean {
-    const clone = this.selectedMoment.clone().date(day)
+    const clone = this.visualMoment.clone().date(day)
     return clone.isSame(this.selectedMoment)
   }
   monthDays(): number[] {
     const arr = []
-    const daysInMonth = this.selectedMoment.daysInMonth()
+    const daysInMonth = this.visualMoment.daysInMonth()
     for (let i = 1; i <= daysInMonth; i++)
       arr.push(i)
     return arr
   }
   firstWeekDayRange(): number[] {
-    const clone = this.selectedMoment.clone()
+    const clone = this.visualMoment.clone()
     const num = parseInt(clone.startOf('month').format('d'), 10)
     const arr = []
     for (let i = 1; i <= num; i++)
@@ -159,23 +162,23 @@ export default class CalendarInput extends Vue {
     return arr
   }
   monthName(): string {
-    return this.selectedMoment.format('MMM')
+    return this.visualMoment.format('MMM')
   }
   weekDayFromTomorrow(): string {
-    const mom = this.originalMoment.clone()
+    const mom = this.visualMoment.clone()
     return mom.add(1, 'd').format('ddd')
   }
   weekDayFromToday(): string {
-    return this.originalMoment.format('ddd')
+    return this.visualMoment.format('ddd')
   }
   year() {
-    return this.selectedMoment.format('Y')
+    return this.visualMoment.format('Y')
   }
   month() {
-    return this.selectedMoment.format('M')
+    return this.visualMoment.format('M')
   }
   day() {
-    return this.selectedMoment.format('D')
+    return this.visualMoment.format('D')
   }
 
   @Watch('time')
@@ -236,7 +239,7 @@ export default class CalendarInput extends Vue {
 }
 
 .add-time {
-  margin-top: 4px;
+  margin-top: 6px;
   color: #83B7E2;
 }
 
