@@ -3,6 +3,8 @@ import { States as RootState } from '@/store/index'
 
 import 'moment-timezone/builds/moment-timezone-with-data'
 
+import timezone from 'moment-timezone'
+
 interface States {
   timeZone: '13:00' | '1:00pm' | string
   dateFormat: string
@@ -97,7 +99,7 @@ export default {
       if (rootState.firestore)
         rootState.firestore.collection('settings').doc(id).set({
           userId: id,
-          timeZone: '',
+          timeZone: timezone.tz.guess(),
           dateFormat: 'DD-MM-YYYY',
           timeFormat: '13:00',
           startOfTheWeek: 'Monday',

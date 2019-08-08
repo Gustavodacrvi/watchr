@@ -1,5 +1,10 @@
 <template>
   <div class='calendar-selection dark card round-border'>
+    <div class='el cancel-sortable-unselect dark' @click='moveToSettingsNav'>
+      <span class='el-name txt dark'>
+        <span>{{ getTimeZone }}</span>
+      </span>
+    </div>
     <div class='el cancel-sortable-unselect dark' @click='selectToday'>
       <span class='el-icon'><i class='txt fas fa-star fa-lg' style='color: #FFE366'></i></span>
       <span class='el-name txt dark'>
@@ -67,14 +72,13 @@
 <script lang='ts'>
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { Getter, namespace } from 'vuex-class'
+import { Getter, Mutation, namespace } from 'vuex-class'
 
 const set = namespace('settings')
 
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 
-import moment from 'moment'
-import timezone from 'moment-timezone'
+import moment from 'moment-timezone'
 
 import appUtils from '@/utils/app'
 
@@ -84,10 +88,12 @@ import appUtils from '@/utils/app'
   },
 })
 export default class CalendarInput extends Vue {
+  @Mutation pushPopUp!: (comp: string) => void
   @Getter isDesktop!: boolean
 
   @set.State timeFormat!: '13:00' | '1:00pm'
   @set.State nextWeek!: string
+  @set.State timeZone!: string
 
   originalMoment: any = null
   selectedMoment: any = null
@@ -95,8 +101,7 @@ export default class CalendarInput extends Vue {
   time: string = ''
 
   created() {
-    console.log(timezone())
-    
+    moment.tz.setDefault(this.timeZone)
     this.originalMoment = moment()
     this.selectedMoment = this.originalMoment.clone()
     this.visualMoment = this.originalMoment.clone()
@@ -181,6 +186,14 @@ export default class CalendarInput extends Vue {
   }
   day() {
     return this.visualMoment.format('D')
+  }
+  moveToSettingsNav() {
+    this.pushPopUp('')
+    this.$router.push('/settings/general#DateandTime')
+  }
+
+  get getTimeZone(): string {
+    return appUtils.parseMomentTimeZone(this.timeZone)
   }
 
   @Watch('time')
