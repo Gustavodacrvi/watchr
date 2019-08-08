@@ -38,6 +38,7 @@
       <div class='line' :class='platform'>
         <div class='text'>
           <span class='txt' :class='theme'>Time zone</span>
+          <form-button @click='autoDetect' class='tiny' style='width: 110px;margin-left: 12px !important;'>Auto detect</form-button>
         </div>
         <div class='content'>
           <form-options
@@ -124,6 +125,7 @@ import { Getter, State, namespace } from 'vuex-class'
 const settingsVuex = namespace('settings')
 
 import Moment from 'moment'
+import timezone from 'moment-timezone'
 import 'moment-timezone/builds/moment-timezone-with-data'
 
 import FormOptions from '@/components/PopUps/FormComponents/FormOptions.vue'
@@ -179,6 +181,9 @@ export default class GeneralSubView extends Vue {
     this.getData()
   }
 
+  autoDetect() {
+    this.timeZone = timezone.tz.guess()
+  }
   getData() {
     const m = Moment as any
 
@@ -233,6 +238,7 @@ export default class GeneralSubView extends Vue {
     if (this.deParsedTimeZone !== this.timeZone) return true
     else if (this.dateFormat !== this.savedDateFormat) return true
     else if (this.timeFormat !== this.savedTimeFormat) return true
+    else if (this.timeZone !== this.savedTimeZone) return true
     else if (this.startOfTheWeek !== this.savedStartOfTheWeek) return true
     else if (this.nextWeek !== this.savedNextWeek) return true
     else if (this.mobileTaskLabels !== this.savedMobileTaskLabels) return true
