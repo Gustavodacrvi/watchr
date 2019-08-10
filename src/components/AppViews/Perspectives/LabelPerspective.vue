@@ -238,6 +238,8 @@ export default class LabelPerspective extends Vue {
         this.sort.push('name')
       else if (value === 'Sort tasks by priority')
         this.sort.push('priority')
+      else if (value === 'Sort by creation date')
+        this.sort.push('creationdate')
   }
   addLabelTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
     const lab = this.getLabel

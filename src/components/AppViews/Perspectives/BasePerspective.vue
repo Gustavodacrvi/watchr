@@ -284,7 +284,15 @@ export default class PerspectiveAppview extends Vue {
             sort: 'priority',
             perspectiveId: this.pers.id,
           })
-    }
+      }
+      else if (value === 'Sort by creation date') {
+        this.sort.push('creationdate')
+        if (this.saveSort)
+          this.addPerspectiveSort({
+            sort: 'creationdate',
+            perspectiveId: this.pers.id,
+          })
+      }
   }
   toggleHide() {
     if (!this.isDesktop)

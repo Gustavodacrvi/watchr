@@ -19,6 +19,7 @@ export default class AppviewEmptytag extends Vue {
     switch (this.name) {
       case 'name': return 'Sort by name'
       case 'priority': return 'Sort by priority'
+      case 'creationdate': return 'Sort by creation date'
     }
     return ''
   }

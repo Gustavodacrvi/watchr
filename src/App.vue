@@ -51,12 +51,11 @@ import { State, Getter, Mutation, Action } from 'vuex-class'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
 
-import { Alert } from '@/interfaces/app'
-
 import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 import TheAppbar from '@/components/TheAppBar/TheAppBar.vue'
 
 import appUtils from '@/utils/app'
+import { Alert } from '@/interfaces/app'
 
 @Component({
   components: {
@@ -96,9 +95,6 @@ export default class App extends Vue {
 
   mounted() {
     window.addEventListener('keypress', this.keyPressed)
-  }
-  created() {
-    document.body.classList.add(this.theme)
   }
   beforeDestroy() {
     window.removeEventListener('keypress', this.keyPressed)
