@@ -61,8 +61,8 @@ export default class AppviewSubtask extends Vue {
   @Prop(Object) task!: any
 
   // tslint:disable-next-line:max-line-length
-  @taskVuex.Action saveSubTask!: (obj: {name: string, taskId: string, completed: boolean, id: string, timeZone: string}) => void
-  @taskVuex.Action deleteSubTaskFromTask!: (obj: {taskId: string, id: string, timeZone: string}) => void
+  @taskVuex.Action saveSubTask!: (obj: {name: string, taskId: string, completed: boolean, id: string}) => void
+  @taskVuex.Action deleteSubTaskFromTask!: (obj: {taskId: string, id: string}) => void
 
   @set.State timeZone!: string
 
@@ -103,7 +103,6 @@ export default class AppviewSubtask extends Vue {
       completed: this.task.completed,
       taskId: this.task.taskId,
       id: this.task.id,
-      timeZone: this.timeZone,
     })
     this.editing = false
   }
@@ -114,14 +113,12 @@ export default class AppviewSubtask extends Vue {
         completed: true,
         taskId: this.task.taskId,
         id: this.task.id,
-        timeZone: this.timeZone,
       })
   }
   deleteSubTask() {
     this.deleteSubTaskFromTask({
       id: this.task.id,
       taskId: this.task.taskId,
-      timeZone: this.timeZone,
     })
   }
   toggleEditing() {

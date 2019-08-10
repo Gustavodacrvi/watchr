@@ -112,8 +112,8 @@ export default class LabelPerspective extends Vue {
   @taskVuex.State tasks!: Task[]
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   // tslint:disable-next-line:max-line-length
-  @taskVuex.Action addTaskLabel!: (obj: {task: Task, labelId: string, position: number, order: string[], timeZone: string}) => void
-  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string, timeZone: string}) => void
+  @taskVuex.Action addTaskLabel!: (obj: {task: Task, labelId: string, position: number, order: string[]}) => void
+  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
 
   @set.State timeZone!: string
 
@@ -159,7 +159,6 @@ export default class LabelPerspective extends Vue {
               this.changePrioritysByIds({
                 ids: this.selected,
                 priority: 'High priority',
-                timeZone: this.timeZone,
               })
               this.sendOptionsToNavbar([])
             },
@@ -173,7 +172,6 @@ export default class LabelPerspective extends Vue {
               this.changePrioritysByIds({
                 ids: this.selected,
                 priority: 'Medium priority',
-                timeZone: this.timeZone,
               })
               this.sendOptionsToNavbar([])
             },
@@ -187,7 +185,6 @@ export default class LabelPerspective extends Vue {
               this.changePrioritysByIds({
                 ids: this.selected,
                 priority: 'Low priority',
-                timeZone: this.timeZone,
               })
               this.sendOptionsToNavbar([])
             },
@@ -213,7 +210,6 @@ export default class LabelPerspective extends Vue {
     this.changePrioritysByIds({
       ids: this.selected,
       priority: value,
-      timeZone: this.timeZone,
     })
   }
 
@@ -254,7 +250,6 @@ export default class LabelPerspective extends Vue {
           priority: obj.priority as any,
           labels: obj.labels.concat([lab.id]),
         },
-        timeZone: this.timeZone,
         position: obj.position,
         labelId: lab.id,
         order: obj.order,

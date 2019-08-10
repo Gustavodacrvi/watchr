@@ -109,9 +109,9 @@ export default class PerspectiveAppview extends Vue {
 
   @taskVuex.State tasks!: Task[]
   // tslint:disable-next-line:max-line-length
-  @taskVuex.Action addTaskPerspective!: (obj: {task: Task, perspectiveId: string, position: number, order: string[], timeZone: string}) => void
+  @taskVuex.Action addTaskPerspective!: (obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
-  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string, timeZone: string}) => void
+  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
 
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
@@ -180,7 +180,6 @@ export default class PerspectiveAppview extends Vue {
               this.changePrioritysByIds({
                 ids: this.selected,
                 priority: 'High priority',
-                timeZone: this.timeZone,
               })
               this.sendOptionsToNavbar([])
             },
@@ -194,7 +193,6 @@ export default class PerspectiveAppview extends Vue {
               this.changePrioritysByIds({
                 ids: this.selected,
                 priority: 'Medium priority',
-                timeZone: this.timeZone,
               })
               this.sendOptionsToNavbar([])
             },
@@ -208,7 +206,6 @@ export default class PerspectiveAppview extends Vue {
               this.changePrioritysByIds({
                 ids: this.selected,
                 priority: 'Low priority',
-                timeZone: this.timeZone,
               })
               this.sendOptionsToNavbar([])
             },
@@ -242,7 +239,6 @@ export default class PerspectiveAppview extends Vue {
         priority: obj.priority,
         labels: obj.labels,
       },
-      timeZone: this.timeZone,
       perspectiveId: this.pers.id,
       position: obj.position, order: obj.order,
     } as any)
@@ -332,7 +328,6 @@ export default class PerspectiveAppview extends Vue {
     this.changePrioritysByIds({
       ids: this.selected,
       priority: value,
-      timeZone: this.timeZone,
     })
   }
   updateView() {

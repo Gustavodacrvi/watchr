@@ -29,21 +29,21 @@ interface ActionContext {
 interface Actions {
   // tslint:disable-next-line:max-line-length
   updateTask: (context: ActionContext, obj: {name: string, priority: string, id: string, labels: [], timeZone: string}) => void
-  copyTask: (context: ActionContext, obj: {taskId: string, timeZone: string}) => void
+  copyTask: (context: ActionContext, taskId: string) => void
   // tslint:disable-next-line:max-line-length
-  addTaskPerspective: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[], timeZone: string}) => void
+  addTaskPerspective: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
   // tslint:disable-next-line:max-line-length
-  addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[], timeZone: string}) => void
-  addTask: (context: ActionContext, obj: {name: string, priority: string, labels: string[], timeZone: string}) => void
+  addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[]}) => void
+  addTask: (context: ActionContext, obj: {name: string, priority: string, labels: string[]}) => void
   deleteTasksById: (context: ActionContext, ids: string[]) => void
   changePrioritysByIds: (context: ActionContext, obj: {ids: string[], priority: string, timeZone: string}) => void
   // tslint:disable-next-line:max-line-length
-  addSubTask: (context: ActionContext, obj: {name: string, taskId: string, position: number, order: string[], timeZone: string}) => void
+  addSubTask: (context: ActionContext, obj: {name: string, taskId: string, position: number, order: string[]}) => void
   // tslint:disable-next-line:max-line-length
-  saveSubTask: (context: ActionContext, obj: {name: string, taskId: string, completed: boolean, id: string, timeZone: string}) => void
-  saveSubtaskOrder: (context: ActionContext, obj: {taskId: string, order: string[], timeZone: string}) => void
-  deleteSubTaskFromTask: (context: ActionContext, obj: {taskId: string, id: string, timeZone: string}) => void
-  unCompleteSubtasks: (context: ActionContext, obj: {taskId: string, timeZone: string}) => void
+  saveSubTask: (context: ActionContext, obj: {name: string, taskId: string, completed: boolean, id: string}) => void
+  saveSubtaskOrder: (context: ActionContext, obj: {taskId: string, order: string[]}) => void
+  deleteSubTaskFromTask: (context: ActionContext, obj: {taskId: string, id: string}) => void
+  unCompleteSubtasks: (context: ActionContext, taskId: string) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -84,8 +84,7 @@ export default {
         })
     },
     updateTask({ rootState }, {name, priority, id, labels, timeZone}) {
-      timezone.tz.setDefault(timeZone)
-      const utc = timezone().clone().utc()
+      const utc = timezone().utc()
       const date = utc.format('Y-M-D')
       const time = utc.format('HH:mm')
       if (rootState.firestore && rootState.uid)
@@ -107,12 +106,11 @@ export default {
         batch.commit()
       }
     },
-    addTaskPerspective({ rootState }, {task, perspectiveId, order, position, timeZone}) {
-      timezone.tz.setDefault(timeZone)
-      const utc = timezone().clone().utc()
+    addTaskPerspective({ rootState }, {task, perspectiveId, order, position}) {
+      const utc = timezone().utc()
       const date = utc.format('Y-M-D')
       const time = utc.format('HH:mm')
-      if (rootState.firestore && rootState.uid && timeZone) {
+      if (rootState.firestore && rootState.uid) {
         const batch = rootState.firestore.batch()
 
         const ord = order.slice()
@@ -138,9 +136,8 @@ export default {
         batch.commit()
       }
     },
-    addTask({ rootState }, {priority, name, labels, timeZone}) {
-      timezone.tz.setDefault(timeZone)
-      const utc = timezone().clone().utc()
+    addTask({ rootState }, {priority, name, labels}) {
+      const utc = timezone().utc()
       const date = utc.format('Y-M-D')
       const time = utc.format('HH:mm')
       if (rootState.firestore && rootState.uid)
@@ -155,9 +152,8 @@ export default {
           checklistOrder: [],
         })
     },
-    changePrioritysByIds({ rootState }, {ids, priority, timeZone}) {
-      timezone.tz.setDefault(timeZone)
-      const utc = timezone().clone().utc()
+    changePrioritysByIds({ rootState }, {ids, priority}) {
+      const utc = timezone().utc()
       const date = utc.format('Y-M-D')
       const time = utc.format('HH:mm')
       if (rootState.firestore && rootState.uid) {
@@ -175,12 +171,11 @@ export default {
         batch.commit()
       }
     },
-    addTaskLabel({ rootState }, {task, labelId, order, position, timeZone}) {
-      timezone.tz.setDefault(timeZone)
-      const utc = timezone().clone().utc()
+    addTaskLabel({ rootState }, {task, labelId, order, position}) {
+      const utc = timezone().utc()
       const date = utc.format('Y-M-D')
       const time = utc.format('HH:mm')
-      if (rootState.firestore && rootState.uid && timezone) {
+      if (rootState.firestore && rootState.uid) {
         const batch = rootState.firestore.batch()
 
         const ord = order.slice()
@@ -206,9 +201,8 @@ export default {
         batch.commit()
       }
     },
-    saveSubtaskOrder({ rootState }, {taskId, order, timeZone}) {
-      timezone.tz.setDefault(timeZone)
-      const utc = timezone().clone().utc()
+    saveSubtaskOrder({ rootState }, {taskId, order}) {
+      const utc = timezone().utc()
       const date = utc.format('Y-M-D')
       const time = utc.format('HH:mm')
       if (rootState.firestore && rootState.uid)
@@ -218,9 +212,8 @@ export default {
           lastEditTime: time,
         })
     },
-    saveSubTask({ rootState, state }, {taskId, name, id, completed, timeZone}) {
-      timezone.tz.setDefault(timeZone)
-      const utc = timezone().clone().utc()
+    saveSubTask({ rootState, state }, {taskId, name, id, completed}) {
+      const utc = timezone().utc()
       const date = utc.format('Y-M-D')
       const time = utc.format('HH:mm')
       if (rootState.firestore && rootState.uid) {
@@ -236,9 +229,8 @@ export default {
         })
       }
     },
-    deleteSubTaskFromTask({ rootState, state }, {taskId, id, timeZone}) {
-      timezone.tz.setDefault(timeZone)
-      const utc = timezone().clone().utc()
+    deleteSubTaskFromTask({ rootState, state }, {taskId, id}) {
+      const utc = timezone().utc()
       const date = utc.format('Y-M-D')
       const time = utc.format('HH:mm')
       if (rootState.firestore && rootState.uid) {
@@ -256,9 +248,8 @@ export default {
         })
       }
     },
-    addSubTask({ rootState }, {taskId, order, position, name, timeZone}) {
-      timezone.tz.setDefault(timeZone)
-      const utc = timezone().clone().utc()
+    addSubTask({ rootState }, {taskId, order, position, name}) {
+      const utc = timezone().utc()
       const date = utc.format('Y-M-D')
       const time = utc.format('HH:mm')
       if (rootState.firestore && rootState.uid) {
@@ -290,9 +281,8 @@ export default {
         })
       }
     },
-    copyTask({ rootState, state }, {taskId, timeZone}) {
-      timezone.tz.setDefault(timeZone)
-      const utc = timezone().clone().utc()
+    copyTask({ rootState, state }, taskId) {
+      const utc = timezone().utc()
       const date = utc.format('Y-M-D')
       const time = utc.format('HH:mm')
       if (rootState.firestore && rootState.uid) {
@@ -316,9 +306,8 @@ export default {
         }
       }
     },
-    unCompleteSubtasks({ rootState, state }, {taskId, timeZone}) {
-      timezone.tz.setDefault(timeZone)
-      const utc = timezone().clone().utc()
+    unCompleteSubtasks({ rootState, state }, taskId) {
+      const utc = timezone().utc()
       const date = utc.format('Y-M-D')
       const time = utc.format('HH:mm')
       if (rootState.firestore && rootState.uid) {

@@ -5,9 +5,9 @@ import ErrorComponent from '@/components/ErrorComponent.vue'
 import { Task } from '@/interfaces/app'
 
 import moment from 'moment'
+import timezone from 'moment-timezone'
 
 import { TaskInputObj } from '@/interfaces/app'
-import task from '@/store/task';
 
 export default {
   AsyncComponent(comp: any): any {
@@ -163,6 +163,12 @@ export default {
     })
 
     return tasks
+  },
+  parseUtcTime(time: string, timeZone: string, timeFormat: string): string {
+    const t = time.toLowerCase()
+    if (timeFormat === '1:00pm')
+      return timezone.utc(t, 'HH:mm').tz(timeZone).format('hh:mm a').replace(' ', '')
+    return timezone.utc(t, 'HH:mm').tz(timeZone).format('HH:mm')
   },
   getTaskInputTime(values: string[], timeFormat: '13:00' | '1:00pm') {
     const parseTime = (time: string): string => {

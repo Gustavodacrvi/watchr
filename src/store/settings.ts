@@ -100,7 +100,7 @@ export default {
         rootState.firestore.collection('settings').doc(id).set({
           userId: id,
           timeZone: timezone.tz.guess(),
-          dateFormat: 'DD-MM-YYYY',
+          dateFormat: 'D-M-Y',
           timeFormat: '13:00',
           startOfTheWeek: 'Monday',
           nextWeek: 'Monday',

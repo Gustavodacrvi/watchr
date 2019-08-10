@@ -47,12 +47,12 @@
                 <i v-show='showLabels' class='fas tiny-icon fa-circle fa-xs'></i>
                 <span class='fade'>
                   <span> {{ task.lastEditDate }} </span>
-                  <span>{{ task.lastEditTime }} </span>
+                  <span>{{ taskEditTime }} </span>
                 </span>
                 <i class='fas tiny-icon fa-circle fa-xs'></i>
                 <span class='fade'>
                   <span> {{ task.creationDate }}</span>
-                  <span> {{ task.creationTime }}</span>
+                  <span> {{ taskCreationTime }}</span>
                 </span>
               </div>
             </transition>
@@ -127,6 +127,7 @@ import SubTaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewSu
 import { Task, ListIcon, Label } from '../../../../interfaces/app'
 
 import appUtils from '@/utils/app'
+import moment from 'moment-timezone'
 
 const taskVuex = namespace('task')
 const labelVuex = namespace('label')
@@ -155,12 +156,14 @@ export default class AppviewTask extends Vue {
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string, timeZone: string}) => void
   // tslint:disable-next-line:max-line-length
-  @taskVuex.Action addSubTask!: (obj: {name: string, taskId: string, position: number, order: string[], timeZone: string}) => void
-  @taskVuex.Action saveSubtaskOrder!: (obj: {taskId: string, order: string[], timeZone: string}) => void
-  @taskVuex.Action unCompleteSubtasks!: (obj: {taskId: string, timeZone: string}) => void
-  @taskVuex.Action copyTask!: (obj: {taskId: string, timeZone: string}) => void
+  @taskVuex.Action addSubTask!: (obj: {name: string, taskId: string, position: number, order: string[]}) => void
+  @taskVuex.Action saveSubtaskOrder!: (obj: {taskId: string, order: string[]}) => void
+  @taskVuex.Action unCompleteSubtasks!: (taskId: string) => void
+  @taskVuex.Action copyTask!: (taskId: string) => void
 
   @settingsVuex.State timeZone!: string
+  @settingsVuex.State timeFormat!: string
+  @settingsVuex.State dateFormat!: string
   @settingsVuex.State mobileTaskLabels!: string
   @settingsVuex.State desktopTaskLabels!: string
 
@@ -200,10 +203,7 @@ export default class AppviewTask extends Vue {
       size: 'lg',
       iconColor: '',
       callback: () => {
-        this.copyTask({
-          taskId: this.task.id,
-          timeZone: this.timeZone,
-        })
+        this.copyTask(this.task.id)
       },
     },
     {
@@ -212,10 +212,7 @@ export default class AppviewTask extends Vue {
       size: 'lg',
       iconColor: '',
       callback: () => {
-        this.unCompleteSubtasks({
-          taskId: this.task.id,
-          timeZone: this.timeZone,
-        })
+        this.unCompleteSubtasks(this.task.id)
       },
     },
     {
@@ -251,7 +248,6 @@ export default class AppviewTask extends Vue {
         this.saveSubtaskOrder({
           taskId: this.task.id,
           order: this.getSubtasksIds().filter(el => el !== 'task-adder'),
-          timeZone: this.timeZone,
         })
       },
     }
@@ -270,7 +266,6 @@ export default class AppviewTask extends Vue {
       position: this.subTaskAdderPoition,
       taskId: this.task.id,
       order: this.task.checklistOrder,
-      timeZone: this.timeZone,
     })
     this.added = true
     this.subtaskValue = ''
@@ -364,6 +359,12 @@ export default class AppviewTask extends Vue {
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
   }
 
+  get taskCreationTime(): string {
+    return appUtils.parseUtcTime(this.task.creationTime, this.timeZone, this.timeFormat)
+  }
+  get taskEditTime(): string {
+    return appUtils.parseUtcTime(this.task.lastEditTime, this.timeZone, this.timeFormat)
+  }
   get exclamationColor() {
     switch (this.task.priority) {
       case 'Low priority': return '#70ff66'
@@ -432,6 +433,7 @@ export default class AppviewTask extends Vue {
 
 .tiny-icon {
   transform: translateY(-20%);
+  opacity: .9;
   font-size: .4em;
 }
 

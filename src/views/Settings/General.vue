@@ -58,7 +58,7 @@
         <div class='content'>
           <form-options
             max-height='100px'
-            :options="['DD-MM-YYYY', 'MM-DD-YYYY']"
+            :options="['D-M-Y', 'M-D-Y']"
             :selected='dateFormat'
             @select='v => dateFormat = v'
           />

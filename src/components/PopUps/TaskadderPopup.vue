@@ -32,7 +32,6 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { State, Getter, Mutation, Action, namespace } from 'vuex-class'
 
 const taskVuex = namespace('task')
-const set = namespace('settings')
 
 import TaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskedit.vue'
 
@@ -48,9 +47,7 @@ export default class LabelAdder extends Vue {
   @Getter isDesktop!: boolean
   @Mutation pushAlert!: (alert: Alert) => void
 
-  @taskVuex.Action addTask!: (obj: {name: string, priority: string, labels: string[], timeZone: string}) => void
-
-  @set.State timeZone!: string
+  @taskVuex.Action addTask!: (obj: {name: string, priority: string, labels: string[], }) => void
 
   input: string = ''
 
@@ -60,7 +57,7 @@ export default class LabelAdder extends Vue {
     }, 80)
   }
   add(obj: {name: string, priority: string, labels: string[]}) {
-    this.addTask({...obj, timeZone: this.timeZone})
+    this.addTask({...obj})
     this.pushAlert({
       name: 'Task successfully added.',
       duration: 2.5,
