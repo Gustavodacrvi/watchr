@@ -46,12 +46,12 @@
                 </template>
                 <i v-show='showLabels' class='fas tiny-icon fa-circle fa-xs'></i>
                 <span class='fade'>
-                  <span> {{ task.lastEditDate }} </span>
+                  <span> {{ taskEditDate }} </span>
                   <span>{{ taskEditTime }} </span>
                 </span>
                 <i class='fas tiny-icon fa-circle fa-xs'></i>
                 <span class='fade'>
-                  <span> {{ task.creationDate }}</span>
+                  <span> {{ taskCreationDate }}</span>
                   <span> {{ taskCreationTime }}</span>
                 </span>
               </div>
@@ -359,6 +359,14 @@ export default class AppviewTask extends Vue {
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
   }
 
+  get taskCreationDate(): string {
+    const momStr = `${this.task.creationDate} ${this.task.creationTime}`
+    return moment.utc(momStr, 'Y-M-D HH:mm').tz(this.timeZone).format(this.dateFormat)
+  }
+  get taskEditDate(): string {
+    const momStr = `${this.task.creationDate} ${this.task.creationTime}`
+    return moment.utc(momStr, 'Y-M-D HH:mm').tz(this.timeZone).format(this.dateFormat)
+  }
   get taskCreationTime(): string {
     return appUtils.parseUtcTime(this.task.creationTime, this.timeZone, this.timeFormat)
   }
