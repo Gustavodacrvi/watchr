@@ -75,7 +75,7 @@ export default {
       name: (task1: Task, task2: Task) => {
         return task1.name.localeCompare(task2.name)
       },
-      priority: (task1: Task, task2: Task) => {
+      priorityHighest: (task1: Task, task2: Task) => {
         const priA = task1.priority
         const priB = task2.priority
         switch (priA) {
@@ -99,6 +99,34 @@ export default {
               case 'Low priority': return -1
               case 'Medium priority': return -1
               default: return -1
+            }
+        }
+        return 0
+      },
+      priorityLowest: (task1: Task, task2: Task) => {
+        const priA = task1.priority
+        const priB = task2.priority
+        switch (priA) {
+          case 'Low priority':
+            switch (priB) {
+              case 'Low priority': return 0
+              case 'Medium priority': return -1
+              case 'High priority': return -1
+              default: return 1
+            }
+          case 'Medium priority':
+            switch (priB) {
+              case 'Medium priority': return 0
+              case 'High priority': return -1
+              case 'Low priority': return 1
+              default: return 1
+            }
+          case 'High priority':
+            switch (priB) {
+              case 'High priority': return 0
+              case 'Low priority': return 1
+              case 'Medium priority': return 1
+              default: return 1
             }
         }
         return 0

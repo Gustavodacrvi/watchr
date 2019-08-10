@@ -128,9 +128,15 @@ export default class AppviewHeadericons extends Vue {
       size: 'lg',
     },
     {
-      name: 'Sort tasks by priority',
+      name: 'Sort tasks by priority highest first',
       icon: 'exclamation',
-      iconColor: '',
+      iconColor: '#FF6B66',
+      size: 'lg',
+    },
+    {
+      name: 'Sort tasks by priority lowest first',
+      icon: 'exclamation',
+      iconColor: '#70ff66',
       size: 'lg',
     },
     {

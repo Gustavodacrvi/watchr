@@ -277,11 +277,18 @@ export default class PerspectiveAppview extends Vue {
             sort: 'name',
             perspectiveId: this.pers.id,
           })
-      } else if (value === 'Sort tasks by priority') {
-        this.sort.push('priority')
+      } else if (value === 'Sort tasks by priority highest first') {
+        this.sort.push('priorityHighest')
         if (this.saveSort)
           this.addPerspectiveSort({
-            sort: 'priority',
+            sort: 'priorityHighest',
+            perspectiveId: this.pers.id,
+          })
+      } else if (value === 'Sort tasks by priority lowest first') {
+        this.sort.push('priorityLowest')
+        if (this.saveSort)
+          this.addPerspectiveSort({
+            sort: 'priorityLowest',
             perspectiveId: this.pers.id,
           })
       }
