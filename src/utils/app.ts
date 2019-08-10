@@ -107,8 +107,8 @@ export default {
         const mom1 = moment(`${t1.creationDate} ${t1.creationTime}`, 'Y-M-D HH:mm')
         const mom2 = moment(`${t2.creationDate} ${t2.creationTime}`, 'Y-M-D HH:mm')
         if (mom1.isSame(mom2)) return 0
-        if (mom1.isBefore(mom2)) return -1
-        if (mom1.isAfter(mom2)) return 1
+        if (mom1.isBefore(mom2)) return 1
+        if (mom1.isAfter(mom2)) return -1
         return 0
       },
     }

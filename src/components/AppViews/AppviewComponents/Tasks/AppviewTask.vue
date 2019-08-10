@@ -36,11 +36,23 @@
               ></i>
             </div>
             <transition name='fade'>
-              <div v-if='showLabels' class='txt fade' :class='theme'>
-                <span v-for='(item, index) in taskLabels'
-                  :key='item'
-                  class='lab'
-                >{{ item }}<span v-if='index !== taskLabels.length - 1'>,</span>
+              <div key='labels' class='txt info' :class='theme'>
+                <template v-if='showLabels'>
+                  <span v-for='(item, index) in taskLabels'
+                    :key='item'
+                    class='lab fade'
+                  >{{ item }}<span v-if='index !== taskLabels.length - 1'>,</span></span>
+                  <span>&nbsp;</span>
+                </template>
+                <i v-show='showLabels' class='fas tiny-icon fa-circle fa-xs'></i>
+                <span class='fade'>
+                  <span> {{ task.lastEditDate }} </span>
+                  <span>{{ task.lastEditTime }} </span>
+                </span>
+                <i class='fas tiny-icon fa-circle fa-xs'></i>
+                <span class='fade'>
+                  <span> {{ task.creationDate }}</span>
+                  <span> {{ task.creationTime }}</span>
                 </span>
               </div>
             </transition>
@@ -417,6 +429,11 @@ export default class AppviewTask extends Vue {
 </script>
 
 <style scoped>
+
+.tiny-icon {
+  transform: translateY(-20%);
+  font-size: .4em;
+}
 
 .content {
   width: 100%;
