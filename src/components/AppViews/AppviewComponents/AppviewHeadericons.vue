@@ -60,7 +60,7 @@
       <icon-options
         handle='ellipsis-h'
         :size='size'
-        min-width='300px'
+        min-width='325px'
         :options='settingsOptions'
         @click='selectSettingsOption'
       />
@@ -134,7 +134,13 @@ export default class AppviewHeadericons extends Vue {
       size: 'lg',
     },
     {
-      name: 'Sort by creation date',
+      name: 'Sort by creation date newest first',
+      icon: 'calendar-alt',
+      iconColor: '',
+      size: 'lg',
+    },
+    {
+      name: 'Sort by creation date oldest first',
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',

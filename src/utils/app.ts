@@ -103,7 +103,15 @@ export default {
         }
         return 0
       },
-      creationdate: (t1: Task, t2: Task) => {
+      creationDateNewest: (t1: Task, t2: Task) => {
+        const mom1 = moment(`${t1.creationDate} ${t1.creationTime}`, 'Y-M-D HH:mm')
+        const mom2 = moment(`${t2.creationDate} ${t2.creationTime}`, 'Y-M-D HH:mm')
+        if (mom1.isSame(mom2)) return 0
+        if (mom1.isBefore(mom2)) return -1
+        if (mom1.isAfter(mom2)) return 1
+        return 0
+      },
+      creationDateOldest: (t1: Task, t2: Task) => {
         const mom1 = moment(`${t1.creationDate} ${t1.creationTime}`, 'Y-M-D HH:mm')
         const mom2 = moment(`${t2.creationDate} ${t2.creationTime}`, 'Y-M-D HH:mm')
         if (mom1.isSame(mom2)) return 0

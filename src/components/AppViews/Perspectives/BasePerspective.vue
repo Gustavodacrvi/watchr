@@ -285,11 +285,19 @@ export default class PerspectiveAppview extends Vue {
             perspectiveId: this.pers.id,
           })
       }
-      else if (value === 'Sort by creation date') {
-        this.sort.push('creationdate')
+      else if (value === 'Sort by creation date newest first') {
+        this.sort.push('creationDateNewest')
         if (this.saveSort)
           this.addPerspectiveSort({
-            sort: 'creationdate',
+            sort: 'creationDateNewest',
+            perspectiveId: this.pers.id,
+          })
+      }
+      else if (value === 'Sort by creation date oldest first') {
+        this.sort.push('creationDateOldest')
+        if (this.saveSort)
+          this.addPerspectiveSort({
+            sort: 'creationDateOldest',
             perspectiveId: this.pers.id,
           })
       }
