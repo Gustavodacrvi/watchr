@@ -32,15 +32,14 @@ export default class CalendarInputIcon extends Vue {
     this.$emit('select', obj)
   }
   openCenteredCard() {
-    if (!this.isDesktop) {
+    if (!this.isDesktop)
       this.pushCenteredCard({
         type: 'Component',
         flexBasis: '275px',
         listIcons: [],
         compName: 'CalendarInput',
-        listIconHandler: (e: any) => {console.log(e)}
+        listIconHandler: (e: any) => {console.log(e)},
       })
-    }
   }
 }
 

@@ -56,7 +56,7 @@ import appUtils from '@/utils/app'
 
 @Component({
   components: {
-    'CalendarInput': appUtils.AsyncComponent(import('./CalendarInput.vue') as any),
+    CalendarInput: appUtils.AsyncComponent(import('./CalendarInput.vue') as any),
   },
 })
 export default class CenteredCardComp extends Vue {

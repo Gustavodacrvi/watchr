@@ -30,7 +30,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { State, namespace } from 'vuex-class'
+import { State } from 'vuex-class'
 
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'

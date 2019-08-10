@@ -141,12 +141,14 @@ export default class AppviewTask extends Vue {
   @Getter isDesktop!: boolean
 
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
-  @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string}) => void
-  @taskVuex.Action addSubTask!: (obj: {name: string, taskId: string, position: number, order: string[]}) => void
-  @taskVuex.Action saveSubtaskOrder!: (obj: {taskId: string, order: string[]}) => void
-  @taskVuex.Action unCompleteSubtasks!: (taskId: string) => void
-  @taskVuex.Action copyTask!: (taskId: string) => void
+  @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string, timeZone: string}) => void
+  // tslint:disable-next-line:max-line-length
+  @taskVuex.Action addSubTask!: (obj: {name: string, taskId: string, position: number, order: string[], timeZone: string}) => void
+  @taskVuex.Action saveSubtaskOrder!: (obj: {taskId: string, order: string[], timeZone: string}) => void
+  @taskVuex.Action unCompleteSubtasks!: (obj: {taskId: string, timeZone: string}) => void
+  @taskVuex.Action copyTask!: (obj: {taskId: string, timeZone: string}) => void
 
+  @settingsVuex.State timeZone!: string
   @settingsVuex.State mobileTaskLabels!: string
   @settingsVuex.State desktopTaskLabels!: string
 
@@ -186,7 +188,10 @@ export default class AppviewTask extends Vue {
       size: 'lg',
       iconColor: '',
       callback: () => {
-        this.copyTask(this.task.id)
+        this.copyTask({
+          taskId: this.task.id,
+          timeZone: this.timeZone,
+        })
       },
     },
     {
@@ -195,7 +200,10 @@ export default class AppviewTask extends Vue {
       size: 'lg',
       iconColor: '',
       callback: () => {
-        this.unCompleteSubtasks(this.task.id)
+        this.unCompleteSubtasks({
+          taskId: this.task.id,
+          timeZone: this.timeZone,
+        })
       },
     },
     {
@@ -231,6 +239,7 @@ export default class AppviewTask extends Vue {
         this.saveSubtaskOrder({
           taskId: this.task.id,
           order: this.getSubtasksIds().filter(el => el !== 'task-adder'),
+          timeZone: this.timeZone,
         })
       },
     }
@@ -249,6 +258,7 @@ export default class AppviewTask extends Vue {
       position: this.subTaskAdderPoition,
       taskId: this.task.id,
       order: this.task.checklistOrder,
+      timeZone: this.timeZone,
     })
     this.added = true
     this.subtaskValue = ''
@@ -294,6 +304,7 @@ export default class AppviewTask extends Vue {
     this.updateTask({
       ...obj,
       id: this.task.id,
+      timeZone: this.timeZone,
     })
     this.editing = false
   }

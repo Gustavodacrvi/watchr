@@ -111,8 +111,7 @@ export default class PerspectiveAppview extends Vue {
   // tslint:disable-next-line:max-line-length
   @taskVuex.Action addTaskPerspective!: (obj: {task: Task, perspectiveId: string, position: number, order: string[], timeZone: string}) => void
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
-  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
-  @taskVuex.Action addLabelByTaskIds!: (obj: {ids: string[], labelId: string}) => void
+  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string, timeZone: string}) => void
 
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
@@ -181,6 +180,7 @@ export default class PerspectiveAppview extends Vue {
               this.changePrioritysByIds({
                 ids: this.selected,
                 priority: 'High priority',
+                timeZone: this.timeZone,
               })
               this.sendOptionsToNavbar([])
             },
@@ -194,6 +194,7 @@ export default class PerspectiveAppview extends Vue {
               this.changePrioritysByIds({
                 ids: this.selected,
                 priority: 'Medium priority',
+                timeZone: this.timeZone,
               })
               this.sendOptionsToNavbar([])
             },
@@ -207,6 +208,7 @@ export default class PerspectiveAppview extends Vue {
               this.changePrioritysByIds({
                 ids: this.selected,
                 priority: 'Low priority',
+                timeZone: this.timeZone,
               })
               this.sendOptionsToNavbar([])
             },
@@ -307,6 +309,7 @@ export default class PerspectiveAppview extends Vue {
     this.changePrioritysByIds({
       ids: this.selected,
       priority: value,
+      timeZone: this.timeZone,
     })
   }
   updateView() {

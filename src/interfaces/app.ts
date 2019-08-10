@@ -70,6 +70,8 @@ export interface Task {
   labels: string[]
   creationDate: string
   creationTime: string
+  lastEditDate: string
+  lastEditTime: string
   checklistOrder: string[]
   checklist: Array<{
     completed: boolean,

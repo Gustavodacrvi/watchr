@@ -26,7 +26,6 @@
           
           @delete='deleteSelected'
           @selectedpriority='selectedPriority'
-          @selectedlabel='selectLabel'
           @priority='v => priority = v'
           @label='v => labels.push(v.id)'
           @settings='selectSettingsOption'
@@ -109,12 +108,12 @@ export default class LabelPerspective extends Vue {
   @labelVuex.State('labels') savedLabels!: Label[]
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
   @labelVuex.Action saveLabelTaskOrder!: (obj: {id: string, order: string[]}) => void
-  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
-  @taskVuex.Action addLabelByTaskIds!: (obj: {ids: string[], labelId: string}) => void
 
   @taskVuex.State tasks!: Task[]
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
+  // tslint:disable-next-line:max-line-length
   @taskVuex.Action addTaskLabel!: (obj: {task: Task, labelId: string, position: number, order: string[], timeZone: string}) => void
+  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string, timeZone: string}) => void
 
   @set.State timeZone!: string
 
@@ -160,6 +159,7 @@ export default class LabelPerspective extends Vue {
               this.changePrioritysByIds({
                 ids: this.selected,
                 priority: 'High priority',
+                timeZone: this.timeZone,
               })
               this.sendOptionsToNavbar([])
             },
@@ -173,6 +173,7 @@ export default class LabelPerspective extends Vue {
               this.changePrioritysByIds({
                 ids: this.selected,
                 priority: 'Medium priority',
+                timeZone: this.timeZone,
               })
               this.sendOptionsToNavbar([])
             },
@@ -186,6 +187,7 @@ export default class LabelPerspective extends Vue {
               this.changePrioritysByIds({
                 ids: this.selected,
                 priority: 'Low priority',
+                timeZone: this.timeZone,
               })
               this.sendOptionsToNavbar([])
             },
@@ -211,14 +213,10 @@ export default class LabelPerspective extends Vue {
     this.changePrioritysByIds({
       ids: this.selected,
       priority: value,
+      timeZone: this.timeZone,
     })
   }
-  selectLabel(label: Label) {
-    this.addLabelByTaskIds({
-      ids: this.selected,
-      labelId: label.id,
-    })
-  }
+
   toggleHide() {
     this.hided = !this.hided
   }

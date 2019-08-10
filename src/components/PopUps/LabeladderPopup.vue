@@ -44,7 +44,6 @@ const labelStore = namespace('label')
 
 import { Alert, Label } from '../../interfaces/app'
 
-const labelModule = namespace('label')
 
 @Component({
   components: {
