@@ -315,6 +315,13 @@ export default class PerspectiveAppview extends Vue {
             sort: 'lastEditDateOldest',
             perspectiveId: this.pers.id,
           })
+      } else if (value === 'Sort tasks by name reversed') {
+        this.sort.push('nameReversed')
+        if (this.saveSort)
+          this.addPerspectiveSort({
+            sort: 'nameReversed',
+            perspectiveId: this.pers.id,
+          })
       }
   }
   toggleHide() {

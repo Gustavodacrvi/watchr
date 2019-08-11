@@ -121,9 +121,15 @@ export default class AppviewHeadericons extends Vue {
     },
   ]
   settingsOptions: ListIcon[] = [
-   {
+    {
       name: 'Sort tasks by name',
       icon: 'sort-alpha-down',
+      iconColor: '',
+      size: 'lg',
+    },
+    {
+      name: 'Sort tasks by name reversed',
+      icon: 'sort-alpha-down-alt',
       iconColor: '',
       size: 'lg',
     },

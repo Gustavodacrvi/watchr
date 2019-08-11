@@ -75,6 +75,9 @@ export default {
       name: (task1: Task, task2: Task) => {
         return task1.name.localeCompare(task2.name)
       },
+      nameReversed: (task1: Task, task2: Task) => {
+        return task2.name.localeCompare(task1.name)
+      },
       priorityHighest: (task1: Task, task2: Task) => {
         const priA = task1.priority
         const priB = task2.priority

@@ -18,6 +18,7 @@ export default class AppviewEmptytag extends Vue {
   get getName(): string {
     switch (this.name) {
       case 'name': return 'Sort by name'
+      case 'nameReversed': return 'Sort tasks by name reversed'
       case 'priorityHighest': return 'Sort tasks by priority highest first'
       case 'priorityLowest': return 'Sort tasks by priority lowest first'
       case 'creationDateNewest': return 'Sort by creation date newest first'
