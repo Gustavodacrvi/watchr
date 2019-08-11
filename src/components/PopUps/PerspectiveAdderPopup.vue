@@ -16,6 +16,7 @@
         @value='v => value = v'
         @select='select'
         @focus='options = getOptions()'
+        style='position: relative;z-index: 5;'
       />
       <textarea
         tabindex='2'
@@ -25,13 +26,24 @@
         style='height: 100px;'
       ></textarea>
       <div class='flex margin'>
-        <div class='flex-el'>
+        <div class='flex-el font-awesome-classes scroll' @mouseenter='showingIconsDropdown = true' @mouseleave='showingIconsDropdown = false'>
           <form-input
             type='text'
             placeholder='Font awesome icon class...'
             v-model='icon'
+            input-theme='dark'
             :max='30'
           />
+          <i :class='`fas txt dark fa-${icon.replace(/\s/g, "-")} fa-lg active-icon`' :style='{color: color}'></i>
+          <transition name='fade'>
+            <div v-if='showingIconsDropdown' class='card dark round-border icons dark scroll'>
+              <i v-for='i in icons'
+                :key='i'
+                :class='`fas txt dark ${i.replace(/\s/g, "-")} fa-sm`'
+                @click='v => icon = i.replace("fa ", "")'
+              ></i>
+            </div>
+          </transition>
         </div>
         <div style='flex-basis: 10px'></div>
         <div class='flex-el'>
@@ -39,6 +51,7 @@
             type='text'
             placeholder='Font awesome icon color...'
             v-model='color'
+            input-theme='dark'
             :max='30'
           />
         </div>
@@ -47,14 +60,17 @@
         <form-checkbox
           name='Always show labels'
           v-model='alwaysShowLabels'
+          input-theme='dark'
         />
         <form-checkbox
           name='Always show edit dates'
           v-model='alwaysShowEditDate'
+          input-theme='dark'
         />
         <form-checkbox
           name='Always show creation dates'
           v-model='alwaysShowCreationDate'
+          input-theme='dark'
         />
       </div>
       <button
@@ -82,6 +98,8 @@ import DropdownInput from '@/components/DropdownInput.vue'
 import FormCheck from '@/components/PopUps/FormComponents/FormCheckbox.vue'
 import FormOptions from '@/components/PopUps/FormComponents/FormOptions.vue'
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+
+import fontAwesomeClasses from '@/utils/fontAwesomeClasses'
 
 const labelStore = namespace('label')
 const perspectiveModule = namespace('perspective')
@@ -119,7 +137,7 @@ export default class LabelAdder extends Vue {
   @perspectiveModule.Action editPerspective!: (obj: Pers & {id: string}) => void
 
   input: string | null = null
-  icon: string = 'layer-group'
+  icon: string = 'layer group'
   color: string = '#8C8C8C'
   description: string = ''
   value: string = ''
@@ -127,6 +145,7 @@ export default class LabelAdder extends Vue {
   alwaysShowLabels: boolean = true
   alwaysShowEditDate: boolean = true
   alwaysShowCreationDate: boolean = true
+  showingIconsDropdown: boolean = false
 
   created() {
     if (this.pers) {
@@ -162,7 +181,7 @@ export default class LabelAdder extends Vue {
         this.addPerspective({
           name: this.value,
           description: this.description,
-          icon: this.icon,
+          icon: this.icon.replace(/\s/g, '-'),
           iconColor: this.color,
           alwaysShowTaskLabels: this.alwaysShowLabels,
           alwaysShowLastEditDate: this.alwaysShowEditDate,
@@ -178,7 +197,7 @@ export default class LabelAdder extends Vue {
           id: this.pers.id,
           name: this.value,
           description: this.description,
-          icon: this.icon,
+          icon: this.icon.replace(/\s/g, '-'),
           iconColor: this.color,
           alwaysShowTaskLabels: this.alwaysShowLabels,
           alwaysShowLastEditDate: this.alwaysShowEditDate,
@@ -201,6 +220,12 @@ export default class LabelAdder extends Vue {
     this.input = value
   }
 
+  get spacedIcons(): string[] {
+    return fontAwesomeClasses.map(el => el.replace(/-/g, ' '))
+  }
+  get icons(): string[] {
+    return this.spacedIcons.filter(el => el.includes(this.icon))
+  }
   get buttonPlaceholder(): string {
     if (!this.pers)
       return 'Add perspective'
@@ -216,6 +241,39 @@ export default class LabelAdder extends Vue {
 </script>
 
 <style scoped>
+
+.font-awesome-classes {
+  position: relative;
+}
+
+.active-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 12px;
+}
+
+.icons {
+  position: absolute;
+  width: 100%;
+  overflow: auto;
+  max-height: 250px;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 1.4em;
+}
+
+.icons .fas {
+  cursor: pointer;
+  flex-basis: 40px;
+  line-height: 40px;
+  text-align: center;
+  transition: transform .3s;
+}
+
+.icons .fas:hover {
+  transform: scale(1.2);
+}
 
 .flex {
   display: flex;
