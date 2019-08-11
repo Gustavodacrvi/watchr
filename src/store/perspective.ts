@@ -4,12 +4,21 @@ import { Perspective, Task } from '@/interfaces/app'
 import { States as RootState } from '@/store/index'
 import appUtils from '@/utils/app'
 
+interface Pers {
+  name: string
+  description: string
+  iconColor: string
+  icon: string
+  alwaysShowTaskLabels: boolean
+  alwaysShowLastEditDate: boolean
+  alwaysShowCreationDate: boolean
+}
+
 interface States {
   perspectives: Perspective[]
   smartOrder: string[]
   customOrder: string[]
 }
-
 
 interface Getters {
   sortedSmartPerspectives: (state: States) => Perspective[]
@@ -49,10 +58,14 @@ interface Actions {
   savePerspectivePriority: (context: ActionContext, obj: {id: string, priority: string}) => void
   addPerspectiveSort: (context: ActionContext, obj: {sort: string, perspectiveId: string}) => void
   savePerspectiveTaskSort: (context: ActionContext, obj: {sort: string[], perspectiveId: string}) => void
-  // tslint:disable-next-line:max-line-length
-  addPerspective: (context: ActionContext, obj: {name: string, description: string, iconColor: string, icon: string}) => void
-  // tslint:disable-next-line:max-line-length
-  editPerspective: (context: ActionContext, obj: {name: string, description: string, iconColor: string, icon: string, id: string}) => void
+  addPerspective: (context: ActionContext, obj: Pers) => void
+  editPerspective: (context: ActionContext, obj: Pers & {id: string}) => void
+  saveSmartPerspective: (context: ActionContext, obj: {
+    alwaysShowTaskLabels: boolean,
+    alwaysShowLastEditDate: boolean,
+    alwaysShowCreationDate: boolean,
+    id: string,
+  }) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -122,14 +135,10 @@ export default {
     },
   } as Getters,
   actions: {
-    addPerspective({ rootState }, {name, description, icon, iconColor}) {
+    addPerspective({ rootState }, obj) {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('perspectives').add({
           userId: rootState.uid,
-          name,
-          icon,
-          iconColor,
-          description,
           order: [],
           sort: [],
           size: 'lg',
@@ -141,15 +150,13 @@ export default {
           excludeLabels: [],
           includeAndLabels: [],
           includeOrLabels: [],
+          ...obj,
         })
     },
-    editPerspective({ rootState, state }, {name, description, icon, iconColor, id}) {
+    editPerspective({ rootState, state }, obj) {
       if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('perspectives').doc(id).update({
-          name,
-          description,
-          icon,
-          iconColor,
+        rootState.firestore.collection('perspectives').doc(obj.id).update({
+          ...obj,
         })
     },
     addLabelToPerspective({ rootState }, {id, labelId}) {
@@ -215,6 +222,14 @@ export default {
 
         batch.commit()
       }
+    },
+    saveSmartPerspective({ rootState }, obj) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('perspectives').doc(obj.id).update({
+          alwaysShowCreationDate: obj.alwaysShowCreationDate,
+          alwaysShowLastEditDate: obj.alwaysShowLastEditDate,
+          alwaysShowTaskLabels: obj.alwaysShowTaskLabels,
+        })
     },
     togglePerspectivesNumberOfTasks({ rootState, state }, arr) {
       if (rootState.firestore && rootState.uid) {
@@ -307,6 +322,9 @@ export default {
             pin: true,
             numberOfTasks: true,
             showWhenNotEmpty: false,
+            alwaysShowTaskLabels: true,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: true,
             icon: 'star',
             iconColor: '#FFE366',
           },
@@ -315,6 +333,9 @@ export default {
             pin: false,
             numberOfTasks: false,
             showWhenNotEmpty: false,
+            alwaysShowTaskLabels: true,
+            alwaysShowLastEditDate: true,
+            alwaysShowCreationDate: true,
             icon: 'tasks',
             iconColor: '#9CE283',
           },
@@ -323,6 +344,9 @@ export default {
             pin: true,
             numberOfTasks: true,
             showWhenNotEmpty: false,
+            alwaysShowTaskLabels: false,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: true,
             icon: 'inbox',
             iconColor: '#83B7E2',
             description: `All of your inbox tasks will be shown here.`,
@@ -332,6 +356,9 @@ export default {
             pin: true,
             numberOfTasks: false,
             showWhenNotEmpty: false,
+            alwaysShowTaskLabels: true,
+            alwaysShowLastEditDate: true,
+            alwaysShowCreationDate: true,
             icon: 'calendar-alt',
             iconColor: '#FF6B66',
           },
@@ -340,6 +367,9 @@ export default {
             pin: false,
             numberOfTasks: false,
             showWhenNotEmpty: false,
+            alwaysShowTaskLabels: true,
+            alwaysShowLastEditDate: true,
+            alwaysShowCreationDate: true,
             icon: 'tags',
             iconColor: '#FF6B66',
           },
@@ -348,6 +378,9 @@ export default {
             pin: false,
             numberOfTasks: false,
             showWhenNotEmpty: false,
+            alwaysShowTaskLabels: false,
+            alwaysShowLastEditDate: true,
+            alwaysShowCreationDate: true,
             icon: 'backspace',
             iconColor: '#FF6B66',
           },
@@ -358,6 +391,9 @@ export default {
             pin: true,
             numberOfTasks: true,
             showWhenNotEmpty: false,
+            alwaysShowTaskLabels: true,
+            alwaysShowLastEditDate: true,
+            alwaysShowCreationDate: true,
             icon: 'layer-group',
             iconColor: '#88DDB7',
           },
@@ -366,6 +402,9 @@ export default {
             pin: true,
             numberOfTasks: false,
             showWhenNotEmpty: false,
+            alwaysShowTaskLabels: true,
+            alwaysShowLastEditDate: true,
+            alwaysShowCreationDate: true,
             icon: 'archive',
             iconColor: '#E2B983',
           },
@@ -386,6 +425,9 @@ export default {
             description: '',
             order: [],
             showWhenNotEmpty: per.showWhenNotEmpty,
+            alwaysShowTaskLabels: per.alwaysShowTaskLabels,
+            alwaysShowLastEditDate: per.alwaysShowLastEditDate,
+            alwaysShowCreationDate: per.alwaysShowCreationDate,
             isSmart: true,
             priority: '',
             excludeLabels: [],
@@ -411,6 +453,9 @@ export default {
             iconColor: per.iconColor,
             description: '',
             showWhenNotEmpty: per.showWhenNotEmpty,
+            alwaysShowTaskLabels: per.alwaysShowTaskLabels,
+            alwaysShowLastEditDate: per.alwaysShowLastEditDate,
+            alwaysShowCreationDate: per.alwaysShowCreationDate,
             order: [],
             isSmart: false,
             priority: '',

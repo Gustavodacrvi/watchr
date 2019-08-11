@@ -8,6 +8,9 @@
         :deselect-all='deselectAll'
         :allow-drag='numberOfSelected > 0'
         :dragging='dragging'
+        :always-show-last-edit-date='alwaysShowLastEditDate'
+        :always-show-creation-date='alwaysShowCreationDate'
+        :always-show-task-labels='alwaysShowTaskLabels'
 
         :data-vid='task.id'
 
@@ -48,14 +51,17 @@ import { Task, Label } from '../../../../interfaces/app'
 export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @State theme!: string
 
-  @Prop({default: false, type: Boolean}) disabled!: boolean
-  @Prop({default: false, type: Boolean}) fixAdderPosition!: boolean
-  @Prop({required: true, type: String}) id!: string
-  @Prop({default: false, type: Boolean}) allowPriority!: boolean
-  @Prop({default: false, type: Boolean}) allowLabels!: boolean
-  @Prop({default: false, type: Boolean}) allowDate!: boolean
+  @Prop(Boolean) disabled!: boolean
+  @Prop(Boolean) fixAdderPosition!: boolean
+  @Prop(Boolean) allowPriority!: boolean
+  @Prop(Boolean) allowLabels!: boolean
+  @Prop(Boolean) alwaysShowLastEditDate!: boolean
+  @Prop(Boolean) alwaysShowCreationDate!: boolean
+  @Prop(Boolean) alwaysShowTaskLabels!: boolean
+  @Prop(Boolean) allowDate!: boolean
   @Prop({default: undefined, type: String}) defaultPriority!: string
   @Prop({default: undefined, type: Array}) defaultLabels!: string[]
+  @Prop({required: true, type: String}) id!: string
   @Prop(String) fixedPers!: string
   @Prop(String) fixedLabel!: string
   @Prop(Array) tasks!: Task[]

@@ -1,7 +1,7 @@
 <template>
   <span
     class='checkbox txt gray round-border'
-    :class='[theme, {active: value}]'
+    :class='[theme, {active: value, "non-active": !value}]'
     @click="$emit('input', !value)"
   >
     {{ name }}
@@ -29,7 +29,8 @@ export default class FormCheckbox extends Vue {
   display: inline-block;
   padding: 8px;
   cursor: pointer;
-  transition: background-color .3s, color .3s;
+  border: none;
+  transition: border .3s, color .3s, background-color .3s;;
 }
 
 .checkbox + .checkbox {
@@ -38,16 +39,16 @@ export default class FormCheckbox extends Vue {
 
 .checkbox:hover {
   color: #83B7E2;
+  background-color: #83B7E2;
 }
 
-.active.light {
-  background-color: #ffbfbd !important;
-  color: #83B7E2;
+.checkbox:hover {
+  color: white !important;
 }
 
-.active.dark {
-  background-color: #3B2B2A !important;
+.active {
   color: #83B7E2;
+  border: 1px solid #83B7E2;
 }
 
 </style>

@@ -221,6 +221,16 @@ export default class OverviewAppnav extends Vue {
           this.togglePerspectivesShowWhenNotEmpty([{id}])
         },
       },
+      {
+        name: 'Edit smart perspective',
+        icon: 'edit',
+        iconColor: '',
+        size: 'lg',
+        callback: (id: string) => {
+          this.pushPopUp('EditSmartPerspectivePopup')
+          this.pushPopUpPayload(this.getPerspectiveById(id))
+        },
+      },
     ]
     if (per.pin)
       icons[0].name = 'Unpin perspective'

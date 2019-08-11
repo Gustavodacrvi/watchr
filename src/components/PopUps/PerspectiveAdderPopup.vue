@@ -43,6 +43,20 @@
           />
         </div>
       </div>
+      <div class='flex margin'>
+        <form-checkbox
+          name='Always show labels'
+          v-model='alwaysShowLabels'
+        />
+        <form-checkbox
+          name='Always show edit dates'
+          v-model='alwaysShowEditDate'
+        />
+        <form-checkbox
+          name='Always show creation dates'
+          v-model='alwaysShowCreationDate'
+        />
+      </div>
       <button
         tabindex='2'
         class='button round-border margin'
@@ -74,6 +88,15 @@ const perspectiveModule = namespace('perspective')
 
 import { Alert, Perspective } from '../../interfaces/app'
 
+interface Pers {
+  name: string
+  description: string
+  iconColor: string
+  icon: string
+  alwaysShowTaskLabels: boolean
+  alwaysShowLastEditDate: boolean
+  alwaysShowCreationDate: boolean
+}
 
 @Component({
   components: {
@@ -92,10 +115,8 @@ export default class LabelAdder extends Vue {
   @Mutation pushPopUp!: (compName: string) => void
 
   @perspectiveModule.State perspectives!: Perspective[]
-  // tslint:disable-next-line:max-line-length
-  @perspectiveModule.Action addPerspective!: (obj: {name: string, description: string, iconColor: string, icon: string}) => void
-  // tslint:disable-next-line:max-line-length
-  @perspectiveModule.Action editPerspective!: (obj: {name: string, description: string, iconColor: string, icon: string, id: string}) => void
+  @perspectiveModule.Action addPerspective!: (obj: Pers) => void
+  @perspectiveModule.Action editPerspective!: (obj: Pers & {id: string}) => void
 
   input: string | null = null
   icon: string = 'layer-group'
@@ -103,6 +124,9 @@ export default class LabelAdder extends Vue {
   description: string = ''
   value: string = ''
   options: string[] = []
+  alwaysShowLabels: boolean = true
+  alwaysShowEditDate: boolean = true
+  alwaysShowCreationDate: boolean = true
 
   created() {
     if (this.pers) {
@@ -111,6 +135,9 @@ export default class LabelAdder extends Vue {
       this.icon = this.pers.icon
       this.color = this.pers.iconColor
       this.description = this.pers.description
+      this.alwaysShowCreationDate = this.pers.alwaysShowCreationDate
+      this.alwaysShowLabels = this.pers.alwaysShowTaskLabels
+      this.alwaysShowEditDate = this.pers.alwaysShowLastEditDate
     }
   }
   mounted() {
@@ -137,6 +164,9 @@ export default class LabelAdder extends Vue {
           description: this.description,
           icon: this.icon,
           iconColor: this.color,
+          alwaysShowTaskLabels: this.alwaysShowLabels,
+          alwaysShowLastEditDate: this.alwaysShowEditDate,
+          alwaysShowCreationDate: this.alwaysShowCreationDate,
         })
         this.pushAlert({
           name: `<strong>${this.value}</strong> perspective was successfully added.`,
@@ -150,6 +180,9 @@ export default class LabelAdder extends Vue {
           description: this.description,
           icon: this.icon,
           iconColor: this.color,
+          alwaysShowTaskLabels: this.alwaysShowLabels,
+          alwaysShowLastEditDate: this.alwaysShowEditDate,
+          alwaysShowCreationDate: this.alwaysShowCreationDate,
         })
         this.$router.push('user?pers=' + this.value)
         this.pushAlert({

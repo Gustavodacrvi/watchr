@@ -35,6 +35,7 @@ import appUtils from '../../utils/app'
     ResetpasswordPopup: appUtils.AsyncComponent(import('./ResetpasswordPopup.vue')),
     SendresetpasswordPopup: appUtils.AsyncComponent(import('./SendresetpasswordPopup.vue')),
     TaskadderPopup: appUtils.AsyncComponent(import('./TaskadderPopup.vue')),
+    EditSmartPerspectivePopup: appUtils.AsyncComponent(import('./EditSmartPerspectivePopup.vue')),
   },
 })
 export default class PopUp extends Vue {

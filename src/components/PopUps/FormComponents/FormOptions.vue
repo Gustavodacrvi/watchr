@@ -73,9 +73,12 @@ export default class FormOptions extends Vue {
   }
 
   get getOptions(): string[] {
+    const parse = appUtils.parseMomentTimeZone
     if (!this.parse)
       return this.options.filter(el => el.includes(this.search))
-    return this.options.filter(el => el.includes(this.search)).map(el => appUtils.parseMomentTimeZone(el))
+    const parsedSearch = parse(this.search)
+    const filtered = this.options.filter(el => parse(el).includes(parsedSearch))
+    return filtered.map(el => parse(el))
   }
 }
 

@@ -35,36 +35,24 @@
                 class='fade content-icon fas fa-checklist fa-list-ul'
               ></i>
             </div>
-            <transition name='fade'>
-              <div key='labels' class='txt info' :class='theme'>
-                <template v-if='showLabels'>
-                  <span v-for='(item, index) in taskLabels'
-                    :key='item'
-                    class='lab fade'
-                  >{{ item }}<span v-if='index !== taskLabels.length - 1'>,</span></span>
-                  <span>&nbsp;</span>
-                </template>
-                <i v-show='showLabels' class='fas tiny-icon fa-circle fa-xs'></i>
-                <!-- <template v-if='exactDate'>
-                  <span class='fade'>
-                    <span> {{ taskEditDate }} </span>
-                    <span>{{ taskEditTime }} </span>
-                  </span>
-                  <i class='fas tiny-icon fa-circle fa-xs'></i>
-                  <span class='fade'>
-                    <span> {{ taskCreationDate }}</span>
-                    <span> {{ taskCreationTime }}</span>
-                  </span>
-                </template> -->
-                <span class='fade'>
-                  <span> {{ readableTaskLastEditDate }} </span>
-                </span>
-                <i class='fas tiny-icon fa-circle fa-xs'></i>
-                <span class='fade'>
-                  <span> {{ readableTaskCreationDate }}</span>
-                </span>
-              </div>
-            </transition>
+            <div key='labels' class='txt info' :class='theme'>
+              <template v-if='showLabels'>
+                <span v-for='(item, index) in taskLabels'
+                  :key='item'
+                  class='lab fade'
+                >{{ item }}<span v-if='index !== taskLabels.length - 1'>,</span></span>
+                <span>&nbsp;</span>
+              </template>
+              <i v-if='showLastEditDate && showLabels' class='fas tiny-icon fa-circle fa-xs'></i>
+              <span v-if='showLastEditDate' class='fade'>
+                <span> Last edited {{ readableTaskLastEditDate }} </span>
+              </span>
+              <i v-if='showLabels && showCreationDate && !showLastEditDate' class='fas tiny-icon fa-circle fa-xs'></i>
+              <i v-if='showLastEditDate && showCreationDate' class='fas tiny-icon fa-circle fa-xs'></i>
+              <span v-if='showCreationDate' class='fade'>
+                <span> Created {{ readableTaskCreationDate }}</span>
+              </span>
+            </div>
           </div>
           <div v-else class='content'>
             <span key='compl' class='txt' :class='theme'>Task completed</span>
@@ -173,8 +161,6 @@ export default class AppviewTask extends Vue {
   @settingsVuex.State timeZone!: string
   @settingsVuex.State timeFormat!: string
   @settingsVuex.State dateFormat!: string
-  @settingsVuex.State mobileTaskLabels!: string
-  @settingsVuex.State desktopTaskLabels!: string
 
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
@@ -182,6 +168,9 @@ export default class AppviewTask extends Vue {
   @Prop(Boolean) deselectAll!: boolean
   @Prop(Boolean) allowDrag!: boolean
   @Prop(Boolean) dragging!: boolean
+  @Prop(Boolean) alwaysShowLastEditDate!: boolean
+  @Prop(Boolean) alwaysShowCreationDate!: boolean
+  @Prop(Boolean) alwaysShowTaskLabels!: boolean
   @Prop(String) fixedPers!: string
 
   clicked: boolean = false
@@ -368,18 +357,15 @@ export default class AppviewTask extends Vue {
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
   }
 
-  /* get taskCreationDate(): string {
-    return moment.utc(this.task.creationDate, 'Y-M-D HH:mm').tz(this.timeZone).format(this.dateFormat)
+  get showLabels(): boolean {
+    return this.alwaysShowTaskLabels || this.onHover
   }
-  get taskEditDate(): string {
-    return moment.utc(this.task.lastEditDate, 'Y-M-D HH:mm').tz(this.timeZone).format(this.dateFormat)
+  get showLastEditDate(): boolean {
+    return this.alwaysShowLastEditDate || this.onHover
   }
-  get taskCreationTime(): string {
-    return appUtils.parseUtcTime(this.task.creationDate, this.timeZone, this.timeFormat)
+  get showCreationDate(): boolean {
+    return this.alwaysShowCreationDate || this.onHover
   }
-  get taskEditTime(): string {
-    return appUtils.parseUtcTime(this.task.lastEditDate, this.timeZone, this.timeFormat)
-  } */
   get readableTaskCreationDate(): string {
     const savedMom = moment.utc(this.task.creationDate, 'Y-M-D HH:mm')
     const todayMom = moment.utc()
@@ -390,12 +376,13 @@ export default class AppviewTask extends Vue {
     const todayMom = moment.utc()
     return savedMom.from(todayMom)
   }
-  get exclamationColor() {
+  get exclamationColor(): string {
     switch (this.task.priority) {
       case 'Low priority': return '#70ff66'
       case 'Medium priority': return '#fff566'
       case 'High priority': return '#FF6B66'
     }
+    return ''
   }
   get showOptionsIconDrop(): boolean {
     return !this.isDesktop || (this.onHover && this.isDesktop)
@@ -405,14 +392,6 @@ export default class AppviewTask extends Vue {
   }
   get taskLabels(): string[] {
     return this.getLabelsByIds(this.task.labels).map(el => el.name)
-  }
-  get showLabels(): boolean {
-    const isNotEmpty = this.taskLabels && this.taskLabels.length > 0
-    if (!isNotEmpty)
-      return false
-    if (this.isDesktop)
-      return this.onHover && this.desktopTaskLabels !== 'Always show' || this.desktopTaskLabels === 'Always show'
-    else return this.onHover && this.mobileTaskLabels !== 'Always show' || this.mobileTaskLabels === 'Always show'
   }
   get rootSubtaskComponent(): HTMLElement {
     return this.$el.getElementsByClassName('subtasks-transition')[0] as HTMLElement
