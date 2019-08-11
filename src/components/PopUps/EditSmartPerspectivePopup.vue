@@ -66,6 +66,12 @@ export default class EditSmartPerspectivePopup extends Vue {
   @Mutation pushPopUp!: (compName: string) => void
 
   @perspectiveModule.State perspectives!: Perspective[]
+  @perspectiveModule.Action saveSmartPerspective!: (obj: {
+    alwaysShowTaskLabels: boolean,
+    alwaysShowLastEditDate: boolean,
+    alwaysShowCreationDate: boolean,
+    id: string
+  }) => void
 
   alwaysShowLabels: boolean = true
   alwaysShowEditDate: boolean = true
@@ -78,7 +84,13 @@ export default class EditSmartPerspectivePopup extends Vue {
   }
 
   save() {
-
+    this.saveSmartPerspective({
+      alwaysShowTaskLabels: this.alwaysShowLabels,
+      alwaysShowCreationDate: this.alwaysShowCreationDate,
+      alwaysShowLastEditDate: this.alwaysShowEditDate,
+      id: this.pers.id,
+    })
+    this.pushPopUp('')
   }
 }
 

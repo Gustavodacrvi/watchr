@@ -60,6 +60,12 @@ interface Actions {
   savePerspectiveTaskSort: (context: ActionContext, obj: {sort: string[], perspectiveId: string}) => void
   addPerspective: (context: ActionContext, obj: Pers) => void
   editPerspective: (context: ActionContext, obj: Pers & {id: string}) => void
+  saveSmartPerspective: (context: ActionContext, obj: {
+    alwaysShowTaskLabels: boolean,
+    alwaysShowLastEditDate: boolean,
+    alwaysShowCreationDate: boolean,
+    id: string,
+  }) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -216,6 +222,14 @@ export default {
 
         batch.commit()
       }
+    },
+    saveSmartPerspective({ rootState }, obj) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('perspectives').doc(obj.id).update({
+          alwaysShowCreationDate: obj.alwaysShowCreationDate,
+          alwaysShowLastEditDate: obj.alwaysShowLastEditDate,
+          alwaysShowTaskLabels: obj.alwaysShowTaskLabels,
+        })
     },
     togglePerspectivesNumberOfTasks({ rootState, state }, arr) {
       if (rootState.firestore && rootState.uid) {
