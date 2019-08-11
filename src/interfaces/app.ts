@@ -69,9 +69,7 @@ export interface Task {
   priority: 'Low priority' | 'High priority' | 'Medium priority' | ''
   labels: string[]
   creationDate: string
-  creationTime: string
   lastEditDate: string
-  lastEditTime: string
   checklistOrder: string[]
   checklist: Array<{
     completed: boolean,

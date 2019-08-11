@@ -106,7 +106,7 @@ export default class Guest extends Mixins(Mixin) {
   @Prop(String) label!: string
 
   waitingResponse: boolean = false
-  showing: boolean = false
+  showing: boolean = true
   per: string = ''
   loaded: boolean = false
 
@@ -118,8 +118,6 @@ export default class Guest extends Mixins(Mixin) {
     } else if (this.isStandAlone)
       this.per = this.initialPerspective
     this.open()
-    if (this.currentAppSection !== 'overview' && this.isDesktop)
-      this.showing = true
   }
 
   open() {
@@ -174,12 +172,6 @@ export default class Guest extends Mixins(Mixin) {
     if (this.undefinedPers && this.loggedAndVerified || this.anonymous)
       this.$router.replace('user?pers=' + this.initialPerspective)
     this.open()
-  }
-  @Watch('currentAppSection')
-  onChange2() {
-    if (this.currentAppSection !== 'overview' && this.isDesktop)
-      this.showing = true
-    else this.showing = false
   }
 }
 

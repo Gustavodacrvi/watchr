@@ -160,6 +160,7 @@ export default class PerspectiveAppview extends Vue {
   ]
 
   created() {
+    console.log(this.value)
     this.showing = this.value
     this.updateView()
   }

@@ -154,7 +154,7 @@ export default class AppviewTask extends Vue {
   @Getter isDesktop!: boolean
 
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
-  @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string, timeZone: string}) => void
+  @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string}) => void
   // tslint:disable-next-line:max-line-length
   @taskVuex.Action addSubTask!: (obj: {name: string, taskId: string, position: number, order: string[]}) => void
   @taskVuex.Action saveSubtaskOrder!: (obj: {taskId: string, order: string[]}) => void
@@ -311,7 +311,6 @@ export default class AppviewTask extends Vue {
     this.updateTask({
       ...obj,
       id: this.task.id,
-      timeZone: this.timeZone,
     })
     this.editing = false
   }
@@ -360,18 +359,16 @@ export default class AppviewTask extends Vue {
   }
 
   get taskCreationDate(): string {
-    const momStr = `${this.task.creationDate} ${this.task.creationTime}`
-    return moment.utc(momStr, 'Y-M-D HH:mm').tz(this.timeZone).format(this.dateFormat)
+    return moment.utc(this.task.creationDate, 'Y-M-D HH:mm').tz(this.timeZone).format(this.dateFormat)
   }
   get taskEditDate(): string {
-    const momStr = `${this.task.creationDate} ${this.task.creationTime}`
-    return moment.utc(momStr, 'Y-M-D HH:mm').tz(this.timeZone).format(this.dateFormat)
+    return moment.utc(this.task.lastEditDate, 'Y-M-D HH:mm').tz(this.timeZone).format(this.dateFormat)
   }
   get taskCreationTime(): string {
-    return appUtils.parseUtcTime(this.task.creationTime, this.timeZone, this.timeFormat)
+    return appUtils.parseUtcTime(this.task.creationDate, this.timeZone, this.timeFormat)
   }
   get taskEditTime(): string {
-    return appUtils.parseUtcTime(this.task.lastEditTime, this.timeZone, this.timeFormat)
+    return appUtils.parseUtcTime(this.task.lastEditDate, this.timeZone, this.timeFormat)
   }
   get exclamationColor() {
     switch (this.task.priority) {

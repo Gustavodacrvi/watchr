@@ -132,16 +132,16 @@ export default {
         return 0
       },
       creationDateNewest: (t1: Task, t2: Task) => {
-        const mom1 = moment(`${t1.creationDate} ${t1.creationTime}`, 'Y-M-D HH:mm')
-        const mom2 = moment(`${t2.creationDate} ${t2.creationTime}`, 'Y-M-D HH:mm')
+        const mom1 = moment(`${t1.creationDate}`, 'Y-M-D HH:mm')
+        const mom2 = moment(`${t2.creationDate}`, 'Y-M-D HH:mm')
         if (mom1.isSame(mom2)) return 0
         if (mom1.isBefore(mom2)) return -1
         if (mom1.isAfter(mom2)) return 1
         return 0
       },
       creationDateOldest: (t1: Task, t2: Task) => {
-        const mom1 = moment(`${t1.creationDate} ${t1.creationTime}`, 'Y-M-D HH:mm')
-        const mom2 = moment(`${t2.creationDate} ${t2.creationTime}`, 'Y-M-D HH:mm')
+        const mom1 = moment(`${t1.creationDate}`, 'Y-M-D HH:mm')
+        const mom2 = moment(`${t2.creationDate}`, 'Y-M-D HH:mm')
         if (mom1.isSame(mom2)) return 0
         if (mom1.isBefore(mom2)) return 1
         if (mom1.isAfter(mom2)) return -1
@@ -167,8 +167,8 @@ export default {
   parseUtcTime(time: string, timeZone: string, timeFormat: string): string {
     const t = time.toLowerCase()
     if (timeFormat === '1:00pm')
-      return timezone.utc(t, 'HH:mm').tz(timeZone).format('hh:mm a').replace(' ', '')
-    return timezone.utc(t, 'HH:mm').tz(timeZone).format('HH:mm')
+      return timezone.utc(t, 'Y-M-D HH:mm').tz(timeZone).format('hh:mm a').replace(' ', '')
+    return timezone.utc(t, 'Y-M-D HH:mm').tz(timeZone).format('HH:mm')
   },
   getTaskInputTime(values: string[], timeFormat: '13:00' | '1:00pm') {
     const parseTime = (time: string): string => {
