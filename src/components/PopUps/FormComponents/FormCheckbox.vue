@@ -42,7 +42,7 @@ export default class FormCheckbox extends Vue {
   background-color: #83B7E2;
 }
 
-.checkbox.active:hover {
+.checkbox:hover {
   color: white !important;
 }
 
