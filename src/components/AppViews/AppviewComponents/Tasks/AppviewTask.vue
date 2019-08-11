@@ -42,11 +42,12 @@
                   class='lab fade'
                 >{{ item }}<span v-if='index !== taskLabels.length - 1'>,</span></span>
                 <span>&nbsp;</span>
-                <i v-if='showLastEditDate' class='fas tiny-icon fa-circle fa-xs'></i>
               </template>
+              <i v-if='showLastEditDate && showLabels' class='fas tiny-icon fa-circle fa-xs'></i>
               <span v-if='showLastEditDate' class='fade'>
                 <span> Last edited {{ readableTaskLastEditDate }} </span>
               </span>
+              <i v-if='showLabels && showCreationDate && !showLastEditDate' class='fas tiny-icon fa-circle fa-xs'></i>
               <i v-if='showLastEditDate && showCreationDate' class='fas tiny-icon fa-circle fa-xs'></i>
               <span v-if='showCreationDate' class='fade'>
                 <span> Created {{ readableTaskCreationDate }}</span>
