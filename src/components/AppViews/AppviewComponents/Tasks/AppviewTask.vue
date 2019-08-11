@@ -45,14 +45,23 @@
                   <span>&nbsp;</span>
                 </template>
                 <i v-show='showLabels' class='fas tiny-icon fa-circle fa-xs'></i>
+                <!-- <template v-if='exactDate'>
+                  <span class='fade'>
+                    <span> {{ taskEditDate }} </span>
+                    <span>{{ taskEditTime }} </span>
+                  </span>
+                  <i class='fas tiny-icon fa-circle fa-xs'></i>
+                  <span class='fade'>
+                    <span> {{ taskCreationDate }}</span>
+                    <span> {{ taskCreationTime }}</span>
+                  </span>
+                </template> -->
                 <span class='fade'>
-                  <span> {{ taskEditDate }} </span>
-                  <span>{{ taskEditTime }} </span>
+                  <span> {{ readableTaskLastEditDate }} </span>
                 </span>
                 <i class='fas tiny-icon fa-circle fa-xs'></i>
                 <span class='fade'>
-                  <span> {{ taskCreationDate }}</span>
-                  <span> {{ taskCreationTime }}</span>
+                  <span> {{ readableTaskCreationDate }}</span>
                 </span>
               </div>
             </transition>
@@ -183,6 +192,7 @@ export default class AppviewTask extends Vue {
   showChecklist: boolean = false
   justLongPressed: boolean = false
   added: boolean = false
+  exactDate: boolean = false
   subTaskAdderPoition: number = 0
   numberOfSelected: number = 0
   editing: boolean = false
@@ -358,7 +368,7 @@ export default class AppviewTask extends Vue {
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
   }
 
-  get taskCreationDate(): string {
+  /* get taskCreationDate(): string {
     return moment.utc(this.task.creationDate, 'Y-M-D HH:mm').tz(this.timeZone).format(this.dateFormat)
   }
   get taskEditDate(): string {
@@ -369,6 +379,16 @@ export default class AppviewTask extends Vue {
   }
   get taskEditTime(): string {
     return appUtils.parseUtcTime(this.task.lastEditDate, this.timeZone, this.timeFormat)
+  } */
+  get readableTaskCreationDate(): string {
+    const savedMom = moment.utc(this.task.creationDate, 'Y-M-D HH:mm')
+    const todayMom = moment.utc()
+    return savedMom.from(todayMom)
+  }
+  get readableTaskLastEditDate(): string {
+    const savedMom = moment.utc(this.task.lastEditDate, 'Y-M-D HH:mm')
+    const todayMom = moment.utc()
+    return savedMom.from(todayMom)
   }
   get exclamationColor() {
     switch (this.task.priority) {
