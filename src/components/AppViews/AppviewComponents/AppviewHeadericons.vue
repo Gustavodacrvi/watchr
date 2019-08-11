@@ -151,6 +151,18 @@ export default class AppviewHeadericons extends Vue {
       iconColor: '',
       size: 'lg',
     },
+    {
+      name: 'Sort by last edit date oldest first',
+      icon: 'calendar-alt',
+      iconColor: '',
+      size: 'lg',
+    },
+    {
+      name: 'Sort by last edit date newest first',
+      icon: 'calendar-alt',
+      iconColor: '',
+      size: 'lg',
+    },
   ]
 
   created() {

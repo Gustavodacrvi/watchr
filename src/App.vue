@@ -95,6 +95,7 @@ export default class App extends Vue {
 
   mounted() {
     window.addEventListener('keypress', this.keyPressed)
+    document.body.classList.add(this.theme)
   }
   beforeDestroy() {
     window.removeEventListener('keypress', this.keyPressed)

@@ -22,6 +22,8 @@ export default class AppviewEmptytag extends Vue {
       case 'priorityLowest': return 'Sort tasks by priority lowest first'
       case 'creationDateNewest': return 'Sort by creation date newest first'
       case 'creationDateOldest': return 'Sort by creation date oldest first'
+      case 'lastEditDateOldest': return 'Sort by last edit date oldest first'
+      case 'lastEditDateNewest': return 'Sort by last edit date newest first'
     }
     return ''
   }
