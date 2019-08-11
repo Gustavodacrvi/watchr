@@ -75,6 +75,9 @@ export default {
       name: (task1: Task, task2: Task) => {
         return task1.name.localeCompare(task2.name)
       },
+      nameReversed: (task1: Task, task2: Task) => {
+        return task2.name.localeCompare(task1.name)
+      },
       priorityHighest: (task1: Task, task2: Task) => {
         const priA = task1.priority
         const priB = task2.priority
@@ -142,6 +145,22 @@ export default {
       creationDateOldest: (t1: Task, t2: Task) => {
         const mom1 = moment(`${t1.creationDate}`, 'Y-M-D HH:mm')
         const mom2 = moment(`${t2.creationDate}`, 'Y-M-D HH:mm')
+        if (mom1.isSame(mom2)) return 0
+        if (mom1.isBefore(mom2)) return 1
+        if (mom1.isAfter(mom2)) return -1
+        return 0
+      },
+      lastEditDateNewest: (t1: Task, t2: Task) => {
+        const mom1 = moment(`${t1.lastEditDate}`, 'Y-M-D HH:mm')
+        const mom2 = moment(`${t2.lastEditDate}`, 'Y-M-D HH:mm')
+        if (mom1.isSame(mom2)) return 0
+        if (mom1.isBefore(mom2)) return -1
+        if (mom1.isAfter(mom2)) return 1
+        return 0
+      },
+      lastEditDateOldest: (t1: Task, t2: Task) => {
+        const mom1 = moment(`${t1.lastEditDate}`, 'Y-M-D HH:mm')
+        const mom2 = moment(`${t2.lastEditDate}`, 'Y-M-D HH:mm')
         if (mom1.isSame(mom2)) return 0
         if (mom1.isBefore(mom2)) return 1
         if (mom1.isAfter(mom2)) return -1
