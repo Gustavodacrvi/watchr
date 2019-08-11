@@ -1,7 +1,7 @@
 <template>
   <span
     class='checkbox txt gray round-border'
-    :class='[theme, {active: value, "non-active": !value}]'
+    :class='[inputTheme ? inputTheme : theme, {active: value, "non-active": !value}]'
     @click="$emit('input', !value)"
   >
     {{ name }}
@@ -19,6 +19,7 @@ export default class FormCheckbox extends Vue {
 
   @Prop(Boolean) value!: boolean
   @Prop(String) name!: string
+  @Prop(String) inputTheme!: string
 }
 
 </script>
