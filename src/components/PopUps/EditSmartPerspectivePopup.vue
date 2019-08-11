@@ -72,9 +72,9 @@ export default class EditSmartPerspectivePopup extends Vue {
   alwaysShowCreationDate: boolean = true
 
   created() {
-    if (this.pers) {
-
-    }
+    this.alwaysShowLabels = this.pers.alwaysShowTaskLabels
+    this.alwaysShowEditDate = this.pers.alwaysShowLastEditDate
+    this.alwaysShowCreationDate = this.pers.alwaysShowCreationDate
   }
 
   save() {
