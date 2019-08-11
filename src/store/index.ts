@@ -14,12 +14,12 @@ import { SimpleAdder, Alert, Perspective, ListIcon } from '@/interfaces/app'
 Vue.use(Vuex)
 
 export interface CenteredCard {
-  type: 'ListIcons',
+  type: 'ListIcons' | 'Component',
   flexBasis: string,
   search?: boolean
   maxHeight?: string
   listIcons: ListIcon[],
-  listIconHandler: (name: string, callback: () => any) => any
+  listIconHandler: (...arr: any[]) => any
   compName: string
 }
 
@@ -248,8 +248,9 @@ const store: any = new Vuex.Store({
   actions: {
     getWindowWidthOnResize({state, getters, commit}) {
       window.addEventListener('resize', () => {
+        const oldWidth = state.windowWidth
         state.windowWidth = document.body.clientWidth
-        if (!getters.isDesktop)
+        if (!getters.isDesktop && state.windowWidth !== oldWidth)
           commit('closeAppBar')
       })
     },

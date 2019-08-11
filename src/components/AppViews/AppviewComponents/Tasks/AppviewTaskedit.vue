@@ -28,7 +28,7 @@
         @select='selectDropValue'
       />
     </div>
-    <div class='margin options'>
+    <div class='options'>
       <view-btn
         class='tiny'
         :waiting-response='false'
@@ -39,7 +39,7 @@
       <span v-if='showCancel' class='cancel pointer' @click="$emit('cancel')">Cancel</span>
       <div class='right'>
         <div v-if='allowDate' class='header-option'>
-          <calendar-input @select='getDate' />
+          <calendar-input @select='getDate'/>
         </div>
         <div v-if='allowLabels' class='header-option'>
           <drop-finder
@@ -191,7 +191,6 @@ export default class AppviewTaskedit extends Vue {
   getDate(obj: any) {
     this.calendarString = obj.parsed
     this.calendarObj = obj
-    console.log(this.calendarString)
   }
 
   get getLabels(): Label[] {
@@ -279,6 +278,11 @@ export default class AppviewTaskedit extends Vue {
 
 <style scoped>
 
+.task-adder {
+  position: relative;
+  z-index: 10;
+}
+
 .view-tags {
   position: relative;
 }
@@ -310,7 +314,7 @@ export default class AppviewTaskedit extends Vue {
 }
 
 .margin {
-  margin-top: 4px;
+  margin-top: 1.5px !important;
 }
 
 .input-div {

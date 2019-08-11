@@ -1,5 +1,10 @@
 <template>
   <div class='calendar-selection dark card round-border'>
+    <div class='el cancel-sortable-unselect dark' @click='moveToSettingsNav'>
+      <span class='el-name txt dark'>
+        <span>{{ getTimeZone }}</span>
+      </span>
+    </div>
     <div class='el cancel-sortable-unselect dark' @click='selectToday'>
       <span class='el-icon'><i class='txt fas fa-star fa-lg' style='color: #FFE366'></i></span>
       <span class='el-name txt dark'>
@@ -51,7 +56,7 @@
           <span class='number'>{{ i }}</span>
         </span>
       </div>
-      <span v-if='isDesktop'>
+      <span>
         <form-input class='add-time tiny'
           input-theme='dark'
           placeholder='Add time...'
@@ -60,7 +65,6 @@
           :max='10'
         />
       </span>
-      <span v-else class='add-time red'>Add time</span>
     </div>
   </div>
 </template>
@@ -68,13 +72,13 @@
 <script lang='ts'>
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { Getter, namespace } from 'vuex-class'
+import { Getter, Mutation, namespace } from 'vuex-class'
 
 const set = namespace('settings')
 
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 import appUtils from '@/utils/app'
 
@@ -84,22 +88,27 @@ import appUtils from '@/utils/app'
   },
 })
 export default class CalendarInput extends Vue {
+  @Mutation pushPopUp!: (comp: string) => void
   @Getter isDesktop!: boolean
 
   @set.State timeFormat!: '13:00' | '1:00pm'
   @set.State nextWeek!: string
-  
+  @set.State timeZone!: string
+
   originalMoment: any = null
   selectedMoment: any = null
+  visualMoment: any = null
   time: string = ''
 
   created() {
+    moment.tz.setDefault(this.timeZone)
     this.originalMoment = moment()
     this.selectedMoment = this.originalMoment.clone()
+    this.visualMoment = this.originalMoment.clone()
   }
 
   selectDay(num: number) {
-    this.selectedMoment.date(num)
+    this.selectedMoment = this.visualMoment.clone().date(num)
     this.$forceUpdate()
     this.emitEvent()
   }
@@ -113,13 +122,13 @@ export default class CalendarInput extends Vue {
   selectNextweek() {
     this.emitEvent(appUtils.getNextWeek(this.originalMoment.clone(), this.nextWeek))
   }
-  emitEvent(moment?: any) {
-    if (!moment)
-      moment = this.selectedMoment
+  emitEvent(mom?: any) {
+    if (!mom)
+      mom = this.selectedMoment
     const time = appUtils.getTaskInputTime(this.time.split(' '), this.timeFormat)
-    const day = moment.format('D')
-    const month = moment.format('M')
-    const year = moment.format('Y')
+    const day = mom.format('D')
+    const month = mom.format('M')
+    const year = mom.format('Y')
     this.$emit('select', {
       time, day, month, year,
       parsed: appUtils.parseTaskInputObjectToString({
@@ -128,54 +137,63 @@ export default class CalendarInput extends Vue {
     })
   }
   nextMonth() {
-    this.selectedMoment.add(1, 'M')
+    this.visualMoment.add(1, 'M')
     this.$forceUpdate()
   }
   previousMonth() {
-    this.selectedMoment.subtract(1, 'M')
+    this.visualMoment.subtract(1, 'M')
     this.$forceUpdate()
   }
 
   goToOriginalDate() {
     this.selectedMoment = this.originalMoment.clone()
+    this.visualMoment = this.originalMoment.clone()
   }
   isSelectedDate(day: number): boolean {
-    const clone = this.selectedMoment.clone().date(day)
+    const clone = this.visualMoment.clone().date(day)
     return clone.isSame(this.selectedMoment)
   }
   monthDays(): number[] {
     const arr = []
-    const daysInMonth = this.selectedMoment.daysInMonth()
-    for (let i = 1;i <= daysInMonth; i++)
+    const daysInMonth = this.visualMoment.daysInMonth()
+    for (let i = 1; i <= daysInMonth; i++)
       arr.push(i)
     return arr
   }
   firstWeekDayRange(): number[] {
-    const clone = this.selectedMoment.clone()
+    const clone = this.visualMoment.clone()
     const num = parseInt(clone.startOf('month').format('d'), 10)
     const arr = []
-    for (let i = 1;i <= num;i++)
+    for (let i = 1; i <= num; i++)
       arr.push(i)
     return arr
   }
   monthName(): string {
-    return this.selectedMoment.format('MMM')
+    return this.visualMoment.format('MMM')
   }
   weekDayFromTomorrow(): string {
-    const mom = this.originalMoment.clone()
+    const mom = this.visualMoment.clone()
     return mom.add(1, 'd').format('ddd')
   }
   weekDayFromToday(): string {
-    return this.originalMoment.format('ddd')
+    return this.visualMoment.format('ddd')
   }
   year() {
-    return this.selectedMoment.format('Y')
+    return this.visualMoment.format('Y')
   }
   month() {
-    return this.selectedMoment.format('M')
+    return this.visualMoment.format('M')
   }
   day() {
-    return this.selectedMoment.format('D')
+    return this.visualMoment.format('D')
+  }
+  moveToSettingsNav() {
+    this.pushPopUp('')
+    this.$router.push('/settings/general#DateandTime')
+  }
+
+  get getTimeZone(): string {
+    return appUtils.parseMomentTimeZone(this.timeZone)
   }
 
   @Watch('time')
@@ -236,7 +254,7 @@ export default class CalendarInput extends Vue {
 }
 
 .add-time {
-  margin-top: 4px;
+  margin-top: 6px;
   color: #83B7E2;
 }
 

@@ -9,7 +9,7 @@
         class='margin'
         focus-class='labeladder'
         placeholder='Label name...'
-        :input='input'
+        :input='value'
         :values='options'
         @enter='add'
         @value='v => value = v'
@@ -44,7 +44,6 @@ const labelStore = namespace('label')
 
 import { Alert, Label } from '../../interfaces/app'
 
-const labelModule = namespace('label')
 
 @Component({
   components: {
@@ -91,6 +90,7 @@ export default class LabelAdder extends Vue {
           duration: 2.5,
           type: 'success',
         })
+        this.value = ''
       }
     }
   }

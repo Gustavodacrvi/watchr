@@ -19,7 +19,7 @@ import { State, Mutation } from 'vuex-class'
 export default class FormInput extends Vue {
   @State theme!: string
 
-  @Prop({required: true}) value!: string | null
+  @Prop({default: true}) value!: string | null
   @Prop({required: true, type: Number}) max!: number
   @Prop(String) type!: string | null
   @Prop(String) inputTheme!: string | null

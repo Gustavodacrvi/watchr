@@ -9,10 +9,12 @@
         icon-color=''
         icon=''
       />
+      <div class='margin'></div>
       <empty-tag-renderer v-if='sort && sort.length > 0'
         :list='sort'
         @update='v => sort = v'
       />
+      <div class='margin'></div>
       <div class='right'>
         <view-header-icons
           v-model='search'
@@ -24,7 +26,6 @@
           
           @delete='deleteSelected'
           @selectedpriority='selectedPriority'
-          @selectedlabel='selectLabel'
           @priority='v => priority = v'
           @label='v => labels.push(v.id)'
           @settings='selectSettingsOption'
@@ -72,6 +73,7 @@ import { Getter, namespace, Mutation, State } from 'vuex-class'
 
 const taskVuex = namespace('task')
 const labelVuex = namespace('label')
+const set = namespace('settings')
 
 import AppviewHeaderIcons from '@/components/AppViews/AppviewComponents/AppviewHeadericons.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
@@ -106,12 +108,14 @@ export default class LabelPerspective extends Vue {
   @labelVuex.State('labels') savedLabels!: Label[]
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
   @labelVuex.Action saveLabelTaskOrder!: (obj: {id: string, order: string[]}) => void
-  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
-  @taskVuex.Action addLabelByTaskIds!: (obj: {ids: string[], labelId: string}) => void
 
   @taskVuex.State tasks!: Task[]
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
+  // tslint:disable-next-line:max-line-length
   @taskVuex.Action addTaskLabel!: (obj: {task: Task, labelId: string, position: number, order: string[]}) => void
+  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
+
+  @set.State timeZone!: string
 
   search: string = ''
   priority: string = ''
@@ -208,12 +212,7 @@ export default class LabelPerspective extends Vue {
       priority: value,
     })
   }
-  selectLabel(label: Label) {
-    this.addLabelByTaskIds({
-      ids: this.selected,
-      labelId: label.id,
-    })
-  }
+
   toggleHide() {
     this.hided = !this.hided
   }
@@ -233,8 +232,14 @@ export default class LabelPerspective extends Vue {
     if (!this.sort.find(el => el === value))
       if (value === 'Sort tasks by name')
         this.sort.push('name')
-      else if (value === 'Sort tasks by priority')
-        this.sort.push('priority')
+      else if (value === 'Sort tasks by priority highest first')
+        this.sort.push('priorityHighest')
+      else if (value === 'Sort tasks by priority lowest first')
+        this.sort.push('priorityLowest')
+      else if (value === 'Sort by creation date newest first')
+        this.sort.push('creationDateNewest')
+      else if (value === 'Sort by creation date oldest first')
+        this.sort.push('creationDateOldest')
   }
   addLabelTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
     const lab = this.getLabel

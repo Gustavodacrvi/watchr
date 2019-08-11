@@ -39,6 +39,7 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter, namespace } from 'vuex-class'
 
 const taskVuex = namespace('task')
+const set = namespace('settings')
 
 import SubTaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtaskEdit.vue'
 
@@ -59,8 +60,11 @@ export default class AppviewSubtask extends Vue {
 
   @Prop(Object) task!: any
 
+  // tslint:disable-next-line:max-line-length
   @taskVuex.Action saveSubTask!: (obj: {name: string, taskId: string, completed: boolean, id: string}) => void
   @taskVuex.Action deleteSubTaskFromTask!: (obj: {taskId: string, id: string}) => void
+
+  @set.State timeZone!: string
 
   @Prop(Boolean) allowDrag!: boolean
   @Prop(Boolean) deselectAll!: boolean

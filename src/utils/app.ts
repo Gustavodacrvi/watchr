@@ -5,6 +5,7 @@ import ErrorComponent from '@/components/ErrorComponent.vue'
 import { Task } from '@/interfaces/app'
 
 import moment from 'moment'
+import timezone from 'moment-timezone'
 
 import { TaskInputObj } from '@/interfaces/app'
 
@@ -74,7 +75,7 @@ export default {
       name: (task1: Task, task2: Task) => {
         return task1.name.localeCompare(task2.name)
       },
-      priority: (task1: Task, task2: Task) => {
+      priorityHighest: (task1: Task, task2: Task) => {
         const priA = task1.priority
         const priB = task2.priority
         switch (priA) {
@@ -102,25 +103,72 @@ export default {
         }
         return 0
       },
+      priorityLowest: (task1: Task, task2: Task) => {
+        const priA = task1.priority
+        const priB = task2.priority
+        switch (priA) {
+          case 'Low priority':
+            switch (priB) {
+              case 'Low priority': return 0
+              case 'Medium priority': return -1
+              case 'High priority': return -1
+              default: return 1
+            }
+          case 'Medium priority':
+            switch (priB) {
+              case 'Medium priority': return 0
+              case 'High priority': return -1
+              case 'Low priority': return 1
+              default: return 1
+            }
+          case 'High priority':
+            switch (priB) {
+              case 'High priority': return 0
+              case 'Low priority': return 1
+              case 'Medium priority': return 1
+              default: return 1
+            }
+        }
+        return 0
+      },
+      creationDateNewest: (t1: Task, t2: Task) => {
+        const mom1 = moment(`${t1.creationDate}`, 'Y-M-D HH:mm')
+        const mom2 = moment(`${t2.creationDate}`, 'Y-M-D HH:mm')
+        if (mom1.isSame(mom2)) return 0
+        if (mom1.isBefore(mom2)) return -1
+        if (mom1.isAfter(mom2)) return 1
+        return 0
+      },
+      creationDateOldest: (t1: Task, t2: Task) => {
+        const mom1 = moment(`${t1.creationDate}`, 'Y-M-D HH:mm')
+        const mom2 = moment(`${t2.creationDate}`, 'Y-M-D HH:mm')
+        if (mom1.isSame(mom2)) return 0
+        if (mom1.isBefore(mom2)) return 1
+        if (mom1.isAfter(mom2)) return -1
+        return 0
+      },
     }
 
     tasks.sort((task1: Task, task2: Task) => {
 
-      let compare = obj[sort[0]]
-      if (compare) {
-        const result = compare(task1, task2)
-        if (result) return result
-      }
-      compare = obj[sort[1]]
-      if (compare) {
-        const result = compare(task1, task2)
-        if (result !== undefined) return result
+      for (let i = 0; i < 3; i++) {
+        const compare = obj[sort[0]]
+        if (compare) {
+          const result = compare(task1, task2)
+          if (result) return result
+        }
       }
 
       return 0
     })
 
     return tasks
+  },
+  parseUtcTime(time: string, timeZone: string, timeFormat: string): string {
+    const t = time.toLowerCase()
+    if (timeFormat === '1:00pm')
+      return timezone.utc(t, 'Y-M-D HH:mm').tz(timeZone).format('hh:mm a').replace(' ', '')
+    return timezone.utc(t, 'Y-M-D HH:mm').tz(timeZone).format('HH:mm')
   },
   getTaskInputTime(values: string[], timeFormat: '13:00' | '1:00pm') {
     const parseTime = (time: string): string => {
@@ -136,7 +184,6 @@ export default {
       else if (time.includes('am'))
         momentStr = `2014-12-13 ${time.replace('am', '')} am`
       else momentStr = `2014-12-13 ${time}`
-      console.log(momentStr, format)
       return moment(momentStr, format, true).isValid()
     }
     for (const v of values)
@@ -144,8 +191,8 @@ export default {
         return parseTime(v)
     return null
   },
-  getNextWeek(moment: any, nextWeek: string) {
-    const clone = moment.clone()
+  getNextWeek(mom: any, nextWeek: string) {
+    const clone = mom.clone()
     while (true) {
       clone.add(1, 'd')
       const week = clone.format('dddd')

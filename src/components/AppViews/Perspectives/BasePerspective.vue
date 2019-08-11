@@ -30,6 +30,7 @@
       :list='sort'
       @update='saveNewSortOrder'
     />
+    <div class='margin'></div>
     <div v-if='!hided'>
       <div v-if='showing'>
         <p v-if='pers.description' class='description txt' :class='theme'>
@@ -85,6 +86,7 @@ import appUtils from '@/utils/app'
 const labelVuex = namespace('label')
 const taskVuex = namespace('task')
 const persVuex = namespace('perspective')
+const set = namespace('settings')
 
 @Component({
   components: {
@@ -110,7 +112,6 @@ export default class PerspectiveAppview extends Vue {
   @taskVuex.Action addTaskPerspective!: (obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
-  @taskVuex.Action addLabelByTaskIds!: (obj: {ids: string[], labelId: string}) => void
 
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
@@ -121,6 +122,8 @@ export default class PerspectiveAppview extends Vue {
   @persVuex.Action savePerspectivePriority!: (obj: {id: string, priority: string}) => Label[]
   @persVuex.Action addPerspectiveSort!: (obj: {sort: string, perspectiveId: string}) => Label[]
   @persVuex.Action savePerspectiveTaskSort!: (obj: {sort: string[], perspectiveId: string}) => Label[]
+
+  @set.State timeZone!: string
 
   @Prop({default: true, type: Boolean}) allowLabels!: boolean
   @Prop({default: true, type: Boolean}) allowDate!: boolean
@@ -270,14 +273,35 @@ export default class PerspectiveAppview extends Vue {
             sort: 'name',
             perspectiveId: this.pers.id,
           })
-      } else if (value === 'Sort tasks by priority') {
-        this.sort.push('priority')
+      } else if (value === 'Sort tasks by priority highest first') {
+        this.sort.push('priorityHighest')
         if (this.saveSort)
           this.addPerspectiveSort({
-            sort: 'priority',
+            sort: 'priorityHighest',
             perspectiveId: this.pers.id,
           })
-    }
+      } else if (value === 'Sort tasks by priority lowest first') {
+        this.sort.push('priorityLowest')
+        if (this.saveSort)
+          this.addPerspectiveSort({
+            sort: 'priorityLowest',
+            perspectiveId: this.pers.id,
+          })
+      } else if (value === 'Sort by creation date newest first') {
+        this.sort.push('creationDateNewest')
+        if (this.saveSort)
+          this.addPerspectiveSort({
+            sort: 'creationDateNewest',
+            perspectiveId: this.pers.id,
+          })
+      } else if (value === 'Sort by creation date oldest first') {
+        this.sort.push('creationDateOldest')
+        if (this.saveSort)
+          this.addPerspectiveSort({
+            sort: 'creationDateOldest',
+            perspectiveId: this.pers.id,
+          })
+      }
   }
   toggleHide() {
     if (!this.isDesktop)

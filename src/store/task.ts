@@ -3,6 +3,8 @@ import { Task, Label } from '@/interfaces/app'
 
 import { States as RootState } from '@/store/index'
 
+import timezone from 'moment-timezone'
+
 interface States {
   tasks: Task[]
 }
@@ -27,14 +29,17 @@ interface ActionContext {
 interface Actions {
   // tslint:disable-next-line:max-line-length
   updateTask: (context: ActionContext, obj: {name: string, priority: string, id: string, labels: []}) => void
+  copyTask: (context: ActionContext, taskId: string) => void
   // tslint:disable-next-line:max-line-length
   addTaskPerspective: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
+  // tslint:disable-next-line:max-line-length
   addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[]}) => void
   addTask: (context: ActionContext, obj: {name: string, priority: string, labels: string[]}) => void
   deleteTasksById: (context: ActionContext, ids: string[]) => void
   changePrioritysByIds: (context: ActionContext, obj: {ids: string[], priority: string}) => void
+  // tslint:disable-next-line:max-line-length
   addSubTask: (context: ActionContext, obj: {name: string, taskId: string, position: number, order: string[]}) => void
-  addLabelByTaskIds: (context: ActionContext, obj: {ids: string[], labelId: string}) => void
+  // tslint:disable-next-line:max-line-length
   saveSubTask: (context: ActionContext, obj: {name: string, taskId: string, completed: boolean, id: string}) => void
   saveSubtaskOrder: (context: ActionContext, obj: {taskId: string, order: string[]}) => void
   deleteSubTaskFromTask: (context: ActionContext, obj: {taskId: string, id: string}) => void
@@ -79,9 +84,12 @@ export default {
         })
     },
     updateTask({ rootState }, {name, priority, id, labels}) {
+      const utc = timezone().utc()
+      const date = utc.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('tasks').doc(id).update({
           name, priority, labels,
+          lastEditDate: date,
         })
     },
     deleteTasksById({ rootState }, ids: string[]) {
@@ -97,6 +105,8 @@ export default {
       }
     },
     addTaskPerspective({ rootState }, {task, perspectiveId, order, position}) {
+      const utc = timezone().utc()
+      const date = utc.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
         const batch = rootState.firestore.batch()
 
@@ -107,6 +117,8 @@ export default {
           name: task.name,
           priority: task.priority,
           userId: rootState.uid,
+          creationDate: date,
+          lastEditDate: date,
           labels: task.labels,
           checklist: [],
           checklistOrder: [],
@@ -120,15 +132,21 @@ export default {
       }
     },
     addTask({ rootState }, {priority, name, labels}) {
+      const utc = timezone().utc()
+      const date = utc.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('tasks').add({
           name, labels, priority,
           userId: rootState.uid,
+          creationDate: date,
+          lastEditDate: date,
           checklist: [],
           checklistOrder: [],
         })
     },
     changePrioritysByIds({ rootState }, {ids, priority}) {
+      const utc = timezone().utc()
+      const date = utc.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
         const batch = rootState.firestore.batch()
 
@@ -136,21 +154,7 @@ export default {
           const ref = rootState.firestore.collection('tasks').doc(id)
           batch.update(ref, {
             priority,
-          })
-        }
-
-        batch.commit()
-      }
-    },
-    addLabelByTaskIds({ rootState }, {ids, labelId}) {
-      if (rootState.firestore && rootState.uid) {
-        const batch = rootState.firestore.batch()
-
-        const fire = rootState.firebase.firestore.FieldValue as any
-        for (const id of ids) {
-          const ref = rootState.firestore.collection('tasks').doc(id)
-          batch.update(ref, {
-            labels: fire.arrayUnion(labelId),
+            lastEditDate: date,
           })
         }
 
@@ -158,6 +162,8 @@ export default {
       }
     },
     addTaskLabel({ rootState }, {task, labelId, order, position}) {
+      const utc = timezone().utc()
+      const date = utc.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
         const batch = rootState.firestore.batch()
 
@@ -169,6 +175,8 @@ export default {
           priority: task.priority,
           userId: rootState.uid,
           labels: task.labels,
+          creationDate: date,
+          lastEditDate: date,
           checklist: [],
           checklistOrder: [],
         })
@@ -181,12 +189,17 @@ export default {
       }
     },
     saveSubtaskOrder({ rootState }, {taskId, order}) {
+      const utc = timezone().utc()
+      const date = utc.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('tasks').doc(taskId).update({
           checklistOrder: order,
+          lastEditDate: date,
         })
     },
     saveSubTask({ rootState, state }, {taskId, name, id, completed}) {
+      const utc = timezone().utc()
+      const date = utc.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
         const task = state.tasks.find(el => el.id === taskId) as Task
         const i = task.checklist.findIndex(el => el.id === id) as any
@@ -195,10 +208,13 @@ export default {
         }
         rootState.firestore.collection('tasks').doc(taskId).update({
           checklist: task.checklist,
+          lastEditDate: date,
         })
       }
     },
     deleteSubTaskFromTask({ rootState, state }, {taskId, id}) {
+      const utc = timezone().utc()
+      const date = utc.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
         const task = state.tasks.find(el => el.id === taskId) as Task
         let i = task.checklist.findIndex(el => el.id === id) as any
@@ -209,10 +225,13 @@ export default {
         rootState.firestore.collection('tasks').doc(taskId).update({
           checklist: task.checklist,
           checklistOrder: task.checklistOrder,
+          lastEditDate: date,
         })
       }
     },
     addSubTask({ rootState }, {taskId, order, position, name}) {
+      const utc = timezone().utc()
+      const date = utc.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
         const fire = rootState.firebase.firestore.FieldValue as any
         let timesRun = 0
@@ -237,10 +256,36 @@ export default {
         rootState.firestore.collection('tasks').doc(taskId).update({
           checklistOrder: order,
           checklist: fire.arrayUnion(subtask),
+          lastEditDate: date,
         })
       }
     },
+    copyTask({ rootState, state }, taskId) {
+      const utc = timezone().utc()
+      const date = utc.format('Y-M-D HH:mm')
+
+      if (rootState.firestore && rootState.uid) {
+        const task = state.tasks.find(el => el.id === taskId)
+        if (task) {
+          const batch = rootState.firestore.batch()
+          const ref = rootState.firestore.collection('tasks').doc()
+          batch.set(ref, {
+            checklist: task.checklist,
+            checklistOrder: task.checklistOrder,
+            labels: task.labels,
+            creationDate: date,
+            lastEditDate: date,
+            name: task.name,
+            priority: task.priority,
+            userId: task.userId,
+          } as Task)
+          batch.commit()
+        }
+      }
+    },
     unCompleteSubtasks({ rootState, state }, taskId) {
+      const utc = timezone().utc()
+      const date = utc.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
         const task = state.tasks.find(el => el.id === taskId)
         if (task) {
@@ -248,6 +293,7 @@ export default {
             sub.completed = false
           rootState.firestore.collection('tasks').doc(taskId).update({
             checklist: task.checklist,
+            lastEditDate: date,
           })
         }
       }

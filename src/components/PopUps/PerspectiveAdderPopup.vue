@@ -70,10 +70,10 @@ import FormOptions from '@/components/PopUps/FormComponents/FormOptions.vue'
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 
 const labelStore = namespace('label')
+const perspectiveModule = namespace('perspective')
 
 import { Alert, Perspective } from '../../interfaces/app'
 
-const perspectiveModule = namespace('perspective')
 
 @Component({
   components: {

@@ -31,13 +31,38 @@
               <i v-if='taskLabels && taskLabels.length > 0'
                 class='fade content-icon fas fa-tags fa-sm'
               ></i>
+              <i v-if='getChecklist && getChecklist.length > 0'
+                class='fade content-icon fas fa-checklist fa-list-ul'
+              ></i>
             </div>
             <transition name='fade'>
-              <div v-if='showLabels' class='txt fade' :class='theme'>
-                <span v-for='lab in taskLabels'
-                  :key='lab'
-                  class='lab'
-                >{{ lab }}</span>
+              <div key='labels' class='txt info' :class='theme'>
+                <template v-if='showLabels'>
+                  <span v-for='(item, index) in taskLabels'
+                    :key='item'
+                    class='lab fade'
+                  >{{ item }}<span v-if='index !== taskLabels.length - 1'>,</span></span>
+                  <span>&nbsp;</span>
+                </template>
+                <i v-show='showLabels' class='fas tiny-icon fa-circle fa-xs'></i>
+                <!-- <template v-if='exactDate'>
+                  <span class='fade'>
+                    <span> {{ taskEditDate }} </span>
+                    <span>{{ taskEditTime }} </span>
+                  </span>
+                  <i class='fas tiny-icon fa-circle fa-xs'></i>
+                  <span class='fade'>
+                    <span> {{ taskCreationDate }}</span>
+                    <span> {{ taskCreationTime }}</span>
+                  </span>
+                </template> -->
+                <span class='fade'>
+                  <span> {{ readableTaskLastEditDate }} </span>
+                </span>
+                <i class='fas tiny-icon fa-circle fa-xs'></i>
+                <span class='fade'>
+                  <span> {{ readableTaskCreationDate }}</span>
+                </span>
               </div>
             </transition>
           </div>
@@ -111,6 +136,7 @@ import SubTaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewSu
 import { Task, ListIcon, Label } from '../../../../interfaces/app'
 
 import appUtils from '@/utils/app'
+import moment from 'moment-timezone'
 
 const taskVuex = namespace('task')
 const labelVuex = namespace('label')
@@ -138,10 +164,15 @@ export default class AppviewTask extends Vue {
 
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string}) => void
+  // tslint:disable-next-line:max-line-length
   @taskVuex.Action addSubTask!: (obj: {name: string, taskId: string, position: number, order: string[]}) => void
   @taskVuex.Action saveSubtaskOrder!: (obj: {taskId: string, order: string[]}) => void
   @taskVuex.Action unCompleteSubtasks!: (taskId: string) => void
+  @taskVuex.Action copyTask!: (taskId: string) => void
 
+  @settingsVuex.State timeZone!: string
+  @settingsVuex.State timeFormat!: string
+  @settingsVuex.State dateFormat!: string
   @settingsVuex.State mobileTaskLabels!: string
   @settingsVuex.State desktopTaskLabels!: string
 
@@ -161,6 +192,7 @@ export default class AppviewTask extends Vue {
   showChecklist: boolean = false
   justLongPressed: boolean = false
   added: boolean = false
+  exactDate: boolean = false
   subTaskAdderPoition: number = 0
   numberOfSelected: number = 0
   editing: boolean = false
@@ -173,6 +205,15 @@ export default class AppviewTask extends Vue {
       iconColor: '',
       callback: () => {
         this.editing = true
+      },
+    },
+    {
+      name: 'Copy task',
+      icon: 'copy',
+      size: 'lg',
+      iconColor: '',
+      callback: () => {
+        this.copyTask(this.task.id)
       },
     },
     {
@@ -327,6 +368,28 @@ export default class AppviewTask extends Vue {
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
   }
 
+  /* get taskCreationDate(): string {
+    return moment.utc(this.task.creationDate, 'Y-M-D HH:mm').tz(this.timeZone).format(this.dateFormat)
+  }
+  get taskEditDate(): string {
+    return moment.utc(this.task.lastEditDate, 'Y-M-D HH:mm').tz(this.timeZone).format(this.dateFormat)
+  }
+  get taskCreationTime(): string {
+    return appUtils.parseUtcTime(this.task.creationDate, this.timeZone, this.timeFormat)
+  }
+  get taskEditTime(): string {
+    return appUtils.parseUtcTime(this.task.lastEditDate, this.timeZone, this.timeFormat)
+  } */
+  get readableTaskCreationDate(): string {
+    const savedMom = moment.utc(this.task.creationDate, 'Y-M-D HH:mm')
+    const todayMom = moment.utc()
+    return savedMom.from(todayMom)
+  }
+  get readableTaskLastEditDate(): string {
+    const savedMom = moment.utc(this.task.lastEditDate, 'Y-M-D HH:mm')
+    const todayMom = moment.utc()
+    return savedMom.from(todayMom)
+  }
   get exclamationColor() {
     switch (this.task.priority) {
       case 'Low priority': return '#70ff66'
@@ -392,6 +455,12 @@ export default class AppviewTask extends Vue {
 </script>
 
 <style scoped>
+
+.tiny-icon {
+  transform: translateY(-20%);
+  opacity: .9;
+  font-size: .4em;
+}
 
 .content {
   width: 100%;

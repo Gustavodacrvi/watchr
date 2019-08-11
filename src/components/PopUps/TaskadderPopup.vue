@@ -57,7 +57,7 @@ export default class LabelAdder extends Vue {
     }, 80)
   }
   add(obj: {name: string, priority: string, labels: string[]}) {
-    this.addTask(obj)
+    this.addTask({...obj})
     this.pushAlert({
       name: 'Task successfully added.',
       duration: 2.5,

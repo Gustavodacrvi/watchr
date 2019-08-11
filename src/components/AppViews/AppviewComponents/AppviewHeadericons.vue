@@ -60,7 +60,7 @@
       <icon-options
         handle='ellipsis-h'
         :size='size'
-        min-width='300px'
+        min-width='325px'
         :options='settingsOptions'
         @click='selectSettingsOption'
       />
@@ -125,13 +125,31 @@ export default class AppviewHeadericons extends Vue {
       name: 'Sort tasks by name',
       icon: 'sort-alpha-down',
       iconColor: '',
-      size: 'size',
+      size: 'lg',
     },
     {
-      name: 'Sort tasks by priority',
+      name: 'Sort tasks by priority highest first',
       icon: 'exclamation',
+      iconColor: '#FF6B66',
+      size: 'lg',
+    },
+    {
+      name: 'Sort tasks by priority lowest first',
+      icon: 'exclamation',
+      iconColor: '#70ff66',
+      size: 'lg',
+    },
+    {
+      name: 'Sort by creation date newest first',
+      icon: 'calendar-alt',
       iconColor: '',
-      size: 'size',
+      size: 'lg',
+    },
+    {
+      name: 'Sort by creation date oldest first',
+      icon: 'calendar-alt',
+      iconColor: '',
+      size: 'lg',
     },
   ]
 

@@ -51,12 +51,11 @@ import { State, Getter, Mutation, Action } from 'vuex-class'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
 
-import { Alert } from '@/interfaces/app'
-
 import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 import TheAppbar from '@/components/TheAppBar/TheAppBar.vue'
 
 import appUtils from '@/utils/app'
+import { Alert } from '@/interfaces/app'
 
 @Component({
   components: {
@@ -137,6 +136,11 @@ export default class App extends Vue {
   onRouteChange(to: any, from: any) {
     if (from.name === 'Popup')
       this.resetPopUpState()
+  }
+  @Watch('theme')
+  onChange(newStr: string, oldStr: string) {
+    document.body.classList.remove(oldStr)
+    document.body.classList.add(newStr)
   }
 }
 
