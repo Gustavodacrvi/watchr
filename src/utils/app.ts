@@ -2,12 +2,10 @@
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
 
-import { Task } from '@/interfaces/app'
+import { Task, TaskInputObj } from '@/interfaces/app'
 
 import moment from 'moment'
 import timezone from 'moment-timezone'
-
-import { TaskInputObj } from '@/interfaces/app'
 
 export default {
   AsyncComponent(comp: any): any {
