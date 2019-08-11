@@ -248,8 +248,9 @@ const store: any = new Vuex.Store({
   actions: {
     getWindowWidthOnResize({state, getters, commit}) {
       window.addEventListener('resize', () => {
+        const oldWidth = state.windowWidth
         state.windowWidth = document.body.clientWidth
-        if (!getters.isDesktop)
+        if (!getters.isDesktop && state.windowWidth !== oldWidth)
           commit('closeAppBar')
       })
     },
