@@ -55,7 +55,7 @@ import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 import TheAppbar from '@/components/TheAppBar/TheAppBar.vue'
 
 import appUtils from '@/utils/app'
-import { Alert } from '@/interfaces/app'
+import { Alert, Task, Perspective } from '@/interfaces/app'
 
 @Component({
   components: {

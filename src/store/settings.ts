@@ -11,8 +11,6 @@ interface States {
   timeFormat: string
   startOfTheWeek: string
   nextWeek: string
-  mobileTaskLabels: string
-  desktopTaskLabels: string
 }
 
 interface Getters {
@@ -39,8 +37,6 @@ interface Actions {
     timeFormat: string,
     startOfTheWeek: string,
     nextWeek: string,
-    desktopTaskLabels: string,
-    mobileTaskLabels: string,
   }) => void
   setDefaultSettings: (context: ActionContext) => void
   [key: string]: (context: ActionContext, payload: any) => any
@@ -54,8 +50,6 @@ export default {
     timeFormat: '',
     startOfTheWeek: '',
     nextWeek: '',
-    desktopTaskLabels: '',
-    mobileTaskLabels: '',
   } as States,
   mutations: {
 
@@ -74,8 +68,6 @@ export default {
             state.timeFormat = data.timeFormat
             state.startOfTheWeek = data.startOfTheWeek
             state.nextWeek = data.nextWeek
-            state.mobileTaskLabels = data.mobileTaskLabels
-            state.desktopTaskLabels = data.desktopTaskLabels
           }
         })
     },
@@ -87,8 +79,6 @@ export default {
           timeFormat: s.timeFormat,
           nextWeek: s.nextWeek,
           startOfTheWeek: s.startOfTheWeek,
-          mobileTaskLabels: s.mobileTaskLabels,
-          desktopTaskLabels: s.desktopTaskLabels,
         })
     },
     setDefaultSettings({ rootState, dispatch }) {
@@ -104,8 +94,6 @@ export default {
           timeFormat: '13:00',
           startOfTheWeek: 'Monday',
           nextWeek: 'Monday',
-          mobileTaskLabels: 'Show on mouse/touch hover',
-          desktopTaskLabels: 'Show on mouse/touch hover',
         })
     },
   } as Actions,

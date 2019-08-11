@@ -48,6 +48,9 @@ export interface Perspective {
   pin: boolean
   numberOfTasks: boolean
   showWhenNotEmpty: boolean
+  alwaysShowTaskLabels: boolean
+  alwaysShowLastEditDate: boolean
+  alwaysShowCreationDate: boolean
   sort: string[]
   excludeLabels: string[]
   includeAndLabels: string[]

@@ -170,7 +170,7 @@ export default {
 
     tasks.sort((task1: Task, task2: Task) => {
 
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 7; i++) {
         const compare = obj[sort[0]]
         if (compare) {
           const result = compare(task1, task2)
