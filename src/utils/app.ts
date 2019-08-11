@@ -151,8 +151,8 @@ export default {
 
     tasks.sort((task1: Task, task2: Task) => {
 
-      for (let i = 0;i < 3;i++) {
-        let compare = obj[sort[0]]
+      for (let i = 0; i < 3; i++) {
+        const compare = obj[sort[0]]
         if (compare) {
           const result = compare(task1, task2)
           if (result) return result

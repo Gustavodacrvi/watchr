@@ -160,7 +160,6 @@ export default class PerspectiveAppview extends Vue {
   ]
 
   created() {
-    console.log(this.value)
     this.showing = this.value
     this.updateView()
   }
@@ -288,16 +287,14 @@ export default class PerspectiveAppview extends Vue {
             sort: 'priorityLowest',
             perspectiveId: this.pers.id,
           })
-      }
-      else if (value === 'Sort by creation date newest first') {
+      } else if (value === 'Sort by creation date newest first') {
         this.sort.push('creationDateNewest')
         if (this.saveSort)
           this.addPerspectiveSort({
             sort: 'creationDateNewest',
             perspectiveId: this.pers.id,
           })
-      }
-      else if (value === 'Sort by creation date oldest first') {
+      } else if (value === 'Sort by creation date oldest first') {
         this.sort.push('creationDateOldest')
         if (this.saveSort)
           this.addPerspectiveSort({

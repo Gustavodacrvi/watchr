@@ -16,7 +16,7 @@ import CalendarInputComp from '@/components/AppViews/AppviewComponents/Tasks/App
 export default class CenteredCardCalendarInput extends Vue {
 
   select(obj: any) {
-    console.log(obj)
+    
   }
 }
 

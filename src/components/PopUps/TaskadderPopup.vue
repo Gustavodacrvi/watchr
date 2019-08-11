@@ -47,7 +47,7 @@ export default class LabelAdder extends Vue {
   @Getter isDesktop!: boolean
   @Mutation pushAlert!: (alert: Alert) => void
 
-  @taskVuex.Action addTask!: (obj: {name: string, priority: string, labels: string[], }) => void
+  @taskVuex.Action addTask!: (obj: {name: string, priority: string, labels: string[]}) => void
 
   input: string = ''
 
