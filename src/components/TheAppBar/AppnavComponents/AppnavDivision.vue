@@ -6,7 +6,7 @@
         <span v-for='i in icons'
           :key='i.name'
           class='header-option'
-          @click='i.callback'
+          @click.stop='i.callback'
         >
           <i :class='[`fas pointer icon fa-${i.icon} fa-${i.size} txt`, theme]'></i>
         </span>
