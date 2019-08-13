@@ -85,26 +85,7 @@ export default {
   getters: {
     getNumberOfTasksByPerspectiveId: (state: States) => (id: string, tasks: Task[]) => {
       const per: Perspective = state.perspectives.find(el => el.id === id) as Perspective
-      if (!per.isSmart) {
-        const pers = per as Perspective
-        if (pers.priority !== '')
-          tasks = tasks.filter(el => el.priority === pers.priority)
-        if (pers.includeAndLabels.length > 0)
-          tasks = appUtils.filterTasksByLabels(tasks, pers.includeAndLabels)
-        return tasks.length
-      } else if (per.name === 'Inbox') {
-        tasks = tasks.filter(el => el.labels.length === 0)
-        return tasks.length
-      } else if (per.name === 'All tasks')
-        return tasks.length
-      else if (per.name === 'Have tags') {
-        tasks = tasks.filter(el => el.labels.length > 0)
-        return tasks.length
-      } else if (per.name === `Doesn't have tags`) {
-        tasks = tasks.filter(el => el.labels.length === 0)
-        return tasks.length
-      }
-      return 0
+      return appUtils.filterTasksByPerspective(per, tasks).length
     },
     getPerspectiveByName: (state: States) => (name: string): Perspective => {
       return state.perspectives.find(el => el.name === name) as Perspective

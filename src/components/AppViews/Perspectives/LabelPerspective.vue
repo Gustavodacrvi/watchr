@@ -289,10 +289,8 @@ export default class LabelPerspective extends Vue {
     if (this.getLabel) {
       if (this.search)
         tasks = tasks.filter(el => this.search.includes(el.name))
-      if (this.priority && this.priority !== 'No priority')
-        tasks = tasks.filter(el => el.priority === this.priority)
-      if (this.priority && this.priority === 'No priority')
-        tasks = tasks.filter(el => el.priority === '')
+      if (this.priority)
+        tasks = appUtils.filterTasksByPriority(tasks, this.priority)
       if (this.labels && this.labels.length > 0)
         tasks = appUtils.filterTasksByLabels(tasks, this.labels)
       if (this.getLabel.order && this.getLabel.order.length > 0) {

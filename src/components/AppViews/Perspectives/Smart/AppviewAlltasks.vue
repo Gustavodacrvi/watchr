@@ -1,6 +1,6 @@
 <template>
   <base-pers
-    pers-name='All tasks'
+    :pers-name='persName'
     :value='value'
     :base-tasks='baseTasks'
     :save-sort='!isOnOverview'
@@ -29,6 +29,8 @@ export default class ViewAlltasks extends Vue {
   @State currentAppSection!: string
 
   @taskVuex.State tasks!: Task[]
+
+  persName: string = 'All tasks'
 
   @Prop(Boolean) value!: string
 
