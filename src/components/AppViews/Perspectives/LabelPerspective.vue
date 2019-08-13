@@ -9,7 +9,6 @@
         icon-color=''
         icon=''
       />
-      <div class='margin'></div>
       <empty-tag-renderer v-if='sort && sort.length > 0'
         :list='sort'
         @update='v => sort = v'
@@ -32,6 +31,7 @@
         />
       </div>
     </div>
+    <div class='margin'></div>
     <div class='margin'></div>
     <div v-if='!hided'>
       <div v-if='showing'>
