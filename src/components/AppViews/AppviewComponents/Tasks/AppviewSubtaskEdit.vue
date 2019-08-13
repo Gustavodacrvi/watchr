@@ -3,17 +3,19 @@
     <transition name='fade' mode='out-in'>
       <div v-if='addingSubtask || onlyEdit' key='adding' class='adding-wrapper'>
         <div class='adding'>
-          <form-input
+          <drop-input
             class='subtask-input'
             type='text'
             placeholder='Subtask...'
-            v-model='val'
+            :input='val'
             :disabled='true'
             :focus='true'
             :keydown='true'
+            :values='[]'
             :input-theme='theme'
             :max='200'
             @enter='add'
+            @value='v => val = v'
           />
         </div>
         <form-btn class='tiny' @click='add'>Add subtask</form-btn>
@@ -32,12 +34,12 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
-import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+import DropdownInput from '@/components/DropdownInput.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
 @Component({
   components: {
-    'form-input': FormInput,
+    'drop-input': DropdownInput,
     'form-btn': FormButton,
   },
 })
