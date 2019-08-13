@@ -17,6 +17,7 @@
       <div class='right'>
         <view-header-icons
           v-model='search'
+          pers-name=''
           :show-task-options='selected && selected.length > 0'
           :allow-search='true'
           :allow-labels='true'
@@ -130,7 +131,7 @@ export default class LabelPerspective extends Vue {
   labels: string[] = []
   sort: string[] = []
   smartPers: string[] = []
-  showing: boolean = false
+  showing: boolean = true
   hided: boolean = false
   mobileSelectedOptions: ListIcon[] = [
     {
@@ -293,6 +294,9 @@ export default class LabelPerspective extends Vue {
         tasks = appUtils.filterTasksByPriority(tasks, this.priority)
       if (this.labels && this.labels.length > 0)
         tasks = appUtils.filterTasksByLabels(tasks, this.labels)
+      if (this.smartPers && this.smartPers.length > 0)
+        for (const name of this.smartPers)
+          tasks = appUtils.filterTasksBySmartPerspective(name, tasks)
       if (this.getLabel.order && this.getLabel.order.length > 0) {
         const ord = appUtils.fixOrder(tasks, this.getLabel.order)
         tasks = appUtils.sortArrayByIds(tasks, ord)

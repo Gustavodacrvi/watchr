@@ -360,6 +360,10 @@ export default class PerspectiveAppview extends Vue {
       tasks = appUtils.filterTasksByPriority(tasks, this.priority)
     if (this.labels && this.labels.length > 0)
       tasks = appUtils.filterTasksByLabels(tasks, this.labels)
+    if (this.smartPers && this.smartPers.length > 0)
+      for (const name of this.smartPers)
+        if (name !== this.pers.name)
+          tasks = appUtils.filterTasksBySmartPerspective(name, tasks)
     if (this.order && this.order.length > 0) {
       const ord = appUtils.fixOrder(tasks, this.order)
       tasks = appUtils.sortArrayByIds(tasks, ord)
