@@ -26,13 +26,15 @@
         style='height: 100px;'
       ></textarea>
       <div class='flex margin'>
-        <div class='flex-el font-awesome-classes scroll' @mouseenter='showingIconsDropdown = true' @mouseleave='showingIconsDropdown = false'>
+        <div class='flex-el font-awesome-classes scroll'>
           <form-input
             type='text'
             placeholder='Font awesome icon class...'
             v-model='icon'
             input-theme='dark'
             :max='30'
+            @focus='showingIconsDropdown = true'
+            @blur='showingIconsDropdown = false'
           />
           <i :class='`fas txt dark fa-${icon.replace(/\s/g, "-")} fa-lg active-icon`' :style='{color: color}'></i>
           <transition name='fade'>
