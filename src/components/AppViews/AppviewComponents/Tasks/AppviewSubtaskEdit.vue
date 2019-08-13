@@ -19,7 +19,7 @@
         <form-btn class='tiny' @click='add'>Add subtask</form-btn>
         <span class='txt cancel pointer' :class='theme' @click='addingSubtask = false;cancel()'>Cancel</span>
       </div>
-      <div v-else key='not-adding' class='txt not-adding' :class='theme' @click='addingSubtask = true'>
+      <div v-else key='not-adding' class='txt add-subtask not-adding' :class='theme' @click='addingSubtask = true'>
         <i class='fas fa-plus fa-sm'></i>
         <span>Add subtask</span>
       </div>
@@ -82,6 +82,15 @@ export default class SubtaskEdit extends Vue {
 .cancel {
   margin-left: 4px;
   color: #FF6B66;
+}
+
+.add-subtask {
+  cursor: pointer;
+  transition: color .3s;
+}
+
+.add-subtask:hover {
+  color: #ff6b66;
 }
 
 .not-adding {
