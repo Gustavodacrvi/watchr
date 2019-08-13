@@ -139,7 +139,7 @@ export default class AppviewHeadericons extends Vue {
       icon: 'exclamation',
       iconColor: '',
       size: 'lg',
-    }
+    },
   ]
   settingsOptions: any = [
     {
@@ -182,7 +182,7 @@ export default class AppviewHeadericons extends Vue {
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
-      optionKey: 'creationDateOldest'
+      optionKey: 'creationDateOldest',
     },
     {
       name: 'Sort by last edit date oldest first',

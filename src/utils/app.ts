@@ -90,11 +90,10 @@ export default {
     return tasks
   },
   filterTasksByPriority(tasks: Task[], priority: string): Task[] {
-    if (priority && priority !== 'No priority') {
+    if (priority && priority !== 'No priority')
       return tasks.filter(el => el.priority === priority)
-    } else if (priority && priority === 'No priority') {
+    else if (priority && priority === 'No priority')
       return tasks.filter(el => el.priority === '')
-    }
     return tasks
   },
   sortTasksByMultipleCriteria(tasks: Task[], sort: string[]): Task[] {

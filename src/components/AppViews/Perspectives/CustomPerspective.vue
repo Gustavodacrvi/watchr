@@ -47,9 +47,7 @@ export default class CustomPerspectives extends Vue {
     return this.getPerspectiveByName(this.pers)
   }
   get baseTasks() {
-    let tasks = this.tasks
-    const pers = this.perspectiveData as Perspective
-    return tasks
+    return this.tasks
   }
 }
 
