@@ -233,22 +233,7 @@ export default class LabelPerspective extends Vue {
   }
   selectSettingsOption(value: string) {
     if (!this.sort.find(el => el === value))
-      if (value === 'Sort tasks by name')
-        this.sort.push('name')
-      else if (value === 'Sort tasks by priority highest first')
-        this.sort.push('priorityHighest')
-      else if (value === 'Sort tasks by priority lowest first')
-        this.sort.push('priorityLowest')
-      else if (value === 'Sort by creation date newest first')
-        this.sort.push('creationDateNewest')
-      else if (value === 'Sort by creation date oldest first')
-        this.sort.push('creationDateOldest')
-      else if (value === 'Sort by last edit date oldest first')
-        this.sort.push('lastEditDateOldest')
-      else if (value === 'Sort by last edit date newest first')
-        this.sort.push('lastEditDateNewest')
-      else if (value === 'Sort tasks by name reversed')
-        this.sort.push('nameReversed')
+      this.sort.push(value)
   }
   addLabelTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
     const lab = this.getLabel

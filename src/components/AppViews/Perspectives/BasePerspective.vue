@@ -268,64 +268,14 @@ export default class PerspectiveAppview extends Vue {
       })
   }
   selectSettingsOption(value: string) {
-    if (!this.sort.find(el => el === value))
-      if (value === 'Sort tasks by name') {
-        this.sort.push('name')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'name',
-            perspectiveId: this.pers.id,
-          })
-      } else if (value === 'Sort tasks by priority highest first') {
-        this.sort.push('priorityHighest')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'priorityHighest',
-            perspectiveId: this.pers.id,
-          })
-      } else if (value === 'Sort tasks by priority lowest first') {
-        this.sort.push('priorityLowest')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'priorityLowest',
-            perspectiveId: this.pers.id,
-          })
-      } else if (value === 'Sort by creation date newest first') {
-        this.sort.push('creationDateNewest')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'creationDateNewest',
-            perspectiveId: this.pers.id,
-          })
-      } else if (value === 'Sort by creation date oldest first') {
-        this.sort.push('creationDateOldest')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'creationDateOldest',
-            perspectiveId: this.pers.id,
-          })
-      } else if (value === 'Sort by last edit date newest first') {
-        this.sort.push('lastEditDateNewest')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'lastEditDateNewest',
-            perspectiveId: this.pers.id,
-          })
-      } else if (value === 'Sort by last edit date oldest first') {
-        this.sort.push('lastEditDateOldest')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'lastEditDateOldest',
-            perspectiveId: this.pers.id,
-          })
-      } else if (value === 'Sort tasks by name reversed') {
-        this.sort.push('nameReversed')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'nameReversed',
-            perspectiveId: this.pers.id,
-          })
-      }
+    if (!this.sort.find(el => el === value)) {
+      this.sort.push(value)
+      if (this.saveSort)
+        this.addPerspectiveSort({
+          sort: value,
+          perspectiveId: this.pers.id,
+        })
+    }
   }
   toggleHide() {
     if (!this.isDesktop)

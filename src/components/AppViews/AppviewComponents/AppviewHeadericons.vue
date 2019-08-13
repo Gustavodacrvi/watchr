@@ -126,54 +126,62 @@ export default class AppviewHeadericons extends Vue {
       size: 'lg',
     }
   ]
-  settingsOptions: ListIcon[] = [
+  settingsOptions: any = [
     {
       name: 'Sort tasks by name',
       icon: 'sort-alpha-down',
       iconColor: '',
       size: 'lg',
+      optionKey: 'name',
     },
     {
       name: 'Sort tasks by name reversed',
       icon: 'sort-alpha-down-alt',
       iconColor: '',
       size: 'lg',
+      optionKey: 'nameReversed',
     },
     {
       name: 'Sort tasks by priority highest first',
       icon: 'exclamation',
       iconColor: '#FF6B66',
       size: 'lg',
+      optionKey: 'priorityHighest',
     },
     {
       name: 'Sort tasks by priority lowest first',
       icon: 'exclamation',
       iconColor: '#70ff66',
       size: 'lg',
+      optionKey: 'priorityLowest',
     },
     {
       name: 'Sort by creation date newest first',
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
+      optionKey: 'creationDateNewest',
     },
     {
       name: 'Sort by creation date oldest first',
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
+      optionKey: 'creationDateOldest'
     },
     {
       name: 'Sort by last edit date oldest first',
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
+      optionKey: 'lastEditDateOldest',
     },
     {
       name: 'Sort by last edit date newest first',
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
+      optionKey: 'creationDateOldest',
     },
   ]
 
@@ -182,7 +190,8 @@ export default class AppviewHeadericons extends Vue {
   }
 
   selectSettingsOption(value: string) {
-    this.$emit('settings', value)
+    const opt: any = this.settingsOptions.find((el: any) => el.name === value)
+    this.$emit('settings', opt.optionKey)
   }
   selectPriority(value: string) {
     this.$emit('priority', value)
