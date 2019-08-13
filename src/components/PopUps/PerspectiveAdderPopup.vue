@@ -25,7 +25,7 @@
         v-model='description'
         style='height: 100px;'
       ></textarea>
-      <div class='flex margin'>
+      <div class='flex margin' :class='platform'>
         <div class='flex-el font-awesome-classes scroll'>
           <form-input
             type='text'
@@ -58,18 +58,21 @@
           />
         </div>
       </div>
-      <div class='flex margin'>
+      <div class='flex margin' :class='platform'>
         <form-checkbox
+          :class='platform'
           name='Always show labels'
           v-model='alwaysShowLabels'
           input-theme='dark'
         />
         <form-checkbox
+          :class='platform'
           name='Always show edit dates'
           v-model='alwaysShowEditDate'
           input-theme='dark'
         />
         <form-checkbox
+          :class='platform'
           name='Always show creation dates'
           v-model='alwaysShowCreationDate'
           input-theme='dark'
@@ -131,6 +134,7 @@ export default class LabelAdder extends Vue {
   @State uid!: string
   @State('popUpPayload') pers!: Perspective
   @Getter isDesktop!: boolean
+  @Getter platform!: boolean
   @Mutation pushAlert!: (alert: Alert) => void
   @Mutation pushPopUp!: (compName: string) => void
 
@@ -279,6 +283,15 @@ export default class LabelAdder extends Vue {
 
 .flex {
   display: flex;
+}
+
+.flex.mobile {
+  flex-direction: column;
+}
+
+.checkbox.mobile + .checkbox.mobile {
+  margin-left: 0 !important;
+  margin-top: 8px !important;
 }
 
 .flex-el {
