@@ -49,12 +49,6 @@ export default class CustomPerspectives extends Vue {
   get baseTasks() {
     let tasks = this.tasks
     const pers = this.perspectiveData as Perspective
-    if (pers) {
-      if (pers.priority !== '')
-        tasks = tasks.filter(el => el.priority === pers.priority)
-      if (pers.includeAndLabels.length > 0)
-        tasks = appUtils.filterTasksByLabels(tasks, pers.includeAndLabels)
-    }
     return tasks
   }
 }

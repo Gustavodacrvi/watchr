@@ -119,6 +119,12 @@ export default class AppviewHeadericons extends Vue {
       iconColor: '#70ff66',
       size: 'lg',
     },
+    {
+      name: 'No priority',
+      icon: 'exclamation',
+      iconColor: '',
+      size: 'lg',
+    }
   ]
   settingsOptions: ListIcon[] = [
     {

@@ -380,8 +380,11 @@ export default class PerspectiveAppview extends Vue {
     let tasks: Task[] = this.sortedTasks
     if (this.search)
       tasks = tasks.filter(el => el.name.includes(this.search))
-    if (this.priority)
+    if (this.priority && this.priority !== 'No priority') {
       tasks = tasks.filter(el => el.priority === this.priority)
+    } else if (this.priority && this.priority === 'No priority') {
+      tasks = tasks.filter(el => el.priority === '')
+    }
     if (this.labels && this.labels.length > 0)
       tasks = appUtils.filterTasksByLabels(tasks, this.labels)
     if (this.order && this.order.length > 0) {
