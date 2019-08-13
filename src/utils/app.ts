@@ -136,32 +136,32 @@ export default {
         const mom1 = moment(`${t1.creationDate}`, 'Y-M-D HH:mm')
         const mom2 = moment(`${t2.creationDate}`, 'Y-M-D HH:mm')
         if (mom1.isSame(mom2)) return 0
-        if (mom1.isBefore(mom2)) return -1
-        if (mom1.isAfter(mom2)) return 1
+        if (mom1.isBefore(mom2)) return 1
+        if (mom1.isAfter(mom2)) return -1
         return 0
       },
       creationDateOldest: (t1: Task, t2: Task) => {
         const mom1 = moment(`${t1.creationDate}`, 'Y-M-D HH:mm')
         const mom2 = moment(`${t2.creationDate}`, 'Y-M-D HH:mm')
         if (mom1.isSame(mom2)) return 0
-        if (mom1.isBefore(mom2)) return 1
-        if (mom1.isAfter(mom2)) return -1
+        if (mom1.isBefore(mom2)) return -1
+        if (mom1.isAfter(mom2)) return 1
         return 0
       },
       lastEditDateNewest: (t1: Task, t2: Task) => {
         const mom1 = moment(`${t1.lastEditDate}`, 'Y-M-D HH:mm')
         const mom2 = moment(`${t2.lastEditDate}`, 'Y-M-D HH:mm')
         if (mom1.isSame(mom2)) return 0
-        if (mom1.isBefore(mom2)) return -1
-        if (mom1.isAfter(mom2)) return 1
+        if (mom1.isBefore(mom2)) return 1
+        if (mom1.isAfter(mom2)) return -1
         return 0
       },
       lastEditDateOldest: (t1: Task, t2: Task) => {
         const mom1 = moment(`${t1.lastEditDate}`, 'Y-M-D HH:mm')
         const mom2 = moment(`${t2.lastEditDate}`, 'Y-M-D HH:mm')
         if (mom1.isSame(mom2)) return 0
-        if (mom1.isBefore(mom2)) return 1
-        if (mom1.isAfter(mom2)) return -1
+        if (mom1.isBefore(mom2)) return -1
+        if (mom1.isAfter(mom2)) return 1
         return 0
       },
     }

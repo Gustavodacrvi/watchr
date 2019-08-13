@@ -181,7 +181,7 @@ export default class AppviewHeadericons extends Vue {
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
-      optionKey: 'creationDateOldest',
+      optionKey: 'creationDateNewest',
     },
   ]
 
