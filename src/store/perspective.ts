@@ -50,6 +50,8 @@ interface Actions {
   addDefaultPerspectives: (context: ActionContext, obj: {id: string, someday: string, anytime: string}) => void
   saveSmartOrder: (context: ActionContext, ids: string[]) => void
   saveCustomOrder: (context: ActionContext, ids: string[]) => void
+  addSmartPersFilter: (context: ActionContext, obj: {id: string, persName: string}) => void
+  removeSmartPersFilter: (context: ActionContext, obj: {id: string, persName: string}) => void
   togglePerspectivesPin: (context: ActionContext, arr: Array<{id: string, pin: boolean}>) => void
   togglePerspectivesNumberOfTasks: (context: ActionContext, arr: Array<{id: string, show: boolean}>) => void
   togglePerspectivesShowWhenNotEmpty: (context: ActionContext, arr: Array<{id: string, show: boolean}>) => void
@@ -180,6 +182,13 @@ export default {
           includeAndLabels: fire.arrayUnion(labelId),
         })
     },
+    addSmartPersFilter({ rootState }, {id, persName}) {
+      const fire = rootState.firebase.firestore.FieldValue as any
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('perspectives').doc(id).update({
+          includeAndSmartPers: fire.arrayUnion(persName),
+        })
+    },
     savePerspectivePriority({ rootState }, {id, priority}) {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('perspectives').doc(id).update({
@@ -191,6 +200,13 @@ export default {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('perspectives').doc(id).update({
           includeAndLabels: fire.arrayRemove(labelId),
+        })
+    },
+    removeSmartPersFilter({ rootState }, {id, persName}) {
+      const fire = rootState.firebase.firestore.FieldValue as any
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('perspectives').doc(id).update({
+          includeAndSmartPers: fire.arrayRemove(persName),
         })
     },
     saveSmartOrder({ rootState }, ids) {

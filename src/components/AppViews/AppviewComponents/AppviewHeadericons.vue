@@ -106,6 +106,7 @@ export default class AppviewHeadericons extends Vue {
   @pers.Getter smartFilters!: Perspective[]
 
   @Prop(String) value!: string
+  @Prop(String) persName!: string
   @Prop(Boolean) showTaskOptions!: boolean
   @Prop(Boolean) allowSearch!: boolean
   @Prop(Boolean) allowSettings!: boolean
@@ -230,7 +231,7 @@ export default class AppviewHeadericons extends Vue {
         iconColor: smart.iconColor,
         size: 'lg',
       })
-    return arr
+    return arr.filter(el => el.name !== this.persName)
   }
   get size(): string {
     if (this.isDesktop)

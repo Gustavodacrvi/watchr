@@ -28,6 +28,7 @@
           @selectedpriority='selectedPriority'
           @priority='v => priority = v'
           @label='v => labels.push(v.id)'
+          @smartpers='addSmartPers'
           @settings='selectSettingsOption'
         />
       </div>
@@ -42,9 +43,11 @@
           :search='search'
           :labels='getLabels'
           :priority='priority'
+          :smart-pers='smartPers'
           @clearsearch="v => search = ''"
           @clearpriority="v => priority = ''"
           @removelabel='removeLabel'
+          @removesmartpers='removeSmartPers'
         />
         <div class='margin'></div>
       </div>
@@ -126,6 +129,7 @@ export default class LabelPerspective extends Vue {
   selected: string[] = []
   labels: string[] = []
   sort: string[] = []
+  smartPers: string[] = []
   showing: boolean = false
   hided: boolean = false
   mobileSelectedOptions: ListIcon[] = [
@@ -224,6 +228,10 @@ export default class LabelPerspective extends Vue {
     const index = this.labels.findIndex(el => el === id)
     this.labels.splice(index, 1)
   }
+  removeSmartPers(name: string) {
+    const index = this.smartPers.findIndex(el => el === name)
+    this.smartPers.splice(index, 1)
+  }
   onUpdate(ids: string[]) {
     const lab = this.getLabel
     if (lab)
@@ -231,6 +239,10 @@ export default class LabelPerspective extends Vue {
         order: ids,
         id: lab.id,
       })
+  }
+  addSmartPers(name: string) {
+    if (!this.smartPers.find(el => el === name))
+      this.smartPers.push(name)
   }
   selectSettingsOption(value: string) {
     if (!this.sort.find(el => el === value))

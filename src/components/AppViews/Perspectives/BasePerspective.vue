@@ -9,8 +9,9 @@
         @toggle='v => showing = !showing'
       />
       <div class='right'>
-        <view-header-icons
+        <view-header-icons v-if='pers'
           v-model='search'
+          :pers-name='pers.name'
           :show-task-options='selected && selected.length > 0'
           :allow-search='true'
           :allow-settings='true'
@@ -44,9 +45,11 @@
           :search='search'
           :priority='getPriority'
           :labels='getLabels'
+          :smart-pers='smartPers'
           @clearsearch="v => search = ''"
           @clearpriority="selectPriority('')"
           @removelabel='removeLabel'
+          @removesmartpers='removeSmartPers'
         />
         <div class='margin'></div>
       </div>
@@ -122,6 +125,8 @@ export default class PerspectiveAppview extends Vue {
 
   @persVuex.Getter getPerspectiveByName!: (name: string) => Perspective
   @persVuex.Action saveTaskOrder!: (obj: {id: string, order: string[]}) => void
+  @persVuex.Action addSmartPersFilter!: (obj: {id: string, persName: string}) => void
+  @persVuex.Action removeSmartPersFilter!: (obj: {id: string, persName: string}) => void
   @persVuex.Action addLabelToPerspective!: (obj: {id: string, labelId: string}) => Label[]
   @persVuex.Action removeLabelFromPerspective!: (obj: {id: string, labelId: string}) => Label[]
   @persVuex.Action savePerspectivePriority!: (obj: {id: string, priority: string}) => Label[]
@@ -246,6 +251,15 @@ export default class PerspectiveAppview extends Vue {
         labelId: id,
       })
   }
+  removeSmartPers(name: string) {
+    if (!this.save) {
+      const index = this.smartPers.findIndex(el => el === name)
+      this.smartPers.splice(index, 1)
+    } else this.removeSmartPersFilter({
+        id: this.pers.id,
+        persName: name,
+      })
+  }
   addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
     this.addTaskPerspective({
       task: {
@@ -317,6 +331,7 @@ export default class PerspectiveAppview extends Vue {
     this.priority = this.pers.priority
     if (!this.justUpdated && !this.save || this.save) {
       this.labels = this.pers.includeAndLabels.slice()
+      this.smartPers = this.pers.includeAndSmartPers.slice()
       this.sort = this.pers.sort.slice()
       this.order = this.pers.order.slice()
     }
