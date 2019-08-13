@@ -46,6 +46,16 @@
         @click='selectPriority'
       />
     </span>
+    <span v-if='allowSmartPerspectives' class='header-option'>
+      <icon-options
+        handle='layer-group'
+        :size='size'
+        min-width='200px'
+        title='Smart perspectives'
+        :options='smartPersOptions'
+        @click='selectSmartPers'
+      />
+    </span>
     <span v-if='allowLabels' class='header-option'>
       <drop-finder
         handle='tags'
@@ -77,8 +87,9 @@ import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFind
 import IconOptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 
 const labelsVuex = namespace('label')
+const pers = namespace('perspective')
 
-import { ListIcon, Label } from '../../../interfaces/app'
+import { ListIcon, Label, Perspective } from '../../../interfaces/app'
 
 @Component({
   components: {
@@ -92,10 +103,14 @@ export default class AppviewHeadericons extends Vue {
 
   @labelsVuex.Getter sortedLabelsByName!: Label[]
 
+  @pers.Getter smartFilters!: Perspective[]
+
   @Prop(String) value!: string
+  @Prop(String) persName!: string
   @Prop(Boolean) showTaskOptions!: boolean
   @Prop(Boolean) allowSearch!: boolean
   @Prop(Boolean) allowSettings!: boolean
+  @Prop(Boolean) allowSmartPerspectives!: boolean
   @Prop(Boolean) allowLabels!: boolean
   @Prop(Boolean) allowPriority!: boolean
 
@@ -119,55 +134,69 @@ export default class AppviewHeadericons extends Vue {
       iconColor: '#70ff66',
       size: 'lg',
     },
+    {
+      name: 'No priority',
+      icon: 'exclamation',
+      iconColor: '',
+      size: 'lg',
+    },
   ]
-  settingsOptions: ListIcon[] = [
+  settingsOptions: any = [
     {
       name: 'Sort tasks by name',
       icon: 'sort-alpha-down',
       iconColor: '',
       size: 'lg',
+      optionKey: 'name',
     },
     {
       name: 'Sort tasks by name reversed',
       icon: 'sort-alpha-down-alt',
       iconColor: '',
       size: 'lg',
+      optionKey: 'nameReversed',
     },
     {
       name: 'Sort tasks by priority highest first',
       icon: 'exclamation',
       iconColor: '#FF6B66',
       size: 'lg',
+      optionKey: 'priorityHighest',
     },
     {
       name: 'Sort tasks by priority lowest first',
       icon: 'exclamation',
       iconColor: '#70ff66',
       size: 'lg',
+      optionKey: 'priorityLowest',
     },
     {
       name: 'Sort by creation date newest first',
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
+      optionKey: 'creationDateNewest',
     },
     {
       name: 'Sort by creation date oldest first',
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
+      optionKey: 'creationDateOldest',
     },
     {
       name: 'Sort by last edit date oldest first',
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
+      optionKey: 'lastEditDateOldest',
     },
     {
       name: 'Sort by last edit date newest first',
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
+      optionKey: 'creationDateNewest',
     },
   ]
 
@@ -176,7 +205,8 @@ export default class AppviewHeadericons extends Vue {
   }
 
   selectSettingsOption(value: string) {
-    this.$emit('settings', value)
+    const opt: any = this.settingsOptions.find((el: any) => el.name === value)
+    this.$emit('settings', opt.optionKey)
   }
   selectPriority(value: string) {
     this.$emit('priority', value)
@@ -187,7 +217,22 @@ export default class AppviewHeadericons extends Vue {
   selectLabel(label: Label) {
     this.$emit('label', label)
   }
+  selectSmartPers(value: string) {
+    this.$emit('smartpers', value)
+  }
 
+  get smartPersOptions(): ListIcon[] {
+    const smarts = this.smartFilters
+    const arr = []
+    for (const smart of smarts)
+      arr.push({
+        name: smart.name,
+        icon: smart.icon,
+        iconColor: smart.iconColor,
+        size: 'lg',
+      })
+    return arr.filter(el => el.name !== this.persName)
+  }
   get size(): string {
     if (this.isDesktop)
       return 'lg'

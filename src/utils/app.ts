@@ -2,7 +2,7 @@
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
 
-import { Task, TaskInputObj } from '@/interfaces/app'
+import { Task, TaskInputObj, Perspective } from '@/interfaces/app'
 
 import moment from 'moment'
 import timezone from 'moment-timezone'
@@ -16,6 +16,27 @@ export default {
       delay: 200,
       timeout: 5000,
     })
+  },
+  filterTasksBySmartPerspective(name: string, tasks: Task[]): Task[] {
+    switch (name) {
+      case 'Inbox': {
+        return tasks.filter(el => el.labels.length === 0)
+      }
+      case 'Have tags': return tasks.filter(el => el.labels.length > 0)
+      case `Doesn't have tags`: return tasks.filter(el => el.labels.length === 0)
+    }
+    return tasks
+  },
+  filterTasksByPerspective(per: Perspective, tasks: Task[]): Task[] {
+    if (!per.isSmart) {
+      const pers = per as Perspective
+      if (pers.priority)
+        tasks = this.filterTasksByPriority(tasks, pers.priority)
+      if (pers.includeAndLabels.length > 0)
+        tasks = this.filterTasksByLabels(tasks, pers.includeAndLabels)
+      return tasks
+    }
+    return this.filterTasksBySmartPerspective(per.name, tasks)
   },
   snakeToCamel(s: string) {
     return s.replace(/(\-\w)/g, (m: any) => m[1].toUpperCase())
@@ -63,9 +84,16 @@ export default {
   deParseMomentTimeZone(str: string): string {
     return str.replace(', ', '/').replace(' ', '_')
   },
-  filterTasksByLabels(tasks: Task[], labels: string[]) {
+  filterTasksByLabels(tasks: Task[], labels: string[]): Task[] {
     for (const id of labels)
       tasks = tasks.filter(el => el.labels.includes(id))
+    return tasks
+  },
+  filterTasksByPriority(tasks: Task[], priority: string): Task[] {
+    if (priority && priority !== 'No priority')
+      return tasks.filter(el => el.priority === priority)
+    else if (priority && priority === 'No priority')
+      return tasks.filter(el => el.priority === '')
     return tasks
   },
   sortTasksByMultipleCriteria(tasks: Task[], sort: string[]): Task[] {
@@ -136,32 +164,32 @@ export default {
         const mom1 = moment(`${t1.creationDate}`, 'Y-M-D HH:mm')
         const mom2 = moment(`${t2.creationDate}`, 'Y-M-D HH:mm')
         if (mom1.isSame(mom2)) return 0
-        if (mom1.isBefore(mom2)) return -1
-        if (mom1.isAfter(mom2)) return 1
+        if (mom1.isBefore(mom2)) return 1
+        if (mom1.isAfter(mom2)) return -1
         return 0
       },
       creationDateOldest: (t1: Task, t2: Task) => {
         const mom1 = moment(`${t1.creationDate}`, 'Y-M-D HH:mm')
         const mom2 = moment(`${t2.creationDate}`, 'Y-M-D HH:mm')
         if (mom1.isSame(mom2)) return 0
-        if (mom1.isBefore(mom2)) return 1
-        if (mom1.isAfter(mom2)) return -1
+        if (mom1.isBefore(mom2)) return -1
+        if (mom1.isAfter(mom2)) return 1
         return 0
       },
       lastEditDateNewest: (t1: Task, t2: Task) => {
         const mom1 = moment(`${t1.lastEditDate}`, 'Y-M-D HH:mm')
         const mom2 = moment(`${t2.lastEditDate}`, 'Y-M-D HH:mm')
         if (mom1.isSame(mom2)) return 0
-        if (mom1.isBefore(mom2)) return -1
-        if (mom1.isAfter(mom2)) return 1
+        if (mom1.isBefore(mom2)) return 1
+        if (mom1.isAfter(mom2)) return -1
         return 0
       },
       lastEditDateOldest: (t1: Task, t2: Task) => {
         const mom1 = moment(`${t1.lastEditDate}`, 'Y-M-D HH:mm')
         const mom2 = moment(`${t2.lastEditDate}`, 'Y-M-D HH:mm')
         if (mom1.isSame(mom2)) return 0
-        if (mom1.isBefore(mom2)) return 1
-        if (mom1.isAfter(mom2)) return -1
+        if (mom1.isBefore(mom2)) return -1
+        if (mom1.isAfter(mom2)) return 1
         return 0
       },
     }

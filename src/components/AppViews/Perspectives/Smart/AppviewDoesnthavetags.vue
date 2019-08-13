@@ -1,9 +1,10 @@
 <template>
   <base-pers
-    pers-name="Doesn't have tags"
+    :pers-name='persName'
     :value='value'
     :base-tasks='baseTasks'
     :allow-labels='false'
+    :fixed-tag="{name: 'All tasks', icon: 'layer-group', backColor: '#6b66ff'}"
     :save-sort='!isOnOverview'
 
     @input="$emit('input', !value)"
@@ -19,6 +20,8 @@ const taskVuex = namespace('task')
 
 import BasePerspective from '@/components/AppViews/Perspectives/BasePerspective.vue'
 
+import appUtils from '@/utils/app'
+
 import { Task } from '../../../../interfaces/app'
 
 @Component({
@@ -31,13 +34,15 @@ export default class ViewDoesntAlltasks extends Vue {
 
   @taskVuex.State tasks!: Task[]
 
+  persName: string = `Doesn't have tags`
+
   @Prop(Boolean) value!: string
 
   get isOnOverview(): boolean {
     return this.currentAppSection === 'overview'
   }
   get baseTasks() {
-    return this.tasks.filter(el => el.labels.length === 0)
+    return appUtils.filterTasksBySmartPerspective(this.persName, this.tasks)
   }
 }
 

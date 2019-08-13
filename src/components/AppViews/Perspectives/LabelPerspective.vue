@@ -9,7 +9,6 @@
         icon-color=''
         icon=''
       />
-      <div class='margin'></div>
       <empty-tag-renderer v-if='sort && sort.length > 0'
         :list='sort'
         @update='v => sort = v'
@@ -18,20 +17,24 @@
       <div class='right'>
         <view-header-icons
           v-model='search'
+          pers-name=''
           :show-task-options='selected && selected.length > 0'
           :allow-search='true'
           :allow-labels='true'
           :allow-settings='true'
+          :allow-smart-perspectives='true'
           :allow-priority='true'
           
           @delete='deleteSelected'
           @selectedpriority='selectedPriority'
           @priority='v => priority = v'
           @label='v => labels.push(v.id)'
+          @smartpers='addSmartPers'
           @settings='selectSettingsOption'
         />
       </div>
     </div>
+    <div class='margin'></div>
     <div class='margin'></div>
     <div v-if='!hided'>
       <div v-if='showing'>
@@ -41,9 +44,11 @@
           :search='search'
           :labels='getLabels'
           :priority='priority'
+          :smart-pers='smartPers'
           @clearsearch="v => search = ''"
           @clearpriority="v => priority = ''"
           @removelabel='removeLabel'
+          @removesmartpers='removeSmartPers'
         />
         <div class='margin'></div>
       </div>
@@ -125,7 +130,8 @@ export default class LabelPerspective extends Vue {
   selected: string[] = []
   labels: string[] = []
   sort: string[] = []
-  showing: boolean = false
+  smartPers: string[] = []
+  showing: boolean = true
   hided: boolean = false
   mobileSelectedOptions: ListIcon[] = [
     {
@@ -223,6 +229,10 @@ export default class LabelPerspective extends Vue {
     const index = this.labels.findIndex(el => el === id)
     this.labels.splice(index, 1)
   }
+  removeSmartPers(name: string) {
+    const index = this.smartPers.findIndex(el => el === name)
+    this.smartPers.splice(index, 1)
+  }
   onUpdate(ids: string[]) {
     const lab = this.getLabel
     if (lab)
@@ -231,24 +241,13 @@ export default class LabelPerspective extends Vue {
         id: lab.id,
       })
   }
+  addSmartPers(name: string) {
+    if (!this.smartPers.find(el => el === name))
+      this.smartPers.push(name)
+  }
   selectSettingsOption(value: string) {
     if (!this.sort.find(el => el === value))
-      if (value === 'Sort tasks by name')
-        this.sort.push('name')
-      else if (value === 'Sort tasks by priority highest first')
-        this.sort.push('priorityHighest')
-      else if (value === 'Sort tasks by priority lowest first')
-        this.sort.push('priorityLowest')
-      else if (value === 'Sort by creation date newest first')
-        this.sort.push('creationDateNewest')
-      else if (value === 'Sort by creation date oldest first')
-        this.sort.push('creationDateOldest')
-      else if (value === 'Sort by last edit date oldest first')
-        this.sort.push('lastEditDateOldest')
-      else if (value === 'Sort by last edit date newest first')
-        this.sort.push('lastEditDateNewest')
-      else if (value === 'Sort tasks by name reversed')
-        this.sort.push('nameReversed')
+      this.sort.push(value)
   }
   addLabelTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
     const lab = this.getLabel
@@ -292,9 +291,12 @@ export default class LabelPerspective extends Vue {
       if (this.search)
         tasks = tasks.filter(el => this.search.includes(el.name))
       if (this.priority)
-        tasks = tasks.filter(el => el.priority === this.priority)
+        tasks = appUtils.filterTasksByPriority(tasks, this.priority)
       if (this.labels && this.labels.length > 0)
         tasks = appUtils.filterTasksByLabels(tasks, this.labels)
+      if (this.smartPers && this.smartPers.length > 0)
+        for (const name of this.smartPers)
+          tasks = appUtils.filterTasksBySmartPerspective(name, tasks)
       if (this.getLabel.order && this.getLabel.order.length > 0) {
         const ord = appUtils.fixOrder(tasks, this.getLabel.order)
         tasks = appUtils.sortArrayByIds(tasks, ord)

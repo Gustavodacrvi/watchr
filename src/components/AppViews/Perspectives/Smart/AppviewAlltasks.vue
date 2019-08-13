@@ -1,9 +1,8 @@
 <template>
   <base-pers
-    pers-name='All tasks'
+    :pers-name='persName'
     :value='value'
     :base-tasks='baseTasks'
-    :fixed-tag="{name: 'All tasks', icon: 'layer-group', backColor: '#83B7E2'}"
     :save-sort='!isOnOverview'
 
     @input="$emit('input', !value)"
@@ -30,6 +29,8 @@ export default class ViewAlltasks extends Vue {
   @State currentAppSection!: string
 
   @taskVuex.State tasks!: Task[]
+
+  persName: string = 'All tasks'
 
   @Prop(Boolean) value!: string
 

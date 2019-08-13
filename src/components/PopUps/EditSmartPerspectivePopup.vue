@@ -70,7 +70,7 @@ export default class EditSmartPerspectivePopup extends Vue {
     alwaysShowTaskLabels: boolean,
     alwaysShowLastEditDate: boolean,
     alwaysShowCreationDate: boolean,
-    id: string
+    id: string,
   }) => void
 
   alwaysShowLabels: boolean = true

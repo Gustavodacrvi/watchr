@@ -25,6 +25,16 @@
       </transition-group>
     </div>
     <div class='tags'>
+      <view-tag v-for='tag in smartPers'
+        :key='tag'
+        icon='layer-group'
+        back-color='#6b66ff'
+        :name='tag'
+        :fixed='false'
+        @click="$emit('removesmartpers', tag)"
+      />
+    </div>
+    <div class='tags'>
       <view-tag v-for='lab in labels'
         :key='lab.id'
         icon='tag'
@@ -68,6 +78,7 @@ export default class AppviewTags extends Vue {
   @Prop(String) priority!: string
   @Prop(String) calendar!: string
   @Prop(Array) labels!: Label[]
+  @Prop(Array) smartPers!: Label[]
 }
 
 </script>

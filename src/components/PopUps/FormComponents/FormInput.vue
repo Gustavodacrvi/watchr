@@ -7,6 +7,8 @@
     :class='[classArr, inputTheme ? inputTheme : theme]'
     v-model.trim='model'
     @keydown='onKeydown'
+    @focus='$emit("focus")'
+    @blur='$emit("blur")'
   >
 </template>
 

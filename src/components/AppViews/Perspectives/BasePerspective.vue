@@ -9,12 +9,14 @@
         @toggle='v => showing = !showing'
       />
       <div class='right'>
-        <view-header-icons
+        <view-header-icons v-if='pers'
           v-model='search'
+          :pers-name='pers.name'
           :show-task-options='selected && selected.length > 0'
           :allow-search='true'
           :allow-settings='true'
           :allow-labels='allowLabels'
+          :allow-smart-perspectives='true'
           :allow-priority='true'
 
           @delete='deleteSelected'
@@ -22,6 +24,7 @@
           @selectedpriority='selectedPriority'
           @settings='selectSettingsOption'
           @label='addLabel'
+          @smartpers='addSmartPers'
         />
       </div>
     </div>
@@ -42,9 +45,11 @@
           :search='search'
           :priority='getPriority'
           :labels='getLabels'
+          :smart-pers='smartPers'
           @clearsearch="v => search = ''"
           @clearpriority="selectPriority('')"
           @removelabel='removeLabel'
+          @removesmartpers='removeSmartPers'
         />
         <div class='margin'></div>
       </div>
@@ -120,6 +125,8 @@ export default class PerspectiveAppview extends Vue {
 
   @persVuex.Getter getPerspectiveByName!: (name: string) => Perspective
   @persVuex.Action saveTaskOrder!: (obj: {id: string, order: string[]}) => void
+  @persVuex.Action addSmartPersFilter!: (obj: {id: string, persName: string}) => void
+  @persVuex.Action removeSmartPersFilter!: (obj: {id: string, persName: string}) => void
   @persVuex.Action addLabelToPerspective!: (obj: {id: string, labelId: string}) => Label[]
   @persVuex.Action removeLabelFromPerspective!: (obj: {id: string, labelId: string}) => Label[]
   @persVuex.Action savePerspectivePriority!: (obj: {id: string, priority: string}) => Label[]
@@ -140,6 +147,7 @@ export default class PerspectiveAppview extends Vue {
   search: string = ''
   priority: string = ''
   labels: string[] = []
+  smartPers: string[] = []
   sort: string[] = []
   order: string[] = []
   hided: boolean = false
@@ -226,6 +234,14 @@ export default class PerspectiveAppview extends Vue {
         labelId: label.id,
       })
   }
+  addSmartPers(name: string) {
+    if (!this.save && !this.smartPers.find(el => el === name))
+      this.smartPers.push(name)
+    else if (this.save) this.addSmartPersFilter({
+        id: this.pers.id,
+        persName: name,
+      })
+  }
   removeLabel(id: string) {
     if (!this.save) {
       const index = this.labels.findIndex(el => el === id)
@@ -233,6 +249,15 @@ export default class PerspectiveAppview extends Vue {
     } else this.removeLabelFromPerspective({
         id: this.pers.id,
         labelId: id,
+      })
+  }
+  removeSmartPers(name: string) {
+    if (!this.save) {
+      const index = this.smartPers.findIndex(el => el === name)
+      this.smartPers.splice(index, 1)
+    } else this.removeSmartPersFilter({
+        id: this.pers.id,
+        persName: name,
       })
   }
   addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
@@ -268,64 +293,14 @@ export default class PerspectiveAppview extends Vue {
       })
   }
   selectSettingsOption(value: string) {
-    if (!this.sort.find(el => el === value))
-      if (value === 'Sort tasks by name') {
-        this.sort.push('name')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'name',
-            perspectiveId: this.pers.id,
-          })
-      } else if (value === 'Sort tasks by priority highest first') {
-        this.sort.push('priorityHighest')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'priorityHighest',
-            perspectiveId: this.pers.id,
-          })
-      } else if (value === 'Sort tasks by priority lowest first') {
-        this.sort.push('priorityLowest')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'priorityLowest',
-            perspectiveId: this.pers.id,
-          })
-      } else if (value === 'Sort by creation date newest first') {
-        this.sort.push('creationDateNewest')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'creationDateNewest',
-            perspectiveId: this.pers.id,
-          })
-      } else if (value === 'Sort by creation date oldest first') {
-        this.sort.push('creationDateOldest')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'creationDateOldest',
-            perspectiveId: this.pers.id,
-          })
-      } else if (value === 'Sort by last edit date newest first') {
-        this.sort.push('lastEditDateNewest')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'lastEditDateNewest',
-            perspectiveId: this.pers.id,
-          })
-      } else if (value === 'Sort by last edit date oldest first') {
-        this.sort.push('lastEditDateOldest')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'lastEditDateOldest',
-            perspectiveId: this.pers.id,
-          })
-      } else if (value === 'Sort tasks by name reversed') {
-        this.sort.push('nameReversed')
-        if (this.saveSort)
-          this.addPerspectiveSort({
-            sort: 'nameReversed',
-            perspectiveId: this.pers.id,
-          })
-      }
+    if (!this.sort.find(el => el === value)) {
+      this.sort.push(value)
+      if (this.saveSort)
+        this.addPerspectiveSort({
+          sort: value,
+          perspectiveId: this.pers.id,
+        })
+    }
   }
   toggleHide() {
     if (!this.isDesktop)
@@ -356,6 +331,7 @@ export default class PerspectiveAppview extends Vue {
     this.priority = this.pers.priority
     if (!this.justUpdated && !this.save || this.save) {
       this.labels = this.pers.includeAndLabels.slice()
+      this.smartPers = this.pers.includeAndSmartPers.slice()
       this.sort = this.pers.sort.slice()
       this.order = this.pers.order.slice()
     }
@@ -381,9 +357,13 @@ export default class PerspectiveAppview extends Vue {
     if (this.search)
       tasks = tasks.filter(el => el.name.includes(this.search))
     if (this.priority)
-      tasks = tasks.filter(el => el.priority === this.priority)
+      tasks = appUtils.filterTasksByPriority(tasks, this.priority)
     if (this.labels && this.labels.length > 0)
       tasks = appUtils.filterTasksByLabels(tasks, this.labels)
+    if (this.smartPers && this.smartPers.length > 0)
+      for (const name of this.smartPers)
+        if (name !== this.pers.name)
+          tasks = appUtils.filterTasksBySmartPerspective(name, tasks)
     if (this.order && this.order.length > 0) {
       const ord = appUtils.fixOrder(tasks, this.order)
       tasks = appUtils.sortArrayByIds(tasks, ord)

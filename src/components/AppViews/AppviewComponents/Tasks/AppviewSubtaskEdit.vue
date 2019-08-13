@@ -3,23 +3,24 @@
     <transition name='fade' mode='out-in'>
       <div v-if='addingSubtask || onlyEdit' key='adding' class='adding-wrapper'>
         <div class='adding'>
-          <form-input
+          <drop-input
             class='subtask-input'
             type='text'
             placeholder='Subtask...'
-            v-model='val'
+            focus-class='subtask-edit-focus-class'
             :disabled='true'
-            :focus='true'
-            :keydown='true'
+            :input='val'
+            :values='[]'
             :input-theme='theme'
             :max='200'
             @enter='add'
+            @value='v => val = v'
           />
         </div>
         <form-btn class='tiny' @click='add'>Add subtask</form-btn>
         <span class='txt cancel pointer' :class='theme' @click='addingSubtask = false;cancel()'>Cancel</span>
       </div>
-      <div v-else key='not-adding' class='txt not-adding' :class='theme' @click='addingSubtask = true'>
+      <div v-else key='not-adding' class='txt add-subtask not-adding' :class='theme' @click='addingSubtask = true'>
         <i class='fas fa-plus fa-sm'></i>
         <span>Add subtask</span>
       </div>
@@ -32,12 +33,12 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
-import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+import DropdownInput from '@/components/DropdownInput.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
 @Component({
   components: {
-    'form-input': FormInput,
+    'drop-input': DropdownInput,
     'form-btn': FormButton,
   },
 })
@@ -54,6 +55,10 @@ export default class SubtaskEdit extends Vue {
     this.val = this.value
   }
 
+  focus() {
+    const el = document.querySelectorAll('.subtask-edit-focus-class')[0] as any
+    el.focus()
+  }
   add() {
     setTimeout(() => {
       this.$emit('add', this.val)
@@ -69,6 +74,13 @@ export default class SubtaskEdit extends Vue {
   onChange() {
     this.$emit('input', this.val)
   }
+  @Watch('addingSubtask')
+  onChange2() {
+    setTimeout(() => {
+      if (this.addingSubtask)
+        this.focus()
+    }, 500)
+  }
 }
 
 </script>
@@ -82,6 +94,15 @@ export default class SubtaskEdit extends Vue {
 .cancel {
   margin-left: 4px;
   color: #FF6B66;
+}
+
+.add-subtask {
+  cursor: pointer;
+  transition: color .3s;
+}
+
+.add-subtask:hover {
+  color: #ff6b66;
 }
 
 .not-adding {
