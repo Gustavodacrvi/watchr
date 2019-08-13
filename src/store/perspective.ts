@@ -22,6 +22,7 @@ interface States {
 
 interface Getters {
   sortedSmartPerspectives: (state: States) => Perspective[]
+  smartFilters: (state: States, getters: Getters) => Perspective[]
   sortedCustomPerspectives: (state: States) => Perspective[]
   getPerspectiveByName: (state: States) => (name: string) => Perspective
   pinedSmartPerspectives: (state: States, getters: Getters) => void
@@ -111,6 +112,16 @@ export default {
       // tslint:disable-next-line:max-line-length
       return appUtils.sortArrayByIds(smart, appUtils.fixOrder(smart, state.smartOrder))
     },
+    smartFilters(state: States, getters: Getters) {
+      const filters: string[] = [
+        'Inbox',
+        'Today',
+        'Have tags',
+        `Doesn't have tags`,
+      ]
+      const pers = getters.sortedSmartPerspectives as any
+      return pers.filter((el: Perspective) => filters.includes(el.name))
+    },
     pinedSmartPerspectives(state: States, getters: Getters): Perspective[] {
       const pers: Perspective[] = getters.sortedSmartPerspectives as any
       return pers.filter(el => el.pin)
@@ -148,6 +159,9 @@ export default {
           numberOfTasks: false,
           showWhenNotEmpty: false,
           excludeLabels: [],
+          excludeSmartPers: [],
+          includeAndSmartPers: [],
+          includeOrSmartPers: [],
           includeAndLabels: [],
           includeOrLabels: [],
           ...obj,
@@ -431,6 +445,9 @@ export default {
             isSmart: true,
             priority: '',
             excludeLabels: [],
+            excludeSmartPers: [],
+            includeAndSmartPers: [],
+            includeOrSmartPers: [],
             includeAndLabels: [],
             includeOrLabels: [],
           }
@@ -461,6 +478,9 @@ export default {
             priority: '',
             excludeLabels: [],
             includeAndLabels: [],
+            excludeSmartPers: [],
+            includeAndSmartPers: [],
+            includeOrSmartPers: [],
             includeOrLabels: [],
           }
           if (per.description)

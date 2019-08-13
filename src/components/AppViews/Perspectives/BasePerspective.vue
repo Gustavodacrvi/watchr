@@ -15,6 +15,7 @@
           :allow-search='true'
           :allow-settings='true'
           :allow-labels='allowLabels'
+          :allow-smart-perspectives='true'
           :allow-priority='true'
 
           @delete='deleteSelected'
@@ -22,6 +23,7 @@
           @selectedpriority='selectedPriority'
           @settings='selectSettingsOption'
           @label='addLabel'
+          @smartpers='addSmartPers'
         />
       </div>
     </div>
@@ -140,6 +142,7 @@ export default class PerspectiveAppview extends Vue {
   search: string = ''
   priority: string = ''
   labels: string[] = []
+  smartPers: string[] = []
   sort: string[] = []
   order: string[] = []
   hided: boolean = false
@@ -224,6 +227,14 @@ export default class PerspectiveAppview extends Vue {
     else this.addLabelToPerspective({
         id: this.pers.id,
         labelId: label.id,
+      })
+  }
+  addSmartPers(name: string) {
+    if (!this.save && !this.smartPers.find(el => el === name))
+      this.smartPers.push(name)
+    else if (this.save) this.addSmartPersFilter({
+        id: this.pers.id,
+        persName: name,
       })
   }
   removeLabel(id: string) {

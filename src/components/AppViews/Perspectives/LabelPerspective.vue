@@ -21,6 +21,7 @@
           :allow-search='true'
           :allow-labels='true'
           :allow-settings='true'
+          :allow-smart-perspectives='true'
           :allow-priority='true'
           
           @delete='deleteSelected'

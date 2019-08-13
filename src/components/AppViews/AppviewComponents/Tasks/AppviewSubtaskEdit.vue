@@ -7,10 +7,9 @@
             class='subtask-input'
             type='text'
             placeholder='Subtask...'
-            :input='val'
+            focus-class='subtask-edit-focus-class'
             :disabled='true'
-            :focus='true'
-            :keydown='true'
+            :input='val'
             :values='[]'
             :input-theme='theme'
             :max='200'
@@ -56,6 +55,10 @@ export default class SubtaskEdit extends Vue {
     this.val = this.value
   }
 
+  focus() {
+    const el = document.querySelectorAll('.subtask-edit-focus-class')[0] as any
+    el.focus()
+  }
   add() {
     setTimeout(() => {
       this.$emit('add', this.val)
@@ -70,6 +73,13 @@ export default class SubtaskEdit extends Vue {
   @Watch('val')
   onChange() {
     this.$emit('input', this.val)
+  }
+  @Watch('addingSubtask')
+  onChange2() {
+    setTimeout(() => {
+      if (this.addingSubtask)
+        this.focus()
+    }, 500)
   }
 }
 

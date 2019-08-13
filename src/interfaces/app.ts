@@ -52,6 +52,9 @@ export interface Perspective {
   alwaysShowLastEditDate: boolean
   alwaysShowCreationDate: boolean
   sort: string[]
+  excludeSmartPers: string[]
+  includeAndSmartPers: string[]
+  includeOrSmartPers: string[]
   excludeLabels: string[]
   includeAndLabels: string[]
   includeOrLabels: string[]

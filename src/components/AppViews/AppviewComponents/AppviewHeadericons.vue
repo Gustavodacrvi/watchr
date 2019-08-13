@@ -46,6 +46,16 @@
         @click='selectPriority'
       />
     </span>
+    <span v-if='allowSmartPerspectives' class='header-option'>
+      <icon-options
+        handle='layer-group'
+        :size='size'
+        min-width='200px'
+        title='Smart perspectives'
+        :options='smartPersOptions'
+        @click='selectSmartPers'
+      />
+    </span>
     <span v-if='allowLabels' class='header-option'>
       <drop-finder
         handle='tags'
@@ -77,8 +87,9 @@ import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFind
 import IconOptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 
 const labelsVuex = namespace('label')
+const pers = namespace('perspective')
 
-import { ListIcon, Label } from '../../../interfaces/app'
+import { ListIcon, Label, Perspective } from '../../../interfaces/app'
 
 @Component({
   components: {
@@ -92,10 +103,13 @@ export default class AppviewHeadericons extends Vue {
 
   @labelsVuex.Getter sortedLabelsByName!: Label[]
 
+  @pers.Getter smartFilters!: Perspective[]
+
   @Prop(String) value!: string
   @Prop(Boolean) showTaskOptions!: boolean
   @Prop(Boolean) allowSearch!: boolean
   @Prop(Boolean) allowSettings!: boolean
+  @Prop(Boolean) allowSmartPerspectives!: boolean
   @Prop(Boolean) allowLabels!: boolean
   @Prop(Boolean) allowPriority!: boolean
 
@@ -202,7 +216,22 @@ export default class AppviewHeadericons extends Vue {
   selectLabel(label: Label) {
     this.$emit('label', label)
   }
+  selectSmartPers(value: string) {
+    this.$emit('smartpers', value)
+  }
 
+  get smartPersOptions(): ListIcon[] {
+    const smarts = this.smartFilters
+    const arr = []
+    for (const smart of smarts)
+      arr.push({
+        name: smart.name,
+        icon: smart.icon,
+        iconColor: smart.iconColor,
+        size: 'lg',
+      })
+    return arr
+  }
   get size(): string {
     if (this.isDesktop)
       return 'lg'
