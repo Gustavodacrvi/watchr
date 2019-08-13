@@ -99,6 +99,7 @@ export default class AppviewTaskedit extends Vue {
   @State theme!: string
 
   @set.State timeFormat!: '13:00' | '1:00pm'
+  @set.State nextWeek!: string
 
   @labelsVuex.State('labels') savedLabels!: Label[]
   @labelsVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
@@ -257,11 +258,12 @@ export default class AppviewTaskedit extends Vue {
     }
     if (this.allowDate)
       if (this.value.includes(' $')) {
-        const obj = appUtils.parseTaskInputTime(this.value, this.timeFormat)
+        const obj = appUtils.parseTaskInputTime(this.value, this.timeFormat, this.nextWeek)
         const str = appUtils.parseTaskInputObjectToString(obj)
         if (obj) {
           this.calendarObj = obj
           this.calendarString = str
+          console.log(obj.day, obj.month, obj.year, obj.time)
         }
       }
     if (!changedOptions)

@@ -246,7 +246,7 @@ export default {
     }
     return clone
   },
-  parseTaskInputTime(input: string, timeFormat: '13:00' | '1:00pm'): TaskInputObj {
+  parseTaskInputTime(input: string, timeFormat: '13:00' | '1:00pm', nextWeek: string): TaskInputObj {
     const parseDateInput = (value: string, callback: (str: string | null) => void): any => {
       const exists = value.includes(' $')
       let str: string | null = null
@@ -304,23 +304,65 @@ export default {
       return parseInt(moment().format('D'), 10)
     }
     const searchKeyWords = (str: string, obj: TaskInputObj): TaskInputObj => {
+      const getNextWeek = (mom: any, firstDayOfTheWeek: string): any => {
+        const f = firstDayOfTheWeek
+        const m = mom.clone()
+
+        m.add(1, 'd')
+        if (f !== 'Invalid date')
+          while (true) {
+            if (m.format('dddd') === f) return m
+            m.add(1, 'd')
+          }
+        else undefined
+      }
+      
       const values = str.split(' ')
-      const tod = moment()
+      let tod = moment()
       let m = moment(`${obj.day}-${obj.month}-${obj.year} ${obj.time}`, 'D-M-Y HH:mm')
       let inKeyword = false
-      let inHours = false
+      let inHour = false
 
-      if (str.includes('next '))
+      if (str.includes('next ')) {
         for (let i = 0; i < values.length; i++)
-          if (values[i] === 'next' && values[i + 1])
-            switch (values[i + 1]) {
-              case 'day': m.add(1, 'd'); break
-              case 'month': m.add(1, 'M'); break
-              case 'year': m.add(1, 'y'); break
+          if (values[i] === 'next' && values[i + 1]) {
+            const v = values[i + 1]
+            let found = false
+            switch (v) {
+              case 'day': {
+                tod.add(1, 'd')
+                inKeyword = found = true
+                break
+              }
+              case 'week': {
+                tod = getNextWeek(tod, nextWeek)
+                inKeyword = found = true
+                found = true
+                break
+              }
+              case 'month': {
+                tod = tod.startOf('month').add(1, 'M')
+                inKeyword = found = true
+                break
+              }
+              case 'year': {
+                tod = tod.startOf('month').startOf('year').add(1, 'y')
+                inKeyword = found = true
+                break
+              }
             }
-      else if (str.includes('tomorrow '))
-        m.add(1, 'd')
-      else if (str.includes('in '))
+            if (found) break
+            const ins = getNextWeek(tod, moment(v, 'dddd').format('dddd'))
+            if (ins) {
+              tod = ins
+              inKeyword = true
+            }
+            break
+          }
+      } else if (str.includes('tomorrow') || str.includes('tom')) {
+        tod.add(1, 'd')
+        inKeyword = true
+      } else if (str.includes('in '))
         for (let j = 0; j < values.length; j++) {
           const q = values[j + 1]
           const k = values[j + 2]
@@ -330,7 +372,7 @@ export default {
               case 'months': tod.add(q, 'M'); inKeyword = true; break
               case 'weeks': tod.add(q, 'w'); inKeyword = true; break
               case 'years': tod.add(q, 'y'); inKeyword = true; break
-              case 'hours': tod.add(q, 'h'); inKeyword = true; inHours = true; break
+              case 'hours': tod.add(q, 'h'); inKeyword = true;inHour = true;break
             }
         }
       if (inKeyword) m = tod
@@ -343,8 +385,8 @@ export default {
       }
       if (!obj.time)
         o['time'] = null
-      if (inHours)
-        o['time'] = m.format('HH:mm')
+      if (inHour)
+        o['time'] = tod.format('HH:mm')
 
       return o
     }
