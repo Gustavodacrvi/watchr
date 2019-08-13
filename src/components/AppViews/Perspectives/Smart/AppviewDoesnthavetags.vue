@@ -4,6 +4,7 @@
     :value='value'
     :base-tasks='baseTasks'
     :allow-labels='false'
+    :fixed-tag="{name: 'All tasks', icon: 'layer-group', backColor: '#6b66ff'}"
     :save-sort='!isOnOverview'
 
     @input="$emit('input', !value)"
