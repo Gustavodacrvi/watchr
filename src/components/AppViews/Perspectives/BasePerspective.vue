@@ -291,7 +291,6 @@ export default class PerspectiveAppview extends Vue {
       })
   }
   addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any}) {
-    console.log(obj.position, obj.order)
     this.addTaskPerspective({
       task: {
         name: obj.name,
@@ -394,11 +393,9 @@ export default class PerspectiveAppview extends Vue {
     for (const date of hds) {
       const mom = moment.utc(date, 'Y-M-D')
       const arr: Task[] = []
-      for (const t of this.getTasks) {
-        if (mom.isSame(moment.utc(t.date, 'Y-M-D'))) {
+      for (const t of this.getTasks)
+        if (mom.isSame(moment.utc(t.date, 'Y-M-D')))
           arr.push(t)
-        }
-      }
       if (arr.length > 0) finalArr.push(arr)
     }
     return finalArr
@@ -409,7 +406,7 @@ export default class PerspectiveAppview extends Vue {
     for (const t of tks)
       if (!dates.has(t.date))
         dates.add(t.date)
-    const arr = Array.from(dates)
+    const arr: string[] = Array.from(dates)
     arr.sort((a, b) => {
       const ma = moment.utc(a, 'Y-M-D')
       const mb = moment.utc(b, 'Y-M-D')

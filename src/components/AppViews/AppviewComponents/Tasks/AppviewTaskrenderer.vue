@@ -143,9 +143,8 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 
         } else if (type === 'date' && this.listHasDates) {
           const els = evt.items
-          if (els.length === 0) {
+          if (els.length === 0)
             els.push(evt.item)
-          }
           const arr = []
           for (const e of els)
             arr.push({

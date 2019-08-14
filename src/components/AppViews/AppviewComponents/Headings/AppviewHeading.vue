@@ -19,9 +19,9 @@ import { State } from 'vuex-class'
 @Component
 export default class AppviewHeading extends Vue {
   @State theme!: string
-  
+
   @Prop(String) name!: string
-  
+
   showing: boolean = true
 }
 
