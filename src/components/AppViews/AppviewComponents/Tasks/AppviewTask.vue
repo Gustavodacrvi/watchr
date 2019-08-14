@@ -43,12 +43,11 @@
                 >{{ item }}<span v-if='index !== taskLabels.length - 1'>,</span></span>
                 <span>&nbsp;</span>
               </template>
-              <i v-if='showLastEditDate && showLabels' class='fas tiny-icon fa-circle fa-xs'></i>
+              <i v-if='showDot1' class='fas tiny-icon fa-circle fa-xs'></i>
               <span v-if='showLastEditDate' class='fade'>
                 <span> Last edited {{ readableTaskLastEditDate }} </span>
               </span>
-              <i v-if='showLabels && showCreationDate && !showLastEditDate' class='fas tiny-icon fa-circle fa-xs'></i>
-              <i v-if='showLastEditDate && showCreationDate' class='fas tiny-icon fa-circle fa-xs'></i>
+              <i v-if='showDot2' class='fas tiny-icon fa-circle fa-xs'></i>
               <span v-if='showCreationDate' class='fade'>
                 <span> Created {{ readableTaskCreationDate }}</span>
               </span>
@@ -357,6 +356,24 @@ export default class AppviewTask extends Vue {
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
   }
 
+  get showDot1(): boolean {
+    return !this.atLeastTwoInfoOptionsWontShowUp && (this.allTrue || this.showLabels)
+  }
+  get showDot2(): boolean {
+    return !this.atLeastTwoInfoOptionsWontShowUp && (this.allTrue || !this.showLabels || !(this.showLastEditDate || this.showCreationDate))
+  }
+
+  get allTrue(): boolean {
+    if (this.showLabels && this.showLastEditDate && this.showCreationDate) return true
+    return false
+  }
+  get atLeastTwoInfoOptionsWontShowUp(): boolean {
+    let numbersOfFalse = 0
+    if (!this.showLabels) numbersOfFalse++
+    if (!this.showLastEditDate) numbersOfFalse++
+    if (!this.showCreationDate) numbersOfFalse++
+    return numbersOfFalse > 1
+  }
   get showLabels(): boolean {
     return this.alwaysShowTaskLabels || this.onHover
   }
