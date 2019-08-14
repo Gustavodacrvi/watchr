@@ -17,7 +17,7 @@ export default {
       timeout: 5000,
     })
   },
-  filterTasksBySmartPerspective(name: string, tasks: Task[]): Task[] {
+  filterTasksBySmartPerspective(name: string, tasks: Task[], startOfTheWeek?: string): Task[] {
     switch (name) {
       case 'Inbox': {
         return tasks.filter(el => el.labels.length === 0 && !el.date)
@@ -32,10 +32,27 @@ export default {
           return today.isSame(saved, 'day')
         })
       }
+      case 'Next week': {
+        return tasks.filter(el => {
+          if (startOfTheWeek && el.date) {
+            const m = timezone.utc()
+            const saved = timezone.utc(`${el.date}`)
+            const next = this.getNextWeek(m.clone(), startOfTheWeek)
+
+            for (let i = 0; i < 6; i++) {
+              if (next.isSame(saved, 'day'))
+                return true
+              next.add(1, 'd')
+            }
+            return false
+          }
+          return false
+        })
+      }
     }
     return tasks
   },
-  filterTasksByPerspective(per: Perspective, tasks: Task[]): Task[] {
+  filterTasksByPerspective(per: Perspective, tasks: Task[], startOfTheWeek?: string): Task[] {
     if (!per.isSmart) {
       const pers = per as Perspective
       if (pers.priority)
@@ -44,7 +61,7 @@ export default {
         tasks = this.filterTasksByLabels(tasks, pers.includeAndLabels)
       return tasks
     }
-    return this.filterTasksBySmartPerspective(per.name, tasks)
+    return this.filterTasksBySmartPerspective(per.name, tasks, startOfTheWeek)
   },
   snakeToCamel(s: string) {
     return s.replace(/(\-\w)/g, (m: any) => m[1].toUpperCase())
@@ -243,10 +260,10 @@ export default {
   getNextWeek(mom: any, nextWeek: string) {
     const clone = mom.clone()
     while (true) {
-      clone.add(1, 'd')
       const week = clone.format('dddd')
       if (week === nextWeek)
         break
+      clone.add(1, 'd')
     }
     return clone
   },

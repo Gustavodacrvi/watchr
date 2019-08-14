@@ -29,7 +29,7 @@ interface Getters {
   pinedCustomPerspectives: (state: States, getters: Getters) => void
   initialPerspective: (state: States, getters: Getters) => void
   getPerspectiveById: (state: States) => (id: string) => Perspective
-  getNumberOfTasksByPerspectiveId: (state: States) => (id: string, tasks: Task[]) => number
+  getNumberOfTasksByPerspectiveId: (state: States, f: any, rootState: any) => (id: string, tasks: Task[]) => number
 }
 
 interface Mutations {
@@ -83,9 +83,9 @@ export default {
 
   } as Mutations,
   getters: {
-    getNumberOfTasksByPerspectiveId: (state: States) => (id: string, tasks: Task[]) => {
+    getNumberOfTasksByPerspectiveId: (state: States, f: any, rootState: any) => (id: string, tasks: Task[]) => {
       const per: Perspective = state.perspectives.find(el => el.id === id) as Perspective
-      return appUtils.filterTasksByPerspective(per, tasks).length
+      return appUtils.filterTasksByPerspective(per, tasks, rootState.settings.startOfTheWeek).length
     },
     getPerspectiveByName: (state: States) => (name: string): Perspective => {
       return state.perspectives.find(el => el.name === name) as Perspective
