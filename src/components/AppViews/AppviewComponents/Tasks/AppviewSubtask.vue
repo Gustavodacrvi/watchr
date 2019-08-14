@@ -18,7 +18,7 @@
           <i v-if='!task.completed' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
           <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
         </span>
-        <span class='txt' :class='theme'>{{ task.name }}</span>
+        <span class='txt name' :class='theme'>{{ task.name }}</span>
         <transition name='fade'>
           <i v-if='showTrashIcons' class='fas right fa-trash fa-sm icon txt' :class='theme' @click='deleteSubTask'></i>
         </transition>
@@ -142,6 +142,10 @@ export default class AppviewSubtask extends Vue {
 </script>
 
 <style scoped>
+
+.name {
+  max-width: 90%;
+}
 
 .completed {
   opacity: .4;

@@ -74,6 +74,8 @@ export interface Task {
   name: string
   priority: 'Low priority' | 'High priority' | 'Medium priority' | ''
   labels: string[]
+  date: string
+  time: string
   creationDate: string
   lastEditDate: string
   checklistOrder: string[]
@@ -86,8 +88,8 @@ export interface Task {
 }
 
 export interface TaskInputObj {
-  day: number,
-  month: number,
-  year: number,
-  time: string | null,
+  day: number
+  month: number
+  year: number
+  time: string | null
 }

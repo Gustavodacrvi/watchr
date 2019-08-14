@@ -13,7 +13,6 @@
         :list='sort'
         @update='v => sort = v'
       />
-      <div class='margin'></div>
       <div class='right'>
         <view-header-icons
           v-model='search'

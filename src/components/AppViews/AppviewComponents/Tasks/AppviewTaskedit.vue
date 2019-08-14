@@ -99,6 +99,8 @@ export default class AppviewTaskedit extends Vue {
   @State theme!: string
 
   @set.State timeFormat!: '13:00' | '1:00pm'
+  @set.State timeZone!: string
+  @set.State nextWeek!: string
 
   @labelsVuex.State('labels') savedLabels!: Label[]
   @labelsVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
@@ -128,7 +130,7 @@ export default class AppviewTaskedit extends Vue {
     {
       name: 'High priority',
       icon: 'exclamation',
-      iconColor: '#83B7E2',
+      iconColor: '#FF6B66',
       size: 'lg',
     },
     {
@@ -170,8 +172,11 @@ export default class AppviewTaskedit extends Vue {
     this.value = str
   }
   enter() {
+    let utc = null
+    if (this.calendarObj)
+      utc = this.calendarObj.utc
     if (this.value)
-      this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels})
+      this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels, utc})
     this.value = ''
   }
   removeLabel(id: string) {
@@ -209,15 +214,19 @@ export default class AppviewTaskedit extends Vue {
   onValue() {
     let changedOptions: boolean = false
     if (this.allowPriority) {
-      if (this.value.includes(' !high')) {
+      const v = this.value
+      if (v.includes(' !high') || v.includes(' !hi')) {
         this.priority = 'High priority'
-        this.value = this.value.replace(' !high', '')
-      } else if (this.value.includes(' !medium')) {
+        this.value = v.replace(' !high', '')
+        this.value = v.replace(' !hi', '')
+      } else if (v.includes(' !medium') || v.includes(' !me')) {
         this.priority = 'Medium priority'
-        this.value = this.value.replace(' !medium', '')
-      } else if (this.value.includes(' !low')) {
+        this.value = v.replace(' !medium', '')
+        this.value = v.replace(' !me', '')
+      } else if (v.includes(' !low') || v.includes(' !lo')) {
         this.priority = 'Low priority'
-        this.value = this.value.replace(' !low', '')
+        this.value = v.replace(' !low', '')
+        this.value = v.replace(' !lo', '')
       }
       const arr = this.value.split(' ')
       const lastWord = arr[arr.length - 1]
@@ -257,8 +266,8 @@ export default class AppviewTaskedit extends Vue {
     }
     if (this.allowDate)
       if (this.value.includes(' $')) {
-        const obj = appUtils.parseTaskInputTime(this.value, this.timeFormat)
-        const str = appUtils.parseTaskInputObjectToString(obj)
+        const obj = appUtils.parseTaskInputTime(this.value, this.timeFormat, this.timeZone, this.nextWeek)
+        const str = appUtils.parseTaskInputObjectToString(obj, this.timeFormat)
         if (obj) {
           this.calendarObj = obj
           this.calendarString = str

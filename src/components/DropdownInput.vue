@@ -30,7 +30,7 @@
         class='dropdown round-border gray border dark scroll'
         ref='dropdown'
       >
-        <transition-group name='fade'>
+        <transition-group>
           <span v-for='option in values'
             :ref='option'
             class='option txt dark'

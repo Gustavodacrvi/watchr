@@ -6,10 +6,9 @@
           class='margin'
           @click='showing = false'></div>
       </transition>
-      <span id='floating-btn'>
+      <span id='floating-btn' @click='showing = !showing'>
         <span
           class='main-button'
-          @click='showing = !showing'
         >
           <i class='icon txt pointer fas fa-plus' :style="{color: 'white'}"></i>
           <span class='txt msg' :class='theme'>Add task</span>
