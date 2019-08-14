@@ -390,8 +390,13 @@ export default class AppviewTask extends Vue {
   get allowDragAndDrop(): boolean {
     return this.allowDrag && !this.isDesktop && this.clicked
   }
-  get taskLabels(): string[] {
+  get getLabels(): string[] {
     return this.getLabelsByIds(this.task.labels).map(el => el.name)
+  }
+  get taskLabels(): string[] {
+    const labs = this.getLabels
+    labs.sort((lab1, lab2) => lab1.localeCompare(lab2))
+    return labs
   }
   get rootSubtaskComponent(): HTMLElement {
     return this.$el.getElementsByClassName('subtasks-transition')[0] as HTMLElement

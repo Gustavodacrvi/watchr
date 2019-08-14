@@ -129,11 +129,15 @@ export default class CalendarInput extends Vue {
     const day = mom.format('D')
     const month = mom.format('M')
     const year = mom.format('Y')
-    this.$emit('select', {
+    const obj = {
       time, day, month, year,
+    }
+    const utc = appUtils.getUtcValuesFromTaskInputObj(obj, this.timeZone)
+    this.$emit('select', {
+      ...obj, utc,
       parsed: appUtils.parseTaskInputObjectToString({
-        time, day, month, year,
-      }),
+        ...obj,
+      }, this.timeFormat),
     })
   }
   nextMonth() {

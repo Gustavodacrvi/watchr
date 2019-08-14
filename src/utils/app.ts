@@ -4,7 +4,7 @@ import ErrorComponent from '@/components/ErrorComponent.vue'
 
 import { Task, TaskInputObj, Perspective } from '@/interfaces/app'
 
-import moment from 'moment'
+import moment, { months } from 'moment'
 import timezone from 'moment-timezone'
 
 export default {
@@ -217,19 +217,15 @@ export default {
   },
   getTaskInputTime(values: string[], timeFormat: '13:00' | '1:00pm') {
     const parseTime = (time: string): string => {
-      return moment(time, 'H:m').format('HH:mm')
+      if (timeFormat === '13:00')
+        return moment(time, 'H:m').format('HH:mm')
+      return moment(time, 'H:m a').format('HH:mm a')
     }
     const isValidTime = (str: string): boolean => {
       const time = parseTime(str)
       const twelveHourFormat = timeFormat === '1:00pm'
-      const format = twelveHourFormat ? 'Y-M-D LT' : 'Y-M-D HH:mm'
-      let momentStr = ''
-      if (time.includes('pm'))
-        momentStr = `2014-12-13 ${time.replace('pm', '')} pm`
-      else if (time.includes('am'))
-        momentStr = `2014-12-13 ${time.replace('am', '')} am`
-      else momentStr = `2014-12-13 ${time}`
-      return moment(momentStr, format, true).isValid()
+      const format = twelveHourFormat ? 'HH:mm a' : 'HH:mm'
+      return moment(time, format, true).isValid()
     }
     for (const v of values)
       if (v && v.includes(':') && isValidTime(v.toLowerCase()) && !v.includes('24:00'))
@@ -246,7 +242,20 @@ export default {
     }
     return clone
   },
-  parseTaskInputTime(input: string, timeFormat: '13:00' | '1:00pm', nextWeek: string): TaskInputObj {
+  getUtcValuesFromTaskInputObj(obj: TaskInputObj, timeZone: string): {date: string, time: string} {
+    let date = ''
+    let time = ''
+    if (obj.time) {
+      const utc = timezone.tz(`${obj.year}-${obj.month}-${obj.day} ${obj.time}`, 'Y-M-D HH:mm',timeZone).utc()
+      date = utc.format('Y-M-D')
+      time = utc.format('HH:mm')
+    } else {
+      const utc = timezone.tz(`${obj.year}-${obj.month}-${obj.day}`, 'Y-M-D', timeZone).utc()
+      date = utc.format('Y-M-D')
+    }
+    return {date, time}
+  },
+  parseTaskInputTime(input: string, timeFormat: '13:00' | '1:00pm', timeZone: string, nextWeek: string): TaskInputObj & {utc: {date: string, time: string}} {
     const parseDateInput = (value: string, callback: (str: string | null) => void): any => {
       const exists = value.includes(' $')
       let str: string | null = null
@@ -265,34 +274,8 @@ export default {
     }
     const getMonth = (values: string[]): number => {
       for (const str of values) {
-        switch (str) {
-          case 'jan': return 1
-          case 'feb': return 2
-          case 'mar': return 3
-          case 'apr': return 4
-          case 'may': return 5
-          case 'jun': return 6
-          case 'jul': return 7
-          case 'aug': return 8
-          case 'sep': return 9
-          case 'oct': return 10
-          case 'nov': return 11
-          case 'dec': return 12
-        }
-        switch (str) {
-          case 'january': return 1
-          case 'february': return 2
-          case 'march': return 3
-          case 'april': return 4
-          case 'may': return 5
-          case 'june': return 6
-          case 'july': return 7
-          case 'august': return 8
-          case 'september': return 9
-          case 'october': return 10
-          case 'november': return 11
-          case 'december': return 12
-        }
+        const mom = moment(str, 'MMMM')
+        if (mom.isValid()) return mom.month() + 1
       }
       return moment().month() + 1
     }
@@ -401,16 +384,22 @@ export default {
         const time = this.getTaskInputTime(values, timeFormat)
 
         const obj = searchKeyWords(str, {month, year, day, time})
-
-        return obj
+        const utc = this.getUtcValuesFromTaskInputObj(obj, timeZone)
+        
+        return {...obj, utc}
       }
     })
   },
-  parseTaskInputObjectToString(obj: TaskInputObj | undefined): string {
+  parseTaskInputObjectToString(obj: TaskInputObj | undefined, timeFormat: '13:00' | '1:00pm'): string {
     if (obj) {
       let str = `${moment().month(obj.month - 1).format('MMMM')} ${obj.day}, ${obj.year}`
 
-      if (obj.time) str += ` at ${obj.time}`
+      let time = obj.time
+      if (time) {
+        if (timeFormat === '1:00pm')
+          time = moment(time, 'HH:mm').format('hh:mm a')
+        str += ` at ${obj.time}`
+      }
 
       return str
     }

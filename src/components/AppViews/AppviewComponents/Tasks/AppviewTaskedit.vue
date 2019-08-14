@@ -99,6 +99,7 @@ export default class AppviewTaskedit extends Vue {
   @State theme!: string
 
   @set.State timeFormat!: '13:00' | '1:00pm'
+  @set.State timeZone!: string
   @set.State nextWeek!: string
 
   @labelsVuex.State('labels') savedLabels!: Label[]
@@ -172,7 +173,7 @@ export default class AppviewTaskedit extends Vue {
   }
   enter() {
     if (this.value)
-      this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels})
+      this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels, utc: this.calendarObj.utc})
     this.value = ''
   }
   removeLabel(id: string) {
@@ -258,12 +259,11 @@ export default class AppviewTaskedit extends Vue {
     }
     if (this.allowDate)
       if (this.value.includes(' $')) {
-        const obj = appUtils.parseTaskInputTime(this.value, this.timeFormat, this.nextWeek)
-        const str = appUtils.parseTaskInputObjectToString(obj)
+        const obj = appUtils.parseTaskInputTime(this.value, this.timeFormat, this.timeZone, this.nextWeek)
+        const str = appUtils.parseTaskInputObjectToString(obj, this.timeFormat)
         if (obj) {
           this.calendarObj = obj
           this.calendarString = str
-          console.log(obj.day, obj.month, obj.year, obj.time)
         }
       }
     if (!changedOptions)

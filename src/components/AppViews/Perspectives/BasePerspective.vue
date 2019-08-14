@@ -117,7 +117,7 @@ export default class PerspectiveAppview extends Vue {
 
   @taskVuex.State tasks!: Task[]
   // tslint:disable-next-line:max-line-length
-  @taskVuex.Action addTaskPerspective!: (obj: {task: Task, perspectiveId: string, position: number, order: string[]}) => void
+  @taskVuex.Action addTaskPerspective!: (obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: any}) => void
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
 
@@ -260,12 +260,13 @@ export default class PerspectiveAppview extends Vue {
         persName: name,
       })
   }
-  addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
+  addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any}) {
     this.addTaskPerspective({
       task: {
         name: obj.name,
         priority: obj.priority,
         labels: obj.labels,
+        utc: obj.utc,
       },
       perspectiveId: this.pers.id,
       position: obj.position, order: obj.order,
