@@ -374,6 +374,17 @@ export default {
             iconColor: '#FF6B66',
           },
           {
+            name: 'Next week',
+            pin: false,
+            numberOfTasks: true,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: true,
+            alwaysShowLastEditDate: true,
+            alwaysShowCreationDate: true,
+            icon: 'calendar-week',
+            iconColor: '#FF6B66',
+          },
+          {
             name: 'Have tags',
             pin: false,
             numberOfTasks: false,
