@@ -20,10 +20,18 @@ export default {
   filterTasksBySmartPerspective(name: string, tasks: Task[]): Task[] {
     switch (name) {
       case 'Inbox': {
-        return tasks.filter(el => el.labels.length === 0)
+        return tasks.filter(el => el.labels.length === 0 && !el.date)
       }
       case 'Have tags': return tasks.filter(el => el.labels.length > 0)
       case `Doesn't have tags`: return tasks.filter(el => el.labels.length === 0)
+      case 'Today': {
+        return tasks.filter(el => {
+          if (!el.date) return false
+          const today = timezone.utc()
+          const saved = timezone.utc(`${el.date}`)
+          return today.isSame(saved, 'day')
+        })
+      }
     }
     return tasks
   },

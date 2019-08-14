@@ -133,6 +133,7 @@ export default class CalendarInput extends Vue {
       time, day, month, year,
     }
     const utc = appUtils.getUtcValuesFromTaskInputObj(obj, this.timeZone)
+    console.log(utc)
     this.$emit('select', {
       ...obj, utc,
       parsed: appUtils.parseTaskInputObjectToString({

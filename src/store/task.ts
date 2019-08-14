@@ -34,13 +34,13 @@ interface ActionContext {
 
 interface Actions {
   // tslint:disable-next-line:max-line-length
-  updateTask: (context: ActionContext, obj: {name: string, priority: string, id: string, labels: [], utc: Utc}) => void
+  updateTask: (context: ActionContext, obj: {name: string, priority: string, id: string, labels: [], utc: Utc | null}) => void
   copyTask: (context: ActionContext, taskId: string) => void
   // tslint:disable-next-line:max-line-length
-  addTaskPerspective: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: Utc}) => void
+  addTaskPerspective: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: Utc | null}) => void
   // tslint:disable-next-line:max-line-length
-  addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[], utc: Utc}) => void
-  addTask: (context: ActionContext, obj: {name: string, priority: string, labels: string[], utc: Utc}) => void
+  addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[], utc: Utc | null}) => void
+  addTask: (context: ActionContext, obj: {name: string, priority: string, labels: string[], utc: Utc | null}) => void
   deleteTasksById: (context: ActionContext, ids: string[]) => void
   changePrioritysByIds: (context: ActionContext, obj: {ids: string[], priority: string}) => void
   // tslint:disable-next-line:max-line-length
@@ -95,9 +95,8 @@ export default {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('tasks').doc(id).update({
           name, priority, labels,
-          date: utc.date,
-          time: utc.time,
           lastEditDate: dt,
+          ...utc,
         })
     },
     deleteTasksById({ rootState }, ids: string[]) {
@@ -125,13 +124,12 @@ export default {
           name: task.name,
           priority: task.priority,
           userId: rootState.uid,
-          date: utc.date,
-          time: utc.time,
           creationDate: date,
           lastEditDate: date,
           labels: task.labels,
           checklist: [],
           checklistOrder: [],
+          ...utc,
         })
         const persRef = rootState.firestore.collection('perspectives').doc(perspectiveId)
         batch.update(persRef, {
@@ -150,10 +148,9 @@ export default {
           userId: rootState.uid,
           creationDate: date,
           lastEditDate: date,
-          date: utc.date,
-          time: utc.time,
           checklist: [],
           checklistOrder: [],
+          ...utc,
         })
     },
     changePrioritysByIds({ rootState }, {ids, priority}) {
@@ -187,12 +184,11 @@ export default {
           priority: task.priority,
           userId: rootState.uid,
           labels: task.labels,
-          date: utc.date,
-          time: utc.time,
           creationDate: date,
           lastEditDate: date,
           checklist: [],
           checklistOrder: [],
+          ...utc,
         })
         const persRef = rootState.firestore.collection('labels').doc(labelId)
         batch.update(persRef, {

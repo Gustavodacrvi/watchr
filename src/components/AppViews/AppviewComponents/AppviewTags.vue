@@ -25,10 +25,10 @@
       </transition-group>
     </div>
     <div class='tags'>
-      <view-tag v-for='tag in smartPers'
-        :key='tag'
-        icon='layer-group'
+      <view-tag v-for='tag in getSmartPers'
         back-color='#6b66ff'
+        icon='layer-group'
+        :key='tag'
         :name='tag'
         :fixed='false'
         @click="$emit('removesmartpers', tag)"
@@ -81,7 +81,14 @@ export default class AppviewTags extends Vue {
   @Prop(Array) smartPers!: Label[]
 
   get getLabels(): Label[] {
-    return this.labels.sort((lab1, lab2) => lab1.name.localeCompare(lab2.name))
+    if (this.labels)
+      return this.labels.sort((lab1, lab2) => lab1.name.localeCompare(lab2.name))
+    return []
+  }
+  get getSmartPers(): Label[] {
+    if (this.smartPers)
+      return this.smartPers.sort((per1, per2) => per1.name.localeCompare(per2.name))
+    return []
   }
 }
 

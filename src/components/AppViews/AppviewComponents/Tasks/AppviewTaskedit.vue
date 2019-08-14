@@ -172,8 +172,11 @@ export default class AppviewTaskedit extends Vue {
     this.value = str
   }
   enter() {
+    let utc = null
+    if (this.calendarObj)
+      utc = this.calendarObj.utc
     if (this.value)
-      this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels, utc: this.calendarObj.utc})
+      this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels, utc})
     this.value = ''
   }
   removeLabel(id: string) {
@@ -220,7 +223,7 @@ export default class AppviewTaskedit extends Vue {
         this.priority = 'Medium priority'
         this.value = v.replace(' !medium', '')
         this.value = v.replace(' !me', '')
-      } else if (v.includes(' !low') || v.includes(' !low')) {
+      } else if (v.includes(' !low') || v.includes(' !lo')) {
         this.priority = 'Low priority'
         this.value = v.replace(' !low', '')
         this.value = v.replace(' !lo', '')
