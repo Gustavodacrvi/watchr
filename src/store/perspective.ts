@@ -329,6 +329,17 @@ export default {
 
         const perspectives: any[] = [
           {
+            name: 'All tasks',
+            pin: false,
+            numberOfTasks: false,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: true,
+            alwaysShowLastEditDate: true,
+            alwaysShowCreationDate: true,
+            icon: 'tasks',
+            iconColor: '#83B7E2',
+          },
+          {
             name: 'Today',
             pin: true,
             numberOfTasks: true,
@@ -338,17 +349,6 @@ export default {
             alwaysShowCreationDate: true,
             icon: 'star',
             iconColor: '#FFE366',
-          },
-          {
-            name: 'All tasks',
-            pin: false,
-            numberOfTasks: false,
-            showWhenNotEmpty: false,
-            alwaysShowTaskLabels: true,
-            alwaysShowLastEditDate: true,
-            alwaysShowCreationDate: true,
-            icon: 'tasks',
-            iconColor: '#9CE283',
           },
           {
             name: 'Inbox',
@@ -371,7 +371,7 @@ export default {
             alwaysShowLastEditDate: true,
             alwaysShowCreationDate: true,
             icon: 'calendar-alt',
-            iconColor: '#FF6B66',
+            iconColor: '#9CE283',
           },
           {
             name: 'Next week',
@@ -382,7 +382,18 @@ export default {
             alwaysShowLastEditDate: true,
             alwaysShowCreationDate: true,
             icon: 'calendar-week',
-            iconColor: '#FF6B66',
+            iconColor: '#9CE283',
+          },
+          {
+            name: 'Next month',
+            pin: false,
+            numberOfTasks: true,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: true,
+            alwaysShowLastEditDate: true,
+            alwaysShowCreationDate: true,
+            icon: 'calendar',
+            iconColor: '#9CE283',
           },
           {
             name: 'Have tags',

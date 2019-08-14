@@ -131,7 +131,7 @@ export default class App extends Vue {
 
       /* console.log('before it')
       this.firestore.collection('perspectives').add({
-        
+
       })
       console.log('worked') */
 

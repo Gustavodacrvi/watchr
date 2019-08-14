@@ -6,7 +6,6 @@
     >
       <div class='view-wrapper background-color' :class='[platform, theme]'>
         <div class='view' :class='platform'>
-          {{getComp}}
           <transition name='fade' mode='out-in'>
             <component
               v-model='showing'
@@ -82,6 +81,7 @@ const persVuex = namespace('perspective')
     'app-upcoming': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewUpcoming.vue')),
     'app-today': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewToday.vue')),
     'app-next-week': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewNextweek.vue')),
+    'app-next-month': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewNextmonth.vue')),
     'app-have-tags': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewHavetags.vue')),
     // tslint:disable-next-line:max-line-length
     'app-doesnt-have-tags': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewDoesnthavetags.vue')),
@@ -135,6 +135,7 @@ export default class Guest extends Mixins(Mixin) {
         case 'Upcoming': return 'app-upcoming'
         case 'Today': return 'app-today'
         case 'Next week': return 'app-next-week'
+        case 'Next month': return 'app-next-month'
         case 'All tasks': return 'app-all-tasks'
         case 'Have tags': return 'app-have-tags'
         case `Doesn't have tags`: return 'app-doesnt-have-tags'
