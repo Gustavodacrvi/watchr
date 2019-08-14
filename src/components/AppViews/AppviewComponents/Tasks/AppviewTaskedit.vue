@@ -211,15 +211,19 @@ export default class AppviewTaskedit extends Vue {
   onValue() {
     let changedOptions: boolean = false
     if (this.allowPriority) {
-      if (this.value.includes(' !high')) {
+      const v = this.value
+      if (v.includes(' !high') || v.includes(' !hi')) {
         this.priority = 'High priority'
-        this.value = this.value.replace(' !high', '')
-      } else if (this.value.includes(' !medium')) {
+        this.value = v.replace(' !high', '')
+        this.value = v.replace(' !hi', '')
+      } else if (v.includes(' !medium') || v.includes(' !me')) {
         this.priority = 'Medium priority'
-        this.value = this.value.replace(' !medium', '')
-      } else if (this.value.includes(' !low')) {
+        this.value = v.replace(' !medium', '')
+        this.value = v.replace(' !me', '')
+      } else if (v.includes(' !low') || v.includes(' !low')) {
         this.priority = 'Low priority'
-        this.value = this.value.replace(' !low', '')
+        this.value = v.replace(' !low', '')
+        this.value = v.replace(' !lo', '')
       }
       const arr = this.value.split(' ')
       const lastWord = arr[arr.length - 1]
