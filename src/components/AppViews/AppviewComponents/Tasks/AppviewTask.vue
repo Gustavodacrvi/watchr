@@ -376,7 +376,7 @@ export default class AppviewTask extends Vue {
     return numbersOfFalse > 1
   }
   get showLabels(): boolean {
-    return this.alwaysShowTaskLabels || this.onHover
+    return this.taskLabels && this.taskLabels.length > 0 && (this.alwaysShowTaskLabels || this.onHover)
   }
   get showLastEditDate(): boolean {
     return this.alwaysShowLastEditDate || this.onHover

@@ -20,7 +20,7 @@
       </span>
     </div>
     <div class='el cancel-sortable-unselect dark' @click='selectNextweek'>
-      <span class='el-icon'><i class='txt fas fa-calendar-week fa-lg' style='color: #88DDB7'></i></span>
+      <span class='el-icon'><i class='txt fas fa-calendar-week fa-lg' style='color: #9CE283'></i></span>
       <span class='el-name txt dark'>Next week</span>
     </div>
     <div class='drop'>
