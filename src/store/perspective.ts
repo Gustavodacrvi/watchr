@@ -105,6 +105,7 @@ export default {
         'Next month',
         'Overdue',
         'Tomorrow',
+        'Upcoming',
       ]
       const pers = getters.sortedSmartPerspectives as any
       return pers.filter((el: Perspective) => filters.includes(el.name))

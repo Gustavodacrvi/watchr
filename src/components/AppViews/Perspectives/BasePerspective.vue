@@ -53,7 +53,7 @@
         />
         <div class='margin'></div>
       </div>
-      <task-renderer
+      <task-renderer v-if='!calendarRenderer'
         id='appnavalltasks'
         :tasks='getTasks'
         :fixed-pers='pers.name'
@@ -71,6 +71,8 @@
         @selected='onSelect'
         @add='addPersTask'
       />
+      <div v-else>
+      </div>
     </div>
     <div class='margin-task' :class='platform'></div>
   </div>
@@ -140,6 +142,7 @@ export default class PerspectiveAppview extends Vue {
   @Prop(Boolean) value!: boolean
   @Prop(Boolean) save!: boolean
   @Prop(Boolean) saveSort!: boolean
+  @Prop(Boolean) calendarRenderer!: boolean
   @Prop(String) persName!: string
   @Prop(Object) fixedTag!: object
   @Prop(Array) baseTasks!: Task[]
