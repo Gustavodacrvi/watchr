@@ -353,6 +353,17 @@ export default {
             iconColor: '#FFE366',
           },
           {
+            name: 'Tomorrow',
+            pin: false,
+            numberOfTasks: false,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: true,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: true,
+            icon: 'sun',
+            iconColor: '#FF7B66',
+          },
+          {
             name: 'Inbox',
             pin: true,
             numberOfTasks: true,
