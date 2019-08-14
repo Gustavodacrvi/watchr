@@ -360,6 +360,7 @@ export default class AppviewTask extends Vue {
     return !this.atLeastTwoInfoOptionsWontShowUp && (this.allTrue || this.showLabels)
   }
   get showDot2(): boolean {
+    // tslint:disable-next-line:max-line-length
     return !this.atLeastTwoInfoOptionsWontShowUp && (this.allTrue || !this.showLabels || !(this.showLastEditDate || this.showCreationDate))
   }
 

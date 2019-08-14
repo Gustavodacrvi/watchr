@@ -254,15 +254,16 @@ export default {
     let date = ''
     let time = ''
     if (obj.time) {
-      const utc = timezone.tz(`${obj.year}-${obj.month}-${obj.day} ${obj.time}`, 'Y-M-D HH:mm',timeZone).utc()
-      date = utc.format('Y-M-D')
-      time = utc.format('HH:mm')
+      const u = timezone.tz(`${obj.year}-${obj.month}-${obj.day} ${obj.time}`, 'Y-M-D HH:mm', timeZone).utc()
+      date = u.format('Y-M-D')
+      time = u.format('HH:mm')
     } else {
-      const utc = timezone.tz(`${obj.year}-${obj.month}-${obj.day}`, 'Y-M-D', timeZone).utc()
-      date = utc.format('Y-M-D')
+      const u = timezone.tz(`${obj.year}-${obj.month}-${obj.day}`, 'Y-M-D', timeZone).utc()
+      date = u.format('Y-M-D')
     }
     return {date, time}
   },
+  // tslint:disable-next-line:max-line-length
   parseTaskInputTime(input: string, timeFormat: '13:00' | '1:00pm', timeZone: string, nextWeek: string): TaskInputObj & {utc: {date: string, time: string}} {
     const parseDateInput = (value: string, callback: (str: string | null) => void): any => {
       const exists = value.includes(' $')
@@ -297,17 +298,17 @@ export default {
     const searchKeyWords = (str: string, obj: TaskInputObj): TaskInputObj => {
       const getNextWeek = (mom: any, firstDayOfTheWeek: string): any => {
         const f = firstDayOfTheWeek
-        const m = mom.clone()
+        const mo = mom.clone()
 
-        m.add(1, 'd')
+        mo.add(1, 'd')
         if (f !== 'Invalid date')
           while (true) {
-            if (m.format('dddd') === f) return m
-            m.add(1, 'd')
+            if (mo.format('dddd') === f) return mo
+            mo.add(1, 'd')
           }
-        else undefined
+        else return undefined
       }
-      
+
       const values = str.split(' ')
       let tod = moment()
       let m = moment(`${obj.day}-${obj.month}-${obj.year} ${obj.time}`, 'D-M-Y HH:mm')
@@ -363,7 +364,7 @@ export default {
               case 'months': tod.add(q, 'M'); inKeyword = true; break
               case 'weeks': tod.add(q, 'w'); inKeyword = true; break
               case 'years': tod.add(q, 'y'); inKeyword = true; break
-              case 'hours': tod.add(q, 'h'); inKeyword = true;inHour = true;break
+              case 'hours': tod.add(q, 'h'); inKeyword = true; inHour = true;  break
             }
         }
       if (inKeyword) m = tod
@@ -393,7 +394,7 @@ export default {
 
         const obj = searchKeyWords(str, {month, year, day, time})
         const utc = this.getUtcValuesFromTaskInputObj(obj, timeZone)
-        
+
         return {...obj, utc}
       }
     })

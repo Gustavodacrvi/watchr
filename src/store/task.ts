@@ -4,9 +4,8 @@ import { Task, Label } from '@/interfaces/app'
 import { States as RootState } from '@/store/index'
 
 import timezone from 'moment-timezone'
-import { parseTwoDigitYear, utc } from 'moment';
 
-interface Utc {
+interface UtcObj {
   time: string
   date: string
 }
@@ -34,13 +33,13 @@ interface ActionContext {
 
 interface Actions {
   // tslint:disable-next-line:max-line-length
-  updateTask: (context: ActionContext, obj: {name: string, priority: string, id: string, labels: [], utc: Utc | null}) => void
+  updateTask: (context: ActionContext, obj: {name: string, priority: string, id: string, labels: [], utc: UtcObj | null}) => void
   copyTask: (context: ActionContext, taskId: string) => void
   // tslint:disable-next-line:max-line-length
-  addTaskPerspective: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: Utc | null}) => void
+  addTaskPerspective: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: UtcObj | null}) => void
   // tslint:disable-next-line:max-line-length
-  addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[], utc: Utc | null}) => void
-  addTask: (context: ActionContext, obj: {name: string, priority: string, labels: string[], utc: Utc | null}) => void
+  addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[], utc: UtcObj | null}) => void
+  addTask: (context: ActionContext, obj: {name: string, priority: string, labels: string[], utc: UtcObj | null}) => void
   deleteTasksById: (context: ActionContext, ids: string[]) => void
   changePrioritysByIds: (context: ActionContext, obj: {ids: string[], priority: string}) => void
   // tslint:disable-next-line:max-line-length
@@ -199,8 +198,8 @@ export default {
       }
     },
     saveSubtaskOrder({ rootState }, {taskId, order}) {
-      const utc = timezone().utc()
-      const date = utc.format('Y-M-D HH:mm')
+      const u = timezone().utc()
+      const date = u.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('tasks').doc(taskId).update({
           checklistOrder: order,
@@ -208,8 +207,8 @@ export default {
         })
     },
     saveSubTask({ rootState, state }, {taskId, name, id, completed}) {
-      const utc = timezone().utc()
-      const date = utc.format('Y-M-D HH:mm')
+      const u = timezone().utc()
+      const date = u.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
         const task = state.tasks.find(el => el.id === taskId) as Task
         const i = task.checklist.findIndex(el => el.id === id) as any
@@ -223,8 +222,8 @@ export default {
       }
     },
     deleteSubTaskFromTask({ rootState, state }, {taskId, id}) {
-      const utc = timezone().utc()
-      const date = utc.format('Y-M-D HH:mm')
+      const u = timezone().utc()
+      const date = u.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
         const task = state.tasks.find(el => el.id === taskId) as Task
         let i = task.checklist.findIndex(el => el.id === id) as any
@@ -271,8 +270,8 @@ export default {
       }
     },
     copyTask({ rootState, state }, taskId) {
-      const utc = timezone().utc()
-      const date = utc.format('Y-M-D HH:mm')
+      const u = timezone().utc()
+      const date = u.format('Y-M-D HH:mm')
 
       if (rootState.firestore && rootState.uid) {
         const task = state.tasks.find(el => el.id === taskId)
@@ -294,8 +293,8 @@ export default {
       }
     },
     unCompleteSubtasks({ rootState, state }, taskId) {
-      const utc = timezone().utc()
-      const date = utc.format('Y-M-D HH:mm')
+      const u = timezone().utc()
+      const date = u.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
         const task = state.tasks.find(el => el.id === taskId)
         if (task) {
