@@ -101,6 +101,8 @@ export default {
         'Today',
         'Have tags',
         `Doesn't have tags`,
+        'Next week',
+        'Next month',
       ]
       const pers = getters.sortedSmartPerspectives as any
       return pers.filter((el: Perspective) => filters.includes(el.name))
