@@ -1,5 +1,5 @@
 <template>
-  <div class='component'>
+  <div class='component' v-if='pers'>
     <div class='header' :class='{pointer: !isDesktop}' @dblclick='toggleHide'>
       <header-title
         :value='pers.name'
@@ -53,7 +53,7 @@
         />
         <div class='margin'></div>
       </div>
-      <task-renderer
+      <task-renderer v-if='!calendarRenderer'
         id='appnavalltasks'
         :tasks='getTasks'
         :fixed-pers='pers.name'
@@ -71,6 +71,30 @@
         @selected='onSelect'
         @add='addPersTask'
       />
+      <div v-else>
+        <app-header v-for='tasks in headingsTasks'
+          :key='tasks[0].date'
+          :name='beautifyDate(tasks[0].date)'
+        >
+          <task-renderer
+            id='appnavalltasks'
+            list-type='date'
+            :date='tasks[0].date'
+            :list-has-dates='true'
+            :tasks='tasks'
+            :allow-priority='true'
+            :insert-before='true'
+            :allow-date='true'
+            :fix-adder-position='true'
+            :allow-labels='true'
+            :always-show-last-edit-date='pers.alwaysShowLastEditDate'
+            :always-show-creation-date='pers.alwaysShowCreationDate'
+            :always-show-task-labels='pers.alwaysShowTaskLabels'
+            @savenewdates='saveNewTaskDates'
+            @add='addPersTask'
+          />
+        </app-header>
+      </div>
     </div>
     <div class='margin-task' :class='platform'></div>
   </div>
@@ -87,6 +111,9 @@ import EmptyTagsRenderer from '@/components/AppViews/AppviewComponents/AppviewEm
 import AppviewHeaderIcons from '@/components/AppViews/AppviewComponents/AppviewHeadericons.vue'
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskrenderer.vue'
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
+import AppviewHeader from '@/components/AppViews/AppviewComponents/Headings/AppviewHeading.vue'
+
+import moment from 'moment-timezone'
 
 import { Perspective, Label, Task, ListIcon, Alert } from '../../../interfaces/app'
 import appUtils from '@/utils/app'
@@ -102,6 +129,7 @@ const set = namespace('settings')
     'task-renderer': AppviewTaskrenderer,
     'view-header-icons': AppviewHeaderIcons,
     'header-title': HeaderTitle,
+    'app-header': AppviewHeader,
     'empty-tag-renderer': EmptyTagsRenderer,
   },
 })
@@ -120,6 +148,7 @@ export default class PerspectiveAppview extends Vue {
   @taskVuex.Action addTaskPerspective!: (obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: any}) => void
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
+  @taskVuex.Action saveNewDateOfTasks!: (arr: Array<{id: string, date: string}>) => void
 
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
@@ -140,6 +169,7 @@ export default class PerspectiveAppview extends Vue {
   @Prop(Boolean) value!: boolean
   @Prop(Boolean) save!: boolean
   @Prop(Boolean) saveSort!: boolean
+  @Prop(Boolean) calendarRenderer!: boolean
   @Prop(String) persName!: string
   @Prop(Object) fixedTag!: object
   @Prop(Array) baseTasks!: Task[]
@@ -344,7 +374,47 @@ export default class PerspectiveAppview extends Vue {
       })
     }
   }
+  saveNewTaskDates(arr: Array<{id: string, date: string}>) {
+    this.saveNewDateOfTasks(arr)
+  }
+  beautifyDate(date: string): string {
+    const today = moment.utc().tz(this.timeZone)
+    const m = moment.utc(`${date} ${moment.utc().format('HH:mm')}`, 'Y-M-D HH:mm').tz(this.timeZone)
+    const diff = m.diff(today, 'days')
+    if (diff < 6) return m.format('dddd')
+    if (m.isSame(today, 'month')) return m.format('D')
+    if (m.isSame(today, 'year')) return m.format('dddd, D of MMMM')
+    return m.format('LL')
+  }
 
+  get headingsTasks(): Task[][] {
+    const hds = this.calendarHeadings
+    const finalArr: Task[][] = []
+    for (const date of hds) {
+      const mom = moment.utc(date, 'Y-M-D')
+      const arr: Task[] = []
+      for (const t of this.getTasks)
+        if (mom.isSame(moment.utc(t.date, 'Y-M-D')))
+          arr.push(t)
+      if (arr.length > 0) finalArr.push(arr)
+    }
+    return finalArr
+  }
+  get calendarHeadings(): string[] {
+    const tks = this.getTasks
+    const dates = new Set()
+    for (const t of tks)
+      if (!dates.has(t.date))
+        dates.add(t.date)
+    const arr: string[] = Array.from(dates)
+    arr.sort((a, b) => {
+      const ma = moment.utc(a, 'Y-M-D')
+      const mb = moment.utc(b, 'Y-M-D')
+      if (ma.isAfter(mb)) return 1
+      return -1
+    })
+    return arr
+  }
   get pers(): Perspective {
     return this.getPerspectiveByName(this.persName)
   }

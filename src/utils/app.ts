@@ -77,6 +77,16 @@ export default {
           return false
         })
       }
+      case 'Upcoming': {
+        return tasks.filter(el => {
+          if (el.date) {
+            const today = timezone.utc()
+            const saved = timezone.utc(el.date, 'Y-M-D')
+            return saved.isAfter(today, 'day')
+          }
+          return false
+        })
+      }
     }
     return tasks
   },

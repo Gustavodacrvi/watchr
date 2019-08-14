@@ -6,7 +6,10 @@
           class='margin'
           @click='showing = false'></div>
       </transition>
-      <span id='floating-btn' @click='showing = !showing'>
+      <span id='floating-btn'
+        @click='showing = !showing'
+        data-sortfrom='actionbutton'
+      >
         <span
           class='main-button'
         >
