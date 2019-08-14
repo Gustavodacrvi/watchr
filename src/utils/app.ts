@@ -67,6 +67,16 @@ export default {
           return false
         })
       }
+      case 'Overdue': {
+        return tasks.filter(el => {
+          if (el.date) {
+            const tom = timezone.utc()
+            const saved = timezone.utc(el.date, 'Y-M-D')
+            return saved.isBefore(tom, 'day')
+          }
+          return false
+        })
+      }
     }
     return tasks
   },

@@ -103,6 +103,8 @@ export default {
         `Doesn't have tags`,
         'Next week',
         'Next month',
+        'Overdue',
+        'Tomorrow',
       ]
       const pers = getters.sortedSmartPerspectives as any
       return pers.filter((el: Perspective) => filters.includes(el.name))
@@ -362,6 +364,17 @@ export default {
             alwaysShowCreationDate: true,
             icon: 'sun',
             iconColor: '#FF7B66',
+          },
+          {
+            name: 'Overdue',
+            pin: false,
+            numberOfTasks: true,
+            showWhenNotEmpty: true,
+            alwaysShowTaskLabels: true,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: true,
+            icon: 'hourglass-end',
+            iconColor: '#FF6B66',
           },
           {
             name: 'Inbox',
