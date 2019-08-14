@@ -96,13 +96,14 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       selectedClass: 'sortable-selected',
       multiDrag: true,
       dataIdAttr: 'data-sortableid',
-      group: {name: 'taskrenderer', pull: false, put: ['floatbutton']},
+      group: {name: 'taskrenderer', pull: ['taskrenderer'], put: ['floatbutton', 'taskrenderer']},
 
       onUpdate: () => {
         const ids: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
         this.$emit('update', ids)
       },
       onAdd: (evt: any) => {
+        console.log(evt)
         const Constructor = Vue.extend(TaskEditTemplate)
         const instance = new Constructor({
           created() {
