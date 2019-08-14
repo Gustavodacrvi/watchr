@@ -78,6 +78,8 @@
         >
           <task-renderer
             id='appnavalltasks'
+            list-type='date'
+            :date='tasks[0].date'
             :has-dates='true'
             :tasks='tasks'
             :allow-priority='true'
@@ -88,6 +90,7 @@
             :always-show-last-edit-date='pers.alwaysShowLastEditDate'
             :always-show-creation-date='pers.alwaysShowCreationDate'
             :always-show-task-labels='pers.alwaysShowTaskLabels'
+            @savenewdates='saveNewTaskDates'
           />
         </app-header>
       </div>
@@ -109,7 +112,7 @@ import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/Tasks/A
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 import AppviewHeader from '@/components/AppViews/AppviewComponents/Headings/AppviewHeading.vue'
 
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 import { Perspective, Label, Task, ListIcon, Alert } from '../../../interfaces/app'
 import appUtils from '@/utils/app'
@@ -144,6 +147,7 @@ export default class PerspectiveAppview extends Vue {
   @taskVuex.Action addTaskPerspective!: (obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: any}) => void
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
+  @taskVuex.Action saveNewDateOfTasks!: (arr: Array<{id: string, date: string}>) => void
 
   @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
 
@@ -369,9 +373,12 @@ export default class PerspectiveAppview extends Vue {
       })
     }
   }
+  saveNewTaskDates(arr: Array<{id: string, date: string}>) {
+    this.saveNewDateOfTasks(arr)
+  }
   beautifyDate(date: string): string {
-    const today = moment.utc()
-    const m = moment.utc(date, 'Y-M-D')
+    const today = moment.utc().tz(this.timeZone)
+    const m = moment.utc(`${date} ${moment.utc().format('HH:mm')}`, 'Y-M-D HH:mm').tz(this.timeZone)
     const diff = m.diff(today, 'days')
     if (diff < 6) return m.format('dddd')
     if (m.isSame(today, 'month')) return m.format('D')

@@ -48,6 +48,7 @@ interface Actions {
   saveSubTask: (context: ActionContext, obj: {name: string, taskId: string, completed: boolean, id: string}) => void
   saveSubtaskOrder: (context: ActionContext, obj: {taskId: string, order: string[]}) => void
   deleteSubTaskFromTask: (context: ActionContext, obj: {taskId: string, id: string}) => void
+  saveNewDateOfTasks: (context: ActionContext, arr: Array<{id: string, date: string}>) => void
   unCompleteSubtasks: (context: ActionContext, taskId: string) => void
   [key: string]: (context: ActionContext, payload: any) => any
 }
@@ -193,6 +194,23 @@ export default {
         batch.update(persRef, {
           order: ord,
         })
+
+        batch.commit()
+      }
+    },
+    saveNewDateOfTasks({ rootState }, arr) {
+      const u = timezone().utc()
+      const date = u.format('Y-M-D HH:mm')
+      if (rootState.firestore && rootState.uid) {
+        const batch = rootState.firestore.batch()
+
+        for (const o of arr) {
+          const ref = rootState.firestore.collection('tasks').doc(o.id)
+          batch.update(ref, {
+            date: o.date,
+            lastEditDate: date,
+          })
+        }
 
         batch.commit()
       }

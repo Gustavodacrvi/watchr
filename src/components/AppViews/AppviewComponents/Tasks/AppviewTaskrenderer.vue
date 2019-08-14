@@ -1,6 +1,13 @@
 <template>
   <div :class='`task-taskrenderer-${id} task-renderer`'>
-    <transition-group name='list' class='list' tag='div' :class='[theme, {isempty: tasks.length === 0}]'>
+    <transition-group
+      name='list'
+      class='list'
+      tag='div'
+      :class='[theme, {isempty: tasks.length === 0}]'
+      :data-sortfrom='listType'
+      :data-date='date'
+    >
       <view-task v-for='task in tasks'
         class='root-task'
         :key='task.id'
@@ -64,6 +71,8 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop({required: true, type: String}) id!: string
   @Prop(String) fixedPers!: string
   @Prop(String) fixedLabel!: string
+  @Prop(String) date!: string
+  @Prop(String) listType!: string
   @Prop(Array) tasks!: Task[]
   @Prop({default: false, type: Boolean}) insertBefore!: boolean
 
@@ -103,32 +112,47 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
         this.$emit('update', ids)
       },
       onAdd: (evt: any) => {
-        console.log(evt)
-        const Constructor = Vue.extend(TaskEditTemplate)
-        const instance = new Constructor({
-          created() {
-            this.$emit('enter')
-          },
-          parent: this,
-          propsData: {
-            class: 'handle', key: 'task-adder',
-            fixedPers: this.fixedPers, fixedLabel: this.fixedLabel,
-            defaultLabels: this.defaultLabels, defaultPriority: this.defaultPriority,
-            allowPriority: this.allowPriority, allowLabels: this.allowLabels, lock: true, allowDate: this.allowDate,
-          },
-        })
-        const el = this.rootComponent.querySelector('.main-button') as HTMLElement
-        el.setAttribute('id', 'main-button')
-        instance.$mount('#main-button')
-        this.rootComponent.getElementsByClassName('task-adder')[0].setAttribute('data-vid', 'task-adder')
-        this.numberOfAdders++
-        instance.$on('enter', this.add)
-        instance.$on('cancel', () => {
-          instance.$destroy()
-          const $el = instance.$el as any
-          this.numberOfAdders--
-          $el.parentNode.removeChild($el)
-        })
+        const type = evt.from.dataset.sortfrom
+        if (type === 'actionbutton') {
+          const Constructor = Vue.extend(TaskEditTemplate)
+          const instance = new Constructor({
+            created() {
+              this.$emit('enter')
+            },
+            parent: this,
+            propsData: {
+              class: 'handle', key: 'task-adder',
+              fixedPers: this.fixedPers, fixedLabel: this.fixedLabel,
+              defaultLabels: this.defaultLabels, defaultPriority: this.defaultPriority,
+              allowPriority: this.allowPriority, allowLabels: this.allowLabels, lock: true, allowDate: this.allowDate,
+            },
+          })
+          const el = this.rootComponent.querySelector('.main-button') as HTMLElement
+          el.setAttribute('id', 'main-button')
+          instance.$mount('#main-button')
+          this.rootComponent.getElementsByClassName('task-adder')[0].setAttribute('data-vid', 'task-adder')
+          this.numberOfAdders++
+          instance.$on('enter', this.add)
+          instance.$on('cancel', () => {
+            instance.$destroy()
+            const $el = instance.$el as any
+            this.numberOfAdders--
+            $el.parentNode.removeChild($el)
+          })
+
+        } else if (type === 'date' && this.allowDate) {
+          const els = evt.items
+          if (els.length === 0) {
+            els.push(evt.item)
+          }
+          const arr = []
+          for (const e of els)
+            arr.push({
+              date: evt.target.dataset.date,
+              id: e.dataset.vid,
+            })
+          this.$emit('savenewdates', arr)
+        }
       },
       onStart: () => {
         this.dragging = true
