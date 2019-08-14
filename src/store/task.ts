@@ -4,7 +4,7 @@ import { Task, Label } from '@/interfaces/app'
 import { States as RootState } from '@/store/index'
 
 import timezone from 'moment-timezone'
-import { parseTwoDigitYear } from 'moment';
+import { parseTwoDigitYear, utc } from 'moment';
 
 interface Utc {
   time: string
@@ -39,7 +39,7 @@ interface Actions {
   // tslint:disable-next-line:max-line-length
   addTaskPerspective: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: Utc}) => void
   // tslint:disable-next-line:max-line-length
-  addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[]}) => void
+  addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[], utc: Utc}) => void
   addTask: (context: ActionContext, obj: {name: string, priority: string, labels: string[], utc: Utc}) => void
   deleteTasksById: (context: ActionContext, ids: string[]) => void
   changePrioritysByIds: (context: ActionContext, obj: {ids: string[], priority: string}) => void
@@ -125,6 +125,8 @@ export default {
           name: task.name,
           priority: task.priority,
           userId: rootState.uid,
+          date: utc.date,
+          time: utc.time,
           creationDate: date,
           lastEditDate: date,
           labels: task.labels,
@@ -171,9 +173,9 @@ export default {
         batch.commit()
       }
     },
-    addTaskLabel({ rootState }, {task, labelId, order, position}) {
-      const utc = timezone().utc()
-      const date = utc.format('Y-M-D HH:mm')
+    addTaskLabel({ rootState }, {task, labelId, order, position, utc}) {
+      const u = timezone().utc()
+      const date = u.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
         const batch = rootState.firestore.batch()
 
@@ -185,6 +187,8 @@ export default {
           priority: task.priority,
           userId: rootState.uid,
           labels: task.labels,
+          date: utc.date,
+          time: utc.time,
           creationDate: date,
           lastEditDate: date,
           checklist: [],
