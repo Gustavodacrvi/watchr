@@ -79,6 +79,7 @@ const persVuex = namespace('perspective')
     'app-inbox': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewInbox.vue')),
     'app-all-tasks': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewAlltasks.vue')),
     'app-upcoming': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewUpcoming.vue')),
+    'app-overdue': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewOverdue.vue')),
     'app-today': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewToday.vue')),
     'app-tomorrow': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewTomorrow.vue')),
     'app-next-week': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewNextweek.vue')),
@@ -136,6 +137,7 @@ export default class Guest extends Mixins(Mixin) {
         case 'Upcoming': return 'app-upcoming'
         case 'Today': return 'app-today'
         case 'Tomorrow': return 'app-tomorrow'
+        case 'Overdue': return 'app-overdue'
         case 'Next week': return 'app-next-week'
         case 'Next month': return 'app-next-month'
         case 'All tasks': return 'app-all-tasks'
