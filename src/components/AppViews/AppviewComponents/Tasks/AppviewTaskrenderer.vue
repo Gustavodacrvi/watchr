@@ -66,6 +66,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop(Boolean) alwaysShowCreationDate!: boolean
   @Prop(Boolean) alwaysShowTaskLabels!: boolean
   @Prop(Boolean) allowDate!: boolean
+  @Prop(Boolean) listHasDates!: boolean
   @Prop({default: undefined, type: String}) defaultPriority!: string
   @Prop({default: undefined, type: Array}) defaultLabels!: string[]
   @Prop({required: true, type: String}) id!: string
@@ -140,7 +141,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
             $el.parentNode.removeChild($el)
           })
 
-        } else if (type === 'date' && this.allowDate) {
+        } else if (type === 'date' && this.listHasDates) {
           const els = evt.items
           if (els.length === 0) {
             els.push(evt.item)
@@ -168,10 +169,16 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     this.sortable = new Sortable(this.rootComponent, options)
   }
 
-  add(obj: {name: string, priority: string}) {
+  add(obj: {name: string, priority: string, utc: {time: string, date: string}}) {
     const els: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
     this.getTaskAdderPosition()
     const order = els.filter(el => el !== 'task-adder')
+    if (this.listHasDates) {
+      if (!obj.utc) obj['utc'] = {
+        time: '', date: '',
+      }
+      obj.utc.date = this.rootComponent.dataset.date as any
+    }
     this.$emit('add', {position: this.taskAdderPosition, order, ...obj})
     this.added = true
   }

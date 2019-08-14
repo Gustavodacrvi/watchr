@@ -80,7 +80,7 @@
             id='appnavalltasks'
             list-type='date'
             :date='tasks[0].date'
-            :has-dates='true'
+            :list-has-dates='true'
             :tasks='tasks'
             :allow-priority='true'
             :insert-before='true'
@@ -91,6 +91,7 @@
             :always-show-creation-date='pers.alwaysShowCreationDate'
             :always-show-task-labels='pers.alwaysShowTaskLabels'
             @savenewdates='saveNewTaskDates'
+            @add='addPersTask'
           />
         </app-header>
       </div>
@@ -290,6 +291,7 @@ export default class PerspectiveAppview extends Vue {
       })
   }
   addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any}) {
+    console.log(obj.position, obj.order)
     this.addTaskPerspective({
       task: {
         name: obj.name,

@@ -111,7 +111,7 @@ export default {
         batch.commit()
       }
     },
-    addTaskPerspective({ rootState }, {task, perspectiveId, order, position, utc}) {
+    addTaskPerspective({ rootState }, {task, perspectiveId, order, position}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
@@ -120,6 +120,7 @@ export default {
         const ord = order.slice()
         const ref = rootState.firestore.collection('tasks').doc()
         ord.splice(position, 0, ref.id)
+        const t = task as any
         batch.set(ref, {
           name: task.name,
           priority: task.priority,
@@ -129,7 +130,7 @@ export default {
           labels: task.labels,
           checklist: [],
           checklistOrder: [],
-          ...utc,
+          ...t.utc,
         })
         const persRef = rootState.firestore.collection('perspectives').doc(perspectiveId)
         batch.update(persRef, {
