@@ -16,6 +16,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { namespace, State } from 'vuex-class'
 
 const taskVuex = namespace('task')
+const set = namespace('settings')
 
 import BasePerspective from '@/components/AppViews/Perspectives/BasePerspective.vue'
 
@@ -28,12 +29,14 @@ import { Task } from '../../../../interfaces/app'
     'base-pers': BasePerspective,
   },
 })
-export default class ViewToday extends Vue {
+export default class ViewNextWeek extends Vue {
   @State currentAppSection!: string
 
   @taskVuex.State tasks!: Task[]
 
-  persName: string = 'Today'
+  @set.State startOfTheWeek!: string
+
+  persName: string = 'Next week'
 
   @Prop(Boolean) value!: string
 
@@ -41,7 +44,7 @@ export default class ViewToday extends Vue {
     return this.currentAppSection === 'overview'
   }
   get baseTasks() {
-    return appUtils.filterTasksBySmartPerspective(this.persName, this.tasks)
+    return appUtils.filterTasksBySmartPerspective(this.persName, this.tasks, this.startOfTheWeek)
   }
 }
 

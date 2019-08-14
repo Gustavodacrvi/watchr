@@ -46,7 +46,9 @@
 <script lang='ts'>
 
 import { Vue, Component, Watch } from 'vue-property-decorator'
-import { State, Getter, Mutation, Action } from 'vuex-class'
+import { State, Getter, Mutation, Action, namespace } from 'vuex-class'
+
+const pers = namespace('perspective')
 
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
@@ -56,6 +58,32 @@ import TheAppbar from '@/components/TheAppBar/TheAppBar.vue'
 
 import appUtils from '@/utils/app'
 import { Alert, Task, Perspective } from '@/interfaces/app'
+
+/* 
+  {
+  userId: id,
+  name: per.name,
+  numberOfTasks: per.numberOfTasks,
+  pin: per.pin,
+  sort: [],
+  icon: per.icon,
+  iconColor: per.iconColor,
+  description: '',
+  order: [],
+  showWhenNotEmpty: per.showWhenNotEmpty,
+  alwaysShowTaskLabels: per.alwaysShowTaskLabels,
+  alwaysShowLastEditDate: per.alwaysShowLastEditDate,
+  alwaysShowCreationDate: per.alwaysShowCreationDate,
+  isSmart: true,
+  priority: '',
+  excludeLabels: [],
+  excludeSmartPers: [],
+  includeAndSmartPers: [],
+  includeOrSmartPers: [],
+  includeAndLabels: [],
+  includeOrLabels: [],
+}
+ */
 
 @Component({
   components: {
@@ -93,9 +121,22 @@ export default class App extends Vue {
   @Action showLastAlert!: () => void
   @Action activateKeyShortcut!: (key: string) => void
 
+  @State firestore!: firebase.firestore.Firestore
+
   mounted() {
     window.addEventListener('keypress', this.keyPressed)
     document.body.classList.add(this.theme)
+
+    setTimeout(() => {
+
+      /* console.log('before it')
+      this.firestore.collection('perspectives').add({
+        
+      })
+      console.log('worked') */
+
+    }, 5000)
+    
   }
   beforeDestroy() {
     window.removeEventListener('keypress', this.keyPressed)
