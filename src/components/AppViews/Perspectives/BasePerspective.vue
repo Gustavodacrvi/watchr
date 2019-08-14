@@ -329,18 +329,20 @@ export default class PerspectiveAppview extends Vue {
     })
   }
   updateView() {
-    this.priority = this.pers.priority
-    if (!this.justUpdated && !this.save || this.save) {
-      this.labels = this.pers.includeAndLabels.slice()
-      this.smartPers = this.pers.includeAndSmartPers.slice()
-      this.sort = this.pers.sort.slice()
-      this.order = this.pers.order.slice()
+    if (this.pers) {
+      this.priority = this.pers.priority
+      if (!this.justUpdated && !this.save || this.save) {
+        this.labels = this.pers.includeAndLabels.slice()
+        this.smartPers = this.pers.includeAndSmartPers.slice()
+        this.sort = this.pers.sort.slice()
+        this.order = this.pers.order.slice()
+      }
+      this.justUpdated = false
+      this.pushView({
+        view: this.pers.name,
+        viewType: 'perspective',
+      })
     }
-    this.justUpdated = false
-    this.pushView({
-      view: this.pers.name,
-      viewType: 'perspective',
-    })
   }
 
   get pers(): Perspective {
