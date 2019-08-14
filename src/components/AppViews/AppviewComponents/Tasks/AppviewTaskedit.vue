@@ -130,7 +130,7 @@ export default class AppviewTaskedit extends Vue {
     {
       name: 'High priority',
       icon: 'exclamation',
-      iconColor: '#83B7E2',
+      iconColor: '#FF6B66',
       size: 'lg',
     },
     {
