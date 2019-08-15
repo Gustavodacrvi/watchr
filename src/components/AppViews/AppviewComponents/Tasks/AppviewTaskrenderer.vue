@@ -18,6 +18,7 @@
         :always-show-last-edit-date='alwaysShowLastEditDate'
         :always-show-creation-date='alwaysShowCreationDate'
         :always-show-task-labels='alwaysShowTaskLabels'
+        :fixed-pers='fixedPers'
 
         :data-vid='task.id'
 
@@ -37,7 +38,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Mixins, Watch } from 'vue-property-decorator'
-import { Getter, State } from 'vuex-class'
+import { Getter, State, Mutation } from 'vuex-class'
 import Mixin from '@/mixins/sortable'
 
 import ViewTask from '@/components/AppViews/AppviewComponents/Tasks/AppviewTask.vue'
@@ -57,6 +58,8 @@ import { Task, Label } from '../../../../interfaces/app'
 })
 export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @State theme!: string
+  @Mutation hideExtraActions!: () => void
+  @Mutation showExtraActions!: () => void
 
   @Prop(Boolean) disabled!: boolean
   @Prop(Boolean) fixAdderPosition!: boolean
@@ -68,6 +71,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop(Boolean) allowDate!: boolean
   @Prop(Boolean) listHasDates!: boolean
   @Prop({default: undefined, type: String}) defaultPriority!: string
+  @Prop({default: undefined, type: String}) defaultDate!: string
   @Prop({default: undefined, type: Array}) defaultLabels!: string[]
   @Prop({required: true, type: String}) id!: string
   @Prop(String) fixedPers!: string
@@ -106,7 +110,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       selectedClass: 'sortable-selected',
       multiDrag: true,
       dataIdAttr: 'data-sortableid',
-      group: {name: 'taskrenderer', pull: ['taskrenderer'], put: ['floatbutton', 'taskrenderer']},
+      group: {name: 'taskrenderer', pull: ['taskrenderer', 'extraaction'], put: ['floatbutton', 'taskrenderer']},
 
       onUpdate: () => {
         const ids: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
@@ -124,7 +128,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
             propsData: {
               class: 'handle', key: 'task-adder',
               fixedPers: this.fixedPers, fixedLabel: this.fixedLabel,
-              defaultLabels: this.defaultLabels, defaultPriority: this.defaultPriority,
+              defaultLabels: this.defaultLabels, defaultPriority: this.defaultPriority, defaultDate: this.defaultDate,
               allowPriority: this.allowPriority, allowLabels: this.allowLabels, lock: true, allowDate: this.allowDate,
             },
           })
@@ -156,9 +160,11 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       },
       onStart: () => {
         this.dragging = true
+        this.showExtraActions()
       },
       onEnd: () => {
         this.dragging = false
+        this.hideExtraActions()
       },
     }
 

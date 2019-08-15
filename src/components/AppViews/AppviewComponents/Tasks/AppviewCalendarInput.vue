@@ -13,7 +13,7 @@
       </span>
     </div>
     <div class='el cancel-sortable-unselect dark' @click='selectTomorrow'>
-      <span class='el-icon'><i class='txt fas fa-sun fa-lg' style='color: #FF7B66'></i></span>
+      <span class='el-icon'><i class='txt fas fa-sun fa-lg' style='color: #ffa166'></i></span>
       <span class='el-name txt dark'>
         <span>Tomorrow</span>
         <span class='fade'>{{ weekDayFromTomorrow() }}</span>
@@ -137,7 +137,7 @@ export default class CalendarInput extends Vue {
       ...obj, utc,
       parsed: appUtils.parseTaskInputObjectToString({
         ...obj,
-      }, this.timeFormat),
+      }, this.timeFormat, this.timeZone),
     })
   }
   nextMonth() {

@@ -59,32 +59,6 @@ import TheAppbar from '@/components/TheAppBar/TheAppBar.vue'
 import appUtils from '@/utils/app'
 import { Alert, Task, Perspective } from '@/interfaces/app'
 
-/* 
-  {
-  userId: id,
-  name: per.name,
-  numberOfTasks: per.numberOfTasks,
-  pin: per.pin,
-  sort: [],
-  icon: per.icon,
-  iconColor: per.iconColor,
-  description: '',
-  order: [],
-  showWhenNotEmpty: per.showWhenNotEmpty,
-  alwaysShowTaskLabels: per.alwaysShowTaskLabels,
-  alwaysShowLastEditDate: per.alwaysShowLastEditDate,
-  alwaysShowCreationDate: per.alwaysShowCreationDate,
-  isSmart: true,
-  priority: '',
-  excludeLabels: [],
-  excludeSmartPers: [],
-  includeAndSmartPers: [],
-  includeOrSmartPers: [],
-  includeAndLabels: [],
-  includeOrLabels: [],
-}
- */
-
 @Component({
   components: {
     'loading-component': LoadingComponent,
@@ -126,17 +100,6 @@ export default class App extends Vue {
   mounted() {
     window.addEventListener('keypress', this.keyPressed)
     document.body.classList.add(this.theme)
-
-    setTimeout(() => {
-
-      /* console.log('before it')
-      this.firestore.collection('perspectives').add({
-
-      })
-      console.log('worked') */
-
-    }, 5000)
-    
   }
   beforeDestroy() {
     window.removeEventListener('keypress', this.keyPressed)

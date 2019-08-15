@@ -364,11 +364,11 @@ export default {
             alwaysShowLastEditDate: false,
             alwaysShowCreationDate: true,
             icon: 'sun',
-            iconColor: '#FF7B66',
+            iconColor: '#ffa166',
           },
           {
             name: 'Overdue',
-            pin: false,
+            pin: true,
             numberOfTasks: true,
             showWhenNotEmpty: true,
             alwaysShowTaskLabels: true,

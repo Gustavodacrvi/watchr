@@ -454,8 +454,15 @@ export default {
       }
     })
   },
-  parseTaskInputObjectToString(obj: TaskInputObj | undefined, timeFormat: '13:00' | '1:00pm'): string {
-    if (obj) {
+  // tslint:disable-next-line:max-line-length
+  parseTaskInputObjectToString(obj: TaskInputObj | undefined, timeFormat: '13:00' | '1:00pm', timeZone: string): string {
+    if (obj && timeZone && timeFormat) {
+      const today = timezone.utc().tz(timeZone)
+      const typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day}`, 'Y-M-D', timeZone)
+      if (today.isSame(typed, 'day')) return 'Today'
+      today.add(1, 'd')
+      if (today.isSame(typed, 'day')) return 'Tomorrow'
+
       let str = `${moment().month(obj.month - 1).format('MMMM')} ${obj.day}, ${obj.year}`
 
       let time = obj.time
@@ -464,6 +471,7 @@ export default {
           time = moment(time, 'HH:mm').format('hh:mm a')
         str += ` at ${obj.time}`
       }
+      str += ', ' + typed.format('dddd')
 
       return str
     }

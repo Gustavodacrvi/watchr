@@ -23,7 +23,7 @@ import { CenteredCard } from '../../../../store'
 })
 export default class CalendarInputIcon extends Vue {
   @State theme!: string
-  @Mutation pushCenteredCard!: (card: CenteredCard) => void
+  @Mutation pushCenteredCard!: (card: CenteredCard | null) => void
   @Getter isDesktop!: boolean
 
   showing: boolean = false
@@ -38,7 +38,9 @@ export default class CalendarInputIcon extends Vue {
         flexBasis: '275px',
         listIcons: [],
         compName: 'CalendarInput',
-        listIconHandler: (e: any) => {console.log(e)},
+        listIconHandler: (e: any) => {
+          this.select(e)
+        },
       })
   }
 }

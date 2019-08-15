@@ -14,7 +14,7 @@
           :pers-name='pers.name'
           :show-task-options='selected && selected.length > 0'
           :allow-search='true'
-          :allow-settings='true'
+          :allow-settings='!calendarRenderer'
           :allow-labels='allowLabels'
           :allow-smart-perspectives='true'
           :allow-priority='true'
@@ -39,7 +39,7 @@
         <p v-if='pers.description' class='description txt' :class='theme'>
           {{ pers.description }}
         </p>
-        <div class='margin'></div>
+        <div v-if='pers.description' class='margin'></div>
         <view-tags
           :fixed-tag='fixedTag'
           :search='search'
@@ -59,6 +59,7 @@
         :fixed-pers='pers.name'
         :default-priority='getPriority'
         :default-labels='defaultLabels'
+        :default-date='defaultDate'
         :allow-priority='true'
         :allow-date='allowDate'
         :fix-adder-position='sort.length === 0'
@@ -72,28 +73,36 @@
         @add='addPersTask'
       />
       <div v-else>
-        <app-header v-for='tasks in headingsTasks'
-          :key='tasks[0].date'
-          :name='beautifyDate(tasks[0].date)'
-        >
-          <task-renderer
-            id='appnavalltasks'
-            list-type='date'
-            :date='tasks[0].date'
-            :list-has-dates='true'
-            :tasks='tasks'
-            :allow-priority='true'
-            :insert-before='true'
-            :allow-date='true'
-            :fix-adder-position='true'
-            :allow-labels='true'
-            :always-show-last-edit-date='pers.alwaysShowLastEditDate'
-            :always-show-creation-date='pers.alwaysShowCreationDate'
-            :always-show-task-labels='pers.alwaysShowTaskLabels'
-            @savenewdates='saveNewTaskDates'
-            @add='addPersTask'
-          />
-        </app-header>
+        <template v-if='headingsTasks.length > 0'>
+          <app-header v-for='tasks in headingsTasks'
+            :key='tasks[0].date'
+            :obj='beautifyDate(tasks[0].date)'
+          >
+            <task-renderer
+              id='appnavalltasks'
+              list-type='date'
+              :date='tasks[0].date'
+              :list-has-dates='true'
+              :tasks='tasks'
+              :default-priority='getPriority'
+              :default-labels='defaultLabels'
+              :default-date='defaultDate'
+              :allow-priority='true'
+              :insert-before='true'
+              :allow-date='true'
+              :fix-adder-position='true'
+              :allow-labels='true'
+              :always-show-last-edit-date='pers.alwaysShowLastEditDate'
+              :always-show-creation-date='pers.alwaysShowCreationDate'
+              :always-show-task-labels='pers.alwaysShowTaskLabels'
+              @savenewdates='saveNewTaskDates'
+              @add='addPersTask'
+            />
+          </app-header>
+        </template>
+        <div v-else class='headings-error gray round-border' :class='theme'>
+          <span class='txt' :class='theme'>You have no upcoming tasks!</span>
+        </div>
       </div>
     </div>
     <div class='margin-task' :class='platform'></div>
@@ -377,14 +386,31 @@ export default class PerspectiveAppview extends Vue {
   saveNewTaskDates(arr: Array<{id: string, date: string}>) {
     this.saveNewDateOfTasks(arr)
   }
-  beautifyDate(date: string): string {
+  beautifyDate(date: string): {name: string, faded?: string} {
     const today = moment.utc().tz(this.timeZone)
     const m = moment.utc(`${date} ${moment.utc().format('HH:mm')}`, 'Y-M-D HH:mm').tz(this.timeZone)
     const diff = m.diff(today, 'days')
-    if (diff < 6) return m.format('dddd')
-    if (m.isSame(today, 'month')) return m.format('D')
-    if (m.isSame(today, 'year')) return m.format('dddd, D of MMMM')
-    return m.format('LL')
+
+    let name!: string
+    let faded!: string
+    const week = m.format('dddd')
+    
+    if (diff === 0) name = 'Tomorrow'
+    else if (diff < 6) {
+      name = week
+      faded = m.format('D')
+    } else if (m.isSame(today, 'month')) {
+      name = m.format('D')
+      faded = week
+    } else if (m.isSame(today, 'year')) {
+      name = m.format('D of MMMM')
+      faded = week
+    } else {
+      name = m.format('LL')
+      faded = week
+    }
+
+    return {name, faded}
   }
 
   get headingsTasks(): Task[][] {
@@ -406,7 +432,7 @@ export default class PerspectiveAppview extends Vue {
     for (const t of tks)
       if (!dates.has(t.date))
         dates.add(t.date)
-    const arr: string[] = Array.from(dates)
+    const arr: string[] = Array.from(dates) as any
     arr.sort((a, b) => {
       const ma = moment.utc(a, 'Y-M-D')
       const mb = moment.utc(b, 'Y-M-D')
@@ -460,6 +486,14 @@ export default class PerspectiveAppview extends Vue {
       return this.labels
     return this.pers.includeAndLabels
   }
+  get defaultDate(): string | undefined {
+    if (!this.pers) return undefined
+    if (this.pers.name === 'Today')
+      return moment.utc().format('Y-M-D')
+    if (this.pers.name === 'Tomorrow')
+      return moment.utc().add(1, 'd').format('Y-M-D')
+    return undefined
+  }
 
   @Watch('selected')
   onChange() {
@@ -488,6 +522,13 @@ export default class PerspectiveAppview extends Vue {
 
 .header {
   height: 30px;
+}
+
+.headings-error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 275px;
 }
 
 </style>

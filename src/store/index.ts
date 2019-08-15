@@ -29,6 +29,7 @@ export interface States {
   theme: string
   popUpComponent: string
   windowWidth: number
+  showingExtraActions: boolean
   popUpPayload: any | SimpleAdder
   appBarState: boolean
   firestore: firebase.firestore.Firestore | null
@@ -57,6 +58,8 @@ interface Mutations {
   pushPopUpPayload: (state: States, payload: any) => void
   saveCurrentUser: (state: States, user: firebase.User) => void
   saveFirestore: (state: States, firestore: firebase.firestore.Firestore) => void
+  hideExtraActions: (state: States) => void
+  showExtraActions: (state: States) => void
   pushCenteredCard: (state: States, centeredCardPopUp: CenteredCard | null) => void
   openSection: (state: States, currentAppSection: string) => void
   saveFirebase: (state: States, firebase: any) => void
@@ -107,6 +110,7 @@ const store: any = new Vuex.Store({
   state: {
     theme: savedTheme,
     popUpComponent: '',
+    showingExtraActions: false,
     popUpPayload: null,
     navBarTitle: '',
     windowWidth: document.body.clientWidth,
@@ -129,6 +133,12 @@ const store: any = new Vuex.Store({
     alert: undefined,
   } as States,
   mutations: {
+    hideExtraActions(state: States) {
+      state.showingExtraActions = false
+    },
+    showExtraActions(state: States) {
+      state.showingExtraActions = true
+    },
     openSection(state: States, currentAppSection: string) {
       state.currentAppSection = currentAppSection
     },
