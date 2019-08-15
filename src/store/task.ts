@@ -303,6 +303,8 @@ export default {
             labels: task.labels,
             creationDate: date,
             lastEditDate: date,
+            date: task.date,
+            time: task.time,
             name: task.name,
             priority: task.priority,
             userId: task.userId,
