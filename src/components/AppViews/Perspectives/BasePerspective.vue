@@ -14,7 +14,7 @@
           :pers-name='pers.name'
           :show-task-options='selected && selected.length > 0'
           :allow-search='true'
-          :allow-settings='true'
+          :allow-settings='!calendarRenderer'
           :allow-labels='allowLabels'
           :allow-smart-perspectives='true'
           :allow-priority='true'
