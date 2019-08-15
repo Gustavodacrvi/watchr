@@ -114,6 +114,7 @@ export default class AppviewTaskedit extends Vue {
   @Prop(String) fixedLabel!: string
   @Prop(String) input!: string
   @Prop(String) defaultPriority!: string
+  @Prop(String) defaultDate!: string
   @Prop(Array) defaultLabels!: string[]
   @Prop(String) inputTheme!: string
   @Prop(String) date!: string | null
@@ -159,7 +160,9 @@ export default class AppviewTaskedit extends Vue {
       this.priority = this.defaultPriority as any
     if (this.defaultValue)
       this.value = this.defaultValue
-    this.updateCalendarObj()
+    if (this.defaultDate)
+      this.updateCalendarObj(this.defaultDate)
+    else this.updateCalendarObj(this.date)
   }
   mounted() {
     const el = document.querySelectorAll('.taskedit')[0] as any
@@ -205,12 +208,12 @@ export default class AppviewTaskedit extends Vue {
     this.calendarString = obj.parsed
     this.calendarObj = obj
   }
-  updateCalendarObj() {
-    if (this.date) {
+  updateCalendarObj(date: string | null) {
+    if (date) {
       let saved!: any
       if (!this.time)
-        saved = moment.tz(`${this.date}`, 'Y-M-D', this.timeZone)
-      else saved = moment.tz(`${this.date} ${this.time}`, this.timeZone)
+        saved = moment.tz(`${date}`, 'Y-M-D', this.timeZone)
+      else saved = moment.tz(`${date} ${this.time}`, this.timeZone)
       this.calendarObj = {
         day: saved.format('D'),
         month: saved.format('M'),

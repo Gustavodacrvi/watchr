@@ -59,6 +59,7 @@
         :fixed-pers='pers.name'
         :default-priority='getPriority'
         :default-labels='defaultLabels'
+        :default-date='defaultDate'
         :allow-priority='true'
         :allow-date='allowDate'
         :fix-adder-position='sort.length === 0'
@@ -83,6 +84,9 @@
               :date='tasks[0].date'
               :list-has-dates='true'
               :tasks='tasks'
+              :default-priority='getPriority'
+              :default-labels='defaultLabels'
+              :default-date='defaultDate'
               :allow-priority='true'
               :insert-before='true'
               :allow-date='true'
@@ -484,6 +488,14 @@ export default class PerspectiveAppview extends Vue {
     if (!this.save)
       return this.labels
     return this.pers.includeAndLabels
+  }
+  get defaultDate(): string | undefined {
+    if (!this.pers) return undefined
+    if (this.pers.name === 'Today')
+      return moment.utc().format('Y-M-D')
+    if (this.pers.name === 'Tomorrow')
+      return moment.utc().add(1, 'd').format('Y-M-D')
+    return undefined
   }
 
   @Watch('selected')

@@ -69,6 +69,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop(Boolean) allowDate!: boolean
   @Prop(Boolean) listHasDates!: boolean
   @Prop({default: undefined, type: String}) defaultPriority!: string
+  @Prop({default: undefined, type: String}) defaultDate!: string
   @Prop({default: undefined, type: Array}) defaultLabels!: string[]
   @Prop({required: true, type: String}) id!: string
   @Prop(String) fixedPers!: string
@@ -125,7 +126,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
             propsData: {
               class: 'handle', key: 'task-adder',
               fixedPers: this.fixedPers, fixedLabel: this.fixedLabel,
-              defaultLabels: this.defaultLabels, defaultPriority: this.defaultPriority,
+              defaultLabels: this.defaultLabels, defaultPriority: this.defaultPriority, defaultDate: this.defaultDate,
               allowPriority: this.allowPriority, allowLabels: this.allowLabels, lock: true, allowDate: this.allowDate,
             },
           })
