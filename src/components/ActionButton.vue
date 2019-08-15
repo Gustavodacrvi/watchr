@@ -1,5 +1,5 @@
 <template>
-  <div class='wrapper'>
+  <div class='wrapper actions-button-wrapper'>
     <div class='relative-wrapper action-comp'>
       <transition name='fade'>
         <div v-if='showing'
@@ -13,23 +13,25 @@
         <span
           class='main-button'
         >
-            <span class='txt'>{{showingExtraActions}}</span>
-
           <i class='icon txt pointer fas fa-plus' :style="{color: 'white'}"></i>
           <span class='txt msg' :class='theme'>Add task</span>
         </span>
       </span>
       <transition name='below-trans'>
-        <div v-if='showing'
+        <div v-show='showingExtraActions'
           class='left-wrapper' 
         >
-          <span v-for='btn in leftButtons'
+          <span id='today-btn'
             class='btn left floating-btn'
-            :key='btn.icon'
-            :style='`background-color: ${btn.backColor}`'
-            @click='btn.click'
+            style='background-color: #FFE366'
           >
-            <i :class='`icon txt pointer fas fa-${btn.icon}`' :style='{color: btn.iconColor}'></i>
+            <i class='icon txt pointer fas fa-star' style='color: white'></i>
+          </span>
+          <span id='tomorrow-btn'
+            class='btn left floating-btn'
+            style='background-color: #ffa166'
+          >
+            <i class='icon txt pointer fas fa-sun' style='color: white'></i>
           </span>
         </div>
       </transition>
@@ -53,9 +55,13 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { Mutation, State } from 'vuex-class'
+import { Mutation, State, namespace } from 'vuex-class'
+
+const task = namespace('task')
 
 import { FloatingButton } from '@/interfaces/app'
+
+import moment from 'moment-timezone'
 
 import Sortable from 'sortablejs'
 
@@ -65,8 +71,8 @@ export default class ActionButtonComp extends Vue {
   @State showingExtraActions!: boolean
   @Mutation pushPopUp!: (compName: string) => void
 
-  leftButtons: FloatingButton[] = [
-  ]
+  @task.Action saveNewDateOfTasks!: (arr: Array<{id: string, date: string}>) => void
+
   topButtons: FloatingButton[] = [
     {icon: 'bolt', iconColor: 'white', backColor: '#FFE366', click: this.popUp('TaskadderPopup')},
     {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: this.popUp('LabeladderPopup')},
@@ -78,12 +84,53 @@ export default class ActionButtonComp extends Vue {
     this.mount()
   }
 
+  getIds(evt: any): string[] {
+    const els = evt.items
+    if (els.length === 0)
+      els.push(evt.item)
+    const arr = []
+    for (const e of els)
+      arr.push(e.dataset.vid)
+    return arr
+  }
   mount() {
     const el = document.getElementById('floating-btn')
     const sort = new Sortable(el, {
       disabled: false,
       group: {name: 'floatbutton', pull: 'clone', put: false},
       animation: 150,
+    })
+    const tod = document.getElementById('today-btn')
+    const today = new Sortable(tod, {
+      disabled: false,
+      group: {name: 'extraaction', pull: false, put: ['taskrenderer']},
+      animation: 150,
+
+      onAdd: (evt: any) => {
+        const arr = []
+        const ids = this.getIds(evt)
+        for (const id of ids)
+          arr.push({
+            id, date: moment.utc().format('Y-M-D'),
+          })
+        this.saveNewDateOfTasks(arr)
+      },
+    })
+    const tom = document.getElementById('tomorrow-btn')
+    const tomorrow = new Sortable(tom, {
+      disabled: false,
+      group: {name: 'extraaction', pull: false, put: ['taskrenderer']},
+      animation: 150,
+
+      onAdd: (evt: any) => {
+        const arr = []
+        const ids = this.getIds(evt)
+        for (const id of ids)
+          arr.push({
+            id, date: moment.utc().add(1, 'd').format('Y-M-D'),
+          })
+        this.saveNewDateOfTasks(arr)
+      },
     })
   }
   popUp(compName: string): () => void {
@@ -94,6 +141,14 @@ export default class ActionButtonComp extends Vue {
 }
 
 </script>
+
+<style>
+
+.actions-button-wrapper .root-task {
+  display: none;
+}
+
+</style>
 
 <style scoped>
 
@@ -160,6 +215,11 @@ export default class ActionButtonComp extends Vue {
 
 .floating-btn:hover {
   transform: scale(1.05, 1.05);
+  filter: brightness(1.1);
+}
+
+.btn.left.hover {
+  transform: scale(1.1,1.1);
   filter: brightness(1.1);
 }
 

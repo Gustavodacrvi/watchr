@@ -100,7 +100,7 @@
             />
           </app-header>
         </template>
-        <div class='headings-error gray round-border' :class='theme'>
+        <div v-else class='headings-error gray round-border' :class='theme'>
           <span class='txt' :class='theme'>You have no upcoming tasks!</span>
         </div>
       </div>
