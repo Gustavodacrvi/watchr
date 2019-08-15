@@ -436,7 +436,7 @@ export default class AppviewTask extends Vue {
   }
   get time(): string | null {
     if (!(this.task.date && this.task.time)) return null
-    
+
     const now = moment.utc().tz(this.timeZone)
     const saved = moment.tz(`${this.task.date} ${this.task.time}`, 'Y-M-D HH:mm', this.timeZone)
     return ' at ' + saved.format(this.timeFormat)

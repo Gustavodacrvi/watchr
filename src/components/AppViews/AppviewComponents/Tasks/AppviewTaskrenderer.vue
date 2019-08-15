@@ -110,7 +110,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       selectedClass: 'sortable-selected',
       multiDrag: true,
       dataIdAttr: 'data-sortableid',
-      group: {name: 'taskrenderer', pull: ['taskrenderer','extraaction'], put: ['floatbutton', 'taskrenderer']},
+      group: {name: 'taskrenderer', pull: ['taskrenderer', 'extraaction'], put: ['floatbutton', 'taskrenderer']},
 
       onUpdate: () => {
         const ids: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')

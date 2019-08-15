@@ -185,7 +185,7 @@ export default class AppviewTaskedit extends Vue {
     if (this.calendarObj)
       utc = this.calendarObj.utc
     if (this.stringToReplaceOnAdd)
-      this.value = this.value.replace(this.stringToReplaceOnAdd, '')    
+      this.value = this.value.replace(this.stringToReplaceOnAdd, '')
     if (this.value)
       this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels, utc})
     this.value = ''

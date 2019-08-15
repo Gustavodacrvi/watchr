@@ -8,7 +8,8 @@ import { Component, Vue } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
 
 import CalendarInputComp from '@/components/AppViews/AppviewComponents/Tasks/AppviewCalendarInput.vue'
-import { CenteredCard } from '../../store';
+
+import { CenteredCard } from '../../store'
 
 @Component({
   components: {
@@ -22,7 +23,7 @@ export default class CenteredCardCalendarInput extends Vue {
   select(obj: any) {
     if (this.card) {
       this.card.listIconHandler(obj)
-      this.pushCenteredCard(null) 
+      this.pushCenteredCard(null)
     }
   }
 }

@@ -399,16 +399,13 @@ export default class PerspectiveAppview extends Vue {
     else if (diff < 6) {
       name = week
       faded = m.format('D')
-    }
-    else if (m.isSame(today, 'month')) {
+    } else if (m.isSame(today, 'month')) {
       name = m.format('D')
       faded = week
-    }
-    else if (m.isSame(today, 'year')) {
+    } else if (m.isSame(today, 'year')) {
       name = m.format('D of MMMM')
       faded = week
-    }
-    else {
+    } else {
       name = m.format('LL')
       faded = week
     }

@@ -454,6 +454,7 @@ export default {
       }
     })
   },
+  // tslint:disable-next-line:max-line-length
   parseTaskInputObjectToString(obj: TaskInputObj | undefined, timeFormat: '13:00' | '1:00pm', timeZone: string): string {
     if (obj && timeZone && timeFormat) {
       const today = timezone.utc().tz(timeZone)
@@ -461,7 +462,7 @@ export default {
       if (today.isSame(typed, 'day')) return 'Today'
       today.add(1, 'd')
       if (today.isSame(typed, 'day')) return 'Tomorrow'
-      
+
       let str = `${moment().month(obj.month - 1).format('MMMM')} ${obj.day}, ${obj.year}`
 
       let time = obj.time
