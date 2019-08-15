@@ -72,28 +72,33 @@
         @add='addPersTask'
       />
       <div v-else>
-        <app-header v-for='tasks in headingsTasks'
-          :key='tasks[0].date'
-          :obj='beautifyDate(tasks[0].date)'
-        >
-          <task-renderer
-            id='appnavalltasks'
-            list-type='date'
-            :date='tasks[0].date'
-            :list-has-dates='true'
-            :tasks='tasks'
-            :allow-priority='true'
-            :insert-before='true'
-            :allow-date='true'
-            :fix-adder-position='true'
-            :allow-labels='true'
-            :always-show-last-edit-date='pers.alwaysShowLastEditDate'
-            :always-show-creation-date='pers.alwaysShowCreationDate'
-            :always-show-task-labels='pers.alwaysShowTaskLabels'
-            @savenewdates='saveNewTaskDates'
-            @add='addPersTask'
-          />
-        </app-header>
+        <template v-if='headingsTasks.length > 0'>
+          <app-header v-for='tasks in headingsTasks'
+            :key='tasks[0].date'
+            :obj='beautifyDate(tasks[0].date)'
+          >
+            <task-renderer
+              id='appnavalltasks'
+              list-type='date'
+              :date='tasks[0].date'
+              :list-has-dates='true'
+              :tasks='tasks'
+              :allow-priority='true'
+              :insert-before='true'
+              :allow-date='true'
+              :fix-adder-position='true'
+              :allow-labels='true'
+              :always-show-last-edit-date='pers.alwaysShowLastEditDate'
+              :always-show-creation-date='pers.alwaysShowCreationDate'
+              :always-show-task-labels='pers.alwaysShowTaskLabels'
+              @savenewdates='saveNewTaskDates'
+              @add='addPersTask'
+            />
+          </app-header>
+        </template>
+        <div class='headings-error gray round-border' :class='theme'>
+          <span class='txt' :class='theme'>You have no upcoming tasks!</span>
+        </div>
       </div>
     </div>
     <div class='margin-task' :class='platform'></div>
@@ -508,6 +513,13 @@ export default class PerspectiveAppview extends Vue {
 
 .header {
   height: 30px;
+}
+
+.headings-error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 275px;
 }
 
 </style>
