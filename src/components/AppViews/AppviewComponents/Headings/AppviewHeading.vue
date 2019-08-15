@@ -1,7 +1,8 @@
 <template>
   <div class='heading-wrapper'>
     <div class='header' :class='theme' @click='showing = !showing'>
-      <span class='txt' :class='theme'>{{name}}</span>
+      <span class='txt' :class='theme'>{{ obj.name }}</span>
+      <span v-if='obj.faded' class='txt faded' :class='theme'>{{ obj.faded }}</span>
     </div>
     <transition name='fade'>
       <div v-if='showing' class='content'>
@@ -20,7 +21,7 @@ import { State } from 'vuex-class'
 export default class AppviewHeading extends Vue {
   @State theme!: string
 
-  @Prop(String) name!: string
+  @Prop(Object) obj!: {name: string, faded?: string}
 
   showing: boolean = true
 }
@@ -49,6 +50,12 @@ export default class AppviewHeading extends Vue {
 
 .heading-wrapper + .heading-wrapper {
   margin-top: 45px;
+}
+
+.faded {
+  margin-left: 10px;
+  font-size: .8em;
+  opacity: .6;
 }
 
 </style>

@@ -39,7 +39,7 @@
         <p v-if='pers.description' class='description txt' :class='theme'>
           {{ pers.description }}
         </p>
-        <div class='margin'></div>
+        <div v-if='pers.description' class='margin'></div>
         <view-tags
           :fixed-tag='fixedTag'
           :search='search'
@@ -74,7 +74,7 @@
       <div v-else>
         <app-header v-for='tasks in headingsTasks'
           :key='tasks[0].date'
-          :name='beautifyDate(tasks[0].date)'
+          :obj='beautifyDate(tasks[0].date)'
         >
           <task-renderer
             id='appnavalltasks'
@@ -377,14 +377,34 @@ export default class PerspectiveAppview extends Vue {
   saveNewTaskDates(arr: Array<{id: string, date: string}>) {
     this.saveNewDateOfTasks(arr)
   }
-  beautifyDate(date: string): string {
+  beautifyDate(date: string): {name: string, faded?: string} {
     const today = moment.utc().tz(this.timeZone)
     const m = moment.utc(`${date} ${moment.utc().format('HH:mm')}`, 'Y-M-D HH:mm').tz(this.timeZone)
     const diff = m.diff(today, 'days')
-    if (diff < 6) return m.format('dddd')
-    if (m.isSame(today, 'month')) return m.format('D')
-    if (m.isSame(today, 'year')) return m.format('dddd, D of MMMM')
-    return m.format('LL')
+
+    let name!: string
+    let faded!: string
+    const week = m.format('dddd')
+    
+    if (diff === 0) name = 'Tomorrow'
+    else if (diff < 6) {
+      name = week
+      faded = m.format('D')
+    }
+    else if (m.isSame(today, 'month')) {
+      name = m.format('D')
+      faded = week
+    }
+    else if (m.isSame(today, 'year')) {
+      name = m.format('D of MMMM')
+      faded = week
+    }
+    else {
+      name = m.format('LL')
+      faded = week
+    }
+
+    return {name, faded}
   }
 
   get headingsTasks(): Task[][] {
@@ -406,7 +426,7 @@ export default class PerspectiveAppview extends Vue {
     for (const t of tks)
       if (!dates.has(t.date))
         dates.add(t.date)
-    const arr: string[] = Array.from(dates)
+    const arr: string[] = Array.from(dates) as any
     arr.sort((a, b) => {
       const ma = moment.utc(a, 'Y-M-D')
       const mb = moment.utc(b, 'Y-M-D')
