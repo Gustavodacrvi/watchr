@@ -364,7 +364,7 @@ export default {
             alwaysShowLastEditDate: false,
             alwaysShowCreationDate: true,
             icon: 'sun',
-            iconColor: '#FF7B66',
+            iconColor: '#ffa166',
           },
           {
             name: 'Overdue',

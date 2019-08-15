@@ -82,6 +82,8 @@ import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFind
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
 import CalendarInput from '@/components/AppViews/AppviewComponents/Tasks/AppviewCalendarInputIcon.vue'
 
+import moment from 'moment-timezone'
+
 import appUtils from '@/utils/app'
 
 @Component({
@@ -114,6 +116,8 @@ export default class AppviewTaskedit extends Vue {
   @Prop(String) defaultPriority!: string
   @Prop(Array) defaultLabels!: string[]
   @Prop(String) inputTheme!: string
+  @Prop(String) date!: string | null
+  @Prop(String) time!: string | null
   @Prop(Boolean) allowPriority!: boolean
   @Prop(Boolean) allowLabels!: boolean
   @Prop(Boolean) allowDate!: boolean
@@ -121,9 +125,10 @@ export default class AppviewTaskedit extends Vue {
 
   value: string = ''
   optionsType: string = ''
+  calendarString: string = ''
+  stringToReplaceOnAdd: string = ''
   priority: '' | 'Low priority' | 'High priority' | 'Medium priority' = ''
   labels: string[] = []
-  calendarString: string = ''
   calendarObj: any = null
   options: string[] = []
   priorityIcons: ListIcon[] = [
@@ -154,6 +159,7 @@ export default class AppviewTaskedit extends Vue {
       this.priority = this.defaultPriority as any
     if (this.defaultValue)
       this.value = this.defaultValue
+    this.updateCalendarObj()
   }
   mounted() {
     const el = document.querySelectorAll('.taskedit')[0] as any
@@ -175,6 +181,8 @@ export default class AppviewTaskedit extends Vue {
     let utc = null
     if (this.calendarObj)
       utc = this.calendarObj.utc
+    if (this.stringToReplaceOnAdd)
+      this.value = this.value.replace(this.stringToReplaceOnAdd, '')    
     if (this.value)
       this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels, utc})
     this.value = ''
@@ -196,6 +204,21 @@ export default class AppviewTaskedit extends Vue {
   getDate(obj: any) {
     this.calendarString = obj.parsed
     this.calendarObj = obj
+  }
+  updateCalendarObj() {
+    if (this.date) {
+      let saved!: any
+      if (!this.time)
+        saved = moment.tz(`${this.date}`, 'Y-M-D', this.timeZone)
+      else saved = moment.tz(`${this.date} ${this.time}`, this.timeZone)
+      this.calendarObj = {
+        day: saved.format('D'),
+        month: saved.format('M'),
+        year: saved.format('Y'),
+      }
+      if (this.time) this.calendarObj['time'] = saved.format('HH:mm')
+      this.calendarString = appUtils.parseTaskInputObjectToString(this.calendarObj, this.timeFormat, this.timeZone)
+    }
   }
 
   get getLabels(): Label[] {
@@ -267,10 +290,11 @@ export default class AppviewTaskedit extends Vue {
     if (this.allowDate)
       if (this.value.includes(' $')) {
         const obj = appUtils.parseTaskInputTime(this.value, this.timeFormat, this.timeZone, this.nextWeek)
-        const str = appUtils.parseTaskInputObjectToString(obj, this.timeFormat)
+        const str = appUtils.parseTaskInputObjectToString(obj, this.timeFormat, this.timeZone)
         if (obj) {
           this.calendarObj = obj
           this.calendarString = str
+          this.stringToReplaceOnAdd = this.value.substr(this.value.indexOf(' $'))
         }
       }
     if (!changedOptions)
