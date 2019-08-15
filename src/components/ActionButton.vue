@@ -13,6 +13,8 @@
         <span
           class='main-button'
         >
+            <span class='txt'>{{showingExtraActions}}</span>
+
           <i class='icon txt pointer fas fa-plus' :style="{color: 'white'}"></i>
           <span class='txt msg' :class='theme'>Add task</span>
         </span>
@@ -60,6 +62,7 @@ import Sortable from 'sortablejs'
 @Component
 export default class ActionButtonComp extends Vue {
   @State theme!: string
+  @State showingExtraActions!: boolean
   @Mutation pushPopUp!: (compName: string) => void
 
   leftButtons: FloatingButton[] = [
