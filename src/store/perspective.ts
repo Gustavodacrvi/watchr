@@ -368,7 +368,7 @@ export default {
           },
           {
             name: 'Overdue',
-            pin: false,
+            pin: true,
             numberOfTasks: true,
             showWhenNotEmpty: true,
             alwaysShowTaskLabels: true,

@@ -18,6 +18,7 @@
         :always-show-last-edit-date='alwaysShowLastEditDate'
         :always-show-creation-date='alwaysShowCreationDate'
         :always-show-task-labels='alwaysShowTaskLabels'
+        :fixed-pers='fixedPers'
 
         :data-vid='task.id'
 

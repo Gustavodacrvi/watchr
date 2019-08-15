@@ -23,6 +23,8 @@
             @click='toggleChecklist'
           >
             <div class='txt' :class='theme'>
+              <i v-if='showTodayIcon' class='txt fas fa-star fa-sm' style='color: #FFE366'></i>
+              <i v-else-if='showOverdueIcon' class='txt fas fa-hourglass-end fa-sm' style='color: #FF6B66'></i>
               {{ task.name }}
               <i v-if='task.priority'
                 class='content-icon fas fa-exclamation fa-sm'
@@ -96,7 +98,6 @@
   </div>
   <div key='editing' v-else>
     <task-edit key='showing'
-      :fixed-tag='fixedPers'
       :default-labels='task.labels'
       :default-value='task.name'
       :default-priority='task.priority'
@@ -126,6 +127,7 @@ import appUtils from '@/utils/app'
 import moment from 'moment-timezone'
 
 const taskVuex = namespace('task')
+const pers = namespace('perspective')
 const labelVuex = namespace('label')
 const settingsVuex = namespace('settings')
 
@@ -364,6 +366,18 @@ export default class AppviewTask extends Vue {
     return !this.atLeastTwoInfoOptionsWontShowUp && (this.allTrue || !this.showLabels || !(this.showLastEditDate || this.showCreationDate))
   }
 
+  get showTodayIcon(): boolean {
+    if (this.fixedPers === 'Today' || !this.task.date) return false
+    const today = moment.utc()
+    const saved = moment.utc(this.task.date, 'Y-M-D')
+    return today.isSame(saved, 'day')
+  }
+  get showOverdueIcon(): boolean {
+    if (this.fixedPers === 'Overdue' || !this.task.date) return false
+    const today = moment.utc()
+    const saved = moment.utc(this.task.date, 'Y-M-D')
+    return saved.isBefore(today, 'day')
+  }
   get allTrue(): boolean {
     if (this.showLabels && this.showLastEditDate && this.showCreationDate) return true
     return false
