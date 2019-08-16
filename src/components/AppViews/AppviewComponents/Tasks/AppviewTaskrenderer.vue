@@ -189,7 +189,6 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
         this.showExtraActions()
       },
       onEnd: (evt: any) => {
-        if (evt.srcElement === evt.to) this.actionType = ''
         switch (this.actionType) {
           case 'today-btn': {
             const arr = []
