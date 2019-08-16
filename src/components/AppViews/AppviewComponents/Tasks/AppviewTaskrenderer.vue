@@ -38,8 +38,10 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Mixins, Watch } from 'vue-property-decorator'
-import { Getter, State, Mutation } from 'vuex-class'
+import { Getter, State, Mutation, namespace } from 'vuex-class'
 import Mixin from '@/mixins/sortable'
+
+const task = namespace('task')
 
 import ViewTask from '@/components/AppViews/AppviewComponents/Tasks/AppviewTask.vue'
 
@@ -48,6 +50,8 @@ import { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
 import TaskEditTemplate from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskedit.vue'
 
 Sortable.mount(new MultiDrag(), new AutoScroll())
+
+import moment from 'moment-timezone'
 
 import { Task, Label } from '../../../../interfaces/app'
 
@@ -60,6 +64,8 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @State theme!: string
   @Mutation hideExtraActions!: () => void
   @Mutation showExtraActions!: () => void
+
+  @task.Action saveNewDateOfTasks!: (arr: Array<{id: string, date: string}>) => void
 
   @Prop(Boolean) disabled!: boolean
   @Prop(Boolean) fixAdderPosition!: boolean
@@ -91,6 +97,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   numberOfAdders: number = 0
   rootSelector: string = `.task-taskrenderer-${this.id}`
   taskAdderPosition: number = 0
+  actionType: string = ''
 
   created() {
     this.$on('enter', this.add)
@@ -103,6 +110,15 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     document.removeEventListener('click', this.calcSelectedElements)
   }
 
+  getIds(evt: any): string[] {
+    const els = evt.items
+    if (els.length === 0)
+      els.push(evt.item)
+    const arr = []
+    for (const e of els)
+      arr.push(e.dataset.vid)
+    return arr
+  }
   mount() {
     const options: any = {
       disabled: this.disabled,
@@ -110,7 +126,17 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       selectedClass: 'sortable-selected',
       multiDrag: true,
       dataIdAttr: 'data-sortableid',
-      group: {name: 'taskrenderer', pull: ['taskrenderer', 'extraaction'], put: ['floatbutton', 'taskrenderer']},
+      group: {name: 'taskrenderer', pull: (to: any, from: any) => {
+        if (to.options.group.name === 'today-btn') {
+          this.actionType = 'today-btn'
+          return false
+        } else if (to.options.group.name === 'tomorrow-btn') {
+          this.actionType = 'tomorrow-btn'
+          return false
+        }
+        this.actionType = ''
+        return false
+      }, put: ['floatbutton', 'taskrenderer']},
 
       onUpdate: () => {
         const ids: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
@@ -162,7 +188,31 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
         this.dragging = true
         this.showExtraActions()
       },
-      onEnd: () => {
+      onEnd: (evt: any) => {
+        if (evt.srcElement === evt.to) this.actionType = ''
+        switch (this.actionType) {
+          case 'today-btn': {
+            const arr = []
+            const ids = this.getIds(evt)
+            for (const id of ids)
+              arr.push({
+                id, date: moment.utc().format('Y-M-D'),
+              })
+            this.saveNewDateOfTasks(arr)
+            break
+          }
+          case 'tomorrow-btn': {
+            const arr = []
+            const ids = this.getIds(evt)
+            for (const id of ids)
+              arr.push({
+                id, date: moment.utc().add(1, 'd').format('Y-M-D'),
+              })
+            this.saveNewDateOfTasks(arr)
+            break
+          }
+        }
+        this.actionType = ''
         this.dragging = false
         this.hideExtraActions()
       },
