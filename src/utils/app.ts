@@ -28,7 +28,7 @@ export default {
         return tasks.filter(el => {
           if (!el.date) return false
           const today = timezone.utc()
-          const saved = timezone.utc(el.date, 'Y-M-D')
+          const saved = timezone.utc(`${el.date} ${today.format('HH:mm')}`, 'Y-M-D HH:mm')
           return today.isSame(saved, 'day')
         })
       }
@@ -36,7 +36,7 @@ export default {
         return tasks.filter(el => {
           if (startOfTheWeek && el.date) {
             const m = timezone.utc()
-            const saved = timezone.utc(el.date, 'Y-M-D')
+            const saved = timezone.utc(`${el.date} ${m.format('HH:mm')}`, 'Y-M-D HH:mm')
             const start = this.getNextWeek(m.clone(), startOfTheWeek)
             const end = start.clone().add(6, 'd')
             return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
@@ -48,7 +48,7 @@ export default {
         return tasks.filter(el => {
           if (el.date) {
             const nextMonth = timezone.utc().add(1, 'M')
-            const saved = timezone.utc(el.date, 'Y-M-D')
+            const saved = timezone.utc(`${el.date} ${nextMonth.format('HH:mm')}`, 'Y-M-D HH:mm')
             const start = nextMonth.clone().startOf('month')
             const end = nextMonth.clone().endOf('month')
 
@@ -61,7 +61,7 @@ export default {
         return tasks.filter(el => {
           if (el.date) {
             const tom = timezone.utc().add(1, 'd')
-            const saved = timezone.utc(el.date, 'Y-M-D')
+            const saved = timezone.utc(`${el.date} ${tom.format('HH:mm')}`, 'Y-M-D HH:mm')
             return tom.isSame(saved, 'day')
           }
           return false
@@ -71,7 +71,7 @@ export default {
         return tasks.filter(el => {
           if (el.date) {
             const tom = timezone.utc()
-            const saved = timezone.utc(el.date, 'Y-M-D')
+            const saved = timezone.utc(`${el.date} ${tom.format('HH:mm')}`, 'Y-M-D HH:mm')
             return saved.isBefore(tom, 'day')
           }
           return false
@@ -81,7 +81,7 @@ export default {
         return tasks.filter(el => {
           if (el.date) {
             const today = timezone.utc()
-            const saved = timezone.utc(el.date, 'Y-M-D')
+            const saved = timezone.utc(`${el.date} ${today.format('HH:mm')}`, 'Y-M-D HH:mm')
             return saved.isAfter(today, 'day')
           }
           return false
@@ -97,6 +97,9 @@ export default {
         tasks = this.filterTasksByPriority(tasks, pers.priority)
       if (pers.includeAndLabels.length > 0)
         tasks = this.filterTasksByLabels(tasks, pers.includeAndLabels)
+      if (pers.includeAndSmartPers)
+        for (const smart of pers.includeAndSmartPers)
+          tasks = this.filterTasksBySmartPerspective(smart, tasks, startOfTheWeek)
       return tasks
     }
     return this.filterTasksBySmartPerspective(per.name, tasks, startOfTheWeek)
@@ -459,11 +462,12 @@ export default {
     if (obj && timeZone && timeFormat) {
       const today = timezone.utc().tz(timeZone)
       const typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day}`, 'Y-M-D', timeZone)
-      if (today.isSame(typed, 'day')) return 'Today'
-      today.add(1, 'd')
-      if (today.isSame(typed, 'day')) return 'Tomorrow'
 
       let str = `${moment().month(obj.month - 1).format('MMMM')} ${obj.day}, ${obj.year}`
+
+      if (today.isSame(typed, 'day')) str = 'Today'
+      today.add(1, 'd')
+      if (today.isSame(typed, 'day')) str = 'Tomorrow'
 
       let time = obj.time
       if (time) {

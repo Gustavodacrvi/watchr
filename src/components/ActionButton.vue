@@ -61,8 +61,6 @@ const task = namespace('task')
 
 import { FloatingButton } from '@/interfaces/app'
 
-import moment from 'moment-timezone'
-
 import Sortable from 'sortablejs'
 
 @Component
@@ -70,8 +68,6 @@ export default class ActionButtonComp extends Vue {
   @State theme!: string
   @State showingExtraActions!: boolean
   @Mutation pushPopUp!: (compName: string) => void
-
-  @task.Action saveNewDateOfTasks!: (arr: Array<{id: string, date: string}>) => void
 
   topButtons: FloatingButton[] = [
     {icon: 'bolt', iconColor: 'white', backColor: '#FFE366', click: this.popUp('TaskadderPopup')},
@@ -84,14 +80,14 @@ export default class ActionButtonComp extends Vue {
     this.mount()
   }
 
-  getIds(evt: any): string[] {
-    const els = evt.items
-    if (els.length === 0)
-      els.push(evt.item)
-    const arr = []
-    for (const e of els)
-      arr.push(e.dataset.vid)
-    return arr
+  deleteEl() {
+    const r = this.$el
+    if (r) {
+      const el = r.getElementsByClassName('root-task')[0]
+      const parent = el.parentNode
+      if (parent)
+        parent.removeChild(el)
+    }
   }
   mount() {
     const el = document.getElementById('floating-btn')
@@ -103,34 +99,14 @@ export default class ActionButtonComp extends Vue {
     const tod = document.getElementById('today-btn')
     const today = new Sortable(tod, {
       disabled: false,
-      group: {name: 'extraaction', pull: false, put: ['taskrenderer']},
+      group: {name: 'today-btn', pull: false, put: ['taskrenderer']},
       animation: 150,
-
-      onAdd: (evt: any) => {
-        const arr = []
-        const ids = this.getIds(evt)
-        for (const id of ids)
-          arr.push({
-            id, date: moment.utc().format('Y-M-D'),
-          })
-        this.saveNewDateOfTasks(arr)
-      },
     })
     const tom = document.getElementById('tomorrow-btn')
     const tomorrow = new Sortable(tom, {
       disabled: false,
-      group: {name: 'extraaction', pull: false, put: ['taskrenderer']},
+      group: {name: 'tomorrow-btn', pull: false, put: ['taskrenderer']},
       animation: 150,
-
-      onAdd: (evt: any) => {
-        const arr = []
-        const ids = this.getIds(evt)
-        for (const id of ids)
-          arr.push({
-            id, date: moment.utc().add(1, 'd').format('Y-M-D'),
-          })
-        this.saveNewDateOfTasks(arr)
-      },
     })
   }
   popUp(compName: string): () => void {
@@ -141,14 +117,6 @@ export default class ActionButtonComp extends Vue {
 }
 
 </script>
-
-<style>
-
-.actions-button-wrapper .root-task {
-  display: none;
-}
-
-</style>
 
 <style scoped>
 
