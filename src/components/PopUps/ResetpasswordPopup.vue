@@ -33,6 +33,7 @@ import { Alert } from '@/interfaces/app'
 
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
+import { IndexState, IndexMutations } from '../../interfaces/store/index'
 
 @Component({
   components: {
@@ -41,10 +42,10 @@ import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
   },
 })
 export default class ResetPasswordPopUp extends Vue {
-  @State theme!: string
-  @State popUpPayload!: string
-  @Mutation pushAlert!: (alert: Alert) => void
-  @Mutation pushPopUp!: (compName: string) => void
+  @State theme!: IndexState.theme
+  @State popUpPayload!: IndexState.popUpPayload
+  @Mutation pushAlert!: IndexMutations.PushAlert
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
 
   newPassword: string | null = null
   confirmPassword: string | null = null

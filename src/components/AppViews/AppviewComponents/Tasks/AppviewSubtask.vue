@@ -44,6 +44,7 @@ const set = namespace('settings')
 import SubTaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtaskEdit.vue'
 
 import { longClickDirective } from 'vue-long-click'
+import { IndexState, IndexGetters } from '../../../../interfaces/store/index'
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
@@ -55,8 +56,8 @@ else Vue.directive('longpress', longClickDirective({delay: 1500, interval: 5000}
   },
 })
 export default class AppviewSubtask extends Vue {
-  @State theme!: string
-  @Getter isDesktop!: boolean
+  @State theme!: IndexState.theme
+  @Getter isDesktop!: IndexGetters.IsDesktop
 
   @Prop(Object) task!: any
 

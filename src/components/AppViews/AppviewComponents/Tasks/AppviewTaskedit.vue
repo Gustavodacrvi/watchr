@@ -85,6 +85,7 @@ import CalendarInput from '@/components/AppViews/AppviewComponents/Tasks/Appview
 import moment from 'moment-timezone'
 
 import appUtils from '@/utils/app'
+import { IndexState } from '../../../../interfaces/store/index'
 
 @Component({
   components: {
@@ -98,7 +99,7 @@ import appUtils from '@/utils/app'
   },
 })
 export default class AppviewTaskedit extends Vue {
-  @State theme!: string
+  @State theme!: IndexState.theme
 
   @set.State timeFormat!: '13:00' | '1:00pm'
   @set.State timeZone!: string

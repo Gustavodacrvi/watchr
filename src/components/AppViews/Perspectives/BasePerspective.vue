@@ -126,6 +126,7 @@ import moment from 'moment-timezone'
 
 import { Perspective, Label, Task, ListIcon, Alert } from '../../../interfaces/app'
 import appUtils from '@/utils/app'
+import { IndexState, IndexGetters, IndexMutations } from '../../../interfaces/store/index'
 
 const labelVuex = namespace('label')
 const taskVuex = namespace('task')
@@ -143,14 +144,14 @@ const set = namespace('settings')
   },
 })
 export default class PerspectiveAppview extends Vue {
-  @State theme!: string
-  @State currentAppSection!: string
-  @Getter isDesktop!: boolean
-  @Getter platform!: string
-  @Mutation pushView!: (obj: {view: string, viewType: string}) => void
-  @Mutation sendOptionsToNavbar!: (options: ListIcon[]) => void
-  @Mutation hideNavBarOptions!: () => void
-  @Mutation pushAlert!: (alert: Alert) => void
+  @State theme!: IndexState.theme
+  @State currentAppSection!: IndexState.currentAppSection
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Getter platform!: IndexGetters.Platform
+  @Mutation pushView!: IndexMutations.PushView
+  @Mutation sendOptionsToNavbar!: IndexMutations.SendOptionsToNavbar
+  @Mutation hideNavBarOptions!: IndexMutations.HideNavBarOptions
+  @Mutation pushAlert!: IndexMutations.PushAlert
 
   @taskVuex.State tasks!: Task[]
   // tslint:disable-next-line:max-line-length

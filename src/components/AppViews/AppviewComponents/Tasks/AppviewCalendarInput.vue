@@ -81,6 +81,7 @@ import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 import moment from 'moment-timezone'
 
 import appUtils from '@/utils/app'
+import { IndexMutations, IndexGetters } from '../../../../interfaces/store/index'
 
 @Component({
   components: {
@@ -88,8 +89,8 @@ import appUtils from '@/utils/app'
   },
 })
 export default class CalendarInput extends Vue {
-  @Mutation pushPopUp!: (comp: string) => void
-  @Getter isDesktop!: boolean
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Getter isDesktop!: IndexGetters.IsDesktop
 
   @set.State timeFormat!: '13:00' | '1:00pm'
   @set.State nextWeek!: string

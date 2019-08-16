@@ -39,6 +39,7 @@ Sortable.mount(new MultiDrag(), new AutoScroll())
 import ListElement from '@/components/TheAppBar/AppnavComponents/ListElement.vue'
 
 import { ListIcon } from '../../../interfaces/app'
+import { IndexGetters } from '../../../interfaces/store/index'
 
 @Component({
   components: {
@@ -46,6 +47,8 @@ import { ListIcon } from '../../../interfaces/app'
   },
 })
 export default class ListRenderer extends Mixins(Mixin) {
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  
   @Prop({required: true, type: Array}) list!: any[]
   @Prop({required: true, type: String}) group!: string
   @Prop({required: true, type: String}) active!: string
@@ -53,8 +56,6 @@ export default class ListRenderer extends Mixins(Mixin) {
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({default: () => [], type: Function}) options!: (obj: any) => ListIcon[]
   @Prop({default: () => [], type: Function}) helpIcons!: (obj: any) => ListIcon[]
-
-  @Getter isDesktop!: boolean
 
   numberOfSelected: number = 0
   sortable: any = null

@@ -9,7 +9,7 @@ import settings from '@/store/settings'
 
 const MAX_MOBILE_SCREEN_WIDTH = 992
 
-import { SimpleAdder, Alert, Perspective, ListIcon } from '@/interfaces/app'
+import { SimpleAdder, Alert, Perspective, ListIcon, CenteredCard } from '@/interfaces/app'
 import { IndexState, IndexMutations, IndexActions, IndexGetters, State } from '@/interfaces/store/index'
 
 Vue.use(Vuex)
@@ -19,7 +19,7 @@ const savedTheme: IndexState.theme = localStorage.getItem('watchrTheme') as Inde
 interface Mutations {
   pushAlert: IndexMutations.PushAlert
   pushTheme: IndexMutations.PushTheme
-  pushPopUp: IndexMutations.PopUp
+  pushPopUp: IndexMutations.PushPopUp
   pushPopUpPayload: IndexMutations.PushPopUpPayload
   saveCurrentUser: IndexMutations.SaveCurrentUser
   saveFirestore: IndexMutations.SaveFirestore
@@ -39,7 +39,7 @@ interface Mutations {
   closeAppBar: IndexMutations.CloseAppBar
   resetPopUpState: IndexMutations.ResetPopUpState
   hideAlert: IndexMutations.HideAlert
-  [key: string]: (state: State, ...arr: any[]) => void
+  [key: string]: (state: State, payload: any) => void
 }
 
 interface Getters {
@@ -104,32 +104,34 @@ const store: any = new Vuex.Store({
     showExtraActions(state) {
       state.showingExtraActions = true
     },
-    openSection(state, currentAppSection: string) {
+    openSection(state, currentAppSection) {
       state.currentAppSection = currentAppSection
     },
-    saveFirestore(state, firestore: firebase.firestore.Firestore) {
+    saveFirestore(state, firestore) {
       state.firestore = firestore
-      state.firestore.enablePersistence()
-        .catch(err => {
-          if (err.code === 'failed-precondition')
-            state.appError = true
-          else if (err.code === 'unimplemented')
-            state.alerts.push({
-              // tslint:disable-next-line:max-line-length
-              name: `Firestore's persistence is not available on your browser, therefore you won't be able to use this app offline.</br>Please chose a better browser or update the current one to the latest version.`,
-              duration: 12,
-              type: 'error',
-            })
-        })
+      if (state.firestore) {
+        state.firestore.enablePersistence()
+          .catch(err => {
+            if (err.code === 'failed-precondition')
+              state.appError = true
+            else if (err.code === 'unimplemented')
+              state.alerts.push({
+                // tslint:disable-next-line:max-line-length
+                name: `Firestore's persistence is not available on your browser, therefore you won't be able to use this app offline.</br>Please chose a better browser or update the current one to the latest version.`,
+                duration: 12,
+                type: 'error',
+              })
+          })
+      }
     },
     saveFirebase(state, firebase) {
       state.firebase = firebase
     },
-    pushTheme(state, theme: IndexState.theme) {
+    pushTheme(state, theme) {
       state.theme = theme
       localStorage.setItem('watchrTheme', theme)
     },
-    saveCurrentUser(state, user: firebase.User | null) {
+    saveCurrentUser(state, user) {
       if (user !== null) {
         state.isLogged = true
         state.isAnonymous = user.isAnonymous
@@ -149,7 +151,7 @@ const store: any = new Vuex.Store({
     pushCenteredCard(state, centeredCardPopUp) {
       state.centeredCard = centeredCardPopUp
     },
-    pushPopUp(state, compName: string) {
+    pushPopUp(state, compName) {
       const isDesktop = state.windowWidth > MAX_MOBILE_SCREEN_WIDTH
       if (!isDesktop && compName === '' && state.popUpComponent !== '')
         router.go(-1)
@@ -158,13 +160,13 @@ const store: any = new Vuex.Store({
       state.popUpComponent = compName
       state.popUpPayload = null
     },
-    pushPopUpPayload(state, payload: any | SimpleAdder) {
+    pushPopUpPayload(state, payload) {
       state.popUpPayload = payload
     },
     showApp(state) {
       state.loading = false
     },
-    pushAlert(state, alert: Alert) {
+    pushAlert(state, alert) {
       state.alerts.push(alert)
     },
     hideAlert(state) {
@@ -180,16 +182,16 @@ const store: any = new Vuex.Store({
       state.viewName = view
       state.viewType = viewType
     },
-    addNavBarTitle(state, title: string) {
+    addNavBarTitle(state, title) {
       state.navBarTitle = title
     },
-    sendOptionsToNavbar(state, options: ListIcon[]) {
+    sendOptionsToNavbar(state, options) {
       state.navBarOptions = options
     },
     hideNavBarOptions(state) {
       state.navBarOptions = []
     },
-  } as Mutations,
+  },
   getters: {
     platform(state: any, getters: Getters) {
       if (getters.isDesktop)
@@ -229,7 +231,7 @@ const store: any = new Vuex.Store({
           commit('closeAppBar')
       })
     },
-    showLastAlert({state, commit}) {
+    showLastAlert({state}) {
       const NUMBER_OF_MILISECONDS_IN_ONE_SECOND = 1000
       if (state.alerts.length !== 0 && !state.showingAlert) {
         state.alert = state.alerts.shift() as Alert
@@ -240,7 +242,7 @@ const store: any = new Vuex.Store({
           }, state.alert.duration * NUMBER_OF_MILISECONDS_IN_ONE_SECOND)
       }
     },
-    activateKeyShortcut({state, commit, getters}, key) {
+    activateKeyShortcut({commit, getters}, key) {
       if ((getters.loggedAndVerified || getters.anonymous))
         switch (key.toLowerCase()) {
           case 'l': commit('pushPopUp', 'LabeladderPopup'); break

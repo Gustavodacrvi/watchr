@@ -141,6 +141,7 @@ const settingsVuex = namespace('settings')
 import Sortable from 'sortablejs'
 
 import { longClickDirective } from 'vue-long-click'
+import { IndexState, IndexGetters } from '../../../../interfaces/store/index'
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 400, interval: 5000}))
@@ -155,8 +156,8 @@ else Vue.directive('longpress', longClickDirective({delay: 1500, interval: 5000}
   },
 })
 export default class AppviewTask extends Vue {
-  @State theme!: string
-  @Getter isDesktop!: boolean
+  @State theme!: IndexState.theme
+  @Getter isDesktop!: IndexGetters.IsDesktop
 
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void
   @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string}) => void

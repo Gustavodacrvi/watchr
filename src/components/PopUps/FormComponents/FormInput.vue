@@ -16,10 +16,11 @@
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
+import { IndexState } from '../../../interfaces/store/index'
 
 @Component
 export default class FormInput extends Vue {
-  @State theme!: string
+  @State theme!: IndexState.theme
 
   @Prop({default: true}) value!: string | null
   @Prop({required: true, type: Number}) max!: number

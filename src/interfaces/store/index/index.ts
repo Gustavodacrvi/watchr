@@ -51,31 +51,78 @@ export interface State {
   showingAlert: IndexState.showingAlert
   alerts: IndexState.alerts
   alert: IndexState.alert
-} 
+}
+
+type OverloadVoid = {
+  (state: State): void
+  (): void
+}
 
 export namespace IndexMutations {
-  export type HideExtraActions = (state: State) => void
-  export type ShowExtraActions = (state: State) => void
-  export type ShowApp = (state: State) => void
-  export type HideNavBarOptions = (state: State) => void
-  export type OpenAppBar = (state: State) => void
-  export type CloseAppBar = (state: State) => void
-  export type ResetPopUpState = (state: State) => void
-  export type HideAlert = (state: State) => void
-  export type PushAlert = (state: State, alert: Alert) => void
-  export type PushTheme = (state: State, theme: string) => void
-  export type PopUp = (state: State, compName: string) => void
-  export type PushPopUpPayload = (state: State, payload: any) => void
-  export type SaveCurrentUser = (state: State, user: firebase.User) => void
-  export type SaveFirestore = (state: State, firestore: firebase.firestore.Firestore) => void
-  export type PushCenteredCard = (state: State, centeredCardPopUp: CenteredCard | null) => void
-  export type OpenSection = (state: State, currentAppSection: string) => void
-  export type SaveFirebase = (state: State, firebase: any) => void
-  export type PushAppView = (state: State, comp: string) => void
-  export type PushPerspective = (state: State, payload?: any) => void
-  export type PushView = (state: State, obj: {view: string, viewType: string}) => void
-  export type AddNavBarTitle = (state: State, title: string) => void
-  export type SendOptionsToNavbar = (state: State, options: ListIcon[]) => void
+  export type HideExtraActions = OverloadVoid
+  export type ShowExtraActions = OverloadVoid
+  export type ShowApp = OverloadVoid
+  export type HideNavBarOptions = OverloadVoid
+  export type OpenAppBar = OverloadVoid
+  export type CloseAppBar = OverloadVoid
+  export type ResetPopUpState = OverloadVoid
+  export type HideAlert = OverloadVoid
+  export type PushAlert = {
+    (alert: Alert): void
+    (state: State, alert: Alert): void
+  }
+  export type PushTheme = {
+    (theme: string): void
+    (state: State, theme: string): void
+  }
+  export type PushPopUp = {
+    (compName: string): void
+    (state: State, compName: string): void
+  }
+  export type PushPopUpPayload = {
+    (payload: any): void
+    (state: State, payload: any): void
+  }
+  export type SaveCurrentUser = {
+    (user: firebase.User): void
+    (state: State, user: firebase.User): void
+  }
+  export type SaveFirestore = {
+    (firestore: firebase.firestore.Firestore): void
+    (state: State, firestore: firebase.firestore.Firestore): void
+  }
+  export type PushCenteredCard = {
+    (centeredCardPopUp: CenteredCard | null): void
+    (state: State, centeredCardPopUp: CenteredCard | null): void
+  }
+  export type OpenSection = {
+    (currentAppSection: string): void
+    (state: State, currentAppSection: string): void
+  }
+  export type SaveFirebase = {
+    (firebase: any): void
+    (state: State, firebase: any): void
+  }
+  export type PushAppView = {
+    (comp: string): void
+    (state: State, comp: string): void
+  }
+  export type PushPerspective = {
+    (payload?: any): void
+    (state: State, payload?: any): void
+  }
+  export type PushView = {
+    (obj: {view: string, viewType: string}): void
+    (state: State, obj: {view: string, viewType: string}): void
+  }
+  export type AddNavBarTitle = {
+    (title: string): void
+    (state: State, title: string): void
+  }
+  export type SendOptionsToNavbar = {
+    (options: ListIcon[]): void
+    (state: State, options: ListIcon[]): void
+  }
 }
 
 export namespace IndexGetters {

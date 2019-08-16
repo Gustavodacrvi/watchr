@@ -24,6 +24,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 
 import appUtils from '../../utils/app'
+import { IndexState, IndexMutations, IndexGetters } from '../../interfaces/store/index'
 
 @Component({
   components: {
@@ -39,12 +40,12 @@ import appUtils from '../../utils/app'
   },
 })
 export default class PopUp extends Vue {
-  @State theme!: string
-  @State popUpComponent!: string
-  @Mutation pushPopUp!: (compName: string) => void
-  @Getter isDesktop!: boolean
-  @Getter isStandAlone!: boolean
-  @Getter platform!: 'mobile' | 'desktop'
+  @State theme!: IndexState.theme
+  @State popUpComponent!: IndexState.popUpComponent
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Getter isStandAlone!: IndexGetters.IsStandAlone
+  @Getter platform!: IndexGetters.Platform
 
   get componentClass(): any[] {
     return [

@@ -35,6 +35,7 @@ import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.v
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
 
 import { Label, Perspective, Task, ListIcon, ListElement } from '@/interfaces/app'
+import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 
 const persVuex = namespace('perspective')
 const taskVuex = namespace('task')
@@ -46,9 +47,9 @@ const taskVuex = namespace('task')
   },
 })
 export default class OverviewAppnav extends Vue {
-  @State viewName!: string
-  @State viewType!: string
-  @Mutation openSection!: (section: string) => void
+  @State viewName!: IndexState.viewName
+  @State viewType!: IndexState.viewType
+  @Mutation openSection!: IndexMutations.OpenSection
 
   @persVuex.Getter pinedSmartPerspectives!: Perspective[]
   @persVuex.Getter pinedCustomPerspectives!: Perspective[]

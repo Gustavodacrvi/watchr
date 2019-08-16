@@ -36,6 +36,7 @@ const taskVuex = namespace('task')
 import TaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskedit.vue'
 
 import { Alert, Perspective } from '../../interfaces/app'
+import { IndexState, IndexGetters, IndexMutations } from '../../interfaces/store/index'
 
 @Component({
   components: {
@@ -43,9 +44,9 @@ import { Alert, Perspective } from '../../interfaces/app'
   },
 })
 export default class LabelAdder extends Vue {
-  @State theme!: string
-  @Getter isDesktop!: boolean
-  @Mutation pushAlert!: (alert: Alert) => void
+  @State theme!: IndexState.theme
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Mutation pushAlert!: IndexMutations.PushAlert
 
   @taskVuex.Action addTask!: (obj: {name: string, priority: string, labels: string[]}) => void
 

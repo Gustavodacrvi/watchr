@@ -18,6 +18,7 @@
     "prefer-for-of": true,
     "curly": [true, "as-needed"],
     "no-conditional-assignment": true,
+    "no-namespace": false,
     "no-string-literal": false,
     "no-var-keyword": true,
     "deprecation": true,

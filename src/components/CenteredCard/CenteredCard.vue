@@ -49,10 +49,10 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Mutation, State } from 'vuex-class'
 
-import { ListIcon } from '../../interfaces/app'
-import { CenteredCard } from '@/store/index'
+import { ListIcon, CenteredCard } from '../../interfaces/app'
 
 import appUtils from '@/utils/app'
+import { IndexState, IndexMutations } from '../../interfaces/store/index'
 
 @Component({
   components: {
@@ -60,9 +60,9 @@ import appUtils from '@/utils/app'
   },
 })
 export default class CenteredCardComp extends Vue {
-  @State theme!: string
-  @State('centeredCard') card!: CenteredCard | null
-  @Mutation pushCenteredCard!: (card: CenteredCard | null) => void
+  @State theme!: IndexState.theme
+  @State('centeredCard') card!: IndexState.centeredCard
+  @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
   search: string = ''
 

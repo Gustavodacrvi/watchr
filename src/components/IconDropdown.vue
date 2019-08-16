@@ -23,10 +23,11 @@
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State } from 'vuex-class'
+import { IndexState } from '../interfaces/store/index'
 
 @Component
 export default class TheNavbar extends Vue {
-  @State theme!: string
+  @State theme!: IndexState.theme
 
   @Prop({required: true, type: String}) handle!: string
   @Prop({default: 'lg', type: String}) size!: string

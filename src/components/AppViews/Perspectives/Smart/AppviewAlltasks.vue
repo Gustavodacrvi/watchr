@@ -18,6 +18,7 @@ const taskVuex = namespace('task')
 
 import BasePerspective from '@/components/AppViews/Perspectives/BasePerspective.vue'
 
+import { IndexState } from '../../../../interfaces/store/index'
 import { Task } from '../../../../interfaces/app'
 
 @Component({
@@ -26,7 +27,7 @@ import { Task } from '../../../../interfaces/app'
   },
 })
 export default class ViewAlltasks extends Vue {
-  @State currentAppSection!: string
+  @State currentAppSection!: IndexState.currentAppSection
 
   @taskVuex.State tasks!: Task[]
 

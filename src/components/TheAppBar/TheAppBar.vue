@@ -36,6 +36,7 @@ import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
 
 import appUtils from '@/utils/app'
+import { IndexState, IndexMutations, IndexGetters } from '../../interfaces/store/index'
 
 @Component({
   components: {
@@ -44,16 +45,16 @@ import appUtils from '@/utils/app'
   },
 })
 export default class TheNavBar extends Vue {
-  @State theme!: string
-  @State appBarState!: string
-  @State isLogged!: boolean
-  @State emailVerified!: boolean
-  @Mutation pushTheme!: (theme: string) => void
-  @Mutation closeAppBar!: () => void
-  @Getter isDesktop!: boolean
-  @Getter loggedAndVerified!: boolean
-  @Getter platform!: 'mobile' | 'desktop'
-  @Getter isStandAlone!: boolean
+  @State theme!: IndexState.theme
+  @State appBarState!: IndexState.appBarState
+  @State isLogged!: IndexState.isLogged
+  @State emailVerified!: IndexState.emailVerified
+  @Mutation pushTheme!: IndexMutations.PushTheme
+  @Mutation closeAppBar!: IndexMutations.CloseAppBar
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Getter loggedAndVerified!: IndexGetters.LoggedAndVerified
+  @Getter platform!: IndexGetters.Platform
+  @Getter isStandAlone!: IndexGetters.IsStandAlone
 
   appMenu: 'settingsnav' | 'appnav' = 'appnav'
   activeZindex: boolean = true

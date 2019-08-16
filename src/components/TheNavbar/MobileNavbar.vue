@@ -31,6 +31,7 @@ import { Mutation, State } from 'vuex-class'
 import IconOptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 
 import { ListIcon } from '../../interfaces/app'
+import { IndexState, IndexMutations } from '../../interfaces/store/index'
 
 @Component({
   components: {
@@ -38,9 +39,9 @@ import { ListIcon } from '../../interfaces/app'
   },
 })
 export default class MobileNavbar extends Vue {
-  @State navBarTitle!: string
-  @State navBarOptions!: ListIcon[]
-  @Mutation openAppBar!: () => void
+  @State navBarTitle!: IndexState.navBarTitle
+  @State navBarOptions!: IndexState.navBarOptions
+  @Mutation openAppBar!: IndexMutations.OpenAppBar
 }
 
 </script>

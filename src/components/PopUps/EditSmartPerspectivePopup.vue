@@ -40,6 +40,7 @@ const labelStore = namespace('label')
 const perspectiveModule = namespace('perspective')
 
 import { Alert, Perspective } from '../../interfaces/app'
+import { IndexState, IndexGetters, IndexMutations } from '../../interfaces/store/index'
 
 interface Pers {
   name: string
@@ -60,10 +61,10 @@ interface Pers {
   },
 })
 export default class EditSmartPerspectivePopup extends Vue {
-  @State('popUpPayload') pers!: Perspective
-  @Getter isDesktop!: boolean
-  @Mutation pushAlert!: (alert: Alert) => void
-  @Mutation pushPopUp!: (compName: string) => void
+  @State('popUpPayload') pers!: IndexState.popUpPayload
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Mutation pushAlert!: IndexMutations.PushAlert
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
 
   @perspectiveModule.State perspectives!: Perspective[]
   @perspectiveModule.Action saveSmartPerspective!: (obj: {

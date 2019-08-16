@@ -8,8 +8,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
 
 import CalendarInputComp from '@/components/AppViews/AppviewComponents/Tasks/AppviewCalendarInput.vue'
-
-import { CenteredCard } from '../../store'
+import { IndexState, IndexMutations } from '../../interfaces/store/index'
 
 @Component({
   components: {
@@ -17,8 +16,8 @@ import { CenteredCard } from '../../store'
   },
 })
 export default class CenteredCardCalendarInput extends Vue {
-  @State('centeredCard') card!: CenteredCard | null
-  @Mutation pushCenteredCard!: (card: CenteredCard | null) => void
+  @State('centeredCard') card!: IndexState.centeredCard
+  @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
   select(obj: any) {
     if (this.card) {

@@ -90,6 +90,7 @@ const labelsVuex = namespace('label')
 const pers = namespace('perspective')
 
 import { ListIcon, Label, Perspective } from '../../../interfaces/app'
+import { IndexState, IndexGetters } from '../../../interfaces/store/index'
 
 @Component({
   components: {
@@ -98,8 +99,8 @@ import { ListIcon, Label, Perspective } from '../../../interfaces/app'
   },
 })
 export default class AppviewHeadericons extends Vue {
-  @State theme!: string
-  @Getter isDesktop!: boolean
+  @State theme!: IndexState.theme
+  @Getter isDesktop!: IndexGetters.IsDesktop
 
   @labelsVuex.Getter sortedLabelsByName!: Label[]
 

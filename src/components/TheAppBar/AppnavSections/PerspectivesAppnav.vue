@@ -47,6 +47,7 @@ import AppnavDivision from '@/components/TheAppBar/AppnavComponents/AppnavDivisi
 import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmessage.vue'
 
 import { Label, Perspective, ListIcon, SimpleAdder, ListElement, Task } from '@/interfaces/app'
+import { IndexState, IndexMutations } from '../../../interfaces/store/index';
 
 const persVuex = namespace('perspective')
 const taskVuex = namespace('task')
@@ -60,12 +61,11 @@ const taskVuex = namespace('task')
   },
 })
 export default class OverviewAppnav extends Vue {
-  @State viewName!: string
-  @State viewType!: string
-  @Mutation pushPopUp!: (comp: string) => void
-  @Mutation pushPopUpPayload!: (obj: SimpleAdder | any) => void
-  @Mutation openSection!: (section: string) => void
-  @Getter initialAppViewRoute!: string
+  @State viewName!: IndexState.viewName
+  @State viewType!: IndexState.viewType
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
+  @Mutation openSection!: IndexMutations.OpenSection
 
   @persVuex.State smartOrder!: Perspective[]
   @persVuex.Getter sortedSmartPerspectives!: Perspective[]

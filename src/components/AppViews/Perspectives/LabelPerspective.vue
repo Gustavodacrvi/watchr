@@ -91,6 +91,7 @@ import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeaderti
 import appUtils from '@/utils/app'
 
 import { Task, Label, ListIcon } from '../../../interfaces/app'
+import { IndexState, IndexMutations, IndexGetters } from '../../../interfaces/store/index'
 
 @Component({
   components: {
@@ -102,13 +103,13 @@ import { Task, Label, ListIcon } from '../../../interfaces/app'
   },
 })
 export default class LabelPerspective extends Vue {
-  @State theme!: string
-  @State currentAppSection!: string
-  @Mutation pushView!: (obj: {view: string, viewType: string}) => void
-  @Getter isDesktop!: boolean
-  @Getter platform!: string
-  @Mutation sendOptionsToNavbar!: (options: ListIcon[]) => void
-  @Mutation hideNavBarOptions!: () => void
+  @State theme!: IndexState.theme
+  @State currentAppSection!: IndexState.currentAppSection
+  @Mutation pushView!: IndexMutations.PushView
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Getter platform!: IndexGetters.Platform
+  @Mutation sendOptionsToNavbar!: IndexMutations.SendOptionsToNavbar
+  @Mutation hideNavBarOptions!: IndexMutations.HideNavBarOptions
 
   @Prop(String) label!: string
 

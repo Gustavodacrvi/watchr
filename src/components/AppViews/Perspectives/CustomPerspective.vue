@@ -23,6 +23,7 @@ import BasePerspective from '@/components/AppViews/Perspectives/BasePerspective.
 import appUtils from '@/utils/app'
 
 import { Task, Perspective } from '../../../interfaces/app'
+import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 
 @Component({
   components: {
@@ -30,8 +31,8 @@ import { Task, Perspective } from '../../../interfaces/app'
   },
 })
 export default class CustomPerspectives extends Vue {
-  @State currentAppSection!: string
-  @Mutation pushView!: (obj: {view: string, viewType: string}) => void
+  @State currentAppSection!: IndexState.currentAppSection
+  @Mutation pushView!: IndexMutations.PushView
 
   @persVuex.Getter getPerspectiveByName!: (name: string) => Perspective
 

@@ -54,6 +54,7 @@ Sortable.mount(new MultiDrag(), new AutoScroll())
 import moment from 'moment-timezone'
 
 import { Task, Label } from '../../../../interfaces/app'
+import { IndexState, IndexMutations } from '../../../../interfaces/store/index'
 
 @Component({
   components: {
@@ -61,9 +62,9 @@ import { Task, Label } from '../../../../interfaces/app'
   },
 })
 export default class AppviewTaskrenderer extends Mixins(Mixin) {
-  @State theme!: string
-  @Mutation hideExtraActions!: () => void
-  @Mutation showExtraActions!: () => void
+  @State theme!: IndexState.theme
+  @Mutation hideExtraActions!: IndexMutations.HideExtraActions
+  @Mutation showExtraActions!: IndexMutations.ShowExtraActions
 
   @task.Action saveNewDateOfTasks!: (arr: Array<{id: string, date: string}>) => void
 

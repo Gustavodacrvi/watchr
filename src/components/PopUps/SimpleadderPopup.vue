@@ -28,6 +28,7 @@ import { State, Mutation } from 'vuex-class'
 import { SimpleAdder } from '@/interfaces/app'
 
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+import { IndexState } from '../../interfaces/store/index'
 
 @Component({
   components: {
@@ -35,8 +36,8 @@ import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
   },
 })
 export default class SigninPopUp extends Vue {
-  @State theme!: SimpleAdder
-  @State popUpPayload!: SimpleAdder
+  @State theme!: IndexState.theme
+  @State popUpPayload!: IndexState.popUpPayload
 
   input: string | null = null
   inputState: boolean = false
