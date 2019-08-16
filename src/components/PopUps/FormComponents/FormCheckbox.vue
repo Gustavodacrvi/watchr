@@ -12,10 +12,11 @@
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State } from 'vuex-class'
+import { IndexState } from '../../../interfaces/store/index'
 
 @Component
 export default class FormCheckbox extends Vue {
-  @State theme!: string
+  @State theme!: IndexState.theme
 
   @Prop(Boolean) value!: boolean
   @Prop(String) name!: string

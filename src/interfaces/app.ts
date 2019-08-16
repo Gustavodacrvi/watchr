@@ -21,6 +21,16 @@ export interface SimpleAdder {
   callback: (input: string) => void
 }
 
+export interface CenteredCard {
+  type: 'ListIcons' | 'Component',
+  flexBasis: string,
+  search?: boolean
+  maxHeight?: string
+  listIcons: ListIcon[],
+  listIconHandler: (...arr: any[]) => any
+  compName: string
+}
+
 export interface FloatingButton {
   icon: string
   iconColor: string

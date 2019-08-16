@@ -85,6 +85,9 @@ import CalendarInput from '@/components/AppViews/AppviewComponents/Tasks/Appview
 import moment from 'moment-timezone'
 
 import appUtils from '@/utils/app'
+import { IndexState } from '../../../../interfaces/store/index'
+import { LabelState, LabelGetters } from '../../../../interfaces/store/label'
+import { SetState } from '../../../../interfaces/store/settings'
 
 @Component({
   components: {
@@ -98,14 +101,14 @@ import appUtils from '@/utils/app'
   },
 })
 export default class AppviewTaskedit extends Vue {
-  @State theme!: string
+  @State theme!: IndexState.theme
 
-  @set.State timeFormat!: '13:00' | '1:00pm'
-  @set.State timeZone!: string
-  @set.State nextWeek!: string
+  @set.State timeFormat!: SetState.timeFormat
+  @set.State timeZone!: SetState.timeZone
+  @set.State nextWeek!: SetState.nextWeek
 
-  @labelsVuex.State('labels') savedLabels!: Label[]
-  @labelsVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
+  @labelsVuex.State('labels') savedLabels!: LabelState.labels
+  @labelsVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
 
   @Prop({default: 'Add task', type: String}) btn!: string
   @Prop({default: false, type: Boolean}) closeOnSave!: boolean

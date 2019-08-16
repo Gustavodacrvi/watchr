@@ -76,16 +76,17 @@
 import { Component, Vue, Mixins } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 import Mixin from '@/mixins/navBar'
+import { IndexState, IndexMutations, IndexGetters } from '../../interfaces/store/index'
 
 @Component
 export default class LoggedAppnav extends Mixins(Mixin) {
-  @State theme!: string
-  @State isLogged!: boolean
-  @State emailVerified!: boolean
-  @Mutation pushPopUp!: (compName: string) => void
-  @Mutation closeAppBar!: () => void
-  @Getter isDesktop!: boolean
-  @Getter loggedAndVerified!: boolean
+  @State theme!: IndexState.theme
+  @State isLogged!: IndexState.isLogged
+  @State emailVerified!: IndexState.emailVerified
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Mutation closeAppBar!: IndexMutations.CloseAppBar
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Getter loggedAndVerified!: IndexGetters.LoggedAndVerified
 }
 
 </script>

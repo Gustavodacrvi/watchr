@@ -16,10 +16,11 @@
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State } from 'vuex-class'
+import { IndexState } from '../../../../interfaces/store/index'
 
 @Component
 export default class AppviewHeading extends Vue {
-  @State theme!: string
+  @State theme!: IndexState.theme
 
   @Prop(Object) obj!: {name: string, faded?: string}
 

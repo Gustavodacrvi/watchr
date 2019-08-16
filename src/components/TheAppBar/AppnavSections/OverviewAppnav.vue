@@ -35,6 +35,9 @@ import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.v
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
 
 import { Label, Perspective, Task, ListIcon, ListElement } from '@/interfaces/app'
+import { IndexState, IndexMutations } from '../../../interfaces/store/index'
+import { PersGetters } from '../../../interfaces/store/perspective'
+import { TaskState } from '../../../interfaces/store/task'
 
 const persVuex = namespace('perspective')
 const taskVuex = namespace('task')
@@ -46,15 +49,15 @@ const taskVuex = namespace('task')
   },
 })
 export default class OverviewAppnav extends Vue {
-  @State viewName!: string
-  @State viewType!: string
-  @Mutation openSection!: (section: string) => void
+  @State viewName!: IndexState.viewName
+  @State viewType!: IndexState.viewType
+  @Mutation openSection!: IndexMutations.OpenSection
 
-  @persVuex.Getter pinedSmartPerspectives!: Perspective[]
-  @persVuex.Getter pinedCustomPerspectives!: Perspective[]
-  @persVuex.Getter getNumberOfTasksByPerspectiveId!: (id: string, tasks: Task[]) => number
+  @persVuex.Getter pinedSmartPerspectives!: PersGetters.PinedSmartPerspectives
+  @persVuex.Getter pinedCustomPerspectives!: PersGetters.PinedCustomPerspectives
+  @persVuex.Getter getNumberOfTasksByPerspectiveId!: PersGetters.GetNumberOfTasksByPerspectiveId
 
-  @taskVuex.State tasks!: Task[]
+  @taskVuex.State tasks!: TaskState.tasks
 
   @Prop(String) search!: string
 

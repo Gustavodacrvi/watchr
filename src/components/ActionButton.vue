@@ -57,17 +57,16 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Mutation, State, namespace } from 'vuex-class'
 
-const task = namespace('task')
-
 import { FloatingButton } from '@/interfaces/app'
 
 import Sortable from 'sortablejs'
+import { IndexState, IndexMutations } from '../interfaces/store/index'
 
 @Component
 export default class ActionButtonComp extends Vue {
-  @State theme!: string
-  @State showingExtraActions!: boolean
-  @Mutation pushPopUp!: (compName: string) => void
+  @State theme!: IndexState.theme
+  @State showingExtraActions!: IndexState.showingExtraActions
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
 
   topButtons: FloatingButton[] = [
     {icon: 'bolt', iconColor: 'white', backColor: '#FFE366', click: this.popUp('TaskadderPopup')},

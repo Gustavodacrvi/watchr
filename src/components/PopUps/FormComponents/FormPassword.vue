@@ -39,6 +39,7 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Mutation } from 'vuex-class'
 
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
+import { IndexState } from '../../../interfaces/store/index'
 
 @Component({
   components: {
@@ -46,7 +47,7 @@ import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
   },
 })
 export default class FormPassword extends Vue {
-  @State theme!: string
+  @State theme!: IndexState.theme
   @Prop(String) value!: string | null
   @Prop(String) placeholder!: string
   @Prop(Number) max!: number

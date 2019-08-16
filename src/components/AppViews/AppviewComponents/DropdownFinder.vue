@@ -41,8 +41,8 @@ import { State, Getter, Mutation } from 'vuex-class'
 
 import IconDropdown from '@/components/IconDropdown.vue'
 
-import { CenteredCard } from '../../../store'
 import { ListIcon } from '../../../interfaces/app'
+import { IndexState, IndexMutations, IndexGetters } from '../../../interfaces/store/index'
 
 @Component({
   components: {
@@ -50,10 +50,10 @@ import { ListIcon } from '../../../interfaces/app'
   },
 })
 export default class DropdownFinder extends Vue {
-  @State theme!: string
-  @State centeredCard!: CenteredCard
-  @Mutation pushCenteredCard!: (obj: CenteredCard) => void
-  @Getter isDesktop!: boolean
+  @State theme!: IndexState.theme
+  @State centeredCard!: IndexState.centeredCard
+  @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
+  @Getter isDesktop!: IndexGetters.IsDesktop
 
   @Prop({default: '', type: String}) value!: string
   @Prop({default: 'dark', type: String}) inputTheme!: string

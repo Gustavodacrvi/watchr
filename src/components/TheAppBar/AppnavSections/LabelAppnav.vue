@@ -28,6 +28,10 @@ import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.v
 import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmessage.vue'
 
 import { Label, ListIcon, SimpleAdder, Perspective, ListElement, Alert } from '../../../interfaces/app'
+import { IndexState, IndexMutations } from '../../../interfaces/store/index'
+import { LabelGetters, LabelActions } from '../../../interfaces/store/label'
+import { PersGetters } from '../../../interfaces/store/perspective'
+import { TaskGetters } from '../../../interfaces/store/task'
 
 const label = namespace('label')
 const task = namespace('task')
@@ -41,22 +45,22 @@ const pers = namespace('perspective')
   },
 })
 export default class LabelAppnav extends Vue {
-  @State viewName!: string
-  @State viewType!: string
-  @Mutation pushPopUpPayload!: (obj: SimpleAdder) => void
-  @Mutation pushPopUp!: (comp: string) => void
-  @Mutation pushAlert!: (alert: Alert) => void
-  @Mutation openSection!: (section: string) => void
+  @State viewName!: IndexState.viewName
+  @State viewType!: IndexState.viewType
+  @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Mutation pushAlert!: IndexMutations.PushAlert
+  @Mutation openSection!: IndexMutations.OpenSection
 
-  @label.Getter sortedLabels!: Label[]
-  @label.Getter getLabelsByIds!: (ids: string[]) => Label[]
-  @label.Action saveLabelPosition!: (ids: string[]) => void
-  @label.Action deleteLabelsById!: (ids: string[]) => void
-  @label.Action editLabelNameById!: (obj: {id: string, name: string}) => void
+  @label.Getter sortedLabels!: LabelGetters.SortedLabels
+  @label.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
+  @label.Action saveLabelPosition!: LabelActions.SaveLabelPosition
+  @label.Action deleteLabelsById!: LabelActions.DeleteLabelsById
+  @label.Action editLabelNameById!: LabelActions.EditLabelNameById
 
-  @task.Getter getNumberOfTasksByLabel!: (labelId: string) => number
+  @task.Getter getNumberOfTasksByLabel!: TaskGetters.GetNumberOfTasksByLabel
 
-  @pers.Getter initialPerspective!: string
+  @pers.Getter initialPerspective!: PersGetters.InitialPerspective
 
   @Prop(String) search!: string
 
@@ -90,7 +94,7 @@ export default class LabelAppnav extends Vue {
             inputMaximumCharacters: 40,
             buttonName: 'Save new label name',
             inputPlaceholder: this.getLabelsByIds([id])[0].name,
-            callback: name => {
+            callback: (name: string) => {
               this.pushPopUp('')
               this.pushAlert({
                 name: `<strong>${name}</strong> label was successfully saved.`,

@@ -24,6 +24,7 @@ import BasePerspective from '@/components/AppViews/Perspectives/BasePerspective.
 import appUtils from '@/utils/app'
 
 import { Task } from '../../../../interfaces/app'
+import { IndexState } from '../../../../interfaces/store/index'
 
 @Component({
   components: {
@@ -31,7 +32,7 @@ import { Task } from '../../../../interfaces/app'
   },
 })
 export default class ViewUpcoming extends Vue {
-  @State currentAppSection!: string
+  @State currentAppSection!: IndexState.currentAppSection
 
   @taskVuex.State tasks!: Task[]
 

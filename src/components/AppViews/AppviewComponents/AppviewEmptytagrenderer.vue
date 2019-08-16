@@ -21,6 +21,7 @@ import Mixin from '@/mixins/sortable'
 import EmptyTag from './AppviewEmptytag.vue'
 
 import Sortable from 'sortablejs'
+import { IndexState } from '../../../interfaces/store/index'
 
 @Component({
   components: {
@@ -28,7 +29,7 @@ import Sortable from 'sortablejs'
   },
 })
 export default class AppviewEmptytag extends Mixins(Mixin) {
-  @State theme!: string
+  @State theme!: IndexState.theme
 
   @Prop(Array) list!: string[]
 

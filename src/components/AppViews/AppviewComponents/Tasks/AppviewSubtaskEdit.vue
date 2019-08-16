@@ -35,6 +35,7 @@ import { State } from 'vuex-class'
 
 import DropdownInput from '@/components/DropdownInput.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
+import { IndexState } from '../../../../interfaces/store/index'
 
 @Component({
   components: {
@@ -43,7 +44,7 @@ import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
   },
 })
 export default class SubtaskEdit extends Vue {
-  @State theme!: string
+  @State theme!: IndexState.theme
 
   @Prop(String) value!: string
   @Prop(Boolean) onlyEdit!: boolean

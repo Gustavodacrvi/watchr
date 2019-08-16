@@ -13,6 +13,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
 
 import appUtils from '@/utils/app'
+import { IndexGetters } from '../../interfaces/store/index'
 
 @Component({
   components: {
@@ -21,8 +22,8 @@ import appUtils from '@/utils/app'
   },
 })
 export default class TheNavbar extends Vue {
-  @Getter isDesktop!: boolean
-  @Getter platform!: boolean
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Getter platform!: IndexGetters.Platform
 }
 
 </script>

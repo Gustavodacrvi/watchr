@@ -27,10 +27,11 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
 import { ListIcon } from '../../../interfaces/app'
+import { IndexState } from '../../../interfaces/store/index'
 
 @Component
 export default class TodayView extends Vue {
-  @State theme!: string
+  @State theme!: IndexState.theme
 
   @Prop(String) name!: string
   @Prop(Array) icons!: ListIcon[]

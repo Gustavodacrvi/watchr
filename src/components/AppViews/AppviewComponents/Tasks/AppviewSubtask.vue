@@ -44,6 +44,9 @@ const set = namespace('settings')
 import SubTaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtaskEdit.vue'
 
 import { longClickDirective } from 'vue-long-click'
+import { IndexState, IndexGetters } from '../../../../interfaces/store/index'
+import { SetState } from '../../../../interfaces/store/settings'
+import { TaskActions } from '../../../../interfaces/store/task'
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
@@ -55,16 +58,15 @@ else Vue.directive('longpress', longClickDirective({delay: 1500, interval: 5000}
   },
 })
 export default class AppviewSubtask extends Vue {
-  @State theme!: string
-  @Getter isDesktop!: boolean
+  @State theme!: IndexState.theme
+  @Getter isDesktop!: IndexGetters.IsDesktop
 
   @Prop(Object) task!: any
 
-  // tslint:disable-next-line:max-line-length
-  @taskVuex.Action saveSubTask!: (obj: {name: string, taskId: string, completed: boolean, id: string}) => void
-  @taskVuex.Action deleteSubTaskFromTask!: (obj: {taskId: string, id: string}) => void
+  @taskVuex.Action saveSubTask!: TaskActions.SaveSubTask
+  @taskVuex.Action deleteSubTaskFromTask!: TaskActions.DeleteSubTaskFromTask
 
-  @set.State timeZone!: string
+  @set.State timeZone!: SetState.timeZone
 
   @Prop(Boolean) allowDrag!: boolean
   @Prop(Boolean) deselectAll!: boolean

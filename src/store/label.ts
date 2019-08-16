@@ -1,43 +1,18 @@
 
 import { Label } from '@/interfaces/app'
 
-import { States as RootState } from '@/store/index'
+import { State, Getters, LabelActions } from '@/interfaces/store/label'
 import appUtils from '@/utils/app'
 
-interface States {
-  labels: Label[]
-  order: string[]
-}
-
-
-interface Getters {
-  sortedLabels: () => Label[]
-  sortedLabelsByName: () => Label[]
-  getLabelsByIds: () => (ids: string[]) => Label[]
-}
-
-interface Mutations {
-
-}
-
-interface ActionContext {
-  state: States
-  getters: Getters
-  commit: (mutation: string, payload?: any) => void
-  dispatch: (action: string, payload?: any) => void
-  rootState: RootState
-}
-
 interface Actions {
-  getData: (context: ActionContext) => void
-  addLabel: (context: ActionContext) => void
-  saveLabelPosition: (context: ActionContext, ids: string[]) => void
-  deleteLabelsById: (context: ActionContext, ids: string[]) => void
-  editLabelNameById: (context: ActionContext, obj: {id: string, name: string}) => void
-  saveLabelTaskOrder: (context: ActionContext, obj: {id: string, order: string[]}) => void
-  sortLabelsByName: (context: ActionContext) => void
-  addLabelsOrder: (context: ActionContext, id: string) => void
-  [key: string]: (context: ActionContext, payload: any) => any
+  getData: LabelActions.StoreGetData
+  addLabel: LabelActions.StoreAddLabel
+  saveLabelPosition: LabelActions.StoreSaveLabelPosition
+  deleteLabelsById: LabelActions.StoreDeleteLabelsById
+  editLabelNameById: LabelActions.StoreEditLabelNameById
+  saveLabelTaskOrder: LabelActions.StoreSaveLabelTaskOrder
+  sortLabelsByName: LabelActions.StoreSortLabelsByName
+  addLabelsOrder: LabelActions.StoreAddLabelsOrder
 }
 
 export default {
@@ -45,26 +20,26 @@ export default {
   state: {
     labels: [],
     order: [],
-  } as States,
+  } as State,
   mutations: {
 
-  } as Mutations,
+  },
   getters: {
-    sortedLabelsByName(state: States): Label[] {
+    sortedLabelsByName(state) {
       const labs = state.labels.slice()
       labs.sort((a, b) => a.name.localeCompare(b.name))
       return labs
     },
-    sortedLabels(state: States): Label[] {
+    sortedLabels(state) {
       const order: string[] = appUtils.fixOrder(state.labels, state.order)
       return appUtils.sortArrayByIds(state.labels, order)
     },
-    getLabelsByIds: (state: States) => (ids: string[]) => {
+    getLabelsByIds: state => ids => {
       return state.labels.filter(el => ids.includes(el.id))
     },
   } as Getters,
   actions: {
-    saveLabelPosition({ state, rootState }, ids) {
+    saveLabelPosition({ rootState }, ids) {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('labelsOrder').doc(rootState.uid)
           .update({
@@ -85,7 +60,7 @@ export default {
           order,
         })
     },
-    getData({ rootState, state, dispatch }) {
+    getData({ rootState, state }) {
       if (rootState.firestore && rootState.uid) {
         rootState.firestore.collection('labelsOrder').doc(rootState.uid)
           .onSnapshot(snap => {
@@ -111,7 +86,7 @@ export default {
         })
       }
     },
-    addLabel({ rootState, state }: ActionContext, name: string) {
+    addLabel({ rootState }, name) {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('labels').add({
           name,
@@ -119,7 +94,7 @@ export default {
           order: [],
         })
     },
-    deleteLabelsById({ rootState, state }: ActionContext, ids: string[]) {
+    deleteLabelsById({ rootState }, ids) {
       if (rootState.firestore && rootState.uid) {
         const batch = rootState.firestore.batch()
 
@@ -135,7 +110,7 @@ export default {
           name,
         })
     },
-    addLabelsOrder({ rootState }, id: string) {
+    addLabelsOrder({ rootState }, id) {
       if (rootState.firestore)
         return new Promise(resolve => {
           const fire = rootState.firestore as any

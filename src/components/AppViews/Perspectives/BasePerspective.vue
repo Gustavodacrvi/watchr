@@ -126,6 +126,11 @@ import moment from 'moment-timezone'
 
 import { Perspective, Label, Task, ListIcon, Alert } from '../../../interfaces/app'
 import appUtils from '@/utils/app'
+import { IndexState, IndexGetters, IndexMutations } from '../../../interfaces/store/index'
+import { LabelGetters } from '../../../interfaces/store/label'
+import { PersGetters, PersActions } from '../../../interfaces/store/perspective'
+import { SetState } from '../../../interfaces/store/settings'
+import { TaskState, TaskActions } from '../../../interfaces/store/task'
 
 const labelVuex = namespace('label')
 const taskVuex = namespace('task')
@@ -143,35 +148,34 @@ const set = namespace('settings')
   },
 })
 export default class PerspectiveAppview extends Vue {
-  @State theme!: string
-  @State currentAppSection!: string
-  @Getter isDesktop!: boolean
-  @Getter platform!: string
-  @Mutation pushView!: (obj: {view: string, viewType: string}) => void
-  @Mutation sendOptionsToNavbar!: (options: ListIcon[]) => void
-  @Mutation hideNavBarOptions!: () => void
-  @Mutation pushAlert!: (alert: Alert) => void
+  @State theme!: IndexState.theme
+  @State currentAppSection!: IndexState.currentAppSection
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Getter platform!: IndexGetters.Platform
+  @Mutation pushView!: IndexMutations.PushView
+  @Mutation sendOptionsToNavbar!: IndexMutations.SendOptionsToNavbar
+  @Mutation hideNavBarOptions!: IndexMutations.HideNavBarOptions
+  @Mutation pushAlert!: IndexMutations.PushAlert
 
-  @taskVuex.State tasks!: Task[]
-  // tslint:disable-next-line:max-line-length
-  @taskVuex.Action addTaskPerspective!: (obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: any}) => void
-  @taskVuex.Action deleteTasksById!: (ids: string[]) => void
-  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
-  @taskVuex.Action saveNewDateOfTasks!: (arr: Array<{id: string, date: string}>) => void
+  @taskVuex.State tasks!: TaskState.tasks
+  @taskVuex.Action addTaskPerspective!: TaskActions.AddTaskPerspective
+  @taskVuex.Action deleteTasksById!: TaskActions.DeleteTasksById
+  @taskVuex.Action changePrioritysByIds!: TaskActions.ChangePrioritysByIds
+  @taskVuex.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
 
-  @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
+  @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
 
-  @persVuex.Getter getPerspectiveByName!: (name: string) => Perspective
-  @persVuex.Action saveTaskOrder!: (obj: {id: string, order: string[]}) => void
-  @persVuex.Action addSmartPersFilter!: (obj: {id: string, persName: string}) => void
-  @persVuex.Action removeSmartPersFilter!: (obj: {id: string, persName: string}) => void
-  @persVuex.Action addLabelToPerspective!: (obj: {id: string, labelId: string}) => Label[]
-  @persVuex.Action removeLabelFromPerspective!: (obj: {id: string, labelId: string}) => Label[]
-  @persVuex.Action savePerspectivePriority!: (obj: {id: string, priority: string}) => Label[]
-  @persVuex.Action addPerspectiveSort!: (obj: {sort: string, perspectiveId: string}) => Label[]
-  @persVuex.Action savePerspectiveTaskSort!: (obj: {sort: string[], perspectiveId: string}) => Label[]
+  @persVuex.Getter getPerspectiveByName!: PersGetters.GetPerspectiveByName
+  @persVuex.Action saveTaskOrder!: PersActions.SaveTaskOrder
+  @persVuex.Action addSmartPersFilter!: PersActions.AddSmartPersFilter
+  @persVuex.Action removeSmartPersFilter!: PersActions.RemoveSmartPersFilter
+  @persVuex.Action addLabelToPerspective!: PersActions.AddLabelToPerspective
+  @persVuex.Action removeLabelFromPerspective!: PersActions.RemoveLabelFromPerspective
+  @persVuex.Action savePerspectivePriority!: PersActions.SavePerspectivePriority
+  @persVuex.Action addPerspectiveSort!: PersActions.AddPerspectiveSort
+  @persVuex.Action savePerspectiveTaskSort!: PersActions.SavePerspectiveTaskSort
 
-  @set.State timeZone!: string
+  @set.State timeZone!: SetState.timeZone
 
   @Prop({default: true, type: Boolean}) allowLabels!: boolean
   @Prop({default: true, type: Boolean}) allowDate!: boolean
@@ -394,7 +398,7 @@ export default class PerspectiveAppview extends Vue {
     let name!: string
     let faded!: string
     const week = m.format('dddd')
-    
+
     if (diff === 0) name = 'Tomorrow'
     else if (diff < 6) {
       name = week

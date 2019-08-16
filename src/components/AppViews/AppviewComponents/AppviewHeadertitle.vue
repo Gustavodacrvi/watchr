@@ -16,12 +16,13 @@
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
+import { IndexState, IndexGetters, IndexMutations } from '../../../interfaces/store/index'
 
 @Component
 export default class AppviewHeadertitle extends Vue {
-  @State theme!: string
-  @Getter isDesktop!: boolean
-  @Mutation addNavBarTitle!: (title: string) => void
+  @State theme!: IndexState.theme
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Mutation addNavBarTitle!: IndexMutations.AddNavBarTitle
 
   @Prop(String) value!: string
   @Prop(String) icon!: string

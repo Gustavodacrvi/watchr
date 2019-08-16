@@ -9,7 +9,7 @@
         class='margin'
         focus-class='labeladder'
         placeholder='Label name...'
-        :input='value'
+        :input='input'
         :values='options'
         @enter='add'
         @value='v => value = v'
@@ -43,7 +43,8 @@ import DropdownInput from '@/components/DropdownInput.vue'
 const labelStore = namespace('label')
 
 import { Alert, Label } from '../../interfaces/app'
-
+import { IndexState, IndexGetters, IndexMutations } from '../../interfaces/store/index'
+import { LabelState, LabelActions } from '../../interfaces/store/label'
 
 @Component({
   components: {
@@ -51,14 +52,14 @@ import { Alert, Label } from '../../interfaces/app'
   },
 })
 export default class LabelAdder extends Vue {
-  @State theme!: string
-  @State uid!: string
-  @State popUpPayload!: any
-  @Getter isDesktop!: boolean
-  @Mutation pushAlert!: (alert: Alert) => void
+  @State theme!: IndexState.theme
+  @State uid!: IndexState.uid
+  @State popUpPayload!: IndexState.popUpPayload
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Mutation pushAlert!: IndexMutations.PushAlert
 
-  @labelStore.State labels!: Label[]
-  @labelStore.Action addLabel!: (name: string) => void
+  @labelStore.State labels!: LabelState.labels
+  @labelStore.Action addLabel!: LabelActions.AddLabel
 
   input: string | null = null
   value: string = ''

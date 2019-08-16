@@ -14,7 +14,7 @@ import { State, Getter, Mutation } from 'vuex-class'
 
 import CalendarInputComp from '@/components/AppViews/AppviewComponents/Tasks/AppviewCalendarInput.vue'
 
-import { CenteredCard } from '../../../../store'
+import { IndexState, IndexMutations, IndexGetters } from '../../../../interfaces/store/index'
 
 @Component({
   components: {
@@ -22,9 +22,9 @@ import { CenteredCard } from '../../../../store'
   },
 })
 export default class CalendarInputIcon extends Vue {
-  @State theme!: string
-  @Mutation pushCenteredCard!: (card: CenteredCard | null) => void
-  @Getter isDesktop!: boolean
+  @State theme!: IndexState.theme
+  @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
+  @Getter isDesktop!: IndexGetters.IsDesktop
 
   showing: boolean = false
 

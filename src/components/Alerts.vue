@@ -28,6 +28,7 @@ import { State, Getter } from 'vuex-class'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
 import { Alert } from '@/interfaces/app'
+import { IndexState, IndexGetters } from '../interfaces/store/index'
 
 @Component({
   components: {
@@ -35,9 +36,9 @@ import { Alert } from '@/interfaces/app'
   },
 })
 export default class LabelAdder extends Vue {
-  @State theme!: string
+  @State theme!: IndexState.theme
   @State alert!: Alert
-  @Getter platform!: 'desktop' | 'mobile'
+  @Getter platform!: IndexGetters.Platform
 }
 
 </script>

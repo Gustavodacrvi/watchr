@@ -45,10 +45,11 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
 import appUtils from '@/utils/app'
+import { IndexState } from '../../../interfaces/store/index'
 
 @Component
 export default class FormOptions extends Vue {
-  @State theme!: string
+  @State theme!: IndexState.theme
 
   @Prop({default: false, type: Boolean}) enableSearch!: boolean
   @Prop({default: false, type: Boolean}) parse!: boolean

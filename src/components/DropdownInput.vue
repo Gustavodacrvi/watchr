@@ -48,6 +48,7 @@
 
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { State } from 'vuex-class'
+import { IndexState } from '../interfaces/store/index'
 
 interface RefsPositions {
   drop: {
@@ -62,7 +63,7 @@ interface RefsPositions {
 
 @Component
 export default class DropdownInput extends Vue {
-  @State theme!: string
+  @State theme!: IndexState.theme
 
   @Prop(String) focusClass!: string
   @Prop(Boolean) disabled!: boolean

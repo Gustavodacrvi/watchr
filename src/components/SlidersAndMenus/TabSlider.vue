@@ -30,6 +30,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
 import appUtils from '@/utils/app'
+import { IndexState } from '../../interfaces/store/index'
 
 interface Option {
   name: string
@@ -38,7 +39,8 @@ interface Option {
 
 @Component
 export default class TabSlider extends Vue {
-  @State theme!: string
+  @State theme!: IndexState.theme
+
   @Prop(Array) options!: Option[]
   @Prop(String) flexBasis!: string
 

@@ -88,6 +88,7 @@ import { State, Mutation } from 'vuex-class'
 import Mixin from '@/mixins/navBar'
 
 import IconDropdown from '@/components/IconDropdown.vue'
+import { IndexState, IndexMutations } from '../../interfaces/store/index'
 
 @Component({
   components: {
@@ -95,11 +96,11 @@ import IconDropdown from '@/components/IconDropdown.vue'
   },
 })
 export default class DesktopNavbar extends Mixins(Mixin) {
-  @State theme!: string
-  @State isLogged!: boolean
-  @State emailVerified!: boolean
-  @Mutation pushTheme!: (theme: string) => void
-  @Mutation pushPopUp!: (compName: string) => void
+  @State theme!: IndexState.theme
+  @State isLogged!: IndexState.isLogged
+  @State emailVerified!: IndexState.emailVerified
+  @Mutation pushTheme!: IndexMutations.PushTheme
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
 
   lineLeftPosition: string = ''
   lineWidth: string = ''

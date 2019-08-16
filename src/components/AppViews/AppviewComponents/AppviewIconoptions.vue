@@ -37,7 +37,7 @@ import { State, Mutation, Getter } from 'vuex-class'
 import IconDropdown from '@/components/IconDropdown.vue'
 
 import { ListIcon } from '../../../interfaces/app'
-import { CenteredCard } from '../../../store'
+import { IndexState, IndexMutations, IndexGetters } from '../../../interfaces/store/index'
 
 @Component({
   components: {
@@ -45,10 +45,10 @@ import { CenteredCard } from '../../../store'
   },
 })
 export default class AppviewIconoptions extends Vue {
-  @State theme!: string
-  @State('centeredCard') card!: CenteredCard | null
-  @Getter isDesktop!: boolean
-  @Mutation pushCenteredCard!: (card: CenteredCard | null) => void
+  @State theme!: IndexState.theme
+  @State('centeredCard') card!: IndexState.centeredCard
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
   @Prop(String) handle!: string
   @Prop(String) size!: string

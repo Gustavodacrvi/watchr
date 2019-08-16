@@ -91,6 +91,10 @@ import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeaderti
 import appUtils from '@/utils/app'
 
 import { Task, Label, ListIcon } from '../../../interfaces/app'
+import { IndexState, IndexMutations, IndexGetters } from '../../../interfaces/store/index'
+import { LabelState, LabelGetters, LabelActions } from '../../../interfaces/store/label'
+import { SetState } from '../../../interfaces/store/settings'
+import { TaskState, TaskActions } from '../../../interfaces/store/task'
 
 @Component({
   components: {
@@ -102,27 +106,26 @@ import { Task, Label, ListIcon } from '../../../interfaces/app'
   },
 })
 export default class LabelPerspective extends Vue {
-  @State theme!: string
-  @State currentAppSection!: string
-  @Mutation pushView!: (obj: {view: string, viewType: string}) => void
-  @Getter isDesktop!: boolean
-  @Getter platform!: string
-  @Mutation sendOptionsToNavbar!: (options: ListIcon[]) => void
-  @Mutation hideNavBarOptions!: () => void
+  @State theme!: IndexState.theme
+  @State currentAppSection!: IndexState.currentAppSection
+  @Mutation pushView!: IndexMutations.PushView
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Getter platform!: IndexGetters.Platform
+  @Mutation sendOptionsToNavbar!: IndexMutations.SendOptionsToNavbar
+  @Mutation hideNavBarOptions!: IndexMutations.HideNavBarOptions
 
   @Prop(String) label!: string
 
-  @labelVuex.State('labels') savedLabels!: Label[]
-  @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
-  @labelVuex.Action saveLabelTaskOrder!: (obj: {id: string, order: string[]}) => void
+  @labelVuex.State('labels') savedLabels!: LabelState.labels
+  @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
+  @labelVuex.Action saveLabelTaskOrder!: LabelActions.SaveLabelTaskOrder
 
-  @taskVuex.State tasks!: Task[]
-  @taskVuex.Action deleteTasksById!: (ids: string[]) => void
-  // tslint:disable-next-line:max-line-length
-  @taskVuex.Action addTaskLabel!: (obj: {task: Task, labelId: string, position: number, order: string[]}) => void
-  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
+  @taskVuex.State tasks!: TaskState.tasks
+  @taskVuex.Action deleteTasksById!: TaskActions.DeleteTasksById
+  @taskVuex.Action addTaskLabel!: TaskActions.AddTaskLabel
+  @taskVuex.Action changePrioritysByIds!: TaskActions.ChangePrioritysByIds
 
-  @set.State timeZone!: string
+  @set.State timeZone!: SetState.timeZone
 
   search: string = ''
   priority: string = ''

@@ -37,6 +37,7 @@ import { Alert } from '../../interfaces/app'
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 import FormPassword from '@/components/PopUps/FormComponents/FormPassword.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
+import { IndexState, IndexMutations } from '../../interfaces/store/index'
 
 @Component({
   components: {
@@ -46,9 +47,9 @@ import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
   },
 })
 export default class SigninPopUp extends Vue {
-  @State theme!: string
-  @Mutation pushPopUp!: (compName: string) => void
-  @Mutation pushAlert!: (alert: Alert) => void
+  @State theme!: IndexState.theme
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Mutation pushAlert!: IndexMutations.PushAlert
 
   email: string | null = null
   password: string | null = null

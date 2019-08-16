@@ -54,6 +54,7 @@ import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewI
 import { ListIcon } from '../../../interfaces/app'
 
 import { longClickDirective } from 'vue-long-click'
+import { IndexMutations } from '../../../interfaces/store/index'
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 400, interval: 5000}))
@@ -66,7 +67,7 @@ else Vue.directive('longpress', longClickDirective({delay: 1500, interval: 5000}
   },
 })
 export default class ListRenderer extends Vue {
-  @Mutation closeAppBar!: () => void
+  @Mutation closeAppBar!: IndexMutations.CloseAppBar
 
   @Prop({default: true, type: Boolean}) show!: boolean
   @Prop({default: 0, type: Number}) number!: boolean

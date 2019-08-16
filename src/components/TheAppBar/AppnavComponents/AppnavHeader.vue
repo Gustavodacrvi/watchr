@@ -21,10 +21,11 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State } from 'vuex-class'
 
 import { ListIcon } from '../../../interfaces/app'
+import { IndexState } from '../../../interfaces/store/index'
 
 @Component
 export default class AppnavHeader extends Vue {
-  @State theme!: string
+  @State theme!: IndexState.theme
 
   @Prop({type: String, required: true}) name!: string
   @Prop({type: Boolean, required: true}) showTitle!: boolean

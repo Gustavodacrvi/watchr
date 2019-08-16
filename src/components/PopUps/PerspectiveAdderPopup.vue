@@ -106,10 +106,11 @@ import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 
 import fontAwesomeClasses from '@/utils/fontAwesomeClasses'
 
-const labelStore = namespace('label')
 const perspectiveModule = namespace('perspective')
 
 import { Alert, Perspective } from '../../interfaces/app'
+import { IndexState, IndexGetters, IndexMutations } from '../../interfaces/store/index'
+import { PersGetters, PersState } from '../../interfaces/store/perspective'
 
 interface Pers {
   name: string
@@ -130,15 +131,15 @@ interface Pers {
   },
 })
 export default class LabelAdder extends Vue {
-  @State theme!: string
-  @State uid!: string
-  @State('popUpPayload') pers!: Perspective
-  @Getter isDesktop!: boolean
-  @Getter platform!: boolean
-  @Mutation pushAlert!: (alert: Alert) => void
-  @Mutation pushPopUp!: (compName: string) => void
+  @State theme!: IndexState.theme
+  @State uid!: IndexState.uid
+  @State('popUpPayload') pers!: IndexState.popUpPayload
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Getter platform!: IndexGetters.Platform
+  @Mutation pushAlert!: IndexMutations.PushAlert
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
 
-  @perspectiveModule.State perspectives!: Perspective[]
+  @perspectiveModule.State perspectives!: PersState.perspectives
   @perspectiveModule.Action addPerspective!: (obj: Pers) => void
   @perspectiveModule.Action editPerspective!: (obj: Pers & {id: string}) => void
 
@@ -156,7 +157,8 @@ export default class LabelAdder extends Vue {
   created() {
     if (this.pers) {
       this.input = this.pers.name
-      this.value = this.input
+      if (this.input)
+        this.value = this.input
       this.icon = this.pers.icon
       this.color = this.pers.iconColor
       this.description = this.pers.description

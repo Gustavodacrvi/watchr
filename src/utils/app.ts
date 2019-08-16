@@ -373,6 +373,8 @@ export default {
       let inKeyword = false
       let inHour = false
 
+      // dont remove this
+      // tslint:disable-next-line:curly
       if (str.includes('next ')) {
         for (let i = 0; i < values.length; i++)
           if (values[i] === 'next' && values[i + 1]) {
