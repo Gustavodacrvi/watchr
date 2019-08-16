@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
+import Vuex, { Getter } from 'vuex'
 import router from './../router'
 
 import label from '@/store/label'
@@ -10,96 +10,61 @@ import settings from '@/store/settings'
 const MAX_MOBILE_SCREEN_WIDTH = 992
 
 import { SimpleAdder, Alert, Perspective, ListIcon } from '@/interfaces/app'
+import { IndexState, IndexMutations, IndexActions, IndexGetters, State } from '@/interfaces/store/index'
 
 Vue.use(Vuex)
 
-export interface CenteredCard {
-  type: 'ListIcons' | 'Component',
-  flexBasis: string,
-  search?: boolean
-  maxHeight?: string
-  listIcons: ListIcon[],
-  listIconHandler: (...arr: any[]) => any
-  compName: string
-}
-
-const savedTheme: string = localStorage.getItem('watchrTheme') || 'light'
-
-export interface States {
-  theme: string
-  popUpComponent: string
-  windowWidth: number
-  showingExtraActions: boolean
-  popUpPayload: any | SimpleAdder
-  appBarState: boolean
-  firestore: firebase.firestore.Firestore | null
-  isLogged: boolean
-  viewName: string
-  centeredCard: CenteredCard | null
-  viewType: string
-  currentAppSection: string
-  uid: string | null
-  firebase: any
-  isAnonymous: boolean
-  navBarTitle: string
-  navBarOptions: ListIcon[]
-  emailVerified: boolean
-  appError: boolean
-  loading: boolean
-  showingAlert: boolean
-  alerts: Alert[]
-  alert: Alert | undefined
-}
+const savedTheme: IndexState.theme = localStorage.getItem('watchrTheme') as IndexState.theme || 'light'
 
 interface Mutations {
-  pushTheme: (state: States, theme: string) => void
-  pushPopUp: (state: States, compName: string) => void
-  pushAlert: (state: States, alert: Alert) => void
-  pushPopUpPayload: (state: States, payload: any) => void
-  saveCurrentUser: (state: States, user: firebase.User) => void
-  saveFirestore: (state: States, firestore: firebase.firestore.Firestore) => void
-  hideExtraActions: (state: States) => void
-  showExtraActions: (state: States) => void
-  pushCenteredCard: (state: States, centeredCardPopUp: CenteredCard | null) => void
-  openSection: (state: States, currentAppSection: string) => void
-  saveFirebase: (state: States, firebase: any) => void
-  pushAppView: (state: States, comp: string) => void
-  pushPerspective: (state: States, payload?: any) => void
-  pushView: (state: States, obj: {view: string, viewType: string}) => void
-  addNavBarTitle: (state: States, title: string) => void
-  sendOptionsToNavbar: (state: States, options: ListIcon[]) => void
-  showApp: () => void
-  hideNavBarOptions: () => void
-  openAppBar: () => void
-  closeAppBar: () => void
-  resetPopUpState: () => void
-  hideAlert: () => void
-  [key: string]: (state: States, payload: any) => any
+  pushAlert: IndexMutations.PushAlert
+  pushTheme: IndexMutations.PushTheme
+  pushPopUp: IndexMutations.PopUp
+  pushPopUpPayload: IndexMutations.PushPopUpPayload
+  saveCurrentUser: IndexMutations.SaveCurrentUser
+  saveFirestore: IndexMutations.SaveFirestore
+  hideExtraActions: IndexMutations.HideExtraActions
+  showExtraActions: IndexMutations.ShowExtraActions
+  pushCenteredCard: IndexMutations.PushCenteredCard
+  openSection: IndexMutations.OpenSection
+  saveFirebase: IndexMutations.SaveFirebase
+  pushAppView: IndexMutations.PushAppView
+  pushPerspective: IndexMutations.PushPerspective
+  pushView: IndexMutations.PushView
+  addNavBarTitle: IndexMutations.AddNavBarTitle
+  sendOptionsToNavbar: IndexMutations.SendOptionsToNavbar
+  showApp: IndexMutations.ShowApp
+  hideNavBarOptions: IndexMutations.HideNavBarOptions
+  openAppBar: IndexMutations.OpenAppBar
+  closeAppBar: IndexMutations.CloseAppBar
+  resetPopUpState: IndexMutations.ResetPopUpState
+  hideAlert: IndexMutations.HideAlert
+  [key: string]: (state: State, ...arr: any[]) => void
 }
 
 interface Getters {
-  isDesktop: () => boolean
-  isStandAlone: () => boolean
-  platform: () => 'mobile' | 'desktop'
-  isOnAppRoute: () => boolean
-  perspectiveData: () => Perspective
-  loggedAndVerified: () => boolean
-  loggedAndNotVerified: () => boolean
-  anonymous: () => boolean
-  [key: string]: (state: States, getters: any, rootState: States, rootGetters: any) => any
+  isDesktop: (state: State) => IndexGetters.IsDesktop
+  isStandAlone: (state: State) => IndexGetters.IsStandAlone
+  platform: (state: State) => IndexGetters.Platform
+  isOnAppRoute: (state: State) => IndexGetters.IsOnAppRoute
+  perspectiveData: (state: State) => IndexGetters.PerspectiveData
+  loggedAndVerified: (state: State) => IndexGetters.LoggedAndVerified
+  loggedAndNotVerified: (state: State) => IndexGetters.LoggedAndNotVerified
+  anonymous: (state: State) => IndexGetters.Anonymous
+  [key: string]: (state: State, getters: Getters) => void
 }
 
 interface ActionContext {
-  state: States
+  state: State
   getters: Getters
   commit: (mutation: string, payload?: any) => void
   dispatch: (action: string) => void
 }
 
 interface Actions {
-  getWindowWidthOnResize: (context: ActionContext) => void
-  showLastAlert: (context: ActionContext) => void
-  activateKeyShortcut: (context: ActionContext, key: string) => void
+  getWindowWidthOnResize: IndexActions.GetWindowWidthOnResize
+  showLastAlert: IndexActions.ShowLastAlert
+  activateKeyShortcut: IndexActions.activateKeyShortcut
   [key: string]: (context: ActionContext, payload: any) => any
 }
 
@@ -131,18 +96,18 @@ const store: any = new Vuex.Store({
     showingAlert: false,
     alerts: [],
     alert: undefined,
-  } as States,
+  } as State,
   mutations: {
-    hideExtraActions(state: States) {
+    hideExtraActions(state) {
       state.showingExtraActions = false
     },
-    showExtraActions(state: States) {
+    showExtraActions(state) {
       state.showingExtraActions = true
     },
-    openSection(state: States, currentAppSection: string) {
+    openSection(state, currentAppSection: string) {
       state.currentAppSection = currentAppSection
     },
-    saveFirestore(state: States, firestore: firebase.firestore.Firestore) {
+    saveFirestore(state, firestore: firebase.firestore.Firestore) {
       state.firestore = firestore
       state.firestore.enablePersistence()
         .catch(err => {
@@ -157,14 +122,14 @@ const store: any = new Vuex.Store({
             })
         })
     },
-    saveFirebase(state: States, firebase) {
+    saveFirebase(state, firebase) {
       state.firebase = firebase
     },
-    pushTheme(state: States, theme: string) {
+    pushTheme(state, theme: IndexState.theme) {
       state.theme = theme
       localStorage.setItem('watchrTheme', theme)
     },
-    saveCurrentUser(state: States, user: firebase.User | null) {
+    saveCurrentUser(state, user: firebase.User | null) {
       if (user !== null) {
         state.isLogged = true
         state.isAnonymous = user.isAnonymous
@@ -177,14 +142,14 @@ const store: any = new Vuex.Store({
         state.uid = null
       }
     },
-    resetPopUpState(state: States) {
+    resetPopUpState(state) {
       state.popUpComponent = ''
       state.popUpPayload = null
     },
-    pushCenteredCard(state: States, centeredCardPopUp) {
+    pushCenteredCard(state, centeredCardPopUp) {
       state.centeredCard = centeredCardPopUp
     },
-    pushPopUp(state: States, compName: string) {
+    pushPopUp(state, compName: string) {
       const isDesktop = state.windowWidth > MAX_MOBILE_SCREEN_WIDTH
       if (!isDesktop && compName === '' && state.popUpComponent !== '')
         router.go(-1)
@@ -193,64 +158,64 @@ const store: any = new Vuex.Store({
       state.popUpComponent = compName
       state.popUpPayload = null
     },
-    pushPopUpPayload(state: States, payload: any | SimpleAdder) {
+    pushPopUpPayload(state, payload: any | SimpleAdder) {
       state.popUpPayload = payload
     },
-    showApp(state: States) {
+    showApp(state) {
       state.loading = false
     },
-    pushAlert(state: States, alert: Alert) {
+    pushAlert(state, alert: Alert) {
       state.alerts.push(alert)
     },
-    hideAlert(state: States) {
+    hideAlert(state) {
       state.showingAlert = false
     },
-    openAppBar(state: States) {
+    openAppBar(state) {
       state.appBarState = true
     },
-    closeAppBar(state: States) {
+    closeAppBar(state) {
       state.appBarState = false
     },
-    pushView(state: States, {view, viewType}) {
+    pushView(state, {view, viewType}) {
       state.viewName = view
       state.viewType = viewType
     },
-    addNavBarTitle(state: States, title: string) {
+    addNavBarTitle(state, title: string) {
       state.navBarTitle = title
     },
-    sendOptionsToNavbar(state: States, options: ListIcon[]) {
+    sendOptionsToNavbar(state, options: ListIcon[]) {
       state.navBarOptions = options
     },
-    hideNavBarOptions(state: States) {
+    hideNavBarOptions(state) {
       state.navBarOptions = []
     },
   } as Mutations,
   getters: {
-    isDesktop(state: States): boolean {
-      if (state.windowWidth > MAX_MOBILE_SCREEN_WIDTH)
-        return true
-      return false
-    },
-    platform(state: States, getters: Getters): 'desktop' | 'mobile' {
+    platform(state: any, getters: Getters) {
       if (getters.isDesktop)
         return 'desktop'
       return 'mobile'
     },
-    isStandAlone(state: States): boolean {
+    isDesktop(state): boolean {
+      if (state.windowWidth > MAX_MOBILE_SCREEN_WIDTH)
+        return true
+      return false
+    },
+    isStandAlone(state: State): boolean {
       const navigator: any = window.navigator
       return (navigator.standalone === true)
       || (window.matchMedia('(display-mode: standalone)').matches)
     },
-    loggedAndVerified(state: States) {
+    loggedAndVerified(state: State) {
       return state.isLogged && state.emailVerified
     },
-    loggedAndNotVerified(state: States) {
+    loggedAndNotVerified(state: State) {
       return state.isLogged && !state.emailVerified
     },
-    anonymous(state: States) {
+    anonymous(state: State) {
       return state.isLogged && state.isAnonymous
     },
-    perspectiveData(state: States) {
+    perspectiveData(state: State) {
       const s = state as any
       return s.perspective.customPerspectives.find((el: Perspective) => el.name === state.viewName)
     },

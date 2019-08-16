@@ -180,6 +180,7 @@ export default class DropdownInput extends Vue {
 
   @Watch('input')
   onInput() {
+    console.log('input')
     setTimeout(() => {
       this.value = this.input
     }, 1)

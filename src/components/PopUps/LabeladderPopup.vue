@@ -9,7 +9,7 @@
         class='margin'
         focus-class='labeladder'
         placeholder='Label name...'
-        :input='value'
+        :input='input'
         :values='options'
         @enter='add'
         @value='v => value = v'

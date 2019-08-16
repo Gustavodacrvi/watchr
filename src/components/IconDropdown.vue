@@ -31,11 +31,11 @@ export default class TheNavbar extends Vue {
   @Prop({required: true, type: String}) handle!: string
   @Prop({default: 'lg', type: String}) size!: string
   @Prop({default: '250px', type: String}) minWidth!: string
-  @Prop({default: false, type: Boolean}) changeColorOnHover!: boolean
-  @Prop({default: false, type: Boolean}) centralize!: boolean
-  @Prop({default: false, type: Boolean}) floatTop!: boolean
+  @Prop(Boolean) changeColorOnHover!: boolean
+  @Prop(Boolean) centralize!: boolean
+  @Prop(Boolean) floatTop!: boolean
 
-  public showing: boolean = false
+  showing: boolean = false
 }
 
 </script>
