@@ -28,7 +28,8 @@ import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.v
 import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmessage.vue'
 
 import { Label, ListIcon, SimpleAdder, Perspective, ListElement, Alert } from '../../../interfaces/app'
-import { IndexState, IndexMutations } from '../../../interfaces/store/index';
+import { IndexState, IndexMutations } from '../../../interfaces/store/index'
+import { LabelGetters, LabelActions } from '../../../interfaces/store/label'
 
 const label = namespace('label')
 const task = namespace('task')
@@ -49,11 +50,11 @@ export default class LabelAppnav extends Vue {
   @Mutation pushAlert!: IndexMutations.PushAlert
   @Mutation openSection!: IndexMutations.OpenSection
 
-  @label.Getter sortedLabels!: Label[]
-  @label.Getter getLabelsByIds!: (ids: string[]) => Label[]
-  @label.Action saveLabelPosition!: (ids: string[]) => void
-  @label.Action deleteLabelsById!: (ids: string[]) => void
-  @label.Action editLabelNameById!: (obj: {id: string, name: string}) => void
+  @label.Getter sortedLabels!: LabelGetters.SortedLabels
+  @label.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
+  @label.Action saveLabelPosition!: LabelActions.SaveLabelPosition
+  @label.Action deleteLabelsById!: LabelActions.DeleteLabelsById
+  @label.Action editLabelNameById!: LabelActions.EditLabelNameById
 
   @task.Getter getNumberOfTasksByLabel!: (labelId: string) => number
 

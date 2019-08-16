@@ -127,6 +127,7 @@ import moment from 'moment-timezone'
 import { Perspective, Label, Task, ListIcon, Alert } from '../../../interfaces/app'
 import appUtils from '@/utils/app'
 import { IndexState, IndexGetters, IndexMutations } from '../../../interfaces/store/index'
+import { LabelGetters } from '../../../interfaces/store/label'
 
 const labelVuex = namespace('label')
 const taskVuex = namespace('task')
@@ -160,7 +161,7 @@ export default class PerspectiveAppview extends Vue {
   @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
   @taskVuex.Action saveNewDateOfTasks!: (arr: Array<{id: string, date: string}>) => void
 
-  @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
+  @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
 
   @persVuex.Getter getPerspectiveByName!: (name: string) => Perspective
   @persVuex.Action saveTaskOrder!: (obj: {id: string, order: string[]}) => void

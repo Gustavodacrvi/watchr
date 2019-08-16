@@ -44,6 +44,7 @@ const labelStore = namespace('label')
 
 import { Alert, Label } from '../../interfaces/app'
 import { IndexState, IndexGetters, IndexMutations } from '../../interfaces/store/index'
+import { LabelState, LabelActions } from '../../interfaces/store/label'
 
 @Component({
   components: {
@@ -57,8 +58,8 @@ export default class LabelAdder extends Vue {
   @Getter isDesktop!: IndexGetters.IsDesktop
   @Mutation pushAlert!: IndexMutations.PushAlert
 
-  @labelStore.State labels!: Label[]
-  @labelStore.Action addLabel!: (name: string) => void
+  @labelStore.State labels!: LabelState.labels
+  @labelStore.Action addLabel!: LabelActions.AddLabel
 
   input: string | null = null
   value: string = ''

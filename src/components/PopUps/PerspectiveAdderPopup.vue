@@ -106,7 +106,6 @@ import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 
 import fontAwesomeClasses from '@/utils/fontAwesomeClasses'
 
-const labelStore = namespace('label')
 const perspectiveModule = namespace('perspective')
 
 import { Alert, Perspective } from '../../interfaces/app'

@@ -86,6 +86,7 @@ import moment from 'moment-timezone'
 
 import appUtils from '@/utils/app'
 import { IndexState } from '../../../../interfaces/store/index'
+import { LabelState, LabelGetters } from '../../../../interfaces/store/label'
 
 @Component({
   components: {
@@ -105,8 +106,8 @@ export default class AppviewTaskedit extends Vue {
   @set.State timeZone!: string
   @set.State nextWeek!: string
 
-  @labelsVuex.State('labels') savedLabels!: Label[]
-  @labelsVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
+  @labelsVuex.State('labels') savedLabels!: LabelState.labels
+  @labelsVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
 
   @Prop({default: 'Add task', type: String}) btn!: string
   @Prop({default: false, type: Boolean}) closeOnSave!: boolean

@@ -45,6 +45,7 @@ import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 import FormPassword from '@/components/PopUps/FormComponents/FormPassword.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 import { IndexState, IndexMutations } from '../../interfaces/store/index'
+import { LabelActions } from '../../interfaces/store/label'
 
 @Component({
   components: {
@@ -59,7 +60,9 @@ export default class SigninPopUp extends Vue {
   @Mutation pushAlert!: IndexMutations.PushAlert
 
   @persVuex.Action addDefaultPerspectives!: (obj: {id: string, someday: string, anytime: string}) => void
-  @label.Action addLabelsOrder!: (id: string) => any
+
+  @label.Action addLabelsOrder!: LabelActions.AddLabelsOrder
+
   @settings.Action addDefaultSettings!: (id: string) => void
 
   email: string | null = null

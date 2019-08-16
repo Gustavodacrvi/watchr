@@ -95,6 +95,7 @@ import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewI
 import appUtil from '@/utils/app'
 import { ListIcon } from '../../interfaces/app'
 import { IndexState, IndexMutations, IndexGetters } from '../../interfaces/store/index'
+import { LabelActions } from '../../interfaces/store/label'
 
 const label = namespace('label')
 
@@ -122,7 +123,7 @@ export default class LoggedAppnav extends Vue {
   @Getter isDesktop!: IndexGetters.IsDesktop
   @Getter platform!: IndexGetters.Platform
 
-  @label.Action sortLabelsByName!: () => void
+  @label.Action sortLabelsByName!: LabelActions.SortLabelsByName
 
   sections: Section[] = [
     {icon: 'home', comp: 'overview', title: 'OVERVIEW'},

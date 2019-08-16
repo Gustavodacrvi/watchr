@@ -36,7 +36,6 @@ import FormCheck from '@/components/PopUps/FormComponents/FormCheckbox.vue'
 import FormOptions from '@/components/PopUps/FormComponents/FormOptions.vue'
 import FormInput from '@/components/PopUps/FormComponents/FormInput.vue'
 
-const labelStore = namespace('label')
 const perspectiveModule = namespace('perspective')
 
 import { Alert, Perspective } from '../../interfaces/app'

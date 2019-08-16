@@ -92,6 +92,7 @@ import appUtils from '@/utils/app'
 
 import { Task, Label, ListIcon } from '../../../interfaces/app'
 import { IndexState, IndexMutations, IndexGetters } from '../../../interfaces/store/index'
+import { LabelState, LabelGetters, LabelActions } from '../../../interfaces/store/label'
 
 @Component({
   components: {
@@ -113,9 +114,9 @@ export default class LabelPerspective extends Vue {
 
   @Prop(String) label!: string
 
-  @labelVuex.State('labels') savedLabels!: Label[]
-  @labelVuex.Getter getLabelsByIds!: (ids: string[]) => Label[]
-  @labelVuex.Action saveLabelTaskOrder!: (obj: {id: string, order: string[]}) => void
+  @labelVuex.State('labels') savedLabels!: LabelState.labels
+  @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
+  @labelVuex.Action saveLabelTaskOrder!: LabelActions.SaveLabelTaskOrder
 
   @taskVuex.State tasks!: Task[]
   @taskVuex.Action deleteTasksById!: (ids: string[]) => void

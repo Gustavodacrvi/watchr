@@ -1,5 +1,5 @@
 
-import { SimpleAdder, ListIcon, Alert, CenteredCard, Perspective } from '../../app'
+import { SimpleAdder, ListIcon, Alert, CenteredCard, Perspective } from '../app'
 
 export namespace IndexState {
   export type showingExtraActions = boolean
