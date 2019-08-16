@@ -128,6 +128,7 @@ import { Perspective, Label, Task, ListIcon, Alert } from '../../../interfaces/a
 import appUtils from '@/utils/app'
 import { IndexState, IndexGetters, IndexMutations } from '../../../interfaces/store/index'
 import { LabelGetters } from '../../../interfaces/store/label'
+import { PersGetters, PersActions } from '../../../interfaces/store/perspective';
 
 const labelVuex = namespace('label')
 const taskVuex = namespace('task')
@@ -163,15 +164,15 @@ export default class PerspectiveAppview extends Vue {
 
   @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
 
-  @persVuex.Getter getPerspectiveByName!: (name: string) => Perspective
-  @persVuex.Action saveTaskOrder!: (obj: {id: string, order: string[]}) => void
-  @persVuex.Action addSmartPersFilter!: (obj: {id: string, persName: string}) => void
-  @persVuex.Action removeSmartPersFilter!: (obj: {id: string, persName: string}) => void
-  @persVuex.Action addLabelToPerspective!: (obj: {id: string, labelId: string}) => Label[]
-  @persVuex.Action removeLabelFromPerspective!: (obj: {id: string, labelId: string}) => Label[]
-  @persVuex.Action savePerspectivePriority!: (obj: {id: string, priority: string}) => Label[]
-  @persVuex.Action addPerspectiveSort!: (obj: {sort: string, perspectiveId: string}) => Label[]
-  @persVuex.Action savePerspectiveTaskSort!: (obj: {sort: string[], perspectiveId: string}) => Label[]
+  @persVuex.Getter getPerspectiveByName!: PersGetters.GetPerspectiveByName
+  @persVuex.Action saveTaskOrder!: PersActions.SaveTaskOrder
+  @persVuex.Action addSmartPersFilter!: PersActions.AddSmartPersFilter
+  @persVuex.Action removeSmartPersFilter!: PersActions.RemoveSmartPersFilter
+  @persVuex.Action addLabelToPerspective!: PersActions.AddLabelToPerspective
+  @persVuex.Action removeLabelFromPerspective!: PersActions.RemoveLabelFromPerspective
+  @persVuex.Action savePerspectivePriority!: PersActions.SavePerspectivePriority
+  @persVuex.Action addPerspectiveSort!: PersActions.AddPerspectiveSort
+  @persVuex.Action savePerspectiveTaskSort!: PersActions.SavePerspectiveTaskSort
 
   @set.State timeZone!: string
 

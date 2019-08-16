@@ -30,6 +30,7 @@ import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmess
 import { Label, ListIcon, SimpleAdder, Perspective, ListElement, Alert } from '../../../interfaces/app'
 import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 import { LabelGetters, LabelActions } from '../../../interfaces/store/label'
+import { PersGetters } from '../../../interfaces/store/perspective'
 
 const label = namespace('label')
 const task = namespace('task')
@@ -58,7 +59,7 @@ export default class LabelAppnav extends Vue {
 
   @task.Getter getNumberOfTasksByLabel!: (labelId: string) => number
 
-  @pers.Getter initialPerspective!: string
+  @pers.Getter initialPerspective!: PersGetters.InitialPerspective
 
   @Prop(String) search!: string
 

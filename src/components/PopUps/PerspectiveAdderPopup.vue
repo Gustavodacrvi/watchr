@@ -110,6 +110,7 @@ const perspectiveModule = namespace('perspective')
 
 import { Alert, Perspective } from '../../interfaces/app'
 import { IndexState, IndexGetters, IndexMutations } from '../../interfaces/store/index'
+import { PersGetters, PersState } from '../../interfaces/store/perspective';
 
 interface Pers {
   name: string
@@ -138,7 +139,7 @@ export default class LabelAdder extends Vue {
   @Mutation pushAlert!: IndexMutations.PushAlert
   @Mutation pushPopUp!: IndexMutations.PushPopUp
 
-  @perspectiveModule.State perspectives!: Perspective[]
+  @perspectiveModule.State perspectives!: PersState.perspectives
   @perspectiveModule.Action addPerspective!: (obj: Pers) => void
   @perspectiveModule.Action editPerspective!: (obj: Pers & {id: string}) => void
 

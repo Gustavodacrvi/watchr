@@ -134,7 +134,6 @@ import appUtils from '@/utils/app'
 import moment from 'moment-timezone'
 
 const taskVuex = namespace('task')
-const pers = namespace('perspective')
 const labelVuex = namespace('label')
 const settingsVuex = namespace('settings')
 

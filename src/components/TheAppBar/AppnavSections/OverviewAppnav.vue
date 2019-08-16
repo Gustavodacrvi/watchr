@@ -36,6 +36,7 @@ import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.v
 
 import { Label, Perspective, Task, ListIcon, ListElement } from '@/interfaces/app'
 import { IndexState, IndexMutations } from '../../../interfaces/store/index'
+import { PersGetters } from '../../../interfaces/store/perspective'
 
 const persVuex = namespace('perspective')
 const taskVuex = namespace('task')
@@ -51,9 +52,9 @@ export default class OverviewAppnav extends Vue {
   @State viewType!: IndexState.viewType
   @Mutation openSection!: IndexMutations.OpenSection
 
-  @persVuex.Getter pinedSmartPerspectives!: Perspective[]
-  @persVuex.Getter pinedCustomPerspectives!: Perspective[]
-  @persVuex.Getter getNumberOfTasksByPerspectiveId!: (id: string, tasks: Task[]) => number
+  @persVuex.Getter pinedSmartPerspectives!: PersGetters.PinedSmartPerspectives
+  @persVuex.Getter pinedCustomPerspectives!: PersGetters.PinedCustomPerspectives
+  @persVuex.Getter getNumberOfTasksByPerspectiveId!: PersGetters.GetNumberOfTasksByPerspectiveId
 
   @taskVuex.State tasks!: Task[]
 

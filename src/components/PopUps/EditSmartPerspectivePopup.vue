@@ -40,6 +40,7 @@ const perspectiveModule = namespace('perspective')
 
 import { Alert, Perspective } from '../../interfaces/app'
 import { IndexState, IndexGetters, IndexMutations } from '../../interfaces/store/index'
+import { PersState, PersActions } from '../../interfaces/store/perspective';
 
 interface Pers {
   name: string
@@ -65,13 +66,8 @@ export default class EditSmartPerspectivePopup extends Vue {
   @Mutation pushAlert!: IndexMutations.PushAlert
   @Mutation pushPopUp!: IndexMutations.PushPopUp
 
-  @perspectiveModule.State perspectives!: Perspective[]
-  @perspectiveModule.Action saveSmartPerspective!: (obj: {
-    alwaysShowTaskLabels: boolean,
-    alwaysShowLastEditDate: boolean,
-    alwaysShowCreationDate: boolean,
-    id: string,
-  }) => void
+  @perspectiveModule.State perspectives!: PersState.perspectives
+  @perspectiveModule.Action saveSmartPerspective!: PersActions.SaveSmartPerspective
 
   alwaysShowLabels: boolean = true
   alwaysShowEditDate: boolean = true

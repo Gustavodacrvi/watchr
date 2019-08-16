@@ -48,6 +48,7 @@ import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmess
 
 import { Label, Perspective, ListIcon, SimpleAdder, ListElement, Task } from '@/interfaces/app'
 import { IndexState, IndexMutations } from '../../../interfaces/store/index';
+import { PersState, PersGetters, PersActions } from '../../../interfaces/store/perspective';
 
 const persVuex = namespace('perspective')
 const taskVuex = namespace('task')
@@ -67,18 +68,18 @@ export default class OverviewAppnav extends Vue {
   @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
   @Mutation openSection!: IndexMutations.OpenSection
 
-  @persVuex.State smartOrder!: Perspective[]
-  @persVuex.Getter sortedSmartPerspectives!: Perspective[]
-  @persVuex.Getter sortedCustomPerspectives!: Perspective[]
-  @persVuex.Getter initialPerspective!: string
-  @persVuex.Getter getNumberOfTasksByPerspectiveId!: (id: string, tasks: Task[]) => number
-  @persVuex.Getter getPerspectiveById!: (id: string) => Perspective
-  @persVuex.Action saveSmartOrder!: (ids: string[]) => void
-  @persVuex.Action saveCustomOrder!: (ids: string[]) => void
-  @persVuex.Action togglePerspectivesPin!: (obj: Array<{id: string, pin?: boolean}>) => void
-  @persVuex.Action togglePerspectivesNumberOfTasks!: (obj: Array<{id: string, show?: boolean}>) => void
-  @persVuex.Action togglePerspectivesShowWhenNotEmpty!: (obj: Array<{id: string, show?: boolean}>) => void
-  @persVuex.Action deletePerspectivesById!: (ids: string[]) => void
+  @persVuex.State smartOrder!: PersState.smartOrder
+  @persVuex.Getter sortedSmartPerspectives!: PersGetters.SortedSmartPerspectives
+  @persVuex.Getter sortedCustomPerspectives!: PersGetters.SortedCustomPerspectives
+  @persVuex.Getter initialPerspective!: PersGetters.InitialPerspective
+  @persVuex.Getter getNumberOfTasksByPerspectiveId!: PersGetters.GetNumberOfTasksByPerspectiveId
+  @persVuex.Getter getPerspectiveById!: PersGetters.GetPerspectiveById
+  @persVuex.Action saveSmartOrder!: PersActions.SaveSmartOrder
+  @persVuex.Action saveCustomOrder!: PersActions.SaveCustomOrder
+  @persVuex.Action togglePerspectivesPin!: PersActions.TogglePerspectivesPin
+  @persVuex.Action togglePerspectivesNumberOfTasks!: PersActions.TogglePerspectivesNumberOfTasks
+  @persVuex.Action togglePerspectivesShowWhenNotEmpty!: PersActions.TogglePerspectivesShowWhenNotEmpty
+  @persVuex.Action deletePerspectivesById!: PersActions.DeletePerspectivesById
 
   @taskVuex.State tasks!: Task[]
 
