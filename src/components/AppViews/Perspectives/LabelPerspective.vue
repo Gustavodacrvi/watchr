@@ -93,7 +93,8 @@ import appUtils from '@/utils/app'
 import { Task, Label, ListIcon } from '../../../interfaces/app'
 import { IndexState, IndexMutations, IndexGetters } from '../../../interfaces/store/index'
 import { LabelState, LabelGetters, LabelActions } from '../../../interfaces/store/label'
-import { SetState } from '../../../interfaces/store/settings';
+import { SetState } from '../../../interfaces/store/settings'
+import { TaskState, TaskActions } from '../../../interfaces/store/task'
 
 @Component({
   components: {
@@ -119,11 +120,10 @@ export default class LabelPerspective extends Vue {
   @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
   @labelVuex.Action saveLabelTaskOrder!: LabelActions.SaveLabelTaskOrder
 
-  @taskVuex.State tasks!: Task[]
-  @taskVuex.Action deleteTasksById!: (ids: string[]) => void
-  // tslint:disable-next-line:max-line-length
-  @taskVuex.Action addTaskLabel!: (obj: {task: Task, labelId: string, position: number, order: string[]}) => void
-  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
+  @taskVuex.State tasks!: TaskState.tasks
+  @taskVuex.Action deleteTasksById!: TaskActions.DeleteTasksById
+  @taskVuex.Action addTaskLabel!: TaskActions.AddTaskLabel
+  @taskVuex.Action changePrioritysByIds!: TaskActions.ChangePrioritysByIds
 
   @set.State timeZone!: SetState.timeZone
 

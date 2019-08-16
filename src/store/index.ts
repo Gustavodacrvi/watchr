@@ -109,7 +109,7 @@ const store: any = new Vuex.Store({
     },
     saveFirestore(state, firestore) {
       state.firestore = firestore
-      if (state.firestore) {
+      if (state.firestore)
         state.firestore.enablePersistence()
           .catch(err => {
             if (err.code === 'failed-precondition')
@@ -122,7 +122,6 @@ const store: any = new Vuex.Store({
                 type: 'error',
               })
           })
-      }
     },
     saveFirebase(state, firebase) {
       state.firebase = firebase

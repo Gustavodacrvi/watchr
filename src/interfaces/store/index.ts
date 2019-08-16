@@ -1,4 +1,6 @@
 
+/* tslint:disable:max-line-length */
+
 import { SimpleAdder, ListIcon, Alert, CenteredCard, Perspective } from '../app'
 
 export namespace IndexState {
@@ -53,10 +55,7 @@ export interface State {
   alert: IndexState.alert
 }
 
-type OverloadVoid = {
-  (state: State): void
-  (): void
-}
+type OverloadVoid = (state?: State) => void
 
 export namespace IndexMutations {
   export type HideExtraActions = OverloadVoid
@@ -68,60 +67,60 @@ export namespace IndexMutations {
   export type ResetPopUpState = OverloadVoid
   export type HideAlert = OverloadVoid
   export type PushAlert = {
-    (alert: Alert): void
-    (state: State, alert: Alert): void
+    (alert: Alert): void,
+    (state: State, alert: Alert): void,
   }
   export type PushTheme = {
-    (theme: string): void
-    (state: State, theme: string): void
+    (theme: string): void,
+    (state: State, theme: string): void,
   }
   export type PushPopUp = {
-    (compName: string): void
-    (state: State, compName: string): void
+    (compName: string): void,
+    (state: State, compName: string): void,
   }
   export type PushPopUpPayload = {
-    (payload: any): void
-    (state: State, payload: any): void
+    (payload: any): void,
+    (state: State, payload: any): void,
   }
   export type SaveCurrentUser = {
-    (user: firebase.User): void
-    (state: State, user: firebase.User): void
+    (user: firebase.User): void,
+    (state: State, user: firebase.User): void,
   }
   export type SaveFirestore = {
-    (firestore: firebase.firestore.Firestore): void
-    (state: State, firestore: firebase.firestore.Firestore): void
+    (firestore: firebase.firestore.Firestore): void,
+    (state: State, firestore: firebase.firestore.Firestore): void,
   }
   export type PushCenteredCard = {
-    (centeredCardPopUp: CenteredCard | null): void
-    (state: State, centeredCardPopUp: CenteredCard | null): void
+    (centeredCardPopUp: CenteredCard | null): void,
+    (state: State, centeredCardPopUp: CenteredCard | null): void,
   }
   export type OpenSection = {
-    (currentAppSection: string): void
-    (state: State, currentAppSection: string): void
+    (currentAppSection: string): void,
+    (state: State, currentAppSection: string): void,
   }
   export type SaveFirebase = {
-    (firebase: any): void
-    (state: State, firebase: any): void
+    (firebase: any): void,
+    (state: State, firebase: any): void,
   }
   export type PushAppView = {
-    (comp: string): void
-    (state: State, comp: string): void
+    (comp: string): void,
+    (state: State, comp: string): void,
   }
   export type PushPerspective = {
-    (payload?: any): void
-    (state: State, payload?: any): void
+    (payload?: any): void,
+    (state: State, payload?: any): void,
   }
   export type PushView = {
-    (obj: {view: string, viewType: string}): void
-    (state: State, obj: {view: string, viewType: string}): void
+    (obj: {view: string, viewType: string}): void,
+    (state: State, obj: {view: string, viewType: string}): void,
   }
   export type AddNavBarTitle = {
-    (title: string): void
-    (state: State, title: string): void
+    (title: string): void,
+    (state: State, title: string): void,
   }
   export type SendOptionsToNavbar = {
-    (options: ListIcon[]): void
-    (state: State, options: ListIcon[]): void
+    (options: ListIcon[]): void,
+    (state: State, options: ListIcon[]): void,
   }
 }
 

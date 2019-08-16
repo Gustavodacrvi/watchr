@@ -7,6 +7,8 @@ export namespace LabelState {
   export type order = string[]
 }
 
+/* tslint:disable:max-line-length */
+
 export interface State {
   labels: LabelState.labels
   order: LabelState.order

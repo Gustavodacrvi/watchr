@@ -34,7 +34,7 @@ export default {
       const order: string[] = appUtils.fixOrder(state.labels, state.order)
       return appUtils.sortArrayByIds(state.labels, order)
     },
-    getLabelsByIds: (state) => (ids) => {
+    getLabelsByIds: state => ids => {
       return state.labels.filter(el => ids.includes(el.id))
     },
   } as Getters,

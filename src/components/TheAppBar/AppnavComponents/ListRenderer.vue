@@ -48,7 +48,7 @@ import { IndexGetters } from '../../../interfaces/store/index'
 })
 export default class ListRenderer extends Mixins(Mixin) {
   @Getter isDesktop!: IndexGetters.IsDesktop
-  
+
   @Prop({required: true, type: Array}) list!: any[]
   @Prop({required: true, type: String}) group!: string
   @Prop({required: true, type: String}) active!: string

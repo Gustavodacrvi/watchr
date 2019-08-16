@@ -99,7 +99,7 @@ import FormOptions from '@/components/PopUps/FormComponents/FormOptions.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
 import appUtils from '@/utils/app'
-import { SetState, SetActions } from '../../interfaces/store/settings';
+import { SetState, SetActions } from '../../interfaces/store/settings'
 
 @Component({
   components: {

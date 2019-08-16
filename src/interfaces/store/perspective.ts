@@ -1,4 +1,6 @@
 
+/* tslint:disable:max-line-length */
+
 import { Perspective, Task } from '../app'
 import { State as RootState } from '@/interfaces/store'
 

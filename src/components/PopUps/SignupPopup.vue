@@ -46,7 +46,7 @@ import FormPassword from '@/components/PopUps/FormComponents/FormPassword.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 import { IndexState, IndexMutations } from '../../interfaces/store/index'
 import { LabelActions } from '../../interfaces/store/label'
-import { SetActions } from '../../interfaces/store/settings';
+import { SetActions } from '../../interfaces/store/settings'
 
 @Component({
   components: {

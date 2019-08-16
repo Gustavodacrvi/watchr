@@ -128,8 +128,9 @@ import { Perspective, Label, Task, ListIcon, Alert } from '../../../interfaces/a
 import appUtils from '@/utils/app'
 import { IndexState, IndexGetters, IndexMutations } from '../../../interfaces/store/index'
 import { LabelGetters } from '../../../interfaces/store/label'
-import { PersGetters, PersActions } from '../../../interfaces/store/perspective';
-import { SetState } from '../../../interfaces/store/settings';
+import { PersGetters, PersActions } from '../../../interfaces/store/perspective'
+import { SetState } from '../../../interfaces/store/settings'
+import { TaskState, TaskActions } from '../../../interfaces/store/task'
 
 const labelVuex = namespace('label')
 const taskVuex = namespace('task')
@@ -156,12 +157,11 @@ export default class PerspectiveAppview extends Vue {
   @Mutation hideNavBarOptions!: IndexMutations.HideNavBarOptions
   @Mutation pushAlert!: IndexMutations.PushAlert
 
-  @taskVuex.State tasks!: Task[]
-  // tslint:disable-next-line:max-line-length
-  @taskVuex.Action addTaskPerspective!: (obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: any}) => void
-  @taskVuex.Action deleteTasksById!: (ids: string[]) => void
-  @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
-  @taskVuex.Action saveNewDateOfTasks!: (arr: Array<{id: string, date: string}>) => void
+  @taskVuex.State tasks!: TaskState.tasks
+  @taskVuex.Action addTaskPerspective!: TaskActions.AddTaskPerspective
+  @taskVuex.Action deleteTasksById!: TaskActions.DeleteTasksById
+  @taskVuex.Action changePrioritysByIds!: TaskActions.ChangePrioritysByIds
+  @taskVuex.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
 
   @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
 
@@ -398,7 +398,7 @@ export default class PerspectiveAppview extends Vue {
     let name!: string
     let faded!: string
     const week = m.format('dddd')
-    
+
     if (diff === 0) name = 'Tomorrow'
     else if (diff < 6) {
       name = week

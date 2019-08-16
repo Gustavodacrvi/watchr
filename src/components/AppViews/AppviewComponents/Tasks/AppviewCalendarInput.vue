@@ -82,7 +82,7 @@ import moment from 'moment-timezone'
 
 import appUtils from '@/utils/app'
 import { IndexMutations, IndexGetters } from '../../../../interfaces/store/index'
-import { SetState } from '../../../../interfaces/store/settings';
+import { SetState } from '../../../../interfaces/store/settings'
 
 @Component({
   components: {

@@ -57,8 +57,6 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Mutation, State, namespace } from 'vuex-class'
 
-const task = namespace('task')
-
 import { FloatingButton } from '@/interfaces/app'
 
 import Sortable from 'sortablejs'

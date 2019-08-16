@@ -31,6 +31,7 @@ import { Label, ListIcon, SimpleAdder, Perspective, ListElement, Alert } from '.
 import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 import { LabelGetters, LabelActions } from '../../../interfaces/store/label'
 import { PersGetters } from '../../../interfaces/store/perspective'
+import { TaskGetters } from '../../../interfaces/store/task'
 
 const label = namespace('label')
 const task = namespace('task')
@@ -57,7 +58,7 @@ export default class LabelAppnav extends Vue {
   @label.Action deleteLabelsById!: LabelActions.DeleteLabelsById
   @label.Action editLabelNameById!: LabelActions.EditLabelNameById
 
-  @task.Getter getNumberOfTasksByLabel!: (labelId: string) => number
+  @task.Getter getNumberOfTasksByLabel!: TaskGetters.GetNumberOfTasksByLabel
 
   @pers.Getter initialPerspective!: PersGetters.InitialPerspective
 

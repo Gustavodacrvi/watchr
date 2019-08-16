@@ -1,24 +1,10 @@
 
 import { Perspective, Task } from '@/interfaces/app'
 
-import { State as RootState } from '@/interfaces/store'
 import appUtils from '@/utils/app'
 
 import { State, PersGetters, Getters, PersActions } from '@/interfaces/store/perspective'
 
-interface Pers {
-  name: string
-  description: string
-  iconColor: string
-  icon: string
-  alwaysShowTaskLabels: boolean
-  alwaysShowLastEditDate: boolean
-  alwaysShowCreationDate: boolean
-}
-
-interface Mutations {
-  
-}
 
 interface Actions {
   deletePerspectivesById: PersActions.StoreDeletePerspectivesById
@@ -52,8 +38,9 @@ export default {
   } as State,
   mutations: {
 
-  } as Mutations,
+  } as {},
   getters: {
+    // tslint:disable-next-line:max-line-length
     getNumberOfTasksByPerspectiveId: (state: State, f: Getters, rootState: any) => (id: string, tasks: Task[]): number => {
       const per: Perspective = state.perspectives.find(el => el.id === id) as Perspective
       return appUtils.filterTasksByPerspective(per, tasks, rootState.settings.startOfTheWeek).length

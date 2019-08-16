@@ -142,7 +142,8 @@ import Sortable from 'sortablejs'
 import { longClickDirective } from 'vue-long-click'
 import { IndexState, IndexGetters } from '../../../../interfaces/store/index'
 import { LabelGetters } from '../../../../interfaces/store/label'
-import { SetState } from '../../../../interfaces/store/settings';
+import { SetState } from '../../../../interfaces/store/settings'
+import { TaskActions } from '../../../../interfaces/store/task'
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 400, interval: 5000}))
@@ -160,13 +161,12 @@ export default class AppviewTask extends Vue {
   @State theme!: IndexState.theme
   @Getter isDesktop!: IndexGetters.IsDesktop
 
-  @taskVuex.Action deleteTasksById!: (ids: string[]) => void
-  @taskVuex.Action updateTask!: (obj: {name: string, priority: string, id: string}) => void
-  // tslint:disable-next-line:max-line-length
-  @taskVuex.Action addSubTask!: (obj: {name: string, taskId: string, position: number, order: string[]}) => void
-  @taskVuex.Action saveSubtaskOrder!: (obj: {taskId: string, order: string[]}) => void
-  @taskVuex.Action unCompleteSubtasks!: (taskId: string) => void
-  @taskVuex.Action copyTask!: (taskId: string) => void
+  @taskVuex.Action deleteTasksById!: TaskActions.DeleteTasksById
+  @taskVuex.Action updateTask!: TaskActions.UpdateTask
+  @taskVuex.Action addSubTask!: TaskActions.AddSubTask
+  @taskVuex.Action saveSubtaskOrder!: TaskActions.SaveSubtaskOrder
+  @taskVuex.Action unCompleteSubtasks!: TaskActions.UnCompleteSubtasks
+  @taskVuex.Action copyTask!: TaskActions.CopyTask
 
   @settingsVuex.State timeZone!: SetState.timeZone
   @settingsVuex.State timeFormat!: SetState.timeFormat
@@ -316,7 +316,7 @@ export default class AppviewTask extends Vue {
       select: this.clicked,
     })
   }
-  enter(obj: {name: string, priority: string}) {
+  enter(obj: any) {
     this.updateTask({
       ...obj,
       id: this.task.id,

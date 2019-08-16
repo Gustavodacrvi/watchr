@@ -1,4 +1,6 @@
 
+/* tslint:disable:max-line-length */
+
 import { State as RootState } from '@/interfaces/store'
 
 export namespace SetState {

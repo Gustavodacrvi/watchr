@@ -47,8 +47,9 @@ import AppnavDivision from '@/components/TheAppBar/AppnavComponents/AppnavDivisi
 import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmessage.vue'
 
 import { Label, Perspective, ListIcon, SimpleAdder, ListElement, Task } from '@/interfaces/app'
-import { IndexState, IndexMutations } from '../../../interfaces/store/index';
-import { PersState, PersGetters, PersActions } from '../../../interfaces/store/perspective';
+import { IndexState, IndexMutations } from '../../../interfaces/store/index'
+import { PersState, PersGetters, PersActions } from '../../../interfaces/store/perspective'
+import { TaskState } from '../../../interfaces/store/task'
 
 const persVuex = namespace('perspective')
 const taskVuex = namespace('task')
@@ -81,7 +82,7 @@ export default class OverviewAppnav extends Vue {
   @persVuex.Action togglePerspectivesShowWhenNotEmpty!: PersActions.TogglePerspectivesShowWhenNotEmpty
   @persVuex.Action deletePerspectivesById!: PersActions.DeletePerspectivesById
 
-  @taskVuex.State tasks!: Task[]
+  @taskVuex.State tasks!: TaskState.tasks
 
   @Prop(String) search!: string
 

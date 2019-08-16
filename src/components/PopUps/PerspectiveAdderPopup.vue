@@ -110,7 +110,7 @@ const perspectiveModule = namespace('perspective')
 
 import { Alert, Perspective } from '../../interfaces/app'
 import { IndexState, IndexGetters, IndexMutations } from '../../interfaces/store/index'
-import { PersGetters, PersState } from '../../interfaces/store/perspective';
+import { PersGetters, PersState } from '../../interfaces/store/perspective'
 
 interface Pers {
   name: string

@@ -1,71 +1,40 @@
 
 import { Task, Label } from '@/interfaces/app'
 
-import { States as RootState } from '@/store/index'
+import { State, Getters, TaskActions } from '@/interfaces/store/task'
 
 import timezone from 'moment-timezone'
 
-interface UtcObj {
-  time: string
-  date: string
-}
-
-interface States {
-  tasks: Task[]
-}
-
-interface Getters {
-  inboxTasks: (state: States) => Task[]
-  getNumberOfTasksByLabel: (state: States) => (labelId: string) => number
-}
-
-interface Mutations {
-
-}
-
-interface ActionContext {
-  state: States
-  getters: Getters
-  commit: (mutation: string, payload?: any) => void
-  dispatch: (action: string, payload?: any) => void
-  rootState: RootState
-}
-
 interface Actions {
-  // tslint:disable-next-line:max-line-length
-  updateTask: (context: ActionContext, obj: {name: string, priority: string, id: string, labels: [], utc: UtcObj | null}) => void
-  copyTask: (context: ActionContext, taskId: string) => void
-  // tslint:disable-next-line:max-line-length
-  addTaskPerspective: (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: UtcObj | null}) => void
-  // tslint:disable-next-line:max-line-length
-  addTaskLabel: (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[], utc: UtcObj | null}) => void
-  addTask: (context: ActionContext, obj: {name: string, priority: string, labels: string[], utc: UtcObj | null}) => void
-  deleteTasksById: (context: ActionContext, ids: string[]) => void
-  changePrioritysByIds: (context: ActionContext, obj: {ids: string[], priority: string}) => void
-  // tslint:disable-next-line:max-line-length
-  addSubTask: (context: ActionContext, obj: {name: string, taskId: string, position: number, order: string[]}) => void
-  // tslint:disable-next-line:max-line-length
-  saveSubTask: (context: ActionContext, obj: {name: string, taskId: string, completed: boolean, id: string}) => void
-  saveSubtaskOrder: (context: ActionContext, obj: {taskId: string, order: string[]}) => void
-  deleteSubTaskFromTask: (context: ActionContext, obj: {taskId: string, id: string}) => void
-  saveNewDateOfTasks: (context: ActionContext, arr: Array<{id: string, date: string}>) => void
-  unCompleteSubtasks: (context: ActionContext, taskId: string) => void
-  [key: string]: (context: ActionContext, payload: any) => any
+  getData: TaskActions.StoreGetData
+  updateTask: TaskActions.StoreUpdateTask
+  copyTask: TaskActions.StoreCopyTask
+  addTaskPerspective: TaskActions.StoreAddTaskPerspective
+  addTaskLabel: TaskActions.StoreAddTaskLabel
+  addTask: TaskActions.StoreAddTask
+  deleteTasksById: TaskActions.StoreDeleteTasksById
+  changePrioritysByIds: TaskActions.StoreChangePrioritysByIds
+  addSubTask: TaskActions.StoreAddSubTask
+  saveSubTask: TaskActions.StoreSaveSubTask
+  saveSubtaskOrder: TaskActions.StoreSaveSubtaskOrder
+  deleteSubTaskFromTask: TaskActions.StoreDeleteSubTaskFromTask
+  saveNewDateOfTasks: TaskActions.StoreSaveNewDateOfTasks
+  unCompleteSubtasks: TaskActions.StoreUnCompleteSubtasks
 }
 
 export default {
   namespaced: true,
   state: {
     tasks: [],
-  } as States,
+  } as State,
   mutations: {
 
-  } as Mutations,
+  } as {},
   getters: {
-    inboxTasks(state: States) {
+    inboxTasks(state: State) {
       return state.tasks.filter(el => el.labels.length === 0)
     },
-    getNumberOfTasksByLabel: (state: States) => (labelId: string): number => {
+    getNumberOfTasksByLabel: (state: State) => (labelId: string): number => {
       const tasks = state.tasks.filter(el => el.labels.includes(labelId))
       return tasks.length
     },

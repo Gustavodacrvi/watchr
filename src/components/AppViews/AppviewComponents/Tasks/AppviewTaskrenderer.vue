@@ -55,6 +55,7 @@ import moment from 'moment-timezone'
 
 import { Task, Label } from '../../../../interfaces/app'
 import { IndexState, IndexMutations } from '../../../../interfaces/store/index'
+import { TaskActions } from '../../../../interfaces/store/task'
 
 @Component({
   components: {
@@ -66,7 +67,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Mutation hideExtraActions!: IndexMutations.HideExtraActions
   @Mutation showExtraActions!: IndexMutations.ShowExtraActions
 
-  @task.Action saveNewDateOfTasks!: (arr: Array<{id: string, date: string}>) => void
+  @task.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
 
   @Prop(Boolean) disabled!: boolean
   @Prop(Boolean) fixAdderPosition!: boolean
