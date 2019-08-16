@@ -1,62 +1,33 @@
 
-import { States as RootState } from '@/store/index'
+import { State, SetActions } from '@/interfaces/store/settings'
 
 import 'moment-timezone/builds/moment-timezone-with-data'
 
 import timezone from 'moment-timezone'
 
-interface States {
-  timeZone: '13:00' | '1:00pm' | string
-  dateFormat: string
-  timeFormat: string
-  startOfTheWeek: string
-  nextWeek: string
-}
-
-interface Getters {
-  
-}
-
-interface Mutations {
-
-}
-
-interface ActionContext {
-  state: States
-  getters: Getters
-  commit: (mutation: string, payload?: any) => void
-  dispatch: (action: string, payload?: any) => void
-  rootState: RootState
-}
-
 interface Actions {
-  getData: (context: ActionContext) => void
-  saveSettings: (context: ActionContext, obj: {
-    timeZone: string,
-    dateFormat: string,
-    timeFormat: string,
-    startOfTheWeek: string,
-    nextWeek: string,
-  }) => void
-  setDefaultSettings: (context: ActionContext) => void
-  [key: string]: (context: ActionContext, payload: any) => any
+  getData: SetActions.StoreGetData
+  saveSettings: SetActions.StoreSaveSettings
+  setDefaultSettings: SetActions.StoreSetDefaultSettings
+  addDefaultSettings: SetActions.StoreAddDefaultSettings
+  [key: string]: (...arr: any[]) => any
 }
 
 export default {
   namespaced: true,
   state: {
     timeZone: '',
-    dateFormat: '',
-    timeFormat: '',
+    dateFormat: 'M-D-Y',
+    timeFormat: '13:00',
     startOfTheWeek: '',
     nextWeek: '',
-  } as States,
+  } as State,
   mutations: {
 
-  } as Mutations,
+  } as {},
   getters: {
 
-  } as Getters,
+  } as {},
   actions: {
     getData({ rootState, state }) {
       if (rootState.firestore && rootState.uid)

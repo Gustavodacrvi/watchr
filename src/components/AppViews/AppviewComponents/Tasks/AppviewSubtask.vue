@@ -45,6 +45,7 @@ import SubTaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewSu
 
 import { longClickDirective } from 'vue-long-click'
 import { IndexState, IndexGetters } from '../../../../interfaces/store/index'
+import { SetState } from '../../../../interfaces/store/settings';
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
@@ -65,7 +66,7 @@ export default class AppviewSubtask extends Vue {
   @taskVuex.Action saveSubTask!: (obj: {name: string, taskId: string, completed: boolean, id: string}) => void
   @taskVuex.Action deleteSubTaskFromTask!: (obj: {taskId: string, id: string}) => void
 
-  @set.State timeZone!: string
+  @set.State timeZone!: SetState.timeZone
 
   @Prop(Boolean) allowDrag!: boolean
   @Prop(Boolean) deselectAll!: boolean

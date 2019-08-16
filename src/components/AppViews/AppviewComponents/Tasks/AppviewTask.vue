@@ -142,6 +142,7 @@ import Sortable from 'sortablejs'
 import { longClickDirective } from 'vue-long-click'
 import { IndexState, IndexGetters } from '../../../../interfaces/store/index'
 import { LabelGetters } from '../../../../interfaces/store/label'
+import { SetState } from '../../../../interfaces/store/settings';
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 400, interval: 5000}))
@@ -167,9 +168,9 @@ export default class AppviewTask extends Vue {
   @taskVuex.Action unCompleteSubtasks!: (taskId: string) => void
   @taskVuex.Action copyTask!: (taskId: string) => void
 
-  @settingsVuex.State timeZone!: string
-  @settingsVuex.State timeFormat!: string
-  @settingsVuex.State dateFormat!: string
+  @settingsVuex.State timeZone!: SetState.timeZone
+  @settingsVuex.State timeFormat!: SetState.timeFormat
+  @settingsVuex.State dateFormat!: SetState.dateFormat
 
   @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
 

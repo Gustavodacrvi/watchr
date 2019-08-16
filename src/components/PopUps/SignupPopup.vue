@@ -46,6 +46,7 @@ import FormPassword from '@/components/PopUps/FormComponents/FormPassword.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 import { IndexState, IndexMutations } from '../../interfaces/store/index'
 import { LabelActions } from '../../interfaces/store/label'
+import { SetActions } from '../../interfaces/store/settings';
 
 @Component({
   components: {
@@ -63,7 +64,7 @@ export default class SigninPopUp extends Vue {
 
   @label.Action addLabelsOrder!: LabelActions.AddLabelsOrder
 
-  @settings.Action addDefaultSettings!: (id: string) => void
+  @settings.Action addDefaultSettings!: SetActions.AddDefaultSettings
 
   email: string | null = null
   password: string | null = null

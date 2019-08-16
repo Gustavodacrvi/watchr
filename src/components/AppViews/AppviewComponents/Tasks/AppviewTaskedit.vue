@@ -87,6 +87,7 @@ import moment from 'moment-timezone'
 import appUtils from '@/utils/app'
 import { IndexState } from '../../../../interfaces/store/index'
 import { LabelState, LabelGetters } from '../../../../interfaces/store/label'
+import { SetState } from '../../../../interfaces/store/settings';
 
 @Component({
   components: {
@@ -102,9 +103,9 @@ import { LabelState, LabelGetters } from '../../../../interfaces/store/label'
 export default class AppviewTaskedit extends Vue {
   @State theme!: IndexState.theme
 
-  @set.State timeFormat!: '13:00' | '1:00pm'
-  @set.State timeZone!: string
-  @set.State nextWeek!: string
+  @set.State timeFormat!: SetState.timeFormat
+  @set.State timeZone!: SetState.timeZone
+  @set.State nextWeek!: SetState.nextWeek
 
   @labelsVuex.State('labels') savedLabels!: LabelState.labels
   @labelsVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds

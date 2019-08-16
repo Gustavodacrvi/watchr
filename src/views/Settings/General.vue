@@ -99,6 +99,7 @@ import FormOptions from '@/components/PopUps/FormComponents/FormOptions.vue'
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 
 import appUtils from '@/utils/app'
+import { SetState, SetActions } from '../../interfaces/store/settings';
 
 @Component({
   components: {
@@ -110,20 +111,14 @@ export default class GeneralSubView extends Vue {
   @State theme!: string
   @Getter platform!: string
 
-  @settingsVuex.State('timeZone') savedTimeZone!: string
-  @settingsVuex.State('dateFormat') savedDateFormat!: string
-  @settingsVuex.State('timeFormat') savedTimeFormat!: string
-  @settingsVuex.State('startOfTheWeek') savedStartOfTheWeek!: string
-  @settingsVuex.State('nextWeek') savedNextWeek!: string
+  @settingsVuex.State('timeZone') savedTimeZone!: SetState.timeZone
+  @settingsVuex.State('dateFormat') savedDateFormat!: SetState.dateFormat
+  @settingsVuex.State('timeFormat') savedTimeFormat!: SetState.timeFormat
+  @settingsVuex.State('startOfTheWeek') savedStartOfTheWeek!: SetState.startOfTheWeek
+  @settingsVuex.State('nextWeek') savedNextWeek!: SetState.nextWeek
 
-  @settingsVuex.Action saveSettings!: (obj: {
-    timeZone: string,
-    dateFormat: string,
-    timeFormat: string,
-    startOfTheWeek: string,
-    nextWeek: string,
-  }) => void
-  @settingsVuex.Action setDefaultSettings!: () => void
+  @settingsVuex.Action saveSettings!: SetActions.SaveSettings
+  @settingsVuex.Action setDefaultSettings!: SetActions.SetDefaultSettings
 
   selected: string = 'option 1'
 

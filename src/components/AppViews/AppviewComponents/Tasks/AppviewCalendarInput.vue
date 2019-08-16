@@ -82,6 +82,7 @@ import moment from 'moment-timezone'
 
 import appUtils from '@/utils/app'
 import { IndexMutations, IndexGetters } from '../../../../interfaces/store/index'
+import { SetState } from '../../../../interfaces/store/settings';
 
 @Component({
   components: {
@@ -92,9 +93,9 @@ export default class CalendarInput extends Vue {
   @Mutation pushPopUp!: IndexMutations.PushPopUp
   @Getter isDesktop!: IndexGetters.IsDesktop
 
-  @set.State timeFormat!: '13:00' | '1:00pm'
-  @set.State nextWeek!: string
-  @set.State timeZone!: string
+  @set.State timeFormat!: SetState.timeFormat
+  @set.State nextWeek!: SetState.nextWeek
+  @set.State timeZone!: SetState.timeZone
 
   originalMoment: any = null
   selectedMoment: any = null

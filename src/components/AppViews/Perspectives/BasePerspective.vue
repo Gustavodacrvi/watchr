@@ -129,6 +129,7 @@ import appUtils from '@/utils/app'
 import { IndexState, IndexGetters, IndexMutations } from '../../../interfaces/store/index'
 import { LabelGetters } from '../../../interfaces/store/label'
 import { PersGetters, PersActions } from '../../../interfaces/store/perspective';
+import { SetState } from '../../../interfaces/store/settings';
 
 const labelVuex = namespace('label')
 const taskVuex = namespace('task')
@@ -174,7 +175,7 @@ export default class PerspectiveAppview extends Vue {
   @persVuex.Action addPerspectiveSort!: PersActions.AddPerspectiveSort
   @persVuex.Action savePerspectiveTaskSort!: PersActions.SavePerspectiveTaskSort
 
-  @set.State timeZone!: string
+  @set.State timeZone!: SetState.timeZone
 
   @Prop({default: true, type: Boolean}) allowLabels!: boolean
   @Prop({default: true, type: Boolean}) allowDate!: boolean

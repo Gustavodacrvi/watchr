@@ -93,6 +93,7 @@ import appUtils from '@/utils/app'
 import { Task, Label, ListIcon } from '../../../interfaces/app'
 import { IndexState, IndexMutations, IndexGetters } from '../../../interfaces/store/index'
 import { LabelState, LabelGetters, LabelActions } from '../../../interfaces/store/label'
+import { SetState } from '../../../interfaces/store/settings';
 
 @Component({
   components: {
@@ -124,7 +125,7 @@ export default class LabelPerspective extends Vue {
   @taskVuex.Action addTaskLabel!: (obj: {task: Task, labelId: string, position: number, order: string[]}) => void
   @taskVuex.Action changePrioritysByIds!: (obj: {ids: string[], priority: string}) => void
 
-  @set.State timeZone!: string
+  @set.State timeZone!: SetState.timeZone
 
   search: string = ''
   priority: string = ''
