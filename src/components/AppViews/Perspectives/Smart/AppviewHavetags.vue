@@ -1,49 +1,18 @@
 <template>
-  <base-pers
-    :pers-name='persName'
-    :value='value'
-    :base-tasks='baseTasks'
-    :fixed-tag="{name: 'Have tags', icon: 'layer-group', backColor: '#6b66ff'}"
-    :save-sort='!isOnOverview'
-
-    @input="$emit('input', !value)"
-  />
+  <smart-pers name='Have tags'/>
 </template>
 
 <script lang='ts'>
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { namespace, State } from 'vuex-class'
 
-const taskVuex = namespace('task')
-
-import BasePerspective from '@/components/AppViews/Perspectives/BasePerspective.vue'
-
-import appUtils from '@/utils/app'
-
-import { IndexState } from '../../../../interfaces/store/index'
-import { Task } from '../../../../interfaces/app'
+import SmartPerspective from '@/components/AppViews/Perspectives/Smart/SmartPerspective.vue'
 
 @Component({
   components: {
-    'base-pers': BasePerspective,
+    'smart-pers': SmartPerspective,
   },
 })
-export default class ViewHaveTags extends Vue {
-  @State currentAppSection!: IndexState.currentAppSection
-
-  @taskVuex.State tasks!: Task[]
-
-  persName: string = 'Have tags'
-
-  @Prop(Boolean) value!: string
-
-  get isOnOverview(): boolean {
-    return this.currentAppSection === 'overview'
-  }
-  get baseTasks() {
-    return appUtils.filterTasksBySmartPerspective(this.persName, this.tasks)
-  }
-}
+export default class ViewHaveTags extends Vue {}
 
 </script>

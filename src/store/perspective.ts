@@ -41,9 +41,9 @@ export default {
   } as {},
   getters: {
     // tslint:disable-next-line:max-line-length
-    getNumberOfTasksByPerspectiveId: (state: State, f: Getters, rootState: any) => (id: string, tasks: Task[]): number => {
+    getNumberOfTasksByPerspectiveId: (state: State, f: Getters, rootState: any) => (id: string, tasks: Task[], timeZone: string): number => {
       const per: Perspective = state.perspectives.find(el => el.id === id) as Perspective
-      return appUtils.filterTasksByPerspective(per, tasks, rootState.settings.startOfTheWeek).length
+      return appUtils.filterTasksByPerspective(per, tasks, timeZone, rootState.settings.startOfTheWeek).length
     },
     getPerspectiveByName: (state: State) => (name: string) => {
       return state.perspectives.find(el => el.name === name) as Perspective

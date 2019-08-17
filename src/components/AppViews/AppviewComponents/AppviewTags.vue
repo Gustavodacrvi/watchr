@@ -10,7 +10,7 @@
         />
         <view-tag key='priority' v-if="priority && priority !== ''"
           icon='exclamation'
-          back-color='#70ff66'
+          back-color='#ffa166'
           :name='priority'
           :fixed='false'
           @click="$emit('clearpriority')"

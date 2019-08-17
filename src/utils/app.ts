@@ -17,7 +17,7 @@ export default {
       timeout: 5000,
     })
   },
-  filterTasksBySmartPerspective(name: string, tasks: Task[], startOfTheWeek?: string): Task[] {
+  filterTasksBySmartPerspective(name: string, tasks: Task[], timeZone: string, startOfTheWeek?: string): Task[] {
     switch (name) {
       case 'Inbox': {
         return tasks.filter(el => el.labels.length === 0 && !el.date)
@@ -28,7 +28,8 @@ export default {
         return tasks.filter(el => {
           if (!el.date) return false
           const today = timezone.utc()
-          const saved = timezone.utc(`${el.date} ${today.format('HH:mm')}`, 'Y-M-D HH:mm')
+          const saved = timezone.utc(`${el.date} ${today.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
+          today.tz(timeZone)
           return today.isSame(saved, 'day')
         })
       }
@@ -36,7 +37,8 @@ export default {
         return tasks.filter(el => {
           if (startOfTheWeek && el.date) {
             const m = timezone.utc()
-            const saved = timezone.utc(`${el.date} ${m.format('HH:mm')}`, 'Y-M-D HH:mm')
+            const saved = timezone.utc(`${el.date} ${m.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
+            m.tz(timeZone)
             const start = this.getNextWeek(m.clone(), startOfTheWeek)
             const end = start.clone().add(6, 'd')
             return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
@@ -48,7 +50,8 @@ export default {
         return tasks.filter(el => {
           if (el.date) {
             const nextMonth = timezone.utc().add(1, 'M')
-            const saved = timezone.utc(`${el.date} ${nextMonth.format('HH:mm')}`, 'Y-M-D HH:mm')
+            const saved = timezone.utc(`${el.date} ${nextMonth.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
+            nextMonth.tz(timeZone)
             const start = nextMonth.clone().startOf('month')
             const end = nextMonth.clone().endOf('month')
 
@@ -61,7 +64,8 @@ export default {
         return tasks.filter(el => {
           if (el.date) {
             const tom = timezone.utc().add(1, 'd')
-            const saved = timezone.utc(`${el.date} ${tom.format('HH:mm')}`, 'Y-M-D HH:mm')
+            const saved = timezone.utc(`${el.date} ${tom.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
+            tom.tz(timeZone)
             return tom.isSame(saved, 'day')
           }
           return false
@@ -71,7 +75,8 @@ export default {
         return tasks.filter(el => {
           if (el.date) {
             const tom = timezone.utc()
-            const saved = timezone.utc(`${el.date} ${tom.format('HH:mm')}`, 'Y-M-D HH:mm')
+            const saved = timezone.utc(`${el.date} ${tom.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
+            tom.tz(timeZone)
             return saved.isBefore(tom, 'day')
           }
           return false
@@ -81,7 +86,8 @@ export default {
         return tasks.filter(el => {
           if (el.date) {
             const today = timezone.utc()
-            const saved = timezone.utc(`${el.date} ${today.format('HH:mm')}`, 'Y-M-D HH:mm')
+            const saved = timezone.utc(`${el.date} ${today.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
+            today.tz(timeZone)
             return saved.isAfter(today, 'day')
           }
           return false
@@ -90,7 +96,7 @@ export default {
     }
     return tasks
   },
-  filterTasksByPerspective(per: Perspective, tasks: Task[], startOfTheWeek?: string): Task[] {
+  filterTasksByPerspective(per: Perspective, tasks: Task[], timeZone: string, startOfTheWeek?: string): Task[] {
     if (!per.isSmart) {
       const pers = per as Perspective
       if (pers.priority)
@@ -99,10 +105,10 @@ export default {
         tasks = this.filterTasksByLabels(tasks, pers.includeAndLabels)
       if (pers.includeAndSmartPers)
         for (const smart of pers.includeAndSmartPers)
-          tasks = this.filterTasksBySmartPerspective(smart, tasks, startOfTheWeek)
+          tasks = this.filterTasksBySmartPerspective(smart, tasks, timeZone, startOfTheWeek)
       return tasks
     }
-    return this.filterTasksBySmartPerspective(per.name, tasks, startOfTheWeek)
+    return this.filterTasksBySmartPerspective(per.name, tasks, timeZone,startOfTheWeek)
   },
   snakeToCamel(s: string) {
     return s.replace(/(\-\w)/g, (m: any) => m[1].toUpperCase())
@@ -462,8 +468,14 @@ export default {
   // tslint:disable-next-line:max-line-length
   parseTaskInputObjectToString(obj: TaskInputObj | undefined, timeFormat: '13:00' | '1:00pm', timeZone: string): string {
     if (obj && timeZone && timeFormat) {
+      let time = obj.time
+
       const today = timezone.utc().tz(timeZone)
-      const typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day}`, 'Y-M-D', timeZone)
+      let typed!: any
+      if (time)
+        typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day} ${time}`, 'Y-M-D HH:mm', timeZone)
+      else 
+        typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day}`, 'Y-M-D', timeZone)
 
       let str = `${moment().month(obj.month - 1).format('MMMM')} ${obj.day}, ${obj.year}`
 
@@ -471,7 +483,6 @@ export default {
       today.add(1, 'd')
       if (today.isSame(typed, 'day')) str = 'Tomorrow'
 
-      let time = obj.time
       if (time) {
         if (timeFormat === '1:00pm')
           time = moment(time, 'HH:mm').format('hh:mm a')
