@@ -1,6 +1,6 @@
 <template>
   <div class='calendar-input-tag' @mouseenter='showing = true' @mouseleave='showing = false'>
-    <i class='fas icon fa-calendar-alt fa-lg pointer' @click='openCenteredCard' :class='theme'></i>
+    <i class='fas icon fa-calendar-alt fa-lg pointer' @click='openCenteredCard' :class='theme' title='Calendar'></i>
     <transition name='fade'>
       <calendar-input v-if='showing && isDesktop' class='calendar' @select='select'/>
     </transition>

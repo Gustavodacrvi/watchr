@@ -23,6 +23,7 @@
           @delete='deleteSelected'
           @priority='selectPriority'
           @selectedpriority='selectedPriority'
+          @selecteddates='selectedDates'
           @settings='selectSettingsOption'
           @date='selectDate'
           @label='addLabel'
@@ -392,6 +393,13 @@ export default class PerspectiveAppview extends Vue {
       ids: this.selected,
       priority: value,
     })
+  }
+  selectedDates(date: string) {
+    const arr: Array<{id: string, date: string}> = []
+    for (const id of this.selected)
+      arr.push({id, date})
+    if (arr.length > 0)
+      this.saveNewDateOfTasks(arr)
   }
   updateView() {
     if (this.pers) {
