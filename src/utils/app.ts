@@ -4,7 +4,6 @@ import ErrorComponent from '@/components/ErrorComponent.vue'
 
 import { Task, TaskInputObj, Perspective } from '@/interfaces/app'
 
-import moment from 'moment'
 import timezone from 'moment-timezone'
 import { SetState } from '@/interfaces/store/settings';
 
@@ -19,6 +18,14 @@ export default {
     })
   },
   filterTasksBySmartPerspective(name: string, tasks: Task[], timeZone: string, startOfTheWeek: string): Task[] {
+    const getMoments = (date: string, time?: string): {today: any, saved: any} => {
+      const today = timezone().tz(timeZone)
+      let saved!: any
+      if (!time)
+        saved = timezone.tz(`${date} ${timezone.utc().format('HH:mm')}`, 'Y-M-D HH:mm', 'UTC').tz(timeZone)
+      else saved = timezone.tz(`${date} ${time}`, 'Y-M-D HH:mm', 'UTC').tz(timeZone)
+      return {saved, today}
+    }
     switch (name) {
       case 'Inbox': {
         return tasks.filter(el => el.labels.length === 0 && !el.date)
@@ -28,19 +35,15 @@ export default {
       case 'Today': {
         return tasks.filter(el => {
           if (!el.date) return false
-          const today = timezone()
-          const saved = timezone(`${el.date} ${today.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
-          today.tz(timeZone)
+          const {today, saved} = getMoments(el.date)
           return today.isSame(saved, 'day')
         })
       }
       case 'Next week': {
         return tasks.filter(el => {
           if (startOfTheWeek && el.date) {
-            const m = timezone()
-            const saved = timezone(`${el.date} ${m.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
-            m.tz(timeZone)
-            const start = this.getNextWeek(m.clone(), startOfTheWeek)
+            const {today, saved} = getMoments(el.date)
+            const start = this.getNextWeek(today.clone(), startOfTheWeek)
             const end = start.clone().add(6, 'd')
             return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
           }
@@ -50,9 +53,8 @@ export default {
       case 'Next month': {
         return tasks.filter(el => {
           if (el.date) {
-            const nextMonth = timezone().add(1, 'M')
-            const saved = timezone(`${el.date} ${nextMonth.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
-            nextMonth.tz(timeZone)
+            const nextMonth = timezone().add(1, 'M').tz(timeZone)
+            const {saved} = getMoments(el.date)
             const start = nextMonth.clone().startOf('month')
             const end = nextMonth.clone().endOf('month')
 
@@ -64,9 +66,8 @@ export default {
       case 'Tomorrow': {
         return tasks.filter(el => {
           if (el.date) {
-            const tom = timezone().add(1, 'd')
-            const saved = timezone(`${el.date} ${tom.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
-            tom.tz(timeZone)
+            const tom = timezone().add(1, 'd').tz(timeZone)
+            const {saved} = getMoments(el.date)
             return tom.isSame(saved, 'day')
           }
           return false
@@ -75,10 +76,8 @@ export default {
       case 'Overdue': {
         return tasks.filter(el => {
           if (el.date) {
-            const tom = timezone()
-            const saved = timezone(`${el.date} ${tom.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
-            tom.tz(timeZone)
-            return saved.isBefore(tom, 'day')
+            const {saved, today} = getMoments(el.date)
+            return saved.isBefore(today, 'day')
           }
           return false
         })
@@ -86,9 +85,7 @@ export default {
       case 'Upcoming': {
         return tasks.filter(el => {
           if (el.date) {
-            const today = timezone()
-            const saved = timezone(`${el.date} ${today.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
-            today.tz(timeZone)
+            const {today, saved} = getMoments(el.date)
             return saved.isAfter(today, 'day')
           }
           return false
@@ -314,14 +311,14 @@ export default {
   getTaskInputTime(values: string[], timeFormat: SetState.timeFormat) {
     const parseTime = (time: string): string => {
       if (timeFormat === '13:00')
-        return moment(time, 'H:m').format('HH:mm')
-      return moment(time, 'H:m a').format('HH:mm a')
+        return timezone(time, 'H:m').format('HH:mm')
+      return timezone(time, 'H:m a').format('HH:mm a')
     }
     const isValidTime = (str: string): boolean => {
       const time = parseTime(str)
       const twelveHourFormat = timeFormat === '1:00pm'
       const format = twelveHourFormat ? 'HH:mm a' : 'HH:mm'
-      return moment(time, format, true).isValid()
+      return timezone(time, format, true).isValid()
     }
     for (const v of values)
       if (v && v.includes(':') && isValidTime(v.toLowerCase()) && !v.includes('24:00'))
@@ -367,21 +364,21 @@ export default {
       for (const v of values)
         if (isNumber(v) && v.length > 3 && !v.includes(':'))
           return parseInt(v, 10)
-      return moment().year()
+      return timezone().year()
     }
     const getMonth = (values: string[]): number => {
       for (const str of values) {
-        const mom = moment(str, 'MMMM')
+        const mom = timezone(str, 'MMMM')
         if (mom.isValid()) return mom.month() + 1
       }
-      return moment().month() + 1
+      return timezone().month() + 1
     }
     const getDay = (values: string[], month: number, year: number): number => {
       for (const v of values)
         if (isNumber(v) && v.length < 3 && parseInt(v, 10) < 32 && parseInt(v, 10) > 0)
-          if (moment(`${v}-${month}-${year}`, 'D-M-Y', true).isValid())
+          if (timezone(`${v}-${month}-${year}`, 'D-M-Y', true).isValid())
             return parseInt(v, 10)
-      return parseInt(moment().format('D'), 10)
+      return parseInt(timezone().format('D'), 10)
     }
     const searchKeyWords = (str: string, obj: TaskInputObj): TaskInputObj => {
       const getNextWeek = (mom: any, firstDayOfTheWeek: string): any => {
@@ -398,8 +395,8 @@ export default {
       }
 
       const values = str.split(' ')
-      let tod = moment()
-      let m = moment(`${obj.day}-${obj.month}-${obj.year} ${obj.time}`, 'D-M-Y HH:mm')
+      let tod = timezone()
+      let m = timezone(`${obj.day}-${obj.month}-${obj.year} ${obj.time}`, 'D-M-Y HH:mm')
       let inKeyword = false
       let inHour = false
 
@@ -434,7 +431,7 @@ export default {
               }
             }
             if (found) break
-            const ins = getNextWeek(tod, moment(v, 'dddd').format('dddd'))
+            const ins = getNextWeek(tod, timezone(v, 'dddd').format('dddd'))
             if (ins) {
               tod = ins
               inKeyword = true
@@ -498,7 +495,7 @@ export default {
       else
         typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day}`, 'Y-M-D', timeZone)
 
-      let str = `${moment().month(obj.month - 1).format('MMMM')} ${obj.day}, ${obj.year}`
+      let str = `${timezone().month(obj.month - 1).format('MMMM')} ${obj.day}, ${obj.year}`
 
       if (today.isSame(typed, 'day')) str = 'Today'
       today.add(1, 'd')
@@ -506,7 +503,7 @@ export default {
 
       if (time) {
         if (timeFormat === '1:00pm')
-          time = moment(time, 'HH:mm').format('hh:mm a')
+          time = timezone(time, 'HH:mm').format('hh:mm a')
         str += ` at ${obj.time}`
       }
       str += ', ' + typed.format('dddd')

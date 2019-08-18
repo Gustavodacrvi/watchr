@@ -384,12 +384,6 @@ export default class AppviewTask extends Vue {
   get showTodayIcon(): boolean {
     if (this.fixedPers === 'Today' || !this.task.date) return false
     const {today, saved} = this.todayMomAndSavedMom()
-    if (this.task.name === 'change the date of multiple tasks by selecting them') {
-      console.log(today.format('Y-M-D HH:mm'), saved.format('Y-M-D HH:mm'), today.isSame(saved, 'day'))
-    }
-    if (this.task.name === 'sort by date option') {
-      console.log(today.format('Y-M-D HH:mm'), saved.format('Y-M-D HH:mm'), today.isSame(saved, 'day'))
-    }
     return today.isSame(saved, 'day')
   }
   get showOverdueIcon(): boolean {

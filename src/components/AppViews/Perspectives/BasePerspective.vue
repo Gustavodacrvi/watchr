@@ -122,7 +122,7 @@ import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/Tasks/A
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 import AppviewHeader from '@/components/AppViews/AppviewComponents/Headings/AppviewHeading.vue'
 
-import moment from 'moment-timezone'
+import timezone from 'moment-timezone'
 
 import { Perspective, Label, Task, ListIcon, Alert } from '../../../interfaces/app'
 import appUtils from '@/utils/app'
@@ -389,9 +389,8 @@ export default class PerspectiveAppview extends Vue {
     this.saveNewDateOfTasks(arr)
   }
   beautifyDate(date: string): {name: string, faded?: string} {
-    const today = moment()
-    const m = moment(`${date} ${today.format('HH:mm')}`, 'Y-M-D HH:mm').tz(this.timeZone)
-    today.tz(this.timeZone)
+    const today = timezone().tz(this.timeZone)
+    const m = timezone.tz(`${date} ${timezone.utc().format('HH:mm')}`, 'Y-M-D HH:mm', 'UTC').tz(this.timeZone)
     const diff = m.diff(today, 'days')
 
     let name!: string
@@ -420,10 +419,10 @@ export default class PerspectiveAppview extends Vue {
     const hds = this.calendarHeadings
     const finalArr: Task[][] = []
     for (const date of hds) {
-      const mom = moment(date, 'Y-M-D')
+      const mom = timezone.tz(date, 'Y-M-D', 'UTC')
       const arr: Task[] = []
       for (const t of this.getTasks)
-        if (mom.isSame(moment(t.date, 'Y-M-D')))
+        if (mom.isSame(timezone.tz(t.date, 'Y-M-D', 'UTC')))
           arr.push(t)
       if (arr.length > 0) finalArr.push(arr)
     }
@@ -437,8 +436,8 @@ export default class PerspectiveAppview extends Vue {
         dates.add(t.date)
     const arr: string[] = Array.from(dates) as any
     arr.sort((a, b) => {
-      const ma = moment(a, 'Y-M-D')
-      const mb = moment(b, 'Y-M-D')
+      const ma = timezone.tz(a, 'Y-M-D', 'UTC')
+      const mb = timezone.tz(b, 'Y-M-D', 'UTC')
       if (ma.isAfter(mb)) return 1
       return -1
     })
@@ -492,9 +491,9 @@ export default class PerspectiveAppview extends Vue {
   get defaultDate(): string | undefined {
     if (!this.pers) return undefined
     if (this.pers.name === 'Today')
-      return moment().format('Y-M-D')
+      return timezone.utc().format('Y-M-D')
     if (this.pers.name === 'Tomorrow')
-      return moment().add(1, 'd').format('Y-M-D')
+      return timezone.utc().add(1, 'd').format('Y-M-D')
     return undefined
   }
 
