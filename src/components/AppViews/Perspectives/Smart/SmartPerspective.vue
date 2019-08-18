@@ -1,12 +1,10 @@
 <template>
   <base-pers
     :pers-name='persName'
-    :value='value'
     :base-tasks='baseTasks'
     :fixed-tag="{name: persName, icon: 'layer-group', backColor: '#6b66ff'}"
     :save-sort='!isOnOverview'
-
-    @input="$emit('input', !value)"
+    :calendar-renderer='calendarRenderer'
   />
 </template>
 
@@ -37,15 +35,16 @@ export default class ViewToday extends Vue {
   @taskVuex.State tasks!: Task[]
 
   @set.State timeZone!: SetState.timeZone
+  @set.State startOfTheWeek!: SetState.startOfTheWeek
 
-  @Prop(Boolean) value!: string
   @Prop(String) persName!: string
+  @Prop(Boolean) calendarRenderer!: boolean
 
   get isOnOverview(): boolean {
     return this.currentAppSection === 'overview'
   }
   get baseTasks() {
-    return appUtils.filterTasksBySmartPerspective(this.persName, this.tasks, this.timeZone)
+    return appUtils.filterTasksBySmartPerspective(this.persName, this.tasks, this.timeZone, this.startOfTheWeek)
   }
 }
 

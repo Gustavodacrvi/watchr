@@ -186,8 +186,8 @@ export default class AppviewTaskedit extends Vue {
   enter() {
     let utc = null
     if (this.calendarObj)
-      utc = this.calendarObj.utc
-    if (this.stringToReplaceOnAdd)
+      utc = this.calendarObj
+    if (this.stringToReplaceOnAdd && this.calendarString)
       this.value = this.value.replace(this.stringToReplaceOnAdd, '')
     if (this.value)
       this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels, utc})
@@ -216,11 +216,16 @@ export default class AppviewTaskedit extends Vue {
       let saved!: any
       if (!this.time)
         saved = moment.tz(`${date}`, 'Y-M-D', this.timeZone)
-      else saved = moment.tz(`${date} ${this.time}`, this.timeZone)
+      else saved = moment.tz(`${date} ${this.time}`, 'Y-M-D HH:mm', this.timeZone)
+      let time = this.time ? this.time : ''
       this.calendarObj = {
         day: saved.format('D'),
         month: saved.format('M'),
         year: saved.format('Y'),
+        utc: {
+          time: time,
+          date: saved.format('Y-M-D'),
+        }
       }
       if (this.time) this.calendarObj['time'] = saved.format('HH:mm')
       this.calendarString = appUtils.parseTaskInputObjectToString(this.calendarObj, this.timeFormat, this.timeZone)

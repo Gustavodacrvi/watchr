@@ -53,16 +53,14 @@
         min-width='300px'
       >
         <span
-          class='drop-el txt'
-          :class='theme'
+          class='drop-el txt-light txt'
           @click='signOut'
         >
           <i class='fa-sign-out-alt fas fa-sm'></i>
           Sign out
         </span>
         <span v-if='!emailVerified'
-          class='drop-el txt'
-          :class='theme'
+          class='drop-el txt-light txt'
           @click='resendConfirmationEmail'
         >
           <i class='fa-paper-plane fas fa-sm'></i>

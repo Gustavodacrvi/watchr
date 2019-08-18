@@ -1,5 +1,5 @@
 <template>
-  <smart-pers name='Next month'/>
+  <smart-pers pers-name='Next month'/>
 </template>
 
 <script lang='ts'>

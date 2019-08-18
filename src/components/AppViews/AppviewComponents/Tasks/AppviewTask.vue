@@ -37,10 +37,8 @@
               <i v-if='getChecklist && getChecklist.length > 0'
                 class='fade content-icon fas fa-checklist fa-list-ul'
               ></i>
-              <span v-if='date' class='fade txt'>
-                <span>{{ date }}</span>
-                <span v-if='time'>{{ time }}</span>
-              </span>
+              <span class='fade' v-if='date'>{{ date }}</span>
+              <span class='fade' v-if='time'>{{ time }}</span>
             </div>
             <div key='labels' class='txt info' :class='theme'>
               <template v-if='showLabels'>
@@ -366,6 +364,14 @@ export default class AppviewTask extends Vue {
 
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
   }
+  todayMomAndSavedMom(): {today: any, saved: any} {
+    const today = moment().tz(this.timeZone)
+    let saved!: any
+    if (!this.task.time)
+      saved = moment.tz(`${this.task.date} ${moment.utc().format('HH:mm')}`, 'Y-M-D HH:mm', 'UTC').tz(this.timeZone)
+    else saved = moment.tz(`${this.task.date} ${this.task.time}`, 'Y-M-D HH:mm', 'UTC').tz(this.timeZone)
+    return {today, saved}
+  }
 
   get showDot1(): boolean {
     return !this.atLeastTwoInfoOptionsWontShowUp && (this.allTrue || this.showLabels)
@@ -377,20 +383,23 @@ export default class AppviewTask extends Vue {
 
   get showTodayIcon(): boolean {
     if (this.fixedPers === 'Today' || !this.task.date) return false
-    const today = moment.utc()
-    const saved = moment.utc(this.task.date, 'Y-M-D')
+    const {today, saved} = this.todayMomAndSavedMom()
+    if (this.task.name === 'change the date of multiple tasks by selecting them') {
+      console.log(today.format('Y-M-D HH:mm'), saved.format('Y-M-D HH:mm'), today.isSame(saved, 'day'))
+    }
+    if (this.task.name === 'sort by date option') {
+      console.log(today.format('Y-M-D HH:mm'), saved.format('Y-M-D HH:mm'), today.isSame(saved, 'day'))
+    }
     return today.isSame(saved, 'day')
   }
   get showOverdueIcon(): boolean {
     if (this.fixedPers === 'Overdue' || !this.task.date) return false
-    const today = moment.utc()
-    const saved = moment.utc(this.task.date, 'Y-M-D')
+    const {today, saved} = this.todayMomAndSavedMom()
     return saved.isBefore(today, 'day')
   }
   get showTomorrowIcon(): boolean {
     if (this.fixedPers === 'Tomorrow' || !this.task.date) return false
-    const today = moment.utc()
-    const saved = moment.utc(this.task.date, 'Y-M-D')
+    const {today, saved} = this.todayMomAndSavedMom()
     today.add(1, 'd')
     return today.isSame(saved, 'day')
   }
@@ -415,33 +424,30 @@ export default class AppviewTask extends Vue {
     return this.alwaysShowCreationDate || this.onHover
   }
   get readableTaskCreationDate(): string {
-    const savedMom = moment.utc(this.task.creationDate, 'Y-M-D HH:mm')
-    const todayMom = moment.utc()
+    const savedMom = moment.tz(this.task.creationDate, 'Y-M-D HH:mm', 'UTC')
+    const todayMom = moment().tz('UTC')
     return savedMom.from(todayMom)
   }
   get readableTaskLastEditDate(): string {
-    const savedMom = moment.utc(this.task.lastEditDate, 'Y-M-D HH:mm')
-    const todayMom = moment.utc()
+    const savedMom = moment.tz(this.task.lastEditDate, 'Y-M-D HH:mm', 'UTC')
+    const todayMom = moment().tz('UTC')
     return savedMom.from(todayMom)
   }
   get date(): string | null {
     if (!this.task.date) return null
+    const {today, saved} = this.todayMomAndSavedMom()
 
-    const now = moment.utc().tz(this.timeZone)
-    const tom = now.clone().add(1, 'd')
-    const saved = moment.tz(this.task.date, 'Y-M-D', this.timeZone)
-    if (now.isSame(saved, 'day') || tom.isSame(saved, 'day')) return null
-    if (now.isSame(saved, 'year')) return saved.format('MMMM D, dddd')
+    const tom = today.clone().add(1, 'd')
+    if (today.isSame(saved, 'day') || tom.isSame(saved, 'day')) return null
+    if (today.isSame(saved, 'year')) return saved.format('MMMM D, dddd')
     else saved.format('LL, dddd')
 
     return null
   }
   get time(): string | null {
     if (!(this.task.date && this.task.time)) return null
-
-    const now = moment.utc().tz(this.timeZone)
-    const saved = moment.tz(`${this.task.date} ${this.task.time}`, 'Y-M-D HH:mm', this.timeZone)
-    return ' at ' + saved.format(this.timeFormat)
+    const {today, saved} = this.todayMomAndSavedMom()
+    return ' at ' + appUtils.parseUtcTime(saved.format('HH:mm'), this.timeFormat)
   }
   get exclamationColor(): string {
     switch (this.task.priority) {

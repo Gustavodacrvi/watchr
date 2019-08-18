@@ -11,16 +11,15 @@
     >
       <div v-if='isDesktop' class='drop round-border'>
         <div v-for='i in options'
-          class='el cancel-sortable-unselect'
+          class='el cancel-sortable-unselect txt-light'
           :key='i.name'
-          :class='theme'
           @click='optionClick(i.name, i.callback)'
         >
           <span class='el-icon'>
-            <i v-if='!i.iconColor' :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]'></i>
-            <i v-else :class='[`txt fas fa-${i.icon} fa-${i.size}`, theme]' :style='{color: i.iconColor}'></i>
+            <i v-if='!i.iconColor' :class='`txt fas fa-${i.icon} txt-light fa-${i.size}`'></i>
+            <i v-else :class='`txt fas fa-${i.icon} txt-light fa-${i.size}`' :style='{color: i.iconColor}'></i>
           </span>
-          <span class='el-name txt' :class='theme'>
+          <span class='el-name txt txt-light'>
             {{ i.name }}
           </span>
         </div>

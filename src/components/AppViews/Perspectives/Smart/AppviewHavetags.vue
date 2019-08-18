@@ -1,5 +1,5 @@
 <template>
-  <smart-pers name='Have tags'/>
+  <smart-pers pers-name='Have tags'/>
 </template>
 
 <script lang='ts'>

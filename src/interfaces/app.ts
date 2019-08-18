@@ -65,9 +65,15 @@ export interface Perspective {
   excludeSmartPers: string[]
   includeAndSmartPers: string[]
   includeOrSmartPers: string[]
+  excludeCustomPers: string[]
+  includeAndCustomPers: string[]
+  includeOrCustomPers: string[]
   excludeLabels: string[]
   includeAndLabels: string[]
   includeOrLabels: string[]
+  excludeDates: string[]
+  includeAndDates: string[]
+  includeOrDates: string[]
 }
 
 export interface ListIcon {
@@ -84,8 +90,8 @@ export interface Task {
   name: string
   priority: 'Low priority' | 'High priority' | 'Medium priority' | ''
   labels: string[]
-  date: string
-  time: string
+  date: string | null
+  time: string | null
   creationDate: string
   lastEditDate: string
   checklistOrder: string[]

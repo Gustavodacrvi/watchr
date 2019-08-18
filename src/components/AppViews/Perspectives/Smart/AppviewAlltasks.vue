@@ -1,5 +1,5 @@
 <template>
-  <smart-pers name='All tasks'/>
+  <smart-pers pers-name='All tasks'/>
 </template>
 
 <script lang='ts'>

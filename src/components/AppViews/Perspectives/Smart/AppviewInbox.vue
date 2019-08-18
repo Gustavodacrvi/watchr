@@ -1,5 +1,5 @@
 <template>
-  <smart-pers name='Inbox'/>
+  <smart-pers pers-name='Inbox'/>
 </template>
 
 <script lang='ts'>

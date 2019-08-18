@@ -129,6 +129,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       multiDrag: true,
       dataIdAttr: 'data-sortableid',
       group: {name: 'taskrenderer', pull: (to: any, from: any) => {
+        if (to.options.group.name === 'taskrenderer') return true
         if (to.options.group.name === 'today-btn') {
           this.actionType = 'today-btn'
           return false

@@ -46,9 +46,7 @@
 <script lang='ts'>
 
 import { Vue, Component, Watch } from 'vue-property-decorator'
-import { State, Getter, Mutation, Action, namespace } from 'vuex-class'
-
-const pers = namespace('perspective')
+import { State, Getter, Mutation, Action } from 'vuex-class'
 
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
@@ -57,7 +55,7 @@ import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 import TheAppbar from '@/components/TheAppBar/TheAppBar.vue'
 
 import appUtils from '@/utils/app'
-import { Alert, Task, Perspective } from '@/interfaces/app'
+import { Alert } from '@/interfaces/app'
 import { IndexState, IndexMutations, IndexGetters, IndexActions } from './interfaces/store'
 
 @Component({
@@ -95,8 +93,6 @@ export default class App extends Vue {
   @Getter anonymous!: IndexGetters.Anonymous
   @Action showLastAlert!: IndexActions.ShowLastAlert
   @Action activateKeyShortcut!: IndexActions.ActivateKeyShortcut
-
-  @State firestore!: firebase.firestore.Firestore
 
   mounted() {
     window.addEventListener('keypress', this.keyPressed)

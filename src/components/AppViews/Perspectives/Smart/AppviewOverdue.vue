@@ -1,5 +1,5 @@
 <template>
-  <smart-pers name='Overdue'/>
+  <smart-pers pers-name='Overdue'/>
 </template>
 
 <script lang='ts'>

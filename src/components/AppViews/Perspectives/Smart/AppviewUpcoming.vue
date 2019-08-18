@@ -1,5 +1,5 @@
 <template>
-  <smart-pers name='Upcoming'/>
+  <smart-pers pers-name='Upcoming' :calendar-renderer='true'/>
 </template>
 
 <script lang='ts'>

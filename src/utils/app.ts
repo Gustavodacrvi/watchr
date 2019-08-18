@@ -4,8 +4,9 @@ import ErrorComponent from '@/components/ErrorComponent.vue'
 
 import { Task, TaskInputObj, Perspective } from '@/interfaces/app'
 
-import moment, { months } from 'moment'
+import moment from 'moment'
 import timezone from 'moment-timezone'
+import { SetState } from '@/interfaces/store/settings';
 
 export default {
   AsyncComponent(comp: any): any {
@@ -17,7 +18,7 @@ export default {
       timeout: 5000,
     })
   },
-  filterTasksBySmartPerspective(name: string, tasks: Task[], timeZone: string, startOfTheWeek?: string): Task[] {
+  filterTasksBySmartPerspective(name: string, tasks: Task[], timeZone: string, startOfTheWeek: string): Task[] {
     switch (name) {
       case 'Inbox': {
         return tasks.filter(el => el.labels.length === 0 && !el.date)
@@ -27,8 +28,8 @@ export default {
       case 'Today': {
         return tasks.filter(el => {
           if (!el.date) return false
-          const today = timezone.utc()
-          const saved = timezone.utc(`${el.date} ${today.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
+          const today = timezone()
+          const saved = timezone(`${el.date} ${today.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
           today.tz(timeZone)
           return today.isSame(saved, 'day')
         })
@@ -36,8 +37,8 @@ export default {
       case 'Next week': {
         return tasks.filter(el => {
           if (startOfTheWeek && el.date) {
-            const m = timezone.utc()
-            const saved = timezone.utc(`${el.date} ${m.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
+            const m = timezone()
+            const saved = timezone(`${el.date} ${m.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
             m.tz(timeZone)
             const start = this.getNextWeek(m.clone(), startOfTheWeek)
             const end = start.clone().add(6, 'd')
@@ -49,8 +50,8 @@ export default {
       case 'Next month': {
         return tasks.filter(el => {
           if (el.date) {
-            const nextMonth = timezone.utc().add(1, 'M')
-            const saved = timezone.utc(`${el.date} ${nextMonth.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
+            const nextMonth = timezone().add(1, 'M')
+            const saved = timezone(`${el.date} ${nextMonth.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
             nextMonth.tz(timeZone)
             const start = nextMonth.clone().startOf('month')
             const end = nextMonth.clone().endOf('month')
@@ -63,8 +64,8 @@ export default {
       case 'Tomorrow': {
         return tasks.filter(el => {
           if (el.date) {
-            const tom = timezone.utc().add(1, 'd')
-            const saved = timezone.utc(`${el.date} ${tom.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
+            const tom = timezone().add(1, 'd')
+            const saved = timezone(`${el.date} ${tom.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
             tom.tz(timeZone)
             return tom.isSame(saved, 'day')
           }
@@ -74,8 +75,8 @@ export default {
       case 'Overdue': {
         return tasks.filter(el => {
           if (el.date) {
-            const tom = timezone.utc()
-            const saved = timezone.utc(`${el.date} ${tom.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
+            const tom = timezone()
+            const saved = timezone(`${el.date} ${tom.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
             tom.tz(timeZone)
             return saved.isBefore(tom, 'day')
           }
@@ -85,8 +86,8 @@ export default {
       case 'Upcoming': {
         return tasks.filter(el => {
           if (el.date) {
-            const today = timezone.utc()
-            const saved = timezone.utc(`${el.date} ${today.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
+            const today = timezone()
+            const saved = timezone(`${el.date} ${today.format('HH:mm')}`, 'Y-M-D HH:mm').tz(timeZone)
             today.tz(timeZone)
             return saved.isAfter(today, 'day')
           }
@@ -96,7 +97,7 @@ export default {
     }
     return tasks
   },
-  filterTasksByPerspective(per: Perspective, tasks: Task[], timeZone: string, startOfTheWeek?: string): Task[] {
+  filterTasksByPerspective(per: Perspective, tasks: Task[], timeZone: string, startOfTheWeek: string): Task[] {
     if (!per.isSmart) {
       const pers = per as Perspective
       if (pers.priority)
@@ -108,7 +109,7 @@ export default {
           tasks = this.filterTasksBySmartPerspective(smart, tasks, timeZone, startOfTheWeek)
       return tasks
     }
-    return this.filterTasksBySmartPerspective(per.name, tasks, timeZone,startOfTheWeek)
+    return this.filterTasksBySmartPerspective(per.name, tasks, timeZone, startOfTheWeek)
   },
   snakeToCamel(s: string) {
     return s.replace(/(\-\w)/g, (m: any) => m[1].toUpperCase())
@@ -169,6 +170,93 @@ export default {
     return tasks
   },
   sortTasksByMultipleCriteria(tasks: Task[], sort: string[]): Task[] {
+    const dateNewest = (t1: Task, t2: Task, newest: boolean): number => {
+      let num = 1
+      if (!newest) num = -1
+      if (!t1.date && t2.date) return num
+      if (t1.date && !t2.date) return -num
+      if (!t1.date && !t2.date) return 0
+
+      const t1HasTime_t2Doesnt = t1.time && !t2.time
+      const t2HasTime_t1Doesnt = !t1.time && t2.time
+      const neitherOfThemHasTime = !t1.time && !t2.time
+      const bothOfThemHaveTime = t1.time && t2.time
+
+      const noTime1 = timezone.tz(`${t1.date}`, 'Y-M-D', 'UTC')
+      const hasTime1 = timezone.tz(`${t1.date} ${t1.time}`, 'Y-M-D HH:mm', 'UTC')
+      const noTime2 = timezone.tz(`${t2.date}`, 'Y-M-D', 'UTC')
+      const hasTime2 = timezone.tz(`${t2.date} ${t2.time}`, 'Y-M-D HH:mm', 'UTC')
+
+      const areTheSameDay = noTime1.isSame(noTime2, 'day')
+      const t1ComesBeforet2Day = noTime1.isBefore(noTime2, 'day')
+      const t1ComesAftert2Day = noTime1.isAfter(noTime2, 'day')
+
+      if (areTheSameDay) {
+        if (t1HasTime_t2Doesnt) return num
+        if (t2HasTime_t1Doesnt) return -num
+        if (neitherOfThemHasTime) return 0
+        if (bothOfThemHaveTime) {
+          if (hasTime1.isSame(hasTime2, 'minute')) return 0
+          if (hasTime1.isAfter(hasTime2, 'minute')) return num
+          if (hasTime1.isBefore(hasTime2, 'minute')) return -num
+        }
+      }
+      if (t1ComesBeforet2Day) return -num
+      if (t1ComesAftert2Day) return num
+      
+      return 0
+    }
+    const lastEditDateNewest = (t1: Task, t2: Task, newest: boolean): number => {
+      let num = 1
+      if (!newest) num = -1
+      const mom1 = timezone.tz(`${t1.lastEditDate}`, 'Y-M-D HH:mm', 'UTC')
+      const mom2 = timezone.tz(`${t2.lastEditDate}`, 'Y-M-D HH:mm', 'UTC')
+      if (mom1.isSame(mom2, 'minute')) return 0
+      if (mom1.isAfter(mom2, 'minute')) return -num
+      if (mom1.isBefore(mom2,'minute')) return num
+      return 0
+    }
+    const creationDateNewest = (t1: Task, t2: Task, newest: boolean): number => {
+      let num = 1
+      if (!newest) num = -1
+      const mom1 = timezone.tz(`${t1.creationDate}`, 'Y-M-D HH:mm', 'UTC')
+      const mom2 = timezone.tz(`${t2.creationDate}`, 'Y-M-D HH:mm', 'UTC')
+      if (mom1.isSame(mom2, 'minute')) return 0
+      if (mom1.isBefore(mom2, 'minute')) return num
+      if (mom1.isAfter(mom2, 'minute')) return -num
+      return 0
+    }
+    const priorityHighest = (t1: Task, t2: Task, highest: boolean): number => {
+      let num = 1
+      if (!highest) num = -1
+      const priA = t1.priority
+      const priB = t2.priority
+      switch (priA) {
+        case 'Low priority':
+          switch (priB) {
+            case 'Low priority': return 0
+            case 'Medium priority': return num
+            case 'High priority': return num
+            default: return -1
+          }
+        case 'Medium priority':
+          switch (priB) {
+            case 'Medium priority': return 0
+            case 'High priority': return num
+            case 'Low priority': return -num
+            default: return -1
+          }
+        case 'High priority':
+          switch (priB) {
+            case 'High priority': return 0
+            case 'Low priority': return -num
+            case 'Medium priority': return -num
+            default: return -1
+          }
+      }
+      return 0
+    }
+
     const obj: {[key: string]: (task1: Task, task2: Task) => number} = {
       name: (task1: Task, task2: Task) => {
         return task1.name.localeCompare(task2.name)
@@ -177,98 +265,34 @@ export default {
         return task2.name.localeCompare(task1.name)
       },
       priorityHighest: (task1: Task, task2: Task) => {
-        const priA = task1.priority
-        const priB = task2.priority
-        switch (priA) {
-          case 'Low priority':
-            switch (priB) {
-              case 'Low priority': return 0
-              case 'Medium priority': return 1
-              case 'High priority': return 1
-              default: return -1
-            }
-          case 'Medium priority':
-            switch (priB) {
-              case 'Medium priority': return 0
-              case 'High priority': return 1
-              case 'Low priority': return -1
-              default: return -1
-            }
-          case 'High priority':
-            switch (priB) {
-              case 'High priority': return 0
-              case 'Low priority': return -1
-              case 'Medium priority': return -1
-              default: return -1
-            }
-        }
-        return 0
+        return priorityHighest(task1, task2, true)
       },
       priorityLowest: (task1: Task, task2: Task) => {
-        const priA = task1.priority
-        const priB = task2.priority
-        switch (priA) {
-          case 'Low priority':
-            switch (priB) {
-              case 'Low priority': return 0
-              case 'Medium priority': return -1
-              case 'High priority': return -1
-              default: return 1
-            }
-          case 'Medium priority':
-            switch (priB) {
-              case 'Medium priority': return 0
-              case 'High priority': return -1
-              case 'Low priority': return 1
-              default: return 1
-            }
-          case 'High priority':
-            switch (priB) {
-              case 'High priority': return 0
-              case 'Low priority': return 1
-              case 'Medium priority': return 1
-              default: return 1
-            }
-        }
-        return 0
+        return priorityHighest(task1, task2, false)
       },
       creationDateNewest: (t1: Task, t2: Task) => {
-        const mom1 = moment(`${t1.creationDate}`, 'Y-M-D HH:mm')
-        const mom2 = moment(`${t2.creationDate}`, 'Y-M-D HH:mm')
-        if (mom1.isSame(mom2)) return 0
-        if (mom1.isBefore(mom2)) return 1
-        if (mom1.isAfter(mom2)) return -1
-        return 0
+        return creationDateNewest(t1, t2, true)
       },
       creationDateOldest: (t1: Task, t2: Task) => {
-        const mom1 = moment(`${t1.creationDate}`, 'Y-M-D HH:mm')
-        const mom2 = moment(`${t2.creationDate}`, 'Y-M-D HH:mm')
-        if (mom1.isSame(mom2)) return 0
-        if (mom1.isBefore(mom2)) return -1
-        if (mom1.isAfter(mom2)) return 1
-        return 0
+        return creationDateNewest(t1, t2, false)
       },
       lastEditDateNewest: (t1: Task, t2: Task) => {
-        const mom1 = moment(`${t1.lastEditDate}`, 'Y-M-D HH:mm')
-        const mom2 = moment(`${t2.lastEditDate}`, 'Y-M-D HH:mm')
-        if (mom1.isSame(mom2)) return 0
-        if (mom1.isBefore(mom2)) return 1
-        if (mom1.isAfter(mom2)) return -1
-        return 0
+        return lastEditDateNewest(t1, t2, true)
       },
       lastEditDateOldest: (t1: Task, t2: Task) => {
-        const mom1 = moment(`${t1.lastEditDate}`, 'Y-M-D HH:mm')
-        const mom2 = moment(`${t2.lastEditDate}`, 'Y-M-D HH:mm')
-        if (mom1.isSame(mom2)) return 0
-        if (mom1.isBefore(mom2)) return -1
-        if (mom1.isAfter(mom2)) return 1
-        return 0
+        return lastEditDateNewest(t1, t2, false)
+      },
+      dateNewest: (t1: Task, t2: Task) => {
+        return dateNewest(t1, t2, true)
+      },
+      dateOldest: (t1: Task, t2: Task) => {
+        return dateNewest(t1, t2, false)
       },
     }
 
     tasks.sort((task1: Task, task2: Task) => {
 
-      for (let i = 0; i < 7; i++) {
+      for (let i = 0; i < 9; i++) {
         const compare = obj[sort[0]]
         if (compare) {
           const result = compare(task1, task2)
@@ -281,13 +305,13 @@ export default {
 
     return tasks
   },
-  parseUtcTime(time: string, timeZone: string, timeFormat: string): string {
+  parseUtcTime(time: string, timeFormat: string): string {
     const t = time.toLowerCase()
     if (timeFormat === '1:00pm')
-      return timezone.utc(t, 'Y-M-D HH:mm').tz(timeZone).format('hh:mm a').replace(' ', '')
-    return timezone.utc(t, 'Y-M-D HH:mm').tz(timeZone).format('HH:mm')
+      return timezone(t, 'HH:mm').format('hh:mm a').replace(' ', '')
+    return timezone(t, 'HH:mm').format('HH:mm')
   },
-  getTaskInputTime(values: string[], timeFormat: '13:00' | '1:00pm') {
+  getTaskInputTime(values: string[], timeFormat: SetState.timeFormat) {
     const parseTime = (time: string): string => {
       if (timeFormat === '13:00')
         return moment(time, 'H:m').format('HH:mm')
@@ -328,7 +352,7 @@ export default {
     return {date, time}
   },
   // tslint:disable-next-line:max-line-length
-  parseTaskInputTime(input: string, timeFormat: '13:00' | '1:00pm', timeZone: string, nextWeek: string): TaskInputObj & {utc: {date: string, time: string}} {
+  parseTaskInputTime(input: string, timeFormat: SetState.timeFormat, timeZone: string, nextWeek: string): TaskInputObj & {utc: {date: string, time: string}} {
     const parseDateInput = (value: string, callback: (str: string | null) => void): any => {
       const exists = value.includes(' $')
       let str: string | null = null
@@ -430,7 +454,7 @@ export default {
               case 'months': tod.add(q, 'M'); inKeyword = true; break
               case 'weeks': tod.add(q, 'w'); inKeyword = true; break
               case 'years': tod.add(q, 'y'); inKeyword = true; break
-              case 'hours': tod.add(q, 'h'); inKeyword = true; inHour = true;  break
+              case 'hours': tod.add(q, 'h'); inKeyword = true; inHour = true; break
             }
         }
       if (inKeyword) m = tod
@@ -439,12 +463,9 @@ export default {
         year: parseInt(m.format('Y'), 10),
         month: parseInt(m.format('M'), 10),
         day: parseInt(m.format('D'), 10),
-        time: m.format('HH:mm'),
+        time: obj.time,
       }
-      if (!obj.time)
-        o['time'] = null
-      if (inHour)
-        o['time'] = tod.format('HH:mm')
+      if (inHour) o.time = m.format('HH:mm')
 
       return o
     }
@@ -466,15 +487,15 @@ export default {
     })
   },
   // tslint:disable-next-line:max-line-length
-  parseTaskInputObjectToString(obj: TaskInputObj | undefined, timeFormat: '13:00' | '1:00pm', timeZone: string): string {
+  parseTaskInputObjectToString(obj: TaskInputObj | undefined, timeFormat: SetState.timeFormat, timeZone: string): string {
     if (obj && timeZone && timeFormat) {
       let time = obj.time
 
-      const today = timezone.utc().tz(timeZone)
+      const today = timezone().tz(timeZone)
       let typed!: any
       if (time)
         typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day} ${time}`, 'Y-M-D HH:mm', timeZone)
-      else 
+      else
         typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day}`, 'Y-M-D', timeZone)
 
       let str = `${moment().month(obj.month - 1).format('MMMM')} ${obj.day}, ${obj.year}`

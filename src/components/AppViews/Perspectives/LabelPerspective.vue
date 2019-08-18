@@ -126,6 +126,7 @@ export default class LabelPerspective extends Vue {
   @taskVuex.Action changePrioritysByIds!: TaskActions.ChangePrioritysByIds
 
   @set.State timeZone!: SetState.timeZone
+  @set.State startOfTheWeek!: SetState.startOfTheWeek
 
   search: string = ''
   priority: string = ''
@@ -291,14 +292,14 @@ export default class LabelPerspective extends Vue {
     let tasks = this.viewTasks
     if (this.getLabel) {
       if (this.search)
-        tasks = tasks.filter(el => this.search.includes(el.name))
+        tasks = tasks.filter(el => el.name.toLowerCase().includes(this.search.toLowerCase()))
       if (this.priority)
         tasks = appUtils.filterTasksByPriority(tasks, this.priority)
       if (this.labels && this.labels.length > 0)
         tasks = appUtils.filterTasksByLabels(tasks, this.labels)
       if (this.smartPers && this.smartPers.length > 0)
         for (const name of this.smartPers)
-          tasks = appUtils.filterTasksBySmartPerspective(name, tasks, this.timeZone)
+          tasks = appUtils.filterTasksBySmartPerspective(name, tasks, this.timeZone, this.startOfTheWeek)
       if (this.getLabel.order && this.getLabel.order.length > 0) {
         const ord = appUtils.fixOrder(tasks, this.getLabel.order)
         tasks = appUtils.sortArrayByIds(tasks, ord)
