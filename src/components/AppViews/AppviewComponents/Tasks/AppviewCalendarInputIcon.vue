@@ -1,6 +1,7 @@
 <template>
   <div class='calendar-input-tag' @mouseenter='showing = true' @mouseleave='showing = false'>
-    <i class='fas icon fa-calendar-alt fa-lg pointer' @click='openCenteredCard' :class='theme' title='Calendar'></i>
+    <i v-if='!size' class='fas icon fa-calendar-alt fa-lg pointer' @click='openCenteredCard' :class='theme' title='Calendar'></i>
+    <i v-else :class='[`fas icon fa-calendar-alt fa-${size} pointer`, theme]' @click='openCenteredCard' title='Calendar'></i>
     <transition name='fade'>
       <calendar-input v-if='showing && isDesktop' class='calendar' @select='select'/>
     </transition>
@@ -9,7 +10,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 
 import CalendarInputComp from '@/components/AppViews/AppviewComponents/Tasks/AppviewCalendarInput.vue'
@@ -27,6 +28,8 @@ export default class CalendarInputIcon extends Vue {
   @Getter isDesktop!: IndexGetters.IsDesktop
 
   showing: boolean = false
+
+  @Prop(String) size!: string
 
   select(obj: any) {
     this.$emit('select', obj)

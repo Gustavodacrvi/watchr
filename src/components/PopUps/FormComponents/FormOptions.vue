@@ -78,7 +78,7 @@ export default class FormOptions extends Vue {
     if (!this.parse)
       return this.options.filter(el => el.includes(this.search))
     const parsedSearch = parse(this.search)
-    const filtered = this.options.filter(el => parse(el).includes(parsedSearch))
+    const filtered = this.options.filter(el => parse(el).toLowerCase().includes(parsedSearch.toLowerCase()))
     return filtered.map(el => parse(el))
   }
 }

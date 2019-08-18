@@ -24,7 +24,7 @@
     </transition>
      <transition name='fade'>
       <span v-if='showTaskOptions && isDesktop' class='header-option'>
-        <calendar-comp @select='multipleDates'/>
+        <calendar-comp @select='multipleDates' :size='size'/>
       </span>
     </transition>
     <span style='width: 35px'></span>
@@ -72,7 +72,7 @@
       />
     </span>
     <span v-if='allowDates' class='header-option'>
-      <calendar-comp @select='selectCalendar'/>
+      <calendar-comp @select='selectCalendar' :size='size'/>
     </span>
     <span v-if='allowSettings' class='header-option'>
       <icon-options

@@ -365,12 +365,9 @@ export default class AppviewTask extends Vue {
     this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
   }
   todayMomAndSavedMom(): {today: any, saved: any} {
-    const today = moment().tz(this.timeZone)
-    let saved!: any
-    if (!this.task.time)
-      saved = moment.tz(`${this.task.date} ${moment.utc().format('HH:mm')}`, 'Y-M-D HH:mm', 'UTC').tz(this.timeZone)
-    else saved = moment.tz(`${this.task.date} ${this.task.time}`, 'Y-M-D HH:mm', 'UTC').tz(this.timeZone)
-    return {today, saved}
+    if (this.task.date)
+      return appUtils.getMomentsOutOfTask(this.task.date, this.timeZone, this.task.time)
+    return {today: null, saved: null}
   }
 
   get showDot1(): boolean {
