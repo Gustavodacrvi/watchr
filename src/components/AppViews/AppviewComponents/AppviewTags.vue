@@ -80,7 +80,7 @@ import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 import { Label } from '../../../interfaces/app'
 
 import moment from 'moment'
-import { SetState } from '../../../interfaces/store/settings';
+import { SetState } from '../../../interfaces/store/settings'
 
 @Component({
   components: {
@@ -126,7 +126,7 @@ export default class AppviewTags extends Vue {
       return dts.map(el => moment(el, 'Y-M-D').format(this.dateFormat).replace(/-/g, '/'))
     }
     return []
-  } 
+  }
 }
 
 </script>
