@@ -118,6 +118,7 @@ export default class LabelPerspective extends Vue {
   @Getter platform!: IndexGetters.Platform
   @Mutation sendOptionsToNavbar!: IndexMutations.SendOptionsToNavbar
   @Mutation hideNavBarOptions!: IndexMutations.HideNavBarOptions
+  @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
   @Prop(String) label!: string
 
@@ -209,6 +210,19 @@ export default class LabelPerspective extends Vue {
             },
           },
         ])
+      }, 80)
+    }
+    this.mobileSelectedOptions[2]['callback'] = () => {
+      setTimeout(() => {
+        this.pushCenteredCard({
+          type: 'Component',
+          compName: 'CalendarInput',
+          flexBasis: '275px',
+          listIcons: [],
+          listIconHandler: (e: any) => {
+            this.selectedDates(e.utc.date)
+          },
+        })
       }, 80)
     }
     return this.mobileSelectedOptions

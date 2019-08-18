@@ -145,7 +145,7 @@ import { TaskActions } from '../../../../interfaces/store/task'
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 400, interval: 5000}))
-else Vue.directive('longpress', longClickDirective({delay: 1500, interval: 5000}))
+else Vue.directive('longpress', longClickDirective({delay: 1200, interval: 5000}))
 
 @Component({
   components: {

@@ -119,8 +119,8 @@ export namespace IndexMutations {
     (state: State, title: string): void,
   }
   export type SendOptionsToNavbar = {
-    (options: ListIcon[]): void,
-    (state: State, options: ListIcon[]): void,
+    (options: IndexState.navBarOptions): void,
+    (state: State, options: IndexState.navBarOptions): void,
   }
 }
 
