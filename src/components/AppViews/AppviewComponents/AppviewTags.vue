@@ -35,6 +35,16 @@
       />
     </div>
     <div class='tags'>
+      <view-tag v-for='date in dates'
+        back-color='#9CE283'
+        icon='calendar-day'
+        :key='date'
+        :name='date'
+        :fixed='false'
+        @click="$emit('removedate', date)"
+      />
+    </div>
+    <div class='tags'>
       <view-tag v-for='lab in getLabels'
         :key='lab.id'
         icon='tag'
@@ -78,6 +88,7 @@ export default class AppviewTags extends Vue {
   @Prop(String) priority!: string
   @Prop(String) calendar!: string
   @Prop(Array) labels!: Label[]
+  @Prop(Array) dates!: string[]
   @Prop(Array) smartPers!: Label[]
 
   get getLabels(): Label[] {

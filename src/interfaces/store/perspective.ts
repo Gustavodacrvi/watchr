@@ -119,4 +119,7 @@ export namespace PersActions {
 
   export type StoreAddDateToPerspective = (context: ActionContext, obj: {id: string, date: string}) => void
   export type AddDateToPerspective = (obj: {id: string, date: string}) => void
+
+  export type StoreRemoveDateFromPerspective = (context: ActionContext, obj: {id: string, date: string}) => void
+  export type RemoveDateFromPerspective = (obj: {id: string, date: string}) => void
 }

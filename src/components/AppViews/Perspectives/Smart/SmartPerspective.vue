@@ -3,7 +3,8 @@
     :pers-name='persName'
     :base-tasks='baseTasks'
     :fixed-tag="{name: persName, icon: 'layer-group', backColor: '#6b66ff'}"
-    :save-sort='!isOnOverview'
+    :save-sort='true'
+    :save='!isOnOverview'
     :calendar-renderer='calendarRenderer'
   />
 </template>

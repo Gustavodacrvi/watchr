@@ -2,8 +2,8 @@
   <base-pers v-if='perspectiveData'
     :pers-name='pers'
     :base-tasks='baseTasks'
-    :save='true'
-    :save-sort='!isOnOverview'
+    :save='!isOnOverview'
+    :save-sort='true'
   />
 </template>
 

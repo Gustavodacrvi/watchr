@@ -47,15 +47,16 @@
           :search='search'
           :priority='getPriority'
           :labels='getLabels'
+          :dates='dates'
           :smart-pers='smartPers'
           @clearsearch="v => search = ''"
           @clearpriority="selectPriority('')"
           @removelabel='removeLabel'
+          @removedate='removeDate'
           @removesmartpers='removeSmartPers'
         />
         <div class='margin'></div>
       </div>
-      {{dates}}
       <task-renderer v-if='!calendarRenderer'
         id='appnavalltasks'
         :tasks='getTasks'
@@ -178,6 +179,7 @@ export default class PerspectiveAppview extends Vue {
   @persVuex.Action addPerspectiveSort!: PersActions.AddPerspectiveSort
   @persVuex.Action savePerspectiveTaskSort!: PersActions.SavePerspectiveTaskSort
   @persVuex.Action addDateToPerspective!: PersActions.AddDateToPerspective
+  @persVuex.Action removeDateFromPerspective!: PersActions.RemoveDateFromPerspective
 
   @set.State timeZone!: SetState.timeZone
   @set.State startOfTheWeek!: SetState.startOfTheWeek
@@ -304,6 +306,15 @@ export default class PerspectiveAppview extends Vue {
         id: this.pers.id,
         labelId: id,
       })
+  }
+  removeDate(date: string) {
+    if (!this.save) {
+      const index = this.dates.findIndex(el => el === date)
+      this.dates.splice(index, 1)
+    } else this.removeDateFromPerspective({
+      id: this.pers.id,
+      date,
+    })
   }
   removeSmartPers(name: string) {
     if (!this.save) {
@@ -488,9 +499,10 @@ export default class PerspectiveAppview extends Vue {
     return tasks
   }
   get getLabels(): Label[] {
-    if (!this.save)
-      return this.getLabelsByIds(this.labels)
-    else return this.getLabelsByIds(this.pers.includeAndLabels)
+    return this.getLabelsByIds(this.labels)
+  }
+  get getDates(): string[] {
+    return this.dates
   }
   get getPriority(): string {
     if (!this.save)

@@ -27,6 +27,7 @@ interface Actions {
   editPerspective: PersActions.StoreEditPerspective
   saveSmartPerspective: PersActions.StoreSaveSmartPerspective
   addDateToPerspective: PersActions.StoreAddDateToPerspective
+  removeDateFromPerspective: PersActions.StoreRemoveDateFromPerspective
   [key: string]: (...arr: any[]) => any
 }
 
@@ -158,6 +159,13 @@ export default {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('perspectives').doc(id).update({
           includeAndSmartPers: fire.arrayRemove(persName),
+        })
+    },
+    removeDateFromPerspective({ rootState }, {id, date}) {
+      const fire = rootState.firebase.firestore.FieldValue as any
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('perspectives').doc(id).update({
+          includeAndDates: fire.arrayRemove(date),
         })
     },
     saveSmartOrder({ rootState }, ids) {
@@ -528,7 +536,7 @@ export default {
       const fire = rootState.firebase.firestore.FieldValue as any
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('perspectives').doc(id).update({
-          includeAndDates: fire.arrayUnion(date)
+          includeAndDates: fire.arrayUnion(date),
         })
     },
   } as Actions,
