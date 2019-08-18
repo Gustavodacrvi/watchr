@@ -217,15 +217,14 @@ export default class AppviewTaskedit extends Vue {
       if (!this.time)
         saved = moment.tz(`${date}`, 'Y-M-D', 'UTC').tz(this.timeZone)
       else saved = moment.tz(`${date} ${this.time}`, 'Y-M-D HH:mm', 'UTC').tz(this.timeZone)
-      let time = this.time ? this.time : ''
+      const time = this.time ? this.time : ''
       this.calendarObj = {
         day: saved.format('D'),
         month: saved.format('M'),
         year: saved.format('Y'),
         utc: {
-          time: time,
-          date: saved.format('Y-M-D'),
-        }
+          time, date: saved.format('Y-M-D'),
+        },
       }
       if (this.time) this.calendarObj['time'] = saved.format('HH:mm')
       this.calendarString = appUtils.parseTaskInputObjectToString(this.calendarObj, this.timeFormat, this.timeZone)

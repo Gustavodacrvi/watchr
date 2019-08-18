@@ -5,7 +5,7 @@ import ErrorComponent from '@/components/ErrorComponent.vue'
 import { Task, TaskInputObj, Perspective } from '@/interfaces/app'
 
 import timezone from 'moment-timezone'
-import { SetState } from '@/interfaces/store/settings';
+import { SetState } from '@/interfaces/store/settings'
 
 export default {
   AsyncComponent(comp: any): any {
@@ -174,8 +174,8 @@ export default {
       if (t1.date && !t2.date) return -num
       if (!t1.date && !t2.date) return 0
 
-      const t1HasTime_t2Doesnt = t1.time && !t2.time
-      const t2HasTime_t1Doesnt = !t1.time && t2.time
+      const t1HasTimet2Doesnt = t1.time && !t2.time
+      const t2HasTimet1Doesnt = !t1.time && t2.time
       const neitherOfThemHasTime = !t1.time && !t2.time
       const bothOfThemHaveTime = t1.time && t2.time
 
@@ -189,8 +189,8 @@ export default {
       const t1ComesAftert2Day = noTime1.isAfter(noTime2, 'day')
 
       if (areTheSameDay) {
-        if (t1HasTime_t2Doesnt) return num
-        if (t2HasTime_t1Doesnt) return -num
+        if (t1HasTimet2Doesnt) return num
+        if (t2HasTimet1Doesnt) return -num
         if (neitherOfThemHasTime) return 0
         if (bothOfThemHaveTime) {
           if (hasTime1.isSame(hasTime2, 'minute')) return 0
@@ -200,7 +200,7 @@ export default {
       }
       if (t1ComesBeforet2Day) return -num
       if (t1ComesAftert2Day) return num
-      
+
       return 0
     }
     const lastEditDateNewest = (t1: Task, t2: Task, newest: boolean): number => {
@@ -210,7 +210,7 @@ export default {
       const mom2 = timezone.tz(`${t2.lastEditDate}`, 'Y-M-D HH:mm', 'UTC')
       if (mom1.isSame(mom2, 'minute')) return 0
       if (mom1.isAfter(mom2, 'minute')) return -num
-      if (mom1.isBefore(mom2,'minute')) return num
+      if (mom1.isBefore(mom2, 'minute')) return num
       return 0
     }
     const creationDateNewest = (t1: Task, t2: Task, newest: boolean): number => {
