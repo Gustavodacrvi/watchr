@@ -136,7 +136,10 @@ export namespace IndexGetters {
 }
 
 export namespace IndexActions {
-  export type GetWindowWidthOnResize = (par: any) => void
-  export type ShowLastAlert = (par: any) => void
-  export type activateKeyShortcut = (par: any, key: string) => void
+  export type GetWindowWidthOnResize = () => void
+  export type StoreGetWindowWidthOnResize = (par: any) => void
+  export type ShowLastAlert = () => void
+  export type StoreShowLastAlert = (par: any) => void
+  export type ActivateKeyShortcut = (key: string) => void
+  export type StoreActivateKeyShortcut = (par: any, key: string) => void
 }

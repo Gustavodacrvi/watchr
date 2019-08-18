@@ -9,7 +9,7 @@
         class='margin'
         focus-class='labeladder'
         placeholder='Label name...'
-        :input='input'
+        :input='value'
         :values='options'
         @enter='add'
         @value='v => value = v'
@@ -61,7 +61,6 @@ export default class LabelAdder extends Vue {
   @labelStore.State labels!: LabelState.labels
   @labelStore.Action addLabel!: LabelActions.AddLabel
 
-  input: string | null = null
   value: string = ''
   options: string[] = []
 
@@ -70,8 +69,8 @@ export default class LabelAdder extends Vue {
     el.focus()
     setTimeout(() => {
       if (this.popUpPayload)
-        this.input = this.popUpPayload
-      else this.input = ''
+        this.value = this.popUpPayload
+      else this.value = ''
     }, 100)
   }
 
@@ -101,7 +100,7 @@ export default class LabelAdder extends Vue {
   }
 
   select(value: string) {
-    this.input = value
+    this.value = value
   }
 
   @Watch('value')

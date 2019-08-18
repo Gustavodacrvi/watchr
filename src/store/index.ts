@@ -62,9 +62,9 @@ interface ActionContext {
 }
 
 interface Actions {
-  getWindowWidthOnResize: IndexActions.GetWindowWidthOnResize
-  showLastAlert: IndexActions.ShowLastAlert
-  activateKeyShortcut: IndexActions.activateKeyShortcut
+  getWindowWidthOnResize: IndexActions.StoreGetWindowWidthOnResize
+  showLastAlert: IndexActions.StoreShowLastAlert
+  activateKeyShortcut: IndexActions.StoreActivateKeyShortcut
   [key: string]: (context: ActionContext, payload: any) => any
 }
 

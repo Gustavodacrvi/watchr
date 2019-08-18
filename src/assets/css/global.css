@@ -16,7 +16,7 @@ body, button, input, textarea {
   color: #808080;
 }
 
-.txt.dark, .icon.dark {
+.txt.dark, .icon.dark, .txt-light {
   color: #b3b3b3;
 }
 

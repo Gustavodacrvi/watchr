@@ -1,12 +1,9 @@
 <template>
   <base-pers v-if='perspectiveData'
     :pers-name='pers'
-    :value='value'
     :base-tasks='baseTasks'
     :save='true'
     :save-sort='!isOnOverview'
-
-    @input="$emit('input', !value)"
   />
 </template>
 
@@ -40,7 +37,6 @@ export default class CustomPerspectives extends Vue {
 
   @taskVuex.State tasks!: TaskState.tasks
 
-  @Prop(Boolean) value!: string
   @Prop(String) pers!: string
 
   get isOnOverview(): boolean {

@@ -26,6 +26,8 @@ export default class AppviewEmptytag extends Vue {
       case 'creationDateOldest': return 'Sort by creation date oldest first'
       case 'lastEditDateOldest': return 'Sort by last edit date oldest first'
       case 'lastEditDateNewest': return 'Sort by last edit date newest first'
+      case 'dateOldest': return 'Sort by date oldest first'
+      case 'dateNewest': return 'Sort by date newest first'
     }
     return ''
   }

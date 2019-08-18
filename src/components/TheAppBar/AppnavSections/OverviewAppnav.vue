@@ -38,9 +38,11 @@ import { Label, Perspective, Task, ListIcon, ListElement } from '@/interfaces/ap
 import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 import { PersGetters } from '../../../interfaces/store/perspective'
 import { TaskState } from '../../../interfaces/store/task'
+import { SetState } from '../../../interfaces/store/settings'
 
 const persVuex = namespace('perspective')
 const taskVuex = namespace('task')
+const set = namespace('settings')
 
 @Component({
   components: {
@@ -59,6 +61,8 @@ export default class OverviewAppnav extends Vue {
 
   @taskVuex.State tasks!: TaskState.tasks
 
+  @set.State timeZone!: SetState.timeZone
+
   @Prop(String) search!: string
 
   created() {
@@ -69,7 +73,7 @@ export default class OverviewAppnav extends Vue {
     const els: ListElement[] = []
     const pers = this.pinedSmartPerspectives.filter(el => el.name.includes(this.search))
     for (const per of pers) {
-      let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
+      let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks, this.timeZone)
       let show = true
       if (per.showWhenNotEmpty && numberOfTasks === 0)
         show = false
@@ -85,7 +89,7 @@ export default class OverviewAppnav extends Vue {
     const els: ListElement[] = []
     const pers = this.pinedCustomPerspectives.filter(el => el.name.includes(this.search))
     for (const per of pers) {
-      let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
+      let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks, this.timeZone)
       let show = true
       if (per.showWhenNotEmpty && numberOfTasks === 0)
         show = false

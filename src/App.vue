@@ -46,9 +46,7 @@
 <script lang='ts'>
 
 import { Vue, Component, Watch } from 'vue-property-decorator'
-import { State, Getter, Mutation, Action, namespace } from 'vuex-class'
-
-const pers = namespace('perspective')
+import { State, Getter, Mutation, Action } from 'vuex-class'
 
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
@@ -57,7 +55,8 @@ import TheNavbar from '@/components/TheNavbar/TheNavbar.vue'
 import TheAppbar from '@/components/TheAppBar/TheAppBar.vue'
 
 import appUtils from '@/utils/app'
-import { Alert, Task, Perspective } from '@/interfaces/app'
+import { Alert } from '@/interfaces/app'
+import { IndexState, IndexMutations, IndexGetters, IndexActions } from './interfaces/store'
 
 @Component({
   components: {
@@ -74,28 +73,26 @@ import { Alert, Task, Perspective } from '@/interfaces/app'
   },
 })
 export default class App extends Vue {
-  @State theme!: string
-  @State loading!: boolean
-  @State popUpComponent!: string
-  @State centeredCard!: string
-  @State alerts!: Alert[]
-  @State appBarState!: boolean
-  @State showingAlert!: boolean
-  @State isLogged!: boolean
-  @State appError!: boolean
-  @Mutation hideAlert!: () => void
-  @Mutation resetPopUpState!: () => void
-  @Mutation openAppBar!: () => void
-  @Mutation pushAlert!: (alert: Alert) => void
-  @Getter isDesktop!: boolean
-  @Getter platform!: 'mobile' | 'desktop'
-  @Getter loggedAndVerified!: boolean
-  @Getter loggedAndNotVerified!: boolean
-  @Getter anonymous!: boolean
-  @Action showLastAlert!: () => void
-  @Action activateKeyShortcut!: (key: string) => void
-
-  @State firestore!: firebase.firestore.Firestore
+  @State theme!: IndexState.theme
+  @State loading!: IndexState.loading
+  @State popUpComponent!: IndexState.popUpComponent
+  @State centeredCard!: IndexState.centeredCard
+  @State alerts!: IndexState.alerts
+  @State appBarState!: IndexState.appBarState
+  @State showingAlert!: IndexState.showingAlert
+  @State isLogged!: IndexState.isLogged
+  @State appError!: IndexState.appError
+  @Mutation hideAlert!: IndexMutations.HideAlert
+  @Mutation resetPopUpState!: IndexMutations.ResetPopUpState
+  @Mutation openAppBar!: IndexMutations.OpenAppBar
+  @Mutation pushAlert!: IndexMutations.PushAlert
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Getter platform!: IndexGetters.Platform
+  @Getter loggedAndVerified!: IndexGetters.LoggedAndVerified
+  @Getter loggedAndNotVerified!: IndexGetters.LoggedAndNotVerified
+  @Getter anonymous!: IndexGetters.Anonymous
+  @Action showLastAlert!: IndexActions.ShowLastAlert
+  @Action activateKeyShortcut!: IndexActions.ActivateKeyShortcut
 
   mounted() {
     window.addEventListener('keypress', this.keyPressed)

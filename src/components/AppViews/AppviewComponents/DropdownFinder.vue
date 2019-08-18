@@ -21,8 +21,7 @@
           <transition-group name='fade'>
             <div v-for='el in filteredArray'
               :key='el.id'
-              class='element txt round-border'
-              :class='theme'
+              class='element txt-light txt round-border'
               @click='select(el)'
             >
               {{ el.name }}

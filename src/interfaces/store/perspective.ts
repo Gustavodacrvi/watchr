@@ -25,7 +25,7 @@ export namespace PersGetters {
   export type PinedCustomPerspectives = Perspective[]
   export type InitialPerspective = Perspective
   export type GetPerspectiveById = (id: string) => Perspective
-  export type GetNumberOfTasksByPerspectiveId = (id: string, tasks: Task[]) => number
+  export type GetNumberOfTasksByPerspectiveId = (id: string, tasks: Task[], timeZone: string) => number
 }
 
 export  interface Getters {

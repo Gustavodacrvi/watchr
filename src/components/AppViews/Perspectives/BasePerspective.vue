@@ -122,7 +122,7 @@ import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/Tasks/A
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 import AppviewHeader from '@/components/AppViews/AppviewComponents/Headings/AppviewHeading.vue'
 
-import moment from 'moment-timezone'
+import timezone from 'moment-timezone'
 
 import { Perspective, Label, Task, ListIcon, Alert } from '../../../interfaces/app'
 import appUtils from '@/utils/app'
@@ -176,10 +176,10 @@ export default class PerspectiveAppview extends Vue {
   @persVuex.Action savePerspectiveTaskSort!: PersActions.SavePerspectiveTaskSort
 
   @set.State timeZone!: SetState.timeZone
+  @set.State startOfTheWeek!: SetState.startOfTheWeek
 
   @Prop({default: true, type: Boolean}) allowLabels!: boolean
   @Prop({default: true, type: Boolean}) allowDate!: boolean
-  @Prop(Boolean) value!: boolean
   @Prop(Boolean) save!: boolean
   @Prop(Boolean) saveSort!: boolean
   @Prop(Boolean) calendarRenderer!: boolean
@@ -194,8 +194,7 @@ export default class PerspectiveAppview extends Vue {
   sort: string[] = []
   order: string[] = []
   hided: boolean = false
-  showing: boolean = false
-  loaded: boolean = false
+  showing: boolean = true
   selected: string[] = []
   justUpdated: boolean = false
   mobileSelectedOptions: ListIcon[] = [
@@ -214,7 +213,6 @@ export default class PerspectiveAppview extends Vue {
   ]
 
   created() {
-    this.showing = this.value
     this.updateView()
   }
 
@@ -309,7 +307,7 @@ export default class PerspectiveAppview extends Vue {
         name: obj.name,
         priority: obj.priority,
         labels: obj.labels,
-        utc: obj.utc,
+        utc: obj,
       },
       perspectiveId: this.pers.id,
       position: obj.position, order: obj.order,
@@ -391,8 +389,8 @@ export default class PerspectiveAppview extends Vue {
     this.saveNewDateOfTasks(arr)
   }
   beautifyDate(date: string): {name: string, faded?: string} {
-    const today = moment.utc().tz(this.timeZone)
-    const m = moment.utc(`${date} ${moment.utc().format('HH:mm')}`, 'Y-M-D HH:mm').tz(this.timeZone)
+    const today = timezone().tz(this.timeZone)
+    const m = timezone.tz(`${date} ${timezone.utc().format('HH:mm')}`, 'Y-M-D HH:mm', 'UTC').tz(this.timeZone)
     const diff = m.diff(today, 'days')
 
     let name!: string
@@ -421,10 +419,10 @@ export default class PerspectiveAppview extends Vue {
     const hds = this.calendarHeadings
     const finalArr: Task[][] = []
     for (const date of hds) {
-      const mom = moment.utc(date, 'Y-M-D')
+      const mom = timezone.tz(date, 'Y-M-D', 'UTC')
       const arr: Task[] = []
       for (const t of this.getTasks)
-        if (mom.isSame(moment.utc(t.date, 'Y-M-D')))
+        if (mom.isSame(timezone.tz(t.date, 'Y-M-D', 'UTC')))
           arr.push(t)
       if (arr.length > 0) finalArr.push(arr)
     }
@@ -438,8 +436,8 @@ export default class PerspectiveAppview extends Vue {
         dates.add(t.date)
     const arr: string[] = Array.from(dates) as any
     arr.sort((a, b) => {
-      const ma = moment.utc(a, 'Y-M-D')
-      const mb = moment.utc(b, 'Y-M-D')
+      const ma = timezone.tz(a, 'Y-M-D', 'UTC')
+      const mb = timezone.tz(b, 'Y-M-D', 'UTC')
       if (ma.isAfter(mb)) return 1
       return -1
     })
@@ -458,7 +456,7 @@ export default class PerspectiveAppview extends Vue {
   get getTasks(): Task[] {
     let tasks: Task[] = this.sortedTasks
     if (this.search)
-      tasks = tasks.filter(el => el.name.includes(this.search))
+      tasks = tasks.filter(el => el.name.toLowerCase().includes(this.search.toLowerCase()))
     if (this.priority)
       tasks = appUtils.filterTasksByPriority(tasks, this.priority)
     if (this.labels && this.labels.length > 0)
@@ -466,7 +464,7 @@ export default class PerspectiveAppview extends Vue {
     if (this.smartPers && this.smartPers.length > 0)
       for (const name of this.smartPers)
         if (name !== this.pers.name)
-          tasks = appUtils.filterTasksBySmartPerspective(name, tasks)
+          tasks = appUtils.filterTasksBySmartPerspective(name, tasks, this.timeZone, this.startOfTheWeek)
     if (this.order && this.order.length > 0) {
       const ord = appUtils.fixOrder(tasks, this.order)
       tasks = appUtils.sortArrayByIds(tasks, ord)
@@ -493,9 +491,9 @@ export default class PerspectiveAppview extends Vue {
   get defaultDate(): string | undefined {
     if (!this.pers) return undefined
     if (this.pers.name === 'Today')
-      return moment.utc().format('Y-M-D')
+      return timezone.utc().format('Y-M-D')
     if (this.pers.name === 'Tomorrow')
-      return moment.utc().add(1, 'd').format('Y-M-D')
+      return timezone.utc().add(1, 'd').format('Y-M-D')
     return undefined
   }
 
@@ -505,10 +503,6 @@ export default class PerspectiveAppview extends Vue {
       if (this.selected.length > 0)
         this.sendOptionsToNavbar(this.getMobileSelectedOptions())
       else this.hideNavBarOptions()
-  }
-  @Watch('value')
-  onChange2() {
-    this.showing = this.value
   }
   @Watch('pers')
   onChange3() {

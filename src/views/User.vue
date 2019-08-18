@@ -8,7 +8,6 @@
         <div class='view' :class='platform'>
           <transition name='fade' mode='out-in'>
             <component
-              v-model='showing'
               :is='getComp'
               :pers='per'
               :label='label'
@@ -110,7 +109,6 @@ export default class Guest extends Mixins(Mixin) {
   @Prop(String) label!: string
 
   waitingResponse: boolean = false
-  showing: boolean = true
   per: string = ''
   loaded: boolean = false
 

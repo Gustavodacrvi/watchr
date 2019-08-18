@@ -183,8 +183,8 @@ export default class DropdownInput extends Vue {
   onInput() {
     setTimeout(() => {
       this.value = this.input
-    }, 1)
-    this.fixTextAreadHeight()
+      this.fixTextAreadHeight()
+    }, 80)
   }
   @Watch('value')
   onValue() {

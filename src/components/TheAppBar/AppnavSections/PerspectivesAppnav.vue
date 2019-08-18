@@ -50,9 +50,11 @@ import { Label, Perspective, ListIcon, SimpleAdder, ListElement, Task } from '@/
 import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 import { PersState, PersGetters, PersActions } from '../../../interfaces/store/perspective'
 import { TaskState } from '../../../interfaces/store/task'
+import { SetState } from '../../../interfaces/store/settings'
 
 const persVuex = namespace('perspective')
 const taskVuex = namespace('task')
+const set = namespace('settings')
 
 @Component({
   components: {
@@ -83,6 +85,8 @@ export default class OverviewAppnav extends Vue {
   @persVuex.Action deletePerspectivesById!: PersActions.DeletePerspectivesById
 
   @taskVuex.State tasks!: TaskState.tasks
+
+  @set.State timeZone!: SetState.timeZone
 
   @Prop(String) search!: string
 
@@ -260,7 +264,7 @@ export default class OverviewAppnav extends Vue {
       const els: ListElement[] = []
       const pers = this.sortedSmartPerspectives.filter(el => el.name.includes(this.search))
       for (const per of pers) {
-        let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
+        let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks, this.timeZone)
         const show = true
         if (!per.numberOfTasks)
           numberOfTasks = 0
@@ -274,7 +278,7 @@ export default class OverviewAppnav extends Vue {
     const els: ListElement[] = []
     const pers = this.sortedCustomPerspectives.filter(el => el.name.includes(this.search))
     for (const per of pers) {
-      let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks)
+      let numberOfTasks = this.getNumberOfTasksByPerspectiveId(per.id, this.tasks, this.timeZone)
       const show = true
       if (!per.numberOfTasks)
         numberOfTasks = 0
