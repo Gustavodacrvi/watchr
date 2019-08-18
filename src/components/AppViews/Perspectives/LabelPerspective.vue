@@ -27,6 +27,7 @@
           
           @delete='deleteSelected'
           @selectedpriority='selectedPriority'
+          @selecteddates='selectedDates'
           @priority='v => priority = v'
           @label='addLabel'
           @date='addDate'
@@ -128,6 +129,7 @@ export default class LabelPerspective extends Vue {
   @taskVuex.Action deleteTasksById!: TaskActions.DeleteTasksById
   @taskVuex.Action addTaskLabel!: TaskActions.AddTaskLabel
   @taskVuex.Action changePrioritysByIds!: TaskActions.ChangePrioritysByIds
+  @taskVuex.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
 
   @set.State timeZone!: SetState.timeZone
   @set.State startOfTheWeek!: SetState.startOfTheWeek
@@ -247,6 +249,13 @@ export default class LabelPerspective extends Vue {
   removeDate(date: string) {
     const index = this.dates.findIndex(el => el === date)
     this.dates.splice(index, 1)
+  }
+  selectedDates(date: string) {
+    const arr: Array<{id: string, date: string}> = []
+    for (const id of this.selected)
+      arr.push({id, date})
+    if (arr.length > 0)
+      this.saveNewDateOfTasks(arr)
   }
   removeSmartPers(name: string) {
     const index = this.smartPers.findIndex(el => el === name)

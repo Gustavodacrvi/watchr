@@ -22,6 +22,11 @@
         ></i>
       </span>
     </transition>
+     <transition name='fade'>
+      <span v-if='showTaskOptions && isDesktop' class='header-option'>
+        <calendar-comp @select='multipleDates'/>
+      </span>
+    </transition>
     <span style='width: 35px'></span>
     <span v-if='allowSearch' class='header-option'>
       <drop-finder
@@ -66,7 +71,7 @@
         @select='selectLabel'
       />
     </span>
-    <span v-if='allowLabels' class='header-option'>
+    <span v-if='allowDates' class='header-option'>
       <calendar-comp @select='selectCalendar'/>
     </span>
     <span v-if='allowSettings' class='header-option'>
@@ -237,6 +242,9 @@ export default class AppviewHeadericons extends Vue {
   }
   selectCalendar(obj: any) {
     this.$emit('date', obj.utc.date)
+  }
+  multipleDates(obj: any) {
+    this.$emit('selecteddates', obj.utc.date)
   }
   multiplePriority(value: string) {
     this.$emit('selectedpriority', value)
