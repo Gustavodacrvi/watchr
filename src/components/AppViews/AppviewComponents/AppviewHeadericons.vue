@@ -66,6 +66,9 @@
         @select='selectLabel'
       />
     </span>
+    <span v-if='allowLabels' class='header-option'>
+      <calendar-comp @select='selectCalendar'/>
+    </span>
     <span v-if='allowSettings' class='header-option'>
       <icon-options
         handle='ellipsis-h'
@@ -83,8 +86,11 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { Getter, namespace, State } from 'vuex-class'
 
+const set = namespace('settings')
+
 import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
 import IconOptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
+import CalendarIconComp from '@/components/AppViews/AppviewComponents/Tasks/AppviewCalendarInputIcon.vue'
 
 const labelsVuex = namespace('label')
 const pers = namespace('perspective')
@@ -97,6 +103,7 @@ import { LabelGetters } from '../../../interfaces/store/label'
   components: {
     'drop-finder': DropdownFinder,
     'icon-options': IconOptions,
+    'calendar-comp': CalendarIconComp,
   },
 })
 export default class AppviewHeadericons extends Vue {
@@ -114,6 +121,7 @@ export default class AppviewHeadericons extends Vue {
   @Prop(Boolean) allowSettings!: boolean
   @Prop(Boolean) allowSmartPerspectives!: boolean
   @Prop(Boolean) allowLabels!: boolean
+  @Prop(Boolean) allowDates!: boolean
   @Prop(Boolean) allowPriority!: boolean
 
   search: string = ''
@@ -226,6 +234,9 @@ export default class AppviewHeadericons extends Vue {
   }
   selectPriority(value: string) {
     this.$emit('priority', value)
+  }
+  selectCalendar(obj: any) {
+    this.$emit('date', obj.utc.date)
   }
   multiplePriority(value: string) {
     this.$emit('selectedpriority', value)

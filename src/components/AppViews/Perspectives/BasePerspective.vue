@@ -16,6 +16,7 @@
           :allow-search='true'
           :allow-settings='!calendarRenderer'
           :allow-labels='allowLabels'
+          :allow-dates='allowDate'
           :allow-smart-perspectives='true'
           :allow-priority='true'
 
@@ -23,6 +24,7 @@
           @priority='selectPriority'
           @selectedpriority='selectedPriority'
           @settings='selectSettingsOption'
+          @date='selectDate'
           @label='addLabel'
           @smartpers='addSmartPers'
         />
@@ -45,10 +47,12 @@
           :search='search'
           :priority='getPriority'
           :labels='getLabels'
+          :dates='dates'
           :smart-pers='smartPers'
           @clearsearch="v => search = ''"
           @clearpriority="selectPriority('')"
           @removelabel='removeLabel'
+          @removedate='removeDate'
           @removesmartpers='removeSmartPers'
         />
         <div class='margin'></div>
@@ -174,6 +178,8 @@ export default class PerspectiveAppview extends Vue {
   @persVuex.Action savePerspectivePriority!: PersActions.SavePerspectivePriority
   @persVuex.Action addPerspectiveSort!: PersActions.AddPerspectiveSort
   @persVuex.Action savePerspectiveTaskSort!: PersActions.SavePerspectiveTaskSort
+  @persVuex.Action addDateToPerspective!: PersActions.AddDateToPerspective
+  @persVuex.Action removeDateFromPerspective!: PersActions.RemoveDateFromPerspective
 
   @set.State timeZone!: SetState.timeZone
   @set.State startOfTheWeek!: SetState.startOfTheWeek
@@ -190,6 +196,7 @@ export default class PerspectiveAppview extends Vue {
   search: string = ''
   priority: string = ''
   labels: string[] = []
+  dates: string[] = []
   smartPers: string[] = []
   sort: string[] = []
   order: string[] = []
@@ -268,12 +275,20 @@ export default class PerspectiveAppview extends Vue {
     return this.mobileSelectedOptions
   }
   addLabel(label: Label) {
-    if (!this.save)
+    if (!this.save && !this.labels.find(el => el === label.id))
       this.labels.push(label.id)
-    else this.addLabelToPerspective({
+    else if (this.save) this.addLabelToPerspective({
         id: this.pers.id,
         labelId: label.id,
       })
+  }
+  selectDate(date: string) {
+    if (!this.save && !this.dates.find(el => el === date))
+      this.dates.push(date)
+    else if (this.save) this.addDateToPerspective({
+      id: this.pers.id,
+      date,
+    })
   }
   addSmartPers(name: string) {
     if (!this.save && !this.smartPers.find(el => el === name))
@@ -291,6 +306,15 @@ export default class PerspectiveAppview extends Vue {
         id: this.pers.id,
         labelId: id,
       })
+  }
+  removeDate(date: string) {
+    if (!this.save) {
+      const index = this.dates.findIndex(el => el === date)
+      this.dates.splice(index, 1)
+    } else this.removeDateFromPerspective({
+      id: this.pers.id,
+      date,
+    })
   }
   removeSmartPers(name: string) {
     if (!this.save) {
@@ -377,6 +401,7 @@ export default class PerspectiveAppview extends Vue {
         this.smartPers = this.pers.includeAndSmartPers.slice()
         this.sort = this.pers.sort.slice()
         this.order = this.pers.order.slice()
+        this.dates = this.pers.includeAndDates.slice()
       }
       this.justUpdated = false
       this.pushView({
@@ -461,6 +486,8 @@ export default class PerspectiveAppview extends Vue {
       tasks = appUtils.filterTasksByPriority(tasks, this.priority)
     if (this.labels && this.labels.length > 0)
       tasks = appUtils.filterTasksByLabels(tasks, this.labels)
+    if (this.dates && this.dates.length > 0)
+      tasks = appUtils.filterTasksByDates(tasks, this.dates, this.timeZone)
     if (this.smartPers && this.smartPers.length > 0)
       for (const name of this.smartPers)
         if (name !== this.pers.name)
@@ -474,9 +501,7 @@ export default class PerspectiveAppview extends Vue {
     return tasks
   }
   get getLabels(): Label[] {
-    if (!this.save)
-      return this.getLabelsByIds(this.labels)
-    else return this.getLabelsByIds(this.pers.includeAndLabels)
+    return this.getLabelsByIds(this.labels)
   }
   get getPriority(): string {
     if (!this.save)

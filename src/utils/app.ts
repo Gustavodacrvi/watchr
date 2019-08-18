@@ -159,6 +159,18 @@ export default {
       tasks = tasks.filter(el => el.labels.includes(id))
     return tasks
   },
+  filterTasksByDates(tasks: Task[], dates: string[], timeZone: string): Task[] {
+    const filters: any[] = []
+    for (const d of dates)
+      filters.push(timezone.tz(d, 'Y-M-D', timeZone))
+    tasks = tasks.filter(el => el.date)
+    for (const f of filters)
+      tasks = tasks.filter(el => {
+        const saved = timezone.tz(`${el.date} ${timezone.utc().format('HH:mm')}`, 'Y-M-D HH:mm', 'UTC').tz(timeZone)
+        return f.isSame(saved, 'day')
+      })
+    return tasks
+  },
   filterTasksByPriority(tasks: Task[], priority: string): Task[] {
     if (priority && priority !== 'No priority')
       return tasks.filter(el => el.priority === priority)

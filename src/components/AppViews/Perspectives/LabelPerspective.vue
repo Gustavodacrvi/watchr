@@ -20,6 +20,7 @@
           :show-task-options='selected && selected.length > 0'
           :allow-search='true'
           :allow-labels='true'
+          :allow-dates='true'
           :allow-settings='true'
           :allow-smart-perspectives='true'
           :allow-priority='true'
@@ -27,7 +28,8 @@
           @delete='deleteSelected'
           @selectedpriority='selectedPriority'
           @priority='v => priority = v'
-          @label='v => labels.push(v.id)'
+          @label='addLabel'
+          @date='addDate'
           @smartpers='addSmartPers'
           @settings='selectSettingsOption'
         />
@@ -43,10 +45,12 @@
           :search='search'
           :labels='getLabels'
           :priority='priority'
+          :dates='dates'
           :smart-pers='smartPers'
           @clearsearch="v => search = ''"
           @clearpriority="v => priority = ''"
           @removelabel='removeLabel'
+          @removedate='removeDate'
           @removesmartpers='removeSmartPers'
         />
         <div class='margin'></div>
@@ -132,6 +136,7 @@ export default class LabelPerspective extends Vue {
   priority: string = ''
   selected: string[] = []
   labels: string[] = []
+  dates: string[] = []
   sort: string[] = []
   smartPers: string[] = []
   showing: boolean = true
@@ -224,13 +229,24 @@ export default class LabelPerspective extends Vue {
       priority: value,
     })
   }
-
+  addLabel(label: Label) {
+    if (!this.labels.find(el => el === label.id))
+      this.labels.push(label.id)
+  }
+  addDate(date: string) {
+    if (!this.dates.find(el => el === date))
+      this.dates.push(date)
+  }
   toggleHide() {
     this.hided = !this.hided
   }
   removeLabel(id: string) {
     const index = this.labels.findIndex(el => el === id)
     this.labels.splice(index, 1)
+  }
+  removeDate(date: string) {
+    const index = this.dates.findIndex(el => el === date)
+    this.dates.splice(index, 1)
   }
   removeSmartPers(name: string) {
     const index = this.smartPers.findIndex(el => el === name)
@@ -297,6 +313,8 @@ export default class LabelPerspective extends Vue {
         tasks = appUtils.filterTasksByPriority(tasks, this.priority)
       if (this.labels && this.labels.length > 0)
         tasks = appUtils.filterTasksByLabels(tasks, this.labels)
+      if (this.dates && this.dates.length > 0)
+        tasks = appUtils.filterTasksByDates(tasks, this.dates, this.timeZone)
       if (this.smartPers && this.smartPers.length > 0)
         for (const name of this.smartPers)
           tasks = appUtils.filterTasksBySmartPerspective(name, tasks, this.timeZone, this.startOfTheWeek)

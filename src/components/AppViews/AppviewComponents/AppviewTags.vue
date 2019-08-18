@@ -35,6 +35,16 @@
       />
     </div>
     <div class='tags'>
+      <view-tag v-for='date in getDates'
+        back-color='#9CE283'
+        icon='calendar-day'
+        :key='date'
+        :name='date'
+        :fixed='false'
+        @click='removeDate(date)'
+      />
+    </div>
+    <div class='tags'>
       <view-tag v-for='lab in getLabels'
         :key='lab.id'
         icon='tag'
@@ -61,11 +71,16 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { State } from 'vuex-class'
+import { State, namespace } from 'vuex-class'
+
+const set = namespace('settings')
 
 import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 
 import { Label } from '../../../interfaces/app'
+
+import moment from 'moment'
+import { SetState } from '../../../interfaces/store/settings'
 
 @Component({
   components: {
@@ -78,7 +93,14 @@ export default class AppviewTags extends Vue {
   @Prop(String) priority!: string
   @Prop(String) calendar!: string
   @Prop(Array) labels!: Label[]
+  @Prop(Array) dates!: string[]
   @Prop(Array) smartPers!: Label[]
+
+  @set.State dateFormat!: SetState.dateFormat
+
+  removeDate(date: string) {
+    this.$emit('removedate', moment(date.replace(/\//g, '-'), this.dateFormat).format('Y-M-D'))
+  }
 
   get getLabels(): Label[] {
     if (this.labels)
@@ -88,6 +110,21 @@ export default class AppviewTags extends Vue {
   get getSmartPers(): Label[] {
     if (this.smartPers)
       return this.smartPers.sort((per1, per2) => per1.name.localeCompare(per2.name))
+    return []
+  }
+  get getDates(): string[] {
+    if (this.dates) {
+      const dts = this.dates.slice()
+      dts.sort((d1, d2) => {
+        const m1 = moment(d1, 'Y-M-D')
+        const m2 = moment(d2, 'Y-M-D')
+
+        if (m1.isSame(m2, 'day')) return 0
+        if (m1.isAfter(m2, 'day')) return 1
+        return -1
+      })
+      return dts.map(el => moment(el, 'Y-M-D').format(this.dateFormat).replace(/-/g, '/'))
+    }
     return []
   }
 }
