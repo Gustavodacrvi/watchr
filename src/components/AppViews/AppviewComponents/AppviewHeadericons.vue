@@ -86,6 +86,8 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { Getter, namespace, State } from 'vuex-class'
 
+const set = namespace('settings')
+
 import DropdownFinder from '@/components/AppViews/AppviewComponents/DropdownFinder.vue'
 import IconOptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 import CalendarIconComp from '@/components/AppViews/AppviewComponents/Tasks/AppviewCalendarInputIcon.vue'
@@ -119,7 +121,7 @@ export default class AppviewHeadericons extends Vue {
   @Prop(Boolean) allowSettings!: boolean
   @Prop(Boolean) allowSmartPerspectives!: boolean
   @Prop(Boolean) allowLabels!: boolean
-  @Prop(Boolean) allowDate!: boolean
+  @Prop(Boolean) allowDates!: boolean
   @Prop(Boolean) allowPriority!: boolean
 
   search: string = ''
@@ -234,7 +236,7 @@ export default class AppviewHeadericons extends Vue {
     this.$emit('priority', value)
   }
   selectCalendar(obj: any) {
-    this.$emit('selectdate', obj.utc.date)
+    this.$emit('date', obj.utc.date)
   }
   multiplePriority(value: string) {
     this.$emit('selectedpriority', value)

@@ -16,15 +16,15 @@
           :allow-search='true'
           :allow-settings='!calendarRenderer'
           :allow-labels='allowLabels'
-          :allow-date='allowDate'
+          :allow-dates='allowDate'
           :allow-smart-perspectives='true'
           :allow-priority='true'
 
           @delete='deleteSelected'
           @priority='selectPriority'
           @selectedpriority='selectedPriority'
-          @selectdate='selectDate'
           @settings='selectSettingsOption'
+          @date='selectDate'
           @label='addLabel'
           @smartpers='addSmartPers'
         />
@@ -486,6 +486,8 @@ export default class PerspectiveAppview extends Vue {
       tasks = appUtils.filterTasksByPriority(tasks, this.priority)
     if (this.labels && this.labels.length > 0)
       tasks = appUtils.filterTasksByLabels(tasks, this.labels)
+    if (this.dates && this.dates.length > 0)
+      tasks = appUtils.filterTasksByDates(tasks, this.dates, this.timeZone)
     if (this.smartPers && this.smartPers.length > 0)
       for (const name of this.smartPers)
         if (name !== this.pers.name)
@@ -500,9 +502,6 @@ export default class PerspectiveAppview extends Vue {
   }
   get getLabels(): Label[] {
     return this.getLabelsByIds(this.labels)
-  }
-  get getDates(): string[] {
-    return this.dates
   }
   get getPriority(): string {
     if (!this.save)
