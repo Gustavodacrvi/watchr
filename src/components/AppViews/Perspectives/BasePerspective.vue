@@ -161,6 +161,7 @@ export default class PerspectiveAppview extends Vue {
   @Mutation sendOptionsToNavbar!: IndexMutations.SendOptionsToNavbar
   @Mutation hideNavBarOptions!: IndexMutations.HideNavBarOptions
   @Mutation pushAlert!: IndexMutations.PushAlert
+  @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
   @taskVuex.State tasks!: TaskState.tasks
   @taskVuex.Action addTaskPerspective!: TaskActions.AddTaskPerspective
@@ -218,6 +219,12 @@ export default class PerspectiveAppview extends Vue {
       iconColor: '',
       size: '',
     },
+    {
+      name: 'Change date of tasks',
+      icon: 'calendar-day',
+      iconColor: '',
+      size: '',
+    },
   ]
 
   created() {
@@ -271,6 +278,19 @@ export default class PerspectiveAppview extends Vue {
             },
           },
         ])
+      }, 80)
+    }
+    this.mobileSelectedOptions[2]['callback'] = () => {
+      setTimeout(() => {
+        this.pushCenteredCard({
+          type: 'Component',
+          compName: 'CalendarInput',
+          flexBasis: '275px',
+          listIcons: [],
+          listIconHandler: (e: any) => {
+            this.selectedDates(e.utc.date)
+          },
+        })
       }, 80)
     }
     return this.mobileSelectedOptions
