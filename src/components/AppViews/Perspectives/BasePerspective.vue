@@ -16,12 +16,14 @@
           :allow-search='true'
           :allow-settings='!calendarRenderer'
           :allow-labels='allowLabels'
+          :allow-date='allowDate'
           :allow-smart-perspectives='true'
           :allow-priority='true'
 
           @delete='deleteSelected'
           @priority='selectPriority'
           @selectedpriority='selectedPriority'
+          @selectdate='selectDate'
           @settings='selectSettingsOption'
           @label='addLabel'
           @smartpers='addSmartPers'
@@ -53,6 +55,7 @@
         />
         <div class='margin'></div>
       </div>
+      {{dates}}
       <task-renderer v-if='!calendarRenderer'
         id='appnavalltasks'
         :tasks='getTasks'
@@ -174,6 +177,7 @@ export default class PerspectiveAppview extends Vue {
   @persVuex.Action savePerspectivePriority!: PersActions.SavePerspectivePriority
   @persVuex.Action addPerspectiveSort!: PersActions.AddPerspectiveSort
   @persVuex.Action savePerspectiveTaskSort!: PersActions.SavePerspectiveTaskSort
+  @persVuex.Action addDateToPerspective!: PersActions.AddDateToPerspective
 
   @set.State timeZone!: SetState.timeZone
   @set.State startOfTheWeek!: SetState.startOfTheWeek
@@ -190,6 +194,7 @@ export default class PerspectiveAppview extends Vue {
   search: string = ''
   priority: string = ''
   labels: string[] = []
+  dates: string[] = []
   smartPers: string[] = []
   sort: string[] = []
   order: string[] = []
@@ -268,12 +273,20 @@ export default class PerspectiveAppview extends Vue {
     return this.mobileSelectedOptions
   }
   addLabel(label: Label) {
-    if (!this.save)
+    if (!this.save && !this.labels.find(el => el === label.id))
       this.labels.push(label.id)
-    else this.addLabelToPerspective({
+    else if (this.save) this.addLabelToPerspective({
         id: this.pers.id,
         labelId: label.id,
       })
+  }
+  selectDate(date: string) {
+    if (!this.save && !this.dates.find(el => el === date))
+      this.dates.push(date)
+    else if (this.save) this.addDateToPerspective({
+      id: this.pers.id,
+      date,
+    })
   }
   addSmartPers(name: string) {
     if (!this.save && !this.smartPers.find(el => el === name))
@@ -377,6 +390,7 @@ export default class PerspectiveAppview extends Vue {
         this.smartPers = this.pers.includeAndSmartPers.slice()
         this.sort = this.pers.sort.slice()
         this.order = this.pers.order.slice()
+        this.dates = this.pers.includeAndDates.slice()
       }
       this.justUpdated = false
       this.pushView({

@@ -20,6 +20,7 @@
           :show-task-options='selected && selected.length > 0'
           :allow-search='true'
           :allow-labels='true'
+          :allow-date='true'
           :allow-settings='true'
           :allow-smart-perspectives='true'
           :allow-priority='true'
@@ -27,7 +28,7 @@
           @delete='deleteSelected'
           @selectedpriority='selectedPriority'
           @priority='v => priority = v'
-          @label='v => labels.push(v.id)'
+          @label='addLabel'
           @smartpers='addSmartPers'
           @settings='selectSettingsOption'
         />
@@ -224,7 +225,10 @@ export default class LabelPerspective extends Vue {
       priority: value,
     })
   }
-
+  addLabel(label: Label) {
+    if (!this.labels.find(el => el === label.id))
+      this.labels.push(label.id)
+  }
   toggleHide() {
     this.hided = !this.hided
   }

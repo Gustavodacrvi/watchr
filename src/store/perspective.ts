@@ -26,6 +26,7 @@ interface Actions {
   addPerspective: PersActions.StoreAddPerspective
   editPerspective: PersActions.StoreEditPerspective
   saveSmartPerspective: PersActions.StoreSaveSmartPerspective
+  addDateToPerspective: PersActions.StoreAddDateToPerspective
   [key: string]: (...arr: any[]) => any
 }
 
@@ -522,6 +523,13 @@ export default {
 
         batch.commit()
       }
+    },
+    addDateToPerspective({ rootState }, {id, date}) {
+      const fire = rootState.firebase.firestore.FieldValue as any
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('perspectives').doc(id).update({
+          includeAndDates: fire.arrayUnion(date)
+        })
     },
   } as Actions,
 }
