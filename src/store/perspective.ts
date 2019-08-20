@@ -53,6 +53,7 @@ export default {
     sortedSmartPerspectives: (state: State) => {
       const smart = state.perspectives.filter(el => el.isSmart)
       // tslint:disable-next-line:max-line-length
+      console.log(smart.filter(el => el.name === 'This week'))
       return appUtils.sortArrayByIds(smart, appUtils.fixOrder(smart, state.smartOrder))
     },
     smartFilters(state: State, getters: Getters) {
@@ -416,6 +417,17 @@ export default {
             alwaysShowCreationDate: false,
             icon: 'backspace',
             iconColor: '#FF6B66',
+          },
+          {
+            name: `This week`,
+            pin: false,
+            numberOfTasks: false,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: false,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: false,
+            icon: 'calendar-week',
+            iconColor: '#9CE283',
           },
         ]
         const customPerspectives: any = [
