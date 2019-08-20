@@ -62,6 +62,7 @@ export default {
         'Have tags',
         `Doesn't have tags`,
         'Next week',
+        'This week',
         'Next month',
         'Overdue',
         'Tomorrow',
@@ -416,6 +417,17 @@ export default {
             alwaysShowCreationDate: false,
             icon: 'backspace',
             iconColor: '#FF6B66',
+          },
+          {
+            name: `This week`,
+            pin: false,
+            numberOfTasks: false,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: false,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: false,
+            icon: 'calendar-week',
+            iconColor: '#9CE283',
           },
         ]
         const customPerspectives: any = [

@@ -215,7 +215,7 @@ export default class AppviewTaskedit extends Vue {
     if (date) {
       let saved!: any
       if (!this.time)
-        saved = moment.tz(`${date}`, 'Y-M-D', 'UTC').tz(this.timeZone)
+        saved = moment.tz(`${date}`, 'Y-M-D', this.timeZone)
       else saved = moment.tz(`${date} ${this.time}`, 'Y-M-D HH:mm', 'UTC').tz(this.timeZone)
       const time = this.time ? this.time : ''
       this.calendarObj = {
@@ -240,6 +240,8 @@ export default class AppviewTaskedit extends Vue {
       str += ' !high !medium !low'
     if (this.allowLabels)
       str += ' #label'
+    if (this.allowDate)
+      str += ' $next thursday at 6:00'
     return str
   }
 

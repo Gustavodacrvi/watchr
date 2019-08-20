@@ -82,6 +82,7 @@ const persVuex = namespace('perspective')
     'app-today': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewToday.vue')),
     'app-tomorrow': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewTomorrow.vue')),
     'app-next-week': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewNextweek.vue')),
+    'app-this-week': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewThisweek.vue')),
     'app-next-month': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewNextmonth.vue')),
     'app-have-tags': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewHavetags.vue')),
     // tslint:disable-next-line:max-line-length
@@ -137,6 +138,7 @@ export default class Guest extends Mixins(Mixin) {
         case 'Tomorrow': return 'app-tomorrow'
         case 'Overdue': return 'app-overdue'
         case 'Next week': return 'app-next-week'
+        case 'This week': return 'app-this-week'
         case 'Next month': return 'app-next-month'
         case 'All tasks': return 'app-all-tasks'
         case 'Have tags': return 'app-have-tags'

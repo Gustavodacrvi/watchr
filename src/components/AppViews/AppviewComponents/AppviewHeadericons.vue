@@ -28,19 +28,6 @@
       </span>
     </transition>
     <span style='width: 35px'></span>
-    <span v-if='allowSearch' class='header-option'>
-      <drop-finder
-        class='icon pointer txt'
-        handle='search'
-        :class='theme'
-        :size='size'
-        :list='[]'
-        :disable-centered-card='true'
-        min-width='250px'
-        title='Search tasks'
-        v-model='search'
-      />
-    </span>
     <span v-if='allowPriority' class='header-option'>
       <icon-options
         handle='exclamation'
@@ -73,6 +60,19 @@
     </span>
     <span v-if='allowDates' class='header-option'>
       <calendar-comp @select='selectCalendar' :size='size'/>
+    </span>
+    <span v-if='allowSearch' class='header-option'>
+      <drop-finder
+        class='icon pointer txt'
+        handle='search'
+        :class='theme'
+        :size='size'
+        :list='[]'
+        :disable-centered-card='true'
+        min-width='250px'
+        title='Search tasks'
+        v-model='search'
+      />
     </span>
     <span v-if='allowSettings' class='header-option'>
       <icon-options
