@@ -53,7 +53,6 @@ export default {
     sortedSmartPerspectives: (state: State) => {
       const smart = state.perspectives.filter(el => el.isSmart)
       // tslint:disable-next-line:max-line-length
-      console.log(smart.filter(el => el.name === 'This week'))
       return appUtils.sortArrayByIds(smart, appUtils.fixOrder(smart, state.smartOrder))
     },
     smartFilters(state: State, getters: Getters) {
@@ -63,6 +62,7 @@ export default {
         'Have tags',
         `Doesn't have tags`,
         'Next week',
+        'This week',
         'Next month',
         'Overdue',
         'Tomorrow',

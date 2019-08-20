@@ -57,7 +57,6 @@ export default {
             const {today, saved} = this.getMomentsOutOfTask(el.date, timeZone)
             const start = this.getNextWeek(today.clone(), startOfTheWeek).subtract(6, 'd')
             const end = start.clone().add(6, 'd')
-            console.log(start.format('Y-M-D'), end.format('Y-M-D'))
             return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
           }
           return false
