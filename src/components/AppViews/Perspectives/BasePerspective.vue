@@ -352,7 +352,7 @@ export default class PerspectiveAppview extends Vue {
         name: obj.name,
         priority: obj.priority,
         labels: obj.labels,
-        utc: obj,
+        utc: obj.utc,
       },
       perspectiveId: this.pers.id,
       position: obj.position, order: obj.order,
