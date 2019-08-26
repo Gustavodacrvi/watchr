@@ -10,9 +10,14 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
+import { State } from 'vuex-class'
+
+import { IndexState } from '../../../interfaces/store'
 
 @Component
 export default class AppnavMessage extends Vue {
+  @State theme!: IndexState.theme
+
   @Prop(String) name!: string
 }
 
