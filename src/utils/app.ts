@@ -26,6 +26,15 @@ export default {
     return {saved, today}
   },
   filterTasksBySmartPerspective(name: string, tasks: Task[], timeZone: string, startOfTheWeek: string): Task[] {
+    const weekFilter = (els: Task[], week: string): Task[] => {
+      return tasks.filter(el => {
+        if (el.date) {
+          const {saved} = this.getMomentsOutOfTask(el.date, timeZone, el.time)
+          return saved.format('dddd') === week
+        }
+        return false
+      })
+    }
     switch (name) {
       case 'Inbox': {
         return tasks.filter(el => el.labels.length === 0 && !el.date)
@@ -102,6 +111,24 @@ export default {
           }
           return false
         })
+      }
+      case 'Sunday': {
+        return weekFilter(tasks, 'Sunday')
+      }
+      case 'Monday': {
+        return weekFilter(tasks, 'Monday')
+      }
+      case 'Tuesday': {
+        return weekFilter(tasks, 'Tuesday')
+      }
+      case 'Wednesday': {
+        return weekFilter(tasks, 'Wednesday')
+      }
+      case 'Thursday': {
+        return weekFilter(tasks, 'Thursday')
+      }
+      case 'Friday': {
+        return weekFilter(tasks, 'Friday')
       }
     }
     return tasks
