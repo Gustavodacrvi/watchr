@@ -71,24 +71,33 @@ import { Perspective } from '../interfaces/app'
 
 const persVuex = namespace('perspective')
 
+const c = appUtils.AsyncComponent
+
 @Component({
   components: {
     'tab-slider': TabSlider,
     'form-button': FormButton,
-    'app-inbox': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewInbox.vue')),
-    'app-all-tasks': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewAlltasks.vue')),
-    'app-upcoming': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewUpcoming.vue')),
-    'app-overdue': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewOverdue.vue')),
-    'app-today': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewToday.vue')),
-    'app-tomorrow': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewTomorrow.vue')),
-    'app-next-week': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewNextweek.vue')),
-    'app-this-week': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewThisweek.vue')),
-    'app-next-month': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewNextmonth.vue')),
-    'app-have-tags': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewHavetags.vue')),
+    'app-inbox': c(import('@/components/AppViews/Perspectives/Smart/AppviewInbox.vue')),
+    'app-all-tasks': c(import('@/components/AppViews/Perspectives/Smart/AppviewAlltasks.vue')),
+    'app-upcoming': c(import('@/components/AppViews/Perspectives/Smart/AppviewUpcoming.vue')),
+    'app-overdue': c(import('@/components/AppViews/Perspectives/Smart/AppviewOverdue.vue')),
+    'app-today': c(import('@/components/AppViews/Perspectives/Smart/AppviewToday.vue')),
+    'app-sunday': c(import('@/components/AppViews/Perspectives/Smart/AppviewSunday.vue')),
+    'app-monday': c(import('@/components/AppViews/Perspectives/Smart/AppviewMonday.vue')),
+    'app-tuesday': c(import('@/components/AppViews/Perspectives/Smart/AppviewTuesday.vue')),
+    'app-wednesday': c(import('@/components/AppViews/Perspectives/Smart/AppviewWednesday.vue')),
+    'app-thursday': c(import('@/components/AppViews/Perspectives/Smart/AppviewThursday.vue')),
+    'app-friday': c(import('@/components/AppViews/Perspectives/Smart/AppviewFriday.vue')),
+    'app-saturday': c(import('@/components/AppViews/Perspectives/Smart/AppviewSaturday.vue')),
+    'app-tomorrow': c(import('@/components/AppViews/Perspectives/Smart/AppviewTomorrow.vue')),
+    'app-next-week': c(import('@/components/AppViews/Perspectives/Smart/AppviewNextweek.vue')),
+    'app-this-week': c(import('@/components/AppViews/Perspectives/Smart/AppviewThisweek.vue')),
+    'app-next-month': c(import('@/components/AppViews/Perspectives/Smart/AppviewNextmonth.vue')),
+    'app-have-tags': c(import('@/components/AppViews/Perspectives/Smart/AppviewHavetags.vue')),
     // tslint:disable-next-line:max-line-length
-    'app-doesnt-have-tags': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/Smart/AppviewDoesnthavetags.vue')),
-    'app-custom-pers': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/CustomPerspective.vue')),
-    'app-custom-label': appUtils.AsyncComponent(import('@/components/AppViews/Perspectives/LabelPerspective.vue')),
+    'app-doesnt-have-tags': c(import('@/components/AppViews/Perspectives/Smart/AppviewDoesnthavetags.vue')),
+    'app-custom-pers': c(import('@/components/AppViews/Perspectives/CustomPerspective.vue')),
+    'app-custom-label': c(import('@/components/AppViews/Perspectives/LabelPerspective.vue')),
   },
 })
 export default class Guest extends Mixins(Mixin) {
@@ -139,6 +148,13 @@ export default class Guest extends Mixins(Mixin) {
         case 'Overdue': return 'app-overdue'
         case 'Next week': return 'app-next-week'
         case 'This week': return 'app-this-week'
+        case 'Sunday': return 'app-sunday'
+        case 'Monday': return 'app-monday'
+        case 'Tuesday': return 'app-tuesday'
+        case 'Wednesday': return 'app-wednesday'
+        case 'Thursday': return 'app-thursday'
+        case 'Friday': return 'app-friday'
+        case 'Saturday': return 'app-saturday'
         case 'Next month': return 'app-next-month'
         case 'All tasks': return 'app-all-tasks'
         case 'Have tags': return 'app-have-tags'
