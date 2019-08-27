@@ -9,7 +9,7 @@
       :float-top='floatTop'
       :centralize='centralize'
     >
-      <div v-if='isDesktop' class='drop round-border'>
+      <div v-if='isDesktop' class='drop round-border scroll' :class='theme'>
         <div v-for='i in options'
           class='el cancel-sortable-unselect txt-light'
           :key='i.name'

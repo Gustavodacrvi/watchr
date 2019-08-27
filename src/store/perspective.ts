@@ -1,7 +1,7 @@
 
 import { Perspective, Task } from '@/interfaces/app'
 
-import appUtils from '@/utils/app'
+import appUtils from './../utils/app'
 
 import { State, PersGetters, Getters, PersActions } from '@/interfaces/store/perspective'
 
@@ -67,6 +67,13 @@ export default {
         'Overdue',
         'Tomorrow',
         'Upcoming',
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
       ]
       const pers = getters.sortedSmartPerspectives as any
       return pers.filter((el: Perspective) => filters.includes(el.name))
@@ -427,6 +434,83 @@ export default {
             alwaysShowLastEditDate: false,
             alwaysShowCreationDate: false,
             icon: 'calendar-week',
+            iconColor: '#9CE283',
+          },
+          {
+            name: `Sunday`,
+            pin: false,
+            numberOfTasks: false,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: false,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: false,
+            icon: 'calendar-day',
+            iconColor: '#9CE283',
+          },
+          {
+            name: `Monday`,
+            pin: false,
+            numberOfTasks: false,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: false,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: false,
+            icon: 'calendar-day',
+            iconColor: '#9CE283',
+          },
+          {
+            name: `Tuesday`,
+            pin: false,
+            numberOfTasks: false,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: false,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: false,
+            icon: 'calendar-day',
+            iconColor: '#9CE283',
+          },
+          {
+            name: `Wednesday`,
+            pin: false,
+            numberOfTasks: false,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: false,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: false,
+            icon: 'calendar-day',
+            iconColor: '#9CE283',
+          },
+          {
+            name: `Thursday`,
+            pin: false,
+            numberOfTasks: false,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: false,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: false,
+            icon: 'calendar-day',
+            iconColor: '#9CE283',
+          },
+          {
+            name: `Friday`,
+            pin: false,
+            numberOfTasks: false,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: false,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: false,
+            icon: 'calendar-day',
+            iconColor: '#9CE283',
+          },
+          {
+            name: `Saturday`,
+            pin: false,
+            numberOfTasks: false,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: false,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: false,
+            icon: 'calendar-day',
             iconColor: '#9CE283',
           },
         ]
