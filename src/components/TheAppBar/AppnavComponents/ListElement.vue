@@ -1,7 +1,7 @@
 <template>
   <div v-show='show'
     class='element round-border'
-    :class='[theme, {active: active === name}]'
+    :class='[theme, platform, {active: active === name}]'
     @mouseenter='onHover = true'
     @mouseleave='onHover = false'
   >
@@ -54,7 +54,7 @@ import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewI
 import { ListIcon } from '../../../interfaces/app'
 
 import { longClickDirective } from 'vue-long-click'
-import { IndexMutations } from '../../../interfaces/store/index'
+import { IndexMutations, IndexGetters } from '../../../interfaces/store/index'
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 400, interval: 5000}))
@@ -67,6 +67,7 @@ else Vue.directive('longpress', longClickDirective({delay: 1200, interval: 5000}
   },
 })
 export default class ListRenderer extends Vue {
+  @Getter platform!: IndexGetters.Platform
   @Mutation closeAppBar!: IndexMutations.CloseAppBar
 
   @Prop({default: true, type: Boolean}) show!: boolean
@@ -149,6 +150,11 @@ export default class ListRenderer extends Vue {
   height: 33px;
   cursor: pointer;
   transition: background-color .25s;
+}
+
+.element.mobile {
+  height: 38px;
+  font-size: 1.01em;
 }
 
 .content {

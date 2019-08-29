@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div :class="isDesktop ? 'gray': 'background-color'">
+    <i v-if="!isDesktop" class="fas fa-arrow-left arrow fa-2x txt pointer icon" :class='theme' @click='$emit("close")'></i>
     <div v-if='!isLogged'
       class='auth-banner main-color-card'
       :class='theme'
@@ -90,6 +91,15 @@ export default class LoggedAppnav extends Mixins(Mixin) {
 }
 
 </script>
+
+<style scoped>
+
+.arrow {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+</style>
 
 <style scoped src='@/assets/css/appBarMenu.css'>
 </style>

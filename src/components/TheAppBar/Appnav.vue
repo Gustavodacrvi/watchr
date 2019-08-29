@@ -1,49 +1,50 @@
 <template>
-  <div>
-    <div v-if='!isLogged'
-      class='auth-banner main-color-card'
-      :class='theme'
-    >
-      <button
-        class='auth-button'
-        @click='pushPopUp("SignupPopup")'
+  <div class='appnav-wrapper' :class='[theme, platform, {scroll: isDesktop}]'>
+    <div class='appnav' :class="[platform, theme, backColor]">
+      <i v-if="!isDesktop" class="fas fa-arrow-left arrow fa-2x txt pointer icon" :class='theme' @click='$emit("close")'></i>
+      <div v-if='!isLogged'
+        class='auth-banner main-color-card'
         :class='theme'
-      >SIGN UP</button>
-      <button
-        class='auth-button'
-        @click='pushPopUp("SigninPopup")'
-        :class='theme'
-      >SIGN IN</button>
-    </div>
-    <div
-      class='content-wrapper'
-      :class='{topmargin: isLogged}'
-    >
-      <div id='search-bar-wrapper'>
-        <form-input
-          id='search-bar'
-          class='medium'
-          v-model='search'
-          placeholder='Search...'
-          :backcolor='true'
-          :disabled='true'
-          :max='50'
-        />
+      >
+        <button
+          class='auth-button'
+          @click='pushPopUp("SignupPopup")'
+          :class='theme'
+        >SIGN UP</button>
+        <button
+          class='auth-button'
+          @click='pushPopUp("SigninPopup")'
+          :class='theme'
+        >SIGN IN</button>
       </div>
-      <div class='content'>
-        <div class='navsect'>
-          <span v-for='sect in sections' :key='sect.comp' @click='select(sect)'>
-          <i
-            :class='[`txt pointer icon fas fa-${sect.icon} fa-lg`, theme]'
-            :style="isActiveClass(sect.comp)"
-            :title='sect.title'
-          ></i>
-          </span>
+      <div
+        class='content-wrapper'
+        :class='{topmargin: isLogged}'
+      >
+        <div id='search-bar-wrapper'>
+          <form-input
+            id='search-bar'
+            class='medium'
+            v-model='search'
+            placeholder='Search...'
+            :class='{backcolor: isDesktop}'
+            :disabled='true'
+            :max='50'
+          />
         </div>
-        <div style='height: 12px;'></div>
-      </div>
-      <div class='list-wrapper scroll' :class='[theme, platform]'>
-        <div class='list'>
+        <div class='content'>
+          <div class='navsect'>
+            <span v-for='sect in sections' :key='sect.comp' @click='select(sect)'>
+            <i
+              :class='[`txt pointer icon fas fa-${sect.icon} fa-lg`, theme]'
+              :style="isActiveClass(sect.comp)"
+              :title='sect.title'
+            ></i>
+            </span>
+          </div>
+          <div style='height: 12px;'></div>
+        </div>
+        <div class='list' :class='platform'>
           <transition
             name='fade'
             mode='out-in'
@@ -55,8 +56,8 @@
       </div>
     </div>
     <div v-if='showFooter'
-      class='footer-wrapper gray'
-      :class='theme'
+      class='footer-wrapper'
+      :class='[theme, backColor]'
     >
       <div style='height: 18px;'></div>
       <div class='footer'>
@@ -171,6 +172,10 @@ export default class LoggedAppnav extends Vue {
       color: mainColor,
     }
   }
+
+  get backColor() {
+    return this.isDesktop ? 'gray' : 'background-color'
+  }
   get showFooter() {
     return !this.isDesktop || (this.options && this.options.length > 0 && this.isDesktop)
   }
@@ -182,11 +187,14 @@ export default class LoggedAppnav extends Vue {
 
 #search-bar-wrapper {
   margin: 6px 14px;
-  margin-top: 14px;
 }
 
-#search-bar.dark {
-  background-color: #121212;
+.backcolor {
+  background-color: #121212 !important;
+}
+
+.margin {
+  margin: 8px 0;
 }
 
 </style>

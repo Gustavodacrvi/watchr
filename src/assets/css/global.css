@@ -129,7 +129,7 @@ body, button, input, textarea {
 }
 
 .round-border {
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 /* .scroll::-webkit-scrollbar-track {

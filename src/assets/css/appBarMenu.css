@@ -2,31 +2,46 @@
 .content-wrapper {
   height: 100%;
   position: relative;
-  display: flex;
-  flex-direction: column;
   overflow: visible;
+}
+
+.arrow {
+  z-index: 999;
+  margin-left: 8px;
+  margin-top: 6px;
 }
 
 .content {
   margin: 14px 14px 0 14px;
 }
 
-.list-wrapper {
-  overflow: auto;
+.appnav-wrapper {
+  overflow-y: visible;
+  overflow-x: auto;
 }
 
-.list-wrapper.desktop {
+.appnav-wrapper.desktop {
   width: 305px;
 }
 
-.list-wrapper.mobile {
-  width: 295px;
+.appnav-wrapper.mobile {
+  width: 100%;
+}
+
+.appnav {
+  width: 280px;
+  min-height: 100%;
+  overflow: auto;
+}
+
+.appnav.mobile {
+  width: 100%;
 }
 
 .list {
   position: relative;
-  margin-left: 14px;
-  width: 251.5px;
+  padding: 0 8px;
+  box-sizing: border-box;
 }
 
 .list-margin {
@@ -58,7 +73,7 @@
 }
 
 .footer-wrapper {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   height: 45px;
   width: 100%;
