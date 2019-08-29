@@ -21,7 +21,7 @@
           <transition name='pop-up-trans' mode='out-in'>
             <centered-card v-if='isShowingCenteredCard'/>
           </transition>
-          <transition name='fade'>
+          <transition name='appbar-trans'>
             <keep-alive>
               <the-app-bar v-if='appBarState'/>
             </keep-alive>
@@ -239,6 +239,18 @@ export default class App extends Vue {
 .pop-up-trans-enter-to, .pop-up-trans-leave {
   top: 0;
   opacity: 1;
+}
+
+.appbar-trans-enter, .appbar-trans-leave-to {
+  transform: scale(0.9,0.9);
+  opacity: 0;
+  transition: transform .2s ease-out, opacity .2s ease-out !important;
+}
+
+.appbar-trans-enter-to, .appbar-trans-leave {
+  transform: scale(1,1);
+  opacity: 1;
+  transition: transform .2s ease-in, opacity .2s ease-in !important;
 }
 
 .alert-trans-enter-active {

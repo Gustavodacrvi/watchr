@@ -40,23 +40,33 @@
               <span class='fade' v-if='date'>{{ date }}</span>
               <span class='fade' v-if='time'>{{ time }}</span>
             </div>
-            <div key='labels' class='txt info' :class='theme'>
-              <template v-if='showLabels'>
-                <span v-for='(item, index) in taskLabels'
-                  :key='item'
-                  class='lab fade'
-                >{{ item }}<span v-if='index !== taskLabels.length - 1'>,</span></span>
-                <span>&nbsp;</span>
-              </template>
-              <i v-if='showDot1' class='fas tiny-icon fa-circle fa-xs'></i>
-              <span v-if='showLastEditDate' class='fade'>
-                <span> Last edited {{ readableTaskLastEditDate }} </span>
-              </span>
-              <i v-if='showDot2' class='fas tiny-icon fa-circle fa-xs'></i>
-              <span v-if='showCreationDate' class='fade'>
-                <span> Created {{ readableTaskCreationDate }}</span>
-              </span>
-            </div>
+            <transition
+              name='info-fade'
+              @beforeLeave='saveHeight'
+              @beforeEnter='saveHeight'
+              @enter='applyHeight'
+              @leave='applyHeightLeave'
+              @afterEnter='setDefault'
+              @afterLeave='setDefault'
+            >
+              <div v-if='showLabels || showLastEditDate || showCreationDate' key='labels' class='txt info' :class='theme'>
+                <template v-if='showLabels'>
+                  <span v-for='(item, index) in taskLabels'
+                    :key='item'
+                    class='lab fade'
+                  >{{ item }}<span v-if='index !== taskLabels.length - 1'>,</span></span>
+                  <span>&nbsp;</span>
+                </template>
+                <i v-if='showDot1' class='fas tiny-icon fa-circle fa-xs'></i>
+                <span v-if='showLastEditDate' class='fade'>
+                  <span> Last edited {{ readableTaskLastEditDate }} </span>
+                </span>
+                <i v-if='showDot2' class='fas tiny-icon fa-circle fa-xs'></i>
+                <span v-if='showCreationDate' class='fade'>
+                  <span> Created {{ readableTaskCreationDate }}</span>
+                </span>
+              </div>
+            </transition>
           </div>
           <div v-else class='content'>
             <span key='compl' class='txt' :class='theme'>Task completed</span>
@@ -194,6 +204,7 @@ export default class AppviewTask extends Vue {
   numberOfSelected: number = 0
   editing: boolean = false
   sortable: any = null
+  infoHeight: number = 0
   options: ListIcon[] = [
     {
       name: 'Edit task',
@@ -239,6 +250,33 @@ export default class AppviewTask extends Vue {
   }
   beforeDestroy() {
     document.removeEventListener('click', this.calcSelectedElements)
+  }
+
+
+  saveHeight(el: any) {
+    this.infoHeight = getComputedStyle(el).height as any
+    if (!this.infoHeight) this.infoHeight = 0
+  }
+  applyHeight(el: any) {
+    const { height } = getComputedStyle(el)
+
+    el.style.height = this.infoHeight
+
+    setTimeout(() => {
+      el.style.height = height
+    })
+  }
+  applyHeightLeave(el: any) {
+    const { height } = getComputedStyle(el)
+
+    el.style.height = this.infoHeight
+
+    setTimeout(() => {
+      el.style.height = 0
+    })
+  }
+  setDefault(el: any) {
+    el.style.height = 'auto'
   }
 
   mount() {
@@ -609,6 +647,18 @@ export default class AppviewTask extends Vue {
 
 .content-icon {
   margin: 0 6px;
+}
+
+.info-fade-enter, .info-fade-leave-to {
+  opacity: 0;
+}
+
+.info-fade-enter-active, .info-fade-leave-active {
+  transition: opacity .3s, height .3s;
+}
+
+.info-fade-enter-to, .info-fade-leave {
+  opacity: 1;
 }
 
 </style>
