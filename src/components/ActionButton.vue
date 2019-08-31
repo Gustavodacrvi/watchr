@@ -51,7 +51,7 @@
             class='btn option floating-btn'
             :key='btn.icon'
             :style='`background-color: ${btn.backColor}`'
-            @click='btn.click'
+            @click.prevent='btn.click'
           >
             <i :class='`icon txt pointer fas fa-${btn.icon}`' :style='{color: btn.iconColor}'></i>
           </span>
@@ -113,6 +113,13 @@ export default class ActionButtonComp extends Vue {
     {icon: 'calendar', iconColor: 'white', backColor: '#9ce283', click: this.postPoneNextWeek},
   ]
   optionsButtons: FloatingButton[] = [
+    {icon: 'calendar-day', iconColor: 'white', backColor: '#9ce283', click: this.centeredCard({
+      type: 'Component',
+      flexBasis: '275px',
+      listIcons: [],
+      listIconHandler: (el: any) => this.changeDate(el),
+      compName: 'CalendarInput',
+    })},
     {icon: 'exclamation', iconColor: 'white', backColor: '#ffa166', click: this.centeredCard({
       type: 'ListIcons',
       flexBasis: '275px',
@@ -142,6 +149,7 @@ export default class ActionButtonComp extends Vue {
     {icon: 'trash', iconColor: 'white', backColor: '#FF6B66', click: this.delete},
   ]
   showing: boolean = false
+  tasks: string[] = []
 
   mounted() {
     this.mount()
@@ -187,9 +195,17 @@ export default class ActionButtonComp extends Vue {
       priority: value,
     })
   }
+  changeDate(value: any) {
+    const arr: Array<{id: string, date: string}> = []
+    for (const id of this.selectedTasks)
+      arr.push({id, date: value.utc.date})
+    if (arr.length > 0)
+      this.saveNewDateOfTasks(arr)
+  }
   centeredCard(centeredCard: IndexState.centeredCard) {
     return () => {
       this.pushCenteredCard(centeredCard)
+      this.tasks = this.selectedTasks
     }
   }
 }
