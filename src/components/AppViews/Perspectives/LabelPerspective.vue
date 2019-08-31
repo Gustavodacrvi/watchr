@@ -17,7 +17,6 @@
         <view-header-icons
           v-model='search'
           pers-name=''
-          :show-task-options='selected && selected.length > 0'
           :allow-search='true'
           :allow-labels='true'
           :allow-dates='true'
@@ -25,9 +24,6 @@
           :allow-smart-perspectives='true'
           :allow-priority='true'
           
-          @delete='deleteSelected'
-          @selectedpriority='selectedPriority'
-          @selecteddates='selectedDates'
           @priority='v => priority = v'
           @label='addLabel'
           @date='addDate'
@@ -112,11 +108,13 @@ import { TaskState, TaskActions } from '../../../interfaces/store/task'
 })
 export default class LabelPerspective extends Vue {
   @State theme!: IndexState.theme
+  @State selectedTasks!: IndexState.selectedTasks
   @State currentAppSection!: IndexState.currentAppSection
   @Mutation pushView!: IndexMutations.PushView
   @Getter isDesktop!: IndexGetters.IsDesktop
   @Getter platform!: IndexGetters.Platform
   @Mutation sendOptionsToNavbar!: IndexMutations.SendOptionsToNavbar
+  @Mutation updateSelectedTasks!: IndexMutations.UpdateSelectedTasks
   @Mutation hideNavBarOptions!: IndexMutations.HideNavBarOptions
   @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
@@ -137,7 +135,6 @@ export default class LabelPerspective extends Vue {
 
   search: string = ''
   priority: string = ''
-  selected: string[] = []
   labels: string[] = []
   dates: string[] = []
   sort: string[] = []
@@ -165,7 +162,7 @@ export default class LabelPerspective extends Vue {
 
   getMobileSelectedOptions(): ListIcon[] {
     this.mobileSelectedOptions[0]['callback'] = () => {
-      this.deleteTasksById(this.selected)
+      this.deleteTasksById(this.selectedTasks)
     }
     this.mobileSelectedOptions[1]['callback'] = () => {
       setTimeout(() => {
@@ -177,7 +174,7 @@ export default class LabelPerspective extends Vue {
             size: 'lg',
             callback: () => {
               this.changePrioritysByIds({
-                ids: this.selected,
+                ids: this.selectedTasks,
                 priority: 'High priority',
               })
               this.sendOptionsToNavbar([])
@@ -190,7 +187,7 @@ export default class LabelPerspective extends Vue {
             size: 'lg',
             callback: () => {
               this.changePrioritysByIds({
-                ids: this.selected,
+                ids: this.selectedTasks,
                 priority: 'Medium priority',
               })
               this.sendOptionsToNavbar([])
@@ -203,7 +200,7 @@ export default class LabelPerspective extends Vue {
             size: 'lg',
             callback: () => {
               this.changePrioritysByIds({
-                ids: this.selected,
+                ids: this.selectedTasks,
                 priority: 'Low priority',
               })
               this.sendOptionsToNavbar([])
@@ -234,14 +231,14 @@ export default class LabelPerspective extends Vue {
     })
   }
   onSelect(ids: string[]) {
-    this.selected = ids
+    this.updateSelectedTasks(ids)
   }
   deleteSelected() {
-    this.deleteTasksById(this.selected)
+    this.deleteTasksById(this.selectedTasks)
   }
   selectedPriority(value: string) {
     this.changePrioritysByIds({
-      ids: this.selected,
+      ids: this.selectedTasks,
       priority: value,
     })
   }
@@ -266,7 +263,7 @@ export default class LabelPerspective extends Vue {
   }
   selectedDates(date: string) {
     const arr: Array<{id: string, date: string}> = []
-    for (const id of this.selected)
+    for (const id of this.selectedTasks)
       arr.push({id, date})
     if (arr.length > 0)
       this.saveNewDateOfTasks(arr)
@@ -354,7 +351,7 @@ export default class LabelPerspective extends Vue {
   @Watch('selected')
   onChange() {
     if (!this.isDesktop)
-      if (this.selected.length > 0)
+      if (this.selectedTasks.length > 0)
         this.sendOptionsToNavbar(this.getMobileSelectedOptions())
       else this.hideNavBarOptions()
   }

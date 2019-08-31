@@ -1,32 +1,5 @@
 <template>
   <div class='right'>
-    <transition name='fade'>
-      <span v-if='showTaskOptions && isDesktop' class='header-option'>
-        <icon-options
-          handle='exclamation'
-          :size='size'
-          min-width='200px'
-          title='Change priority'
-          :options='priorityOptions'
-          @click='multiplePriority'
-        />
-      </span>
-    </transition>
-    <transition name='fade'>
-      <span v-if='showTaskOptions && isDesktop' class='header-option'>
-        <i
-          class='fas icon pointer trash fa-trash fa-lg'
-          :class='theme'
-          title='Delete tasks'
-          @click="$emit('delete')"
-        ></i>
-      </span>
-    </transition>
-     <transition name='fade'>
-      <span v-if='showTaskOptions && isDesktop' class='header-option'>
-        <calendar-comp @select='multipleDates' :size='size'/>
-      </span>
-    </transition>
     <span style='width: 35px'></span>
     <span v-if='allowPriority' class='header-option'>
       <icon-options
@@ -242,12 +215,6 @@ export default class AppviewHeadericons extends Vue {
   }
   selectCalendar(obj: any) {
     this.$emit('date', obj.utc.date)
-  }
-  multipleDates(obj: any) {
-    this.$emit('selecteddates', obj.utc.date)
-  }
-  multiplePriority(value: string) {
-    this.$emit('selectedpriority', value)
   }
   selectLabel(label: Label) {
     this.$emit('label', label)

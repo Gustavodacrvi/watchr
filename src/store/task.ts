@@ -175,6 +175,7 @@ export default {
         const batch = rootState.firestore.batch()
 
         for (const o of arr) {
+          console.log(o.date)
           const ref = rootState.firestore.collection('tasks').doc(o.id)
           batch.update(ref, {
             date: o.date,

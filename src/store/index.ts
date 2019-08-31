@@ -23,10 +23,9 @@ interface Mutations {
   pushPopUpPayload: IndexMutations.PushPopUpPayload
   saveCurrentUser: IndexMutations.SaveCurrentUser
   saveFirestore: IndexMutations.SaveFirestore
-  hideExtraActions: IndexMutations.HideExtraActions
-  showExtraActions: IndexMutations.ShowExtraActions
   pushCenteredCard: IndexMutations.PushCenteredCard
   openSection: IndexMutations.OpenSection
+  updateSelectedTasks: IndexMutations.UpdateSelectedTasks
   saveFirebase: IndexMutations.SaveFirebase
   pushAppView: IndexMutations.PushAppView
   pushPerspective: IndexMutations.PushPerspective
@@ -75,9 +74,9 @@ const store: any = new Vuex.Store({
   state: {
     theme: savedTheme,
     popUpComponent: '',
-    showingExtraActions: false,
     popUpPayload: null,
     navBarTitle: '',
+    selectedTasks: [],
     windowWidth: document.body.clientWidth,
     appBarState: false,
     isLogged: false,
@@ -98,11 +97,8 @@ const store: any = new Vuex.Store({
     alert: undefined,
   } as State,
   mutations: {
-    hideExtraActions(state) {
-      state.showingExtraActions = false
-    },
-    showExtraActions(state) {
-      state.showingExtraActions = true
+    updateSelectedTasks(state, selectedTasks) {
+      state.selectedTasks = selectedTasks
     },
     openSection(state, currentAppSection) {
       state.currentAppSection = currentAppSection

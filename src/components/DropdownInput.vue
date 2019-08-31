@@ -78,6 +78,14 @@ export default class DropdownInput extends Vue {
   value: string | null = this.input
   selected: string = ''
 
+  created() {
+    this.selectFirstOne()
+  }
+
+  selectFirstOne() {
+    if (this.values[0])
+      this.selected = this.values[0]
+  }
   autoGrowTextarea(el: any) {
     el.style.height = '5px'
     el.style.height = (el.scrollHeight) + 'px'
@@ -191,6 +199,10 @@ export default class DropdownInput extends Vue {
     this.selected = ''
     this.$emit('value', this.value)
     this.$emit('update')
+  }
+  @Watch('values')
+  onValues() {
+    this.selectFirstOne()
   }
 }
 

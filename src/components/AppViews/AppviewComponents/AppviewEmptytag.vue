@@ -1,5 +1,5 @@
 <template>
-  <span class='tag-wrapper border-card' @click="$emit('click', name)" :class='theme'>
+  <span class='tag-wrapper gray' @click="$emit('click', name)" :class='theme'>
     <span class='txt name fade' :class='theme'>{{ getName }}</span>
   </span>
 </template>
@@ -42,19 +42,17 @@ export default class AppviewEmptytag extends Vue {
   padding: 4px 12px;
   display: inline-block;
   cursor: pointer;
-  transition: background-color .2s;
+  transition: background-color .2s, color .2s;
+  margin-right: 6px;
+  margin-top: 4px;
 }
 
-.tag-wrapper + .tag-wrapper {
-  margin-left: 6px;
+.tag-wrapper:hover {
+  background-color: rgba(131, 183, 226, .1);
 }
 
-.tag-wrapper.dark:hover {
-  background-color: #282828;
-}
-
-.tag-wrapper.light:hover {
-  background-color: #e3e3e3;
+.tag-wrapper:hover .name {
+  color: #83B7E2;
 }
 
 </style>

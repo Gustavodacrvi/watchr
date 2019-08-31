@@ -6,7 +6,7 @@
     >
       <div class='view-wrapper background-color' :class='[platform, theme]'>
         <div class='view' :class='platform'>
-          <transition name='fade' mode='out-in'>
+          <transition class='transition-view' name='fade' mode='out-in'>
             <component
               :is='getComp'
               :pers='per'
@@ -206,7 +206,7 @@ export default class Guest extends Mixins(Mixin) {
 .view-wrapper {
   position: relative;
   width: 100%;
-  min-height: 100%;
+  height: 100%;
 }
 
 .view-wrapper.desktop {
@@ -216,6 +216,12 @@ export default class Guest extends Mixins(Mixin) {
 
 .view {
   margin: 0 15px;
+  position: relative;
+  height: 100%;
+}
+
+.transition-view {
+  height: 100%;
   position: relative;
 }
 

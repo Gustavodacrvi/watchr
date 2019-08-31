@@ -27,7 +27,7 @@
             class='medium'
             v-model='search'
             placeholder='Search...'
-            :class='{backcolor: isDesktop}'
+            :class='[{backcolor: isDesktop}, theme]'
             :disabled='true'
             :max='50'
           />
@@ -189,8 +189,12 @@ export default class LoggedAppnav extends Vue {
   margin: 6px 14px;
 }
 
-.backcolor {
+.backcolor.dark {
   background-color: #121212 !important;
+}
+
+.backcolor.light {
+  background-color: #fff !important;
 }
 
 .margin {

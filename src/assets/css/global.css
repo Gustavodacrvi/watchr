@@ -30,11 +30,7 @@ body, button, input, textarea {
   cursor: pointer;
 }
 
-.icon:hover {
-  color: #83B7E2;
-}
-
-.main-color, h1, h2, h3, h4, h5, h6 {
+.main-color, h1, h2, h3, h4, h5, h6, .icon:hover {
   color: #83B7E2;
 }
 

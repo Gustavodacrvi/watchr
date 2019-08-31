@@ -4,9 +4,9 @@
 import { SimpleAdder, ListIcon, Alert, CenteredCard, Perspective } from '../app'
 
 export namespace IndexState {
-  export type showingExtraActions = boolean
   export type appBarState = boolean
   export type isLogged = boolean
+  export type selectedTasks = string[]
   export type isAnonymous = boolean
   export type emailVerified = boolean
   export type appError = boolean
@@ -33,7 +33,7 @@ export interface State {
   theme: IndexState.theme
   popUpComponent: IndexState.popUpComponent
   windowWidth: IndexState.windowWidth
-  showingExtraActions: IndexState.showingExtraActions
+  selectedTasks: IndexState.selectedTasks
   popUpPayload: IndexState.popUpPayload
   appBarState: IndexState.appBarState
   firestore: IndexState.firestore
@@ -58,8 +58,6 @@ export interface State {
 type OverloadVoid = (state?: State) => void
 
 export namespace IndexMutations {
-  export type HideExtraActions = OverloadVoid
-  export type ShowExtraActions = OverloadVoid
   export type ShowApp = OverloadVoid
   export type HideNavBarOptions = OverloadVoid
   export type OpenAppBar = OverloadVoid
@@ -69,6 +67,10 @@ export namespace IndexMutations {
   export type PushAlert = {
     (alert: Alert): void,
     (state: State, alert: Alert): void,
+  }
+  export type UpdateSelectedTasks = {
+    (selected: string[]): void,
+    (state: State, selected: string[]): void,
   }
   export type PushTheme = {
     (theme: string): void,

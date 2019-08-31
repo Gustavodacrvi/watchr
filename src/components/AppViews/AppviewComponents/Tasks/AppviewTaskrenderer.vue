@@ -64,8 +64,6 @@ import { TaskActions } from '../../../../interfaces/store/task'
 })
 export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @State theme!: IndexState.theme
-  @Mutation hideExtraActions!: IndexMutations.HideExtraActions
-  @Mutation showExtraActions!: IndexMutations.ShowExtraActions
 
   @task.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
 
@@ -99,7 +97,6 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   numberOfAdders: number = 0
   rootSelector: string = `.task-taskrenderer-${this.id}`
   taskAdderPosition: number = 0
-  actionType: string = ''
 
   created() {
     this.$on('enter', this.add)
@@ -130,14 +127,6 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       dataIdAttr: 'data-sortableid',
       group: {name: 'taskrenderer', pull: (to: any, from: any) => {
         if (to.options.group.name === 'taskrenderer') return true
-        if (to.options.group.name === 'today-btn') {
-          this.actionType = 'today-btn'
-          return false
-        } else if (to.options.group.name === 'tomorrow-btn') {
-          this.actionType = 'tomorrow-btn'
-          return false
-        }
-        this.actionType = ''
         return false
       }, put: ['floatbutton', 'taskrenderer']},
 
@@ -189,34 +178,6 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       },
       onStart: () => {
         this.dragging = true
-        this.showExtraActions()
-      },
-      onEnd: (evt: any) => {
-        switch (this.actionType) {
-          case 'today-btn': {
-            const arr = []
-            const ids = this.getIds(evt)
-            for (const id of ids)
-              arr.push({
-                id, date: moment.utc().format('Y-M-D'),
-              })
-            this.saveNewDateOfTasks(arr)
-            break
-          }
-          case 'tomorrow-btn': {
-            const arr = []
-            const ids = this.getIds(evt)
-            for (const id of ids)
-              arr.push({
-                id, date: moment.utc().add(1, 'd').format('Y-M-D'),
-              })
-            this.saveNewDateOfTasks(arr)
-            break
-          }
-        }
-        this.actionType = ''
-        this.dragging = false
-        this.hideExtraActions()
       },
     }
 

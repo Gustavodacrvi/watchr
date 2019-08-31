@@ -18,7 +18,7 @@
         </span>
       </span>
       <transition name='below-trans'>
-        <div v-show='showingExtraActions'
+        <div v-show='selectedTasks.length > 0'
           class='left-wrapper' 
         >
           <span id='today-btn'
@@ -62,10 +62,45 @@ import { FloatingButton } from '@/interfaces/app'
 import Sortable from 'sortablejs'
 import { IndexState, IndexMutations } from '../interfaces/store/index'
 
+
+
+/*       onEnd: (evt: any) => {
+        switch (this.actionType) {
+          case 'today-btn': {
+            const arr = []
+            const ids = this.getIds(evt)
+            for (const id of ids)
+              arr.push({
+                id, date: moment.utc().format('Y-M-D'),
+              })
+            this.saveNewDateOfTasks(arr)
+            break
+          }
+          case 'tomorrow-btn': {
+            const arr = []
+            const ids = this.getIds(evt)
+            console.log(ids)
+            for (const id of ids)
+              arr.push({
+                id, date: moment.utc().add(1, 'd').format('Y-M-D'),
+              })
+            console.log(arr)
+            this.saveNewDateOfTasks(arr)
+            break
+          }
+        }
+        this.actionType = ''
+        this.dragging = false
+        this.hideExtraActions()
+      }, */
+
+
+
+
 @Component
 export default class ActionButtonComp extends Vue {
   @State theme!: IndexState.theme
-  @State showingExtraActions!: IndexState.showingExtraActions
+  @State selectedTasks!: IndexState.selectedTasks
   @Mutation pushPopUp!: IndexMutations.PushPopUp
 
   topButtons: FloatingButton[] = [

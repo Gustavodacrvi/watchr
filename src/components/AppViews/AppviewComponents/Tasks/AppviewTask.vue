@@ -39,6 +39,7 @@
               ></i>
               <span class='fade' v-if='date'>{{ date }}</span>
               <span class='fade' v-if='time'>{{ time }}</span>
+            {{task.date}}
             </div>
             <transition
               name='info-fade'
@@ -267,8 +268,6 @@ export default class AppviewTask extends Vue {
     })
   }
   applyHeightLeave(el: any) {
-    const { height } = getComputedStyle(el)
-
     el.style.height = this.infoHeight
 
     setTimeout(() => {
