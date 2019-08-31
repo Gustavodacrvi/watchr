@@ -233,9 +233,6 @@ export default class LabelPerspective extends Vue {
   onSelect(ids: string[]) {
     this.updateSelectedTasks(ids)
   }
-  deleteSelected() {
-    this.deleteTasksById(this.selectedTasks)
-  }
   selectedPriority(value: string) {
     this.changePrioritysByIds({
       ids: this.selectedTasks,

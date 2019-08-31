@@ -44,6 +44,19 @@
           </span>
         </div>
       </transition>
+      <transition name='option-trans'>
+        <div v-if='isDesktop'
+          class='options-wrapper'>
+          <span v-for='btn in optionsButtons'
+            class='btn top floating-btn'
+            :key='btn.icon'
+            :style='`background-color: ${btn.backColor}`'
+            @click='btn.click'
+          >
+            <i :class='`icon txt pointer fas fa-${btn.icon}`' :style='{color: btn.iconColor}'></i>
+          </span>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -51,7 +64,7 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { Mutation, State, namespace } from 'vuex-class'
+import { Mutation, State, Getter, namespace } from 'vuex-class'
 
 const task = namespace('task')
 const set = namespace('settings')
@@ -67,14 +80,17 @@ import appUtils from '@/utils/app'
 
 import { TaskActions } from '../interfaces/store/task'
 import { SetState } from '../interfaces/store/settings'
+import { IndexGetters } from '../interfaces/store/'
 
 @Component
 export default class ActionButtonComp extends Vue {
   @State theme!: IndexState.theme
+  @Getter isDesktop!: IndexGetters.IsDesktop
   @State selectedTasks!: IndexState.selectedTasks
   @Mutation pushPopUp!: IndexMutations.PushPopUp
 
   @task.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
+  @task.Action deleteTasksById!: TaskActions.DeleteTasksById
 
   @set.State startOfTheWeek!: SetState.startOfTheWeek
 
@@ -88,21 +104,15 @@ export default class ActionButtonComp extends Vue {
     {icon: 'sun', iconColor: 'white', backColor: '#ffa166', click: this.postPoneTomorrow},
     {icon: 'calendar', iconColor: 'white', backColor: '#9ce283', click: this.postPoneNextWeek},
   ]
+  optionsButtons: FloatingButton[] = [
+    {icon: 'trash', iconColor: 'white', backColor: '#FF6B66', click: this.delete},
+  ]
   showing: boolean = false
 
   mounted() {
     this.mount()
   }
 
-  deleteEl() {
-    const r = this.$el
-    if (r) {
-      const el = r.getElementsByClassName('root-task')[0]
-      const parent = el.parentNode
-      if (parent)
-        parent.removeChild(el)
-    }
-  }
   mount() {
     const el = document.getElementById('floating-btn')
     const sort = new Sortable(el, {
@@ -112,6 +122,9 @@ export default class ActionButtonComp extends Vue {
     })
   }
 
+  delete() {
+    this.deleteTasksById(this.selectedTasks)
+  }
   postPone(mom: any) {
     const arr = []
     for (const id of this.selectedTasks)
@@ -140,7 +153,7 @@ export default class ActionButtonComp extends Vue {
 
 <style scoped>
 
-.left-wrapper, .top-wrapper {
+.left-wrapper, .top-wrapper, .options-wrapper {
   display: flex;
   align-items: center;
 }
@@ -183,6 +196,14 @@ export default class ActionButtonComp extends Vue {
   bottom: 70px;
   right: 16px;
   flex-direction: column-reverse;
+}
+
+.options-wrapper {
+  flex-direction: row-reverse;
+  position: absolute;
+  height: 45px;
+  bottom: 16px;
+  left: 360px;
 }
 
 .btn {
