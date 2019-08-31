@@ -38,6 +38,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { State, Mutation, namespace } from 'vuex-class'
 
 const label = namespace('label')
+const task = namespace('task')
 
 import DropdownInput from '@/components/DropdownInput.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
@@ -45,6 +46,7 @@ import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue
 import { IndexState } from '../../interfaces/store/index'
 import { LabelState } from '../../interfaces/store/label'
 import { Label } from '../../interfaces/app'
+import { TaskActions } from '../../interfaces/store/task'
 
 @Component({
   components: {
@@ -57,6 +59,7 @@ export default class SigninPopUp extends Vue {
   @State popUpPayload!: string[]
 
   @label.State labels!: LabelState.labels
+  @task.Action addMultipleLabelsToMultipleTasks!: TaskActions.AddMultipleLabelsToMultipleTasks
 
   value: string = ''
   options: string[] = []
@@ -68,7 +71,10 @@ export default class SigninPopUp extends Vue {
   }
 
   add() {
-    console.log(this.popUpPayload, this.selected)
+    this.addMultipleLabelsToMultipleTasks({
+      taskIds: this.popUpPayload,
+      labIds: this.getIds(),
+    })
   }
   select(val: string) {
     this.value = ''
@@ -81,6 +87,9 @@ export default class SigninPopUp extends Vue {
   }
   getOptions() {
     return this.labels.filter(el => el.name.includes(this.value)).map(el => el.name)
+  }
+  getIds(): string[] {
+    return this.selected.map(el => el.id)
   }
 
   @Watch('value')

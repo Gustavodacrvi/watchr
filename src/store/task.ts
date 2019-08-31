@@ -13,6 +13,7 @@ interface Actions {
   addTaskLabel: TaskActions.StoreAddTaskLabel
   addTask: TaskActions.StoreAddTask
   deleteTasksById: TaskActions.StoreDeleteTasksById
+  addMultipleLabelsToMultipleTasks: TaskActions.StoreAddMultipleLabelsToMultipleTasks
   changePrioritysByIds: TaskActions.StoreChangePrioritysByIds
   addSubTask: TaskActions.StoreAddSubTask
   saveSubTask: TaskActions.StoreSaveSubTask
@@ -295,6 +296,21 @@ export default {
             lastEditDate: date,
           })
         }
+      }
+    },
+    addMultipleLabelsToMultipleTasks({ rootState, state }, {taskIds, labIds}) {
+      if (rootState.firestore && rootState.uid) {
+        const batch = rootState.firestore.batch()
+        const fire = rootState.firebase.firestore.FieldValue as any
+
+        for (const id of taskIds) {
+          const ref = rootState.firestore.collection('tasks').doc(id)
+          batch.update(ref, {
+            labels: fire.arrayUnion(...labIds),
+          })
+        }
+
+        batch.commit()
       }
     },
   } as Actions,
