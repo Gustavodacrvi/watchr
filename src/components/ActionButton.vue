@@ -45,7 +45,7 @@
         </div>
       </transition>
       <transition name='option-trans'>
-        <div v-if='isDesktop'
+        <div v-if='isDesktop && selectedTasks.length > 0'
           class='options-wrapper'>
           <span v-for='btn in optionsButtons'
             class='btn option floating-btn'
@@ -69,8 +69,6 @@ import { Mutation, State, Getter, namespace } from 'vuex-class'
 const task = namespace('task')
 const set = namespace('settings')
 
-import AppviewCalendarInput from '@/components/AppViews/AppviewComponents/Tasks/AppviewCalendarInput.vue'
-
 import Sortable from 'sortablejs'
 import { IndexState, IndexMutations } from '../interfaces/store/index'
 
@@ -83,11 +81,7 @@ import { TaskActions } from '../interfaces/store/task'
 import { SetState } from '../interfaces/store/settings'
 import { IndexGetters } from '../interfaces/store/'
 
-@Component({
-  components: {
-    'AppviewCalendarInput': AppviewCalendarInput,
-  },
-})
+@Component
 export default class ActionButtonComp extends Vue {
   @State theme!: IndexState.theme
   @Getter isDesktop!: IndexGetters.IsDesktop

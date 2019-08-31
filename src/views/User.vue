@@ -117,19 +117,22 @@ export default class Guest extends Mixins(Mixin) {
 
   @Prop(String) pers!: string
   @Prop(String) label!: string
+  @Prop(Boolean) loaded!: string
 
   waitingResponse: boolean = false
   per: string = ''
-  loaded: boolean = false
 
   created() {
     this.per = this.pers
     if (this.ready && !this.isStandAlone && this.initialPerspective && !this.per) {
       this.$router.replace('user?pers=' + this.initialPerspective)
-      this.loaded = true
+      this.$emit('loaded', true)
     } else if (this.isStandAlone)
       this.per = this.initialPerspective
     this.open()
+  }
+  beforeDestroy() {
+    this.$emit('loaded', false)
   }
 
   open() {
@@ -180,7 +183,7 @@ export default class Guest extends Mixins(Mixin) {
   onChange5() {
     if (!this.loaded && !this.pers) {
       this.$router.replace('user?pers=' + this.initialPerspective)
-      this.loaded = true
+      this.$emit('loaded', true)
     }
   }
   @Watch('isDesktop')

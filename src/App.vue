@@ -12,7 +12,7 @@
           </div>
           <div v-if='!isDesktop' style='flex-basis: 50px'></div>
           <transition name='fade' mode='out-in'>
-            <router-view v-if='!isShowingPopUp || isDesktop' class='content'/>
+            <router-view v-if='!isShowingPopUp || isDesktop' class='content' @loaded='v => loaded = v'/>
           </transition>
           <transition name='pop-up-trans' mode='out-in'>
             <pop-up v-if='isShowingPopUp && isDesktop'/>
@@ -93,6 +93,8 @@ export default class App extends Vue {
   @Getter anonymous!: IndexGetters.Anonymous
   @Action showLastAlert!: IndexActions.ShowLastAlert
   @Action activateKeyShortcut!: IndexActions.ActivateKeyShortcut
+
+  loaded: boolean = false
 
   mounted() {
     window.addEventListener('keypress', this.keyPressed)
