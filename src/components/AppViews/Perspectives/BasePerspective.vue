@@ -158,6 +158,8 @@ export default class PerspectiveAppview extends Vue {
   @Mutation sendOptionsToNavbar!: IndexMutations.SendOptionsToNavbar
   @Mutation hideNavBarOptions!: IndexMutations.HideNavBarOptions
   @Mutation pushAlert!: IndexMutations.PushAlert
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
   @Mutation updateSelectedTasks!: IndexMutations.UpdateSelectedTasks
   @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
@@ -219,6 +221,12 @@ export default class PerspectiveAppview extends Vue {
     {
       name: 'Change date of tasks',
       icon: 'calendar-day',
+      iconColor: '',
+      size: '',
+    },
+    {
+      name: 'Add labels to tasks',
+      icon: 'tag',
       iconColor: '',
       size: '',
     },
@@ -288,6 +296,12 @@ export default class PerspectiveAppview extends Vue {
             this.selectedDates(e.utc.date)
           },
         })
+      }, 80)
+    }
+    this.mobileSelectedOptions[3]['callback'] = () => {
+      setTimeout(() => {
+        this.pushPopUp('AddLabelsToTasksPopup')
+        this.pushPopUpPayload(this.selectedTasks)
       }, 80)
     }
     return this.mobileSelectedOptions
@@ -538,7 +552,7 @@ export default class PerspectiveAppview extends Vue {
     return undefined
   }
 
-  @Watch('selected')
+  @Watch('selectedTasks')
   onChange() {
     if (!this.isDesktop)
       if (this.selectedTasks.length > 0)

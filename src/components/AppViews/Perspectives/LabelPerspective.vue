@@ -113,6 +113,8 @@ export default class LabelPerspective extends Vue {
   @Mutation pushView!: IndexMutations.PushView
   @Getter isDesktop!: IndexGetters.IsDesktop
   @Getter platform!: IndexGetters.Platform
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
   @Mutation sendOptionsToNavbar!: IndexMutations.SendOptionsToNavbar
   @Mutation updateSelectedTasks!: IndexMutations.UpdateSelectedTasks
   @Mutation hideNavBarOptions!: IndexMutations.HideNavBarOptions
@@ -151,6 +153,18 @@ export default class LabelPerspective extends Vue {
     {
       name: 'Change priority of tasks',
       icon: 'exclamation',
+      iconColor: '',
+      size: '',
+    },
+    {
+      name: 'Change date of tasks',
+      icon: 'calendar-day',
+      iconColor: '',
+      size: '',
+    },
+    {
+      name: 'Add labels to tasks',
+      icon: 'tag',
       iconColor: '',
       size: '',
     },
@@ -220,6 +234,12 @@ export default class LabelPerspective extends Vue {
             this.selectedDates(e.utc.date)
           },
         })
+      }, 80)
+    }
+    this.mobileSelectedOptions[3]['callback'] = () => {
+      setTimeout(() => {
+        this.pushPopUp('AddLabelsToTasksPopup')
+        this.pushPopUpPayload(this.selectedTasks)
       }, 80)
     }
     return this.mobileSelectedOptions
@@ -345,7 +365,7 @@ export default class LabelPerspective extends Vue {
     return tasks
   }
 
-  @Watch('selected')
+  @Watch('selectedTasks')
   onChange() {
     if (!this.isDesktop)
       if (this.selectedTasks.length > 0)

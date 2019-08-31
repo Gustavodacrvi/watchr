@@ -43,8 +43,8 @@ const task = namespace('task')
 import DropdownInput from '@/components/DropdownInput.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
 
-import { IndexState } from '../../interfaces/store/index'
-import { LabelState } from '../../interfaces/store/label'
+import { IndexState, IndexMutations } from '../../interfaces/store/index'
+import { LabelState, LabelGetters } from '../../interfaces/store/label'
 import { Label } from '../../interfaces/app'
 import { TaskActions } from '../../interfaces/store/task'
 
@@ -57,8 +57,11 @@ import { TaskActions } from '../../interfaces/store/task'
 export default class SigninPopUp extends Vue {
   @State theme!: IndexState.theme
   @State popUpPayload!: string[]
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
 
   @label.State labels!: LabelState.labels
+  @label.Getter sortedLabelsByName!: LabelGetters.SortedLabelsByName
+
   @task.Action addMultipleLabelsToMultipleTasks!: TaskActions.AddMultipleLabelsToMultipleTasks
 
   value: string = ''
@@ -75,6 +78,7 @@ export default class SigninPopUp extends Vue {
       taskIds: this.popUpPayload,
       labIds: this.getIds(),
     })
+    this.pushPopUp('')
   }
   select(val: string) {
     this.value = ''
@@ -86,7 +90,7 @@ export default class SigninPopUp extends Vue {
     this.selected.splice(i, 1)
   }
   getOptions() {
-    return this.labels.filter(el => el.name.includes(this.value)).map(el => el.name)
+    return this.sortedLabelsByName.filter(el => el.name.includes(this.value)).map(el => el.name)
   }
   getIds(): string[] {
     return this.selected.map(el => el.id)
