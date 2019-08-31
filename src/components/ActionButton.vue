@@ -87,6 +87,7 @@ export default class ActionButtonComp extends Vue {
   @Getter isDesktop!: IndexGetters.IsDesktop
   @State selectedTasks!: IndexState.selectedTasks
   @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
 
   @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
@@ -107,6 +108,7 @@ export default class ActionButtonComp extends Vue {
     {icon: 'calendar', iconColor: 'white', backColor: '#9ce283', click: this.postPoneNextWeek},
   ]
   optionsButtons: FloatingButton[] = [
+    {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: this.popUp('AddLabelsToTasksPopup', true)},
     {icon: 'calendar-day', iconColor: 'white', backColor: '#9ce283', click: this.centeredCard({
       type: 'Component',
       flexBasis: '275px',
@@ -178,9 +180,10 @@ export default class ActionButtonComp extends Vue {
   postPoneNextWeek() {
     this.postPone(appUtils.getNextWeek(moment.utc(), this.startOfTheWeek))
   }
-  popUp(compName: string): () => void {
+  popUp(compName: string, sendIds?: boolean): () => void {
     return () => {
       this.pushPopUp(compName)
+      if (sendIds) this.pushPopUpPayload(this.selectedTasks)
     }
   }
   changePriority(value: string) {

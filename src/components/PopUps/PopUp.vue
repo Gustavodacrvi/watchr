@@ -26,17 +26,20 @@ import { State, Getter, Mutation } from 'vuex-class'
 import appUtils from '../../utils/app'
 import { IndexState, IndexMutations, IndexGetters } from '../../interfaces/store/index'
 
+const c = appUtils.AsyncComponent
+
 @Component({
   components: {
-    SimpleadderPopup: appUtils.AsyncComponent(import('./SimpleadderPopup.vue')),
-    SignupPopup: appUtils.AsyncComponent(import('./SignupPopup.vue')),
-    SigninPopup: appUtils.AsyncComponent(import('./SigninPopup.vue')),
-    LabeladderPopup: appUtils.AsyncComponent(import('./LabeladderPopup.vue')),
-    PerspectiveAdderPopup: appUtils.AsyncComponent(import('./PerspectiveAdderPopup.vue')),
-    ResetpasswordPopup: appUtils.AsyncComponent(import('./ResetpasswordPopup.vue')),
-    SendresetpasswordPopup: appUtils.AsyncComponent(import('./SendresetpasswordPopup.vue')),
-    TaskadderPopup: appUtils.AsyncComponent(import('./TaskadderPopup.vue')),
-    EditSmartPerspectivePopup: appUtils.AsyncComponent(import('./EditSmartPerspectivePopup.vue')),
+    SimpleadderPopup: c(import('./SimpleadderPopup.vue')),
+    SignupPopup: c(import('./SignupPopup.vue')),
+    SigninPopup: c(import('./SigninPopup.vue')),
+    LabeladderPopup: c(import('./LabeladderPopup.vue')),
+    PerspectiveAdderPopup: c(import('./PerspectiveAdderPopup.vue')),
+    AddLabelsToTasksPopup: c(import('./AddLabelsToTasksPopup.vue')),
+    ResetpasswordPopup: c(import('./ResetpasswordPopup.vue')),
+    SendresetpasswordPopup: c(import('./SendresetpasswordPopup.vue')),
+    TaskadderPopup: c(import('./TaskadderPopup.vue')),
+    EditSmartPerspectivePopup: c(import('./EditSmartPerspectivePopup.vue')),
   },
 })
 export default class PopUp extends Vue {
