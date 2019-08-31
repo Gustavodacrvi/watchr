@@ -19,19 +19,15 @@
       </span>
       <transition name='below-trans'>
         <div v-show='selectedTasks.length > 0'
-          class='left-wrapper' 
+          class='left-wrapper'
         >
-          <span id='today-btn'
+          <span v-for='b of leftButtons'
+            :key='b.icon'
             class='btn left floating-btn'
-            style='background-color: #FFE366'
+            :style='{backgroundColor: b.backColor}'
+            @click='b.click'
           >
-            <i class='icon txt pointer fas fa-star' style='color: white'></i>
-          </span>
-          <span id='tomorrow-btn'
-            class='btn left floating-btn'
-            style='background-color: #ffa166'
-          >
-            <i class='icon txt pointer fas fa-sun' style='color: white'></i>
+            <i :class='`icon txt pointer fas fa-${b.icon}`' style='color: white'></i>
           </span>
         </div>
       </transition>
@@ -57,45 +53,20 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Mutation, State, namespace } from 'vuex-class'
 
+const task = namespace('task')
+const set = namespace('settings')
+
 import { FloatingButton } from '@/interfaces/app'
 
 import Sortable from 'sortablejs'
 import { IndexState, IndexMutations } from '../interfaces/store/index'
 
+import moment from 'moment-timezone'
 
+import appUtils from '@/utils/app'
 
-/*       onEnd: (evt: any) => {
-        switch (this.actionType) {
-          case 'today-btn': {
-            const arr = []
-            const ids = this.getIds(evt)
-            for (const id of ids)
-              arr.push({
-                id, date: moment.utc().format('Y-M-D'),
-              })
-            this.saveNewDateOfTasks(arr)
-            break
-          }
-          case 'tomorrow-btn': {
-            const arr = []
-            const ids = this.getIds(evt)
-            console.log(ids)
-            for (const id of ids)
-              arr.push({
-                id, date: moment.utc().add(1, 'd').format('Y-M-D'),
-              })
-            console.log(arr)
-            this.saveNewDateOfTasks(arr)
-            break
-          }
-        }
-        this.actionType = ''
-        this.dragging = false
-        this.hideExtraActions()
-      }, */
-
-
-
+import { TaskActions } from '../interfaces/store/task'
+import { SetState } from '../interfaces/store/settings'
 
 @Component
 export default class ActionButtonComp extends Vue {
@@ -103,10 +74,19 @@ export default class ActionButtonComp extends Vue {
   @State selectedTasks!: IndexState.selectedTasks
   @Mutation pushPopUp!: IndexMutations.PushPopUp
 
+  @task.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
+
+  @set.State startOfTheWeek!: SetState.startOfTheWeek
+
   topButtons: FloatingButton[] = [
     {icon: 'bolt', iconColor: 'white', backColor: '#FFE366', click: this.popUp('TaskadderPopup')},
     {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: this.popUp('LabeladderPopup')},
     {icon: 'layer-group', iconColor: 'white', backColor: '#6b66ff', click: this.popUp('PerspectiveAdderPopup')},
+  ]
+  leftButtons: FloatingButton[] = [
+    {icon: 'star', iconColor: 'white', backColor: '#FFE366', click: this.postPoneToday},
+    {icon: 'sun', iconColor: 'white', backColor: '#ffa166', click: this.postPoneTomorrow},
+    {icon: 'calendar', iconColor: 'white', backColor: '#9ce283', click: this.postPoneNextWeek},
   ]
   showing: boolean = false
 
@@ -130,18 +110,24 @@ export default class ActionButtonComp extends Vue {
       group: {name: 'floatbutton', pull: 'clone', put: false},
       animation: 150,
     })
-    const tod = document.getElementById('today-btn')
-    const today = new Sortable(tod, {
-      disabled: false,
-      group: {name: 'today-btn', pull: false, put: ['taskrenderer']},
-      animation: 150,
-    })
-    const tom = document.getElementById('tomorrow-btn')
-    const tomorrow = new Sortable(tom, {
-      disabled: false,
-      group: {name: 'tomorrow-btn', pull: false, put: ['taskrenderer']},
-      animation: 150,
-    })
+  }
+
+  postPone(mom: any) {
+    const arr = []
+    for (const id of this.selectedTasks)
+      arr.push({
+        id, date: mom.format('Y-M-D'),
+      })
+    this.saveNewDateOfTasks(arr)
+  }
+  postPoneToday() {
+    this.postPone(moment.utc())
+  }
+  postPoneTomorrow() {
+    this.postPone(moment.utc().add(1, 'd'))
+  }
+  postPoneNextWeek() {
+    this.postPone(appUtils.getNextWeek(moment.utc(), this.startOfTheWeek))
   }
   popUp(compName: string): () => void {
     return () => {

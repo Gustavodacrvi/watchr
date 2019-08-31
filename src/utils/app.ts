@@ -378,11 +378,14 @@ export default {
   },
   getNextWeek(mom: any, nextWeek: string) {
     const clone = mom.clone()
+    let i = 0
     while (true) {
       const week = clone.format('dddd')
       if (week === nextWeek)
         break
       clone.add(1, 'd')
+      if (i > 100) break
+      i++
     }
     return clone
   },

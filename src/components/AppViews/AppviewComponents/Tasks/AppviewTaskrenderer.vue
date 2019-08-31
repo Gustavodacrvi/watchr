@@ -65,8 +65,6 @@ import { TaskActions } from '../../../../interfaces/store/task'
 export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @State theme!: IndexState.theme
 
-  @task.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
-
   @Prop(Boolean) disabled!: boolean
   @Prop(Boolean) fixAdderPosition!: boolean
   @Prop(Boolean) allowPriority!: boolean
