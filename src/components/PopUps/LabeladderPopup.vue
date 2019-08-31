@@ -15,7 +15,7 @@
         @value='v => value = v'
         @select='select'
         @focus='options = getOptions()'
-      ></dropdown-input>
+      />
       <button
         tabindex='2'
         class='button round-border margin'
