@@ -15,7 +15,7 @@
         @value='v => value = v'
         @select='select'
         @focus='options = getOptions()'
-      ></dropdown-input>
+      />
       <button
         tabindex='2'
         class='button round-border margin'
@@ -44,7 +44,7 @@ const labelStore = namespace('label')
 
 import { Alert, Label } from '../../interfaces/app'
 import { IndexState, IndexGetters, IndexMutations } from '../../interfaces/store/index'
-import { LabelState, LabelActions } from '../../interfaces/store/label'
+import { LabelState, LabelActions, LabelGetters } from '../../interfaces/store/label'
 
 @Component({
   components: {
@@ -59,6 +59,7 @@ export default class LabelAdder extends Vue {
   @Mutation pushAlert!: IndexMutations.PushAlert
 
   @labelStore.State labels!: LabelState.labels
+  @labelStore.Getter sortedLabelsByName!: LabelGetters.SortedLabelsByName
   @labelStore.Action addLabel!: LabelActions.AddLabel
 
   value: string = ''
@@ -96,7 +97,7 @@ export default class LabelAdder extends Vue {
   }
 
   getOptions(): string[] {
-    return this.labels.filter(el => el.name.includes(this.value)).map(el => el.name)
+    return this.sortedLabelsByName.filter(el => el.name.includes(this.value)).map(el => el.name)
   }
 
   select(value: string) {

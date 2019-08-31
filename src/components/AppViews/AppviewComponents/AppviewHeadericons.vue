@@ -1,32 +1,5 @@
 <template>
   <div class='right'>
-    <transition name='fade'>
-      <span v-if='showTaskOptions && isDesktop' class='header-option'>
-        <icon-options
-          handle='exclamation'
-          :size='size'
-          min-width='200px'
-          title='Change priority'
-          :options='priorityOptions'
-          @click='multiplePriority'
-        />
-      </span>
-    </transition>
-    <transition name='fade'>
-      <span v-if='showTaskOptions && isDesktop' class='header-option'>
-        <i
-          class='fas icon pointer trash fa-trash fa-lg'
-          :class='theme'
-          title='Delete tasks'
-          @click="$emit('delete')"
-        ></i>
-      </span>
-    </transition>
-     <transition name='fade'>
-      <span v-if='showTaskOptions && isDesktop' class='header-option'>
-        <calendar-comp @select='multipleDates' :size='size'/>
-      </span>
-    </transition>
     <span style='width: 35px'></span>
     <span v-if='allowPriority' class='header-option'>
       <icon-options
@@ -172,56 +145,56 @@ export default class AppviewHeadericons extends Vue {
       optionKey: 'nameReversed',
     },
     {
-      name: 'Sort tasks by priority highest first',
+      name: 'Sort tasks by priority(high to low)',
       icon: 'exclamation',
       iconColor: '#FF6B66',
       size: 'lg',
       optionKey: 'priorityHighest',
     },
     {
-      name: 'Sort tasks by priority lowest first',
+      name: 'Sort tasks by priority(low to high)',
       icon: 'exclamation',
       iconColor: '#70ff66',
       size: 'lg',
       optionKey: 'priorityLowest',
     },
     {
-      name: 'Sort by creation date newest first',
+      name: 'Sort by creation(new to old)',
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
       optionKey: 'creationDateNewest',
     },
     {
-      name: 'Sort by creation date oldest first',
+      name: 'Sort by creation(old to new)',
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
       optionKey: 'creationDateOldest',
     },
     {
-      name: 'Sort by last edit date oldest first',
+      name: 'Sort by last edit date(old to new)',
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
       optionKey: 'lastEditDateOldest',
     },
     {
-      name: 'Sort by last edit date newest first',
+      name: 'Sort by last edit date(new to old)',
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
       optionKey: 'lastEditDateNewest',
     },
     {
-      name: 'Sort by date newest first',
+      name: 'Sort by date(new to old)',
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
       optionKey: 'dateNewest',
     },
     {
-      name: 'Sort by date oldest first',
+      name: 'Sort by date(old to new)',
       icon: 'calendar-alt',
       iconColor: '',
       size: 'lg',
@@ -242,12 +215,6 @@ export default class AppviewHeadericons extends Vue {
   }
   selectCalendar(obj: any) {
     this.$emit('date', obj.utc.date)
-  }
-  multipleDates(obj: any) {
-    this.$emit('selecteddates', obj.utc.date)
-  }
-  multiplePriority(value: string) {
-    this.$emit('selectedpriority', value)
   }
   selectLabel(label: Label) {
     this.$emit('label', label)

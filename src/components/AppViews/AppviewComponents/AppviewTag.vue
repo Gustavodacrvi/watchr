@@ -39,6 +39,10 @@ export default class AppviewIcon extends Vue {
   height: 25px;
   border-radius: 100px;
   transition: transform .2s;
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow: hidden;
 }
 
 .tag:hover {

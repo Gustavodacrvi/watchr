@@ -4,7 +4,7 @@
     :class='[platform, {zindex: activeZindex && !isDesktop}]'
   >
     <div
-      class='appbar gray'
+      class='appbar'
       :class='platform'
     >
       <transition
@@ -12,18 +12,15 @@
         mode='out-in'
       >
         <component
-          class='theappbar gray'
+          class='theappbar'
           :class='theme'
           :is='appMenu'
           @change='changeMenu'
           @theme='changeTheme'
+          @close='closeAppBar'
         ></component>
       </transition>
     </div>
-    <div v-if='!isDesktop'
-      class='appbar-margin'
-      @click='closeAppBar'
-    ></div>
   </div>
 </template>
 
@@ -104,21 +101,21 @@ export default class TheNavBar extends Vue {
 
 <style scoped>
 
-.wrapper, .theappbar {
-  display: flex;
-}
-
 .wrapper {
   position: fixed;
+  display: flex;
   top: 0;
   left: 0;
   height: 100%;
-  width: 100%;
   z-index: 35;
 }
 
 .wrapper.desktop {
-  width: 280px;
+  width: 305px;
+}
+
+.wrapper.mobile {
+  width: 100%;
 }
 
 .zindex {
@@ -127,6 +124,10 @@ export default class TheNavBar extends Vue {
 
 .appbar {
   width: 280px;
+}
+
+.appbar.mobile {
+  width: 100%;
 }
 
 .appbar-margin {

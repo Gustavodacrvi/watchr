@@ -1,5 +1,5 @@
 <template>
-  <span class='tag-wrapper border-card' @click="$emit('click', name)" :class='theme'>
+  <span class='tag-wrapper gray' @click="$emit('click', name)" :class='theme'>
     <span class='txt name fade' :class='theme'>{{ getName }}</span>
   </span>
 </template>
@@ -20,14 +20,14 @@ export default class AppviewEmptytag extends Vue {
     switch (this.name) {
       case 'name': return 'Sort by name'
       case 'nameReversed': return 'Sort tasks by name reversed'
-      case 'priorityHighest': return 'Sort tasks by priority highest first'
-      case 'priorityLowest': return 'Sort tasks by priority lowest first'
-      case 'creationDateNewest': return 'Sort by creation date newest first'
-      case 'creationDateOldest': return 'Sort by creation date oldest first'
-      case 'lastEditDateOldest': return 'Sort by last edit date oldest first'
-      case 'lastEditDateNewest': return 'Sort by last edit date newest first'
-      case 'dateOldest': return 'Sort by date oldest first'
-      case 'dateNewest': return 'Sort by date newest first'
+      case 'priorityHighest': return 'Sort tasks by priority(high to low)'
+      case 'priorityLowest': return 'Sort tasks by priority(low to high)'
+      case 'creationDateNewest': return 'Sort by creation(new to old)'
+      case 'creationDateOldest': return 'Sort by creation(old to new)'
+      case 'lastEditDateOldest': return 'Sort by last edit date(old to new)'
+      case 'lastEditDateNewest': return 'Sort by last edit date(new to old)'
+      case 'dateOldest': return 'Sort by date(old to new)'
+      case 'dateNewest': return 'Sort by date(new to old)'
     }
     return ''
   }
@@ -42,19 +42,17 @@ export default class AppviewEmptytag extends Vue {
   padding: 4px 12px;
   display: inline-block;
   cursor: pointer;
-  transition: background-color .2s;
+  transition: background-color .2s, color .2s;
+  margin-right: 6px;
+  margin-top: 4px;
 }
 
-.tag-wrapper + .tag-wrapper {
-  margin-left: 6px;
+.tag-wrapper:hover {
+  background-color: rgba(131, 183, 226, .1);
 }
 
-.tag-wrapper.dark:hover {
-  background-color: #282828;
-}
-
-.tag-wrapper.light:hover {
-  background-color: #e3e3e3;
+.tag-wrapper:hover .name {
+  color: #83B7E2;
 }
 
 </style>

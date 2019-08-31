@@ -12,7 +12,6 @@
         <view-header-icons v-if='pers'
           v-model='search'
           :pers-name='pers.name'
-          :show-task-options='selected && selected.length > 0'
           :allow-search='true'
           :allow-settings='!calendarRenderer'
           :allow-labels='allowLabels'
@@ -20,10 +19,7 @@
           :allow-smart-perspectives='true'
           :allow-priority='true'
 
-          @delete='deleteSelected'
           @priority='selectPriority'
-          @selectedpriority='selectedPriority'
-          @selecteddates='selectedDates'
           @settings='selectSettingsOption'
           @date='selectDate'
           @label='addLabel'
@@ -154,6 +150,7 @@ const set = namespace('settings')
 })
 export default class PerspectiveAppview extends Vue {
   @State theme!: IndexState.theme
+  @State selectedTasks!: IndexState.selectedTasks
   @State currentAppSection!: IndexState.currentAppSection
   @Getter isDesktop!: IndexGetters.IsDesktop
   @Getter platform!: IndexGetters.Platform
@@ -161,6 +158,9 @@ export default class PerspectiveAppview extends Vue {
   @Mutation sendOptionsToNavbar!: IndexMutations.SendOptionsToNavbar
   @Mutation hideNavBarOptions!: IndexMutations.HideNavBarOptions
   @Mutation pushAlert!: IndexMutations.PushAlert
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
+  @Mutation updateSelectedTasks!: IndexMutations.UpdateSelectedTasks
   @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
   @taskVuex.State tasks!: TaskState.tasks
@@ -204,7 +204,6 @@ export default class PerspectiveAppview extends Vue {
   order: string[] = []
   hided: boolean = false
   showing: boolean = true
-  selected: string[] = []
   justUpdated: boolean = false
   mobileSelectedOptions: ListIcon[] = [
     {
@@ -225,6 +224,12 @@ export default class PerspectiveAppview extends Vue {
       iconColor: '',
       size: '',
     },
+    {
+      name: 'Add labels to tasks',
+      icon: 'tag',
+      iconColor: '',
+      size: '',
+    },
   ]
 
   created() {
@@ -233,7 +238,7 @@ export default class PerspectiveAppview extends Vue {
 
   getMobileSelectedOptions(): ListIcon[] {
     this.mobileSelectedOptions[0]['callback'] = () => {
-      this.deleteTasksById(this.selected)
+      this.deleteTasksById(this.selectedTasks)
     }
     this.mobileSelectedOptions[1]['callback'] = () => {
       setTimeout(() => {
@@ -245,7 +250,7 @@ export default class PerspectiveAppview extends Vue {
             size: 'lg',
             callback: () => {
               this.changePrioritysByIds({
-                ids: this.selected,
+                ids: this.selectedTasks,
                 priority: 'High priority',
               })
               this.sendOptionsToNavbar([])
@@ -258,7 +263,7 @@ export default class PerspectiveAppview extends Vue {
             size: 'lg',
             callback: () => {
               this.changePrioritysByIds({
-                ids: this.selected,
+                ids: this.selectedTasks,
                 priority: 'Medium priority',
               })
               this.sendOptionsToNavbar([])
@@ -271,7 +276,7 @@ export default class PerspectiveAppview extends Vue {
             size: 'lg',
             callback: () => {
               this.changePrioritysByIds({
-                ids: this.selected,
+                ids: this.selectedTasks,
                 priority: 'Low priority',
               })
               this.sendOptionsToNavbar([])
@@ -291,6 +296,12 @@ export default class PerspectiveAppview extends Vue {
             this.selectedDates(e.utc.date)
           },
         })
+      }, 80)
+    }
+    this.mobileSelectedOptions[3]['callback'] = () => {
+      setTimeout(() => {
+        this.pushPopUp('AddLabelsToTasksPopup')
+        this.pushPopUpPayload(this.selectedTasks)
       }, 80)
     }
     return this.mobileSelectedOptions
@@ -403,20 +414,11 @@ export default class PerspectiveAppview extends Vue {
     this.justUpdated = true
   }
   onSelect(ids: string[]) {
-    this.selected = ids
-  }
-  deleteSelected() {
-    this.deleteTasksById(this.selected)
-  }
-  selectedPriority(value: string) {
-    this.changePrioritysByIds({
-      ids: this.selected,
-      priority: value,
-    })
+    this.updateSelectedTasks(ids)
   }
   selectedDates(date: string) {
     const arr: Array<{id: string, date: string}> = []
-    for (const id of this.selected)
+    for (const id of this.selectedTasks)
       arr.push({id, date})
     if (arr.length > 0)
       this.saveNewDateOfTasks(arr)
@@ -550,10 +552,10 @@ export default class PerspectiveAppview extends Vue {
     return undefined
   }
 
-  @Watch('selected')
+  @Watch('selectedTasks')
   onChange() {
     if (!this.isDesktop)
-      if (this.selected.length > 0)
+      if (this.selectedTasks.length > 0)
         this.sendOptionsToNavbar(this.getMobileSelectedOptions())
       else this.hideNavBarOptions()
   }

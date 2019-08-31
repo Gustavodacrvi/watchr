@@ -12,7 +12,7 @@
           </div>
           <div v-if='!isDesktop' style='flex-basis: 50px'></div>
           <transition name='fade' mode='out-in'>
-            <router-view v-if='!isShowingPopUp || isDesktop' class='content'/>
+            <router-view v-if='!isShowingPopUp || isDesktop' class='content' @loaded='v => loaded = v'/>
           </transition>
           <transition name='pop-up-trans' mode='out-in'>
             <pop-up v-if='isShowingPopUp && isDesktop'/>
@@ -93,6 +93,8 @@ export default class App extends Vue {
   @Getter anonymous!: IndexGetters.Anonymous
   @Action showLastAlert!: IndexActions.ShowLastAlert
   @Action activateKeyShortcut!: IndexActions.ActivateKeyShortcut
+
+  loaded: boolean = false
 
   mounted() {
     window.addEventListener('keypress', this.keyPressed)
@@ -223,26 +225,6 @@ export default class App extends Vue {
   overflow: hidden;
 }
 
-.appbar-trans-enter {
-  left: -300px !important;
-}
-
-.appbar-trans-enter-to {
-  transition: left .3s ease-out !important;
-}
-
-.appbar-trans-leave-active {
-  transition: left .3s ease-in !important;
-}
-
-.appbar-trans-enter-to {
-  left: 0 !important;
-}
-
-.appbar-trans-leave-active {
-  left: -300px !important;
-}
-
 .pop-up-trans-enter-active {
   transition: top .3s ease-out, opacity .3s ease-out !important;
 }
@@ -259,6 +241,18 @@ export default class App extends Vue {
 .pop-up-trans-enter-to, .pop-up-trans-leave {
   top: 0;
   opacity: 1;
+}
+
+.appbar-trans-enter, .appbar-trans-leave-to {
+  transform: scale(0.9,0.9);
+  opacity: 0;
+  transition: transform .2s ease-out, opacity .2s ease-out !important;
+}
+
+.appbar-trans-enter-to, .appbar-trans-leave {
+  transform: scale(1,1);
+  opacity: 1;
+  transition: transform .2s ease-in, opacity .2s ease-in !important;
 }
 
 .alert-trans-enter-active {

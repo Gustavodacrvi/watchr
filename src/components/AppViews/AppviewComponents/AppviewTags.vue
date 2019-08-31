@@ -45,14 +45,16 @@
       />
     </div>
     <div class='tags'>
-      <view-tag v-for='lab in getLabels'
-        :key='lab.id'
-        icon='tag'
-        back-color='#FF6B66'
-        :name='lab.name'
-        :fixed='false'
-        @click="$emit('removelabel', lab.id)"
-      />
+      <transition-group name='fade'>
+        <view-tag v-for='lab in getLabels'
+          :key='lab.id'
+          icon='tag'
+          back-color='#FF6B66'
+          :name='lab.name'
+          :fixed='false'
+          @click="$emit('removelabel', lab.id)"
+        />
+      </transition-group>
     </div>
     <div class='tags'>
       <transition name='fade'>
@@ -98,6 +100,8 @@ export default class AppviewTags extends Vue {
 
   @set.State dateFormat!: SetState.dateFormat
 
+  infoWidth: number = 0
+
   removeDate(date: string) {
     this.$emit('removedate', moment(date.replace(/\//g, '-'), this.dateFormat).format('Y-M-D'))
   }
@@ -142,8 +146,9 @@ export default class AppviewTags extends Vue {
   margin-top: 6px;
 }
 
-.tag + .tag {
-  margin-left: 4px;
+.tag {
+  margin-right: 4px;
+  margin-top: 3px;
 }
 
 </style>

@@ -29,7 +29,7 @@ export default {
     const weekFilter = (els: Task[], week: string): Task[] => {
       return tasks.filter(el => {
         if (el.date) {
-          const {saved} = this.getMomentsOutOfTask(el.date, timeZone, el.time)
+          const {saved} = this.getMomentsOutOfTask(el.date, timeZone)
           return saved.format('dddd') === week
         }
         return false
@@ -44,7 +44,7 @@ export default {
       case 'Today': {
         return tasks.filter(el => {
           if (!el.date) return false
-          const {today, saved} = this.getMomentsOutOfTask(el.date, timeZone, el.time)
+          const {today, saved} = this.getMomentsOutOfTask(el.date, timeZone)
           const areSame = today.isSame(saved, 'day')
           return areSame
         })
@@ -52,7 +52,7 @@ export default {
       case 'Next week': {
         return tasks.filter(el => {
           if (el.date) {
-            const {today, saved} = this.getMomentsOutOfTask(el.date, timeZone, el.time)
+            const {today, saved} = this.getMomentsOutOfTask(el.date, timeZone)
             const start = this.getNextWeek(today.clone(), startOfTheWeek)
             const end = start.clone().add(6, 'd')
             return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
@@ -63,7 +63,7 @@ export default {
       case 'This week': {
         return tasks.filter(el => {
           if (el.date) {
-            const {today, saved} = this.getMomentsOutOfTask(el.date, timeZone, el.time)
+            const {today, saved} = this.getMomentsOutOfTask(el.date, timeZone)
             const start = this.getNextWeek(today.clone(), startOfTheWeek).subtract(6, 'd')
             const end = start.clone().add(6, 'd')
             return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
@@ -75,7 +75,7 @@ export default {
         return tasks.filter(el => {
           if (el.date) {
             const nextMonth = timezone().add(1, 'M').tz(timeZone)
-            const {saved} = this.getMomentsOutOfTask(el.date, timeZone, el.time)
+            const {saved} = this.getMomentsOutOfTask(el.date, timeZone)
             const start = nextMonth.clone().startOf('month')
             const end = nextMonth.clone().endOf('month')
 
@@ -88,7 +88,7 @@ export default {
         return tasks.filter(el => {
           if (el.date) {
             const tom = timezone().add(1, 'd').tz(timeZone)
-            const {saved} = this.getMomentsOutOfTask(el.date, timeZone, el.time)
+            const {saved} = this.getMomentsOutOfTask(el.date, timeZone)
             return tom.isSame(saved, 'day')
           }
           return false
@@ -97,7 +97,7 @@ export default {
       case 'Overdue': {
         return tasks.filter(el => {
           if (el.date) {
-            const {saved, today} = this.getMomentsOutOfTask(el.date, timeZone, el.time)
+            const {saved, today} = this.getMomentsOutOfTask(el.date, timeZone)
             return saved.isBefore(today, 'day')
           }
           return false
@@ -106,7 +106,7 @@ export default {
       case 'Upcoming': {
         return tasks.filter(el => {
           if (el.date) {
-            const {today, saved} = this.getMomentsOutOfTask(el.date, timeZone, el.time)
+            const {today, saved} = this.getMomentsOutOfTask(el.date, timeZone)
             return saved.isAfter(today, 'day')
           }
           return false
@@ -378,11 +378,14 @@ export default {
   },
   getNextWeek(mom: any, nextWeek: string) {
     const clone = mom.clone()
+    let i = 0
     while (true) {
       const week = clone.format('dddd')
       if (week === nextWeek)
         break
       clone.add(1, 'd')
+      if (i > 100) break
+      i++
     }
     return clone
   },

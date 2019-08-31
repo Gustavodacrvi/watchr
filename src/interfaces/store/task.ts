@@ -57,6 +57,9 @@ export namespace TaskActions {
   export type StoreDeleteTasksById = (context: ActionContext, ids: string[]) => void
   export type DeleteTasksById = (ids: string[]) => void
 
+  export type StoreAddMultipleLabelsToMultipleTasks = (context: ActionContext, obj: {taskIds: string[], labIds: string[]}) => void
+  export type AddMultipleLabelsToMultipleTasks = (obj: {taskIds: string[], labIds: string[]}) => void
+
   export type StoreChangePrioritysByIds = (context: ActionContext, obj: {ids: string[], priority: string}) => void
   export type ChangePrioritysByIds = (obj: {ids: string[], priority: string}) => void
 

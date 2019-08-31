@@ -18,20 +18,16 @@
         </span>
       </span>
       <transition name='below-trans'>
-        <div v-show='showingExtraActions'
-          class='left-wrapper' 
+        <div v-show='selectedTasks.length > 0'
+          class='left-wrapper'
         >
-          <span id='today-btn'
+          <span v-for='b of leftButtons'
+            :key='b.icon'
             class='btn left floating-btn'
-            style='background-color: #FFE366'
+            :style='{backgroundColor: b.backColor}'
+            @click='b.click'
           >
-            <i class='icon txt pointer fas fa-star' style='color: white'></i>
-          </span>
-          <span id='tomorrow-btn'
-            class='btn left floating-btn'
-            style='background-color: #ffa166'
-          >
-            <i class='icon txt pointer fas fa-sun' style='color: white'></i>
+            <i :class='`icon txt pointer fas fa-${b.icon}`' style='color: white'></i>
           </span>
         </div>
       </transition>
@@ -48,6 +44,19 @@
           </span>
         </div>
       </transition>
+      <transition name='option-trans'>
+        <div v-if='isDesktop && selectedTasks.length > 0'
+          class='options-wrapper'>
+          <span v-for='btn in optionsButtons'
+            class='btn option floating-btn'
+            :key='btn.icon'
+            :style='`background-color: ${btn.backColor}`'
+            @click.prevent='btn.click'
+          >
+            <i :class='`icon txt pointer fas fa-${btn.icon}`' :style='{color: btn.iconColor}'></i>
+          </span>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -55,39 +64,93 @@
 <script lang='ts'>
 
 import { Component, Vue } from 'vue-property-decorator'
-import { Mutation, State, namespace } from 'vuex-class'
+import { Mutation, State, Getter, namespace } from 'vuex-class'
 
-import { FloatingButton } from '@/interfaces/app'
+const task = namespace('task')
+const set = namespace('settings')
 
 import Sortable from 'sortablejs'
 import { IndexState, IndexMutations } from '../interfaces/store/index'
 
+import moment from 'moment-timezone'
+
+import appUtils from '@/utils/app'
+
+import { FloatingButton } from '@/interfaces/app'
+import { TaskActions } from '../interfaces/store/task'
+import { SetState } from '../interfaces/store/settings'
+import { IndexGetters } from '../interfaces/store/'
+
 @Component
 export default class ActionButtonComp extends Vue {
   @State theme!: IndexState.theme
-  @State showingExtraActions!: IndexState.showingExtraActions
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @State selectedTasks!: IndexState.selectedTasks
   @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
+
+  @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
+
+  @task.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
+  @task.Action changePrioritysByIds!: TaskActions.ChangePrioritysByIds
+  @task.Action deleteTasksById!: TaskActions.DeleteTasksById
+
+  @set.State startOfTheWeek!: SetState.startOfTheWeek
 
   topButtons: FloatingButton[] = [
     {icon: 'bolt', iconColor: 'white', backColor: '#FFE366', click: this.popUp('TaskadderPopup')},
     {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: this.popUp('LabeladderPopup')},
     {icon: 'layer-group', iconColor: 'white', backColor: '#6b66ff', click: this.popUp('PerspectiveAdderPopup')},
   ]
+  leftButtons: FloatingButton[] = [
+    {icon: 'star', iconColor: 'white', backColor: '#FFE366', click: this.postPoneToday},
+    {icon: 'sun', iconColor: 'white', backColor: '#ffa166', click: this.postPoneTomorrow},
+    {icon: 'calendar', iconColor: 'white', backColor: '#9ce283', click: this.postPoneNextWeek},
+  ]
+  optionsButtons: FloatingButton[] = [
+    {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: this.popUp('AddLabelsToTasksPopup', true)},
+    {icon: 'calendar-day', iconColor: 'white', backColor: '#9ce283', click: this.centeredCard({
+      type: 'Component',
+      flexBasis: '275px',
+      listIcons: [],
+      listIconHandler: (el: any) => this.changeDate(el),
+      compName: 'CalendarInput',
+    })},
+    {icon: 'exclamation', iconColor: 'white', backColor: '#ffa166', click: this.centeredCard({
+      type: 'ListIcons',
+      flexBasis: '275px',
+      listIcons: [
+        {
+          name: 'High priority',
+          icon: 'exclamation',
+          iconColor: '#FF6B66',
+          size: 'lg',
+        },
+        {
+          name: 'Medium priority',
+          icon: 'exclamation',
+          iconColor: '#fff566',
+          size: 'lg',
+        },
+        {
+          name: 'Low priority',
+          icon: 'exclamation',
+          iconColor: '#70ff66',
+          size: 'lg',
+        },
+      ],
+      listIconHandler: (el: any) => this.changePriority(el),
+      compName: '',
+    })},
+    {icon: 'trash', iconColor: 'white', backColor: '#FF6B66', click: this.delete},
+  ]
   showing: boolean = false
+  tasks: string[] = []
 
   mounted() {
     this.mount()
   }
 
-  deleteEl() {
-    const r = this.$el
-    if (r) {
-      const el = r.getElementsByClassName('root-task')[0]
-      const parent = el.parentNode
-      if (parent)
-        parent.removeChild(el)
-    }
-  }
   mount() {
     const el = document.getElementById('floating-btn')
     const sort = new Sortable(el, {
@@ -95,22 +158,51 @@ export default class ActionButtonComp extends Vue {
       group: {name: 'floatbutton', pull: 'clone', put: false},
       animation: 150,
     })
-    const tod = document.getElementById('today-btn')
-    const today = new Sortable(tod, {
-      disabled: false,
-      group: {name: 'today-btn', pull: false, put: ['taskrenderer']},
-      animation: 150,
-    })
-    const tom = document.getElementById('tomorrow-btn')
-    const tomorrow = new Sortable(tom, {
-      disabled: false,
-      group: {name: 'tomorrow-btn', pull: false, put: ['taskrenderer']},
-      animation: 150,
-    })
   }
-  popUp(compName: string): () => void {
+
+  delete() {
+    this.deleteTasksById(this.selectedTasks)
+  }
+  postPone(mom: any) {
+    const arr = []
+    for (const id of this.selectedTasks)
+      arr.push({
+        id, date: mom.format('Y-M-D'),
+      })
+    this.saveNewDateOfTasks(arr)
+  }
+  postPoneToday() {
+    this.postPone(moment.utc())
+  }
+  postPoneTomorrow() {
+    this.postPone(moment.utc().add(1, 'd'))
+  }
+  postPoneNextWeek() {
+    this.postPone(appUtils.getNextWeek(moment.utc(), this.startOfTheWeek))
+  }
+  popUp(compName: string, sendIds?: boolean): () => void {
     return () => {
       this.pushPopUp(compName)
+      if (sendIds) this.pushPopUpPayload(this.selectedTasks)
+    }
+  }
+  changePriority(value: string) {
+    this.changePrioritysByIds({
+      ids: this.selectedTasks,
+      priority: value,
+    })
+  }
+  changeDate(value: any) {
+    const arr: Array<{id: string, date: string}> = []
+    for (const id of this.selectedTasks)
+      arr.push({id, date: value.utc.date})
+    if (arr.length > 0)
+      this.saveNewDateOfTasks(arr)
+  }
+  centeredCard(centeredCard: IndexState.centeredCard) {
+    return () => {
+      this.pushCenteredCard(centeredCard)
+      this.tasks = this.selectedTasks
     }
   }
 }
@@ -119,9 +211,13 @@ export default class ActionButtonComp extends Vue {
 
 <style scoped>
 
-.left-wrapper, .top-wrapper {
+.left-wrapper, .top-wrapper, .options-wrapper {
   display: flex;
   align-items: center;
+}
+
+.option {
+  margin: 0 6px;
 }
 
 .wrapper {
@@ -164,6 +260,18 @@ export default class ActionButtonComp extends Vue {
   flex-direction: column-reverse;
 }
 
+.options-wrapper {
+  flex-direction: row-reverse;
+  position: absolute;
+  height: 45px;
+  bottom: 16px;
+  left: 360px;
+}
+
+.option {
+  margin: 0 6px;
+}
+
 .btn {
   display: inline-block;
   border-radius: 100px;
@@ -177,7 +285,17 @@ export default class ActionButtonComp extends Vue {
 }
 
 .floating-btn {
+  position: relative;
   transition: filter .2s, transform .2s;
+}
+
+.comp {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition-duration: .2s;
 }
 
 .floating-btn:hover {

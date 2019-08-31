@@ -1,7 +1,7 @@
 <template>
   <div>
     <transition name='fade' mode='out-in'>
-      <div key='header' v-if='showTitle' class='header title'>
+      <div key='header' v-if='showTitle' class='header title' :class='{margin: !isDesktop}'>
         <span class='title'>{{ name }}</span>
       </div>
       <div key='options' v-else class='header options'>
@@ -18,14 +18,15 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { State } from 'vuex-class'
+import { State, Getter } from 'vuex-class'
 
 import { ListIcon } from '../../../interfaces/app'
-import { IndexState } from '../../../interfaces/store/index'
+import { IndexState, IndexGetters } from '../../../interfaces/store/index'
 
 @Component
 export default class AppnavHeader extends Vue {
   @State theme!: IndexState.theme
+  @Getter isDesktop!: IndexGetters.IsDesktop
 
   @Prop({type: String, required: true}) name!: string
   @Prop({type: Boolean, required: true}) showTitle!: boolean
@@ -53,6 +54,10 @@ export default class AppnavHeader extends Vue {
 
 .header.title {
   justify-content: center;
+}
+
+.header.margin {
+  margin: 8px 0;
 }
 
 .header .title {
