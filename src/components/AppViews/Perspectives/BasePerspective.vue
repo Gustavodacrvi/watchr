@@ -402,12 +402,6 @@ export default class PerspectiveAppview extends Vue {
   onSelect(ids: string[]) {
     this.updateSelectedTasks(ids)
   }
-  selectedPriority(value: string) {
-    this.changePrioritysByIds({
-      ids: this.selectedTasks,
-      priority: value,
-    })
-  }
   selectedDates(date: string) {
     const arr: Array<{id: string, date: string}> = []
     for (const id of this.selectedTasks)

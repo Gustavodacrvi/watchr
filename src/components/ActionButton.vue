@@ -48,7 +48,7 @@
         <div v-if='isDesktop'
           class='options-wrapper'>
           <span v-for='btn in optionsButtons'
-            class='btn top floating-btn'
+            class='btn option floating-btn'
             :key='btn.icon'
             :style='`background-color: ${btn.backColor}`'
             @click='btn.click'
@@ -69,7 +69,7 @@ import { Mutation, State, Getter, namespace } from 'vuex-class'
 const task = namespace('task')
 const set = namespace('settings')
 
-import { FloatingButton } from '@/interfaces/app'
+import AppviewCalendarInput from '@/components/AppViews/AppviewComponents/Tasks/AppviewCalendarInput.vue'
 
 import Sortable from 'sortablejs'
 import { IndexState, IndexMutations } from '../interfaces/store/index'
@@ -78,18 +78,26 @@ import moment from 'moment-timezone'
 
 import appUtils from '@/utils/app'
 
+import { FloatingButton } from '@/interfaces/app'
 import { TaskActions } from '../interfaces/store/task'
 import { SetState } from '../interfaces/store/settings'
 import { IndexGetters } from '../interfaces/store/'
 
-@Component
+@Component({
+  components: {
+    'AppviewCalendarInput': AppviewCalendarInput,
+  },
+})
 export default class ActionButtonComp extends Vue {
   @State theme!: IndexState.theme
   @Getter isDesktop!: IndexGetters.IsDesktop
   @State selectedTasks!: IndexState.selectedTasks
   @Mutation pushPopUp!: IndexMutations.PushPopUp
 
+  @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
+
   @task.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
+  @task.Action changePrioritysByIds!: TaskActions.ChangePrioritysByIds
   @task.Action deleteTasksById!: TaskActions.DeleteTasksById
 
   @set.State startOfTheWeek!: SetState.startOfTheWeek
@@ -105,6 +113,32 @@ export default class ActionButtonComp extends Vue {
     {icon: 'calendar', iconColor: 'white', backColor: '#9ce283', click: this.postPoneNextWeek},
   ]
   optionsButtons: FloatingButton[] = [
+    {icon: 'exclamation', iconColor: 'white', backColor: '#ffa166', click: this.centeredCard({
+      type: 'ListIcons',
+      flexBasis: '275px',
+      listIcons: [
+        {
+          name: 'High priority',
+          icon: 'exclamation',
+          iconColor: '#FF6B66',
+          size: 'lg',
+        },
+        {
+          name: 'Medium priority',
+          icon: 'exclamation',
+          iconColor: '#fff566',
+          size: 'lg',
+        },
+        {
+          name: 'Low priority',
+          icon: 'exclamation',
+          iconColor: '#70ff66',
+          size: 'lg',
+        },
+      ],
+      listIconHandler: (el: any) => this.changePriority(el),
+      compName: '',
+    })},
     {icon: 'trash', iconColor: 'white', backColor: '#FF6B66', click: this.delete},
   ]
   showing: boolean = false
@@ -147,6 +181,17 @@ export default class ActionButtonComp extends Vue {
       this.pushPopUp(compName)
     }
   }
+  changePriority(value: string) {
+    this.changePrioritysByIds({
+      ids: this.selectedTasks,
+      priority: value,
+    })
+  }
+  centeredCard(centeredCard: IndexState.centeredCard) {
+    return () => {
+      this.pushCenteredCard(centeredCard)
+    }
+  }
 }
 
 </script>
@@ -156,6 +201,10 @@ export default class ActionButtonComp extends Vue {
 .left-wrapper, .top-wrapper, .options-wrapper {
   display: flex;
   align-items: center;
+}
+
+.option {
+  margin: 0 6px;
 }
 
 .wrapper {
@@ -206,6 +255,10 @@ export default class ActionButtonComp extends Vue {
   left: 360px;
 }
 
+.option {
+  margin: 0 6px;
+}
+
 .btn {
   display: inline-block;
   border-radius: 100px;
@@ -219,7 +272,17 @@ export default class ActionButtonComp extends Vue {
 }
 
 .floating-btn {
+  position: relative;
   transition: filter .2s, transform .2s;
+}
+
+.comp {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition-duration: .2s;
 }
 
 .floating-btn:hover {
