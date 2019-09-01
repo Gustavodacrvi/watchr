@@ -103,6 +103,30 @@ export interface Task {
   }>
 }
 
+export interface Heading {
+  name: string
+  tasks: string[]
+}
+
+export interface Folder {
+  userId: string
+  id: string
+  name: string
+  projects: string[] // project ids
+}
+
+export interface Project {
+  userId: string
+  id: string
+  name: string
+  description: string
+  creationDate: string
+  lastEditDate: string
+  headingsOrder: string[]
+  tasks: string[]
+  headings: string[] // headings ids
+}
+
 export interface TaskInputObj {
   day: number
   month: number

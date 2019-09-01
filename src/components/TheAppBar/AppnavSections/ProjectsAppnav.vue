@@ -6,6 +6,7 @@
       :icons='[]'
       :selected='[]'
     />
+    <appnav-message @click="pushPopUp('PerspectiveAdderPopup')" name='Add project'/>
   </div>
 </template>
 
