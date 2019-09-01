@@ -546,9 +546,9 @@ export default class PerspectiveAppview extends Vue {
   get defaultDate(): string | undefined {
     if (!this.pers) return undefined
     if (this.pers.name === 'Today')
-      return timezone.utc().format('Y-M-D')
+      return timezone().format('Y-M-D')
     if (this.pers.name === 'Tomorrow')
-      return timezone.utc().add(1, 'd').format('Y-M-D')
+      return timezone().add(1, 'd').format('Y-M-D')
     return undefined
   }
 

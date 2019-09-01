@@ -172,13 +172,13 @@ export default class ActionButtonComp extends Vue {
     this.saveNewDateOfTasks(arr)
   }
   postPoneToday() {
-    this.postPone(moment.utc())
+    this.postPone(moment())
   }
   postPoneTomorrow() {
-    this.postPone(moment.utc().add(1, 'd'))
+    this.postPone(moment().add(1, 'd'))
   }
   postPoneNextWeek() {
-    this.postPone(appUtils.getNextWeek(moment.utc(), this.startOfTheWeek))
+    this.postPone(appUtils.getNextWeek(moment(), this.startOfTheWeek))
   }
   popUp(compName: string, sendIds?: boolean): () => void {
     return () => {
