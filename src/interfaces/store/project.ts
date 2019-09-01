@@ -32,7 +32,7 @@ interface ActionContext {
 
 export interface Getters {
   sortedFolders: (state: State) => ProjectGetters.SortedFolders
-  SortedFoldersByName: (state: State) => ProjectGetters.SortedFolders
+  sortedFoldersByName: (state: State) => ProjectGetters.SortedFolders
   [key: string]: (state: State, getters: Getters) => void
 }
 

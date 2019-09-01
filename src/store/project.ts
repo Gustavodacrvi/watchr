@@ -23,7 +23,7 @@ export default {
       const order: string[] = appUtils.fixOrder(state.folders, state.foldersOrder)
       return appUtils.sortArrayByIds(state.folders, order)
     },
-    SortedFoldersByName(state) {
+    sortedFoldersByName(state) {
       const fol = state.folders.slice()
       fol.sort((a, b) => a.name.localeCompare(b.name))
       return fol

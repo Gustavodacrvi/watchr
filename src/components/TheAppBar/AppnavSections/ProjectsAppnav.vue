@@ -6,7 +6,7 @@
       :icons='[]'
       :selected='[]'
     />
-    <appnav-message name='Add folder'/>
+    <appnav-message @click='pushPopUp("AddFolderPopup")' name='Add folder'/>
   </div>
 </template>
 
@@ -42,6 +42,7 @@ export default class OverviewAppnav extends Vue {
   @State viewName!: IndexState.viewName
   @State viewType!: IndexState.viewType
   @Mutation openSection!: IndexMutations.OpenSection
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
 
   @project.Getter sortedFolders!: ProjectGetters.SortedFolders
 

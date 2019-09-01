@@ -32,23 +32,38 @@ import { State, Mutation, namespace } from 'vuex-class'
 
 const project = namespace('project')
 
-import { IndexState } from '../../interfaces/store/index'
+import DropInput from '@/components/DropdownInput.vue'
 
-@Component
+import { IndexState } from '../../interfaces/store/index'
+import { ProjectGetters } from '../../interfaces/store/project'
+
+@Component({
+  components: {
+    'dropdown-input': DropInput,
+  },
+})
 export default class SigninPopUp extends Vue {
   @State theme!: IndexState.theme
 
-  @project.State folders!: ProjectState.folders
+  @project.Getter sortedFoldersByName!: ProjectGetters.SortedFoldersByName
 
-  value: string | null = ''
+  value: string = ''
   options: string[] = []
 
   mounted() {
     const el = document.querySelectorAll('.folderadder')[0] as any
     el.focus()
   }
-  getOptions(): string[] {
 
+  add() {
+    console.log('add shit')
+  }
+  getOptions(): string[] {
+    return this.sortedFoldersByName.filter(el => el.name.includes(this.value)).map(el => el.name)
+
+  }
+  select(val: string) {
+    this.value = val
   }
 
   @Watch('value')
