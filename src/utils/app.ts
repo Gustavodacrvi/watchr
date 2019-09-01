@@ -8,6 +8,20 @@ import timezone from 'moment-timezone'
 import { SetState } from '@/interfaces/store/settings'
 
 export default {
+  fixStoreChanges(state: any, changes: any, arrName: string) {
+    for (const change of changes)
+      if (change.type === 'added') {
+        const lab = state[arrName].find((el: any) => el.id === change.doc.id)
+        if (!lab)
+          state[arrName].push({...change.doc.data(), id: change.doc.id} as any)
+      } else if (change.type === 'removed') {
+        const index = state[arrName].findIndex((el: any) => el.id === change.doc.id)
+        state[arrName].splice(index, 1)
+      } else {
+        const index = state[arrName].findIndex((el: any) => el.id === change.doc.id)
+        state[arrName].splice(index, 1, {...change.doc.data(), id: change.doc.id} as any)
+      }
+  },
   AsyncComponent(comp: any): any {
     return () => ({
       component: comp,

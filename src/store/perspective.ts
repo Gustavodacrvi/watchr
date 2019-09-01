@@ -281,18 +281,7 @@ export default {
         })
         rootState.firestore.collection('perspectives').where('userId', '==', rootState.uid).onSnapshot(snap => {
           const changes = snap.docChanges()
-          for (const change of changes)
-            if (change.type === 'added') {
-              const lab = state.perspectives.find(el => el.id === change.doc.id)
-              if (!lab)
-                state.perspectives.push({...change.doc.data(), id: change.doc.id} as any)
-            } else if (change.type === 'removed') {
-              const index = state.perspectives.findIndex(el => el.id === change.doc.id)
-              state.perspectives.splice(index, 1)
-            } else {
-              const index = state.perspectives.findIndex(el => el.id === change.doc.id)
-              state.perspectives.splice(index, 1, {...change.doc.data(), id: change.doc.id} as any)
-            }
+          appUtils.fixStoreChanges(state, changes, 'perspectives')
         })
       }
     },

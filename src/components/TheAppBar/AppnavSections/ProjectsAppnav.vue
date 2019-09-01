@@ -6,7 +6,8 @@
       :icons='[]'
       :selected='[]'
     />
-    <appnav-message @click="pushPopUp('PerspectiveAdderPopup')" name='Add project'/>
+    {{sortedFolders}}
+    <appnav-message name='Add folder'/>
   </div>
 </template>
 
@@ -17,21 +18,25 @@ import { State, Mutation, namespace, Getter } from 'vuex-class'
 
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
+import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmessage.vue'
+import AppnavDivision from '@/components/TheAppBar/AppnavComponents/AppnavDivision.vue'
 
 import { Label, Perspective, Task, ListIcon, ListElement } from '@/interfaces/app'
 import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 import { PersGetters } from '../../../interfaces/store/perspective'
 import { TaskState } from '../../../interfaces/store/task'
 import { SetState } from '../../../interfaces/store/settings'
+import { ProjectGetters } from '../../../interfaces/store/project'
 
-const persVuex = namespace('perspective')
-const taskVuex = namespace('task')
 const set = namespace('settings')
+const project = namespace('project')
 
 @Component({
   components: {
     'list-renderer': ListRenderer,
     'appnav-header': AppnavHeader,
+    'appnav-message': AppnavMessage,
+    'app-division': AppnavDivision,
   },
 })
 export default class OverviewAppnav extends Vue {
@@ -39,11 +44,7 @@ export default class OverviewAppnav extends Vue {
   @State viewType!: IndexState.viewType
   @Mutation openSection!: IndexMutations.OpenSection
 
-  @persVuex.Getter pinedSmartPerspectives!: PersGetters.PinedSmartPerspectives
-  @persVuex.Getter pinedCustomPerspectives!: PersGetters.PinedCustomPerspectives
-  @persVuex.Getter getNumberOfTasksByPerspectiveId!: PersGetters.GetNumberOfTasksByPerspectiveId
-
-  @taskVuex.State tasks!: TaskState.tasks
+  @project.Getter sortedFolders!: ProjectGetters.SortedFolders
 
   @set.State timeZone!: SetState.timeZone
 
