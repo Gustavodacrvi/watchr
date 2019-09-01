@@ -6,7 +6,6 @@
       :icons='[]'
       :selected='[]'
     />
-    {{sortedFolders}}
     <appnav-message name='Add folder'/>
   </div>
 </template>

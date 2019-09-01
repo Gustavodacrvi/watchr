@@ -19,6 +19,7 @@ export interface State {
 
 export namespace ProjectGetters {
   export type SortedFolders = Folder[]
+  export type SortedFoldersByName = Folder[]
 }
 
 interface ActionContext {
@@ -31,6 +32,7 @@ interface ActionContext {
 
 export interface Getters {
   sortedFolders: (state: State) => ProjectGetters.SortedFolders
+  SortedFoldersByName: (state: State) => ProjectGetters.SortedFolders
   [key: string]: (state: State, getters: Getters) => void
 }
 
