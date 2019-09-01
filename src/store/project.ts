@@ -6,6 +6,7 @@ import appUtils from '@/utils/app'
 interface Actions {
   getData: ProjectActions.StoreGetData
   addFoldersOrder: ProjectActions.StoreAddFoldersOrder
+  addFolder: ProjectActions.StoreAddFolder
 }
 
 export default {
@@ -57,6 +58,13 @@ export default {
             appUtils.fixStoreChanges(state, changes, 'projects')
           })
       }
+    },
+    addFolder({ rootState }, name) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('folders').add({
+          name, projects: [],
+          userId: rootState.uid,
+        })
     },
   } as Actions,
 }

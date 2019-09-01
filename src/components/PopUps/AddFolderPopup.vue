@@ -35,7 +35,7 @@ const project = namespace('project')
 import DropInput from '@/components/DropdownInput.vue'
 
 import { IndexState } from '../../interfaces/store/index'
-import { ProjectGetters } from '../../interfaces/store/project'
+import { ProjectGetters, ProjectActions } from '../../interfaces/store/project'
 
 @Component({
   components: {
@@ -46,6 +46,7 @@ export default class SigninPopUp extends Vue {
   @State theme!: IndexState.theme
 
   @project.Getter sortedFoldersByName!: ProjectGetters.SortedFoldersByName
+  @project.Action addFolder!: ProjectActions.AddFolder
 
   value: string = ''
   options: string[] = []
@@ -56,7 +57,12 @@ export default class SigninPopUp extends Vue {
   }
 
   add() {
-    console.log('add shit')
+    if (this.value) {
+      const fol = this.sortedFoldersByName.find(el => el.name === this.value)
+      if (!fol) {
+        this.addFolder(this.value)
+      }
+    }
   }
   getOptions(): string[] {
     return this.sortedFoldersByName.filter(el => el.name.includes(this.value)).map(el => el.name)

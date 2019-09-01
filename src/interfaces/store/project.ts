@@ -42,4 +42,7 @@ export namespace ProjectActions {
 
   export type StoreAddFoldersOrder = (context: ActionContext, id: string) => void
   export type AddFoldersOrder = (id: string) => Promise<any>
+
+  export type StoreAddFolder = (context: ActionContext, name: string) => void
+  export type AddFolder = (name: string) => void
 }
