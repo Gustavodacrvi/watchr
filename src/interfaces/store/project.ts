@@ -65,4 +65,7 @@ export namespace ProjectActions {
 
   export type StoreMoveProjectsFromFolder = (context: ActionContext, obj: {from: string, to: string, ids: string[]}) => void
   export type MoveProjectsFromFolder = (obj: {from: string, to: string, ids: string[]}) => void
+
+  export type StoreToggleProjectPin = (context: ActionContext, id: string) => void
+  export type ToggleProjectPin = (id: string) => void
 }

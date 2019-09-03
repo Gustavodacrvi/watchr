@@ -11,6 +11,8 @@
       :list='getFoldersList'
       :icons='folderOptions'
       :active='activePers'
+      :options='getProjectOptions'
+      :help-icons='getProjectHelpIcons'
       @update='foldersOrder'
       @move='updateFoldersMove'
     />
@@ -28,7 +30,7 @@ import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.v
 import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmessage.vue'
 import AppnavDivision from '@/components/TheAppBar/AppnavComponents/AppnavDivision.vue'
 
-import { Label, Perspective, Task, ListIcon, ListElement, AppnavDivisionEl, SimpleAdder } from '@/interfaces/app'
+import { Label, Perspective, Task, ListIcon, ListElement, AppnavDivisionEl, SimpleAdder, Project } from '@/interfaces/app'
 import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 import { PersGetters } from '../../../interfaces/store/perspective'
 import { TaskState } from '../../../interfaces/store/task'
@@ -60,6 +62,7 @@ export default class OverviewAppnav extends Vue {
   @project.Action editFolderNameById!: ProjectActions.EditFolderNameById
   @project.Action saveFoldersOrder!: ProjectActions.SaveFoldersOrder
   @project.Action moveProjectsFromFolder!: ProjectActions.MoveProjectsFromFolder
+  @project.Action toggleProjectPin!: ProjectActions.ToggleProjectPin
 
   @set.State timeZone!: SetState.timeZone
 
@@ -73,6 +76,51 @@ export default class OverviewAppnav extends Vue {
   }
   updateFoldersMove(obj: {to: string, from: string, ids: string[]}) {
     this.moveProjectsFromFolder(obj)
+  }
+  getProjectOptions(pro: Project) {
+    const icons: ListIcon[] = [
+      {
+        name: 'Pin project',
+        icon: 'thumbtack',
+        iconColor: '',
+        size: 'lg',
+        callback: (id: string) => {
+          this.toggleProjectPin(id)
+        },
+      },
+      {
+        name: 'Edit project',
+        icon: 'edit',
+        iconColor: '',
+        size: 'lg',
+        callback: (id: string) => {
+
+        },
+      },
+      {
+        name: 'Delete project',
+        icon: 'trash',
+        iconColor: '',
+        size: 'lg',
+        callback: (id: string) => {
+
+        },
+      },
+    ]
+    if (pro.bindOnOverview)
+      icons[0].name = 'Unpin project'
+    return icons
+  }
+  getProjectHelpIcons(pro: Project) {
+    const icons: ListIcon[] = []
+    if (pro.bindOnOverview)
+      icons.push({
+        icon: 'thumbtack',
+        iconColor: '',
+        name: '',
+        size: 'xs',
+      })
+    return icons
   }
 
   get folderOptions(): ListIcon[] {

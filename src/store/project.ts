@@ -15,6 +15,7 @@ interface Actions {
   saveFoldersOrder: ProjectActions.StoreSaveFoldersOrder
   addProject: ProjectActions.StoreAddProject
   moveProjectsFromFolder: ProjectActions.StoreMoveProjectsFromFolder
+  toggleProjectPin: ProjectActions.StoreToggleProjectPin
 }
 
 export default {
@@ -66,6 +67,14 @@ export default {
         rootState.firestore.collection('folders').doc(id).update({
           name,
         })
+    },
+    toggleProjectPin({ rootState, state }, id) {
+      if (rootState.firestore && rootState.uid) {
+        const pro = state.projects.find(el => el.id === id) as Project
+        rootState.firestore.collection('projects').doc(id).update({
+          bindOnOverview: !pro.bindOnOverview,
+        })
+      }
     },
     moveProjectsFromFolder({ rootState }, {from, to, ids}) {
       if (rootState.firestore && rootState.uid) {

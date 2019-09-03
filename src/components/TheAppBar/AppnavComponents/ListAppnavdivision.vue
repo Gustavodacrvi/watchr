@@ -15,6 +15,8 @@
           :list='el.list'
           :parent='el.id'
           :active='active'
+          :options='options'
+          :help-icons='helpIcons'
           :name='el.name'
           @move='move'
         />
@@ -51,8 +53,8 @@ export default class ListAppnavDivisionRendrer extends Mixins(Mixin) {
   @Prop({required: true, type: String}) group!: string
   @Prop({required: true, type: String}) active!: string
   @Prop({default: false, type: Boolean}) disabled!: boolean
-  @Prop({default: () => [], type: Function}) options!: (obj: any) => ListIcon[]
-  @Prop({default: () => [], type: Function}) helpIcons!: (obj: any) => ListIcon[]
+  @Prop(Function) options!: (obj: any) => ListIcon[]
+  @Prop(Function) helpIcons!: (obj: any) => ListIcon[]
 
   sortable: any = null
   rootSelector: string = `.sort-appnavdivision-${this.group}`
