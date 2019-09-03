@@ -45,6 +45,15 @@ export default {
       p.sort((a, b) => a.name.localeCompare(b.name))
       return p
     },
+    getPinedProjectsByFolderId: (state) => (id) => {
+      const fold = state.folders.find(el => el.id === id) as Folder
+      const arr = []
+      for (const proId of fold.projects) {
+        const project = state.projects.find(el => el.id === proId)
+        if (project && project.bindOnOverview) arr.push(project)
+      }
+      return arr
+    },
     getProjectsByFolderId: (state) => (id) => {
       const fold = state.folders.find(el => el.id === id) as Folder
       const arr = []

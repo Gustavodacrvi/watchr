@@ -18,6 +18,7 @@
           :options='options'
           :help-icons='helpIcons'
           :name='el.name'
+          :disabled='disabled'
           @move='move'
         />
       </app-division>

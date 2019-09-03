@@ -22,6 +22,7 @@ export namespace ProjectGetters {
   export type SortedFolders = Folder[]
   export type SortedFoldersByName = Folder[]
   export type SortedProjectsByName = Project[]
+  export type GetPinedProjectsByFolderId = (id: string) => Project[]
   export type GetProjectsByFolderId = (id: string) => Project[]
 }
 
@@ -38,6 +39,7 @@ export interface Getters {
   sortedFoldersByName: (state: State) => ProjectGetters.SortedFolders
   sortedProjectsByName: (state: State) => ProjectGetters.SortedProjectsByName
   getProjectsByFolderId: (state: State) => ProjectGetters.GetProjectsByFolderId
+  getPinedProjectsByFolderId: (state: State) => ProjectGetters.GetPinedProjectsByFolderId
   [key: string]: (state: State, getters: Getters) => void
 }
 
