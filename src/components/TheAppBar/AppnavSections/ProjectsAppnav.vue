@@ -7,7 +7,7 @@
       :selected='[]'
     />
     <appnav-renderer v-if='sortedFolders && sortedFolders.length > 0'
-      group='appnavdivision'
+      group='appnavdivisionprojects'
       :list='getFoldersList'
       :icons='folderOptions'
       @update='foldersOrder'

@@ -44,7 +44,7 @@
           </span>
         </div>
       </transition>
-      <transition name='option-trans'>
+      <transition name='below-trans'>
         <div v-if='isDesktop && selectedTasks.length > 0'
           class='options-wrapper'>
           <span v-for='btn in optionsButtons'

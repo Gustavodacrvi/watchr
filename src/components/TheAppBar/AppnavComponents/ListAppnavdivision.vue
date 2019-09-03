@@ -21,10 +21,7 @@ import { Component, Vue, Prop, Watch, Mixins } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
 import Mixin from '@/mixins/sortable'
 
-import Sortable, { MultiDrag } from 'sortablejs'
-import { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
-
-Sortable.mount(new MultiDrag(), new AutoScroll())
+import Sortable from 'sortablejs'
 
 import AppnavDivision from '@/components/TheAppBar/AppnavComponents/AppnavDivision.vue'
 
