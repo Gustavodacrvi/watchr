@@ -63,6 +63,7 @@ export default class OverviewAppnav extends Vue {
   @project.Action saveFoldersOrder!: ProjectActions.SaveFoldersOrder
   @project.Action moveProjectsFromFolder!: ProjectActions.MoveProjectsFromFolder
   @project.Action toggleProjectPin!: ProjectActions.ToggleProjectPin
+  @project.Action deleteProjectById!: ProjectActions.DeleteProjectById
 
   @set.State timeZone!: SetState.timeZone
 
@@ -104,7 +105,7 @@ export default class OverviewAppnav extends Vue {
         iconColor: '',
         size: 'lg',
         callback: (id: string) => {
-
+          this.deleteProjectById(id)
         },
       },
     ]

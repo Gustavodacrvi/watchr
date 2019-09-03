@@ -17,6 +17,7 @@ interface Actions {
   moveProjectsFromFolder: ProjectActions.StoreMoveProjectsFromFolder
   toggleProjectPin: ProjectActions.StoreToggleProjectPin
   editProject: ProjectActions.StoreEditProject
+  deleteProjectById: ProjectActions.StoreDeleteProjectById
 }
 
 export default {
@@ -74,6 +75,10 @@ export default {
         rootState.firestore.collection('folders').doc(id).update({
           name,
         })
+    },
+    deleteProjectById({ rootState }, id) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('projects').doc(id).delete()
     },
     toggleProjectPin({ rootState, state }, id) {
       if (rootState.firestore && rootState.uid) {

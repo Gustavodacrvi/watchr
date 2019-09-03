@@ -71,4 +71,7 @@ export namespace ProjectActions {
 
   export type StoreEditProject = (context: ActionContext, obj: {name: string, id: string, description: string}) => void
   export type EditProject = (obj: {name: string, id: string, description: string}) => void
+
+  export type StoreDeleteProjectById = (context: ActionContext, id: string) => void
+  export type DeleteProjectById = (id: string) => void
 }
