@@ -48,6 +48,7 @@ export default class OverviewAppnav extends Vue {
   @State viewType!: IndexState.viewType
   @Mutation openSection!: IndexMutations.OpenSection
   @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
   @project.Getter sortedFolders!: ProjectGetters.SortedFolders
   @project.Getter getProjectsByFolderId!: ProjectGetters.GetProjectsByFolderId
@@ -68,7 +69,15 @@ export default class OverviewAppnav extends Vue {
         iconColor: '',
         size: 'lg',
         callback: (id: string) => {
-          console.log(id)
+          this.pushCenteredCard({
+            type: 'Component',
+            flexBasis: '275px',
+            listIcons: [],
+            listIconHandler: () => {
+
+            },
+            compName: 'Confirm',
+          })
         },
       }
     ]

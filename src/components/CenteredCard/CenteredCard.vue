@@ -54,9 +54,12 @@ import { ListIcon, CenteredCard } from '../../interfaces/app'
 import appUtils from '@/utils/app'
 import { IndexState, IndexMutations } from '../../interfaces/store/index'
 
+const c = appUtils.AsyncComponent
+
 @Component({
   components: {
-    CalendarInput: appUtils.AsyncComponent(import('./CalendarInput.vue') as any),
+    CalendarInput: c(import('./CalendarInput.vue') as any),
+    Confirm: c(import('./Confirm.vue') as any),
   },
 })
 export default class CenteredCardComp extends Vue {
