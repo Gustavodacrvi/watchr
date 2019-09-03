@@ -124,12 +124,24 @@ export default class OverviewAppnav extends Vue {
   }
   get getPinedProjects(): AppnavDivisionEl[] {
     const arr: AppnavDivisionEl[] = []
-
     for (const fold of this.sortedFolders) {
-
+      const pros = this.getPinedProjectsByFolderId(fold.id)
+      if (pros.length > 0) {
+        const list = []
+        for (const p of pros)
+          list.push({
+            ...p,
+            number: 0,
+            show: true,
+          })
+        arr.push({
+          name: fold.name,
+          id: fold.id,
+          list,
+        })
+      }
     }
-
-    return []
+    return arr
   }
 }
 
