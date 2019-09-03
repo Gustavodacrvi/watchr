@@ -10,6 +10,7 @@
       group='appnavdivision'
       :list='getFoldersList'
       :icons='folderOptions'
+      @update='foldersOrder'
     />
     <appnav-message v-else @click='pushPopUp("AddFolderPopup")' name='Add folder'/>
   </div>
@@ -55,6 +56,7 @@ export default class OverviewAppnav extends Vue {
   @project.Getter getProjectsByFolderId!: ProjectGetters.GetProjectsByFolderId
   @project.Action deleteFolderAndProjectsByFolderId!: ProjectActions.DeleteFolderAndProjectsByFolderId
   @project.Action editFolderNameById!: ProjectActions.EditFolderNameById
+  @project.Action saveFoldersOrder!: ProjectActions.SaveFoldersOrder
 
   @set.State timeZone!: SetState.timeZone
 
@@ -62,6 +64,9 @@ export default class OverviewAppnav extends Vue {
 
   created() {
     this.openSection('overview')
+  }
+  foldersOrder(ids: string[]) {
+    this.saveFoldersOrder(ids)
   }
 
   get folderOptions(): ListIcon[] {

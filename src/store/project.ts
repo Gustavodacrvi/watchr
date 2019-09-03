@@ -10,6 +10,7 @@ interface Actions {
   addFolder: ProjectActions.StoreAddFolder
   deleteFolderAndProjectsByFolderId: ProjectActions.StoreDeleteFolderAndProjectsByFolderId
   editFolderNameById: ProjectActions.StoreEditFolderNameById
+  saveFoldersOrder: ProjectActions.StoreSaveFoldersOrder
 }
 
 export default {
@@ -98,6 +99,12 @@ export default {
         rootState.firestore.collection('folders').add({
           name, projects: [],
           userId: rootState.uid,
+        })
+    },
+    saveFoldersOrder({ rootState }, ids) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('foldersOrder').doc(rootState.uid).update({
+          order: ids,
         })
     },
   } as Actions,

@@ -54,4 +54,7 @@ export namespace ProjectActions {
 
   export type StoreEditFolderNameById = (context: ActionContext, obj: {id: string, name: string}) => void
   export type EditFolderNameById = (obj: {id: string, name: string}) => void
+
+  export type StoreSaveFoldersOrder = (context: ActionContext, ids: string[]) => void
+  export type SaveFoldersOrder = (ids: string[]) => void
 }
