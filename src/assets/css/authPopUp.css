@@ -41,14 +41,31 @@
   transition: background-color .3s ease-in;
 }
 
+.button.alert {
+  background-color: #FF6B66;
+}
+
+.transparent {
+  background-color: #282828 !important;
+}
+
 .button:hover {
   transition: background-color .3s ease-out;
   background-color: #accfec;
 }
 
+.button.alert:hover {
+  transition: background-color .3s ease-out;
+  background-color: #FF6B66 !important;
+}
+
 .button.tiny {
   width: initial;
   padding: 6px;
+}
+
+.button.big {
+  padding: 12px;
 }
 
 .button.block {

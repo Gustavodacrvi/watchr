@@ -71,10 +71,11 @@ export default class OverviewAppnav extends Vue {
         callback: (id: string) => {
           this.pushCenteredCard({
             type: 'Component',
-            flexBasis: '275px',
+            flexBasis: '475px',
+            payload: 'The folder and all of the projects in it will be <strong>Deleted</strong>.',
             listIcons: [],
-            listIconHandler: () => {
-
+            listIconHandler: (confirm: boolean) => {
+              console.log(confirm)
             },
             compName: 'Confirm',
           })
