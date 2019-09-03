@@ -238,14 +238,17 @@ const store: any = new Vuex.Store({
           }, state.alert.duration * NUMBER_OF_MILISECONDS_IN_ONE_SECOND)
       }
     },
-    activateKeyShortcut({commit, getters}, key) {
-      if ((getters.loggedAndVerified || getters.anonymous))
-        switch (key.toLowerCase()) {
-          case 'l': commit('pushPopUp', 'LabeladderPopup'); break
-          case 'p': commit('pushPopUp', 'PerspectiveAdderPopup'); break
-          case 't': commit('pushPopUp', 'TaskadderPopup'); break
-          case 'h': commit('pushPopUp', ''); break
-        }
+    activateKeyShortcut({commit, getters}, {key, special, isTyping}) {
+      if ((getters.loggedAndVerified || getters.anonymous)) {
+        if (!isTyping)
+          switch (key.toLowerCase()) {
+            case 'l': commit('pushPopUp', 'LabeladderPopup'); break
+            case 'p': commit('pushPopUp', 'PerspectiveAdderPopup'); break
+            case 't': commit('pushPopUp', 'TaskadderPopup'); break
+            case 'h': commit('pushPopUp', ''); break
+          }
+        if (special && key === 'h') commit('pushPopUp', '')
+      }
     },
   } as Actions,
 })

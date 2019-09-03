@@ -2,6 +2,7 @@
 
 import { State, Getters, ProjectActions } from '@/interfaces/store/project'
 import appUtils from '@/utils/app'
+import { Folder } from '@/interfaces/app'
 
 interface Actions {
   getData: ProjectActions.StoreGetData
@@ -28,6 +29,15 @@ export default {
       const fol = state.folders.slice()
       fol.sort((a, b) => a.name.localeCompare(b.name))
       return fol
+    },
+    getProjectsByFolderId: (state) => (id) => {
+      const fold = state.folders.find(el => el.id === id) as Folder
+      const arr = []
+      for (const proId of fold.projects) {
+        const project = state.projects.find(el => el.id === proId)
+        if (project) arr.push(project)
+      }
+      return arr
     },
   } as Getters,
   actions: {

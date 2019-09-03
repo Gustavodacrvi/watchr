@@ -15,8 +15,8 @@
         @click='elClick'
       >
         <span class='circles' @click='completeSubTask'>
-          <i v-if='!task.completed' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
-          <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
+          <i v-show='!task.completed' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
+          <i v-show='task.completed' key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
         </span>
         <span class='txt name' :class='theme'>{{ task.name }}</span>
         <transition name='fade'>
@@ -50,7 +50,7 @@ import { TaskActions } from '../../../../interfaces/store/task'
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
-else Vue.directive('longpress', longClickDirective({delay: 1500, interval: 5000}))
+else Vue.directive('longpress', longClickDirective({delay: 1000, interval: 5000}))
 
 @Component({
   components: {

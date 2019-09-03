@@ -20,6 +20,7 @@ export interface State {
 export namespace ProjectGetters {
   export type SortedFolders = Folder[]
   export type SortedFoldersByName = Folder[]
+  export type GetProjectsByFolderId = (id: string) => Project[]
 }
 
 interface ActionContext {
@@ -33,6 +34,7 @@ interface ActionContext {
 export interface Getters {
   sortedFolders: (state: State) => ProjectGetters.SortedFolders
   sortedFoldersByName: (state: State) => ProjectGetters.SortedFolders
+  getProjectsByFolderId: (state: State) => ProjectGetters.GetProjectsByFolderId
   [key: string]: (state: State, getters: Getters) => void
 }
 

@@ -1,8 +1,8 @@
 <template>
   <div class='division'>
-    <div class='header'>
+    <div class='header' @click='showing = !showing'>
       <span class='txt' :class='theme'>{{ name }}</span>
-      <span class='right' @click='showing = !showing'>
+      <span class='right' @click.stop='showing = !showing'>
         <span v-for='i in icons'
           :key='i.name'
           class='header-option'
@@ -53,7 +53,7 @@ export default class TodayView extends Vue {
   align-items: center;
   opacity: .6;
   margin-left: -12px;
-  font-size: .8em;
+  font-size: .9em;
   margin: 10px 0;
   position: relative;
 }

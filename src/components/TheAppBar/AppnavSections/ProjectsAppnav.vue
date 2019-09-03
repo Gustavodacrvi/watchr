@@ -6,7 +6,11 @@
       :icons='[]'
       :selected='[]'
     />
-    <appnav-message @click='pushPopUp("AddFolderPopup")' name='Add folder'/>
+    <appnav-renderer v-if='sortedFolders && sortedFolders.length > 0'
+      group='appnavdivision'
+      :list='getFoldersList'
+    />
+    <appnav-message v-else @click='pushPopUp("AddFolderPopup")' name='Add folder'/>
   </div>
 </template>
 
@@ -15,12 +19,12 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State, Mutation, namespace, Getter } from 'vuex-class'
 
-import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
+import AppnavRenderer from '@/components/TheAppBar/AppnavComponents/ListAppnavdivision.vue'
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
 import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmessage.vue'
 import AppnavDivision from '@/components/TheAppBar/AppnavComponents/AppnavDivision.vue'
 
-import { Label, Perspective, Task, ListIcon, ListElement } from '@/interfaces/app'
+import { Label, Perspective, Task, ListIcon, ListElement, AppnavDivisionEl } from '@/interfaces/app'
 import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 import { PersGetters } from '../../../interfaces/store/perspective'
 import { TaskState } from '../../../interfaces/store/task'
@@ -32,7 +36,7 @@ const project = namespace('project')
 
 @Component({
   components: {
-    'list-renderer': ListRenderer,
+    'appnav-renderer': AppnavRenderer,
     'appnav-header': AppnavHeader,
     'appnav-message': AppnavMessage,
     'app-division': AppnavDivision,
@@ -45,6 +49,7 @@ export default class OverviewAppnav extends Vue {
   @Mutation pushPopUp!: IndexMutations.PushPopUp
 
   @project.Getter sortedFolders!: ProjectGetters.SortedFolders
+  @project.Getter getProjectsByFolderId!: ProjectGetters.GetProjectsByFolderId
 
   @set.State timeZone!: SetState.timeZone
 
@@ -54,6 +59,26 @@ export default class OverviewAppnav extends Vue {
     this.openSection('overview')
   }
 
+  get getFoldersList(): AppnavDivisionEl[] {
+    const fs = this.sortedFolders
+    const arr: AppnavDivisionEl[] = []
+    for (const f of fs) {
+      const pros = this.getProjectsByFolderId(f.id)
+      const list = []
+      for (const p of pros)
+        list.push({
+          ...p,
+          number: 0,
+          show: true,
+        })
+      arr.push({
+        name: f.name,
+        id: f.id,
+        list,
+      })
+    }
+    return arr
+  }
   get activePers(): string {
     if (this.viewType === 'project')
       return this.viewName

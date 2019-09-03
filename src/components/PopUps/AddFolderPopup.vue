@@ -62,6 +62,7 @@ export default class SigninPopUp extends Vue {
       if (!fol) {
         this.addFolder(this.value)
       }
+      this.value = ''
     }
   }
   getOptions(): string[] {

@@ -13,6 +13,12 @@ export interface ListElement {
   [key: string]: any
 }
 
+export interface AppnavDivisionEl {
+  name: string
+  id: string
+  list: ListElement[]
+}
+
 export interface SimpleAdder {
   popUpTitle: string
   buttonName: string

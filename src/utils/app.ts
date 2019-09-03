@@ -565,16 +565,20 @@ export default {
 
       let str = `${timezone().month(obj.month - 1).format('MMMM')} ${obj.day}, ${obj.year}`
 
-      if (today.isSame(typed, 'day')) str = 'Today'
+      const isToday = today.isSame(typed, 'day')
       today.add(1, 'd')
-      if (today.isSame(typed, 'day')) str = 'Tomorrow'
+      const isTom = today.isSame(typed, 'day')
+
+      if (isToday) str = 'Today'
+      else if (isTom) str = 'Tomorrow'
 
       if (time) {
         if (timeFormat === '1:00pm')
           time = timezone(time, 'HH:mm').format('hh:mm a')
         str += ` at ${obj.time}`
       }
-      str += ', ' + typed.format('dddd')
+      if (!isToday && !isTom)
+        str += ', ' + typed.format('dddd')
 
       return str
     }
