@@ -16,6 +16,7 @@ interface Actions {
   addProject: ProjectActions.StoreAddProject
   moveProjectsFromFolder: ProjectActions.StoreMoveProjectsFromFolder
   toggleProjectPin: ProjectActions.StoreToggleProjectPin
+  editProject: ProjectActions.StoreEditProject
 }
 
 export default {
@@ -61,6 +62,12 @@ export default {
           userId: id,
         })
       }
+    },
+    editProject({ rootState }, {name, description, id}) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('projects').doc(id).update({
+          name, description,
+        })
     },
     editFolderNameById({ rootState }, {name, id}) {
       if (rootState.firestore && rootState.uid)

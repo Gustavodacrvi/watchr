@@ -1,14 +1,14 @@
 <template>
   <div class='simple-adder-popup' :class='theme'>
     <div class='title'>
-      <h2>Add Project</h2>
+      <h2>{{ projectTitle }}</h2>
     </div>
     <div class='content'>
       <dropdown-input
         tabindex='1'
         class='margin'
         focus-class='projectadder'
-        placeholder='Folder:project...'
+        :placeholder='dropdownInput'
         :input='value'
         :values='options'
         @enter='add'
@@ -27,7 +27,7 @@
         tabindex='2'
         class='button round-border margin'
         @click='add'
-      >Add project</button>
+      >{{ btnMsg }}</button>
     </div>
   </div>
 </template>
@@ -41,7 +41,7 @@ const project = namespace('project')
 
 import DropInput from '@/components/DropdownInput.vue'
 
-import { IndexState } from '../../interfaces/store/index'
+import { IndexState, IndexMutations } from '../../interfaces/store/index'
 import { ProjectGetters, ProjectActions } from '../../interfaces/store/project'
 
 @Component({
@@ -51,11 +51,13 @@ import { ProjectGetters, ProjectActions } from '../../interfaces/store/project'
 })
 export default class ProjectPopup extends Vue {
   @State theme!: IndexState.theme
-  @State popUpPayload!: IndexState.popUpPayload
+  @State popUpPayload!: any
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
 
   @project.Getter sortedFoldersByName!: ProjectGetters.SortedFoldersByName
   @project.Getter sortedProjectsByName!: ProjectGetters.SortedProjectsByName
   @project.Action addProject!: ProjectActions.AddProject
+  @project.Action editProject!: ProjectActions.EditProject
 
   value: string = ''
   description: string = ''
@@ -64,13 +66,20 @@ export default class ProjectPopup extends Vue {
   mounted() {
     const el = document.querySelectorAll('.projectadder')[0] as any
     el.focus()
-    if (this.popUpPayload) {
-      this.value += this.popUpPayload + ':'
+    const p = this.popUpPayload
+    if (p && !p.editing) {
+      this.value += p + ':'
+    } else if (p && p.editing) {
+      const pro = this.sortedProjectsByName.find(el => el.id === p.id)
+      if (pro) {
+        this.value = pro.name
+        this.description = pro.description
+      }
     } else this.value = ''
   }
 
   add() {
-    if (this.value) {
+    if (this.value && !this.isEditing) {
       const {folder, project} = this.getInput
       const pro = this.sortedProjectsByName.find(el => el.name === project)
       const fold = this.sortedFoldersByName.find(el => el.name === folder)
@@ -80,6 +89,17 @@ export default class ProjectPopup extends Vue {
           foldId: fold.id,
           description: this.description,
         })
+      }
+    } else if (this.value && this.isEditing) {
+      const pro = this.sortedProjectsByName.find(el => el.name === this.value)
+      if (!pro) {
+        const p = this.popUpPayload as any
+        this.editProject({
+          id: p.id,
+          name: this.value,
+          description: this.description,
+        })
+        this.pushPopUp('')
       }
     }
   }
@@ -107,6 +127,21 @@ export default class ProjectPopup extends Vue {
     if (split.length === 0) project = null
     split.forEach(el => project += el)
     return {folder, project}
+  }
+  get isEditing(): boolean {
+    return this.popUpPayload && this.popUpPayload.editing
+  }
+  get projectTitle(): string {
+    if (this.isEditing) return 'Edit project'
+    return 'Add project'
+  }
+  get dropdownInput(): string {
+    if (this.isEditing) return 'Project name...'
+    return 'Project name...'
+  }
+  get btnMsg(): string {
+    if (this.isEditing) return 'Save project'
+    return 'Add project'
   }
 
   @Watch('value')
