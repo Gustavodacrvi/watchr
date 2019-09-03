@@ -97,6 +97,7 @@ export default class App extends Vue {
   loaded: boolean = false
   clickedControl: boolean = false
   clickedAlt: boolean = false
+  lastKey: string = ''
 
   mounted() {
     window.addEventListener('keydown', this.keyPressed)
@@ -126,10 +127,14 @@ export default class App extends Vue {
     const active = document.activeElement
     const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA') && this.isOnAppRoute as any
     this.activateKeyShortcut({
-      key,
+      key: this.lastKey + key,
       special: this.clickedControl && this.clickedAlt,
       isTyping
     })
+    this.lastKey = key
+    setTimeout(() => {
+      this.lastKey = ''
+    }, 200)
   }
 
   get showActionButton(): boolean {

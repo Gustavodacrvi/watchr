@@ -240,10 +240,12 @@ const store: any = new Vuex.Store({
     },
     activateKeyShortcut({commit, getters}, {key, special, isTyping}) {
       if ((getters.loggedAndVerified || getters.anonymous)) {
+        console.log(key)
         if (!isTyping)
           switch (key.toLowerCase()) {
             case 'l': commit('pushPopUp', 'LabeladderPopup'); break
-            case 'p': commit('pushPopUp', 'PerspectiveAdderPopup'); break
+            case 'pe': commit('pushPopUp', 'PerspectiveAdderPopup'); break
+            case 'pr': commit('pushPopUp', 'AddProjectPopup'); break
             case 't': commit('pushPopUp', 'TaskadderPopup'); break
             case 'h': commit('pushPopUp', ''); break
           }
