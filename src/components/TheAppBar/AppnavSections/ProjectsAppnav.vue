@@ -72,6 +72,19 @@ export default class OverviewAppnav extends Vue {
   get folderOptions(): ListIcon[] {
     return [
       {
+        name: 'Add project',
+        icon: 'project-diagram',
+        iconColor: '',
+        size: 'lg',
+        callback: (id: string) => {
+          const fold = this.sortedFolders.find(el => el.id === id)
+          if (fold) {
+            this.pushPopUp('addProjectPopup')
+            this.pushPopUpPayload(fold.name)
+          }
+        },
+      },
+      {
         name: 'Edit folder',
         icon: 'edit',
         iconColor: '',

@@ -134,7 +134,7 @@ export default class LoggedAppnav extends Vue {
     {icon: 'project-diagram', comp: 'projects', title: 'PROJECTS', options: [
       {
         name: 'Add folder',
-        icon: 'project-diagram',
+        icon: 'folder',
         iconColor: '',
         size: 'lg',
         callback: () => {
