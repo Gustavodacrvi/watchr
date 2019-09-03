@@ -4,6 +4,7 @@
 
 import { Label, Project, Folder } from '../app'
 import { State as RootState } from '@/interfaces/store/index'
+import { Action } from 'vuex';
 
 export namespace ProjectState {
   export type projects = Project[]
@@ -47,4 +48,7 @@ export namespace ProjectActions {
 
   export type StoreAddFolder = (context: ActionContext, name: string) => void
   export type AddFolder = (name: string) => void
+
+  export type StoreDeleteFolderAndProjectsByFolderId = (context: ActionContext, id: string) => void
+  export type DeleteFolderAndProjectsByFolderId = (id: string) => void
 }

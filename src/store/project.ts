@@ -2,12 +2,13 @@
 
 import { State, Getters, ProjectActions } from '@/interfaces/store/project'
 import appUtils from '@/utils/app'
-import { Folder } from '@/interfaces/app'
+import { Folder, Project } from '@/interfaces/app'
 
 interface Actions {
   getData: ProjectActions.StoreGetData
   addFoldersOrder: ProjectActions.StoreAddFoldersOrder
   addFolder: ProjectActions.StoreAddFolder
+  deleteFolderAndProjectsByFolderId: ProjectActions.StoreDeleteFolderAndProjectsByFolderId
 }
 
 export default {
@@ -42,11 +43,27 @@ export default {
   } as Getters,
   actions: {
     addFoldersOrder({ rootState }, id) {
-      if (rootState.firestore) {
+      if (rootState.firestore && rootState.uid) {
         rootState.firestore.collection('foldersOrder').doc(id).set({
           order: [],
           userId: id,
         })
+      }
+    },
+    deleteFolderAndProjectsByFolderId({ rootState, state }, id) {
+      if (rootState.firestore && rootState.uid) {
+        const batch = rootState.firestore.batch()
+        const fold = state.folders.find(el => el.id === id) as Folder
+
+        const ref = rootState.firestore.collection('folders').doc(fold.id)
+        batch.delete(ref)
+
+        for (const i of fold.projects) {
+          const proRef = rootState.firestore.collection('projects').doc(i)
+          batch.delete(proRef)
+        }
+
+        batch.commit()
       }
     },
     getData({ rootState, state }) {

@@ -30,7 +30,7 @@ import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 import { PersGetters } from '../../../interfaces/store/perspective'
 import { TaskState } from '../../../interfaces/store/task'
 import { SetState } from '../../../interfaces/store/settings'
-import { ProjectGetters } from '../../../interfaces/store/project'
+import { ProjectGetters, ProjectActions } from '../../../interfaces/store/project'
 
 const set = namespace('settings')
 const project = namespace('project')
@@ -52,6 +52,7 @@ export default class OverviewAppnav extends Vue {
 
   @project.Getter sortedFolders!: ProjectGetters.SortedFolders
   @project.Getter getProjectsByFolderId!: ProjectGetters.GetProjectsByFolderId
+  @project.Action deleteFolderAndProjectsByFolderId!: ProjectActions.DeleteFolderAndProjectsByFolderId
 
   @set.State timeZone!: SetState.timeZone
 
@@ -75,7 +76,8 @@ export default class OverviewAppnav extends Vue {
             payload: 'The folder and all of the projects in it will be <strong>Deleted</strong>.',
             listIcons: [],
             listIconHandler: (confirm: boolean) => {
-              console.log(confirm)
+              if (confirm)
+                this.deleteFolderAndProjectsByFolderId(id)
             },
             compName: 'Confirm',
           })
