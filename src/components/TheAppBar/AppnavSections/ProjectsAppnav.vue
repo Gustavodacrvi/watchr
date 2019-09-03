@@ -10,7 +10,9 @@
       group='appnavdivisionprojects'
       :list='getFoldersList'
       :icons='folderOptions'
+      :active='activePers'
       @update='foldersOrder'
+      @move='updateFoldersMove'
     />
     <appnav-message v-else @click='pushPopUp("AddFolderPopup")' name='Add folder'/>
   </div>
@@ -57,6 +59,7 @@ export default class OverviewAppnav extends Vue {
   @project.Action deleteFolderAndProjectsByFolderId!: ProjectActions.DeleteFolderAndProjectsByFolderId
   @project.Action editFolderNameById!: ProjectActions.EditFolderNameById
   @project.Action saveFoldersOrder!: ProjectActions.SaveFoldersOrder
+  @project.Action moveProjectsFromFolder!: ProjectActions.MoveProjectsFromFolder
 
   @set.State timeZone!: SetState.timeZone
 
@@ -67,6 +70,9 @@ export default class OverviewAppnav extends Vue {
   }
   foldersOrder(ids: string[]) {
     this.saveFoldersOrder(ids)
+  }
+  updateFoldersMove(obj: {to: string, from: string, ids: string[]}) {
+    this.moveProjectsFromFolder(obj)
   }
 
   get folderOptions(): ListIcon[] {
@@ -148,7 +154,6 @@ export default class OverviewAppnav extends Vue {
         list,
       })
     }
-    console.log(arr)
     return arr
   }
   get activePers(): string {

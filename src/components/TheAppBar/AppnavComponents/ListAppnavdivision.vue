@@ -9,7 +9,15 @@
 
         :data-vid='el.id'
       >
-        <span>{{el.list.map(el => el.name)}}</span>
+        <list-renderer
+          group='appnavprojects'
+          route='project'
+          :list='el.list'
+          :parent='el.id'
+          :active='active'
+          :name='el.name'
+          @move='move'
+        />
       </app-division>
     </transition-group>
   </div>
@@ -24,6 +32,7 @@ import Mixin from '@/mixins/sortable'
 import Sortable from 'sortablejs'
 
 import AppnavDivision from '@/components/TheAppBar/AppnavComponents/AppnavDivision.vue'
+import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
 
 import { ListIcon, AppnavDivisionEl } from '../../../interfaces/app'
 import { IndexGetters } from '../../../interfaces/store/index'
@@ -31,14 +40,16 @@ import { IndexGetters } from '../../../interfaces/store/index'
 @Component({
   components: {
     'app-division': AppnavDivision,
+    'list-renderer': ListRenderer,
   },
 })
-export default class ListRenderer extends Mixins(Mixin) {
+export default class ListAppnavDivisionRendrer extends Mixins(Mixin) {
   @Getter isDesktop!: IndexGetters.IsDesktop
 
   @Prop(Array) icons!: ListIcon[]
   @Prop({required: true, type: Array}) list!: AppnavDivisionEl[]
   @Prop({required: true, type: String}) group!: string
+  @Prop({required: true, type: String}) active!: string
   @Prop({default: false, type: Boolean}) disabled!: boolean
   @Prop({default: () => [], type: Function}) options!: (obj: any) => ListIcon[]
   @Prop({default: () => [], type: Function}) helpIcons!: (obj: any) => ListIcon[]
@@ -56,6 +67,7 @@ export default class ListRenderer extends Mixins(Mixin) {
       animation: 150,
       selectedClass: 'sortable-selected',
       multiDrag: false,
+      handle: '.division-handle',
       dataIdAttr: 'data-sortableid',
       group: this.group,
 
@@ -65,10 +77,10 @@ export default class ListRenderer extends Mixins(Mixin) {
       },
     }
 
-    if (!this.isDesktop)
-      options['handle'] = '.handle'
-
     this.sortable = new Sortable(this.rootComponent, options)
+  }
+  move(obj: any) {
+    this.$emit('move', obj)
   }
 
   get rootComponent(): HTMLElement {

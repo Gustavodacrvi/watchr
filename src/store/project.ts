@@ -14,6 +14,7 @@ interface Actions {
   editFolderNameById: ProjectActions.StoreEditFolderNameById
   saveFoldersOrder: ProjectActions.StoreSaveFoldersOrder
   addProject: ProjectActions.StoreAddProject
+  moveProjectsFromFolder: ProjectActions.StoreMoveProjectsFromFolder
 }
 
 export default {
@@ -66,6 +67,24 @@ export default {
           name,
         })
     },
+    moveProjectsFromFolder({ rootState }, {from, to, ids}) {
+      if (rootState.firestore && rootState.uid) {
+        const fire = rootState.firebase.firestore.FieldValue as any
+        const batch = rootState.firestore.batch()
+
+        const fromRef = rootState.firestore.collection('folders').doc(from)
+        const toRef = rootState.firestore.collection('folders').doc(to)
+
+        batch.update(fromRef, {
+          projects: fire.arrayRemove(...ids),
+        })
+        batch.update(toRef, {
+          projects: ids,
+        })
+
+        batch.commit()
+      }
+    },
     addProject({ rootState }, {name, foldId, description}) {
       const u = timezone().utc()
       const dt = u.format('Y-M-D HH:mm')
@@ -81,6 +100,7 @@ export default {
           userId: rootState.uid,
           creationDate: dt,
           lastEditDate: dt,
+          bindOnOverview: false,
           folderId: foldRef.id,
           headingsOrder: [],
           tasks: [],

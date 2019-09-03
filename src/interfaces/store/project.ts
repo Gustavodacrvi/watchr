@@ -62,4 +62,7 @@ export namespace ProjectActions {
 
   export type StoreAddProject = (context: ActionContext, obj: {name: string, foldId: string, description: string}) => void
   export type AddProject = (obj: {name: string, foldId: string, description: string}) => void
+
+  export type StoreMoveProjectsFromFolder = (context: ActionContext, obj: {from: string, to: string, ids: string[]}) => void
+  export type MoveProjectsFromFolder = (obj: {from: string, to: string, ids: string[]}) => void
 }

@@ -129,6 +129,7 @@ export interface Project {
   description: string
   creationDate: string
   lastEditDate: string
+  bindOnOverview: boolean
   folderId: string
   headingsOrder: string[]
   tasks: string[]

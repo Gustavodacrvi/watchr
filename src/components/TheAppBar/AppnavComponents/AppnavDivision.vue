@@ -1,6 +1,6 @@
 <template>
   <div class='division'>
-    <div class='header' @click='showing = !showing' @mouseenter='onHover = true' @mouseleave='onHover = false'>
+    <div class='header division-handle' @click='showing = !showing' @mouseenter='onHover = true' @mouseleave='onHover = false'>
       <span class='txt' :class='theme'>{{ name }}</span>
       <span class='right' @click.stop='showing = !showing'>
         <template v-if='!list'>
@@ -29,7 +29,9 @@
       </span>
     </div>
     <transition name='fade'>
-      <slot v-if='showing'></slot>
+      <div v-if='showing' style='min-height: 33px;'>
+        <slot></slot>
+      </div>
     </transition>
   </div>
 </template>
