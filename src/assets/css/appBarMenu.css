@@ -76,6 +76,10 @@
   position: fixed;
   bottom: 0;
   height: 45px;
+  width: 280px;
+}
+
+.footer-wrapper.mobile {
   width: 100%;
 }
 

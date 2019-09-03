@@ -131,7 +131,17 @@ export default class LoggedAppnav extends Vue {
 
   sections: Section[] = [
     {icon: 'home', comp: 'overview', title: 'OVERVIEW'},
-    {icon: 'project-diagram', comp: 'projects', title: 'PROJECTS'},
+    {icon: 'project-diagram', comp: 'projects', title: 'PROJECTS', options: [
+      {
+        name: 'Add folder',
+        icon: 'project-diagram',
+        iconColor: '',
+        size: 'lg',
+        callback: () => {
+          this.pushPopUp('AddFolderPopup')
+        },
+      }
+    ]},
     {icon: 'layer-group', comp: 'perspectives', title: 'PERSPECTIVES'},
     {icon: 'tags', comp: 'labels', title: 'LABELS', options: [
       {

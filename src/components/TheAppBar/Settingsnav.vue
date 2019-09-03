@@ -54,7 +54,7 @@
         </template>
       </div>
     </div>
-    <div class='footer-wrapper'>
+    <div class='footer-wrapper' :class='theme'>
       <div style='height: 18px;'></div>
       <div class='footer'>
         <div v-if='loggedAndVerified' class='left'>
