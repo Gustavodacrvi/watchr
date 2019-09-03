@@ -240,7 +240,6 @@ const store: any = new Vuex.Store({
     },
     activateKeyShortcut({commit, getters}, {key, special, isTyping}) {
       if ((getters.loggedAndVerified || getters.anonymous)) {
-        console.log(key)
         if (!isTyping)
           switch (key.toLowerCase()) {
             case 'l': commit('pushPopUp', 'LabeladderPopup'); break

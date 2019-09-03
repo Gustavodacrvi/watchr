@@ -148,6 +148,7 @@ export default class OverviewAppnav extends Vue {
         list,
       })
     }
+    console.log(arr)
     return arr
   }
   get activePers(): string {

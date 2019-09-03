@@ -9,7 +9,7 @@
 
         :data-vid='el.id'
       >
-        asdf
+        <span>{{el.list.map(el => el.name)}}</span>
       </app-division>
     </transition-group>
   </div>
