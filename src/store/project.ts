@@ -9,6 +9,7 @@ interface Actions {
   addFoldersOrder: ProjectActions.StoreAddFoldersOrder
   addFolder: ProjectActions.StoreAddFolder
   deleteFolderAndProjectsByFolderId: ProjectActions.StoreDeleteFolderAndProjectsByFolderId
+  editFolderNameById: ProjectActions.StoreEditFolderNameById
 }
 
 export default {
@@ -49,6 +50,12 @@ export default {
           userId: id,
         })
       }
+    },
+    editFolderNameById({ rootState }, {name, id}) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('folders').doc(id).update({
+          name,
+        })
     },
     deleteFolderAndProjectsByFolderId({ rootState, state }, id) {
       if (rootState.firestore && rootState.uid) {

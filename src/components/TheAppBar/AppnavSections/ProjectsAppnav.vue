@@ -25,7 +25,7 @@ import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.v
 import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmessage.vue'
 import AppnavDivision from '@/components/TheAppBar/AppnavComponents/AppnavDivision.vue'
 
-import { Label, Perspective, Task, ListIcon, ListElement, AppnavDivisionEl } from '@/interfaces/app'
+import { Label, Perspective, Task, ListIcon, ListElement, AppnavDivisionEl, SimpleAdder } from '@/interfaces/app'
 import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 import { PersGetters } from '../../../interfaces/store/perspective'
 import { TaskState } from '../../../interfaces/store/task'
@@ -48,11 +48,13 @@ export default class OverviewAppnav extends Vue {
   @State viewType!: IndexState.viewType
   @Mutation openSection!: IndexMutations.OpenSection
   @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
   @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
   @project.Getter sortedFolders!: ProjectGetters.SortedFolders
   @project.Getter getProjectsByFolderId!: ProjectGetters.GetProjectsByFolderId
   @project.Action deleteFolderAndProjectsByFolderId!: ProjectActions.DeleteFolderAndProjectsByFolderId
+  @project.Action editFolderNameById!: ProjectActions.EditFolderNameById
 
   @set.State timeZone!: SetState.timeZone
 
@@ -64,6 +66,31 @@ export default class OverviewAppnav extends Vue {
 
   get folderOptions(): ListIcon[] {
     return [
+      {
+        name: 'Edit folder',
+        icon: 'edit',
+        iconColor: '',
+        size: 'lg',
+        callback: (id: string) => {
+          const fold = this.sortedFolders.find(el => el.id === id)
+          if (fold) {
+            this.pushPopUp('SimpleadderPopup')
+            this.pushPopUpPayload({
+              buttonName: 'Save',
+              popUpTitle: 'Edit folder name',
+              inputPlaceholder: fold.name,
+              inputMaximumCharacters: 50,
+              callback: input => {
+                this.editFolderNameById({
+                  name: input,
+                  id,
+                })
+                this.pushPopUp('')
+              },
+            } as SimpleAdder)
+          }
+        },
+      },
       {
         name: 'Delete folder',
         icon: 'trash',
@@ -82,7 +109,7 @@ export default class OverviewAppnav extends Vue {
             compName: 'Confirm',
           })
         },
-      }
+      },
     ]
   }
   get getFoldersList(): AppnavDivisionEl[] {

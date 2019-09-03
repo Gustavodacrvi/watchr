@@ -51,4 +51,7 @@ export namespace ProjectActions {
 
   export type StoreDeleteFolderAndProjectsByFolderId = (context: ActionContext, id: string) => void
   export type DeleteFolderAndProjectsByFolderId = (id: string) => void
+
+  export type StoreEditFolderNameById = (context: ActionContext, obj: {id: string, name: string}) => void
+  export type EditFolderNameById = (obj: {id: string, name: string}) => void
 }
