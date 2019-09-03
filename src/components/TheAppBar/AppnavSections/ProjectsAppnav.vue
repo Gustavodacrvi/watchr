@@ -9,6 +9,7 @@
     <appnav-renderer v-if='sortedFolders && sortedFolders.length > 0'
       group='appnavdivision'
       :list='getFoldersList'
+      :icons='folderOptions'
     />
     <appnav-message v-else @click='pushPopUp("AddFolderPopup")' name='Add folder'/>
   </div>
@@ -59,6 +60,19 @@ export default class OverviewAppnav extends Vue {
     this.openSection('overview')
   }
 
+  get folderOptions(): ListIcon[] {
+    return [
+      {
+        name: 'Delete folder',
+        icon: 'trash',
+        iconColor: '',
+        size: 'lg',
+        callback: (id: string) => {
+          console.log(id)
+        },
+      }
+    ]
+  }
   get getFoldersList(): AppnavDivisionEl[] {
     const fs = this.sortedFolders
     const arr: AppnavDivisionEl[] = []

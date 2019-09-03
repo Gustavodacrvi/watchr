@@ -1,16 +1,29 @@
 <template>
   <div class='division'>
-    <div class='header' @click='showing = !showing'>
+    <div class='header' @click='showing = !showing' @mouseenter='onHover = true' @mouseleave='onHover = false'>
       <span class='txt' :class='theme'>{{ name }}</span>
       <span class='right' @click.stop='showing = !showing'>
-        <span v-for='i in icons'
-          :key='i.name'
-          class='header-option'
-          @click.stop='i.callback'
-        >
-          <i :class='[`fas pointer icon fa-${i.icon} fa-${i.size} txt`, theme]'></i>
-        </span>
-        <span class='header-option'>
+        <template v-if='!list'>
+          <span v-for='i in icons'
+            :key='i.name'
+            class='header-option transparent'
+            @click.stop='i.callback'
+          >
+            <i :class='[`fas pointer icon fa-${i.icon} fa-${i.size} txt`, theme]'></i>
+          </span>
+        </template>
+        <div v-else-if='icons && icons.length > 0' style='margin-right: 10px;'>
+          <transition name='fade'>
+            <icon-options v-if='onHover'
+              handle='ellipsis-v'
+              size='lg'
+              minWidth='200px'
+              :options='icons'
+              :payload='iconsPayload'
+            />
+          </transition>
+        </div>
+        <span class='header-option transparent'>
           <i class='fas pointer icon fa-angle-down fa-lg txt' :class='[{rotate: showing}, theme]'></i>
         </span>
       </span>
@@ -29,14 +42,23 @@ import { State } from 'vuex-class'
 import { ListIcon } from '../../../interfaces/app'
 import { IndexState } from '../../../interfaces/store/index'
 
-@Component
+import IconOptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
+
+@Component({
+  components: {
+    'icon-options': IconOptions,
+  },
+})
 export default class TodayView extends Vue {
   @State theme!: IndexState.theme
 
   @Prop(String) name!: string
+  @Prop(Boolean) list!: boolean
   @Prop(Array) icons!: ListIcon[]
+  @Prop() iconsPayload!: any
 
   showing: boolean = true
+  onHover: boolean = false
 }
 
 </script>
@@ -47,11 +69,14 @@ export default class TodayView extends Vue {
   margin-right: 8px;
 }
 
+.transparent {
+  opacity: .6;
+}
+
 .header {
   height: 20px;
   display: flex;
   align-items: center;
-  opacity: .6;
   margin-left: -12px;
   font-size: .9em;
   margin: 10px 0;
@@ -69,6 +94,7 @@ export default class TodayView extends Vue {
 .right {
   position: absolute;
   right: 0;
+  display: flex;
 }
 
 </style>

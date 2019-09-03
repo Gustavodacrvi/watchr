@@ -5,9 +5,9 @@
       :size='size'
       :change-color-on-hover='true'
       :min-width='minWidth'
-      @click='pushIcons'
       :float-top='floatTop'
       :centralize='centralize'
+      @click='pushIcons'
     >
       <div v-if='isDesktop' class='drop round-border scroll' :class='theme'>
         <div v-for='i in options'

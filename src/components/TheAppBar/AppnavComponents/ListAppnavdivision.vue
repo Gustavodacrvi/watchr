@@ -3,6 +3,10 @@
     <transition-group name='fade'>
       <app-division v-for='el of list' :key='el.id'
         :name='el.name'
+        :list='true'
+        :icons='icons'
+        :icons-payload='el.id'
+
         :data-vid='el.id'
       >
         asdf
@@ -35,6 +39,7 @@ import { IndexGetters } from '../../../interfaces/store/index'
 export default class ListRenderer extends Mixins(Mixin) {
   @Getter isDesktop!: IndexGetters.IsDesktop
 
+  @Prop(Array) icons!: ListIcon[]
   @Prop({required: true, type: Array}) list!: AppnavDivisionEl[]
   @Prop({required: true, type: String}) group!: string
   @Prop({default: false, type: Boolean}) disabled!: boolean
