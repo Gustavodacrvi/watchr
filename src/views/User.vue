@@ -6,7 +6,6 @@
     >
       <div class='view-wrapper background-color' :class='[platform, theme]'>
         <div class='view' :class='platform'>
-          {{project}} {{getComp}}
           <transition class='transition-view' name='fade' mode='out-in'>
             <component
               :is='getComp'

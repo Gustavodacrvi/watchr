@@ -134,11 +134,11 @@ export default class LabelPerspective extends Mixins(PersMixing) {
   }
   addLabel(label: Label) {
     if (!this.labels.find(el => el === label.id))
-    this.labels.push(label.id)
+      this.labels.push(label.id)
   }
   addDate(date: string) {
     if (!this.dates.find(el => el === date))
-    this.dates.push(date)
+      this.dates.push(date)
   }
   removeLabel(id: string) {
     const index = this.labels.findIndex(el => el === id)
