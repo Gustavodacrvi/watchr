@@ -78,6 +78,7 @@ import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue
 
 import { Project, Label, Task } from '@/interfaces/app'
 import { ProjectActions, ProjectGetters } from '../../../interfaces/store/project'
+import { TaskGetters } from '../../../interfaces/store/task'
 
 @Component({
   components: {
@@ -88,6 +89,8 @@ import { ProjectActions, ProjectGetters } from '../../../interfaces/store/projec
 })
 export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Getter getProjectByName!: ProjectGetters.GetProjectByName
+
+  @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
 
   @Prop(String) project!: string
 

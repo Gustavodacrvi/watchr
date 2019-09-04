@@ -33,12 +33,21 @@ export default {
 
   } as {},
   getters: {
-    inboxTasks(state: State) {
+    inboxTasks(state) {
       return state.tasks.filter(el => el.labels.length === 0)
     },
-    getNumberOfTasksByLabel: (state: State) => (labelId: string): number => {
+    getNumberOfTasksByLabel: (state) => (labelId) => {
       const tasks = state.tasks.filter(el => el.labels.includes(labelId))
       return tasks.length
+    },
+    getTasksByIds: (state) => (ids) => {
+      const arr: Task[] = []
+      for (const id of ids) {
+        const task = state.tasks.find(el => el.id === id)
+        if (task)
+          arr.push(task)
+      }
+      return arr
     },
   } as Getters,
   actions: {

@@ -15,11 +15,13 @@ export interface State {
 export namespace TaskGetters {
   export type InboxTasks = Task[]
   export type GetNumberOfTasksByLabel = (labelId: string) => number
+  export type GetTasksByIds = (ids: string[]) => Task[]
 }
 
 export interface Getters {
   inboxTasks: (state: State) => TaskGetters.InboxTasks
   getNumberOfTasksByLabel: (state: State) => TaskGetters.GetNumberOfTasksByLabel
+  getTasksByIds: (state: State) => TaskGetters.GetTasksByIds
 }
 
 export interface ActionContext {
