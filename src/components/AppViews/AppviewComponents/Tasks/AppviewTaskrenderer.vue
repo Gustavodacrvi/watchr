@@ -23,6 +23,8 @@
         :data-vid='task.id'
 
         @toggle='toggleElement'
+        @delete='deleteTask'
+        @complete='completeTask'
       />
     </transition-group>
     <transition name='fade'>
@@ -115,6 +117,12 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     for (const e of els)
       arr.push(e.dataset.vid)
     return arr
+  }
+  deleteTask(task: Task[]) {
+    this.$emit('delete', task)
+  }
+  completeTask(task: Task[]) {
+    this.$emit('complete', task)
   }
   mount() {
     const options: any = {

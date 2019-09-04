@@ -2,7 +2,7 @@
 
 /* tslint:disable:max-line-length */
 
-import { Label, Project, Folder } from '../app'
+import { Label, Project, Folder, Task } from '../app'
 import { State as RootState } from '@/interfaces/store/index'
 import { Action } from 'vuex';
 
@@ -78,4 +78,7 @@ export namespace ProjectActions {
 
   export type StoreDeleteProjectById = (context: ActionContext, id: string) => void
   export type DeleteProjectById = (id: string) => void
+
+  export type StoreCompleteProjectTask = (context: ActionContext, obj: {task: Task, projectId: string}) => void
+  export type CompleteProjectTask = (obj: {task: Task, projectId: string}) => void
 }

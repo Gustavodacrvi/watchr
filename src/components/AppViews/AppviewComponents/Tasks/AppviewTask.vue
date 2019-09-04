@@ -239,6 +239,7 @@ export default class AppviewTask extends Vue {
       size: 'lg',
       iconColor: '',
       callback: () => {
+        this.$emit('delete', this.task)
         this.deleteTasksById([this.task.id])
       },
     },
@@ -531,6 +532,7 @@ export default class AppviewTask extends Vue {
   @Watch('completed')
   onChange2() {
     setTimeout(() => {
+      this.$emit('complete', this.task)
       this.deleteTasksById([this.task.id])
     }, 1000)
   }

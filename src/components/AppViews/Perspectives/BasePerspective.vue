@@ -84,7 +84,7 @@
               :list-has-dates='true'
               :tasks='tasks'
               :default-priority='pers.priority'
-              :default-labels='defaultLabels'
+              :default-labels='getLabels'
               :default-date='defaultDate'
               :allow-priority='true'
               :insert-before='true'

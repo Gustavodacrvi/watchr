@@ -60,6 +60,7 @@
         @update='onUpdate'
         @selected='onSelect'
         @add='addTask'
+        @complete='completeTask'
       />
     </div>
     <div class='margin-task' :class='platform'></div>
@@ -96,6 +97,7 @@ import { TaskGetters, TaskActions } from '../../../interfaces/store/task'
 })
 export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Getter getProjectByName!: ProjectGetters.GetProjectByName
+  @prjVuex.Action completeProjectTask!: ProjectActions.CompleteProjectTask
 
   @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
   @task.Action addProjectTask!: TaskActions.AddProjectTask
@@ -121,6 +123,12 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   onUpdate(obj: any) {
     console.log('onUpdateProjectTask', obj)
   }
+  completeTask(task: Task) {
+    if (this.prj)
+      this.completeProjectTask({
+        task, projectId: this.prj.id,
+      })
+  }
   updateView() {
     if (this.prj)
       this.pushView({
@@ -130,6 +138,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   }
 
   get getTasks(): Task[] {
+    console.log(this.prj)
     if (this.prj)
       return this.filterTasks(this.getTasksByIds(this.prj.tasks))
     return []
