@@ -40,7 +40,6 @@ export default class NavbarMixin extends Vue {
   smartPers: string[] = []
   sort: string[] = []
   hided: boolean = false
-  showing: boolean = true
 
   toggleHide() {
     if (!this.isDesktop)

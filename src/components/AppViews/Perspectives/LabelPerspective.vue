@@ -3,9 +3,6 @@
     <div class='header' :class='{pointer: !isDesktop}' @dblclick='toggleHide'>
       <header-title
         :value='label'
-        :showing='showing'
-        @toggle='v => showing = !showing'
-        
         icon-color=''
         icon=''
       />
@@ -35,7 +32,7 @@
     <div class='margin'></div>
     <div class='margin'></div>
     <div v-if='!hided'>
-      <div v-if='showing'>
+      <div>
         <div class='margin'></div>
         <view-tags
           :fixed-tag="{name: label, icon: 'tag', backColor: '#83B7E2'}"

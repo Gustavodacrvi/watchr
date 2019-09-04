@@ -54,6 +54,9 @@ export default {
       }
       return arr
     },
+    getProjectByName: (state) => (name) => {
+      return state.projects.find(el => el.name === name)
+    },
     getProjectsByFolderId: (state) => (id) => {
       const fold = state.folders.find(el => el.id === id) as Folder
       const arr = []

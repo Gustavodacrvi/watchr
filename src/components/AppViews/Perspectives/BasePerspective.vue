@@ -5,8 +5,6 @@
         :value='pers.name'
         :icon='pers.icon'
         :icon-color='pers.iconColor'
-        :showing='showing'
-        @toggle='v => showing = !showing'
       />
       <div class='right'>
         <view-header-icons v-if='pers'
@@ -34,7 +32,7 @@
     />
     <div class='margin'></div>
     <div v-if='!hided'>
-      <div v-if='showing'>
+      <div>
         <p v-if='pers.description' class='description txt' :class='theme'>
           {{ pers.description }}
         </p>
