@@ -4,13 +4,15 @@ import { Mutation, State, Getter, namespace } from 'vuex-class'
 
 const taskVuex = namespace('task')
 const set = namespace('settings')
+const labelVuex = namespace('label')
 
 import appUtils from '@/utils/app'
 
 import { IndexState, IndexMutations, IndexGetters } from '@/interfaces/store'
 import { TaskState, TaskActions } from '@/interfaces/store/task'
 import { SetState } from '@/interfaces/store/settings'
-import { ListIcon, Label, Task } from '@/interfaces/app';
+import { ListIcon, Label, Task } from '@/interfaces/app'
+import { LabelGetters } from '@/interfaces/store/label'
 
 @Component
 export default class NavbarMixin extends Vue {
@@ -31,6 +33,8 @@ export default class NavbarMixin extends Vue {
   @taskVuex.Action deleteTasksById!: TaskActions.DeleteTasksById
   @taskVuex.Action changePrioritysByIds!: TaskActions.ChangePrioritysByIds
   @taskVuex.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
+
+  @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
 
   @set.State timeZone!: SetState.timeZone
   @set.State startOfTheWeek!: SetState.startOfTheWeek

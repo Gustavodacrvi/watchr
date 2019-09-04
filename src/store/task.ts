@@ -22,6 +22,7 @@ interface Actions {
   deleteSubTaskFromTask: TaskActions.StoreDeleteSubTaskFromTask
   saveNewDateOfTasks: TaskActions.StoreSaveNewDateOfTasks
   unCompleteSubtasks: TaskActions.StoreUnCompleteSubtasks
+  addProjectTask: TaskActions.StoreAddProjectTask
 }
 
 export default {
@@ -98,12 +99,46 @@ export default {
           lastEditDate: date,
           labels: task.labels,
           checklist: [],
+          completed: false,
+          projectId: '',
           checklistOrder: [],
           ...t.utc,
         })
         const persRef = rootState.firestore.collection('perspectives').doc(perspectiveId)
         batch.update(persRef, {
           order: ord,
+        })
+
+        batch.commit()
+      }
+    },
+    addProjectTask({ rootState }, {task, projectId, order, position}) {
+      const u = timezone().utc()
+      const date = u.format('Y-M-D HH:mm')
+      if (rootState.firestore && rootState.uid) {
+        console.log(task, projectId, order, position)
+        const batch = rootState.firestore.batch()
+
+        const ord = order.slice()
+        const ref = rootState.firestore.collection('tasks').doc()
+        ord.splice(position, 0, ref.id)
+        const t = task as any
+        batch.set(ref, {
+          projectId,
+          name: task.name,
+          priority: task.priority,
+          userId: rootState.uid,
+          creationDate: date,
+          lastEditDate: date,
+          labels: task.labels,
+          checklist: [],
+          completed: false,
+          checklistOrder: [],
+          ...t.utc,
+        })
+        const persRef = rootState.firestore.collection('projects').doc(projectId)
+        batch.update(persRef, {
+          tasks: ord,
         })
 
         batch.commit()
@@ -119,6 +154,8 @@ export default {
           creationDate: date,
           lastEditDate: date,
           checklist: [],
+          completed: false,
+          projectId: '',
           checklistOrder: [],
           ...utc,
         })
@@ -157,6 +194,8 @@ export default {
           creationDate: date,
           lastEditDate: date,
           checklist: [],
+          completed: false,
+          projectId: '',
           checklistOrder: [],
           ...utc,
         })

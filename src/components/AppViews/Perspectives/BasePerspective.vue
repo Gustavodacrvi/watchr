@@ -152,8 +152,6 @@ export default class PerspectiveAppview extends Mixins(PersMixin) {
 
   @taskVuex.Action addTaskPerspective!: TaskActions.AddTaskPerspective
 
-  @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
-
   @persVuex.Getter getPerspectiveByName!: PersGetters.GetPerspectiveByName
   @persVuex.Action saveTaskOrder!: PersActions.SaveTaskOrder
   @persVuex.Action addSmartPersFilter!: PersActions.AddSmartPersFilter

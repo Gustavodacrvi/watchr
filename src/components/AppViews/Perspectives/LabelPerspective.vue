@@ -111,7 +111,6 @@ export default class LabelPerspective extends Mixins(PersMixing) {
   @Prop(String) label!: string
 
   @labelVuex.State('labels') savedLabels!: LabelState.labels
-  @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
   @labelVuex.Action saveLabelTaskOrder!: LabelActions.SaveLabelTaskOrder
 
   @taskVuex.Action addTaskLabel!: TaskActions.AddTaskLabel

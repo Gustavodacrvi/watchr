@@ -23,43 +23,46 @@
           @smartpers='addSmartPersNonSave'
         />
       </div>
-      <div class='margin'></div>
-      <div v-if="!hided">
-        <div>
-          <div class='margin'></div>
-          <view-tags
-            :search='search'
-            :labels='labels'
-            :priority='priority'
-            :dates='dates'
-            :smart-pers='smartPers'
-            @clearsearch='v => search = ""'
-            @clearpriority='v => priority = ""'
-            @removelabel='removeLabelNonSave'
-            @removedate='removeDateNonSave'
-            @removesmartpers='removeSmartPersNonSave'
-          />
-        </div>
-        <task-renderer v-if='getLabel'
-          id='appnavproject'
-          :tasks='getTasks'
-          :default-priority='priority'
-          :default-labels='getLabels'
-          :allow-priority='true'
-          :fix-adder-position='true'
-          :insert-before='true'
-          :always-show-last-edit-date='false'
-          :always-show-creation-date='false'
-          :always-show-task-labels='false'
-          :allow-labels='true'
-          :allow-date='true'
-          @update='onUpdate'
-          @selected='onSelect'
-          @add='addProjectTask'
+    </div>
+    <div class='margin'></div>
+    <div v-if="!hided">
+      <div>
+        <p v-if='prj.description' class='description txt' :class='theme'>
+          {{ prj.description }}
+        </p>
+        <div v-if='prj.description' class='margin'></div>
+        <view-tags
+          :search='search'
+          :labels='labels'
+          :priority='priority'
+          :dates='dates'
+          :smart-pers='smartPers'
+          @clearsearch='v => search = ""'
+          @clearpriority='v => priority = ""'
+          @removelabel='removeLabelNonSave'
+          @removedate='removeDateNonSave'
+          @removesmartpers='removeSmartPersNonSave'
         />
       </div>
-      <div class='margin-task' :class='platform'></div>
+      <task-renderer
+        id='appnavproject'
+        :tasks='getTasks'
+        :default-priority='priority'
+        :default-labels='getLabels'
+        :allow-priority='true'
+        :fix-adder-position='true'
+        :insert-before='true'
+        :always-show-last-edit-date='false'
+        :always-show-creation-date='false'
+        :always-show-task-labels='false'
+        :allow-labels='true'
+        :allow-date='true'
+        @update='onUpdate'
+        @selected='onSelect'
+        @add='addTask'
+      />
     </div>
+    <div class='margin-task' :class='platform'></div>
   </div>
 </template>
 
@@ -74,18 +77,20 @@ const prjVuex = namespace('project')
 
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 import AppviewHeaderIcons from '@/components/AppViews/AppviewComponents/AppviewHeadericons.vue'
+import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskrenderer.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
 
 import appUtils from '@/utils/app'
 
 import { Project, Label, Task } from '@/interfaces/app'
 import { ProjectActions, ProjectGetters } from '../../../interfaces/store/project'
-import { TaskGetters } from '../../../interfaces/store/task'
+import { TaskGetters, TaskActions } from '../../../interfaces/store/task'
 
 @Component({
   components: {
     'header-title': HeaderTitle,
     'view-header-icons': AppviewHeaderIcons,
+    'task-renderer': AppviewTaskrenderer,
     'view-tags': AppviewTags,
   },
 })
@@ -93,11 +98,25 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Getter getProjectByName!: ProjectGetters.GetProjectByName
 
   @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
+  @task.Action addProjectTask!: TaskActions.AddProjectTask
 
   @Prop(String) project!: string
 
-  addProjectTask(obj: any) {
-    console.log('addProjectTask', obj)
+  addTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any}) {
+    if (this.prj) {
+      const p = this.prj as Project
+      this.addProjectTask({
+        task: {
+          name: obj.name,
+          priority: obj.priority,
+          labels: obj.labels,
+          utc: obj.utc,
+        },
+        projectId: p.id,
+        position: obj.position,
+        order: p.tasks,
+      } as any)
+    }
   }
   onUpdate(obj: any) {
     console.log('onUpdateProjectTask', obj)
@@ -114,6 +133,9 @@ export default class ProjectAppview extends Mixins(PersMixin) {
     if (this.prj)
       return this.filterTasks(this.getTasksByIds(this.prj.tasks))
     return []
+  }
+  get getLabels(): Label[] {
+    return this.getLabelsByIds(this.labels)
   }
   get prj(): Project | undefined {
     return this.getProjectByName(this.project)

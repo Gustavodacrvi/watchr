@@ -82,4 +82,7 @@ export namespace TaskActions {
 
   export type StoreUnCompleteSubtasks = (context: ActionContext, taskId: string) => void
   export type UnCompleteSubtasks = (taskId: string) => void
+
+  export type StoreAddProjectTask = (context: ActionContext, obj: {task: Task, projectId: string, position: number, order: string[], utc: UtcObj | null}) => void
+  export type AddProjectTask = (obj: {task: Task, projectId: string, position: number, order: string[], utc: UtcObj | null}) => void
 }

@@ -103,6 +103,7 @@ export interface Task {
   lastEditDate: string
   checklistOrder: string[]
   projectId: string
+  completed: boolean
   checklist: Array<{
     completed: boolean,
     name: string,
@@ -113,6 +114,7 @@ export interface Task {
 
 export interface Heading {
   name: string
+  completedTasks: Task[]
   tasks: string[]
 }
 
@@ -134,6 +136,7 @@ export interface Project {
   folderId: string
   headingsOrder: string[]
   tasks: string[]
+  completedTasks: Task[]
   headings: string[] // headings ids
 }
 

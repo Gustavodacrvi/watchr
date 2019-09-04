@@ -136,6 +136,7 @@ export default {
           bindOnOverview: false,
           folderId: foldRef.id,
           headingsOrder: [],
+          completedTasks: [],
           tasks: [],
           headings: [],
         })
