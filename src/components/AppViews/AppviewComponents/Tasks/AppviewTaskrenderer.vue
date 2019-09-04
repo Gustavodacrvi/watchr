@@ -19,6 +19,7 @@
         :always-show-creation-date='alwaysShowCreationDate'
         :always-show-task-labels='alwaysShowTaskLabels'
         :fixed-pers='fixedPers'
+        :emit-complete-task='emitCompleteTask'
 
         :data-vid='task.id'
 
@@ -76,6 +77,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop(Boolean) alwaysShowTaskLabels!: boolean
   @Prop(Boolean) allowDate!: boolean
   @Prop(Boolean) listHasDates!: boolean
+  @Prop(Boolean) emitCompleteTask!: boolean
   @Prop({default: undefined, type: String}) defaultPriority!: string
   @Prop({default: undefined, type: String}) defaultDate!: string
   @Prop({default: undefined, type: Array}) defaultLabels!: string[]

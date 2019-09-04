@@ -19,6 +19,7 @@ interface Actions {
   editProject: ProjectActions.StoreEditProject
   deleteProjectById: ProjectActions.StoreDeleteProjectById
   completeProjectTask: ProjectActions.StoreCompleteProjectTask
+  deleteProjectTask: ProjectActions.StoreDeleteProjectTask
 }
 
 export default {
@@ -114,6 +115,22 @@ export default {
         })
         batch.update(toRef, {
           projects: ids,
+        })
+
+        batch.commit()
+      }
+    },
+    deleteProjectTask({ rootState }, {taskId, projectId}) {
+      if (rootState.firestore && rootState.uid) {
+        const fire = rootState.firebase.firestore.FieldValue as any
+        const batch = rootState.firestore.batch()
+
+        const taskRef = rootState.firestore.collection('tasks').doc(taskId)
+        batch.delete(taskRef)
+
+        const proRef = rootState.firestore.collection('projects').doc(projectId)
+        batch.update(proRef, {
+          tasks: fire.arrayRemove(taskId),
         })
 
         batch.commit()

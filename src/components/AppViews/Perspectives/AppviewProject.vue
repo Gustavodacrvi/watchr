@@ -57,10 +57,12 @@
         :always-show-task-labels='false'
         :allow-labels='true'
         :allow-date='true'
+        :emit-complete-task='true'
         @update='onUpdate'
         @selected='onSelect'
         @add='addTask'
         @complete='completeTask'
+        @delete='deleteTask'
       />
     </div>
     <div class='margin-task' :class='platform'></div>
@@ -98,6 +100,7 @@ import { TaskGetters, TaskActions } from '../../../interfaces/store/task'
 export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Getter getProjectByName!: ProjectGetters.GetProjectByName
   @prjVuex.Action completeProjectTask!: ProjectActions.CompleteProjectTask
+  @prjVuex.Action deleteProjectTask!: ProjectActions.DeleteProjectTask
 
   @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
   @task.Action addProjectTask!: TaskActions.AddProjectTask
@@ -127,6 +130,12 @@ export default class ProjectAppview extends Mixins(PersMixin) {
     if (this.prj)
       this.completeProjectTask({
         task, projectId: this.prj.id,
+      })
+  }
+  deleteTask(taskId: string) {
+    if (this.prj)
+      this.deleteProjectTask({
+        taskId, projectId: this.prj.id,
       })
   }
   updateView() {
