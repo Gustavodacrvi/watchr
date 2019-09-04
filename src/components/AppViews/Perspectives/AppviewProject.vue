@@ -65,7 +65,7 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Prop, Mixins } from 'vue-property-decorator'
+import { Component, Vue, Prop, Mixins, Watch } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import PersMixin from '@/mixins/perspective'
 
@@ -75,6 +75,8 @@ const prjVuex = namespace('project')
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 import AppviewHeaderIcons from '@/components/AppViews/AppviewComponents/AppviewHeadericons.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
+
+import appUtils from '@/utils/app'
 
 import { Project, Label, Task } from '@/interfaces/app'
 import { ProjectActions, ProjectGetters } from '../../../interfaces/store/project'
@@ -100,15 +102,30 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   onUpdate(obj: any) {
     console.log('onUpdateProjectTask', obj)
   }
+  updateView() {
+    if (this.prj)
+      this.pushView({
+        view: this.prj.name,
+        viewType: 'project',
+      })
+  }
 
   get getTasks(): Task[] {
-    
-    
+    if (this.prj)
+      return this.filterTasks(this.getTasksByIds(this.prj.tasks))
     return []
   }
   get prj(): Project | undefined {
-    console.log(this.project)
     return this.getProjectByName(this.project)
+  }
+
+  @Watch('label')
+  onChange3() {
+    this.updateView()
+  }
+  @Watch('currentAppSection')
+  onChange6() {
+    this.updateView()
   }
 }
 

@@ -5,10 +5,12 @@ import { Mutation, State, Getter, namespace } from 'vuex-class'
 const taskVuex = namespace('task')
 const set = namespace('settings')
 
+import appUtils from '@/utils/app'
+
 import { IndexState, IndexMutations, IndexGetters } from '@/interfaces/store'
 import { TaskState, TaskActions } from '@/interfaces/store/task'
 import { SetState } from '@/interfaces/store/settings'
-import { ListIcon, Label } from '@/interfaces/app';
+import { ListIcon, Label, Task } from '@/interfaces/app';
 
 @Component
 export default class NavbarMixin extends Vue {
@@ -173,6 +175,20 @@ export default class NavbarMixin extends Vue {
       arr.push({id, date})
     if (arr.length > 0)
       this.saveNewDateOfTasks(arr)
+  }
+  filterTasks(tasks: Task[]): Task[] {
+    if (this.search)
+      tasks = tasks.filter(el => el.name.toLowerCase().includes(this.search.toLowerCase()))
+    if (this.priority)
+      tasks = appUtils.filterTasksByPriority(tasks, this.priority)
+    if (this.labels && this.labels.length > 0)
+      tasks = appUtils.filterTasksByLabels(tasks, this.labels)
+    if (this.dates && this.dates.length > 0)
+      tasks = appUtils.filterTasksByDates(tasks, this.dates, this.timeZone)
+    if (this.smartPers && this.smartPers.length > 0)
+      for (const name of this.smartPers)
+        tasks = appUtils.filterTasksBySmartPerspective(name, tasks, this.timeZone, this.startOfTheWeek) 
+    return tasks
   }
 
   @Watch('selectedTasks')
