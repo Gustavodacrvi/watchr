@@ -34,6 +34,7 @@ export default new Router({
       props: (route: any) => ({
         pers: route.query.pers,
         label: route.query.label,
+        project: route.query.project,
       }),
     },
     {

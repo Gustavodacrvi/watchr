@@ -1,6 +1,7 @@
 <template>
   <div class='division'>
     <div class='header division-handle' @click='showing = !showing' @mouseenter='onHover = true' @mouseleave='onHover = false'>
+      <span class="txt" :class="theme"><i class="fas fa-folder fa-lg" style="margin-right: 6px;"></i></span>
       <span class='txt' :class='theme'>{{ name }}</span>
       <span class='right' @click.stop='showing = !showing'>
         <template v-if='!list'>
@@ -23,9 +24,6 @@
             />
           </transition>
         </div>
-        <span class='header-option transparent'>
-          <i class='fas pointer icon fa-angle-down fa-lg txt' :class='[{rotate: showing}, theme]'></i>
-        </span>
       </span>
     </div>
     <transition name='fade'>
@@ -80,17 +78,13 @@ export default class TodayView extends Vue {
   display: flex;
   align-items: center;
   margin-left: -12px;
-  font-size: .9em;
   margin: 10px 0;
+  cursor: pointer;
   position: relative;
 }
 
 .fas {
   transition: transform .3s;
-}
-
-.rotate {
-  transform: rotate(-90deg);
 }
 
 .right {

@@ -6,11 +6,13 @@
     >
       <div class='view-wrapper background-color' :class='[platform, theme]'>
         <div class='view' :class='platform'>
+          {{project}} {{getComp}}
           <transition class='transition-view' name='fade' mode='out-in'>
             <component
               :is='getComp'
               :pers='per'
               :label='label'
+              :project='project'
             />
           </transition>
         </div>
@@ -90,6 +92,7 @@ const c = appUtils.AsyncComponent
     'app-friday': c(import('@/components/AppViews/Perspectives/Smart/AppviewFriday.vue')),
     'app-saturday': c(import('@/components/AppViews/Perspectives/Smart/AppviewSaturday.vue')),
     'app-tomorrow': c(import('@/components/AppViews/Perspectives/Smart/AppviewTomorrow.vue')),
+    'app-project': c(import('@/components/AppViews/Perspectives/AppviewProject.vue')),
     'app-next-week': c(import('@/components/AppViews/Perspectives/Smart/AppviewNextweek.vue')),
     'app-this-week': c(import('@/components/AppViews/Perspectives/Smart/AppviewThisweek.vue')),
     'app-next-month': c(import('@/components/AppViews/Perspectives/Smart/AppviewNextmonth.vue')),
@@ -117,6 +120,7 @@ export default class Guest extends Mixins(Mixin) {
 
   @Prop(String) pers!: string
   @Prop(String) label!: string
+  @Prop(String) project!: string
   @Prop(Boolean) loaded!: string
 
   waitingResponse: boolean = false
@@ -142,7 +146,7 @@ export default class Guest extends Mixins(Mixin) {
       this.closeAppBar()
   }
   get getComp(): string {
-    if (this.per && !this.label) {
+    if (this.per && !this.label && !this.project) {
       switch (this.per) {
         case 'Inbox': return 'app-inbox'
         case 'Upcoming': return 'app-upcoming'
@@ -164,8 +168,10 @@ export default class Guest extends Mixins(Mixin) {
         case `Doesn't have tags`: return 'app-doesnt-have-tags'
       }
       return 'app-custom-pers'
-    } else if (this.label)
+    } else if (this.label && !this.project)
       return 'app-custom-label'
+    else if (this.project)
+      return 'app-project'
     return ''
   }
   get ready(): boolean {
