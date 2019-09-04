@@ -76,8 +76,9 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch, Mixins } from 'vue-property-decorator'
 import { Getter, namespace, Mutation, State } from 'vuex-class'
+import PersMixing from '@/mixins/perspective'
 
 const taskVuex = namespace('task')
 const labelVuex = namespace('label')
@@ -106,144 +107,19 @@ import { TaskState, TaskActions } from '../../../interfaces/store/task'
     'header-title': HeaderTitle,
   },
 })
-export default class LabelPerspective extends Vue {
-  @State theme!: IndexState.theme
-  @State selectedTasks!: IndexState.selectedTasks
-  @State currentAppSection!: IndexState.currentAppSection
-  @Mutation pushView!: IndexMutations.PushView
-  @Getter isDesktop!: IndexGetters.IsDesktop
-  @Getter platform!: IndexGetters.Platform
-  @Mutation pushPopUp!: IndexMutations.PushPopUp
-  @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
-  @Mutation sendOptionsToNavbar!: IndexMutations.SendOptionsToNavbar
-  @Mutation updateSelectedTasks!: IndexMutations.UpdateSelectedTasks
-  @Mutation hideNavBarOptions!: IndexMutations.HideNavBarOptions
-  @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
-
+export default class LabelPerspective extends Mixins(PersMixing) {
   @Prop(String) label!: string
 
   @labelVuex.State('labels') savedLabels!: LabelState.labels
   @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
   @labelVuex.Action saveLabelTaskOrder!: LabelActions.SaveLabelTaskOrder
 
-  @taskVuex.State tasks!: TaskState.tasks
-  @taskVuex.Action deleteTasksById!: TaskActions.DeleteTasksById
   @taskVuex.Action addTaskLabel!: TaskActions.AddTaskLabel
-  @taskVuex.Action changePrioritysByIds!: TaskActions.ChangePrioritysByIds
-  @taskVuex.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
-
-  @set.State timeZone!: SetState.timeZone
-  @set.State startOfTheWeek!: SetState.startOfTheWeek
-
-  search: string = ''
-  priority: string = ''
-  labels: string[] = []
-  dates: string[] = []
-  sort: string[] = []
-  smartPers: string[] = []
-  showing: boolean = true
-  hided: boolean = false
-  mobileSelectedOptions: ListIcon[] = [
-    {
-      name: 'Delete selected tasks',
-      icon: 'trash',
-      iconColor: '',
-      size: '',
-    },
-    {
-      name: 'Change priority of tasks',
-      icon: 'exclamation',
-      iconColor: '',
-      size: '',
-    },
-    {
-      name: 'Change date of tasks',
-      icon: 'calendar-day',
-      iconColor: '',
-      size: '',
-    },
-    {
-      name: 'Add labels to tasks',
-      icon: 'tag',
-      iconColor: '',
-      size: '',
-    },
-  ]
 
   created() {
     this.updateView()
   }
 
-  getMobileSelectedOptions(): ListIcon[] {
-    this.mobileSelectedOptions[0]['callback'] = () => {
-      this.deleteTasksById(this.selectedTasks)
-    }
-    this.mobileSelectedOptions[1]['callback'] = () => {
-      setTimeout(() => {
-        this.sendOptionsToNavbar([
-          {
-            name: 'High priority',
-            icon: 'exclamation',
-            iconColor: '#83B7E2',
-            size: 'lg',
-            callback: () => {
-              this.changePrioritysByIds({
-                ids: this.selectedTasks,
-                priority: 'High priority',
-              })
-              this.sendOptionsToNavbar([])
-            },
-          },
-          {
-            name: 'Medium priority',
-            icon: 'exclamation',
-            iconColor: '#fff566',
-            size: 'lg',
-            callback: () => {
-              this.changePrioritysByIds({
-                ids: this.selectedTasks,
-                priority: 'Medium priority',
-              })
-              this.sendOptionsToNavbar([])
-            },
-          },
-          {
-            name: 'Low priority',
-            icon: 'exclamation',
-            iconColor: '#70ff66',
-            size: 'lg',
-            callback: () => {
-              this.changePrioritysByIds({
-                ids: this.selectedTasks,
-                priority: 'Low priority',
-              })
-              this.sendOptionsToNavbar([])
-            },
-          },
-        ])
-      }, 80)
-    }
-    this.mobileSelectedOptions[2]['callback'] = () => {
-      setTimeout(() => {
-        this.pushCenteredCard({
-          type: 'Component',
-          compName: 'CalendarInput',
-          flexBasis: '275px',
-          listIcons: [],
-          listIconHandler: (e: any) => {
-            this.selectedDates(e.utc.date)
-          },
-        })
-      }, 80)
-    }
-    this.mobileSelectedOptions[3]['callback'] = () => {
-      setTimeout(() => {
-        this.pushPopUp('AddLabelsToTasksPopup')
-        this.pushPopUpPayload(this.selectedTasks)
-      }, 80)
-    }
-    return this.mobileSelectedOptions
-  }
   updateView() {
     this.pushView({
       view: this.label,
@@ -261,14 +137,11 @@ export default class LabelPerspective extends Vue {
   }
   addLabel(label: Label) {
     if (!this.labels.find(el => el === label.id))
-      this.labels.push(label.id)
+    this.labels.push(label.id)
   }
   addDate(date: string) {
     if (!this.dates.find(el => el === date))
-      this.dates.push(date)
-  }
-  toggleHide() {
-    this.hided = !this.hided
+    this.dates.push(date)
   }
   removeLabel(id: string) {
     const index = this.labels.findIndex(el => el === id)
@@ -277,13 +150,6 @@ export default class LabelPerspective extends Vue {
   removeDate(date: string) {
     const index = this.dates.findIndex(el => el === date)
     this.dates.splice(index, 1)
-  }
-  selectedDates(date: string) {
-    const arr: Array<{id: string, date: string}> = []
-    for (const id of this.selectedTasks)
-      arr.push({id, date})
-    if (arr.length > 0)
-      this.saveNewDateOfTasks(arr)
   }
   removeSmartPers(name: string) {
     const index = this.smartPers.findIndex(el => el === name)
@@ -365,13 +231,6 @@ export default class LabelPerspective extends Vue {
     return tasks
   }
 
-  @Watch('selectedTasks')
-  onChange() {
-    if (!this.isDesktop)
-      if (this.selectedTasks.length > 0)
-        this.sendOptionsToNavbar(this.getMobileSelectedOptions())
-      else this.hideNavBarOptions()
-  }
   @Watch('label')
   onChange3() {
     this.updateView()
