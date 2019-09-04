@@ -18,14 +18,49 @@
           :allow-priority='true'
 
           @priority='v => priority = v'
-          @label='addLabel'
-          @date='addDate'
-          @smartpers='addSmartPers'
+          @label='addLabelNonSave'
+          @date='addDateNonSave'
+          @smartpers='addSmartPersNonSave'
         />
       </div>
+      <div class='margin'></div>
+      <div v-if="!hided">
+        <div>
+          <div class='margin'></div>
+          <view-tags
+            :search='search'
+            :labels='labels'
+            :priority='priority'
+            :dates='dates'
+            :smart-pers='smartPers'
+            @clearsearch='v => search = ""'
+            @clearpriority='v => priority = ""'
+            @removelabel='removeLabelNonSave'
+            @removedate='removeDateNonSave'
+            @removesmartpers='removeSmartPersNonSave'
+          />
+        </div>
+        <task-renderer v-if='getLabel'
+          id='appnavproject'
+          :tasks='getTasks'
+          :default-priority='priority'
+          :default-labels='getLabels'
+          :allow-priority='true'
+          :fix-adder-position='true'
+          :insert-before='true'
+          :always-show-last-edit-date='false'
+          :always-show-creation-date='false'
+          :always-show-task-labels='false'
+          :allow-labels='true'
+          :allow-date='true'
+          @update='onUpdate'
+          @selected='onSelect'
+          @add='addProjectTask'
+        />
+      </div>
+      <div class='margin-task' :class='platform'></div>
     </div>
   </div>
-  <div v-else>asdfj açsdsfk asçdlfkj asçdlfjk asçdfj çasldkfjç </div>
 </template>
 
 <script lang='ts'>
@@ -39,14 +74,16 @@ const prjVuex = namespace('project')
 
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
 import AppviewHeaderIcons from '@/components/AppViews/AppviewComponents/AppviewHeadericons.vue'
+import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
 
-import { Project, Label } from '@/interfaces/app'
+import { Project, Label, Task } from '@/interfaces/app'
 import { ProjectActions, ProjectGetters } from '../../../interfaces/store/project'
 
 @Component({
   components: {
     'header-title': HeaderTitle,
     'view-header-icons': AppviewHeaderIcons,
+    'view-tags': AppviewTags,
   },
 })
 export default class ProjectAppview extends Mixins(PersMixin) {
@@ -54,19 +91,18 @@ export default class ProjectAppview extends Mixins(PersMixin) {
 
   @Prop(String) project!: string
 
-  addLabel(label: Label) {
-    if (!this.labels.find(el => el === label.id))
-      this.labels.push(label.id)
+  addProjectTask(obj: any) {
+    console.log('addProjectTask', obj)
   }
-  addDate(date: string) {
-    if (!this.dates.find(el => el === date))
-      this.dates.push(date)
-  }
-  addSmartPers(name: string) {
-    if (!this.smartPers.find(el => el === name))
-      this.smartPers.push(name)
+  onUpdate(obj: any) {
+    console.log('onUpdateProjectTask', obj)
   }
 
+  get getTasks(): Task[] {
+    
+    
+    return []
+  }
   get prj(): Project | undefined {
     console.log(this.project)
     return this.getProjectByName(this.project)

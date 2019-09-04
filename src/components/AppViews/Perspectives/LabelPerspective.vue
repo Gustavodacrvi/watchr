@@ -22,15 +22,18 @@
           :allow-priority='true'
           
           @priority='v => priority = v'
-          @label='addLabel'
-          @date='addDate'
-          @smartpers='addSmartPers'
+          @label='addLabelNonSave'
+          @date='addDateNonSave'
+          @smartpers='addSmartPersNonSave'
           @settings='selectSettingsOption'
         />
       </div>
     </div>
     <div class='margin'></div>
-    <div class='margin'></div>
+    <empty-tag-renderer v-if='sort && sort.length > 0'
+      :list='sort'
+      @update='v => names = v'
+    />
     <div v-if='!hided'>
       <div>
         <div class='margin'></div>
@@ -43,9 +46,9 @@
           :smart-pers='smartPers'
           @clearsearch="v => search = ''"
           @clearpriority="v => priority = ''"
-          @removelabel='removeLabel'
-          @removedate='removeDate'
-          @removesmartpers='removeSmartPers'
+          @removelabel='removeLabelNonSave'
+          @removedate='removeDateNonSave'
+          @removesmartpers='removeSmartPersNonSave'
         />
         <div class='margin'></div>
       </div>
@@ -123,34 +126,11 @@ export default class LabelPerspective extends Mixins(PersMixing) {
       viewType: 'label',
     })
   }
-  onSelect(ids: string[]) {
-    this.updateSelectedTasks(ids)
-  }
   selectedPriority(value: string) {
     this.changePrioritysByIds({
       ids: this.selectedTasks,
       priority: value,
     })
-  }
-  addLabel(label: Label) {
-    if (!this.labels.find(el => el === label.id))
-      this.labels.push(label.id)
-  }
-  addDate(date: string) {
-    if (!this.dates.find(el => el === date))
-      this.dates.push(date)
-  }
-  removeLabel(id: string) {
-    const index = this.labels.findIndex(el => el === id)
-    this.labels.splice(index, 1)
-  }
-  removeDate(date: string) {
-    const index = this.dates.findIndex(el => el === date)
-    this.dates.splice(index, 1)
-  }
-  removeSmartPers(name: string) {
-    const index = this.smartPers.findIndex(el => el === name)
-    this.smartPers.splice(index, 1)
   }
   onUpdate(ids: string[]) {
     const lab = this.getLabel
@@ -159,10 +139,6 @@ export default class LabelPerspective extends Mixins(PersMixing) {
         order: ids,
         id: lab.id,
       })
-  }
-  addSmartPers(name: string) {
-    if (!this.smartPers.find(el => el === name))
-      this.smartPers.push(name)
   }
   selectSettingsOption(value: string) {
     if (!this.sort.find(el => el === value))

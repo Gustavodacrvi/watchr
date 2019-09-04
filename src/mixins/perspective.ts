@@ -8,7 +8,7 @@ const set = namespace('settings')
 import { IndexState, IndexMutations, IndexGetters } from '@/interfaces/store'
 import { TaskState, TaskActions } from '@/interfaces/store/task'
 import { SetState } from '@/interfaces/store/settings'
-import { ListIcon } from '@/interfaces/app';
+import { ListIcon, Label } from '@/interfaces/app';
 
 @Component
 export default class NavbarMixin extends Vue {
@@ -44,6 +44,33 @@ export default class NavbarMixin extends Vue {
   toggleHide() {
     if (!this.isDesktop)
       this.hided = !this.hided
+  }
+  addLabelNonSave(label: Label) {
+    if (!this.labels.find(el => el === label.id))
+      this.labels.push(label.id)
+  }
+  addDateNonSave(date: string) {
+    if (!this.dates.find(el => el === date))
+      this.dates.push(date)
+  }
+  removeLabelNonSave(id: string) {
+    const index = this.labels.findIndex(el => el === id)
+    this.labels.splice(index, 1)
+  }
+  removeDateNonSave(date: string) {
+    const index = this.dates.findIndex(el => el === date)
+    this.dates.splice(index, 1)
+  }
+  removeSmartPersNonSave(name: string) {
+    const index = this.smartPers.findIndex(el => el === name)
+    this.smartPers.splice(index, 1)
+  }
+  onSelect(ids: string[]) {
+    this.updateSelectedTasks(ids)
+  }
+  addSmartPersNonSave(name: string) {
+    if (!this.smartPers.find(el => el === name))
+      this.smartPers.push(name)
   }
   getMobileSelectedOptions(): ListIcon[] {
     return [

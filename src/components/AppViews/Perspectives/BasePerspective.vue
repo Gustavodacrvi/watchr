@@ -40,7 +40,7 @@
         <view-tags
           :fixed-tag='fixedTag'
           :search='search'
-          :priority='getPriority'
+          :priority='pers.priority'
           :labels='getLabels'
           :dates='dates'
           :smart-pers='smartPers'
@@ -56,8 +56,8 @@
         id='appnavalltasks'
         :tasks='getTasks'
         :fixed-pers='pers.name'
-        :default-priority='getPriority'
-        :default-labels='defaultLabels'
+        :default-priority='pers.priority'
+        :default-labels='pers.includeAndLabels'
         :default-date='defaultDate'
         :allow-priority='true'
         :allow-date='allowDate'
@@ -83,7 +83,7 @@
               :date='tasks[0].date'
               :list-has-dates='true'
               :tasks='tasks'
-              :default-priority='getPriority'
+              :default-priority='pers.priority'
               :default-labels='defaultLabels'
               :default-date='defaultDate'
               :allow-priority='true'
@@ -168,8 +168,6 @@ export default class PerspectiveAppview extends Mixins(PersMixin) {
 
   @Prop({default: true, type: Boolean}) allowLabels!: boolean
   @Prop({default: true, type: Boolean}) allowDate!: boolean
-  @Prop(Boolean) save!: boolean
-  @Prop(Boolean) saveSort!: boolean
   @Prop(Boolean) calendarRenderer!: boolean
   @Prop(String) persName!: string
   @Prop(Object) fixedTag!: object
@@ -183,55 +181,40 @@ export default class PerspectiveAppview extends Mixins(PersMixin) {
   }
 
   addLabel(label: Label) {
-    if (!this.save && !this.labels.find(el => el === label.id))
-      this.labels.push(label.id)
-    else if (this.save) this.addLabelToPerspective({
-        id: this.pers.id,
-        labelId: label.id,
-      })
+    this.addLabelToPerspective({
+      id: this.pers.id,
+      labelId: label.id,
+    })
   }
   selectDate(date: string) {
-    if (!this.save && !this.dates.find(el => el === date))
-      this.dates.push(date)
-    else if (this.save) this.addDateToPerspective({
+    this.addDateToPerspective({
       id: this.pers.id,
       date,
     })
   }
   addSmartPers(name: string) {
-    if (!this.save && !this.smartPers.find(el => el === name))
-      this.smartPers.push(name)
-    else if (this.save) this.addSmartPersFilter({
-        id: this.pers.id,
-        persName: name,
-      })
+    this.addSmartPersFilter({
+      id: this.pers.id,
+      persName: name,
+    })
   }
   removeLabel(id: string) {
-    if (!this.save) {
-      const index = this.labels.findIndex(el => el === id)
-      this.labels.splice(index, 1)
-    } else this.removeLabelFromPerspective({
-        id: this.pers.id,
-        labelId: id,
-      })
+    this.removeLabelFromPerspective({
+      id: this.pers.id,
+      labelId: id,
+    })
   }
   removeDate(date: string) {
-    if (!this.save) {
-      const index = this.dates.findIndex(el => el === date)
-      this.dates.splice(index, 1)
-    } else this.removeDateFromPerspective({
+    this.removeDateFromPerspective({
       id: this.pers.id,
       date,
     })
   }
   removeSmartPers(name: string) {
-    if (!this.save) {
-      const index = this.smartPers.findIndex(el => el === name)
-      this.smartPers.splice(index, 1)
-    } else this.removeSmartPersFilter({
-        id: this.pers.id,
-        persName: name,
-      })
+    this.removeSmartPersFilter({
+      id: this.pers.id,
+      persName: name,
+    })
   }
   addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any}) {
     this.addTaskPerspective({
@@ -251,29 +234,23 @@ export default class PerspectiveAppview extends Mixins(PersMixin) {
     })
   }
   selectPriority(value: string) {
-    if (!this.save)
-      this.priority = value
-    else this.savePerspectivePriority({
-        id: this.pers.id,
-        priority: value,
-      })
+    this.savePerspectivePriority({
+      id: this.pers.id,
+      priority: value,
+    })
   }
   saveNewSortOrder(names: string[]) {
-    this.sort = names
-    if (this.saveSort)
-      this.savePerspectiveTaskSort({
-        sort: names,
-        perspectiveId: this.pers.id,
-      })
+    this.savePerspectiveTaskSort({
+      sort: names,
+      perspectiveId: this.pers.id,
+    })
   }
   selectSettingsOption(value: string) {
     if (!this.sort.find(el => el === value)) {
-      this.sort.push(value)
-      if (this.saveSort)
-        this.addPerspectiveSort({
-          sort: value,
-          perspectiveId: this.pers.id,
-        })
+      this.addPerspectiveSort({
+        sort: value,
+        perspectiveId: this.pers.id,
+      })
     }
   }
   onUpdate(ids: string[]) {
@@ -285,13 +262,10 @@ export default class PerspectiveAppview extends Mixins(PersMixin) {
       })
     this.justUpdated = true
   }
-  onSelect(ids: string[]) {
-    this.updateSelectedTasks(ids)
-  }
   updateView() {
     if (this.pers) {
       this.priority = this.pers.priority
-      if (!this.justUpdated && !this.save || this.save) {
+      if (!this.justUpdated) {
         this.labels = this.pers.includeAndLabels.slice()
         this.smartPers = this.pers.includeAndSmartPers.slice()
         this.sort = this.pers.sort.slice()
@@ -397,16 +371,6 @@ export default class PerspectiveAppview extends Mixins(PersMixin) {
   }
   get getLabels(): Label[] {
     return this.getLabelsByIds(this.labels)
-  }
-  get getPriority(): string {
-    if (!this.save)
-      return this.priority
-    else return this.pers.priority
-  }
-  get defaultLabels(): string[] {
-    if (!this.save)
-      return this.labels
-    return this.pers.includeAndLabels
   }
   get defaultDate(): string | undefined {
     if (!this.pers) return undefined

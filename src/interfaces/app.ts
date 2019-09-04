@@ -102,6 +102,7 @@ export interface Task {
   creationDate: string
   lastEditDate: string
   checklistOrder: string[]
+  projectId: string
   checklist: Array<{
     completed: boolean,
     name: string,
