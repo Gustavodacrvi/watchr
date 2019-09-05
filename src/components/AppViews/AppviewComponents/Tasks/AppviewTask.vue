@@ -1,8 +1,8 @@
 <template>
-  <div v-if='!editing' key='task' class='round-border wrapper' :class="[theme, completed ? 'completed' : 'not-completed']">
+  <div v-if='!editing' key='task' class='round-border wrapper'>
     <div
       class='round-border task'
-      :class="[theme, completed ? 'completed' : 'not-completed', {'not-selected': !clicked}]"
+      :class="[theme, {'not-selected': !clicked}]"
       @dblclick='toggleEditing'
       @mouseenter='onHover = true'
       @mouseleave='onHover = false'
@@ -10,19 +10,19 @@
       <div
         class='content-wrapper'
       >
-        <span class='circles'>
-          <i v-if='!completed' @click='v => completed = true' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
-          <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
+        <span class='circles' @click='toggleTaskComplete'>
+          <i v-show='!task.completed' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
+          <i v-show='task.completed' class='far fade circle icon txt fa-check-circle fa-sm' :class='theme'></i>
         </span>
         <transition name='check-trans' mode='out-in'>
-          <div v-if='!completed'
+          <div
             key='cont'
             class='content'
             :class='{handle: allowDragAndDrop}'
             v-longpress='toggleElement'
             @click='toggleChecklist'
           >
-            <div class='txt' :class='theme'>
+            <div class='txt' :class='[theme, {fade: task.completed}]'>
               <i v-if='showTodayIcon' class='txt fas fa-star fa-sm' style='color: #FFE366'></i>
               <i v-else-if='showOverdueIcon' class='txt fas fa-hourglass-end fa-sm' style='color: #FF6B66'></i>
               <i v-else-if='showTomorrowIcon' class='txt fas fa-sun fa-sm' style='color: #ffa166'></i>
@@ -53,23 +53,20 @@
                 <template v-if='showLabels'>
                   <span v-for='(item, index) in taskLabels'
                     :key='item'
-                    class='lab fade'
+                    class='lab fade tiny'
                   >{{ item }}<span v-if='index !== taskLabels.length - 1'>,</span></span>
                   <span>&nbsp;</span>
                 </template>
                 <i v-if='showDot1' class='fas tiny-icon fa-circle fa-xs'></i>
-                <span v-if='showLastEditDate' class='fade'>
+                <span v-if='showLastEditDate' class='fade tiny'>
                   <span> Last edited {{ readableTaskLastEditDate }} </span>
                 </span>
                 <i v-if='showDot2' class='fas tiny-icon fa-circle fa-xs'></i>
-                <span v-if='showCreationDate' class='fade'>
+                <span v-if='showCreationDate' class='fade tiny'>
                   <span> Created {{ readableTaskCreationDate }}</span>
                 </span>
               </div>
             </transition>
-          </div>
-          <div v-else class='content'>
-            <span key='compl' class='txt' :class='theme'>Task completed</span>
           </div>
         </transition>
       </div>
@@ -172,6 +169,7 @@ export default class AppviewTask extends Vue {
   @taskVuex.Action deleteTasksById!: TaskActions.DeleteTasksById
   @taskVuex.Action updateTask!: TaskActions.UpdateTask
   @taskVuex.Action addSubTask!: TaskActions.AddSubTask
+  @taskVuex.Action toggleCompleteTask!: TaskActions.ToggleCompleteTask
   @taskVuex.Action saveSubtaskOrder!: TaskActions.SaveSubtaskOrder
   @taskVuex.Action unCompleteSubtasks!: TaskActions.UnCompleteSubtasks
   @taskVuex.Action copyTask!: TaskActions.CopyTask
@@ -184,9 +182,9 @@ export default class AppviewTask extends Vue {
 
   @Prop(Object) task!: Task
   @Prop(Boolean) deselectAll!: boolean
-  @Prop(Boolean) allowDrag!: boolean
   @Prop(Boolean) dragging!: boolean
-  @Prop(Boolean) emitCompleteTask!: boolean
+  @Prop(Boolean) allowDrag!: boolean
+  @Prop(Boolean) emitOnDelete!: boolean
   @Prop(Boolean) alwaysShowLastEditDate!: boolean
   @Prop(Boolean) alwaysShowCreationDate!: boolean
   @Prop(Boolean) alwaysShowTaskLabels!: boolean
@@ -194,7 +192,6 @@ export default class AppviewTask extends Vue {
 
   clicked: boolean = false
   onHover: boolean = false
-  completed: boolean = false
   subtaskValue: string = ''
   deselect: boolean = false
   showChecklist: boolean = false
@@ -240,9 +237,9 @@ export default class AppviewTask extends Vue {
       size: 'lg',
       iconColor: '',
       callback: () => {
-        if (this.emitCompleteTask)
-          this.$emit('delete', this.task)
-        else this.deleteTasksById([this.task.id])
+        if (!this.emitOnDelete)
+          this.deleteTasksById([this.task.id])
+        else this.$emit('delete', this.task.id)
       },
     },
   ]
@@ -359,6 +356,12 @@ export default class AppviewTask extends Vue {
       id: this.task.id,
     })
     this.editing = false
+  }
+  toggleTaskComplete() {
+    this.toggleCompleteTask({
+      id: this.task.id,
+      completed: !this.task.completed,
+    })
   }
   getSubTaskAdderPosition() {
     const ids = this.getSubtasksIds()
@@ -531,14 +534,6 @@ export default class AppviewTask extends Vue {
   onChange() {
     this.clicked = false
   }
-  @Watch('completed')
-  onChange2() {
-    setTimeout(() => {
-      if (this.emitCompleteTask)
-        this.$emit('complete', this.task)
-      else this.deleteTasksById([this.task.id])
-    }, 1000)
-  }
 }
 
 </script>
@@ -580,10 +575,6 @@ export default class AppviewTask extends Vue {
   opacity: 0;
 }
 
-.completed.task {
-  background-color: #c4ffbd !important;
-}
-
 .circles {
   margin: 0 8px;
   margin-left: 4px;
@@ -618,8 +609,11 @@ export default class AppviewTask extends Vue {
 }
 
 .fade {
-  font-size: .75em;
   opacity: .5;
+}
+
+.tiny {
+  font-size: .75em;
 }
 
 .content-wrapper {
@@ -632,19 +626,19 @@ export default class AppviewTask extends Vue {
   align-items: center;
 }
 
-.task.not-completed.not-selected.light:hover {
+.task.not-selected.light:hover {
   background-color: #f0f0f0;
 }
 
-.task.not-completed.not-selected.dark:hover {
+.task.not-selected.dark:hover {
   background-color: #282828;
 }
 
-.sortable-selected.not-completed.light {
+.sortable-selected.light {
   background-color: #83B7E2 !important;
 }
 
-.sortable-selected.not-completed.dark {
+.sortable-selected.dark {
   background-color: #3287cd !important;
 }
 

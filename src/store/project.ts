@@ -136,23 +136,6 @@ export default {
         batch.commit()
       }
     },
-    completeProjectTask({ rootState }, {task, projectId}) {
-      if (rootState.firestore && rootState.uid) {
-        const fire = rootState.firebase.firestore.FieldValue as any
-        const batch = rootState.firestore.batch()
-
-        const taskRef = rootState.firestore.collection('tasks').doc(task.id)
-        batch.delete(taskRef)
-
-        const proRef = rootState.firestore.collection('projects').doc(projectId)
-        batch.update(proRef, {
-          completedTasks: fire.arrayUnion(task),
-          tasks: fire.arrayRemove(task.id),
-        })
-
-        batch.commit()
-      }
-    },
     addProject({ rootState }, {name, foldId, description}) {
       const u = timezone().utc()
       const dt = u.format('Y-M-D HH:mm')

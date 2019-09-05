@@ -57,11 +57,10 @@
         :always-show-task-labels='false'
         :allow-labels='true'
         :allow-date='true'
-        :emit-complete-task='true'
+        :emit-on-delete='true'
         @update='onUpdate'
         @selected='onSelect'
         @add='addTask'
-        @complete='completeTask'
         @delete='deleteTask'
       />
     </div>
@@ -99,7 +98,6 @@ import { TaskGetters, TaskActions } from '../../../interfaces/store/task'
 })
 export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Getter getProjectByName!: ProjectGetters.GetProjectByName
-  @prjVuex.Action completeProjectTask!: ProjectActions.CompleteProjectTask
   @prjVuex.Action deleteProjectTask!: ProjectActions.DeleteProjectTask
 
   @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
@@ -126,12 +124,6 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   onUpdate(obj: any) {
     console.log('onUpdateProjectTask', obj)
   }
-  completeTask(task: Task) {
-    if (this.prj)
-      this.completeProjectTask({
-        task, projectId: this.prj.id,
-      })
-  }
   deleteTask(taskId: string) {
     if (this.prj)
       this.deleteProjectTask({
@@ -147,7 +139,6 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   }
 
   get getTasks(): Task[] {
-    console.log(this.prj)
     if (this.prj)
       return this.filterTasks(this.getTasksByIds(this.prj.tasks))
     return []

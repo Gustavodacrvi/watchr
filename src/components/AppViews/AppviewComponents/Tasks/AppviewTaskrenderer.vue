@@ -19,13 +19,12 @@
         :always-show-creation-date='alwaysShowCreationDate'
         :always-show-task-labels='alwaysShowTaskLabels'
         :fixed-pers='fixedPers'
-        :emit-complete-task='emitCompleteTask'
+        :emit-on-delete='emitOnDelete'
 
         :data-vid='task.id'
 
         @toggle='toggleElement'
         @delete='deleteTask'
-        @complete='completeTask'
       />
     </transition-group>
     <transition name='fade'>
@@ -75,9 +74,9 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop(Boolean) alwaysShowLastEditDate!: boolean
   @Prop(Boolean) alwaysShowCreationDate!: boolean
   @Prop(Boolean) alwaysShowTaskLabels!: boolean
+  @Prop(Boolean) emitOnDelete!: boolean
   @Prop(Boolean) allowDate!: boolean
   @Prop(Boolean) listHasDates!: boolean
-  @Prop(Boolean) emitCompleteTask!: boolean
   @Prop({default: undefined, type: String}) defaultPriority!: string
   @Prop({default: undefined, type: String}) defaultDate!: string
   @Prop({default: undefined, type: Array}) defaultLabels!: string[]
@@ -122,9 +121,6 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   }
   deleteTask(task: Task[]) {
     this.$emit('delete', task)
-  }
-  completeTask(task: Task[]) {
-    this.$emit('complete', task)
   }
   mount() {
     const options: any = {

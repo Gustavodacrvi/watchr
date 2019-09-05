@@ -23,6 +23,7 @@ interface Actions {
   saveNewDateOfTasks: TaskActions.StoreSaveNewDateOfTasks
   unCompleteSubtasks: TaskActions.StoreUnCompleteSubtasks
   addProjectTask: TaskActions.StoreAddProjectTask
+  toggleCompleteTask: TaskActions.StoreToggleCompleteTask
 }
 
 export default {
@@ -295,6 +296,12 @@ export default {
           lastEditDate: date,
         })
       }
+    },
+    toggleCompleteTask({ rootState }, {id, completed}) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('tasks').doc(id).update({
+          completed,
+        })
     },
     copyTask({ rootState, state }, taskId) {
       const u = timezone().utc()

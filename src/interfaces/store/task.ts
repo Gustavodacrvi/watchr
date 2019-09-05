@@ -85,4 +85,7 @@ export namespace TaskActions {
 
   export type StoreAddProjectTask = (context: ActionContext, obj: {task: Task, projectId: string, position: number, order: string[], utc: UtcObj | null}) => void
   export type AddProjectTask = (obj: {task: Task, projectId: string, position: number, order: string[], utc: UtcObj | null}) => void
+
+  export type StoreToggleCompleteTask = (context: ActionContext, obj: {id: string, completed: boolean}) => void
+  export type ToggleCompleteTask = (obj: {id: string, completed: boolean}) => void
 }
