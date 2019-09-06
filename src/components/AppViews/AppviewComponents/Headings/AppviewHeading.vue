@@ -1,5 +1,5 @@
 <template>
-  <div class='heading-wrapper'>
+  <div class='heading-wrapper heading-adder'>
     <div v-if="!editing" class='header' :class='theme' @click='showing = !showing' @dblclick="edit">
       <span class='txt' :class='theme'>{{ obj.name }}</span>
       <span v-if='obj.faded' class='txt faded' :class='theme'>{{ obj.faded }}</span>
@@ -15,6 +15,7 @@
           :values='[]'
           :input='value'
           @enter='enter'
+          @value='v => value = v'
         />
       </div>
       <view-btn
@@ -59,12 +60,23 @@ export default class AppviewHeading extends Vue {
   showing: boolean = true
   value: string = ''
 
+  mounted() {
+    if (this.editing)
+      this.focus()
+  }
+
   enter() {
     if (this.value !== '')
       this.$emit('enter', this.value)
   }
+  focus() {
+    const el = this.$el.getElementsByClassName('headingedit')[0] as any
+    el.focus()
+  }
   edit() {
     if (this.allowEdit) this.editing = !this.editing
+    if (this.editing)
+      this.focus()
   }
 }
 

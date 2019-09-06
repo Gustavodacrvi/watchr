@@ -10,7 +10,7 @@ export default class SortableMixin extends Vue {
       const els = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
       const arr = []
       for (const el of els)
-        if (requiredClass && el.classList.contains(requiredClass) || el.classList.contains('task-adder'))
+        if (requiredClass && el.classList.contains(requiredClass) || el.classList.contains('task-adder') || el.classList.contains('heading-adder'))
           arr.push(el)
         else if (!requiredClass)
           arr.push(el)

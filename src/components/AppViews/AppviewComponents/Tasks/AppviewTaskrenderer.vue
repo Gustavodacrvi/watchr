@@ -99,6 +99,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   numberOfAdders: number = 0
   rootSelector: string = `.task-taskrenderer-${this.id}`
   taskAdderPosition: number = 0
+  headingAdderPosition: number = 0
 
   mounted() {
     this.mount()
@@ -133,8 +134,8 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       }, put: ['floatbutton', 'taskrenderer']},
 
       onUpdate: () => {
-        const ids: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
-        this.$emit('update', ids)
+        const order: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
+        this.$emit('update', order.filter(el => el !== 'task-adder' && 'heading-adder'))
       },
       onAdd: (evt: any) => {
         const type = evt.from.dataset.sortfrom
@@ -187,7 +188,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
           instance.$mount('#main-button-heading')
           this.rootComponent.getElementsByClassName('heading-wrapper')[0].setAttribute('data-vid', 'heading-adder')
           this.numberOfAdders++
-          instance.$on('enter', () => console.log('heading enter'))
+          instance.$on('enter', this.addHeading)
           instance.$on('cancel', () => {
             instance.$destroy()
             const $el = instance.$el as any
@@ -210,7 +211,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   add(obj: {name: string, priority: string, utc: {time: string, date: string}}) {
     const els: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
     this.getTaskAdderPosition()
-    const order = els.filter(el => el !== 'task-adder')
+    const order = els.filter(el => el !== 'task-adder' && el !== 'heading-adder')
     if (this.listHasDates) {
       if (!obj.utc) obj['utc'] = {
         time: '', date: '',
@@ -219,6 +220,13 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     }
     this.$emit('add', {position: this.taskAdderPosition, order, ...obj})
     this.added = true
+  }
+  addHeading(name: string) {
+    const els: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
+    this.getHeadingsAdderPosition()
+    const order = els.filter(el => el !== 'task-adder' && el !== 'heading-adder')
+    const ids = order.slice(this.headingAdderPosition)
+    console.log(ids, this.headingAdderPosition)
   }
   calcSelectedElements(evt?: any) {
     if (evt) {
@@ -256,13 +264,18 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     this.calcSelectedElements()
   }
   getTaskAdderPosition() {
+    this.taskAdderPosition = this.getCompPositionById('task-adder')
+  }
+  getHeadingsAdderPosition() {
+    this.headingAdderPosition = this.getCompPositionById('heading-adder')
+  }
+  getCompPositionById(key: string): number {
     const els: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
     let i = 0
     for (const id of els)
-      if (id === 'task-adder') {
-        this.taskAdderPosition = i
-        break
-      } else i++
+      if (id === key) return i
+      else i++
+    return 0
   }
 
   get rootComponent(): HTMLElement {
