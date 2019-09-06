@@ -11,8 +11,9 @@
       >
         <task-renderer
           class='task-renderer'
-          :id='id'
+          :id='head.id'
           :tasks='head.tasks'
+          :parent-id='head.id'
           :default-priority='defaultPriority'
           :default-labels='defaultLabels'
           :allow-priority='allowPriority'
@@ -26,6 +27,7 @@
           :emit-on-delete='emitOnDelete'
           :number='index + 1'
           @selected='onSelect'
+          @update='updateHeadingTasks'
         />
       </app-header>
     </transition-group>
@@ -87,7 +89,6 @@ export default class HeadingsRenderer extends Mixins(Mixin) {
 
       onUpdate: () => {
         const ids: string[] = this.getIdsFromElements(this.rootSelector, 'task-renderer')
-        console.log(ids)
         this.$emit('updateheadings', ids)
       },
     }
@@ -95,9 +96,12 @@ export default class HeadingsRenderer extends Mixins(Mixin) {
     this.sortable = new Sortable(this.rootComponent, options)
   }
 
-  onSelect(ids: string[]) {
-    console.log(ids)
-    this.$emit('selected', ids)
+  onSelect(obj: {ids: string[], parentId: string}) {
+    console.log(obj, 'onselect headings')
+    this.$emit('selected', obj)
+  }
+  updateHeadingTasks(obj: {ids: string[], parentId: string}) {
+    this.$emit('update', obj)
   }
 
   get rootComponent(): HTMLElement {

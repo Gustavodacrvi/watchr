@@ -23,6 +23,7 @@ interface Actions {
   addProjectHeadings: ProjectActions.StoreAddProjectHeadings
   deleteHeadingById: ProjectActions.StoreDeleteHeadingById
   updateHeadingsOrder: ProjectActions.StoreUpdateHeadingsOrder
+  updateHeadingsTaskOrder: ProjectActions.StoreUpdateHeadingsTaskOrder
 }
 
 export default {
@@ -278,6 +279,21 @@ export default {
           name, projects: [],
           userId: rootState.uid,
         })
+    },
+    updateHeadingsTaskOrder({ rootState, state }, {projectId, ids, headingId}) {
+      if (rootState.firestore && rootState.uid) {
+        const project = state.projects.find(el => el.id === projectId)
+        if (project) {
+          const headings = project.headings.slice()
+          const i = project.headings.findIndex(el => el.id === headingId)
+          if (i !== undefined) {
+            headings[i].tasks = ids
+            rootState.firestore.collection('projects').doc(projectId).update({
+              headings,
+            })
+          }
+        }
+      }
     },
     saveFoldersOrder({ rootState }, ids) {
       if (rootState.firestore && rootState.uid)

@@ -86,6 +86,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop(String) fixedPers!: string
   @Prop(String) fixedLabel!: string
   @Prop(String) date!: string
+  @Prop(String) parentId!: string
   @Prop(String) listType!: string
   @Prop(Array) tasks!: Task[]
   @Prop({default: false, type: Boolean}) insertBefore!: boolean
@@ -137,7 +138,10 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 
       onUpdate: () => {
         const order: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
-        this.$emit('update', order.filter(el => el !== 'task-adder' && 'heading-adder'))
+        const ids = order.filter(el => el !== 'task-adder' && el !== 'heading-adder')
+        if (!this.parentId)
+          this.$emit('update', ids)
+        else this.$emit('update', {ids, parentId: this.parentId})
       },
       onAdd: (evt: any) => {
         const type = evt.from.dataset.sortfrom
@@ -255,7 +259,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     this.numberOfSelected = this.$el.querySelectorAll('.sortable-selected').length
     if (this.numberOfSelected !== this.lastNumberOfSelected)
       setTimeout(() => {
-        this.$emit('selected', this.getIdsFromSelectedElements(this.rootSelector).filter(el => el !== 'task-adder'))
+        this.$emit('selected', this.getIdsFromSelectedElements(this.rootSelector).filter(el => el !== 'task-adder' && el !== 'heading-adder'))
       }, 1)
     this.lastNumberOfSelected = this.numberOfSelected
   }
