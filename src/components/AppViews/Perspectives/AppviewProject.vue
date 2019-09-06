@@ -82,6 +82,7 @@
         :allow-date='true'
         :emit-on-delete='true'
         @selected='onSelect'
+        @updateheadings='updateHeadings'
       />
     </div>
     <div class='margin-task' :class='platform'></div>
@@ -124,6 +125,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Action updateProjectTasks!: ProjectActions.UpdateProjectTasks
   @prjVuex.Action addProjectHeadings!: ProjectActions.AddProjectHeadings
   @prjVuex.Action deleteHeadingById!: ProjectActions.DeleteHeadingById
+  @prjVuex.Action updateHeadingsOrder!: ProjectActions.UpdateHeadingsOrder
 
   @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
   @task.Action addProjectTask!: TaskActions.AddProjectTask
@@ -154,6 +156,13 @@ export default class ProjectAppview extends Mixins(PersMixin) {
     if (this.prj)
       this.updateProjectTasks({
         id: this.prj.id,
+        ids,
+      })
+  }
+  updateHeadings(ids: string[]) {
+    if (this.prj)
+      this.updateHeadingsOrder({
+        projectId: this.prj.id,
         ids,
       })
   }

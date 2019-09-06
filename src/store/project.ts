@@ -22,6 +22,7 @@ interface Actions {
   updateProjectTasks: ProjectActions.StoreUpdateProjectTasks
   addProjectHeadings: ProjectActions.StoreAddProjectHeadings
   deleteHeadingById: ProjectActions.StoreDeleteHeadingById
+  updateHeadingsOrder: ProjectActions.StoreUpdateHeadingsOrder
 }
 
 export default {
@@ -155,6 +156,21 @@ export default {
         })
 
         batch.commit()
+      }
+    },
+    updateHeadingsOrder({ rootState, state }, {ids, projectId}) {
+      if (rootState.firestore && rootState.uid) {
+        const project = state.projects.find(el => el.id === projectId)
+        if (project) {
+          const headings = []
+          for (const id of ids) {
+            const head = project.headings.find(el => el.id === id)
+            if (head) headings.push(head)
+          }
+          rootState.firestore.collection('projects').doc(projectId).update({
+            headings,
+          })
+        }
       }
     },
     addProject({ rootState }, {name, foldId, description}) {

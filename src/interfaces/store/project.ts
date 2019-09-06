@@ -90,4 +90,7 @@ export namespace ProjectActions {
 
   export type StoreDeleteHeadingById = (context: ActionContext, obj: {projectId: string, headingId: string}) => void
   export type DeleteHeadingById = (obj: {projectId: string, headingId: string}) => void
+
+  export type StoreUpdateHeadingsOrder = (context: ActionContext, obj: {ids: string[], projectId: string}) => void
+  export type UpdateHeadingsOrder = (obj: {ids: string[], projectId: string}) => void
 }

@@ -88,7 +88,7 @@ export default class HeadingsRenderer extends Mixins(Mixin) {
       onUpdate: () => {
         const ids: string[] = this.getIdsFromElements(this.rootSelector, 'task-renderer')
         console.log(ids)
-        this.$emit('update', ids)
+        this.$emit('updateheadings', ids)
       },
     }
 
