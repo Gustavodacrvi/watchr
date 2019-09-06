@@ -95,6 +95,7 @@
               :always-show-creation-date='pers.alwaysShowCreationDate'
               :always-show-task-labels='pers.alwaysShowTaskLabels'
               @savenewdates='saveNewTaskDates'
+              @selected='onSelect'
               @add='addPersTask'
             />
           </app-header>

@@ -21,6 +21,7 @@ interface Actions {
   deleteProjectTask: ProjectActions.StoreDeleteProjectTask
   updateProjectTasks: ProjectActions.StoreUpdateProjectTasks
   addProjectHeadings: ProjectActions.StoreAddProjectHeadings
+  deleteHeadingById: ProjectActions.StoreDeleteHeadingById
 }
 
 export default {
@@ -119,6 +120,25 @@ export default {
         })
 
         batch.commit()
+      }
+    },
+    deleteHeadingById({ rootState, state }, {headingId, projectId}) {
+      if (rootState.firestore && rootState.uid) {
+        const project = state.projects.find(el => el.id === projectId)
+        if (project) {
+          const headings = project.headings.slice()
+          const i = headings.findIndex(el => el.id === headingId)
+          if (i) {
+            const fire = rootState.firebase.firestore.FieldValue as any
+            const ids = headings[i].tasks.slice()
+            headings.splice(i, 1)
+
+            rootState.firestore.collection('projects').doc(projectId).update({
+              tasks: fire.arrayUnion(...ids),
+              headings,
+            })
+          }
+        }
       }
     },
     deleteProjectTask({ rootState }, {taskId, projectId}) {

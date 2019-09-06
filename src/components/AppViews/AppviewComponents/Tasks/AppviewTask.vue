@@ -238,7 +238,6 @@ export default class AppviewTask extends Vue {
       size: 'lg',
       iconColor: '',
       callback: () => {
-        console.log(!this.emitOnDelete)
         if (!this.emitOnDelete)
           this.deleteTasksById([this.task.id])
         else this.$emit('delete', this.task.id)

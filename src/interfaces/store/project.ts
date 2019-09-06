@@ -87,4 +87,7 @@ export namespace ProjectActions {
 
   export type StoreAddProjectHeadings = (context: ActionContext, obj: {index: number, id: string, name: string, ids: string[]}) => void
   export type AddProjectHeadings = (obj: {index: number, name: string, id: string, ids: string[]}) => void
+
+  export type StoreDeleteHeadingById = (context: ActionContext, obj: {projectId: string, headingId: string}) => void
+  export type DeleteHeadingById = (obj: {projectId: string, headingId: string}) => void
 }

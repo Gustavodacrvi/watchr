@@ -94,6 +94,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 
   sortable: any = null
   numberOfSelected: number = 0
+  lastNumberOfSelected: number = 0
   deselectAll: boolean = false
   added: boolean = false
   dragging: boolean = false
@@ -251,10 +252,12 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       }
     }
 
-    this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
-    setTimeout(() => {
-      this.$emit('selected', this.getIdsFromSelectedElements(this.rootSelector).filter(el => el !== 'task-adder'))
-    }, 1)
+    this.numberOfSelected = this.$el.querySelectorAll('.sortable-selected').length
+    if (this.numberOfSelected !== this.lastNumberOfSelected)
+      setTimeout(() => {
+        this.$emit('selected', this.getIdsFromSelectedElements(this.rootSelector).filter(el => el !== 'task-adder'))
+      }, 1)
+    this.lastNumberOfSelected = this.numberOfSelected
   }
   toggleElement({el, select}: {el: HTMLElement, select: boolean}) {
     if (this.numberOfSelected === 0)

@@ -50,6 +50,7 @@
           </span>
         </div>
       </transition>
+      {{selectedTasks}} {{}}
       <transition name='below-trans'>
         <div v-if='isDesktop && selectedTasks.length > 0'
           class='options-wrapper'>
@@ -283,7 +284,7 @@ export default class ActionButtonComp extends Vue {
   position: absolute;
   height: 45px;
   bottom: 16px;
-  left: 360px;
+  left: 296px;
 }
 
 .option {

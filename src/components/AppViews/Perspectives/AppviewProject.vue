@@ -68,7 +68,9 @@
       <div style="height: 45px;"></div>
       <app-header v-for='(head, index) in getHeadings'
         :key='head.id'
+        :payload='head.id'
         :obj='{name: head.name}'
+        :options='headerOptions'
       >
         <task-renderer
           id='appnavprojecttasks'
@@ -110,7 +112,7 @@ import AppviewHeader from '@/components/AppViews/AppviewComponents/Headings/Appv
 
 import appUtils from '@/utils/app'
 
-import { Project, Label, Task } from '@/interfaces/app'
+import { Project, Label, Task, ListIcon } from '@/interfaces/app'
 import { ProjectActions, ProjectGetters } from '../../../interfaces/store/project'
 import { TaskGetters, TaskActions } from '../../../interfaces/store/task'
 
@@ -128,6 +130,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Action deleteProjectTask!: ProjectActions.DeleteProjectTask
   @prjVuex.Action updateProjectTasks!: ProjectActions.UpdateProjectTasks
   @prjVuex.Action addProjectHeadings!: ProjectActions.AddProjectHeadings
+  @prjVuex.Action deleteHeadingById!: ProjectActions.DeleteHeadingById
 
   @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
   @task.Action addProjectTask!: TaskActions.AddProjectTask
@@ -187,6 +190,26 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   get getTasks(): Task[] {
     if (this.prj)
       return this.filterTasks(this.getTasksByIds(this.prj.tasks))
+    return []
+  }
+  get headerOptions(): ListIcon[] {
+    if (this.prj) {
+      const project = this.prj as Project
+      return [
+        {
+          name: 'Delete heading',
+          icon: 'trash',
+          iconColor: '',
+          size: 'lg',
+          callback: (id: string) => {
+            this.deleteHeadingById({
+              projectId: project.id,
+              headingId: id,
+            })
+          },
+        },
+      ]
+    }
     return []
   }
   get getHeadings(): Array<{id: string, name: string, tasks: Task[]}> {
