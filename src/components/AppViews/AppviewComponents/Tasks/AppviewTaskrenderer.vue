@@ -50,6 +50,7 @@ import ViewTask from '@/components/AppViews/AppviewComponents/Tasks/AppviewTask.
 import Sortable, { MultiDrag } from 'sortablejs'
 import { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
 import TaskEditTemplate from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskedit.vue'
+import HeadingsTemplate from '@/components/AppViews/AppviewComponents/Headings/AppviewHeading.vue'
 
 Sortable.mount(new MultiDrag(), new AutoScroll())
 
@@ -99,9 +100,6 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   rootSelector: string = `.task-taskrenderer-${this.id}`
   taskAdderPosition: number = 0
 
-  created() {
-    this.$on('enter', this.add)
-  }
   mounted() {
     this.mount()
     document.addEventListener('click', this.calcSelectedElements)
@@ -143,9 +141,6 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
         if (type === 'actionbutton') {
           const Constructor = Vue.extend(TaskEditTemplate)
           const instance = new Constructor({
-            created() {
-              this.$emit('enter')
-            },
             parent: this,
             propsData: {
               class: 'handle', key: 'task-adder',
@@ -155,8 +150,8 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
             },
           })
           const el = this.rootComponent.querySelector('.main-button') as HTMLElement
-          el.setAttribute('id', 'main-button')
-          instance.$mount('#main-button')
+          el.setAttribute('id', 'main-button-task')
+          instance.$mount('#main-button-task')
           this.rootComponent.getElementsByClassName('task-adder')[0].setAttribute('data-vid', 'task-adder')
           this.numberOfAdders++
           instance.$on('enter', this.add)
@@ -178,6 +173,27 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
               id: e.dataset.vid,
             })
           this.$emit('savenewdates', arr)
+        } else if (type === 'actionbuttonleft') {
+          const Constructor = Vue.extend(HeadingsTemplate)
+          const instance = new Constructor({
+            parent: this,
+            propsData: {
+              class: 'handle', key: 'heading-adder',
+              obj: {name: ''}, editing: true, allowEdit: true,
+            },
+          })
+          const el = this.rootComponent.querySelector('.main-button') as HTMLElement
+          el.setAttribute('id', 'main-button-heading')
+          instance.$mount('#main-button-heading')
+          this.rootComponent.getElementsByClassName('heading-wrapper')[0].setAttribute('data-vid', 'heading-adder')
+          this.numberOfAdders++
+          instance.$on('enter', () => console.log('heading enter'))
+          instance.$on('cancel', () => {
+            instance.$destroy()
+            const $el = instance.$el as any
+            this.numberOfAdders--
+            $el.parentNode.removeChild($el)
+          })
         }
       },
       onStart: () => {
