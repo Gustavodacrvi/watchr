@@ -5,6 +5,7 @@ import appUtils from '@/utils/app'
 import { Folder, Project } from '@/interfaces/app'
 
 import timezone from 'moment-timezone'
+import undefined from 'firebase/empty-import'
 
 interface Actions {
   getData: ProjectActions.StoreGetData
@@ -24,6 +25,7 @@ interface Actions {
   deleteHeadingById: ProjectActions.StoreDeleteHeadingById
   updateHeadingsOrder: ProjectActions.StoreUpdateHeadingsOrder
   updateHeadingsTaskOrder: ProjectActions.StoreUpdateHeadingsTaskOrder
+  addProjectHeadingTask: ProjectActions.StoreAddProjectHeadingTask
 }
 
 export default {
@@ -130,7 +132,7 @@ export default {
         if (project) {
           const headings = project.headings.slice()
           const i = headings.findIndex(el => el.id === headingId)
-          if (i !== undefined) {
+          if (i > -1) {
             const fire = rootState.firebase.firestore.FieldValue as any
             const ids = headings[i].tasks.slice()
             headings.splice(i, 1)
@@ -280,13 +282,52 @@ export default {
           userId: rootState.uid,
         })
     },
+    addProjectHeadingTask({ rootState, state }, {projectId, headingId, task, order, position}) {
+      const u = timezone().utc()
+      const date = u.format('Y-M-D HH:mm')
+      if (rootState.firestore && rootState.uid) {
+        const project = state.projects.find(el => el.id === projectId)
+        if (project) {
+          const headings = project.headings.slice()
+          const i = headings.findIndex(el => el.id === headingId)
+          if (i > -1) {
+            const batch = rootState.firestore.batch()
+
+            const ord = order.slice()
+            const ref = rootState.firestore.collection('tasks').doc()
+            ord.splice(position, 0, ref.id)
+            headings[0].tasks = ord
+            const t = task as any
+            batch.set(ref, {
+              projectId,
+              name: task.name,
+              priority: task.priority,
+              userId: rootState.uid,
+              creationDate: date,
+              lastEditDate: date,
+              labels: task.labels,
+              checklist: [],
+              completed: false,
+              checklistOrder: [],
+              ...t.utc,
+            })
+            const persRef = rootState.firestore.collection('projects').doc(projectId)
+            batch.update(persRef, {
+              headings,
+            })
+    
+            batch.commit()
+          }
+        }
+      }
+    },
     updateHeadingsTaskOrder({ rootState, state }, {projectId, ids, headingId}) {
       if (rootState.firestore && rootState.uid) {
         const project = state.projects.find(el => el.id === projectId)
         if (project) {
           const headings = project.headings.slice()
           const i = project.headings.findIndex(el => el.id === headingId)
-          if (i !== undefined) {
+          if (i > -1) {
             headings[i].tasks = ids
             rootState.firestore.collection('projects').doc(projectId).update({
               headings,

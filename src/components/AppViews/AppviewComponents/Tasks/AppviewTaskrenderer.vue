@@ -121,8 +121,8 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       arr.push(e.dataset.vid)
     return arr
   }
-  deleteTask(task: Task[]) {
-    this.$emit('delete', task)
+  deleteTask(id: string) {
+    this.$emit('delete', id)
   }
   mount() {
     const options: any = {
@@ -224,7 +224,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       }
       obj.utc.date = this.rootComponent.dataset.date as any
     }
-    this.$emit('add', {position: this.taskAdderPosition, order, ...obj})
+    this.$emit('add', {position: this.taskAdderPosition, order, ...obj, parentId: this.parentId})
     this.added = true
   }
   addHeading(name: string) {

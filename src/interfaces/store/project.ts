@@ -45,6 +45,11 @@ export interface Getters {
   [key: string]: (state: State, getters: Getters) => void
 }
 
+export interface UtcObj {
+  time: string
+  date: string
+}
+
 export namespace ProjectActions {
   export type GetData = () => void
   export type StoreGetData = (context: ActionContext) => void
@@ -96,4 +101,7 @@ export namespace ProjectActions {
 
   export type StoreUpdateHeadingsTaskOrder = (context: ActionContext, obj: {projectId: string, ids: string[], headingId: string}) => void
   export type UpdateHeadingsTaskOrder = (obj: {projectId: string, ids: string[], headingId: string}) => void
+
+  export type StoreAddProjectHeadingTask = (context: ActionContext, obj: {task: Task, projectId: string, position: number, headingId: string, order: string[], utc: UtcObj | null}) => void
+  export type AddProjectHeadingTask = (obj: {task: Task, projectId: string, position: number, headingId: string, order: string[], utc: UtcObj | null}) => void
 }

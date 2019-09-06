@@ -27,6 +27,7 @@
           :emit-on-delete='emitOnDelete'
           :number='index + 1'
           @selected='onSelect'
+          @add='addTask'
           @update='updateHeadingTasks'
         />
       </app-header>
@@ -97,11 +98,13 @@ export default class HeadingsRenderer extends Mixins(Mixin) {
   }
 
   onSelect(obj: {ids: string[], parentId: string}) {
-    console.log(obj, 'onselect headings')
     this.$emit('selected', obj)
   }
   updateHeadingTasks(obj: {ids: string[], parentId: string}) {
     this.$emit('update', obj)
+  }
+  addTask(obj: any) {
+    this.$emit('add', obj)
   }
 
   get rootComponent(): HTMLElement {

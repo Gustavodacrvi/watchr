@@ -204,46 +204,6 @@ export default class AppviewTask extends Vue {
   editing: boolean = false
   sortable: any = null
   infoHeight: number = 0
-  options: ListIcon[] = [
-    {
-      name: 'Edit task',
-      icon: 'edit',
-      size: 'lg',
-      iconColor: '',
-      callback: () => {
-        this.editing = true
-      },
-    },
-    {
-      name: 'Copy task',
-      icon: 'copy',
-      size: 'lg',
-      iconColor: '',
-      callback: () => {
-        this.copyTask(this.task.id)
-      },
-    },
-    {
-      name: 'Uncomplete subtasks',
-      icon: 'list-ul',
-      size: 'lg',
-      iconColor: '',
-      callback: () => {
-        this.unCompleteSubtasks(this.task.id)
-      },
-    },
-    {
-      name: 'Delete task',
-      icon: 'trash',
-      size: 'lg',
-      iconColor: '',
-      callback: () => {
-        if (!this.emitOnDelete)
-          this.deleteTasksById([this.task.id])
-        else this.$emit('delete', this.task.id)
-      },
-    },
-  ]
 
   mounted() {
     this.mount()
@@ -425,6 +385,48 @@ export default class AppviewTask extends Vue {
     return !this.atLeastTwoInfoOptionsWontShowUp && (this.allTrue || !this.showLabels || !(this.showLastEditDate || this.showCreationDate))
   }
 
+  get options(): ListIcon[] {
+    return [
+      {
+        name: 'Edit task',
+        icon: 'edit',
+        size: 'lg',
+        iconColor: '',
+        callback: () => {
+          this.editing = true
+        },
+      },
+      {
+        name: 'Copy task',
+        icon: 'copy',
+        size: 'lg',
+        iconColor: '',
+        callback: () => {
+          this.copyTask(this.task.id)
+        },
+      },
+      {
+        name: 'Uncomplete subtasks',
+        icon: 'list-ul',
+        size: 'lg',
+        iconColor: '',
+        callback: () => {
+          this.unCompleteSubtasks(this.task.id)
+        },
+      },
+      {
+        name: 'Delete task',
+        icon: 'trash',
+        size: 'lg',
+        iconColor: '',
+        callback: () => {
+          if (!this.emitOnDelete)
+            this.deleteTasksById([this.task.id])
+          else this.$emit('delete', this.task.id)
+        },
+      },
+    ]
+  }
   get showTodayIcon(): boolean {
     if (this.fixedPers === 'Today' || !this.task.date) return false
     const {today, saved} = this.todayMomAndSavedMom()
