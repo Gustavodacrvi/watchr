@@ -114,6 +114,7 @@ export interface Task {
 
 export interface Heading {
   name: string
+  id: string
   tasks: string[]
 }
 
@@ -133,9 +134,8 @@ export interface Project {
   lastEditDate: string
   bindOnOverview: boolean
   folderId: string
-  headingsOrder: string[]
   tasks: string[]
-  headings: string[] // headings ids
+  headings: Heading[] // headings ids
 }
 
 export interface TaskInputObj {

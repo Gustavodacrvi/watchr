@@ -117,7 +117,6 @@ export default {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
-        console.log(task, projectId, order, position)
         const batch = rootState.firestore.batch()
 
         const ord = order.slice()

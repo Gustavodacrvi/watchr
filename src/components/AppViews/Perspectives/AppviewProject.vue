@@ -102,6 +102,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Getter getProjectByName!: ProjectGetters.GetProjectByName
   @prjVuex.Action deleteProjectTask!: ProjectActions.DeleteProjectTask
   @prjVuex.Action updateProjectTasks!: ProjectActions.UpdateProjectTasks
+  @prjVuex.Action addProjectHeadings!: ProjectActions.AddProjectHeadings
 
   @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
   @task.Action addProjectTask!: TaskActions.AddProjectTask
