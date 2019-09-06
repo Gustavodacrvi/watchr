@@ -12,6 +12,7 @@
         class='root-task'
         :key='task.id'
         :task='task'
+        :parent-id='parentId'
         :deselect-all='deselectAll'
         :allow-drag='numberOfSelected > 0'
         :dragging='dragging'
@@ -350,14 +351,14 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 }
 
 .list.isempty {
-  height: 150px;
+  height: 40px;
 }
 
 .no-task {
   position: relative;
-  top: -150px;
+  top: -40px;
   padding: 0 30px;
-  height: 150px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;

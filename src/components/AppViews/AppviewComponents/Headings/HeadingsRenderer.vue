@@ -27,6 +27,7 @@
           :emit-on-delete='emitOnDelete'
           :number='index + 1'
           @selected='onSelect'
+          @delete='deleteTask'
           @add='addTask'
           @update='updateHeadingTasks'
         />
@@ -105,6 +106,9 @@ export default class HeadingsRenderer extends Mixins(Mixin) {
   }
   addTask(obj: any) {
     this.$emit('add', obj)
+  }
+  deleteTask(obj: any) {
+    this.$emit('delete', obj)
   }
 
   get rootComponent(): HTMLElement {

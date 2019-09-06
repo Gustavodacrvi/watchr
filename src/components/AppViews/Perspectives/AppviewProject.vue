@@ -85,6 +85,7 @@
         @add='addTaskInProjectHeading'
         @updateheadings='updateHeadings'
         @update='updateHeadingTasks'
+        @delete='deleteHeadingTask'
       />
     </div>
     <div class='margin-task' :class='platform'></div>
@@ -130,6 +131,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Action updateHeadingsOrder!: ProjectActions.UpdateHeadingsOrder
   @prjVuex.Action updateHeadingsTaskOrder!: ProjectActions.UpdateHeadingsTaskOrder
   @prjVuex.Action addProjectHeadingTask!: ProjectActions.AddProjectHeadingTask
+  @prjVuex.Action deleteProjectHeadingTask!: ProjectActions.DeleteProjectHeadingTask
 
   @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
   @task.Action addProjectTask!: TaskActions.AddProjectTask
@@ -203,7 +205,15 @@ export default class ProjectAppview extends Mixins(PersMixin) {
         id: this.prj.id,
       })
   }
-  deleteTask(taskId: string) {
+  deleteHeadingTask(obj: {parentId: string, taskId: string}) {
+    if (this.prj)
+      this.deleteProjectHeadingTask({
+        projectId: this.prj.id,
+        headingId: obj.parentId,
+        taskId: obj.taskId,
+      })
+  }
+  deleteTask({taskId}: {taskId: string, parentId: string}) {
     if (this.prj)
       this.deleteProjectTask({
         taskId, projectId: this.prj.id,

@@ -26,6 +26,7 @@ interface Actions {
   updateHeadingsOrder: ProjectActions.StoreUpdateHeadingsOrder
   updateHeadingsTaskOrder: ProjectActions.StoreUpdateHeadingsTaskOrder
   addProjectHeadingTask: ProjectActions.StoreAddProjectHeadingTask
+  deleteProjectHeadingTask: ProjectActions.StoreDeleteProjectHeadingTask
 }
 
 export default {
@@ -281,6 +282,25 @@ export default {
           name, projects: [],
           userId: rootState.uid,
         })
+    },
+    deleteProjectHeadingTask({ rootState, state }, {taskId, projectId, headingId}) {
+      if (rootState.firestore && rootState.uid) {
+        const project = state.projects.find(el => el.id === projectId)
+        if (project) {
+          const headings = project.headings.slice()
+          const i = headings.findIndex(el => el.id === headingId)
+          if (i > -1) {
+            const batch = rootState.firestore.batch()
+            const j = headings[i].tasks.findIndex(el => el === taskId)
+            headings[i].tasks.splice(j, 1)
+            const taskRef = rootState.firestore.collection('tasks').doc(taskId)
+            batch.delete(taskRef)
+            const proRef = rootState.firestore.collection('projects').doc(projectId)
+            batch.update(proRef, {headings})
+            batch.commit()
+          }
+        }
+      }
     },
     addProjectHeadingTask({ rootState, state }, {projectId, headingId, task, order, position}) {
       const u = timezone().utc()

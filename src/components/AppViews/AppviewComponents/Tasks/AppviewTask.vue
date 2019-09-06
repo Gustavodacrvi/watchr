@@ -189,6 +189,7 @@ export default class AppviewTask extends Vue {
   @Prop(Boolean) alwaysShowCreationDate!: boolean
   @Prop(Boolean) alwaysShowTaskLabels!: boolean
   @Prop(String) fixedPers!: string
+  @Prop(String) parentId!: string
 
   clicked: boolean = false
   onHover: boolean = false
@@ -422,7 +423,7 @@ export default class AppviewTask extends Vue {
         callback: () => {
           if (!this.emitOnDelete)
             this.deleteTasksById([this.task.id])
-          else this.$emit('delete', this.task.id)
+          else this.$emit('delete', {taskId: this.task.id, parentId: this.parentId})
         },
       },
     ]

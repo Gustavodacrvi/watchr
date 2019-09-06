@@ -104,4 +104,7 @@ export namespace ProjectActions {
 
   export type StoreAddProjectHeadingTask = (context: ActionContext, obj: {task: Task, projectId: string, position: number, headingId: string, order: string[], utc: UtcObj | null}) => void
   export type AddProjectHeadingTask = (obj: {task: Task, projectId: string, position: number, headingId: string, order: string[], utc: UtcObj | null}) => void
+
+  export type StoreDeleteProjectHeadingTask = (context: ActionContext, obj: {projectId: string, taskId: string, headingId: string}) => void
+  export type DeleteProjectHeadingTask = (obj: {projectId: string, taskId: string, headingId: string}) => void
 }
