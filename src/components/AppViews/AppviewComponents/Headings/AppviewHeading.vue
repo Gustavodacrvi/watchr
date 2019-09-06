@@ -66,8 +66,10 @@ export default class AppviewHeading extends Vue {
   }
 
   enter() {
-    if (this.value !== '')
+    if (this.value !== '') {
       this.$emit('enter', this.value)
+      this.$emit('cancel')
+    }
   }
   focus() {
     const el = this.$el.getElementsByClassName('headingedit')[0] as any

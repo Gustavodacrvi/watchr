@@ -65,6 +65,29 @@
         @addheading='addHeading'
         @delete='deleteTask'
       />
+      <div style="height: 45px;"></div>
+      <app-header v-for='(head, index) in getHeadings'
+        :key='head.id'
+        :obj='{name: head.name}'
+      >
+        <task-renderer
+          id='appnavprojecttasks'
+          :tasks='head.tasks'
+          :default-priority='priority'
+          :default-labels='getLabels'
+          :allow-priority='true'
+          :fix-adder-position='true'
+          :insert-before='true'
+          :always-show-last-edit-date='false'
+          :always-show-creation-date='false'
+          :always-show-task-labels='false'
+          :allow-labels='true'
+          :allow-date='true'
+          :emit-on-delete='true'
+          :number='index + 1'
+          @selected='onSelect'
+        />
+      </app-header>
     </div>
     <div class='margin-task' :class='platform'></div>
   </div>
@@ -83,6 +106,7 @@ import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeaderti
 import AppviewHeaderIcons from '@/components/AppViews/AppviewComponents/AppviewHeadericons.vue'
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskrenderer.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
+import AppviewHeader from '@/components/AppViews/AppviewComponents/Headings/AppviewHeading.vue'
 
 import appUtils from '@/utils/app'
 
@@ -96,6 +120,7 @@ import { TaskGetters, TaskActions } from '../../../interfaces/store/task'
     'view-header-icons': AppviewHeaderIcons,
     'task-renderer': AppviewTaskrenderer,
     'view-tags': AppviewTags,
+    'app-header': AppviewHeader,
   },
 })
 export default class ProjectAppview extends Mixins(PersMixin) {
@@ -136,8 +161,13 @@ export default class ProjectAppview extends Mixins(PersMixin) {
         ids,
       })
   }
-  addHeading({ids, number}: {ids: string[], number: number}) {
-    console.log(ids, number)
+  addHeading({ids, position, name}: {ids: string[], position: number, name: string}) {
+    if (this.prj)
+      this.addProjectHeadings({
+        name, ids,
+        index: position,
+        id: this.prj.id,
+      })
   }
   deleteTask(taskId: string) {
     if (this.prj)
@@ -146,6 +176,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
       })
   }
   updateView() {
+    console.log(this.prj)
     if (this.prj)
       this.pushView({
         view: this.prj.name,
@@ -157,6 +188,19 @@ export default class ProjectAppview extends Mixins(PersMixin) {
     if (this.prj)
       return this.filterTasks(this.getTasksByIds(this.prj.tasks))
     return []
+  }
+  get getHeadings(): Array<{id: string, name: string, tasks: Task[]}> {
+    const arr: Array<{id: string, name: string, tasks: Task[]}> = []
+
+    if (this.prj)
+      for (const head of this.prj.headings)
+        arr.push({
+          id: head.id,
+          name: head.name,
+          tasks: this.getTasksByIds(head.tasks),
+        })
+
+    return arr
   }
   get getLabels(): Label[] {
     return this.getLabelsByIds(this.labels)

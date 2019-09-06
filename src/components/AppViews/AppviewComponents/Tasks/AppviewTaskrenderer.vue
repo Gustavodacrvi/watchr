@@ -227,7 +227,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     this.getHeadingsAdderPosition()
     const order = els.filter(el => el !== 'task-adder' && el !== 'heading-adder')
     const ids = order.slice(this.headingAdderPosition)
-    this.$emit('addheading', {number: this.number, ids})
+    this.$emit('addheading', {position: this.number, ids, name})
   }
   calcSelectedElements(evt?: any) {
     if (evt) {

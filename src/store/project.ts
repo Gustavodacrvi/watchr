@@ -174,10 +174,10 @@ export default {
         if (project) {
           const fire = rootState.firebase.firestore.FieldValue as any
 
-          let id = project.headings.length
+          let newId = project.headings.length
           while (true) {
-            if (project.headings.find(el => el.id === '' + id)) {
-              id++
+            if (project.headings.find(el => el.id === '' + newId)) {
+              newId++
               continue
             }
             break
@@ -185,7 +185,7 @@ export default {
 
           const headings = project.headings.slice()
           headings.splice(index, 0, {
-            id: '' + id,
+            id: '' + newId,
             tasks: ids, name,
           })
           rootState.firestore.collection('projects').doc(id).update({
