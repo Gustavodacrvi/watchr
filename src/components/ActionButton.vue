@@ -10,12 +10,18 @@
         @click='showing = !showing'
         data-sortfrom='actionbutton'
       >
-        <span
-          class='main-button'
-        >
-          <i class='icon txt pointer fas fa-plus' :style="{color: 'white'}"></i>
+        <span class='right main-button'>
+          <i class='icon txt pointer fas fa-plus' style="color: white"></i>
           <span class='txt msg' :class='theme'>Add task</span>
         </span>
+      </span>
+      <span id="left-floating-btn" data-sortfrom='actionbuttonleft'>
+        <transition name="fade">
+          <span class="left main-button" v-show="showLeftButton">
+            <i class="icon txt pointer fas fa-heading" style='color: white;'></i>
+            <span class="txt msg" :class="theme">Add heading</span>
+          </span>
+        </transition>
       </span>
       <transition name='below-trans'>
         <div v-show='selectedTasks.length > 0'
@@ -85,6 +91,7 @@ import { IndexGetters } from '../interfaces/store/'
 export default class ActionButtonComp extends Vue {
   @State theme!: IndexState.theme
   @State selectedTasks!: IndexState.selectedTasks
+  @State viewType!: IndexState.viewType
   @Getter isDesktop!: IndexGetters.IsDesktop
   @Mutation pushPopUp!: IndexMutations.PushPopUp
   @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
@@ -159,6 +166,12 @@ export default class ActionButtonComp extends Vue {
       group: {name: 'floatbutton', pull: 'clone', put: false},
       animation: 150,
     })
+    const elLeft = document.getElementById('left-floating-btn')
+    const sortLeft = new Sortable(elLeft, {
+      disabled: false,
+      group: {name: 'floatbutton', pull: 'clone', put: false},
+      animation: 150,
+    })
   }
 
   delete() {
@@ -205,6 +218,10 @@ export default class ActionButtonComp extends Vue {
       this.pushCenteredCard(centeredCard)
       this.tasks = this.selectedTasks
     }
+  }
+
+  get showLeftButton(): boolean {
+    return this.selectedTasks.length === 0 && this.viewType === 'project'
   }
 }
 
