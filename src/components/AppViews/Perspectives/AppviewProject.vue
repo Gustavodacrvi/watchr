@@ -105,6 +105,10 @@ export default class ProjectAppview extends Mixins(PersMixin) {
 
   @Prop(String) project!: string
 
+  created() {
+    this.updateView()
+  }
+
   addTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any}) {
     if (this.prj) {
       const p = this.prj as Project
@@ -131,6 +135,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
       })
   }
   updateView() {
+    console.log(this.prj)
     if (this.prj)
       this.pushView({
         view: this.prj.name,
@@ -150,7 +155,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
     return this.getProjectByName(this.project)
   }
 
-  @Watch('label')
+  @Watch('prj')
   onChange3() {
     this.updateView()
   }

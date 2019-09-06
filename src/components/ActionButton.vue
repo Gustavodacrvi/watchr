@@ -84,8 +84,8 @@ import { IndexGetters } from '../interfaces/store/'
 @Component
 export default class ActionButtonComp extends Vue {
   @State theme!: IndexState.theme
-  @Getter isDesktop!: IndexGetters.IsDesktop
   @State selectedTasks!: IndexState.selectedTasks
+  @Getter isDesktop!: IndexGetters.IsDesktop
   @Mutation pushPopUp!: IndexMutations.PushPopUp
   @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
 

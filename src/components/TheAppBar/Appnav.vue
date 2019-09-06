@@ -57,7 +57,7 @@
     </div>
     <div v-if='showFooter'
       class='footer-wrapper'
-      :class='[theme, backColor]'
+      :class='[theme, backColor, platform]'
     >
       <div style='height: 18px;'></div>
       <div class='footer'>

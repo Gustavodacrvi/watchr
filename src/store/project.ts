@@ -18,7 +18,6 @@ interface Actions {
   toggleProjectPin: ProjectActions.StoreToggleProjectPin
   editProject: ProjectActions.StoreEditProject
   deleteProjectById: ProjectActions.StoreDeleteProjectById
-  completeProjectTask: ProjectActions.StoreCompleteProjectTask
   deleteProjectTask: ProjectActions.StoreDeleteProjectTask
 }
 

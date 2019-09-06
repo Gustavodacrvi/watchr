@@ -1,8 +1,8 @@
 <template>
-  <div v-if='!editing' key='task' class='round-border wrapper'>
+  <div v-if='!editing' key='task' class='round-border wrapper' :class='theme'>
     <div
       class='round-border task'
-      :class="[theme, {'not-selected': !clicked}]"
+      :class="[theme, {'not-selected': !clicked, done: done, undone: !done}]"
       @dblclick='toggleEditing'
       @mouseenter='onHover = true'
       @mouseleave='onHover = false'
@@ -192,6 +192,7 @@ export default class AppviewTask extends Vue {
 
   clicked: boolean = false
   onHover: boolean = false
+  done: boolean = false
   subtaskValue: string = ''
   deselect: boolean = false
   showChecklist: boolean = false
@@ -358,6 +359,10 @@ export default class AppviewTask extends Vue {
     this.editing = false
   }
   toggleTaskComplete() {
+    this.done = true
+    setTimeout(() => {
+      this.done = false
+    }, 1000)
     this.toggleCompleteTask({
       id: this.task.id,
       completed: !this.task.completed,
@@ -634,11 +639,11 @@ export default class AppviewTask extends Vue {
   background-color: #282828;
 }
 
-.sortable-selected.light {
+.sortable-selected.light .task {
   background-color: #83B7E2 !important;
 }
 
-.sortable-selected.dark {
+.sortable-selected.dark .task {
   background-color: #3287cd !important;
 }
 
@@ -656,6 +661,51 @@ export default class AppviewTask extends Vue {
 
 .info-fade-enter-to, .info-fade-leave {
   opacity: 1;
+}
+
+.done, .undone {
+  transition: border .4s, background-color .4s;
+}
+
+.done .txt, .undone .txt {
+  transition: .4s;
+}
+
+.undone {
+  border: 0px #000 solid;
+  background-color: none;
+}
+
+.done.dark {
+  background-color: rgba(50, 135, 205, .2) !important;
+}
+
+.done.light {
+  background-color: rgba(131, 183, 226, .2) !important;
+}
+
+.done.dark .txt {
+  color: #808080;
+}
+
+.done.light .txt {
+  color: #b3b3b3;
+}
+
+.done.dark {
+  border: 2px #3287cd solid;
+}
+
+.done.dark .txt {
+  color: #3287cd;
+}
+
+.done.light {
+  border: 2px #83B7E2 solid;
+}
+
+.done.dark .txt {
+  color: #83B7E2;
 }
 
 </style>

@@ -298,9 +298,11 @@ export default {
       }
     },
     toggleCompleteTask({ rootState }, {id, completed}) {
+      const utc = timezone().utc()
+      const date = utc.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('tasks').doc(id).update({
-          completed,
+          completed, lastEditDate: date,
         })
     },
     copyTask({ rootState, state }, taskId) {
