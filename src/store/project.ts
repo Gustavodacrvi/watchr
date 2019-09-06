@@ -19,6 +19,7 @@ interface Actions {
   editProject: ProjectActions.StoreEditProject
   deleteProjectById: ProjectActions.StoreDeleteProjectById
   deleteProjectTask: ProjectActions.StoreDeleteProjectTask
+  updateProjectTasks: ProjectActions.StoreUpdateProjectTasks
 }
 
 export default {
@@ -164,6 +165,12 @@ export default {
 
         batch.commit()
       }
+    },
+    updateProjectTasks({ rootState }, {id, ids}) {
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('projects').doc(id).update({
+          tasks: ids,
+        })
     },
     deleteFolderAndProjectsByFolderId({ rootState, state }, id) {
       if (rootState.firestore && rootState.uid) {

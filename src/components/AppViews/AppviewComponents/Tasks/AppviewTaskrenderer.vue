@@ -78,6 +78,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop(Boolean) emitOnDelete!: boolean
   @Prop(Boolean) allowDate!: boolean
   @Prop(Boolean) listHasDates!: boolean
+  @Prop(Number) number!: number
   @Prop({default: undefined, type: String}) defaultPriority!: string
   @Prop({default: undefined, type: String}) defaultDate!: string
   @Prop({default: undefined, type: Array}) defaultLabels!: string[]
@@ -226,7 +227,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     this.getHeadingsAdderPosition()
     const order = els.filter(el => el !== 'task-adder' && el !== 'heading-adder')
     const ids = order.slice(this.headingAdderPosition)
-    console.log(ids, this.headingAdderPosition)
+    this.$emit('addheading', {number: this.number, ids})
   }
   calcSelectedElements(evt?: any) {
     if (evt) {

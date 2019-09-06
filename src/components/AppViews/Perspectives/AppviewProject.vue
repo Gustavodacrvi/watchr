@@ -58,9 +58,11 @@
         :allow-labels='true'
         :allow-date='true'
         :emit-on-delete='true'
+        :number='0'
         @update='onUpdate'
         @selected='onSelect'
         @add='addTask'
+        @addheading='addHeading'
         @delete='deleteTask'
       />
     </div>
@@ -99,6 +101,7 @@ import { TaskGetters, TaskActions } from '../../../interfaces/store/task'
 export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Getter getProjectByName!: ProjectGetters.GetProjectByName
   @prjVuex.Action deleteProjectTask!: ProjectActions.DeleteProjectTask
+  @prjVuex.Action updateProjectTasks!: ProjectActions.UpdateProjectTasks
 
   @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
   @task.Action addProjectTask!: TaskActions.AddProjectTask
@@ -125,8 +128,15 @@ export default class ProjectAppview extends Mixins(PersMixin) {
       } as any)
     }
   }
-  onUpdate(obj: any) {
-    console.log('onUpdateProjectTask', obj)
+  onUpdate(ids: string[]) {
+    if (this.prj)
+      this.updateProjectTasks({
+        id: this.prj.id,
+        ids,
+      })
+  }
+  addHeading({ids, number}: {ids: string[], number: number}) {
+    console.log(ids, number)
   }
   deleteTask(taskId: string) {
     if (this.prj)
@@ -135,7 +145,6 @@ export default class ProjectAppview extends Mixins(PersMixin) {
       })
   }
   updateView() {
-    console.log(this.prj)
     if (this.prj)
       this.pushView({
         view: this.prj.name,
