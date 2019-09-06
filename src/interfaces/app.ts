@@ -135,7 +135,7 @@ export interface Project {
   bindOnOverview: boolean
   folderId: string
   tasks: string[]
-  headings: Heading[] // headings ids
+  headings: Heading[]
 }
 
 export interface TaskInputObj {

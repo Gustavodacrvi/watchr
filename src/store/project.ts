@@ -128,7 +128,7 @@ export default {
         if (project) {
           const headings = project.headings.slice()
           const i = headings.findIndex(el => el.id === headingId)
-          if (i) {
+          if (i !== undefined) {
             const fire = rootState.firebase.firestore.FieldValue as any
             const ids = headings[i].tasks.slice()
             headings.splice(i, 1)
@@ -174,7 +174,6 @@ export default {
           lastEditDate: dt,
           bindOnOverview: false,
           folderId: foldRef.id,
-          headingsOrder: [],
           completedTasks: [],
           tasks: [],
           headings: [],
