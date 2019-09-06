@@ -1,6 +1,6 @@
 <template>
   <div class='heading-wrapper heading-adder'>
-    <div v-if="!editing" class='header'
+    <div v-if="!editing" class='header heading-handle'
       :class='theme'
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"

@@ -66,30 +66,23 @@
         @delete='deleteTask'
       />
       <div style="height: 45px;"></div>
-      <app-header v-for='(head, index) in getHeadings'
-        :key='head.id'
-        :payload='head.id'
-        :obj='{name: head.name}'
-        :options='headerOptions'
-      >
-        <task-renderer
-          id='appnavprojecttasks'
-          :tasks='head.tasks'
-          :default-priority='priority'
-          :default-labels='getLabels'
-          :allow-priority='true'
-          :fix-adder-position='true'
-          :insert-before='true'
-          :always-show-last-edit-date='false'
-          :always-show-creation-date='false'
-          :always-show-task-labels='false'
-          :allow-labels='true'
-          :allow-date='true'
-          :emit-on-delete='true'
-          :number='index + 1'
-          @selected='onSelect'
-        />
-      </app-header>
+      <headings-render
+        id='appnavprojecttasks'
+        :headings='getHeadings'
+        :header-options='headerOptions'
+        :default-priority='priority'
+        :default-labels='getLabels'
+        :allow-priority='true'
+        :fix-adder-position='true'
+        :insert-before='true'
+        :always-show-last-edit-date='false'
+        :always-show-creation-date='false'
+        :always-show-task-labels='false'
+        :allow-labels='true'
+        :allow-date='true'
+        :emit-on-delete='true'
+        @selected='onSelect'
+      />
     </div>
     <div class='margin-task' :class='platform'></div>
   </div>
@@ -108,13 +101,13 @@ import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeaderti
 import AppviewHeaderIcons from '@/components/AppViews/AppviewComponents/AppviewHeadericons.vue'
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskrenderer.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
-import AppviewHeader from '@/components/AppViews/AppviewComponents/Headings/AppviewHeading.vue'
 
 import appUtils from '@/utils/app'
 
 import { Project, Label, Task, ListIcon } from '@/interfaces/app'
 import { ProjectActions, ProjectGetters } from '../../../interfaces/store/project'
 import { TaskGetters, TaskActions } from '../../../interfaces/store/task'
+import HeadingsRenderer from '../AppviewComponents/Headings/HeadingsRenderer.vue'
 
 @Component({
   components: {
@@ -122,7 +115,7 @@ import { TaskGetters, TaskActions } from '../../../interfaces/store/task'
     'view-header-icons': AppviewHeaderIcons,
     'task-renderer': AppviewTaskrenderer,
     'view-tags': AppviewTags,
-    'app-header': AppviewHeader,
+    'headings-render': HeadingsRenderer,
   },
 })
 export default class ProjectAppview extends Mixins(PersMixin) {
