@@ -296,7 +296,7 @@ export default {
             const ord = order.slice()
             const ref = rootState.firestore.collection('tasks').doc()
             ord.splice(position, 0, ref.id)
-            headings[0].tasks = ord
+            headings[i].tasks = ord
             const t = task as any
             batch.set(ref, {
               projectId,

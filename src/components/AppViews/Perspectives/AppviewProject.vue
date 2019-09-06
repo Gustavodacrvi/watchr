@@ -159,7 +159,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   addTaskInProjectHeading(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any, parentId: string}) {
     if (this.prj) {
       const p = this.prj as Project
-      this.addProjectTask({
+      this.addProjectHeadingTask({
         task: {
           name: obj.name,
           priority: obj.priority,
@@ -204,7 +204,6 @@ export default class ProjectAppview extends Mixins(PersMixin) {
       })
   }
   deleteTask(taskId: string) {
-    console.log(taskId)
     if (this.prj)
       this.deleteProjectTask({
         taskId, projectId: this.prj.id,
