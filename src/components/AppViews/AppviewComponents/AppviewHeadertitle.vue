@@ -1,6 +1,7 @@
 <template>
   <div v-if='isDesktop'>
     <i v-if='icon' :class='`fas fa-${icon} fa-2x`' :style='{color: iconColor}'></i>
+    <app-pie :svg-width='35' :progress='40'/>
     <span class='title'>
       {{ value }}
     </span>
@@ -17,7 +18,13 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { State, Getter, Mutation } from 'vuex-class'
 import { IndexState, IndexGetters, IndexMutations } from '../../../interfaces/store/index'
 
-@Component
+import pie from '@/components/AppViews/AppviewComponents/AppviewPieprogress.vue'
+
+@Component({
+  components: {
+    'app-pie': pie,
+  },
+})
 export default class AppviewHeadertitle extends Vue {
   @State theme!: IndexState.theme
   @Getter isDesktop!: IndexGetters.IsDesktop
@@ -58,6 +65,15 @@ export default class AppviewHeadertitle extends Vue {
 
 .rotate {
   transform: rotate(-90deg);
+}
+
+.title {
+  margin-left: 45px !important; 
+}
+
+.pie-wrapper {
+  top: -5px;
+  left: -5px;
 }
 
 .left {
