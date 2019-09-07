@@ -5,6 +5,7 @@
         :key='obj.id'
         :id='obj.id'
         :show='obj.show'
+        :progress='obj.progress'
         :number='obj.number'
         :name='obj.name'
         :icon='obj.icon'

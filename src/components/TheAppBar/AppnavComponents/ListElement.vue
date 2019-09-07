@@ -11,6 +11,11 @@
     >
       <i :class='`txt fas fa-lg fa-${icon}`' :style='[{color: iconColor}, theme]'></i>
     </div>
+    <div v-else-if="progress" class="left-icon pie"
+      :class="{handle: allowDragAndDrop}"
+    >
+      <app-pie :svg-width='15' :progress='progress'/>
+    </div>
     <div
       class='content'
       :class='{handle: allowDragAndDrop}'
@@ -50,6 +55,7 @@ import { State, Getter, Mutation } from 'vuex-class'
 
 import IconDropdown from '@/components/IconDropdown.vue'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
+import pie from '@/components/AppViews/AppviewComponents/AppviewPieprogress.vue'
 
 import { ListIcon } from '../../../interfaces/app'
 
@@ -64,6 +70,7 @@ else Vue.directive('longpress', longClickDirective({delay: 1000, interval: 5000}
   components: {
     'icon-options': AppviewIconoptions,
     'icon-dropdown': IconDropdown,
+    'app-pie': pie,
   },
 })
 export default class ListRenderer extends Vue {
@@ -79,6 +86,7 @@ export default class ListRenderer extends Vue {
   @Prop(String) iconColor!: string
   @Prop(String) route!: string
   @Prop(Array) options!: ListIcon[]
+  @Prop(Number) progress!: number
   @Prop(Array) helpIcons!: ListIcon[]
   @Prop(Boolean) showHandle!: boolean
   @Prop(Boolean) deselectAll!: boolean
@@ -198,6 +206,11 @@ export default class ListRenderer extends Vue {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.pie {
+  margin-top: 3px;
+  transform: translateX(5px);
 }
 
 .element.dark:hover, .active.dark {

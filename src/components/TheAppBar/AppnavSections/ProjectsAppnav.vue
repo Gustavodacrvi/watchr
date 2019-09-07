@@ -33,11 +33,12 @@ import AppnavDivision from '@/components/TheAppBar/AppnavComponents/AppnavDivisi
 import { Label, Perspective, Task, ListIcon, ListElement, AppnavDivisionEl, SimpleAdder, Project } from '@/interfaces/app'
 import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 import { PersGetters } from '../../../interfaces/store/perspective'
-import { TaskState } from '../../../interfaces/store/task'
+import { TaskState, TaskActions, TaskGetters } from '../../../interfaces/store/task'
 import { SetState } from '../../../interfaces/store/settings'
 import { ProjectGetters, ProjectActions } from '../../../interfaces/store/project'
 
 const set = namespace('settings')
+const task = namespace('task')
 const project = namespace('project')
 
 @Component({
@@ -64,6 +65,8 @@ export default class OverviewAppnav extends Vue {
   @project.Action moveProjectsFromFolder!: ProjectActions.MoveProjectsFromFolder
   @project.Action toggleProjectPin!: ProjectActions.ToggleProjectPin
   @project.Action deleteProjectById!: ProjectActions.DeleteProjectById
+
+  @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
 
   @set.State timeZone!: SetState.timeZone
 
@@ -192,12 +195,33 @@ export default class OverviewAppnav extends Vue {
     for (const f of fs) {
       const pros = this.getProjectsByFolderId(f.id)
       const list = []
-      for (const p of pros)
+      
+      for (const p of pros) {
+        const isInThisProject = (task: Task) => {
+          return task.projectId && task.projectId === p.id
+        }
+
+        let tasks = this.getTasksByIds(p.tasks)
+        tasks = tasks.filter(el => isInThisProject(el))
+
+        for (const head of p.headings) {
+          let headTasks = this.getTasksByIds(head.tasks)
+          headTasks = headTasks.filter(el => isInThisProject(el))
+          tasks = [...tasks, ...headTasks]
+        }
+        const numberOfTasks = tasks.length
+        let completedTasks = 0
+
+        for (const task of tasks)
+          if (task.completed) completedTasks++
+
         list.push({
           ...p,
           number: 0,
+          progress: 100 * completedTasks / numberOfTasks,
           show: true,
         })
+      }
       arr.push({
         name: f.name,
         id: f.id,

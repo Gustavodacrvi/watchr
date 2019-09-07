@@ -1,9 +1,9 @@
 <template>
-  <div class="pie-wrapper">
+  <div class="pie-wrapper" :class="theme" :style='outlineStyle'>
     <svg class='svg' viewBox="0 0 32 32" :width='getsvgWidth'>
       <circle class='pie' :class="theme" :stroke-dasharray="`${progress} 100`"></circle>
     </svg>
-    <div class="outline" :class="theme" :style='outlineStyle'></div>
+    <div class="outline" :style='outlineStyle' :class="theme"></div>
   </div>
 </template>
 
@@ -31,11 +31,6 @@ export default class AppviewPie extends Vue {
       height: width,
     }
   }
-  get getIconFontSize(): Object {
-    return {
-      fontSize: this.svgWidth,
-    }
-  }
 }
 
 </script>
@@ -52,6 +47,7 @@ export default class AppviewPie extends Vue {
 
 .pie-wrapper {
   position: relative;
+  display: inline-block;
 }
 
 .pie {
@@ -73,11 +69,9 @@ export default class AppviewPie extends Vue {
 
 .outline {
   position: absolute;
-  top: -4px;
   left: -4px;
+  top: -4px;
   border-radius: 100px;
-  height: 50px;
-  width: 50px;
 }
 
 .outline.dark {

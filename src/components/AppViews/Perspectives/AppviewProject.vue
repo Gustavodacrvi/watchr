@@ -322,7 +322,8 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   }
   get getProgress(): number {
     if (this.prj) {
-      let tasks = this.getTasks
+      let tasks = this.getTasksByIds(this.prj.tasks)
+      tasks = tasks.filter(el => this.isInThisProject(el))
 
       for (const head of this.prj.headings) {
         let headTasks = this.getTasksByIds(head.tasks)
@@ -335,12 +336,6 @@ export default class ProjectAppview extends Mixins(PersMixin) {
       for (const task of tasks)
         if (task.completed) completedTasks++
 
-      /* 
-        100 - numberOfTasks
-        y   - completedTasks
-        100 * completedTasks = numberOfTasks * y
-        100 * completedTasks / numberOfTasks = y
-       */
       return 100 * completedTasks / numberOfTasks
     }
     return 0

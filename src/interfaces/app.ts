@@ -10,6 +10,9 @@ export interface Alert {
 export interface ListElement {
   show: boolean
   number: number
+  icon?: string
+  iconColor?: string
+  progress?: number
   [key: string]: any
 }
 
