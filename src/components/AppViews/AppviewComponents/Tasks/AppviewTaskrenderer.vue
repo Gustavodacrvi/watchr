@@ -203,9 +203,8 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
           if (els.length === 0)
             els.push(evt.item)
           const pId = els[0].dataset.vparentdi
-          const arr = []
-          for (const e of els)
-            arr.push(e.dataset.vid)
+          const order: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
+          const ids = order.filter(el => el !== 'task-adder' && el !== 'heading-adder')
           
           const to = this.listType
           const fm = type
@@ -217,11 +216,11 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
           const betweenHeads = (to === head && fm === head)
 
           if (comingFromRoot) {
-            this.$emit('fromroot', {to: this.parentId, ids: els})
+            this.$emit('fromroot', {to: this.parentId, ids: ids})
           } else if (goingToRoot) {
-            this.$emit('toroot', {from: pId, ids: els})
+            this.$emit('toroot', {from: pId, ids: ids})
           } else if (betweenHeads) {
-            this.$emit('betweenheadings', {from: pId, to: this.parentId, ids: els})
+            this.$emit('betweenheadings', {from: pId, to: this.parentId, ids: ids})
           }
         }
       },

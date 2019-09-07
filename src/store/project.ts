@@ -26,6 +26,7 @@ interface Actions {
   updateHeadingsTaskOrder: ProjectActions.StoreUpdateHeadingsTaskOrder
   addProjectHeadingTask: ProjectActions.StoreAddProjectHeadingTask
   saveProjectHeadingName: ProjectActions.StoreSaveProjectHeadingName
+  moveTasksFromRootToHeading: ProjectActions.StoreMoveTasksFromRootToHeading
 }
 
 export default {
@@ -140,8 +141,12 @@ export default {
             const ids = headings[i].tasks.slice()
             headings.splice(i, 1)
 
-            rootState.firestore.collection('projects').doc(projectId).update({
-              tasks: fire.arrayUnion(...ids),
+            if (ids.length > 0)
+              rootState.firestore.collection('projects').doc(projectId).update({
+                tasks: fire.arrayUnion(...ids),
+                headings,
+              })
+            else rootState.firestore.collection('projects').doc(projectId).update({
               headings,
             })
           }
@@ -273,6 +278,23 @@ export default {
           name, projects: [],
           userId: rootState.uid,
         })
+    },
+    moveTasksFromRootToHeading({ rootState, state }, {to, projectId, ids}) {
+      if (rootState.firestore && rootState.uid) {
+        const project = state.projects.find(el => el.id === projectId)
+        if (project) {
+          const headings = project.headings.slice()
+          const i = headings.findIndex(el => el.id === to)
+          if (i > -1) {
+            const fire = rootState.firebase.firestore.FieldValue as any
+            headings[i].tasks = ids
+            rootState.firestore.collection('projects').doc(projectId).update({
+              headings,
+              tasks: fire.arrayRemove(...ids),
+            })
+          }
+        }
+      }
     },
     saveProjectHeadingName({ rootState, state }, {projectId, name, headingId}) {
       if (rootState.firestore && rootState.uid) {
