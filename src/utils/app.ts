@@ -108,8 +108,18 @@ export default {
           return false
         })
       }
+      case 'Completed': {
+        return tasks.filter(el => el.completed)
+      }
+      case 'Has project': {
+        return tasks.filter(el => el.projectId)
+      }
+      case `Doesn't have project`: {
+        return tasks.filter(el => !el.projectId)
+      }
       case 'Overdue': {
         return tasks.filter(el => {
+          if (el.completed) return false
           if (el.date) {
             const {saved, today} = this.getMomentsOutOfTask(el.date, timeZone)
             return saved.isBefore(today, 'day')

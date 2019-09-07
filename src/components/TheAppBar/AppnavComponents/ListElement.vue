@@ -18,11 +18,11 @@
     </div>
     <div
       class='content'
-      :class='{handle: allowDragAndDrop}'
+      :class='[{handle: allowDragAndDrop}, platform]'
       v-longpress='longPress'      
       @click='singleClick'
     >
-      <span class='txt name' :class='[{showall: helpIcons.length === 0}, theme]'>{{ name }}</span>
+      <span class='txt name' :class='[{showall: helpIcons.length === 0}, theme, platform]'>{{ name }}</span>
     </div>
     <div class='options' :class='theme'>
       <span v-if='number' class='help-icon number'>{{ number }}</span>
@@ -172,12 +172,21 @@ export default class ListRenderer extends Vue {
   align-items: center;
 }
 
+.content.mobile {
+  width: 100%;
+}
+
 .name {
   margin-left: 6px;
   max-width: 120px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.name.mobile {
+  max-width: 200px;
+  width: 100%;
 }
 
 .showall {

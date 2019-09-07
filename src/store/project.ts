@@ -104,9 +104,29 @@ export default {
           name,
         })
     },
-    deleteProjectById({ rootState }, id) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('projects').doc(id).delete()
+    deleteProjectById({ rootState, state }, id) {
+      if (rootState.firestore && rootState.uid) {
+        const project = state.projects.find(el => el.id === id)
+        if (project) {
+          const batch = rootState.firestore.batch()
+
+          for (const i of project.tasks) {
+            const ref = rootState.firestore.collection('tasks').doc(i)
+            batch.update(ref, {
+              projectId: '',
+            })
+          }
+          for (const head of project.headings)
+            for (const i of head.tasks) {
+              const ref = rootState.firestore.collection('tasks').doc(i)
+              batch.update(ref, {
+                projectId: '',
+              })
+            }
+
+          batch.commit()
+        }
+      }
     },
     toggleProjectPin({ rootState, state }, id) {
       if (rootState.firestore && rootState.uid) {

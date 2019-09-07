@@ -736,16 +736,8 @@ export default class AppviewTask extends Vue {
   color: #b3b3b3;
 }
 
-.done.dark {
-  border: 2px #3287cd solid;
-}
-
 .done.dark .txt {
   color: #3287cd;
-}
-
-.done.light {
-  border: 2px #83B7E2 solid;
 }
 
 .done.dark .txt {

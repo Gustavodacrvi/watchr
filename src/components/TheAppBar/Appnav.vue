@@ -130,6 +130,7 @@ export default class LoggedAppnav extends Vue {
   @label.Action sortLabelsByName!: LabelActions.SortLabelsByName
 
   sections: Section[] = [
+    {icon: 'home', comp: 'overview', title: 'OVERVIEW'},
     {icon: 'project-diagram', comp: 'projects', title: 'PROJECTS', options: [
       {
         name: 'Add folder',
@@ -141,7 +142,6 @@ export default class LoggedAppnav extends Vue {
         },
       }
     ]},
-    {icon: 'home', comp: 'overview', title: 'OVERVIEW'},
     {icon: 'layer-group', comp: 'perspectives', title: 'PERSPECTIVES'},
     {icon: 'tags', comp: 'labels', title: 'LABELS', options: [
       {
