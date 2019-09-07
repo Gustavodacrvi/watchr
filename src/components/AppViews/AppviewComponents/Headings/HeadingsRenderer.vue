@@ -6,8 +6,11 @@
         :payload='head.id'
         :obj='{name: head.name}'
         :options='headerOptions'
+        :allow-edit='true'
 
         :data-vid='head.id'
+
+        @enter='saveHeadingName'
       >
         <task-renderer
           class='task-renderer'
@@ -98,6 +101,9 @@ export default class HeadingsRenderer extends Mixins(Mixin) {
     this.sortable = new Sortable(this.rootComponent, options)
   }
 
+  saveHeadingName({name, payload}: {name: string, payload: string}) {
+    this.$emit('saveheading', {name, headingId: payload})
+  }
   onSelect(ids: string[]) {
     this.$emit('selected', ids)
   }

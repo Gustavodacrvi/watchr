@@ -1,6 +1,6 @@
 <template>
   <div class='heading-wrapper heading-adder'>
-    <div v-if="!editing" class='header heading-handle'
+    <div v-if="!editingHeading" class='header heading-handle'
       :class='theme'
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
@@ -42,7 +42,7 @@
       >
         Save heading
       </view-btn>
-      <span class="cancel pointer" @click="$emit('cancel')">Cancel</span>
+      <span class="cancel pointer" @click="cancel">Cancel</span>
     </template>
     <transition name='fade'>
       <div v-if='showing' class='content'>
@@ -82,27 +82,44 @@ export default class AppviewHeading extends Vue {
 
   showing: boolean = true
   onHover: boolean = false
+  editingHeading: boolean = false
   value: string = ''
 
+  created() {
+    if (this.obj && this.obj.name)
+      this.value = this.obj.name
+    this.editingHeading = this.editing
+  }
+
   mounted() {
-    if (this.editing)
+    if (this.editingHeading)
       this.focus()
   }
 
   enter() {
     if (this.value !== '') {
-      this.$emit('enter', this.value)
-      this.$emit('cancel')
+      if (!this.payload)
+        this.$emit('enter', this.value)
+      else this.$emit('enter', {name: this.value, payload: this.payload})
+      this.cancel()
     }
   }
+  cancel() {
+    this.$emit('cancel')
+    this.editingHeading = false
+  }
   focus() {
-    const el = this.$el.getElementsByClassName('headingedit')[0] as any
-    el.focus()
+    setTimeout(() => {
+      const el = this.$el.getElementsByClassName('headingedit')[0] as any
+      if (el)
+        el.focus()
+    }, 100)
   }
   edit() {
-    if (this.allowEdit) this.editing = !this.editing
-    if (this.editing)
+    if (this.allowEdit) {
+      this.editingHeading = true
       this.focus()
+    }
   }
 }
 

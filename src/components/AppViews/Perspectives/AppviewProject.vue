@@ -78,6 +78,7 @@
         :always-show-task-labels='false'
         :allow-labels='true'
         :allow-date='true'
+        @saveheading='saveHeading'
         @selected='onSelect'
         @add='addTaskInProjectHeading'
         @updateheadings='updateHeadings'
@@ -126,6 +127,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Action updateHeadingsOrder!: ProjectActions.UpdateHeadingsOrder
   @prjVuex.Action updateHeadingsTaskOrder!: ProjectActions.UpdateHeadingsTaskOrder
   @prjVuex.Action addProjectHeadingTask!: ProjectActions.AddProjectHeadingTask
+  @prjVuex.Action saveProjectHeadingName!: ProjectActions.SaveProjectHeadingName
 
   @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
   @task.Action addProjectTask!: TaskActions.AddProjectTask
@@ -151,6 +153,12 @@ export default class ProjectAppview extends Mixins(PersMixin) {
         order: p.tasks,
       } as any)
     }
+  }
+  saveHeading({name, headingId}: {name: string, headingId: string}) {
+    if (this.prj)
+      this.saveProjectHeadingName({
+        name, headingId, projectId: this.prj.id,
+      })
   }
   addTaskInProjectHeading(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any, parentId: string}) {
     if (this.prj) {

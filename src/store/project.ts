@@ -25,6 +25,7 @@ interface Actions {
   updateHeadingsOrder: ProjectActions.StoreUpdateHeadingsOrder
   updateHeadingsTaskOrder: ProjectActions.StoreUpdateHeadingsTaskOrder
   addProjectHeadingTask: ProjectActions.StoreAddProjectHeadingTask
+  saveProjectHeadingName: ProjectActions.StoreSaveProjectHeadingName
 }
 
 export default {
@@ -272,6 +273,21 @@ export default {
           name, projects: [],
           userId: rootState.uid,
         })
+    },
+    saveProjectHeadingName({ rootState, state }, {projectId, name, headingId}) {
+      if (rootState.firestore && rootState.uid) {
+        const project = state.projects.find(el => el.id === projectId)
+        if (project) {
+          const headings = project.headings.slice()
+          const i = headings.findIndex(el => el.id === headingId)
+          if (i > -1) {
+            headings[i].name = name
+            rootState.firestore.collection('projects').doc(projectId).update({
+              headings,
+            })
+          }
+        }
+      }
     },
     addProjectHeadingTask({ rootState, state }, {projectId, headingId, task, order, position}) {
       const u = timezone().utc()
