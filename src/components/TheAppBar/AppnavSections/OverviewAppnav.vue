@@ -47,7 +47,7 @@ import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.v
 import { Label, Perspective, Task, ListIcon, ListElement, AppnavDivisionEl } from '@/interfaces/app'
 import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 import { PersGetters } from '../../../interfaces/store/perspective'
-import { TaskState } from '../../../interfaces/store/task'
+import { TaskState, TaskGetters } from '../../../interfaces/store/task'
 import { SetState } from '../../../interfaces/store/settings'
 import { ProjectGetters } from '../../../interfaces/store/project'
 
@@ -75,6 +75,7 @@ export default class OverviewAppnav extends Vue {
   @persVuex.Getter pinedCustomPerspectives!: PersGetters.PinedCustomPerspectives
   @persVuex.Getter getNumberOfTasksByPerspectiveId!: PersGetters.GetNumberOfTasksByPerspectiveId
 
+  @taskVuex.Getter getTasksByIds!: TaskGetters.GetTasksByIds
   @taskVuex.State tasks!: TaskState.tasks
 
   @set.State timeZone!: SetState.timeZone
@@ -128,12 +129,32 @@ export default class OverviewAppnav extends Vue {
       const pros = this.getPinedProjectsByFolderId(fold.id)
       if (pros.length > 0) {
         const list = []
-        for (const p of pros)
+        for (const p of pros) {
+          const isInThisProject = (task: Task) => {
+            return task.projectId && task.projectId === p.id
+          }
+
+          let tasks = this.getTasksByIds(p.tasks)
+          tasks = tasks.filter(el => isInThisProject(el))
+
+          for (const head of p.headings) {
+            let headTasks = this.getTasksByIds(head.tasks)
+            headTasks = headTasks.filter(el => isInThisProject(el))
+            tasks = [...tasks, ...headTasks]
+          }
+          const numberOfTasks = tasks.length
+          let completedTasks = 0
+
+          for (const task of tasks)
+          if (task.completed) completedTasks++
+
           list.push({
             ...p,
             number: 0,
+            progress: 100 * completedTasks / numberOfTasks,
             show: true,
           })
+        }
         arr.push({
           name: fold.name,
           id: fold.id,
