@@ -206,10 +206,17 @@ export default class ProjectAppview extends Mixins(PersMixin) {
         viewType: 'project',
       })
   }
+  isInThisProject(task: Task) {
+    if (this.prj)
+      return task.projectId && task.projectId === this.prj.id
+    return false
+  }
 
   get getTasks(): Task[] {
     if (this.prj) {
-      return this.filterTasks(this.getTasksByIds(this.prj.tasks))
+      let tasks = this.getTasksByIds(this.prj.tasks)
+      tasks = tasks.filter(el => this.isInThisProject(el))
+      return this.filterTasks(tasks)
     }
     return []
   }
@@ -237,12 +244,15 @@ export default class ProjectAppview extends Mixins(PersMixin) {
     const arr: Array<{id: string, name: string, tasks: Task[]}> = []
 
     if (this.prj)
-      for (const head of this.prj.headings)
+      for (const head of this.prj.headings) {
+        let tasks = this.getTasksByIds(head.tasks)
+        tasks = tasks.filter(el => this.isInThisProject(el))
         arr.push({
           id: head.id,
           name: head.name,
-          tasks: this.getTasksByIds(head.tasks),
+          tasks: tasks,
         })
+      }
 
     return arr
   }

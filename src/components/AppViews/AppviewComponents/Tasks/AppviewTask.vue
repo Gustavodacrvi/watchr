@@ -173,6 +173,7 @@ export default class AppviewTask extends Vue {
   @taskVuex.Action saveSubtaskOrder!: TaskActions.SaveSubtaskOrder
   @taskVuex.Action unCompleteSubtasks!: TaskActions.UnCompleteSubtasks
   @taskVuex.Action copyTask!: TaskActions.CopyTask
+  @taskVuex.Action removeTasksFromProject!: TaskActions.RemoveTasksFromProject
 
   @settingsVuex.State timeZone!: SetState.timeZone
   @settingsVuex.State timeFormat!: SetState.timeFormat
@@ -386,7 +387,7 @@ export default class AppviewTask extends Vue {
   }
 
   get options(): ListIcon[] {
-    return [
+    const options = [
       {
         name: 'Edit task',
         icon: 'edit',
@@ -424,6 +425,17 @@ export default class AppviewTask extends Vue {
         },
       },
     ]
+    if (this.task.projectId)
+      options.push({
+        name: 'Remove task from project',
+        icon: 'project-diagram',
+        iconColor: '',
+        size: 'lg',
+        callback: () => {
+          this.removeTasksFromProject([this.task.id])
+        },
+      })
+    return options
   }
   get showTodayIcon(): boolean {
     if (this.fixedPers === 'Today' || !this.task.date) return false

@@ -23,6 +23,7 @@ interface Actions {
   saveNewDateOfTasks: TaskActions.StoreSaveNewDateOfTasks
   unCompleteSubtasks: TaskActions.StoreUnCompleteSubtasks
   addProjectTask: TaskActions.StoreAddProjectTask
+  removeTasksFromProject: TaskActions.StoreRemoveTasksFromProject
   toggleCompleteTask: TaskActions.StoreToggleCompleteTask
 }
 
@@ -294,6 +295,20 @@ export default {
           checklist: fire.arrayUnion(subtask),
           lastEditDate: date,
         })
+      }
+    },
+    removeTasksFromProject({ rootState }, ids) {
+      if (rootState.firestore && rootState.uid) {
+        const batch = rootState.firestore.batch()
+
+        for (const id of ids) {
+          const ref = rootState.firestore.collection('tasks').doc(id)
+          batch.update(ref, {
+            projectId: '',
+          })
+        }
+
+        batch.commit()
       }
     },
     toggleCompleteTask({ rootState }, {id, completed}) {

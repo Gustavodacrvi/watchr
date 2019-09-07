@@ -88,4 +88,7 @@ export namespace TaskActions {
 
   export type StoreToggleCompleteTask = (context: ActionContext, obj: {id: string, completed: boolean}) => void
   export type ToggleCompleteTask = (obj: {id: string, completed: boolean}) => void
+
+  export type StoreRemoveTasksFromProject = (context: ActionContext, ids: string[]) => void
+  export type RemoveTasksFromProject = (ids: string[]) => void
 }
