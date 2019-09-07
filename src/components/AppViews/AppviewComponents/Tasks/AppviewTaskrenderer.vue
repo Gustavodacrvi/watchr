@@ -20,6 +20,7 @@
         :always-show-creation-date='alwaysShowCreationDate'
         :always-show-task-labels='alwaysShowTaskLabels'
         :fixed-pers='fixedPers'
+        :show-project-name='showProjectName'
 
         :data-vid='task.id'
         :data-vparentdi='parentId'
@@ -78,6 +79,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop(Boolean) allowDate!: boolean
   @Prop(Boolean) listHasDates!: boolean
   @Prop(Number) number!: number
+  @Prop({default: true, type: Boolean}) showProjectName!: boolean
   @Prop({default: undefined, type: String}) defaultPriority!: string
   @Prop({default: undefined, type: String}) defaultDate!: string
   @Prop({default: undefined, type: Array}) defaultLabels!: string[]

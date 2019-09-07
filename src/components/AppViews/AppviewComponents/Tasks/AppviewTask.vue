@@ -26,6 +26,9 @@
               <i v-if='showTodayIcon' class='txt fas fa-star fa-sm' style='color: #FFE366'></i>
               <i v-else-if='showOverdueIcon' class='txt fas fa-hourglass-end fa-sm' style='color: #FF6B66'></i>
               <i v-else-if='showTomorrowIcon' class='txt fas fa-sun fa-sm' style='color: #ffa166'></i>
+              <span v-if="showProjectName && projectName" class="txt-tag gray txt round-border" :class="theme">{{ projectName }}</span>
+              <span v-if="date" class="txt-tag gray txt round-border" :class="theme">{{ date }}</span>
+              <span v-if="time" class="txt-tag gray txt round-border" :class="theme">{{ time }}</span>
               {{ task.name }}
               <i v-if='task.priority'
                 class='content-icon fas fa-exclamation fa-sm'
@@ -37,8 +40,6 @@
               <i v-if='getChecklist && getChecklist.length > 0'
                 class='fade content-icon fas fa-checklist fa-list-ul'
               ></i>
-              <span class='fade' v-if='date'>{{ date }}</span>
-              <span class='fade' v-if='time'>{{ time }}</span>
             </div>
             <transition
               name='info-fade'
@@ -140,6 +141,7 @@ import moment from 'moment-timezone'
 
 const taskVuex = namespace('task')
 const labelVuex = namespace('label')
+const project = namespace('project')
 const settingsVuex = namespace('settings')
 
 import Sortable from 'sortablejs'
@@ -149,6 +151,7 @@ import { IndexState, IndexGetters } from '../../../../interfaces/store/index'
 import { LabelGetters } from '../../../../interfaces/store/label'
 import { SetState } from '../../../../interfaces/store/settings'
 import { TaskActions } from '../../../../interfaces/store/task'
+import { ProjectGetters } from '../../../../interfaces/store/project';
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 400, interval: 5000}))
@@ -181,6 +184,9 @@ export default class AppviewTask extends Vue {
 
   @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
 
+  @project.Getter getProjectById!: ProjectGetters.GetProjectById
+
+  @Prop({default: true, type: Boolean}) showProjectName!: boolean
   @Prop(Object) task!: Task
   @Prop(Boolean) deselectAll!: boolean
   @Prop(Boolean) dragging!: boolean
@@ -489,8 +495,9 @@ export default class AppviewTask extends Vue {
 
     const tom = today.clone().add(1, 'd')
     if (today.isSame(saved, 'day') || tom.isSame(saved, 'day')) return null
-    if (today.isSame(saved, 'year')) return saved.format('MMMM D, dddd')
-    else saved.format('LL, dddd')
+    if (today.isSame(saved, 'month')) return saved.format('D, ddd')
+    if (today.isSame(saved, 'year')) return saved.format('MMM D, ddd')
+    else saved.format('LL, ddd')
 
     return null
   }
@@ -531,6 +538,12 @@ export default class AppviewTask extends Vue {
     if (this.isDesktop)
       return 'longpressdesktop'
     return 'longpressmobile'
+  }
+  get projectName(): string | null {
+    if (!this.task.projectId) return null
+    const project = this.getProjectById(this.task.projectId)
+    if (project) return project.name
+    return null
   }
 
   @Watch('task')
@@ -641,6 +654,12 @@ export default class AppviewTask extends Vue {
   position: relative;
   display: flex;
   align-items: center;
+}
+
+.txt-tag {
+  display: inline-block;
+  font-size: .8em;
+  padding: 4px;
 }
 
 .task.not-selected.light:hover {

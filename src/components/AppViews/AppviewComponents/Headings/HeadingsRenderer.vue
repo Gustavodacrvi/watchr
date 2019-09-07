@@ -30,11 +30,12 @@
           :allow-date='allowDate'
           :emit-on-delete='emitOnDelete'
           :number='index + 1'
+          :show-project-name='false'
           @selected='onSelect'
           @delete='deleteTask'
           @add='addTask'
           @update='updateHeadingTasks'
-          @addheading='addHeading'          
+          @addheading='addHeading'
 
           @fromroot='fromroot'
           @toroot='toroot'

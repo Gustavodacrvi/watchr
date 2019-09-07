@@ -59,6 +59,7 @@
         :allow-labels='true'
         :allow-date='true'
         :number='0'
+        :show-project-name='false'
         @update='onUpdate'
         @selected='onSelect'
         @add='addTask'
