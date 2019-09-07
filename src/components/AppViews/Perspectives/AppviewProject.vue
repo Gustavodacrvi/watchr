@@ -57,7 +57,6 @@
         :always-show-task-labels='false'
         :allow-labels='true'
         :allow-date='true'
-        :emit-on-delete='true'
         :number='0'
         @update='onUpdate'
         @selected='updateSelected'
@@ -80,7 +79,6 @@
         :always-show-task-labels='false'
         :allow-labels='true'
         :allow-date='true'
-        :emit-on-delete='true'
         @selected='updateSelectedHeading'
         @add='addTaskInProjectHeading'
         @updateheadings='updateHeadings'
@@ -124,6 +122,7 @@ import HeadingsRenderer from '../AppviewComponents/Headings/HeadingsRenderer.vue
 })
 export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Getter getProjectByName!: ProjectGetters.GetProjectByName
+  @prjVuex.Getter getProjectById!: ProjectGetters.GetProjectById
   @prjVuex.Action deleteProjectTask!: ProjectActions.DeleteProjectTask
   @prjVuex.Action updateProjectTasks!: ProjectActions.UpdateProjectTasks
   @prjVuex.Action addProjectHeadings!: ProjectActions.AddProjectHeadings

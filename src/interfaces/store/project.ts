@@ -25,6 +25,7 @@ export namespace ProjectGetters {
   export type GetPinedProjectsByFolderId = (id: string) => Project[]
   export type GetProjectsByFolderId = (id: string) => Project[]
   export type GetProjectByName = (name: string) => Project | undefined
+  export type GetProjectById = (id: string) => Project | undefined
 }
 
 interface ActionContext {
@@ -41,6 +42,7 @@ export interface Getters {
   sortedProjectsByName: (state: State) => ProjectGetters.SortedProjectsByName
   getProjectsByFolderId: (state: State) => ProjectGetters.GetProjectsByFolderId
   getProjectByName: (state: State) => ProjectGetters.GetProjectByName
+  getProjectById: (state: State) => ProjectGetters.GetProjectById
   getPinedProjectsByFolderId: (state: State) => ProjectGetters.GetPinedProjectsByFolderId
   [key: string]: (state: State, getters: Getters) => void
 }
