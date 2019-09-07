@@ -38,7 +38,6 @@
         </p>
         <div v-if='pers.description' class='margin'></div>
         <view-tags
-          :fixed-tag='fixedTag'
           :search='search'
           :priority='pers.priority'
           :labels='getLabels'
@@ -50,7 +49,6 @@
           @removedate='removeDate'
           @removesmartpers='removeSmartPers'
         />
-        <div class='margin'></div>
       </div>
       <task-renderer v-if='!calendarRenderer'
         id='appnavalltasks'
@@ -169,7 +167,6 @@ export default class PerspectiveAppview extends Mixins(PersMixin) {
   @Prop({default: true, type: Boolean}) allowDate!: boolean
   @Prop(Boolean) calendarRenderer!: boolean
   @Prop(String) persName!: string
-  @Prop(Object) fixedTag!: object
   @Prop(Array) baseTasks!: Task[]
 
   order: string[] = []

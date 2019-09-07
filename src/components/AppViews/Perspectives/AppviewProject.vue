@@ -81,7 +81,7 @@
         :allow-labels='true'
         :allow-date='true'
         :emit-on-delete='true'
-        @selected='updateSelected'
+        @selected='updateSelectedHeading'
         @add='addTaskInProjectHeading'
         @updateheadings='updateHeadings'
         @update='updateHeadingTasks'
@@ -131,7 +131,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Action updateHeadingsOrder!: ProjectActions.UpdateHeadingsOrder
   @prjVuex.Action updateHeadingsTaskOrder!: ProjectActions.UpdateHeadingsTaskOrder
   @prjVuex.Action addProjectHeadingTask!: ProjectActions.AddProjectHeadingTask
-  @prjVuex.Action deleteProjectHeadingTask!: ProjectActions.DeleteProjectHeadingTask
+  @prjVuex.Action deleteProjectHeadingTasks!: ProjectActions.DeleteProjectHeadingTasks
 
   @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
   @task.Action addProjectTask!: TaskActions.AddProjectTask
@@ -207,10 +207,10 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   }
   deleteHeadingTask(obj: {parentId: string, taskId: string}) {
     if (this.prj)
-      this.deleteProjectHeadingTask({
+      this.deleteProjectHeadingTasks({
         projectId: this.prj.id,
         headingId: obj.parentId,
-        taskId: obj.taskId,
+        taskIds: [obj.taskId],
       })
   }
   deleteTask({taskId}: {taskId: string, parentId: string}) {
@@ -220,8 +220,13 @@ export default class ProjectAppview extends Mixins(PersMixin) {
       })
   }
   updateSelected(ids: string[]) {
+    console.log(ids)
     if (this.prj)
       this.onSelect(ids, this.prj.id, 'project')
+  }
+  updateSelectedHeading({parentId, ids}: {parentId: string, ids: string[]}) {
+    if (this.prj)
+      this.onSelect(ids, {projectId: this.prj.id, headingId: parentId}, 'projectheading')
   }
   updateView() {
     if (this.prj)

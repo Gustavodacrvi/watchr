@@ -102,6 +102,7 @@ export default class ActionButtonComp extends Vue {
   @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
 
   @project.Action deleteProjectTasksById!: ProjectActions.DeleteProjectTasksById
+  @project.Action deleteProjectHeadingTasks!: ProjectActions.DeleteProjectHeadingTasks
 
   @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
@@ -182,13 +183,18 @@ export default class ActionButtonComp extends Vue {
   }
 
   delete() {
-    console.log(this.selectedTasks, this.selectedTasksPayload)
     if (!this.selectedTasksType)
       this.deleteTasksById(this.selectedTasks)
     else if (this.selectedTasksType === 'project' && this.selectedTasksPayload)
       this.deleteProjectTasksById({
         ids: this.selectedTasks,
         projectId: this.selectedTasksPayload as string,
+      })
+    else if (this.selectedTasksType === 'projectheading' && this.selectedTasksPayload)
+      this.deleteProjectHeadingTasks({
+        projectId: this.selectedTasksPayload.projectId,
+        headingId: this.selectedTasksPayload.headingId,
+        taskIds: this.selectedTasks,
       })
   }
   postPone(mom: any) {

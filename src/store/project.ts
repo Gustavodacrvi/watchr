@@ -27,7 +27,7 @@ interface Actions {
   updateHeadingsOrder: ProjectActions.StoreUpdateHeadingsOrder
   updateHeadingsTaskOrder: ProjectActions.StoreUpdateHeadingsTaskOrder
   addProjectHeadingTask: ProjectActions.StoreAddProjectHeadingTask
-  deleteProjectHeadingTask: ProjectActions.StoreDeleteProjectHeadingTask
+  deleteProjectHeadingTasks: ProjectActions.StoreDeleteProjectHeadingTasks
 }
 
 export default {
@@ -289,7 +289,7 @@ export default {
           userId: rootState.uid,
         })
     },
-    deleteProjectHeadingTask({ rootState, state }, {taskId, projectId, headingId}) {
+    deleteProjectHeadingTasks({ rootState, state }, {taskIds, projectId, headingId}) {
       if (rootState.firestore && rootState.uid) {
         const project = state.projects.find(el => el.id === projectId)
         if (project) {
@@ -297,10 +297,14 @@ export default {
           const i = headings.findIndex(el => el.id === headingId)
           if (i > -1) {
             const batch = rootState.firestore.batch()
-            const j = headings[i].tasks.findIndex(el => el === taskId)
-            headings[i].tasks.splice(j, 1)
-            const taskRef = rootState.firestore.collection('tasks').doc(taskId)
-            batch.delete(taskRef)
+
+            for (const id of taskIds) {
+              const j = headings[i].tasks.findIndex(el => el === id)
+              headings[i].tasks.splice(j, 1)
+              const taskRef = rootState.firestore.collection('tasks').doc(id)
+              batch.delete(taskRef)
+            }
+
             const proRef = rootState.firestore.collection('projects').doc(projectId)
             batch.update(proRef, {headings})
             batch.commit()

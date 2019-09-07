@@ -2,7 +2,6 @@
   <base-pers
     :pers-name='persName'
     :base-tasks='baseTasks'
-    :fixed-tag="{name: persName, icon: 'layer-group', backColor: '#6b66ff'}"
     :calendar-renderer='calendarRenderer'
   />
 </template>
