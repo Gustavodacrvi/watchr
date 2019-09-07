@@ -28,6 +28,7 @@ interface Actions {
   saveProjectHeadingName: ProjectActions.StoreSaveProjectHeadingName
   moveTasksFromRootToHeading: ProjectActions.StoreMoveTasksFromRootToHeading
   moveTasksFromHeadingToRoot: ProjectActions.StoreMoveTasksFromHeadingToRoot
+  moveTasksFromHeadingToHeading: ProjectActions.StoreMoveTasksFromHeadingToHeading
 }
 
 export default {
@@ -148,6 +149,30 @@ export default {
                 headings,
               })
             else rootState.firestore.collection('projects').doc(projectId).update({
+              headings,
+            })
+          }
+        }
+      }
+    },
+    moveTasksFromHeadingToHeading({ rootState, state }, {projectId, ids, from, to}) {
+      if (rootState.firestore && rootState.uid) {
+        const project = state.projects.find(el => el.id === projectId)
+        if (project) {
+          const headings = project.headings.slice()
+          const fromI = headings.findIndex(el => el.id === from)
+          const toI = headings.findIndex(el => el.id === to)
+          if (fromI > -1 && toI > -1) {
+            headings[toI].tasks = ids
+            const from = headings[fromI]
+            const idsToRemove = [] 
+            for (const id of from.tasks)
+              if (ids.includes(id)) idsToRemove.push(id)
+            for (const id of idsToRemove) {
+              const i = from.tasks.findIndex(el => el === id)
+              if (i > -1) from.tasks.splice(i, 1)
+            }
+            rootState.firestore.collection('projects').doc(projectId).update({
               headings,
             })
           }

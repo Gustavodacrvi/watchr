@@ -136,6 +136,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Action saveProjectHeadingName!: ProjectActions.SaveProjectHeadingName
   @prjVuex.Action moveTasksFromRootToHeading!: ProjectActions.MoveTasksFromRootToHeading
   @prjVuex.Action moveTasksFromHeadingToRoot!: ProjectActions.MoveTasksFromHeadingToRoot
+  @prjVuex.Action moveTasksFromHeadingToHeading!: ProjectActions.MoveTasksFromHeadingToHeading
 
   @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
   @task.Action addProjectTask!: TaskActions.AddProjectTask
@@ -161,7 +162,14 @@ export default class ProjectAppview extends Mixins(PersMixin) {
     this.emptySelected()
   }
   betweenheadings(obj: {from: string, to: string, ids: string[]}) {
-    console.log('betweenheadings', obj)
+    if (this.prj)
+      this.moveTasksFromHeadingToHeading({
+        projectId: this.prj.id,
+        from: obj.from,
+        to: obj.to,
+        ids: obj.ids,
+      })
+    this.emptySelected()
   }
   toroot(obj: {from: string, ids: string[]}) {
     if (this.prj)
