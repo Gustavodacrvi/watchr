@@ -60,7 +60,7 @@
         :emit-on-delete='true'
         :number='0'
         @update='onUpdate'
-        @selected='onSelect'
+        @selected='updateSelected'
         @add='addTask'
         @addheading='addHeading'
         @delete='deleteTask'
@@ -81,7 +81,7 @@
         :allow-labels='true'
         :allow-date='true'
         :emit-on-delete='true'
-        @selected='onSelect'
+        @selected='updateSelected'
         @add='addTaskInProjectHeading'
         @updateheadings='updateHeadings'
         @update='updateHeadingTasks'
@@ -218,6 +218,10 @@ export default class ProjectAppview extends Mixins(PersMixin) {
       this.deleteProjectTask({
         taskId, projectId: this.prj.id,
       })
+  }
+  updateSelected(ids: string[]) {
+    if (this.prj)
+      this.onSelect(ids, this.prj.id, 'project')
   }
   updateView() {
     if (this.prj)

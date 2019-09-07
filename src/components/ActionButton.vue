@@ -74,6 +74,7 @@ import { Mutation, State, Getter, namespace } from 'vuex-class'
 
 const task = namespace('task')
 const set = namespace('settings')
+const project = namespace('project')
 
 import Sortable from 'sortablejs'
 import { IndexState, IndexMutations } from '../interfaces/store/index'
@@ -86,16 +87,21 @@ import { FloatingButton } from '@/interfaces/app'
 import { TaskActions } from '../interfaces/store/task'
 import { SetState } from '../interfaces/store/settings'
 import { IndexGetters } from '../interfaces/store/'
+import { ProjectActions } from '../interfaces/store/project'
 
 @Component
 export default class ActionButtonComp extends Vue {
   @State theme!: IndexState.theme
   @State selectedTasks!: IndexState.selectedTasks
   @State viewType!: IndexState.viewType
+  @State selectedTasksType!: IndexState.selectedTasksType
+  @State selectedTasksPayload!: IndexState.selectedTasksPayload
   @Getter isDesktop!: IndexGetters.IsDesktop
   @Getter platform!: IndexGetters.Platform
   @Mutation pushPopUp!: IndexMutations.PushPopUp
   @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
+
+  @project.Action deleteProjectTasksById!: ProjectActions.DeleteProjectTasksById
 
   @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
@@ -176,7 +182,14 @@ export default class ActionButtonComp extends Vue {
   }
 
   delete() {
-    this.deleteTasksById(this.selectedTasks)
+    console.log(this.selectedTasks, this.selectedTasksPayload)
+    if (!this.selectedTasksType)
+      this.deleteTasksById(this.selectedTasks)
+    else if (this.selectedTasksType === 'project' && this.selectedTasksPayload)
+      this.deleteProjectTasksById({
+        ids: this.selectedTasks,
+        projectId: this.selectedTasksPayload as string,
+      })
   }
   postPone(mom: any) {
     const arr = []

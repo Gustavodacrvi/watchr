@@ -80,6 +80,8 @@ const store: any = new Vuex.Store({
     selectedTasks: [],
     windowWidth: document.body.clientWidth,
     appBarState: false,
+    selectedTasksType: null,
+    selectedTasksPayload: null,
     isLogged: false,
     firestore: null,
     centeredCard: null,
@@ -98,8 +100,10 @@ const store: any = new Vuex.Store({
     alert: undefined,
   } as State,
   mutations: {
-    updateSelectedTasks(state, selectedTasks) {
-      state.selectedTasks = selectedTasks
+    updateSelectedTasks(state, {selected, type, payload}) {
+      state.selectedTasks = selected
+      state.selectedTasksPayload = payload
+      state.selectedTasksType = type
     },
     openSection(state, currentAppSection) {
       state.currentAppSection = currentAppSection

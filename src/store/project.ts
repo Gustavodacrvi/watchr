@@ -18,6 +18,7 @@ interface Actions {
   moveProjectsFromFolder: ProjectActions.StoreMoveProjectsFromFolder
   toggleProjectPin: ProjectActions.StoreToggleProjectPin
   editProject: ProjectActions.StoreEditProject
+  deleteProjectTasksById: ProjectActions.StoreDeleteProjectTasksById
   deleteProjectById: ProjectActions.StoreDeleteProjectById
   deleteProjectTask: ProjectActions.StoreDeleteProjectTask
   updateProjectTasks: ProjectActions.StoreUpdateProjectTasks
@@ -305,6 +306,24 @@ export default {
             batch.commit()
           }
         }
+      }
+    },
+    deleteProjectTasksById({ rootState }, {ids, projectId}) {
+      if (rootState.firestore && rootState.uid) {
+        const fire = rootState.firebase.firestore.FieldValue as any
+        const batch = rootState.firestore.batch()
+
+        for (const id of ids) {
+          const ref = rootState.firestore.collection('tasks').doc(id)
+          batch.delete(ref)
+        }
+
+        const ref = rootState.firestore.collection('projects').doc(projectId)
+        batch.update(ref, {
+          tasks: fire.arrayRemove(...ids)
+        })
+
+        batch.commit()
       }
     },
     addProjectHeadingTask({ rootState, state }, {projectId, headingId, task, order, position}) {
