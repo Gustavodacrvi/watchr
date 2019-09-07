@@ -14,6 +14,7 @@
       >
         <task-renderer
           class='task-renderer'
+          list-type='projectHeading'
           :id='head.id'
           :tasks='head.tasks'
           :parent-id='head.id'
@@ -33,6 +34,10 @@
           @delete='deleteTask'
           @add='addTask'
           @update='updateHeadingTasks'
+
+          @fromroot='fromroot'
+          @toroot='toroot'
+          @betweenheadings='betweenheadings'
         />
       </app-header>
     </transition-group>
@@ -101,6 +106,15 @@ export default class HeadingsRenderer extends Mixins(Mixin) {
     this.sortable = new Sortable(this.rootComponent, options)
   }
 
+  fromroot(obj: any) {
+    this.$emit('fromroot', obj)
+  }
+  toroot(obj: any) {
+    this.$emit('toroot', obj)
+  }
+  betweenheadings(obj: any) {
+    this.$emit('betweenheadings', obj)
+  }
   saveHeadingName({name, payload}: {name: string, payload: string}) {
     this.$emit('saveheading', {name, headingId: payload})
   }

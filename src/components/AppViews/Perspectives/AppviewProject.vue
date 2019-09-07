@@ -46,6 +46,7 @@
       </div>
       <task-renderer
         id='appnavproject'
+        list-type='projectRoot'
         :tasks='getTasks'
         :default-priority='priority'
         :default-labels='getLabels'
@@ -62,6 +63,8 @@
         @selected='onSelect'
         @add='addTask'
         @addheading='addHeading'
+
+        @toroot='toroot'
       />
       <div style="height: 45px;"></div>
       <headings-render
@@ -83,6 +86,9 @@
         @add='addTaskInProjectHeading'
         @updateheadings='updateHeadings'
         @update='updateHeadingTasks'
+
+        @fromroot='fromroot'
+        @betweenheadings='betweenheadings'
       />
     </div>
     <div class='margin-task' :class='platform'></div>
@@ -137,7 +143,16 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   created() {
     this.updateView()
   }
-
+  
+  fromroot(obj: {to: string, ids: string[]}) {
+    console.log('fromroot',obj)
+  }
+  betweenheadings(obj: {from: string, to: string, ids: string[]}) {
+    console.log('betweenheadings', obj)
+  }
+  toroot(obj: {from: string, ids: string[]}) {
+    console.log('toroot', obj)
+  }
   addTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any}) {
     if (this.prj) {
       const p = this.prj as Project

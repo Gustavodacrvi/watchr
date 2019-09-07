@@ -22,6 +22,7 @@
         :fixed-pers='fixedPers'
 
         :data-vid='task.id'
+        :data-vparentdi='parentId'
 
         @toggle='toggleElement'
       />
@@ -81,10 +82,10 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop({default: undefined, type: String}) defaultDate!: string
   @Prop({default: undefined, type: Array}) defaultLabels!: string[]
   @Prop({required: true, type: String}) id!: string
+  @Prop({default: null, type: String}) parentId!: string
   @Prop(String) fixedPers!: string
   @Prop(String) fixedLabel!: string
   @Prop(String) date!: string
-  @Prop(String) parentId!: string
   @Prop(String) listType!: string
   @Prop(Array) tasks!: Task[]
   @Prop({default: false, type: Boolean}) insertBefore!: boolean
@@ -127,7 +128,8 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       multiDrag: true,
       dataIdAttr: 'data-sortableid',
       group: {name: 'taskrenderer', pull: (to: any, from: any) => {
-        if (to.options.group.name === 'taskrenderer') return true
+        const name = to.options.group.name
+        if (name === 'taskrenderer') return true
         return false
       }, put: ['floatbutton', 'taskrenderer']},
 
@@ -196,6 +198,31 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
             this.numberOfAdders--
             $el.parentNode.removeChild($el)
           })
+        } else if (type === 'projectRoot' || type === 'projectHeading') {
+          const els = evt.items
+          if (els.length === 0)
+            els.push(evt.item)
+          const pId = els[0].dataset.vparentdi
+          const arr = []
+          for (const e of els)
+            arr.push(e.dataset.vid)
+          
+          const to = this.listType
+          const fm = type
+          const head = 'projectHeading'
+          const root = 'projectRoot'
+
+          const comingFromRoot = (to === head && fm === root)
+          const goingToRoot =  (to === root && fm === head)
+          const betweenHeads = (to === head && fm === head)
+
+          if (comingFromRoot) {
+            this.$emit('fromroot', {to: this.parentId, ids: els})
+          } else if (goingToRoot) {
+            this.$emit('toroot', {from: pId, ids: els})
+          } else if (betweenHeads) {
+            this.$emit('betweenheadings', {from: pId, to: this.parentId, ids: els})
+          }
         }
       },
       onStart: () => {
