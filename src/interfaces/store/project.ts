@@ -118,4 +118,7 @@ export namespace ProjectActions {
 
   export type StoreMoveTasksFromHeadingToHeading = (context: ActionContext, obj: {ids: string[], projectId: string, from: string, to: string}) => void
   export type MoveTasksFromHeadingToHeading = (obj: {ids: string[], projectId: string, from: string, to: string}) => void
+
+  export type StoreAddTasksToProject = (context: ActionContext, obj: {ids: string[], projectId: string}) => void
+  export type AddTasksToProject = (obj: {ids: string[], projectId: string}) => void
 }

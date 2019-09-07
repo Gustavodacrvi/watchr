@@ -34,7 +34,7 @@ const project = namespace('project')
 
 import DropInput from '@/components/DropdownInput.vue'
 
-import { IndexState } from '../../interfaces/store/index'
+import { IndexState, IndexMutations } from '../../interfaces/store/index'
 import { ProjectGetters, ProjectActions } from '../../interfaces/store/project'
 
 @Component({
@@ -44,29 +44,34 @@ import { ProjectGetters, ProjectActions } from '../../interfaces/store/project'
 })
 export default class SigninPopUp extends Vue {
   @State theme!: IndexState.theme
+  @State popUpPayload!: IndexState.popUpPayload
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
 
-  @project.Getter sortedFoldersByName!: ProjectGetters.SortedFoldersByName
-  @project.Action addFolder!: ProjectActions.AddFolder
+  @project.Getter sortedProjectsByName!: ProjectGetters.SortedFoldersByName
+  @project.Action addTasksToProject!: ProjectActions.AddTasksToProject
 
   value: string = ''
   options: string[] = []
 
   mounted() {
-    const el = document.querySelectorAll('.folderadder')[0] as any
+    const el = document.querySelectorAll('.projectfinder')[0] as any
     el.focus()
   }
 
   add() {
     if (this.value) {
-      const fol = this.sortedFoldersByName.find(el => el.name === this.value)
-      if (!fol) {
-        this.addFolder(this.value)
+      const project = this.sortedProjectsByName.find(el => el.name === this.value) as any
+      if (project) {
+        this.addTasksToProject({
+          ids: this.popUpPayload as string[],
+          projectId: project.id,
+        })
       }
-      this.value = ''
+      this.pushPopUp('')
     }
   }
   getOptions(): string[] {
-    return this.sortedFoldersByName.filter(el => el.name.includes(this.value)).map(el => el.name)
+    return this.sortedProjectsByName.filter(el => el.name.toLowerCase().includes(this.value.toLowerCase())).map(el => el.name)
 
   }
   select(val: string) {

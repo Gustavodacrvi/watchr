@@ -423,15 +423,6 @@ export default class AppviewTask extends Vue {
           this.unCompleteSubtasks(this.task.id)
         },
       },
-      {
-        name: 'Delete task',
-        icon: 'trash',
-        size: 'lg',
-        iconColor: '',
-        callback: () => {
-          this.deleteTasksById([this.task.id])
-        },
-      },
     ]
     if (this.task.projectId)
       options.push({
@@ -452,6 +443,15 @@ export default class AppviewTask extends Vue {
         callback: () => {
           this.pushPopUp('AddtoprojectPopup')
           this.pushPopUpPayload([this.task.id])
+        },
+      })
+    options.push({
+        name: 'Delete task',
+        icon: 'trash',
+        size: 'lg',
+        iconColor: '',
+        callback: () => {
+          this.deleteTasksById([this.task.id])
         },
       })
     return options

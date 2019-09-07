@@ -28,6 +28,7 @@ interface Actions {
   saveProjectHeadingName: ProjectActions.StoreSaveProjectHeadingName
   addProjectHeadingFromHeading: ProjectActions.StoreAddProjectHeadingFromHeading
   moveTasksFromRootToHeading: ProjectActions.StoreMoveTasksFromRootToHeading
+  addTasksToProject: ProjectActions.StoreAddTasksToProject
   moveTasksFromHeadingToRoot: ProjectActions.StoreMoveTasksFromHeadingToRoot
   moveTasksFromHeadingToHeading: ProjectActions.StoreMoveTasksFromHeadingToHeading
 }
@@ -242,6 +243,25 @@ export default {
 
         batch.update(foldRef, {
           projects: fire.arrayUnion(proRef.id),
+        })
+
+        batch.commit()
+      }
+    },
+    addTasksToProject({ rootState }, {projectId, ids}) {
+      if (rootState.firestore && rootState.uid) {
+        const fire = rootState.firebase.firestore.FieldValue as any
+        const batch = rootState.firestore.batch()
+
+        for (const id of ids) {
+          const ref = rootState.firestore.collection('tasks').doc(id)
+          batch.update(ref, {
+            projectId,
+          })
+        }
+        const ref = rootState.firestore.collection('projects').doc(projectId)
+        batch.update(ref, {
+          tasks: fire.arrayUnion(...ids),
         })
 
         batch.commit()

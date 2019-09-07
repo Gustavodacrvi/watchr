@@ -90,7 +90,7 @@ export default class SigninPopUp extends Vue {
     this.selected.splice(i, 1)
   }
   getOptions() {
-    return this.sortedLabelsByName.filter(el => el.name.includes(this.value)).map(el => el.name)
+    return this.sortedLabelsByName.filter(el => el.name.toLowerCase().includes(this.value.toLowerCase())).map(el => el.name)
   }
   getIds(): string[] {
     return this.selected.map(el => el.id)
