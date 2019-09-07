@@ -31,6 +31,11 @@ export default class AppviewPie extends Vue {
       height: width,
     }
   }
+  get getIconFontSize(): Object {
+    return {
+      fontSize: this.svgWidth,
+    }
+  }
 }
 
 </script>

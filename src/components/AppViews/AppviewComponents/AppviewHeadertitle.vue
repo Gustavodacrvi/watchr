@@ -1,7 +1,7 @@
 <template>
   <div v-if='isDesktop'>
     <i v-if='icon' :class='`fas fa-${icon} fa-2x`' :style='{color: iconColor}'></i>
-    <app-pie :svg-width='35' :progress='40'/>
+    <app-pie v-if="progress || progress === 0" :svg-width='35' :progress='progress'/>
     <span class='title'>
       {{ value }}
     </span>
@@ -34,6 +34,7 @@ export default class AppviewHeadertitle extends Vue {
   @Prop(String) icon!: string
   @Prop(Boolean) showing!: boolean
   @Prop(String) iconColor!: string
+  @Prop(Number) progress!: number
 
   created() {
     this.addToTitle()

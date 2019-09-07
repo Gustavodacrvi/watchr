@@ -5,6 +5,7 @@
         :value='prj.name'
         icon=''
         icon-color=''
+        :progress='getProgress'
       />
       <div class="right">
         <view-header-icons
@@ -318,6 +319,31 @@ export default class ProjectAppview extends Mixins(PersMixin) {
       }
 
     return arr
+  }
+  get getProgress(): number {
+    if (this.prj) {
+      let tasks = this.getTasks
+
+      for (const head of this.prj.headings) {
+        let headTasks = this.getTasksByIds(head.tasks)
+        headTasks = headTasks.filter(el => this.isInThisProject(el))
+        tasks = [...tasks, ...headTasks]
+      }
+      const numberOfTasks = tasks.length
+      let completedTasks = 0
+
+      for (const task of tasks)
+        if (task.completed) completedTasks++
+
+      /* 
+        100 - numberOfTasks
+        y   - completedTasks
+        100 * completedTasks = numberOfTasks * y
+        100 * completedTasks / numberOfTasks = y
+       */
+      return 100 * completedTasks / numberOfTasks
+    }
+    return 0
   }
   get getLabels(): Label[] {
     return this.getLabelsByIds(this.labels)
