@@ -255,9 +255,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     if (this.numberOfSelected !== this.lastNumberOfSelected)
       setTimeout(() => {
         const ord = this.getIdsFromSelectedElements(this.rootSelector).filter(el => el !== 'task-adder' && el !== 'heading-adder')
-        if (!this.parentId)
-          this.$emit('selected', ord)
-        else this.$emit('selected', {parentId: this.parentId, ids: ord})
+        this.$emit('selected', ord)
       }, 1)
     this.lastNumberOfSelected = this.numberOfSelected
   }

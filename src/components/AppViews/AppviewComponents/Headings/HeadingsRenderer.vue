@@ -98,8 +98,8 @@ export default class HeadingsRenderer extends Mixins(Mixin) {
     this.sortable = new Sortable(this.rootComponent, options)
   }
 
-  onSelect(obj: {ids: string[], parentId: string}) {
-    this.$emit('selected', obj)
+  onSelect(ids: string[]) {
+    this.$emit('selected', ids)
   }
   updateHeadingTasks(obj: {ids: string[], parentId: string}) {
     this.$emit('update', obj)

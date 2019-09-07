@@ -104,6 +104,7 @@ export default class ActionButtonComp extends Vue {
   @task.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
   @task.Action changePrioritysByIds!: TaskActions.ChangePrioritysByIds
   @task.Action deleteTasksById!: TaskActions.DeleteTasksById
+  @task.Action removeTasksFromProject!: TaskActions.RemoveTasksFromProject
 
   @set.State startOfTheWeek!: SetState.startOfTheWeek
 
@@ -117,43 +118,6 @@ export default class ActionButtonComp extends Vue {
     {icon: 'star', iconColor: 'white', backColor: '#FFE366', click: this.postPoneToday},
     {icon: 'sun', iconColor: 'white', backColor: '#ffa166', click: this.postPoneTomorrow},
     {icon: 'calendar', iconColor: 'white', backColor: '#9ce283', click: this.postPoneNextWeek},
-  ]
-  optionsButtons: FloatingButton[] = [
-    {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: this.popUp('AddLabelsToTasksPopup', true)},
-    {icon: 'calendar-day', iconColor: 'white', backColor: '#9ce283', click: this.centeredCard({
-      type: 'Component',
-      flexBasis: '275px',
-      listIcons: [],
-      listIconHandler: (el: any) => this.changeDate(el),
-      compName: 'CalendarInput',
-    })},
-    {icon: 'exclamation', iconColor: 'white', backColor: '#ffa166', click: this.centeredCard({
-      type: 'ListIcons',
-      flexBasis: '275px',
-      listIcons: [
-        {
-          name: 'High priority',
-          icon: 'exclamation',
-          iconColor: '#FF6B66',
-          size: 'lg',
-        },
-        {
-          name: 'Medium priority',
-          icon: 'exclamation',
-          iconColor: '#fff566',
-          size: 'lg',
-        },
-        {
-          name: 'Low priority',
-          icon: 'exclamation',
-          iconColor: '#70ff66',
-          size: 'lg',
-        },
-      ],
-      listIconHandler: (el: any) => this.changePriority(el),
-      compName: '',
-    })},
-    {icon: 'trash', iconColor: 'white', backColor: '#FF6B66', click: this.delete},
   ]
   showing: boolean = false
   tasks: string[] = []
@@ -179,6 +143,9 @@ export default class ActionButtonComp extends Vue {
 
   delete() {
     this.deleteTasksById(this.selectedTasks)
+  }
+  removeFromProject() {
+    this.removeTasksFromProject(this.selectedTasks)
   }
   postPone(mom: any) {
     const arr = []
@@ -223,6 +190,54 @@ export default class ActionButtonComp extends Vue {
     }
   }
 
+  get optionsButtons(): FloatingButton[] {
+    const optionsButtons: FloatingButton[] = [
+      {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: this.popUp('AddLabelsToTasksPopup', true)},
+      {icon: 'calendar-day', iconColor: 'white', backColor: '#9ce283', click: this.centeredCard({
+        type: 'Component',
+        flexBasis: '275px',
+        listIcons: [],
+        listIconHandler: (el: any) => this.changeDate(el),
+        compName: 'CalendarInput',
+      })},
+      {icon: 'exclamation', iconColor: 'white', backColor: '#ffa166', click: this.centeredCard({
+        type: 'ListIcons',
+        flexBasis: '275px',
+        listIcons: [
+          {
+            name: 'High priority',
+            icon: 'exclamation',
+            iconColor: '#FF6B66',
+            size: 'lg',
+          },
+          {
+            name: 'Medium priority',
+            icon: 'exclamation',
+            iconColor: '#fff566',
+            size: 'lg',
+          },
+          {
+            name: 'Low priority',
+            icon: 'exclamation',
+            iconColor: '#70ff66',
+            size: 'lg',
+          },
+        ],
+        listIconHandler: (el: any) => this.changePriority(el),
+        compName: '',
+      })},
+      {icon: 'trash', iconColor: 'white', backColor: '#FF6B66', click: this.delete},
+    ]
+    if (this.viewType === 'project')
+      optionsButtons.unshift({
+        icon: 'project-diagram',
+        iconColor: 'white',
+        backColor: '#CD66FF',
+        click: this.removeFromProject
+      })
+
+    return optionsButtons
+  }
   get showLeftButton(): boolean {
     return this.selectedTasks.length === 0 && this.viewType === 'project'
   }
