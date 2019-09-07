@@ -20,12 +20,10 @@
         :always-show-creation-date='alwaysShowCreationDate'
         :always-show-task-labels='alwaysShowTaskLabels'
         :fixed-pers='fixedPers'
-        :emit-on-delete='emitOnDelete'
 
         :data-vid='task.id'
 
         @toggle='toggleElement'
-        @delete='deleteTask'
       />
     </transition-group>
     <transition name='fade'>
@@ -76,7 +74,6 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop(Boolean) alwaysShowLastEditDate!: boolean
   @Prop(Boolean) alwaysShowCreationDate!: boolean
   @Prop(Boolean) alwaysShowTaskLabels!: boolean
-  @Prop(Boolean) emitOnDelete!: boolean
   @Prop(Boolean) allowDate!: boolean
   @Prop(Boolean) listHasDates!: boolean
   @Prop(Number) number!: number
@@ -121,9 +118,6 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     for (const e of els)
       arr.push(e.dataset.vid)
     return arr
-  }
-  deleteTask(id: string) {
-    this.$emit('delete', id)
   }
   mount() {
     const options: any = {

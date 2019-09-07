@@ -184,7 +184,6 @@ export default class AppviewTask extends Vue {
   @Prop(Boolean) deselectAll!: boolean
   @Prop(Boolean) dragging!: boolean
   @Prop(Boolean) allowDrag!: boolean
-  @Prop(Boolean) emitOnDelete!: boolean
   @Prop(Boolean) alwaysShowLastEditDate!: boolean
   @Prop(Boolean) alwaysShowCreationDate!: boolean
   @Prop(Boolean) alwaysShowTaskLabels!: boolean
@@ -421,9 +420,7 @@ export default class AppviewTask extends Vue {
         size: 'lg',
         iconColor: '',
         callback: () => {
-          if (!this.emitOnDelete)
-            this.deleteTasksById([this.task.id])
-          else this.$emit('delete', {taskId: this.task.id, parentId: this.parentId})
+          this.deleteTasksById([this.task.id])
         },
       },
     ]

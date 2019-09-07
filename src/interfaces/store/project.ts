@@ -86,9 +86,6 @@ export namespace ProjectActions {
   export type StoreDeleteProjectById = (context: ActionContext, id: string) => void
   export type DeleteProjectById = (id: string) => void
 
-  export type StoreDeleteProjectTask = (context: ActionContext, obj: {taskId: string, projectId: string}) => void
-  export type DeleteProjectTask = (obj: {taskId: string, projectId: string}) => void
-
   export type StoreUpdateProjectTasks = (context: ActionContext, obj: {id: string, ids: string[]}) => void
   export type UpdateProjectTasks = (obj: {id: string, ids: string[]}) => void
 
@@ -106,10 +103,4 @@ export namespace ProjectActions {
 
   export type StoreAddProjectHeadingTask = (context: ActionContext, obj: {task: Task, projectId: string, position: number, headingId: string, order: string[], utc: UtcObj | null}) => void
   export type AddProjectHeadingTask = (obj: {task: Task, projectId: string, position: number, headingId: string, order: string[], utc: UtcObj | null}) => void
-
-  export type StoreDeleteProjectHeadingTasks = (context: ActionContext, obj: {projectId: string, taskIds: string[], headingId: string}) => void
-  export type DeleteProjectHeadingTasks = (obj: {projectId: string, taskIds: string[], headingId: string}) => void
-
-  export type StoreDeleteProjectTasksById = (context: ActionContext, obj: {ids: string[], projectId: string}) => void
-  export type DeleteProjectTasksById = (obj: {ids: string[], projectId: string}) => void
 }

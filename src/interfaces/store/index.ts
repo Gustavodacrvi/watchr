@@ -12,8 +12,6 @@ export namespace IndexState {
   export type appError = boolean
   export type loading = boolean
   export type showingAlert = boolean
-  export type selectedTasksType = string | null
-  export type selectedTasksPayload = any
   export type theme = 'light' | 'dark'
   export type uid = string | null
   export type popUpComponent = string
@@ -38,8 +36,6 @@ export interface State {
   selectedTasks: IndexState.selectedTasks
   popUpPayload: IndexState.popUpPayload
   appBarState: IndexState.appBarState
-  selectedTasksPayload: IndexState.selectedTasksPayload
-  selectedTasksType: IndexState.selectedTasksType
   firestore: IndexState.firestore
   isLogged: IndexState.isLogged
   viewName: IndexState.viewName
@@ -73,8 +69,8 @@ export namespace IndexMutations {
     (state: State, alert: Alert): void,
   }
   export type UpdateSelectedTasks = {
-    (obj: {selected: string[], type?: string, payload?: any}): void,
-    (state: State, obj: {selected: string[], type?: string, payload?: any}): void,
+    (selected: string[]): void,
+    (state: State, selected: string[]): void,
   }
   export type PushTheme = {
     (theme: string): void,

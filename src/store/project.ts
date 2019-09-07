@@ -18,16 +18,13 @@ interface Actions {
   moveProjectsFromFolder: ProjectActions.StoreMoveProjectsFromFolder
   toggleProjectPin: ProjectActions.StoreToggleProjectPin
   editProject: ProjectActions.StoreEditProject
-  deleteProjectTasksById: ProjectActions.StoreDeleteProjectTasksById
   deleteProjectById: ProjectActions.StoreDeleteProjectById
-  deleteProjectTask: ProjectActions.StoreDeleteProjectTask
   updateProjectTasks: ProjectActions.StoreUpdateProjectTasks
   addProjectHeadings: ProjectActions.StoreAddProjectHeadings
   deleteHeadingById: ProjectActions.StoreDeleteHeadingById
   updateHeadingsOrder: ProjectActions.StoreUpdateHeadingsOrder
   updateHeadingsTaskOrder: ProjectActions.StoreUpdateHeadingsTaskOrder
   addProjectHeadingTask: ProjectActions.StoreAddProjectHeadingTask
-  deleteProjectHeadingTasks: ProjectActions.StoreDeleteProjectHeadingTasks
 }
 
 export default {
@@ -148,22 +145,6 @@ export default {
             })
           }
         }
-      }
-    },
-    deleteProjectTask({ rootState }, {taskId, projectId}) {
-      if (rootState.firestore && rootState.uid) {
-        const fire = rootState.firebase.firestore.FieldValue as any
-        const batch = rootState.firestore.batch()
-
-        const taskRef = rootState.firestore.collection('tasks').doc(taskId)
-        batch.delete(taskRef)
-
-        const proRef = rootState.firestore.collection('projects').doc(projectId)
-        batch.update(proRef, {
-          tasks: fire.arrayRemove(taskId),
-        })
-
-        batch.commit()
       }
     },
     updateHeadingsOrder({ rootState, state }, {ids, projectId}) {
@@ -291,47 +272,6 @@ export default {
           name, projects: [],
           userId: rootState.uid,
         })
-    },
-    deleteProjectHeadingTasks({ rootState, state }, {taskIds, projectId, headingId}) {
-      if (rootState.firestore && rootState.uid) {
-        const project = state.projects.find(el => el.id === projectId)
-        if (project) {
-          const headings = project.headings.slice()
-          const i = headings.findIndex(el => el.id === headingId)
-          if (i > -1) {
-            const batch = rootState.firestore.batch()
-
-            for (const id of taskIds) {
-              const j = headings[i].tasks.findIndex(el => el === id)
-              headings[i].tasks.splice(j, 1)
-              const taskRef = rootState.firestore.collection('tasks').doc(id)
-              batch.delete(taskRef)
-            }
-
-            const proRef = rootState.firestore.collection('projects').doc(projectId)
-            batch.update(proRef, {headings})
-            batch.commit()
-          }
-        }
-      }
-    },
-    deleteProjectTasksById({ rootState }, {ids, projectId}) {
-      if (rootState.firestore && rootState.uid) {
-        const fire = rootState.firebase.firestore.FieldValue as any
-        const batch = rootState.firestore.batch()
-
-        for (const id of ids) {
-          const ref = rootState.firestore.collection('tasks').doc(id)
-          batch.delete(ref)
-        }
-
-        const ref = rootState.firestore.collection('projects').doc(projectId)
-        batch.update(ref, {
-          tasks: fire.arrayRemove(...ids)
-        })
-
-        batch.commit()
-      }
     },
     addProjectHeadingTask({ rootState, state }, {projectId, headingId, task, order, position}) {
       const u = timezone().utc()

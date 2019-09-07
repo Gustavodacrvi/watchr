@@ -59,10 +59,9 @@
         :allow-date='true'
         :number='0'
         @update='onUpdate'
-        @selected='updateSelected'
+        @selected='onSelect'
         @add='addTask'
         @addheading='addHeading'
-        @delete='deleteTask'
       />
       <div style="height: 45px;"></div>
       <headings-render
@@ -79,11 +78,10 @@
         :always-show-task-labels='false'
         :allow-labels='true'
         :allow-date='true'
-        @selected='updateSelectedHeading'
+        @selected='onSelect'
         @add='addTaskInProjectHeading'
         @updateheadings='updateHeadings'
         @update='updateHeadingTasks'
-        @delete='deleteHeadingTask'
       />
     </div>
     <div class='margin-task' :class='platform'></div>
@@ -122,15 +120,12 @@ import HeadingsRenderer from '../AppviewComponents/Headings/HeadingsRenderer.vue
 })
 export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Getter getProjectByName!: ProjectGetters.GetProjectByName
-  @prjVuex.Getter getProjectById!: ProjectGetters.GetProjectById
-  @prjVuex.Action deleteProjectTask!: ProjectActions.DeleteProjectTask
   @prjVuex.Action updateProjectTasks!: ProjectActions.UpdateProjectTasks
   @prjVuex.Action addProjectHeadings!: ProjectActions.AddProjectHeadings
   @prjVuex.Action deleteHeadingById!: ProjectActions.DeleteHeadingById
   @prjVuex.Action updateHeadingsOrder!: ProjectActions.UpdateHeadingsOrder
   @prjVuex.Action updateHeadingsTaskOrder!: ProjectActions.UpdateHeadingsTaskOrder
   @prjVuex.Action addProjectHeadingTask!: ProjectActions.AddProjectHeadingTask
-  @prjVuex.Action deleteProjectHeadingTasks!: ProjectActions.DeleteProjectHeadingTasks
 
   @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
   @task.Action addProjectTask!: TaskActions.AddProjectTask
@@ -204,29 +199,6 @@ export default class ProjectAppview extends Mixins(PersMixin) {
         id: this.prj.id,
       })
   }
-  deleteHeadingTask(obj: {parentId: string, taskId: string}) {
-    if (this.prj)
-      this.deleteProjectHeadingTasks({
-        projectId: this.prj.id,
-        headingId: obj.parentId,
-        taskIds: [obj.taskId],
-      })
-  }
-  deleteTask({taskId}: {taskId: string, parentId: string}) {
-    if (this.prj)
-      this.deleteProjectTask({
-        taskId, projectId: this.prj.id,
-      })
-  }
-  updateSelected(ids: string[]) {
-    console.log(ids)
-    if (this.prj)
-      this.onSelect(ids, this.prj.id, 'project')
-  }
-  updateSelectedHeading({parentId, ids}: {parentId: string, ids: string[]}) {
-    if (this.prj)
-      this.onSelect(ids, {projectId: this.prj.id, headingId: parentId}, 'projectheading')
-  }
   updateView() {
     if (this.prj)
       this.pushView({
@@ -236,8 +208,9 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   }
 
   get getTasks(): Task[] {
-    if (this.prj)
+    if (this.prj) {
       return this.filterTasks(this.getTasksByIds(this.prj.tasks))
+    }
     return []
   }
   get headerOptions(): ListIcon[] {

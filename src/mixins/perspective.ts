@@ -71,8 +71,8 @@ export default class NavbarMixin extends Vue {
     const index = this.smartPers.findIndex(el => el === name)
     this.smartPers.splice(index, 1)
   }
-  onSelect(ids: string[], payload?: any, type?: string) {
-    this.updateSelectedTasks({selected: ids, type, payload})
+  onSelect(ids: string[]) {
+    this.updateSelectedTasks(ids)
   }
   addSmartPersNonSave(name: string) {
     if (!this.smartPers.find(el => el === name))

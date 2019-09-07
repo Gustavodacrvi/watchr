@@ -94,15 +94,10 @@ export default class ActionButtonComp extends Vue {
   @State theme!: IndexState.theme
   @State selectedTasks!: IndexState.selectedTasks
   @State viewType!: IndexState.viewType
-  @State selectedTasksType!: IndexState.selectedTasksType
-  @State selectedTasksPayload!: IndexState.selectedTasksPayload
   @Getter isDesktop!: IndexGetters.IsDesktop
   @Getter platform!: IndexGetters.Platform
   @Mutation pushPopUp!: IndexMutations.PushPopUp
   @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
-
-  @project.Action deleteProjectTasksById!: ProjectActions.DeleteProjectTasksById
-  @project.Action deleteProjectHeadingTasks!: ProjectActions.DeleteProjectHeadingTasks
 
   @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
@@ -183,19 +178,7 @@ export default class ActionButtonComp extends Vue {
   }
 
   delete() {
-    if (!this.selectedTasksType)
-      this.deleteTasksById(this.selectedTasks)
-    else if (this.selectedTasksType === 'project' && this.selectedTasksPayload)
-      this.deleteProjectTasksById({
-        ids: this.selectedTasks,
-        projectId: this.selectedTasksPayload as string,
-      })
-    else if (this.selectedTasksType === 'projectheading' && this.selectedTasksPayload)
-      this.deleteProjectHeadingTasks({
-        projectId: this.selectedTasksPayload.projectId,
-        headingId: this.selectedTasksPayload.headingId,
-        taskIds: this.selectedTasks,
-      })
+    this.deleteTasksById(this.selectedTasks)
   }
   postPone(mom: any) {
     const arr = []

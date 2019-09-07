@@ -100,10 +100,8 @@ const store: any = new Vuex.Store({
     alert: undefined,
   } as State,
   mutations: {
-    updateSelectedTasks(state, {selected, type, payload}) {
+    updateSelectedTasks(state, selected) {
       state.selectedTasks = selected
-      state.selectedTasksPayload = payload
-      state.selectedTasksType = type
     },
     openSection(state, currentAppSection) {
       state.currentAppSection = currentAppSection
