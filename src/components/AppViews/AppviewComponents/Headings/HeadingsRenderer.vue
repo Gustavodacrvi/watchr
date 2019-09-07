@@ -34,6 +34,7 @@
           @delete='deleteTask'
           @add='addTask'
           @update='updateHeadingTasks'
+          @addheading='addHeading'          
 
           @fromroot='fromroot'
           @toroot='toroot'
@@ -108,6 +109,9 @@ export default class HeadingsRenderer extends Mixins(Mixin) {
 
   fromroot(obj: any) {
     this.$emit('fromroot', obj)
+  }
+  addHeading(obj: any) {
+    this.$emit('addheading', obj)
   }
   toroot(obj: any) {
     this.$emit('toroot', obj)

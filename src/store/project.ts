@@ -26,6 +26,7 @@ interface Actions {
   updateHeadingsTaskOrder: ProjectActions.StoreUpdateHeadingsTaskOrder
   addProjectHeadingTask: ProjectActions.StoreAddProjectHeadingTask
   saveProjectHeadingName: ProjectActions.StoreSaveProjectHeadingName
+  addProjectHeadingFromHeading: ProjectActions.StoreAddProjectHeadingFromHeading
   moveTasksFromRootToHeading: ProjectActions.StoreMoveTasksFromRootToHeading
   moveTasksFromHeadingToRoot: ProjectActions.StoreMoveTasksFromHeadingToRoot
   moveTasksFromHeadingToHeading: ProjectActions.StoreMoveTasksFromHeadingToHeading
@@ -277,6 +278,34 @@ export default {
             rootState.firestore.collection('projects').doc(id).update({
               headings,
             })
+        }
+      }
+    },
+    addProjectHeadingFromHeading({ rootState, state }, {position, name, ids, projectId, from}) {
+      if (rootState.firestore && rootState.uid) {
+        const project = state.projects.find(el => el.id === projectId)
+        if (project) {
+          let newId = project.headings.length
+          while (true) {
+            if (project.headings.find(el => el.id === '' + newId)) {
+              newId++
+              continue
+            }
+            break
+          }
+          const headings = project.headings.slice()
+          const head = headings[from]
+          for (const id of ids) {
+            const i = head.tasks.findIndex(el => el === id)
+            if (i > -1) head.tasks.splice(i, 1)
+          }
+          headings.splice(position, 0, {
+            id: '' + newId,
+            tasks: ids, name,
+          })
+          rootState.firestore.collection('projects').doc(projectId).update({
+            headings,
+          })
         }
       }
     },

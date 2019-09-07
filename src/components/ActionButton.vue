@@ -230,7 +230,7 @@ export default class ActionButtonComp extends Vue {
     ]
     if (this.viewType === 'project')
       optionsButtons.unshift({
-        icon: 'project-diagram',
+        icon: 'sign-out-alt',
         iconColor: 'white',
         backColor: '#CD66FF',
         click: this.removeFromProject

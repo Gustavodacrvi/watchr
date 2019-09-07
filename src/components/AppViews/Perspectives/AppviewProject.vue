@@ -86,6 +86,7 @@
         @add='addTaskInProjectHeading'
         @updateheadings='updateHeadings'
         @update='updateHeadingTasks'
+        @addheading='addHeadingFromHeading'
 
         @fromroot='fromroot'
         @betweenheadings='betweenheadings'
@@ -129,6 +130,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Getter getProjectByName!: ProjectGetters.GetProjectByName
   @prjVuex.Action updateProjectTasks!: ProjectActions.UpdateProjectTasks
   @prjVuex.Action addProjectHeadings!: ProjectActions.AddProjectHeadings
+  @prjVuex.Action addProjectHeadingFromHeading!: ProjectActions.AddProjectHeadingFromHeading
   @prjVuex.Action deleteHeadingById!: ProjectActions.DeleteHeadingById
   @prjVuex.Action updateHeadingsOrder!: ProjectActions.UpdateHeadingsOrder
   @prjVuex.Action updateHeadingsTaskOrder!: ProjectActions.UpdateHeadingsTaskOrder
@@ -160,6 +162,16 @@ export default class ProjectAppview extends Mixins(PersMixin) {
         ids: obj.ids,     
       })
     this.emptySelected()
+  }
+  addHeadingFromHeading(obj: any) {
+    if (this.prj)
+      this.addProjectHeadingFromHeading({
+        projectId: this.prj.id,
+        position: obj.position,
+        ids: obj.ids,
+        name: obj.name,
+        from: obj.from,
+      })
   }
   betweenheadings(obj: {from: string, to: string, ids: string[]}) {
     if (this.prj)

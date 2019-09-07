@@ -227,6 +227,9 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       onStart: () => {
         this.dragging = true
       },
+      onEnd: () => {
+        this.dragging = false
+      }
     }
 
     if (!this.isDesktop)
@@ -253,7 +256,9 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     this.getHeadingsAdderPosition()
     const order = els.filter(el => el !== 'task-adder' && el !== 'heading-adder')
     const ids = order.slice(this.headingAdderPosition)
-    this.$emit('addheading', {position: this.number, ids, name})
+    if (!this.parentId)
+      this.$emit('addheading', {position: this.number, ids, name})
+    else this.$emit('addheading', {position: this.number, ids, name, from: this.parentId})
   }
   calcSelectedElements(evt?: any) {
     if (evt) {
