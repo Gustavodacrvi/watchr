@@ -4,8 +4,11 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component
 export default class SortableMixin extends Vue {
 
-  getIdsFromElements(querySelector: string, requiredClass?: string): string[] {
-    const root = document.querySelector(querySelector)
+  getIdsFromElements(querySelector: string, requiredClass?: string, el?: any): string[] {
+    let root!: any
+    if (!el)
+      root = document.querySelector(querySelector)
+    else root = el
     if (root) {
       const els = Array.prototype.slice.call(root.querySelectorAll('[data-vid]'))
       const arr = []

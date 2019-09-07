@@ -80,12 +80,16 @@ body, button, input, textarea {
 
 .action-comp .main-button.left {
   position: absolute;
-  left: 296px;
+  left: 16px;
   bottom: 16px;
   width: 45px;
   height: 45px;
   border-radius: 100px;
   background-color: #CD66FF;
+}
+
+.action-comp .main-button.left.desktop {
+  left: 296px !important;
 }
 
 .task-renderer .main-button {

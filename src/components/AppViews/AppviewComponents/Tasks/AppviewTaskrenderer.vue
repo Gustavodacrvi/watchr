@@ -1,5 +1,5 @@
 <template>
-  <div :class='`task-taskrenderer-${id} task-renderer`'>
+  <div :class='`task-taskrenderer-${id}-${parentId} task-renderer`'>
     <transition-group
       name='list'
       class='list'
@@ -101,7 +101,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   added: boolean = false
   dragging: boolean = false
   numberOfAdders: number = 0
-  rootSelector: string = `.task-taskrenderer-${this.id}`
+  rootSelector: string = `.task-taskrenderer-${this.id}-${this.parentId}`
   taskAdderPosition: number = 0
   headingAdderPosition: number = 0
 
@@ -216,7 +216,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   }
 
   add(obj: {name: string, priority: string, utc: {time: string, date: string}}) {
-    const els: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
+    const els: string[] = this.getIdsFromElements(this.rootSelector, 'root-task', this.$el)
     this.getTaskAdderPosition()
     const order = els.filter(el => el !== 'task-adder' && el !== 'heading-adder')
     if (this.listHasDates) {

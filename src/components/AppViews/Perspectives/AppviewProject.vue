@@ -171,7 +171,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
         headingId: obj.parentId,
         projectId: p.id,
         position: obj.position,
-        order: p.tasks,
+        order: obj.order,
       } as any)
     }
   }

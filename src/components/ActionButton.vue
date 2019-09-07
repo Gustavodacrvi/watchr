@@ -15,9 +15,9 @@
           <span class='txt msg' :class='theme'>Add task</span>
         </span>
       </span>
-      <span id="left-floating-btn" data-sortfrom='actionbuttonleft'>
+      <span id="left-floating-btn" :class='{"hide-left-main-btn": !showLeftButton}' data-sortfrom='actionbuttonleft'>
         <transition name="fade">
-          <span class="left main-button" v-show="showLeftButton">
+          <span class="left main-button" :class="platform">
             <i class="icon txt pointer fas fa-heading" style='color: white;'></i>
             <span class="txt msg" :class="theme">Add heading</span>
           </span>
@@ -50,7 +50,6 @@
           </span>
         </div>
       </transition>
-      {{selectedTasks}} {{}}
       <transition name='below-trans'>
         <div v-if='isDesktop && selectedTasks.length > 0'
           class='options-wrapper'>
@@ -94,6 +93,7 @@ export default class ActionButtonComp extends Vue {
   @State selectedTasks!: IndexState.selectedTasks
   @State viewType!: IndexState.viewType
   @Getter isDesktop!: IndexGetters.IsDesktop
+  @Getter platform!: IndexGetters.Platform
   @Mutation pushPopUp!: IndexMutations.PushPopUp
   @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
 
@@ -306,6 +306,14 @@ export default class ActionButtonComp extends Vue {
 .floating-btn {
   position: relative;
   transition: filter .2s, transform .2s;
+}
+
+.main-button.left {
+  transition: opacity .3s;
+}
+
+.hide-left-main-btn .main-button {
+  opacity: 0;
 }
 
 .comp {

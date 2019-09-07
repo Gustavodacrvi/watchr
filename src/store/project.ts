@@ -227,10 +227,15 @@ export default {
             id: '' + newId,
             tasks: ids, name,
           })
-          rootState.firestore.collection('projects').doc(id).update({
-            headings,
-            tasks: fire.arrayRemove(...ids),
-          })
+          if (ids.length > 0)
+            rootState.firestore.collection('projects').doc(id).update({
+              headings,
+              tasks: fire.arrayRemove(...ids),
+            })
+          else 
+            rootState.firestore.collection('projects').doc(id).update({
+              headings,
+            })
         }
       }
     },

@@ -83,6 +83,7 @@ import { IndexState, IndexMutations, IndexGetters } from '../../interfaces/store
 export default class LoggedAppnav extends Mixins(Mixin) {
   @State theme!: IndexState.theme
   @State isLogged!: IndexState.isLogged
+  @State platform!: IndexState.isLogged
   @State emailVerified!: IndexState.emailVerified
   @Mutation pushPopUp!: IndexMutations.PushPopUp
   @Mutation closeAppBar!: IndexMutations.CloseAppBar
