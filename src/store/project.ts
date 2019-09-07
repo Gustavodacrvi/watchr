@@ -233,7 +233,6 @@ export default {
           name, description,
           userId: rootState.uid,
           creationDate: dt,
-          lastEditDate: dt,
           bindOnOverview: false,
           folderId: foldRef.id,
           completedTasks: [],

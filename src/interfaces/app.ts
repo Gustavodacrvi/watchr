@@ -134,7 +134,6 @@ export interface Project {
   name: string
   description: string
   creationDate: string
-  lastEditDate: string
   bindOnOverview: boolean
   folderId: string
   tasks: string[]

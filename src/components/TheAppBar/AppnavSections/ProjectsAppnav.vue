@@ -214,11 +214,14 @@ export default class OverviewAppnav extends Vue {
 
         for (const task of tasks)
           if (task.completed) completedTasks++
+        
+        let progress = 100 * completedTasks / numberOfTasks
+        if (numberOfTasks === 0) progress = 0
 
         list.push({
           ...p,
           number: 0,
-          progress: 100 * completedTasks / numberOfTasks,
+          progress,
           show: true,
         })
       }

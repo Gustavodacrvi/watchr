@@ -330,7 +330,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
         const adder = childNodes[p] as any
         const newTask = childNodes[p + 1]
         this.rootComponent.insertBefore(newTask, adder)
-      }, 10)
+      }, 100)
       this.added = false
     }
   }

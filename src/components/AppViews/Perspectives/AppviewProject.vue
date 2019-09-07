@@ -331,6 +331,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
         tasks = [...tasks, ...headTasks]
       }
       const numberOfTasks = tasks.length
+      if (numberOfTasks === 0) return 0
       let completedTasks = 0
 
       for (const task of tasks)

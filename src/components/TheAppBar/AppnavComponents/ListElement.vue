@@ -11,7 +11,7 @@
     >
       <i :class='`txt fas fa-lg fa-${icon}`' :style='[{color: iconColor}, theme]'></i>
     </div>
-    <div v-else-if="progress" class="left-icon pie"
+    <div v-else-if="progress || progress === 0" class="left-icon pie"
       :class="{handle: allowDragAndDrop}"
     >
       <app-pie :svg-width='15' :progress='progress'/>

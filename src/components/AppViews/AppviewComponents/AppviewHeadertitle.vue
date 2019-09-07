@@ -1,7 +1,7 @@
 <template>
   <div v-if='isDesktop'>
     <i v-if='icon' :class='`fas fa-${icon} fa-2x`' :style='{color: iconColor}'></i>
-    <app-pie v-if="progress || progress === 0" :svg-width='45' :progress='progress'/>
+    <app-pie v-if="progress || progress === 0" :svg-width='40' :progress='progress'/>
     <span class='title'>
       {{ value }}
     </span>

@@ -127,7 +127,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { State, Getter, namespace } from 'vuex-class'
+import { State, Getter, Mutation, namespace } from 'vuex-class'
 
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 import TaskEditTemplate from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskedit.vue'
@@ -147,7 +147,7 @@ const settingsVuex = namespace('settings')
 import Sortable from 'sortablejs'
 
 import { longClickDirective } from 'vue-long-click'
-import { IndexState, IndexGetters } from '../../../../interfaces/store/index'
+import { IndexState, IndexGetters, IndexMutations } from '../../../../interfaces/store/index'
 import { LabelGetters } from '../../../../interfaces/store/label'
 import { SetState } from '../../../../interfaces/store/settings'
 import { TaskActions } from '../../../../interfaces/store/task'
@@ -167,6 +167,8 @@ else Vue.directive('longpress', longClickDirective({delay: 1200, interval: 5000}
 })
 export default class AppviewTask extends Vue {
   @State theme!: IndexState.theme
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
   @Getter isDesktop!: IndexGetters.IsDesktop
 
   @taskVuex.Action deleteTasksById!: TaskActions.DeleteTasksById
@@ -439,6 +441,17 @@ export default class AppviewTask extends Vue {
         size: 'lg',
         callback: () => {
           this.removeTasksFromProject([this.task.id])
+        },
+      })
+    if (!this.task.projectId)
+      options.push({
+        name: 'Add to project',
+        icon: 'project-diagram',
+        iconColor: '',
+        size: 'lg',
+        callback: () => {
+          this.pushPopUp('AddtoprojectPopup')
+          this.pushPopUpPayload([this.task.id])
         },
       })
     return options
