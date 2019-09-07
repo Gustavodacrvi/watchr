@@ -192,6 +192,8 @@ export default class ActionButtonComp extends Vue {
 
   get optionsButtons(): FloatingButton[] {
     const optionsButtons: FloatingButton[] = [
+      {icon: 'sign-out-alt', iconColor: 'white', backColor: '#CD66FF', click: this.removeFromProject},
+      {icon: 'project-diagram', iconColor: 'white', backColor: '#CD66FF', click: this.popUp('AddtoprojectPopup', true)},
       {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: this.popUp('AddLabelsToTasksPopup', true)},
       {icon: 'calendar-day', iconColor: 'white', backColor: '#9ce283', click: this.centeredCard({
         type: 'Component',
@@ -228,13 +230,6 @@ export default class ActionButtonComp extends Vue {
       })},
       {icon: 'trash', iconColor: 'white', backColor: '#FF6B66', click: this.delete},
     ]
-    if (this.viewType === 'project')
-      optionsButtons.unshift({
-        icon: 'sign-out-alt',
-        iconColor: 'white',
-        backColor: '#CD66FF',
-        click: this.removeFromProject
-      })
 
     return optionsButtons
   }

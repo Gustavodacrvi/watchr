@@ -51,7 +51,7 @@ export default {
     }
     switch (name) {
       case 'Inbox': {
-        return tasks.filter(el => el.labels.length === 0 && !el.date)
+        return tasks.filter(el => el.labels.length === 0 && !el.date && el.projectId === '')
       }
       case 'Have tags': return tasks.filter(el => el.labels.length > 0)
       case `Doesn't have tags`: return tasks.filter(el => el.labels.length === 0)
