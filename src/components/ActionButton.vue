@@ -10,12 +10,18 @@
         @click='showing = !showing'
         data-sortfrom='actionbutton'
       >
-        <span
-          class='main-button'
-        >
-          <i class='icon txt pointer fas fa-plus' :style="{color: 'white'}"></i>
+        <span class='right main-button'>
+          <i class='icon txt pointer fas fa-plus' style="color: white"></i>
           <span class='txt msg' :class='theme'>Add task</span>
         </span>
+      </span>
+      <span id="left-floating-btn" :class='{"hide-left-main-btn": !showLeftButton}' data-sortfrom='actionbuttonleft'>
+        <transition name="fade">
+          <span class="left main-button" :class="platform">
+            <i class="icon txt pointer fas fa-heading" style='color: white;'></i>
+            <span class="txt msg" :class="theme">Add heading</span>
+          </span>
+        </transition>
       </span>
       <transition name='below-trans'>
         <div v-show='selectedTasks.length > 0'
@@ -44,7 +50,7 @@
           </span>
         </div>
       </transition>
-      <transition name='option-trans'>
+      <transition name='below-trans'>
         <div v-if='isDesktop && selectedTasks.length > 0'
           class='options-wrapper'>
           <span v-for='btn in optionsButtons'
@@ -68,6 +74,7 @@ import { Mutation, State, Getter, namespace } from 'vuex-class'
 
 const task = namespace('task')
 const set = namespace('settings')
+const project = namespace('project')
 
 import Sortable from 'sortablejs'
 import { IndexState, IndexMutations } from '../interfaces/store/index'
@@ -80,12 +87,15 @@ import { FloatingButton } from '@/interfaces/app'
 import { TaskActions } from '../interfaces/store/task'
 import { SetState } from '../interfaces/store/settings'
 import { IndexGetters } from '../interfaces/store/'
+import { ProjectActions } from '../interfaces/store/project'
 
 @Component
 export default class ActionButtonComp extends Vue {
   @State theme!: IndexState.theme
-  @Getter isDesktop!: IndexGetters.IsDesktop
   @State selectedTasks!: IndexState.selectedTasks
+  @State viewType!: IndexState.viewType
+  @Getter isDesktop!: IndexGetters.IsDesktop
+  @Getter platform!: IndexGetters.Platform
   @Mutation pushPopUp!: IndexMutations.PushPopUp
   @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
 
@@ -94,11 +104,13 @@ export default class ActionButtonComp extends Vue {
   @task.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
   @task.Action changePrioritysByIds!: TaskActions.ChangePrioritysByIds
   @task.Action deleteTasksById!: TaskActions.DeleteTasksById
+  @task.Action removeTasksFromProject!: TaskActions.RemoveTasksFromProject
 
   @set.State startOfTheWeek!: SetState.startOfTheWeek
 
   topButtons: FloatingButton[] = [
     {icon: 'bolt', iconColor: 'white', backColor: '#FFE366', click: this.popUp('TaskadderPopup')},
+    {icon: 'project-diagram', iconColor: 'white', backColor: '#CD66FF', click: this.popUp('AddProjectPopup')},
     {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: this.popUp('LabeladderPopup')},
     {icon: 'layer-group', iconColor: 'white', backColor: '#6b66ff', click: this.popUp('PerspectiveAdderPopup')},
   ]
@@ -106,43 +118,6 @@ export default class ActionButtonComp extends Vue {
     {icon: 'star', iconColor: 'white', backColor: '#FFE366', click: this.postPoneToday},
     {icon: 'sun', iconColor: 'white', backColor: '#ffa166', click: this.postPoneTomorrow},
     {icon: 'calendar', iconColor: 'white', backColor: '#9ce283', click: this.postPoneNextWeek},
-  ]
-  optionsButtons: FloatingButton[] = [
-    {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: this.popUp('AddLabelsToTasksPopup', true)},
-    {icon: 'calendar-day', iconColor: 'white', backColor: '#9ce283', click: this.centeredCard({
-      type: 'Component',
-      flexBasis: '275px',
-      listIcons: [],
-      listIconHandler: (el: any) => this.changeDate(el),
-      compName: 'CalendarInput',
-    })},
-    {icon: 'exclamation', iconColor: 'white', backColor: '#ffa166', click: this.centeredCard({
-      type: 'ListIcons',
-      flexBasis: '275px',
-      listIcons: [
-        {
-          name: 'High priority',
-          icon: 'exclamation',
-          iconColor: '#FF6B66',
-          size: 'lg',
-        },
-        {
-          name: 'Medium priority',
-          icon: 'exclamation',
-          iconColor: '#fff566',
-          size: 'lg',
-        },
-        {
-          name: 'Low priority',
-          icon: 'exclamation',
-          iconColor: '#70ff66',
-          size: 'lg',
-        },
-      ],
-      listIconHandler: (el: any) => this.changePriority(el),
-      compName: '',
-    })},
-    {icon: 'trash', iconColor: 'white', backColor: '#FF6B66', click: this.delete},
   ]
   showing: boolean = false
   tasks: string[] = []
@@ -158,10 +133,19 @@ export default class ActionButtonComp extends Vue {
       group: {name: 'floatbutton', pull: 'clone', put: false},
       animation: 150,
     })
+    const elLeft = document.getElementById('left-floating-btn')
+    const sortLeft = new Sortable(elLeft, {
+      disabled: false,
+      group: {name: 'floatbutton', pull: 'clone', put: false},
+      animation: 150,
+    })
   }
 
   delete() {
     this.deleteTasksById(this.selectedTasks)
+  }
+  removeFromProject() {
+    this.removeTasksFromProject(this.selectedTasks)
   }
   postPone(mom: any) {
     const arr = []
@@ -172,13 +156,13 @@ export default class ActionButtonComp extends Vue {
     this.saveNewDateOfTasks(arr)
   }
   postPoneToday() {
-    this.postPone(moment.utc())
+    this.postPone(moment())
   }
   postPoneTomorrow() {
-    this.postPone(moment.utc().add(1, 'd'))
+    this.postPone(moment().add(1, 'd'))
   }
   postPoneNextWeek() {
-    this.postPone(appUtils.getNextWeek(moment.utc(), this.startOfTheWeek))
+    this.postPone(appUtils.getNextWeek(moment(), this.startOfTheWeek))
   }
   popUp(compName: string, sendIds?: boolean): () => void {
     return () => {
@@ -204,6 +188,53 @@ export default class ActionButtonComp extends Vue {
       this.pushCenteredCard(centeredCard)
       this.tasks = this.selectedTasks
     }
+  }
+
+  get optionsButtons(): FloatingButton[] {
+    const optionsButtons: FloatingButton[] = [
+      {icon: 'sign-out-alt', iconColor: 'white', backColor: '#CD66FF', click: this.removeFromProject},
+      {icon: 'project-diagram', iconColor: 'white', backColor: '#CD66FF', click: this.popUp('AddtoprojectPopup', true)},
+      {icon: 'tags', iconColor: 'white', backColor: '#FF6B66', click: this.popUp('AddLabelsToTasksPopup', true)},
+      {icon: 'calendar-day', iconColor: 'white', backColor: '#9ce283', click: this.centeredCard({
+        type: 'Component',
+        flexBasis: '275px',
+        listIcons: [],
+        listIconHandler: (el: any) => this.changeDate(el),
+        compName: 'CalendarInput',
+      })},
+      {icon: 'exclamation', iconColor: 'white', backColor: '#ffa166', click: this.centeredCard({
+        type: 'ListIcons',
+        flexBasis: '275px',
+        listIcons: [
+          {
+            name: 'High priority',
+            icon: 'exclamation',
+            iconColor: '#FF6B66',
+            size: 'lg',
+          },
+          {
+            name: 'Medium priority',
+            icon: 'exclamation',
+            iconColor: '#fff566',
+            size: 'lg',
+          },
+          {
+            name: 'Low priority',
+            icon: 'exclamation',
+            iconColor: '#70ff66',
+            size: 'lg',
+          },
+        ],
+        listIconHandler: (el: any) => this.changePriority(el),
+        compName: '',
+      })},
+      {icon: 'trash', iconColor: 'white', backColor: '#FF6B66', click: this.delete},
+    ]
+
+    return optionsButtons
+  }
+  get showLeftButton(): boolean {
+    return this.selectedTasks.length === 0 && this.viewType === 'project'
   }
 }
 
@@ -265,7 +296,7 @@ export default class ActionButtonComp extends Vue {
   position: absolute;
   height: 45px;
   bottom: 16px;
-  left: 360px;
+  left: 296px;
 }
 
 .option {
@@ -287,6 +318,14 @@ export default class ActionButtonComp extends Vue {
 .floating-btn {
   position: relative;
   transition: filter .2s, transform .2s;
+}
+
+.main-button.left {
+  transition: opacity .3s;
+}
+
+.hide-left-main-btn .main-button {
+  opacity: 0;
 }
 
 .comp {

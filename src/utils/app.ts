@@ -8,6 +8,20 @@ import timezone from 'moment-timezone'
 import { SetState } from '@/interfaces/store/settings'
 
 export default {
+  fixStoreChanges(state: any, changes: any, arrName: string) {
+    for (const change of changes)
+      if (change.type === 'added') {
+        const lab = state[arrName].find((el: any) => el.id === change.doc.id)
+        if (!lab)
+          state[arrName].push({...change.doc.data(), id: change.doc.id} as any)
+      } else if (change.type === 'removed') {
+        const index = state[arrName].findIndex((el: any) => el.id === change.doc.id)
+        state[arrName].splice(index, 1)
+      } else {
+        const index = state[arrName].findIndex((el: any) => el.id === change.doc.id)
+        state[arrName].splice(index, 1, {...change.doc.data(), id: change.doc.id} as any)
+      }
+  },
   AsyncComponent(comp: any): any {
     return () => ({
       component: comp,
@@ -37,7 +51,7 @@ export default {
     }
     switch (name) {
       case 'Inbox': {
-        return tasks.filter(el => el.labels.length === 0 && !el.date)
+        return tasks.filter(el => el.labels.length === 0 && !el.date && el.projectId === '')
       }
       case 'Have tags': return tasks.filter(el => el.labels.length > 0)
       case `Doesn't have tags`: return tasks.filter(el => el.labels.length === 0)
@@ -94,8 +108,18 @@ export default {
           return false
         })
       }
+      case 'Completed': {
+        return tasks.filter(el => el.completed)
+      }
+      case 'Has project': {
+        return tasks.filter(el => el.projectId)
+      }
+      case `Doesn't have project`: {
+        return tasks.filter(el => !el.projectId)
+      }
       case 'Overdue': {
         return tasks.filter(el => {
+          if (el.completed) return false
           if (el.date) {
             const {saved, today} = this.getMomentsOutOfTask(el.date, timeZone)
             return saved.isBefore(today, 'day')
@@ -551,16 +575,20 @@ export default {
 
       let str = `${timezone().month(obj.month - 1).format('MMMM')} ${obj.day}, ${obj.year}`
 
-      if (today.isSame(typed, 'day')) str = 'Today'
+      const isToday = today.isSame(typed, 'day')
       today.add(1, 'd')
-      if (today.isSame(typed, 'day')) str = 'Tomorrow'
+      const isTom = today.isSame(typed, 'day')
+
+      if (isToday) str = 'Today'
+      else if (isTom) str = 'Tomorrow'
 
       if (time) {
         if (timeFormat === '1:00pm')
           time = timezone(time, 'HH:mm').format('hh:mm a')
         str += ` at ${obj.time}`
       }
-      str += ', ' + typed.format('dddd')
+      if (!isToday && !isTom)
+        str += ', ' + typed.format('dddd')
 
       return str
     }

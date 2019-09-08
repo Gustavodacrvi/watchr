@@ -71,18 +71,7 @@ export default {
         rootState.firestore.collection('labels').where('userId', '==', rootState.uid)
           .onSnapshot(snap => {
           const changes = snap.docChanges()
-          for (const change of changes)
-            if (change.type === 'added') {
-              const lab = state.labels.find(el => el.id === change.doc.id)
-              if (!lab)
-                state.labels.push({...change.doc.data(), id: change.doc.id} as any)
-            } else if (change.type === 'removed') {
-              const index = state.labels.findIndex(el => el.id === change.doc.id)
-              state.labels.splice(index, 1)
-            } else {
-              const index = state.labels.findIndex(el => el.id === change.doc.id)
-              state.labels.splice(index, 1, {...change.doc.data(), id: change.doc.id} as any)
-            }
+          appUtils.fixStoreChanges(state, changes, 'labels')
         })
       }
     },

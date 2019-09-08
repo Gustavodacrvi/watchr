@@ -11,13 +11,18 @@
     >
       <i :class='`txt fas fa-lg fa-${icon}`' :style='[{color: iconColor}, theme]'></i>
     </div>
+    <div v-else-if="progress || progress === 0" class="left-icon pie"
+      :class="{handle: allowDragAndDrop}"
+    >
+      <app-pie :svg-width='15' :progress='progress'/>
+    </div>
     <div
       class='content'
-      :class='{handle: allowDragAndDrop}'
+      :class='[{handle: allowDragAndDrop}, platform]'
       v-longpress='longPress'      
       @click='singleClick'
     >
-      <span class='txt name' :class='[{showall: helpIcons.length === 0}, theme]'>{{ name }}</span>
+      <span class='txt name' :class='[{showall: helpIcons.length === 0}, theme, platform]'>{{ name }}</span>
     </div>
     <div class='options' :class='theme'>
       <span v-if='number' class='help-icon number'>{{ number }}</span>
@@ -50,6 +55,7 @@ import { State, Getter, Mutation } from 'vuex-class'
 
 import IconDropdown from '@/components/IconDropdown.vue'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
+import pie from '@/components/AppViews/AppviewComponents/AppviewPieprogress.vue'
 
 import { ListIcon } from '../../../interfaces/app'
 
@@ -57,13 +63,14 @@ import { longClickDirective } from 'vue-long-click'
 import { IndexMutations, IndexGetters } from '../../../interfaces/store/index'
 
 if (document.body.clientWidth > 992)
-  Vue.directive('longpress', longClickDirective({delay: 400, interval: 5000}))
-else Vue.directive('longpress', longClickDirective({delay: 1200, interval: 5000}))
+  Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
+else Vue.directive('longpress', longClickDirective({delay: 1000, interval: 5000}))
 
 @Component({
   components: {
     'icon-options': AppviewIconoptions,
     'icon-dropdown': IconDropdown,
+    'app-pie': pie,
   },
 })
 export default class ListRenderer extends Vue {
@@ -79,6 +86,7 @@ export default class ListRenderer extends Vue {
   @Prop(String) iconColor!: string
   @Prop(String) route!: string
   @Prop(Array) options!: ListIcon[]
+  @Prop(Number) progress!: number
   @Prop(Array) helpIcons!: ListIcon[]
   @Prop(Boolean) showHandle!: boolean
   @Prop(Boolean) deselectAll!: boolean
@@ -164,12 +172,21 @@ export default class ListRenderer extends Vue {
   align-items: center;
 }
 
+.content.mobile {
+  width: 100%;
+}
+
 .name {
   margin-left: 6px;
   max-width: 120px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.name.mobile {
+  max-width: 200px;
+  width: 100%;
 }
 
 .showall {
@@ -198,6 +215,11 @@ export default class ListRenderer extends Vue {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.pie {
+  margin-top: 3px;
+  transform: translateX(5px);
 }
 
 .element.dark:hover, .active.dark {

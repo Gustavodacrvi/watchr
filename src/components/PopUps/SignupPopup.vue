@@ -37,6 +37,7 @@ import { State, Mutation, Getter, namespace } from 'vuex-class'
 const persVuex = namespace('perspective')
 const label = namespace('label')
 const settings = namespace('settings')
+const project = namespace('project')
 
 import firebase from 'firebase/app'
 import { Alert } from '../../interfaces/app'
@@ -47,6 +48,7 @@ import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
 import { IndexState, IndexMutations } from '../../interfaces/store/index'
 import { LabelActions } from '../../interfaces/store/label'
 import { SetActions } from '../../interfaces/store/settings'
+import { ProjectActions } from '../../interfaces/store/project'
 
 @Component({
   components: {
@@ -60,10 +62,10 @@ export default class SigninPopUp extends Vue {
   @Mutation pushPopUp!: IndexMutations.PushPopUp
   @Mutation pushAlert!: IndexMutations.PushAlert
 
+
   @persVuex.Action addDefaultPerspectives!: (obj: {id: string, someday: string, anytime: string}) => void
-
   @label.Action addLabelsOrder!: LabelActions.AddLabelsOrder
-
+  @project.Action addFoldersOrder!: ProjectActions.AddFoldersOrder
   @settings.Action addDefaultSettings!: SetActions.AddDefaultSettings
 
   email: string | null = null
@@ -98,6 +100,7 @@ export default class SigninPopUp extends Vue {
               anytime: obj.anytimeId,
             })
             this.addDefaultSettings(id)
+            this.addFoldersOrder(id)
           })
         }
         this.pushAlert({

@@ -1,8 +1,8 @@
 <template>
-  <div v-if='!editing' key='task' class='round-border wrapper' :class="[theme, completed ? 'completed' : 'not-completed']">
+  <div v-if='!editing' key='task' class='round-border wrapper' :class='theme'>
     <div
       class='round-border task'
-      :class="[theme, completed ? 'completed' : 'not-completed', {'not-selected': !clicked}]"
+      :class="[theme, {'not-selected': !clicked, done: done, undone: !done}]"
       @dblclick='toggleEditing'
       @mouseenter='onHover = true'
       @mouseleave='onHover = false'
@@ -10,22 +10,25 @@
       <div
         class='content-wrapper'
       >
-        <span class='circles'>
-          <i v-if='!completed' @click='v => completed = true' key='notco' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
-          <i v-else key='com' class='far circle icon txt fa-check-circle fa-sm' :class='theme'></i>
+        <span class='circles' @click='toggleTaskComplete'>
+          <i v-show='!task.completed' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
+          <i v-show='task.completed' class='far fade circle icon txt fa-check-circle fa-sm' :class='theme'></i>
         </span>
         <transition name='check-trans' mode='out-in'>
-          <div v-if='!completed'
+          <div
             key='cont'
             class='content'
             :class='{handle: allowDragAndDrop}'
             v-longpress='toggleElement'
             @click='toggleChecklist'
           >
-            <div class='txt' :class='theme'>
+            <div class='txt' :class='[theme, {fade: task.completed}]'>
               <i v-if='showTodayIcon' class='txt fas fa-star fa-sm' style='color: #FFE366'></i>
               <i v-else-if='showOverdueIcon' class='txt fas fa-hourglass-end fa-sm' style='color: #FF6B66'></i>
               <i v-else-if='showTomorrowIcon' class='txt fas fa-sun fa-sm' style='color: #ffa166'></i>
+              <span v-if="showProjectName && projectName" class="txt-tag gray txt round-border" :class="theme">{{ projectName }}</span>
+              <span v-if="date" class="txt-tag gray txt round-border" :class="theme">{{ date }}</span>
+              <span v-if="time" class="txt-tag gray txt round-border" :class="theme">{{ time }}</span>
               {{ task.name }}
               <i v-if='task.priority'
                 class='content-icon fas fa-exclamation fa-sm'
@@ -37,8 +40,6 @@
               <i v-if='getChecklist && getChecklist.length > 0'
                 class='fade content-icon fas fa-checklist fa-list-ul'
               ></i>
-              <span class='fade' v-if='date'>{{ date }}</span>
-              <span class='fade' v-if='time'>{{ time }}</span>
             </div>
             <transition
               name='info-fade'
@@ -53,23 +54,20 @@
                 <template v-if='showLabels'>
                   <span v-for='(item, index) in taskLabels'
                     :key='item'
-                    class='lab fade'
+                    class='lab fade tiny'
                   >{{ item }}<span v-if='index !== taskLabels.length - 1'>,</span></span>
                   <span>&nbsp;</span>
                 </template>
                 <i v-if='showDot1' class='fas tiny-icon fa-circle fa-xs'></i>
-                <span v-if='showLastEditDate' class='fade'>
+                <span v-if='showLastEditDate' class='fade tiny'>
                   <span> Last edited {{ readableTaskLastEditDate }} </span>
                 </span>
                 <i v-if='showDot2' class='fas tiny-icon fa-circle fa-xs'></i>
-                <span v-if='showCreationDate' class='fade'>
+                <span v-if='showCreationDate' class='fade tiny'>
                   <span> Created {{ readableTaskCreationDate }}</span>
                 </span>
               </div>
             </transition>
-          </div>
-          <div v-else class='content'>
-            <span key='compl' class='txt' :class='theme'>Task completed</span>
           </div>
         </transition>
       </div>
@@ -129,7 +127,7 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import { State, Getter, namespace } from 'vuex-class'
+import { State, Getter, Mutation, namespace } from 'vuex-class'
 
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
 import TaskEditTemplate from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskedit.vue'
@@ -143,15 +141,17 @@ import moment from 'moment-timezone'
 
 const taskVuex = namespace('task')
 const labelVuex = namespace('label')
+const projectVuex = namespace('project')
 const settingsVuex = namespace('settings')
 
 import Sortable from 'sortablejs'
 
 import { longClickDirective } from 'vue-long-click'
-import { IndexState, IndexGetters } from '../../../../interfaces/store/index'
+import { IndexState, IndexGetters, IndexMutations } from '../../../../interfaces/store/index'
 import { LabelGetters } from '../../../../interfaces/store/label'
 import { SetState } from '../../../../interfaces/store/settings'
 import { TaskActions } from '../../../../interfaces/store/task'
+import { ProjectGetters } from '../../../../interfaces/store/project'
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 400, interval: 5000}))
@@ -167,14 +167,18 @@ else Vue.directive('longpress', longClickDirective({delay: 1200, interval: 5000}
 })
 export default class AppviewTask extends Vue {
   @State theme!: IndexState.theme
+  @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
   @Getter isDesktop!: IndexGetters.IsDesktop
 
   @taskVuex.Action deleteTasksById!: TaskActions.DeleteTasksById
   @taskVuex.Action updateTask!: TaskActions.UpdateTask
   @taskVuex.Action addSubTask!: TaskActions.AddSubTask
+  @taskVuex.Action toggleCompleteTask!: TaskActions.ToggleCompleteTask
   @taskVuex.Action saveSubtaskOrder!: TaskActions.SaveSubtaskOrder
   @taskVuex.Action unCompleteSubtasks!: TaskActions.UnCompleteSubtasks
   @taskVuex.Action copyTask!: TaskActions.CopyTask
+  @taskVuex.Action removeTasksFromProject!: TaskActions.RemoveTasksFromProject
 
   @settingsVuex.State timeZone!: SetState.timeZone
   @settingsVuex.State timeFormat!: SetState.timeFormat
@@ -182,18 +186,22 @@ export default class AppviewTask extends Vue {
 
   @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
 
+  @projectVuex.Getter getProjectById!: ProjectGetters.GetProjectById
+
+  @Prop({default: true, type: Boolean}) showProjectName!: boolean
   @Prop(Object) task!: Task
   @Prop(Boolean) deselectAll!: boolean
-  @Prop(Boolean) allowDrag!: boolean
   @Prop(Boolean) dragging!: boolean
+  @Prop(Boolean) allowDrag!: boolean
   @Prop(Boolean) alwaysShowLastEditDate!: boolean
   @Prop(Boolean) alwaysShowCreationDate!: boolean
   @Prop(Boolean) alwaysShowTaskLabels!: boolean
   @Prop(String) fixedPers!: string
+  @Prop(String) parentId!: string
 
   clicked: boolean = false
   onHover: boolean = false
-  completed: boolean = false
+  done: boolean = false
   subtaskValue: string = ''
   deselect: boolean = false
   showChecklist: boolean = false
@@ -205,44 +213,6 @@ export default class AppviewTask extends Vue {
   editing: boolean = false
   sortable: any = null
   infoHeight: number = 0
-  options: ListIcon[] = [
-    {
-      name: 'Edit task',
-      icon: 'edit',
-      size: 'lg',
-      iconColor: '',
-      callback: () => {
-        this.editing = true
-      },
-    },
-    {
-      name: 'Copy task',
-      icon: 'copy',
-      size: 'lg',
-      iconColor: '',
-      callback: () => {
-        this.copyTask(this.task.id)
-      },
-    },
-    {
-      name: 'Uncomplete subtasks',
-      icon: 'list-ul',
-      size: 'lg',
-      iconColor: '',
-      callback: () => {
-        this.unCompleteSubtasks(this.task.id)
-      },
-    },
-    {
-      name: 'Delete task',
-      icon: 'trash',
-      size: 'lg',
-      iconColor: '',
-      callback: () => {
-        this.deleteTasksById([this.task.id])
-      },
-    },
-  ]
 
   mounted() {
     this.mount()
@@ -357,6 +327,16 @@ export default class AppviewTask extends Vue {
     })
     this.editing = false
   }
+  toggleTaskComplete() {
+    this.done = true
+    setTimeout(() => {
+      this.done = false
+    }, 1000)
+    this.toggleCompleteTask({
+      id: this.task.id,
+      completed: !this.task.completed,
+    })
+  }
   getSubTaskAdderPosition() {
     const ids = this.getSubtasksIds()
     let position = 0
@@ -414,6 +394,68 @@ export default class AppviewTask extends Vue {
     return !this.atLeastTwoInfoOptionsWontShowUp && (this.allTrue || !this.showLabels || !(this.showLastEditDate || this.showCreationDate))
   }
 
+  get options(): ListIcon[] {
+    const options = [
+      {
+        name: 'Edit task',
+        icon: 'edit',
+        size: 'lg',
+        iconColor: '',
+        callback: () => {
+          this.editing = true
+        },
+      },
+      {
+        name: 'Copy task',
+        icon: 'copy',
+        size: 'lg',
+        iconColor: '',
+        callback: () => {
+          this.copyTask(this.task.id)
+        },
+      },
+      {
+        name: 'Uncomplete subtasks',
+        icon: 'list-ul',
+        size: 'lg',
+        iconColor: '',
+        callback: () => {
+          this.unCompleteSubtasks(this.task.id)
+        },
+      },
+    ]
+    if (this.task.projectId)
+      options.push({
+        name: 'Remove task from project',
+        icon: 'project-diagram',
+        iconColor: '',
+        size: 'lg',
+        callback: () => {
+          this.removeTasksFromProject([this.task.id])
+        },
+      })
+    if (!this.task.projectId)
+      options.push({
+        name: 'Add to project',
+        icon: 'project-diagram',
+        iconColor: '',
+        size: 'lg',
+        callback: () => {
+          this.pushPopUp('AddtoprojectPopup')
+          this.pushPopUpPayload([this.task.id])
+        },
+      })
+    options.push({
+        name: 'Delete task',
+        icon: 'trash',
+        size: 'lg',
+        iconColor: '',
+        callback: () => {
+          this.deleteTasksById([this.task.id])
+        },
+      })
+    return options
+  }
   get showTodayIcon(): boolean {
     if (this.fixedPers === 'Today' || !this.task.date) return false
     const {today, saved} = this.todayMomAndSavedMom()
@@ -466,8 +508,9 @@ export default class AppviewTask extends Vue {
 
     const tom = today.clone().add(1, 'd')
     if (today.isSame(saved, 'day') || tom.isSame(saved, 'day')) return null
-    if (today.isSame(saved, 'year')) return saved.format('MMMM D, dddd')
-    else saved.format('LL, dddd')
+    if (today.isSame(saved, 'month')) return saved.format('D, ddd')
+    if (today.isSame(saved, 'year')) return saved.format('MMM D, ddd')
+    else saved.format('LL, ddd')
 
     return null
   }
@@ -509,6 +552,12 @@ export default class AppviewTask extends Vue {
       return 'longpressdesktop'
     return 'longpressmobile'
   }
+  get projectName(): string | null {
+    if (!this.task.projectId) return null
+    const project = this.getProjectById(this.task.projectId)
+    if (project) return project.name
+    return null
+  }
 
   @Watch('task')
   onChange3() {
@@ -527,12 +576,6 @@ export default class AppviewTask extends Vue {
   @Watch('deselectAll')
   onChange() {
     this.clicked = false
-  }
-  @Watch('completed')
-  onChange2() {
-    setTimeout(() => {
-      this.deleteTasksById([this.task.id])
-    }, 1000)
   }
 }
 
@@ -575,10 +618,6 @@ export default class AppviewTask extends Vue {
   opacity: 0;
 }
 
-.completed.task {
-  background-color: #c4ffbd !important;
-}
-
 .circles {
   margin: 0 8px;
   margin-left: 4px;
@@ -613,8 +652,11 @@ export default class AppviewTask extends Vue {
 }
 
 .fade {
-  font-size: .75em;
   opacity: .5;
+}
+
+.tiny {
+  font-size: .75em;
 }
 
 .content-wrapper {
@@ -627,19 +669,25 @@ export default class AppviewTask extends Vue {
   align-items: center;
 }
 
-.task.not-completed.not-selected.light:hover {
+.txt-tag {
+  display: inline-block;
+  font-size: .8em;
+  padding: 4px;
+}
+
+.task.not-selected.light:hover {
   background-color: #f0f0f0;
 }
 
-.task.not-completed.not-selected.dark:hover {
+.task.not-selected.dark:hover {
   background-color: #282828;
 }
 
-.sortable-selected.not-completed.light {
+.sortable-selected.light .task {
   background-color: #83B7E2 !important;
 }
 
-.sortable-selected.not-completed.dark {
+.sortable-selected.dark .task {
   background-color: #3287cd !important;
 }
 
@@ -657,6 +705,43 @@ export default class AppviewTask extends Vue {
 
 .info-fade-enter-to, .info-fade-leave {
   opacity: 1;
+}
+
+.done, .undone {
+  transition: border .4s, background-color .4s;
+}
+
+.done .txt, .undone .txt {
+  transition: .4s;
+}
+
+.undone {
+  border: 0px #000 solid;
+  background-color: none;
+}
+
+.done.dark {
+  background-color: rgba(50, 135, 205, .2) !important;
+}
+
+.done.light {
+  background-color: rgba(131, 183, 226, .2) !important;
+}
+
+.done.dark .txt {
+  color: #808080;
+}
+
+.done.light .txt {
+  color: #b3b3b3;
+}
+
+.done.dark .txt {
+  color: #3287cd;
+}
+
+.done.dark .txt {
+  color: #83B7E2;
 }
 
 </style>

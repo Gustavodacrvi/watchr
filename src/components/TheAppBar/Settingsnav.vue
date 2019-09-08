@@ -54,7 +54,7 @@
         </template>
       </div>
     </div>
-    <div class='footer-wrapper'>
+    <div class='footer-wrapper' :class='[theme, platform]'>
       <div style='height: 18px;'></div>
       <div class='footer'>
         <div v-if='loggedAndVerified' class='left'>
@@ -87,6 +87,7 @@ export default class LoggedAppnav extends Mixins(Mixin) {
   @Mutation pushPopUp!: IndexMutations.PushPopUp
   @Mutation closeAppBar!: IndexMutations.CloseAppBar
   @Getter isDesktop!: IndexGetters.IsDesktop
+  @Getter platform!: IndexGetters.Platform
   @Getter loggedAndVerified!: IndexGetters.LoggedAndVerified
 }
 

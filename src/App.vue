@@ -95,13 +95,16 @@ export default class App extends Vue {
   @Action activateKeyShortcut!: IndexActions.ActivateKeyShortcut
 
   loaded: boolean = false
+  clickedControl: boolean = false
+  clickedAlt: boolean = false
+  lastKey: string = ''
 
   mounted() {
-    window.addEventListener('keypress', this.keyPressed)
+    window.addEventListener('keydown', this.keyPressed)
     document.body.classList.add(this.theme)
   }
   beforeDestroy() {
-    window.removeEventListener('keypress', this.keyPressed)
+    window.removeEventListener('keydown', this.keyPressed)
   }
 
   closeAlert() {
@@ -109,9 +112,30 @@ export default class App extends Vue {
     this.showLastAlert()
   }
   keyPressed({key}: {key: string}) {
+    if (!this.clickedControl && key === 'Control') {
+      this.clickedControl = true
+      setTimeout(() => {
+        this.clickedControl = false
+      }, 200)
+    }
+    if (!this.clickedAlt && key === 'Alt') {
+      this.clickedAlt = true
+      setTimeout(() => {
+        this.clickedAlt = false
+      }, 200)
+    }
     const active = document.activeElement
-    if (active && active.nodeName !== 'INPUT' && active.nodeName !== 'TEXTAREA' && this.isOnAppRoute)
-      this.activateKeyShortcut(key)
+    // tslint:disable-next-line:max-line-length
+    const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA') && this.isOnAppRoute as any
+    this.activateKeyShortcut({
+      key: this.lastKey + key,
+      special: this.clickedControl && this.clickedAlt,
+      isTyping,
+    })
+    this.lastKey = key
+    setTimeout(() => {
+      this.lastKey = ''
+    }, 200)
   }
 
   get showActionButton(): boolean {

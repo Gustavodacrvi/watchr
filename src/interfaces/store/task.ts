@@ -15,11 +15,13 @@ export interface State {
 export namespace TaskGetters {
   export type InboxTasks = Task[]
   export type GetNumberOfTasksByLabel = (labelId: string) => number
+  export type GetTasksByIds = (ids: string[]) => Task[]
 }
 
 export interface Getters {
   inboxTasks: (state: State) => TaskGetters.InboxTasks
   getNumberOfTasksByLabel: (state: State) => TaskGetters.GetNumberOfTasksByLabel
+  getTasksByIds: (state: State) => TaskGetters.GetTasksByIds
 }
 
 export interface ActionContext {
@@ -80,4 +82,13 @@ export namespace TaskActions {
 
   export type StoreUnCompleteSubtasks = (context: ActionContext, taskId: string) => void
   export type UnCompleteSubtasks = (taskId: string) => void
+
+  export type StoreAddProjectTask = (context: ActionContext, obj: {task: Task, projectId: string, position: number, order: string[], utc: UtcObj | null}) => void
+  export type AddProjectTask = (obj: {task: Task, projectId: string, position: number, order: string[], utc: UtcObj | null}) => void
+
+  export type StoreToggleCompleteTask = (context: ActionContext, obj: {id: string, completed: boolean}) => void
+  export type ToggleCompleteTask = (obj: {id: string, completed: boolean}) => void
+
+  export type StoreRemoveTasksFromProject = (context: ActionContext, ids: string[]) => void
+  export type RemoveTasksFromProject = (ids: string[]) => void
 }

@@ -68,7 +68,7 @@ body, button, input, textarea {
   display: block;
 }
 
-.action-comp .main-button {
+.action-comp .main-button.right {
   position: absolute;
   right: 16px;
   bottom: 16px;
@@ -76,6 +76,20 @@ body, button, input, textarea {
   height: 45px;
   border-radius: 100px;
   background-color: #83B7E2;
+}
+
+.action-comp .main-button.left {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  width: 45px;
+  height: 45px;
+  border-radius: 100px;
+  background-color: #CD66FF;
+}
+
+.action-comp .main-button.left.desktop {
+  left: 296px !important;
 }
 
 .task-renderer .main-button {

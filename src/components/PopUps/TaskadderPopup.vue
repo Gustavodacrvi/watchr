@@ -21,7 +21,7 @@
       <span v-show='isDesktop'
         class='margin txt'
         :class='theme'
-      >You can close any pop up at any time by clicking 'H' key.</span>
+      >You can close any pop up at any time by clicking 'H' key or 'CTRL + Alt + H'.</span>
     </div>
   </div>
 </template>

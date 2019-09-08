@@ -2,8 +2,6 @@
   <base-pers v-if='perspectiveData'
     :pers-name='pers'
     :base-tasks='baseTasks'
-    :save='true'
-    :save-sort='true'
   />
 </template>
 

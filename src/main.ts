@@ -37,6 +37,7 @@ auth.onAuthStateChanged(() => {
 
   store.dispatch('settings/getData')
   store.dispatch('label/getData')
+  store.dispatch('project/getData')
   store.dispatch('perspective/getData')
   store.dispatch('task/getData')
 })

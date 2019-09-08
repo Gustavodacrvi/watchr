@@ -39,6 +39,9 @@ const c = appUtils.AsyncComponent
     ResetpasswordPopup: c(import('./ResetpasswordPopup.vue')),
     SendresetpasswordPopup: c(import('./SendresetpasswordPopup.vue')),
     TaskadderPopup: c(import('./TaskadderPopup.vue')),
+    AddFolderPopup: c(import('./AddFolderPopup.vue')),
+    AddtoprojectPopup: c(import('./AddtoprojectPopup.vue')),
+    AddProjectPopup: c(import('./AddProjectPopup.vue')),
     EditSmartPerspectivePopup: c(import('./EditSmartPerspectivePopup.vue')),
   },
 })

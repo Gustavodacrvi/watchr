@@ -11,6 +11,7 @@
               :is='getComp'
               :pers='per'
               :label='label'
+              :project='project'
             />
           </transition>
         </div>
@@ -90,9 +91,13 @@ const c = appUtils.AsyncComponent
     'app-friday': c(import('@/components/AppViews/Perspectives/Smart/AppviewFriday.vue')),
     'app-saturday': c(import('@/components/AppViews/Perspectives/Smart/AppviewSaturday.vue')),
     'app-tomorrow': c(import('@/components/AppViews/Perspectives/Smart/AppviewTomorrow.vue')),
+    'app-project': c(import('@/components/AppViews/Perspectives/AppviewProject.vue')),
     'app-next-week': c(import('@/components/AppViews/Perspectives/Smart/AppviewNextweek.vue')),
     'app-this-week': c(import('@/components/AppViews/Perspectives/Smart/AppviewThisweek.vue')),
     'app-next-month': c(import('@/components/AppViews/Perspectives/Smart/AppviewNextmonth.vue')),
+    'app-has-project': c(import('@/components/AppViews/Perspectives/Smart/AppviewHasproject.vue')),
+    'app-doesnt-have-project': c(import('@/components/AppViews/Perspectives/Smart/AppviewDoesnthaveproject.vue')),
+    'app-completed': c(import('@/components/AppViews/Perspectives/Smart/AppviewCompleted.vue')),
     'app-have-tags': c(import('@/components/AppViews/Perspectives/Smart/AppviewHavetags.vue')),
     // tslint:disable-next-line:max-line-length
     'app-doesnt-have-tags': c(import('@/components/AppViews/Perspectives/Smart/AppviewDoesnthavetags.vue')),
@@ -117,6 +122,7 @@ export default class Guest extends Mixins(Mixin) {
 
   @Prop(String) pers!: string
   @Prop(String) label!: string
+  @Prop(String) project!: string
   @Prop(Boolean) loaded!: string
 
   waitingResponse: boolean = false
@@ -124,7 +130,7 @@ export default class Guest extends Mixins(Mixin) {
 
   created() {
     this.per = this.pers
-    if (this.ready && !this.isStandAlone && this.initialPerspective && !this.per) {
+    if (this.ready && !this.isStandAlone && this.initialPerspective && !this.per && !this.label && !this.project) {
       this.$router.replace('user?pers=' + this.initialPerspective)
       this.$emit('loaded', true)
     } else if (this.isStandAlone)
@@ -142,7 +148,7 @@ export default class Guest extends Mixins(Mixin) {
       this.closeAppBar()
   }
   get getComp(): string {
-    if (this.per && !this.label) {
+    if (this.per && !this.label && !this.project) {
       switch (this.per) {
         case 'Inbox': return 'app-inbox'
         case 'Upcoming': return 'app-upcoming'
@@ -158,14 +164,19 @@ export default class Guest extends Mixins(Mixin) {
         case 'Thursday': return 'app-thursday'
         case 'Friday': return 'app-friday'
         case 'Saturday': return 'app-saturday'
+        case 'Has project': return 'app-has-project'
+        case `Doesn't have project`: return 'app-doesnt-have-project'
+        case 'Completed': return 'app-completed'
         case 'Next month': return 'app-next-month'
         case 'All tasks': return 'app-all-tasks'
         case 'Have tags': return 'app-have-tags'
         case `Doesn't have tags`: return 'app-doesnt-have-tags'
       }
       return 'app-custom-pers'
-    } else if (this.label)
+    } else if (this.label && !this.project)
       return 'app-custom-label'
+    else if (this.project)
+      return 'app-project'
     return ''
   }
   get ready(): boolean {
@@ -181,7 +192,7 @@ export default class Guest extends Mixins(Mixin) {
   }
   @Watch('initialPerspective')
   onChange5() {
-    if (!this.loaded && !this.pers) {
+    if (!this.loaded && !this.pers && !this.isDesktop) {
       this.$router.replace('user?pers=' + this.initialPerspective)
       this.$emit('loaded', true)
     }

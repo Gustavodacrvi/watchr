@@ -5,8 +5,6 @@
         :value='pers.name'
         :icon='pers.icon'
         :icon-color='pers.iconColor'
-        :showing='showing'
-        @toggle='v => showing = !showing'
       />
       <div class='right'>
         <view-header-icons v-if='pers'
@@ -34,15 +32,14 @@
     />
     <div class='margin'></div>
     <div v-if='!hided'>
-      <div v-if='showing'>
+      <div>
         <p v-if='pers.description' class='description txt' :class='theme'>
           {{ pers.description }}
         </p>
         <div v-if='pers.description' class='margin'></div>
         <view-tags
-          :fixed-tag='fixedTag'
           :search='search'
-          :priority='getPriority'
+          :priority='pers.priority'
           :labels='getLabels'
           :dates='dates'
           :smart-pers='smartPers'
@@ -52,14 +49,13 @@
           @removedate='removeDate'
           @removesmartpers='removeSmartPers'
         />
-        <div class='margin'></div>
       </div>
       <task-renderer v-if='!calendarRenderer'
         id='appnavalltasks'
         :tasks='getTasks'
         :fixed-pers='pers.name'
-        :default-priority='getPriority'
-        :default-labels='defaultLabels'
+        :default-priority='pers.priority'
+        :default-labels='pers.includeAndLabels'
         :default-date='defaultDate'
         :allow-priority='true'
         :allow-date='allowDate'
@@ -85,8 +81,8 @@
               :date='tasks[0].date'
               :list-has-dates='true'
               :tasks='tasks'
-              :default-priority='getPriority'
-              :default-labels='defaultLabels'
+              :default-priority='pers.priority'
+              :default-labels='getLabels'
               :default-date='defaultDate'
               :allow-priority='true'
               :insert-before='true'
@@ -97,6 +93,7 @@
               :always-show-creation-date='pers.alwaysShowCreationDate'
               :always-show-task-labels='pers.alwaysShowTaskLabels'
               @savenewdates='saveNewTaskDates'
+              @selected='onSelect'
               @add='addPersTask'
             />
           </app-header>
@@ -112,8 +109,9 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
+import { Component, Vue, Watch, Prop, Mixins } from 'vue-property-decorator'
 import { State, Getter, Mutation, namespace } from 'vuex-class'
+import PersMixin from '@/mixins/perspective'
 
 import DynamicFontawesome from '@/components/DynamicFontawesome.vue'
 import AppviewTags from '@/components/AppViews/AppviewComponents/AppviewTags.vue'
@@ -148,28 +146,10 @@ const set = namespace('settings')
     'empty-tag-renderer': EmptyTagsRenderer,
   },
 })
-export default class PerspectiveAppview extends Vue {
-  @State theme!: IndexState.theme
-  @State selectedTasks!: IndexState.selectedTasks
-  @State currentAppSection!: IndexState.currentAppSection
-  @Getter isDesktop!: IndexGetters.IsDesktop
-  @Getter platform!: IndexGetters.Platform
-  @Mutation pushView!: IndexMutations.PushView
-  @Mutation sendOptionsToNavbar!: IndexMutations.SendOptionsToNavbar
-  @Mutation hideNavBarOptions!: IndexMutations.HideNavBarOptions
+export default class PerspectiveAppview extends Mixins(PersMixin) {
   @Mutation pushAlert!: IndexMutations.PushAlert
-  @Mutation pushPopUp!: IndexMutations.PushPopUp
-  @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
-  @Mutation updateSelectedTasks!: IndexMutations.UpdateSelectedTasks
-  @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
-  @taskVuex.State tasks!: TaskState.tasks
   @taskVuex.Action addTaskPerspective!: TaskActions.AddTaskPerspective
-  @taskVuex.Action deleteTasksById!: TaskActions.DeleteTasksById
-  @taskVuex.Action changePrioritysByIds!: TaskActions.ChangePrioritysByIds
-  @taskVuex.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
-
-  @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
 
   @persVuex.Getter getPerspectiveByName!: PersGetters.GetPerspectiveByName
   @persVuex.Action saveTaskOrder!: PersActions.SaveTaskOrder
@@ -183,179 +163,54 @@ export default class PerspectiveAppview extends Vue {
   @persVuex.Action addDateToPerspective!: PersActions.AddDateToPerspective
   @persVuex.Action removeDateFromPerspective!: PersActions.RemoveDateFromPerspective
 
-  @set.State timeZone!: SetState.timeZone
-  @set.State startOfTheWeek!: SetState.startOfTheWeek
-
   @Prop({default: true, type: Boolean}) allowLabels!: boolean
   @Prop({default: true, type: Boolean}) allowDate!: boolean
-  @Prop(Boolean) save!: boolean
-  @Prop(Boolean) saveSort!: boolean
   @Prop(Boolean) calendarRenderer!: boolean
   @Prop(String) persName!: string
-  @Prop(Object) fixedTag!: object
   @Prop(Array) baseTasks!: Task[]
 
-  search: string = ''
-  priority: string = ''
-  labels: string[] = []
-  dates: string[] = []
-  smartPers: string[] = []
-  sort: string[] = []
   order: string[] = []
-  hided: boolean = false
-  showing: boolean = true
   justUpdated: boolean = false
-  mobileSelectedOptions: ListIcon[] = [
-    {
-      name: 'Delete selected tasks',
-      icon: 'trash',
-      iconColor: '',
-      size: '',
-    },
-    {
-      name: 'Change priority of tasks',
-      icon: 'exclamation',
-      iconColor: '',
-      size: '',
-    },
-    {
-      name: 'Change date of tasks',
-      icon: 'calendar-day',
-      iconColor: '',
-      size: '',
-    },
-    {
-      name: 'Add labels to tasks',
-      icon: 'tag',
-      iconColor: '',
-      size: '',
-    },
-  ]
 
   created() {
     this.updateView()
   }
 
-  getMobileSelectedOptions(): ListIcon[] {
-    this.mobileSelectedOptions[0]['callback'] = () => {
-      this.deleteTasksById(this.selectedTasks)
-    }
-    this.mobileSelectedOptions[1]['callback'] = () => {
-      setTimeout(() => {
-        this.sendOptionsToNavbar([
-          {
-            name: 'High priority',
-            icon: 'exclamation',
-            iconColor: '#FF6B66',
-            size: 'lg',
-            callback: () => {
-              this.changePrioritysByIds({
-                ids: this.selectedTasks,
-                priority: 'High priority',
-              })
-              this.sendOptionsToNavbar([])
-            },
-          },
-          {
-            name: 'Medium priority',
-            icon: 'exclamation',
-            iconColor: '#fff566',
-            size: 'lg',
-            callback: () => {
-              this.changePrioritysByIds({
-                ids: this.selectedTasks,
-                priority: 'Medium priority',
-              })
-              this.sendOptionsToNavbar([])
-            },
-          },
-          {
-            name: 'Low priority',
-            icon: 'exclamation',
-            iconColor: '#70ff66',
-            size: 'lg',
-            callback: () => {
-              this.changePrioritysByIds({
-                ids: this.selectedTasks,
-                priority: 'Low priority',
-              })
-              this.sendOptionsToNavbar([])
-            },
-          },
-        ])
-      }, 80)
-    }
-    this.mobileSelectedOptions[2]['callback'] = () => {
-      setTimeout(() => {
-        this.pushCenteredCard({
-          type: 'Component',
-          compName: 'CalendarInput',
-          flexBasis: '275px',
-          listIcons: [],
-          listIconHandler: (e: any) => {
-            this.selectedDates(e.utc.date)
-          },
-        })
-      }, 80)
-    }
-    this.mobileSelectedOptions[3]['callback'] = () => {
-      setTimeout(() => {
-        this.pushPopUp('AddLabelsToTasksPopup')
-        this.pushPopUpPayload(this.selectedTasks)
-      }, 80)
-    }
-    return this.mobileSelectedOptions
-  }
   addLabel(label: Label) {
-    if (!this.save && !this.labels.find(el => el === label.id))
-      this.labels.push(label.id)
-    else if (this.save) this.addLabelToPerspective({
-        id: this.pers.id,
-        labelId: label.id,
-      })
+    this.addLabelToPerspective({
+      id: this.pers.id,
+      labelId: label.id,
+    })
   }
   selectDate(date: string) {
-    if (!this.save && !this.dates.find(el => el === date))
-      this.dates.push(date)
-    else if (this.save) this.addDateToPerspective({
+    this.addDateToPerspective({
       id: this.pers.id,
       date,
     })
   }
   addSmartPers(name: string) {
-    if (!this.save && !this.smartPers.find(el => el === name))
-      this.smartPers.push(name)
-    else if (this.save) this.addSmartPersFilter({
-        id: this.pers.id,
-        persName: name,
-      })
+    this.addSmartPersFilter({
+      id: this.pers.id,
+      persName: name,
+    })
   }
   removeLabel(id: string) {
-    if (!this.save) {
-      const index = this.labels.findIndex(el => el === id)
-      this.labels.splice(index, 1)
-    } else this.removeLabelFromPerspective({
-        id: this.pers.id,
-        labelId: id,
-      })
+    this.removeLabelFromPerspective({
+      id: this.pers.id,
+      labelId: id,
+    })
   }
   removeDate(date: string) {
-    if (!this.save) {
-      const index = this.dates.findIndex(el => el === date)
-      this.dates.splice(index, 1)
-    } else this.removeDateFromPerspective({
+    this.removeDateFromPerspective({
       id: this.pers.id,
       date,
     })
   }
   removeSmartPers(name: string) {
-    if (!this.save) {
-      const index = this.smartPers.findIndex(el => el === name)
-      this.smartPers.splice(index, 1)
-    } else this.removeSmartPersFilter({
-        id: this.pers.id,
-        persName: name,
-      })
+    this.removeSmartPersFilter({
+      id: this.pers.id,
+      persName: name,
+    })
   }
   addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any}) {
     this.addTaskPerspective({
@@ -375,34 +230,23 @@ export default class PerspectiveAppview extends Vue {
     })
   }
   selectPriority(value: string) {
-    if (!this.save)
-      this.priority = value
-    else this.savePerspectivePriority({
-        id: this.pers.id,
-        priority: value,
-      })
+    this.savePerspectivePriority({
+      id: this.pers.id,
+      priority: value,
+    })
   }
   saveNewSortOrder(names: string[]) {
-    this.sort = names
-    if (this.saveSort)
-      this.savePerspectiveTaskSort({
-        sort: names,
-        perspectiveId: this.pers.id,
-      })
+    this.savePerspectiveTaskSort({
+      sort: names,
+      perspectiveId: this.pers.id,
+    })
   }
   selectSettingsOption(value: string) {
-    if (!this.sort.find(el => el === value)) {
-      this.sort.push(value)
-      if (this.saveSort)
-        this.addPerspectiveSort({
-          sort: value,
-          perspectiveId: this.pers.id,
-        })
-    }
-  }
-  toggleHide() {
-    if (!this.isDesktop)
-      this.hided = !this.hided
+    if (!this.sort.find(el => el === value))
+      this.addPerspectiveSort({
+        sort: value,
+        perspectiveId: this.pers.id,
+      })
   }
   onUpdate(ids: string[]) {
     const filtered = ids.filter(el => el !== 'task-adder')
@@ -413,20 +257,10 @@ export default class PerspectiveAppview extends Vue {
       })
     this.justUpdated = true
   }
-  onSelect(ids: string[]) {
-    this.updateSelectedTasks(ids)
-  }
-  selectedDates(date: string) {
-    const arr: Array<{id: string, date: string}> = []
-    for (const id of this.selectedTasks)
-      arr.push({id, date})
-    if (arr.length > 0)
-      this.saveNewDateOfTasks(arr)
-  }
   updateView() {
     if (this.pers) {
       this.priority = this.pers.priority
-      if (!this.justUpdated && !this.save || this.save) {
+      if (!this.justUpdated) {
         this.labels = this.pers.includeAndLabels.slice()
         this.smartPers = this.pers.includeAndSmartPers.slice()
         this.sort = this.pers.sort.slice()
@@ -510,18 +344,7 @@ export default class PerspectiveAppview extends Vue {
   }
   get getTasks(): Task[] {
     let tasks: Task[] = this.sortedTasks
-    if (this.search)
-      tasks = tasks.filter(el => el.name.toLowerCase().includes(this.search.toLowerCase()))
-    if (this.priority)
-      tasks = appUtils.filterTasksByPriority(tasks, this.priority)
-    if (this.labels && this.labels.length > 0)
-      tasks = appUtils.filterTasksByLabels(tasks, this.labels)
-    if (this.dates && this.dates.length > 0)
-      tasks = appUtils.filterTasksByDates(tasks, this.dates, this.timeZone)
-    if (this.smartPers && this.smartPers.length > 0)
-      for (const name of this.smartPers)
-        if (name !== this.pers.name)
-          tasks = appUtils.filterTasksBySmartPerspective(name, tasks, this.timeZone, this.startOfTheWeek)
+    tasks = this.filterTasks(tasks)
     if (this.order && this.order.length > 0) {
       const ord = appUtils.fixOrder(tasks, this.order)
       tasks = appUtils.sortArrayByIds(tasks, ord)
@@ -533,32 +356,15 @@ export default class PerspectiveAppview extends Vue {
   get getLabels(): Label[] {
     return this.getLabelsByIds(this.labels)
   }
-  get getPriority(): string {
-    if (!this.save)
-      return this.priority
-    else return this.pers.priority
-  }
-  get defaultLabels(): string[] {
-    if (!this.save)
-      return this.labels
-    return this.pers.includeAndLabels
-  }
   get defaultDate(): string | undefined {
     if (!this.pers) return undefined
     if (this.pers.name === 'Today')
-      return timezone.utc().format('Y-M-D')
+      return timezone().format('Y-M-D')
     if (this.pers.name === 'Tomorrow')
-      return timezone.utc().add(1, 'd').format('Y-M-D')
+      return timezone().add(1, 'd').format('Y-M-D')
     return undefined
   }
 
-  @Watch('selectedTasks')
-  onChange() {
-    if (!this.isDesktop)
-      if (this.selectedTasks.length > 0)
-        this.sendOptionsToNavbar(this.getMobileSelectedOptions())
-      else this.hideNavBarOptions()
-  }
   @Watch('pers')
   onChange3() {
     this.updateView()

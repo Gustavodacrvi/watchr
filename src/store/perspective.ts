@@ -74,6 +74,9 @@ export default {
         'Thursday',
         'Friday',
         'Saturday',
+        `Doesn't have project`,
+        `Has project`,
+        `Completed`,
       ]
       const pers = getters.sortedSmartPerspectives as any
       return pers.filter((el: Perspective) => filters.includes(el.name))
@@ -281,18 +284,7 @@ export default {
         })
         rootState.firestore.collection('perspectives').where('userId', '==', rootState.uid).onSnapshot(snap => {
           const changes = snap.docChanges()
-          for (const change of changes)
-            if (change.type === 'added') {
-              const lab = state.perspectives.find(el => el.id === change.doc.id)
-              if (!lab)
-                state.perspectives.push({...change.doc.data(), id: change.doc.id} as any)
-            } else if (change.type === 'removed') {
-              const index = state.perspectives.findIndex(el => el.id === change.doc.id)
-              state.perspectives.splice(index, 1)
-            } else {
-              const index = state.perspectives.findIndex(el => el.id === change.doc.id)
-              state.perspectives.splice(index, 1, {...change.doc.data(), id: change.doc.id} as any)
-            }
+          appUtils.fixStoreChanges(state, changes, 'perspectives')
         })
       }
     },
@@ -380,6 +372,39 @@ export default {
             alwaysShowCreationDate: false,
             icon: 'calendar-alt',
             iconColor: '#9CE283',
+          },
+          {
+            name: 'Completed',
+            pin: true,
+            numberOfTasks: false,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: false,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: false,
+            icon: 'check-circle',
+            iconColor: '#83B7E2',
+          },
+          {
+            name: 'Has project',
+            pin: false,
+            numberOfTasks: false,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: false,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: false,
+            icon: 'project-diagram',
+            iconColor: '#CD66FF',
+          },
+          {
+            name: `Doesn't have project`,
+            pin: false,
+            numberOfTasks: false,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: false,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: false,
+            icon: 'project-diagram',
+            iconColor: '#CD66FF',
           },
           {
             name: 'Next week',

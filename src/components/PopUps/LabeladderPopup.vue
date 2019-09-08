@@ -28,7 +28,7 @@
       <span v-show='isDesktop'
         class='margin txt'
         :class='theme'
-      >You can close any pop up at any time by clicking 'H' key.</span>
+      >You can close any pop up at any time by clicking 'H' key or 'CTRL + Alt + H'.</span>
     </div>
   </div>
 </template>
@@ -97,7 +97,8 @@ export default class LabelAdder extends Vue {
   }
 
   getOptions(): string[] {
-    return this.sortedLabelsByName.filter(el => el.name.includes(this.value)).map(el => el.name)
+    // tslint:disable-next-line:max-line-length
+    return this.sortedLabelsByName.filter(el => el.name.toLowerCase().includes(this.value.toLowerCase())).map(el => el.name)
   }
 
   select(value: string) {

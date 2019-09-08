@@ -1,10 +1,11 @@
 <template>
-  <div :class='`sort-${group}`'>
-    <transition-group name='fade'>
+  <div :class='`sort-${group}-${name} max-height`'>
+    <transition-group class='max-height' name='fade' tag='div'>
       <list-element v-for='obj in list'
         :key='obj.id'
         :id='obj.id'
         :show='obj.show'
+        :progress='obj.progress'
         :number='obj.number'
         :name='obj.name'
         :icon='obj.icon'
@@ -20,6 +21,8 @@
         @clearselected='clearSelected'
 
         :data-vid='obj.id'
+        :data-vparent='parent'
+        :data-vgroup='group'
       />
     </transition-group>
   </div>
@@ -49,6 +52,8 @@ import { IndexGetters } from '../../../interfaces/store/index'
 export default class ListRenderer extends Mixins(Mixin) {
   @Getter isDesktop!: IndexGetters.IsDesktop
 
+  @Prop(String) parent!: any
+  @Prop({default: 'appnav', type: String}) name!: any
   @Prop({required: true, type: Array}) list!: any[]
   @Prop({required: true, type: String}) group!: string
   @Prop({required: true, type: String}) active!: string
@@ -61,7 +66,7 @@ export default class ListRenderer extends Mixins(Mixin) {
   sortable: any = null
   deselectAll: boolean = false
   dragging: boolean = false
-  rootSelector: string = `.sort-${this.group}`
+  rootSelector: string = `.sort-${this.group}-${this.name}`
 
   mounted() {
     this.mount()
@@ -89,6 +94,16 @@ export default class ListRenderer extends Mixins(Mixin) {
       },
       onEnd: () => {
         this.dragging = false
+      },
+      onAdd: (el: any) => {
+        let items = []
+        if (el.items.length === 0)
+          items.push(el.item)
+        else items = el.items
+        const from = items[0].dataset.vparent
+        const to = this.parent
+        const ids: string[] = this.getIdsFromElements(this.rootSelector)
+        this.$emit('move', {from, to, ids})
       },
     }
 
@@ -136,3 +151,11 @@ export default class ListRenderer extends Mixins(Mixin) {
 }
 
 </script>
+
+<style scoped>
+
+.max-height {
+  height: 100%;
+}
+
+</style>

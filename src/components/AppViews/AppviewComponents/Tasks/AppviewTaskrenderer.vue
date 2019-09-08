@@ -1,5 +1,5 @@
 <template>
-  <div :class='`task-taskrenderer-${id} task-renderer`'>
+  <div :class='`task-taskrenderer-${id}-${parentId} task-renderer`'>
     <transition-group
       name='list'
       class='list'
@@ -12,6 +12,7 @@
         class='root-task'
         :key='task.id'
         :task='task'
+        :parent-id='parentId'
         :deselect-all='deselectAll'
         :allow-drag='numberOfSelected > 0'
         :dragging='dragging'
@@ -19,8 +20,10 @@
         :always-show-creation-date='alwaysShowCreationDate'
         :always-show-task-labels='alwaysShowTaskLabels'
         :fixed-pers='fixedPers'
+        :show-project-name='showProjectName'
 
         :data-vid='task.id'
+        :data-vparentdi='parentId'
 
         @toggle='toggleElement'
       />
@@ -48,6 +51,7 @@ import ViewTask from '@/components/AppViews/AppviewComponents/Tasks/AppviewTask.
 import Sortable, { MultiDrag } from 'sortablejs'
 import { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js'
 import TaskEditTemplate from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskedit.vue'
+import HeadingsTemplate from '@/components/AppViews/AppviewComponents/Headings/AppviewHeading.vue'
 
 Sortable.mount(new MultiDrag(), new AutoScroll())
 
@@ -74,10 +78,13 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop(Boolean) alwaysShowTaskLabels!: boolean
   @Prop(Boolean) allowDate!: boolean
   @Prop(Boolean) listHasDates!: boolean
+  @Prop(Number) number!: number
+  @Prop({default: true, type: Boolean}) showProjectName!: boolean
   @Prop({default: undefined, type: String}) defaultPriority!: string
   @Prop({default: undefined, type: String}) defaultDate!: string
   @Prop({default: undefined, type: Array}) defaultLabels!: string[]
   @Prop({required: true, type: String}) id!: string
+  @Prop({default: null, type: String}) parentId!: string
   @Prop(String) fixedPers!: string
   @Prop(String) fixedLabel!: string
   @Prop(String) date!: string
@@ -89,16 +96,15 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 
   sortable: any = null
   numberOfSelected: number = 0
+  lastNumberOfSelected: number = 0
   deselectAll: boolean = false
   added: boolean = false
   dragging: boolean = false
   numberOfAdders: number = 0
-  rootSelector: string = `.task-taskrenderer-${this.id}`
+  rootSelector: string = `.task-taskrenderer-${this.id}-${this.parentId}`
   taskAdderPosition: number = 0
+  headingAdderPosition: number = 0
 
-  created() {
-    this.$on('enter', this.add)
-  }
   mounted() {
     this.mount()
     document.addEventListener('click', this.calcSelectedElements)
@@ -124,22 +130,23 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       multiDrag: true,
       dataIdAttr: 'data-sortableid',
       group: {name: 'taskrenderer', pull: (to: any, from: any) => {
-        if (to.options.group.name === 'taskrenderer') return true
+        const name = to.options.group.name
+        if (name === 'taskrenderer') return true
         return false
       }, put: ['floatbutton', 'taskrenderer']},
 
       onUpdate: () => {
-        const ids: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
-        this.$emit('update', ids)
+        const order: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
+        const ids = order.filter(el => el !== 'task-adder' && el !== 'heading-adder')
+        if (!this.parentId)
+          this.$emit('update', ids)
+        else this.$emit('update', {ids, parentId: this.parentId})
       },
       onAdd: (evt: any) => {
         const type = evt.from.dataset.sortfrom
         if (type === 'actionbutton') {
           const Constructor = Vue.extend(TaskEditTemplate)
           const instance = new Constructor({
-            created() {
-              this.$emit('enter')
-            },
             parent: this,
             propsData: {
               class: 'handle', key: 'task-adder',
@@ -149,8 +156,8 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
             },
           })
           const el = this.rootComponent.querySelector('.main-button') as HTMLElement
-          el.setAttribute('id', 'main-button')
-          instance.$mount('#main-button')
+          el.setAttribute('id', 'main-button-task')
+          instance.$mount('#main-button-task')
           this.rootComponent.getElementsByClassName('task-adder')[0].setAttribute('data-vid', 'task-adder')
           this.numberOfAdders++
           instance.$on('enter', this.add)
@@ -172,10 +179,57 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
               id: e.dataset.vid,
             })
           this.$emit('savenewdates', arr)
+        } else if (type === 'actionbuttonleft') {
+          const Constructor = Vue.extend(HeadingsTemplate)
+          const instance = new Constructor({
+            parent: this,
+            propsData: {
+              class: 'handle', key: 'heading-adder',
+              obj: {name: ''}, editing: true, allowEdit: true,
+            },
+          })
+          const el = this.rootComponent.querySelector('.main-button') as HTMLElement
+          el.setAttribute('id', 'main-button-heading')
+          instance.$mount('#main-button-heading')
+          this.rootComponent.getElementsByClassName('heading-wrapper')[0].setAttribute('data-vid', 'heading-adder')
+          this.numberOfAdders++
+          instance.$on('enter', this.addHeading)
+          instance.$on('cancel', () => {
+            instance.$destroy()
+            const $el = instance.$el as any
+            this.numberOfAdders--
+            $el.parentNode.removeChild($el)
+          })
+        } else if (type === 'projectRoot' || type === 'projectHeading') {
+          const els = evt.items
+          if (els.length === 0)
+            els.push(evt.item)
+          const pId = els[0].dataset.vparentdi
+          const order: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
+          const ids = order.filter(el => el !== 'task-adder' && el !== 'heading-adder')
+
+          const to = this.listType
+          const fm = type
+          const head = 'projectHeading'
+          const root = 'projectRoot'
+
+          const comingFromRoot = (to === head && fm === root)
+          const goingToRoot =  (to === root && fm === head)
+          const betweenHeads = (to === head && fm === head)
+
+          if (comingFromRoot)
+            this.$emit('fromroot', {to: this.parentId, ids})
+          else if (goingToRoot)
+            this.$emit('toroot', {from: pId, ids})
+          else if (betweenHeads)
+            this.$emit('betweenheadings', {from: pId, to: this.parentId, ids})
         }
       },
       onStart: () => {
         this.dragging = true
+      },
+      onEnd: () => {
+        this.dragging = false
       },
     }
 
@@ -186,17 +240,26 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   }
 
   add(obj: {name: string, priority: string, utc: {time: string, date: string}}) {
-    const els: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
+    const els: string[] = this.getIdsFromElements(this.rootSelector, 'root-task', this.$el)
     this.getTaskAdderPosition()
-    const order = els.filter(el => el !== 'task-adder')
+    const order = els.filter(el => el !== 'task-adder' && el !== 'heading-adder')
     if (this.listHasDates) {
       if (!obj.utc) obj['utc'] = {
         time: '', date: '',
       }
       obj.utc.date = this.rootComponent.dataset.date as any
     }
-    this.$emit('add', {position: this.taskAdderPosition, order, ...obj})
+    this.$emit('add', {position: this.taskAdderPosition, order, ...obj, parentId: this.parentId})
     this.added = true
+  }
+  addHeading(name: string) {
+    const els: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
+    this.getHeadingsAdderPosition()
+    const order = els.filter(el => el !== 'task-adder' && el !== 'heading-adder')
+    const ids = order.slice(this.headingAdderPosition)
+    if (!this.parentId)
+      this.$emit('addheading', {position: this.number, ids, name})
+    else this.$emit('addheading', {position: this.number, ids, name, from: this.parentId})
   }
   calcSelectedElements(evt?: any) {
     if (evt) {
@@ -220,10 +283,15 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       }
     }
 
-    this.numberOfSelected = document.querySelectorAll('.sortable-selected').length
-    setTimeout(() => {
-      this.$emit('selected', this.getIdsFromSelectedElements(this.rootSelector).filter(el => el !== 'task-adder'))
-    }, 1)
+    // tslint:disable-next-line:max-line-length
+    this.numberOfSelected = this.$el.querySelectorAll('.sortable-selected').length
+    if (this.numberOfSelected !== this.lastNumberOfSelected)
+      setTimeout(() => {
+        // tslint:disable-next-line:max-line-length
+        const ord = this.getIdsFromSelectedElements(this.rootSelector).filter(el => el !== 'task-adder' && el !== 'heading-adder')
+        this.$emit('selected', ord)
+      }, 1)
+    this.lastNumberOfSelected = this.numberOfSelected
   }
   toggleElement({el, select}: {el: HTMLElement, select: boolean}) {
     if (this.numberOfSelected === 0)
@@ -234,13 +302,18 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     this.calcSelectedElements()
   }
   getTaskAdderPosition() {
+    this.taskAdderPosition = this.getCompPositionById('task-adder')
+  }
+  getHeadingsAdderPosition() {
+    this.headingAdderPosition = this.getCompPositionById('heading-adder')
+  }
+  getCompPositionById(key: string): number {
     const els: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
     let i = 0
     for (const id of els)
-      if (id === 'task-adder') {
-        this.taskAdderPosition = i
-        break
-      } else i++
+      if (id === key) return i
+      else i++
+    return 0
   }
 
   get rootComponent(): HTMLElement {
@@ -258,7 +331,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
         const adder = childNodes[p] as any
         const newTask = childNodes[p + 1]
         this.rootComponent.insertBefore(newTask, adder)
-      }, 10)
+      }, 100)
       this.added = false
     }
   }
@@ -307,14 +380,14 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
 }
 
 .list.isempty {
-  height: 150px;
+  height: 40px;
 }
 
 .no-task {
   position: relative;
-  top: -150px;
+  top: -40px;
   padding: 0 30px;
-  height: 150px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;

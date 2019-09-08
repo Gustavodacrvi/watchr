@@ -3,7 +3,7 @@
     class='icon-dropdown'
     @mouseenter='showing = true'
     @mouseleave='showing = false'
-    @click="$emit('click')"
+    @click.stop="$emit('click')"
     :class="{'color-on-hover': changeColorOnHover}"
   >
     <i :class='[`pointer handle icon txt fas fa-${handle} fa-${size}`, theme, {centralize: centralize}]'></i>

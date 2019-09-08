@@ -57,7 +57,7 @@
     </div>
     <div v-if='showFooter'
       class='footer-wrapper'
-      :class='[theme, backColor]'
+      :class='[theme, backColor, platform]'
     >
       <div style='height: 18px;'></div>
       <div class='footer'>
@@ -107,14 +107,17 @@ interface Section {
   options?: ListIcon[]
 }
 
+const c = appUtil.AsyncComponent
+
 @Component({
   components: {
     'icon-options': AppviewIconoptions,
-    'overview': appUtil.AsyncComponent(import('./AppnavSections/OverviewAppnav.vue')),
-    'labels': appUtil.AsyncComponent(import('./AppnavSections/LabelAppnav.vue')),
-    'perspectives': appUtil.AsyncComponent(import('./AppnavSections/PerspectivesAppnav.vue')),
     'icon-dropdown': IconDropdown,
     'form-input': FormInput,
+    'overview': c(import('./AppnavSections/OverviewAppnav.vue')),
+    'labels': c(import('./AppnavSections/LabelAppnav.vue')),
+    'perspectives': c(import('./AppnavSections/PerspectivesAppnav.vue')),
+    'projects': c(import('./AppnavSections/ProjectsAppnav.vue')),
   },
 })
 export default class LoggedAppnav extends Vue {
@@ -128,6 +131,17 @@ export default class LoggedAppnav extends Vue {
 
   sections: Section[] = [
     {icon: 'home', comp: 'overview', title: 'OVERVIEW'},
+    {icon: 'project-diagram', comp: 'projects', title: 'PROJECTS', options: [
+      {
+        name: 'Add folder',
+        icon: 'folder',
+        iconColor: '',
+        size: 'lg',
+        callback: () => {
+          this.pushPopUp('AddFolderPopup')
+        },
+      },
+    ]},
     {icon: 'layer-group', comp: 'perspectives', title: 'PERSPECTIVES'},
     {icon: 'tags', comp: 'labels', title: 'LABELS', options: [
       {

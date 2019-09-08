@@ -81,6 +81,9 @@ export default class DropdownInput extends Vue {
   created() {
     this.selectFirstOne()
   }
+  mounted() {
+    this.fixTextAreadHeight()
+  }
 
   selectFirstOne() {
     if (this.values[0])

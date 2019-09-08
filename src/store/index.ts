@@ -6,6 +6,7 @@ import label from '@/store/label'
 import perspective from '@/store/perspective'
 import task from '@/store/task'
 import settings from '@/store/settings'
+import project from '@/store/project'
 
 const MAX_MOBILE_SCREEN_WIDTH = 992
 
@@ -69,7 +70,7 @@ interface Actions {
 
 const store: any = new Vuex.Store({
   modules: {
-    label, perspective, task, settings,
+    label, perspective, task, settings, project,
   } as any,
   state: {
     theme: savedTheme,
@@ -79,6 +80,8 @@ const store: any = new Vuex.Store({
     selectedTasks: [],
     windowWidth: document.body.clientWidth,
     appBarState: false,
+    selectedTasksType: null,
+    selectedTasksPayload: null,
     isLogged: false,
     firestore: null,
     centeredCard: null,
@@ -97,8 +100,8 @@ const store: any = new Vuex.Store({
     alert: undefined,
   } as State,
   mutations: {
-    updateSelectedTasks(state, selectedTasks) {
-      state.selectedTasks = selectedTasks
+    updateSelectedTasks(state, selected) {
+      state.selectedTasks = selected
     },
     openSection(state, currentAppSection) {
       state.currentAppSection = currentAppSection
@@ -237,14 +240,18 @@ const store: any = new Vuex.Store({
           }, state.alert.duration * NUMBER_OF_MILISECONDS_IN_ONE_SECOND)
       }
     },
-    activateKeyShortcut({commit, getters}, key) {
-      if ((getters.loggedAndVerified || getters.anonymous))
-        switch (key.toLowerCase()) {
-          case 'l': commit('pushPopUp', 'LabeladderPopup'); break
-          case 'p': commit('pushPopUp', 'PerspectiveAdderPopup'); break
-          case 't': commit('pushPopUp', 'TaskadderPopup'); break
-          case 'h': commit('pushPopUp', ''); break
-        }
+    activateKeyShortcut({commit, getters}, {key, special, isTyping}) {
+      if ((getters.loggedAndVerified || getters.anonymous)) {
+        if (!isTyping)
+          switch (key.toLowerCase()) {
+            case 'l': commit('pushPopUp', 'LabeladderPopup'); break
+            case 'pe': commit('pushPopUp', 'PerspectiveAdderPopup'); break
+            case 'pr': commit('pushPopUp', 'AddProjectPopup'); break
+            case 't': commit('pushPopUp', 'TaskadderPopup'); break
+            case 'h': commit('pushPopUp', ''); break
+          }
+        if (special && key === 'h') commit('pushPopUp', '')
+      }
     },
   } as Actions,
 })

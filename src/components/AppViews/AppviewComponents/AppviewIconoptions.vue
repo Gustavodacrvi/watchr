@@ -5,15 +5,15 @@
       :size='size'
       :change-color-on-hover='true'
       :min-width='minWidth'
-      @click='pushIcons'
       :float-top='floatTop'
       :centralize='centralize'
+      @click='pushIcons'
     >
       <div v-if='isDesktop' class='drop round-border scroll' :class='theme'>
         <div v-for='i in options'
           class='el cancel-sortable-unselect txt-light'
           :key='i.name'
-          @click='optionClick(i.name, i.callback)'
+          @click.stop='optionClick(i.name, i.callback)'
         >
           <span class='el-icon'>
             <i v-if='!i.iconColor' :class='`txt fas fa-${i.icon} txt-light fa-${i.size}`'></i>
@@ -24,7 +24,7 @@
           </span>
         </div>
       </div>
-    </icon-dropdown>  
+    </icon-dropdown>
   </span>
 </template>
 

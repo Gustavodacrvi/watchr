@@ -16,12 +16,21 @@
       />
       <div class='margin'></div>
     </div>
-    <list-renderer
-      group='appnavoverviewcustompers'
-      route='pers'
+    <div v-if='customPers && smartPers.length > 0'>
+      <list-renderer
+        group='appnavoverviewcustompers'
+        route='pers'
+        :disabled='true'
+        :list='customPers'
+        :active='activePers'
+      />
+      <div class='margin'></div>
+    </div>
+    <project-renderer
+      group='appnavdivisionprojectsoverview'
+      :list='getPinedProjects'
+      :active='""'
       :disabled='true'
-      :list='customPers'
-      :active='activePers'
     />
   </div>
 </template>
@@ -32,22 +41,26 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { State, Mutation, namespace, Getter } from 'vuex-class'
 
 import ListRenderer from '@/components/TheAppBar/AppnavComponents/ListRenderer.vue'
+import AppnavRenderer from '@/components/TheAppBar/AppnavComponents/ListAppnavdivision.vue'
 import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.vue'
 
-import { Label, Perspective, Task, ListIcon, ListElement } from '@/interfaces/app'
+import { Label, Perspective, Task, ListIcon, ListElement, AppnavDivisionEl } from '@/interfaces/app'
 import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 import { PersGetters } from '../../../interfaces/store/perspective'
-import { TaskState } from '../../../interfaces/store/task'
+import { TaskState, TaskGetters } from '../../../interfaces/store/task'
 import { SetState } from '../../../interfaces/store/settings'
+import { ProjectGetters } from '../../../interfaces/store/project'
 
 const persVuex = namespace('perspective')
 const taskVuex = namespace('task')
+const project = namespace('project')
 const set = namespace('settings')
 
 @Component({
   components: {
     'list-renderer': ListRenderer,
     'appnav-header': AppnavHeader,
+    'project-renderer': AppnavRenderer,
   },
 })
 export default class OverviewAppnav extends Vue {
@@ -55,10 +68,14 @@ export default class OverviewAppnav extends Vue {
   @State viewType!: IndexState.viewType
   @Mutation openSection!: IndexMutations.OpenSection
 
+  @project.Getter sortedFolders!: ProjectGetters.SortedFolders
+  @project.Getter getPinedProjectsByFolderId!: ProjectGetters.GetPinedProjectsByFolderId
+
   @persVuex.Getter pinedSmartPerspectives!: PersGetters.PinedSmartPerspectives
   @persVuex.Getter pinedCustomPerspectives!: PersGetters.PinedCustomPerspectives
   @persVuex.Getter getNumberOfTasksByPerspectiveId!: PersGetters.GetNumberOfTasksByPerspectiveId
 
+  @taskVuex.Getter getTasksByIds!: TaskGetters.GetTasksByIds
   @taskVuex.State tasks!: TaskState.tasks
 
   @set.State timeZone!: SetState.timeZone
@@ -105,6 +122,50 @@ export default class OverviewAppnav extends Vue {
     if (this.viewType === 'perspective')
       return this.viewName
     return ''
+  }
+  get getPinedProjects(): AppnavDivisionEl[] {
+    const arr: AppnavDivisionEl[] = []
+    for (const fold of this.sortedFolders) {
+      const pros = this.getPinedProjectsByFolderId(fold.id)
+      if (pros.length > 0) {
+        const list = []
+        for (const p of pros) {
+          const isInThisProject = (task: Task) => {
+            return task.projectId && task.projectId === p.id
+          }
+
+          let tasks = this.getTasksByIds(p.tasks)
+          tasks = tasks.filter(el => isInThisProject(el))
+
+          for (const head of p.headings) {
+            let headTasks = this.getTasksByIds(head.tasks)
+            headTasks = headTasks.filter(el => isInThisProject(el))
+            tasks = [...tasks, ...headTasks]
+          }
+          const numberOfTasks = tasks.length
+          let completedTasks = 0
+
+          for (const task of tasks)
+          if (task.completed) completedTasks++
+
+          let progress = 100 * completedTasks / numberOfTasks
+          if (numberOfTasks === 0) progress = 0
+
+          list.push({
+            ...p,
+            number: 0,
+            progress,
+            show: true,
+          })
+        }
+        arr.push({
+          name: fold.name,
+          id: fold.id,
+          list,
+        })
+      }
+    }
+    return arr
   }
 }
 

@@ -142,6 +142,6 @@ export namespace IndexActions {
   export type StoreGetWindowWidthOnResize = (par: any) => void
   export type ShowLastAlert = () => void
   export type StoreShowLastAlert = (par: any) => void
-  export type ActivateKeyShortcut = (key: string) => void
-  export type StoreActivateKeyShortcut = (par: any, key: string) => void
+  export type ActivateKeyShortcut = (o: {key: string, special: boolean, isTyping: boolean}) => void
+  export type StoreActivateKeyShortcut = (par: any, o: {key: string, special: boolean, isTyping: boolean}) => void
 }

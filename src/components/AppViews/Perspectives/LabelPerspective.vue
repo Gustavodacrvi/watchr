@@ -3,9 +3,6 @@
     <div class='header' :class='{pointer: !isDesktop}' @dblclick='toggleHide'>
       <header-title
         :value='label'
-        :showing='showing'
-        @toggle='v => showing = !showing'
-        
         icon-color=''
         icon=''
       />
@@ -25,17 +22,20 @@
           :allow-priority='true'
           
           @priority='v => priority = v'
-          @label='addLabel'
-          @date='addDate'
-          @smartpers='addSmartPers'
+          @label='addLabelNonSave'
+          @date='addDateNonSave'
+          @smartpers='addSmartPersNonSave'
           @settings='selectSettingsOption'
         />
       </div>
     </div>
     <div class='margin'></div>
-    <div class='margin'></div>
+    <empty-tag-renderer v-if='sort && sort.length > 0'
+      :list='sort'
+      @update='v => names = v'
+    />
     <div v-if='!hided'>
-      <div v-if='showing'>
+      <div>
         <div class='margin'></div>
         <view-tags
           :fixed-tag="{name: label, icon: 'tag', backColor: '#83B7E2'}"
@@ -46,9 +46,9 @@
           :smart-pers='smartPers'
           @clearsearch="v => search = ''"
           @clearpriority="v => priority = ''"
-          @removelabel='removeLabel'
-          @removedate='removeDate'
-          @removesmartpers='removeSmartPers'
+          @removelabel='removeLabelNonSave'
+          @removedate='removeDateNonSave'
+          @removesmartpers='removeSmartPersNonSave'
         />
         <div class='margin'></div>
       </div>
@@ -76,8 +76,9 @@
 
 <script lang='ts'>
 
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch, Mixins } from 'vue-property-decorator'
 import { Getter, namespace, Mutation, State } from 'vuex-class'
+import PersMixing from '@/mixins/perspective'
 
 const taskVuex = namespace('task')
 const labelVuex = namespace('label')
@@ -106,188 +107,29 @@ import { TaskState, TaskActions } from '../../../interfaces/store/task'
     'header-title': HeaderTitle,
   },
 })
-export default class LabelPerspective extends Vue {
-  @State theme!: IndexState.theme
-  @State selectedTasks!: IndexState.selectedTasks
-  @State currentAppSection!: IndexState.currentAppSection
-  @Mutation pushView!: IndexMutations.PushView
-  @Getter isDesktop!: IndexGetters.IsDesktop
-  @Getter platform!: IndexGetters.Platform
-  @Mutation pushPopUp!: IndexMutations.PushPopUp
-  @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
-  @Mutation sendOptionsToNavbar!: IndexMutations.SendOptionsToNavbar
-  @Mutation updateSelectedTasks!: IndexMutations.UpdateSelectedTasks
-  @Mutation hideNavBarOptions!: IndexMutations.HideNavBarOptions
-  @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
-
+export default class LabelPerspective extends Mixins(PersMixing) {
   @Prop(String) label!: string
 
   @labelVuex.State('labels') savedLabels!: LabelState.labels
-  @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
   @labelVuex.Action saveLabelTaskOrder!: LabelActions.SaveLabelTaskOrder
 
-  @taskVuex.State tasks!: TaskState.tasks
-  @taskVuex.Action deleteTasksById!: TaskActions.DeleteTasksById
   @taskVuex.Action addTaskLabel!: TaskActions.AddTaskLabel
-  @taskVuex.Action changePrioritysByIds!: TaskActions.ChangePrioritysByIds
-  @taskVuex.Action saveNewDateOfTasks!: TaskActions.SaveNewDateOfTasks
-
-  @set.State timeZone!: SetState.timeZone
-  @set.State startOfTheWeek!: SetState.startOfTheWeek
-
-  search: string = ''
-  priority: string = ''
-  labels: string[] = []
-  dates: string[] = []
-  sort: string[] = []
-  smartPers: string[] = []
-  showing: boolean = true
-  hided: boolean = false
-  mobileSelectedOptions: ListIcon[] = [
-    {
-      name: 'Delete selected tasks',
-      icon: 'trash',
-      iconColor: '',
-      size: '',
-    },
-    {
-      name: 'Change priority of tasks',
-      icon: 'exclamation',
-      iconColor: '',
-      size: '',
-    },
-    {
-      name: 'Change date of tasks',
-      icon: 'calendar-day',
-      iconColor: '',
-      size: '',
-    },
-    {
-      name: 'Add labels to tasks',
-      icon: 'tag',
-      iconColor: '',
-      size: '',
-    },
-  ]
 
   created() {
     this.updateView()
   }
 
-  getMobileSelectedOptions(): ListIcon[] {
-    this.mobileSelectedOptions[0]['callback'] = () => {
-      this.deleteTasksById(this.selectedTasks)
-    }
-    this.mobileSelectedOptions[1]['callback'] = () => {
-      setTimeout(() => {
-        this.sendOptionsToNavbar([
-          {
-            name: 'High priority',
-            icon: 'exclamation',
-            iconColor: '#83B7E2',
-            size: 'lg',
-            callback: () => {
-              this.changePrioritysByIds({
-                ids: this.selectedTasks,
-                priority: 'High priority',
-              })
-              this.sendOptionsToNavbar([])
-            },
-          },
-          {
-            name: 'Medium priority',
-            icon: 'exclamation',
-            iconColor: '#fff566',
-            size: 'lg',
-            callback: () => {
-              this.changePrioritysByIds({
-                ids: this.selectedTasks,
-                priority: 'Medium priority',
-              })
-              this.sendOptionsToNavbar([])
-            },
-          },
-          {
-            name: 'Low priority',
-            icon: 'exclamation',
-            iconColor: '#70ff66',
-            size: 'lg',
-            callback: () => {
-              this.changePrioritysByIds({
-                ids: this.selectedTasks,
-                priority: 'Low priority',
-              })
-              this.sendOptionsToNavbar([])
-            },
-          },
-        ])
-      }, 80)
-    }
-    this.mobileSelectedOptions[2]['callback'] = () => {
-      setTimeout(() => {
-        this.pushCenteredCard({
-          type: 'Component',
-          compName: 'CalendarInput',
-          flexBasis: '275px',
-          listIcons: [],
-          listIconHandler: (e: any) => {
-            this.selectedDates(e.utc.date)
-          },
-        })
-      }, 80)
-    }
-    this.mobileSelectedOptions[3]['callback'] = () => {
-      setTimeout(() => {
-        this.pushPopUp('AddLabelsToTasksPopup')
-        this.pushPopUpPayload(this.selectedTasks)
-      }, 80)
-    }
-    return this.mobileSelectedOptions
-  }
   updateView() {
     this.pushView({
       view: this.label,
       viewType: 'label',
     })
   }
-  onSelect(ids: string[]) {
-    this.updateSelectedTasks(ids)
-  }
   selectedPriority(value: string) {
     this.changePrioritysByIds({
       ids: this.selectedTasks,
       priority: value,
     })
-  }
-  addLabel(label: Label) {
-    if (!this.labels.find(el => el === label.id))
-      this.labels.push(label.id)
-  }
-  addDate(date: string) {
-    if (!this.dates.find(el => el === date))
-      this.dates.push(date)
-  }
-  toggleHide() {
-    this.hided = !this.hided
-  }
-  removeLabel(id: string) {
-    const index = this.labels.findIndex(el => el === id)
-    this.labels.splice(index, 1)
-  }
-  removeDate(date: string) {
-    const index = this.dates.findIndex(el => el === date)
-    this.dates.splice(index, 1)
-  }
-  selectedDates(date: string) {
-    const arr: Array<{id: string, date: string}> = []
-    for (const id of this.selectedTasks)
-      arr.push({id, date})
-    if (arr.length > 0)
-      this.saveNewDateOfTasks(arr)
-  }
-  removeSmartPers(name: string) {
-    const index = this.smartPers.findIndex(el => el === name)
-    this.smartPers.splice(index, 1)
   }
   onUpdate(ids: string[]) {
     const lab = this.getLabel
@@ -296,10 +138,6 @@ export default class LabelPerspective extends Vue {
         order: ids,
         id: lab.id,
       })
-  }
-  addSmartPers(name: string) {
-    if (!this.smartPers.find(el => el === name))
-      this.smartPers.push(name)
   }
   selectSettingsOption(value: string) {
     if (!this.sort.find(el => el === value))
@@ -344,17 +182,7 @@ export default class LabelPerspective extends Vue {
   get getTasks(): Task[] {
     let tasks = this.viewTasks
     if (this.getLabel) {
-      if (this.search)
-        tasks = tasks.filter(el => el.name.toLowerCase().includes(this.search.toLowerCase()))
-      if (this.priority)
-        tasks = appUtils.filterTasksByPriority(tasks, this.priority)
-      if (this.labels && this.labels.length > 0)
-        tasks = appUtils.filterTasksByLabels(tasks, this.labels)
-      if (this.dates && this.dates.length > 0)
-        tasks = appUtils.filterTasksByDates(tasks, this.dates, this.timeZone)
-      if (this.smartPers && this.smartPers.length > 0)
-        for (const name of this.smartPers)
-          tasks = appUtils.filterTasksBySmartPerspective(name, tasks, this.timeZone, this.startOfTheWeek)
+      tasks = this.filterTasks(tasks)
       if (this.getLabel.order && this.getLabel.order.length > 0) {
         const ord = appUtils.fixOrder(tasks, this.getLabel.order)
         tasks = appUtils.sortArrayByIds(tasks, ord)
@@ -365,13 +193,6 @@ export default class LabelPerspective extends Vue {
     return tasks
   }
 
-  @Watch('selectedTasks')
-  onChange() {
-    if (!this.isDesktop)
-      if (this.selectedTasks.length > 0)
-        this.sendOptionsToNavbar(this.getMobileSelectedOptions())
-      else this.hideNavBarOptions()
-  }
   @Watch('label')
   onChange3() {
     this.updateView()

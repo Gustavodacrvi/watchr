@@ -4,6 +4,7 @@ import { Task, Label } from '@/interfaces/app'
 import { State, Getters, TaskActions } from '@/interfaces/store/task'
 
 import timezone from 'moment-timezone'
+import appUtils from '@/utils/app'
 
 interface Actions {
   getData: TaskActions.StoreGetData
@@ -21,6 +22,9 @@ interface Actions {
   deleteSubTaskFromTask: TaskActions.StoreDeleteSubTaskFromTask
   saveNewDateOfTasks: TaskActions.StoreSaveNewDateOfTasks
   unCompleteSubtasks: TaskActions.StoreUnCompleteSubtasks
+  addProjectTask: TaskActions.StoreAddProjectTask
+  removeTasksFromProject: TaskActions.StoreRemoveTasksFromProject
+  toggleCompleteTask: TaskActions.StoreToggleCompleteTask
 }
 
 export default {
@@ -32,12 +36,21 @@ export default {
 
   } as {},
   getters: {
-    inboxTasks(state: State) {
+    inboxTasks(state) {
       return state.tasks.filter(el => el.labels.length === 0)
     },
-    getNumberOfTasksByLabel: (state: State) => (labelId: string): number => {
+    getNumberOfTasksByLabel: state => labelId => {
       const tasks = state.tasks.filter(el => el.labels.includes(labelId))
       return tasks.length
+    },
+    getTasksByIds: state => ids => {
+      const arr: Task[] = []
+      for (const id of ids) {
+        const task = state.tasks.find(el => el.id === id)
+        if (task)
+          arr.push(task)
+      }
+      return arr
     },
   } as Getters,
   actions: {
@@ -45,18 +58,7 @@ export default {
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('tasks').where('userId', '==', rootState.uid).onSnapshot(snap => {
           const changes = snap.docChanges()
-          for (const change of changes)
-            if (change.type === 'added') {
-              const lab = state.tasks.find(el => el.id === change.doc.id)
-              if (!lab)
-                state.tasks.push({...change.doc.data(), id: change.doc.id} as any)
-            } else if (change.type === 'removed') {
-              const index = state.tasks.findIndex(el => el.id === change.doc.id)
-              state.tasks.splice(index, 1)
-            } else {
-              const index = state.tasks.findIndex(el => el.id === change.doc.id)
-              state.tasks.splice(index, 1, {...change.doc.data(), id: change.doc.id} as any)
-            }
+          appUtils.fixStoreChanges(state, changes, 'tasks')
         })
     },
     updateTask({ rootState }, {name, priority, id, labels, utc}) {
@@ -99,12 +101,45 @@ export default {
           lastEditDate: date,
           labels: task.labels,
           checklist: [],
+          completed: false,
+          projectId: '',
           checklistOrder: [],
           ...t.utc,
         })
         const persRef = rootState.firestore.collection('perspectives').doc(perspectiveId)
         batch.update(persRef, {
           order: ord,
+        })
+
+        batch.commit()
+      }
+    },
+    addProjectTask({ rootState }, {task, projectId, order, position}) {
+      const u = timezone().utc()
+      const date = u.format('Y-M-D HH:mm')
+      if (rootState.firestore && rootState.uid) {
+        const batch = rootState.firestore.batch()
+
+        const ord = order.slice()
+        const ref = rootState.firestore.collection('tasks').doc()
+        ord.splice(position, 0, ref.id)
+        const t = task as any
+        batch.set(ref, {
+          projectId,
+          name: task.name,
+          priority: task.priority,
+          userId: rootState.uid,
+          creationDate: date,
+          lastEditDate: date,
+          labels: task.labels,
+          checklist: [],
+          completed: false,
+          checklistOrder: [],
+          ...t.utc,
+        })
+        const persRef = rootState.firestore.collection('projects').doc(projectId)
+        batch.update(persRef, {
+          tasks: ord,
         })
 
         batch.commit()
@@ -120,6 +155,8 @@ export default {
           creationDate: date,
           lastEditDate: date,
           checklist: [],
+          completed: false,
+          projectId: '',
           checklistOrder: [],
           ...utc,
         })
@@ -158,6 +195,8 @@ export default {
           creationDate: date,
           lastEditDate: date,
           checklist: [],
+          completed: false,
+          projectId: '',
           checklistOrder: [],
           ...utc,
         })
@@ -257,6 +296,28 @@ export default {
           lastEditDate: date,
         })
       }
+    },
+    removeTasksFromProject({ rootState }, ids) {
+      if (rootState.firestore && rootState.uid) {
+        const batch = rootState.firestore.batch()
+
+        for (const id of ids) {
+          const ref = rootState.firestore.collection('tasks').doc(id)
+          batch.update(ref, {
+            projectId: '',
+          })
+        }
+
+        batch.commit()
+      }
+    },
+    toggleCompleteTask({ rootState }, {id, completed}) {
+      const utc = timezone().utc()
+      const date = utc.format('Y-M-D HH:mm')
+      if (rootState.firestore && rootState.uid)
+        rootState.firestore.collection('tasks').doc(id).update({
+          completed, lastEditDate: date,
+        })
     },
     copyTask({ rootState, state }, taskId) {
       const u = timezone().utc()

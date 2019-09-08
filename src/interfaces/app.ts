@@ -10,7 +10,16 @@ export interface Alert {
 export interface ListElement {
   show: boolean
   number: number
+  icon?: string
+  iconColor?: string
+  progress?: number
   [key: string]: any
+}
+
+export interface AppnavDivisionEl {
+  name: string
+  id: string
+  list: ListElement[]
 }
 
 export interface SimpleAdder {
@@ -24,11 +33,12 @@ export interface SimpleAdder {
 export interface CenteredCard {
   type: 'ListIcons' | 'Component',
   flexBasis: string,
-  search?: boolean
-  maxHeight?: string
   listIcons: ListIcon[],
   listIconHandler: (...arr: any[]) => any
   compName: string
+  search?: boolean
+  maxHeight?: string
+  payload?: any
 }
 
 export interface FloatingButton {
@@ -95,12 +105,39 @@ export interface Task {
   creationDate: string
   lastEditDate: string
   checklistOrder: string[]
+  projectId: string
+  completed: boolean
   checklist: Array<{
     completed: boolean,
     name: string,
     id: string,
     taskId: string,
   }>
+}
+
+export interface Heading {
+  name: string
+  id: string
+  tasks: string[]
+}
+
+export interface Folder {
+  userId: string
+  id: string
+  name: string
+  projects: string[] // project ids
+}
+
+export interface Project {
+  userId: string
+  id: string
+  name: string
+  description: string
+  creationDate: string
+  bindOnOverview: boolean
+  folderId: string
+  tasks: string[]
+  headings: Heading[]
 }
 
 export interface TaskInputObj {
