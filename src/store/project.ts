@@ -122,6 +122,9 @@ export default {
               })
             }
 
+          const proRef = rootState.firestore.collection('projects').doc(id)
+          batch.delete(proRef)
+
           batch.commit()
         }
       }
