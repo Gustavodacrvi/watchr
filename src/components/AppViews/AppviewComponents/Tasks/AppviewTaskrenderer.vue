@@ -287,6 +287,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
     this.numberOfSelected = this.$el.querySelectorAll('.sortable-selected').length
     if (this.numberOfSelected !== this.lastNumberOfSelected)
       setTimeout(() => {
+        // tslint:disable-next-line:max-line-length
         const ord = this.getIdsFromSelectedElements(this.rootSelector).filter(el => el !== 'task-adder' && el !== 'heading-adder')
         this.$emit('selected', ord)
       }, 1)

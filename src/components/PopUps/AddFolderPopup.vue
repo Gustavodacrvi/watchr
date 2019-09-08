@@ -65,7 +65,6 @@ export default class SigninPopUp extends Vue {
     }
   }
   getOptions(): string[] {
-    // tslint:disable-next-line:max-line-length
     return this.sortedFoldersByName.filter(el => el.name.includes(this.value)).map(el => el.name)
 
   }
