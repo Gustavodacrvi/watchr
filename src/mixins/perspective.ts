@@ -191,7 +191,7 @@ export default class NavbarMixin extends Vue {
       tasks = appUtils.filterTasksByDates(tasks, this.dates, this.timeZone)
     if (this.smartPers && this.smartPers.length > 0)
       for (const name of this.smartPers)
-        tasks = appUtils.filterTasksBySmartPerspective(name, tasks, this.timeZone, this.startOfTheWeek) 
+        tasks = appUtils.filterTasksBySmartPerspective(name, tasks, this.timeZone, this.startOfTheWeek)
     return tasks
   }
 

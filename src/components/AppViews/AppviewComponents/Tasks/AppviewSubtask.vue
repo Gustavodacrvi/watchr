@@ -94,7 +94,6 @@ export default class AppviewSubtask extends Vue {
   select() {
     this.clicked = !this.clicked
     const el: HTMLElement = this.$el as HTMLElement
-    console.log(this.clicked)
     this.$emit('toggle', {
       el,
       select: this.clicked,

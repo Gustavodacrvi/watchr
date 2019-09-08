@@ -30,6 +30,7 @@ import AppnavHeader from '@/components/TheAppBar/AppnavComponents/AppnavHeader.v
 import AppnavMessage from '@/components/TheAppBar/AppnavComponents/AppnavAddmessage.vue'
 import AppnavDivision from '@/components/TheAppBar/AppnavComponents/AppnavDivision.vue'
 
+// tslint:disable-next-line:max-line-length
 import { Label, Perspective, Task, ListIcon, ListElement, AppnavDivisionEl, SimpleAdder, Project } from '@/interfaces/app'
 import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 import { PersGetters } from '../../../interfaces/store/perspective'
@@ -195,10 +196,10 @@ export default class OverviewAppnav extends Vue {
     for (const f of fs) {
       const pros = this.getProjectsByFolderId(f.id)
       const list = []
-      
+
       for (const p of pros) {
-        const isInThisProject = (task: Task) => {
-          return task.projectId && task.projectId === p.id
+        const isInThisProject = (givenTask: Task) => {
+          return givenTask.projectId && givenTask.projectId === p.id
         }
 
         let tasks = this.getTasksByIds(p.tasks)
@@ -212,9 +213,9 @@ export default class OverviewAppnav extends Vue {
         const numberOfTasks = tasks.length
         let completedTasks = 0
 
-        for (const task of tasks)
-          if (task.completed) completedTasks++
-        
+        for (const t of tasks)
+          if (t.completed) completedTasks++
+
         let progress = 100 * completedTasks / numberOfTasks
         if (numberOfTasks === 0) progress = 0
 

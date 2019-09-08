@@ -104,7 +104,7 @@ import { Component, Vue, Prop, Mixins, Watch } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import PersMixin from '@/mixins/perspective'
 
-const task = namespace('task')
+const taskVuex = namespace('task')
 const prjVuex = namespace('project')
 
 import HeaderTitle from '@/components/AppViews/AppviewComponents/AppviewHeadertitle.vue'
@@ -142,15 +142,15 @@ export default class ProjectAppview extends Mixins(PersMixin) {
   @prjVuex.Action moveTasksFromHeadingToRoot!: ProjectActions.MoveTasksFromHeadingToRoot
   @prjVuex.Action moveTasksFromHeadingToHeading!: ProjectActions.MoveTasksFromHeadingToHeading
 
-  @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
-  @task.Action addProjectTask!: TaskActions.AddProjectTask
+  @taskVuex.Getter getTasksByIds!: TaskGetters.GetTasksByIds
+  @taskVuex.Action addProjectTask!: TaskActions.AddProjectTask
 
   @Prop(String) project!: string
 
   created() {
     this.updateView()
   }
-  
+
   emptySelected() {
     setTimeout(() => {
       this.onSelect([])
@@ -161,7 +161,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
       this.moveTasksFromRootToHeading({
         projectId: this.prj.id,
         to: obj.to,
-        ids: obj.ids,     
+        ids: obj.ids,
       })
     this.emptySelected()
   }
@@ -216,6 +216,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
         name, headingId, projectId: this.prj.id,
       })
   }
+  // tslint:disable-next-line:max-line-length
   addTaskInProjectHeading(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any, parentId: string}) {
     if (this.prj) {
       const p = this.prj as Project
@@ -312,9 +313,9 @@ export default class ProjectAppview extends Mixins(PersMixin) {
         let tasks = this.getTasksByIds(head.tasks)
         tasks = tasks.filter(el => this.isInThisProject(el))
         arr.push({
+          tasks,
           id: head.id,
           name: head.name,
-          tasks: tasks,
         })
       }
 

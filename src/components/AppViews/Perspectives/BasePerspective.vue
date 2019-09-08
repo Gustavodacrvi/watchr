@@ -242,12 +242,11 @@ export default class PerspectiveAppview extends Mixins(PersMixin) {
     })
   }
   selectSettingsOption(value: string) {
-    if (!this.sort.find(el => el === value)) {
+    if (!this.sort.find(el => el === value))
       this.addPerspectiveSort({
         sort: value,
         perspectiveId: this.pers.id,
       })
-    }
   }
   onUpdate(ids: string[]) {
     const filtered = ids.filter(el => el !== 'task-adder')

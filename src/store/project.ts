@@ -5,7 +5,6 @@ import appUtils from '@/utils/app'
 import { Folder, Project } from '@/interfaces/app'
 
 import timezone from 'moment-timezone'
-import undefined from 'firebase/empty-import'
 
 interface Actions {
   getData: ProjectActions.StoreGetData
@@ -58,7 +57,7 @@ export default {
       p.sort((a, b) => a.name.localeCompare(b.name))
       return p
     },
-    getPinedProjectsByFolderId: (state) => (id) => {
+    getPinedProjectsByFolderId: state => id => {
       const fold = state.folders.find(el => el.id === id) as Folder
       const arr = []
       for (const proId of fold.projects) {
@@ -67,13 +66,13 @@ export default {
       }
       return arr
     },
-    getProjectByName: (state) => (name) => {
+    getProjectByName: state => name => {
       return state.projects.find(el => el.name === name)
     },
-    getProjectById: (state) => (id) => {
+    getProjectById: state => id => {
       return state.projects.find(el => el.id === id)
     },
-    getProjectsByFolderId: (state) => (id) => {
+    getProjectsByFolderId: state => id => {
       const fold = state.folders.find(el => el.id === id) as Folder
       const arr = []
       for (const proId of fold.projects) {
@@ -85,12 +84,11 @@ export default {
   } as Getters,
   actions: {
     addFoldersOrder({ rootState }, id) {
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('foldersOrder').doc(id).set({
           order: [],
           userId: id,
         })
-      }
     },
     editProject({ rootState }, {name, description, id}) {
       if (rootState.firestore && rootState.uid)
@@ -186,13 +184,13 @@ export default {
           const toI = headings.findIndex(el => el.id === to)
           if (fromI > -1 && toI > -1) {
             headings[toI].tasks = ids
-            const from = headings[fromI]
-            const idsToRemove = [] 
-            for (const id of from.tasks)
+            const fromHead = headings[fromI]
+            const idsToRemove = []
+            for (const id of fromHead.tasks)
               if (ids.includes(id)) idsToRemove.push(id)
             for (const id of idsToRemove) {
-              const i = from.tasks.findIndex(el => el === id)
-              if (i > -1) from.tasks.splice(i, 1)
+              const i = fromHead.tasks.findIndex(el => el === id)
+              if (i > -1) fromHead.tasks.splice(i, 1)
             }
             rootState.firestore.collection('projects').doc(projectId).update({
               headings,
@@ -214,8 +212,8 @@ export default {
             for (const id of head.tasks)
               if (ids.includes(id)) idsToRemove.push(id)
             for (const id of idsToRemove) {
-              const i = head.tasks.findIndex(el => el === id)
-              if (i > -1) head.tasks.splice(i, 1)
+              const j = head.tasks.findIndex(el => el === id)
+              if (j > -1) head.tasks.splice(j, 1)
             }
             rootState.firestore.collection('projects').doc(projectId).update({
               tasks: fire.arrayUnion(...ids),
@@ -274,8 +272,8 @@ export default {
         const batch = rootState.firestore.batch()
 
         for (const id of ids) {
-          const ref = rootState.firestore.collection('tasks').doc(id)
-          batch.update(ref, {
+          const taskRef = rootState.firestore.collection('tasks').doc(id)
+          batch.update(taskRef, {
             projectId,
           })
         }
@@ -290,7 +288,7 @@ export default {
     addProjectHeadings({ rootState, state }, {index, name, id, ids}) {
       if (rootState.firestore && rootState.uid) {
         const project = state.projects.find(el => el.id === id)
-        
+
         if (project) {
           const fire = rootState.firebase.firestore.FieldValue as any
 
@@ -313,7 +311,7 @@ export default {
               headings,
               tasks: fire.arrayRemove(...ids),
             })
-          else 
+          else
             rootState.firestore.collection('projects').doc(id).update({
               headings,
             })
@@ -378,11 +376,10 @@ export default {
             if (data)
               state.foldersOrder = data.order
           })
-        rootState.firestore.collection('folders').where('userId', '==', rootState.uid)
-          .onSnapshot(snap => {
+        rootState.firestore.collection('folders').where('userId', '==', rootState.uid).onSnapshot(snap => {
           const changes = snap.docChanges()
-            appUtils.fixStoreChanges(state, changes, 'folders')
-          })
+          appUtils.fixStoreChanges(state, changes, 'folders')
+        })
         rootState.firestore.collection('projects').where('userId', '==', rootState.uid)
           .onSnapshot(snap => {
             const changes = snap.docChanges()
@@ -462,7 +459,7 @@ export default {
             batch.update(persRef, {
               headings,
             })
-    
+
             batch.commit()
           }
         }

@@ -4,7 +4,6 @@
 
 import { Label, Project, Folder, Task } from '../app'
 import { State as RootState } from '@/interfaces/store/index'
-import { Action } from 'vuex';
 
 export namespace ProjectState {
   export type projects = Project[]

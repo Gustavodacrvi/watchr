@@ -396,7 +396,7 @@ export default {
             iconColor: '#CD66FF',
           },
           {
-            name: "Doesn't have project",
+            name: `Doesn't have project`,
             pin: false,
             numberOfTasks: false,
             showWhenNotEmpty: false,

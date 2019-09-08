@@ -140,7 +140,7 @@ export default class LoggedAppnav extends Vue {
         callback: () => {
           this.pushPopUp('AddFolderPopup')
         },
-      }
+      },
     ]},
     {icon: 'layer-group', comp: 'perspectives', title: 'PERSPECTIVES'},
     {icon: 'tags', comp: 'labels', title: 'LABELS', options: [

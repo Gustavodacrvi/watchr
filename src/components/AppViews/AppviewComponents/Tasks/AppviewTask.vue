@@ -141,7 +141,7 @@ import moment from 'moment-timezone'
 
 const taskVuex = namespace('task')
 const labelVuex = namespace('label')
-const project = namespace('project')
+const projectVuex = namespace('project')
 const settingsVuex = namespace('settings')
 
 import Sortable from 'sortablejs'
@@ -151,7 +151,7 @@ import { IndexState, IndexGetters, IndexMutations } from '../../../../interfaces
 import { LabelGetters } from '../../../../interfaces/store/label'
 import { SetState } from '../../../../interfaces/store/settings'
 import { TaskActions } from '../../../../interfaces/store/task'
-import { ProjectGetters } from '../../../../interfaces/store/project';
+import { ProjectGetters } from '../../../../interfaces/store/project'
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 400, interval: 5000}))
@@ -186,7 +186,7 @@ export default class AppviewTask extends Vue {
 
   @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
 
-  @project.Getter getProjectById!: ProjectGetters.GetProjectById
+  @projectVuex.Getter getProjectById!: ProjectGetters.GetProjectById
 
   @Prop({default: true, type: Boolean}) showProjectName!: boolean
   @Prop(Object) task!: Task

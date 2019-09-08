@@ -37,7 +37,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { State, Mutation, namespace } from 'vuex-class'
 
-const project = namespace('project')
+const proVuex = namespace('project')
 
 import DropInput from '@/components/DropdownInput.vue'
 
@@ -54,10 +54,10 @@ export default class ProjectPopup extends Vue {
   @State popUpPayload!: any
   @Mutation pushPopUp!: IndexMutations.PushPopUp
 
-  @project.Getter sortedFoldersByName!: ProjectGetters.SortedFoldersByName
-  @project.Getter sortedProjectsByName!: ProjectGetters.SortedProjectsByName
-  @project.Action addProject!: ProjectActions.AddProject
-  @project.Action editProject!: ProjectActions.EditProject
+  @proVuex.Getter sortedFoldersByName!: ProjectGetters.SortedFoldersByName
+  @proVuex.Getter sortedProjectsByName!: ProjectGetters.SortedProjectsByName
+  @proVuex.Action addProject!: ProjectActions.AddProject
+  @proVuex.Action editProject!: ProjectActions.EditProject
 
   value: string = ''
   description: string = ''
@@ -67,10 +67,10 @@ export default class ProjectPopup extends Vue {
     const el = document.querySelectorAll('.projectadder')[0] as any
     el.focus()
     const p = this.popUpPayload
-    if (p && !p.editing) {
+    if (p && !p.editing)
       this.value += p + ':'
-    } else if (p && p.editing) {
-      const pro = this.sortedProjectsByName.find(el => el.id === p.id)
+    else if (p && p.editing) {
+      const pro = this.sortedProjectsByName.find(e => e.id === p.id)
       if (pro) {
         this.value = pro.name
         this.description = pro.description
@@ -83,13 +83,12 @@ export default class ProjectPopup extends Vue {
       const {folder, project} = this.getInput
       const pro = this.sortedProjectsByName.find(el => el.name === project)
       const fold = this.sortedFoldersByName.find(el => el.name === folder)
-      if (fold && !pro && project) {
+      if (fold && !pro && project)
         this.addProject({
           name: project,
           foldId: fold.id,
           description: this.description,
         })
-      }
     } else if (this.value && this.isEditing) {
       const p = this.popUpPayload as any
       const pro = this.sortedProjectsByName.find(el => el.name === this.value)
@@ -108,11 +107,10 @@ export default class ProjectPopup extends Vue {
   getOptions(): string[] {
     const {folder, project} = this.getInput
 
-    if (project === null) {
+    if (project === null)
       return this.sortedFoldersByName.filter(el => el.name.includes(this.value)).map(el => el.name)
-    } else {
+    else
       return this.sortedProjectsByName.filter(el => el.name.includes(project)).map(el => el.name)
-    }
   }
   select(val: string) {
     const {folder, project} = this.getInput
@@ -125,10 +123,10 @@ export default class ProjectPopup extends Vue {
     const split = this.value.split(':')
     const folder = split[0]
     split.shift()
-    let project: null | string = ''
-    if (split.length === 0) project = null
-    split.forEach(el => project += el)
-    return {folder, project}
+    let pro: null | string = ''
+    if (split.length === 0) pro = null
+    split.forEach(el => pro += el)
+    return {folder, project: pro}
   }
   get isEditing(): boolean {
     return this.popUpPayload && this.popUpPayload.editing

@@ -24,7 +24,7 @@ export default class AppviewPie extends Vue {
   get getsvgWidth(): string {
     return '' + this.svgWidth + 'px'
   }
-  get outlineStyle(): Object {
+  get outlineStyle(): object {
     const width = '' + (this.svgWidth + 7) + 'px'
     return {
       width,

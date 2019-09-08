@@ -90,6 +90,7 @@ export default class SigninPopUp extends Vue {
     this.selected.splice(i, 1)
   }
   getOptions() {
+    // tslint:disable-next-line:max-line-length
     return this.sortedLabelsByName.filter(el => el.name.toLowerCase().includes(this.value.toLowerCase())).map(el => el.name)
   }
   getIds(): string[] {

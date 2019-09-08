@@ -59,13 +59,13 @@ export default class SigninPopUp extends Vue {
   add() {
     if (this.value) {
       const fol = this.sortedFoldersByName.find(el => el.name === this.value)
-      if (!fol) {
+      if (!fol)
         this.addFolder(this.value)
-      }
       this.value = ''
     }
   }
   getOptions(): string[] {
+    // tslint:disable-next-line:max-line-length
     return this.sortedFoldersByName.filter(el => el.name.includes(this.value)).map(el => el.name)
 
   }

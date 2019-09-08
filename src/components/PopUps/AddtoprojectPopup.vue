@@ -60,17 +60,17 @@ export default class SigninPopUp extends Vue {
 
   add() {
     if (this.value) {
-      const project = this.sortedProjectsByName.find(el => el.name === this.value) as any
-      if (project) {
+      const pro = this.sortedProjectsByName.find(el => el.name === this.value) as any
+      if (pro)
         this.addTasksToProject({
           ids: this.popUpPayload as string[],
-          projectId: project.id,
+          projectId: pro.id,
         })
-      }
       this.pushPopUp('')
     }
   }
   getOptions(): string[] {
+    // tslint:disable-next-line:max-line-length
     return this.sortedProjectsByName.filter(el => el.name.toLowerCase().includes(this.value.toLowerCase())).map(el => el.name)
 
   }

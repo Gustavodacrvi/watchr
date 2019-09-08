@@ -97,6 +97,7 @@ export default class LabelAdder extends Vue {
   }
 
   getOptions(): string[] {
+    // tslint:disable-next-line:max-line-length
     return this.sortedLabelsByName.filter(el => el.name.toLowerCase().includes(this.value.toLowerCase())).map(el => el.name)
   }
 

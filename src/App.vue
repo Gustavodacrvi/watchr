@@ -125,11 +125,12 @@ export default class App extends Vue {
       }, 200)
     }
     const active = document.activeElement
+    // tslint:disable-next-line:max-line-length
     const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA') && this.isOnAppRoute as any
     this.activateKeyShortcut({
       key: this.lastKey + key,
       special: this.clickedControl && this.clickedAlt,
-      isTyping
+      isTyping,
     })
     this.lastKey = key
     setTimeout(() => {

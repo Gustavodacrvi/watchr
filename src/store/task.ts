@@ -39,11 +39,11 @@ export default {
     inboxTasks(state) {
       return state.tasks.filter(el => el.labels.length === 0)
     },
-    getNumberOfTasksByLabel: (state) => (labelId) => {
+    getNumberOfTasksByLabel: state => labelId => {
       const tasks = state.tasks.filter(el => el.labels.includes(labelId))
       return tasks.length
     },
-    getTasksByIds: (state) => (ids) => {
+    getTasksByIds: state => ids => {
       const arr: Task[] = []
       for (const id of ids) {
         const task = state.tasks.find(el => el.id === id)

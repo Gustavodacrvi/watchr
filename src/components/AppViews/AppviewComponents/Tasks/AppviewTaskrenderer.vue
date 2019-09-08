@@ -207,7 +207,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
           const pId = els[0].dataset.vparentdi
           const order: string[] = this.getIdsFromElements(this.rootSelector, 'root-task')
           const ids = order.filter(el => el !== 'task-adder' && el !== 'heading-adder')
-          
+
           const to = this.listType
           const fm = type
           const head = 'projectHeading'
@@ -217,13 +217,12 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
           const goingToRoot =  (to === root && fm === head)
           const betweenHeads = (to === head && fm === head)
 
-          if (comingFromRoot) {
-            this.$emit('fromroot', {to: this.parentId, ids: ids})
-          } else if (goingToRoot) {
-            this.$emit('toroot', {from: pId, ids: ids})
-          } else if (betweenHeads) {
-            this.$emit('betweenheadings', {from: pId, to: this.parentId, ids: ids})
-          }
+          if (comingFromRoot)
+            this.$emit('fromroot', {to: this.parentId, ids})
+          else if (goingToRoot)
+            this.$emit('toroot', {from: pId, ids})
+          else if (betweenHeads)
+            this.$emit('betweenheadings', {from: pId, to: this.parentId, ids})
         }
       },
       onStart: () => {
@@ -231,7 +230,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       },
       onEnd: () => {
         this.dragging = false
-      }
+      },
     }
 
     if (!this.isDesktop)
@@ -284,6 +283,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       }
     }
 
+    // tslint:disable-next-line:max-line-length
     this.numberOfSelected = this.$el.querySelectorAll('.sortable-selected').length
     if (this.numberOfSelected !== this.lastNumberOfSelected)
       setTimeout(() => {
