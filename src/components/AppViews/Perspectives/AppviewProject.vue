@@ -44,6 +44,7 @@
           @removedate='removeDateNonSave'
           @removesmartpers='removeSmartPersNonSave'
         />
+        <div v-if="atLeastOneViewTag" class="margin"></div>
       </div>
       <task-renderer
         id='appnavproject'
@@ -59,6 +60,8 @@
         :always-show-task-labels='false'
         :allow-labels='true'
         :allow-date='true'
+        :allow-project='true'
+        :default-project='prj'
         :number='0'
         :show-project-name='false'
         @update='onUpdate'
@@ -75,6 +78,7 @@
         :header-options='headerOptions'
         :default-priority='priority'
         :default-labels='getLabels'
+        :default-project='prj'
         :allow-priority='true'
         :fix-adder-position='true'
         :insert-before='true'

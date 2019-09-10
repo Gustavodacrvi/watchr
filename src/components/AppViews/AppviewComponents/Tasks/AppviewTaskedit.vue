@@ -134,6 +134,7 @@ export default class AppviewTaskedit extends Vue {
   @Prop(String) defaultPriority!: string
   @Prop(String) defaultDate!: string
   @Prop(Array) defaultLabels!: string[]
+  @Prop(Object) defaultProject!: Project
   @Prop(String) inputTheme!: string
   @Prop(String) date!: string | null
   @Prop(String) time!: string | null
@@ -180,6 +181,8 @@ export default class AppviewTaskedit extends Vue {
       this.priority = this.defaultPriority as any
     if (this.defaultValue)
       this.value = this.defaultValue
+    if (this.defaultProject)
+      this.project = this.defaultProject
     if (this.defaultDate)
       this.updateCalendarObj(this.defaultDate)
     else this.updateCalendarObj(this.date)

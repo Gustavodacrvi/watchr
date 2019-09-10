@@ -61,15 +61,28 @@ export default {
           appUtils.fixStoreChanges(state, changes, 'tasks')
         })
     },
-    updateTask({ rootState }, {name, priority, id, labels, utc}) {
+    updateTask({ rootState }, {name, priority, projectId, id, labels, utc}) {
       const u = timezone().utc()
       const dt = u.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('tasks').doc(id).update({
-          name, priority, labels,
+      if (rootState.firestore && rootState.uid) {
+        const fire = rootState.firebase.firestore.FieldValue as any
+        const batch = rootState.firestore.batch()
+
+        const ref = rootState.firestore.collection('tasks').doc(id)
+        batch.update(ref, {
+          name, priority, labels, projectId,
           lastEditDate: dt,
           ...utc,
         })
+        if (projectId) {
+          const pro = rootState.firestore.collection('projects').doc(projectId)
+          batch.update(pro, {
+            tasks: fire.arrayUnion(ref.id),
+          })
+        }
+
+        batch.commit()
+      }
     },
     deleteTasksById({ rootState }, ids: string[]) {
       if (rootState.firestore && rootState.uid) {

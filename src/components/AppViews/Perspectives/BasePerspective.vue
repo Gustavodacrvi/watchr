@@ -30,7 +30,7 @@
       :list='sort'
       @update='saveNewSortOrder'
     />
-    <div class='margin'></div>
+    <div v-if='sort && sort.length > 0' class='margin'></div>
     <div v-if='!hided'>
       <div>
         <p v-if='pers.description' class='description txt' :class='theme'>
@@ -49,6 +49,7 @@
           @removedate='removeDate'
           @removesmartpers='removeSmartPers'
         />
+        <div v-if="atLeastOneViewTag" class="margin"></div>
       </div>
       <task-renderer v-if='!calendarRenderer'
         id='appnavalltasks'

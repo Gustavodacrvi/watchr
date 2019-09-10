@@ -57,7 +57,7 @@ Sortable.mount(new MultiDrag(), new AutoScroll())
 
 import moment from 'moment-timezone'
 
-import { Task, Label } from '../../../../interfaces/app'
+import { Task, Label, Project } from '../../../../interfaces/app'
 import { IndexState, IndexMutations } from '../../../../interfaces/store/index'
 import { TaskActions } from '../../../../interfaces/store/task'
 
@@ -81,9 +81,10 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop(Boolean) listHasDates!: boolean
   @Prop(Number) number!: number
   @Prop({default: true, type: Boolean}) showProjectName!: boolean
-  @Prop({default: undefined, type: String}) defaultPriority!: string
-  @Prop({default: undefined, type: String}) defaultDate!: string
-  @Prop({default: undefined, type: Array}) defaultLabels!: string[]
+  @Prop(String) defaultPriority!: string
+  @Prop(String) defaultDate!: string
+  @Prop(Object) defaultProject!: Project
+  @Prop(Array) defaultLabels!: string[]
   @Prop({required: true, type: String}) id!: string
   @Prop({default: null, type: String}) parentId!: string
   @Prop(String) fixedPers!: string
@@ -153,6 +154,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
               class: 'handle', key: 'task-adder',
               fixedPers: this.fixedPers, fixedLabel: this.fixedLabel,
               defaultLabels: this.defaultLabels, defaultPriority: this.defaultPriority, defaultDate: this.defaultDate,
+              defaultProject: this.defaultProject,
               // tslint:disable-next-line:max-line-length
               allowPriority: this.allowPriority, allowLabels: this.allowLabels, lock: true, allowDate: this.allowDate, allowProject: this.allowProject,
             },

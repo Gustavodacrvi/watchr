@@ -185,9 +185,11 @@ export default class ActionButtonComp extends Vue {
     })
   }
   changeDate(value: any) {
+    let date = ''
+    if (value) date = value.utc.date
     const arr: Array<{id: string, date: string}> = []
     for (const id of this.selectedTasks)
-      arr.push({id, date: value.utc.date})
+      arr.push({id, date: ''})
     if (arr.length > 0)
       this.saveNewDateOfTasks(arr)
   }

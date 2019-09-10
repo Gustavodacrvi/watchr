@@ -131,7 +131,7 @@ export default class CalendarInput extends Vue {
     this.emitEvent(appUtils.getNextWeek(this.originalMoment.clone(), this.nextWeek))
   }
   selectNodate() {
-   this.$emit('select', null)
+   this.$emit('select', '')
   }
   emitEvent(mom?: any) {
     if (!mom)

@@ -36,9 +36,7 @@
     />
     <div v-if='!hided'>
       <div>
-        <div class='margin'></div>
         <view-tags
-          :fixed-tag="{name: label, icon: 'tag', backColor: '#83B7E2'}"
           :search='search'
           :labels='getLabels'
           :priority='priority'
@@ -50,7 +48,7 @@
           @removedate='removeDateNonSave'
           @removesmartpers='removeSmartPersNonSave'
         />
-        <div class='margin'></div>
+        <div v-if='atLeastOneViewTag' class='margin'></div>
       </div>
       <task-renderer v-if='getLabel'
         id='appnavlabel'
