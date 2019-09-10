@@ -148,8 +148,12 @@ export default {
     addTask({ rootState }, {priority, name, labels, utc, projectId}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('tasks').add({
+      if (rootState.firestore && rootState.uid) {
+        const fire = rootState.firebase.firestore.FieldValue as any
+        const batch = rootState.firestore.batch()
+
+        const ref = rootState.firestore.collection('tasks').doc()
+        batch.set(ref, {
           name, labels, priority, projectId,
           userId: rootState.uid,
           creationDate: date,
@@ -159,6 +163,15 @@ export default {
           checklistOrder: [],
           ...utc,
         })
+        if (projectId) {
+          const proRef = rootState.firestore.collection('projects').doc(projectId)
+          batch.update(proRef, {
+            tasks: fire.arrayUnion(ref.id),
+          })
+        }
+
+        batch.commit()
+      }
     },
     changePrioritysByIds({ rootState }, {ids, priority}) {
       const utc = timezone().utc()
