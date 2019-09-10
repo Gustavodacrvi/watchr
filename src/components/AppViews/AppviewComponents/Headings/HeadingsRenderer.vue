@@ -21,12 +21,14 @@
           :default-priority='defaultPriority'
           :default-labels='defaultLabels'
           :allow-priority='allowPriority'
+          :allow-project='allowProject'
           :fix-adder-position='fixAdderPosition'
           :insert-before='insertBefore'
           :always-show-last-edit-date='alwaysShowLastEditDate'
           :always-show-creation-date='alwaysShowCreationDate'
           :always-show-task-labels='alwaysShowTaskLabels'
           :allow-labels='allowLabels'
+          :default-project='defaultProject'
           :allow-date='allowDate'
           :emit-on-delete='emitOnDelete'
           :number='index + 1'
@@ -57,7 +59,7 @@ import Mixin from '@/mixins/sortable'
 import AppviewHeader from '@/components/AppViews/AppviewComponents/Headings/AppviewHeading.vue'
 import AppviewTaskrenderer from '@/components/AppViews/AppviewComponents/Tasks/AppviewTaskrenderer.vue'
 
-import { Heading, Label, ListIcon } from '../../../../interfaces/app'
+import { Heading, Label, ListIcon, Project } from '../../../../interfaces/app'
 
 @Component({
   components: {
@@ -71,7 +73,9 @@ export default class HeadingsRenderer extends Mixins(Mixin) {
   @Prop(String) defaultPriority!: string
   @Prop(String) id!: string
   @Prop(Array) defaultLabels!: Label[]
+  @Prop(Object) defaultProject!: Project
   @Prop(Boolean) allowPriority!: boolean
+  @Prop(Boolean) allowProject!: boolean
   @Prop(Boolean) allowLabels!: boolean
   @Prop(Boolean) allowDate!: boolean
   @Prop(Boolean) disabled!: boolean

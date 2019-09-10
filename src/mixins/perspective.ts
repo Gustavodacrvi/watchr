@@ -195,6 +195,11 @@ export default class NavbarMixin extends Vue {
     return tasks
   }
 
+  get atLeastOneViewTag(): boolean {
+    // tslint:disable-next-line:max-line-length
+    return this.search !== '' || this.labels.length > 0 || this.priority !== '' || this.dates.length > 0 || this.smartPers.length > 0
+  }
+
   @Watch('selectedTasks')
   onChange() {
     if (!this.isDesktop)

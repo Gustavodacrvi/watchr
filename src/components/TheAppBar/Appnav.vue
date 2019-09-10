@@ -1,5 +1,5 @@
 <template>
-  <div class='appnav-wrapper' :class='[theme, platform, {scroll: isDesktop}]'>
+  <div class='appnav-wrapper hide-scroll' :class='[theme, platform]'>
     <div class='appnav' :class="[platform, theme, backColor]">
       <i v-if="!isDesktop" class="fas fa-arrow-left arrow fa-2x txt pointer icon" :class='theme' @click='$emit("close")'></i>
       <div v-if='!isLogged'
@@ -201,6 +201,11 @@ export default class LoggedAppnav extends Vue {
 
 #search-bar-wrapper {
   margin: 6px 14px;
+}
+
+.hide-scroll::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
 }
 
 .backcolor.dark {

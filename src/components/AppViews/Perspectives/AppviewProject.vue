@@ -34,7 +34,7 @@
         <div v-if='prj.description' class='margin'></div>
         <view-tags
           :search='search'
-          :labels='labels'
+          :labels='getLabels'
           :priority='priority'
           :dates='dates'
           :smart-pers='smartPers'
@@ -44,6 +44,7 @@
           @removedate='removeDateNonSave'
           @removesmartpers='removeSmartPersNonSave'
         />
+        <div v-if="atLeastOneViewTag" class="margin"></div>
       </div>
       <task-renderer
         id='appnavproject'
@@ -59,6 +60,8 @@
         :always-show-task-labels='false'
         :allow-labels='true'
         :allow-date='true'
+        :allow-project='true'
+        :default-project='prj'
         :number='0'
         :show-project-name='false'
         @update='onUpdate'
@@ -75,13 +78,15 @@
         :header-options='headerOptions'
         :default-priority='priority'
         :default-labels='getLabels'
+        :default-project='prj'
         :allow-priority='true'
         :fix-adder-position='true'
         :insert-before='true'
         :always-show-last-edit-date='false'
         :always-show-creation-date='false'
-        :always-show-task-labels='false'
+        :always-show-task-labels='true'
         :allow-labels='true'
+        :allow-project='true'
         :allow-date='true'
         @saveheading='saveHeading'
         @selected='onSelect'
@@ -312,6 +317,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
       for (const head of this.prj.headings) {
         let tasks = this.getTasksByIds(head.tasks)
         tasks = tasks.filter(el => this.isInThisProject(el))
+        tasks = this.filterTasks(tasks)
         arr.push({
           tasks,
           id: head.id,

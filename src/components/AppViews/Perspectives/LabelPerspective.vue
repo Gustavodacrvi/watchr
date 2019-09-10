@@ -36,9 +36,7 @@
     />
     <div v-if='!hided'>
       <div>
-        <div class='margin'></div>
         <view-tags
-          :fixed-tag="{name: label, icon: 'tag', backColor: '#83B7E2'}"
           :search='search'
           :labels='getLabels'
           :priority='priority'
@@ -50,19 +48,20 @@
           @removedate='removeDateNonSave'
           @removesmartpers='removeSmartPersNonSave'
         />
-        <div class='margin'></div>
+        <div v-if='atLeastOneViewTag' class='margin'></div>
       </div>
       <task-renderer v-if='getLabel'
         id='appnavlabel'
         :tasks='getTasks'
         :default-priority='priority'
         :default-labels='getLabels.concat([getLabel.id])'
-        :allow-priority='true'
         :fix-adder-position='sort.length === 0'
         :insert-before='true'
         :always-show-last-edit-date='true'
         :always-show-creation-date='true'
         :always-show-task-labels='true'
+        :allow-priority='true'
+        :allow-project='true'
         :allow-labels='true'
         :allow-date='true'
         @update='onUpdate'
@@ -143,13 +142,15 @@ export default class LabelPerspective extends Mixins(PersMixing) {
     if (!this.sort.find(el => el === value))
       this.sort.push(value)
   }
-  addLabelTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
+  // tslint:disable-next-line:max-line-length
+  addLabelTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], projectId: string}) {
     const lab = this.getLabel
     if (lab)
       this.addTaskLabel({
         task: {
           name: obj.name,
           priority: obj.priority as any,
+          projectId: obj.projectId,
           labels: obj.labels.concat([lab.id]),
         },
         position: obj.position,

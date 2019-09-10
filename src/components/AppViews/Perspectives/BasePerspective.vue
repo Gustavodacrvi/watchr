@@ -30,7 +30,7 @@
       :list='sort'
       @update='saveNewSortOrder'
     />
-    <div class='margin'></div>
+    <div v-if='sort && sort.length > 0' class='margin'></div>
     <div v-if='!hided'>
       <div>
         <p v-if='pers.description' class='description txt' :class='theme'>
@@ -49,6 +49,7 @@
           @removedate='removeDate'
           @removesmartpers='removeSmartPers'
         />
+        <div v-if="atLeastOneViewTag" class="margin"></div>
       </div>
       <task-renderer v-if='!calendarRenderer'
         id='appnavalltasks'
@@ -58,6 +59,7 @@
         :default-labels='pers.includeAndLabels'
         :default-date='defaultDate'
         :allow-priority='true'
+        :allow-project='true'
         :allow-date='allowDate'
         :fix-adder-position='sort.length === 0'
         :insert-before='true'
@@ -84,10 +86,11 @@
               :default-priority='pers.priority'
               :default-labels='getLabels'
               :default-date='defaultDate'
-              :allow-priority='true'
               :insert-before='true'
-              :allow-date='true'
               :fix-adder-position='true'
+              :allow-priority='true'
+              :allow-project='true'
+              :allow-date='true'
               :allow-labels='true'
               :always-show-last-edit-date='pers.alwaysShowLastEditDate'
               :always-show-creation-date='pers.alwaysShowCreationDate'
@@ -123,7 +126,7 @@ import AppviewHeader from '@/components/AppViews/AppviewComponents/Headings/Appv
 
 import timezone from 'moment-timezone'
 
-import { Perspective, Label, Task, ListIcon, Alert } from '../../../interfaces/app'
+import { Perspective, Label, Task, ListIcon, Alert, Project } from '../../../interfaces/app'
 import appUtils from '@/utils/app'
 import { IndexState, IndexGetters, IndexMutations } from '../../../interfaces/store/index'
 import { LabelGetters } from '../../../interfaces/store/label'
@@ -165,6 +168,7 @@ export default class PerspectiveAppview extends Mixins(PersMixin) {
 
   @Prop({default: true, type: Boolean}) allowLabels!: boolean
   @Prop({default: true, type: Boolean}) allowDate!: boolean
+  @Prop({default: true, type: Boolean}) allowProject!: boolean
   @Prop(Boolean) calendarRenderer!: boolean
   @Prop(String) persName!: string
   @Prop(Array) baseTasks!: Task[]
@@ -212,11 +216,13 @@ export default class PerspectiveAppview extends Mixins(PersMixin) {
       persName: name,
     })
   }
-  addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any}) {
+  // tslint:disable-next-line:max-line-length
+  addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any, projectId: string}) {
     this.addTaskPerspective({
       task: {
         name: obj.name,
         priority: obj.priority,
+        projectId: obj.projectId,
         labels: obj.labels,
         utc: obj.utc,
       },

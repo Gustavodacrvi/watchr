@@ -2,13 +2,15 @@
   <div class='task-adder'>
     <div class='view-tags'>
       <transition name='fade'>
-        <view-tags v-if='priority || fixedPers || getLabels.length > 0 || calendarString'
+        <view-tags v-if='priority || fixedPers || getLabels.length > 0 || calendarString || project'
           :fixed-pers='fixedPers'
           :fixed-label='fixedLabel'
           :priority='priority'
+          :project='project'
           :labels='getLabels'
           :calendar='calendarString'
           @clearpriority="v => priority = ''"
+          @clearproject="v => project = null"
           @removelabel='removeLabel'
           @removecalendar='removeCalendar'
         />
@@ -38,6 +40,15 @@
       </view-btn>
       <span v-if='showCancel' class='cancel pointer' @click="$emit('cancel')">Cancel</span>
       <div class='right'>
+        <div v-if='allowProject' class='header-option'>
+          <drop-finder
+            handle='project-diagram'
+            size='lg'
+            min-width='300px'
+            :list='sortedProjectsByName'
+            @select='selectProject'
+          />
+        </div>
         <div v-if='allowDate' class='header-option'>
           <calendar-input @select='getDate'/>
         </div>
@@ -46,7 +57,7 @@
             handle='tags'
             size='lg'
             min-width='300px'
-            :list='savedLabels'
+            :list='sortedLabelsByName'
             @select='selectLabel'
           />
         </div>
@@ -70,9 +81,10 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { namespace, State } from 'vuex-class'
 
 const labelsVuex = namespace('label')
+const projectVuex = namespace('project')
 const set = namespace('settings')
 
-import { ListIcon, Task, Label, TaskInputObj } from '../../../../interfaces/app'
+import { ListIcon, Task, Label, TaskInputObj, Project } from '../../../../interfaces/app'
 
 import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
@@ -88,6 +100,7 @@ import appUtils from '@/utils/app'
 import { IndexState } from '../../../../interfaces/store/index'
 import { LabelState, LabelGetters } from '../../../../interfaces/store/label'
 import { SetState } from '../../../../interfaces/store/settings'
+import { ProjectGetters } from '../../../../interfaces/store/project'
 
 @Component({
   components: {
@@ -107,8 +120,10 @@ export default class AppviewTaskedit extends Vue {
   @set.State timeZone!: SetState.timeZone
   @set.State nextWeek!: SetState.nextWeek
 
-  @labelsVuex.State('labels') savedLabels!: LabelState.labels
+  @projectVuex.Getter sortedProjectsByName!: ProjectGetters.SortedProjectsByName
+
   @labelsVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
+  @labelsVuex.Getter sortedLabelsByName!: LabelGetters.SortedLabelsByName
 
   @Prop({default: 'Add task', type: String}) btn!: string
   @Prop({default: false, type: Boolean}) closeOnSave!: boolean
@@ -119,16 +134,19 @@ export default class AppviewTaskedit extends Vue {
   @Prop(String) defaultPriority!: string
   @Prop(String) defaultDate!: string
   @Prop(Array) defaultLabels!: string[]
+  @Prop(Object) defaultProject!: Project
   @Prop(String) inputTheme!: string
   @Prop(String) date!: string | null
   @Prop(String) time!: string | null
   @Prop(Boolean) allowPriority!: boolean
+  @Prop(Boolean) allowProject!: boolean
   @Prop(Boolean) allowLabels!: boolean
   @Prop(Boolean) allowDate!: boolean
   @Prop({default: true, type: Boolean}) showCancel!: boolean
 
   value: string = ''
   optionsType: string = ''
+  project: Project | null = null
   calendarString: string = ''
   stringToReplaceOnAdd: string = ''
   priority: '' | 'Low priority' | 'High priority' | 'Medium priority' = ''
@@ -163,6 +181,8 @@ export default class AppviewTaskedit extends Vue {
       this.priority = this.defaultPriority as any
     if (this.defaultValue)
       this.value = this.defaultValue
+    if (this.defaultProject)
+      this.project = this.defaultProject
     if (this.defaultDate)
       this.updateCalendarObj(this.defaultDate)
     else this.updateCalendarObj(this.date)
@@ -185,12 +205,14 @@ export default class AppviewTaskedit extends Vue {
   }
   enter() {
     let utc = null
+    let proId = ''
+    if (this.project) proId = this.project.id
     if (this.calendarObj)
       utc = this.calendarObj.utc
     if (this.stringToReplaceOnAdd && this.calendarString)
       this.value = this.value.replace(this.stringToReplaceOnAdd, '')
     if (this.value)
-      this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels, utc})
+      this.$emit('enter', {name: this.value, priority: this.priority, projectId: proId, labels: this.labels, utc})
     this.value = ''
   }
   removeLabel(id: string) {
@@ -200,6 +222,9 @@ export default class AppviewTaskedit extends Vue {
   selectLabel(label: Label) {
     this.labels.push(label.id)
   }
+  selectProject(project: Project) {
+    this.project = project
+  }
   chosePriority(priority: 'Low priority' | 'High priority' | 'Medium priority') {
     this.priority = priority
   }
@@ -208,8 +233,13 @@ export default class AppviewTaskedit extends Vue {
     this.calendarObj = {utc: {time: '', date: ''}}
   }
   getDate(obj: any) {
-    this.calendarString = obj.parsed
-    this.calendarObj = obj
+    if (obj) {
+      this.calendarString = obj.parsed
+      this.calendarObj = obj
+    } else {
+      this.calendarString = ''
+      this.calendarObj = null
+    }
   }
   updateCalendarObj(date: string | null) {
     if (date) {
@@ -242,6 +272,8 @@ export default class AppviewTaskedit extends Vue {
       str += ' #label'
     if (this.allowDate)
       str += ' $next thursday at 6:00'
+    if (this.allowProject)
+     str += ' @project name'
     return str
   }
 
@@ -282,7 +314,7 @@ export default class AppviewTaskedit extends Vue {
       }
     }
     if (this.allowLabels) {
-      const labels = this.savedLabels
+      const labels = this.sortedLabelsByName
       for (const lab of labels)
         if (this.value.includes(` #${lab.name}`)) {
           this.value = this.value.replace(` #${lab.name}`, '')
@@ -296,6 +328,24 @@ export default class AppviewTaskedit extends Vue {
         const word = lastWord.substr(1)
 
         this.options = labels.map(el => el.name).filter(el => el.includes(word))
+        changedOptions = true
+      }
+    }
+    if (this.allowProject) {
+      const projects = this.sortedProjectsByName
+      for (const pro of projects)
+        if (this.value.includes(` @${pro.name}`)) {
+          this.value = this.value.replace(` @${pro.name}`, '')
+          this.project = pro
+          break
+      }
+      const arr = this.value.split(' ')
+      const lastWord = arr[arr.length - 1]
+      if (lastWord[0] === '@') {
+        this.optionsType = '@'
+        const word = lastWord.substr(1)
+
+        this.options = projects.map(el => el.name).filter(el => el.includes(word))
         changedOptions = true
       }
     }

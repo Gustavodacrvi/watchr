@@ -41,8 +41,8 @@ export namespace TaskActions {
   export type StoreGetData = (context: ActionContext) => void
   export type GetData = () => void
 
-  export type StoreUpdateTask = (context: ActionContext, obj: {name: string, priority: string, id: string, labels: [], utc: UtcObj | null}) => void
-  export type UpdateTask = (obj: {name: string, priority: string, id: string, labels: [], utc: UtcObj | null}) => void
+  export type StoreUpdateTask = (context: ActionContext, obj: {name: string, priority: string, id: string, projectId: string, labels: [], utc: UtcObj | null}) => void
+  export type UpdateTask = (obj: {name: string, projectId: string, priority: string, id: string, labels: [], utc: UtcObj | null}) => void
 
   export type StoreCopyTask = (context: ActionContext, taskId: string) => void
   export type CopyTask = (taskId: string) => void
@@ -50,11 +50,11 @@ export namespace TaskActions {
   export type StoreAddTaskPerspective = (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: UtcObj | null}) => void
   export type AddTaskPerspective = (obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: UtcObj | null}) => void
 
-  export type StoreAddTaskLabel = (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[], utc: UtcObj | null}) => void
-  export type AddTaskLabel = (obj: {task: Task, labelId: string, position: number, order: string[], utc: UtcObj | null}) => void
+  export type StoreAddTaskLabel = (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[], projectId: string, utc: UtcObj | null}) => void
+  export type AddTaskLabel = (obj: {task: Task, labelId: string, projectId: string, position: number, order: string[], utc: UtcObj | null}) => void
 
-  export type StoreAddTask = (context: ActionContext, obj: {name: string, priority: string, labels: string[], utc: UtcObj | null}) => void
-  export type AddTask = (obj: {name: string, priority: string, labels: string[], utc: UtcObj | null}) => void
+  export type StoreAddTask = (context: ActionContext, obj: {name: string, priority: string, labels: string[], projectId: string, utc: UtcObj | null}) => void
+  export type AddTask = (obj: {name: string, priority: string, projectId: string, labels: string[], utc: UtcObj | null}) => void
 
   export type StoreDeleteTasksById = (context: ActionContext, ids: string[]) => void
   export type DeleteTasksById = (ids: string[]) => void

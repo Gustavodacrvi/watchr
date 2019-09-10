@@ -85,7 +85,7 @@
       >{{ buttonPlaceholder }}</button>
       <span v-show='isDesktop'
         class='margin txt' :class='theme'
-      >You can open this pop up at any time by clicking the 'P' key.</span><br>
+      >You can open this pop up at any time by clicking the 'PE' key.</span><br>
       <span v-show='isDesktop'
         class='margin txt'
         :class='theme'
@@ -196,7 +196,7 @@ export default class LabelAdder extends Vue {
           alwaysShowCreationDate: this.alwaysShowCreationDate,
         })
         this.pushAlert({
-          name: `<strong>${this.value}</strong> perspective was successfully added.`,
+          name: `<strong>${this.value}</strong> perspective was successfully added!`,
           duration: 2.5,
           type: 'success',
         })
@@ -213,7 +213,7 @@ export default class LabelAdder extends Vue {
         })
         this.$router.push('user?pers=' + this.value)
         this.pushAlert({
-          name: `<strong>${this.value}</strong> perspective was successfully edited.`,
+          name: `<strong>${this.value}</strong> perspective was successfully edited!`,
           duration: 2.5,
           type: 'success',
         })

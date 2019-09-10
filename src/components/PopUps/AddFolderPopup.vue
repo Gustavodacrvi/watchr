@@ -34,7 +34,7 @@ const project = namespace('project')
 
 import DropInput from '@/components/DropdownInput.vue'
 
-import { IndexState } from '../../interfaces/store/index'
+import { IndexState, IndexMutations } from '../../interfaces/store/index'
 import { ProjectGetters, ProjectActions } from '../../interfaces/store/project'
 
 @Component({
@@ -44,6 +44,7 @@ import { ProjectGetters, ProjectActions } from '../../interfaces/store/project'
 })
 export default class SigninPopUp extends Vue {
   @State theme!: IndexState.theme
+  @State pushAlert!: IndexMutations.PushAlert
 
   @project.Getter sortedFoldersByName!: ProjectGetters.SortedFoldersByName
   @project.Action addFolder!: ProjectActions.AddFolder
@@ -59,8 +60,19 @@ export default class SigninPopUp extends Vue {
   add() {
     if (this.value) {
       const fol = this.sortedFoldersByName.find(el => el.name === this.value)
-      if (!fol)
+      if (!fol) {
         this.addFolder(this.value)
+        this.pushAlert({
+          name: `Folder <strong>${this.value}</strong> successfully added!`,
+          duration: 3,
+          type: 'error',
+        })
+      } else
+        this.pushAlert({
+          name: `Another folder with the name <strong>${this.value}</strong> already exists!`,
+          duration: 3,
+          type: 'error',
+        })
       this.value = ''
     }
   }

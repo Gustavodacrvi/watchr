@@ -102,27 +102,27 @@ export default {
           name,
         })
     },
-    deleteProjectById({ rootState, state }, id) {
+    deleteProjectById({ rootState, state }, {projectId, projectTasks, headings}) {
       if (rootState.firestore && rootState.uid) {
-        const project = state.projects.find(el => el.id === id)
+        const project = state.projects.find(el => el.id === projectId)
         if (project) {
           const batch = rootState.firestore.batch()
 
-          for (const i of project.tasks) {
+          for (const i of projectTasks) {
             const ref = rootState.firestore.collection('tasks').doc(i)
             batch.update(ref, {
               projectId: '',
             })
           }
-          for (const head of project.headings)
-            for (const i of head.tasks) {
+          for (const tasks of headings)
+            for (const i of tasks) {
               const ref = rootState.firestore.collection('tasks').doc(i)
               batch.update(ref, {
                 projectId: '',
               })
             }
 
-          const proRef = rootState.firestore.collection('projects').doc(id)
+          const proRef = rootState.firestore.collection('projects').doc(projectId)
           batch.delete(proRef)
 
           batch.commit()

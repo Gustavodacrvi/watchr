@@ -8,6 +8,21 @@
           :icon='fixedTag.icon'
           :back-color='fixedTag.backColor'
         />
+        {{project}}
+        <view-tag key='calendar' v-if='project'
+          icon='project-diagram'
+          back-color='#CD66FF'
+          :name='project.name'
+          :fixed='false'
+          @click="$emit('clearproject')"
+        />
+        <view-tag key='project' v-if='calendar'
+          icon='calendar-day'
+          back-color='#9CE283'
+          :name='calendar'
+          :fixed='false'
+          @click="$emit('removecalendar')"
+        />
         <view-tag key='priority' v-if="priority && priority !== ''"
           icon='exclamation'
           back-color='#ffa166'
@@ -56,17 +71,6 @@
         />
       </transition-group>
     </div>
-    <div class='tags'>
-      <transition name='fade'>
-        <view-tag v-if='calendar'
-          icon='calendar-day'
-          back-color='#9CE283'
-          :name='calendar'
-          :fixed='false'
-          @click="$emit('removecalendar')"
-        />
-      </transition>
-    </div>
   </div>
 </template>
 
@@ -79,7 +83,7 @@ const set = namespace('settings')
 
 import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 
-import { Label } from '../../../interfaces/app'
+import { Label, Project } from '../../../interfaces/app'
 
 import moment from 'moment'
 import { SetState } from '../../../interfaces/store/settings'
@@ -92,6 +96,7 @@ import { SetState } from '../../../interfaces/store/settings'
 export default class AppviewTags extends Vue {
   @Prop(String) search!: string
   @Prop(Object) fixedTag!: object
+  @Prop(Object) project!: Project
   @Prop(String) priority!: string
   @Prop(String) calendar!: string
   @Prop(Array) labels!: Label[]

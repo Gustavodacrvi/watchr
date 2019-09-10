@@ -25,7 +25,7 @@
       <span class='txt name' :class='[{showall: helpIcons.length === 0}, theme, platform]'>{{ name }}</span>
     </div>
     <div class='options' :class='theme'>
-      <span v-if='number' class='help-icon number'>{{ number }}</span>
+      <span v-if='number' class='help-icon txt' :class="theme">{{ number }}</span>
       <template v-if='helpIcons && helpIcons.length > 0'>
         <span v-for='i in helpIcons'
           class='help-icon'
@@ -240,10 +240,6 @@ export default class ListRenderer extends Vue {
 
 .fade {
   opacity: .6;
-}
-
-.number {
-  color: #83B7E2;
 }
 
 </style>

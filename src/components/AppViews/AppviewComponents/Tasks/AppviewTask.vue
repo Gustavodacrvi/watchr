@@ -26,7 +26,7 @@
               <i v-if='showTodayIcon' class='txt fas fa-star fa-sm' style='color: #FFE366'></i>
               <i v-else-if='showOverdueIcon' class='txt fas fa-hourglass-end fa-sm' style='color: #FF6B66'></i>
               <i v-else-if='showTomorrowIcon' class='txt fas fa-sun fa-sm' style='color: #ffa166'></i>
-              <span v-if="showProjectName && projectName" class="txt-tag gray txt round-border" :class="theme">{{ projectName }}</span>
+              <span v-if="showProjectName && getProject" class="txt-tag gray txt round-border" :class="theme">{{ getProject.name }}</span>
               <span v-if="date" class="txt-tag gray txt round-border" :class="theme">{{ date }}</span>
               <span v-if="time" class="txt-tag gray txt round-border" :class="theme">{{ time }}</span>
               {{ task.name }}
@@ -112,9 +112,11 @@
       :default-labels='task.labels'
       :default-value='task.name'
       :default-priority='task.priority'
+      :default-project='getProject'
       :allow-priority='true'
       :allow-labels='true'
       :allow-date='true'
+      :allow-project='true'
       :date='task.date'
       :time='task.time'
       btn='Edit task'
@@ -134,7 +136,7 @@ import TaskEditTemplate from '@/components/AppViews/AppviewComponents/Tasks/Appv
 import SubTask from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtask.vue'
 import SubTaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtaskEdit.vue'
 
-import { Task, ListIcon, Label } from '../../../../interfaces/app'
+import { Task, ListIcon, Label, Project } from '../../../../interfaces/app'
 
 import appUtils from '@/utils/app'
 import moment from 'moment-timezone'
@@ -154,7 +156,7 @@ import { TaskActions } from '../../../../interfaces/store/task'
 import { ProjectGetters } from '../../../../interfaces/store/project'
 
 if (document.body.clientWidth > 992)
-  Vue.directive('longpress', longClickDirective({delay: 400, interval: 5000}))
+  Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
 else Vue.directive('longpress', longClickDirective({delay: 1200, interval: 5000}))
 
 @Component({
@@ -552,10 +554,10 @@ export default class AppviewTask extends Vue {
       return 'longpressdesktop'
     return 'longpressmobile'
   }
-  get projectName(): string | null {
+  get getProject(): Project | null {
     if (!this.task.projectId) return null
     const project = this.getProjectById(this.task.projectId)
-    if (project) return project.name
+    if (project) return project
     return null
   }
 
@@ -693,6 +695,13 @@ export default class AppviewTask extends Vue {
 
 .content-icon {
   margin: 0 6px;
+}
+
+.txt {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .info-fade-enter, .info-fade-leave-to {
