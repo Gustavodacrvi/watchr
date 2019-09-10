@@ -103,8 +103,11 @@ export default class OverviewAppnav extends Vue {
         iconColor: '',
         size: 'lg',
         callback: (id: string) => {
-          this.pushPopUp('AddProjectPopup')
-          this.pushPopUpPayload({id, editing: true})
+          const project = this.projects.find(el => el.id === id)
+          if (project) {
+            this.pushPopUp('AddProjectPopup')
+            this.pushPopUpPayload({id, editing: true, name: project.name})
+          }
         },
       },
       {

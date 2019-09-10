@@ -92,8 +92,9 @@ export default class ProjectPopup extends Vue {
     } else if (this.value && this.isEditing) {
       const p = this.popUpPayload as any
       const pro = this.sortedProjectsByName.find(el => el.name === this.value)
-      let edit = true
-      if (this.value !== p.name && !pro) edit = false
+      let edit = false
+      if (this.value !== p.name && !pro) edit = true
+      console.log(edit)
       if (edit) {
         this.editProject({
           id: p.id,
