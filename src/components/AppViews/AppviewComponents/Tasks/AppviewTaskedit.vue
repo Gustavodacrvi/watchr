@@ -139,6 +139,7 @@ export default class AppviewTaskedit extends Vue {
   @Prop(String) date!: string | null
   @Prop(String) time!: string | null
   @Prop(Boolean) allowPriority!: boolean
+  @Prop(Boolean) isOnProject!: boolean
   @Prop(Boolean) allowProject!: boolean
   @Prop(Boolean) allowLabels!: boolean
   @Prop(Boolean) allowDate!: boolean

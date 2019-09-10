@@ -78,7 +78,7 @@
             :obj='beautifyDate(tasks[0].date)'
           >
             <task-renderer
-              id='appnavalltasks'
+              :id='`appnavalltasks${tasks[0].date}`'
               list-type='date'
               :date='tasks[0].date'
               :list-has-dates='true'

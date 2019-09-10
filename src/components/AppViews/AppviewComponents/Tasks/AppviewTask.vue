@@ -198,7 +198,9 @@ export default class AppviewTask extends Vue {
   @Prop(Boolean) alwaysShowLastEditDate!: boolean
   @Prop(Boolean) alwaysShowCreationDate!: boolean
   @Prop(Boolean) alwaysShowTaskLabels!: boolean
+  @Prop(Boolean) isOnProject!: boolean
   @Prop(String) fixedPers!: string
+  @Prop(Object) defaultProject!: Project
   @Prop(String) parentId!: string
 
   clicked: boolean = false
@@ -323,9 +325,12 @@ export default class AppviewTask extends Vue {
     })
   }
   enter(obj: any) {
+    let saveProject = true
+    if (this.defaultProject && this.defaultProject.id === obj.projectId) saveProject = false
     this.updateTask({
       ...obj,
       id: this.task.id,
+      saveProject,
     })
     this.editing = false
   }

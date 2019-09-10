@@ -12,10 +12,12 @@
         class='root-task'
         :key='task.id'
         :task='task'
+        :is-on-project='isOnProject'
         :parent-id='parentId'
         :deselect-all='deselectAll'
         :allow-drag='numberOfSelected > 0'
         :dragging='dragging'
+        :default-project='defaultProject'
         :always-show-last-edit-date='alwaysShowLastEditDate'
         :always-show-creation-date='alwaysShowCreationDate'
         :always-show-task-labels='alwaysShowTaskLabels'
@@ -79,6 +81,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop(Boolean) alwaysShowCreationDate!: boolean
   @Prop(Boolean) alwaysShowTaskLabels!: boolean
   @Prop(Boolean) listHasDates!: boolean
+  @Prop(Boolean) isOnProject!: boolean
   @Prop(Number) number!: number
   @Prop({default: true, type: Boolean}) showProjectName!: boolean
   @Prop(String) defaultPriority!: string

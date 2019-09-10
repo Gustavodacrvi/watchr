@@ -61,7 +61,7 @@ export default {
           appUtils.fixStoreChanges(state, changes, 'tasks')
         })
     },
-    updateTask({ rootState }, {name, priority, projectId, id, labels, utc}) {
+    updateTask({ rootState }, {name, priority, projectId, id, saveProject, labels, utc}) {
       const u = timezone().utc()
       const dt = u.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
@@ -74,7 +74,7 @@ export default {
           lastEditDate: dt,
           ...utc,
         })
-        if (projectId) {
+        if (projectId && saveProject) {
           const pro = rootState.firestore.collection('projects').doc(projectId)
           batch.update(pro, {
             tasks: fire.arrayUnion(ref.id),

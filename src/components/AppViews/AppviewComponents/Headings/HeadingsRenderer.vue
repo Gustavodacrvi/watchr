@@ -29,6 +29,7 @@
           :always-show-task-labels='alwaysShowTaskLabels'
           :allow-labels='allowLabels'
           :default-project='defaultProject'
+          :is-on-project='isOnProject'
           :allow-date='allowDate'
           :emit-on-delete='emitOnDelete'
           :number='index + 1'
@@ -75,6 +76,7 @@ export default class HeadingsRenderer extends Mixins(Mixin) {
   @Prop(Array) defaultLabels!: Label[]
   @Prop(Object) defaultProject!: Project
   @Prop(Boolean) allowPriority!: boolean
+  @Prop(Boolean) isOnProject!: boolean
   @Prop(Boolean) allowProject!: boolean
   @Prop(Boolean) allowLabels!: boolean
   @Prop(Boolean) allowDate!: boolean
