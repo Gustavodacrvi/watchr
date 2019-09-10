@@ -57,12 +57,13 @@
         :tasks='getTasks'
         :default-priority='priority'
         :default-labels='getLabels.concat([getLabel.id])'
-        :allow-priority='true'
         :fix-adder-position='sort.length === 0'
         :insert-before='true'
         :always-show-last-edit-date='true'
         :always-show-creation-date='true'
         :always-show-task-labels='true'
+        :allow-priority='true'
+        :allow-project='true'
         :allow-labels='true'
         :allow-date='true'
         @update='onUpdate'
@@ -143,13 +144,15 @@ export default class LabelPerspective extends Mixins(PersMixing) {
     if (!this.sort.find(el => el === value))
       this.sort.push(value)
   }
-  addLabelTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[]}) {
+  addLabelTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], projectId: string}) {
     const lab = this.getLabel
+    console.log(obj)
     if (lab)
       this.addTaskLabel({
         task: {
           name: obj.name,
           priority: obj.priority as any,
+          projectId: obj.projectId,
           labels: obj.labels.concat([lab.id]),
         },
         position: obj.position,

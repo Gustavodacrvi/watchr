@@ -28,6 +28,14 @@
         class='button round-border margin'
         @click='add'
       >{{ btnMsg }}</button>
+      <span v-show='isDesktop'
+        class='margin txt'
+        :class='theme'
+      >You can open this pop up at any time by clicking the 'PR' key.</span><br>
+      <span v-show='isDesktop'
+        class='margin txt'
+        :class='theme'
+      >You can close any pop up at any time by clicking 'H' key or 'CTRL + Alt + H'.</span>
     </div>
   </div>
 </template>
@@ -35,13 +43,13 @@
 <script lang='ts'>
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { State, Mutation, namespace } from 'vuex-class'
+import { State, Mutation, Getter, namespace } from 'vuex-class'
 
 const proVuex = namespace('project')
 
 import DropInput from '@/components/DropdownInput.vue'
 
-import { IndexState, IndexMutations } from '../../interfaces/store/index'
+import { IndexState, IndexMutations, IndexGetters } from '../../interfaces/store/index'
 import { ProjectGetters, ProjectActions } from '../../interfaces/store/project'
 
 @Component({
@@ -52,6 +60,7 @@ import { ProjectGetters, ProjectActions } from '../../interfaces/store/project'
 export default class ProjectPopup extends Vue {
   @State theme!: IndexState.theme
   @State popUpPayload!: any
+  @Getter isDesktop!: IndexGetters.IsDesktop
   @Mutation pushPopUp!: IndexMutations.PushPopUp
   @Mutation pushAlert!: IndexMutations.PushAlert
 

@@ -8,6 +8,7 @@
         btn='Add task'
         :allow-priority='true'
         :allow-labels='true'
+        :allow-project='true'
         :allow-date='true'
         :show-cancel='false'
         :input='input'

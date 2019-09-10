@@ -73,10 +73,11 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
   @Prop(Boolean) fixAdderPosition!: boolean
   @Prop(Boolean) allowPriority!: boolean
   @Prop(Boolean) allowLabels!: boolean
+  @Prop(Boolean) allowDate!: boolean
+  @Prop(Boolean) allowProject!: boolean
   @Prop(Boolean) alwaysShowLastEditDate!: boolean
   @Prop(Boolean) alwaysShowCreationDate!: boolean
   @Prop(Boolean) alwaysShowTaskLabels!: boolean
-  @Prop(Boolean) allowDate!: boolean
   @Prop(Boolean) listHasDates!: boolean
   @Prop(Number) number!: number
   @Prop({default: true, type: Boolean}) showProjectName!: boolean
@@ -152,7 +153,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
               class: 'handle', key: 'task-adder',
               fixedPers: this.fixedPers, fixedLabel: this.fixedLabel,
               defaultLabels: this.defaultLabels, defaultPriority: this.defaultPriority, defaultDate: this.defaultDate,
-              allowPriority: this.allowPriority, allowLabels: this.allowLabels, lock: true, allowDate: this.allowDate,
+              allowPriority: this.allowPriority, allowLabels: this.allowLabels, lock: true, allowDate: this.allowDate, allowProject: this.allowProject,
             },
           })
           const el = this.rootComponent.querySelector('.main-button') as HTMLElement

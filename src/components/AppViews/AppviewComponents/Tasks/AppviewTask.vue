@@ -154,7 +154,7 @@ import { TaskActions } from '../../../../interfaces/store/task'
 import { ProjectGetters } from '../../../../interfaces/store/project'
 
 if (document.body.clientWidth > 992)
-  Vue.directive('longpress', longClickDirective({delay: 400, interval: 5000}))
+  Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
 else Vue.directive('longpress', longClickDirective({delay: 1200, interval: 5000}))
 
 @Component({
@@ -693,6 +693,13 @@ export default class AppviewTask extends Vue {
 
 .content-icon {
   margin: 0 6px;
+}
+
+.txt {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .info-fade-enter, .info-fade-leave-to {

@@ -96,13 +96,13 @@ export default {
         batch.set(ref, {
           name: task.name,
           priority: task.priority,
+          projectId: task.projectId,
           userId: rootState.uid,
           creationDate: date,
           lastEditDate: date,
           labels: task.labels,
           checklist: [],
           completed: false,
-          projectId: '',
           checklistOrder: [],
           ...t.utc,
         })
@@ -145,18 +145,17 @@ export default {
         batch.commit()
       }
     },
-    addTask({ rootState }, {priority, name, labels, utc}) {
+    addTask({ rootState }, {priority, name, labels, utc, projectId}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid)
         rootState.firestore.collection('tasks').add({
-          name, labels, priority,
+          name, labels, priority, projectId,
           userId: rootState.uid,
           creationDate: date,
           lastEditDate: date,
           checklist: [],
           completed: false,
-          projectId: '',
           checklistOrder: [],
           ...utc,
         })
@@ -178,16 +177,18 @@ export default {
         batch.commit()
       }
     },
-    addTaskLabel({ rootState }, {task, labelId, order, position, utc}) {
+    addTaskLabel({ rootState }, {task, labelId, order, projectId, position, utc}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
+        const fire = rootState.firebase.firestore.FieldValue as any
         const batch = rootState.firestore.batch()
 
         const ord = order.slice()
         const ref = rootState.firestore.collection('tasks').doc()
         ord.splice(position, 0, ref.id)
         batch.set(ref, {
+          projectId: task.projectId,
           name: task.name,
           priority: task.priority,
           userId: rootState.uid,
@@ -196,7 +197,6 @@ export default {
           lastEditDate: date,
           checklist: [],
           completed: false,
-          projectId: '',
           checklistOrder: [],
           ...utc,
         })
@@ -204,6 +204,12 @@ export default {
         batch.update(persRef, {
           order: ord,
         })
+        if (task.projectId) {
+          const pro = rootState.firestore.collection('projects').doc(task.projectId)
+          batch.update(pro, {
+            tasks: fire.arrayUnion(ref.id),
+          })
+        }
 
         batch.commit()
       }
@@ -334,6 +340,7 @@ export default {
             labels: task.labels,
             creationDate: date,
             lastEditDate: date,
+            projectId: task.projectId,
             date: task.date,
             time: task.time,
             name: task.name,

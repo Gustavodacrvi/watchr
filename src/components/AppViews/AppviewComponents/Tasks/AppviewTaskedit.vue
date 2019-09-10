@@ -2,13 +2,15 @@
   <div class='task-adder'>
     <div class='view-tags'>
       <transition name='fade'>
-        <view-tags v-if='priority || fixedPers || getLabels.length > 0 || calendarString'
+        <view-tags v-if='priority || fixedPers || getLabels.length > 0 || calendarString || project'
           :fixed-pers='fixedPers'
           :fixed-label='fixedLabel'
           :priority='priority'
+          :project='project'
           :labels='getLabels'
           :calendar='calendarString'
           @clearpriority="v => priority = ''"
+          @clearproject="v => project = null"
           @removelabel='removeLabel'
           @removecalendar='removeCalendar'
         />
@@ -38,6 +40,15 @@
       </view-btn>
       <span v-if='showCancel' class='cancel pointer' @click="$emit('cancel')">Cancel</span>
       <div class='right'>
+        <div v-if='allowProject' class='header-option'>
+          <drop-finder
+            handle='project-diagram'
+            size='lg'
+            min-width='300px'
+            :list='sortedProjectsByName'
+            @select='selectProject'
+          />
+        </div>
         <div v-if='allowDate' class='header-option'>
           <calendar-input @select='getDate'/>
         </div>
@@ -46,7 +57,7 @@
             handle='tags'
             size='lg'
             min-width='300px'
-            :list='savedLabels'
+            :list='sortedLabelsByName'
             @select='selectLabel'
           />
         </div>
@@ -70,9 +81,10 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { namespace, State } from 'vuex-class'
 
 const labelsVuex = namespace('label')
+const projectVuex = namespace('project')
 const set = namespace('settings')
 
-import { ListIcon, Task, Label, TaskInputObj } from '../../../../interfaces/app'
+import { ListIcon, Task, Label, TaskInputObj, Project } from '../../../../interfaces/app'
 
 import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
@@ -88,6 +100,7 @@ import appUtils from '@/utils/app'
 import { IndexState } from '../../../../interfaces/store/index'
 import { LabelState, LabelGetters } from '../../../../interfaces/store/label'
 import { SetState } from '../../../../interfaces/store/settings'
+import { ProjectGetters } from '../../../../interfaces/store/project'
 
 @Component({
   components: {
@@ -107,8 +120,11 @@ export default class AppviewTaskedit extends Vue {
   @set.State timeZone!: SetState.timeZone
   @set.State nextWeek!: SetState.nextWeek
 
+  @projectVuex.Getter sortedProjectsByName!: ProjectGetters.SortedProjectsByName
+
   @labelsVuex.State('labels') savedLabels!: LabelState.labels
   @labelsVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
+  @labelsVuex.Getter sortedLabelsByName!: LabelGetters.SortedLabelsByName
 
   @Prop({default: 'Add task', type: String}) btn!: string
   @Prop({default: false, type: Boolean}) closeOnSave!: boolean
@@ -123,12 +139,14 @@ export default class AppviewTaskedit extends Vue {
   @Prop(String) date!: string | null
   @Prop(String) time!: string | null
   @Prop(Boolean) allowPriority!: boolean
+  @Prop(Boolean) allowProject!: boolean
   @Prop(Boolean) allowLabels!: boolean
   @Prop(Boolean) allowDate!: boolean
   @Prop({default: true, type: Boolean}) showCancel!: boolean
 
   value: string = ''
   optionsType: string = ''
+  project: Project | null = null
   calendarString: string = ''
   stringToReplaceOnAdd: string = ''
   priority: '' | 'Low priority' | 'High priority' | 'Medium priority' = ''
@@ -185,12 +203,14 @@ export default class AppviewTaskedit extends Vue {
   }
   enter() {
     let utc = null
+    let proId = ''
+    if (this.project) proId = this.project.id
     if (this.calendarObj)
       utc = this.calendarObj.utc
     if (this.stringToReplaceOnAdd && this.calendarString)
       this.value = this.value.replace(this.stringToReplaceOnAdd, '')
     if (this.value)
-      this.$emit('enter', {name: this.value, priority: this.priority, labels: this.labels, utc})
+      this.$emit('enter', {name: this.value, priority: this.priority, projectId: proId, labels: this.labels, utc})
     this.value = ''
   }
   removeLabel(id: string) {
@@ -199,6 +219,9 @@ export default class AppviewTaskedit extends Vue {
   }
   selectLabel(label: Label) {
     this.labels.push(label.id)
+  }
+  selectProject(project: Project) {
+    this.project = project
   }
   chosePriority(priority: 'Low priority' | 'High priority' | 'Medium priority') {
     this.priority = priority

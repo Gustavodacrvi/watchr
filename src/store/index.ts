@@ -250,7 +250,7 @@ const store: any = new Vuex.Store({
             case 't': commit('pushPopUp', 'TaskadderPopup'); break
             case 'h': commit('pushPopUp', ''); break
           }
-        if (special && key === 'h') commit('pushPopUp', '')
+        if (special && key === 'Alth') commit('pushPopUp', '')
       }
     },
   } as Actions,

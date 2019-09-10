@@ -85,7 +85,7 @@
       >{{ buttonPlaceholder }}</button>
       <span v-show='isDesktop'
         class='margin txt' :class='theme'
-      >You can open this pop up at any time by clicking the 'P' key.</span><br>
+      >You can open this pop up at any time by clicking the 'PE' key.</span><br>
       <span v-show='isDesktop'
         class='margin txt'
         :class='theme'

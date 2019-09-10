@@ -12,6 +12,7 @@
 
         @enter='saveHeadingName'
       >
+      {{allowProject}}
         <task-renderer
           class='task-renderer'
           list-type='projectHeading'
@@ -21,6 +22,7 @@
           :default-priority='defaultPriority'
           :default-labels='defaultLabels'
           :allow-priority='allowPriority'
+          :allow-project='allowProject'
           :fix-adder-position='fixAdderPosition'
           :insert-before='insertBefore'
           :always-show-last-edit-date='alwaysShowLastEditDate'
@@ -72,6 +74,7 @@ export default class HeadingsRenderer extends Mixins(Mixin) {
   @Prop(String) id!: string
   @Prop(Array) defaultLabels!: Label[]
   @Prop(Boolean) allowPriority!: boolean
+  @Prop(Boolean) allowProject!: boolean
   @Prop(Boolean) allowLabels!: boolean
   @Prop(Boolean) allowDate!: boolean
   @Prop(Boolean) disabled!: boolean
