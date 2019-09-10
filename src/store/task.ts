@@ -87,6 +87,7 @@ export default {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.firestore && rootState.uid) {
+        const fire = rootState.firebase.firestore.FieldValue as any
         const batch = rootState.firestore.batch()
 
         const ord = order.slice()
@@ -106,6 +107,12 @@ export default {
           checklistOrder: [],
           ...t.utc,
         })
+        if (task.projectId) {
+          const pro = rootState.firestore.collection('projects').doc(task.projectId)
+          batch.update(pro, {
+            tasks: fire.arrayUnion(ref.id),
+          })
+        }
         const persRef = rootState.firestore.collection('perspectives').doc(perspectiveId)
         batch.update(persRef, {
           order: ord,
