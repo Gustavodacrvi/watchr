@@ -122,7 +122,6 @@ export default class AppviewTaskedit extends Vue {
 
   @projectVuex.Getter sortedProjectsByName!: ProjectGetters.SortedProjectsByName
 
-  @labelsVuex.State('labels') savedLabels!: LabelState.labels
   @labelsVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
   @labelsVuex.Getter sortedLabelsByName!: LabelGetters.SortedLabelsByName
 
@@ -265,6 +264,8 @@ export default class AppviewTaskedit extends Vue {
       str += ' #label'
     if (this.allowDate)
       str += ' $next thursday at 6:00'
+    if (this.allowProject)
+     str += ' @project name'
     return str
   }
 
@@ -305,7 +306,7 @@ export default class AppviewTaskedit extends Vue {
       }
     }
     if (this.allowLabels) {
-      const labels = this.savedLabels
+      const labels = this.sortedLabelsByName
       for (const lab of labels)
         if (this.value.includes(` #${lab.name}`)) {
           this.value = this.value.replace(` #${lab.name}`, '')
@@ -319,6 +320,24 @@ export default class AppviewTaskedit extends Vue {
         const word = lastWord.substr(1)
 
         this.options = labels.map(el => el.name).filter(el => el.includes(word))
+        changedOptions = true
+      }
+    }
+    if (this.allowProject) {
+      const projects = this.sortedProjectsByName
+      for (const pro of projects)
+        if (this.value.includes(` @${pro.name}`)) {
+          this.value = this.value.replace(` @${pro.name}`, '')
+          this.project = pro
+          break
+      }
+      const arr = this.value.split(' ')
+      const lastWord = arr[arr.length - 1]
+      if (lastWord[0] === '@') {
+        this.optionsType = '@'
+        const word = lastWord.substr(1)
+
+        this.options = projects.map(el => el.name).filter(el => el.includes(word))
         changedOptions = true
       }
     }
