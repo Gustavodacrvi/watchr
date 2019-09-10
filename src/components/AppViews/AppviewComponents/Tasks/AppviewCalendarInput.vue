@@ -23,6 +23,12 @@
       <span class='el-icon'><i class='txt fas fa-calendar-week fa-lg' style='color: #9CE283'></i></span>
       <span class='el-name txt dark'>Next week</span>
     </div>
+    <div class='el cancel-sortable-unselect dark' @click='selectNodate'>
+      <span class='el-icon'><i class='txt fas fa-calendar-times fa-lg' style='color: #707070'></i></span>
+      <span class='el-name txt dark'>
+        <span>No date</span>
+      </span>
+    </div>
     <div class='drop'>
       <div class='calendar-header'>
         <div class='header-row'>
@@ -123,6 +129,9 @@ export default class CalendarInput extends Vue {
   }
   selectNextweek() {
     this.emitEvent(appUtils.getNextWeek(this.originalMoment.clone(), this.nextWeek))
+  }
+  selectNodate() {
+   this.$emit('select', null)
   }
   emitEvent(mom?: any) {
     if (!mom)

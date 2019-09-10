@@ -153,6 +153,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
               class: 'handle', key: 'task-adder',
               fixedPers: this.fixedPers, fixedLabel: this.fixedLabel,
               defaultLabels: this.defaultLabels, defaultPriority: this.defaultPriority, defaultDate: this.defaultDate,
+              // tslint:disable-next-line:max-line-length
               allowPriority: this.allowPriority, allowLabels: this.allowLabels, lock: true, allowDate: this.allowDate, allowProject: this.allowProject,
             },
           })

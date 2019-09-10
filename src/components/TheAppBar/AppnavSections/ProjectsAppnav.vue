@@ -42,7 +42,7 @@ import appUtils from '@/utils/app'
 
 const set = namespace('settings')
 const task = namespace('task')
-const project = namespace('project')
+const projectVuex = namespace('project')
 
 @Component({
   components: {
@@ -60,15 +60,15 @@ export default class OverviewAppnav extends Vue {
   @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
   @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
-  @project.State projects!: ProjectState.projects
-  @project.Getter sortedFolders!: ProjectGetters.SortedFolders
-  @project.Getter getProjectsByFolderId!: ProjectGetters.GetProjectsByFolderId
-  @project.Action deleteFolderAndProjectsByFolderId!: ProjectActions.DeleteFolderAndProjectsByFolderId
-  @project.Action editFolderNameById!: ProjectActions.EditFolderNameById
-  @project.Action saveFoldersOrder!: ProjectActions.SaveFoldersOrder
-  @project.Action moveProjectsFromFolder!: ProjectActions.MoveProjectsFromFolder
-  @project.Action toggleProjectPin!: ProjectActions.ToggleProjectPin
-  @project.Action deleteProjectById!: ProjectActions.DeleteProjectById
+  @projectVuex.State projects!: ProjectState.projects
+  @projectVuex.Getter sortedFolders!: ProjectGetters.SortedFolders
+  @projectVuex.Getter getProjectsByFolderId!: ProjectGetters.GetProjectsByFolderId
+  @projectVuex.Action deleteFolderAndProjectsByFolderId!: ProjectActions.DeleteFolderAndProjectsByFolderId
+  @projectVuex.Action editFolderNameById!: ProjectActions.EditFolderNameById
+  @projectVuex.Action saveFoldersOrder!: ProjectActions.SaveFoldersOrder
+  @projectVuex.Action moveProjectsFromFolder!: ProjectActions.MoveProjectsFromFolder
+  @projectVuex.Action toggleProjectPin!: ProjectActions.ToggleProjectPin
+  @projectVuex.Action deleteProjectById!: ProjectActions.DeleteProjectById
 
   @task.State tasks!: TaskState.tasks
   @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
@@ -116,11 +116,11 @@ export default class OverviewAppnav extends Vue {
         iconColor: '',
         size: 'lg',
         callback: (id: string) => {
-          const pro = this.projects.find(el => el.id === id)
-          if (pro) {
-            const ord = appUtils.fixOrder(this.tasks, pro.tasks, true)
+          const p = this.projects.find(el => el.id === id)
+          if (p) {
+            const ord = appUtils.fixOrder(this.tasks, p.tasks, true)
             const headingTasks = []
-            for (const head of pro.headings) {
+            for (const head of p.headings) {
               const order = appUtils.fixOrder(this.tasks, head.tasks, true)
               headingTasks.push(order)
             }

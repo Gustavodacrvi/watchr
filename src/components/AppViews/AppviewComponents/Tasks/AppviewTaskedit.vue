@@ -230,8 +230,13 @@ export default class AppviewTaskedit extends Vue {
     this.calendarObj = {utc: {time: '', date: ''}}
   }
   getDate(obj: any) {
-    this.calendarString = obj.parsed
-    this.calendarObj = obj
+    if (obj) {
+      this.calendarString = obj.parsed
+      this.calendarObj = obj
+    } else {
+      this.calendarString = ''
+      this.calendarObj = null
+    }
   }
   updateCalendarObj(date: string | null) {
     if (date) {

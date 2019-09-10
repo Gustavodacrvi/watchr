@@ -117,7 +117,7 @@ export default class ActionButtonComp extends Vue {
   leftButtons: FloatingButton[] = [
     {icon: 'star', iconColor: 'white', backColor: '#FFE366', click: this.postPoneToday},
     {icon: 'sun', iconColor: 'white', backColor: '#ffa166', click: this.postPoneTomorrow},
-    {icon: 'calendar', iconColor: 'white', backColor: '#9ce283', click: this.postPoneNextWeek},
+    {icon: 'calendar-times', iconColor: 'white', backColor: '#707070', click: this.removeDates},
   ]
   showing: boolean = false
   tasks: string[] = []
@@ -163,6 +163,14 @@ export default class ActionButtonComp extends Vue {
   }
   postPoneNextWeek() {
     this.postPone(appUtils.getNextWeek(moment(), this.startOfTheWeek))
+  }
+  removeDates() {
+    const arr = []
+    for (const id of this.selectedTasks)
+      arr.push({
+        id, date: '',
+      })
+    this.saveNewDateOfTasks(arr)
   }
   popUp(compName: string, sendIds?: boolean): () => void {
     return () => {

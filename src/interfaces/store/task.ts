@@ -50,7 +50,7 @@ export namespace TaskActions {
   export type StoreAddTaskPerspective = (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: UtcObj | null}) => void
   export type AddTaskPerspective = (obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: UtcObj | null}) => void
 
-  export type StoreAddTaskLabel = (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[],projectId: string, utc: UtcObj | null}) => void
+  export type StoreAddTaskLabel = (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[], projectId: string, utc: UtcObj | null}) => void
   export type AddTaskLabel = (obj: {task: Task, labelId: string, projectId: string, position: number, order: string[], utc: UtcObj | null}) => void
 
   export type StoreAddTask = (context: ActionContext, obj: {name: string, priority: string, labels: string[], projectId: string, utc: UtcObj | null}) => void

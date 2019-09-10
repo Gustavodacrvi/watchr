@@ -144,9 +144,9 @@ export default class LabelPerspective extends Mixins(PersMixing) {
     if (!this.sort.find(el => el === value))
       this.sort.push(value)
   }
+  // tslint:disable-next-line:max-line-length
   addLabelTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], projectId: string}) {
     const lab = this.getLabel
-    console.log(obj)
     if (lab)
       this.addTaskLabel({
         task: {

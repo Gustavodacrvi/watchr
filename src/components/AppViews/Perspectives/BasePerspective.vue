@@ -215,6 +215,7 @@ export default class PerspectiveAppview extends Mixins(PersMixin) {
       persName: name,
     })
   }
+  // tslint:disable-next-line:max-line-length
   addPersTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any, projectId: string}) {
     this.addTaskPerspective({
       task: {
