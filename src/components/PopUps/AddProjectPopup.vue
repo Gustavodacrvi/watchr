@@ -53,6 +53,7 @@ export default class ProjectPopup extends Vue {
   @State theme!: IndexState.theme
   @State popUpPayload!: any
   @Mutation pushPopUp!: IndexMutations.PushPopUp
+  @Mutation pushAlert!: IndexMutations.PushAlert
 
   @proVuex.Getter sortedFoldersByName!: ProjectGetters.SortedFoldersByName
   @proVuex.Getter sortedProjectsByName!: ProjectGetters.SortedProjectsByName
@@ -83,18 +84,28 @@ export default class ProjectPopup extends Vue {
       const {folder, project} = this.getInput
       const pro = this.sortedProjectsByName.find(el => el.name === project)
       const fold = this.sortedFoldersByName.find(el => el.name === folder)
-      if (fold && !pro && project)
+      if (fold && !pro && project) {
         this.addProject({
           name: project,
           foldId: fold.id,
           description: this.description,
+        })
+        this.pushAlert({
+          name: `Project <strong>${this.value}</strong> successfully added!`,
+          duration: 2,
+          type: 'success',
+        })
+      } else if (!pro)
+        this.pushAlert({
+          name: `Another project with the name <strong>${project}</strong> already exists!`,
+          duration: 3,
+          type: 'error',
         })
     } else if (this.value && this.isEditing) {
       const p = this.popUpPayload as any
       const pro = this.sortedProjectsByName.find(el => el.name === this.value)
       let edit = false
       if (this.value !== p.name && !pro) edit = true
-      console.log(edit)
       if (edit) {
         this.editProject({
           id: p.id,
@@ -102,7 +113,17 @@ export default class ProjectPopup extends Vue {
           description: this.description,
         })
         this.pushPopUp('')
-      }
+        this.pushAlert({
+          name: `Project ${this.value} successfully edited!`,
+          duration: 2,
+          type: 'success',
+        })
+      } else if (this.value === p.name)
+        this.pushAlert({
+          name: `Another project with the name ${this.value} already exists!`,
+          duration: 3,
+          type: 'error',
+        })
     }
   }
   getOptions(): string[] {

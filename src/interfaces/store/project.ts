@@ -82,8 +82,8 @@ export namespace ProjectActions {
   export type StoreEditProject = (context: ActionContext, obj: {name: string, id: string, description: string}) => void
   export type EditProject = (obj: {name: string, id: string, description: string}) => void
 
-  export type StoreDeleteProjectById = (context: ActionContext, obj: {projectId: string, projectTasks: string[], headings: Array<string[]>}) => void
-  export type DeleteProjectById = (obj: {projectId: string, projectTasks: string[], headings: Array<string[]>}) => void
+  export type StoreDeleteProjectById = (context: ActionContext, obj: {projectId: string, projectTasks: string[], headings: string[][]}) => void
+  export type DeleteProjectById = (obj: {projectId: string, projectTasks: string[], headings: string[][]}) => void
 
   export type StoreUpdateProjectTasks = (context: ActionContext, obj: {id: string, ids: string[]}) => void
   export type UpdateProjectTasks = (obj: {id: string, ids: string[]}) => void
