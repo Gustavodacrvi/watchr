@@ -36,7 +36,9 @@ import { IndexState, IndexMutations } from '../../../interfaces/store/index'
 import { PersGetters } from '../../../interfaces/store/perspective'
 import { TaskState, TaskActions, TaskGetters } from '../../../interfaces/store/task'
 import { SetState } from '../../../interfaces/store/settings'
-import { ProjectGetters, ProjectActions } from '../../../interfaces/store/project'
+import { ProjectGetters, ProjectActions, ProjectState } from '../../../interfaces/store/project'
+
+import appUtils from '@/utils/app'
 
 const set = namespace('settings')
 const task = namespace('task')
@@ -58,6 +60,7 @@ export default class OverviewAppnav extends Vue {
   @Mutation pushPopUpPayload!: IndexMutations.PushPopUpPayload
   @Mutation pushCenteredCard!: IndexMutations.PushCenteredCard
 
+  @project.State projects!: ProjectState.projects
   @project.Getter sortedFolders!: ProjectGetters.SortedFolders
   @project.Getter getProjectsByFolderId!: ProjectGetters.GetProjectsByFolderId
   @project.Action deleteFolderAndProjectsByFolderId!: ProjectActions.DeleteFolderAndProjectsByFolderId
@@ -67,6 +70,7 @@ export default class OverviewAppnav extends Vue {
   @project.Action toggleProjectPin!: ProjectActions.ToggleProjectPin
   @project.Action deleteProjectById!: ProjectActions.DeleteProjectById
 
+  @task.State tasks!: TaskState.tasks
   @task.Getter getTasksByIds!: TaskGetters.GetTasksByIds
 
   @set.State timeZone!: SetState.timeZone
@@ -109,7 +113,20 @@ export default class OverviewAppnav extends Vue {
         iconColor: '',
         size: 'lg',
         callback: (id: string) => {
-          this.deleteProjectById(id)
+          const project = this.projects.find(el => el.id === id)
+          if (project) {
+            const order = appUtils.fixOrder(this.tasks, project.tasks, true)
+            const headingTasks = []
+            for (const head of project.headings) {
+              const order = appUtils.fixOrder(this.tasks, head.tasks, true)
+              headingTasks.push(order)
+            }
+            this.deleteProjectById({
+              projectId: id,
+              projectTasks: order,
+              headings: headingTasks,
+            })
+          }
         },
       },
     ]
