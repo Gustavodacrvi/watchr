@@ -116,17 +116,17 @@ export default class OverviewAppnav extends Vue {
         iconColor: '',
         size: 'lg',
         callback: (id: string) => {
-          const project = this.projects.find(el => el.id === id)
-          if (project) {
-            const order = appUtils.fixOrder(this.tasks, project.tasks, true)
+          const pro = this.projects.find(el => el.id === id)
+          if (pro) {
+            const ord = appUtils.fixOrder(this.tasks, pro.tasks, true)
             const headingTasks = []
-            for (const head of project.headings) {
+            for (const head of pro.headings) {
               const order = appUtils.fixOrder(this.tasks, head.tasks, true)
               headingTasks.push(order)
             }
             this.deleteProjectById({
               projectId: id,
-              projectTasks: order,
+              projectTasks: ord,
               headings: headingTasks,
             })
           }
