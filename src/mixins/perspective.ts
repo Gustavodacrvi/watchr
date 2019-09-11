@@ -171,6 +171,18 @@ export default class NavbarMixin extends Vue {
           }, 80)
         },
       },
+      {
+        name: 'Add tasks to project',
+        icon: 'project-diagram',
+        iconColor: '',
+        size: '',
+        callback: () => {
+          setTimeout(() => {
+            this.pushPopUp('AddtoprojectPopup')
+            this.pushPopUpPayload(this.selectedTasks)
+          }, 80)
+        },
+      },
     ]
   }
   selectedDates(date: string) {

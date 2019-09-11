@@ -46,6 +46,7 @@
         />
       </app-header>
     </transition-group>
+    <div class="margin"></div>
   </div>
 </template>
 
@@ -147,6 +148,5 @@ export default class HeadingsRenderer extends Mixins(Mixin) {
     return root.childNodes[0] as HTMLElement
   }
 }
-
 
 </script>
