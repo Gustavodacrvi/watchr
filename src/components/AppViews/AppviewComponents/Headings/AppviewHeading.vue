@@ -163,7 +163,7 @@ export default class AppviewHeading extends Vue {
 }
 
 .heading-wrapper + .heading-wrapper {
-  margin-top: 45px;
+  margin-top: 60px;
 }
 
 .faded {
