@@ -65,7 +65,7 @@ export default {
       const u = timezone().utc()
       const dt = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
-        const fire = rootState.firebase.fr.FieldValue as any
+        const fire = rootState.firebase.firestore.FieldValue as any
         const batch = rootState.fr.batch()
 
         const ref = rootState.fr.collection('tasks').doc(id)
@@ -100,7 +100,7 @@ export default {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
-        const fire = rootState.firebase.fr.FieldValue as any
+        const fire = rootState.firebase.firestore.FieldValue as any
         const batch = rootState.fr.batch()
 
         const ord = order.slice()
@@ -169,7 +169,7 @@ export default {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
-        const fire = rootState.firebase.fr.FieldValue as any
+        const fire = rootState.firebase.firestore.FieldValue as any
         const batch = rootState.fr.batch()
 
         const ref = rootState.fr.collection('tasks').doc()
@@ -214,7 +214,7 @@ export default {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
-        const fire = rootState.firebase.fr.FieldValue as any
+        const fire = rootState.firebase.firestore.FieldValue as any
         const batch = rootState.fr.batch()
 
         const ord = order.slice()
@@ -309,7 +309,7 @@ export default {
       const utc = timezone().utc()
       const date = utc.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
-        const fire = rootState.firebase.fr.FieldValue as any
+        const fire = rootState.firebase.firestore.FieldValue as any
         let timesRun = 0
         let newId!: string
         while (true) {
@@ -402,7 +402,7 @@ export default {
     addMultipleLabelsToMultipleTasks({ rootState, state }, {taskIds, labIds}) {
       if (rootState.fr && rootState.uid) {
         const batch = rootState.fr.batch()
-        const fire = rootState.firebase.fr.FieldValue as any
+        const fire = rootState.firebase.firestore.FieldValue as any
 
         for (const id of taskIds) {
           const ref = rootState.fr.collection('tasks').doc(id)

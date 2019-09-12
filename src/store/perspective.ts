@@ -139,14 +139,14 @@ export default {
         })
     },
     addLabelToPerspective({ rootState }, {id, labelId}) {
-      const fire = rootState.firebase.fr.FieldValue as any
+      const fire = rootState.firebase.firestore.FieldValue as any
       if (rootState.fr && rootState.uid)
         rootState.fr.collection('perspectives').doc(id).update({
           includeAndLabels: fire.arrayUnion(labelId),
         })
     },
     addSmartPersFilter({ rootState }, {id, persName}) {
-      const fire = rootState.firebase.fr.FieldValue as any
+      const fire = rootState.firebase.firestore.FieldValue as any
       if (rootState.fr && rootState.uid)
         rootState.fr.collection('perspectives').doc(id).update({
           includeAndSmartPers: fire.arrayUnion(persName),
@@ -159,21 +159,21 @@ export default {
         })
     },
     removeLabelFromPerspective({ rootState }, {id, labelId}) {
-      const fire = rootState.firebase.fr.FieldValue as any
+      const fire = rootState.firebase.firestore.FieldValue as any
       if (rootState.fr && rootState.uid)
         rootState.fr.collection('perspectives').doc(id).update({
           includeAndLabels: fire.arrayRemove(labelId),
         })
     },
     removeSmartPersFilter({ rootState }, {id, persName}) {
-      const fire = rootState.firebase.fr.FieldValue as any
+      const fire = rootState.firebase.firestore.FieldValue as any
       if (rootState.fr && rootState.uid)
         rootState.fr.collection('perspectives').doc(id).update({
           includeAndSmartPers: fire.arrayRemove(persName),
         })
     },
     removeDateFromPerspective({ rootState }, {id, date}) {
-      const fire = rootState.firebase.fr.FieldValue as any
+      const fire = rootState.firebase.firestore.FieldValue as any
       if (rootState.fr && rootState.uid)
         rootState.fr.collection('perspectives').doc(id).update({
           includeAndDates: fire.arrayRemove(date),
@@ -295,7 +295,7 @@ export default {
         })
     },
     addPerspectiveSort({ rootState }, {perspectiveId, sort}) {
-      const fire = rootState.firebase.fr.FieldValue as any
+      const fire = rootState.firebase.firestore.FieldValue as any
       if (rootState.fr && rootState.uid)
         rootState.fr.collection('perspectives').doc(perspectiveId).update({
           sort: fire.arrayUnion(sort),
@@ -654,7 +654,7 @@ export default {
       }
     },
     addDateToPerspective({ rootState }, {id, date}) {
-      const fire = rootState.firebase.fr.FieldValue as any
+      const fire = rootState.firebase.firestore.FieldValue as any
       if (rootState.fr && rootState.uid)
         rootState.fr.collection('perspectives').doc(id).update({
           includeAndDates: fire.arrayUnion(date),
