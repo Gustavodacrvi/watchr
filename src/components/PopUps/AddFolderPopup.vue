@@ -44,7 +44,7 @@ import { ProjectGetters, ProjectActions } from '../../interfaces/store/project'
 })
 export default class SigninPopUp extends Vue {
   @State theme!: IndexState.theme
-  @State pushAlert!: IndexMutations.PushAlert
+  @Mutation pushAlert!: IndexMutations.PushAlert
 
   @project.Getter sortedFoldersByName!: ProjectGetters.SortedFoldersByName
   @project.Action addFolder!: ProjectActions.AddFolder
