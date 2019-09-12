@@ -83,7 +83,7 @@ const store: any = new Vuex.Store({
     selectedTasksType: null,
     selectedTasksPayload: null,
     isLogged: false,
-    firestore: null,
+    fr: null,
     centeredCard: null,
     viewName: '',
     viewType: '',
@@ -107,9 +107,9 @@ const store: any = new Vuex.Store({
       state.currentAppSection = currentAppSection
     },
     saveFirestore(state, firestore) {
-      state.firestore = firestore
-      if (state.firestore)
-        state.firestore.enablePersistence()
+      state.fr = firestore
+      if (state.fr)
+        state.fr.enablePersistence()
           .catch(err => {
             if (err.code === 'failed-precondition')
               state.appError = true
@@ -151,6 +151,7 @@ const store: any = new Vuex.Store({
     },
     pushPopUp(state, compName) {
       const isDesktop = state.windowWidth > MAX_MOBILE_SCREEN_WIDTH
+      state.selectedTasks = []
       if (!isDesktop && compName === '' && state.popUpComponent !== '')
         router.go(-1)
       if (!isDesktop && compName !== '' && state.popUpComponent === '')

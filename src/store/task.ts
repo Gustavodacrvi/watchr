@@ -55,8 +55,8 @@ export default {
   } as Getters,
   actions: {
     getData({ rootState, state }) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('tasks').where('userId', '==', rootState.uid).onSnapshot(snap => {
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('tasks').where('userId', '==', rootState.uid).onSnapshot(snap => {
           const changes = snap.docChanges()
           appUtils.fixStoreChanges(state, changes, 'tasks')
         })
@@ -64,18 +64,18 @@ export default {
     updateTask({ rootState }, {name, priority, projectId, id, saveProject, labels, utc}) {
       const u = timezone().utc()
       const dt = u.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid) {
-        const fire = rootState.firebase.firestore.FieldValue as any
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const fire = rootState.firebase.fr.FieldValue as any
+        const batch = rootState.fr.batch()
 
-        const ref = rootState.firestore.collection('tasks').doc(id)
+        const ref = rootState.fr.collection('tasks').doc(id)
         batch.update(ref, {
           name, priority, labels, projectId,
           lastEditDate: dt,
           ...utc,
         })
         if (projectId && saveProject) {
-          const pro = rootState.firestore.collection('projects').doc(projectId)
+          const pro = rootState.fr.collection('projects').doc(projectId)
           batch.update(pro, {
             tasks: fire.arrayUnion(ref.id),
           })
@@ -85,11 +85,11 @@ export default {
       }
     },
     deleteTasksById({ rootState }, ids: string[]) {
-      if (rootState.firestore && rootState.uid) {
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const batch = rootState.fr.batch()
 
         for (const id of ids) {
-          const ref = rootState.firestore.collection('tasks').doc(id)
+          const ref = rootState.fr.collection('tasks').doc(id)
           batch.delete(ref)
         }
 
@@ -99,12 +99,12 @@ export default {
     addTaskPerspective({ rootState }, {task, perspectiveId, order, position}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid) {
-        const fire = rootState.firebase.firestore.FieldValue as any
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const fire = rootState.firebase.fr.FieldValue as any
+        const batch = rootState.fr.batch()
 
         const ord = order.slice()
-        const ref = rootState.firestore.collection('tasks').doc()
+        const ref = rootState.fr.collection('tasks').doc()
         ord.splice(position, 0, ref.id)
         const t = task as any
         batch.set(ref, {
@@ -121,12 +121,12 @@ export default {
           ...t.utc,
         })
         if (task.projectId) {
-          const pro = rootState.firestore.collection('projects').doc(task.projectId)
+          const pro = rootState.fr.collection('projects').doc(task.projectId)
           batch.update(pro, {
             tasks: fire.arrayUnion(ref.id),
           })
         }
-        const persRef = rootState.firestore.collection('perspectives').doc(perspectiveId)
+        const persRef = rootState.fr.collection('perspectives').doc(perspectiveId)
         batch.update(persRef, {
           order: ord,
         })
@@ -137,11 +137,11 @@ export default {
     addProjectTask({ rootState }, {task, projectId, order, position}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid) {
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const batch = rootState.fr.batch()
 
         const ord = order.slice()
-        const ref = rootState.firestore.collection('tasks').doc()
+        const ref = rootState.fr.collection('tasks').doc()
         ord.splice(position, 0, ref.id)
         const t = task as any
         batch.set(ref, {
@@ -157,7 +157,7 @@ export default {
           checklistOrder: [],
           ...t.utc,
         })
-        const persRef = rootState.firestore.collection('projects').doc(projectId)
+        const persRef = rootState.fr.collection('projects').doc(projectId)
         batch.update(persRef, {
           tasks: ord,
         })
@@ -168,11 +168,11 @@ export default {
     addTask({ rootState }, {priority, name, labels, utc, projectId}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid) {
-        const fire = rootState.firebase.firestore.FieldValue as any
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const fire = rootState.firebase.fr.FieldValue as any
+        const batch = rootState.fr.batch()
 
-        const ref = rootState.firestore.collection('tasks').doc()
+        const ref = rootState.fr.collection('tasks').doc()
         batch.set(ref, {
           name, labels, priority, projectId,
           userId: rootState.uid,
@@ -184,7 +184,7 @@ export default {
           ...utc,
         })
         if (projectId) {
-          const proRef = rootState.firestore.collection('projects').doc(projectId)
+          const proRef = rootState.fr.collection('projects').doc(projectId)
           batch.update(proRef, {
             tasks: fire.arrayUnion(ref.id),
           })
@@ -196,11 +196,11 @@ export default {
     changePrioritysByIds({ rootState }, {ids, priority}) {
       const utc = timezone().utc()
       const date = utc.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid) {
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const batch = rootState.fr.batch()
 
         for (const id of ids) {
-          const ref = rootState.firestore.collection('tasks').doc(id)
+          const ref = rootState.fr.collection('tasks').doc(id)
           batch.update(ref, {
             priority,
             lastEditDate: date,
@@ -213,12 +213,12 @@ export default {
     addTaskLabel({ rootState }, {task, labelId, order, projectId, position, utc}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid) {
-        const fire = rootState.firebase.firestore.FieldValue as any
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const fire = rootState.firebase.fr.FieldValue as any
+        const batch = rootState.fr.batch()
 
         const ord = order.slice()
-        const ref = rootState.firestore.collection('tasks').doc()
+        const ref = rootState.fr.collection('tasks').doc()
         ord.splice(position, 0, ref.id)
         batch.set(ref, {
           projectId: task.projectId,
@@ -233,12 +233,12 @@ export default {
           checklistOrder: [],
           ...utc,
         })
-        const persRef = rootState.firestore.collection('labels').doc(labelId)
+        const persRef = rootState.fr.collection('labels').doc(labelId)
         batch.update(persRef, {
           order: ord,
         })
         if (task.projectId) {
-          const pro = rootState.firestore.collection('projects').doc(task.projectId)
+          const pro = rootState.fr.collection('projects').doc(task.projectId)
           batch.update(pro, {
             tasks: fire.arrayUnion(ref.id),
           })
@@ -250,11 +250,11 @@ export default {
     saveNewDateOfTasks({ rootState }, arr) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid) {
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const batch = rootState.fr.batch()
 
         for (const o of arr) {
-          const ref = rootState.firestore.collection('tasks').doc(o.id)
+          const ref = rootState.fr.collection('tasks').doc(o.id)
           batch.update(ref, {
             date: o.date,
             lastEditDate: date,
@@ -267,8 +267,8 @@ export default {
     saveSubtaskOrder({ rootState }, {taskId, order}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('tasks').doc(taskId).update({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('tasks').doc(taskId).update({
           checklistOrder: order,
           lastEditDate: date,
         })
@@ -276,13 +276,13 @@ export default {
     saveSubTask({ rootState, state }, {taskId, name, id, completed}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const task = state.tasks.find(el => el.id === taskId) as Task
         const i = task.checklist.findIndex(el => el.id === id) as any
         task.checklist[i] = {
           completed, name, id, taskId,
         }
-        rootState.firestore.collection('tasks').doc(taskId).update({
+        rootState.fr.collection('tasks').doc(taskId).update({
           checklist: task.checklist,
           lastEditDate: date,
         })
@@ -291,14 +291,14 @@ export default {
     deleteSubTaskFromTask({ rootState, state }, {taskId, id}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const task = state.tasks.find(el => el.id === taskId) as Task
         let i = task.checklist.findIndex(el => el.id === id) as any
         task.checklist.splice(i, 1)
 
         i = task.checklistOrder.findIndex(el => el === id)
         task.checklistOrder.splice(i, 1)
-        rootState.firestore.collection('tasks').doc(taskId).update({
+        rootState.fr.collection('tasks').doc(taskId).update({
           checklist: task.checklist,
           checklistOrder: task.checklistOrder,
           lastEditDate: date,
@@ -308,8 +308,8 @@ export default {
     addSubTask({ rootState }, {taskId, order, position, name}) {
       const utc = timezone().utc()
       const date = utc.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid) {
-        const fire = rootState.firebase.firestore.FieldValue as any
+      if (rootState.fr && rootState.uid) {
+        const fire = rootState.firebase.fr.FieldValue as any
         let timesRun = 0
         let newId!: string
         while (true) {
@@ -329,7 +329,7 @@ export default {
           taskId,
         }
         order.splice(position, 0, newId)
-        rootState.firestore.collection('tasks').doc(taskId).update({
+        rootState.fr.collection('tasks').doc(taskId).update({
           checklistOrder: order,
           checklist: fire.arrayUnion(subtask),
           lastEditDate: date,
@@ -337,11 +337,11 @@ export default {
       }
     },
     removeTasksFromProject({ rootState }, ids) {
-      if (rootState.firestore && rootState.uid) {
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const batch = rootState.fr.batch()
 
         for (const id of ids) {
-          const ref = rootState.firestore.collection('tasks').doc(id)
+          const ref = rootState.fr.collection('tasks').doc(id)
           batch.update(ref, {
             projectId: '',
           })
@@ -353,8 +353,8 @@ export default {
     toggleCompleteTask({ rootState }, {id, completed}) {
       const utc = timezone().utc()
       const date = utc.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('tasks').doc(id).update({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('tasks').doc(id).update({
           completed, lastEditDate: date,
         })
     },
@@ -362,11 +362,11 @@ export default {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
 
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const task = state.tasks.find(el => el.id === taskId)
         if (task) {
-          const batch = rootState.firestore.batch()
-          const ref = rootState.firestore.collection('tasks').doc()
+          const batch = rootState.fr.batch()
+          const ref = rootState.fr.collection('tasks').doc()
           batch.set(ref, {
             checklist: task.checklist,
             checklistOrder: task.checklistOrder,
@@ -387,12 +387,12 @@ export default {
     unCompleteSubtasks({ rootState, state }, taskId) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const task = state.tasks.find(el => el.id === taskId)
         if (task) {
           for (const sub of task.checklist)
             sub.completed = false
-          rootState.firestore.collection('tasks').doc(taskId).update({
+          rootState.fr.collection('tasks').doc(taskId).update({
             checklist: task.checklist,
             lastEditDate: date,
           })
@@ -400,12 +400,12 @@ export default {
       }
     },
     addMultipleLabelsToMultipleTasks({ rootState, state }, {taskIds, labIds}) {
-      if (rootState.firestore && rootState.uid) {
-        const batch = rootState.firestore.batch()
-        const fire = rootState.firebase.firestore.FieldValue as any
+      if (rootState.fr && rootState.uid) {
+        const batch = rootState.fr.batch()
+        const fire = rootState.firebase.fr.FieldValue as any
 
         for (const id of taskIds) {
-          const ref = rootState.firestore.collection('tasks').doc(id)
+          const ref = rootState.fr.collection('tasks').doc(id)
           batch.update(ref, {
             labels: fire.arrayUnion(...labIds),
           })

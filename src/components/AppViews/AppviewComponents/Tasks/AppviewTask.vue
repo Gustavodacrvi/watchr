@@ -34,9 +34,6 @@
                 class='content-icon fas fa-exclamation fa-sm'
                 :style='{color: exclamationColor}'
               ></i>
-              <i v-if='taskLabels && taskLabels.length > 0'
-                class='fade content-icon fas fa-tags fa-sm'
-              ></i>
               <i v-if='getChecklist && getChecklist.length > 0'
                 class='fade content-icon fas fa-checklist fa-list-ul'
               ></i>
@@ -471,7 +468,7 @@ export default class AppviewTask extends Vue {
   get showOverdueIcon(): boolean {
     if (this.fixedPers === 'Overdue' || !this.task.date) return false
     const {today, saved} = this.todayMomAndSavedMom()
-    return saved.isBefore(today, 'day')
+    return saved.isBefore(today, 'day') && !this.task.completed
   }
   get showTomorrowIcon(): boolean {
     if (this.fixedPers === 'Tomorrow' || !this.task.date) return false

@@ -30,8 +30,8 @@ export default {
   } as {},
   actions: {
     getData({ rootState, state }) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('settings').doc(rootState.uid).onSnapshot(snap => {
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('settings').doc(rootState.uid).onSnapshot(snap => {
           const data = snap.data()
           if (data) {
             state.timeZone = data.timeZone
@@ -43,8 +43,8 @@ export default {
         })
     },
     saveSettings({ rootState }, s) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('settings').doc(rootState.uid).update({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('settings').doc(rootState.uid).update({
           timeZone: s.timeZone,
           dateFormat: s.dateFormat,
           timeFormat: s.timeFormat,
@@ -57,8 +57,8 @@ export default {
         dispatch('addDefaultSettings', rootState.uid)
     },
     addDefaultSettings({ rootState }, id: string) {
-      if (rootState.firestore)
-        rootState.firestore.collection('settings').doc(id).set({
+      if (rootState.fr)
+        rootState.fr.collection('settings').doc(id).set({
           userId: id,
           timeZone: timezone.tz.guess(),
           dateFormat: 'D-M-Y',

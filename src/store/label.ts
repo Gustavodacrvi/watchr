@@ -40,8 +40,8 @@ export default {
   } as Getters,
   actions: {
     saveLabelPosition({ rootState }, ids) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('labelsOrder').doc(rootState.uid)
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('labelsOrder').doc(rootState.uid)
           .update({
             order: ids,
           })
@@ -55,20 +55,20 @@ export default {
       dispatch('saveLabelPosition', ids)
     },
     saveLabelTaskOrder({ rootState }, {id, order}) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('labels').doc(id).update({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('labels').doc(id).update({
           order,
         })
     },
     getData({ rootState, state }) {
-      if (rootState.firestore && rootState.uid) {
-        rootState.firestore.collection('labelsOrder').doc(rootState.uid)
+      if (rootState.fr && rootState.uid) {
+        rootState.fr.collection('labelsOrder').doc(rootState.uid)
           .onSnapshot(snap => {
             const data = snap.data()
             if (data)
               state.order = data.order
           })
-        rootState.firestore.collection('labels').where('userId', '==', rootState.uid)
+        rootState.fr.collection('labels').where('userId', '==', rootState.uid)
           .onSnapshot(snap => {
           const changes = snap.docChanges()
           appUtils.fixStoreChanges(state, changes, 'labels')
@@ -76,33 +76,33 @@ export default {
       }
     },
     addLabel({ rootState }, name) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('labels').add({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('labels').add({
           name,
           userId: rootState.uid,
           order: [],
         })
     },
     deleteLabelsById({ rootState }, ids) {
-      if (rootState.firestore && rootState.uid) {
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const batch = rootState.fr.batch()
 
         for (const id of ids)
-          batch.delete(rootState.firestore.collection('labels').doc(id))
+          batch.delete(rootState.fr.collection('labels').doc(id))
 
         batch.commit()
       }
     },
     editLabelNameById({ rootState }, {id, name}) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('labels').doc(id).update({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('labels').doc(id).update({
           name,
         })
     },
     addLabelsOrder({ rootState }, id) {
-      if (rootState.firestore)
+      if (rootState.fr)
         return new Promise(resolve => {
-          const fire = rootState.firestore as any
+          const fire = rootState.fr as any
           const batch = fire.batch()
 
           let ref = fire.collection('labels').doc()

@@ -84,45 +84,45 @@ export default {
   } as Getters,
   actions: {
     addFoldersOrder({ rootState }, id) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('foldersOrder').doc(id).set({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('foldersOrder').doc(id).set({
           order: [],
           userId: id,
         })
     },
     editProject({ rootState }, {name, description, id}) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('projects').doc(id).update({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('projects').doc(id).update({
           name, description,
         })
     },
     editFolderNameById({ rootState }, {name, id}) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('folders').doc(id).update({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('folders').doc(id).update({
           name,
         })
     },
     deleteProjectById({ rootState, state }, {projectId, projectTasks, headings}) {
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const project = state.projects.find(el => el.id === projectId)
         if (project) {
-          const batch = rootState.firestore.batch()
+          const batch = rootState.fr.batch()
 
           for (const i of projectTasks) {
-            const ref = rootState.firestore.collection('tasks').doc(i)
+            const ref = rootState.fr.collection('tasks').doc(i)
             batch.update(ref, {
               projectId: '',
             })
           }
           for (const tasks of headings)
             for (const i of tasks) {
-              const ref = rootState.firestore.collection('tasks').doc(i)
+              const ref = rootState.fr.collection('tasks').doc(i)
               batch.update(ref, {
                 projectId: '',
               })
             }
 
-          const proRef = rootState.firestore.collection('projects').doc(projectId)
+          const proRef = rootState.fr.collection('projects').doc(projectId)
           batch.delete(proRef)
 
           batch.commit()
@@ -130,20 +130,20 @@ export default {
       }
     },
     toggleProjectPin({ rootState, state }, id) {
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const pro = state.projects.find(el => el.id === id) as Project
-        rootState.firestore.collection('projects').doc(id).update({
+        rootState.fr.collection('projects').doc(id).update({
           bindOnOverview: !pro.bindOnOverview,
         })
       }
     },
     moveProjectsFromFolder({ rootState }, {from, to, ids}) {
-      if (rootState.firestore && rootState.uid) {
-        const fire = rootState.firebase.firestore.FieldValue as any
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const fire = rootState.firebase.fr.FieldValue as any
+        const batch = rootState.fr.batch()
 
-        const fromRef = rootState.firestore.collection('folders').doc(from)
-        const toRef = rootState.firestore.collection('folders').doc(to)
+        const fromRef = rootState.fr.collection('folders').doc(from)
+        const toRef = rootState.fr.collection('folders').doc(to)
 
         batch.update(fromRef, {
           projects: fire.arrayRemove(...ids),
@@ -156,22 +156,22 @@ export default {
       }
     },
     deleteHeadingById({ rootState, state }, {headingId, projectId}) {
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const project = state.projects.find(el => el.id === projectId)
         if (project) {
           const headings = project.headings.slice()
           const i = headings.findIndex(el => el.id === headingId)
           if (i > -1) {
-            const fire = rootState.firebase.firestore.FieldValue as any
+            const fire = rootState.firebase.fr.FieldValue as any
             const ids = headings[i].tasks.slice()
             headings.splice(i, 1)
 
             if (ids.length > 0)
-              rootState.firestore.collection('projects').doc(projectId).update({
+              rootState.fr.collection('projects').doc(projectId).update({
                 tasks: fire.arrayUnion(...ids),
                 headings,
               })
-            else rootState.firestore.collection('projects').doc(projectId).update({
+            else rootState.fr.collection('projects').doc(projectId).update({
               headings,
             })
           }
@@ -179,7 +179,7 @@ export default {
       }
     },
     moveTasksFromHeadingToHeading({ rootState, state }, {projectId, ids, from, to}) {
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const project = state.projects.find(el => el.id === projectId)
         if (project) {
           const headings = project.headings.slice()
@@ -195,7 +195,7 @@ export default {
               const i = fromHead.tasks.findIndex(el => el === id)
               if (i > -1) fromHead.tasks.splice(i, 1)
             }
-            rootState.firestore.collection('projects').doc(projectId).update({
+            rootState.fr.collection('projects').doc(projectId).update({
               headings,
             })
           }
@@ -203,13 +203,13 @@ export default {
       }
     },
     moveTasksFromHeadingToRoot({ rootState, state }, {projectId, ids, from}) {
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const project = state.projects.find(el => el.id === projectId)
         if (project) {
           const headings = project.headings.slice()
           const i = headings.findIndex(el => el.id === from)
           if (i > -1) {
-            const fire = rootState.firebase.firestore.FieldValue as any
+            const fire = rootState.firebase.fr.FieldValue as any
             const head = headings[i]
             const idsToRemove = []
             for (const id of head.tasks)
@@ -218,7 +218,7 @@ export default {
               const j = head.tasks.findIndex(el => el === id)
               if (j > -1) head.tasks.splice(j, 1)
             }
-            rootState.firestore.collection('projects').doc(projectId).update({
+            rootState.fr.collection('projects').doc(projectId).update({
               tasks: fire.arrayUnion(...ids),
               headings,
             })
@@ -227,7 +227,7 @@ export default {
       }
     },
     updateHeadingsOrder({ rootState, state }, {ids, projectId}) {
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const project = state.projects.find(el => el.id === projectId)
         if (project) {
           const headings = []
@@ -235,7 +235,7 @@ export default {
             const head = project.headings.find(el => el.id === id)
             if (head) headings.push(head)
           }
-          rootState.firestore.collection('projects').doc(projectId).update({
+          rootState.fr.collection('projects').doc(projectId).update({
             headings,
           })
         }
@@ -244,12 +244,12 @@ export default {
     addProject({ rootState }, {name, foldId, description}) {
       const u = timezone().utc()
       const dt = u.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid) {
-        const fire = rootState.firebase.firestore.FieldValue as any
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const fire = rootState.firebase.fr.FieldValue as any
+        const batch = rootState.fr.batch()
 
-        const proRef = rootState.firestore.collection('projects').doc()
-        const foldRef = rootState.firestore.collection('folders').doc(foldId)
+        const proRef = rootState.fr.collection('projects').doc()
+        const foldRef = rootState.fr.collection('folders').doc(foldId)
 
         batch.set(proRef, {
           name, description,
@@ -270,17 +270,17 @@ export default {
       }
     },
     addTasksToProject({ rootState }, {projectId, ids}) {
-      if (rootState.firestore && rootState.uid) {
-        const fire = rootState.firebase.firestore.FieldValue as any
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const fire = rootState.firebase.fr.FieldValue as any
+        const batch = rootState.fr.batch()
 
         for (const id of ids) {
-          const taskRef = rootState.firestore.collection('tasks').doc(id)
+          const taskRef = rootState.fr.collection('tasks').doc(id)
           batch.update(taskRef, {
             projectId,
           })
         }
-        const ref = rootState.firestore.collection('projects').doc(projectId)
+        const ref = rootState.fr.collection('projects').doc(projectId)
         batch.update(ref, {
           tasks: fire.arrayUnion(...ids),
         })
@@ -289,11 +289,11 @@ export default {
       }
     },
     addProjectHeadings({ rootState, state }, {index, name, id, ids}) {
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const project = state.projects.find(el => el.id === id)
 
         if (project) {
-          const fire = rootState.firebase.firestore.FieldValue as any
+          const fire = rootState.firebase.fr.FieldValue as any
 
           let newId = project.headings.length
           while (true) {
@@ -310,19 +310,19 @@ export default {
             tasks: ids, name,
           })
           if (ids.length > 0)
-            rootState.firestore.collection('projects').doc(id).update({
+            rootState.fr.collection('projects').doc(id).update({
               headings,
               tasks: fire.arrayRemove(...ids),
             })
           else
-            rootState.firestore.collection('projects').doc(id).update({
+            rootState.fr.collection('projects').doc(id).update({
               headings,
             })
         }
       }
     },
     addProjectHeadingFromHeading({ rootState, state }, {position, name, ids, projectId, from}) {
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const project = state.projects.find(el => el.id === projectId)
         if (project) {
           let newId = project.headings.length
@@ -343,28 +343,28 @@ export default {
             id: '' + newId,
             tasks: ids, name,
           })
-          rootState.firestore.collection('projects').doc(projectId).update({
+          rootState.fr.collection('projects').doc(projectId).update({
             headings,
           })
         }
       }
     },
     updateProjectTasks({ rootState }, {id, ids}) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('projects').doc(id).update({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('projects').doc(id).update({
           tasks: ids,
         })
     },
     deleteFolderAndProjectsByFolderId({ rootState, state }, id) {
-      if (rootState.firestore && rootState.uid) {
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const batch = rootState.fr.batch()
         const fold = state.folders.find(el => el.id === id) as Folder
 
-        const ref = rootState.firestore.collection('folders').doc(fold.id)
+        const ref = rootState.fr.collection('folders').doc(fold.id)
         batch.delete(ref)
 
         for (const i of fold.projects) {
-          const proRef = rootState.firestore.collection('projects').doc(i)
+          const proRef = rootState.fr.collection('projects').doc(i)
           batch.delete(proRef)
         }
 
@@ -372,18 +372,18 @@ export default {
       }
     },
     getData({ rootState, state }) {
-      if (rootState.firestore && rootState.uid) {
-        rootState.firestore.collection('foldersOrder').doc(rootState.uid)
+      if (rootState.fr && rootState.uid) {
+        rootState.fr.collection('foldersOrder').doc(rootState.uid)
           .onSnapshot(snap => {
             const data = snap.data()
             if (data)
               state.foldersOrder = data.order
           })
-        rootState.firestore.collection('folders').where('userId', '==', rootState.uid).onSnapshot(snap => {
+        rootState.fr.collection('folders').where('userId', '==', rootState.uid).onSnapshot(snap => {
           const changes = snap.docChanges()
           appUtils.fixStoreChanges(state, changes, 'folders')
         })
-        rootState.firestore.collection('projects').where('userId', '==', rootState.uid)
+        rootState.fr.collection('projects').where('userId', '==', rootState.uid)
           .onSnapshot(snap => {
             const changes = snap.docChanges()
             appUtils.fixStoreChanges(state, changes, 'projects')
@@ -391,22 +391,22 @@ export default {
       }
     },
     addFolder({ rootState }, name) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('folders').add({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('folders').add({
           name, projects: [],
           userId: rootState.uid,
         })
     },
     moveTasksFromRootToHeading({ rootState, state }, {to, projectId, ids}) {
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const project = state.projects.find(el => el.id === projectId)
         if (project) {
           const headings = project.headings.slice()
           const i = headings.findIndex(el => el.id === to)
           if (i > -1) {
-            const fire = rootState.firebase.firestore.FieldValue as any
+            const fire = rootState.firebase.fr.FieldValue as any
             headings[i].tasks = ids
-            rootState.firestore.collection('projects').doc(projectId).update({
+            rootState.fr.collection('projects').doc(projectId).update({
               headings,
               tasks: fire.arrayRemove(...ids),
             })
@@ -415,14 +415,14 @@ export default {
       }
     },
     saveProjectHeadingName({ rootState, state }, {projectId, name, headingId}) {
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const project = state.projects.find(el => el.id === projectId)
         if (project) {
           const headings = project.headings.slice()
           const i = headings.findIndex(el => el.id === headingId)
           if (i > -1) {
             headings[i].name = name
-            rootState.firestore.collection('projects').doc(projectId).update({
+            rootState.fr.collection('projects').doc(projectId).update({
               headings,
             })
           }
@@ -432,16 +432,16 @@ export default {
     addProjectHeadingTask({ rootState, state }, {projectId, headingId, task, order, position}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const project = state.projects.find(el => el.id === projectId)
         if (project) {
           const headings = project.headings.slice()
           const i = headings.findIndex(el => el.id === headingId)
           if (i > -1) {
-            const batch = rootState.firestore.batch()
+            const batch = rootState.fr.batch()
 
             const ord = order.slice()
-            const ref = rootState.firestore.collection('tasks').doc()
+            const ref = rootState.fr.collection('tasks').doc()
             ord.splice(position, 0, ref.id)
             headings[i].tasks = ord
             const t = task as any
@@ -458,7 +458,7 @@ export default {
               checklistOrder: [],
               ...t.utc,
             })
-            const persRef = rootState.firestore.collection('projects').doc(projectId)
+            const persRef = rootState.fr.collection('projects').doc(projectId)
             batch.update(persRef, {
               headings,
             })
@@ -469,14 +469,14 @@ export default {
       }
     },
     updateHeadingsTaskOrder({ rootState, state }, {projectId, ids, headingId}) {
-      if (rootState.firestore && rootState.uid) {
+      if (rootState.fr && rootState.uid) {
         const project = state.projects.find(el => el.id === projectId)
         if (project) {
           const headings = project.headings.slice()
           const i = project.headings.findIndex(el => el.id === headingId)
           if (i > -1) {
             headings[i].tasks = ids
-            rootState.firestore.collection('projects').doc(projectId).update({
+            rootState.fr.collection('projects').doc(projectId).update({
               headings,
             })
           }
@@ -484,8 +484,8 @@ export default {
       }
     },
     saveFoldersOrder({ rootState }, ids) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('foldersOrder').doc(rootState.uid).update({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('foldersOrder').doc(rootState.uid).update({
           order: ids,
         })
     },

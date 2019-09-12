@@ -106,8 +106,8 @@ export default {
   } as Getters,
   actions: {
     addPerspective({ rootState }, obj) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('perspectives').add({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('perspectives').add({
           userId: rootState.uid,
           order: [],
           sort: [],
@@ -133,76 +133,76 @@ export default {
         })
     },
     editPerspective({ rootState, state }, obj) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('perspectives').doc(obj.id).update({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('perspectives').doc(obj.id).update({
           ...obj,
         })
     },
     addLabelToPerspective({ rootState }, {id, labelId}) {
-      const fire = rootState.firebase.firestore.FieldValue as any
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('perspectives').doc(id).update({
+      const fire = rootState.firebase.fr.FieldValue as any
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('perspectives').doc(id).update({
           includeAndLabels: fire.arrayUnion(labelId),
         })
     },
     addSmartPersFilter({ rootState }, {id, persName}) {
-      const fire = rootState.firebase.firestore.FieldValue as any
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('perspectives').doc(id).update({
+      const fire = rootState.firebase.fr.FieldValue as any
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('perspectives').doc(id).update({
           includeAndSmartPers: fire.arrayUnion(persName),
         })
     },
     savePerspectivePriority({ rootState }, {id, priority}) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('perspectives').doc(id).update({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('perspectives').doc(id).update({
           priority,
         })
     },
     removeLabelFromPerspective({ rootState }, {id, labelId}) {
-      const fire = rootState.firebase.firestore.FieldValue as any
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('perspectives').doc(id).update({
+      const fire = rootState.firebase.fr.FieldValue as any
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('perspectives').doc(id).update({
           includeAndLabels: fire.arrayRemove(labelId),
         })
     },
     removeSmartPersFilter({ rootState }, {id, persName}) {
-      const fire = rootState.firebase.firestore.FieldValue as any
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('perspectives').doc(id).update({
+      const fire = rootState.firebase.fr.FieldValue as any
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('perspectives').doc(id).update({
           includeAndSmartPers: fire.arrayRemove(persName),
         })
     },
     removeDateFromPerspective({ rootState }, {id, date}) {
-      const fire = rootState.firebase.firestore.FieldValue as any
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('perspectives').doc(id).update({
+      const fire = rootState.firebase.fr.FieldValue as any
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('perspectives').doc(id).update({
           includeAndDates: fire.arrayRemove(date),
         })
     },
     saveSmartOrder({ rootState }, ids) {
-      if (rootState.firestore && rootState.uid)
-      rootState.firestore.collection('perspectivesOrder').doc(rootState.uid)
+      if (rootState.fr && rootState.uid)
+      rootState.fr.collection('perspectivesOrder').doc(rootState.uid)
         .update({
           smartOrder: ids,
         })
     },
     saveCustomOrder({ rootState }, ids) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('perspectivesOrder').doc(rootState.uid)
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('perspectivesOrder').doc(rootState.uid)
           .update({
             customOrder: ids,
           })
     },
     togglePerspectivesPin({ rootState, state }, pins) {
-      if (rootState.firestore && rootState.uid) {
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const batch = rootState.fr.batch()
 
         for (const pin of pins) {
           const per: any = state.perspectives.find(el => el.id === pin.id)
           let finalPin: boolean = !per.pin
           if (pin.pin)
             finalPin = pin.pin
-          const ref = rootState.firestore.collection('perspectives').doc(pin.id)
+          const ref = rootState.fr.collection('perspectives').doc(pin.id)
           batch.update(ref, {
             pin: finalPin,
           })
@@ -212,11 +212,11 @@ export default {
       }
     },
     deletePerspectivesById({ rootState }, ids) {
-      if (rootState.firestore && rootState.uid) {
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const batch = rootState.fr.batch()
 
         for (const id of ids) {
-          const ref = rootState.firestore.collection('perspectives').doc(id)
+          const ref = rootState.fr.collection('perspectives').doc(id)
           batch.delete(ref)
         }
 
@@ -224,23 +224,23 @@ export default {
       }
     },
     saveSmartPerspective({ rootState }, obj) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('perspectives').doc(obj.id).update({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('perspectives').doc(obj.id).update({
           alwaysShowCreationDate: obj.alwaysShowCreationDate,
           alwaysShowLastEditDate: obj.alwaysShowLastEditDate,
           alwaysShowTaskLabels: obj.alwaysShowTaskLabels,
         })
     },
     togglePerspectivesNumberOfTasks({ rootState, state }, arr) {
-      if (rootState.firestore && rootState.uid) {
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const batch = rootState.fr.batch()
 
         for (const show of arr) {
           const per: any = state.perspectives.find(el => el.id === show.id)
           let finalShow = !per.numberOfTasks
           if (show.show)
             finalShow = show.show
-          const ref = rootState.firestore.collection('perspectives').doc(show.id)
+          const ref = rootState.fr.collection('perspectives').doc(show.id)
           batch.update(ref, {
             numberOfTasks: finalShow,
           })
@@ -250,15 +250,15 @@ export default {
       }
     },
     togglePerspectivesShowWhenNotEmpty({ rootState, state }, arr) {
-      if (rootState.firestore && rootState.uid) {
-        const batch = rootState.firestore.batch()
+      if (rootState.fr && rootState.uid) {
+        const batch = rootState.fr.batch()
 
         for (const show of arr) {
           const per: any = state.perspectives.find(el => el.id === show.id)
           let finalShow = !per.showWhenNotEmpty
           if (show.show)
             finalShow = show.show
-          const ref = rootState.firestore.collection('perspectives').doc(show.id)
+          const ref = rootState.fr.collection('perspectives').doc(show.id)
           batch.update(ref, {
             showWhenNotEmpty: finalShow,
           })
@@ -268,42 +268,42 @@ export default {
       }
     },
     saveTaskOrder({ rootState }, {id, order}) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('perspectives').doc(id).update({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('perspectives').doc(id).update({
           order,
         })
     },
     getData({ rootState, state }) {
-      if (rootState.firestore && rootState.uid) {
-        rootState.firestore.collection('perspectivesOrder').where('userId', '==', rootState.uid).onSnapshot(snapS => {
+      if (rootState.fr && rootState.uid) {
+        rootState.fr.collection('perspectivesOrder').where('userId', '==', rootState.uid).onSnapshot(snapS => {
           const changs = snapS.docChanges()
           for (const change of changs) {
             state.smartOrder = change.doc.data().smartOrder
             state.customOrder = change.doc.data().customOrder
           }
         })
-        rootState.firestore.collection('perspectives').where('userId', '==', rootState.uid).onSnapshot(snap => {
+        rootState.fr.collection('perspectives').where('userId', '==', rootState.uid).onSnapshot(snap => {
           const changes = snap.docChanges()
           appUtils.fixStoreChanges(state, changes, 'perspectives')
         })
       }
     },
     savePerspectiveTaskSort({ rootState }, {perspectiveId, sort}) {
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('perspectives').doc(perspectiveId).update({
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('perspectives').doc(perspectiveId).update({
           sort,
         })
     },
     addPerspectiveSort({ rootState }, {perspectiveId, sort}) {
-      const fire = rootState.firebase.firestore.FieldValue as any
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('perspectives').doc(perspectiveId).update({
+      const fire = rootState.firebase.fr.FieldValue as any
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('perspectives').doc(perspectiveId).update({
           sort: fire.arrayUnion(sort),
         })
     },
     addDefaultPerspectives({ rootState }, {id, someday, anytime}) {
-      if (rootState.firestore) {
-        const batch = rootState.firestore.batch()
+      if (rootState.fr) {
+        const batch = rootState.fr.batch()
 
         const perspectives: any[] = [
           {
@@ -566,7 +566,7 @@ export default {
 
         const ids: string[] = []
         for (const per of perspectives) {
-          const ref = rootState.firestore.collection('perspectives').doc()
+          const ref = rootState.fr.collection('perspectives').doc()
           ids.push(ref.id)
           const obj: any = {
             userId: id,
@@ -601,10 +601,10 @@ export default {
             obj.description = per.description
           batch.set(ref, obj)
         }
-        let orderRef = rootState.firestore.collection('perspectivesOrder').doc(id)
+        let orderRef = rootState.fr.collection('perspectivesOrder').doc(id)
         const ids2 = []
         for (const per of customPerspectives) {
-          const ref = rootState.firestore.collection('perspectives').doc()
+          const ref = rootState.fr.collection('perspectives').doc()
           ids2.push(ref.id)
           const obj: any = {
             userId: id,
@@ -643,7 +643,7 @@ export default {
             per.includeCustomLabels = [anytime]
           batch.set(ref, obj)
         }
-        orderRef = rootState.firestore.collection('perspectivesOrder').doc(id)
+        orderRef = rootState.fr.collection('perspectivesOrder').doc(id)
         batch.set(orderRef, {
           userId: id,
           smartOrder: ids,
@@ -654,9 +654,9 @@ export default {
       }
     },
     addDateToPerspective({ rootState }, {id, date}) {
-      const fire = rootState.firebase.firestore.FieldValue as any
-      if (rootState.firestore && rootState.uid)
-        rootState.firestore.collection('perspectives').doc(id).update({
+      const fire = rootState.firebase.fr.FieldValue as any
+      if (rootState.fr && rootState.uid)
+        rootState.fr.collection('perspectives').doc(id).update({
           includeAndDates: fire.arrayUnion(date),
         })
     },

@@ -147,10 +147,6 @@ export default class AppviewTags extends Vue {
   margin-bottom: 5px;
 }
 
-.tags + .tags {
-  margin-top: 6px;
-}
-
 .tag {
   margin-right: 4px;
   margin-top: 3px;
