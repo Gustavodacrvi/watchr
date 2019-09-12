@@ -10,7 +10,7 @@
       <span class='txt big' :class='theme'>{{ obj.name }}</span>
       <span v-if='obj.faded' class='txt faded' :class='theme'>{{ obj.faded }}</span>
       <transition name="fade">
-        <div class="right" v-if="onHover">
+        <div class="right" v-if="onHover || !isDesktop">
           <icon-options v-if="options && options.length > 0"
             handle='ellipsis-h'
             size='lg'
@@ -55,9 +55,9 @@
 <script lang='ts'>
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { State } from 'vuex-class'
+import { State, Getter } from 'vuex-class'
 
-import { IndexState } from '../../../../interfaces/store/index'
+import { IndexState, IndexGetters } from '../../../../interfaces/store/index'
 import { ListIcon } from '@/interfaces/app'
 
 import FormButton from '@/components/PopUps/FormComponents/FormButton.vue'
@@ -73,6 +73,7 @@ import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewI
 })
 export default class AppviewHeading extends Vue {
   @State theme!: IndexState.theme
+  @Getter isDesktop!: IndexGetters.IsDesktop
 
   @Prop(Object) obj!: {name: string, faded?: string}
   @Prop(Array) options!: ListIcon[]

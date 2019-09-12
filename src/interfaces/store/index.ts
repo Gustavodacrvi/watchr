@@ -21,7 +21,7 @@ export namespace IndexState {
   export type navBarTitle = string
   export type windowWidth = number
   export type popUpPayload = any | SimpleAdder
-  export type firestore = firebase.firestore.Firestore | null
+  export type fr = firebase.firestore.Firestore | null
   export type centeredCard = CenteredCard | null
   export type firebase = any
   export type navBarOptions = ListIcon[]
@@ -36,7 +36,7 @@ export interface State {
   selectedTasks: IndexState.selectedTasks
   popUpPayload: IndexState.popUpPayload
   appBarState: IndexState.appBarState
-  firestore: IndexState.firestore
+  fr: IndexState.fr
   isLogged: IndexState.isLogged
   viewName: IndexState.viewName
   centeredCard: IndexState.centeredCard
