@@ -255,11 +255,10 @@ export default class PerspectiveAppview extends Mixins(PersMixin) {
       })
   }
   onUpdate(ids: string[]) {
-    const filtered = ids.filter(el => el !== 'task-adder')
-    if (!appUtils.arraysEqual(filtered, this.pers.order))
+    if (!appUtils.arraysEqual(ids, this.pers.order))
       this.saveTaskOrder({
         id: this.pers.id,
-        order: ids.filter(el => el !== 'task-adder'),
+        order: ids,
       })
     this.justUpdated = true
   }

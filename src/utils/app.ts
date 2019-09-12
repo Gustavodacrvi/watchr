@@ -39,6 +39,16 @@ export default {
     else saved = timezone.tz(`${date} ${time}`, 'Y-M-D HH:mm', 'UTC').tz(timeZone)
     return {saved, today}
   },
+  removeClonedItems(arr: any[]) {
+    const set = new Set()
+    const finalArr = []
+    for (const item of arr)
+      if (!set.has(item)) {
+        finalArr.push(item)
+        set.add(item)
+      }
+    return finalArr
+  },
   filterTasksBySmartPerspective(name: string, tasks: Task[], timeZone: string, startOfTheWeek: string): Task[] {
     const weekFilter = (els: Task[], week: string): Task[] => {
       return tasks.filter(el => {
@@ -181,7 +191,7 @@ export default {
       if (lab)
         sorted.push(lab)
     }
-    return sorted
+    return this.removeClonedItems(sorted)
   },
   arraysEqual(arr1: any[], arr2: any[]): boolean {
     if (arr1.length !== arr2.length)
