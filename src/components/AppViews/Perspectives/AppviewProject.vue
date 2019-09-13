@@ -201,7 +201,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
       })
     this.emptySelected()
   }
-  addTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any}) {
+  addTask(obj: any) {
     if (this.prj) {
       const p = this.prj as Project
       this.addProjectTask({
@@ -211,6 +211,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
           labels: obj.labels,
           utc: obj.utc,
         },
+        periodic: obj.periodic,
         projectId: p.id,
         position: obj.position,
         order: p.tasks,
@@ -223,8 +224,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
         name, headingId, projectId: this.prj.id,
       })
   }
-  // tslint:disable-next-line:max-line-length
-  addTaskInProjectHeading(obj: {name: string, priority: string, position: number, labels: string[], order: string[], utc: any, parentId: string}) {
+  addTaskInProjectHeading(obj: any) {
     if (this.prj) {
       const p = this.prj as Project
       this.addProjectHeadingTask({
@@ -234,6 +234,7 @@ export default class ProjectAppview extends Mixins(PersMixin) {
           labels: obj.labels,
           utc: obj.utc,
         },
+        periodic: obj.periodic,
         headingId: obj.parentId,
         projectId: p.id,
         position: obj.position,

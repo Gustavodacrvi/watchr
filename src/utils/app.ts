@@ -2,7 +2,7 @@
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
 
-import { Task, TaskInputObj, Perspective } from '@/interfaces/app'
+import { Task, TaskInputObj, Perspective, PeriodicObject } from '@/interfaces/app'
 
 import timezone from 'moment-timezone'
 import { SetState } from '@/interfaces/store/settings'
@@ -51,75 +51,154 @@ export default {
   },
   filterTasksBySmartPerspective(name: string, tasks: Task[], timeZone: string, startOfTheWeek: string): Task[] {
     const weekFilter = (els: Task[], week: string): Task[] => {
-      return tasks.filter(el => {
-        if (el.date) {
-          const {saved} = this.getMomentsOutOfTask(el.date, timeZone)
-          return saved.format('dddd') === week
+      return tasks.filter(t => {
+        if (t.date || t.periodic) {
+          const date = t.date as string
+          if (!t.periodic) {
+            const {saved} = this.getMomentsOutOfTask(date, timeZone)
+            return saved.format('dddd') === week
+          } else if (t.periodic && t.type === 'interval') {
+            const first = timezone(t.firstPeriodicDay, 'Y-M-D')
+            let i = 0
+            while (true) {
+              if (first.format('dddd') === week) return true
+              first.add(t.periodicInterval, 'd')
+              i++
+              if (i > 100) return false
+            }
+          } else if (t.periodic && t.type === 'weekdays')
+            if (t.weekDays !== null) return t.weekDays.includes(week)
         }
         return false
       })
     }
     switch (name) {
       case 'Inbox': {
-        return tasks.filter(el => el.labels.length === 0 && !el.date && el.projectId === '')
+        return tasks.filter(el => el.labels.length === 0 && !el.date && el.projectId === '' && !el.periodic)
       }
       case 'Have tags': return tasks.filter(el => el.labels.length > 0)
       case `Doesn't have tags`: return tasks.filter(el => el.labels.length === 0)
       case 'Today': {
-        return tasks.filter(el => {
-          if (!el.date) return false
-          const {today, saved} = this.getMomentsOutOfTask(el.date, timeZone)
-          const areSame = today.isSame(saved, 'day')
-          return areSame
-        })
-      }
-      case 'Next week': {
-        return tasks.filter(el => {
-          if (el.date) {
-            const {today, saved} = this.getMomentsOutOfTask(el.date, timeZone)
-            const start = this.getNextWeek(today.clone(), startOfTheWeek)
-            const end = start.clone().add(6, 'd')
-            return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
+        return tasks.filter(t => {
+          if (t.date || t.periodic) {
+            const date = t.date as string
+            if (!t.periodic) {
+              const {today, saved} = this.getMomentsOutOfTask(date, timeZone)
+              return today.isSame(saved, 'day')
+            } else if (t.periodic && t.type === 'interval') {
+              const today = timezone()
+              const first = timezone(t.firstPeriodicDay, 'Y-M-D')
+              const diff = today.diff(first, 'days')
+              return diff % t.periodicInterval === 0 && t.times !== 0
+            } else if (t.periodic && t.type === 'weekdays')
+              if (t.weekDays === null) return true && t.times !== 0
+              else return t.weekDays.includes(timezone().format('dddd'))
           }
           return false
         })
       }
+      case 'Next week': {
+        return tasks.filter(t => {
+          if (t.date || t.periodic)
+            if (!t.periodic) {
+              const date = t.date as string
+              const {today, saved} = this.getMomentsOutOfTask(date, timeZone)
+              const start = this.getNextWeek(today.clone(), startOfTheWeek)
+              const end = start.clone().add(6, 'd')
+              return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
+            } else if (t.periodic && t.type === 'interval') {
+              const start = this.getNextWeek(timezone().clone(), startOfTheWeek)
+              const end = start.clone().add(6, 'd')
+              const first = timezone(t.firstPeriodicDay, 'Y-M-D')
+              while (true) {
+                if (start.isSameOrBefore(first, 'day') && end.isSameOrAfter(first, 'day')) return true
+                first.add(t.periodicInterval, 'd')
+                if (first.isAfter(end, 'day')) return false
+              }
+            } else if (t.periodic && t.type === 'weekdays') return true
+          return false
+        })
+      }
       case 'This week': {
-        return tasks.filter(el => {
-          if (el.date) {
-            const {today, saved} = this.getMomentsOutOfTask(el.date, timeZone)
-            const start = this.getNextWeek(today.clone(), startOfTheWeek).subtract(6, 'd')
-            const end = start.clone().add(6, 'd')
-            return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
+        return tasks.filter(t => {
+          if (t.date || t.periodic) {
+            const date = t.date as string
+            if (!t.periodic) {
+              const {today, saved} = this.getMomentsOutOfTask(date, timeZone)
+              const start = this.getNextWeek(today.clone(), startOfTheWeek).subtract(6, 'd')
+              const end = start.clone().add(6, 'd')
+              return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
+            } else if (t.periodic && t.type === 'interval') {
+              const start = this.getNextWeek(timezone().clone(), startOfTheWeek).subtract(6, 'd')
+              const end = start.clone().add(6, 'd')
+              const first = timezone(t.firstPeriodicDay, 'Y-M-D')
+              while (true) {
+                if (start.isSameOrBefore(first, 'day') && end.isSameOrAfter(first, 'day')) return true
+                first.add(t.periodicInterval, 'd')
+                if (first.isAfter(end, 'day')) return false
+              }
+            } else if (t.periodic && t.type === 'weekdays') return true
           }
           return false
         })
       }
       case 'Next month': {
-        return tasks.filter(el => {
-          if (el.date) {
-            const nextMonth = timezone().add(1, 'M').tz(timeZone)
-            const {saved} = this.getMomentsOutOfTask(el.date, timeZone)
-            const start = nextMonth.clone().startOf('month')
-            const end = nextMonth.clone().endOf('month')
+        return tasks.filter(t => {
+          if (t.date || t.periodic) {
+            const date = t.date as string
+            if (!t.periodic) {
+              const nextMonth = timezone().add(1, 'M').tz(timeZone)
+              const {saved} = this.getMomentsOutOfTask(date, timeZone)
+              const start = nextMonth.clone().startOf('month')
+              const end = nextMonth.clone().endOf('month')
 
-            return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
+              return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
+            } else if (t.periodic && t.type === 'interval') {
+              const nextMonth = timezone().add(1, 'M').tz(timeZone)
+              const start = nextMonth.clone().startOf('month')
+              const end = nextMonth.clone().endOf('month')
+              const first = timezone(t.firstPeriodicDay, 'Y-M-D')
+              while (true) {
+                if (start.isSameOrBefore(first, 'day') && end.isSameOrAfter(first, 'day')) return true
+                first.add(t.periodicInterval, 'd')
+                if (first.isAfter(end, 'day')) return false
+              }
+            } else if (t.periodic && t.type === 'weekdays') return true
           }
           return false
         })
       }
       case 'Tomorrow': {
-        return tasks.filter(el => {
-          if (el.date) {
-            const tom = timezone().add(1, 'd').tz(timeZone)
-            const {saved} = this.getMomentsOutOfTask(el.date, timeZone)
-            return tom.isSame(saved, 'day')
+        return tasks.filter(t => {
+          if (t.date || t.periodic) {
+            const date = t.date as string
+            if (!t.periodic) {
+              const {today, saved} = this.getMomentsOutOfTask(date, timeZone)
+              return today.clone().add(1, 'day').isSame(saved, 'day')
+            } else if (t.periodic && t.type === 'interval') {
+              const tomorrow = timezone().add(1, 'day')
+              const first = timezone(t.firstPeriodicDay, 'Y-M-D')
+              const diff = tomorrow.diff(first, 'days')
+              return diff % t.periodicInterval === 0 && t.times !== 0
+            } else if (t.periodic && t.type === 'weekdays')
+              if (t.weekDays === null) return true
+              else return t.weekDays.includes(timezone().add(1, 'day').format('dddd'))
           }
           return false
         })
       }
       case 'Completed': {
-        return tasks.filter(el => el.completed)
+        return tasks.filter(t => {
+          if (!t.periodic) return t.completed
+          else {
+            const today = timezone()
+            const completedDate = timezone(t.completedDate, 'Y-M-D')
+            return completedDate.isSame(today, 'day')
+          }
+        })
+      }
+      case 'Periodic tasks': {
+        return tasks.filter(t => t.periodic)
       }
       case 'Has project': {
         return tasks.filter(el => el.projectId)
@@ -128,11 +207,38 @@ export default {
         return tasks.filter(el => !el.projectId)
       }
       case 'Overdue': {
-        return tasks.filter(el => {
-          if (el.completed) return false
-          if (el.date) {
-            const {saved, today} = this.getMomentsOutOfTask(el.date, timeZone)
-            return saved.isBefore(today, 'day')
+        return tasks.filter(t => {
+          if (t.date || t.periodic) {
+            const date = t.date as string
+            if (!t.periodic) {
+              const {today, saved} = this.getMomentsOutOfTask(date, timeZone)
+              return saved.isBefore(today, 'day') && !t.completed
+            } else if (t.periodic && t.type === 'interval') {
+              const today = timezone()
+              const first = timezone(t.firstPeriodicDay, 'Y-M-D')
+              const lastEvent = first.clone()
+              const diff = today.diff(first, 'days')
+              const timesToAdd = Math.floor(diff / t.periodicInterval)
+              lastEvent.add(t.periodicInterval * timesToAdd, 'd')
+              const lastCompleted = timezone(t.completedDate, 'Y-M-D')
+              if (!lastCompleted.isValid()) return lastEvent.isBefore(today, 'day')
+              else return lastCompleted.isBefore(lastEvent, 'day')
+            } else if (t.periodic && t.type === 'weekdays')
+              if (t.weekDays === null) {
+                const today = timezone()
+                const yesterday = today.clone().subtract(1, 'day')
+                const lastCompleted = timezone(t.completedDate, 'Y-M-D')
+                const firstPeriodicDay = timezone(t.firstPeriodicDay, 'Y-M-D')
+                if (!lastCompleted.isValid()) return today.diff(firstPeriodicDay, 'days') > 1
+                return lastCompleted.isBefore(yesterday, 'day')
+              } else {
+                const lastEvent = this.getLastWeekDay(timezone(), t.weekDays)
+                const lastCompleted = timezone(t.completedDate, 'Y-M-D')
+                const firstPeriodicDay = timezone(t.firstPeriodicDay, 'Y-M-D')
+                // tslint:disable-next-line:max-line-length
+                if (!lastCompleted.isValid()) return lastEvent.isBefore(timezone(), 'day') && lastEvent.isSameOrAfter(firstPeriodicDay, 'day')
+                else return lastCompleted.isBefore(lastEvent, 'day')
+              }
           }
           return false
         })
@@ -418,7 +524,20 @@ export default {
       if (week === nextWeek)
         break
       clone.add(1, 'd')
-      if (i > 100) break
+      if (i > 10) break
+      i++
+    }
+    return clone
+  },
+  getLastWeekDay(mom: any, weeknames: string[]) {
+    const clone = mom.clone()
+    let i = 0
+    while (true) {
+      const week = clone.format('dddd')
+      if (weeknames.includes(week))
+        break
+      clone.subtract(1, 'd')
+      if (i > 10) break
       i++
     }
     return clone
@@ -554,6 +673,62 @@ export default {
 
       return o
     }
+    const searchPeriodicInput = (str: string): PeriodicObject | null => {
+      const obj: PeriodicObject = {
+        periodic: false,
+        type: 'weekdays',
+        weekDays: null,
+        times: null,
+        timesPerDay: 0,
+        timesTotal: 0,
+        timesCompleted: 0,
+        periodicInterval: 0,
+        firstPeriodicDay: '',
+        completedDate: '',
+      }
+
+      if (str.includes('every ')) {
+        const values = str.split(' ')
+        obj.periodic = true
+
+        if (!isNumber(values[1])) {
+          const weekDays = []
+          for (const val of values) {
+            const mom = timezone(val, 'dddd')
+            if (mom.isValid()) weekDays.push(mom.format('dddd'))
+          }
+          if (weekDays.length > 0) {
+            const set = new Set()
+            const weeks = []
+            for (const week of weekDays)
+              if (!set.has(week)) {
+                weeks.push(week)
+                set.add(week)
+              }
+            obj.weekDays = weeks
+          }
+        } else
+          for (let j = 0; j < values.length; j++) {
+            const f = values[j]
+            const m = values[j + 1]
+            const l = values[j + 2]
+            if (f && m && l && f === 'every' && isNumber(m) && (l === 'days')) {
+              obj.periodicInterval = parseInt(m, 10)
+              obj.type = 'interval'
+              obj.firstPeriodicDay = timezone().format('Y-M-D')
+            }
+          }
+
+        for (let i = 0; i < values.length; i++) {
+          const f = values[i]
+          const l = values[i + 1]
+          if (f && l && isNumber(f) && (l === 'times' || l === 'ti')) obj.times = parseInt(f, 10)
+        }
+      }
+      if (obj.periodic)
+        return obj
+      else return null
+    }
 
     return parseDateInput(input, (str): any => {
       if (str) {
@@ -565,43 +740,69 @@ export default {
         const time = this.getTaskInputTime(values, timeFormat)
 
         const obj = searchKeyWords(str, {month, year, day, time})
-        const utc = this.getUtcValuesFromTaskInputObj(obj, timeZone)
+        const perInput = searchPeriodicInput(str)
+        let utc = null
+        if (!perInput)
+          utc = this.getUtcValuesFromTaskInputObj(obj, timeZone)
 
-        return {...obj, utc}
+        return {...obj, utc, periodic: perInput}
       }
     })
   },
   // tslint:disable-next-line:max-line-length
   parseTaskInputObjectToString(obj: TaskInputObj | undefined, timeFormat: SetState.timeFormat, timeZone: string): string {
-    if (obj && timeZone && timeFormat) {
-      let time = obj.time
+    if (obj && timeZone && timeFormat)
+      if (!obj.periodic) {
+        let time = obj.time
 
-      const today = timezone().tz(timeZone)
-      let typed!: any
-      if (time)
-        typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day} ${time}`, 'Y-M-D HH:mm', timeZone)
-      else
-        typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day}`, 'Y-M-D', timeZone)
+        const today = timezone().tz(timeZone)
+        let typed!: any
+        if (time)
+          typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day} ${time}`, 'Y-M-D HH:mm', timeZone)
+        else
+          typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day}`, 'Y-M-D', timeZone)
 
-      let str = `${timezone().month(obj.month - 1).format('MMMM')} ${obj.day}, ${obj.year}`
+        let str = ''
+        if (!today.isSame(typed, 'month')) str += '' + today.month(obj.month - 1).format('MMMM') + ' '
+        str += `${obj.day}`
+        if (!today.isSame(typed, 'year')) str += `, ${obj.year}`
 
-      const isToday = today.isSame(typed, 'day')
-      today.add(1, 'd')
-      const isTom = today.isSame(typed, 'day')
+        const isToday = today.isSame(typed, 'day')
+        today.add(1, 'd')
+        const isTom = today.isSame(typed, 'day')
 
-      if (isToday) str = 'Today'
-      else if (isTom) str = 'Tomorrow'
+        if (isToday) str = 'Today'
+        else if (isTom) str = 'Tomorrow'
 
-      if (time) {
-        if (timeFormat === '1:00pm')
-          time = timezone(time, 'HH:mm').format('hh:mm a')
-        str += ` at ${obj.time}`
+        if (time) {
+          if (timeFormat === '1:00pm')
+            time = timezone(time, 'HH:mm').format('hh:mm a')
+          str += ` at ${obj.time}`
+        }
+        if (!isToday && !isTom)
+          str += ', ' + typed.format('dddd')
+
+        return str
+      } else {
+        let str = 'every'
+        const per = obj.periodic
+
+        if (per.type === 'weekdays')
+          if (per.weekDays === null) str += ' day'
+          else {
+            str += ' '
+            for (let i = 0; i < per.weekDays.length; i++) {
+              str += timezone(per.weekDays[i], 'dddd').format('ddd')
+              if (i !== per.weekDays.length - 1) str += ', '
+            }
+          }
+        else
+          str = `every ${per.periodicInterval} days`
+
+        if (per.times !== null) str += ` ${per.times} times`
+
+        return str
       }
-      if (!isToday && !isTom)
-        str += ', ' + typed.format('dddd')
-
-      return str
-    }
     return ''
   },
 }

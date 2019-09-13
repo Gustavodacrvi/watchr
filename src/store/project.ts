@@ -429,7 +429,7 @@ export default {
         }
       }
     },
-    addProjectHeadingTask({ rootState, state }, {projectId, headingId, task, order, position}) {
+    addProjectHeadingTask({ rootState, state }, {projectId, periodic, headingId, task, order, position}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
@@ -456,7 +456,7 @@ export default {
               checklist: [],
               completed: false,
               checklistOrder: [],
-              ...t.utc,
+              ...t.utc, ...periodic,
             })
             const persRef = rootState.fr.collection('projects').doc(projectId)
             batch.update(persRef, {

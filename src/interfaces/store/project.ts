@@ -2,7 +2,7 @@
 
 /* tslint:disable:max-line-length */
 
-import { Label, Project, Folder, Task } from '../app'
+import { Label, Project, Folder, Task, PeriodicObject } from '../app'
 import { State as RootState } from '@/interfaces/store/index'
 
 export namespace ProjectState {
@@ -103,8 +103,8 @@ export namespace ProjectActions {
   export type StoreUpdateHeadingsTaskOrder = (context: ActionContext, obj: {projectId: string, ids: string[], headingId: string}) => void
   export type UpdateHeadingsTaskOrder = (obj: {projectId: string, ids: string[], headingId: string}) => void
 
-  export type StoreAddProjectHeadingTask = (context: ActionContext, obj: {task: Task, projectId: string, position: number, headingId: string, order: string[], utc: UtcObj | null}) => void
-  export type AddProjectHeadingTask = (obj: {task: Task, projectId: string, position: number, headingId: string, order: string[], utc: UtcObj | null}) => void
+  export type StoreAddProjectHeadingTask = (context: ActionContext, obj: {task: Task, projectId: string, position: number, periodic: PeriodicObject, headingId: string, order: string[], utc: UtcObj | null}) => void
+  export type AddProjectHeadingTask = (obj: {task: Task, projectId: string, position: number, headingId: string, order: string[], periodic: PeriodicObject, utc: UtcObj | null}) => void
 
   export type StoreSaveProjectHeadingName = (context: ActionContext, obj: {name: string, projectId: string, headingId: string}) => void
   export type SaveProjectHeadingName = (obj: {name: string, projectId: string, headingId: string}) => void

@@ -1,7 +1,7 @@
 
 /* tslint:disable:max-line-length */
 
-import { Task } from '../app'
+import { Task, PeriodicObject } from '../app'
 import { State as RootState } from '@/interfaces/store'
 
 export namespace TaskState {
@@ -41,20 +41,20 @@ export namespace TaskActions {
   export type StoreGetData = (context: ActionContext) => void
   export type GetData = () => void
 
-  export type StoreUpdateTask = (context: ActionContext, obj: {name: string, priority: string, id: string, projectId: string, saveProject: boolean, labels: [], utc: UtcObj | null}) => void
-  export type UpdateTask = (obj: {name: string, projectId: string, saveProject: boolean, priority: string, id: string, labels: [], utc: UtcObj | null}) => void
+  export type StoreUpdateTask = (context: ActionContext, obj: {name: string, priority: string, id: string, projectId: string, periodic: PeriodicObject, saveProject: boolean, labels: [], utc: UtcObj | null}) => void
+  export type UpdateTask = (obj: {name: string, projectId: string, saveProject: boolean, priority: string, id: string, periodic: PeriodicObject, labels: [], utc: UtcObj | null}) => void
 
   export type StoreCopyTask = (context: ActionContext, taskId: string) => void
   export type CopyTask = (taskId: string) => void
 
-  export type StoreAddTaskPerspective = (context: ActionContext, obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: UtcObj | null}) => void
-  export type AddTaskPerspective = (obj: {task: Task, perspectiveId: string, position: number, order: string[], utc: UtcObj | null}) => void
+  export type StoreAddTaskPerspective = (context: ActionContext, obj: {task: Task, perspectiveId: string, periodic: PeriodicObject, position: number, order: string[], utc: UtcObj | null}) => void
+  export type AddTaskPerspective = (obj: {task: Task, periodic: PeriodicObject, perspectiveId: string, position: number, order: string[], utc: UtcObj | null}) => void
 
-  export type StoreAddTaskLabel = (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[], projectId: string, utc: UtcObj | null}) => void
-  export type AddTaskLabel = (obj: {task: Task, labelId: string, projectId: string, position: number, order: string[], utc: UtcObj | null}) => void
+  export type StoreAddTaskLabel = (context: ActionContext, obj: {task: Task, labelId: string, position: number, order: string[], periodic: PeriodicObject, utc: UtcObj | null}) => void
+  export type AddTaskLabel = (obj: {task: Task, periodic: PeriodicObject, labelId: string, position: number, order: string[], utc: UtcObj | null}) => void
 
-  export type StoreAddTask = (context: ActionContext, obj: {name: string, priority: string, labels: string[], projectId: string, utc: UtcObj | null}) => void
-  export type AddTask = (obj: {name: string, priority: string, projectId: string, labels: string[], utc: UtcObj | null}) => void
+  export type StoreAddTask = (context: ActionContext, obj: {name: string, priority: string, labels: string[], periodic: PeriodicObject, projectId: string, utc: UtcObj | null}) => void
+  export type AddTask = (obj: {name: string, periodic: PeriodicObject, priority: string, projectId: string, labels: string[], utc: UtcObj | null}) => void
 
   export type StoreDeleteTasksById = (context: ActionContext, ids: string[]) => void
   export type DeleteTasksById = (ids: string[]) => void
@@ -74,6 +74,9 @@ export namespace TaskActions {
   export type StoreSaveSubtaskOrder = (context: ActionContext, obj: {taskId: string, order: string[]}) => void
   export type SaveSubtaskOrder = (obj: {taskId: string, order: string[]}) => void
 
+  export type StoreTogglePeriodicCompleteTask = (context: ActionContext, id: string) => void
+  export type TogglePeriodicCompleteTask = (id: string) => void
+
   export type StoreDeleteSubTaskFromTask = (context: ActionContext, obj: {taskId: string, id: string}) => void
   export type DeleteSubTaskFromTask = (obj: {taskId: string, id: string}) => void
 
@@ -83,8 +86,8 @@ export namespace TaskActions {
   export type StoreUnCompleteSubtasks = (context: ActionContext, taskId: string) => void
   export type UnCompleteSubtasks = (taskId: string) => void
 
-  export type StoreAddProjectTask = (context: ActionContext, obj: {task: Task, projectId: string, position: number, order: string[], utc: UtcObj | null}) => void
-  export type AddProjectTask = (obj: {task: Task, projectId: string, position: number, order: string[], utc: UtcObj | null}) => void
+  export type StoreAddProjectTask = (context: ActionContext, obj: {task: Task, projectId: string, position: number, periodic: PeriodicObject, order: string[], utc: UtcObj | null}) => void
+  export type AddProjectTask = (obj: {task: Task, projectId: string, periodic: PeriodicObject, position: number, order: string[], utc: UtcObj | null}) => void
 
   export type StoreToggleCompleteTask = (context: ActionContext, obj: {id: string, completed: boolean}) => void
   export type ToggleCompleteTask = (obj: {id: string, completed: boolean}) => void

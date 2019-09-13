@@ -21,6 +21,7 @@ interface Actions {
   saveSubtaskOrder: TaskActions.StoreSaveSubtaskOrder
   deleteSubTaskFromTask: TaskActions.StoreDeleteSubTaskFromTask
   saveNewDateOfTasks: TaskActions.StoreSaveNewDateOfTasks
+  togglePeriodicCompleteTask: TaskActions.StoreTogglePeriodicCompleteTask
   unCompleteSubtasks: TaskActions.StoreUnCompleteSubtasks
   addProjectTask: TaskActions.StoreAddProjectTask
   removeTasksFromProject: TaskActions.StoreRemoveTasksFromProject
@@ -61,7 +62,7 @@ export default {
           appUtils.fixStoreChanges(state, changes, 'tasks')
         })
     },
-    updateTask({ rootState }, {name, priority, projectId, id, saveProject, labels, utc}) {
+    updateTask({ rootState }, {name, priority, periodic, projectId, id, saveProject, labels, utc}) {
       const u = timezone().utc()
       const dt = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
@@ -72,7 +73,7 @@ export default {
         batch.update(ref, {
           name, priority, labels, projectId,
           lastEditDate: dt,
-          ...utc,
+          ...utc, ...periodic,
         })
         if (projectId && saveProject) {
           const pro = rootState.fr.collection('projects').doc(projectId)
@@ -96,7 +97,7 @@ export default {
         batch.commit()
       }
     },
-    addTaskPerspective({ rootState }, {task, perspectiveId, order, position}) {
+    addTaskPerspective({ rootState }, {task, perspectiveId, periodic, order, position}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
@@ -118,7 +119,7 @@ export default {
           checklist: [],
           completed: false,
           checklistOrder: [],
-          ...t.utc,
+          ...t.utc, ...periodic,
         })
         if (task.projectId) {
           const pro = rootState.fr.collection('projects').doc(task.projectId)
@@ -134,7 +135,7 @@ export default {
         batch.commit()
       }
     },
-    addProjectTask({ rootState }, {task, projectId, order, position}) {
+    addProjectTask({ rootState }, {task, projectId, periodic, order, position}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
@@ -155,7 +156,7 @@ export default {
           checklist: [],
           completed: false,
           checklistOrder: [],
-          ...t.utc,
+          ...t.utc, ...periodic,
         })
         const persRef = rootState.fr.collection('projects').doc(projectId)
         batch.update(persRef, {
@@ -165,7 +166,7 @@ export default {
         batch.commit()
       }
     },
-    addTask({ rootState }, {priority, name, labels, utc, projectId}) {
+    addTask({ rootState }, {priority, name, labels, utc, projectId, periodic}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
@@ -181,7 +182,7 @@ export default {
           checklist: [],
           completed: false,
           checklistOrder: [],
-          ...utc,
+          ...utc, ...periodic,
         })
         if (projectId) {
           const proRef = rootState.fr.collection('projects').doc(projectId)
@@ -210,7 +211,7 @@ export default {
         batch.commit()
       }
     },
-    addTaskLabel({ rootState }, {task, labelId, order, projectId, position, utc}) {
+    addTaskLabel({ rootState }, {task, labelId, order, periodic, position, utc}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
@@ -231,7 +232,7 @@ export default {
           checklist: [],
           completed: false,
           checklistOrder: [],
-          ...utc,
+          ...utc, ...periodic,
         })
         const persRef = rootState.fr.collection('labels').doc(labelId)
         batch.update(persRef, {
@@ -358,6 +359,22 @@ export default {
           completed, lastEditDate: date,
         })
     },
+    togglePeriodicCompleteTask({ rootState, state }, id) {
+      const utc = timezone().utc()
+      const date = utc.format('Y-M-D')
+      if (rootState.fr && rootState.uid) {
+        const task = state.tasks.find(el => el.id === id)
+        if (task)
+          if (task.times === null || task.times === 0)
+            rootState.fr.collection('tasks').doc(id).update({
+              completedDate: date,
+            })
+          else rootState.fr.collection('tasks').doc(id).update({
+            times: task.times - 1,
+            completedDate: date,
+          })
+      }
+    },
     copyTask({ rootState, state }, taskId) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
@@ -373,6 +390,13 @@ export default {
             labels: task.labels,
             creationDate: date,
             lastEditDate: date,
+            periodic: false,
+            type: 'weekdays',
+            weekDays: null,
+            times: null,
+            periodicInterval: 0,
+            firstPeriodicDay: '',
+            completedDate: '',
             projectId: task.projectId,
             date: task.date,
             time: task.time,

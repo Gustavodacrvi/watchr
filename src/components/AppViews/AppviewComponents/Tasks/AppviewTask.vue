@@ -10,9 +10,13 @@
       <div
         class='content-wrapper'
       >
-        <span class='circles' @click='toggleTaskComplete'>
-          <i v-show='!task.completed' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
-          <i v-show='task.completed' class='far fade circle icon txt fa-check-circle fa-sm' :class='theme'></i>
+        <span v-if="!task.periodic" class='circles' @click='toggleTaskComplete'>
+          <i v-show='!isTaskCompleted' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
+          <i v-show='isTaskCompleted' class='far fade circle icon txt fa-check-circle fa-sm' :class='theme'></i>
+        </span>
+        <span v-else class="circles" :class="{fade: isTaskCompleted}" @click='togglePeriodicTaskComplete'>
+          <i class='fas circle icon txt fa-redo-alt fa-sm' :class="theme"></i>
+          <span class='circle-number txt' :class="theme">{{ task.times }}</span>
         </span>
         <transition name='check-trans' mode='out-in'>
           <div
@@ -22,11 +26,12 @@
             v-longpress='toggleElement'
             @click='toggleChecklist'
           >
-            <div class='txt' :class='[theme, {fade: task.completed}]'>
-              <i v-if='showTodayIcon' class='txt fas fa-star fa-sm' style='color: #FFE366'></i>
-              <i v-else-if='showOverdueIcon' class='txt fas fa-hourglass-end fa-sm' style='color: #FF6B66'></i>
+            <div class='txt' :class='[theme, {fade: isTaskCompleted}]'>
+              <i v-if='showOverdueIcon' class='txt fas fa-hourglass-end fa-sm' style='color: #FF6B66'></i>
+              <i v-else-if='showTodayIcon' class='txt fas fa-star fa-sm' style='color: #FFE366'></i>
               <i v-else-if='showTomorrowIcon' class='txt fas fa-sun fa-sm' style='color: #ffa166'></i>
               <span v-if="showProjectName && getProject" class="txt-tag gray txt round-border" :class="theme">{{ getProject.name }}</span>
+              <span v-if="task.periodic && getPeriodicString" class="txt-tag gray txt round-border" :class="theme">{{ getPeriodicString }}</span>
               <span v-if="date" class="txt-tag gray txt round-border" :class="theme">{{ date }}</span>
               <span v-if="time" class="txt-tag gray txt round-border" :class="theme">{{ time }}</span>
               {{ task.name }}
@@ -110,6 +115,7 @@
       :default-value='task.name'
       :default-priority='task.priority'
       :default-project='getProject'
+      :default-periodic='getPeriodicObject'
       :allow-priority='true'
       :allow-labels='true'
       :allow-date='true'
@@ -133,7 +139,7 @@ import TaskEditTemplate from '@/components/AppViews/AppviewComponents/Tasks/Appv
 import SubTask from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtask.vue'
 import SubTaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtaskEdit.vue'
 
-import { Task, ListIcon, Label, Project } from '../../../../interfaces/app'
+import { Task, ListIcon, Label, Project, PeriodicObject } from '../../../../interfaces/app'
 
 import appUtils from '@/utils/app'
 import moment from 'moment-timezone'
@@ -154,7 +160,7 @@ import { ProjectGetters } from '../../../../interfaces/store/project'
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
-else Vue.directive('longpress', longClickDirective({delay: 1200, interval: 5000}))
+else Vue.directive('longpress', longClickDirective({delay: 800, interval: 5000}))
 
 @Component({
   components: {
@@ -175,12 +181,14 @@ export default class AppviewTask extends Vue {
   @taskVuex.Action addSubTask!: TaskActions.AddSubTask
   @taskVuex.Action toggleCompleteTask!: TaskActions.ToggleCompleteTask
   @taskVuex.Action saveSubtaskOrder!: TaskActions.SaveSubtaskOrder
+  @taskVuex.Action togglePeriodicCompleteTask!: TaskActions.TogglePeriodicCompleteTask
   @taskVuex.Action unCompleteSubtasks!: TaskActions.UnCompleteSubtasks
   @taskVuex.Action copyTask!: TaskActions.CopyTask
   @taskVuex.Action removeTasksFromProject!: TaskActions.RemoveTasksFromProject
 
   @settingsVuex.State timeZone!: SetState.timeZone
   @settingsVuex.State timeFormat!: SetState.timeFormat
+  @settingsVuex.State startOfTheWeek!: SetState.startOfTheWeek
   @settingsVuex.State dateFormat!: SetState.dateFormat
 
   @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
@@ -331,15 +339,22 @@ export default class AppviewTask extends Vue {
     })
     this.editing = false
   }
-  toggleTaskComplete() {
+  runAnimation() {
     this.done = true
     setTimeout(() => {
       this.done = false
     }, 1000)
+  }
+  toggleTaskComplete() {
+    this.runAnimation()
     this.toggleCompleteTask({
       id: this.task.id,
       completed: !this.task.completed,
     })
+  }
+  togglePeriodicTaskComplete() {
+    this.runAnimation()
+    this.togglePeriodicCompleteTask(this.task.id)
   }
   getSubTaskAdderPosition() {
     const ids = this.getSubtasksIds()
@@ -460,21 +475,34 @@ export default class AppviewTask extends Vue {
       })
     return options
   }
+  get periodicTaskHasntEnded(): boolean {
+    return this.task.times !== 0
+  }
+  get isTaskToday(): boolean {
+    return appUtils.filterTasksBySmartPerspective('Today', [this.task], this.timeZone, this.startOfTheWeek).length > 0
+  }
+  get taskDoesntHaveDateBinding(): boolean {
+    return !this.task.date && !this.task.periodic
+  }
   get showTodayIcon(): boolean {
-    if (this.fixedPers === 'Today' || !this.task.date) return false
-    const {today, saved} = this.todayMomAndSavedMom()
-    return today.isSame(saved, 'day')
+    if (this.fixedPers === 'Today' || this.everyday || this.taskDoesntHaveDateBinding) return false
+    return this.isTaskToday
   }
   get showOverdueIcon(): boolean {
-    if (this.fixedPers === 'Overdue' || !this.task.date) return false
-    const {today, saved} = this.todayMomAndSavedMom()
-    return saved.isBefore(today, 'day') && !this.task.completed
+    if (this.fixedPers === 'Overdue' || this.taskDoesntHaveDateBinding) return false
+    return appUtils.filterTasksBySmartPerspective('Overdue', [this.task], this.timeZone, this.startOfTheWeek).length > 0
+  }
+  get isTaskTomorrow(): boolean {
+    // tslint:disable-next-line:max-line-length
+    return appUtils.filterTasksBySmartPerspective('Tomorrow', [this.task], this.timeZone, this.startOfTheWeek).length > 0
   }
   get showTomorrowIcon(): boolean {
-    if (this.fixedPers === 'Tomorrow' || !this.task.date) return false
-    const {today, saved} = this.todayMomAndSavedMom()
-    today.add(1, 'd')
-    return today.isSame(saved, 'day')
+    if (this.fixedPers === 'Tomorrow' || this.everyday || this.taskDoesntHaveDateBinding) return false
+    return this.isTaskTomorrow
+  }
+  get everyday(): boolean {
+    const p = this.task
+    return p.periodic && p.weekDays === null
   }
   get allTrue(): boolean {
     if (this.showLabels && this.showLastEditDate && this.showCreationDate) return true
@@ -556,10 +584,45 @@ export default class AppviewTask extends Vue {
       return 'longpressdesktop'
     return 'longpressmobile'
   }
+  get getPeriodicString(): string {
+    const t = this.task
+    if (t.type === 'interval')
+      return `every ${t.periodicInterval} days`
+    else if (t.weekDays !== null) {
+      let str = ''
+      for (let i = 0; i < t.weekDays.length; i++) {
+        str += moment(t.weekDays[i], 'dddd').format('ddd')
+        if (i !== t.weekDays.length - 1) str += ', '
+      }
+      return str
+    }
+    return ''
+  }
   get getProject(): Project | null {
     if (!this.task.projectId) return null
     const project = this.getProjectById(this.task.projectId)
     if (project) return project
+    return null
+  }
+  get isTaskCompleted(): boolean {
+    // tslint:disable-next-line:max-line-length
+    return appUtils.filterTasksBySmartPerspective('Completed', [this.task], this.timeZone, this.startOfTheWeek).length > 0
+  }
+  get getPeriodicObject(): PeriodicObject | null {
+    const t = this.task
+    if (t.periodic)
+      return {
+        periodic: t.periodic,
+        type: t.type,
+        weekDays: t.weekDays,
+        times: t.times,
+        periodicInterval: t.periodicInterval,
+        timesPerDay: t.timesPerDay,
+        timesCompleted: t.timesCompleted,
+        timesTotal: t.timesTotal,
+        firstPeriodicDay: t.firstPeriodicDay,
+        completedDate: t.completedDate,
+      }
     return null
   }
 
@@ -626,6 +689,14 @@ export default class AppviewTask extends Vue {
   margin: 0 8px;
   margin-left: 4px;
   font-size: 1.2em;
+  position: relative;
+}
+
+.circle-number {
+  position: absolute;
+  font-size: .7em;
+  bottom: -14px;
+  right: -4px;
 }
 
 .circle {
@@ -679,6 +750,10 @@ export default class AppviewTask extends Vue {
   padding: 4px;
 }
 
+.txt-tag + .txt-tag {
+  margin-left: 2px;
+}
+
 .task.not-selected.light:hover {
   background-color: #f0f0f0;
 }
@@ -692,7 +767,7 @@ export default class AppviewTask extends Vue {
 }
 
 .sortable-selected.dark .task {
-  background-color: #3287cd !important;
+  background-color: rgba(50, 135, 205, .2) !important;
 }
 
 .content-icon {

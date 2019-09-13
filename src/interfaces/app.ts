@@ -98,6 +98,13 @@ export interface Task {
   userId: string
   id: string
   name: string
+  periodic: boolean,
+  type: 'weekdays' | 'interval',
+  weekDays: null | string[],
+  times: number | null,
+  periodicInterval: number
+  firstPeriodicDay: string,
+  completedDate: string,
   priority: 'Low priority' | 'High priority' | 'Medium priority' | ''
   labels: string[]
   date: string | null
@@ -105,6 +112,9 @@ export interface Task {
   creationDate: string
   lastEditDate: string
   checklistOrder: string[]
+  timesPerDay: number
+  timesTotal: number
+  timesCompleted: number
   projectId: string
   completed: boolean
   checklist: Array<{
@@ -119,6 +129,19 @@ export interface Heading {
   name: string
   id: string
   tasks: string[]
+}
+
+export interface PeriodicObject {
+  periodic: boolean,
+  type: 'weekdays' | 'interval',
+  weekDays: null | string[],
+  times: number | null,
+  timesPerDay: number
+  timesTotal: number
+  timesCompleted: number
+  periodicInterval: number
+  firstPeriodicDay: string,
+  completedDate: string,
 }
 
 export interface Folder {
@@ -145,4 +168,5 @@ export interface TaskInputObj {
   month: number
   year: number
   time: string | null
+  periodic?: PeriodicObject
 }

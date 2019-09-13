@@ -84,7 +84,7 @@ const labelsVuex = namespace('label')
 const projectVuex = namespace('project')
 const set = namespace('settings')
 
-import { ListIcon, Task, Label, TaskInputObj, Project } from '../../../../interfaces/app'
+import { ListIcon, Task, Label, TaskInputObj, Project, PeriodicObject } from '../../../../interfaces/app'
 
 import Tag from '@/components/AppViews/AppviewComponents/AppviewTag.vue'
 import AppviewIconoptions from '@/components/AppViews/AppviewComponents/AppviewIconoptions.vue'
@@ -135,6 +135,7 @@ export default class AppviewTaskedit extends Vue {
   @Prop(String) defaultDate!: string
   @Prop(Array) defaultLabels!: string[]
   @Prop(Object) defaultProject!: Project
+  @Prop(Object) defaultPeriodic!: PeriodicObject
   @Prop(String) inputTheme!: string
   @Prop(String) date!: string | null
   @Prop(String) time!: string | null
@@ -153,6 +154,7 @@ export default class AppviewTaskedit extends Vue {
   priority: '' | 'Low priority' | 'High priority' | 'Medium priority' = ''
   labels: string[] = []
   calendarObj: any = null
+  periodicObj: any = null
   options: string[] = []
   priorityIcons: ListIcon[] = [
     {
@@ -185,8 +187,8 @@ export default class AppviewTaskedit extends Vue {
     if (this.defaultProject)
       this.project = this.defaultProject
     if (this.defaultDate)
-      this.updateCalendarObj(this.defaultDate)
-    else this.updateCalendarObj(this.date)
+      this.updateCalendarObj(this.defaultDate, this.defaultPeriodic)
+    else this.updateCalendarObj(this.date, this.defaultPeriodic)
   }
   mounted() {
     const el = document.querySelectorAll('.taskedit')[0] as any
@@ -205,15 +207,19 @@ export default class AppviewTaskedit extends Vue {
     this.value = str
   }
   enter() {
-    let utc = null
     let proId = ''
     if (this.project) proId = this.project.id
+    let utc = null
     if (this.calendarObj)
       utc = this.calendarObj.utc
+    let periodic = null
+    if (this.periodicObj)
+      periodic = this.periodicObj
     if (this.stringToReplaceOnAdd && this.calendarString)
       this.value = this.value.replace(this.stringToReplaceOnAdd, '')
     if (this.value)
-      this.$emit('enter', {name: this.value, priority: this.priority, projectId: proId, labels: this.labels, utc})
+      // tslint:disable-next-line:max-line-length
+      this.$emit('enter', {name: this.value, priority: this.priority, projectId: proId, labels: this.labels, utc, periodic})
     this.value = ''
   }
   removeLabel(id: string) {
@@ -242,8 +248,8 @@ export default class AppviewTaskedit extends Vue {
       this.calendarObj = null
     }
   }
-  updateCalendarObj(date: string | null) {
-    if (date) {
+  updateCalendarObj(date: string | null, periodicObj: PeriodicObject | null) {
+    if (date || periodicObj) {
       let saved!: any
       if (!this.time)
         saved = moment.tz(`${date}`, 'Y-M-D', this.timeZone)
@@ -256,6 +262,7 @@ export default class AppviewTaskedit extends Vue {
         utc: {
           time, date: saved.format('Y-M-D'),
         },
+        periodic: periodicObj,
       }
       if (this.time) this.calendarObj['time'] = saved.format('HH:mm')
       this.calendarString = appUtils.parseTaskInputObjectToString(this.calendarObj, this.timeFormat, this.timeZone)
@@ -356,6 +363,7 @@ export default class AppviewTaskedit extends Vue {
         const str = appUtils.parseTaskInputObjectToString(obj, this.timeFormat, this.timeZone)
         if (obj) {
           this.calendarObj = obj
+          this.periodicObj = obj.periodic
           this.calendarString = str
           this.stringToReplaceOnAdd = this.value.substr(this.value.indexOf(' $'))
         }
