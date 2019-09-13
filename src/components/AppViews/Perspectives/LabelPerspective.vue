@@ -143,7 +143,7 @@ export default class LabelPerspective extends Mixins(PersMixing) {
       this.sort.push(value)
   }
   // tslint:disable-next-line:max-line-length
-  addLabelTask(obj: {name: string, priority: string, position: number, labels: string[], order: string[], projectId: string}) {
+  addLabelTask(obj: any) {
     const lab = this.getLabel
     if (lab)
       this.addTaskLabel({
@@ -153,6 +153,7 @@ export default class LabelPerspective extends Mixins(PersMixing) {
           projectId: obj.projectId,
           labels: obj.labels.concat([lab.id]),
         },
+        periodic: obj.periodic,
         position: obj.position,
         labelId: lab.id,
         order: obj.order,

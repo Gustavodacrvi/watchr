@@ -429,7 +429,7 @@ export default {
         }
       }
     },
-    addProjectHeadingTask({ rootState, state }, {projectId, headingId, task, order, position}) {
+    addProjectHeadingTask({ rootState, state }, {projectId, periodic, headingId, task, order, position}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
@@ -452,6 +452,13 @@ export default {
               userId: rootState.uid,
               creationDate: date,
               lastEditDate: date,
+              firstPeriodicDay: periodic.firstPeriodicDay,
+              periodic: periodic.periodic,
+              type: periodic.type,
+              weekDays: periodic.weekDays,
+              times: periodic.times,
+              periodicInterval: periodic.periodicInterval,
+              completedDate: '',
               labels: task.labels,
               checklist: [],
               completed: false,

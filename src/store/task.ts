@@ -96,7 +96,7 @@ export default {
         batch.commit()
       }
     },
-    addTaskPerspective({ rootState }, {task, perspectiveId, order, position}) {
+    addTaskPerspective({ rootState }, {task, perspectiveId, periodic, order, position}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
@@ -114,12 +114,12 @@ export default {
           userId: rootState.uid,
           creationDate: date,
           lastEditDate: date,
-          periodic: false,
-          type: 'weekdays',
-          weekDays: null,
-          times: null,
-          periodicInterval: 0,
-          firstPeriodicDay: '',
+          firstPeriodicDay: periodic.firstPeriodicDay,
+          periodic: periodic.periodic,
+          type: periodic.type,
+          weekDays: periodic.weekDays,
+          times: periodic.times,
+          periodicInterval: periodic.periodicInterval,
           completedDate: '',
           labels: task.labels,
           checklist: [],
@@ -141,7 +141,7 @@ export default {
         batch.commit()
       }
     },
-    addProjectTask({ rootState }, {task, projectId, order, position}) {
+    addProjectTask({ rootState }, {task, projectId, periodic, order, position}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
@@ -156,12 +156,12 @@ export default {
           name: task.name,
           priority: task.priority,
           userId: rootState.uid,
-          periodic: false,
-          type: 'weekdays',
-          weekDays: null,
-          times: null,
-          periodicInterval: 0,
-          firstPeriodicDay: '',
+          firstPeriodicDay: periodic.firstPeriodicDay,
+          periodic: periodic.periodic,
+          type: periodic.type,
+          weekDays: periodic.weekDays,
+          times: periodic.times,
+          periodicInterval: periodic.periodicInterval,
           completedDate: '',
           creationDate: date,
           lastEditDate: date,
@@ -179,7 +179,7 @@ export default {
         batch.commit()
       }
     },
-    addTask({ rootState }, {priority, name, labels, utc, projectId}) {
+    addTask({ rootState }, {priority, name, labels, utc, projectId, periodic}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
@@ -192,12 +192,12 @@ export default {
           userId: rootState.uid,
           creationDate: date,
           lastEditDate: date,
-          periodic: false,
-          type: 'weekdays',
-          weekDays: null,
-          times: null,
-          periodicInterval: 0,
-          firstPeriodicDay: '',
+          firstPeriodicDay: periodic.firstPeriodicDay,
+          periodic: periodic.periodic,
+          type: periodic.type,
+          weekDays: periodic.weekDays,
+          times: periodic.times,
+          periodicInterval: periodic.periodicInterval,
           completedDate: '',
           checklist: [],
           completed: false,
@@ -231,7 +231,7 @@ export default {
         batch.commit()
       }
     },
-    addTaskLabel({ rootState }, {task, labelId, order, projectId, position, utc}) {
+    addTaskLabel({ rootState }, {task, labelId, order, periodic, position, utc}) {
       const u = timezone().utc()
       const date = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
@@ -247,12 +247,12 @@ export default {
           priority: task.priority,
           userId: rootState.uid,
           labels: task.labels,
-          periodic: false,
-          type: 'weekdays',
-          weekDays: null,
-          times: null,
-          periodicInterval: 0,
-          firstPeriodicDay: '',
+          firstPeriodicDay: periodic.firstPeriodicDay,
+          periodic: periodic.periodic,
+          type: periodic.type,
+          weekDays: periodic.weekDays,
+          times: periodic.times,
+          periodicInterval: periodic.periodicInterval,
           completedDate: '',
           creationDate: date,
           lastEditDate: date,
