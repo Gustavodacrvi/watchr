@@ -90,17 +90,16 @@ export default {
               const first = timezone(t.firstPeriodicDay, 'Y-M-D')
               const diff = today.diff(first, 'days')
               return diff % t.periodicInterval === 0 && t.times !== 0
-            } else if (t.periodic && t.type === 'weekdays') {
+            } else if (t.periodic && t.type === 'weekdays')
               if (t.weekDays === null) return true && t.times !== 0
               else return t.weekDays.includes(timezone().format('dddd'))
-            }
           }
           return false
         })
       }
       case 'Next week': {
         return tasks.filter(t => {
-          if (t.date || t.periodic) {
+          if (t.date || t.periodic)
             if (!t.periodic) {
               const date = t.date as string
               const {today, saved} = this.getMomentsOutOfTask(date, timeZone)
@@ -117,7 +116,6 @@ export default {
                 if (first.isAfter(end, 'day')) return false
               }
             } else if (t.periodic && t.type === 'weekdays') return true
-          }
           return false
         })
       }
@@ -153,7 +151,7 @@ export default {
               const {saved} = this.getMomentsOutOfTask(date, timeZone)
               const start = nextMonth.clone().startOf('month')
               const end = nextMonth.clone().endOf('month')
-  
+
               return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
             } else if (t.periodic && t.type === 'interval') {
               const nextMonth = timezone().add(1, 'M').tz(timeZone)
@@ -182,10 +180,9 @@ export default {
               const first = timezone(t.firstPeriodicDay, 'Y-M-D')
               const diff = tomorrow.diff(first, 'days')
               return diff % t.periodicInterval === 0 && t.times !== 0
-            } else if (t.periodic && t.type === 'weekdays') {
+            } else if (t.periodic && t.type === 'weekdays')
               if (t.weekDays === null) return true
               else return t.weekDays.includes(timezone().add(1, 'day').format('dddd'))
-            }
           }
           return false
         })
@@ -226,7 +223,7 @@ export default {
               const lastCompleted = timezone(t.completedDate, 'Y-M-D')
               if (!lastCompleted.isValid()) return lastEvent.isBefore(today, 'day')
               else return lastCompleted.isBefore(lastEvent, 'day')
-            } else if (t.periodic && t.type === 'weekdays') {
+            } else if (t.periodic && t.type === 'weekdays')
               if (t.weekDays === null) {
                 const today = timezone()
                 const yesterday = today.clone().subtract(1, 'day')
@@ -234,15 +231,14 @@ export default {
                 const firstPeriodicDay = timezone(t.firstPeriodicDay, 'Y-M-D')
                 if (!lastCompleted.isValid()) return today.diff(firstPeriodicDay, 'days') > 1
                 return lastCompleted.isBefore(yesterday, 'day')
-              }
-              else {
+              } else {
                 const lastEvent = this.getLastWeekDay(timezone(), t.weekDays)
                 const lastCompleted = timezone(t.completedDate, 'Y-M-D')
                 const firstPeriodicDay = timezone(t.firstPeriodicDay, 'Y-M-D')
+                // tslint:disable-next-line:max-line-length
                 if (!lastCompleted.isValid()) return lastEvent.isBefore(timezone(), 'day') && lastEvent.isSameOrAfter(firstPeriodicDay, 'day')
                 else return lastCompleted.isBefore(lastEvent, 'day')
               }
-            }
           }
           return false
         })
@@ -536,7 +532,7 @@ export default {
   getLastWeekDay(mom: any, weeknames: string[]) {
     const clone = mom.clone()
     let i = 0
-    while(true) {
+    while (true) {
       const week = clone.format('dddd')
       if (weeknames.includes(week))
         break
@@ -691,7 +687,7 @@ export default {
       if (str.includes('every ')) {
         const values = str.split(' ')
         obj.periodic = true
-          
+
         if (!isNumber(values[1])) {
           const weekDays = []
           for (const val of values) {
@@ -708,8 +704,8 @@ export default {
               }
             obj.weekDays = weeks
           }
-        } else {
-          for (let j = 0;j < values.length; j++) {
+        } else
+          for (let j = 0; j < values.length; j++) {
             const f = values[j]
             const m = values[j + 1]
             const l = values[j + 2]
@@ -719,7 +715,6 @@ export default {
               obj.firstPeriodicDay = timezone().format('Y-M-D')
             }
           }
-        }
 
         for (let i = 0; i < values.length; i++) {
           const f = values[i]
@@ -727,15 +722,6 @@ export default {
           if (f && l && isNumber(f) && (l === 'times' || l === 'ti')) obj.times = parseInt(f, 10)
         }
       }
-
-      /*
-        if periodic is true:
-          if type = 'weekdays':
-            return isWeekDay(today) and hasntEnded(times) and !alreadyCompletedToday:
-            
-          else if type = 'interval':
-            return (today - firstPeriodicDay) % periodicInterval = 0 and hasntEnded(times) and !alreadyCompletedToday:
-       */
       if (obj.periodic)
         return obj
       else return null
@@ -798,18 +784,17 @@ export default {
         let str = 'every'
         const per = obj.periodic
 
-        if (per.type === 'weekdays') {
+        if (per.type === 'weekdays')
           if (per.weekDays === null) str += ' day'
           else {
             str += ' '
-            for (let i = 0;i < per.weekDays.length; i++) {
+            for (let i = 0; i < per.weekDays.length; i++) {
               str += timezone(per.weekDays[i], 'dddd').format('ddd')
-              if (i !== per.weekDays.length -1) str += ', '
+              if (i !== per.weekDays.length - 1) str += ', '
             }
           }
-        } else {
+        else
           str = `every ${per.periodicInterval} days`
-        }
 
         if (per.times !== null) str += ` ${per.times} times`
 

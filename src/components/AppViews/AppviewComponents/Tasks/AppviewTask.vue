@@ -160,7 +160,7 @@ import { ProjectGetters } from '../../../../interfaces/store/project'
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
-else Vue.directive('longpress', longClickDirective({delay: 1200, interval: 5000}))
+else Vue.directive('longpress', longClickDirective({delay: 800, interval: 5000}))
 
 @Component({
   components: {
@@ -493,6 +493,7 @@ export default class AppviewTask extends Vue {
     return appUtils.filterTasksBySmartPerspective('Overdue', [this.task], this.timeZone, this.startOfTheWeek).length > 0
   }
   get isTaskTomorrow(): boolean {
+    // tslint:disable-next-line:max-line-length
     return appUtils.filterTasksBySmartPerspective('Tomorrow', [this.task], this.timeZone, this.startOfTheWeek).length > 0
   }
   get showTomorrowIcon(): boolean {
@@ -585,9 +586,9 @@ export default class AppviewTask extends Vue {
   }
   get getPeriodicString(): string {
     const t = this.task
-    if (t.type === 'interval') {
+    if (t.type === 'interval')
       return `every ${t.periodicInterval} days`
-    } else if (t.weekDays !== null) {
+    else if (t.weekDays !== null) {
       let str = ''
       for (let i = 0; i < t.weekDays.length; i++) {
         str += moment(t.weekDays[i], 'dddd').format('ddd')
@@ -604,6 +605,7 @@ export default class AppviewTask extends Vue {
     return null
   }
   get isTaskCompleted(): boolean {
+    // tslint:disable-next-line:max-line-length
     return appUtils.filterTasksBySmartPerspective('Completed', [this.task], this.timeZone, this.startOfTheWeek).length > 0
   }
   get getPeriodicObject(): PeriodicObject | null {

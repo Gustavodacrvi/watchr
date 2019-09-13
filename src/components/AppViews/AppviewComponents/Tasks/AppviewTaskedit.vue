@@ -218,6 +218,7 @@ export default class AppviewTaskedit extends Vue {
     if (this.stringToReplaceOnAdd && this.calendarString)
       this.value = this.value.replace(this.stringToReplaceOnAdd, '')
     if (this.value)
+      // tslint:disable-next-line:max-line-length
       this.$emit('enter', {name: this.value, priority: this.priority, projectId: proId, labels: this.labels, utc, periodic})
     this.value = ''
   }

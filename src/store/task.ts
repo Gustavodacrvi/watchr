@@ -364,16 +364,15 @@ export default {
       const date = utc.format('Y-M-D')
       if (rootState.fr && rootState.uid) {
         const task = state.tasks.find(el => el.id === id)
-        if (task) {
+        if (task)
           if (task.times === null || task.times === 0)
             rootState.fr.collection('tasks').doc(id).update({
-              completedDate: date
+              completedDate: date,
             })
           else rootState.fr.collection('tasks').doc(id).update({
             times: task.times - 1,
             completedDate: date,
           })
-        }
       }
     },
     copyTask({ rootState, state }, taskId) {
