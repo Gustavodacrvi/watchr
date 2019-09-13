@@ -604,13 +604,7 @@ export default class AppviewTask extends Vue {
     return null
   }
   get isTaskCompleted(): boolean {
-    const t = this.task
-    if (!t.periodic) return t.completed
-    else {
-      const today = moment()
-      const completedDate = moment(t.completedDate, 'Y-M-D')
-      return completedDate.isSame(today, 'day')
-    }
+    return appUtils.filterTasksBySmartPerspective('Completed', [this.task], this.timeZone, this.startOfTheWeek).length > 0
   }
   get getPeriodicObject(): PeriodicObject | null {
     const t = this.task

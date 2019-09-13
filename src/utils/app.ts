@@ -178,7 +178,14 @@ export default {
         })
       }
       case 'Completed': {
-        return tasks.filter(el => el.completed)
+        return tasks.filter(t => {
+          if (!t.periodic) return t.completed
+          else {
+            const today = timezone()
+            const completedDate = timezone(t.completedDate, 'Y-M-D')
+            return completedDate.isSame(today, 'day')
+          }
+        })
       }
       case 'Has project': {
         return tasks.filter(el => el.projectId)
