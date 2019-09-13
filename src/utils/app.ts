@@ -200,6 +200,9 @@ export default {
           }
         })
       }
+      case 'Periodic tasks': {
+        return tasks.filter(t => t.periodic)
+      }
       case 'Has project': {
         return tasks.filter(el => el.projectId)
       }

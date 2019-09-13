@@ -96,6 +96,7 @@ const c = appUtils.AsyncComponent
     'app-this-week': c(import('@/components/AppViews/Perspectives/Smart/AppviewThisweek.vue')),
     'app-next-month': c(import('@/components/AppViews/Perspectives/Smart/AppviewNextmonth.vue')),
     'app-has-project': c(import('@/components/AppViews/Perspectives/Smart/AppviewHasproject.vue')),
+    'app-periodic-tasks': c(import('@/components/AppViews/Perspectives/Smart/AppviewPeriodictasks.vue')),
     'app-doesnt-have-project': c(import('@/components/AppViews/Perspectives/Smart/AppviewDoesnthaveproject.vue')),
     'app-completed': c(import('@/components/AppViews/Perspectives/Smart/AppviewCompleted.vue')),
     'app-have-tags': c(import('@/components/AppViews/Perspectives/Smart/AppviewHavetags.vue')),
@@ -168,6 +169,7 @@ export default class Guest extends Mixins(Mixin) {
         case `Doesn't have project`: return 'app-doesnt-have-project'
         case 'Completed': return 'app-completed'
         case 'Next month': return 'app-next-month'
+        case 'Periodic tasks': return 'app-periodic-tasks'
         case 'All tasks': return 'app-all-tasks'
         case 'Have tags': return 'app-have-tags'
         case `Doesn't have tags`: return 'app-doesnt-have-tags'

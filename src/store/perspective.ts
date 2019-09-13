@@ -363,6 +363,17 @@ export default {
             description: `All of your inbox tasks will be shown here.`,
           },
           {
+            name: 'Periodic',
+            pin: false,
+            numberOfTasks: true,
+            showWhenNotEmpty: false,
+            alwaysShowTaskLabels: false,
+            alwaysShowLastEditDate: false,
+            alwaysShowCreationDate: false,
+            icon: 'redo-alt',
+            iconColor: '#83B7E2',
+          },
+          {
             name: 'Upcoming',
             pin: true,
             numberOfTasks: false,
