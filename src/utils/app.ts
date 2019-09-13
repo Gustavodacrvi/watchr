@@ -132,14 +132,27 @@ export default {
         })
       }
       case 'Next month': {
-        return tasks.filter(el => {
-          if (el.date) {
-            const nextMonth = timezone().add(1, 'M').tz(timeZone)
-            const {saved} = this.getMomentsOutOfTask(el.date, timeZone)
-            const start = nextMonth.clone().startOf('month')
-            const end = nextMonth.clone().endOf('month')
-
-            return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
+        return tasks.filter(t => {
+          if (t.date || t.periodic) {
+            const date = t.date as string
+            if (!t.periodic) {
+              const nextMonth = timezone().add(1, 'M').tz(timeZone)
+              const {saved} = this.getMomentsOutOfTask(date, timeZone)
+              const start = nextMonth.clone().startOf('month')
+              const end = nextMonth.clone().endOf('month')
+  
+              return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
+            } else if (t.periodic && t.type === 'interval') {
+              const nextMonth = timezone().add(1, 'M').tz(timeZone)
+              const start = nextMonth.clone().startOf('month')
+              const end = nextMonth.clone().endOf('month')
+              const first = timezone(t.firstPeriodicDay, 'Y-M-D')
+              while (true) {
+                if (start.isSameOrBefore(first, 'day') && end.isSameOrAfter(first, 'day')) return true
+                first.add(t.periodicInterval, 'd')
+                if (first.isAfter(end, 'day')) return false
+              }
+            } else if (t.periodic && t.type === 'weekdays') return true
           }
           return false
         })
