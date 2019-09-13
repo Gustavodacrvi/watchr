@@ -51,10 +51,23 @@ export default {
   },
   filterTasksBySmartPerspective(name: string, tasks: Task[], timeZone: string, startOfTheWeek: string): Task[] {
     const weekFilter = (els: Task[], week: string): Task[] => {
-      return tasks.filter(el => {
-        if (el.date) {
-          const {saved} = this.getMomentsOutOfTask(el.date, timeZone)
-          return saved.format('dddd') === week
+      return tasks.filter(t => {
+        if (t.date || t.periodic) {
+          const date = t.date as string
+          if (!t.periodic) {
+            const {saved} = this.getMomentsOutOfTask(date, timeZone)
+            return saved.format('dddd') === week
+          } else if (t.periodic && t.type === 'interval') {
+            const first = timezone(t.firstPeriodicDay, 'Y-M-D')
+            let i = 0
+            while (true) {
+              if (first.format('dddd') === week) return true
+              first.add(t.periodicInterval, 'd')
+              i++
+              if (i > 100) return false
+            }
+          } else if (t.periodic && t.type === 'weekdays')
+            if (t.weekDays !== null) return t.weekDays.includes(week)
         }
         return false
       })
