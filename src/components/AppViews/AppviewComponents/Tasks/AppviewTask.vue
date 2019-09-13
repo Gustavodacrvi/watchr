@@ -27,8 +27,8 @@
             @click='toggleChecklist'
           >
             <div class='txt' :class='[theme, {fade: isTaskCompleted}]'>
-              <i v-if='showTodayIcon' class='txt fas fa-star fa-sm' style='color: #FFE366'></i>
-              <i v-else-if='showOverdueIcon' class='txt fas fa-hourglass-end fa-sm' style='color: #FF6B66'></i>
+              <i v-if='showOverdueIcon' class='txt fas fa-hourglass-end fa-sm' style='color: #FF6B66'></i>
+              <i v-else-if='showTodayIcon' class='txt fas fa-star fa-sm' style='color: #FFE366'></i>
               <i v-else-if='showTomorrowIcon' class='txt fas fa-sun fa-sm' style='color: #ffa166'></i>
               <span v-if="showProjectName && getProject" class="txt-tag gray txt round-border" :class="theme">{{ getProject.name }}</span>
               <span v-if="task.periodic && getPeriodicString" class="txt-tag gray txt round-border" :class="theme">{{ getPeriodicString }}</span>
@@ -188,6 +188,7 @@ export default class AppviewTask extends Vue {
 
   @settingsVuex.State timeZone!: SetState.timeZone
   @settingsVuex.State timeFormat!: SetState.timeFormat
+  @settingsVuex.State startOfTheWeek!: SetState.startOfTheWeek
   @settingsVuex.State dateFormat!: SetState.dateFormat
 
   @labelVuex.Getter getLabelsByIds!: LabelGetters.GetLabelsByIds
@@ -478,84 +479,29 @@ export default class AppviewTask extends Vue {
     return this.task.times !== 0
   }
   get isTaskToday(): boolean {
-    const t = this.task
-    if (!t.periodic) {
-      const {today, saved} = this.todayMomAndSavedMom()
-      return today.isSame(saved, 'day')
-    } else if (t.periodic && t.type === 'interval') {
-      const today = moment()
-      const first = moment(t.firstPeriodicDay, 'Y-M-D')
-      const diff = today.diff(first, 'days')
-      return diff % t.periodicInterval === 0 && this.periodicTaskHasntEnded
-    } else if (t.periodic && t.type === 'weekdays') {
-      if (t.weekDays === null) return true
-      else return t.weekDays.includes(moment().format('dddd'))
-    }
-    return false
+    return appUtils.filterTasksBySmartPerspective('Today', [this.task], this.timeZone, this.startOfTheWeek).length > 0
   }
   get taskDoesntHaveDateBinding(): boolean {
     return !this.task.date && !this.task.periodic
   }
   get showTodayIcon(): boolean {
-    if (this.fixedPers === 'Today' || this.taskDoesntHaveDateBinding) return false
+    if (this.fixedPers === 'Today' || this.everyday || this.taskDoesntHaveDateBinding) return false
     return this.isTaskToday
   }
   get showOverdueIcon(): boolean {
     if (this.fixedPers === 'Overdue' || this.taskDoesntHaveDateBinding) return false
-    const t = this.task
-    if (!t.periodic) {
-      const {today, saved} = this.todayMomAndSavedMom()
-      return saved.isBefore(today, 'day') && !this.task.completed
-    } else if (t.periodic && t.type === 'interval') {
-      const today = moment()
-      const first = moment(t.firstPeriodicDay, 'Y-M-D')
-      const lastEvent = first.clone()
-      const diff = today.diff(first, 'days')
-      const timesToAdd = Math.floor(diff / t.periodicInterval)
-      lastEvent.add(t.periodicInterval * timesToAdd, 'd')
-      const lastCompleted = moment(t.completedDate, 'Y-M-D')
-      if (!lastCompleted.isValid()) return lastEvent.isBefore(today, 'day')
-      else return lastCompleted.isBefore(lastEvent, 'day')
-    } else if (t.periodic && t.type === 'weekdays') {
-      if (t.weekDays === null) {
-        const today = moment()
-        const yesterday = today.clone().subtract(1, 'day')
-        const lastCompleted = moment(t.completedDate, 'Y-M-D')
-        const firstPeriodicDay = moment(t.firstPeriodicDay, 'Y-M-D')
-        if (!lastCompleted.isValid()) return today.diff(firstPeriodicDay) > 1
-        return lastCompleted.isBefore(yesterday, 'day')
-      }
-      else {
-        const lastEvent = appUtils.getLastWeekDay(moment(), t.weekDays)
-        const lastCompleted = moment(t.completedDate, 'Y-M-D')
-        const firstPeriodicDay = moment(t.firstPeriodicDay, 'Y-M-D')
-        if (!lastCompleted.isValid()) return lastEvent.isBefore(moment(), 'day')
-        else return lastCompleted.isBefore(lastEvent, 'day')
-      }
-    }
-    return false
+    return appUtils.filterTasksBySmartPerspective('Overdue', [this.task], this.timeZone, this.startOfTheWeek).length > 0
   }
   get isTaskTomorrow(): boolean {
-    const t = this.task
-    if (!t.periodic) {
-      const {today, saved} = this.todayMomAndSavedMom()
-      return today.clone().add(1, 'day').isSame(saved, 'day')
-    } else if (t.periodic && t.type === 'interval') {
-      const tomorrow = moment().add(1, 'day')
-      const first = moment(t.firstPeriodicDay, 'Y-M-D')
-      const diff = tomorrow.diff(first, 'days')
-      return diff % t.periodicInterval === 0 && this.periodicTaskHasntEnded
-    } else if (t.periodic && t.type === 'weekdays') {
-      if (t.weekDays === null) return true
-      else return t.weekDays.includes(moment().add(1, 'day').format('dddd'))
-    }
-    return false
+    return appUtils.filterTasksBySmartPerspective('Tomorrow', [this.task], this.timeZone, this.startOfTheWeek).length > 0
   }
   get showTomorrowIcon(): boolean {
-    if (this.fixedPers === 'Tomorrow' || !this.task.date) return false
-    const {today, saved} = this.todayMomAndSavedMom()
-    today.add(1, 'd')
-    return today.isSame(saved, 'day')
+    if (this.fixedPers === 'Tomorrow' || this.everyday || this.taskDoesntHaveDateBinding) return false
+    return this.isTaskTomorrow
+  }
+  get everyday(): boolean {
+    const p = this.task
+    return p.periodic && p.weekDays === null
   }
   get allTrue(): boolean {
     if (this.showLabels && this.showLastEditDate && this.showCreationDate) return true

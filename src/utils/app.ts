@@ -61,16 +61,28 @@ export default {
     }
     switch (name) {
       case 'Inbox': {
-        return tasks.filter(el => el.labels.length === 0 && !el.date && el.projectId === '')
+        return tasks.filter(el => el.labels.length === 0 && !el.date && el.projectId === '' && !el.periodic)
       }
       case 'Have tags': return tasks.filter(el => el.labels.length > 0)
       case `Doesn't have tags`: return tasks.filter(el => el.labels.length === 0)
       case 'Today': {
-        return tasks.filter(el => {
-          if (!el.date) return false
-          const {today, saved} = this.getMomentsOutOfTask(el.date, timeZone)
-          const areSame = today.isSame(saved, 'day')
-          return areSame
+        return tasks.filter(t => {
+          if (t.date || t.periodic) {
+            const date = t.date as string
+            if (!t.periodic) {
+              const {today, saved} = this.getMomentsOutOfTask(date, timeZone)
+              return today.isSame(saved, 'day')
+            } else if (t.periodic && t.type === 'interval') {
+              const today = timezone()
+              const first = timezone(t.firstPeriodicDay, 'Y-M-D')
+              const diff = today.diff(first, 'days')
+              return diff % t.periodicInterval === 0 && t.times !== 0
+            } else if (t.periodic && t.type === 'weekdays') {
+              if (t.weekDays === null) return true && t.times !== 0
+              else return t.weekDays.includes(timezone().format('dddd'))
+            }
+          }
+          return false
         })
       }
       case 'Next week': {
@@ -109,11 +121,21 @@ export default {
         })
       }
       case 'Tomorrow': {
-        return tasks.filter(el => {
-          if (el.date) {
-            const tom = timezone().add(1, 'd').tz(timeZone)
-            const {saved} = this.getMomentsOutOfTask(el.date, timeZone)
-            return tom.isSame(saved, 'day')
+        return tasks.filter(t => {
+          if (t.date || t.periodic) {
+            const date = t.date as string
+            if (!t.periodic) {
+              const {today, saved} = this.getMomentsOutOfTask(date, timeZone)
+              return today.clone().add(1, 'day').isSame(saved, 'day')
+            } else if (t.periodic && t.type === 'interval') {
+              const tomorrow = timezone().add(1, 'day')
+              const first = timezone(t.firstPeriodicDay, 'Y-M-D')
+              const diff = tomorrow.diff(first, 'days')
+              return diff % t.periodicInterval === 0 && t.times !== 0
+            } else if (t.periodic && t.type === 'weekdays') {
+              if (t.weekDays === null) return true
+              else return t.weekDays.includes(timezone().add(1, 'day').format('dddd'))
+            }
           }
           return false
         })
@@ -128,11 +150,39 @@ export default {
         return tasks.filter(el => !el.projectId)
       }
       case 'Overdue': {
-        return tasks.filter(el => {
-          if (el.completed) return false
-          if (el.date) {
-            const {saved, today} = this.getMomentsOutOfTask(el.date, timeZone)
-            return saved.isBefore(today, 'day')
+        return tasks.filter(t => {
+          if (t.date || t.periodic) {
+            const date = t.date as string
+            if (!t.periodic) {
+              const {today, saved} = this.getMomentsOutOfTask(date, timeZone)
+              return saved.isBefore(today, 'day') && !t.completed
+            } else if (t.periodic && t.type === 'interval') {
+              const today = timezone()
+              const first = timezone(t.firstPeriodicDay, 'Y-M-D')
+              const lastEvent = first.clone()
+              const diff = today.diff(first, 'days')
+              const timesToAdd = Math.floor(diff / t.periodicInterval)
+              lastEvent.add(t.periodicInterval * timesToAdd, 'd')
+              const lastCompleted = timezone(t.completedDate, 'Y-M-D')
+              if (!lastCompleted.isValid()) return lastEvent.isBefore(today, 'day')
+              else return lastCompleted.isBefore(lastEvent, 'day')
+            } else if (t.periodic && t.type === 'weekdays') {
+              if (t.weekDays === null) {
+                const today = timezone()
+                const yesterday = today.clone().subtract(1, 'day')
+                const lastCompleted = timezone(t.completedDate, 'Y-M-D')
+                const firstPeriodicDay = timezone(t.firstPeriodicDay, 'Y-M-D')
+                if (!lastCompleted.isValid()) return today.diff(firstPeriodicDay, 'days') > 1
+                return lastCompleted.isBefore(yesterday, 'day')
+              }
+              else {
+                const lastEvent = this.getLastWeekDay(timezone(), t.weekDays)
+                const lastCompleted = timezone(t.completedDate, 'Y-M-D')
+                const firstPeriodicDay = timezone(t.firstPeriodicDay, 'Y-M-D')
+                if (!lastCompleted.isValid()) return lastEvent.isBefore(timezone(), 'day') && lastEvent.isSameOrAfter(firstPeriodicDay, 'day')
+                else return lastCompleted.isBefore(lastEvent, 'day')
+              }
+            }
           }
           return false
         })
