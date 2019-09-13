@@ -112,6 +112,9 @@ export interface Task {
   creationDate: string
   lastEditDate: string
   checklistOrder: string[]
+  timesPerDay: number
+  timesTotal: number
+  timesCompleted: number
   projectId: string
   completed: boolean
   checklist: Array<{
@@ -133,6 +136,9 @@ export interface PeriodicObject {
   type: 'weekdays' | 'interval',
   weekDays: null | string[],
   times: number | null,
+  timesPerDay: number
+  timesTotal: number
+  timesCompleted: number
   periodicInterval: number
   firstPeriodicDay: string,
   completedDate: string,

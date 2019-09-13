@@ -617,6 +617,9 @@ export default class AppviewTask extends Vue {
         weekDays: t.weekDays,
         times: t.times,
         periodicInterval: t.periodicInterval,
+        timesPerDay: t.timesPerDay,
+        timesCompleted: t.timesCompleted,
+        timesTotal: t.timesTotal,
         firstPeriodicDay: t.firstPeriodicDay,
         completedDate: t.completedDate,
       }
