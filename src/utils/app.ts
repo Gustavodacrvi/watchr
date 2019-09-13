@@ -2,7 +2,7 @@
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorComponent from '@/components/ErrorComponent.vue'
 
-import { Task, TaskInputObj, Perspective } from '@/interfaces/app'
+import { Task, TaskInputObj, Perspective, PeriodicObject } from '@/interfaces/app'
 
 import timezone from 'moment-timezone'
 import { SetState } from '@/interfaces/store/settings'
@@ -554,6 +554,69 @@ export default {
 
       return o
     }
+    const searchPeriodicInput = (str: string): PeriodicObject | null => {
+      const obj: PeriodicObject = {
+        periodic: false,
+        type: 'weekdays',
+        weekDays: null,
+        times: null,
+        periodicInterval: 0,
+        firstPeriodicDay: '',
+        completedDate: '',
+      }
+
+      if (str.includes('every ')) {
+        const values = str.split(' ')
+        obj.periodic = true
+          
+        if (!isNumber(values[1])) {
+          const weekDays = []
+          for (const val of values) {
+            const mom = timezone(val, 'dddd')
+            if (mom.isValid()) weekDays.push(mom.format('dddd'))
+          }
+          if (weekDays.length > 0) {
+            const set = new Set()
+            const weeks = []
+            for (const week of weekDays)
+              if (!set.has(week)) {
+                weeks.push(week)
+                set.add(week)
+              }
+            obj.weekDays = weeks
+          }
+        } else {
+          for (let j = 0;j < values.length; j++) {
+            const f = values[j]
+            const m = values[j + 1]
+            const l = values[j + 2]
+            if (f && m && l && f === 'every' && isNumber(m) && (l === 'days')) {
+              obj.periodicInterval = parseInt(m, 10)
+              obj.type = 'interval'
+              obj.firstPeriodicDay = timezone().format('Y-M-D')
+            }
+          }
+        }
+
+        for (let i = 0; i < values.length; i++) {
+          const f = values[i]
+          const l = values[i + 1]
+          if (f && l && isNumber(f) && (l === 'times' || l === 'ti')) obj.times = parseInt(f, 10)
+        }
+      }
+
+      /*
+        if periodic is true:
+          if type = 'weekdays':
+            return isWeekDay(today) and hasntEnded(times) and !alreadyCompletedToday:
+            
+          else if type = 'interval':
+            return (today - firstPeriodicDay) % periodicInterval = 0 and hasntEnded(times) and !alreadyCompletedToday:
+       */
+      if (obj.periodic)
+        return obj
+      else return null
+    }
 
     return parseDateInput(input, (str): any => {
       if (str) {
@@ -565,43 +628,68 @@ export default {
         const time = this.getTaskInputTime(values, timeFormat)
 
         const obj = searchKeyWords(str, {month, year, day, time})
+        const perInput = searchPeriodicInput(str)
         const utc = this.getUtcValuesFromTaskInputObj(obj, timeZone)
 
-        return {...obj, utc}
+        return {...obj, utc, periodic: perInput}
       }
     })
   },
   // tslint:disable-next-line:max-line-length
   parseTaskInputObjectToString(obj: TaskInputObj | undefined, timeFormat: SetState.timeFormat, timeZone: string): string {
-    if (obj && timeZone && timeFormat) {
-      let time = obj.time
+    if (obj && timeZone && timeFormat)
+      if (!obj.periodic) {
+        let time = obj.time
 
-      const today = timezone().tz(timeZone)
-      let typed!: any
-      if (time)
-        typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day} ${time}`, 'Y-M-D HH:mm', timeZone)
-      else
-        typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day}`, 'Y-M-D', timeZone)
+        const today = timezone().tz(timeZone)
+        let typed!: any
+        if (time)
+          typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day} ${time}`, 'Y-M-D HH:mm', timeZone)
+        else
+          typed = timezone.tz(`${obj.year}-${obj.month}-${obj.day}`, 'Y-M-D', timeZone)
 
-      let str = `${timezone().month(obj.month - 1).format('MMMM')} ${obj.day}, ${obj.year}`
+        let str = ''
+        if (!today.isSame(typed, 'month')) str += '' + today.month(obj.month - 1).format('MMMM') + ' '
+        str += `${obj.day}`
+        if (!today.isSame(typed, 'year')) str += `, ${obj.year}`
 
-      const isToday = today.isSame(typed, 'day')
-      today.add(1, 'd')
-      const isTom = today.isSame(typed, 'day')
+        const isToday = today.isSame(typed, 'day')
+        today.add(1, 'd')
+        const isTom = today.isSame(typed, 'day')
 
-      if (isToday) str = 'Today'
-      else if (isTom) str = 'Tomorrow'
+        if (isToday) str = 'Today'
+        else if (isTom) str = 'Tomorrow'
 
-      if (time) {
-        if (timeFormat === '1:00pm')
-          time = timezone(time, 'HH:mm').format('hh:mm a')
-        str += ` at ${obj.time}`
+        if (time) {
+          if (timeFormat === '1:00pm')
+            time = timezone(time, 'HH:mm').format('hh:mm a')
+          str += ` at ${obj.time}`
+        }
+        if (!isToday && !isTom)
+          str += ', ' + typed.format('dddd')
+
+        return str
+      } else {
+        let str = 'every'
+        const per = obj.periodic
+
+        if (per.type === 'weekdays') {
+          if (per.weekDays === null) str += ' day'
+          else {
+            str += ' '
+            for (let i = 0;i < per.weekDays.length; i++) {
+              str += timezone(per.weekDays[i], 'dddd').format('ddd')
+              if (i !== per.weekDays.length -1) str += ', '
+            }
+          }
+        } else {
+          str = `every ${per.periodicInterval} days`
+        }
+
+        if (per.times !== null) str += ` ${per.times} times`
+
+        return str
       }
-      if (!isToday && !isTom)
-        str += ', ' + typed.format('dddd')
-
-      return str
-    }
     return ''
   },
 }
