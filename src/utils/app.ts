@@ -109,12 +109,24 @@ export default {
         })
       }
       case 'This week': {
-        return tasks.filter(el => {
-          if (el.date) {
-            const {today, saved} = this.getMomentsOutOfTask(el.date, timeZone)
-            const start = this.getNextWeek(today.clone(), startOfTheWeek).subtract(6, 'd')
-            const end = start.clone().add(6, 'd')
-            return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
+        return tasks.filter(t => {
+          if (t.date || t.periodic) {
+            const date = t.date as string
+            if (!t.periodic) {
+              const {today, saved} = this.getMomentsOutOfTask(date, timeZone)
+              const start = this.getNextWeek(today.clone(), startOfTheWeek).subtract(6, 'd')
+              const end = start.clone().add(6, 'd')
+              return start.isSameOrBefore(saved, 'day') && end.isSameOrAfter(saved, 'day')
+            } else if (t.periodic && t.type === 'interval') {
+              const start = this.getNextWeek(timezone().clone(), startOfTheWeek).subtract(6, 'd')
+              const end = start.clone().add(6, 'd')
+              const first = timezone(t.firstPeriodicDay, 'Y-M-D')
+              while (true) {
+                if (start.isSameOrBefore(first, 'day') && end.isSameOrAfter(first, 'day')) return true
+                first.add(t.periodicInterval, 'd')
+                if (first.isAfter(end, 'day')) return false
+              }
+            } else if (t.periodic && t.type === 'weekdays') return true
           }
           return false
         })
