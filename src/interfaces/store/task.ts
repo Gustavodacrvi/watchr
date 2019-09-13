@@ -74,6 +74,9 @@ export namespace TaskActions {
   export type StoreSaveSubtaskOrder = (context: ActionContext, obj: {taskId: string, order: string[]}) => void
   export type SaveSubtaskOrder = (obj: {taskId: string, order: string[]}) => void
 
+  export type StoreTogglePeriodicCompleteTask = (context: ActionContext, id: string) => void
+  export type TogglePeriodicCompleteTask = (id: string) => void
+
   export type StoreDeleteSubTaskFromTask = (context: ActionContext, obj: {taskId: string, id: string}) => void
   export type DeleteSubTaskFromTask = (obj: {taskId: string, id: string}) => void
 

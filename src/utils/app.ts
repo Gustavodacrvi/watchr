@@ -418,7 +418,20 @@ export default {
       if (week === nextWeek)
         break
       clone.add(1, 'd')
-      if (i > 100) break
+      if (i > 10) break
+      i++
+    }
+    return clone
+  },
+  getLastWeekDay(mom: any, weeknames: string[]) {
+    const clone = mom.clone()
+    let i = 0
+    while(true) {
+      const week = clone.format('dddd')
+      if (weeknames.includes(week))
+        break
+      clone.subtract(1, 'd')
+      if (i > 10) break
       i++
     }
     return clone

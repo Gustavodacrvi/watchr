@@ -452,18 +452,11 @@ export default {
               userId: rootState.uid,
               creationDate: date,
               lastEditDate: date,
-              firstPeriodicDay: periodic.firstPeriodicDay,
-              periodic: periodic.periodic,
-              type: periodic.type,
-              weekDays: periodic.weekDays,
-              times: periodic.times,
-              periodicInterval: periodic.periodicInterval,
-              completedDate: '',
               labels: task.labels,
               checklist: [],
               completed: false,
               checklistOrder: [],
-              ...t.utc,
+              ...t.utc, ...periodic,
             })
             const persRef = rootState.fr.collection('projects').doc(projectId)
             batch.update(persRef, {

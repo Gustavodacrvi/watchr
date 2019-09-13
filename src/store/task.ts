@@ -21,6 +21,7 @@ interface Actions {
   saveSubtaskOrder: TaskActions.StoreSaveSubtaskOrder
   deleteSubTaskFromTask: TaskActions.StoreDeleteSubTaskFromTask
   saveNewDateOfTasks: TaskActions.StoreSaveNewDateOfTasks
+  togglePeriodicCompleteTask: TaskActions.StoreTogglePeriodicCompleteTask
   unCompleteSubtasks: TaskActions.StoreUnCompleteSubtasks
   addProjectTask: TaskActions.StoreAddProjectTask
   removeTasksFromProject: TaskActions.StoreRemoveTasksFromProject
@@ -71,15 +72,8 @@ export default {
         const ref = rootState.fr.collection('tasks').doc(id)
         batch.update(ref, {
           name, priority, labels, projectId,
-          firstPeriodicDay: periodic.firstPeriodicDay,
-          periodic: periodic.periodic,
-          type: periodic.type,
-          weekDays: periodic.weekDays,
-          times: periodic.times,
-          periodicInterval: periodic.periodicInterval,
-          completedDate: '',
           lastEditDate: dt,
-          ...utc,
+          ...utc, ...periodic,
         })
         if (projectId && saveProject) {
           const pro = rootState.fr.collection('projects').doc(projectId)
@@ -121,18 +115,11 @@ export default {
           userId: rootState.uid,
           creationDate: date,
           lastEditDate: date,
-          firstPeriodicDay: periodic.firstPeriodicDay,
-          periodic: periodic.periodic,
-          type: periodic.type,
-          weekDays: periodic.weekDays,
-          times: periodic.times,
-          periodicInterval: periodic.periodicInterval,
-          completedDate: '',
           labels: task.labels,
           checklist: [],
           completed: false,
           checklistOrder: [],
-          ...t.utc,
+          ...t.utc, ...periodic,
         })
         if (task.projectId) {
           const pro = rootState.fr.collection('projects').doc(task.projectId)
@@ -163,20 +150,13 @@ export default {
           name: task.name,
           priority: task.priority,
           userId: rootState.uid,
-          firstPeriodicDay: periodic.firstPeriodicDay,
-          periodic: periodic.periodic,
-          type: periodic.type,
-          weekDays: periodic.weekDays,
-          times: periodic.times,
-          periodicInterval: periodic.periodicInterval,
-          completedDate: '',
           creationDate: date,
           lastEditDate: date,
           labels: task.labels,
           checklist: [],
           completed: false,
           checklistOrder: [],
-          ...t.utc,
+          ...t.utc, ...periodic,
         })
         const persRef = rootState.fr.collection('projects').doc(projectId)
         batch.update(persRef, {
@@ -199,17 +179,10 @@ export default {
           userId: rootState.uid,
           creationDate: date,
           lastEditDate: date,
-          firstPeriodicDay: periodic.firstPeriodicDay,
-          periodic: periodic.periodic,
-          type: periodic.type,
-          weekDays: periodic.weekDays,
-          times: periodic.times,
-          periodicInterval: periodic.periodicInterval,
-          completedDate: '',
           checklist: [],
           completed: false,
           checklistOrder: [],
-          ...utc,
+          ...utc, ...periodic,
         })
         if (projectId) {
           const proRef = rootState.fr.collection('projects').doc(projectId)
@@ -254,19 +227,12 @@ export default {
           priority: task.priority,
           userId: rootState.uid,
           labels: task.labels,
-          firstPeriodicDay: periodic.firstPeriodicDay,
-          periodic: periodic.periodic,
-          type: periodic.type,
-          weekDays: periodic.weekDays,
-          times: periodic.times,
-          periodicInterval: periodic.periodicInterval,
-          completedDate: '',
           creationDate: date,
           lastEditDate: date,
           checklist: [],
           completed: false,
           checklistOrder: [],
-          ...utc,
+          ...utc, ...periodic,
         })
         const persRef = rootState.fr.collection('labels').doc(labelId)
         batch.update(persRef, {
@@ -392,6 +358,23 @@ export default {
         rootState.fr.collection('tasks').doc(id).update({
           completed, lastEditDate: date,
         })
+    },
+    togglePeriodicCompleteTask({ rootState, state }, id) {
+      const utc = timezone().utc()
+      const date = utc.format('Y-M-D')
+      if (rootState.fr && rootState.uid) {
+        const task = state.tasks.find(el => el.id === id)
+        if (task) {
+          if (task.times === null || task.times === 0)
+            rootState.fr.collection('tasks').doc(id).update({
+              completedDate: date
+            })
+          else rootState.fr.collection('tasks').doc(id).update({
+            times: task.times - 1,
+            completedDate: date,
+          })
+        }
+      }
     },
     copyTask({ rootState, state }, taskId) {
       const u = timezone().utc()

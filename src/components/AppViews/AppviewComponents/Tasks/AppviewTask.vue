@@ -11,11 +11,11 @@
         class='content-wrapper'
       >
         <span v-if="!task.periodic" class='circles' @click='toggleTaskComplete'>
-          <i v-show='!task.completed' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
-          <i v-show='task.completed' class='far fade circle icon txt fa-check-circle fa-sm' :class='theme'></i>
+          <i v-show='!isTaskCompleted' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
+          <i v-show='isTaskCompleted' class='far fade circle icon txt fa-check-circle fa-sm' :class='theme'></i>
         </span>
-        <span v-else class="circles">
-          <i class='fas circle icon txt fa-redo-alt fa-sm' :class='theme'></i>
+        <span v-else class="circles" :class="{fade: isTaskCompleted}" @click='togglePeriodicTaskComplete'>
+          <i class='fas circle icon txt fa-redo-alt fa-sm' :class="theme"></i>
           <span class='circle-number txt' :class="theme">{{ task.times }}</span>
         </span>
         <transition name='check-trans' mode='out-in'>
@@ -26,7 +26,7 @@
             v-longpress='toggleElement'
             @click='toggleChecklist'
           >
-            <div class='txt' :class='[theme, {fade: task.completed}]'>
+            <div class='txt' :class='[theme, {fade: isTaskCompleted}]'>
               <i v-if='showTodayIcon' class='txt fas fa-star fa-sm' style='color: #FFE366'></i>
               <i v-else-if='showOverdueIcon' class='txt fas fa-hourglass-end fa-sm' style='color: #FF6B66'></i>
               <i v-else-if='showTomorrowIcon' class='txt fas fa-sun fa-sm' style='color: #ffa166'></i>
@@ -181,6 +181,7 @@ export default class AppviewTask extends Vue {
   @taskVuex.Action addSubTask!: TaskActions.AddSubTask
   @taskVuex.Action toggleCompleteTask!: TaskActions.ToggleCompleteTask
   @taskVuex.Action saveSubtaskOrder!: TaskActions.SaveSubtaskOrder
+  @taskVuex.Action togglePeriodicCompleteTask!: TaskActions.TogglePeriodicCompleteTask
   @taskVuex.Action unCompleteSubtasks!: TaskActions.UnCompleteSubtasks
   @taskVuex.Action copyTask!: TaskActions.CopyTask
   @taskVuex.Action removeTasksFromProject!: TaskActions.RemoveTasksFromProject
@@ -337,15 +338,22 @@ export default class AppviewTask extends Vue {
     })
     this.editing = false
   }
-  toggleTaskComplete() {
+  runAnimation() {
     this.done = true
     setTimeout(() => {
       this.done = false
     }, 1000)
+  }
+  toggleTaskComplete() {
+    this.runAnimation()
     this.toggleCompleteTask({
       id: this.task.id,
       completed: !this.task.completed,
     })
+  }
+  togglePeriodicTaskComplete() {
+    this.runAnimation()
+    this.togglePeriodicCompleteTask(this.task.id)
   }
   getSubTaskAdderPosition() {
     const ids = this.getSubtasksIds()
@@ -466,15 +474,82 @@ export default class AppviewTask extends Vue {
       })
     return options
   }
+  get periodicTaskHasntEnded(): boolean {
+    return this.task.times !== 0
+  }
+  get isTaskToday(): boolean {
+    const t = this.task
+    if (!t.periodic) {
+      const {today, saved} = this.todayMomAndSavedMom()
+      return today.isSame(saved, 'day')
+    } else if (t.periodic && t.type === 'interval') {
+      const today = moment()
+      const first = moment(t.firstPeriodicDay, 'Y-M-D')
+      const diff = today.diff(first, 'days')
+      return diff % t.periodicInterval === 0 && this.periodicTaskHasntEnded
+    } else if (t.periodic && t.type === 'weekdays') {
+      if (t.weekDays === null) return true
+      else return t.weekDays.includes(moment().format('dddd'))
+    }
+    return false
+  }
+  get taskDoesntHaveDateBinding(): boolean {
+    return !this.task.date && !this.task.periodic
+  }
   get showTodayIcon(): boolean {
-    if (this.fixedPers === 'Today' || !this.task.date) return false
-    const {today, saved} = this.todayMomAndSavedMom()
-    return today.isSame(saved, 'day')
+    if (this.fixedPers === 'Today' || this.taskDoesntHaveDateBinding) return false
+    return this.isTaskToday
   }
   get showOverdueIcon(): boolean {
-    if (this.fixedPers === 'Overdue' || !this.task.date) return false
-    const {today, saved} = this.todayMomAndSavedMom()
-    return saved.isBefore(today, 'day') && !this.task.completed
+    if (this.fixedPers === 'Overdue' || this.taskDoesntHaveDateBinding) return false
+    const t = this.task
+    if (!t.periodic) {
+      const {today, saved} = this.todayMomAndSavedMom()
+      return saved.isBefore(today, 'day') && !this.task.completed
+    } else if (t.periodic && t.type === 'interval') {
+      const today = moment()
+      const first = moment(t.firstPeriodicDay, 'Y-M-D')
+      const lastEvent = first.clone()
+      const diff = today.diff(first, 'days')
+      const timesToAdd = Math.floor(diff / t.periodicInterval)
+      lastEvent.add(t.periodicInterval * timesToAdd, 'd')
+      const lastCompleted = moment(t.completedDate, 'Y-M-D')
+      if (!lastCompleted.isValid()) return lastEvent.isBefore(today, 'day')
+      else return lastCompleted.isBefore(lastEvent, 'day')
+    } else if (t.periodic && t.type === 'weekdays') {
+      if (t.weekDays === null) {
+        const today = moment()
+        const yesterday = today.clone().subtract(1, 'day')
+        const lastCompleted = moment(t.completedDate, 'Y-M-D')
+        const firstPeriodicDay = moment(t.firstPeriodicDay, 'Y-M-D')
+        if (!lastCompleted.isValid()) return today.diff(firstPeriodicDay) > 1
+        return lastCompleted.isBefore(yesterday, 'day')
+      }
+      else {
+        const lastEvent = appUtils.getLastWeekDay(moment(), t.weekDays)
+        const lastCompleted = moment(t.completedDate, 'Y-M-D')
+        const firstPeriodicDay = moment(t.firstPeriodicDay, 'Y-M-D')
+        if (!lastCompleted.isValid()) return lastEvent.isBefore(moment(), 'day')
+        else return lastCompleted.isBefore(lastEvent, 'day')
+      }
+    }
+    return false
+  }
+  get isTaskTomorrow(): boolean {
+    const t = this.task
+    if (!t.periodic) {
+      const {today, saved} = this.todayMomAndSavedMom()
+      return today.clone().add(1, 'day').isSame(saved, 'day')
+    } else if (t.periodic && t.type === 'interval') {
+      const tomorrow = moment().add(1, 'day')
+      const first = moment(t.firstPeriodicDay, 'Y-M-D')
+      const diff = tomorrow.diff(first, 'days')
+      return diff % t.periodicInterval === 0 && this.periodicTaskHasntEnded
+    } else if (t.periodic && t.type === 'weekdays') {
+      if (t.weekDays === null) return true
+      else return t.weekDays.includes(moment().add(1, 'day').format('dddd'))
+    }
+    return false
   }
   get showTomorrowIcon(): boolean {
     if (this.fixedPers === 'Tomorrow' || !this.task.date) return false
@@ -582,6 +657,15 @@ export default class AppviewTask extends Vue {
     if (project) return project
     return null
   }
+  get isTaskCompleted(): boolean {
+    const t = this.task
+    if (!t.periodic) return t.completed
+    else {
+      const today = moment()
+      const completedDate = moment(t.completedDate, 'Y-M-D')
+      return completedDate.isSame(today, 'day')
+    }
+  }
   get getPeriodicObject(): PeriodicObject | null {
     const t = this.task
     if (t.periodic)
@@ -666,8 +750,8 @@ export default class AppviewTask extends Vue {
 .circle-number {
   position: absolute;
   font-size: .7em;
-  bottom: -9px;
-  right: -6px;
+  bottom: -14px;
+  right: -4px;
 }
 
 .circle {
@@ -738,7 +822,7 @@ export default class AppviewTask extends Vue {
 }
 
 .sortable-selected.dark .task {
-  background-color: #3287cd !important;
+  background-color: rgba(50, 135, 205, .2) !important;
 }
 
 .content-icon {
