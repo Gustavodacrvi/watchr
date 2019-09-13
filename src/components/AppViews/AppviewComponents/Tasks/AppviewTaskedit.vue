@@ -186,11 +186,9 @@ export default class AppviewTaskedit extends Vue {
       this.value = this.defaultValue
     if (this.defaultProject)
       this.project = this.defaultProject
-    if (this.defaultPeriodic)
-      this.periodicObj = this.defaultPeriodic
     if (this.defaultDate)
-      this.updateCalendarObj(this.defaultDate)
-    else this.updateCalendarObj(this.date)
+      this.updateCalendarObj(this.defaultDate, this.defaultPeriodic)
+    else this.updateCalendarObj(this.date, this.defaultPeriodic)
   }
   mounted() {
     const el = document.querySelectorAll('.taskedit')[0] as any
@@ -249,8 +247,8 @@ export default class AppviewTaskedit extends Vue {
       this.calendarObj = null
     }
   }
-  updateCalendarObj(date: string | null) {
-    if (date) {
+  updateCalendarObj(date: string | null, periodicObj: PeriodicObject | null) {
+    if (date || periodicObj) {
       let saved!: any
       if (!this.time)
         saved = moment.tz(`${date}`, 'Y-M-D', this.timeZone)
@@ -263,6 +261,7 @@ export default class AppviewTaskedit extends Vue {
         utc: {
           time, date: saved.format('Y-M-D'),
         },
+        periodic: periodicObj,
       }
       if (this.time) this.calendarObj['time'] = saved.format('HH:mm')
       this.calendarString = appUtils.parseTaskInputObjectToString(this.calendarObj, this.timeFormat, this.timeZone)

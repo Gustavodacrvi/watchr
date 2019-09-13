@@ -41,8 +41,8 @@ export namespace TaskActions {
   export type StoreGetData = (context: ActionContext) => void
   export type GetData = () => void
 
-  export type StoreUpdateTask = (context: ActionContext, obj: {name: string, priority: string, id: string, projectId: string, saveProject: boolean, labels: [], utc: UtcObj | null}) => void
-  export type UpdateTask = (obj: {name: string, projectId: string, saveProject: boolean, priority: string, id: string, labels: [], utc: UtcObj | null}) => void
+  export type StoreUpdateTask = (context: ActionContext, obj: {name: string, priority: string, id: string, projectId: string, periodic: PeriodicObject, saveProject: boolean, labels: [], utc: UtcObj | null}) => void
+  export type UpdateTask = (obj: {name: string, projectId: string, saveProject: boolean, priority: string, id: string, periodic: PeriodicObject, labels: [], utc: UtcObj | null}) => void
 
   export type StoreCopyTask = (context: ActionContext, taskId: string) => void
   export type CopyTask = (taskId: string) => void

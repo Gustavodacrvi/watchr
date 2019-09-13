@@ -61,7 +61,7 @@ export default {
           appUtils.fixStoreChanges(state, changes, 'tasks')
         })
     },
-    updateTask({ rootState }, {name, priority, projectId, id, saveProject, labels, utc}) {
+    updateTask({ rootState }, {name, priority, periodic, projectId, id, saveProject, labels, utc}) {
       const u = timezone().utc()
       const dt = u.format('Y-M-D HH:mm')
       if (rootState.fr && rootState.uid) {
@@ -71,6 +71,13 @@ export default {
         const ref = rootState.fr.collection('tasks').doc(id)
         batch.update(ref, {
           name, priority, labels, projectId,
+          firstPeriodicDay: periodic.firstPeriodicDay,
+          periodic: periodic.periodic,
+          type: periodic.type,
+          weekDays: periodic.weekDays,
+          times: periodic.times,
+          periodicInterval: periodic.periodicInterval,
+          completedDate: '',
           lastEditDate: dt,
           ...utc,
         })

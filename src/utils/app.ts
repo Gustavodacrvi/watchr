@@ -629,7 +629,9 @@ export default {
 
         const obj = searchKeyWords(str, {month, year, day, time})
         const perInput = searchPeriodicInput(str)
-        const utc = this.getUtcValuesFromTaskInputObj(obj, timeZone)
+        let utc = null
+        if (!perInput)
+          utc = this.getUtcValuesFromTaskInputObj(obj, timeZone)
 
         return {...obj, utc, periodic: perInput}
       }

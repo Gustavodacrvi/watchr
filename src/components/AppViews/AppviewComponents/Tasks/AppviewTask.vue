@@ -10,9 +10,13 @@
       <div
         class='content-wrapper'
       >
-        <span class='circles' @click='toggleTaskComplete'>
+        <span v-if="!task.periodic" class='circles' @click='toggleTaskComplete'>
           <i v-show='!task.completed' class='far circle icon txt fa-circle fa-sm' :class='theme'></i>
           <i v-show='task.completed' class='far fade circle icon txt fa-check-circle fa-sm' :class='theme'></i>
+        </span>
+        <span v-else class="circles">
+          <i class='fas circle icon txt fa-redo-alt fa-sm' :class='theme'></i>
+          <span class='circle-number txt' :class="theme">{{ task.times }}</span>
         </span>
         <transition name='check-trans' mode='out-in'>
           <div
@@ -27,6 +31,7 @@
               <i v-else-if='showOverdueIcon' class='txt fas fa-hourglass-end fa-sm' style='color: #FF6B66'></i>
               <i v-else-if='showTomorrowIcon' class='txt fas fa-sun fa-sm' style='color: #ffa166'></i>
               <span v-if="showProjectName && getProject" class="txt-tag gray txt round-border" :class="theme">{{ getProject.name }}</span>
+              <span v-if="task.periodic && getPeriodicString" class="txt-tag gray txt round-border" :class="theme">{{ getPeriodicString }}</span>
               <span v-if="date" class="txt-tag gray txt round-border" :class="theme">{{ date }}</span>
               <span v-if="time" class="txt-tag gray txt round-border" :class="theme">{{ time }}</span>
               {{ task.name }}
@@ -110,6 +115,7 @@
       :default-value='task.name'
       :default-priority='task.priority'
       :default-project='getProject'
+      :default-periodic='getPeriodicObject'
       :allow-priority='true'
       :allow-labels='true'
       :allow-date='true'
@@ -133,7 +139,7 @@ import TaskEditTemplate from '@/components/AppViews/AppviewComponents/Tasks/Appv
 import SubTask from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtask.vue'
 import SubTaskEdit from '@/components/AppViews/AppviewComponents/Tasks/AppviewSubtaskEdit.vue'
 
-import { Task, ListIcon, Label, Project } from '../../../../interfaces/app'
+import { Task, ListIcon, Label, Project, PeriodicObject } from '../../../../interfaces/app'
 
 import appUtils from '@/utils/app'
 import moment from 'moment-timezone'
@@ -556,10 +562,38 @@ export default class AppviewTask extends Vue {
       return 'longpressdesktop'
     return 'longpressmobile'
   }
+  get getPeriodicString(): string {
+    const t = this.task
+    if (t.type === 'interval') {
+      return `every ${t.periodicInterval} days`
+    } else if (t.weekDays !== null) {
+      let str = ''
+      for (let i = 0; i < t.weekDays.length; i++) {
+        str += moment(t.weekDays[i], 'dddd').format('ddd')
+        if (i !== t.weekDays.length - 1) str += ', '
+      }
+      return str
+    }
+    return ''
+  }
   get getProject(): Project | null {
     if (!this.task.projectId) return null
     const project = this.getProjectById(this.task.projectId)
     if (project) return project
+    return null
+  }
+  get getPeriodicObject(): PeriodicObject | null {
+    const t = this.task
+    if (t.periodic)
+      return {
+        periodic: t.periodic,
+        type: t.type,
+        weekDays: t.weekDays,
+        times: t.times,
+        periodicInterval: t.periodicInterval,
+        firstPeriodicDay: t.firstPeriodicDay,
+        completedDate: t.completedDate,
+      }
     return null
   }
 
@@ -626,6 +660,14 @@ export default class AppviewTask extends Vue {
   margin: 0 8px;
   margin-left: 4px;
   font-size: 1.2em;
+  position: relative;
+}
+
+.circle-number {
+  position: absolute;
+  font-size: .7em;
+  bottom: -9px;
+  right: -6px;
 }
 
 .circle {
@@ -677,6 +719,10 @@ export default class AppviewTask extends Vue {
   display: inline-block;
   font-size: .8em;
   padding: 4px;
+}
+
+.txt-tag + .txt-tag {
+  margin-left: 2px;
 }
 
 .task.not-selected.light:hover {
