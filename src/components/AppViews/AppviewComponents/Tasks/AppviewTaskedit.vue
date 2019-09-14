@@ -278,7 +278,7 @@ export default class AppviewTaskedit extends Vue {
   get inputPlaceholder(): string {
     let str = 'Do something'
     if (this.allowPriority)
-      str += ' !high !medium !low'
+      str += ' !priority'
     if (this.allowLabels)
       str += ' #label'
     if (this.allowDate)

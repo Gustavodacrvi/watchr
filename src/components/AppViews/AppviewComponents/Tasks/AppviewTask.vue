@@ -34,7 +34,7 @@
               <span v-if="task.periodic && getPeriodicString" class="txt-tag gray txt round-border" :class="theme">{{ getPeriodicString }}</span>
               <span v-if="date" class="txt-tag gray txt round-border" :class="theme">{{ date }}</span>
               <span v-if="time" class="txt-tag gray txt round-border" :class="theme">{{ time }}</span>
-              {{ task.name }}
+              <span v-html='parsedName'></span>
               <i v-if='task.priority'
                 class='content-icon fas fa-exclamation fa-sm'
                 :style='{color: exclamationColor}'
@@ -410,6 +410,12 @@ export default class AppviewTask extends Vue {
       }
     return {today: null, saved: null}
   }
+  replace(str: string, substring: string, even: string, odd: string): string {
+    const s = substring
+    const re = new RegExp(`([^${s}]*${s}[^${s}]*)${s}`, 'gm')
+    const reAll = new RegExp(`${s}`, 'g')
+    return str.replace(re, '$1' + odd).replace(reAll, even)
+  }
 
   get showDot1(): boolean {
     return !this.atLeastTwoInfoOptionsWontShowUp && (this.allTrue || this.showLabels)
@@ -554,12 +560,12 @@ export default class AppviewTask extends Vue {
   }
   get hasTime(): boolean {
     const t = this.task
-    return (t.date && t.time !== '') || (t.periodic && t.time !== '')
+    return (t.date && t.time !== '' && t.time !== undefined) || (t.periodic && t.time !== '' && t.time !== undefined)
   }
   get time(): string | null {
     if (!this.hasTime) return null
     const {today, saved} = this.todayMomAndSavedMom()
-    if (saved)
+    if (saved && saved.isValid())
       return ' at ' + appUtils.parseUtcTime(saved.format('HH:mm'), this.timeFormat)
     return null
   }
@@ -619,6 +625,16 @@ export default class AppviewTask extends Vue {
   get isTaskCompleted(): boolean {
     // tslint:disable-next-line:max-line-length
     return appUtils.filterTasksBySmartPerspective('Completed', [this.task], this.timeZone, this.startOfTheWeek).length > 0
+  }
+  get noHtmlName(): string {
+    const div = document.createElement('div')
+    div.innerHTML = this.task.name
+    return div.textContent || div.innerText
+  }
+  get parsedName(): string {
+    const name = this.noHtmlName
+    console.log(this.replace(name, '\\*', '<b>', '<b/>'))
+    return this.replace(name, '\\*', '<b>', '</b>')
   }
   get getPeriodicObject(): PeriodicObject | null {
     const t = this.task
