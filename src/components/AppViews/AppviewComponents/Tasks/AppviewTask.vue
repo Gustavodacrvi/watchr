@@ -632,9 +632,10 @@ export default class AppviewTask extends Vue {
     return div.textContent || div.innerText
   }
   get parsedName(): string {
-    const name = this.noHtmlName
-    console.log(this.replace(name, '\\*', '<b>', '<b/>'))
-    return this.replace(name, '\\*', '<b>', '</b>')
+    let name = this.noHtmlName
+    name = this.replace(name, '\\*', '<b>', '</b>') // bold
+    name = this.replace(name, '\\_', '<i>', '</i>') // italic
+    return name
   }
   get getPeriodicObject(): PeriodicObject | null {
     const t = this.task
