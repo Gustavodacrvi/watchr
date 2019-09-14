@@ -403,6 +403,11 @@ export default class AppviewTask extends Vue {
   todayMomAndSavedMom(): {today: any, saved: any} {
     if (this.task.date)
       return appUtils.getMomentsOutOfTask(this.task.date, this.timeZone, this.task.time)
+    else if (this.task.periodic && this.task.time)
+      return {
+        saved: moment.tz(this.task.time, 'HH:mm', 'UTC').tz(this.timeZone),
+        today: moment().tz(this.timeZone),
+      }
     return {today: null, saved: null}
   }
 
@@ -547,10 +552,16 @@ export default class AppviewTask extends Vue {
 
     return null
   }
+  get hasTime(): boolean {
+    const t = this.task
+    return (t.date && t.time !== '') || (t.periodic && t.time !== '')
+  }
   get time(): string | null {
-    if (!(this.task.date && this.task.time)) return null
+    if (!this.hasTime) return null
     const {today, saved} = this.todayMomAndSavedMom()
-    return ' at ' + appUtils.parseUtcTime(saved.format('HH:mm'), this.timeFormat)
+    if (saved)
+      return ' at ' + appUtils.parseUtcTime(saved.format('HH:mm'), this.timeFormat)
+    return null
   }
   get exclamationColor(): string {
     switch (this.task.priority) {

@@ -741,9 +741,8 @@ export default {
 
         const obj = searchKeyWords(str, {month, year, day, time})
         const perInput = searchPeriodicInput(str)
-        let utc = null
-        if (!perInput)
-          utc = this.getUtcValuesFromTaskInputObj(obj, timeZone)
+        const utc = this.getUtcValuesFromTaskInputObj(obj, timeZone)
+        if (perInput) utc.date = ''
 
         return {...obj, utc, periodic: perInput}
       }
@@ -800,6 +799,8 @@ export default {
           str = `every ${per.periodicInterval} days`
 
         if (per.times !== null) str += ` ${per.times} times`
+
+        if (obj.time) str += ` at ${obj.time}`
 
         return str
       }
