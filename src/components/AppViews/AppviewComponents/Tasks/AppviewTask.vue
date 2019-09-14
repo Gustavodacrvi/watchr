@@ -416,6 +416,34 @@ export default class AppviewTask extends Vue {
     const reAll = new RegExp(`${s}`, 'g')
     return str.replace(re, '$1' + odd).replace(reAll, even)
   }
+  replaceColors(str: string): string {
+    const colors: any = {
+      blue: '#83B7E2',
+      purple: '#8583e2',
+      pink: '#e283da',
+      red: '#e28386',
+      green: '#86e283',
+      yellow: '#e8e15e',
+      orange: '#e8a15e',
+    }
+    const keys = Object.keys(colors)
+    for (const c of keys) {
+      const color = colors[c] as string
+      const w = `{${c}}`
+      if (str.indexOf(w) === -1) continue
+
+      const values = str.split(w)
+      let final = ''
+      for (let i = 0; i < values.length; i++) {
+        const v = values[i]
+        final += v
+        if ((i + 1) % 2 !== 0) final += `<span style="color: ${color};">`
+        else final += '</span>'
+      }
+      str = final
+    }
+    return str
+  }
 
   get showDot1(): boolean {
     return !this.atLeastTwoInfoOptionsWontShowUp && (this.allTrue || this.showLabels)
@@ -635,6 +663,7 @@ export default class AppviewTask extends Vue {
     let name = this.noHtmlName
     name = this.replace(name, '\\*', '<b>', '</b>') // bold
     name = this.replace(name, '\\_', '<i>', '</i>') // italic
+    name = this.replaceColors(name)
     return name
   }
   get getPeriodicObject(): PeriodicObject | null {
