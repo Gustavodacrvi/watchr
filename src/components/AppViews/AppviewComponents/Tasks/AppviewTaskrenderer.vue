@@ -169,6 +169,8 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
           this.rootComponent.getElementsByClassName('task-adder')[0].setAttribute('data-vid', 'task-adder')
           this.numberOfAdders++
           instance.$on('enter', this.add)
+          instance.$on('goup', () => this.moveTaskRenderer('up'))
+          instance.$on('godown', () => this.moveTaskRenderer('down'))
           instance.$on('cancel', () => {
             instance.$destroy()
             const $el = instance.$el as any
@@ -323,6 +325,24 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       else i++
     return 0
   }
+  moveTaskRenderer(direction: 'up' | 'down') {
+    this.getTaskAdderPosition()
+    const childNodes = this.rootComponent.childNodes
+    const p = this.taskAdderPosition
+    const adder = childNodes[p] as any
+    let element!: undefined | HTMLElement
+    if (direction === 'up')
+      element = childNodes[p - 1] as any
+    else element = childNodes[p + 1] as any
+    if (element && adder) {
+      if (direction === 'up')
+        this.rootComponent.insertBefore(adder, element)
+      else
+        this.rootComponent.insertBefore(element, adder)
+      const input = adder.getElementsByClassName('input')[0]
+      if (input) input.focus()
+    }
+  }
 
   get rootComponent(): HTMLElement {
     const root: HTMLElement = this.$el as HTMLElement
@@ -338,8 +358,9 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
         const p = this.taskAdderPosition
         const adder = childNodes[p] as any
         const newTask = childNodes[p + 1]
-        this.rootComponent.insertBefore(newTask, adder)
-      }, 100)
+        if (newTask)
+          this.rootComponent.insertBefore(newTask, adder)
+      }, 70)
       this.added = false
     }
   }

@@ -28,6 +28,8 @@
         @value="v => value = v"
         @enter='enter'
         @select='selectDropValue'
+        @goup="$emit('goup')"
+        @godown="$emit('godown')"
       />
     </div>
     <div class='options'>
