@@ -133,6 +133,7 @@ export default class AppviewTaskrenderer extends Mixins(Mixin) {
       animation: 150,
       selectedClass: 'sortable-selected',
       multiDrag: true,
+      delayOnTouchOnly: true,
       dataIdAttr: 'data-sortableid',
       group: {name: 'taskrenderer', pull: (to: any, from: any) => {
         const name = to.options.group.name

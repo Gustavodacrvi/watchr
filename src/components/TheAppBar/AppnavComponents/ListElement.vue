@@ -64,7 +64,7 @@ import { IndexMutations, IndexGetters } from '../../../interfaces/store/index'
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
-else Vue.directive('longpress', longClickDirective({delay: 1000, interval: 5000}))
+else Vue.directive('longpress', longClickDirective({delay: 600, interval: 5000}))
 
 @Component({
   components: {

@@ -210,11 +210,6 @@ export default class CalendarInput extends Vue {
   get getTimeZone(): string {
     return appUtils.parseMomentTimeZone(this.timeZone)
   }
-
-  @Watch('time')
-  onChange() {
-    this.emitEvent()
-  }
 }
 
 </script>

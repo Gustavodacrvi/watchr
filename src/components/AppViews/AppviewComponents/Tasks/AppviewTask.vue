@@ -160,7 +160,7 @@ import { ProjectGetters } from '../../../../interfaces/store/project'
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
-else Vue.directive('longpress', longClickDirective({delay: 800, interval: 5000}))
+else Vue.directive('longpress', longClickDirective({delay: 600, interval: 5000}))
 
 @Component({
   components: {
@@ -263,6 +263,7 @@ export default class AppviewTask extends Vue {
       animation: 150,
       multiDrag: true,
       scroll: true,
+      delayOnTouchOnly: true,
       selectedClass: 'sortable-selected',
       dataIdAttr: 'data-sortableid',
 
@@ -658,6 +659,7 @@ export default class AppviewTask extends Vue {
 
 .content {
   width: 100%;
+  word-break: break-word;
 }
 
 .handle {
