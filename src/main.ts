@@ -24,6 +24,10 @@ messaging.requestPermission().then(() => {
   console.log(token)
 })
 
+messaging.onMessage((payload) => {
+  console.log('onMessage: ', 'payload')
+})
+
 const auth = firebase.auth()
 
 import Vue from 'vue'
