@@ -18,10 +18,12 @@ firebase.initializeApp(config)
 
 const messaging = firebase.messaging()
 
+let token: null | string = null
+
 messaging.requestPermission().then(() => {
   return messaging.getToken()
-}).then((token) => {
-  console.log(token)
+}).then((t) => {
+  if (t) token = t
 })
 
 messaging.onMessage((payload) => {
@@ -48,7 +50,10 @@ auth.onAuthStateChanged(() => {
   store.commit('saveCurrentUser', firebase.auth().currentUser)
   store.commit('saveFirebase', firebase)
 
-  store.dispatch('settings/getData')
+  store.dispatch('settings/getData').then(() => {
+    if (token)
+      store.dispatch('settings/saveFcmToken', token)
+  })
   store.dispatch('label/getData')
   store.dispatch('project/getData')
   store.dispatch('perspective/getData')

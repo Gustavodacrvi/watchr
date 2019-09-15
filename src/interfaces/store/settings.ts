@@ -5,6 +5,7 @@ import { State as RootState } from '@/interfaces/store'
 
 export namespace SetState {
   export type timeZone = string
+  export type FcmTokens = Array<{date: {seconds: number}, token: string}>
   export type dateFormat = 'D-M-Y' | 'M-D-Y'
   export type timeFormat = '13:00' | '1:00pm'
   export type startOfTheWeek = string
@@ -13,6 +14,7 @@ export namespace SetState {
 
 export interface State {
   timeZone: SetState.timeZone
+  fcmTokens: SetState.FcmTokens
   dateFormat: SetState.dateFormat
   timeFormat: SetState.timeFormat
   startOfTheWeek: SetState.startOfTheWeek
@@ -51,4 +53,7 @@ export namespace SetActions {
 
   export type StoreAddDefaultSettings = (context: ActionContext, id: string) => void
   export type AddDefaultSettings = (id: string) => void
+
+  export type StoreSaveFcmToken = (context: ActionContext, token: string) => void
+  export type SaveFcmToken = (token: string) => void
 }
