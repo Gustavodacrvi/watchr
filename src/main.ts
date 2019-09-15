@@ -2,6 +2,7 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
+import 'firebase/messaging'
 
 const config = {
   apiKey: process.env.VUE_APP_API_KEY,
@@ -14,6 +15,14 @@ const config = {
 }
 
 firebase.initializeApp(config)
+
+const messaging = firebase.messaging()
+
+messaging.requestPermission().then(() => {
+  return messaging.getToken()
+}).then((token) => {
+  console.log(token)
+})
 
 const auth = firebase.auth()
 
