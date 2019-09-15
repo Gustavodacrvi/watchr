@@ -27,7 +27,7 @@ messaging.requestPermission().then(() => {
 })
 
 messaging.onMessage((payload) => {
-  console.log('onMessage: ', 'payload')
+  console.log('onMessage: ', payload)
 })
 
 const auth = firebase.auth()
