@@ -256,7 +256,13 @@ export default {
 
         for (const o of arr) {
           const ref = rootState.fr.collection('tasks').doc(o.id)
-          batch.update(ref, {
+          if (o.time)
+            batch.update(ref, {
+              date: o.date,
+              time: o.time,
+              lastEditDate: date,
+            })
+          else batch.update(ref, {
             date: o.date,
             lastEditDate: date,
           })

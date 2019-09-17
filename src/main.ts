@@ -2,6 +2,7 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
+import 'firebase/messaging'
 
 const config = {
   apiKey: process.env.VUE_APP_API_KEY,
@@ -14,6 +15,20 @@ const config = {
 }
 
 firebase.initializeApp(config)
+
+const messaging = firebase.messaging()
+
+let token: null | string = null
+
+messaging.requestPermission().then(() => {
+  return messaging.getToken()
+}).then((t) => {
+  if (t) token = t
+})
+
+messaging.onMessage((payload) => {
+  console.log('onMessage: ', payload)
+})
 
 const auth = firebase.auth()
 
@@ -35,7 +50,10 @@ auth.onAuthStateChanged(() => {
   store.commit('saveCurrentUser', firebase.auth().currentUser)
   store.commit('saveFirebase', firebase)
 
-  store.dispatch('settings/getData')
+  store.dispatch('settings/getData').then(() => {
+    if (token)
+      store.dispatch('settings/saveFcmToken', token)
+  })
   store.dispatch('label/getData')
   store.dispatch('project/getData')
   store.dispatch('perspective/getData')

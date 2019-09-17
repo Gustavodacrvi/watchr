@@ -11,6 +11,7 @@
       @keypress='keyPressed'
       @focus='focus'
       @blur='blur'
+      @keyup="keyUp"
     >
     <textarea v-else v-bind='attrs'
       class='margin input txt round-border gray area'
@@ -24,6 +25,7 @@
       @keypress='keyPressed'
       @focus='focus'
       @blur='blur'
+      @keyup="keyUp"
     ></textarea>
     <transition name='fade'>
       <div v-if='showing && values.length > 0'
@@ -75,6 +77,7 @@ export default class DropdownInput extends Vue {
   @Prop({type: String}) placeholder!: string[]
 
   showing: boolean = true
+  control: boolean = false
   value: string | null = this.input
   selected: string = ''
 
@@ -106,12 +109,21 @@ export default class DropdownInput extends Vue {
       this.autoGrowTextarea(this.$el.getElementsByClassName('area')[0])
     }, 5)
   }
+  keyUp({key}: {key: string}) {
+    if (key === 'Control') this.control = false
+  }
   keyDown({key}: {key: string}) {
     this.fixTextAreadHeight()
     if (key === 'ArrowDown' || key === 'ArrowUp')
       this.moveSelection(key)
-    else if (key === 'ArrowLeft' || key === 'ArrowRight')
+    else if (key === 'Control') this.control = true
+    else if (key === 'ArrowLeft' || key === 'ArrowRight') {
       this.selected = ''
+      if (this.control) {
+        if (key === 'ArrowLeft') this.$emit('goup')
+        if (key === 'ArrowRight') this.$emit('godown')
+      }
+    }
   }
   getRefsPositions(ref: string): RefsPositions {
     /* tslint:disable:no-string-literal */

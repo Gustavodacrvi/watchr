@@ -34,7 +34,7 @@
               <span v-if="task.periodic && getPeriodicString" class="txt-tag gray txt round-border" :class="theme">{{ getPeriodicString }}</span>
               <span v-if="date" class="txt-tag gray txt round-border" :class="theme">{{ date }}</span>
               <span v-if="time" class="txt-tag gray txt round-border" :class="theme">{{ time }}</span>
-              {{ task.name }}
+              <span v-html='parsedName'></span>
               <i v-if='task.priority'
                 class='content-icon fas fa-exclamation fa-sm'
                 :style='{color: exclamationColor}'
@@ -160,7 +160,7 @@ import { ProjectGetters } from '../../../../interfaces/store/project'
 
 if (document.body.clientWidth > 992)
   Vue.directive('longpress', longClickDirective({delay: 300, interval: 5000}))
-else Vue.directive('longpress', longClickDirective({delay: 800, interval: 5000}))
+else Vue.directive('longpress', longClickDirective({delay: 600, interval: 5000}))
 
 @Component({
   components: {
@@ -263,6 +263,7 @@ export default class AppviewTask extends Vue {
       animation: 150,
       multiDrag: true,
       scroll: true,
+      delayOnTouchOnly: true,
       selectedClass: 'sortable-selected',
       dataIdAttr: 'data-sortableid',
 
@@ -402,7 +403,46 @@ export default class AppviewTask extends Vue {
   todayMomAndSavedMom(): {today: any, saved: any} {
     if (this.task.date)
       return appUtils.getMomentsOutOfTask(this.task.date, this.timeZone, this.task.time)
+    else if (this.task.periodic && this.task.time)
+      return {
+        saved: moment.tz(this.task.time, 'HH:mm', 'UTC').tz(this.timeZone),
+        today: moment().tz(this.timeZone),
+      }
     return {today: null, saved: null}
+  }
+  replace(str: string, substring: string, even: string, odd: string): string {
+    const s = substring
+    const re = new RegExp(`([^${s}]*${s}[^${s}]*)${s}`, 'gm')
+    const reAll = new RegExp(`${s}`, 'g')
+    return str.replace(re, '$1' + odd).replace(reAll, even)
+  }
+  replaceColors(str: string): string {
+    const colors: any = {
+      blue: '#83B7E2',
+      purple: '#8583e2',
+      pink: '#e283da',
+      red: '#e28386',
+      green: '#86e283',
+      yellow: '#e8e15e',
+      orange: '#e8a15e',
+    }
+    const keys = Object.keys(colors)
+    for (const c of keys) {
+      const color = colors[c] as string
+      const w = `{${c}}`
+      if (str.indexOf(w) === -1) continue
+
+      const values = str.split(w)
+      let final = ''
+      for (let i = 0; i < values.length; i++) {
+        const v = values[i]
+        final += v
+        if ((i + 1) % 2 !== 0) final += `<span style="color: ${color};">`
+        else final += '</span>'
+      }
+      str = final
+    }
+    return str
   }
 
   get showDot1(): boolean {
@@ -546,10 +586,16 @@ export default class AppviewTask extends Vue {
 
     return null
   }
+  get hasTime(): boolean {
+    const t = this.task
+    return (t.date && t.time !== '' && t.time !== undefined) || (t.periodic && t.time !== '' && t.time !== undefined)
+  }
   get time(): string | null {
-    if (!(this.task.date && this.task.time)) return null
+    if (!this.hasTime) return null
     const {today, saved} = this.todayMomAndSavedMom()
-    return ' at ' + appUtils.parseUtcTime(saved.format('HH:mm'), this.timeFormat)
+    if (saved && saved.isValid())
+      return ' at ' + appUtils.parseUtcTime(saved.format('HH:mm'), this.timeFormat)
+    return null
   }
   get exclamationColor(): string {
     switch (this.task.priority) {
@@ -608,6 +654,18 @@ export default class AppviewTask extends Vue {
     // tslint:disable-next-line:max-line-length
     return appUtils.filterTasksBySmartPerspective('Completed', [this.task], this.timeZone, this.startOfTheWeek).length > 0
   }
+  get noHtmlName(): string {
+    const div = document.createElement('div')
+    div.innerHTML = this.task.name
+    return div.textContent || div.innerText
+  }
+  get parsedName(): string {
+    let name = this.noHtmlName
+    name = this.replace(name, '\\*', '<b>', '</b>') // bold
+    name = this.replace(name, '\\_', '<i>', '</i>') // italic
+    name = this.replaceColors(name)
+    return name
+  }
   get getPeriodicObject(): PeriodicObject | null {
     const t = this.task
     if (t.periodic)
@@ -658,6 +716,7 @@ export default class AppviewTask extends Vue {
 
 .content {
   width: 100%;
+  word-break: break-word;
 }
 
 .handle {

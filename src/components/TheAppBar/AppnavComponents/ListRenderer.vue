@@ -82,6 +82,7 @@ export default class ListRenderer extends Mixins(Mixin) {
       animation: 150,
       selectedClass: 'sortable-selected',
       multiDrag: true,
+      delayOnTouchOnly: true,
       dataIdAttr: 'data-sortableid',
       group: this.group,
 

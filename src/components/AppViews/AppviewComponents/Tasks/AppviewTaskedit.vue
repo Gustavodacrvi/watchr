@@ -28,6 +28,8 @@
         @value="v => value = v"
         @enter='enter'
         @select='selectDropValue'
+        @goup="$emit('goup')"
+        @godown="$emit('godown')"
       />
     </div>
     <div class='options'>
@@ -253,7 +255,8 @@ export default class AppviewTaskedit extends Vue {
       let saved!: any
       if (!this.time)
         saved = moment.tz(`${date}`, 'Y-M-D', this.timeZone)
-      else saved = moment.tz(`${date} ${this.time}`, 'Y-M-D HH:mm', 'UTC').tz(this.timeZone)
+      else if (date) saved = moment.tz(`${date} ${this.time}`, 'Y-M-D HH:mm', 'UTC').tz(this.timeZone)
+      else saved = moment.tz(this.time, 'HH:mm', 'UTC').tz(this.timeZone)
       const time = this.time ? this.time : ''
       this.calendarObj = {
         day: saved.format('D'),
@@ -275,7 +278,7 @@ export default class AppviewTaskedit extends Vue {
   get inputPlaceholder(): string {
     let str = 'Do something'
     if (this.allowPriority)
-      str += ' !high !medium !low'
+      str += ' !priority'
     if (this.allowLabels)
       str += ' #label'
     if (this.allowDate)

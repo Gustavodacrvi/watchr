@@ -80,8 +80,8 @@ export namespace TaskActions {
   export type StoreDeleteSubTaskFromTask = (context: ActionContext, obj: {taskId: string, id: string}) => void
   export type DeleteSubTaskFromTask = (obj: {taskId: string, id: string}) => void
 
-  export type StoreSaveNewDateOfTasks = (context: ActionContext, arr: Array<{id: string, date: string}>) => void
-  export type SaveNewDateOfTasks = (arr: Array<{id: string, date: string}>) => void
+  export type StoreSaveNewDateOfTasks = (context: ActionContext, arr: Array<{id: string, date: string, time?: string}>) => void
+  export type SaveNewDateOfTasks = (arr: Array<{id: string, date: string, time?: string}>) => void
 
   export type StoreUnCompleteSubtasks = (context: ActionContext, taskId: string) => void
   export type UnCompleteSubtasks = (taskId: string) => void
