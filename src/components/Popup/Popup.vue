@@ -1,19 +1,27 @@
 <template>
   <div class="Popup" @click="$emit('close')">
-    <div class="card">
-      asçlkjdffdas
-      <button v-if="!$store.getters.isDesktop" @click="closeMobilePopup">Freaking do it</button>
-    </div>
+    <component :is="popup.comp"/>
   </div>
 </template>
 
 <script>
 
+import SignupVue from './Auth/Signup.vue'
+
+import { mapGetters, mapState } from 'vuex'
+
 export default {
+  components: {
+    Signup: SignupVue,
+  },
   methods: {
     closeMobilePopup() {
       this.$router.go(-1)
     }
+  },
+  computed: {
+    ...mapState(['popup']),
+    ...mapGetters(['isPopupOpened'])
   }
 }
 

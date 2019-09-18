@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <transition name="popup-trans">
-      <Popup v-if="isPopupOpened" @close="closePopup"/>
+      <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>
 
     <NavBar/>
@@ -22,11 +22,6 @@ export default {
   methods: {
     closePopup() {
       this.$store.commit('closePopup')
-    }
-  },
-  computed: {
-    isPopupOpened() {
-      return this.$store.state.popup.comp !== ''
     }
   },
   watch: {

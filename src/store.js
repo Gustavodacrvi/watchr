@@ -8,7 +8,7 @@ const MINIMUM_DESKTOP_SCREEN_WIDTH = 1020
 export default new Vuex.Store({
   state: {
     popup: {
-      comp: 'asdfasdf',
+      comp: 'Signup',
       payload: null,
     },
   },
@@ -20,6 +20,9 @@ export default new Vuex.Store({
       if (getters.isDesktop) return 'desktop'
       return 'mobile'
     },
+    isPopupOpened(state) {
+      return state.popup.comp !== ''
+    }
   },
   mutations: {
     closePopup(state) {
