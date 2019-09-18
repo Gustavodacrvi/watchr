@@ -11,6 +11,7 @@
   --primary: #57A0DE;
   --card: #131313;
   --dark: #171717;
+  --light-gray: #282828;
 }
 
 body {
@@ -18,7 +19,7 @@ body {
   background-color: var(--back-color);
 }
 
-body, input {
+body, input, button {
   font-family: var(--font);
   color: var(--white);
 }

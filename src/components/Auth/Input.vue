@@ -1,5 +1,5 @@
 <template>
-  <input v-model="str" class="input cbd" autocomplete="off">
+  <input v-model="str" class="Input cbd" autocomplete="off">
 </template>
 
 <script>
@@ -16,7 +16,7 @@ export default {
   },
   mounted() {
     if (this.focus) {
-      const el = this.$el
+      this.$el.focus()
     }
   },
   watch: {
@@ -30,11 +30,14 @@ export default {
 
 <style scoped>
 
-.input {
+.Input {
   border: none;
   padding: 12px;
+  outline: none;
   border-radius: 10px;
   font-size: 1em;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 </style>
