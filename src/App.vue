@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <transition name="popup-trans">
+    <transition name="popup">
       <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>
 
@@ -18,6 +18,11 @@ export default {
   components: {
     NavBar: NavBarVue,
     Popup: PopupVue,
+  },
+  mounted() {
+    setTimeout(() => {
+      this.$store.dispatch('pushPopup', {comp: 'Signin'})
+    }, 1000)
   },
   methods: {
     closePopup() {
@@ -42,6 +47,16 @@ export default {
   position: absolute;
   height: 100%;
   width: 100%;
+}
+
+.popup-enter, .popup-leave-to {
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.popup-leave, .popup-enter-to {
+  opacity: 1;
+  transition: opacity .2s;
 }
 
 </style>

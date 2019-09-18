@@ -1,7 +1,7 @@
 <template>
   <div class="Signup cb rb" :class="platform" @click.stop="">
     <div class="tac title">
-      <h3 class="pc">Create an Account</h3>
+      <h3 class="pc">Sign in</h3>
     </div>
     <div class="content">
       <InputApp
@@ -14,15 +14,10 @@
         placeholder='Password:'
         v-model="password"
       />
-      <InputApp
-        class="mt"
-        placeholder='Confirm password:'
-        v-model="conPassword"
-      />
       <ButtonApp
         class="mt"
-        value='Create account'
-        @click="createAccount"
+        value='Sign in'
+        @click="signIn"
       />
     </div>
   </div>
@@ -44,27 +39,18 @@ export default {
     return {
       eMail: '',
       password: '',
-      conPassword: '',
     }
   },
   methods: {
-    createAccount() {
+    signIn() {
       if (this.atLeastOneEmpty) console.log('all empty')
-      else if (this.tooLong) console.log('too long')
-      else if (this.notEqual) console.log('not equal')
+      console.log('Sign in ')
     }
   },
   computed: {
-    tooLong() {
-      const { eMail, password, conPassword } = this
-      return eMail.length > 75 || password.length > 75 || conPassword > 75
-    },
     atLeastOneEmpty() {
-      const { eMail, password, conPassword } = this
-      return eMail === '' || password === '' || conPassword === ''
-    },
-    notEqual() {
-      return this.password !== this.conPassword
+      const { eMail, password } = this
+      return eMail === '' || password === ''
     },
     ...mapGetters(['platform'])
   },

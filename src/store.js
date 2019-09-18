@@ -8,7 +8,7 @@ const MINIMUM_DESKTOP_SCREEN_WIDTH = 1020
 const store = new Vuex.Store({
   state: {
     popup: {
-      comp: 'Signup',
+      comp: '',
       payload: null,
     },
     windowWidth: 0,

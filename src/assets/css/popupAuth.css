@@ -1,0 +1,18 @@
+
+.mt {
+  margin-top: 8px;
+}
+
+.Signup.desktop {
+  margin-top: 100px;
+  flex-basis: 650px;
+}
+
+.title {
+  overflow: hidden;
+}
+
+.content {
+  margin: 28px;
+  margin-top: 0;
+}
