@@ -3,9 +3,15 @@
     <transition name="popup">
       <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>
+    <Toast/>
 
     <NavBar/>
     <router-view/>
+        <div style="width: 20px">
+      <svg :viewBox="Inbox.viewBox">
+        <use :xlink:href="`#${Inbox.id}`"/>
+      </svg>
+    </div>
   </div>
 </template>
 
@@ -13,16 +19,22 @@
 
 import NavBarVue from './components/NavBar/NavBar.vue'
 import PopupVue from './components/Popup/Popup.vue'
+import ToastVue from './components/Toast.vue'
+
+import Inbox from '@/assets/icons/inbox.svg'
+
+console.log(Inbox)
 
 export default {
   components: {
     NavBar: NavBarVue,
     Popup: PopupVue,
+    Toast: ToastVue,
   },
-  mounted() {
-    setTimeout(() => {
-      this.$store.dispatch('pushPopup', {comp: 'Signin'})
-    }, 1000)
+  data() {
+    return {
+      Inbox,
+    }
   },
   methods: {
     closePopup() {

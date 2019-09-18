@@ -11,6 +11,7 @@ const store = new Vuex.Store({
       comp: '',
       payload: null,
     },
+    toasts: [],
     windowWidth: 0,
   },
   getters: {
@@ -31,6 +32,9 @@ const store = new Vuex.Store({
     },
     saveWindowWidth(state) {
       state.windowWidth = document.body.clientWidth
+    },
+    pushToast(state, toast) {
+      state.toasts.unshift(toast)
     },
   },
   actions: {
