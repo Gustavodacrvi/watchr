@@ -33,6 +33,9 @@ const store = new Vuex.Store({
     saveWindowWidth(state) {
       state.windowWidth = document.body.clientWidth
     },
+    moveToastQueue(state) {
+      state.toasts.pop()
+    },
     pushToast(state, toast) {
       state.toasts.unshift(toast)
     },

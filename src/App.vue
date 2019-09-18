@@ -23,8 +23,6 @@ import ToastVue from './components/Toast.vue'
 
 import Inbox from '@/assets/icons/inbox.svg'
 
-console.log(Inbox)
-
 export default {
   components: {
     NavBar: NavBarVue,
