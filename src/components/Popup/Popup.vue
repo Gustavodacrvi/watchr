@@ -2,6 +2,7 @@
   <div class="Popup" @click="$emit('close')">
     <div class="card">
       asçlkjdffdas
+      <button v-if="!$store.getters.isDesktop" @click="closeMobilePopup">Freaking do it</button>
     </div>
   </div>
 </template>
@@ -9,7 +10,11 @@
 <script>
 
 export default {
-  
+  methods: {
+    closeMobilePopup() {
+      this.$router.go(-1)
+    }
+  }
 }
 
 </script>

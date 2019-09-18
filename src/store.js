@@ -22,13 +22,13 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    pushPopup(state, popup) {
-      state.popup = popup
-    },
     closePopup(state) {
-      console.log(3)
       state.popup = {comp: '', payload: null}
     }
   },
-  actions: {}
+  actions: {
+    pushPopup({state, getters}, popup) {
+      state.popup = popup
+    },
+  }
 });

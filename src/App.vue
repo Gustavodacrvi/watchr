@@ -28,6 +28,11 @@ export default {
     isPopupOpened() {
       return this.$store.state.popup.comp !== ''
     }
+  },
+  watch: {
+    $route(to, from) {
+      this.closePopup()
+    }
   }
 }
 
