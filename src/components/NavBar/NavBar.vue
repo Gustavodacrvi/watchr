@@ -5,7 +5,7 @@
     <router-link class="link" :class="{active: route === 'about'}" to="/about">About</router-link>
     <div class="line"></div>
     <div class="icons">
-      <DropIcon/>
+      <DropIcon :options="dropLinks"/>
     </div>
   </div>
 </template>
@@ -53,6 +53,54 @@ export default {
       }
       return this.$route.name
     },
+    dropLinks() {
+      return [
+        {
+          name: 'Freaking link 1',
+          callback: () => {
+            return [
+              {
+                name: 'Sub link 1'
+              },
+                      {
+          name: 'Sub link 2',
+          callback: () => {
+            return [
+              {
+                name: 'Sub sub link 1'
+              },
+              {
+                name: 'Sub sub link 2'
+              },
+              {
+                name: 'Sub sub link 3'
+              },
+              {
+                name: 'Sub sub link 4'
+              },
+              {
+                name: 'Sub sub link 5'
+              },
+              {
+                name: 'Sub sub link 6'
+              },
+            ]
+          }
+        },
+            ]
+          }
+        },
+        {
+          name: 'Freaking link 2'
+        },
+        {
+          name: 'Freaking link 3'
+        },
+        {
+          name: 'Freaking link 4'
+        },
+      ]
+    }
   },
 }
 

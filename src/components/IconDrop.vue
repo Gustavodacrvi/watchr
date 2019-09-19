@@ -7,12 +7,14 @@
       @leave="leave"
     >
       <div v-show="showing" class="content cb rb">
-        <span class="link">I am the freaking link</span>
-        <span class="link">I am the freaking link</span>
-        <span class="link">I am the freaking link</span>
-        <span class="link">I am the freaking link</span>
-        <span class="link">I am the freaking link</span>
-        <span class="link">I am the freaking link</span>
+        <transition name="links-trans">
+          <div v-if="showingLinks" class="links">
+            <span class="link" v-for="link in links"
+              :key="link.name"
+              @click="linkCallback(link.callback)"
+            >{{ link.name }}</span>
+          </div>
+        </transition>
       </div>
     </transition>
   </div>
@@ -23,12 +25,15 @@
 import IconVue from './Icon.vue'
 
 export default {
+  props: ['options'],
   components: {
     Icon: IconVue,
   },
   data() {
     return {
       showing: false,
+      showingLinks: true,
+      links: this.options,
       height: 0,
       width: 0,
     }
@@ -40,8 +45,51 @@ export default {
     window.removeEventListener('click', this.hide)
   },
   methods: {
+    linkCallback(callback) {
+      if (callback) {
+        const links = callback()
+        const cont = this.getContent()
+        
+        const s = this.getStyles()
+        const oldWidth = s.width
+        const oldHeight = s.height
+
+        cont.style.transitionDelay = '.25s';
+        setTimeout(() => {
+          cont.style.width = 'auto'
+          cont.style.height = 'auto'
+          setTimeout(() => {
+            const {height, width} = this.getStyles()
+            cont.style.width = oldWidth
+            cont.style.height = oldHeight
+            setTimeout(() => {
+              cont.style.width = width
+              cont.style.height = height
+              cont.style.transitionDelay = '0s'
+            }, 80)
+          })
+        }, 300)
+
+        this.toggleLinks()        
+        this.links = links
+      }
+    },
+    toggleLinks() {
+      const links = this.$el.getElementsByClassName('links')[0]
+      this.showingLinks = false
+      setTimeout(() => {
+        this.showingLinks = true
+      }, 300)
+    },
+    getContent() {
+      return this.$el.getElementsByClassName('content')[0]
+    },
+    getStyles() {
+      return getComputedStyle(this.getContent())
+    },
     hide() {
       this.showing = false
+      setTimeout(() => this.links = this.options, 400)
     },
     leave(el) {
       el.style.width = 0
@@ -73,12 +121,34 @@ export default {
   position: relative;
 }
 
+.links {
+  transition-duration: .2s;
+  opacity: 1;
+}
+
+.hidden {
+  opacity: 0;
+}
+
+.links-trans-enter, .links-trans-leave-to {
+  opacity: 0;
+  transition-duration: .3s;
+}
+
+.links-trans-leave, .links-trans-enter-to {
+  opacity: 1;
+  transition-duration: .3s;
+}
+
 .content {
   position: absolute;
   right: 0;
   top: 0;
+  width: 0;
+  height: 0;
   padding: 18px 0;
   overflow: hidden;
+  transition-duration: .3s;
 }
 
 .link {
@@ -87,10 +157,6 @@ export default {
   cursor: pointer;
   transition-duration: .3s;
   white-space: nowrap;
-}
-
-.drop-trans-enter-active, .drop-trans-leave-active {
-  transition-duration: .3s;
 }
 
 .drop-trans-enter-active .link {

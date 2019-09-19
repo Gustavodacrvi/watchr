@@ -4,7 +4,7 @@
       <div v-if="toast"
         class="toast cb rb"
         :class="[toast.type, {hasCallback: toast.callback}, $store.getters.platform]"
-        @click="toastClick"
+        @click="toast.callback"
       >
         <span class="name">{{ toast.name }}</span>
       </div>
@@ -38,11 +38,6 @@ export default {
         }, toast.seconds * 1000)
       }
     },
-    toastClick() {
-      if (this.toast.callback) {
-        this.toast.callback()
-      }
-    }
   },
   computed: {
     ...mapState(['toasts']),
