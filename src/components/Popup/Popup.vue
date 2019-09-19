@@ -1,5 +1,6 @@
 <template>
   <div class="Popup" :class="platform" @click="$emit('close')">
+    <Icon class="icon cursor" icon="arrow" :primary-hover="true" @click="closeMobilePopup"/>
     <component class="component" :is="popup.comp"/>
   </div>
 </template>
@@ -8,6 +9,7 @@
 
 import SignupVue from './Auth/Signup.vue'
 import SigninVue from './Auth/Signin.vue'
+import IconVue from '../Icon.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -15,6 +17,7 @@ export default {
   components: {
     Signup: SignupVue,
     Signin: SigninVue,
+    Icon: IconVue,
   },
   methods: {
     closeMobilePopup() {
@@ -54,6 +57,13 @@ export default {
 .Popup.mobile .component {
   width: 100%;
   height: 100%;
+}
+
+.icon {
+  position: absolute;
+  left: 15px;
+  top: 10px;
+  transform: rotate(90deg);
 }
 
 </style>

@@ -29,7 +29,8 @@ export default {
   },
   watch: {
     $route(to, from) {
-      this.closePopup()
+      if (to && to.path !== '/popup')
+        this.closePopup()
     }
   }
 }

@@ -45,6 +45,12 @@ export default {
       const link = this.$el.getElementsByClassName('active')[0]
       if (link) return link
     },
+    signUp() {
+      this.$store.dispatch('pushPopup', {comp: 'Signup'})
+    },
+    signIn() {
+      this.$store.dispatch('pushPopup', {comp: 'Signin'})
+    },
   },
   computed: {
     route() {
@@ -53,23 +59,17 @@ export default {
       }
       return this.$route.name
     },
-    signUp() {
-      this.$store.commit('pushPopup', 'Signup')
-    },
-    signIn() {
-      this.$store.commit('pushPopup', 'Signin')
-    },
     dropLinks() {
       return [
         {
           name: 'Sign up',
-          user: 'user-plus',
-          callback: () => this.signUp
+          icon: 'user-plus',
+          callback: () => this.signUp()
         },
         {
           name: 'Sign in',
           icon: 'out',
-          callback: () => this.signIn
+          callback: () => this.signIn()
         }
       ]
     }

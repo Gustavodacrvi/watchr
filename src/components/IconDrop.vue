@@ -184,7 +184,7 @@ export default {
 
 .link:hover {
   color: var(--primary);
-  background-color: rgba(87,160,222,.2);
+  background-color: rgba(87,160,222,.1);
 }
 
 .link .link-cont {
