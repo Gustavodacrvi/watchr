@@ -1,5 +1,5 @@
 <template>
-  <div :style="{width: getWidth}">
+  <div class="icon" :style="{width: getWidth}" @click="$emit('click')">
     <svg :viewBox="getIcon.viewBox">
       <use :xlink:href="`#${getIcon.id}`"/>
     </svg>

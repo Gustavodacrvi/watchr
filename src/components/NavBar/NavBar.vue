@@ -4,12 +4,20 @@
     <router-link class="link" :class="{active: route === 'user'}" to="/user">User</router-link>
     <router-link class="link" :class="{active: route === 'about'}" to="/about">About</router-link>
     <div class="line"></div>
+    <div class="icons">
+      <DropIcon/>
+    </div>
   </div>
 </template>
 
 <script>
 
+import IconDropVue from '../IconDrop.vue'
+
 export default {
+  components: {
+    DropIcon: IconDropVue,
+  },
   mounted() {
     this.calculateLineOffset()
     setTimeout(() => {
@@ -81,6 +89,11 @@ export default {
   width: 50px;
   bottom: 0;
   transition-duration: .2s;
+}
+
+.icons {
+  position: absolute;
+  right: 34px;
 }
 
 </style>

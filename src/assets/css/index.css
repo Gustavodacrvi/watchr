@@ -25,6 +25,10 @@ path {
   fill: currentColor;
 }
 
+.cursor {
+  cursor: pointer;
+}
+
 body, input, button {
   font-family: var(--font);
   color: var(--white);
