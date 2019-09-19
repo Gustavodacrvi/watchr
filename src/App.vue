@@ -7,11 +7,8 @@
 
     <NavBar/>
     <router-view/>
-        <div style="width: 20px">
-      <svg :viewBox="Inbox.viewBox">
-        <use :xlink:href="`#${Inbox.id}`"/>
-      </svg>
-    </div>
+
+    <Icon icon="sun"/>
   </div>
 </template>
 
@@ -20,14 +17,14 @@
 import NavBarVue from './components/NavBar/NavBar.vue'
 import PopupVue from './components/Popup/Popup.vue'
 import ToastVue from './components/Toast.vue'
-
-import Inbox from '@/assets/icons/inbox.svg'
+import IconVue from './components/Icon.vue'
 
 export default {
   components: {
     NavBar: NavBarVue,
     Popup: PopupVue,
     Toast: ToastVue,
+    Icon: IconVue,
   },
   data() {
     return {
