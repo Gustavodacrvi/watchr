@@ -5,7 +5,7 @@
     <router-link class="link" :class="{active: route === 'about'}" to="/about">About</router-link>
     <div class="line"></div>
     <div class="icons">
-      <DropIcon :options="dropLinks"/>
+      <DropIcon handle="user" :options="dropLinks"/>
     </div>
   </div>
 </template>
@@ -53,52 +53,24 @@ export default {
       }
       return this.$route.name
     },
+    signUp() {
+      this.$store.commit('pushPopup', 'Signup')
+    },
+    signIn() {
+      this.$store.commit('pushPopup', 'Signin')
+    },
     dropLinks() {
       return [
         {
-          name: 'Freaking link 1',
-          callback: () => {
-            return [
-              {
-                name: 'Sub link 1'
-              },
-                      {
-          name: 'Sub link 2',
-          callback: () => {
-            return [
-              {
-                name: 'Sub sub link 1'
-              },
-              {
-                name: 'Sub sub link 2'
-              },
-              {
-                name: 'Sub sub link 3'
-              },
-              {
-                name: 'Sub sub link 4'
-              },
-              {
-                name: 'Sub sub link 5'
-              },
-              {
-                name: 'Sub sub link 6'
-              },
-            ]
-          }
-        },
-            ]
-          }
+          name: 'Sign up',
+          user: 'user-plus',
+          callback: () => this.signUp
         },
         {
-          name: 'Freaking link 2'
-        },
-        {
-          name: 'Freaking link 3'
-        },
-        {
-          name: 'Freaking link 4'
-        },
+          name: 'Sign in',
+          icon: 'out',
+          callback: () => this.signIn
+        }
       ]
     }
   },

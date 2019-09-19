@@ -13,13 +13,16 @@ import calendar from '@/assets/icons/calendar.svg'
 import sun from '@/assets/icons/sun.svg'
 import star from '@/assets/icons/star.svg'
 import user from '@/assets/icons/user.svg'
+import userPlus from '@/assets/icons/user-plus.svg'
+import out from '@/assets/icons/out.svg'
 
 export default {
   props: ['icon', 'width'],
   data() {
     return {
       icons: {
-        inbox, calendar, sun, star, user,
+        inbox, calendar, sun, star, user, out,
+        "user-plus": userPlus,
       }
     }
   },
@@ -36,5 +39,9 @@ export default {
 </script>
 
 <style scoped>
+
+.icon {
+  display: inline-block
+}
 
 </style>

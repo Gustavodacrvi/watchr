@@ -1,6 +1,6 @@
 <template>
   <div class="IconDrop" @click.stop>
-    <Icon class="cursor" icon="sun" @click="showing = true"/>
+    <Icon class="cursor" :icon="handle" @click="showing = true"/>
     <transition name="drop-trans"
       @beforeEnter="afterEnter"
       @enter="enter"
@@ -9,10 +9,15 @@
       <div v-show="showing" class="content cb rb">
         <transition name="links-trans">
           <div v-if="showingLinks" class="links">
-            <span class="link" v-for="link in links"
+            <div v-for="link in links" class="link"
               :key="link.name"
               @click="linkCallback(link.callback)"
-            >{{ link.name }}</span>
+            >
+              <div class="link-cont">
+                <Icon v-if="link.icon" class="cursor icon" :icon="link.icon"/>
+                <span class="name">{{ link.name }}</span>
+              </div>
+            </div>
           </div>
         </transition>
       </div>
@@ -25,7 +30,7 @@
 import IconVue from './Icon.vue'
 
 export default {
-  props: ['options'],
+  props: ['options', 'handle'],
   components: {
     Icon: IconVue,
   },
@@ -151,14 +156,6 @@ export default {
   transition-duration: .3s;
 }
 
-.link {
-  display: block;
-  padding: 6px 24px;
-  cursor: pointer;
-  transition-duration: .3s;
-  white-space: nowrap;
-}
-
 .drop-trans-enter-active .link {
   transition-duration: .5s;
   transition-delay: .25s;
@@ -176,9 +173,32 @@ export default {
   opacity: 1;
 }
 
+.link {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition-duration: .3s;
+  white-space: nowrap;
+  height: 35px;
+}
+
 .link:hover {
   color: var(--primary);
   background-color: rgba(87,160,222,.2);
+}
+
+.link .link-cont {
+  display: flex;
+  height: 100%;
+  margin: 0 26px;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  position: relative;
+  margin-right: 8px;
+  bottom: -1.5px;
 }
 
 </style>
