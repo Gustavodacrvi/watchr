@@ -1,8 +1,13 @@
 <template>
-  <div class="AppbarElement" :style="hoverStyle" @mouseenter="hover = true" @mouseleave="hover = false">
+  <div class="AppbarElement rb"
+    :style="hoverStyle"
+    :tabindex="tabindex"
+    @mouseenter="hover = true"
+    @mouseleave="hover = false"
+    @click="callback"
+  >
     <div
       class="link-wrapper rb"
-      @click="callback"
     >
       <div class="icon-wrapper">
         <Icon class="icon" :icon="icon"/>
@@ -19,7 +24,7 @@
 import IconVue from '../Icon.vue'
 
 export default {
-  props: ['name', 'icon', 'callback', 'iconColor'],
+  props: ['name', 'icon', 'callback', 'iconColor', 'tabindex'],
   components: {
     Icon: IconVue,
   },
@@ -66,6 +71,10 @@ export default {
   transition: background-color .2s;
   position: relative;
   display: flex;
+}
+
+.AppbarElement {
+  outline: none;
 }
 
 .link-wrapper:hover {
