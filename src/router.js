@@ -1,6 +1,8 @@
 import Vue from "vue";
 import Router from "vue-router";
+
 import Home from "./views/Home.vue";
+import Action from "./views/Action.vue";
 
 Vue.use(Router);
 
@@ -22,6 +24,15 @@ export default new Router({
       path: "/about",
       name: 'about',
       component: Home,
-    }
+    },
+    {
+      path: '/action',
+      name: 'Action',
+      component: Action,
+      props: route => ({
+        mode: route.query.mode,
+        oobCode: route.query.oobCode,
+      }),
+    },
   ]
 });

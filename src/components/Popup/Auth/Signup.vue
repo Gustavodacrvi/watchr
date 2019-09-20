@@ -54,6 +54,13 @@ export default {
   methods: {
     createAccount() {
       const toast = (toast) => this.$store.commit('pushToast', toast)
+      const toastErr = (err) => {
+        toast({
+          name: err.message,
+          type: 'error',
+          seconds: 6,
+        })
+      }
       if (this.atLeastOneEmpty)
         toast({
           name: "Fill in all the required fields.",
@@ -86,23 +93,11 @@ export default {
               seconds: 6,
               type: 'warning',
             })
-          }).catch(err => {
-            toast({
-              name: err.message,
-              seconds: 6,
-              type: 'warning',
-            })
-          })
+          }).catch(err => toastErr(err))
           this.$store.commit('closePopup')
           this.$store.commit('toggleUser', true)
           this.$router.push('/user')
-        }).catch(err => {
-          toast({
-            name: err.message,
-            seconds: 4,
-            type: 'error',
-          })
-        })
+        }).catch(err => toastErr(err))
       }
     }
   },
