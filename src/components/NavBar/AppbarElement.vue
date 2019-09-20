@@ -24,7 +24,7 @@
 import IconVue from '../Icon.vue'
 
 export default {
-  props: ['name', 'icon', 'callback', 'iconColor', 'tabindex'],
+  props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active'],
   components: {
     Icon: IconVue,
   },
@@ -35,7 +35,9 @@ export default {
   },
   computed: {
     hoverStyle() {
-      return `color: ${this.hover ? this.iconColor : ''}`
+      let isActive = this.name === this.active
+      if (this.hover) isActive = true
+      return `color: ${isActive ? this.iconColor : ''}`
     },
   },
 }
@@ -61,16 +63,19 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
-  margin-top: 2px;
+  margin-top: 1.5px;
   transition: color .2s;
 }
 
 .link-wrapper {
   height: 35px;
   cursor: pointer;
-  transition: background-color .2s;
   position: relative;
   display: flex;
+}
+
+.name {
+  transition-duration: .2s;
 }
 
 .AppbarElement {

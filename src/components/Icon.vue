@@ -1,8 +1,8 @@
 <template>
   <div
     class="icon"
-    :class="{primaryHover: primaryHover}"
-    :style="{width: getWidth}"
+    :class="{primaryHover}"
+    :style="{width: getWidth, color}"
     @click="$emit('click')"
   >
     <svg :viewBox="getIcon.viewBox">
@@ -23,7 +23,7 @@ import out from '@/assets/icons/out.svg'
 import arrow from '@/assets/icons/arrow.svg'
 
 export default {
-  props: ['icon', 'width', 'primaryHover'],
+  props: ['icon', 'width', 'primaryHover', 'color'],
   data() {
     return {
       icons: {
@@ -48,11 +48,10 @@ export default {
 
 .icon {
   display: inline-block;
-  transition: fill .1s;
 }
 
 .primaryHover:hover {
-  fill: var(--primary);
+  color: var(--primary) !important;
 }
 
 </style>

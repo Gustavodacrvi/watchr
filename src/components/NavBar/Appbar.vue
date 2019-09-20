@@ -2,6 +2,7 @@
   <div class="Appbar">
     <AppbarElement v-for="(l, i) in links" :key="l.name"
       :name='l.name'
+      :active="value"
       :icon='l.icon'
       :callback='l.callback'
       :icon-color='l.iconColor'
@@ -25,6 +26,7 @@ import IconVue from '../Icon.vue'
 import AppbarElementVue from './AppbarElement.vue'
 
 export default {
+  props: ['value', 'viewType'],
   components: {
     Icon: IconVue,
     AppbarElement: AppbarElementVue,
@@ -35,25 +37,25 @@ export default {
         {
           name: 'Today',
           icon: 'star',
-          callback: () => console.log('today'),
+          callback: () => this.$router.push('/user?list=Today'),
           iconColor: 'var(--yellow)',
         },
         {
           name: 'Tomorrow',
           icon: 'sun',
-          callback: () => console.log('tomorrow'),
+          callback: () => this.$router.push('/user?list=Tomorrow'),
           iconColor: 'var(--orange)',
         },
         {
           name: 'Inbox',
           icon: 'inbox',
-          callback: () => console.log('inbox'),
+          callback: () => this.$router.push('/user?list=Inbox'),
           iconColor: 'var(--primary)',
         },
         {
           name: 'Upcoming',
           icon: 'calendar',
-          callback: () => console.log('calendar'),
+          callback: () => this.$router.push('/user?list=Upcoming'),
           iconColor: 'var(--green)'
         },
       ],
@@ -72,13 +74,20 @@ export default {
     }
   },
   mounted() {
-    const el = this.$el.getElementsByClassName('sectionActive')[0]
-    const line = this.$el.getElementsByClassName('line')[0]
-
-    line.style.left = el.offsetLeft + 'px'
-    line.style.width = el.offsetWidth + 'px'
+    this.moveLineToActive()
+    window.addEventListener('resize', this.moveLineToActive)
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.moveLineToActive)
   },
   methods: {
+    moveLineToActive() {
+      const el = this.$el.getElementsByClassName('sectionActive')[0]
+      const line = this.$el.getElementsByClassName('line')[0]
+
+      line.style.left = el.offsetLeft + 'px'
+      line.style.width = el.offsetWidth + 'px'
+    },
     moveLine(i) {
       const el = this.$el.getElementsByClassName('section-option')[i]
       const line = this.$el.getElementsByClassName('section-line')[0]

@@ -1,6 +1,6 @@
 <template>
   <div class="IconDrop" @click.stop>
-    <Icon class="cursor" :icon="handle" @click="showing = true"/>
+    <Icon class="cursor handle" :icon="handle" :primary-hover='true' @click="showing = true"/>
     <transition name="drop-trans"
       @beforeEnter="afterEnter"
       @enter="enter"
@@ -124,6 +124,10 @@ export default {
 
 .IconDrop {
   position: relative;
+}
+
+.handle {
+  transition: color .2s;
 }
 
 .links {
