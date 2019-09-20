@@ -30,6 +30,8 @@ import InputVue from '../../Auth/Input.vue'
 import { mapGetters } from 'vuex'
 import ButtonVue from '../../Auth/Button.vue'
 
+import firebase from 'firebase/app'
+
 export default {
   components: {
     InputApp: InputVue,
@@ -43,8 +45,38 @@ export default {
   },
   methods: {
     signIn() {
-      if (this.atLeastOneEmpty) console.log('all empty')
-      console.log('Sign in ')
+      if (this.atLeastOneEmpty)
+        this.$store.commit('pushToast', {
+          name: "Fill in all the required fields.",
+          type: "error",
+          seconds: 3,
+        })
+      else {
+        const auth = firebase.auth()
+        auth.signInWithEmailAndPassword(this.eMail, this.password).then(() => {
+          this.$store.commit('pushToast', {
+            name: 'You have successfully logged in!',
+            type: 'success',
+            seconds: 3,
+          })
+          if (auth.currentUser && !auth.currentUser.emailVerified)
+            this.$store.commit('pushToast', {
+              name: 'Please confirm your e-mail address.',
+              type: 'warning',
+              seconds: 4,
+            })
+
+          this.$store.commit('closePopup')
+          this.$store.commit('toggleUser', true)
+          this.$router.push("/user")
+        }).catch(err => {
+          this.$store.commit('pushToast', {
+            name: err.message,
+            type: 'error',
+            seconds: 3,
+          })
+        })
+      }
     }
   },
   computed: {

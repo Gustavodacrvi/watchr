@@ -25,6 +25,7 @@ const store = new Vuex.Store({
       comp: '',
       payload: null,
     },
+    authState: false,
     toasts: [],
     windowWidth: 0,
   },
@@ -41,6 +42,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    toggleUser(state, isLogged) {
+      state.authState = isLogged
+    },
     closePopup(state) {
       state.popup = {comp: '', payload: null}
     },

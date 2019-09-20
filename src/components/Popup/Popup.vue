@@ -1,6 +1,6 @@
 <template>
   <div class="Popup" :class="platform" @click="$emit('close')">
-    <Icon class="icon cursor" icon="arrow" :primary-hover="true" @click="closeMobilePopup"/>
+    <Icon v-if="!isDesktop" class="icon cursor" icon="arrow" :primary-hover="true" @click="closeMobilePopup"/>
     <component class="component" :is="popup.comp"/>
   </div>
 </template>
@@ -32,7 +32,7 @@ export default {
   },
   computed: {
     ...mapState(['popup']),
-    ...mapGetters(['isPopupOpened', 'platform'])
+    ...mapGetters(['isPopupOpened', 'platform', 'isDesktop'])
   }
 }
 

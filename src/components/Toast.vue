@@ -1,10 +1,10 @@
 <template>
-  <div class="Toast">
+  <div class="Toast" :class="$store.getters.platform">
     <transition name="trans">
       <div v-if="toast"
         class="toast cb rb"
-        :class="[toast.type, {hasCallback: toast.callback}, $store.getters.platform]"
-        @click="toast.callback"
+        :class="[toast.type, {hasCallback: toast.callback}]"
+        @click="runCallback"
       >
         <span class="name">{{ toast.name }}</span>
       </div>
@@ -23,6 +23,9 @@ export default {
     }
   },
   methods: {
+    runCallback() {
+      if (this.toast && this.toast.callback) this.toast.callback()
+    },
     addToast(toast) {
       this.toast = toast
       if (toast && toast.seconds) {
@@ -73,13 +76,18 @@ export default {
   transition: background-color .2s;
 }
 
-.toast.desktop {
+.Toast.desktop .toast {
   left: 50%;
   transform: translateX(-50%);
 }
 
-.toast.mobile {
-  margin: 0 32px;
+.Toast.mobile {
+  display: flex;
+  justify-content: center;
+}
+
+.Toast.mobile .toast {
+  width: 92%;
 }
 
 .toast.success {
@@ -88,6 +96,10 @@ export default {
 
 .toast.error {
   border: 1px solid var(--red);
+}
+
+.toast.warning {
+  border: 1px solid var(--yellow);
 }
 
 .hasCallback {
@@ -105,12 +117,12 @@ export default {
 
 .trans-enter, .trans-leave-to {
   bottom: -120px;
-  transition: bottom .2s ease-out;
+  transition: bottom .3s ease-out;
 }
 
 .trans-leave, .trans-enter-to {
   bottom: 40px;
-  transition: bottom .2s ease-in;
+  transition: bottom .3s ease-in;
 }
 
 </style>
