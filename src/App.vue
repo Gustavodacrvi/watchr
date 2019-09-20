@@ -7,8 +7,6 @@
 
     <NavBar/>
     <router-view/>
-
-    {{ $store.state.authState }}
   </div>
 </template>
 
