@@ -17,8 +17,26 @@ export default {
     return {
       options: [
         {
-          name: 'Link 1',
-          icon: 'sun'
+          name: 'Sort tasks',
+          icon: 'sort',
+          callback: () => [
+            {
+              name: 'Sort by date',
+              icon: 'sort-name',
+            },
+            {
+              name: 'Sort by priority',
+              icon: 'priority',
+            },
+            {
+              name: 'Sort by date',
+              icon: 'calendar',
+            }
+          ],
+        },
+        {
+          name: 'Show completed',
+          icon: 'completed',
         }
       ]
     }

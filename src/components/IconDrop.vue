@@ -1,6 +1,6 @@
 <template>
   <div class="IconDrop" @click.stop>
-    <Icon class="cursor handle" :icon="handle" :primary-hover='true' @click="showing = true"/>
+    <Icon class="cursor handle" :icon="handle" :primary-hover='true' @click="showing = true" :color="handleColor"/>
     <transition name="drop-trans"
       @beforeEnter="afterEnter"
       @enter="enter"
@@ -30,7 +30,7 @@
 import IconVue from './Icon.vue'
 
 export default {
-  props: ['options', 'handle'],
+  props: ['options', 'handle', 'handleColor'],
   components: {
     Icon: IconVue,
   },

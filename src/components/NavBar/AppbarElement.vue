@@ -10,7 +10,7 @@
       class="link-wrapper rb"
     >
       <div class="icon-wrapper">
-        <Icon class="icon" :icon="icon"/>
+        <Icon class="icon" :class="{notActive: !isActive}" :icon="icon"/>
       </div>
       <div class="name-wrapper">
         <span class="name">{{ name }}</span>
@@ -35,9 +35,12 @@ export default {
   },
   computed: {
     hoverStyle() {
+      return `color: ${this.isActive ? this.iconColor : ''} !important;`
+    },
+    isActive() {
       let isActive = this.name === this.active
       if (this.hover) isActive = true
-      return `color: ${isActive ? this.iconColor : ''}`
+      return isActive      
     },
   },
 }
@@ -76,6 +79,10 @@ export default {
 
 .name {
   transition-duration: .2s;
+}
+
+.icon.notActive {
+  color: var(--gray);
 }
 
 .AppbarElement {

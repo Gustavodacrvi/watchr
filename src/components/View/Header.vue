@@ -2,7 +2,7 @@
   <div class="Header">
     <Icon v-if="smart" class="icon" :icon="getIcon" :color="getIconColor" width="50px"/>
     <h2 class="name">{{ value }}</h2>
-    <IconDrop handle="sun" :options="options"/>
+    <IconDrop handle="settings-h" handle-color="var(--gray)" :options="options"/>
   </div>
 </template>
 

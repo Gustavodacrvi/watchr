@@ -21,6 +21,13 @@ import user from '@/assets/icons/user.svg'
 import userPlus from '@/assets/icons/user-plus.svg'
 import out from '@/assets/icons/out.svg'
 import arrow from '@/assets/icons/arrow.svg'
+import settingsH from '@/assets/icons/settings-h.svg'
+import settingsV from '@/assets/icons/settings-v.svg'
+import sort from '@/assets/icons/sort.svg'
+import tag from '@/assets/icons/tag.svg'
+import completed from '@/assets/icons/completed.svg'
+import sortName from '@/assets/icons/sort-name.svg'
+import priority from '@/assets/icons/priority.svg'
 
 export default {
   props: ['icon', 'width', 'primaryHover', 'color'],
@@ -28,7 +35,11 @@ export default {
     return {
       icons: {
         inbox, calendar, sun, arrow, star, user, out,
+        sort, tag, completed, priority,
         "user-plus": userPlus,
+        "settings-h": settingsH,
+        "sort-name": sortName,
+        "settings-v": settingsV,
       }
     }
   },
