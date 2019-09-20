@@ -1,27 +1,23 @@
 <template>
   <div class="Appbar">
-    <div v-for="l in links"
-      :key="l.name"
-      class="link-wrapper rb"
-      @click="l.callback"
-    >
-      <div class="icon-wrapper">
-        <Icon class="icon" :icon="l.icon"/>
-      </div>
-      <div class="name-wrapper">
-        <span class="name">{{ l.name }}</span>
-      </div>
-    </div>
+    <AppbarElement v-for="l in links" :key="l.name"
+      :name='l.name'
+      :icon='l.icon'
+      :callback='l.callback'
+      :icon-color='l.iconColor'
+    />
   </div>
 </template>
 
 <script>
 
 import IconVue from '../Icon.vue'
+import AppbarElementVue from './AppbarElement.vue'
 
 export default {
   components: {
     Icon: IconVue,
+    AppbarElement: AppbarElementVue,
   },
   data() {
     return {
@@ -29,22 +25,26 @@ export default {
         {
           name: 'Today',
           icon: 'star',
-          callback: () => console.log('today')
+          callback: () => console.log('today'),
+          iconColor: 'var(--yellow)',
         },
         {
           name: 'Tomorrow',
           icon: 'sun',
-          callback: () => console.log('tomorrow')
+          callback: () => console.log('tomorrow'),
+          iconColor: 'var(--orange)',
         },
         {
           name: 'Inbox',
           icon: 'inbox',
-          callback: () => console.log('inbox')
+          callback: () => console.log('inbox'),
+          iconColor: 'var(--primary)',
         },
         {
           name: 'Upcoming',
           icon: 'calendar',
-          callback: () => console.log('calendar')
+          callback: () => console.log('calendar'),
+          iconColor: 'var(--green)'
         },
       ]
     }
@@ -55,35 +55,5 @@ export default {
 
 <style scoped>
 
-.link-wrapper {
-  height: 35px;
-  cursor: pointer;
-  transition: background-color .2s;
-  position: relative;
-  display: flex;
-}
-
-.link-wrapper:hover {
-  background-color: var(--light-gray);
-}
-
-.icon-wrapper {
-  height: 100%;
-  width: 40px;
-  position: relative;
-}
-
-.name-wrapper {
-  height: 100%;
-  display: inline-flex;
-  align-items: center;
-}
-
-.icon {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-}
 
 </style>
