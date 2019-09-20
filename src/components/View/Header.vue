@@ -1,6 +1,6 @@
 <template>
   <div class="Header">
-    <Icon v-if="smart" class="icon" :icon="getIcon" :color="getIconColor" width="50px"/>
+    <Icon v-if="smart" class="icon" :icon="getIcon" :color="getIconColor" width="40px"/>
     <h2 class="name">{{ value }}</h2>
     <IconDrop handle="settings-h" handle-color="var(--gray)" :options="options"/>
   </div>
@@ -23,7 +23,7 @@ export default {
         Today: 'star',
         Tomorrow: 'sun',
         Inbox: 'inbox',
-        Upcoming: 'upcoming',
+        Upcoming: 'calendar',
       }
       return obj[this.value]
     },
