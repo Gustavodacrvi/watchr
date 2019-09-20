@@ -19,6 +19,8 @@ firebase.initializeApp({
   appId: process.env.VUE_APP_APP_ID,
 })
 
+const auth = firebase.auth()
+
 const store = new Vuex.Store({
   state: {
     popup: {
@@ -66,6 +68,10 @@ const store = new Vuex.Store({
     },
   }
 });
+
+auth.onAuthStateChanged(() => {
+  store.commit('toggleUser', auth.currentUser !== null)
+})
 
 window.addEventListener('resize', () => store.commit('saveWindowWidth'))
 

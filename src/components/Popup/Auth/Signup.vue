@@ -12,10 +12,12 @@
       <InputApp
         class="mt"
         placeholder='Password:'
+        type="password"
         v-model="password"
       />
       <InputApp
         class="mt"
+        type="password"
         placeholder='Confirm password:'
         v-model="conPassword"
       />
@@ -35,6 +37,8 @@ import InputVue from '../../Auth/Input.vue'
 import { mapGetters } from 'vuex'
 import ButtonVue from '../../Auth/Button.vue'
 
+import firebase from 'firebase/app'
+
 export default {
   components: {
     InputApp: InputVue,
@@ -49,9 +53,57 @@ export default {
   },
   methods: {
     createAccount() {
-      if (this.atLeastOneEmpty) console.log('all empty')
-      else if (this.tooLong) console.log('too long')
-      else if (this.notEqual) console.log('not equal')
+      const toast = (toast) => this.$store.commit('pushToast', toast)
+      if (this.atLeastOneEmpty)
+        toast({
+          name: "Fill in all the required fields.",
+          type: "error",
+          seconds: 4,
+        })
+      else if (this.tooLong)
+        toast({
+          name: "The maximum number of characters is 75.",
+          type: "error",
+          seconds: 4,
+        })
+      else if (this.notEqual)
+        toast({
+          name: "The passwords aren't matching.",
+          type: "error",
+          seconds: 4,
+        })
+      else {
+        const auth = firebase.auth()
+        auth.createUserWithEmailAndPassword(this.eMail, this.password).then(() => {
+          toast({
+            name: 'You have successfully created an account!',
+            seconds: 3,
+            type: 'error'
+          })
+          auth.currentUser.sendEmailVerification().then(() => {
+            toast({
+              name: 'An email confirmation has been sent to your email address. Please check your inbox and click the confirmation link.',
+              seconds: 6,
+              type: 'warning',
+            })
+          }).catch(err => {
+            toast({
+              name: err.message,
+              seconds: 6,
+              type: 'warning',
+            })
+          })
+          this.$store.commit('closePopup')
+          this.$store.commit('toggleUser', true)
+          this.$router.push('/user')
+        }).catch(err => {
+          toast({
+            name: err.message,
+            seconds: 4,
+            type: 'error',
+          })
+        })
+      }
     }
   },
   computed: {

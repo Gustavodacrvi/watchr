@@ -12,6 +12,7 @@
       <InputApp
         class="mt"
         placeholder='Password:'
+        type="password"
         v-model="password"
       />
       <ButtonApp
@@ -26,9 +27,9 @@
 <script>
 
 import InputVue from '../../Auth/Input.vue'
+import ButtonVue from '../../Auth/Button.vue'
 
 import { mapGetters } from 'vuex'
-import ButtonVue from '../../Auth/Button.vue'
 
 import firebase from 'firebase/app'
 
@@ -45,22 +46,23 @@ export default {
   },
   methods: {
     signIn() {
+      const toast = (toast) => this.$store.commit('pushToast', toast)
       if (this.atLeastOneEmpty)
-        this.$store.commit('pushToast', {
+        toast({
           name: "Fill in all the required fields.",
           type: "error",
-          seconds: 3,
+          seconds: 4,
         })
       else {
         const auth = firebase.auth()
         auth.signInWithEmailAndPassword(this.eMail, this.password).then(() => {
-          this.$store.commit('pushToast', {
+          toast({
             name: 'You have successfully logged in!',
             type: 'success',
             seconds: 3,
           })
           if (auth.currentUser && !auth.currentUser.emailVerified)
-            this.$store.commit('pushToast', {
+            toast({
               name: 'Please confirm your e-mail address.',
               type: 'warning',
               seconds: 4,
@@ -70,7 +72,7 @@ export default {
           this.$store.commit('toggleUser', true)
           this.$router.push("/user")
         }).catch(err => {
-          this.$store.commit('pushToast', {
+          toast({
             name: err.message,
             type: 'error',
             seconds: 3,
