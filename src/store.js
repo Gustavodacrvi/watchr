@@ -68,6 +68,11 @@ const store = new Vuex.Store({
     },
   },
   actions: {
+    pushKeyShortcut({dispatch}, key) {
+      switch (key) {
+        case 'q': dispatch('pushPopup', {comp: 'AddTask'})
+      }
+    },
     pushPopup({state, getters}, popup) {
       state.popup = popup
       if (!getters.isDesktop)

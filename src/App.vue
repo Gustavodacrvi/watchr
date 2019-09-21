@@ -29,7 +29,18 @@ export default {
     Toast: ToastVue,
     Menu: MenuVue,
   },
+  created() {
+    window.addEventListener('keydown', this.keydown)
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this,keydown)
+  },
   methods: {
+    keydown({key}) {
+      const active = document.activeElement
+      const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA') && this.isOnAppRoute
+      if (!isTyping) this.$store.dispatch('pushKeyShortcut', key)
+    },
     closePopup() {
       this.$store.commit('closePopup')
     }
