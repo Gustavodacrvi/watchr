@@ -2,14 +2,13 @@ import Vue from "vue"
 import Vuex from "vuex"
 import router from './../router'
 
-import task from './task'
-
 Vue.use(Vuex)
 
 const MINIMUM_DESKTOP_SCREEN_WIDTH = 1020
 
 import firebase from 'firebase/app'
 import 'firebase/auth'
+import 'firebase/firestore'
 
 firebase.initializeApp({
   apiKey: process.env.VUE_APP_API_KEY,
@@ -21,11 +20,16 @@ firebase.initializeApp({
   appId: process.env.VUE_APP_APP_ID,
 })
 
-const auth = firebase.auth()
+
+export const fire = firebase.firestore()
+export const auth = firebase.auth()
+
+import task from './task'
+import tag from './tag'
 
 const store = new Vuex.Store({
   modules: {
-    task,
+    task, tag,
   },
   state: {
     popup: {
@@ -37,6 +41,7 @@ const store = new Vuex.Store({
       title: "",
     },
     authState: false,
+    isLoading: true,
     toasts: [],
     windowWidth: 0,
   },
@@ -55,6 +60,9 @@ const store = new Vuex.Store({
   mutations: {
     pushNavBarData(state, navBar) {
       state.navBar = navBar
+    },
+    load(state) {
+      state.isLoading = false
     },
     toggleUser(state, isLogged) {
       state.authState = isLogged
@@ -87,7 +95,16 @@ const store = new Vuex.Store({
 });
 
 auth.onAuthStateChanged(() => {
-  store.commit('toggleUser', auth.currentUser !== null)
+  const isLogged = auth.currentUser !== null
+  store.commit('toggleUser', isLogged)
+
+  if (isLogged) {
+    Promise.all([
+      store.dispatch('tag/getData'),
+    ]).then(() => {
+      store.commit('load')
+    })
+  }
 })
 
 window.addEventListener('resize', () => store.commit('saveWindowWidth'))

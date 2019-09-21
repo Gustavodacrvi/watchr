@@ -1,6 +1,6 @@
 <template>
   <div class="Tags">
-    Tags Tags Tags Tags
+    
   </div>
 </template>
 

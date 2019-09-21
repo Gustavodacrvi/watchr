@@ -3,7 +3,9 @@
     <div class="tags">
       <Tag v-if="priority"
         icon="priority"
+        :color="getPriorityColor"
         :value="priority"
+        @click="priority = ''"
       />
     </div>
     <InputApp
@@ -19,6 +21,8 @@
         <IconDrop
           handle="tag"
           handleWidth="25px"
+          :allowSearch="true"
+          :options="getTags"
         />
         <IconDrop
           handle="priority"
@@ -57,6 +61,24 @@ export default {
     return {
       name: '',
       priority: '',
+      tags: [
+        {
+          id: '1',
+          name: 'Freaking tag',
+        },
+        {
+          id: '2',
+          name: 'Another tag',
+        },
+        {
+          id: '3',
+          name: 'The ultimate tag',
+        },
+        {
+          id: '4',
+          name: 'The last one'
+        }
+      ]
     }
   },
   computed: {
@@ -70,6 +92,24 @@ export default {
         }
       }
       return links
+    },
+    getPriorityColor() {
+      const obj = {
+        "High priority": "var(--red)",
+        "Medium priority": "var(--orange)",
+        "Low priority": "var(--primary)",
+      }
+      return obj[this.priority]
+    },
+    getTags() {
+      const arr = []
+      for (const el of this.tags) {
+        arr.push({
+          name: el.name,
+          icon: 'tag',
+        })
+      }
+      return arr
     }
   },
 }

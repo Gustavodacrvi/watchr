@@ -9,19 +9,29 @@
       <div v-show="showing" class="content shadow cb rb">
         <transition name="links-trans">
           <div v-if="showingLinks" class="links">
-            <div v-for="link in links" class="link"
-              :key="link.name"
-              @click="linkCallback(link.callback(link))"
-            >
-              <div class="link-cont">
-                <Icon v-if="link.icon"
-                  class="cursor icon"
-                  :icon="link.icon"
-                  :style="{color: link.iconColor}"
-                />
-                <span class="name">{{ link.name }}</span>
-              </div>
+            <div class="search">
+              <input v-if="allowSearch" class="input"
+                v-model="search"
+              >
             </div>
+            <transition-group
+              @enter='enterItems'
+              @leave='leaveItems'
+            >
+              <div v-for="link in getLinks" class="link"
+                :key="link.name"
+                @click="linkCallback(link.callback(link))"
+              >
+                <div class="link-cont">
+                  <Icon v-if="link.icon"
+                    class="cursor icon"
+                    :icon="link.icon"
+                    :style="{color: link.iconColor}"
+                  />
+                  <span class="name">{{ link.name }}</span>
+                </div>
+              </div>
+            </transition-group>
           </div>
         </transition>
       </div>
@@ -34,7 +44,7 @@
 import IconVue from './Icon.vue'
 
 export default {
-  props: ['options', 'handle', 'handleColor', 'handleWidth'],
+  props: ['options', 'handle', 'handleColor', 'handleWidth', 'allowSearch'],
   components: {
     Icon: IconVue,
   },
@@ -45,6 +55,7 @@ export default {
       links: this.options,
       height: 0,
       width: 0,
+      search: '',
     }
   },
   created() {
@@ -53,7 +64,31 @@ export default {
   beforeDestroy() {
     window.removeEventListener('click', this.hide)
   },
+  mounted() {
+    if (this.allowSearch) {
+      const inp = this.$el.getElementsByClassName('input')[0]
+      if (inp)
+        setTimeout(() => {
+          console.log(inp)
+          inp.focus()
+        }, 1000)
+    }
+  },
   methods: {
+    enterItems(el, done) {
+      el.style.opacity = 0
+      el.style.height = '0px'
+      setTimeout(() => {
+        el.style.opacity = 1
+        el.style.height = '35px'
+        setTimeout(() => done(), 300)
+      })
+    },
+    leaveItems(el, done) {
+      el.style.opacity = 0
+      el.style.height = '0px'
+      setTimeout(() => done(), 300)
+    },
     linkCallback(callback) {
       if (callback) {
         const links = callback()
@@ -121,6 +156,11 @@ export default {
   computed: {
     getHandleWidth() {
       return this.handleWidth ? this.handleWidth : ''
+    },
+    getLinks() {
+      if (this.allowSearch)
+        return this.links.filter(el => el.name.toLowerCase().includes(this.search.toLowerCase()))
+      return this.links
     }
   }
 }
@@ -147,6 +187,24 @@ export default {
 
 .hidden {
   opacity: 0;
+}
+
+.search {
+  margin: 0 12px;
+  margin-bottom: 18px;
+  min-width: 250px;
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  background: none;
+  border: none;
+  font-size: 1em;
+  padding: 8px;
+  outline: none;
+  border-bottom: 1px solid var(--gray);
 }
 
 .links-trans-enter, .links-trans-leave-to {
