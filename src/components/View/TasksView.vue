@@ -21,7 +21,7 @@ export default {
           icon: 'sort',
           callback: () => [
             {
-              name: 'Sort by date',
+              name: 'Sort by name',
               icon: 'sort-name',
             },
             {

@@ -19,6 +19,12 @@
           >{{ s.name }}</div>
           <div class="line section-line"></div>
         </div>
+        <transition name="sect-trans"
+          @leave="leave"
+          @enter="enter"
+        >
+          <component :is="section" :data-transindex="getAppnavIndex(section)"/>
+        </transition>
       </div>
     </transition>
     <Icon icon="arrow" class="arrow cursor" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
@@ -29,12 +35,18 @@
 
 import IconVue from '../Icon.vue'
 import AppbarElementVue from './AppbarElement.vue'
+import ListsVue from '../../components/NavBar/Sections/Lists.vue'
+import TagsVue from '../../components/NavBar/Sections/Tags.vue'
+import FiltersVue from '../../components/NavBar/Sections/Filters.vue'
 
 export default {
   props: ['value', 'viewType'],
   components: {
     Icon: IconVue,
     AppbarElement: AppbarElementVue,
+    Lists: ListsVue,
+    Tags: TagsVue,
+    Filters: FiltersVue,
   },
   data() {
     return {
@@ -76,6 +88,8 @@ export default {
         },
       ],
       showing: true,
+      transRight: true,
+      oldIndex: 0,
       section: 'Lists'
     }
   },
@@ -87,6 +101,46 @@ export default {
     window.removeEventListener('resize', this.moveLineToActive)
   },
   methods: {
+    leave(el) {
+      this.transRight = this.newIndex > this.oldIndex
+
+      if (this.transRight) {
+        el.style.transform = 'translateX(0px)'
+      } else {
+        el.style.transform = 'translateX(-50px)'
+      }
+      setTimeout(() => {
+        if (this.transRight) {
+          el.style.transform = 'translateX(-50px)'
+        } else {
+          el.style.transform = 'translateX(0px)'
+        }
+      })
+    },
+    enter(el) {
+      if (this.transRight) {
+        el.style.transform = 'translateX(50px)'
+      } else {
+        el.style.transform = 'translateX(-50px)'
+      }
+      setTimeout(() => {
+        if (this.transRight) {
+          el.style.transform = 'translateX(0px)'
+        } else {
+          el.style.transform = 'translateX(0px)'
+        }
+      })
+
+      this.oldIndex = this.newIndex
+    },
+    getAppnavIndex(name) {
+      const obj = {
+        Lists: 1,
+        Filters: 2,
+        Tags: 3,
+      }
+      return obj[name]
+    },
     toggleAppbar() {
       this.showing = !this.showing
       this.$emit('appbar', !this.showing)
@@ -111,6 +165,11 @@ export default {
         this.section = el.textContent
       }
     },
+  },
+  computed: {
+    newIndex() {
+      return this.getAppnavIndex(this.section)
+    }
   }
 }
 
@@ -144,11 +203,13 @@ export default {
   align-items: center;
   transition-duration: .2s;
   cursor: pointer;
+  color: var(--gray);
   outline: none;
 }
 
 .option:hover {
   background-color: var(--light-gray);
+  color: var(--white);
 }
 
 .sectionActive {
@@ -182,6 +243,18 @@ export default {
 
 .bar-trans-enter-to {
   transition-delay: .6s;
+}
+
+.sect-trans-enter, .sect-trans-leave-to {
+  transition-duration: .2s;
+  opacity: 0;
+  position: absolute;
+}
+
+.sect-trans-leave, .sect-trans-enter-to {
+  transition-duration: .2s;
+  opacity: 1;
+  position: absolute;
 }
 
 </style>
