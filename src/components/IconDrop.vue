@@ -9,8 +9,8 @@
       <div v-show="showing" class="content shadow cb rb">
         <transition name="links-trans">
           <div v-if="showingLinks" class="links">
-            <div class="search">
-              <input v-if="allowSearch" class="input"
+            <div v-if="allowSearch" class="search">
+              <input class="input"
                 v-model="search"
               >
             </div>
@@ -69,9 +69,8 @@ export default {
       const inp = this.$el.getElementsByClassName('input')[0]
       if (inp)
         setTimeout(() => {
-          console.log(inp)
           inp.focus()
-        }, 1000)
+        }, 1500)
     }
   },
   methods: {
@@ -201,6 +200,7 @@ export default {
   box-sizing: border-box;
   background: none;
   border: none;
+  border-radius: 0;
   font-size: 1em;
   padding: 8px;
   outline: none;

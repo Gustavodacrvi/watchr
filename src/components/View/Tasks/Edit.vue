@@ -8,10 +8,22 @@
         @click="priority = ''"
       />
     </div>
-    <InputApp
+    <div class="tags">
+      <Tag v-for="t in tags"
+        :key="t"
+        icon="tag"
+        :value="t"
+        @click="removeTag(t)"
+      />
+    </div>
+    <DropInput
       v-model="name"
       :focus="true"
+      :options="['I am the option 1', 'You are the option 2', 'You are breath taking', 'No, no, you are breath taking', 'Mr Keano enters the chat',
+      'asdf', 'asçlkdjfaçsjdf', 'jkfdaçslkfjaç  '
+      ]"
       :placeholder="placeholder"
+      @select="select"
     />
     <div class="options">
       <div class="button">
@@ -44,14 +56,14 @@
 
 <script>
 
-import InputVue from '../../Auth/Input.vue'
 import ButtonVue from '../../Auth/Button.vue'
 import IconDropVue from '../../IconDrop.vue'
 import TagVue from '../Tag.vue'
+import DropInputVue from '../../Auth/DropInput.vue'
 
 export default {
   components: {
-    InputApp: InputVue,
+    DropInput: DropInputVue,
     ButtonApp: ButtonVue,
     IconDrop: IconDropVue,
     Tag: TagVue,
@@ -61,7 +73,8 @@ export default {
     return {
       name: '',
       priority: '',
-      tags: [
+      tags: [],
+      tagss: [
         {
           id: '1',
           name: 'Freaking tag',
@@ -80,6 +93,15 @@ export default {
         }
       ]
     }
+  },
+  methods: {
+    removeTag(name) {
+      const index = this.tags.findIndex(el => el === name)
+      this.tags.splice(index, 1)
+    },
+    select(value) {
+      this.name = value
+    },
   },
   computed: {
     priorityOptions() {
@@ -103,10 +125,13 @@ export default {
     },
     getTags() {
       const arr = []
-      for (const el of this.tags) {
+      for (const el of this.tagss) {
         arr.push({
           name: el.name,
           icon: 'tag',
+          callback: () => {
+            this.tags.push(el.name)
+          },
         })
       }
       return arr

@@ -1,5 +1,5 @@
 <template>
-  <input v-model="str" class="Input cbd" autocomplete="off">
+  <input v-model.trim="str" class="Input cbd" autocomplete="off" type="text">
 </template>
 
 <script>
@@ -16,7 +16,7 @@ export default {
   },
   mounted() {
     if (this.focus) {
-      setTimeout(() => this.$el.focus(), 100)
+      setTimeout(() => this.$el.focus(), 200)
     }
   },
   watch: {

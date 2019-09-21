@@ -32,7 +32,7 @@ path {
   cursor: pointer;
 }
 
-body, input, button {
+body, input, button, textarea {
   font-family: var(--font);
   color: var(--white);
 }
@@ -59,4 +59,13 @@ body, input, button {
 
 .tac {
   text-align: center;
+}
+
+.scroll-thin::-webkit-scrollbar-thumb {
+  background-color: var(--light-gray);
+  border-radius: 6px;
+}
+
+.scroll-thin::-webkit-scrollbar {
+  width: 4px;
 }
