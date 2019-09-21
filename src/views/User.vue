@@ -1,11 +1,15 @@
 <template>
   <div class="User" :class="[{appbarHided}, platform]">
     <div v-if="isDesktop" class="nav">
-      <Appbar :value="value" :view-type="viewType" @appbar="toggleAppbar"/>
+      <Appbar
+        :value="value"
+        :view-type="viewType"
+        @appbar="toggleAppbar"
+      />
     </div>
     <div class="cont">
       <TasksView
-        :smart="true"
+        :smart="isSmart"
         :view-type="viewType"
         :value="value"
       />
@@ -52,6 +56,16 @@ export default {
   },
   computed: {
     ...mapGetters(['platform', 'isDesktop']),
+    isSmart() {
+      if (this.viewType !== 'list') return false
+      switch (this.value) {
+        case 'Today': return true
+        case 'Upcoming': return true
+        case 'Tomorrow': return true
+        case 'Inbox': return true
+      }
+      return false
+    }
   },
   watch: {
     $route() {

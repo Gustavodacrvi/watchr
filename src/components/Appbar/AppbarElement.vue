@@ -2,9 +2,10 @@
   <div class="AppbarElement rb"
     :style="hoverStyle"
     :tabindex="tabindex"
+    :class="{notSmartActive: !isSmart && isActive}"
     @mouseenter="hover = true"
     @mouseleave="hover = false"
-    @click="callback"
+    @click="linkCallback(callback)"
   >
     <div
       class="link-wrapper rb"
@@ -24,7 +25,9 @@
 import IconVue from '../Icon.vue'
 
 export default {
-  props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active'],
+  props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
+    'viewType', 'type', 'isSmart',
+  ],
   components: {
     Icon: IconVue,
   },
@@ -33,12 +36,19 @@ export default {
       hover: false,
     }
   },
+  methods: {
+    linkCallback(callback) {
+      if (callback) callback()
+    }
+  },
   computed: {
     hoverStyle() {
-      return `color: ${this.isActive ? this.iconColor : ''} !important;`
+      if (this.isSmart)
+        return `color: ${this.isActive ? this.iconColor : ''} !important;`
     },
     isActive() {
-      let isActive = this.name === this.active
+      let isActive = this.name === this.active && this.type === this.viewType
+      console.log(this.name, this.active, this.type, this.viewTypeth)
       if (this.hover) isActive = true
       return isActive      
     },
@@ -89,7 +99,7 @@ export default {
   outline: none;
 }
 
-.link-wrapper:hover {
+.link-wrapper:hover, .notSmartActive {
   background-color: var(--light-gray);
 }
 

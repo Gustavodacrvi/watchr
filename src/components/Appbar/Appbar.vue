@@ -3,8 +3,11 @@
     <transition name="bar-trans">
       <div v-if="showing" class="content">
         <AppbarElement v-for="(l, i) in links" :key="l.name"
+          type='list'
           :name='l.name'
           :active="value"
+          :isSmart='true'
+          :viewType="viewType"
           :icon='l.icon'
           :callback='l.callback'
           :icon-color='l.iconColor'
@@ -12,7 +15,7 @@
         />
         <div class="header">
           <div v-for="(s,i) in sections" :key="s.name"
-            class="option section-option rb"
+            class="option section-option"
             :class="{sectionActive: s.name === section}"
             :tabindex="i + 1 + links.length"
             @click="moveLine(i)"
@@ -23,7 +26,7 @@
           @leave="leave"
           @enter="enter"
         >
-          <component :is="section" :data-transindex="getAppnavIndex(section)"/>
+          <component :is="section" :active="value" :viewType='viewType' :data-transindex="getAppnavIndex(section)"/>
         </transition>
       </div>
     </transition>
@@ -205,6 +208,8 @@ export default {
   cursor: pointer;
   color: var(--gray);
   outline: none;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
 }
 
 .option:hover {
