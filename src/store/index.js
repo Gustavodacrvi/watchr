@@ -1,6 +1,8 @@
 import Vue from "vue"
 import Vuex from "vuex"
-import router from './router'
+import router from './../router'
+
+import task from './task'
 
 Vue.use(Vuex)
 
@@ -22,6 +24,9 @@ firebase.initializeApp({
 const auth = firebase.auth()
 
 const store = new Vuex.Store({
+  modules: {
+    task,
+  },
   state: {
     popup: {
       comp: '',

@@ -1,7 +1,8 @@
 <template>
-  <div class="Popup" :class="platform" @click="$emit('close')">
+  <div class="Popup" :class="platform">
     <Icon v-if="!isDesktop" class="icon cursor" icon="arrow" :primaryHover="true" @click="closeMobilePopup"/>
     <component class="component" :is="popup.comp"/>
+    <div class="back" @click="$emit('close')"></div>
   </div>
 </template>
 
@@ -66,6 +67,18 @@ export default {
   left: 15px;
   top: 10px;
   transform: rotate(90deg);
+}
+
+.component {
+  z-index: 99;
+  position: relative;
+}
+
+.back {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 98;
 }
 
 </style>

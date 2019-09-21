@@ -16,7 +16,7 @@ export default {
   },
   mounted() {
     if (this.focus) {
-      this.$el.focus()
+      setTimeout(() => this.$el.focus(), 100)
     }
   },
   watch: {

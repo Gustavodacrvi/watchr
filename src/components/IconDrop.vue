@@ -1,20 +1,24 @@
 <template>
   <div class="IconDrop" @click.stop>
-    <Icon class="cursor handle" :icon="handle" :primaryHover='true' @click="showing = true" :color="handleColor"/>
+    <Icon class="cursor handle" :icon="handle" :primaryHover='true' @click="showing = true" :color="handleColor" :width="getHandleWidth"/>
     <transition name="drop-trans"
       @beforeEnter="afterEnter"
       @enter="enter"
       @leave="leave"
     >
-      <div v-show="showing" class="content cb rb">
+      <div v-show="showing" class="content shadow cb rb">
         <transition name="links-trans">
           <div v-if="showingLinks" class="links">
             <div v-for="link in links" class="link"
               :key="link.name"
-              @click="linkCallback(link.callback)"
+              @click="linkCallback(link.callback(link))"
             >
               <div class="link-cont">
-                <Icon v-if="link.icon" class="cursor icon" :icon="link.icon"/>
+                <Icon v-if="link.icon"
+                  class="cursor icon"
+                  :icon="link.icon"
+                  :style="{color: link.iconColor}"
+                />
                 <span class="name">{{ link.name }}</span>
               </div>
             </div>
@@ -30,7 +34,7 @@
 import IconVue from './Icon.vue'
 
 export default {
-  props: ['options', 'handle', 'handleColor'],
+  props: ['options', 'handle', 'handleColor', 'handleWidth'],
   components: {
     Icon: IconVue,
   },
@@ -113,6 +117,11 @@ export default {
       el.style.width = 'auto'
       el.style.height = 'auto'
     }
+  },
+  computed: {
+    getHandleWidth() {
+      return this.handleWidth ? this.handleWidth : ''
+    }
   }
 }
 
@@ -126,6 +135,9 @@ export default {
 
 .handle {
   transition: color .2s;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .links {
@@ -156,6 +168,7 @@ export default {
   padding: 18px 0;
   overflow: hidden;
   transition-duration: .3s;
+  z-index: 5;
 }
 
 .drop-trans-enter-active .link {

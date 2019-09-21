@@ -1,5 +1,5 @@
 <template>
-  <div class="Signup cb rb" :class="platform" @click.stop="">
+  <div class="Signin popup cb shadow rb" :class="platform">
     <div class="tac title">
       <h3 class="pc">Sign in</h3>
     </div>

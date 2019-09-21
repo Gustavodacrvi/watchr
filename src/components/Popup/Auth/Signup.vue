@@ -1,5 +1,5 @@
 <template>
-  <div class="Signup cb rb" :class="platform" @click.stop="">
+  <div class="Signup popup cb shadow rb" :class="platform">
     <div class="tac title">
       <h3 class="pc">Create an Account</h3>
     </div>
