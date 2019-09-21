@@ -1,22 +1,20 @@
 <template>
   <div class="NavBar" @click="calculateLineOffset">
-    <router-link class="link" :class="{active: route === 'home'}" to="/">Home</router-link>
-    <router-link class="link" :class="{active: route === 'user'}" to="/user">User</router-link>
-    <router-link class="link" :class="{active: route === 'about'}" to="/about">About</router-link>
-    <div class="line"></div>
-    <div class="icons">
-      <DropIcon handle="user" :options="dropLinks"/>
-    </div>
+    <Desktop v-if="isDesktop" :route="route" :dropLinks="dropLinks"/>
+    <Mobile v-else :route="route" :dropLinks="dropLinks"/>
   </div>
 </template>
 
 <script>
 
-import IconDropVue from '../IconDrop.vue'
+import { mapGetters } from 'vuex'
+import DesktopVue from './Desktop.vue'
+import MobileVue from './Mobile.vue'
 
 export default {
   components: {
-    DropIcon: IconDropVue,
+    Desktop: DesktopVue,
+    Mobile: MobileVue,
   },
   mounted() {
     this.calculateLineOffset()
@@ -53,6 +51,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(['isDesktop']),
     route() {
       if (this.$route.matched[0]) {
         return this.$route.matched[0].name
@@ -80,40 +79,14 @@ export default {
 
 <style scoped>
 
+
 .NavBar {
   position: relative;
   height: 65px;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.link {
-  text-decoration: none;
-  color: var(--white);
-  font-size: 1.05em;
-  display: inline-block;
-  padding: 0 14px;
-  transition-duration: .2s;
-}
-
-.link.active, .link:hover {
-  color: var(--primary);
-}
-
-.line {
-  position: absolute;
-  background-color: var(--primary);
-  border-radius: 2px;
-  height: 3px;
-  width: 50px;
-  bottom: 0;
-  transition-duration: .2s;
-}
-
-.icons {
-  position: absolute;
-  right: 34px;
+  z-index: 50;
 }
 
 </style>

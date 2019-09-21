@@ -35,9 +35,9 @@
 
 import IconVue from '../Icon.vue'
 import AppbarElementVue from './AppbarElement.vue'
-import ListsVue from '../../components/NavBar/Sections/Lists.vue'
-import TagsVue from '../../components/NavBar/Sections/Tags.vue'
-import FiltersVue from '../../components/NavBar/Sections/Filters.vue'
+import ListsVue from './Sections/Lists.vue'
+import TagsVue from './Sections/Tags.vue'
+import FiltersVue from './Sections/Filters.vue'
 
 export default {
   props: ['value', 'viewType'],

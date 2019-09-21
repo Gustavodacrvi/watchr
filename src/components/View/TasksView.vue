@@ -1,5 +1,5 @@
 <template>
-  <div class="TaskView">
+  <div class="TaskView" :class="platform">
     <Header :smart="smart" :value="value" :options="options"/>
   </div>
 </template>
@@ -7,6 +7,8 @@
 <script>
 
 import HeaderVue from './Header.vue'
+
+import { mapGetters } from 'vuex'
 
 export default {
   props: ['smart', 'viewType', 'value'],
@@ -40,7 +42,10 @@ export default {
         }
       ]
     }
-  }
+  },
+  computed: {
+    ...mapGetters(['platform'])
+  },
 }
 
 </script>
@@ -49,6 +54,10 @@ export default {
 
 .TaskView {
   margin: 0 60px;
+}
+
+.TaskView.mobile {
+  margin: 0 8px;
 }
 
 </style>

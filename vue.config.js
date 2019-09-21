@@ -1,6 +1,14 @@
-const SvgSpriteLoader = require('svg-sprite-loader')
 
 module.exports = {
+  pwa: {
+    themeColor: '#131313',
+    appleMobileWebAppCapable: 'yes',
+    appleMobileWebAppStatusBarStyle: 'black',
+    workboxPluginMode: 'InjectManifest',
+    workboxOptions: {
+      swSrc: 'public/service-worker.js',
+    },
+  },
   chainWebpack: config => {
     const svgRule = config.module.rule('svg')
 
@@ -11,12 +19,3 @@ module.exports = {
       .loader('svg-sprite-loader')
   }
 }
-
-/* 
-            test: /\.(svg)$/,
-            loader: "svg-sprite-loader",
-            include: path.join( __dirname, "app/icons/svg/" ),
-            options: {
-                symbolId: "app-icon-[name]"
-            }
- */

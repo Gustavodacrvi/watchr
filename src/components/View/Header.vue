@@ -1,8 +1,8 @@
 <template>
-  <div class="Header">
+  <div class="Header" v-if="$store.getters.isDesktop">
     <Icon v-if="smart" class="icon" :icon="getIcon" :color="getIconColor" width="40px"/>
     <h2 class="name">{{ value }}</h2>
-    <IconDrop handle="settings-h" handle-color="var(--gray)" :options="options"/>
+    <IconDrop handle="settings-h" handleColor="var(--gray)" :options="options"/>
   </div>
 </template>
 
@@ -16,6 +16,17 @@ export default {
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
+  },
+  created() {
+    this.pushToNavbar()
+  },
+  methods: {
+    pushToNavbar() {
+      this.$store.commit('pushNavBarData', {
+        options: this.options,
+        title: this.value,
+      })
+    }
   },
   computed: {
     getIcon() {
@@ -37,6 +48,17 @@ export default {
       return obj[this.value]
     }
   },
+  watch: {
+    value() {
+      this.pushToNavbar()
+    },
+    options() {
+      this.pushToNavbar()
+    },
+    smart() {
+      this.pushToNavbar()
+    },
+  }
 }
 
 </script>

@@ -1,6 +1,6 @@
 <template>
-  <div class="User" :class="{appbarHided}">
-    <div class="nav">
+  <div class="User" :class="[{appbarHided}, platform]">
+    <div v-if="isDesktop" class="nav">
       <Appbar :value="value" :view-type="viewType" @appbar="toggleAppbar"/>
     </div>
     <div class="cont">
@@ -15,8 +15,10 @@
 
 <script>
 
-import AppbarVue from '../components/NavBar/Appbar.vue'
+import AppbarVue from '../components/Appbar/Appbar.vue'
 import TasksViewVue from '../components/View/TasksView.vue'
+
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -48,6 +50,9 @@ export default {
       this.viewType = viewType
     }
   },
+  computed: {
+    ...mapGetters(['platform', 'isDesktop']),
+  },
   watch: {
     $route() {
       this.updateViewType()
@@ -64,6 +69,10 @@ export default {
   display: flex;
   justify-content: center;
   transition-delay: .4s;
+}
+
+.User.mobile {
+  margin: 30px 0;
 }
 
 .nav {

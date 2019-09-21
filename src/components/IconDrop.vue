@@ -1,6 +1,6 @@
 <template>
   <div class="IconDrop" @click.stop>
-    <Icon class="cursor handle" :icon="handle" :primary-hover='true' @click="showing = true" :color="handleColor"/>
+    <Icon class="cursor handle" :icon="handle" :primaryHover='true' @click="showing = true" :color="handleColor"/>
     <transition name="drop-trans"
       @beforeEnter="afterEnter"
       @enter="enter"
@@ -59,7 +59,6 @@ export default {
         const oldWidth = s.width
         const oldHeight = s.height
 
-        cont.style.transitionDelay = '.25s';
         setTimeout(() => {
           cont.style.width = 'auto'
           cont.style.height = 'auto'
@@ -70,8 +69,7 @@ export default {
             setTimeout(() => {
               cont.style.width = width
               cont.style.height = height
-              cont.style.transitionDelay = '0s'
-            }, 80)
+            }, 10)
           })
         }, 300)
 
@@ -84,7 +82,7 @@ export default {
       this.showingLinks = false
       setTimeout(() => {
         this.showingLinks = true
-      }, 300)
+      }, 200)
     },
     getContent() {
       return this.$el.getElementsByClassName('content')[0]
@@ -141,12 +139,12 @@ export default {
 
 .links-trans-enter, .links-trans-leave-to {
   opacity: 0;
-  transition-duration: .3s;
+  transition-duration: .2s;
 }
 
 .links-trans-leave, .links-trans-enter-to {
   opacity: 1;
-  transition-duration: .3s;
+  transition-duration: .2s;
 }
 
 .content {

@@ -28,6 +28,7 @@ import tag from '@/assets/icons/tag.svg'
 import completed from '@/assets/icons/completed.svg'
 import sortName from '@/assets/icons/sort-name.svg'
 import priority from '@/assets/icons/priority.svg'
+import menu from '@/assets/icons/menu.svg'
 
 export default {
   props: ['icon', 'width', 'primaryHover', 'color'],
@@ -35,7 +36,7 @@ export default {
     return {
       icons: {
         inbox, calendar, sun, arrow, star, user, out,
-        sort, tag, completed, priority,
+        sort, tag, completed, priority, menu,
         "user-plus": userPlus,
         "settings-h": settingsH,
         "sort-name": sortName,

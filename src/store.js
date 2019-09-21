@@ -27,6 +27,10 @@ const store = new Vuex.Store({
       comp: '',
       payload: null,
     },
+    navBar: {
+      options: null,
+      title: "",
+    },
     authState: false,
     toasts: [],
     windowWidth: 0,
@@ -44,6 +48,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    pushNavBarData(state, navBar) {
+      state.navBar = navBar
+    },
     toggleUser(state, isLogged) {
       state.authState = isLogged
     },
