@@ -15,6 +15,11 @@
       </div>
       <div class="name-wrapper">
         <span class="name">{{ name }}</span>
+        <IconDrop v-if="showOptions"
+          class="drop"
+          handle="settings-v"
+          :options='options'
+        />
       </div>
     </div>
   </div>
@@ -23,13 +28,15 @@
 <script>
 
 import IconVue from '../Icon.vue'
+import IconDropVue from '../IconDrop.vue'
 
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
-    'viewType', 'type', 'isSmart',
+    'viewType', 'type', 'isSmart', 'options',
   ],
   components: {
     Icon: IconVue,
+    IconDrop: IconDropVue,
   },
   data() {
     return {
@@ -51,6 +58,11 @@ export default {
       if (this.hover) isActive = true
       return isActive      
     },
+    showOptions() {
+      if (!this.options || this.options.length === 0) return false
+      if (this.$store.getters.isDesktop) return this.hover
+      return true
+    }
   },
 }
 
@@ -80,7 +92,7 @@ export default {
 }
 
 .link-wrapper {
-  height: 35px;
+  height: 100%;
   cursor: pointer;
   position: relative;
   display: flex;
@@ -96,11 +108,18 @@ export default {
 
 .AppbarElement {
   outline: none;
-  transition: background-color .2s;
+  height: 35px;
+  transition: background-color .2s, height .3s;
 }
 
 .link-wrapper:hover, .notSmartActive {
   background-color: var(--light-gray);
+}
+
+.drop {
+  position: absolute;
+  right: 0px;
+  top: 50%;
 }
 
 </style>

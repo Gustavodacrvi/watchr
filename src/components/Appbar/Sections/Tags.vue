@@ -1,15 +1,21 @@
 <template>
   <div class="Tags">
-    <AppbarElement v-for="(el,i) in sortedTags"
-      type="tag"
-      icon="tag"
-      :key="el.id"
-      :name="el.name"
-      :tabindex="i + 1"
-      :active="active"
-      :viewType="viewType"
-      :callback="el.callback"
-    />
+    <transition-group
+      @enter='enter'
+      @leave='leave'
+    >
+      <AppbarElement v-for="(el,i) in sortedTags"
+        type="tag"
+        icon="tag"
+        :key="el.id"
+        :name="el.name"
+        :tabindex="i + 1"
+        :active="active"
+        :viewType="viewType"
+        :callback="el.callback"
+        :options='el.options'
+      />
+    </transition-group>
   </div>
 </template>
 
@@ -23,6 +29,22 @@ export default {
     AppbarElement: AppbarElementVue,
   },
   props: ['active', 'viewType'],
+  methods: {
+    enter(el, done) {
+      el.style.opacity = 0
+      el.style.height = '0px'
+      setTimeout(() => {
+        el.style.opacity = 1
+        el.style.height = '35px'
+        setTimeout(() => done(), 300)
+      })
+    },
+    leave(el, done) {
+      el.style.opacity = 0
+      el.style.height = '0px'
+      setTimeout(() => done(), 300)
+    },
+  },
   computed: {
     ...mapState({
       tags: state => state.tag.tags,
@@ -35,6 +57,22 @@ export default {
         el.callback = () => {
           this.$router.push('/user?tag=' + el.name)
         }
+        el.options = [
+          {
+            name: 'Edit tag',
+            icon: 'pen',
+            callback: () => {
+              console.log('pen')
+            },
+          },
+          {
+            name: 'Delete tag',
+            icon: 'trash',
+            callback: () => {
+              this.$store.dispatch('tag/deleteTag', el.id)
+            }
+          }
+        ]
       }
       return tags
     },

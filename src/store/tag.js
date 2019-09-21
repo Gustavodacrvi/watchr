@@ -24,6 +24,9 @@ export default {
         userId: auth.currentUser.uid,
         times: 0,
       })
+    },
+    deleteTag({}, id) {
+      return fire.collection('tags').doc(id).delete()
     }
   },
 }
