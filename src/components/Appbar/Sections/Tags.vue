@@ -62,7 +62,9 @@ export default {
             name: 'Edit tag',
             icon: 'pen',
             callback: () => {
-              console.log('pen')
+              this.$store.dispatch('pushPopup', {
+                comp: 'AddTag', payload: el,
+              })
             },
           },
           {

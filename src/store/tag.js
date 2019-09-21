@@ -27,6 +27,11 @@ export default {
     },
     deleteTag({}, id) {
       return fire.collection('tags').doc(id).delete()
+    },
+    editTag({}, {name, id}) {
+      return fire.collection('tags').doc(id).update({
+        name,
+      })
     }
   },
 }

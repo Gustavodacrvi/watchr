@@ -1,7 +1,7 @@
 <template>
   <div class="AddTag popup cb shadow rb" :class="platform">
     <div class="title tac">
-      <h2 class="pc">Add tag</h2>
+      <h2 class="pc">{{ title }}</h2>
     </div>
     <div class="content">
       <DropInput
@@ -11,7 +11,7 @@
         :options='options'
         @select="select"
       />
-      <ButtonApp value="Add tag" @click="addTag"/>
+      <ButtonApp :value="btn" @click="addTag"/>
     </div>
   </div>
 </template>
@@ -31,14 +31,30 @@ export default {
   data() {
     return {
       name: '',
-      options: []
-    }  
+      options: [],
+    }
+  },
+  created() {
+    if (this.isEditing) this.name = this.payload.name
   },
   computed: {
     ...mapGetters(['platform']),
     ...mapState({
       tags: state => state.tag.tags,
-    })
+      popup: state => state.popup,
+      payload: state => state.popup.payload,
+    }),
+    isEditing() {
+      return this.payload
+    },
+    title() {
+      if (!this.isEditing) return 'Add tag'
+      return 'Edit tag'
+    },
+    btn() {
+      if (!this.isEditing) return 'Add tag'
+      return 'Edit tag'
+    }
   },
   methods: {
     addTag() {
@@ -47,12 +63,23 @@ export default {
       }
       if (this.name) {
         const tag = this.tags.find(el => el.name === this.name)
-        if (!tag) {
+        if (!tag && !this.isEditing) {
           this.$store.dispatch('tag/addTag', {
             name: this.name,
           })
           toast({
             name: `<strong>${this.name}</strong> tag added successfully!`,
+            type: 'success',
+            seconds: 2,
+          })
+          this.$store.commit('closePopup')
+        } else if (!tag && this.isEditing) {
+          this.$store.dispatch('tag/editTag', {
+            name: this.name,
+            id: this.payload.id,
+          })
+          toast({
+            name: `<strong>${this.name}</strong> tag edited successfully!`,
             type: 'success',
             seconds: 2,
           })
