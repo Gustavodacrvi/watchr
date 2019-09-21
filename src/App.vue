@@ -4,6 +4,9 @@
       <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>
     <Toast/>
+    <transition name="popup">
+      <Menu v-if="isMenuOpened && !isDesktop"/>
+    </transition>
 
     <NavBar/>
     <router-view/>
@@ -15,17 +18,27 @@
 import NavBarVue from './components/NavBar/NavBar.vue'
 import PopupVue from './components/Popup/Popup.vue'
 import ToastVue from './components/Toast.vue'
+import MenuVue from './components/NavBar/Menu.vue'
+
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
     NavBar: NavBarVue,
     Popup: PopupVue,
     Toast: ToastVue,
+    Menu: MenuVue,
   },
   methods: {
     closePopup() {
       this.$store.commit('closePopup')
     }
+  },
+  computed: {
+    isMenuOpened() {
+      return this.$route.fullPath === '/menu'
+    },
+    ...mapGetters(['isDesktop']),
   },
   watch: {
     $route(to, from) {

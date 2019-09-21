@@ -27,7 +27,7 @@
         </transition>
       </div>
     </transition>
-    <Icon icon="arrow" class="arrow cursor" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
+    <Icon v-if="$store.getters.isDesktop" icon="arrow" class="arrow cursor" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
   </div>
 </template>
 

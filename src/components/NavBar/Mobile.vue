@@ -1,7 +1,7 @@
 <template>
   <div class="Mobile">
     <div class="central">
-      <Icon class="cursor" icon="menu" width="30px" :primaryHover="true"/>
+      <Icon class="cursor" icon="menu" width="30px" :primaryHover="true" @click="openMenu"/>
       <h2 v-if="navBar && navBar.title" class="title">{{ navBar.title }}</h2>
       <IconDrop v-if="navBar && navBar.options"
         handle="settings-v"
@@ -24,6 +24,11 @@ export default {
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
+  },
+  methods: {
+    openMenu() {
+      this.$router.push('/menu')
+    }
   },
   computed: {
     ...mapState(['navBar'])
