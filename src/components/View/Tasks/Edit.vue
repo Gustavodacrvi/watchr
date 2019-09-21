@@ -1,5 +1,11 @@
 <template>
   <div class="Edit">
+    <div class="tags">
+      <Tag v-if="priority"
+        icon="priority"
+        :value="priority"
+      />
+    </div>
     <InputApp
       v-model="name"
       :focus="true"
@@ -37,12 +43,14 @@
 import InputVue from '../../Auth/Input.vue'
 import ButtonVue from '../../Auth/Button.vue'
 import IconDropVue from '../../IconDrop.vue'
+import TagVue from '../Tag.vue'
 
 export default {
   components: {
     InputApp: InputVue,
     ButtonApp: ButtonVue,
     IconDrop: IconDropVue,
+    Tag: TagVue,
   },
   props: ['placeholder'],
   data() {
@@ -56,7 +64,9 @@ export default {
       const links = this.$store.getters['task/priorityOptions']
       for (const l of links) {
         l.callback = ({name}) => {
-          this.priority = name
+          if (name !== 'No priority')
+            this.priority = name
+          else this.priority = ''
         }
       }
       return links
@@ -82,6 +92,10 @@ export default {
 .icons {
   display: inline-flex;
   flex-direction: row-reverse;
+}
+
+.tags {
+  margin-bottom: 4px;
 }
 
 </style>
