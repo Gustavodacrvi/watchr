@@ -95,7 +95,8 @@ export default {
 }
 
 .tags {
-  margin-bottom: 4px;
+  padding-bottom: 4px;
+  display: flex;
 }
 
 </style>

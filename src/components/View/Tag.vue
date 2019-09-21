@@ -24,11 +24,13 @@ export default {
   data() {
     return {
       height: 0,
+      width: 0,
     }
   },
   methods: {
     enter(el, done) {
       this.height = el.offsetHeight
+      this.width = el.offsetWidth
 
       const { name, icon } = this.getContStyle()
       const w = this.getWrapper()
@@ -36,6 +38,7 @@ export default {
       icon.transitionDuration = '0s'
       name.opacity = '0'
       w.height = 0 + 'px'
+      w.width = 0 + 'px'
       icon.opacity = '0'
       el.style.opacity = '0'
       setTimeout(() => {
@@ -44,6 +47,7 @@ export default {
         icon.transitionDuration = '.3s'
         setTimeout(() => {
           w.height = this.height + 'px'
+          w.width = this.width + 'px'
           setTimeout(() => {
             done()
             name.opacity = '1'
@@ -60,12 +64,14 @@ export default {
       icon.opacity = '0'
       el.style.opacity = '0'
       w.height = el.offsetHeight + 'px'
+      w.width = el.offsetWidth + 'px'
       
       setTimeout(() => {
         el.style.transitionDuration = '.3s'
         w.transitionDuration = '.35s'
         setTimeout(() => {
           w.height = '0px'
+          w.width = '0px'
           setTimeout(() => {
             done()
             el.style.transitionDuration = '0s'
@@ -88,10 +94,13 @@ export default {
 
 <style scoped>
 
+.wrapper {
+  display: block;
+}
+
 .Tag {
   border-radius: 100px;
   border: 1px solid var(--white);
-  display: inline-block;
   height: 20px;
   display: inline-flex;
   align-items: center;
@@ -116,6 +125,10 @@ export default {
   font-size: .8em;
   transition-duration: .2s;
   white-space: nowrap;
+}
+
+.Tag {
+  margin-right: 4px;
 }
 
 </style>
