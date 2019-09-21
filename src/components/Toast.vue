@@ -6,7 +6,7 @@
         :class="[toast.type, {hasCallback: toast.callback}]"
         @click="runCallback"
       >
-        <span class="name">{{ toast.name }}</span>
+        <span class="name" v-html="toast.name"></span>
       </div>
     </transition>
   </div>

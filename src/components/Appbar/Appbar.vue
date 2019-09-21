@@ -180,6 +180,10 @@ export default {
 
 <style scoped>
 
+.content {
+  position: relative;
+}
+
 .header {
   width: 100%;
   height: 42px;
@@ -253,12 +257,14 @@ export default {
 .sect-trans-enter, .sect-trans-leave-to {
   transition-duration: .2s;
   opacity: 0;
+  width: 100%;
   position: absolute;
 }
 
 .sect-trans-leave, .sect-trans-enter-to {
   transition-duration: .2s;
   opacity: 1;
+  width: 100%;
   position: absolute;
 }
 

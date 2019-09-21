@@ -16,44 +16,17 @@
 <script>
 
 import AppbarElementVue from '../AppbarElement.vue'
+import { mapState } from 'vuex'
 
 export default {
   components: {
     AppbarElement: AppbarElementVue,
   },
   props: ['active', 'viewType'],
-  data() {
-    return {
-      tags: [
-        {
-          id: '1',
-          name: 'Tag freaking one',
-          times: 8,
-        },
-        {
-          id: '2',
-          name: 'Tag freakng two',
-          times: 5,
-        },
-        {
-          id: 'I am the third onw',
-          name: 'I am the third tag',
-          times: 9,
-        },
-        {
-          id: 'asdf',
-          name: 'Is this even real?',
-          times: 2,
-        },
-        {
-          id: '24',
-          name: 'the last one',
-          times: 10,
-        }
-      ],
-    }
-  },
   computed: {
+    ...mapState({
+      tags: state => state.tag.tags,
+    }),
     sortedTags() {
       let tags = this.tags.slice()
       tags = tags.sort((a, b) => a.name.localeCompare(b.name))
@@ -64,7 +37,7 @@ export default {
         }
       }
       return tags
-    }
+    },
   },
 }
 

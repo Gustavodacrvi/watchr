@@ -60,7 +60,7 @@ export default {
       el.style.height = '0px'
       setTimeout(() => {
         el.style.opacity = 1
-        el.style.height = '35px'
+        el.style.height = '40px'
         setTimeout(() => done(), 300)
       })
     },
@@ -218,7 +218,7 @@ export default {
 
 .link {
   display: block;
-  height: 35px;
+  height: 40px;
   padding: 0 12px;
   display: flex;
   align-items: center;

@@ -12,6 +12,7 @@ import SignupVue from './Auth/Signup.vue'
 import SigninVue from './Auth/Signin.vue'
 import IconVue from '../Icon.vue'
 import AddTaskVue from './Tasks/AddTask.vue'
+import AddTagVue from './Tags/AddTag.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -19,6 +20,7 @@ export default {
   components: {
     Signup: SignupVue,
     Signin: SigninVue,
+    AddTag: AddTagVue,
     Icon: IconVue,
     AddTask: AddTaskVue,
   },

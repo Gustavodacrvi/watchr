@@ -48,7 +48,6 @@ export default {
     },
     isActive() {
       let isActive = this.name === this.active && this.type === this.viewType
-      console.log(this.name, this.active, this.type, this.viewTypeth)
       if (this.hover) isActive = true
       return isActive      
     },
@@ -97,6 +96,7 @@ export default {
 
 .AppbarElement {
   outline: none;
+  transition: background-color .2s;
 }
 
 .link-wrapper:hover, .notSmartActive {
