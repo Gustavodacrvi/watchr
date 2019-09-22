@@ -82,6 +82,7 @@ export default {
       else {
         const auth = firebase.auth()
         auth.createUserWithEmailAndPassword(this.eMail, this.password).then(() => {
+          const uid = auth.currentUser.uid
           toast({
             name: 'You have successfully created an account!',
             seconds: 3,
@@ -94,6 +95,7 @@ export default {
               type: 'warning',
             })
           }).catch(err => toastErr(err))
+          this.$store.dispatch('tag/addDefaultData', uid)
           this.$store.commit('closePopup')
           this.$store.commit('toggleUser', true)
           this.$router.push('/user')

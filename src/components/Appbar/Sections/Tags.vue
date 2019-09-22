@@ -24,17 +24,15 @@ export default {
   props: ['active', 'viewType'],
   methods: {
     update(ids) {
-      
+      console.log(ids)
     }
   },
   computed: {
-    ...mapState({
-      tags: state => state.tag.tags,
-    }),
+    sortedTags() {
+      return this.$store.getters['tag/sortedTags']
+    },
     getTags() {
-      let tags = this.tags.slice()
-/*       tags = tags.sort((a, b) => a.name.localeCompare(b.name))
-      tags = tags.sort((a, b) => b.times - a.times) */
+      let tags = this.sortedTags.slice()
       for (const el of tags) {
         el.callback = () => {
           this.$router.push('/user?tag=' + el.name)

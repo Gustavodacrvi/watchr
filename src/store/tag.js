@@ -7,16 +7,30 @@ export default {
   namespaced: true,
   state: {
     tags: [],
+    tagsOrder: [],
+  },
+  getters: {
+    sortedTags(state) {
+      const {tagsOrder, tags} = state
+      return utils.checkMissingIdsAndSortArr(tagsOrder, tags)
+    }
   },
   actions: {
     getData({state}) {
-      return new Promise(resolve => {
-        const id = auth.currentUser.uid
-        fire.collection('tags').where('userId', '==', id).onSnapshot(snap => {
-          utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tags')
-          resolve()
+      const id = auth.currentUser.uid
+      return Promise.all([
+        new Promise(resolve => {
+          fire.collection('tags').where('userId', '==', id).onSnapshot(snap => {
+            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tags')
+            resolve()
+          })
+        }),
+        new Promise(resolve => {
+          fire.collection('tagsOrder').doc(id).onSnapshot(snap => {
+            state.tagsOrder = snap.data().order
+          })
         })
-      })
+      ])
     },
     addTag({}, {name}) {
       return fire.collection('tags').add({
@@ -31,6 +45,12 @@ export default {
     editTag({}, {name, id}) {
       return fire.collection('tags').doc(id).update({
         name,
+      })
+    },
+    addDefaultData({}, id) {
+      return fire.collection('tagsOrder').doc(id).set({
+        order: [],
+        userId: id,
       })
     }
   },
