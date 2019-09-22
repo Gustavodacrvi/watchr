@@ -8,6 +8,8 @@
           <router-link class="cursor link rb" to="/home">Home</router-link>
           <router-link class="cursor link rb" to="/user">User</router-link>
           <router-link class="cursor link rb" to="/about">About</router-link>
+          <span class="cursor link rb" @click="pop('Signin')">Sign in</span>
+          <span class="cursor link rb" @click="pop('Signup')">Sign up</span>
         </div>
       </transition>
     </div>
@@ -33,6 +35,9 @@ export default {
   methods: {
     toggleMenu() {
       this.appSection = !this.appSection
+    },
+    pop(comp) {
+      this.$store.dispatch('pushPopup', {comp})
     }
   },
 }

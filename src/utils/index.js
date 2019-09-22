@@ -25,6 +25,14 @@ export default {
       if (!order.includes(item.id))
         items.push(item)
     }
-    return items
+    const ids = new Set()
+    const ordered = []
+    for (const item of items) {
+      if (!ids.has(item.id)) {
+        ids.add(item.id)
+        ordered.push(item)
+      }
+    }
+    return ordered
   }
 }

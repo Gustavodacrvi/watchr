@@ -24,7 +24,7 @@ export default {
   props: ['active', 'viewType'],
   methods: {
     update(ids) {
-      console.log(ids)
+      this.$store.dispatch('tag/updateOrder', ids)
     }
   },
   computed: {

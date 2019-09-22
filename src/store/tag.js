@@ -2,6 +2,9 @@
 import { fire, auth } from './index'
 import utils from '../utils'
 
+const uid = () => {
+  return auth.currentUser.uid
+}
 
 export default {
   namespaced: true,
@@ -17,17 +20,17 @@ export default {
   },
   actions: {
     getData({state}) {
-      const id = auth.currentUser.uid
       return Promise.all([
         new Promise(resolve => {
-          fire.collection('tags').where('userId', '==', id).onSnapshot(snap => {
+          fire.collection('tags').where('userId', '==', uid()).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tags')
             resolve()
           })
         }),
         new Promise(resolve => {
-          fire.collection('tagsOrder').doc(id).onSnapshot(snap => {
+          fire.collection('tagsOrder').doc(uid()).onSnapshot(snap => {
             state.tagsOrder = snap.data().order
+            resolve()
           })
         })
       ])
@@ -35,12 +38,17 @@ export default {
     addTag({}, {name}) {
       return fire.collection('tags').add({
         name,
-        userId: auth.currentUser.uid,
+        userId: uid(),
         times: 0,
       })
     },
     deleteTag({}, id) {
       return fire.collection('tags').doc(id).delete()
+    },
+    updateOrder({}, ids) {
+      return fire.collection('tagsOrder').doc(uid()).update({
+        order: ids,
+      })
     },
     editTag({}, {name, id}) {
       return fire.collection('tags').doc(id).update({

@@ -33,21 +33,31 @@ export default {
     AppbarElement: AppbarElementVue,
   },
   props: ['list', 'icon', 'type', 'active', 'viewType'],
+  data() {
+    return {
+      sortable: null,
+    }
+  },
   mounted() {
-    const sortable = new Sortable(this.getRoot(), {
+    this.sortable = new Sortable(this.getRoot(), {
       draggable: '.handle',
       mirror: {
         appendTo: 'body',
       },
     })
-    sortable.on('sortable:stop', (evt) => {
-      const childs = evt.newContainer.childNodes
-      const ids = []
-      for (const el of childs) {
-        ids.push(el.dataset.id)
-      }
-      this.$emit('update', ids)
+    this.sortable.on('sortable:stop', (evt) => {
+      setTimeout(() => {
+        const childs = evt.newContainer.childNodes
+        const ids = []
+        for (const el of childs) {
+          ids.push(el.dataset.id)
+        }
+        this.$emit('update', ids)
+      }, 100)
     })
+  },
+  beforeDestroy() {
+    this.sortable.destroy()
   },
   methods: {
     enter(el, done) {
