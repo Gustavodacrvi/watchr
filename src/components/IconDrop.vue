@@ -6,7 +6,7 @@
       @enter="enter"
       @leave="leave"
     >
-      <div v-show="showing" class="content shadow cb rb">
+      <div v-if="showing && !calendar" key="links" class="content shadow cb rb">
         <transition name="links-trans">
           <div v-if="showingLinks" class="links">
             <div v-if="allowSearch" class="search">
@@ -35,6 +35,9 @@
           </div>
         </transition>
       </div>
+      <div v-else-if="showing && calendar" class="content calendar shadow cb rb" key="calendar">
+        <CalendarPicker @select="selectDate"/>
+      </div>
     </transition>
   </div>
 </template>
@@ -42,11 +45,13 @@
 <script>
 
 import IconVue from './Icon.vue'
+import CalendarPickerVue from './View/Tasks/CalendarPicker.vue'
 
 export default {
-  props: ['options', 'handle', 'handleColor', 'handleWidth', 'allowSearch'],
+  props: ['options', 'handle', 'handleColor', 'handleWidth', 'allowSearch', 'calendar'],
   components: {
     Icon: IconVue,
+    CalendarPicker: CalendarPickerVue,
   },
   data() {
     return {
@@ -70,7 +75,7 @@ export default {
       if (inp)
         setTimeout(() => {
           inp.focus()
-        }, 1500)
+        }, 1600)
     }
   },
   methods: {
@@ -91,29 +96,36 @@ export default {
     linkCallback(callback, link) {
       if (callback) {
         const links = callback(link)
-        const cont = this.getContent()
-        
-        const s = this.getStyles()
-        const oldWidth = s.width
-        const oldHeight = s.height
-
-        setTimeout(() => {
-          cont.style.width = 'auto'
-          cont.style.height = 'auto'
+        if (links) {
+          const cont = this.getContent()
+          
+          const s = this.getStyles()
+          const oldWidth = s.width
+          const oldHeight = s.height
+  
+          cont.style.transitionDelay = '.05s'
           setTimeout(() => {
-            const {height, width} = this.getStyles()
-            cont.style.width = oldWidth
-            cont.style.height = oldHeight
+            cont.style.width = 'auto'
+            cont.style.height = 'auto'
             setTimeout(() => {
-              cont.style.width = width
-              cont.style.height = height
-            }, 10)
-          })
-        }, 300)
-
-        this.toggleLinks()        
-        this.links = links
+              const {height, width} = this.getStyles()
+              cont.style.width = oldWidth
+              cont.style.height = oldHeight
+              setTimeout(() => {
+                cont.style.width = width
+                cont.style.height = height
+                cont.style.transitionDelay = '.0s'
+              }, 10)
+            })
+          }, 300)
+  
+          this.toggleLinks()
+          this.links = links
+        } else this.showing = false
       }
+    },
+    selectDate(date) {
+      this.$emit('select', date)
     },
     toggleLinks() {
       const links = this.$el.getElementsByClassName('links')[0]
@@ -157,7 +169,7 @@ export default {
       return this.handleWidth ? this.handleWidth : ''
     },
     getLinks() {
-      if (this.allowSearch)
+      if (this.allowSearch && this.links)
         return this.links.filter(el => el.name.toLowerCase().includes(this.search.toLowerCase()))
       return this.links
     }

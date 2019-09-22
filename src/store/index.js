@@ -85,12 +85,13 @@ const store = new Vuex.Store({
   actions: {
     pushKeyShortcut({dispatch}, key) {
       const pop = (comp) => {
+        console.log(comp)
         dispatch('pushPopup', {comp})
       }
       switch (key.toLowerCase()) {
-        case 'q': pop('AddTask')
-        case 't': pop('AddTag')
-        case 'l': pop('AddList')
+        case 'q': pop('AddTask'); break
+        case 't': pop('AddTag'); break
+        case 'l': pop('AddList'); break
       }
     },
     pushPopup({state, getters}, popup) {

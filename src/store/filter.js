@@ -34,6 +34,15 @@ export default {
           })
         })
       ])
-    }
+    },
+    deleteTag(c, id) {
+
+    },
+    updateOrder(c, ids) {
+
+    },
+    sortFiltersByName() {
+
+    },
   }
 }

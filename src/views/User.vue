@@ -119,6 +119,21 @@ export default {
           callback: () => dispatch('list/sortListsByName'),
         }
       ]
+    },
+    Filters() {
+      const dispatch = this.$store.dispatch
+      return [
+        {
+          name: 'Add filter',
+          icon: 'filter',
+          callback: () => dispatch('pushPopup', {comp: 'AddFilter'}),
+        },
+        {
+          name: 'Sort lists by name',
+          icon: 'sort-name',
+          callback: () => dispatch('list/sortFiltersByName'),
+        }
+      ]
     }
   },
   watch: {

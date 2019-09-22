@@ -91,9 +91,9 @@ export default {
         {
           name: 'Lists',
         },
-        {
+/*         {
           name: 'Filters',
-        },
+        }, */
         {
           name: 'Tags',
         },

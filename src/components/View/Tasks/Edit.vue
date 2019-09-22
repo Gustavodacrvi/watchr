@@ -7,6 +7,11 @@
         :value="priority"
         @click="priority = ''"
       />
+      <Tag v-if="list"
+        icon="tasks"
+        :value="list"
+        @click="list = ''"
+      />
     </div>
     <div class="tags">
       <Tag v-for="t in tags"
@@ -19,9 +24,7 @@
     <DropInput
       v-model="name"
       :focus="true"
-      :options="['I am the option 1', 'You are the option 2', 'You are breath taking', 'No, no, you are breath taking', 'Mr Keano enters the chat',
-      'asdf', 'asçlkdjfaçsjdf', 'jkfdaçslkfjaç  '
-      ]"
+      :options="options"
       :placeholder="placeholder"
       @select="select"
     />
@@ -44,10 +47,14 @@
         <IconDrop
           handle="tasks"
           handleWidth="32px"
+          :allowSearch="true"
+          :options="listOptions"
         />
         <IconDrop
           handle="calendar"
           handleWidth="23px"
+          :calendar="true"
+          @select="selectDate"
         />
       </div>
     </div>
@@ -60,6 +67,7 @@ import ButtonVue from '../../Auth/Button.vue'
 import IconDropVue from '../../IconDrop.vue'
 import TagVue from '../Tag.vue'
 import DropInputVue from '../../Auth/DropInput.vue'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -73,25 +81,9 @@ export default {
     return {
       name: '',
       priority: '',
+      list: '',
       tags: [],
-      tagss: [
-        {
-          id: '1',
-          name: 'Freaking tag',
-        },
-        {
-          id: '2',
-          name: 'Another tag',
-        },
-        {
-          id: '3',
-          name: 'The ultimate tag',
-        },
-        {
-          id: '4',
-          name: 'The last one'
-        }
-      ]
+      options: [],
     }
   },
   methods: {
@@ -102,8 +94,15 @@ export default {
     select(value) {
       this.name = value
     },
+    selectDate(date) {
+      console.log(date)
+    }
   },
   computed: {
+    ...mapState({
+      savedTags: state => state.tag.tags,
+      savedLists: state => state.list.lists,
+    }),
     priorityOptions() {
       const links = this.$store.getters['task/priorityOptions']
       for (const l of links) {
@@ -125,17 +124,31 @@ export default {
     },
     getTags() {
       const arr = []
-      for (const el of this.tagss) {
+      for (const el of this.savedTags) {
         arr.push({
           name: el.name,
           icon: 'tag',
           callback: () => {
-            this.tags.push(el.name)
+            if (!this.tags.find(e => e === el.name))
+              this.tags.push(el.name)
           },
         })
       }
       return arr
-    }
+    },
+    listOptions() {
+      const arr = []
+      for (const el of this.savedLists) {
+        arr.push({
+          name: el.name,
+          icon: 'tasks',
+          callback: () => {
+            this.list = el.name
+          }
+        })
+      }
+      return arr
+    },
   },
 }
 

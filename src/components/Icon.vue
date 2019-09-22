@@ -33,8 +33,9 @@ import tasks from '@/assets/icons/tasks.svg'
 import pen from '@/assets/icons/pen.svg'
 import trash from '@/assets/icons/trash.svg'
 import fire from '@/assets/icons/fire.svg'
-import folderPlus from '@/assets/icons/folder-plus.svg'
-import folder from '@/assets/icons/folder.svg'
+import filter from '@/assets/icons/filter.svg'
+import tinyCircle from '@/assets/icons/tiny-circle.svg'
+import bloqued from '@/assets/icons/bloqued.svg'
 
 export default {
   props: ['icon', 'width', 'primaryHover', 'color'],
@@ -43,12 +44,12 @@ export default {
       icons: {
         inbox, calendar, sun, arrow, star, user, out,
         sort, tag, completed, priority, menu, tasks,
-        pen, trash, fire, folder,
+        pen, trash, fire, filter, bloqued,
         "user-plus": userPlus,
         "settings-h": settingsH,
         "sort-name": sortName,
-        "folder-plus": folderPlus,
         "settings-v": settingsV,
+        "tiny-circle": tinyCircle,
       }
     }
   },
