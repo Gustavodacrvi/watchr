@@ -18,6 +18,18 @@ export default {
       const {foldersOrder, folders} = state
       return utils.checkMissingIdsAndSortArr(foldersOrder, folders)
     },
+    getFolderLists: state => id => {
+      const {lists, folders} = state
+      const arr = []
+      const fold = folders.find(el => el.id === id)
+      if (fold) {
+        for (const listId of fold.lists) {
+          const list = lists.find(el => el.id === listId)
+          if (list) arr.push(list)
+        }
+      }
+      return arr
+    }
   },
   actions: {
     getData({state}) {

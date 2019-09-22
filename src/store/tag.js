@@ -35,17 +35,17 @@ export default {
         })
       ])
     },
-    addTag({}, {name}) {
+    addTag(c, {name}) {
       return fire.collection('tags').add({
         name,
         userId: uid(),
         times: 0,
       })
     },
-    deleteTag({}, id) {
+    deleteTag(c, id) {
       return fire.collection('tags').doc(id).delete()
     },
-    updateOrder({}, ids) {
+    updateOrder(c, ids) {
       return fire.collection('tagsOrder').doc(uid()).update({
         order: ids,
       })
@@ -60,12 +60,12 @@ export default {
       tags.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       dispatch('updateOrder', tags.map(el => el.id))
     },
-    editTag({}, {name, id}) {
+    editTag(c, {name, id}) {
       return fire.collection('tags').doc(id).update({
         name,
       })
     },
-    addDefaultData({}, id) {
+    addDefaultData(c, id) {
       return fire.collection('tagsOrder').doc(id).set({
         order: [],
         userId: id,
