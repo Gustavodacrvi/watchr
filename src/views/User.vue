@@ -80,16 +80,17 @@ export default {
       return this[this.section]
     },
     Tags() {
+      const dispatch = this.$store.dispatch
       return [
         {
           name: 'Sort tags by name',
           icon: 'sort-name',
-          callback: () => console.log('sort by name')
+          callback: () => {dispatch('tag/sortTagsByName')}
         },
         {
           name: 'Sort tags by frequency',
           icon: 'fire',
-          callback: () => console.log('frequency')
+          callback: () => {dispatch('tag/sortTagsByFrequency')}
         }
       ]
     }

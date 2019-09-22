@@ -50,6 +50,16 @@ export default {
         order: ids,
       })
     },
+    sortTagsByFrequency({state, dispatch}) {
+      const tags = state.tags.slice()
+      tags.sort((a, b) => b.times - a.times)
+      dispatch('updateOrder', tags.map(el => el.id))
+    },
+    sortTagsByName({state, dispatch}) {
+      const tags = state.tags.slice()
+      tags.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+      dispatch('updateOrder', tags.map(el => el.id))
+    },
     editTag({}, {name, id}) {
       return fire.collection('tags').doc(id).update({
         name,
