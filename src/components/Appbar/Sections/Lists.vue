@@ -31,6 +31,25 @@ export default {
     },
     getList() {
       const lists = this.sortedLists
+      for (const list of lists) {
+        list.callback = () => {
+          this.$router.push('/user?list=' + list.name)
+        }
+        list.options = [
+          {
+            name: 'Edit list',
+            icon: 'pen',
+            callback: () => {
+              this.$store.dispatch('pushPopup', {comp: 'AddList', payload: list})
+            }
+          },
+          {
+            name: 'Delete list',
+            icon: 'trash',
+            callback: () => this.$store.dispatch('list/deleteList', list.id)
+          }
+        ]
+      }
       return lists
     },
   },

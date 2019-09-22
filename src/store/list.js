@@ -44,7 +44,9 @@ export default {
       })
     },
     editList(c, {name, id}) {
-      console.log('editList', name, id)
+      return fire.collection('lists').doc(id).update({
+        name,
+      })
     },
     updateOrder(c, ids) {
       return fire.collection('listsOrder').doc(uid()).update({
@@ -55,6 +57,9 @@ export default {
       const lists = state.lists.slice()
       lists.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       dispatch('updateOrder', lists.map(el => el.id))
+    },
+    deleteList(c, id) {
+      return fire.collection('lists').doc(id).delete()
     },
     addDefaultData(c, id) {
       return fire.collection('listsOrder').doc(id).set({
