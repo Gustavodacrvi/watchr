@@ -33,6 +33,7 @@ import tasks from '@/assets/icons/tasks.svg'
 import pen from '@/assets/icons/pen.svg'
 import trash from '@/assets/icons/trash.svg'
 import fire from '@/assets/icons/fire.svg'
+import folderPlus from '@/assets/icons/folder-plus.svg'
 
 export default {
   props: ['icon', 'width', 'primaryHover', 'color'],
@@ -45,6 +46,7 @@ export default {
         "user-plus": userPlus,
         "settings-h": settingsH,
         "sort-name": sortName,
+        "folder-plus": folderPlus,
         "settings-v": settingsV,
       }
     }

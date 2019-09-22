@@ -20,7 +20,7 @@
             >
               <div v-for="link in getLinks" class="link"
                 :key="link.name"
-                @click="linkCallback(link.callback(link))"
+                @click="linkCallback(link.callback, link)"
               >
                 <div class="link-cont">
                   <Icon v-if="link.icon"
@@ -88,9 +88,9 @@ export default {
       el.style.height = '0px'
       setTimeout(() => done(), 300)
     },
-    linkCallback(callback) {
+    linkCallback(callback, link) {
       if (callback) {
-        const links = callback()
+        const links = callback(link)
         const cont = this.getContent()
         
         const s = this.getStyles()

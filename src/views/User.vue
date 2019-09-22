@@ -83,14 +83,37 @@ export default {
       const dispatch = this.$store.dispatch
       return [
         {
-          name: 'Sort tags by name',
-          icon: 'sort-name',
-          callback: () => {dispatch('tag/sortTagsByName')}
+          name: 'Sort tags',
+          icon: 'sort',
+          callback: () => [
+            {
+              name: 'Sort tags by name',
+              icon: 'sort-name',
+              callback: () => dispatch('tag/sortTagsByName')
+            },
+            {
+              name: 'Sort tags by frequency',
+              icon: 'fire',
+              callback: () => dispatch('tag/sortTagsByFrequency')
+            }
+          ]
         },
         {
-          name: 'Sort tags by frequency',
-          icon: 'fire',
-          callback: () => {dispatch('tag/sortTagsByFrequency')}
+          name: 'Add tag',
+          icon: 'tag',
+          callback: () => dispatch('pushPopup', {comp: 'AddTag'})
+        }
+      ]
+    },
+    Lists() {
+      return [
+        {
+          name: 'Add folder',
+          icon: 'folder-plus',
+        },
+        {
+          name: 'Sort folders by name',
+          icon: 'sort-name',
         }
       ]
     }
