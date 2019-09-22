@@ -6,6 +6,7 @@
       :list="getTags"
       :active="active"
       :viewType="viewType"
+      @update='update'
     />
   </div>
 </template>
@@ -21,6 +22,11 @@ export default {
     Renderer: RendererVue,
   },
   props: ['active', 'viewType'],
+  methods: {
+    update(ids) {
+      
+    }
+  },
   computed: {
     ...mapState({
       tags: state => state.tag.tags,

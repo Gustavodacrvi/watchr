@@ -1,5 +1,5 @@
 <template>
-  <div class="AppbarElement rb"
+  <div class="AppbarElement rb handle"
     :style="hoverStyle"
     :tabindex="tabindex"
     :class="{notSmartActive: !isSmart && isActive}"
@@ -110,6 +110,16 @@ export default {
   outline: none;
   height: 35px;
   transition: background-color .2s, height .3s;
+}
+
+.draggable--over .link-wrapper {
+  display: none;
+}
+
+.draggable--over {
+  background-color: var(--void) !important;
+  transition-duration: 0 !important;
+  transition: none !important;
 }
 
 .link-wrapper:hover, .notSmartActive {
