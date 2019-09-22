@@ -106,10 +106,12 @@ export default {
       ]
     },
     Lists() {
+      const dispatch = this.$store.dispatch
       return [
         {
           name: 'Add folder',
           icon: 'folder-plus',
+          callback: () => dispatch('pushPopup', {comp: 'AddFolder'})
         },
         {
           name: 'Sort folders by name',

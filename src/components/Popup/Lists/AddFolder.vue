@@ -1,5 +1,5 @@
 <template>
-  <div class="AddTag popup cb shadow rb" :class="platform">
+  <div class="AddFolder popup cb shadow rb" :class="platform">
     <div class="title tac">
       <h2 class="pc">{{ title }}</h2>
     </div>
@@ -40,7 +40,7 @@ export default {
   computed: {
     ...mapGetters(['platform']),
     ...mapState({
-      tags: state => state.tag.tags,
+      folders: state => state.list.folders,
       popup: state => state.popup,
       payload: state => state.popup.payload,
     }),
@@ -48,12 +48,12 @@ export default {
       return this.payload
     },
     title() {
-      if (!this.isEditing) return 'Add tag'
-      return 'Edit tag'
+      if (!this.isEditing) return 'Add folder'
+      return 'Edit folder'
     },
     btn() {
-      if (!this.isEditing) return 'Add tag'
-      return 'Edit tag'
+      if (!this.isEditing) return 'Add folder'
+      return 'Edit folder'
     }
   },
   methods: {
@@ -62,31 +62,31 @@ export default {
         this.$store.commit('pushToast', toast)
       }
       if (this.name) {
-        const tag = this.tags.find(el => el.name === this.name)
-        if (!tag && !this.isEditing) {
-          this.$store.dispatch('tag/addTag', {
+        const fold = this.folders.find(el => el.name === this.name)
+        if (!fold && !this.isEditing) {
+          this.$store.dispatch('list/addFolder', {
             name: this.name,
           })
           toast({
-            name: `<strong>${this.name}</strong> tag added successfully!`,
+            name: `<strong>${this.name}</strong> folder added successfully!`,
             type: 'success',
             seconds: 2,
           })
           this.$store.commit('closePopup')
-        } else if (!tag && this.isEditing) {
-          this.$store.dispatch('tag/editTag', {
+        } else if (!fold && this.isEditing) {
+          this.$store.dispatch('list/editFolder', {
             name: this.name,
             id: this.payload.id,
           })
           toast({
-            name: `<strong>${this.name}</strong> tag edited successfully!`,
+            name: `<strong>${this.name}</strong> folder edited successfully!`,
             type: 'success',
             seconds: 2,
           })
           this.$store.commit('closePopup')
         } else {
           toast({
-            name: `This tag already exists!`,
+            name: `This folder already exists!`,
             type: 'error',
             seconds: 3,
           })
@@ -108,7 +108,7 @@ export default {
   },
   watch: {
     name() {
-      this.options = this.tags.filter(el => el.name.toLowerCase().includes(this.name.toLowerCase())).map(el => el.name)
+      this.options = this.folders.filter(el => el.name.toLowerCase().includes(this.name.toLowerCase())).map(el => el.name)
     }
   }
 }

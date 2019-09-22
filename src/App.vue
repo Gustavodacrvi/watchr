@@ -38,7 +38,7 @@ export default {
   methods: {
     keydown({key}) {
       const active = document.activeElement
-      const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA') && this.isOnAppRoute
+      const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
       if (!isTyping) this.$store.dispatch('pushKeyShortcut', key)
     },
     closePopup() {

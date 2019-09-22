@@ -29,7 +29,7 @@ export default {
         }
       }
       return arr
-    }
+    },
   },
   actions: {
     getData({state}) {
@@ -53,6 +53,17 @@ export default {
           }))
         })
       ])
-    }
+    },
+    addFolder(c, {name}) {
+      console.log('editFolder', name)
+      return fire.collection('folders').add({
+        name,
+        userId: uid(),
+        lists: [],
+      })
+    },
+    editFolder(c, {name, id}) {
+      console.log('editFolder', name, id)
+    },
   },
 }
