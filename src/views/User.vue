@@ -5,6 +5,7 @@
         :value="value"
         :view-type="viewType"
         @appbar="toggleAppbar"
+        @section="v => section = v"
       />
       <IconDrop v-if="getSectionOptions"
         class="drop right"
@@ -42,6 +43,7 @@ export default {
       viewType: null,
       value: null,
       appbarHided: false,
+      section: 'Lists',
     }
   },
   created() {
@@ -75,9 +77,9 @@ export default {
       return false
     },
     getSectionOptions() {
-      return this[this.viewType]
+      return this[this.section]
     },
-    tag() {
+    Tags() {
       return [
         {
           name: 'Sort tags by name',

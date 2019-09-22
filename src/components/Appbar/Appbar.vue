@@ -173,6 +173,11 @@ export default {
     newIndex() {
       return this.getAppnavIndex(this.section)
     }
+  },
+  watch: {
+    section() {
+      this.$emit('section', this.section)
+    }
   }
 }
 
