@@ -9,37 +9,18 @@ const uid = () => {
 export default {
   namespaced: true,
   state: {
-    folders: [],
     lists: [],
-    foldersOrder: [],
+    listsOrder: [],
   },
   getters: {
-    sortedFolders(state) {
-      const {foldersOrder, folders} = state
-      return utils.checkMissingIdsAndSortArr(foldersOrder, folders)
-    },
-    getFolderLists: state => id => {
-      const {lists, folders} = state
-      const arr = []
-      const fold = folders.find(el => el.id === id)
-      if (fold) {
-        for (const listId of fold.lists) {
-          const list = lists.find(el => el.id === listId)
-          if (list) arr.push(list)
-        }
-      }
-      return arr
+    sortedLists(state) {
+      const {listsOrder, lists} = state
+      return utils.checkMissingIdsAndSortArr(listsOrder, lists)
     },
   },
   actions: {
     getData({state}) {
       return Promise.all([
-        new Promise(resolve => {
-          fire.collection('folders').where('userId', '==', uid()).onSnapshot(snap => {
-            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'folders')
-            resolve()
-          })
-        }),
         new Promise(resolve => {
           fire.collection('lists').where('userId', '==', uid()).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
@@ -47,23 +28,39 @@ export default {
           })
         }),
         new Promise(resolve => {
-          fire.collection('foldersOrder').doc(uid()).onSnapshot((snap => {
-            state.foldersOrder = snap.data().order
+          fire.collection('listsOrder').doc(uid()).onSnapshot((snap => {
+            state.listsOrder = snap.data().order
             resolve()
           }))
         })
       ])
     },
-    addFolder(c, {name}) {
-      console.log('editFolder', name)
-      return fire.collection('folders').add({
+    addList(c, {name}) {
+      console.log('addList', name)
+      return fire.collection('lists').add({
         name,
         userId: uid(),
-        lists: [],
+        descr: '',
       })
     },
-    editFolder(c, {name, id}) {
-      console.log('editFolder', name, id)
+    editList(c, {name, id}) {
+      console.log('editList', name, id)
+    },
+    updateOrder(c, ids) {
+      return fire.collection('listsOrder').doc(uid()).update({
+        order: ids,
+      })
+    },
+    sortListsByName({state, dispatch}) {
+      const lists = state.lists.slice()
+      lists.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+      dispatch('updateOrder', lists.map(el => el.id))
+    },
+    addDefaultData(c, id) {
+      return fire.collection('listsOrder').doc(id).set({
+        order: [],
+        userId: uid(),
+      })
     },
   },
 }

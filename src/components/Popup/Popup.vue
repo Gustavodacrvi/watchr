@@ -13,7 +13,7 @@ import SigninVue from './Auth/Signin.vue'
 import IconVue from '../Icon.vue'
 import AddTaskVue from './Tasks/AddTask.vue'
 import AddTagVue from './Tags/AddTag.vue'
-import AddFolderVue from './Lists/AddFolder.vue'
+import AddListVue from './Lists/AddList.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -23,7 +23,7 @@ export default {
     Signin: SigninVue,
     AddTag: AddTagVue,
     Icon: IconVue,
-    AddFolder: AddFolderVue,
+    AddList: AddListVue,
     AddTask: AddTaskVue,
   },
   methods: {

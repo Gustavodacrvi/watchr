@@ -4,7 +4,7 @@ import router from './../router'
 
 Vue.use(Vuex)
 
-const MINIMUM_DESKTOP_SCREEN_WIDTH = 1020
+const MINIMUM_DESKTOP_SCREEN_WIDTH = 820
 
 import firebase from 'firebase/app'
 import 'firebase/auth'
@@ -89,6 +89,7 @@ const store = new Vuex.Store({
       switch (key.toLowerCase()) {
         case 'q': pop('AddTask')
         case 't': pop('AddTag')
+        case 'l': pop('AddList')
       }
     },
     pushPopup({state, getters}, popup) {

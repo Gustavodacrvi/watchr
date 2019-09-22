@@ -3,6 +3,7 @@
     <Renderer
       type="tag"
       icon="tag"
+      sortableId='tag'
       :list="getTags"
       :active="active"
       :viewType="viewType"

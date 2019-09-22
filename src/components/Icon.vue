@@ -34,6 +34,7 @@ import pen from '@/assets/icons/pen.svg'
 import trash from '@/assets/icons/trash.svg'
 import fire from '@/assets/icons/fire.svg'
 import folderPlus from '@/assets/icons/folder-plus.svg'
+import folder from '@/assets/icons/folder.svg'
 
 export default {
   props: ['icon', 'width', 'primaryHover', 'color'],
@@ -42,7 +43,7 @@ export default {
       icons: {
         inbox, calendar, sun, arrow, star, user, out,
         sort, tag, completed, priority, menu, tasks,
-        pen, trash, fire,
+        pen, trash, fire, folder,
         "user-plus": userPlus,
         "settings-h": settingsH,
         "sort-name": sortName,

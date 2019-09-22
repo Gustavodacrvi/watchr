@@ -96,6 +96,10 @@ export default {
       section: 'Lists'
     }
   },
+  created() {
+    const saved = localStorage.getItem('section')
+    if (saved) this.section = saved
+  },
   mounted() {
     this.moveLineToActive()
     window.addEventListener('resize', this.moveLineToActive)
@@ -166,6 +170,7 @@ export default {
         line.style.width = el.offsetWidth + 'px'
   
         this.section = el.textContent
+        localStorage.setItem('section', this.section)
       }
     },
   },

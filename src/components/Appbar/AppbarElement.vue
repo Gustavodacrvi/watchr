@@ -1,10 +1,10 @@
 <template>
-  <div class="AppbarElement rb handle"
+  <div class="AppbarElement rb draggable"
     :style="hoverStyle"
     :tabindex="tabindex"
-    :class="{notSmartActive: !isSmart && isActive}"
     @mouseenter="hover = true"
     @mouseleave="hover = false"
+    :class="{notSmartActive: !isSmart && isActive}"
     @click="linkCallback(callback)"
   >
     <div
@@ -37,6 +37,7 @@ export default {
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
+    Renderer: () => import('./Renderer.vue'),
   },
   data() {
     return {

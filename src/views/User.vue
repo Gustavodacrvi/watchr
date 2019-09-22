@@ -109,13 +109,14 @@ export default {
       const dispatch = this.$store.dispatch
       return [
         {
-          name: 'Add folder',
-          icon: 'folder-plus',
-          callback: () => dispatch('pushPopup', {comp: 'AddFolder'})
+          name: 'Add list',
+          icon: 'tasks',
+          callback: () => dispatch('pushPopup', {comp: 'AddList'}),
         },
         {
-          name: 'Sort folders by name',
+          name: 'Sort lists by name',
           icon: 'sort-name',
+          callback: () => dispatch('list/sortListsByName'),
         }
       ]
     }

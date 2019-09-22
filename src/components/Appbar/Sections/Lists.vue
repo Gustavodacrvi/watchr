@@ -1,8 +1,8 @@
 <template>
   <div class="Lists">
-    <FolderRenderer
+    <Renderer
       type="list"
-      icon="list"
+      icon="tasks"
       :list="getList"
       :active="active"
       :viewType="viewType"
@@ -13,32 +13,25 @@
 
 <script>
 
-import FolderRendererVue from '../FolderRenderer.vue'
+import RendererVue from '../Renderer.vue'
 
 export default {
   components: {
-    FolderRenderer: FolderRendererVue,
+    Renderer: RendererVue,
   },
   props: ['active', 'viewType'],
   methods: {
-    update() {
-
+    update(ids) {
+      this.$store.dispatch('list/updateOrder', ids)
     },
-    getFolderLists(id) {
-      return this.$store.getters['list/getFolderLists'](id)
-    }
   },
   computed: {
-    sortedFolders() {
-      return this.$store.getters['list/sortedFolders']
+    sortedLists() {
+      return this.$store.getters['list/sortedLists']
     },
     getList() {
-      const folders = this.sortedFolders
-      for (const fold of folders) {
-        const lists = fold.lists.slice()
-        fold.lists = this.getFolderLists(fold.id)
-      }
-      return folders
+      const lists = this.sortedLists
+      return lists
     },
   },
 }

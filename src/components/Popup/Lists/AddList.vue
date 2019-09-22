@@ -40,7 +40,7 @@ export default {
   computed: {
     ...mapGetters(['platform']),
     ...mapState({
-      folders: state => state.list.folders,
+      lists: state => state.list.lists,
       popup: state => state.popup,
       payload: state => state.popup.payload,
     }),
@@ -48,12 +48,12 @@ export default {
       return this.payload
     },
     title() {
-      if (!this.isEditing) return 'Add folder'
-      return 'Edit folder'
+      if (!this.isEditing) return 'Add list'
+      return 'Edit list'
     },
     btn() {
-      if (!this.isEditing) return 'Add folder'
-      return 'Edit folder'
+      if (!this.isEditing) return 'Add list'
+      return 'Edit list'
     }
   },
   methods: {
@@ -62,31 +62,31 @@ export default {
         this.$store.commit('pushToast', toast)
       }
       if (this.name) {
-        const fold = this.folders.find(el => el.name === this.name)
-        if (!fold && !this.isEditing) {
-          this.$store.dispatch('list/addFolder', {
+        const list = this.lists.find(el => el.name === this.name)
+        if (!list && !this.isEditing) {
+          this.$store.dispatch('list/addList', {
             name: this.name,
           })
           toast({
-            name: `<strong>${this.name}</strong> folder added successfully!`,
+            name: `<strong>${this.name}</strong> list added successfully!`,
             type: 'success',
             seconds: 2,
           })
           this.$store.commit('closePopup')
-        } else if (!fold && this.isEditing) {
-          this.$store.dispatch('list/editFolder', {
+        } else if (!list && this.isEditing) {
+          this.$store.dispatch('list/editList', {
             name: this.name,
             id: this.payload.id,
           })
           toast({
-            name: `<strong>${this.name}</strong> folder edited successfully!`,
+            name: `<strong>${this.name}</strong> list edited successfully!`,
             type: 'success',
             seconds: 2,
           })
           this.$store.commit('closePopup')
         } else {
           toast({
-            name: `This folder already exists!`,
+            name: `This list already exists!`,
             type: 'error',
             seconds: 3,
           })
@@ -108,7 +108,7 @@ export default {
   },
   watch: {
     name() {
-      this.options = this.folders.filter(el => el.name.toLowerCase().includes(this.name.toLowerCase())).map(el => el.name)
+      this.options = this.lists.filter(el => el.name.toLowerCase().includes(this.name.toLowerCase())).map(el => el.name)
     }
   }
 }

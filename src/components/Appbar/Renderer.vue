@@ -1,48 +1,47 @@
 <template>
-  <div class="Renderer">
-    <transition-group class="root"
-      @enter='enter'
-      @leave='leave'
-      tag="div"
-    >
-      <AppbarElement v-for="(el,i) in list"
-        :type="type"
-        :icon="icon"
-        :key="el.id"
-        :name="el.name"
-        :tabindex="i + 1"
-        :active="active"
-        :viewType="viewType"
-        :callback="el.callback"
-        :options='el.options'
+  <transition-group class="Renderer"
+    @enter='enter'
+    @leave='leave'
+    tag="div"
+  >
+    <AppbarElement v-for="(el,i) in list"
+      :type="type"
+      :icon="icon"
+      :subListIcon='subListIcon'
+      :key="el.id"
+      :name="el.name"
+      :tabindex="i + 1"
+      :active="active"
+      :viewType="viewType"
+      :callback="el.callback"
+      :options='el.options'
+      :list="el.list"
 
-        :data-id="el.id"
-      />
-    </transition-group>
-  </div>
+      :data-id="el.id"
+    />
+  </transition-group>
 </template>
 
 <script>
-
-import AppbarElementVue from './AppbarElement.vue'
 
 import { Sortable } from '@shopify/draggable'
 
 export default {
   components: {
-    AppbarElement: AppbarElementVue,
+    AppbarElement: () => import('./AppbarElement.vue'),
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon',],
   data() {
     return {
       sortable: null,
     }
   },
   mounted() {
-    this.sortable = new Sortable(this.getRoot(), {
-      draggable: '.handle',
+    this.sortable = new Sortable(this.$el, {
+      draggable: '.draggable',
       mirror: {
         appendTo: 'body',
+        constrainDimensions: true,
       },
     })
     this.sortable.on('sortable:stop', (evt) => {
@@ -74,19 +73,12 @@ export default {
       el.style.height = '0px'
       setTimeout(() => done(), 300)
     },
-    getRoot() {
-      return this.$el.getElementsByClassName('root')[0]
-    },
   },
 }
 
 </script>
 
 <style>
-
-.Renderer {
-  position: relative;
-}
 
 .draggable-mirror {
   width: 288px;
