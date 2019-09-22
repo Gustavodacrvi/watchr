@@ -229,6 +229,12 @@ export default {
   z-index: 5;
 }
 
+.right .content {
+  bottom: 0;
+  top: unset;
+  right: 0;
+}
+
 .drop-trans-enter-active .link {
   transition-duration: .5s;
   transition-delay: .25s;

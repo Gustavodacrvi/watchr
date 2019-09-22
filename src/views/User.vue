@@ -6,6 +6,12 @@
         :view-type="viewType"
         @appbar="toggleAppbar"
       />
+      <IconDrop v-if="getSectionOptions"
+        class="drop right"
+        handle='settings-h'
+        handleColor='var(--gray)'
+        :options="getSectionOptions"
+      />
     </div>
     <div class="cont">
       <TasksView
@@ -21,12 +27,14 @@
 
 import AppbarVue from '../components/Appbar/Appbar.vue'
 import TasksViewVue from '../components/View/TasksView.vue'
+import IconDropVue from '../components/IconDrop.vue'
 
 import { mapGetters } from 'vuex'
 
 export default {
   components: {
     Appbar: AppbarVue,
+    IconDrop: IconDropVue,
     TasksView: TasksViewVue,
   },
   data() {
@@ -65,6 +73,23 @@ export default {
         case 'Inbox': return true
       }
       return false
+    },
+    getSectionOptions() {
+      return this[this.viewType]
+    },
+    tag() {
+      return [
+        {
+          name: 'Sort tags by name',
+          icon: 'sort-name',
+          callback: () => console.log('sort by name')
+        },
+        {
+          name: 'Sort tags by frequency',
+          icon: 'fire',
+          callback: () => console.log('frequency')
+        }
+      ]
     }
   },
   watch: {
@@ -83,6 +108,12 @@ export default {
   display: flex;
   justify-content: center;
   transition-delay: .4s;
+}
+
+.drop {
+  position: absolute;
+  bottom: 10px;
+  left: 323px;
 }
 
 .User.mobile {

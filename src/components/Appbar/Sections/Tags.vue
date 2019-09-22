@@ -22,6 +22,7 @@
 <script>
 
 import AppbarElementVue from '../AppbarElement.vue'
+
 import { mapState } from 'vuex'
 
 export default {

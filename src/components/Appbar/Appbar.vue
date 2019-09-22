@@ -233,6 +233,12 @@ export default {
   transform: rotate(90deg);
 }
 
+.drop {
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+}
+
 .arrow.hided {
   transform: rotate(-90deg);
   left: 15px;
