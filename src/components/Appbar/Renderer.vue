@@ -39,6 +39,7 @@ export default {
   mounted() {
     this.sortable = new Sortable(this.$el, {
       draggable: '.draggable',
+      delay: 300,
       mirror: {
         appendTo: 'body',
         constrainDimensions: true,

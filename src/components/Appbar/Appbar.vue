@@ -26,7 +26,15 @@
           @leave="leave"
           @enter="enter"
         >
-          <component :is="section" :active="value" :viewType='viewType' :data-transindex="getAppnavIndex(section)"/>
+          <keep-alive>
+            <component
+              class="component"
+              :is="section"
+              :active="value"
+              :viewType='viewType'
+              :data-transindex="getAppnavIndex(section)"
+            />
+          </keep-alive>
         </transition>
       </div>
     </transition>
@@ -112,30 +120,22 @@ export default {
       this.transRight = this.newIndex > this.oldIndex
 
       if (this.transRight) {
-        el.style.transform = 'translateX(0px)'
+        el.classList.add('to-left')
       } else {
-        el.style.transform = 'translateX(-50px)'
+        el.classList.add('to-right')
       }
-      setTimeout(() => {
-        if (this.transRight) {
-          el.style.transform = 'translateX(-50px)'
-        } else {
-          el.style.transform = 'translateX(0px)'
-        }
-      })
     },
     enter(el) {
+      el.style.transitionDuration = '.0s'
       if (this.transRight) {
-        el.style.transform = 'translateX(50px)'
+        el.classList.add('to-right')
       } else {
-        el.style.transform = 'translateX(-50px)'
+        el.classList.add('to-left')
       }
       setTimeout(() => {
-        if (this.transRight) {
-          el.style.transform = 'translateX(0px)'
-        } else {
-          el.style.transform = 'translateX(0px)'
-        }
+        el.style.transitionDuration = '.2s'
+        el.classList.remove('to-right')
+        el.classList.remove('to-left')
       })
 
       this.oldIndex = this.newIndex
@@ -270,16 +270,22 @@ export default {
   transition-delay: .6s;
 }
 
-.sect-trans-enter, .sect-trans-leave-to {
-  transition-duration: .2s;
-  opacity: 0;
-  width: 100%;
-  position: absolute;
+.component {
+  transform: translateX(0px);
+  opacity: 1;
 }
 
-.sect-trans-leave, .sect-trans-enter-to {
-  transition-duration: .2s;
-  opacity: 1;
+.to-right {
+  transform: translateX(75px);
+  opacity: 0;
+}
+
+.to-left {
+  transform: translateX(-75px);
+  opacity: 0;
+}
+
+.sect-trans-enter-active, .sect-trans-leave-active {
   width: 100%;
   position: absolute;
 }

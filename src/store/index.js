@@ -27,10 +27,11 @@ export const auth = firebase.auth()
 import task from './task'
 import tag from './tag'
 import list from './list'
+import filter from './filter'
 
 const store = new Vuex.Store({
   modules: {
-    task, tag, list,
+    task, tag, list, filter,
   },
   state: {
     popup: {
@@ -108,6 +109,7 @@ auth.onAuthStateChanged(() => {
     Promise.all([
       store.dispatch('tag/getData'),
       store.dispatch('list/getData'),
+      store.dispatch('filter/getData'),
     ]).then(() => {
       store.commit('load')
     })

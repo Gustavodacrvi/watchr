@@ -10,12 +10,12 @@ export default {
   namespaced: true,
   state: {
     lists: [],
-    listsOrder: [],
+    order: [],
   },
   getters: {
     sortedLists(state) {
-      const {listsOrder, lists} = state
-      return utils.checkMissingIdsAndSortArr(listsOrder, lists)
+      const {order, lists} = state
+      return utils.checkMissingIdsAndSortArr(order, lists)
     },
   },
   actions: {
@@ -29,7 +29,7 @@ export default {
         }),
         new Promise(resolve => {
           fire.collection('listsOrder').doc(uid()).onSnapshot((snap => {
-            state.listsOrder = snap.data().order
+            state.order = snap.data().order
             resolve()
           }))
         })
