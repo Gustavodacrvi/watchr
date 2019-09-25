@@ -36,6 +36,7 @@ import fire from '@/assets/icons/fire.svg'
 import filter from '@/assets/icons/filter.svg'
 import tinyCircle from '@/assets/icons/tiny-circle.svg'
 import bloqued from '@/assets/icons/bloqued.svg'
+import arrowTiny from '@/assets/icons/arrow-tiny.svg'
 
 export default {
   props: ['icon', 'width', 'primaryHover', 'color'],
@@ -49,6 +50,7 @@ export default {
         "settings-h": settingsH,
         "sort-name": sortName,
         "settings-v": settingsV,
+        "tiny-arrow": arrowTiny,
         "tiny-circle": tinyCircle,
       }
     }

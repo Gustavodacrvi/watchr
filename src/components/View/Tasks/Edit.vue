@@ -1,6 +1,12 @@
 <template>
   <div class="Edit">
     <div class="tags">
+      <Tag v-if="calendarStr"
+        icon="calendar"
+        color="var(--green)"
+        :value="calendarStr"
+        @click="calendar = null"
+      />
       <Tag v-if="priority"
         icon="priority"
         :color="getPriorityColor"
@@ -67,7 +73,10 @@ import ButtonVue from '../../Auth/Button.vue'
 import IconDropVue from '../../IconDrop.vue'
 import TagVue from '../Tag.vue'
 import DropInputVue from '../../Auth/DropInput.vue'
+
 import { mapState } from 'vuex'
+
+import utils from '@/utils/'
 
 export default {
   components: {
@@ -82,7 +91,9 @@ export default {
       name: '',
       priority: '',
       list: '',
+      calendar: null,
       tags: [],
+      optionsType: '',
       options: [],
     }
   },
@@ -95,7 +106,7 @@ export default {
       this.name = value
     },
     selectDate(date) {
-      console.log(date)
+      this.calendar = date
     }
   },
   computed: {
@@ -103,8 +114,16 @@ export default {
       savedTags: state => state.tag.tags,
       savedLists: state => state.list.lists,
     }),
+    calendarStr() {
+      if (this.calendar)
+        return utils.parseCalendarObjectToString(this.calendar)
+      return null
+    },
+    priorities() {
+      return this.$store.getters['task/priorityOptions']
+    },
     priorityOptions() {
-      const links = this.$store.getters['task/priorityOptions']
+      const links = this.priorities
       for (const l of links) {
         l.callback = ({name}) => {
           if (name !== 'No priority')
@@ -150,6 +169,82 @@ export default {
       return arr
     },
   },
+  watch: {
+    name() {
+      const n = this.name
+      let changedOptions = false
+      const parsePriority = () => {
+        const pri = (priority) => {
+          const obj = {
+            'Low priority': ' !l',
+            'Medium priority': ' !m',
+            'High priority': ' !h',
+          }
+          this.priority = priority
+          this.name = n.replace(obj[priority], '')
+        }
+        if (n.includes(' !l')) pri('Low priority')
+        else if (n.includes(' !m')) pri('Medium priority')
+        else if (n.includes(' !h')) pri('High priority')
+        else if (n.includes(' !no')) {
+          this.priority = null
+          this.name = n.replace(' !no', '')
+        }
+      }
+      const parseTags = () => {
+        const tags = this.savedTags
+        for (const tag of tags) {
+          const tagName = ` #${tag.name}`
+          if (n.includes(tagName)) {
+            this.name = n.replace(tagName, '')
+            this.tags.push(tag.name)
+            break
+          }
+        }
+        const arr = n.split(' ')
+        const lastWord = arr[arr.length - 1]
+        if (lastWord[0] === '#') {
+          this.optionsType = '#'
+          const word = lastWord.substr(1)
+
+          this.options = tags.map(el => el.name).filter(el => el.includes(word))
+          changedOptions = true
+        }
+      }
+      const parseLists = () => {
+        const lists = this.savedLists
+        for (const li of lists) {
+          const listName = ` #${li.name}`
+          if (n.includes(listName)) {
+            this.name = n.replace(listName, '')
+            this.lists.push(li.name)
+            break
+          }
+        }
+        const arr = n.split(' ')
+        const lastWord = arr[arr.length - 1]
+        if (lastWord[0] === '@') {
+          this.optionsType = '@'
+          const word = lastWord.substr(1)
+
+          this.options = lists.map(el => el.name).filter(el => el.includes(word))
+          changedOptions = true
+        }
+      }
+      const parseDate = () => {
+        if (n.includes(' $')) {
+          const obj = utils.parseInputToCalendarObject(n)
+        }
+      }
+
+      parsePriority()
+      parseTags()
+      parseLists()
+      parseDate()
+
+      if (!changedOptions) this.options = []
+    }
+  }
 }
 
 </script>

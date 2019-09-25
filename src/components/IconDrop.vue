@@ -99,7 +99,7 @@ export default {
         if (links) {
           const cont = this.getContent()
           
-          const s = this.getStyles()
+          const s = getComputedStyle(cont)
           const oldWidth = s.width
           const oldHeight = s.height
   
@@ -126,6 +126,7 @@ export default {
     },
     selectDate(date) {
       this.$emit('select', date)
+      this.showing = false
     },
     toggleLinks() {
       const links = this.$el.getElementsByClassName('links')[0]
@@ -136,9 +137,6 @@ export default {
     },
     getContent() {
       return this.$el.getElementsByClassName('content')[0]
-    },
-    getStyles() {
-      return getComputedStyle(this.getContent())
     },
     hide() {
       this.showing = false
