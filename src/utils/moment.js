@@ -38,5 +38,17 @@ export default {
       i++
     }
     return clone
-  }
+  },
+  getNextDateByMonthDay(initial, day) {
+    const clone = initial.clone()
+    let i = 0
+    while (true) {
+      if (clone.format('D') === day + '')
+        break
+      clone.add(1, 'd')
+      if (i > 33) break
+      i++
+    }
+    return clone
+  },
 }
