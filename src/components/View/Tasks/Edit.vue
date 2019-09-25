@@ -234,6 +234,7 @@ export default {
       const parseDate = () => {
         if (n.includes(' $')) {
           const obj = utils.parseInputToCalendarObject(n)
+          console.log(obj)
         }
       }
 

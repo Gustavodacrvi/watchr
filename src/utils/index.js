@@ -67,7 +67,7 @@ export default {
       }
       return null
     }
-    const str = getDateString()
+    let str = getDateString()
 
     const obj = {
       defer: null,
@@ -87,29 +87,46 @@ export default {
     const tod = mom()
 
     if (str) {
+      str = str.toLowerCase()
       const vals = str.split(' ')
 
       obj.time = getTime(vals)
 
+      console.log(str)
+
       switch (str) {
-        case 'Today': {
+        case 'tod': {
           obj.type = 'specific'
           obj.editDate = tod.format('Y-M-D')
           obj.specific = tod.format('Y-M-D')
           return obj
         }
-        case 'Tomorrow': {
+        case 'tom': {
           obj.type = 'specific'
           const date = tod.clone().add(1, 'd').format('Y-M-D')
           obj.editDate = date
           obj.specific = date
           return obj
         }
-        case 'Next week': {
-          obj.due = moment.getFirstDayOfNextWeekMoment(mom())
-          obj.defer = moment.getLastDayOfNextWeekMoment(mom())
+        case 'next week': {
+          obj.defer = moment.getFirstDayOfNextWeekMoment(mom()).format('Y-M-D')
+          obj.due = moment.getLastDayOfNextWeekMoment(mom()).format('Y-M-D')
+          return obj
+        }
+        case 'next weekend': {
+          const sat = moment.nextWeekDay(mom(), 'Saturday')
+          console.log(sat.format('Y-M-D'))
+          obj.defer = sat.format('Y-M-D')
+          obj.due = sat.clone().add(1, 'd').format('Y-M-D')
+          return obj
+        }
+        case 'next month': {
+          obj.defer = moment.getFirstDayOfNextMonth(mom()).format('Y-M-D')
+          obj.due = moment.getLastDayOfNextMonth(mom()).format('Y-M-D')
+          return obj
         }
       }
+      return obj
     }
     return undefined
   },
