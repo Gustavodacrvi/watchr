@@ -1,6 +1,6 @@
 <template>
   <div class="TaskRenderer">
-    <transition-group class="root"
+    <transition-group name="task-trans" class="root"
       @enter='enter'
       @leave='leave'
       tag="div"
@@ -45,15 +45,17 @@ export default {
   },
   methods: {
     enter(el) {
-      el.transitionDuration = '0s'
-      el.classList.add('task-hided')
+      const cont = el.getElementsByClassName('cont-wrapper')[0]
+      cont.transitionDuration = '0s'
+      cont.classList.add('task-hided')
       setTimeout(() => {
-        el.transitionDuration = '.3s'
-        el.classList.remove('task-hided')
+        cont.transitionDuration = '.3s'
+        cont.classList.remove('task-hided')
       })
     },
     leave(el) {
-      el.classList.add('task-hided')
+      const cont = el.getElementsByClassName('cont-wrapper')[0]
+      cont.classList.add('task-hided')
     },
   },
   computed: {
@@ -71,9 +73,16 @@ export default {
   margin-top: 16px;
 }
 
-.task-hided {
+.task-trans-enter, .task-trans-leave-to {
   opacity: 0;
-  height: 0;
+}
+
+.task-trans-leave, .task-trans-enter-to {
+  opacity: 1;
+}
+
+.root {
+  outline: none;
 }
 
 </style>

@@ -1,21 +1,23 @@
 <template>
-  <div class="Task draggable rb" :class="{fade: done}">
-    <div class="cont">
-      <div class="check" @click="completeTask">
-        <Icon v-if="!isCompleted" class="icon"
-          icon="circle"
-          :primaryHover="true"
-        />
-        <Icon v-else class="icon"
-          icon="circle-check"
-          :primaryHover="true"
-        />
-      </div>
-      <div class="text">
-        {{ task.name }}
-      </div>
-      <div class="icon-drop">
-        
+  <div class="Task draggable" :class="{fade: done}">
+    <div class="cont-wrapper rb">
+      <div class="cont">
+        <div class="check" @click="completeTask">
+          <Icon v-if="!isCompleted" class="icon"
+            icon="circle"
+            :primaryHover="true"
+          />
+          <Icon v-else class="icon"
+            icon="circle-check"
+            :primaryHover="true"
+          />
+        </div>
+        <div class="text">
+          {{ task.name }}
+        </div>
+        <div class="icon-drop">
+          
+        </div>
       </div>
     </div>
   </div>
@@ -52,21 +54,40 @@ export default {
 <style scoped>
 
 .Task {
-  height: 40px;
-  opacity: 1;
+  position: relative;
+  height: auto;
   cursor: pointer;
-  transition: height .3s, opacity .3s;
+  transition: opacity .3s;
+}
+
+.cont-wrapper {
+  height: 40px;
+  transition: height .3s, background-color .2s;
+}
+
+.task-hided {
+  height: 0;
+}
+
+.subtasks {
+  position: relative;
+  top: 100%;
+  left: 0;
 }
 
 .fade {
   opacity: .4;
 }
 
-.Task:hover {
+.cont-wrapper:hover {
   background-color: var(--light-gray);
 }
 
-.cont, .check, .text, .options {
+.cont {
+  height: 100%;
+}
+
+.check, .text, .options {
   height: 100%;
 }
 
@@ -100,7 +121,7 @@ export default {
   display: none;
 }
 
-.draggable--over {
+.draggable--over .cont-wrapper {
   background-color: var(--void) !important;
   transition-duration: 0 !important;
   transition: none !important;
