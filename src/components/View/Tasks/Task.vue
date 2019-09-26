@@ -1,9 +1,13 @@
 <template>
-  <div class="Task rb">
+  <div class="Task draggable rb" :class="{fade: done}">
     <div class="cont">
-      <div class="check">
-        <Icon class="icon"
+      <div class="check" @click="completeTask">
+        <Icon v-if="!isCompleted" class="icon"
           icon="circle"
+          :primaryHover="true"
+        />
+        <Icon v-else class="icon"
+          icon="circle-check"
           :primaryHover="true"
         />
       </div>
@@ -25,6 +29,21 @@ export default {
   props: ['task'],
   components: {
     Icon: IconVue,
+  },
+  data() {
+    return {
+      done: false,
+    }
+  },
+  methods: {
+    completeTask() {
+      this.done = !this.done
+    },
+  },
+  computed: {
+    isCompleted() {
+      return this.done
+    }
   }
 }
 
@@ -33,10 +52,14 @@ export default {
 <style scoped>
 
 .Task {
-  height: 35px;
+  height: 40px;
   opacity: 1;
   cursor: pointer;
-  transition-duration: .3s;
+  transition: height .3s, opacity .3s;
+}
+
+.fade {
+  opacity: .4;
 }
 
 .Task:hover {
@@ -71,6 +94,16 @@ export default {
 
 .check-drop {
   flex-basis: 28px;
+}
+
+.draggable--over .cont {
+  display: none;
+}
+
+.draggable--over {
+  background-color: var(--void) !important;
+  transition-duration: 0 !important;
+  transition: none !important;
 }
 
 </style>
