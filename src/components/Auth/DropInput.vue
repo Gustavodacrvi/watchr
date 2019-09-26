@@ -118,8 +118,10 @@ export default {
       if (key === 'ArrowDown' || key === 'ArrowUp')
         this.moveActive(key)
       else if (key === 'Enter') {
-        if (this.active)
+        if (this.active) {
           this.$emit('select', this.active)
+          this.active = ''
+        }
         event.preventDefault()
       }
     },

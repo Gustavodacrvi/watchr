@@ -1,19 +1,24 @@
 <template>
   <div class="TaskView" :class="platform">
     <Header :smart="smart" :value="value" :options="options"/>
+    <TaskRenderer
+      :tasks='getTasks'
+    />
   </div>
 </template>
 
 <script>
 
 import HeaderVue from './Header.vue'
+import TaskRendererVue from './TaskRenderer.vue'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   props: ['smart', 'viewType', 'value'],
   components: {
     Header: HeaderVue,
+    TaskRenderer: TaskRendererVue
   },
   data() {
     return {
@@ -44,7 +49,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['platform'])
+    ...mapState({
+      tasks: state => state.task.tasks,
+    }),
+    ...mapGetters(['platform']),
+    getTasks() {
+      return this.tasks
+    },
   },
 }
 

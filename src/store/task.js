@@ -41,7 +41,6 @@ export default {
         new Promise(resolve => {
           fire.collection('tasks').where('userId', '==', uid()).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
-            state.tasks.forEach(console.log)
             resolve()
           })
         })

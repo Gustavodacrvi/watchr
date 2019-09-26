@@ -103,14 +103,25 @@ export default {
       this.tags.splice(index, 1)
     },
     select(value) {
-      this.name = value
+      const arr = this.name.split(' ')
+      arr[arr.length - 1] = this.optionsType + value
+      let str = ''
+      for (const s of arr)
+        str += s + ' '
+      str = str.slice(0, -1)
+      this.name = str
     },
     selectDate(date) {
       this.calendar = date
     },
     save() {
+      let n = this.name
+      const i = n.indexOf(' $')
+      if (i && i > -1 && this.calendar) {
+        n = n.substr(0, i)
+      }
       this.$emit('save', {
-        name: this.name,
+        name: n,
         priority: this.priority,
         list: this.listId,
         tags: this.tagIds,
@@ -225,7 +236,7 @@ export default {
           this.optionsType = '#'
           const word = lastWord.substr(1)
 
-          this.options = tags.map(el => el.name).filter(el => el.includes(word))
+          this.options = tags.map(el => el.name).filter(el => el.toLowerCase().includes(word.toLowerCase()))
           changedOptions = true
         }
       }
@@ -245,7 +256,7 @@ export default {
           this.optionsType = '@'
           const word = lastWord.substr(1)
 
-          this.options = lists.map(el => el.name).filter(el => el.includes(word))
+          this.options = lists.map(el => el.name).filter(el => el.toLowerCase().includes(word.toLowerCase()))
           changedOptions = true
         }
       }
