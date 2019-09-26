@@ -17,6 +17,14 @@ export default {
       const {order, lists} = state
       return utils.checkMissingIdsAndSortArr(order, lists)
     },
+    getListsByName: state => names => {
+      const arr = []
+      for (const n of names) {
+        const list = state.lists.find(el => el.name === n)
+        if (list) arr.push(list)
+      }
+      return arr
+    },
   },
   actions: {
     getData({state}) {

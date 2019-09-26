@@ -1,6 +1,14 @@
 
+import { fire, auth } from './index'
+import utils from '../utils'
+
+const uid = () => auth.currentUser.uid
+
 export default {
   namespaced: true,
+  state: {
+    tasks: [],
+  },
   getters: {
     priorityOptions() {
       return [
@@ -25,6 +33,37 @@ export default {
           iconColor: 'var(--red)',
         }
       ]
+    },
+  },
+  actions: {
+    getData({state}) {
+      return Promise.all([
+        new Promise(resolve => {
+          fire.collection('tasks').where('userId', '==', uid()).onSnapshot(snap => {
+            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
+            state.tasks.forEach(console.log)
+            resolve()
+          })
+        })
+      ])
+    },
+    addTask(c, obj) {
+      const batch = fire.batch()
+
+      const ref = fire.collection('tasks').doc()
+      batch.set(ref, {
+        userId: uid(),
+        ...obj,
+      })
+
+      if (obj.listId) {
+        const listRef = fire.collection('lists').doc(obj.listId)
+        batch.update(ref, {
+          tasks: fire.FieldValue.arrayUnion(obj.id),
+        })
+      }
+
+      batch.commit()
     },
   },
 }

@@ -111,6 +111,7 @@ auth.onAuthStateChanged(() => {
       store.dispatch('tag/getData'),
       store.dispatch('list/getData'),
       store.dispatch('filter/getData'),
+      store.dispatch('task/getData'),
     ]).then(() => {
       store.commit('load')
     })

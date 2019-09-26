@@ -16,6 +16,14 @@ export default {
     sortedTags(state) {
       const {order, tags} = state
       return utils.checkMissingIdsAndSortArr(order, tags)
+    },
+    getTagsByName: state => names => {
+      const arr = []
+      for (const n of names) {
+        const tag = state.tags.find(el => el.name === n)
+        if (tag) arr.push(tag)
+      }
+      return arr
     }
   },
   actions: {

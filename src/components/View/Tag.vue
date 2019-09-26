@@ -53,6 +53,8 @@ export default {
             name.opacity = '1'
             icon.opacity = '1'
             el.style.opacity = '1'
+            el.style.height = 'auto'
+            el.style.width = 'auto'
           }, 300)
         })
       })
@@ -109,7 +111,7 @@ export default {
 }
 
 .Tag:hover .icon, .Tag:hover .name {
-  color: var(--white) !important;
+  color: var(--white);
 }
 
 .Tag:hover {

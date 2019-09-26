@@ -36,7 +36,7 @@
     />
     <div class="options">
       <div class="button">
-        <ButtonApp value="Add task"/>
+        <ButtonApp value="Add task" @click="save"/>
       </div>
       <div class="icons">
         <IconDrop
@@ -107,13 +107,31 @@ export default {
     },
     selectDate(date) {
       this.calendar = date
-    }
+    },
+    save() {
+      this.$emit('save', {
+        name: this.name,
+        priority: this.priority,
+        list: this.listId,
+        tags: this.tagIds,
+        calendar: this.calendar,
+      })
+      this.name = ''
+    },
   },
   computed: {
     ...mapState({
       savedTags: state => state.tag.tags,
       savedLists: state => state.list.lists,
     }),
+    listId() {
+      if (this.list)
+        return this.$store.getters['list/getListsByName']([this.name]).map(el => el.id)
+      return null
+    },
+    tagIds() {
+      return this.$store.getters['tag/getTagsByName'](this.tags).map(el => el.id)
+    },
     calendarStr() {
       if (this.calendar)
         return utils.parseCalendarObjectToString(this.calendar)
@@ -214,10 +232,10 @@ export default {
       const parseLists = () => {
         const lists = this.savedLists
         for (const li of lists) {
-          const listName = ` #${li.name}`
+          const listName = ` @${li.name}`
           if (n.includes(listName)) {
             this.name = n.replace(listName, '')
-            this.lists.push(li.name)
+            this.list = li.name
             break
           }
         }

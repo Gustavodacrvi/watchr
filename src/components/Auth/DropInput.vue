@@ -19,7 +19,7 @@
           @enter='enterItems'
           @leave='leaveItems'
         >
-          <span v-for="o in getOptions" :key="o"
+          <span v-for="o in options" :key="o"
             class="link"
             :class="{active: o === active}"
           >{{ o }}</span>
@@ -41,7 +41,7 @@ export default {
     }
   },
   created() {
-    this.active = this.getOptions[0]
+    this.active = this.options[0]
   },
   mounted() {
     if (this.focus) {
@@ -118,7 +118,8 @@ export default {
       if (key === 'ArrowDown' || key === 'ArrowUp')
         this.moveActive(key)
       else if (key === 'Enter') {
-        this.$emit('select', this.active)
+        if (this.active)
+          this.$emit('select', this.active)
         event.preventDefault()
       }
     },
@@ -169,11 +170,6 @@ export default {
         } else if (i + 1 !== this.options.length)
           this.active = ''
       }
-    }
-  },
-  computed: {
-    getOptions() {
-      return this.options.filter(el => el.toLowerCase().includes(this.str.toLowerCase()))  
     }
   },
   watch: {

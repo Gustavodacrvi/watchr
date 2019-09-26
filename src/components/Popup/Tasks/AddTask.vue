@@ -6,6 +6,7 @@
     <div class="content">
       <TaskEdit
         placeholder="Task name..."
+        @save='add'
       />
     </div>
   </div>
@@ -20,6 +21,11 @@ import { mapGetters } from 'vuex'
 export default {
   components: {
     TaskEdit: EditVue,
+  },
+  methods: {
+    add(obj) {
+      this.$store.dispatch('task/addTask', {...obj})
+    },
   },
   computed: {
     ...mapGetters(['platform'])
