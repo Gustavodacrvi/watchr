@@ -1,6 +1,6 @@
 <template>
   <div class="Task draggable" :class="{fade: done}">
-    <div class="cont-wrapper rb">
+    <div class="cont-wrapper handle rb">
       <div class="cont">
         <div class="check" @click="completeTask">
           <Icon v-if="!isCompleted" class="icon"
@@ -57,11 +57,12 @@ export default {
   position: relative;
   height: auto;
   cursor: pointer;
+  user-select: none;
   transition: opacity .3s;
 }
 
 .cont-wrapper {
-  height: 40px;
+  height: 38px;
   transition: height .3s, background-color .2s;
 }
 
@@ -102,6 +103,10 @@ export default {
 
 .check {
   flex-basis: 35px;
+}
+
+.handle {
+  outline: none;
 }
 
 .icon {

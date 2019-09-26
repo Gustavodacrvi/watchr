@@ -3,6 +3,7 @@
     <Header :smart="smart" :value="value" :options="options"/>
     <TaskRenderer
       :tasks='getTasks'
+      @update='updateOrder'
     />
   </div>
 </template>
@@ -13,6 +14,9 @@ import HeaderVue from './Header.vue'
 import TaskRendererVue from './TaskRenderer.vue'
 
 import { mapGetters, mapState } from 'vuex'
+
+import utilsTask from '@/utils/task'
+import utils from '@/utils/'
 
 export default {
   props: ['smart', 'viewType', 'value'],
@@ -48,13 +52,35 @@ export default {
       ],
     }
   },
+  methods: {
+    updateOrder(ids) {
+      if (this.smart) {
+        this.$store.dispatch('list/updateViewOrder', {
+          ids,
+          view: this.value,
+        })
+      }
+    }
+  },
   computed: {
     ...mapState({
       tasks: state => state.task.tasks,
+      viewOrders: state => state.list.viewOrders,
     }),
     ...mapGetters(['platform']),
+    getTaskOrder() {
+      if (this.smart) {
+        return this.viewOrders[this.value]
+      }
+    },
     getTasks() {
-      return this.tasks
+      let tasks = this.tasks
+      const order = this.getTaskOrder
+      if (this.smart) {
+        tasks = utilsTask.filterTasksByView(tasks, this.value)
+        tasks = utils.checkMissingIdsAndSortArr(order, tasks)
+      }
+      return tasks
     },
   },
 }

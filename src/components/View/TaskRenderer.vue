@@ -7,6 +7,8 @@
     >
       <Task v-for="t of tasks" :key="t.id"
         :task='t'
+
+        :data-id='t.id'
       />
     </transition-group>
   </div>
@@ -26,6 +28,7 @@ export default {
   mounted() {
     this.sortable = new Sortable(this.draggableRoot, {
       draggable: '.draggable',
+      handle: '.handle',
       delay: 300,
       mirror: {
         appendTo: 'body',

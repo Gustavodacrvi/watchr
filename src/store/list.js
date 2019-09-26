@@ -11,6 +11,12 @@ export default {
   state: {
     lists: [],
     order: [],
+    viewOrders: {
+      'Today': [],
+      'Upcoming': [],
+      'Inbox': [],
+      'Tomorrow': [],
+    },
   },
   getters: {
     sortedLists(state) {
@@ -40,6 +46,12 @@ export default {
             state.order = snap.data().order
             resolve()
           }))
+        }),
+        new Promise(resolve => {
+          fire.collection('viewOrders').doc(uid()).onSnapshot((snap => {
+            state.viewOrders = snap.data()
+            resolve()
+          }))
         })
       ])
     },
@@ -61,6 +73,11 @@ export default {
         order: ids,
       })
     },
+    updateViewOrder(c, {view, ids}) {
+      const obj = {}
+      obj[view] = ids
+      return fire.collection('viewOrders').doc(uid()).update(obj)
+    },
     sortListsByName({state, dispatch}) {
       const lists = state.lists.slice()
       lists.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
@@ -70,10 +87,19 @@ export default {
       return fire.collection('lists').doc(id).delete()
     },
     addDefaultData(c, id) {
-      return fire.collection('listsOrder').doc(id).set({
-        order: [],
-        userId: uid(),
-      })
+      return Promise.all([
+        fire.collection('listsOrder').doc(id).set({
+          order: [],
+          userId: uid(),
+        }),
+        fire.collection('viewOrders').doc(id).set({
+          userId: uid(),
+          Today: [],
+          Upcoming: [],
+          Inbox: [],
+          Tomorrow: [],
+        })
+      ])
     },
   },
 }
