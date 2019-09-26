@@ -1,6 +1,9 @@
 <template>
   <div class="TaskRenderer">
-    <transition-group>
+    <transition-group
+      @enter='enter'
+      @leave='leave'
+    >
       <Task v-for="t of tasks" :key="t.id"
         :task='t'
       />
@@ -17,6 +20,19 @@ export default {
   components: {
     Task: TaskVue,
   },
+  methods: {
+    enter(el) {
+      el.transitionDuration = '0s'
+      el.classList.add('task-hided')
+      setTimeout(() => {
+        el.transitionDuration = '.3s'
+        el.classList.remove('task-hided')
+      })
+    },
+    leave(el) {
+      el.classList.add('task-hided')
+    },
+  }
 }
 
 </script>
@@ -25,6 +41,11 @@ export default {
 
 .TaskRenderer {
   margin-top: 16px;
+}
+
+.task-hided {
+  opacity: 0;
+  height: 0;
 }
 
 </style>

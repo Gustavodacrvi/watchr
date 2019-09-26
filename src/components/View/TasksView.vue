@@ -45,7 +45,7 @@ export default {
           name: 'Show completed',
           icon: 'completed',
         }
-      ]
+      ],
     }
   },
   computed: {

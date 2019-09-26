@@ -34,8 +34,9 @@ export default {
 
 .Task {
   height: 35px;
+  opacity: 1;
   cursor: pointer;
-  transition: background-color .3s;
+  transition-duration: .3s;
 }
 
 .Task:hover {
