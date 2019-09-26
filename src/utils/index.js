@@ -50,18 +50,18 @@ export default {
     }
     return ordered
   },
+  parseMomentToObject(m) {
+    return {
+      day: m.format('D'),
+      month: m.format('MMM').toLowerCase(),
+      year: m.format('Y'),
+    }
+  },
   parseInputToCalendarObject(name) {
     const getDateString = () => {
       if (name.includes(' $'))
         return name.substr(name.indexOf(' $')).replace(' $', '')
       return undefined
-    }
-    const parseMomentToObject = (m) => {
-      return {
-        day: m.format('D'),
-        month: m.format('MMM').toLowerCase(),
-        year: m.format('Y'),
-      }
     }
     const parseObjectToMoment = ({day,month,year}) => {
       return mom(`${year}-${month}-${day}`, 'Y-MMM-D', true)
@@ -88,13 +88,12 @@ export default {
           if (next === 'next' && v) {
             const parsed = parseInt(v, 10)
             if (!isNaN(parsed)) {
-              const m = mom(parsed, 'D', true)
-              if (m.isValid())
-                return parseMomentToObject(moment.getNextDateByMonthDay(mom(), parsed))
+              if (parsed > 0 && parsed < 32)
+                return this.parseMomentToObject(moment.getNextDateByMonthDay(mom(), parsed))
             } else {
               const m = mom(v, 'ddd', true)
               if (m.isValid())
-                return parseMomentToObject(moment.nextWeekDay(mom(), v))
+                return this.parseMomentToObject(moment.nextWeekDay(mom(), v))
             }
           }
         }
@@ -104,10 +103,10 @@ export default {
     const getKeyWords = (str) => {
       switch (str) {
         case 'tod': {
-          return parseMomentToObject(mom())
+          return this.parseMomentToObject(mom())
         }
         case 'tom': {
-          return parseMomentToObject(tod.clone().add(1, 'd').clone())
+          return this.parseMomentToObject(tod.clone().add(1, 'd').clone())
         }
       }
       const next = searchForNextKeyword(str)
@@ -312,36 +311,50 @@ export default {
     return obj
   },
   parseCalendarObjectToString(obj) {
+    let str = ''
+    const getHumanDate = (str) => {
+      const tod = mom()
+      const sameDay = (mom1, mom2) => {
+        return mom1.isSame(mom2, 'day')
+      }
+      
+      let date = mom(str, 'Y-M-D', true)
+      if (sameDay(tod, date)) return 'Today'
+      if (sameDay(mom().add(1, 'day'), date)) return 'Tomorrow'
+      if (!tod.isSame(date, 'year')) return date.format('MMM Do, ddd, Y')
+      if (!tod.isSame(date, 'month')) return date.format('MMM Do, ddd')
+      return date.format('Do, ddd')
+    }
     switch (obj.type) {
       case 'specific': {
-        let str = ''
-        const tod = mom()
-        const sameDay = (mom1, mom2) => {
-          return mom1.isSame(mom2, 'day')
-        }
-        
-        let date = mom(obj.specific, 'Y-M-D', true)
-        if (sameDay(tod, date)) str = 'Today'
-        else if (sameDay(mom().add(1, 'day'), date)) str = 'Tomorrow'
-        else if (!tod.isSame(date, 'year')) return date.format('MMM Do, ddd, Y')
-        else if (!tod.isSame(date, 'month')) return date.format('MMM Do, ddd')
-        else return date.format('Do, ddd')
-        return str
+        str += getHumanDate(obj.specific)
+        break
       }
       case 'periodic': {
         if (obj.periodic.interval === 1)
-          return `every day`
-        return `every ${obj.periodic.interval} days`
+          str = `Every day`
+        else str = `Every ${obj.periodic.interval} days`
+        break
       }
       case 'weekly': {
-        let str = 'every '
+        str = 'Every '
         obj.weekly.forEach((week, i) => {
           str += week
           if (i !== obj.weekly.length - 1)
             str += ', '
         })
-        return str
+        break
       }
     }
+    if (obj.defer) {
+      if (str !== '') str += ', '
+      str += 'Eefer ' + getHumanDate(obj.defer)
+    }
+    if (obj.due) {
+      if (str !== '') str += ', '
+      str += 'Due ' + getHumanDate(obj.due)
+    }
+    
+    return str
   }
 }

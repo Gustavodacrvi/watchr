@@ -12,13 +12,15 @@ export default {
   nextWeekDay(initial, weekday) {
     const clone = initial.clone()
     let i = 0
+    const week = mom(weekday, 'ddd').format('dddd')
     while (true) {
-      if (clone.format('dddd') === weekday)
-        break
+      if (clone.format('dddd') === week)
+        return clone
       clone.add(1, 'd')
       if (i > 10) break
       i++
     }
+    console.log(clone.format('dddd'))
     return clone
   },
   getLastDayOfNextMonth(initial) {
@@ -32,7 +34,7 @@ export default {
     let i = 0
     while (true) {
       if (clone.format('D') === '1')
-        break
+        return clone
       clone.add(1, 'd')
       if (i > 33) break
       i++
@@ -44,9 +46,9 @@ export default {
     let i = 0
     while (true) {
       if (clone.format('D') === day + '')
-        break
+        return clone
       clone.add(1, 'd')
-      if (i > 33) break
+      if (i > 364) break
       i++
     }
     return clone
