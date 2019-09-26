@@ -5,10 +5,12 @@
         <div class="check" @click="completeTask">
           <Icon v-if="!isCompleted" class="icon"
             icon="circle"
+            :color='circleColor'
             :primaryHover="true"
           />
           <Icon v-else class="icon"
             icon="circle-check"
+            :color='circleColor'
             :primaryHover="true"
           />
         </div>
@@ -45,7 +47,16 @@ export default {
   computed: {
     isCompleted() {
       return this.done
-    }
+    },
+    circleColor() {
+      if (!this.task.priority) return ''
+      const obj = {
+        'Low priority': 'var(--primary)',
+        'Medium priority': 'var(--yellow)',
+        'High priority': 'var(--red)',
+      }
+      return obj[this.task.priority]
+    },
   }
 }
 

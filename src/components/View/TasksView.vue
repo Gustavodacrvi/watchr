@@ -34,14 +34,17 @@ export default {
             {
               name: 'Sort by name',
               icon: 'sort-name',
+              callback: () => this.sortByName()
             },
             {
               name: 'Sort by priority',
               icon: 'priority',
+              callback: () => this.sortByPriority()
             },
             {
               name: 'Sort by date',
               icon: 'calendar',
+              callback: () => this.sortByDate(),
             }
           ],
         },
@@ -53,13 +56,31 @@ export default {
     }
   },
   methods: {
-    updateOrder(ids) {
+    updateIds(ids) {
       if (this.smart) {
         this.$store.dispatch('list/updateViewOrder', {
-          ids,
           view: this.value,
+          ids,
         })
       }
+    },
+    sortByName() {
+      const tasks = this.getTasks.slice()
+      tasks.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+      this.updateIds(tasks.map(el => el.id))
+    },
+    sortByPriority() {
+      let tasks = this.getTasks.slice()
+      tasks = utilsTask.sortTasksByPriority(tasks)
+      this.updateIds(tasks.map(el => el.id))
+    },
+    sortByDate() {
+      let tasks = this.getTasks.slice()
+      tasks = utilsTask.sortTasksByDate(tasks)
+      this.updateIds(tasks.map(el => el.id))
+    },
+    updateOrder(ids) {
+      this.updateIds(ids)
     }
   },
   computed: {

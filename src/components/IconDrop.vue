@@ -69,15 +69,6 @@ export default {
   beforeDestroy() {
     window.removeEventListener('click', this.hide)
   },
-  mounted() {
-    if (this.allowSearch) {
-      const inp = this.$el.getElementsByClassName('input')[0]
-      if (inp)
-        setTimeout(() => {
-          inp.focus()
-        }, 1600)
-    }
-  },
   methods: {
     enterItems(el, done) {
       el.style.opacity = 0
@@ -108,7 +99,7 @@ export default {
             cont.style.width = 'auto'
             cont.style.height = 'auto'
             setTimeout(() => {
-              const {height, width} = this.getStyles()
+              const {height, width} = getComputedStyle(cont)
               cont.style.width = oldWidth
               cont.style.height = oldHeight
               setTimeout(() => {
@@ -117,7 +108,7 @@ export default {
                 cont.style.transitionDelay = '.0s'
               }, 10)
             })
-          }, 300)
+          }, 400)
   
           this.toggleLinks()
           this.links = links
