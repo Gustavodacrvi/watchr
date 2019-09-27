@@ -1,7 +1,14 @@
 <template>
-  <div class="Task draggable" :class="{fade: completed, isSelected, hideTask: completed && !showCompleted}">
+  <div class="Task draggable" :class="{fade: completed, isSelected, hideTask: completed && !showCompleted}"
+    @mouseenter="onHover = true"
+    @mouseleave="onHover = false"
+  >
     <transition name="edit-t" mode="out-in">
-      <div v-if="!isEditing" key="notediting" class="cont-wrapper handle rb" @click="click" @dblclick="dblclick">
+      <div v-if="!isEditing" key="notediting"
+        class="cont-wrapper handle rb" 
+        @click="click"
+        @dblclick="dblclick"
+      >
         <div class="cont">
           <div class="check" @click.stop="completeTask">
             <Icon v-if="!completed" class="icon"
@@ -22,7 +29,11 @@
             <span v-else-if="calendarStr" class="tag cb rb">{{ calendarStr }}</span>
             <span>{{ task.name }}</span>
           </div>
-          <div class="icon-drop">
+          <div class="icon-drop-wrapper">
+            <IconDrop v-if="showIconDrop" class="icon-drop"
+              handle='settings-v'
+              :options='options'
+            />
           </div>
         </div>
       </div>
@@ -41,6 +52,7 @@
 <script>
 
 import IconVue from '../../Icon.vue'
+import IconDropVue from '../../IconDrop.vue'
 import EditVue from './Edit.vue'
 
 import { mapState, mapGetters } from 'vuex'
@@ -54,11 +66,13 @@ export default {
   props: ['task', 'isSelected', 'showCompleted', 'view'],
   components: {
     Icon: IconVue,
+    IconDrop: IconDropVue,
     Edit: EditVue,
   },
   data() {
     return {
       isEditing: false,
+      onHover: false,
     }
   },
   methods: {
@@ -103,6 +117,30 @@ export default {
     completed() {
       return utilsTask.filterTasksByCompletion([this.task]).length === 1
     },
+    options() {
+      const dispatch = this.$store.dispatch
+      return [
+        {
+          name: 'Edit task',
+          icon: 'pen',
+          callback: () => this.isEditing = true
+        },
+        {
+          name: 'Copy task',
+          icon: 'pen',
+          callback: () => dispatch('task/copyTask', this.task)
+        },
+        {
+          name: 'Move to list',
+          icon: 'tasks',
+        },
+        {
+          name: 'Delete task',
+          icon: 'trash',
+          callback: () => dispatch('task/deleteTasks', [this.task.id])
+        }
+      ]
+    },
     isOverdue() {
       if (this.view === 'Overdue') return false
       return false
@@ -114,6 +152,10 @@ export default {
     isTomorrow() {
       if (this.view === 'Tomorrow') return false
       return utilsTask.filterTasksByView([this.task], 'Tomorrow').length === 1
+    },
+    showIconDrop() {
+      if (this.isDesktop && this.onHover) return true
+      else if (!this.isDesktop) return true
     },
     calendarStr() {
       if (!this.task.calendar) return null
@@ -136,10 +178,15 @@ export default {
 <style scoped>
 
 .Task {
-  position: relative;
   height: auto;
   user-select: none;
   transition: opacity .3s;
+  position: relative;
+  z-index: 1;
+}
+
+.Task:hover {
+  z-index: 2;
 }
 
 .cont-wrapper {
@@ -153,7 +200,6 @@ export default {
 }
 
 .subtasks {
-  position: relative;
   top: 100%;
   left: 0;
 }
@@ -161,7 +207,6 @@ export default {
 .fade {
   opacity: .4;
 }
-
 
 .cont-wrapper:hover {
   background-color: var(--light-gray);
@@ -183,9 +228,13 @@ export default {
   display: flex;
 }
 
-.check, .icon-drop {
+.check, .icon-drop-wrapper {
   justify-content: center;
   align-items: center;
+}
+
+.icon-drop {
+  transform: translateY(18.5px);
 }
 
 .check {

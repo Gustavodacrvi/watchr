@@ -83,5 +83,20 @@ export default {
         ...obj,
       })
     },
+    copyTask(c, task) {
+      return fire.collection('tasks').add({
+        ...task,
+      })
+    },
+    deleteTasks(c, ids) {
+      const batch = fire.batch()
+
+      for (const id of ids) {
+        const ref = fire.collection('tasks').doc(id)
+        batch.delete(ref)
+      }
+
+      return batch.commit()
+    },
   },
 }
