@@ -23,7 +23,7 @@
             />
           </div>
           <div class="text">
-            <Icon v-if="isTomorrow" class="name-icon" icon="star" color="var(--orange)"/>
+            <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
             <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
             <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
             <span v-else-if="calendarStr" class="tag cb rb">{{ calendarStr }}</span>
@@ -116,6 +116,23 @@ export default {
         priority: pri,
       })
     },
+    saveDate(date) {
+      this.$store.dispatch('task/saveTask', {
+        id: this.task.id,
+        calendar: {
+          defer: null,
+          due: null,
+
+          type: 'specific',
+          time: null,
+          editDate: mom().format('Y-M-D'),
+
+          specific: date,
+          lastCompleteDate: null,
+          periodic: null
+        },
+      })
+    },
   },
   computed: {
     ...mapState(['isOnControl']),
@@ -137,7 +154,11 @@ export default {
           callback: () => dispatch('task/copyTask', this.task)
         },
         {
-          type: 'optionList',
+          name: 'Move to list',
+          icon: 'tasks',
+        },
+        {
+          type: 'optionsList',
           name: 'Priority',
           options: [
             {
@@ -167,8 +188,20 @@ export default {
           ],
         },
         {
-          name: 'Move to list',
-          icon: 'tasks',
+          type: 'optionsList',
+          name: 'Schedule',
+          options: [
+            {
+              icon: 'star',
+              id: 'd',
+              callback: () => this.saveDate(mom().format('Y-M-D')),
+            },
+            {
+              icon: 'sun',
+              id: 'çljk',
+              callback: () => this.saveDate(mom().add(1, 'day').format('Y-M-D')),
+            },
+          ]
         },
         {
           name: 'Delete task',
@@ -249,7 +282,7 @@ export default {
 }
 
 .isSelected .cont-wrapper {
-  background-color: rgba(89, 160, 222, .6);
+  background-color: rgba(53, 73, 90, 0.6);
 }
 
 .cont {

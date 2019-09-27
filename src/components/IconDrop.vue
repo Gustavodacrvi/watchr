@@ -6,7 +6,7 @@
       @enter="enter"
       @leave="leave"
     >
-      <div v-if="showing && !calendar" key="links" class="content shadow cb rb">
+      <div v-if="showing && !showCalendar" key="links" class="content shadow cb rb">
         <transition name="links-trans">
           <div v-if="showingLinks" class="links">
             <div v-if="allowSearch" class="search">
@@ -33,7 +33,7 @@
                   </div>
                 </div>
                 <div v-else :key="link.name" class="header-link">
-                  <span class="header-name">{{ link.name }}</span>
+                  <div class="header-name">{{ link.name }}</div>
                   <div class="values">
                     <Icon v-for="l in link.options" :key="l.id" class="val icon cursor"
                       width="25px"
@@ -72,6 +72,7 @@ export default {
       showing: false,
       showingLinks: true,
       links: this.options,
+      showCalendar: this.calendar,
       height: 0,
       width: 0,
       search: '',
@@ -206,6 +207,12 @@ export default {
 
 .values {
   margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.val {
+  margin-right: 6px;
 }
 
 .handle {
