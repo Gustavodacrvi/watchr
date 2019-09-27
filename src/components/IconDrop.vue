@@ -18,19 +18,33 @@
               @enter='enterItems'
               @leave='leaveItems'
             >
-              <div v-for="link in getLinks" class="link"
-                :key="link.name"
-                @click="linkCallback(link.callback, link)"
-              >
-                <div class="link-cont">
-                  <Icon v-if="link.icon"
-                    class="cursor icon"
-                    :icon="link.icon"
-                    :style="{color: link.iconColor}"
-                  />
-                  <span class="name">{{ link.name }}</span>
+              <template v-for="link in getLinks">
+                <div v-if="!link.type" class="link"
+                  :key="link.name"
+                  @click="linkCallback(link.callback, link)"
+                >
+                  <div class="link-cont">
+                    <Icon v-if="link.icon"
+                      class="cursor icon"
+                      :icon="link.icon"
+                      :style="{color: link.iconColor}"
+                    />
+                    <span class="name">{{ link.name }}</span>
+                  </div>
                 </div>
-              </div>
+                <div v-else :key="link.name" class="header-link">
+                  <span class="header-name">{{ link.name }}</span>
+                  <div class="values">
+                    <Icon v-for="l in link.options" :key="l.id" class="val icon cursor"
+                      width="25px"
+                      :icon="l.icon"
+                      :color="l.color"
+                      :primaryHover="true"
+                      @click="linkCallback(l.callback, l)"
+                    />
+                  </div>
+                </div>
+              </template>
             </transition-group>
           </div>
         </transition>
@@ -178,6 +192,20 @@ export default {
 
 .IconDrop {
   position: relative;
+}
+
+.header-link {
+  margin: 8px 26px;  
+  width: 160px;
+}
+
+.header-name {
+  opacity: .6;
+  font-size: .9em;
+}
+
+.values {
+  margin-top: 6px;
 }
 
 .handle {

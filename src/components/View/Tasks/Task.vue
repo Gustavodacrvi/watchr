@@ -110,6 +110,12 @@ export default {
       })
       this.isEditing = false
     },
+    addPriority(pri) {
+      this.$store.dispatch('task/saveTask', {
+        id: this.task.id,
+        priority: pri,
+      })
+    },
   },
   computed: {
     ...mapState(['isOnControl']),
@@ -127,8 +133,38 @@ export default {
         },
         {
           name: 'Copy task',
-          icon: 'pen',
+          icon: 'copy',
           callback: () => dispatch('task/copyTask', this.task)
+        },
+        {
+          type: 'optionList',
+          name: 'Priority',
+          options: [
+            {
+              icon: 'priority',
+              id: 'd',
+              color: 'var(--gray)',
+              callback: () => this.addPriority('')
+            },
+            {
+              icon: 'priority',
+              id: 'f',
+              color: 'var(--green)',
+              callback: () => this.addPriority('Low priority')
+            },
+            {
+              icon: 'priority',
+              id: 'j',
+              color: 'var(--yellow)',
+              callback: () => this.addPriority('Medium priority')
+            },
+            {
+              icon: 'priority',
+              id: 'l',
+              color: 'var(--red)',
+              callback: () => this.addPriority('High priority')
+            },
+          ],
         },
         {
           name: 'Move to list',
