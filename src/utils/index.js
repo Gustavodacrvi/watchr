@@ -348,7 +348,7 @@ export default {
     }
     if (obj.defer) {
       if (str !== '') str += ', '
-      str += 'Eefer ' + getHumanDate(obj.defer)
+      str += 'Defer ' + getHumanDate(obj.defer)
     }
     if (obj.due) {
       if (str !== '') str += ', '
