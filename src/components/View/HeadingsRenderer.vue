@@ -11,6 +11,7 @@
           <TaskRenderer
             :tasks='getTasks(tasks, h)'
             :showCompleted='showCompleted'
+            :view='view'
             :onAdd='h.onAdd'
           />
         </HeadingApp>
@@ -30,7 +31,7 @@ const lastHeading = {
 }
 
 export default {
-  props: ['headings', 'tasks', 'showCompleted'],
+  props: ['headings', 'tasks', 'showCompleted', 'view'],
   components: {
     HeadingApp: HeadingVue,
     TaskRenderer: TaskRendererVue,

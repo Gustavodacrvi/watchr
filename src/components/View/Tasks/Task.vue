@@ -16,7 +16,11 @@
             />
           </div>
           <div class="text">
-            {{ task.name }}
+            <Icon v-if="isTomorrow" class="name-icon" icon="star" color="var(--orange)"/>
+            <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
+            <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
+            <span v-else-if="calendarStr" class="tag cb rb">{{ calendarStr }}</span>
+            <span>{{ task.name }}</span>
           </div>
           <div class="icon-drop">
           </div>
@@ -42,11 +46,12 @@ import EditVue from './Edit.vue'
 import { mapState, mapGetters } from 'vuex'
 
 import utilsTask from '@/utils/task'
+import utils from '@/utils/index'
 
 import mom from 'moment'
 
 export default {
-  props: ['task', 'isSelected', 'showCompleted'],
+  props: ['task', 'isSelected', 'showCompleted', 'view'],
   components: {
     Icon: IconVue,
     Edit: EditVue,
@@ -97,6 +102,22 @@ export default {
     ...mapGetters(['isDesktop']),
     completed() {
       return utilsTask.filterTasksByCompletion([this.task]).length === 1
+    },
+    isOverdue() {
+      if (this.view === 'Overdue') return false
+      return false
+    },
+    isToday() {
+      if (this.view === 'Today') return false
+      return utilsTask.filterTasksByView([this.task], 'Today').length === 1
+    },
+    isTomorrow() {
+      if (this.view === 'Tomorrow') return false
+      return utilsTask.filterTasksByView([this.task], 'Tomorrow').length === 1
+    },
+    calendarStr() {
+      if (!this.task.calendar) return null
+      return utils.parseCalendarObjectToString(this.task.calendar)
     },
     circleColor() {
       if (!this.task.priority) return ''
@@ -216,8 +237,21 @@ export default {
   transition: opacity .1s ease-in, transform .1s ease-in;
 }
 
-.hideTask {
-  display: none;
+.hideTask .cont-wrapper {
+  opacity: 0;
+  height: 0px;
+  transition: height .2s, opacity .2s;;
+}
+
+.name-icon {
+  margin: 0 4px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 5px;
+  margin: 0 4px;
+  font-size: .75em;
 }
 
 </style>

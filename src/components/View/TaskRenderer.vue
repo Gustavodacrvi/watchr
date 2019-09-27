@@ -10,6 +10,7 @@
         :isSelecting='isSelecting'
         :isSelected='isTaskSelected(t.id)'
         :showCompleted='showCompleted'
+        :view='view'
         @select='taskSelect'
 
         :data-id='t.id'
@@ -27,7 +28,7 @@ import { mapState } from 'vuex'
 import Sortable from 'sortablejs'
 
 export default {
-  props: ['tasks', 'onAdd', 'showCompleted'],
+  props: ['tasks', 'onAdd', 'showCompleted', 'view'],
   components: {
     Task: TaskVue,
   },
@@ -74,7 +75,8 @@ export default {
     },
     leave(el) {
       const cont = el.getElementsByClassName('cont-wrapper')[0]
-      cont.classList.add('task-hided')
+      if (cont)
+        cont.classList.add('task-hided')
     },
     windowClick() {
       this.$store.commit('clearSelected')

@@ -4,11 +4,13 @@
     <TaskRenderer v-if="!headingsRenderer"
       :tasks='getTasks'
       :showCompleted='showCompleted'
+      :view='value'
       @update='updateIds'
     />
     <HeadingsRenderer v-else
       :tasks='tasks'
       :showCompleted='showCompleted'
+      :view='value'
       :headings='upcomingHeadings'
     />
   </div>
