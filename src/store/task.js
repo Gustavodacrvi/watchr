@@ -20,7 +20,7 @@ export default {
         {
           name: 'Low priority',
           icon: 'priority',
-          iconColor: 'var(--primary)',
+          iconColor: 'var(--green)',
         },
         {
           name: 'Medium priority',

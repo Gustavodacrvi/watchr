@@ -1,6 +1,6 @@
 <template>
-  <div class="Task draggable" :class="{fade: done}">
-    <div class="cont-wrapper handle rb">
+  <div class="Task draggable" :class="{fade: done, isSelected}">
+    <div class="cont-wrapper handle rb" @click="click" @dblclick="dblclick">
       <div class="cont">
         <div class="check" @click="completeTask">
           <Icon v-if="!isCompleted" class="icon"
@@ -28,9 +28,10 @@
 <script>
 
 import IconVue from '../../Icon.vue'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
-  props: ['task'],
+  props: ['task', 'isSelected'],
   components: {
     Icon: IconVue,
   },
@@ -43,15 +44,34 @@ export default {
     completeTask() {
       this.done = !this.done
     },
+    selectTask() {
+      this.$emit('select', this.task.id)
+    },
+    click() {
+      if (this.isDesktop && this.isOnControl) {
+        this.selectTask()
+      } else if (this.isDesktop) {
+        // edit task
+      } else if (!this.isSelecting) {
+        this.selectTask()
+      }
+    },
+    dblclick() {
+      if (!this.isDesktop) {
+        // edit task
+      }
+    }
   },
   computed: {
+    ...mapState(['isOnControl']),
+    ...mapGetters(['isDesktop']),
     isCompleted() {
       return this.done
     },
     circleColor() {
       if (!this.task.priority) return ''
       const obj = {
-        'Low priority': 'var(--primary)',
+        'Low priority': 'var(--green)',
         'Medium priority': 'var(--yellow)',
         'High priority': 'var(--red)',
       }
@@ -91,8 +111,13 @@ export default {
   opacity: .4;
 }
 
+
 .cont-wrapper:hover {
   background-color: var(--light-gray);
+}
+
+.isSelected .cont-wrapper {
+  background-color: rgba(89, 160, 222, .6);
 }
 
 .cont {
@@ -114,9 +139,10 @@ export default {
 
 .check {
   flex-basis: 35px;
+  opacity: .6;
 }
 
-.handle {
+.handle, .Task, .cont {
   outline: none;
 }
 
@@ -131,6 +157,11 @@ export default {
 
 .check-drop {
   flex-basis: 28px;
+}
+
+.draggable-mirror {
+  background-color: var(--light-gray) !important;
+  border-radius: 6px;
 }
 
 .draggable--over .cont {

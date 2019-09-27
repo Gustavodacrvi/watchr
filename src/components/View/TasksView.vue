@@ -3,7 +3,7 @@
     <Header :smart="smart" :value="value" :options="options"/>
     <TaskRenderer
       :tasks='getTasks'
-      @update='updateOrder'
+      @update='updateIds'
     />
   </div>
 </template>
@@ -75,13 +75,11 @@ export default {
       this.updateIds(tasks.map(el => el.id))
     },
     sortByDate() {
-      let tasks = this.getTasks.slice()
+      // TODO
+/*       let tasks = this.getTasks.slice()
       tasks = utilsTask.sortTasksByDate(tasks)
-      this.updateIds(tasks.map(el => el.id))
+      this.updateIds(tasks.map(el => el.id)) */
     },
-    updateOrder(ids) {
-      this.updateIds(ids)
-    }
   },
   computed: {
     ...mapState({

@@ -1,5 +1,5 @@
 <template>
-  <div class="TaskRenderer">
+  <div class="TaskRenderer" @click.stop>
     <transition-group name="task-trans" class="root"
       @enter='enter'
       @leave='leave'
@@ -7,6 +7,9 @@
     >
       <Task v-for="t of tasks" :key="t.id"
         :task='t'
+        :isSelecting='isSelecting'
+        :isSelected='isTaskSelected(t.id)'
+        @select='taskSelect'
 
         :data-id='t.id'
       />
@@ -19,6 +22,7 @@
 import TaskVue from './Tasks/Task.vue'
 
 import { Sortable } from '@shopify/draggable'
+import { mapState } from 'vuex'
 
 export default {
   props: ['tasks'],
@@ -45,6 +49,10 @@ export default {
         this.$emit('update', ids)
       }, 100)
     })
+    window.addEventListener('click', this.windowClick)
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this.windowClick)
   },
   methods: {
     enter(el) {
@@ -60,10 +68,29 @@ export default {
       const cont = el.getElementsByClassName('cont-wrapper')[0]
       cont.classList.add('task-hided')
     },
+    windowClick() {
+      this.$store.commit('clearSelected')
+    },
+    isTaskSelected(id) {
+      return this.selected.includes(id)
+    },
+    taskSelect(id) {
+      if (!this.selected.includes(id))
+        this.$store.commit('selectTask', id)
+      else {
+        this.$store.commit('unselectTask', id)
+      }
+    },
   },
   computed: {
+    ...mapState({
+      selected: state => state.selectedTasks,
+    }),
     draggableRoot() {
       return this.$el.getElementsByClassName('root')[0]
+    },
+    isSelecting() {
+      return this.selected.length > 0
     }
   }
 }

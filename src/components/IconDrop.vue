@@ -95,6 +95,7 @@ export default {
           const oldHeight = s.height
   
           cont.style.transitionDelay = '.05s'
+          cont.style.transitionDuration = '0s'
           setTimeout(() => {
             cont.style.width = 'auto'
             cont.style.height = 'auto'
@@ -103,12 +104,13 @@ export default {
               cont.style.width = oldWidth
               cont.style.height = oldHeight
               setTimeout(() => {
+                cont.style.transitionDuration = '.3s'
                 cont.style.width = width
                 cont.style.height = height
                 cont.style.transitionDelay = '.0s'
-              }, 10)
+              }, 50)
             })
-          }, 400)
+          }, 300)
   
           this.toggleLinks()
           this.links = links

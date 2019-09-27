@@ -31,14 +31,22 @@ export default {
   },
   created() {
     window.addEventListener('keydown', this.keydown)
+    window.addEventListener('keyup', this.keyup)
   },
   beforeDestroy() {
     window.removeEventListener('keydown', this,keydown)
+    window.addEventListener('keyup', this.keyup)
   },
   methods: {
+    keyup({key}) {
+      if (key === 'Control')
+        this.$store.commit('toggleControl', false)
+    },
     keydown({key}) {
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
+      if (!isTyping && key === 'Control')
+        this.$store.commit('toggleControl', true)
       if (!isTyping) this.$store.dispatch('pushKeyShortcut', key)
     },
     closePopup() {

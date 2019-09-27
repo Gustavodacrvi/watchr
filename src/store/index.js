@@ -42,6 +42,8 @@ const store = new Vuex.Store({
       options: null,
       title: "",
     },
+    selectedTasks: [],
+    isOnControl: false,
     authState: false,
     isLoading: true,
     toasts: [],
@@ -60,6 +62,16 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    unselectTask(state, id) {
+      const i = state.selectedTasks.find(el => el === id)
+      state.selectedTasks.splice(i, 1)
+    },
+    selectTask(state, id) {
+      state.selectedTasks.push(id)
+    },
+    clearSelected(state) {
+      state.selectedTasks = []
+    },
     pushNavBarData(state, navBar) {
       state.navBar = navBar
     },
@@ -81,11 +93,13 @@ const store = new Vuex.Store({
     pushToast(state, toast) {
       state.toasts.unshift(toast)
     },
+    toggleControl(state, clicked) {
+      state.isOnControl = clicked
+    },
   },
   actions: {
     pushKeyShortcut({dispatch}, key) {
       const pop = (comp) => {
-        console.log(comp)
         dispatch('pushPopup', {comp})
       }
       switch (key.toLowerCase()) {
