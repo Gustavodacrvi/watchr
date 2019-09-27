@@ -166,7 +166,7 @@ export default {
 }
 
 .icon {
-  transform: translateY(2px);
+  transform: translateY(1px);
 }
 
 .text {
@@ -178,16 +178,16 @@ export default {
   flex-basis: 28px;
 }
 
-.draggable-mirror {
+.sortable-drag {
   background-color: var(--light-gray);
   border-radius: 6px;
 }
 
-.draggable--over .cont {
+.sortable-ghost .cont {
   display: none;
 }
 
-.draggable--over .cont-wrapper {
+.sortable-ghost .cont-wrapper {
   background-color: var(--void) !important;
   transition-duration: 0 !important;
   transition: none !important;

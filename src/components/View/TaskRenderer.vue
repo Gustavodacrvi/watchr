@@ -21,8 +21,9 @@
 
 import TaskVue from './Tasks/Task.vue'
 
-import { Sortable } from '@shopify/draggable'
 import { mapState } from 'vuex'
+
+import Sortable from 'sortablejs'
 
 export default {
   props: ['tasks'],
@@ -31,23 +32,17 @@ export default {
   },
   mounted() {
     this.sortable = new Sortable(this.draggableRoot, {
-      draggable: '.draggable',
+      group: 'task-renderer',
+      delay: 150,
+      delayOnTouchOnly: true,
       handle: '.handle',
-      delay: 300,
-      mirror: {
-        appendTo: 'body',
-        constrainDimensions: true,
-      },
-    })
-    this.sortable.on('sortable:stop', (evt) => {
-      setTimeout(() => {
-        const childs = evt.newContainer.childNodes
-        const ids = []
-        for (const el of childs) {
-          ids.push(el.dataset.id)
-        }
-        this.$emit('update', ids)
-      }, 100)
+
+      onUpdate: (evt) => {
+        setTimeout(() => {
+          const ids = this.getIds()
+          this.$emit('update', ids)
+        }, 100)
+      }
     })
     window.addEventListener('click', this.windowClick)
   },
@@ -55,6 +50,13 @@ export default {
     window.removeEventListener('click', this.windowClick)
   },
   methods: {
+    getIds() {
+      const childs = this.draggableRoot.childNodes
+      const ids = []
+      for (const el of childs)
+        ids.push(el.dataset.id)
+      return ids
+    },
     enter(el) {
       const cont = el.getElementsByClassName('cont-wrapper')[0]
       cont.transitionDuration = '0s'

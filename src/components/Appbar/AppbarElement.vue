@@ -1,5 +1,5 @@
 <template>
-  <div class="AppbarElement rb draggable"
+  <div class="AppbarElement rb handle"
     :style="hoverStyle"
     :tabindex="tabindex"
     @mouseenter="hover = true"
@@ -113,11 +113,11 @@ export default {
   transition: background-color .2s, height .3s;
 }
 
-.draggable--over .link-wrapper {
+.sortable-ghost .link-wrapper {
   display: none;
 }
 
-.draggable--over {
+.sortable-ghost {
   background-color: var(--void) !important;
   transition-duration: 0 !important;
   transition: none !important;

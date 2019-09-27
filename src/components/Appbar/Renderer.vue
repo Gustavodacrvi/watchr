@@ -24,7 +24,7 @@
 
 <script>
 
-import { Sortable } from '@shopify/draggable'
+import Sortable from 'sortablejs'
 
 export default {
   components: {
@@ -38,22 +38,20 @@ export default {
   },
   mounted() {
     this.sortable = new Sortable(this.$el, {
-      draggable: '.draggable',
-      delay: 300,
-      mirror: {
-        appendTo: 'body',
-        constrainDimensions: true,
-      },
-    })
-    this.sortable.on('sortable:stop', (evt) => {
-      setTimeout(() => {
-        const childs = evt.newContainer.childNodes
-        const ids = []
-        for (const el of childs) {
-          ids.push(el.dataset.id)
-        }
-        this.$emit('update', ids)
-      }, 100)
+      group: 'appnav',
+      delay: 150,
+      delayOnTouchOnly: true,
+      handle: '.handle',
+
+      onUpdate: (evt) => {
+        setTimeout(() => {
+          const childs = this.$el.childNodes
+          const ids = []
+          for (const el of childs)
+            ids.push(el.dataset.id)
+          this.$emit('update', ids)
+        }, 100)
+      }
     })
   },
   beforeDestroy() {
@@ -78,11 +76,3 @@ export default {
 }
 
 </script>
-
-<style>
-
-.draggable-mirror {
-  width: 288px;
-}
-
-</style>
