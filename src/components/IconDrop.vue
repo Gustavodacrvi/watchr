@@ -27,7 +27,7 @@
                     <Icon v-if="link.icon"
                       class="cursor icon"
                       :icon="link.icon"
-                      :style="{color: link.iconColor}"
+                      :color="link.color"
                     />
                     <span class="name">{{ link.name }}</span>
                   </div>

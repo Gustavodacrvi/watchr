@@ -73,39 +73,81 @@ export default {
     ...mapState({
       tasks: state => state.task.tasks,
       viewOrders: state => state.list.viewOrders,
+      selectedTasks: state => state.selectedTasks,
     }),
     ...mapGetters(['platform']),
     options() {
-      const opt = [
-        {
-          name: 'Sort tasks',
-          icon: 'sort',
-          callback: () => [
-            {
-              name: 'Sort by name',
-              icon: 'sort-name',
-              callback: () => this.sortByName()
-            },
-            {
-              name: 'Sort by priority',
-              icon: 'priority',
-              callback: () => this.sortByPriority()
-            },
-            {
-              name: 'Sort by date',
-              icon: 'calendar',
-              callback: () => this.sortByDate(),
-            }
-          ],
-        },
-        {
-          name: 'Show completed',
-          icon: 'completed',
-          callback: () => this.toggleCompleted()
-        }
-      ]
-      if (this.showCompleted) opt[1].name = 'Hide completed'
-      return opt
+      const dispatch = this.$store.dispatch
+      const ids = this.selectedTasks
+
+      const savePri = (pri) => {
+        dispatch('task/saveTasksById', {ids, task: {priority: pri}})
+      }
+      
+      if (ids.length === 0) {
+        const opt = [
+          {
+            name: 'Sort tasks',
+            icon: 'sort',
+            callback: () => [
+              {
+                name: 'Sort by name',
+                icon: 'sort-name',
+                callback: () => this.sortByName()
+              },
+              {
+                name: 'Sort by priority',
+                icon: 'priority',
+                callback: () => this.sortByPriority()
+              },
+              {
+                name: 'Sort by date',
+                icon: 'calendar',
+                callback: () => this.sortByDate(),
+              }
+            ],
+          },
+          {
+            name: 'Show completed',
+            icon: 'completed',
+            callback: () => this.toggleCompleted()
+          }
+        ]
+        if (this.showCompleted) opt[1].name = 'Hide completed'
+        return opt
+      } else {
+        return [
+          {
+            icon: 'priority',
+            name: 'Change priority of tasks',
+            callback: () => [
+              {
+                name: 'No priority',
+                icon: 'priority',
+                callback: () => savePri('')
+              },
+              {
+                name: 'Low priority',
+                icon: 'priority',
+                color: 'var(--green)',
+                callback: () => savePri('Low priority')
+              },
+              {
+                name: 'Medium priority',
+                icon: 'priority',
+                color: 'var(--yellow)',
+                callback: () => savePri('Medium priority')
+              },
+              {
+                name: 'High priority',
+                icon: 'priority',
+                color: 'var(--red)',
+                callback: () => savePri('High priority')
+              }
+            ]
+          }
+        ]
+      }
     },
     upcomingHeadings() {
       const arr = []

@@ -15,22 +15,22 @@ export default {
         {
           name: 'No priority',
           icon: 'priority',
-          iconColor: 'var(--gray)',
+          color: 'var(--gray)',
         },
         {
           name: 'Low priority',
           icon: 'priority',
-          iconColor: 'var(--green)',
+          color: 'var(--green)',
         },
         {
           name: 'Medium priority',
           icon: 'priority',
-          iconColor: 'var(--yellow)',
+          color: 'var(--yellow)',
         },
         {
           name: 'High priority',
           icon: 'priority',
-          iconColor: 'var(--red)',
+          color: 'var(--red)',
         }
       ]
     },
@@ -82,6 +82,18 @@ export default {
       return fire.collection('tasks').doc(obj.id).update({
         ...obj,
       })
+    },
+    saveTasksById(c, {ids, task}) {
+      const batch = fire.batch()
+
+      for (const id of ids) {
+        const ref = fire.collection('tasks').doc(id)
+        batch.update(ref, {
+          ...task,
+        })
+      }
+
+      return batch.commit()
     },
     copyTask(c, task) {
       return fire.collection('tasks').add({
