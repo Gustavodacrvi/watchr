@@ -67,19 +67,45 @@ export default {
       return true
     })
   },
+  filterTasksByCompletion(tasks) {
+    return tasks.filter(el => {
+      if (!el.calendar) return el.completed
+      const {
+        type, lastComplete, tod,
+      } = this.taskData(el, mom())
+
+      if (type === 'specific') return el.completed
+      
+      if (type === 'periodic' || type === 'weekly') {
+        return lastComplete.isSameOrAfter(tod, 'day')
+      }
+
+      return false
+    })
+  },
   taskData(t, tod) {
     const c = t.calendar
 
-    return {
+    const obj = {
       tod,
       type: c.type,
       defer: mom(c.defer, 'Y-M-D'),
       due: mom(c.due, 'Y-M-D'),
       spec: mom(c.specific, 'Y-M-D'),
       edit: mom(c.editDate, 'Y-M-D'),
-      interval: c.periodic.interval,
+      lastComplete: mom(c.lastCompleteDate, 'Y-M-D'),
+      nextEventAfterCompletion: mom(),
+      interval: c.periodic,
       weekDays: c.weekly,
     }
+
+    if (obj.lastComplete.isValid()) {
+      obj.nextEventAfterCompletion = obj.lastComplete.clone().add(obj.interval, 'day')
+    } else {
+      obj.nextEventAfterCompletion = obj.edit.clone()
+    }
+
+    return obj
   },
   filterTasksByView(tasks, view) {
     switch (view) {

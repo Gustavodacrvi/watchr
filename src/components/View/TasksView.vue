@@ -3,10 +3,12 @@
     <Header :smart="smart" :value="value" :options="options"/>
     <TaskRenderer v-if="!headingsRenderer"
       :tasks='getTasks'
+      :showCompleted='showCompleted'
       @update='updateIds'
     />
     <HeadingsRenderer v-else
       :tasks='tasks'
+      :showCompleted='showCompleted'
       :headings='upcomingHeadings'
     />
   </div>
@@ -33,33 +35,7 @@ export default {
   },
   data() {
     return {
-      options: [
-        {
-          name: 'Sort tasks',
-          icon: 'sort',
-          callback: () => [
-            {
-              name: 'Sort by name',
-              icon: 'sort-name',
-              callback: () => this.sortByName()
-            },
-            {
-              name: 'Sort by priority',
-              icon: 'priority',
-              callback: () => this.sortByPriority()
-            },
-            {
-              name: 'Sort by date',
-              icon: 'calendar',
-              callback: () => this.sortByDate(),
-            }
-          ],
-        },
-        {
-          name: 'Show completed',
-          icon: 'completed',
-        }
-      ],
+      showCompleted: false,
     }
   },
   methods: {
@@ -87,6 +63,9 @@ export default {
       tasks = utilsTask.sortTasksByDate(tasks)
       this.updateIds(tasks.map(el => el.id)) */
     },
+    toggleCompleted() {
+      this.showCompleted = !this.showCompleted
+    },
   },
   computed: {
     ...mapState({
@@ -94,6 +73,38 @@ export default {
       viewOrders: state => state.list.viewOrders,
     }),
     ...mapGetters(['platform']),
+    options() {
+      const opt = [
+        {
+          name: 'Sort tasks',
+          icon: 'sort',
+          callback: () => [
+            {
+              name: 'Sort by name',
+              icon: 'sort-name',
+              callback: () => this.sortByName()
+            },
+            {
+              name: 'Sort by priority',
+              icon: 'priority',
+              callback: () => this.sortByPriority()
+            },
+            {
+              name: 'Sort by date',
+              icon: 'calendar',
+              callback: () => this.sortByDate(),
+            }
+          ],
+        },
+        {
+          name: 'Show completed',
+          icon: 'completed',
+          callback: () => this.toggleCompleted()
+        }
+      ]
+      if (this.showCompleted) opt[1].name = 'Hide completed'
+      return opt
+    },
     upcomingHeadings() {
       const arr = []
       const tod = mom()
@@ -121,10 +132,8 @@ export default {
   
                 specific: date,
                 weekly: null,
-                periodic: {
-                  interval: null,
-                  lastCompleteDate: null
-                }
+                lastCompleteDate: null,
+                periodic: null
               }
             })
           },

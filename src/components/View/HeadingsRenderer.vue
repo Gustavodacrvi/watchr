@@ -1,15 +1,21 @@
 <template>
   <div class="HeadingsRenderer">
-    <template v-for="h in headings">
-      <HeadingApp v-if="getTasks(tasks, h).length > 0" :key="h.id"
-        :name='h.name'
-      >
-        <TaskRenderer
-          :tasks='getTasks(tasks, h)'
-          :onAdd='h.onAdd'
-        />
-      </HeadingApp>
-    </template>
+    <transition-group
+      @leave='leave'
+      @enter='enter'
+    >
+      <template v-for="h in headings">
+        <HeadingApp v-if="getTasks(tasks, h).length > 0" :key="h.id"
+          :name='h.name'
+        >
+          <TaskRenderer
+            :tasks='getTasks(tasks, h)'
+            :showCompleted='showCompleted'
+            :onAdd='h.onAdd'
+          />
+        </HeadingApp>
+      </template>
+    </transition-group>
   </div>
 </template>
 
@@ -24,12 +30,32 @@ const lastHeading = {
 }
 
 export default {
-  props: ['headings', 'tasks'],
+  props: ['headings', 'tasks', 'showCompleted'],
   components: {
     HeadingApp: HeadingVue,
     TaskRenderer: TaskRendererVue,
   },
   methods: {
+    leave(el) {
+      const header = el.getElementsByClassName('header-wrapper')[0]
+      const s = header.style      
+      s.transitionDuration = '0s'
+      s.height = '45px'
+      setTimeout(() => {
+        s.transitionDuration = '.3s'
+        s.height = '0px'
+      })
+    },
+    enter(el) {
+      const header = el.getElementsByClassName('header-wrapper')[0]
+      const s = header.style
+      s.transitionDuration = '0s'
+      s.height = '0px'
+      setTimeout(() => {
+        s.transitionDuration = '.3s'
+        s.height = '45px'
+      })
+    },
     getTasks(tasks, h) {
       if (h.id === lastHeading.id) return lastHeading.tasks
       lastHeading.tasks = h.filter(tasks, h)

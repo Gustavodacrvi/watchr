@@ -133,7 +133,7 @@ export default {
     },
     hide() {
       this.showing = false
-      setTimeout(() => this.links = this.options, 400)
+      setTimeout(() => this.links = this.options)
     },
     leave(el) {
       el.style.width = 0
@@ -163,6 +163,11 @@ export default {
       if (this.allowSearch && this.links)
         return this.links.filter(el => el.name.toLowerCase().includes(this.search.toLowerCase()))
       return this.links
+    }
+  },
+  watch: {
+    options() {
+      this.links = this.options
     }
   }
 }

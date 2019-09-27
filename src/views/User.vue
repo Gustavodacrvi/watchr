@@ -165,7 +165,7 @@ export default {
 }
 
 .User.mobile {
-  margin: 30px 0;
+  margin: 0;
 }
 
 .nav {

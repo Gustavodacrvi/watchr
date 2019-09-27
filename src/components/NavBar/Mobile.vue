@@ -52,6 +52,7 @@ export default {
 .IconDrop {
   position: absolute;
   right: 6px;
+  transform: translateY(11px);
 }
 
 .central {

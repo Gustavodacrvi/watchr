@@ -64,6 +64,20 @@ export default {
 
       return batch.commit()
     },
+    completeTasks(c, {ids, calendar}) {
+      const batch = fire.batch()
+
+      for (const id of ids) {
+        const ref = fire.collection('tasks').doc(id)
+        batch.update(ref, {
+          completeDate: new Date(),
+          completed: true,
+          calendar,
+        })
+      }
+      
+      return batch.commit()
+    },
     saveTask(c, obj) {
       return fire.collection('tasks').doc(obj.id).update({
         ...obj,

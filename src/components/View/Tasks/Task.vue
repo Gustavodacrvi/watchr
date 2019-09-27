@@ -1,10 +1,10 @@
 <template>
-  <div class="Task draggable" :class="{fade: done, isSelected}">
+  <div class="Task draggable" :class="{fade: completed, isSelected, hideTask: completed && !showCompleted}">
     <transition name="edit-t" mode="out-in">
       <div v-if="!isEditing" key="notediting" class="cont-wrapper handle rb" @click="click" @dblclick="dblclick">
         <div class="cont">
-          <div class="check" @click="completeTask">
-            <Icon v-if="!isCompleted" class="icon"
+          <div class="check" @click.stop="completeTask">
+            <Icon v-if="!completed" class="icon"
               icon="circle"
               :color='circleColor'
               :primaryHover="true"
@@ -41,21 +41,32 @@ import EditVue from './Edit.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
+import utilsTask from '@/utils/task'
+
+import mom from 'moment'
+
 export default {
-  props: ['task', 'isSelected'],
+  props: ['task', 'isSelected', 'showCompleted'],
   components: {
     Icon: IconVue,
     Edit: EditVue,
   },
   data() {
     return {
-      done: false,
       isEditing: false,
     }
   },
   methods: {
     completeTask() {
-      this.done = !this.done
+      const calendar = this.task.calendar
+      if (calendar) {
+        const {nextEventAfterCompletion} = utilsTask.taskData(this.task, mom())
+        calendar.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
+      }
+      this.$store.dispatch('task/completeTasks', {
+        calendar,
+        ids: [this.task.id],
+      })
     },
     selectTask() {
       this.$emit('select', this.task.id)
@@ -84,8 +95,8 @@ export default {
   computed: {
     ...mapState(['isOnControl']),
     ...mapGetters(['isDesktop']),
-    isCompleted() {
-      return this.done
+    completed() {
+      return utilsTask.filterTasksByCompletion([this.task]).length === 1
     },
     circleColor() {
       if (!this.task.priority) return ''
@@ -203,6 +214,10 @@ export default {
   opacity: 1;
   transform: scale(1,1);
   transition: opacity .1s ease-in, transform .1s ease-in;
+}
+
+.hideTask {
+  display: none;
 }
 
 </style>

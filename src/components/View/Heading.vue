@@ -14,8 +14,8 @@
       </div>
     </div>
     <transition name="fade">
-      <div v-if="showing" class="cont">
-          <slot v-if="showing"></slot>
+      <div v-show="showing" class="cont">
+          <slot></slot>
       </div>
     </transition>
   </div>

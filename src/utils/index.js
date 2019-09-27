@@ -1,20 +1,6 @@
 import mom from "moment"
 import moment from "./moment"
 
-/*
-  time: null,
-  defer: null,
-  due: null
-  type: 'specific', 'periódico',
-  editDate: mom().format('Y-M-D'),
-  specific: m.format('Y-M-D'),
-  weekly: null,
-  periodic: {
-    interval: null,
-    lastCompleteDate: null
-  }
-*/
-
 export default {
   getDataFromFirestoreSnapshot(state, changes, arrName) {
     for (const change of changes)
@@ -202,18 +188,14 @@ export default {
         if (se === 'day') {
           return {
             type: 'periodic',
-            periodic: {
-              interval: 1,
-              lastCompleteDate: null,
-            },
+            lastCompleteDate: null,
+            periodic: 1,
           }
         } else if (!isNaN(parsed)) {
           return {
             type: 'periodic',
-            periodic: {
-              interval: parsed,
-              lastCompleteDate: null,
-            }
+            lastCompleteDate: null,
+            periodic: parsed,
           }
         } else {
           const weeks = []
@@ -245,11 +227,8 @@ export default {
       editDate: mom().format('Y-M-D'),
 
       specific: null,
-      weekly: null,
-      periodic: {
-        interval: null,
-        lastCompleteDate: null
-      }
+      lastCompleteDate: null,
+      periodic: null
     }
     let str = getDateString()
     const tod = mom()
@@ -331,9 +310,9 @@ export default {
         break
       }
       case 'periodic': {
-        if (obj.periodic.interval === 1)
+        if (obj.periodic === 1)
           str = `Every day`
-        else str = `Every ${obj.periodic.interval} days`
+        else str = `Every ${obj.periodic} days`
         break
       }
       case 'weekly': {

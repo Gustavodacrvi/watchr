@@ -9,6 +9,7 @@
         :task='t'
         :isSelecting='isSelecting'
         :isSelected='isTaskSelected(t.id)'
+        :showCompleted='showCompleted'
         @select='taskSelect'
 
         :data-id='t.id'
@@ -26,7 +27,7 @@ import { mapState } from 'vuex'
 import Sortable from 'sortablejs'
 
 export default {
-  props: ['tasks', 'onAdd'],
+  props: ['tasks', 'onAdd', 'showCompleted'],
   components: {
     Task: TaskVue,
   },
@@ -59,6 +60,7 @@ export default {
       const ids = []
       for (const el of childs)
         ids.push(el.dataset.id)
+      console.log(ids)
       return ids
     },
     enter(el) {
