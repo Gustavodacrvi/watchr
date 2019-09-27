@@ -26,7 +26,7 @@ import { mapState } from 'vuex'
 import Sortable from 'sortablejs'
 
 export default {
-  props: ['tasks'],
+  props: ['tasks', 'onAdd'],
   components: {
     Task: TaskVue,
   },
@@ -42,6 +42,10 @@ export default {
           const ids = this.getIds()
           this.$emit('update', ids)
         }, 100)
+      },
+      onAdd: (evt) => {
+        evt.item.style.display = 'none'
+        this.onAdd(evt)
       }
     })
     window.addEventListener('click', this.windowClick)

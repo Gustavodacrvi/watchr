@@ -108,6 +108,26 @@ export default {
             }), mom(date, 'Y-M-D'))
           },
           id: date,
+          onAdd: (evt) => {
+            this.$store.dispatch('task/saveTask', {
+              id: evt.item.dataset.id,
+              calendar: {
+                defer: null,
+                due: null,
+  
+                type: 'specific',
+                time: null,
+                editDate: mom().format('Y-M-D'),
+  
+                specific: date,
+                weekly: null,
+                periodic: {
+                  interval: null,
+                  lastCompleteDate: null
+                }
+              }
+            })
+          },
         })
       }
       return arr

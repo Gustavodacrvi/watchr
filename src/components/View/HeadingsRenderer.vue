@@ -6,6 +6,7 @@
       >
         <TaskRenderer
           :tasks='getTasks(tasks, h)'
+          :onAdd='h.onAdd'
         />
       </HeadingApp>
     </template>
