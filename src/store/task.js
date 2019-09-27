@@ -57,12 +57,17 @@ export default {
 
       if (obj.listId) {
         const listRef = fire.collection('lists').doc(obj.listId)
-        batch.update(ref, {
-          tasks: fire.FieldValue.arrayUnion(obj.id),
+        batch.update(listRef, {
+          tasks: fire.FieldValue.arrayUnion(ref.id),
         })
       }
 
-      batch.commit()
+      return batch.commit()
+    },
+    saveTask(c, obj) {
+      return fire.collection('tasks').doc(obj.id).update({
+        ...obj,
+      })
     },
   },
 }

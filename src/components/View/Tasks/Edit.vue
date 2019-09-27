@@ -33,10 +33,14 @@
       :options="options"
       :placeholder="placeholder"
       @select="select"
+      @enter='save'
     />
     <div class="options">
-      <div class="button">
-        <ButtonApp value="Add task" @click="save"/>
+      <div class="button-wrapper">
+        <div class="button">
+          <ButtonApp :value="buttonText" @click="save"/>
+        </div>
+        <span v-if="showCancel" class="cancel cursor" @click="$emit('cancel')">Cancel</span>
       </div>
       <div class="icons">
         <IconDrop
@@ -79,13 +83,13 @@ import { mapState } from 'vuex'
 import utils from '@/utils/'
 
 export default {
+  props: ['placeholder', 'task', 'showCancel', 'btnText'],
   components: {
     DropInput: DropInputVue,
     ButtonApp: ButtonVue,
     IconDrop: IconDropVue,
     Tag: TagVue,
   },
-  props: ['placeholder'],
   data() {
     return {
       name: '',
@@ -95,6 +99,16 @@ export default {
       tags: [],
       optionsType: '',
       options: [],
+    }
+  },
+  created() {
+    if (this.task) {
+      const t = this.task
+      this.name = t.name
+      this.priority = t.priority
+      this.calendar = t.calendar
+      this.list = this.listName
+      this.tags = this.getTagNames
     }
   },
   methods: {
@@ -135,10 +149,24 @@ export default {
       savedTags: state => state.tag.tags,
       savedLists: state => state.list.lists,
     }),
+    listName() {
+      if (this.task.list)
+        return this.$store.getters['list/getListsById']([this.task.list])[0].name
+      return ''
+    },
     listId() {
       if (this.list)
-        return this.$store.getters['list/getListsByName']([this.name]).map(el => el.id)
+        return this.$store.getters['list/getListsByName']([this.list]).map(el => el.id)[0]
       return null
+    },
+    getTagNames() {
+      const tags = this.savedTags
+      const names = []
+      for (const id of this.task.tags) {
+        const tag = tags.find(el => el.id === id)
+        if (tag) names.push(tag.name)
+      }
+      return names
     },
     tagIds() {
       return this.$store.getters['tag/getTagsByName'](this.tags).map(el => el.id)
@@ -197,6 +225,10 @@ export default {
       }
       return arr
     },
+    buttonText() {
+      if (this.btnText) return this.btnText
+      return 'Add task'
+    }
   },
   watch: {
     name() {
@@ -281,7 +313,25 @@ export default {
 
 <style>
 
+.Edit {
+  outline: none;
+}
+
+.cancel {
+  color: var(--red);
+  margin-left: 6px;
+}
+
+.cancel:hover {
+  text-decoration: underline;
+}
+
+.button-wrapper {
+  width: 200px;
+}
+
 .button {
+  display: inline-block;
   width: 100px;
 }
 

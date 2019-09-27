@@ -1,43 +1,56 @@
 <template>
   <div class="Task draggable" :class="{fade: done, isSelected}">
-    <div class="cont-wrapper handle rb" @click="click" @dblclick="dblclick">
-      <div class="cont">
-        <div class="check" @click="completeTask">
-          <Icon v-if="!isCompleted" class="icon"
-            icon="circle"
-            :color='circleColor'
-            :primaryHover="true"
-          />
-          <Icon v-else class="icon"
-            icon="circle-check"
-            :color='circleColor'
-            :primaryHover="true"
-          />
-        </div>
-        <div class="text">
-          {{ task.name }}
-        </div>
-        <div class="icon-drop">
-          
+    <transition name="edit-t" mode="out-in">
+      <div v-if="!isEditing" key="notediting" class="cont-wrapper handle rb" @click="click" @dblclick="dblclick">
+        <div class="cont">
+          <div class="check" @click="completeTask">
+            <Icon v-if="!isCompleted" class="icon"
+              icon="circle"
+              :color='circleColor'
+              :primaryHover="true"
+            />
+            <Icon v-else class="icon"
+              icon="circle-check"
+              :color='circleColor'
+              :primaryHover="true"
+            />
+          </div>
+          <div class="text">
+            {{ task.name }}
+          </div>
+          <div class="icon-drop">
+          </div>
         </div>
       </div>
-    </div>
+      <Edit v-else key="editing" class="handle"
+        placeholder="Task name..."
+        btnText="Save task"
+        :task='task'
+        :showCancel='true'
+        @cancel='isEditing = false'
+        @save='saveTask'
+      />
+    </transition>
   </div>
 </template>
 
 <script>
 
 import IconVue from '../../Icon.vue'
+import EditVue from './Edit.vue'
+
 import { mapState, mapGetters } from 'vuex'
 
 export default {
   props: ['task', 'isSelected'],
   components: {
     Icon: IconVue,
+    Edit: EditVue,
   },
   data() {
     return {
       done: false,
+      isEditing: false,
     }
   },
   methods: {
@@ -51,16 +64,22 @@ export default {
       if (this.isDesktop && this.isOnControl) {
         this.selectTask()
       } else if (this.isDesktop) {
-        // edit task
+        this.isEditing = true
       } else if (!this.isSelecting) {
         this.selectTask()
       }
     },
     dblclick() {
-      if (!this.isDesktop) {
-        // edit task
-      }
-    }
+      if (!this.isDesktop)
+        this.isEditing = true
+    },
+    saveTask(obj) {
+      this.$store.dispatch('task/saveTask', {
+        id: this.task.id,
+        ...obj,
+      })
+      this.isEditing = false
+    },
   },
   computed: {
     ...mapState(['isOnControl']),
@@ -87,12 +106,12 @@ export default {
 .Task {
   position: relative;
   height: auto;
-  cursor: pointer;
   user-select: none;
   transition: opacity .3s;
 }
 
 .cont-wrapper {
+  cursor: pointer;
   height: 38px;
   transition: height .3s, background-color .2s;
 }
@@ -160,7 +179,7 @@ export default {
 }
 
 .draggable-mirror {
-  background-color: var(--light-gray) !important;
+  background-color: var(--light-gray);
   border-radius: 6px;
 }
 
@@ -172,6 +191,18 @@ export default {
   background-color: var(--void) !important;
   transition-duration: 0 !important;
   transition: none !important;
+}
+
+.edit-t-enter, .edit-t-leave-to {
+  opacity: 0;
+  transform: scale(.95,.95);
+  transition: opacity .1s ease-out, transform .1s ease-out;
+}
+
+.edit-t-leave, .edit-t-enter-to {
+  opacity: 1;
+  transform: scale(1,1);
+  transition: opacity .1s ease-in, transform .1s ease-in;
 }
 
 </style>

@@ -121,7 +121,7 @@ export default {
         if (this.active) {
           this.$emit('select', this.active)
           this.active = ''
-        }
+        } else this.$emit('enter')
         event.preventDefault()
       }
     },

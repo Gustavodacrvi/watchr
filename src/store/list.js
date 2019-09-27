@@ -31,6 +31,14 @@ export default {
       }
       return arr
     },
+    getListsById: state => ids => {
+      const arr = []
+      for (const id of ids) {
+        const list = state.lists.find(el => el.id === id)
+        if (list) arr.push(list)
+      }
+      return arr
+    },
   },
   actions: {
     getData({state}) {
