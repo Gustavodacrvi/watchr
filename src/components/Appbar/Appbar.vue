@@ -236,7 +236,7 @@ export default {
 }
 
 .arrow {
-  position: absolute;
+  position: fixed;
   left: 60px;
   bottom: 10px;
   transition: color .2s, transform .4s, left .4s;

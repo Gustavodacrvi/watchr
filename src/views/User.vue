@@ -7,7 +7,7 @@
         @appbar="toggleAppbar"
         @section="v => section = v"
       />
-      <IconDrop v-if="getSectionOptions"
+      <IconDrop v-if="getSectionOptions && !appbarHided"
         class="drop right"
         handle='settings-h'
         handleColor='var(--gray)'
@@ -19,6 +19,7 @@
         :smart="isSmart"
         :view-type="viewType"
         :value="value"
+        :headingsRenderer='isHeadingsRendererType'
       />
     </div>
   </div>
@@ -134,7 +135,10 @@ export default {
           callback: () => dispatch('list/sortFiltersByName'),
         }
       ]
-    }
+    },
+    isHeadingsRendererType() {
+      return this.value === 'Upcoming'
+    },
   },
   watch: {
     $route() {
@@ -155,7 +159,7 @@ export default {
 }
 
 .drop {
-  position: absolute;
+  position: fixed;
   bottom: 10px;
   left: 323px;
 }

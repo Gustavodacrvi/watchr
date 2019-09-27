@@ -14,18 +14,12 @@
         :data-id='t.id'
       />
     </transition-group>
-    <HeadingApp
-      name="I am a freaking heading"
-    >
-      freaking testaçsldjkf 
-    </HeadingApp>
   </div>
 </template>
 
 <script>
 
 import TaskVue from './Tasks/Task.vue'
-import HeadingVue from './Heading.vue'
 
 import { Sortable } from '@shopify/draggable'
 import { mapState } from 'vuex'
@@ -34,7 +28,6 @@ export default {
   props: ['tasks'],
   components: {
     Task: TaskVue,
-    HeadingApp: HeadingVue,
   },
   mounted() {
     this.sortable = new Sortable(this.draggableRoot, {

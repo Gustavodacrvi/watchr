@@ -11,7 +11,7 @@
         :options='options'
         @select="select"
       />
-      <ButtonApp :value="btn" @click="addTag"/>
+      <ButtonApp :value="btn" @click="addList"/>
     </div>
   </div>
 </template>
@@ -54,16 +54,31 @@ export default {
     btn() {
       if (!this.isEditing) return 'Add list'
       return 'Edit list'
+    },
+    isSmartList() {
+      const lists = [
+        'Today',
+        'Upcoming',
+        'Tomorrow',
+        'Inbox'
+      ]
+      return lists.includes(this.name)
     }
   },
   methods: {
-    addTag() {
+    addList() {
       const toast = (toast) => {
         this.$store.commit('pushToast', toast)
       }
       if (this.name) {
         const list = this.lists.find(el => el.name === this.name)
-        if (!list && !this.isEditing) {
+        if (this.isSmartList)
+          toast({
+            name: `<strong>${this.name}</strong> is a special list type.`,
+            type: 'error',
+            seconds: 4,
+          })
+        else if (!list && !this.isEditing) {
           this.$store.dispatch('list/addList', {
             name: this.name,
           })

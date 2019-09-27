@@ -51,7 +51,7 @@ export default {
 <style scoped>
 
 .Heading {
-  margin: 16px 0;
+  margin: 24px 0;
   position: relative;
 }
 

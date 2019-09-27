@@ -310,24 +310,24 @@ export default {
     }
     return obj
   },
+  getHumanReadableDate(str) {
+    const tod = mom()
+    const sameDay = (mom1, mom2) => {
+      return mom1.isSame(mom2, 'day')
+    }
+    
+    let date = mom(str, 'Y-M-D', true)
+    if (sameDay(tod, date)) return 'Today'
+    if (sameDay(mom().add(1, 'day'), date)) return 'Tomorrow'
+    if (!tod.isSame(date, 'year')) return date.format('MMM Do, ddd, Y')
+    if (!tod.isSame(date, 'month')) return date.format('MMM Do, ddd')
+    return date.format('Do, ddd')
+  },
   parseCalendarObjectToString(obj) {
     let str = ''
-    const getHumanDate = (str) => {
-      const tod = mom()
-      const sameDay = (mom1, mom2) => {
-        return mom1.isSame(mom2, 'day')
-      }
-      
-      let date = mom(str, 'Y-M-D', true)
-      if (sameDay(tod, date)) return 'Today'
-      if (sameDay(mom().add(1, 'day'), date)) return 'Tomorrow'
-      if (!tod.isSame(date, 'year')) return date.format('MMM Do, ddd, Y')
-      if (!tod.isSame(date, 'month')) return date.format('MMM Do, ddd')
-      return date.format('Do, ddd')
-    }
     switch (obj.type) {
       case 'specific': {
-        str += getHumanDate(obj.specific)
+        str += this.getHumanReadableDate(obj.specific)
         break
       }
       case 'periodic': {
@@ -348,11 +348,11 @@ export default {
     }
     if (obj.defer) {
       if (str !== '') str += ', '
-      str += 'Defer ' + getHumanDate(obj.defer)
+      str += 'Defer ' + this.getHumanReadableDate(obj.defer)
     }
     if (obj.due) {
       if (str !== '') str += ', '
-      str += 'Due ' + getHumanDate(obj.due)
+      str += 'Due ' + this.getHumanReadableDate(obj.due)
     }
     
     return str

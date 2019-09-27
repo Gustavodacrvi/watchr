@@ -1,9 +1,13 @@
 <template>
   <div class="TaskView" :class="platform">
     <Header :smart="smart" :value="value" :options="options"/>
-    <TaskRenderer
+    <TaskRenderer v-if="!headingsRenderer"
       :tasks='getTasks'
       @update='updateIds'
+    />
+    <HeadingsRenderer v-else
+      :tasks='tasks'
+      :headings='upcomingHeadings'
     />
   </div>
 </template>
@@ -12,17 +16,20 @@
 
 import HeaderVue from './Header.vue'
 import TaskRendererVue from './TaskRenderer.vue'
+import HeadingsRendererVue from './HeadingsRenderer.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
 import utilsTask from '@/utils/task'
-import utils from '@/utils/'
+import utils from '@/utils/index.js'
+import mom from 'moment'
 
 export default {
-  props: ['smart', 'viewType', 'value'],
+  props: ['smart', 'viewType', 'value', 'headingsRenderer'],
   components: {
     Header: HeaderVue,
-    TaskRenderer: TaskRendererVue
+    TaskRenderer: TaskRendererVue,
+    HeadingsRenderer: HeadingsRendererVue
   },
   data() {
     return {
@@ -87,6 +94,24 @@ export default {
       viewOrders: state => state.list.viewOrders,
     }),
     ...mapGetters(['platform']),
+    upcomingHeadings() {
+      const arr = []
+      const tod = mom()
+      for (let i = 0;i < 31;i++) {
+        tod.add(1, 'day')
+        const date = tod.format('Y-M-D')
+        arr.push({
+          name: utils.getHumanReadableDate(date),
+          filter: (tasks) => {
+            return utilsTask.filterTasksByDay(tasks.filter(el => {
+              return el.calendar && el.calendar.type === 'specific'
+            }), mom(date, 'Y-M-D'))
+          },
+          id: date,
+        })
+      }
+      return arr
+    },
     getTaskOrder() {
       if (this.smart) {
         return this.viewOrders[this.value]
