@@ -2,9 +2,8 @@
 import { fire, auth } from './index'
 import utils from '../utils'
 
-const uid = () => {
-  return auth.currentUser.uid
-}
+const uid = () => auth.currentUser.uid
+const fd = () => fb.firestore.FieldValue
 
 export default {
   namespaced: true,
@@ -93,6 +92,25 @@ export default {
     },
     deleteList(c, id) {
       return fire.collection('lists').doc(id).delete()
+    },
+    addTaskByIndexSmart({ getters }, {ids, index, task, list}) {
+      const batch = fire.batch()
+
+      const taskRef = fire.collection('tasks').doc()
+      batch.set(taskRef, {
+        userId: uid(),
+        ...task,
+      })
+
+      ids.splice(index, 0, taskRef.id)
+
+      const obj = {}
+      obj[list] = ids
+
+      const listRef = fire.collection('viewOrders').doc(uid())
+      batch.update(listRef, obj)
+
+      return batch.commit()
     },
     addDefaultData(c, id) {
       return Promise.all([

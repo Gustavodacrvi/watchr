@@ -1,6 +1,6 @@
 <template>
   <div class="TaskRenderer" @click.stop>
-    <transition-group name="task-trans" class="root"
+    <transition-group name="task-trans" class="task-renderer-root"
       @enter='enter'
       @leave='leave'
       tag="div"
@@ -21,33 +21,66 @@
 
 <script>
 
+import Vue from 'vue'
+
 import TaskVue from './Tasks/Task.vue'
+import TaskEditTemplate from './Tasks/Edit.vue'
 
 import { mapState } from 'vuex'
 
 import Sortable from 'sortablejs'
 
 export default {
-  props: ['tasks', 'onAdd', 'showCompleted', 'view'],
+  props: ['tasks', 'onAdd', 'showCompleted', 'view', 'addTask'],
   components: {
     Task: TaskVue,
   },
+  data() {
+    return {
+      addedTask: false,
+    }
+  },
   mounted() {
     this.sortable = new Sortable(this.draggableRoot, {
-      group: 'task-renderer',
+      group: {name: 'task-renderer', pull: false, put: ['action-buttons']},
       delay: 150,
       delayOnTouchOnly: true,
       handle: '.handle',
 
       onUpdate: (evt) => {
         setTimeout(() => {
-          const ids = this.getIds()
-          this.$emit('update', ids)
+          this.$emit('update', this.getIds(true))
         }, 100)
       },
       onAdd: (evt) => {
-        evt.item.style.display = 'none'
-        this.onAdd(evt)
+        const item = evt.item
+        const type = item.dataset.type
+        if (type !== 'addtask')
+          item.style.display = 'none'
+        if (this.onAdd)
+          this.onAdd(evt, item, type)
+        if (type === 'addtask') {
+          const Constructor = Vue.extend(TaskEditTemplate)
+          const instance = new Constructor({
+            parent: this,
+            propsData: {
+              class: 'handle', key: 'Edit',
+              placeholder: 'Task name', showCancel: true, btnText: 'Add task'
+            },
+          })
+          const el = this.$el.querySelector('.action-button')
+          el.setAttribute('id', 'main-button-task')
+          instance.$mount('#main-button-task')
+          this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
+          instance.$on('save', (obj) => this.add(obj, evt))
+          instance.$on('goup', () => this.moveTaskRenderer('up'))
+          instance.$on('godown', () => this.moveTaskRenderer('down'))
+          instance.$on('cancel', () => {
+            instance.$destroy()
+            const $el = instance.$el
+            $el.parentNode.removeChild($el)
+          })
+        }
       }
     })
     window.addEventListener('click', this.windowClick)
@@ -56,11 +89,30 @@ export default {
     window.removeEventListener('click', this.windowClick)
   },
   methods: {
-    getIds() {
+    add(task) {
+      this.addTask({
+        task, ids: this.getIds(true),
+        index: this.getTaskRendererPosition(),
+      })
+      this.addedTask = true
+    },
+    getTaskRendererPosition() {
+      const ids = this.getIds()
+      for (let i = 0;i < ids.length;i++) {
+        if (ids[i] === 'Edit')
+          return i
+      }
+    },
+    moveTaskRenderer(dire) {
+      console.log('moveTaskRenderer', dire)
+    },
+    getIds(removeAdders) {
       const childs = this.draggableRoot.childNodes
-      const ids = []
+      let ids = []
       for (const el of childs)
         ids.push(el.dataset.id)
+      if (removeAdders)
+        ids = ids.filter(id => id !== 'Edit')
       return ids
     },
     enter(el) {
@@ -96,10 +148,25 @@ export default {
       selected: state => state.selectedTasks,
     }),
     draggableRoot() {
-      return this.$el.getElementsByClassName('root')[0]
+      return this.$el.getElementsByClassName('task-renderer-root')[0]
     },
     isSelecting() {
       return this.selected.length > 0
+    }
+  },
+  watch: {
+    tasks() {
+      if (this.addedTask) {
+        setTimeout(() => {
+          const i = this.getTaskRendererPosition()
+          const childNodes = this.draggableRoot.childNodes
+          const adder = childNodes[i]
+          const newTask = childNodes[i + 1]
+          if (newTask)
+            this.draggableRoot.insertBefore(newTask, adder)
+        })
+      }
+      this.addedTask = false
     }
   }
 }
@@ -120,7 +187,7 @@ export default {
   opacity: 1;
 }
 
-.root {
+.task-renderer-root {
   outline: none;
 }
 

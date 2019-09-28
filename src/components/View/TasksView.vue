@@ -16,6 +16,7 @@
         :tasks='getTasks'
         :showCompleted='showCompleted'
         :view='value'
+        :addTask='addTask'
         @update='updateIds'
       />
       <HeadingsRenderer v-else
@@ -25,7 +26,7 @@
         :headings='upcomingHeadings'
       />
     </div>
-    <ActionButtons/>
+    <ActionButtons :showHeader='showHeader'/>
   </div>
 </template>
 
@@ -121,6 +122,12 @@ export default {
         tagIds: [id],
       })
     },
+    addTask(obj, evt) {
+      if (this.smart)
+        this.$store.dispatch('list/addTaskByIndexSmart', {
+          ...obj, list: this.value,
+        })
+    },
   },
   computed: {
     ...mapState({
@@ -134,6 +141,9 @@ export default {
       isDesktop: 'isDesktop',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
+    showHeader() {
+      return this.viewType === 'list' && !this.smart
+    },
     sliceNumber() {
       return this.isDesktop ? 8 : 4
     },

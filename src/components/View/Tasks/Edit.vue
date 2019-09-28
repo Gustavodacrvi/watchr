@@ -1,5 +1,5 @@
 <template>
-  <div class="Edit">
+  <div class="Edit handle">
     <div class="tags">
       <Tag v-if="calendarStr"
         icon="calendar"

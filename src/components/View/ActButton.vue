@@ -1,10 +1,17 @@
 <template>
-  <div class="ActButton cb handle" @mouseenter="hover = true" @mouseleave="hover = false" @mousedown="mouseDown = true" @mouseup="mouseDown = false">
-    <Icon class="icon"
-      :icon="icon"
-      :color="color"
-    />
-    <div class="path" :class="{showingPath}" :style="pathStyle"></div>
+  <div class="ActButton handle">
+    <div class="floating">
+      <div class="button cb">
+        <Icon class="icon"
+          :icon="icon"
+          :color="color"
+        />
+        <div class="path"></div>
+      </div>
+    </div>
+    <div class="renderer">
+      {{ txt }}
+    </div>
   </div>
 </template>
 
@@ -13,52 +20,42 @@
 import IconVue from '../Icon.vue'
 
 export default {
-  props: ['icon', 'color'],
+  props: ['icon', 'color' ,'txt'],
   components: {
     Icon: IconVue,
   },
-  data() {
-    return {
-      hover: false,
-      mouseDown: false,
-    }
-  },
-  computed: {
-    showingPath() {
-      return this.hover
-    },
-    pathStyle() {
-      return {
-        backgroundColor: this.mouseDown ? 'var(--primary)' : 'var(--light-gray)',
-      }
-    },
-  }
 }
 
 </script>
 
-<style>
+<style scoped>
 
-.ActButton, .path {
-  transition-duration: .3s;
-}
-
-.ActButton {
-  border-radius: 100px;
-  cursor: pointer;
-  width: 45px;
-  height: 45px;
+.ActButton, .button {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-  overflow: hidden;
-  z-index: 10;
 }
 
-.ActButton:hover {
+.floating {
+  position: relative;
+  transform: scale(1,1);
+  transition-duration: .3s;
+}
+
+.floating:hover {
   transform: scale(1.1,1.1);
 }
+
+.button {
+  transition-duration: .3s;
+  width: 45px;
+  height: 45px;
+  z-index: 10;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 100px;
+}
+
 
 .path {
   position: absolute;
@@ -68,10 +65,16 @@ export default {
   height: 100%;
   clip-path: circle(0px);
   z-index: 10;
+  transition-duration: .3s;
+  background-color: var(--light-gray);
 }
 
-.showingPath {
-  clip-path: circle(100px);
+.button:hover .path {
+  clip-path: circle(50px);
+}
+
+.button:active .path {
+  background-color: var(--primary);
 }
 
 .icon {
