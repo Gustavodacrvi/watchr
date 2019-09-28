@@ -21,6 +21,7 @@
         :value="value"
         :headingsRenderer='isHeadingsRendererType'
       />
+      <ActionButtons/>
     </div>
   </div>
 </template>
@@ -30,6 +31,7 @@
 import AppbarVue from '../components/Appbar/Appbar.vue'
 import TasksViewVue from '../components/View/TasksView.vue'
 import IconDropVue from '../components/IconDrop.vue'
+import ActionButtonsVue from '../components/View/ActionButtons.vue'
 
 import { mapGetters } from 'vuex'
 
@@ -38,6 +40,7 @@ export default {
     Appbar: AppbarVue,
     IconDrop: IconDropVue,
     TasksView: TasksViewVue,
+    ActionButtons: ActionButtonsVue,
   },
   data() {
     return {
@@ -160,7 +163,7 @@ export default {
 
 .drop {
   position: fixed;
-  bottom: 10px;
+  bottom: 16px;
   left: 323px;
 }
 

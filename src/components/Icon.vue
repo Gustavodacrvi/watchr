@@ -39,6 +39,7 @@ import bloqued from '@/assets/icons/bloqued.svg'
 import arrowTiny from '@/assets/icons/arrow-tiny.svg'
 import circle from '@/assets/icons/circle.svg'
 import copy from '@/assets/icons/copy.svg'
+import plus from '@/assets/icons/plus.svg'
 import circleCheck from '@/assets/icons/circle-check.svg'
 
 export default {
@@ -49,7 +50,7 @@ export default {
         inbox, calendar, sun, arrow, star, user, out,
         sort, tag, completed, priority, menu, tasks,
         pen, trash, fire, filter, bloqued, circle,
-        copy,
+        copy, plus,
         "user-plus": userPlus,
         "circle-check": circleCheck,
         "settings-h": settingsH,

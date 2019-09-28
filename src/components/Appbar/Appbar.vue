@@ -238,7 +238,7 @@ export default {
 .arrow {
   position: fixed;
   left: 60px;
-  bottom: 10px;
+  bottom: 16px;
   transition: color .2s, transform .4s, left .4s;
   transform: rotate(90deg);
 }
@@ -246,7 +246,7 @@ export default {
 .drop {
   position: absolute;
   right: 0;
-  bottom: 10px;
+  bottom: 16px;
 }
 
 .arrow.hided {
