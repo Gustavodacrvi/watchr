@@ -9,7 +9,7 @@
       <div v-if="showing && !showCalendar" key="links" class="content shadow cb rb">
         <transition name="links-trans">
           <div v-if="showingLinks" class="links">
-            <div v-if="allowSearch" class="search">
+            <div v-if="showSearch" class="search">
               <input class="input"
                 v-model="search"
               >
@@ -76,6 +76,7 @@ export default {
       height: 0,
       calendarCallback: null,
       width: 0,
+      showSearch: this.allowSearch,
       search: '',
     }
   },
@@ -102,37 +103,43 @@ export default {
     },
     linkCallback(callback, link) {
       if (callback) {
-        const links = callback(link)
-        if (links.calendar && links.callback) {
+        let links = callback(link)
+        if (links && links.search) {
+          this.showSearch = true
+        }
+        if (links && Array.isArray(links.links))
+          links = links.links
+        if (links && links.calendar && links.callback) {
           this.showCalendar = true
           this.calendarCallback = links.callback
         } else if (links) {
           const cont = this.getContent()
-          
-          const s = getComputedStyle(cont)
-          const oldWidth = s.width
-          const oldHeight = s.height
-  
-          cont.style.transitionDelay = '.05s'
-          cont.style.transitionDuration = '0s'
-          setTimeout(() => {
-            cont.style.width = 'auto'
-            cont.style.height = 'auto'
+          if (cont) {
+            const s = getComputedStyle(cont)
+            const oldWidth = s.width
+            const oldHeight = s.height
+    
+            cont.style.transitionDelay = '.05s'
+            cont.style.transitionDuration = '0s'
             setTimeout(() => {
-              const {height, width} = getComputedStyle(cont)
-              cont.style.width = oldWidth
-              cont.style.height = oldHeight
+              cont.style.width = 'auto'
+              cont.style.height = 'auto'
               setTimeout(() => {
-                cont.style.transitionDuration = '.3s'
-                cont.style.width = width
-                cont.style.height = height
-                cont.style.transitionDelay = '.0s'
-              }, 50)
-            })
-          }, 300)
-  
-          this.toggleLinks()
-          this.links = links
+                const {height, width} = getComputedStyle(cont)
+                cont.style.width = oldWidth
+                cont.style.height = oldHeight
+                setTimeout(() => {
+                  cont.style.transitionDuration = '.3s'
+                  cont.style.width = width
+                  cont.style.height = height
+                  cont.style.transitionDelay = '.0s'
+                }, 50)
+              })
+            }, 300)
+    
+            this.toggleLinks()
+            this.links = links
+          }
         } else this.showing = false
       }
     },
@@ -155,8 +162,9 @@ export default {
       this.showing = false
       setTimeout(() => {
         this.links = this.options
+        this.showSearch = false
         this.showCalendar = false
-      }, 100)
+      }, 300)
     },
     leave(el) {
       el.style.width = 0
@@ -183,13 +191,14 @@ export default {
       return this.handleWidth ? this.handleWidth : ''
     },
     getLinks() {
-      if (this.allowSearch && this.links)
+      if (this.showSearch && this.links)
         return this.links.filter(el => el.name.toLowerCase().includes(this.search.toLowerCase()))
       return this.links
     }
   },
   watch: {
     options() {
+      this.linkCallback(() => this.options, {})
       this.links = this.options
     }
   }

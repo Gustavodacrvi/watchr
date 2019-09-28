@@ -74,14 +74,55 @@ export default {
         task: {calendar: date},
       })
     },
+    addTagToTasks(id) {
+      this.$store.dispatch('task/addTagsToTasksById', {
+        ids: this.selectedTasks,
+        tagIds: [id],
+      })
+    },
   },
   computed: {
     ...mapState({
       tasks: state => state.task.tasks,
+      savedTags: state => state.tag.tags,
+      savedLists: state => state.list.lists,
       viewOrders: state => state.list.viewOrders,
       selectedTasks: state => state.selectedTasks,
     }),
     ...mapGetters(['platform']),
+    getTags() {
+      const arr = []
+      for (const t of this.savedTags) {
+        arr.push({
+          name: t.name,
+          icon: 'tag',
+          callback: () => this.addTagToTasks(t.id),
+        })
+      }
+      return arr
+    },
+    getLists() {
+      const arr = []
+      for (const l of this.savedLists) {
+        arr.push({
+          name: l.name,
+          icon: 'tasks',
+          callback: () => {
+            this.$store.dispatch('task/saveTasksById', {
+              ids: this.selectedTasks,
+              task: {list: l.id},
+            })
+          },
+        })
+      }
+      return arr
+    },
+    removeLists() {
+      this.$store.dispatch('task/saveTasksById', {
+        ids: this.selectedTasks,
+        task: {list: ''},
+      })
+    },
     options() {
       const dispatch = this.$store.dispatch
       const ids = this.selectedTasks
@@ -156,6 +197,27 @@ export default {
             name: 'Change date',
             icon: 'calendar',
             callback: () => {return {calendar: true, callback: this.saveDates}}
+          },
+          {
+            name: 'Add tags',
+            icon: 'tag',
+            callback: () => {return {
+              search: true,
+              links: this.getTags,
+            }}
+          },
+          {
+            name: 'Add tasks to list',
+            icon: 'tasks',
+            callback: () => {return {
+              search: true,
+              links: this.getLists,
+            }}
+          },
+          {
+            name: 'Remove tasks from list',
+            icon: 'tasks',
+            callback: () => this.removeLists,
           },
           {
             name: 'Delete tasks',

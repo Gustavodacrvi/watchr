@@ -116,6 +116,12 @@ export default {
         priority: pri,
       })
     },
+    saveCalendarDate(date) {
+      this.$store.dispatch('task/saveTasksById', {
+        ids: [this.task.id],
+        task: {calendar: date},
+      })
+    },
     saveDate(date) {
       this.$store.dispatch('task/saveTask', {
         id: this.task.id,
@@ -200,6 +206,11 @@ export default {
               icon: 'sun',
               id: 'çljk',
               callback: () => this.saveDate(mom().add(1, 'day').format('Y-M-D')),
+            },
+            {
+              icon: 'calendar',
+              id: 'çljkasdf',
+              callback: () => {return {calendar: true, callback: this.saveCalendarDate}},
             },
           ]
         },

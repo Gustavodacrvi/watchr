@@ -1,8 +1,10 @@
 
 import { fire, auth } from './index'
 import utils from '../utils'
+import fb from 'firebase/app'
 
 const uid = () => auth.currentUser.uid
+const fd = () => fb.firestore.FieldValue
 
 export default {
   namespaced: true,
@@ -58,7 +60,7 @@ export default {
       if (obj.listId) {
         const listRef = fire.collection('lists').doc(obj.listId)
         batch.update(listRef, {
-          tasks: fire.FieldValue.arrayUnion(ref.id),
+          tasks: fd().arrayUnion(ref.id),
         })
       }
 
@@ -90,6 +92,18 @@ export default {
         const ref = fire.collection('tasks').doc(id)
         batch.update(ref, {
           ...task,
+        })
+      }
+
+      return batch.commit()
+    },
+    addTagsToTasksById(c, {ids, tagIds}) {
+      const batch = fire.batch()
+
+      for (const id of ids) {
+        const ref = fire.collection('tasks').doc(id)
+        batch.update(ref, {
+          tags: fd().arrayUnion(...tagIds),
         })
       }
 
