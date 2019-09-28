@@ -68,6 +68,12 @@ export default {
     toggleCompleted() {
       this.showCompleted = !this.showCompleted
     },
+    saveDates(date) {
+      this.$store.dispatch('task/saveTasksById', {
+        ids: this.selectedTasks,
+        task: {calendar: date},
+      })
+    },
   },
   computed: {
     ...mapState({
@@ -145,7 +151,17 @@ export default {
                 callback: () => savePri('High priority')
               }
             ]
-          }
+          },
+          {
+            name: 'Change date',
+            icon: 'calendar',
+            callback: () => {return {calendar: true, callback: this.saveDates}}
+          },
+          {
+            name: 'Delete tasks',
+            icon: 'trash',
+            callback: () => dispatch('task/deleteTasks', ids)
+          },
         ]
       }
     },

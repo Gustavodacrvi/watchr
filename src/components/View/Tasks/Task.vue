@@ -228,7 +228,9 @@ export default {
     },
     calendarStr() {
       if (!this.task.calendar) return null
-      return utils.parseCalendarObjectToString(this.task.calendar)
+      const str = utils.parseCalendarObjectToString(this.task.calendar)
+      if (str === this.view) return null
+      return str
     },
     circleColor() {
       if (!this.task.priority) return ''
@@ -316,7 +318,7 @@ export default {
 }
 
 .icon {
-  transform: translateY(1px);
+  transform: translateY(2px);
 }
 
 .text {

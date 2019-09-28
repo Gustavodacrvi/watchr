@@ -2,7 +2,7 @@
   <div class="IconDrop" @click.stop>
     <Icon class="cursor handle" :icon="handle" :primaryHover='true' @click="showing = true" :color="handleColor" :width="getHandleWidth"/>
     <transition name="drop-trans"
-      @beforeEnter="afterEnter"
+      @beforeEnter="beforeEnter"
       @enter="enter"
       @leave="leave"
     >
@@ -19,7 +19,7 @@
               @leave='leaveItems'
             >
               <template v-for="link in getLinks">
-                <div v-if="!link.type" class="link"
+                <div v-if="!link.type" class="link hide-trans"
                   :key="link.name"
                   @click="linkCallback(link.callback, link)"
                 >
@@ -32,7 +32,7 @@
                     <span class="name">{{ link.name }}</span>
                   </div>
                 </div>
-                <div v-else :key="link.name" class="header-link">
+                <div v-else :key="link.name" class="header-link hide-trans">
                   <div class="header-name">{{ link.name }}</div>
                   <div class="values">
                     <Icon v-for="l in link.options" :key="l.id" class="val icon cursor"
@@ -49,7 +49,7 @@
           </div>
         </transition>
       </div>
-      <div v-else-if="showing && calendar" class="content calendar shadow cb rb" key="calendar">
+      <div v-else-if="showing && showCalendar" class="content calendar shadow cb rb" key="calendar">
         <CalendarPicker @select="selectDate"/>
       </div>
     </transition>
@@ -74,6 +74,7 @@ export default {
       links: this.options,
       showCalendar: this.calendar,
       height: 0,
+      calendarCallback: null,
       width: 0,
       search: '',
     }
@@ -102,7 +103,10 @@ export default {
     linkCallback(callback, link) {
       if (callback) {
         const links = callback(link)
-        if (links) {
+        if (links.calendar && links.callback) {
+          this.showCalendar = true
+          this.calendarCallback = links.callback
+        } else if (links) {
           const cont = this.getContent()
           
           const s = getComputedStyle(cont)
@@ -133,11 +137,12 @@ export default {
       }
     },
     selectDate(date) {
+      if (this.calendarCallback)
+        this.calendarCallback(date)
       this.$emit('select', date)
       this.showing = false
     },
     toggleLinks() {
-      const links = this.$el.getElementsByClassName('links')[0]
       this.showingLinks = false
       setTimeout(() => {
         this.showingLinks = true
@@ -148,7 +153,10 @@ export default {
     },
     hide() {
       this.showing = false
-      setTimeout(() => this.links = this.options)
+      setTimeout(() => {
+        this.links = this.options
+        this.showCalendar = false
+      }, 100)
     },
     leave(el) {
       el.style.width = 0
@@ -165,7 +173,7 @@ export default {
         el.style.height = height
       })
     },
-    afterEnter(el) {
+    beforeEnter(el) {
       el.style.width = 'auto'
       el.style.height = 'auto'
     }
@@ -198,6 +206,7 @@ export default {
 .header-link {
   margin: 8px 26px;  
   width: 160px;
+  transition: opacity .3s;
 }
 
 .header-name {
@@ -278,21 +287,21 @@ export default {
   right: 0;
 }
 
-.drop-trans-enter-active .link {
+.drop-trans-enter-active .hide-trans {
   transition-duration: .5s;
   transition-delay: .25s;
 }
 
-.drop-trans-leave-active .link {
+.drop-trans-leave-active .hide-trans {
   transition-duration: .1s;
 }
 
-.drop-trans-enter .link, .drop-trans-leave-to .link {
-  opacity: 0;
+.drop-trans-enter .link, .drop-trans-leave-to .hide-trans {
+  opacity: 0 !important;
 }
 
-.drop-trans-leave .link, .drop-trans-enter-to .link {
-  opacity: 1;
+.drop-trans-leave .link, .drop-trans-enter-to .hide-trans {
+  opacity: 1 !important;
 }
 
 .link {

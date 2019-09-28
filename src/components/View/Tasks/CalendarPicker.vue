@@ -156,10 +156,8 @@ export default {
         editDate: mom().format('Y-M-D'),
         specific: m.format('Y-M-D'),
         weekly: null,
-        periodic: {
-          interval: null,
-          lastCompleteDate: null
-        }
+        lastCompleteDate: null,
+        periodic: null,
       }
       this.$emit('select', calendar)
     },

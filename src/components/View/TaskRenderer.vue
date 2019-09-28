@@ -61,7 +61,6 @@ export default {
       const ids = []
       for (const el of childs)
         ids.push(el.dataset.id)
-      console.log(ids)
       return ids
     },
     enter(el) {
