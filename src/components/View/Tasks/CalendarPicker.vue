@@ -262,7 +262,8 @@ export default {
 }
 
 .time {
-  height: 100%;
+  height: 350px;
+  width: 225px !important;
 }
 
 .time-selector {
@@ -301,6 +302,7 @@ export default {
 .time-wrapper {
   flex-basis: 50px;
   height: 50px;
+  width: 275px;
   transition-duration: .2s;
 }
 
@@ -333,7 +335,7 @@ export default {
 
 .cal-trans-enter-active, .cal-trans-leave-active {
   position: absolute;
-  width: 100%;
+  width: 275px;
 }
 
 .CalendarPicker {

@@ -1,6 +1,6 @@
 <template>
-  <div class="IconDrop" @click.stop>
-    <Icon class="cursor handle" :icon="handle" :primaryHover='true' @click="showing = true" :color="handleColor" :width="getHandleWidth"/>
+  <div class="IconDrop" :class="centralize ? 'central' : ''" @click.stop>
+    <Icon v-if="handle" class="cursor handle" :icon="handle" :primaryHover='true' @click="toggleIconDrop" :color="handleColor" :width="getHandleWidth"/>
     <transition name="drop-trans"
       @beforeEnter="beforeEnter"
       @enter="enter"
@@ -61,8 +61,10 @@
 import IconVue from './Icon.vue'
 import CalendarPickerVue from './View/Tasks/CalendarPicker.vue'
 
+import { mapGetters } from 'vuex'
+
 export default {
-  props: ['options', 'handle', 'handleColor', 'handleWidth', 'allowSearch', 'calendar'],
+  props: ['options', 'handle', 'handleColor', 'handleWidth', 'allowSearch', 'calendar', 'isMobileIconDropComp', 'centralize'],
   components: {
     Icon: IconVue,
     CalendarPicker: CalendarPickerVue,
@@ -80,13 +82,23 @@ export default {
       search: '',
     }
   },
-  created() {
+  mounted() {
+    if (!this.isDesktop && this.isMobileIconDropComp) this.showing = true
     window.addEventListener('click', this.hide)
   },
   beforeDestroy() {
     window.removeEventListener('click', this.hide)
   },
   methods: {
+    toggleIconDrop() {
+      if (this.isDesktop)
+        this.showing = true
+      else this.$store.commit('pushIconDrop', {
+        options: this.options,
+        allowSearch: this.allowSearch,
+        calendar: this.calendar,
+      })
+    },
     enterItems(el, done) {
       el.style.opacity = 0
       el.style.height = '0px'
@@ -162,8 +174,8 @@ export default {
       this.showing = false
       setTimeout(() => {
         this.links = this.options
-        this.showSearch = false
-        this.showCalendar = false
+        this.showSearch = this.allowSearch
+        this.showCalendar = this.calendar
       }, 300)
     },
     leave(el) {
@@ -187,6 +199,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['isDesktop']),
     getHandleWidth() {
       return this.handleWidth ? this.handleWidth : ''
     },
@@ -198,8 +211,10 @@ export default {
   },
   watch: {
     options() {
-      this.linkCallback(() => this.options, {})
-      this.links = this.options
+      if (!this.calendar) {
+        this.linkCallback(() => this.options, {})
+        this.links = this.options
+      }
     }
   }
 }
@@ -210,6 +225,10 @@ export default {
 
 .IconDrop {
   position: relative;
+}
+
+.central {
+  position: unset;
 }
 
 .header-link {
@@ -288,6 +307,12 @@ export default {
   overflow: hidden;
   transition-duration: .3s;
   z-index: 5;
+}
+
+.central .content {
+  right: 50%;
+  top: 50%;
+  transform: translate(50%, -50%);
 }
 
 .right .content {

@@ -31,10 +31,6 @@ export default {
     this.sortable = new Sortable(this.$el, {
       group: {name: 'action-buttons', pull: 'clone', put: false},
       handle: '.handle',
-
-      onUpdate: (evt) => {
-        console.log(evt)
-      },
     })
   },
   methods: {

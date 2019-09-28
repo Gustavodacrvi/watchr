@@ -7,6 +7,9 @@
     <transition name="popup">
       <Menu v-if="isMenuOpened && !isDesktop"/>
     </transition>
+    <transition>
+      <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
+    </transition>
 
     <div class="content">
       <NavBar/>
@@ -21,6 +24,7 @@ import NavBarVue from './components/NavBar/NavBar.vue'
 import PopupVue from './components/Popup/Popup.vue'
 import ToastVue from './components/Toast.vue'
 import MenuVue from './components/NavBar/Menu.vue'
+import MobileIcondropVue from './components/Popup/MobileIcondrop.vue'
 
 import { mapGetters } from 'vuex'
 
@@ -30,6 +34,7 @@ export default {
     Popup: PopupVue,
     Toast: ToastVue,
     Menu: MenuVue,
+    MobileIcondrop: MobileIcondropVue,
   },
   created() {
     window.addEventListener('keydown', this.keydown)
@@ -56,10 +61,13 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['isDesktop']),
     isMenuOpened() {
       return this.$route.fullPath === '/menu'
     },
-    ...mapGetters(['isDesktop']),
+    isIconDropOpened() {
+      return this.$store.state.iconDrop !== null
+    },
   },
   watch: {
     $route(to, from) {

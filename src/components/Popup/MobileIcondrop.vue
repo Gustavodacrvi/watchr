@@ -1,0 +1,46 @@
+<template>
+  <div class="MobileIcondrop" @click="closeIconDrop">
+    <IconDrop
+      :options='iconDrop.options'
+      :allowSearch='iconDrop.allowSearch'
+      :calendar='iconDrop.calendar'
+      :isMobileIconDropComp='true'
+      :centralize='true'
+    />
+  </div>
+</template>
+
+<script>
+
+import IconDropVue from '../IconDrop.vue'
+
+import { mapState } from 'vuex'
+
+export default {
+  components: {
+    IconDrop: IconDropVue,
+  },
+  methods: {
+    closeIconDrop() {
+      setTimeout(() => {
+        this.$store.commit('pushIconDrop', null)
+      }, 300)
+    },
+  },
+  computed: {
+    ...mapState(['iconDrop']),
+  },
+}
+
+</script>
+
+<style scoped>
+
+.MobileIcondrop {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 500;
+}
+
+</style>

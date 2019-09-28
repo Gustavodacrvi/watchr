@@ -42,6 +42,7 @@ const store = new Vuex.Store({
       options: null,
       title: "",
     },
+    iconDrop: null,
     selectedTasks: [],
     isOnControl: false,
     authState: false,
@@ -62,6 +63,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    pushIconDrop(state, drop) {
+      state.iconDrop = drop
+    },
     unselectTask(state, id) {
       const i = state.selectedTasks.find(el => el === id)
       state.selectedTasks.splice(i, 1)
