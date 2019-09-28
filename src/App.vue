@@ -8,8 +8,10 @@
       <Menu v-if="isMenuOpened && !isDesktop"/>
     </transition>
 
-    <NavBar/>
-    <router-view/>
+    <div class="content">
+      <NavBar/>
+      <router-view/>
+    </div>
   </div>
 </template>
 
@@ -78,6 +80,13 @@ export default {
   position: absolute;
   height: 100%;
   width: 100%;
+}
+
+.content {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  position: relative;
 }
 
 .popup-enter, .popup-leave-to {

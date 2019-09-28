@@ -71,3 +71,12 @@ body, input, button, textarea {
 .scroll-thin::-webkit-scrollbar {
   width: 4px;
 }
+
+.scroll-main::-webkit-scrollbar-thumb {
+  background-color: var(--light-gray);
+  border-radius: 6px;
+}
+
+.scroll-main::-webkit-scrollbar {
+  width: 10px;
+}

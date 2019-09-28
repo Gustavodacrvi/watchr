@@ -1,7 +1,11 @@
 <template>
-  <div class="ActionButtons">
-    <Btn
+  <div class="ActionButtons" :class="platform">
+    <Btn class="add"
       icon='plus'
+      color='white'
+    />
+    <Btn class="header"
+      icon='user'
       color='white'
     />
   </div>
@@ -11,10 +15,15 @@
 
 import ActButtonVue from './ActButton.vue'
 
+import { mapGetters } from 'vuex'
+
 export default {
   components: {
     Btn: ActButtonVue,
-  } 
+  },
+  computed: {
+    ...mapGetters(['platform'])
+  }
 }
 
 </script>
@@ -22,9 +31,26 @@ export default {
 <style scoped>
 
 .ActionButtons {
-  position: absolute;
   bottom: 16px;
-  right: 30px;
+  z-index: 15;
+  pointer-events: none;
+  position: sticky;
+  display: flex;
+  justify-content: space-between;
+}
+
+.ActionButtons .add {
+  transform: translateX(-48px);
+  pointer-events: all;
+}
+
+.ActionButtons .header {
+  transform: translateX(48px);
+  pointer-events: all;
+}
+
+.ActionButtons.mobile .add {
+  right: 16px;
 }
 
 </style>

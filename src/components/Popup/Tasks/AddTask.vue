@@ -24,7 +24,8 @@ export default {
   },
   methods: {
     add(obj) {
-      this.$store.dispatch('task/addTask', {...obj})
+      if (obj.name)
+        this.$store.dispatch('task/addTask', {...obj})
     },
   },
   computed: {

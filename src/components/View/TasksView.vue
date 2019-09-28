@@ -1,28 +1,31 @@
 <template>
   <div class="TaskView" :class="platform">
-    <Header
-      :smart="smart"
-      :value="value"
-      :options="options"
-      :tags='tagSelection'
-      :lists='listSelection'
-      :activeTag='activeTag'
-      :activeList='activeList'
-      @tag='selectTag'
-      @list='selectList'
-    />
-    <TaskRenderer v-if="!headingsRenderer"
-      :tasks='getTasks'
-      :showCompleted='showCompleted'
-      :view='value'
-      @update='updateIds'
-    />
-    <HeadingsRenderer v-else
-      :tasks='tasks'
-      :showCompleted='showCompleted'
-      :view='value'
-      :headings='upcomingHeadings'
-    />
+    <div>
+      <Header
+        :smart="smart"
+        :value="value"
+        :options="options"
+        :tags='tagSelection'
+        :lists='listSelection'
+        :activeTag='activeTag'
+        :activeList='activeList'
+        @tag='selectTag'
+        @list='selectList'
+      />
+      <TaskRenderer v-if="!headingsRenderer"
+        :tasks='getTasks'
+        :showCompleted='showCompleted'
+        :view='value'
+        @update='updateIds'
+      />
+      <HeadingsRenderer v-else
+        :tasks='tasks'
+        :showCompleted='showCompleted'
+        :view='value'
+        :headings='upcomingHeadings'
+      />
+    </div>
+    <ActionButtons/>
   </div>
 </template>
 
@@ -31,6 +34,7 @@
 import HeaderVue from './Header.vue'
 import TaskRendererVue from './TaskRenderer.vue'
 import HeadingsRendererVue from './HeadingsRenderer.vue'
+import ActionButtonsVue from './ActionButtons.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -43,7 +47,8 @@ export default {
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,
-    HeadingsRenderer: HeadingsRendererVue
+    HeadingsRenderer: HeadingsRendererVue,
+    ActionButtons: ActionButtonsVue,
   },
   data() {
     return {
@@ -357,7 +362,11 @@ export default {
 <style scoped>
 
 .TaskView {
-  margin: 0 60px;
+  margin: 0 90px;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .TaskView.mobile {

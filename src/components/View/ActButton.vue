@@ -46,12 +46,11 @@ export default {
 .ActButton {
   border-radius: 100px;
   cursor: pointer;
-  outline: none;
-  width: 50px;
+  width: 45px;
+  height: 45px;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 50px;
   position: relative;
   overflow: hidden;
   z-index: 10;
