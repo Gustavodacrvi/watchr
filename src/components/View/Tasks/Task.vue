@@ -27,6 +27,7 @@
             <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
             <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
             <span v-else-if="calendarStr" class="tag cb rb">{{ calendarStr }}</span>
+            <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
             <span>{{ task.name }}</span>
           </div>
           <div class="icon-drop-wrapper">
@@ -141,7 +142,10 @@ export default {
     },
   },
   computed: {
-    ...mapState(['isOnControl']),
+    ...mapState({
+      isOnControl: state => state.isOnControl,
+      savedLists: state => state.list.lists,
+    }),
     ...mapGetters(['isDesktop']),
     completed() {
       return utilsTask.filterTasksByCompletion([this.task]).length === 1
@@ -236,6 +240,10 @@ export default {
     showIconDrop() {
       if (this.isDesktop && this.onHover) return true
       else if (!this.isDesktop) return true
+    },
+    listStr() {
+      if (!this.task.list) return null
+      return this.savedLists.find(el => el.id === this.task.list).name
     },
     calendarStr() {
       if (!this.task.calendar) return null

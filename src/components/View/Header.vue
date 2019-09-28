@@ -1,8 +1,26 @@
 <template>
-  <div class="Header" v-if="$store.getters.isDesktop">
-    <Icon v-if="smart" class="icon" :icon="getIcon" :color="getIconColor" width="40px"/>
-    <h2 class="name">{{ value }}</h2>
-    <IconDrop handle="settings-h" handleColor="var(--gray)" :options="options"/>
+  <div class="Header">
+    <div v-if="$store.getters.isDesktop" class="header">
+      <Icon v-if="smart" class="icon" :icon="getIcon" :color="getIconColor" width="40px"/>
+      <h2 class="name">{{ value }}</h2>
+      <IconDrop handle="settings-h" handleColor="var(--gray)" :options="options"/>
+    </div>
+    <div class="tags" :class="{margins: tags.length > 0}">
+      <Tag v-for="t in tags" :key="t.id"
+        :value="t.name"
+        :selected='activeTag === t.name'
+        icon="tag"
+        @click="$emit('tag', t.name)"
+      />
+    </div>
+    <div class="tags" :class="{margins: lists.length > 0}">
+      <Tag v-for="l in lists" :key="l.id"
+        :value="l.name"
+        :selected='activeList === l.name'
+        icon="tasks"
+        @click="$emit('list', l.name)"
+      />
+    </div>
   </div>
 </template>
 
@@ -10,12 +28,14 @@
 
 import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop.vue'
+import TagVue from './Tag.vue'
 
 export default {
-  props: ['smart', 'value', 'options'],
+  props: ['smart', 'value', 'options', 'tags', 'lists', 'activeTag', 'activeList'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
+    Tag: TagVue,
   },
   created() {
     this.pushToNavbar()
@@ -65,10 +85,20 @@ export default {
 
 <style scoped>
 
-.Header {
+.header, .tags {
   display: flex;
   align-items: center;
   position: relative;
+  margin: 0;
+  transition-duration: .2s;
+}
+
+.margins {
+  margin-top: 30px;
+}
+
+.margins + .margins {
+  margin-top: 4px;
 }
 
 .IconDrop {

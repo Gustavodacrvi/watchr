@@ -106,6 +106,12 @@ export default {
           tags: fd().arrayUnion(...tagIds),
         })
       }
+      for (const id of tagIds) {
+        const ref = fire.collection('tags').doc(id)
+        batch.update(ref, {
+          times: fd().increment(1),
+        })
+      }
 
       return batch.commit()
     },

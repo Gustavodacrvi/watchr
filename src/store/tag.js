@@ -17,6 +17,11 @@ export default {
       const {order, tags} = state
       return utils.checkMissingIdsAndSortArr(order, tags)
     },
+    sortedTagsByFrequency(s, getters) {
+      const tags = getters.sortedTags
+      tags.sort((a, b) => b.times - a.times)
+      return tags
+    },
     getTagsByName: state => names => {
       const arr = []
       for (const n of names) {

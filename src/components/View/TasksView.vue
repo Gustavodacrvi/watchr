@@ -1,6 +1,16 @@
 <template>
   <div class="TaskView" :class="platform">
-    <Header :smart="smart" :value="value" :options="options"/>
+    <Header
+      :smart="smart"
+      :value="value"
+      :options="options"
+      :tags='tagSelection'
+      :lists='listSelection'
+      :activeTag='activeTag'
+      :activeList='activeList'
+      @tag='selectTag'
+      @list='selectList'
+    />
     <TaskRenderer v-if="!headingsRenderer"
       :tasks='getTasks'
       :showCompleted='showCompleted'
@@ -38,9 +48,35 @@ export default {
   data() {
     return {
       showCompleted: false,
+      showingTagSelection: false,
+      showingListSelection: false,
+      activeTag: '',
+      activeList: '',
     }
   },
+  created() {
+    this.showingTagSelection = localStorage.getItem('showingTagSelection') === 'true'
+    this.showingListSelection = localStorage.getItem('showingListSelection') === 'true'
+  },
   methods: {
+    selectTag(name) {
+      if (name === this.activeTag) this.activeTag = ''
+      else this.activeTag = name
+    },
+    selectList(name) {
+      if (name === this.activeList) this.activeList = ''
+      else this.activeList = name
+    },
+    toggleTagSelection() {
+      this.showingTagSelection = !this.showingTagSelection
+      localStorage.setItem('showingTagSelection', this.showingTagSelection)
+      this.activeTag = ''
+    },
+    toggleListSelection() {
+      this.showingListSelection = !this.showingListSelection
+      localStorage.setItem('showingListSelection', this.showingListSelection)
+      this.activeList = ''
+    },
     updateIds(ids) {
       if (this.smart) {
         this.$store.dispatch('list/updateViewOrder', {
@@ -84,12 +120,34 @@ export default {
   computed: {
     ...mapState({
       tasks: state => state.task.tasks,
-      savedTags: state => state.tag.tags,
       savedLists: state => state.list.lists,
       viewOrders: state => state.list.viewOrders,
       selectedTasks: state => state.selectedTasks,
     }),
-    ...mapGetters(['platform']),
+    ...mapGetters({
+      platform: 'platform',
+      isDesktop: 'isDesktop',
+      savedTags: 'tag/sortedTagsByFrequency',
+    }),
+    sliceNumber() {
+      return this.isDesktop ? 8 : 4
+    },
+    tagSelection() {
+      return this.showingTagSelection ? this.savedTags.slice(this.sliceNumber) : []
+    },
+    listSelection() {
+      return this.showingListSelection ? this.savedLists.slice(this.sliceNumber) : []
+    },
+    getActiveTagId() {
+      if (this.activeTag)
+        return this.$store.getters['tag/getTagsByName']([this.activeTag])[0].id
+      return null
+    },
+    getActiveListId() {
+      if (this.activeList)
+        return this.$store.getters['list/getListsByName']([this.activeList])[0].id
+      return null
+    },
     getTags() {
       const arr = []
       for (const t of this.savedTags) {
@@ -153,6 +211,16 @@ export default {
                 callback: () => this.sortByDate(),
               }
             ],
+          },
+          {
+            name: 'Show tag selection',
+            icon: 'tag',
+            callback: () => this.toggleTagSelection()
+          },
+          {
+            name: 'Show list selection',
+            icon: 'tasks',
+            callback: () => this.toggleListSelection()
           },
           {
             name: 'Show completed',
@@ -275,6 +343,10 @@ export default {
         tasks = utilsTask.filterTasksByView(tasks, this.value)
         tasks = utils.checkMissingIdsAndSortArr(order, tasks)
       }
+      if (this.getActiveTagId)
+        tasks = tasks.filter(el => el.tags.includes(this.getActiveTagId))
+      if (this.getActiveListId)
+        tasks = tasks.filter(el => el.list === this.getActiveListId)
       return tasks
     },
   },

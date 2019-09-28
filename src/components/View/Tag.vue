@@ -4,7 +4,7 @@
     @leave="leave"
   >
     <div class="wrapper" @click="$emit('click')">
-      <div class="Tag" :style="`border: 1px solid ${color}`">
+      <div class="Tag" :class="[{selected}, platform]" :style="`border: 1px solid ${color}`">
         <Icon class="icon" :icon="icon" :color="color" width="14px"/>
         <span class="name" :style="{color}">{{ value }}</span>
       </div>
@@ -16,11 +16,13 @@
 
 import IconVue from '../Icon.vue'
 
+import { mapGetters } from 'vuex'
+
 export default {
   components: {
     Icon: IconVue,
   },
-  props: ['value', 'icon', 'color'],
+  props: ['value', 'icon', 'color', 'selected'],
   data() {
     return {
       height: 0,
@@ -90,6 +92,9 @@ export default {
       return {name: name.style, icon: icon.style}
     }
   },
+  computed: {
+    ...mapGetters(['platform'])
+  }
 }
 
 </script>
@@ -110,13 +115,6 @@ export default {
   cursor: pointer;
 }
 
-.Tag:hover .icon, .Tag:hover .name {
-  color: var(--white);
-}
-
-.Tag:hover {
-  border: 1px solid var(--white);
-}
 
 .icon {
   margin-right: 4px;
@@ -131,6 +129,12 @@ export default {
 
 .Tag {
   margin-right: 4px;
+  outline: none;
+}
+
+.selected, .Tag.desktop:hover {
+  background-color: var(--white);
+  color: var(--void);
 }
 
 </style>
