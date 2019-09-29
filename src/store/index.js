@@ -58,6 +58,11 @@ const store = new Vuex.Store({
       if (getters.isDesktop) return 'desktop'
       return 'mobile'
     },
+    isStandAlone() {
+      const navigator = window.navigator
+      return (navigator.standalone === true)
+      || (window.matchMedia('(display-mode: standalone)').matches)
+    },
     isPopupOpened(state) {
       return state.popup.comp !== ''
     },

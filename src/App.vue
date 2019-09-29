@@ -12,8 +12,11 @@
     </transition>
 
     <div class="content">
-      <NavBar/>
-      <router-view/>
+      <transition name="nav-trans" mode="out-in">
+        <NavBar v-if='!hideNavbar'/>
+        <div v-if="hideNavbar" style="height: 65px;"></div>
+      </transition>
+      <router-view class="router-view" :class="{hided: hideNavbar}"/>
     </div>
   </div>
 </template>
@@ -36,13 +39,21 @@ export default {
     Menu: MenuVue,
     MobileIcondrop: MobileIcondropVue,
   },
+  data() {
+    return {
+      hided: false,
+      hideTimeout: null,
+    }
+  },
   created() {
     window.addEventListener('keydown', this.keydown)
     window.addEventListener('keyup', this.keyup)
+    window.addEventListener('mousemove', this.getMousePos)
   },
   beforeDestroy() {
     window.removeEventListener('keydown', this,keydown)
     window.addEventListener('keyup', this.keyup)
+    window.addEventListener('mousemove', this.getMousePos)
   },
   methods: {
     keyup({key}) {
@@ -58,12 +69,35 @@ export default {
     },
     closePopup() {
       this.$store.commit('closePopup')
-    }
+    },
+    getMousePos(evt) {
+      const clear = () => {
+        if (this.hideTimeout) clearTimeout(this.hideTimeout)
+      }
+      
+      const y = evt.pageY
+      let hideTimeout
+      if (y && y < 60) {
+        clear()
+        hideTimeout = setTimeout(() => {
+          this.hided = false
+        }, 500)
+      } else if (y) {
+        clear()
+        hideTimeout = setTimeout(() => {
+          this.hided = true
+        }, 300)
+      }
+    },
   },
   computed: {
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktop', 'isStandAlone']),
     isMenuOpened() {
       return this.$route.fullPath === '/menu'
+    },
+    hideNavbar() {
+      if (!this.isStandAlone || !this.isDesktop) return false
+      return this.hided
     },
     isIconDropOpened() {
       return this.$store.state.iconDrop !== null
@@ -97,6 +131,15 @@ export default {
   position: relative;
 }
 
+.router-view {
+  transform: translateY(0px);
+  transition: transform .3s;
+}
+
+.hided {
+  transform: translateY(-13px);
+}
+
 .popup-enter, .popup-leave-to {
   opacity: 0;
   transition: opacity .2s;
@@ -105,6 +148,18 @@ export default {
 .popup-leave, .popup-enter-to {
   opacity: 1;
   transition: opacity .2s;
+}
+
+.nav-trans-enter, .nav-trans-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity .3s ease-out, transform .3s ease-out;
+}
+
+.nav-trans-leave, .nav-trans-enter-to {
+  opacity: 1;
+  transform: translateY(0px);
+  transition: opacity .3s ease-in, transform .3s ease-in;
 }
 
 </style>
