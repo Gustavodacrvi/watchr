@@ -12,5 +12,7 @@ new Vue({
   render: h => h(App)
 }).$mount("#app")
 
-if (store.getters.isStandAlone)
-  router.replace('/user')
+setTimeout(() => {
+  if (store.getters.isStandAlone)
+    router.replace('/user')
+})

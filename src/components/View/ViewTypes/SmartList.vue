@@ -74,8 +74,15 @@ export default {
     getTasks() {
       return utilsTask.filterTasksByView(this.tasks, this.viewName)
     },
-    isHeadingsRendererType() {
+    getUpcomingTasks() {
+      return utilsTask.filterTasksByView(this.tasks, 'Overdue')
+    },
+    upcomingView() {
       return this.viewName === 'Upcoming'
+    },
+    isHeadingsRendererType() {
+      console.log(this.getUpcomingTasks.length)
+      return this.upcomingView
     },
     headingsOptions() {
       const arr = []

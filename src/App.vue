@@ -41,7 +41,7 @@ export default {
   },
   data() {
     return {
-      hided: false,
+      hided: true,
       hideTimeout: null,
     }
   },
@@ -71,15 +71,14 @@ export default {
       }
       
       const y = evt.pageY
-      let hideTimeout
       if (y && y < 60) {
         clear()
-        hideTimeout = setTimeout(() => {
+        this.hideTimeout = setTimeout(() => {
           this.hided = false
         }, 500)
       } else if (y) {
         clear()
-        hideTimeout = setTimeout(() => {
+        this.hideTimeout = setTimeout(() => {
           this.hided = true
         }, 300)
       }

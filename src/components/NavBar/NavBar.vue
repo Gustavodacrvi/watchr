@@ -18,9 +18,9 @@ export default {
   },
   mounted() {
     this.calculateLineOffset()
-    setTimeout(() => {
+    setInterval(() => {
       this.calculateLineOffset()
-    }, 80)
+    }, 200)
     window.addEventListener('resize', this.calculateLineOffset)
   },
   beforeDestroy() {

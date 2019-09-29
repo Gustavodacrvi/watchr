@@ -9,20 +9,6 @@ export default {
     const clone = this.getFirstDayOfNextWeekMoment(initial)
     return clone.add(6, 'd').clone()
   },
-  nextWeekDay(initial, weekday) {
-    const clone = initial.clone()
-    let i = 0
-    const week = mom(weekday, 'ddd').format('dddd')
-    while (true) {
-      if (clone.format('dddd') === week)
-        return clone
-      clone.add(1, 'd')
-      if (i > 10) break
-      i++
-    }
-    console.log(clone.format('dddd'))
-    return clone
-  },
   getLastDayOfNextMonth(initial) {
     const first = this.getFirstDayOfNextMonth(initial)
     const days = first.daysInMonth()
@@ -52,5 +38,31 @@ export default {
       i++
     }
     return clone
+  },
+  nextWeekDay(initial, weekday) {
+    const clone = initial.clone()
+    let i = 0
+    const week = mom(weekday, 'ddd').format('dddd')
+    while (true) {
+      if (clone.format('dddd') === week)
+        return clone
+      clone.add(1, 'd')
+      if (i > 10) return clone
+      i++
+    }
+  },
+  getLastInstanceOfaWeek(initial, arrOfWeeks) {
+    const weeks = []
+    arrOfWeeks.forEach(w => weeks.push(mom(w, 'ddd').format('dddd')))
+    const clo = initial.clone()
+
+    let i = 0
+    while (true) {
+      clo.subtract(1, 'd')
+      if (weeks.includes(clo.format('dddd')))
+        return clo
+      if (i > 10) return clo
+      i++
+    }
   },
 }
