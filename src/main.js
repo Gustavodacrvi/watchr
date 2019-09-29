@@ -11,3 +11,6 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount("#app")
+
+if (store.getters.isStandAlone)
+  router.replace('/user')
