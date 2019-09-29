@@ -50,11 +50,6 @@ export default {
     window.addEventListener('keyup', this.keyup)
     window.addEventListener('mousemove', this.getMousePos)
   },
-  beforeDestroy() {
-    window.removeEventListener('keydown', this,keydown)
-    window.addEventListener('keyup', this.keyup)
-    window.addEventListener('mousemove', this.getMousePos)
-  },
   methods: {
     keyup({key}) {
       if (key === 'Control')
