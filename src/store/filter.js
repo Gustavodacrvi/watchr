@@ -46,7 +46,7 @@ export default {
     },
     addDefaultData(c, id) {
       return fire.collection('filtersOrder').doc(id).set({
-        useId: uid(),
+        userId: id,
         order: [],
       })
     },

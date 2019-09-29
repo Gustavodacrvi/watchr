@@ -124,6 +124,20 @@ auth.onAuthStateChanged(() => {
   const isLogged = auth.currentUser !== null
   store.commit('toggleUser', isLogged)
 
+  if (fire)
+    fire.enablePersistence()
+      .catch(err => {
+        if (err.code === 'failed-precondition') {
+          // handle error
+        }
+        else if (err.code === 'unimplemented')
+          store.commit('pushToast', {
+            name: `Firestore's persistence is not available on your browser, therefore you won't be able to use this app offline.</br>Please chose a better browser or update the current one to the latest version.`,
+            seconds: 12,
+            type: 'error',
+          })
+      })
+
   if (isLogged) {
     Promise.all([
       store.dispatch('tag/getData'),

@@ -28,6 +28,28 @@ export default {
   mixins: [ViewTypeMixim],
   methods: {
     addTask(obj) {
+      let calendar = null
+      const getCalObj = (m) => {
+        return {
+          defer: null,
+          due: null,
+
+          type: 'specific',
+          time: null,
+          editDate: mom().format('Y-M-D'),
+
+          specific: m.format('Y-M-D'),
+          lastCompleteDate: null,
+          periodic: null
+        }
+      }
+
+      if (this.viewName === 'Today')
+        calendar = getCalObj(mom())
+      else if (this.viewName === 'Tomorrow')
+        calendar = getCalObj(mom().add(1, 'day'))
+
+      obj.task.calendar = calendar
       this.$store.dispatch('list/addTaskByIndexSmart', {
         ...obj, list: this.viewName,
       })

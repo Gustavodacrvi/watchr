@@ -14,7 +14,9 @@ export default {
       this.$store.commit('pushToast', toast)
     }
     const reload = () => {
-      auth.currentUser.reload()
+      auth.currentUser.reload().then(() => {
+        this.$router.push('/user')
+      })
     }
     const toastErr = (err) => {
       toast({
@@ -29,7 +31,7 @@ export default {
           toast({
             name: 'E-mail confirmed successfully!',
             seconds: 6,
-            type: 'error',
+            type: 'success',
           })
           reload()
         }).catch(err => {

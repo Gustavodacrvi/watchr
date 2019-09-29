@@ -63,7 +63,6 @@ export default {
       ])
     },
     addList(c, {name}) {
-      console.log('addList', name)
       return fire.collection('lists').add({
         name,
         userId: uid(),
@@ -116,10 +115,10 @@ export default {
       return Promise.all([
         fire.collection('listsOrder').doc(id).set({
           order: [],
-          userId: uid(),
+          userId: id,
         }),
         fire.collection('viewOrders').doc(id).set({
-          userId: uid(),
+          userId: id,
         })
       ])
     },
