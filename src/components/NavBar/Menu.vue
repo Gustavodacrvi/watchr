@@ -1,0 +1,110 @@
+<template>
+  <div class="Menu cbd">
+    <div class="appbar-wrapper">
+      <Icon class="arrow cursor" icon="arrow" color="var(--gray)" @click="$router.go(-1)" :primaryHover="true"/>
+      <transition :name="this.appSection ? 'mr' : 'ml'">
+        <Appbar class="Appbar" v-if="appSection" key="app"/>
+        <div v-else key="links" class="nav-links">
+          <router-link class="cursor link rb" to="/home">Home</router-link>
+          <router-link class="cursor link rb" to="/user">User</router-link>
+          <router-link class="cursor link rb" to="/about">About</router-link>
+          <span class="cursor link rb" @click="pop('Signin')">Sign in</span>
+          <span class="cursor link rb" @click="pop('Signup')">Sign up</span>
+        </div>
+      </transition>
+    </div>
+    <Icon class="cursor user" icon="user" color="var(--gray)" :primaryHover="true" @click="toggleMenu"/>
+  </div>
+</template>
+
+<script>
+
+import AppbarVue from '../Appbar/Appbar.vue'
+import IconVue from '../Icon.vue'
+
+export default {
+  components: {
+    Appbar: AppbarVue,
+    Icon: IconVue,
+  },
+  data() {
+    return {
+      appSection: true,
+    }
+  },
+  methods: {
+    toggleMenu() {
+      this.appSection = !this.appSection
+    },
+    pop(comp) {
+      this.$store.dispatch('pushPopup', {comp})
+    }
+  },
+}
+
+</script>
+
+<style scoped>
+
+.Menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 500;
+  overflow: hidden;
+}
+
+.appbar-wrapper {
+  position: relative;
+  margin: 16px;
+}
+
+.arrow {
+  transform: rotate(90deg);
+}
+
+.link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  color: var(--white);
+  height: 35px;
+  transition-duration: .3s;
+  padding: 0 6px;
+}
+
+.link:hover {
+  background-color: var(--light-gray);
+}
+
+.user {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+}
+
+.mr-enter-active, .mr-leave-active, .ml-enter-active, .ml-leave-active {
+  transition-duration: .3s;
+  position: absolute;
+  width: 100%;
+}
+
+.mr-enter, .ml-leave {
+  transform: translateX(100px);
+  opacity: 0;
+}
+
+.mr-enter-to, .mr-leave, .ml-enter, .ml-leave-to {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.mr-leave, .ml-enter {
+  transform: translateX(-100px);
+  opacity: 0;
+}
+
+</style>

@@ -1,0 +1,134 @@
+<template>
+  <div class="AddFolder popup cb shadow rb" :class="platform">
+    <div class="title tac">
+      <h2 class="pc">{{ title }}</h2>
+    </div>
+    <div class="content">
+      <DropInput
+        placeholder="Tag name..."
+        v-model="name"
+        :focus="true"
+        :options='options'
+        @select="select"
+      />
+      <ButtonApp :value="btn" @click="addList"/>
+    </div>
+  </div>
+</template>
+
+<script>
+
+import DropInputVue from '../../Auth/DropInput.vue'
+import ButtonVue from '../../Auth/Button.vue'
+
+import { mapGetters, mapState } from 'vuex'
+
+export default {
+  components: {
+    DropInput: DropInputVue,
+    ButtonApp: ButtonVue,
+  },
+  data() {
+    return {
+      name: '',
+      options: [],
+    }
+  },
+  created() {
+    if (this.isEditing) this.name = this.payload.name
+  },
+  computed: {
+    ...mapGetters(['platform']),
+    ...mapState({
+      lists: state => state.list.lists,
+      popup: state => state.popup,
+      payload: state => state.popup.payload,
+    }),
+    isEditing() {
+      return this.payload
+    },
+    title() {
+      if (!this.isEditing) return 'Add list'
+      return 'Edit list'
+    },
+    btn() {
+      if (!this.isEditing) return 'Add list'
+      return 'Edit list'
+    },
+    isSmartList() {
+      const lists = [
+        'Today',
+        'Upcoming',
+        'Tomorrow',
+        'Inbox'
+      ]
+      return lists.includes(this.name)
+    }
+  },
+  methods: {
+    addList() {
+      const toast = (toast) => {
+        this.$store.commit('pushToast', toast)
+      }
+      if (this.name) {
+        const list = this.lists.find(el => el.name === this.name)
+        if (this.isSmartList)
+          toast({
+            name: `<strong>${this.name}</strong> is a special list type.`,
+            type: 'error',
+            seconds: 4,
+          })
+        else if (!list && !this.isEditing) {
+          this.$store.dispatch('list/addList', {
+            name: this.name,
+          })
+          toast({
+            name: `<strong>${this.name}</strong> list added successfully!`,
+            type: 'success',
+            seconds: 2,
+          })
+          this.$store.commit('closePopup')
+        } else if (!list && this.isEditing) {
+          this.$store.dispatch('list/editList', {
+            name: this.name,
+            id: this.payload.id,
+          })
+          toast({
+            name: `<strong>${this.name}</strong> list edited successfully!`,
+            type: 'success',
+            seconds: 2,
+          })
+          this.$store.commit('closePopup')
+        } else {
+          toast({
+            name: `This list already exists!`,
+            type: 'error',
+            seconds: 3,
+          })
+        }
+      } else {
+        toast({
+          name: 'Fill in all the required fields.',
+          type: 'error',
+          seconds: 3,
+        })
+      }
+    },
+    select(val) {
+      this.name = val
+      setTimeout(() => {
+        this.options = []
+      })
+    }
+  },
+  watch: {
+    name() {
+      this.options = this.lists.filter(el => el.name.toLowerCase().includes(this.name.toLowerCase())).map(el => el.name)
+    }
+  }
+}
+
+</script>
+
+<style scoped src="@/assets/css/popupAuth.css">
+</style>

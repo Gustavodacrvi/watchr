@@ -1,0 +1,12 @@
+{
+  calendar: {
+    type: 'specific', 'weekly', 'periodic',
+    editDate: Date object
+    specific: Date object
+    weekly: ['Sunday', 'Monday'],
+    periodic: {
+      interval: 2
+      lastCompleteDate: 
+    }
+  }
+}

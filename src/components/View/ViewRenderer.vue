@@ -1,0 +1,342 @@
+<template>
+  <div class="ViewRenderer" :class="platform">
+    <div>
+      <Header
+        :useIcon="useIcon"
+        :value="viewName"
+        :options="options"
+        :tags='tagSelectionOptions'
+        :lists='listSelectionOptions'
+        :activeTag='activeTag'
+        :activeList='activeList'
+        @tag='selectTag'
+        @list='selectList'
+      />
+      <TaskRenderer v-if="!headingsRenderer"
+        :tasks='sortAndFilterTasks'
+        :showCompleted='showCompleted'
+        :view='viewName'
+        :addTask='addTask'
+        @update='updateIds'
+      />
+      <HeadingsRenderer v-else
+        :tasks='tasks'
+        :showCompleted='showCompleted'
+        :view='viewName'
+        :headings='headingsOptions'
+      />
+    </div>
+    <ActionButtons :showHeader='showHeader'/>
+  </div>
+</template>
+
+<script>
+
+import HeaderVue from './Header.vue'
+import TaskRendererVue from './Tasks/TaskRenderer.vue'
+import HeadingsRendererVue from './Headings/HeadingsRenderer.vue'
+import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
+
+import { mapGetters, mapState } from 'vuex'
+
+import utilsTask from '@/utils/task'
+import utils from '@/utils/index.js'
+import mom from 'moment'
+
+export default {
+  props: ['headingsRenderer', 'headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'useIcon'],
+  components: {
+    Header: HeaderVue,
+    TaskRenderer: TaskRendererVue,
+    HeadingsRenderer: HeadingsRendererVue,
+    ActionButtons: ActionButtonsVue,
+  },
+  data() {
+    return {
+      showCompleted: false,
+      showingTagSelection: false,
+      showingListSelection: false,
+      activeTag: '',
+      activeList: '',
+    }
+  },
+  created() {
+    this.showingTagSelection = localStorage.getItem(this.tagSelectionStr) === 'true'
+    this.showingListSelection = localStorage.getItem(this.listSelectionStr) === 'true'
+  },
+  methods: {
+    selectTag(name) {
+      if (name === this.activeTag) this.activeTag = ''
+      else this.activeTag = name
+    },
+    selectList(name) {
+      if (name === this.activeList) this.activeList = ''
+      else this.activeList = name
+    },
+    toggleTagSelection() {
+      this.showingTagSelection = !this.showingTagSelection
+      localStorage.setItem(this.tagSelectionStr, this.showingTagSelection)
+      this.activeTag = ''
+    },
+    toggleListSelection() {
+      this.showingListSelection = !this.showingListSelection
+      localStorage.setItem(this.listSelectionStr, this.showingListSelection)
+      this.activeList = ''
+    },
+
+    updateIds(ids) {
+      this.$emit('update-ids', ids)
+    },
+    sortByName() {
+      const tasks = this.tasks.slice()
+      tasks.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+      this.updateIds(tasks.map(el => el.id))
+    },
+    sortByPriority() {
+      let tasks = this.tasks.slice()
+      tasks = utilsTask.sortTasksByPriority(tasks)
+      this.updateIds(tasks.map(el => el.id))
+    },
+    sortByDate() {
+      // TODO
+/*       let tasks = this.getTasks.slice()
+      tasks = utilsTask.sortTasksByDate(tasks)
+      this.updateIds(tasks.map(el => el.id)) */
+    },
+    toggleCompleted() {
+      this.showCompleted = !this.showCompleted
+    },
+    saveDates(date) {
+      this.$store.dispatch('task/saveTasksById', {
+        ids: this.selectedTasks,
+        task: {calendar: date},
+      })
+    },
+    addTagToTasks(id) {
+      this.$store.dispatch('task/addTagsToTasksById', {
+        ids: this.selectedTasks,
+        tagIds: [id],
+      })
+    },
+    addTask(obj, evt) {
+      this.$emit('add-task', obj)
+    },
+    removeTasksFromLists() {
+      this.$store.dispatch('task/saveTasksById', {
+        ids: this.selectedTasks,
+        task: {list: ''},
+      })
+    },
+  },
+  computed: {
+    ...mapState({
+      savedLists: state => state.list.lists,
+      viewOrders: state => state.list.viewOrders,
+      selectedTasks: state => state.selectedTasks,
+    }),
+    ...mapGetters({
+      platform: 'platform',
+      isDesktop: 'isDesktop',
+      savedTags: 'tag/sortedTagsByFrequency',
+    }),
+    tagSelectionStr() {
+      return 'showingTagSelection' + this.viewName + this.viewType
+    },
+    listSelectionStr() {
+      return 'showingListSelection' + this.viewName + this.viewType
+    },
+    sliceNumber() {
+      return this.isDesktop ? 8 : 4
+    },
+    tagSelectionOptions() {
+      return this.showingTagSelection ? this.savedTags.slice(this.sliceNumber) : []
+    },
+    listSelectionOptions() {
+      return this.showingListSelection ? this.savedLists.slice(this.sliceNumber) : []
+    },
+    getActiveTagId() {
+      if (this.activeTag)
+        return this.$store.getters['tag/getTagsByName']([this.activeTag])[0].id
+      return null
+    },
+    getActiveListId() {
+      if (this.activeList)
+        return this.$store.getters['list/getListsByName']([this.activeList])[0].id
+      return null
+    },
+    getIconDropOptionsTags() {
+      const arr = []
+      for (const t of this.savedTags) {
+        arr.push({
+          name: t.name,
+          icon: 'tag',
+          callback: () => this.addTagToTasks(t.id),
+        })
+      }
+      return arr
+    },
+    getIconDropOptionsLists() {
+      const arr = []
+      for (const l of this.savedLists) {
+        arr.push({
+          name: l.name,
+          icon: 'tasks',
+          callback: () => {
+            this.$store.dispatch('task/saveTasksById', {
+              ids: this.selectedTasks,
+              task: {list: l.id},
+            })
+          },
+        })
+      }
+      return arr
+    },
+    options() {
+      const dispatch = this.$store.dispatch
+      const ids = this.selectedTasks
+
+      const savePri = (pri) => {
+        dispatch('task/saveTasksById', {ids, task: {priority: pri}})
+      }
+      
+      if (ids.length === 0) {
+        const opt = [
+          {
+            name: 'Sort tasks',
+            icon: 'sort',
+            callback: () => [
+              {
+                name: 'Sort by name',
+                icon: 'sort-name',
+                callback: () => this.sortByName()
+              },
+              {
+                name: 'Sort by priority',
+                icon: 'priority',
+                callback: () => this.sortByPriority()
+              },
+              {
+                name: 'Sort by date',
+                icon: 'calendar',
+                callback: () => this.sortByDate(),
+              }
+            ],
+          },
+          {
+            name: 'Show tag selection',
+            icon: 'tag',
+            callback: () => this.toggleTagSelection()
+          },
+          {
+            name: 'Show list selection',
+            icon: 'tasks',
+            callback: () => this.toggleListSelection()
+          },
+          {
+            name: 'Show completed',
+            icon: 'completed',
+            callback: () => this.toggleCompleted()
+          }
+        ]
+        if (this.showCompleted) opt[1].name = 'Hide completed'
+        return opt
+      } else {
+        return [
+          {
+            icon: 'priority',
+            name: 'Change priority of tasks',
+            callback: () => [
+              {
+                name: 'No priority',
+                icon: 'priority',
+                callback: () => savePri('')
+              },
+              {
+                name: 'Low priority',
+                icon: 'priority',
+                color: 'var(--green)',
+                callback: () => savePri('Low priority')
+              },
+              {
+                name: 'Medium priority',
+                icon: 'priority',
+                color: 'var(--yellow)',
+                callback: () => savePri('Medium priority')
+              },
+              {
+                name: 'High priority',
+                icon: 'priority',
+                color: 'var(--red)',
+                callback: () => savePri('High priority')
+              }
+            ]
+          },
+          {
+            name: 'Change date',
+            icon: 'calendar',
+            callback: () => {return {calendar: true, callback: this.saveDates}}
+          },
+          {
+            name: 'Add tags',
+            icon: 'tag',
+            callback: () => {return {
+              search: true,
+              links: this.getIconDropOptionsTags,
+            }}
+          },
+          {
+            name: 'Add tasks to list',
+            icon: 'tasks',
+            callback: () => {return {
+              search: true,
+              links: this.getIconDropOptionsLists,
+            }}
+          },
+          {
+            name: 'Remove tasks from list',
+            icon: 'tasks',
+            callback: () => this.removeTasksFromLists(),
+          },
+          {
+            name: 'Delete tasks',
+            icon: 'trash',
+            callback: () => dispatch('task/deleteTasks', ids)
+          },
+        ]
+      }
+    },
+    sortAndFilterTasks() {
+      let ts = this.tasks
+      const order = this.tasksOrder
+
+      if (order)
+        ts = utils.checkMissingIdsAndSortArr(order, ts)
+      else
+        ts = utilsTask.sortTasksByPriority(ts)
+
+      if (this.getActiveTagId)
+        ts = ts.filter(el => el.tags.includes(this.getActiveTagId))
+      if (this.getActiveListId)
+        ts = ts.filter(el => el.list === this.getActiveListId)
+      return ts
+    },
+  },
+}
+
+</script>
+
+<style scoped>
+
+.ViewRenderer {
+  margin: 0 90px;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ViewRenderer.mobile {
+  margin: 0 8px;
+}
+
+</style>
