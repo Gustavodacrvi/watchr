@@ -4,7 +4,7 @@
     @leave="leave"
   >
     <div class="wrapper" @click="$emit('click')">
-      <div class="Tag" :class="[{selected}, platform]" :style="`border: 1px solid ${color}`">
+      <div class="Tag" :class="[{selected, disabled}, platform]" :style="`border: 1px solid ${color}`">
         <Icon class="icon" :icon="icon" :color="color" width="14px"/>
         <span class="name" :style="{color}">{{ value }}</span>
       </div>
@@ -22,7 +22,7 @@ export default {
   components: {
     Icon: IconVue,
   },
-  props: ['value', 'icon', 'color', 'selected'],
+  props: ['value', 'icon', 'color', 'selected', 'disabled'],
   data() {
     return {
       height: 0,
@@ -135,6 +135,12 @@ export default {
 .selected, .Tag.desktop:hover {
   background-color: var(--white);
   color: var(--void);
+}
+
+.disabled {
+  background-color: initial !important;
+  opacity: .4;
+  color: var(--white) !important;
 }
 
 </style>

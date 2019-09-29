@@ -1,5 +1,5 @@
 <template>
-  <div class="Appbar">
+  <div class="Appbar" :class='platform'>
     <transition name="bar-trans">
       <div v-if="showing" class="content">
         <AppbarElement v-for="(l, i) in links" :key="l.name"
@@ -38,6 +38,12 @@
         </transition>
       </div>
     </transition>
+      <IconDrop v-if="getSectionOptions && !appbarHided"
+      class="drop right"
+      handle='settings-h'
+      handleColor='var(--gray)'
+      :options="getSectionOptions"
+    />
     <Icon v-if="$store.getters.isDesktop" icon="arrow" class="arrow cursor" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
   </div>
 </template>
@@ -49,12 +55,15 @@ import AppbarElementVue from './AppbarElement.vue'
 import ListsVue from './Sections/Lists.vue'
 import TagsVue from './Sections/Tags.vue'
 import FiltersVue from './Sections/Filters.vue'
+import IconDropVue from '../IconDrop.vue'
+import { mapGetters } from 'vuex'
 
 export default {
-  props: ['value', 'viewType'],
+  props: ['value', 'viewType', 'appbarHided'],
   components: {
     Icon: IconVue,
     AppbarElement: AppbarElementVue,
+    IconDrop: IconDropVue,
     Lists: ListsVue,
     Tags: TagsVue,
     Filters: FiltersVue,
@@ -175,6 +184,66 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(['platform']),
+    getSectionOptions() {
+      return this[this.section]
+    },
+    Tags() {
+      const dispatch = this.$store.dispatch
+      return [
+        {
+          name: 'Sort tags',
+          icon: 'sort',
+          callback: () => [
+            {
+              name: 'Sort tags by name',
+              icon: 'sort-name',
+              callback: () => dispatch('tag/sortTagsByName')
+            },
+            {
+              name: 'Sort tags by frequency',
+              icon: 'fire',
+              callback: () => dispatch('tag/sortTagsByFrequency')
+            }
+          ]
+        },
+        {
+          name: 'Add tag',
+          icon: 'tag',
+          callback: () => dispatch('pushPopup', {comp: 'AddTag'})
+        }
+      ]
+    },
+    Lists() {
+      const dispatch = this.$store.dispatch
+      return [
+        {
+          name: 'Add list',
+          icon: 'tasks',
+          callback: () => dispatch('pushPopup', {comp: 'AddList'}),
+        },
+        {
+          name: 'Sort lists by name',
+          icon: 'sort-name',
+          callback: () => dispatch('list/sortListsByName'),
+        }
+      ]
+    },
+    Filters() {
+      const dispatch = this.$store.dispatch
+      return [
+        {
+          name: 'Add filter',
+          icon: 'filter',
+          callback: () => dispatch('pushPopup', {comp: 'AddFilter'}),
+        },
+        {
+          name: 'Sort lists by name',
+          icon: 'sort-name',
+          callback: () => dispatch('list/sortFiltersByName'),
+        }
+      ]
+    },
     newIndex() {
       return this.getAppnavIndex(this.section)
     }
@@ -244,9 +313,14 @@ export default {
 }
 
 .drop {
-  position: absolute;
-  right: 0;
+  position: fixed;
+  left: 323px;
   bottom: 16px;
+}
+
+.mobile .drop {
+  left: unset;
+  right: 7px;
 }
 
 .arrow.hided {

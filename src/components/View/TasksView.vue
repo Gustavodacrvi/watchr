@@ -127,6 +127,12 @@ export default {
         this.$store.dispatch('list/addTaskByIndexSmart', {
           ...obj, list: this.value,
         })
+      else if (this.isTagView) {
+        obj.task.tags = [this.getViewTag.id]
+        this.$store.dispatch('task/addTask', {
+          ...obj.task,
+        })
+      }
     },
   },
   computed: {
@@ -351,18 +357,29 @@ export default {
         return this.viewOrders[this.value]
       }
     },
+    getViewTag() {
+      const tag = this.savedTags.find(el => el.name === this.value)
+      if (tag) return tag
+      return null
+    },
+    isTagView() {
+      return !this.smart && this.viewType === 'tag'
+    },
     getTasks() {
-      let tasks = this.tasks
+      let ts = this.tasks
       const order = this.getTaskOrder
       if (this.smart) {
-        tasks = utilsTask.filterTasksByView(tasks, this.value)
-        tasks = utils.checkMissingIdsAndSortArr(order, tasks)
+        ts = utilsTask.filterTasksByView(ts, this.value)
+        ts = utils.checkMissingIdsAndSortArr(order, ts)
+      } else if (this.isTagView && this.getViewTag) {
+        ts = ts.filter(el => el.tags.includes(this.getViewTag.id))
+        ts = utilsTask.sortTasksByPriority(ts)
       }
       if (this.getActiveTagId)
-        tasks = tasks.filter(el => el.tags.includes(this.getActiveTagId))
+        ts = ts.filter(el => el.tags.includes(this.getActiveTagId))
       if (this.getActiveListId)
-        tasks = tasks.filter(el => el.list === this.getActiveListId)
-      return tasks
+        ts = ts.filter(el => el.list === this.getActiveListId)
+      return ts
     },
   },
 }

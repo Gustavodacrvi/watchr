@@ -4,14 +4,9 @@
       <Appbar
         :value="value"
         :view-type="viewType"
+        :appbarHided='appbarHided'
         @appbar="toggleAppbar"
         @section="v => section = v"
-      />
-      <IconDrop v-if="getSectionOptions && !appbarHided"
-        class="drop right"
-        handle='settings-h'
-        handleColor='var(--gray)'
-        :options="getSectionOptions"
       />
     </div>
     <div class="cont">
@@ -29,14 +24,12 @@
 
 import AppbarVue from '../components/Appbar/Appbar.vue'
 import TasksViewVue from '../components/View/TasksView.vue'
-import IconDropVue from '../components/IconDrop.vue'
 
 import { mapGetters } from 'vuex'
 
 export default {
   components: {
     Appbar: AppbarVue,
-    IconDrop: IconDropVue,
     TasksView: TasksViewVue,
   },
   data() {
@@ -44,7 +37,6 @@ export default {
       viewType: null,
       value: null,
       appbarHided: false,
-      section: 'Lists',
     }
   },
   created() {
@@ -77,65 +69,6 @@ export default {
       }
       return false
     },
-    getSectionOptions() {
-      return this[this.section]
-    },
-    Tags() {
-      const dispatch = this.$store.dispatch
-      return [
-        {
-          name: 'Sort tags',
-          icon: 'sort',
-          callback: () => [
-            {
-              name: 'Sort tags by name',
-              icon: 'sort-name',
-              callback: () => dispatch('tag/sortTagsByName')
-            },
-            {
-              name: 'Sort tags by frequency',
-              icon: 'fire',
-              callback: () => dispatch('tag/sortTagsByFrequency')
-            }
-          ]
-        },
-        {
-          name: 'Add tag',
-          icon: 'tag',
-          callback: () => dispatch('pushPopup', {comp: 'AddTag'})
-        }
-      ]
-    },
-    Lists() {
-      const dispatch = this.$store.dispatch
-      return [
-        {
-          name: 'Add list',
-          icon: 'tasks',
-          callback: () => dispatch('pushPopup', {comp: 'AddList'}),
-        },
-        {
-          name: 'Sort lists by name',
-          icon: 'sort-name',
-          callback: () => dispatch('list/sortListsByName'),
-        }
-      ]
-    },
-    Filters() {
-      const dispatch = this.$store.dispatch
-      return [
-        {
-          name: 'Add filter',
-          icon: 'filter',
-          callback: () => dispatch('pushPopup', {comp: 'AddFilter'}),
-        },
-        {
-          name: 'Sort lists by name',
-          icon: 'sort-name',
-          callback: () => dispatch('list/sortFiltersByName'),
-        }
-      ]
-    },
     isHeadingsRendererType() {
       return this.value === 'Upcoming'
     },
@@ -157,12 +90,6 @@ export default {
   justify-content: center;
   transition-delay: .4s;
   flex-grow: 1;
-}
-
-.drop {
-  position: fixed;
-  bottom: 16px;
-  left: 323px;
 }
 
 .User.mobile {

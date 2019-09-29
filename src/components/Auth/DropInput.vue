@@ -9,6 +9,7 @@
       @blur="blur"
       @focus="onFocus"
       @keydown="keydown"
+      @keyup="keyup"
     ></textarea>
     <transition
       @enter="enter"
@@ -38,6 +39,7 @@ export default {
       str: this.value,
       showing: false,
       active: this.options[0],
+      control: false,
     }
   },
   created() {
@@ -113,17 +115,27 @@ export default {
         l.style.opacity = 1
       }
     },
+    keyup({key}) {
+      if (key === 'Control') this.control = false
+    },
     keydown(event) {
       const { key } = event
       if (key === 'ArrowDown' || key === 'ArrowUp')
         this.moveActive(key)
+      else if (key === 'Control') this.control = true
       else if (key === 'Enter') {
         if (this.active) {
           this.$emit('select', this.active)
           this.active = ''
         } else this.$emit('enter')
         event.preventDefault()
+      } else if (key === 'ArrowLeft' || key === 'ArrowRight') {
+      this.active = ''
+      if (this.control) {
+        if (key === 'ArrowLeft') this.$emit('goup')
+        if (key === 'ArrowRight') this.$emit('godown')
       }
+    }
     },
     getRefsPositions(text) {
       const drop = this.$el.getElementsByClassName('content')[0]
@@ -149,7 +161,7 @@ export default {
       }
     },
     moveActive(key) {
-      if (this.active === '')
+      if (!this.active)
         this.active = this.options[0]
       else {
         const i = this.options.findIndex(el => {

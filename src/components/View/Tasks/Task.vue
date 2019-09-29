@@ -29,6 +29,11 @@
             <span v-else-if="calendarStr" class="tag cb rb">{{ calendarStr }}</span>
             <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
             <span>{{ task.name }}</span>
+            <Tag class="task-tag" v-for="t in taskTags" :key="t.name"
+              icon="tag"
+              :value="t.name"
+              :disabled='true'
+            />
           </div>
           <div class="icon-drop-wrapper">
             <IconDrop v-if="showIconDrop" class="icon-drop"
@@ -54,6 +59,7 @@
 
 import IconVue from '../../Icon.vue'
 import IconDropVue from '../../IconDrop.vue'
+import TagVue from '../Tag.vue'
 import EditVue from './Edit.vue'
 
 import { mapState, mapGetters } from 'vuex'
@@ -69,6 +75,7 @@ export default {
     Icon: IconVue,
     IconDrop: IconDropVue,
     Edit: EditVue,
+    Tag: TagVue,
   },
   data() {
     return {
@@ -145,10 +152,20 @@ export default {
     ...mapState({
       isOnControl: state => state.isOnControl,
       savedLists: state => state.list.lists,
+      savedTags: state => state.tag.tags,
     }),
     ...mapGetters(['isDesktop']),
     completed() {
       return utilsTask.filterTasksByCompletion([this.task]).length === 1
+    },
+    taskTags() {
+      const ts = this.savedTags
+      const arr = []
+      for (const id of this.task.tags) {
+        const tag = ts.find(el => el.id === id)
+        if (tag) arr.push(tag)
+      }
+      return arr
     },
     options() {
       const dispatch = this.$store.dispatch
@@ -391,6 +408,11 @@ export default {
   padding: 5px;
   margin: 0 4px;
   font-size: .75em;
+}
+
+.task-tag {
+  margin-left: 6px;
+  transform: scale(.8,.8);
 }
 
 </style>

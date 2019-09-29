@@ -34,6 +34,8 @@
       :placeholder="placeholder"
       @select="select"
       @enter='save'
+      @goup='$emit("goup")'
+      @godown='$emit("godown")'
     />
     <div class="options">
       <div class="button-wrapper">
