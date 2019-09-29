@@ -6,8 +6,8 @@
       @mouseleave="onHover = false"
     >
       <div class="header">
-        <h4 class="name">{{ name }}</h4>
-        <IconDrop v-show="showIconDrop && options" class="drop"
+        <h4 class="name" :style="{color}">{{ name }}</h4>
+        <IconDrop v-show="showIconDrop && options && options.length > 0" class="drop"
           handle='settings-h'
           :options='options'
         />
@@ -26,7 +26,7 @@
 import IconDropVue from '../../IconDrop.vue'
 
 export default {
-  props: ['name', 'options'],
+  props: ['name', 'options', 'color'],
   components: {
     IconDrop: IconDropVue,
   },
@@ -42,7 +42,7 @@ export default {
       if (isDesktop && this.onHover) return true
       else if (!isDesktop) return true
       return false
-    }
+    },
   }
 }
 

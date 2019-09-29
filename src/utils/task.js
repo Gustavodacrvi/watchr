@@ -140,7 +140,6 @@ export default {
             return nextEventAfterCompletion.isBefore(tod, 'day')
           }
           if (type === 'weekly') {
-            console.log(lastWeeklyEvent.format('Y-M-D'), lastComplete.format('Y-M-D'))
             return lastWeeklyEvent.isAfter(lastComplete, 'day')
           }
 

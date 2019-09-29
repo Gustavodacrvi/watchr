@@ -7,6 +7,8 @@
       <template v-for="h in headings">
         <HeadingApp v-if="getTasks(tasks, h).length > 0" :key="h.id"
           :name='h.name'
+          :color='h.color ? h.color : ""'
+          :options='h.options ? h.options : []'
         >
           <TaskRenderer
             :tasks='getTasks(tasks, h)'
