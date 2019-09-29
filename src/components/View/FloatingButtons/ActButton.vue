@@ -17,7 +17,7 @@
 
 <script>
 
-import IconVue from '../Icon.vue'
+import IconVue from '../../Icon.vue'
 
 export default {
   props: ['icon', 'color' ,'txt'],

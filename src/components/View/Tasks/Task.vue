@@ -415,4 +415,8 @@ export default {
   transform: scale(.8,.8);
 }
 
+.task-tag + .task-tag {
+  margin-left: -8px;
+}
+
 </style>

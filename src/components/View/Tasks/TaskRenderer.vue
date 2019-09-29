@@ -23,8 +23,8 @@
 
 import Vue from 'vue'
 
-import TaskVue from './Tasks/Task.vue'
-import TaskEditTemplate from './Tasks/Edit.vue'
+import TaskVue from './Task.vue'
+import TaskEditTemplate from './Edit.vue'
 
 import { mapState } from 'vuex'
 

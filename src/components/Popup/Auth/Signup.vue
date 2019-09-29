@@ -96,6 +96,8 @@ export default {
             })
           }).catch(err => toastErr(err))
           this.$store.dispatch('tag/addDefaultData', uid)
+          this.$store.dispatch('list/addDefaultData', uid)
+          this.$store.dispatch('filter/addDefaultData', uid)
           this.$store.commit('closePopup')
           this.$store.commit('toggleUser', true)
           this.$router.push('/user')

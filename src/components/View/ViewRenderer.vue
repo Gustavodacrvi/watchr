@@ -1,29 +1,29 @@
 <template>
-  <div class="TaskView" :class="platform">
+  <div class="ViewRenderer" :class="platform">
     <div>
       <Header
-        :smart="smart"
-        :value="value"
+        :useIcon="useIcon"
+        :value="viewName"
         :options="options"
-        :tags='tagSelection'
-        :lists='listSelection'
+        :tags='tagSelectionOptions'
+        :lists='listSelectionOptions'
         :activeTag='activeTag'
         :activeList='activeList'
         @tag='selectTag'
         @list='selectList'
       />
       <TaskRenderer v-if="!headingsRenderer"
-        :tasks='getTasks'
+        :tasks='sortAndFilterTasks'
         :showCompleted='showCompleted'
-        :view='value'
+        :view='viewName'
         :addTask='addTask'
         @update='updateIds'
       />
       <HeadingsRenderer v-else
         :tasks='tasks'
         :showCompleted='showCompleted'
-        :view='value'
-        :headings='upcomingHeadings'
+        :view='viewName'
+        :headings='headingsOptions'
       />
     </div>
     <ActionButtons :showHeader='showHeader'/>
@@ -33,9 +33,9 @@
 <script>
 
 import HeaderVue from './Header.vue'
-import TaskRendererVue from './TaskRenderer.vue'
-import HeadingsRendererVue from './HeadingsRenderer.vue'
-import ActionButtonsVue from './ActionButtons.vue'
+import TaskRendererVue from './Tasks/TaskRenderer.vue'
+import HeadingsRendererVue from './Headings/HeadingsRenderer.vue'
+import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -44,7 +44,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['smart', 'viewType', 'value', 'headingsRenderer'],
+  props: ['headingsRenderer', 'headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'useIcon'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,
@@ -61,8 +61,8 @@ export default {
     }
   },
   created() {
-    this.showingTagSelection = localStorage.getItem('showingTagSelection') === 'true'
-    this.showingListSelection = localStorage.getItem('showingListSelection') === 'true'
+    this.showingTagSelection = localStorage.getItem(this.tagSelectionStr) === 'true'
+    this.showingListSelection = localStorage.getItem(this.listSelectionStr) === 'true'
   },
   methods: {
     selectTag(name) {
@@ -75,29 +75,25 @@ export default {
     },
     toggleTagSelection() {
       this.showingTagSelection = !this.showingTagSelection
-      localStorage.setItem('showingTagSelection', this.showingTagSelection)
+      localStorage.setItem(this.tagSelectionStr, this.showingTagSelection)
       this.activeTag = ''
     },
     toggleListSelection() {
       this.showingListSelection = !this.showingListSelection
-      localStorage.setItem('showingListSelection', this.showingListSelection)
+      localStorage.setItem(this.listSelectionStr, this.showingListSelection)
       this.activeList = ''
     },
+
     updateIds(ids) {
-      if (this.smart) {
-        this.$store.dispatch('list/updateViewOrder', {
-          view: this.value,
-          ids,
-        })
-      }
+      this.$emit('update-ids', ids)
     },
     sortByName() {
-      const tasks = this.getTasks.slice()
+      const tasks = this.tasks.slice()
       tasks.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       this.updateIds(tasks.map(el => el.id))
     },
     sortByPriority() {
-      let tasks = this.getTasks.slice()
+      let tasks = this.tasks.slice()
       tasks = utilsTask.sortTasksByPriority(tasks)
       this.updateIds(tasks.map(el => el.id))
     },
@@ -123,21 +119,17 @@ export default {
       })
     },
     addTask(obj, evt) {
-      if (this.smart)
-        this.$store.dispatch('list/addTaskByIndexSmart', {
-          ...obj, list: this.value,
-        })
-      else if (this.isTagView) {
-        obj.task.tags = [this.getViewTag.id]
-        this.$store.dispatch('task/addTask', {
-          ...obj.task,
-        })
-      }
+      this.$emit('add-task', obj)
+    },
+    removeTasksFromLists() {
+      this.$store.dispatch('task/saveTasksById', {
+        ids: this.selectedTasks,
+        task: {list: ''},
+      })
     },
   },
   computed: {
     ...mapState({
-      tasks: state => state.task.tasks,
       savedLists: state => state.list.lists,
       viewOrders: state => state.list.viewOrders,
       selectedTasks: state => state.selectedTasks,
@@ -147,16 +139,19 @@ export default {
       isDesktop: 'isDesktop',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
-    showHeader() {
-      return this.viewType === 'list' && !this.smart
+    tagSelectionStr() {
+      return 'showingTagSelection' + this.viewName + this.viewType
+    },
+    listSelectionStr() {
+      return 'showingListSelection' + this.viewName + this.viewType
     },
     sliceNumber() {
       return this.isDesktop ? 8 : 4
     },
-    tagSelection() {
+    tagSelectionOptions() {
       return this.showingTagSelection ? this.savedTags.slice(this.sliceNumber) : []
     },
-    listSelection() {
+    listSelectionOptions() {
       return this.showingListSelection ? this.savedLists.slice(this.sliceNumber) : []
     },
     getActiveTagId() {
@@ -169,7 +164,7 @@ export default {
         return this.$store.getters['list/getListsByName']([this.activeList])[0].id
       return null
     },
-    getTags() {
+    getIconDropOptionsTags() {
       const arr = []
       for (const t of this.savedTags) {
         arr.push({
@@ -180,7 +175,7 @@ export default {
       }
       return arr
     },
-    getLists() {
+    getIconDropOptionsLists() {
       const arr = []
       for (const l of this.savedLists) {
         arr.push({
@@ -195,12 +190,6 @@ export default {
         })
       }
       return arr
-    },
-    removeLists() {
-      this.$store.dispatch('task/saveTasksById', {
-        ids: this.selectedTasks,
-        task: {list: ''},
-      })
     },
     options() {
       const dispatch = this.$store.dispatch
@@ -292,7 +281,7 @@ export default {
             icon: 'tag',
             callback: () => {return {
               search: true,
-              links: this.getTags,
+              links: this.getIconDropOptionsTags,
             }}
           },
           {
@@ -300,13 +289,13 @@ export default {
             icon: 'tasks',
             callback: () => {return {
               search: true,
-              links: this.getLists,
+              links: this.getIconDropOptionsLists,
             }}
           },
           {
             name: 'Remove tasks from list',
             icon: 'tasks',
-            callback: () => this.removeLists,
+            callback: () => this.removeTasksFromLists(),
           },
           {
             name: 'Delete tasks',
@@ -316,65 +305,15 @@ export default {
         ]
       }
     },
-    upcomingHeadings() {
-      const arr = []
-      const tod = mom()
-      for (let i = 0;i < 31;i++) {
-        tod.add(1, 'day')
-        const date = tod.format('Y-M-D')
-        arr.push({
-          name: utils.getHumanReadableDate(date),
-          filter: (tasks) => {
-            return utilsTask.filterTasksByDay(tasks.filter(el => {
-              return el.calendar && el.calendar.type === 'specific'
-            }), mom(date, 'Y-M-D'))
-          },
-          id: date,
-          onAdd: (evt) => {
-            this.$store.dispatch('task/saveTask', {
-              id: evt.item.dataset.id,
-              calendar: {
-                defer: null,
-                due: null,
-  
-                type: 'specific',
-                time: null,
-                editDate: mom().format('Y-M-D'),
-  
-                specific: date,
-                weekly: null,
-                lastCompleteDate: null,
-                periodic: null
-              }
-            })
-          },
-        })
-      }
-      return arr
-    },
-    getTaskOrder() {
-      if (this.smart) {
-        return this.viewOrders[this.value]
-      }
-    },
-    getViewTag() {
-      const tag = this.savedTags.find(el => el.name === this.value)
-      if (tag) return tag
-      return null
-    },
-    isTagView() {
-      return !this.smart && this.viewType === 'tag'
-    },
-    getTasks() {
+    sortAndFilterTasks() {
       let ts = this.tasks
-      const order = this.getTaskOrder
-      if (this.smart) {
-        ts = utilsTask.filterTasksByView(ts, this.value)
+      const order = this.tasksOrder
+
+      if (order)
         ts = utils.checkMissingIdsAndSortArr(order, ts)
-      } else if (this.isTagView && this.getViewTag) {
-        ts = ts.filter(el => el.tags.includes(this.getViewTag.id))
+      else
         ts = utilsTask.sortTasksByPriority(ts)
-      }
+
       if (this.getActiveTagId)
         ts = ts.filter(el => el.tags.includes(this.getActiveTagId))
       if (this.getActiveListId)
@@ -388,7 +327,7 @@ export default {
 
 <style scoped>
 
-.TaskView {
+.ViewRenderer {
   margin: 0 90px;
   min-height: 100%;
   display: flex;
@@ -396,7 +335,7 @@ export default {
   justify-content: space-between;
 }
 
-.TaskView.mobile {
+.ViewRenderer.mobile {
   margin: 0 8px;
 }
 

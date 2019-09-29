@@ -10,11 +10,10 @@
       />
     </div>
     <div class="cont">
-      <TasksView
-        :smart="isSmart"
-        :view-type="viewType"
-        :value="value"
-        :headingsRenderer='isHeadingsRendererType'
+      <ViewControler
+        :isSmart="isSmart"
+        :viewType='viewType'
+        :viewName='value'
       />
     </div>
   </div>
@@ -23,14 +22,14 @@
 <script>
 
 import AppbarVue from '../components/Appbar/Appbar.vue'
-import TasksViewVue from '../components/View/TasksView.vue'
+import ViewControlerVue from '../components/View/ViewControler.vue'
 
 import { mapGetters } from 'vuex'
 
 export default {
   components: {
     Appbar: AppbarVue,
-    TasksView: TasksViewVue,
+    ViewControler: ViewControlerVue
   },
   data() {
     return {
@@ -68,9 +67,6 @@ export default {
         case 'Inbox': return true
       }
       return false
-    },
-    isHeadingsRendererType() {
-      return this.value === 'Upcoming'
     },
   },
   watch: {

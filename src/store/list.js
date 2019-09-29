@@ -120,10 +120,6 @@ export default {
         }),
         fire.collection('viewOrders').doc(id).set({
           userId: uid(),
-          Today: [],
-          Upcoming: [],
-          Inbox: [],
-          Tomorrow: [],
         })
       ])
     },

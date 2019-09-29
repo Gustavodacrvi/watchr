@@ -44,5 +44,11 @@ export default {
     sortFiltersByName() {
 
     },
+    addDefaultData(c, id) {
+      return fire.collection('filtersOrder').doc(id).set({
+        useId: uid(),
+        order: [],
+      })
+    },
   }
 }

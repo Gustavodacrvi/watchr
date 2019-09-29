@@ -23,7 +23,7 @@
 <script>
 
 import HeadingVue from './Heading.vue'
-import TaskRendererVue from './TaskRenderer.vue'
+import TaskRendererVue from './../Tasks/TaskRenderer.vue'
 
 const lastHeading = {
   id: null,
