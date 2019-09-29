@@ -1,6 +1,19 @@
 /* eslint-disable no-console */
 
 import { register } from "register-service-worker";
+import store from './store/index'
+
+const notifyUserAboutUpdate = (worker) => {
+  if (worker !== null)
+    store.commit('pushToast', {
+      name: 'New content is available please refresh.',
+      seconds: null,
+      type: 'normal',
+      callback: () => {
+        worker.postMessage({ action: 'skipWaiting' })
+      },
+    })
+}
 
 if (process.env.NODE_ENV === "production") {
   register(`${process.env.BASE_URL}service-worker.js`, {
@@ -21,6 +34,7 @@ if (process.env.NODE_ENV === "production") {
     },
     updated() {
       console.log("New content is available; please refresh.");
+      notifyUserAboutUpdate(reg.waiting)
     },
     offline() {
       console.log(
@@ -31,4 +45,7 @@ if (process.env.NODE_ENV === "production") {
       console.error("Error during service worker registration:", error);
     }
   });
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload()
+  })
 }

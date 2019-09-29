@@ -10,6 +10,8 @@ module.exports = {
     },
   },
   chainWebpack: config => {
+    config.plugins.delete('prefetch')
+
     const svgRule = config.module.rule('svg')
 
     svgRule.uses.clear()
