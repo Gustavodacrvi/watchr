@@ -1,5 +1,6 @@
 
-import mom, { weekdays } from "moment"
+import mom from "moment"
+import utilsMoment from './moment'
 
 export default {
   sortTasksByPriority(tasks) {
@@ -83,8 +84,8 @@ export default {
       return false
     })
   },
-  taskData(t, tod) {
-    const c = t.calendar
+  taskData(task, tod) {
+    const c = task.calendar
 
     const obj = {
       tod,
@@ -95,6 +96,7 @@ export default {
       edit: mom(c.editDate, 'Y-M-D'),
       lastComplete: mom(c.lastCompleteDate, 'Y-M-D'),
       nextEventAfterCompletion: mom(),
+      lastWeeklyEvent: mom(),
       interval: c.periodic,
       weekDays: c.weekly,
     }
@@ -103,6 +105,10 @@ export default {
       obj.nextEventAfterCompletion = obj.lastComplete.clone().add(obj.interval, 'day')
     } else {
       obj.nextEventAfterCompletion = obj.edit.clone()
+    }
+    if (obj.type !== 'weekly') obj.lastWeeklyEvent = null
+    else {
+      obj.lastWeeklyEvent = utilsMoment.getLastInstanceOfaWeek(tod, obj.weekDays)
     }
 
     return obj
@@ -114,6 +120,31 @@ export default {
       }
       case 'Today': {
         return this.filterTasksByDay(tasks, mom())
+      }
+      case 'Overdue': {
+        return tasks.filter(el => {
+          if (!el.calendar) return false
+          
+          const {
+            spec, type, due, tod,
+            nextEventAfterCompletion,
+            lastComplete, lastWeeklyEvent,
+          } = this.taskData(el, mom())
+
+          const isOverdue = (due.isBefore(tod, 'day'))
+
+          if (isOverdue) return true
+
+          if (type === 'specific' && spec.isBefore(tod, 'day')) return true
+          if (type === 'periodic') {
+            return nextEventAfterCompletion.isBefore(tod, 'day')
+          }
+          if (type === 'weekly') {
+            return lastWeeklyEvent.isAfter(lastComplete, 'day')
+          }
+
+          return false
+        })
       }
       case 'Tomorrow': {
         return this.filterTasksByDay(tasks, mom().add(1, 'day'))

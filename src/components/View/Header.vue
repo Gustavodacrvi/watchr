@@ -8,7 +8,7 @@
     <div class="tags" :class="{margins: tags.length > 0}">
       <Tag v-for="t in tags" :key="t.id"
         :value="t.name"
-        :selected='activeTag === t.name'
+        :selected='activeTags.includes(t.name)'
         icon="tag"
         @click="$emit('tag', t.name)"
       />
@@ -31,7 +31,7 @@ import IconDropVue from '../IconDrop.vue'
 import TagVue from './Tag.vue'
 
 export default {
-  props: ['useIcon', 'value', 'options', 'tags', 'lists', 'activeTag', 'activeList'],
+  props: ['useIcon', 'value', 'options', 'tags', 'lists', 'activeTags', 'activeList'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,

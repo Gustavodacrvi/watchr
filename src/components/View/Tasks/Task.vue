@@ -251,7 +251,7 @@ export default {
       return utilsTask.filterTasksByView([this.task], 'Today').length === 1
     },
     isTomorrow() {
-      if (this.view === 'Tomorrow') return false
+      if (this.view === 'Tomorrow' || this.view === 'Today') return false
       return utilsTask.filterTasksByView([this.task], 'Tomorrow').length === 1
     },
     showIconDrop() {

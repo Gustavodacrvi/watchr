@@ -118,6 +118,9 @@ export default {
     if (saved) this.section = saved
   },
   mounted() {
+    setInterval(() => {
+      this.moveLineToActive()
+    }, 200)
     this.moveLineToActive()
     window.addEventListener('resize', this.moveLineToActive)
   },
@@ -251,7 +254,7 @@ export default {
   watch: {
     section() {
       this.$emit('section', this.section)
-    }
+    },
   }
 }
 
@@ -306,7 +309,7 @@ export default {
 
 .arrow {
   position: fixed;
-  left: 60px;
+  left: 18px;
   bottom: 16px;
   transition: color .2s, transform .4s, left .4s;
   transform: rotate(90deg);
@@ -314,7 +317,7 @@ export default {
 
 .drop {
   position: fixed;
-  left: 323px;
+  left: 290px;
   bottom: 16px;
 }
 
@@ -325,7 +328,7 @@ export default {
 
 .arrow.hided {
   transform: rotate(-90deg);
-  left: 15px;
+  left: -15px;
 }
 
 .bar-trans-enter, .bar-trans-leave-to {

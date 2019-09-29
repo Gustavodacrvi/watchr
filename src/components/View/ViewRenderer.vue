@@ -7,7 +7,7 @@
         :options="options"
         :tags='tagSelectionOptions'
         :lists='listSelectionOptions'
-        :activeTag='activeTag'
+        :activeTags='activeTags'
         :activeList='activeList'
         @tag='selectTag'
         @list='selectList'
@@ -56,8 +56,8 @@ export default {
       showCompleted: false,
       showingTagSelection: false,
       showingListSelection: false,
-      activeTag: '',
-      activeList: '',
+      activeTags: [],
+      activeList: null,
     }
   },
   created() {
@@ -66,22 +66,25 @@ export default {
   },
   methods: {
     selectTag(name) {
-      if (name === this.activeTag) this.activeTag = ''
-      else this.activeTag = name
+      if (this.activeTags.includes(name)) {
+        const i = this.activeTags.findIndex(el => el === name)
+        this.activeTags.splice(i, 1)
+      }
+      else this.activeTags.push(name)
     },
     selectList(name) {
-      if (name === this.activeList) this.activeList = ''
+      if (this.activeList === name) this.activeList = ''
       else this.activeList = name
     },
     toggleTagSelection() {
       this.showingTagSelection = !this.showingTagSelection
       localStorage.setItem(this.tagSelectionStr, this.showingTagSelection)
-      this.activeTag = ''
+      this.activeTags = []
     },
     toggleListSelection() {
       this.showingListSelection = !this.showingListSelection
       localStorage.setItem(this.listSelectionStr, this.showingListSelection)
-      this.activeList = ''
+      this.activeLists = ''
     },
 
     updateIds(ids) {
@@ -149,15 +152,13 @@ export default {
       return this.isDesktop ? 8 : 4
     },
     tagSelectionOptions() {
-      return this.showingTagSelection ? this.savedTags.slice(this.sliceNumber) : []
+      return this.showingTagSelection ? this.savedTags.slice(0, this.sliceNumber) : []
     },
     listSelectionOptions() {
-      return this.showingListSelection ? this.savedLists.slice(this.sliceNumber) : []
+      return this.showingListSelection ? this.savedLists.slice(0, this.sliceNumber) : []
     },
-    getActiveTagId() {
-      if (this.activeTag)
-        return this.$store.getters['tag/getTagsByName']([this.activeTag])[0].id
-      return null
+    getActiveTagIds() {
+      return this.$store.getters['tag/getTagsByName'](this.activeTags).map(el => el.id)
     },
     getActiveListId() {
       if (this.activeList)
@@ -314,8 +315,8 @@ export default {
       else
         ts = utilsTask.sortTasksByPriority(ts)
 
-      if (this.getActiveTagId)
-        ts = ts.filter(el => el.tags.includes(this.getActiveTagId))
+      if (this.getActiveTagIds.length > 0) 
+        ts = ts.filter(el => this.getActiveTagIds.every(id => el.tags.includes(id)))
       if (this.getActiveListId)
         ts = ts.filter(el => el.list === this.getActiveListId)
       return ts

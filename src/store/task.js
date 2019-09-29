@@ -6,6 +6,8 @@ import fb from 'firebase/app'
 const uid = () => auth.currentUser.uid
 const fd = () => fb.firestore.FieldValue
 
+import mom from 'moment'
+
 export default {
   namespaced: true,
   state: {
@@ -36,6 +38,20 @@ export default {
         }
       ]
     },
+    getSpecificDayCalendarObj: () => moment => {
+      return {
+        defer: null,
+        due: null,
+  
+        type: 'specific',
+        time: null,
+        editDate: mom().format('Y-M-D'),
+  
+        specific: moment.format('Y-M-D'),
+        lastCompleteDate: null,
+        periodic: null
+      }
+    }
   },
   actions: {
     getData({state}) {

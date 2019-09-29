@@ -74,10 +74,19 @@ export default {
     getTasks() {
       return utilsTask.filterTasksByView(this.tasks, this.viewName)
     },
-    isHeadingsRendererType() {
+    getOverdueTasks() {
+      return utilsTask.filterTasksByView(this.tasks, 'Overdue')
+    },
+    upcomingView() {
       return this.viewName === 'Upcoming'
     },
-    headingsOptions() {
+    hasAtLeastOneOverdue() {
+      return this.viewName === 'Today' && this.getOverdueTasks.length > 0
+    },
+    isHeadingsRendererType() {
+      return this.upcomingView || this.hasAtLeastOneOverdue
+    },
+    upcomingHeadingsOptions() {
       const arr = []
       const tod = mom()
       for (let i = 0;i < 31;i++) {
@@ -112,6 +121,57 @@ export default {
         })
       }
       return arr
+    },
+    todayHeadingsOptions() {
+      const dispatch = this.$store.dispatch
+      const saveTasksDay = (ids, mom) => {
+        dispatch('task/saveTasksById', {
+          ids, task: {calendar: this.$store.getters['task/getSpecificDayCalendarObj'](mom)}
+        })
+      }
+      const overIds = this.getOverdueTasks.map(el => el.id)
+      return [
+        {
+          name: 'Overdue',
+          id: 'overdue',
+          filter: (tasks) => this.getOverdueTasks,
+          color: 'var(--red)',
+          options: [
+            {
+              name: 'Move to today',
+              icon: 'star',
+              callback: () => saveTasksDay(overIds, mom())
+            },
+            {
+              name: 'Move to tomorrow',
+              icon: 'sun',
+              callback: () => saveTasksDay(overIds, mom().add(1, 'd'))
+            },
+            {
+              name: 'Select date',
+              icon: 'calendar',
+              callback: () => {return {
+                calendar: true,
+                callback: (calendar) => {
+                  dispatch('task/saveTasksById', {
+                    ids: overIds,
+                    task: {calendar},
+                  })
+                }
+              }}
+            }
+          ]
+        },
+        {
+          name: 'Today',
+          id: 'todya',
+          filter: (tasks) => this.getTasks,
+        },
+      ]
+    },
+    headingsOptions() {
+      if (this.upcomingView) return this.upcomingHeadingsOptions
+      return this.todayHeadingsOptions
     },
   }
 }
