@@ -4,9 +4,14 @@
     @leave="leave"
   >
     <div class="wrapper" @click="$emit('click')">
-      <div class="Tag" :class="[{selected, disabled}, platform]" :style="`border: 1px solid ${color}`">
-        <Icon class="icon" :icon="icon" :color="color" width="14px"/>
-        <span class="name" :style="{color}">{{ value }}</span>
+      <div class="Tag"
+        :class="[{selected, disabled}, platform]"
+        :style="`border: 1px solid ${tagColor}`"
+        @mouseenter="hover = true"
+        @mouseleave="hover = false"
+      >
+        <Icon class="icon" :icon="icon" :color="tagColor" width="14px"/>
+        <span class="name" :style="{color: tagColor}">{{ value }}</span>
       </div>
     </div>
   </transition>
@@ -27,6 +32,7 @@ export default {
     return {
       height: 0,
       width: 0,
+      hover: false,
     }
   },
   methods: {
@@ -93,7 +99,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['platform'])
+    ...mapGetters(['platform']),
+    tagColor() {
+      return !this.hover ? this.color : ''
+    },
   }
 }
 

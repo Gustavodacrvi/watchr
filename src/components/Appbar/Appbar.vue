@@ -118,6 +118,9 @@ export default {
     if (saved) this.section = saved
   },
   mounted() {
+    setInterval(() => {
+      this.moveLineToActive()
+    }, 200)
     this.moveLineToActive()
     window.addEventListener('resize', this.moveLineToActive)
   },
@@ -251,7 +254,7 @@ export default {
   watch: {
     section() {
       this.$emit('section', this.section)
-    }
+    },
   }
 }
 
