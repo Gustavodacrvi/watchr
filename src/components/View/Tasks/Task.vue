@@ -29,11 +29,13 @@
             <span v-else-if="calendarStr" class="tag cb rb">{{ calendarStr }}</span>
             <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
             <span>{{ task.name }}</span>
-            <Tag class="task-tag" v-for="t in taskTags" :key="t.name"
-              icon="tag"
-              :value="t.name"
-              :disabled='true'
-            />
+            <template v-if="isDesktop">
+              <Tag class="task-tag" v-for="t in taskTags" :key="t.name"
+                icon="tag"
+                :value="t.name"
+                :disabled='true'
+              />
+            </template>
           </div>
           <div class="icon-drop-wrapper">
             <IconDrop v-if="showIconDrop" class="icon-drop"
@@ -407,10 +409,10 @@ export default {
 }
 
 .hideTask .cont-wrapper {
-  opacity: 0;
-  height: 0px;
-  padding: 0;
-  transition: height .2s, opacity .2s, padding .2s;
+  opacity: 0 !important;
+  height: 0px !important;
+  padding: 0 !important;
+  transition: height .2s, opacity .2s, padding .2s !important;
 }
 
 .name-icon {
