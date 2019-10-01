@@ -298,6 +298,8 @@ export default {
 
 .cont-wrapper {
   cursor: pointer;
+  height: auto;
+  padding: 2px;
   transition: height .3s, background-color .2s;
 }
 
@@ -328,11 +330,7 @@ export default {
   background-color: rgba(53, 73, 90, 0.6);
 }
 
-.cont {
-  height: 100%;
-}
-
-.check, .text, .options {
+.check, .text, .options, .cont {
   height: 100%;
 }
 
@@ -350,12 +348,20 @@ export default {
 }
 
 .check {
-  flex-basis: 35px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 35px;
+  height: 100%;
   opacity: .6;
 }
 
 .handle, .Task, .cont {
   outline: none;
+}
+
+.cont {
+  position: relative;
 }
 
 .icon {
@@ -365,6 +371,7 @@ export default {
 .text {
   align-items: center;
   flex-basis: 100%;
+  margin-left: 35px;
 }
 
 .check-drop {

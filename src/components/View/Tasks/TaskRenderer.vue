@@ -132,7 +132,7 @@ export default {
     contWrapper(el) {
       return el.getElementsByClassName('cont-wrapper')[0]
     },
-    enter(el, done) {
+    enter(el) {
       const cont = this.contWrapper(el)
       const height = cont.offsetHeight + 'px'
       const lessThan38 = (cont.offsetHeight < 38)
@@ -144,6 +144,9 @@ export default {
         }
         else
           cont.style.height = height
+          setTimeout(() => {
+            cont.style.height = 'auto'
+          }, 300)
       }, 10)
     },
     leave(el) {
