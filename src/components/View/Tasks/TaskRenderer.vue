@@ -1,6 +1,7 @@
 <template>
   <div class="TaskRenderer" @click.stop>
     <transition-group name="task-trans" class="task-renderer-root"
+      appear
       @enter='enter'
       @leave='leave'
       tag="div"

@@ -133,7 +133,6 @@ auth.onAuthStateChanged(() => {
   if (fire && !enabled)
     fire.enablePersistence().then(() => enabled = true)
       .catch(err => {
-        console.log(4)
         if (err.code === 'failed-precondition') {
           // handle error
         }

@@ -1,6 +1,7 @@
 <template>
   <div class="HeadingsRenderer">
     <transition-group
+      appear
       @leave='leave'
       @enter='enter'
     >
