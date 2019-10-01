@@ -51,7 +51,8 @@ export default {
             ids.push(el.dataset.id)
           this.$emit('update', ids)
         }, 100)
-      }
+      },
+      onStart: () => window.navigator.vibrate(100),
     })
   },
   beforeDestroy() {

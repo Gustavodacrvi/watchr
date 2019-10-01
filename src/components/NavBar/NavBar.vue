@@ -1,5 +1,5 @@
 <template>
-  <div class="NavBar" @click="calculateLineOffset">
+  <div class="NavBar" :class="platform" @click="calculateLineOffset">
     <Desktop v-if="isDesktop" :route="route" :dropLinks="dropLinks"/>
     <Mobile v-else :route="route" :dropLinks="dropLinks"/>
   </div>
@@ -51,7 +51,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktop', 'platform']),
     route() {
       if (this.$route.matched[0]) {
         return this.$route.matched[0].name
@@ -87,6 +87,14 @@ export default {
   justify-content: center;
   align-items: center;
   z-index: 50;
+}
+
+.NavBar.mobile {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  background-color: var(--back-color);
 }
 
 </style>

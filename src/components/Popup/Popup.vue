@@ -1,7 +1,7 @@
 <template>
   <div class="Popup" :class="platform">
     <Icon v-if="!isDesktop" class="icon cursor" icon="arrow" :primaryHover="true" @click="closeMobilePopup"/>
-    <component class="component" :is="popup.comp"/>
+    <component class="component" :class="platform" :is="popup.comp"/>
     <div class="back" @click="$emit('close')"></div>
   </div>
 </template>
@@ -71,6 +71,7 @@ export default {
   left: 15px;
   top: 10px;
   transform: rotate(90deg);
+  z-index: 100;
 }
 
 .component {

@@ -24,8 +24,14 @@ export default {
   },
   methods: {
     add(obj) {
-      if (obj.name)
+      if (obj.name) {
         this.$store.dispatch('task/addTask', {...obj})
+        this.$store.commit('pushToast', {
+          name: `Task successfully added!`,
+          seconds: 2,
+          type: 'success',
+        })
+      }
     },
   },
   computed: {

@@ -9,7 +9,6 @@
         :task='t'
         :isSelecting='isSelecting'
         :isSelected='isTaskSelected(t.id)'
-        :showCompleted='showCompleted'
         :view='view'
         @select='taskSelect'
 
@@ -31,7 +30,7 @@ import { mapState } from 'vuex'
 import Sortable from 'sortablejs'
 
 export default {
-  props: ['tasks', 'onAdd', 'showCompleted', 'view', 'addTask'],
+  props: ['tasks', 'onAdd', 'view', 'addTask'],
   components: {
     Task: TaskVue,
   },
@@ -81,7 +80,8 @@ export default {
             $el.parentNode.removeChild($el)
           })
         }
-      }
+      },
+      onStart: () => window.navigator.vibrate(100),
     })
     window.addEventListener('click', this.windowClick)
   },
@@ -134,25 +134,31 @@ export default {
     },
     enter(el) {
       const cont = this.contWrapper(el)
-      const height = cont.offsetHeight + 'px'
-      const lessThan38 = (cont.offsetHeight < 38)
-      cont.classList.add('hide-task')
-      setTimeout(() => {
-        if (lessThan38) {
-          cont.classList.remove('hide-task')
-          cont.classList.add('lessthan38')
-        }
-        else
-          cont.style.height = height
-          setTimeout(() => {
-            cont.style.height = 'auto'
-          }, 300)
-      }, 10)
+      if (cont) {
+        const s = cont.style
+        const height = cont.offsetHeight + 'px'
+        const lessThan38 = (cont.offsetHeight < 38)
+        cont.classList.add('hided')
+        s.height = '0px'
+        setTimeout(() => {
+          if (lessThan38) {
+          cont.classList.add('show')
+            s.height = '38px'
+          }
+          else {
+            s.height = height
+            s.padding = '2px 0'
+          }
+          cont.classList.remove('hided')
+        })
+      }
     },
     leave(el) {
       const cont = el.getElementsByClassName('cont-wrapper')[0]
-      if (cont)
-        cont.classList.add('hideTask')
+      if (cont) {
+        cont.classList.add('hided-leave')
+        cont.style.height = 0
+      }
     },
     windowClick() {
       this.$store.commit('clearSelected')

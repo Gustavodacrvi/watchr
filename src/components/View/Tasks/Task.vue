@@ -1,11 +1,12 @@
 <template>
-  <div class="Task draggable" :class="{fade: completed, isSelected, hideTask: completed && !showCompleted}"
+  <div class="Task draggable" :class="{fade: completed, isSelected}"
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
   >
     <transition name="edit-t" mode="out-in">
       <div v-if="!isEditing" key="notediting"
-        class="cont-wrapper handle rb" 
+        class="cont-wrapper handle rb cursor"
+        :class="platform"
         @click="click"
         @dblclick="dblclick"
       >
@@ -43,7 +44,7 @@
           </div>
         </div>
       </div>
-      <Edit v-else key="editing" class="handle"
+      <Edit v-else-if="isEditing" key="editing" class="handle"
         placeholder="Task name..."
         btnText="Save task"
         :task='task'
@@ -70,7 +71,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'isSelected', 'showCompleted', 'view'],
+  props: ['task', 'isSelected', 'view'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -154,7 +155,7 @@ export default {
       savedLists: state => state.list.lists,
       savedTags: state => state.tag.tags,
     }),
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktop', 'platform']),
     completed() {
       return utilsTask.filterTasksByCompletion([this.task]).length === 1
     },
@@ -297,20 +298,18 @@ export default {
 }
 
 .cont-wrapper {
-  cursor: pointer;
-  height: auto;
-  padding: 2px;
-  transition: height .3s, background-color .2s;
+  transition-duration: .3s;
 }
 
-.hide-task {
-  height: 0;
-  transition: height 0;
+.hided {
+  opacity: 0;
+  padding: 0;
+  transition-duration: 0s;
 }
 
-.lessthan38 {
-  height: 38px !important;
-  transition: height .3s !important;
+.show {
+  opacity: 1;
+  padding: 2px 0;
 }
 
 .subtasks {
@@ -322,7 +321,7 @@ export default {
   opacity: .4;
 }
 
-.cont-wrapper:hover {
+.cont-wrapper:hover, .cont-wrapper:active {
   background-color: var(--light-gray);
 }
 
@@ -404,13 +403,6 @@ export default {
   opacity: 1;
   transform: scale(1,1);
   transition: opacity .1s ease-in, transform .1s ease-in;
-}
-
-.hideTask .cont-wrapper {
-  opacity: 0;
-  height: 0px;
-  padding: 0;
-  transition: height .2s, opacity .2s, padding .2s;
 }
 
 .name-icon {

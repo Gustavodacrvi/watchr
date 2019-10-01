@@ -19,7 +19,7 @@
               @leave='leaveItems'
             >
               <template v-for="link in getLinks">
-                <div v-if="!link.type" class="link hide-trans"
+                <div v-if="!link.type" class="link cursor hide-trans"
                   :key="link.name"
                   @click="linkCallback(link.callback, link)"
                 >
@@ -341,7 +341,6 @@ export default {
 .link {
   display: flex;
   align-items: center;
-  cursor: pointer;
   transition-duration: .3s;
   white-space: nowrap;
   height: 35px;

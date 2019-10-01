@@ -4,7 +4,7 @@
     @leave="leave"
   >
     <div class="wrapper" @click="$emit('click')">
-      <div class="Tag"
+      <div class="Tag cursor"
         :class="[{selected, disabled}, platform]"
         :style="`border: 1px solid ${tagColor}`"
         @mouseenter="hover = true"
@@ -121,7 +121,6 @@ export default {
   display: inline-flex;
   align-items: center;
   padding: .5px 12px;
-  cursor: pointer;
 }
 
 

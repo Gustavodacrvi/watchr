@@ -7,6 +7,7 @@
     <transition name="popup">
       <Menu v-if="isMenuOpened && !isDesktop"/>
     </transition>
+    <div v-if="!isDesktop" style="height: 65px"></div>
     <transition>
       <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
     </transition>
