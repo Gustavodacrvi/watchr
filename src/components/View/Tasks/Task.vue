@@ -389,13 +389,6 @@ export default {
   display: none;
 }
 
-.sortable-ghost .cont-wrapper {
-  background-color: var(--void) !important;
-  transition-duration: 0 !important;
-  transition: none !important;
-  padding: 0;
-}
-
 .edit-t-enter, .edit-t-leave-to {
   opacity: 0;
   transform: scale(.95,.95);
@@ -433,6 +426,14 @@ export default {
 
 .task-tag + .task-tag {
   margin-left: -8px;
+}
+
+.sortable-ghost .cont-wrapper {
+  background-color: var(--void) !important;
+  transition-duration: 0 !important;
+  transition: none !important;
+  height: 38px !important;
+  padding: 0;
 }
 
 </style>
