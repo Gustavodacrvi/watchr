@@ -129,19 +129,27 @@ export default {
         ids = ids.filter(id => id !== 'Edit')
       return ids
     },
-    enter(el) {
-      const cont = el.getElementsByClassName('cont-wrapper')[0]
-      cont.transitionDuration = '0s'
-      cont.classList.add('task-hided')
+    contWrapper(el) {
+      return el.getElementsByClassName('cont-wrapper')[0]
+    },
+    enter(el, done) {
+      const cont = this.contWrapper(el)
+      const height = cont.offsetHeight + 'px'
+      const lessThan38 = (cont.offsetHeight < 38)
+      cont.classList.add('hide-task')
       setTimeout(() => {
-        cont.transitionDuration = '.3s'
-        cont.classList.remove('task-hided')
-      })
+        if (lessThan38) {
+          cont.classList.remove('hide-task')
+          cont.classList.add('lessthan38')
+        }
+        else
+          cont.style.height = height
+      }, 10)
     },
     leave(el) {
       const cont = el.getElementsByClassName('cont-wrapper')[0]
       if (cont)
-        cont.classList.add('task-hided')
+        cont.classList.add('hideTask')
     },
     windowClick() {
       this.$store.commit('clearSelected')

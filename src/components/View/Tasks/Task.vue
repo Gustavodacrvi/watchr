@@ -298,12 +298,17 @@ export default {
 
 .cont-wrapper {
   cursor: pointer;
-  height: 38px;
   transition: height .3s, background-color .2s;
 }
 
-.task-hided {
+.hide-task {
   height: 0;
+  transition: height 0;
+}
+
+.lessthan38 {
+  height: 38px !important;
+  transition: height .3s !important;
 }
 
 .subtasks {
@@ -379,6 +384,7 @@ export default {
   background-color: var(--void) !important;
   transition-duration: 0 !important;
   transition: none !important;
+  padding: 0;
 }
 
 .edit-t-enter, .edit-t-leave-to {
@@ -396,7 +402,8 @@ export default {
 .hideTask .cont-wrapper {
   opacity: 0;
   height: 0px;
-  transition: height .2s, opacity .2s;;
+  padding: 0;
+  transition: height .2s, opacity .2s, padding .2s;
 }
 
 .name-icon {

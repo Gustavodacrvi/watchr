@@ -23,6 +23,7 @@
         :tasks='tasks'
         :showCompleted='showCompleted'
         :view='viewName'
+        :addTask="addTask"
         :headings='headingsOptions'
       />
     </div>
