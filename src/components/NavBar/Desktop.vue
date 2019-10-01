@@ -5,7 +5,8 @@
     <router-link class="link" :class="{active: route === 'about'}" to="/about">About</router-link>
     <div class="line"></div>
     <div class="icons">
-      <DropIcon handle="user" handleColor="var(--gray)" :options="dropLinks"/>
+      <DropIcon class="drop" handle="user" handleColor="var(--gray)" :options="dropLinks"/>
+      <DropIcon class="drop" handle="globe" handleColor="var(--gray)" :options="languages"/>
     </div>
   </div>
 </template>
@@ -19,11 +20,34 @@ export default {
     DropIcon: IconDropVue,    
   },
   props: ['route', 'dropLinks'],
+  methods: {
+    saveLang(lang) {
+      this.$store.commit('saveLang', lang)
+    },
+  },
+  computed: {
+    languages() {
+      return [
+        {
+          name: 'English',
+          callback: () => this.saveLang('en'),
+        },
+        {
+          name: 'Português(Brasil)',
+          callback: () => this.saveLang('pt-br'),
+        },
+      ]
+    },
+  }
 }
 
 </script>
 
 <style scoped>
+
+.drop {
+  margin-left: 14px;
+}
 
 .link {
   text-decoration: none;

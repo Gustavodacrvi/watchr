@@ -29,11 +29,22 @@ import tag from './tag'
 import list from './list'
 import filter from './filter'
 
+const lang = localStorage.getItem('watchrlanguage') || 'en'
+
+const getLanguageFile = (name) => {
+  return new Promise(resolve => {
+    import(/* webpackMode: "lazy" */`./../assets/locales/${name}.js`)
+      .then((res) => resolve(res.default))
+  })
+}
+
 const store = new Vuex.Store({
   modules: {
     task, tag, list, filter,
   },
   state: {
+    lang,
+    language: null,
     popup: {
       comp: '',
       payload: null,
@@ -68,6 +79,16 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    languageFile(state, language) {
+      state.language = language
+    },
+    saveLang(state, lang) {
+      getLanguageFile(lang).then((language) => {
+        state.lang = lang
+        state.language = language
+        localStorage.setItem('watchrlanguage', lang)
+      })
+    },
     pushIconDrop(state, drop) {
       state.iconDrop = drop
     },
@@ -123,7 +144,9 @@ const store = new Vuex.Store({
         router.push('/popup')
     },
   }
-});
+})
+
+getLanguageFile(lang).then((l) => store.commit('languageFile', l))
 
 auth.onAuthStateChanged(() => {
   const isLogged = auth.currentUser !== null
