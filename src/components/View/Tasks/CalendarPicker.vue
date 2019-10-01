@@ -5,19 +5,19 @@
       @leave="leave"
     >
       <div v-if="calendar" key="calendar" class="view calendar">
-        <span class="option" @click="today">
+        <span class="option cursor" @click="today">
           <span class="cont">
             <Icon class="icon" icon="star"/>
             <span class="name">Today</span>
           </span>
         </span>
-        <span class="option" @click="tomorrow">
+        <span class="option cursor" @click="tomorrow">
           <span class="cont">
             <Icon class="icon" icon="sun"/>
             <span class="name">Tomorrow</span>
           </span>
         </span>
-        <span class="option" @click="noDate">
+        <span class="option cursor" @click="noDate">
           <span class="cont">
             <Icon class="icon" icon="bloqued"/>
             <span class="name">No date</span>
@@ -42,7 +42,7 @@
             <span class="week">S</span>
           </div>
           <div class="dates">
-            <span v-for="i in monthDays()" :key="i" class="day rb"
+            <span v-for="i in monthDays()" :key="i" class="day cursor rb"
               :class="{active: isSelectedDate(i)}"
               @click="selectDate(i)"
             >
@@ -50,7 +50,7 @@
             </span>
           </div>
         </div>
-        <span class="option" @click="calendar = false">
+        <span class="option cursor" @click="calendar = false">
           <span class="cont">
             <span v-if="!time" class="name">Add time</span>
             <span v-else class="name">At: {{ time }}</span>
@@ -365,7 +365,6 @@ export default {
   height: 35px;
   white-space: nowrap;
   transition-duration: .3s;
-  cursor: pointer;
 }
 
 .option:hover {
@@ -416,7 +415,6 @@ export default {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   transition-duration: .2s;
 }
 

@@ -34,6 +34,10 @@ path {
   cursor: pointer;
 }
 
+.cursor:focus {
+  outline: 0;
+}
+
 body, input, button, textarea {
   font-family: var(--font);
   color: var(--white);

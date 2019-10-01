@@ -13,15 +13,13 @@
         @list='selectList'
       />
       <TaskRenderer v-if="!headingsRenderer"
-        :tasks='sortAndFilterTasks'
-        :showCompleted='showCompleted'
+        :tasks='getFilterCompletedTasks'
         :view='viewName'
         :addTask='addTask'
         @update='updateIds'
       />
       <HeadingsRenderer v-else
         :tasks='tasks'
-        :showCompleted='showCompleted'
         :view='viewName'
         :addTask="addTask"
         :headings='headingsOptions'
@@ -123,6 +121,7 @@ export default {
       })
     },
     addTask(obj, evt) {
+      obj.ids = this.sortAndFilterTasks.map(el => el.id)
       this.$emit('add-task', obj)
     },
     removeTasksFromLists() {
@@ -320,6 +319,12 @@ export default {
         ts = ts.filter(el => this.getActiveTagIds.every(id => el.tags.includes(id)))
       if (this.getActiveListId)
         ts = ts.filter(el => el.list === this.getActiveListId)
+      return ts
+    },
+    getFilterCompletedTasks() {
+      let ts = this.sortAndFilterTasks
+      if (!this.showCompleted)
+        ts = utilsTask.filterTasksByCompletion(ts, true)
       return ts
     },
   },

@@ -127,7 +127,12 @@ export default {
         if (this.active) {
           this.$emit('select', this.active)
           this.active = ''
-        } else this.$emit('enter')
+        } else {
+          this.$emit('enter')
+          setTimeout(() => {
+            this.fixHeight() 
+          })
+        }
         event.preventDefault()
       } else if (key === 'ArrowLeft' || key === 'ArrowRight') {
       this.active = ''

@@ -104,6 +104,7 @@ export default {
 
 .hasCallback {
   cursor: pointer;
+  outline: 0;
 }
 
 .hasCallback:hover {

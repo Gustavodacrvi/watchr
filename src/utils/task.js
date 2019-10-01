@@ -68,8 +68,8 @@ export default {
       return true
     })
   },
-  filterTasksByCompletion(tasks) {
-    return tasks.filter(el => {
+  filterTasksByCompletion(tasks, notCompleted) {
+    const isCompleted = (el) => {
       if (!el.calendar) return el.completed
       const {
         type, lastComplete, tod,
@@ -82,6 +82,11 @@ export default {
       }
 
       return false
+    }
+    return tasks.filter(el => {
+      const comp = isCompleted(el)
+      if (notCompleted) return !comp
+      return comp
     })
   },
   taskData(task, tod) {
