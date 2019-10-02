@@ -79,7 +79,7 @@ export default {
   position: relative;
 }
 
-.component.isStandAlone {
+.component.isStandAlone.mobile {
   margin-top: 150px !important;
 }
 

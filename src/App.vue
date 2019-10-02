@@ -100,7 +100,7 @@ export default {
       return this.hided
     },
     hidePassive() {
-      return this.timeBeforeMouseMove > 7 && this.isStandAlone
+      return this.timeBeforeMouseMove > 7 && this.isStandAlone && this.isDesktop
     },
     isIconDropOpened() {
       return this.$store.state.iconDrop !== null

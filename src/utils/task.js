@@ -68,23 +68,23 @@ export default {
       return true
     })
   },
-  filterTasksByCompletion(tasks, notCompleted) {
-    const isCompleted = (el) => {
-      if (!el.calendar) return el.completed
-      const {
-        type, lastComplete, tod,
-      } = this.taskData(el, mom())
+  isTaskCompleted(task) {
+    if (!task.calendar) return task.completed
+    const {
+      type, lastComplete, tod,
+    } = this.taskData(task, mom())
 
-      if (type === 'specific') return el.completed
-      
-      if (type === 'periodic' || type === 'weekly') {
-        return lastComplete.isSameOrAfter(tod, 'day')
-      }
-
-      return false
+    if (type === 'specific') return task.completed
+    
+    if (type === 'periodic' || type === 'weekly') {
+      return lastComplete.isSameOrAfter(tod, 'day')
     }
+
+    return false
+  },
+  filterTasksByCompletion(tasks, notCompleted) {
     return tasks.filter(el => {
-      const comp = isCompleted(el)
+      const comp = this.isCompleted(el)
       if (notCompleted) return !comp
       return comp
     })
@@ -128,7 +128,7 @@ export default {
       }
       case 'Overdue': {
         return tasks.filter(el => {
-          if (!el.calendar) return false
+          if (!el.calendar || this.isCompleted(el)) return false
           
           const {
             spec, type, due, tod,
