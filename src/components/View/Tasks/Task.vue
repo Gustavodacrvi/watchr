@@ -424,16 +424,6 @@ export default {
   transition: opacity .1s ease-in, transform .1s ease-in;
 }
 
-<<<<<<< HEAD
-.hideTask .cont-wrapper {
-  opacity: 0 !important;
-  height: 0px !important;
-  padding: 0 !important;
-  transition: height .2s, opacity .2s, padding .2s !important;
-}
-
-=======
->>>>>>> 30c75b4df3175c5ae97744fbb97823a5f5e68911
 .name-icon {
   margin: 0 4px;
 }

@@ -27,7 +27,7 @@ import Vue from 'vue'
 import TaskVue from './Task.vue'
 import TaskEditTemplate from './Edit.vue'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 import Sortable from 'sortablejs'
 
@@ -66,7 +66,7 @@ export default {
             parent: this,
             propsData: {
               class: 'handle', key: 'Edit',
-              placeholder: 'Task name', showCancel: true, btnText: 'Add task'
+              placeholder: this.l['Task name'], showCancel: true, btnText: this.l['Add task']
             },
           })
           const el = this.$el.querySelector('.action-button')
@@ -181,6 +181,7 @@ export default {
     ...mapState({
       selected: state => state.selectedTasks,
     }),
+    ...mapGetters(['l']),
     draggableRoot() {
       return this.$el.getElementsByClassName('task-renderer-root')[0]
     },

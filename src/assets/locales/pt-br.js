@@ -38,6 +38,7 @@ export default {
   'Low priority': 'Prioridade baixa',
   'No priority': 'Sem prioridade',
   'Tag name': 'Nome da tag',
+  'Cancel': 'Cancelar',
   'Add list': 'Adicionar lista',
   'List name': 'Nome da lista',
   'Change priority of tasks': 'Mudar prioridade das tarefas',

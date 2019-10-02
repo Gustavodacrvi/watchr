@@ -42,7 +42,7 @@
         <div class="button">
           <ButtonApp :value="buttonText" @click="save"/>
         </div>
-        <span v-if="showCancel" class="cancel cursor" @click="$emit('cancel')">Cancel</span>
+        <span v-if="showCancel" class="cancel cursor" @click="$emit('cancel')">{{ l['Cancel'] }}</span>
       </div>
       <div class="icons">
         <IconDrop

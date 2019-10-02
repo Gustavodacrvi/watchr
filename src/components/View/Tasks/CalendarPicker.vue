@@ -52,7 +52,7 @@
         </div>
         <span class="option cursor" @click="calendar = false">
           <span class="cont">
-            <span v-if="!time" class="name">Add time</span>
+            <span v-if="!time" class="name">{{l['Add time']}}</span>
             <span v-else class="name">At: {{ time }}</span>
           </span>
         </span>
@@ -87,8 +87,8 @@
             </div>
           </div>
           <div class="buttons">
-            <Button class="btn-time" value="Add time" @click="addTime"/>
-            <Button class="btn-time" value="Remove time" @click="removeTime"/>
+            <Button class="btn-time" :value="l['Add time']" @click="addTime"/>
+            <Button class="btn-time" :value="l['Remove time']" @click="removeTime"/>
           </div>
         </div>
       </div>
