@@ -1,5 +1,5 @@
 <template>
-  <div v-if="l" id="app">
+  <div v-if="l" id="app" :class="{hidePassive}">
     <transition name="popup">
       <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>
@@ -44,9 +44,13 @@ export default {
     return {
       hided: true,
       hideTimeout: null,
+      timeBeforeMouseMove: 0,
     }
   },
   created() {
+    setInterval(() => {
+      this.timeBeforeMouseMove++
+    }, 1000)
     window.addEventListener('keydown', this.keydown)
     window.addEventListener('keyup', this.keyup)
     window.addEventListener('mousemove', this.getMousePos)
@@ -70,6 +74,7 @@ export default {
       const clear = () => {
         if (this.hideTimeout) clearTimeout(this.hideTimeout)
       }
+      this.timeBeforeMouseMove = 0
       
       const y = evt.pageY
       if (y && y < 60) {
@@ -93,6 +98,9 @@ export default {
     hideNavbar() {
       if (!this.isStandAlone || !this.isDesktop) return false
       return this.hided
+    },
+    hidePassive() {
+      return this.timeBeforeMouseMove > 7 && this.isStandAlone
     },
     isIconDropOpened() {
       return this.$store.state.iconDrop !== null
@@ -155,6 +163,20 @@ export default {
   opacity: 1;
   transform: translateY(0px);
   transition: opacity .3s ease-in, transform .3s ease-in;
+}
+
+</style>
+
+<style>
+
+.passive {
+  transition: opacity .6s !important;
+  opacity: 1 !important;
+}
+
+.hidePassive .passive {
+  opacity: 0 !important;
+  transition: opacity .6s !important;
 }
 
 </style>

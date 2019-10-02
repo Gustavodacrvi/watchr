@@ -40,12 +40,12 @@
       </div>
     </transition>
       <IconDrop v-if="getSectionOptions && !appbarHided"
-      class="drop right"
+      class="drop right passive"
       handle='settings-h'
       handleColor='var(--gray)'
       :options="getSectionOptions"
     />
-    <Icon v-if="$store.getters.isDesktop" icon="arrow" class="arrow cursor" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
+    <Icon v-if="$store.getters.isDesktop" icon="arrow" class="arrow cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
   </div>
 </template>
 

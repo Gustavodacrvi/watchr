@@ -3,7 +3,7 @@
     <div v-if="$store.getters.isDesktop" class="header">
       <Icon v-if="useIcon" class="icon" :icon="getIcon" :color="getIconColor" width="40px"/>
       <h2 class="name">{{ value }}</h2>
-      <IconDrop handle="settings-h" handleColor="var(--gray)" :options="options"/>
+      <IconDrop class="passive" handle="settings-h" handleColor="var(--gray)" :options="options"/>
     </div>
     <div class="tags" :class="{margins: tags.length > 0}">
       <Tag v-for="t in tags" :key="t.id"

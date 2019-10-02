@@ -1,5 +1,5 @@
 <template>
-  <div class="ActionButtons" :class="platform" @click="click">
+  <div class="ActionButtons passive" :class="platform" @click="click">
     <Btn v-if="showHeader" class="header button handle action-button"
       icon='user'
       color='white'
