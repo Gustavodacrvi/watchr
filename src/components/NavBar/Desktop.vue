@@ -1,8 +1,8 @@
 <template>
   <div class="Desktop">
-    <router-link class="link" :class="{active: route === 'home'}" to="/">Home</router-link>
-    <router-link class="link" :class="{active: route === 'user'}" to="/user">User</router-link>
-    <router-link class="link" :class="{active: route === 'about'}" to="/about">About</router-link>
+    <router-link class="link" :class="{active: route === 'home'}" to="/">{{ l['Home'] }}</router-link>
+    <router-link class="link" :class="{active: route === 'user'}" to="/user">{{ l['User'] }}</router-link>
+    <router-link class="link" :class="{active: route === 'about'}" to="/about">{{ l['About'] }}</router-link>
     <div class="line"></div>
     <div class="icons">
       <DropIcon class="drop" handle="user" handleColor="var(--gray)" :options="dropLinks"/>
@@ -12,6 +12,8 @@
 </template>
 
 <script>
+
+import { mapGetters } from 'vuex'
 
 import IconDropVue from '../IconDrop.vue'
 
@@ -26,6 +28,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(['l']),
     languages() {
       return [
         {

@@ -1,11 +1,11 @@
 <template>
   <div class="AddTask popup cb shadow rb" :class="platform">
     <div class="title tac">
-      <h2 class="pc">Add task</h2>
+      <h2 class="pc">{{ l['Add task'] }}</h2>
     </div>
     <div class="content">
       <TaskEdit
-        placeholder="Task name..."
+        :placeholder="`${l['Task name']}...`"
         @save='add'
       />
     </div>
@@ -27,7 +27,7 @@ export default {
       if (obj.name) {
         this.$store.dispatch('task/addTask', {...obj})
         this.$store.commit('pushToast', {
-          name: `Task successfully added!`,
+          name: this.l[`Task successfully added!`],
           seconds: 2,
           type: 'success',
         })
@@ -35,7 +35,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform'])
+    ...mapGetters(['platform', 'l'])
   }
 }
 

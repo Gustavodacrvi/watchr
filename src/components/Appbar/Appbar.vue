@@ -19,7 +19,8 @@
             :class="{sectionActive: s.name === section}"
             :tabindex="i + 1 + links.length"
             @click="moveLine(i)"
-          >{{ s.name }}</div>
+            :data-section="s.name"
+          >{{ l[s.name] }}</div>
           <div class="line section-line"></div>
         </div>
         <transition name="sect-trans"
@@ -181,13 +182,13 @@ export default {
         line.style.left = el.offsetLeft + 'px'
         line.style.width = el.offsetWidth + 'px'
   
-        this.section = el.textContent
+        this.section = el.dataset.section
         localStorage.setItem('section', this.section)
       }
     },
   },
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['platform', 'l']),
     getSectionOptions() {
       return this[this.section]
     },
@@ -199,19 +200,19 @@ export default {
           icon: 'sort',
           callback: () => [
             {
-              name: 'Sort tags by name',
+              name: this.l['Sort tags by name'],
               icon: 'sort-name',
               callback: () => dispatch('tag/sortTagsByName')
             },
             {
-              name: 'Sort tags by frequency',
+              name: this.l['Sort tags by frequency'],
               icon: 'fire',
               callback: () => dispatch('tag/sortTagsByFrequency')
             }
           ]
         },
         {
-          name: 'Add tag',
+          name: this.l['Add tag'],
           icon: 'tag',
           callback: () => dispatch('pushPopup', {comp: 'AddTag'})
         }
@@ -221,12 +222,12 @@ export default {
       const dispatch = this.$store.dispatch
       return [
         {
-          name: 'Add list',
+          name: this.l['Add list'],
           icon: 'tasks',
           callback: () => dispatch('pushPopup', {comp: 'AddList'}),
         },
         {
-          name: 'Sort lists by name',
+          name: this.l['Sort lists by name'],
           icon: 'sort-name',
           callback: () => dispatch('list/sortListsByName'),
         }

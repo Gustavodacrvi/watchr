@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div v-if="l" id="app">
     <transition name="popup">
       <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>
@@ -30,7 +30,7 @@ import ToastVue from './components/Toast.vue'
 import MenuVue from './components/NavBar/Menu.vue'
 import MobileIcondropVue from './components/Popup/MobileIcondrop.vue'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
@@ -86,7 +86,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktop', 'isStandAlone']),
+    ...mapGetters(['isDesktop', 'isStandAlone', 'l']),
     isMenuOpened() {
       return this.$route.fullPath === '/menu'
     },

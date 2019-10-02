@@ -5,13 +5,13 @@
     </div>
     <div class="content">
       <DropInput
-        placeholder="Tag name..."
+        :placeholder="l['Tag name'] + '...'"
         v-model="name"
         :focus="true"
         :options='options'
         @select="select"
       />
-      <ButtonApp :value="btn" @click="addTag"/>
+      <ButtonApp :value="title" @click="addTag"/>
     </div>
   </div>
 </template>
@@ -48,13 +48,9 @@ export default {
       return this.payload
     },
     title() {
-      if (!this.isEditing) return 'Add tag'
-      return 'Edit tag'
+      if (!this.isEditing) return this.l['Add tag']
+      return this.l['Edit tag']
     },
-    btn() {
-      if (!this.isEditing) return 'Add tag'
-      return 'Edit tag'
-    }
   },
   methods: {
     addTag() {
@@ -68,7 +64,7 @@ export default {
             name: this.name,
           })
           toast({
-            name: `<strong>${this.name}</strong> tag added successfully!`,
+            name: this.l[`Tag added successfully!`],
             type: 'success',
             seconds: 2,
           })
@@ -79,21 +75,21 @@ export default {
             id: this.payload.id,
           })
           toast({
-            name: `<strong>${this.name}</strong> tag edited successfully!`,
+            name: this.l[`Tag edited successfully!`],
             type: 'success',
             seconds: 2,
           })
           this.$store.commit('closePopup')
         } else {
           toast({
-            name: `This tag already exists!`,
+            name: this.l[`This tag already exists!`],
             type: 'error',
             seconds: 3,
           })
         }
       } else {
         toast({
-          name: 'Fill in all the required fields.',
+          name: this.l['Fill in all the required fields.'],
           type: 'error',
           seconds: 3,
         })
@@ -105,6 +101,9 @@ export default {
         this.options = []
       })
     }
+  },
+  computed: {
+    ...mapGetters(['l']),
   },
   watch: {
     name() {

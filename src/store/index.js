@@ -77,6 +77,9 @@ const store = new Vuex.Store({
     isPopupOpened(state) {
       return state.popup.comp !== ''
     },
+    l(state) {
+      return state.language
+    },
   },
   mutations: {
     languageFile(state, language) {

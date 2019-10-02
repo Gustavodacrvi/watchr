@@ -31,7 +31,7 @@ import IconDropVue from '../IconDrop.vue'
 import TagVue from './Tag.vue'
 
 export default {
-  props: ['useIcon', 'value', 'options', 'tags', 'lists', 'activeTags', 'activeList'],
+  props: ['useIcon', 'value', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -50,6 +50,7 @@ export default {
   },
   computed: {
     getIcon() {
+      if (this.icon) return this.icon
       const obj = {
         Today: 'star',
         Tomorrow: 'sun',

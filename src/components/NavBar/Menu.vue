@@ -14,6 +14,12 @@
       </transition>
     </div>
     <Icon class="cursor user" icon="user" color="var(--gray)" :primaryHover="true" @click="toggleMenu"/>
+    <IconDrop v-if="!appSection"
+      class="drop rigth"
+      handle="globe"
+      handleColor="var(--gray)"
+      :options='languages'
+    />
   </div>
 </template>
 
@@ -21,11 +27,13 @@
 
 import AppbarVue from '../Appbar/Appbar.vue'
 import IconVue from '../Icon.vue'
+import IconDropVue from '../IconDrop.vue'
 
 export default {
   components: {
     Appbar: AppbarVue,
     Icon: IconVue,
+    IconDrop: IconDropVue
   },
   data() {
     return {
@@ -38,8 +46,25 @@ export default {
     },
     pop(comp) {
       this.$store.dispatch('pushPopup', {comp})
-    }
+    },
+    saveLang(lang) {
+      this.$store.commit('saveLang', lang)
+    },
   },
+  computed: {
+    languages() {
+      return [
+        {
+          name: 'English',
+          callback: () => this.saveLang('en'),
+        },
+        {
+          name: 'Português(Brasil)',
+          callback: () => this.saveLang('pt-br'),
+        },
+      ]
+    },
+  }
 }
 
 </script>
@@ -55,6 +80,12 @@ export default {
   box-sizing: border-box;
   z-index: 500;
   overflow: hidden;
+}
+
+.drop {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
 }
 
 .appbar-wrapper {

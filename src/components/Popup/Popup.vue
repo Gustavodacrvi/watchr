@@ -1,7 +1,7 @@
 <template>
   <div class="Popup" :class="platform">
     <Icon v-if="!isDesktop" class="icon cursor" icon="arrow" :primaryHover="true" @click="closeMobilePopup"/>
-    <component class="component" :class="platform" :is="popup.comp"/>
+    <component class="component" :class="[platform, {isStandAlone}]" :is="popup.comp"/>
     <div class="back" @click="$emit('close')"></div>
   </div>
 </template>
@@ -39,7 +39,7 @@ export default {
   },
   computed: {
     ...mapState(['popup']),
-    ...mapGetters(['isPopupOpened', 'platform', 'isDesktop'])
+    ...mapGetters(['isPopupOpened', 'platform', 'isDesktop', 'isStandAlone'])
   }
 }
 
@@ -77,6 +77,10 @@ export default {
 .component {
   z-index: 99;
   position: relative;
+}
+
+.component.isStandAlone {
+  margin-top: 150px !important;
 }
 
 .back {

@@ -3,6 +3,7 @@
     <div>
       <Header
         :useIcon="useIcon"
+        :icon="icon"
         :value="viewName"
         :options="options"
         :tags='tagSelectionOptions'
@@ -43,7 +44,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsRenderer', 'headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'useIcon'],
+  props: ['headingsRenderer', 'headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'useIcon', 'icon'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,
@@ -239,7 +240,7 @@ export default {
             callback: () => this.toggleCompleted()
           }
         ]
-        if (this.showCompleted) opt[1].name = 'Hide completed'
+        if (this.showCompleted) opt[3].name = 'Hide completed'
         return opt
       } else {
         return [
