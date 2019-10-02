@@ -95,7 +95,7 @@ export default {
         tod.add(1, 'day')
         const date = tod.format('Y-M-D')
         arr.push({
-          name: utils.getHumanReadableDate(date),
+          name: utils.getHumanReadableDate(date, this.l),
           filter: (tasks) => {
             return utilsTask.filterTasksByDay(tasks.filter(el => {
               return el.calendar && el.calendar.type === 'specific'
