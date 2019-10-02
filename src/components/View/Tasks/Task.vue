@@ -1,11 +1,14 @@
 <template>
-  <div class="Task draggable" :class="{fade: completed, isSelected, hideTask: completed && !showCompleted}"
+  <div class="Task draggable" :class="{fade: completed, isSelected}"
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
   >
-    <transition name="edit-t" mode="out-in">
+    <transition name="edit-t" mode="out-in"
+      @enter='enter'
+    >
       <div v-if="!isEditing" key="notediting"
-        class="cont-wrapper handle rb" 
+        class="cont-wrapper handle rb cursor"
+        :class="platform"
         @click="click"
         @dblclick="dblclick"
       >
@@ -45,9 +48,9 @@
           </div>
         </div>
       </div>
-      <Edit v-else key="editing" class="handle"
+      <Edit v-else-if="isEditing" key="editing" class="handle"
         placeholder="Task name..."
-        btnText="Save task"
+        :btnText="l['Save task']"
         :task='task'
         :showCancel='true'
         @cancel='isEditing = false'
@@ -72,7 +75,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'isSelected', 'showCompleted', 'view'],
+  props: ['task', 'isSelected', 'view', 'viewNameValue'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -86,6 +89,27 @@ export default {
     }
   },
   methods: {
+    enter(cont) {
+      if (!this.isEditing) {
+        const s = cont.style
+        const height = cont.offsetHeight + 'px'
+        const lessThan38 = (cont.offsetHeight < 38)
+        cont.classList.add('hided')
+        s.height = '0px'
+        s.padding = '2px 0'
+        setTimeout(() => {
+          if (lessThan38) {
+          cont.classList.add('show')
+            s.height = '38px'
+          }
+          else {
+            s.height = height
+          }
+          s.padding = '0'
+          cont.classList.remove('hided')
+        })
+      }
+    },
     completeTask() {
       const calendar = this.task.calendar
       if (calendar) {
@@ -156,7 +180,7 @@ export default {
       savedLists: state => state.list.lists,
       savedTags: state => state.tag.tags,
     }),
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktop', 'platform', 'l']),
     completed() {
       return utilsTask.filterTasksByCompletion([this.task]).length === 1
     },
@@ -171,24 +195,25 @@ export default {
     },
     options() {
       const dispatch = this.$store.dispatch
+      const l = this.l
       return [
         {
-          name: 'Edit task',
+          name: l['Edit task'],
           icon: 'pen',
           callback: () => this.isEditing = true
         },
         {
-          name: 'Copy task',
+          name: l['Copy task'],
           icon: 'copy',
           callback: () => dispatch('task/copyTask', this.task)
         },
         {
-          name: 'Move to list',
+          name: l['Move to list'],
           icon: 'tasks',
         },
         {
           type: 'optionsList',
-          name: 'Priority',
+          name: l['Priority'],
           options: [
             {
               icon: 'priority',
@@ -218,7 +243,7 @@ export default {
         },
         {
           type: 'optionsList',
-          name: 'Schedule',
+          name: l['Schedule'],
           options: [
             {
               icon: 'star',
@@ -238,7 +263,7 @@ export default {
           ]
         },
         {
-          name: 'Delete task',
+          name: l['Delete task'],
           icon: 'trash',
           callback: () => dispatch('task/deleteTasks', [this.task.id])
         }
@@ -266,8 +291,8 @@ export default {
     },
     calendarStr() {
       if (!this.task.calendar) return null
-      const str = utils.parseCalendarObjectToString(this.task.calendar)
-      if (str === this.view) return null
+      const str = utils.parseCalendarObjectToString(this.task.calendar, this.l)
+      if (str === this.viewNameValue) return null
       return str
     },
     circleColor() {
@@ -299,20 +324,18 @@ export default {
 }
 
 .cont-wrapper {
-  cursor: pointer;
-  height: auto;
-  padding: 2px;
-  transition: height .3s, background-color .2s;
+  transition-duration: .3s;
 }
 
-.hide-task {
-  height: 0;
-  transition: height 0;
+.hided {
+  opacity: 0;
+  padding: 0;
+  transition-duration: 0s;
 }
 
-.lessthan38 {
-  height: 38px !important;
-  transition: height .3s !important;
+.show {
+  opacity: 1;
+  padding: 2px 0;
 }
 
 .subtasks {
@@ -324,7 +347,7 @@ export default {
   opacity: .4;
 }
 
-.cont-wrapper:hover {
+.cont-wrapper:hover, .cont-wrapper:active {
   background-color: var(--light-gray);
 }
 
@@ -401,6 +424,7 @@ export default {
   transition: opacity .1s ease-in, transform .1s ease-in;
 }
 
+<<<<<<< HEAD
 .hideTask .cont-wrapper {
   opacity: 0 !important;
   height: 0px !important;
@@ -408,6 +432,8 @@ export default {
   transition: height .2s, opacity .2s, padding .2s !important;
 }
 
+=======
+>>>>>>> 30c75b4df3175c5ae97744fbb97823a5f5e68911
 .name-icon {
   margin: 0 4px;
 }

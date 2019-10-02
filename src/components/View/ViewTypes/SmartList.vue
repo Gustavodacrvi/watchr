@@ -3,6 +3,7 @@
     :headingsRenderer='isHeadingsRendererType'
     :headingsOptions='headingsOptions'
     :viewName='viewName'
+    :viewNameValue='l[viewName]'
     :viewType='viewType'
     :useIcon='true'
 
@@ -20,7 +21,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 import mom from 'moment'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 import ViewTypeMixim from '@/mixins/viewType.js'
 
@@ -66,6 +67,7 @@ export default {
       tasks: state => state.task.tasks,
       viewOrders: state => state.list.viewOrders,      
     }),
+    ...mapGetters(['l']),
     tasksOrder() {
       const o = this.viewOrders[this.viewName]
       if (o) return o

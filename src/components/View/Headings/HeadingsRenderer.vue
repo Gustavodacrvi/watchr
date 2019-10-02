@@ -1,6 +1,7 @@
 <template>
   <div class="HeadingsRenderer">
     <transition-group
+      appear
       @leave='leave'
       @enter='enter'
     >
@@ -12,8 +13,8 @@
         >
           <TaskRenderer
             :tasks='getTasks(tasks, h)'
-            :showCompleted='showCompleted'
             :view='view'
+            :viewNameValue='viewNameValue'
             :addTask='addTask'
             :onAdd='h.onAdd'
           />
@@ -34,7 +35,7 @@ const lastHeading = {
 }
 
 export default {
-  props: ['headings', 'tasks', 'showCompleted', 'view', 'addTask'],
+  props: ['headings', 'tasks', 'view', 'addTask', 'viewNameValue'],
   components: {
     HeadingApp: HeadingVue,
     TaskRenderer: TaskRendererVue,

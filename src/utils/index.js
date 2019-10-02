@@ -43,7 +43,9 @@ export default {
       year: m.format('Y'),
     }
   },
-  parseInputToCalendarObject(name) {
+  parseInputToCalendarObject(name, language) {
+    if (!language) throw 'Missing language object'
+    const l = language
     const getDateString = () => {
       if (name.includes(' $'))
         return name.substr(name.indexOf(' $')).replace(' $', '')
@@ -66,12 +68,13 @@ export default {
       return {time: null, noTimeStr: str}
     }
     const searchForNextKeyword = (str) => {
-      if (str.includes('next ')) {
+      const key = l['CalParserNext']
+      if (str.includes(`${key} `)) {
         const vals = str.split(' ')
         for (let i = 0;i < str.length;i++) {
           const next = vals[i]
           const v = vals[i + 1]
-          if (next === 'next' && v) {
+          if (next === key && v) {
             const parsed = parseInt(v, 10)
             if (!isNaN(parsed)) {
               if (parsed > 0 && parsed < 32)
@@ -87,11 +90,13 @@ export default {
       return null
     }
     const getKeyWords = (str) => {
+      const today = l['CalParserToday']
+      const tomorrow = l['CalParserTomorrow']
       switch (str) {
-        case 'tod': {
+        case today: {
           return this.parseMomentToObject(mom())
         }
-        case 'tom': {
+        case tomorrow: {
           return this.parseMomentToObject(tod.clone().add(1, 'd').clone())
         }
       }
@@ -143,7 +148,10 @@ export default {
       }
     }
     const getDeferAndDue = (str) => {
+      const keyDefer = l['CalParserDefer']
+      const keyDue = l['CalParserDue']
       const getDateNextToKeyWord = (keyWord, except) => {
+        
         const exists = str.includes(keyWord)
         if (exists) {
           const i = str.indexOf(keyWord)
@@ -160,8 +168,8 @@ export default {
         }
         return null
       }
-      let du = getDateNextToKeyWord('due', 'defer')
-      let de = getDateNextToKeyWord('defer', 'due')
+      let du = getDateNextToKeyWord(keyDue, keyDefer)
+      let de = getDateNextToKeyWord(keyDefer, keyDue)
       let duParsed = null
       let deParsed = null
       if (du) duParsed = parseDate(du)
@@ -179,13 +187,15 @@ export default {
       }
     }
     const getPeriodicDate = (str) => {
+      const keyEvery = l['CalParserEvery']
+      const dayKey = l['CalParserDayKey']
+      
       const vals = str.split(' ')
       const fi = vals[0]
       const se = vals[1]
-      const third = vals[2]
-      if (fi && fi === 'every' && se) {
+      if (fi && fi === keyEvery && se) {
         const parsed = parseInt(se, 10)
-        if (se === 'day') {
+        if (se === dayKey) {
           return {
             type: 'periodic',
             lastCompleteDate: null,
@@ -199,7 +209,7 @@ export default {
           }
         } else {
           const weeks = []
-          const i = str.indexOf('every')
+          const i = str.indexOf(keyEvery)
           const sub = str.substr(i + 5)
           const vs = sub.split(',')
           for (const v of vs) {
@@ -233,19 +243,23 @@ export default {
     let str = getDateString()
     const tod = mom()
     if (str) {
+      const keyNextWeek = l['CalParserNextweek']
+      const keyNextWeekend = l['CalParserNextweekend']
+      const keyNextMonth = l['CalParserNextmonth']
+      
       switch (str) {
-        case 'next week': {
+        case keyNextWeek: {
           obj.defer = moment.getFirstDayOfNextWeekMoment(mom()).format('Y-M-D')
           obj.due = moment.getLastDayOfNextWeekMoment(mom()).format('Y-M-D')
           return obj
         }
-        case 'next weekend': {
+        case keyNextWeekend: {
           const sat = moment.nextWeekDay(mom(), 'Saturday')
           obj.defer = sat.format('Y-M-D')
           obj.due = sat.clone().add(1, 'd').format('Y-M-D')
           return obj
         }
-        case 'next month': {
+        case keyNextMonth: {
           obj.defer = moment.getFirstDayOfNextMonth(mom()).format('Y-M-D')
           obj.due = moment.getLastDayOfNextMonth(mom()).format('Y-M-D')
           return obj
@@ -289,34 +303,49 @@ export default {
     }
     return obj
   },
-  getHumanReadableDate(str) {
+  getHumanReadableDate(str, language) {
+    const l = language
+    
+    const todayKey = l['CalParserTODAY']
+    const tomorrowKey = l['CalParserTOMORROW']
+    
+    if (!language) throw 'Missing language object'
     const tod = mom()
     const sameDay = (mom1, mom2) => {
       return mom1.isSame(mom2, 'day')
     }
     
     let date = mom(str, 'Y-M-D', true)
-    if (sameDay(tod, date)) return 'Today'
-    if (sameDay(mom().add(1, 'day'), date)) return 'Tomorrow'
+    if (sameDay(tod, date)) return todayKey
+    if (sameDay(mom().add(1, 'day'), date)) return tomorrowKey
     if (!tod.isSame(date, 'year')) return date.format('MMM Do, ddd, Y')
     if (!tod.isSame(date, 'month')) return date.format('MMM Do, ddd')
     return date.format('Do, ddd')
   },
-  parseCalendarObjectToString(obj) {
+  parseCalendarObjectToString(obj, language) {
+    const l = language
+    
+    const everyDayKey = l['CalParserEveryDay']
+    const daysKey = l['CalParserDaysKey']
+    const everyKey = l['CalParserEveryKey']
+    const DEFERKey = l['CalParserDEFER']
+    const DUEKey = l['CalParserDUE']
+    
+    if (!language) throw 'Missing language object'
     let str = ''
     switch (obj.type) {
       case 'specific': {
-        str += this.getHumanReadableDate(obj.specific)
+        str += this.getHumanReadableDate(obj.specific, language)
         break
       }
       case 'periodic': {
         if (obj.periodic === 1)
-          str = `Every day`
-        else str = `Every ${obj.periodic} days`
+          str = everyDayKey
+        else str = `${everyKey} ${obj.periodic} ${daysKey}`
         break
       }
       case 'weekly': {
-        str = 'Every '
+        str = `${everyKey} `
         obj.weekly.forEach((week, i) => {
           str += week
           if (i !== obj.weekly.length - 1)
@@ -327,11 +356,11 @@ export default {
     }
     if (obj.defer) {
       if (str !== '') str += ', '
-      str += 'Defer ' + this.getHumanReadableDate(obj.defer)
+      str += `${DEFERKey} ` + this.getHumanReadableDate(obj.defer, language)
     }
     if (obj.due) {
       if (str !== '') str += ', '
-      str += 'Due ' + this.getHumanReadableDate(obj.due)
+      str += `${DUEKey} ` + this.getHumanReadableDate(obj.due, language)
     }
     
     return str

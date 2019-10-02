@@ -1,7 +1,7 @@
 <template>
   <div
     class="icon"
-    :class="{primaryHover}"
+    :class="[{primaryHover}, platform]"
     :style="{width: getWidth, color}"
     @click="$emit('click')"
   >
@@ -41,6 +41,9 @@ import circle from '@/assets/icons/circle.svg'
 import copy from '@/assets/icons/copy.svg'
 import plus from '@/assets/icons/plus.svg'
 import circleCheck from '@/assets/icons/circle-check.svg'
+import globe from '@/assets/icons/globe.svg'
+
+import { mapGetters } from 'vuex'
 
 export default {
   props: ['icon', 'width', 'primaryHover', 'color'],
@@ -50,7 +53,7 @@ export default {
         inbox, calendar, sun, arrow, star, user, out,
         sort, tag, completed, priority, menu, tasks,
         pen, trash, fire, filter, bloqued, circle,
-        copy, plus,
+        copy, plus, globe,
         "user-plus": userPlus,
         "circle-check": circleCheck,
         "settings-h": settingsH,
@@ -62,6 +65,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['platform']),
     getIcon() {
       return this.icons[this.icon]
     },

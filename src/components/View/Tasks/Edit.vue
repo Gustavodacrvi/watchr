@@ -10,7 +10,7 @@
       <Tag v-if="priority"
         icon="priority"
         :color="getPriorityColor"
-        :value="priority"
+        :value="l[priority]"
         @click="priority = ''"
       />
       <Tag v-if="list"
@@ -66,7 +66,7 @@
           handle="calendar"
           handleWidth="23px"
           :calendar="true"
-          @select="selectDate"
+          :calendarCall='selectDate'
         />
       </div>
     </div>
@@ -80,7 +80,7 @@ import IconDropVue from '../../IconDrop.vue'
 import TagVue from '../Tag.vue'
 import DropInputVue from '../../Auth/DropInput.vue'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 import utils from '@/utils/'
 
@@ -127,9 +127,6 @@ export default {
       str = str.slice(0, -1)
       this.name = str
     },
-    selectDate(date) {
-      this.calendar = date
-    },
     save() {
       let n = this.name
       const i = n.indexOf(' $')
@@ -151,6 +148,10 @@ export default {
       savedTags: state => state.tag.tags,
       savedLists: state => state.list.lists,
     }),
+    ...mapGetters(['l']),
+    selectDate() {
+      return (date) => this.calendar = date
+    },
     listName() {
       if (this.task.list)
         return this.$store.getters['list/getListsById']([this.task.list])[0].name
@@ -175,7 +176,7 @@ export default {
     },
     calendarStr() {
       if (this.calendar)
-        return utils.parseCalendarObjectToString(this.calendar)
+        return utils.parseCalendarObjectToString(this.calendar, this.l)
       return null
     },
     priorities() {
@@ -229,7 +230,7 @@ export default {
     },
     buttonText() {
       if (this.btnText) return this.btnText
-      return 'Add task'
+      return this.l['Add task']
     }
   },
   watch: {
@@ -296,7 +297,7 @@ export default {
       }
       const parseDate = () => {
         if (n.includes(' $')) {
-          const obj = utils.parseInputToCalendarObject(n)
+          const obj = utils.parseInputToCalendarObject(n, this.l)
           this.calendar = obj
         } else if (this.task) {
           this.calendar = this.task.calendar

@@ -3,6 +3,8 @@
     :viewName='viewName'
     :viewType='viewType'
     :tasks='getTasks'
+    :useIcon='true'
+    icon='tag'
 
     @add-task='addTask'
   />

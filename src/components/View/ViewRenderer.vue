@@ -3,7 +3,9 @@
     <div>
       <Header
         :useIcon="useIcon"
-        :value="viewName"
+        :icon="icon"
+        :viewName="viewName"
+        :viewNameValue="viewNameValue"
         :options="options"
         :tags='tagSelectionOptions'
         :lists='listSelectionOptions'
@@ -13,16 +15,16 @@
         @list='selectList'
       />
       <TaskRenderer v-if="!headingsRenderer"
-        :tasks='sortAndFilterTasks'
-        :showCompleted='showCompleted'
+        :tasks='getFilterCompletedTasks'
         :view='viewName'
+        :viewNameValue='viewNameValue'
         :addTask='addTask'
         @update='updateIds'
       />
       <HeadingsRenderer v-else
         :tasks='tasks'
-        :showCompleted='showCompleted'
         :view='viewName'
+        :viewNameValue='viewNameValue'
         :addTask="addTask"
         :headings='headingsOptions'
       />
@@ -45,7 +47,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsRenderer', 'headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'useIcon'],
+  props: ['headingsRenderer', 'headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'useIcon', 'icon', 'viewNameValue'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,
@@ -123,6 +125,7 @@ export default {
       })
     },
     addTask(obj, evt) {
+      obj.ids = this.sortAndFilterTasks.map(el => el.id)
       this.$emit('add-task', obj)
     },
     removeTasksFromLists() {
@@ -141,6 +144,7 @@ export default {
     ...mapGetters({
       platform: 'platform',
       isDesktop: 'isDesktop',
+      l: 'l',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
     tagSelectionStr() {
@@ -200,53 +204,54 @@ export default {
       const savePri = (pri) => {
         dispatch('task/saveTasksById', {ids, task: {priority: pri}})
       }
+      const l = this.l
       
       if (ids.length === 0) {
         const opt = [
           {
-            name: 'Sort tasks',
+            name: l['Sort tasks'],
             icon: 'sort',
             callback: () => [
               {
-                name: 'Sort by name',
+                name: l['Sort by name'],
                 icon: 'sort-name',
                 callback: () => this.sortByName()
               },
               {
-                name: 'Sort by priority',
+                name: l['Sort by priority'],
                 icon: 'priority',
                 callback: () => this.sortByPriority()
               },
               {
-                name: 'Sort by date',
+                name: l['Sort by date'],
                 icon: 'calendar',
                 callback: () => this.sortByDate(),
               }
             ],
           },
           {
-            name: 'Show tag selection',
+            name: l['Show tag selection'],
             icon: 'tag',
             callback: () => this.toggleTagSelection()
           },
           {
-            name: 'Show list selection',
+            name: l['Show list selection'],
             icon: 'tasks',
             callback: () => this.toggleListSelection()
           },
           {
-            name: 'Show completed',
+            name: l['Show completed'],
             icon: 'completed',
             callback: () => this.toggleCompleted()
           }
         ]
-        if (this.showCompleted) opt[1].name = 'Hide completed'
+        if (this.showCompleted) opt[3].name = l['Hide completed']
         return opt
       } else {
         return [
           {
             icon: 'priority',
-            name: 'Change priority of tasks',
+            name: l['Change priority of tasks'],
             callback: () => [
               {
                 name: 'No priority',
@@ -274,12 +279,12 @@ export default {
             ]
           },
           {
-            name: 'Change date',
+            name: l['Change date'],
             icon: 'calendar',
             callback: () => {return {calendar: true, callback: this.saveDates}}
           },
           {
-            name: 'Add tags',
+            name: l['Add tags'],
             icon: 'tag',
             callback: () => {return {
               search: true,
@@ -287,7 +292,7 @@ export default {
             }}
           },
           {
-            name: 'Add tasks to list',
+            name: l['Add tasks to list'],
             icon: 'tasks',
             callback: () => {return {
               search: true,
@@ -295,12 +300,12 @@ export default {
             }}
           },
           {
-            name: 'Remove tasks from list',
+            name: l['Remove tasks from list'],
             icon: 'tasks',
             callback: () => this.removeTasksFromLists(),
           },
           {
-            name: 'Delete tasks',
+            name: l['Delete tasks'],
             icon: 'trash',
             callback: () => dispatch('task/deleteTasks', ids)
           },
@@ -320,6 +325,12 @@ export default {
         ts = ts.filter(el => this.getActiveTagIds.every(id => el.tags.includes(id)))
       if (this.getActiveListId)
         ts = ts.filter(el => el.list === this.getActiveListId)
+      return ts
+    },
+    getFilterCompletedTasks() {
+      let ts = this.sortAndFilterTasks
+      if (!this.showCompleted)
+        ts = utilsTask.filterTasksByCompletion(ts, true)
       return ts
     },
   },

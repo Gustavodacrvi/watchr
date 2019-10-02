@@ -19,7 +19,7 @@
               @leave='leaveItems'
             >
               <template v-for="link in getLinks">
-                <div v-if="!link.type" class="link hide-trans"
+                <div v-if="!link.type" class="link cursor hide-trans"
                   :key="link.name"
                   @click="linkCallback(link.callback, link)"
                 >
@@ -29,7 +29,7 @@
                       :icon="link.icon"
                       :color="link.color"
                     />
-                    <span class="name">{{ link.name }}</span>
+                    <span class="name">{{ priorityParser(link.name) }}</span>
                   </div>
                 </div>
                 <div v-else :key="link.name" class="header-link hide-trans">
@@ -64,7 +64,7 @@ import CalendarPickerVue from './View/Tasks/CalendarPicker.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['options', 'handle', 'handleColor', 'handleWidth', 'allowSearch', 'calendar', 'isMobileIconDropComp', 'centralize'],
+  props: ['options', 'handle', 'handleColor', 'handleWidth', 'allowSearch', 'calendar', 'isMobileIconDropComp', 'centralize', 'calendarCall'],
   components: {
     Icon: IconVue,
     CalendarPicker: CalendarPickerVue,
@@ -76,7 +76,7 @@ export default {
       links: this.options,
       showCalendar: this.calendar,
       height: 0,
-      calendarCallback: null,
+      calendarCallback: this.calendarCall,
       width: 0,
       showSearch: this.allowSearch,
       search: '',
@@ -97,6 +97,7 @@ export default {
         options: this.options,
         allowSearch: this.allowSearch,
         calendar: this.calendar,
+        calendarCallback: this.calendarCallback,
       })
     },
     enterItems(el, done) {
@@ -156,9 +157,9 @@ export default {
       }
     },
     selectDate(date) {
+      console.log(this.calendarCallback)
       if (this.calendarCallback)
         this.calendarCallback(date)
-      this.$emit('select', date)
       this.showing = false
     },
     toggleLinks() {
@@ -196,10 +197,15 @@ export default {
     beforeEnter(el) {
       el.style.width = 'auto'
       el.style.height = 'auto'
-    }
+    },
+    priorityParser(name) {
+      const str = this.l[name]
+      if (str) return str
+      return name
+    },
   },
   computed: {
-    ...mapGetters(['isDesktop']),
+    ...mapGetters(['isDesktop', 'l']),
     getHandleWidth() {
       return this.handleWidth ? this.handleWidth : ''
     },
@@ -341,7 +347,6 @@ export default {
 .link {
   display: flex;
   align-items: center;
-  cursor: pointer;
   transition-duration: .3s;
   white-space: nowrap;
   height: 35px;

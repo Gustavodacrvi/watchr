@@ -5,15 +5,21 @@
       <transition :name="this.appSection ? 'mr' : 'ml'">
         <Appbar class="Appbar" v-if="appSection" key="app"/>
         <div v-else key="links" class="nav-links">
-          <router-link class="cursor link rb" to="/home">Home</router-link>
-          <router-link class="cursor link rb" to="/user">User</router-link>
-          <router-link class="cursor link rb" to="/about">About</router-link>
-          <span class="cursor link rb" @click="pop('Signin')">Sign in</span>
-          <span class="cursor link rb" @click="pop('Signup')">Sign up</span>
+          <router-link class="cursor link rb" to="/home">{{ l['Home'] }}</router-link>
+          <router-link class="cursor link rb" to="/user">{{ l['User'] }}</router-link>
+          <router-link class="cursor link rb" to="/about">{{ l['About'] }}</router-link>
+          <span class="cursor link rb" @click="pop('Signin')">{{ l['Sign in'] }}</span>
+          <span class="cursor link rb" @click="pop('Signup')">{{ l['Sign up'] }}</span>
         </div>
       </transition>
     </div>
     <Icon class="cursor user" icon="user" color="var(--gray)" :primaryHover="true" @click="toggleMenu"/>
+    <IconDrop v-if="!appSection"
+      class="drop rigth"
+      handle="globe"
+      handleColor="var(--gray)"
+      :options='languages'
+    />
   </div>
 </template>
 
@@ -21,11 +27,14 @@
 
 import AppbarVue from '../Appbar/Appbar.vue'
 import IconVue from '../Icon.vue'
+import IconDropVue from '../IconDrop.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
     Appbar: AppbarVue,
     Icon: IconVue,
+    IconDrop: IconDropVue
   },
   data() {
     return {
@@ -38,8 +47,26 @@ export default {
     },
     pop(comp) {
       this.$store.dispatch('pushPopup', {comp})
-    }
+    },
+    saveLang(lang) {
+      this.$store.commit('saveLang', lang)
+    },
   },
+  computed: {
+    ...mapGetters(['l']),
+    languages() {
+      return [
+        {
+          name: 'English',
+          callback: () => this.saveLang('en'),
+        },
+        {
+          name: 'Português(Brasil)',
+          callback: () => this.saveLang('pt-br'),
+        },
+      ]
+    },
+  }
 }
 
 </script>
@@ -55,6 +82,12 @@ export default {
   box-sizing: border-box;
   z-index: 500;
   overflow: hidden;
+}
+
+.drop {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
 }
 
 .appbar-wrapper {

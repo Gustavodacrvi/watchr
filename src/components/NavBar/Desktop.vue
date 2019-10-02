@@ -1,16 +1,19 @@
 <template>
   <div class="Desktop">
-    <router-link class="link" :class="{active: route === 'home'}" to="/">Home</router-link>
-    <router-link class="link" :class="{active: route === 'user'}" to="/user">User</router-link>
-    <router-link class="link" :class="{active: route === 'about'}" to="/about">About</router-link>
+    <router-link class="link" :class="{active: route === 'home'}" to="/">{{ l['Home'] }}</router-link>
+    <router-link class="link" :class="{active: route === 'user'}" to="/user">{{ l['User'] }}</router-link>
+    <router-link class="link" :class="{active: route === 'about'}" to="/about">{{ l['About'] }}</router-link>
     <div class="line"></div>
     <div class="icons">
-      <DropIcon handle="user" handleColor="var(--gray)" :options="dropLinks"/>
+      <DropIcon class="drop" handle="user" handleColor="var(--gray)" :options="dropLinks"/>
+      <DropIcon class="drop" handle="globe" handleColor="var(--gray)" :options="languages"/>
     </div>
   </div>
 </template>
 
 <script>
+
+import { mapGetters } from 'vuex'
 
 import IconDropVue from '../IconDrop.vue'
 
@@ -19,11 +22,35 @@ export default {
     DropIcon: IconDropVue,    
   },
   props: ['route', 'dropLinks'],
+  methods: {
+    saveLang(lang) {
+      this.$store.commit('saveLang', lang)
+    },
+  },
+  computed: {
+    ...mapGetters(['l']),
+    languages() {
+      return [
+        {
+          name: 'English',
+          callback: () => this.saveLang('en'),
+        },
+        {
+          name: 'Português(Brasil)',
+          callback: () => this.saveLang('pt-br'),
+        },
+      ]
+    },
+  }
 }
 
 </script>
 
 <style scoped>
+
+.drop {
+  margin-left: 14px;
+}
 
 .link {
   text-decoration: none;
