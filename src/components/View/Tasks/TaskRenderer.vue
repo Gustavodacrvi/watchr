@@ -11,6 +11,7 @@
         :isSelecting='isSelecting'
         :isSelected='isTaskSelected(t.id)'
         :view='view'
+        :viewNameValue='viewNameValue'
         @select='taskSelect'
 
         :data-id='t.id'
@@ -31,7 +32,7 @@ import { mapState } from 'vuex'
 import Sortable from 'sortablejs'
 
 export default {
-  props: ['tasks', 'onAdd', 'view', 'addTask'],
+  props: ['tasks', 'onAdd', 'view', 'addTask', 'viewNameValue'],
   components: {
     Task: TaskVue,
   },
@@ -141,6 +142,7 @@ export default {
         const lessThan38 = (cont.offsetHeight < 38)
         cont.classList.add('hided')
         s.height = '0px'
+        s.padding = '2px 0'
         setTimeout(() => {
           if (lessThan38) {
           cont.classList.add('show')
@@ -148,8 +150,8 @@ export default {
           }
           else {
             s.height = height
-            s.padding = '2px 0'
           }
+          s.padding = '0'
           cont.classList.remove('hided')
         })
       }

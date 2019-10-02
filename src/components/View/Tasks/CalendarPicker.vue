@@ -8,19 +8,19 @@
         <span class="option cursor" @click="today">
           <span class="cont">
             <Icon class="icon" icon="star"/>
-            <span class="name">Today</span>
+            <span class="name">{{ l['Today'] }}</span>
           </span>
         </span>
         <span class="option cursor" @click="tomorrow">
           <span class="cont">
             <Icon class="icon" icon="sun"/>
-            <span class="name">Tomorrow</span>
+            <span class="name">{{ l['Tomorrow'] }}</span>
           </span>
         </span>
         <span class="option cursor" @click="noDate">
           <span class="cont">
             <Icon class="icon" icon="bloqued"/>
-            <span class="name">No date</span>
+            <span class="name">{{ l['No date'] }}</span>
           </span>
         </span>
         <div class="content">
@@ -102,6 +102,7 @@ import IconVue from '../../Icon.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
 
 import mom from 'moment'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -116,6 +117,9 @@ export default {
       selectedMoment: mom(),
       time: null,
     }
+  },
+  computed: {
+    ...mapGetters(['l']),
   },
   methods: {
     leave(el) {

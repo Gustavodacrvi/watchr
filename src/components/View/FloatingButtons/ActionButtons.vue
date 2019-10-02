@@ -1,5 +1,5 @@
 <template>
-  <div class="ActionButtons" :class="platform" @click="click">
+  <div class="ActionButtons passive" :class="platform" @click="click">
     <Btn v-if="showHeader" class="header button handle action-button"
       icon='user'
       color='white'
@@ -8,8 +8,8 @@
     <Btn class="add button handle action-button task-adder" id="addtask"
       icon='plus'
       color='white'
-      txt='Add task'
       data-type='addtask'
+      :txt='l["Add task"]'
     />
   </div>
 </template>
@@ -44,7 +44,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['platform'])
+    ...mapGetters(['platform', 'l'])
   }
 }
 

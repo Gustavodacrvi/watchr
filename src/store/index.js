@@ -2,6 +2,8 @@ import Vue from "vue"
 import Vuex from "vuex"
 import router from './../router'
 
+import moment from 'moment'
+
 Vue.use(Vuex)
 
 const MINIMUM_DESKTOP_SCREEN_WIDTH = 820
@@ -29,11 +31,24 @@ import tag from './tag'
 import list from './list'
 import filter from './filter'
 
+const lang = localStorage.getItem('watchrlanguage') || 'en'
+
+const getLanguageFile = (name) => {
+  return new Promise(resolve => {
+    import(/* webpackMode: "lazy" */`./../assets/locales/${name}.js`)
+      .then((res) => resolve(res.default))
+  })
+}
+
+moment.locale(lang)
+
 const store = new Vuex.Store({
   modules: {
     task, tag, list, filter,
   },
   state: {
+    lang,
+    language: null,
     popup: {
       comp: '',
       payload: null,
@@ -66,8 +81,22 @@ const store = new Vuex.Store({
     isPopupOpened(state) {
       return state.popup.comp !== ''
     },
+    l(state) {
+      return state.language
+    },
   },
   mutations: {
+    languageFile(state, language) {
+      state.language = language
+    },
+    saveLang(state, lang) {
+      getLanguageFile(lang).then((language) => {
+        state.lang = lang
+        state.language = language
+        localStorage.setItem('watchrlanguage', lang)
+        location.reload()
+      })
+    },
     pushIconDrop(state, drop) {
       state.iconDrop = drop
     },
@@ -123,7 +152,9 @@ const store = new Vuex.Store({
         router.push('/popup')
     },
   }
-});
+})
+
+getLanguageFile(lang).then((l) => store.commit('languageFile', l))
 
 auth.onAuthStateChanged(() => {
   const isLogged = auth.currentUser !== null

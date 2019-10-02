@@ -51,7 +51,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktop', 'platform']),
+    ...mapGetters(['isDesktop', 'platform', 'l']),
     route() {
       if (this.$route.matched[0]) {
         return this.$route.matched[0].name
@@ -61,12 +61,12 @@ export default {
     dropLinks() {
       return [
         {
-          name: 'Sign up',
+          name: this.l['Sign up'],
           icon: 'user-plus',
           callback: () => this.signUp()
         },
         {
-          name: 'Sign in',
+          name: this.l['Sign in'],
           icon: 'out',
           callback: () => this.signIn()
         }

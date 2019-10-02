@@ -1,23 +1,23 @@
 <template>
   <div class="Signin popup cb shadow rb" :class="platform">
     <div class="tac title">
-      <h3 class="pc">Sign in</h3>
+      <h3 class="pc">{{ l['Sign in'] }}</h3>
     </div>
     <div class="content">
       <InputApp
-        placeholder='E-mail:'
+        :placeholder='l["E-mail"] + ":"'
         :focus="true"
         v-model="eMail"
       />
       <InputApp
         class="mt"
-        placeholder='Password:'
+        :placeholder='l["Password"] + ":"'
         type="password"
         v-model="password"
       />
       <ButtonApp
         class="mt"
-        value='Sign in'
+        :value='l["Sign in"]'
         @click="signIn"
       />
     </div>
@@ -49,7 +49,7 @@ export default {
       const toast = (toast) => this.$store.commit('pushToast', toast)
       if (this.atLeastOneEmpty)
         toast({
-          name: "Fill in all the required fields.",
+          name: this.l["Fill in all the required fields."],
           type: "error",
           seconds: 4,
         })
@@ -57,13 +57,13 @@ export default {
         const auth = firebase.auth()
         auth.signInWithEmailAndPassword(this.eMail, this.password).then(() => {
           toast({
-            name: 'You have successfully logged in!',
+            name: this.l['You have successfully logged in!'],
             type: 'success',
             seconds: 3,
           })
           if (auth.currentUser && !auth.currentUser.emailVerified)
             toast({
-              name: 'Please confirm your e-mail address.',
+              name: this.l['Please confirm your e-mail address.'],
               type: 'warning',
               seconds: 4,
             })
@@ -82,11 +82,11 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['platform', 'l']),
     atLeastOneEmpty() {
       const { eMail, password } = this
       return eMail === '' || password === ''
     },
-    ...mapGetters(['platform'])
   },
 }
 

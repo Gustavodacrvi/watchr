@@ -5,13 +5,13 @@
     </div>
     <div class="content">
       <DropInput
-        placeholder="Tag name..."
+        :placeholder="['Tag name'] + '...'"
         v-model="name"
         :focus="true"
         :options='options'
         @select="select"
       />
-      <ButtonApp :value="btn" @click="addList"/>
+      <ButtonApp :value="title" @click="addList"/>
     </div>
   </div>
 </template>
@@ -38,7 +38,7 @@ export default {
     if (this.isEditing) this.name = this.payload.name
   },
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['platform', 'l']),
     ...mapState({
       lists: state => state.list.lists,
       popup: state => state.popup,
@@ -48,12 +48,8 @@ export default {
       return this.payload
     },
     title() {
-      if (!this.isEditing) return 'Add list'
-      return 'Edit list'
-    },
-    btn() {
-      if (!this.isEditing) return 'Add list'
-      return 'Edit list'
+      if (!this.isEditing) return this.l['Add list']
+      return this.l['Edit list']
     },
     isSmartList() {
       const lists = [
@@ -74,7 +70,7 @@ export default {
         const list = this.lists.find(el => el.name === this.name)
         if (this.isSmartList)
           toast({
-            name: `<strong>${this.name}</strong> is a special list type.`,
+            name: this.l[`This is a special list type.`],
             type: 'error',
             seconds: 4,
           })
@@ -83,7 +79,7 @@ export default {
             name: this.name,
           })
           toast({
-            name: `<strong>${this.name}</strong> list added successfully!`,
+            name: this.l[`List added successfully!`],
             type: 'success',
             seconds: 2,
           })
@@ -94,21 +90,21 @@ export default {
             id: this.payload.id,
           })
           toast({
-            name: `<strong>${this.name}</strong> list edited successfully!`,
+            name: this.l[`List edited successfully!`],
             type: 'success',
             seconds: 2,
           })
           this.$store.commit('closePopup')
         } else {
           toast({
-            name: `This list already exists!`,
+            name: this.l[`This list already exists!`],
             type: 'error',
             seconds: 3,
           })
         }
       } else {
         toast({
-          name: 'Fill in all the required fields.',
+          name: this.l['Fill in all the required fields.'],
           type: 'error',
           seconds: 3,
         })

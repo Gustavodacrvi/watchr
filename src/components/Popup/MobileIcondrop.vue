@@ -4,6 +4,7 @@
       :options='iconDrop.options'
       :allowSearch='iconDrop.allowSearch'
       :calendar='iconDrop.calendar'
+      :calendarCall='iconDrop.calendarCallback'
       :isMobileIconDropComp='true'
       :centralize='true'
     />

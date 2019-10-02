@@ -1,29 +1,29 @@
 <template>
   <div class="Signup popup cb shadow rb" :class="platform">
     <div class="tac title">
-      <h3 class="pc">Create an Account</h3>
+      <h3 class="pc">{{ l['Create an Account'] }}</h3>
     </div>
     <div class="content">
       <InputApp
-        placeholder='E-mail:'
+        :placeholder='l["E-mail"] + ":"'
         :focus="true"
         v-model="eMail"
       />
       <InputApp
         class="mt"
-        placeholder='Password:'
+        :placeholder='l["Password"] + ":"'
         type="password"
         v-model="password"
       />
       <InputApp
         class="mt"
         type="password"
-        placeholder='Confirm password:'
+        :placeholder='l["Confirm password"] + ":"'
         v-model="conPassword"
       />
       <ButtonApp
         class="mt"
-        value='Create account'
+        :value='l["Create account"]'
         @click="createAccount"
       />
     </div>
@@ -63,19 +63,19 @@ export default {
       }
       if (this.atLeastOneEmpty)
         toast({
-          name: "Fill in all the required fields.",
+          name: this.l["Fill in all the required fields."],
           type: "error",
           seconds: 4,
         })
       else if (this.tooLong)
         toast({
-          name: "The maximum number of characters is 75.",
+          name: this.l["The maximum number of characters is 75."],
           type: "error",
           seconds: 4,
         })
       else if (this.notEqual)
         toast({
-          name: "The passwords aren't matching.",
+          name: this.l["The passwords aren't matching."],
           type: "error",
           seconds: 4,
         })
@@ -84,13 +84,13 @@ export default {
         auth.createUserWithEmailAndPassword(this.eMail, this.password).then(() => {
           const uid = auth.currentUser.uid
           toast({
-            name: 'You have successfully created an account!',
+            name: this.l['You have successfully created an account!'],
             seconds: 3,
             type: 'error'
           })
           auth.currentUser.sendEmailVerification().then(() => {
             toast({
-              name: 'An email confirmation has been sent to your email address. Please check your inbox and click the confirmation link.',
+              name: this.l['An email confirmation has been sent to your email address. Please check your inbox and click the confirmation link.'],
               seconds: 6,
               type: 'warning',
             })
@@ -117,7 +117,7 @@ export default {
     notEqual() {
       return this.password !== this.conPassword
     },
-    ...mapGetters(['platform'])
+    ...mapGetters(['platform', 'l'])
   },
 }
 

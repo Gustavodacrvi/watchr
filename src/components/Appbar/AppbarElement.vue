@@ -14,7 +14,7 @@
         <Icon class="icon" :class="{notActive: !isActive}" :icon="icon"/>
       </div>
       <div class="name-wrapper">
-        <span class="name">{{ name }}</span>
+        <span class="name">{{ getName }}</span>
         <IconDrop v-if="showOptions"
           class="drop"
           handle="settings-v"
@@ -29,6 +29,8 @@
 
 import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop.vue'
+
+import { mapGetters } from 'vuex'
 
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
@@ -50,6 +52,11 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['l']),
+    getName() {
+      if (this.isSmart) return this.l[this.name]
+      return this.name
+    },
     hoverStyle() {
       if (this.isSmart)
         return `color: ${this.isActive ? this.iconColor : ''} !important;`
