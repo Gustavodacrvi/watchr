@@ -3,7 +3,9 @@
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
   >
-    <transition name="edit-t" mode="out-in">
+    <transition name="edit-t" mode="out-in"
+      @enter='enter'
+    >
       <div v-if="!isEditing" key="notediting"
         class="cont-wrapper handle rb cursor"
         :class="platform"
@@ -46,7 +48,7 @@
       </div>
       <Edit v-else-if="isEditing" key="editing" class="handle"
         placeholder="Task name..."
-        btnText="Save task"
+        :btnText="l['Save task']"
         :task='task'
         :showCancel='true'
         @cancel='isEditing = false'
@@ -71,7 +73,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'isSelected', 'view'],
+  props: ['task', 'isSelected', 'view', 'viewNameValue'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -85,6 +87,27 @@ export default {
     }
   },
   methods: {
+    enter(cont) {
+      if (!this.isEditing) {
+        const s = cont.style
+        const height = cont.offsetHeight + 'px'
+        const lessThan38 = (cont.offsetHeight < 38)
+        cont.classList.add('hided')
+        s.height = '0px'
+        s.padding = '2px 0'
+        setTimeout(() => {
+          if (lessThan38) {
+          cont.classList.add('show')
+            s.height = '38px'
+          }
+          else {
+            s.height = height
+          }
+          s.padding = '0'
+          cont.classList.remove('hided')
+        })
+      }
+    },
     completeTask() {
       const calendar = this.task.calendar
       if (calendar) {
@@ -155,7 +178,7 @@ export default {
       savedLists: state => state.list.lists,
       savedTags: state => state.tag.tags,
     }),
-    ...mapGetters(['isDesktop', 'platform']),
+    ...mapGetters(['isDesktop', 'platform', 'l']),
     completed() {
       return utilsTask.filterTasksByCompletion([this.task]).length === 1
     },
@@ -170,24 +193,25 @@ export default {
     },
     options() {
       const dispatch = this.$store.dispatch
+      const l = this.l
       return [
         {
-          name: 'Edit task',
+          name: l['Edit task'],
           icon: 'pen',
           callback: () => this.isEditing = true
         },
         {
-          name: 'Copy task',
+          name: l['Copy task'],
           icon: 'copy',
           callback: () => dispatch('task/copyTask', this.task)
         },
         {
-          name: 'Move to list',
+          name: l['Move to list'],
           icon: 'tasks',
         },
         {
           type: 'optionsList',
-          name: 'Priority',
+          name: l['Priority'],
           options: [
             {
               icon: 'priority',
@@ -217,7 +241,7 @@ export default {
         },
         {
           type: 'optionsList',
-          name: 'Schedule',
+          name: l['Schedule'],
           options: [
             {
               icon: 'star',
@@ -237,7 +261,7 @@ export default {
           ]
         },
         {
-          name: 'Delete task',
+          name: l['Delete task'],
           icon: 'trash',
           callback: () => dispatch('task/deleteTasks', [this.task.id])
         }
@@ -265,8 +289,8 @@ export default {
     },
     calendarStr() {
       if (!this.task.calendar) return null
-      const str = utils.parseCalendarObjectToString(this.task.calendar)
-      if (str === this.view) return null
+      const str = utils.parseCalendarObjectToString(this.task.calendar, this.l)
+      if (str === this.viewNameValue) return null
       return str
     },
     circleColor() {

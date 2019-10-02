@@ -8,8 +8,8 @@
     <Btn class="add button handle action-button task-adder" id="addtask"
       icon='plus'
       color='white'
-      txt='Add task'
       data-type='addtask'
+      :txt='l["Add task"]'
     />
   </div>
 </template>
@@ -44,7 +44,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['platform'])
+    ...mapGetters(['platform', 'l'])
   }
 }
 

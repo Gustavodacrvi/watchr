@@ -196,7 +196,7 @@ export default {
       const dispatch = this.$store.dispatch
       return [
         {
-          name: 'Sort tags',
+          name: this.l['Sort tags'],
           icon: 'sort',
           callback: () => [
             {

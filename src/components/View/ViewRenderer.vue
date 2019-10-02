@@ -4,7 +4,8 @@
       <Header
         :useIcon="useIcon"
         :icon="icon"
-        :value="viewName"
+        :viewName="viewName"
+        :viewNameValue="viewNameValue"
         :options="options"
         :tags='tagSelectionOptions'
         :lists='listSelectionOptions'
@@ -16,12 +17,14 @@
       <TaskRenderer v-if="!headingsRenderer"
         :tasks='getFilterCompletedTasks'
         :view='viewName'
+        :viewNameValue='viewNameValue'
         :addTask='addTask'
         @update='updateIds'
       />
       <HeadingsRenderer v-else
         :tasks='tasks'
         :view='viewName'
+        :viewNameValue='viewNameValue'
         :addTask="addTask"
         :headings='headingsOptions'
       />
@@ -44,7 +47,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsRenderer', 'headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'useIcon', 'icon'],
+  props: ['headingsRenderer', 'headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'useIcon', 'icon', 'viewNameValue'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,

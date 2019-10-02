@@ -38,7 +38,7 @@ export default {
     if (this.isEditing) this.name = this.payload.name
   },
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['platform', 'l']),
     ...mapState({
       tags: state => state.tag.tags,
       popup: state => state.popup,
@@ -101,9 +101,6 @@ export default {
         this.options = []
       })
     }
-  },
-  computed: {
-    ...mapGetters(['l']),
   },
   watch: {
     name() {

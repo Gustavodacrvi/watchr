@@ -7,7 +7,6 @@
     <transition name="popup">
       <Menu v-if="isMenuOpened && !isDesktop"/>
     </transition>
-    <div v-if="!isDesktop" style="height: 65px"></div>
     <transition>
       <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
     </transition>
@@ -17,6 +16,7 @@
         <NavBar v-if='!hideNavbar'/>
         <div v-if="hideNavbar" style="height: 65px;"></div>
       </transition>
+      <div v-if="!isDesktop" style="height: 65px"></div>
       <router-view class="router-view" :class="{hided: hideNavbar}"/>
     </div>
   </div>
@@ -130,6 +130,7 @@ export default {
 .content {
   display: flex;
   min-height: 100%;
+  overflow-x: hidden; 
   flex-direction: column;
   position: relative;
 }

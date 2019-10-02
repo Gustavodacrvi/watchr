@@ -2,6 +2,8 @@ import Vue from "vue"
 import Vuex from "vuex"
 import router from './../router'
 
+import moment from 'moment'
+
 Vue.use(Vuex)
 
 const MINIMUM_DESKTOP_SCREEN_WIDTH = 820
@@ -37,6 +39,8 @@ const getLanguageFile = (name) => {
       .then((res) => resolve(res.default))
   })
 }
+
+moment.locale(lang)
 
 const store = new Vuex.Store({
   modules: {
@@ -90,6 +94,7 @@ const store = new Vuex.Store({
         state.lang = lang
         state.language = language
         localStorage.setItem('watchrlanguage', lang)
+        location.reload()
       })
     },
     pushIconDrop(state, drop) {
