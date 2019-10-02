@@ -84,7 +84,7 @@ export default {
   },
   filterTasksByCompletion(tasks, notCompleted) {
     return tasks.filter(el => {
-      const comp = this.isCompleted(el)
+      const comp = this.isTaskCompleted(el)
       if (notCompleted) return !comp
       return comp
     })
@@ -128,7 +128,7 @@ export default {
       }
       case 'Overdue': {
         return tasks.filter(el => {
-          if (!el.calendar || this.isCompleted(el)) return false
+          if (!el.calendar || this.isTaskCompleted(el)) return false
           
           const {
             spec, type, due, tod,

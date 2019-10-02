@@ -61,7 +61,7 @@ export default {
 <style scoped>
 
 .Toast {
-  position: absolute;
+  position: fixed;
   height: 100%;
   width: 100%;
   z-index: 150;
@@ -70,7 +70,7 @@ export default {
 }
 
 .toast {
-  position: absolute;
+  position: fixed;
   bottom: 40px;
   pointer-events: all;
   transition: background-color .2s;

@@ -70,7 +70,7 @@ export default {
         const list = this.lists.find(el => el.name === this.name)
         if (this.isSmartList)
           toast({
-            name: this.l[`Is a special list type.`],
+            name: this.l[`This is a special list type.`],
             type: 'error',
             seconds: 4,
           })
