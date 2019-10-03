@@ -61,7 +61,7 @@ export default {
         "settings-v": settingsV,
         "tiny-arrow": arrowTiny,
         "tiny-circle": tinyCircle,
-      }
+      },
     }
   },
   computed: {
@@ -72,7 +72,7 @@ export default {
     getWidth() {
       return this.width ? this.width : "20px"
     }
-  }
+  },
 }
 
 </script>

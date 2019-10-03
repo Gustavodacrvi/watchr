@@ -14,11 +14,13 @@
         @list='selectList'
       />
       <TaskRenderer
+        :emptyIcon='emptyIcon'
         :tasks='getFilterCompletedTasks'
         :view='viewName'
         :viewNameValue='viewNameValue'
         :headings='headingsOptions'
         :addTask='addTask'
+        :illustration='illustration'
         @update='updateIds'
       />
     </div>
@@ -39,7 +41,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'icon', 'viewNameValue'],
+  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'icon', 'viewNameValue', 'emptyIcon', 'illustration'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,

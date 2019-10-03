@@ -1,9 +1,11 @@
 <template>
   <ViewRenderer v-if="hasTasks"
+    emptyIcon='happy-star'
     :viewName='viewName'
     :viewNameValue='viewNameValue'
     :viewType='viewType'
     :icon="icon"
+    :illustration='illustration'
     :headingsOptions='headingsOptions'
 
     :tasks='getTasks'
@@ -111,6 +113,15 @@ export default {
         }
       }
       return []
+    },
+    illustration() {
+      const l = this.l
+      if (this.isSmart && this.viewName === 'Today')
+        return {
+          name: 'HappyFace',
+          title: this.l['Enjoy the rest of the day'],
+          descr: this.l['You already completed everything here!'],
+        }
     },
 
     viewTag() {

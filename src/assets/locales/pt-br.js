@@ -91,4 +91,6 @@ export default {
   'CalParserEveryKey': 'Todo',
   'CalParserDEFER': 'Atrasar',
   'CalParserDUE': 'Vence',
+  'Enjoy the rest of the day': 'Aproveite o resto do dia!',
+  'You already completed everything here!': 'Você já completou todas as tarefas de hoje!',
 }

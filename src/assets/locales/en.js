@@ -90,4 +90,6 @@ export default {
   'CalParserEveryKey': 'Every',
   'CalParserDEFER': 'Defer',
   'CalParserDUE': 'Due',
+  'Enjoy the rest of the day': 'Enjoy the rest of the day',
+  'You already completed everything here!': 'You already completed everything here!',
 }

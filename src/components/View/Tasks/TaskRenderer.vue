@@ -42,6 +42,16 @@
         </HeadingApp>
       </template>
     </transition-group>
+    <transition name="task-trans" appear>
+      <div v-if="headings.length === 0 && tasks.length === 0" class="illustration">
+        <Illustration
+          :name='illustration.name'
+          :width="illustration.width"
+          :title="illustration.title"
+          :descr="illustration.descr"
+        />
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -51,6 +61,7 @@ import Vue from 'vue'
 
 import TaskVue from './Task.vue'
 import TaskEditTemplate from './Edit.vue'
+import IllustrationVue from '@/components/Illustrations/Illustration.vue'
 import HeadingVue from './../Heading.vue'
 
 import { mapState, mapGetters } from 'vuex'
@@ -63,11 +74,12 @@ const lastHeading = {
 }
 
 export default {
-  props: ['tasks', 'header', 'onAdd', 'view', 'addTask', 'viewNameValue', 'headings'],
+  props: ['tasks', 'header', 'onAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue,
     HeadingApp: HeadingVue,
+    Illustration: IllustrationVue,
   },
   data() {
     return {
@@ -143,24 +155,46 @@ export default {
       lastHeading.id = h.id
       return lastHeading.tasks
     },
+    hideHeading(s) {
+      s.height = '0px'
+      s.marginBottom = 0
+      s.padding = 0
+      s.borderBottom = '0px solid var(--light-gray)'
+    },
+    showHeading(s) {
+      s.height = '45px'
+      s.marginBottom = '10px'
+      s.padding = '0 6px'
+      s.borderBottom = '1px solid var(--light-gray)'
+    },
     headingsLeave(el) {
       const header = el.getElementsByClassName('header-wrapper')[0]
-      const s = header.style      
+      const s = header.style
+      const sw = el.style
       s.transitionDuration = '0s'
-      s.height = '45px'
+      sw.transitionDuration = '0s'
+      sw.margin = '24px 0'
+      this.showHeading(s)
       setTimeout(() => {
         s.transitionDuration = '.3s'
-        s.height = '0px'
+        sw.transitionDuration = '.3s'
+        sw.margin = 0
+        this.hideHeading(s)
       })
     },
     headingsEnter(el) {
       const header = el.getElementsByClassName('header-wrapper')[0]
       const s = header.style
+      const sw = el.style
       s.transitionDuration = '0s'
-      s.height = '0px'
+      sw.transitionDuration = '0s'
+      sw.margin = 0
+      this.hideHeading(s)
       setTimeout(() => {
         s.transitionDuration = '.3s'
-        s.height = '45px'
+        sw.transitionDuration = '.3s'
+        sw.margin = '24px 0'
+        this.showHeading(s)
       })
     },
     add(task) {
@@ -285,6 +319,15 @@ export default {
 </script>
 
 <style scoped>
+
+.illustration {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity .3s;
+}
 
 .TaskRenderer {
   margin-top: 16px;
