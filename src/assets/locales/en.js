@@ -92,4 +92,6 @@ export default {
   'CalParserDUE': 'Due',
   'Enjoy the rest of the day': 'Enjoy the rest of the day',
   'You already completed everything here!': 'You already completed everything here!',
+  'Nothing here...': 'Nothing here...',
+  'You have not tasks for tomorrow.': 'You have not tasks for tomorrow.',
 }

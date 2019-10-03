@@ -116,11 +116,18 @@ export default {
     },
     illustration() {
       const l = this.l
-      if (this.isSmart && this.viewName === 'Today')
+      if (this.viewName === 'Today')
         return {
           name: 'HappyFace',
           title: this.l['Enjoy the rest of the day'],
           descr: this.l['You already completed everything here!'],
+        }
+      else if (this.viewName === 'Tomorrow')
+        return {
+          name: 'Sleep',
+          title: this.l['Nothing here...'],
+          descr: this.l['You have not tasks for tomorrow.'],
+          width: '150px'
         }
     },
 

@@ -11,11 +11,12 @@
 <script>
 
 import HappyFace from './HappyFace.vue'
+import Sleep from './Sleep.vue'
 
 export default {
   props: ['name', 'title', 'descr', 'width'],
   components: {
-    HappyFace,
+    HappyFace, Sleep,
   },
   computed: {
     getWidth() {
@@ -37,8 +38,8 @@ export default {
   justify-content: center;
 }
 
-.margin + .margin {
-  margin-top: 10px;
+.margin {
+  margin-top: 18px;
 }
 
 .fade {

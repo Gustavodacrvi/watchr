@@ -1,6 +1,16 @@
 <template>
   <div class="TaskRenderer" @click.stop>
-    <transition-group name="task-trans" class="task-renderer-root"
+    <transition name="illus-trans" appear>
+      <div v-if="headings.length === 0 && tasks.length === 0" class="illustration">
+        <Illustration
+          :name='illustration.name'
+          :width="illustration.width"
+          :title="illustration.title"
+          :descr="illustration.descr"
+        />
+      </div>
+    </transition>
+    <transition-group name="task-trans" class="front task-renderer-root"
       appear
       @enter='enter'
       @leave='leave'
@@ -20,6 +30,7 @@
     </transition-group>
     <transition-group v-if="headings.length > 0"
       appear
+      class="front"
       @leave='headingsLeave'
       @enter='headingsEnter'
     >
@@ -42,16 +53,6 @@
         </HeadingApp>
       </template>
     </transition-group>
-    <transition name="task-trans" appear>
-      <div v-if="headings.length === 0 && tasks.length === 0" class="illustration">
-        <Illustration
-          :name='illustration.name'
-          :width="illustration.width"
-          :title="illustration.title"
-          :descr="illustration.descr"
-        />
-      </div>
-    </transition>
   </div>
 </template>
 
@@ -321,16 +322,34 @@ export default {
 <style scoped>
 
 .illustration {
+  position: absolute;
   width: 100%;
+  top: 0;
   height: 300px;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: opacity .3s;
+  transition-duration: .3s;
+}
+
+.front {
+  position: relative;
+  z-index: 1;
 }
 
 .TaskRenderer {
+  position: relative;
   margin-top: 16px;
+}
+
+.illus-trans-enter, .illus-trans-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.illus-trans-leave, .illus-trans-enter-to {
+  opacity: 1;
+  transform: translateY(0px);
 }
 
 .task-trans-enter, .task-trans-leave-to {
