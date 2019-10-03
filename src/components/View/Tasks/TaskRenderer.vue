@@ -15,7 +15,32 @@
         @select='taskSelect'
 
         :data-id='t.id'
+        :data-type='`task`'
       />
+    </transition-group>
+    <transition-group v-if="headings.length > 0"
+      appear
+      @leave='headingsLeave'
+      @enter='headingsEnter'
+    >
+      <template v-for="h in headings">
+        <HeadingApp v-if="getTasks(savedTasks, h).length > 0" :key="h.id"
+          :header='h'
+          :name='h.name'
+          :color='h.color ? h.color : ""'
+          :options='h.options ? h.options : []'
+        >
+          <TaskRenderer
+            :tasks='getTasks(savedTasks, h)'
+            :view='view'
+            :viewNameValue='viewNameValue'
+            :headings='[]'
+            :header="h"
+            :addTask="h.onAddTask"
+            :onAdd='h.onAdd'
+          />
+        </HeadingApp>
+      </template>
     </transition-group>
   </div>
 </template>
@@ -26,15 +51,23 @@ import Vue from 'vue'
 
 import TaskVue from './Task.vue'
 import TaskEditTemplate from './Edit.vue'
+import HeadingVue from './../Heading.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
 import Sortable from 'sortablejs'
 
+const lastHeading = {
+  id: null,
+  tasks: null,
+}
+
 export default {
-  props: ['tasks', 'onAdd', 'view', 'addTask', 'viewNameValue'],
+  props: ['tasks', 'header', 'onAdd', 'view', 'addTask', 'viewNameValue', 'headings'],
+  name: 'TaskRenderer',
   components: {
     Task: TaskVue,
+    HeadingApp: HeadingVue,
   },
   data() {
     return {
@@ -43,7 +76,20 @@ export default {
   },
   mounted() {
     this.sortable = new Sortable(this.draggableRoot, {
-      group: {name: 'task-renderer', pull: false, put: ['action-buttons']},
+      group: {
+        name: 'task-renderer',
+        pull: (e,j,item) => {
+          const d = item.dataset
+          if (d.type === 'task') return true
+          return false
+        },
+        put: (j,o,item) => {
+          const d = item.dataset
+          if (d.type === 'task') return true
+          if (d.type === 'floatbutton') return true
+          return false
+        }
+      },
       delay: 150,
       delayOnTouchOnly: true,
       handle: '.handle',
@@ -58,9 +104,9 @@ export default {
         const type = item.dataset.type
         if (type !== 'addtask')
           item.style.display = 'none'
-        if (this.onAdd)
+        if (type !== 'floatbutton' && this.onAdd)
           this.onAdd(evt, item, type)
-        if (type === 'addtask') {
+        if (type === 'floatbutton') {
           const Constructor = Vue.extend(TaskEditTemplate)
           const instance = new Constructor({
             parent: this,
@@ -91,12 +137,41 @@ export default {
     window.removeEventListener('click', this.windowClick)
   },
   methods: {
-    add(task) {
-      this.addTask({
-        task, ids: this.getIds(true),
-        index: this.getTaskRendererPosition(),
+    getTasks(tasks, h) {
+      if (h.id === lastHeading.id) return lastHeading.tasks
+      lastHeading.tasks = h.filter(tasks, h)
+      lastHeading.id = h.id
+      return lastHeading.tasks
+    },
+    headingsLeave(el) {
+      const header = el.getElementsByClassName('header-wrapper')[0]
+      const s = header.style      
+      s.transitionDuration = '0s'
+      s.height = '45px'
+      setTimeout(() => {
+        s.transitionDuration = '.3s'
+        s.height = '0px'
       })
-      this.addedTask = true
+    },
+    headingsEnter(el) {
+      const header = el.getElementsByClassName('header-wrapper')[0]
+      const s = header.style
+      s.transitionDuration = '0s'
+      s.height = '0px'
+      setTimeout(() => {
+        s.transitionDuration = '.3s'
+        s.height = '45px'
+      })
+    },
+    add(task) {
+      if (task.name) {
+        this.addTask({
+          task, ids: this.getIds(true),
+          index: this.getTaskRendererPosition(),
+          header: this.header,
+        })
+        this.addedTask = true
+      }
     },
     getTaskRendererPosition() {
       const ids = this.getIds()
@@ -180,6 +255,7 @@ export default {
   computed: {
     ...mapState({
       selected: state => state.selectedTasks,
+      savedTasks: state => state.task.tasks,
     }),
     ...mapGetters(['l']),
     draggableRoot() {
@@ -191,17 +267,17 @@ export default {
   },
   watch: {
     tasks() {
-      if (this.addedTask) {
-        setTimeout(() => {
-          const i = this.getTaskRendererPosition()
-          const childNodes = this.draggableRoot.childNodes
-          const adder = childNodes[i]
-          const newTask = childNodes[i + 1]
-          if (newTask)
-            this.draggableRoot.insertBefore(newTask, adder)
-        })
-      }
-      this.addedTask = false
+      setTimeout(() => {
+        if (this.addedTask) {
+            const i = this.getTaskRendererPosition()
+            const childNodes = this.draggableRoot.childNodes
+            const adder = childNodes[i]
+            const newTask = childNodes[i + 1]
+            if (newTask)
+              this.draggableRoot.insertBefore(newTask, adder)
+        }
+        this.addedTask = false
+      })
     }
   }
 }

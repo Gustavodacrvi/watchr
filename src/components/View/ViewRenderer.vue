@@ -2,7 +2,6 @@
   <div class="ViewRenderer" :class="platform">
     <div>
       <Header
-        :useIcon="useIcon"
         :icon="icon"
         :viewName="viewName"
         :viewNameValue="viewNameValue"
@@ -14,19 +13,13 @@
         @tag='selectTag'
         @list='selectList'
       />
-      <TaskRenderer v-if="!headingsRenderer"
+      <TaskRenderer
         :tasks='getFilterCompletedTasks'
         :view='viewName'
         :viewNameValue='viewNameValue'
+        :headings='headingsOptions'
         :addTask='addTask'
         @update='updateIds'
-      />
-      <HeadingsRenderer v-else
-        :tasks='tasks'
-        :view='viewName'
-        :viewNameValue='viewNameValue'
-        :addTask="addTask"
-        :headings='headingsOptions'
       />
     </div>
     <ActionButtons :showHeader='showHeader'/>
@@ -37,7 +30,6 @@
 
 import HeaderVue from './Header.vue'
 import TaskRendererVue from './Tasks/TaskRenderer.vue'
-import HeadingsRendererVue from './Headings/HeadingsRenderer.vue'
 import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
 
 import { mapGetters, mapState } from 'vuex'
@@ -47,11 +39,10 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsRenderer', 'headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'useIcon', 'icon', 'viewNameValue'],
+  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'icon', 'viewNameValue'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,
-    HeadingsRenderer: HeadingsRendererVue,
     ActionButtons: ActionButtonsVue,
   },
   data() {

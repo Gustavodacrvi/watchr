@@ -1,5 +1,8 @@
 <template>
-  <div class="Heading">
+  <div class="Heading"
+    :name='header.name'
+    :id='header.id'
+  >
     <div class="header-wrapper"
       @click="showing = !showing"
       @mouseenter="onHover = true"
@@ -23,10 +26,10 @@
 
 <script>
 
-import IconDropVue from '../../IconDrop.vue'
+import IconDropVue from '../IconDrop.vue'
 
 export default {
-  props: ['name', 'options', 'color'],
+  props: ['name', 'options', 'color', 'header'],
   components: {
     IconDrop: IconDropVue,
   },

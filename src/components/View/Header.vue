@@ -1,7 +1,7 @@
 <template>
   <div class="Header">
     <div v-if="$store.getters.isDesktop" class="header">
-      <Icon v-if="useIcon" class="icon" :icon="getIcon" :color="getIconColor" width="40px"/>
+      <Icon class="icon" :icon="getIcon" :color="getIconColor" width="40px"/>
       <h2 class="name">{{ viewNameValue }}</h2>
       <IconDrop class="passive" handle="settings-h" handleColor="var(--gray)" :options="options"/>
     </div>
@@ -31,7 +31,7 @@ import IconDropVue from '../IconDrop.vue'
 import TagVue from './Tag.vue'
 
 export default {
-  props: ['useIcon', 'viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -74,9 +74,6 @@ export default {
       this.pushToNavbar()
     },
     options() {
-      this.pushToNavbar()
-    },
-    useIcon() {
       this.pushToNavbar()
     },
   }
