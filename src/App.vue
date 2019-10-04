@@ -165,7 +165,7 @@ export default {
 }
 
 .hided {
-  top: -22px !important;
+  top: -18px !important;
 }
 
 .view-t-enter, .view-t-leave-to {

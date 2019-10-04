@@ -42,7 +42,6 @@ export default {
           calendar = this.getSpecificDayCalendarObj(mom().add(1, 'day'))
   
         obj.task.calendar = calendar
-        console.log(obj, this.viewName)
         this.$store.dispatch('list/addTaskByIndexSmart', {
           ...obj, list: this.viewName,
         })
@@ -113,18 +112,25 @@ export default {
     },
     illustration() {
       const l = this.l
-      if (this.viewName === 'Today')
+      if (this.isSmart && this.viewName === 'Today')
         return {
           name: 'HappyFace',
           title: this.l['Enjoy the rest of the day'],
           descr: this.l['You already completed everything here!'],
         }
-      else if (this.viewName === 'Tomorrow')
+      else if (this.isSmart && this.viewName === 'Tomorrow')
         return {
           name: 'Sleep',
           title: this.l['Nothing here...'],
           descr: this.l['You have not tasks for tomorrow.'],
           width: '150px'
+        }
+      else if (this.viewType === 'tag')
+        return {
+          name: 'SadTag',
+          title: this.l["This tag doesn't have any tasks."],
+          descr: this.l["How about adding one using the floating button?"],
+          width: '150px',
         }
     },
 

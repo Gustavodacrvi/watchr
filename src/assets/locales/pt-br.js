@@ -99,4 +99,6 @@ export default {
   'Some error occurred, please try again later.': 'Ocorreu algum erro, por favor tente novamente mais tarde.',
   'Log out': 'Sair',
   'Please log in to continue.': 'Por favor entre para continuar',
+  "This tag doesn't have any tasks.": "Essa tag não tem nenhuma tarefa.",
+  "How about adding one using the floating button?": "Que tal adicionar alguma usando o botão flutuante?",
 }

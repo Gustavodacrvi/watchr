@@ -14,11 +14,12 @@ import HappyFace from './HappyFace.vue'
 import Sleep from './Sleep.vue'
 import Error from './Error.vue'
 import Logo from './Logo.vue'
+import SadTag from './SadTag.vue'
 
 export default {
   props: ['name', 'title', 'descr', 'width'],
   components: {
-    HappyFace, Sleep, Error, Logo,
+    HappyFace, Sleep, Error, Logo, SadTag,
   },
   computed: {
     getWidth() {
