@@ -17,8 +17,9 @@
         <div v-if="hideNavbar" style="height: 65px;"></div>
       </transition>
       <div v-if="!isDesktop" style="height: 65px"></div>
-      <!-- <router-view class="router-view" :class="{hided: hideNavbar}"/> -->
-      <Loading/>
+      <transition name="view-t" appear mode="out-in">
+        <router-view class="router-view" :class="{hided: hideNavbar}"/>
+      </transition>
     </div>
   </div>
 </template>
@@ -134,12 +135,6 @@ export default {
   flex-direction: column;
 }
 
-.router-view {
-  position: relative;
-  top: 0;
-  transition: top .3s;
-}
-
 .hided {
   top: -13px;
 }
@@ -164,6 +159,22 @@ export default {
   opacity: 1;
   transform: translateY(0px);
   transition: opacity .3s ease-in, transform .3s ease-in;
+}
+
+.router-view {
+  position: relative;
+  top: 0;
+  transition: top .3s;
+}
+
+.view-t-enter, .view-t-leave-to {
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.view-t-leave, .view-t-enter-to {
+  opacity: 1;
+  transition: opacity .2s;
 }
 
 </style>

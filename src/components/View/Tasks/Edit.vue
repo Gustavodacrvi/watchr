@@ -53,7 +53,6 @@
         />
         <IconDrop
           handle="priority"
-          handleWidth="25px"
           :options="priorityOptions"
         />
         <IconDrop

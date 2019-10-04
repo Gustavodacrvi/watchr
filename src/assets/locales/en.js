@@ -96,4 +96,6 @@ export default {
   "You don't have any tasks for tomorrow.": "You don't have any tasks for tomorrow.",
   'Completed': 'Completed',
   'Some error occurred, please try again later.': 'Some error occurred, please try again later.',
+  'Log out': 'Log out',
+  'Please log in to continue.': 'Please log in to continue.',
 }

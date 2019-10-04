@@ -7,9 +7,10 @@
 
 <script>
 
-import { mapGetters } from 'vuex'
 import DesktopVue from './Desktop.vue'
 import MobileVue from './Mobile.vue'
+
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
@@ -49,8 +50,12 @@ export default {
     signIn() {
       this.$store.dispatch('pushPopup', {comp: 'Signin'})
     },
+    logOut() {
+      this.$store.dispatch('logOut')
+    },
   },
   computed: {
+    ...mapState(['authState']),
     ...mapGetters(['isDesktop', 'platform', 'l']),
     route() {
       if (this.$route.matched[0]) {
@@ -59,16 +64,24 @@ export default {
       return this.$route.name
     },
     dropLinks() {
+      if (!this.authState)
+        return [
+          {
+            name: this.l['Sign up'],
+            icon: 'user-plus',
+            callback: () => this.signUp()
+          },
+          {
+            name: this.l['Sign in'],
+            icon: 'out',
+            callback: () => this.signIn()
+          }
+        ]
       return [
         {
-          name: this.l['Sign up'],
-          icon: 'user-plus',
-          callback: () => this.signUp()
-        },
-        {
-          name: this.l['Sign in'],
+          name: this.l['Log out'],
           icon: 'out',
-          callback: () => this.signIn()
+          callback: () => this.logOut(),
         }
       ]
     }
