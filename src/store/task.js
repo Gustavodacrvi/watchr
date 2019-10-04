@@ -98,7 +98,7 @@ export default {
       for (const id of ids) {
         const ref = fire.collection('tasks').doc(id)
         batch.update(ref, {
-          completeDate: new Date(),
+          completeDate: mom().format('Y-M-D'),
           completed: true,
           calendar,
         })

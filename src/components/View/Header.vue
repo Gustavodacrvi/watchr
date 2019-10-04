@@ -56,6 +56,7 @@ export default {
         Tomorrow: 'sun',
         Inbox: 'inbox',
         Upcoming: 'calendar',
+        Completed: 'circle-check',
       }
       return obj[this.viewName]
     },
@@ -65,6 +66,7 @@ export default {
         Tomorrow: 'var(--orange)',
         Inbox: 'var(--primary)',
         Upcoming: 'var(--green)',
+        Completed: 'var(--brown)',
       }
       return obj[this.viewName]
     }

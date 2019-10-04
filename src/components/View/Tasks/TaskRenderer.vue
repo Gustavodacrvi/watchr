@@ -10,7 +10,7 @@
         />
       </div>
     </transition>
-    <transition-group name="task-trans" class="front task-renderer-root" :class="{dontHaveTasks: tasks.length === 0}"
+    <transition-group name="task-trans" class="front task-renderer-root" :class="{dontHaveTasks: tasks.length === 0 && headings.length === 0}"
       appear
       @enter='enter'
       @leave='leave'
@@ -51,6 +51,7 @@
             :header="h"
             :addTask="h.onAddTask"
             :onAdd='h.onAdd'
+            :disable='h.disableTaskRenderer'
           />
         </HeadingApp>
       </template>
@@ -77,7 +78,7 @@ const lastHeading = {
 }
 
 export default {
-  props: ['tasks', 'header', 'onAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags'],
+  props: ['tasks', 'header', 'onAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue,
@@ -91,6 +92,7 @@ export default {
   },
   mounted() {
     this.sortable = new Sortable(this.draggableRoot, {
+      disabled: this.disable,
       group: {
         name: 'task-renderer',
         pull: (e,j,item) => {

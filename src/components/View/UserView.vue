@@ -64,6 +64,7 @@ export default {
         case 'Today': return true
         case 'Upcoming': return true
         case 'Tomorrow': return true
+        case 'Completed': return true
         case 'Inbox': return true
       }
       return false

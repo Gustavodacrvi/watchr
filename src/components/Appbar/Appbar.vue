@@ -98,6 +98,12 @@ export default {
           callback: () => this.$router.push('/user?list=Upcoming'),
           iconColor: 'var(--green)'
         },
+        {
+          name: 'Completed',
+          icon: 'circle-check',
+          callback: () => this.$router.push('/user?list=Completed'),
+          iconColor: 'var(--brown)'
+        },
       ],
       sections: [
         {

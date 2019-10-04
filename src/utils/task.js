@@ -154,6 +154,9 @@ export default {
       case 'Tomorrow': {
         return this.filterTasksByDay(tasks, mom().add(1, 'day'))
       }
+      case 'Completed': {
+        return this.filterTasksByCompletion(tasks)
+      }
     }
     
     return tasks

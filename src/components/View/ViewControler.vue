@@ -1,6 +1,5 @@
 <template>
   <ViewRenderer
-    emptyIcon='happy-star'
     :viewName='viewName'
     :viewNameValue='viewNameValue'
     :viewType='viewType'
@@ -82,8 +81,11 @@ export default {
         case 'tag': return 'tag'
       }
     },
+    notSmartHeaderView() {
+      return this.viewName !== 'Upcoming' && this.viewName !== 'Completed'
+    },
     getTasks() {
-      if (this.isSmart && this.viewName !== 'Upcoming') {
+      if (this.isSmart && this.notSmartHeaderView) {
         if (this.viewName === 'Today' && this.hasOverdueTasks) return []
         return utilsTask.filterTasksByView(this.tasks, this.viewName)
       }
@@ -105,6 +107,9 @@ export default {
           case 'Today': {
             if (this.hasOverdueTasks) return this.todayHeadingsOptions
             return []
+          }
+          case 'Completed': {
+            return this.completedHeadingsOptions
           }
         }
       }
@@ -193,6 +198,28 @@ export default {
               calendar: calObj(date)
             })
           },
+        })
+      }
+      return arr
+    },
+    completedHeadingsOptions() {
+      const arr = []
+      const tod = mom()
+      for (let i = 0;i < 31;i++) {
+        tod.subtract(1, 'day')
+        const date = tod.format('Y-M-D')
+        arr.push({
+          name: utils.getHumanReadableDate(date, this.l),
+          filter: (tasks) => {
+            return tasks.filter(t => {
+              const type = el.calendar.type
+              if (type === 'weekly' || type === 'periodic') return false
+              const complete = mom(t.completeDate, 'Y-M-D')
+              return complete.isSame(mom(date, 'Y-M-D'), 'day')
+            })
+          },
+          id: date,
+          disableTaskRenderer: true,
         })
       }
       return arr
