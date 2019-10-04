@@ -5,6 +5,7 @@
     tag="div"
   >
     <AppbarElement v-for="(el,i) in list"
+      :iconColor='iconColor'
       :type="type"
       :icon="icon"
       :subListIcon='subListIcon'
@@ -30,7 +31,7 @@ export default {
   components: {
     AppbarElement: () => import('./AppbarElement.vue'),
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon',],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor'],
   data() {
     return {
       sortable: null,

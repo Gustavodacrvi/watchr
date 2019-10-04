@@ -20,6 +20,7 @@
         :viewNameValue='viewNameValue'
         :headings='headingsOptions'
         :addTask='addTask'
+        :activeTags='getActiveTags'
         :illustration='illustration'
         @update='updateIds'
       />
@@ -140,6 +141,12 @@ export default {
       l: 'l',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
+    getActiveTags() {
+      const arr = this.activeTags.slice()
+      if (this.viewType === 'tag' && !arr.includes(this.viewName))
+        arr.push(this.viewName)
+      return arr
+    },
     tagSelectionStr() {
       return 'showingTagSelection' + this.viewName + this.viewType
     },

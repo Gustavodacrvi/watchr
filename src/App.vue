@@ -183,13 +183,13 @@ export default {
 <style>
 
 .passive {
-  transition: opacity .6s !important;
+  transition: opacity .6s;
   opacity: 1 !important;
 }
 
 .hidePassive .passive {
   opacity: 0 !important;
-  transition: opacity .6s !important;
+  transition: opacity .6s;
 }
 
 </style>

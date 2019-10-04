@@ -75,7 +75,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'isSelected', 'view', 'viewNameValue'],
+  props: ['task', 'isSelected', 'view', 'viewNameValue', 'activeTags'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -189,7 +189,7 @@ export default {
       const arr = []
       for (const id of this.task.tags) {
         const tag = ts.find(el => el.id === id)
-        if (tag) arr.push(tag)
+        if (tag && !this.activeTags.includes(tag.name)) arr.push(tag)
       }
       return arr
     },

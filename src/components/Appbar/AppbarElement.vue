@@ -1,6 +1,5 @@
 <template>
   <div class="AppbarElement rb handle"
-    :style="hoverStyle"
     :tabindex="tabindex"
     @mouseenter="hover = true"
     @mouseleave="hover = false"
@@ -11,10 +10,10 @@
       class="link-wrapper rb"
     >
       <div class="icon-wrapper">
-        <Icon class="icon" :class="{notActive: !isActive}" :icon="icon"/>
+        <Icon class="icon" :style="hoverStyle" :class="{notActive: !isActive}" :icon="icon"/>
       </div>
       <div class="name-wrapper">
-        <span class="name">{{ getName }}</span>
+        <span class="name" :style="hoverStyle">{{ getName }}</span>
         <IconDrop v-if="showOptions"
           class="drop"
           handle="settings-v"
@@ -58,8 +57,7 @@ export default {
       return this.name
     },
     hoverStyle() {
-      if (this.isSmart)
-        return `color: ${this.isActive ? this.iconColor : ''} !important;`
+      return `color: ${this.isActive ? this.iconColor : ''} !important;`
     },
     isActive() {
       let isActive = this.name === this.active && this.type === this.viewType

@@ -3,6 +3,7 @@
     <Renderer
       type="tag"
       icon="tag"
+      iconColor='var(--red)'
       :list="getTags"
       :active="active"
       :viewType="viewType"

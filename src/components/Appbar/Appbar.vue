@@ -10,7 +10,7 @@
           :viewType="viewType"
           :icon='l.icon'
           :callback='l.callback'
-          :icon-color='l.iconColor'
+          :iconColor='l.iconColor'
           :tabindex="i + 1"
         />
         <div class="header">
@@ -45,7 +45,7 @@
       handleColor='var(--gray)'
       :options="getSectionOptions"
     />
-    <Icon v-if="$store.getters.isDesktop" icon="arrow" class="arrow cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
+    <Icon v-if="$store.getters.isDesktop" icon="arrow" id='appbar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
   </div>
 </template>
 
@@ -304,15 +304,20 @@ export default {
 }
 
 .sectionActive {
-  color: var(--primary);
+  color: var(--primary) !important;
 }
 
-.arrow {
+#appbar-arrow {
   position: fixed;
   left: 70px;
   bottom: 16px;
-  transition: color .2s, transform .4s, left .4s;
+  transition: opacity .3s, left .3s, transform .3s;
   transform: rotate(90deg);
+}
+
+#appbar-arrow.hided {
+  transform: rotate(-90deg);
+  left: 30px;
 }
 
 .drop {
@@ -326,10 +331,6 @@ export default {
   right: 7px;
 }
 
-.arrow.hided {
-  transform: rotate(-90deg);
-  left: -15px;
-}
 
 .bar-trans-enter, .bar-trans-leave-to {
   transform: translateX(-30px);

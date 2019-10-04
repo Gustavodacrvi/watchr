@@ -21,6 +21,7 @@
         :isSelecting='isSelecting'
         :isSelected='isTaskSelected(t.id)'
         :view='view'
+        :activeTags="activeTags"
         :viewNameValue='viewNameValue'
         @select='taskSelect'
 
@@ -45,6 +46,7 @@
             :tasks='getTasks(savedTasks, h)'
             :view='view'
             :viewNameValue='viewNameValue'
+            :activeTags="activeTags"
             :headings='[]'
             :header="h"
             :addTask="h.onAddTask"
@@ -75,7 +77,7 @@ const lastHeading = {
 }
 
 export default {
-  props: ['tasks', 'header', 'onAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration'],
+  props: ['tasks', 'header', 'onAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue,
@@ -254,6 +256,7 @@ export default {
         s.height = '0px'
         s.padding = '2px 0'
         setTimeout(() => {
+          s.transitionDuration = '.3s'
           if (lessThan38) {
           cont.classList.add('show')
             s.height = '38px'
@@ -263,7 +266,7 @@ export default {
           }
           s.padding = '0'
           cont.classList.remove('hided')
-        })
+        }, 50)
       }
     },
     leave(el) {
