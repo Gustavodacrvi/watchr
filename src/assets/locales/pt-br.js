@@ -94,5 +94,7 @@ export default {
   'Enjoy the rest of the day': 'Aproveite o resto do dia!',
   'You already completed everything here!': 'Você já completou todas as tarefas de hoje!',
   'Nothing here...': 'Nada aqui...',
-  'You have not tasks for tomorrow.': 'Você não tem nenhuma tarefa amanhã.',
+  "You don't have any tasks for tomorrow.": 'Você não tem nenhuma tarefa amanhã.',
+  'Completed': 'Completadas',
+  'Some error occurred, please try again later.': 'Ocorreu algum erro, por favor tente novamente mais tarde.',
 }

@@ -1,10 +1,10 @@
 <template>
   <div class="Illustration">
     <div class="center">
-      <component :style="{width: getWidth}" class="illustration" :is="name"/>
+      <component :style="{width: getWidth}" class="illustration illustration-colors" :is="name"/>
     </div>
-    <div class="center margin"><span>{{ title }}</span></div>
-    <div class="center margin fade"><span>{{ descr }}</span></div>
+    <div v-if="title" class="center margin"><span>{{ title }}</span></div>
+    <div v-if="descr" class="center margin fade"><span>{{ descr }}</span></div>
   </div>
 </template>
 
@@ -12,16 +12,18 @@
 
 import HappyFace from './HappyFace.vue'
 import Sleep from './Sleep.vue'
+import Error from './Error.vue'
+import Logo from './Logo.vue'
 
 export default {
   props: ['name', 'title', 'descr', 'width'],
   components: {
-    HappyFace, Sleep,
+    HappyFace, Sleep, Error, Logo,
   },
   computed: {
     getWidth() {
       return this.width ? this.width : '125px'
-    }
+    },
   }
 }
 

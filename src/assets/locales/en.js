@@ -93,5 +93,7 @@ export default {
   'Enjoy the rest of the day': 'Enjoy the rest of the day',
   'You already completed everything here!': 'You already completed everything here!',
   'Nothing here...': 'Nothing here...',
-  'You have not tasks for tomorrow.': 'You have not tasks for tomorrow.',
+  "You don't have any tasks for tomorrow.": "You don't have any tasks for tomorrow.",
+  'Completed': 'Completed',
+  'Some error occurred, please try again later.': 'Some error occurred, please try again later.',
 }

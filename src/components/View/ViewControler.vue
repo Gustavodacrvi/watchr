@@ -1,5 +1,5 @@
 <template>
-  <ViewRenderer v-if="hasTasks"
+  <ViewRenderer
     emptyIcon='happy-star'
     :viewName='viewName'
     :viewNameValue='viewNameValue'
@@ -72,9 +72,6 @@ export default {
       l: 'l',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
-    hasTasks() {
-      return this.getTasks.length > 0 || this.headingsOptions.length > 0
-    },
     viewNameValue() {
       if (this.isSmart) return this.l[this.viewName]
       return this.viewName

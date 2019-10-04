@@ -1,7 +1,7 @@
 <template>
   <div class="TaskRenderer" @click.stop>
     <transition name="illus-trans" appear>
-      <div v-if="headings.length === 0 && tasks.length === 0" class="illustration">
+      <div v-if="showIllustration" class="illustration">
         <Illustration
           :name='illustration.name'
           :width="illustration.width"
@@ -295,6 +295,9 @@ export default {
     ...mapGetters(['l']),
     draggableRoot() {
       return this.$el.getElementsByClassName('task-renderer-root')[0]
+    },
+    showIllustration() {
+      return this.headings.length === 0 && this.tasks.length === 0 && this.illustration
     },
     isSelecting() {
       return this.selected.length > 0

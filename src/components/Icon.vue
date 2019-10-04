@@ -1,5 +1,5 @@
 <template>
-  <div
+  <div v-if="getIcon"
     class="icon"
     :class="[{primaryHover}, platform]"
     :style="{width: getWidth, color}"

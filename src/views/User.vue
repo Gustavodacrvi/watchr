@@ -1,7 +1,7 @@
 <template>
   <div class="User" :class="[{appbarHided}, platform]">
     <div v-if="isDesktop" class="nav">
-      <Appbar
+      <Appbar class="Appbar"
         :value="value"
         :view-type="viewType"
         :appbarHided='appbarHided'
@@ -98,6 +98,11 @@ export default {
   min-height: 100%;
   transition-duration: .6s;
   transition-delay: 0s;
+}
+
+.Appbar {
+  position: sticky;
+  top: 20px;
 }
 
 .cont {

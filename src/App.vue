@@ -18,6 +18,7 @@
       </transition>
       <div v-if="!isDesktop" style="height: 65px"></div>
       <router-view class="router-view" :class="{hided: hideNavbar}"/>
+      <LoadingComponent/>
     </div>
   </div>
 </template>
@@ -29,6 +30,11 @@ import PopupVue from './components/Popup/Popup.vue'
 import ToastVue from './components/Toast.vue'
 import MenuVue from './components/NavBar/Menu.vue'
 import MobileIcondropVue from './components/Popup/MobileIcondrop.vue'
+import LogoVue from './components/Illustrations/Logo.vue'
+import ErrorVue from './components/Illustrations/Error.vue'
+import IllustrationVue from './components/Illustrations/Illustration.vue'
+import ErrorComponentVue from './components/Illustrations/ErrorComponent.vue'
+import LoadingComponentVue from './components/Illustrations/LoadingComponent.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -39,6 +45,11 @@ export default {
     Toast: ToastVue,
     Menu: MenuVue,
     MobileIcondrop: MobileIcondropVue,
+    Logo: LogoVue,
+    Error: ErrorVue,
+    Illustration: IllustrationVue,
+    ErrorComponent: ErrorComponentVue,
+    LoadingComponent: LoadingComponentVue,
   },
   data() {
     return {
@@ -100,7 +111,7 @@ export default {
       return this.hided
     },
     hidePassive() {
-      return this.timeBeforeMouseMove > 7 && this.isStandAlone && this.isDesktop
+      return this.timeBeforeMouseMove > 5 && this.isStandAlone && this.isDesktop
     },
     isIconDropOpened() {
       return this.$store.state.iconDrop !== null
@@ -130,18 +141,17 @@ export default {
 .content {
   display: flex;
   min-height: 100%;
-  overflow-x: hidden; 
   flex-direction: column;
-  position: relative;
 }
 
 .router-view {
-  transform: translateY(0px);
-  transition: transform .3s;
+  position: relative;
+  top: 0;
+  transition: top .3s;
 }
 
 .hided {
-  transform: translateY(-13px);
+  top: -13px;
 }
 
 .popup-enter, .popup-leave-to {

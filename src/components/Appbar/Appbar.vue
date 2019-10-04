@@ -300,7 +300,6 @@ export default {
 }
 
 .option:hover {
-  background-color: var(--light-gray);
   color: var(--white);
 }
 
@@ -310,7 +309,7 @@ export default {
 
 .arrow {
   position: fixed;
-  left: 18px;
+  left: 70px;
   bottom: 16px;
   transition: color .2s, transform .4s, left .4s;
   transform: rotate(90deg);
@@ -318,7 +317,7 @@ export default {
 
 .drop {
   position: fixed;
-  left: 290px;
+  left: 310px;
   bottom: 16px;
 }
 
