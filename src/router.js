@@ -1,11 +1,18 @@
-import Vue from "vue";
-import Router from "vue-router";
+import Vue from "vue"
+import Router from "vue-router"
 
-import Home from "./views/Home.vue";
-import Action from "./views/Action.vue";
-import User from "./views/User.vue";
+Vue.use(Router)
 
-Vue.use(Router);
+import LoadingComponent from './components/Illustrations/LoadingComponent.vue'
+import ErrorComponent from './components/Illustrations/ErrorComponent.vue'
+
+const AsyncComponent = (comp) => () => ({
+  component: comp,
+  loading: LoadingComponent,
+  error: ErrorComponent,
+  delay: 0,
+  timeout: 7500,
+})
 
 export default new Router({
   mode: "history",
@@ -14,22 +21,22 @@ export default new Router({
     {
       path: "/",
       name: "home",
-      component: Home
+      component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './views/Home.vue')),
     },
     {
       path: "/user",
       name: 'user',
-      component: User,
+      component: AsyncComponent(import(/* webpackChunkName: "user-chunk" */ './views/User.vue')),
     },
     {
       path: "/about",
       name: 'about',
-      component: Home,
+      component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './views/Home.vue')),
     },
     {
       path: '/action',
       name: 'Action',
-      component: Action,
+      component: AsyncComponent(import(/* webpackChunkName: "action-chunk" */ './views/Action.vue')),
       props: route => ({
         mode: route.query.mode,
         oobCode: route.query.oobCode,

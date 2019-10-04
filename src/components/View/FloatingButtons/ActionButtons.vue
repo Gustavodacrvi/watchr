@@ -8,7 +8,7 @@
     <Btn class="add button handle action-button task-adder" id="addtask"
       icon='plus'
       color='white'
-      data-type='addtask'
+      data-type='floatbutton'
       :txt='l["Add task"]'
     />
   </div>

@@ -60,6 +60,7 @@ const store = new Vuex.Store({
     iconDrop: null,
     selectedTasks: [],
     isOnControl: false,
+    fireBaseFirstLoaded: false,
     authState: false,
     isLoading: true,
     toasts: [],
@@ -86,6 +87,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    firebaseFirstLoad(state) {
+      state.fireBaseFirstLoaded = true
+    },
     languageFile(state, language) {
       state.language = language
     },
@@ -136,6 +140,12 @@ const store = new Vuex.Store({
     },
   },
   actions: {
+    logOut({state}) {
+      auth.signOut().then(() => {
+        state.authState = false
+        state.isLoading = true
+      })
+    },
     pushKeyShortcut({dispatch}, key) {
       const pop = (comp) => {
         dispatch('pushPopup', {comp})
@@ -156,11 +166,12 @@ const store = new Vuex.Store({
 
 getLanguageFile(lang).then((l) => store.commit('languageFile', l))
 
+let enabled = false
 auth.onAuthStateChanged(() => {
   const isLogged = auth.currentUser !== null
+  store.commit('firebaseFirstLoad')
   store.commit('toggleUser', isLogged)
 
-  const enabled = false
   if (fire && !enabled)
     fire.enablePersistence().then(() => enabled = true)
       .catch(err => {

@@ -17,7 +17,9 @@
         <div v-if="hideNavbar" style="height: 65px;"></div>
       </transition>
       <div v-if="!isDesktop" style="height: 65px"></div>
-      <router-view class="router-view" :class="{hided: hideNavbar}"/>
+      <transition name="view-t" appear mode="out-in">
+        <router-view class="router-view" :class="{hided: hideNavbar}"/>
+      </transition>
     </div>
   </div>
 </template>
@@ -100,7 +102,7 @@ export default {
       return this.hided
     },
     hidePassive() {
-      return this.timeBeforeMouseMove > 7 && this.isStandAlone && this.isDesktop
+      return this.timeBeforeMouseMove > 5 && this.isStandAlone && this.isDesktop
     },
     isIconDropOpened() {
       return this.$store.state.iconDrop !== null
@@ -130,19 +132,9 @@ export default {
 .content {
   display: flex;
   min-height: 100%;
-  overflow-x: hidden; 
   flex-direction: column;
-  position: relative;
 }
 
-.router-view {
-  transform: translateY(0px);
-  transition: transform .3s;
-}
-
-.hided {
-  transform: translateY(-13px);
-}
 
 .popup-enter, .popup-leave-to {
   opacity: 0;
@@ -156,7 +148,7 @@ export default {
 
 .nav-trans-enter, .nav-trans-leave-to {
   opacity: 0;
-  transform: translateY(-20px);
+  transform: translateY(-25px);
   transition: opacity .3s ease-out, transform .3s ease-out;
 }
 
@@ -164,6 +156,26 @@ export default {
   opacity: 1;
   transform: translateY(0px);
   transition: opacity .3s ease-in, transform .3s ease-in;
+}
+
+.router-view {
+  position: relative;
+  top: 0;
+  transition: top .3s;
+}
+
+.hided {
+  top: -18px !important;
+}
+
+.view-t-enter, .view-t-leave-to {
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.view-t-leave, .view-t-enter-to {
+  opacity: 1;
+  transition: opacity .2s;
 }
 
 </style>

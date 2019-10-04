@@ -1,5 +1,9 @@
 <template>
   <div class="Desktop">
+    <div class="logo" :class="{normal: isntOnIndexPage}">
+      <LogoApp :width='isntOnIndexPage ? "30px" : "45px"' :class="{'illustration-colors': isntOnIndexPage}" :trans='true'/>
+      <span class="watchr"><b>watchr</b></span>
+    </div>
     <router-link class="link" :class="{active: route === 'home'}" to="/">{{ l['Home'] }}</router-link>
     <router-link class="link" :class="{active: route === 'user'}" to="/user">{{ l['User'] }}</router-link>
     <router-link class="link" :class="{active: route === 'about'}" to="/about">{{ l['About'] }}</router-link>
@@ -13,13 +17,15 @@
 
 <script>
 
-import { mapGetters } from 'vuex'
-
+import LogoVue from '../Illustrations/Logo.vue'
 import IconDropVue from '../IconDrop.vue'
+
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
-    DropIcon: IconDropVue,    
+    DropIcon: IconDropVue,
+    LogoApp: LogoVue,
   },
   props: ['route', 'dropLinks'],
   methods: {
@@ -29,6 +35,9 @@ export default {
   },
   computed: {
     ...mapGetters(['l']),
+    isntOnIndexPage() {
+      return this.$route.path !== '/'
+    },
     languages() {
       return [
         {
@@ -80,6 +89,32 @@ export default {
   right: 34px;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.logo {
+  position: absolute;
+  left: 34px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  opacity: 1;
+  align-items: center;
+  transition: opacity .3s;
+}
+
+.watchr {
+  margin-left: 6px;
+  font-size: 1.6em;
+  transform: translateY(0px);
+  transition-duration: .3s;
+}
+
+.normal .watchr {
+  transform: translateY(-80px);
+}
+
+.normal {
+  opacity: .6;
 }
 
 </style>

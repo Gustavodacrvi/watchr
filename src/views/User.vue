@@ -1,123 +1,68 @@
 <template>
-  <div class="User" :class="[{appbarHided}, platform]">
-    <div v-if="isDesktop" class="nav">
-      <Appbar
-        :value="value"
-        :view-type="viewType"
-        :appbarHided='appbarHided'
-        @appbar="toggleAppbar"
-        @section="v => section = v"
-      />
-    </div>
-    <div class="cont">
-      <ViewControler
-        :isSmart="isSmart"
-        :viewType='viewType'
-        :viewName='value'
-      />
-    </div>
+  <div class="User">
+    <transition appear name="state" mode="out-in">
+      <UserView v-if="authState && !isLoading" key="app"/>
+      <div key="notlogged" v-else-if="showMsg && !authState && fireBaseFirstLoaded" class="view">
+        <span class='view'>{{ l['Please log in to continue.'] }}</span>
+      </div>
+      <div v-else key="loading" class="view">
+        <LoadingComponent/>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
 
-import AppbarVue from '../components/Appbar/Appbar.vue'
-import ViewControlerVue from '../components/View/ViewControler.vue'
+import UserViewVue from '../components/View/UserView.vue'
+import LoadingComponentVue from '../components/Illustrations/LoadingComponent.vue'
 
-import { mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: {
-    Appbar: AppbarVue,
-    ViewControler: ViewControlerVue
+    UserView: UserViewVue,
+    LoadingComponent: LoadingComponentVue,
   },
   data() {
     return {
-      viewType: null,
-      value: null,
-      appbarHided: false,
+      showMsg: false,
     }
   },
   created() {
-    this.updateViewType()
-  },
-  methods: {
-    toggleAppbar(isHided) {
-      this.appbarHided = isHided
-    },
-    updateViewType() {
-      const query = this.$route.query
-      const keys = Object.keys(query)
-      let viewType = keys[0]
-      let value = query[viewType]
-      if (viewType === undefined || value === undefined)
-        this.$router.replace('/user?list=Today')
-      this.value = value
-      this.viewType = viewType
-    }
+    setTimeout(() => {
+      this.showMsg = true
+    }, 1000)
   },
   computed: {
-    ...mapGetters(['platform', 'isDesktop']),
-    isSmart() {
-      if (this.viewType !== 'list') return false
-      switch (this.value) {
-        case 'Today': return true
-        case 'Upcoming': return true
-        case 'Tomorrow': return true
-        case 'Inbox': return true
-      }
-      return false
-    },
-  },
-  watch: {
-    $route() {
-      this.updateViewType()
-    }
-  }
+    ...mapGetters(['l']),
+    ...mapState(['authState', 'isLoading', 'fireBaseFirstLoaded']),
+  }  
 }
 
 </script>
 
 <style scoped>
 
-.User {
-  margin: 8px 60px;
+.User, .view {
+  flex-grow: 1;
   display: flex;
   justify-content: center;
-  transition-delay: .4s;
-  flex-grow: 1;
+  flex-direction: 1;
 }
 
-.User.mobile {
-  margin: 0;
+.view {
+  align-items: center;
 }
 
-.nav {
-  flex-basis: 400px;
-  max-width: 400px;
-  min-height: 100%;
-  transition-duration: .6s;
-  transition-delay: 0s;
+.state-enter, .state-leave-to {
+  opacity: 0;
+  transition-duration: .2s;
 }
 
-.cont {
-  position: relative;
-  flex-basis: 100%;
-  flex-grow: 1;
-  transition-delay: .4s;
-  transition-duration: .6s;
-}
-
-.appbarHided .nav {
-  flex-basis: 0;
-  max-width: 0;
-  transition-delay: .6s;
-  transition-duration: .6s;
-}
-
-.appbarHided .cont {
-  flex-basis: 925px;
-  flex-grow: 0;
+.state-leave, .state-enter-to {
+  opacity: 1;
+  transition-duration: .2s;
 }
 
 </style>
