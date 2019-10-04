@@ -1,5 +1,5 @@
 <template>
-  <svg :class="{loading}" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+  <svg :class="{loading, trans}" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="130px" height="130px" viewBox="0 0 294 294" enable-background="new 0 0 294 294" xml:space="preserve">
   <g>
     <path fill="#282828" class="shape" d="M239.12,0H54.88C24.571,0,0,25.072,0,56v182c0,30.928,24.571,56,54.88,56h184.24
@@ -24,12 +24,16 @@
 <script>
 
 export default {
-  props: ['loading'], 
+  props: ['loading', 'trans'], 
 }
 
 </script>
 
 <style scoped>
+
+.trans, .trans path, .trans {
+  transition-duration: .3s;
+}
 
 .illustration-colors .shape {
   fill: var(--white);
