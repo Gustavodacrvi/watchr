@@ -135,9 +135,6 @@ export default {
   flex-direction: column;
 }
 
-.hided {
-  top: -13px;
-}
 
 .popup-enter, .popup-leave-to {
   opacity: 0;
@@ -151,7 +148,7 @@ export default {
 
 .nav-trans-enter, .nav-trans-leave-to {
   opacity: 0;
-  transform: translateY(-20px);
+  transform: translateY(-25px);
   transition: opacity .3s ease-out, transform .3s ease-out;
 }
 
@@ -165,6 +162,10 @@ export default {
   position: relative;
   top: 0;
   transition: top .3s;
+}
+
+.hided {
+  top: -22px !important;
 }
 
 .view-t-enter, .view-t-leave-to {

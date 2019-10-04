@@ -2,11 +2,11 @@
   <div class="User">
     <transition appear name="state" mode="out-in">
       <UserView v-if="authState && !isLoading" key="app"/>
-      <div v-else-if="authState && isLoading" class="view">
-        <LoadingComponent/>
+      <div key="notlogged" v-else-if="showMsg && !authState && fireBaseFirstLoaded" class="view">
+        <span class='view'>{{ l['Please log in to continue.'] }}</span>
       </div>
-      <div v-else class="view">
-        <span class='view' key="notlogged">{{ l['Please log in to continue.'] }}</span>
+      <div v-else key="loading" class="view">
+        <LoadingComponent/>
       </div>
     </transition>
   </div>
@@ -24,9 +24,19 @@ export default {
     UserView: UserViewVue,
     LoadingComponent: LoadingComponentVue,
   },
+  data() {
+    return {
+      showMsg: false,
+    }
+  },
+  created() {
+    setTimeout(() => {
+      this.showMsg = true
+    }, 1000)
+  },
   computed: {
     ...mapGetters(['l']),
-    ...mapState(['authState', 'isLoading']),
+    ...mapState(['authState', 'isLoading', 'fireBaseFirstLoaded']),
   }  
 }
 

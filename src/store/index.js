@@ -60,6 +60,7 @@ const store = new Vuex.Store({
     iconDrop: null,
     selectedTasks: [],
     isOnControl: false,
+    fireBaseFirstLoaded: false,
     authState: false,
     isLoading: true,
     toasts: [],
@@ -86,6 +87,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    firebaseFirstLoad(state) {
+      state.fireBaseFirstLoaded = true
+    },
     languageFile(state, language) {
       state.language = language
     },
@@ -165,6 +169,7 @@ getLanguageFile(lang).then((l) => store.commit('languageFile', l))
 let enabled = false
 auth.onAuthStateChanged(() => {
   const isLogged = auth.currentUser !== null
+  store.commit('firebaseFirstLoad')
   store.commit('toggleUser', isLogged)
 
   if (fire && !enabled)
