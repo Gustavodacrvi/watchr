@@ -1,5 +1,7 @@
 <template>
-  <LogoApp :loading="true"/>  
+  <div class="LoadingComponent">
+    <LogoApp :loading="true"/>  
+  </div>
 </template>
 
 <script>
@@ -13,3 +15,15 @@ export default {
 }
 
 </script>
+
+<style scoped>
+
+.LoadingComponent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  flex-grow: 1;
+}
+
+</style>
