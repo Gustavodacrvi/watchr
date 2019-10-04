@@ -1,5 +1,5 @@
 <template>
-  <div class="Header">
+  <div class="Header" @click.stop>
     <div v-if="$store.getters.isDesktop" class="header">
       <Icon class="icon" :icon="getIcon" :color="getIconColor" width="40px"/>
       <h2 class="name">{{ viewNameValue }}</h2>

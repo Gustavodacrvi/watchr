@@ -14,11 +14,15 @@
       </div>
       <div class="name-wrapper">
         <span class="name" :style="hoverStyle">{{ getName }}</span>
-        <IconDrop v-if="showOptions"
-          class="drop"
-          handle="settings-v"
-          :options='options'
-        />
+        <div class="info">
+          <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
+          <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
+          <IconDrop v-if="showOptions"
+            class="inf drop"
+            handle="settings-v"
+            :options='options'
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -33,7 +37,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
-    'viewType', 'type', 'isSmart', 'options',
+    'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
   ],
   components: {
     Icon: IconVue,
@@ -132,10 +136,24 @@ export default {
   background-color: var(--light-gray);
 }
 
-.drop {
+.info {
+  display: flex;
+  align-items: center;
   position: absolute;
-  right: 0px;
-  top: 50%;
+  right: 6px;
+  height: 100%;
+}
+
+.inf {
+  margin-left: 8px;
+}
+
+.drop {
+  transform: translate(8px, 13px);
+}
+
+.total {
+  color: var(--gray);
 }
 
 </style>

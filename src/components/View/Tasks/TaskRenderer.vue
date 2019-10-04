@@ -10,7 +10,7 @@
         />
       </div>
     </transition>
-    <transition-group name="task-trans" class="front task-renderer-root"
+    <transition-group name="task-trans" class="front task-renderer-root" :class="{dontHaveTasks: tasks.length === 0}"
       appear
       @enter='enter'
       @leave='leave'
@@ -256,7 +256,7 @@ export default {
         s.height = '0px'
         s.padding = '2px 0'
         setTimeout(() => {
-          s.transitionDuration = '.3s'
+          s.transition = 'height .2s, opacity .2s, transform .1s'
           if (lessThan38) {
           cont.classList.add('show')
             s.height = '38px'
@@ -348,6 +348,7 @@ export default {
   margin-top: 16px;
 }
 
+
 .illus-trans-enter, .illus-trans-leave-to {
   opacity: 0;
   transform: translateY(30px);
@@ -368,6 +369,10 @@ export default {
 
 .task-renderer-root {
   outline: none;
+}
+
+.dontHaveTasks {
+  height: 400px;
 }
 
 </style>

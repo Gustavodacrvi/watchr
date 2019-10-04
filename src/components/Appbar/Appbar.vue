@@ -12,6 +12,8 @@
           :callback='l.callback'
           :iconColor='l.iconColor'
           :tabindex="i + 1"
+          :totalNumber='numberOfTasks(l.name).total'
+          :importantNumber='numberOfTasks(l.name).notCompleted'
         />
         <div class="header">
           <div v-for="(s,i) in sections" :key="s.name"
@@ -186,9 +188,24 @@ export default {
         localStorage.setItem('section', this.section)
       }
     },
+    numberOfTasks(viewName) {
+      if (viewName === 'Upcoming')
+        return {
+          total: 0,
+          notCompleted: 0,
+        }
+      const obj = this.getNumberOfTasksByView(viewName)
+      if (viewName !== 'Today')
+        return {total: obj.total}
+      return obj
+    },
   },
   computed: {
-    ...mapGetters(['platform', 'l']),
+    ...mapGetters({
+      platform: 'platform',
+      l: 'l',
+      getNumberOfTasksByView: 'task/getNumberOfTasksByView'
+    }),
     getSectionOptions() {
       return this[this.section]
     },
@@ -250,7 +267,7 @@ export default {
     },
     newIndex() {
       return this.getAppnavIndex(this.section)
-    }
+    },
   },
   watch: {
     section() {

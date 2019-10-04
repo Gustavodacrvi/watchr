@@ -157,7 +157,6 @@ export default {
       }
     },
     selectDate(date) {
-      console.log(this.calendarCallback)
       if (this.calendarCallback)
         this.calendarCallback(date)
       this.showing = false

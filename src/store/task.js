@@ -1,7 +1,9 @@
 
 import { fire, auth } from './index'
-import utils from '../utils'
 import fb from 'firebase/app'
+
+import utils from '../utils'
+import utilsTask from '../utils/task'
 
 const uid = () => auth.currentUser.uid
 const fd = () => fb.firestore.FieldValue
@@ -51,7 +53,15 @@ export default {
         lastCompleteDate: null,
         periodic: null
       }
-    }
+    },
+    getNumberOfTasksByView: state => viewName => {
+      const ts = utilsTask.filterTasksByView(state.tasks, viewName)
+
+      return {
+        total: ts.length,
+        notCompleted: utilsTask.filterTasksByCompletion(ts, true).length,
+      }
+    },
   },
   actions: {
     getData({state}) {
