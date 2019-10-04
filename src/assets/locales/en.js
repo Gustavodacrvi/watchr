@@ -101,4 +101,5 @@ export default {
   "This tag doesn't have any tasks.": "This tag doesn't have any tasks.",
   "How about adding one using the floating button?": "How about adding one using the floating button?",
   "Congrats! Your Inbox is empty.": "Congrats! Your Inbox is empty.",
+  "You don't have any upcoming tasks!": "You don't have any upcoming tasks!",
 }

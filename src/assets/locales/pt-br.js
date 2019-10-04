@@ -102,4 +102,5 @@ export default {
   "This tag doesn't have any tasks.": "Essa tag não tem nenhuma tarefa.",
   "How about adding one using the floating button?": "Que tal adicionar alguma usando o botão flutuante?",
   "Congrats! Your Inbox is empty.": "Parabéns! Seu Inbox está vazio.",
+  "You don't have any upcoming tasks!": "Você não tem nenhuma tarefa no seu calendário!",
 }

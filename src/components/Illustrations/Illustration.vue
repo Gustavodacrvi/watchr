@@ -16,12 +16,13 @@ import Error from './Error.vue'
 import Logo from './Logo.vue'
 import SadTag from './SadTag.vue'
 import EmptyInbox from './EmptyInbox.vue'
+import EmptyCalendar from './EmptyCalendar.vue'
 
 export default {
   props: ['name', 'title', 'descr', 'width'],
   components: {
     HappyFace, Sleep, Error, Logo, SadTag,
-    EmptyInbox,
+    EmptyInbox, EmptyCalendar,
   },
   computed: {
     getWidth() {

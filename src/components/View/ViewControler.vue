@@ -6,8 +6,8 @@
     :viewType='viewType'
     :icon="icon"
     :illustration='illustration'
-    :headingsOptions='headingsOptions'
 
+    :headingsOptions='headingsOptions'
     :tasks='getTasks'
     :tasksOrder='tasksOrder'
 
@@ -114,25 +114,33 @@ export default {
       const l = this.l
       const n = this.viewName
       if (this.isSmart) {
-        if (n === 'Today')
-          return {
-            name: 'HappyFace',
-            title: l['Enjoy the rest of the day'],
-            descr: l['You already completed everything here!'],
-          }
-        else if (n === 'Tomorrow')
-          return {
-            name: 'Sleep',
-            title: l['Nothing here...'],
-            descr: l['You have not tasks for tomorrow.'],
-            width: '150px'
-          }
-        else if (n === 'Inbox')
-          return {
-            name: 'EmptyInbox',
-            title: l["Congrats! Your Inbox is empty."],
-            width: '150px',
-          }
+        switch (n) {
+          case 'Today':
+            return {
+              name: 'HappyFace',
+              title: l['Enjoy the rest of the day'],
+              descr: l['You already completed everything here!'],
+            }
+          case 'Tomorrow':
+            return {
+              name: 'Sleep',
+              title: l['Nothing here...'],
+              descr: l['You have not tasks for tomorrow.'],
+              width: '150px'
+            }
+          case 'Inbox':
+            return {
+              name: 'EmptyInbox',
+              title: l["Congrats! Your Inbox is empty."],
+              width: '150px',
+            }
+          case 'Upcoming':
+            return {
+              name: 'EmptyCalendar',
+              title: l["You don't have any upcoming tasks!"],
+              width: '150px',
+            }
+        }
       }
       else if (this.viewType === 'tag')
         return {

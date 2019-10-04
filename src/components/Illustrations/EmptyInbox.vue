@@ -12,16 +12,16 @@
 	<g>
 		<path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M34.343,48.278
 			c0,0-0.367-0.044-0.982-0.176"/>
-		<path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.9963,1.9963" d="
+		<path fill="none" stroke="var(--gray)" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.9963,1.9963" d="
 			M31.44,47.579c-3.931-1.285-10.489-4.778-10.722-13.802c-0.333-12.917,16.583-2.083,16.25-13.625
 			c-0.259-8.985-9.963-10.117-14.249-10.177"/>
 		<path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M21.713,9.98
 			c-0.626,0.015-0.995,0.048-0.995,0.048"/>
 	</g>
 </g>
-<ellipse transform="matrix(0.9878 -0.1557 0.1557 0.9878 -1.5159 2.5193)" cx="15.326" cy="10.938" rx="3.625" ry="2.25"/>
-<ellipse transform="matrix(-0.7448 -0.6673 0.6673 -0.7448 21.9127 24.9125)" fill="none" stroke-miterlimit="10" cx="15.72" cy="8.266" rx="1.506" ry="2.124"/>
-<ellipse transform="matrix(-0.4259 0.9048 -0.9048 -0.4259 35.6643 3.2447)" fill="none" stroke-miterlimit="10" cx="16.803" cy="12.938" rx="1.506" ry="2.124"/>
+<ellipse stroke="var(--primary)" fill="var(--primary)" transform="matrix(0.9878 -0.1557 0.1557 0.9878 -1.5159 2.5193)" cx="15.326" cy="10.938" rx="3.625" ry="2.25"/>
+<ellipse stroke="var(--primary)" transform="matrix(-0.7448 -0.6673 0.6673 -0.7448 21.9127 24.9125)" fill="none" stroke-miterlimit="10" cx="15.72" cy="8.266" rx="1.506" ry="2.124"/>
+<ellipse stroke="var(--primary)" transform="matrix(-0.4259 0.9048 -0.9048 -0.4259 35.6643 3.2447)" fill="none" stroke-miterlimit="10" cx="16.803" cy="12.938" rx="1.506" ry="2.124"/>
 </svg>
 
 </template>
