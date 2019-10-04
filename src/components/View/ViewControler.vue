@@ -112,24 +112,33 @@ export default {
     },
     illustration() {
       const l = this.l
-      if (this.isSmart && this.viewName === 'Today')
-        return {
-          name: 'HappyFace',
-          title: this.l['Enjoy the rest of the day'],
-          descr: this.l['You already completed everything here!'],
-        }
-      else if (this.isSmart && this.viewName === 'Tomorrow')
-        return {
-          name: 'Sleep',
-          title: this.l['Nothing here...'],
-          descr: this.l['You have not tasks for tomorrow.'],
-          width: '150px'
-        }
+      const n = this.viewName
+      if (this.isSmart) {
+        if (n === 'Today')
+          return {
+            name: 'HappyFace',
+            title: l['Enjoy the rest of the day'],
+            descr: l['You already completed everything here!'],
+          }
+        else if (n === 'Tomorrow')
+          return {
+            name: 'Sleep',
+            title: l['Nothing here...'],
+            descr: l['You have not tasks for tomorrow.'],
+            width: '150px'
+          }
+        else if (n === 'Inbox')
+          return {
+            name: 'EmptyInbox',
+            title: l["Congrats! Your Inbox is empty."],
+            width: '150px',
+          }
+      }
       else if (this.viewType === 'tag')
         return {
           name: 'SadTag',
-          title: this.l["This tag doesn't have any tasks."],
-          descr: this.l["How about adding one using the floating button?"],
+          title: l["This tag doesn't have any tasks."],
+          descr: l["How about adding one using the floating button?"],
           width: '150px',
         }
     },

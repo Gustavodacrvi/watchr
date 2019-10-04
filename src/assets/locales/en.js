@@ -100,4 +100,5 @@ export default {
   'Please log in to continue.': 'Please log in to continue.',
   "This tag doesn't have any tasks.": "This tag doesn't have any tasks.",
   "How about adding one using the floating button?": "How about adding one using the floating button?",
+  "Congrats! Your Inbox is empty.": "Congrats! Your Inbox is empty.",
 }
