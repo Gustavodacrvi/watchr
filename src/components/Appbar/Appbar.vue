@@ -5,6 +5,7 @@
         <AppnavRenderer
           type='list'
           :disableSort='true'
+          :disabled='!isDesktop'
           :list='links'
           :active='value'
           :viewType='viewType'
@@ -43,7 +44,7 @@
       handleColor='var(--gray)'
       :options="getSectionOptions"
     />
-    <Icon v-if="$store.getters.isDesktop" icon="arrow" id='appbar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
+    <Icon v-if="isDesktop" icon="arrow" id='appbar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
   </div>
 </template>
 
@@ -75,21 +76,21 @@ export default {
       links: [
         {
           name: 'Today',
-          id: 'today',
+          id: 'Today',
           icon: 'star',
           callback: () => this.$router.push('/user?list=Today'),
           iconColor: 'var(--yellow)',
         },
         {
           name: 'Tomorrow',
-          id: 'tom',
+          id: 'Tomorrow',
           icon: 'sun',
           callback: () => this.$router.push('/user?list=Tomorrow'),
           iconColor: 'var(--orange)',
         },
         {
           name: 'Inbox',
-          id: 'inb',
+          id: 'Inbox',
           icon: 'inbox',
           disableAction: true,
           callback: () => this.$router.push('/user?list=Inbox'),
@@ -97,7 +98,7 @@ export default {
         },
         {
           name: 'Upcoming',
-          id: 'up',
+          id: 'Upcoming',
           icon: 'calendar',
           disableAction: true,
           callback: () => this.$router.push('/user?list=Upcoming'),
@@ -105,7 +106,7 @@ export default {
         },
         {
           name: 'Completed',
-          id: 'comp',
+          id: 'Completed',
           icon: 'circle-check',
           callback: () => this.$router.push('/user?list=Completed'),
           iconColor: 'var(--brown)'
@@ -216,6 +217,7 @@ export default {
   computed: {
     ...mapGetters({
       platform: 'platform',
+      isDesktop: 'isDesktop',
       l: 'l',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView'
     }),

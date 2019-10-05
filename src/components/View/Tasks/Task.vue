@@ -7,7 +7,7 @@
       @enter='enter'
     >
       <div v-if="!isEditing" key="notediting"
-        class="cont-wrapper handle rb cursor"
+        class="cont-wrapper task-cont-wrapper handle rb cursor"
         :class="platform"
         @click="click"
         @dblclick="dblclick"
@@ -111,10 +111,7 @@ export default {
       }
     },
     completeTask() {
-      this.$store.dispatch('task/completeTasks', {
-        task: this.task,
-        ids: [this.task.id],
-      })
+      this.$store.dispatch('task/completeTasks', [this.task])
     },
     selectTask() {
       this.$emit('select', this.task.id)
@@ -343,11 +340,11 @@ export default {
 }
 
 .cont-wrapper:hover, .cont-wrapper:active {
-  background-color: var(--light-gray);
+  background-color: var(--light-gray) !important;
 }
 
 .isSelected .cont-wrapper {
-  background-color: rgba(53, 73, 90, 0.6);
+  background-color: rgba(53, 73, 90, 0.6) !important;
 }
 
 .check, .text, .options, .cont {
@@ -399,7 +396,7 @@ export default {
 }
 
 .sortable-drag {
-  background-color: var(--light-gray);
+  background-color: var(--light-gray) !important; 
   border-radius: 6px;
 }
 
@@ -440,7 +437,7 @@ export default {
 }
 
 .sortable-ghost .cont-wrapper {
-  background-color: var(--void);
+  background-color: var(--void) !important;
   transition-duration: 0;
   transition: none;
   height: 38px;

@@ -119,6 +119,7 @@ export default {
           const d = item.dataset
           if (d.type === 'task') return true
           if (d.type === 'floatbutton') return true
+          if (d.type === 'appnav-element') return true
           return false
         }
       },
@@ -166,47 +167,16 @@ export default {
       },
       onEnd: (e, t) => {
         removeTaskOnHoverFromAppnavElements()
-        if (move && move.type && move.taskId && move.name) {
-          const dispatch = this.$store.dispatch
-          switch (move.type) {
-            case 'tag': {
-              dispatch('task/addTagsToTasksById', {
-                tagIds: [this.getTagsByName([move.name])[0].id],
-                ids: [move.taskId],
-              })
-              break
-            }
-            case 'list': {
-              switch (move.name) {
-                case 'Today': {
-                  dispatch('task/saveTask', {
-                    id: move.taskId,
-                    calendar: this.getSpecificDayCalendarObj(mom()),
-                  })
-                  break
-                }
-                case 'Tomorrow': {
-                  dispatch('task/saveTask', {
-                    id: move.taskId,
-                    calendar: this.getSpecificDayCalendarObj(mom().add(1, 'day')),
-                  })
-                  break
-                }
-                case 'Completed': {
-                  dispatch('task/completeTasks', {
-                    task: this.getTaskById(move.taskId),
-                    ids: [move.taskId],
-                  })
-                  break
-                }
-              }
-              break
-            }
-          }
-        }
-      },
-      onChange: () => {
-        console.log('run')
+        const specialTypes = ['Today', 'Completed', 'Tomorrow']
+        if (specialTypes.includes(move.elId))
+          move.type = move.elId
+        
+        this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+          elIds: [move.elId],
+          taskIds: [move.taskId],
+          type: move.type,
+        })
+        move = null
       },
       onMove: (t, e) => {
         let el = e.target
@@ -214,13 +184,13 @@ export default {
           el = el.closest('.AppbarElement-link')
         if (el) {
           const data = el.dataset
-          const name = el.getElementsByClassName('name')[0]
+          const wrapper = el.closest('.AppbarElement')
           removeTaskOnHoverFromAppnavElements(el)
-          if (name && !data.disabled) {
+          if (wrapper && !data.disabled) {
             move = {}
             const color = data.color
             move.taskId = t.dragged.dataset.id
-            move.name = name.innerHTML
+            move.elId = wrapper.dataset.id
             move.type = data.type
   
             el.setAttribute('id', 'task-on-hover')

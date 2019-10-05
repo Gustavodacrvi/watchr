@@ -26,6 +26,7 @@
       :importantNumber='mapNumbers(el).notCompleted'
 
       :data-id="el.id"
+      data-type="appnav-element"
     />
   </transition-group>
 </template>
@@ -38,7 +39,7 @@ export default {
   components: {
     AppbarElement: () => import('./AppbarElement.vue'),
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'disableSort', 'isSmart'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'disableSort', 'isSmart', 'disabled'],
   data() {
     return {
       sortable: null,
@@ -46,9 +47,24 @@ export default {
     }
   },
   mounted() {
+    let taskId = null
+    const removeAppnavOnHoverOnTaskElements = (el) => {
+      const items = document.getElementsByClassName('task-cont-wrapper')
+      for (const item of items) {
+        if (el && item === el) continue
+        const s = item.style
+        s.transition = 'initial'
+        s.transform = 'scale(1,1)'
+        s.backgroundColor = 'initial'
+        s.boxShadow = `initial`
+      }
+    }
     this.sortable = new Sortable(this.$el, {
       sort: !this.disableSort,
-      group: {name: 'appnav', pull: false, put: (l,j,item) => {
+      disabled: this.disabled,
+      group: {name: 'appnav', pull: (e) => {
+        if (e.el.dataset.name === 'task-renderer') return 'clone'
+      }, put: (l,j,item) => {
         const type = item.dataset.type
         if (type === 'task') return true
       }},
@@ -64,6 +80,31 @@ export default {
             ids.push(el.dataset.id)
           this.$emit('update', ids)
         }, 100)
+      },
+      onEnd: () => {
+        removeAppnavOnHoverOnTaskElements()
+        console.log('end', taskId)
+      },
+      onMove: (t, e) => {
+        let el = e.target
+        if (!el.classList.contains('Task'))
+          el = el.closest('.Task')
+        if (el) {
+          taskId = el.dataset.id
+          const cont = el.getElementsByClassName('task-cont-wrapper')[0]
+          if (cont) {
+            const s = cont.style
+            setTimeout(() => {
+              removeAppnavOnHoverOnTaskElements(cont)
+            })
+            s.transition = 'opacity .2s, box-shadow .2s, transform .2s'
+            s.transform = 'scale(1.01,1.01)'
+            s.backgroundColor = 'var(--primary)'
+            s.boxShadow = `0 2px 10px var(--primary)`
+          }
+        } else taskId = null
+
+        return false
       },
       onStart: () => window.navigator.vibrate(100),
     })
