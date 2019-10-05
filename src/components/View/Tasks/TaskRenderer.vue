@@ -15,6 +15,8 @@
       @enter='enter'
       @leave='leave'
       tag="div"
+
+      data-name='task-renderer'
     >
       <Task v-for="t of tasks" :key="t.id"
         :task='t'
@@ -91,12 +93,23 @@ export default {
     }
   },
   mounted() {
+    let move = null
+    const removeTaskOnHoverFromAppnavElements = (el) => {
+      const items = document.getElementsByClassName('AppbarElement-link')
+      for (const i of items) {
+        if (el && i === el) continue
+        i.classList.remove('task-on-hover')
+        i.style.backgroundColor = 'initial'
+        i.style.boxShadow = 'initial'
+      }
+    }
     this.sortable = new Sortable(this.draggableRoot, {
       disabled: this.disable,
       group: {
         name: 'task-renderer',
         pull: (e,j,item) => {
           const d = item.dataset
+          if (e.el.dataset.name === 'appnav-renderer') return 'clone'
           if (d.type === 'task') return true
           return false
         },
@@ -146,7 +159,42 @@ export default {
           })
         }
       },
-      onStart: () => window.navigator.vibrate(100),
+      onStart: (evt) => {
+        window.navigator.vibrate(100)
+      },
+      onEnd: (evt) => {
+        removeTaskOnHoverFromAppnavElements()
+        if (move && move.type && move.taskId && move.name) {
+          const dispatch = this.$store.dispatch
+          switch (move.type) {
+            case 'tag': {
+              dispatch('task/addTagsToTasksById', {
+                tagIds: [this.getTagsByName([move.name])[0].id],
+                ids: [move.taskId],
+              })
+              break
+            }
+          }
+        }
+      },
+      onMove: (t, e) => {
+        const el = e.target
+        const name = el.getElementsByClassName('name')[0]
+        if (name) {
+          move = {}
+          const color = el.dataset.color
+          move.taskId = t.dragged.dataset.id
+          move.name = name.innerHTML
+          move.type = el.dataset.type
+
+          removeTaskOnHoverFromAppnavElements(el)
+          el.classList.add('task-on-hover')
+          el.style.backgroundColor = color
+          el.style.boxShadow = `0 2px 10px ${color}`
+        } else move = null
+        if (!e.path.some(el => el.classList && el.classList.contains('task-renderer-root')))
+          return false
+      },
     })
     window.addEventListener('click', this.windowClick)
   },
@@ -297,7 +345,10 @@ export default {
       selected: state => state.selectedTasks,
       savedTasks: state => state.task.tasks,
     }),
-    ...mapGetters(['l']),
+    ...mapGetters({
+      l: 'l',
+      getTagsByName: 'tag/getTagsByName',
+    }),
     draggableRoot() {
       return this.$el.getElementsByClassName('task-renderer-root')[0]
     },

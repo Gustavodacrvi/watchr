@@ -212,8 +212,10 @@ export default {
           name: utils.getHumanReadableDate(date, this.l),
           filter: (tasks) => {
             return tasks.filter(t => {
-              const type = el.calendar.type
-              if (type === 'weekly' || type === 'periodic') return false
+              if (t.calendar) {
+                const type = t.calendar.type
+                if (type === 'weekly' || type === 'periodic') return false
+              }
               const complete = mom(t.completeDate, 'Y-M-D')
               return complete.isSame(mom(date, 'Y-M-D'), 'day')
             })

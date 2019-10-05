@@ -445,10 +445,10 @@ export default {
 }
 
 .sortable-ghost .cont-wrapper {
-  background-color: var(--void) !important;
-  transition-duration: 0 !important;
-  transition: none !important;
-  height: 38px !important;
+  background-color: var(--void);
+  transition-duration: 0;
+  transition: none;
+  height: 38px;
   padding: 0;
 }
 

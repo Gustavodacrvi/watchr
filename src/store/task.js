@@ -54,6 +54,14 @@ export default {
         periodic: null
       }
     },
+    getNumberOfTasksByTag: state => tagId => {
+      const ts = state.tasks.filter(el => el.tags.includes(tagId))
+
+      return {
+        total: ts.length,
+        notCompleted: utilsTask.filterTasksByCompletion(ts, true),length,
+      }
+    },
     getNumberOfTasksByView: state => viewName => {
       const ts = utilsTask.filterTasksByView(state.tasks, viewName)
 

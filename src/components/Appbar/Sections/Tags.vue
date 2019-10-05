@@ -7,6 +7,7 @@
       :list="getTags"
       :active="active"
       :viewType="viewType"
+      :mapNumbers='numberOfTasks'
       @update='update'
     />
   </div>
@@ -16,7 +17,7 @@
 
 import RendererVue from '../Renderer.vue'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -26,9 +27,17 @@ export default {
   methods: {
     update(ids) {
       this.$store.dispatch('tag/updateOrder', ids)
-    }
+    },
+    numberOfTasks(tag) {
+      return {
+        total: this.getNumberOfTasksByTag(tag.id).total,
+      }
+    },
   },
   computed: {
+    ...mapGetters({
+      getNumberOfTasksByTag: 'task/getNumberOfTasksByTag'
+    }),
     sortedTags() {
       return this.$store.getters['tag/sortedTags']
     },

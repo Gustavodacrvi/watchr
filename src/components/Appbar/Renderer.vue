@@ -1,8 +1,10 @@
 <template>
-  <transition-group class="Renderer"
+  <transition-group class="Renderer appnav-renderer"
     @enter='enter'
     @leave='leave'
     tag="div"
+
+    data-name='appnav-renderer'
   >
     <AppbarElement v-for="(el,i) in list"
       :iconColor='iconColor'
@@ -17,6 +19,7 @@
       :callback="el.callback"
       :options='el.options'
       :list="el.list"
+      :totalNumber='mapNumbers(el).total'
 
       :data-id="el.id"
     />
@@ -31,7 +34,7 @@ export default {
   components: {
     AppbarElement: () => import('./AppbarElement.vue'),
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers'],
   data() {
     return {
       sortable: null,
@@ -39,7 +42,10 @@ export default {
   },
   mounted() {
     this.sortable = new Sortable(this.$el, {
-      group: 'appnav',
+      group: {name: 'appnav', pull: false, put: (l,j,item) => {
+        const type = item.dataset.type
+        if (type === 'task') return true
+      }},
       delay: 150,
       delayOnTouchOnly: true,
       handle: '.handle',

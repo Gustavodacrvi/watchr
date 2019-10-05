@@ -7,7 +7,9 @@
     @click="linkCallback(callback)"
   >
     <div
-      class="link-wrapper rb"
+      class="link-wrapper AppbarElement-link rb"
+      :data-type='type'
+      :data-color='iconColor'
     >
       <div class="icon-wrapper">
         <Icon class="icon" :style="hoverStyle" :class="{notActive: !isActive}" :icon="icon"/>
@@ -33,7 +35,7 @@
 import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop.vue'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
@@ -55,7 +57,11 @@ export default {
     }
   },
   computed: {
+    ...mapState(['drag']),
     ...mapGetters(['l']),
+    isDraggingOver() {
+      return this
+    },
     getName() {
       if (this.isSmart) return this.l[this.name]
       return this.name
@@ -106,6 +112,7 @@ export default {
   cursor: pointer;
   position: relative;
   display: flex;
+  transition-duration: .2s;
 }
 
 .name {
@@ -154,6 +161,15 @@ export default {
 
 .total {
   color: var(--gray);
+}
+
+.task-on-hover {
+  transform: scale(1.01,1.01);
+  color: white;
+}
+
+.task-on-hover .inf,.task-on-hover .icon {
+  color: white !important;
 }
 
 </style>
