@@ -21,7 +21,7 @@
               <template v-for="link in getLinks">
                 <div v-if="!link.type" class="link cursor hide-trans"
                   :key="link.name"
-                  @click="linkCallback(link.callback, link)"
+                  @click="linkClick(link.callback, link)"
                 >
                   <div class="link-cont">
                     <Icon v-if="link.icon"
@@ -77,6 +77,7 @@ export default {
       showCalendar: this.calendar,
       height: 0,
       calendarCallback: this.calendarCall,
+      justClosed: false,
       width: 0,
       showSearch: this.allowSearch,
       search: '',
@@ -113,6 +114,11 @@ export default {
       el.style.opacity = 0
       el.style.height = '0px'
       setTimeout(() => done(), 300)
+    },
+    linkClick(callback, link) {
+      this.linkCallback(callback, link)
+      this.justClosed = true
+      this.$store.commit('clearSelected')      
     },
     linkCallback(callback, link) {
       if (callback) {
@@ -216,10 +222,11 @@ export default {
   },
   watch: {
     options() {
-      if (!this.calendar) {
+      if (!this.calendar && !this.justClosed) {
         this.linkCallback(() => this.options, {})
         this.links = this.options
       }
+      this.justClosed = false
     }
   }
 }

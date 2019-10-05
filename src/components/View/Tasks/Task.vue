@@ -2,6 +2,7 @@
   <div class="Task draggable" :class="{fade: completed, isSelected}"
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
+    @click="rootClick"
   >
     <transition name="edit-t" mode="out-in"
       @enter='enter'
@@ -13,7 +14,7 @@
         @dblclick="dblclick"
       >
         <div class="cont">
-          <div class="check" @click.stop="completeTask">
+          <div class="check" @click="completeTask">
             <Icon v-if="!completed" class="icon"
               icon="circle"
               :color='circleColor'
@@ -33,7 +34,7 @@
             <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
             <transition name="name-t">
               <span v-if="!showApplyOnTasks" key="normal">{{ task.name }}</span>
-              <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
+              <span v-else @click="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
             </transition>
             <template v-if="isDesktop">
               <Tag class="task-tag" v-for="t in taskTags" :key="t.name"
@@ -124,7 +125,7 @@ export default {
         this.selectTask()
       } else if (this.isDesktop) {
         this.isEditing = true
-      } else if (!this.isSelecting) {
+      } else {
         this.selectTask()
       }
     },
@@ -170,6 +171,9 @@ export default {
           periodic: null
         },
       })
+    },
+    rootClick(event) {
+      if (this.isSelectingAppnavEls) event.stopPropagation()
     },
   },
   computed: {

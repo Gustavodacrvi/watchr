@@ -1,5 +1,5 @@
 <template>
-  <div class="TaskRenderer" @click.stop>
+  <div class="TaskRenderer" @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration" class="illustration">
         <Illustration
@@ -208,6 +208,9 @@ export default {
     window.removeEventListener('click', this.windowClick)
   },
   methods: {
+    click(event) {
+      if (this.selected.length > 0) event.stopPropagation()
+    },
     getTasks(tasks, h) {
       if (h.id === lastHeading.id) return lastHeading.tasks
       lastHeading.tasks = h.filter(tasks, h)

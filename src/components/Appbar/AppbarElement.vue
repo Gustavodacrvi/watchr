@@ -59,7 +59,10 @@ export default {
     linkCallback(evt) {
       if (this.isOnControl && this.selectedEmpty) this.$emit('select')
       else if (this.callback && !this.showSpecialInfo) this.callback()
-      else if (this.showSpecialInfo && !this.selectedEmpty) this.$emit('apply')
+      else if (this.showSpecialInfo && !this.selectedEmpty) {
+        this.$emit('apply')
+        this.$store.commit('clearSelected')
+      }
     },
   },
   computed: {

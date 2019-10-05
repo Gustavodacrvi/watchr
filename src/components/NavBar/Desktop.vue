@@ -100,6 +100,7 @@ export default {
   opacity: 1;
   align-items: center;
   transition: opacity .3s;
+  pointer-events: none;
 }
 
 .watchr {

@@ -6,6 +6,7 @@
           type='list'
           :disableSort='true'
           :disabled='!isDesktop'
+          :disableSelection='true'
           :list='links'
           :active='value'
           :viewType='viewType'

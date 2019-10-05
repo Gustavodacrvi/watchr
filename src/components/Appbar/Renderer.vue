@@ -136,10 +136,12 @@ export default {
       })
     },
     selectEl(id) {
-      if (this.selected.some(el => el === id)) {
-        const i = this.selected.findIndex(el => el === id)
-        this.selected.splice(i, 1)
-      } else this.selected.push(id)
+      if (!this.disableSelection) {
+        if (this.selected.some(el => el === id)) {
+          const i = this.selected.findIndex(el => el === id)
+          this.selected.splice(i, 1)
+        } else this.selected.push(id)
+      }
     },
     leave(el, done) {
       el.style.opacity = 0

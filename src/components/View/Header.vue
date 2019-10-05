@@ -1,5 +1,5 @@
 <template>
-  <div class="Header" @click.stop>
+  <div class="Header" @click='click'>
     <div v-if="$store.getters.isDesktop" class="header">
       <Icon class="icon" :icon="getIcon" :color="getIconColor" width="40px"/>
       <h2 class="name">{{ viewNameValue }}</h2>
@@ -30,6 +30,8 @@ import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop.vue'
 import TagVue from './Tag.vue'
 
+import { mapState } from 'vuex'
+
 export default {
   props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon'],
   components: {
@@ -41,6 +43,9 @@ export default {
     this.pushToNavbar()
   },
   methods: {
+    click() {
+      console.log(3)
+    },
     pushToNavbar() {
       this.$store.commit('pushNavBarData', {
         options: this.options,
@@ -49,6 +54,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['selectedTasks']),
     getIcon() {
       if (this.icon) return this.icon
       const obj = {
