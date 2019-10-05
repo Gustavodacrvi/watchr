@@ -206,7 +206,6 @@ export default {
       const arr = []
       const tod = mom()
       for (let i = 0;i < 31;i++) {
-        tod.subtract(1, 'day')
         const date = tod.format('Y-M-D')
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
@@ -223,6 +222,7 @@ export default {
           id: date,
           disableTaskRenderer: true,
         })
+        tod.subtract(1, 'day')
       }
       return arr
     },

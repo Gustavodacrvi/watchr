@@ -62,6 +62,9 @@ export default {
         notCompleted: utilsTask.filterTasksByCompletion(ts, true),length,
       }
     },
+    getTaskById: state => id => {
+      return state.tasks.find(el => el.id === id)
+    },
     getNumberOfTasksByView: state => viewName => {
       const ts = utilsTask.filterTasksByView(state.tasks, viewName)
 
@@ -100,8 +103,14 @@ export default {
 
       return batch.commit()
     },
-    completeTasks(c, {ids, calendar}) {
+    completeTasks(c, {ids, task}) {
       const batch = fire.batch()
+
+      let calendar = task.calendar
+      if (calendar) {
+        const {nextEventAfterCompletion} = utilsTask.taskData(task, mom())
+        calendar.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
+      }
 
       for (const id of ids) {
         const ref = fire.collection('tasks').doc(id)

@@ -3,13 +3,14 @@
     :tabindex="tabindex"
     @mouseenter="hover = true"
     @mouseleave="hover = false"
-    :class="{notSmartActive: !isSmart && isActive}"
     @click="linkCallback(callback)"
+    :class="{notSmartActive: !isSmart && isActive}"
   >
     <div
       class="link-wrapper AppbarElement-link rb"
       :data-type='type'
       :data-color='iconColor'
+      :data-disabled='disableAction'
     >
       <div class="icon-wrapper">
         <Icon class="icon" :style="hoverStyle" :class="{notActive: !isActive}" :icon="icon"/>
@@ -40,7 +41,7 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
-  ],
+  'disableAction'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -67,7 +68,7 @@ export default {
       return this.name
     },
     hoverStyle() {
-      return `color: ${this.isActive ? this.iconColor : ''} !important;`
+      return `color: ${this.isActive ? this.iconColor : ''};`
     },
     isActive() {
       let isActive = this.name === this.active && this.type === this.viewType
@@ -125,6 +126,7 @@ export default {
 
 .AppbarElement {
   outline: none;
+  position: relative;
   height: 35px;
   transition: background-color .2s, height .3s;
 }
@@ -140,7 +142,7 @@ export default {
 }
 
 .link-wrapper:hover, .notSmartActive {
-  background-color: var(--light-gray);
+  background-color: var(--light-gray) !important;
 }
 
 .info {
@@ -163,12 +165,11 @@ export default {
   color: var(--gray);
 }
 
-.task-on-hover {
+#task-on-hover {
   transform: scale(1.01,1.01);
-  color: white;
 }
 
-.task-on-hover .inf,.task-on-hover .icon {
+#task-on-hover .inf, #task-on-hover .icon, #task-on-hover .name {
   color: white !important;
 }
 

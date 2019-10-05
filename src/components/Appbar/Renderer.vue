@@ -7,19 +7,23 @@
     data-name='appnav-renderer'
   >
     <AppbarElement v-for="(el,i) in list"
-      :iconColor='iconColor'
+      :iconColor='getIconColor(el)'
+      :icon="getIcon(el)"
+
       :type="type"
-      :icon="icon"
       :subListIcon='subListIcon'
       :key="el.id"
       :name="el.name"
+      :disableAction='el.disableAction'
       :tabindex="i + 1"
       :active="active"
+      :isSmart='isSmart'
       :viewType="viewType"
       :callback="el.callback"
       :options='el.options'
       :list="el.list"
       :totalNumber='mapNumbers(el).total'
+      :importantNumber='mapNumbers(el).notCompleted'
 
       :data-id="el.id"
     />
@@ -34,14 +38,16 @@ export default {
   components: {
     AppbarElement: () => import('./AppbarElement.vue'),
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'disableSort', 'isSmart'],
   data() {
     return {
       sortable: null,
+      hover: false,
     }
   },
   mounted() {
     this.sortable = new Sortable(this.$el, {
+      sort: !this.disableSort,
       group: {name: 'appnav', pull: false, put: (l,j,item) => {
         const type = item.dataset.type
         if (type === 'task') return true
@@ -80,6 +86,14 @@ export default {
       el.style.height = '0px'
       setTimeout(() => done(), 300)
     },
+    getIcon(el) {
+      if (this.icon) return this.icon
+      return el.icon
+    },
+    getIconColor(el) {
+      if (this.iconColor) return this.iconColor
+      return el.iconColor
+    }
   },
 }
 

@@ -111,13 +111,8 @@ export default {
       }
     },
     completeTask() {
-      const calendar = this.task.calendar
-      if (calendar) {
-        const {nextEventAfterCompletion} = utilsTask.taskData(this.task, mom())
-        calendar.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
-      }
       this.$store.dispatch('task/completeTasks', {
-        calendar,
+        task: this.task,
         ids: [this.task.id],
       })
     },

@@ -2,18 +2,14 @@
   <div class="Appbar" :class='platform'>
     <transition name="bar-trans">
       <div v-if="showing" class="content">
-        <AppbarElement v-for="(l, i) in links" :key="l.name"
+        <AppnavRenderer
           type='list'
-          :name='l.name'
-          :active="value"
+          :disableSort='true'
+          :list='links'
+          :active='value'
+          :viewType='viewType'
+          :mapNumbers='numberOfTasks'
           :isSmart='true'
-          :viewType="viewType"
-          :icon='l.icon'
-          :callback='l.callback'
-          :iconColor='l.iconColor'
-          :tabindex="i + 1"
-          :totalNumber='numberOfTasks(l.name).total'
-          :importantNumber='numberOfTasks(l.name).notCompleted'
         />
         <div class="header">
           <div v-for="(s,i) in sections" :key="s.name"
@@ -59,6 +55,8 @@ import ListsVue from './Sections/Lists.vue'
 import TagsVue from './Sections/Tags.vue'
 import FiltersVue from './Sections/Filters.vue'
 import IconDropVue from '../IconDrop.vue'
+import RendererVue from './Renderer.vue'
+
 import { mapGetters } from 'vuex'
 
 export default {
@@ -70,36 +68,44 @@ export default {
     Lists: ListsVue,
     Tags: TagsVue,
     Filters: FiltersVue,
+    AppnavRenderer: RendererVue,
   },
   data() {
     return {
       links: [
         {
           name: 'Today',
+          id: 'today',
           icon: 'star',
           callback: () => this.$router.push('/user?list=Today'),
           iconColor: 'var(--yellow)',
         },
         {
           name: 'Tomorrow',
+          id: 'tom',
           icon: 'sun',
           callback: () => this.$router.push('/user?list=Tomorrow'),
           iconColor: 'var(--orange)',
         },
         {
           name: 'Inbox',
+          id: 'inb',
           icon: 'inbox',
+          disableAction: true,
           callback: () => this.$router.push('/user?list=Inbox'),
           iconColor: 'var(--primary)',
         },
         {
           name: 'Upcoming',
+          id: 'up',
           icon: 'calendar',
+          disableAction: true,
           callback: () => this.$router.push('/user?list=Upcoming'),
           iconColor: 'var(--green)'
         },
         {
           name: 'Completed',
+          id: 'comp',
           icon: 'circle-check',
           callback: () => this.$router.push('/user?list=Completed'),
           iconColor: 'var(--brown)'
@@ -194,7 +200,8 @@ export default {
         localStorage.setItem('section', this.section)
       }
     },
-    numberOfTasks(viewName) {
+    numberOfTasks(link) {
+      const viewName = link.name
       if (viewName === 'Upcoming')
         return {
           total: 0,

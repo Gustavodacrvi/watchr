@@ -74,6 +74,8 @@ import { mapState, mapGetters } from 'vuex'
 
 import Sortable from 'sortablejs'
 
+import mom from 'moment'
+
 const lastHeading = {
   id: null,
   tasks: null,
@@ -98,7 +100,7 @@ export default {
       const items = document.getElementsByClassName('AppbarElement-link')
       for (const i of items) {
         if (el && i === el) continue
-        i.classList.remove('task-on-hover')
+        i.setAttribute('id', '')
         i.style.backgroundColor = 'initial'
         i.style.boxShadow = 'initial'
       }
@@ -162,7 +164,7 @@ export default {
       onStart: (evt) => {
         window.navigator.vibrate(100)
       },
-      onEnd: (evt) => {
+      onEnd: (e, t) => {
         removeTaskOnHoverFromAppnavElements()
         if (move && move.type && move.taskId && move.name) {
           const dispatch = this.$store.dispatch
@@ -174,23 +176,57 @@ export default {
               })
               break
             }
+            case 'list': {
+              switch (move.name) {
+                case 'Today': {
+                  dispatch('task/saveTask', {
+                    id: move.taskId,
+                    calendar: this.getSpecificDayCalendarObj(mom()),
+                  })
+                  break
+                }
+                case 'Tomorrow': {
+                  dispatch('task/saveTask', {
+                    id: move.taskId,
+                    calendar: this.getSpecificDayCalendarObj(mom().add(1, 'day')),
+                  })
+                  break
+                }
+                case 'Completed': {
+                  dispatch('task/completeTasks', {
+                    task: this.getTaskById(move.taskId),
+                    ids: [move.taskId],
+                  })
+                  break
+                }
+              }
+              break
+            }
           }
         }
       },
+      onChange: () => {
+        console.log('run')
+      },
       onMove: (t, e) => {
-        const el = e.target
-        const name = el.getElementsByClassName('name')[0]
-        if (name) {
-          move = {}
-          const color = el.dataset.color
-          move.taskId = t.dragged.dataset.id
-          move.name = name.innerHTML
-          move.type = el.dataset.type
-
+        let el = e.target
+        if (!el.classList.contains('AppbarElement-link'))
+          el = el.closest('.AppbarElement-link')
+        if (el) {
+          const data = el.dataset
+          const name = el.getElementsByClassName('name')[0]
           removeTaskOnHoverFromAppnavElements(el)
-          el.classList.add('task-on-hover')
-          el.style.backgroundColor = color
-          el.style.boxShadow = `0 2px 10px ${color}`
+          if (name && !data.disabled) {
+            move = {}
+            const color = data.color
+            move.taskId = t.dragged.dataset.id
+            move.name = name.innerHTML
+            move.type = data.type
+  
+            el.setAttribute('id', 'task-on-hover')
+            el.style.backgroundColor = color
+            el.style.boxShadow = `0 2px 10px ${color}`
+          } else move = null
         } else move = null
         if (!e.path.some(el => el.classList && el.classList.contains('task-renderer-root')))
           return false
@@ -348,6 +384,8 @@ export default {
     ...mapGetters({
       l: 'l',
       getTagsByName: 'tag/getTagsByName',
+      getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
+      getTaskById: 'task/getTaskById',
     }),
     draggableRoot() {
       return this.$el.getElementsByClassName('task-renderer-root')[0]

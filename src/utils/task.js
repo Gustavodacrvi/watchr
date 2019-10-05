@@ -155,11 +155,7 @@ export default {
         return this.filterTasksByDay(tasks, mom().add(1, 'day'))
       }
       case 'Completed': {
-        return tasks.filter(el => {
-          if (mom().isSame(mom(el.completeDate, 'Y-M-D'), 'day'))
-            return false
-          return this.filterTasksByCompletion([el]).length > 0
-        })
+        return this.filterTasksByCompletion(tasks)
       }
     }
     
