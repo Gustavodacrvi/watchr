@@ -194,14 +194,18 @@ export default {
         case 'Today': {
           dispatch('saveTasksById', {
             ids: taskIds,
-            calendar: calObj(mom()),
+            task: {
+              calendar: calObj(mom()),
+            }
           })
           break
         }
         case 'Tomorrow': {
           dispatch('saveTasksById', {
             ids: taskIds,
-            calendar: calObj(mom().add(1, 'day')),
+            task: {
+              calendar: calObj(mom().add(1, 'day')),
+            }
           })
           break
         }

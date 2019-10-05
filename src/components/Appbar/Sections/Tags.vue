@@ -8,6 +8,7 @@
       :active="active"
       :viewType="viewType"
       :mapNumbers='numberOfTasks'
+      :onTaskDrop='onTaskDrop'
       @update='update'
     />
   </div>
@@ -32,6 +33,13 @@ export default {
       return {
         total: this.getNumberOfTasksByTag(tag.id).total,
       }
+    },
+    onTaskDrop({taskId, elId}) {
+      this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+        elIds: [elId],
+        taskIds: [taskId],
+        type: 'tag',
+      })
     },
   },
   computed: {

@@ -39,7 +39,7 @@ export default {
   components: {
     AppbarElement: () => import('./AppbarElement.vue'),
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'disableSort', 'isSmart', 'disabled'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'disableSort', 'isSmart', 'disabled', 'onTaskDrop'],
   data() {
     return {
       sortable: null,
@@ -47,7 +47,7 @@ export default {
     }
   },
   mounted() {
-    let taskId = null
+    let move = null
     const removeAppnavOnHoverOnTaskElements = (el) => {
       const items = document.getElementsByClassName('task-cont-wrapper')
       for (const item of items) {
@@ -83,16 +83,19 @@ export default {
       },
       onEnd: () => {
         removeAppnavOnHoverOnTaskElements()
-        console.log('end', taskId)
+        if (this.onTaskDrop) this.onTaskDrop(move)
+        move = null
       },
       onMove: (t, e) => {
         let el = e.target
         if (!el.classList.contains('Task'))
           el = el.closest('.Task')
         if (el) {
-          taskId = el.dataset.id
           const cont = el.getElementsByClassName('task-cont-wrapper')[0]
           if (cont) {
+            move = {}
+            move.taskId = el.dataset.id
+            move.elId = t.dragged.dataset.id
             const s = cont.style
             setTimeout(() => {
               removeAppnavOnHoverOnTaskElements(cont)
@@ -102,7 +105,7 @@ export default {
             s.backgroundColor = 'var(--primary)'
             s.boxShadow = `0 2px 10px var(--primary)`
           }
-        } else taskId = null
+        } else move = null
 
         return false
       },
