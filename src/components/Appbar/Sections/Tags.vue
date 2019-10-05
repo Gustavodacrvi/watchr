@@ -11,6 +11,7 @@
       :onTaskDrop='onTaskDrop'
       @update='update'
       @apply='applySelectedTasks'
+      @apply-selected-els='applySelectedEls'
     />
   </div>
 </template>
@@ -31,6 +32,13 @@ export default {
       this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
         elIds: [id],
         taskIds: this.selectedTasks,
+        type: 'tag',
+      })
+    },
+    applySelectedEls({elIds, taskId}) {
+      this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+        elIds: elIds,
+        taskIds: [taskId],
         type: 'tag',
       })
     },

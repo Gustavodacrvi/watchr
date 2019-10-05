@@ -3,8 +3,8 @@
     :tabindex="tabindex"
     @mouseenter="hover = true"
     @mouseleave="hover = false"
-    @click="linkCallback(callback)"
-    :class="{notSmartActive: !isSmart && isActive}"
+    @click.stop="linkCallback"
+    :class="{notSmartActive: !isSmart && isActive, isSelectedEl}"
   >
     <div
       class="link-wrapper AppbarElement-link rb"
@@ -44,7 +44,7 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
-  'disableAction'],
+  'disableAction', 'selected', 'id'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -56,10 +56,11 @@ export default {
     }
   },
   methods: {
-    linkCallback(callback) {
-      if (callback && !this.showSpecialInfo) callback()
-      else if (this.showSpecialInfo) this.$emit('apply')
-    }
+    linkCallback(evt) {
+      if (this.isOnControl && this.selectedEmpty) this.$emit('select')
+      else if (this.callback && !this.showSpecialInfo) this.callback()
+      else if (this.showSpecialInfo && !this.selectedEmpty) this.$emit('apply')
+    },
   },
   computed: {
     ...mapState(['drag', 'isOnControl', 'selectedTasks']),
@@ -68,7 +69,13 @@ export default {
       return this
     },
     showSpecialInfo() {
-      return this.hover && this.isOnControl && this.selectedTasks.length > 0
+      return this.hover && !this.isOnControl && !this.selectedEmpty
+    },
+    selectedEmpty() {
+      return this.selectedTasks.length === 0
+    },
+    isSelectedEl() {
+      return this.selected.includes(this.id)
     },
     getName() {
       if (this.isSmart) return this.l[this.name]
@@ -179,6 +186,10 @@ export default {
 
 #task-on-hover .inf, #task-on-hover .icon, #task-on-hover .name {
   color: white !important;
+}
+
+.isSelectedEl {
+  background-color: rgba(53, 73, 90, 0.6) !important;
 }
 
 .name-t-enter {

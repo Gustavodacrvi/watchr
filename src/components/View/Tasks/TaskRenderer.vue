@@ -312,7 +312,7 @@ export default {
         s.height = '0px'
         s.padding = '2px 0'
         setTimeout(() => {
-          s.transition = 'height .2s, opacity .2s, transform .1s'
+          s.transition = 'height .2s, opacity .2s, transform .1s !important'
           if (lessThan38) {
           cont.classList.add('show')
             s.height = '38px'

@@ -31,7 +31,10 @@
             <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
             <span v-else-if="calendarStr" class="tag cb rb">{{ calendarStr }}</span>
             <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
-            <span>{{ task.name }}</span>
+            <transition name="name-t">
+              <span v-if="!showApplyOnTasks" key="normal">{{ task.name }}</span>
+              <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
+            </transition>
             <template v-if="isDesktop">
               <Tag class="task-tag" v-for="t in taskTags" :key="t.name"
                 icon="tag"
@@ -142,6 +145,9 @@ export default {
         priority: pri,
       })
     },
+    applySelected() {
+      this.$store.commit('applyAppnavSelected', this.task.id)
+    },
     saveCalendarDate(date) {
       this.$store.dispatch('task/saveTasksById', {
         ids: [this.task.id],
@@ -171,6 +177,7 @@ export default {
       isOnControl: state => state.isOnControl,
       savedLists: state => state.list.lists,
       savedTags: state => state.tag.tags,
+      selectedEls: state => state.selectedEls,
     }),
     ...mapGetters(['isDesktop', 'platform', 'l']),
     completed() {
@@ -260,6 +267,12 @@ export default {
           callback: () => dispatch('task/deleteTasks', [this.task.id])
         }
       ]
+    },
+    showApplyOnTasks() {
+      return !this.isOnControl && this.isSelectingAppnavEls && this.onHover
+    },
+    isSelectingAppnavEls() {
+      return this.selectedEls.length > 0
     },
     isOverdue() {
       if (this.view === 'Overdue') return false
@@ -420,6 +433,10 @@ export default {
   margin: 0 4px;
 }
 
+.apply {
+  color: var(--primary);
+}
+
 .tag {
   display: inline-block;
   padding: 5px;
@@ -442,6 +459,26 @@ export default {
   transition: none;
   height: 38px;
   padding: 0;
+}
+
+.name-t-enter {
+  opacity: 0;
+  transform: translateY(-25px); 
+}
+
+.name-t-enter-active, .name-t-leave-active {
+  position: absolute;
+  transition-duration: .2s;
+}
+
+.name-t-enter-to, .name-t-leave {
+  transform: translateY(0px);
+  opacity: 1;
+}
+
+.name-t-leave-to {
+  opacity: 0;
+  transform: translateY(25px);
 }
 
 </style>

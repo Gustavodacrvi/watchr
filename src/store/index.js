@@ -58,6 +58,11 @@ const store = new Vuex.Store({
       title: "",
     },
     iconDrop: null,
+    selectedEls: [],
+    apply: {
+      taskId: null,
+      bool: false,
+    },
     selectedTasks: [],
     isOnControl: false,
     fireBaseFirstLoaded: false,
@@ -87,6 +92,13 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    applyAppnavSelected(state, id) {
+      state.apply.taskId = id
+      state.apply.bool = !state.apply.bool
+    },
+    appnavSelected(state, selected) {
+      state.selectedEls = selected
+    },
     firebaseFirstLoad(state) {
       state.fireBaseFirstLoaded = true
     },

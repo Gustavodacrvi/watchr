@@ -16,15 +16,18 @@
       :name="el.name"
       :disableAction='el.disableAction'
       :tabindex="i + 1"
+      :selected='selected'
       :active="active"
       :isSmart='isSmart'
       :viewType="viewType"
       :callback="el.callback"
       :options='el.options'
       :list="el.list"
+      :id='el.id'
       :totalNumber='mapNumbers(el).total'
       :importantNumber='mapNumbers(el).notCompleted'
       @apply='() => $emit("apply", el.id)'
+      @select='() => selectEl(el.id)'
 
       :data-id="el.id"
       data-type="appnav-element"
@@ -45,7 +48,13 @@ export default {
     return {
       sortable: null,
       hover: false,
+      selected: [],
     }
+  },
+  created() {
+    window.addEventListener('click', () => {
+      this.selected = []
+    })
   },
   mounted() {
     let move = null
@@ -126,6 +135,12 @@ export default {
         setTimeout(() => done(), 300)
       })
     },
+    selectEl(id) {
+      if (this.selected.some(el => el === id)) {
+        const i = this.selected.findIndex(el => el === id)
+        this.selected.splice(i, 1)
+      } else this.selected.push(id)
+    },
     leave(el, done) {
       el.style.opacity = 0
       el.style.height = '0px'
@@ -138,8 +153,24 @@ export default {
     getIconColor(el) {
       if (this.iconColor) return this.iconColor
       return el.iconColor
-    }
+    },
   },
+  computed: {
+    apply() {
+      return this.$store.state.apply.bool
+    },
+  },
+  watch: {
+    selected() {
+      this.$store.commit('appnavSelected', this.selected)
+    },
+    apply() {
+      this.$emit('apply-selected-els', {
+        elIds: this.selected,
+        taskId: this.$store.state.apply.taskId,
+      })
+    }
+  }
 }
 
 </script>

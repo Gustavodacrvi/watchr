@@ -104,4 +104,5 @@ export default {
   "Congrats! Your Inbox is empty.": "Parabéns! Seu Inbox está vazio.",
   "You don't have any upcoming tasks!": "Você não tem nenhuma tarefa no seu calendário!",
   "Apply selected tasks": "Aplicar nas tarefas",
+  "Apply selected on tasks": "Aplicar selecionados na tarefa.",
 }
