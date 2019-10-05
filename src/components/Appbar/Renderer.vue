@@ -43,7 +43,7 @@ export default {
   components: {
     AppbarElement: () => import('./AppbarElement.vue'),
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'disableSort', 'isSmart', 'disabled', 'onTaskDrop'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'disableSort', 'isSmart', 'disabled', 'onTaskDrop', 'onAdd'],
   data() {
     return {
       sortable: null,
@@ -77,6 +77,7 @@ export default {
       }, put: (l,j,item) => {
         const type = item.dataset.type
         if (type === 'task') return true
+        if (type === 'floatbutton') return true
       }},
       delay: 150,
       delayOnTouchOnly: true,
@@ -120,6 +121,17 @@ export default {
         return false
       },
       onStart: () => window.navigator.vibrate(100),
+      onAdd: (evt) => {
+        evt.item.dataset.id = 'floating-button'
+        const childs = this.$el.childNodes
+        let i = 0
+        for (const c of childs) {
+          if (c.dataset.id === 'floating-button') break
+          i++
+        }
+        this.$emit('buttonAdd', i)
+        this.$el.removeChild(evt.item)
+      }
     })
   },
   beforeDestroy() {

@@ -48,12 +48,26 @@ export default {
         })
       ])
     },
-    addTag(c, {name}) {
-      return fire.collection('tags').add({
+    addTag({dispatch, state}, {name, index}) {
+      const obj = {
         name,
         userId: uid(),
         times: 0,
+      }
+      if (!index)
+        return fire.collection('tags').add(obj)
+      const batch = fire.batch()
+
+      const ord = state.order.slice()
+      const ref = fire.collection('tags').doc()
+      batch.set(ref, obj)
+      ord.splice(index, 0, ref.id)
+      const orderRef = fire.collection('tagsOrder').doc(uid())
+      batch.update(orderRef, {
+        order: ord,
       })
+
+      batch.commit()
     },
     deleteTag(c, id) {
       return fire.collection('tags').doc(id).delete()

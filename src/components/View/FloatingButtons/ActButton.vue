@@ -9,8 +9,11 @@
         <div class="path"></div>
       </div>
     </div>
-    <div class="renderer">
-      {{ txt }}
+    <div class="renderer task-renderer">
+      {{ l["Add task"] }}
+    </div>
+    <div class="renderer tags-act">
+      {{ l["Add tag"] }}
     </div>
   </div>
 </template>
@@ -19,11 +22,16 @@
 
 import IconVue from '../../Icon.vue'
 
+import { mapGetters } from 'vuex'
+
 export default {
   props: ['icon', 'color' ,'txt'],
   components: {
     Icon: IconVue,
   },
+  computed: {
+    ...mapGetters(['l'])
+  }
 }
 
 </script>

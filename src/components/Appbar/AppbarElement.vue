@@ -169,6 +169,7 @@ export default {
   position: absolute;
   right: 6px;
   height: 100%;
+  z-index: 5;
 }
 
 .inf {

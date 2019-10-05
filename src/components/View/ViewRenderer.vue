@@ -42,7 +42,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'alwaysShowCompleted'],
+  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'icon', 'viewNameValue', 'emptyIcon', 'illustration'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,
@@ -329,8 +329,11 @@ export default {
     },
     getFilterCompletedTasks() {
       let ts = this.sortAndFilterTasks
-      if (!this.showCompleted && !this.alwaysShowCompleted)
-        ts = utilsTask.filterTasksByCompletion(ts, true)
+      let notCompleted = []
+      if (!this.showCompleted)
+        notCompleted = utilsTask.filterTasksByCompletion(ts, true)
+      if (notCompleted.length > 0)
+        return notCompleted
       return ts
     },
   },

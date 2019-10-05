@@ -9,7 +9,6 @@
       icon='plus'
       color='white'
       data-type='floatbutton'
-      :txt='l["Add task"]'
     />
   </div>
 </template>
@@ -29,7 +28,7 @@ export default {
   },
   mounted() {
     this.sortable = new Sortable(this.$el, {
-      group: {name: 'action-buttons', pull: 'clone', put: false},
+      group: {name: ['action-buttons', 'appnav'], pull: 'clone', put: false},
       handle: '.handle',
     })
   },
@@ -79,19 +78,24 @@ export default {
 
 <style>
 
-.ActionButtons .floating, .TaskRenderer .renderer {
-  display: block;
-}
-
-.TaskRenderer .floating, .ActionButtons .renderer {
+.tags-act {
   display: none;
 }
 
-.TaskRenderer .ActButton {
+.ActionButtons .floating, .TaskRenderer .task-renderer, .Tags .tags-act {
+  display: block;
+}
+
+.TaskRenderer .floating, .ActionButtons .renderer, .Tags .floating, .Tags .task-renderer {
+  display: none;
+}
+
+.TaskRenderer .ActButton, .Tags .ActButton {
   width: 100%;
   border: 1px solid var(--white);
   border-radius: 6px;
   height: 40px;
+  flex-grow: 1;
 }
 
 </style>

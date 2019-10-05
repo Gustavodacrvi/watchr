@@ -9,6 +9,7 @@
       :viewType="viewType"
       :mapNumbers='numberOfTasks'
       :onTaskDrop='onTaskDrop'
+      @buttonAdd='buttonAdd'
       @update='update'
       @apply='applySelectedTasks'
       @apply-selected-els='applySelectedEls'
@@ -57,6 +58,9 @@ export default {
         type: 'tag',
       })
     },
+    buttonAdd(index) {
+      this.$store.dispatch('pushPopup', {comp: 'AddTag', payload: index})
+    }
   },
   computed: {
     ...mapState(['selectedTasks']),
@@ -78,7 +82,7 @@ export default {
             icon: 'pen',
             callback: () => {
               this.$store.dispatch('pushPopup', {
-                comp: 'AddTag', payload: el,
+                comp: 'AddTag', payload: {...el, editing: true},
               })
             },
           },

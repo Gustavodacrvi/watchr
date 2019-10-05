@@ -43,8 +43,8 @@ export default {
     this.pushToNavbar()
   },
   methods: {
-    click() {
-      console.log(3)
+    click(event) {
+      if (this.selectedTasks.length > 0) event.stopPropagation()
     },
     pushToNavbar() {
       this.$store.commit('pushNavBarData', {
