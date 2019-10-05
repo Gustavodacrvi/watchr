@@ -60,7 +60,7 @@ import FiltersVue from './Sections/Filters.vue'
 import IconDropVue from '../IconDrop.vue'
 import RendererVue from './Renderer.vue'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   props: ['value', 'viewType', 'appbarHided'],
@@ -147,7 +147,11 @@ export default {
   },
   methods: {
     applySelectedTasks(elId) {
-      console.log(elId)
+      this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+        elIds: [elId],
+        taskIds: this.selectedTasks,
+        type: elId,
+      })
     },
     onTaskDrop({taskId, elId}) {
       this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
@@ -227,6 +231,7 @@ export default {
     },
   },
   computed: {
+    ...mapState(['selectedTasks']),
     ...mapGetters({
       platform: 'platform',
       isDesktop: 'isDesktop',

@@ -210,7 +210,7 @@ export default {
           break
         }
         case 'Completed': {
-          dispatch('task/completeTasks', getters.getTasksById(taskIds))
+          dispatch('completeTasks', getters.getTasksById(taskIds))
           break
         }
       }
