@@ -24,6 +24,7 @@
       :list="el.list"
       :totalNumber='mapNumbers(el).total'
       :importantNumber='mapNumbers(el).notCompleted'
+      @apply='() => $emit("apply", el.id)'
 
       :data-id="el.id"
       data-type="appnav-element"

@@ -57,7 +57,8 @@ export default {
   },
   methods: {
     linkCallback(callback) {
-      if (callback) callback()
+      if (callback && !this.showSpecialInfo) callback()
+      else if (this.showSpecialInfo) this.$emit('apply')
     }
   },
   computed: {

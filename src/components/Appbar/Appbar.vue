@@ -12,6 +12,7 @@
           :onTaskDrop='onTaskDrop'
           :mapNumbers='numberOfTasks'
           :isSmart='true'
+          @apply='applySelectedTasks'
         />
         <div class="header">
           <div v-for="(s,i) in sections" :key="s.name"
@@ -145,6 +146,9 @@ export default {
     window.removeEventListener('resize', this.moveLineToActive)
   },
   methods: {
+    applySelectedTasks(elId) {
+      console.log(elId)
+    },
     onTaskDrop({taskId, elId}) {
       this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
         elIds: [elId],

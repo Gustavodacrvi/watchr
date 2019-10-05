@@ -10,6 +10,7 @@
       :mapNumbers='numberOfTasks'
       :onTaskDrop='onTaskDrop'
       @update='update'
+      @apply='applySelectedTasks'
     />
   </div>
 </template>
@@ -26,6 +27,13 @@ export default {
   },
   props: ['active', 'viewType'],
   methods: {
+    applySelectedTasks(id) {
+      this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+        elIds: [id],
+        taskIds: this.selectedTasks,
+        type: 'tag',
+      })
+    },
     update(ids) {
       this.$store.dispatch('tag/updateOrder', ids)
     },
@@ -43,6 +51,7 @@ export default {
     },
   },
   computed: {
+    ...mapState(['selectedTasks']),
     ...mapGetters({
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag'
     }),
