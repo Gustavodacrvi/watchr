@@ -9,6 +9,7 @@
           :list='links'
           :active='value'
           :viewType='viewType'
+          :onTaskDrop='onTaskDrop'
           :mapNumbers='numberOfTasks'
           :isSmart='true'
         />
@@ -144,6 +145,13 @@ export default {
     window.removeEventListener('resize', this.moveLineToActive)
   },
   methods: {
+    onTaskDrop({taskId, elId}) {
+      this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+        elIds: [elId],
+        taskIds: [taskId],
+        type: elId,
+      })
+    },
     leave(el) {
       this.transRight = this.newIndex > this.oldIndex
 
