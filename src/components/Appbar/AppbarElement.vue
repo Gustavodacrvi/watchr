@@ -16,7 +16,10 @@
         <Icon class="icon" :style="hoverStyle" :class="{notActive: !isActive}" :icon="icon"/>
       </div>
       <div class="name-wrapper">
-        <span class="name" :style="hoverStyle">{{ getName }}</span>
+        <transition name="name-t">
+          <span v-if="!showSpecialInfo" key="normal" class="name" :style="hoverStyle">{{ getName }}</span>
+          <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
+        </transition>
         <div class="info">
           <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
           <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
@@ -58,10 +61,13 @@ export default {
     }
   },
   computed: {
-    ...mapState(['drag']),
+    ...mapState(['drag', 'isOnControl', 'selectedTasks']),
     ...mapGetters(['l']),
     isDraggingOver() {
       return this
+    },
+    showSpecialInfo() {
+      return this.hover && this.isOnControl && this.selectedTasks.length > 0
     },
     getName() {
       if (this.isSmart) return this.l[this.name]
@@ -118,6 +124,7 @@ export default {
 
 .name {
   transition-duration: .2s;
+  transform: translateY(0px);
 }
 
 .icon.notActive {
@@ -171,6 +178,26 @@ export default {
 
 #task-on-hover .inf, #task-on-hover .icon, #task-on-hover .name {
   color: white !important;
+}
+
+.name-t-enter {
+  opacity: 0;
+  transform: translateY(-25px); 
+}
+
+.name-t-enter-active, .name-t-leave-active {
+  position: absolute;
+  transition-duration: .2s;
+}
+
+.name-t-enter-to, .name-t-leave {
+  transform: translateY(0px);
+  opacity: 1;
+}
+
+.name-t-leave-to {
+  opacity: 0;
+  transform: translateY(25px);
 }
 
 </style>
