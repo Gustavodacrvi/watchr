@@ -82,11 +82,11 @@ export default {
   display: none;
 }
 
-.ActionButtons .floating, .TaskRenderer .task-renderer, .Tags .tags-act {
+.ActionButtons .floating, .TaskRenderer .task-renderer, .appnav-section .tags-act {
   display: block;
 }
 
-.TaskRenderer .floating, .ActionButtons .renderer, .Tags .floating, .Tags .task-renderer {
+.TaskRenderer .floating, .ActionButtons .renderer, .appnav-section .floating, .appnav-section .task-renderer {
   display: none;
 }
 

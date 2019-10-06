@@ -15,6 +15,7 @@
       @apply='applySelectedTasks'
       @apply-selected-els='applySelectedEls'
     />
+    <div style="height: 100px"></div>
   </div>
 </template>
 

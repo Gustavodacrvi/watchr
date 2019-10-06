@@ -1,6 +1,6 @@
 <template>
   <div class="Appbar scroll-thin" :class='platform'>
-    <div class="inner-appbar">
+    <div class="inner-wrapper">
       <div class="cont-wrapper">
         <transition name="bar-trans">
           <div v-if="showing" class="content">
@@ -35,7 +35,6 @@
                 <keep-alive>
                   <component
                     class="component scroll-thin appnav-section"
-                    :class="{standAlone: true}"
                     :is="section"
                     :active="value"
                     :viewType='viewType'
@@ -47,7 +46,8 @@
           </div>
         </transition>
       </div>
-      <div class="footer">
+      <div v-if="isDesktop" style="height: 35px;"></div>
+      <div class="footer" :class="platform">
         <div class="inner-footer">
           <transition name="icon-t">
             <IconDrop v-if="showIconDropdown"
@@ -344,7 +344,7 @@ export default {
   width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 15px;
+  padding-right: 25px;
 }
 
 .footer {
@@ -356,6 +356,15 @@ export default {
   background-color: var(--back-color);
   border: none;
   box-shadow: 0 -3px 4px var(--back-color);
+}
+
+.footer.mobile {
+  bottom: 15px;
+  height: 53px;
+  width: 130%;
+  left: -15px;
+  background-color: var(--dark);
+  box-shadow: 0 -3px 4px var(--dark);
 }
 
 .comp-wrapper {
@@ -425,6 +434,11 @@ export default {
   transform: translateY(13px);
 }
 
+.footer.mobile .drop {
+  right: 130px;
+  bottom: 21px;
+}
+
 .mobile .drop {
   left: unset;
   right: 7px;
@@ -450,10 +464,6 @@ export default {
   transform: translateX(0px);
   opacity: 1;
   overflow: hidden;
-}
-
-.component.standAlone {
-  height: 360px;
 }
 
 .to-right {

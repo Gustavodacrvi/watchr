@@ -68,17 +68,19 @@ export default {
     getNavTopPosition() {
       const app = document.getElementById('app')
       const scroll = this.scrollTop
-      const winHeight = app.offsetHeight
-      let top = (75 - scroll) + 'px'
-      let height = ((winHeight - 100) + scroll) + 'px'
-      if (scroll > 50) {
-        top = '30px'
-        height = (winHeight - 100 + 45) + 'px'
-      }
+      if (app) {
+        const winHeight = app.offsetHeight
+        let top = (75 - scroll) + 'px'
+        let height = ((winHeight - 100) + scroll) + 'px'
+        if (scroll > 50) {
+          top = '30px'
+          height = (winHeight - 100 + 45) + 'px'
+        }
 
-      return {
-        top,
-        height,
+        return {
+          top,
+          height,
+        }
       }
     },
     isSmart() {
@@ -129,6 +131,7 @@ export default {
   position: fixed;
   width: 300px;
   left: 60px;
+  z-index: 4;
 }
 
 .cont {

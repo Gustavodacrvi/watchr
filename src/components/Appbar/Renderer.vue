@@ -227,9 +227,9 @@ export default {
 }
 
 .illustration {
+  position: absolute;
   width: 100%;
   height: 175px;
-  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -239,7 +239,7 @@ export default {
 }
 
 .dontHaveElements {
-  height: 300px;
+  height: 225px;
 }
 
 .illus-t-enter, .illus-t-leave-to {
