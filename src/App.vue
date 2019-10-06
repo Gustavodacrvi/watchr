@@ -102,7 +102,6 @@ export default {
       return this.hided
     },
     hidePassive() {
-      return true
       return this.timeBeforeMouseMove > 4 && this.isStandAlone && this.isDesktop
     },
     isIconDropOpened() {

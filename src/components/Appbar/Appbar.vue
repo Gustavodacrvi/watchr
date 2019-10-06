@@ -1,56 +1,66 @@
 <template>
-  <div class="Appbar" :class='platform'>
-    <transition name="bar-trans">
-      <div v-if="showing" class="content">
-        <AppnavRenderer
-          type='list'
-          :disableSort='true'
-          :disabled='!isDesktop'
-          :disableSelection='true'
-          :list='links'
-          :active='value'
-          :viewType='viewType'
-          :onTaskDrop='onTaskDrop'
-          :mapNumbers='numberOfTasks'
-          :isSmart='true'
-          @apply='applySelectedTasks'
-        />
-        <div class="header">
-          <div v-for="(s,i) in sections" :key="s.name"
-            class="option section-option"
-            :class="{sectionActive: s.name === section}"
-            :tabindex="i + 1 + links.length"
-            @click="moveLine(i)"
-            :data-section="s.name"
-          >{{ l[s.name] }}</div>
-          <div class="line section-line"></div>
-        </div>
-        <transition name="sect-trans"
-          @leave="leave"
-          @enter="enter"
-        >
-          <keep-alive>
-            <component
-              class="component scroll-thin appnav-section"
-              :is="section"
-              :active="value"
+  <div class="Appbar scroll-thin" :class='platform'>
+    <div class="inner-appbar">
+      <div class="cont-wrapper">
+        <transition name="bar-trans">
+          <div v-if="showing" class="content">
+            <AppnavRenderer
+              type='list'
+              :disableSort='true'
+              :disabled='!isDesktop'
+              :disableSelection='true'
+              :list='links'
+              :active='value'
               :viewType='viewType'
-              :data-transindex="getAppnavIndex(section)"
+              :onTaskDrop='onTaskDrop'
+              :mapNumbers='numberOfTasks'
+              :isSmart='true'
+              @apply='applySelectedTasks'
             />
-          </keep-alive>
+            <div class="header">
+              <div v-for="(s,i) in sections" :key="s.name"
+                class="option section-option"
+                :class="{sectionActive: s.name === section}"
+                :tabindex="i + 1 + links.length"
+                @click="moveLine(i)"
+                :data-section="s.name"
+              >{{ l[s.name] }}</div>
+              <div class="line section-line"></div>
+            </div>
+            <div class="comp-wrapper">
+              <transition name="sect-trans"
+                @leave="leave"
+                @enter="enter"
+              >
+                <keep-alive>
+                  <component
+                    class="component scroll-thin appnav-section"
+                    :class="{standAlone: true}"
+                    :is="section"
+                    :active="value"
+                    :viewType='viewType'
+                    :data-transindex="getAppnavIndex(section)"
+                  />
+                </keep-alive>
+              </transition>
+            </div>
+          </div>
         </transition>
       </div>
-    </transition>
-    <div class="footer-wrapper"></div>
-    <transition name="icon-t">
-      <IconDrop v-if="showIconDropdown"
-        class="drop right passive"
-        handle='settings-h'
-        handleColor='var(--gray)'
-        :options="getSectionOptions"
-      />
-    </transition>
-    <Icon v-if="isDesktop" icon="arrow" id='appbar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
+      <div class="footer">
+        <div class="inner-footer">
+          <transition name="icon-t">
+            <IconDrop v-if="showIconDropdown"
+              class="drop right passive"
+              handle='settings-h'
+              handleColor='var(--gray)'
+              :options="getSectionOptions"
+            />
+          </transition>
+          <Icon v-if="isDesktop" icon="arrow" id='appbar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -122,7 +132,7 @@ export default {
         {
           name: 'Lists',
         },
-/*         {
+        /*         {
           name: 'Filters',
         }, */
         {
@@ -239,6 +249,7 @@ export default {
     ...mapState(['selectedTasks']),
     ...mapGetters({
       platform: 'platform',
+      isStandAlone: 'isStandAlone',
       isDesktop: 'isDesktop',
       l: 'l',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView'
@@ -324,18 +335,31 @@ export default {
 
 <style scoped>
 
-.content, .Appbar {
+.content {
   position: relative;
 }
 
-.footer-wrapper {
-  position: fixed;
+.Appbar {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 15px;
+}
+
+.footer {
+  position: absolute;
   left: 0;
-  bottom: 8px;
+  bottom: 0;
   height: 35px;
   width: 100%;
   background-color: var(--back-color);
+  border: none;
   box-shadow: 0 -3px 4px var(--back-color);
+}
+
+.comp-wrapper {
+  overflow-y: auto;
 }
 
 .header {
@@ -379,29 +403,32 @@ export default {
 }
 
 #appbar-arrow {
-  position: fixed;
-  left: 70px;
-  bottom: 16px;
+  position: absolute;
+  left: 3px;
+  transform: translateY(5px) rotate(90deg);
   transition: opacity .3s, left .3s, transform .3s;
-  transform: rotate(90deg);
 }
 
 #appbar-arrow.hided {
-  transform: rotate(-90deg);
-  left: 30px;
+  transform: translateY(5px) rotate(-90deg);
+  left: -30px;
+}
+
+.inner-footer {
+  position: relative;
+  height: 100%;
 }
 
 .drop {
   position: absolute;
-  right: 3px;
-  bottom: -24px;
+  right: 0;
+  transform: translateY(13px);
 }
 
 .mobile .drop {
   left: unset;
   right: 7px;
 }
-
 
 .bar-trans-enter, .bar-trans-leave-to {
   transform: translateX(-30px);
@@ -421,10 +448,12 @@ export default {
 
 .component {
   transform: translateX(0px);
-  height: 270px;
-  overflow-y: auto;
-  overflow-x: hidden;
   opacity: 1;
+  overflow: hidden;
+}
+
+.component.standAlone {
+  height: 360px;
 }
 
 .to-right {

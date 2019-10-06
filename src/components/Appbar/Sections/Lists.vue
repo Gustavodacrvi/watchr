@@ -9,7 +9,6 @@
       :viewType="viewType"
       @update='update'
     />
-    <div style="height: 50px"></div>
   </div>
 </template>
 
@@ -58,10 +57,13 @@ export default {
       return lists
     },
     illustration() {
+      let descr = this.l["You can add one by dropping the plus floating button in this region."]
+      if (!this.isDesktop)
+        descr = this.l["You can add one by clicking on the right corner icon."]
       return {
+        descr,
         name: 'List',
         title: this.l["You don't have any lists."],
-        descr: this.l["You can add one by dropping the plus floating button in this region."],
         width: '80px'
       }
     },

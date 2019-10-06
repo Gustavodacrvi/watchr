@@ -68,12 +68,16 @@ export default {
     ...mapGetters({
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       l: 'l',
+      isDesktop: 'isDesktop',
     }),
     illustration() {
+      let descr = this.l["You can add one by dropping the plus floating button in this region."]
+      if (!this.isDesktop)
+        descr = this.l["You can add one by clicking on the right corner icon."]
       return {
+        descr,
         name: 'MultipleTags',
         title: this.l["You don't have any tags."],
-        descr: this.l["You can add one by dropping the plus floating button in this region."],
         width: '80px',
       }
     },
