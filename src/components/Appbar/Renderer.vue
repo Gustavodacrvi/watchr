@@ -39,7 +39,7 @@
         :id='el.id'
         :totalNumber='mapNumbers(el).total'
         :importantNumber='mapNumbers(el).notCompleted'
-        @apply='() => $emit("apply", el.id)'
+        @apply='() => applyEmit(el.id)'
         @select='() => selectEl(el.id)'
 
         :data-id="el.id"
@@ -56,12 +56,14 @@ import AppbarElementVue from './AppbarElement.vue'
 
 import Sortable from 'sortablejs'
 
+import { mapGetters, mapState } from 'vuex'
+
 export default {
   components: {
     Illustration: IllustrationVue,
     AppbarElement: AppbarElementVue,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'disableSort', 'isSmart', 'disabled', 'onTaskDrop', 'onAdd', 'illustration'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'illustration', 'disableSelection'],
   data() {
     return {
       sortable: null,
@@ -88,7 +90,7 @@ export default {
       }
     }
     this.sortable = new Sortable(this.draggableRoot, {
-      sort: !this.disableSort,
+      sort: this.enableSort,
       disabled: this.disabled,
       group: {name: 'appnav', pull: (e) => {
         if (e.el.dataset.name === 'task-renderer') return 'clone'
@@ -106,9 +108,16 @@ export default {
           this.$emit('update', this.getIds())
         }, 100)
       },
-      onEnd: () => {
+      onEnd: (e, j) => {
         removeAppnavOnHoverOnTaskElements()
-        if (this.onTaskDrop) this.onTaskDrop(move)
+        if (move && !this.isSmart) {
+          this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+            elIds: [move.elId],
+            taskIds: [move.taskId],
+            type: this.type,
+          })
+        }
+        this.$emit('on-task-drop')
         move = null
       },
       onMove: (t, e) => {
@@ -131,8 +140,8 @@ export default {
             s.boxShadow = `0 2px 10px var(--primary)`
           }
         } else move = null
-
-        return false
+        if (!e.target.classList.contains('AppbarElement-link'))
+          return false
       },
       onStart: () => window.navigator.vibrate(100),
       onAdd: (evt) => {
@@ -155,6 +164,15 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    applyEmit(elId) {
+      if (!this.isSmart)
+        this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+          elIds: [elId],
+          taskIds: this.selectedTasks,
+          type: this.type,
+        })
+      this.$emit('apply', elId)
+    },
     getIds() {
       const childs = this.draggableRoot.childNodes
       const ids = []
@@ -172,6 +190,7 @@ export default {
       })
     },
     selectEl(id) {
+      console.log(this.disableSelection)
       if (!this.disableSelection) {
         if (this.selected.some(el => el === id)) {
           const i = this.selected.findIndex(el => el === id)
@@ -195,6 +214,7 @@ export default {
     },
   },
   computed: {
+    ...mapState(['selectedTasks']),
     draggableRoot() {
       return this.$el.getElementsByClassName('appnav-renderer-root')[0]
     },
@@ -210,10 +230,12 @@ export default {
       this.$store.commit('appnavSelected', this.selected)
     },
     apply() {
-      this.$emit('apply-selected-els', {
-        elIds: this.selected,
-        taskId: this.$store.state.apply.taskId,
-      })
+      if (!this.isSmart)
+        this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+          elIds: this.selected,
+          taskIds: [this.$store.state.apply.taskId],
+          type: this.type,
+        })
     }
   }
 }

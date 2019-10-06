@@ -168,15 +168,17 @@ export default {
       },
       onEnd: (e, t) => {
         removeTaskOnHoverFromAppnavElements()
-        const specialTypes = ['Today', 'Completed', 'Tomorrow']
-        if (specialTypes.includes(move.elId))
-          move.type = move.elId
-
-        this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
-          elIds: [move.elId],
-          taskIds: [move.taskId],
-          type: move.type,
-        })
+        if (move) {
+          const specialTypes = ['Today', 'Completed', 'Tomorrow']
+          if (specialTypes.includes(move.elId))
+            move.type = move.elId
+  
+          this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+            elIds: [move.elId],
+            taskIds: [move.taskId],
+            type: move.type,
+          })
+        }
         move = null
       },
       onMove: (t, e) => {

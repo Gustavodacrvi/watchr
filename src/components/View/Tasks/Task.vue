@@ -34,7 +34,7 @@
             <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
             <transition name="name-t">
               <span v-if="!showApplyOnTasks" key="normal">{{ task.name }}</span>
-              <span v-else @click="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
+              <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
             </transition>
             <template v-if="isDesktop">
               <Tag class="task-tag" v-for="t in taskTags" :key="t.name"
@@ -299,7 +299,7 @@ export default {
       return this.savedLists.find(el => el.id === this.task.list).name
     },
     calendarStr() {
-      if (!this.task.calendar) return null
+      if (!this.task.calendar || this.view === 'Upcoming') return null
       const str = utils.parseCalendarObjectToString(this.task.calendar, this.l)
       if (str === this.viewNameValue) return null
       return str

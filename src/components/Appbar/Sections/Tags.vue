@@ -9,11 +9,9 @@
       :active="active"
       :viewType="viewType"
       :mapNumbers='numberOfTasks'
-      :onTaskDrop='onTaskDrop'
+      :enableSort='true'
       @buttonAdd='buttonAdd'
       @update='update'
-      @apply='applySelectedTasks'
-      @apply-selected-els='applySelectedEls'
     />
     <div style="height: 100px"></div>
   </div>
@@ -31,20 +29,6 @@ export default {
   },
   props: ['active', 'viewType'],
   methods: {
-    applySelectedTasks(id) {
-      this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
-        elIds: [id],
-        taskIds: this.selectedTasks,
-        type: 'tag',
-      })
-    },
-    applySelectedEls({elIds, taskId}) {
-      this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
-        elIds: elIds,
-        taskIds: [taskId],
-        type: 'tag',
-      })
-    },
     update(ids) {
       this.$store.dispatch('tag/updateOrder', ids)
     },
@@ -52,13 +36,6 @@ export default {
       return {
         total: this.getNumberOfTasksByTag(tag.id).total,
       }
-    },
-    onTaskDrop({taskId, elId}) {
-      this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
-        elIds: [elId],
-        taskIds: [taskId],
-        type: 'tag',
-      })
     },
     buttonAdd(obj) {
       this.$store.dispatch('pushPopup', {comp: 'AddTag', payload: {...obj}})

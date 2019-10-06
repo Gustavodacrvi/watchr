@@ -11,10 +11,22 @@ export default {
     lists: [],
     order: [],
     viewOrders: {
-      'Today': [],
-      'Upcoming': [],
-      'Inbox': [],
-      'Tomorrow': [],
+      'Today': {
+        tasks: [],
+        headings: []
+      },
+      'Upcoming': {
+        tasks: [],
+        headings: []
+      },
+      'Inbox': {
+        tasks: [],
+        headings: []
+      },
+      'Tomorrow': {
+        tasks: [],
+        headings: []
+      },
     },
   },
   getters: {
@@ -94,7 +106,8 @@ export default {
     },
     updateViewOrder(c, {view, ids}) {
       const obj = {}
-      obj[view] = ids
+      obj[view] = {}
+      obj[view].tasks = ids
       return fire.collection('viewOrders').doc(uid()).update(obj)
     },
     sortListsByName({state, dispatch}) {

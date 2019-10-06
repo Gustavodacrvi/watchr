@@ -153,14 +153,15 @@ export default {
   display: none;
 }
 
+
+.link-wrapper:hover, .notSmartActive {
+  background-color: var(--light-gray) !important;
+}
+
 .sortable-ghost {
   background-color: var(--void) !important;
   transition-duration: 0 !important;
   transition: none !important;
-}
-
-.link-wrapper:hover, .notSmartActive {
-  background-color: var(--light-gray) !important;
 }
 
 .info {

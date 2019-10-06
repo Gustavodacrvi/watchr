@@ -1,12 +1,12 @@
 <template>
   <div class="Appbar scroll-thin" :class='platform'>
     <div class="inner-wrapper">
-      <div class="cont-wrapper">
+      <div>
         <transition name="bar-trans">
           <div v-if="showing" class="content">
             <AppnavRenderer
               type='list'
-              :disableSort='true'
+              :enableSort='false'
               :disabled='!isDesktop'
               :disableSelection='true'
               :list='links'
@@ -32,15 +32,13 @@
                 @leave="leave"
                 @enter="enter"
               >
-                <keep-alive>
-                  <component
-                    class="component scroll-thin appnav-section"
-                    :is="section"
-                    :active="value"
-                    :viewType='viewType'
-                    :data-transindex="getAppnavIndex(section)"
-                  />
-                </keep-alive>
+                <component
+                  class="component appnav-section"
+                  :is="section"
+                  :active="value"
+                  :viewType='viewType'
+                  :data-transindex="getAppnavIndex(section)"
+                />
               </transition>
             </div>
           </div>
@@ -361,14 +359,13 @@ export default {
 .footer.mobile {
   bottom: 15px;
   height: 53px;
-  width: 130%;
-  left: -15px;
+  width: 100%;
   background-color: var(--dark);
   box-shadow: 0 -3px 4px var(--dark);
 }
 
 .comp-wrapper {
-  overflow-y: auto;
+  overflow: visible;
 }
 
 .header {
@@ -435,8 +432,8 @@ export default {
 }
 
 .footer.mobile .drop {
-  right: 130px;
-  bottom: 21px;
+  right: 0;
+  bottom: 24px;
 }
 
 .mobile .drop {
@@ -463,7 +460,7 @@ export default {
 .component {
   transform: translateX(0px);
   opacity: 1;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .to-right {

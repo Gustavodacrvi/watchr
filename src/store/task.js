@@ -164,6 +164,18 @@ export default {
 
       return batch.commit()
     },
+    addListToTasksById(c, {ids, listId}) {
+      const batch = fire.batch()
+
+      for (const id of ids) {
+        const ref = fire.collection('tasks').doc(id)
+        batch.update(ref, {
+          list: listId,
+        })
+      }
+
+      return batch.commit()
+    },
     copyTask(c, task) {
       return fire.collection('tasks').add({
         ...task,
@@ -187,6 +199,13 @@ export default {
         case 'tag': {
           dispatch('addTagsToTasksById', {
             tagIds: elIds,
+            ids: taskIds,
+          })
+          break
+        }
+        case 'list': {
+          dispatch('addListToTasksById', {
+            listId: elIds[0],
             ids: taskIds,
           })
           break

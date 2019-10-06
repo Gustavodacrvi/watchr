@@ -141,6 +141,10 @@ export default {
       })
       this.name = ''
     },
+    addTag(name) {
+      if (!this.tags.find(e => e === name))
+        this.tags.push(name)
+    }
   },
   computed: {
     ...mapState({
@@ -207,8 +211,7 @@ export default {
           name: el.name,
           icon: 'tag',
           callback: () => {
-            if (!this.tags.find(e => e === el.name))
-              this.tags.push(el.name)
+            this.addTag(el.name)
           },
         })
       }
@@ -260,7 +263,7 @@ export default {
           const tagName = ` #${tag.name}`
           if (n.includes(tagName)) {
             this.name = n.replace(tagName, '')
-            this.tags.push(tag.name)
+            this.addTag(tag.name)
             break
           }
         }

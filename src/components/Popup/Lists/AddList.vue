@@ -45,7 +45,8 @@ export default {
       payload: state => state.popup.payload,
     }),
     isEditing() {
-      return this.payload
+      if (!this.payload) return false
+      return this.payload.editing === true
     },
     title() {
       if (!this.isEditing) return this.l['Add list']
@@ -77,6 +78,7 @@ export default {
         else if (!list && !this.isEditing) {
           this.$store.dispatch('list/addList', {
             name: this.name,
+            ...this.payload,
           })
           toast({
             name: this.l[`List added successfully!`],

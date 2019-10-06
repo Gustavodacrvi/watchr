@@ -91,7 +91,7 @@ export default {
 }
 
 .TaskRenderer .ActButton, .appnav-section .ActButton {
-  width: 100%;
+  width: 98%;
   border: 1px solid var(--white);
   border-radius: 6px;
   height: 40px;

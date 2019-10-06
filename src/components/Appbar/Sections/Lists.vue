@@ -3,12 +3,17 @@
     <Renderer
       type="list"
       icon="tasks"
-      :list="getList"
+      iconColor='var(--purple)'
       :illustration="illustration"
+      :list="getList"
       :active="active"
+      :disableSelection='true'
       :viewType="viewType"
+      :mapNumbers="(tasks) => tasks"
+      :enableSort="true"
       @update='update'
     />
+    <div style="height: 100px"></div>
   </div>
 </template>
 
@@ -27,6 +32,9 @@ export default {
     update(ids) {
       this.$store.dispatch('list/updateOrder', ids)
     },
+    buttonAdd(obj) {
+      this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj}})
+    },
   },
   computed: {
     ...mapGetters(['l']),
@@ -44,7 +52,7 @@ export default {
             name: 'Edit list',
             icon: 'pen',
             callback: () => {
-              this.$store.dispatch('pushPopup', {comp: 'AddList', payload: list})
+              this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...list, editing: true}})
             }
           },
           {
