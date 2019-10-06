@@ -1,49 +1,66 @@
 <template>
-  <transition-group class="Renderer appnav-renderer"
-    @enter='enter'
-    @leave='leave'
-    tag="div"
+  <div class="Renderer">
+    <transition name="illus-t">
+      <div v-if="showIllustration" class="illustration">
+        <Illustration
+          :name='illustration.name'
+          :title='illustration.title'
+          :descr='illustration.descr'
+          :width='illustration.width'
+        />
+      </div>
+    </transition>
+    <transition-group class="appnav-renderer appnav-renderer-root"
+      @enter='enter'
+      @leave='leave'
+      tag="div"
+      :class="{dontHaveElements: list.length === 0}"
 
-    data-name='appnav-renderer'
-  >
-    <AppbarElement v-for="(el,i) in list"
-      :iconColor='getIconColor(el)'
-      :icon="getIcon(el)"
+      data-name='appnav-renderer'
+    >
+      <AppbarElement v-for="(el,i) in list"
+        :iconColor='getIconColor(el)'
+        :icon="getIcon(el)"
 
-      :type="type"
-      :subListIcon='subListIcon'
-      :key="el.id"
-      :name="el.name"
-      :disableAction='el.disableAction'
-      :tabindex="i + 1"
-      :selected='selected'
-      :active="active"
-      :isSmart='isSmart'
-      :viewType="viewType"
-      :callback="el.callback"
-      :options='el.options'
-      :list="el.list"
-      :id='el.id'
-      :totalNumber='mapNumbers(el).total'
-      :importantNumber='mapNumbers(el).notCompleted'
-      @apply='() => $emit("apply", el.id)'
-      @select='() => selectEl(el.id)'
+        :type="type"
+        :subListIcon='subListIcon'
+        :key="el.id"
+        :name="el.name"
+        :disableAction='el.disableAction'
+        :tabindex="i + 1"
+        :selected='selected'
+        :active="active"
+        :isSmart='isSmart'
+        :viewType="viewType"
+        :callback="el.callback"
+        :options='el.options'
+        :list="el.list"
+        :id='el.id'
+        :totalNumber='mapNumbers(el).total'
+        :importantNumber='mapNumbers(el).notCompleted'
+        @apply='() => $emit("apply", el.id)'
+        @select='() => selectEl(el.id)'
 
-      :data-id="el.id"
-      data-type="appnav-element"
-    />
-  </transition-group>
+        :data-id="el.id"
+        data-type="appnav-element"
+      />
+    </transition-group>
+  </div>
 </template>
 
 <script>
+
+import IllustrationVue from '@/components/Illustrations/Illustration.vue'
+import AppbarElementVue from './AppbarElement.vue'
 
 import Sortable from 'sortablejs'
 
 export default {
   components: {
-    AppbarElement: () => import('./AppbarElement.vue'),
+    Illustration: IllustrationVue,
+    AppbarElement: AppbarElementVue,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'disableSort', 'isSmart', 'disabled', 'onTaskDrop', 'onAdd'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'disableSort', 'isSmart', 'disabled', 'onTaskDrop', 'onAdd', 'illustration'],
   data() {
     return {
       sortable: null,
@@ -69,7 +86,7 @@ export default {
         s.boxShadow = `initial`
       }
     }
-    this.sortable = new Sortable(this.$el, {
+    this.sortable = new Sortable(this.draggableRoot, {
       sort: !this.disableSort,
       disabled: this.disabled,
       group: {name: 'appnav', pull: (e) => {
@@ -85,7 +102,7 @@ export default {
 
       onUpdate: (evt) => {
         setTimeout(() => {
-          const childs = this.$el.childNodes
+          const childs = this.draggableRoot.childNodes
           const ids = []
           for (const el of childs)
             ids.push(el.dataset.id)
@@ -123,14 +140,14 @@ export default {
       onStart: () => window.navigator.vibrate(100),
       onAdd: (evt) => {
         evt.item.dataset.id = 'floating-button'
-        const childs = this.$el.childNodes
+        const childs = this.draggableRoot.childNodes
         let i = 0
         for (const c of childs) {
           if (c.dataset.id === 'floating-button') break
           i++
         }
         this.$emit('buttonAdd', i)
-        this.$el.removeChild(evt.item)
+        this.draggableRoot.removeChild(evt.item)
       }
     })
   },
@@ -170,9 +187,15 @@ export default {
     },
   },
   computed: {
+    draggableRoot() {
+      return this.$el.getElementsByClassName('appnav-renderer-root')[0]
+    },
     apply() {
       return this.$store.state.apply.bool
     },
+    showIllustration() {
+      return this.list.length === 0 && this.illustration
+    }
   },
   watch: {
     selected() {
@@ -188,3 +211,39 @@ export default {
 }
 
 </script>
+
+<style scoped>
+
+.Renderer {
+  position: relative;
+}
+
+.illustration {
+  width: 100%;
+  height: 200px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dontHaveElements {
+  height: 300px;
+}
+
+.illus-t-enter, .illus-t-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+  transition-duration: .3s;
+}
+
+.illus-t-leave, .illus-t-enter-to {
+  opacity: 1;
+  transform: translateY(0px);
+  transition-duration: .3s;
+}
+
+</style>

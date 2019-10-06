@@ -18,12 +18,14 @@ import SadTag from './SadTag.vue'
 import EmptyInbox from './EmptyInbox.vue'
 import EmptyCalendar from './EmptyCalendar.vue'
 import CleanCheck from './CleanCheck.vue'
+import MultipleTags from './States/MultipleTags.vue'
 
 export default {
   props: ['name', 'title', 'descr', 'width'],
   components: {
     HappyFace, Sleep, Error, Logo, SadTag,
     EmptyInbox, EmptyCalendar, CleanCheck,
+    MultipleTags,
   },
   computed: {
     getWidth() {

@@ -4,6 +4,7 @@
       type="tag"
       icon="tag"
       iconColor='var(--red)'
+      :illustration='illustration'
       :list="getTags"
       :active="active"
       :viewType="viewType"
@@ -67,6 +68,14 @@ export default {
     ...mapGetters({
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag'
     }),
+    illustration() {
+      return {
+        name: 'MultipleTags',
+        title: "You don't have any tags.",
+        descr: "You can add some by dropping the plus floating button in this region.",
+        width: '80px',
+      }
+    },
     sortedTags() {
       return this.$store.getters['tag/sortedTags']
     },
