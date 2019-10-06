@@ -104,4 +104,6 @@ export default {
   "You don't have any upcoming tasks!": "You don't have any upcoming tasks!",
   "Apply selected tasks": "Apply selected tasks",
   "Apply selected on tasks": "Apply selected on tasks",
+  "Hurray! Everything is clean here!": "Hurray! Everything is clean here!",
+  "You don't have any completed tasks, how about completing some?": "You don't have any completed tasks, how about completing some?",
 }

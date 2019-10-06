@@ -92,6 +92,7 @@ export default {
   data() {
     return {
       addedTask: false,
+      atLeastOneRenderedTask: false,
     }
   },
   mounted() {
@@ -215,16 +216,19 @@ export default {
       if (h.id === lastHeading.id) return lastHeading.tasks
       lastHeading.tasks = h.filter(tasks, h)
       lastHeading.id = h.id
+      if (lastHeading.tasks.length > 0) this.atLeastOneRenderedTask = true
       return lastHeading.tasks
     },
     hideHeading(s) {
       s.height = '0px'
       s.marginBottom = 0
       s.padding = 0
+      s.opacity = 0
       s.borderBottom = '0px solid var(--light-gray)'
     },
     showHeading(s) {
       s.height = '45px'
+      s.opacity = 1
       s.marginBottom = '10px'
       s.padding = '0 6px'
       s.borderBottom = '1px solid var(--light-gray)'
@@ -364,7 +368,7 @@ export default {
       return this.$el.getElementsByClassName('task-renderer-root')[0]
     },
     showIllustration() {
-      return this.headings.length === 0 && this.tasks.length === 0 && this.illustration
+      return !this.atLeastOneRenderedTask && this.tasks.length === 0 && this.illustration
     },
     isSelecting() {
       return this.selected.length > 0
@@ -372,6 +376,7 @@ export default {
   },
   watch: {
     tasks() {
+      this.atLeastOneRenderedTask = false
       setTimeout(() => {
         if (this.addedTask) {
             const i = this.getTaskRendererPosition()

@@ -145,6 +145,13 @@ export default {
               title: l["You don't have any upcoming tasks!"],
               width: '150px',
             }
+          case 'Completed':
+            return {
+              name: 'CleanCheck',
+              title: l["Hurray! Everything is clean here!"],
+              descr: l["You don't have any completed tasks, how about completing some?"],
+              width: '150px',
+            }
         }
       }
       else if (this.viewType === 'tag')
