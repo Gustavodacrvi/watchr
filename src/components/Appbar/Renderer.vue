@@ -19,6 +19,7 @@
       data-name='appnav-renderer'
     >
       <AppbarElement v-for="(el,i) in list"
+        class="element"
         :iconColor='getIconColor(el)'
         :icon="getIcon(el)"
 
@@ -102,11 +103,7 @@ export default {
 
       onUpdate: (evt) => {
         setTimeout(() => {
-          const childs = this.draggableRoot.childNodes
-          const ids = []
-          for (const el of childs)
-            ids.push(el.dataset.id)
-          this.$emit('update', ids)
+          this.$emit('update', this.getIds())
         }, 100)
       },
       onEnd: () => {
@@ -146,7 +143,10 @@ export default {
           if (c.dataset.id === 'floating-button') break
           i++
         }
-        this.$emit('buttonAdd', i)
+        this.$emit('buttonAdd', {
+          index: i,
+          ids: this.getIds(),
+        })
         this.draggableRoot.removeChild(evt.item)
       }
     })
@@ -155,6 +155,13 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    getIds() {
+      const childs = this.draggableRoot.childNodes
+      const ids = []
+      for (const el of childs)
+        ids.push(el.dataset.id)
+      return ids
+    },
     enter(el, done) {
       el.style.opacity = 0
       el.style.height = '0px'
@@ -173,6 +180,7 @@ export default {
       }
     },
     leave(el, done) {
+      el.style.transition = 'height .2s, opacity .2s !important'
       el.style.opacity = 0
       el.style.height = '0px'
       setTimeout(() => done(), 300)
@@ -220,7 +228,7 @@ export default {
 
 .illustration {
   width: 100%;
-  height: 200px;
+  height: 175px;
   position: absolute;
   top: 0;
   left: 0;

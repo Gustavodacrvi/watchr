@@ -4,7 +4,7 @@
     @mouseenter="hover = true"
     @mouseleave="hover = false"
     @click.stop="linkCallback"
-    :class="{notSmartActive: !isSmart && isActive, isSelectedEl}"
+    :class="{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover}"
   >
     <div
       class="link-wrapper AppbarElement-link rb"
@@ -214,6 +214,10 @@ export default {
 .name-t-leave-to {
   opacity: 0;
   transform: translateY(25px);
+}
+
+.onHover {
+  z-index: 10;
 }
 
 </style>

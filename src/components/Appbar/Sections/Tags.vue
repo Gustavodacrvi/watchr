@@ -59,20 +59,21 @@ export default {
         type: 'tag',
       })
     },
-    buttonAdd(index) {
-      this.$store.dispatch('pushPopup', {comp: 'AddTag', payload: index})
+    buttonAdd(obj) {
+      this.$store.dispatch('pushPopup', {comp: 'AddTag', payload: {...obj}})
     }
   },
   computed: {
     ...mapState(['selectedTasks']),
     ...mapGetters({
-      getNumberOfTasksByTag: 'task/getNumberOfTasksByTag'
+      getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
+      l: 'l',
     }),
     illustration() {
       return {
         name: 'MultipleTags',
-        title: "You don't have any tags.",
-        descr: "You can add some by dropping the plus floating button in this region.",
+        title: this.l["You don't have any tags."],
+        descr: this.l["You can add one by dropping the plus floating button in this region."],
         width: '80px',
       }
     },

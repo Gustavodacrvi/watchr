@@ -106,4 +106,6 @@ export default {
   "Apply selected on tasks": "Apply selected on tasks",
   "Hurray! Everything is clean here!": "Hurray! Everything is clean here!",
   "You don't have any completed tasks, how about completing some?": "You don't have any completed tasks, how about completing some?",
+  "You can add one by dropping the plus floating button in this region.": "You can add one by dropping the plus floating button in this region.",
+  "You don't have any tags.": "You don't have any tags.",
 }

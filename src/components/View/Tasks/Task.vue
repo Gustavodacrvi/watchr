@@ -14,7 +14,7 @@
         @dblclick="dblclick"
       >
         <div class="cont">
-          <div class="check" @click="completeTask">
+          <div class="check" @click.stop="completeTask">
             <Icon v-if="!completed" class="icon"
               icon="circle"
               :color='circleColor'

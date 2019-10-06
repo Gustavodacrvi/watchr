@@ -102,7 +102,8 @@ export default {
       return this.hided
     },
     hidePassive() {
-      return this.timeBeforeMouseMove > 5 && this.isStandAlone && this.isDesktop
+      return true
+      return this.timeBeforeMouseMove > 4 && this.isStandAlone && this.isDesktop
     },
     isIconDropOpened() {
       return this.$store.state.iconDrop !== null
@@ -165,7 +166,7 @@ export default {
 }
 
 .hided {
-  top: -18px !important;
+  top: -22px !important;
 }
 
 .view-t-enter, .view-t-leave-to {

@@ -48,7 +48,7 @@ export default {
         })
       ])
     },
-    addTag({dispatch, state}, {name, index}) {
+    addTag(c, {name, index, ids}) {
       const obj = {
         name,
         userId: uid(),
@@ -58,7 +58,7 @@ export default {
         return fire.collection('tags').add(obj)
       const batch = fire.batch()
 
-      const ord = state.order.slice()
+      const ord = ids.slice()
       const ref = fire.collection('tags').doc()
       batch.set(ref, obj)
       ord.splice(index, 0, ref.id)

@@ -8,7 +8,6 @@
       :viewType="viewType"
       @update='update'
     />
-    Not ready
   </div>
 </template>
 

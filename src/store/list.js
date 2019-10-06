@@ -62,12 +62,25 @@ export default {
         })
       ])
     },
-    addList(c, {name}) {
-      return fire.collection('lists').add({
+    addList(c, {name, ids, index}) {
+      const obj = {
         name,
         userId: uid(),
-        descr: '',
+      }
+      if (!index)
+        return fire.collection('lists').add(obj)
+      const batch = fire.batch()
+
+      const ord = ids.slice()
+      const ref = fire.collection('lists').doc()
+      batch.set(ref, obj)
+      ord.splice(index, 0, ref.id)
+      const orderRef = fire.collection('listsOrder').doc(uid())
+      batch.update(orderRef, {
+        order: ord,
       })
+
+      batch.commit()
     },
     editList(c, {name, id}) {
       return fire.collection('lists').doc(id).update({

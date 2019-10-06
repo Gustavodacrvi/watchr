@@ -90,7 +90,7 @@ export default {
   display: none;
 }
 
-.TaskRenderer .ActButton, .Tags .ActButton {
+.TaskRenderer .ActButton, .appnav-section .ActButton {
   width: 100%;
   border: 1px solid var(--white);
   border-radius: 6px;

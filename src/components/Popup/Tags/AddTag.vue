@@ -63,7 +63,7 @@ export default {
         if (!tag && !this.isEditing) {
           this.$store.dispatch('tag/addTag', {
             name: this.name,
-            index: this.payload,
+            ...this.payload,
           })
           toast({
             name: this.l[`Tag added successfully!`],

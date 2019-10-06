@@ -106,5 +106,7 @@ export default {
   "Apply selected tasks": "Aplicar nas tarefas",
   "Apply selected on tasks": "Aplicar selecionados na tarefa.",
   "Hurray! Everything is clean here!": "Você não tem tarefas completadas.",
-  "You don't have any completed tasks, how about completing some?": "Que tal completar mais tarefas?"
+  "You don't have any completed tasks, how about completing some?": "Que tal completar mais tarefas?",
+  "You can add one by dropping the plus floating button in this region.": "Você pode adicionar uma ao droppar o botão flutuante nesta região.",
+  "You don't have any tags.": "Você não tem nenhuma tag.",
 }

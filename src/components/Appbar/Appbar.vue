@@ -31,7 +31,7 @@
         >
           <keep-alive>
             <component
-              class="component"
+              class="component scroll-thin appnav-section"
               :is="section"
               :active="value"
               :viewType='viewType'
@@ -41,12 +41,15 @@
         </transition>
       </div>
     </transition>
-      <IconDrop v-if="getSectionOptions && !appbarHided"
-      class="drop right passive"
-      handle='settings-h'
-      handleColor='var(--gray)'
-      :options="getSectionOptions"
-    />
+    <div class="footer-wrapper"></div>
+    <transition name="icon-t">
+      <IconDrop v-if="showIconDropdown"
+        class="drop right passive"
+        handle='settings-h'
+        handleColor='var(--gray)'
+        :options="getSectionOptions"
+      />
+    </transition>
     <Icon v-if="isDesktop" icon="arrow" id='appbar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
   </div>
 </template>
@@ -128,6 +131,7 @@ export default {
       ],
       showing: true,
       transRight: true,
+      showingIconDrop: true,
       oldIndex: 0,
       section: 'Lists'
     }
@@ -239,6 +243,9 @@ export default {
       l: 'l',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView'
     }),
+    showIconDropdown() {
+      return this.getSectionOptions && !this.appbarHided && this.showingIconDrop
+    },
     getSectionOptions() {
       return this[this.section]
     },
@@ -305,6 +312,10 @@ export default {
   watch: {
     section() {
       this.$emit('section', this.section)
+      this.showingIconDrop = false
+      setTimeout(() => {
+        this.showingIconDrop = true
+      }, 200)
     },
   }
 }
@@ -313,8 +324,18 @@ export default {
 
 <style scoped>
 
-.content {
+.content, .Appbar {
   position: relative;
+}
+
+.footer-wrapper {
+  position: fixed;
+  left: 0;
+  bottom: 8px;
+  height: 35px;
+  width: 100%;
+  background-color: var(--back-color);
+  box-shadow: 0 -3px 4px var(--back-color);
 }
 
 .header {
@@ -371,9 +392,9 @@ export default {
 }
 
 .drop {
-  position: fixed;
-  left: 310px;
-  bottom: 16px;
+  position: absolute;
+  right: 3px;
+  bottom: -24px;
 }
 
 .mobile .drop {
@@ -400,6 +421,9 @@ export default {
 
 .component {
   transform: translateX(0px);
+  height: 270px;
+  overflow-y: auto;
+  overflow-x: hidden;
   opacity: 1;
 }
 
@@ -416,6 +440,16 @@ export default {
 .sect-trans-enter-active, .sect-trans-leave-active {
   width: 100%;
   position: absolute;
+}
+
+.icon-t-enter, .icon-t-leave-to {
+  opacity: 0 !important;
+  transition-duration: .2s !important;
+}
+
+.icon-t-leave, .icon-t-enter-to {
+  opacity: 1 !important;
+  transition-duration: .2s !important;
 }
 
 </style>
