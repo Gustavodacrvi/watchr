@@ -104,6 +104,11 @@ export default {
         order: ids,
       })
     },
+    saveList(c, list) {
+      return fire.collection('lists').doc(list.id).update({
+        ...list,
+      })
+    },
     updateViewOrder(c, {view, ids}) {
       const obj = {}
       obj[view] = {}

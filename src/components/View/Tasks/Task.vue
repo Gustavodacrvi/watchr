@@ -295,8 +295,11 @@ export default {
       else if (!this.isDesktop) return true
     },
     listStr() {
-      if (!this.task.list) return null
-      return this.savedLists.find(el => el.id === this.task.list).name
+      const list = this.task.list
+      if (!list) return null
+      const name = this.savedLists.find(el => el.id === list).name
+      if (name === this.view) return null
+      return name
     },
     calendarStr() {
       if (!this.task.calendar || this.view === 'Upcoming') return null

@@ -53,17 +53,22 @@ export default {
     },
     updateIds(ids) {
       if (this.isSmart) {
-          this.$store.dispatch('list/updateViewOrder', {
+        this.$store.dispatch('list/updateViewOrder', {
           view: this.viewName,
           ids,
         })
-      }
+      } else if (this.viewType === 'list' && this.viewList)
+        this.$store.dispatch('list/saveList', {
+          tasks: ids,
+          id: this.viewList.id,
+        })
     },
   },
   computed: {
     ...mapState({
       tags: state => state.tag.tags,
       tasks: state => state.task.tasks,
+      lists: state => state.list.lists,
       viewOrders: state => state.list.viewOrders,      
     }),
     ...mapGetters({
@@ -91,6 +96,9 @@ export default {
       }
       else if (this.viewType === 'tag' && this.viewTag)
         return this.tasks.filter(el => el.tags.includes(this.viewTag.id))
+      else if (this.viewType === 'list' && this.viewList) {
+        return this.getRootTasksOfList
+      }
       return []
     },
     tasksOrder() {
@@ -98,7 +106,8 @@ export default {
         let o = this.viewOrders[this.viewName]
         if (o && o.tasks) o = this.viewOrders[this.viewName].tasks
         if (o) return o
-      }
+      } else if (this.viewType === 'list' && this.viewList)
+        return this.viewList.tasks
       return []
     },
     headingsOptions() {
@@ -162,10 +171,25 @@ export default {
           descr: l["How about adding one using the floating button?"],
           width: '150px',
         }
+      else if (this.viewName)
+        return {
+          name: 'SadTag',
+          title: "This illustration will change MOTHERFUCKER!.",
+          width: '150px',
+        }
     },
 
     viewTag() {
       return this.tags.find(el => el.name === this.viewName)
+    },
+    viewList() {
+      return this.lists.find(el => el.name === this.viewName)
+    },
+    getListTasks() {
+      return this.tasks.filter(el => el.list === this.viewList.id)
+    },
+    getRootTasksOfList() {
+      return this.getListTasks.filter(el => !el.heading)
     },
     upcomingHeadingsOptions() {
       const arr = []
