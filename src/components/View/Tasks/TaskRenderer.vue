@@ -47,8 +47,7 @@
           <TaskRenderer
             :tasks='getTasks(savedTasks, h)'
             :view='view'
-            :editHeadingExcludeNames='h.headingEdit.excludeNames'
-            :excludeNamesErrorToast='h.headingEdit.errorToast'
+            :headingEdit='headingEdit'
             :viewNameValue='viewNameValue'
             :activeTags="activeTags"
             :headings='[]'
@@ -172,9 +171,11 @@ export default {
             })
         }
         else if (type === 'headingbutton') {
+          const h = this.headingEdit
+          console.log(h)
           addEdit(HeadingEditVue, this.addHeading, {
               key: 'EditHeading', class: 'handle',
-              errorToast: this.errorToast, names: this.excludeNames,
+              errorToast: h.errorToast, names: h.excludeNames,
               buttonTxt: this.l['Save'],
             })
         }

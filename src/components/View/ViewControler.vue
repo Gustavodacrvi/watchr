@@ -6,6 +6,7 @@
     :icon="icon"
     :illustration='illustration'
     :showHeader='isListType'
+    :headingEdit='headingEdit'
 
     :headingsOptions='headingsOptions'
     :tasks='getTasks'
@@ -196,6 +197,14 @@ export default {
     getRootTasksOfList() {
       return this.getListTasks.filter(el => !el.heading)
     },
+    headingEdit() {
+      if (!this.isSmart && this.viewType === 'list' && this.viewList)
+        return {
+          excludeNames: this.viewList.headings.map(el => el.name),
+          errorToast: "There's already another heading with this name.",
+        }
+      return []
+    },
     listHeadingsOptions() {
       const arr = []
       const heads = this.viewList.headings
@@ -204,10 +213,6 @@ export default {
           name: h.name,
           filter: () => [],
           id: h.name,
-          heading: {
-            excludeNames: h.headings.map(el => el.name),
-            errorToast: "There's already another heading with this name.",
-          },
           onAddTask(obj) {
             console.log('liskRenderEditAdder', obj)
           },

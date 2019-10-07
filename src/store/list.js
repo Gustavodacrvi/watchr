@@ -82,32 +82,34 @@ export default {
         tasks: [],
       }
       if (!index)
-        return fire.collection('lists').add(obj)
-      const batch = fire.batch()
-
-      const ord = ids.slice()
-      const ref = fire.collection('lists').doc()
-      batch.set(ref, obj)
-      ord.splice(index, 0, ref.id)
-      const orderRef = fire.collection('listsOrder').doc(uid())
-      batch.update(orderRef, {
-        order: ord,
-      })
-
-      batch.commit()
+        fire.collection('lists').add(obj)
+      else {
+        const batch = fire.batch()
+  
+        const ord = ids.slice()
+        const ref = fire.collection('lists').doc()
+        batch.set(ref, obj)
+        ord.splice(index, 0, ref.id)
+        const orderRef = fire.collection('listsOrder').doc(uid())
+        batch.update(orderRef, {
+          order: ord,
+        })
+  
+        batch.commit()
+      }
     },
     editList(c, {name, id}) {
-      return fire.collection('lists').doc(id).update({
+      fire.collection('lists').doc(id).update({
         name,
       })
     },
     updateOrder(c, ids) {
-      return fire.collection('listsOrder').doc(uid()).update({
+      fire.collection('listsOrder').doc(uid()).update({
         order: ids,
       })
     },
     saveList(c, list) {
-      return fire.collection('lists').doc(list.id).update({
+      fire.collection('lists').doc(list.id).update({
         ...list,
       })
     },
@@ -115,7 +117,7 @@ export default {
       const obj = {}
       obj[view] = {}
       obj[view].tasks = ids
-      return fire.collection('viewOrders').doc(uid()).update(obj)
+      fire.collection('viewOrders').doc(uid()).update(obj)
     },
     sortListsByName({state, dispatch}) {
       const lists = state.lists.slice()
@@ -123,7 +125,7 @@ export default {
       dispatch('updateOrder', lists.map(el => el.id))
     },
     deleteList(c, id) {
-      return fire.collection('lists').doc(id).delete()
+      fire.collection('lists').doc(id).delete()
     },
     addTaskByIndexSmart({ getters }, {ids, index, task, list}) {
       const batch = fire.batch()
@@ -142,7 +144,7 @@ export default {
       const listRef = fire.collection('viewOrders').doc(uid())
       batch.update(listRef, obj)
 
-      return batch.commit()
+      batch.commit()
     },
     addDefaultData(c, id) {
       return Promise.all([

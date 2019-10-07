@@ -20,6 +20,7 @@
         :viewNameValue='viewNameValue'
         :headings='headingsOptions'
         :addTask='addTask'
+        :headingEdit='headingEdit'
         :activeTags='getActiveTags'
         :illustration='illustration'
         @update='updateIds'
@@ -42,7 +43,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'icon', 'viewNameValue', 'emptyIcon', 'illustration'],
+  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,

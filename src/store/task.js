@@ -106,7 +106,7 @@ export default {
         })
       }
 
-      return batch.commit()
+      batch.commit()
     },
     completeTasks(c, tasks) {
       const batch = fire.batch()
@@ -127,10 +127,10 @@ export default {
 
       }
       
-      return batch.commit()
+      batch.commit()
     },
     saveTask(c, obj) {
-      return fire.collection('tasks').doc(obj.id).update({
+      fire.collection('tasks').doc(obj.id).update({
         ...obj,
       })
     },
@@ -144,7 +144,7 @@ export default {
         })
       }
 
-      return batch.commit()
+      batch.commit()
     },
     addTagsToTasksById(c, {ids, tagIds}) {
       const batch = fire.batch()
@@ -162,7 +162,7 @@ export default {
         })
       }
 
-      return batch.commit()
+      batch.commit()
     },
     addListToTasksById(c, {ids, listId}) {
       const batch = fire.batch()
@@ -174,10 +174,10 @@ export default {
         })
       }
 
-      return batch.commit()
+      batch.commit()
     },
     copyTask(c, task) {
-      return fire.collection('tasks').add({
+      fire.collection('tasks').add({
         ...task,
       })
     },
@@ -189,7 +189,7 @@ export default {
         batch.delete(ref)
       }
 
-      return batch.commit()
+      batch.commit()
     },
     handleTasksByAppnavElementDragAndDrop({dispatch, getters}, {elIds, taskIds, type}) {
       const calObj = (mom) => {

@@ -117,6 +117,7 @@ export default {
     },
     linkClick(callback, link) {
       this.linkCallback(callback, link, () => {
+        console.log(3)
         this.$store.commit('clearSelected')
       })
       this.justClosed = true
@@ -124,6 +125,7 @@ export default {
     linkCallback(callback, link, doesnHaveLinksCallback) {
       if (callback) {
         let links = callback(link)
+        if ((!links || !links.calendar) && doesnHaveLinksCallback) doesnHaveLinksCallback()
         if (links && links.search) {
           this.showSearch = true
         }
@@ -162,7 +164,6 @@ export default {
           }
         } else {
           this.showing = false
-          if (doesnHaveLinksCallback) doesnHaveLinksCallback()
         }
       }
     },
