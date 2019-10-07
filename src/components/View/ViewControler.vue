@@ -221,6 +221,18 @@ export default {
             return this.getListTasks.filter(el => el.heading === h.name)
           },
           id: h.name,
+          options: [
+            {
+              name: 'Delete heading',
+              icon: 'trash',
+              callback: () => {
+                this.$store.dispatch('list/deleteHeadingFromList', {
+                  listId: this.viewList.id,
+                  name: h.name,
+                })
+              },
+            }
+          ],
           onAddTask(obj) {
             console.log('liskRenderEditAdder', obj)
           },
