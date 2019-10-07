@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="renderer task-renderer">
-      {{ l["Add task"] }}
+      {{ txt }}
     </div>
     <div class="renderer tags-act">
       {{ l["Add tag"] }}

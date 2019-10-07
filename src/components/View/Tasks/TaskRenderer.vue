@@ -10,16 +10,6 @@
         />
       </div>
     </transition>
-    <heading-edit
-      buttonTxt="Save"
-      errorToast="Error freaking toast"
-      name='Freaking default text'
-      :names='
-        ["Heading name 1",
-        "Heading name 2",
-        "Heading three"]
-      '
-    />
     <transition-group name="task-trans" class="front task-renderer-root" :class="{dontHaveTasks: tasks.length === 0 && headings.length === 0}"
       appear
       @enter='enter'
@@ -57,8 +47,8 @@
           <TaskRenderer
             :tasks='getTasks(savedTasks, h)'
             :view='view'
-            :editHeadingExcludeNames='h.editHeadingExcludeNames.map(el => el.name)'
-            :excludeNamesErrorToast='h.excludeNamesErrorToast'
+            :editHeadingExcludeNames='h.headingEdit.excludeNames'
+            :excludeNamesErrorToast='h.headingEdit.errorToast'
             :viewNameValue='viewNameValue'
             :activeTags="activeTags"
             :headings='[]'
@@ -95,13 +85,12 @@ const lastHeading = {
 }
 
 export default {
-  props: ['tasks', 'header', 'onAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'editHeadingExcludeNames', 'excludeNamesErrorToast'],
+  props: ['tasks', 'header', 'onAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue,
     HeadingApp: HeadingVue,
     Illustration: IllustrationVue,
-    HeadingEdit: HeadingEditVue,
   },
   data() {
     return {
@@ -135,6 +124,7 @@ export default {
           if (d.type === 'task') return true
           if (d.type === 'floatbutton') return true
           if (d.type === 'appnav-element') return true
+          if (d.type === 'headingbutton') return true
           return false
         }
       },
@@ -150,24 +140,18 @@ export default {
       onAdd: (evt) => {
         const item = evt.item
         const type = item.dataset.type
-        if (type !== 'addtask')
-          item.style.display = 'none'
-        if (type !== 'floatbutton' && this.onAdd)
-          this.onAdd(evt, item, type)
-        if (type === 'floatbutton') {
-          const Constructor = Vue.extend(TaskEditTemplate)
+
+        const addEdit = (comp, onSave, propsData) => {
+          const Constructor = Vue.extend(comp)
           const instance = new Constructor({
             parent: this,
-            propsData: {
-              class: 'handle', key: 'Edit',
-              placeholder: this.l['Task name'], showCancel: true, btnText: this.l['Add task']
-            },
+            propsData,
           })
           const el = this.$el.querySelector('.action-button')
-          el.setAttribute('id', 'main-button-task')
-          instance.$mount('#main-button-task')
+          el.setAttribute('id', 'edit-task-renderer')
+          instance.$mount('#edit-task-renderer')
           this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
-          instance.$on('save', (obj) => this.add(obj, evt))
+          instance.$on('save', (obj) => onSave(obj, evt))
           instance.$on('goup', () => this.moveTaskRenderer('up'))
           instance.$on('godown', () => this.moveTaskRenderer('down'))
           instance.$on('cancel', () => {
@@ -176,8 +160,23 @@ export default {
             $el.parentNode.removeChild($el)
           })
         }
+        
+        if (type !== 'addtask')
+          item.style.display = 'none'
+        if (type !== 'floatbutton' && this.onAdd)
+          this.onAdd(evt, item, type)
+        if (type === 'floatbutton') {
+          addEdit(TaskEditTemplate, this.add, {
+              class: 'handle', key: 'Edit',
+              placeholder: this.l['Task name'], showCancel: true, btnText: this.l['Add task']
+            })
+        }
         else if (type === 'headingbutton') {
-
+          addEdit(HeadingEditVue, this.addHeading, {
+              key: 'EditHeading', class: 'handle',
+              errorToast: this.errorToast, names: this.excludeNames,
+              buttonTxt: this.l['Save'],
+            })
         }
       },
       onStart: (evt) => {
@@ -228,6 +227,9 @@ export default {
     window.removeEventListener('click', this.windowClick)
   },
   methods: {
+    addHeading(obj) {
+      console.log('addHeading', obj)
+    },
     click(event) {
       if (this.selected.length > 0) event.stopPropagation()
     },

@@ -204,8 +204,10 @@ export default {
           name: h.name,
           filter: () => [],
           id: h.name,
-          editHeadingExcludeNames: h.headings,
-          excludeNamesErrorToast: "There's already another heading with this name.",
+          heading: {
+            excludeNames: h.headings.map(el => el.name),
+            errorToast: "There's already another heading with this name.",
+          },
           onAddTask(obj) {
             console.log('liskRenderEditAdder', obj)
           },

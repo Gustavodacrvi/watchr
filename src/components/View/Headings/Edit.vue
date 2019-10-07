@@ -1,5 +1,5 @@
 <template>
-  <div class="HeadingEdit">
+  <div class="HeadingEdit Edit">
     <InputApp
       placeholder="Heading name..."
       v-model="str"
@@ -11,10 +11,13 @@
       @godown='$emit("godown")'
     />
     <div class="button">
-      <ButtonApp
-        :value="buttonTxt"
-        @click="save"
-      />
+      <div class="btn">
+        <ButtonApp
+          :value="buttonTxt"
+          @click="save"
+        />
+      </div>
+      <span class="cancel cursor" @click="$emit('cancel')">{{ l['Cancel'] }}</span>
     </div>
   </div>
 </template>
@@ -23,6 +26,7 @@
 
 import DropInputVue from '../../Auth/DropInput.vue'
 import ButtonVue from '../../Auth/Button.vue'
+
 import { mapGetters } from 'vuex'
 
 export default {
@@ -56,6 +60,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['l']),
+  },
   watch: {
     str() {
       this.options = this.names.filter(el => el.toLowerCase().includes(this.str.toLowerCase()))
@@ -68,7 +75,17 @@ export default {
 <style scoped>
 
 .button {
-  width: 300px;
+  display: flex;
+  align-items: center;
+}
+
+.btn {
+  flex-basis: 100px;
+}
+
+.cancel {
+  color: var(--red);
+  margin-left: 6px;
 }
 
 </style>
