@@ -6,6 +6,7 @@
     :icon="icon"
     :illustration='illustration'
     :showHeader='isListType'
+    :showEmptyHeadings='isListType'
     :headingEdit='headingEdit'
 
     :headingsOptions='headingsOptions'
@@ -14,6 +15,7 @@
 
     @update-ids='updateIds'
     @add-task='addTask'
+    @add-heading='addHeading'
   />
 </template>
 
@@ -68,6 +70,10 @@ export default {
           id: this.viewList.id,
         })
     },
+    addHeading(obj) {
+      if (this.viewList)
+        this.$store.dispatch('list/addHeading', {...obj, listId: this.viewList.id})
+    }
   },
   computed: {
     ...mapState({
@@ -211,7 +217,9 @@ export default {
       for (const h of heads) {
         arr.push({
           name: h.name,
-          filter: () => [],
+          filter: () => {
+            return this.getListTasks.filter(el => el.heading === h.name)
+          },
           id: h.name,
           onAddTask(obj) {
             console.log('liskRenderEditAdder', obj)
@@ -222,7 +230,7 @@ export default {
         })
       }
 
-      return []
+      return arr
     },
     upcomingHeadingsOptions() {
       const arr = []

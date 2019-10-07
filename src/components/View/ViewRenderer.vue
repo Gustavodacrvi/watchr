@@ -18,12 +18,15 @@
         :tasks='getFilterCompletedTasks'
         :view='viewName'
         :viewNameValue='viewNameValue'
+        :showEmptyHeadings='showEmptyHeadings'
         :headings='headingsOptions'
         :addTask='addTask'
         :headingEdit='headingEdit'
         :activeTags='getActiveTags'
         :illustration='illustration'
+        :headingPosition='0'
         @update='updateIds'
+        @add-heading="(obj) => $emit('add-heading', obj)"
       />
     </div>
     <ActionButtons :showHeader='showHeader'/>
@@ -43,7 +46,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration'],
+  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,

@@ -1,5 +1,5 @@
 <template>
-  <div class="HeadingEdit Edit">
+  <div class="HeadingEdit Edit handle">
     <InputApp
       placeholder="Heading name..."
       v-model="str"
@@ -55,7 +55,7 @@ export default {
         else this.$store.commit('pushToast', {
           name: this.errorToast,
           seconds: 3,
-          error: 'success',
+          type: 'error',
         })
       }
     }

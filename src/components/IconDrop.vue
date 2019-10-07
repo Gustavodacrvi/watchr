@@ -117,7 +117,6 @@ export default {
     },
     linkClick(callback, link) {
       this.linkCallback(callback, link, () => {
-        console.log(3)
         this.$store.commit('clearSelected')
       })
       this.justClosed = true

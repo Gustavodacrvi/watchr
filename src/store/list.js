@@ -127,7 +127,7 @@ export default {
     deleteList(c, id) {
       fire.collection('lists').doc(id).delete()
     },
-    addTaskByIndexSmart({ getters }, {ids, index, task, list}) {
+    addTaskByIndexSmart(c, {ids, index, task, list}) {
       const batch = fire.batch()
 
       const taskRef = fire.collection('tasks').doc()
@@ -145,6 +145,27 @@ export default {
       batch.update(listRef, obj)
 
       batch.commit()
+    },
+    addHeading({state}, {ids, name, listId, index}) {
+      const list = state.lists.find(el => el.id === listId)
+      if (list) {
+        const batch = fire.batch()
+
+        for (const id of ids) {
+          const ref = fire.collection('tasks').doc(id)
+          batch.update(ref, {
+            heading: name,
+          })
+        }
+        const headings = list.headings.slice()
+        headings.splice(index, 0, {name, tasks: ids})
+        const ref = fire.collection('lists').doc(listId)
+        batch.update(ref, {
+          headings,
+        })
+
+        batch.commit()
+      }
     },
     addDefaultData(c, id) {
       return Promise.all([

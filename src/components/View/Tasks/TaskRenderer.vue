@@ -10,7 +10,7 @@
         />
       </div>
     </transition>
-    <transition-group name="task-trans" class="front task-renderer-root" :class="{dontHaveTasks: tasks.length === 0 && headings.length === 0}"
+    <transition-group name="task-trans" class="front task-renderer-root" :class="{dontHaveTasks: tasks.length === 0 && headings.length === 0, showEmptyHeadings}"
       appear
       @enter='enter'
       @leave='leave'
@@ -37,8 +37,8 @@
       @leave='headingsLeave'
       @enter='headingsEnter'
     >
-      <template v-for="h in headings">
-        <HeadingApp v-if="getTasks(savedTasks, h).length > 0" :key="h.id"
+      <template v-for="(h, i) in headings">
+        <HeadingApp v-if="showEmptyHeadings || getTasks(savedTasks, h).length > 0" :key="h.id"
           :header='h'
           :name='h.name'
           :color='h.color ? h.color : ""'
@@ -49,12 +49,15 @@
             :view='view'
             :headingEdit='headingEdit'
             :viewNameValue='viewNameValue'
+            :showEmptyHeadings='showEmptyHeadings'
             :activeTags="activeTags"
             :headings='[]'
             :header="h"
             :addTask="h.onAddTask"
+            :headingPosition='i + 1'
             :onAdd='h.onAdd'
             :disable='h.disableTaskRenderer'
+            @add-heading='(obj) => $emit("add-heading", obj)'
           />
         </HeadingApp>
       </template>
@@ -84,7 +87,7 @@ const lastHeading = {
 }
 
 export default {
-  props: ['tasks', 'header', 'onAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit'],
+  props: ['tasks', 'header', 'onAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit', 'headingPosition', 'showEmptyHeadings'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue,
@@ -162,19 +165,18 @@ export default {
         
         if (type !== 'addtask')
           item.style.display = 'none'
-        if (type !== 'floatbutton' && this.onAdd)
+        if (type === 'task' && this.onAdd)
           this.onAdd(evt, item, type)
         if (type === 'floatbutton') {
           addEdit(TaskEditTemplate, this.add, {
-              class: 'handle', key: 'Edit',
+              key: 'Edit',
               placeholder: this.l['Task name'], showCancel: true, btnText: this.l['Add task']
             })
         }
         else if (type === 'headingbutton') {
           const h = this.headingEdit
-          console.log(h)
           addEdit(HeadingEditVue, this.addHeading, {
-              key: 'EditHeading', class: 'handle',
+              key: 'EditHeading',
               errorToast: h.errorToast, names: h.excludeNames,
               buttonTxt: this.l['Save'],
             })
@@ -218,7 +220,7 @@ export default {
             el.style.boxShadow = `0 2px 10px ${color}`
           } else move = null
         } else move = null
-        if (!e.path.some(el => el.classList && el.classList.contains('task-renderer-root')))
+        if (e && !e.path.some(el => el.classList && el.classList.contains('task-renderer-root')))
           return false
       },
     })
@@ -228,8 +230,16 @@ export default {
     window.removeEventListener('click', this.windowClick)
   },
   methods: {
-    addHeading(obj) {
-      console.log('addHeading', obj)
+    addHeading(name) {
+      if (name) {
+        const i = this.getTaskRendererPosition()
+        const ids = this.getIds(true)
+        console.log(ids.slice(i))
+/*         this.$emit('add-heading', {
+          ids: ids.slice(i),
+          name, index: this.headingPosition,
+        }) */
+      }
     },
     click(event) {
       if (this.selected.length > 0) event.stopPropagation()
@@ -464,6 +474,10 @@ export default {
 
 .dontHaveTasks {
   height: 400px;
+}
+
+.showEmptyHeadings.dontHaveTasks {
+  height: 50px;
 }
 
 </style>
