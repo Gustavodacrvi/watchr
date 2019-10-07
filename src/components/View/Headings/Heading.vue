@@ -26,7 +26,7 @@
 
 <script>
 
-import IconDropVue from '../IconDrop.vue'
+import IconDropVue from '../../IconDrop.vue'
 
 export default {
   props: ['name', 'options', 'color', 'header'],

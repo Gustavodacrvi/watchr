@@ -116,11 +116,12 @@ export default {
       setTimeout(() => done(), 300)
     },
     linkClick(callback, link) {
-      this.linkCallback(callback, link)
+      this.linkCallback(callback, link, () => {
+        this.$store.commit('clearSelected')
+      })
       this.justClosed = true
-      this.$store.commit('clearSelected')      
     },
-    linkCallback(callback, link) {
+    linkCallback(callback, link, doesnHaveLinksCallback) {
       if (callback) {
         let links = callback(link)
         if (links && links.search) {
@@ -159,13 +160,17 @@ export default {
             this.toggleLinks()
             this.links = links
           }
-        } else this.showing = false
+        } else {
+          this.showing = false
+          if (doesnHaveLinksCallback) doesnHaveLinksCallback()
+        }
       }
     },
     selectDate(date) {
       if (this.calendarCallback)
         this.calendarCallback(date)
       this.showing = false
+      this.$store.commit('clearSelected')
     },
     toggleLinks() {
       this.showingLinks = false

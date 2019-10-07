@@ -31,7 +31,7 @@
 
 <script>
 
-import HeaderVue from './Header.vue'
+import HeaderVue from './Headings/Header.vue'
 import TaskRendererVue from './Tasks/TaskRenderer.vue'
 import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
 

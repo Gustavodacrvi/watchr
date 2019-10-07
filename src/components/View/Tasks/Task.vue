@@ -297,9 +297,9 @@ export default {
     listStr() {
       const list = this.task.list
       if (!list) return null
-      const name = this.savedLists.find(el => el.id === list).name
-      if (name === this.view) return null
-      return name
+      const savedList = this.savedLists.find(el => el.id === list)
+      if (!savedList || savedList.name === this.view) return null
+      return savedList.name
     },
     calendarStr() {
       if (!this.task.calendar || this.view === 'Upcoming') return null
@@ -373,6 +373,10 @@ export default {
 
 .cont, .text, .check-drop, .check {
   display: flex;
+}
+
+.text .icon {
+  flex-shrink: 0;
 }
 
 .check, .icon-drop-wrapper {

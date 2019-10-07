@@ -78,6 +78,8 @@ export default {
       const obj = {
         name,
         userId: uid(),
+        headings: [],
+        tasks: [],
       }
       if (!index)
         return fire.collection('lists').add(obj)

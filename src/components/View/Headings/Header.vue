@@ -26,9 +26,9 @@
 
 <script>
 
-import IconVue from '../Icon.vue'
-import IconDropVue from '../IconDrop.vue'
-import TagVue from './Tag.vue'
+import IconVue from '../../Icon.vue'
+import IconDropVue from '../../IconDrop.vue'
+import TagVue from './../Tag.vue'
 
 import { mapState } from 'vuex'
 

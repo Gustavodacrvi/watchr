@@ -11,6 +11,7 @@
       :viewType="viewType"
       :mapNumbers="(tasks) => tasks"
       :enableSort="true"
+      @buttonAdd='buttonAdd'
       @update='update'
     />
     <div style="height: 100px"></div>

@@ -5,6 +5,7 @@
     :viewType='viewType'
     :icon="icon"
     :illustration='illustration'
+    :showHeader='isListType'
 
     :headingsOptions='headingsOptions'
     :tasks='getTasks'
@@ -49,7 +50,10 @@ export default {
         this.$store.dispatch('task/addTask', {
           ...obj.task,
         })  
-      }
+      } else if (this.isListType)
+        this.$store.dispatch('task/addTask', {
+          ...obj.task, list: this.viewList.id
+        })
     },
     updateIds(ids) {
       if (this.isSmart) {
@@ -57,7 +61,7 @@ export default {
           view: this.viewName,
           ids,
         })
-      } else if (this.viewType === 'list' && this.viewList)
+      } else if (this.isListType)
         this.$store.dispatch('list/saveList', {
           tasks: ids,
           id: this.viewList.id,
@@ -96,7 +100,7 @@ export default {
       }
       else if (this.viewType === 'tag' && this.viewTag)
         return this.tasks.filter(el => el.tags.includes(this.viewTag.id))
-      else if (this.viewType === 'list' && this.viewList) {
+      else if (this.isListType) {
         return this.getRootTasksOfList
       }
       return []
@@ -106,7 +110,7 @@ export default {
         let o = this.viewOrders[this.viewName]
         if (o && o.tasks) o = this.viewOrders[this.viewName].tasks
         if (o) return o
-      } else if (this.viewType === 'list' && this.viewList)
+      } else if (this.isListType)
         return this.viewList.tasks
       return []
     },
@@ -122,7 +126,8 @@ export default {
             return this.completedHeadingsOptions
           }
         }
-      }
+      } else if (this.isListType)
+        return this.listHeadingsOptions
       return []
     },
     illustration() {
@@ -190,6 +195,27 @@ export default {
     },
     getRootTasksOfList() {
       return this.getListTasks.filter(el => !el.heading)
+    },
+    listHeadingsOptions() {
+      const arr = []
+      const heads = this.viewList.headings
+      for (const h of heads) {
+        arr.push({
+          name: h.name,
+          filter: () => [],
+          id: h.name,
+          editHeadingExcludeNames: h.headings,
+          excludeNamesErrorToast: "There's already another heading with this name.",
+          onAddTask(obj) {
+            console.log('liskRenderEditAdder', obj)
+          },
+          onAdd(evt) {
+            console.log('listHeadingsListAdder', evt)
+          }
+        })
+      }
+
+      return []
     },
     upcomingHeadingsOptions() {
       const arr = []
@@ -304,6 +330,9 @@ export default {
           filter: (tasks) => this.getTasks,
         },
       ]
+    },
+    isListType() {
+      return !this.isSmart && this.viewList && this.viewType === 'list'
     },
     hasOverdueTasks() {
       return this.getOverdueTasks.length > 0

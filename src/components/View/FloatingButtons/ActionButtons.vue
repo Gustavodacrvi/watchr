@@ -3,6 +3,7 @@
     <Btn v-if="showHeader" class="header button handle action-button"
       icon='user'
       color='white'
+      data-type='headingbutton'
     />
     <span v-else></span>
     <Btn class="add button handle action-button task-adder" id="addtask"

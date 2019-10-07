@@ -10,6 +10,16 @@
         />
       </div>
     </transition>
+    <heading-edit
+      buttonTxt="Save"
+      errorToast="Error freaking toast"
+      name='Freaking default text'
+      :names='
+        ["Heading name 1",
+        "Heading name 2",
+        "Heading three"]
+      '
+    />
     <transition-group name="task-trans" class="front task-renderer-root" :class="{dontHaveTasks: tasks.length === 0 && headings.length === 0}"
       appear
       @enter='enter'
@@ -47,6 +57,8 @@
           <TaskRenderer
             :tasks='getTasks(savedTasks, h)'
             :view='view'
+            :editHeadingExcludeNames='h.editHeadingExcludeNames.map(el => el.name)'
+            :excludeNamesErrorToast='h.excludeNamesErrorToast'
             :viewNameValue='viewNameValue'
             :activeTags="activeTags"
             :headings='[]'
@@ -68,7 +80,8 @@ import Vue from 'vue'
 import TaskVue from './Task.vue'
 import TaskEditTemplate from './Edit.vue'
 import IllustrationVue from '@/components/Illustrations/Illustration.vue'
-import HeadingVue from './../Heading.vue'
+import HeadingVue from './../Headings/Heading.vue'
+import HeadingEditVue from './../Headings/Edit.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -82,12 +95,13 @@ const lastHeading = {
 }
 
 export default {
-  props: ['tasks', 'header', 'onAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable'],
+  props: ['tasks', 'header', 'onAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'editHeadingExcludeNames', 'excludeNamesErrorToast'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue,
     HeadingApp: HeadingVue,
     Illustration: IllustrationVue,
+    HeadingEdit: HeadingEditVue,
   },
   data() {
     return {
@@ -161,6 +175,9 @@ export default {
             const $el = instance.$el
             $el.parentNode.removeChild($el)
           })
+        }
+        else if (type === 'headingbutton') {
+
         }
       },
       onStart: (evt) => {
