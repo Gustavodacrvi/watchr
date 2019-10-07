@@ -3,23 +3,37 @@
     :name='header.name'
     :id='header.id'
   >
-    <div class="header-wrapper"
-      @click="showing = !showing"
-      @mouseenter="onHover = true"
-      @mouseleave="onHover = false"
-    >
-      <div class="header">
-        <h4 class="name" :style="{color}">{{ name }}</h4>
-        <IconDrop v-show="showIconDrop && options && options.length > 0" class="drop"
-          handle='settings-h'
-          :options='options'
-        />
+    <transition name="fade" mode="out-in">
+      <div v-if="!editing">
+        <div class="header-wrapper" key="wr"
+          @click="showing = !showing"
+          @dblclick="toggleEditing"
+          @mouseenter="onHover = true"
+          @mouseleave="onHover = false"
+        >
+          <div class="header">
+            <h4 class="name" :style="{color}">{{ name }}</h4>
+            <IconDrop v-show="showIconDrop && options && options.length > 0" class="drop"
+              handle='settings-h'
+              :options='options'
+              @edit='toggleEditing'
+            />
+          </div>
+        </div>
+        <transition name="fade">
+          <div v-show="showing" class="cont">
+              <slot></slot>
+          </div>
+        </transition>
       </div>
-    </div>
-    <transition name="fade">
-      <div v-show="showing" class="cont">
-          <slot></slot>
-      </div>
+      <EditHeading v-else key="edig"
+        :name='name'
+        :errorToast='headingEdit.errorToast'
+        :names='headingEdit.excludeNames'
+        :buttonTxt='l["Save"]'
+        @save='save'
+        @cancel='toggleEditing'
+      />
     </transition>
   </div>
 </template>
@@ -27,19 +41,31 @@
 <script>
 
 import IconDropVue from '../../IconDrop.vue'
+import EditVue from './Edit.vue'
+
+import { mapGetters } from 'vuex'
 
 export default {
-  props: ['name', 'options', 'color', 'header'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEdit', 'save'],
   components: {
     IconDrop: IconDropVue,
+    EditHeading: EditVue,
   },
   data() {
     return {
       showing: true,
       onHover: false,
+      editing: false,
+    }
+  },
+  methods: {
+    toggleEditing() {
+      if (this.allowEdit)
+        this.editing = !this.editing
     }
   },
   computed: {
+    ...mapGetters(['l']),
     showIconDrop() {
       const isDesktop = this.$store.getters.isDesktop
       if (isDesktop && this.onHover) return true

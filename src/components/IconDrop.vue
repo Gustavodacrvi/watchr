@@ -123,7 +123,7 @@ export default {
     },
     linkCallback(callback, link, doesnHaveLinksCallback) {
       if (callback) {
-        let links = callback(link)
+        let links = callback(link, this)
         if ((!links || !links.calendar) && doesnHaveLinksCallback) doesnHaveLinksCallback()
         if (links && links.search) {
           this.showSearch = true

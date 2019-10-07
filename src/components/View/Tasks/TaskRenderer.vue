@@ -41,8 +41,11 @@
         <HeadingApp v-if="showEmptyHeadings || getTasks(savedTasks, h).length > 0" :key="h.id"
           :header='h'
           :name='h.name'
+          :allowEdit='h.allowEdit'
+          :headingEdit='headingEdit'
           :color='h.color ? h.color : ""'
           :options='h.options ? h.options : []'
+          :save='h.onEdit'
         >
           <TaskRenderer
             :tasks='getTasks(savedTasks, h)'
@@ -234,18 +237,17 @@ export default {
       if (name) {
         const i = this.getTaskRendererPosition()
         const ids = this.getIds(true)
-        console.log(ids.slice(i))
-/*         this.$emit('add-heading', {
+        this.$emit('add-heading', {
           ids: ids.slice(i),
           name, index: this.headingPosition,
-        }) */
+        })
       }
     },
     click(event) {
       if (this.selected.length > 0) event.stopPropagation()
     },
     getTasks(tasks, h) {
-      if (h.id === lastHeading.id) return lastHeading.tasks
+      if (h.id === lastHeading.id && !this.showEmptyHeadings) return lastHeading.tasks
       lastHeading.tasks = h.filter(tasks, h)
       lastHeading.id = h.id
       if (lastHeading.tasks.length > 0) this.atLeastOneRenderedTask = true
@@ -267,33 +269,37 @@ export default {
     },
     headingsLeave(el) {
       const header = el.getElementsByClassName('header-wrapper')[0]
-      const s = header.style
-      const sw = el.style
-      s.transitionDuration = '0s'
-      sw.transitionDuration = '0s'
-      sw.margin = '24px 0'
-      this.showHeading(s)
-      setTimeout(() => {
-        s.transitionDuration = '.3s'
-        sw.transitionDuration = '.3s'
-        sw.margin = 0
-        this.hideHeading(s)
-      })
+      if (header) {
+        const s = header.style
+        const sw = el.style
+        s.transitionDuration = '0s'
+        sw.transitionDuration = '0s'
+        sw.margin = '24px 0'
+        this.showHeading(s)
+        setTimeout(() => {
+          s.transitionDuration = '.3s'
+          sw.transitionDuration = '.3s'
+          sw.margin = 0
+          this.hideHeading(s)
+        })
+      }
     },
     headingsEnter(el) {
       const header = el.getElementsByClassName('header-wrapper')[0]
-      const s = header.style
-      const sw = el.style
-      s.transitionDuration = '0s'
-      sw.transitionDuration = '0s'
-      sw.margin = 0
-      this.hideHeading(s)
-      setTimeout(() => {
-        s.transitionDuration = '.3s'
-        sw.transitionDuration = '.3s'
-        sw.margin = '24px 0'
-        this.showHeading(s)
-      })
+      if (header) {
+        const s = header.style
+        const sw = el.style
+        s.transitionDuration = '0s'
+        sw.transitionDuration = '0s'
+        sw.margin = 0
+        this.hideHeading(s)
+        setTimeout(() => {
+          s.transitionDuration = '.3s'
+          sw.transitionDuration = '.3s'
+          sw.margin = '24px 0'
+          this.showHeading(s)
+        })
+      }
     },
     add(task) {
       if (task.name) {

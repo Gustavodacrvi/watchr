@@ -50,8 +50,10 @@ export default {
     },
     save() {
       if (this.str) {
-        if (!this.options.includes(this.str))
+        if (!this.options.includes(this.str)) {
           this.$emit('save', this.str)
+          this.$emit('cancel')
+        }
         else this.$store.commit('pushToast', {
           name: this.errorToast,
           seconds: 3,

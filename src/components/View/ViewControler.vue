@@ -215,13 +215,28 @@ export default {
       const arr = []
       const heads = this.viewList.headings
       for (const h of heads) {
+        const headingTasks = this.getListTasks.filter(el => el.heading === h.name)
         arr.push({
           name: h.name,
-          filter: () => {
-            return this.getListTasks.filter(el => el.heading === h.name)
+          allowEdit: true,
+          onEdit: (name) => {
+            this.$store.dispatch('list/saveHeadingName', {
+              listId: this.viewList.id,
+              oldName: h.name,
+              newName: name,
+              tasksIds: headingTasks.map(el => el.id)
+            })
           },
+          filter: () => headingTasks,
           id: h.name,
           options: [
+            {
+              name: 'Edit heading',
+              icon: 'pen',
+              callback: (j, vm, l) => {
+                vm.$emit('edit')
+              }
+            },
             {
               name: 'Delete heading',
               icon: 'trash',
@@ -231,7 +246,7 @@ export default {
                   name: h.name,
                 })
               },
-            }
+            },
           ],
           onAddTask(obj) {
             console.log('liskRenderEditAdder', obj)
