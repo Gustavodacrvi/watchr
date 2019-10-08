@@ -96,6 +96,46 @@ export default {
         })
       }
     },
+
+    getListHeadingsByView(view) {
+      const ts = utilsTask.filterTasksByView(this.tasksWithLists, view)
+      if (ts && ts.length > 0) {
+        const savedLists = this.lists
+        const setOfLists = new Set()
+        for (const t of savedLists) {
+          if (!setOfLists.has(t)) {
+            setOfLists.add(t)
+          }
+        }
+        let lists = Array.from(setOfLists)
+        let order = this.viewOrders[view].headings
+        if (!order) order = []
+        lists = utils.checkMissingIdsAndSortArr(order, lists)
+        const arr = []
+        for (const t of lists) {
+          arr.push({
+            name: t.name,
+            allowEdit: true,
+            onEdit: (name) => console.log(name),
+            filter: () => {
+              return this.tasksWithLists.filter(el => el.list === t.id)
+            },
+            options: [],
+            id: t.id,
+            options: [],
+            onAddTask(obj) {
+              console.log(obj)
+            },
+            onSortableAdd(obj) {
+              console.log('today sortable add')
+            }
+          })
+        }
+
+        return arr
+      }
+      return []
+    }
   },
   computed: {
     ...mapState({
@@ -147,9 +187,10 @@ export default {
       if (this.isSmart) {
         switch (this.viewName) {
           case 'Upcoming': return this.upcomingHeadingsOptions
+          case 'Tomorrow': return this.getListHeadingsByView('Tomorrow')
           case 'Today': {
             if (this.hasOverdueTasks) return this.todayHeadingsOptions
-            return []
+            return this.getListHeadingsByView('Today')
           }
           case 'Completed': {
             return this.completedHeadingsOptions

@@ -197,6 +197,7 @@ export default {
         const ref = fire.collection('lists').doc(listId)
         batch.update(ref, {
           headings,
+          headingsOrder: headings.map(el => el.name)
         })
 
         batch.commit()

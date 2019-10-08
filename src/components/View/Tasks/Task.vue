@@ -298,7 +298,7 @@ export default {
       const list = this.task.list
       if (!list) return null
       const savedList = this.savedLists.find(el => el.id === list)
-      if (!savedList || savedList.name === this.view) return null
+      if (!savedList || (savedList.name === this.view)) return null
       return savedList.name
     },
     calendarStr() {
