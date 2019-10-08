@@ -79,6 +79,7 @@ export default {
         name,
         userId: uid(),
         headings: [],
+        headingsOrder: [],
         tasks: [],
       }
       if (!index)
@@ -119,6 +120,12 @@ export default {
       obj[view].tasks = ids
       fire.collection('viewOrders').doc(uid()).update(obj)
     },
+    updateHeadingsViewOrder(c, {view, ids}) {
+      const obj = {}
+      obj[view] = {}
+      obj[view].headings = ids
+      fire.collection('viewOrders').doc(uid()).update(obj)
+    },
     sortListsByName({state, dispatch}) {
       const lists = state.lists.slice()
       lists.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
@@ -145,6 +152,11 @@ export default {
       batch.update(listRef, obj)
 
       batch.commit()
+    },
+    updateListHeadings(c, {ids, listId}) {
+      fire.collection('lists').doc(listId).update({
+        headingsOrder: ids,
+      })
     },
     addHeading({state}, {ids, name, listId, index}) {
       const list = state.lists.find(el => el.id === listId)

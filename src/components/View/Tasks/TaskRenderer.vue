@@ -33,9 +33,10 @@
     </transition-group>
     <transition-group v-if="headings.length > 0"
       appear
-      class="front"
+      class="front headings-root"
       @leave='headingsLeave'
       @enter='headingsEnter'
+      tag="div"
     >
       <template v-for="(h, i) in headings">
         <HeadingApp v-if="showEmptyHeadings || getTasks(savedTasks, h).length > 0" :key="h.id"
@@ -46,6 +47,8 @@
           :color='h.color ? h.color : ""'
           :options='h.options ? h.options : []'
           :save='h.onEdit'
+
+          :data-id='h.id'
         >
           <TaskRenderer
             :tasks='getTasks(savedTasks, h)'
@@ -227,6 +230,20 @@ export default {
           return false
       },
     })
+    const el = this.$el.getElementsByClassName('headings-root')[0]
+    if (el) {
+      const headsSor = new Sortable(el, {
+        group: 'headings',
+        delay: 150,
+        delayOnTouchOnly: true,
+        handle: '.handle',
+  
+        onUpdate: (evt) => {
+          const ids = this.getHeadingsIds()
+          this.$emit('update-headings', ids)
+        },
+      })
+    }
     window.addEventListener('click', this.windowClick)
   },
   beforeDestroy() {
@@ -277,8 +294,8 @@ export default {
         sw.margin = '24px 0'
         this.showHeading(s)
         setTimeout(() => {
-          s.transitionDuration = '.3s'
-          sw.transitionDuration = '.3s'
+          s.transitionDuration = '.2s'
+          sw.transitionDuration = '.2s'
           sw.margin = 0
           this.hideHeading(s)
         })
@@ -294,8 +311,8 @@ export default {
         sw.margin = 0
         this.hideHeading(s)
         setTimeout(() => {
-          s.transitionDuration = '.3s'
-          sw.transitionDuration = '.3s'
+          s.transitionDuration = '.2s'
+          sw.transitionDuration = '.2s'
           sw.margin = '24px 0'
           this.showHeading(s)
         })
@@ -333,6 +350,17 @@ export default {
           this.draggableRoot.insertBefore(element, adder)
         const input = adder.getElementsByClassName('input')[0]
         if (input) input.focus()
+      }
+    },
+    getHeadingsIds() {
+      const el = this.$el.getElementsByClassName('headings-root')[0]
+      if (el) {
+        const childs = el.childNodes
+        const arr = []
+        for (const c of childs) {
+          arr.push(c.dataset.id)
+        }
+        return arr
       }
     },
     getIds(removeAdders) {
@@ -442,7 +470,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition-duration: .3s;
+  transition-duration: .2s;
 }
 
 .front {

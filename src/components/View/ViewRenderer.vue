@@ -26,7 +26,8 @@
         :illustration='illustration'
         :headingPosition='0'
         :onSortableAdd='onSortableAdd'
-        @update='updateIds'
+        @update="(ids) => this.$emit('update-ids', ids)"
+        @update-headings='(ids) => this.$emit("update-heading-ids", ids)'
         @add-heading="(obj) => $emit('add-heading', obj)"
       />
     </div>
@@ -89,9 +90,6 @@ export default {
       this.activeLists = ''
     },
 
-    updateIds(ids) {
-      this.$emit('update-ids', ids)
-    },
     sortByName() {
       const tasks = this.tasks.slice()
       tasks.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))

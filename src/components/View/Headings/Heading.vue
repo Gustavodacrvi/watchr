@@ -5,7 +5,7 @@
   >
     <transition name="fade" mode="out-in">
       <div v-if="!editing">
-        <div class="header-wrapper" key="wr"
+        <div class="header-wrapper handle" key="wr"
           @click="showing = !showing"
           @dblclick="toggleEditing"
           @mouseenter="onHover = true"

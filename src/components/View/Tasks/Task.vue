@@ -326,7 +326,7 @@ export default {
 .Task {
   height: auto;
   user-select: none;
-  transition: opacity .3s;
+  transition: opacity .2s;
   position: relative;
   z-index: 1;
 }
@@ -336,7 +336,7 @@ export default {
 }
 
 .cont-wrapper {
-  transition-duration: .3s;
+  transition-duration: .2s;
 }
 
 .hided {

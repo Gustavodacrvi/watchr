@@ -15,6 +15,7 @@
     :onSortableAdd='onSortableAdd'
 
     @update-ids='updateIds'
+    @update-heading-ids='updateHeadingIds'
     @add-task='addTask'
     @add-heading='addHeading'
   />
@@ -69,6 +70,18 @@ export default {
         this.$store.dispatch('list/saveList', {
           tasks: ids,
           id: this.viewList.id,
+        })
+    },
+    updateHeadingIds(ids) {
+      if (this.isSmart) {
+        this.$store.dispatch('list/updateHeadingsViewOrder', {
+          view: this.viewName,
+          ids,
+        })
+      } else if (this.isListType)
+        this.$store.dispatch('list/updateListHeadings', {
+          listId: this.viewList.id,
+          ids,
         })
     },
     addHeading(obj) {
@@ -209,6 +222,9 @@ export default {
     getListTasks() {
       return this.tasks.filter(el => el.list === this.viewList.id)
     },
+    tasksWithLists() {
+      return this.tasks.filter(el => el.list)
+    },
     getRootTasksOfList() {
       return this.getListTasks.filter(el => !el.heading)
     },
@@ -223,7 +239,11 @@ export default {
     listHeadingsOptions() {
       const arr = []
       const viewList = this.viewList
-      const heads = viewList.headings
+      let order = viewList.headingsOrder
+      if (!order) order = []
+      
+      const heads = utils.checkMissingIdsAndSortArr(order, viewList.headings, 'name')
+      
       for (const h of heads) {
         let headingTasks = this.getListTasks.filter(el => el.heading === h.name)
         headingTasks= utils.checkMissingIdsAndSortArr(h.tasks, headingTasks)

@@ -16,21 +16,24 @@ export default {
         state[arrName].splice(index, 1, {...change.doc.data(), id: change.doc.id})
       }
   },
-  checkMissingIdsAndSortArr(order, arr) {
+  checkMissingIdsAndSortArr(order, arr, property) {
+    let name = 'id'
+    if (property) name = property
+    
     const items = []
     for (const id of order) {
-      const item = arr.find(el => el.id === id)
+      const item = arr.find(el => el[name] === id)
       if (item) items.push(item)
     }
     for (const item of arr) {
-      if (!order.includes(item.id))
+      if (!order.includes(item[name]))
         items.push(item)
     }
     const ids = new Set()
     const ordered = []
     for (const item of items) {
-      if (!ids.has(item.id)) {
-        ids.add(item.id)
+      if (!ids.has(item[name])) {
+        ids.add(item[name])
         ordered.push(item)
       }
     }
