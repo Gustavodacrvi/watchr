@@ -209,6 +209,23 @@ export default {
         batch.commit()
       }
     },
+    removeTaskFromHeading({state}, {listId, taskId, ids}) {
+      const list = state.lists.find(el => el.id === listId)
+      if (list) {
+        const batch = fire.batch()
+
+        const taskRef = fire.collection('tasks').doc(taskId)
+        batch.update(taskRef, {
+          heading: null,
+        })
+        const listRef = fire.collection('lists').doc(listId)
+        batch.update(listRef, {
+          tasks: ids,
+        })
+
+        batch.commit()
+      }
+    },
     deleteHeadingFromList({state}, {listId, name}) {
       const list = state.lists.find(el => el.id === listId)
       if (list) {

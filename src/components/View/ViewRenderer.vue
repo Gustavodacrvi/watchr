@@ -25,6 +25,7 @@
         :activeTags='getActiveTags'
         :illustration='illustration'
         :headingPosition='0'
+        :onSortableAdd='onSortableAdd'
         @update='updateIds'
         @add-heading="(obj) => $emit('add-heading', obj)"
       />
@@ -46,7 +47,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings'],
+  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,

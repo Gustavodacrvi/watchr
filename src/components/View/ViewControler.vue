@@ -12,6 +12,7 @@
     :headingsOptions='headingsOptions'
     :tasks='getTasks'
     :tasksOrder='tasksOrder'
+    :onSortableAdd='onSortableAdd'
 
     @update-ids='updateIds'
     @add-task='addTask'
@@ -73,7 +74,15 @@ export default {
     addHeading(obj) {
       if (this.viewList)
         this.$store.dispatch('list/addHeading', {...obj, listId: this.viewList.id})
-    }
+    },
+    onSortableAdd(evt, {dataset}, type, ids) {
+      if (this.isListType && this.viewList) {
+        const taskId = dataset.id
+        this.$store.dispatch('list/removeTaskFromHeading', {
+          taskId, ids, listId: this.viewList.id,
+        })
+      }
+    },
   },
   computed: {
     ...mapState({
