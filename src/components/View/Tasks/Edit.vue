@@ -16,7 +16,14 @@
       <Tag v-if="list"
         icon="tasks"
         :value="list"
+        color='var(--purple)'
         @click="list = ''"
+      />
+      <Tag v-if="list && heading"
+        icon="user"
+        :value="heading"
+        color='var(--purple)'
+        @click="heading = ''"
       />
     </div>
     <div class="tags">
@@ -97,6 +104,7 @@ export default {
       priority: '',
       list: '',
       calendar: null,
+      heading: null,
       tags: [],
       optionsType: '',
       options: [],
@@ -138,6 +146,7 @@ export default {
         list: this.listId,
         tags: this.tagIds,
         calendar: this.calendar,
+        heading: this.heading,
       })
       this.name = ''
     },
@@ -225,6 +234,15 @@ export default {
           icon: 'tasks',
           callback: () => {
             this.list = el.name
+            const arr = []
+            for (const h of el.headings) {
+              arr.push({
+                name: h.name,
+                icon: 'user',
+                callback: () => this.heading = h.name
+              })
+            }
+            return arr
           }
         })
       }
