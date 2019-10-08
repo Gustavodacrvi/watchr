@@ -158,6 +158,29 @@ export default {
         headingsOrder: ids,
       })
     },
+    addTaskHeading({state}, {name, ids, listId, task}) {
+      const list = state.lists.find(el => el.id === listId)
+      if (list) {
+        const batch = fire.batch()
+
+        const taskRef = fire.collection('tasks').doc()
+        task.list = listId
+        task.heading = name
+        batch.set(taskRef, {
+          userId: uid(),
+          ...task,
+        })
+        const heads = list.headings.slice()
+        const i = heads.findIndex(el => el.name === name)
+        heads[i].tasks = ids
+        const listRef = fire.collection('lists').doc(listId)
+        batch.update(listRef, {
+          headings: heads,
+        })
+
+        batch.commit()
+      }
+    },
     addHeading({state}, {ids, name, listId, index}) {
       const list = state.lists.find(el => el.id === listId)
       if (list) {

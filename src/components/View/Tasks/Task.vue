@@ -453,6 +453,7 @@ export default {
   padding: 5px;
   margin: 0 4px;
   font-size: .75em;
+  white-space: nowrap;
 }
 
 .task-tag {

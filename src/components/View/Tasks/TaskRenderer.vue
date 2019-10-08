@@ -453,7 +453,7 @@ export default {
               this.draggableRoot.insertBefore(newTask, adder)
         }
         this.addedTask = false
-      })
+      }, 100)
     }
   }
 }

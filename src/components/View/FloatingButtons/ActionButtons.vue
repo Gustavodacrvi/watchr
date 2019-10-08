@@ -39,7 +39,7 @@ export default {
     click(evt) {
       const els = evt.path
       for (const e of els)
-        if (e.id === 'addtask') {
+        if (e.classList.contains('task-adder')) {
           this.$store.dispatch('pushPopup', {comp: 'AddTask'})
           break
         }

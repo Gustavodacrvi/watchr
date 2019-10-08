@@ -41,9 +41,9 @@ export default {
       if (this.isSmart) {
         let calendar = null
   
-        if (this.viewName === 'Today')
+        if (this.viewName === 'Today' && !obj.calendar)
           calendar = this.getSpecificDayCalendarObj(mom())
-        else if (this.viewName === 'Tomorrow')
+        else if (this.viewName === 'Tomorrow' && !obj.calendar)
           calendar = this.getSpecificDayCalendarObj(mom().add(1, 'day'))
   
         obj.task.calendar = calendar
@@ -280,7 +280,9 @@ export default {
             },
           ],
           onAddTask(obj) {
-            console.log('onAddTask')
+            this.$store.dispatch('list/addTaskHeading', {
+              name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task,
+            })
           },
           onSortableAdd(evt, {dataset}, type, ids) {
             const taskId = dataset.id

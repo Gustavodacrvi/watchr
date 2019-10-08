@@ -82,6 +82,11 @@ export default {
 .Heading {
   margin: 24px 0;
   position: relative;
+  z-index: 5;
+}
+
+.Heading:hover {
+  z-index: 6;
 }
 
 .header-wrapper {
