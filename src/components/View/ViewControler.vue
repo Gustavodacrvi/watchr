@@ -213,9 +213,11 @@ export default {
     },
     listHeadingsOptions() {
       const arr = []
-      const heads = this.viewList.headings
+      const viewList = this.viewList
+      const heads = viewList.headings
       for (const h of heads) {
-        const headingTasks = this.getListTasks.filter(el => el.heading === h.name)
+        let headingTasks = this.getListTasks.filter(el => el.heading === h.name)
+        headingTasks= utils.checkMissingIdsAndSortArr(h.tasks, headingTasks)
         arr.push({
           name: h.name,
           allowEdit: true,
@@ -249,10 +251,13 @@ export default {
             },
           ],
           onAddTask(obj) {
-            console.log('liskRenderEditAdder', obj)
+            console.log('onAddTask')
           },
-          onAdd(evt) {
-            console.log('listHeadingsListAdder', evt)
+          onSortableAdd(evt, {dataset}, type, ids) {
+            const taskId = dataset.id
+            this.$store.dispatch('list/moveTaskBetweenHeadings', {
+              taskId, ids, name: h.name, listId: viewList.id,
+            })
           }
         })
       }
@@ -292,7 +297,7 @@ export default {
               ...obj.task, calendar: calObj(date)
             })
           },
-          onAdd: (evt) => {
+          onSortableAdd: (evt) => {
             this.$store.dispatch('task/saveTask', {
               id: evt.item.dataset.id,
               calendar: calObj(date)

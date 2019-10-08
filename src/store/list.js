@@ -189,6 +189,26 @@ export default {
         batch.commit()
       }
     },
+    moveTaskBetweenHeadings({state}, {ids, listId, taskId, name}) {
+      const list = state.lists.find(el => el.id === listId)
+      if (list) {
+        const batch = fire.batch()
+
+        const taskRef = fire.collection('tasks').doc(taskId)
+        batch.update(taskRef, {
+          heading: name,
+        })
+        const heads = list.headings.slice()
+        const i = heads.findIndex(el => el.name === name)
+        heads[i].tasks = ids
+        const listRef = fire.collection('lists').doc(listId)
+        batch.update(listRef, {
+          headings: heads,
+        })
+
+        batch.commit()
+      }
+    },
     deleteHeadingFromList({state}, {listId, name}) {
       const list = state.lists.find(el => el.id === listId)
       if (list) {

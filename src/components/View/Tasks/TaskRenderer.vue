@@ -58,7 +58,7 @@
             :header="h"
             :addTask="h.onAddTask"
             :headingPosition='i + 1'
-            :onAdd='h.onAdd'
+            :onSortableAdd='h.onSortableAdd'
             :disable='h.disableTaskRenderer'
             @add-heading='(obj) => $emit("add-heading", obj)'
           />
@@ -90,7 +90,7 @@ const lastHeading = {
 }
 
 export default {
-  props: ['tasks', 'header', 'onAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit', 'headingPosition', 'showEmptyHeadings'],
+  props: ['tasks', 'header', 'onSortableAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit', 'headingPosition', 'showEmptyHeadings'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue,
@@ -168,8 +168,8 @@ export default {
         
         if (type !== 'addtask')
           item.style.display = 'none'
-        if (type === 'task' && this.onAdd)
-          this.onAdd(evt, item, type)
+        if (type === 'task' && this.onSortableAdd)
+          this.onSortableAdd(evt, item, type, this.getIds(true))
         if (type === 'floatbutton') {
           addEdit(TaskEditTemplate, this.add, {
               key: 'Edit',
