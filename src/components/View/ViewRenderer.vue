@@ -22,6 +22,7 @@
         :headings='headingsOptions'
         :addTask='addTask'
         :headingEdit='headingEdit'
+        :showCompleted='showCompleted'
         :activeTags='getActiveTags'
         :illustration='illustration'
         :headingPosition='0'
@@ -48,7 +49,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd'],
+  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'showCompletedOnHeadings'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,

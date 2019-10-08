@@ -23,6 +23,8 @@
         :isSelecting='isSelecting'
         :isSelected='isTaskSelected(t.id)'
         :view='view'
+        :showHeadingName='showHeadingName'
+        :hideListName='hideListName'
         :activeTags="activeTags"
         :viewNameValue='viewNameValue'
         @select='taskSelect'
@@ -39,7 +41,7 @@
       tag="div"
     >
       <template v-for="(h, i) in headings">
-        <HeadingApp v-if="showEmptyHeadings || getTasks(savedTasks, h).length > 0" :key="h.id"
+        <HeadingApp v-if="showEmptyHeadings || h.filter(savedTasks, h, showCompleted).length > 0" :key="h.id"
           :header='h'
           :name='h.name'
           :allowEdit='h.allowEdit'
@@ -51,7 +53,7 @@
           :data-id='h.id'
         >
           <TaskRenderer
-            :tasks='getTasks(savedTasks, h)'
+            :tasks='h.filter(savedTasks, h, showCompleted)'
             :view='view'
             :headingEdit='headingEdit'
             :viewNameValue='viewNameValue'
@@ -59,6 +61,8 @@
             :activeTags="activeTags"
             :headings='[]'
             :header="h"
+            :hideListName="h.hideListName"
+            :showHeadingName="h.showHeadingName"
             :addTask="h.onAddTask"
             :headingPosition='i + 1'
             :onSortableAdd='h.onSortableAdd'
@@ -87,13 +91,8 @@ import Sortable from 'sortablejs'
 
 import mom from 'moment'
 
-const lastHeading = {
-  id: null,
-  tasks: null,
-}
-
 export default {
-  props: ['tasks', 'header', 'onSortableAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit', 'headingPosition', 'showEmptyHeadings'],
+  props: ['tasks', 'header', 'onSortableAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue,
@@ -262,13 +261,6 @@ export default {
     },
     click(event) {
       if (this.selected.length > 0) event.stopPropagation()
-    },
-    getTasks(tasks, h) {
-      if (h.id === lastHeading.id && !this.showEmptyHeadings) return lastHeading.tasks
-      lastHeading.tasks = h.filter(tasks, h)
-      lastHeading.id = h.id
-      if (lastHeading.tasks.length > 0) this.atLeastOneRenderedTask = true
-      return lastHeading.tasks
     },
     hideHeading(s) {
       s.height = '0px'

@@ -14,6 +14,8 @@
     :tasksOrder='tasksOrder'
     :onSortableAdd='onSortableAdd'
 
+    @show-completed='v => showCompleted = v'
+
     @update-ids='updateIds'
     @update-heading-ids='updateHeadingIds'
     @add-task='addTask'
@@ -35,6 +37,11 @@ export default {
   props: ['isSmart', 'viewType', 'viewName'],
   components: {
     ViewRenderer: ViewRendererVue,
+  },
+  data() {
+    return {
+      showCompleted: false,
+    }
   },
   methods: {
     addTask(obj) {
@@ -89,10 +96,14 @@ export default {
         this.$store.dispatch('list/addHeading', {...obj, listId: this.viewList.id})
     },
     onSortableAdd(evt, {dataset}, type, ids) {
-      if (this.isListType && this.viewList) {
+      if (this.isListType) {
         const taskId = dataset.id
         this.$store.dispatch('list/removeTaskFromHeading', {
           taskId, ids, listId: this.viewList.id,
+        })
+      } else if (this.viewName === 'Today' || this.viewName === 'Tomorrow') {
+        this.$store.dispatch('list/removeTaskFromList', {
+          taskId: dataset.id, view: this.viewName, ids,
         })
       }
     },
@@ -116,19 +127,41 @@ export default {
           arr.push({
             name: t.name,
             allowEdit: true,
-            onEdit: (name) => console.log(name),
-            filter: () => {
-              return this.tasksWithLists.filter(el => el.list === t.id)
+            hideListName: true,
+            showHeadingName: true,
+            onEdit: (name) => {
+              this.$store.dispatch('list/saveList', {
+                name
+              })
             },
-            options: [],
+            filter: (a, h, showCompleted) => {
+              let tasks = ts.filter(el => el.list === t.id)
+
+              if (!showCompleted)
+                tasks = utilsTask.filterTasksByCompletion(tasks, true)
+
+              return tasks
+            },
+            options: [
+              {
+                name: 'Edit list',
+                icon: 'pen',
+                callback: (j, vm, l) => {
+                  vm.$emit('edit')
+                }
+              },
+            ],
             id: t.id,
             options: [],
             onAddTask(obj) {
-              console.log(obj)
+              obj.task.calendar = this.getSpecificDayCalendarObj(mom())
+              this.$store.dispatch('list/addTaskHeading', {
+                name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task,
+              })
             },
             onSortableAdd(obj) {
               console.log('today sortable add')
-            }
+            },
           })
         }
 
@@ -163,12 +196,13 @@ export default {
       return this.viewName !== 'Upcoming' && this.viewName !== 'Completed'
     },
     getTasks() {
+      const ts = this.tasksWithoutLists
       if (this.isSmart && this.notSmartHeaderView) {
         if (this.viewName === 'Today' && this.hasOverdueTasks) return []
-        return utilsTask.filterTasksByView(this.tasks, this.viewName)
+        return utilsTask.filterTasksByView(ts, this.viewName)
       }
       else if (this.viewType === 'tag' && this.viewTag)
-        return this.tasks.filter(el => el.tags.includes(this.viewTag.id))
+        return ts.filter(el => el.tags.includes(this.viewTag.id))
       else if (this.isListType) {
         return this.getRootTasksOfList
       }
@@ -263,6 +297,9 @@ export default {
     getListTasks() {
       return this.tasks.filter(el => el.list === this.viewList.id)
     },
+    tasksWithoutLists() {
+      return this.tasks.filter(el => !el.list)
+    },
     tasksWithLists() {
       return this.tasks.filter(el => el.list)
     },
@@ -274,6 +311,11 @@ export default {
         return {
           excludeNames: this.viewList.headings.map(el => el.name),
           errorToast: "There's already another heading with this name.",
+        }
+      else if (this.viewName === "Today" || this.viewName === "Tomorrow")
+        return {
+          excludeNames: this.lists.map(el => el.name),
+          errorToast: "There's already another list with this name."
         }
       return []
     },

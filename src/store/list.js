@@ -114,15 +114,27 @@ export default {
         ...list,
       })
     },
-    updateViewOrder(c, {view, ids}) {
-      const obj = {}
-      obj[view] = {}
+    removeTaskFromList({state}, {taskId, view, ids}) {
+      const batch = fire.batch()
+
+      const taskRef = fire.collection('tasks').doc(taskId)
+      batch.update(taskRef, {
+        list: null, heading: null,
+      })
+      const obj = state.viewOrders
+      obj[view].tasks = ids
+      const listRef = fire.collection('viewOrders').doc(uid())
+      batch.update(listRef, obj)
+
+      batch.commit()
+    },
+    updateViewOrder({state}, {view, ids}) {
+      const obj = state.viewOrders
       obj[view].tasks = ids
       fire.collection('viewOrders').doc(uid()).update(obj)
     },
-    updateHeadingsViewOrder(c, {view, ids}) {
-      const obj = {}
-      obj[view] = {}
+    updateHeadingsViewOrder({state}, {view, ids}) {
+      const obj = state.viewOrders
       obj[view].headings = ids
       fire.collection('viewOrders').doc(uid()).update(obj)
     },

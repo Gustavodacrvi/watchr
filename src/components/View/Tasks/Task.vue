@@ -32,6 +32,7 @@
             <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
             <span v-else-if="calendarStr" class="tag cb rb">{{ calendarStr }}</span>
             <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
+            <span v-if="task.heading" class="tag cb rb">{{ task.heading }}</span>
             <transition name="name-t">
               <span v-if="!showApplyOnTasks" key="normal">{{ task.name }}</span>
               <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
@@ -79,7 +80,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'isSelected', 'view', 'viewNameValue', 'activeTags'],
+  props: ['task', 'isSelected', 'view', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -296,7 +297,7 @@ export default {
     },
     listStr() {
       const list = this.task.list
-      if (!list) return null
+      if (!list || this.hideListName) return null
       const savedList = this.savedLists.find(el => el.id === list)
       if (!savedList || (savedList.name === this.view)) return null
       return savedList.name
