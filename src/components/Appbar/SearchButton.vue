@@ -2,6 +2,7 @@
   <div class="SearchButton rb cursor"
     @mouseenter="$emit('mouseenter')"
     @mouseleave="$emit('mouseleave')"
+    @click="$emit('click')"
   >
     <span>
       <Icon icon="search" width="15px"/>

@@ -1,15 +1,16 @@
 <template>
   <div v-if="l" id="app" :class="{hidePassive}">
-    <transition name="popup">
+    <transition name="fade">
       <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>
     <Toast/>
-    <transition name="popup">
+    <transition name="fade">
       <Menu v-if="isMenuOpened && !isDesktop"/>
     </transition>
-    <transition>
-      <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
+    <transition name="fade">
+      <FastSearch v-if="fastSearch"/>
     </transition>
+    <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
 
     <div class="content">
       <transition name="nav-trans" mode="out-in">
@@ -31,6 +32,7 @@ import PopupVue from './components/Popup/Popup.vue'
 import ToastVue from './components/Toast.vue'
 import MenuVue from './components/NavBar/Menu.vue'
 import MobileIcondropVue from './components/Popup/MobileIcondrop.vue'
+import FastSearchVue from './components/Popup/FastSearch.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -41,6 +43,7 @@ export default {
     Toast: ToastVue,
     Menu: MenuVue,
     MobileIcondrop: MobileIcondropVue,
+    FastSearch: FastSearchVue,
   },
   data() {
     return {
@@ -93,6 +96,7 @@ export default {
     },
   },
   computed: {
+    ...mapState(['fastSearch']),
     ...mapGetters(['isDesktop', 'isStandAlone', 'l']),
     isMenuOpened() {
       return this.$route.fullPath === '/menu'
@@ -136,12 +140,12 @@ export default {
 }
 
 
-.popup-enter, .popup-leave-to {
+.fade-enter, .fade-leave-to {
   opacity: 0;
   transition: opacity .2s;
 }
 
-.popup-leave, .popup-enter-to {
+.fade-leave, .fade-enter-to {
   opacity: 1;
   transition: opacity .2s;
 }

@@ -68,6 +68,7 @@ const store = new Vuex.Store({
     isOnControl: false,
     fireBaseFirstLoaded: false,
     authState: false,
+    fastSearch: false,
     isLoading: true,
     toasts: [],
     windowWidth: 0,
@@ -93,6 +94,12 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    openFastSearch(state) {
+      state.fastSearch = true
+    },
+    closeFastSearch(state) {
+      state.fastSearch = false
+    },
     saveUser(state, user) {
       state.user = user
     },

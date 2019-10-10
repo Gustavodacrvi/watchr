@@ -7,7 +7,11 @@
           <transition name="bar-trans">
           <div v-if="showing" class="content">
             <transition name="search-t">
-              <SearchButton v-if="showingSearch || !isDesktop" @mouseenter="showSearch" @mouseleave="hideSearch"/>
+              <SearchButton v-if="showingSearch || !isDesktop"
+                @click="$store.commit('openFastSearch')"
+                @mouseenter="showSearch"
+                @mouseleave="hideSearch"
+              />
             </transition>
               <AppnavRenderer
                 type='list'
