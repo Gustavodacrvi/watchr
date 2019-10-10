@@ -37,22 +37,11 @@ export default {
     IconDrop: IconDropVue,
     LogoApp: LogoVue,
   },
-  data() {
-    return {
-      click: false,
-    }
-  },
   methods: {
     openMenu() {
-<<<<<<< HEAD
-      this.$emit('open-menu')
-      this.$router.push('/menu')
-=======
-      this.click = !this.click
       setTimeout(() => {
         this.$router.push({path: '/menu'})
       })
->>>>>>> 91cca45f11f479ff53ab837d44141090ee679b6c
     },
     goToIndexPage() {
       this.$router.push('/')

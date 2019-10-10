@@ -1,13 +1,9 @@
 <template>
   <div class="Menu cbd">
     <div class="appbar-wrapper">
-<<<<<<< HEAD
-      <Icon class="arrow cursor" icon="arrow" color="var(--gray)" @click="goback" :primaryHover="true"/>
-=======
       <span @click="closeMenu">
         <Icon class="arrow cursor" icon="arrow" color="var(--gray)" width="25px" :primaryHover="true"/>
       </span>
->>>>>>> 91cca45f11f479ff53ab837d44141090ee679b6c
       <transition :name="this.appSection ? 'mr' : 'ml'">
         <Appbar class="Appbar" v-if="appSection" key="app"/>
         <div v-else key="links" class="nav-links">
