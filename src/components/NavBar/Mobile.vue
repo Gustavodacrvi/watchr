@@ -1,7 +1,9 @@
 <template>
   <div class="Mobile">
     <div class="central">
-      <Icon class="cursor" icon="menu" width="30px" :primaryHover="true" @click="openMenu"/>
+      <span class="cursor" @click="openMenu">
+        <Icon icon="menu" width="30px" :primaryHover="true"/>
+      </span>
       <transition name="fade" mode="out-in" appear>
         <div v-if="isOnUserPage" key="user">
           <h2 v-if="navBar && navBar.title" class="title">{{ navBar.title }}</h2>
@@ -35,9 +37,17 @@ export default {
     IconDrop: IconDropVue,
     LogoApp: LogoVue,
   },
+  data() {
+    return {
+      click: false,
+    }
+  },
   methods: {
     openMenu() {
-      this.$router.push('/menu')
+      this.click = !this.click
+      setTimeout(() => {
+        this.$router.push({path: '/menu'})
+      })
     },
     goToIndexPage() {
       this.$router.push('/')

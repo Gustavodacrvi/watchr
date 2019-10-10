@@ -57,6 +57,7 @@ export default {
     ...mapState(['selectedTasks']),
     getIcon() {
       if (this.icon) return this.icon
+      if (this.viewType === 'search') return 'search'
       const obj = {
         Today: 'star',
         Tomorrow: 'sun',
@@ -79,6 +80,7 @@ export default {
         if (!color) return 'var(--purple)'
         return color
       }
+      if (this.viewType === 'search') return ''
       return 'var(--red)'
     }
   },
@@ -128,6 +130,11 @@ export default {
 
 .name {
   margin: 0;
+  max-width: 550px;
+  word-break: break-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 </style>

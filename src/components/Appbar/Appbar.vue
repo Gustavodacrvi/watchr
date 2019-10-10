@@ -3,8 +3,16 @@
     <div class="Appbar" :class='platform'>
       <div class="inner-wrapper">
         <div>
+          <div class="search-shadow" @mouseenter="showSearch" @mouseleave="hideSearch"></div>
           <transition name="bar-trans">
-            <div v-if="showing" class="content">
+          <div v-if="showing" class="content">
+            <transition name="search-t">
+              <SearchButton v-if="showingSearch || !isDesktop"
+                @click="$store.commit('openFastSearch')"
+                @mouseenter="showSearch"
+                @mouseleave="hideSearch"
+              />
+            </transition>
               <AppnavRenderer
                 type='list'
                 :enableSort='false'
@@ -73,6 +81,7 @@ import TagsVue from './Sections/Tags.vue'
 import FiltersVue from './Sections/Filters.vue'
 import IconDropVue from '../IconDrop.vue'
 import RendererVue from './Renderer.vue'
+import SearchButtonVue from './SearchButton.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -86,6 +95,7 @@ export default {
     Tags: TagsVue,
     Filters: FiltersVue,
     AppnavRenderer: RendererVue,
+    SearchButton: SearchButtonVue,
   },
   data() {
     return {
@@ -142,6 +152,8 @@ export default {
       showing: true,
       transRight: true,
       showingIconDrop: true,
+      showingSearch: false,
+      searchTimeout: null,
       oldIndex: 0,
       section: 'Lists'
     }
@@ -161,6 +173,16 @@ export default {
     window.removeEventListener('resize', this.moveLineToActive)
   },
   methods: {
+    showSearch() {
+      this.showingSearch = true
+      if (this.searchTimeout)
+        clearTimeout(this.searchTimeout)
+    },
+    hideSearch() {
+      this.searchTimeout = setTimeout(() => {
+        this.showingSearch = false
+      }, 1000)
+    },
     applySelectedTasks(elId) {
       this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
         elIds: [elId],
@@ -337,6 +359,14 @@ export default {
 
 <style scoped>
 
+.search-shadow {
+  z-index: 100;
+  top: -35px;
+  width: 100%;
+  position: absolute;
+  height: 35px;
+}
+
 .content {
   position: relative;
 }
@@ -502,6 +532,18 @@ export default {
 .icon-t-leave, .icon-t-enter-to {
   opacity: 1 !important;
   transition-duration: .2s !important;
+}
+
+.search-t-enter, .search-t-leave-to {
+  opacity: 0;
+  height: 0;
+  transition: height .3s, opacity .3s;
+}
+
+.search-t-leave, .search-t-enter-to {
+  opacity: 1;
+  height: 35px;
+  transition: height .3s, opacity .3s;
 }
 
 </style>

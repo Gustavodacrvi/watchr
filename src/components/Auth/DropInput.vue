@@ -23,6 +23,7 @@
           <span v-for="o in options" :key="o"
             class="link"
             :class="{active: o === active}"
+            @click="$emit('select', o)"
           >{{ o }}</span>
         </transition-group>
       </div>
