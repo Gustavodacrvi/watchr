@@ -4,6 +4,10 @@
   src: url("../WorkSans-Regular.otf");
 }
 
+html {
+  touch-action: manipulation;
+}
+
 :root {
   --back-color: #131313;
   --void: #0D0D0D;

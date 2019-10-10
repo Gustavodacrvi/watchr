@@ -12,6 +12,7 @@ export default {
   'Confirm password': 'Confirmar senha',
   'Create account': 'Criar conta',
   'Today': 'Hoje',
+  'Overdue': 'Atrasadas',
   'Tomorrow': 'Amanhã',
   'No date': 'Sem data',
   'Add tasks to list': 'Adicionar tarefas em uma lista',

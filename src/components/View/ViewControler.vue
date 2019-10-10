@@ -451,6 +451,7 @@ export default {
     },
     todayHeadingsOptions() {
       const dispatch = this.$store.dispatch
+      const l = this.l
       const saveTasksDay = (ids, mom) => {
         dispatch('task/saveTasksById', {
           ids, task: {calendar: this.$store.getters['task/getSpecificDayCalendarObj'](mom)}
@@ -459,7 +460,7 @@ export default {
       const overIds = this.getOverdueTasks.map(el => el.id)
       return [
         {
-          name: 'Overdue',
+          name: l['Overdue'],
           id: 'overdue',
           filter: (tasks) => this.getOverdueTasks,
           color: 'var(--red)',
@@ -490,7 +491,7 @@ export default {
           ]
         },
         {
-          name: 'Today',
+          name: l['Today'],
           id: 'todya',
           filter: (tasks) => this.getTasks,
         },

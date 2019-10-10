@@ -37,6 +37,7 @@ export default {
   },
   methods: {
     openMenu() {
+      this.$emit('open-menu')
       this.$router.push('/menu')
     },
     goToIndexPage() {

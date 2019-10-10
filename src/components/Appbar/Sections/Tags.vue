@@ -4,12 +4,12 @@
       type="tag"
       icon="tag"
       iconColor='var(--red)'
+      :enableSort='true'
       :illustration='illustration'
       :list="getTags"
       :active="active"
       :viewType="viewType"
       :mapNumbers='numberOfTasks'
-      :enableSort='true'
       @buttonAdd='buttonAdd'
       @update='update'
     />

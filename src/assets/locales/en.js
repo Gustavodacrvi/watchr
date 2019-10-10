@@ -12,6 +12,7 @@ export default {
   'Confirm password': 'Confirm password',
   'Create account': 'Create account',
   'Today': 'Today',
+  'Overdue': 'Overdue',
   'Tomorrow': 'Tomorrow',
   'No date': 'No date',
   'Add time': 'Add time',

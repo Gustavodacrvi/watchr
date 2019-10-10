@@ -1,7 +1,7 @@
 <template>
   <div class="Menu cbd">
     <div class="appbar-wrapper">
-      <Icon class="arrow cursor" icon="arrow" color="var(--gray)" @click="$router.go(-1)" :primaryHover="true"/>
+      <Icon class="arrow cursor" icon="arrow" color="var(--gray)" @click="goback" :primaryHover="true"/>
       <transition :name="this.appSection ? 'mr' : 'ml'">
         <Appbar class="Appbar" v-if="appSection" key="app"/>
         <div v-else key="links" class="nav-links">
@@ -51,6 +51,10 @@ export default {
     saveLang(lang) {
       this.$store.commit('saveLang', lang)
     },
+    goback() {
+      this.$emit('close-menu')
+      this.$router.go(-1)
+    }
   },
   computed: {
     ...mapGetters(['l']),

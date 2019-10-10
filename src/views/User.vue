@@ -5,7 +5,7 @@
       <div key="notlogged" v-else-if="showMsg && !authState" class="view">
         <span class='view'>{{ l['Please log in to continue.'] }}</span>
       </div>
-      <div v-else-if="user && !user.emailVerified" class="view" key="confirm">
+      <div v-else-if="user && !user.emailVerified && firstFireLoad" class="view" key="confirm">
         <span>Please confirm your e-mail</span>
       </div>
       <div v-else-if="error" class="view" key="error">
@@ -54,7 +54,7 @@ export default {
   },
   computed: {
     ...mapGetters(['l']),
-    ...mapState(['authState', 'isLoading', 'user']),
+    ...mapState(['authState', 'isLoading', 'user', 'firstFireLoad']),
   },
   watch: {
     authState() {

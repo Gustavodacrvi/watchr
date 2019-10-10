@@ -64,6 +64,7 @@ const store = new Vuex.Store({
       bool: false,
     },
     user: null,
+    firstFireLoad: false,
     selectedTasks: [],
     isOnControl: false,
     fireBaseFirstLoaded: false,
@@ -95,6 +96,9 @@ const store = new Vuex.Store({
   mutations: {
     saveUser(state, user) {
       state.user = user
+    },
+    firstFirebaseLoaded(state) {
+      state.firstFireLoad = true
     },
     applyAppnavSelected(state, id) {
       state.apply.taskId = id
@@ -184,6 +188,7 @@ auth.onAuthStateChanged((user) => {
   const isLogged = user !== null
   store.commit('toggleUser', isLogged)
   store.commit('saveUser', user)
+  store.commit('firstFirebaseLoaded')
 
   if (fire && !enabled && user && user.emailVerified)
     fire.enablePersistence().then(() => enabled = true)

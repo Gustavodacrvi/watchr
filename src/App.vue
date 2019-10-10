@@ -1,19 +1,19 @@
 <template>
   <div v-if="l" id="app" :class="{hidePassive}">
-    <transition name="popup">
+    <transition name="fade">
       <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>
     <Toast/>
-    <transition name="popup">
-      <Menu v-if="isMenuOpened && !isDesktop"/>
+    <transition name="fade">
+      <Menu v-if="openedMenu && !isDesktop" @close-menu='openedMenu = false'/>
     </transition>
-    <transition>
+    <transition name="fade">
       <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
     </transition>
 
     <div class="content">
       <transition name="nav-trans" mode="out-in">
-        <NavBar v-if='!hideNavbar'/>
+        <NavBar v-if='!hideNavbar' @open-menu="openedMenu = true"/>
         <div v-if="hideNavbar" style="height: 65px;"></div>
       </transition>
       <div v-if="!isDesktop" style="height: 65px"></div>
@@ -47,6 +47,7 @@ export default {
       hided: true,
       hideTimeout: null,
       timeBeforeMouseMove: 0,
+      openedMenu: false,
     }
   },
   created() {
@@ -94,9 +95,6 @@ export default {
   },
   computed: {
     ...mapGetters(['isDesktop', 'isStandAlone', 'l']),
-    isMenuOpened() {
-      return this.$route.fullPath === '/menu'
-    },
     hideNavbar() {
       if (!this.isStandAlone || !this.isDesktop) return false
       return this.hided
@@ -136,12 +134,12 @@ export default {
 }
 
 
-.popup-enter, .popup-leave-to {
+.fade-enter, .fade-leave-to {
   opacity: 0;
   transition: opacity .2s;
 }
 
-.popup-leave, .popup-enter-to {
+.fade-leave, .fade-enter-to {
   opacity: 1;
   transition: opacity .2s;
 }

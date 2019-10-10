@@ -140,7 +140,7 @@ export default {
             s.boxShadow = `0 2px 10px var(--primary)`
           }
         } else move = null
-        if (!e.target.classList.contains('AppbarElement-link'))
+        if (e && e && e.target && !e.target.classList.contains('AppbarElement-link'))
           return false
       },
       onStart: () => window.navigator.vibrate(100),

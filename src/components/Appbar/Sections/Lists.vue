@@ -4,13 +4,13 @@
       type="list"
       icon="tasks"
       iconColor='var(--purple)'
+      :disableSelection='true'
+      :enableSort="false"
       :illustration="illustration"
       :list="getList"
       :active="active"
-      :disableSelection='true'
       :viewType="viewType"
       :mapNumbers="(tasks) => tasks"
-      :enableSort="true"
       @buttonAdd='buttonAdd'
       @update='update'
     />
