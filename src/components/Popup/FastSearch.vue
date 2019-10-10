@@ -108,11 +108,13 @@ export default {
           color: 'var(--purple)',
           callback: () => go('/user?list=' + l.name)
         })
-     /*for (const t of ts)
+     for (const t of ts)
         arr.push({
           name: t.name,
           icon: 'circle-check',
-        }) */
+          id: t.id,
+          callback: () => go('/user?search=' + t.name)
+        })
 
       return arr.slice(0, 10)
     },
@@ -226,6 +228,7 @@ export default {
   display: flex;
   align-items: center;
   flex-basis: 100%;
+  word-wrap: break-all;
 }
 
 .trans-lenter, .trans-leave-to {

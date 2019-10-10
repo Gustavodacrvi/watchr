@@ -170,7 +170,7 @@ const store = new Vuex.Store({
         state.isLoading = true
       })
     },
-    pushKeyShortcut({dispatch}, key) {
+    pushKeyShortcut({dispatch, commit}, key) {
       const pop = (comp) => {
         dispatch('pushPopup', {comp})
       }
@@ -178,6 +178,7 @@ const store = new Vuex.Store({
         case 'q': pop('AddTask'); break
         case 't': pop('AddTag'); break
         case 'l': pop('AddList'); break
+        case 'f': commit('openFastSearch'); break
       }
     },
     pushPopup({state, getters}, popup) {
