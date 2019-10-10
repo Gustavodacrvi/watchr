@@ -86,7 +86,7 @@ export default {
           toast({
             name: this.l['You have successfully created an account!'],
             seconds: 3,
-            type: 'error'
+            type: 'success'
           })
           auth.currentUser.sendEmailVerification().then(() => {
             toast({

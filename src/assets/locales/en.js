@@ -36,6 +36,7 @@ export default {
   'Task name': 'Task name',
   'High priority': 'High priority',
   'Medium priority': 'Medium priority',
+  'Add tasks to list': 'Add tasks to list',
   'Low priority': 'Low priority',
   'No priority': 'No priority',
   'Add tag': 'Add tag',

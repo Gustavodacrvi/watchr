@@ -41,7 +41,7 @@
       tag="div"
     >
       <template v-for="(h, i) in headings">
-        <HeadingApp v-if="showEmptyHeadings || h.filter(savedTasks, h, showCompleted).length > 0" :key="h.id"
+        <HeadingApp v-if="showEmptyHeadings || filter(h).length > 0" :key="h.id"
           :header='h'
           :name='h.name'
           :allowEdit='h.allowEdit'
@@ -53,7 +53,7 @@
           :data-id='h.id'
         >
           <TaskRenderer
-            :tasks='h.filter(savedTasks, h, showCompleted)'
+            :tasks='filter(h)'
             :view='view'
             :headingEdit='headingEdit'
             :viewNameValue='viewNameValue'
@@ -103,6 +103,7 @@ export default {
     return {
       addedTask: false,
       atLeastOneRenderedTask: false,
+      lastAddedTaskId: '',
     }
   },
   mounted() {
@@ -225,7 +226,7 @@ export default {
             el.style.boxShadow = `0 2px 10px ${color}`
           } else move = null
         } else move = null
-        if (e && !e.path.some(el => el.classList && el.classList.contains('task-renderer-root')))
+        if (e && e.path && !e.path.some(el => el.classList && el.classList.contains('task-renderer-root')))
           return false
       },
     })
@@ -249,6 +250,11 @@ export default {
     window.removeEventListener('click', this.windowClick)
   },
   methods: {
+    filter(h) {
+      const ts = h.filter(this.savedTasks, h, this.showCompleted)
+      if (ts.length > 0) this.atLeastOneRenderedTask = true
+      return ts
+    },
     addHeading(name) {
       if (name) {
         const i = this.getTaskRendererPosition()
@@ -367,7 +373,20 @@ export default {
     contWrapper(el) {
       return el.getElementsByClassName('cont-wrapper')[0]
     },
+    fixTaskRenderer() {
+      setTimeout(() => {
+        const i = this.getTaskRendererPosition()
+        const childNodes = this.draggableRoot.childNodes
+        const adder = childNodes[i]
+        const newTask = childNodes[i + 1]
+        if (newTask)
+          this.draggableRoot.insertBefore(newTask, adder)
+        this.addedTask = false
+      }, 10)
+    },
     enter(el) {
+      if (this.addedTask)
+        this.fixTaskRenderer()
       const cont = this.contWrapper(el)
       if (cont) {
         const s = cont.style
@@ -435,17 +454,6 @@ export default {
   watch: {
     tasks() {
       this.atLeastOneRenderedTask = false
-      setTimeout(() => {
-        if (this.addedTask) {
-            const i = this.getTaskRendererPosition()
-            const childNodes = this.draggableRoot.childNodes
-            const adder = childNodes[i]
-            const newTask = childNodes[i + 1]
-            if (newTask)
-              this.draggableRoot.insertBefore(newTask, adder)
-        }
-        this.addedTask = false
-      }, 100)
     }
   }
 }
@@ -496,6 +504,8 @@ export default {
 
 .task-renderer-root {
   outline: none;
+  position: relative;
+  z-index: 2;
 }
 
 .dontHaveTasks {

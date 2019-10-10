@@ -33,6 +33,7 @@ export default {
   },
   actions: {
     getData({state}) {
+      if (uid())
       return Promise.all([
         new Promise(resolve => {
           fire.collection('tags').where('userId', '==', uid()).onSnapshot(snap => {

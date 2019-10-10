@@ -14,9 +14,9 @@ export default {
       this.$store.commit('pushToast', toast)
     }
     const reload = () => {
-      auth.currentUser.reload().then(() => {
-        this.$router.push('/user')
-      })
+      this.$router.push('/user')
+      const a = firebase.auth()
+      if (a.currentUser) a.currentUser.reload()
     }
     const toastErr = (err) => {
       toast({

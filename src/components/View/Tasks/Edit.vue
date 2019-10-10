@@ -20,7 +20,7 @@
         @click="list = ''"
       />
       <Tag v-if="list && heading"
-        icon="user"
+        icon="heading"
         :value="heading"
         color='var(--purple)'
         @click="heading = ''"
@@ -117,6 +117,7 @@ export default {
       this.priority = t.priority
       this.calendar = t.calendar
       this.list = this.listName
+      this.heading = t.heading
       this.tags = this.getTagNames
     }
   },
@@ -140,13 +141,15 @@ export default {
       if (i && i > -1 && this.calendar) {
         n = n.substr(0, i)
       }
+      let head = this.heading
+      if (head === undefined) head = null
       this.$emit('save', {
         name: n,
         priority: this.priority,
         list: this.listId,
         tags: this.tagIds,
         calendar: this.calendar,
-        heading: this.heading,
+        heading: head,
       })
       this.name = ''
     },
@@ -238,7 +241,7 @@ export default {
             for (const h of el.headings) {
               arr.push({
                 name: h.name,
-                icon: 'user',
+                icon: 'heading',
                 callback: () => this.heading = h.name
               })
             }

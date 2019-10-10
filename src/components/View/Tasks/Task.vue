@@ -32,7 +32,7 @@
             <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
             <span v-else-if="calendarStr" class="tag cb rb">{{ calendarStr }}</span>
             <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
-            <span v-if="task.heading" class="tag cb rb">{{ task.heading }}</span>
+            <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
             <transition name="name-t">
               <span v-if="!showApplyOnTasks" key="normal">{{ task.name }}</span>
               <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
@@ -116,7 +116,9 @@ export default {
       }
     },
     completeTask() {
-      this.$store.dispatch('task/completeTasks', [this.task])
+      if (!this.completed)
+        this.$store.dispatch('task/completeTasks', [this.task])
+      else this.$store.dispatch('task/uncompleteTasks', [this.task])
     },
     selectTask() {
       this.$emit('select', this.task.id)
@@ -329,11 +331,11 @@ export default {
   user-select: none;
   transition: opacity .2s;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .Task:hover {
-  z-index: 2;
+  z-index: 3;
 }
 
 .cont-wrapper {

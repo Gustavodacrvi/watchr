@@ -14,6 +14,7 @@ export default {
   'Today': 'Hoje',
   'Tomorrow': 'Amanhã',
   'No date': 'Sem data',
+  'Add tasks to list': 'Adicionar tarefas em uma lista',
   'Add time': 'Adicionar hora',
   'Inbox': 'Inbox',
   'Upcoming': 'Próximos dias',

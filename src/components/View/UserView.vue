@@ -10,7 +10,7 @@
         @section="v => section = v"
       />
     </div>
-    <div class="cont">
+    <div class="cont" :class="platform">
       <ViewControler
         :isSmart="isSmart"
         :viewType='viewType'
@@ -140,6 +140,11 @@ export default {
   flex-grow: 1;
   transition-delay: .4s;
   transition-duration: .6s;
+  z-index: 5;
+}
+
+.cont.desktop {
+  margin-left: 60px;
 }
 
 .appbarHided .nav-shadow {

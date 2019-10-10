@@ -12,7 +12,7 @@
           @mouseleave="onHover = false"
         >
           <div class="header">
-            <h4 class="name" :style="{color}">{{ name }}</h4>
+            <h3 class="name" :style="{color}">{{ name }}</h3>
             <IconDrop v-show="showIconDrop && options && options.length > 0" class="drop"
               handle='settings-h'
               :options='options'
@@ -82,11 +82,11 @@ export default {
 .Heading {
   margin: 24px 0;
   position: relative;
-  z-index: 5;
+  z-index: 1;
 }
 
 .Heading:hover {
-  z-index: 6;
+  z-index: 2;
 }
 
 .header-wrapper {
@@ -107,6 +107,7 @@ export default {
 
 .name {
   margin: 0;
+  color: var(--primary);
 }
 
 .fade-enter, .fade-leave-to {

@@ -42,6 +42,7 @@
             <span class="week">S</span>
           </div>
           <div class="dates">
+            <span v-for='i in firstWeekDayRange()' :key='i + 100' class="dark-date"></span>
             <span v-for="i in monthDays()" :key="i" class="day cursor rb"
               :class="{active: isSelectedDate(i)}"
               @click="selectDate(i)"
@@ -220,6 +221,14 @@ export default {
         mom.subtract(1, 'minute')
       }
       this.$forceUpdate()
+    },
+    firstWeekDayRange() {
+      const clone = this.visualMoment.clone()
+      const num = parseInt(clone.startOf('month').format('d'), 10)
+      const arr = []
+      for (let i = 1; i <= num; i++)
+        arr.push(i)
+      return arr
     },
     addTime() {
       this.calendar = true
@@ -411,6 +420,12 @@ export default {
   width: 100%;
   margin: 10px 0;
   overflow: hidden;
+}
+
+.dark-date {
+  display: inline-block;
+  width: 31px;
+  height: 31px;
 }
 
 .day {

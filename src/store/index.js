@@ -63,6 +63,7 @@ const store = new Vuex.Store({
       taskId: null,
       bool: false,
     },
+    user: null,
     selectedTasks: [],
     isOnControl: false,
     fireBaseFirstLoaded: false,
@@ -92,15 +93,15 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    saveUser(state, user) {
+      state.user = user
+    },
     applyAppnavSelected(state, id) {
       state.apply.taskId = id
       state.apply.bool = !state.apply.bool
     },
     appnavSelected(state, selected) {
       state.selectedEls = selected
-    },
-    firebaseFirstLoad(state) {
-      state.fireBaseFirstLoaded = true
     },
     languageFile(state, language) {
       state.language = language
@@ -179,12 +180,12 @@ const store = new Vuex.Store({
 getLanguageFile(lang).then((l) => store.commit('languageFile', l))
 
 let enabled = false
-auth.onAuthStateChanged(() => {
-  const isLogged = auth.currentUser !== null
-  store.commit('firebaseFirstLoad')
+auth.onAuthStateChanged((user) => {
+  const isLogged = user !== null
   store.commit('toggleUser', isLogged)
+  store.commit('saveUser', user)
 
-  if (fire && !enabled)
+  if (fire && !enabled && user && user.emailVerified)
     fire.enablePersistence().then(() => enabled = true)
       .catch(err => {
         if (err.code === 'failed-precondition') {

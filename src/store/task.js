@@ -81,6 +81,7 @@ export default {
   },
   actions: {
     getData({state}) {
+      if (uid())      
       return Promise.all([
         new Promise(resolve => {
           fire.collection('tasks').where('userId', '==', uid()).onSnapshot(snap => {
@@ -127,6 +128,19 @@ export default {
 
       }
       
+      batch.commit()
+    },
+    uncompleteTasks(c, tasks) {
+      const batch = fire.batch()
+
+      for (const t of tasks) {
+        const ref = fire.collection('tasks').doc(t.id)
+        batch.update(ref, {
+          completeDate: null,
+          completed: false,
+        })
+      }
+
       batch.commit()
     },
     saveTask(c, obj) {

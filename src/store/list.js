@@ -53,6 +53,7 @@ export default {
   },
   actions: {
     getData({state}) {
+      if (uid())
       return Promise.all([
         new Promise(resolve => {
           fire.collection('lists').where('userId', '==', uid()).onSnapshot(snap => {
@@ -128,6 +129,16 @@ export default {
 
       batch.commit()
     },
+    moveTaskToList(c, {ids, taskId, listId}) {
+      const batch = fire.batch()
+
+      const taskRef = fire.collection('tasks').doc(taskId)
+      batch.update(taskRef, {
+        list: listId,
+      })
+
+      batch.commit()
+    },
     updateViewOrder({state}, {view, ids}) {
       const obj = state.viewOrders
       obj[view].tasks = ids
@@ -170,7 +181,7 @@ export default {
         headingsOrder: ids,
       })
     },
-    addTaskHeading({state}, {name, ids, listId, task}) {
+    addTaskHeading({state}, {name, ids, listId, task, index}) {
       const list = state.lists.find(el => el.id === listId)
       if (list) {
         const batch = fire.batch()
@@ -184,6 +195,7 @@ export default {
         })
         const heads = list.headings.slice()
         const i = heads.findIndex(el => el.name === name)
+        ids.splice(index, 0, taskRef.id)
         heads[i].tasks = ids
         const listRef = fire.collection('lists').doc(listId)
         batch.update(listRef, {
@@ -274,7 +286,7 @@ export default {
         batch.commit()
       }
     },
-    deleteHeadingFromList({state}, {listId, name}) {
+    deleteHeadingFromList({state}, {listId, name, savedTasks}) {
       const list = state.lists.find(el => el.id === listId)
       if (list) {
         const batch = fire.batch()
@@ -282,8 +294,13 @@ export default {
         const heads = list.headings.slice()
         const i = heads.findIndex(el => el.name === name)
         const tasks = heads[i].tasks.slice()
+        const ts = []
+        for (const t of tasks) {
+          const task = savedTasks.find(el => el.id === t.id)
+          if (task) ts.push(task)
+        }
         heads.splice(i, 1)
-        for (const id of tasks) {
+        for (const id of ts) {
           const ref = fire.collection('tasks').doc(id)
           batch.update(ref, {
             heading: null,

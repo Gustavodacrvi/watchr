@@ -33,7 +33,7 @@ import TagVue from './../Tag.vue'
 import { mapState } from 'vuex'
 
 export default {
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -67,14 +67,19 @@ export default {
       return obj[this.viewName]
     },
     getIconColor() {
-      const obj = {
-        Today: 'var(--yellow)',
-        Tomorrow: 'var(--orange)',
-        Inbox: 'var(--primary)',
-        Upcoming: 'var(--green)',
-        Completed: 'var(--brown)',
+      if (this.viewType === 'list') {
+        const obj = {
+          Today: 'var(--yellow)',
+          Tomorrow: 'var(--orange)',
+          Inbox: 'var(--primary)',
+          Upcoming: 'var(--green)',
+          Completed: 'var(--brown)',
+        }
+        const color = obj[this.viewName]
+        if (!color) return 'var(--purple)'
+        return color
       }
-      return obj[this.viewName]
+      return 'var(--red)'
     }
   },
   watch: {

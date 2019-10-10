@@ -20,20 +20,21 @@ export default {
   },
   actions: {
     getData({state}) {
-      return Promise.all([
-        new Promise(resolve => {
-          fire.collection('filters').where('userId', '==', uid()).onSnapshot(snap => {
-            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'filters')
-            resolve()
+      if (uid())
+        return Promise.all([
+          new Promise(resolve => {
+            fire.collection('filters').where('userId', '==', uid()).onSnapshot(snap => {
+              utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'filters')
+              resolve()
+            })
+          }),
+          new Promise(resolve => {
+            fire.collection('filtersOrder').doc(uid()).onSnapshot(snap => {
+              state.filtersOrder = snap.data().order
+              resolve()
+            })
           })
-        }),
-        new Promise(resolve => {
-          fire.collection('filtersOrder').doc(uid()).onSnapshot(snap => {
-            state.filtersOrder = snap.data().order
-            resolve()
-          })
-        })
-      ])
+        ])
     },
     deleteTag(c, id) {
 

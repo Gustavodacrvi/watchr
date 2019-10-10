@@ -156,12 +156,15 @@ export default {
             onAddTask(obj) {
               obj.task.calendar = this.getSpecificDayCalendarObj(mom())
               this.$store.dispatch('list/addTaskHeading', {
-                name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task,
+                name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
               })
             },
-            onSortableAdd(obj) {
-              console.log('today sortable add')
-            },
+            onSortableAdd(evt, {dataset}, type, ids) {
+              const taskId = dataset.id
+              this.$store.dispatch('list/moveTaskToList', {
+                taskId, ids, listId: t.id,
+              })
+            }
           })
         }
 
@@ -333,6 +336,7 @@ export default {
         arr.push({
           name: h.name,
           allowEdit: true,
+          showHeadingName: false,
           onEdit: (name) => {
             this.$store.dispatch('list/saveHeadingName', {
               listId: this.viewList.id,
@@ -357,14 +361,14 @@ export default {
               callback: () => {
                 this.$store.dispatch('list/deleteHeadingFromList', {
                   listId: this.viewList.id,
-                  name: h.name,
+                  name: h.name, savedTasks: this.tasks,
                 })
               },
             },
           ],
           onAddTask(obj) {
             this.$store.dispatch('list/addTaskHeading', {
-              name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task,
+              name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
             })
           },
           onSortableAdd(evt, {dataset}, type, ids) {

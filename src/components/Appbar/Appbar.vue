@@ -1,61 +1,63 @@
 <template>
-  <div class="Appbar scroll-thin" :class='platform'>
-    <div class="inner-wrapper">
-      <div>
-        <transition name="bar-trans">
-          <div v-if="showing" class="content">
-            <AppnavRenderer
-              type='list'
-              :enableSort='false'
-              :disabled='!isDesktop'
-              :disableSelection='true'
-              :list='links'
-              :active='value'
-              :viewType='viewType'
-              :onTaskDrop='onTaskDrop'
-              :mapNumbers='numberOfTasks'
-              :isSmart='true'
-              @apply='applySelectedTasks'
-            />
-            <div class="header">
-              <div v-for="(s,i) in sections" :key="s.name"
-                class="option section-option"
-                :class="{sectionActive: s.name === section}"
-                :tabindex="i + 1 + links.length"
-                @click="moveLine(i)"
-                :data-section="s.name"
-              >{{ l[s.name] }}</div>
-              <div class="line section-line"></div>
+  <div class="Appbar-wrapper scroll-thin" :class="platform">
+    <div class="Appbar" :class='platform'>
+      <div class="inner-wrapper">
+        <div>
+          <transition name="bar-trans">
+            <div v-if="showing" class="content">
+              <AppnavRenderer
+                type='list'
+                :enableSort='false'
+                :disabled='!isDesktop'
+                :disableSelection='true'
+                :list='links'
+                :active='value'
+                :viewType='viewType'
+                :onTaskDrop='onTaskDrop'
+                :mapNumbers='numberOfTasks'
+                :isSmart='true'
+                @apply='applySelectedTasks'
+              />
+              <div class="header">
+                <div v-for="(s,i) in sections" :key="s.name"
+                  class="option section-option"
+                  :class="{sectionActive: s.name === section}"
+                  :tabindex="i + 1 + links.length"
+                  @click="moveLine(i)"
+                  :data-section="s.name"
+                >{{ l[s.name] }}</div>
+                <div class="line section-line"></div>
+              </div>
+              <div class="comp-wrapper">
+                <transition name="sect-trans"
+                  @leave="leave"
+                  @enter="enter"
+                >
+                  <component
+                    class="component appnav-section"
+                    :is="section"
+                    :active="value"
+                    :viewType='viewType'
+                    :data-transindex="getAppnavIndex(section)"
+                  />
+                </transition>
+              </div>
             </div>
-            <div class="comp-wrapper">
-              <transition name="sect-trans"
-                @leave="leave"
-                @enter="enter"
-              >
-                <component
-                  class="component appnav-section"
-                  :is="section"
-                  :active="value"
-                  :viewType='viewType'
-                  :data-transindex="getAppnavIndex(section)"
-                />
-              </transition>
-            </div>
-          </div>
-        </transition>
-      </div>
-      <div v-if="isDesktop" style="height: 35px;"></div>
-      <div class="footer" :class="platform">
-        <div class="inner-footer">
-          <transition name="icon-t">
-            <IconDrop v-if="showIconDropdown"
-              class="drop right passive"
-              handle='settings-h'
-              handleColor='var(--gray)'
-              :options="getSectionOptions"
-            />
           </transition>
-          <Icon v-if="isDesktop" icon="arrow" id='appbar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
+        </div>
+        <div v-if="isDesktop" style="height: 35px;"></div>
+        <div class="footer" :class="platform">
+          <div class="inner-footer">
+            <transition name="icon-t">
+              <IconDrop v-if="showIconDropdown"
+                class="drop right passive"
+                handle='settings-h'
+                handleColor='var(--gray)'
+                :options="getSectionOptions"
+              />
+            </transition>
+            <Icon v-if="isDesktop" icon="arrow" id='appbar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
+          </div>
         </div>
       </div>
     </div>
@@ -210,12 +212,14 @@ export default {
       this.$emit('appbar', !this.showing)
     },
     moveLineToActive() {
-      const el = this.$el.getElementsByClassName('sectionActive')[0]
-      const line = this.$el.getElementsByClassName('line')[0]
-
-      if (el && line) {
-        line.style.left = el.offsetLeft + 'px'
-        line.style.width = el.offsetWidth + 'px'
+      if (this.$el) {
+        const el = this.$el.getElementsByClassName('sectionActive')[0]
+        const line = this.$el.getElementsByClassName('line')[0]
+  
+        if (el && line) {
+          line.style.left = el.offsetLeft + 'px'
+          line.style.width = el.offsetWidth + 'px'
+        }
       }
     },
     moveLine(i) {
@@ -340,9 +344,19 @@ export default {
 .Appbar {
   height: 100%;
   width: 100%;
+  padding-right: 25px;
+  overflow: visible;
+}
+
+.Appbar-wrapper {
+  height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 25px;
+}
+
+.Appbar-wrapper.desktop {
+  left: -35px;
+  padding-left: 35px;
 }
 
 .footer {
@@ -353,6 +367,7 @@ export default {
   width: 100%;
   background-color: var(--back-color);
   border: none;
+  margin-left: 32px;
   box-shadow: 0 -3px 4px var(--back-color);
 }
 
@@ -360,6 +375,7 @@ export default {
   bottom: 15px;
   height: 53px;
   width: 100%;
+  margin-left: 0;
   background-color: var(--dark);
   box-shadow: 0 -3px 4px var(--dark);
 }

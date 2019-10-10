@@ -1,7 +1,7 @@
 <template>
   <div class="ActionButtons passive" :class="platform" @click="click">
     <Btn v-if="showHeader" class="header button handle action-button" id="edit-component"
-      icon='user'
+      icon='heading'
       color='white'
       data-type='headingbutton'
       txt='Add heading'

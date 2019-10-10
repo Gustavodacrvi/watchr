@@ -6,6 +6,7 @@
         :viewName="viewName"
         :viewNameValue="viewNameValue"
         :options="options"
+        :viewType="viewType"
         :tags='tagSelectionOptions'
         :lists='listSelectionOptions'
         :activeTags='activeTags'
@@ -32,6 +33,7 @@
         @add-heading="(obj) => $emit('add-heading', obj)"
       />
     </div>
+    <div style="height: 500px"></div>
     <ActionButtons :showHeader='showHeader'/>
   </div>
 </template>

@@ -107,13 +107,13 @@ export default {
       setTimeout(() => {
         el.style.opacity = 1
         el.style.height = '35px'
-        setTimeout(() => done(), 300)
+        setTimeout(() => done(), 200)
       })
     },
     leaveItems(el, done) {
       el.style.opacity = 0
       el.style.height = '0px'
-      setTimeout(() => done(), 300)
+      setTimeout(() => done(), 200)
     },
     linkClick(callback, link) {
       this.linkCallback(callback, link, () => {
@@ -124,7 +124,7 @@ export default {
     linkCallback(callback, link, doesnHaveLinksCallback) {
       if (callback) {
         let links = callback(link, this)
-        if ((!links || !links.calendar) && doesnHaveLinksCallback) doesnHaveLinksCallback()
+        if ((!links || !links.calendar) && doesnHaveLinksCallback && links && !links.search) doesnHaveLinksCallback()
         if (links && links.search) {
           this.showSearch = true
         }
@@ -150,13 +150,13 @@ export default {
                 cont.style.width = oldWidth
                 cont.style.height = oldHeight
                 setTimeout(() => {
-                  cont.style.transitionDuration = '.3s'
+                  cont.style.transitionDuration = '.2s'
                   cont.style.width = width
                   cont.style.height = height
                   cont.style.transitionDelay = '.0s'
                 }, 50)
               })
-            }, 300)
+            }, 200)
     
             this.toggleLinks()
             this.links = links
@@ -187,7 +187,7 @@ export default {
         this.links = this.options
         this.showSearch = this.allowSearch
         this.showCalendar = this.calendar
-      }, 300)
+      }, 200)
     },
     leave(el) {
       el.style.width = 0
@@ -251,7 +251,7 @@ export default {
 .header-link {
   margin: 8px 26px;  
   width: 160px;
-  transition: opacity .3s;
+  transition: opacity .2s;
 }
 
 .header-name {
@@ -322,7 +322,7 @@ export default {
   height: 0;
   padding: 18px 0;
   overflow: hidden;
-  transition-duration: .3s;
+  transition-duration: .2s;
   z-index: 5;
 }
 
@@ -358,7 +358,7 @@ export default {
 .link {
   display: flex;
   align-items: center;
-  transition-duration: .3s;
+  transition-duration: .2s;
   white-space: nowrap;
   height: 35px;
 }
