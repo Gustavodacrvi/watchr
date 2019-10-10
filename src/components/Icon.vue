@@ -43,6 +43,7 @@ import plus from '@/assets/icons/plus.svg'
 import circleCheck from '@/assets/icons/circle-check.svg'
 import globe from '@/assets/icons/globe.svg'
 import heading from '@/assets/icons/heading.svg'
+import search from '@/assets/icons/search.svg'
 
 import { mapGetters } from 'vuex'
 
@@ -54,7 +55,7 @@ export default {
         inbox, calendar, sun, arrow, star, user, out,
         sort, tag, completed, priority, menu, tasks,
         pen, trash, fire, filter, bloqued, circle,
-        copy, plus, globe, heading,
+        copy, plus, globe, heading, search,
         "user-plus": userPlus,
         "circle-check": circleCheck,
         "settings-h": settingsH,

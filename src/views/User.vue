@@ -2,7 +2,7 @@
   <div class="User">
     <transition appear name="state" mode="out-in">
       <UserView v-if="authState && !isLoading" key="app"/>
-      <div key="notlogged" v-else-if="showMsg && !authState" class="view">
+      <div key="notlogged" v-else-if="showMsg && !authState && firstFireLoad" class="view">
         <span class='view'>{{ l['Please log in to continue.'] }}</span>
       </div>
       <div v-else-if="user && !user.emailVerified && firstFireLoad" class="view" key="confirm">

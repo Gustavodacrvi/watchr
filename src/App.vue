@@ -5,11 +5,10 @@
     </transition>
     <Toast/>
     <transition name="fade">
-      <Menu v-if="openedMenu && !isDesktop" @close-menu='openedMenu = false'/>
+      <Menu v-show="isMenuOpened && !isDesktop"/>
     </transition>
-    <transition name="fade">
-      <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
-    </transition>
+    <FastSearch v-if="fastSearch"/>
+    <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
 
     <div class="content">
       <transition name="nav-trans" mode="out-in">
@@ -31,6 +30,7 @@ import PopupVue from './components/Popup/Popup.vue'
 import ToastVue from './components/Toast.vue'
 import MenuVue from './components/NavBar/Menu.vue'
 import MobileIcondropVue from './components/Popup/MobileIcondrop.vue'
+import FastSearchVue from './components/Popup/FastSearch.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -41,6 +41,7 @@ export default {
     Toast: ToastVue,
     Menu: MenuVue,
     MobileIcondrop: MobileIcondropVue,
+    FastSearch: FastSearchVue,
   },
   data() {
     return {
@@ -94,10 +95,14 @@ export default {
     },
   },
   computed: {
+    ...mapState(['fastSearch']),
     ...mapGetters(['isDesktop', 'isStandAlone', 'l']),
     hideNavbar() {
       if (!this.isStandAlone || !this.isDesktop) return false
       return this.hided
+    },
+    isMenuOpened() {
+      return this.$route.fullPath === '/menu'
     },
     hidePassive() {
       return this.timeBeforeMouseMove > 4 && this.isStandAlone && this.isDesktop
@@ -147,19 +152,19 @@ export default {
 .nav-trans-enter, .nav-trans-leave-to {
   opacity: 0;
   transform: translateY(-25px);
-  transition: opacity .3s ease-out, transform .3s ease-out;
+  transition: opacity .2s ease-out, transform .2s ease-out;
 }
 
 .nav-trans-leave, .nav-trans-enter-to {
   opacity: 1;
   transform: translateY(0px);
-  transition: opacity .3s ease-in, transform .3s ease-in;
+  transition: opacity .2s ease-in, transform .2s ease-in;
 }
 
 .router-view {
   position: relative;
   top: 0;
-  transition: top .3s;
+  transition: top .2s;
 }
 
 .hided {

@@ -1,5 +1,5 @@
 <template>
-  <input v-model.trim="str" class="Input cbd" autocomplete="off" type="text">
+  <input v-model.trim="str" class="Input cbd" autocomplete="off" type="text" @keydown="evt => $emit('keydown', evt)">
 </template>
 
 <script>

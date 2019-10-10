@@ -1,5 +1,5 @@
 <template>
-  <div class="AppbarElement rb handle AppbarElement-link"
+  <div class="AppbarElement AppbarElement-link rb handle"
     :tabindex="tabindex"
     @mouseenter="hover = true"
     @mouseleave="hover = false"

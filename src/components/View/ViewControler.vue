@@ -200,6 +200,8 @@ export default {
     },
     getTasks() {
       const ts = this.tasksWithoutLists
+      if (this.viewType === 'search')
+        return this.tasks.filter(el => el.name.includes(this.viewName))
       if (this.isSmart && this.notSmartHeaderView) {
         if (this.viewName === 'Today' && this.hasOverdueTasks) return []
         return utilsTask.filterTasksByView(ts, this.viewName)
