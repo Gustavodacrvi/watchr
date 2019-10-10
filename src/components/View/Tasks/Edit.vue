@@ -16,7 +16,14 @@
       <Tag v-if="list"
         icon="tasks"
         :value="list"
+        color='var(--purple)'
         @click="list = ''"
+      />
+      <Tag v-if="list && heading"
+        icon="heading"
+        :value="heading"
+        color='var(--purple)'
+        @click="heading = ''"
       />
     </div>
     <div class="tags">
@@ -97,6 +104,7 @@ export default {
       priority: '',
       list: '',
       calendar: null,
+      heading: null,
       tags: [],
       optionsType: '',
       options: [],
@@ -109,6 +117,7 @@ export default {
       this.priority = t.priority
       this.calendar = t.calendar
       this.list = this.listName
+      this.heading = t.heading
       this.tags = this.getTagNames
     }
   },
@@ -132,15 +141,22 @@ export default {
       if (i && i > -1 && this.calendar) {
         n = n.substr(0, i)
       }
+      let head = this.heading
+      if (head === undefined) head = null
       this.$emit('save', {
         name: n,
         priority: this.priority,
         list: this.listId,
         tags: this.tagIds,
         calendar: this.calendar,
+        heading: head,
       })
       this.name = ''
     },
+    addTag(name) {
+      if (!this.tags.find(e => e === name))
+        this.tags.push(name)
+    }
   },
   computed: {
     ...mapState({
@@ -207,8 +223,7 @@ export default {
           name: el.name,
           icon: 'tag',
           callback: () => {
-            if (!this.tags.find(e => e === el.name))
-              this.tags.push(el.name)
+            this.addTag(el.name)
           },
         })
       }
@@ -222,6 +237,15 @@ export default {
           icon: 'tasks',
           callback: () => {
             this.list = el.name
+            const arr = []
+            for (const h of el.headings) {
+              arr.push({
+                name: h.name,
+                icon: 'heading',
+                callback: () => this.heading = h.name
+              })
+            }
+            return arr
           }
         })
       }
@@ -260,7 +284,7 @@ export default {
           const tagName = ` #${tag.name}`
           if (n.includes(tagName)) {
             this.name = n.replace(tagName, '')
-            this.tags.push(tag.name)
+            this.addTag(tag.name)
             break
           }
         }

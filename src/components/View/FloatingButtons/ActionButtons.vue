@@ -1,11 +1,13 @@
 <template>
   <div class="ActionButtons passive" :class="platform" @click="click">
-    <Btn v-if="showHeader" class="header button handle action-button"
-      icon='user'
+    <Btn v-if="showHeader" class="header button handle action-button" id="edit-component"
+      icon='heading'
       color='white'
+      data-type='headingbutton'
+      txt='Add heading'
     />
     <span v-else></span>
-    <Btn class="add button handle action-button task-adder" id="addtask"
+    <Btn class="add button handle action-button task-adder" id="edit-component"
       icon='plus'
       color='white'
       data-type='floatbutton'
@@ -29,7 +31,7 @@ export default {
   },
   mounted() {
     this.sortable = new Sortable(this.$el, {
-      group: {name: 'action-buttons', pull: 'clone', put: false},
+      group: {name: ['action-buttons', 'appnav'], pull: 'clone', put: false},
       handle: '.handle',
     })
   },
@@ -37,7 +39,7 @@ export default {
     click(evt) {
       const els = evt.path
       for (const e of els)
-        if (e.id === 'addtask') {
+        if (e.classList.contains('task-adder')) {
           this.$store.dispatch('pushPopup', {comp: 'AddTask'})
           break
         }
@@ -79,19 +81,24 @@ export default {
 
 <style>
 
-.ActionButtons .floating, .TaskRenderer .renderer {
-  display: block;
-}
-
-.TaskRenderer .floating, .ActionButtons .renderer {
+.tags-act {
   display: none;
 }
 
-.TaskRenderer .ActButton {
-  width: 100%;
+.ActionButtons .floating, .TaskRenderer .task-renderer, .appnav-section .tags-act {
+  display: block;
+}
+
+.TaskRenderer .floating, .ActionButtons .renderer, .appnav-section .floating, .appnav-section .task-renderer {
+  display: none;
+}
+
+.TaskRenderer .ActButton, .appnav-section .ActButton {
+  width: 98%;
   border: 1px solid var(--white);
   border-radius: 6px;
   height: 40px;
+  flex-grow: 1;
 }
 
 </style>

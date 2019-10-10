@@ -46,7 +46,7 @@ export default {
   computed: {
     ...mapState(['navBar']),
     isOnUserPage() {
-      return this.$route.name === 'user'
+      return this.$route.name === 'user' || this.$route.path === '/menu'
     }
   }
 }

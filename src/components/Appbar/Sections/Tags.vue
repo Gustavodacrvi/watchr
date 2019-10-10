@@ -3,11 +3,17 @@
     <Renderer
       type="tag"
       icon="tag"
+      iconColor='var(--red)'
+      :illustration='illustration'
       :list="getTags"
       :active="active"
       :viewType="viewType"
+      :mapNumbers='numberOfTasks'
+      :enableSort='true'
+      @buttonAdd='buttonAdd'
       @update='update'
     />
+    <div style="height: 100px"></div>
   </div>
 </template>
 
@@ -15,7 +21,7 @@
 
 import RendererVue from '../Renderer.vue'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -25,9 +31,34 @@ export default {
   methods: {
     update(ids) {
       this.$store.dispatch('tag/updateOrder', ids)
+    },
+    numberOfTasks(tag) {
+      return {
+        total: this.getNumberOfTasksByTag(tag.id).total,
+      }
+    },
+    buttonAdd(obj) {
+      this.$store.dispatch('pushPopup', {comp: 'AddTag', payload: {...obj}})
     }
   },
   computed: {
+    ...mapState(['selectedTasks']),
+    ...mapGetters({
+      getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
+      l: 'l',
+      isDesktop: 'isDesktop',
+    }),
+    illustration() {
+      let descr = this.l["You can add one by dropping the plus floating button in this region."]
+      if (!this.isDesktop)
+        descr = this.l["You can add one by clicking on the right corner icon."]
+      return {
+        descr,
+        name: 'MultipleTags',
+        title: this.l["You don't have any tags."],
+        width: '80px',
+      }
+    },
     sortedTags() {
       return this.$store.getters['tag/sortedTags']
     },
@@ -43,7 +74,7 @@ export default {
             icon: 'pen',
             callback: () => {
               this.$store.dispatch('pushPopup', {
-                comp: 'AddTag', payload: el,
+                comp: 'AddTag', payload: {...el, editing: true},
               })
             },
           },

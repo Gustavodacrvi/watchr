@@ -3,17 +3,26 @@
     <Renderer
       type="list"
       icon="tasks"
+      iconColor='var(--purple)'
+      :illustration="illustration"
       :list="getList"
       :active="active"
+      :disableSelection='true'
       :viewType="viewType"
+      :mapNumbers="(tasks) => tasks"
+      :enableSort="true"
+      @buttonAdd='buttonAdd'
       @update='update'
     />
+    <div style="height: 100px"></div>
   </div>
 </template>
 
 <script>
 
 import RendererVue from '../Renderer.vue'
+
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -24,8 +33,12 @@ export default {
     update(ids) {
       this.$store.dispatch('list/updateOrder', ids)
     },
+    buttonAdd(obj) {
+      this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj}})
+    },
   },
   computed: {
+    ...mapGetters(['l']),
     sortedLists() {
       return this.$store.getters['list/sortedLists']
     },
@@ -40,7 +53,7 @@ export default {
             name: 'Edit list',
             icon: 'pen',
             callback: () => {
-              this.$store.dispatch('pushPopup', {comp: 'AddList', payload: list})
+              this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...list, editing: true}})
             }
           },
           {
@@ -51,6 +64,17 @@ export default {
         ]
       }
       return lists
+    },
+    illustration() {
+      let descr = this.l["You can add one by dropping the plus floating button in this region."]
+      if (!this.isDesktop)
+        descr = this.l["You can add one by clicking on the right corner icon."]
+      return {
+        descr,
+        name: 'List',
+        title: this.l["You don't have any lists."],
+        width: '80px'
+      }
     },
   },
 }

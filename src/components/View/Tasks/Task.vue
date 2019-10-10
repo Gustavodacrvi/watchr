@@ -2,12 +2,13 @@
   <div class="Task draggable" :class="{fade: completed, isSelected}"
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
+    @click="rootClick"
   >
     <transition name="edit-t" mode="out-in"
       @enter='enter'
     >
       <div v-if="!isEditing" key="notediting"
-        class="cont-wrapper handle rb cursor"
+        class="cont-wrapper task-cont-wrapper handle rb cursor"
         :class="platform"
         @click="click"
         @dblclick="dblclick"
@@ -31,7 +32,11 @@
             <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
             <span v-else-if="calendarStr" class="tag cb rb">{{ calendarStr }}</span>
             <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
-            <span>{{ task.name }}</span>
+            <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
+            <transition name="name-t">
+              <span v-if="!showApplyOnTasks" key="normal">{{ task.name }}</span>
+              <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
+            </transition>
             <template v-if="isDesktop">
               <Tag class="task-tag" v-for="t in taskTags" :key="t.name"
                 icon="tag"
@@ -75,7 +80,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'isSelected', 'view', 'viewNameValue'],
+  props: ['task', 'isSelected', 'view', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -111,15 +116,9 @@ export default {
       }
     },
     completeTask() {
-      const calendar = this.task.calendar
-      if (calendar) {
-        const {nextEventAfterCompletion} = utilsTask.taskData(this.task, mom())
-        calendar.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
-      }
-      this.$store.dispatch('task/completeTasks', {
-        calendar,
-        ids: [this.task.id],
-      })
+      if (!this.completed)
+        this.$store.dispatch('task/completeTasks', [this.task])
+      else this.$store.dispatch('task/uncompleteTasks', [this.task])
     },
     selectTask() {
       this.$emit('select', this.task.id)
@@ -129,7 +128,7 @@ export default {
         this.selectTask()
       } else if (this.isDesktop) {
         this.isEditing = true
-      } else if (!this.isSelecting) {
+      } else {
         this.selectTask()
       }
     },
@@ -149,6 +148,9 @@ export default {
         id: this.task.id,
         priority: pri,
       })
+    },
+    applySelected() {
+      this.$store.commit('applyAppnavSelected', this.task.id)
     },
     saveCalendarDate(date) {
       this.$store.dispatch('task/saveTasksById', {
@@ -173,12 +175,16 @@ export default {
         },
       })
     },
+    rootClick(event) {
+      if (this.isSelectingAppnavEls) event.stopPropagation()
+    },
   },
   computed: {
     ...mapState({
       isOnControl: state => state.isOnControl,
       savedLists: state => state.list.lists,
       savedTags: state => state.tag.tags,
+      selectedEls: state => state.selectedEls,
     }),
     ...mapGetters(['isDesktop', 'platform', 'l']),
     completed() {
@@ -189,7 +195,7 @@ export default {
       const arr = []
       for (const id of this.task.tags) {
         const tag = ts.find(el => el.id === id)
-        if (tag) arr.push(tag)
+        if (tag && !this.activeTags.includes(tag.name)) arr.push(tag)
       }
       return arr
     },
@@ -269,6 +275,12 @@ export default {
         }
       ]
     },
+    showApplyOnTasks() {
+      return !this.isOnControl && this.isSelectingAppnavEls && this.onHover
+    },
+    isSelectingAppnavEls() {
+      return this.selectedEls.length > 0
+    },
     isOverdue() {
       if (this.view === 'Overdue') return false
       return false
@@ -286,11 +298,14 @@ export default {
       else if (!this.isDesktop) return true
     },
     listStr() {
-      if (!this.task.list) return null
-      return this.savedLists.find(el => el.id === this.task.list).name
+      const list = this.task.list
+      if (!list || this.hideListName) return null
+      const savedList = this.savedLists.find(el => el.id === list)
+      if (!savedList || (savedList.name === this.view)) return null
+      return savedList.name
     },
     calendarStr() {
-      if (!this.task.calendar) return null
+      if (!this.task.calendar || this.view === 'Upcoming') return null
       const str = utils.parseCalendarObjectToString(this.task.calendar, this.l)
       if (str === this.viewNameValue) return null
       return str
@@ -314,17 +329,17 @@ export default {
 .Task {
   height: auto;
   user-select: none;
-  transition: opacity .3s;
+  transition: opacity .2s;
   position: relative;
-  z-index: 1;
-}
-
-.Task:hover {
   z-index: 2;
 }
 
+.Task:hover {
+  z-index: 3;
+}
+
 .cont-wrapper {
-  transition-duration: .3s;
+  transition-duration: .2s;
 }
 
 .hided {
@@ -348,11 +363,11 @@ export default {
 }
 
 .cont-wrapper:hover, .cont-wrapper:active {
-  background-color: var(--light-gray);
+  background-color: var(--light-gray) !important;
 }
 
 .isSelected .cont-wrapper {
-  background-color: rgba(53, 73, 90, 0.6);
+  background-color: rgba(53, 73, 90, 0.6) !important;
 }
 
 .check, .text, .options, .cont {
@@ -361,6 +376,10 @@ export default {
 
 .cont, .text, .check-drop, .check {
   display: flex;
+}
+
+.text .icon {
+  flex-shrink: 0;
 }
 
 .check, .icon-drop-wrapper {
@@ -404,7 +423,7 @@ export default {
 }
 
 .sortable-drag {
-  background-color: var(--light-gray);
+  background-color: var(--light-gray) !important; 
   border-radius: 6px;
 }
 
@@ -428,11 +447,16 @@ export default {
   margin: 0 4px;
 }
 
+.apply {
+  color: var(--primary);
+}
+
 .tag {
   display: inline-block;
   padding: 5px;
   margin: 0 4px;
   font-size: .75em;
+  white-space: nowrap;
 }
 
 .task-tag {
@@ -446,10 +470,30 @@ export default {
 
 .sortable-ghost .cont-wrapper {
   background-color: var(--void) !important;
-  transition-duration: 0 !important;
-  transition: none !important;
-  height: 38px !important;
+  transition-duration: 0;
+  transition: none;
+  height: 38px;
   padding: 0;
+}
+
+.name-t-enter {
+  opacity: 0;
+  transform: translateY(-25px); 
+}
+
+.name-t-enter-active, .name-t-leave-active {
+  position: absolute;
+  transition-duration: .2s;
+}
+
+.name-t-enter-to, .name-t-leave {
+  transform: translateY(0px);
+  opacity: 1;
+}
+
+.name-t-leave-to {
+  opacity: 0;
+  transform: translateY(25px);
 }
 
 </style>

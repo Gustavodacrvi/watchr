@@ -1,7 +1,9 @@
 
 import { fire, auth } from './index'
-import utils from '../utils'
 import fb from 'firebase/app'
+
+import utils from '../utils'
+import utilsTask from '../utils/task'
 
 const uid = () => auth.currentUser.uid
 const fd = () => fb.firestore.FieldValue
@@ -51,10 +53,35 @@ export default {
         lastCompleteDate: null,
         periodic: null
       }
-    }
+    },
+    getNumberOfTasksByTag: state => tagId => {
+      const ts = state.tasks.filter(el => el.tags.includes(tagId))
+
+      return {
+        total: ts.length,
+        notCompleted: utilsTask.filterTasksByCompletion(ts, true),length,
+      }
+    },
+    getTasksById: state => ids => {
+      const arr = []
+      for (const id of ids) {
+        const task = state.tasks.find(el => el.id === id)
+        if (task) arr.push(task)
+      }
+      return arr
+    },
+    getNumberOfTasksByView: state => viewName => {
+      const ts = utilsTask.filterTasksByView(state.tasks, viewName)
+
+      return {
+        total: ts.length,
+        notCompleted: utilsTask.filterTasksByCompletion(ts, true).length,
+      }
+    },
   },
   actions: {
     getData({state}) {
+      if (uid())      
       return Promise.all([
         new Promise(resolve => {
           fire.collection('tasks').where('userId', '==', uid()).onSnapshot(snap => {
@@ -80,24 +107,44 @@ export default {
         })
       }
 
-      return batch.commit()
+      batch.commit()
     },
-    completeTasks(c, {ids, calendar}) {
+    completeTasks(c, tasks) {
       const batch = fire.batch()
 
-      for (const id of ids) {
-        const ref = fire.collection('tasks').doc(id)
+      for (const t of tasks) {
+        let calendar = t.calendar
+        if (calendar) {
+          const {nextEventAfterCompletion} = utilsTask.taskData(t, mom())
+          calendar.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
+        }
+
+        const ref = fire.collection('tasks').doc(t.id)
         batch.update(ref, {
-          completeDate: new Date(),
+          completeDate: mom().format('Y-M-D'),
           completed: true,
           calendar,
         })
+
       }
       
-      return batch.commit()
+      batch.commit()
+    },
+    uncompleteTasks(c, tasks) {
+      const batch = fire.batch()
+
+      for (const t of tasks) {
+        const ref = fire.collection('tasks').doc(t.id)
+        batch.update(ref, {
+          completeDate: null,
+          completed: false,
+        })
+      }
+
+      batch.commit()
     },
     saveTask(c, obj) {
-      return fire.collection('tasks').doc(obj.id).update({
+      fire.collection('tasks').doc(obj.id).update({
         ...obj,
       })
     },
@@ -111,7 +158,7 @@ export default {
         })
       }
 
-      return batch.commit()
+      batch.commit()
     },
     addTagsToTasksById(c, {ids, tagIds}) {
       const batch = fire.batch()
@@ -129,10 +176,22 @@ export default {
         })
       }
 
-      return batch.commit()
+      batch.commit()
+    },
+    addListToTasksById(c, {ids, listId}) {
+      const batch = fire.batch()
+
+      for (const id of ids) {
+        const ref = fire.collection('tasks').doc(id)
+        batch.update(ref, {
+          list: listId,
+        })
+      }
+
+      batch.commit()
     },
     copyTask(c, task) {
-      return fire.collection('tasks').add({
+      fire.collection('tasks').add({
         ...task,
       })
     },
@@ -144,7 +203,50 @@ export default {
         batch.delete(ref)
       }
 
-      return batch.commit()
+      batch.commit()
+    },
+    handleTasksByAppnavElementDragAndDrop({dispatch, getters}, {elIds, taskIds, type}) {
+      const calObj = (mom) => {
+        return getters.getSpecificDayCalendarObj(mom)
+      }
+      switch (type) {
+        case 'tag': {
+          dispatch('addTagsToTasksById', {
+            tagIds: elIds,
+            ids: taskIds,
+          })
+          break
+        }
+        case 'list': {
+          dispatch('addListToTasksById', {
+            listId: elIds[0],
+            ids: taskIds,
+          })
+          break
+        }
+        case 'Today': {
+          dispatch('saveTasksById', {
+            ids: taskIds,
+            task: {
+              calendar: calObj(mom()),
+            }
+          })
+          break
+        }
+        case 'Tomorrow': {
+          dispatch('saveTasksById', {
+            ids: taskIds,
+            task: {
+              calendar: calObj(mom().add(1, 'day')),
+            }
+          })
+          break
+        }
+        case 'Completed': {
+          dispatch('completeTasks', getters.getTasksById(taskIds))
+          break
+        }
+      }
     },
   },
 }

@@ -1,6 +1,7 @@
 <template>
   <div class="UserView" :class="[{appbarHided}, platform]">
-    <div v-if="isDesktop" class="nav">
+    <div v-if="isDesktop" class="nav-shadow"></div>
+    <div v-if="isDesktop" class="nav" :style="getNavTopPosition">
       <Appbar class="Appbar"
         :value="value"
         :view-type="viewType"
@@ -9,7 +10,7 @@
         @section="v => section = v"
       />
     </div>
-    <div class="cont">
+    <div class="cont" :class="platform">
       <ViewControler
         :isSmart="isSmart"
         :viewType='viewType'
@@ -36,12 +37,18 @@ export default {
       viewType: null,
       value: null,
       appbarHided: false,
+      scrollTop: null,
     }
   },
   created() {
     this.updateViewType()
+    this.getScrollTop()
+    window.addEventListener('scroll', this.getScrollTop)
   },
   methods: {
+    getScrollTop() {
+      this.scrollTop = window.scrollY
+    },
     toggleAppbar(isHided) {
       this.appbarHided = isHided
     },
@@ -58,12 +65,31 @@ export default {
   },
   computed: {
     ...mapGetters(['platform', 'isDesktop']),
+    getNavTopPosition() {
+      const app = document.getElementById('app')
+      const scroll = this.scrollTop
+      if (app) {
+        const winHeight = app.offsetHeight
+        let top = (75 - scroll) + 'px'
+        let height = ((winHeight - 100) + scroll) + 'px'
+        if (scroll > 50) {
+          top = '30px'
+          height = (winHeight - 100 + 45) + 'px'
+        }
+
+        return {
+          top,
+          height,
+        }
+      }
+    },
     isSmart() {
       if (this.viewType !== 'list') return false
       switch (this.value) {
         case 'Today': return true
         case 'Upcoming': return true
         case 'Tomorrow': return true
+        case 'Completed': return true
         case 'Inbox': return true
       }
       return false
@@ -92,17 +118,20 @@ export default {
   margin: 0;
 }
 
-.nav {
-  flex-basis: 400px;
-  max-width: 400px;
-  min-height: 100%;
+.nav-shadow {
+  flex-basis: 300px;
+  max-width: 300px;
+  flex-grow: 0;
+  flex-shrink: 0;
   transition-duration: .6s;
   transition-delay: 0s;
 }
 
-.Appbar {
-  position: sticky;
-  top: 20px;
+.nav {
+  position: fixed;
+  width: 300px;
+  left: 60px;
+  z-index: 4;
 }
 
 .cont {
@@ -111,9 +140,14 @@ export default {
   flex-grow: 1;
   transition-delay: .4s;
   transition-duration: .6s;
+  z-index: 5;
 }
 
-.appbarHided .nav {
+.cont.desktop {
+  margin-left: 60px;
+}
+
+.appbarHided .nav-shadow {
   flex-basis: 0;
   max-width: 0;
   transition-delay: .6s;

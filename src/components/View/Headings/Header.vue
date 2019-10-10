@@ -1,5 +1,5 @@
 <template>
-  <div class="Header">
+  <div class="Header" @click='click'>
     <div v-if="$store.getters.isDesktop" class="header">
       <Icon class="icon" :icon="getIcon" :color="getIconColor" width="40px"/>
       <h2 class="name">{{ viewNameValue }}</h2>
@@ -26,12 +26,14 @@
 
 <script>
 
-import IconVue from '../Icon.vue'
-import IconDropVue from '../IconDrop.vue'
-import TagVue from './Tag.vue'
+import IconVue from '../../Icon.vue'
+import IconDropVue from '../../IconDrop.vue'
+import TagVue from './../Tag.vue'
+
+import { mapState } from 'vuex'
 
 export default {
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -41,6 +43,9 @@ export default {
     this.pushToNavbar()
   },
   methods: {
+    click(event) {
+      if (this.selectedTasks.length > 0) event.stopPropagation()
+    },
     pushToNavbar() {
       this.$store.commit('pushNavBarData', {
         options: this.options,
@@ -49,6 +54,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['selectedTasks']),
     getIcon() {
       if (this.icon) return this.icon
       const obj = {
@@ -56,17 +62,24 @@ export default {
         Tomorrow: 'sun',
         Inbox: 'inbox',
         Upcoming: 'calendar',
+        Completed: 'circle-check',
       }
       return obj[this.viewName]
     },
     getIconColor() {
-      const obj = {
-        Today: 'var(--yellow)',
-        Tomorrow: 'var(--orange)',
-        Inbox: 'var(--primary)',
-        Upcoming: 'var(--green)',
+      if (this.viewType === 'list') {
+        const obj = {
+          Today: 'var(--yellow)',
+          Tomorrow: 'var(--orange)',
+          Inbox: 'var(--primary)',
+          Upcoming: 'var(--green)',
+          Completed: 'var(--brown)',
+        }
+        const color = obj[this.viewName]
+        if (!color) return 'var(--purple)'
+        return color
       }
-      return obj[this.viewName]
+      return 'var(--red)'
     }
   },
   watch: {

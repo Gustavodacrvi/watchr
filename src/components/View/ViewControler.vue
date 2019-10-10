@@ -1,18 +1,25 @@
 <template>
   <ViewRenderer
-    emptyIcon='happy-star'
     :viewName='viewName'
     :viewNameValue='viewNameValue'
     :viewType='viewType'
     :icon="icon"
     :illustration='illustration'
+    :showHeader='isListType'
+    :showEmptyHeadings='isListType'
+    :headingEdit='headingEdit'
 
     :headingsOptions='headingsOptions'
     :tasks='getTasks'
     :tasksOrder='tasksOrder'
+    :onSortableAdd='onSortableAdd'
+
+    @show-completed='v => showCompleted = v'
 
     @update-ids='updateIds'
+    @update-heading-ids='updateHeadingIds'
     @add-task='addTask'
+    @add-heading='addHeading'
   />
 </template>
 
@@ -31,14 +38,19 @@ export default {
   components: {
     ViewRenderer: ViewRendererVue,
   },
+  data() {
+    return {
+      showCompleted: false,
+    }
+  },
   methods: {
     addTask(obj) {
       if (this.isSmart) {
         let calendar = null
   
-        if (this.viewName === 'Today')
+        if (this.viewName === 'Today' && !obj.calendar)
           calendar = this.getSpecificDayCalendarObj(mom())
-        else if (this.viewName === 'Tomorrow')
+        else if (this.viewName === 'Tomorrow' && !obj.calendar)
           calendar = this.getSpecificDayCalendarObj(mom().add(1, 'day'))
   
         obj.task.calendar = calendar
@@ -50,21 +62,122 @@ export default {
         this.$store.dispatch('task/addTask', {
           ...obj.task,
         })  
-      }
+      } else if (this.isListType)
+        this.$store.dispatch('task/addTask', {
+          ...obj.task, list: this.viewList.id
+        })
     },
     updateIds(ids) {
       if (this.isSmart) {
-          this.$store.dispatch('list/updateViewOrder', {
+        this.$store.dispatch('list/updateViewOrder', {
           view: this.viewName,
           ids,
         })
+      } else if (this.isListType)
+        this.$store.dispatch('list/saveList', {
+          tasks: ids,
+          id: this.viewList.id,
+        })
+    },
+    updateHeadingIds(ids) {
+      if (this.isSmart) {
+        this.$store.dispatch('list/updateHeadingsViewOrder', {
+          view: this.viewName,
+          ids,
+        })
+      } else if (this.isListType)
+        this.$store.dispatch('list/updateListHeadings', {
+          listId: this.viewList.id,
+          ids,
+        })
+    },
+    addHeading(obj) {
+      if (this.viewList)
+        this.$store.dispatch('list/addHeading', {...obj, listId: this.viewList.id})
+    },
+    onSortableAdd(evt, {dataset}, type, ids) {
+      if (this.isListType) {
+        const taskId = dataset.id
+        this.$store.dispatch('list/removeTaskFromHeading', {
+          taskId, ids, listId: this.viewList.id,
+        })
+      } else if (this.viewName === 'Today' || this.viewName === 'Tomorrow') {
+        this.$store.dispatch('list/removeTaskFromList', {
+          taskId: dataset.id, view: this.viewName, ids,
+        })
       }
     },
+
+    getListHeadingsByView(view) {
+      const ts = utilsTask.filterTasksByView(this.tasksWithLists, view)
+      if (ts && ts.length > 0) {
+        const savedLists = this.lists
+        const setOfLists = new Set()
+        for (const t of savedLists) {
+          if (!setOfLists.has(t)) {
+            setOfLists.add(t)
+          }
+        }
+        let lists = Array.from(setOfLists)
+        let order = this.viewOrders[view].headings
+        if (!order) order = []
+        lists = utils.checkMissingIdsAndSortArr(order, lists)
+        const arr = []
+        for (const t of lists) {
+          arr.push({
+            name: t.name,
+            allowEdit: true,
+            hideListName: true,
+            showHeadingName: true,
+            onEdit: (name) => {
+              this.$store.dispatch('list/saveList', {
+                name
+              })
+            },
+            filter: (a, h, showCompleted) => {
+              let tasks = ts.filter(el => el.list === t.id)
+
+              if (!showCompleted)
+                tasks = utilsTask.filterTasksByCompletion(tasks, true)
+
+              return tasks
+            },
+            options: [
+              {
+                name: 'Edit list',
+                icon: 'pen',
+                callback: (j, vm, l) => {
+                  vm.$emit('edit')
+                }
+              },
+            ],
+            id: t.id,
+            options: [],
+            onAddTask(obj) {
+              obj.task.calendar = this.getSpecificDayCalendarObj(mom())
+              this.$store.dispatch('list/addTaskHeading', {
+                name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
+              })
+            },
+            onSortableAdd(evt, {dataset}, type, ids) {
+              const taskId = dataset.id
+              this.$store.dispatch('list/moveTaskToList', {
+                taskId, ids, listId: t.id,
+              })
+            }
+          })
+        }
+
+        return arr
+      }
+      return []
+    }
   },
   computed: {
     ...mapState({
       tags: state => state.tag.tags,
       tasks: state => state.task.tasks,
+      lists: state => state.list.lists,
       viewOrders: state => state.list.viewOrders,      
     }),
     ...mapGetters({
@@ -82,32 +195,46 @@ export default {
         case 'tag': return 'tag'
       }
     },
+    notSmartHeaderView() {
+      return this.viewName !== 'Upcoming' && this.viewName !== 'Completed'
+    },
     getTasks() {
-      if (this.isSmart && this.viewName !== 'Upcoming') {
+      const ts = this.tasksWithoutLists
+      if (this.isSmart && this.notSmartHeaderView) {
         if (this.viewName === 'Today' && this.hasOverdueTasks) return []
-        return utilsTask.filterTasksByView(this.tasks, this.viewName)
+        return utilsTask.filterTasksByView(ts, this.viewName)
       }
       else if (this.viewType === 'tag' && this.viewTag)
-        return this.tasks.filter(el => el.tags.includes(this.viewTag.id))
+        return ts.filter(el => el.tags.includes(this.viewTag.id))
+      else if (this.isListType) {
+        return this.getRootTasksOfList
+      }
       return []
     },
     tasksOrder() {
       if (this.isSmart) {
-        const o = this.viewOrders[this.viewName]
+        let o = this.viewOrders[this.viewName]
+        if (o && o.tasks) o = this.viewOrders[this.viewName].tasks
         if (o) return o
-      }
+      } else if (this.isListType)
+        return this.viewList.tasks
       return []
     },
     headingsOptions() {
       if (this.isSmart) {
         switch (this.viewName) {
           case 'Upcoming': return this.upcomingHeadingsOptions
+          case 'Tomorrow': return this.getListHeadingsByView('Tomorrow')
           case 'Today': {
             if (this.hasOverdueTasks) return this.todayHeadingsOptions
-            return []
+            return this.getListHeadingsByView('Today')
+          }
+          case 'Completed': {
+            return this.completedHeadingsOptions
           }
         }
-      }
+      } else if (this.isListType)
+        return this.listHeadingsOptions
       return []
     },
     illustration() {
@@ -140,6 +267,13 @@ export default {
               title: l["You don't have any upcoming tasks!"],
               width: '150px',
             }
+          case 'Completed':
+            return {
+              name: 'CleanCheck',
+              title: l["Hurray! Everything is clean here!"],
+              descr: l["You don't have any completed tasks, how about completing some?"],
+              width: '150px',
+            }
         }
       }
       else if (this.viewType === 'tag')
@@ -149,10 +283,104 @@ export default {
           descr: l["How about adding one using the floating button?"],
           width: '150px',
         }
+      else if (this.viewName)
+        return {
+          name: 'SadTag',
+          title: "This illustration will change MOTHERFUCKER!.",
+          width: '150px',
+        }
     },
 
     viewTag() {
       return this.tags.find(el => el.name === this.viewName)
+    },
+    viewList() {
+      return this.lists.find(el => el.name === this.viewName)
+    },
+    getListTasks() {
+      return this.tasks.filter(el => el.list === this.viewList.id)
+    },
+    tasksWithoutLists() {
+      return this.tasks.filter(el => !el.list)
+    },
+    tasksWithLists() {
+      return this.tasks.filter(el => el.list)
+    },
+    getRootTasksOfList() {
+      return this.getListTasks.filter(el => !el.heading)
+    },
+    headingEdit() {
+      if (!this.isSmart && this.viewType === 'list' && this.viewList)
+        return {
+          excludeNames: this.viewList.headings.map(el => el.name),
+          errorToast: "There's already another heading with this name.",
+        }
+      else if (this.viewName === "Today" || this.viewName === "Tomorrow")
+        return {
+          excludeNames: this.lists.map(el => el.name),
+          errorToast: "There's already another list with this name."
+        }
+      return []
+    },
+    listHeadingsOptions() {
+      const arr = []
+      const viewList = this.viewList
+      let order = viewList.headingsOrder
+      if (!order) order = []
+      
+      const heads = utils.checkMissingIdsAndSortArr(order, viewList.headings, 'name')
+      
+      for (const h of heads) {
+        let headingTasks = this.getListTasks.filter(el => el.heading === h.name)
+        headingTasks= utils.checkMissingIdsAndSortArr(h.tasks, headingTasks)
+        arr.push({
+          name: h.name,
+          allowEdit: true,
+          showHeadingName: false,
+          onEdit: (name) => {
+            this.$store.dispatch('list/saveHeadingName', {
+              listId: this.viewList.id,
+              oldName: h.name,
+              newName: name,
+              tasksIds: headingTasks.map(el => el.id)
+            })
+          },
+          filter: () => headingTasks,
+          id: h.name,
+          options: [
+            {
+              name: 'Edit heading',
+              icon: 'pen',
+              callback: (j, vm, l) => {
+                vm.$emit('edit')
+              }
+            },
+            {
+              name: 'Delete heading',
+              icon: 'trash',
+              callback: () => {
+                this.$store.dispatch('list/deleteHeadingFromList', {
+                  listId: this.viewList.id,
+                  name: h.name, savedTasks: this.tasks,
+                })
+              },
+            },
+          ],
+          onAddTask(obj) {
+            this.$store.dispatch('list/addTaskHeading', {
+              name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
+            })
+          },
+          onSortableAdd(evt, {dataset}, type, ids) {
+            const taskId = dataset.id
+            this.$store.dispatch('list/moveTaskBetweenHeadings', {
+              taskId, ids, name: h.name, listId: viewList.id,
+            })
+          }
+        })
+      }
+
+      return arr
     },
     upcomingHeadingsOptions() {
       const arr = []
@@ -187,13 +415,37 @@ export default {
               ...obj.task, calendar: calObj(date)
             })
           },
-          onAdd: (evt) => {
+          onSortableAdd: (evt) => {
             this.$store.dispatch('task/saveTask', {
               id: evt.item.dataset.id,
               calendar: calObj(date)
             })
           },
         })
+      }
+      return arr
+    },
+    completedHeadingsOptions() {
+      const arr = []
+      const tod = mom()
+      for (let i = 0;i < 31;i++) {
+        const date = tod.format('Y-M-D')
+        arr.push({
+          name: utils.getHumanReadableDate(date, this.l),
+          filter: (tasks) => {
+            return tasks.filter(t => {
+              if (t.calendar) {
+                const type = t.calendar.type
+                if (type === 'weekly' || type === 'periodic') return false
+              }
+              const complete = mom(t.completeDate, 'Y-M-D')
+              return complete.isSame(mom(date, 'Y-M-D'), 'day')
+            })
+          },
+          id: date,
+          disableTaskRenderer: true,
+        })
+        tod.subtract(1, 'day')
       }
       return arr
     },
@@ -243,6 +495,9 @@ export default {
           filter: (tasks) => this.getTasks,
         },
       ]
+    },
+    isListType() {
+      return !this.isSmart && this.viewList && this.viewType === 'list'
     },
     hasOverdueTasks() {
       return this.getOverdueTasks.length > 0

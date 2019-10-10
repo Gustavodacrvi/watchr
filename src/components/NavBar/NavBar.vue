@@ -55,7 +55,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['authState']),
+    ...mapState(['user']),
     ...mapGetters(['isDesktop', 'platform', 'l']),
     route() {
       if (this.$route.matched[0]) {
@@ -64,7 +64,7 @@ export default {
       return this.$route.name
     },
     dropLinks() {
-      if (!this.authState)
+      if (!this.user)
         return [
           {
             name: this.l['Sign up'],

@@ -2,8 +2,14 @@
   <div class="User">
     <transition appear name="state" mode="out-in">
       <UserView v-if="authState && !isLoading" key="app"/>
-      <div key="notlogged" v-else-if="showMsg && !authState && fireBaseFirstLoaded" class="view">
+      <div key="notlogged" v-else-if="showMsg && !authState" class="view">
         <span class='view'>{{ l['Please log in to continue.'] }}</span>
+      </div>
+      <div v-else-if="user && !user.emailVerified" class="view" key="confirm">
+        <span>Please confirm your e-mail</span>
+      </div>
+      <div v-else-if="error" class="view" key="error">
+        <ErrorComp/>
       </div>
       <div v-else key="loading" class="view">
         <LoadingComponent/>
@@ -16,6 +22,7 @@
 
 import UserViewVue from '../components/View/UserView.vue'
 import LoadingComponentVue from '../components/Illustrations/LoadingComponent.vue'
+import ErrorComponentVue from '../components/Illustrations/ErrorComponent.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -23,21 +30,43 @@ export default {
   components: {
     UserView: UserViewVue,
     LoadingComponent: LoadingComponentVue,
+    ErrorComp: ErrorComponentVue,
   },
   data() {
     return {
       showMsg: false,
+      error: false,
     }
   },
   created() {
     setTimeout(() => {
       this.showMsg = true
     }, 1000)
+    this.resetErroState()
+  },
+  methods: {
+    resetErroState() {
+      this.error = false
+      setTimeout(() => {
+        this.error = true
+      }, 7000)
+    }
   },
   computed: {
     ...mapGetters(['l']),
-    ...mapState(['authState', 'isLoading', 'fireBaseFirstLoaded']),
-  }  
+    ...mapState(['authState', 'isLoading', 'user']),
+  },
+  watch: {
+    authState() {
+      this.resetErroState()
+    },
+    isLoading() {
+      this.resetErroState()
+    },
+    user() {
+      this.resetErroState()
+    }
+  }
 }
 
 </script>

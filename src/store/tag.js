@@ -33,6 +33,7 @@ export default {
   },
   actions: {
     getData({state}) {
+      if (uid())
       return Promise.all([
         new Promise(resolve => {
           fire.collection('tags').where('userId', '==', uid()).onSnapshot(snap => {
@@ -48,18 +49,34 @@ export default {
         })
       ])
     },
-    addTag(c, {name}) {
-      return fire.collection('tags').add({
+    addTag(c, {name, index, ids}) {
+      const obj = {
         name,
         userId: uid(),
         times: 0,
-      })
+      }
+      if (!index)
+        fire.collection('tags').add(obj)
+      else {
+        const batch = fire.batch()
+  
+        const ord = ids.slice()
+        const ref = fire.collection('tags').doc()
+        batch.set(ref, obj)
+        ord.splice(index, 0, ref.id)
+        const orderRef = fire.collection('tagsOrder').doc(uid())
+        batch.update(orderRef, {
+          order: ord,
+        })
+  
+        batch.commit()
+      }
     },
     deleteTag(c, id) {
-      return fire.collection('tags').doc(id).delete()
+      fire.collection('tags').doc(id).delete()
     },
     updateOrder(c, ids) {
-      return fire.collection('tagsOrder').doc(uid()).update({
+      fire.collection('tagsOrder').doc(uid()).update({
         order: ids,
       })
     },
@@ -74,7 +91,7 @@ export default {
       dispatch('updateOrder', tags.map(el => el.id))
     },
     editTag(c, {name, id}) {
-      return fire.collection('tags').doc(id).update({
+      fire.collection('tags').doc(id).update({
         name,
       })
     },

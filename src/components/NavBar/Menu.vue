@@ -93,6 +93,7 @@ export default {
 .appbar-wrapper {
   position: relative;
   margin: 16px;
+  height: 100%;
 }
 
 .arrow {

@@ -6,6 +6,7 @@
         :viewName="viewName"
         :viewNameValue="viewNameValue"
         :options="options"
+        :viewType="viewType"
         :tags='tagSelectionOptions'
         :lists='listSelectionOptions'
         :activeTags='activeTags'
@@ -18,19 +19,28 @@
         :tasks='getFilterCompletedTasks'
         :view='viewName'
         :viewNameValue='viewNameValue'
+        :showEmptyHeadings='showEmptyHeadings'
         :headings='headingsOptions'
         :addTask='addTask'
+        :headingEdit='headingEdit'
+        :showCompleted='showCompleted'
+        :activeTags='getActiveTags'
         :illustration='illustration'
-        @update='updateIds'
+        :headingPosition='0'
+        :onSortableAdd='onSortableAdd'
+        @update="(ids) => this.$emit('update-ids', ids)"
+        @update-headings='(ids) => this.$emit("update-heading-ids", ids)'
+        @add-heading="(obj) => $emit('add-heading', obj)"
       />
     </div>
+    <div style="height: 500px"></div>
     <ActionButtons :showHeader='showHeader'/>
   </div>
 </template>
 
 <script>
 
-import HeaderVue from './Header.vue'
+import HeaderVue from './Headings/Header.vue'
 import TaskRendererVue from './Tasks/TaskRenderer.vue'
 import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
 
@@ -41,7 +51,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'icon', 'viewNameValue', 'emptyIcon', 'illustration'],
+  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'showCompletedOnHeadings'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,
@@ -83,9 +93,6 @@ export default {
       this.activeLists = ''
     },
 
-    updateIds(ids) {
-      this.$emit('update-ids', ids)
-    },
     sortByName() {
       const tasks = this.tasks.slice()
       tasks.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
@@ -140,6 +147,12 @@ export default {
       l: 'l',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
+    getActiveTags() {
+      const arr = this.activeTags.slice()
+      if (this.viewType === 'tag' && !arr.includes(this.viewName))
+        arr.push(this.viewName)
+      return arr
+    },
     tagSelectionStr() {
       return 'showingTagSelection' + this.viewName + this.viewType
     },
@@ -322,8 +335,11 @@ export default {
     },
     getFilterCompletedTasks() {
       let ts = this.sortAndFilterTasks
+      let notCompleted = []
       if (!this.showCompleted)
-        ts = utilsTask.filterTasksByCompletion(ts, true)
+        notCompleted = utilsTask.filterTasksByCompletion(ts, true)
+      if (notCompleted.length > 0)
+        return notCompleted
       return ts
     },
   },

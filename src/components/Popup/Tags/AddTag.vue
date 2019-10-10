@@ -45,7 +45,8 @@ export default {
       payload: state => state.popup.payload,
     }),
     isEditing() {
-      return this.payload
+      if (!this.payload) return false
+      return this.payload.editing === true
     },
     title() {
       if (!this.isEditing) return this.l['Add tag']
@@ -62,6 +63,7 @@ export default {
         if (!tag && !this.isEditing) {
           this.$store.dispatch('tag/addTag', {
             name: this.name,
+            ...this.payload,
           })
           toast({
             name: this.l[`Tag added successfully!`],
