@@ -3,8 +3,10 @@
     <div class="Appbar" :class='platform'>
       <div class="inner-wrapper">
         <div>
+          <SearchButton/>
           <transition name="bar-trans">
             <div v-if="showing" class="content">
+
               <AppnavRenderer
                 type='list'
                 :enableSort='false'
@@ -73,6 +75,7 @@ import TagsVue from './Sections/Tags.vue'
 import FiltersVue from './Sections/Filters.vue'
 import IconDropVue from '../IconDrop.vue'
 import RendererVue from './Renderer.vue'
+import SearchButtonVue from './SearchButton.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -86,6 +89,7 @@ export default {
     Tags: TagsVue,
     Filters: FiltersVue,
     AppnavRenderer: RendererVue,
+    SearchButton: SearchButtonVue,
   },
   data() {
     return {

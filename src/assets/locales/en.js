@@ -9,6 +9,7 @@ export default {
   'Create an Account': 'Create an Account',
   'E-mail': 'E-mail',
   'Password': 'Password',
+  'Search': 'Search',
   'Confirm password': 'Confirm password',
   'Create account': 'Create account',
   'Today': 'Today',
