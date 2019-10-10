@@ -113,4 +113,6 @@ export default {
   "You don't have any tags.": "You don't have any tags.",
   "You can add one by clicking on the right corner icon.": "You can add one by clicking on the right corner icon.",
   "Save": "Save",
+  "You can add tasks and headings by dropping the floating buttons here.": "You can add tasks and headings by dropping the floating buttons here.",
+  "This list doesn't have any tasks.": "This list doesn't have any tasks.",
 }

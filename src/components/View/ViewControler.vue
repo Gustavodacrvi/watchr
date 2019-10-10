@@ -287,8 +287,9 @@ export default {
         }
       else if (this.viewName)
         return {
-          name: 'SadTag',
-          title: "This illustration will change MOTHERFUCKER!.",
+          name: 'EmptyList',
+          title: l["This list doesn't have any tasks."],
+          descr: l["You can add tasks and headings by dropping the floating buttons here."],
           width: '150px',
         }
     },

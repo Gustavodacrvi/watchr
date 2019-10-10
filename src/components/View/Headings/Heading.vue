@@ -1,5 +1,5 @@
 <template>
-  <div class="Heading"
+  <div class="Heading handle"
     :name='header.name'
     :id='header.id'
   >
