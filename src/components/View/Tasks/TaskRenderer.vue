@@ -33,7 +33,7 @@
         :data-type='`task`'
       />
     </transition-group>
-    <transition-group v-if="headings.length > 0"
+    <transition-group
       appear
       class="front headings-root"
       @leave='headingsLeave'
@@ -270,7 +270,7 @@ export default {
     },
     hideHeading(s) {
       s.height = '0px'
-      s.marginBottom = 0
+      s.margin = 0
       s.padding = 0
       s.opacity = 0
       s.borderBottom = '0px solid var(--light-gray)'
@@ -284,14 +284,35 @@ export default {
     },
     headingsLeave(el) {
       const header = el.getElementsByClassName('header-wrapper')[0]
+      const root = el.getElementsByClassName('task-renderer-root')[0]
+      const TaskRenderer = el.getElementsByClassName('TaskRenderer')[0]
       if (header) {
+        const divMargin = el.getElementsByClassName('dontHaveTasks')[0]
         const s = header.style
+        if (divMargin) {
+          divMargin.style.transitionDuration = '.2s'
+          divMargin.style.height = 0
+        }
         const sw = el.style
+
+        if (root) {
+          root.style.transitionDuration = '0s'
+          root.style.height = root.offsetHeight + 'px'
+        }
         s.transitionDuration = '0s'
         sw.transitionDuration = '0s'
         sw.margin = '24px 0'
         this.showHeading(s)
         setTimeout(() => {
+          if (root) {
+            root.style.transitionDuration = '.2s'
+            root.style.height = '0px'
+            root.style.opacity = 0
+          }
+          TaskRenderer.style.transitionDuration = '.2s'
+          TaskRenderer.style.margin = 0
+          header.style.transitionDuration = '.2s'
+          header.style.margin = 0
           s.transitionDuration = '.2s'
           sw.transitionDuration = '.2s'
           sw.margin = 0
@@ -506,6 +527,7 @@ export default {
   outline: none;
   position: relative;
   z-index: 2;
+  overflow: visible;
 }
 
 .dontHaveTasks {
