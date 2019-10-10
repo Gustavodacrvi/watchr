@@ -112,6 +112,8 @@ export default {
   "You don't have any completed tasks, how about completing some?": "Que tal completar mais tarefas?",
   "You can add one by dropping the plus floating button in this region.": "Você pode adicionar uma ao droppar o botão flutuante nesta região.",
   "You don't have any tags.": "Você não tem nenhuma tag.",
-  "You can add one by clicking on the right corner icon.": "Você pode adicionar um ao clicar no ícone a direita.",
+  "You can add one by clicking on the right corner icon.": "Você pode adicionar uma lista ao clicar no ícone a direita.",
   "Save": "Salvar",
+  "You can add tasks and headings by dropping the floating buttons here.": "Você pode adicionar tarefas e cabeçalhos usando os botões flutuantes.",
+  "This list doesn't have any tasks.": "Esta lista não possui nenhuma tarefa.",
 }
