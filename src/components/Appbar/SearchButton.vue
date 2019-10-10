@@ -1,7 +1,12 @@
 <template>
-  <div class="SearchButton rb cursor">
-    <Icon icon="search" width="15px"/>
-    <span class="search-msg">{{ l['Search'] }}</span>
+  <div class="SearchButton rb cursor"
+    @mouseenter="$emit('mouseenter')"
+    @mouseleave="$emit('mouseleave')"
+  >
+    <span>
+      <Icon icon="search" width="15px"/>
+      <span class="search-msg">{{ l['Search'] }}</span>
+    </span>
   </div>
 </template>
 
