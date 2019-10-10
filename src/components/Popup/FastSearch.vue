@@ -1,15 +1,25 @@
 <template>
   <div class="FastSearch" @click="$store.commit('closeFastSearch')">
-    <div class="cb rb card shadow" @click.stop>
+    <div class="cb rb card shadow scroll-thin" @click.stop>
       <div class="cont">
         <InputApp :focus='true' v-model="search"/>
-        <div class="options">
-          <div class="option rb cursor">
-            <div class="icon-wrapper">
-              <Icon icon='user' class="icon"/>
+        <div>
+          <transition-group name="trans"
+            @enter='enter'
+            @leave='leave'
+            class="options"
+            tag="div"
+          >
+            <div v-for="(o, i) in options"
+              :key="o.name + o.icon + i"
+              class="option rb cursor"
+            >
+              <div class="icon-wrapper">
+                <Icon icon='user' class="icon"/>
+              </div>
+              <span class="name">I am a freaking option motherfucker.</span>
             </div>
-            <span class="name">I am a freaking option motherfucker.</span>
-          </div>
+          </transition-group>
         </div>
       </div>
     </div>
@@ -28,7 +38,52 @@ export default {
   },
   data() {
     return {
-      search: ''
+      search: '',
+      options: [
+        {
+          name: 'freaking ttest',
+          icon: 'user'
+        }
+      ]
+    }
+  },
+  created() {
+    setInterval(() => {
+      if (this.options.length)
+        this.options = []
+      else this.options = [
+        {
+          name: 'freaking test',
+          icon: 'user'
+        }
+      ]
+    }, 1000)
+  },
+  methods: {
+    enter(el) {
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.height = 0
+      setTimeout(() => {
+        s.transitionDuration = '.2s'
+        s.height = '35px'
+      })
+    },
+    leave(el) {
+      const s = el.style
+
+      s.height = 0
+    },
+  },
+  computed: {
+    optionss() {
+      return [
+        {
+          name: 'freaking test',
+          icon: 'user',
+        }
+      ]
     }
   }
 }
@@ -51,9 +106,9 @@ export default {
   flex-basis: 600px;
   margin: 0 15px;
   margin-top: 60px;
+  overflow: auto;
   max-height: 400px;
 }
-
 
 .cont {
   margin: 10px;
@@ -61,6 +116,8 @@ export default {
 
 .options {
   margin-top: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .option {
@@ -92,6 +149,14 @@ export default {
   display: flex;
   align-items: center;
   flex-basis: 100%;
+}
+
+.trans-lenter, .trans-leave-to {
+  opacity: 0;
+}
+
+.trans-leave, .trans-lenter-to {
+  opacity: 1;
 }
 
 </style>
