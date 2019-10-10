@@ -80,7 +80,7 @@ export default {
   height: 100%;
   width: 100%;
   box-sizing: border-box;
-  z-index: 500;
+  z-index: 498;
   overflow: hidden;
 }
 
