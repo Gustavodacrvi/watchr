@@ -1,5 +1,5 @@
 
-const cacheName = '347'
+const cacheName = '349'
 
 self.addEventListener('message', msg => {
   if (msg.data.action === 'skipWaiting')

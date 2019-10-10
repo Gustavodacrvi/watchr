@@ -32,7 +32,7 @@ export default {
 
 .SearchButton {
   height: 35px;
-  background-color: var(--light-gray);
+  background-color: var(--dark-gray);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,7 +44,7 @@ export default {
 }
 
 .SearchButton:hover {
-  background-color: var(--extra-light-gray);
+  background-color: var(--light-gray);
 }
 
 </style>

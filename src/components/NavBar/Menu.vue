@@ -1,7 +1,9 @@
 <template>
   <div class="Menu cbd">
     <div class="appbar-wrapper">
-      <Icon class="arrow cursor" icon="arrow" color="var(--gray)" @click="$router.go(-1)" :primaryHover="true"/>
+      <span @click="closeMenu">
+        <Icon class="arrow cursor" icon="arrow" color="var(--gray)" width="25px" :primaryHover="true"/>
+      </span>
       <transition :name="this.appSection ? 'mr' : 'ml'">
         <Appbar class="Appbar" v-if="appSection" key="app"/>
         <div v-else key="links" class="nav-links">
@@ -47,6 +49,11 @@ export default {
     },
     pop(comp) {
       this.$store.dispatch('pushPopup', {comp})
+    },
+    closeMenu() {
+      setTimeout(() => {
+        this.$router.go(-1)
+      })
     },
     saveLang(lang) {
       this.$store.commit('saveLang', lang)
@@ -98,6 +105,7 @@ export default {
 
 .arrow {
   transform: rotate(90deg);
+  margin-bottom: 6px;
 }
 
 .link {

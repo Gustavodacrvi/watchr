@@ -5,11 +5,9 @@
     </transition>
     <Toast/>
     <transition name="fade">
-      <Menu v-if="isMenuOpened && !isDesktop"/>
+      <Menu v-show="isMenuOpened && !isDesktop"/>
     </transition>
-    <transition name="fade">
-      <FastSearch v-if="fastSearch"/>
-    </transition>
+    <FastSearch v-if="fastSearch"/>
     <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
 
     <div class="content">
@@ -98,12 +96,12 @@ export default {
   computed: {
     ...mapState(['fastSearch']),
     ...mapGetters(['isDesktop', 'isStandAlone', 'l']),
-    isMenuOpened() {
-      return this.$route.fullPath === '/menu'
-    },
     hideNavbar() {
       if (!this.isStandAlone || !this.isDesktop) return false
       return this.hided
+    },
+    isMenuOpened() {
+      return this.$route.fullPath === '/menu'
     },
     hidePassive() {
       return this.timeBeforeMouseMove > 4 && this.isStandAlone && this.isDesktop
@@ -153,19 +151,19 @@ export default {
 .nav-trans-enter, .nav-trans-leave-to {
   opacity: 0;
   transform: translateY(-25px);
-  transition: opacity .3s ease-out, transform .3s ease-out;
+  transition: opacity .2s ease-out, transform .2s ease-out;
 }
 
 .nav-trans-leave, .nav-trans-enter-to {
   opacity: 1;
   transform: translateY(0px);
-  transition: opacity .3s ease-in, transform .3s ease-in;
+  transition: opacity .2s ease-in, transform .2s ease-in;
 }
 
 .router-view {
   position: relative;
   top: 0;
-  transition: top .3s;
+  transition: top .2s;
 }
 
 .hided {

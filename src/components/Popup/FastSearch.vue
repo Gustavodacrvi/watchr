@@ -1,30 +1,38 @@
 <template>
-  <div class="FastSearch" @click="$store.commit('closeFastSearch')">
-    <div class="cb rb card shadow scroll-thin" @click.stop>
-      <div class="cont">
-        <InputApp :focus='true' v-model="search" placeholder="Search for tags, lists and tasks..."/>
-        <div>
-          <transition-group name="trans"
-            @enter='enter'
-            @leave='leave'
-            class="options"
-            tag="div"
-          >
-            <div v-for="(o, i) in options"
-              :key="o.name + o.icon + i"
-              class="option rb cursor"
-              @click="click(o.callback)"
+  <transition appear name="card-t">
+    <div class="FastSearch" @click="$store.commit('closeFastSearch')">
+      <div class="cb rb card shadow scroll-thin" @click.stop>
+        <div class="cont">
+          <InputApp
+            :focus='true'
+            v-model="search"
+            placeholder="Search for tags, lists and tasks..."
+            @keydown="keydown"
+          />
+          <div>
+            <transition-group name="trans"
+              @enter='enter'
+              @leave='leave'
+              class="options"
+              tag="div"
             >
-              <div class="icon-wrapper">
-                <Icon :icon='o.icon' class="icon" :color="o.color"/>
+              <div v-for="o in options"
+                :key="o.id"
+                class="option rb cursor"
+                :class="{active: isActive(o)}"
+                @click="click(o.callback)"
+              >
+                <div class="icon-wrapper">
+                  <Icon :icon='o.icon' class="icon" :color="o.color"/>
+                </div>
+                <span class="name">{{ o.name }}</span>
               </div>
-              <span class="name">{{ o.name }}</span>
-            </div>
-          </transition-group>
+            </transition-group>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -32,7 +40,7 @@
 import InputVue from '@/components/Auth/Input.vue'
 import IconVue from '@/components/Icon.vue'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -42,6 +50,11 @@ export default {
   data() {
     return {
       search: '',
+      active: {
+        name: null,
+        icon: null,
+      },
+      options: [],
     }
   },
   methods: {
@@ -66,15 +79,8 @@ export default {
     click(callback) {
       this.$store.commit('closeFastSearch')
       if (callback) callback()
-    }
-  },
-  computed: {
-    ...mapState({
-      tasks: state => state.task.tasks,
-      tags: state => state.tag.tags,
-      lists: state => state.list.lists,
-    }),
-    options() {
+    },
+    getOptions() {
       const { search, tasks, tags, lists } = this
       if (!search) return []
       const lower = search.toLowerCase()
@@ -90,6 +96,7 @@ export default {
         arr.push({
           name: t.name,
           icon: 'tag',
+          id: t.id,
           color: 'var(--red)',
           callback: () => go('/user?tag=' + t.name)
         })
@@ -97,16 +104,60 @@ export default {
         arr.push({
           name: l.name,
           icon: 'tasks',
+          id: l.id,
           color: 'var(--purple)',
           callback: () => go('/user?list=' + l.name)
         })
-/*       for (const t of ts)
+     /*for (const t of ts)
         arr.push({
           name: t.name,
           icon: 'circle-check',
         }) */
 
-      return arr.slice(0, 8)
+      return arr.slice(0, 10)
+    },
+    isActive(el) {
+      return this.active.name === el.name && this.active.icon === el.icon
+    },
+    move(dir) {
+      const { options, active } = this
+      
+      const i = options.findIndex(this.isActive)
+
+      let ind
+      if (dir === 'up')
+        ind = i - 1 
+      else ind = i + 1
+
+      if (options[ind])
+        this.active = options[ind]
+    },
+    keydown({key}) {
+      if (this.noActive && this.options[0])
+        this.active = this.options[0]
+      else if (key === 'ArrowUp') {
+        this.move('up')
+      } else if (key === 'ArrowDown') {
+        this.move('down')
+      } else if (key === 'Enter') {
+        this.click(this.active.callback)
+      }
+    }
+  },
+  computed: {
+    ...mapState({
+      tasks: state => state.task.tasks,
+      tags: state => state.tag.tags,
+      lists: state => state.list.lists,
+    }),
+    ...mapGetters(['isStandAlone']),
+  },
+  noActive() {
+    return !this.active.name || !this.active.icon
+  },
+  watch: {
+    search() {
+      this.options = this.getOptions()
     }
   }
 }
@@ -131,6 +182,10 @@ export default {
   margin-top: 60px;
   overflow: auto;
   max-height: 400px;
+}
+
+.card.isStandAlone {
+  margin-top: 120px;
 }
 
 .cont {
@@ -179,6 +234,18 @@ export default {
 
 .trans-leave, .trans-lenter-to {
   opacity: 1;
+}
+
+.card-t-enter, .card-t-leave-to {
+  transform: translateY(-70px);
+  opacity: 0;
+  transition-duration: .2s;
+}
+
+.card-t-leave, .card-t-enter-to {
+  transform: translateY(0px);
+  opacity: 1;
+  transition-duration: .2s;
 }
 
 </style>
