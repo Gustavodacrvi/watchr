@@ -359,6 +359,14 @@ export default {
               }
             },
             {
+              name: 'Uncomplete tasks',
+              icon: 'circle',
+              callback: () => this.$store.dispatch('list/uncompleteHeadingTasks', {
+                listId: this.viewList.id,
+                name: h.name, savedTasks: this.tasks,
+              })
+            },
+            {
               name: 'Delete heading',
               icon: 'trash',
               callback: () => {

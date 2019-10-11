@@ -100,6 +100,28 @@ export default {
         batch.commit()
       }
     },
+    uncompleteHeadingTasks({state}, {name, listId, savedTasks}) {
+      const list = state.lists.find(el => el.id === listId)
+      if (list) {
+        const batch = fire.batch()
+        
+        const head = list.headings.find(el => el.name === name)
+        const ids = []
+        for (const t of head.tasks) {
+          const task = savedTasks.find(el => el.id === t.id)
+          if (tasks) ids.push(task.id)
+        }
+        for (const id of ids) {
+          const ref = fire.collection('tasks').doc(id)
+          batch.update(ref, {
+            completeDate: null,
+            completed: false,
+          })
+        }
+
+        batch.commit()
+      }
+    },
     editList(c, {name, id}) {
       fire.collection('lists').doc(id).update({
         name,
