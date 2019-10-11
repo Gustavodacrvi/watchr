@@ -49,7 +49,7 @@ export default {
       this.error = false
       setTimeout(() => {
         this.error = true
-      }, 7000)
+      }, 10000)
     }
   },
   computed: {

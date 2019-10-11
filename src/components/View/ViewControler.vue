@@ -352,14 +352,14 @@ export default {
           id: h.name,
           options: [
             {
-              name: 'Edit heading',
+              name: this.l['Edit heading'],
               icon: 'pen',
               callback: (j, vm, l) => {
                 vm.$emit('edit')
               }
             },
             {
-              name: 'Uncomplete tasks',
+              name: this.l['Uncomplete tasks'],
               icon: 'circle',
               callback: () => this.$store.dispatch('list/uncompleteHeadingTasks', {
                 listId: this.viewList.id,
@@ -367,7 +367,7 @@ export default {
               })
             },
             {
-              name: 'Delete heading',
+              name: this.l['Delete heading'],
               icon: 'trash',
               callback: () => {
                 this.$store.dispatch('list/deleteHeadingFromList', {

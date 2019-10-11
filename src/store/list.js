@@ -107,9 +107,9 @@ export default {
         
         const head = list.headings.find(el => el.name === name)
         const ids = []
-        for (const t of head.tasks) {
-          const task = savedTasks.find(el => el.id === t.id)
-          if (tasks) ids.push(task.id)
+        for (const i of head.tasks) {
+          const task = savedTasks.find(el => el.id === i)
+          if (task) ids.push(task.id)
         }
         for (const id of ids) {
           const ref = fire.collection('tasks').doc(id)
@@ -177,34 +177,24 @@ export default {
       dispatch('updateOrder', lists.map(el => el.id))
     },
     deleteList({state}, {id, tasks}) {
-      const list = state.lists.find(el => el.id === id)
-      if (list) {
-          const batch = fire.batch()
-  
-          const listRef = fire.collection('lists').doc(id)
-          batch.delete(listRef)
-  
-          const toDeleteTaskIds = []
-          for (const t of list.tasks) {
-            const task = tasks.find(el => el.id === t.id)
-            if (task) toDeleteTaskIds.push(task.id)
-          }
-          for (const head of list.headings) {
-            for (const t of head.tasks) {
-              const task = tasks.find(el => el.id === t.id) 
-              if (task) toDeleteTaskIds.push(t.id)
-            }
-          }
-          for (const id of toDeleteTaskIds) {
-            const ref = fire.collection('tasks').doc(id)
-            batch.update(ref, {
-              list: null,
-              heading: null,
-            })
-          }
-  
-          batch.commit()
+      const batch = fire.batch()
+
+      const listRef = fire.collection('lists').doc(id)
+      batch.delete(listRef)
+
+      const ids = []
+      for (const t of tasks) {
+        if (t.list === id) ids.push(t.id)
       }
+      for (const id of ids) {
+        const ref = fire.collection('tasks').doc(id)
+        batch.update(ref, {
+          list: null,
+          heading: null,
+        })
+      }
+
+      batch.commit()
     },
     addTaskByIndexSmart(c, {ids, index, task, list}) {
       const batch = fire.batch()
