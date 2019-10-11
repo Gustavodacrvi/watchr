@@ -22,7 +22,7 @@
 
 import RendererVue from '../Renderer.vue'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
@@ -40,7 +40,7 @@ export default {
   computed: {
     ...mapState({
       tasks: state => state.task.tasks,
-    })
+    }),
     ...mapGetters(['l']),
     sortedLists() {
       return this.$store.getters['list/sortedLists']

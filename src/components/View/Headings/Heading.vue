@@ -13,9 +13,10 @@
         >
           <div class="header">
             <h3 class="name" :style="{color}">{{ name }}</h3>
-            <IconDrop v-show="showIconDrop && options && options.length > 0" class="drop"
+            <IconDrop class="drop"
               handle='settings-h'
               :options='options'
+              :hideHandle='!showOptions'
               @edit='toggleEditing'
             />
           </div>
@@ -66,6 +67,9 @@ export default {
   },
   computed: {
     ...mapGetters(['l']),
+    showOptions() {
+      return this.showIconDrop && this.options && this.options.length > 0
+    },
     showIconDrop() {
       const isDesktop = this.$store.getters.isDesktop
       if (isDesktop && this.onHover) return true

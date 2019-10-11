@@ -23,9 +23,10 @@
         <div class="info">
           <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
           <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
-          <IconDrop v-if="showOptions"
+          <IconDrop
             class="inf drop"
             handle="settings-v"
+            :hideHandle="!showOptions"
             :options='options'
           />
         </div>

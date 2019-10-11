@@ -1,6 +1,8 @@
 <template>
   <div class="IconDrop" :class="centralize ? 'central' : ''" @click.stop>
-    <Icon v-if="handle" class="cursor handle" :icon="handle" :primaryHover='true' @click="toggleIconDrop" :color="handleColor" :width="getHandleWidth"/>
+    <transition name='handle-t'>
+      <Icon v-if="handle && !hideHandle" class="cursor handle" :icon="handle" :primaryHover='true' @click="toggleIconDrop" :color="handleColor" :width="getHandleWidth"/>
+    </transition>
     <transition name="drop-trans"
       @beforeEnter="beforeEnter"
       @enter="enter"
@@ -64,7 +66,7 @@ import CalendarPickerVue from './View/Tasks/CalendarPicker.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['options', 'handle', 'handleColor', 'handleWidth', 'allowSearch', 'calendar', 'isMobileIconDropComp', 'centralize', 'calendarCall'],
+  props: ['options', 'handle', 'handleColor', 'handleWidth', 'allowSearch', 'calendar', 'isMobileIconDropComp', 'centralize', 'calendarCall', 'hideHandle'],
   components: {
     Icon: IconVue,
     CalendarPicker: CalendarPickerVue,
@@ -100,11 +102,11 @@ export default {
         calendar: this.calendar,
         calendarCallback: () => {
           this.closeMobileIconDrop()
-          this.calendarCallback()
+          this.closeCalendarCallback()
         },
       })
     },
-    calendarCallback() {
+    closeCalendarCallback() {
       setTimeout(() => {
         this.$store.commit('pushIconDrop', null)
       }, 200)
@@ -388,6 +390,16 @@ export default {
   position: relative;
   margin-right: 8px;
   bottom: -1.5px;
+}
+
+.handle-t-enter, .handle-t-leave-to {
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.handle-t-leave, .handle-t-enter-to {
+  opacity: 1;
+  transition: opacity .2s;
 }
 
 </style>

@@ -46,9 +46,10 @@
             </template>
           </div>
           <div class="icon-drop-wrapper">
-            <IconDrop v-if="showIconDrop" class="icon-drop"
+            <IconDrop class="icon-drop"
               handle='settings-v'
               :options='options'
+              :hideHandle='!showIconDrop'
             />
           </div>
         </div>
