@@ -154,8 +154,35 @@ export default {
       lists.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       dispatch('updateOrder', lists.map(el => el.id))
     },
-    deleteList(c, id) {
-      fire.collection('lists').doc(id).delete()
+    deleteList({state}, {id, tasks}) {
+      const list = state.lists.find(el => el.id === id)
+      if (list) {
+          const batch = fire.batch()
+  
+          const listRef = fire.collection('lists').doc(id)
+          batch.delete(listRef)
+  
+          const toDeleteTaskIds = []
+          for (const t of list.tasks) {
+            const task = tasks.find(el => el.id === t.id)
+            if (task) toDeleteTaskIds.push(task.id)
+          }
+          for (const head of list.headings) {
+            for (const t of head.tasks) {
+              const task = tasks.find(el => el.id === t.id) 
+              if (task) toDeleteTaskIds.push(t.id)
+            }
+          }
+          for (const id of toDeleteTaskIds) {
+            const ref = fire.collection('tasks').doc(id)
+            batch.update(ref, {
+              list: null,
+              heading: null,
+            })
+          }
+  
+          batch.commit()
+      }
     },
     addTaskByIndexSmart(c, {ids, index, task, list}) {
       const batch = fire.batch()

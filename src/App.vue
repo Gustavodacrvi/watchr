@@ -8,7 +8,9 @@
       <Menu v-show="isMenuOpened && !isDesktop"/>
     </transition>
     <FastSearch v-if="fastSearch"/>
-    <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
+    <transition name="fade">
+      <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
+    </transition>
 
     <div class="content">
       <transition name="nav-trans" mode="out-in">

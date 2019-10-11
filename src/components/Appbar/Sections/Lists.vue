@@ -38,6 +38,9 @@ export default {
     },
   },
   computed: {
+    ...mapState({
+      tasks: state => state.task.tasks,
+    })
     ...mapGetters(['l']),
     sortedLists() {
       return this.$store.getters['list/sortedLists']
@@ -59,7 +62,10 @@ export default {
           {
             name: 'Delete list',
             icon: 'trash',
-            callback: () => this.$store.dispatch('list/deleteList', list.id)
+            callback: () => this.$store.dispatch('list/deleteList', {
+              id: list.id,
+              tasks: this.tasks,
+            })
           }
         ]
       }

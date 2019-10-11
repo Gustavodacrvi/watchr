@@ -25,7 +25,7 @@ export default {
     closeIconDrop() {
       setTimeout(() => {
         this.$store.commit('pushIconDrop', null)
-      }, 300)
+      }, 200)
     },
   },
   computed: {

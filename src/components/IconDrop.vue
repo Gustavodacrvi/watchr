@@ -98,8 +98,16 @@ export default {
         options: this.options,
         allowSearch: this.allowSearch,
         calendar: this.calendar,
-        calendarCallback: this.calendarCallback,
+        calendarCallback: () => {
+          this.closeMobileIconDrop()
+          this.calendarCallback()
+        },
       })
+    },
+    calendarCallback() {
+      setTimeout(() => {
+        this.$store.commit('pushIconDrop', null)
+      }, 200)
     },
     enterItems(el, done) {
       el.style.opacity = 0
@@ -220,7 +228,7 @@ export default {
       return this.handleWidth ? this.handleWidth : ''
     },
     getLinks() {
-      if (this.showSearch && this.links)
+      if (this.showSearch && this.links && this.links.filter)
         return this.links.filter(el => el.name.toLowerCase().includes(this.search.toLowerCase()))
       return this.links
     }
