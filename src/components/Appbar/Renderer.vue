@@ -190,7 +190,6 @@ export default {
       })
     },
     selectEl(id) {
-      console.log(this.disableSelection)
       if (!this.disableSelection) {
         if (this.selected.some(el => el === id)) {
           const i = this.selected.findIndex(el => el === id)

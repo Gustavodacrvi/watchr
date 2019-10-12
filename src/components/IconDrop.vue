@@ -23,7 +23,7 @@
               <template v-for="link in getLinks">
                 <div v-if="!link.type" class="link cursor hide-trans"
                   :key="link.name"
-                  @click="linkClick(link.callback, link)"
+                  @click="linkCallback(link.callback, link)"
                 >
                   <div class="link-cont">
                     <Icon v-if="link.icon"
@@ -75,7 +75,7 @@ export default {
     return {
       showing: false,
       showingLinks: true,
-      links: this.options,
+      opt: this.options,
       showCalendar: this.calendar,
       height: 0,
       calendarCallback: this.calendarCall,
@@ -100,13 +100,12 @@ export default {
         options: this.options,
         allowSearch: this.allowSearch,
         calendar: this.calendar,
-        calendarCallback: () => {
-          this.closeMobileIconDrop()
-          this.closeCalendarCallback()
+        calendarCallback: (date) => {
+          if (this.calendarCallback) this.calendarCallback(date)
         },
       })
     },
-    closeCalendarCallback() {
+    closeMobileIconDrop() {
       setTimeout(() => {
         this.$store.commit('pushIconDrop', null)
       }, 200)
@@ -125,25 +124,22 @@ export default {
       el.style.height = '0px'
       setTimeout(() => done(), 200)
     },
-    linkClick(callback, link) {
-      this.linkCallback(callback, link, () => {
+    linkCallback(callback, link) {
+      const close = () => {
+        this.showing = false
+        this.justClosed = true
         this.$store.commit('clearSelected')
-      })
-      this.justClosed = true
-    },
-    linkCallback(callback, link, doesnHaveLinksCallback) {
+        this.closeMobileIconDrop()
+      }
       if (callback) {
-        let links = callback(link, this)
-        if ((!links || !links.calendar) && doesnHaveLinksCallback && links && !links.search) doesnHaveLinksCallback()
-        if (links && links.search) {
-          this.showSearch = true
-        }
-        if (links && Array.isArray(links.links))
-          links = links.links
-        if (links && links.calendar && links.callback) {
-          this.showCalendar = true
-          this.calendarCallback = links.callback
-        } else if (links) {
+        let opt = callback(link, this)
+        const isAPromise = opt.then !== undefined
+
+        if (!isAPromise && opt) {
+          if (opt.calendar && opt.callback) {
+            this.showCalendar = true
+            this.calendarCallback = opt.callback
+          } else if (opt.search) this.showSearch = true
           const cont = this.getContent()
           if (cont) {
             const s = getComputedStyle(cont)
@@ -169,11 +165,9 @@ export default {
             }, 200)
     
             this.toggleLinks()
-            this.links = links
+            this.opt = opt
           }
-        } else {
-          this.showing = false
-        }
+        } else close()
       }
     },
     selectDate(date) {
@@ -194,7 +188,7 @@ export default {
     hide() {
       this.showing = false
       setTimeout(() => {
-        this.links = this.options
+        this.opt = this.options
         this.showSearch = this.allowSearch
         this.showCalendar = this.calendar
       }, 200)
@@ -230,16 +224,21 @@ export default {
       return this.handleWidth ? this.handleWidth : ''
     },
     getLinks() {
-      if (this.showSearch && this.links && this.links.filter)
-        return this.links.filter(el => el.name.toLowerCase().includes(this.search.toLowerCase()))
-      return this.links
+      const links = this.opt.links || this.opt
+      
+      if (Array.isArray(links)) {
+        if (this.showSearch && links)
+          return links.filter(el => el.name.toLowerCase().includes(this.search.toLowerCase()))
+        return links
+      }
+      return []
     }
   },
   watch: {
     options() {
       if (!this.calendar && !this.justClosed) {
         this.linkCallback(() => this.options, {})
-        this.links = this.options
+        this.opt = this.options
       }
       this.justClosed = false
     }

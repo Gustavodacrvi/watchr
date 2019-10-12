@@ -15,6 +15,7 @@ export default {
   'Today': 'Today',
   'Overdue': 'Overdue',
   'Tomorrow': 'Tomorrow',
+  'List root': 'List root',
   'Edit heading': 'Edit heading',
   'Uncomplete tasks': 'Uncomplete tasks',
   'Delete heading': 'Delete heading',

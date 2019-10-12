@@ -195,19 +195,18 @@ export default {
         case 'tag': return 'tag'
       }
     },
-    notSmartHeaderView() {
+    notHeadingHeaderView() {
       return this.viewName !== 'Upcoming' && this.viewName !== 'Completed'
     },
     getTasks() {
-      const ts = this.tasksWithoutLists
       if (this.viewType === 'search')
         return this.tasks.filter(el => el.name.includes(this.viewName))
-      if (this.isSmart && this.notSmartHeaderView) {
+      if (this.isSmart && this.notHeadingHeaderView) {
         if (this.viewName === 'Today' && this.hasOverdueTasks) return []
-        return utilsTask.filterTasksByView(ts, this.viewName)
+        return utilsTask.filterTasksByView(this.tasksWithoutLists, this.viewName)
       }
       else if (this.viewType === 'tag' && this.viewTag)
-        return ts.filter(el => el.tags.includes(this.viewTag.id))
+        return this.tasks.filter(el => el.tags.includes(this.viewTag.id))
       else if (this.isListType) {
         return this.getRootTasksOfList
       }

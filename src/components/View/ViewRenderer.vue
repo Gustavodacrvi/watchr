@@ -188,20 +188,34 @@ export default {
       return arr
     },
     getIconDropOptionsLists() {
-      const arr = []
-      for (const l of this.savedLists) {
-        arr.push({
-          name: l.name,
+      const moveToList = (obj) => {
+        this.$store.dispatch('task/saveTasksById', {
+          ids: this.selectedTasks,
+          task: {...obj},
+        })
+      }
+      const links = []
+      for (const list of this.savedLists) {
+        links.push({
+          name: list.name,
           icon: 'tasks',
           callback: () => {
-            this.$store.dispatch('task/saveTasksById', {
-              ids: this.selectedTasks,
-              task: {list: l.id},
-            })
+            const arr = [{
+              name: this.l['List root'],
+              callback: () => moveToList({list: list.id, heading: null})
+            }]
+            for (const h of list.headings) {
+              arr.push({
+                name: h.name,
+                icon: 'heading',
+                callback: () => moveToList({list: list.id, heading: h.name})
+              })
+            }
+            return arr
           },
         })
       }
-      return arr
+      return links
     },
     options() {
       const dispatch = this.$store.dispatch

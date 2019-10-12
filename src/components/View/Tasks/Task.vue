@@ -200,6 +200,39 @@ export default {
       }
       return arr
     },
+    listOptions() {
+      const moveToList = (obj) => {
+        this.$store.dispatch('task/saveTask', {
+          id: this.task.id,
+          ...obj
+        })
+      }
+      const links = []
+      for (const list of this.savedLists) {
+        links.push({
+          name: list.name,
+          icon: 'tasks',
+          callback: () => {
+            const arr = [{
+              name: this.l['List root'],
+              callback: () => moveToList({list: list.id, heading: null})
+            }]
+            for (const h of list.headings) {
+              arr.push({
+                name: h.name,
+                icon: 'heading',
+                callback: () => moveToList({list: list.id, heading: h.name})
+              })
+            }
+            return arr
+          }
+        })
+      }
+      return {
+        search: true,
+        links,
+      }
+    },
     options() {
       const dispatch = this.$store.dispatch
       const l = this.l
@@ -217,6 +250,7 @@ export default {
         {
           name: l['Move to list'],
           icon: 'tasks',
+          callback: () => this.listOptions
         },
         {
           type: 'optionsList',

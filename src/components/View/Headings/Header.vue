@@ -98,6 +98,11 @@ export default {
 
 <style scoped>
 
+.Header {
+  position: relative;
+  z-index: 200;
+}
+
 .header, .tags {
   display: flex;
   align-items: center;

@@ -64,7 +64,7 @@
         />
         <IconDrop
           handle="tasks"
-          handleWidth="32px"
+          handleWidth="25px"
           :allowSearch="true"
           :options="listOptions"
         />
