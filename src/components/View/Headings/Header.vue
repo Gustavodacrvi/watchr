@@ -3,7 +3,7 @@
     <div v-if="$store.getters.isDesktop" class="header">
       <Icon class="icon" :icon="getIcon" :color="getIconColor" width="40px"/>
       <h2 class="name">{{ viewNameValue }}</h2>
-      <IconDrop class="passive" handle="settings-h" handleColor="var(--gray)" :options="options"/>
+      <IconDrop class="passive drop" handle="settings-h" handleColor="var(--gray)" :options="options"/>
     </div>
     <div class="tags" :class="{margins: tags.length > 0}">
       <Tag class="tag" v-for="t in tags" :key="t.id"
@@ -117,6 +117,10 @@ export default {
 
 .margins + .margins {
   margin-top: 4px;
+}
+
+.drop {
+  transform: translateY(6px);
 }
 
 .IconDrop {

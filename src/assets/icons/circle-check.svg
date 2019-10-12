@@ -2,12 +2,8 @@
 <!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="11.939px" height="11.939px" viewBox="0 0 11.939 11.939" enable-background="new 0 0 11.939 11.939" xml:space="preserve">
-<g>
-	<path d="M5.97,0C2.678,0,0,2.678,0,5.97s2.678,5.969,5.97,5.969s5.97-2.678,5.97-5.969S9.262,0,5.97,0z M5.97,10.939
-		C3.229,10.939,1,8.71,1,5.97S3.229,1,5.97,1s4.97,2.229,4.97,4.97S8.71,10.939,5.97,10.939z"/>
-	<path d="M9.563,3.861c-0.19-0.201-0.506-0.21-0.707-0.021L5.236,7.247L3.494,5.223C3.315,5.015,3,4.99,2.789,5.17
-		C2.58,5.35,2.556,5.666,2.736,5.875l2.083,2.42c0.089,0.104,0.217,0.166,0.353,0.173c0.009,0,0.018,0,0.026,0
-		c0.127,0,0.25-0.048,0.343-0.136l4-3.765C9.742,4.378,9.752,4.062,9.563,3.861z"/>
-</g>
+	 width="12.653px" height="12.653px" viewBox="0 0 12.653 12.653" enable-background="new 0 0 12.653 12.653" xml:space="preserve">
+<circle fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" cx="6.327" cy="6.327" r="5.827"/>
+<polyline fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
+	3.534,5.868 5.555,8.202 9.597,4.452 "/>
 </svg>

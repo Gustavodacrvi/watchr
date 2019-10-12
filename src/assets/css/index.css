@@ -34,10 +34,6 @@ body {
   background-color: var(--back-color);
 }
 
-#__SVG_SPRITE_NODE__ path {
-  fill: currentColor;
-}
-
 .cursor {
   touch-action: manipulation;
   cursor: pointer;

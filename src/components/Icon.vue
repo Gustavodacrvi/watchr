@@ -25,7 +25,6 @@ import settingsH from '@/assets/icons/settings-h.svg'
 import settingsV from '@/assets/icons/settings-v.svg'
 import sort from '@/assets/icons/sort.svg'
 import tag from '@/assets/icons/tag.svg'
-import completed from '@/assets/icons/completed.svg'
 import sortName from '@/assets/icons/sort-name.svg'
 import priority from '@/assets/icons/priority.svg'
 import menu from '@/assets/icons/menu.svg'
@@ -33,7 +32,6 @@ import tasks from '@/assets/icons/tasks.svg'
 import pen from '@/assets/icons/pen.svg'
 import trash from '@/assets/icons/trash.svg'
 import fire from '@/assets/icons/fire.svg'
-import filter from '@/assets/icons/filter.svg'
 import tinyCircle from '@/assets/icons/tiny-circle.svg'
 import bloqued from '@/assets/icons/bloqued.svg'
 import arrowTiny from '@/assets/icons/arrow-tiny.svg'
@@ -53,8 +51,8 @@ export default {
     return {
       icons: {
         inbox, calendar, sun, arrow, star, user, out,
-        sort, tag, completed, priority, menu, tasks,
-        pen, trash, fire, filter, bloqued, circle,
+        sort, tag, priority, menu, tasks,
+        pen, trash, fire, bloqued, circle,
         copy, plus, globe, heading, search,
         "user-plus": userPlus,
         "circle-check": circleCheck,
