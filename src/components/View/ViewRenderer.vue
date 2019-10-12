@@ -247,7 +247,7 @@ export default {
           },
           {
             name: l['Show completed'],
-            icon: 'completed',
+            icon: 'circle-check',
             callback: () => this.toggleCompleted()
           }
         ]

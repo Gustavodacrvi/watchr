@@ -179,7 +179,7 @@ export default {
 }
 
 .drop {
-  transform: translate(8px, 13px);
+  transform: translate(8px, 16px);
 }
 
 .total {
@@ -192,6 +192,7 @@ export default {
 
 #task-on-hover .inf, #task-on-hover .icon, #task-on-hover .name {
   color: white !important;
+  stroke: white;
 }
 
 .isSelectedEl {
