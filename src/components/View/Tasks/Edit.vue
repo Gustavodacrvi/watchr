@@ -321,7 +321,6 @@ export default {
       const parseDate = () => {
         if (n.includes(' $')) {
           const obj = utils.parseInputToCalendarObject(n, this.l)
-          console.log(obj)
           this.calendar = obj
         } else if (this.task) {
           this.calendar = this.task.calendar

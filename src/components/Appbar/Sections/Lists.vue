@@ -5,7 +5,7 @@
       icon="tasks"
       iconColor='var(--purple)'
       :disableSelection='true'
-      :enableSort="false"
+      :enableSort="true"
       :illustration="illustration"
       :list="getList"
       :active="active"

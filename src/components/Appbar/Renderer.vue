@@ -122,7 +122,7 @@ export default {
       },
       onMove: (t, e) => {
         let el = e.target
-        if (!el.classList.contains('Task'))
+        if (el && !el.classList.contains('Task'))
           el = el.closest('.Task')
         if (el) {
           const cont = el.getElementsByClassName('task-cont-wrapper')[0]
