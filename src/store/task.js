@@ -81,7 +81,7 @@ export default {
   },
   actions: {
     getData({state}) {
-      if (uid())      
+      if (uid())
       return Promise.all([
         new Promise(resolve => {
           fire.collection('tasks').where('userId', '==', uid()).onSnapshot(snap => {

@@ -129,6 +129,12 @@ export default {
         lists = utils.checkMissingIdsAndSortArr(order, lists)
         const arr = []
         for (const list of lists) {
+          const saveOrder = ids =>
+            this.$store.dispatch('list/saveSmartViewHeadingTasksOrder', {
+              ids, listId: list.id, smartView: this.viewName,
+            })
+          const getTasks = () => ts.filter(el => el.list === list.id)
+          
           arr.push({
             name: list.name,
             allowEdit: true,
@@ -136,7 +142,7 @@ export default {
             showHeadingName: true,
             onEdit: (name) => {
               this.$store.dispatch('list/saveList', {
-                name
+                name, id: list.id,
               })
             },
             order: () => {
@@ -148,7 +154,7 @@ export default {
               return taskOrder
             },
             filter: (a, h, showCompleted) => {
-              let tasks = ts.filter(el => el.list === list.id)
+              let tasks = getTasks()
 
               if (!showCompleted)
                 tasks = utilsTask.filterTasksByCompletion(tasks, true)
@@ -163,14 +169,48 @@ export default {
                   vm.$emit('edit')
                 }
               },
+              {
+                name: this.l['Sort tasks'],
+                icon: 'sort',
+                callback: () => [
+                  {
+                    name: this.l['Sort by name'],
+                    icon: 'sort-name',
+                    callback: () => {
+                      const tasks = getTasks()
+                      tasks.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+                      saveOrder(tasks.map(el => el.id))
+                    },
+                  },
+                  {
+                    name: this.l['Sort by priority'],
+                    icon: 'priority',
+                    callback: () => {
+                      const tasks = utilsTask.sortTasksByPriority(getTasks())
+                      saveOrder(tasks.map(el => el.id))
+                    },
+                  },
+                  {
+                    name: 'Sort by date',
+                    icon: 'calendar',
+                    callback: () => console.log('sort tasks by date'),
+                  }
+                ]
+              },
+              {
+                name: this.l['Change date'],
+                icon: 'calendar',
+                callback: () => ({
+                  calendar: true,
+                  callback: (calendar) => this.$store.dispatch('task/saveTasksById', {
+                    ids: getTasks().map(el => el.id),
+                    task: {calendar},
+                  })
+                })
+              }
             ],
             id: list.id,
-            options: [],
-            updateIds: ids => {
-              this.$store.dispatch('list/saveSmartViewHeadingTasksOrder', {
-                ids, listId: list.id, smartView: this.viewName,
-              })
-            },
+            updateIds: saveOrder,
             onAddTask: (obj) => {
               const t = obj.task
               if (!t.calendar)
