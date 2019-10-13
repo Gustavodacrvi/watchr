@@ -27,8 +27,6 @@
 
 <script>
 
-const UPDATE_STRING = '2.0.0'
-
 import NavBarVue from './components/NavBar/NavBar.vue'
 import PopupVue from './components/Popup/Popup.vue'
 import ToastVue from './components/Toast.vue'
@@ -61,13 +59,6 @@ export default {
     window.addEventListener('keydown', this.keydown)
     window.addEventListener('keyup', this.keyup)
     window.addEventListener('mousemove', this.getMousePos)
-  },
-  mounted() {
-    setTimeout(() => {
-      if (localStorage.getItem('updatestring') !== UPDATE_STRING)
-        this.$store.dispatch('pushPopup', {comp: 'Update'})
-      localStorage.setItem('updatestring', UPDATE_STRING)
-    }, 2000)
   },
   methods: {
     keyup({key}) {

@@ -5,7 +5,7 @@
     </div>
     <div class="content">
       <p>Now everytime there is an update, this popup will appear! 😱</p>
-      <Button @click="close" value="Got it!"/>
+      <Button @click="close" value="Got it! Refresh"/>
     </div>
   </div>
 </template>
@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     close() {
-      this.$router.push('/user')
+      window.location.reload()
     },
   },
   computed: {
