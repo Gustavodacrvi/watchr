@@ -29,8 +29,8 @@
         :illustration='illustration'
         :headingPosition='0'
         :onSortableAdd='onSortableAdd'
-        @update="(ids) => this.$emit('update-ids', ids)"
-        @update-headings='(ids) => this.$emit("update-heading-ids", ids)'
+        @update="(ids) => $emit('update-ids', ids)"
+        @update-headings='(ids) => $emit("update-heading-ids", ids)'
         @add-heading="(obj) => $emit('add-heading', obj)"
       />
     </div>

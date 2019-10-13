@@ -71,11 +71,12 @@ export default {
           view: this.viewName,
           ids,
         })
-      } else if (this.isListType)
+      } else if (this.isListType) {
         this.$store.dispatch('list/saveList', {
           tasks: ids,
           id: this.viewList.id,
         })
+      }
     },
     updateHeadingIds(ids) {
       if (this.isSmart) {
@@ -138,6 +139,15 @@ export default {
                 name
               })
             },
+            order: () => {
+              let taskOrder = []
+              if (list.views && list.views[this.viewName])
+                taskOrder = list.views[this.viewName]
+              else
+                taskOrder = this.getAllTasksOrderByList(list.id)
+              console.log(taskOrder)
+              return taskOrder
+            },
             filter: (a, h, showCompleted) => {
               let tasks = ts.filter(el => el.list === list.id)
 
@@ -191,6 +201,7 @@ export default {
     ...mapGetters({
       l: 'l',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
+      getAllTasksOrderByList: 'list/getAllTasksOrderByList'
     }),
     viewNameValue() {
       if (this.isSmart) return this.l[this.viewName]
@@ -385,8 +396,12 @@ export default {
               },
             },
           ],
+          updateIds: ids => {
+            this.$store.dispatch('list/updateHeadingsTaskIds', {
+              name: h.name, listId: viewList.id, ids,
+            })
+          },
           onAddTask(obj) {
-            console.log(viewList)
             this.$store.dispatch('list/addTaskHeading', {
               name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
             })

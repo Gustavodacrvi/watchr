@@ -2,12 +2,7 @@
   <div class="TaskRenderer" @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration" class="illustration">
-        <Illustration
-          :name='illustration.name'
-          :width="illustration.width"
-          :title="illustration.title"
-          :descr="illustration.descr"
-        />
+        <Illustration v-bind="illustration"/>
       </div>
     </transition>
     <transition-group name="task-trans" class="front task-renderer-root" :class="{dontHaveTasks: tasks.length === 0 && headings.length === 0, showEmptyHeadings}"
@@ -68,6 +63,7 @@
             :onSortableAdd='h.onSortableAdd'
             :disable='h.disableTaskRenderer'
             @add-heading='(obj) => $emit("add-heading", obj)'
+            @update="ids => updateHeadingIds(h,ids)"
           />
         </HeadingApp>
       </template>
@@ -92,6 +88,7 @@ import Sortable from 'sortablejs'
 import mom from 'moment'
 
 import utilsTask from '@/utils/task'
+import utils from '@/utils/'
 
 export default {
   props: ['tasks', 'header', 'onSortableAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList'],
@@ -252,10 +249,24 @@ export default {
     window.removeEventListener('click', this.windowClick)
   },
   methods: {
+    updateHeadingIds(h, ids) {
+      if (h.updateIds)
+        h.updateIds(ids)
+    },
     filter(h) {
       let ts = h.filter(this.savedTasks, h, this.showCompleted)
+
+      let order = []
+      if (h.order)
+        order = h.order()
+
+      console.log(ts.map(el => el.name))
+      ts = utils.checkMissingIdsAndSortArr(order, ts)
+      console.log(ts.map(el => el.name))
       ts = utilsTask.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
+
       if (ts.length > 0) this.atLeastOneRenderedTask = true
+
       return ts
     },
     addHeading(name) {

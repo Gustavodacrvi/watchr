@@ -50,6 +50,20 @@ export default {
       }
       return arr
     },
+    getAllTasksOrderByList: state => listId => {
+      const list = state.lists.find(el => el.id === listId)
+      const ord = list.tasks.slice()
+      
+      let headsOrder = list.headingsOrder.slice() || []
+
+      const heads = utils.checkMissingIdsAndSortArr(headsOrder, list.headings, 'name')
+
+      for (const h of heads)
+        for (const id of h.tasks)
+          ord.push(id)
+      
+      return ord
+    },
   },
   actions: {
     getData({state}) {
@@ -351,6 +365,17 @@ export default {
         })
 
         batch.commit()
+      }
+    },
+    updateHeadingsTaskIds({state}, {listId, name, ids}) {
+      const list = state.lists.find(el => el.id === listId)
+      if (list) {
+        const heads = list.headings.slice()
+        const i = heads.findIndex(el => el.name === name)
+        heads[i].tasks = ids
+        fire.collection('lists').doc(listId).update({
+          headings: heads,
+        })
       }
     },
     addDefaultData(c, id) {
