@@ -56,7 +56,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'showCompletedOnHeadings', 'isSmart'],
+  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'showCompletedOnHeadings', 'isSmart', 'headerOptions'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,
@@ -232,7 +232,7 @@ export default {
       const l = this.l
       
       if (ids.length === 0) {
-        const opt = [
+        let opt = [
           {
             name: l['Sort tasks'],
             icon: 'sort',
@@ -271,6 +271,13 @@ export default {
           }
         ]
         if (this.showCompleted) opt[3].name = l['Hide completed']
+        if (this.headerOptions) {
+          opt.unshift({
+            type: 'hr',
+            name: 'division',
+          })
+          opt = [...this.headerOptions, ...opt]
+        }
         return opt
       } else {
         return [

@@ -9,6 +9,7 @@
     :showHeader='isListType'
     :showEmptyHeadings='isListType'
     :headingEdit='headingEdit'
+    :headerOptions='headerOptions'
 
     :headingsOptions='headingsOptions'
     :tasks='getTasks'
@@ -374,6 +375,18 @@ export default {
         }
     },
 
+    headerOptions() {
+      if (this.isListType)
+        return [
+          {
+            name: 'Edit list',
+            icon: 'pen',
+            callback: () => {
+              this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...this.viewList, editing: true}})
+            }
+          },
+        ]
+    },
     viewTag() {
       return this.tags.find(el => el.name === this.viewName)
     },
