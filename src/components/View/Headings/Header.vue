@@ -22,6 +22,14 @@
       </transition>
       <IconDrop class="passive drop" handle="settings-h" handleColor="var(--gray)" :options="options"/>
     </div>
+    <transition name="note-t"
+      @enter='enterNote'
+      @leave='leaveNote'
+    >
+      <div v-if="notes" class="tags">
+        <p>{{ notes }}</p>
+      </div>
+    </transition>
     <div class="tags" :class="{margins: tags.length > 0}">
       <Tag class="tag" v-for="t in tags" :key="t.id"
         :value="t.name"
@@ -50,7 +58,7 @@ import TagVue from './../Tag.vue'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart', 'notes'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -88,6 +96,23 @@ export default {
     },
     lineLeave(el) {
       el.style.width = '0px'
+      el.style.opacity = '0'
+    },
+    enterNote(el) {
+      const s = el.style
+      const height = el.offsetHeight
+
+      s.transitionDuration = '0s'
+      s.opacity = '0'
+      s.height = '0px'
+      setTimeout(() => {
+        s.transitionDuration = '.2s'
+        s.height = height + 'px'
+        s.opacity = '1'
+      })
+    },
+    leaveNote(el) {
+      el.style.height = '0px'
       el.style.opacity = '0'
     },
     keydown({key}) {

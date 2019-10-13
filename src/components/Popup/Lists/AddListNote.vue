@@ -33,15 +33,19 @@ export default {
       note: '',
     }
   },
-  created() {
-
-  },
   computed: {
     ...mapGetters(['platform', 'l']),
+    ...mapState({
+      payload: state => state.popup.payload,
+    })
   },
   methods: {
     addNote() {
-      console.log(3)
+      if (this.note && this.payload)
+        this.$store.dispatch('list/saveList', {
+          id: this.payload,
+          notes: this.note,
+        })
     }
   },
 }

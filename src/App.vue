@@ -1,14 +1,14 @@
 <template>
   <div v-if="l" id="app" :class="{hidePassive}">
-    <transition name="fade">
+    <transition name="fade-t">
       <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>
     <Toast/>
-    <transition name="fade">
+    <transition name="fade-t">
       <Menu v-show="isMenuOpened && !isDesktop"/>
     </transition>
     <FastSearch v-if="fastSearch"/>
-    <transition name="fade">
+    <transition name="fade-t">
       <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
     </transition>
 

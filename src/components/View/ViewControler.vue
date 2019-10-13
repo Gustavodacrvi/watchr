@@ -10,6 +10,7 @@
     :showEmptyHeadings='isListType'
     :headingEdit='headingEdit'
     :headerOptions='headerOptions'
+    :notes='getViewNotes'
 
     :headingsOptions='headingsOptions'
     :tasks='getTasks'
@@ -565,6 +566,10 @@ export default {
         })
       }
       return arr
+    },
+    getViewNotes() {
+      if (this.isListType) return this.viewList.notes
+      return null
     },
     completedHeadingsOptions() {
       const arr = []

@@ -7,6 +7,7 @@
         :viewNameValue="viewNameValue"
         :options="options"
         :viewType="viewType"
+        :notes='notes'
         :tags='tagSelectionOptions'
         :lists='listSelectionOptions'
         :activeTags='activeTags'
@@ -56,7 +57,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'showCompletedOnHeadings', 'isSmart', 'headerOptions'],
+  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'notes', 'showCompletedOnHeadings', 'isSmart', 'headerOptions'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,

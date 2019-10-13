@@ -51,7 +51,7 @@
                 </div>
                 <div v-else-if="l.type === 'hr'" :key="l.name"
                   class="drop-division hide-trans"
-                ><div class="division-line"></div></div>
+                ><div class="division-line hide-trans"></div></div>
               </template>
             </transition-group>
           </div>
