@@ -24,6 +24,8 @@ export default {
   'Inbox': 'Inbox',
   'Upcoming': 'Upcoming',
   'New update!': 'New update!',
+  "There is already a list with this heading name.": "There is already a list with this heading name.",
+  "Convert to list": "Convert to list",
   'Lists': 'Lists',
   'Tags': 'Tags',
   'Sort lists by name': 'Sort lists by name',

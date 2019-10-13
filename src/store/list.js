@@ -252,6 +252,40 @@ export default {
         })
       } 
     },
+    convertHeadingToList({state}, {listId, taskIds, name}) {
+      const list = state.lists.find(el => el.id === listId)
+      if (list) {
+        const batch = fire.batch()
+
+        const heads = list.headings.slice()
+        const i = heads.findIndex(el => el.name === name)
+        heads.splice(i, 1)
+
+        const listRef = fire.collection('lists').doc(listId)
+        batch.update(listRef, {
+          headings: heads,
+        })
+        
+        const newList = fire.collection('lists').doc()
+        batch.set(newList, {
+          name,
+          userId: uid(),
+          smartViewsOrders: {},
+          headings: [],
+          headingsOrder: [],
+          tasks: taskIds,
+        })
+        for (const id of taskIds) {
+          const ref = fire.collection('tasks').doc(id)
+          batch.update(ref, {
+            list: newList.id,
+            heading: null,
+          })
+        }
+
+        batch.commit()
+      }
+    },
     addTaskHeading({state}, {name, ids, listId, task, index}) {
       const list = state.lists.find(el => el.id === listId)
       if (list) {

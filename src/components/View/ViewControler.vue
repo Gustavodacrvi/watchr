@@ -437,6 +437,22 @@ export default {
               })
             },
             {
+              name: this.l["Convert to list"],
+              icon: 'tasks',
+              callback: () => {
+                if (this.lists.some(l => l.name === h.name))
+                  this.$store.commit('pushToast', {
+                    name: this.l['There is already a list with this heading name.'],
+                    seconds: 3,
+                    type: 'error',
+                  })
+                else 
+                  this.$store.dispatch('list/convertHeadingToList', {
+                    name: h.name, listId: viewList.id, taskIds: headingTasks.map(el => el.id)
+                  })
+              }
+            },
+            {
               name: this.l['Delete heading'],
               icon: 'trash',
               important: true,

@@ -140,6 +140,9 @@ export default {
         this.justClosed = true
         this.$store.commit('clearSelected')
         this.closeMobileIconDrop()
+        setTimeout(() => {
+          this.opt = this.options
+        }, 210)
       }
       if (callback) {
         let opt = callback(link, this)

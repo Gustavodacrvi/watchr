@@ -86,7 +86,7 @@ export default {
         clear()
         this.hideTimeout = setTimeout(() => {
           this.hided = false
-        }, 500)
+        }, 250)
       } else if (y) {
         clear()
         this.hideTimeout = setTimeout(() => {
