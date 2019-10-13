@@ -255,14 +255,13 @@ export default {
     },
     filter(h) {
       let ts = h.filter(this.savedTasks, h, this.showCompleted)
+      if (ts.length === 0) return []
 
       let order = []
       if (h.order)
         order = h.order()
 
-      console.log(ts.map(el => el.name))
       ts = utils.checkMissingIdsAndSortArr(order, ts)
-      console.log(ts.map(el => el.name))
       ts = utilsTask.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
 
       if (ts.length > 0) this.atLeastOneRenderedTask = true

@@ -141,11 +141,10 @@ export default {
             },
             order: () => {
               let taskOrder = []
-              if (list.views && list.views[this.viewName])
-                taskOrder = list.views[this.viewName]
+              if (list.smartViewsOrders && list.smartViewsOrders[this.viewName])
+                taskOrder = list.smartViewsOrders[this.viewName]
               else
                 taskOrder = this.getAllTasksOrderByList(list.id)
-              console.log(taskOrder)
               return taskOrder
             },
             filter: (a, h, showCompleted) => {
@@ -167,6 +166,11 @@ export default {
             ],
             id: list.id,
             options: [],
+            updateIds: ids => {
+              this.$store.dispatch('list/saveSmartViewHeadingTasksOrder', {
+                ids, listId: list.id, smartView: this.viewName,
+              })
+            },
             onAddTask: (obj) => {
               const t = obj.task
               if (!t.calendar)

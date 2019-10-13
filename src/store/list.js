@@ -52,15 +52,15 @@ export default {
     },
     getAllTasksOrderByList: state => listId => {
       const list = state.lists.find(el => el.id === listId)
-      const ord = list.tasks.slice()
+      let ord = list.tasks.slice()
       
       let headsOrder = list.headingsOrder.slice() || []
 
       const heads = utils.checkMissingIdsAndSortArr(headsOrder, list.headings, 'name')
-
-      for (const h of heads)
-        for (const id of h.tasks)
-          ord.push(id)
+      
+      for (const h of heads) {
+        ord = [...ord, ...h.tasks]
+      }
       
       return ord
     },
@@ -92,6 +92,7 @@ export default {
     addList(c, {name, ids, index}) {
       const obj = {
         name,
+        smartViewsOrders: {},
         userId: uid(),
         headings: [],
         headingsOrder: [],
@@ -233,6 +234,17 @@ export default {
       fire.collection('lists').doc(listId).update({
         headingsOrder: ids,
       })
+    },
+    saveSmartViewHeadingTasksOrder({state}, {ids, listId, smartView}) {
+      const list = state.lists.find(el => el.id === listId)
+      if (list) {
+        let views = list.smartViewsOrders
+        if (!views) views = {}
+        views[smartView] = ids
+        fire.collection('lists').doc(listId).update({
+          smartViewsOrders: views,
+        })
+      } 
     },
     addTaskHeading({state}, {name, ids, listId, task, index}) {
       const list = state.lists.find(el => el.id === listId)
