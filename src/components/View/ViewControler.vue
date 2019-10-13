@@ -370,7 +370,14 @@ export default {
               tasksIds: headingTasks.map(el => el.id)
             })
           },
-          filter: () => headingTasks,
+          filter: (a, h, showCompleted) => {
+            let tasks = headingTasks.slice()
+
+            if (!showCompleted)
+              tasks = utilsTask.filterTasksByCompletion(tasks, true)
+            
+            return tasks
+          },
           id: h.name,
           options: [
             {

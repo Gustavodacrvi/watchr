@@ -253,21 +253,6 @@ export default {
       if (h.updateIds)
         h.updateIds(ids)
     },
-    filter(h) {
-      let ts = h.filter(this.savedTasks, h, this.showCompleted)
-      if (ts.length === 0) return []
-
-      let order = []
-      if (h.order)
-        order = h.order()
-
-      ts = utils.checkMissingIdsAndSortArr(order, ts)
-      ts = utilsTask.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
-
-      if (ts.length > 0) this.atLeastOneRenderedTask = true
-
-      return ts
-    },
     addHeading(name) {
       if (name) {
         const i = this.getTaskRendererPosition()
@@ -475,6 +460,23 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
       getTaskById: 'task/getTaskById',
     }),
+    filter() {
+      return (h) => {
+        let ts = h.filter(this.savedTasks, h, this.showCompleted)
+        if (ts.length === 0) return []
+
+        let order = []
+        if (h.order)
+          order = h.order()
+
+        ts = utils.checkMissingIdsAndSortArr(order, ts)
+        ts = utilsTask.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
+
+        if (ts.length > 0) this.atLeastOneRenderedTask = true
+
+        return ts
+      }
+    },
     draggableRoot() {
       return this.$el.getElementsByClassName('task-renderer-root')[0]
     },
