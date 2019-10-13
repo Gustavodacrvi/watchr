@@ -20,6 +20,8 @@
         :emptyIcon='emptyIcon'
         :tasks='getFilterCompletedTasks'
         :view='viewName'
+        :isSmart="isSmart"
+        :viewType="viewType"
         :viewNameValue='viewNameValue'
         :showEmptyHeadings='showEmptyHeadings'
         :headings='headingsOptions'

@@ -91,7 +91,8 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'header', 'onSortableAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList'],
+  props: ['tasks', 'header', 'onSortableAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
+  'viewType'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue,
@@ -441,33 +442,49 @@ export default {
       }
     },
     keydown({key}) {
-      const addTaskRenderer = (pos) => {
-        const Constructor = Vue.extend(TaskEditTemplate)
-        const instance = new Constructor({
-          parent: this,
-          propsData: {
-              key: 'Edit',
-              placeholder: this.l['Task name'], showCancel: true, btnText: this.l['Add task']
-            },
-        })
-        const node = document.createElement('div')
-        node.setAttribute('id', 'edit-task-renderer')
-        if (pos === 'begin') {
-          this.draggableRoot.childNodes[0].prepend(node)
-        } else if (pos === 'end') {
-          this.draggableRoot.appendChild(node)
-        }
-        instance.$mount('#edit-task-renderer')
-        this.applyEventListenersToEditVueInstance(instance, this.add)
-      }
       if (!this.header) {
+        const addEdit = (comp, propsData, onSave, pos) => {
+          const Constructor = Vue.extend(comp)
+          const instance = new Constructor({
+            parent: this,
+            propsData,
+          })
+          const node = document.createElement('div')
+          node.setAttribute('id', 'edit-task-renderer')
+          if (pos === 'begin') {
+            this.draggableRoot.childNodes[0].prepend(node)
+          } else if (pos === 'end') {
+            this.draggableRoot.appendChild(node)
+          }
+          instance.$mount('#edit-task-renderer')
+          this.applyEventListenersToEditVueInstance(instance, onSave) 
+        }
+
+        const addTaskEdit = pos => addEdit(TaskEditTemplate, {
+          key: 'Edit',
+          placeholder: this.l['Task name'], showCancel: true, btnText: this.l['Add task']
+        }, this.add, pos)
+        const h = this.headingEdit
+        const addHeadingEdit = (pos) => addEdit(HeadingEditVue, {
+          key: 'EditHeading',
+          errorToast: h.errorToast, names: h.excludeNames,
+          buttonTxt: this.l['Save'],
+        }, this.addHeading, pos)
+
         const active = document.activeElement
         const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
-        if (!isTyping)
+        if (!isTyping) {
           if (key === 'a')
-            addTaskRenderer('end')
+            addTaskEdit('end')
           else if (key === 'A')
-            addTaskRenderer('begin')
+            addTaskEdit('begin')
+          if (this.viewType === 'list') {
+            if (key === 'h')
+              addHeadingEdit('end')
+            else if (key === 'H')
+              addHeadingEdit('begin')
+          }
+        }
       }
     },
     windowClick() {
