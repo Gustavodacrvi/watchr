@@ -1,5 +1,6 @@
 <template>
   <ViewRenderer
+    :isSmart='isSmart'
     :viewName='viewName'
     :viewNameValue='viewNameValue'
     :viewType='viewType'

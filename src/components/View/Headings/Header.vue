@@ -2,7 +2,24 @@
   <div class="Header" @click='click'>
     <div v-if="$store.getters.isDesktop" class="header">
       <Icon class="icon" :icon="getIcon" :color="getIconColor" width="40px"/>
-      <h2 class="name">{{ viewNameValue }}</h2>
+      <h2 v-if="!editing || !isEditable"
+        class="name"
+        @click.stop="editing = true"
+      >{{ viewNameValue }}</h2>
+      <input v-else-if="isEditable"
+        class="input"
+        autocomplete="off"
+        v-model="title"
+        ref='input'
+        @click.stop
+        @keydown="keydown"
+      >
+      <transition name="line-t"
+        @enter="lineEnter"
+        @leave="lineLeave"
+      >
+        <div v-if="isEditable && editing" class="line"></div>
+      </transition>
       <IconDrop class="passive drop" handle="settings-h" handleColor="var(--gray)" :options="options"/>
     </div>
     <div class="tags" :class="{margins: tags.length > 0}">
@@ -30,19 +47,58 @@ import IconVue from '../../Icon.vue'
 import IconDropVue from '../../IconDrop.vue'
 import TagVue from './../Tag.vue'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
     Tag: TagVue,
   },
+  data() {
+    return {
+      editing: false,
+      title: this.viewNameValue,
+    }
+  },
   created() {
     this.pushToNavbar()
+    window.addEventListener('click', this.hide)
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this.hide)
   },
   methods: {
+    lineEnter(el) {
+      const s = el.style
+      
+      const inp = this.$refs.input
+      if (inp) {
+        s.left = inp.offsetLeft + 'px'
+        s.opacity = '0'
+        s.width = '0px'
+        s.transitionDuration = '.0s'
+        setTimeout(() => {
+          s.transitionDuration = '.2s'
+          s.width = inp.offsetWidth + 'px'
+          s.opacity = '1'
+        })
+      }
+    },
+    lineLeave(el) {
+      el.style.width = '0px'
+      el.style.opacity = '0'
+    },
+    keydown({key}) {
+      if (key === "Enter" && this.isEditable) {
+        console.log(3)
+        this.editing = false
+      }
+    },
+    hide() {
+      this.editing = false
+    },
     click(event) {
       if (this.selectedTasks.length > 0) event.stopPropagation()
     },
@@ -51,10 +107,20 @@ export default {
         options: this.options,
         title: this.viewNameValue,
       })
+    },
+    focusOnInput() {
+      setTimeout(() => {
+        const inp = this.$refs.input
+        if (inp) inp.focus()
+      }, 100) 
     }
   },
   computed: {
     ...mapState(['selectedTasks']),
+    ...mapGetters(['isDesktop']),
+    isEditable() {
+      return !this.isSmart && (this.viewType === 'list' || this.viewType === 'tag') && this.isDesktop
+    },
     getIcon() {
       if (this.icon) return this.icon
       if (this.viewType === 'search') return 'search'
@@ -82,15 +148,23 @@ export default {
       }
       if (this.viewType === 'search') return ''
       return 'var(--red)'
-    }
+    },
   },
   watch: {
     viewName() {
       this.pushToNavbar()
+      this.editing = false
+    },
+    viewNameValue() {
+      this.title = this.viewNameValue
     },
     options() {
       this.pushToNavbar()
     },
+    editing() {
+      if (this.editing)
+        this.focusOnInput()
+    }
   }
 }
 
@@ -110,6 +184,23 @@ export default {
   position: relative;
   margin: 0;
   transition-duration: .2s;
+}
+
+.input {
+  background-color: var(--back-color);
+  border: none;
+  font-size: 1.5em;
+  width: 500px;
+  font-weight: bold;
+  outline: none;
+}
+
+.line {
+  position: absolute;
+  bottom: 0;
+  display: inline-block;
+  height: 2px;
+  background-color: var(--white);
 }
 
 .header {

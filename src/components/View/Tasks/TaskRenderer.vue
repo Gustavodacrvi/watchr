@@ -244,6 +244,7 @@ export default {
   },
   methods: {
     applyEventListenersToEditVueInstance(ins, onSave, evt) {
+      this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
       ins.$on('save', (obj) => onSave(obj, evt))
       ins.$on('goup', () => this.moveTaskRenderer('up'))
       ins.$on('godown', () => this.moveTaskRenderer('down'))

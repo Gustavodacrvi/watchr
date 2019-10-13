@@ -11,6 +11,7 @@
         :lists='listSelectionOptions'
         :activeTags='activeTags'
         :activeList='activeList'
+        :isSmart="isSmart"
         @tag='selectTag'
         @list='selectList'
       />
@@ -52,7 +53,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'showCompletedOnHeadings'],
+  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'showCompletedOnHeadings', 'isSmart'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,
