@@ -48,10 +48,8 @@ export default {
       if (this.isSmart) {
         let calendar = null
   
-        if (this.viewName === 'Today' && !obj.calendar)
-          calendar = this.getSpecificDayCalendarObj(mom())
-        else if (this.viewName === 'Tomorrow' && !obj.calendar)
-          calendar = this.getSpecificDayCalendarObj(mom().add(1, 'day'))
+        if (!obj.calendar)
+          calendar = this.getCalObjectByView(this.viewName)
   
         obj.task.calendar = calendar
         this.$store.dispatch('list/addTaskByIndexSmart', {
@@ -107,6 +105,12 @@ export default {
         })
       }
     },
+    getCalObjectByView(viewName) {
+      if (this.viewName === 'Today')
+        return this.getSpecificDayCalendarObj(mom())
+      if (this.viewName === 'Tomorrow')
+        return this.getSpecificDayCalendarObj(mom().add(1, 'day'))
+    },
 
     getListHeadingsByView(view) {
       const ts = utilsTask.filterTasksByView(this.tasksWithLists, view)
@@ -123,9 +127,9 @@ export default {
         if (!order) order = []
         lists = utils.checkMissingIdsAndSortArr(order, lists)
         const arr = []
-        for (const t of lists) {
+        for (const list of lists) {
           arr.push({
-            name: t.name,
+            name: list.name,
             allowEdit: true,
             hideListName: true,
             showHeadingName: true,
@@ -135,7 +139,7 @@ export default {
               })
             },
             filter: (a, h, showCompleted) => {
-              let tasks = ts.filter(el => el.list === t.id)
+              let tasks = ts.filter(el => el.list === list.id)
 
               if (!showCompleted)
                 tasks = utilsTask.filterTasksByCompletion(tasks, true)
@@ -151,12 +155,16 @@ export default {
                 }
               },
             ],
-            id: t.id,
+            id: list.id,
             options: [],
-            onAddTask(obj) {
-              obj.task.calendar = this.getSpecificDayCalendarObj(mom())
-              this.$store.dispatch('list/addTaskHeading', {
-                name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
+            onAddTask: (obj) => {
+              const t = obj.task
+              if (!t.calendar)
+                obj.task.calendar = this.getCalObjectByView(this.viewName)
+              t.list = list.id
+              t.calendar = this.getSpecificDayCalendarObj(mom())
+              this.$store.dispatch('task/addTask', {
+                ...t, 
               })
             },
             onSortableAdd(evt, {dataset}, type, ids) {
@@ -378,6 +386,7 @@ export default {
             },
           ],
           onAddTask(obj) {
+            console.log(viewList)
             this.$store.dispatch('list/addTaskHeading', {
               name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
             })

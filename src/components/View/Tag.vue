@@ -126,7 +126,6 @@ export default {
 
 .icon {
   margin-right: 4px;
-  transform: translateY(2px);
 }
 
 .name {

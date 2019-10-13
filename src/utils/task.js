@@ -160,5 +160,13 @@ export default {
     }
     
     return tasks
-  }
+  },
+  filterTasksByViewRendererFilterOptions(tasks, tags, list) {
+    let ts = tasks
+    if (tags.length > 0)
+      ts = ts.filter(el => tags.every(id => el.tags.includes(id)))
+    if (list)
+      ts = ts.filter(el => el.list === list)
+    return ts
+  },
 }

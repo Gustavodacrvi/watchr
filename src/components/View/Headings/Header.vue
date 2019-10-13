@@ -112,6 +112,14 @@ export default {
   transition-duration: .2s;
 }
 
+.header {
+  z-index: 200;
+}
+
+.tags {
+  z-index: 199;
+}
+
 .tag {
   margin-top: 4px;
 }

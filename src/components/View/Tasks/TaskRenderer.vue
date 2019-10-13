@@ -91,8 +91,10 @@ import Sortable from 'sortablejs'
 
 import mom from 'moment'
 
+import utilsTask from '@/utils/task'
+
 export default {
-  props: ['tasks', 'header', 'onSortableAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted'],
+  props: ['tasks', 'header', 'onSortableAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue,
@@ -251,7 +253,8 @@ export default {
   },
   methods: {
     filter(h) {
-      const ts = h.filter(this.savedTasks, h, this.showCompleted)
+      let ts = h.filter(this.savedTasks, h, this.showCompleted)
+      ts = utilsTask.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
       if (ts.length > 0) this.atLeastOneRenderedTask = true
       return ts
     },

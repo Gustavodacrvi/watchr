@@ -25,6 +25,7 @@
         :headingEdit='headingEdit'
         :showCompleted='showCompleted'
         :activeTags='getActiveTags'
+        :activeList='getActiveListId'
         :illustration='illustration'
         :headingPosition='0'
         :onSortableAdd='onSortableAdd'
@@ -327,6 +328,7 @@ export default {
           {
             name: l['Delete tasks'],
             icon: 'trash',
+            important: true,
             callback: () => dispatch('task/deleteTasks', ids)
           },
         ]
@@ -341,11 +343,7 @@ export default {
       else
         ts = utilsTask.sortTasksByPriority(ts)
 
-      if (this.getActiveTagIds.length > 0) 
-        ts = ts.filter(el => this.getActiveTagIds.every(id => el.tags.includes(id)))
-      if (this.getActiveListId)
-        ts = ts.filter(el => el.list === this.getActiveListId)
-      return ts
+      return utilsTask.filterTasksByViewRendererFilterOptions(ts, this.getActiveTagIds, this.getActiveListId)
     },
     getFilterCompletedTasks() {
       let ts = this.sortAndFilterTasks
