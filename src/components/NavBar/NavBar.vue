@@ -81,6 +81,7 @@ export default {
         {
           name: this.l['Log out'],
           icon: 'out',
+          important: true,
           callback: () => this.logOut(),
         }
       ]

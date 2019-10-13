@@ -20,24 +20,27 @@
               @enter='enterItems'
               @leave='leaveItems'
             >
-              <template v-for="link in getLinks">
-                <div v-if="!link.type" class="link cursor hide-trans"
-                  :key="link.name"
-                  @click="linkCallback(link.callback, link)"
+              <template v-for="l in getLinks">
+                <div v-if="!l.type" class="link cursor hide-trans"
+                  :class="{important: l.important}"
+                  :key="l.name"
+                  :ref="l.name"
+                  @click="l.important ? blink(l.name) : linkCallback(l.callback, l)"
+                  @dblclick="l.important ? linkCallback(l.callback, l) : () => {}"
                 >
                   <div class="link-cont">
-                    <Icon v-if="link.icon"
+                    <Icon v-if="l.icon"
                       class="cursor icon"
-                      :icon="link.icon"
-                      :color="link.color"
+                      :icon="l.icon"
+                      :color="l.color"
                     />
-                    <span class="name">{{ priorityParser(link.name) }}</span>
+                    <span class="name">{{ priorityParser(l.name) }}</span>
                   </div>
                 </div>
-                <div v-else :key="link.name" class="header-link hide-trans">
-                  <div class="header-name">{{ link.name }}</div>
+                <div v-else :key="l.name" class="header-link hide-trans">
+                  <div class="header-name">{{ l.name }}</div>
                   <div class="values">
-                    <Icon v-for="l in link.options" :key="l.id" class="val icon cursor"
+                    <Icon v-for="l in l.options" :key="l.id" class="val icon cursor"
                       width="25px"
                       :icon="l.icon"
                       :color="l.color"
@@ -66,14 +69,14 @@ import CalendarPickerVue from './View/Tasks/CalendarPicker.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['options', 'handle', 'handleColor', 'handleWidth', 'allowSearch', 'calendar', 'isMobileIconDropComp', 'centralize', 'calendarCall', 'hideHandle'],
+  props: ['options', 'handle', 'handleColor', 'handleWidth', 'allowSearch', 'calendar', 'isMobileIconDropComp', 'centralize', 'calendarCall', 'hideHandle', 'value'],
   components: {
     Icon: IconVue,
     CalendarPicker: CalendarPickerVue,
   },
   data() {
     return {
-      showing: false,
+      showing: this.value,
       showingLinks: true,
       opt: this.options,
       showCalendar: this.calendar,
@@ -110,6 +113,13 @@ export default {
         this.$store.commit('pushIconDrop', null)
       }, 200)
     },
+    blink(ref) {
+      const el = this.$refs[ref][0]
+      if (el) {
+        el.classList.add('blink')
+        setTimeout(() => el.classList.remove('blink'), 200)
+      }
+    },
     enterItems(el, done) {
       el.style.opacity = 0
       el.style.height = '0px'
@@ -133,7 +143,7 @@ export default {
       }
       if (callback) {
         let opt = callback(link, this)
-        const isAPromise = opt.then !== undefined
+        const isAPromise = opt && opt.then !== undefined
 
         if (!isAPromise && opt) {
           if (opt.calendar && opt.callback) {
@@ -241,6 +251,9 @@ export default {
         this.opt = this.options
       }
       this.justClosed = false
+    },
+    showing() {
+      this.$emit('input', this.showing)
     }
   }
 }
@@ -288,10 +301,6 @@ export default {
 .links {
   transition-duration: .2s;
   opacity: 1;
-}
-
-.hidden {
-  opacity: 0;
 }
 
 .search {
@@ -356,11 +365,11 @@ export default {
   transition-duration: .1s;
 }
 
-.drop-trans-enter .link, .drop-trans-leave-to .hide-trans {
+.drop-trans-enter .hide-trans, .drop-trans-leave-to .hide-trans {
   opacity: 0 !important;
 }
 
-.drop-trans-leave .link, .drop-trans-enter-to .hide-trans {
+.drop-trans-leave .hide-trans, .drop-trans-enter-to .hide-trans {
   opacity: 1 !important;
 }
 
@@ -375,6 +384,19 @@ export default {
 .link:hover {
   color: var(--primary);
   background-color: rgba(87,160,222,.1);
+}
+
+.link.important {
+  color: var(--red);
+}
+
+.link.important:hover {
+  background-color: rgba(222, 89, 89, .1);
+}
+
+.blink {
+  color: white !important;
+  background-color: rgba(255,255,255,.1) !important;
 }
 
 .link .link-cont {

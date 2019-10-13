@@ -62,6 +62,7 @@ export default {
           {
             name: 'Delete list',
             icon: 'trash',
+            important: true,
             callback: () => this.$store.dispatch('list/deleteList', {
               id: list.id,
               tasks: this.tasks,

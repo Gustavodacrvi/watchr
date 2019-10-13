@@ -1,5 +1,5 @@
 <template>
-  <div class="Task draggable" :class="{fade: completed, isSelected}"
+  <div class="Task draggable" :class="{fade: completed, isSelected, showingIconDropContent}"
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
     @click="rootClick"
@@ -47,6 +47,7 @@
           </div>
           <div class="icon-drop-wrapper">
             <IconDrop class="icon-drop"
+              v-model="showingIconDropContent"
               handle='settings-v'
               :options='options'
               :hideHandle='!showIconDrop'
@@ -90,6 +91,7 @@ export default {
   },
   data() {
     return {
+      showingIconDropContent: false,
       isEditing: false,
       onHover: false,
     }
@@ -306,6 +308,7 @@ export default {
         {
           name: l['Delete task'],
           icon: 'trash',
+          important: true,
           callback: () => dispatch('task/deleteTasks', [this.task.id])
         }
       ]
@@ -369,8 +372,8 @@ export default {
   z-index: 2;
 }
 
-.Task:hover {
-  z-index: 3;
+.Task.showingIconDropContent {
+  z-index: 5;
 }
 
 .cont-wrapper {

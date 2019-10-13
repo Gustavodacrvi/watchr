@@ -368,6 +368,7 @@ export default {
             {
               name: this.l['Delete heading'],
               icon: 'trash',
+              important: true,
               callback: () => {
                 this.$store.dispatch('list/deleteHeadingFromList', {
                   listId: this.viewList.id,
