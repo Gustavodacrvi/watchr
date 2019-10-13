@@ -23,6 +23,7 @@ export default {
   'Add time': 'Add time',
   'Inbox': 'Inbox',
   'Upcoming': 'Upcoming',
+  'New update!': 'New update!',
   'Lists': 'Lists',
   'Tags': 'Tags',
   'Sort lists by name': 'Sort lists by name',
