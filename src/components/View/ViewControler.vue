@@ -115,6 +115,7 @@ export default {
 
     getListHeadingsByView(view) {
       const ts = utilsTask.filterTasksByView(this.tasksWithLists, view)
+      
       if (ts && ts.length > 0) {
         const savedLists = this.lists
         const setOfLists = new Set()

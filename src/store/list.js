@@ -159,8 +159,10 @@ export default {
       batch.update(taskRef, {
         list: null, heading: null,
       })
-      const obj = state.viewOrders
+      const obj = {}
+      obj[view] = {}
       obj[view].tasks = ids
+      obj[view].headings = state.viewOrders[view].headings || []
       const listRef = fire.collection('viewOrders').doc(uid())
       batch.update(listRef, obj)
 
@@ -177,12 +179,16 @@ export default {
       batch.commit()
     },
     updateViewOrder({state}, {view, ids}) {
-      const obj = state.viewOrders
+      const obj = {}
+      obj[view] = {}
       obj[view].tasks = ids
+      obj[view].headings = state.viewOrders[view].headings || []
       fire.collection('viewOrders').doc(uid()).update(obj)
     },
     updateHeadingsViewOrder({state}, {view, ids}) {
-      const obj = state.viewOrders
+      const obj = {}
+      obj[view] = {}
+      obj[view].tasks = state.viewOrders[view].tasks || []
       obj[view].headings = ids
       fire.collection('viewOrders').doc(uid()).update(obj)
     },

@@ -158,7 +158,7 @@ export default {
           el.setAttribute('id', 'edit-task-renderer')
           instance.$mount('#edit-task-renderer')
           this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
-          this.applyEventListenersToEditVueInstance(instance, onSave)
+          this.applyEventListenersToEditVueInstance(instance, onSave, evt)
         }
         
         if (type !== 'addtask')
@@ -243,7 +243,7 @@ export default {
     window.removeEventListener('click', this.windowClick)
   },
   methods: {
-    applyEventListenersToEditVueInstance(ins, onSave) {
+    applyEventListenersToEditVueInstance(ins, onSave, evt) {
       ins.$on('save', (obj) => onSave(obj, evt))
       ins.$on('goup', () => this.moveTaskRenderer('up'))
       ins.$on('godown', () => this.moveTaskRenderer('down'))
