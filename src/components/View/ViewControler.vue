@@ -100,7 +100,11 @@ export default {
             name,
             id: this.viewList.id,
           })
-        }
+        } else if (this.viewType === 'tag' && this.viewTag)
+          this.$router.push('/user?tag='+name)
+          this.$store.dispatch('tag/editTag', {
+            name, id: this.viewTag.id
+          })
       }
     },
     addHeading(obj) {
