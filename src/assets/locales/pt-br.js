@@ -113,6 +113,7 @@ export default {
   'Edit heading': 'Editar cabeçalho',
   'Uncomplete tasks': 'Descompl',
   'List root': 'Raiz da list',
+  'New update!': 'Nova atualização!',
   'Delete heading': 'Delete heading',
   "You can add one by dropping the plus floating button in this region.": "Você pode adicionar uma ao droppar o botão flutuante nesta região.",
   "You don't have any tags.": "Você não tem nenhuma tag.",
