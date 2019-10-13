@@ -158,14 +158,7 @@ export default {
           el.setAttribute('id', 'edit-task-renderer')
           instance.$mount('#edit-task-renderer')
           this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
-          instance.$on('save', (obj) => onSave(obj, evt))
-          instance.$on('goup', () => this.moveTaskRenderer('up'))
-          instance.$on('godown', () => this.moveTaskRenderer('down'))
-          instance.$on('cancel', () => {
-            instance.$destroy()
-            const $el = instance.$el
-            $el.parentNode.removeChild($el)
-          })
+          this.applyEventListenersToEditVueInstance(instance, onSave)
         }
         
         if (type !== 'addtask')
@@ -244,11 +237,22 @@ export default {
       })
     }
     window.addEventListener('click', this.windowClick)
+    window.addEventListener('keydown', this.keydown)
   },
   beforeDestroy() {
     window.removeEventListener('click', this.windowClick)
   },
   methods: {
+    applyEventListenersToEditVueInstance(ins, onSave) {
+      ins.$on('save', (obj) => onSave(obj, evt))
+      ins.$on('goup', () => this.moveTaskRenderer('up'))
+      ins.$on('godown', () => this.moveTaskRenderer('down'))
+      ins.$on('cancel', () => {
+        ins.$destroy()
+        const $el = ins.$el
+        $el.parentNode.removeChild($el)
+      })
+    },
     updateHeadingIds(h, ids) {
       if (h.updateIds)
         h.updateIds(ids)
@@ -433,6 +437,36 @@ export default {
       if (cont) {
         cont.classList.add('hided-leave')
         cont.style.height = 0
+      }
+    },
+    keydown({key}) {
+      const addTaskRenderer = (pos) => {
+        const Constructor = Vue.extend(TaskEditTemplate)
+        const instance = new Constructor({
+          parent: this,
+          propsData: {
+              key: 'Edit',
+              placeholder: this.l['Task name'], showCancel: true, btnText: this.l['Add task']
+            },
+        })
+        const node = document.createElement('div')
+        node.setAttribute('id', 'edit-task-renderer')
+        if (pos === 'begin') {
+          this.draggableRoot.childNodes[0].prepend(node)
+        } else if (pos === 'end') {
+          this.draggableRoot.appendChild(node)
+        }
+        instance.$mount('#edit-task-renderer')
+        this.applyEventListenersToEditVueInstance(instance, this.add)
+      }
+      if (!this.header) {
+        const active = document.activeElement
+        const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
+        if (!isTyping)
+          if (key === 'a')
+            addTaskRenderer('end')
+          else if (key === 'A')
+            addTaskRenderer('begin')
       }
     },
     windowClick() {
