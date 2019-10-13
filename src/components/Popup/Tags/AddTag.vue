@@ -10,6 +10,7 @@
         :focus="true"
         :options='options'
         @select="select"
+        @enter='addTag'
       />
       <ButtonApp :value="title" @click="addTag"/>
     </div>

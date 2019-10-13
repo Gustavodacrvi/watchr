@@ -1,5 +1,5 @@
 <template>
-  <div class="AddFolder popup cb shadow rb" :class="platform">
+  <div class="AddList popup cb shadow rb" :class="platform">
     <div class="title tac">
       <h2 class="pc">{{ title }}</h2>
     </div>
@@ -10,6 +10,7 @@
         :focus="true"
         :options='options'
         @select="select"
+        @enter='addList'
       />
       <ButtonApp :value="title" @click="addList"/>
     </div>

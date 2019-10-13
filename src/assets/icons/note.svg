@@ -4,12 +4,12 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="14.25px" height="13.583px" viewBox="0 0 14.25 13.583" enable-background="new 0 0 14.25 13.583" xml:space="preserve">
 <g>
-	<path fill="none" stroke="#000000" stroke-miterlimit="10" d="M1.5,0.5c-0.55,0-1,0.45-1,1v10.583c0,0.55,0.45,1,1,1h8.458
+	<path fill="none" stroke="currentColor" stroke-miterlimit="10" d="M1.5,0.5c-0.55,0-1,0.45-1,1v10.583c0,0.55,0.45,1,1,1h8.458
 		c0.55,0,1.348-0.286,1.773-0.634l1.246-1.023c0.425-0.349,0.773-1.084,0.773-1.634V1.5c0-0.55-0.45-1-1-1H1.5z"/>
 </g>
-<polyline fill="none" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" points="10.292,13.083 10.292,9.833 
+<polyline fill="none" stroke="currentColor" stroke-linejoin="round" stroke-miterlimit="10" points="10.292,13.083 10.292,9.833 
 	13.75,9.833 "/>
-<line fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.854" y1="3.354" x2="10.396" y2="3.354"/>
-<line fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.854" y1="5.792" x2="10.396" y2="5.792"/>
-<line fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.854" y1="8.229" x2="10.396" y2="8.229"/>
+<line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.854" y1="3.354" x2="10.396" y2="3.354"/>
+<line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.854" y1="5.792" x2="10.396" y2="5.792"/>
+<line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.854" y1="8.229" x2="10.396" y2="8.229"/>
 </svg>

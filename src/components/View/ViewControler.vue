@@ -379,12 +379,20 @@ export default {
       if (this.isListType)
         return [
           {
-            name: 'Edit list',
+            name: this.l['Edit list'],
             icon: 'pen',
             callback: () => {
               this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...this.viewList, editing: true}})
             }
           },
+          {
+            name: this.l['Add list notes'],
+            icon: 'note',
+            callback: () => this.$store.dispatch('pushPopup', {
+              comp: 'AddListNote',
+              payload: this.viewList.id,
+            })
+          }
         ]
     },
     viewTag() {
