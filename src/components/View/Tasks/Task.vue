@@ -1,5 +1,5 @@
 <template>
-  <div class="Task draggable" :class="{fade: completed, isSelected}"
+  <div class="Task draggable" :class="{fade: completed, isSelected, showingIconDropContent}"
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
     @click="rootClick"
@@ -47,6 +47,7 @@
           </div>
           <div class="icon-drop-wrapper">
             <IconDrop class="icon-drop"
+              v-model="showingIconDropContent"
               handle='settings-v'
               :options='options'
               :hideHandle='!showIconDrop'
@@ -90,6 +91,7 @@ export default {
   },
   data() {
     return {
+      showingIconDropContent: false,
       isEditing: false,
       onHover: false,
     }
@@ -200,6 +202,39 @@ export default {
       }
       return arr
     },
+    listOptions() {
+      const moveToList = (obj) => {
+        this.$store.dispatch('task/saveTask', {
+          id: this.task.id,
+          ...obj
+        })
+      }
+      const links = []
+      for (const list of this.savedLists) {
+        links.push({
+          name: list.name,
+          icon: 'tasks',
+          callback: () => {
+            const arr = [{
+              name: this.l['List root'],
+              callback: () => moveToList({list: list.id, heading: null})
+            }]
+            for (const h of list.headings) {
+              arr.push({
+                name: h.name,
+                icon: 'heading',
+                callback: () => moveToList({list: list.id, heading: h.name})
+              })
+            }
+            return arr
+          }
+        })
+      }
+      return {
+        search: true,
+        links,
+      }
+    },
     options() {
       const dispatch = this.$store.dispatch
       const l = this.l
@@ -217,6 +252,7 @@ export default {
         {
           name: l['Move to list'],
           icon: 'tasks',
+          callback: () => this.listOptions
         },
         {
           type: 'optionsList',
@@ -272,6 +308,7 @@ export default {
         {
           name: l['Delete task'],
           icon: 'trash',
+          important: true,
           callback: () => dispatch('task/deleteTasks', [this.task.id])
         }
       ]
@@ -335,8 +372,8 @@ export default {
   z-index: 2;
 }
 
-.Task:hover {
-  z-index: 3;
+.Task.showingIconDropContent {
+  z-index: 5;
 }
 
 .cont-wrapper {

@@ -66,21 +66,22 @@ export default {
     dropLinks() {
       if (!this.user)
         return [
-          {
-            name: this.l['Sign up'],
-            icon: 'user-plus',
-            callback: () => this.signUp()
-          },
-          {
-            name: this.l['Sign in'],
-            icon: 'out',
-            callback: () => this.signIn()
-          }
-        ]
+            {
+              name: this.l['Sign up'],
+              icon: 'user-plus',
+              callback: (close) => this.signUp()
+            },
+            {
+              name: this.l['Sign in'],
+              icon: 'out',
+              callback: () => this.signIn()
+            }
+          ]
       return [
         {
           name: this.l['Log out'],
           icon: 'out',
+          important: true,
           callback: () => this.logOut(),
         }
       ]

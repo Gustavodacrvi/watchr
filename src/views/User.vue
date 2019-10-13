@@ -2,13 +2,13 @@
   <div class="User">
     <transition appear name="state" mode="out-in">
       <UserView v-if="authState && !isLoading" key="app"/>
-      <div key="notlogged" v-else-if="showMsg && !authState && firstFireLoad" class="view">
+      <div key="notlogged" v-else-if="!authState && firstFireLoad" class="view">
         <span class='view'>{{ l['Please log in to continue.'] }}</span>
       </div>
       <div v-else-if="user && !user.emailVerified && firstFireLoad" class="view" key="confirm">
         <span>Please confirm your e-mail</span>
       </div>
-      <div v-else-if="error" class="view" key="error">
+      <div v-else-if="error && firstFireLoad" class="view" key="error">
         <ErrorComp/>
       </div>
       <div v-else key="loading" class="view">
@@ -34,14 +34,10 @@ export default {
   },
   data() {
     return {
-      showMsg: false,
       error: false,
     }
   },
   created() {
-    setTimeout(() => {
-      this.showMsg = true
-    }, 1000)
     this.resetErroState()
   },
   methods: {

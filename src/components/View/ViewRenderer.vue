@@ -25,11 +25,12 @@
         :headingEdit='headingEdit'
         :showCompleted='showCompleted'
         :activeTags='getActiveTags'
+        :activeList='getActiveListId'
         :illustration='illustration'
         :headingPosition='0'
         :onSortableAdd='onSortableAdd'
-        @update="(ids) => this.$emit('update-ids', ids)"
-        @update-headings='(ids) => this.$emit("update-heading-ids", ids)'
+        @update="(ids) => $emit('update-ids', ids)"
+        @update-headings='(ids) => $emit("update-heading-ids", ids)'
         @add-heading="(obj) => $emit('add-heading', obj)"
       />
     </div>
@@ -188,20 +189,34 @@ export default {
       return arr
     },
     getIconDropOptionsLists() {
-      const arr = []
-      for (const l of this.savedLists) {
-        arr.push({
-          name: l.name,
+      const moveToList = (obj) => {
+        this.$store.dispatch('task/saveTasksById', {
+          ids: this.selectedTasks,
+          task: {...obj},
+        })
+      }
+      const links = []
+      for (const list of this.savedLists) {
+        links.push({
+          name: list.name,
           icon: 'tasks',
           callback: () => {
-            this.$store.dispatch('task/saveTasksById', {
-              ids: this.selectedTasks,
-              task: {list: l.id},
-            })
+            const arr = [{
+              name: this.l['List root'],
+              callback: () => moveToList({list: list.id, heading: null})
+            }]
+            for (const h of list.headings) {
+              arr.push({
+                name: h.name,
+                icon: 'heading',
+                callback: () => moveToList({list: list.id, heading: h.name})
+              })
+            }
+            return arr
           },
         })
       }
-      return arr
+      return links
     },
     options() {
       const dispatch = this.$store.dispatch
@@ -313,6 +328,7 @@ export default {
           {
             name: l['Delete tasks'],
             icon: 'trash',
+            important: true,
             callback: () => dispatch('task/deleteTasks', ids)
           },
         ]
@@ -327,11 +343,7 @@ export default {
       else
         ts = utilsTask.sortTasksByPriority(ts)
 
-      if (this.getActiveTagIds.length > 0) 
-        ts = ts.filter(el => this.getActiveTagIds.every(id => el.tags.includes(id)))
-      if (this.getActiveListId)
-        ts = ts.filter(el => el.list === this.getActiveListId)
-      return ts
+      return utilsTask.filterTasksByViewRendererFilterOptions(ts, this.getActiveTagIds, this.getActiveListId)
     },
     getFilterCompletedTasks() {
       let ts = this.sortAndFilterTasks

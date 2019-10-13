@@ -50,6 +50,20 @@ export default {
       }
       return arr
     },
+    getAllTasksOrderByList: state => listId => {
+      const list = state.lists.find(el => el.id === listId)
+      let ord = list.tasks.slice()
+      
+      let headsOrder = list.headingsOrder.slice() || []
+
+      const heads = utils.checkMissingIdsAndSortArr(headsOrder, list.headings, 'name')
+      
+      for (const h of heads) {
+        ord = [...ord, ...h.tasks]
+      }
+      
+      return ord
+    },
   },
   actions: {
     getData({state}) {
@@ -78,6 +92,7 @@ export default {
     addList(c, {name, ids, index}) {
       const obj = {
         name,
+        smartViewsOrders: {},
         userId: uid(),
         headings: [],
         headingsOrder: [],
@@ -144,8 +159,10 @@ export default {
       batch.update(taskRef, {
         list: null, heading: null,
       })
-      const obj = state.viewOrders
+      const obj = {}
+      obj[view] = {}
       obj[view].tasks = ids
+      obj[view].headings = state.viewOrders[view].headings || []
       const listRef = fire.collection('viewOrders').doc(uid())
       batch.update(listRef, obj)
 
@@ -162,12 +179,16 @@ export default {
       batch.commit()
     },
     updateViewOrder({state}, {view, ids}) {
-      const obj = state.viewOrders
+      const obj = {}
+      obj[view] = {}
       obj[view].tasks = ids
+      obj[view].headings = state.viewOrders[view].headings || []
       fire.collection('viewOrders').doc(uid()).update(obj)
     },
     updateHeadingsViewOrder({state}, {view, ids}) {
-      const obj = state.viewOrders
+      const obj = {}
+      obj[view] = {}
+      obj[view].tasks = state.viewOrders[view].tasks || []
       obj[view].headings = ids
       fire.collection('viewOrders').doc(uid()).update(obj)
     },
@@ -219,6 +240,17 @@ export default {
       fire.collection('lists').doc(listId).update({
         headingsOrder: ids,
       })
+    },
+    saveSmartViewHeadingTasksOrder({state}, {ids, listId, smartView}) {
+      const list = state.lists.find(el => el.id === listId)
+      if (list) {
+        let views = list.smartViewsOrders
+        if (!views) views = {}
+        views[smartView] = ids
+        fire.collection('lists').doc(listId).update({
+          smartViewsOrders: views,
+        })
+      } 
     },
     addTaskHeading({state}, {name, ids, listId, task, index}) {
       const list = state.lists.find(el => el.id === listId)
@@ -351,6 +383,17 @@ export default {
         })
 
         batch.commit()
+      }
+    },
+    updateHeadingsTaskIds({state}, {listId, name, ids}) {
+      const list = state.lists.find(el => el.id === listId)
+      if (list) {
+        const heads = list.headings.slice()
+        const i = heads.findIndex(el => el.name === name)
+        heads[i].tasks = ids
+        fire.collection('lists').doc(listId).update({
+          headings: heads,
+        })
       }
     },
     addDefaultData(c, id) {

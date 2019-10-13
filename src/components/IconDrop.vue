@@ -20,24 +20,27 @@
               @enter='enterItems'
               @leave='leaveItems'
             >
-              <template v-for="link in getLinks">
-                <div v-if="!link.type" class="link cursor hide-trans"
-                  :key="link.name"
-                  @click="linkClick(link.callback, link)"
+              <template v-for="l in getLinks">
+                <div v-if="!l.type" class="link cursor hide-trans"
+                  :class="{important: l.important}"
+                  :key="l.name"
+                  :ref="l.name"
+                  @click="l.important ? blink(l.name) : linkCallback(l.callback, l)"
+                  @dblclick="l.important ? linkCallback(l.callback, l) : () => {}"
                 >
                   <div class="link-cont">
-                    <Icon v-if="link.icon"
+                    <Icon v-if="l.icon"
                       class="cursor icon"
-                      :icon="link.icon"
-                      :color="link.color"
+                      :icon="l.icon"
+                      :color="l.color"
                     />
-                    <span class="name">{{ priorityParser(link.name) }}</span>
+                    <span class="name">{{ priorityParser(l.name) }}</span>
                   </div>
                 </div>
-                <div v-else :key="link.name" class="header-link hide-trans">
-                  <div class="header-name">{{ link.name }}</div>
+                <div v-else :key="l.name" class="header-link hide-trans">
+                  <div class="header-name">{{ l.name }}</div>
                   <div class="values">
-                    <Icon v-for="l in link.options" :key="l.id" class="val icon cursor"
+                    <Icon v-for="l in l.options" :key="l.id" class="val icon cursor"
                       width="25px"
                       :icon="l.icon"
                       :color="l.color"
@@ -66,16 +69,16 @@ import CalendarPickerVue from './View/Tasks/CalendarPicker.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['options', 'handle', 'handleColor', 'handleWidth', 'allowSearch', 'calendar', 'isMobileIconDropComp', 'centralize', 'calendarCall', 'hideHandle'],
+  props: ['options', 'handle', 'handleColor', 'handleWidth', 'allowSearch', 'calendar', 'isMobileIconDropComp', 'centralize', 'calendarCall', 'hideHandle', 'value'],
   components: {
     Icon: IconVue,
     CalendarPicker: CalendarPickerVue,
   },
   data() {
     return {
-      showing: false,
+      showing: this.value,
       showingLinks: true,
-      links: this.options,
+      opt: this.options,
       showCalendar: this.calendar,
       height: 0,
       calendarCallback: this.calendarCall,
@@ -100,16 +103,22 @@ export default {
         options: this.options,
         allowSearch: this.allowSearch,
         calendar: this.calendar,
-        calendarCallback: () => {
-          this.closeMobileIconDrop()
-          this.closeCalendarCallback()
+        calendarCallback: (date) => {
+          if (this.calendarCallback) this.calendarCallback(date)
         },
       })
     },
-    closeCalendarCallback() {
+    closeMobileIconDrop() {
       setTimeout(() => {
         this.$store.commit('pushIconDrop', null)
       }, 200)
+    },
+    blink(ref) {
+      const el = this.$refs[ref][0]
+      if (el) {
+        el.classList.add('blink')
+        setTimeout(() => el.classList.remove('blink'), 200)
+      }
     },
     enterItems(el, done) {
       el.style.opacity = 0
@@ -125,25 +134,22 @@ export default {
       el.style.height = '0px'
       setTimeout(() => done(), 200)
     },
-    linkClick(callback, link) {
-      this.linkCallback(callback, link, () => {
+    linkCallback(callback, link) {
+      const close = () => {
+        this.showing = false
+        this.justClosed = true
         this.$store.commit('clearSelected')
-      })
-      this.justClosed = true
-    },
-    linkCallback(callback, link, doesnHaveLinksCallback) {
+        this.closeMobileIconDrop()
+      }
       if (callback) {
-        let links = callback(link, this)
-        if ((!links || !links.calendar) && doesnHaveLinksCallback && links && !links.search) doesnHaveLinksCallback()
-        if (links && links.search) {
-          this.showSearch = true
-        }
-        if (links && Array.isArray(links.links))
-          links = links.links
-        if (links && links.calendar && links.callback) {
-          this.showCalendar = true
-          this.calendarCallback = links.callback
-        } else if (links) {
+        let opt = callback(link, this)
+        const isAPromise = opt && opt.then !== undefined
+
+        if (!isAPromise && opt) {
+          if (opt.calendar && opt.callback) {
+            this.showCalendar = true
+            this.calendarCallback = opt.callback
+          } else if (opt.search) this.showSearch = true
           const cont = this.getContent()
           if (cont) {
             const s = getComputedStyle(cont)
@@ -169,11 +175,9 @@ export default {
             }, 200)
     
             this.toggleLinks()
-            this.links = links
+            this.opt = opt
           }
-        } else {
-          this.showing = false
-        }
+        } else close()
       }
     },
     selectDate(date) {
@@ -194,7 +198,7 @@ export default {
     hide() {
       this.showing = false
       setTimeout(() => {
-        this.links = this.options
+        this.opt = this.options
         this.showSearch = this.allowSearch
         this.showCalendar = this.calendar
       }, 200)
@@ -230,18 +234,26 @@ export default {
       return this.handleWidth ? this.handleWidth : ''
     },
     getLinks() {
-      if (this.showSearch && this.links && this.links.filter)
-        return this.links.filter(el => el.name.toLowerCase().includes(this.search.toLowerCase()))
-      return this.links
+      const links = this.opt.links || this.opt
+      
+      if (Array.isArray(links)) {
+        if (this.showSearch && links)
+          return links.filter(el => el.name.toLowerCase().includes(this.search.toLowerCase()))
+        return links
+      }
+      return []
     }
   },
   watch: {
     options() {
       if (!this.calendar && !this.justClosed) {
         this.linkCallback(() => this.options, {})
-        this.links = this.options
+        this.opt = this.options
       }
       this.justClosed = false
+    },
+    showing() {
+      this.$emit('input', this.showing)
     }
   }
 }
@@ -289,10 +301,6 @@ export default {
 .links {
   transition-duration: .2s;
   opacity: 1;
-}
-
-.hidden {
-  opacity: 0;
 }
 
 .search {
@@ -357,11 +365,11 @@ export default {
   transition-duration: .1s;
 }
 
-.drop-trans-enter .link, .drop-trans-leave-to .hide-trans {
+.drop-trans-enter .hide-trans, .drop-trans-leave-to .hide-trans {
   opacity: 0 !important;
 }
 
-.drop-trans-leave .link, .drop-trans-enter-to .hide-trans {
+.drop-trans-leave .hide-trans, .drop-trans-enter-to .hide-trans {
   opacity: 1 !important;
 }
 
@@ -376,6 +384,19 @@ export default {
 .link:hover {
   color: var(--primary);
   background-color: rgba(87,160,222,.1);
+}
+
+.link.important {
+  color: var(--red);
+}
+
+.link.important:hover {
+  background-color: rgba(222, 89, 89, .1);
+}
+
+.blink {
+  color: white !important;
+  background-color: rgba(255,255,255,.1) !important;
 }
 
 .link .link-cont {

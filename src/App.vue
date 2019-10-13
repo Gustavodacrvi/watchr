@@ -14,7 +14,7 @@
 
     <div class="content">
       <transition name="nav-trans" mode="out-in">
-        <NavBar v-if='!hideNavbar' @open-menu="openedMenu = true"/>
+        <NavBar v-if='!hideNavbar'/>
         <div v-if="hideNavbar" style="height: 65px;"></div>
       </transition>
       <div v-if="!isDesktop" style="height: 65px"></div>
@@ -50,7 +50,6 @@ export default {
       hided: true,
       hideTimeout: null,
       timeBeforeMouseMove: 0,
-      openedMenu: false,
     }
   },
   created() {
@@ -140,13 +139,22 @@ export default {
   flex-direction: column;
 }
 
+.router-view {
+  position: relative;
+  top: 0;
+  transition: top .2s;
+}
 
-.fade-enter, .fade-leave-to {
+.hided {
+  top: -22px !important;
+}
+
+.fade-t-enter, .fade-t-leave-to {
   opacity: 0;
   transition: opacity .2s;
 }
 
-.fade-leave, .fade-enter-to {
+.fade-t-leave, .fade-t-enter-to {
   opacity: 1;
   transition: opacity .2s;
 }
@@ -161,26 +169,6 @@ export default {
   opacity: 1;
   transform: translateY(0px);
   transition: opacity .2s ease-in, transform .2s ease-in;
-}
-
-.router-view {
-  position: relative;
-  top: 0;
-  transition: top .2s;
-}
-
-.hided {
-  top: -22px !important;
-}
-
-.view-t-enter, .view-t-leave-to {
-  opacity: 0;
-  transition: opacity .2s;
-}
-
-.view-t-leave, .view-t-enter-to {
-  opacity: 1;
-  transition: opacity .2s;
 }
 
 </style>

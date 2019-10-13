@@ -2,12 +2,7 @@
   <div class="TaskRenderer" @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration" class="illustration">
-        <Illustration
-          :name='illustration.name'
-          :width="illustration.width"
-          :title="illustration.title"
-          :descr="illustration.descr"
-        />
+        <Illustration v-bind="illustration"/>
       </div>
     </transition>
     <transition-group name="task-trans" class="front task-renderer-root" :class="{dontHaveTasks: tasks.length === 0 && headings.length === 0, showEmptyHeadings}"
@@ -68,6 +63,7 @@
             :onSortableAdd='h.onSortableAdd'
             :disable='h.disableTaskRenderer'
             @add-heading='(obj) => $emit("add-heading", obj)'
+            @update="ids => updateHeadingIds(h,ids)"
           />
         </HeadingApp>
       </template>
@@ -91,8 +87,11 @@ import Sortable from 'sortablejs'
 
 import mom from 'moment'
 
+import utilsTask from '@/utils/task'
+import utils from '@/utils/'
+
 export default {
-  props: ['tasks', 'header', 'onSortableAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted'],
+  props: ['tasks', 'header', 'onSortableAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue,
@@ -159,14 +158,7 @@ export default {
           el.setAttribute('id', 'edit-task-renderer')
           instance.$mount('#edit-task-renderer')
           this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
-          instance.$on('save', (obj) => onSave(obj, evt))
-          instance.$on('goup', () => this.moveTaskRenderer('up'))
-          instance.$on('godown', () => this.moveTaskRenderer('down'))
-          instance.$on('cancel', () => {
-            instance.$destroy()
-            const $el = instance.$el
-            $el.parentNode.removeChild($el)
-          })
+          this.applyEventListenersToEditVueInstance(instance, onSave, evt)
         }
         
         if (type !== 'addtask')
@@ -245,15 +237,25 @@ export default {
       })
     }
     window.addEventListener('click', this.windowClick)
+    window.addEventListener('keydown', this.keydown)
   },
   beforeDestroy() {
     window.removeEventListener('click', this.windowClick)
   },
   methods: {
-    filter(h) {
-      const ts = h.filter(this.savedTasks, h, this.showCompleted)
-      if (ts.length > 0) this.atLeastOneRenderedTask = true
-      return ts
+    applyEventListenersToEditVueInstance(ins, onSave, evt) {
+      ins.$on('save', (obj) => onSave(obj, evt))
+      ins.$on('goup', () => this.moveTaskRenderer('up'))
+      ins.$on('godown', () => this.moveTaskRenderer('down'))
+      ins.$on('cancel', () => {
+        ins.$destroy()
+        const $el = ins.$el
+        $el.parentNode.removeChild($el)
+      })
+    },
+    updateHeadingIds(h, ids) {
+      if (h.updateIds)
+        h.updateIds(ids)
     },
     addHeading(name) {
       if (name) {
@@ -437,6 +439,36 @@ export default {
         cont.style.height = 0
       }
     },
+    keydown({key}) {
+      const addTaskRenderer = (pos) => {
+        const Constructor = Vue.extend(TaskEditTemplate)
+        const instance = new Constructor({
+          parent: this,
+          propsData: {
+              key: 'Edit',
+              placeholder: this.l['Task name'], showCancel: true, btnText: this.l['Add task']
+            },
+        })
+        const node = document.createElement('div')
+        node.setAttribute('id', 'edit-task-renderer')
+        if (pos === 'begin') {
+          this.draggableRoot.childNodes[0].prepend(node)
+        } else if (pos === 'end') {
+          this.draggableRoot.appendChild(node)
+        }
+        instance.$mount('#edit-task-renderer')
+        this.applyEventListenersToEditVueInstance(instance, this.add)
+      }
+      if (!this.header) {
+        const active = document.activeElement
+        const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
+        if (!isTyping)
+          if (key === 'a')
+            addTaskRenderer('end')
+          else if (key === 'A')
+            addTaskRenderer('begin')
+      }
+    },
     windowClick() {
       this.$store.commit('clearSelected')
     },
@@ -462,6 +494,23 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
       getTaskById: 'task/getTaskById',
     }),
+    filter() {
+      return (h) => {
+        let ts = h.filter(this.savedTasks, h, this.showCompleted)
+        if (ts.length === 0) return []
+
+        let order = []
+        if (h.order)
+          order = h.order()
+
+        ts = utils.checkMissingIdsAndSortArr(order, ts)
+        ts = utilsTask.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
+
+        if (ts.length > 0) this.atLeastOneRenderedTask = true
+
+        return ts
+      }
+    },
     draggableRoot() {
       return this.$el.getElementsByClassName('task-renderer-root')[0]
     },

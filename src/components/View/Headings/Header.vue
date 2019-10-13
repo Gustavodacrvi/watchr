@@ -98,6 +98,11 @@ export default {
 
 <style scoped>
 
+.Header {
+  position: relative;
+  z-index: 200;
+}
+
 .header, .tags {
   display: flex;
   align-items: center;
@@ -105,6 +110,14 @@ export default {
   position: relative;
   margin: 0;
   transition-duration: .2s;
+}
+
+.header {
+  z-index: 200;
+}
+
+.tags {
+  z-index: 199;
 }
 
 .tag {
