@@ -18,6 +18,7 @@
     @show-completed='v => showCompleted = v'
 
     @update-ids='updateIds'
+    @save-header-name='saveHeaderName'
     @update-heading-ids='updateHeadingIds'
     @add-task='addTask'
     @add-heading='addHeading'
@@ -90,6 +91,17 @@ export default {
           listId: this.viewList.id,
           ids,
         })
+    },
+    saveHeaderName(name) {
+      if (!this.isSmart) {
+        if (this.isListType) {
+          this.$router.push('/user?list='+name)
+          this.$store.dispatch('list/saveList', {
+            name,
+            id: this.viewList.id,
+          })
+        }
+      }
     },
     addHeading(obj) {
       if (this.viewList)

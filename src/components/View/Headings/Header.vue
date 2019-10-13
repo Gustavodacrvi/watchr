@@ -92,7 +92,7 @@ export default {
     },
     keydown({key}) {
       if (key === "Enter" && this.isEditable) {
-        console.log(3)
+        this.$emit('save-header-name', this.title)
         this.editing = false
       }
     },

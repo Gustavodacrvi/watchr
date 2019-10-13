@@ -12,6 +12,7 @@
         :activeTags='activeTags'
         :activeList='activeList'
         :isSmart="isSmart"
+        @save-header-name='name => $emit("save-header-name", name)'
         @tag='selectTag'
         @list='selectList'
       />
