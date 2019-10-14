@@ -112,6 +112,7 @@ export default {
   "You don't have any completed tasks, how about completing some?": "Que tal completar mais tarefas?",
   'Add Notes': 'Adicionar Notas',
   'Add notes': 'Adicionar notas',
+  'Duplicate heading': 'Duplicat cabeçalho',
   'Note...': 'Nota...',
   'Edit heading': 'Editar cabeçalho',
   "There is already a list with this heading name.": "Já existe uma lista com o mesmo nome desse cabeçalho.",

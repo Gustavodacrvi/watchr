@@ -432,7 +432,6 @@ export default {
           })
         }
       }
-      console.log(opt)
       return opt
     },
     viewTag() {
@@ -515,8 +514,18 @@ export default {
               })
             },
             {
+              name: this.l['Duplicate heading'],
+              icon: 'copy',
+              callback: () => {
+                this.$store.dispatch('list/duplicateHeading', {
+                  name: h.name, listId: viewList.id, tasks: headingTasks.slice(),
+                })
+              }
+            },
+            {
               name: this.l["Convert to list"],
               icon: 'tasks',
+              important: true,
               callback: () => {
                 if (this.lists.some(l => l.name === h.name))
                   this.$store.commit('pushToast', {

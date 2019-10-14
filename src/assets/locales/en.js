@@ -22,6 +22,7 @@ export default {
   'No date': 'No date',
   'Add time': 'Add time',
   'Inbox': 'Inbox',
+  'Duplicate heading': 'Duplicate heading',
   'Add Notes': 'Add Notes',
   'Add notes': 'Add notes',
   'Note...': 'Note...',

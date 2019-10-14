@@ -152,6 +152,39 @@ export default {
         ...list,
       })
     },
+    duplicateHeading({state}, {name, listId, tasks}) {
+      const list = state.lists.find(l => l.id === listId)
+      if (list) {
+        const batch = fire.batch()
+
+        const newHeadingName = name += ' (2)'
+        const newTaskIds = []
+        for (const t of tasks) {
+          const ref = fire.collection('tasks').doc()
+          batch.set(ref, {
+            ...t, heading: newHeadingName, id: null,
+          })
+          newTaskIds.push(ref.id)
+        }
+
+        const heads = list.headings.slice()
+        heads.push({
+          name: newHeadingName,
+          tasks: newTaskIds,
+        })
+        const order = list.headingsOrder.slice()
+        const i = order.findIndex(n => n === name)
+        order.splice(i, 0, newHeadingName)
+
+        const listRef = fire.collection('lists').doc(listId)
+        batch.update(listRef, {
+          headingsOrder: order,
+          headings: heads,
+        })
+
+        batch.commit()
+      }
+    },
     removeTaskFromList({state}, {taskId, view, ids}) {
       const batch = fire.batch()
 
