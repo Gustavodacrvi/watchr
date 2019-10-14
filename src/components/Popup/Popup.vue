@@ -13,6 +13,7 @@ import SigninVue from './Auth/Signin.vue'
 import IconVue from '../Icon.vue'
 import AddTaskVue from './Tasks/AddTask.vue'
 import AddTagVue from './Tags/AddTag.vue'
+import AddTagNoteVue from './Tags/AddTagNote.vue'
 import AddListVue from './Lists/AddList.vue'
 import AddListNoteVue from './Lists/AddListNote.vue'
 import Update from './Update.vue'
@@ -25,6 +26,7 @@ export default {
     Signin: SigninVue,
     AddTag: AddTagVue,
     AddListNote: AddListNoteVue,
+    AddTagNote: AddTagNoteVue,
     Icon: IconVue,
     AddList: AddListVue,
     AddTask: AddTaskVue,

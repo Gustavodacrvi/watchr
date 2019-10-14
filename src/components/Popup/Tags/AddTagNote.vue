@@ -42,9 +42,9 @@ export default {
   methods: {
     addNote() {
       if (this.note && this.payload)
-        this.$store.dispatch('list/saveList', {
+        this.$store.dispatch('tag/saveTag', {
           id: this.payload,
-          notes: this.note,
+          tag: {notes: this.note},
         })
     }
   },

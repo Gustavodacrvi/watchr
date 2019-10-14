@@ -106,7 +106,7 @@ export default {
           })
         } else if (this.viewType === 'tag' && this.viewTag)
           this.$router.push('/user?tag='+name)
-          this.$store.dispatch('tag/editTag', {
+          this.$store.dispatch('tag/saveTag', {
             name, id: this.viewTag.id
           })
       }
@@ -115,6 +115,10 @@ export default {
       if (this.isListType)
         this.$store.dispatch('list/saveList', {
           notes, id: this.viewList.id,
+        })
+      else (this.viewType === 'tag' && this.viewTag)
+        this.$store.dispatch('tag/saveTag', {
+          notes, id: this.viewTag.id
         })
     },
     addHeading(obj) {
@@ -398,14 +402,37 @@ export default {
         ]
         if (!this.viewList.notes)
           opt.push({
-            name: this.l['Add list notes'],
+            name: this.l['Add notes'],
             icon: 'note',
             callback: () => this.$store.dispatch('pushPopup', {
               comp: 'AddListNote',
               payload: this.viewList.id,
             })
           })
+      } else if (this.viewType === 'tag' && this.viewTag) {
+        opt = [
+          {
+            name: this.l['Edit tag'],
+            icon: 'pen',
+            callback: () => {
+              this.$store.dispatch('pushPopup', {
+                comp: 'AddTag', payload: {...this.viewTag, editing: true}
+              })
+            }
+          }
+        ]
+        if (!this.viewTag.notes) {
+          opt.push({
+            name: this.l['Add notes'],
+            icon: 'note',
+            callback: () => this.$store.dispatch('pushPopup', {
+              comp: 'AddTagNote',
+              payload: this.viewTag.id,
+            })
+          })
+        }
       }
+      console.log(opt)
       return opt
     },
     viewTag() {
@@ -581,6 +608,7 @@ export default {
     },
     getViewNotes() {
       if (this.isListType) return this.viewList.notes
+      else if (this.viewType === 'tag' && this.viewTag) return this.viewTag.notes
       return null
     },
     completedHeadingsOptions() {
