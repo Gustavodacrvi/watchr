@@ -10,6 +10,7 @@
         :focus="true"
         :options='options'
         @select="select"
+        @enter='addTag'
       />
       <ButtonApp :value="title" @click="addTag"/>
     </div>
@@ -72,7 +73,7 @@ export default {
           })
           this.$store.commit('closePopup')
         } else if (!tag && this.isEditing) {
-          this.$store.dispatch('tag/editTag', {
+          this.$store.dispatch('tag/saveTag', {
             name: this.name,
             id: this.payload.id,
           })

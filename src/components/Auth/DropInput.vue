@@ -121,7 +121,9 @@ export default {
     },
     keydown(event) {
       const { key } = event
-      if (key === 'ArrowDown' || key === 'ArrowUp')
+      if (key === "Escape")
+        this.$emit('cancel')
+      else if (key === 'ArrowDown' || key === 'ArrowUp')
         this.moveActive(key)
       else if (key === 'Control') this.control = true
       else if (key === 'Enter') {

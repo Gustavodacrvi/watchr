@@ -37,7 +37,7 @@
                     <span class="name">{{ priorityParser(l.name) }}</span>
                   </div>
                 </div>
-                <div v-else :key="l.name" class="header-link hide-trans">
+                <div v-else-if="l.type === 'optionsList'" :key="l.name" class="header-link hide-trans">
                   <div class="header-name">{{ l.name }}</div>
                   <div class="values">
                     <Icon v-for="l in l.options" :key="l.id" class="val icon cursor"
@@ -49,6 +49,9 @@
                     />
                   </div>
                 </div>
+                <div v-else-if="l.type === 'hr'" :key="l.name"
+                  class="drop-division hide-trans"
+                ><div class="division-line hide-trans"></div></div>
               </template>
             </transition-group>
           </div>
@@ -140,6 +143,9 @@ export default {
         this.justClosed = true
         this.$store.commit('clearSelected')
         this.closeMobileIconDrop()
+        setTimeout(() => {
+          this.opt = this.options
+        }, 210)
       }
       if (callback) {
         let opt = callback(link, this)
@@ -411,6 +417,16 @@ export default {
   position: relative;
   margin-right: 8px;
   bottom: -1.5px;
+}
+
+.drop-division {
+  margin: 16px 26px;
+  background-color: var(--light-gray);
+}
+
+.division-line {
+  height: 1px;
+  width: 100%;
 }
 
 .handle-t-enter, .handle-t-leave-to {

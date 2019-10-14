@@ -169,6 +169,8 @@ const store = new Vuex.Store({
       auth.signOut().then(() => {
         state.authState = false
         state.isLoading = true
+        window.location.reload()
+
       })
     },
     pushKeyShortcut({dispatch, commit}, key) {

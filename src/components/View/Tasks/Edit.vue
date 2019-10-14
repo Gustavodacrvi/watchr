@@ -41,6 +41,7 @@
       :placeholder="placeholder"
       @select="select"
       @enter='save'
+      @cancel="$emit('cancel')"
       @goup='$emit("goup")'
       @godown='$emit("godown")'
     />

@@ -1,5 +1,6 @@
 <template>
   <ViewRenderer
+    :isSmart='isSmart'
     :viewName='viewName'
     :viewNameValue='viewNameValue'
     :viewType='viewType'
@@ -8,6 +9,8 @@
     :showHeader='isListType'
     :showEmptyHeadings='isListType'
     :headingEdit='headingEdit'
+    :headerOptions='headerOptions'
+    :notes='getViewNotes'
 
     :headingsOptions='headingsOptions'
     :tasks='getTasks'
@@ -15,6 +18,9 @@
     :onSortableAdd='onSortableAdd'
 
     @show-completed='v => showCompleted = v'
+
+    @save-header-name='saveHeaderName'
+    @save-notes='saveNotes'
 
     @update-ids='updateIds'
     @update-heading-ids='updateHeadingIds'
@@ -88,6 +94,31 @@ export default {
         this.$store.dispatch('list/updateListHeadings', {
           listId: this.viewList.id,
           ids,
+        })
+    },
+    saveHeaderName(name) {
+      if (!this.isSmart) {
+        if (this.isListType) {
+          this.$router.push('/user?list='+name)
+          this.$store.dispatch('list/saveList', {
+            name,
+            id: this.viewList.id,
+          })
+        } else if (this.viewType === 'tag' && this.viewTag)
+          this.$router.push('/user?tag='+name)
+          this.$store.dispatch('tag/saveTag', {
+            name, id: this.viewTag.id
+          })
+      }
+    },
+    saveNotes(notes) {
+      if (this.isListType)
+        this.$store.dispatch('list/saveList', {
+          notes, id: this.viewList.id,
+        })
+      else (this.viewType === 'tag' && this.viewTag)
+        this.$store.dispatch('tag/saveTag', {
+          notes, id: this.viewTag.id
         })
     },
     addHeading(obj) {
@@ -357,6 +388,62 @@ export default {
         }
     },
 
+    headerOptions() {
+      let opt = []
+      if (this.isListType) {
+        opt = [
+          {
+            name: this.l['Edit list'],
+            icon: 'pen',
+            callback: () => {
+              this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...this.viewList, editing: true}})
+            }
+          },
+          {
+            name: this.l["Duplicate list"],
+            icon: 'copy',
+            callback: () => {
+              this.$store.dispatch('list/duplicateList', {
+                list: this.viewList, rootTasks: this.getRootTasksOfList,
+                headingTasks: this.getTasksWithHeading,
+              })
+            }
+          }
+        ]
+        if (!this.viewList.notes)
+          opt.push({
+            name: this.l['Add notes'],
+            icon: 'note',
+            callback: () => this.$store.dispatch('pushPopup', {
+              comp: 'AddListNote',
+              payload: this.viewList.id,
+            })
+          })
+      } else if (this.viewType === 'tag' && this.viewTag) {
+        opt = [
+          {
+            name: this.l['Edit tag'],
+            icon: 'pen',
+            callback: () => {
+              this.$store.dispatch('pushPopup', {
+                comp: 'AddTag', payload: {...this.viewTag, editing: true}
+              })
+            }
+          }
+        ]
+        if (!this.viewTag.notes) {
+          opt.push({
+            name: this.l['Add notes'],
+            icon: 'note',
+            callback: () => this.$store.dispatch('pushPopup', {
+              comp: 'AddTagNote',
+              payload: this.viewTag.id,
+            })
+          })
+        }
+      }
+      return opt
+    },
     viewTag() {
       return this.tags.find(el => el.name === this.viewName)
     },
@@ -374,6 +461,9 @@ export default {
     },
     getRootTasksOfList() {
       return this.getListTasks.filter(el => !el.heading)
+    },
+    getTasksWithHeading() {
+      return this.getListTasks.filter(el => el.heading)
     },
     headingEdit() {
       if (!this.isSmart && this.viewType === 'list' && this.viewList)
@@ -435,6 +525,32 @@ export default {
                 listId: this.viewList.id,
                 name: h.name, savedTasks: this.tasks,
               })
+            },
+            {
+              name: this.l['Duplicate heading'],
+              icon: 'copy',
+              callback: () => {
+                this.$store.dispatch('list/duplicateHeading', {
+                  name: h.name, listId: viewList.id, tasks: headingTasks.slice(),
+                })
+              }
+            },
+            {
+              name: this.l["Convert to list"],
+              icon: 'tasks',
+              important: true,
+              callback: () => {
+                if (this.lists.some(l => l.name === h.name))
+                  this.$store.commit('pushToast', {
+                    name: this.l['There is already a list with this heading name.'],
+                    seconds: 3,
+                    type: 'error',
+                  })
+                else 
+                  this.$store.dispatch('list/convertHeadingToList', {
+                    name: h.name, listId: viewList.id, taskIds: headingTasks.map(el => el.id)
+                  })
+              }
             },
             {
               name: this.l['Delete heading'],
@@ -511,6 +627,11 @@ export default {
         })
       }
       return arr
+    },
+    getViewNotes() {
+      if (this.isListType) return this.viewList.notes
+      else if (this.viewType === 'tag' && this.viewTag) return this.viewTag.notes
+      return null
     },
     completedHeadingsOptions() {
       const arr = []

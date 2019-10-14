@@ -90,9 +90,9 @@ export default {
       tags.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       dispatch('updateOrder', tags.map(el => el.id))
     },
-    editTag(c, {name, id}) {
-      fire.collection('tags').doc(id).update({
-        name,
+    saveTag(c, tag) {
+      fire.collection('tags').doc(tag.id).update({
+        ...tag
       })
     },
     addDefaultData(c, id) {
