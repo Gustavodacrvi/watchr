@@ -14,6 +14,7 @@
         :activeList='activeList'
         :isSmart="isSmart"
         @save-header-name='name => $emit("save-header-name", name)'
+        @save-notes='notes => $emit("save-notes", notes)'
         @tag='selectTag'
         @list='selectList'
       />

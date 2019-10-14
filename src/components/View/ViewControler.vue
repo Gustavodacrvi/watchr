@@ -19,8 +19,10 @@
 
     @show-completed='v => showCompleted = v'
 
-    @update-ids='updateIds'
     @save-header-name='saveHeaderName'
+    @save-notes='saveNotes'
+
+    @update-ids='updateIds'
     @update-heading-ids='updateHeadingIds'
     @add-task='addTask'
     @add-heading='addHeading'
@@ -108,6 +110,12 @@ export default {
             name, id: this.viewTag.id
           })
       }
+    },
+    saveNotes(notes) {
+      if (this.isListType)
+        this.$store.dispatch('list/saveList', {
+          notes, id: this.viewList.id,
+        })
     },
     addHeading(obj) {
       if (this.viewList)
@@ -377,8 +385,9 @@ export default {
     },
 
     headerOptions() {
-      if (this.isListType)
-        return [
+      let opt = []
+      if (this.isListType) {
+        opt = [
           {
             name: this.l['Edit list'],
             icon: 'pen',
@@ -386,15 +395,18 @@ export default {
               this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...this.viewList, editing: true}})
             }
           },
-          {
+        ]
+        if (!this.viewList.notes)
+          opt.push({
             name: this.l['Add list notes'],
             icon: 'note',
             callback: () => this.$store.dispatch('pushPopup', {
               comp: 'AddListNote',
               payload: this.viewList.id,
             })
-          }
-        ]
+          })
+      }
+      return opt
     },
     viewTag() {
       return this.tags.find(el => el.name === this.viewName)
