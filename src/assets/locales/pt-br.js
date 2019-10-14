@@ -112,6 +112,7 @@ export default {
   "You don't have any completed tasks, how about completing some?": "Que tal completar mais tarefas?",
   'Add Notes': 'Adicionar Notas',
   'Add notes': 'Adicionar notas',
+  "Duplicate list": "Duplicar lista",
   'Duplicate heading': 'Duplicat cabeçalho',
   'Note...': 'Nota...',
   'Edit heading': 'Editar cabeçalho',

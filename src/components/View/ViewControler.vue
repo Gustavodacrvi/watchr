@@ -399,6 +399,16 @@ export default {
               this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...this.viewList, editing: true}})
             }
           },
+          {
+            name: this.l["Duplicate list"],
+            icon: 'copy',
+            callback: () => {
+              this.$store.dispatch('list/duplicateList', {
+                list: this.viewList, rootTasks: this.getRootTasksOfList,
+                headingTasks: this.getTasksWithHeading,
+              })
+            }
+          }
         ]
         if (!this.viewList.notes)
           opt.push({
@@ -451,6 +461,9 @@ export default {
     },
     getRootTasksOfList() {
       return this.getListTasks.filter(el => !el.heading)
+    },
+    getTasksWithHeading() {
+      return this.getListTasks.filter(el => el.heading)
     },
     headingEdit() {
       if (!this.isSmart && this.viewType === 'list' && this.viewList)

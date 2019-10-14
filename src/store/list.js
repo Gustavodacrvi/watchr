@@ -185,6 +185,52 @@ export default {
         batch.commit()
       }
     },
+    duplicateList(c, {list, rootTasks, headingTasks}) {
+      const batch = fire.batch()
+
+      const name = list.name + ' (2)'
+      const listRef = fire.collection('lists').doc()
+
+      const createTasks = (arr, tasks) => {
+        for (const t of tasks) {
+          const ref = fire.collection('tasks').doc()
+          batch.set(ref, {
+            ...t, id: null, list: listRef.id
+          })
+          arr.push({
+            oldId: t.id,
+            newId: ref.id,
+          })
+        }
+      }
+
+      const newRootTasks = []
+      const newHeadingTasks = []
+      createTasks(newRootTasks, rootTasks)
+      createTasks(newHeadingTasks, headingTasks)
+
+      const headings = list.headings.slice()
+      const headingsOrder = list.headingsOrder.slice()
+
+      for (const h of headings) {
+        const newIds = []
+        for (const id of h.tasks) {
+          const task = newHeadingTasks.find(t => t.oldId === id)
+          newIds.push(task.newId)
+        }
+        h.tasks = newIds
+      }
+
+      batch.set(listRef, {
+        headingsOrder,
+        headings,
+        name,
+        tasks: newRootTasks.map(t => t.newId),
+        userId: uid(),
+      })
+
+      batch.commit()
+    },
     removeTaskFromList({state}, {taskId, view, ids}) {
       const batch = fire.batch()
 

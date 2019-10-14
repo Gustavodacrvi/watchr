@@ -121,7 +121,6 @@ export default {
     },
     keydown(event) {
       const { key } = event
-      console.log(key)
       if (key === "Escape")
         this.$emit('cancel')
       else if (key === 'ArrowDown' || key === 'ArrowUp')
