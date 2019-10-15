@@ -16,6 +16,7 @@ export default {
   'Tomorrow': 'Amanhã',
   'No date': 'Sem data',
   'Add tasks to list': 'Adicionar tarefas em uma lista',
+  "Sign in as a guest": "Entrar como convidado",
   'Add time': 'Adicionar hora',
   'Inbox': 'Inbox',
   'Upcoming': 'Próximos dias',

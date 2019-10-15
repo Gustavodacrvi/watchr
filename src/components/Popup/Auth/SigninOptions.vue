@@ -1,8 +1,10 @@
 <template>
   <div class="SigninOptions">
-    <div class="card cursor rb" @click="google">
-      <img src="https://d3ptyyxy2at9ui.cloudfront.net/google-41de20.svg" alt="goggle">
-      <span class="name">{{ l['Sign in with google'] }}</span>
+    <div class="card cursor rb google" @click="google">
+      <span>{{ l['Sign in with google'] }}</span>
+    </div>
+    <div class="card cursor rb" @click="guest">
+      <span>{{ l["Sign in as a guest"] }}</span>
     </div>
     <div class="tac">
       <h3>{{ l['OR'] }}</h3>
@@ -52,7 +54,16 @@ export default {
         seconds: 3,
         type: 'error',
       }))
-    }
+    },
+    guest() {
+      firebase.auth().signInAnonymously().catch(err => this.$store.commit('pushToast', {
+        name: err.message,
+        seconds: 3,
+        type: 'error',
+      }))
+      this.$router.push('/user')
+      this.$store.commit('closePopup')
+    },
   },
   computed: {
     ...mapState(['lang']),
@@ -69,8 +80,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 50px;
-  transition: background-color .2s;
+  height: 40px;
+  transition-duration: .2s;
 }
 
 .card:hover {
@@ -78,11 +89,17 @@ export default {
 }
 
 .card + .card {
-  margin-top: 30px;
+  margin-top: 12px;
 }
 
-.name {
-  margin-left: 8px;
+.google {
+  color: var(--red);
+  border: 1px solid var(--red);
+}
+
+.google:hover {
+  background-color: var(--red);
+  color: white;
 }
 
 </style>

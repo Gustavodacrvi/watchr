@@ -20,6 +20,7 @@ export default {
   'Uncomplete tasks': 'Uncomplete tasks',
   'Delete heading': 'Delete heading',
   "Sign up option": "Sign up option",
+  "Sign in as a guest": "Sign in as a guest",
   "OR": "OR",
   "Sign in with google": "Sign in with google",
   'No date': 'No date',

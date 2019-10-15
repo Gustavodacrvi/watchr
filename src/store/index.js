@@ -200,30 +200,42 @@ auth.onAuthStateChanged((user) => {
   store.commit('toggleUser', isLogged)
   store.commit('saveUser', user)
   store.commit('firstFirebaseLoad')
+  if (!isLogged) return;
 
-  if (fire && !enabled && user && user.emailVerified)
-    fire.enablePersistence().then(() => enabled = true)
-      .catch(err => {
-        if (err.code === 'failed-precondition') {
-          // handle error
-        }
-        else if (err.code === 'unimplemented')
-          store.commit('pushToast', {
-            name: `Firestore's persistence is not available on your browser, therefore you won't be able to use this app offline.</br>Please chose a better browser or update the current one to the latest version.`,
-            seconds: 12,
-            type: 'error',
-          })
-      })
-
-  if (isLogged) {
+  const dispatch = store.dispatch
+  const loadData = () => {
     Promise.all([
-      store.dispatch('tag/getData'),
-      store.dispatch('list/getData'),
-      store.dispatch('filter/getData'),
-      store.dispatch('task/getData'),
+      dispatch('tag/getData'),
+      dispatch('list/getData'),
+      dispatch('filter/getData'),
+      dispatch('task/getData'),
     ]).then(() => {
       store.commit('load')
     })
+  }
+
+  if (!user.isAnonymous) {
+    if (fire && !enabled && user && user.emailVerified)
+      fire.enablePersistence().then(() => enabled = true)
+        .catch(err => {
+          if (err.code === 'failed-precondition') {
+            // handle error
+          }
+          else if (err.code === 'unimplemented')
+            store.commit('pushToast', {
+              name: `Firestore's persistence is not available on your browser, therefore you won't be able to use this app offline.</br>Please chose a better browser or update the current one to the latest version.`,
+              seconds: 12,
+              type: 'error',
+            })
+        })
+
+    if (isLogged) loadData()
+  } else {
+    const uid = user.uid
+    dispatch('tag/addDefaultData', uid)
+    dispatch('list/addDefaultData', uid)
+    dispatch('filter/addDefaultData', uid)
+    loadData()
   }
 })
 
