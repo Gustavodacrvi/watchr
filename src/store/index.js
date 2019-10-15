@@ -213,6 +213,7 @@ auth.onAuthStateChanged((user) => {
       store.commit('load')
     })
   }
+  const toast = (t) => store.commit('pushToast', t)
 
   if (!user.isAnonymous) {
     if (fire && !enabled && user && user.emailVerified)
@@ -232,6 +233,13 @@ auth.onAuthStateChanged((user) => {
     if (isLogged) loadData()
   } else {
     const uid = user.uid
+    setTimeout(() => {
+      toast({
+        name: store.getters.l['Anonymous users are deleted every week, sign in to save your data indefinitely.'],
+        seconds: 7,
+        type: 'warning',
+      })
+    }, 3000)
     dispatch('tag/addDefaultData', uid)
     dispatch('list/addDefaultData', uid)
     dispatch('filter/addDefaultData', uid)

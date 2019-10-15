@@ -4,7 +4,10 @@
       <h3 class="pc">{{ l['Create an Account'] }}</h3>
     </div>
     <div class="content">
-      <SigninOptions/>
+      <SigninOptions
+        :isUpgrading='isUpgrading'
+        @google='upgradeAccountToGoogle'
+      />
       <InputApp
         :placeholder='l["E-mail"] + ":"'
         :focus="true"
@@ -34,14 +37,15 @@
 <script>
 
 import InputVue from '../../Auth/Input.vue'
-
-import { mapGetters } from 'vuex'
 import ButtonVue from '../../Auth/Button.vue'
 import SigninOptions from './SigninOptions.vue'
+
+import { mapGetters, mapState } from 'vuex'
 
 import firebase from 'firebase/app'
 
 export default {
+  props: ['payload'],
   components: {
     InputApp: InputVue,
     ButtonApp: ButtonVue,
@@ -82,7 +86,7 @@ export default {
           type: "error",
           seconds: 4,
         })
-      else {
+      else if (!this.isUpgrading) {
         const auth = firebase.auth()
         auth.createUserWithEmailAndPassword(this.eMail, this.password).then(() => {
           const uid = auth.currentUser.uid
@@ -105,10 +109,20 @@ export default {
           this.$store.commit('toggleUser', true)
           this.$router.push('/user')
         }).catch(err => toastErr(err))
-      }
-    }
+      } else this.upgradeAccountWithEmailAndPassword()
+    },
+    upgradeAccountToGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider()
+      firebase.auth().currentUser.linkWithRedirect(provider)
+    },
+    upgradeAccountWithEmailAndPassword() {
+
+    },
   },
   computed: {
+    isUpgrading() {
+      return this.payload
+    },
     tooLong() {
       const { eMail, password, conPassword } = this
       return eMail.length > 75 || password.length > 75 || conPassword > 75

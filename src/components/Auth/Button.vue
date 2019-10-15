@@ -28,4 +28,16 @@ export default {
   color: white;
 }
 
+.no-back {
+  background-color: var(--back-color);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  padding: 8px;
+}
+
+.no-back:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
 </style>

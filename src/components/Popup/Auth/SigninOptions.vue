@@ -3,7 +3,7 @@
     <div class="card cursor rb google" @click="google">
       <span>{{ l['Sign in with google'] }}</span>
     </div>
-    <div class="card cursor rb" @click="guest">
+    <div v-if="!isUpgrading" class="card cursor rb" @click="guest">
       <span>{{ l["Sign in as a guest"] }}</span>
     </div>
     <div class="tac">
@@ -21,19 +21,21 @@ import firebase from 'firebase/app'
 let provider
 
 export default {
+  props: ['isUpgrading'],
   created() {
     provider = new firebase.auth.GoogleAuthProvider()
     firebase.auth().languageCode = this.lang
   },
   methods: {
     google() {
-      if (!provider) return;
+      if (this.isUpgrading) this.$emit('google')
+      if (!provider || this.isUpgrading) return;
 
       const toast = (t) => this.$store.commit('pushToast', t)
       const dispatch = this.$store.dispatch
       const commit = this.$store.commit
 
-      firebase.auth().signInWithPopup(provider).then(res => {
+      firebase.auth().signInWithRedirect(provider).then(res => {
         const uid = res.user.uid
 
         toast({
@@ -56,7 +58,14 @@ export default {
       }))
     },
     guest() {
-      firebase.auth().signInAnonymously().catch(err => this.$store.commit('pushToast', {
+      firebase.auth().signInAnonymously()
+      .then(() => {
+        this.$store.commit('pushToast', {
+          name: this.l['You have successfully signed in as a guest.'],
+          seconds: 3,
+          type: 'success',
+        })
+      }).catch(err => this.$store.commit('pushToast', {
         name: err.message,
         seconds: 3,
         type: 'error',

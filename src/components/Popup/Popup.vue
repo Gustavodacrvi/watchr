@@ -1,7 +1,11 @@
 <template>
   <div class="Popup" :class="platform">
     <Icon v-if="!isDesktop && popup && popup.comp !== 'Update'" class="icon cursor" icon="arrow" :primaryHover="true" @click="closeMobilePopup"/>
-    <component class="component" :class="[platform, {isStandAlone}]" :is="popup.comp"/>
+    <component class="component"
+      :is="popup.comp"
+      :class="[platform, {isStandAlone}]"
+      :payload="popup.payload"
+    />
     <div class="back" @click="$emit('close')"></div>
   </div>
 </template>
