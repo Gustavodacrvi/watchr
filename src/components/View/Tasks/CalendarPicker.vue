@@ -162,7 +162,7 @@ export default {
         specific: m.format('Y-M-D'),
         weekly: null,
         lastCompleteDate: null,
-        times: 0,
+        times: null,
         periodic: null,
       }
       this.$emit('select', calendar)

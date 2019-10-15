@@ -276,6 +276,8 @@ export default {
     let str = getDateString()
     const tod = mom()
     if (str) {
+      if (str.includes(l['CalParserPersistentKey']) || str.includes(l['CalParserPerKey'])) obj.persistent = true
+      
       const keyNextWeek = l['CalParserNextweek']
       const keyNextWeekend = l['CalParserNextweekend']
       const keyNextMonth = l['CalParserNextmonth']
@@ -367,6 +369,7 @@ export default {
     const DEFERKey = l['CalParserDEFER']
     const DUEKey = l['CalParserDUE']
     const timesKey = l['CalParserTimesKeyword']
+    const perKey = l['CalParserPersistentKey']
     
     if (!language) throw 'Missing language object'
     let str = ''
@@ -400,7 +403,9 @@ export default {
       str += `${DUEKey} ` + this.getHumanReadableDate(obj.due, language)
     }
     if (obj.time) str += ` at ${obj.time}`
-    if (obj.times !== null) str += ` ${obj.times} ${timesKey}`
+    const hasTimesBinding = obj.times !== null && obj.times !== undefined
+    if (hasTimesBinding) str += ` ${obj.times} ${timesKey}`
+    if (obj.persistent && hasTimesBinding) str += ' ' + perKey
     
     return str
   }
