@@ -4,6 +4,10 @@
       <h3 class="pc">{{ l['Create an Account'] }}</h3>
     </div>
     <div class="content">
+      <SigninOptions
+        :isUpgrading='isUpgrading'
+        @google='upgradeAccountToGoogle'
+      />
       <InputApp
         :placeholder='l["E-mail"] + ":"'
         :focus="true"
@@ -33,16 +37,19 @@
 <script>
 
 import InputVue from '../../Auth/Input.vue'
-
-import { mapGetters } from 'vuex'
 import ButtonVue from '../../Auth/Button.vue'
+import SigninOptions from './SigninOptions.vue'
+
+import { mapGetters, mapState } from 'vuex'
 
 import firebase from 'firebase/app'
 
 export default {
+  props: ['payload'],
   components: {
     InputApp: InputVue,
     ButtonApp: ButtonVue,
+    SigninOptions,
   },
   data() {
     return {
@@ -79,7 +86,7 @@ export default {
           type: "error",
           seconds: 4,
         })
-      else {
+      else if (!this.isUpgrading) {
         const auth = firebase.auth()
         auth.createUserWithEmailAndPassword(this.eMail, this.password).then(() => {
           const uid = auth.currentUser.uid
@@ -102,10 +109,34 @@ export default {
           this.$store.commit('toggleUser', true)
           this.$router.push('/user')
         }).catch(err => toastErr(err))
-      }
-    }
+      } else this.upgradeAccountWithEmailAndPassword()
+    },
+    upgradeAccountToGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider()
+      firebase.auth().currentUser.linkWithRedirect(provider).catch(err => {
+        this.$store.commit('pushToast', {
+          name: err.message,
+          seconds: 4,
+          type: 'error'
+        })
+      })
+    },
+    upgradeAccountWithEmailAndPassword() {
+      const provider = new firebase.auth.EmailAuthProvider.credential(this.eMail, this.password)
+      firebase.auth().currentUser.linkAndRetrieveDataWithCredential(provider).then(res => window.location.reload())
+      .catch(err => {
+        this.$store.commit('pushToast', {
+          name: err.message,
+          seconds: 4,
+          type: 'error'
+        })
+      })
+    },
   },
   computed: {
+    isUpgrading() {
+      return this.payload
+    },
     tooLong() {
       const { eMail, password, conPassword } = this
       return eMail.length > 75 || password.length > 75 || conPassword > 75

@@ -1,36 +1,35 @@
 <template>
   <div class="Popup" :class="platform">
     <Icon v-if="!isDesktop && popup && popup.comp !== 'Update'" class="icon cursor" icon="arrow" :primaryHover="true" @click="closeMobilePopup"/>
-    <component class="component" :class="[platform, {isStandAlone}]" :is="popup.comp"/>
+    <component class="component"
+      :is="popup.comp"
+      :class="[platform, {isStandAlone}]"
+      :payload="popup.payload"
+    />
     <div class="back" @click="$emit('close')"></div>
   </div>
 </template>
 
 <script>
 
-import SignupVue from './Auth/Signup.vue'
-import SigninVue from './Auth/Signin.vue'
-import IconVue from '../Icon.vue'
-import AddTaskVue from './Tasks/AddTask.vue'
-import AddTagVue from './Tags/AddTag.vue'
-import AddTagNoteVue from './Tags/AddTagNote.vue'
-import AddListVue from './Lists/AddList.vue'
-import AddListNoteVue from './Lists/AddListNote.vue'
+import Signup from './Auth/Signup.vue'
+import SigninOptions from './Auth/SigninOptions.vue'
+import Signin from './Auth/Signin.vue'
+import Icon from '../Icon.vue'
+import AddTask from './Tasks/AddTask.vue'
+import AddTag from './Tags/AddTag.vue'
+import AddTagNote from './Tags/AddTagNote.vue'
+import AddList from './Lists/AddList.vue'
+import AddListNote from './Lists/AddListNote.vue'
 import Update from './Update.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    Signup: SignupVue,
-    Signin: SigninVue,
-    AddTag: AddTagVue,
-    AddListNote: AddListNoteVue,
-    AddTagNote: AddTagNoteVue,
-    Icon: IconVue,
-    AddList: AddListVue,
-    AddTask: AddTaskVue,
-    Update,
+    Signup, SigninOptions, Signin, AddTag,
+    AddListNote, AddTagNote, Icon, AddList,
+    AddTask, Update,
   },
   methods: {
     closeMobilePopup() {

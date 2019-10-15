@@ -12,6 +12,7 @@
           <router-link class="cursor link rb" to="/about">{{ l['About'] }}</router-link>
           <span class="cursor link rb" @click="pop('Signin')">{{ l['Sign in'] }}</span>
           <span class="cursor link rb" @click="pop('Signup')">{{ l['Sign up'] }}</span>
+          <span v-if="user && user.isAnonymous" class="cursor link rb" @click="pop('Signup')">{{ l['Sign in'] }}</span>
         </div>
       </transition>
     </div>

@@ -11,6 +11,7 @@
     <div class="icons">
       <DropIcon class="drop" handle="user" handleColor="var(--gray)" :options="dropLinks"/>
       <DropIcon class="drop" handle="globe" handleColor="var(--gray)" :options="languages"/>
+      <ButtonApp v-if="user && user.isAnonymous" class="no-back" :value="l['Sign in']" @click="upgradeUser"/>
     </div>
   </div>
 </template>
@@ -19,21 +20,32 @@
 
 import LogoVue from '../Illustrations/Logo.vue'
 import IconDropVue from '../IconDrop.vue'
+import ButtonVue from '../Auth/Button.vue'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
+
+import firebase from 'firebase/app'
 
 export default {
   components: {
     DropIcon: IconDropVue,
     LogoApp: LogoVue,
+    ButtonApp: ButtonVue,
   },
   props: ['route', 'dropLinks'],
   methods: {
     saveLang(lang) {
       this.$store.commit('saveLang', lang)
     },
+    upgradeUser() {
+      this.$store.dispatch('pushPopup', {
+        comp: 'Signup',
+        payload: true,
+      })
+    }
   },
   computed: {
+    ...mapState(['user']),
     ...mapGetters(['l']),
     isntOnIndexPage() {
       return this.$route.path !== '/'

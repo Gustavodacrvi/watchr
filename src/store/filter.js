@@ -31,6 +31,7 @@ export default {
           new Promise(resolve => {
             fire.collection('filtersOrder').doc(uid()).onSnapshot(snap => {
               state.filtersOrder = snap.data().order
+              if (!state.filtersOrder) state.filtersOrder = []
               resolve()
             })
           })
@@ -48,8 +49,7 @@ export default {
     addDefaultData(c, id) {
       fire.collection('filtersOrder').doc(id).set({
         userId: id,
-        order: [],
-      })
+      }, {merge: true})
     },
   }
 }

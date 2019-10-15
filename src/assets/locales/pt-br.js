@@ -1,5 +1,4 @@
 
-
 export default {
   'Home': 'Início',
   'User': 'Usuário',
@@ -14,9 +13,12 @@ export default {
   'Create account': 'Criar conta',
   'Today': 'Hoje',
   'Overdue': 'Atrasadas',
+  "Anonymous users are deleted every week, sign in to save your data indefinitely.": "Usuários anônimos são deletados toda semana, inscreva-se para salvar os dados indefinidamente.",
   'Tomorrow': 'Amanhã',
   'No date': 'Sem data',
   'Add tasks to list': 'Adicionar tarefas em uma lista',
+  "Sign in as a guest": "Entrar como convidado",
+  'You have successfully signed in as a guest.': 'Você entrou como convidado com sucesso!',
   'Add time': 'Adicionar hora',
   'Inbox': 'Inbox',
   'Upcoming': 'Próximos dias',
@@ -110,6 +112,9 @@ export default {
   "Apply selected on tasks": "Aplicar selecionados na tarefa.",
   "Hurray! Everything is clean here!": "Você não tem tarefas completadas.",
   "You don't have any completed tasks, how about completing some?": "Que tal completar mais tarefas?",
+  "Sign up option": "Opção de inscrição",
+  "Sign in with google": "Inscrever-se com google",
+  "OR": "OR",
   'Add Notes': 'Adicionar Notas',
   'Add notes': 'Adicionar notas',
   "Duplicate list": "Duplicar lista",

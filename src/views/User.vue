@@ -5,8 +5,8 @@
       <div key="notlogged" v-else-if="!authState && firstFireLoad" class="view">
         <span class='view'>{{ l['Please log in to continue.'] }}</span>
       </div>
-      <div v-else-if="user && !user.emailVerified && firstFireLoad" class="view" key="confirm">
-        <span>Please confirm your e-mail</span>
+      <div v-else-if="user && (!user.emailVerified && !user.isAnonymous) && firstFireLoad" class="view" key="confirm">
+        <span>{{ l["Please confirm your e-mail address."] }}</span>
       </div>
       <div v-else-if="error && firstFireLoad" class="view" key="error">
         <ErrorComp/>

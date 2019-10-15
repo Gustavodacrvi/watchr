@@ -44,6 +44,7 @@ export default {
         new Promise(resolve => {
           fire.collection('tagsOrder').doc(uid()).onSnapshot(snap => {
             state.order = snap.data().order
+            if (!state.order) state.order = []
             resolve()
           })
         })
@@ -97,9 +98,8 @@ export default {
     },
     addDefaultData(c, id) {
       return fire.collection('tagsOrder').doc(id).set({
-        order: [],
         userId: id,
-      })
+      }, {merge: true})
     }
   },
 }
