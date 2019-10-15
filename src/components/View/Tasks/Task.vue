@@ -174,6 +174,7 @@ export default {
           editDate: mom().format('Y-M-D'),
 
           specific: date,
+          times: 0,
           lastCompleteDate: null,
           periodic: null
         },

@@ -47,16 +47,18 @@ export default {
       const {
         type, defer, due, tod,
         edit, spec, interval,
-        weekDays,
+        weekDays, times,
       } = this.taskData(el, dayMoment.clone())
       const isOverdue = (due.isBefore(tod, 'day'))
       const isntReadyYet = (defer.isAfter(tod, 'day'))
       const notToday = (!tod.isSame(spec, 'day'))
+      const taskIsForToday = !notToday
 
       if (isOverdue) return false
       if (isntReadyYet) return false
 
-      if (type === 'specific' && notToday) return false
+      if (type === 'specific') return taskIsForToday
+      // if it passes here, then the task is guaranted to be periodic or weekly
       if (type === 'periodic') {
         const dayDiff = tod.diff(edit, 'day')
         const eventNotToday = dayDiff % interval !== 0
@@ -67,6 +69,7 @@ export default {
         const eventNotToday = !weekDays.find(w => w.toLowerCase() === todaysWeekDayName)
         if (eventNotToday) return false
       }
+      if (times) return times > 0
 
       return true
     })
@@ -74,12 +77,13 @@ export default {
   isTaskCompleted(task) {
     if (!task.calendar) return task.completed
     const {
-      type, lastComplete, tod,
+      type, lastComplete, tod, times,
     } = this.taskData(task, mom())
 
     if (type === 'specific') return task.completed
     
     if (type === 'periodic' || type === 'weekly') {
+      if (times && times === 0) return true
       return lastComplete.isSameOrAfter(tod, 'day')
     }
 
@@ -107,6 +111,7 @@ export default {
       lastWeeklyEvent: mom(),
       interval: c.periodic,
       weekDays: c.weekly,
+      times: c.times,
     }
 
     if (obj.lastComplete.isValid()) {
@@ -141,6 +146,7 @@ export default {
             spec, type, due, tod,
             nextEventAfterCompletion,
             lastComplete, lastWeeklyEvent,
+            times,
           } = this.taskData(el, mom())
 
           const isOverdue = (due.isBefore(tod, 'day'))
@@ -148,6 +154,7 @@ export default {
           if (isOverdue) return true
 
           if (type === 'specific' && spec.isBefore(tod, 'day')) return true
+          if (times && times === 0) return true
           if (type === 'periodic') {
             return nextEventAfterCompletion.isBefore(tod, 'day')
           }

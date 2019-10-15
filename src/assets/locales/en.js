@@ -104,6 +104,7 @@ export default {
   'CalParserEvery': 'every',
   'CalParserNextweek': 'next week',
   'CalParserNextweekend': 'next weekend',
+  "CalParserTimesKeyword": "times",
   'CalParserNextmonth': 'next month',
   'CalParserTODAY': 'Today',
   'CalParserTOMORROW': 'Tomorrow',

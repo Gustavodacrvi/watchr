@@ -51,6 +51,7 @@ export default {
   
         specific: moment.format('Y-M-D'),
         lastCompleteDate: null,
+        times: 0,
         periodic: null
       }
     },
@@ -117,6 +118,7 @@ export default {
         if (calendar) {
           const {nextEventAfterCompletion} = utilsTask.taskData(t, mom())
           calendar.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
+          if (calendar.times) calendar.times -= 1
         }
 
         const ref = fire.collection('tasks').doc(t.id)
