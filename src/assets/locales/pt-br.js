@@ -1,5 +1,3 @@
-"OR": "OR",
-
 
 export default {
   'Home': 'Início',
