@@ -9,7 +9,7 @@
 <script>
 
 import Signup from './Auth/Signup.vue'
-import SignupOptions from './Auth/SignupOptions.vue'
+import SigninOptions from './Auth/SigninOptions.vue'
 import Signin from './Auth/Signin.vue'
 import Icon from '../Icon.vue'
 import AddTask from './Tasks/AddTask.vue'
@@ -23,7 +23,7 @@ import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    Signup, SignupOptions, Signin, AddTag,
+    Signup, SigninOptions, Signin, AddTag,
     AddListNote, AddTagNote, Icon, AddList,
     AddTask, Update,
   },

@@ -4,6 +4,7 @@
       <h3 class="pc">{{ l['Sign in'] }}</h3>
     </div>
     <div class="content">
+      <SigninOptions/>
       <InputApp
         :placeholder='l["E-mail"] + ":"'
         :focus="true"
@@ -28,6 +29,7 @@
 
 import InputVue from '../../Auth/Input.vue'
 import ButtonVue from '../../Auth/Button.vue'
+import SigninOptions from './SigninOptions.vue'
 
 import { mapGetters } from 'vuex'
 
@@ -37,6 +39,7 @@ export default {
   components: {
     InputApp: InputVue,
     ButtonApp: ButtonVue,
+    SigninOptions,
   },
   data() {
     return {

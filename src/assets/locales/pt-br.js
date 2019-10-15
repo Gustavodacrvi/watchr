@@ -1,3 +1,4 @@
+"OR": "OR",
 
 
 export default {
@@ -111,7 +112,8 @@ export default {
   "Hurray! Everything is clean here!": "Você não tem tarefas completadas.",
   "You don't have any completed tasks, how about completing some?": "Que tal completar mais tarefas?",
   "Sign up option": "Opção de inscrição",
-  "Sign up with google": "Inscrever-se com google",
+  "Sign in with google": "Inscrever-se com google",
+  "OR": "OR",
   'Add Notes': 'Adicionar Notas',
   'Add notes': 'Adicionar notas',
   "Duplicate list": "Duplicar lista",

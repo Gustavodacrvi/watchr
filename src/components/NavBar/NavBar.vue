@@ -45,7 +45,7 @@ export default {
       if (link) return link
     },
     signUp() {
-      this.$store.dispatch('pushPopup', {comp: 'SignupOptions'})
+      this.$store.dispatch('pushPopup', {comp: 'Signup'})
     },
     signIn() {
       this.$store.dispatch('pushPopup', {comp: 'Signin'})

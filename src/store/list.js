@@ -78,12 +78,14 @@ export default {
         new Promise(resolve => {
           fire.collection('listsOrder').doc(uid()).onSnapshot((snap => {
             state.order = snap.data().order
+            if (!state.order) state.order = []
             resolve()
           }))
         }),
         new Promise(resolve => {
           fire.collection('viewOrders').doc(uid()).onSnapshot((snap => {
             state.viewOrders = snap.data()
+            if (!state.viewOrders) state.viewOrders = []
             resolve()
           }))
         })
@@ -512,12 +514,11 @@ export default {
     addDefaultData(c, id) {
       return Promise.all([
         fire.collection('listsOrder').doc(id).set({
-          order: [],
           userId: id,
-        }),
+        }, {merge: true}),
         fire.collection('viewOrders').doc(id).set({
           userId: id,
-        })
+        }, {merge: true})
       ])
     },
   },
