@@ -38,9 +38,12 @@ export default {
   sortTasksByDate(tasks) {
     // TODO
   },
+  hasCalendarBinding(task) {
+    return task.calendar && task.calendar.type !== null
+  },
   filterTasksByDay(tasks, dayMoment) {
     return tasks.filter(el => {
-      if (!el.calendar) return false
+      if (!this.hasCalendarBinding(el)) return false
       const {
         type, defer, due, tod,
         edit, spec, interval,
@@ -121,14 +124,18 @@ export default {
   filterTasksByView(tasks, view) {
     switch (view) {
       case 'Inbox': {
-        return tasks.filter(el => !el.calendar && !el.list && el.tags.length === 0)
+        return tasks.filter(el =>
+          !this.hasCalendarBinding(el) &&
+          !el.list &&
+          el.tags.length === 0
+        )
       }
       case 'Today': {
         return this.filterTasksByDay(tasks, mom())
       }
       case 'Overdue': {
         return tasks.filter(el => {
-          if (!el.calendar || this.isTaskCompleted(el)) return false
+          if (!this.hasCalendarBinding(el) || this.isTaskCompleted(el)) return false
           
           const {
             spec, type, due, tod,

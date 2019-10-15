@@ -273,7 +273,7 @@ export default {
           }
         ]
         if (this.showCompleted) opt[3].name = l['Hide completed']
-        if (this.headerOptions) {
+        if (this.headerOptions && this.headerOptions.length > 0) {
           opt.unshift({
             type: 'hr',
             name: 'division',

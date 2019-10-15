@@ -31,6 +31,7 @@
             <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
             <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
             <span v-else-if="calendarStr" class="tag cb rb">{{ calendarStr }}</span>
+            <span v-if="timeStr" class="tag cb rb">{{ timeStr }}</span>
             <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
             <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
             <transition name="name-t">
@@ -347,6 +348,10 @@ export default {
       const str = utils.parseCalendarObjectToString(this.task.calendar, this.l)
       if (str === this.viewNameValue) return null
       return str
+    },
+    timeStr() {
+      if (!this.task.calendar || !this.task.calendar.time) return null
+      return this.task.calendar.time
     },
     circleColor() {
       if (!this.task.priority) return ''
