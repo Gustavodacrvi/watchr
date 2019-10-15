@@ -51,6 +51,7 @@ export default {
   
         specific: moment.format('Y-M-D'),
         lastCompleteDate: null,
+        times: null,
         periodic: null
       }
     },
@@ -117,6 +118,8 @@ export default {
         if (calendar) {
           const {nextEventAfterCompletion} = utilsTask.taskData(t, mom())
           calendar.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
+          if (calendar.times) calendar.times -= 1
+          if (calendar.times === 0) calendar.times = null
         }
 
         const ref = fire.collection('tasks').doc(t.id)
@@ -134,10 +137,13 @@ export default {
       const batch = fire.batch()
 
       for (const t of tasks) {
+        const c = t.calendar
+        if (c && c.times === 0) c.times = null
         const ref = fire.collection('tasks').doc(t.id)
         batch.update(ref, {
           completeDate: null,
           completed: false,
+          calendar: c,
         })
       }
 

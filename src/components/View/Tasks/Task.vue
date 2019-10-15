@@ -31,12 +31,14 @@
             <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
             <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
             <span v-else-if="calendarStr" class="tag cb rb">{{ calendarStr }}</span>
+            <span v-if="timeStr" class="tag cb rb">{{ timeStr }}</span>
             <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
             <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
             <transition name="name-t">
               <span v-if="!showApplyOnTasks" key="normal">{{ task.name }}</span>
               <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
             </transition>
+            <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
             <template v-if="isDesktop">
               <Tag class="task-tag" v-for="t in taskTags" :key="t.name"
                 icon="tag"
@@ -119,7 +121,8 @@ export default {
       }
     },
     completeTask() {
-      if (!this.completed)
+      const {t,c} = this.getTask
+      if (!this.completed || (c && c.type === 'periodic' || c && c.type === 'weekly'))
         this.$store.dispatch('task/completeTasks', [this.task])
       else this.$store.dispatch('task/uncompleteTasks', [this.task])
     },
@@ -173,6 +176,7 @@ export default {
           editDate: mom().format('Y-M-D'),
 
           specific: date,
+          times: null,
           lastCompleteDate: null,
           periodic: null
         },
@@ -343,10 +347,30 @@ export default {
       return savedList.name
     },
     calendarStr() {
-      if (!this.task.calendar || this.view === 'Upcoming') return null
-      const str = utils.parseCalendarObjectToString(this.task.calendar, this.l)
+      const {t,c} = this.getTask
+      if (!c || this.view === 'Upcoming') return null
+      const str = utils.parseCalendarObjectToString(c, this.l)
       if (str === this.viewNameValue) return null
       return str
+    },
+    nextCalEvent() {
+      const {t,c} = this.getTask
+      if (!c || (c.type !== 'periodic' && c.type !== 'weekly')) return null
+      const {nextEventAfterCompletion} = utilsTask.taskData(t, mom())
+      const date = utils.getHumanReadableDate(nextEventAfterCompletion.format('Y-M-D'), this.l)
+      if (!date || date === this.view) return null
+      return this.l["Next event"] + ' ' + date
+    },
+    timeStr() {
+      const {t,c} = this.getTask
+      if (!c || !c.time) return null
+      return c.time
+    },
+    getTask() {
+      return {
+        t: this.task,
+        c: this.task.calendar
+      }
     },
     circleColor() {
       if (!this.task.priority) return ''

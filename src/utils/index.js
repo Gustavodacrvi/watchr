@@ -49,6 +49,7 @@ export default {
   parseInputToCalendarObject(name, language) {
     if (!language) throw 'Missing language object'
     const l = language
+    const isStrNumber = str => !isNaN(parseInt(str, 10))
     const getDateString = () => {
       if (name.includes(' $'))
         return name.substr(name.indexOf(' $')).replace(' $', '')
@@ -57,7 +58,7 @@ export default {
     const parseObjectToMoment = ({day,month,year}) => {
       return mom(`${year}-${month}-${day}`, 'Y-MMM-D', true)
     }
-    const getTime = (str) => {
+    const getTime = str => {
       const vals = str.split(' ')
       const isValidTime = (time) => {
         return mom(time, 'H:m', true).isValid()
@@ -70,7 +71,7 @@ export default {
       }
       return {time: null, noTimeStr: str}
     }
-    const searchForNextKeyword = (str) => {
+    const searchForNextKeyword = str => {
       const key = l['CalParserNext']
       if (str.includes(`${key} `)) {
         const vals = str.split(' ')
@@ -92,7 +93,7 @@ export default {
       }
       return null
     }
-    const getKeyWords = (str) => {
+    const getKeyWords = str => {
       const today = l['CalParserToday']
       const tomorrow = l['CalParserTomorrow']
       switch (str) {
@@ -107,7 +108,7 @@ export default {
       if (next) return next
       return null
     }
-    const parseDate = (date) => {
+    const parseDate = date => {
       const vals = date.split(' ')
       const getDay = () => {
         for (const v of vals) {
@@ -134,9 +135,15 @@ export default {
       }
       const next = searchForNextKeyword(date)
       if (next) return next
+
+      
       let d = getDay()
       let m = getMonth()
       let y = getYear()
+
+      const onlyHaveTheDay = d && !m && !y
+
+      if (onlyHaveTheDay) d = null
 
       if (!d) return null
       if (!d && !m && !y) return null
@@ -144,13 +151,14 @@ export default {
       if (!m) m = mom().format('MMM')
       if (!y) y = mom().format('Y')
 
+
       return {
         day: d,
         month: m,
         year: y,
       }
     }
-    const getDeferAndDue = (str) => {
+    const getDeferAndDue = str => {
       const keyDefer = l['CalParserDefer']
       const keyDue = l['CalParserDue']
       const getDateNextToKeyWord = (keyWord, except) => {
@@ -189,9 +197,10 @@ export default {
         defer: de,
       }
     }
-    const getPeriodicDate = (str) => {
+    const getPeriodicDate = str => {
       const keyEvery = l['CalParserEvery']
       const dayKey = l['CalParserDayKey']
+      const timesKey = l['CalParserTimesKeyword']
       
       const vals = str.split(' ')
       const fi = vals[0]
@@ -213,7 +222,15 @@ export default {
         } else {
           const weeks = []
           const i = str.indexOf(keyEvery)
-          const sub = str.substr(i + 5)
+          let sub = str.substr(i + 5)
+          const spaceSplit = sub.split(' ')
+          const len = spaceSplit.length
+          if (spaceSplit[len - 1] === timesKey && isStrNumber(spaceSplit[len - 2])) {
+            sub = '' 
+            for (let i = 0; i < len - 2;i++) {
+              sub += spaceSplit[i]
+            }
+          }
           const vs = sub.split(',')
           for (const v of vs) {
             let week = v.trim().toLowerCase()
@@ -231,6 +248,18 @@ export default {
       }
       return null
     }
+    const getTimesKeyword = str => {
+      const keyword = l['CalParserTimesKeyword']
+      
+      const values = str.split(' ')
+      for (let i = 0;i < values.length;i++) {
+        const times = values[i]
+        const key = values[i + 1]
+        const parsed = parseInt(times, 10)
+        if (!isNaN(parsed) && key === keyword && parsed > 0) return parsed
+      }
+      return null
+    }
     const obj = {
       defer: null,
       due: null,
@@ -241,11 +270,14 @@ export default {
 
       specific: null,
       lastCompleteDate: null,
-      periodic: null
+      times: null,
+      periodic: null,
     }
     let str = getDateString()
     const tod = mom()
     if (str) {
+      if (str.includes(l['CalParserPersistentKey']) || str.includes(l['CalParserPerKey'])) obj.persistent = true
+      
       const keyNextWeek = l['CalParserNextweek']
       const keyNextWeekend = l['CalParserNextweekend']
       const keyNextMonth = l['CalParserNextmonth']
@@ -271,10 +303,13 @@ export default {
       
       str = str.toLowerCase()
 
+      
       const {time, noTimeStr} = getTime(str)
       str = noTimeStr
       obj.time = time
       const {defer, due} = getDeferAndDue(noTimeStr)
+      
+      obj.times = getTimesKeyword(noTimeStr)
 
       obj.defer = defer
       obj.due = due
@@ -333,6 +368,8 @@ export default {
     const everyKey = l['CalParserEveryKey']
     const DEFERKey = l['CalParserDEFER']
     const DUEKey = l['CalParserDUE']
+    const timesKey = l['CalParserTimesKeyword']
+    const perKey = l['CalParserPersistentKey']
     
     if (!language) throw 'Missing language object'
     let str = ''
@@ -365,6 +402,10 @@ export default {
       if (str !== '') str += ', '
       str += `${DUEKey} ` + this.getHumanReadableDate(obj.due, language)
     }
+    if (obj.time) str += ` at ${obj.time}`
+    const hasTimesBinding = obj.times !== null && obj.times !== undefined
+    if (hasTimesBinding) str += ` ${obj.times} ${timesKey}`
+    if (obj.persistent && hasTimesBinding) str += ' ' + perKey
     
     return str
   }

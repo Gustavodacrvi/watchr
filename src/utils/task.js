@@ -38,22 +38,29 @@ export default {
   sortTasksByDate(tasks) {
     // TODO
   },
+  hasCalendarBinding(task) {
+    return task.calendar && task.calendar.type !== null
+  },
   filterTasksByDay(tasks, dayMoment) {
     return tasks.filter(el => {
-      if (!el.calendar) return false
+      if (!this.hasCalendarBinding(el)) return false
       const {
         type, defer, due, tod,
         edit, spec, interval,
-        weekDays,
+        weekDays, times, persistent,
+        hasTimesBinding,
       } = this.taskData(el, dayMoment.clone())
       const isOverdue = (due.isBefore(tod, 'day'))
       const isntReadyYet = (defer.isAfter(tod, 'day'))
       const notToday = (!tod.isSame(spec, 'day'))
+      const taskIsForToday = !notToday
 
       if (isOverdue) return false
       if (isntReadyYet) return false
-
-      if (type === 'specific' && notToday) return false
+      
+      if (type === 'specific') return taskIsForToday
+      // if it passes here, then the task is guaranted to be periodic or weekly
+      if (persistent && hasTimesBinding) return true
       if (type === 'periodic') {
         const dayDiff = tod.diff(edit, 'day')
         const eventNotToday = dayDiff % interval !== 0
@@ -71,10 +78,17 @@ export default {
   isTaskCompleted(task) {
     if (!task.calendar) return task.completed
     const {
-      type, lastComplete, tod,
+      type, lastComplete, tod, times,
+      persistent, hasTimesBinding,
     } = this.taskData(task, mom())
-
+    
     if (type === 'specific') return task.completed
+
+    /*
+      if it doesn't have persistence, then it should only return a result if times === 0, cause if it's false, then the logic at line 96 will be used to figure out the completion of the task, if it does not have persistence then it should return a false or true every time
+    */
+    if (hasTimesBinding && times === 0) return true
+    if (hasTimesBinding && persistent) return times === 0
     
     if (type === 'periodic' || type === 'weekly') {
       return lastComplete.isSameOrAfter(tod, 'day')
@@ -103,11 +117,18 @@ export default {
       nextEventAfterCompletion: mom(),
       lastWeeklyEvent: mom(),
       interval: c.periodic,
+      persistent: c.persistent,
       weekDays: c.weekly,
+      times: c.times,
+      hasTimesBinding: c.times !== null && c.times !== undefined
     }
 
     if (obj.lastComplete.isValid()) {
+      if (obj.type === 'periodic')
       obj.nextEventAfterCompletion = obj.lastComplete.clone().add(obj.interval, 'day')
+      else {
+        obj.nextEventAfterCompletion = utilsMoment.nextWeekDay(obj.lastComplete, obj.weekDays)
+      }
     } else {
       obj.nextEventAfterCompletion = obj.edit.clone()
     }
@@ -121,26 +142,30 @@ export default {
   filterTasksByView(tasks, view) {
     switch (view) {
       case 'Inbox': {
-        return tasks.filter(el => !el.calendar && !el.list && el.tags.length === 0)
+        return tasks.filter(el =>
+          !this.hasCalendarBinding(el) &&
+          !el.list &&
+          el.tags.length === 0
+        )
       }
       case 'Today': {
         return this.filterTasksByDay(tasks, mom())
       }
       case 'Overdue': {
         return tasks.filter(el => {
-          if (!el.calendar || this.isTaskCompleted(el)) return false
+          if (!this.hasCalendarBinding(el) || this.isTaskCompleted(el)) return false
           
           const {
             spec, type, due, tod,
             nextEventAfterCompletion,
             lastComplete, lastWeeklyEvent,
+            times, hasTimesBinding
           } = this.taskData(el, mom())
 
-          const isOverdue = (due.isBefore(tod, 'day'))
+          if (due.isBefore(tod, 'day')) return true
 
-          if (isOverdue) return true
-
-          if (type === 'specific' && spec.isBefore(tod, 'day')) return true
+          if (type === 'specific') return spec.isBefore(tod, 'day')
+          if (hasTimesBinding && times === 0) return true
           if (type === 'periodic') {
             return nextEventAfterCompletion.isBefore(tod, 'day')
           }

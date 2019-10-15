@@ -42,9 +42,19 @@ export default {
   nextWeekDay(initial, weekday) {
     const clone = initial.clone()
     let i = 0
-    const week = mom(weekday, 'ddd').format('dddd')
+    let possibleWeekdays = []
+    if (!Array.isArray(weekday))
+      possibleWeekdays.push(weekday)
+    else possibleWeekdays = weekday
+    const formatedWeekdays = []
+    for (const week of possibleWeekdays)
+      formatedWeekdays.push(mom(week, 'ddd').format('dddd'))
+    const isOnIt = (week) => {
+      return formatedWeekdays.includes(week)
+    }
+    clone.add(1, 'day')
     while (true) {
-      if (clone.format('dddd') === week)
+      if (isOnIt(clone.format('dddd')))
         return clone
       clone.add(1, 'd')
       if (i > 10) return clone

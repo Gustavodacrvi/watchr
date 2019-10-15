@@ -273,7 +273,7 @@ export default {
           }
         ]
         if (this.showCompleted) opt[3].name = l['Hide completed']
-        if (this.headerOptions) {
+        if (this.headerOptions && this.headerOptions.length > 0) {
           opt.unshift({
             type: 'hr',
             name: 'division',
@@ -361,11 +361,14 @@ export default {
     getFilterCompletedTasks() {
       let ts = this.sortAndFilterTasks
       let notCompleted = []
-      if (!this.showCompleted)
-        notCompleted = utilsTask.filterTasksByCompletion(ts, true)
-      if (notCompleted.length > 0)
-        return notCompleted
-      return ts
+      if (this.showCompleted) return ts
+      
+      notCompleted = utilsTask.filterTasksByCompletion(ts, true)
+
+      if (notCompleted.length === 0)
+        return ts.filter(task => task.calendar.type === 'specific')
+
+      return notCompleted
     },
   },
 }
