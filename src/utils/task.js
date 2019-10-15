@@ -69,7 +69,7 @@ export default {
         const eventNotToday = !weekDays.find(w => w.toLowerCase() === todaysWeekDayName)
         if (eventNotToday) return false
       }
-      if (times) return times > 0
+      if (times !== null) return times > 0
 
       return true
     })
@@ -79,11 +79,11 @@ export default {
     const {
       type, lastComplete, tod, times,
     } = this.taskData(task, mom())
+    if (times !== null && times === 0) return true
 
     if (type === 'specific') return task.completed
     
     if (type === 'periodic' || type === 'weekly') {
-      if (times && times === 0) return true
       return lastComplete.isSameOrAfter(tod, 'day')
     }
 
@@ -154,7 +154,7 @@ export default {
           if (isOverdue) return true
 
           if (type === 'specific' && spec.isBefore(tod, 'day')) return true
-          if (times && times === 0) return true
+          if (times !== null && times === 0) return true
           if (type === 'periodic') {
             return nextEventAfterCompletion.isBefore(tod, 'day')
           }

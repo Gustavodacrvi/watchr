@@ -96,10 +96,11 @@ export default {
     },
   },
   computed: {
-    ...mapState(['fastSearch']),
+    ...mapState(['fastSearch', 'user']),
     ...mapGetters(['isDesktop', 'isStandAlone', 'l']),
     hideNavbar() {
-      if (!this.isStandAlone || !this.isDesktop) return false
+      const isAnonymous = this.user && this.user.isAnonymous
+      if (!this.isStandAlone || !this.isDesktop || isAnonymous) return false
       return this.hided
     },
     isMenuOpened() {

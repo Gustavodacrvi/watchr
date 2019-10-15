@@ -135,15 +135,22 @@ export default {
       }
       const next = searchForNextKeyword(date)
       if (next) return next
+
+      
       let d = getDay()
       let m = getMonth()
       let y = getYear()
+
+      const onlyHaveTheDay = d && !m && !y
+
+      if (onlyHaveTheDay) d = null
 
       if (!d) return null
       if (!d && !m && !y) return null
 
       if (!m) m = mom().format('MMM')
       if (!y) y = mom().format('Y')
+
 
       return {
         day: d,
@@ -294,10 +301,13 @@ export default {
       
       str = str.toLowerCase()
 
+      
       const {time, noTimeStr} = getTime(str)
       str = noTimeStr
       obj.time = time
       const {defer, due} = getDeferAndDue(noTimeStr)
+      
+      obj.times = getTimesKeyword(noTimeStr)
 
       obj.defer = defer
       obj.due = due
@@ -311,7 +321,6 @@ export default {
         } else if (per.weekly) {
           obj.weekly = per.weekly
         }
-        obj.times = getTimesKeyword(str)
         return obj
       }
       
@@ -391,7 +400,7 @@ export default {
       str += `${DUEKey} ` + this.getHumanReadableDate(obj.due, language)
     }
     if (obj.time) str += ` at ${obj.time}`
-    if (obj.times) str += ` ${obj.times} ${timesKey}`
+    if (obj.times !== null) str += ` ${obj.times} ${timesKey}`
     
     return str
   }
