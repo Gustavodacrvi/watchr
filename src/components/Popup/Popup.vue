@@ -8,29 +8,24 @@
 
 <script>
 
-import SignupVue from './Auth/Signup.vue'
-import SigninVue from './Auth/Signin.vue'
-import IconVue from '../Icon.vue'
-import AddTaskVue from './Tasks/AddTask.vue'
-import AddTagVue from './Tags/AddTag.vue'
-import AddTagNoteVue from './Tags/AddTagNote.vue'
-import AddListVue from './Lists/AddList.vue'
-import AddListNoteVue from './Lists/AddListNote.vue'
+import Signup from './Auth/Signup.vue'
+import SignupOptions from './Auth/SignupOptions.vue'
+import Signin from './Auth/Signin.vue'
+import Icon from '../Icon.vue'
+import AddTask from './Tasks/AddTask.vue'
+import AddTag from './Tags/AddTag.vue'
+import AddTagNote from './Tags/AddTagNote.vue'
+import AddList from './Lists/AddList.vue'
+import AddListNote from './Lists/AddListNote.vue'
 import Update from './Update.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    Signup: SignupVue,
-    Signin: SigninVue,
-    AddTag: AddTagVue,
-    AddListNote: AddListNoteVue,
-    AddTagNote: AddTagNoteVue,
-    Icon: IconVue,
-    AddList: AddListVue,
-    AddTask: AddTaskVue,
-    Update,
+    Signup, SignupOptions, Signin, AddTag,
+    AddListNote, AddTagNote, Icon, AddList,
+    AddTask, Update,
   },
   methods: {
     closeMobilePopup() {

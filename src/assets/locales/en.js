@@ -19,6 +19,7 @@ export default {
   'Edit heading': 'Edit heading',
   'Uncomplete tasks': 'Uncomplete tasks',
   'Delete heading': 'Delete heading',
+  "Sign up option": "Sign up option",
   'No date': 'No date',
   'Add time': 'Add time',
   'Inbox': 'Inbox',

@@ -11,7 +11,7 @@
           <router-link class="cursor link rb" to="/user">{{ l['User'] }}</router-link>
           <router-link class="cursor link rb" to="/about">{{ l['About'] }}</router-link>
           <span class="cursor link rb" @click="pop('Signin')">{{ l['Sign in'] }}</span>
-          <span class="cursor link rb" @click="pop('Signup')">{{ l['Sign up'] }}</span>
+          <span class="cursor link rb" @click="pop('SignupOptions')">{{ l['Sign up'] }}</span>
         </div>
       </transition>
     </div>

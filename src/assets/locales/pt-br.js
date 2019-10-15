@@ -110,6 +110,7 @@ export default {
   "Apply selected on tasks": "Aplicar selecionados na tarefa.",
   "Hurray! Everything is clean here!": "Você não tem tarefas completadas.",
   "You don't have any completed tasks, how about completing some?": "Que tal completar mais tarefas?",
+  "Sign up option": "Opção de inscrição",
   'Add Notes': 'Adicionar Notas',
   'Add notes': 'Adicionar notas',
   "Duplicate list": "Duplicar lista",
