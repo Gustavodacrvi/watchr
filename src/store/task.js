@@ -40,8 +40,8 @@ export default {
         }
       ]
     },
-    getSpecificDayCalendarObj: () => moment => {
-      return {
+    getSpecificDayCalendarObj: () => (moment, cal) => {
+      const obj = {
         defer: null,
         due: null,
   
@@ -54,6 +54,12 @@ export default {
         times: null,
         periodic: null
       }
+      if (cal) {
+        obj.time = cal.time
+        obj.times = cal.times
+        obj.persistent = cal.persistent
+      }
+      return obj
     },
     getNumberOfTasksByTag: state => tagId => {
       const ts = state.tasks.filter(el => el.tags.includes(tagId))
@@ -131,6 +137,19 @@ export default {
 
       }
       
+      batch.commit()
+    },
+    manualCompleteTasks(c, tasks) {
+      const batch = fire.batch()
+
+      for (const t of tasks) {
+        const ref = fire.collection('tasks').doc(t.id)
+        t.calendar.manualComplete = t.calendar.lastCompleteDate
+        batch.update(ref, {
+          calendar: t.calendar
+        })
+      }
+
       batch.commit()
     },
     uncompleteTasks(c, tasks) {

@@ -79,7 +79,7 @@ export default {
     if (!task.calendar) return task.completed
     const {
       type, lastComplete, tod, times,
-      persistent, hasTimesBinding,
+      persistent, hasTimesBinding, manualComplete
     } = this.taskData(task, mom())
     
     if (type === 'specific') return task.completed
@@ -87,6 +87,7 @@ export default {
     /*
       if it doesn't have persistence, then it should only return a result if times === 0, cause if it's false, then the logic at line 96 will be used to figure out the completion of the task, if it does not have persistence then it should return a false or true every time
     */
+    if (manualComplete.isSame(lastComplete, 'day')) return true
     if (hasTimesBinding && times === 0) return true
     if (hasTimesBinding && persistent) return times === 0
     
@@ -119,6 +120,7 @@ export default {
       interval: c.periodic,
       persistent: c.persistent,
       weekDays: c.weekly,
+      manualComplete: mom(c.manualComplete, 'Y-M-D'),
       times: c.times,
       hasTimesBinding: c.times !== null && c.times !== undefined
     }

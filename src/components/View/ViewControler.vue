@@ -53,11 +53,12 @@ export default {
     addTask(obj) {
       if (this.isSmart) {
         let calendar = null
+
+        if (!obj.task.calendar) {
+          calendar = this.getCalObjectByView(this.viewName, obj.task.calendar)
+          obj.task.calendar = calendar
+        }
   
-        if (!obj.calendar)
-          calendar = this.getCalObjectByView(this.viewName)
-  
-        obj.task.calendar = calendar
         this.$store.dispatch('list/addTaskByIndexSmart', {
           ...obj, list: this.viewName,
         })
@@ -137,11 +138,11 @@ export default {
         })
       }
     },
-    getCalObjectByView(viewName) {
+    getCalObjectByView(viewName, cal) {
       if (this.viewName === 'Today')
-        return this.getSpecificDayCalendarObj(mom())
+        return this.getSpecificDayCalendarObj(mom(), cal)
       if (this.viewName === 'Tomorrow')
-        return this.getSpecificDayCalendarObj(mom().add(1, 'day'))
+        return this.getSpecificDayCalendarObj(mom().add(1, 'day'), cal)
     },
 
     getListHeadingsByView(view) {
@@ -246,7 +247,7 @@ export default {
             onAddTask: (obj) => {
               const t = obj.task
               if (!t.calendar)
-                obj.task.calendar = this.getCalObjectByView(this.viewName)
+                obj.task.calendar = this.getCalObjectByView(this.viewName, t.calendar)
               t.list = list.id
               t.calendar = this.getSpecificDayCalendarObj(mom())
               this.$store.dispatch('task/addTask', {

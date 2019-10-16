@@ -240,9 +240,10 @@ export default {
       }
     },
     options() {
+      const {c,t} = this.getTask
       const dispatch = this.$store.dispatch
       const l = this.l
-      return [
+      const arr = [
         {
           name: l['Edit task'],
           icon: 'pen',
@@ -316,6 +317,13 @@ export default {
           callback: () => dispatch('task/deleteTasks', [this.task.id])
         }
       ]
+      if (c && c.persistent && (c.type === "periodic" || c.type === "periodic"))
+        arr.splice(3, 0, {
+          name: l["Manual complete"],
+          icon: 'circle-check',
+          callback: () => dispatch('task/manualCompleteTasks', [t])
+        })
+      return arr
     },
     showApplyOnTasks() {
       return !this.isOnControl && this.isSelectingAppnavEls && this.onHover

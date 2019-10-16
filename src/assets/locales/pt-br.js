@@ -105,6 +105,7 @@ export default {
   'Nothing here...': 'Nada aqui...',
   "You don't have any tasks for tomorrow.": 'Você não tem nenhuma tarefa amanhã.',
   'Completed': 'Completadas',
+  "Manual complete": "Completar hoje",
   'Some error occurred, please try again later.': 'Ocorreu algum erro, por favor tente novamente mais tarde.',
   'Log out': 'Sair',
   'Please log in to continue.': 'Por favor entre para continuar',

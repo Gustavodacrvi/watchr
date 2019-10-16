@@ -120,6 +120,7 @@ export default {
   'You already completed everything here!': 'You already completed everything here!',
   'Nothing here...': 'Nothing here...',
   "You don't have any tasks for tomorrow.": "You don't have any tasks for tomorrow.",
+  "Manual complete": "Manual complete",
   'Completed': 'Completed',
   'Some error occurred, please try again later.': 'Some error occurred, please try again later.',
   'Log out': 'Log out',
