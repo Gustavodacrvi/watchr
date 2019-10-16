@@ -34,6 +34,7 @@
                       :icon="l.icon"
                       :color="l.color"
                     />
+                    <input v-if="l.file" :ref="`file-icondrop-link-${l.name}`" type="file" accept=".json" style="display: none" @change='handleFiles(l)'>
                     <span class="name">{{ priorityParser(l.name) }}</span>
                   </div>
                 </div>
@@ -138,53 +139,64 @@ export default {
       setTimeout(() => done(), 200)
     },
     linkCallback(callback, link) {
-      const close = () => {
-        this.showing = false
-        this.justClosed = true
-        this.$store.commit('clearSelected')
-        this.closeMobileIconDrop()
-        setTimeout(() => {
-          this.opt = this.options
-        }, 210)
-      }
-      if (callback) {
-        let opt = callback(link, this)
-        const isAPromise = opt && opt.then !== undefined
+      if (link.file) this.getFile(link)
+      else {
+        const close = () => {
+          this.showing = false
+          this.justClosed = true
+          this.$store.commit('clearSelected')
+          this.closeMobileIconDrop()
+          setTimeout(() => {
+            this.opt = this.options
+          }, 210)
+        }
+        if (callback) {
+          let opt = callback(link, this)
+          const isAPromise = opt && opt.then !== undefined
 
-        if (!isAPromise && opt) {
-          if (opt.calendar && opt.callback) {
-            this.showCalendar = true
-            this.calendarCallback = opt.callback
-          } else if (opt.search) this.showSearch = true
-          const cont = this.getContent()
-          if (cont) {
-            const s = getComputedStyle(cont)
-            const oldWidth = s.width
-            const oldHeight = s.height
-    
-            cont.style.transitionDelay = '.05s'
-            cont.style.transitionDuration = '0s'
-            setTimeout(() => {
-              cont.style.width = 'auto'
-              cont.style.height = 'auto'
+          if (!isAPromise && opt) {
+            if (opt.calendar && opt.callback) {
+              this.showCalendar = true
+              this.calendarCallback = opt.callback
+            } else if (opt.search) this.showSearch = true
+            const cont = this.getContent()
+            if (cont) {
+              const s = getComputedStyle(cont)
+              const oldWidth = s.width
+              const oldHeight = s.height
+      
+              cont.style.transitionDelay = '.05s'
+              cont.style.transitionDuration = '0s'
               setTimeout(() => {
-                const {height, width} = getComputedStyle(cont)
-                cont.style.width = oldWidth
-                cont.style.height = oldHeight
+                cont.style.width = 'auto'
+                cont.style.height = 'auto'
                 setTimeout(() => {
-                  cont.style.transitionDuration = '.2s'
-                  cont.style.width = width
-                  cont.style.height = height
-                  cont.style.transitionDelay = '.0s'
-                }, 50)
-              })
-            }, 200)
-    
-            this.toggleLinks()
-            this.opt = opt
-          }
-        } else close()
+                  const {height, width} = getComputedStyle(cont)
+                  cont.style.width = oldWidth
+                  cont.style.height = oldHeight
+                  setTimeout(() => {
+                    cont.style.transitionDuration = '.2s'
+                    cont.style.width = width
+                    cont.style.height = height
+                    cont.style.transitionDelay = '.0s'
+                  }, 50)
+                })
+              }, 200)
+      
+              this.toggleLinks()
+              this.opt = opt
+            }
+          } else close()
+        }
       }
+    },
+    getFile(link) {
+      const ref = this.$refs[`file-icondrop-link-${link.name}`][0]
+      if (ref) ref.click()
+    },
+    handleFiles(link) {
+      const ref = this.$refs[`file-icondrop-link-${link.name}`][0]
+      if (ref && link.handleFiles) link.handleFiles(ref.files) 
     },
     selectDate(date) {
       if (this.calendarCallback)

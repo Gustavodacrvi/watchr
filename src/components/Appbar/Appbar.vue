@@ -321,7 +321,10 @@ export default {
         {
           name: this.l['Import from template'],
           icon: 'import',
-          callback: () => console.log(3),
+          file: true,
+          handleFiles: (files) => {
+            console.log(files[0])
+          }
         },
         {
           name: this.l['Sort lists by name'],
