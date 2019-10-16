@@ -37,6 +37,7 @@ export default {
         ordered.push(item)
       }
     }
+
     return ordered
   },
   parseMomentToObject(m) {

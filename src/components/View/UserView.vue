@@ -22,7 +22,7 @@
 
 <script>
 
-const UPDATE_STRING = '2.0.0.4'
+const UPDATE_STRING = '2.0.1.1'
 
 import AppbarVue from '../Appbar/Appbar.vue'
 import ViewControlerVue from '../View/ViewControler.vue'
@@ -48,9 +48,11 @@ export default {
     window.addEventListener('scroll', this.getScrollTop)
   },
   mounted() {
-    if (localStorage.getItem('updatestring') !== UPDATE_STRING)
-      this.$store.dispatch('pushPopup', {comp: 'Update'})
-    localStorage.setItem('updatestring', UPDATE_STRING)
+    setTimeout(() => {
+      if (localStorage.getItem('updatestring') !== UPDATE_STRING)
+        this.$store.dispatch('pushPopup', {comp: 'Update'})
+      localStorage.setItem('updatestring', UPDATE_STRING)
+    }, 1000)
   },
   methods: {
     getScrollTop() {

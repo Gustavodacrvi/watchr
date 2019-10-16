@@ -277,6 +277,7 @@ export default {
     }),
     ...mapGetters({
       l: 'l',
+      isDesktop: 'isDesktop',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
       getAllTasksOrderByList: 'list/getAllTasksOrderByList'
     }),
@@ -410,14 +411,6 @@ export default {
               })
             }
           },
-          {
-            name: this.l["Export as template"],
-            icon: 'export',
-            callback: () => utils.exportListTemplate({
-              list: this.viewList,
-              tasks: this.getListTasks
-            })
-          }
         ]
         if (!this.viewList.notes)
           opt.push({
@@ -426,6 +419,15 @@ export default {
             callback: () => this.$store.dispatch('pushPopup', {
               comp: 'AddListNote',
               payload: this.viewList.id,
+            })
+          })
+        if (this.isDesktop)
+          opt.push({
+            name: this.l["Export as template"],
+            icon: 'export',
+            callback: () => utils.exportListTemplate({
+              list: this.viewList,
+              tasks: this.getListTasks
             })
           })
       } else if (this.viewType === 'tag' && this.viewTag) {

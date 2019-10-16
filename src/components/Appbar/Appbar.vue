@@ -312,13 +312,20 @@ export default {
     },
     Lists() {
       const dispatch = this.$store.dispatch
-      return [
+      const arr = [
         {
           name: this.l['Add list'],
           icon: 'tasks',
           callback: () => dispatch('pushPopup', {comp: 'AddList'}),
         },
         {
+          name: this.l['Sort lists by name'],
+          icon: 'sort-name',
+          callback: () => dispatch('list/sortListsByName'),
+        }
+      ]
+      if (this.isDesktop)
+        arr.splice(1, 0, {
           name: this.l['Import from template'],
           icon: 'import',
           file: true,
@@ -339,13 +346,8 @@ export default {
               }
             }).catch(bug)
           }
-        },
-        {
-          name: this.l['Sort lists by name'],
-          icon: 'sort-name',
-          callback: () => dispatch('list/sortListsByName'),
-        }
-      ]
+        },)
+      return arr
     },
     Filters() {
       const dispatch = this.$store.dispatch
