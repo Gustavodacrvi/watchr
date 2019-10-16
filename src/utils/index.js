@@ -136,7 +136,6 @@ export default {
       const next = searchForNextKeyword(date)
       if (next) return next
 
-      
       let d = getDay()
       let m = getMonth()
       let y = getYear()
@@ -150,7 +149,6 @@ export default {
 
       if (!m) m = mom().format('MMM')
       if (!y) y = mom().format('Y')
-
 
       return {
         day: d,
@@ -268,6 +266,7 @@ export default {
       time: null,
       editDate: mom().format('Y-M-D'),
 
+      relativeSpecificInput: null,
       specific: null,
       lastCompleteDate: null,
       times: null,
@@ -423,7 +422,11 @@ export default {
   },
   exportListTemplate({list, tasks}) {
     const ts = []
-    for (const t of tasks) ts.push({...t, userId: undefine})
+    for (const t of tasks) ts.push({...t,
+      userId: undefined,
+      completeDate: null,
+      completed: false,
+    })
     
     const template = {
       list: {...list, userId: null, options: undefined},

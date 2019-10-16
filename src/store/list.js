@@ -511,6 +511,41 @@ export default {
         })
       }
     },
+    importTemplate(c, {list, tasks}) {
+      const batch = fire.batch()
+
+      const listRef = fire.collection('lists').doc()
+
+      const taskIds = {}
+      const listId = listRef.id
+      for (const t of tasks) {
+        const ref = fire.collection('tasks').doc()
+        batch.set(ref, {
+          ...t, list: listId, id: ref.id, userId: uid(),
+        })
+        taskIds[t.id] = ref.id
+      }
+
+      const heads = list.headings
+      for (const h of heads) {
+        const newids = []
+        for (const id of h.tasks) {
+          newids.push(taskIds[id])
+        }
+        h.tasks = newids
+      }
+      const newTasks = []
+      for (const id of list.tasks)
+        newTasks.push(taskIds[id])
+      list.tasks = newTasks
+      
+      list.smartViewsOrders = {}
+      batch.set(listRef, {
+        ...list, id: listId, userId: uid(),
+      })
+
+      batch.commit()
+    },
     addDefaultData(c, id) {
       return Promise.all([
         fire.collection('listsOrder').doc(id).set({

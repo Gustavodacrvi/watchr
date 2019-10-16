@@ -99,6 +99,7 @@ export default {
   'CalParserDUE': 'Vence',
   'Enjoy the rest of the day': 'Aproveite o resto do dia!',
   'You already completed everything here!': 'Você já completou todas as tarefas de hoje!',
+  "An error ocurred while importing the JSON file, the file is corrupted.": "Algum erro ocorreu ao importar o template, o arquivo provavelmente está corrompido.",
   "Export as template": "Exportar como template",
   "Import from template": "Importar do template",
   "Next event": "Próximo evento",

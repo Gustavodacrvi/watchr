@@ -196,7 +196,19 @@ export default {
     },
     handleFiles(link) {
       const ref = this.$refs[`file-icondrop-link-${link.name}`][0]
-      if (ref && link.handleFiles) link.handleFiles(ref.files) 
+      if (ref && link.handleFiles) {
+        const files = ref.files
+        const promise = new Promise(resolve => {
+          const reader = new FileReader()
+          reader.onload = (evt) => {
+            let obj = JSON.parse(evt.target.result)
+            resolve(obj)
+          }
+          reader.readAsText(files[0])
+        })
+
+        link.handleFiles(files, promise)
+      }
     },
     selectDate(date) {
       if (this.calendarCallback)

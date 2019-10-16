@@ -322,8 +322,22 @@ export default {
           name: this.l['Import from template'],
           icon: 'import',
           file: true,
-          handleFiles: (files) => {
-            console.log(files[0])
+          handleFiles: (files, promise) => {
+            const bug = () => {
+              this.$store.commit('pushToast', {
+                name: this.l["An error ocurred while importing the JSON file, the file is corrupted."],
+                seconds: 3,
+                type: 'error'
+              })
+            }
+            promise.then(data => {
+              try {
+                this.$store.dispatch('list/importTemplate', data)
+              } catch (err) {
+                console.log(err)
+                bug()
+              }
+            }).catch(bug)
           }
         },
         {
