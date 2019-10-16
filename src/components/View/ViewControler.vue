@@ -49,9 +49,6 @@ export default {
       showCompleted: false,
     }
   },
-  created() {
-    // utils.download('freaking.json', 'asdfasçldfjkfdsjal')
-  },
   methods: {
     addTask(obj) {
       if (this.isSmart) {

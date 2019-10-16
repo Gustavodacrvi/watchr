@@ -118,6 +118,7 @@ export default {
   'CalParserDUE': 'Due',
   'Enjoy the rest of the day': 'Enjoy the rest of the day',
   'You already completed everything here!': 'You already completed everything here!',
+  "Import from template": "Import from template",
   'Nothing here...': 'Nothing here...',
   "You don't have any tasks for tomorrow.": "You don't have any tasks for tomorrow.",
   "Manual complete": "Manual complete",

@@ -43,6 +43,8 @@ import globe from '@/assets/icons/globe.svg'
 import heading from '@/assets/icons/heading.svg'
 import search from '@/assets/icons/search.svg'
 import note from '@/assets/icons/note.svg'
+import importIcon from '@/assets/icons/import.svg'
+import exportIcon from '@/assets/icons/export.svg'
 
 import { mapGetters } from 'vuex'
 
@@ -55,6 +57,8 @@ export default {
         sort, tag, priority, menu, tasks,
         pen, trash, fire, bloqued, circle,
         copy, plus, globe, heading, search, note,
+        "import": importIcon,
+        "export": exportIcon,
         "user-plus": userPlus,
         "circle-check": circleCheck,
         "settings-h": settingsH,

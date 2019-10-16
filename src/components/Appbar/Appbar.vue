@@ -319,6 +319,11 @@ export default {
           callback: () => dispatch('pushPopup', {comp: 'AddList'}),
         },
         {
+          name: this.l['Import from template'],
+          icon: 'import',
+          callback: () => console.log(3),
+        },
+        {
           name: this.l['Sort lists by name'],
           icon: 'sort-name',
           callback: () => dispatch('list/sortListsByName'),
