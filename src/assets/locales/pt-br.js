@@ -99,6 +99,7 @@ export default {
   'CalParserDUE': 'Vence',
   'Enjoy the rest of the day': 'Aproveite o resto do dia!',
   'You already completed everything here!': 'Você já completou todas as tarefas de hoje!',
+  "Export as template": "Exportar como template",
   "Import from template": "Importar do template",
   "Next event": "Próximo evento",
   "CalParserPersistentKey": "persistente",

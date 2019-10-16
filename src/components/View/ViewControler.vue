@@ -409,6 +409,14 @@ export default {
                 headingTasks: this.getTasksWithHeading,
               })
             }
+          },
+          {
+            name: this.l["Export as template"],
+            icon: 'export',
+            callback: () => utils.exportListTemplate({
+              list: this.viewList,
+              tasks: this.getListTasks
+            })
           }
         ]
         if (!this.viewList.notes)

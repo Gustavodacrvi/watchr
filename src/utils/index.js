@@ -420,5 +420,16 @@ export default {
     element.click()
   
     document.body.removeChild(element)
-  }
+  },
+  exportListTemplate({list, tasks}) {
+    const ts = []
+    for (const t of tasks) ts.push({...t, userId: undefine})
+    
+    const template = {
+      list: {...list, userId: null, options: undefined},
+      tasks: ts,
+    }
+
+    this.download(list.name + '.json', JSON.stringify(template))
+  },
 }
