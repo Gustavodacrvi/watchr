@@ -8,7 +8,7 @@
       <ul>
         <li>Manually complete persistent tasks.</li>
       </ul>
-      <h2>Features for Desktop</h2>
+      <h3>Features for Desktop</h3>
       <ul>
         <li>Export lists as templates.</li>
         <li>Import list templates.</li>
@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     close() {
-      window.location.reload()
+      this.$store.commit('closePopup')
     },
   },
   computed: {

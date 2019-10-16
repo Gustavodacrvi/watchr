@@ -4,7 +4,7 @@ import { register } from "register-service-worker";
 import store from './store/index'
 
 const notifyUserAboutUpdate = (worker) => {
-/*   if (worker !== null)
+  if (worker !== null)
     store.commit('pushToast', {
       name: 'New content is available please refresh.',
       seconds: null,
@@ -12,7 +12,7 @@ const notifyUserAboutUpdate = (worker) => {
       callback: () => {
         worker.postMessage({ action: 'skipWaiting' })
       },
-    }) */
+    })
 }
 
 if (process.env.NODE_ENV === "production") {
