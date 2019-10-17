@@ -4,7 +4,7 @@
       <div class="region">
         <div class="area">
           <div class="header">
-            <h3 class="title cursor" @click="tag('tips')">Tips</h3>
+            <h3 class="title cursor" @click="tag('Tips')">Tips</h3>
           </div>
           <ul class="list">
             <li class="link" @click="go('keyboard_shortcuts')">Keyboard Shortcuts</li>
@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     go(route) {
-      this.$router.push('/' + route)
+      this.$router.push('/article/' + route)
     },
     tag(route) {
       this.$router.push('/tag/' + route)
