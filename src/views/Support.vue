@@ -6,19 +6,18 @@
           class="no-border-down"
           v-model="search"
           :placeholder="l['Search article...']"
-          @enter='searchArticle'
         />
         <div class="search-str cbd">
           <div class="path">
-            <span class="path-link" @click="$router.push('/support/overview')">Overview </span>
+            <span class="path-link" @click="overview">Overview </span>
             <transition name="path-t">
               <span class="path-wrapper" v-if="tag || article">
                 <span class="break">/ </span>
-                <span class="path-link" @click="$router.push('/tag/Tips')">{{ tag }}</span>
+                <span class="path-link" @click="tagPush">{{ tagName }} </span>
                 <transition name="path-t">
                   <span class="path-wrapper" v-if="article">
                      <span class="break">/ </span>
-                    <span class="path-link">{{ articleName }}</span>
+                    <span class="path-link">{{ getArticle.title }}</span>
                   </span>
                 </transition>
               </span>
@@ -28,23 +27,41 @@
       </div>
     </div>
     <transition name="view-t" mode="out-in">
-      <router-view
+      <router-view v-if="!isSearching" key="router-view"
         :articles='articles'
         :tags='tags'
+        :viewArticles='viewArticles'
+        :tag='tag'
+        @clear='clear'
+      />
+      <ArticlesView v-else key="articles-view"
+        :viewArticles='viewArticles'
+        :tag='tag'
+        @clear='clear'
       />
     </transition>
+    <div style='height: 300px'></div>
   </div>
 </template>
 
 <script>
 
 import InputApp from '@/components/Auth/Input.vue'
+import LoadingComponentVue from '../components/Illustrations/LoadingComponent.vue'
+import ErrorComponentVue from '../components/Illustrations/ErrorComponent.vue'
 
 import { mapGetters } from 'vuex'
 
 export default {
   components: {
     InputApp,
+    ArticlesView: () => ({
+      component: import(/* webpackChunkName: "home-chunk" */ '../components/Support/ArticlesView.vue'),
+      loading: LoadingComponentVue,
+      error: ErrorComponentVue,
+      delay: 0,
+      timeout: 7500,
+    }),
   },
   beforeCreate() {
     if (this.$route.fullPath === '/support')
@@ -53,21 +70,41 @@ export default {
   data() {
     return {
       search: '',
-      tags: ['Tips'],
+      tags: ['Tips', 'Lists'],
       articles: [
         {
           title: "Keyboard Shortcuts",
           descr: "Add tasks and navigate more easily on desktop using keyboard shortcuts.",
           url: 'keyboard_shortcuts',
           tag: 'Tips',
-        }
+        },
+        {
+          title: "Repeating Tasks",
+          descr: "Repeat common tasks every day, every 5 days or weekly.",
+          url: 'repeating_tasks',
+          tag: 'Tips',
+        },
+        {
+          title: "List templates",
+          descr: "Save time by copying and recreating any list, any type of repetive work can be easily reused with templates.",
+          url: 'list_templates',
+          tag: 'Lists',
+        },
       ],
     }
   },
   methods: {
-    searchArticle() {
-      this.$router.push('/support?search=' + this.search)
-    }
+    clear() {
+      this.search = ''
+    },
+    overview() {
+      this.clear()
+      this.$router.push('/support/overview')
+    },
+    tagPush() {
+      this.clear()
+      this.$router.push('/tag/' + this.tagName)
+    },
   },
   computed: {
     ...mapGetters(['l', 'platform']),
@@ -77,12 +114,26 @@ export default {
     article() {
       return this.$route.params.article
     },
-    articleName() {
+    tagName() {
+      if (this.tag) return this.tag
+      return this.getArticle.tag
+    },
+    viewArticles() {
+      if (!this.isSearching) return this.tagArticles
+      return this.searchedArticles
+    },
+    searchedArticles() {
+      return this.articles.filter(art => art.title.includes(this.search))
+    },
+    tagArticles() {
+      return this.articles.filter(art => art.tag === this.tag)
+    },
+    getArticle() {
       const art = this.articles.find(el => el.url === this.article)
-      if (art) return art.title
+      if (art) return art
     },
     isSearching() {
-      return this.$route.query.search
+      return this.search
     },
   },
 }

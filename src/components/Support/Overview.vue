@@ -1,7 +1,7 @@
 <template>
   <div class="Overview" :class="platform">
     <div class="cont">
-      <div v-for="area of getHeaderAreas" :key="area.title">
+      <div v-for="area of getHeaderAreas" :key="area.title" class="area">
         <div class="header">
           <h3 class="title cursor" @click="tag(area.title)">{{ area.title }}</h3>
         </div>
@@ -61,9 +61,6 @@ export default {
   border-bottom: 1px solid var(--light-gray);
 }
 
-.area {
-  flex-basis: 375px;
-}
 
 .list {
   padding: 0 26px;
@@ -81,11 +78,20 @@ export default {
 }
 
 .cont {
-  flex-basis: 850px;
-  margin: 0 30px;
   display: flex;
   justify-content: space-between;
+  flex-basis: 850px;
+  margin: 0 30px;
   flex-wrap: wrap;
+}
+
+.area {
+  flex-basis: 375px;
+  margin-bottom: 50px;
+}
+
+.mobile .area {
+  flex-basis: 100%;
 }
 
 .link:hover {
@@ -93,12 +99,5 @@ export default {
   cursor: pointer;
 }
 
-.area {
-  margin-bottom: 50px;
-}
-
-.mobile .area {
-  flex-basis: 100%;
-}
 
 </style>

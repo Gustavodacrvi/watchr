@@ -28,6 +28,9 @@ export default {
   watch: {
     str(str) {
       this.$emit('input', str)
+    },
+    value() {
+      this.str = this.value
     }
   }
 }

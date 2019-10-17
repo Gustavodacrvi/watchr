@@ -39,7 +39,7 @@ export default new Router({
         },
         {
           path: '/tag/:tag',
-          component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './components/Support/Tag.vue'))
+          component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './components/Support/ArticlesView.vue'))
         },
         {
           path: 'overview',
