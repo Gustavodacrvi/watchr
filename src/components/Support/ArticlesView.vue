@@ -68,6 +68,7 @@ export default {
 
 .articles {
   flex-basis: 650px;
+  margin: 0 12px;
 }
 
 .title {

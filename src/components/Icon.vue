@@ -92,4 +92,8 @@ export default {
   color: var(--primary) !important;
 }
 
+.icon:active {
+  color: var(--light-gray) !important;
+}
+
 </style>
