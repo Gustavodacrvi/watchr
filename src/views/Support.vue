@@ -14,11 +14,11 @@
             <transition name="path-t">
               <span class="path-wrapper" v-if="tag || article">
                 <span class="break">/ </span>
-                <span class="path-link" @click="$router.push('/tag/Tips')">Tips </span>
+                <span class="path-link" @click="$router.push('/tag/Tips')">{{ tag }}</span>
                 <transition name="path-t">
                   <span class="path-wrapper" v-if="article">
                      <span class="break">/ </span>
-                    <span class="path-link">Keyboard Shortcuts</span>
+                    <span class="path-link">{{ articleName }}</span>
                   </span>
                 </transition>
               </span>
@@ -28,7 +28,10 @@
       </div>
     </div>
     <transition name="view-t" mode="out-in">
-      <router-view/>
+      <router-view
+        :articles='articles'
+        :tags='tags'
+      />
     </transition>
   </div>
 </template>
@@ -50,11 +53,13 @@ export default {
   data() {
     return {
       search: '',
+      tags: ['Tips'],
       articles: [
         {
           title: "Keyboard Shortcuts",
-          descr: "Add tasks and navigate more easily on desktop using keyboard shortcuts",
-          tag: 'Guide',
+          descr: "Add tasks and navigate more easily on desktop using keyboard shortcuts.",
+          url: 'keyboard_shortcuts',
+          tag: 'Tips',
         }
       ],
     }
@@ -71,6 +76,10 @@ export default {
     },
     article() {
       return this.$route.params.article
+    },
+    articleName() {
+      const art = this.articles.find(el => el.url === this.article)
+      if (art) return art.title
     },
     isSearching() {
       return this.$route.query.search

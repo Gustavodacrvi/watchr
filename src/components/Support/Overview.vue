@@ -1,15 +1,16 @@
 <template>
   <div class="Overview" :class="platform">
     <div class="cont">
-      <div class="region">
-        <div class="area">
-          <div class="header">
-            <h3 class="title cursor" @click="tag('Tips')">Tips</h3>
-          </div>
-          <ul class="list">
-            <li class="link" @click="go('keyboard_shortcuts')">Keyboard Shortcuts</li>
-          </ul>
+      <div v-for="area of getHeaderAreas" :key="area.title">
+        <div class="header">
+          <h3 class="title cursor" @click="tag(area.title)">{{ area.title }}</h3>
         </div>
+        <ul class="list">
+          <li v-for="art of area.articles" :key="art.title"
+            class="link"
+            @click="go(art.url)"
+          >{{ art.title }}</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -20,16 +21,29 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  computed: {
-    ...mapGetters(['platform']),
-  },
+  props: ['articles', 'tags'],
   methods: {
     go(route) {
       this.$router.push('/article/' + route)
     },
     tag(route) {
       this.$router.push('/tag/' + route)
-    }
+    },
+  },
+  computed: {
+    ...mapGetters(['platform']),
+    getHeaderAreas() {
+      const arr = []
+
+      for (const t of this.tags) {
+        arr.push({
+          title: t,
+          articles: this.articles.filter(el => el.tag === t),
+        })
+      }
+
+      return arr
+    },
   }
 }
 
@@ -69,6 +83,9 @@ export default {
 .cont {
   flex-basis: 850px;
   margin: 0 30px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .link:hover {
@@ -76,14 +93,8 @@ export default {
   cursor: pointer;
 }
 
-.region {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-
-.region + .region {
-  margin-top: 50px;
+.area {
+  margin-bottom: 50px;
 }
 
 .mobile .area {
