@@ -6,7 +6,7 @@
     </div>
     <router-link class="link" tabindex="-1" :class="{active: route === 'home'}" to="/">{{ l['Home'] }}</router-link>
     <router-link class="link" tabindex="-1" :class="{active: route === 'user'}" to="/user">{{ l['User'] }}</router-link>
-    <router-link class="link" tabindex="-1" :class="{active: route === 'about'}" to="/about">{{ l['About'] }}</router-link>
+    <router-link class="link" tabindex="-1" :class="{active: route === 'support'}" to="/support">{{ l['Support'] }}</router-link>
     <div class="line"></div>
     <div class="icons">
       <DropIcon class="drop" handle="user" handleColor="var(--gray)" :options="dropLinks"/>

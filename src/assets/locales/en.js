@@ -3,8 +3,9 @@
 export default {
   'Home': 'Home',
   'User': 'User',
-  'About': 'About',
+  'Support': 'Support',
   'Sign up': 'Sign up',
+  "Search article...": "Search article...",
   'Sign in': 'Sign in',
   'Create an Account': 'Create an Account',
   'E-mail': 'E-mail',

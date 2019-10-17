@@ -2,11 +2,12 @@
 export default {
   'Home': 'Início',
   'User': 'Usuário',
-  'About': 'Sobre',
+  'Support': 'Suporte',
   'Sign up': 'Cadastrar',
   'Sign in': 'Entrar',
   'Create an Account': 'Criar uma conta',
   'E-mail': 'E-mail',
+  "Search article...": "Pesquisar artigo...",
   'Password': 'Senha',
   'Search': 'Pesquisar',
   'Confirm password': 'Confirmar senha',
