@@ -8,7 +8,9 @@
         />
       </div>
     </div>
-    <router-view/>
+    <transition name="view-t" mode="out-in">
+      <router-view/>
+    </transition>
   </div>
 </template>
 
@@ -21,6 +23,10 @@ import { mapGetters } from 'vuex'
 export default {
   components: {
     InputApp,
+  },
+  beforeCreate() {
+    if (this.$route.fullPath === '/support')
+      this.$router.replace('/support/overview')
   },
   data() {
     return {
@@ -47,7 +53,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100px;
+  height: 125px;
 }
 
 .search {
@@ -57,6 +63,22 @@ export default {
 
 .mobile .search {
   margin: 0 18px;
+}
+
+.view-t-enter-active, .view-t-leave-active {
+  transition-duration: .2s;
+}
+
+.view-t-enter, .view-t-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+  transition-timing-function: ease-out;
+}
+
+.view-t-leave, .view-t-enter-to {
+  opacity: 1;
+  transform: translateX(0px);
+  transition-timing-function: ease-in;
 }
 
 </style>

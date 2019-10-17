@@ -34,9 +34,17 @@ export default new Router({
       component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './views/Support.vue')),
       children: [
         {
-          path: 'article',
+          path: '/:article',
           component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './components/Support/Article.vue'))
-        }
+        },
+        {
+          path: '/tag/:tag',
+          component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './components/Support/Tag.vue'))
+        },
+        {
+          path: 'overview',
+          component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './components/Support/Overview.vue'))
+        },
       ]
     },
     {

@@ -1,6 +1,7 @@
+
 <template>
-  <div class="Article">
-    {{ $route.params.article }}
+  <div class="Tag">
+    {{ $route.params.tag }}
   </div>
 </template>
 

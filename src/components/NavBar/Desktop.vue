@@ -6,7 +6,7 @@
     </div>
     <router-link class="link" tabindex="-1" :class="{active: isLinkActive('home')}" to="/">{{ l['Home'] }}</router-link>
     <router-link class="link" tabindex="-1" :class="{active: isLinkActive('user')}" to="/user">{{ l['User'] }}</router-link>
-    <router-link class="link" tabindex="-1" :class="{active: isLinkActive('support')}" to="/support">{{ l['Support'] }}</router-link>
+    <router-link class="link" tabindex="-1" :class="{active: isLinkActive('support')}" to="/support/overview">{{ l['Support'] }}</router-link>
     <div class="line"></div>
     <div class="icons">
       <DropIcon class="drop" handle="user" handleColor="var(--gray)" :options="dropLinks"/>
@@ -44,7 +44,6 @@ export default {
       })
     },
     isLinkActive(link) {
-      console.log(this.$route)
       if (this.$route.matched.length === 0)
         return link === this.$route.name
       return this.$route.matched.some(route => route.name === link)
@@ -81,21 +80,31 @@ export default {
 
 .link {
   text-decoration: none;
-  color: var(--white);
+  color: var(--gray);
   font-size: 1.05em;
   display: inline-block;
   padding: 0 14px;
+  outline: none;
   transition-duration: .2s;
 }
 
-.link.active, .link:hover {
+.link:hover {
+  color: var(--white);
+}
+
+.link.active {
   color: var(--primary);
+}
+
+.link:active {
+  color: var(--gray);
+  transform: scale(.9, .9);
 }
 
 .line {
   position: absolute;
   background-color: var(--primary);
-  border-radius: 2px;
+  border-radius: 10px;
   height: 3px;
   width: 50px;
   bottom: 0;
