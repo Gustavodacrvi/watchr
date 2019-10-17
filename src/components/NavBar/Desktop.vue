@@ -4,9 +4,9 @@
       <LogoApp :width='isntOnIndexPage ? "30px" : "45px"' :class="{'illustration-colors': isntOnIndexPage}" :trans='true'/>
       <span class="watchr"><b>watchr</b></span>
     </div>
-    <router-link class="link" tabindex="-1" :class="{active: route === 'home'}" to="/">{{ l['Home'] }}</router-link>
-    <router-link class="link" tabindex="-1" :class="{active: route === 'user'}" to="/user">{{ l['User'] }}</router-link>
-    <router-link class="link" tabindex="-1" :class="{active: route === 'support'}" to="/support">{{ l['Support'] }}</router-link>
+    <router-link class="link" tabindex="-1" :class="{active: isLinkActive('home')}" to="/">{{ l['Home'] }}</router-link>
+    <router-link class="link" tabindex="-1" :class="{active: isLinkActive('user')}" to="/user">{{ l['User'] }}</router-link>
+    <router-link class="link" tabindex="-1" :class="{active: isLinkActive('support')}" to="/support">{{ l['Support'] }}</router-link>
     <div class="line"></div>
     <div class="icons">
       <DropIcon class="drop" handle="user" handleColor="var(--gray)" :options="dropLinks"/>
@@ -42,6 +42,12 @@ export default {
         comp: 'Signup',
         payload: true,
       })
+    },
+    isLinkActive(link) {
+      console.log(this.$route)
+      if (this.$route.matched.length === 0)
+        return link === this.$route.name
+      return this.$route.matched.some(route => route.name === link)
     }
   },
   computed: {

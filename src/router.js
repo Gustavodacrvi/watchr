@@ -32,6 +32,12 @@ export default new Router({
       path: "/support",
       name: 'support',
       component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './views/Support.vue')),
+      children: [
+        {
+          path: 'article',
+          component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './components/Support/Article.vue'))
+        }
+      ]
     },
     {
       path: '/action',
