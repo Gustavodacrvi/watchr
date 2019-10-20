@@ -168,14 +168,16 @@ export default {
       el.style.height = 'auto'
     },
     leave(el) {
-      this.show = false
       const s = el.style
 
       s.transitionDuration = '0s'
       s.height = el.offsetHeight + 'px'
       setTimeout(() => {
-        s.overflow = 'hidden'
+        this.show = false
         s.transitionDuration = '.3s'
+        s.overflow = 'hidden'
+        s.backgroundColor = 'var(--back-color)'
+        s.boxShadow = '0 0 0 #000'
         s.height = 0
       })
     },

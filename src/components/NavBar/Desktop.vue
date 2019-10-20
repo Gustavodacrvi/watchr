@@ -112,6 +112,8 @@ export default {
 }
 
 .icons {
+  display: inline-flex;
+  flex-direction: row-reverse;
   position: absolute;
   right: 34px;
   top: 50%;
