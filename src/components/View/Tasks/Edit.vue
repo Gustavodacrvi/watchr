@@ -5,7 +5,7 @@
     @afterEnter='afterEnter'
     @leave='leave'
   >
-    <div class="Edit handle rb">
+    <div class="Edit handle rb" :class="platform" :style="editStyle">
       <div class="cont-wrapper" :class="{show}">
         <div class="tags" :class="{show: atLeastOnSpecialTag}">
           <Tag v-if="calendarStr"
@@ -42,7 +42,7 @@
           />
         </div>
         <DropInput
-          class="no-back"
+          :class="{'no-back': isDesktop}"
           v-model="task.name"
           :focus="true"
           :options="options"
@@ -54,7 +54,8 @@
           @godown='$emit("godown")'
         />
         <DropInput
-          class="no-back notes"
+          class="notes"
+          :class="{'no-back': isDesktop}"
           v-model="task.notes"
           :options="[]"
           :placeholder="notesPlaceholder"
@@ -220,7 +221,14 @@ export default {
       savedTags: state => state.tag.tags,
       savedLists: state => state.list.lists,
     }),
-    ...mapGetters(['l']),
+    ...mapGetters(['l', 'isDesktop', 'platform']),
+    editStyle() {
+      if (!this.isDesktop)
+        return {
+          boxShadow: 'none !important',
+        }
+      return {}
+    },
     getTagNames() {
       const tags = this.savedTags
       const names = []
@@ -427,7 +435,7 @@ export default {
   transition-duration: .2s;
 }
 
-.notes {
+.desktop .notes {
   margin-top: -12px;
 }
 
