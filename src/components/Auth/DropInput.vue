@@ -51,6 +51,7 @@ export default {
       const el = this.$el.getElementsByClassName('input')[0]
       setTimeout(() => el.focus(), 200)
     }
+    setTimeout(this.fixHeight)
   },
   methods: {
     fixHeight() {

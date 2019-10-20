@@ -7,6 +7,7 @@
       <h3>Features for Desktop and Mobile</h3>
       <ul>
         <li>Better task adder transitions and ui.</li>
+        <li>Better heading adder transitions and ui.</li>
         <li>Tasks can have notes.</li>
       </ul>
       <Button @click="close" value="Got it!"/>

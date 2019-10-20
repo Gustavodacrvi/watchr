@@ -5,7 +5,7 @@
     @afterEnter='afterEnter'
     @leave='leave'
   >
-    <div class="Edit handle rb" :class="platform" :style="editStyle">
+    <div class="Edit handle rb" :class="{notPopup: !popup}" :style="editStyle">
       <div class="cont-wrapper" :class="{show}">
         <div class="tags" :class="{show: atLeastOnSpecialTag}">
           <Tag v-if="calendarStr"
@@ -42,7 +42,7 @@
           />
         </div>
         <DropInput
-          :class="{'no-back': isDesktop}"
+          :class="{'no-back': !popup}"
           v-model="task.name"
           :focus="true"
           :options="options"
@@ -55,7 +55,7 @@
         />
         <DropInput
           class="notes"
-          :class="{'no-back': isDesktop}"
+          :class="{'no-back': !popup}"
           v-model="task.notes"
           :options="[]"
           :placeholder="notesPlaceholder"
@@ -111,7 +111,7 @@ import utils from '@/utils/'
 import taskUtils from '@/utils/task'
 
 export default {
-  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText'],
+  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup'],
   components: {
     DropInput: DropInputVue,
     ButtonApp: ButtonVue,
@@ -223,9 +223,9 @@ export default {
       savedTags: state => state.tag.tags,
       savedLists: state => state.list.lists,
     }),
-    ...mapGetters(['l', 'isDesktop', 'platform']),
+    ...mapGetters(['l']),
     editStyle() {
-      if (!this.isDesktop)
+      if (this.popup)
         return {
           boxShadow: 'none !important',
         }
@@ -437,7 +437,7 @@ export default {
   transition-duration: .2s;
 }
 
-.desktop .notes {
+.notPopup .notes {
   margin-top: -12px;
 }
 

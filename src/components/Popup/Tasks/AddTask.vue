@@ -5,7 +5,7 @@
     </div>
     <div class="content">
       <TaskEdit
-        :noShadow='true'
+        :popup='true'
         :placeholder="l['Task name...']"
         :notesPlaceholder="l['Notes...']"
         @save='add'
