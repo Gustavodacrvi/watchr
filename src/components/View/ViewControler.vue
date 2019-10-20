@@ -653,11 +653,8 @@ export default {
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
           filter: (tasks) => {
+            tasks = utilsTask.filterTasksByCompletion(tasks, false, mom(date, 'Y-M-D'))
             return tasks.filter(t => {
-              if (t.calendar) {
-                const type = t.calendar.type
-                if (type === 'weekly' || type === 'periodic') return false
-              }
               const complete = mom(t.completeDate, 'Y-M-D')
               return complete.isSame(mom(date, 'Y-M-D'), 'day')
             })
