@@ -331,7 +331,7 @@ export default {
     },
   },
   watch: {
-    getTaskName() {
+    'task.name'() {
       const n = this.task.name
       let changedOptions = false
       const parsePriority = () => {
@@ -341,14 +341,14 @@ export default {
             'Medium priority': ' !m',
             'High priority': ' !h',
           }
-          this.priority = priority
+          this.task.priority = priority
           this.task.name = n.replace(obj[priority], '')
         }
         if (n.includes(' !l')) pri('Low priority')
         else if (n.includes(' !m')) pri('Medium priority')
         else if (n.includes(' !h')) pri('High priority')
         else if (n.includes(' !no')) {
-          this.priority = null
+          this.task.priority = null
           this.task.name = n.replace(' !no', '')
         }
       }
@@ -378,7 +378,7 @@ export default {
           const listName = ` @${li.name}`
           if (n.includes(listName)) {
             this.task.name = n.replace(listName, '')
-            this.list = li.name
+            this.task.list = li.name
             break
           }
         }
@@ -395,9 +395,9 @@ export default {
       const parseDate = () => {
         if (n.includes(' $')) {
           const obj = utils.parseInputToCalendarObject(n, this.l)
-          this.calendar = obj
+          this.task.calendar = obj
         } else if (this.task) {
-          this.calendar = this.task.calendar
+          this.task.calendar = this.task.calendar
         }
       }
 
