@@ -89,3 +89,12 @@ body, input, button, textarea {
 .scroll-main::-webkit-scrollbar {
   width: 10px;
 }
+
+.task-link {
+  color: var(--primary) !important;
+  text-decoration: none;
+}
+
+.task-link:hover {
+  text-decoration: underline;
+}

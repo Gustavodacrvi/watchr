@@ -27,14 +27,16 @@
           </div>
         </transition>
       </div>
-      <EditHeading v-else key="edig"
-        :name='name'
-        :errorToast='headingEdit.errorToast'
-        :names='headingEdit.excludeNames'
-        :buttonTxt='l["Save"]'
-        @save='save'
-        @cancel='toggleEditing'
-      />
+      <div v-else key="edig">
+        <EditHeading
+          :name='name'
+          :errorToast='headingEdit.errorToast'
+          :names='headingEdit.excludeNames'
+          :buttonTxt='l["Save"]'
+          @save='save'
+          @cancel='toggleEditing'
+        />
+      </div>
     </transition>
   </div>
 </template>

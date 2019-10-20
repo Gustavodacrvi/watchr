@@ -35,7 +35,9 @@
             <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
             <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
             <transition name="name-t">
-              <span v-if="!showApplyOnTasks" key="normal">{{ task.name }}</span>
+              <span v-if="!showApplyOnTasks" class="task-name" key="normal">
+                <span v-html="parsedName"></span>
+              </span>
               <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
             </transition>
             <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
@@ -57,14 +59,17 @@
           </div>
         </div>
       </div>
-      <Edit v-else-if="isEditing" key="editing" class="handle"
-        placeholder="Task name..."
-        :btnText="l['Save task']"
-        :task='task'
-        :showCancel='true'
-        @cancel='isEditing = false'
-        @save='saveTask'
-      />
+      <div v-else-if="isEditing" key="editing">
+        <Edit class="handle"
+          :placeholder="l['Task name...']"
+          :notesPlaceholder="l['Notes...']"
+          :btnText="l['Save task']"
+          :defaultTask='task'
+          :showCancel='true'
+          @cancel='isEditing = false'
+          @save='saveTask'
+        />
+      </div>
     </transition>
   </div>
 </template>
@@ -185,6 +190,28 @@ export default {
     rootClick(event) {
       if (this.isSelectingAppnavEls) event.stopPropagation()
     },
+    escapeHTML(string) {
+      let div = document.createElement("div")
+      div.innerHTML = string
+      return div.textContent || div.innerText || ""
+    },
+    getLinkString(str) {
+      const matches = str.match(this.urlRegex)
+      if (matches) {
+        const split = str.split(' ')
+        let newStr = ''
+        for (let i = 0; i < split.length;i++) {
+          const txt = split[i + 1]
+          const link = split[i]
+          if (link && matches.includes(link) && txt && !matches.includes(txt)) {
+            newStr += `<a class='task-link' href="${link}">${txt}</a>`
+            i++
+          } else newStr += link
+        }
+        str = newStr
+      }
+      return str
+    },
   },
   computed: {
     ...mapState({
@@ -196,6 +223,12 @@ export default {
     ...mapGetters(['isDesktop', 'platform', 'l']),
     completed() {
       return utilsTask.filterTasksByCompletion([this.task]).length === 1
+    },
+    parsedName() {
+      return this.getLinkString(this.escapeHTML(this.task.name))
+    },
+    urlRegex() {
+      return /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/g
     },
     taskTags() {
       const ts = this.savedTags
@@ -478,6 +511,11 @@ export default {
   position: relative;
 }
 
+.task-name {
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
 .icon {
   transform: translateY(2px);
 }
@@ -503,13 +541,11 @@ export default {
 
 .edit-t-enter, .edit-t-leave-to {
   opacity: 0;
-  transform: scale(.95,.95);
   transition: opacity .1s ease-out, transform .1s ease-out;
 }
 
 .edit-t-leave, .edit-t-enter-to {
-  opacity: 1;
-  transform: scale(1,1);
+  opacity: 0;
   transition: opacity .1s ease-in, transform .1s ease-in;
 }
 

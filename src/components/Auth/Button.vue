@@ -28,6 +28,10 @@ export default {
   color: white;
 }
 
+.tiny {
+  padding: 8px;
+}
+
 .no-back {
   background-color: var(--back-color);
   border: 1px solid var(--primary);

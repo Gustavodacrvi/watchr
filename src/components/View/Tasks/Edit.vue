@@ -1,98 +1,117 @@
+
 <template>
-  <div class="Edit handle">
-    <div class="tags">
-      <Tag v-if="calendarStr"
-        icon="calendar"
-        color="var(--green)"
-        :value="calendarStr"
-        @click="calendar = null"
-      />
-      <Tag v-if="priority"
-        icon="priority"
-        :color="getPriorityColor"
-        :value="l[priority]"
-        @click="priority = ''"
-      />
-      <Tag v-if="list"
-        icon="tasks"
-        :value="list"
-        color='var(--purple)'
-        @click="list = ''"
-      />
-      <Tag v-if="list && heading"
-        icon="heading"
-        :value="heading"
-        color='var(--purple)'
-        @click="heading = ''"
-      />
-    </div>
-    <div class="tags">
-      <Tag v-for="t in tags"
-        :key="t"
-        icon="tag"
-        :value="t"
-        @click="removeTag(t)"
-      />
-    </div>
-    <DropInput
-      v-model="name"
-      :focus="true"
-      :options="options"
-      :placeholder="placeholder"
-      @select="select"
-      @enter='save'
-      @cancel="$emit('cancel')"
-      @goup='$emit("goup")'
-      @godown='$emit("godown")'
-    />
-    <div class="options">
-      <div class="button-wrapper">
-        <div class="button">
-          <ButtonApp :value="buttonText" @click="save"/>
+  <transition name="trans-t" appear
+    @enter='enter'
+    @afterEnter='afterEnter'
+    @leave='leave'
+  >
+    <div class="Edit handle rb" :class="{notPopup: !popup}" :style="editStyle">
+      <div class="cont-wrapper" :class="{show}">
+        <div class="tags" :class="{show: atLeastOnSpecialTag}">
+          <Tag v-if="calendarStr"
+            icon="calendar"
+            color="var(--green)"
+            :value="calendarStr"
+            @click="task.calendar = null"
+          />
+          <Tag v-if="task.priority"
+            icon="priority"
+            :color="getPriorityColor"
+            :value="l[task.priority]"
+            @click="task.priority = ''"
+          />
+          <Tag v-if="task.list"
+            icon="tasks"
+            :value="task.list"
+            color='var(--purple)'
+            @click="task.list = ''"
+          />
+          <Tag v-if="task.list && task.heading"
+            icon="heading"
+            :value="task.heading"
+            color='var(--purple)'
+            @click="task.heading = ''"
+          />
         </div>
-        <span v-if="showCancel" class="cancel cursor" @click="$emit('cancel')">{{ l['Cancel'] }}</span>
-      </div>
-      <div class="icons">
-        <IconDrop
-          handle="tag"
-          handleWidth="25px"
-          :allowSearch="true"
-          :options="getTags"
+        <div class="tags" :class="{show: task.tags.length > 0}">
+          <Tag v-for="t in task.tags"
+            :key="t"
+            icon="tag"
+            :value="t"
+            @click="removeTag(t)"
+          />
+        </div>
+        <DropInput
+          :class="{'no-back': !popup}"
+          v-model="task.name"
+          :focus="true"
+          :options="options"
+          :placeholder="placeholder"
+          @select="select"
+          @enter='save'
+          @cancel="cancel"
+          @goup='$emit("goup")'
+          @godown='$emit("godown")'
         />
-        <IconDrop
-          handle="priority"
-          :options="priorityOptions"
+        <DropInput
+          class="notes"
+          :class="{'no-back': !popup}"
+          v-model="task.notes"
+          :options="[]"
+          :placeholder="notesPlaceholder"
+          @enter='save'
+          @cancel="cancel"
+          @goup='$emit("goup")'
+          @godown='$emit("godown")'
         />
-        <IconDrop
-          handle="tasks"
-          handleWidth="25px"
-          :allowSearch="true"
-          :options="listOptions"
-        />
-        <IconDrop
-          handle="calendar"
-          handleWidth="23px"
-          :calendar="true"
-          :calendarCall='selectDate'
-        />
+        <div class="options">
+          <div class="button-wrapper">
+            <div class="button">
+              <ButtonApp class="tiny" :value="buttonText" @click="save"/>
+            </div>
+            <span v-if="showCancel" class="cancel cursor" @click="cancel">{{ l['Cancel'] }}</span>
+          </div>
+          <div class="icons">
+            <IconDrop
+              handle="tag"
+              :allowSearch="true"
+              :options="getTags"
+            />
+            <IconDrop
+              handle="priority"
+              :options="priorityOptions"
+            />
+            <IconDrop
+              handle="tasks"
+              :allowSearch="true"
+              :options="listOptions"
+            />
+            <IconDrop
+              handle="calendar"
+              :calendar="true"
+              :calendarCall='selectDate'
+            />
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
 
-import ButtonVue from '../../Auth/Button.vue'
-import IconDropVue from '../../IconDrop.vue'
 import TagVue from '../Tag.vue'
 import DropInputVue from '../../Auth/DropInput.vue'
+import ButtonVue from '../../Auth/Button.vue'
+import IconDropVue from '../../IconDrop.vue'
 
-import { mapState, mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 import utils from '@/utils/'
+import taskUtils from '@/utils/task'
 
 export default {
-  props: ['placeholder', 'task', 'showCancel', 'btnText'],
+  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup'],
   components: {
     DropInput: DropInputVue,
     ButtonApp: ButtonVue,
@@ -101,63 +120,103 @@ export default {
   },
   data() {
     return {
-      name: '',
-      priority: '',
-      list: '',
-      calendar: null,
-      heading: null,
-      tags: [],
+      show: false,
+      task: {
+        name: '',
+        priority: '',
+        list: '',
+        notes: '',
+        calendar: null,
+        heading: null,
+        tags: [],
+      },
       optionsType: '',
       options: [],
     }
   },
   created() {
-    if (this.task) {
-      const t = this.task
-      this.name = t.name
-      this.priority = t.priority
-      this.calendar = t.calendar
-      this.list = this.listName
-      this.heading = t.heading
-      this.tags = this.getTagNames
+    if (this.defaultTask) {
+      const t = this.defaultTask
+      this.task = {...t}
+      this.task.list = this.listName
+      this.task.tags = this.getTagNames
     }
   },
   methods: {
-    removeTag(name) {
-      const index = this.tags.findIndex(el => el === name)
-      this.tags.splice(index, 1)
+    cancel() {
+      this.leave(this.$el)
+      setTimeout(() => {
+        this.$emit('cancel')
+      }, 301)
+    },
+    enter(el) {
+      const s = el.style
+      const height = el.offsetHeight
+
+      s.transitionDuration = '0s'
+      s.height = 0
+      setTimeout(() => {
+        s.transitionDuration = '.3s'
+        if (height < 36)
+          s.height = '35px'
+        else
+          s.height = height + 'px'
+        setTimeout(() => this.show = true, 250)
+      })
+    },
+    afterEnter(el) {
+      el.style.height = 'auto'
+    },
+    leave(el) {
+      const s = el.style
+
+      s.transitionDuration = '0s'
+      s.height = el.offsetHeight + 'px'
+      setTimeout(() => {
+        this.show = false
+        s.transitionDuration = '.3s'
+        s.overflow = 'hidden'
+        s.backgroundColor = 'var(--back-color)'
+        s.boxShadow = '0 0 0 #000'
+        s.height = 0
+      })
     },
     select(value) {
-      const arr = this.name.split(' ')
+      const arr = this.task.name.split(' ')
       arr[arr.length - 1] = this.optionsType + value
       let str = ''
       for (const s of arr)
         str += s + ' '
       str = str.slice(0, -1)
-      this.name = str
+      this.task.name = str
     },
     save() {
-      let n = this.name
+      let n = this.task.name
       const i = n.indexOf(' $')
-      if (i && i > -1 && this.calendar) {
+      if (i && i > -1 && this.task.calendar) {
         n = n.substr(0, i)
       }
-      let head = this.heading
-      if (head === undefined) head = null
+      let heading = this.task.heading
+      let calendar = this.task.calendar
+      if (heading === undefined) heading = null
+      if (calendar === undefined) calendar = null
       this.$emit('save', {
-        name: n,
-        priority: this.priority,
+        ...this.task,
         list: this.listId,
         tags: this.tagIds,
-        calendar: this.calendar,
-        heading: head,
+        name: n, heading,
+        calendar,
       })
-      this.name = ''
+      this.task.name = ''
+    },
+    removeTag(name) {
+      const index = this.task.tags.findIndex(el => el === name)
+      this.task.tags.splice(index, 1)
     },
     addTag(name) {
-      if (!this.tags.find(e => e === name))
-        this.tags.push(name)
-    }
+      if (!this.task.tags.some(e => e === name))
+        this.task.tags.push(name)
+    },
   },
   computed: {
     ...mapState({
@@ -165,18 +224,12 @@ export default {
       savedLists: state => state.list.lists,
     }),
     ...mapGetters(['l']),
-    selectDate() {
-      return (date) => this.calendar = date
-    },
-    listName() {
-      if (this.task.list)
-        return this.$store.getters['list/getListsById']([this.task.list])[0].name
-      return ''
-    },
-    listId() {
-      if (this.list)
-        return this.$store.getters['list/getListsByName']([this.list]).map(el => el.id)[0]
-      return null
+    editStyle() {
+      if (this.popup)
+        return {
+          boxShadow: 'none !important',
+        }
+      return {}
     },
     getTagNames() {
       const tags = this.savedTags
@@ -187,35 +240,34 @@ export default {
       }
       return names
     },
-    tagIds() {
-      return this.$store.getters['tag/getTagsByName'](this.tags).map(el => el.id)
+    listName() {
+      if (this.task.list)
+        return this.$store.getters['list/getListsById']([this.task.list])[0].name
+      return ''
     },
-    calendarStr() {
-      if (this.calendar)
-        return utils.parseCalendarObjectToString(this.calendar, this.l)
+    listId() {
+      if (this.task.list)
+        return this.$store.getters['list/getListsByName']([this.task.list]).map(el => el.id)[0]
       return null
     },
-    priorities() {
-      return this.$store.getters['task/priorityOptions']
+    selectDate() {
+      return (date) => this.task.calendar = date
     },
-    priorityOptions() {
-      const links = this.priorities
-      for (const l of links) {
-        l.callback = ({name}) => {
-          if (name !== 'No priority')
-            this.priority = name
-          else this.priority = ''
-        }
-      }
-      return links
+    buttonText() {
+      if (this.btnText) return this.btnText
+      return this.l['Add task']
     },
-    getPriorityColor() {
-      const obj = {
-        "High priority": "var(--red)",
-        "Medium priority": "var(--orange)",
-        "Low priority": "var(--primary)",
-      }
-      return obj[this.priority]
+    atLeastOnSpecialTag() {
+      const t = this.task
+      return this.calendarStr || t.priority || t.list || (t.list && t.heading)
+    },
+    calendarStr() {
+      if (this.task.calendar)
+        return utils.parseCalendarObjectToString(this.task.calendar, this.l)
+      return null
+    },
+    getTaskName() {
+      return this.task.name
     },
     getTags() {
       const arr = []
@@ -230,6 +282,12 @@ export default {
       }
       return arr
     },
+    tagIds() {
+      return this.$store.getters['tag/getTagsByName'](this.task.tags).map(el => el.id)
+    },
+    priorities() {
+      return this.$store.getters['task/priorityOptions']
+    },
     listOptions() {
       const arr = []
       for (const el of this.savedLists) {
@@ -237,13 +295,13 @@ export default {
           name: el.name,
           icon: 'tasks',
           callback: () => {
-            this.list = el.name
+            this.task.list = el.name
             const arr = []
             for (const h of el.headings) {
               arr.push({
                 name: h.name,
                 icon: 'heading',
-                callback: () => this.heading = h.name
+                callback: () => this.task.heading = h.name
               })
             }
             return arr
@@ -252,14 +310,29 @@ export default {
       }
       return arr
     },
-    buttonText() {
-      if (this.btnText) return this.btnText
-      return this.l['Add task']
-    }
+    priorityOptions() {
+      const links = this.priorities
+      for (const l of links) {
+        l.callback = ({name}) => {
+          if (name !== 'No priority')
+            this.task.priority = name
+          else this.task.priority = ''
+        }
+      }
+      return links
+    },
+    getPriorityColor() {
+      const obj = {
+        "High priority": "var(--red)",
+        "Medium priority": "var(--orange)",
+        "Low priority": "var(--primary)",
+      }
+      return obj[this.task.priority]
+    },
   },
   watch: {
-    name() {
-      const n = this.name
+    getTaskName() {
+      const n = this.task.name
       let changedOptions = false
       const parsePriority = () => {
         const pri = (priority) => {
@@ -269,14 +342,14 @@ export default {
             'High priority': ' !h',
           }
           this.priority = priority
-          this.name = n.replace(obj[priority], '')
+          this.task.name = n.replace(obj[priority], '')
         }
         if (n.includes(' !l')) pri('Low priority')
         else if (n.includes(' !m')) pri('Medium priority')
         else if (n.includes(' !h')) pri('High priority')
         else if (n.includes(' !no')) {
           this.priority = null
-          this.name = n.replace(' !no', '')
+          this.task.name = n.replace(' !no', '')
         }
       }
       const parseTags = () => {
@@ -284,7 +357,7 @@ export default {
         for (const tag of tags) {
           const tagName = ` #${tag.name}`
           if (n.includes(tagName)) {
-            this.name = n.replace(tagName, '')
+            this.task.name = n.replace(tagName, '')
             this.addTag(tag.name)
             break
           }
@@ -304,7 +377,7 @@ export default {
         for (const li of lists) {
           const listName = ` @${li.name}`
           if (n.includes(listName)) {
-            this.name = n.replace(listName, '')
+            this.task.name = n.replace(listName, '')
             this.list = li.name
             break
           }
@@ -334,16 +407,67 @@ export default {
       parseDate()
 
       if (!changedOptions) this.options = []
-    }
+    },
   }
 }
 
 </script>
 
-<style>
+<style scoped>
+
+.trans-t-enter, .trans-t-leave-to {
+  opacity: 0;
+  background-color: var(--back-color);
+  box-shadow: 0 0 0 #000;
+}
+
+.trans-t-leave, .trans-t-enter-to {
+  opacity: 1;
+  background-color: var(--card);
+  box-shadow: 0 2px 6px rgba(0,0,0,.3);
+}
 
 .Edit {
-  outline: none;
+  background-color: var(--card);
+  box-shadow: 0 2px 6px rgba(0,0,0,.3);
+}
+
+.cont-wrapper {
+  opacity: 0;
+  transition-duration: .2s;
+}
+
+.notPopup .notes {
+  margin-top: -12px;
+}
+
+.tags {
+  margin: 0;
+  height: 0;
+  float: left;
+  z-index: 5;
+  position: relative;
+  transition-duration: .2s;
+}
+
+.show {
+  opacity: 1;
+}
+
+.options {
+  padding-left: 4px;
+  padding-bottom: 4px;
+}
+
+.show .tags.show {
+  margin: 6px;
+  margin-bottom: 0;
+  height: auto;
+}
+
+.tags {
+  padding-bottom: 4px;
+  display: flex;
 }
 
 .cancel {
@@ -355,15 +479,6 @@ export default {
   text-decoration: underline;
 }
 
-.button-wrapper {
-  width: 200px;
-}
-
-.button {
-  display: inline-block;
-  width: 100px;
-}
-
 .options {
   margin-top: 4px;
   display: flex;
@@ -371,14 +486,17 @@ export default {
   align-items: center;
 }
 
+.button-wrapper {
+  flex-basis: 100%;
+}
+
+.button {
+  display: inline-block;
+}
+
 .icons {
   display: inline-flex;
   flex-direction: row-reverse;
-}
-
-.tags {
-  padding-bottom: 4px;
-  display: flex;
 }
 
 </style>

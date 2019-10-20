@@ -6,12 +6,10 @@
     <div class="content">
       <h3>Features for Desktop and Mobile</h3>
       <ul>
-        <li>Manually complete persistent tasks.</li>
-      </ul>
-      <h3>Features for Desktop</h3>
-      <ul>
-        <li>Export lists as templates.</li>
-        <li>Import list templates.</li>
+        <li>Better task adder transitions and ui.</li>
+        <li>Better heading adder transitions and ui.</li>
+        <li>Tasks can have notes.</li>
+        <li>You can add links to tasks, "https://... text".</li>
       </ul>
       <Button @click="close" value="Got it!"/>
     </div>

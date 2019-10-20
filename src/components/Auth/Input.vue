@@ -54,4 +54,8 @@ export default {
   border-bottom-right-radius: 0px;
 }
 
+.no-back {
+  background-color: transparent !important;
+}
+
 </style>

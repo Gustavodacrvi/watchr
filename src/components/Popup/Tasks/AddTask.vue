@@ -1,14 +1,23 @@
 <template>
-  <div class="AddTask popup cb shadow rb" :class="platform">
+  <div v-if="!isDesktop" class="AddTask popup cb shadow rb" :class="platform">
     <div class="title tac">
       <h2 class="pc">{{ l['Add task'] }}</h2>
     </div>
     <div class="content">
       <TaskEdit
-        :placeholder="`${l['Task name']}...`"
+        :popup='true'
+        :placeholder="l['Task name...']"
+        :notesPlaceholder="l['Notes...']"
         @save='add'
       />
     </div>
+  </div>
+  <div v-else class="AddTask popup cb shadow rb" :class="platform">
+    <TaskEdit
+      :placeholder="l['Task name...']"
+      :notesPlaceholder="l['Notes...']"
+      @save='add'
+    />
   </div>
 </template>
 
@@ -35,7 +44,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform', 'l'])
+    ...mapGetters(['platform', 'l', 'isDesktop'])
   }
 }
 

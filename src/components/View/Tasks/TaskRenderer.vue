@@ -104,7 +104,11 @@ export default {
       addedTask: false,
       atLeastOneRenderedTask: false,
       lastAddedTaskId: '',
+      test: false,
     }
+  },
+  created() {
+    setTimeout(() => this.test = true, 1000)
   },
   mounted() {
     let move = null
@@ -169,7 +173,8 @@ export default {
         if (type === 'floatbutton') {
           addEdit(TaskEditTemplate, this.add, {
               key: 'Edit',
-              placeholder: this.l['Task name'], showCancel: true, btnText: this.l['Add task']
+              placeholder: this.l['Task name...'],
+              notesPlaceholder: this.l['Notes...'], showCancel: true, btnText: this.l['Add task']
             })
         }
         else if (type === 'headingbutton') {
@@ -462,7 +467,8 @@ export default {
 
         const addTaskEdit = pos => addEdit(TaskEditTemplate, {
           key: 'Edit',
-          placeholder: this.l['Task name'], showCancel: true, btnText: this.l['Add task']
+          placeholder: this.l['Task name...'],
+          notesPlaceholder: this.l['Notes...'], showCancel: true, btnText: this.l['Add task']
         }, this.add, pos)
         const h = this.headingEdit
         const addHeadingEdit = (pos) => addEdit(HeadingEditVue, {

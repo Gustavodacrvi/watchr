@@ -51,6 +51,7 @@ export default {
       const el = this.$el.getElementsByClassName('input')[0]
       setTimeout(() => el.focus(), 200)
     }
+    setTimeout(this.fixHeight)
   },
   methods: {
     fixHeight() {
@@ -247,6 +248,10 @@ export default {
 
 .link.active, .link:hover {
   background-color: var(--light-gray);
+}
+
+.no-back .cbd {
+  background-color: transparent !important;
 }
 
 </style>

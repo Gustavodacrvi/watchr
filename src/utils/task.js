@@ -75,12 +75,13 @@ export default {
       return true
     })
   },
-  isTaskCompleted(task) {
+  isTaskCompleted(task, moment) {
     if (!task.calendar) return task.completed
+    if (!moment) moment = mom()
     const {
       type, lastComplete, tod, times,
       persistent, hasTimesBinding, manualComplete
-    } = this.taskData(task, mom())
+    } = this.taskData(task, moment)
     
     if (type === 'specific') return task.completed
 
@@ -97,9 +98,9 @@ export default {
 
     return false
   },
-  filterTasksByCompletion(tasks, notCompleted) {
+  filterTasksByCompletion(tasks, notCompleted, moment) {
     return tasks.filter(el => {
-      const comp = this.isTaskCompleted(el)
+      const comp = this.isTaskCompleted(el, moment)
       if (notCompleted) return !comp
       return comp
     })

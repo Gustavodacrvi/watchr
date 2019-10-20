@@ -1,25 +1,34 @@
 <template>
-  <div class="HeadingEdit Edit handle">
-    <InputApp
-      placeholder="Heading name..."
-      v-model="str"
-      :focus="true"
-      :options="options"
-      @select="select"
-      @enter='save'
-      @goup='$emit("goup")'
-      @godown='$emit("godown")'
-    />
-    <div class="button">
-      <div class="btn">
-        <ButtonApp
-          :value="buttonTxt"
-          @click="save"
+  <transition name="trans-t" appear
+    @enter='enter'
+    @afterEnter='afterEnter'
+    @leave='leave'
+  >
+    <div class="HeadingEdit Edit handle rb shadow">
+      <div class="cont-wrapper" :class="{show}">
+        <InputApp
+          class="no-back"
+          placeholder="Heading name..."
+          v-model="str"
+          :focus="true"
+          :options="options"
+          @select="select"
+          @enter='save'
+          @goup='$emit("goup")'
+          @godown='$emit("godown")'
         />
+        <div class="button">
+          <div class="btn">
+            <ButtonApp class="tiny"
+              :value="buttonTxt"
+              @click="save"
+            />
+          </div>
+          <span class="cancel cursor" @click="cancel">{{ l['Cancel'] }}</span>
+        </div>
       </div>
-      <span class="cancel cursor" @click="$emit('cancel')">{{ l['Cancel'] }}</span>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -39,12 +48,54 @@ export default {
     return {
       str: '',
       options: [],
+      show: false,
     }
   },
   created() {
     if (this.name) this.str = this.name
   },
   methods: {
+        cancel() {
+      this.leave(this.$el)
+      setTimeout(() => {
+        this.$emit('cancel')
+      }, 301)
+    },
+    enter(el) {
+      const s = el.style
+      const height = el.offsetHeight
+
+      s.transitionDuration = '0s'
+      s.height = 0
+      setTimeout(() => {
+        s.transitionDuration = '.3s'
+        if (height < 36)
+          s.height = '35px'
+        else
+          s.height = height + 'px'
+        setTimeout(() => this.show = true, 250)
+      })
+    },
+    afterEnter(el) {
+      el.style.height = 'auto'
+    },
+    leave(el) {
+      const s = el.style
+      const btn = el.getElementsByClassName('button')[0]
+
+      s.transitionDuration = '0s'
+      s.height = el.offsetHeight + 'px'
+      setTimeout(() => {
+        this.show = false
+        btn.style.transitionDuration = '.3s'
+        btn.style.paddding = '0'
+        s.transitionDuration = '.3s'
+        s.overflow = 'hidden'
+        s.backgroundColor = 'var(--back-color)'
+        s.boxShadow = '0 0 0 #000'
+        s.height = 0
+      })
+    },
     select(val) {
       this.str = val
     },
@@ -76,8 +127,26 @@ export default {
 
 <style scoped>
 
+.Edit {
+  background-color: var(--card);
+}
+
+.trans-t-enter, .trans-t-leave-to {
+  opacity: 0;
+  background-color: var(--back-color);
+  box-shadow: 0 0 0 #000;
+}
+
+.trans-t-leave, .trans-t-enter-to {
+  opacity: 1;
+  background-color: var(--card);
+  box-shadow: 0 2px 6px rgba(0,0,0,.3);
+}
+
 .button {
   display: flex;
+  padding-bottom: 4px;
+  padding-left: 4px;
   align-items: center;
 }
 
@@ -88,6 +157,15 @@ export default {
 .cancel {
   color: var(--red);
   margin-left: 6px;
+}
+
+.cont-wrapper {
+  opacity: 0;
+  transition-duration: .3s;
+}
+
+.show {
+  opacity: 1;
 }
 
 </style>
