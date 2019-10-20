@@ -104,9 +104,9 @@ export default {
 .line {
   position: absolute;
   background-color: var(--primary);
-  border-radius: 10px;
+  border-radius: 50px;
   height: 3px;
-  width: 50px;
+  width: 20px;
   bottom: 0;
   transition-duration: .2s;
 }

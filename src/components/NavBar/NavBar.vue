@@ -31,10 +31,8 @@ export default {
     calculateLineOffset() {
       const link = this.activeLink()
       const line = this.line()
-      if (line && link) {
-        line.style.left = link.offsetLeft + 'px'
-        line.style.width = link.offsetWidth + 'px'
-      }
+      if (line && link)
+        line.style.left = (link.offsetLeft + (link.offsetWidth / 2) - 10) + 'px'
     },
     line() {
       const el = this.$el.getElementsByClassName('line')[0]
