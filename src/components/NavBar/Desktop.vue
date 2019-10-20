@@ -4,9 +4,9 @@
       <LogoApp :width='isntOnIndexPage ? "30px" : "45px"' :class="{'illustration-colors': isntOnIndexPage}" :trans='true'/>
       <span class="watchr"><b>watchr</b></span>
     </div>
-    <router-link class="link" tabindex="-1" :class="{active: route === 'home'}" to="/">{{ l['Home'] }}</router-link>
-    <router-link class="link" tabindex="-1" :class="{active: route === 'user'}" to="/user">{{ l['User'] }}</router-link>
-    <router-link class="link" tabindex="-1" :class="{active: route === 'about'}" to="/about">{{ l['About'] }}</router-link>
+    <router-link class="link" tabindex="-1" :class="{active: isLinkActive('home')}" to="/">{{ l['Home'] }}</router-link>
+    <router-link class="link" tabindex="-1" :class="{active: isLinkActive('user')}" to="/user">{{ l['User'] }}</router-link>
+    <router-link class="link" tabindex="-1" :class="{active: isLinkActive('support')}" to="/support/overview">{{ l['Support'] }}</router-link>
     <div class="line"></div>
     <div class="icons">
       <DropIcon class="drop" handle="user" handleColor="var(--gray)" :options="dropLinks"/>
@@ -42,6 +42,11 @@ export default {
         comp: 'Signup',
         payload: true,
       })
+    },
+    isLinkActive(link) {
+      if (this.$route.matched.length === 0)
+        return link === this.$route.name
+      return this.$route.matched.some(route => route.name === link)
     }
   },
   computed: {
@@ -75,23 +80,33 @@ export default {
 
 .link {
   text-decoration: none;
-  color: var(--white);
+  color: var(--gray);
   font-size: 1.05em;
   display: inline-block;
   padding: 0 14px;
+  outline: none;
   transition-duration: .2s;
 }
 
-.link.active, .link:hover {
+.link:hover {
+  color: var(--white);
+}
+
+.link.active {
   color: var(--primary);
+}
+
+.link:active {
+  color: var(--gray);
+  transform: scale(.9, .9);
 }
 
 .line {
   position: absolute;
   background-color: var(--primary);
-  border-radius: 2px;
+  border-radius: 50px;
   height: 3px;
-  width: 50px;
+  width: 20px;
   bottom: 0;
   transition-duration: .2s;
 }

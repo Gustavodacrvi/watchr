@@ -29,9 +29,23 @@ export default new Router({
       component: AsyncComponent(import(/* webpackChunkName: "user-chunk" */ './views/User.vue')),
     },
     {
-      path: "/about",
-      name: 'about',
-      component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './views/Home.vue')),
+      path: "/support",
+      name: 'support',
+      component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './views/Support.vue')),
+      children: [
+        {
+          path: '/article/:article',
+          component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './components/Support/Article.vue'))
+        },
+        {
+          path: '/tag/:tag',
+          component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './components/Support/ArticlesView.vue'))
+        },
+        {
+          path: 'overview',
+          component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './components/Support/Overview.vue'))
+        },
+      ]
     },
     {
       path: '/action',

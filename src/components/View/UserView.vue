@@ -1,3 +1,4 @@
+
 <template>
   <div class="UserView" :class="[{appbarHided}, platform]">
     <div v-if="isDesktop" class="nav-shadow"></div>
@@ -40,9 +41,11 @@ export default {
       value: null,
       appbarHided: false,
       scrollTop: null,
+      test: false,
     }
   },
   created() {
+    setTimeout(() => this.test = true, 2000)
     this.updateViewType()
     this.getScrollTop()
     window.addEventListener('scroll', this.getScrollTop)

@@ -472,6 +472,11 @@ export default {
 
 .option:hover {
   color: var(--white);
+  background-color: var(--light-gray);
+}
+
+.option:active {
+  background-color: var(--card);
 }
 
 .sectionActive {

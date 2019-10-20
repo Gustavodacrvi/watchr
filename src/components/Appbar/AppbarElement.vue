@@ -159,6 +159,10 @@ export default {
   background-color: var(--light-gray) !important;
 }
 
+.link-wrapper:active {
+  background-color: var(--card) !important;
+}
+
 .sortable-ghost {
   background-color: var(--void) !important;
   transition-duration: 0 !important;

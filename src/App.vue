@@ -18,7 +18,7 @@
         <div v-if="hideNavbar" style="height: 65px;"></div>
       </transition>
       <div v-if="!isDesktop" style="height: 65px"></div>
-      <transition name="view-t" appear mode="out-in">
+      <transition name="fade-t" appear mode="out-in">
         <router-view class="router-view" :class="{hided: hideNavbar}"/>
       </transition>
     </div>
@@ -100,7 +100,8 @@ export default {
     ...mapGetters(['isDesktop', 'isStandAlone', 'l']),
     hideNavbar() {
       const isAnonymous = this.user && this.user.isAnonymous
-      if (!this.isStandAlone || !this.isDesktop || isAnonymous) return false
+      const isNotOnUser = this.$route.path !== '/user'
+      if (!this.isStandAlone || !this.isDesktop || isAnonymous || isNotOnUser) return false
       return this.hided
     },
     isMenuOpened() {
