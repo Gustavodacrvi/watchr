@@ -58,7 +58,8 @@ export default {
           calendar = this.getCalObjectByView(this.viewName, obj.task.calendar)
           obj.task.calendar = calendar
         }
-  
+        if (obj.task.calendar === undefined)
+          obj.task.calendar = null
         this.$store.dispatch('list/addTaskByIndexSmart', {
           ...obj, list: this.viewName,
         })

@@ -1,14 +1,10 @@
 <template>
   <div class="AddTask popup cb shadow rb" :class="platform">
-    <div class="title tac">
-      <h2 class="pc">{{ l['Add task'] }}</h2>
-    </div>
-    <div class="content">
-      <TaskEdit
-        :placeholder="`${l['Task name']}...`"
-        @save='add'
-      />
-    </div>
+    <TaskEdit
+      :placeholder="l['Task name...']"
+      :notesPlaceholder="l['Notes...']"
+      @save='add'
+    />
   </div>
 </template>
 

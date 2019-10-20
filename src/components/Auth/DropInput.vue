@@ -249,4 +249,8 @@ export default {
   background-color: var(--light-gray);
 }
 
+.no-back .cbd {
+  background-color: transparent !important;
+}
+
 </style>

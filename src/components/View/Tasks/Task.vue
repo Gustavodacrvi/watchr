@@ -57,14 +57,17 @@
           </div>
         </div>
       </div>
-      <Edit v-else-if="isEditing" key="editing" class="handle"
-        placeholder="Task name..."
-        :btnText="l['Save task']"
-        :task='task'
-        :showCancel='true'
-        @cancel='isEditing = false'
-        @save='saveTask'
-      />
+      <div v-else-if="isEditing" key="editing">
+        <Edit class="handle"
+          :placeholder="l['Task name...']"
+          :notesPlaceholder="l['Notes...']"
+          :btnText="l['Save task']"
+          :defaultTask='task'
+          :showCancel='true'
+          @cancel='isEditing = false'
+          @save='saveTask'
+        />
+      </div>
     </transition>
   </div>
 </template>
@@ -503,13 +506,11 @@ export default {
 
 .edit-t-enter, .edit-t-leave-to {
   opacity: 0;
-  transform: scale(.95,.95);
   transition: opacity .1s ease-out, transform .1s ease-out;
 }
 
 .edit-t-leave, .edit-t-enter-to {
-  opacity: 1;
-  transform: scale(1,1);
+  opacity: 0;
   transition: opacity .1s ease-in, transform .1s ease-in;
 }
 
