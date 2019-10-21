@@ -11,6 +11,7 @@
         v-bind='sub'
         @toggle='toggleTask(sub.id)'
         @remove='$emit("remove", sub.id)'
+        @save='str => sub.name = str'
       />
     </transition-group>
   </div>

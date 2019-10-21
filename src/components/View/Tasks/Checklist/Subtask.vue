@@ -1,11 +1,17 @@
 
 <template>
-  <div class="Subtask rb cursor handle" :class="{completed}" @mouseenter="hover = true" @mouseleave="hover = false">
+  <div class="Subtask rb cursor handle" :class="{completed}" @mouseenter="hover = true" @mouseleave="hover = false" @click.stop="editing = true">
     <span class="icons" @click="$emit('toggle')">
       <Icon v-if="!completed" class="icon" icon="circle"/>
       <Icon v-else class="icon" icon="circle-check"/>
     </span>
-    <span class="name">{{ name }}</span>
+    <span v-if="!editing" class="name">{{ str }}</span>
+    <InputApp v-else
+      v-model="str"
+      class="no-back"
+      :focus='true'
+      @enter='save'
+    />
     <div class="line-wrapper">
       <div class="line rb"></div>
     </div>
@@ -20,6 +26,7 @@
 <script>
 
 import IconVue from '../../../Icon.vue'
+import InputApp from "@/components/Auth/Input.vue"
 
 import { mapGetters } from 'vuex'
 
@@ -27,17 +34,41 @@ export default {
   props: ['name', 'completed', 'id'],
   components: {
     Icon: IconVue,
+    InputApp,
   },
   data() {
     return {
       hover: false,
+      str: this.name,
+      editing: false,
     }
+  },
+  mounted() {
+    window.addEventListener('click', this.stopEditing)
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this.stopEditing)
+  },
+  methods: {
+    stopEditing() {
+      this.str = this.name
+      this.editing = false
+    },
+    save() {
+      this.editing = false
+      this.$emit("save", this.str)
+    },
   },
   computed: {
     ...mapGetters(['isDesktop']),
     showDeleteIcon() {
       return !this.isDesktop || this.hover
-    }
+    },
+  },
+  watch: {
+    name() {
+      this.str = this.name
+    },
   }
 }
 </script>
@@ -122,6 +153,7 @@ export default {
   height: 100%;
   display: flex;
   align-items: center;
+  padding-left: 6px;
   transition: opacity .2s;
   flex-basis: 100%;
 }
