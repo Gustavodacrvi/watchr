@@ -13,7 +13,9 @@
         @remove='remove(sub.id)'
         @save='str => sub.name = str'
 
+        data-type='subtask'
         :data-id='sub.id'
+        :data-name='sub.name'
       />
     </transition-group>
   </div>
