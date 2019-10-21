@@ -44,6 +44,7 @@ export default {
         put: (j,o,item) => {
           const d = item.dataset
           if (d.type === 'floatbutton') return true
+          if (d.type === 'task') return true
           return false
         }
       },
@@ -66,6 +67,18 @@ export default {
           ins.$mount('#edit-subtask-task-renderer')
           this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
           this.applyTaskAdderEventListeners(ins)
+        } else if (type === 'task') {
+          const childs = this.draggableRoot.childNodes
+          let i = 0
+          for (const c of childs) {
+            if (c.dataset.id === item.dataset.id)
+              break
+            i++
+          }
+          this.$emit('convert-task', {
+            index: i, id: item.dataset.id, ids: this.getIds(true)
+          })
+          item.style.display = 'none'
         }
       }
     })

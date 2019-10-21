@@ -2,7 +2,6 @@
 <template>
   <transition name="trans-t" appear
     @enter='enter'
-    @afterEnter='afterEnter'
     @leave='leave'
   >
     <div class="Edit handle rb" :class="{notPopup: !popup}" :style="editStyle">
@@ -70,6 +69,7 @@
           @add='addSubtask'
           @remove='removeSubtask'
           @update='updateIds'
+          @convert-task='convertTask'
         />
         <div class="options">
           <div class="button-wrapper">
@@ -192,12 +192,12 @@ export default {
           s.height = '35px'
         else
           s.height = height + 'px'
-        setTimeout(() => this.show = true, 250)
-      }, 50)
-    },
-    afterEnter(el) {
-      setTimeout(() => {
-        el.style.height = 'auto'
+        setTimeout(() => {
+          this.show = true
+        }, 290)
+        setTimeout(() => {
+          el.style.height = 'auto'
+        }, 300)
       }, 50)
     },
     leave(el) {
@@ -230,10 +230,21 @@ export default {
     updateIds(ids) {
       this.task.order = ids
     },
+    convertTask({ids, index, id}) {
+      ids.splice(index, 0, id)
+      this.task.order = ids
+      this.task.checklist.push({
+        completed: false, id,
+        name: this.savedTasks.find(el => el.id === id).name
+      })
+
+      this.$store.dispatch('task/deleteTasks', [id])
+    },
     addSubtask({name, index, ids}) {
       const id = utils.getUid()
 
-      this.task.order.splice(index, 0, id)
+      ids.splice(index, 0, id)
+      this.task.order = ids
       this.task.checklist.push({
         name, completed: false, id,
       })
@@ -270,6 +281,7 @@ export default {
   computed: {
     ...mapState({
       savedTags: state => state.tag.tags,
+      savedTasks: state => state.task.tasks,
       savedLists: state => state.list.lists,
     }),
     ...mapGetters(['l']),
