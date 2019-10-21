@@ -10,7 +10,7 @@
         :key="sub.id"
         v-bind='sub'
         @toggle='toggleTask(sub.id)'
-        @remove='$emit("remove", sub.id)'
+        @remove='remove(sub.id)'
         @save='str => sub.name = str'
 
         :data-id='sub.id'
@@ -62,6 +62,12 @@ export default {
     toggleTask(id) {
       const subtask = this.list.find(el => el.id === id)
       subtask.completed = !subtask.completed
+    },
+    remove(id) {
+      this.$emit("remove", id)
+      setTimeout(() => {
+        this.calculateLeastNumberOfTasks()
+      }, 210)
     },
     enter(el) {
       if (this.addedTask)

@@ -196,7 +196,9 @@ export default {
       })
     },
     afterEnter(el) {
-      el.style.height = 'auto'
+      setTimeout(() => {
+        el.style.height = 'auto'
+      }, 80)
     },
     leave(el) {
       const s = el.style

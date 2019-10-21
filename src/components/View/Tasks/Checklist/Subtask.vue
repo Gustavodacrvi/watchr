@@ -1,7 +1,7 @@
 
 <template>
   <div class="Subtask rb cursor handle" :class="{completed}" @mouseenter="hover = true" @mouseleave="hover = false" @click.stop="editing = true">
-    <span class="icons" @click="$emit('toggle')">
+    <span class="icons" @click.stop="$emit('toggle')">
       <Icon v-if="!completed" class="icon" icon="circle"/>
       <Icon v-else class="icon" icon="circle-check"/>
     </span>
@@ -130,7 +130,7 @@ export default {
   color: var(--red);
 }
 
-.completed .icons, .completed .name {
+.completed .icons, .completed .name, .completed .delete {
   opacity: .2;
 }
 

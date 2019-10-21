@@ -75,7 +75,8 @@ export default {
       })
     },
     addSubtask() {
-      this.$emit('add', this.name)
+      if (this.name)
+        this.$emit('add', this.name)
       this.name = ''
     },
   },
