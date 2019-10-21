@@ -116,7 +116,7 @@ import DropInputVue from '../../Auth/DropInput.vue'
 import ButtonVue from '../../Auth/Button.vue'
 import IconDropVue from '../../IconDrop.vue'
 import IconVue from '../../Icon.vue'
-import ChecklistVue from './Checklist.vue'
+import ChecklistVue from './Checklist/Checklist.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
