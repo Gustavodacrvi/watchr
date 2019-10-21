@@ -6,6 +6,7 @@
   >
     <transition name="edit-t" mode="out-in"
       @enter='enter'
+      @leave='leave'
     >
       <div v-if="!isEditing" key="notediting"
         class="cont-wrapper task-cont-wrapper handle rb cursor"
@@ -123,6 +124,12 @@ export default {
           s.padding = '0'
           cont.classList.remove('hided')
         })
+      }
+    },
+    leave(cont) {
+      if (this.isEditing) {
+        cont.style.transitionDuration = '.1s'
+        cont.style.opacity = 0
       }
     },
     completeTask() {
@@ -537,16 +544,6 @@ export default {
 
 .sortable-ghost .cont {
   display: none;
-}
-
-.edit-t-enter, .edit-t-leave-to {
-  opacity: 0;
-  transition: opacity .1s ease-out, transform .1s ease-out;
-}
-
-.edit-t-leave, .edit-t-enter-to {
-  opacity: 0;
-  transition: opacity .1s ease-in, transform .1s ease-in;
 }
 
 .name-icon {

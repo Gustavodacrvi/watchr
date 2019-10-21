@@ -10,6 +10,8 @@
           class="no-back"
           placeholder="Heading name..."
           v-model="str"
+          :value='str'
+          @input="v => str = v"
           :focus="true"
           :options="options"
           @select="select"

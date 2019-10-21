@@ -103,7 +103,6 @@ export default {
     return {
       addedTask: false,
       atLeastOneRenderedTask: false,
-      lastAddedTaskId: '',
       test: false,
     }
   },
@@ -135,6 +134,7 @@ export default {
           const d = item.dataset
           if (d.type === 'task') return true
           if (d.type === 'floatbutton') return true
+          if (d.type === 'subtask') return true
           if (d.type === 'appnav-element') return true
           if (d.type === 'headingbutton') return true
           return false
@@ -168,16 +168,15 @@ export default {
         
         if (type !== 'addtask')
           item.style.display = 'none'
-        if (type === 'task' && this.onSortableAdd)
+        else if (type === 'task' && this.onSortableAdd)
           this.onSortableAdd(evt, item, type, this.getIds(true))
-        if (type === 'floatbutton') {
+        else if (type === 'floatbutton') {
           addEdit(TaskEditTemplate, this.add, {
               key: 'Edit',
               placeholder: this.l['Task name...'],
               notesPlaceholder: this.l['Notes...'], showCancel: true, btnText: this.l['Add task']
             })
-        }
-        else if (type === 'headingbutton') {
+        } else if (type === 'headingbutton') {
           const h = this.headingEdit
           addEdit(HeadingEditVue, this.addHeading, {
               key: 'EditHeading',
@@ -457,7 +456,10 @@ export default {
           const node = document.createElement('div')
           node.setAttribute('id', 'edit-task-renderer')
           if (pos === 'begin') {
-            this.draggableRoot.childNodes[0].prepend(node)
+            const child = this.draggableRoot.childNodes[0]
+            if (child)
+              child.prepend(node)
+            else this.draggableRoot.appendChild(node)
           } else if (pos === 'end') {
             this.draggableRoot.appendChild(node)
           }

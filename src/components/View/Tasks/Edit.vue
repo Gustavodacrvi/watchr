@@ -2,7 +2,6 @@
 <template>
   <transition name="trans-t" appear
     @enter='enter'
-    @afterEnter='afterEnter'
     @leave='leave'
   >
     <div class="Edit handle rb" :class="{notPopup: !popup}" :style="editStyle">
@@ -59,10 +58,18 @@
           v-model="task.notes"
           :options="[]"
           :placeholder="notesPlaceholder"
-          @enter='save'
           @cancel="cancel"
           @goup='$emit("goup")'
           @godown='$emit("godown")'
+        />
+        <Checklist
+          :list='task.checklist'
+          :order='task.order'
+          :toggle='toggleChecklist'
+          @add='addSubtask'
+          @remove='removeSubtask'
+          @update='updateIds'
+          @convert-task='convertTask'
         />
         <div class="options">
           <div class="button-wrapper">
@@ -91,6 +98,12 @@
               :calendar="true"
               :calendarCall='selectDate'
             />
+            <Icon v-if="doesntHaveChecklist"
+              style="margin-right: 6px;margin-top: 1px"
+              class="cursor"
+              icon="circle-check"
+              @click="addChecklist"
+            />
           </div>
         </div>
       </div>
@@ -104,6 +117,8 @@ import TagVue from '../Tag.vue'
 import DropInputVue from '../../Auth/DropInput.vue'
 import ButtonVue from '../../Auth/Button.vue'
 import IconDropVue from '../../IconDrop.vue'
+import IconVue from '../../Icon.vue'
+import ChecklistVue from './Checklist/Checklist.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -115,12 +130,15 @@ export default {
   components: {
     DropInput: DropInputVue,
     ButtonApp: ButtonVue,
+    Checklist: ChecklistVue,
     IconDrop: IconDropVue,
+    Icon: IconVue,
     Tag: TagVue,
   },
   data() {
     return {
       show: false,
+      toggleChecklist: false,
       task: {
         name: '',
         priority: '',
@@ -129,6 +147,8 @@ export default {
         calendar: null,
         heading: null,
         tags: [],
+        checklist: [],
+        order: [],
       },
       optionsType: '',
       options: [],
@@ -138,11 +158,22 @@ export default {
     if (this.defaultTask) {
       const t = this.defaultTask
       this.task = {...t}
+
+      this.task.checklist = t.checklist.slice()
+      this.task.order = t.order.slice()
+      if (!this.task.checklist)
+        this.task.checklist = []
+      if (!this.task.order)
+        this.task.order = []
+
       this.task.list = this.listName
       this.task.tags = this.getTagNames
     }
   },
   methods: {
+    addChecklist() {
+      this.toggleChecklist = !this.toggleChecklist
+    },
     cancel() {
       this.leave(this.$el)
       setTimeout(() => {
@@ -161,11 +192,13 @@ export default {
           s.height = '35px'
         else
           s.height = height + 'px'
-        setTimeout(() => this.show = true, 250)
-      })
-    },
-    afterEnter(el) {
-      el.style.height = 'auto'
+        setTimeout(() => {
+          this.show = true
+        }, 290)
+        setTimeout(() => {
+          el.style.height = 'auto'
+        }, 300)
+      }, 50)
     },
     leave(el) {
       const s = el.style
@@ -189,6 +222,33 @@ export default {
         str += s + ' '
       str = str.slice(0, -1)
       this.task.name = str
+    },
+    removeSubtask(id) {
+      const i = this.task.checklist.findIndex(el => el.id === id)
+      this.task.checklist.splice(i, 1)
+    },
+    updateIds(ids) {
+      this.task.order = ids
+    },
+    convertTask({ids, index, id}) {
+      ids.splice(index, 0, id)
+      this.task.order = ids
+      this.task.checklist.push({
+        completed: false, id,
+        name: this.savedTasks.find(el => el.id === id).name
+      })
+
+      this.$store.dispatch('task/deleteTasks', [id])
+    },
+    addSubtask({name, index, ids}) {
+      const id = utils.getUid()
+
+      ids.splice(index, 0, id)
+      this.task.order = ids
+      this.task.checklist.push({
+        name, completed: false, id,
+      })
+      this.name = ''
     },
     save() {
       let n = this.task.name
@@ -221,9 +281,13 @@ export default {
   computed: {
     ...mapState({
       savedTags: state => state.tag.tags,
+      savedTasks: state => state.task.tasks,
       savedLists: state => state.list.lists,
     }),
     ...mapGetters(['l']),
+    doesntHaveChecklist() {
+      return this.task.checklist.length === 0
+    },
     editStyle() {
       if (this.popup)
         return {
@@ -496,6 +560,7 @@ export default {
 
 .icons {
   display: inline-flex;
+  flex-basis: 100%;
   flex-direction: row-reverse;
 }
 

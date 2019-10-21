@@ -12,6 +12,7 @@ export default {
   'Password': 'Password',
   'Search': 'Search',
   'Task name...': 'Task name...',
+  "Subtask name...": "Subtask name...",
   'Confirm password': 'Confirm password',
   'Create account': 'Create account',
   'Today': 'Today',

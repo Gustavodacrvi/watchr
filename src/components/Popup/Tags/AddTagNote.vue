@@ -7,6 +7,8 @@
       <InputApp
         :focus="true"
         v-model="note"
+        :value='note'
+        @input="v => note = v"
         :options="[]"
         :placeholder="l['Note...']"
         @enter='addNote'

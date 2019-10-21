@@ -6,7 +6,8 @@
     <div class="content">
       <DropInput
         :placeholder="['Tag name'] + '...'"
-        v-model="name"
+        :value='name'
+        @input='v => name = v'
         :focus="true"
         :options='options'
         @select="select"

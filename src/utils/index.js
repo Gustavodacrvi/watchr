@@ -1,5 +1,7 @@
+
 import mom from "moment"
 import moment from "./moment"
+import firebase from 'firebase/app'
 
 export default {
   getDataFromFirestoreSnapshot(state, changes, arrName) {
@@ -15,6 +17,9 @@ export default {
         const index = state[arrName].findIndex(el => el.id === change.doc.id)
         state[arrName].splice(index, 1, {...change.doc.data(), id: change.doc.id})
       }
+  },
+  getUid() {
+    return firebase.firestore().collection('tasks').doc().id
   },
   checkMissingIdsAndSortArr(order, arr, property) {
     let name = 'id'
