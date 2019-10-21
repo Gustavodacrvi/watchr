@@ -78,10 +78,7 @@ export default {
     addSubtask() {
       if (this.name)
         this.$emit('add', this.name)
-      console.log(this.name)
-      setTimeout(() => {
-        this.name = ''
-      }, 500)
+      this.name = ''
     },
   },
   computed: {

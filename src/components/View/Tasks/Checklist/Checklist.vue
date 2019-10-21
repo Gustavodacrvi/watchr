@@ -37,6 +37,7 @@ export default {
     SubtaskEdit: EditVue,
   },
   mounted() {
+    this.calculateLeastNumberOfTasks()
     window.addEventListener('click', this.calculateLeastNumberOfTasks)
     const sortable = new Sortable(this.draggableRoot, {
       group: {name: 'sub-task-renderer',
@@ -52,6 +53,20 @@ export default {
 
       onUpdate: () => {
         this.$emit('update', this.getIds(true))
+      },
+      onAdd: (evt) => {
+        const item = evt.item
+        const type = item.dataset.type
+
+        if (type === 'floatbutton') {
+          const ins = this.taskAdderInstance()
+
+          const el = this.$el.querySelector('.action-button')
+          el.setAttribute('id', 'edit-subtask-task-renderer')
+          ins.$mount('#edit-subtask-task-renderer')
+          this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
+          this.applyTaskAdderEventListeners(ins)
+        }
       }
     })
   },
@@ -65,6 +80,18 @@ export default {
     }
   },
   methods: {
+    applyTaskAdderEventListeners(ins) {
+      ins.$on('add', this.addSubtask)
+      ins.$on('goup', () => this.moveTaskRenderer('up'))
+      ins.$on('godown', () => this.moveTaskRenderer('down'))
+      const hide = () => {
+        ins.$destroy()
+        const $el = ins.$el
+        $el.parentNode.removeChild($el)
+        window.removeEventListener('click', hide)
+      }
+      window.addEventListener('click', hide)
+    },
     toggleTask(id) {
       const subtask = this.list.find(el => el.id === id)
       subtask.completed = !subtask.completed
@@ -101,16 +128,7 @@ export default {
         this.draggableRoot.appendChild(el)
         ins.$mount('#edit-subtask-task-renderer')
         this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
-        ins.$on('add', this.addSubtask)
-        ins.$on('goup', () => this.moveTaskRenderer('up'))
-        ins.$on('godown', () => this.moveTaskRenderer('down'))
-        const hide = () => {
-          ins.$destroy()
-          const $el = ins.$el
-          $el.parentNode.removeChild($el)
-          window.removeEventListener('click', hide)
-        }
-        window.addEventListener('click', hide)
+        this.applyTaskAdderEventListeners(ins)
       })
     },
     moveTaskRenderer(dir) {

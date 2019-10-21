@@ -193,12 +193,12 @@ export default {
         else
           s.height = height + 'px'
         setTimeout(() => this.show = true, 250)
-      })
+      }, 50)
     },
     afterEnter(el) {
       setTimeout(() => {
         el.style.height = 'auto'
-      }, 80)
+      }, 50)
     },
     leave(el) {
       const s = el.style
