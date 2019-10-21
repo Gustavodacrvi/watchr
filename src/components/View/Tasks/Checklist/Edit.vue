@@ -4,9 +4,14 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="Edit">
+    <div class="Edit" @click.stop>
       <div class="wrapper rb">
-        asdf
+        <InputApp
+          v-model="name"
+          :focus='true'
+          :placeholder='l["Subtask name..."]'
+          @enter='addSubtask'
+        />
       </div>
     </div>
   </transition>
@@ -14,7 +19,19 @@
 
 <script>
 
+import InputApp from '@/components/Auth/Input.vue'
+
+import { mapGetters } from 'vuex'
+
 export default {
+  components: {
+    InputApp,
+  },
+  data() {
+    return {
+      name: '',
+    }
+  },
   methods: {
     leave(el) {
       const cont = el.getElementsByClassName('wrapper')[0]
@@ -56,8 +73,14 @@ export default {
         s.width = '100%'
         c.width = '100%'
       })
-    }
-  }
+    },
+    addSubtask() {
+      this.$emit('add', this.name)
+    },
+  },
+  computed: {
+    ...mapGetters(['l']),
+  },
 }
 
 </script>

@@ -1,6 +1,6 @@
 
 <template>
-  <div class="Subtask rb cursor" :class="{completed}">
+  <div class="Subtask rb cursor handle" :class="{completed}">
     <span class="icons" @click="$emit('toggle')">
       <Icon v-if="!completed" class="icon" icon="circle"/>
       <Icon v-else class="icon" icon="circle-check"/>

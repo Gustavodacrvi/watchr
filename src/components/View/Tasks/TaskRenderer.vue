@@ -103,7 +103,6 @@ export default {
     return {
       addedTask: false,
       atLeastOneRenderedTask: false,
-      lastAddedTaskId: '',
       test: false,
     }
   },
@@ -457,7 +456,10 @@ export default {
           const node = document.createElement('div')
           node.setAttribute('id', 'edit-task-renderer')
           if (pos === 'begin') {
-            this.draggableRoot.childNodes[0].prepend(node)
+            const child = this.draggableRoot.childNodes[0]
+            if (child)
+              child.prepend(node)
+            else this.draggableRoot.appendChild(node)
           } else if (pos === 'end') {
             this.draggableRoot.appendChild(node)
           }

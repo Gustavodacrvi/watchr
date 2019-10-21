@@ -59,7 +59,6 @@
           v-model="task.notes"
           :options="[]"
           :placeholder="notesPlaceholder"
-          @enter='save'
           @cancel="cancel"
           @goup='$emit("goup")'
           @godown='$emit("godown")'
@@ -68,6 +67,7 @@
           :list='task.checklist'
           :order='task.order'
           :toggle='toggleChecklist'
+          @add='addSubtask'
         />
         <div class="options">
           <div class="button-wrapper">
@@ -96,7 +96,7 @@
               :calendar="true"
               :calendarCall='selectDate'
             />
-            <Icon
+            <Icon v-if="doesntHaveChecklist"
               style="margin-right: 6px;margin-top: 1px"
               class="cursor"
               icon="circle-check"
@@ -156,6 +156,14 @@ export default {
     if (this.defaultTask) {
       const t = this.defaultTask
       this.task = {...t}
+
+      this.task.checklist = t.checklist.slice()
+      this.task.order = t.order.slice()
+      if (!this.task.checklist)
+        this.task.checklist = []
+      if (!this.task.order)
+        this.task.order = []
+
       this.task.list = this.listName
       this.task.tags = this.getTagNames
     }
@@ -211,6 +219,14 @@ export default {
       str = str.slice(0, -1)
       this.task.name = str
     },
+    addSubtask({name, index, ids}) {
+      const id = utils.getUid()
+
+      this.task.order.splice(index, 0, id)
+      this.task.checklist.push({
+        name, completed: false, id,
+      })
+    },
     save() {
       let n = this.task.name
       const i = n.indexOf(' $')
@@ -245,6 +261,9 @@ export default {
       savedLists: state => state.list.lists,
     }),
     ...mapGetters(['l']),
+    doesntHaveChecklist() {
+      return this.task.checklist.length === 0
+    },
     editStyle() {
       if (this.popup)
         return {
