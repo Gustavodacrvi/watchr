@@ -68,6 +68,7 @@
           :order='task.order'
           :toggle='toggleChecklist'
           @add='addSubtask'
+          @remove='removeSubtask'
         />
         <div class="options">
           <div class="button-wrapper">
@@ -219,6 +220,10 @@ export default {
       str = str.slice(0, -1)
       this.task.name = str
     },
+    removeSubtask(id) {
+      const i = this.task.checklist.findIndex(el => el.id === id)
+      this.task.checklist.splice(i, 1)
+    },
     addSubtask({name, index, ids}) {
       const id = utils.getUid()
 
@@ -226,6 +231,7 @@ export default {
       this.task.checklist.push({
         name, completed: false, id,
       })
+      this.name = ''
     },
     save() {
       let n = this.task.name

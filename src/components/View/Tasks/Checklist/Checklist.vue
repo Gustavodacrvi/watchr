@@ -10,6 +10,7 @@
         :key="sub.id"
         v-bind='sub'
         @toggle='toggleTask(sub.id)'
+        @remove='$emit("remove", sub.id)'
       />
     </transition-group>
   </div>

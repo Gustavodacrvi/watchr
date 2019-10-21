@@ -1,6 +1,6 @@
 
 <template>
-  <div class="Subtask rb cursor handle" :class="{completed}">
+  <div class="Subtask rb cursor handle" :class="{completed}" @mouseenter="hover = true" @mouseleave="hover = false">
     <span class="icons" @click="$emit('toggle')">
       <Icon v-if="!completed" class="icon" icon="circle"/>
       <Icon v-else class="icon" icon="circle-check"/>
@@ -9,6 +9,11 @@
     <div class="line-wrapper">
       <div class="line rb"></div>
     </div>
+    <transition name="fade-t">
+      <div v-if="showDeleteIcon" class="delete-wrapper">
+        <Icon icon="trash" class="delete" @click="$emit('remove')"/>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -16,10 +21,23 @@
 
 import IconVue from '../../../Icon.vue'
 
+import { mapGetters } from 'vuex'
+
 export default {
-  props: ['name', 'completed'],
+  props: ['name', 'completed', 'id'],
   components: {
     Icon: IconVue,
+  },
+  data() {
+    return {
+      hover: false,
+    }
+  },
+  computed: {
+    ...mapGetters(['isDesktop']),
+    showDeleteIcon() {
+      return !this.isDesktop || this.hover
+    }
   }
 }
 </script>
@@ -59,6 +77,26 @@ export default {
 
 .Subtask:hover {
   background-color: var(--light-gray);
+}
+
+.delete-wrapper {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  width: 30px;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete {
+  transition-duration: .2s;
+}
+
+.delete:hover {
+  color: var(--red);
 }
 
 .completed .icons, .completed .name {
