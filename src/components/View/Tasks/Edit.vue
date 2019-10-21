@@ -64,6 +64,11 @@
           @goup='$emit("goup")'
           @godown='$emit("godown")'
         />
+        <Checklist
+          :list='task.checklist'
+          :order='task.order'
+          :toggle='toggleChecklist'
+        />
         <div class="options">
           <div class="button-wrapper">
             <div class="button">
@@ -91,6 +96,12 @@
               :calendar="true"
               :calendarCall='selectDate'
             />
+            <Icon
+              style="margin-right: 6px;margin-top: 1px"
+              class="cursor"
+              icon="circle-check"
+              @click="addChecklist"
+            />
           </div>
         </div>
       </div>
@@ -104,6 +115,8 @@ import TagVue from '../Tag.vue'
 import DropInputVue from '../../Auth/DropInput.vue'
 import ButtonVue from '../../Auth/Button.vue'
 import IconDropVue from '../../IconDrop.vue'
+import IconVue from '../../Icon.vue'
+import ChecklistVue from './Checklist.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -115,12 +128,15 @@ export default {
   components: {
     DropInput: DropInputVue,
     ButtonApp: ButtonVue,
+    Checklist: ChecklistVue,
     IconDrop: IconDropVue,
+    Icon: IconVue,
     Tag: TagVue,
   },
   data() {
     return {
       show: false,
+      toggleChecklist: false,
       task: {
         name: '',
         priority: '',
@@ -129,6 +145,8 @@ export default {
         calendar: null,
         heading: null,
         tags: [],
+        checklist: [],
+        order: [],
       },
       optionsType: '',
       options: [],
@@ -143,6 +161,9 @@ export default {
     }
   },
   methods: {
+    addChecklist() {
+      this.toggleChecklist = !this.toggleChecklist
+    },
     cancel() {
       this.leave(this.$el)
       setTimeout(() => {
@@ -496,6 +517,7 @@ export default {
 
 .icons {
   display: inline-flex;
+  flex-basis: 100%;
   flex-direction: row-reverse;
 }
 
