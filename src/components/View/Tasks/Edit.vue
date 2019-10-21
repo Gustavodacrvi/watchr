@@ -159,8 +159,10 @@ export default {
       const t = this.defaultTask
       this.task = {...t}
 
-      this.task.checklist = t.checklist.slice()
-      this.task.order = t.order.slice()
+      if (this.task.checklist)
+        this.task.checklist = t.checklist.slice()
+      if (t.order)
+        this.task.order = t.order.slice()
       if (!this.task.checklist)
         this.task.checklist = []
       if (!this.task.order)
