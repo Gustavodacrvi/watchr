@@ -94,7 +94,7 @@ export default {
 
 .Checklist {
   margin: 0;
-  padding-left: 8px;
+  padding: 0 8px;
   transition: margin .2s;
 }
 

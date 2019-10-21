@@ -2,6 +2,7 @@
 <template>
   <transition name="trans" appear
     @enter='enter'
+    @leave='leave'
   >
     <div class="Edit">
       <div class="wrapper rb">
@@ -15,6 +16,18 @@
 
 export default {
   methods: {
+    leave(el) {
+      const cont = el.getElementsByClassName('wrapper')[0]
+      const s = el.style
+      const c = cont.style
+      const height = el.offsetHeight
+
+      s.width = 0
+      c.width = 0
+      s.height = 0
+      c.height = 0
+      c.opacity = 0
+    },
     enter(el) {
       const cont = el.getElementsByClassName('wrapper')[0]
       const s = el.style
@@ -27,6 +40,7 @@ export default {
       c.width = 0
       s.height = 0
       c.height = 0
+      c.opacity = 0
       setTimeout(() => {
         c.transitionDuration = '.2s'
         s.transitionDuration = '.2s'
@@ -38,6 +52,7 @@ export default {
           s.height = height + 'px'
           c.height = height + 'px'
         }
+        c.opacity = 1
         s.width = '100%'
         c.width = '100%'
       })
@@ -64,7 +79,7 @@ export default {
 }
 
 .wrapper {
-  background-color: var(--void);
+  background-color: var(--dark);
 }
 
 </style>
