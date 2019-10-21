@@ -9,20 +9,34 @@ export default {
   data() {
     return {
       str: '',
+      control: false,
     }
   },
   created() {
     this.str = this.value
   },
   mounted() {
-    if (this.focus) {
-      setTimeout(() => this.$el.focus(), 200)
-    }
+    this.focusInput()
   },
   methods: {
+    focusInput() {
+      setTimeout(() => {
+        if (this.focus && this.$el)
+          this.$el.focus()
+      }, 200)
+    },
+    keyup({key}) {
+      if (key === 'Control') this.control = false
+    },
     keydown({key}) {
-      if (key === 'Enter') this.$emit('enter')
       evt => $emit('keydown', evt)
+      if (key === 'Enter') this.$emit('enter')
+      else if (key === 'Control') this.control = true
+      if (this.control) {
+        if (key === 'ArrowLeft') this.$emit('goup')
+        if (key === 'ArrowRight') this.$emit('godown')
+        this.focusInput()
+      }
     }
   },
   watch: {

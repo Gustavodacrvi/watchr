@@ -12,6 +12,8 @@
           :focus='true'
           :placeholder='l["Subtask name..."]'
           @enter='addSubtask'
+          @goup='$emit("goup")'
+          @godown='$emit("godown")'
         />
       </div>
     </div>

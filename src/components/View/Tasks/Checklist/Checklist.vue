@@ -131,8 +131,22 @@ export default {
         this.applyTaskAdderEventListeners(ins)
       })
     },
-    moveTaskRenderer(dir) {
-      console.log('move task renderer', name)
+    moveTaskRenderer(dire) {
+      const i = this.getTaskRendererPosition()
+      const childNodes = this.draggableRoot.childNodes
+      const adder = childNodes[i]
+      let element = null
+      if (dire === 'up')
+        element = childNodes[i - 1]
+      else element = childNodes[i + 1]
+      if (element && adder) {
+        if (dire === 'up')
+          this.draggableRoot.insertBefore(adder, element)
+        else
+          this.draggableRoot.insertBefore(element, adder)
+        const input = adder.getElementsByClassName('input')[0]
+        if (input) input.focus()
+      }
     },
     fixTaskRenderer() {
       setTimeout(() => {
