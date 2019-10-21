@@ -5,7 +5,8 @@
       rows='1'
       type='text'
       autocomplete='off'
-      v-model.trim='str'
+      :value='str'
+      @input='v => str = v.target.value.trim()'
       @blur="blur"
       @focus="onFocus"
       @keydown="keydown"

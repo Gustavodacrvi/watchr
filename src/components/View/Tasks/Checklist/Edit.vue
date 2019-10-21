@@ -7,7 +7,8 @@
     <div class="Edit" @click.stop>
       <div class="wrapper rb">
         <InputApp
-          v-model="name"
+          :value='name'
+          @input='v => name = v'
           :focus='true'
           :placeholder='l["Subtask name..."]'
           @enter='addSubtask'
@@ -77,7 +78,10 @@ export default {
     addSubtask() {
       if (this.name)
         this.$emit('add', this.name)
-      this.name = ''
+      console.log(this.name)
+      setTimeout(() => {
+        this.name = ''
+      }, 500)
     },
   },
   computed: {

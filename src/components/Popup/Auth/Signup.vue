@@ -11,19 +11,22 @@
       <InputApp
         :placeholder='l["E-mail"] + ":"'
         :focus="true"
-        v-model="eMail"
+        :value='eMail'
+        @input='v => eMail = v'
       />
       <InputApp
         class="mt"
         :placeholder='l["Password"] + ":"'
         type="password"
-        v-model="password"
+        :value='password'
+        @input='v => password = v'
       />
       <InputApp
         class="mt"
         type="password"
         :placeholder='l["Confirm password"] + ":"'
-        v-model="conPassword"
+        :value='conPassword'
+        @input='v => conPassword = v'
       />
       <ButtonApp
         class="mt"

@@ -8,13 +8,15 @@
       <InputApp
         :placeholder='l["E-mail"] + ":"'
         :focus="true"
-        v-model="eMail"
+        :value='eMail'
+        @input='v => eMail = v'
       />
       <InputApp
         class="mt"
         :placeholder='l["Password"] + ":"'
         type="password"
-        v-model="password"
+        :value='password'
+        @input='v => password = v'
       />
       <ButtonApp
         class="mt"

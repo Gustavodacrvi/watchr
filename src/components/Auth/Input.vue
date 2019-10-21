@@ -1,5 +1,5 @@
 <template>
-  <input v-model.trim="str" class="Input cbd" autocomplete="off" type="text" @keydown="keydown">
+  <input :value="str" @input="v => str = v.target.value" class="Input cbd" autocomplete="off" type="text" @keydown="keydown">
 </template>
 
 <script>

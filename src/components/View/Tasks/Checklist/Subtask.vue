@@ -7,7 +7,8 @@
     </span>
     <span v-if="!editing" class="name">{{ str }}</span>
     <InputApp v-else
-      v-model="str"
+      :value='str'
+      @input='v => str = v'
       class="no-back"
       :focus='true'
       @enter='save'

@@ -39,7 +39,13 @@ export default {
   mounted() {
     window.addEventListener('click', this.calculateLeastNumberOfTasks)
     const sortable = new Sortable(this.draggableRoot, {
-      name: 'sub-task-renderer',
+      group: {name: 'sub-task-renderer',
+        put: (j,o,item) => {
+          const d = item.dataset
+          if (d.type === 'floatbutton') return true
+          return false
+        }
+      },
       delay: 150,
       delayOnTouchOnly: true,
       handle: '.handle',

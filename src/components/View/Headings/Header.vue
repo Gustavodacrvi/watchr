@@ -9,7 +9,8 @@
       <input v-else-if="isEditable"
         class="input"
         autocomplete="off"
-        v-model="title"
+        :value="title"
+        @input='v => title = v.target.value'
         ref='input'
         @click.stop
         @keydown="keydown"
@@ -31,7 +32,8 @@
       </div>
     </transition>
     <textarea v-show="notes && editingNote" @click.stop
-      v-model="note"
+      :value='note'
+      @input='v => note = v.target.value'
       ref="notes"
       class="notes"
       @keydown="noteKeydown"
