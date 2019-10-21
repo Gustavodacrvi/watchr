@@ -76,6 +76,7 @@ export default {
     },
     addSubtask() {
       this.$emit('add', this.name)
+      this.name = ''
     },
   },
   computed: {

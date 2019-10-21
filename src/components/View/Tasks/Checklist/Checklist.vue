@@ -12,6 +12,8 @@
         @toggle='toggleTask(sub.id)'
         @remove='$emit("remove", sub.id)'
         @save='str => sub.name = str'
+
+        :data-id='sub.id'
       />
     </transition-group>
   </div>
@@ -41,6 +43,10 @@ export default {
       delay: 150,
       delayOnTouchOnly: true,
       handle: '.handle',
+
+      onUpdate: () => {
+        this.$emit('update', this.getIds(true))
+      }
     })
   },
   beforeDestroy() {
@@ -186,6 +192,14 @@ export default {
 
 .trans-leave, .trans-enter-to {
   opacity: 1;
+}
+
+.sortable-ghost {
+  background-color: var(--back-color) !important;
+  transition-duration: 0;
+  transition: none;
+  height: 38px;
+  padding: 0;
 }
 
 </style>

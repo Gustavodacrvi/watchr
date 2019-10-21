@@ -69,6 +69,7 @@
           :toggle='toggleChecklist'
           @add='addSubtask'
           @remove='removeSubtask'
+          @update='updateIds'
         />
         <div class="options">
           <div class="button-wrapper">
@@ -223,6 +224,9 @@ export default {
     removeSubtask(id) {
       const i = this.task.checklist.findIndex(el => el.id === id)
       this.task.checklist.splice(i, 1)
+    },
+    updateIds(ids) {
+      this.task.order = ids
     },
     addSubtask({name, index, ids}) {
       const id = utils.getUid()
