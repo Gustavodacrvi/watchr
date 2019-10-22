@@ -221,6 +221,44 @@ export default {
         ...task,
       })
     },
+    convertToList(c, task) {
+      const batch = fire.batch()
+
+      const list = fire.collection('lists').doc()
+      const oldTask = fire.collection('tasks').doc(task.id)
+      batch.delete(oldTask)
+      
+      const ids = []
+      if (task.checklist)
+        for (const t of task.checklist) {
+          const ref = fire.collection('tasks').doc(t.id)
+          batch.set(ref, {
+            userId: uid(),
+            name: t.name,
+            priority: '',
+            list: list.id,
+            notes: '',
+            calendar: null,
+            heading: null,
+            tags: [],
+            checklist: [],
+            order: [],
+          })
+          ids.push(t.id)
+        }
+
+      batch.set(list, {
+        userId: uid(),
+        smartViewsOrders: {},
+        name: task.name,
+        descr: '',
+        tasks: ids,
+        headings: [],
+        headingsOrder: [],
+      })
+
+      batch.commit()
+    },
     deleteTasks(c, ids) {
       const batch = fire.batch()
 

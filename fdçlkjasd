@@ -1,0 +1,97 @@
+[33mc5d47b958ce5469a7c9db30a09fb293e3578e303[m[33m ([m[1;36mHEAD -> [m[1;32mconvert-task-list[m[33m)[m buttons transition
+[33m384dd629a977d5e21fbbb780f4be699a8ff04216[m view button
+[33m6748ca22f3ac6fc1334e4eaef1c31969396137ee[m convert task to list
+[33m36f1116ef9a528811546cced12023cb1c7a9574e[m convert task to list
+[33mbe1149f80e6a398d5b4f1a35dd5b77113549a078[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/convert-task-list[m[33m, [m[1;31morigin/HEAD[m[33m)[m heading being hided on every task update
+[33m616474aaefc8cbb882bb3f412b2870c20206b836[m Merge pull request #170 from Gustavodacrvi/options-right-click
+[33mc5da6a0703fe51dcaba9325a1ba3d6f3ee538da8[m[33m ([m[1;31morigin/options-right-click[m[33m, [m[1;32moptions-right-click[m[33m)[m final
+[33m9ee55ec677435093d545334613ea5a7dc3466d1c[m open icon drop on contextmenu click
+[33me5d7b2e0b529ee9356cb70d166e6d22f60a0d669[m show hided headings button showing up on Today view
+[33m08cf8eef2924be9604609a7b80a764125b34f9c0[m Merge pull request #169 from Gustavodacrvi/hide-headings
+[33me5a78da305d0249bd9b64a2c7c274b5585db0895[m[33m ([m[1;31morigin/hide-headings[m[33m, [m[1;32mhide-headings[m[33m)[m final
+[33m781707dcb6f0e266dbe4a96910b002aeb866ee4d[m show and hide hided headings
+[33mb3ffc43045e9dc7e1e8a2565b30206ec3016354c[m show hided headings button
+[33m0ceabcf8bd23d89ff2bcb2f2c0c4b505e3eda98b[m show archive icon on heading
+[33m14c2130de0a36378737be35f7cf56d7db592c745[m toggle heading autohide action
+[33md52dc97a624c69523abd673692b403f1aef3c0b7[m archive icon
+[33m01d8337d72ec98251abad1ef35aab3841b8fced2[m pie progress bug
+[33mb071735c9f336593a1555a9573c1672cc0d6dc5b[m Merge pull request #168 from Gustavodacrvi/list-pie
+[33m7d864f0f5119aa2e0b20998371aa2e3e200e771c[m[33m ([m[1;31morigin/list-pie[m[33m, [m[1;32mlist-pie[m[33m)[m final
+[33m4f6ab50ba47662ca6bb18cf37665827b378ca34d[m final
+[33m85c2f1930b718ddff0a9b99cd9ac59b642f6d3cf[m list progress pie
+[33m7605d2faa14b413ce5125e830ad2a5455301094f[m main view list progress
+[33mdc39e88a1bd609af254a55d8e126313874fa4038[m main view progress pie
+[33m46b54722e394f7f88b6f204b7143c659e72b6b2a[m minor issues
+[33m6b45a647a4f7534a6ace30758190a1cd4bf0b7b7[m production bug
+[33maedb1e7a50f84110702e33128e3ce03b7acc80d6[m Merge pull request #167 from Gustavodacrvi/checklists
+[33m9ed7c0bd3d06894a3a825588bd934c6e802882de[m[33m ([m[1;31morigin/checklists[m[33m, [m[1;32mchecklists[m[33m)[m update
+[33m0bfa3117d766334b7899c63a3d340c53a0e2b62b[m final
+[33me2ebf7def1f04688040804755e613972df384f78[m drop outer task to checklist
+[33m5933c119a4b6df8c4a20aa74d40b0bd8e63b344e[m move subtask adder up and down
+[33m2479243a9c9ee795334d173c808275d1a847f5b8[m drop floatting button on checklist
+[33m570da90f018eb52016018ced66e9feb7415c2d2c[m fixed v-model not working on mobile
+[33m159c423c2c0ecdbb763c92816a3a599c981a05ea[m minor issues with subtasks on mobile
+[33m6c227d0c8a9df182886078b015e0c6af54f3f154[m update checklist order
+[33mc134769a1638a5d0df409d23207905108b14f6e6[m save subtask name
+[33m3ffddf94afcd7d1120d0fab415ec166352ec5ebb[m remove subtask
+[33m8158ea5502dd3460b49fec2ae41edf7e3d802e28[m add subtasks
+[33mf0fb953cb8b575b8572b059467e16c4aa617e619[m leave subtask transition
+[33m855665ee9d7c827523fb1a1d4624e9b363574387[m Add task vue
+[33mdc64942d887beefeb2c996df8578a233ba5b1086[m subtask transitoin
+[33m319d9af30b8bc30e9f7161fbff521915111eca41[m checklist transitions
+[33md39a8346bf02584933c4f7a351c8686f668df5ff[m Checklist.vue component
+[33me0b7b53791190fca25d6a462cf28c8bbc9ccfc33[m minor bug
+[33m3c2f973f5053458d032144bd62e7ccd752c28b6e[m Merge pull request #166 from Gustavodacrvi/task-adder-remake
+[33m9ebe32f8bb19841939aa01aa55328d0fda5d4bae[m[33m ([m[1;31morigin/task-adder-remake[m[33m, [m[1;32mtask-adder-remake[m[33m)[m final
+[33ma9c3d9b66f1bf64b6707f86a46cf60d1db32f988[m add links to task names
+[33mafc14f2655b54eb36e5f6d6d9a70511f4bb8b21c[m better heading adder ui
+[33m0ed931fdd077366cf75fd632efc1130d57dc1102[m fixed desktop header icons alignment
+[33m531e0e5d919617a404ef917810c216d220de8d8f[m fix completed view
+[33m24f8698d61ab328934bdd8667d13636fa70a9fa2[m better new task adder ui
+[33m6d591cf0a9e4bfd7c8a0ca4772d3ce8705c739b1[m new task adder
+[33mc8e9cdc77d97f8f375bed0830ca9e11dd743ec90[m Merge pull request #165 from Gustavodacrvi/support
+[33m33c25a1386ca73536a49dce729a6172c70da7212[m[33m ([m[1;31morigin/support[m[33m, [m[1;32msupport[m[33m)[m final
+[33m69842a24156e8b3ea45bdc4f260765b7b38b194b[m bug
+[33mcfea16e2fed44b89b430aeb9f13885c8106d9f12[m complete search support articles
+[33mba69a2b99818085fa36fc37bd71cff548e84dd8d[m articles and tags data
+[33m40e8c57796c7ef1521a53201bfa3ccc88bac4c66[m support path links
+[33mf0c81e8ada9ac5f7dcb48edc13ce9c4b52fe0958[m tags
+[33m03cf602df2026a56401acd2138afb0cf9ce29b84[m nested rules
+[33mdba1b9cbbbbcccd9f070564777e6b8d6950a5d41[m search bar
+[33m2b560c97420af6b8df8938857dd35063ddbb6888[m popup fix
+[33m7c6bfd23b9399a60ba35dd94b0ffae937225983f[m update message
+[33m2c171165a01048ff4f86fa2a5f5031ba147ccb51[m[33m ([m[1;31morigin/performance[m[33m, [m[1;32mperformance[m[33m)[m import from template
+[33m8aa5fa5ca4b536ea35ece782370d6846e0f642aa[m get file with icon drop option
+[33m59cfd71393c0ab2ebd3caf9ca0f32ac1736e0858[m export list as template
+[33m5391ac65c1f4509d79bad8868a6cb92d6db749d1[m import and export icons
+[33mc5957b3748023c2d91784bf6bd3eef656d4fa6c5[m download file
+[33m899cfd63f507d54a001c51681d1b70bed1506d20[m add manual complete persistent tasks
+[33m7cc424fc30bb254e49ee8e84a0d24221115fae16[m[33m ([m[1;31morigin/templates[m[33m)[m Merge pull request #164 from Gustavodacrvi/more-date-options
+[33mcb9b9f69a8ec8dee30a3e7a0af57e2656f8decb9[m[33m ([m[1;31morigin/more-date-options[m[33m, [m[1;32mmore-date-options[m[33m)[m update message
+[33m837af0bed31c23195f107484d6e0fc1fd8ccbf16[m persistent tasks
+[33m90f409973aaac94d427938a9b850dcf795101e37[m add times to any task
+[33m443f64789e3b72e37c2149c156e55c8c13ed28a4[m times date option
+[33m9c5d6233a9d20f842e1012f88a19e8b6015b1244[m can't add time to tasks bug solved
+[33mf078d754baf7146c7e9b008738e9b0f0e36186e1[m Merge pull request #163 from Gustavodacrvi/sign-up-options
+[33macb559bc474c24e385060b33dc21c002136ab270[m[33m ([m[1;31morigin/sign-up-options[m[33m, [m[1;32msign-up-options[m[33m)[m upgrade account with password and email
+[33me1c4b0da336c6d6831ecbd5301a3cb5a60312fc3[m upgrade anonymous user with google
+[33mf8f126e9ffa7d2fe5ab10d48aed6baabfd35c61f[m sign in with anonymous user
+[33m2526ff4e05ecfe733fddf788da51470078764e6e[m sign in with google
+[33m2ce86f22ead938ca380c41eef3941ba575802807[m sign in with google component
+[33m5335d9e9fecdb2544e229d5114484ec2ec4ab15b[m sign up options card
+[33mccc226368d678b194eb9f81db636a750495eadcd[m signup options popup
+[33m81af528d899fc00cb755056c117de9bcbe793cfd[m Merge pull request #162 from Gustavodacrvi/headings-options
+[33m7a25476be382f7f2abacf95d585fb97ce5197973[m[33m ([m[1;31morigin/headings-options[m[33m, [m[1;32mheadings-options[m[33m)[m final
+[33mee6689d19580c5fef2cd0ea79fa6bef5191f9dfd[m duplicate list with its tasks and headings
+[33mc539cf290fde31bb99d3f8dd7bd8de3050346f5b[m close task/heading adder with Esc key
+[33m12c67807483ee8c9d90a1e7e7bd3c6e9ac1dc8db[m duplicate heading and its tasks
+[33mcfb02fe85fe50f56b671fb5fe5f9784dc08fb8f5[m add and edit tag notes
+[33ma8b38f96ae721056d5018c18d735b352434b3e0c[m save list notes
+[33m6ee588e8018b2fe04a97fa4c77b62370d086e4a9[m Edit header notes
+[33m442b8c048740a20124adb8034104439e7978d49b[m add list notes
+[33mc4f2d487e3d2e7a3a7d6000adabaafa38e682bdc[m add note popup
+[33ma31e69858678f5f2f712e2d04385aa556093a99f[m icon drop division line
+[33me5ac0fefa7137f598aee5f61ff23fd4a92b81b69[m note icon
+[33m1131656193e067e79c75d6c6345021caea9620d7[m add heading to the end of the list with h and at the beginning with H
+[33m00bce0a003395940feb0a415b6f64c1f2de2c165[m edit tags name directly
+[33m1ef4adeb3
