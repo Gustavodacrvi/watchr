@@ -539,7 +539,10 @@ export default {
             {
               name: this.l['Hide heading'],
               icon: 'archive',
-              callback: () => console.log('hide')
+              callback: () => this.$store.dispatch('list/toggleHeadingAuthide', {
+                listId: this.viewList.id,
+                name: h.name,
+              })
             },
             {
               name: this.l['Uncomplete tasks'],

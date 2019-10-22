@@ -134,6 +134,18 @@ export default {
         batch.commit()
       }
     },
+    toggleHeadingAuthide({state}, {listId, name}) {
+      const list = state.lists.find(el => el.id === listId)
+      if (list) {
+        const heads = list.headings.slice()
+        const i = heads.findIndex(el => el.name === name)
+
+        heads[i].autoHide = !heads[i].autoHide
+        fire.collection('lists').doc(listId).update({
+          headings: heads,
+        })
+      }
+    },
     uncompleteHeadingTasks({state}, {name, listId, savedTasks}) {
       const list = state.lists.find(el => el.id === listId)
       if (list) {
