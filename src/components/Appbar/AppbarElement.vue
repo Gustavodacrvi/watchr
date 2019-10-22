@@ -47,6 +47,8 @@ import IconDropVue from '../IconDrop.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
+import utils from '@/utils/'
+
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
@@ -60,6 +62,10 @@ export default {
     return {
       hover: false,
     }
+  },
+  mounted() {
+    const el = this.$el.getElementsByClassName('link-wrapper')[0]
+    utils.bindToContextMenu(el, this.options, this)
   },
   methods: {
     linkCallback(evt) {

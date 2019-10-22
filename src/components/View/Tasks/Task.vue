@@ -104,6 +104,9 @@ export default {
       onHover: false,
     }
   },
+  mounted() {
+    utils.bindToContextMenu(this.$el, this.options, this)
+  },
   methods: {
     enter(cont) {
       if (!this.isEditing) {
