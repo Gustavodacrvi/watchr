@@ -514,6 +514,8 @@ export default {
   z-index: 5;
   position: relative;
   transition-duration: .2s;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .show {
