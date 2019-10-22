@@ -31,17 +31,17 @@
             <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
             <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
             <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
-            <span v-else-if="calendarStr" class="tag cb rb">{{ calendarStr }}</span>
-            <span v-if="timeStr" class="tag cb rb">{{ timeStr }}</span>
-            <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
-            <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
             <transition name="name-t">
               <span v-if="!showApplyOnTasks" class="task-name" key="normal">
-                <span v-html="parsedName"></span>
+                  <span v-if="calendarStr && !isToday" class="tag cb rb">{{ calendarStr }}</span>
+                  <span v-if="timeStr" class="tag cb rb">{{ timeStr }}</span>
+                  <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
+                  <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
+                  <span v-html="parsedName"></span>
+                  <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
               </span>
               <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
             </transition>
-            <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
             <template v-if="isDesktop">
               <Tag class="task-tag" v-for="t in taskTags" :key="t.name"
                 icon="tag"
