@@ -13,12 +13,20 @@
         >
           <div class="header">
             <h3 class="name" :style="{color}">{{ name }}</h3>
-            <IconDrop class="drop"
-              handle='settings-h'
-              :options='options'
-              :hideHandle='!showOptions'
-              @edit='toggleEditing'
-            />
+            <div class="icons">
+              <transition name='fade-t'>
+                <Icon v-if="header.autoHide" class="icon"
+                  icon='archive'
+                  @click="$emit('option-click', 'archive')"
+                />
+              </transition>
+              <IconDrop class="icon"
+                handle='settings-h'
+                :options='options'
+                :hideHandle='!showOptions'
+                @edit='toggleEditing'
+              />
+            </div>
           </div>
         </div>
         <transition name="fade">
@@ -44,6 +52,7 @@
 <script>
 
 import IconDropVue from '../../IconDrop.vue'
+import IconVue from '../../Icon.vue'
 import EditVue from './Edit.vue'
 
 import { mapGetters } from 'vuex'
@@ -52,6 +61,7 @@ export default {
   props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEdit', 'save'],
   components: {
     IconDrop: IconDropVue,
+    Icon: IconVue,
     EditHeading: EditVue,
   },
   data() {
@@ -84,6 +94,21 @@ export default {
 </script>
 
 <style scoped>
+
+.icons {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  margin-left: 8px;
+}
+
+.IconDrop {
+  transform: translateY(5px);
+}
 
 .Heading {
   margin: 24px 0;

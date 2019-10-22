@@ -528,6 +528,10 @@ export default {
             return tasks
           },
           id: h.name,
+          autoHide: h.autoHide,
+          optionClick: (iconName) => {
+
+          },
           options: [
             {
               name: this.l['Edit heading'],

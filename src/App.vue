@@ -151,16 +151,6 @@ export default {
   top: -22px !important;
 }
 
-.fade-t-enter, .fade-t-leave-to {
-  opacity: 0;
-  transition: opacity .2s;
-}
-
-.fade-t-leave, .fade-t-enter-to {
-  opacity: 1;
-  transition: opacity .2s;
-}
-
 .nav-trans-enter, .nav-trans-leave-to {
   opacity: 0;
   transform: translateY(-25px);
@@ -176,6 +166,16 @@ export default {
 </style>
 
 <style>
+
+.fade-t-enter, .fade-t-leave-to {
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.fade-t-leave, .fade-t-enter-to {
+  opacity: 1;
+  transition: opacity .2s;
+}
 
 .passive {
   transition: opacity .6s;

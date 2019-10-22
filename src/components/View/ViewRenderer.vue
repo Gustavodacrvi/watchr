@@ -41,6 +41,9 @@
         @add-heading="(obj) => $emit('add-heading', obj)"
       />
     </div>
+    <span v-if="showHideHeadings" class="show-headings">
+      Show hided headings...
+    </span>
     <div style="height: 500px"></div>
     <ActionButtons :showHeader='showHeader'/>
   </div>
@@ -155,6 +158,10 @@ export default {
       l: 'l',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
+    showHideHeadings() {
+      const hs = this.headingsOptions
+      return hs && hs.length > 0 && hs.some(el => el.autoHide)
+    },
     getActiveTags() {
       const arr = this.activeTags.slice()
       if (this.viewType === 'tag' && !arr.includes(this.viewName))
