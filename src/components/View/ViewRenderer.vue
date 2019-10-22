@@ -109,7 +109,7 @@ export default {
       this.activeLists = ''
     },
     addHeading(obj) {
-      this.$emit('add-heading', {...obj, ids: this.headingsOptions.map(el => el.id)})
+      this.$emit('add-heading', {...obj})
     },
 
     sortByName() {

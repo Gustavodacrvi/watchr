@@ -4,9 +4,9 @@
       <h2 class="pc">{{ l['New update!'] }}</h2>
     </div>
     <div class="content">
-      <h3>Features for Desktop and Mobile</h3>
+      <h3>Bug Fixes</h3>
       <ul>
-        <li>Convert task to list.</li>
+        <li>Can't add heading on lists.</li>
       </ul>
       <Button @click="close" value="Got it!"/>
     </div>

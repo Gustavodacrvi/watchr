@@ -270,6 +270,8 @@ export default {
         calendar,
       })
       this.task.name = ''
+      this.task.checklist = []
+      this.task.order = []
     },
     removeTag(name) {
       const index = this.task.tags.findIndex(el => el === name)
