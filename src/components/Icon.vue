@@ -5,9 +5,15 @@
     :style="{width: getWidth, color}"
     @click="$emit('click')"
   >
-    <svg :viewBox="getIcon.viewBox">
+    <svg v-if="!hasProgress" :viewBox="getIcon.viewBox">
       <use :xlink:href="`#${getIcon.id}`"/>
     </svg>
+    <div v-else class="pie-wrapper" :style='outlineStyle'>
+      <svg class='svg' viewBox="0 0 32 32" :width='getWidth'>
+        <circle class='pie' :stroke-dasharray="`${progress} 100`"></circle>
+      </svg>
+      <div class="outline" :style='outlineStyle'></div>
+    </div>
   </div>
 </template>
 
@@ -49,7 +55,7 @@ import exportIcon from '@/assets/icons/export.svg'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['icon', 'width', 'primaryHover', 'color'],
+  props: ['icon', 'width', 'primaryHover', 'color', 'progress', 'svg'],
   data() {
     return {
       icons: {
@@ -75,7 +81,18 @@ export default {
       return this.icons[this.icon]
     },
     getWidth() {
-      return this.width ? this.width : "20px"
+      const defaultWidth = this.hasProgress ? '15px' : '20px'
+      return this.width ? this.width : defaultWidth
+    },
+    hasProgress() {
+      return this.progress !== undefined
+    },
+    outlineStyle() {
+      const width = '' + (parseInt(this.getWidth, 10) + 7) + 'px'
+      return {
+        width,
+        height: width,
+      }
     }
   },
 }
@@ -94,6 +111,45 @@ export default {
 
 .icon:active {
   color: var(--light-gray) !important;
+}
+
+.svg {
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  transform: rotate(-90deg);
+  position: absolute;
+}
+
+.pie-wrapper {
+  position: relative;
+  transform: translateY(4px);
+  display: inline-block;
+  stroke: var(--white);
+}
+
+.pie {
+  fill: none;
+  transition-duration: .7s;
+  stroke-width: 32;
+  r: 16;
+  cx: 16;
+  cy: 16;
+}
+
+.light {
+  stroke: var(--white);
+}
+
+.outline {
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  border-radius: 100px;
+}
+
+.outline {
+  border: .5px var(--white) solid;
 }
 
 </style>

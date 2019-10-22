@@ -13,7 +13,12 @@
       :data-disabled='disableAction'
     >
       <div class="icon-wrapper">
-        <Icon class="icon" :style="hoverStyle" :class="{notActive: !isActive}" :icon="icon"/>
+        <Icon class="icon"
+          :style="hoverStyle"
+          :class="{notActive: !isActive}"
+          :icon="icon"
+          :progress='progress'
+        />
       </div>
       <div class="name-wrapper">
         <transition name="name-t">
@@ -45,7 +50,7 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
-  'disableAction', 'selected', 'id'],
+  'disableAction', 'selected', 'id', 'progress'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,

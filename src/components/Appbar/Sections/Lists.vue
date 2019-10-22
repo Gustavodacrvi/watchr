@@ -10,6 +10,7 @@
       :list="getList"
       :active="active"
       :viewType="viewType"
+      :mapProgress='getListProgress'
       :mapNumbers="(tasks) => tasks"
       @buttonAdd='buttonAdd'
       @update='update'
@@ -35,6 +36,9 @@ export default {
     },
     buttonAdd(obj) {
       this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj}})
+    },
+    getListProgress(list) {
+      return this.$store.getters['list/pieProgress'](this.tasks, list.id)
     },
   },
   computed: {
