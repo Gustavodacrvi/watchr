@@ -472,7 +472,11 @@ export default {
       return this.tasks.filter(el => el.list)
     },
     getRootTasksOfList() {
-      return this.getListTasks.filter(el => !el.heading)
+      return [...this.getListTasks.filter(el => !el.heading), ...this.getLostTasks]
+    },
+    getLostTasks() {
+      const headingNames = this.viewList.headings.map(el => el.name)
+      return this.getListTasks.filter(el => !headingNames.includes(el.heading))
     },
     getTasksWithHeading() {
       return this.getListTasks.filter(el => el.heading)

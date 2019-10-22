@@ -165,12 +165,13 @@ export default {
           this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
           this.applyEventListenersToEditVueInstance(instance, onSave, evt)
         }
+        console.log(type)
         
         if (type !== 'addtask')
           item.style.display = 'none'
-        else if (type === 'task' && this.onSortableAdd)
+        if (type === 'task' && this.onSortableAdd)
           this.onSortableAdd(evt, item, type, this.getIds(true))
-        else if (type === 'floatbutton') {
+        if (type === 'floatbutton') {
           addEdit(TaskEditTemplate, this.add, {
               key: 'Edit',
               placeholder: this.l['Task name...'],

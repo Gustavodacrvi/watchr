@@ -210,6 +210,7 @@ export default {
         const ref = fire.collection('tasks').doc(id)
         batch.update(ref, {
           list: listId,
+          heading: null,
         })
       }
 
