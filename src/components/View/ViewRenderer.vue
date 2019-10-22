@@ -27,7 +27,7 @@
         :viewType="viewType"
         :viewNameValue='viewNameValue'
         :showEmptyHeadings='showEmptyHeadings'
-        :headings='headingsOptions'
+        :headings='filteredHeadingsOptions'
         :addTask='addTask'
         :headingEdit='headingEdit'
         :showCompleted='showCompleted'
@@ -38,9 +38,16 @@
         :onSortableAdd='onSortableAdd'
         @update="(ids) => $emit('update-ids', ids)"
         @update-headings='(ids) => $emit("update-heading-ids", ids)'
-        @add-heading="(obj) => $emit('add-heading', obj)"
+        @add-heading="addHeading"
       />
     </div>
+    <transition name="fade-t">
+      <div v-if="!showingHidedHeadings" @click="hideHeadings = false">
+        <span class="show-headings rb cursor">
+          Show hided headings...
+        </span>
+      </div>
+    </transition>
     <div style="height: 500px"></div>
     <ActionButtons :showHeader='showHeader'/>
   </div>
@@ -72,6 +79,7 @@ export default {
       showingListSelection: false,
       activeTags: [],
       activeList: null,
+      hideHeadings: true,
     }
   },
   created() {
@@ -100,6 +108,9 @@ export default {
       localStorage.setItem(this.listSelectionStr, this.showingListSelection)
       this.activeLists = ''
     },
+    addHeading(obj) {
+      this.$emit('add-heading', {...obj, ids: this.headingsOptions.map(el => el.id)})
+    },
 
     sortByName() {
       const tasks = this.tasks.slice()
@@ -113,7 +124,7 @@ export default {
     },
     sortByDate() {
       // TODO
-/*       let tasks = this.getTasks.slice()
+      /* let tasks = this.getTasks.slice()
       tasks = utilsTask.sortTasksByDate(tasks)
       this.updateIds(tasks.map(el => el.id)) */
     },
@@ -155,6 +166,11 @@ export default {
       l: 'l',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
+    showingHidedHeadings() {
+      if (this.hideHeadings) return false
+      const hs = this.headingsOptions
+      return hs && hs.length > 0 && hs.some(el => el.autoHide)
+    },
     getActiveTags() {
       const arr = this.activeTags.slice()
       if (this.viewType === 'tag' && !arr.includes(this.viewName))
@@ -271,6 +287,11 @@ export default {
             name: l['Show completed'],
             icon: 'circle-check',
             callback: () => this.toggleCompleted()
+          },
+          {
+            name: l['Hide autohide headings'],
+            icon: 'archive',
+            callback: () => this.hideHeadings = true
           }
         ]
         if (this.showCompleted) opt[3].name = l['Hide completed']
@@ -374,12 +395,40 @@ export default {
 
       return notCompleted
     },
+    filteredHeadingsOptions() {
+      if (!this.showingHidedHeadings)
+        return this.headingsOptions.filter(el => !el.autoHide)
+      return this.headingsOptions
+    },
   },
+  watch: {
+    headingsOptions() {
+      this.hideHeadings = false
+    }
+  }
 }
 
 </script>
 
 <style scoped>
+
+.show-headings {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 10px;
+  color: var(--gray);
+  background-color: var(--back-color);
+  transform: scale(1,1);
+  transition-duration: .2s;
+}
+
+.show-headings:hover {
+  background-color: var(--dark);
+}
+
+.show-headings:active {
+  transform: scale(.9,.9);
+}
 
 .ViewRenderer {
   margin: 0 90px;

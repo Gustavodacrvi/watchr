@@ -528,6 +528,18 @@ export default {
             return tasks
           },
           id: h.name,
+          autoHide: h.autoHide,
+          optionClick: (iconName) => {
+            switch (iconName) {
+              case 'archive': {
+                this.$store.dispatch('list/toggleHeadingAuthide', {
+                  listId: this.viewList.id,
+                  name: h.name,
+                })
+                break
+              }
+            }
+          },
           options: [
             {
               name: this.l['Edit heading'],
@@ -535,6 +547,14 @@ export default {
               callback: (j, vm, l) => {
                 vm.$emit('edit')
               }
+            },
+            {
+              name: this.l['Hide heading'],
+              icon: 'archive',
+              callback: () => this.$store.dispatch('list/toggleHeadingAuthide', {
+                listId: this.viewList.id,
+                name: h.name,
+              })
             },
             {
               name: this.l['Uncomplete tasks'],

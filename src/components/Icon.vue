@@ -49,6 +49,7 @@ import globe from '@/assets/icons/globe.svg'
 import heading from '@/assets/icons/heading.svg'
 import search from '@/assets/icons/search.svg'
 import note from '@/assets/icons/note.svg'
+import archive from '@/assets/icons/archive.svg'
 import importIcon from '@/assets/icons/import.svg'
 import exportIcon from '@/assets/icons/export.svg'
 
@@ -60,7 +61,7 @@ export default {
     return {
       icons: {
         inbox, calendar, sun, arrow, star, user, out,
-        sort, tag, priority, menu, tasks,
+        sort, tag, priority, menu, tasks, archive,
         pen, trash, fire, bloqued, circle,
         copy, plus, globe, heading, search, note,
         "import": importIcon,
