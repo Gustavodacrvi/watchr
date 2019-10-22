@@ -85,7 +85,7 @@ export default {
       return this.width ? this.width : defaultWidth
     },
     hasProgress() {
-      return this.progress !== undefined
+      return this.progress !== undefined && this.progress !== null
     },
     outlineStyle() {
       const width = '' + (parseInt(this.getWidth, 10) + 7) + 'px'

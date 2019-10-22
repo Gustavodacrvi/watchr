@@ -730,7 +730,7 @@ export default {
       return utilsTask.filterTasksByView(this.tasks, 'Overdue')
     },
     getPieProgress() {
-      if (!this.isListType || !this.viewList) return null
+      if (!this.isListType || !this.viewList) return undefined
       return this.$store.getters['list/pieProgress'](this.tasks, this.viewList.id)
     },
   },
