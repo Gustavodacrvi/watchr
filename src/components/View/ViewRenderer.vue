@@ -402,7 +402,7 @@ export default {
   },
   watch: {
     headingsOptions() {
-      this.hideHeadings = true
+      this.viewNameValue = true
     }
   }
 }
