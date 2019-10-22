@@ -3,6 +3,11 @@ import mom from "moment"
 import moment from "./moment"
 import firebase from 'firebase/app'
 
+import Vue from 'vue'
+import IconDrop from '@/components/IconDrop.vue'
+
+let contextMenuRunned = false
+
 export default {
   getDataFromFirestoreSnapshot(state, changes, arrName) {
     for (const change of changes)
@@ -440,5 +445,38 @@ export default {
     }
 
     this.download(list.name + '.json', JSON.stringify(template))
+  },
+  bindToContextMenu(node, options, parent) {
+    node.addEventListener('contextmenu', evt => {
+      evt.preventDefault()
+      if (!contextMenuRunned) {
+        const y = evt.clientY + 'px'
+        const x = evt.clientX + 'px'
+        const old = document.getElementById('contextmenu')
+        if (old) document.body.removeChild(old)
+
+        const Constructor = Vue.extend(IconDrop)
+        const ins = new Constructor({
+          parent,
+          propsData: {
+            options, allowSearch: false, calendar: false,
+            isMobileIconDropComp: true, id: 'contextmenu',
+            root: true,
+          }
+        })
+        const vueEl = document.createElement('div')
+        vueEl.setAttribute('id', 'click-contextmenu')
+        document.body.appendChild(vueEl)
+        ins.$mount('#click-contextmenu')
+
+        const drop = document.getElementById('contextmenu')
+        const s = drop.style
+        s.position = 'fixed'
+        s.left = x
+        s.top = y
+        
+        setTimeout(() => contextMenuRunned = false)
+      }
+    })
   },
 }

@@ -4,13 +4,14 @@
       <h2 class="pc">{{ l['New update!'] }}</h2>
     </div>
     <div class="content">
-      <h3>Bug Fixes</h3>
+      <h3>Bug Fixes for Mobile</h3>
       <ul>
         <li>Task adder overflowing no mobile when having more than 3 tags.</li>
+        <li>Strange task text behavior on mobile.</li>
       </ul>
-      <h3>Features for Desktop and Mobile</h3>
+      <h3>Features for Desktop</h3>
       <ul>
-        <li>Toggle autohide on headings to hide them automatically.</li>
+        <li>Open options on mouse right.</li>
       </ul>
       <Button @click="close" value="Got it!"/>
     </div>

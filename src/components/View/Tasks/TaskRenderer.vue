@@ -166,7 +166,6 @@ export default {
           this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
           this.applyEventListenersToEditVueInstance(instance, onSave, evt)
         }
-        console.log(type)
         
         if (type !== 'addtask')
           item.style.display = 'none'
