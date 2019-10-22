@@ -4,14 +4,9 @@
       <h2 class="pc">{{ l['New update!'] }}</h2>
     </div>
     <div class="content">
-      <h3>Bug Fixes for Mobile</h3>
+      <h3>Features for Desktop and Mobile</h3>
       <ul>
-        <li>Task adder overflowing no mobile when having more than 3 tags.</li>
-        <li>Strange task text behavior on mobile.</li>
-      </ul>
-      <h3>Features for Desktop</h3>
-      <ul>
-        <li>Open options on mouse right.</li>
+        <li>Convert task to list.</li>
       </ul>
       <Button @click="close" value="Got it!"/>
     </div>

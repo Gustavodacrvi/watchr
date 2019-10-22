@@ -303,6 +303,11 @@ export default {
           callback: () => this.listOptions
         },
         {
+          name: l['Convert to list'],
+          icon: 'tasks',
+          callback: () => dispatch('task/convertToList', this.task)
+        },
+        {
           type: 'optionsList',
           name: l['Priority'],
           options: [
