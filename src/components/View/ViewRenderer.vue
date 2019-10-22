@@ -18,7 +18,6 @@
         @save-notes='notes => $emit("save-notes", notes)'
         @tag='selectTag'
         @list='selectList'
-        @hide-headings='showHideHeadings = false'
       />
       <TaskRenderer
         :emptyIcon='emptyIcon'
@@ -43,7 +42,7 @@
       />
     </div>
     <transition name="fade-t">
-      <div v-if="showHideHeadings" @click="showHideHeadings = true">
+      <div v-if="!showingHidedHeadings" @click="hideHeadings = false">
         <span class="show-headings rb cursor">
           Show hided headings...
         </span>
@@ -80,7 +79,7 @@ export default {
       showingListSelection: false,
       activeTags: [],
       activeList: null,
-      showHidedHeadings: false,
+      hideHeadings: true,
     }
   },
   created() {
@@ -167,7 +166,8 @@ export default {
       l: 'l',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
-    showHideHeadings() {
+    showingHidedHeadings() {
+      if (this.hideHeadings) return false
       const hs = this.headingsOptions
       return hs && hs.length > 0 && hs.some(el => el.autoHide)
     },
@@ -291,7 +291,7 @@ export default {
           {
             name: l['Hide autohide headings'],
             icon: 'archive',
-            callback: () => this.showHidedHeadings = false
+            callback: () => this.hideHeadings = true
           }
         ]
         if (this.showCompleted) opt[3].name = l['Hide completed']
@@ -396,14 +396,14 @@ export default {
       return notCompleted
     },
     filteredHeadingsOptions() {
-      if (!this.showHidedHeadings)
+      if (!this.showingHidedHeadings)
         return this.headingsOptions.filter(el => !el.autoHide)
       return this.headingsOptions
     },
   },
   watch: {
     headingsOptions() {
-      this.showHidedHeadings = false
+      this.hideHeadings = false
     }
   }
 }
