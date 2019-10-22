@@ -367,7 +367,10 @@ export default {
       notCompleted = utilsTask.filterTasksByCompletion(ts, true)
 
       if (notCompleted.length === 0)
-        return ts.filter(task => task.calendar.type === 'specific')
+        return ts.filter(task => {
+          if (!task.calendar) return true
+          return task.calendar.type === 'specific'
+        })
 
       return notCompleted
     },

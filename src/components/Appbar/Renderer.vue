@@ -37,6 +37,7 @@
         :options='el.options'
         :list="el.list"
         :id='el.id'
+        :progress='getProgress(el)'
         :totalNumber='mapNumbers(el).total'
         :importantNumber='mapNumbers(el).notCompleted'
         @apply='() => applyEmit(el.id)'
@@ -63,7 +64,7 @@ export default {
     Illustration: IllustrationVue,
     AppbarElement: AppbarElementVue,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'illustration', 'disableSelection'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'illustration', 'disableSelection'],
   data() {
     return {
       sortable: null,
@@ -164,6 +165,10 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    getProgress(el) {
+      if (!this.mapProgress) return undefined
+      return this.mapProgress(el)
+    },
     applyEmit(elId) {
       if (!this.isSmart)
         this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {

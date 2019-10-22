@@ -81,7 +81,8 @@ export default {
       return this.icons[this.icon]
     },
     getWidth() {
-      return this.width ? this.width : "20px"
+      const defaultWidth = this.hasProgress ? '15px' : '20px'
+      return this.width ? this.width : defaultWidth
     },
     hasProgress() {
       return this.progress !== undefined
@@ -122,6 +123,7 @@ export default {
 
 .pie-wrapper {
   position: relative;
+  transform: translateY(4px);
   display: inline-block;
   stroke: var(--white);
 }
