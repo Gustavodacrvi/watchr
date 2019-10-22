@@ -42,7 +42,7 @@
       />
     </div>
     <transition name="fade-t">
-      <div v-if="!showingHidedHeadings" @click="hideHeadings = false">
+      <div v-if="hideHeadings && hasAutoHideHeadings" @click="hideHeadings = false">
         <span class="show-headings rb cursor">
           Show hided headings...
         </span>
@@ -166,10 +166,9 @@ export default {
       l: 'l',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
-    showingHidedHeadings() {
-      if (this.hideHeadings) return false
+    hasAutoHideHeadings() {
       const hs = this.headingsOptions
-      return hs && hs.length > 0 && hs.some(el => el.autoHide)
+      return hs.length > 0 && hs.some(el => el.autoHide)
     },
     getActiveTags() {
       const arr = this.activeTags.slice()
@@ -396,14 +395,14 @@ export default {
       return notCompleted
     },
     filteredHeadingsOptions() {
-      if (!this.showingHidedHeadings)
+      if (this.hideHeadings)
         return this.headingsOptions.filter(el => !el.autoHide)
       return this.headingsOptions
     },
   },
   watch: {
     headingsOptions() {
-      this.hideHeadings = false
+      this.hideHeadings = true
     }
   }
 }
