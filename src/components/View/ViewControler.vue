@@ -537,6 +537,11 @@ export default {
               }
             },
             {
+              name: this.l['Hide heading'],
+              icon: 'archive',
+              callback: () => console.log('hide')
+            },
+            {
               name: this.l['Uncomplete tasks'],
               icon: 'circle',
               callback: () => this.$store.dispatch('list/uncompleteHeadingTasks', {

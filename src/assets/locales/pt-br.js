@@ -125,6 +125,7 @@ export default {
   "Sign up option": "Opção de inscrição",
   "Sign in with google": "Inscrever-se com google",
   "OR": "OR",
+  "Hide heading": "Esconder cabeçalho",
   "Subtask name...": "Subtarefa...",
   'Add Notes': 'Adicionar Notas',
   'Add notes': 'Adicionar notas',

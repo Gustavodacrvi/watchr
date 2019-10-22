@@ -11,6 +11,7 @@ export default {
   'E-mail': 'E-mail',
   'Password': 'Password',
   'Search': 'Search',
+  "Hide heading": "Hide heading",
   'Task name...': 'Task name...',
   "Subtask name...": "Subtask name...",
   'Confirm password': 'Confirm password',
