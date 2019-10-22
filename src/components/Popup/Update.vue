@@ -6,7 +6,7 @@
     <div class="content">
       <h3>Features for Desktop and Mobile</h3>
       <ul>
-        <li>Checklists.</li>
+        <li>List progress pies.</li>
       </ul>
       <Button @click="close" value="Got it!"/>
     </div>
