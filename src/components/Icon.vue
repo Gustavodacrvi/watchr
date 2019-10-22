@@ -5,7 +5,7 @@
     :style="{width: getWidth, color}"
     @click="$emit('click')"
   >
-    <svg v-if="!progress" :viewBox="getIcon.viewBox">
+    <svg v-if="!hasProgress" :viewBox="getIcon.viewBox">
       <use :xlink:href="`#${getIcon.id}`"/>
     </svg>
     <div v-else class="pie-wrapper" :style='outlineStyle'>
@@ -82,6 +82,9 @@ export default {
     },
     getWidth() {
       return this.width ? this.width : "20px"
+    },
+    hasProgress() {
+      return this.progress !== undefined
     },
     outlineStyle() {
       const width = '' + (parseInt(this.getWidth, 10) + 7) + 'px'

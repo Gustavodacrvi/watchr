@@ -5,6 +5,8 @@ import utils from '../utils'
 const uid = () => auth.currentUser.uid
 const fd = () => fb.firestore.FieldValue
 
+import utilsTask from "@/utils/task"
+
 export default {
   namespaced: true,
   state: {
@@ -64,6 +66,21 @@ export default {
       
       return ord
     },
+    getTasks: state => (tasks, id) => {
+      return tasks.filter(el => el.list === id)
+    },
+    pieProgress: (state, getters) => (tasks, id) => {
+      const ts = getters.getTasks(tasks, id)
+      const numberOfTasks = ts.length
+      let completedTasks = 0
+
+      ts.forEach(el => {
+        if (utilsTask.isTaskCompleted(el)) completedTasks++
+      })
+      const result = 100 * completedTasks / numberOfTasks
+      if (isNaN(result)) return 0
+      return result
+    }
   },
   actions: {
     getData({state}) {

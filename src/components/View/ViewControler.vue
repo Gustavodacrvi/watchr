@@ -11,7 +11,7 @@
     :headingEdit='headingEdit'
     :headerOptions='headerOptions'
     :notes='getViewNotes'
-    :progress='90'
+    :progress='getPieProgress'
 
     :headingsOptions='headingsOptions'
     :tasks='getTasks'
@@ -281,7 +281,8 @@ export default {
       l: 'l',
       isDesktop: 'isDesktop',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
-      getAllTasksOrderByList: 'list/getAllTasksOrderByList'
+      getAllTasksOrderByList: 'list/getAllTasksOrderByList',
+      getTasksOfList: 'list/getTasks',
     }),
     viewNameValue() {
       if (this.isSmart) return this.l[this.viewName]
@@ -464,7 +465,7 @@ export default {
       return this.lists.find(el => el.name === this.viewName)
     },
     getListTasks() {
-      return this.tasks.filter(el => el.list === this.viewList.id)
+      return this.getTasksOfList(this.tasks, this.viewList.id)
     },
     tasksWithoutLists() {
       return this.tasks.filter(el => !el.list)
@@ -727,6 +728,10 @@ export default {
     },
     getOverdueTasks() {
       return utilsTask.filterTasksByView(this.tasks, 'Overdue')
+    },
+    getPieProgress() {
+      if (!this.isListType || !this.viewList) return null
+      return this.$store.getters['list/pieProgress'](this.tasks, this.viewList.id)
     },
   },
 }
