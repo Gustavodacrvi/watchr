@@ -530,7 +530,15 @@ export default {
           id: h.name,
           autoHide: h.autoHide,
           optionClick: (iconName) => {
-
+            switch (iconName) {
+              case 'archive': {
+                this.$store.dispatch('list/toggleHeadingAuthide', {
+                  listId: this.viewList.id,
+                  name: h.name,
+                })
+                break
+              }
+            }
           },
           options: [
             {

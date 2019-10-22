@@ -18,6 +18,7 @@
         @save-notes='notes => $emit("save-notes", notes)'
         @tag='selectTag'
         @list='selectList'
+        @hide-headings='showHideHeadings = false'
       />
       <TaskRenderer
         :emptyIcon='emptyIcon'
@@ -27,7 +28,7 @@
         :viewType="viewType"
         :viewNameValue='viewNameValue'
         :showEmptyHeadings='showEmptyHeadings'
-        :headings='headingsOptions'
+        :headings='filteredHeadingsOptions'
         :addTask='addTask'
         :headingEdit='headingEdit'
         :showCompleted='showCompleted'
@@ -38,12 +39,16 @@
         :onSortableAdd='onSortableAdd'
         @update="(ids) => $emit('update-ids', ids)"
         @update-headings='(ids) => $emit("update-heading-ids", ids)'
-        @add-heading="(obj) => $emit('add-heading', obj)"
+        @add-heading="addHeading"
       />
     </div>
-    <span v-if="showHideHeadings" class="show-headings">
-      Show hided headings...
-    </span>
+    <transition name="fade-t">
+      <div v-if="showHideHeadings" @click="showHideHeadings = true">
+        <span class="show-headings rb cursor">
+          Show hided headings...
+        </span>
+      </div>
+    </transition>
     <div style="height: 500px"></div>
     <ActionButtons :showHeader='showHeader'/>
   </div>
@@ -75,6 +80,7 @@ export default {
       showingListSelection: false,
       activeTags: [],
       activeList: null,
+      showHidedHeadings: false,
     }
   },
   created() {
@@ -103,6 +109,9 @@ export default {
       localStorage.setItem(this.listSelectionStr, this.showingListSelection)
       this.activeLists = ''
     },
+    addHeading(obj) {
+      this.$emit('add-heading', {...obj, ids: this.headingsOptions.map(el => el.id)})
+    },
 
     sortByName() {
       const tasks = this.tasks.slice()
@@ -116,7 +125,7 @@ export default {
     },
     sortByDate() {
       // TODO
-/*       let tasks = this.getTasks.slice()
+      /* let tasks = this.getTasks.slice()
       tasks = utilsTask.sortTasksByDate(tasks)
       this.updateIds(tasks.map(el => el.id)) */
     },
@@ -278,6 +287,11 @@ export default {
             name: l['Show completed'],
             icon: 'circle-check',
             callback: () => this.toggleCompleted()
+          },
+          {
+            name: l['Hide autohide headings'],
+            icon: 'archive',
+            callback: () => this.showHidedHeadings = false
           }
         ]
         if (this.showCompleted) opt[3].name = l['Hide completed']
@@ -381,12 +395,40 @@ export default {
 
       return notCompleted
     },
+    filteredHeadingsOptions() {
+      if (!this.showHidedHeadings)
+        return this.headingsOptions.filter(el => !el.autoHide)
+      return this.headingsOptions
+    },
   },
+  watch: {
+    headingsOptions() {
+      this.showHidedHeadings = false
+    }
+  }
 }
 
 </script>
 
 <style scoped>
+
+.show-headings {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 10px;
+  color: var(--gray);
+  background-color: var(--back-color);
+  transform: scale(1,1);
+  transition-duration: .2s;
+}
+
+.show-headings:hover {
+  background-color: var(--dark);
+}
+
+.show-headings:active {
+  transform: scale(.9,.9);
+}
 
 .ViewRenderer {
   margin: 0 90px;

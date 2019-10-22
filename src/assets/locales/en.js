@@ -13,6 +13,7 @@ export default {
   'Search': 'Search',
   "Hide heading": "Hide heading",
   'Task name...': 'Task name...',
+  "Hide autohide headings": "Hide autohide headings",
   "Subtask name...": "Subtask name...",
   'Confirm password': 'Confirm password',
   'Create account': 'Create account',

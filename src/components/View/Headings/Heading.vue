@@ -13,7 +13,7 @@
         >
           <div class="header">
             <h3 class="name" :style="{color}">{{ name }}</h3>
-            <div class="icons">
+            <div class="icons" @click.stop>
               <transition name='fade-t'>
                 <Icon v-if="header.autoHide" class="icon"
                   icon='archive'
@@ -128,6 +128,13 @@ export default {
   margin-bottom: 10px;
   cursor: pointer;
   height: 45px;
+  z-index: 50;
+  position: relative;
+}
+
+.cont {
+  position: relative;
+  z-index: 49;
 }
 
 .header {
