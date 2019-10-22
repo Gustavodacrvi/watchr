@@ -11,6 +11,7 @@
     :headingEdit='headingEdit'
     :headerOptions='headerOptions'
     :notes='getViewNotes'
+    :progress='90'
 
     :headingsOptions='headingsOptions'
     :tasks='getTasks'

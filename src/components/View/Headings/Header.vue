@@ -1,7 +1,12 @@
 <template>
   <div class="Header" @click='click'>
     <div v-if="$store.getters.isDesktop" class="header">
-      <Icon class="icon" :icon="getIcon" :color="getIconColor" width="40px"/>
+      <Icon class="icon"
+        :icon="getIcon"
+        :color="getIconColor"
+        :progress='progress'
+        width="40px"
+      />
       <h2 v-if="!editing || !isEditable"
         class="name"
         @click.stop="editing = true"
@@ -66,7 +71,7 @@ import TagVue from './../Tag.vue'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart', 'notes'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart', 'notes', 'progress'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,

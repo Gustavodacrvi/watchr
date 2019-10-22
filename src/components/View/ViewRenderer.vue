@@ -10,6 +10,7 @@
         :notes='notes'
         :tags='tagSelectionOptions'
         :lists='listSelectionOptions'
+        :progress='progress'
         :activeTags='activeTags'
         :activeList='activeList'
         :isSmart="isSmart"
@@ -58,7 +59,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'notes', 'showCompletedOnHeadings', 'isSmart', 'headerOptions'],
+  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'notes', 'showCompletedOnHeadings', 'isSmart', 'headerOptions', 'progress'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,
