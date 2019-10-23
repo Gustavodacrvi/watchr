@@ -685,7 +685,6 @@ export default {
             })
           },
           id: date,
-          disableTaskRenderer: true,
         })
         tod.subtract(1, 'day')
       }

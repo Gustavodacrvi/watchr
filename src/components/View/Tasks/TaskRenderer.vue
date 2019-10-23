@@ -64,7 +64,6 @@
             :headingPosition='i + 1'
             :options='options'
             :onSortableAdd='h.onSortableAdd'
-            :disable='h.disableTaskRenderer'
             @add-heading='(obj) => $emit("add-heading", obj)'
             @update="ids => updateHeadingIds(h,ids)"
           />
@@ -96,7 +95,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'header', 'onSortableAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
+  props: ['tasks', 'header', 'onSortableAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
   'viewType', 'options'],
   name: 'TaskRenderer',
   components: {
@@ -108,11 +107,7 @@ export default {
     return {
       addedTask: false,
       atLeastOneRenderedTask: false,
-      test: false,
     }
-  },
-  created() {
-    setTimeout(() => this.test = true, 1000)
   },
   mounted() {
     let move = null
@@ -127,7 +122,6 @@ export default {
     }
     const obj = {
       multiDrag: this.enableSelect,
-      disabled: this.disable,
       group: {
         name: 'task-renderer',
         pull: (e,j,item) => {
@@ -523,7 +517,6 @@ export default {
       }
     },
     windowClick() {
-      console.log(3)
       this.$store.commit('clearSelected')
     },
   },
