@@ -18,6 +18,7 @@
         :isSelecting='isSelecting'
         :isSelected='isTaskSelected(t.id)'
         :view='view'
+        :multiSelectOptions='options'
         :showHeadingName='showHeadingName'
         :hideListName='hideListName'
         :activeTags="activeTags"
@@ -61,6 +62,7 @@
             :showHeadingName="h.showHeadingName"
             :addTask="h.onAddTask"
             :headingPosition='i + 1'
+            :multiSelectOptions='options'
             :onSortableAdd='h.onSortableAdd'
             :disable='h.disableTaskRenderer'
             @add-heading='(obj) => $emit("add-heading", obj)'
@@ -93,7 +95,7 @@ import utils from '@/utils/'
 
 export default {
   props: ['tasks', 'header', 'onSortableAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'disable', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
-  'viewType'],
+  'viewType', 'options'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue,

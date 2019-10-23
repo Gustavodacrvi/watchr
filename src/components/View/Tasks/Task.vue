@@ -91,7 +91,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'isSelected', 'view', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName'],
+  props: ['task', 'isSelected', 'view', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -106,9 +106,12 @@ export default {
     }
   },
   mounted() {
-    utils.bindToContextMenu(this.$el, this.options, this)
+    this.bindContextMenu(this.options)
   },
   methods: {
+    bindContextMenu(options) {
+      utils.bindToContextMenu(this.$el, options, this)
+    },
     enter(cont) {
       if (!this.isEditing) {
         const s = cont.style
@@ -230,6 +233,7 @@ export default {
       savedLists: state => state.list.lists,
       savedTags: state => state.tag.tags,
       selectedEls: state => state.selectedEls,
+      selectedTasks: state => state.selectedTasks,
     }),
     ...mapGetters(['isDesktop', 'platform', 'l']),
     completed() {
@@ -441,6 +445,14 @@ export default {
       }
       return obj[this.task.priority]
     },
+  },
+  watch: {
+    selectedTasks() {
+      console.log(this.selectedTasks)
+      if (this.selectedTasks && this.selectedTasks.length > 0)
+        this.bindContextMenu(this.multiSelectOptions)
+      else this.bindContextMenu(this.options)
+    }
   }
 }
 

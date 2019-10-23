@@ -32,6 +32,7 @@
         :headingEdit='headingEdit'
         :showCompleted='showCompleted'
         :activeTags='getActiveTags'
+        :options='options'
         :activeList='getActiveListId'
         :illustration='illustration'
         :headingPosition='0'
