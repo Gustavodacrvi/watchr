@@ -134,7 +134,7 @@ export default {
           taskIds, ids, listId: this.viewList.id,
         })
       } else if (this.viewName === 'Today' || this.viewName === 'Tomorrow') {
-        this.$store.dispatch('list/removeTaskFromList', {
+        this.$store.dispatch('list/removeTasksFromList', {
           taskIds, view: this.viewName, ids,
         })
       }

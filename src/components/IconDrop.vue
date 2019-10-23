@@ -4,6 +4,9 @@
     :class="[centralize ? 'central' : '', {root, left: root}]"
     :id='id'
     @click.stop
+    @pointerup.stop
+    @mouseup.stop
+    @touchend.stop
   >
     <transition name='handle-t'>
       <Icon v-if="handle && !hideHandle" class="cursor handle" :icon="handle" :primaryHover='true' @click="toggleIconDrop" :color="handleColor" :width="getHandleWidth"/>

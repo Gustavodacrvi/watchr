@@ -522,6 +522,7 @@ export default {
       }
     },
     windowClick() {
+      console.log(3)
       this.$store.commit('clearSelected')
     },
   },

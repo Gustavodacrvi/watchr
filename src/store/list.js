@@ -262,13 +262,15 @@ export default {
 
       batch.commit()
     },
-    removeTaskFromList({state}, {taskId, view, ids}) {
+    removeTaskFromList({state}, {taskIds, view, ids}) {
       const batch = fire.batch()
 
-      const taskRef = fire.collection('tasks').doc(taskId)
-      batch.update(taskRef, {
-        list: null, heading: null,
-      })
+      for (const id of taskIds) {
+        const taskRef = fire.collection('tasks').doc(id)
+        batch.update(taskRef, {
+          list: null, heading: null,
+        })
+      }
       const obj = {}
       obj[view] = {}
       obj[view].tasks = ids
