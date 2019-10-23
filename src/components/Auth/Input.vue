@@ -31,6 +31,8 @@ export default {
     keydown({key}) {
       evt => $emit('keydown', evt)
       if (key === 'Enter') this.$emit('enter')
+      else if (key === "Escape")
+        this.$emit('cancel')
       else if (key === 'Control') this.control = true
       if (this.control) {
         if (key === 'ArrowLeft') this.$emit('goup')

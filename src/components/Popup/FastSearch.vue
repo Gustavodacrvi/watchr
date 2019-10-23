@@ -8,6 +8,7 @@
             v-model="search"
             placeholder="Search for tags, lists and tasks..."
             @keydown="keydown"
+            @cancel="$emit('close')"
           />
           <div>
             <transition-group name="trans"

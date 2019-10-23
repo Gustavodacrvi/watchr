@@ -67,7 +67,9 @@ export default {
     EditHeading: EditVue,
   },
   mounted() {
-    utils.bindToContextMenu(this.$el, this.options, this)
+    const header = this.$el.getElementsByClassName('header')[0]
+    if (header)
+      utils.bindToContextMenu(header, this.options, this)
   },
   data() {
     return {

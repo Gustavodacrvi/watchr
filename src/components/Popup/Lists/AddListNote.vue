@@ -12,6 +12,7 @@
         :options="[]"
         :placeholder="l['Note...']"
         @enter='addNote'
+        @cancel="$emit('close')"
       />
       <ButtonApp :value='l["Add notes"]' @click="addNote"/>
     </div>

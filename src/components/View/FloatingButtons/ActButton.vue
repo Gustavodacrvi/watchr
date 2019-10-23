@@ -1,5 +1,5 @@
 <template>
-  <div class="ActButton handle">
+  <div class="ActButton handle shadow">
     <div class="floating">
       <div class="button cb">
         <Icon class="icon"

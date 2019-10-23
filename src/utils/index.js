@@ -7,6 +7,7 @@ import Vue from 'vue'
 import IconDrop from '@/components/IconDrop.vue'
 
 let contextMenuRunned = false
+let contextMenuBinded = false
 
 export default {
   getDataFromFirestoreSnapshot(state, changes, arrName) {
@@ -446,8 +447,9 @@ export default {
 
     this.download(list.name + '.json', JSON.stringify(template))
   },
-  bindToContextMenu(node, options, parent) {
-    node.addEventListener('contextmenu', evt => {
+  bindToContextMenu(node, options, parent, event) {
+    if (!event) event = 'contextmenu'
+    node.addEventListener(event, evt => {
       evt.preventDefault()
       if (!contextMenuRunned) {
         const y = evt.clientY + 'px'

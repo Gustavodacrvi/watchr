@@ -253,25 +253,27 @@ export default {
       this.name = ''
     },
     save() {
-      let n = this.task.name
+      const t = this.task
+      let n = t.name
       const i = n.indexOf(' $')
-      if (i && i > -1 && this.task.calendar) {
+      if (i && i > -1 && t.calendar) {
         n = n.substr(0, i)
       }
-      let heading = this.task.heading
-      let calendar = this.task.calendar
+      let heading = t.heading
+      let calendar = t.calendar
       if (heading === undefined) heading = null
       if (calendar === undefined) calendar = null
       this.$emit('save', {
-        ...this.task,
+        ...t,
         list: this.listId,
         tags: this.tagIds,
         name: n, heading,
         calendar,
       })
-      this.task.name = ''
-      this.task.checklist = []
-      this.task.order = []
+      t.checklist = []
+      t.notes = ''
+      t.name = ''
+      t.order = []
     },
     removeTag(name) {
       const index = this.task.tags.findIndex(el => el === name)
