@@ -32,6 +32,7 @@
         :headingEdit='headingEdit'
         :showCompleted='showCompleted'
         :activeTags='getActiveTags'
+        :options='options'
         :activeList='getActiveListId'
         :illustration='illustration'
         :headingPosition='0'
@@ -109,7 +110,7 @@ export default {
       this.activeLists = ''
     },
     addHeading(obj) {
-      this.$emit('add-heading', {...obj, ids: this.headingsOptions.map(el => el.id)})
+      this.$emit('add-heading', {...obj})
     },
 
     sortByName() {

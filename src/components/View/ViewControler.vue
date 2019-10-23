@@ -128,15 +128,14 @@ export default {
       if (this.viewList)
         this.$store.dispatch('list/addHeading', {...obj, listId: this.viewList.id})
     },
-    onSortableAdd(evt, {dataset}, type, ids) {
+    onSortableAdd(evt, taskIds, type, ids) {
       if (this.isListType) {
-        const taskId = dataset.id
-        this.$store.dispatch('list/removeTaskFromHeading', {
-          taskId, ids, listId: this.viewList.id,
+        this.$store.dispatch('list/removeTasksFromHeading', {
+          taskIds, ids, listId: this.viewList.id,
         })
       } else if (this.viewName === 'Today' || this.viewName === 'Tomorrow') {
-        this.$store.dispatch('list/removeTaskFromList', {
-          taskId: dataset.id, view: this.viewName, ids,
+        this.$store.dispatch('list/removeTasksFromList', {
+          taskIds, view: this.viewName, ids,
         })
       }
     },
@@ -256,10 +255,9 @@ export default {
                 ...t, 
               })
             },
-            onSortableAdd(evt, {dataset}, type, ids) {
-              const taskId = dataset.id
-              this.$store.dispatch('list/moveTaskToList', {
-                taskId, ids, listId: t.id,
+            onSortableAdd: (evt, taskIds, type, ids) => {
+              this.$store.dispatch('list/moveTasksToList', {
+                taskIds, ids, listId: list.id, smartView: this.viewName,
               })
             }
           })
@@ -607,15 +605,14 @@ export default {
               name: h.name, listId: viewList.id, ids,
             })
           },
-          onAddTask(obj) {
+          onAddTask: obj => {
             this.$store.dispatch('list/addTaskHeading', {
               name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
             })
           },
-          onSortableAdd(evt, {dataset}, type, ids) {
-            const taskId = dataset.id
-            this.$store.dispatch('list/moveTaskBetweenHeadings', {
-              taskId, ids, name: h.name, listId: viewList.id,
+          onSortableAdd: (evt, taskIds, type, ids) => {
+            this.$store.dispatch('list/moveTasksBetweenHeadings', {
+              taskIds, ids, name: h.name, listId: viewList.id,
             })
           }
         })
@@ -650,16 +647,18 @@ export default {
             }), mom(date, 'Y-M-D'))
           },
           id: date,
-          onAddTask(obj) {
+          onAddTask: obj => {
             const date = obj.header.id
             this.$store.dispatch('task/addTask', {
               ...obj.task, calendar: calObj(date)
             })
           },
-          onSortableAdd: (evt) => {
-            this.$store.dispatch('task/saveTask', {
-              id: evt.item.dataset.id,
-              calendar: calObj(date)
+          onSortableAdd: evt => {
+            const items = evt.items
+            if (items.length === 0) items.push(evt.item)
+            this.$store.dispatch('task/saveTasksById', {
+              ids: items.map(el => el.dataset.id),
+              task: {calendar: calObj(date)},
             })
           },
         })

@@ -11,6 +11,7 @@
         :focus="true"
         :options='options'
         @select="select"
+        @cancel="$emit('close')"
         @enter='addTag'
       />
       <ButtonApp :value="title" @click="addTag"/>

@@ -1,5 +1,5 @@
 <template>
-  <div class="Task draggable" :class="{fade: completed, isSelected, showingIconDropContent}"
+  <div class="Task draggable" :class="{fade: completed, showingIconDropContent}"
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
     @click="rootClick"
@@ -38,6 +38,7 @@
                   <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
                   <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
                   <span v-html="parsedName"></span>
+                  <Icon v-if="haveChecklist" class="txt-icon" icon="tasks" color="var(--gray)" width="18px"/>
                   <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
               </span>
               <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
@@ -90,7 +91,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'isSelected', 'view', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName'],
+  props: ['task', 'view', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -105,9 +106,12 @@ export default {
     }
   },
   mounted() {
-    utils.bindToContextMenu(this.$el, this.options, this)
+    this.bindContextMenu(this.options)
   },
   methods: {
+    bindContextMenu(options) {
+      utils.bindToContextMenu(this.$el, options, this)
+    },
     enter(cont) {
       if (!this.isEditing) {
         const s = cont.style
@@ -116,6 +120,9 @@ export default {
         cont.classList.add('hided')
         s.height = '0px'
         s.padding = '2px 0'
+        setTimeout(() => {
+          this.$emit('de-select', this.$el)
+        }, 10)
         setTimeout(() => {
           if (lessThan38) {
           cont.classList.add('show')
@@ -141,17 +148,9 @@ export default {
         this.$store.dispatch('task/completeTasks', [this.task])
       else this.$store.dispatch('task/uncompleteTasks', [this.task])
     },
-    selectTask() {
-      this.$emit('select', this.task.id)
-    },
     click() {
-      if (this.isDesktop && this.isOnControl) {
-        this.selectTask()
-      } else if (this.isDesktop) {
+      if (this.isDesktop && !this.enableSelect)
         this.isEditing = true
-      } else {
-        this.selectTask()
-      }
     },
     dblclick() {
       if (!this.isDesktop)
@@ -229,6 +228,7 @@ export default {
       savedLists: state => state.list.lists,
       savedTags: state => state.tag.tags,
       selectedEls: state => state.selectedEls,
+      selectedTasks: state => state.selectedTasks,
     }),
     ...mapGetters(['isDesktop', 'platform', 'l']),
     completed() {
@@ -239,6 +239,9 @@ export default {
     },
     urlRegex() {
       return /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/g
+    },
+    haveChecklist() {
+      return this.task.checklist && this.task.checklist.length > 0
     },
     taskTags() {
       const ts = this.savedTags
@@ -437,6 +440,13 @@ export default {
       }
       return obj[this.task.priority]
     },
+  },
+  watch: {
+    selectedTasks() {
+      if (this.selectedTasks && this.selectedTasks.length > 0)
+        this.bindContextMenu(this.multiSelectOptions)
+      else this.bindContextMenu(this.options)
+    }
   }
 }
 
@@ -480,11 +490,15 @@ export default {
   opacity: .4;
 }
 
+.txt-icon {
+  margin-left: 6px;
+}
+
 .cont-wrapper:hover, .cont-wrapper:active {
   background-color: var(--light-gray) !important;
 }
 
-.isSelected .cont-wrapper {
+.sortable-selected .cont-wrapper {
   background-color: rgba(53, 73, 90, 0.6) !important;
 }
 

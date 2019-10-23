@@ -57,12 +57,19 @@ import EditVue from './Edit.vue'
 
 import { mapGetters } from 'vuex'
 
+import utils from '@/utils/'
+
 export default {
   props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEdit', 'save'],
   components: {
     IconDrop: IconDropVue,
     Icon: IconVue,
     EditHeading: EditVue,
+  },
+  mounted() {
+    const header = this.$el.getElementsByClassName('header')[0]
+    if (header)
+      utils.bindToContextMenu(header, this.options, this)
   },
   data() {
     return {

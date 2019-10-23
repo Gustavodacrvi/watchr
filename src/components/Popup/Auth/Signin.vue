@@ -10,12 +10,14 @@
         :focus="true"
         :value='eMail'
         @input='v => eMail = v'
+        @cancel="$emit('close')"
       />
       <InputApp
         class="mt"
         :placeholder='l["Password"] + ":"'
         type="password"
         :value='password'
+        @cancel="$emit('close')"
         @input='v => password = v'
       />
       <ButtonApp

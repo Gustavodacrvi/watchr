@@ -262,13 +262,15 @@ export default {
 
       batch.commit()
     },
-    removeTaskFromList({state}, {taskId, view, ids}) {
+    removeTasksFromList({state}, {taskIds, view, ids}) {
       const batch = fire.batch()
 
-      const taskRef = fire.collection('tasks').doc(taskId)
-      batch.update(taskRef, {
-        list: null, heading: null,
-      })
+      for (const id of taskIds) {
+        const taskRef = fire.collection('tasks').doc(id)
+        batch.update(taskRef, {
+          list: null, heading: null,
+        })
+      }
       const obj = {}
       obj[view] = {}
       obj[view].tasks = ids
@@ -278,12 +280,22 @@ export default {
 
       batch.commit()
     },
-    moveTaskToList(c, {ids, taskId, listId}) {
+    moveTasksToList(c, {ids, taskIds, listId, smartView}) {
+      const list = fire.collection('lists').doc(listId)
       const batch = fire.batch()
+      let views = list.smartViewsOrders
+      if (!views) views = {}
+      views[smartView] = ids
 
-      const taskRef = fire.collection('tasks').doc(taskId)
-      batch.update(taskRef, {
-        list: listId,
+      for (const id of taskIds) {
+        const taskRef = fire.collection('tasks').doc(id)
+        batch.update(taskRef, {
+          list: listId,
+        })
+      }
+      const listRef = fire.collection('lists').doc(listId)
+      batch.update(listRef, {
+        smartViewsOrders: views,
       })
 
       batch.commit()
@@ -464,35 +476,37 @@ export default {
         batch.commit()
       }
     },
-    moveTaskBetweenHeadings({state}, {ids, listId, taskId, name}) {
+    moveTasksBetweenHeadings({state}, {ids, listId, taskIds, name}) {
       const list = state.lists.find(el => el.id === listId)
-      if (list) {
-        const batch = fire.batch()
+      const batch = fire.batch()
 
-        const taskRef = fire.collection('tasks').doc(taskId)
+      for (const id of taskIds) {
+        const taskRef = fire.collection('tasks').doc(id)
         batch.update(taskRef, {
           heading: name,
         })
-        const heads = list.headings.slice()
-        const i = heads.findIndex(el => el.name === name)
-        heads[i].tasks = ids
-        const listRef = fire.collection('lists').doc(listId)
-        batch.update(listRef, {
-          headings: heads,
-        })
-
-        batch.commit()
       }
+      const heads = list.headings.slice()
+      const i = heads.findIndex(el => el.name === name)
+      heads[i].tasks = ids
+      const listRef = fire.collection('lists').doc(listId)
+      batch.update(listRef, {
+        headings: heads,
+      })
+
+      batch.commit()
     },
-    removeTaskFromHeading({state}, {listId, taskId, ids}) {
+    removeTasksFromHeading({state}, {listId, taskIds, ids}) {
       const list = state.lists.find(el => el.id === listId)
       if (list) {
         const batch = fire.batch()
 
-        const taskRef = fire.collection('tasks').doc(taskId)
-        batch.update(taskRef, {
-          heading: null,
-        })
+        for (const id of taskIds) {
+          const taskRef = fire.collection('tasks').doc(id)
+          batch.update(taskRef, {
+            heading: null,
+          })
+        }
         const listRef = fire.collection('lists').doc(listId)
         batch.update(listRef, {
           tasks: ids,

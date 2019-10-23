@@ -11,6 +11,7 @@
         @input="v => note = v"
         :options="[]"
         :placeholder="l['Note...']"
+        @cancel="$emit('close')"
         @enter='addNote'
       />
       <ButtonApp :value='l["Add notes"]' @click="addNote"/>
