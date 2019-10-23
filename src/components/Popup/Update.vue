@@ -4,9 +4,9 @@
       <h2 class="pc">{{ l['New update!'] }}</h2>
     </div>
     <div class="content">
-      <h3>Bug Fixes</h3>
+      <h3>Features</h3>
       <ul>
-        <li>Bug fixes.</li>
+        <li>Complete multi select functionality.</li>
       </ul>
       <Button @click="close" value="Got it!"/>
     </div>
