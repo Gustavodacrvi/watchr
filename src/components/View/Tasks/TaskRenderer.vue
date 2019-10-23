@@ -16,14 +16,13 @@
       <Task v-for="t of tasks" :key="t.id"
         :task='t'
         :isSelecting='isSelecting'
-        :isSelected='isTaskSelected(t.id)'
         :view='view'
         :multiSelectOptions='options'
         :showHeadingName='showHeadingName'
         :hideListName='hideListName'
         :activeTags="activeTags"
         :viewNameValue='viewNameValue'
-        @select='taskSelect'
+        @de-select='deSelectTask'
 
         :data-id='t.id'
         :data-type='`task`'
@@ -86,7 +85,9 @@ import HeadingEditVue from './../Headings/Edit.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
-import Sortable from 'sortablejs'
+import { MultiDrag, Sortable } from 'sortablejs'
+
+Sortable.mount(new MultiDrag())
 
 import mom from 'moment'
 
@@ -123,7 +124,8 @@ export default {
         i.style.boxShadow = 'initial'
       }
     }
-    this.sortable = new Sortable(this.draggableRoot, {
+    const obj = {
+      multiDrag: this.enableSelect,
       disabled: this.disable,
       group: {
         name: 'task-renderer',
@@ -151,6 +153,15 @@ export default {
         setTimeout(() => {
           this.$emit('update', this.getIds(true))
         }, 100)
+      },
+      onSelect: evt => {
+        const id = evt.item.dataset.id
+        if (id !== "Edit" && !this.selected.includes(id))
+          this.$store.commit('selectTask', id)
+      },
+      onDeselect: evt => {
+        const id = evt.item.dataset.id
+        this.$store.commit('unselectTask', id)
       },
       onAdd: (evt) => {
         const item = evt.item
@@ -229,7 +240,10 @@ export default {
         if (e && e.path && !e.path.some(el => el.classList && el.classList.contains('task-renderer-root')))
           return false
       },
-    })
+    }
+    if (this.isDesktop)
+      obj['multiDragKey'] = this.getMultiDragKey
+    this.sortable = new Sortable(this.draggableRoot, obj)
     const el = this.$el.getElementsByClassName('headings-root')[0]
     if (el) {
       const headsSor = new Sortable(el, {
@@ -351,6 +365,9 @@ export default {
           this.showHeading(s)
         })
       }
+    },
+    deSelectTask(el) {
+      Sortable.utils.deselect(el)
     },
     add(task) {
       if (task.name) {
@@ -505,24 +522,16 @@ export default {
     windowClick() {
       this.$store.commit('clearSelected')
     },
-    isTaskSelected(id) {
-      return this.selected.includes(id)
-    },
-    taskSelect(id) {
-      if (!this.selected.includes(id))
-        this.$store.commit('selectTask', id)
-      else {
-        this.$store.commit('unselectTask', id)
-      }
-    },
   },
   computed: {
     ...mapState({
       selected: state => state.selectedTasks,
       savedTasks: state => state.task.tasks,
+      isOnControl: state => state.isOnControl,
     }),
     ...mapGetters({
       l: 'l',
+      isDesktop: 'isDesktop',
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
       getTaskById: 'task/getTaskById',
@@ -544,6 +553,12 @@ export default {
         return ts
       }
     },
+    enableSelect() {
+      return !this.isDesktop || this.isOnControl || (this.selected.length > 0)
+    },
+    getMultiDragKey() {
+      return this.selected.length > 0 ? null : 'CTRL'
+    },
     draggableRoot() {
       return this.$el.getElementsByClassName('task-renderer-root')[0]
     },
@@ -557,6 +572,10 @@ export default {
   watch: {
     tasks() {
       this.atLeastOneRenderedTask = false
+    },
+    enableSelect() {
+      this.sortable.options.multiDrag = this.enableSelect
+      this.sortable.options.multiDragKey = this.getMultiDragKey
     }
   }
 }

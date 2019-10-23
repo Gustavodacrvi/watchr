@@ -12,7 +12,7 @@
     "firebase": "6.6.1",
     "moment": "2.24.0",
     "register-service-worker": "1.6.2",
-    "sortablejs": "1.10.0",
+    "sortablejs": "^1.10.0",
     "vue": "2.6.10",
     "vue-router": "3.0.3",
     "vuex": "3.0.1"

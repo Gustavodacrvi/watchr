@@ -7,6 +7,7 @@ import Vue from 'vue'
 import IconDrop from '@/components/IconDrop.vue'
 
 let contextMenuRunned = false
+let contextMenuBinded = false
 
 export default {
   getDataFromFirestoreSnapshot(state, changes, arrName) {

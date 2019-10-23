@@ -1,5 +1,5 @@
 <template>
-  <div class="Task draggable" :class="{fade: completed, isSelected, showingIconDropContent}"
+  <div class="Task draggable" :class="{fade: completed, showingIconDropContent}"
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
     @click="rootClick"
@@ -11,7 +11,6 @@
       <div v-if="!isEditing" key="notediting"
         class="cont-wrapper task-cont-wrapper handle rb cursor"
         :class="platform"
-        @click="click"
         @dblclick="dblclick"
       >
         <div class="cont">
@@ -91,7 +90,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'isSelected', 'view', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions'],
+  props: ['task', 'view', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -121,6 +120,9 @@ export default {
         s.height = '0px'
         s.padding = '2px 0'
         setTimeout(() => {
+          this.$emit('de-select', this.$el)
+        }, 10)
+        setTimeout(() => {
           if (lessThan38) {
           cont.classList.add('show')
             s.height = '38px'
@@ -144,18 +146,6 @@ export default {
       if (!this.completed || (c && c.type === 'periodic' || c && c.type === 'weekly'))
         this.$store.dispatch('task/completeTasks', [this.task])
       else this.$store.dispatch('task/uncompleteTasks', [this.task])
-    },
-    selectTask() {
-      this.$emit('select', this.task.id)
-    },
-    click() {
-      if (this.isDesktop && this.isOnControl) {
-        this.selectTask()
-      } else if (this.isDesktop) {
-        this.isEditing = true
-      } else {
-        this.selectTask()
-      }
     },
     dblclick() {
       if (!this.isDesktop)
@@ -448,7 +438,6 @@ export default {
   },
   watch: {
     selectedTasks() {
-      console.log(this.selectedTasks)
       if (this.selectedTasks && this.selectedTasks.length > 0)
         this.bindContextMenu(this.multiSelectOptions)
       else this.bindContextMenu(this.options)
@@ -504,7 +493,7 @@ export default {
   background-color: var(--light-gray) !important;
 }
 
-.isSelected .cont-wrapper {
+.sortable-selected .cont-wrapper {
   background-color: rgba(53, 73, 90, 0.6) !important;
 }
 

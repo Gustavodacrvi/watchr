@@ -137,7 +137,8 @@ const store = new Vuex.Store({
       state.selectedTasks.push(id)
     },
     clearSelected(state) {
-      state.selectedTasks = []
+      if (state.selectedTasks.length !== 0)
+        state.selectedTasks = []
     },
     pushNavBarData(state, navBar) {
       state.navBar = navBar
