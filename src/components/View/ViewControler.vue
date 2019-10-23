@@ -647,13 +647,13 @@ export default {
             }), mom(date, 'Y-M-D'))
           },
           id: date,
-          onAddTask(obj) {
+          onAddTask: obj => {
             const date = obj.header.id
             this.$store.dispatch('task/addTask', {
               ...obj.task, calendar: calObj(date)
             })
           },
-          onSortableAdd: (evt) => {
+          onSortableAdd: evt => {
             const items = evt.items
             if (items.length === 0) items.push(evt.item)
             this.$store.dispatch('task/saveTasksById', {

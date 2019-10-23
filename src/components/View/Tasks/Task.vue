@@ -11,6 +11,7 @@
       <div v-if="!isEditing" key="notediting"
         class="cont-wrapper task-cont-wrapper handle rb cursor"
         :class="platform"
+        @click="click"
         @dblclick="dblclick"
       >
         <div class="cont">
@@ -90,7 +91,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'view', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions'],
+  props: ['task', 'view', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -146,6 +147,10 @@ export default {
       if (!this.completed || (c && c.type === 'periodic' || c && c.type === 'weekly'))
         this.$store.dispatch('task/completeTasks', [this.task])
       else this.$store.dispatch('task/uncompleteTasks', [this.task])
+    },
+    click() {
+      if (this.isDesktop && !this.enableSelect)
+        this.isEditing = true
     },
     dblclick() {
       if (!this.isDesktop)

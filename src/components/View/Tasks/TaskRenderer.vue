@@ -17,6 +17,7 @@
         :task='t'
         :isSelecting='isSelecting'
         :view='view'
+        :enableSelect='enableSelect'
         :multiSelectOptions='options'
         :showHeadingName='showHeadingName'
         :hideListName='hideListName'
