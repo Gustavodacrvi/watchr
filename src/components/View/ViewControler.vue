@@ -654,9 +654,11 @@ export default {
             })
           },
           onSortableAdd: (evt) => {
-            this.$store.dispatch('task/saveTask', {
-              id: evt.item.dataset.id,
-              calendar: calObj(date)
+            const items = evt.items
+            if (items.length === 0) items.push(evt.item)
+            this.$store.dispatch('task/saveTasksById', {
+              ids: items.map(el => el.dataset.id),
+              task: {calendar: calObj(date)},
             })
           },
         })

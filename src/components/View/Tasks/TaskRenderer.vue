@@ -61,7 +61,7 @@
             :showHeadingName="h.showHeadingName"
             :addTask="h.onAddTask"
             :headingPosition='i + 1'
-            :multiSelectOptions='options'
+            :options='options'
             :onSortableAdd='h.onSortableAdd'
             :disable='h.disableTaskRenderer'
             @add-heading='(obj) => $emit("add-heading", obj)'
