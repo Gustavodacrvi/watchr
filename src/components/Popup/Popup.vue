@@ -5,6 +5,7 @@
       :is="popup.comp"
       :class="[platform, {isStandAlone}]"
       :payload="popup.payload"
+      @close="$emit('close')"
     />
     <div class="back" @click="$emit('close')"></div>
   </div>

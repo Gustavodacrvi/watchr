@@ -6,7 +6,7 @@
     <div class="content">
       <h3>Bug Fixes</h3>
       <ul>
-        <li>Can't add heading on lists.</li>
+        <li>Bug fixes.</li>
       </ul>
       <Button @click="close" value="Got it!"/>
     </div>

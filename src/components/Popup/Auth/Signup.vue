@@ -13,6 +13,7 @@
         :focus="true"
         :value='eMail'
         @input='v => eMail = v'
+        @cancel="$emit('close')"
       />
       <InputApp
         class="mt"
@@ -20,6 +21,7 @@
         type="password"
         :value='password'
         @input='v => password = v'
+        @cancel="$emit('close')"
       />
       <InputApp
         class="mt"
@@ -27,6 +29,7 @@
         :placeholder='l["Confirm password"] + ":"'
         :value='conPassword'
         @input='v => conPassword = v'
+        @cancel="$emit('close')"
       />
       <ButtonApp
         class="mt"

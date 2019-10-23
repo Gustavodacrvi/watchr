@@ -38,6 +38,7 @@
                   <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
                   <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
                   <span v-html="parsedName"></span>
+                  <Icon v-if="haveChecklist" class="txt-icon" icon="tasks" color="var(--gray)" width="18px"/>
                   <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
               </span>
               <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
@@ -239,6 +240,9 @@ export default {
     },
     urlRegex() {
       return /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/g
+    },
+    haveChecklist() {
+      return this.task.checklist && this.task.checklist.length > 0
     },
     taskTags() {
       const ts = this.savedTags
@@ -478,6 +482,10 @@ export default {
 
 .fade {
   opacity: .4;
+}
+
+.txt-icon {
+  margin-left: 6px;
 }
 
 .cont-wrapper:hover, .cont-wrapper:active {
