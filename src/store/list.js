@@ -484,15 +484,17 @@ export default {
         batch.commit()
       }
     },
-    removeTaskFromHeading({state}, {listId, taskId, ids}) {
+    removeTasksFromHeading({state}, {listId, taskIds, ids}) {
       const list = state.lists.find(el => el.id === listId)
       if (list) {
         const batch = fire.batch()
 
-        const taskRef = fire.collection('tasks').doc(taskId)
-        batch.update(taskRef, {
-          heading: null,
-        })
+        for (const id of taskIds) {
+          const taskRef = fire.collection('tasks').doc(id)
+          batch.update(taskRef, {
+            heading: null,
+          })
+        }
         const listRef = fire.collection('lists').doc(listId)
         batch.update(listRef, {
           tasks: ids,

@@ -128,15 +128,14 @@ export default {
       if (this.viewList)
         this.$store.dispatch('list/addHeading', {...obj, listId: this.viewList.id})
     },
-    onSortableAdd(evt, {dataset}, type, ids) {
+    onSortableAdd(evt, taskIds, type, ids) {
       if (this.isListType) {
-        const taskId = dataset.id
-        this.$store.dispatch('list/removeTaskFromHeading', {
-          taskId, ids, listId: this.viewList.id,
+        this.$store.dispatch('list/removeTasksFromHeading', {
+          taskIds, ids, listId: this.viewList.id,
         })
       } else if (this.viewName === 'Today' || this.viewName === 'Tomorrow') {
         this.$store.dispatch('list/removeTaskFromList', {
-          taskId: dataset.id, view: this.viewName, ids,
+          taskIds, view: this.viewName, ids,
         })
       }
     },

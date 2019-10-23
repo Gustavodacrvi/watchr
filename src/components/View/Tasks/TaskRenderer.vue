@@ -164,8 +164,9 @@ export default {
         this.$store.commit('unselectTask', id)
       },
       onAdd: (evt) => {
-        const item = evt.item
-        const type = item.dataset.type
+        const items = evt.items
+        if (items.length === 0) items.push(evt.item)
+        const type = items[0].dataset.type
 
         const addEdit = (comp, onSave, propsData) => {
           const Constructor = Vue.extend(comp)
@@ -181,9 +182,10 @@ export default {
         }
         
         if (type !== 'addtask')
-          item.style.display = 'none'
+          for (const item of items)
+            item.style.display = 'none'
         if (type === 'task' && this.onSortableAdd)
-          this.onSortableAdd(evt, item, type, this.getIds(true))
+          this.onSortableAdd(evt, items.map(el => el.dataset.id), type, this.getIds(true))
         if (type === 'floatbutton') {
           addEdit(TaskEditTemplate, this.add, {
               key: 'Edit',
