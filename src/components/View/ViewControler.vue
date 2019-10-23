@@ -605,15 +605,14 @@ export default {
               name: h.name, listId: viewList.id, ids,
             })
           },
-          onAddTask(obj) {
+          onAddTask: obj => {
             this.$store.dispatch('list/addTaskHeading', {
               name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
             })
           },
-          onSortableAdd(evt, {dataset}, type, ids) {
-            const taskId = dataset.id
-            this.$store.dispatch('list/moveTaskBetweenHeadings', {
-              taskId, ids, name: h.name, listId: viewList.id,
+          onSortableAdd: (evt, taskIds, type, ids) => {
+            this.$store.dispatch('list/moveTasksBetweenHeadings', {
+              taskIds, ids, name: h.name, listId: viewList.id,
             })
           }
         })
