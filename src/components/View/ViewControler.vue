@@ -255,10 +255,9 @@ export default {
                 ...t, 
               })
             },
-            onSortableAdd(evt, {dataset}, type, ids) {
-              const taskId = dataset.id
-              this.$store.dispatch('list/moveTaskToList', {
-                taskId, ids, listId: t.id,
+            onSortableAdd: (evt, taskIds, type, ids) => {
+              this.$store.dispatch('list/moveTasksToList', {
+                taskIds, ids, listId: list.id, smartView: this.viewName,
               })
             }
           })

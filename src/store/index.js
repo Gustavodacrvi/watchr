@@ -130,13 +130,15 @@ const store = new Vuex.Store({
       state.iconDrop = drop
     },
     unselectTask(state, id) {
-      const i = state.selectedTasks.findIndex(el => el === id)
-      state.selectedTasks.splice(i, 1)
-      console.log('select',state.selectedTasks)
+      setTimeout(() => {
+        const i = state.selectedTasks.findIndex(el => el === id)
+        state.selectedTasks.splice(i, 1)
+      }, 10)
     },
     selectTask(state, id) {
-      state.selectedTasks.push(id)
-      console.log('select',state.selectedTasks)
+      setTimeout(() => {
+        state.selectedTasks.push(id)
+      }, 10)
     },
     clearSelected(state) {
       if (state.selectedTasks.length !== 0)

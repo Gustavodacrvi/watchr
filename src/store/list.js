@@ -262,7 +262,7 @@ export default {
 
       batch.commit()
     },
-    removeTaskFromList({state}, {taskIds, view, ids}) {
+    removeTasksFromList({state}, {taskIds, view, ids}) {
       const batch = fire.batch()
 
       for (const id of taskIds) {
@@ -280,12 +280,22 @@ export default {
 
       batch.commit()
     },
-    moveTaskToList(c, {ids, taskId, listId}) {
+    moveTasksToList(c, {ids, taskIds, listId, smartView}) {
+      const list = fire.collection('lists').doc(listId)
       const batch = fire.batch()
+      let views = list.smartViewsOrders
+      if (!views) views = {}
+      views[smartView] = ids
 
-      const taskRef = fire.collection('tasks').doc(taskId)
-      batch.update(taskRef, {
-        list: listId,
+      for (const id of taskIds) {
+        const taskRef = fire.collection('tasks').doc(id)
+        batch.update(taskRef, {
+          list: listId,
+        })
+      }
+      const listRef = fire.collection('lists').doc(listId)
+      batch.update(listRef, {
+        smartViewsOrders: views,
       })
 
       batch.commit()
