@@ -39,6 +39,7 @@ export default {
   'Add notes': 'Add notes',
   'Note...': 'Note...',
   'Notes...': 'Notes...',
+  "Profile": "Profile",
   'Upcoming': 'Upcoming',
   "Username (Optional)": "Username (Optional)",
   'New update!': 'New update!',

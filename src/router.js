@@ -48,6 +48,11 @@ export default new Router({
       ]
     },
     {
+      path: '/profile',
+      name: 'profile',
+      component: AsyncComponent(import(/* webpackChunkName: "profile-chunk" */ './views/Profile.vue')),
+    },
+    {
       path: '/action',
       name: 'Action',
       component: AsyncComponent(import(/* webpackChunkName: "action-chunk" */ './views/Action.vue')),
@@ -57,4 +62,4 @@ export default new Router({
       }),
     },
   ]
-});
+})

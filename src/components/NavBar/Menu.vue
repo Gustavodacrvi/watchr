@@ -10,6 +10,7 @@
           <router-link class="cursor link rb" to="/home">{{ l['Home'] }}</router-link>
           <router-link class="cursor link rb" to="/user">{{ l['User'] }}</router-link>
           <router-link class="cursor link rb" to="/support/overview">{{ l['Support'] }}</router-link>
+          <router-link v-if="user && user.emailVerified" class="cursor link rb" to="/support/profile">{{ l['Profile'] }}</router-link>
           <span class="cursor link rb" @click="pop('Signin')">{{ l['Sign in'] }}</span>
           <span class="cursor link rb" @click="pop('Signup')">{{ l['Sign up'] }}</span>
           <span v-if="user && user.isAnonymous" class="cursor link rb" @click="pop('Signup')">{{ l['Sign in'] }}</span>
@@ -31,7 +32,8 @@
 import AppbarVue from '../Appbar/Appbar.vue'
 import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop.vue'
-import { mapGetters } from 'vuex'
+
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
@@ -65,6 +67,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['user']),
     ...mapGetters(['l']),
     languages() {
       return [

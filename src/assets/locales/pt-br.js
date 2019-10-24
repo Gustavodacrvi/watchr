@@ -125,6 +125,7 @@ export default {
   "Sign up option": "Opção de inscrição",
   "Sign in with google": "Inscrever-se com google",
   "OR": "OR",
+  "Profile": "Perfil",
   "Username (Optional)": "Nome de usuário (Opcional)",
   "Hide autohide headings": "Esconder cabeçalhos",
   "Hide heading": "Esconder cabeçalho",
