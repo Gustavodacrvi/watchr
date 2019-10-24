@@ -9,8 +9,15 @@
         @google='upgradeAccountToGoogle'
       />
       <InputApp
-        :placeholder='l["E-mail"] + ":"'
+        :placeholder='l["Username (Optional)"] + ":"'
         :focus="true"
+        :value='username'
+        @input='v => username = v'
+        @cancel="$emit('close')"
+      />
+      <InputApp
+        class="mt"
+        :placeholder='l["E-mail"] + ":"'
         :value='eMail'
         @input='v => eMail = v'
         @cancel="$emit('close')"
@@ -60,6 +67,7 @@ export default {
   data() {
     return {
       eMail: '',
+      username: '',
       password: '',
       conPassword: '',
     }
@@ -95,6 +103,9 @@ export default {
       else if (!this.isUpgrading) {
         const auth = firebase.auth()
         auth.createUserWithEmailAndPassword(this.eMail, this.password).then(() => {
+          if (this.username) auth.currentUser.updateProfile({
+            displayName: this.username,
+          })
           const uid = auth.currentUser.uid
           toast({
             name: this.l['You have successfully created an account!'],
@@ -161,4 +172,12 @@ export default {
 </script>
 
 <style scoped src="@/assets/css/popupAuth.css">
+</style>
+
+<style scoped>
+
+.Signup.desktop {
+  transform: translateY(-16px);
+}
+
 </style>

@@ -40,6 +40,7 @@ export default {
   'Note...': 'Note...',
   'Notes...': 'Notes...',
   'Upcoming': 'Upcoming',
+  "Username (Optional)": "Username (Optional)",
   'New update!': 'New update!',
   "There is already a list with this heading name.": "There is already a list with this heading name.",
   "Convert to list": "Convert to list",
