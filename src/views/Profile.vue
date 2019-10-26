@@ -1,7 +1,7 @@
 
 <template>
   <div class="ViewProfile">
-    <div v-if="isDesktop" class="cont">
+    <div v-if="isDesktop" class="cont desktop">
       <div class="menu-wrapper">
         <div class="menu">
           <div v-for="o in links"
@@ -22,6 +22,18 @@
       </div>
       <div class="view">
         açlskjdf
+      </div>
+    </div>
+    <div v-else class="cont mobile">
+      <div class="menu-wrapper">
+        <div class="scroll">
+          <span v-for="str in mobileLinks"
+            :key="str"
+            class="btn rb cursor"
+            :class="[str, {active: false, 'not-active': true}]"
+          >{{ str }}</span>
+        </div>
+        <div></div>
       </div>
     </div>
   </div>
@@ -45,12 +57,40 @@ export default {
           icon: 'user',
         },
         {
-          name: 'Tags',
-          icon: 'tag',
+          name: 'Profile2',
+          icon: 'user',
         },
         {
-          name: 'Lists',
-          icon: 'tasks',
+          name: 'Profile3',
+          icon: 'user',
+        },
+        {
+          name: 'Profile4',
+          icon: 'user',
+        },
+        {
+          name: 'Profile5',
+          icon: 'user',
+        },
+        {
+          name: 'Profile6',
+          icon: 'user',
+        },
+        {
+          name: 'Profile7',
+          icon: 'user',
+        },
+        {
+          name: 'Profile8',
+          icon: 'user',
+        },
+        {
+          name: 'Profile9',
+          icon: 'user',
+        },
+        {
+          name: '10',
+          icon: 'user',
         },
       ],
       section: 'Profile',
@@ -71,6 +111,9 @@ export default {
     back() {
       return this.$el.getElementsByClassName('back')[0]
     },
+    mobileLinks() {
+      return this.links.map(el => el.name)
+    },
     ...mapGetters(['isDesktop', 'l']),
   },
 }
@@ -83,26 +126,28 @@ export default {
   display: flex;
   height: 100%;
   justify-content: center;
+  position: relative;
+  z-index: 800;
 }
 
-.cont {
+.cont.desktop {
   flex-basis: 1150px;
   height: 100%;
   display: flex;
   align-items: stretch;
 }
 
-.menu-wrapper {
+.desktop .menu-wrapper {
   flex-basis: 400px;
   height: 100%;
 }
 
-.menu {
+.desktop .menu {
   position: relative;
   margin: 0 18px;
 }
 
-.view {
+.desktop .view {
   flex-basis: 100%;
   height: 100%;
 }
@@ -129,7 +174,7 @@ export default {
   color: var(--primary);
 }
 
-.icon-wrapper {
+.desktop .icon-wrapper {
   height: 100%;
   flex-basis: 35px;
   transform: translateY(2px);
@@ -138,13 +183,30 @@ export default {
   align-items: center;
 }
 
-.back {
+.desktop .back {
   position: absolute;
   top: 0;
   height: 35px;
   width: 100%;
   transition-duration: .2s;
   z-index: 1;
+}
+
+.cont.mobile {
+  width: 100%;
+  margin: 16px;
+  margin-top: 0;
+}
+
+.mobile .scroll {
+  display: flex;
+  overflow-x: auto;
+}
+
+.mobile .btn {
+  min-width: min-content;
+  display: flex;
+  padding: 0 12px;
 }
 
 </style>
