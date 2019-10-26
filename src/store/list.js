@@ -84,16 +84,17 @@ export default {
   },
   actions: {
     getData({state}) {
-      if (uid())
+      const id = uid()
+      if (id)
       return Promise.all([
         new Promise(resolve => {
-          fire.collection('lists').where('userId', '==', uid()).onSnapshot(snap => {
+          fire.collection('lists').where(`users.${id}`, '==', true).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
             resolve()
           })
         }),
         new Promise(resolve => {
-          fire.collection('listsOrder').doc(uid()).onSnapshot((snap => {
+          fire.collection('listsOrder').doc(id).onSnapshot((snap => {
             state.order = snap.data().order
             if (!state.order) state.order = []
             resolve()

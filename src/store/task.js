@@ -88,10 +88,11 @@ export default {
   },
   actions: {
     getData({state}) {
-      if (uid())
+      const id = uid()
+      if (id)
       return Promise.all([
         new Promise(resolve => {
-          fire.collection('tasks').where('userId', '==', uid()).onSnapshot(snap => {
+          fire.collection('tasks').where(`users.${id}`, '==', true).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
             resolve()
           })
