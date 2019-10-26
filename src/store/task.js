@@ -105,6 +105,7 @@ export default {
       const ref = fire.collection('tasks').doc()
       batch.set(ref, {
         userId: uid(),
+        users: {[uid()]: true},
         ...obj,
       })
 
@@ -235,6 +236,7 @@ export default {
           const ref = fire.collection('tasks').doc(t.id)
           batch.set(ref, {
             userId: uid(),
+            users: {[uid()]: true},
             name: t.name,
             priority: '',
             list: list.id,
@@ -250,6 +252,7 @@ export default {
 
       batch.set(list, {
         userId: uid(),
+        users: {[uid()]: true},
         smartViewsOrders: {},
         name: task.name,
         descr: '',

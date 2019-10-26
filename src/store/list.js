@@ -114,6 +114,7 @@ export default {
         name,
         smartViewsOrders: {},
         userId: uid(),
+        users: {[uid()]: true},
         headings: [],
         headingsOrder: [],
         tasks: [],
@@ -259,6 +260,7 @@ export default {
         name,
         tasks: newRootTasks.map(t => t.newId),
         userId: uid(),
+        users: {[uid()]: true},
       })
 
       batch.commit()
@@ -346,6 +348,7 @@ export default {
       const taskRef = fire.collection('tasks').doc()
       batch.set(taskRef, {
         userId: uid(),
+        users: {[uid()]: true},
         ...task,
       })
 
@@ -393,6 +396,7 @@ export default {
         batch.set(newList, {
           name,
           userId: uid(),
+          users: {[uid()]: true},
           smartViewsOrders: {},
           headings: [],
           headingsOrder: [],
@@ -419,6 +423,7 @@ export default {
         task.heading = name
         batch.set(taskRef, {
           userId: uid(),
+          users: {[uid()]: true},
           ...task,
         })
         const heads = list.headings.slice()
@@ -566,6 +571,7 @@ export default {
         const ref = fire.collection('tasks').doc()
         batch.set(ref, {
           ...t, list: listId, id: ref.id, userId: uid(),
+          users: {[uid()]: true},
         })
         taskIds[t.id] = ref.id
       }
@@ -586,6 +592,7 @@ export default {
       list.smartViewsOrders = {}
       batch.set(listRef, {
         ...list, id: listId, userId: uid(),
+        users: {[uid()]: true},
       })
 
       batch.commit()

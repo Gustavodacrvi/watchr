@@ -19,7 +19,7 @@
       </transition>
       <div v-if="!isDesktop" style="height: 65px"></div>
       <transition name="fade-t" appear mode="out-in">
-        <router-view class="router-view" :class="{hided: hideNavbar}"/>
+        <router-view class="router-view" :class="{hided: hideNavbar}" :hideNavbar='hideNavbar'/>
       </transition>
     </div>
   </div>

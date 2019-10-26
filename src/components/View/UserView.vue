@@ -23,7 +23,7 @@
 
 <script>
 
-const UPDATE_STRING = '2.0.2.2'
+const UPDATE_STRING = '2.0.2.3'
 
 import AppbarVue from '../Appbar/Appbar.vue'
 import ViewControlerVue from '../View/ViewControler.vue'
@@ -31,6 +31,7 @@ import ViewControlerVue from '../View/ViewControler.vue'
 import { mapGetters } from 'vuex'
 
 export default {
+  props: ['hideNavbar'],
   components: {
     Appbar: AppbarVue,
     ViewControler: ViewControlerVue
@@ -79,8 +80,10 @@ export default {
   computed: {
     ...mapGetters(['platform', 'isDesktop']),
     getNavTopPosition() {
+      let increment = 0
+      if (this.hideNavbar) increment = 22
       const app = document.getElementById('app')
-      const scroll = this.scrollTop
+      const scroll = this.scrollTop + increment
       if (app) {
         const winHeight = app.offsetHeight
         let top = (75 - scroll) + 'px'

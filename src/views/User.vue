@@ -1,7 +1,7 @@
 <template>
   <div class="User">
     <transition appear name="state" mode="out-in">
-      <UserView v-if="authState && user.emailVerified" key="app"/>
+      <UserView v-if="authState && user.emailVerified" key="app" :hideNavbar='hideNavbar'/>
       <div key="notlogged" v-else-if="!authState && firstFireLoad" class="view">
         <span class='view'>{{ l['Please log in to continue.'] }}</span>
       </div>
@@ -33,6 +33,7 @@ import { mapState, mapGetters } from 'vuex'
 import firebase from 'firebase/app'
 
 export default {
+  props: ['hideNavbar'],
   components: {
     UserView: UserViewVue,
     LoadingComponent: LoadingComponentVue,

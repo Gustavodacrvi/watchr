@@ -7,6 +7,7 @@
       <h3>Bug Fixes</h3>
       <ul>
         <li>Couldn't sign up on mobile.</li>
+        <li>Fixed strange margin on appnav on standlone mode.</li>
       </ul>
       <h3>Improvements</h3>
       <ul>
