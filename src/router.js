@@ -49,8 +49,19 @@ export default new Router({
     },
     {
       path: '/profile',
-      name: 'profile',
-      component: AsyncComponent(import(/* webpackChunkName: "profile-chunk" */ './views/Profile.vue')),
+      component: AsyncComponent(import(/* webpackChunkName: "profile-page-chunk" */ './views/Profile.vue')),
+      children: [
+        {
+          path: '/',
+          name: 'profile',
+          component: AsyncComponent(import(/* webpackChunkName: "profile-chunk" */ './components/Profile/Profile.vue')),
+        },
+        {
+          path: 'collaborators',
+          name: 'collaborators',
+          component: AsyncComponent(import(/* webpackChunkName: "collaborators-chunk" */ './components/Profile/Collaborators.vue')),
+        },
+      ]
     },
     {
       path: '/action',

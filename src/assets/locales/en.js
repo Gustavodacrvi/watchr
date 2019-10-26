@@ -44,6 +44,7 @@ export default {
   "Username (Optional)": "Username (Optional)",
   'New update!': 'New update!',
   "There is already a list with this heading name.": "There is already a list with this heading name.",
+  "Collaborators": "Collaborators",
   "Convert to list": "Convert to list",
   'Lists': 'Lists',
   'Add list notes': 'Add list notes',

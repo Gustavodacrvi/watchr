@@ -64,6 +64,7 @@ export default {
       const n = this.$route.name
       switch (n) {
         case 'profile': return this.l['Profile']
+        case 'collaborators': return this.l['Collaborators']
       }
     },
     isOnUserPage() {

@@ -7,8 +7,8 @@
           <div v-for="o in links"
             :key="o.name"
             class="btn rb cursor"
-            :class="[o.name, {active: isActive(o.name), 'not-active': !isActive(o.name)}]"
-            @click="activate(o.name)"
+            :class="[o.name.toLowerCase(), {active: isActive(o.name), 'not-active': !isActive(o.name)}]"
+            @click="activate(o.name.toLowerCase())"
           >
             <div class="icon-wrapper">
               <div>
@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="view">
-        açlskjdf
+        <router-view :data-num='view.name'/>
       </div>
     </div>
     <div v-else class="cont mobile">
@@ -30,12 +30,15 @@
           <span v-for="str in mobileLinks"
             :key="str"
             class="btn rb cursor"
-            :class="[str, {active: isActive(str), 'not-active': !isActive(str)}]"
-            @click="mobileActivate(str)"
+            :class="[str.toLowerCase(), {active: isActive(str), 'not-active': !isActive(str)}]"
+            @click="mobileActivate(str.toLowerCase())"
           >{{ str }}</span>
           <span class="back-mobile rb cb"></span>
         </div>
         <div></div>
+      </div>
+      <div class="view">
+        <router-view :data-num='view.name'/>
       </div>
     </div>
   </div>
@@ -51,6 +54,9 @@ export default {
   components: {
     Icon: IconVue,
   },
+  created() {
+    this.section = this.$route.name
+  },
   data() {
     return {
       links: [
@@ -59,27 +65,35 @@ export default {
           icon: 'user',
           num: 1,
         },
+        {
+          name: 'Collaborators',
+          icon: 'user',
+          num: 2,
+        },
       ],
-      section: 'Profile',
+      section: 'profile',
     }
   },
   mounted() {
     setTimeout(() => {
       this.mobileActivate()
-    }, 10)
+    }, 50)
   },
   methods: {
     isActive(name) {
-      return name === this.section
+      return name.toLowerCase() === this.section
     },
     activate(name) {
+      this.go(name)
       this.section = name
       const el = this.$el.getElementsByClassName(name)[0]
       this.back().style.top = el.offsetTop + 'px'
     },
     mobileActivate(str) {
-      if (str)
+      if (str) {
         this.section = str
+        this.go(str)
+      }
       const el = this.$el.getElementsByClassName(this.section)[0]
       const back = this.$el.getElementsByClassName('back-mobile')[0]
       const s = back.style
@@ -89,14 +103,18 @@ export default {
     },
     back() {
       return this.$el.getElementsByClassName('back')[0]
-    }
+    },
+    go(name) {
+      if (name === 'profile') this.$router.push('/profile')
+      else this.$router.push('/profile/' + name.toLowerCase())
+    },
   },
   computed: {
     mobileLinks() {
       return this.links.map(el => el.name)
     },
     view() {
-      return this.links.find(el => el.name === this.section)
+      return this.links.find(el => el.name.toLowerCase() === this.section)
     },
     ...mapGetters(['isDesktop', 'l']),
   },
@@ -183,7 +201,7 @@ export default {
 .mobile .btn {
   min-width: min-content;
   display: flex;
-  padding: 0 14px;
+  padding: 0 16px;
   transform: scale(1,1);
 }
 

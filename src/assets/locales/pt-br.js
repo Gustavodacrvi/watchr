@@ -128,6 +128,7 @@ export default {
   "Profile": "Perfil",
   "Username (Optional)": "Nome de usuário (Opcional)",
   "Hide autohide headings": "Esconder cabeçalhos",
+  "Collaborators": "Colaboradores",
   "Hide heading": "Esconder cabeçalho",
   "Subtask name...": "Subtarefa...",
   'Add Notes': 'Adicionar Notas',
