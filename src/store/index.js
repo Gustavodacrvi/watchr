@@ -52,6 +52,7 @@ const store = new Vuex.Store({
     popup: {
       comp: '',
       payload: null,
+      callback: null,
     },
     navBar: {
       options: null,

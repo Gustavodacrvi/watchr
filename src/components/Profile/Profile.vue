@@ -1,17 +1,59 @@
 <template>
-  <div class="Profile">
-    <ProfileImg class="img" src="https://cdn.vox-cdn.com/thumbor/2o-DDN0i7YmpkuvHTfgHzIRgrMk=/0x19:660x459/1200x800/filters:focal(0x19:660x459)/cdn.vox-cdn.com/uploads/chorus_image/image/49742777/Screen_Shot_2016-05-31_at_5.06.18_PM.0.0.png"/>
+  <div v-if="user" class="Profile" :class="platform">
+    <div class="header">
+      <ProfileImg class="img" :src="user.photoURL"/>
+      <div class="info">
+        <ButtonApp
+          type="dark"
+          :class="{white: user.displayName}"
+          :value="username"
+          @click="addUsername"
+        />
+        <ButtonApp
+          type="dark"
+          class="white"
+          :value="user.email"
+          @click="changeEmail"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 
 import ProfileImgVue from './ProfileImg.vue'
+import ButtonVue from '../Auth/Button.vue'
+
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: {
     ProfileImg: ProfileImgVue,
-  }
+    ButtonApp: ButtonVue,
+  },
+  mounted() {
+    console.log(this.user)
+  },
+  methods: {
+    addUsername() {
+      this.$store.dispatch('pushPopup', {
+        comp: 'ChangeUsername',
+        callback: () => window.location.reload(),
+      })
+    },
+    changeEmail() {
+      
+    }
+  },
+  computed: {
+    ...mapState(['user']),
+    ...mapGetters(['platform', 'l']),
+    username() {
+      if (this.user.displayName) return this.user.displayName
+      return this.l["Add username"]
+    },
+  },
 }
 
 </script>
@@ -21,6 +63,28 @@ export default {
 .img {
   width: 125px;
   height: 125px;
+}
+
+.header {
+  position: relative;
+}
+
+.info {
+  position: absolute;
+  display: inline-flex;
+  height: 100px;
+  margin-left: 50px;
+  top: 10px;
+  justify-content: space-around;
+  flex-direction: column;
+}
+
+.mobile .info {
+  margin-left: 20px;
+}
+
+.white {
+  color: var(--white);
 }
 
 </style>

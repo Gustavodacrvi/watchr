@@ -155,8 +155,8 @@ export default {
       return this.payload
     },
     tooLong() {
-      const { eMail, password, conPassword } = this
-      return eMail.length > 75 || password.length > 75 || conPassword > 75
+      const { eMail, password, conPassword, username } = this
+      return eMail.length > 75 || password.length > 75 || conPassword.length > 75 || username.length > 50
     },
     atLeastOneEmpty() {
       const { eMail, password, conPassword } = this

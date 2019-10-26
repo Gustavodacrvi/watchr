@@ -16,6 +16,7 @@
 import Signup from './Auth/Signup.vue'
 import SigninOptions from './Auth/SigninOptions.vue'
 import Signin from './Auth/Signin.vue'
+import ChangeUsername from './Auth/ChangeUsername.vue'
 import Icon from '../Icon.vue'
 import AddTask from './Tasks/AddTask.vue'
 import AddTag from './Tags/AddTag.vue'
@@ -30,7 +31,7 @@ export default {
   components: {
     Signup, SigninOptions, Signin, AddTag,
     AddListNote, AddTagNote, Icon, AddList,
-    AddTask, Update,
+    AddTask, Update, ChangeUsername,
   },
   methods: {
     closeMobilePopup() {

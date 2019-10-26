@@ -134,13 +134,17 @@ export default {
   display: flex;
   height: 100%;
   justify-content: center;
-  position: relative;
-  z-index: 800;
+  z-index: 50;
   margin-top: 24px;
+  position: relative;
 }
 
-.ProfileRouterview {
+.desktop .ProfileRouterview {
   margin: 0 30px;
+}
+
+.mobile .ProfileRouterview {
+  margin-top: 30px;
 }
 
 .cont.desktop {
