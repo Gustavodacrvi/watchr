@@ -21,7 +21,9 @@
         </div>
       </div>
       <div class="view">
-        <router-view :data-num='view.name'/>
+        <transition name="fade-t" mode="out-in">
+          <router-view/>
+        </transition>
       </div>
     </div>
     <div v-else class="cont mobile">
@@ -38,7 +40,9 @@
         <div></div>
       </div>
       <div class="view">
-        <router-view :data-num='view.name'/>
+        <transition name='fade-t' mode="out-in">
+          <router-view/>
+        </transition>
       </div>
     </div>
   </div>
@@ -53,9 +57,6 @@ import { mapGetters } from 'vuex'
 export default {
   components: {
     Icon: IconVue,
-  },
-  created() {
-    this.section = this.$route.name
   },
   data() {
     return {
@@ -74,9 +75,14 @@ export default {
       section: 'profile',
     }
   },
+  created() {
+    this.section = this.$route.name
+  },
   mounted() {
     setTimeout(() => {
-      this.mobileActivate()
+      if (!this.isDesktop)
+        this.mobileActivate()
+      else this.activate()
     }, 50)
   },
   methods: {
@@ -84,9 +90,11 @@ export default {
       return name.toLowerCase() === this.section
     },
     activate(name) {
-      this.go(name)
-      this.section = name
-      const el = this.$el.getElementsByClassName(name)[0]
+      if (name) {
+        this.go(name)
+        this.section = name
+      }
+      const el = this.$el.getElementsByClassName(this.section)[0]
       this.back().style.top = el.offsetTop + 'px'
     },
     mobileActivate(str) {
