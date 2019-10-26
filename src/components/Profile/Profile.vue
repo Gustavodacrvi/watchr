@@ -37,14 +37,23 @@ export default {
   },
   methods: {
     addUsername() {
-      this.$store.dispatch('pushPopup', {
+      this.pop({
         comp: 'ChangeUsername',
-        callback: () => window.location.reload(),
+        callback: this.reload,
       })
     },
     changeEmail() {
-      
-    }
+      this.pop({
+        comp: 'ChangeEmail',
+        callback: this.reload,
+      })
+    },
+    reload() {
+      window.location.reload()
+    },
+    pop(config) {
+      this.$store.dispatch('pushPopup', config)
+    },
   },
   computed: {
     ...mapState(['user']),

@@ -1,16 +1,16 @@
 <template>
   <div class="Signin popup cb shadow rb" :class="platform">
     <div class="tac title">
-      <h3 class="pc">{{ l['Change/Add Username'] }}</h3>
+      <h3 class="pc">{{ l['Change E-mail'] }}</h3>
     </div>
     <div class="content">
       <InputApp
-        :placeholder='l["Username"] + ":"'
+        :placeholder='l["E-mail"] + ":"'
         type="text"
-        :value='username'
+        :value='email'
         :focus='true'
         @cancel="$emit('close')"
-        @input='v => username = v'
+        @input='v => email = v'
       />
       <ButtonApp
         class="mt"
@@ -39,37 +39,40 @@ export default {
   },
   data() {
     return {
-      username: '',
+      email: '',
     }
   },
   created() {
-    this.username = this.user.displayName
+    this.email = this.user.email
   },
   methods: {
     update() {
       const toast = t => this.$store.commit('pushToast', t)
-      if (!this.username)
+      if (!this.email)
         toast({
           name: this.l["Fill in all the required fields."],
           type: "error",
           seconds: 4,
         })
-      else if (this.username.length > 50)
+      else if (this.email.length > 50)
         toast({
-          name: this.l["The maximum number of characters is 50."],
+          name: this.l["The maximum number of characters is 75."],
           type: "error",
           seconds: 4,
         })
       else {
-        firebase.auth().currentUser.updateProfile({
-          displayName: this.username,
-        }).catch(err => toast({
+        firebase.auth().currentUser.updateEmail(this.email).catch(err => toast({
           name: err.message,
           type: 'error',
           seconds: 4,
-        }))
-        if (this.popup.callback) this.popup.callback()
-        this.$store.commit('closePopup')
+        })).then(() => {
+          toast({
+            name: this.l['An e-mail has been sent to your e-mail account to proceed, click on the provided link to proceed.'],
+            seconds: 6,
+            type: 'success',
+          })
+          this.$store.commit('closePopup')
+        })
       }
     },
   },

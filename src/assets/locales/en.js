@@ -42,6 +42,8 @@ export default {
   "Profile": "Profile",
   "Show hided headings...": "Show hided headings...",
   "Add username": "Add username",
+  "An e-mail has been sent to your e-mail account to proceed, click on the provided link to proceed.": "An e-mail has been sent to your e-mail account to proceed, click on the provided link to proceed.",
+  "Change E-mail": "Change E-mail",
   "The maximum number of characters is 50.": "The maximum number of characters is 50.",
   "Change/Add Username": "Change/Add Username",
   'Upcoming': 'Upcoming',

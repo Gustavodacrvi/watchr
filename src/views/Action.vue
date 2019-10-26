@@ -26,6 +26,10 @@ export default {
       })
     }
     switch (this.mode) {
+      case 'recoverEmail': {
+        firebase.auth().currentUser.sendEmailVerification()
+        break
+      }
       case 'verifyEmail': {
         auth.applyActionCode(this.oobCode).then(() => {
           toast({
