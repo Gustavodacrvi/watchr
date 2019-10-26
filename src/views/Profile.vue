@@ -22,7 +22,7 @@
       </div>
       <div class="view">
         <transition name="fade-t" mode="out-in">
-          <router-view/>
+          <router-view class="ProfileRouterview"/>
         </transition>
       </div>
     </div>
@@ -41,7 +41,7 @@
       </div>
       <div class="view">
         <transition name='fade-t' mode="out-in">
-          <router-view/>
+          <router-view class="ProfileRouterview"/>
         </transition>
       </div>
     </div>
@@ -136,6 +136,11 @@ export default {
   justify-content: center;
   position: relative;
   z-index: 800;
+  margin-top: 24px;
+}
+
+.ProfileRouterview {
+  margin: 0 30px;
 }
 
 .cont.desktop {
