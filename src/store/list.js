@@ -599,5 +599,11 @@ export default {
         }, {merge: true})
       ])
     },
+    deleteAllData({state}) {
+      for (const el of state.lists)
+        fire.collection('lists').doc(el.id).delete()
+      fire.collection('listsOrder').doc(uid()).delete()
+      fire.collection('viewOrders').doc(uid()).delete()
+    },
   },
 }

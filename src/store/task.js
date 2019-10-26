@@ -312,5 +312,9 @@ export default {
         }
       }
     },
+    deleteAllData({state}) {
+      for (const el of state.tasks)
+        fire.collection('tasks').doc(el.id).delete()
+    },
   },
 }

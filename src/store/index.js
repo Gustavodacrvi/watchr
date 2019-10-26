@@ -195,6 +195,16 @@ const store = new Vuex.Store({
       if (!getters.isDesktop)
         router.push('/popup')
     },
+    deleteAccount({state, dispatch}) {
+      dispatch('tag/deleteAllData')
+      dispatch('list/deleteAllData')
+      dispatch('task/deleteAllData')
+      dispatch('filter/deleteAllData')
+      setTimeout(() => {
+        router.push('/')
+        window.location.reload()
+      }, 100)
+    },
   }
 })
 

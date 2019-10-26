@@ -54,7 +54,7 @@ export default {
         comp: 'Confirm',
         payload: this.l["You're going to lose all of your data forever!"],
         callback: () => {
-          console.log('go')
+          this.$store.dispatch('deleteAccount')
         },
       })
     },
