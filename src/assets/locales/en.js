@@ -40,6 +40,8 @@ export default {
   'Note...': 'Note...',
   'Notes...': 'Notes...',
   "Profile": "Profile",
+  "E-mail sent": "E-mail sent",
+  "Resend confirmation e-mail": "Resend confirmation e-mail",
   "You're going to lose all of your data forever!": "You're going to lose all of your data forever!",
   "Yes, I am aware of the consequences": "Yes, I am aware of the consequences",
   "Delete account": "Delete account",

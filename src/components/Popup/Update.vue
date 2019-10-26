@@ -8,6 +8,10 @@
       <ul>
         <li>Couldn't sign up on mobile.</li>
       </ul>
+      <h3>Improvements</h3>
+      <ul>
+        <li>App should <b><i>"theoretically"</i></b> load 1 to 3 seconds faster.</li>
+      </ul>
       <h3>Features</h3>
       <ul>
         <li>Add/Change username.</li>

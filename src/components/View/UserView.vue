@@ -23,7 +23,7 @@
 
 <script>
 
-const UPDATE_STRING = '2.0.2.1'
+const UPDATE_STRING = '2.0.2.2'
 
 import AppbarVue from '../Appbar/Appbar.vue'
 import ViewControlerVue from '../View/ViewControler.vue'

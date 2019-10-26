@@ -72,7 +72,6 @@ const store = new Vuex.Store({
     authState: false,
     firstFireLoad: false,
     fastSearch: false,
-    isLoading: true,
     toasts: [],
     windowWidth: 0,
   },
@@ -148,9 +147,6 @@ const store = new Vuex.Store({
     pushNavBarData(state, navBar) {
       state.navBar = navBar
     },
-    load(state) {
-      state.isLoading = false
-    },
     toggleUser(state, isLogged) {
       state.authState = isLogged
     },
@@ -174,9 +170,7 @@ const store = new Vuex.Store({
     logOut({state}) {
       auth.signOut().then(() => {
         state.authState = false
-        state.isLoading = true
         window.location.reload()
-
       })
     },
     pushKeyShortcut({dispatch, commit}, key) {
@@ -200,6 +194,7 @@ const store = new Vuex.Store({
       dispatch('list/deleteAllData')
       dispatch('task/deleteAllData')
       dispatch('filter/deleteAllData')
+      firebase.auth().currentUser.delete()
       setTimeout(() => {
         router.push('/')
         window.location.reload()
@@ -220,14 +215,10 @@ auth.onAuthStateChanged((user) => {
 
   const dispatch = store.dispatch
   const loadData = () => {
-    Promise.all([
-      dispatch('tag/getData'),
-      dispatch('list/getData'),
-      dispatch('filter/getData'),
-      dispatch('task/getData'),
-    ]).then(() => {
-      store.commit('load')
-    })
+    dispatch('tag/getData')
+    dispatch('list/getData')
+    dispatch('filter/getData')
+    dispatch('task/getData')
   }
   const toast = (t) => store.commit('pushToast', t)
 
