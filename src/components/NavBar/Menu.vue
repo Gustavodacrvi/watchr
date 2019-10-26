@@ -7,7 +7,7 @@
       <transition :name="this.appSection ? 'mr' : 'ml'">
         <Appbar class="Appbar" v-if="appSection" key="app"/>
         <div v-else key="links" class="nav-links">
-          <router-link class="cursor link rb" to="/home">{{ l['Home'] }}</router-link>
+          <router-link class="cursor link rb" to="/">{{ l['Home'] }}</router-link>
           <router-link class="cursor link rb" to="/user">{{ l['User'] }}</router-link>
           <router-link class="cursor link rb" to="/support/overview">{{ l['Support'] }}</router-link>
           <router-link v-if="user && user.emailVerified" class="cursor link rb" to="/profile">{{ l['Profile'] }}</router-link>

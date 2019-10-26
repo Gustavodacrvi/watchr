@@ -30,8 +30,10 @@
           <span v-for="str in mobileLinks"
             :key="str"
             class="btn rb cursor"
-            :class="[str, {active: false, 'not-active': true}]"
+            :class="[str, {active: isActive(str), 'not-active': !isActive(str)}]"
+            @click="mobileActivate(str)"
           >{{ str }}</span>
+          <span class="back-mobile rb cb"></span>
         </div>
         <div></div>
       </div>
@@ -55,46 +57,16 @@ export default {
         {
           name: 'Profile',
           icon: 'user',
-        },
-        {
-          name: 'Profile2',
-          icon: 'user',
-        },
-        {
-          name: 'Profile3',
-          icon: 'user',
-        },
-        {
-          name: 'Profile4',
-          icon: 'user',
-        },
-        {
-          name: 'Profile5',
-          icon: 'user',
-        },
-        {
-          name: 'Profile6',
-          icon: 'user',
-        },
-        {
-          name: 'Profile7',
-          icon: 'user',
-        },
-        {
-          name: 'Profile8',
-          icon: 'user',
-        },
-        {
-          name: 'Profile9',
-          icon: 'user',
-        },
-        {
-          name: '10',
-          icon: 'user',
+          num: 1,
         },
       ],
       section: 'Profile',
     }
+  },
+  mounted() {
+    setTimeout(() => {
+      this.mobileActivate()
+    }, 10)
   },
   methods: {
     isActive(name) {
@@ -103,16 +75,28 @@ export default {
     activate(name) {
       this.section = name
       const el = this.$el.getElementsByClassName(name)[0]
-      const back = this.back
-      back.style.top = el.offsetTop + 'px'
+      this.back().style.top = el.offsetTop + 'px'
     },
-  },
-  computed: {
+    mobileActivate(str) {
+      if (str)
+        this.section = str
+      const el = this.$el.getElementsByClassName(this.section)[0]
+      const back = this.$el.getElementsByClassName('back-mobile')[0]
+      const s = back.style
+      s.left = el.offsetLeft + 'px'
+      s.height = el.offsetHeight + 'px'
+      s.width = el.offsetWidth + 'px'
+    },
     back() {
       return this.$el.getElementsByClassName('back')[0]
-    },
+    }
+  },
+  computed: {
     mobileLinks() {
       return this.links.map(el => el.name)
+    },
+    view() {
+      return this.links.find(el => el.name === this.section)
     },
     ...mapGetters(['isDesktop', 'l']),
   },
@@ -162,14 +146,6 @@ export default {
   transition-duration: .2s;
 }
 
-.btn.not-active:hover {
-  background-color: var(--dark);
-}
-
-.btn.not-active:active {
-  transform: scale(.95,.95);
-}
-
 .active {
   color: var(--primary);
 }
@@ -201,12 +177,28 @@ export default {
 .mobile .scroll {
   display: flex;
   overflow-x: auto;
+  position: relative;
 }
 
 .mobile .btn {
   min-width: min-content;
   display: flex;
-  padding: 0 12px;
+  padding: 0 14px;
+  transform: scale(1,1);
+}
+
+.back-mobile {
+  position: absolute;
+  top: 0;
+  transition-duration: .2s;
+}
+
+.btn.not-active:hover {
+  background-color: var(--dark);
+}
+
+.btn.not-active:active {
+  transform: scale(.95,.95);
 }
 
 </style>

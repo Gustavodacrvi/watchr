@@ -5,9 +5,9 @@
         <Icon icon="menu" width="30px" :primaryHover="true"/>
       </span>
       <transition name="fade" mode="out-in" appear>
-        <div v-if="isOnUserPage" key="user">
-          <h2 v-if="navBar && navBar.title" class="title">{{ navBar.title }}</h2>
-          <IconDrop v-if="navBar && navBar.options"
+        <div v-if="isNotOnHome" key="user">
+          <h2 v-if="title" class="title">{{ title }}</h2>
+          <IconDrop v-if="isOnUserPage && navBar && navBar.options"
             handle="settings-v"
             :options="navBar.options"
             handle-color="var(--gray)"
@@ -29,7 +29,7 @@ import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop.vue'
 import LogoVue from '../Illustrations/Logo.vue'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -49,9 +49,26 @@ export default {
   },
   computed: {
     ...mapState(['navBar']),
+    ...mapGetters(['l']),
+    title() {
+      if (this.$route.name === 'user') {
+        if (this.navBar) return this.navBar.title
+        else return null
+      }
+      return this.viewTitle
+    },
+    isNotOnHome() {
+      return this.$route.name !== 'home'
+    },
+    viewTitle() {
+      const n = this.$route.name
+      switch (n) {
+        case 'profile': return this.l['Profile']
+      }
+    },
     isOnUserPage() {
       return this.$route.name === 'user' || this.$route.path === '/menu'
-    }
+    },
   }
 }
 
