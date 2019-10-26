@@ -64,12 +64,10 @@ export default {
         {
           name: 'Profile',
           icon: 'user',
-          num: 1,
         },
         {
           name: 'Collaborators',
-          icon: 'user',
-          num: 2,
+          icon: 'users',
         },
       ],
       section: 'profile',

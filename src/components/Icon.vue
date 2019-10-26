@@ -52,6 +52,7 @@ import note from '@/assets/icons/note.svg'
 import archive from '@/assets/icons/archive.svg'
 import importIcon from '@/assets/icons/import.svg'
 import exportIcon from '@/assets/icons/export.svg'
+import users from '@/assets/icons/users.svg'
 
 import { mapGetters } from 'vuex'
 
@@ -62,7 +63,7 @@ export default {
       icons: {
         inbox, calendar, sun, arrow, star, user, out,
         sort, tag, priority, menu, tasks, archive,
-        pen, trash, fire, bloqued, circle,
+        pen, trash, fire, bloqued, circle, users,
         copy, plus, globe, heading, search, note,
         "import": importIcon,
         "export": exportIcon,
