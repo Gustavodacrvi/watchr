@@ -1,5 +1,5 @@
 <template>
-  <div class="Signin popup cb shadow rb" :class="platform">
+  <div class="Signin popup cb shadow rb scroll" :class="platform">
     <div class="tac title">
       <h3 class="pc">{{ l['Sign in'] }}</h3>
     </div>
@@ -25,6 +25,7 @@
         :value='l["Sign in"]'
         @click="signIn"
       />
+      <div v-if="!isDesktop" style="height: 400px"></div>
     </div>
   </div>
 </template>
@@ -89,7 +90,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['platform', 'l']),
+    ...mapGetters(['platform', 'l', 'isDesktop']),
     atLeastOneEmpty() {
       const { eMail, password } = this
       return eMail === '' || password === ''

@@ -17,6 +17,7 @@
         />
       </div>
     </div>
+    <ButtonApp type="dark" :value="l['Delete account']" @click="deleteAccount"/>
   </div>
 </template>
 
@@ -46,6 +47,15 @@ export default {
       this.pop({
         comp: 'ChangeEmail',
         callback: this.reload,
+      })
+    },
+    deleteAccount() {
+      this.pop({
+        comp: 'Confirm',
+        payload: this.l["You're going to lose all of your data forever!"],
+        callback: () => {
+          console.log('go')
+        },
       })
     },
     reload() {

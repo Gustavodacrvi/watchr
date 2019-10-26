@@ -4,9 +4,14 @@
       <h2 class="pc">{{ l['New update!'] }}</h2>
     </div>
     <div class="content">
+      <h3>Bug Fixes</h3>
+      <ul>
+        <li>Couldn't sign up on mobile.</li>
+      </ul>
       <h3>Features</h3>
       <ul>
-        <li>Complete multi select functionality.</li>
+        <li>Add/Change username.</li>
+        <li>Change account e-mail.</li>
       </ul>
       <Button @click="close" value="Got it!"/>
     </div>

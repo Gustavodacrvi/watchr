@@ -1,5 +1,5 @@
 <template>
-  <div class="Signup popup cb shadow rb" :class="platform">
+  <div class="Signup popup cb shadow rb scroll" :class="platform">
     <div class="tac title">
       <h3 class="pc">{{ l['Create an Account'] }}</h3>
     </div>
@@ -43,6 +43,7 @@
         :value='l["Create account"]'
         @click="createAccount"
       />
+      <div v-if="!isDesktop" style="height: 400px"></div>
     </div>
   </div>
 </template>
