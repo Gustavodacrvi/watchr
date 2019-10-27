@@ -33,6 +33,7 @@ import task from './task'
 import tag from './tag'
 import list from './list'
 import filter from './filter'
+import user from './user'
 
 const lang = localStorage.getItem('watchrlanguage') || 'en'
 
@@ -47,7 +48,7 @@ moment.locale(lang)
 
 const store = new Vuex.Store({
   modules: {
-    task, tag, list, filter,
+    task, tag, list, filter, user,
   },
   state: {
     lang,
@@ -201,14 +202,15 @@ const store = new Vuex.Store({
       })
     },
     deleteAccount({state, dispatch}) {
-      dispatch('deleteProfilePic')
       dispatch('tag/deleteAllData')
       dispatch('list/deleteAllData')
       dispatch('task/deleteAllData')
       dispatch('filter/deleteAllData')
+      dispatch('user/deleteAllData')
       firebase.auth().currentUser.delete()
       setTimeout(() => {
         router.push('/')
+        dispatch('deleteProfilePic')
         window.location.reload()
       }, 100)
     },
@@ -231,6 +233,7 @@ auth.onAuthStateChanged((user) => {
     dispatch('list/getData')
     dispatch('filter/getData')
     dispatch('task/getData')
+    dispatch('user/getData')
   }
   const toast = (t) => store.commit('pushToast', t)
 

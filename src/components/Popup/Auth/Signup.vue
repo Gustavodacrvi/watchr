@@ -123,6 +123,7 @@ export default {
           this.$store.dispatch('tag/addDefaultData', uid)
           this.$store.dispatch('list/addDefaultData', uid)
           this.$store.dispatch('filter/addDefaultData', uid)
+          this.$store.dispatch('user/addDefaultData', uid)
           this.$store.commit('closePopup')
           this.$store.commit('toggleUser', true)
           this.$router.push('/user')
