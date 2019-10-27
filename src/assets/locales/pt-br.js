@@ -88,6 +88,8 @@ export default {
   'CalParserDue': 'vence',
   'CalParserEvery': 'todo',
   'CalParserNextweek': 'próxima semana',
+  "Change photo": "Mudar foto",
+  "Remove photo": "Apagar foto",
   'CalParserNextweekend': 'próximo final de semana',
   "CalParserTimesKeyword": "vezes",
   'CalParserNextmonth': 'próximo mês',

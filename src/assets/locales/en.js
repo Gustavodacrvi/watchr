@@ -40,6 +40,8 @@ export default {
   'Note...': 'Note...',
   'Notes...': 'Notes...',
   "Profile": "Profile",
+  "Change photo": "Change photo",
+  "Remove photo": "Remove photo",
   "E-mail sent": "E-mail sent",
   "Resend confirmation e-mail": "Resend confirmation e-mail",
   "You're going to lose all of your data forever!": "You're going to lose all of your data forever!",

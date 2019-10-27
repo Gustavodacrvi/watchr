@@ -329,6 +329,7 @@ export default {
           name: this.l['Import from template'],
           icon: 'import',
           file: true,
+          accept: '.json',
           handleFiles: (files, promise) => {
             const bug = () => {
               this.$store.commit('pushToast', {

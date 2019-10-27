@@ -42,7 +42,7 @@
                       :icon="l.icon"
                       :color="l.color"
                     />
-                    <input v-if="l.file" :ref="`file-icondrop-link-${l.name}`" type="file" accept=".json" style="display: none" @change='handleFiles(l)'>
+                    <input v-if="l.file" :ref="`file-icondrop-link-${l.name}`" type="file" :accept="l.accept" style="display: none" @change='handleFiles(l)'>
                     <span class="name">{{ priorityParser(l.name) }}</span>
                   </div>
                 </div>

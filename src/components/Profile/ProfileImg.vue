@@ -12,21 +12,56 @@
 
 import IconVue from '../Icon.vue'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 import utils from '@/utils'
+import firebase from 'firebase/app'
+
+const storage = firebase.storage()
 
 export default {
   props: ['enable'],
   components: {
     Icon: IconVue,
   },
+  data() {
+    return {
+      url: '',
+    }
+  },
   mounted() {
+    const errToast = err => this.$store.commit('pushToast', {
+      name: err.message,
+      seconds: 4,
+      type: 'error'
+    })
     if (this.enable) {
       utils.bindOptionsToEventListener(this.$el, [
         {
-          name: 'yeai',
-          icon: 'user',
+          name: this.l['Change photo'],
+          icon: 'pen',
+          file: true,
+          accept: '.jpg',
+          handleFiles: (files, promise) => {
+            const file = files[0]
+            if (file) {
+              const str = `images/${this.user.uid}.jpg`
+
+              const ref = storage.ref(str)
+              ref.put(file).then(snap => {
+                storage.ref(str).getDownloadURL().then(url => {
+                  firebase.auth().currentUser.updateProfile({
+                    photoURL: url,
+                  }).then(err => window.location.reload())
+                  .catch(errToast)
+                }).catch(errToast)
+              }).catch(errToast)
+            }
+          },
+        },
+        {
+          name: this.l['Remove photo'],
+          icon: 'trash',
         }
       ], this, 'click')
     }
@@ -38,6 +73,7 @@ export default {
   },
   computed: {
     ...mapState(['user']),
+    ...mapGetters(['l']),
     nophoto() {
       if (!this.user) return true
       return !this.user.photoURL

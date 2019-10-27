@@ -11,6 +11,7 @@ const MINIMUM_DESKTOP_SCREEN_WIDTH = 820
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
+import 'firebase/storage'
 
 firebase.initializeApp({
   apiKey: process.env.VUE_APP_API_KEY,
@@ -26,6 +27,7 @@ firebase.initializeApp({
 
 export const fire = firebase.firestore()
 export const auth = firebase.auth()
+export const sto = firebase.storage()
 
 import task from './task'
 import tag from './tag'
