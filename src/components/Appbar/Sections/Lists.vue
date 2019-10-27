@@ -57,14 +57,23 @@ export default {
         }
         list.options = [
           {
-            name: 'Edit list',
+            name: this.l['Edit list'],
             icon: 'pen',
             callback: () => {
               this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...list, editing: true}})
             }
           },
           {
-            name: 'Delete list',
+            name: this.l['Share list'],
+            icon: 'users',
+            callback: () => {
+              this.$store.dispatch('pushPopup', {
+                comp: 'ShareTasks', payload: list.id,
+              })
+            },
+          },
+          {
+            name: this.l['Delete list'],
             icon: 'trash',
             important: true,
             callback: () => this.$store.dispatch('list/deleteList', {

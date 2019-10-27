@@ -10,9 +10,9 @@
     </svg>
     <div v-else class="pie-wrapper" :style='outlineStyle'>
       <svg class='svg' viewBox="0 0 32 32" :width='getWidth'>
-        <circle class='pie' :stroke-dasharray="`${progress} 100`"></circle>
+        <circle class='pie' :stroke-dasharray="`${progress} 100`" fill='currentColor' stroke='currentColor'></circle>
       </svg>
-      <div class="outline" :style='outlineStyle'></div>
+      <div class="outline" :style='outlineStyle' style='border: .5px currentColor solid'></div>
     </div>
   </div>
 </template>
@@ -148,10 +148,6 @@ export default {
   left: -4px;
   top: -4px;
   border-radius: 100px;
-}
-
-.outline {
-  border: .5px var(--white) solid;
 }
 
 </style>
