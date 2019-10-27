@@ -45,14 +45,14 @@ export default {
           handleFiles: (files, promise) => {
             const file = files[0]
             if (file) {
-              const str = `images/${this.user.uid}.jpg`
+              const str = this.getFirebaseRefPath
 
               const ref = storage.ref(str)
               ref.put(file).then(snap => {
                 storage.ref(str).getDownloadURL().then(url => {
                   firebase.auth().currentUser.updateProfile({
                     photoURL: url,
-                  }).then(err => window.location.reload())
+                  }).then(() => window.location.reload())
                   .catch(errToast)
                 }).catch(errToast)
               }).catch(errToast)
@@ -62,6 +62,7 @@ export default {
         {
           name: this.l['Remove photo'],
           icon: 'trash',
+          callback: () => this.$store.dispatch('deleteProfilePic')
         }
       ], this, 'click')
     }
@@ -74,6 +75,9 @@ export default {
   computed: {
     ...mapState(['user']),
     ...mapGetters(['l']),
+    getFirebaseRefPath() {
+      return `images/${this.user.uid}.jpg`
+    },
     nophoto() {
       if (!this.user) return true
       return !this.user.photoURL

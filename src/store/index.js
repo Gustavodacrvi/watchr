@@ -192,7 +192,16 @@ const store = new Vuex.Store({
       if (!getters.isDesktop)
         router.push('/popup')
     },
+    deleteProfilePic() {
+      const str = `images/${auth.currentUser.uid}.jpg`
+      sto.ref(str).delete().then(() => {
+        auth.currentUser.updateProfile({
+          photoURL: '',
+        }).then(() => window.location.reload())
+      })
+    },
     deleteAccount({state, dispatch}) {
+      dispatch('deleteProfilePic')
       dispatch('tag/deleteAllData')
       dispatch('list/deleteAllData')
       dispatch('task/deleteAllData')
