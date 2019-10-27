@@ -265,6 +265,9 @@ auth.onAuthStateChanged((user) => {
     dispatch('tag/addDefaultData', uid)
     dispatch('list/addDefaultData', uid)
     dispatch('filter/addDefaultData', uid)
+    dispatch('user/addDefaultData', {
+      user, username: user.displayName,
+    })
     loadData()
   }
 })

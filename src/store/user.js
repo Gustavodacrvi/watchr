@@ -25,9 +25,17 @@ export default {
         })
       })
     },
-    addDefaultData(s, id) {
-      fire.collection('users').doc(id).set({
-        userId: id,
+    update(c, info) {
+      fire.collection('users').doc(uid()).update({
+        ...info,
+      })
+    },
+    addDefaultData(s, {user, username}) {
+      fire.collection('users').doc(user.uid).set({
+        userId: user.uid,
+        email: user.email,
+        photo: user.photoURL,
+        displayName: username,
       })
     },
     deleteAllData() {

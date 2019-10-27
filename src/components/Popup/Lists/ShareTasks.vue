@@ -9,6 +9,34 @@
         <span class="opt cursor" :class="{active: section === 'From'}" @click="activate('From')">{{ l['Invite from list'] }}</span>
         <span class="line"></span>
       </div>
+      <div class="popup-cont">
+        <transition name="fade-t" mode="out-in"> 
+          <div v-if="section === 'Colab'" class="colab" key="colab">
+            <div class="mt colab-invite">
+              <div class="colab-input">
+                <DropInput
+                  :placeholder='l["E-mail or username"] + ":"'
+                  :focus='true'
+                  :value='search'
+                  :options='options'
+                  @input='v => search = v'
+                  @select="select"
+                  @cancel="$emit('close')"
+                />
+              </div>
+              <div class="colab-btn">
+                <ButtonApp :value="l['Invite']" @click="invite"/>
+              </div>
+            </div>
+            <div class="mt">
+              <ProfileInfo v-bind='user'/>
+            </div>
+          </div>
+          <div v-else class="from" key="from">
+            from
+          </div>
+        </transition>
+      </div>
     </div>
   </div>
 </template>
@@ -17,6 +45,7 @@
 
 import DropInputVue from '../../Auth/DropInput.vue'
 import ButtonVue from '../../Auth/Button.vue'
+import ProfileInfoVue from '../../Profile/ProfileInfo.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -24,6 +53,7 @@ export default {
   components: {
     DropInput: DropInputVue,
     ButtonApp: ButtonVue,
+    ProfileInfo: ProfileInfoVue,
   },
   data() {
     return {
@@ -38,6 +68,7 @@ export default {
   computed: {
     ...mapGetters(['platform', 'l']),
     ...mapState({
+      user: state => state.user,
       lists: state => state.list.lists,
       listId: state => state.popup.payload,
     }),
@@ -47,6 +78,9 @@ export default {
   },
   methods: {
     select(val) {
+
+    },
+    invite() {
 
     },
     activate(name) {
@@ -92,6 +126,20 @@ export default {
   left: 0;
   border-radius: 4px;
   transition-duration: .2s;
+}
+
+.colab-invite {
+  display: flex;
+  align-items: center;
+}
+
+.colab-input {
+  flex-basis: 65%;
+}
+
+.colab-btn {
+  margin-left: 8px;
+  flex-basis: 35%;
 }
 
 .opt {

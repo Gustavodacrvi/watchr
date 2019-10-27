@@ -90,6 +90,8 @@ export default {
   'CalParserNextweek': 'próxima semana',
   "Change photo": "Mudar foto",
   "Share List": "Compartilhar Lista",
+  "Invite": "Convidar",
+  "E-mail or username": "E-mail ou nome de usuário",
   "Remove photo": "Apagar foto",
   "Invite from list": "Convidar de outra lista",
   "Share list": "Compartilhar lista",

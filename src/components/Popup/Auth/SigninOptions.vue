@@ -46,6 +46,10 @@ export default {
         dispatch('tag/addDefaultData', uid)
         dispatch('list/addDefaultData', uid)
         dispatch('filter/addDefaultData', uid)
+        dispatch('user/addDefaultData', {
+          user: res.user,
+          username: res.user.displayName,
+        })
         commit('closePopup')
         commit('toggleUser', true)
         this.$router.push('/user')

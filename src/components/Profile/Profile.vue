@@ -1,7 +1,7 @@
 <template>
   <div v-if="user" class="Profile" :class="platform">
     <div class="header">
-      <ProfileImg class="img" :enable='true'/>
+      <ProfileImg class="img" :src='user.photoURL' :enable='true'/>
       <div class="info">
         <ButtonApp
           type="dark"

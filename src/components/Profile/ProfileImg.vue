@@ -16,18 +16,12 @@ import { mapState, mapGetters } from 'vuex'
 
 import utils from '@/utils'
 import firebase from 'firebase/app'
-
-const storage = firebase.storage()
+import 'firebase/storage'
 
 export default {
-  props: ['enable'],
+  props: ['enable', 'src'],
   components: {
     Icon: IconVue,
-  },
-  data() {
-    return {
-      url: '',
-    }
   },
   mounted() {
     const errToast = err => this.$store.commit('pushToast', {
@@ -47,13 +41,14 @@ export default {
             if (file) {
               const str = this.getFirebaseRefPath
 
-              const ref = storage.ref(str)
+              const ref = firebase.storage().ref(str)
               ref.put(file).then(snap => {
-                storage.ref(str).getDownloadURL().then(url => {
+                firebase.storage().ref(str).getDownloadURL().then(url => {
                   firebase.auth().currentUser.updateProfile({
                     photoURL: url,
                   }).then(() => window.location.reload())
                   .catch(errToast)
+                  this.$store.dispatch('user/update', {photo: url})
                 }).catch(errToast)
               }).catch(errToast)
             }
@@ -62,7 +57,10 @@ export default {
         {
           name: this.l['Remove photo'],
           icon: 'trash',
-          callback: () => this.$store.dispatch('deleteProfilePic')
+          callback: () => {
+            this.$store.dispatch('deleteProfilePic')
+            this.$store.dispatch('user/update', {photo: ''})
+          }
         }
       ], this, 'click')
     }
@@ -79,15 +77,14 @@ export default {
       return `images/${this.user.uid}.jpg`
     },
     nophoto() {
-      if (!this.user) return true
-      return !this.user.photoURL
+      return !this.src
     },
     enabled() {
       return this.enable
     },
     style() {
-      if (this.user)
-        return `background-image: url("${this.user.photoURL}");`
+      if (!this.nophoto)
+        return `background-image: url("${this.src}");`
       return {}
     },
   },
