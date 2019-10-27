@@ -17,7 +17,7 @@
         />
       </div>
     </div>
-    <ButtonApp v-if="false" type="dark" :value="l['Delete account']" @click="deleteAccount"/>
+    <ButtonApp type="dark" :value="l['Delete account']" @click="deleteAccount"/>
   </div>
 </template>
 

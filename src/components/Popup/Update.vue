@@ -4,19 +4,11 @@
       <h2 class="pc">{{ l['New update!'] }}</h2>
     </div>
     <div class="content">
-      <h3>Bug Fixes</h3>
-      <ul>
-        <li>Couldn't sign up on mobile.</li>
-        <li>Fixed strange margin on appnav on standlone mode.</li>
-      </ul>
-      <h3>Improvements</h3>
-      <ul>
-        <li>App should <b><i>"theoretically"</i></b> load 1 to 3 seconds faster.</li>
-      </ul>
       <h3>Features</h3>
       <ul>
-        <li>Add/Change username.</li>
-        <li>Change account e-mail.</li>
+        <li>Add/Change profile pic.</li>
+        <li>Delete profile pic.</li>
+        <li>Delete account.</li>
       </ul>
       <Button @click="close" value="Got it!"/>
     </div>
@@ -36,6 +28,7 @@ export default {
   methods: {
     close() {
       this.$store.commit('closePopup')
+      this.$router.replace('/user')
     },
   },
   computed: {
