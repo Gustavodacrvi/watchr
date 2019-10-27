@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     bindContextMenu(options) {
-      utils.bindToContextMenu(this.$el, options, this)
+      utils.bindOptionsToEventListener(this.$el, options, this)
     },
     enter(cont) {
       if (!this.isEditing) {

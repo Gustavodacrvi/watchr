@@ -1,5 +1,5 @@
 <template>
-  <div class="ActButton handle shadow">
+  <div class="ActButton handle shadow" :class="platform">
     <div class="floating">
       <div class="button cb">
         <Icon class="icon"
@@ -30,7 +30,7 @@ export default {
     Icon: IconVue,
   },
   computed: {
-    ...mapGetters(['l'])
+    ...mapGetters(['l', 'platform'])
   }
 }
 
@@ -56,14 +56,18 @@ export default {
 
 .button {
   transition-duration: .3s;
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
   z-index: 10;
   overflow: hidden;
   cursor: pointer;
   border-radius: 100px;
 }
 
+.mobile .button {
+  width: 55px;
+  height: 55px;
+}
 
 .path {
   position: absolute;

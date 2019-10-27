@@ -447,9 +447,8 @@ export default {
 
     this.download(list.name + '.json', JSON.stringify(template))
   },
-  bindToContextMenu(node, options, parent, event) {
-    if (!event) event = 'contextmenu'
-    node.addEventListener(event, evt => {
+  bindOptionsToEventListener(node, options, parent, event) {
+    node.addEventListener(event ? event : 'contextmenu', evt => {
       evt.preventDefault()
       if (!contextMenuRunned) {
         const y = evt.clientY + 'px'

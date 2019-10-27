@@ -65,7 +65,7 @@ export default {
   },
   mounted() {
     const el = this.$el.getElementsByClassName('link-wrapper')[0]
-    utils.bindToContextMenu(el, this.options, this)
+    utils.bindOptionsToEventListener(el, this.options, this)
   },
   methods: {
     linkCallback(evt) {

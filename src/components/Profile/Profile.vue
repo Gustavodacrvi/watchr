@@ -1,7 +1,7 @@
 <template>
   <div v-if="user" class="Profile" :class="platform">
     <div class="header">
-      <ProfileImg class="img" :src="user.photoURL"/>
+      <ProfileImg class="img" :enable='true'/>
       <div class="info">
         <ButtonApp
           type="dark"
@@ -32,9 +32,6 @@ export default {
   components: {
     ProfileImg: ProfileImgVue,
     ButtonApp: ButtonVue,
-  },
-  mounted() {
-    console.log(this.user)
   },
   methods: {
     addUsername() {
@@ -99,7 +96,9 @@ export default {
 }
 
 .mobile .info {
-  margin-left: 20px;
+  display: flex;
+  position: unset;
+  margin-left: 0;
 }
 
 .white {

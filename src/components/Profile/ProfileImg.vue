@@ -1,10 +1,10 @@
 <template>
-  <div
+  <div @click='click'
     class="ProfileImg shadow"
-    :class="{nosrc}"
+    :class="{nophoto, enabled}"
     :style='style'
   >
-    <Icon v-if="!src" icon="user" width="65%"/>
+    <Icon v-if="nophoto" icon="user" width="65%"/>
   </div>
 </template>
 
@@ -12,17 +12,43 @@
 
 import IconVue from '../Icon.vue'
 
+import { mapState } from 'vuex'
+
+import utils from '@/utils'
+
 export default {
-  props: ['src'],
+  props: ['enable'],
   components: {
     Icon: IconVue,
   },
+  mounted() {
+    if (this.enable) {
+      utils.bindOptionsToEventListener(this.$el, [
+        {
+          name: 'yeai',
+          icon: 'user',
+        }
+      ], this, 'click')
+    }
+  },
+  methods: {
+    click(evt) {
+      if (this.enable) evt.stopPropagation()
+    },
+  },
   computed: {
-    nosrc() {
-      return !this.src
+    ...mapState(['user']),
+    nophoto() {
+      if (!this.user) return true
+      return !this.user.photoURL
+    },
+    enabled() {
+      return this.enable
     },
     style() {
-      return `background-image: url("${this.src}");`
+      if (this.user)
+        return `background-image: url("${this.user.photoURL}");`
+      return {}
     },
   },
 }
@@ -39,12 +65,16 @@ export default {
   background-size: cover;
 }
 
-.nosrc {
+.nophoto {
   display: inline-flex;
   justify-content: center;
   align-items: center;
   background-color: var(--card);
   color: var(--light-gray);
+}
+
+.enabled {
+  cursor: pointer;
 }
 
 </style>
