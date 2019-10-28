@@ -193,6 +193,12 @@ export default {
         userData: {[userInfo.userId]: userInfo},
       }, {merge: true})
     },
+    removePendingUser(c, {listId, userId}) {
+      fire.collection('lists').doc(listId).update({
+        pending: {[userId]: false},
+        userData: {[userId]: false}
+      })
+    },
     duplicateHeading({state}, {name, listId, tasks}) {
       const list = state.lists.find(l => l.id === listId)
       if (list) {

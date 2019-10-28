@@ -1,6 +1,9 @@
 
 <template>
-  <div class="ProfileInfo cursor rb">
+  <div class="ProfileInfo cursor rb"
+    @mouseenter="hover = true"
+    @mouseleave="hover = false"
+  >
     <div class="img-wrapper">
       <ProfileImg class="img" :src='photoURL'/>
     </div>
@@ -10,6 +13,14 @@
         <span>{{ email }}</span>
         <span v-if="pending" class="tag">{{ l['pending'] }}</span>
       </div>
+      <transition name="fade-t">
+        <Icon v-if="showIcon"
+          class="icon"
+          icon="trash"
+          @click="remove"
+          :primaryHover="true"
+        />
+      </transition>
     </div>
   </div>
 </template>
@@ -17,16 +28,31 @@
 <script>
 
 import ProfileImgVue from './ProfileImg.vue'
+import IconVue from '../Icon.vue'
 
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['displayName', 'photoURL', 'src', 'email', 'pending'],
+  props: ['displayName', 'photoURL', 'src', 'email', 'pending', 'userId'],
   components: {
     ProfileImg: ProfileImgVue,
+    Icon: IconVue,
+  },
+  data() {
+    return {
+      hover: false,
+    }
+  },
+  methods: {
+    remove() {
+      this.$emit('remove')
+    }
   },
   computed: {
-    ...mapGetters(['l']),
+    ...mapGetters(['l', 'isDesktop']),
+    showIcon() {
+      return !this.isDesktop || this.hover
+    }
   }
 }
 
@@ -35,6 +61,7 @@ export default {
 <style scoped>
 
 .ProfileInfo {
+  position: relative;
   height: 40px;
   display: flex;
   transition-duration: .2s;
@@ -75,6 +102,13 @@ export default {
   font-size: .8em;
   border-radius: 6px;
   transform: translateY(-10px);
+}
+
+.icon {
+  position: absolute;
+  right: 10px;
+  top: 55%;
+  transform: translateY(-50%);
 }
 
 </style>

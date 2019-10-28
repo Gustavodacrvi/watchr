@@ -33,6 +33,7 @@
                 :key="u.userId"
                 :pending='true'
                 v-bind="u"
+                @remove='removePendingUser(u.userId)'
               />
             </div>
           </div>
@@ -76,6 +77,17 @@ export default {
     select(val) {
 
     },
+    activate(name) {
+      this.section = name
+    },
+    moveLine() {
+      const act = this.$el.getElementsByClassName('active')[0]
+      const line = this.$el.getElementsByClassName('line')[0]
+      const s = line.style
+
+      s.width = act.offsetWidth + 'px'
+      s.left = act.offsetLeft + 'px'
+    },
     invite() {
       const toast = t => this.$store.commit('pushToast', t)
       const errToast = err => toast({
@@ -99,16 +111,11 @@ export default {
             })
         }).catch(errToast)
     },
-    activate(name) {
-      this.section = name
-    },
-    moveLine() {
-      const act = this.$el.getElementsByClassName('active')[0]
-      const line = this.$el.getElementsByClassName('line')[0]
-      const s = line.style
-
-      s.width = act.offsetWidth + 'px'
-      s.left = act.offsetLeft + 'px'
+    removePendingUser(id) {
+      this.$store.dispatch('list/removePendingUser', {
+        listId: this.list.id,
+        userId: id,
+      })
     },
   },
   computed: {
