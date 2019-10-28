@@ -97,7 +97,7 @@ export default {
           })
         }),
         new Promise(resolve => {
-          fire.collection('lists').where(`pending.${id}`, '==', true).onSnapshot(snap => {
+          fire.collection('lists').where(`usersStatus.${id}`, '==', 'pending').onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'invites')
             resolve()
           })
@@ -197,13 +197,18 @@ export default {
     },
     addPendingUser(c, {listId, userInfo}) {
       fire.collection('lists').doc(listId).set({
-        pending: {[userInfo.userId]: true},
+        usersStatus: {[userInfo.userId]: 'pending'},
         userData: {[userInfo.userId]: userInfo},
+      }, {merge: true})
+    },
+    rejectInvite(c, listId) {
+      fire.collection('lists').doc(listId).set({
+        usersStatus: {[uid()]: 'rejected'},
       }, {merge: true})
     },
     removePendingUser(c, {listId, userId}) {
       fire.collection('lists').doc(listId).update({
-        pending: {[userId]: false},
+        usersStatus: {[userId]: false},
         userData: {[userId]: false}
       })
     },

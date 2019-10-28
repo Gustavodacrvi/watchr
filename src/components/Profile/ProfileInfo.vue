@@ -13,7 +13,10 @@
       <div>
         <span v-if="displayName && listName">{{ displayName }} </span>
         <span>{{ email }}</span>
-        <span v-if="pending" class="tag">{{ l['pending'] }}</span>
+        <transition name="fade-t">
+          <span v-if="status === 'pending'" class="tag">{{ l['pending'] }}</span>
+          <span v-else-if="status === 'rejected'" class="tag rejected">{{ l['rejected'] }}</span>
+        </transition>
       </div>
       <div class="icon-wrapper">
         <transition name="fade-t">
@@ -41,7 +44,7 @@ import IconDropVue from '../IconDrop.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['displayName', 'photoURL', 'src', 'email', 'pending', 'userId', 'listName', 'options'],
+  props: ['displayName', 'photoURL', 'src', 'email', 'status', 'userId', 'listName', 'options'],
   components: {
     ProfileImg: ProfileImgVue,
     Icon: IconVue,
@@ -112,6 +115,10 @@ export default {
   font-size: .8em;
   border-radius: 6px;
   transform: translateY(-10px);
+}
+
+.tag.rejected {
+  background-color: var(--red);
 }
 
 .icon-wrapper {

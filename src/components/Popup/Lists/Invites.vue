@@ -12,7 +12,7 @@
           v-bind="i.ownerData"
           :key="i.id"
           :listName='i.name'
-          :options='[]'
+          :options='getOptions(i)'
         />
       </transition-group>
     </div>
@@ -37,6 +37,26 @@ export default {
     }
   },
   methods: {
+    getOptions(i) {
+      return [
+        {
+          name: this.l['Accept invite'],
+          icon: 'circle-check',
+          callback: () => this.accept(i.id),
+        },
+        {
+          name: this.l['Reject invite'],
+          icon: 'trash',
+          callback: () => this.reject(i.id),
+        },
+      ]
+    },
+    accept(listId) {
+      this.$store.dispatch('list/acceptInvite', listId)
+    },
+    reject(listId) {
+      this.$store.dispatch('list/rejectInvite', listId)
+    },
     enter(el) {
       const s = el.style
 

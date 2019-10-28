@@ -33,9 +33,20 @@
                 @enter='enter'
                 @leave='leave'
               >
+                <ProfileInfo v-for="u in rejectedUsers"
+                  :key="u.userId"
+                  status='rejected'
+                  v-bind="u"
+                  @remove='removePendingUser(u.userId)'
+                />
+              </transition-group>
+              <transition-group
+                @enter='enter'
+                @leave='leave'
+              >
                 <ProfileInfo v-for="u in pendingUsers"
                   :key="u.userId"
-                  :pending='true'
+                  status='pending'
                   v-bind="u"
                   @remove='removePendingUser(u.userId)'
                 />
@@ -149,6 +160,22 @@ export default {
       s.height = 0
       s.opacity = 0
     },
+    getUsersKeysByStatus(status) {
+      const users = this.list.usersStatus
+      if (!users) return []
+      const ids = []
+      for (const key of Object.keys(users))
+        if (users[key] === status) ids.push(key)
+      return ids
+    },
+    getStatusUsersByIds(ids) {
+      const arr = []
+      for (const id of ids) {
+        const user = this.usersData.find(el => el.userId === id)
+        if (user) arr.push(user)
+      }
+      return arr
+    },
   },
   computed: {
     ...mapGetters({
@@ -170,17 +197,16 @@ export default {
       return []
     },
     pendingIds() {
-      if (!this.list.pending) return []
-      return Object.keys(this.list.pending)
+      return this.getUsersKeysByStatus('pending')
+    },
+    rejectedIds() {
+      return this.getUsersKeysByStatus('rejected')
+    },
+    rejectedUsers() {
+      return this.getStatusUsersByIds(this.rejectedIds)
     },
     pendingUsers() {
-      if (!this.list.pending) return []
-      const arr = []
-      for (const id of this.pendingIds) {
-        const user = this.usersData.find(el => el.userId === id)
-        if (user) arr.push(user)
-      }
-      return arr
+      return this.getStatusUsersByIds(this.pendingIds)
     },
   },
   watch: {

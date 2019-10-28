@@ -53,8 +53,9 @@ export default {
           }, {merge: true})
         }
       }
-      const updateSharedLists = (pendingRes, sharedRes) => {
+      const updateSharedLists = (pendingRes, rejectedRes, sharedRes) => {
         pendingRes.docs.forEach(list => pendingIds.push(list.id))
+        rejectedRes.docs.forEach(list => pendingIds.push(list.id))
         sharedRes.docs.forEach(list => sharedIds.push(list.id))
 
         const allIds = [...pendingIds, ...sharedIds].filter(id => id !== uid())
@@ -69,11 +70,12 @@ export default {
 
       Promise.all([
         fire.collection('lists').where('userId', '==', uid()).get({source: 'server'}),
-        fire.collection('lists').where(`pending.${uid()}`, '==', true).get({source: 'server'}),
+        fire.collection('lists').where(`pending.${uid()}`, '==', 'pending').get({source: 'server'}),
+        fire.collection('lists').where(`pending.${uid()}`, '==', 'rejected').get({source: 'server'}),
         fire.collection('lists').where(`users.${uid()}`, '==', true).get({source: 'server'})
       ]).then(res => {
         updateOwnLists(res[0])
-        updateSharedLists(res[1], res[2])
+        updateSharedLists(res[1], res[2], res[3])
         batch.commit()
       })
     },
