@@ -7,12 +7,25 @@
       <transition name="fade" mode="out-in" appear>
         <div v-if="isNotOnHome" key="user">
           <h2 v-if="title" class="title">{{ title }}</h2>
-          <IconDrop v-if="isOnUserPage && navBar && navBar.options"
-            handle="settings-v"
-            :options="navBar.options"
-            handle-color="var(--gray)"
-            width="100px"
-          />
+          <div class="drop">
+            <transition name="fade-t">
+              <Icon v-if="invites.length > 0"
+                class="msg cursor"
+                width="25px"
+                icon="envelope"
+                color="var(--red)"
+                @click="$store.dispatch('pushPopup', {
+                  name: 'Invites',
+                })"
+              />
+            </transition>
+            <IconDrop v-if="isOnUserPage && navBar && navBar.options"
+              handle="settings-v"
+              :options="navBar.options"
+              handle-color="var(--gray)"
+              width="100px"
+            />
+          </div>
         </div>
         <div v-else class="logo cursor" @click="goToIndexPage" key="notuser">
           <span class="watchr"><b>watchr</b></span>
@@ -48,7 +61,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(['navBar']),
+    ...mapState({
+      navBar: state => state.navBar,
+      invites: state => state.list.invites,
+    }),
     ...mapGetters(['l']),
     title() {
       if (this.$route.name === 'user') {
@@ -87,10 +103,16 @@ export default {
   transition-duration: .2s;
 }
 
-.IconDrop {
+.msg {
+  margin-right: 4px;
+  transform: translateY(4px);
+}
+
+.drop {
   position: absolute;
+  display: flex;
   right: 6px;
-  transform: translateY(-17px);
+  transform: translateY(-28px);
 }
 
 .central {
