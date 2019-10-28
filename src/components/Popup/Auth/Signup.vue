@@ -124,8 +124,8 @@ export default {
           this.$store.dispatch('list/addDefaultData', uid)
           this.$store.dispatch('filter/addDefaultData', uid)
           this.$store.dispatch('user/addDefaultData', {
-            user: this.currentUser,
-            username: this.displayName,
+            user: firebase.auth().currentUser,
+            username: this.username,
           })
           this.$store.commit('closePopup')
           this.$store.commit('toggleUser', true)
@@ -156,6 +156,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(['isDesktop']),
     isUpgrading() {
       return this.payload
     },

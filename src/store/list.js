@@ -1,5 +1,7 @@
 
 import { fire, auth } from './index'
+import fb from 'firebase/app'
+
 import utils from '../utils'
 
 const uid = () => auth.currentUser.uid
@@ -184,6 +186,12 @@ export default {
       fire.collection('lists').doc(list.id).update({
         ...list,
       })
+    },
+    addPendingUser(c, {listId, userInfo}) {
+      fire.collection('lists').doc(listId).set({
+        pending: {[userInfo.userId]: true},
+        userData: {[userInfo.userId]: userInfo},
+      }, {merge: true})
     },
     duplicateHeading({state}, {name, listId, tasks}) {
       const list = state.lists.find(l => l.id === listId)

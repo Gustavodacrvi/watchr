@@ -34,6 +34,7 @@ export default {
       fire.collection('users').doc(user.uid).set({
         userId: user.uid,
         email: user.email,
+        emailVerified: user.emailVerified,
         photo: user.photoURL,
         displayName: username,
       })

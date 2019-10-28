@@ -10,7 +10,7 @@ let contextMenuRunned = false
 
 export default {
   getDataFromFirestoreSnapshot(state, changes, arrName) {
-    for (const change of changes)
+    changes.forEach(change => {
       if (change.type === 'added') {
         const el = state[arrName].find(el => el.id === change.doc.id)
         if (!el)
@@ -22,6 +22,7 @@ export default {
         const index = state[arrName].findIndex(el => el.id === change.doc.id)
         state[arrName].splice(index, 1, {...change.doc.data(), id: change.doc.id})
       }
+    })
   },
   getUid() {
     return firebase.firestore().collection('tasks').doc().id

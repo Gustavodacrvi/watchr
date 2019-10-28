@@ -17,9 +17,9 @@
                 <DropInput
                   :placeholder='l["E-mail or username"] + ":"'
                   :focus='true'
-                  :value='search'
+                  :value='email'
                   :options='options'
-                  @input='v => search = v'
+                  @input='v => email = v'
                   @select="select"
                   @cancel="$emit('close')"
                 />
@@ -29,7 +29,11 @@
               </div>
             </div>
             <div class="mt">
-              <ProfileInfo v-bind='user'/>
+              <ProfileInfo v-for="u in pendingUsers"
+                :key="u.userId"
+                :pending='true'
+                v-bind="u"
+              />
             </div>
           </div>
           <div v-else class="from" key="from">
@@ -49,6 +53,9 @@ import ProfileInfoVue from '../../Profile/ProfileInfo.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
+import firebase from 'firebase/app'
+import 'firebase/firestore'
+
 export default {
   components: {
     DropInput: DropInputVue,
@@ -58,30 +65,39 @@ export default {
   data() {
     return {
       section: 'Colab',
-      search: '',
+      email: '',
       options: [],
     }
   },
   mounted() {
     this.moveLine()
   },
-  computed: {
-    ...mapGetters(['platform', 'l']),
-    ...mapState({
-      user: state => state.user,
-      lists: state => state.list.lists,
-      listId: state => state.popup.payload,
-    }),
-    list() {
-      return this.lists.find(el => el.id === this.listId)
-    },
-  },
   methods: {
     select(val) {
 
     },
     invite() {
-
+      const toast = t => this.$store.commit('pushToast', t)
+      const errToast = err => toast({
+        name: err.message,
+        seconds: 4,
+        type: 'error',
+      })
+      let userInfo = null
+      if (this.email)
+        firebase.firestore().collection('users')
+        .where('email', '==', this.email)
+        .where('emailVerified', '==', true)
+        .get({source: 'server'}).then(res => {
+          res.docs.forEach(el => {
+            userInfo = el.data()
+          })
+          if (this.list.userId !== userInfo.userId)
+            this.$store.dispatch('list/addPendingUser', {
+              listId: this.list.id,
+              userInfo,
+            })
+        }).catch(errToast)
     },
     activate(name) {
       this.section = name
@@ -93,6 +109,35 @@ export default {
 
       s.width = act.offsetWidth + 'px'
       s.left = act.offsetLeft + 'px'
+    },
+  },
+  computed: {
+    ...mapGetters(['platform', 'l']),
+    ...mapState({
+      user: state => state.user,
+      lists: state => state.list.lists,
+      listId: state => state.popup.payload,
+    }),
+    list() {
+      return this.lists.find(el => el.id === this.listId)
+    },
+    usersData() {
+      if (this.list.userData)
+        return Object.values(this.list.userData)
+      return []
+    },
+    pendingIds() {
+      if (!this.list.pending) return []
+      return Object.keys(this.list.pending)
+    },
+    pendingUsers() {
+      if (!this.list.pending) return []
+      const arr = []
+      for (const id of this.pendingIds) {
+        const user = this.usersData.find(el => el.userId === id)
+        if (user) arr.push(user)
+      }
+      return arr
     },
   },
   watch: {

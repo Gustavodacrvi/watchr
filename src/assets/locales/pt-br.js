@@ -89,6 +89,7 @@ export default {
   'CalParserEvery': 'todo',
   'CalParserNextweek': 'próxima semana',
   "Change photo": "Mudar foto",
+  "pending": "esperando",
   "Share List": "Compartilhar Lista",
   "Invite": "Convidar",
   "E-mail or username": "E-mail ou nome de usuário",

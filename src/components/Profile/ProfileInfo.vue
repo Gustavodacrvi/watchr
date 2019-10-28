@@ -6,7 +6,10 @@
     </div>
     <div class="info">
       <span v-if="displayName">{{ displayName }}</span>
-      <span>{{ email }}</span>
+      <div>
+        <span>{{ email }}</span>
+        <span v-if="pending" class="tag">{{ l['pending'] }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -15,11 +18,16 @@
 
 import ProfileImgVue from './ProfileImg.vue'
 
+import { mapGetters } from 'vuex'
+
 export default {
-  props: ['displayName', 'photoURL', 'src', 'email'],
+  props: ['displayName', 'photoURL', 'src', 'email', 'pending'],
   components: {
     ProfileImg: ProfileImgVue,
   },
+  computed: {
+    ...mapGetters(['l']),
+  }
 }
 
 </script>
@@ -56,6 +64,17 @@ export default {
 .img {
   width: 25px;
   height: 25px;
+}
+
+.tag {
+  margin-left: 6px;
+  background-color: var(--primary);
+  color: white;
+  display: inline-block;
+  padding: 2px;
+  font-size: .8em;
+  border-radius: 6px;
+  transform: translateY(-10px);
 }
 
 </style>
