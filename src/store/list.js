@@ -195,22 +195,93 @@ export default {
         ...list,
       })
     },
-    addPendingUser(c, {listId, userInfo}) {
-      fire.collection('lists').doc(listId).set({
+    addPendingUser({state}, {listId, userInfo}) {
+      const batch = fire.batch()
+
+      const list = state.lists.find(li => li.id === listId)
+      const listRef = fire.collection('lists').doc(listId)
+      batch.set(listRef, {
         usersStatus: {[userInfo.userId]: 'pending'},
         userData: {[userInfo.userId]: userInfo},
       }, {merge: true})
+
+      let taskIds = list.tasks.slice()
+      for (const h of list.headings) {
+        taskIds = [...taskIds, ...h.tasks.slice()]
+      }
+      for (const id of taskIds) {
+        const taskRef = fire.collection('tasks').doc(id)
+        batch.set(taskRef, {
+          usersStatus: {[userInfo.userId]: 'pending'},
+        }, {merge: true})
+      }
+
+      batch.commit()
     },
-    rejectInvite(c, listId) {
-      fire.collection('lists').doc(listId).set({
+    rejectInvite({state}, listId) {
+      const batch = fire.batch()
+      
+      const list = state.invites.find(li => li.id === listId)
+      const listRef = fire.collection('lists').doc(listId)
+      const obj = {
         usersStatus: {[uid()]: 'rejected'},
-      }, {merge: true})
+      }
+      batch.set(listRef, obj, {merge: true})
+      let taskIds = list.tasks.slice()
+      for (const h of list.headings) {
+        taskIds = [...taskIds, ...h.tasks.slice()]
+      }
+      for (const id of taskIds) {
+        const taskRef = fire.collection('tasks').doc(id)
+        batch.set(taskRef, obj, {merge: true})
+      }
+
+      batch.commit()
     },
-    removePendingUser(c, {listId, userId}) {
-      fire.collection('lists').doc(listId).update({
+    acceptInvite({state}, listId) {
+      const batch = fire.batch()
+      
+      const list = state.invites.find(li => li.id === listId)
+      const listRef = fire.collection('lists').doc(listId)
+      batch.set(listRef, {
+        usersStatus: {[uid()]: false},
+        users: {[uid()]: true},
+      }, {merge: true})
+      let taskIds = list.tasks.slice()
+      for (const h of list.headings) {
+        taskIds = [...taskIds, ...h.tasks.slice()]
+      }
+      for (const id of taskIds) {
+        const taskRef = fire.collection('tasks').doc(id)
+        batch.set(taskRef, {
+          users: {[uid()]: true},
+          usersStatus: {[uid()]: false},
+        }, {merge: true})
+      }
+
+      batch.commit()
+    },
+    removePendingUser({state}, {listId, userId}) {
+      const batch = fire.batch()
+      
+      const listRef = fire.collection('lists').doc(listId)
+      batch.update(listRef, {
         usersStatus: {[userId]: false},
         userData: {[userId]: false}
       })
+      let taskIds = list.tasks.slice()
+      for (const h of list.headings) {
+        taskIds = [...taskIds, ...h.tasks.slice()]
+      }
+      for (const id of taskIds) {
+        const taskRef = fire.collection('tasks').doc(id)
+        batch.set(taskRef, {
+          usersStatus: {[userId]: false},
+          userData: {[userId]: false},
+        }, {merge: true})
+      }
+
+      batch.commit()
     },
     duplicateHeading({state}, {name, listId, tasks}) {
       const list = state.lists.find(l => l.id === listId)
