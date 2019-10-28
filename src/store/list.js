@@ -376,6 +376,23 @@ export default {
 
       batch.commit()
     },
+    addTaskByIndex(c, {ids, index, task, listId}) {
+      const batch = fire.batch()
+
+      const taskRef = fire.collection('tasks').doc()
+      batch.set(taskRef, {
+        userId: uid(),
+        users: {[uid()]: true},
+        ...task,
+      })
+
+      ids.splice(index, 0, taskRef.id)
+
+      const listRef = fire.collection('lists').doc(listId)
+      batch.update(listRef, {tasks: ids})
+
+      batch.commit()
+    },
     updateListHeadings(c, {ids, listId}) {
       fire.collection('lists').doc(listId).update({
         headingsOrder: ids,

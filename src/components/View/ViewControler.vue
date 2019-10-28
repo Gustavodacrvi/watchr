@@ -65,14 +65,18 @@ export default {
           ...obj, list: this.viewName,
         })
       } else if (this.viewTag) {
-        obj.task.tags = [this.viewTag.id]
+        if (obj.task.tags.length === 0 || !obj.task.task.includes(this.viewTag.id))
+          obj.task.tags.push(this.viewTag.id)
         this.$store.dispatch('task/addTask', {
           ...obj.task,
         })  
-      } else if (this.isListType)
-        this.$store.dispatch('task/addTask', {
-          ...obj.task, list: this.viewList.id
+      } else if (this.isListType) {
+        if (!obj.task.list)
+          obj.task.list = this.viewList.id
+        this.$store.dispatch('list/addTaskByIndex', {
+          ...obj, listId: this.viewList.id
         })
+      }
     },
     updateIds(ids) {
       if (this.isSmart) {
