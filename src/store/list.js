@@ -14,6 +14,7 @@ export default {
   state: {
     lists: [],
     order: [],
+    invites: [],
     viewOrders: {
       'Today': {
         tasks: [],
@@ -92,6 +93,12 @@ export default {
         new Promise(resolve => {
           fire.collection('lists').where(`users.${id}`, '==', true).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
+            resolve()
+          })
+        }),
+        new Promise(resolve => {
+          fire.collection('lists').where(`pending.${id}`, '==', true).onSnapshot(snap => {
+            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'invites')
             resolve()
           })
         }),
