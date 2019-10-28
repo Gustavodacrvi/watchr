@@ -8,19 +8,26 @@
       <ProfileImg class="img" :src='photoURL'/>
     </div>
     <div class="info">
-      <span v-if="displayName">{{ displayName }}</span>
+      <span v-if="displayName && !listName">{{ displayName }}</span>
+      <span v-else>{{ listName }}</span>
       <div>
+        <span v-if="displayName && listName">{{ displayName }} </span>
         <span>{{ email }}</span>
         <span v-if="pending" class="tag">{{ l['pending'] }}</span>
       </div>
-      <transition name="fade-t">
-        <Icon v-if="showIcon"
-          class="icon"
-          icon="trash"
-          @click="remove"
-          :primaryHover="true"
-        />
-      </transition>
+      <div class="icon-wrapper">
+        <transition name="fade-t">
+          <Icon v-if="showIcon && !options" key="icon"
+            icon="trash"
+            @click="remove"
+            :primaryHover="true"
+          />
+          <IconDrop v-else-if="showIcon && options"
+            handle='settings-v'
+            :options='options'
+          />
+        </transition>
+      </div>
     </div>
   </div>
 </template>
@@ -29,14 +36,16 @@
 
 import ProfileImgVue from './ProfileImg.vue'
 import IconVue from '../Icon.vue'
+import IconDropVue from '../IconDrop.vue'
 
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['displayName', 'photoURL', 'src', 'email', 'pending', 'userId'],
+  props: ['displayName', 'photoURL', 'src', 'email', 'pending', 'userId', 'listName', 'options'],
   components: {
     ProfileImg: ProfileImgVue,
     Icon: IconVue,
+    IconDrop: IconDropVue,
   },
   data() {
     return {
@@ -89,8 +98,9 @@ export default {
 }
 
 .img {
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
+  margin-left: 4px;
 }
 
 .tag {
@@ -104,11 +114,15 @@ export default {
   transform: translateY(-10px);
 }
 
-.icon {
+.icon-wrapper {
   position: absolute;
   right: 10px;
   top: 55%;
   transform: translateY(-50%);
+}
+
+.IconDrop {
+  transform: translate(8px, 14px);
 }
 
 </style>

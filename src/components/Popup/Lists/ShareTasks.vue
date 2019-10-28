@@ -29,7 +29,7 @@
               </div>
             </div>
             <div class="mt">
-              <transition
+              <transition-group
                 @enter='enter'
                 @leave='leave'
               >
@@ -39,7 +39,7 @@
                   v-bind="u"
                   @remove='removePendingUser(u.userId)'
                 />
-              </transition>
+              </transition-group>
             </div>
           </div>
           <div v-else class="from" key="from">

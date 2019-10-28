@@ -69,8 +69,8 @@ export default {
           type: 'error',
           seconds: 4,
         }))
-        // if (this.popup.callback) this.popup.callback()
-        // this.$store.commit('closePopup')
+        if (this.popup.callback) this.popup.callback()
+        this.$store.commit('closePopup')
       }
     },
   },
