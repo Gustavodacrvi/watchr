@@ -153,7 +153,7 @@ export default {
           } else if (this.list.userId !== userInfo.userId) {
             this.$store.dispatch('list/addPendingUser', {
               listId: this.list.id,
-              userInfo, tasks: this.tasks,
+              userInfo, tasks: this.tasksWithThisList,
             })
             this.$store.dispatch('user/addRecentCollaborators', userInfo)
           }
@@ -237,6 +237,9 @@ export default {
       for (const key of userIds)
         if (this.list.users[key] !== false) final.push(key)
       return this.getStatusUsersByIds(final)
+    },
+    tasksWithThisList() {
+      return this.tasks.filter(t => t.list === this.list.id)
     },
   },
   watch: {
