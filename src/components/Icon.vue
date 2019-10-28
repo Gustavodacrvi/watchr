@@ -47,6 +47,7 @@ import plus from '@/assets/icons/plus.svg'
 import circleCheck from '@/assets/icons/circle-check.svg'
 import globe from '@/assets/icons/globe.svg'
 import heading from '@/assets/icons/heading.svg'
+import envelope from '@/assets/icons/envelope.svg'
 import search from '@/assets/icons/search.svg'
 import note from '@/assets/icons/note.svg'
 import archive from '@/assets/icons/archive.svg'
@@ -65,6 +66,7 @@ export default {
         sort, tag, priority, menu, tasks, archive,
         pen, trash, fire, bloqued, circle, users,
         copy, plus, globe, heading, search, note,
+        envelope,
         "import": importIcon,
         "export": exportIcon,
         "user-plus": userPlus,
