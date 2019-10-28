@@ -7,6 +7,9 @@
     <router-link class="link" tabindex="-1" :class="{active: isLinkActive('home')}" to="/">{{ l['Home'] }}</router-link>
     <router-link class="link" tabindex="-1" :class="{active: isLinkActive('user')}" to="/user">{{ l['User'] }}</router-link>
     <router-link class="link" tabindex="-1" :class="{active: isLinkActive('support')}" to="/support/overview">{{ l['Support'] }}</router-link>
+    <transition name="fade-t">
+      <router-link v-if="user && !user.isAnonymous" class="link" tabindex="-1" :class="{active: isLinkActive('profile')}" to="/profile">{{ l['Profile'] }}</router-link>
+    </transition>
     <div class="line"></div>
     <div class="icons">
       <DropIcon class="drop" handle="user" handleColor="var(--gray)" :options="dropLinks"/>

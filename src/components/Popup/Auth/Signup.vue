@@ -1,5 +1,5 @@
 <template>
-  <div class="Signup popup cb shadow rb" :class="platform">
+  <div class="Signup popup cb shadow rb scroll" :class="platform">
     <div class="tac title">
       <h3 class="pc">{{ l['Create an Account'] }}</h3>
     </div>
@@ -9,8 +9,15 @@
         @google='upgradeAccountToGoogle'
       />
       <InputApp
-        :placeholder='l["E-mail"] + ":"'
+        :placeholder='l["Username (Optional)"] + ":"'
         :focus="true"
+        :value='username'
+        @input='v => username = v'
+        @cancel="$emit('close')"
+      />
+      <InputApp
+        class="mt"
+        :placeholder='l["E-mail"] + ":"'
         :value='eMail'
         @input='v => eMail = v'
         @cancel="$emit('close')"
@@ -36,6 +43,7 @@
         :value='l["Create account"]'
         @click="createAccount"
       />
+      <div v-if="!isDesktop" style="height: 400px"></div>
     </div>
   </div>
 </template>
@@ -60,6 +68,7 @@ export default {
   data() {
     return {
       eMail: '',
+      username: '',
       password: '',
       conPassword: '',
     }
@@ -95,6 +104,9 @@ export default {
       else if (!this.isUpgrading) {
         const auth = firebase.auth()
         auth.createUserWithEmailAndPassword(this.eMail, this.password).then(() => {
+          if (this.username) auth.currentUser.updateProfile({
+            displayName: this.username,
+          })
           const uid = auth.currentUser.uid
           toast({
             name: this.l['You have successfully created an account!'],
@@ -111,6 +123,10 @@ export default {
           this.$store.dispatch('tag/addDefaultData', uid)
           this.$store.dispatch('list/addDefaultData', uid)
           this.$store.dispatch('filter/addDefaultData', uid)
+          this.$store.dispatch('user/addDefaultData', {
+            user: firebase.auth().currentUser,
+            username: this.username,
+          })
           this.$store.commit('closePopup')
           this.$store.commit('toggleUser', true)
           this.$router.push('/user')
@@ -140,12 +156,13 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(['isDesktop']),
     isUpgrading() {
       return this.payload
     },
     tooLong() {
-      const { eMail, password, conPassword } = this
-      return eMail.length > 75 || password.length > 75 || conPassword > 75
+      const { eMail, password, conPassword, username } = this
+      return eMail.length > 75 || password.length > 75 || conPassword.length > 75 || username.length > 50
     },
     atLeastOneEmpty() {
       const { eMail, password, conPassword } = this
@@ -161,4 +178,12 @@ export default {
 </script>
 
 <style scoped src="@/assets/css/popupAuth.css">
+</style>
+
+<style scoped>
+
+.Signup.desktop {
+  transform: translateY(-16px);
+}
+
 </style>

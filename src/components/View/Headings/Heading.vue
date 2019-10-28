@@ -69,7 +69,7 @@ export default {
   mounted() {
     const header = this.$el.getElementsByClassName('header')[0]
     if (header)
-      utils.bindToContextMenu(header, this.options, this)
+      utils.bindOptionsToEventListener(header, this.options, this)
   },
   data() {
     return {

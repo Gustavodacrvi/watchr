@@ -16,12 +16,17 @@
 import Signup from './Auth/Signup.vue'
 import SigninOptions from './Auth/SigninOptions.vue'
 import Signin from './Auth/Signin.vue'
+import ChangeUsername from './Auth/ChangeUsername.vue'
+import ChangeEmail from './Auth/ChangeEmail.vue'
+import Confirm from './Auth/Confirm.vue'
 import Icon from '../Icon.vue'
 import AddTask from './Tasks/AddTask.vue'
 import AddTag from './Tags/AddTag.vue'
 import AddTagNote from './Tags/AddTagNote.vue'
 import AddList from './Lists/AddList.vue'
+import ShareTasks from './Lists/ShareTasks.vue'
 import AddListNote from './Lists/AddListNote.vue'
+import Invites from './Lists/Invites.vue'
 import Update from './Update.vue'
 
 import { mapGetters, mapState } from 'vuex'
@@ -30,7 +35,8 @@ export default {
   components: {
     Signup, SigninOptions, Signin, AddTag,
     AddListNote, AddTagNote, Icon, AddList,
-    AddTask, Update,
+    AddTask, Update, ChangeUsername, ChangeEmail,
+    Confirm, ShareTasks, Invites,
   },
   methods: {
     closeMobilePopup() {

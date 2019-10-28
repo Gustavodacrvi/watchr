@@ -11,25 +11,29 @@ const MINIMUM_DESKTOP_SCREEN_WIDTH = 820
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
+import 'firebase/storage'
 
 firebase.initializeApp({
   apiKey: process.env.VUE_APP_API_KEY,
   authDomain: process.env.VUE_APP_AUTH_DOMAIN,
-  databaseURL: process.env.VUE_APP_DATABASE_URL,
   projectId: process.env.VUE_APP_PROJECT_ID,
   storageBucket: process.env.VUE_APP_STORAGE_BUCKET,
   messagingSenderId: process.env.VUE_APP_MESSAGING_SENDER_ID,
   appId: process.env.VUE_APP_APP_ID,
+  databaseURL: process.env.VUE_APP_DATABASE_URL,
+  storageBucket: process.env.VUE_APP_STORAGE_BUCKET_URL,
 })
 
 
 export const fire = firebase.firestore()
 export const auth = firebase.auth()
+export const sto = firebase.storage()
 
 import task from './task'
 import tag from './tag'
 import list from './list'
 import filter from './filter'
+import user from './user'
 
 const lang = localStorage.getItem('watchrlanguage') || 'en'
 
@@ -44,7 +48,7 @@ moment.locale(lang)
 
 const store = new Vuex.Store({
   modules: {
-    task, tag, list, filter,
+    task, tag, list, filter, user,
   },
   state: {
     lang,
@@ -52,6 +56,7 @@ const store = new Vuex.Store({
     popup: {
       comp: '',
       payload: null,
+      callback: null,
     },
     navBar: {
       options: null,
@@ -71,7 +76,6 @@ const store = new Vuex.Store({
     authState: false,
     firstFireLoad: false,
     fastSearch: false,
-    isLoading: true,
     toasts: [],
     windowWidth: 0,
   },
@@ -147,9 +151,6 @@ const store = new Vuex.Store({
     pushNavBarData(state, navBar) {
       state.navBar = navBar
     },
-    load(state) {
-      state.isLoading = false
-    },
     toggleUser(state, isLogged) {
       state.authState = isLogged
     },
@@ -173,9 +174,7 @@ const store = new Vuex.Store({
     logOut({state}) {
       auth.signOut().then(() => {
         state.authState = false
-        state.isLoading = true
         window.location.reload()
-
       })
     },
     pushKeyShortcut({dispatch, commit}, key) {
@@ -194,6 +193,27 @@ const store = new Vuex.Store({
       if (!getters.isDesktop)
         router.push('/popup')
     },
+    deleteProfilePic() {
+      const str = `images/${auth.currentUser.uid}.jpg`
+      sto.ref(str).delete().then(() => {
+        auth.currentUser.updateProfile({
+          photoURL: '',
+        }).then(() => window.location.reload())
+      })
+    },
+    deleteAccount({state, dispatch}) {
+      dispatch('tag/deleteAllData')
+      dispatch('list/deleteAllData')
+      dispatch('task/deleteAllData')
+      dispatch('filter/deleteAllData')
+      dispatch('user/deleteAllData')
+      firebase.auth().currentUser.delete()
+      setTimeout(() => {
+        router.push('/')
+        dispatch('deleteProfilePic')
+        window.location.reload()
+      }, 100)
+    },
   }
 })
 
@@ -209,14 +229,11 @@ auth.onAuthStateChanged((user) => {
 
   const dispatch = store.dispatch
   const loadData = () => {
-    Promise.all([
-      dispatch('tag/getData'),
-      dispatch('list/getData'),
-      dispatch('filter/getData'),
-      dispatch('task/getData'),
-    ]).then(() => {
-      store.commit('load')
-    })
+    dispatch('tag/getData')
+    dispatch('list/getData')
+    dispatch('filter/getData')
+    dispatch('task/getData')
+    dispatch('user/getData')
   }
   const toast = (t) => store.commit('pushToast', t)
 
@@ -248,6 +265,9 @@ auth.onAuthStateChanged((user) => {
     dispatch('tag/addDefaultData', uid)
     dispatch('list/addDefaultData', uid)
     dispatch('filter/addDefaultData', uid)
+    dispatch('user/addDefaultData', {
+      user, username: user.displayName,
+    })
     loadData()
   }
 })

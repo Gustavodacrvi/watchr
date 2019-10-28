@@ -5,14 +5,27 @@
         <Icon icon="menu" width="30px" :primaryHover="true"/>
       </span>
       <transition name="fade" mode="out-in" appear>
-        <div v-if="isOnUserPage" key="user">
-          <h2 v-if="navBar && navBar.title" class="title">{{ navBar.title }}</h2>
-          <IconDrop v-if="navBar && navBar.options"
-            handle="settings-v"
-            :options="navBar.options"
-            handle-color="var(--gray)"
-            width="100px"
-          />
+        <div v-if="isNotOnHome" key="user">
+          <h2 v-if="title" class="title">{{ title }}</h2>
+          <div class="drop">
+            <transition name="fade-t">
+              <Icon v-if="invites.length > 0"
+                class="msg cursor"
+                width="25px"
+                icon="envelope"
+                color="var(--red)"
+                @click="$store.dispatch('pushPopup', {
+                  comp: 'Invites',
+                })"
+              />
+            </transition>
+            <IconDrop v-if="isOnUserPage && navBar && navBar.options"
+              handle="settings-v"
+              :options="navBar.options"
+              handle-color="var(--gray)"
+              width="100px"
+            />
+          </div>
         </div>
         <div v-else class="logo cursor" @click="goToIndexPage" key="notuser">
           <span class="watchr"><b>watchr</b></span>
@@ -29,7 +42,7 @@ import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop.vue'
 import LogoVue from '../Illustrations/Logo.vue'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -48,10 +61,31 @@ export default {
     }
   },
   computed: {
-    ...mapState(['navBar']),
+    ...mapState({
+      navBar: state => state.navBar,
+      invites: state => state.list.invites,
+    }),
+    ...mapGetters(['l']),
+    title() {
+      if (this.$route.name === 'user') {
+        if (this.navBar) return this.navBar.title
+        else return null
+      }
+      return this.viewTitle
+    },
+    isNotOnHome() {
+      return this.$route.name !== 'home'
+    },
+    viewTitle() {
+      const n = this.$route.name
+      switch (n) {
+        case 'profile': return this.l['Profile']
+        case 'collaborators': return this.l['Collaborators']
+      }
+    },
     isOnUserPage() {
       return this.$route.name === 'user' || this.$route.path === '/menu'
-    }
+    },
   }
 }
 
@@ -69,10 +103,16 @@ export default {
   transition-duration: .2s;
 }
 
-.IconDrop {
+.msg {
+  margin-right: 4px;
+  transform: translateY(4px);
+}
+
+.drop {
   position: absolute;
+  display: flex;
   right: 6px;
-  transform: translateY(-17px);
+  transform: translateY(-28px);
 }
 
 .central {

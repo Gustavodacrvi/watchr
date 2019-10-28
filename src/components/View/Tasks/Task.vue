@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     bindContextMenu(options) {
-      utils.bindToContextMenu(this.$el, options, this)
+      utils.bindOptionsToEventListener(this.$el, options, this)
     },
     enter(cont) {
       if (!this.isEditing) {
@@ -213,9 +213,9 @@ export default {
           const txt = split[i + 1]
           const link = split[i]
           if (link && matches.includes(link) && txt && !matches.includes(txt)) {
-            newStr += `<a class='task-link' href="${link}">${txt}</a>`
+            newStr += ` <a class='task-link' href="${link}">${txt}</a>`
             i++
-          } else newStr += link
+          } else newStr += ' ' + link
         }
         str = newStr
       }

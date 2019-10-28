@@ -56,14 +56,28 @@
         <div v-if="isDesktop" style="height: 35px;"></div>
         <div class="footer" :class="platform">
           <div class="inner-footer">
-            <transition name="icon-t">
-              <IconDrop v-if="showIconDropdown"
-                class="drop right passive"
-                handle='settings-h'
-                handleColor='var(--gray)'
-                :options="getSectionOptions"
-              />
-            </transition>
+            <div class="drop">
+              <transition name="fade-t">
+                <Icon v-if="isDesktop && invites.length > 0"
+                  class="cursor"
+                  style="margin-right: 6px"
+                  icon='envelope'
+                  color='var(--red)'
+                  @click="$store.dispatch('pushPopup', {
+                    comp: 'Invites',
+                  })"
+                />
+              </transition>
+              <transition name="icon-t">
+                <IconDrop v-if="showIconDropdown"
+                  class="right passive"
+                  handle='settings-h'
+                  handleColor='var(--gray)'
+                  :options="getSectionOptions"
+                />
+              </transition>
+            </div>
+            <div></div>
             <Icon v-if="isDesktop" icon="arrow" id='appbar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
           </div>
         </div>
@@ -270,7 +284,10 @@ export default {
     },
   },
   computed: {
-    ...mapState(['selectedTasks']),
+    ...mapState({
+      selectedTasks: state => state.selectedTasks,
+      invites: state => state.list.invites,
+    }),
     ...mapGetters({
       platform: 'platform',
       isStandAlone: 'isStandAlone',
@@ -329,6 +346,7 @@ export default {
           name: this.l['Import from template'],
           icon: 'import',
           file: true,
+          accept: '.json',
           handleFiles: (files, promise) => {
             const bug = () => {
               this.$store.commit('pushToast', {
@@ -503,6 +521,7 @@ export default {
 .drop {
   position: absolute;
   right: 0;
+  display: flex;
   transform: translateY(13px);
 }
 

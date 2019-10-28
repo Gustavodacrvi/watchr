@@ -100,7 +100,12 @@ export default {
       return fire.collection('tagsOrder').doc(id).set({
         userId: id,
       }, {merge: true})
-    }
+    },
+    deleteAllData({state}) {
+      for (const el of state.tags)
+        fire.collection('tags').doc(el.id).delete()
+      fire.collection('tagsOrder').doc(uid()).delete()
+    },
   },
 }
 

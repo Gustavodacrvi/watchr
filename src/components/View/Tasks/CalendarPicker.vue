@@ -27,9 +27,9 @@
           <div class="header">
             <h3 class="year">{{ thisYear() }}   {{ thisMonth() }}</h3>
             <div class="icons">
-              <Icon class="arrow-left icon cursor" icon="arrow" width="18px" :primaryHover="true" @click="nextMonth"/>
-              <Icon class="icon circle cursor" icon="tiny-circle" width="18px" :primaryHover="true" @click="resetDate"/>
               <Icon class="arrow-right icon cursor" icon="arrow" width="18px" :primaryHover="true" @click="previousMonth"/>
+              <Icon class="icon circle cursor" icon="tiny-circle" width="14px" :primaryHover="true" @click="resetDate" style='transform: translateY(0px)'/>
+              <Icon class="arrow-left icon cursor" icon="arrow" width="18px" :primaryHover="true" @click="nextMonth"/>
             </div>
           </div>
           <div class="weeks">

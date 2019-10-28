@@ -88,10 +88,11 @@ export default {
   },
   actions: {
     getData({state}) {
-      if (uid())
+      const id = uid()
+      if (id)
       return Promise.all([
         new Promise(resolve => {
-          fire.collection('tasks').where('userId', '==', uid()).onSnapshot(snap => {
+          fire.collection('tasks').where(`users.${id}`, '==', true).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
             resolve()
           })
@@ -104,6 +105,7 @@ export default {
       const ref = fire.collection('tasks').doc()
       batch.set(ref, {
         userId: uid(),
+        users: {[uid()]: true},
         ...obj,
       })
 
@@ -234,6 +236,7 @@ export default {
           const ref = fire.collection('tasks').doc(t.id)
           batch.set(ref, {
             userId: uid(),
+            users: {[uid()]: true},
             name: t.name,
             priority: '',
             list: list.id,
@@ -249,6 +252,7 @@ export default {
 
       batch.set(list, {
         userId: uid(),
+        users: {[uid()]: true},
         smartViewsOrders: {},
         name: task.name,
         descr: '',
@@ -311,6 +315,10 @@ export default {
           break
         }
       }
+    },
+    deleteAllData({state}) {
+      for (const el of state.tasks)
+        fire.collection('tasks').doc(el.id).delete()
     },
   },
 }

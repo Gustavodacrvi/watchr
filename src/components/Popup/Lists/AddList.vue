@@ -82,6 +82,7 @@ export default {
           this.$store.dispatch('list/addList', {
             name: this.name,
             ...this.payload,
+            ownerInfo: this.$store.state.user.userInfo,
           })
           toast({
             name: this.l[`List added successfully!`],

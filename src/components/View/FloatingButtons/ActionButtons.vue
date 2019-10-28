@@ -74,7 +74,7 @@ export default {
 }
 
 .ActionButtons.mobile .button {
-  transform: translateX(0px) !important;
+  transform: translateX(00px) !important;
 }
 
 </style>
@@ -95,7 +95,8 @@ export default {
 
 .TaskRenderer .ActButton, .appnav-section .ActButton {
   width: 98%;
-  border: 1px solid var(--white);
+  background-color: var(--void);
+  box-shadow: none;
   border-radius: 6px;
   height: 40px;
   flex-grow: 1;

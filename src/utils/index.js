@@ -7,11 +7,10 @@ import Vue from 'vue'
 import IconDrop from '@/components/IconDrop.vue'
 
 let contextMenuRunned = false
-let contextMenuBinded = false
 
 export default {
   getDataFromFirestoreSnapshot(state, changes, arrName) {
-    for (const change of changes)
+    changes.forEach(change => {
       if (change.type === 'added') {
         const el = state[arrName].find(el => el.id === change.doc.id)
         if (!el)
@@ -23,6 +22,7 @@ export default {
         const index = state[arrName].findIndex(el => el.id === change.doc.id)
         state[arrName].splice(index, 1, {...change.doc.data(), id: change.doc.id})
       }
+    })
   },
   getUid() {
     return firebase.firestore().collection('tasks').doc().id
@@ -447,9 +447,8 @@ export default {
 
     this.download(list.name + '.json', JSON.stringify(template))
   },
-  bindToContextMenu(node, options, parent, event) {
-    if (!event) event = 'contextmenu'
-    node.addEventListener(event, evt => {
+  bindOptionsToEventListener(node, options, parent, event) {
+    node.addEventListener(event ? event : 'contextmenu', evt => {
       evt.preventDefault()
       if (!contextMenuRunned) {
         const y = evt.clientY + 'px'

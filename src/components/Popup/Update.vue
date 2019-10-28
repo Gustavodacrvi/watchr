@@ -6,7 +6,7 @@
     <div class="content">
       <h3>Features</h3>
       <ul>
-        <li>Complete multi select functionality.</li>
+        <li>Share tasks.</li>
       </ul>
       <Button @click="close" value="Got it!"/>
     </div>
@@ -26,6 +26,7 @@ export default {
   methods: {
     close() {
       this.$store.commit('closePopup')
+      this.$router.replace('/user')
     },
   },
   computed: {

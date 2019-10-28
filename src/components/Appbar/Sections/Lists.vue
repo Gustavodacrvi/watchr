@@ -12,6 +12,7 @@
       :viewType="viewType"
       :mapProgress='getListProgress'
       :mapNumbers="(tasks) => tasks"
+      :mapHelpIcon='getListIcon'
       @buttonAdd='buttonAdd'
       @update='update'
     />
@@ -40,10 +41,25 @@ export default {
     getListProgress(list) {
       return this.$store.getters['list/pieProgress'](this.tasks, list.id)
     },
+    getListIcon(list) {
+      let isShared = false
+      let numberOfUsers = 0
+      for (const key of Object.keys(list.users)) {
+        if (list.users[key] === true) numberOfUsers++
+        if (numberOfUsers > 1) {
+          isShared = true
+          break
+        }
+      }
+      console.log(isShared)
+      if (isShared) return 'users'
+      return undefined
+    },
   },
   computed: {
     ...mapState({
       tasks: state => state.task.tasks,
+      user: state => state.user,
     }),
     ...mapGetters(['l']),
     sortedLists() {
@@ -57,14 +73,14 @@ export default {
         }
         list.options = [
           {
-            name: 'Edit list',
+            name: this.l['Edit list'],
             icon: 'pen',
             callback: () => {
               this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...list, editing: true}})
             }
           },
           {
-            name: 'Delete list',
+            name: this.l['Delete list'],
             icon: 'trash',
             important: true,
             callback: () => this.$store.dispatch('list/deleteList', {
@@ -73,6 +89,16 @@ export default {
             })
           }
         ]
+        if (list.userId === this.user.uid)
+          list.options.splice(1, 0, {
+            name: this.l['Share list'],
+            icon: 'users',
+            callback: () => {
+              this.$store.dispatch('pushPopup', {
+                comp: 'ShareTasks', payload: list.id,
+              })
+            },
+          },)
       }
       return lists
     },

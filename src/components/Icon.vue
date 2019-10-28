@@ -10,9 +10,9 @@
     </svg>
     <div v-else class="pie-wrapper" :style='outlineStyle'>
       <svg class='svg' viewBox="0 0 32 32" :width='getWidth'>
-        <circle class='pie' :stroke-dasharray="`${progress} 100`"></circle>
+        <circle class='pie' :stroke-dasharray="`${progress} 100`" fill='currentColor' stroke='currentColor'></circle>
       </svg>
-      <div class="outline" :style='outlineStyle'></div>
+      <div class="outline" :style='outlineStyle' style='border: .5px currentColor solid'></div>
     </div>
   </div>
 </template>
@@ -47,11 +47,13 @@ import plus from '@/assets/icons/plus.svg'
 import circleCheck from '@/assets/icons/circle-check.svg'
 import globe from '@/assets/icons/globe.svg'
 import heading from '@/assets/icons/heading.svg'
+import envelope from '@/assets/icons/envelope.svg'
 import search from '@/assets/icons/search.svg'
 import note from '@/assets/icons/note.svg'
 import archive from '@/assets/icons/archive.svg'
 import importIcon from '@/assets/icons/import.svg'
 import exportIcon from '@/assets/icons/export.svg'
+import users from '@/assets/icons/users.svg'
 
 import { mapGetters } from 'vuex'
 
@@ -62,8 +64,9 @@ export default {
       icons: {
         inbox, calendar, sun, arrow, star, user, out,
         sort, tag, priority, menu, tasks, archive,
-        pen, trash, fire, bloqued, circle,
+        pen, trash, fire, bloqued, circle, users,
         copy, plus, globe, heading, search, note,
+        envelope,
         "import": importIcon,
         "export": exportIcon,
         "user-plus": userPlus,
@@ -147,10 +150,6 @@ export default {
   left: -4px;
   top: -4px;
   border-radius: 100px;
-}
-
-.outline {
-  border: .5px var(--white) solid;
 }
 
 </style>

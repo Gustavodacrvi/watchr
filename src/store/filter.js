@@ -30,8 +30,8 @@ export default {
           }),
           new Promise(resolve => {
             fire.collection('filtersOrder').doc(uid()).onSnapshot(snap => {
-              state.filtersOrder = snap.data().order
-              if (!state.filtersOrder) state.filtersOrder = []
+              state.order = snap.data().order
+              if (!state.order) state.order = []
               resolve()
             })
           })
@@ -50,6 +50,11 @@ export default {
       fire.collection('filtersOrder').doc(id).set({
         userId: id,
       }, {merge: true})
+    },
+    deleteAllData({state}) {
+      for (const el of state.filters)
+        fire.collection('filters').doc(el.id).delete()
+      fire.collection('filtersOrder').doc(uid()).delete()
     },
   }
 }

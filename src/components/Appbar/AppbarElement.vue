@@ -13,7 +13,7 @@
       :data-disabled='disableAction'
     >
       <div class="icon-wrapper">
-        <Icon class="icon"
+        <Icon class="main-icon"
           :style="hoverStyle"
           :class="{notActive: !isActive}"
           :icon="icon"
@@ -26,6 +26,9 @@
           <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
         </transition>
         <div class="info">
+          <Icon v-if="helpIcon" class="inf"
+            :icon='helpIcon'
+          />
           <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
           <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
           <IconDrop
@@ -52,7 +55,7 @@ import utils from '@/utils/'
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
-  'disableAction', 'selected', 'id', 'progress'],
+  'disableAction', 'selected', 'id', 'progress', 'helpIcon'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -65,7 +68,7 @@ export default {
   },
   mounted() {
     const el = this.$el.getElementsByClassName('link-wrapper')[0]
-    utils.bindToContextMenu(el, this.options, this)
+    utils.bindOptionsToEventListener(el, this.options, this)
   },
   methods: {
     linkCallback(evt) {
@@ -128,7 +131,7 @@ export default {
   align-items: center;
 }
 
-.icon {
+.main-icon {
   position: absolute;
   top: 50%;
   left: 50%;

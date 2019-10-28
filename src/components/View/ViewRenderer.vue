@@ -44,9 +44,7 @@
     </div>
     <transition name="fade-t">
       <div v-if="hideHeadings && hasAutoHideHeadings" @click="hideHeadings = false">
-        <span class="show-headings rb cursor">
-          Show hided headings...
-        </span>
+        <AppButton type="dark" :value="l['Show hided headings...']"/>
       </div>
     </transition>
     <div style="height: 500px"></div>
@@ -59,6 +57,7 @@
 import HeaderVue from './Headings/Header.vue'
 import TaskRendererVue from './Tasks/TaskRenderer.vue'
 import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
+import ButtonVue from '../Auth/Button.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -72,6 +71,7 @@ export default {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,
     ActionButtons: ActionButtonsVue,
+    AppButton: ButtonVue,
   },
   data() {
     return {
@@ -411,24 +411,6 @@ export default {
 </script>
 
 <style scoped>
-
-.show-headings {
-  display: inline-block;
-  margin-top: 8px;
-  padding: 10px;
-  color: var(--gray);
-  background-color: var(--back-color);
-  transform: scale(1,1);
-  transition-duration: .2s;
-}
-
-.show-headings:hover {
-  background-color: var(--dark);
-}
-
-.show-headings:active {
-  transform: scale(.9,.9);
-}
 
 .ViewRenderer {
   margin: 0 90px;
