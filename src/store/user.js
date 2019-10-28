@@ -14,7 +14,15 @@ export default {
     userInfo: null,
   },
   getters: {
-
+    recentUsersStr(state) {
+      if (!state.userInfo.recentUsers) return []
+      return Object.values(state.userInfo.recentUsers).map(user => {
+        let str = ''
+        if (user.displayName) str += user.displayName + ' '
+        str += user.email
+        return str
+      })
+    },
   },
   actions: {
     getData({state}) {
@@ -37,6 +45,11 @@ export default {
         emailVerified: user.emailVerified,
         photo: user.photoURL,
         displayName: username,
+      })
+    },
+    addRecentCollaborators(s, user) {
+      fire.collection('users').doc(uid()).update({
+        recentUsers: {[user.userId]: user},
       })
     },
     deleteAllData() {

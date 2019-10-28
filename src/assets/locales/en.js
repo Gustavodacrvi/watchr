@@ -113,6 +113,7 @@ export default {
   "E-mail or username": "E-mail or username",
   "Share list": "Share list",
   "Invite": "Invite",
+  "There are no users with the given e-mail.": "There are no users with the given e-mail.",
   "Invite from list": "Invite from list",
   'Please confirm your e-mail address.': 'Please confirm your e-mail address.',
   'You have successfully logged in!': 'You have successfully logged in!',

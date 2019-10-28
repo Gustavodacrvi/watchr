@@ -92,6 +92,7 @@ export default {
   "pending": "esperando",
   "Share List": "Compartilhar Lista",
   "Invite": "Convidar",
+  "There are no users with the given e-mail.": "Não há usuários com esse e-mail.",
   "E-mail or username": "E-mail ou nome de usuário",
   "Remove photo": "Apagar foto",
   "Invite from list": "Convidar de outra lista",

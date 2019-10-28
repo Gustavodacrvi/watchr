@@ -80,7 +80,8 @@ export default {
   },
   methods: {
     select(val) {
-
+      const split = val.split(' ')
+      this.email = split[split.length - 1]
     },
     activate(name) {
       this.section = name
@@ -109,11 +110,20 @@ export default {
           res.docs.forEach(el => {
             userInfo = el.data()
           })
-          if (this.list.userId !== userInfo.userId)
+          if (!userInfo) {
+            toast({
+              name: this.l["There are no users with the given e-mail."],
+              seconds: 3,
+              type: 'error',
+            })
+          }
+          else if (this.list.userId !== userInfo.userId) {
             this.$store.dispatch('list/addPendingUser', {
               listId: this.list.id,
               userInfo,
             })
+            this.$store.dispatch('user/addRecentCollaborators', userInfo)
+          }
         }).catch(errToast)
     },
     removePendingUser(id) {
@@ -141,7 +151,11 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform', 'l']),
+    ...mapGetters({
+      platform: 'platform',
+      l: 'l',
+      recentUsersStr: 'user/recentUsersStr',
+    }),
     ...mapState({
       user: state => state.user,
       lists: state => state.list.lists,
@@ -170,8 +184,10 @@ export default {
     },
   },
   watch: {
-    name() {
-
+    email() {
+      if (this.email)
+        this.options = this.recentUsersStr.filter(str => str.includes(this.email))
+      else this.options = []
     },
     section() {
       setTimeout(() => {
