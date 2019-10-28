@@ -37,7 +37,7 @@
                   :key="u.userId"
                   status='rejected'
                   v-bind="u"
-                  @remove='removePendingUser(u.userId)'
+                  @remove='removeUser(u.userId)'
                 />
               </transition-group>
               <transition-group
@@ -48,7 +48,17 @@
                   :key="u.userId"
                   status='pending'
                   v-bind="u"
-                  @remove='removePendingUser(u.userId)'
+                  @remove='removeUser(u.userId)'
+                />
+              </transition-group>
+              <transition-group
+                @enter='enter'
+                @leave='leave'
+              >
+                <ProfileInfo v-for="u in collaborators"
+                  :key="u.userId"
+                  v-bind="u"
+                  @remove='removeUser(u.userId)'
                 />
               </transition-group>
             </div>
@@ -128,17 +138,29 @@ export default {
               type: 'error',
             })
           }
-          else if (this.list.userId !== userInfo.userId) {
+          else if (this.list.users[userInfo.userId]) {
+            toast({
+              name: this.l['This user is already on this list.'],
+              seconds: 3,
+              type: 'error',
+            })
+          } else if (this.list.usersStatus[userInfo.userId] === 'pending' || this.list.usersStatus[userInfo.userId] === 'rejected') {
+            toast({
+              name: this.l['This user is already on this list.'],
+              seconds: 3,
+              type: 'error',
+            })
+          } else if (this.list.userId !== userInfo.userId) {
             this.$store.dispatch('list/addPendingUser', {
               listId: this.list.id,
-              userInfo,
+              userInfo, tasks: this.tasks,
             })
             this.$store.dispatch('user/addRecentCollaborators', userInfo)
           }
         }).catch(errToast)
     },
-    removePendingUser(id) {
-      this.$store.dispatch('list/removePendingUser', {
+    removeUser(id) {
+      this.$store.dispatch('list/removeUser', {
         listId: this.list.id,
         userId: id,
       })
@@ -185,6 +207,7 @@ export default {
     }),
     ...mapState({
       user: state => state.user,
+      tasks: state => state.task.tasks,
       lists: state => state.list.lists,
       listId: state => state.popup.payload,
     }),
@@ -208,11 +231,18 @@ export default {
     pendingUsers() {
       return this.getStatusUsersByIds(this.pendingIds)
     },
+    collaborators() {
+      const userIds = Object.keys(this.list.users).filter(id => id !== this.list.userId)
+      const final = []
+      for (const key of userIds)
+        if (this.list.users[key] !== false) final.push(key)
+      return this.getStatusUsersByIds(final)
+    },
   },
   watch: {
     email() {
       if (this.email)
-        this.options = this.recentUsersStr.filter(str => str.includes(this.email))
+        this.options = this.recentUsersStr.filter(str => str.toLowerCase().includes(this.email.toLowerCase()))
       else this.options = []
     },
     section() {

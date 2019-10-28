@@ -88,10 +88,11 @@ export default {
         displayName: username,
       })
     },
-    addRecentCollaborators(s, user) {
-      fire.collection('users').doc(uid()).update({
-        recentUsers: {[user.userId]: user},
-      })
+    addRecentCollaborators({state}, user) {
+      if (!state.userInfo.recentUsers[user.userId])
+        fire.collection('users').doc(uid()).update({
+          recentUsers: {[user.userId]: user},
+        })
     },
     deleteAllData() {
       fire.collection('users').doc(uid()).delete()

@@ -93,6 +93,7 @@ export default {
   "Share List": "Compartilhar Lista",
   "List Invites": "Convites de Listas",
   "Invite": "Convidar",
+  "This user is already on this list.": "Esse usuário já está na lista.",
   "Accept invite": "Aceitar convite",
   "Reject invite": "Rejeitar convite",
   "rejected": "rejeitado",

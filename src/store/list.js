@@ -195,20 +195,29 @@ export default {
         ...list,
       })
     },
-    addPendingUser({state}, {listId, userInfo}) {
+    addPendingUser({state}, {listId, userInfo, tasks}) {
+      const list = state.lists.find(li => li.id === listId)
+      const removeNonExistent = ids =>
+        ids.filter(id => tasks.some(el => el.id === id))
+      
       const batch = fire.batch()
 
-      const list = state.lists.find(li => li.id === listId)
+      let rootTaskids = removeNonExistent(list.tasks.slice())
+      let taskIds = rootTaskids.slice()
+      const heads = list.headings.slice()
+      for (const h of heads) {
+        h.tasks = removeNonExistent(h.tasks)
+        taskIds = [...taskIds, ...h.tasks.slice()]
+      }
+
       const listRef = fire.collection('lists').doc(listId)
       batch.set(listRef, {
         usersStatus: {[userInfo.userId]: 'pending'},
         userData: {[userInfo.userId]: userInfo},
+        tasks: rootTaskids,
+        headings: heads,
       }, {merge: true})
 
-      let taskIds = list.tasks.slice()
-      for (const h of list.headings) {
-        taskIds = [...taskIds, ...h.tasks.slice()]
-      }
       for (const id of taskIds) {
         const taskRef = fire.collection('tasks').doc(id)
         batch.set(taskRef, {
@@ -261,14 +270,16 @@ export default {
 
       batch.commit()
     },
-    removePendingUser({state}, {listId, userId}) {
+    removeUser({state}, {listId, userId}) {
       const batch = fire.batch()
       
+      const list = state.lists.find(li => li.id === listId)
       const listRef = fire.collection('lists').doc(listId)
-      batch.update(listRef, {
+      batch.set(listRef, {
         usersStatus: {[userId]: false},
-        userData: {[userId]: false}
-      })
+        userData: {[userId]: false},
+        users: {[userId]: false},
+      }, {merge: true})
       let taskIds = list.tasks.slice()
       for (const h of list.headings) {
         taskIds = [...taskIds, ...h.tasks.slice()]
@@ -278,6 +289,7 @@ export default {
         batch.set(taskRef, {
           usersStatus: {[userId]: false},
           userData: {[userId]: false},
+          users: {[userId]: false},
         }, {merge: true})
       }
 

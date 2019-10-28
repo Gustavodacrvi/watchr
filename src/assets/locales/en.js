@@ -111,6 +111,7 @@ export default {
   'Edit list': 'Edit list',
   "pending": "pending",
   "Accept invite": "Accept invite",
+  "This user is already on this list.": "This user is already on this list.",
   "Reject invite": "Reject invite",
   "List Invites": "List Invites",
   "E-mail or username": "E-mail or username",
