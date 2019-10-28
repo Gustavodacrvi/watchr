@@ -6,9 +6,7 @@
     <div class="content">
       <h3>Features</h3>
       <ul>
-        <li>Add/Change profile pic.</li>
-        <li>Delete profile pic.</li>
-        <li>Delete account.</li>
+        <li>Share tasks.</li>
       </ul>
       <Button @click="close" value="Got it!"/>
     </div>
