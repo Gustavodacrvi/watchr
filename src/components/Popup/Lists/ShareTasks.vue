@@ -29,12 +29,17 @@
               </div>
             </div>
             <div class="mt">
-              <ProfileInfo v-for="u in pendingUsers"
-                :key="u.userId"
-                :pending='true'
-                v-bind="u"
-                @remove='removePendingUser(u.userId)'
-              />
+              <transition
+                @enter='enter'
+                @leave='leave'
+              >
+                <ProfileInfo v-for="u in pendingUsers"
+                  :key="u.userId"
+                  :pending='true'
+                  v-bind="u"
+                  @remove='removePendingUser(u.userId)'
+                />
+              </transition>
             </div>
           </div>
           <div v-else class="from" key="from">
@@ -116,6 +121,23 @@ export default {
         listId: this.list.id,
         userId: id,
       })
+    },
+    enter(el) {
+      const s = el.style
+
+      s.transitionDuration = '0s'
+      s.height = 0
+      s.opacity = 0
+      setTimeout(() => {
+        s.transitionDuration = '.2s'
+        s.height = '40px'
+        s.opacity = 1
+      })
+    },
+    leave(el) {
+      const s = el.style
+      s.height = 0
+      s.opacity = 0
     },
   },
   computed: {
