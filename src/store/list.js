@@ -476,9 +476,9 @@ export default {
       const batch = fire.batch()
 
       const taskRef = fire.collection('tasks').doc()
+      console.log(task)
       batch.set(taskRef, {
         userId: uid(),
-        users: {[uid()]: true},
         ...task,
       })
 
@@ -550,7 +550,6 @@ export default {
         task.heading = name
         batch.set(taskRef, {
           userId: uid(),
-          users: {[uid()]: true},
           ...task,
         })
         const heads = list.headings.slice()

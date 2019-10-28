@@ -73,6 +73,7 @@ export default {
       } else if (this.isListType) {
         if (!obj.task.list)
           obj.task.list = this.viewList.id
+        obj.task.users = this.viewList.users
         this.$store.dispatch('list/addTaskByIndex', {
           ...obj, listId: this.viewList.id
         })
@@ -610,6 +611,7 @@ export default {
             })
           },
           onAddTask: obj => {
+            obj.task.users = this.viewList.users
             this.$store.dispatch('list/addTaskHeading', {
               name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
             })
