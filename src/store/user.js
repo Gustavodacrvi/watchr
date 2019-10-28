@@ -33,9 +33,48 @@ export default {
         })
       })
     },
-    update(c, info) {
-      fire.collection('users').doc(uid()).update({
+    update({state}, info) {
+      const batch = fire.batch()
+      
+      const userRef = fire.collection('users').doc(uid())
+      batch.update(userRef, {
         ...info,
+      })
+      const yourListIds = []
+      const pendingIds = []
+      const sharedIds = []
+
+      const updateOwnLists = res => {
+        res.docs.forEach(list => yourListIds.push(list.id))
+        for (const id of yourListIds) {
+          const listRef = fire.collection('lists').doc(id)
+          batch.set(listRef, {
+            ownerData: {...info},
+          }, {merge: true})
+        }
+      }
+      const updateSharedLists = (pendingRes, sharedRes) => {
+        pendingRes.docs.forEach(list => pendingIds.push(list.id))
+        sharedRes.docs.forEach(list => sharedIds.push(list.id))
+
+        const allIds = [...pendingIds, ...sharedIds].filter(id => id !== uid())
+
+        for (const id of allIds) {
+          const listRef = fire.collection('lists').doc(id)
+          batch.set(listRef, {
+            userData: {[uid()]: {...info}},
+          }, {merge: true})
+        }
+      }
+
+      Promise.all([
+        fire.collection('lists').where('userId', '==', uid()).get({source: 'server'}),
+        fire.collection('lists').where(`pending.${uid()}`, '==', true).get({source: 'server'}),
+        fire.collection('lists').where(`users.${uid()}`, '==', true).get({source: 'server'})
+      ]).then(res => {
+        updateOwnLists(res[0])
+        updateSharedLists(res[1], res[2])
+        batch.commit()
       })
     },
     addDefaultData(s, {user, username}) {

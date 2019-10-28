@@ -61,7 +61,7 @@ export default {
           seconds: 4,
         })
       else {
-        this.$store.dispatch('user/update', {username: this.username})
+        this.$store.dispatch('user/update', {displayName: this.username})
         firebase.auth().currentUser.updateProfile({
           displayName: this.username,
         }).catch(err => toast({
@@ -69,8 +69,8 @@ export default {
           type: 'error',
           seconds: 4,
         }))
-        if (this.popup.callback) this.popup.callback()
-        this.$store.commit('closePopup')
+        // if (this.popup.callback) this.popup.callback()
+        // this.$store.commit('closePopup')
       }
     },
   },

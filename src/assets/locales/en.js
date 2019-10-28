@@ -110,6 +110,7 @@ export default {
   'This list already exists!': 'This list already exists!',
   'Edit list': 'Edit list',
   "pending": "pending",
+  "List Invites": "List Invites",
   "E-mail or username": "E-mail or username",
   "Share list": "Share list",
   "Invite": "Invite",

@@ -118,7 +118,7 @@ export default {
         })
       ])
     },
-    addList(c, {name, ids, index}) {
+    addList(c, {name, ids, index, ownerInfo}) {
       const obj = {
         name,
         smartViewsOrders: {},
@@ -127,6 +127,7 @@ export default {
         headings: [],
         headingsOrder: [],
         tasks: [],
+        ownerInfo,
       }
       if (!index)
         fire.collection('lists').add(obj)

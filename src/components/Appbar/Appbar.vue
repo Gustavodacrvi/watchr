@@ -64,7 +64,7 @@
                   icon='envelope'
                   color='var(--red)'
                   @click="$store.dispatch('pushPopup', {
-                    name: 'Invites',
+                    comp: 'Invites',
                   })"
                 />
               </transition>
