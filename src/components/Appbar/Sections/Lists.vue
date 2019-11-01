@@ -51,7 +51,6 @@ export default {
           break
         }
       }
-      console.log(isShared)
       if (isShared) return 'users'
       return undefined
     },

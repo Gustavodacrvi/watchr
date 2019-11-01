@@ -144,7 +144,7 @@ export default {
               seconds: 3,
               type: 'error',
             })
-          } else if (this.list.usersStatus[userInfo.userId] === 'pending' || this.list.usersStatus[userInfo.userId] === 'rejected') {
+          } else if (this.list.usersStatus && (this.list.usersStatus[userInfo.userId] === 'pending' || this.list.usersStatus[userInfo.userId] === 'rejected')) {
             toast({
               name: this.l['This user is already on this list.'],
               seconds: 3,
@@ -157,7 +157,7 @@ export default {
             })
             this.$store.dispatch('user/addRecentCollaborators', userInfo)
           }
-        }).catch(errToast)
+        })
     },
     removeUser(id) {
       this.$store.dispatch('list/removeUser', {

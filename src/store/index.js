@@ -12,6 +12,8 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/storage'
+import 'firebase/analytics'
+import 'firebase/performance'
 
 firebase.initializeApp({
   apiKey: process.env.VUE_APP_API_KEY,
@@ -22,8 +24,12 @@ firebase.initializeApp({
   appId: process.env.VUE_APP_APP_ID,
   databaseURL: process.env.VUE_APP_DATABASE_URL,
   storageBucket: process.env.VUE_APP_STORAGE_BUCKET_URL,
+  measurementId: process.env.VUE_APP_MEASUREMENT_ID,
 })
 
+firebase.analytics()
+
+const perf = firebase.performance()
 
 export const fire = firebase.firestore()
 export const auth = firebase.auth()
@@ -177,7 +183,7 @@ const store = new Vuex.Store({
         window.location.reload()
       })
     },
-    pushKeyShortcut({dispatch, commit}, key) {
+    pushKeyShortcut({dispatch, commit, state}, key) {
       const pop = (comp) => {
         dispatch('pushPopup', {comp})
       }
@@ -186,6 +192,10 @@ const store = new Vuex.Store({
         case 't': pop('AddTag'); break
         case 'l': pop('AddList'); break
         case 'f': commit('openFastSearch'); break
+        case 'Delete': {
+          if (state.selectedTasks.length > 0) dispatch('task/deleteTasks', state.selectedTasks)
+          break
+        }
       }
     },
     pushPopup({state, getters}, popup) {

@@ -44,7 +44,7 @@ import IconDropVue from '../IconDrop.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['displayName', 'photoURL', 'src', 'email', 'status', 'userId', 'listName', 'options'],
+  props: ['displayName', 'photoURL', 'email', 'status', 'userId', 'listName', 'options'],
   components: {
     ProfileImg: ProfileImgVue,
     Icon: IconVue,
