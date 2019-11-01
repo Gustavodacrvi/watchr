@@ -7,6 +7,8 @@ import utilsTask from '../utils/task'
 
 const uid = () => auth.currentUser.uid
 const fd = () => fb.firestore.FieldValue
+const taskRef = id => fire.collection('tasks').doc(id)
+const listRef = id => fire.collection('lists').doc(id)
 
 import mom from 'moment'
 
@@ -102,7 +104,7 @@ export default {
     addTask(c, obj) {
       const batch = fire.batch()
 
-      const ref = fire.collection('tasks').doc()
+      const ref = taskRef()
       batch.set(ref, {
         userId: uid(),
         users: {[uid()]: true},
@@ -110,7 +112,7 @@ export default {
       })
 
       if (obj.listId) {
-        const listRef = fire.collection('lists').doc(obj.listId)
+        const listRef = taskRef(obj.listId)
         batch.update(listRef, {
           tasks: fd().arrayUnion(ref.id),
         })
@@ -130,7 +132,7 @@ export default {
           if (calendar.times === 0) calendar.times = null
         }
 
-        const ref = fire.collection('tasks').doc(t.id)
+        const ref = taskRef(t.id)
         batch.update(ref, {
           completeDate: mom().format('Y-M-D'),
           completed: true,
@@ -145,7 +147,7 @@ export default {
       const batch = fire.batch()
 
       for (const t of tasks) {
-        const ref = fire.collection('tasks').doc(t.id)
+        const ref = taskRef(t.id)
         t.calendar.manualComplete = t.calendar.lastCompleteDate
         batch.update(ref, {
           calendar: t.calendar
@@ -160,7 +162,7 @@ export default {
       for (const t of tasks) {
         const c = t.calendar
         if (c && c.times === 0) c.times = null
-        const ref = fire.collection('tasks').doc(t.id)
+        const ref = taskRef(t.id)
         batch.update(ref, {
           completeDate: null,
           completed: false,
@@ -171,7 +173,7 @@ export default {
       batch.commit()
     },
     saveTask(c, obj) {
-      fire.collection('tasks').doc(obj.id).update({
+      taskRef(obj.id).update({
         ...obj,
       })
     },
@@ -179,7 +181,7 @@ export default {
       const batch = fire.batch()
 
       for (const id of ids) {
-        const ref = fire.collection('tasks').doc(id)
+        const ref = taskRef(id)
         batch.update(ref, {
           ...task,
         })
@@ -191,7 +193,7 @@ export default {
       const batch = fire.batch()
 
       for (const id of ids) {
-        const ref = fire.collection('tasks').doc(id)
+        const ref = taskRef(id)
         batch.update(ref, {
           tags: fd().arrayUnion(...tagIds),
         })
@@ -209,7 +211,7 @@ export default {
       const batch = fire.batch()
 
       for (const id of ids) {
-        const ref = fire.collection('tasks').doc(id)
+        const ref = taskRef(id)
         batch.update(ref, {
           list: listId,
           heading: null,
@@ -226,14 +228,14 @@ export default {
     convertToList(c, task) {
       const batch = fire.batch()
 
-      const list = fire.collection('lists').doc()
-      const oldTask = fire.collection('tasks').doc(task.id)
+      const list = taskRef()
+      const oldTask = taskRef(task.id)
       batch.delete(oldTask)
       
       const ids = []
       if (task.checklist)
         for (const t of task.checklist) {
-          const ref = fire.collection('tasks').doc(t.id)
+          const ref = taskRef(t.id)
           batch.set(ref, {
             userId: uid(),
             users: {[uid()]: true},
@@ -267,7 +269,7 @@ export default {
       const batch = fire.batch()
 
       for (const id of ids) {
-        const ref = fire.collection('tasks').doc(id)
+        const ref = taskRef(id)
         batch.delete(ref)
       }
 
@@ -318,7 +320,7 @@ export default {
     },
     deleteAllData({state}) {
       for (const el of state.tasks)
-        fire.collection('tasks').doc(el.id).delete()
+        taskRef(el.id).delete()
     },
   },
 }
