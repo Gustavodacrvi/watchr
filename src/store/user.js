@@ -80,13 +80,17 @@ export default {
         batch.commit()
       })
     },
-    addDefaultData(s, {user, username}) {
+    createUser(s, user) {
       fire.collection('users').doc(user.uid).set({
         userId: user.uid,
         email: user.email,
         emailVerified: user.emailVerified,
-        photo: user.photoURL,
-        displayName: username,
+        photoURL: user.photoURL,
+        displayName: user.displayName,
+        lists: [],
+        tags: [],
+        filters: [],
+        viewOrders: [],
       })
     },
     addRecentCollaborators({state}, user) {

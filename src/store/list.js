@@ -476,7 +476,6 @@ export default {
       const batch = fire.batch()
 
       const taskRef = fire.collection('tasks').doc()
-      console.log(task)
       batch.set(taskRef, {
         userId: uid(),
         ...task,
@@ -722,16 +721,6 @@ export default {
       })
 
       batch.commit()
-    },
-    addDefaultData(c, id) {
-      return Promise.all([
-        fire.collection('listsOrder').doc(id).set({
-          userId: id,
-        }, {merge: true}),
-        fire.collection('viewOrders').doc(id).set({
-          userId: id,
-        }, {merge: true})
-      ])
     },
     deleteAllData({state}) {
       for (const el of state.lists)

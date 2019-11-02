@@ -46,11 +46,6 @@ export default {
     sortFiltersByName() {
 
     },
-    addDefaultData(c, id) {
-      fire.collection('filtersOrder').doc(id).set({
-        userId: id,
-      }, {merge: true})
-    },
     deleteAllData({state}) {
       for (const el of state.filters)
         fire.collection('filters').doc(el.id).delete()

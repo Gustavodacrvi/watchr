@@ -120,12 +120,11 @@ export default {
               type: 'warning',
             })
           }).catch(err => toastErr(err))
-          this.$store.dispatch('tag/addDefaultData', uid)
-          this.$store.dispatch('list/addDefaultData', uid)
-          this.$store.dispatch('filter/addDefaultData', uid)
-          this.$store.dispatch('user/addDefaultData', {
-            user: firebase.auth().currentUser,
-            username: this.username,
+          this.$store.dispatch('user/createUser', {
+            ...firebase.auth().currentUser, displayName: this.username,
+          }).catch(err => {
+            auth.currentUser.delete()
+            toastErr(err)
           })
           this.$store.commit('closePopup')
           this.$store.commit('toggleUser', true)
