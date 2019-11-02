@@ -140,12 +140,22 @@ export default {
           seconds: 4,
           type: 'error'
         })
-        this.updateUserData()
       })
     },
     upgradeAccountWithEmailAndPassword() {
       const provider = new firebase.auth.EmailAuthProvider.credential(this.eMail, this.password)
-      firebase.auth().currentUser.linkAndRetrieveDataWithCredential(provider).then(res => window.location.reload())
+      firebase.auth().currentUser.linkAndRetrieveDataWithCredential(provider).then(res => {
+        this.$store.dispatch('user/update', res.user).then(el => {
+          window.location.reload()
+        }).catch(err => {
+          this.$store.dispatch('pushToast', {
+            name: err.message,
+            seconds: 4,
+            type: 'error'
+          })
+          res.user.delete()
+        })
+      })
       .catch(err => {
         this.$store.commit('pushToast', {
           name: err.message,
@@ -154,9 +164,6 @@ export default {
         })
       })
     },
-    updateUserData() {
-      this.$store.dispatch('user/updateUser', firebase.auth().currentUser)
-    }
   },
   computed: {
     ...mapGetters(['isDesktop']),

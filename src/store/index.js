@@ -283,7 +283,6 @@ auth.onAuthStateChanged((user) => {
 
     if (isLogged) loadData()
   } else {
-    const uid = user.uid
     setTimeout(() => {
       toast({
         name: store.getters.l['Anonymous users are deleted every week, sign in to save your data indefinitely.'],

@@ -37,7 +37,7 @@ export default {
     update({state}, info) {
       const batch = fire.batch()
       
-      const userRef = fire.collection('users').doc(uid())
+      const userRef = fire.collection('users').doc(info.uid)
       batch.update(userRef, {
         ...utils.getRelevantUserData(info),
       })
@@ -78,7 +78,7 @@ export default {
         updateOwnLists(res[0])
         updateSharedLists(res[1], res[2], res[3])
       }) */
-      batch.commit()
+      return batch.commit()
     },
     createAnonymousUser(c, userId) {
       fire.collection('users').doc(userId).set({
