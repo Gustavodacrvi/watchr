@@ -4,6 +4,7 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from '../utils/task'
+import utilsFire from '../utils/firestore'
 
 const uid = () => auth.currentUser.uid
 const fd = () => fb.firestore.FieldValue
@@ -94,10 +95,14 @@ export default {
       if (id)
       return Promise.all([
         new Promise(resolve => {
-          fire.collection('tasks').where(`users.${id}`, '==', true).onSnapshot(snap => {
+          utilsFire.getTaskData().then(docChanges => {
+            console.log(docChanges)
+          })
+          resolve()
+/*           fire.collection('tasks').where(`users.${id}`, '==', true).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
             resolve()
-          })
+          }) */
         })
       ])
     },

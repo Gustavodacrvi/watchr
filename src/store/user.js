@@ -27,10 +27,11 @@ export default {
   actions: {
     getData({state}) {
       return new Promise(resolve => {
-        fire.collection('users').doc(uid()).onSnapshot(snap => {
+/*         fire.collection('users').doc(uid()).onSnapshot(snap => {
           state.userInfo = snap.data()
           resolve()
-        })
+        }) */
+        resolve()
       })
     },
     update({state}, info) {

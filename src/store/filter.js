@@ -23,17 +23,17 @@ export default {
       if (uid())
         return Promise.all([
           new Promise(resolve => {
-            fire.collection('filters').where('userId', '==', uid()).onSnapshot(snap => {
+            /* fire.collection('filters').where('userId', '==', uid()).onSnapshot(snap => {
               utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'filters')
-              resolve()
-            })
+            }) */
+            resolve()
           }),
           new Promise(resolve => {
-            fire.collection('filtersOrder').doc(uid()).onSnapshot(snap => {
+            /* fire.collection('filtersOrder').doc(uid()).onSnapshot(snap => {
               state.order = snap.data().order
               if (!state.order) state.order = []
-              resolve()
-            })
+            }) */
+            resolve()
           })
         ])
     },
