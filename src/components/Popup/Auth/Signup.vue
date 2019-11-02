@@ -120,7 +120,7 @@ export default {
               type: 'warning',
             })
           }).catch(err => toastErr(err))
-          this.$store.dispatch('user/createUser', {
+          this.$store.dispatch('createUser', {
             ...firebase.auth().currentUser, displayName: this.username,
           }).catch(err => {
             auth.currentUser.delete()
@@ -145,7 +145,8 @@ export default {
     upgradeAccountWithEmailAndPassword() {
       const provider = new firebase.auth.EmailAuthProvider.credential(this.eMail, this.password)
       firebase.auth().currentUser.linkAndRetrieveDataWithCredential(provider).then(res => {
-        this.$store.dispatch('user/update', res.user).then(el => {
+        this.$store.dispatch('update', res.user).then(el => {
+          res.user.sendEmailVerification()
           window.location.reload()
         }).catch(err => {
           this.$store.dispatch('pushToast', {

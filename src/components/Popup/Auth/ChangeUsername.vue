@@ -61,7 +61,7 @@ export default {
           seconds: 4,
         })
       else {
-        this.$store.dispatch('user/update', {displayName: this.username})
+        this.$store.dispatch('update', {displayName: this.username})
         firebase.auth().currentUser.updateProfile({
           displayName: this.username,
         }).catch(err => toast({

@@ -35,7 +35,6 @@ import task from './task'
 import tag from './tag'
 import list from './list'
 import filter from './filter'
-import user from './user'
 
 const lang = localStorage.getItem('watchrlanguage') || 'en'
 
@@ -50,7 +49,7 @@ moment.locale(lang)
 
 const store = new Vuex.Store({
   modules: {
-    task, tag, list, filter, user,
+    task, tag, list, filter,
   },
   state: {
     lang,
@@ -71,6 +70,7 @@ const store = new Vuex.Store({
       bool: false,
     },
     user: null,
+    userInfo: null,
     firstFireLoad: false,
     selectedTasks: [],
     isOnControl: false,
@@ -99,6 +99,15 @@ const store = new Vuex.Store({
     },
     l(state) {
       return state.language
+    },
+    recentUsersStr(state) {
+      if (!state.userInfo.recentUsers) return []
+      return Object.values(state.userInfo.recentUsers).map(user => {
+        let str = ''
+        if (user.displayName) str += user.displayName + ' '
+        str += user.email
+        return str
+      })
     },
   },
   mutations: {
@@ -212,13 +221,87 @@ const store = new Vuex.Store({
       dispatch('list/deleteAllData')
       dispatch('task/deleteAllData')
       dispatch('filter/deleteAllData')
-      dispatch('user/deleteAllData')
+      dispatch('deleteAllData')
       firebase.auth().currentUser.delete()
       setTimeout(() => {
         router.push('/')
         dispatch('deleteProfilePic')
         window.location.reload()
       }, 100)
+    },
+    getData({state}) {
+      return new Promise(resolve => {
+        fire.collection('users').doc(uid()).onSnapshot(snap => {
+          state.userInfo = snap.data()
+          resolve()
+        })
+        resolve()
+      })
+    },
+    update({state}, info) {
+      const batch = fire.batch()
+      
+      const userRef = fire.collection('users').doc(info.uid)
+      batch.update(userRef, {
+        ...utils.getRelevantUserData(info),
+      })
+/*       const yourListIds = []
+      const pendingIds = []
+      const sharedIds = []
+
+      const updateOwnLists = res => {
+        res.docs.forEach(list => yourListIds.push(list.id))
+        for (const id of yourListIds) {
+          const listRef = fire.collection('lists').doc(id)
+          batch.set(listRef, {
+            ownerData: {...info},
+          }, {merge: true})
+        }
+      }
+      const updateSharedLists = (pendingRes, rejectedRes, sharedRes) => {
+        pendingRes.docs.forEach(list => pendingIds.push(list.id))
+        rejectedRes.docs.forEach(list => pendingIds.push(list.id))
+        sharedRes.docs.forEach(list => sharedIds.push(list.id))
+
+        const allIds = [...pendingIds, ...sharedIds].filter(id => id !== uid())
+
+        for (const id of allIds) {
+          const listRef = fire.collection('lists').doc(id)
+          batch.set(listRef, {
+            userData: {[uid()]: {...info}},
+          }, {merge: true})
+        }
+      }
+
+      Promise.all([
+        fire.collection('lists').where('userId', '==', uid()).get({source: 'server'}),
+        fire.collection('lists').where(`pending.${uid()}`, '==', 'pending').get({source: 'server'}),
+        fire.collection('lists').where(`pending.${uid()}`, '==', 'rejected').get({source: 'server'}),
+        fire.collection('lists').where(`users.${uid()}`, '==', true).get({source: 'server'})
+      ]).then(res => {
+        updateOwnLists(res[0])
+        updateSharedLists(res[1], res[2], res[3])
+      }) */
+      return batch.commit()
+    },
+    createAnonymousUser(c, userId) {
+      fire.collection('users').doc(userId).set({
+        ...utils.getRelevantUserData(userId),
+      })
+    },
+    createUser(s, user) {
+      fire.collection('users').doc(user.uid).set({
+        ...utils.getRelevantUserData(user),
+      })
+    },
+    addRecentCollaborators({state}, user) {
+      if (!state.userInfo.recentUsers[user.userId])
+        fire.collection('users').doc(uid()).update({
+          recentUsers: {[user.userId]: user},
+        })
+    },
+    deleteAllData() {
+      fire.collection('users').doc(uid()).delete()
     },
   }
 })
@@ -232,7 +315,7 @@ firebase.auth().getRedirectResult().then(({user}) => {
       seconds: 3,
       type: 'success',
     })
-    dispatch('user/createUser', user).then(() => {
+    dispatch('createUser', user).then(() => {
       router.push('/user')
       window.location.reload()
     }).catch(err => {
@@ -258,11 +341,11 @@ auth.onAuthStateChanged((user) => {
 
   const dispatch = store.dispatch
   const loadData = () => {
-    dispatch('tag/getData')
-    dispatch('list/getData')
-    dispatch('filter/getData')
+    dispatch('getData')
     dispatch('task/getData')
-    dispatch('user/getData')
+    dispatch('list/getData')
+    dispatch('tag/getData')
+    dispatch('filter/getData')
   }
   const toast = (t) => store.commit('pushToast', t)
 

@@ -36,17 +36,10 @@ export default {
       if (uid())
       return Promise.all([
         new Promise(resolve => {
-          /* fire.collection('tags').where('userId', '==', uid()).onSnapshot(snap => {
-            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tags')
-          }) */
-          resolve()
-        }),
-        new Promise(resolve => {
-          /* fire.collection('tagsOrder').doc(uid()).onSnapshot(snap => {
-            state.order = snap.data().order
-            if (!state.order) state.order = []
-          }) */
-          resolve()
+          fire.collection('users').doc(id).collection('tags').onSnapshot(snap => {
+            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
+            resolve()
+          })
         })
       ])
     },

@@ -91,31 +91,17 @@ export default {
       if (id)
       return Promise.all([
         new Promise(resolve => {
-          fire.collection('lists').where(`users.${id}`, '==', true).onSnapshot(snap => {
+/*           fire.collection('lists').where(`users.${id}`, '==', true).onSnapshot(snap => {
+            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
+            resolve()
+          }) */
+        }),
+        new Promise(resolve => {
+          fire.collection('users').doc(id).collection('lists').onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
             resolve()
           })
         }),
-        new Promise(resolve => {
-          fire.collection('lists').where(`usersStatus.${id}`, '==', 'pending').onSnapshot(snap => {
-            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'invites')
-            resolve()
-          })
-        }),
-        new Promise(resolve => {
-          fire.collection('listsOrder').doc(id).onSnapshot((snap => {
-            state.order = snap.data().order
-            if (!state.order) state.order = []
-            resolve()
-          }))
-        }),
-        new Promise(resolve => {
-          fire.collection('viewOrders').doc(uid()).onSnapshot((snap => {
-            state.viewOrders = snap.data()
-            if (!state.viewOrders) state.viewOrders = []
-            resolve()
-          }))
-        })
       ])
     },
     addList(c, {name, ids, index, ownerInfo}) {

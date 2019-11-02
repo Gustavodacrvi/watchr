@@ -48,7 +48,7 @@ export default {
           seconds: 3,
           type: 'success',
         })
-        this.$store.dispatch('user/createAnonymousUser', auth.currentUser.uid).then(el => {
+        this.$store.dispatch('createAnonymousUser', auth.currentUser.uid).then(el => {
           this.$router.push('/user')
           this.$store.commit('closePopup')
         }).catch(err => {

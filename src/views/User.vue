@@ -51,7 +51,7 @@ export default {
   methods: {
     resend() {
       firebase.auth().currentUser.sendEmailVerification()
-      this.$store.dispatch('pushToast', {
+      this.$store.commit('pushToast', {
         name: 'E-mail sent',
         seconds: 3,
         type: 'success',

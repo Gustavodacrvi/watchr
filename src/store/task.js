@@ -95,14 +95,10 @@ export default {
       if (id)
       return Promise.all([
         new Promise(resolve => {
-          utilsFire.getTaskData().then(docChanges => {
-            console.log(docChanges)
-          })
-          resolve()
-/*           fire.collection('tasks').where(`users.${id}`, '==', true).onSnapshot(snap => {
+          fire.collection('users').doc(uid()).collection('tasks').onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
             resolve()
-          }) */
+          })
         })
       ])
     },
