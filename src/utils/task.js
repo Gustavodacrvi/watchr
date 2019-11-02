@@ -189,6 +189,11 @@ export default {
     
     return tasks
   },
+  taskType(t) {
+    const views = ['Inbox', 'Today', 'Tomorrow']
+    for (const v of views)
+      if (this.filterTasksByView([t], v).length > 0) return v
+  },
   filterTasksByViewRendererFilterOptions(tasks, tags, list) {
     let ts = tasks
     if (tags.length > 0)

@@ -12,6 +12,7 @@ const userRef = () => fire.collection('users').doc(uid())
 const taskRef = () => userRef().collection('tasks').doc(uid())
 const listRef = () => userRef().collection('lists').doc(uid())
 const tagRef = () => userRef().collection('tags').doc(uid())
+const uuid = () => fire.collection('users').doc().id
 
 import mom from 'moment'
 
@@ -98,22 +99,26 @@ export default {
       return Promise.all([
         new Promise(resolve => {
           fire.collection('users').doc(id).collection('tasks').doc(id).onSnapshot(snap => {
-            state.tasks = Array.from(snap.data().tasks)
+            const data = snap.data()
+            state.tasks = Object.values(data.tasks)
+            state.viewOrders = data.viewOrders
             resolve()
           })
         })
       ])
     },
     addTask(c, obj) {
-      const batch = fire.batch()
-
-      const ref = taskRef()
-      batch.set(ref, {
+      const id = uuid()
+      const set = {
         userId: uid(),
-        ...obj,
-      })
-
-      batch.commit()
+        tasks: {
+          [id]: {...obj, id},
+        },
+      }
+      const type = utilsTask.taskType(obj)
+      console.log(type)
+      if (type) obj[type] = fd().arrayUnion(id)
+      taskRef().set(set, {merge: true})
     },
     completeTasks(c, tasks) {
       const batch = fire.batch()
