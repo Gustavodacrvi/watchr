@@ -480,4 +480,23 @@ export default {
       }
     })
   },
+  getRelevantUserData(userAuth) {
+    if (!userAuth.email)
+      return {
+        userId: userAuth,
+        isAnonymous: true
+      }
+    return {
+      userId: userAuth.uid,
+      email: userAuth.email,
+      emailVerified: userAuth.emailVerified,
+      photoURL: userAuth.photoURL,
+      displayName: userAuth.displayName,
+      isAnonymous: false,
+      lists: [],
+      tags: [],
+      filters: [],
+      viewOrders: [],
+    }
+  },
 }

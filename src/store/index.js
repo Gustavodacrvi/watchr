@@ -291,12 +291,6 @@ auth.onAuthStateChanged((user) => {
         type: 'warning',
       })
     }, 3000)
-    dispatch('tag/addDefaultData', uid)
-    dispatch('list/addDefaultData', uid)
-    dispatch('filter/addDefaultData', uid)
-    dispatch('user/addDefaultData', {
-      user, username: user.displayName,
-    })
     loadData()
   }
 })

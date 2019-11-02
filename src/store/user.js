@@ -39,9 +39,9 @@ export default {
       
       const userRef = fire.collection('users').doc(uid())
       batch.update(userRef, {
-        ...info,
+        ...utils.getRelevantUserData(info),
       })
-      const yourListIds = []
+/*       const yourListIds = []
       const pendingIds = []
       const sharedIds = []
 
@@ -77,21 +77,17 @@ export default {
       ]).then(res => {
         updateOwnLists(res[0])
         updateSharedLists(res[1], res[2], res[3])
-        batch.commit()
+      }) */
+      batch.commit()
+    },
+    createAnonymousUser(c, userId) {
+      fire.collection('users').doc(userId).set({
+        ...utils.getRelevantUserData(userId),
       })
     },
     createUser(s, user) {
-      console.log(user.email)
       fire.collection('users').doc(user.uid).set({
-        userId: user.uid,
-        email: user.email,
-        emailVerified: user.emailVerified,
-        photoURL: user.photoURL,
-        displayName: user.displayName,
-        lists: [],
-        tags: [],
-        filters: [],
-        viewOrders: [],
+        ...utils.getRelevantUserData(user),
       })
     },
     addRecentCollaborators({state}, user) {

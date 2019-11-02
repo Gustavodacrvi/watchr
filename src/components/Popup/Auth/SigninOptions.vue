@@ -16,7 +16,7 @@
 
 import { mapGetters, mapState } from 'vuex'
 
-import firebase from 'firebase/app'
+import firebase, { firestore } from 'firebase/app'
 
 let provider
 
@@ -40,20 +40,25 @@ export default {
       }))
     },
     guest() {
-      firebase.auth().signInAnonymously()
+      const auth = firebase.auth()
+      auth.signInAnonymously()
       .then(() => {
         this.$store.commit('pushToast', {
           name: this.l['You have successfully signed in as a guest.'],
           seconds: 3,
           type: 'success',
         })
+        this.$store.dispatch('user/createAnonymousUser', auth.currentUser.uid).then(el => {
+          this.$router.push('/user')
+          this.$store.commit('closePopup')
+        }).catch(err => {
+          auth.signOut()
+        })
       }).catch(err => this.$store.commit('pushToast', {
         name: err.message,
         seconds: 3,
         type: 'error',
       }))
-      this.$router.push('/user')
-      this.$store.commit('closePopup')
     },
   },
   computed: {

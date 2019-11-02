@@ -140,6 +140,7 @@ export default {
           seconds: 4,
           type: 'error'
         })
+        this.updateUserData()
       })
     },
     upgradeAccountWithEmailAndPassword() {
@@ -153,6 +154,9 @@ export default {
         })
       })
     },
+    updateUserData() {
+      this.$store.dispatch('user/updateUser', firebase.auth().currentUser)
+    }
   },
   computed: {
     ...mapGetters(['isDesktop']),
