@@ -36,10 +36,10 @@ export default {
       if (uid())
       return Promise.all([
         new Promise(resolve => {
-          fire.collection('users').doc(id).collection('tags').onSnapshot(snap => {
+          /* fire.collection('users').doc(uid()).collection('tags').doc(uid()).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
-            resolve()
-          })
+          }) */
+          resolve()
         })
       ])
     },

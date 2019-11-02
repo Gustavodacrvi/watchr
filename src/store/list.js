@@ -91,16 +91,10 @@ export default {
       if (id)
       return Promise.all([
         new Promise(resolve => {
-/*           fire.collection('lists').where(`users.${id}`, '==', true).onSnapshot(snap => {
+          /* fire.collection('users').doc(id).collection('lists').doc(id).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
-            resolve()
           }) */
-        }),
-        new Promise(resolve => {
-          fire.collection('users').doc(id).collection('lists').onSnapshot(snap => {
-            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
-            resolve()
-          })
+          resolve()
         }),
       ])
     },

@@ -493,10 +493,6 @@ export default {
       photoURL: userAuth.photoURL,
       displayName: userAuth.displayName,
       isAnonymous: false,
-      lists: [],
-      tags: [],
-      filters: [],
-      viewOrders: [],
     }
   },
 }

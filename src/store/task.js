@@ -8,8 +8,10 @@ import utilsFire from '../utils/firestore'
 
 const uid = () => auth.currentUser.uid
 const fd = () => fb.firestore.FieldValue
-const taskRef = id => fire.collection('tasks').doc(id)
-const listRef = id => fire.collection('lists').doc(id)
+const userRef = () => fire.collection('users').doc(uid())
+const taskRef = () => userRef().collection('tasks').doc(uid())
+const listRef = () => userRef().collection('lists').doc(uid())
+const tagRef = () => userRef().collection('tags').doc(uid())
 
 import mom from 'moment'
 
@@ -95,8 +97,8 @@ export default {
       if (id)
       return Promise.all([
         new Promise(resolve => {
-          fire.collection('users').doc(uid()).collection('tasks').onSnapshot(snap => {
-            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
+          fire.collection('users').doc(id).collection('tasks').doc(id).onSnapshot(snap => {
+            state.tasks = Array.from(snap.data().tasks)
             resolve()
           })
         })
@@ -108,16 +110,8 @@ export default {
       const ref = taskRef()
       batch.set(ref, {
         userId: uid(),
-        users: {[uid()]: true},
         ...obj,
       })
-
-      if (obj.listId) {
-        const listRef = taskRef(obj.listId)
-        batch.update(listRef, {
-          tasks: fd().arrayUnion(ref.id),
-        })
-      }
 
       batch.commit()
     },
@@ -200,7 +194,7 @@ export default {
         })
       }
       for (const id of tagIds) {
-        const ref = fire.collection('tags').doc(id)
+        const ref = tagRef(id)
         batch.update(ref, {
           times: fd().increment(1),
         })
@@ -222,14 +216,14 @@ export default {
       batch.commit()
     },
     copyTask(c, task) {
-      fire.collection('tasks').add({
+      userRef().collection('tasks').add({
         ...task,
       })
     },
     convertToList(c, task) {
       const batch = fire.batch()
 
-      const list = taskRef()
+      const list = listRef()
       const oldTask = taskRef(task.id)
       batch.delete(oldTask)
       

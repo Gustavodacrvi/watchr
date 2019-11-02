@@ -35,6 +35,7 @@ import task from './task'
 import tag from './tag'
 import list from './list'
 import filter from './filter'
+import utils from '../utils'
 
 const lang = localStorage.getItem('watchrlanguage') || 'en'
 
@@ -46,6 +47,29 @@ const getLanguageFile = (name) => {
 }
 
 moment.locale(lang)
+
+const uid = () => auth.currentUser.uid
+
+const createUser = userInfo => {
+  const batch = fire.batch()
+
+  let userId = userInfo
+  if (userInfo.email) userId = userInfo.uid
+
+  const ref = fire.collection('users').doc(userId)
+  const list = ref.collection('lists').doc(userId)
+  const task = ref.collection('tasks').doc(userId)
+  const tag = ref.collection('tags').doc(userId)
+  batch.set(ref, {
+    ...utils.getRelevantUserData(userId),
+  }, {merge: true})
+  const obj = {userId}
+  batch.set(task, obj, {merge: true})
+  batch.set(tag, obj, {merge: true})
+  batch.set(list, obj, {merge: true})
+
+  return batch.commit()
+}
 
 const store = new Vuex.Store({
   modules: {
@@ -285,14 +309,10 @@ const store = new Vuex.Store({
       return batch.commit()
     },
     createAnonymousUser(c, userId) {
-      fire.collection('users').doc(userId).set({
-        ...utils.getRelevantUserData(userId),
-      })
+      return createUser(userId)
     },
     createUser(s, user) {
-      fire.collection('users').doc(user.uid).set({
-        ...utils.getRelevantUserData(user),
-      })
+      return createUser(user)
     },
     addRecentCollaborators({state}, user) {
       if (!state.userInfo.recentUsers[user.userId])
@@ -306,29 +326,6 @@ const store = new Vuex.Store({
   }
 })
 
-firebase.auth().getRedirectResult().then(({user}) => {
-  const toast = (t) => store.commit('pushToast', t)
-  const dispatch = store.dispatch
-  if (user !== null) {
-    toast({
-      name: store.getters.l['You have successfully logged in!'],
-      seconds: 3,
-      type: 'success',
-    })
-    dispatch('createUser', user).then(() => {
-      router.push('/user')
-      window.location.reload()
-    }).catch(err => {
-      user.delete()
-      toast({
-        name: err.message,
-        seconds: 3,
-        type: 'error',
-      })}
-    )
-  }
-})
-
 getLanguageFile(lang).then((l) => store.commit('languageFile', l))
 
 let enabled = false
@@ -338,6 +335,31 @@ auth.onAuthStateChanged((user) => {
   store.commit('saveUser', user)
   store.commit('firstFirebaseLoad')
   if (!isLogged) return;
+
+  firebase.auth().getRedirectResult().then(({user}) => {
+    const toast = (t) => store.commit('pushToast', t)
+    const dispatch = store.dispatch
+    if (user) {
+      toast({
+        name: store.getters.l['You have successfully logged in!'],
+        seconds: 3,
+        type: 'success',
+      })
+      console.log(user)
+      dispatch('createUser', user).then(() => {
+        router.push('/user')
+        console.log('gone', user.uid)
+        window.location.reload()
+      }).catch(err => {
+        user.delete()
+        toast({
+          name: err.message,
+          seconds: 3,
+          type: 'error',
+        })}
+      )
+    }
+  })
 
   const dispatch = store.dispatch
   const loadData = () => {
