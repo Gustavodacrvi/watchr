@@ -223,6 +223,29 @@ const store = new Vuex.Store({
   }
 })
 
+firebase.auth().getRedirectResult().then(({user}) => {
+  const toast = (t) => store.commit('pushToast', t)
+  const dispatch = store.dispatch
+  if (user !== null) {
+    toast({
+      name: store.getters.l['You have successfully logged in!'],
+      seconds: 3,
+      type: 'success',
+    })
+    dispatch('user/createUser', user).then(() => {
+      router.push('/user')
+      window.location.reload()
+    }).catch(err => {
+      user.delete()
+      toast({
+        name: err.message,
+        seconds: 3,
+        type: 'error',
+      })}
+    )
+  }
+})
+
 getLanguageFile(lang).then((l) => store.commit('languageFile', l))
 
 let enabled = false

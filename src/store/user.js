@@ -81,6 +81,7 @@ export default {
       })
     },
     createUser(s, user) {
+      console.log(user.email)
       fire.collection('users').doc(user.uid).set({
         userId: user.uid,
         email: user.email,

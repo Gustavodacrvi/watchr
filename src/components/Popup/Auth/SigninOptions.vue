@@ -32,30 +32,8 @@ export default {
       if (!provider || this.isUpgrading) return;
 
       const toast = (t) => this.$store.commit('pushToast', t)
-      const dispatch = this.$store.dispatch
-      const commit = this.$store.commit
 
-      firebase.auth().signInWithRedirect(provider).then(res => {
-        const uid = res.user.uid
-
-        toast({
-          name: this.l['You have successfully logged in!'],
-          seconds: 3,
-          type: 'success',
-        })
-        dispatch('tag/addDefaultData', uid)
-        dispatch('list/addDefaultData', uid)
-        dispatch('filter/addDefaultData', uid)
-        dispatch('user/addDefaultData', {
-          user: res.user,
-          username: res.user.displayName,
-        })
-        commit('closePopup')
-        commit('toggleUser', true)
-        this.$router.push('/user')
-        window.location.reload()
-        
-      }).catch(err => toast('pushToast', {
+      firebase.auth().signInWithRedirect(provider).catch(err => toast('pushToast', {
         name: err.message,
         seconds: 3,
         type: 'error',
