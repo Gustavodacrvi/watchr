@@ -169,9 +169,12 @@ export default {
     ...mapGetters({
       l: 'l',
       isDesktop: 'isDesktop',
-      getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getTasksOfList: 'list/getTasks',
+      getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
+      getTasksWithHeading: 'task/getTasksWithHeading',
+      tasksWithLists: 'task/tasksWithLists',
+      tasksWithoutLists: 'task/tasksWithoutLists',
     }),
     prefix() {
       if (this.isSmart || this.viewType === 'search') return 'smartList'
@@ -335,21 +338,12 @@ export default {
       ]
     },
 
-    getTasksWithHeading() {
-      return this.getListTasks.filter(el => el.heading)
-    },
     getLostTasks() {
       const headingNames = this.viewList.headings.map(el => el.name)
       return this.getListTasks.filter(el => !headingNames.includes(el.heading))
     },
     getRootTasksOfList() {
       return [...this.getListTasks.filter(el => !el.heading), ...this.getLostTasks]
-    },
-    tasksWithLists() {
-      return this.tasks.filter(el => el.list)
-    },
-    tasksWithoutLists() {
-      return this.tasks.filter(el => !el.list)
     },
     getListTasks() {
       return this.getTasksOfList(this.tasks, this.viewList.id)

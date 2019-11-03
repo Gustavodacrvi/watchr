@@ -83,6 +83,15 @@ export default {
         notCompleted: utilsTask.filterTasksByCompletion(ts, true).length,
       }
     },
+    getTasksWithHeading: (s, getters) => {
+      return getters.getListTasks.filter(el => el.heading)
+    },
+    tasksWithLists: state => {
+      return state.tasks.filter(el => el.list)
+    },
+    tasksWithoutLists: state => {
+      return state.tasks.filter(el => !el.list)
+    },
   },
   actions: {
     getData({state}) {
