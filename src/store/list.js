@@ -145,7 +145,7 @@ export default {
         h.tasks = newIds
       }
 
-      batch.set(listRef, {
+      batch.set(newListRef, {
         headingsOrder,
         headings,
         name,
