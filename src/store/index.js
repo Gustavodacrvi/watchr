@@ -74,7 +74,11 @@ const store = new Vuex.Store({
       bool: false,
     },
     user: null,
-    userInfo: null,
+    userInfo: {
+      lists: [],
+      tags: [],
+      viewOrders: {},
+    },
     firstFireLoad: false,
     selectedTasks: [],
     isOnControl: false,

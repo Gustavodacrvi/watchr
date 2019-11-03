@@ -4,13 +4,12 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from "@/utils/task"
-import { listRef } from '../utils/firestore'
+import { listRef, userRef, uid, listColl } from '../utils/firestore'
 
 export default {
   namespaced: true,
   state: {
     lists: [],
-    order: [],
     invites: [],
     viewOrders: {
       'Today': {
@@ -32,9 +31,11 @@ export default {
     },
   },
   getters: {
-    sortedLists(state) {
-      const {order, lists} = state
-      return utils.checkMissingIdsAndSortArr(order, lists)
+    sortedLists(state, d, {userInfo}) {
+      const {lists} = state
+      if (userInfo)
+        return utils.checkMissingIdsAndSortArr(userInfo.lists, lists)
+      return []
     },
     getListsByName: state => names => {
       const arr = []
@@ -95,14 +96,14 @@ export default {
           resolve()
         }),
         new Promise(resolve => {
-          fire.collection('users').doc(id).collection('lists').onSnapshot(snap => {
+          listColl().where('userId', '==', id).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
             resolve()
           })
         }),
       ])
     },
-    addList(c, {name, ids, index, ownerInfo}) {
+    addList({rootState}, {name, ids, index}) {
       const obj = {
         name,
         smartViewsOrders: {},
@@ -111,20 +112,20 @@ export default {
         headings: [],
         headingsOrder: [],
         tasks: [],
-        ownerInfo,
+        ownerInfo: rootState.userInfo,
       }
       if (!index)
-        fire.collection('lists').add(obj)
+        userRef().collection('lists').add(obj)
       else {
         const batch = fire.batch()
   
         const ord = ids.slice()
-        const ref = fire.collection('lists').doc()
+        const ref = listRef()
         batch.set(ref, obj)
         ord.splice(index, 0, ref.id)
-        const orderRef = fire.collection('listsOrder').doc(uid())
+        const orderRef = userRef()
         batch.update(orderRef, {
-          order: ord,
+          lists: ord,
         })
   
         batch.commit()
