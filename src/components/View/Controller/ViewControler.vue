@@ -1,31 +1,9 @@
 <template>
   <ViewRenderer
-    v-bind="$props"
-
-    :viewNameValue='viewNameValue'
-    :icon="icon"
-    :illustration='illustration'
-    :showHeader='isListType'
-    :showEmptyHeadings='isListType'
-    :headingEdit='headingEdit'
-    :headerOptions='headerOptions'
-    :notes='getViewNotes'
-    :progress='getPieProgress'
-
-    :headingsOptions='headingsOptions'
-    :tasks='getTasks'
-    :tasksOrder='tasksOrder'
-    :onSortableAdd='onSortableAdd'
+    v-bind="{ ...$props, ...props }"
+    v-on="listeners"
 
     @show-completed='v => showCompleted = v'
-
-    @save-header-name='saveHeaderName'
-    @save-notes='saveNotes'
-
-    @update-ids='updateIds'
-    @update-heading-ids='updateHeadingIds'
-    @add-task='addTask'
-    @add-heading='addHeading'
   />
 </template>
 
@@ -270,7 +248,7 @@ export default {
         return arr
       }
       return []
-    }
+    },
   },
   computed: {
     ...mapState({
@@ -286,6 +264,51 @@ export default {
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getTasksOfList: 'list/getTasks',
     }),
+    prefix() {
+      return ''
+    },
+    listeners() {
+      const toCamel = s => {
+        return s.replace(/([-_][a-z])/ig, $1 => {
+          return $1.toUpperCase()
+            .replace('-', '')
+            .replace('_', '')
+        })
+      }
+      const p = this.prefix
+      
+      const events = [
+        'save-header-name', 'save-notes', 'update-heading-ids',
+        'add-task', 'add-heading'
+      ]
+      const obj = {}
+      
+      for (const e of events)
+        obj[e] = this[p + toCamel(e)]
+      
+      return obj
+    },
+    props() {
+      const p = this.prefix
+      
+      const props = [
+        'icon', 'illustration', 'showHeader', 'showEmptyHeadings',
+        'headingEdit', 'headerOptions', 'notes', 'progress', 'headingsOptions',
+        'tasks', 'tasksOrder', 'onSortableAdd', 'viewNameValue',
+      ]
+      const obj = {}
+
+      for (const v of props)
+        obj[v] = this[p + v]
+      
+      const isListType = p + 'isListType'
+      obj['showEmptyHeadings'] = this[isListType]
+      obj['showHeader'] = this[isListType]
+      obj['notes'] = this[p + 'getViewNotes']
+      obj['progress'] = this[p + 'getPieProgress']
+      
+      return obj
+    },
     viewNameValue() {
       if (this.isSmart) return this.l[this.viewName]
       return this.viewName
