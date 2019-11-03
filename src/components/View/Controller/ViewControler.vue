@@ -17,12 +17,10 @@ import utils from '@/utils/'
 
 import mom from 'moment'
 
-import modules from './controlerModules'
-
-console.log(modules)
+import mixins from './controlerModules'
 
 export default {
-  mixins: [...modules],
+  mixins,
   props: ['isSmart', 'viewType', 'viewName'],
   components: {
     ViewRenderer: ViewRendererVue,
@@ -33,106 +31,12 @@ export default {
     }
   },
   methods: {
-    addTask(obj) {
-      if (this.isSmart) {
-        let calendar = null
-
-        if (!obj.task.calendar) {
-          calendar = this.getCalObjectByView(this.viewName, obj.task.calendar)
-          obj.task.calendar = calendar
-        }
-        if (obj.task.calendar === undefined)
-          obj.task.calendar = null
-        this.$store.dispatch('list/addTaskByIndexSmart', {
-          ...obj, list: this.viewName,
-        })
-      } else if (this.viewTag) {
-        if (obj.task.tags.length === 0 || !obj.task.task.includes(this.viewTag.id))
-          obj.task.tags.push(this.viewTag.id)
-        this.$store.dispatch('task/addTask', {
-          ...obj.task,
-        })  
-      } else if (this.isListType) {
-        if (!obj.task.list)
-          obj.task.list = this.viewList.id
-        obj.task.users = this.viewList.users
-        this.$store.dispatch('list/addTaskByIndex', {
-          ...obj, listId: this.viewList.id
-        })
-      }
-    },
-    updateIds(ids) {
-      if (this.isSmart) {
-        this.$store.dispatch('list/updateViewOrder', {
-          view: this.viewName,
-          ids,
-        })
-      } else if (this.isListType) {
-        this.$store.dispatch('list/saveList', {
-          tasks: ids,
-          id: this.viewList.id,
-        })
-      }
-    },
-    updateHeadingIds(ids) {
-      if (this.isSmart) {
-        this.$store.dispatch('list/updateHeadingsViewOrder', {
-          view: this.viewName,
-          ids,
-        })
-      } else if (this.isListType)
-        this.$store.dispatch('list/updateListHeadings', {
-          listId: this.viewList.id,
-          ids,
-        })
-    },
-    saveHeaderName(name) {
-      if (!this.isSmart) {
-        if (this.isListType) {
-          this.$router.push('/user?list='+name)
-          this.$store.dispatch('list/saveList', {
-            name,
-            id: this.viewList.id,
-          })
-        } else if (this.viewType === 'tag' && this.viewTag)
-          this.$router.push('/user?tag='+name)
-          this.$store.dispatch('tag/saveTag', {
-            name, id: this.viewTag.id
-          })
-      }
-    },
-    saveNotes(notes) {
-      if (this.isListType)
-        this.$store.dispatch('list/saveList', {
-          notes, id: this.viewList.id,
-        })
-      else if (this.viewType === 'tag' && this.viewTag)
-        this.$store.dispatch('tag/saveTag', {
-          notes, id: this.viewTag.id
-        })
-    },
-    addHeading(obj) {
-      if (this.viewList)
-        this.$store.dispatch('list/addHeading', {...obj, listId: this.viewList.id})
-    },
-    onSortableAdd(evt, taskIds, type, ids) {
-      if (this.isListType) {
-        this.$store.dispatch('list/removeTasksFromHeading', {
-          taskIds, ids, listId: this.viewList.id,
-        })
-      } else if (this.viewName === 'Today' || this.viewName === 'Tomorrow') {
-        this.$store.dispatch('list/removeTasksFromList', {
-          taskIds, view: this.viewName, ids,
-        })
-      }
-    },
     getCalObjectByView(viewName, cal) {
       if (this.viewName === 'Today')
         return this.getSpecificDayCalendarObj(mom(), cal)
       if (this.viewName === 'Tomorrow')
         return this.getSpecificDayCalendarObj(mom().add(1, 'day'), cal)
     },
-
     getListHeadingsByView(view) {
       const ts = utilsTask.filterTasksByView(this.tasksWithLists, view)
       
@@ -297,7 +201,6 @@ export default {
     },
     props() {
       const p = this.prefix
-      console.log(p)
       
       const props = [
         'icon', 'illustration', 'showHeader', 'showEmptyHeadings',
@@ -320,13 +223,6 @@ export default {
     viewNameValue() {
       if (this.isSmart) return this.l[this.viewName]
       return this.viewName
-    },
-    icon() {
-      if (this.isSmart) return null
-      switch (this.viewType) {
-        case 'list': return 'tasks'
-        case 'tag': return 'tag'
-      }
     },
     notHeadingHeaderView() {
       return this.viewName !== 'Upcoming' && this.viewName !== 'Completed'

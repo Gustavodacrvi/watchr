@@ -8,9 +8,9 @@ const addPrefix = (object, prefix) => {
 
   const mod = {methods: {}, computed: {}}
   for (const k of Object.keys(object.methods))
-    mod.methods[p + k] = mod.methods[k]
+    mod.methods[p + k] = object.methods[k]
   for (const k of Object.keys(object.computed))
-    mod.computed[p + k] = mod.computed[k]
+    mod.computed[p + k] = object.computed[k]
   
   return mod
 }
