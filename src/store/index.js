@@ -173,9 +173,6 @@ const store = new Vuex.Store({
     toggleUser(state, isLogged) {
       state.authState = isLogged
     },
-    closePopup(state) {
-      state.popup = {comp: '', payload: null}
-    },
     saveWindowWidth(state) {
       state.windowWidth = document.body.clientWidth
     },
@@ -215,6 +212,11 @@ const store = new Vuex.Store({
       state.popup = popup
       if (!getters.isDesktop)
         router.push('/popup')
+    },
+    closePopup({state, getters}) {
+      state.popup = {comp: '', payload: null}
+      if (!getters.isDesktop)
+        router.go(-1)
     },
     deleteProfilePic() {
       const str = `images/${auth.currentUser.uid}.jpg`

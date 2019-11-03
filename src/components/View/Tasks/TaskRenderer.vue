@@ -14,15 +14,12 @@
       data-name='task-renderer'
     >
       <Task v-for="t of tasks" :key="t.id"
+        v-bind="$props"
+
         :task='t'
         :isSelecting='isSelecting'
-        :view='view'
         :enableSelect='enableSelect'
         :multiSelectOptions='options'
-        :showHeadingName='showHeadingName'
-        :hideListName='hideListName'
-        :activeTags="activeTags"
-        :viewNameValue='viewNameValue'
         @de-select='deSelectTask'
 
         :data-id='t.id'
@@ -50,22 +47,19 @@
           :data-id='h.id'
         >
           <TaskRenderer
+            v-bind="{...$props, headingPosition: undefined}"
+
             :tasks='filter(h)'
-            :view='view'
-            :headingEdit='headingEdit'
-            :viewNameValue='viewNameValue'
-            :showEmptyHeadings='showEmptyHeadings'
-            :activeTags="activeTags"
-            :headings='[]'
-            :header="h"
             :hideListName="h.hideListName"
             :showHeadingName="h.showHeadingName"
-            :addTask="h.onAddTask"
-            :headingPosition='i + 1'
-            :options='options'
             :onSortableAdd='h.onSortableAdd'
             @add-heading='(obj) => $emit("add-heading", obj)'
             @update="ids => updateHeadingIds(h,ids)"
+
+            :headings='[]'
+            :header="h"
+            :addTask="h.onAddTask"
+            :headingPosition='i + 1'
           />
         </HeadingApp>
       </template>
@@ -95,7 +89,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'header', 'onSortableAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
+  props: ['tasks', 'header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
   'viewType', 'options'],
   name: 'TaskRenderer',
   components: {

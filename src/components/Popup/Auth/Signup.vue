@@ -126,7 +126,7 @@ export default {
             auth.currentUser.delete()
             toastErr(err)
           })
-          this.$store.commit('closePopup')
+          this.$store.dispatch('closePopup')
           this.$store.commit('toggleUser', true)
           this.$router.push('/user')
         }).catch(err => toastErr(err))
@@ -136,7 +136,7 @@ export default {
       const provider = new firebase.auth.GoogleAuthProvider()
       firebase.auth().currentUser.linkWithPopup(provider).then(res => {
         this.$store.dispatch('update', res.user).then(el => {
-          this.$store.commit('closePopup')
+          this.$store.dispatch('closePopup')
           window.location.reload()
         })
       }).catch(err => {

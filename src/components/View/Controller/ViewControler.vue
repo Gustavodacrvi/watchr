@@ -1,9 +1,8 @@
 <template>
   <ViewRenderer
-    :isSmart='isSmart'
-    :viewName='viewName'
+    v-bind="$props"
+
     :viewNameValue='viewNameValue'
-    :viewType='viewType'
     :icon="icon"
     :illustration='illustration'
     :showHeader='isListType'
@@ -32,7 +31,7 @@
 
 <script>
 
-import ViewRendererVue from './ViewRenderer.vue'
+import ViewRendererVue from './../ViewRenderer.vue'
 import { mapState, mapGetters } from 'vuex'
 
 import utilsTask from '@/utils/task'
@@ -124,7 +123,7 @@ export default {
         this.$store.dispatch('list/saveList', {
           notes, id: this.viewList.id,
         })
-      else (this.viewType === 'tag' && this.viewTag)
+      else if (this.viewType === 'tag' && this.viewTag)
         this.$store.dispatch('tag/saveTag', {
           notes, id: this.viewTag.id
         })

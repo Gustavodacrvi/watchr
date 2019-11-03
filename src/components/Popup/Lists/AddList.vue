@@ -88,9 +88,9 @@ export default {
             type: 'success',
             seconds: 2,
           })
-          this.$store.commit('closePopup')
+          this.$store.dispatch('closePopup')
         } else if (!list && this.isEditing) {
-          this.$store.dispatch('list/editList', {
+          this.$store.dispatch('list/saveList', {
             name: this.name,
             id: this.payload.id,
           })
@@ -99,7 +99,7 @@ export default {
             type: 'success',
             seconds: 2,
           })
-          this.$store.commit('closePopup')
+          this.$store.dispatch('closePopup')
         } else {
           toast({
             name: this.l[`This list already exists!`],

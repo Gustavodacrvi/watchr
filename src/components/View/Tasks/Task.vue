@@ -91,7 +91,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'view', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect'],
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -383,15 +383,15 @@ export default {
       return this.selectedEls.length > 0
     },
     isOverdue() {
-      if (this.view === 'Overdue') return false
+      if (this.viewName === 'Overdue') return false
       return false
     },
     isToday() {
-      if (this.view === 'Today') return false
+      if (this.viewName === 'Today') return false
       return utilsTask.filterTasksByView([this.task], 'Today').length === 1
     },
     isTomorrow() {
-      if (this.view === 'Tomorrow' || this.view === 'Today') return false
+      if (this.viewName === 'Tomorrow' || this.viewName === 'Today') return false
       return utilsTask.filterTasksByView([this.task], 'Tomorrow').length === 1
     },
     showIconDrop() {
@@ -402,12 +402,12 @@ export default {
       const list = this.task.list
       if (!list || this.hideListName) return null
       const savedList = this.savedLists.find(el => el.id === list)
-      if (!savedList || (savedList.name === this.view)) return null
+      if (!savedList || (savedList.name === this.viewName)) return null
       return savedList.name
     },
     calendarStr() {
       const {t,c} = this.getTask
-      if (!c || this.view === 'Upcoming') return null
+      if (!c || this.viewName === 'Upcoming') return null
       const str = utils.parseCalendarObjectToString(c, this.l)
       if (str === this.viewNameValue) return null
       return str
@@ -417,7 +417,7 @@ export default {
       if (!c || (c.type !== 'periodic' && c.type !== 'weekly')) return null
       const {nextEventAfterCompletion} = utilsTask.taskData(t, mom())
       const date = utils.getHumanReadableDate(nextEventAfterCompletion.format('Y-M-D'), this.l)
-      if (!date || date === this.view) return null
+      if (!date || date === this.viewName) return null
       return this.l["Next event"] + ' ' + date
     },
     timeStr() {

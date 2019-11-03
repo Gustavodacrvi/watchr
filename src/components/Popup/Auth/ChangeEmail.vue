@@ -72,7 +72,7 @@ export default {
             seconds: 6,
             type: 'success',
           })
-          this.$store.commit('closePopup')
+          this.$store.dispatch('closePopup')
         })
       }
     },

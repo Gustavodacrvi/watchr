@@ -26,7 +26,7 @@
 const UPDATE_STRING = '2.0.2.5'
 
 import AppbarVue from '../Appbar/Appbar.vue'
-import ViewControlerVue from '../View/ViewControler.vue'
+import ViewControlerVue from '../View/Controller/ViewControler.vue'
 
 import { mapGetters } from 'vuex'
 

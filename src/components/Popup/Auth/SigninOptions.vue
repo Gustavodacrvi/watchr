@@ -45,7 +45,7 @@ export default {
         dispatch('createUser', user).then(() => {
           this.$router.push('/user')
           window.location.reload()
-          this.$store.commit('closePopup')
+          this.$store.dispatch('closePopup')
         }).catch(err => {
           firebase.auth().currentUser.delete()
           toast({
@@ -69,7 +69,7 @@ export default {
           type: 'success',
         })
         this.$store.dispatch('createAnonymousUser', auth.currentUser.uid).then(el => {
-          this.$store.commit('closePopup')
+          this.$store.dispatch('closePopup')
           this.$router.push('/user')
         }).catch(err => {
           auth.currentUser.delete()

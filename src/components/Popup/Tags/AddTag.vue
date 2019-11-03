@@ -73,7 +73,7 @@ export default {
             type: 'success',
             seconds: 2,
           })
-          this.$store.commit('closePopup')
+          this.$store.dispatch('closePopup')
         } else if (!tag && this.isEditing) {
           this.$store.dispatch('tag/saveTag', {
             name: this.name,
@@ -84,7 +84,7 @@ export default {
             type: 'success',
             seconds: 2,
           })
-          this.$store.commit('closePopup')
+          this.$store.dispatch('closePopup')
         } else {
           toast({
             name: this.l[`This tag already exists!`],
