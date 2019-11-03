@@ -17,7 +17,12 @@ import utils from '@/utils/'
 
 import mom from 'moment'
 
+import modules from './controlerModules'
+
+console.log(modules)
+
 export default {
+  mixins: [...modules],
   props: ['isSmart', 'viewType', 'viewName'],
   components: {
     ViewRenderer: ViewRendererVue,
@@ -265,7 +270,9 @@ export default {
       getTasksOfList: 'list/getTasks',
     }),
     prefix() {
-      return ''
+      if (this.isSmart) return 'smartList'
+      if (this.viewType === 'list') return 'list'
+      return 'tag'
     },
     listeners() {
       const toCamel = s => {
@@ -290,6 +297,7 @@ export default {
     },
     props() {
       const p = this.prefix
+      console.log(p)
       
       const props = [
         'icon', 'illustration', 'showHeader', 'showEmptyHeadings',
