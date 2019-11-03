@@ -170,10 +170,8 @@ export default {
         name,
       })
     },
-    updateOrder(c, ids) {
-      fire.collection('listsOrder').doc(uid()).update({
-        order: ids,
-      })
+    updateOrder(c, lists) {
+      userRef().update({lists})
     },
     saveList(c, list) {
       fire.collection('lists').doc(list.id).update({
