@@ -33,7 +33,28 @@ export default {
 
       const toast = (t) => this.$store.commit('pushToast', t)
 
-      firebase.auth().signInWithRedirect(provider).catch(err => toast('pushToast', {
+      firebase.auth().signInWithPopup(provider).then(res => {
+        const user = res.user
+        const toast = (t) => this.$store.commit('pushToast', t)
+        const dispatch = this.$store.dispatch
+        toast({
+          name: this.l['You have successfully logged in!'],
+          seconds: 3,
+          type: 'success',
+        })
+        dispatch('createUser', user).then(() => {
+          this.$router.push('/user')
+          window.location.reload()
+          this.$store.commit('closePopup')
+        }).catch(err => {
+          firebase.auth().currentUser.delete()
+          toast({
+            name: err.message,
+            seconds: 3,
+            type: 'error',
+          })}
+        )
+      }).catch(err => toast('pushToast', {
         name: err.message,
         seconds: 3,
         type: 'error',
@@ -41,18 +62,17 @@ export default {
     },
     guest() {
       const auth = firebase.auth()
-      auth.signInAnonymously()
-      .then(() => {
+      auth.signInAnonymously().then(() => {
         this.$store.commit('pushToast', {
           name: this.l['You have successfully signed in as a guest.'],
           seconds: 3,
           type: 'success',
         })
         this.$store.dispatch('createAnonymousUser', auth.currentUser.uid).then(el => {
-          this.$router.push('/user')
           this.$store.commit('closePopup')
+          this.$router.push('/user')
         }).catch(err => {
-          auth.signOut()
+          auth.currentUser.delete()
         })
       }).catch(err => this.$store.commit('pushToast', {
         name: err.message,

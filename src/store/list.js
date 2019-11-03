@@ -3,11 +3,8 @@ import { fire, auth } from './index'
 import fb from 'firebase/app'
 
 import utils from '../utils'
-
-const uid = () => auth.currentUser.uid
-const fd = () => fb.firestore.FieldValue
-
 import utilsTask from "@/utils/task"
+import { listRef } from '../utils/firestore'
 
 export default {
   namespaced: true,
@@ -91,10 +88,17 @@ export default {
       if (id)
       return Promise.all([
         new Promise(resolve => {
-          /* fire.collection('users').doc(id).collection('lists').doc(id).onSnapshot(snap => {
+/*           fire.collection('lists').where(`users.${id}`, '==', true).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
+            resolve()
           }) */
           resolve()
+        }),
+        new Promise(resolve => {
+          fire.collection('users').doc(id).collection('lists').onSnapshot(snap => {
+            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
+            resolve()
+          })
         }),
       ])
     },

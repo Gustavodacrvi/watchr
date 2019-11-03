@@ -4,15 +4,7 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from '../utils/task'
-import utilsFire from '../utils/firestore'
-
-const uid = () => auth.currentUser.uid
-const fd = () => fb.firestore.FieldValue
-const userRef = () => fire.collection('users').doc(uid())
-const taskRef = () => userRef().collection('tasks').doc(uid())
-const listRef = () => userRef().collection('lists').doc(uid())
-const tagRef = () => userRef().collection('tags').doc(uid())
-const uuid = () => fire.collection('users').doc().id
+import { uid, fd, userRef } from '../utils/firestore'
 
 import mom from 'moment'
 
@@ -98,27 +90,31 @@ export default {
       if (id)
       return Promise.all([
         new Promise(resolve => {
-          fire.collection('users').doc(id).collection('tasks').doc(id).onSnapshot(snap => {
-            const data = snap.data()
-            state.tasks = Object.values(data.tasks)
-            state.viewOrders = data.viewOrders
+          fire.collection('users').doc(uid()).collection('tasks').onSnapshot(snap => {
+            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
             resolve()
           })
         })
       ])
     },
     addTask(c, obj) {
-      const id = uuid()
-      const set = {
+      const batch = fire.batch()
+
+      const ref = taskRef()
+      batch.set(ref, {
         userId: uid(),
-        tasks: {
-          [id]: {...obj, id},
-        },
+        users: {[uid()]: true},
+        ...obj,
+      })
+
+      if (obj.listId) {
+        const listRef = taskRef(obj.listId)
+        batch.update(listRef, {
+          tasks: fd().arrayUnion(ref.id),
+        })
       }
-      const type = utilsTask.taskType(obj)
-      console.log(type)
-      if (type) obj[type] = fd().arrayUnion(id)
-      taskRef().set(set, {merge: true})
+
+      batch.commit()
     },
     completeTasks(c, tasks) {
       const batch = fire.batch()

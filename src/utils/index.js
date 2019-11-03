@@ -484,7 +484,11 @@ export default {
     if (!userAuth.email)
       return {
         userId: userAuth,
-        isAnonymous: true
+        isAnonymous: true,
+        viewOrders: {},
+        filters: [],
+        tags: [],
+        lists: [],
       }
     return {
       userId: userAuth.uid,
@@ -493,6 +497,10 @@ export default {
       photoURL: userAuth.photoURL,
       displayName: userAuth.displayName,
       isAnonymous: false,
+      viewOrders: {},
+      filters: [],
+      tags: [],
+      lists: [],
     }
   },
 }

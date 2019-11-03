@@ -134,7 +134,12 @@ export default {
     },
     upgradeAccountToGoogle() {
       const provider = new firebase.auth.GoogleAuthProvider()
-      firebase.auth().currentUser.linkWithRedirect(provider).catch(err => {
+      firebase.auth().currentUser.linkWithPopup(provider).then(res => {
+        this.$store.dispatch('update', res.user).then(el => {
+          this.$store.commit('closePopup')
+          window.location.reload()
+        })
+      }).catch(err => {
         this.$store.commit('pushToast', {
           name: err.message,
           seconds: 4,
@@ -144,7 +149,7 @@ export default {
     },
     upgradeAccountWithEmailAndPassword() {
       const provider = new firebase.auth.EmailAuthProvider.credential(this.eMail, this.password)
-      firebase.auth().currentUser.linkAndRetrieveDataWithCredential(provider).then(res => {
+      firebase.auth().currentUser.linkWithCredential(provider).then(res => {
         this.$store.dispatch('update', res.user).then(el => {
           res.user.sendEmailVerification()
           window.location.reload()
