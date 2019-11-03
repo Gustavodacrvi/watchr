@@ -4,7 +4,7 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from '../utils/task'
-import { uid, fd, userRef } from '../utils/firestore'
+import { uid, fd, userRef, taskColl } from '../utils/firestore'
 
 import mom from 'moment'
 
@@ -109,7 +109,7 @@ export default {
       if (id)
       return Promise.all([
         new Promise(resolve => {
-          fire.collection('users').doc(uid()).collection('tasks').onSnapshot(snap => {
+          taskColl().where(`users.${uid()}`, '==', true).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
             resolve()
           })

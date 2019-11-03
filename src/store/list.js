@@ -5,6 +5,7 @@ import fb from 'firebase/app'
 import utils from '../utils'
 import utilsTask from "@/utils/task"
 import { listRef, userRef, uid, listColl, taskRef } from '../utils/firestore'
+import router from '../router'
 
 export default {
   namespaced: true,
@@ -99,7 +100,7 @@ export default {
           resolve()
         }),
         new Promise(resolve => {
-          listColl().where('userId', '==', id).onSnapshot(snap => {
+          listColl().where('userId', '==', uid()).where('userId', '==', id).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
             resolve()
           })
@@ -667,6 +668,7 @@ export default {
       }
 
       batch.commit()
+      router.push('/user')
     },
     importTemplate(c, {list, tasks}) {
       const batch = fire.batch()

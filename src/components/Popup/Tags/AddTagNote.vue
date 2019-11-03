@@ -44,11 +44,13 @@ export default {
   },
   methods: {
     addNote() {
-      if (this.note && this.payload)
+      if (this.note && this.payload) {
         this.$store.dispatch('tag/saveTag', {
           id: this.payload,
-          tag: {notes: this.note},
+          notes: this.note,
         })
+        this.$store.dispatch('closePopup')
+      }
     }
   },
 }

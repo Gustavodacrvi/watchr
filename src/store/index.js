@@ -37,6 +37,7 @@ import list from './list'
 import filter from './filter'
 
 import utils from '@/utils'
+import { userRef } from "../utils/firestore"
 
 const lang = localStorage.getItem('watchrlanguage') || 'en'
 
@@ -241,7 +242,7 @@ const store = new Vuex.Store({
     },
     getData({state}) {
       return new Promise(resolve => {
-        fire.collection('users').doc(uid()).onSnapshot(snap => {
+        userRef().onSnapshot(snap => {
           state.userInfo = snap.data()
           resolve()
         })

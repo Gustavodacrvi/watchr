@@ -57,26 +57,28 @@ export default {
     },
     headerOptions() {
       let opt = []
-      opt = [
-          {
-            name: this.l['Edit tag'],
-            icon: 'pen',
-            callback: () => {
-              this.$store.dispatch('pushPopup', {
-                comp: 'AddTag', payload: {...this.viewTag, editing: true}
-              })
+      if (this.viewTag) {
+        opt = [
+            {
+              name: this.l['Edit tag'],
+              icon: 'pen',
+              callback: () => {
+                this.$store.dispatch('pushPopup', {
+                  comp: 'AddTag', payload: {...this.viewTag, editing: true}
+                })
+              }
             }
-          }
-        ]
-      if (!this.viewTag.notes) {
-        opt.push({
-          name: this.l['Add notes'],
-          icon: 'note',
-          callback: () => this.$store.dispatch('pushPopup', {
-            comp: 'AddTagNote',
-            payload: this.viewTag.id,
+          ]
+        if (!this.viewTag.notes) {
+          opt.push({
+            name: this.l['Add notes'],
+            icon: 'note',
+            callback: () => this.$store.dispatch('pushPopup', {
+              comp: 'AddTagNote',
+              payload: this.viewTag.id,
+            })
           })
-        })
+        }
       }
       return opt
     },

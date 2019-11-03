@@ -228,6 +228,9 @@ export default {
       this.title = this.viewNameValue
       this.note = this.notes
     },
+    notes() {
+      this.note
+    },
     options() {
       this.pushToNavbar()
     },
