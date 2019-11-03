@@ -53,6 +53,9 @@ export default {
       }
       return arr
     },
+    getListByName: state => name => {
+      return state.lists.find(l => l.name.trim() === name)
+    },
     getAllTasksOrderByList: state => listId => {
       const list = state.lists.find(el => el.id === listId)
       let ord = list.tasks.slice()
@@ -594,38 +597,36 @@ export default {
         })
       } 
     },
-    duplicateHeading({state}, {name, listId, tasks}) {
-      const list = state.lists.find(l => l.id === listId)
-      if (list) {
-        const batch = fire.batch()
+    duplicateHeading({state, getters}, {name, listId, tasks}) {
+      const list = getters.getListsById([listId])[0]
+      const batch = fire.batch()
 
-        const newHeadingName = name += ' (2)'
-        const newTaskIds = []
-        for (const t of tasks) {
-          const ref = fire.collection('tasks').doc()
-          batch.set(ref, {
-            ...t, heading: newHeadingName, id: null,
-          })
-          newTaskIds.push(ref.id)
-        }
-
-        const heads = list.headings.slice()
-        heads.push({
-          name: newHeadingName,
-          tasks: newTaskIds,
+      const newHeadingName = name += ' (2)'
+      const newTaskIds = []
+      for (const t of tasks) {
+        const ref = taskRef()
+        batch.set(ref, {
+          ...t, heading: newHeadingName, id: null,
         })
-        const order = list.headingsOrder.slice()
-        const i = order.findIndex(n => n === name)
-        order.splice(i, 0, newHeadingName)
-
-        const listRef = fire.collection('lists').doc(listId)
-        batch.update(listRef, {
-          headingsOrder: order,
-          headings: heads,
-        })
-
-        batch.commit()
+        newTaskIds.push(ref.id)
       }
+
+      const heads = list.headings.slice()
+      heads.push({
+        name: newHeadingName,
+        tasks: newTaskIds,
+      })
+      const order = list.headingsOrder.slice()
+      const i = order.findIndex(n => n === name)
+      order.splice(i, 0, newHeadingName)
+
+      const newListRef = listRef(listId)
+      batch.update(newListRef, {
+        headingsOrder: order,
+        headings: heads,
+      })
+
+      batch.commit()
     },
     updateHeadingsViewOrder({state}, {view, ids}) {
       const obj = {}

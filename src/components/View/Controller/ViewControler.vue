@@ -10,7 +10,7 @@
 <script>
 
 import ViewRendererVue from './../ViewRenderer.vue'
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapMutations } from 'vuex'
 
 import utilsTask from '@/utils/task'
 import utils from '@/utils/'
@@ -166,11 +166,14 @@ export default {
       lists: state => state.list.lists,
       viewOrders: state => state.list.viewOrders,      
     }),
+    ...mapMutations(['pushToast']),
     ...mapGetters({
       l: 'l',
       isDesktop: 'isDesktop',
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getTasksOfList: 'list/getTasks',
+      getListsById: 'list/getListsById',
+      getListByName: 'list/getListByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
       getTasksWithHeading: 'task/getTasksWithHeading',
       tasksWithLists: 'task/tasksWithLists',
@@ -339,17 +342,22 @@ export default {
     },
 
     getLostTasks() {
-      const headingNames = this.viewList.headings.map(el => el.name)
-      return this.getListTasks.filter(el => !headingNames.includes(el.heading))
+      if (this.viewList) {
+        const headingNames = this.viewList.headings.map(el => el.name)
+        return this.getListTasks.filter(el => !headingNames.includes(el.heading))
+      }
+      return []
     },
     getRootTasksOfList() {
       return [...this.getListTasks.filter(el => !el.heading), ...this.getLostTasks]
     },
     getListTasks() {
-      return this.getTasksOfList(this.tasks, this.viewList.id)
+      if (this.viewList)
+        return this.getTasksOfList(this.tasks, this.viewList.id)
+      return []
     },
     viewList() {
-      return this.lists.find(el => el.name === this.viewName)
+      return this.getListByName(this.viewName)
     },
     notHeadingHeaderView() {
       return this.viewName !== 'Upcoming' && this.viewName !== 'Completed'
