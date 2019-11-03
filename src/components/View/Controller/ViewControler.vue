@@ -13,6 +13,7 @@ import ViewRendererVue from './../ViewRenderer.vue'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 
 import utilsTask from '@/utils/task'
+import utilsList from '@/utils/list'
 import utils from '@/utils/'
 
 import mom from 'moment'
@@ -156,6 +157,7 @@ export default {
 
         return arr
       }
+
       return []
     },
   },
@@ -171,13 +173,11 @@ export default {
       l: 'l',
       isDesktop: 'isDesktop',
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
-      getTasksOfList: 'list/getTasks',
+      getTasks: 'list/getTasks',
       getListsById: 'list/getListsById',
       getListByName: 'list/getListByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
       getTasksWithHeading: 'task/getTasksWithHeading',
-      tasksWithLists: 'task/tasksWithLists',
-      tasksWithoutLists: 'task/tasksWithoutLists',
     }),
     prefix() {
       if (this.isSmart || this.viewType === 'search') return 'smartList'
@@ -341,19 +341,20 @@ export default {
       ]
     },
 
-    getLostTasks() {
-      if (this.viewList) {
-        const headingNames = this.viewList.headings.map(el => el.name)
-        return this.getListTasks.filter(el => !headingNames.includes(el.heading))
-      }
+    getRootTasksOfList() {
+      if (this.viewList)
+        return this.$store.getters['task/getRootTasksOfList'](this.getListTasks, this.viewList)
       return []
     },
-    getRootTasksOfList() {
-      return [...this.getListTasks.filter(el => !el.heading), ...this.getLostTasks]
+    tasksWithLists() {
+      return this.$store.getters['task/tasksWithLists'](this.tasks)
+    },
+    tasksWithoutLists() {
+      return this.$store.getters['task/tasksWithoutLists'](this.tasks)
     },
     getListTasks() {
       if (this.viewList)
-        return this.getTasksOfList(this.tasks, this.viewList.id)
+        return this.$store.getters['task/getListTasks'](this.tasksWithLists, this.viewList.id)
       return []
     },
     viewList() {

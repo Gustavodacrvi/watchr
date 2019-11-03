@@ -125,7 +125,7 @@ export default {
                 }
               }
             },
-            options: list.listHeadingOptions(this.viewList, h, this.$store, headingTasks, this.l),
+            options: utilsList.listHeadingOptions(this.viewList, h, this.$store, headingTasks, this.l),
             updateIds: ids => {
               this.$store.dispatch('list/updateHeadingsTaskIds', {
                 name: h.name, listId: viewList.id, ids,
@@ -157,47 +157,9 @@ export default {
       }
     },
     headerOptions() {
-      let opt = []
-      if (this.viewList) {
-        opt = [
-          {
-            name: this.l['Edit list'],
-            icon: 'pen',
-            callback: () => {
-              this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...this.viewList, editing: true}})
-            }
-          },
-          {
-            name: this.l["Duplicate list"],
-            icon: 'copy',
-            callback: () => {
-              this.$store.dispatch('list/duplicateList', {
-                list: this.viewList, rootTasks: this.getRootTasksOfList,
-                headingTasks: this.getTasksWithHeading,
-              })
-            }
-          },
-        ]
-        if (!this.viewList.notes)
-          opt.push({
-            name: this.l['Add notes'],
-            icon: 'note',
-            callback: () => this.$store.dispatch('pushPopup', {
-              comp: 'AddListNote',
-              payload: this.viewList.id,
-            })
-          })
-        if (this.isDesktop)
-          opt.push({
-            name: this.l["Export as template"],
-            icon: 'export',
-            callback: () => utils.exportListTemplate({
-              list: this.viewList,
-              tasks: this.getListTasks
-            })
-          })
-      }
-      return opt
+      if (this.viewList)
+        return utilsList.listOptions(this.viewList, this.$store, this.getListTasks, this.l)
+      return []
     },
     headingEdit() {
       if (this.viewList)

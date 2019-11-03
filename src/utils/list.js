@@ -18,8 +18,7 @@ export default {
         name: l['Hide heading'],
         icon: 'archive',
         callback: () => dispatch('list/toggleHeadingAuthide', {
-          listId: viewList.id,
-          name: h.name,
+          listId, name: h.name,
         })
       },
       {
@@ -61,5 +60,62 @@ export default {
           })
       },
     ]
+  },
+  listOptions(list, store, getListTasks, l) {
+    const dispatch = store.dispatch
+    const getters = store.getters
+    const rootTasks = getters['task/getRootTasksOfList'](getListTasks, list)
+    const headingTasks = getters['task/getTasksWithHeading'](getListTasks, list.id)
+    const pop = obj => dispatch('pushPopup', obj)
+    const opt = [
+      {
+        name: l['Edit list'],
+        icon: 'pen',
+        callback: () => pop({comp: 'AddList', payload: {...list, editing: true}})
+      },
+      {
+        name: l["Duplicate list"],
+        icon: 'copy',
+        callback: () => {
+          dispatch('list/duplicateList', {
+            list, rootTasks, headingTasks,
+          })
+        }
+      },
+    ]
+    if (list.userId === store.state.user.uid)
+      opt.splice(1, 0, {
+        name: l['Share list'],
+        icon: 'users',
+        callback: () => dispatch('pushPopup', {
+            comp: 'ShareTasks', payload: listId,
+          })
+    })
+    if (!list.notes)
+      opt.push({
+        name: l['Add notes'],
+        icon: 'note',
+        callback: () => dispatch('pushPopup', {
+          comp: 'AddListNote',
+          payload: viewList.id,
+        })
+      })
+    if (store.getters.isDesktop)
+      opt.push({
+        name: l["Export as template"],
+        icon: 'export',
+        callback: () => utils.exportListTemplate({
+          list: viewList, tasks: getListTasks,
+        })
+      })
+    opt.push(          {
+      name: l['Delete list'],
+      icon: 'trash',
+      important: true,
+      callback: () => dispatch('list/deleteList', {
+        listId, tasks: getListTasks,
+      })
+    })
+    return opt
   },
 }

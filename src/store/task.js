@@ -83,14 +83,24 @@ export default {
         notCompleted: utilsTask.filterTasksByCompletion(ts, true).length,
       }
     },
-    getTasksWithHeading: (s, getters) => {
-      return getters.getListTasks.filter(el => el.heading)
+    getLostTasks: () => (tasks, list) => {
+      const headingNames = list.headings.map(el => el.name)
+      return tasks.filter(el => !headingNames.includes(el.heading))
     },
-    tasksWithLists: state => {
-      return state.tasks.filter(el => el.list)
+    getTasksWithHeading: () => tasks => {
+      return tasks.filter(el => el.heading)
     },
-    tasksWithoutLists: state => {
-      return state.tasks.filter(el => !el.list)
+    getRootTasksOfList: (s, getters) => (tasks, list) => {
+      return [...getters['tasksWithLists'](tasks).filter(t => !t.heading),...getters['getLostTasks'](tasks, list)]
+    },
+    getListTasks: (s, getters) => (tasks, listId) => {
+      return getters['tasksWithLists'](tasks).filter(t => t.list === listId)
+    },
+    tasksWithLists: () => tasks => {
+      return tasks.filter(el => el.list)
+    },
+    tasksWithoutLists: () => tasks => {
+      return tasks.filter(el => !el.list)
     },
   },
   actions: {

@@ -660,18 +660,18 @@ export default {
       }
     },
 
-    deleteList(c, {id, tasks}) {
+    deleteList(c, {listId, tasks}) {
       const batch = fire.batch()
 
-      const listRef = fire.collection('lists').doc(id)
-      batch.delete(listRef)
+      const deleteListRef = listRef(listId)
+      batch.delete(deleteListRef)
 
       const ids = []
       for (const t of tasks) {
-        if (t.list === id) ids.push(t.id)
+        if (t.list === listId) ids.push(t.id)
       }
       for (const id of ids) {
-        const ref = fire.collection('tasks').doc(id)
+        const ref = taskRef(id)
         batch.update(ref, {
           list: null,
           heading: null,
