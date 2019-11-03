@@ -184,40 +184,38 @@ export default {
         batch.commit()
       }
     },
-    convertHeadingToList({state}, {listId, taskIds, name}) {
-      const list = state.lists.find(el => el.id === listId)
-      if (list) {
-        const batch = fire.batch()
+    convertHeadingToList({state, getters}, {listId, taskIds, name}) {
+      const list = getters.getListsById([listId])[0]
+      const batch = fire.batch()
 
-        const heads = list.headings.slice()
-        const i = heads.findIndex(el => el.name === name)
-        heads.splice(i, 1)
+      const heads = list.headings.slice()
+      const i = heads.findIndex(el => el.name === name)
+      heads.splice(i, 1)
 
-        const listRef = fire.collection('lists').doc(listId)
-        batch.update(listRef, {
-          headings: heads,
+      const oldListRef = listRef(listId)
+      batch.update(oldListRef, {
+        headings: heads,
+      })
+      
+      const newList = listRef()
+      batch.set(newList, {
+        name,
+        userId: uid(),
+        users: {[uid()]: true},
+        smartViewsOrders: {},
+        headings: [],
+        headingsOrder: [],
+        tasks: taskIds,
+      })
+      for (const id of taskIds) {
+        const ref = taskRef(id)
+        batch.update(ref, {
+          list: newList.id,
+          heading: null,
         })
-        
-        const newList = fire.collection('lists').doc()
-        batch.set(newList, {
-          name,
-          userId: uid(),
-          users: {[uid()]: true},
-          smartViewsOrders: {},
-          headings: [],
-          headingsOrder: [],
-          tasks: taskIds,
-        })
-        for (const id of taskIds) {
-          const ref = fire.collection('tasks').doc(id)
-          batch.update(ref, {
-            list: newList.id,
-            heading: null,
-          })
-        }
-
-        batch.commit()
       }
+
+      batch.commit()
     },
 
     // EDIT
@@ -234,8 +232,9 @@ export default {
       const obj = {}
       obj[view] = {}
       obj[view].tasks = ids
-      obj[view].headings = state.viewOrders[view].headings || []
-      fire.collection('viewOrders').doc(uid()).update(obj)
+      userRef().set({
+        viewOrders: obj,
+      }, {merge: true})
     },
     sortListsByName({state, dispatch}) {
       const lists = state.lists.slice()
@@ -363,8 +362,8 @@ export default {
     addTaskByIndexSmart(c, {ids, index, task, list}) {
       const batch = fire.batch()
 
-      const taskRef = fire.collection('tasks').doc()
-      batch.set(taskRef, {
+      const newTaskRef = taskRef()
+      batch.set(newTaskRef, {
         userId: uid(),
         users: {[uid()]: true},
         ...task,
@@ -373,56 +372,57 @@ export default {
       ids.splice(index, 0, taskRef.id)
 
       const obj = {}
+      // list === viewName, e.g: Today, Tomorrow
       obj[list] = ids
 
-      const listRef = fire.collection('viewOrders').doc(uid())
-      batch.update(listRef, obj)
+      const listRef = userRef()
+      batch.set(listRef, {
+        viewOrders: obj,
+      }, {merge: true})
 
       batch.commit()
     },
     addTaskByIndex(c, {ids, index, task, listId}) {
       const batch = fire.batch()
 
-      const taskRef = fire.collection('tasks').doc()
-      batch.set(taskRef, {
+      const newTaskRef = taskRef()
+      batch.set(newTaskRef, {
         userId: uid(),
         ...task,
       })
 
       ids.splice(index, 0, taskRef.id)
 
-      const listRef = fire.collection('lists').doc(listId)
-      batch.update(listRef, {tasks: ids})
+      const savedListRef = listRef(listId)
+      batch.update(savedListRef, {tasks: ids})
 
       batch.commit()
     },
-    uncompleteHeadingTasks({state}, {name, listId, savedTasks}) {
-      const list = state.lists.find(el => el.id === listId)
-      if (list) {
-        const batch = fire.batch()
-        
-        const head = list.headings.find(el => el.name === name)
-        const ids = []
-        for (const i of head.tasks) {
-          const task = savedTasks.find(el => el.id === i)
-          if (task) ids.push(task.id)
-        }
-        for (const id of ids) {
-          const ref = fire.collection('tasks').doc(id)
-          batch.update(ref, {
-            completeDate: null,
-            completed: false,
-          })
-        }
-
-        batch.commit()
+    uncompleteHeadingTasks({getters}, {name, listId, savedTasks}) {
+      const list = getters.getListsById([listId])[0]
+      const batch = fire.batch()
+      
+      const head = list.headings.find(el => el.name === name)
+      const ids = []
+      for (const i of head.tasks) {
+        const task = savedTasks.find(el => el.id === i)
+        if (task) ids.push(task.id)
       }
+      for (const id of ids) {
+        const ref = taskRef(id)
+        batch.update(ref, {
+          completeDate: null,
+          completed: false,
+        })
+      }
+
+      batch.commit()
     },
-    removeTasksFromList({state}, {taskIds, view, ids}) {
+    removeTasksFromList(c, {taskIds, view, ids}) {
       const batch = fire.batch()
 
       for (const id of taskIds) {
-        const taskRef = fire.collection('tasks').doc(id)
+        const taskRef = taskRef(id)
         batch.update(taskRef, {
           list: null, heading: null,
         })
@@ -430,23 +430,25 @@ export default {
       const obj = {}
       obj[view] = {}
       obj[view].tasks = ids
-      obj[view].headings = state.viewOrders[view].headings || []
-      const listRef = fire.collection('viewOrders').doc(uid())
-      batch.update(listRef, obj)
+      const user = userRef()
+      batch.set(user, {
+        viewOrders: obj,
+      }, {merge: true})
 
       batch.commit()
     },
-    moveTasksToList(c, {ids, taskIds, listId, smartView}) {
-      const list = fire.collection('lists').doc(listId)
+    moveTasksToList({getters}, {ids, taskIds, listId, smartView}) {
+      const list = getters.getListsById([listId])[0]
       const batch = fire.batch()
       let views = list.smartViewsOrders
       if (!views) views = {}
       views[smartView] = ids
 
       for (const id of taskIds) {
-        const taskRef = fire.collection('tasks').doc(id)
+        const taskRef = taskRef(id)
         batch.update(taskRef, {
           list: listId,
+          heading: null,
         })
       }
       const listRef = fire.collection('lists').doc(listId)
@@ -459,145 +461,132 @@ export default {
 
     // HEADING
     
-    addHeading({state}, {ids, name, listId, index}) {
-      const list = state.lists.find(el => el.id === listId)
-      if (list) {
-        const batch = fire.batch()
+    addHeading({getters}, {ids, name, listId, index}) {
+      const list = getters.getListsById([listId])[0]
+      const batch = fire.batch()
 
-        for (const id of ids) {
-          const ref = fire.collection('tasks').doc(id)
-          batch.update(ref, {
-            heading: name,
-          })
-        }
-        const headings = list.headings.slice()
-        headings.splice(index, 0, {name, tasks: ids})
-        const ref = fire.collection('lists').doc(listId)
+      for (const id of ids) {
+        const ref = taskRef(id)
         batch.update(ref, {
-          headings,
-          headingsOrder: headings.map(el => el.name)
+          heading: name,
         })
-
-        batch.commit()
       }
+      const headings = list.headings.slice()
+      headings.splice(index, 0, {name, tasks: ids})
+      const ref = listRef(listId)
+      batch.update(ref, {
+        headings,
+        headingsOrder: headings.map(el => el.name)
+      })
+
+      batch.commit()
     },
-    saveHeadingName({state}, {listId, oldName, newName, tasksIds}) {
-      const list = state.lists.find(el => el.id === listId)
-      if (list) {
-        const batch = fire.batch()
-        
-        const heads = list.headings.slice()
-        const i = heads.findIndex(el => el.name === oldName)
-        heads[i].name = newName
-        for (const id of tasksIds) {
-          const ref = fire.collection('tasks').doc(id)
-          batch.update(ref, {
-            heading: newName,
-          })
-        }
-        const ref = fire.collection('lists').doc(listId)
+    saveHeadingName({getters}, {listId, oldName, newName, tasksIds}) {
+      const list = getters.getListsById([listId])[0]
+      const batch = fire.batch()
+      
+      const heads = list.headings.slice()
+      const i = heads.findIndex(el => el.name === oldName)
+      heads[i].name = newName
+      for (const id of tasksIds) {
+        const ref = taskRef(id)
         batch.update(ref, {
-          headings: heads,
+          heading: newName,
         })
-
-        batch.commit()
       }
+      const ref = listRef(listId)
+      batch.update(ref, {
+        headings: heads,
+      })
+
+      batch.commit()
     },
-    moveTasksBetweenHeadings({state}, {ids, listId, taskIds, name}) {
-      const list = state.lists.find(el => el.id === listId)
+    moveTasksBetweenHeadings({getters}, {ids, listId, taskIds, name}) {
+      const list = getters.getListsById([listId])[0]
       const batch = fire.batch()
 
       for (const id of taskIds) {
-        const taskRef = fire.collection('tasks').doc(id)
-        batch.update(taskRef, {
+        const task = taskRef(id)
+        batch.update(task, {
           heading: name,
         })
       }
       const heads = list.headings.slice()
       const i = heads.findIndex(el => el.name === name)
       heads[i].tasks = ids
-      const listRef = fire.collection('lists').doc(listId)
+      const listRef = listRef(listId)
       batch.update(listRef, {
         headings: heads,
       })
 
       batch.commit()
     },
-    removeTasksFromHeading({state}, {listId, taskIds, ids}) {
-      const list = state.lists.find(el => el.id === listId)
-      if (list) {
-        const batch = fire.batch()
+    removeTasksFromHeading(c, {listId, taskIds, ids}) {
+      const batch = fire.batch()
 
-        for (const id of taskIds) {
-          const taskRef = fire.collection('tasks').doc(id)
-          batch.update(taskRef, {
-            heading: null,
-          })
-        }
-        const listRef = fire.collection('lists').doc(listId)
-        batch.update(listRef, {
-          tasks: ids,
+      for (const id of taskIds) {
+        const task = taskRef(id)
+        batch.update(task, {
+          heading: null,
         })
-
-        batch.commit()
       }
-    },
-    deleteHeadingFromList({state}, {listId, name, savedTasks}) {
-      const list = state.lists.find(el => el.id === listId)
-      if (list) {
-        const batch = fire.batch()
+      const listRef = listRef(listId)
+      batch.update(listRef, {
+        tasks: ids,
+      })
 
-        const heads = list.headings.slice()
-        const i = heads.findIndex(el => el.name === name)
-        const tasks = heads[i].tasks.slice()
-        const ts = []
-        for (const t of tasks) {
-          const task = savedTasks.find(el => el.id === t.id)
-          if (task) ts.push(task)
-        }
-        heads.splice(i, 1)
-        for (const id of ts) {
-          const ref = fire.collection('tasks').doc(id)
-          batch.update(ref, {
-            heading: null,
-          })
-        }
-        const ref = fire.collection('lists').doc(listId)
+      batch.commit()
+    },
+    deleteHeadingFromList({getters}, {listId, name, savedTasks}) {
+      const list = getters.getListsById([listId])[0]
+      const batch = fire.batch()
+
+      const heads = list.headings.slice()
+      const i = heads.findIndex(el => el.name === name)
+      const tasks = heads[i].tasks.slice()
+      const ts = []
+      for (const t of tasks) {
+        const task = savedTasks.find(el => el.id === t.id)
+        if (task) ts.push(task)
+      }
+      heads.splice(i, 1)
+      for (const id of ts) {
+        const ref = taskRef(id)
         batch.update(ref, {
-          headings: heads,
+          heading: null,
         })
+      }
+      const ref = listRef(listId)
+      batch.update(ref, {
+        headings: heads,
+      })
 
-        batch.commit()
-      }
+      batch.commit()
     },
-    updateHeadingsTaskIds({state}, {listId, name, ids}) {
-      const list = state.lists.find(el => el.id === listId)
-      if (list) {
-        const heads = list.headings.slice()
-        const i = heads.findIndex(el => el.name === name)
-        heads[i].tasks = ids
-        fire.collection('lists').doc(listId).update({
-          headings: heads,
-        })
-      }
+    updateHeadingsTaskIds({getters}, {listId, name, ids}) {
+      const list = getters.getListsById([listId])[0]
+      const heads = list.headings.slice()
+      const i = heads.findIndex(el => el.name === name)
+      heads[i].tasks = ids
+      listRef(listId).update({
+        headings: heads,
+      })
     },
     updateListHeadings(c, {ids, listId}) {
-      fire.collection('lists').doc(listId).update({
+      listRef(listId).update({
         headingsOrder: ids,
       })
     },
-    saveSmartViewHeadingTasksOrder({state}, {ids, listId, smartView}) {
-      const list = state.lists.find(el => el.id === listId)
-      if (list) {
-        let views = list.smartViewsOrders
-        if (!views) views = {}
-        views[smartView] = ids
-        fire.collection('lists').doc(listId).update({
-          smartViewsOrders: views,
-        })
-      } 
+    saveSmartViewHeadingTasksOrder({getters}, {ids, listId, smartView}) {
+      const list = getters.getListsById([listId])[0]
+      let views = list.smartViewsOrders
+      if (!views) views = {}
+      views[smartView] = ids
+      listRef(listId).update({
+        smartViewsOrders: views,
+      })
     },
-    duplicateHeading({state, getters}, {name, listId, tasks}) {
+    duplicateHeading({getters}, {name, listId, tasks}) {
       const list = getters.getListsById([listId])[0]
       const batch = fire.batch()
 
@@ -631,33 +620,32 @@ export default {
     updateHeadingsViewOrder({state}, {view, ids}) {
       const obj = {}
       obj[view] = {}
-      obj[view].tasks = state.viewOrders[view].tasks || []
       obj[view].headings = ids
-      fire.collection('viewOrders').doc(uid()).update(obj)
+      userRef().set({
+        viewOrders: obj,
+      }, {merge: true})
     },
-    addTaskHeading({state}, {name, ids, listId, task, index}) {
-      const list = state.lists.find(el => el.id === listId)
-      if (list) {
-        const batch = fire.batch()
+    addTaskHeading({getters}, {name, ids, listId, task, index}) {
+      const list = getters.getListsById([listId])[0]
+      const batch = fire.batch()
 
-        const taskRef = fire.collection('tasks').doc()
-        task.list = listId
-        task.heading = name
-        batch.set(taskRef, {
-          userId: uid(),
-          ...task,
-        })
-        const heads = list.headings.slice()
-        const i = heads.findIndex(el => el.name === name)
-        ids.splice(index, 0, taskRef.id)
-        heads[i].tasks = ids
-        const listRef = fire.collection('lists').doc(listId)
-        batch.update(listRef, {
-          headings: heads,
-        })
+      const newTaskRef = taskRef()
+      task.list = listId
+      task.heading = name
+      batch.set(newTaskRef, {
+        userId: uid(),
+        ...task,
+      })
+      const heads = list.headings.slice()
+      const i = heads.findIndex(el => el.name === name)
+      ids.splice(index, 0, taskRef.id)
+      heads[i].tasks = ids
+      const savedListRef = listRef(listId)
+      batch.update(savedListRef, {
+        headings: heads,
+      })
 
-        batch.commit()
-      }
+      batch.commit()
     },
 
     deleteList(c, {listId, tasks}) {
@@ -683,12 +671,12 @@ export default {
     importTemplate(c, {list, tasks}) {
       const batch = fire.batch()
 
-      const listRef = fire.collection('lists').doc()
+      const newListRef = listRef()
 
       const taskIds = {}
-      const listId = listRef.id
+      const listId = newListRef.id
       for (const t of tasks) {
-        const ref = fire.collection('tasks').doc()
+        const ref = taskRef()
         batch.set(ref, {
           ...t, list: listId, id: ref.id, userId: uid(),
           users: {[uid()]: true},
@@ -710,7 +698,7 @@ export default {
       list.tasks = newTasks
       
       list.smartViewsOrders = {}
-      batch.set(listRef, {
+      batch.set(newListRef, {
         ...list, id: listId, userId: uid(),
         users: {[uid()]: true},
       })
