@@ -1,3 +1,6 @@
+import utilsTask from '@/utils/task'
+import utils from '@/utils/'
+import mom from 'moment'
 
 export default {
   methods: {
@@ -31,5 +34,62 @@ export default {
   },
   computed: {
     icon() {return 'tag'},
+    viewNameValue() {return this.viewName},
+    getTasks() {
+      if (this.viewTag)
+        return this.tasks.filter(el => el.tags.includes(this.viewTag.id))
+      return []
+    },
+    tasksOrder() {
+      return []
+    },
+    headingsOptions() {
+      return []
+    },
+    illustration() {
+      const l = this.l
+      return {
+        name: 'SadTag',
+        title: l["This tag doesn't have any tasks."],
+        descr: l["How about adding one using the floating button?"],
+        width: '150px',
+      }
+    },
+    headerOptions() {
+      let opt = []
+      opt = [
+          {
+            name: this.l['Edit tag'],
+            icon: 'pen',
+            callback: () => {
+              this.$store.dispatch('pushPopup', {
+                comp: 'AddTag', payload: {...this.viewTag, editing: true}
+              })
+            }
+          }
+        ]
+      if (!this.viewTag.notes) {
+        opt.push({
+          name: this.l['Add notes'],
+          icon: 'note',
+          callback: () => this.$store.dispatch('pushPopup', {
+            comp: 'AddTagNote',
+            payload: this.viewTag.id,
+          })
+        })
+      }
+      return opt
+    },
+    headingEdit() {
+      return []
+    },
+    getViewNotes() {
+      if (this.viewTag)
+        return this.viewTag.notes
+      return null
+    },
+    getPieProgress() {
+      return undefined
+    },
   },
 }

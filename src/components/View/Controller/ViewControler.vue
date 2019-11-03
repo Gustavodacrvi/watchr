@@ -174,7 +174,7 @@ export default {
       getTasksOfList: 'list/getTasks',
     }),
     prefix() {
-      if (this.isSmart) return 'smartList'
+      if (this.isSmart || this.viewType === 'search') return 'smartList'
       if (this.viewType === 'list') return 'list'
       return 'tag'
     },
@@ -217,340 +217,9 @@ export default {
       obj['showHeader'] = this[isListType]
       obj['notes'] = this[p + 'getViewNotes']
       obj['progress'] = this[p + 'getPieProgress']
+      obj['tasks'] = this[p + 'getTasks']
       
       return obj
-    },
-    viewNameValue() {
-      if (this.isSmart) return this.l[this.viewName]
-      return this.viewName
-    },
-    notHeadingHeaderView() {
-      return this.viewName !== 'Upcoming' && this.viewName !== 'Completed'
-    },
-    getTasks() {
-      if (this.viewType === 'search')
-        return this.tasks.filter(el => el.name.includes(this.viewName))
-      if (this.isSmart && this.notHeadingHeaderView) {
-        if (this.viewName === 'Today' && this.hasOverdueTasks) return []
-        return utilsTask.filterTasksByView(this.tasksWithoutLists, this.viewName)
-      }
-      else if (this.viewType === 'tag' && this.viewTag)
-        return this.tasks.filter(el => el.tags.includes(this.viewTag.id))
-      else if (this.isListType) {
-        return this.getRootTasksOfList
-      }
-      return []
-    },
-    tasksOrder() {
-      if (this.isSmart) {
-        let o = this.viewOrders[this.viewName]
-        if (o && o.tasks) o = this.viewOrders[this.viewName].tasks
-        if (o) return o
-      } else if (this.isListType)
-        return this.viewList.tasks
-      return []
-    },
-    headingsOptions() {
-      if (this.isSmart) {
-        switch (this.viewName) {
-          case 'Upcoming': return this.upcomingHeadingsOptions
-          case 'Tomorrow': return this.getListHeadingsByView('Tomorrow')
-          case 'Today': {
-            if (this.hasOverdueTasks) return this.todayHeadingsOptions
-            return this.getListHeadingsByView('Today')
-          }
-          case 'Completed': {
-            return this.completedHeadingsOptions
-          }
-        }
-      } else if (this.isListType)
-        return this.listHeadingsOptions
-      return []
-    },
-    illustration() {
-      const l = this.l
-      const n = this.viewName
-      if (this.isSmart) {
-        switch (n) {
-          case 'Today':
-            return {
-              name: 'HappyFace',
-              title: l['Enjoy the rest of the day'],
-              descr: l['You already completed everything here!'],
-            }
-          case 'Tomorrow':
-            return {
-              name: 'Sleep',
-              title: l['Nothing here...'],
-              descr: l['You have not tasks for tomorrow.'],
-              width: '150px'
-            }
-          case 'Inbox':
-            return {
-              name: 'EmptyInbox',
-              title: l["Congrats! Your Inbox is empty."],
-              width: '150px',
-            }
-          case 'Upcoming':
-            return {
-              name: 'EmptyCalendar',
-              title: l["You don't have any upcoming tasks!"],
-              width: '150px',
-            }
-          case 'Completed':
-            return {
-              name: 'CleanCheck',
-              title: l["Hurray! Everything is clean here!"],
-              descr: l["You don't have any completed tasks, how about completing some?"],
-              width: '150px',
-            }
-        }
-      }
-      else if (this.viewType === 'tag')
-        return {
-          name: 'SadTag',
-          title: l["This tag doesn't have any tasks."],
-          descr: l["How about adding one using the floating button?"],
-          width: '150px',
-        }
-      else if (this.viewName)
-        return {
-          name: 'EmptyList',
-          title: l["This list doesn't have any tasks."],
-          descr: l["You can add tasks and headings by dropping the floating buttons here."],
-          width: '150px',
-        }
-    },
-
-    headerOptions() {
-      let opt = []
-      if (this.isListType) {
-        opt = [
-          {
-            name: this.l['Edit list'],
-            icon: 'pen',
-            callback: () => {
-              this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...this.viewList, editing: true}})
-            }
-          },
-          {
-            name: this.l["Duplicate list"],
-            icon: 'copy',
-            callback: () => {
-              this.$store.dispatch('list/duplicateList', {
-                list: this.viewList, rootTasks: this.getRootTasksOfList,
-                headingTasks: this.getTasksWithHeading,
-              })
-            }
-          },
-        ]
-        if (!this.viewList.notes)
-          opt.push({
-            name: this.l['Add notes'],
-            icon: 'note',
-            callback: () => this.$store.dispatch('pushPopup', {
-              comp: 'AddListNote',
-              payload: this.viewList.id,
-            })
-          })
-        if (this.isDesktop)
-          opt.push({
-            name: this.l["Export as template"],
-            icon: 'export',
-            callback: () => utils.exportListTemplate({
-              list: this.viewList,
-              tasks: this.getListTasks
-            })
-          })
-      } else if (this.viewType === 'tag' && this.viewTag) {
-        opt = [
-          {
-            name: this.l['Edit tag'],
-            icon: 'pen',
-            callback: () => {
-              this.$store.dispatch('pushPopup', {
-                comp: 'AddTag', payload: {...this.viewTag, editing: true}
-              })
-            }
-          }
-        ]
-        if (!this.viewTag.notes) {
-          opt.push({
-            name: this.l['Add notes'],
-            icon: 'note',
-            callback: () => this.$store.dispatch('pushPopup', {
-              comp: 'AddTagNote',
-              payload: this.viewTag.id,
-            })
-          })
-        }
-      }
-      return opt
-    },
-    viewTag() {
-      return this.tags.find(el => el.name === this.viewName)
-    },
-    viewList() {
-      return this.lists.find(el => el.name === this.viewName)
-    },
-    getListTasks() {
-      return this.getTasksOfList(this.tasks, this.viewList.id)
-    },
-    tasksWithoutLists() {
-      return this.tasks.filter(el => !el.list)
-    },
-    tasksWithLists() {
-      return this.tasks.filter(el => el.list)
-    },
-    getRootTasksOfList() {
-      return [...this.getListTasks.filter(el => !el.heading), ...this.getLostTasks]
-    },
-    getLostTasks() {
-      const headingNames = this.viewList.headings.map(el => el.name)
-      return this.getListTasks.filter(el => !headingNames.includes(el.heading))
-    },
-    getTasksWithHeading() {
-      return this.getListTasks.filter(el => el.heading)
-    },
-    headingEdit() {
-      if (!this.isSmart && this.viewType === 'list' && this.viewList)
-        return {
-          excludeNames: this.viewList.headings.map(el => el.name),
-          errorToast: "There's already another heading with this name.",
-        }
-      else if (this.viewName === "Today" || this.viewName === "Tomorrow")
-        return {
-          excludeNames: this.lists.map(el => el.name),
-          errorToast: "There's already another list with this name."
-        }
-      return []
-    },
-    listHeadingsOptions() {
-      const arr = []
-      const viewList = this.viewList
-      let order = viewList.headingsOrder
-      if (!order) order = []
-      
-      const heads = utils.checkMissingIdsAndSortArr(order, viewList.headings, 'name')
-      
-      for (const h of heads) {
-        let headingTasks = this.getListTasks.filter(el => el.heading === h.name)
-        headingTasks= utils.checkMissingIdsAndSortArr(h.tasks, headingTasks)
-        arr.push({
-          name: h.name,
-          allowEdit: true,
-          showHeadingName: false,
-          onEdit: (name) => {
-            this.$store.dispatch('list/saveHeadingName', {
-              listId: this.viewList.id,
-              oldName: h.name,
-              newName: name,
-              tasksIds: headingTasks.map(el => el.id)
-            })
-          },
-          filter: (a, h, showCompleted) => {
-            let tasks = headingTasks.slice()
-
-            if (!showCompleted)
-              tasks = utilsTask.filterTasksByCompletion(tasks, true)
-            
-            return tasks
-          },
-          id: h.name,
-          autoHide: h.autoHide,
-          optionClick: (iconName) => {
-            switch (iconName) {
-              case 'archive': {
-                this.$store.dispatch('list/toggleHeadingAuthide', {
-                  listId: this.viewList.id,
-                  name: h.name,
-                })
-                break
-              }
-            }
-          },
-          options: [
-            {
-              name: this.l['Edit heading'],
-              icon: 'pen',
-              callback: (j, vm, l) => {
-                vm.$emit('edit')
-              }
-            },
-            {
-              name: this.l['Hide heading'],
-              icon: 'archive',
-              callback: () => this.$store.dispatch('list/toggleHeadingAuthide', {
-                listId: this.viewList.id,
-                name: h.name,
-              })
-            },
-            {
-              name: this.l['Uncomplete tasks'],
-              icon: 'circle',
-              callback: () => this.$store.dispatch('list/uncompleteHeadingTasks', {
-                listId: this.viewList.id,
-                name: h.name, savedTasks: this.tasks,
-              })
-            },
-            {
-              name: this.l['Duplicate heading'],
-              icon: 'copy',
-              callback: () => {
-                this.$store.dispatch('list/duplicateHeading', {
-                  name: h.name, listId: viewList.id, tasks: headingTasks.slice(),
-                })
-              }
-            },
-            {
-              name: this.l["Convert to list"],
-              icon: 'tasks',
-              important: true,
-              callback: () => {
-                if (this.lists.some(l => l.name === h.name))
-                  this.$store.commit('pushToast', {
-                    name: this.l['There is already a list with this heading name.'],
-                    seconds: 3,
-                    type: 'error',
-                  })
-                else 
-                  this.$store.dispatch('list/convertHeadingToList', {
-                    name: h.name, listId: viewList.id, taskIds: headingTasks.map(el => el.id)
-                  })
-              }
-            },
-            {
-              name: this.l['Delete heading'],
-              icon: 'trash',
-              important: true,
-              callback: () => {
-                this.$store.dispatch('list/deleteHeadingFromList', {
-                  listId: this.viewList.id,
-                  name: h.name, savedTasks: this.tasks,
-                })
-              },
-            },
-          ],
-          updateIds: ids => {
-            this.$store.dispatch('list/updateHeadingsTaskIds', {
-              name: h.name, listId: viewList.id, ids,
-            })
-          },
-          onAddTask: obj => {
-            obj.task.users = this.viewList.users
-            this.$store.dispatch('list/addTaskHeading', {
-              name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
-            })
-          },
-          onSortableAdd: (evt, taskIds, type, ids) => {
-            this.$store.dispatch('list/moveTasksBetweenHeadings', {
-              taskIds, ids, name: h.name, listId: viewList.id,
-            })
-          }
-        })
-      }
-
-      return arr
     },
     upcomingHeadingsOptions() {
       const arr = []
@@ -596,11 +265,6 @@ export default {
         })
       }
       return arr
-    },
-    getViewNotes() {
-      if (this.isListType) return this.viewList.notes
-      else if (this.viewType === 'tag' && this.viewTag) return this.viewTag.notes
-      return null
     },
     completedHeadingsOptions() {
       const arr = []
@@ -670,6 +334,32 @@ export default {
         },
       ]
     },
+
+    getTasksWithHeading() {
+      return this.getListTasks.filter(el => el.heading)
+    },
+    getLostTasks() {
+      const headingNames = this.viewList.headings.map(el => el.name)
+      return this.getListTasks.filter(el => !headingNames.includes(el.heading))
+    },
+    getRootTasksOfList() {
+      return [...this.getListTasks.filter(el => !el.heading), ...this.getLostTasks]
+    },
+    tasksWithLists() {
+      return this.tasks.filter(el => el.list)
+    },
+    tasksWithoutLists() {
+      return this.tasks.filter(el => !el.list)
+    },
+    getListTasks() {
+      return this.getTasksOfList(this.tasks, this.viewList.id)
+    },
+    viewList() {
+      return this.lists.find(el => el.name === this.viewName)
+    },
+    notHeadingHeaderView() {
+      return this.viewName !== 'Upcoming' && this.viewName !== 'Completed'
+    },
     isListType() {
       return !this.isSmart && this.viewList && this.viewType === 'list'
     },
@@ -679,9 +369,8 @@ export default {
     getOverdueTasks() {
       return utilsTask.filterTasksByView(this.tasks, 'Overdue')
     },
-    getPieProgress() {
-      if (!this.isListType || !this.viewList) return undefined
-      return this.$store.getters['list/pieProgress'](this.tasks, this.viewList.id)
+    viewTag() {
+      return this.tags.find(el => el.name === this.viewName)
     },
   },
 }
