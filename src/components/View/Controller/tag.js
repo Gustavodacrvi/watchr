@@ -1,4 +1,5 @@
 import utilsTask from '@/utils/task'
+import utilsTag from '@/utils/tag'
 import utils from '@/utils/'
 import mom from 'moment'
 
@@ -56,31 +57,9 @@ export default {
       }
     },
     headerOptions() {
-      let opt = []
-      if (this.viewTag) {
-        opt = [
-            {
-              name: this.l['Edit tag'],
-              icon: 'pen',
-              callback: () => {
-                this.$store.dispatch('pushPopup', {
-                  comp: 'AddTag', payload: {...this.viewTag, editing: true}
-                })
-              }
-            }
-          ]
-        if (!this.viewTag.notes) {
-          opt.push({
-            name: this.l['Add notes'],
-            icon: 'note',
-            callback: () => this.$store.dispatch('pushPopup', {
-              comp: 'AddTagNote',
-              payload: this.viewTag.id,
-            })
-          })
-        }
-      }
-      return opt
+      if (this.viewTag)
+        return utilsTag.tagOptions(this.viewTag, this.$store, this.l)
+      return []
     },
     headingEdit() {
       return []

@@ -100,7 +100,7 @@ export default {
           resolve()
         }),
         new Promise(resolve => {
-          listColl().where('userId', '==', uid()).where('userId', '==', id).onSnapshot(snap => {
+          listColl().where('userId', '==', id).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
             resolve()
           })
@@ -370,7 +370,7 @@ export default {
         ...task,
       })
 
-      ids.splice(index, 0, taskRef.id)
+      ids.splice(index, 0, newTaskRef.id)
 
       const obj = {}
       // list === viewName, e.g: Today, Tomorrow
@@ -668,7 +668,6 @@ export default {
       }
 
       batch.commit()
-      router.push('/user')
     },
     importTemplate(c, {list, tasks}) {
       const batch = fire.batch()

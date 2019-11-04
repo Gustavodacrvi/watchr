@@ -166,7 +166,7 @@ export default {
       tags: state => state.tag.tags,
       tasks: state => state.task.tasks,
       lists: state => state.list.lists,
-      viewOrders: state => state.list.viewOrders,      
+      userInfo: state => state.userInfo,      
     }),
     ...mapMutations(['pushToast']),
     ...mapGetters({
@@ -179,6 +179,10 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
       getTasksWithHeading: 'task/getTasksWithHeading',
     }),
+    viewOrders() {
+      if (this.userInfo) return this.userInfo.viewOrders
+      return {}
+    },
     prefix() {
       if (this.isSmart || this.viewType === 'search') return 'smartList'
       if (this.viewType === 'list') return 'list'
@@ -196,7 +200,7 @@ export default {
       
       const events = [
         'save-header-name', 'save-notes', 'update-heading-ids',
-        'add-task', 'add-heading'
+        'add-task', 'add-heading', 'update-ids'
       ]
       const obj = {}
       

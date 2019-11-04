@@ -1,5 +1,5 @@
 <template>
-  <div class="Task draggable" :class="{fade: completed, showingIconDropContent}"
+  <div class="Task draggable" :class="{fade: completed, showingIconDropContent: showingIconDropContent || isEditing}"
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
     @click="rootClick"
@@ -170,7 +170,9 @@ export default {
       })
     },
     applySelected() {
-      this.$store.commit('applyAppnavSelected', this.task.id)
+      setTimeout(() => {
+        this.$store.commit('applyAppnavSelected', this.task.id)
+      })
     },
     saveCalendarDate(date) {
       this.$store.dispatch('task/saveTasksById', {

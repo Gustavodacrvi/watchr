@@ -4,7 +4,7 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from '../utils/task'
-import { uid, fd, userRef, taskColl } from '../utils/firestore'
+import { uid, fd, userRef, tagRef, taskColl, taskRef } from '../utils/firestore'
 
 import mom from 'moment'
 
@@ -107,14 +107,14 @@ export default {
     getData({state}) {
       const id = uid()
       if (id)
-      return Promise.all([
-        new Promise(resolve => {
-          taskColl().where(`users.${uid()}`, '==', true).onSnapshot(snap => {
-            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
-            resolve()
+        return Promise.all([
+          new Promise(resolve => {
+            taskColl().where(`users.${id}`, '==', true).onSnapshot(snap => {
+              utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
+              resolve()
+            })
           })
-        })
-      ])
+        ])
     },
     addTask(c, obj) {
       const batch = fire.batch()
@@ -209,6 +209,7 @@ export default {
 
       for (const id of ids) {
         const ref = taskRef(id)
+        console.log(tagIds)
         batch.update(ref, {
           tags: fd().arrayUnion(...tagIds),
         })
@@ -296,8 +297,9 @@ export default {
       }
       switch (type) {
         case 'tag': {
+          console.log(elIds)
           dispatch('addTagsToTasksById', {
-            tagIds: elIds,
+            tagIds: elIds.slice(),
             ids: taskIds,
           })
           break

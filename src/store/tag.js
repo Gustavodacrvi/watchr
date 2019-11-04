@@ -1,7 +1,7 @@
 
 import { fire, auth } from './index'
 import utils from '../utils'
-import { tagColl, tagRef, userRef } from '../utils/firestore'
+import { tagColl, tagRef, userRef, fd, taskRef } from '../utils/firestore'
 
 const uid = () => {
   return auth.currentUser.uid
@@ -68,8 +68,21 @@ export default {
         batch.commit()
       }
     },
-    deleteTag(c, id) {
-      tagRef(id).delete()
+    deleteTag(c, {id, tasks}) {
+      const batch = fire.batch()
+      const ts = tasks.filter(t => t.tags.includes(id))
+      
+      for (const t of ts) {
+        const ref = taskRef(t.id)
+        batch.update(ref, {
+          tags: fd().arrayRemove(id)
+        })
+      }
+
+      const ref = tagRef(id)
+      batch.delete(ref)
+      
+      batch.commit()
     },
     updateOrder(c, ids) {
       userRef().update({
