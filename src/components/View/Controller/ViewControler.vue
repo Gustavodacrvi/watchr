@@ -3,6 +3,8 @@
     v-bind="{ ...$props, ...props }"
     v-on="listeners"
 
+    :prefix='prefix'
+
     @show-completed='v => showCompleted = v'
   />
 </template>
@@ -40,7 +42,6 @@ export default {
     },
     getListHeadingsByView(view) {
       const ts = utilsTask.filterTasksByView(this.tasksWithLists, view)
-      
       if (ts && ts.length > 0) {
         const savedLists = this.lists
         const setOfLists = new Set()
@@ -50,7 +51,7 @@ export default {
           }
         }
         let lists = Array.from(setOfLists)
-        let order = this.viewOrders[view].headings
+        let order = this.viewOrders[view] ? this.viewOrders[view].headings : []
         if (!order) order = []
         lists = utils.checkMissingIdsAndSortArr(order, lists)
         const arr = []
@@ -222,9 +223,8 @@ export default {
       for (const v of props)
         obj[v] = this[p + v]
       
-      const isListType = p + 'isListType'
-      obj['showEmptyHeadings'] = this[isListType]
-      obj['showHeader'] = this[isListType]
+      obj['showEmptyHeadings'] = this['isListType']
+      obj['showHeader'] = this['isListType']
       obj['notes'] = this[p + 'getViewNotes']
       obj['progress'] = this[p + 'getPieProgress']
       obj['tasks'] = this[p + 'getTasks']
@@ -309,7 +309,7 @@ export default {
         {
           name: l['Overdue'],
           id: 'overdue',
-          filter: (tasks) => this.getOverdueTasks,
+          filter: () => this.getOverdueTasks,
           color: 'var(--red)',
           options: [
             {
@@ -340,7 +340,7 @@ export default {
         {
           name: l['Today'],
           id: 'todya',
-          filter: (tasks) => this.getTasks,
+          filter: (tasks) => this[this.prefix + 'getTasks'],
         },
       ]
     },

@@ -411,7 +411,7 @@ export default {
       for (const el of childs)
         ids.push(el.dataset.id)
       if (removeAdders)
-        ids = ids.filter(id => id !== 'Edit')
+        ids = ids.filter(id => id !== 'Edit' && id !== undefined)
       return ids
     },
     contWrapper(el) {
@@ -525,7 +525,6 @@ export default {
       isDesktop: 'isDesktop',
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
-      getTaskById: 'task/getTaskById',
     }),
     filter() {
       return (h) => {
@@ -535,7 +534,6 @@ export default {
         let order = []
         if (h.order)
           order = h.order()
-
         ts = utils.checkMissingIdsAndSortArr(order, ts)
         ts = utilsTask.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
 
@@ -554,7 +552,7 @@ export default {
       return this.$el.getElementsByClassName('task-renderer-root')[0]
     },
     showIllustration() {
-      return !this.atLeastOneRenderedTask && this.tasks.length === 0 && this.illustration
+      return !this.atLeastOneRenderedTask && this.tasks.length === 0 && this.illustration && !this.header
     },
     isSelecting() {
       return this.selected.length > 0

@@ -4,7 +4,7 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from "@/utils/task"
-import { listRef, userRef, uid, listColl, taskRef } from '../utils/firestore'
+import { listRef, userRef, uid, listColl, taskRef, fd } from '../utils/firestore'
 import router from '../router'
 
 export default {
@@ -93,13 +93,6 @@ export default {
       if (id)
       return Promise.all([
         new Promise(resolve => {
-/*           fire.collection('lists').where(`users.${id}`, '==', true).onSnapshot(snap => {
-            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
-            resolve()
-          }) */
-          resolve()
-        }),
-        new Promise(resolve => {
           listColl().where('userId', '==', id).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
             resolve()
@@ -152,7 +145,7 @@ export default {
         name,
         tasks: newRootTasks.map(t => t.newId),
         userId: uid(),
-        users: {[uid()]: true},
+        users: [uid()],
       })
 
       batch.commit()
@@ -162,7 +155,7 @@ export default {
         name,
         smartViewsOrders: {},
         userId: uid(),
-        users: {[uid()]: true},
+        users: [uid()],
         headings: [],
         headingsOrder: [],
         tasks: [],
@@ -202,7 +195,7 @@ export default {
       batch.set(newList, {
         name,
         userId: uid(),
-        users: {[uid()]: true},
+        users: [uid()],
         smartViewsOrders: {},
         headings: [],
         headingsOrder: [],
@@ -243,121 +236,6 @@ export default {
       dispatch('updateOrder', lists.map(el => el.id))
     },
 
-    // SHARE LIST
-    
-    addPendingUser({state}, {listId, userInfo, tasks}) {
-      const list = state.lists.find(li => li.id === listId)
-      const removeNonExistent = ids =>
-        ids.filter(id => tasks.some(el => el.id === id))
-      
-      const batch = fire.batch()
-
-      let rootTaskids = removeNonExistent(list.tasks.slice())
-      let taskIds = rootTaskids.slice()
-      const heads = list.headings.slice()
-      for (const h of heads) {
-        h.tasks = removeNonExistent(h.tasks)
-        taskIds = [...taskIds, ...h.tasks.slice()]
-      }
-
-      const listRef = fire.collection('lists').doc(listId)
-      batch.set(listRef, {
-        usersStatus: {[userInfo.userId]: 'pending'},
-        userData: {[userInfo.userId]: userInfo},
-        tasks: rootTaskids,
-        headings: heads,
-      }, {merge: true})
-
-      for (const id of taskIds) {
-        const taskRef = fire.collection('tasks').doc(id)
-        batch.set(taskRef, {
-          usersStatus: {[userInfo.userId]: 'pending'},
-        }, {merge: true})
-      }
-
-      batch.commit()
-    },
-    rejectInvite({state}, listId) {
-      const batch = fire.batch()
-      
-      const list = state.invites.find(li => li.id === listId)
-      const listRef = fire.collection('lists').doc(listId)
-      const obj = {
-        usersStatus: {[uid()]: 'rejected'},
-      }
-      batch.set(listRef, obj, {merge: true})
-      let taskIds = list.tasks.slice()
-      for (const h of list.headings) {
-        taskIds = [...taskIds, ...h.tasks.slice()]
-      }
-      for (const id of taskIds) {
-        const taskRef = fire.collection('tasks').doc(id)
-        batch.set(taskRef, obj, {merge: true})
-      }
-
-      batch.commit()
-    },
-    acceptInvite({state}, listId) {
-      const batch = fire.batch()
-      
-      const list = state.invites.find(li => li.id === listId)
-      const listRef = fire.collection('lists').doc(listId)
-      batch.set(listRef, {
-        usersStatus: {[uid()]: false},
-        users: {[uid()]: true},
-      }, {merge: true})
-      let taskIds = list.tasks.slice()
-      for (const h of list.headings) {
-        taskIds = [...taskIds, ...h.tasks.slice()]
-      }
-      for (const id of taskIds) {
-        const taskRef = fire.collection('tasks').doc(id)
-        batch.set(taskRef, {
-          users: {[uid()]: true},
-          usersStatus: {[uid()]: false},
-        }, {merge: true})
-      }
-
-      batch.commit()
-    },
-    removeUser({state}, {listId, userId}) {
-      const batch = fire.batch()
-      
-      const list = state.lists.find(li => li.id === listId)
-      const listRef = fire.collection('lists').doc(listId)
-      batch.set(listRef, {
-        usersStatus: {[userId]: false},
-        userData: {[userId]: false},
-        users: {[userId]: false},
-      }, {merge: true})
-      let taskIds = list.tasks.slice()
-      for (const h of list.headings) {
-        taskIds = [...taskIds, ...h.tasks.slice()]
-      }
-      for (const id of taskIds) {
-        const taskRef = fire.collection('tasks').doc(id)
-        batch.set(taskRef, {
-          usersStatus: {[userId]: false},
-          userData: {[userId]: false},
-          users: {[userId]: false},
-        }, {merge: true})
-      }
-
-      batch.commit()
-    },
-    toggleHeadingAuthide({state}, {listId, name}) {
-      const list = state.lists.find(el => el.id === listId)
-      if (list) {
-        const heads = list.headings.slice()
-        const i = heads.findIndex(el => el.name === name)
-
-        heads[i].autoHide = !heads[i].autoHide
-        fire.collection('lists').doc(listId).update({
-          headings: heads,
-        })
-      }
-    },
-
     // TASKS
     
     addTaskByIndexSmart(c, {ids, index, task, list}) {
@@ -366,7 +244,7 @@ export default {
       const newTaskRef = taskRef()
       batch.set(newTaskRef, {
         userId: uid(),
-        users: {[uid()]: true},
+        users: [uid()],
         ...task,
       })
 
@@ -386,15 +264,14 @@ export default {
     addTaskByIndex(c, {ids, index, task, listId}) {
       const batch = fire.batch()
 
-      const newTaskRef = taskRef()
+      const newTaskRef = userRef(task.userId).collection('tasks').doc()
       batch.set(newTaskRef, {
-        userId: uid(),
         ...task,
       })
 
-      ids.splice(index, 0, taskRef.id)
+      ids.splice(index, 0, newTaskRef.id)
 
-      const savedListRef = listRef(listId)
+      const savedListRef = userRef(task.userId).collection('lists').doc(listId)
       batch.update(savedListRef, {tasks: ids})
 
       batch.commit()
@@ -452,7 +329,7 @@ export default {
           heading: null,
         })
       }
-      const listRef = fire.collection('lists').doc(listId)
+      const listRef = listRef(listId)
       batch.update(listRef, {
         smartViewsOrders: views,
       })
@@ -515,8 +392,8 @@ export default {
       const heads = list.headings.slice()
       const i = heads.findIndex(el => el.name === name)
       heads[i].tasks = ids
-      const listRef = listRef(listId)
-      batch.update(listRef, {
+      const savedListRef = listRef(listId)
+      batch.update(savedListRef, {
         headings: heads,
       })
 
@@ -531,8 +408,8 @@ export default {
           heading: null,
         })
       }
-      const listRef = listRef(listId)
-      batch.update(listRef, {
+      const savedListRef = listRef(listId)
+      batch.update(savedListRef, {
         tasks: ids,
       })
 
@@ -639,7 +516,7 @@ export default {
       })
       const heads = list.headings.slice()
       const i = heads.findIndex(el => el.name === name)
-      ids.splice(index, 0, taskRef.id)
+      ids.splice(index, 0, newTaskRef.id)
       heads[i].tasks = ids
       const savedListRef = listRef(listId)
       batch.update(savedListRef, {
@@ -680,7 +557,7 @@ export default {
         const ref = taskRef()
         batch.set(ref, {
           ...t, list: listId, id: ref.id, userId: uid(),
-          users: {[uid()]: true},
+          users: [uid()],
         })
         taskIds[t.id] = ref.id
       }
@@ -701,7 +578,7 @@ export default {
       list.smartViewsOrders = {}
       batch.set(newListRef, {
         ...list, id: listId, userId: uid(),
-        users: {[uid()]: true},
+        users: [uid()],
       })
 
       batch.commit()

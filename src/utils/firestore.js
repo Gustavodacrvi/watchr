@@ -4,7 +4,7 @@ import fb from 'firebase/app'
 
 export const uid = () => auth.currentUser.uid
 export const fd = () => fb.firestore.FieldValue
-export const userRef = () => fire.collection('users').doc(uid())
+export const userRef = id => fire.collection('users').doc(id ? id : uid())
 export const taskColl = () => userRef().collection('tasks')
 export const listColl = () => userRef().collection('lists')
 export const tagColl = () => userRef().collection('tags')

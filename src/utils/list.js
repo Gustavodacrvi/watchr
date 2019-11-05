@@ -25,7 +25,7 @@ export default {
         name: l['Uncomplete tasks'],
         icon: 'circle',
         callback: () => dispatch('list/uncompleteHeadingTasks', {
-          listId, name: h.name, savedTasks: tasks,
+          listId, name: h.name, savedTasks: store.state.task.tasks,
         })
       },
       {
@@ -40,7 +40,7 @@ export default {
         icon: 'tasks',
         important: true,
         callback: () => {
-          if (lists.some(l => l.name === h.name))
+          if (store.state.list.lists.some(l => l.name === h.name))
             toast({
               name: l['There is already a list with this heading name.'],
               seconds: 3,

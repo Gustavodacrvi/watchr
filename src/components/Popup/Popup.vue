@@ -24,9 +24,7 @@ import AddTask from './Tasks/AddTask.vue'
 import AddTag from './Tags/AddTag.vue'
 import AddTagNote from './Tags/AddTagNote.vue'
 import AddList from './Lists/AddList.vue'
-import ShareTasks from './Lists/ShareTasks.vue'
 import AddListNote from './Lists/AddListNote.vue'
-import Invites from './Lists/Invites.vue'
 import Update from './Update.vue'
 
 import { mapGetters, mapState } from 'vuex'
@@ -36,7 +34,7 @@ export default {
     Signup, SigninOptions, Signin, AddTag,
     AddListNote, AddTagNote, Icon, AddList,
     AddTask, Update, ChangeUsername, ChangeEmail,
-    Confirm, ShareTasks, Invites,
+    Confirm,
   },
   methods: {
     closeMobilePopup() {

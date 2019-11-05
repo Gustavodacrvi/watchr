@@ -57,17 +57,6 @@
         <div class="footer" :class="platform">
           <div class="inner-footer">
             <div class="drop">
-              <transition name="fade-t">
-                <Icon v-if="isDesktop && invites.length > 0"
-                  class="cursor"
-                  style="margin-right: 6px"
-                  icon='envelope'
-                  color='var(--red)'
-                  @click="$store.dispatch('pushPopup', {
-                    comp: 'Invites',
-                  })"
-                />
-              </transition>
               <transition name="icon-t">
                 <IconDrop v-if="showIconDropdown"
                   class="right passive"
@@ -286,7 +275,6 @@ export default {
   computed: {
     ...mapState({
       selectedTasks: state => state.selectedTasks,
-      invites: state => state.list.invites,
     }),
     ...mapGetters({
       platform: 'platform',

@@ -13,11 +13,6 @@ export default {
     const toast = (toast) => {
       this.$store.commit('pushToast', toast)
     }
-    const reload = () => {
-      this.$router.push('/user')
-      const a = firebase.auth()
-      if (a.currentUser) a.currentUser.reload()
-    }
     const toastErr = (err) => {
       toast({
         name: err.message,
@@ -31,26 +26,19 @@ export default {
         break
       }
       case 'verifyEmail': {
-        auth.applyActionCode(this.oobCode).then(() => {
+        auth.applyActionCode(this.oobCode).then(data => {
           toast({
             name: 'E-mail confirmed successfully!',
             seconds: 6,
             type: 'success',
           })
-          reload()
-        }).catch(err => {
-          toastErr(err)
-          reload()
-        })
+        }).catch(toastErr)
         break
       }
       case 'resetPassword': {
         auth.verifyPasswordResetCode(this.oobCode).then(() => {
           // push resetpassword popup
-        }).catch(err => {
-          toastErr(err)
-          reload()
-        })
+        }).catch(toastErr)
       }
     }
   }

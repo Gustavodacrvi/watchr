@@ -12,7 +12,7 @@ export default {
           obj.task.list = this.viewList.id
         obj.task.users = this.viewList.users
         this.$store.dispatch('list/addTaskByIndex', {
-          ...obj, listId: this.viewList.id
+          ...obj, listId: this.viewList.id, userId: this.viewList.userId,
         })
       }
     },
@@ -80,6 +80,9 @@ export default {
         return this.viewList.tasks
       return []
     },
+    showEmptyHeadings() {
+      return true
+    },
     headingsOptions() {
       const arr = []
       if (this.viewList) {
@@ -106,7 +109,6 @@ export default {
             },
             filter: (a, h, showCompleted) => {
               let tasks = headingTasks.slice()
-  
               if (!showCompleted)
                 tasks = utilsTask.filterTasksByCompletion(tasks, true)
               

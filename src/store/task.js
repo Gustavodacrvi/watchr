@@ -4,7 +4,7 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from '../utils/task'
-import { uid, fd, userRef, tagRef, taskColl, taskRef } from '../utils/firestore'
+import { uid, fd, userRef, tagRef, taskColl, taskRef, listRef } from '../utils/firestore'
 
 import mom from 'moment'
 
@@ -109,7 +109,7 @@ export default {
       if (id)
         return Promise.all([
           new Promise(resolve => {
-            taskColl().where(`users.${id}`, '==', true).onSnapshot(snap => {
+            taskColl().where('userId', '==', id).onSnapshot(snap => {
               utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
               resolve()
             })
@@ -122,7 +122,7 @@ export default {
       const ref = taskRef()
       batch.set(ref, {
         userId: uid(),
-        users: {[uid()]: true},
+        users: [uid()],
         ...obj,
       })
 
@@ -209,7 +209,6 @@ export default {
 
       for (const id of ids) {
         const ref = taskRef(id)
-        console.log(tagIds)
         batch.update(ref, {
           tags: fd().arrayUnion(...tagIds),
         })
@@ -254,7 +253,7 @@ export default {
           const ref = taskRef(t.id)
           batch.set(ref, {
             userId: uid(),
-            users: {[uid()]: true},
+            users: [uid()],
             name: t.name,
             priority: '',
             list: list.id,
@@ -270,7 +269,7 @@ export default {
 
       batch.set(list, {
         userId: uid(),
-        users: {[uid()]: true},
+        users: [uid()],
         smartViewsOrders: {},
         name: task.name,
         descr: '',

@@ -306,7 +306,8 @@ const store = new Vuex.Store({
       })
     },
     addRecentCollaborators({state}, user) {
-      if (!state.userInfo.recentUsers[user.userId])
+      const add = !state.userInfo.recentUsers || !state.userInfo.recentUsers[user.userId]
+      if (add)
         fire.collection('users').doc(uid()).update({
           recentUsers: {[user.userId]: user},
         })

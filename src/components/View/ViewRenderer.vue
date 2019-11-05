@@ -58,7 +58,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'notes', 'showCompletedOnHeadings', 'isSmart', 'headerOptions', 'progress'],
+  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'notes', 'showCompletedOnHeadings', 'isSmart', 'headerOptions', 'progress', 'prefix'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,
@@ -280,13 +280,13 @@ export default {
             icon: 'circle-check',
             callback: () => this.toggleCompleted()
           },
-          {
+        ]
+        if (this.showCompleted) opt[3].name = l['Hide completed']
+        if (this.prefix === 'list') opt.push(          {
             name: l['Hide autohide headings'],
             icon: 'archive',
             callback: () => this.hideHeadings = true
-          }
-        ]
-        if (this.showCompleted) opt[3].name = l['Hide completed']
+          })
         if (this.headerOptions && this.headerOptions.length > 0) {
           opt.unshift({
             type: 'hr',

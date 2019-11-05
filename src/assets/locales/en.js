@@ -73,6 +73,7 @@ export default {
   'Sort tags by frequency': 'Sort tags by frequency',
   'Delete tag': 'Delete tag',
   'Sort tasks': 'Sort tasks',
+  "You have no internet.": "You have no internet.",
   'Show tag selection': 'Show tag selection',
   'Show list selection': 'Show list selection',
   'Show completed': 'Show completed',
