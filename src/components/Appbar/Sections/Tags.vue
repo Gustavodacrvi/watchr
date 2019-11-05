@@ -23,6 +23,8 @@ import RendererVue from '../Renderer.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
+import utilsTag from '@/utils/tag'
+
 export default {
   components: {
     Renderer: RendererVue,
@@ -68,24 +70,7 @@ export default {
         el.callback = () => {
           this.$router.push('/user?tag=' + el.name)
         }
-        el.options = [
-          {
-            name: 'Edit tag',
-            icon: 'pen',
-            callback: () => {
-              this.$store.dispatch('pushPopup', {
-                comp: 'AddTag', payload: {...el, editing: true},
-              })
-            },
-          },
-          {
-            name: 'Delete tag',
-            icon: 'trash',
-            callback: () => {
-              this.$store.dispatch('tag/deleteTag', el.id)
-            }
-          }
-        ]
+        el.options = utilsTag.tagOptions(el, this.$store, this.l)
       }
       return tags
     },

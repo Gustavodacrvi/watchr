@@ -8,17 +8,6 @@
         <div v-if="isNotOnHome" key="user">
           <h2 v-if="title" class="title">{{ title }}</h2>
           <div class="drop">
-            <transition name="fade-t">
-              <Icon v-if="invites.length > 0"
-                class="msg cursor"
-                width="25px"
-                icon="envelope"
-                color="var(--red)"
-                @click="$store.dispatch('pushPopup', {
-                  comp: 'Invites',
-                })"
-              />
-            </transition>
             <IconDrop v-if="isOnUserPage && navBar && navBar.options"
               handle="settings-v"
               :options="navBar.options"

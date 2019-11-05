@@ -146,7 +146,7 @@ export default {
     },
     keydown({key}) {
       if (key === "Enter" && this.isEditable) {
-        this.$emit('save-header-name', this.title)
+        this.$emit('save-header-name', this.title.trim())
         this.editing = false
       }
     },
@@ -154,7 +154,7 @@ export default {
       const {key} = evt
       if (key === "Enter") {
         evt.preventDefault()
-        this.$emit('save-notes', this.note)
+        this.$emit('save-notes', this.note.trim())
         this.editingNote = false
       }
     },
@@ -227,6 +227,9 @@ export default {
     viewNameValue() {
       this.title = this.viewNameValue
       this.note = this.notes
+    },
+    notes() {
+      this.note
     },
     options() {
       this.pushToNavbar()

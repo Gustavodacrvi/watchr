@@ -120,14 +120,13 @@ export default {
               type: 'warning',
             })
           }).catch(err => toastErr(err))
-          this.$store.dispatch('tag/addDefaultData', uid)
-          this.$store.dispatch('list/addDefaultData', uid)
-          this.$store.dispatch('filter/addDefaultData', uid)
-          this.$store.dispatch('user/addDefaultData', {
-            user: firebase.auth().currentUser,
-            username: this.username,
+          this.$store.dispatch('createUser', {
+            ...firebase.auth().currentUser, displayName: this.username,
+          }).catch(err => {
+            auth.currentUser.delete()
+            toastErr(err)
           })
-          this.$store.commit('closePopup')
+          this.$store.dispatch('closePopup')
           this.$store.commit('toggleUser', true)
           this.$router.push('/user')
         }).catch(err => toastErr(err))
@@ -135,7 +134,12 @@ export default {
     },
     upgradeAccountToGoogle() {
       const provider = new firebase.auth.GoogleAuthProvider()
-      firebase.auth().currentUser.linkWithRedirect(provider).catch(err => {
+      firebase.auth().currentUser.linkWithPopup(provider).then(res => {
+        this.$store.dispatch('update', res.user).then(el => {
+          this.$store.dispatch('closePopup')
+          window.location.reload()
+        })
+      }).catch(err => {
         this.$store.commit('pushToast', {
           name: err.message,
           seconds: 4,
@@ -145,7 +149,19 @@ export default {
     },
     upgradeAccountWithEmailAndPassword() {
       const provider = new firebase.auth.EmailAuthProvider.credential(this.eMail, this.password)
-      firebase.auth().currentUser.linkAndRetrieveDataWithCredential(provider).then(res => window.location.reload())
+      firebase.auth().currentUser.linkWithCredential(provider).then(res => {
+        this.$store.dispatch('update', res.user).then(el => {
+          res.user.sendEmailVerification()
+          window.location.reload()
+        }).catch(err => {
+          this.$store.dispatch('pushToast', {
+            name: err.message,
+            seconds: 4,
+            type: 'error'
+          })
+          res.user.delete()
+        })
+      })
       .catch(err => {
         this.$store.commit('pushToast', {
           name: err.message,

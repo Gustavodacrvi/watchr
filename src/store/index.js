@@ -12,7 +12,6 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/storage'
-import 'firebase/analytics'
 import 'firebase/performance'
 
 firebase.initializeApp({
@@ -23,11 +22,8 @@ firebase.initializeApp({
   messagingSenderId: process.env.VUE_APP_MESSAGING_SENDER_ID,
   appId: process.env.VUE_APP_APP_ID,
   databaseURL: process.env.VUE_APP_DATABASE_URL,
-  storageBucket: process.env.VUE_APP_STORAGE_BUCKET_URL,
   measurementId: process.env.VUE_APP_MEASUREMENT_ID,
 })
-
-firebase.analytics()
 
 const perf = firebase.performance()
 
@@ -39,7 +35,9 @@ import task from './task'
 import tag from './tag'
 import list from './list'
 import filter from './filter'
-import user from './user'
+
+import utils from '@/utils'
+import { userRef } from "../utils/firestore"
 
 const lang = localStorage.getItem('watchrlanguage') || 'en'
 
@@ -52,9 +50,11 @@ const getLanguageFile = (name) => {
 
 moment.locale(lang)
 
+const uid = () => auth.currentUser.uid
+
 const store = new Vuex.Store({
   modules: {
-    task, tag, list, filter, user,
+    task, tag, list, filter,
   },
   state: {
     lang,
@@ -75,6 +75,11 @@ const store = new Vuex.Store({
       bool: false,
     },
     user: null,
+    userInfo: {
+      lists: [],
+      tags: [],
+      viewOrders: {},
+    },
     firstFireLoad: false,
     selectedTasks: [],
     isOnControl: false,
@@ -103,6 +108,15 @@ const store = new Vuex.Store({
     },
     l(state) {
       return state.language
+    },
+    recentUsersStr(state) {
+      if (!state.userInfo.recentUsers) return []
+      return Object.values(state.userInfo.recentUsers).map(user => {
+        let str = ''
+        if (user.displayName) str += user.displayName + ' '
+        str += user.email
+        return str
+      })
     },
   },
   mutations: {
@@ -160,9 +174,6 @@ const store = new Vuex.Store({
     toggleUser(state, isLogged) {
       state.authState = isLogged
     },
-    closePopup(state) {
-      state.popup = {comp: '', payload: null}
-    },
     saveWindowWidth(state) {
       state.windowWidth = document.body.clientWidth
     },
@@ -203,6 +214,11 @@ const store = new Vuex.Store({
       if (!getters.isDesktop)
         router.push('/popup')
     },
+    closePopup({state, getters}) {
+      state.popup = {comp: '', payload: null}
+      if (!getters.isDesktop)
+        router.go(-1)
+    },
     deleteProfilePic() {
       const str = `images/${auth.currentUser.uid}.jpg`
       sto.ref(str).delete().then(() => {
@@ -216,13 +232,88 @@ const store = new Vuex.Store({
       dispatch('list/deleteAllData')
       dispatch('task/deleteAllData')
       dispatch('filter/deleteAllData')
-      dispatch('user/deleteAllData')
+      dispatch('deleteAllData')
       firebase.auth().currentUser.delete()
       setTimeout(() => {
         router.push('/')
         dispatch('deleteProfilePic')
         window.location.reload()
       }, 100)
+    },
+    getData({state}) {
+      return new Promise(resolve => {
+        userRef().onSnapshot(snap => {
+          state.userInfo = snap.data()
+          resolve()
+        })
+        resolve()
+      })
+    },
+    update({state}, info) {
+      const batch = fire.batch()
+      
+      const userRef = fire.collection('users').doc(info.uid)
+      batch.update(userRef, {
+        ...utils.getRelevantUserData(info),
+      })
+/*       const yourListIds = []
+      const pendingIds = []
+      const sharedIds = []
+
+      const updateOwnLists = res => {
+        res.docs.forEach(list => yourListIds.push(list.id))
+        for (const id of yourListIds) {
+          const listRef = fire.collection('lists').doc(id)
+          batch.set(listRef, {
+            ownerData: {...info},
+          }, {merge: true})
+        }
+      }
+      const updateSharedLists = (pendingRes, rejectedRes, sharedRes) => {
+        pendingRes.docs.forEach(list => pendingIds.push(list.id))
+        rejectedRes.docs.forEach(list => pendingIds.push(list.id))
+        sharedRes.docs.forEach(list => sharedIds.push(list.id))
+
+        const allIds = [...pendingIds, ...sharedIds].filter(id => id !== uid())
+
+        for (const id of allIds) {
+          const listRef = fire.collection('lists').doc(id)
+          batch.set(listRef, {
+            userData: {[uid()]: {...info}},
+          }, {merge: true})
+        }
+      }
+
+      Promise.all([
+        fire.collection('lists').where('userId', '==', uid()).get({source: 'server'}),
+        fire.collection('lists').where(`pending.${uid()}`, '==', 'pending').get({source: 'server'}),
+        fire.collection('lists').where(`pending.${uid()}`, '==', 'rejected').get({source: 'server'}),
+        fire.collection('lists').where(`users.${uid()}`, '==', true).get({source: 'server'})
+      ]).then(res => {
+        updateOwnLists(res[0])
+        updateSharedLists(res[1], res[2], res[3])
+      }) */
+      return batch.commit()
+    },
+    createAnonymousUser(c, userId) {
+      return fire.collection('users').doc(userId).set({
+        ...utils.getRelevantUserData(userId),
+      })
+    },
+    createUser(s, user) {
+      return fire.collection('users').doc(user.uid).set({
+        ...utils.getRelevantUserData(user),
+      })
+    },
+    addRecentCollaborators({state}, user) {
+      const add = !state.userInfo.recentUsers || !state.userInfo.recentUsers[user.userId]
+      if (add)
+        fire.collection('users').doc(uid()).update({
+          recentUsers: {[user.userId]: user},
+        })
+    },
+    deleteAllData() {
+      fire.collection('users').doc(uid()).delete()
     },
   }
 })
@@ -239,11 +330,11 @@ auth.onAuthStateChanged((user) => {
 
   const dispatch = store.dispatch
   const loadData = () => {
-    dispatch('tag/getData')
-    dispatch('list/getData')
-    dispatch('filter/getData')
+    dispatch('getData')
     dispatch('task/getData')
-    dispatch('user/getData')
+    dispatch('list/getData')
+    dispatch('tag/getData')
+    dispatch('filter/getData')
   }
   const toast = (t) => store.commit('pushToast', t)
 
@@ -264,7 +355,6 @@ auth.onAuthStateChanged((user) => {
 
     if (isLogged) loadData()
   } else {
-    const uid = user.uid
     setTimeout(() => {
       toast({
         name: store.getters.l['Anonymous users are deleted every week, sign in to save your data indefinitely.'],
@@ -272,12 +362,6 @@ auth.onAuthStateChanged((user) => {
         type: 'warning',
       })
     }, 3000)
-    dispatch('tag/addDefaultData', uid)
-    dispatch('list/addDefaultData', uid)
-    dispatch('filter/addDefaultData', uid)
-    dispatch('user/addDefaultData', {
-      user, username: user.displayName,
-    })
     loadData()
   }
 })

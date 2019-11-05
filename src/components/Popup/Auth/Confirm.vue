@@ -39,7 +39,7 @@ export default {
       this.close()
     },
     close() {
-      this.$store.commit('closePopup')
+      this.$store.dispatch('closePopup')
     }
   },
   computed: {

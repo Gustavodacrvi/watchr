@@ -24,6 +24,8 @@
 
 import RendererVue from '../Renderer.vue'
 
+import utilsList from '@/utils/list'
+
 import { mapGetters, mapState } from 'vuex'
 
 export default {
@@ -70,34 +72,7 @@ export default {
         list.callback = () => {
           this.$router.push('/user?list=' + list.name)
         }
-        list.options = [
-          {
-            name: this.l['Edit list'],
-            icon: 'pen',
-            callback: () => {
-              this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...list, editing: true}})
-            }
-          },
-          {
-            name: this.l['Delete list'],
-            icon: 'trash',
-            important: true,
-            callback: () => this.$store.dispatch('list/deleteList', {
-              id: list.id,
-              tasks: this.tasks,
-            })
-          }
-        ]
-        if (list.userId === this.user.uid)
-          list.options.splice(1, 0, {
-            name: this.l['Share list'],
-            icon: 'users',
-            callback: () => {
-              this.$store.dispatch('pushPopup', {
-                comp: 'ShareTasks', payload: list.id,
-              })
-            },
-          },)
+        list.options = utilsList.listOptions(list, this.$store, this.$store.getters['task/getListTasks'](this.tasks, list.id), this.l)
       }
       return lists
     },

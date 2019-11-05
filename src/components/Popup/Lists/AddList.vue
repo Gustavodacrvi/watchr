@@ -82,16 +82,15 @@ export default {
           this.$store.dispatch('list/addList', {
             name: this.name,
             ...this.payload,
-            ownerInfo: this.$store.state.user.userInfo,
           })
           toast({
             name: this.l[`List added successfully!`],
             type: 'success',
             seconds: 2,
           })
-          this.$store.commit('closePopup')
+          this.$store.dispatch('closePopup')
         } else if (!list && this.isEditing) {
-          this.$store.dispatch('list/editList', {
+          this.$store.dispatch('list/saveList', {
             name: this.name,
             id: this.payload.id,
           })
@@ -100,7 +99,7 @@ export default {
             type: 'success',
             seconds: 2,
           })
-          this.$store.commit('closePopup')
+          this.$store.dispatch('closePopup')
         } else {
           toast({
             name: this.l[`This list already exists!`],

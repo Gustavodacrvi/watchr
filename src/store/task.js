@@ -4,11 +4,7 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from '../utils/task'
-
-const uid = () => auth.currentUser.uid
-const fd = () => fb.firestore.FieldValue
-const taskRef = id => fire.collection('tasks').doc(id)
-const listRef = id => fire.collection('lists').doc(id)
+import { uid, fd, userRef, tagRef, taskColl, taskRef, listRef } from '../utils/firestore'
 
 import mom from 'moment'
 
@@ -87,19 +83,38 @@ export default {
         notCompleted: utilsTask.filterTasksByCompletion(ts, true).length,
       }
     },
+    getLostTasks: () => (tasks, list) => {
+      const headingNames = list.headings.map(el => el.name)
+      return tasks.filter(el => !headingNames.includes(el.heading))
+    },
+    getTasksWithHeading: () => tasks => {
+      return tasks.filter(el => el.heading)
+    },
+    getRootTasksOfList: (s, getters) => (tasks, list) => {
+      return [...getters['tasksWithLists'](tasks).filter(t => !t.heading),...getters['getLostTasks'](tasks, list)]
+    },
+    getListTasks: (s, getters) => (tasks, listId) => {
+      return getters['tasksWithLists'](tasks).filter(t => t.list === listId)
+    },
+    tasksWithLists: () => tasks => {
+      return tasks.filter(el => el.list)
+    },
+    tasksWithoutLists: () => tasks => {
+      return tasks.filter(el => !el.list)
+    },
   },
   actions: {
     getData({state}) {
       const id = uid()
       if (id)
-      return Promise.all([
-        new Promise(resolve => {
-          fire.collection('tasks').where(`users.${id}`, '==', true).onSnapshot(snap => {
-            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
-            resolve()
+        return Promise.all([
+          new Promise(resolve => {
+            taskColl().where('userId', '==', id).onSnapshot(snap => {
+              utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
+              resolve()
+            })
           })
-        })
-      ])
+        ])
     },
     addTask(c, obj) {
       const batch = fire.batch()
@@ -107,7 +122,7 @@ export default {
       const ref = taskRef()
       batch.set(ref, {
         userId: uid(),
-        users: {[uid()]: true},
+        users: [uid()],
         ...obj,
       })
 
@@ -199,7 +214,7 @@ export default {
         })
       }
       for (const id of tagIds) {
-        const ref = fire.collection('tags').doc(id)
+        const ref = tagRef(id)
         batch.update(ref, {
           times: fd().increment(1),
         })
@@ -221,14 +236,14 @@ export default {
       batch.commit()
     },
     copyTask(c, task) {
-      fire.collection('tasks').add({
+      userRef().collection('tasks').add({
         ...task,
       })
     },
     convertToList(c, task) {
       const batch = fire.batch()
 
-      const list = taskRef()
+      const list = listRef()
       const oldTask = taskRef(task.id)
       batch.delete(oldTask)
       
@@ -238,7 +253,7 @@ export default {
           const ref = taskRef(t.id)
           batch.set(ref, {
             userId: uid(),
-            users: {[uid()]: true},
+            users: [uid()],
             name: t.name,
             priority: '',
             list: list.id,
@@ -254,7 +269,7 @@ export default {
 
       batch.set(list, {
         userId: uid(),
-        users: {[uid()]: true},
+        users: [uid()],
         smartViewsOrders: {},
         name: task.name,
         descr: '',
@@ -281,8 +296,9 @@ export default {
       }
       switch (type) {
         case 'tag': {
+          console.log(elIds)
           dispatch('addTagsToTasksById', {
-            tagIds: elIds,
+            tagIds: elIds.slice(),
             ids: taskIds,
           })
           break

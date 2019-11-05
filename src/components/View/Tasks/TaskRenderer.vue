@@ -14,15 +14,12 @@
       data-name='task-renderer'
     >
       <Task v-for="t of tasks" :key="t.id"
+        v-bind="$props"
+
         :task='t'
         :isSelecting='isSelecting'
-        :view='view'
         :enableSelect='enableSelect'
         :multiSelectOptions='options'
-        :showHeadingName='showHeadingName'
-        :hideListName='hideListName'
-        :activeTags="activeTags"
-        :viewNameValue='viewNameValue'
         @de-select='deSelectTask'
 
         :data-id='t.id'
@@ -50,22 +47,19 @@
           :data-id='h.id'
         >
           <TaskRenderer
+            v-bind="{...$props, headingPosition: undefined}"
+
             :tasks='filter(h)'
-            :view='view'
-            :headingEdit='headingEdit'
-            :viewNameValue='viewNameValue'
-            :showEmptyHeadings='showEmptyHeadings'
-            :activeTags="activeTags"
-            :headings='[]'
-            :header="h"
             :hideListName="h.hideListName"
             :showHeadingName="h.showHeadingName"
-            :addTask="h.onAddTask"
-            :headingPosition='i + 1'
-            :options='options'
             :onSortableAdd='h.onSortableAdd'
             @add-heading='(obj) => $emit("add-heading", obj)'
             @update="ids => updateHeadingIds(h,ids)"
+
+            :headings='[]'
+            :header="h"
+            :addTask="h.onAddTask"
+            :headingPosition='i + 1'
           />
         </HeadingApp>
       </template>
@@ -95,7 +89,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'header', 'onSortableAdd', 'view', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
+  props: ['tasks', 'header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
   'viewType', 'options'],
   name: 'TaskRenderer',
   components: {
@@ -417,7 +411,7 @@ export default {
       for (const el of childs)
         ids.push(el.dataset.id)
       if (removeAdders)
-        ids = ids.filter(id => id !== 'Edit')
+        ids = ids.filter(id => id !== 'Edit' && id !== undefined)
       return ids
     },
     contWrapper(el) {
@@ -531,7 +525,6 @@ export default {
       isDesktop: 'isDesktop',
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
-      getTaskById: 'task/getTaskById',
     }),
     filter() {
       return (h) => {
@@ -541,7 +534,6 @@ export default {
         let order = []
         if (h.order)
           order = h.order()
-
         ts = utils.checkMissingIdsAndSortArr(order, ts)
         ts = utilsTask.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
 
@@ -560,7 +552,7 @@ export default {
       return this.$el.getElementsByClassName('task-renderer-root')[0]
     },
     showIllustration() {
-      return !this.atLeastOneRenderedTask && this.tasks.length === 0 && this.illustration
+      return !this.atLeastOneRenderedTask && this.tasks.length === 0 && this.illustration && !this.header
     },
     isSelecting() {
       return this.selected.length > 0

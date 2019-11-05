@@ -269,6 +269,7 @@ export default {
         tags: this.tagIds,
         name: n, heading,
         calendar,
+        userId: this.defaultTask ? this.defaultTask.userId : undefined
       })
       t.checklist = []
       t.notes = ''

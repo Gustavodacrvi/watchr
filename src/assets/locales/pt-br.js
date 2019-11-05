@@ -90,6 +90,7 @@ export default {
   'CalParserNextweek': 'próxima semana',
   "Change photo": "Mudar foto",
   "pending": "esperando",
+  "You have no internet.": "Você não tem internet.",
   "Share List": "Compartilhar Lista",
   "List Invites": "Convites de Listas",
   "Invite": "Convidar",

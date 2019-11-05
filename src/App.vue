@@ -73,7 +73,7 @@ export default {
       if (!isTyping) this.$store.dispatch('pushKeyShortcut', key)
     },
     closePopup() {
-      this.$store.commit('closePopup')
+      this.$store.dispatch('closePopup')
     },
     getMousePos(evt) {
       const clear = () => {
@@ -116,7 +116,7 @@ export default {
   },
   watch: {
     $route(to, from) {
-      if (to && to.path !== '/popup')
+      if (to && to.path !== '/popup' && this.$store.getters.isPopupOpened)
         this.closePopup()
     }
   }

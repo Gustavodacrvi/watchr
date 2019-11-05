@@ -239,12 +239,14 @@ export default {
       this.$store.commit('appnavSelected', this.selected)
     },
     apply() {
-      if (!this.isSmart)
-        this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
-          elIds: this.selected,
-          taskIds: [this.$store.state.apply.taskId],
-          type: this.type,
-        })
+      setTimeout(() => {
+        if (!this.isSmart)
+          this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+            elIds: this.selected,
+            taskIds: [this.$store.state.apply.taskId],
+            type: this.type,
+          })
+      })
     }
   }
 }

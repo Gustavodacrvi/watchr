@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     close() {
-      this.$store.commit('closePopup')
+      this.$store.dispatch('closePopup')
       this.$router.replace('/user')
     },
   },

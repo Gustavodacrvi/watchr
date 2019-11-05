@@ -16,7 +16,7 @@
 
 import { mapGetters, mapState } from 'vuex'
 
-import firebase from 'firebase/app'
+import firebase, { firestore } from 'firebase/app'
 
 let provider
 
@@ -32,29 +32,28 @@ export default {
       if (!provider || this.isUpgrading) return;
 
       const toast = (t) => this.$store.commit('pushToast', t)
-      const dispatch = this.$store.dispatch
-      const commit = this.$store.commit
 
-      firebase.auth().signInWithRedirect(provider).then(res => {
-        const uid = res.user.uid
-
+      firebase.auth().signInWithPopup(provider).then(res => {
+        const user = res.user
+        const toast = (t) => this.$store.commit('pushToast', t)
+        const dispatch = this.$store.dispatch
         toast({
           name: this.l['You have successfully logged in!'],
           seconds: 3,
           type: 'success',
         })
-        dispatch('tag/addDefaultData', uid)
-        dispatch('list/addDefaultData', uid)
-        dispatch('filter/addDefaultData', uid)
-        dispatch('user/addDefaultData', {
-          user: res.user,
-          username: res.user.displayName,
-        })
-        commit('closePopup')
-        commit('toggleUser', true)
-        this.$router.push('/user')
-        window.location.reload()
-        
+        dispatch('createUser', user).then(() => {
+          this.$router.push('/user')
+          window.location.reload()
+          this.$store.dispatch('closePopup')
+        }).catch(err => {
+          firebase.auth().currentUser.delete()
+          toast({
+            name: err.message,
+            seconds: 3,
+            type: 'error',
+          })}
+        )
       }).catch(err => toast('pushToast', {
         name: err.message,
         seconds: 3,
@@ -62,20 +61,24 @@ export default {
       }))
     },
     guest() {
-      firebase.auth().signInAnonymously()
-      .then(() => {
+      const auth = firebase.auth()
+      auth.signInAnonymously().then(() => {
         this.$store.commit('pushToast', {
           name: this.l['You have successfully signed in as a guest.'],
           seconds: 3,
           type: 'success',
+        })
+        this.$store.dispatch('createAnonymousUser', auth.currentUser.uid).then(el => {
+          this.$store.dispatch('closePopup')
+          this.$router.push('/user')
+        }).catch(err => {
+          auth.currentUser.delete()
         })
       }).catch(err => this.$store.commit('pushToast', {
         name: err.message,
         seconds: 3,
         type: 'error',
       }))
-      this.$router.push('/user')
-      this.$store.commit('closePopup')
     },
   },
   computed: {

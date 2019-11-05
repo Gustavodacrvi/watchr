@@ -78,10 +78,10 @@ export default {
 
       for (const v of vals) {
         if (v && v.includes(':') && !v.includes('24:00') && isValidTime(v)) {
-          return {time: v, noTimeStr: name.replace(v, '')}
+          return v
         }
       }
-      return {time: null, noTimeStr: str}
+      return null
     }
     const searchForNextKeyword = str => {
       const key = l['CalParserNext']
@@ -108,14 +108,10 @@ export default {
     const getKeyWords = str => {
       const today = l['CalParserToday']
       const tomorrow = l['CalParserTomorrow']
-      switch (str) {
-        case today: {
-          return this.parseMomentToObject(mom())
-        }
-        case tomorrow: {
+      if (str.includes(today))
+        return this.parseMomentToObject(mom())
+      else if (str.includes(tomorrow))
           return this.parseMomentToObject(tod.clone().add(1, 'd').clone())
-        }
-      }
       const next = searchForNextKeyword(str)
       if (next) return next
       return null
@@ -292,6 +288,8 @@ export default {
       const keyNextWeek = l['CalParserNextweek']
       const keyNextWeekend = l['CalParserNextweekend']
       const keyNextMonth = l['CalParserNextmonth']
+
+      obj.time = getTime(str)
       
       switch (str) {
         case keyNextWeek: {
@@ -314,19 +312,15 @@ export default {
       
       str = str.toLowerCase()
 
+      const {defer, due} = getDeferAndDue(str)
       
-      const {time, noTimeStr} = getTime(str)
-      str = noTimeStr
-      obj.time = time
-      const {defer, due} = getDeferAndDue(noTimeStr)
-      
-      obj.times = getTimesKeyword(noTimeStr)
+      obj.times = getTimesKeyword(str)
 
       obj.defer = defer
       obj.due = due
       if (defer || due) return obj
 
-      const per = getPeriodicDate(noTimeStr)
+      const per = getPeriodicDate(str)
       if (per) {
         obj.type = per.type
         if (per.periodic) {
@@ -337,14 +331,14 @@ export default {
         return obj
       }
       
-      const keys = getKeyWords(noTimeStr)
+      const keys = getKeyWords(str)
       if (keys) {
         obj.type = 'specific'
         const momStr = parseObjectToMoment(keys).format('Y-M-D')
         obj.specific = momStr
         return obj
       }
-      const parsedDate = parseDate(noTimeStr)
+      const parsedDate = parseDate(str)
       if (parsedDate) {
         obj.type = 'specific'
         obj.specific = parseObjectToMoment(parsedDate).format('Y-M-D')
@@ -479,5 +473,30 @@ export default {
         setTimeout(() => contextMenuRunned = false)
       }
     })
+  },
+  getRelevantUserData(userAuth, update) {
+    if (!userAuth.email)
+      return {
+        userId: userAuth,
+        isAnonymous: true,
+        viewOrders: {},
+        filters: [],
+        tags: [],
+        lists: [],
+      }
+    let obj = {
+      userId: userAuth.uid,
+      email: userAuth.email,
+      photoURL: userAuth.photoURL,
+      displayName: userAuth.displayName,
+      isAnonymous: false,
+    }
+    if (!update) obj = {...obj, ...{
+      viewOrders: {},
+      filters: [],
+      tags: [],
+      lists: [],
+    }}
+    return obj
   },
 }

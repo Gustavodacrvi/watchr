@@ -1,7 +1,7 @@
 <template>
   <div class="User">
     <transition appear name="state" mode="out-in">
-      <UserView v-if="authState && user.emailVerified" key="app" :hideNavbar='hideNavbar'/>
+      <UserView v-if="(authState && user.emailVerified) || (user && user.isAnonymous)" key="app" :hideNavbar='hideNavbar'/>
       <div key="notlogged" v-else-if="!authState && firstFireLoad" class="view">
         <span class='view'>{{ l['Please log in to continue.'] }}</span>
       </div>
@@ -51,7 +51,7 @@ export default {
   methods: {
     resend() {
       firebase.auth().currentUser.sendEmailVerification()
-      this.$store.dispatch('pushToast', {
+      this.$store.commit('pushToast', {
         name: 'E-mail sent',
         seconds: 3,
         type: 'success',

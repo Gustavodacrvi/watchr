@@ -48,7 +48,7 @@ export default {
                     photoURL: url,
                   }).then(() => window.location.reload())
                   .catch(errToast)
-                  this.$store.dispatch('user/update', {photoURL: url})
+                  this.$store.dispatch('update', {photoURL: url})
                 }).catch(errToast)
               }).catch(errToast)
             }
@@ -59,7 +59,7 @@ export default {
           icon: 'trash',
           callback: () => {
             this.$store.dispatch('deleteProfilePic')
-            this.$store.dispatch('user/update', {photoURL: ''})
+            this.$store.dispatch('update', {photoURL: ''})
           }
         }
       ], this, 'click')

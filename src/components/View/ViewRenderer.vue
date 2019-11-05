@@ -1,32 +1,26 @@
+
 <template>
   <div class="ViewRenderer" :class="platform">
     <div>
       <Header
-        :icon="icon"
+        v-bind="$props"
+
         :viewName="viewName"
-        :viewNameValue="viewNameValue"
         :options="options"
-        :viewType="viewType"
-        :notes='notes'
         :tags='tagSelectionOptions'
         :lists='listSelectionOptions'
-        :progress='progress'
         :activeTags='activeTags'
         :activeList='activeList'
-        :isSmart="isSmart"
         @save-header-name='name => $emit("save-header-name", name)'
         @save-notes='notes => $emit("save-notes", notes)'
         @tag='selectTag'
         @list='selectList'
       />
       <TaskRenderer
-        :emptyIcon='emptyIcon'
+        v-bind="$props"
+
         :tasks='getFilterCompletedTasks'
-        :view='viewName'
-        :isSmart="isSmart"
-        :viewType="viewType"
-        :viewNameValue='viewNameValue'
-        :showEmptyHeadings='showEmptyHeadings'
+        :viewName='viewName'
         :headings='filteredHeadingsOptions'
         :addTask='addTask'
         :headingEdit='headingEdit'
@@ -34,9 +28,7 @@
         :activeTags='getActiveTags'
         :options='options'
         :activeList='getActiveListId'
-        :illustration='illustration'
         :headingPosition='0'
-        :onSortableAdd='onSortableAdd'
         @update="(ids) => $emit('update-ids', ids)"
         @update-headings='(ids) => $emit("update-heading-ids", ids)'
         @add-heading="addHeading"
@@ -66,7 +58,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 export default {
-  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'notes', 'showCompletedOnHeadings', 'isSmart', 'headerOptions', 'progress'],
+  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'notes', 'showCompletedOnHeadings', 'isSmart', 'headerOptions', 'progress', 'prefix'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,
@@ -288,13 +280,13 @@ export default {
             icon: 'circle-check',
             callback: () => this.toggleCompleted()
           },
-          {
+        ]
+        if (this.showCompleted) opt[3].name = l['Hide completed']
+        if (this.prefix === 'list') opt.push(          {
             name: l['Hide autohide headings'],
             icon: 'archive',
             callback: () => this.hideHeadings = true
-          }
-        ]
-        if (this.showCompleted) opt[3].name = l['Hide completed']
+          })
         if (this.headerOptions && this.headerOptions.length > 0) {
           opt.unshift({
             type: 'hr',

@@ -1,6 +1,7 @@
 
 import { fire, auth } from './index'
 import utils from '../utils'
+import { tagColl, tagRef, userRef, fd, taskRef } from '../utils/firestore'
 
 const uid = () => {
   return auth.currentUser.uid
@@ -10,12 +11,13 @@ export default {
   namespaced: true,
   state: {
     tags: [],
-    order: [],
   },
   getters: {
-    sortedTags(state) {
-      const {order, tags} = state
-      return utils.checkMissingIdsAndSortArr(order, tags)
+    sortedTags(state, asd, {userInfo}) {
+      const {tags} = state
+      if (userInfo)
+        return utils.checkMissingIdsAndSortArr(userInfo.tags, tags)
+      return []
     },
     sortedTagsByFrequency(s, getters) {
       const tags = getters.sortedTags
@@ -36,15 +38,8 @@ export default {
       if (uid())
       return Promise.all([
         new Promise(resolve => {
-          fire.collection('tags').where('userId', '==', uid()).onSnapshot(snap => {
+          tagColl().where('userId', '==', uid()).onSnapshot(snap => {
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tags')
-            resolve()
-          })
-        }),
-        new Promise(resolve => {
-          fire.collection('tagsOrder').doc(uid()).onSnapshot(snap => {
-            state.order = snap.data().order
-            if (!state.order) state.order = []
             resolve()
           })
         })
@@ -57,28 +52,41 @@ export default {
         times: 0,
       }
       if (!index)
-        fire.collection('tags').add(obj)
+        tagColl().add(obj)
       else {
         const batch = fire.batch()
   
         const ord = ids.slice()
-        const ref = fire.collection('tags').doc()
+        const ref = tagRef()
         batch.set(ref, obj)
         ord.splice(index, 0, ref.id)
-        const orderRef = fire.collection('tagsOrder').doc(uid())
-        batch.update(orderRef, {
-          order: ord,
+        const user = userRef()
+        batch.update(user, {
+          tags: ord,
         })
   
         batch.commit()
       }
     },
-    deleteTag(c, id) {
-      fire.collection('tags').doc(id).delete()
+    deleteTag(c, {id, tasks}) {
+      const batch = fire.batch()
+      const ts = tasks.filter(t => t.tags.includes(id))
+      
+      for (const t of ts) {
+        const ref = taskRef(t.id)
+        batch.update(ref, {
+          tags: fd().arrayRemove(id)
+        })
+      }
+
+      const ref = tagRef(id)
+      batch.delete(ref)
+      
+      batch.commit()
     },
     updateOrder(c, ids) {
-      fire.collection('tagsOrder').doc(uid()).update({
-        order: ids,
+      userRef().update({
+        tags: ids,
       })
     },
     sortTagsByFrequency({state, dispatch}) {
@@ -92,14 +100,9 @@ export default {
       dispatch('updateOrder', tags.map(el => el.id))
     },
     saveTag(c, tag) {
-      fire.collection('tags').doc(tag.id).update({
+      tagRef(tag.id).update({
         ...tag
       })
-    },
-    addDefaultData(c, id) {
-      return fire.collection('tagsOrder').doc(id).set({
-        userId: id,
-      }, {merge: true})
     },
     deleteAllData({state}) {
       for (const el of state.tags)

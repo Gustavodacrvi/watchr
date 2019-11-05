@@ -66,13 +66,13 @@ export default {
           type: 'error',
           seconds: 4,
         })).then(() => {
-          this.$store.dispatch('user/update', {email: this.email})
+          this.$store.dispatch('update', {email: this.email})
           toast({
             name: this.l['An e-mail has been sent to your e-mail account to proceed, click on the provided link to proceed.'],
             seconds: 6,
             type: 'success',
           })
-          this.$store.commit('closePopup')
+          this.$store.dispatch('closePopup')
         })
       }
     },
