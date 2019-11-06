@@ -110,6 +110,7 @@ export default {
   width: 100%;
   margin: 16px 0;
   outline: none;
+  resize: none;
 }
 
 </style>

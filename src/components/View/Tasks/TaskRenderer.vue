@@ -46,6 +46,7 @@
           :options='h.options ? h.options : []'
           :save='h.onEdit'
           @option-click='v => getOptionClick(h)(v)'
+          @save-notes='h.saveNotes'
 
           :data-id='h.id'
         >

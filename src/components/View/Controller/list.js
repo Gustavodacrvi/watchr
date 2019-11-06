@@ -99,6 +99,12 @@ export default {
             allowEdit: true,
             showHeadingName: false,
             notes: h.notes,
+            saveNotes: notes => {
+              console.log(notes)
+              this.$store.dispatch('list/saveHeadingNotes', {
+                listId: this.viewList.id, notes, heading: h.name,
+              })
+            },
             onEdit: (name) => {
               this.$store.dispatch('list/saveHeadingName', {
                 listId: this.viewList.id,
