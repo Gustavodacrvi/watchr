@@ -37,7 +37,9 @@
       <template v-for="(h, i) in headings">
         <HeadingApp v-if="showEmptyHeadings || filter(h).length > 0" :key="h.id"
           :header='h'
+
           :name='h.name'
+          :notes='h.notes'
           :allowEdit='h.allowEdit'
           :headingEdit='headingEdit'
           :color='h.color ? h.color : ""'

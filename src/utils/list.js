@@ -102,7 +102,7 @@ export default {
         icon: 'note',
         callback: () => dispatch('pushPopup', {
           comp: 'AddListNote',
-          payload: viewList.id,
+          payload: listId,
         })
       })
     if (store.getters.isDesktop)
@@ -110,7 +110,7 @@ export default {
         name: l["Export as template"],
         icon: 'export',
         callback: () => utils.exportListTemplate({
-          list: viewList, tasks: getListTasks,
+          list, tasks: getListTasks,
         })
       })
     opt.push(          {

@@ -60,7 +60,7 @@ import { mapGetters } from 'vuex'
 import utils from '@/utils/'
 
 export default {
-  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEdit', 'save'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEdit', 'save', 'notes'],
   components: {
     IconDrop: IconDropVue,
     Icon: IconVue,

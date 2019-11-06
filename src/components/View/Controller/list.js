@@ -98,6 +98,7 @@ export default {
             name: h.name,
             allowEdit: true,
             showHeadingName: false,
+            notes: h.notes,
             onEdit: (name) => {
               this.$store.dispatch('list/saveHeadingName', {
                 listId: this.viewList.id,
