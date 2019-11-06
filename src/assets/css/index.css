@@ -8,7 +8,7 @@ html {
   touch-action: manipulation;
 }
 
-:root {
+html.dark {
   --back-color: #131313;
   --void: #0D0D0D;
   --font: "Work Sans";
@@ -26,7 +26,28 @@ html {
   --purple: #a459de;
   --brown: #daa85d;
   --yellow: #FFE366;
-  --red: #DE5757;
+  --red: #DE5757; 
+}
+
+html.light {
+  --back-color: #EBEBEB;
+  --void: #B4B3B7;
+  --font: "Work Sans";
+  --white: #505050;
+  --primary: #57A0DE;
+  --dark: #D8D8D8;
+  --card: var(--back-color);
+  --dark-gray: #B4B3B7;
+  --light-gray: #F3F3F3;
+  --gray: #BEBEBE;
+  --extra-light-gray: #AAAAAA;
+  --extra-extra-light-gray: #E3E2E2;
+  --orange: #FFA166;
+  --green: #57DE5B;
+  --purple: #a459de;
+  --brown: #daa85d;
+  --yellow: #FFE366;
+  --red: #DE5757; 
 }
 
 body {

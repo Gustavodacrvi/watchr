@@ -91,7 +91,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect'],
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -116,7 +116,7 @@ export default {
       if (!this.isEditing) {
         const s = cont.style
         const height = cont.offsetHeight + 'px'
-        const lessThan38 = (cont.offsetHeight < 38)
+        const lessThanMinimum = (cont.offsetHeight < this.minimumTaskHeight)
         cont.classList.add('hided')
         s.height = '0px'
         s.padding = '2px 0'
@@ -124,9 +124,9 @@ export default {
           this.$emit('de-select', this.$el)
         }, 10)
         setTimeout(() => {
-          if (lessThan38) {
+          if (lessThanMinimum) {
           cont.classList.add('show')
-            s.height = '38px'
+            s.height = this.minimumTaskHeight + 'px'
           }
           else {
             s.height = height
@@ -522,7 +522,10 @@ export default {
 }
 
 .icon-drop {
-  transform: translateY(18.5px);
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .check {
