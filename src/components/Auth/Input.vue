@@ -28,8 +28,9 @@ export default {
     keyup({key}) {
       if (key === 'Control') this.control = false
     },
-    keydown({key}) {
-      evt => $emit('keydown', evt)
+    keydown(evt) {
+      this.$emit('keydown', evt)
+      const key = evt.key
       if (key === 'Enter') this.$emit('enter')
       else if (key === "Escape")
         this.$emit('cancel')

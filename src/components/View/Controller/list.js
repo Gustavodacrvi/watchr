@@ -10,9 +10,8 @@ export default {
       if (this.viewList) {
         if (!obj.task.list)
           obj.task.list = this.viewList.id
-        obj.task.users = this.viewList.users
         this.$store.dispatch('list/addTaskByIndex', {
-          ...obj, listId: this.viewList.id, userId: this.viewList.userId,
+          ...obj, listId: this.viewList.id,
         })
       }
     },

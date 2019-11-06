@@ -116,23 +116,21 @@ export default {
           })
         ])
     },
-    addTask(c, obj) {
+    addTask({rootState}, obj) {
       const batch = fire.batch()
 
       const ref = taskRef()
       batch.set(ref, {
         userId: uid(),
-        users: [uid()],
         ...obj,
       })
-
-      if (obj.listId) {
-        const listRef = taskRef(obj.listId)
-        batch.update(listRef, {
-          tasks: fd().arrayUnion(ref.id),
-        })
+      const type = utilsTask.taskType(obj)
+      console.log(type, obj.calendar)
+      if (type && rootState.userInfo) {
+        const viewOrders = rootState.userInfo.viewOrders
+        viewOrders[type] = fd().arrayUnion(ref.id)
+        batch.update(userRef(), viewOrders)
       }
-
       batch.commit()
     },
     completeTasks(c, tasks) {
@@ -296,7 +294,6 @@ export default {
       }
       switch (type) {
         case 'tag': {
-          console.log(elIds)
           dispatch('addTagsToTasksById', {
             tagIds: elIds.slice(),
             ids: taskIds,

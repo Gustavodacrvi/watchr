@@ -244,7 +244,6 @@ export default {
       const newTaskRef = taskRef()
       batch.set(newTaskRef, {
         userId: uid(),
-        users: [uid()],
         ...task,
       })
 
@@ -264,14 +263,15 @@ export default {
     addTaskByIndex(c, {ids, index, task, listId}) {
       const batch = fire.batch()
 
-      const newTaskRef = userRef(task.userId).collection('tasks').doc()
+      const newTaskRef = taskRef()
       batch.set(newTaskRef, {
+        userId: uid(),
         ...task,
       })
 
       ids.splice(index, 0, newTaskRef.id)
 
-      const savedListRef = userRef(task.userId).collection('lists').doc(listId)
+      const savedListRef = listRef(listId)
       batch.update(savedListRef, {tasks: ids})
 
       batch.commit()

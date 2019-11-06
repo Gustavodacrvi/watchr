@@ -84,14 +84,6 @@ export default {
         }
       },
     ]
-    if (list.userId === store.state.user.uid)
-      opt.splice(1, 0, {
-        name: l['Share list'],
-        icon: 'users',
-        callback: () => dispatch('pushPopup', {
-            comp: 'ShareTasks', payload: listId,
-          })
-    })
     if (!list.notes)
       opt.push({
         name: l['Add notes'],
