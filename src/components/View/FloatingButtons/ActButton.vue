@@ -44,6 +44,10 @@ export default {
   align-items: center;
 }
 
+.renderer {
+  width: 100%;
+}
+
 .floating {
   position: relative;
   transform: scale(1,1);

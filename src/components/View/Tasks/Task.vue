@@ -32,7 +32,7 @@
             <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
             <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
             <transition name="name-t">
-              <span v-if="!showApplyOnTasks" class="task-name" key="normal">
+              <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
                   <span v-if="calendarStr && !isToday" class="tag cb rb">{{ calendarStr }}</span>
                   <span v-if="timeStr" class="tag cb rb">{{ timeStr }}</span>
                   <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
@@ -126,7 +126,7 @@ export default {
         setTimeout(() => {
           if (lessThanMinimum) {
           cont.classList.add('show')
-            s.height = this.minimumTaskHeight + 'px'
+            s.height = '38px'
           }
           else {
             s.height = height
@@ -521,11 +521,15 @@ export default {
   align-items: center;
 }
 
+.icon-drop-wrapper {
+  position: relative;
+  width: 4px;
+}
+
 .icon-drop {
   position: absolute;
-  right: 5px;
   top: 50%;
-  transform: translateY(-50%);
+  right: -.5px;
 }
 
 .check {

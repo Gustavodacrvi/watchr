@@ -379,6 +379,20 @@ export default {
 
       batch.commit()
     },
+    saveHeadingNotes({getters}, {listId, notes, heading}) {
+      const list = getters.getListsById([listId])[0]
+      const batch = fire.batch()
+      
+      const heads = list.headings.slice()
+      const i = heads.findIndex(el => el.name === heading)
+      heads[i].notes = notes
+      const ref = listRef(listId)
+      batch.update(ref, {
+        headings: heads,
+      })
+
+      batch.commit()
+    },
     moveTasksBetweenHeadings({getters}, {ids, listId, taskIds, name}) {
       const list = getters.getListsById([listId])[0]
       const batch = fire.batch()

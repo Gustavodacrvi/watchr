@@ -15,6 +15,18 @@ export default {
         }
       },
       {
+        name: l['Add notes'],
+        icon: 'note',
+        callback: () => {
+          dispatch('pushPopup', {
+            comp: 'AddHeadingNote',
+            payload: {
+              listId, heading: heading.name,
+            }
+          })
+        },
+      },
+      {
         name: l['Hide heading'],
         icon: 'archive',
         callback: () => dispatch('list/toggleHeadingAuthide', {
