@@ -29,6 +29,7 @@
             </div>
           </div>
         </div>
+        <NotesApp :notes="notes" @save-notes="saveNote"/>
         <transition name="fade">
           <div v-show="showing" class="cont">
               <slot></slot>
@@ -54,17 +55,19 @@
 import IconDropVue from '../../IconDrop.vue'
 import IconVue from '../../Icon.vue'
 import EditVue from './Edit.vue'
+import Notes from './Notes.vue'
 
 import { mapGetters } from 'vuex'
 
 import utils from '@/utils/'
 
 export default {
-  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEdit', 'save'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEdit', 'save', 'notes'],
   components: {
     IconDrop: IconDropVue,
     Icon: IconVue,
     EditHeading: EditVue,
+    NotesApp: Notes,
   },
   mounted() {
     const header = this.$el.getElementsByClassName('header')[0]
@@ -82,7 +85,10 @@ export default {
     toggleEditing() {
       if (this.allowEdit)
         this.editing = !this.editing
-    }
+    },
+    saveNote(notes) {
+      this.$emit('save-notes', notes)
+    },
   },
   computed: {
     ...mapGetters(['l']),

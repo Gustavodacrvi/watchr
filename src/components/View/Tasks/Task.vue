@@ -32,7 +32,7 @@
             <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
             <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
             <transition name="name-t">
-              <span v-if="!showApplyOnTasks" class="task-name" key="normal">
+              <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
                   <span v-if="calendarStr && !isToday" class="tag cb rb">{{ calendarStr }}</span>
                   <span v-if="timeStr" class="tag cb rb">{{ timeStr }}</span>
                   <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
@@ -91,7 +91,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect'],
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -116,7 +116,7 @@ export default {
       if (!this.isEditing) {
         const s = cont.style
         const height = cont.offsetHeight + 'px'
-        const lessThan38 = (cont.offsetHeight < 38)
+        const lessThanMinimum = (cont.offsetHeight < this.minimumTaskHeight)
         cont.classList.add('hided')
         s.height = '0px'
         s.padding = '2px 0'
@@ -124,7 +124,7 @@ export default {
           this.$emit('de-select', this.$el)
         }, 10)
         setTimeout(() => {
-          if (lessThan38) {
+          if (lessThanMinimum) {
           cont.classList.add('show')
             s.height = '38px'
           }
@@ -521,8 +521,15 @@ export default {
   align-items: center;
 }
 
+.icon-drop-wrapper {
+  position: relative;
+  width: 4px;
+}
+
 .icon-drop {
-  transform: translateY(18.5px);
+  position: absolute;
+  top: 50%;
+  right: -.5px;
 }
 
 .check {

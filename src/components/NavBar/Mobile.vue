@@ -2,11 +2,11 @@
   <div class="Mobile">
     <div class="central">
       <span class="cursor" @click="openMenu">
-        <Icon icon="menu" width="30px" :primaryHover="true"/>
+        <Icon icon="menu" width="22px" :primaryHover="true"/>
       </span>
       <transition name="fade" mode="out-in" appear>
         <div v-if="isNotOnHome" key="user">
-          <h2 v-if="title" class="title">{{ title }}</h2>
+          <span v-if="title" class="title">{{ title }}</span>
           <div class="drop">
             <IconDrop v-if="isOnUserPage && navBar && navBar.options"
               handle="settings-v"
@@ -114,6 +114,7 @@ export default {
   display: inline-block;
   margin: 0;
   margin-left: 10px;
+  font-size: 1.15em;
   transform: translateY(-2.5px);
 }
 

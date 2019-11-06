@@ -16,6 +16,7 @@
       <Task v-for="t of tasks" :key="t.id"
         v-bind="$props"
 
+        :minimumTaskHeight='minimumTaskHeight'
         :task='t'
         :isSelecting='isSelecting'
         :enableSelect='enableSelect'
@@ -36,13 +37,16 @@
       <template v-for="(h, i) in headings">
         <HeadingApp v-if="showEmptyHeadings || filter(h).length > 0" :key="h.id"
           :header='h'
+
           :name='h.name'
+          :notes='h.notes'
           :allowEdit='h.allowEdit'
           :headingEdit='headingEdit'
           :color='h.color ? h.color : ""'
           :options='h.options ? h.options : []'
           :save='h.onEdit'
           @option-click='v => getOptionClick(h)(v)'
+          @save-notes='h.saveNotes'
 
           :data-id='h.id'
         >
@@ -435,15 +439,15 @@ export default {
       if (cont) {
         const s = cont.style
         const height = cont.offsetHeight + 'px'
-        const lessThan38 = (cont.offsetHeight < 38)
+        const lessThanMinimum = (cont.offsetHeight < this.minimumTaskHeight)
         cont.classList.add('hided')
         s.height = '0px'
         s.padding = '2px 0'
         setTimeout(() => {
           s.transition = 'height .2s, opacity .2s, transform .1s !important'
-          if (lessThan38) {
+          if (lessThanMinimum) {
           cont.classList.add('show')
-            s.height = '38px'
+            s.height = this.minimumTaskHeight + 'px'
           }
           else {
             s.height = height
@@ -526,6 +530,9 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    minimumTaskHeight() {
+      return this.isDesktop ? 38 : 45
+    },
     filter() {
       return (h) => {
         let ts = h.filter(this.savedTasks, h, this.showCompleted)
