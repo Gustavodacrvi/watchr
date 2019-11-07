@@ -100,6 +100,7 @@ export default {
   "Accept invite": "Aceitar convite",
   "Reject invite": "Rejeitar convite",
   "rejected": "rejeitado",
+  "Edit list name": "Editar nome da lista",
   "Begins in": "Começa em",
   "Hide defered lists": "Hide defered lists",
   "Show defered lists": "Mostrar escondidas",

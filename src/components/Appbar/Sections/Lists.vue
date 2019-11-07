@@ -87,7 +87,6 @@ export default {
         list.callback = () => {
           this.$router.push('/user?list=' + list.name)
         }
-        if (list.deferDate) console.log(list.deferDate)
         list.options = utilsList.listOptions(list, this.$store, this.$store.getters['task/getListTasks'](this.tasks, list.id), this.l)
       }
       return lists

@@ -219,6 +219,11 @@ export default {
         ...list,
       })
     },
+    addListTag(c, {tagId, listId}) {
+      listRef(listId).update({
+        tags: fd().arrayUnion(tagId),
+      })
+    },
     updateOrder(c, lists) {
       userRef().update({lists})
     },
