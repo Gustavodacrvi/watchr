@@ -82,6 +82,17 @@ export default {
     showEmptyHeadings() {
       return true
     },
+    headerDates() {
+      const obj = {}
+      const list = this.viewList
+      if (!list) return obj
+
+      obj.defer = list.deferDate
+      obj.deadline = list.deadline
+      obj.repeat = list.repeat
+
+      return obj
+    },
     headingsOptions() {
       const arr = []
       if (this.viewList) {
@@ -100,7 +111,6 @@ export default {
             showHeadingName: false,
             notes: h.notes,
             saveNotes: notes => {
-              console.log(notes)
               this.$store.dispatch('list/saveHeadingNotes', {
                 listId: this.viewList.id, notes, heading: h.name,
               })

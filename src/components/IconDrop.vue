@@ -21,7 +21,8 @@
           <div v-if="showingLinks" class="links">
             <div v-if="showSearch" class="search">
               <input class="input"
-                v-model="search"
+                :value="search"
+                @input="v => search = v"
               >
             </div>
             <transition-group

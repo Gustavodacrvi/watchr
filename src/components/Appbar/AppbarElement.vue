@@ -150,6 +150,10 @@ export default {
 
 .name {
   transition-duration: .2s;
+  max-width: 225px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   transform: translateY(0px);
 }
 
@@ -197,7 +201,7 @@ export default {
 }
 
 .drop {
-  transform: translate(8px, 16px);
+  transform: translate(8px, 14px);
 }
 
 .total {

@@ -87,6 +87,16 @@ export default {
         callback: () => pop({comp: 'AddList', payload: {...list, editing: true}})
       },
       {
+        name: l['Defer date'],
+        icon: 'calendar',
+        callback: () => {return {calendar: true, callback: date => {
+          if (date.type === 'specific')
+            dispatch('list/saveList', {
+              id: listId, deferDate: date.specific,
+            })
+        }}},
+      },
+      {
         name: l["Duplicate list"],
         icon: 'copy',
         callback: () => {

@@ -46,7 +46,7 @@
           :options='h.options ? h.options : []'
           :save='h.onEdit'
           @option-click='v => getOptionClick(h)(v)'
-          @save-notes='h.saveNotes'
+          @save-notes='v => getNotesOption(h)(v)'
 
           :data-id='h.id'
         >
@@ -263,6 +263,10 @@ export default {
     getOptionClick(h) {
       if (!h.optionClick) return () => {}
       return h.optionClick
+    },
+    getNotesOption(h) {
+      if (!h.saveNotes) return () => {}
+      return h.saveNotes
     },
     applyEventListenersToEditVueInstance(ins, onSave, evt) {
       this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')

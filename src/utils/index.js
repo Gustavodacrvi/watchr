@@ -58,11 +58,12 @@ export default {
       year: m.format('Y'),
     }
   },
-  parseInputToCalendarObject(name, language) {
+  parseInputToCalendarObject(name, language, returnEntireStr) {
     if (!language) throw 'Missing language object'
     const l = language
     const isStrNumber = str => !isNaN(parseInt(str, 10))
     const getDateString = () => {
+      if (returnEntireStr) return name
       if (name.includes(' $'))
         return name.substr(name.indexOf(' $')).replace(' $', '')
       return undefined

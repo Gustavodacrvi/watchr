@@ -28,6 +28,9 @@
       </transition>
       <IconDrop class="passive drop" handle="settings-h" handleColor="var(--gray)" :options="options"/>
     </div>
+    <div class="tags">
+      <HeaderInfo :content="defer"/>
+    </div>
     <NotesApp class="tags" :notes='notes' @save-notes="saveNotes"/>
     <div class="tags" :class="{margins: tags.length > 0}">
       <Tag class="tag" v-for="t in tags" :key="t.id"
@@ -54,16 +57,21 @@ import IconVue from '../../Icon.vue'
 import IconDropVue from '../../IconDrop.vue'
 import TagVue from './../Tag.vue'
 import Notes from './Notes.vue'
+import HeaderInfo from './HeaderInfo.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
+import mom from 'moment'
+import utils from '@/utils'
+
 export default {
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart', 'notes', 'progress'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
     Tag: TagVue,
     NotesApp: Notes,
+    HeaderInfo,
   },
   data() {
     return {
@@ -122,12 +130,15 @@ export default {
       setTimeout(() => {
         const inp = this.$refs.input
         if (inp) inp.focus()
-      }, 100) 
+      }, 100)
+    },
+    getDateDifference(date) {
+      return mom().diff(mom(date, 'Y-M-D'), 'd')
     },
   },
   computed: {
     ...mapState(['selectedTasks']),
-    ...mapGetters(['isDesktop', 'platform']),
+    ...mapGetters(['isDesktop', 'platform', 'l']),
     isEditable() {
       return !this.isSmart && (this.viewType === 'list' || this.viewType === 'tag') && this.isDesktop
     },
@@ -158,6 +169,14 @@ export default {
       }
       if (this.viewType === 'search') return ''
       return 'var(--red)'
+    },
+    defer() {
+      const l = this.l
+      if (this.headerDates && this.headerDates.defer) {
+        const date = utils.getHumanReadableDate(this.headerDates.defer, this.l)
+        return `${l['Begins in']}: ${date}`
+      }
+      return null
     },
   },
   watch: {

@@ -201,7 +201,7 @@ export default {
       
       const events = [
         'save-header-name', 'save-notes', 'update-heading-ids',
-        'add-task', 'add-heading', 'update-ids'
+        'add-task', 'add-heading', 'update-ids',
       ]
       const obj = {}
       
@@ -216,7 +216,7 @@ export default {
       const props = [
         'icon', 'illustration', 'showHeader', 'showEmptyHeadings',
         'headingEdit', 'headerOptions', 'notes', 'progress', 'headingsOptions',
-        'tasks', 'tasksOrder', 'onSortableAdd', 'viewNameValue',
+        'tasks', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates',
       ]
       const obj = {}
 
