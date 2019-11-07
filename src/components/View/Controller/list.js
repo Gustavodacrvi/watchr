@@ -73,6 +73,12 @@ export default {
         deferDate: null,
       })
     },
+    removeHeaderTag(tagName) {
+      this.$store.dispatch('list/removeListTag', {
+        listId: this.viewList.id,
+        tagId: this.listgetListTags.find(el => el.name === tagName).id,
+      })
+    },
   },
   computed: {
     icon() {return 'tasks'},
@@ -87,6 +93,14 @@ export default {
     },
     showEmptyHeadings() {
       return true
+    },
+    getListTags() {
+      if (this.viewList && this.viewList.tags)
+        return this.getTagsById(this.viewList.tags)
+      return []
+    },
+    headerTags() {
+      return this.listgetListTags.map(el => el.name)
     },
     headerDates() {
       const obj = {}

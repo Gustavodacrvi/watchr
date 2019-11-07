@@ -31,7 +31,15 @@ export default {
         if (tag) arr.push(tag)
       }
       return arr
-    }
+    },
+    getTagsById: state => ids => {
+      const arr = []
+      for (const id of ids) {
+        const tag = state.tags.find(el => el.id === id)
+        if (tag) arr.push(tag)
+      }
+      return arr
+    },
   },
   actions: {
     getData({state}) {

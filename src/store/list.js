@@ -224,6 +224,11 @@ export default {
         tags: fd().arrayUnion(tagId),
       })
     },
+    removeListTag(c, {tagId, listId}) {
+      listRef(listId).update({
+        tags: fd().arrayRemove(tagId),
+      })
+    },
     updateOrder(c, lists) {
       userRef().update({lists})
     },

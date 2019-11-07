@@ -30,6 +30,13 @@
     </div>
     <div class="tags">
       <HeaderInfo :content="defer" @click="$emit('remove-defer-date')"/>
+      <div class="tags">
+        <Tag class="tag" v-for="t in headerTags" :key="t"
+          :value="t"
+          icon="tag"
+          @click="$emit('remove-header-tag', t)"
+        />
+      </div>
     </div>
     <NotesApp class="tags" :notes='notes' @save-notes="saveNotes"/>
     <div class="tags" :class="{margins: tags.length > 0}">
@@ -65,7 +72,7 @@ import mom from 'moment'
 import utils from '@/utils'
 
 export default {
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,

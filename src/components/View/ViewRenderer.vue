@@ -11,6 +11,7 @@
         :lists='listSelectionOptions'
         :activeTags='activeTags'
         :activeList='activeList'
+        :headerTags="headerTags"
         @save-header-name='name => $emit("save-header-name", name)'
         @save-notes='notes => $emit("save-notes", notes)'
         @tag='selectTag'
@@ -18,6 +19,7 @@
         @remove-defer-date='$emit("remove-defer-date")'
         @remove-deadline='$emit("remove-deadline")'
         @remove-repeat='$emit("remove-repeat")'
+        @remove-header-tag="tagName => $emit('remove-header-tag', tagName)"
       />
       <TaskRenderer
         v-bind="$props"
@@ -62,7 +64,7 @@ import mom from 'moment'
 
 export default {
   props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'notes', 'showCompletedOnHeadings', 'isSmart', 'headerOptions', 'progress', 'prefix',
-  'headerDates'],
+  'headerDates', 'headerTags'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,
