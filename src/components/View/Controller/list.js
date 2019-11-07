@@ -67,6 +67,12 @@ export default {
         })
       }
     },
+    removeDeferDate() {
+      this.$store.dispatch('list/saveList', {
+        id: this.viewList.id,
+        deferDate: null,
+      })
+    },
   },
   computed: {
     icon() {return 'tasks'},

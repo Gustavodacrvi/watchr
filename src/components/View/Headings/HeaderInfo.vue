@@ -3,7 +3,7 @@
     @enter='enter'
     @leave='leave'
   >
-    <div v-if="content" class="header-info rb"
+    <div v-show="content" class="header-info rb"
       @mouseenter="hover = true"
       @mouseleave="hover = false"
       @click="$emit('click')"

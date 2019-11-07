@@ -15,6 +15,9 @@
         @save-notes='notes => $emit("save-notes", notes)'
         @tag='selectTag'
         @list='selectList'
+        @remove-defer-date='$emit("remove-defer-date")'
+        @remove-deadline='$emit("remove-deadline")'
+        @remove-repeat='$emit("remove-repeat")'
       />
       <TaskRenderer
         v-bind="$props"

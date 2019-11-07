@@ -29,7 +29,7 @@
       <IconDrop class="passive drop" handle="settings-h" handleColor="var(--gray)" :options="options"/>
     </div>
     <div class="tags">
-      <HeaderInfo :content="defer"/>
+      <HeaderInfo :content="defer" @click="$emit('remove-defer-date')"/>
     </div>
     <NotesApp class="tags" :notes='notes' @save-notes="saveNotes"/>
     <div class="tags" :class="{margins: tags.length > 0}">
