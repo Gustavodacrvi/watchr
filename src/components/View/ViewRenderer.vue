@@ -420,7 +420,7 @@ export default {
 
 .ViewRenderer.mobile {
   margin: 0 8px;
-  margin-top: -16px;
+  margin-top: -4px;
 }
 
 </style>

@@ -10,6 +10,7 @@ export default {
       if (this.viewList) {
         if (!obj.task.list)
           obj.task.list = this.viewList.id
+        obj.task.tags = [...obj.task.tags, ...this.listgetListTags.map(el => el.id)]
         this.$store.dispatch('list/addTaskByIndex', {
           ...obj, listId: this.viewList.id,
         })
@@ -170,7 +171,7 @@ export default {
               })
             },
             onAddTask: obj => {
-              obj.task.users = this.viewList.users
+              obj.task.tags = [...obj.task.tags, ...this.listgetListTags.map(el => el.id)]
               this.$store.dispatch('list/addTaskHeading', {
                 name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
               })
