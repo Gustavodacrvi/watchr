@@ -101,6 +101,8 @@ export default {
   "Reject invite": "Rejeitar convite",
   "rejected": "rejeitado",
   "Begins in": "Começa em",
+  "Hide defered lists": "Hide defered lists",
+  "Show defered lists": "Mostrar escondidas",
   "There are no users with the given e-mail.": "Não há usuários com esse e-mail.",
   "E-mail or username": "E-mail ou nome de usuário",
   "Remove photo": "Apagar foto",

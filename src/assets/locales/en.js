@@ -75,6 +75,8 @@ export default {
   'Delete tag': 'Delete tag',
   "Begins in": "Begins in",
   'Sort tasks': 'Sort tasks',
+  "Hide defered lists": "Hide defered lists",
+  "Show defered lists": "Show defered lists",
   "Add Heading Notes": "Add Heading Notes",
   "You have no internet.": "You have no internet.",
   'Show tag selection': 'Show tag selection',

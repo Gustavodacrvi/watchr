@@ -46,6 +46,7 @@
                     :is="section"
                     :active="value"
                     :viewType='viewType'
+                    :showDefered='showDefered'
                     :data-transindex="getAppnavIndex(section)"
                   />
                 </transition>
@@ -156,6 +157,7 @@ export default {
       transRight: true,
       showingIconDrop: true,
       showingSearch: false,
+      showDefered: false,
       searchTimeout: null,
       oldIndex: 0,
       section: 'Lists'
@@ -327,9 +329,10 @@ export default {
           name: this.l['Sort lists by name'],
           icon: 'sort-name',
           callback: () => dispatch('list/sortListsByName'),
-        }
+        },
+
       ]
-      if (this.isDesktop)
+      if (this.isDesktop) {
         arr.splice(1, 0, {
           name: this.l['Import from template'],
           icon: 'import',
@@ -353,6 +356,20 @@ export default {
             }).catch(bug)
           }
         },)
+      }
+      if (!this.showDefered) {
+        arr.unshift({
+          name: this.l["Show defered lists"],
+          icon: 'tasks',
+          callback: () => this.showDefered = true
+        })
+      } else {
+        arr.unshift({
+          name: this.l['Hide defered lists'],
+          icon: 'tasks',
+          callback: () => this.showDefered = false
+        })
+      }
       return arr
     },
     Filters() {

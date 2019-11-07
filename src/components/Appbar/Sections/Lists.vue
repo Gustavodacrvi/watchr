@@ -7,7 +7,7 @@
       :disableSelection='true'
       :enableSort="true"
       :illustration="illustration"
-      :list="getList"
+      :list="getFilteredList"
       :active="active"
       :viewType="viewType"
       :mapProgress='getListProgress'
@@ -28,11 +28,13 @@ import utilsList from '@/utils/list'
 
 import { mapGetters, mapState } from 'vuex'
 
+import mom from 'moment'
+
 export default {
   components: {
     Renderer: RendererVue,
   },
-  props: ['active', 'viewType'],
+  props: ['active', 'viewType', 'showDefered'],
   methods: {
     update(ids) {
       this.$store.dispatch('list/updateOrder', ids)
@@ -66,7 +68,20 @@ export default {
     sortedLists() {
       return this.$store.getters['list/sortedLists']
     },
-    getList() {
+    getFilteredList() {
+      const lists = this.getLists
+
+      const arr = []
+      for (const l of lists) {
+        if (this.showDefered ||
+        !l.deferDate ||
+        mom().isSameOrAfter(mom(l.deferDate, 'Y-M-D')))
+          arr.push(l)
+      }
+
+      return arr
+    },
+    getLists() {
       const lists = this.sortedLists
       for (const list of lists) {
         list.callback = () => {
