@@ -80,6 +80,12 @@ export default {
         tagId: this.listgetListTags.find(el => el.name === tagName).id,
       })
     },
+    removeDeadline() {
+      this.$store.dispatch('list/saveList', {
+        id: this.viewList.id,
+        deadline: null,
+      })
+    }
   },
   computed: {
     icon() {return 'tasks'},

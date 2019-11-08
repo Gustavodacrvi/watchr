@@ -203,7 +203,7 @@ export default {
       const events = [
         'save-header-name', 'save-notes', 'update-heading-ids',
         'add-task', 'add-heading', 'update-ids', 'remove-defer-date',
-        'remove-header-tag'
+        'remove-header-tag', 'remove-deadline',
       ]
       const obj = {}
       
