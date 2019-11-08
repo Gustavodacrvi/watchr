@@ -30,6 +30,7 @@
     </div>
     <div class="tags">
       <HeaderInfo :content="defer" @click="$emit('remove-defer-date')"/>
+      <HeaderInfo :content="deadline" @click="$emit('remove-deadline')"/>
       <div class="tags">
         <Tag class="tag" v-for="t in headerTags" :key="t"
           :value="t"
@@ -140,7 +141,7 @@ export default {
       }, 100)
     },
     getDateDifference(date) {
-      return mom().diff(mom(date, 'Y-M-D'), 'd')
+      return mom(date, 'Y-M-D').diff(mom(), 'd') + 1
     },
   },
   computed: {
@@ -184,6 +185,13 @@ export default {
         return `${l['Begins in']}: ${date}`
       }
       return null
+    },
+    deadline() {
+      const l = this.l
+      if (this.headerDates && this.headerDates.deadline) {
+        const date = utils.getHumanReadableDate(this.headerDates.deadline, this.l)
+        return `${l["Deadline"]}: ${date}, ${this.getDateDifference(this.headerDates.deadline)} ${l['days left']}`
+      }
     },
   },
   watch: {

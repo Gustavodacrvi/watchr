@@ -68,7 +68,7 @@ export default {
         icon: 'trash',
         important: true,
         callback: () => dispatch('list/deleteHeadingFromList', {
-            listId, name: h.name, savedTasks: tasks,
+            listId, name: h.name, savedTasks: headingTasks,
           })
       },
     ]
@@ -119,6 +119,16 @@ export default {
                 callback: () => dispatch('list/addListTag', {tagId: el.id, listId}),
               })),
             }),
+          },
+          {
+            name: l['Add deadline'],
+            icon: 'priority',
+            callback: () => {return {calendar: true, callback: date => {
+              if (date.type === 'specific')
+                dispatch('list/saveList', {
+                  id: listId, deadline: date.specific,
+                })
+            }}},
           },
         ]
       },
