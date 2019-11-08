@@ -41,6 +41,7 @@
         :totalNumber='mapNumbers(el).total'
         :importantNumber='mapNumbers(el).notCompleted'
         :helpIcons='getExraIcon(el)'
+        :border='getBorder(el)'
         @apply='() => applyEmit(el.id)'
         @select='() => selectEl(el.id)'
 
@@ -65,7 +66,7 @@ export default {
     Illustration: IllustrationVue,
     AppbarElement: AppbarElementVue,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'illustration', 'disableSelection', 'mapIcon', 'mapHelpIcon'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'illustration', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapBorder'],
   data() {
     return {
       sortable: null,
@@ -166,6 +167,10 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    getBorder(el) {
+      if (!this.mapBorder) return undefined
+      return this.mapBorder(el)
+    },
     getProgress(el) {
       if (!this.mapProgress) return undefined
       return this.mapProgress(el)

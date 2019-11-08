@@ -13,6 +13,7 @@
       :mapProgress='getListProgress'
       :mapNumbers="(tasks) => tasks"
       :mapHelpIcon='getListIcon'
+      :mapBorder='mapBorder'
       @buttonAdd='buttonAdd'
       @update='update'
     />
@@ -53,6 +54,11 @@ export default {
         arr.push('deadline')
 
       return arr.length > 0 ? arr : undefined
+    },
+    mapBorder(list) {
+      if (list.deadline && mom().isAfter(mom(list.deadline, 'Y-M-D')))
+        return 'var(--red)'
+      return 'none'
     },
   },
   computed: {

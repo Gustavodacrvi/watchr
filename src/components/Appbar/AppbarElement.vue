@@ -5,6 +5,7 @@
     @mouseleave="hover = false"
     @click.stop="linkCallback"
     :class="{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover}"
+    :style='`border: 1px solid ${border}`'
   >
     <div
       class="link-wrapper AppbarElement-link rb"
@@ -57,7 +58,7 @@ import utils from '@/utils/'
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
-  'disableAction', 'selected', 'id', 'progress', 'helpIcons'],
+  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'border'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
