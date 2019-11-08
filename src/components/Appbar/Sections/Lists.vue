@@ -46,17 +46,13 @@ export default {
       return this.$store.getters['list/pieProgress'](this.tasks, list.id)
     },
     getListIcon(list) {
-      let isShared = false
-      let numberOfUsers = 0
-      for (const key of Object.keys(list.users)) {
-        if (list.users[key] === true) numberOfUsers++
-        if (numberOfUsers > 1) {
-          isShared = true
-          break
-        }
-      }
-      if (isShared) return 'users'
-      return undefined
+      const arr = []
+      if (list.deferDate)
+        arr.push('sleep')
+      if (list.deadline)
+        arr.push('deadline')
+
+      return arr.length > 0 ? arr : undefined
     },
   },
   computed: {

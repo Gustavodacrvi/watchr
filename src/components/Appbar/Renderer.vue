@@ -40,7 +40,7 @@
         :progress='getProgress(el)'
         :totalNumber='mapNumbers(el).total'
         :importantNumber='mapNumbers(el).notCompleted'
-        :helpIcon='getExraIcon(el)'
+        :helpIcons='getExraIcon(el)'
         @apply='() => applyEmit(el.id)'
         @select='() => selectEl(el.id)'
 
