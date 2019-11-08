@@ -360,7 +360,7 @@ export default {
       if (!this.showDefered) {
         arr.unshift({
           name: this.l["Show defered lists"],
-          icon: 'tasks',
+          icon: 'sleep',
           callback: () => this.showDefered = true
         })
       } else {

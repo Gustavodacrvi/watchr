@@ -16,6 +16,9 @@ export default {
         })
       }
     },
+    removeDeadline() {},
+    removeHeaderTag() {},
+    removeDeferDate() {},
     updateIds(ids) {
       if (this.viewList) {
         this.$store.dispatch('list/saveList', {

@@ -28,9 +28,25 @@
       </transition>
       <IconDrop class="passive drop" handle="settings-h" handleColor="var(--gray)" :options="options"/>
     </div>
-    <div class="tags">
-      <HeaderInfo :content="defer" @click="$emit('remove-defer-date')"/>
-      <HeaderInfo :content="deadline" @click="$emit('remove-deadline')"/>
+    <div class="tags" style="flex-direction: column; align-items: flex-start;margin-top: 4px">
+      <div>
+        <HeaderInfo
+          icon="sleep"
+          :info="`${l['Defered to']}:`"
+          :content="defer"
+          :left="deferDaysLeft"
+          @click="$emit('remove-defer-date')"
+        />
+      </div>
+      <div>
+        <HeaderInfo
+          icon="deadline"
+          :info='`${l["Deadline"]}:`'
+          :content="deadline"
+          :left="deadlineDaysLeft"
+          @click="$emit('remove-deadline')"
+        />
+      </div>
       <div class="tags">
         <Tag class="tag" v-for="t in headerTags" :key="t"
           :value="t"
@@ -181,15 +197,24 @@ export default {
     defer() {
       const l = this.l
       if (this.headerDates && this.headerDates.defer) {
-        const date = utils.getHumanReadableDate(this.headerDates.defer, this.l)
-        return `${l['Begins in']}: ${date}`
+        return utils.getHumanReadableDate(this.headerDates.defer, this.l)
       }
       return null
+    },
+    deferDaysLeft() {
+      if (this.headerDates && this.headerDates.defer) {
+        return `${this.getDateDifference(this.headerDates.deadline)} ${this.l['days left']}`
+      }
+    },
+    deadlineDaysLeft() {
+      if (this.headerDates && this.headerDates.deadline) {
+        return `${this.getDateDifference(this.headerDates.deadline)} ${this.l['days left']}`
+      }
     },
     deadline() {
       const l = this.l
       if (this.headerDates && this.headerDates.deadline) {
-        const date = utils.getHumanReadableDate(this.headerDates.deadline, this.l)
+        return utils.getHumanReadableDate(this.headerDates.deadline, this.l)
         return `${l["Deadline"]}: ${date}, ${this.getDateDifference(this.headerDates.deadline)} ${l['days left']}`
       }
     },

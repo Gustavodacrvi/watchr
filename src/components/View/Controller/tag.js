@@ -28,6 +28,9 @@ export default {
           notes, id: this.viewTag.id
         })
     },
+    removeDeadline() {},
+    removeHeaderTag() {},
+    removeDeferDate() {},
     addHeading() {},
     updateIds() {},
     updateHeadingIds() {},

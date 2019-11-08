@@ -73,7 +73,7 @@ export default {
   'Sort tags by name': 'Sort tags by name',
   'Sort tags by frequency': 'Sort tags by frequency',
   'Delete tag': 'Delete tag',
-  "Begins in": "Begins in",
+  "Defered to": "Defered to",
   'Sort tasks': 'Sort tasks',
   "Add tags": "Add tags",
   "Hide defered lists": "Hide defered lists",

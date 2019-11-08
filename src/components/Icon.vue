@@ -54,6 +54,8 @@ import archive from '@/assets/icons/archive.svg'
 import importIcon from '@/assets/icons/import.svg'
 import exportIcon from '@/assets/icons/export.svg'
 import users from '@/assets/icons/users.svg'
+import sleep from '@/assets/icons/sleep.svg'
+import deadline from '@/assets/icons/deadline.svg'
 
 import { mapGetters } from 'vuex'
 
@@ -66,7 +68,7 @@ export default {
         sort, tag, priority, menu, tasks, archive,
         pen, trash, fire, bloqued, circle, users,
         copy, plus, globe, heading, search, note,
-        envelope,
+        envelope, deadline, sleep,
         "import": importIcon,
         "export": exportIcon,
         "user-plus": userPlus,

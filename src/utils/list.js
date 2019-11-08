@@ -92,7 +92,7 @@ export default {
           },
           {
             name: l['Defer date'],
-            icon: 'calendar',
+            icon: 'sleep',
             callback: () => {return {calendar: true, callback: date => {
               if (date.type === 'specific')
                 dispatch('list/saveList', {
@@ -122,7 +122,7 @@ export default {
           },
           {
             name: l['Add deadline'],
-            icon: 'priority',
+            icon: 'deadline',
             callback: () => {return {calendar: true, callback: date => {
               if (date.type === 'specific')
                 dispatch('list/saveList', {

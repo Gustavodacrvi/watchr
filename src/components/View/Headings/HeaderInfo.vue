@@ -8,15 +8,24 @@
       @mouseleave="hover = false"
       @click="$emit('click')"
     >
-      <span>{{ content }}</span>
+      <Icon class="mg faded" :icon="icon"/>
+      <span v-if="hover" class="mg faded">{{ info }}</span>
+      <span class="mg">{{ content }}</span>
+      <span class="mg"></span>
+      <span class="faded">{{ left }}</span>
     </div>
   </transition>
 </template>
 
 <script>
 
+import Icon from '@/components/Icon.vue'
+
 export default {
-  props: ['content'],
+  props: ['content', 'props', 'info', 'left', 'icon'],
+  components: {
+    Icon,
+  },
   data() {
     return {
       hover: false,
@@ -49,6 +58,14 @@ export default {
 </script>
 
 <style scoped>
+
+.mg {
+  margin-right: 6px;
+}
+
+.faded {
+  opacity: .6;
+}
 
 .header-info {
   height: 35px;
