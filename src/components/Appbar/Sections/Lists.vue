@@ -7,12 +7,13 @@
       :disableSelection='true'
       :enableSort="true"
       :illustration="illustration"
-      :list="getList"
+      :list="filteredByRepeat"
       :active="active"
       :viewType="viewType"
       :mapProgress='getListProgress'
       :mapNumbers="(tasks) => tasks"
       :mapHelpIcon='getListIcon'
+      :mapBorder='mapBorder'
       @buttonAdd='buttonAdd'
       @update='update'
     />
@@ -25,14 +26,18 @@
 import RendererVue from '../Renderer.vue'
 
 import utilsList from '@/utils/list'
+import utilsTask from '@/utils/task'
+import utils from '@/utils'
 
 import { mapGetters, mapState } from 'vuex'
+
+import mom from 'moment'
 
 export default {
   components: {
     Renderer: RendererVue,
   },
-  props: ['active', 'viewType'],
+  props: ['active', 'viewType', 'showDefered', 'showRepeat'],
   methods: {
     update(ids) {
       this.$store.dispatch('list/updateOrder', ids)
@@ -44,17 +49,20 @@ export default {
       return this.$store.getters['list/pieProgress'](this.tasks, list.id)
     },
     getListIcon(list) {
-      let isShared = false
-      let numberOfUsers = 0
-      for (const key of Object.keys(list.users)) {
-        if (list.users[key] === true) numberOfUsers++
-        if (numberOfUsers > 1) {
-          isShared = true
-          break
-        }
-      }
-      if (isShared) return 'users'
-      return undefined
+      const arr = []
+      if (list.deferDate)
+        arr.push('sleep')
+      if (list.deadline)
+        arr.push('deadline')
+      if (list.calendar)
+        arr.push('repeat')
+
+      return arr.length > 0 ? arr : undefined
+    },
+    mapBorder(list) {
+      if (list.deadline && mom().isAfter(mom(list.deadline, 'Y-M-D')))
+        return 'var(--red)'
+      return 'none'
     },
   },
   computed: {
@@ -62,11 +70,39 @@ export default {
       tasks: state => state.task.tasks,
       user: state => state.user,
     }),
-    ...mapGetters(['l']),
+    ...mapGetters({
+      l: 'l',
+      getTasksByListId: 'list/getTasks',
+    }),
     sortedLists() {
       return this.$store.getters['list/sortedLists']
     },
-    getList() {
+    filteredByRepeat() {
+      if (!this.showRepeat)
+        return this.filteredByDefer.filter(l => {
+          if (!l.calendar) return true
+          const { lastCallEvent } = utils.getCalendarObjectData(l.calendar, mom())
+
+          const tasks = this.getTasksByListId(this.tasks, l.id)
+          let isAllTasksCompleted = true
+          for (const el of tasks)
+            if (!utilsTask.isTaskCompleted(el, mom(), lastCallEvent.format('Y-M-D'))) {
+              isAllTasksCompleted = false
+              break
+            }
+
+          return !isAllTasksCompleted
+        })
+      return this.filteredByDefer
+    },
+    filteredByDefer() {
+      if (!this.showDefered)
+        return this.getLists.filter(l => {
+          return !l.deferDate || mom().isSameOrAfter(mom(l.deferDate, 'Y-M-D'))
+        })
+      return this.getLists
+    },
+    getLists() {
       const lists = this.sortedLists
       for (const list of lists) {
         list.callback = () => {

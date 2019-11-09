@@ -91,7 +91,8 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'],
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'
+  , 'taskCompletionCompareDate'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -234,7 +235,7 @@ export default {
     }),
     ...mapGetters(['isDesktop', 'platform', 'l']),
     completed() {
-      return utilsTask.filterTasksByCompletion([this.task]).length === 1
+      return utilsTask.isTaskCompleted(this.task, mom(), this.taskCompletionCompareDate)
     },
     parsedName() {
       return this.getLinkString(this.escapeHTML(this.task.name))

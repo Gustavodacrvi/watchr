@@ -68,7 +68,7 @@ export default {
         icon: 'trash',
         important: true,
         callback: () => dispatch('list/deleteHeadingFromList', {
-            listId, name: h.name, savedTasks: tasks,
+            listId, name: h.name, savedTasks: headingTasks,
           })
       },
     ]
@@ -82,9 +82,66 @@ export default {
     const pop = obj => dispatch('pushPopup', obj)
     const opt = [
       {
-        name: l['Edit list'],
+        name: l["Edit list"],
         icon: 'pen',
-        callback: () => pop({comp: 'AddList', payload: {...list, editing: true}})
+        callback: () => [
+          {
+            name: l['Edit list name'],
+            icon: 'pen',
+            callback: () => pop({comp: 'AddList', payload: {...list, editing: true}})
+          },
+          {
+            name: l['Repeat list'],
+            icon: 'repeat',
+            callback: () => {return {calendar: true, callback: date => {
+              if (date.type && date.type !== 'specific') {
+                dispatch('list/saveList', {
+                  id: listId, calendar: date,
+                })
+              }
+            }}},
+          },
+          {
+            name: l['Defer date'],
+            icon: 'sleep',
+            callback: () => {return {calendar: true, callback: date => {
+              if (date.type === 'specific')
+                dispatch('list/saveList', {
+                  id: listId, deferDate: date.specific,
+                })
+            }}},
+          },
+          {
+            name: l['Add notes'],
+            icon: 'note',
+            callback: () => dispatch('pushPopup', {
+              comp: 'AddListNote',
+              payload: listId,
+            })
+          },
+          {
+            name: l['Add tags'],
+            icon: 'tag',
+            callback: () => ({
+              search: true,
+              links: store.state.tag.tags.map(el => ({
+                name: el.name,
+                icon: 'tag',
+                callback: () => dispatch('list/addListTag', {tagId: el.id, listId}),
+              })),
+            }),
+          },
+          {
+            name: l['Add deadline'],
+            icon: 'deadline',
+            callback: () => {return {calendar: true, callback: date => {
+              if (date.type === 'specific')
+                dispatch('list/saveList', {
+                  id: listId, deadline: date.specific,
+                })
+            }}},
+          },
+        ]
       },
       {
         name: l["Duplicate list"],
@@ -96,15 +153,6 @@ export default {
         }
       },
     ]
-    if (!list.notes)
-      opt.push({
-        name: l['Add notes'],
-        icon: 'note',
-        callback: () => dispatch('pushPopup', {
-          comp: 'AddListNote',
-          payload: listId,
-        })
-      })
     if (store.getters.isDesktop)
       opt.push({
         name: l["Export as template"],

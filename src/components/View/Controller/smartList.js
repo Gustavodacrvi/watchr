@@ -30,8 +30,11 @@ export default {
         ids,
       })
     },
-
+    removeRepeat() {},
+    removeDeadline() {},
+    removeHeaderTag() {},
     saveHeaderName() {},
+    removeDeferDate() {},
     saveNotes() {},
     addHeading() {},
     onSortableAdd() {},

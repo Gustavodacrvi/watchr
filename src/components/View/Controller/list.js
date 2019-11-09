@@ -10,11 +10,15 @@ export default {
       if (this.viewList) {
         if (!obj.task.list)
           obj.task.list = this.viewList.id
+        obj.task.tags = [...obj.task.tags, ...this.listgetListTags.map(el => el.id)]
         this.$store.dispatch('list/addTaskByIndex', {
           ...obj, listId: this.viewList.id,
         })
       }
     },
+    removeDeadline() {},
+    removeHeaderTag() {},
+    removeDeferDate() {},
     updateIds(ids) {
       if (this.viewList) {
         this.$store.dispatch('list/saveList', {
@@ -67,12 +71,38 @@ export default {
         })
       }
     },
+    saveList(obj) {
+      this.$store.dispatch('list/saveList', {
+        ...obj,
+        id: this.viewList.id,
+      })
+    },
+    removeDeferDate() {
+      this.listsaveList({deferDate: null})
+    },
+    removeRepeat(val) {
+      this.listsaveList({calendar: null})
+    },
+    removeHeaderTag(tagName) {
+      this.$store.dispatch('list/removeListTag', {
+        listId: this.viewList.id,
+        tagId: this.listgetListTags.find(el => el.name === tagName).id,
+      })
+    },
+    removeDeadline() {
+      this.listsaveList({deadline: null})
+    }
   },
   computed: {
     icon() {return 'tasks'},
     viewNameValue() {return this.viewName},
     getTasks() {
       return this.getRootTasksOfList
+    },
+    taskCompletionCompareDate() {
+      if (this.viewList && this.viewList.calendar)
+        return utils.getCalendarObjectData(this.viewList.calendar, mom()).lastCallEvent.format('Y-M-D')
+      return null
     },
     tasksOrder() {
       if (this.viewList)
@@ -81,6 +111,29 @@ export default {
     },
     showEmptyHeadings() {
       return true
+    },
+    getListTags() {
+      if (this.viewList && this.viewList.tags)
+        return this.getTagsById(this.viewList.tags)
+      return []
+    },
+    headerTags() {
+      return this.listgetListTags.map(el => el.name)
+    },
+    headerDates() {
+      const obj = {}
+      const list = this.viewList
+      if (!list) return obj
+
+      obj.defer = list.deferDate
+      obj.deadline = list.deadline
+
+      return obj
+    },
+    headerCalendar() {
+      if (this.viewList)
+        return this.viewList.calendar
+      return null
     },
     headingsOptions() {
       const arr = []
@@ -100,7 +153,6 @@ export default {
             showHeadingName: false,
             notes: h.notes,
             saveNotes: notes => {
-              console.log(notes)
               this.$store.dispatch('list/saveHeadingNotes', {
                 listId: this.viewList.id, notes, heading: h.name,
               })
@@ -140,7 +192,7 @@ export default {
               })
             },
             onAddTask: obj => {
-              obj.task.users = this.viewList.users
+              obj.task.tags = [...obj.task.tags, ...this.listgetListTags.map(el => el.id)]
               this.$store.dispatch('list/addTaskHeading', {
                 name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
               })

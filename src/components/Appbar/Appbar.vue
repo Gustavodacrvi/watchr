@@ -46,6 +46,8 @@
                     :is="section"
                     :active="value"
                     :viewType='viewType'
+                    :showDefered='showDefered'
+                    :showRepeat='showRepeat'
                     :data-transindex="getAppnavIndex(section)"
                   />
                 </transition>
@@ -156,6 +158,8 @@ export default {
       transRight: true,
       showingIconDrop: true,
       showingSearch: false,
+      showDefered: false,
+      showRepeat: false,
       searchTimeout: null,
       oldIndex: 0,
       section: 'Lists'
@@ -327,9 +331,10 @@ export default {
           name: this.l['Sort lists by name'],
           icon: 'sort-name',
           callback: () => dispatch('list/sortListsByName'),
-        }
+        },
+
       ]
-      if (this.isDesktop)
+      if (this.isDesktop) {
         arr.splice(1, 0, {
           name: this.l['Import from template'],
           icon: 'import',
@@ -353,6 +358,33 @@ export default {
             }).catch(bug)
           }
         },)
+      }
+      if (!this.showDefered) {
+        arr.unshift({
+          name: this.l["Show defered lists"],
+          icon: 'sleep',
+          callback: () => this.showDefered = true
+        })
+      } else {
+        arr.unshift({
+          name: this.l['Hide defered lists'],
+          icon: 'tasks',
+          callback: () => this.showDefered = false
+        })
+      }
+      if (!this.showRepeat) {
+        arr.unshift({
+          name: this.l['Show periodic lists'],
+          icon: 'repeat',
+          callback: () => this.showRepeat = true
+        })
+      } else {
+        arr.unshift({
+          name: this.l['Hide periodic lists'],
+          icon: 'repeat',
+          callback: () => this.showRepeat = false
+        })
+      }
       return arr
     },
     Filters() {

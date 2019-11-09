@@ -5,6 +5,7 @@
     @mouseleave="hover = false"
     @click.stop="linkCallback"
     :class="{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover}"
+    :style='`border: 1px solid ${border}`'
   >
     <div
       class="link-wrapper AppbarElement-link rb"
@@ -26,9 +27,11 @@
           <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
         </transition>
         <div class="info">
-          <Icon v-if="helpIcon" class="inf"
-            :icon='helpIcon'
-          />
+          <template v-if="helpIcons">
+            <Icon v-for="i in helpIcons" :key="i" class="inf faded"
+              :icon='i'
+            />
+          </template>
           <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
           <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
           <IconDrop
@@ -55,7 +58,7 @@ import utils from '@/utils/'
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
-  'disableAction', 'selected', 'id', 'progress', 'helpIcon'],
+  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'border'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -150,6 +153,10 @@ export default {
 
 .name {
   transition-duration: .2s;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   transform: translateY(0px);
 }
 
@@ -196,8 +203,12 @@ export default {
   margin-left: 8px;
 }
 
+.faded {
+  opacity: .6;
+}
+
 .drop {
-  transform: translate(8px, 16px);
+  transform: translate(8px, 14px);
 }
 
 .total {

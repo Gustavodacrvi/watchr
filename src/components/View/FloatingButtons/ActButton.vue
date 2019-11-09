@@ -44,10 +44,6 @@ export default {
   align-items: center;
 }
 
-.renderer {
-  width: 100%;
-}
-
 .floating {
   position: relative;
   transform: scale(1,1);
@@ -66,11 +62,6 @@ export default {
   overflow: hidden;
   cursor: pointer;
   border-radius: 100px;
-}
-
-.mobile .button {
-  width: 55px;
-  height: 55px;
 }
 
 .path {

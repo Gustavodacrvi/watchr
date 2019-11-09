@@ -101,7 +101,7 @@ export default {
   position: absolute;
   display: flex;
   right: 6px;
-  transform: translateY(-28px);
+  transform: translateY(-25px);
 }
 
 .central {

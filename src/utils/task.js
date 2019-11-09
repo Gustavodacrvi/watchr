@@ -1,6 +1,7 @@
 
 import mom from "moment"
 import utilsMoment from './moment'
+import utils from './index'
 
 export default {
   sortTasksByPriority(tasks) {
@@ -44,59 +45,41 @@ export default {
   filterTasksByDay(tasks, dayMoment) {
     return tasks.filter(el => {
       if (!this.hasCalendarBinding(el)) return false
-      const {
-        type, defer, due, tod,
-        edit, spec, interval,
-        weekDays, times, persistent,
-        hasTimesBinding,
-      } = this.taskData(el, dayMoment.clone())
-      const isOverdue = (due.isBefore(tod, 'day'))
-      const isntReadyYet = (defer.isAfter(tod, 'day'))
-      const notToday = (!tod.isSame(spec, 'day'))
-      const taskIsForToday = !notToday
-
-      if (isOverdue) return false
-      if (isntReadyYet) return false
-      
-      if (type === 'specific') return taskIsForToday
-      // if it passes here, then the task is guaranted to be periodic or weekly
-      if (persistent && hasTimesBinding) return true
-      if (type === 'periodic') {
-        const dayDiff = tod.diff(edit, 'day')
-        const eventNotToday = dayDiff % interval !== 0
-        if (eventNotToday) return false
-      }
-      if (type === 'weekly') {
-        const todaysWeekDayName = tod.format('ddd').toLowerCase()
-        const eventNotToday = !weekDays.find(w => w.toLowerCase() === todaysWeekDayName)
-        if (eventNotToday) return false
-      }
-
-      return true
+      return utils.isCalendarObjectShowingToday(el.calendar, dayMoment.clone())
     })
   },
-  isTaskCompleted(task, moment) {
-    if (!task.calendar) return task.completed
-    if (!moment) moment = mom()
-    const {
-      type, lastComplete, tod, times,
-      persistent, hasTimesBinding, manualComplete
-    } = this.taskData(task, moment)
-    
-    if (type === 'specific') return task.completed
-
-    /*
-      if it doesn't have persistence, then it should only return a result if times === 0, cause if it's false, then the logic at line 96 will be used to figure out the completion of the task, if it does not have persistence then it should return a false or true every time
-    */
-    if (manualComplete.isSame(lastComplete, 'day')) return true
-    if (hasTimesBinding && times === 0) return true
-    if (hasTimesBinding && persistent) return times === 0
-    
-    if (type === 'periodic' || type === 'weekly') {
-      return lastComplete.isSameOrAfter(tod, 'day')
+  isTaskCompleted(task, moment, compareDate) {
+    const calc = () => {
+      if (!task.calendar) return task.completed
+      if (!moment) moment = mom()    
+      const {
+        type, lastComplete, tod, times,
+        persistent, hasTimesBinding, manualComplete
+      } = this.taskData(task, moment)
+      
+      if (type === 'specific') return task.completed
+  
+      /*
+        if it doesn't have persistence, then it should only return a result if times === 0, cause if it's false, then the logic at line 96 will be used to figure out the completion of the task, if it does not have persistence then it should return a false or true every time
+      */
+      if (manualComplete.isSame(lastComplete, 'day')) return true
+      if (hasTimesBinding && times === 0) return true
+      if (hasTimesBinding && persistent) return times === 0
+      
+      if (type === 'periodic' || type === 'weekly') {
+        return lastComplete.isSameOrAfter(tod, 'day')
+      }
+  
+      return false
     }
-
-    return false
+    let isCompleted = calc()
+    if (compareDate) {
+      if (!task.completeDate) return false
+      const taskCompleteDate = mom(task.completeDate, 'Y-M-D')
+      const compare = mom(compareDate, 'Y-M-D')
+      return isCompleted && taskCompleteDate.isSameOrAfter(compare, 'day')
+    }
+    return isCompleted
   },
   filterTasksByCompletion(tasks, notCompleted, moment) {
     return tasks.filter(el => {
@@ -106,41 +89,7 @@ export default {
     })
   },
   taskData(task, tod) {
-    const c = task.calendar
-
-    const obj = {
-      tod,
-      type: c.type,
-      defer: mom(c.defer, 'Y-M-D'),
-      due: mom(c.due, 'Y-M-D'),
-      spec: mom(c.specific, 'Y-M-D'),
-      edit: mom(c.editDate, 'Y-M-D'),
-      lastComplete: mom(c.lastCompleteDate, 'Y-M-D'),
-      nextEventAfterCompletion: mom(),
-      lastWeeklyEvent: mom(),
-      interval: c.periodic,
-      persistent: c.persistent,
-      weekDays: c.weekly,
-      manualComplete: mom(c.manualComplete, 'Y-M-D'),
-      times: c.times,
-      hasTimesBinding: c.times !== null && c.times !== undefined
-    }
-
-    if (obj.lastComplete.isValid()) {
-      if (obj.type === 'periodic')
-      obj.nextEventAfterCompletion = obj.lastComplete.clone().add(obj.interval, 'day')
-      else {
-        obj.nextEventAfterCompletion = utilsMoment.nextWeekDay(obj.lastComplete, obj.weekDays)
-      }
-    } else {
-      obj.nextEventAfterCompletion = obj.edit.clone()
-    }
-    if (obj.type !== 'weekly') obj.lastWeeklyEvent = null
-    else {
-      obj.lastWeeklyEvent = utilsMoment.getLastInstanceOfaWeek(tod, obj.weekDays)
-    }
-
-    return obj
+    return utils.getCalendarObjectData(task.calendar, tod)
   },
   filterTasksByView(tasks, view) {
     switch (view) {

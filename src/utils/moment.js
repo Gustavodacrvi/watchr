@@ -75,4 +75,18 @@ export default {
       i++
     }
   },
+  getNextCalendarPeriodicEventByMoment(initial, period, calEdit) {
+    const edit = calEdit.clone()
+    const diff = initial.diff(edit, 'day')
+    const numberOfEvents = Math.floor(diff / period) + 1
+    edit.add(numberOfEvents * period, 'day')
+    return edit
+  },
+  getLastCalendarPeriodicEventByMoment(initial, period, calEdit) {
+    const edit = calEdit.clone()
+    const diff = initial.diff(edit, 'day')
+    const numberOfEvents = Math.floor(diff / period)
+    edit.add(numberOfEvents * period, 'day')
+    return edit
+  },
 }

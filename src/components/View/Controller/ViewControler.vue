@@ -175,6 +175,7 @@ export default {
       isDesktop: 'isDesktop',
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getTasks: 'list/getTasks',
+      getTagsById: 'tag/getTagsById',
       getListsById: 'list/getListsById',
       getListByName: 'list/getListByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
@@ -201,7 +202,8 @@ export default {
       
       const events = [
         'save-header-name', 'save-notes', 'update-heading-ids',
-        'add-task', 'add-heading', 'update-ids'
+        'add-task', 'add-heading', 'update-ids', 'remove-defer-date',
+        'remove-header-tag', 'remove-deadline', 'remove-repeat',
       ]
       const obj = {}
       
@@ -216,7 +218,8 @@ export default {
       const props = [
         'icon', 'illustration', 'showHeader', 'showEmptyHeadings',
         'headingEdit', 'headerOptions', 'notes', 'progress', 'headingsOptions',
-        'tasks', 'tasksOrder', 'onSortableAdd', 'viewNameValue',
+        'tasks', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates',
+        'headerTags', 'headerCalendar', 'taskCompletionCompareDate',
       ]
       const obj = {}
 

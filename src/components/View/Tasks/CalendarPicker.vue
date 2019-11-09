@@ -5,6 +5,19 @@
       @leave="leave"
     >
       <div v-if="calendar" key="calendar" class="view calendar">
+        <div style="margin: 4px 22px;">
+          <Tag v-if="calendarStr"
+            icon="calendar"
+            color="var(--green)"
+            :value="calendarStr"
+            @click="calStr = ''"
+          />
+          <input class="input"
+            :value="calStr"
+            @input="v => calStr = v.target.value"
+            @keydown="keydown"
+          >
+        </div>
         <span class="option cursor" @click="today">
           <span class="cont">
             <Icon class="icon" icon="star"/>
@@ -101,14 +114,18 @@
 
 import IconVue from '../../Icon.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
+import TagVue from '../Tag.vue'
 
 import mom from 'moment'
 import { mapGetters } from 'vuex'
+
+import utils from '@/utils'
 
 export default {
   components: {
     Icon: IconVue,
     Button: ButtonVue,
+    Tag: TagVue,
   },
   data() {
     return {
@@ -117,12 +134,23 @@ export default {
       originalMoment: mom(),
       selectedMoment: mom(),
       time: null,
+      calStr: '',
+      calendarObj: null,
     }
   },
   computed: {
     ...mapGetters(['l']),
+    calendarStr() {
+      if (this.calendarObj)
+        return utils.parseCalendarObjectToString(this.calendarObj, this.l)
+      return null
+    },
   },
   methods: {
+    keydown({key}) {
+      if (key === "Enter")
+        this.$emit('select', this.calendarObj)
+    },
     leave(el) {
       if (this.calendar) {
         el.classList.add('right')
@@ -262,6 +290,11 @@ export default {
       return this.visualMoment.clone().date(day).isSame(this.selectedMoment, 'day')
     },
   },
+  watch: {
+    calStr() {
+      this.calendarObj = utils.parseInputToCalendarObject(this.calStr, this.l, true)
+    },
+  }
 }
 
 </script>
@@ -303,6 +336,18 @@ export default {
   position: relative;
   left: 5px;
   margin-top: -20px;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  background: none;
+  border: none;
+  border-radius: 0;
+  font-size: 1em;
+  padding: 8px;
+  outline: none;
+  border-bottom: 1px solid var(--gray);
 }
 
 .bottom {

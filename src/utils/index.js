@@ -1,6 +1,6 @@
 
 import mom from "moment"
-import moment from "./moment"
+import utilsMoment from "./moment"
 import firebase from 'firebase/app'
 
 import Vue from 'vue'
@@ -58,11 +58,12 @@ export default {
       year: m.format('Y'),
     }
   },
-  parseInputToCalendarObject(name, language) {
+  parseInputToCalendarObject(name, language, returnEntireStr) {
     if (!language) throw 'Missing language object'
     const l = language
     const isStrNumber = str => !isNaN(parseInt(str, 10))
     const getDateString = () => {
+      if (returnEntireStr) return name
       if (name.includes(' $'))
         return name.substr(name.indexOf(' $')).replace(' $', '')
       return undefined
@@ -94,11 +95,11 @@ export default {
             const parsed = parseInt(v, 10)
             if (!isNaN(parsed)) {
               if (parsed > 0 && parsed < 32)
-                return this.parseMomentToObject(moment.getNextDateByMonthDay(mom(), parsed))
+                return this.parseMomentToObject(utilsMoment.getNextDateByMonthDay(mom(), parsed))
             } else {
               const m = mom(v, 'ddd', true)
               if (m.isValid())
-                return this.parseMomentToObject(moment.nextWeekDay(mom(), v))
+                return this.parseMomentToObject(utilsMoment.nextWeekDay(mom(), v))
             }
           }
         }
@@ -293,19 +294,19 @@ export default {
       
       switch (str) {
         case keyNextWeek: {
-          obj.defer = moment.getFirstDayOfNextWeekMoment(mom()).format('Y-M-D')
-          obj.due = moment.getLastDayOfNextWeekMoment(mom()).format('Y-M-D')
+          obj.defer = utilsMoment.getFirstDayOfNextWeekMoment(mom()).format('Y-M-D')
+          obj.due = utilsMoment.getLastDayOfNextWeekMoment(mom()).format('Y-M-D')
           return obj
         }
         case keyNextWeekend: {
-          const sat = moment.nextWeekDay(mom(), 'Saturday')
+          const sat = utilsMoment.nextWeekDay(mom(), 'Saturday')
           obj.defer = sat.format('Y-M-D')
           obj.due = sat.clone().add(1, 'd').format('Y-M-D')
           return obj
         }
         case keyNextMonth: {
-          obj.defer = moment.getFirstDayOfNextMonth(mom()).format('Y-M-D')
-          obj.due = moment.getLastDayOfNextMonth(mom()).format('Y-M-D')
+          obj.defer = utilsMoment.getFirstDayOfNextMonth(mom()).format('Y-M-D')
+          obj.due = utilsMoment.getLastDayOfNextMonth(mom()).format('Y-M-D')
           return obj
         }
       }
@@ -499,4 +500,82 @@ export default {
     }}
     return obj
   },
+  getCalendarObjectData(calendar, tod) {
+    const c = calendar
+
+    const obj = {
+      tod,
+      type: c.type,
+      defer: mom(c.defer, 'Y-M-D'),
+      due: mom(c.due, 'Y-M-D'),
+      spec: mom(c.specific, 'Y-M-D'),
+      edit: mom(c.editDate, 'Y-M-D'),
+      lastComplete: mom(c.lastCompleteDate, 'Y-M-D'),
+      nextEventAfterCompletion: mom(),
+      nextCalEvent: mom(),
+      lastCallEvent: mom(),
+      lastWeeklyEvent: mom(),
+      interval: c.periodic,
+      persistent: c.persistent,
+      weekDays: c.weekly,
+      manualComplete: mom(c.manualComplete, 'Y-M-D'),
+      times: c.times,
+      hasTimesBinding: c.times !== null && c.times !== undefined
+    }
+
+    if (obj.type === 'periodic') {
+      obj.nextCalEvent = utilsMoment.getNextCalendarPeriodicEventByMoment(mom(), c.periodic, obj.edit)
+      obj.lastCallEvent = utilsMoment.getLastCalendarPeriodicEventByMoment(mom(), c.periodic, obj.edit)
+    } else if (obj.type === 'weekly') {
+      obj.nextCalEvent = utilsMoment.nextWeekDay(mom(), obj.weekDays)
+      obj.lastCallEvent = utilsMoment.getLastInstanceOfaWeek(mom(), obj.weekDays)
+    }
+    if (obj.lastComplete.isValid()) {
+      if (obj.type === 'periodic') {
+        obj.nextEventAfterCompletion = obj.lastComplete.clone().add(obj.interval, 'day')
+      }
+      else {
+        obj.nextEventAfterCompletion = utilsMoment.nextWeekDay(obj.lastComplete, obj.weekDays)
+      }
+    } else {
+      obj.nextEventAfterCompletion = obj.edit.clone()
+    }
+    if (obj.type !== 'weekly') obj.lastWeeklyEvent = null
+    else {
+      obj.lastWeeklyEvent = utilsMoment.getLastInstanceOfaWeek(tod, obj.weekDays)
+    }
+
+    return obj
+  },
+  isCalendarObjectShowingToday(calendar, todayMoment) {
+    const {
+      type, defer, due, tod,
+      edit, spec, interval,
+      weekDays, times, persistent,
+      hasTimesBinding,
+    } = this.getCalendarObjectData(calendar, todayMoment)
+    const isOverdue = (due.isBefore(tod, 'day'))
+    const isntReadyYet = (defer.isAfter(tod, 'day'))
+    const notToday = (!tod.isSame(spec, 'day'))
+    const isForToday = !notToday
+
+    if (isOverdue) return false
+    if (isntReadyYet) return false
+    
+    if (type === 'specific') return isForToday
+    // if it passes here, then the calendar is guaranted to be periodic or weekly
+    if (persistent && hasTimesBinding) return true
+    if (type === 'periodic') {
+      const dayDiff = tod.diff(edit, 'day')
+      const eventNotToday = dayDiff % interval !== 0
+      if (eventNotToday) return false
+    }
+    if (type === 'weekly') {
+      const todaysWeekDayName = tod.format('ddd').toLowerCase()
+      const eventNotToday = !weekDays.find(w => w.toLowerCase() === todaysWeekDayName)
+      if (eventNotToday) return false
+    }
+
+    return true
+  }
 }

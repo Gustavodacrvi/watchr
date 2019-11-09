@@ -28,6 +28,40 @@
       </transition>
       <IconDrop class="passive drop" handle="settings-h" handleColor="var(--gray)" :options="options"/>
     </div>
+    <div class="tags" style="flex-direction: column; align-items: flex-start;margin-top: 4px">
+      <div>
+        <HeaderInfo
+          icon="sleep"
+          :info="`${l['Defered to']}:`"
+          :content="defer"
+          :left="deferDaysLeft"
+          @click="$emit('remove-defer-date')"
+        />
+      </div>
+      <div>
+        <HeaderInfo
+          icon="deadline"
+          :info='`${l["Deadline"]}:`'
+          :content="deadline"
+          :left="deadlineDaysLeft"
+          @click="$emit('remove-deadline')"
+        />
+        <HeaderInfo
+          icon='repeat'
+          info=''
+          :content='repeatCalendar'
+          :left='repeatCalendarNextEvent'
+          @click="$emit('remove-repeat')"
+        />
+      </div>
+      <div class="tags">
+        <Tag class="tag" v-for="t in headerTags" :key="t"
+          :value="t"
+          icon="tag"
+          @click="$emit('remove-header-tag', t)"
+        />
+      </div>
+    </div>
     <NotesApp class="tags" :notes='notes' @save-notes="saveNotes"/>
     <div class="tags" :class="{margins: tags.length > 0}">
       <Tag class="tag" v-for="t in tags" :key="t.id"
@@ -54,16 +88,21 @@ import IconVue from '../../Icon.vue'
 import IconDropVue from '../../IconDrop.vue'
 import TagVue from './../Tag.vue'
 import Notes from './Notes.vue'
+import HeaderInfo from './HeaderInfo.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
+import mom from 'moment'
+import utils from '@/utils'
+
 export default {
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart', 'notes', 'progress'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
     Tag: TagVue,
     NotesApp: Notes,
+    HeaderInfo,
   },
   data() {
     return {
@@ -122,12 +161,24 @@ export default {
       setTimeout(() => {
         const inp = this.$refs.input
         if (inp) inp.focus()
-      }, 100) 
+      }, 100)
+    },
+    getDateDifference(date) {
+      return mom(date, 'Y-M-D').diff(mom(), 'd') + 1
     },
   },
   computed: {
     ...mapState(['selectedTasks']),
-    ...mapGetters(['isDesktop', 'platform']),
+    ...mapGetters(['isDesktop', 'platform', 'l']),
+    repeatCalendar() {
+      if (!this.headerCalendar) return ''
+      return utils.parseCalendarObjectToString(this.headerCalendar, this.l)
+    },
+    repeatCalendarNextEvent() {
+      if (!this.headerCalendar) return ''
+      const { nextCalEvent } = utils.getCalendarObjectData(this.headerCalendar, mom())
+      return utils.getHumanReadableDate(nextCalEvent.format('Y-M-D'), this.l)
+    },
     isEditable() {
       return !this.isSmart && (this.viewType === 'list' || this.viewType === 'tag') && this.isDesktop
     },
@@ -158,6 +209,30 @@ export default {
       }
       if (this.viewType === 'search') return ''
       return 'var(--red)'
+    },
+    defer() {
+      const l = this.l
+      if (this.headerDates && this.headerDates.defer) {
+        return utils.getHumanReadableDate(this.headerDates.defer, this.l)
+      }
+      return null
+    },
+    deferDaysLeft() {
+      if (this.headerDates && this.headerDates.defer) {
+        return `${this.getDateDifference(this.headerDates.deadline)} ${this.l['days left']}`
+      }
+    },
+    deadlineDaysLeft() {
+      if (this.headerDates && this.headerDates.deadline) {
+        return `${this.getDateDifference(this.headerDates.deadline)} ${this.l['days left']}`
+      }
+    },
+    deadline() {
+      const l = this.l
+      if (this.headerDates && this.headerDates.deadline) {
+        return utils.getHumanReadableDate(this.headerDates.deadline, this.l)
+        return `${l["Deadline"]}: ${date}, ${this.getDateDifference(this.headerDates.deadline)} ${l['days left']}`
+      }
     },
   },
   watch: {
