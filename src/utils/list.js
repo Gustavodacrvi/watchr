@@ -93,7 +93,13 @@ export default {
           {
             name: l['Repeat list'],
             icon: 'repeat',
-            callback: () => console.log(3),
+            callback: () => {return {calendar: true, callback: date => {
+              if (date.type && date.type !== 'specific') {
+                dispatch('list/saveList', {
+                  id: listId, calendar: date,
+                })
+              }
+            }}},
           },
           {
             name: l['Defer date'],
