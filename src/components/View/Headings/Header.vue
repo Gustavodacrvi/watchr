@@ -50,7 +50,7 @@
           icon='repeat'
           info=''
           :content='repeatCalendar'
-          left=''
+          :left='repeatCalendarNextEvent'
           @click="$emit('remove-repeat')"
         />
       </div>
@@ -173,6 +173,11 @@ export default {
     repeatCalendar() {
       if (!this.headerCalendar) return ''
       return utils.parseCalendarObjectToString(this.headerCalendar, this.l)
+    },
+    repeatCalendarNextEvent() {
+      if (!this.headerCalendar) return ''
+      const { nextCalEvent } = utils.getCalendarObjectData(this.headerCalendar, mom())
+      return utils.getHumanReadableDate(nextCalEvent.format('Y-M-D'), this.l)
     },
     isEditable() {
       return !this.isSmart && (this.viewType === 'list' || this.viewType === 'tag') && this.isDesktop

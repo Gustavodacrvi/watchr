@@ -75,4 +75,12 @@ export default {
       i++
     }
   },
+  getNextCalendarPeriodicEventByMoment(initial, period, tod) {
+    const returnMom = initial.clone()
+    while (true) {
+      if (returnMom.isAfter(tod, 'day'))
+        return returnMom
+      returnMom.add(period, 'day')
+    }
+  }
 }

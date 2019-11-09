@@ -1,6 +1,7 @@
 
 import mom from "moment"
 import utilsMoment from './moment'
+import utils from './index'
 
 export default {
   sortTasksByPriority(tasks) {
@@ -106,41 +107,7 @@ export default {
     })
   },
   taskData(task, tod) {
-    const c = task.calendar
-
-    const obj = {
-      tod,
-      type: c.type,
-      defer: mom(c.defer, 'Y-M-D'),
-      due: mom(c.due, 'Y-M-D'),
-      spec: mom(c.specific, 'Y-M-D'),
-      edit: mom(c.editDate, 'Y-M-D'),
-      lastComplete: mom(c.lastCompleteDate, 'Y-M-D'),
-      nextEventAfterCompletion: mom(),
-      lastWeeklyEvent: mom(),
-      interval: c.periodic,
-      persistent: c.persistent,
-      weekDays: c.weekly,
-      manualComplete: mom(c.manualComplete, 'Y-M-D'),
-      times: c.times,
-      hasTimesBinding: c.times !== null && c.times !== undefined
-    }
-
-    if (obj.lastComplete.isValid()) {
-      if (obj.type === 'periodic')
-      obj.nextEventAfterCompletion = obj.lastComplete.clone().add(obj.interval, 'day')
-      else {
-        obj.nextEventAfterCompletion = utilsMoment.nextWeekDay(obj.lastComplete, obj.weekDays)
-      }
-    } else {
-      obj.nextEventAfterCompletion = obj.edit.clone()
-    }
-    if (obj.type !== 'weekly') obj.lastWeeklyEvent = null
-    else {
-      obj.lastWeeklyEvent = utilsMoment.getLastInstanceOfaWeek(tod, obj.weekDays)
-    }
-
-    return obj
+    return utils.getCalendarObjectData(task.calendar, tod)
   },
   filterTasksByView(tasks, view) {
     switch (view) {

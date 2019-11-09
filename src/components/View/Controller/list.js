@@ -71,14 +71,17 @@ export default {
         })
       }
     },
-    removeDeferDate() {
+    saveList(obj) {
       this.$store.dispatch('list/saveList', {
+        ...obj,
         id: this.viewList.id,
-        deferDate: null,
       })
     },
+    removeDeferDate() {
+      this.listsaveList({deferDate: null})
+    },
     removeRepeat(val) {
-      console.log('controller/list.js', val)
+      this.listsaveList({calendar: null})
     },
     removeHeaderTag(tagName) {
       this.$store.dispatch('list/removeListTag', {
@@ -87,10 +90,7 @@ export default {
       })
     },
     removeDeadline() {
-      this.$store.dispatch('list/saveList', {
-        id: this.viewList.id,
-        deadline: null,
-      })
+      this.listsaveList({deadline: null})
     }
   },
   computed: {
