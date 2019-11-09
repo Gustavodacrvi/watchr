@@ -111,6 +111,8 @@ export default {
   "Deadline": "Deadline",
   "days left": "days left",
   "days": "days",
+  "Hide periodic lists": "Hide periodic lists",
+  "Show periodic lists": "Show periodic lists",
   'Task successfully added!': 'Task successfully added!',
   'Tag added successfully!': 'Tag added successfully!',
   'Tag edited successfully!': 'Tag edited successfully!',

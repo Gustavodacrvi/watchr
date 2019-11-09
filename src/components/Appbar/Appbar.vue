@@ -47,6 +47,7 @@
                     :active="value"
                     :viewType='viewType'
                     :showDefered='showDefered'
+                    :showRepeat='showRepeat'
                     :data-transindex="getAppnavIndex(section)"
                   />
                 </transition>
@@ -158,6 +159,7 @@ export default {
       showingIconDrop: true,
       showingSearch: false,
       showDefered: false,
+      showRepeat: false,
       searchTimeout: null,
       oldIndex: 0,
       section: 'Lists'
@@ -368,6 +370,19 @@ export default {
           name: this.l['Hide defered lists'],
           icon: 'tasks',
           callback: () => this.showDefered = false
+        })
+      }
+      if (!this.showRepeat) {
+        arr.unshift({
+          name: this.l['Show periodic lists'],
+          icon: 'repeat',
+          callback: () => this.showRepeat = true
+        })
+      } else {
+        arr.unshift({
+          name: this.l['Hide periodic lists'],
+          icon: 'repeat',
+          callback: () => this.showRepeat = false
         })
       }
       return arr

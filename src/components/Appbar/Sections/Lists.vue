@@ -37,7 +37,7 @@ export default {
   components: {
     Renderer: RendererVue,
   },
-  props: ['active', 'viewType', 'showDefered'],
+  props: ['active', 'viewType', 'showDefered', 'showRepeat'],
   methods: {
     update(ids) {
       this.$store.dispatch('list/updateOrder', ids)
@@ -54,6 +54,8 @@ export default {
         arr.push('sleep')
       if (list.deadline)
         arr.push('deadline')
+      if (list.calendar)
+        arr.push('repeat')
 
       return arr.length > 0 ? arr : undefined
     },
@@ -76,29 +78,29 @@ export default {
       return this.$store.getters['list/sortedLists']
     },
     filteredByRepeat() {
-      return this.filteredByDefer.filter(l => {
-        if (!l.calendar) return true
+      if (!this.showRepeat)
+        return this.filteredByDefer.filter(l => {
+          if (!l.calendar) return true
+          const { lastCallEvent } = utils.getCalendarObjectData(l.calendar, mom())
 
-        /*return utils.isCalendarObjectShowingToday(l.calendar, mom())
-          showListOnAppnav if !isAllListTasksCompletedBeforeTheNextListEvent
-        */
-        const { lastCallEvent } = utils.getCalendarObjectData(l.calendar, mom())
+          const tasks = this.getTasksByListId(this.tasks, l.id)
+          let isAllTasksCompleted = true
+          for (const el of tasks)
+            if (!utilsTask.isTaskCompleted(el, mom(), lastCallEvent.format('Y-M-D'))) {
+              isAllTasksCompleted = false
+              break
+            }
 
-        const tasks = this.getTasksByListId(this.tasks, l.id)
-        let isAllTasksCompleted = true
-        for (const el of tasks)
-          if (!utilsTask.isTaskCompleted(el, mom(), lastCallEvent.format('Y-M-D'))) {
-            isAllTasksCompleted = false
-            break
-          }
-
-        return !isAllTasksCompleted
-      })
+          return !isAllTasksCompleted
+        })
+      return this.filteredByDefer
     },
     filteredByDefer() {
-      return this.getLists.filter(l => {
-        return this.showDefered || !l.deferDate || mom().isSameOrAfter(mom(l.deferDate, 'Y-M-D'))
-      })
+      if (!this.showDefered)
+        return this.getLists.filter(l => {
+          return !l.deferDate || mom().isSameOrAfter(mom(l.deferDate, 'Y-M-D'))
+        })
+      return this.getLists
     },
     getLists() {
       const lists = this.sortedLists

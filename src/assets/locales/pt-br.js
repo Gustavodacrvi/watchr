@@ -103,6 +103,8 @@ export default {
   "Deadline": "Prazo",
   "days left": "dias faltando",
   "days": "dias",
+  "Hide periodic lists": "Esconder listas periódicas",
+  "Show periodic lists": "Mostrar listas periódicas",
   "Add deadline": "Adicionar prazos",
   "Edit list name": "Editar nome da lista",
   "Defered to": "Começa em",
