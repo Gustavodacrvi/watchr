@@ -7,7 +7,7 @@
       :disableSelection='true'
       :enableSort="true"
       :illustration="illustration"
-      :list="getFilteredList"
+      :list="filteredByRepeat"
       :active="active"
       :viewType="viewType"
       :mapProgress='getListProgress'
@@ -26,6 +26,8 @@
 import RendererVue from '../Renderer.vue'
 
 import utilsList from '@/utils/list'
+import utilsTask from '@/utils/task'
+import utils from '@/utils'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -66,22 +68,37 @@ export default {
       tasks: state => state.task.tasks,
       user: state => state.user,
     }),
-    ...mapGetters(['l']),
+    ...mapGetters({
+      l: 'l',
+      getTasksByListId: 'list/getTasks',
+    }),
     sortedLists() {
       return this.$store.getters['list/sortedLists']
     },
-    getFilteredList() {
-      const lists = this.getLists
+    filteredByRepeat() {
+      return this.filteredByDefer.filter(l => {
+        if (!l.calendar) return true
 
-      const arr = []
-      for (const l of lists) {
-        if (this.showDefered ||
-        !l.deferDate ||
-        mom().isSameOrAfter(mom(l.deferDate, 'Y-M-D')))
-          arr.push(l)
-      }
+        /*return utils.isCalendarObjectShowingToday(l.calendar, mom())
+          showListOnAppnav if !isAllListTasksCompletedBeforeTheNextListEvent
+        */
+        const { lastCallEvent } = utils.getCalendarObjectData(l.calendar, mom())
 
-      return arr
+        const tasks = this.getTasksByListId(this.tasks, l.id)
+        let isAllTasksCompleted = true
+        for (const el of tasks)
+          if (!utilsTask.isTaskCompleted(el, mom(), lastCallEvent.format('Y-M-D'))) {
+            isAllTasksCompleted = false
+            break
+          }
+
+        return !isAllTasksCompleted
+      })
+    },
+    filteredByDefer() {
+      return this.getLists.filter(l => {
+        return this.showDefered || !l.deferDate || mom().isSameOrAfter(mom(l.deferDate, 'Y-M-D'))
+      })
     },
     getLists() {
       const lists = this.sortedLists

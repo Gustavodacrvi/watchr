@@ -125,7 +125,6 @@ export default {
         ...obj,
       })
       const type = utilsTask.taskType(obj)
-      console.log(type, obj.calendar)
       if (type && rootState.userInfo) {
         const viewOrders = rootState.userInfo.viewOrders
         viewOrders[type] = fd().arrayUnion(ref.id)

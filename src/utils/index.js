@@ -513,6 +513,7 @@ export default {
       lastComplete: mom(c.lastCompleteDate, 'Y-M-D'),
       nextEventAfterCompletion: mom(),
       nextCalEvent: mom(),
+      lastCallEvent: mom(),
       lastWeeklyEvent: mom(),
       interval: c.periodic,
       persistent: c.persistent,
@@ -523,7 +524,11 @@ export default {
     }
 
     if (obj.type === 'periodic') {
-      obj.nextCalEvent = utilsMoment.getNextCalendarPeriodicEventByMoment(obj.nextCalEvent, c.periodic, tod)
+      obj.nextCalEvent = utilsMoment.getNextCalendarPeriodicEventByMoment(mom(), c.periodic, obj.edit)
+      obj.lastCallEvent = utilsMoment.getLastCalendarPeriodicEventByMoment(mom(), c.periodic, obj.edit)
+    } else if (obj.type === 'weekly') {
+      obj.nextCalEvent = utilsMoment.nextWeekDay(mom(), obj.weekDays)
+      obj.lastCallEvent = utilsMoment.getLastInstanceOfaWeek(mom(), obj.weekDays)
     }
     if (obj.lastComplete.isValid()) {
       if (obj.type === 'periodic') {
@@ -541,5 +546,36 @@ export default {
     }
 
     return obj
+  },
+  isCalendarObjectShowingToday(calendar, todayMoment) {
+    const {
+      type, defer, due, tod,
+      edit, spec, interval,
+      weekDays, times, persistent,
+      hasTimesBinding,
+    } = this.getCalendarObjectData(calendar, todayMoment)
+    const isOverdue = (due.isBefore(tod, 'day'))
+    const isntReadyYet = (defer.isAfter(tod, 'day'))
+    const notToday = (!tod.isSame(spec, 'day'))
+    const isForToday = !notToday
+
+    if (isOverdue) return false
+    if (isntReadyYet) return false
+    
+    if (type === 'specific') return isForToday
+    // if it passes here, then the calendar is guaranted to be periodic or weekly
+    if (persistent && hasTimesBinding) return true
+    if (type === 'periodic') {
+      const dayDiff = tod.diff(edit, 'day')
+      const eventNotToday = dayDiff % interval !== 0
+      if (eventNotToday) return false
+    }
+    if (type === 'weekly') {
+      const todaysWeekDayName = tod.format('ddd').toLowerCase()
+      const eventNotToday = !weekDays.find(w => w.toLowerCase() === todaysWeekDayName)
+      if (eventNotToday) return false
+    }
+
+    return true
   }
 }
