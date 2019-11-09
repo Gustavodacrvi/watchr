@@ -94,7 +94,7 @@ import utils from '@/utils/'
 
 export default {
   props: ['tasks', 'header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
-  'viewType', 'options'],
+  'viewType', 'options', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue,

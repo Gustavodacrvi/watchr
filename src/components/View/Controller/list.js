@@ -99,6 +99,11 @@ export default {
     getTasks() {
       return this.getRootTasksOfList
     },
+    taskCompletionCompareDate() {
+      if (this.viewList && this.viewList.calendar)
+        return utils.getCalendarObjectData(this.viewList.calendar, mom()).lastCallEvent.format('Y-M-D')
+      return null
+    },
     tasksOrder() {
       if (this.viewList)
         return this.viewList.tasks
