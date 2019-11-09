@@ -105,6 +105,7 @@ export default {
   "Add deadline": "Adicionar prazos",
   "Edit list name": "Editar nome da lista",
   "Defered to": "Começa em",
+  "Repeat list": "Repetir lista",
   "Hide defered lists": "Hide defered lists",
   "Show defered lists": "Mostrar escondidas",
   "There are no users with the given e-mail.": "Não há usuários com esse e-mail.",

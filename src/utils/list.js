@@ -91,6 +91,11 @@ export default {
             callback: () => pop({comp: 'AddList', payload: {...list, editing: true}})
           },
           {
+            name: l['Repeat list'],
+            icon: 'repeat',
+            callback: () => console.log(3),
+          },
+          {
             name: l['Defer date'],
             icon: 'sleep',
             callback: () => {return {calendar: true, callback: date => {
