@@ -30,6 +30,7 @@ export default {
         ids,
       })
     },
+    removeRepeat() {},
     removeDeadline() {},
     removeHeaderTag() {},
     saveHeaderName() {},

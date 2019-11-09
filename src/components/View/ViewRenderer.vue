@@ -64,7 +64,7 @@ import mom from 'moment'
 
 export default {
   props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'notes', 'showCompletedOnHeadings', 'isSmart', 'headerOptions', 'progress', 'prefix',
-  'headerDates', 'headerTags'],
+  'headerDates', 'headerTags', 'headerCalendar'],
   components: {
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,

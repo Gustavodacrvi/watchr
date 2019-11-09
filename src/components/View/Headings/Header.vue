@@ -46,6 +46,13 @@
           :left="deadlineDaysLeft"
           @click="$emit('remove-deadline')"
         />
+        <HeaderInfo
+          icon='repeat'
+          info=''
+          :content='repeatCalendar'
+          left=''
+          @click="$emit('remove-repeat')"
+        />
       </div>
       <div class="tags">
         <Tag class="tag" v-for="t in headerTags" :key="t"
@@ -89,7 +96,7 @@ import mom from 'moment'
 import utils from '@/utils'
 
 export default {
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -163,6 +170,10 @@ export default {
   computed: {
     ...mapState(['selectedTasks']),
     ...mapGetters(['isDesktop', 'platform', 'l']),
+    repeatCalendar() {
+      if (!this.headerCalendar) return ''
+      return utils.parseCalendarObjectToString(this.headerCalendar, this.l)
+    },
     isEditable() {
       return !this.isSmart && (this.viewType === 'list' || this.viewType === 'tag') && this.isDesktop
     },

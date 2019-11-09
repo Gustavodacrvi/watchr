@@ -77,6 +77,9 @@ export default {
         deferDate: null,
       })
     },
+    removeRepeat(val) {
+      console.log('controller/list.js', val)
+    },
     removeHeaderTag(tagName) {
       this.$store.dispatch('list/removeListTag', {
         listId: this.viewList.id,
@@ -119,9 +122,13 @@ export default {
 
       obj.defer = list.deferDate
       obj.deadline = list.deadline
-      obj.repeat = list.repeat
 
       return obj
+    },
+    headerCalendar() {
+      if (this.viewList)
+        return this.viewList.calendar
+      return null
     },
     headingsOptions() {
       const arr = []
