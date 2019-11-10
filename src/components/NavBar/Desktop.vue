@@ -12,8 +12,18 @@
     </transition>
     <div class="line"></div>
     <div class="icons">
-      <DropIcon class="drop" handle="user" handleColor="var(--gray)" :options="dropLinks"/>
-      <DropIcon class="drop" handle="globe" handleColor="var(--gray)" :options="languages"/>
+      <DropIcon
+        class="drop"
+        handle="user"
+        handleColor="var(--gray)"
+        :options="dropLinks"
+      />
+      <DropIcon
+        class="drop"
+        handle="globe"
+        handleColor="var(--gray)"
+        :options="languages"
+      />
       <ButtonApp v-if="user && user.isAnonymous" class="no-back" :value="l['Sign in']" @click="upgradeUser"/>
     </div>
   </div>
@@ -22,7 +32,7 @@
 <script>
 
 import LogoVue from '../Illustrations/Logo.vue'
-import IconDropVue from '../IconDrop.vue'
+import IconDropVue from '../IconDrop/IconDrop.vue'
 import ButtonVue from '../Auth/Button.vue'
 
 import { mapGetters, mapState } from 'vuex'
@@ -36,6 +46,29 @@ export default {
     ButtonApp: ButtonVue,
   },
   props: ['route', 'dropLinks'],
+  data() {
+    return {
+      languages: [
+        {
+          name: 'English',
+          callback: () => this.saveLang('en'),
+        },
+        {
+          name: 'Português(Brasil)',
+          callback: () => this.saveLang('pt-br'),
+        },
+      ]
+    }
+  },
+  mounted() {
+    setTimeout(() => {
+      this.languages = [
+        {
+          name: 'fdsa',
+        }
+      ]
+    }, 3000)
+  },
   methods: {
     saveLang(lang) {
       this.$store.commit('saveLang', lang)
@@ -58,7 +91,7 @@ export default {
     isntOnIndexPage() {
       return this.$route.path !== '/'
     },
-    languages() {
+/*     languages() {
       return [
         {
           name: 'English',
@@ -69,7 +102,7 @@ export default {
           callback: () => this.saveLang('pt-br'),
         },
       ]
-    },
+    }, */
   }
 }
 

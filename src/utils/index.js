@@ -4,7 +4,7 @@ import utilsMoment from "./moment"
 import firebase from 'firebase/app'
 
 import Vue from 'vue'
-import IconDrop from '@/components/IconDrop.vue'
+import IconDrop from '@/components/IconDrop/IconDrop.vue'
 
 let contextMenuRunned = false
 

@@ -52,7 +52,7 @@
 
 <script>
 
-import IconDropVue from '../../IconDrop.vue'
+import IconDropVue from '../../IconDrop/IconDrop.vue'
 import IconVue from '../../Icon.vue'
 import EditVue from './Edit.vue'
 import Notes from './Notes.vue'

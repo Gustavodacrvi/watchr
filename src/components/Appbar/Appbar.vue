@@ -84,7 +84,7 @@ import AppbarElementVue from './AppbarElement.vue'
 import ListsVue from './Sections/Lists.vue'
 import TagsVue from './Sections/Tags.vue'
 import FiltersVue from './Sections/Filters.vue'
-import IconDropVue from '../IconDrop.vue'
+import IconDropVue from '../IconDrop/IconDrop.vue'
 import RendererVue from './Renderer.vue'
 import SearchButtonVue from './SearchButton.vue'
 

@@ -116,7 +116,7 @@
 import TagVue from '../Tag.vue'
 import DropInputVue from '../../Auth/DropInput.vue'
 import ButtonVue from '../../Auth/Button.vue'
-import IconDropVue from '../../IconDrop.vue'
+import IconDropVue from '../../IconDrop/IconDrop.vue'
 import IconVue from '../../Icon.vue'
 import ChecklistVue from './Checklist/Checklist.vue'
 

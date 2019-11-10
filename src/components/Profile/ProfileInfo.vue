@@ -39,7 +39,7 @@
 
 import ProfileImgVue from './ProfileImg.vue'
 import IconVue from '../Icon.vue'
-import IconDropVue from '../IconDrop.vue'
+import IconDropVue from '../IconDrop/IconDrop.vue'
 
 import { mapGetters } from 'vuex'
 

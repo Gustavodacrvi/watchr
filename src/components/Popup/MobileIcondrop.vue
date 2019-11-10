@@ -13,7 +13,7 @@
 
 <script>
 
-import IconDropVue from '../IconDrop.vue'
+import IconDropVue from '../IconDrop/IconDrop.vue'
 
 import { mapState } from 'vuex'
 
