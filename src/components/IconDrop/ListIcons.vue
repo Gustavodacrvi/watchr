@@ -1,6 +1,6 @@
 
 <template>
-  <div class="ListIcons">
+  <div class="ListIcons scroll-thin" :class="{overflow: links.allowSearch}">
     <transition name="links-trans">
       <div v-if="showingLinks" class="links" ref='main-content'>
         <div v-if="links.allowSearch" class="search hide-trans">
@@ -200,6 +200,14 @@ export default {
 </script>
 
 <style scoped>
+
+.ListIcons {
+  max-height: 300px;
+}
+
+.overflow {
+  overflow: auto !important;
+}
 
 .link {
   display: flex;

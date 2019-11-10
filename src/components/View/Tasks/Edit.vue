@@ -93,8 +93,7 @@
             />
             <IconDrop
               handle="calendar"
-              :calendar="true"
-              :calendarCall='selectDate'
+              :options="calendarOptions"
             />
             <Icon v-if="doesntHaveChecklist"
               style="margin-right: 6px;margin-top: 1px"
@@ -292,6 +291,12 @@ export default {
     doesntHaveChecklist() {
       return this.task.checklist.length === 0
     },
+    calendarOptions() {
+      return {
+        comp: 'CalendarPicker',
+        content: {callback: this.selectDate}
+      }
+    },
     editStyle() {
       if (this.popup)
         return {
@@ -379,7 +384,10 @@ export default {
           }
         })
       }
-      return arr
+      return {
+        links: arr,
+        allowSearch: true,
+      }
     },
     priorityOptions() {
       const links = this.priorities
