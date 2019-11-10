@@ -99,6 +99,7 @@ export default {
   "This user is already on this list.": "Esse usuário já está na lista.",
   "Accept invite": "Aceitar convite",
   "Reject invite": "Rejeitar convite",
+  "Go to list": "Ir para a lista",
   "rejected": "rejeitado",
   "Deadline": "Prazo",
   "days left": "dias faltando",
