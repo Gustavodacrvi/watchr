@@ -3,10 +3,10 @@
   <div class="ListIcons">
     <transition name="links-trans">
       <div v-if="showingLinks" class="links" ref='main-content'>
-        <div v-if="links.showSearch" class="search">
+        <div v-if="links.allowSearch" class="search hide-trans">
           <input class="input"
             :value="search"
-            @input="v => search = v"
+            @input="v => search = v.target.value"
           >
         </div>
         <transition-group
@@ -181,8 +181,11 @@ export default {
   computed: {
     ...mapGetters(['l']),
     getLinks() {
-      if (this.links.links) return this.links.links
-      return this.links
+      let arr = this.links
+      if (this.links.links) arr = this.links.links
+      if (this.links.allowSearch)
+        return arr.filter(el => el.name.toLowerCase().includes(this.search.toLowerCase()))
+      return arr
     },
   },
   watch: {
@@ -246,6 +249,25 @@ export default {
   position: relative;
   margin-right: 8px;
   bottom: -1.5px;
+}
+
+.search {
+  margin: 0 12px;
+  margin-bottom: 18px;
+  min-width: 250px;
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  background: none;
+  border: none;
+  border-radius: 0;
+  font-size: 1em;
+  padding: 8px;
+  outline: none;
+  border-bottom: 1px solid var(--gray);
 }
 
 </style>

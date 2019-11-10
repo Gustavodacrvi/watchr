@@ -81,7 +81,7 @@
 
 import IconVue from './../Icon.vue'
 import ListIcons from './ListIcons.vue'
-import CalendarPickerVue from './../View/Tasks/CalendarPicker.vue'
+import CalendarComp from './Calendar.vue'
 
 import { mapGetters } from 'vuex'
 

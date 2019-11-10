@@ -81,7 +81,6 @@
           <div class="icons">
             <IconDrop
               handle="tag"
-              :allowSearch="true"
               :options="getTags"
             />
             <IconDrop
@@ -90,7 +89,6 @@
             />
             <IconDrop
               handle="tasks"
-              :allowSearch="true"
               :options="listOptions"
             />
             <IconDrop
@@ -350,7 +348,10 @@ export default {
           },
         })
       }
-      return arr
+      return {
+        links: arr,
+        allowSearch: true,
+      }
     },
     tagIds() {
       return this.$store.getters['tag/getTagsByName'](this.task.tags).map(el => el.id)

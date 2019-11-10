@@ -36,13 +36,14 @@
 import Icon from './../Icon.vue'
 
 import ListIcons from './ListIcons.vue'
+import CalendarComp from './Calendar.vue'
 
 import { mapGetters } from 'vuex'
 
 export default {
   props: ['options', 'id', 'hideHandle', 'handle', 'handleColor'],
   components: {
-    Icon, ListIcons,
+    Icon, ListIcons, CalendarComp,
   },
   data() {
     return {

@@ -114,7 +114,7 @@
 
 import IconVue from '../../Icon.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
-import TagVue from '../Tag.vue'
+import TagVue from '@/components/View/Tag.vue'
 
 import mom from 'moment'
 import { mapGetters } from 'vuex'
