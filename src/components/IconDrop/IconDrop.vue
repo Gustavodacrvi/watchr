@@ -43,13 +43,14 @@ import Icon from './../Icon.vue'
 
 import ListIcons from './ListIcons.vue'
 import CalendarPicker from './Calendar.vue'
+import WeeklyPicker from './Calendar/WeeklyPicker.vue'
 
 import { mapGetters } from 'vuex'
 
 export default {
   props: ['options', 'id', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root'],
   components: {
-    Icon, ListIcons, CalendarPicker,
+    Icon, ListIcons, CalendarPicker, WeeklyPicker,
   },
   data() {
     return {

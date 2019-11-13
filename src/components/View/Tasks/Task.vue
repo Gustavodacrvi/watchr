@@ -312,6 +312,25 @@ export default {
           callback: () => dispatch('task/convertToList', this.task)
         },
         {
+          name: l['Repeat task'],
+          icon: 'repeat',
+          callback: () => [
+            {
+              name: l['Repeat weekly'],
+              icon: 'repeat',
+              callback: () => ({
+                comp: 'WeeklyPicker',
+                content: {callback: console.log}
+              }),
+            },
+            {
+              name: l['Repeat periodically'],
+              icon: 'repeat',
+              callback: () => null,
+            },
+          ],
+        },
+        {
           type: 'optionsList',
           name: l['Priority'],
           options: [
@@ -405,7 +424,7 @@ export default {
       return utilsTask.filterTasksByView([this.task], 'Tomorrow').length === 1
     },
     showIconDrop() {
-      return this.isDesktop
+      return this.isDesktop && this.onHover
     },
     listStr() {
       const list = this.task.list

@@ -147,7 +147,7 @@ export default {
 <style scoped>
 
 .ListIcons {
-  max-height: 300px;
+  max-height: 360px;
 }
 
 .overflow {
