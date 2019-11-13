@@ -320,13 +320,16 @@ export default {
               icon: 'repeat',
               callback: () => ({
                 comp: 'WeeklyPicker',
-                content: {callback: this.saveCalendarDate}
+                content: {callback: this.saveCalendarDate},
               }),
             },
             {
               name: l['Repeat periodically'],
               icon: 'repeat',
-              callback: () => null,
+              callback: () => ({
+                comp: 'PeriodicPicker',
+                content: {callback: this.saveCalendarDate},
+              }),
             },
           ],
         },
