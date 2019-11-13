@@ -3,6 +3,7 @@
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
     @click="rootClick"
+    v-longclick='openMobileOptions'
   >
     <transition name="edit-t" mode="out-in"
       @enter='enter'
@@ -106,13 +107,7 @@ export default {
       onHover: false,
     }
   },
-  mounted() {
-    this.bindContextMenu(this.options)
-  },
   methods: {
-    bindContextMenu(options) {
-      utils.bindOptionsToEventListener(this.$el, options, this)
-    },
     enter(cont) {
       if (!this.isEditing) {
         const s = cont.style
@@ -142,6 +137,9 @@ export default {
         cont.style.transitionDuration = '.1s'
         cont.style.opacity = 0
       }
+    },
+    openMobileOptions() {
+      this.$store.commit('pushIconDrop', this.options)
     },
     completeTask() {
       const {t,c} = this.getTask
@@ -407,8 +405,7 @@ export default {
       return utilsTask.filterTasksByView([this.task], 'Tomorrow').length === 1
     },
     showIconDrop() {
-      if (this.isDesktop && this.onHover) return true
-      else if (!this.isDesktop) return true
+      return this.isDesktop
     },
     listStr() {
       const list = this.task.list
@@ -453,13 +450,6 @@ export default {
       return obj[this.task.priority]
     },
   },
-  watch: {
-    selectedTasks() {
-      if (this.selectedTasks && this.selectedTasks.length > 0)
-        this.bindContextMenu(this.multiSelectOptions)
-      else this.bindContextMenu(this.options)
-    }
-  }
 }
 
 </script>
@@ -539,6 +529,7 @@ export default {
 .icon-drop {
   position: absolute;
   top: 50%;
+  transform: translateY(-45%);
   right: -.5px;
 }
 

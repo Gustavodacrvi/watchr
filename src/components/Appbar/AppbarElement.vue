@@ -208,7 +208,7 @@ export default {
 }
 
 .drop {
-  transform: translate(8px, 14px);
+  transform: translateY(2px);
 }
 
 .total {
