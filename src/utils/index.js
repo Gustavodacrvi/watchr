@@ -3,7 +3,7 @@ import mom from "moment"
 import utilsMoment from "./moment"
 import firebase from 'firebase/app'
 
-import Vue from 'vue'
+import Vue from 'vue' 
 import IconDrop from '@/components/IconDrop/IconDrop.vue'
 
 let contextMenuRunned = false
@@ -455,9 +455,8 @@ export default {
         const ins = new Constructor({
           parent,
           propsData: {
-            options, allowSearch: false, calendar: false,
-            isMobileIconDropComp: true, id: 'contextmenu',
-            root: true,
+            options, defaultShowing: true, id: 'contextmenu',
+            root: true, hideHandle: true,
           }
         })
         const vueEl = document.createElement('div')

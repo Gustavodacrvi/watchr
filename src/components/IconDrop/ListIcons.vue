@@ -1,55 +1,53 @@
 
 <template>
   <div class="ListIcons scroll-thin" :class="{overflow: links.allowSearch}">
-    <transition name="links-trans">
-      <div v-if="showingLinks" class="links" ref='main-content'>
-        <div v-if="links.allowSearch" class="search hide-trans">
-          <input class="input"
-            :value="search"
-            @input="v => search = v.target.value"
-          >
-        </div>
-        <transition-group
-          @enter='enterItems'
-          @leave='leaveItems'
+    <div class="links" ref='main-content'>
+      <div v-if="links.allowSearch" class="search hide-trans">
+        <input class="input"
+          :value="search"
+          @input="v => search = v.target.value"
         >
-          <template v-for="l in getLinks">
-            <div v-if="!l.type" class="link cursor hide-trans"
-              :class="{important: l.important}"
-              :key="l.name"
-              :ref="l.name"
-              @click="l.important ? blink(l.name) : linkCallback(l.callback, l)"
-              @dblclick="l.important ? linkCallback(l.callback, l) : () => {}"
-            >
-              <div class="link-cont">
-                <Icon v-if="l.icon"
-                  class="cursor icon"
-                  :icon="l.icon"
-                  :color="l.color"
-                />
-                <input v-if="l.file" :ref="`file-icondrop-link-${l.name}`" type="file" :accept="l.accept" style="display: none" @change='handleFiles(l)'>
-                <span class="name">{{ priorityParser(l.name) }}</span>
-              </div>
-            </div>
-            <div v-else-if="l.type === 'optionsList'" :key="l.name" class="header-link hide-trans">
-              <div class="header-name">{{ l.name }}</div>
-              <div class="values">
-                <Icon v-for="l in l.options" :key="l.id" class="val icon cursor"
-                  width="25px"
-                  :icon="l.icon"
-                  :color="l.color"
-                  :primaryHover="true"
-                  @click="linkCallback(l.callback, l)"
-                />
-              </div>
-            </div>
-            <div v-else-if="l.type === 'hr'" :key="l.name"
-              class="drop-division hide-trans"
-            ><div class="division-line hide-trans"></div></div>
-          </template>
-        </transition-group>
       </div>
-    </transition>
+      <transition-group
+        @enter='enterItems'
+        @leave='leaveItems'
+      >
+        <template v-for="l in getLinks">
+          <div v-if="!l.type" class="link cursor hide-trans"
+            :class="{important: l.important}"
+            :key="l.name"
+            :ref="l.name"
+            @click="l.important ? blink(l.name) : linkCallback(l.callback, l)"
+            @dblclick="l.important ? linkCallback(l.callback, l) : () => {}"
+          >
+            <div class="link-cont">
+              <Icon v-if="l.icon"
+                class="cursor icon"
+                :icon="l.icon"
+                :color="l.color"
+              />
+              <input v-if="l.file" :ref="`file-icondrop-link-${l.name}`" type="file" :accept="l.accept" style="display: none" @change='handleFiles(l)'>
+              <span class="name">{{ priorityParser(l.name) }}</span>
+            </div>
+          </div>
+          <div v-else-if="l.type === 'optionsList'" :key="l.name" class="header-link hide-trans">
+            <div class="header-name">{{ l.name }}</div>
+            <div class="values">
+              <Icon v-for="l in l.options" :key="l.id" class="val icon cursor"
+                width="25px"
+                :icon="l.icon"
+                :color="l.color"
+                :primaryHover="true"
+                @click="linkCallback(l.callback, l)"
+              />
+            </div>
+          </div>
+          <div v-else-if="l.type === 'hr'" :key="l.name"
+            class="drop-division hide-trans"
+          ><div class="division-line hide-trans"></div></div>
+        </template>
+      </transition-group>
+    </div>
   </div>
 </template>
 
@@ -67,7 +65,6 @@ export default {
   data() {
     return {
       links: this.content,
-      showingLinks: true,
       search: '',
     }
   },
@@ -83,60 +80,15 @@ export default {
       if (link.file) this.getFile(link)
       else {
         const close = () => {
-          this.showing = false
-          this.justClosed = true
+          this.$emit('close')
           this.$store.commit('clearSelected')
-          this.closeMobileIconDrop()
-          setTimeout(() => {
-            this.links = this.content
-          }, 210)
         }
         if (callback) {
-          let opt = callback(link, this)
-          const isAPromise = opt && opt.then !== undefined
-
-          if (!isAPromise && opt) {
-            const cont = this.$el
-            if (cont) {
-              const s = getComputedStyle(cont)
-              const oldWidth = s.width
-              const oldHeight = s.height
-      
-              cont.style.transitionDelay = '.05s'
-              cont.style.transitionDuration = '0s'
-              setTimeout(() => {
-                cont.style.width = 'auto'
-                cont.style.height = 'auto'
-                setTimeout(() => {
-                  const {height, width} = getComputedStyle(cont)
-                  cont.style.width = oldWidth
-                  cont.style.height = oldHeight
-                  setTimeout(() => {
-                    cont.style.transitionDuration = '.2s'
-                    cont.style.width = width
-                    cont.style.height = height
-                    cont.style.transitionDelay = '.0s'
-                  }, 50)
-                })
-              }, 200)
-      
-              this.toggleLinks()
-              this.links = opt
-            }
-          } else close()
+          const opt = callback(link, this, this.$parent)
+          this.$emit('update', opt)
+          if (!opt) close()
         }
       }
-    },
-    toggleLinks() {
-      this.showingLinks = false
-      setTimeout(() => {
-        this.showingLinks = true
-      }, 200)
-    },
-    closeMobileIconDrop() {
-      setTimeout(() => {
-        this.$store.commit('pushIconDrop', null)
-      }, 200)
     },
     getFile(link) {
       const ref = this.$refs[`file-icondrop-link-${link.name}`][0]
@@ -188,13 +140,6 @@ export default {
       return arr
     },
   },
-  watch: {
-    content() {
-      if (!this.justClosed)
-        this.linkCallback(() => this.content, {})
-      this.justClosed = false
-    },
-  }
 }
 
 </script>
@@ -243,16 +188,6 @@ export default {
   justify-content: center;
 }
 
-.links-trans-enter, .links-trans-leave-to {
-  opacity: 0;
-  transition-duration: .2s;
-}
-
-.links-trans-leave, .links-trans-enter-to {
-  opacity: 1;
-  transition-duration: .2s;
-}
-
 .icon {
   position: relative;
   margin-right: 8px;
@@ -264,6 +199,12 @@ export default {
   margin-bottom: 18px;
   min-width: 250px;
   position: relative;
+}
+
+.header-link {
+  margin: 8px 26px;  
+  width: 160px;
+  transition: opacity .2s;
 }
 
 .input {

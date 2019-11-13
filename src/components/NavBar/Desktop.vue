@@ -46,29 +46,6 @@ export default {
     ButtonApp: ButtonVue,
   },
   props: ['route', 'dropLinks'],
-  data() {
-    return {
-      languages: [
-        {
-          name: 'English',
-          callback: () => this.saveLang('en'),
-        },
-        {
-          name: 'Português(Brasil)',
-          callback: () => this.saveLang('pt-br'),
-        },
-      ]
-    }
-  },
-  mounted() {
-    setTimeout(() => {
-      this.languages = [
-        {
-          name: 'fdsa',
-        }
-      ]
-    }, 3000)
-  },
   methods: {
     saveLang(lang) {
       this.$store.commit('saveLang', lang)
@@ -91,7 +68,7 @@ export default {
     isntOnIndexPage() {
       return this.$route.path !== '/'
     },
-/*     languages() {
+    languages() {
       return [
         {
           name: 'English',
@@ -102,7 +79,7 @@ export default {
           callback: () => this.saveLang('pt-br'),
         },
       ]
-    }, */
+    },
   }
 }
 

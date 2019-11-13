@@ -93,22 +93,26 @@ export default {
           {
             name: l['Repeat list'],
             icon: 'repeat',
-            callback: () => {return {calendar: true, callback: date => {
+            callback: () => {return {
+              comp: 'CalendarPicker',
+              content: {callback: date => {
               if (date.type && date.type !== 'specific') {
                 dispatch('list/saveList', {
                   id: listId, calendar: date,
-                })
+                })}
               }
             }}},
           },
           {
             name: l['Defer date'],
             icon: 'sleep',
-            callback: () => {return {calendar: true, callback: date => {
+            callback: () => {return {
+              comp: 'CalendarPicker',
+              content: {callback: date => {
               if (date.type === 'specific')
                 dispatch('list/saveList', {
                   id: listId, deferDate: date.specific,
-                })
+                })}
             }}},
           },
           {
@@ -134,11 +138,13 @@ export default {
           {
             name: l['Add deadline'],
             icon: 'deadline',
-            callback: () => {return {calendar: true, callback: date => {
+            callback: () => {return {
+              comp: 'CalendarPicker',
+              content: {callback: date => {
               if (date.type === 'specific')
                 dispatch('list/saveList', {
                   id: listId, deadline: date.specific,
-                })
+                })}
             }}},
           },
         ]

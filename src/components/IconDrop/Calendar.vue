@@ -15,8 +15,10 @@ export default {
   },
   methods: {
     selectDate(date) {
-      if (this.content.callback)
+      if (this.content.callback) {
         this.content.callback(date)
+        this.$emit('close')
+      }
       this.showing = false
       this.$store.commit('clearSelected')
     },

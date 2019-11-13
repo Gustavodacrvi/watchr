@@ -360,7 +360,9 @@ export default {
             {
               icon: 'calendar',
               id: 'çljkasdf',
-              callback: () => {return {calendar: true, callback: this.saveCalendarDate}},
+              callback: () => {return {
+                comp: "CalendarPicker",
+                content: {callback: this.saveCalendarDate}}},
             },
           ]
         },
