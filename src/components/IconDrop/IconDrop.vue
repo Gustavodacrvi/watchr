@@ -96,7 +96,7 @@ export default {
               cont.style.transitionDelay = '.0s'
             }, 50)
           })
-        }, 220)
+        }, 300)
         this.showingCont = false
         setTimeout(() => {
           this.showingCont = true
@@ -180,6 +180,10 @@ export default {
   z-index: 5;
 }
 
+.central {
+  position: unset;
+}
+
 .root {
   z-index: 900;
 }
@@ -194,6 +198,12 @@ export default {
   bottom: 0;
   top: unset;
   right: 0;
+}
+
+.central .content {
+  right: 50%;
+  top: 50%;
+  transform: translate(50%, -50%);
 }
 
 .fade-enter, .fade-leave-to {

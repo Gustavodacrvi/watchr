@@ -1,12 +1,8 @@
 <template>
   <div class="MobileIcondrop" @click="closeIconDrop">
-    <IconDrop
-      :options='iconDrop.options'
-      :allowSearch='iconDrop.allowSearch'
-      :calendar='iconDrop.calendar'
-      :calendarCall='iconDrop.calendarCallback'
-      :isMobileIconDropComp='true'
-      :centralize='true'
+    <IconDrop class="central"
+      :options='iconDrop'
+      :defaultShowing='true'
     />
   </div>
 </template>
