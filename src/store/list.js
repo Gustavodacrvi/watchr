@@ -560,13 +560,11 @@ export default {
       for (const t of tasks) {
         if (t.list === listId) ids.push(t.id)
       }
-      for (const id of ids) {
-        const ref = taskRef(id)
-        batch.update(ref, {
+      for (const id of ids)
+        batch.update(taskRef(id), {
           list: null,
           heading: null,
         })
-      }
 
       batch.commit()
     },

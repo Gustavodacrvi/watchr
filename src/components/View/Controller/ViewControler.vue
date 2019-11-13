@@ -128,11 +128,11 @@ export default {
                 name: this.l['Change date'],
                 icon: 'calendar',
                 callback: () => ({
-                  calendar: true,
-                  callback: (calendar) => this.$store.dispatch('task/saveTasksById', {
+                  comp: "CalendarPicker",
+                  content: {callback: (calendar) => this.$store.dispatch('task/saveTasksById', {
                     ids: getTasks().map(el => el.id),
                     task: {calendar},
-                  })
+                  })}
                 })
               }
             ],
@@ -329,12 +329,12 @@ export default {
               name: 'Select date',
               icon: 'calendar',
               callback: () => {return {
-                calendar: true,
-                callback: (calendar) => {
+                comp: 'CalendarPicker',
+                content: {callback: (calendar) => {
                   dispatch('task/saveTasksById', {
                     ids: overIds,
                     task: {calendar},
-                  })
+                  })}
                 }
               }}
             }

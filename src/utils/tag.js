@@ -25,7 +25,7 @@ export default {
       name: l['Delete tag'],
       icon: 'trash',
       important: true,
-      callback: () => dispatch('tag/deleteTag', {id: el.id, tasks: this.$store.state.task.tasks})
+      callback: () => dispatch('tag/deleteTag', {id: tag.id, tasks: store.state.task.tasks})
     })
     return opt
   }

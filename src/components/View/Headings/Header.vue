@@ -85,7 +85,7 @@
 <script>
 
 import IconVue from '../../Icon.vue'
-import IconDropVue from '../../IconDrop.vue'
+import IconDropVue from '../../IconDrop/IconDrop.vue'
 import TagVue from './../Tag.vue'
 import Notes from './Notes.vue'
 import HeaderInfo from './HeaderInfo.vue'

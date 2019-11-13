@@ -12,8 +12,18 @@
     </transition>
     <div class="line"></div>
     <div class="icons">
-      <DropIcon class="drop" handle="user" handleColor="var(--gray)" :options="dropLinks"/>
-      <DropIcon class="drop" handle="globe" handleColor="var(--gray)" :options="languages"/>
+      <DropIcon
+        class="drop"
+        handle="user"
+        handleColor="var(--gray)"
+        :options="dropLinks"
+      />
+      <DropIcon
+        class="drop"
+        handle="globe"
+        handleColor="var(--gray)"
+        :options="languages"
+      />
       <ButtonApp v-if="user && user.isAnonymous" class="no-back" :value="l['Sign in']" @click="upgradeUser"/>
     </div>
   </div>
@@ -22,7 +32,7 @@
 <script>
 
 import LogoVue from '../Illustrations/Logo.vue'
-import IconDropVue from '../IconDrop.vue'
+import IconDropVue from '../IconDrop/IconDrop.vue'
 import ButtonVue from '../Auth/Button.vue'
 
 import { mapGetters, mapState } from 'vuex'

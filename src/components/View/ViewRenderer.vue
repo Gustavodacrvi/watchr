@@ -34,7 +34,7 @@
         :options='options'
         :activeList='getActiveListId'
         :headingPosition='0'
-        @update="(ids) => $emit('update-ids', ids)"
+        @update="updateIds"
         @update-headings='(ids) => $emit("update-heading-ids", ids)'
         @add-heading="addHeading"
       />
@@ -110,6 +110,9 @@ export default {
     addHeading(obj) {
       this.$emit('add-heading', {...obj})
     },
+    updateIds(ids) {
+      this.$emit('update-ids', ids)
+    },
 
     sortByName() {
       const tasks = this.tasks.slice()
@@ -121,6 +124,7 @@ export default {
       tasks = utilsTask.sortTasksByPriority(tasks)
       this.updateIds(tasks.map(el => el.id))
     },
+
     sortByDate() {
       // TODO
       /* let tasks = this.getTasks.slice()
@@ -335,7 +339,31 @@ export default {
           {
             name: l['Change date'],
             icon: 'calendar',
-            callback: () => {return {calendar: true, callback: this.saveDates}}
+            callback: () => [
+              {
+              name: l['Specific day'],
+              icon: 'calendar',
+              callback: () => {return {
+                comp: 'CalendarPicker',
+                content: {callback: this.saveDates}}},
+              },
+              {
+                name: l['Repeat weekly'],
+                icon: 'repeat',
+                callback: () => ({
+                  comp: 'WeeklyPicker',
+                  content: {callback: this.saveDates},
+                }),
+              },
+              {
+                name: l['Repeat periodically'],
+                icon: 'repeat',
+                callback: () => ({
+                  comp: 'PeriodicPicker',
+                  content: {callback: this.saveDates},
+                }),
+              },
+            ],
           },
           {
             name: l['Add tags'],

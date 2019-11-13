@@ -254,7 +254,7 @@ export default {
             name: t.name,
             priority: '',
             list: list.id,
-            notes: '',
+            notes: t.notes,
             calendar: null,
             heading: null,
             tags: [],

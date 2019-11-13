@@ -49,7 +49,7 @@
 <script>
 
 import IconVue from '../Icon.vue'
-import IconDropVue from '../IconDrop.vue'
+import IconDropVue from '../IconDrop/IconDrop.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -208,7 +208,7 @@ export default {
 }
 
 .drop {
-  transform: translate(8px, 14px);
+  transform: translateY(2px);
 }
 
 .total {

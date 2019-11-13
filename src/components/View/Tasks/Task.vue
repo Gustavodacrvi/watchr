@@ -3,6 +3,7 @@
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
     @click="rootClick"
+    v-longclick='openMobileOptions'
   >
     <transition name="edit-t" mode="out-in"
       @enter='enter'
@@ -79,7 +80,7 @@
 <script>
 
 import IconVue from '../../Icon.vue'
-import IconDropVue from '../../IconDrop.vue'
+import IconDropVue from '../../IconDrop/IconDrop.vue'
 import TagVue from '../Tag.vue'
 import EditVue from './Edit.vue'
 
@@ -107,7 +108,8 @@ export default {
     }
   },
   mounted() {
-    this.bindContextMenu(this.options)
+    if (this.isDesktop)
+      this.bindContextMenu(this.options)
   },
   methods: {
     bindContextMenu(options) {
@@ -143,6 +145,10 @@ export default {
         cont.style.opacity = 0
       }
     },
+    openMobileOptions() {
+      if (!this.isDesktop)
+        this.$store.commit('pushIconDrop', this.options)
+    },
     completeTask() {
       const {t,c} = this.getTask
       if (!this.completed || (c && c.type === 'periodic' || c && c.type === 'weekly'))
@@ -175,10 +181,10 @@ export default {
         this.$store.commit('applyAppnavSelected', this.task.id)
       })
     },
-    saveCalendarDate(date) {
+    saveCalendarDate(calendar) {
       this.$store.dispatch('task/saveTasksById', {
         ids: [this.task.id],
-        task: {calendar: date},
+        task: {calendar},
       })
     },
     saveDate(date) {
@@ -314,6 +320,28 @@ export default {
           callback: () => dispatch('task/convertToList', this.task)
         },
         {
+          name: l['Repeat task'],
+          icon: 'repeat',
+          callback: () => [
+            {
+              name: l['Repeat weekly'],
+              icon: 'repeat',
+              callback: () => ({
+                comp: 'WeeklyPicker',
+                content: {callback: this.saveCalendarDate},
+              }),
+            },
+            {
+              name: l['Repeat periodically'],
+              icon: 'repeat',
+              callback: () => ({
+                comp: 'PeriodicPicker',
+                content: {callback: this.saveCalendarDate},
+              }),
+            },
+          ],
+        },
+        {
           type: 'optionsList',
           name: l['Priority'],
           options: [
@@ -360,7 +388,9 @@ export default {
             {
               icon: 'calendar',
               id: 'çljkasdf',
-              callback: () => {return {calendar: true, callback: this.saveCalendarDate}},
+              callback: () => {return {
+                comp: "CalendarPicker",
+                content: {callback: this.saveCalendarDate}}},
             },
           ]
         },
@@ -371,6 +401,13 @@ export default {
           callback: () => dispatch('task/deleteTasks', [this.task.id])
         }
       ]
+      if (this.task.list) {
+        arr.splice(2, 0, {
+          name: l["Go to list"],
+          icon: 'tasks',
+          callback: () => this.$router.push('/user?list='+this.savedLists.find(el => el.id === t.list).name)
+        })
+      }
       if (c && c.persistent && (c.type === "periodic" || c.type === "periodic"))
         arr.splice(3, 0, {
           name: l["Manual complete"],
@@ -398,8 +435,7 @@ export default {
       return utilsTask.filterTasksByView([this.task], 'Tomorrow').length === 1
     },
     showIconDrop() {
-      if (this.isDesktop && this.onHover) return true
-      else if (!this.isDesktop) return true
+      return this.isDesktop && this.onHover
     },
     listStr() {
       const list = this.task.list
@@ -446,9 +482,10 @@ export default {
   },
   watch: {
     selectedTasks() {
-      if (this.selectedTasks && this.selectedTasks.length > 0)
-        this.bindContextMenu(this.multiSelectOptions)
-      else this.bindContextMenu(this.options)
+      if (this.isDesktop)
+        if (this.selectedTasks && this.selectedTasks.length > 0)
+          this.bindContextMenu(this.multiSelectOptions)
+        else this.bindContextMenu(this.options)
     }
   }
 }
@@ -530,6 +567,7 @@ export default {
 .icon-drop {
   position: absolute;
   top: 50%;
+  transform: translateY(-45%);
   right: -.5px;
 }
 

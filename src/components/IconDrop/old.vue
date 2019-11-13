@@ -16,7 +16,10 @@
       @enter="enter"
       @leave="leave"
     >
-      <div v-if="showing && !showCalendar" key="links" class="content shadow cb rb">
+      <component :is="dropComp"
+        :opt='options'
+      />
+<!--       <div v-if="showing && !showCalendar" key="links" class="content shadow cb rb">
         <transition name="links-trans">
           <div v-if="showingLinks" class="links">
             <div v-if="showSearch" class="search">
@@ -69,15 +72,16 @@
       </div>
       <div v-else-if="showing && showCalendar" class="content calendar shadow cb rb" key="calendar">
         <CalendarPicker @select="selectDate"/>
-      </div>
+      </div> -->
     </transition>
   </div>
 </template>
 
 <script>
 
-import IconVue from './Icon.vue'
-import CalendarPickerVue from './View/Tasks/CalendarPicker.vue'
+import IconVue from './../Icon.vue'
+import ListIcons from './ListIcons.vue'
+import CalendarComp from './Calendar.vue'
 
 import { mapGetters } from 'vuex'
 
@@ -86,6 +90,7 @@ export default {
   components: {
     Icon: IconVue,
     CalendarPicker: CalendarPickerVue,
+    ListIcons,
   },
   data() {
     return {
@@ -281,7 +286,11 @@ export default {
         return links
       }
       return []
-    }
+    },
+    dropComp() {
+      if (this.opt && this.opt.type) return this.opt.type
+      return 'ListIcons'
+    },
   },
   watch: {
     options() {
@@ -369,18 +378,6 @@ export default {
 .links-trans-leave, .links-trans-enter-to {
   opacity: 1;
   transition-duration: .2s;
-}
-
-.content {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 0;
-  height: 0;
-  padding: 18px 0;
-  overflow: hidden;
-  transition-duration: .2s;
-  z-index: 5;
 }
 
 .central .content {

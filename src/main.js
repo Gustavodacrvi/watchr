@@ -6,6 +6,11 @@ import "./registerServiceWorker"
 
 Vue.config.productionTip = false
 
+import { longClickDirective } from 'vue-long-click'
+ 
+const longClickInstance = longClickDirective({delay: 600, interval: 5000})
+Vue.directive('longclick', longClickInstance)
+
 new Vue({
   router,
   store,

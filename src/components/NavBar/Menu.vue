@@ -31,7 +31,7 @@
 
 import AppbarVue from '../Appbar/Appbar.vue'
 import IconVue from '../Icon.vue'
-import IconDropVue from '../IconDrop.vue'
+import IconDropVue from '../IconDrop/IconDrop.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
