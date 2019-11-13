@@ -107,7 +107,14 @@ export default {
       onHover: false,
     }
   },
+  mounted() {
+    if (this.isDesktop)
+      this.bindContextMenu(this.options)
+  },
   methods: {
+    bindContextMenu(options) {
+      utils.bindOptionsToEventListener(this.$el, options, this)
+    },
     enter(cont) {
       if (!this.isEditing) {
         const s = cont.style
@@ -139,7 +146,8 @@ export default {
       }
     },
     openMobileOptions() {
-      this.$store.commit('pushIconDrop', this.options)
+      if (!this.isDesktop)
+        this.$store.commit('pushIconDrop', this.options)
     },
     completeTask() {
       const {t,c} = this.getTask
@@ -472,6 +480,14 @@ export default {
       return obj[this.task.priority]
     },
   },
+  watch: {
+    selectedTasks() {
+      if (this.isDesktop)
+        if (this.selectedTasks && this.selectedTasks.length > 0)
+          this.bindContextMenu(this.multiSelectOptions)
+        else this.bindContextMenu(this.options)
+    }
+  }
 }
 
 </script>

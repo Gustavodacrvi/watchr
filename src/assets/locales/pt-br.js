@@ -101,6 +101,7 @@ export default {
   "Reject invite": "Rejeitar convite",
   "Go to list": "Ir para a lista",
   "Repeat weekly": "Repetir semanalmente",
+  "Specific day": "Dia específico",
   "Repeat periodically": "Repetir periodicamente",
   "Repeat task": "Repetir tarefa",
   "rejected": "rejeitado",

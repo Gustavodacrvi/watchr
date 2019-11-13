@@ -95,6 +95,10 @@
               handle="calendar"
               :options="calendarOptions"
             />
+            <IconDrop
+              handle="repeat"
+              :options="repeatOptions"
+            />
             <Icon v-if="doesntHaveChecklist"
               style="margin-right: 6px;margin-top: 1px"
               class="cursor"
@@ -296,6 +300,26 @@ export default {
         comp: 'CalendarPicker',
         content: {callback: this.selectDate}
       }
+    },
+    repeatOptions() {
+      return [
+        {
+          name: this.l['Repeat weekly'],
+          icon: 'repeat',
+          callback: () => ({
+            comp: 'WeeklyPicker',
+            content: {callback: this.selectDate},
+          }),
+        },
+        {
+          name: this.l['Repeat periodically'],
+          icon: 'repeat',
+          callback: () => ({
+            comp: 'PeriodicPicker',
+            content: {callback: this.selectDate},
+          }),
+        },
+      ]
     },
     editStyle() {
       if (this.popup)

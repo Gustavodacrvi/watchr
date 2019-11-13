@@ -112,6 +112,7 @@ export default {
   "days left": "days left",
   "days": "days",
   "Repeat weekly": "Repeat weekly",
+  "Specific day": "Specific day",
   "Repeat periodically": "Repeat periodically",
   "Go to list": "Go to list",
   "Repeat task": "Repeat task",
