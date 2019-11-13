@@ -30,7 +30,14 @@ export default {
   },
   methods: {
     save() {
-
+      if (this.weeks.length > 0) {
+        this.content.callback({
+          type: 'weekly',
+          weekly: this.weeks,
+          editDate: mom().format('Y-M-D'),
+        })
+        this.$emit('close')
+      }
     },
     toggle(d) {
       if (this.isActive(d)) {

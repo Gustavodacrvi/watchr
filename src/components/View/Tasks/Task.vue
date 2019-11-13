@@ -173,10 +173,10 @@ export default {
         this.$store.commit('applyAppnavSelected', this.task.id)
       })
     },
-    saveCalendarDate(date) {
+    saveCalendarDate(calendar) {
       this.$store.dispatch('task/saveTasksById', {
         ids: [this.task.id],
-        task: {calendar: date},
+        task: {calendar},
       })
     },
     saveDate(date) {
@@ -320,7 +320,7 @@ export default {
               icon: 'repeat',
               callback: () => ({
                 comp: 'WeeklyPicker',
-                content: {callback: console.log}
+                content: {callback: this.saveCalendarDate}
               }),
             },
             {
