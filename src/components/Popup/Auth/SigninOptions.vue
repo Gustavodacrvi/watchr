@@ -33,32 +33,34 @@ export default {
 
       const toast = (t) => this.$store.commit('pushToast', t)
 
-      firebase.auth().signInWithPopup(provider).then(res => {
-        const user = res.user
-        const toast = (t) => this.$store.commit('pushToast', t)
-        const dispatch = this.$store.dispatch
-        toast({
-          name: this.l['You have successfully logged in!'],
-          seconds: 3,
-          type: 'success',
-        })
-        dispatch('createUser', user).then(() => {
-          this.$router.push('/user')
-          window.location.reload()
-          this.$store.dispatch('closePopup')
-        }).catch(err => {
-          firebase.auth().currentUser.delete()
+      if (this.isDesktop)
+        firebase.auth().signInWithPopup(provider).then(res => {
+          const user = res.user
+          const toast = (t) => this.$store.commit('pushToast', t)
+          const dispatch = this.$store.dispatch
           toast({
-            name: err.message,
+            name: this.l['You have successfully logged in!'],
             seconds: 3,
-            type: 'error',
-          })}
-        )
-      }).catch(err => toast('pushToast', {
-        name: err.message,
-        seconds: 3,
-        type: 'error',
-      }))
+            type: 'success',
+          })
+          dispatch('createUser', user).then(() => {
+            this.$router.push('/user')
+            window.location.reload()
+            this.$store.dispatch('closePopup')
+          }).catch(err => {
+            firebase.auth().currentUser.delete()
+            toast({
+              name: err.message,
+              seconds: 3,
+              type: 'error',
+            })}
+          )
+        }).catch(err => toast('pushToast', {
+          name: err.message,
+          seconds: 3,
+          type: 'error',
+        }))
+      else firebase.auth().signInWithRedirect(provider)
     },
     guest() {
       const auth = firebase.auth()
@@ -83,7 +85,7 @@ export default {
   },
   computed: {
     ...mapState(['lang']),
-    ...mapGetters(['platform', 'l'])
+    ...mapGetters(['platform', 'l', 'isDesktop'])
   },
 }
 

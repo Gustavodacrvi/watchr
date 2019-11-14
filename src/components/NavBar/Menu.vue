@@ -13,7 +13,7 @@
           <router-link v-if="user && !user.isAnonymous" class="cursor link rb" to="/profile">{{ l['Profile'] }}</router-link>
           <span class="cursor link rb" @click="pop('Signin')">{{ l['Sign in'] }}</span>
           <span class="cursor link rb" @click="pop('Signup')">{{ l['Sign up'] }}</span>
-          <span v-if="user && user.isAnonymous" class="cursor link rb" @click="pop('Signup')">{{ l['Sign in'] }}</span>
+          <span v-if="user && user.isAnonymous" class="cursor link rb" @click="$store.dispatch('logOut')">{{ l['Log out'] }}</span>
         </div>
       </transition>
     </div>

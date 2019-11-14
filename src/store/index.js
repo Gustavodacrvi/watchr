@@ -301,7 +301,7 @@ const store = new Vuex.Store({
       })
     },
     createUser(s, user) {
-      return fire.collection('users').doc(user.uid).set({
+      fire.collection('users').doc(user.uid).set({
         ...utils.getRelevantUserData(user),
       })
     },
@@ -317,6 +317,33 @@ const store = new Vuex.Store({
     },
   }
 })
+
+auth.getRedirectResult().then(res => {
+  const user = res.user
+  const toast = (t) => store.commit('pushToast', t)
+  const dispatch = store.dispatch
+  if (user) {
+    toast({
+      name: store.getters['l']['You have successfully logged in!'],
+      seconds: 3,
+      type: 'success',
+    })
+    dispatch('createUser', user).then(() => {
+      router.push('/user')
+      location.reload()
+    }).catch(err => {
+      firebase.auth().currentUser.delete()
+      toast({
+        name: err.message,
+        seconds: 3,
+        type: 'error',
+    })})
+  }
+}).catch(err => store.commit('pushToast', {
+  name: err.message,
+  seconds: 4,
+  type: 'error',
+}))
 
 getLanguageFile(lang).then((l) => store.commit('languageFile', l))
 
