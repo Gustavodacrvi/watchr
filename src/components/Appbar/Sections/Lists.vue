@@ -73,6 +73,7 @@ export default {
     ...mapGetters({
       l: 'l',
       getTasksByListId: 'list/getTasks',
+      getListTasks: 'task/getListTasks',
     }),
     sortedLists() {
       return this.$store.getters['list/sortedLists']
@@ -108,7 +109,8 @@ export default {
         list.callback = () => {
           this.$router.push('/user?list=' + list.name)
         }
-        list.options = utilsList.listOptions(list, this.$store, this.$store.getters['task/getListTasks'](this.tasks, list.id), this.l)
+        const result = this.getListTasks(this.tasks, list.id).slice()
+        list.options = utilsList.listOptions(list, this.$store, this.getListTasks(this.tasks, list.id).slice(), this.l)
       }
       return lists
     },

@@ -70,10 +70,13 @@ export default {
     }
   },
   mounted() {
-    const el = this.$el.getElementsByClassName('link-wrapper')[0]
-    utils.bindOptionsToEventListener(el, this.options, this)
+    this.bindOptions()
   },
   methods: {
+    bindOptions() {
+      const el = this.$el.getElementsByClassName('link-wrapper')[0]
+      utils.bindOptionsToEventListener(el, this.options, this)
+    },
     linkCallback(evt) {
       if (this.isOnControl && this.selectedEmpty) this.$emit('select')
       else if (this.callback && !this.showSpecialInfo) this.callback()
@@ -116,6 +119,11 @@ export default {
       return true
     }
   },
+  watch: {
+    options() {
+      this.bindOptions()
+    },
+  }
 }
 
 </script>

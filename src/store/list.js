@@ -553,18 +553,17 @@ export default {
     deleteList(c, {listId, tasks}) {
       const batch = fire.batch()
 
-      const deleteListRef = listRef(listId)
-      batch.delete(deleteListRef)
-
       const ids = []
-      for (const t of tasks) {
+      for (const t of tasks)
         if (t.list === listId) ids.push(t.id)
-      }
       for (const id of ids)
         batch.update(taskRef(id), {
           list: null,
           heading: null,
         })
+
+      const deleteListRef = listRef(listId)
+      batch.delete(deleteListRef)
 
       batch.commit()
     },

@@ -1,4 +1,6 @@
 
+import utils from '@/utils'
+
 export default {
   listHeadingOptions(list, heading, store, headingTasks, l) {
     const li = list
@@ -79,6 +81,7 @@ export default {
     const rootTasks = getters['task/getRootTasksOfList'](getListTasks, list)
     const headingTasks = getters['task/getTasksWithHeading'](getListTasks, list.id)
     const listId = list.id
+    const tasks = [...getListTasks]
     const pop = obj => dispatch('pushPopup', obj)
     const opt = [
       {
@@ -163,17 +166,20 @@ export default {
       opt.push({
         name: l["Export as template"],
         icon: 'export',
-        callback: () => utils.exportListTemplate({
-          list, tasks: getListTasks,
-        })
+        callback: l => {
+          utils.exportListTemplate({
+          list, tasks,
+        })}
       })
-    opt.push(          {
+    opt.push({
       name: l['Delete list'],
       icon: 'trash',
       important: true,
-      callback: () => dispatch('list/deleteList', {
-        listId, tasks: getListTasks,
-      })
+      callback: () => {
+        dispatch('list/deleteList', {
+          listId, tasks,
+        })
+      }
     })
     return opt
   },

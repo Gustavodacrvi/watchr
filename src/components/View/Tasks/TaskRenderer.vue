@@ -269,15 +269,18 @@ export default {
       return h.saveNotes
     },
     applyEventListenersToEditVueInstance(ins, onSave, evt) {
-      this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
-      ins.$on('save', (obj) => onSave(obj, evt))
-      ins.$on('goup', () => this.moveTaskRenderer('up'))
-      ins.$on('godown', () => this.moveTaskRenderer('down'))
-      ins.$on('cancel', () => {
-        ins.$destroy()
-        const $el = ins.$el
-        $el.parentNode.removeChild($el)
-      })
+      const el =this.$el.getElementsByClassName('Edit')[0]
+      if (el) {
+        el.setAttribute('data-id', 'Edit')
+        ins.$on('save', (obj) => onSave(obj, evt))
+        ins.$on('goup', () => this.moveTaskRenderer('up'))
+        ins.$on('godown', () => this.moveTaskRenderer('down'))
+        ins.$on('cancel', () => {
+          ins.$destroy()
+          const $el = ins.$el
+          $el.parentNode.removeChild($el)
+        })
+      }
     },
     updateHeadingIds(h, ids) {
       if (h.updateIds)

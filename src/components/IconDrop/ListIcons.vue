@@ -219,4 +219,12 @@ export default {
   border-bottom: 1px solid var(--gray);
 }
 
+.drop-division {
+  margin: 10px 26px;
+}
+
+.division-line {
+  border: 1px solid var(--light-gray);
+}
+
 </style>

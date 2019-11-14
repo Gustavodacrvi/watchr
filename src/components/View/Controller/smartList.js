@@ -43,6 +43,7 @@ export default {
     icon() {return null},
     viewNameValue() {
       if (this.isSmart) return this.l[this.viewName]
+      return this.l['Search']
     },
     getTasks() {
       if (this.viewType === 'search')
