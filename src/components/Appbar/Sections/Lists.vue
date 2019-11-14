@@ -92,7 +92,7 @@ export default {
               break
             }
 
-          return !isAllTasksCompleted
+          return !isAllTasksCompleted || tasks.length === 0
         })
       return this.filteredByDefer
     },

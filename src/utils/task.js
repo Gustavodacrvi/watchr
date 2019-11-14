@@ -74,6 +74,7 @@ export default {
     }
     let isCompleted = calc()
     if (compareDate) {
+      console.log(compareDate)
       if (!task.completeDate) return false
       const taskCompleteDate = mom(task.completeDate, 'Y-M-D')
       const compare = mom(compareDate, 'Y-M-D')
