@@ -50,23 +50,35 @@ export default {
   color: white;
 }
 
-.dark {
+.dark, .card {
   display: inline-block;
   margin-top: 8px;
   width: unset;
   padding: 10px;
   color: var(--gray);
-  background-color: var(--back-color);
   transform: scale(1,1);
   transition-duration: .2s;
+}
+
+.dark:active, .card:active {
+  transform: scale(.9,.9);
+}
+
+.dark {
+  background-color: var(--back-color);
 }
 
 .dark:hover {
   background-color: var(--dark);
 }
 
-.dark:active {
-  transform: scale(.9,.9);
+.card {
+  background-color: var(--card);
+  color: var(--white);
+}
+
+.card:hover {
+  background-color: var(--dark);
 }
 
 </style>
