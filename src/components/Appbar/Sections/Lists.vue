@@ -60,7 +60,7 @@ export default {
       return arr.length > 0 ? arr : undefined
     },
     mapBorder(list) {
-      if (list.deadline && mom().isAfter(mom(list.deadline, 'Y-M-D')))
+      if (list.deadline && mom().isSameOrAfter(mom(list.deadline, 'Y-M-D')))
         return 'var(--red)'
       return 'none'
     },
