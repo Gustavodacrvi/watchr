@@ -98,6 +98,8 @@ export default {
   "Defer date": "Data de começo",
   "This user is already on this list.": "Esse usuário já está na lista.",
   "Accept invite": "Aceitar convite",
+  "Options": "Opções",
+  "Appnav": "Appnav",
   "Reject invite": "Rejeitar convite",
   "Go to list": "Ir para a lista",
   "Repeat weekly": "Repetir semanalmente",

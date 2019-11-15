@@ -53,6 +53,8 @@ export default {
   "Show hided headings...": "Show hided headings...",
   "No, I changed my mind": "No, I changed my mind",
   "Add username": "Add username",
+  "Options": "Options",
+  "Appnav": "Appnav",
   "An e-mail has been sent to your e-mail account to proceed, click on the provided link to proceed.": "An e-mail has been sent to your e-mail account to proceed, click on the provided link to proceed.",
   "Change E-mail": "Change E-mail",
   "The maximum number of characters is 50.": "The maximum number of characters is 50.",
