@@ -1,5 +1,5 @@
 <template>
-  <div class="Task draggable" :class="{fade: completed, showingIconDropContent: showingIconDropContent || isEditing}"
+  <div class="Task draggable" :class="[{fade: completed, showingIconDropContent: showingIconDropContent || isEditing}, platform]"
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
     @click="rootClick"
@@ -12,11 +12,14 @@
       <div v-if="!isEditing" key="notediting"
         class="cont-wrapper task-cont-wrapper handle rb cursor"
         :class="platform"
-        @click="click"
+        @click.stop="click"
         @dblclick="dblclick"
       >
         <div class="cont">
-          <div class="check" @click.stop="completeTask">
+          <div class="check" @click.stop="completeTask"
+            @touchstart.stop
+            @mousedown.stop
+          >
             <Icon v-if="!completed" class="icon"
               icon="circle"
               :color='circleColor'
@@ -93,7 +96,7 @@ import mom from 'moment'
 
 export default {
   props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'
-  , 'taskCompletionCompareDate', 'isDragging'],
+  , 'taskCompletionCompareDate', 'isDragging', 'isScrolling'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -149,7 +152,7 @@ export default {
       }
     },
     openMobileOptions() {
-      if (!this.isDesktop && !this.isDragging) {
+      if (!this.isDesktop && !this.isDragging && !this.isScrolling) {
         window.navigator.vibrate(100)
         this.$store.commit('pushIconDrop', this.options)
       }
@@ -539,7 +542,7 @@ export default {
   margin-left: 6px;
 }
 
-.cont-wrapper:hover, .cont-wrapper:active {
+.desktop .cont-wrapper:hover, .cont-wrapper:active {
   background-color: var(--light-gray) !important;
 }
 

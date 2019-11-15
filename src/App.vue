@@ -71,7 +71,7 @@ export default {
         clearTimeout(this.scrollTimeout)
       this.scrollTimeout = setTimeout(() => {
         tog(false)
-      }, 10)
+      }, 80)
     },
     keyup({key}) {
       if (key === 'Control')

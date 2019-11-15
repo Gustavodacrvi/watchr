@@ -22,6 +22,7 @@
         :enableSelect='enableSelect'
         :multiSelectOptions='options'
         :isDragging='isDragging'
+        :isScrolling='isScrolling'
         @de-select='deSelectTask'
 
         :data-id='t.id'
@@ -107,6 +108,7 @@ export default {
       addedTask: false,
       atLeastOneRenderedTask: false,
       isDragging: false,
+      justScrolled: false,
     }
   },
   mounted() {
@@ -150,6 +152,9 @@ export default {
         }, 100)
       },
       onSelect: evt => {
+        if (this.justScrolled && !this.isDesktop)
+          this.deSelectTask(evt.item)
+        this.justScrolled = false
         const id = evt.item.dataset.id
         if (id !== "Edit" && !this.selected.includes(id))
           this.$store.commit('selectTask', id)
@@ -247,7 +252,7 @@ export default {
     if (el) {
       const headsSor = new Sortable(el, {
         group: 'headings',
-        delay: 150,
+        delay: 225,
         delayOnTouchOnly: true,
         handle: '.handle',
   
@@ -533,6 +538,7 @@ export default {
     ...mapState({
       selected: state => state.selectedTasks,
       savedTasks: state => state.task.tasks,
+      isScrolling: state => state.isScrolling,
       isOnControl: state => state.isOnControl,
     }),
     ...mapGetters({
@@ -561,7 +567,8 @@ export default {
       }
     },
     enableSelect() {
-      return !this.isDesktop || this.isOnControl || (this.selected.length > 0)
+      return !this.isDesktop ||
+      (this.isOnControl || (this.selected.length > 0))
     },
     getMultiDragKey() {
       return this.selected.length > 0 ? null : 'CTRL'
@@ -583,7 +590,11 @@ export default {
     enableSelect() {
       this.sortable.options.multiDrag = this.enableSelect
       this.sortable.options.multiDragKey = this.getMultiDragKey
-    }
+    },
+    isScrolling() {
+      if (this.isScrolling) this.justScrolled = true
+      else setTimeout(() => this.justScrolled = false, 500)
+    },
   }
 }
 
