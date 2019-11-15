@@ -50,6 +50,7 @@ export default {
       hided: true,
       hideTimeout: null,
       timeBeforeMouseMove: 0,
+      scrollTimeout: null,
     }
   },
   created() {
@@ -59,8 +60,19 @@ export default {
     window.addEventListener('keydown', this.keydown)
     window.addEventListener('keyup', this.keyup)
     window.addEventListener('mousemove', this.getMousePos)
+    document.addEventListener('scroll', this.toggleScroll)
   },
   methods: {
+    toggleScroll() {
+      const tog = b => this.$store.commit('toggleScroll', b)
+
+      tog(true)
+      if (this.scrollTimeout)
+        clearTimeout(this.scrollTimeout)
+      this.scrollTimeout = setTimeout(() => {
+        tog(false)
+      }, 10)
+    },
     keyup({key}) {
       if (key === 'Control')
         this.$store.commit('toggleControl', false)

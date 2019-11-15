@@ -89,6 +89,7 @@ const store = new Vuex.Store({
     fastSearch: false,
     toasts: [],
     windowWidth: 0,
+    isScrolling: false,
   },
   getters: {
     isDesktop(state) {
@@ -120,6 +121,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    toggleScroll(state, isScrolling) {
+      state.isScrolling = isScrolling
+    },
     openFastSearch(state) {
       state.fastSearch = true
     },

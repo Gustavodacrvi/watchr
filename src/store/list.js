@@ -7,6 +7,8 @@ import utilsTask from "@/utils/task"
 import { listRef, userRef, uid, listColl, taskRef, fd } from '../utils/firestore'
 import router from '../router'
 
+import mom from 'moment'
+
 export default {
   namespaced: true,
   state: {
@@ -74,13 +76,18 @@ export default {
     getTasks: state => (tasks, id) => {
       return tasks.filter(el => el.list === id)
     },
-    pieProgress: (state, getters) => (tasks, id) => {
-      const ts = getters.getTasks(tasks, id)
+    pieProgress: (state, getters) => (tasks, listId) => {
+      const list = getters['getListsById']([listId])[0]
+      const ts = getters.getTasks(tasks, listId)
       const numberOfTasks = ts.length
       let completedTasks = 0
+      
+      let compareDate = null
+      if (list.calendar)
+        compareDate = utils.getCalendarObjectData(list.calendar, mom()).lastCallEvent.format('Y-M-D')
 
       ts.forEach(el => {
-        if (utilsTask.isTaskCompleted(el)) completedTasks++
+        if (utilsTask.isTaskCompleted(el, mom(), compareDate)) completedTasks++
       })
       const result = 100 * completedTasks / numberOfTasks
       if (isNaN(result)) return 0

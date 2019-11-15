@@ -93,7 +93,7 @@ import mom from 'moment'
 
 export default {
   props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'
-  , 'taskCompletionCompareDate'],
+  , 'taskCompletionCompareDate', 'isDragging'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -115,6 +115,11 @@ export default {
     bindContextMenu(options) {
       utils.bindOptionsToEventListener(this.$el, options, this)
     },
+    deselectTask() {
+      setTimeout(() => {
+        this.$emit('de-select', this.$el)
+      }, 10)
+    },
     enter(cont) {
       if (!this.isEditing) {
         const s = cont.style
@@ -123,9 +128,7 @@ export default {
         cont.classList.add('hided')
         s.height = '0px'
         s.padding = '2px 0'
-        setTimeout(() => {
-          this.$emit('de-select', this.$el)
-        }, 10)
+        this.deselectTask()
         setTimeout(() => {
           if (lessThanMinimum) {
           cont.classList.add('show')
@@ -146,8 +149,10 @@ export default {
       }
     },
     openMobileOptions() {
-      if (!this.isDesktop)
+      if (!this.isDesktop && !this.isDragging) {
+        window.navigator.vibrate(100)
         this.$store.commit('pushIconDrop', this.options)
+      }
     },
     completeTask() {
       const {t,c} = this.getTask

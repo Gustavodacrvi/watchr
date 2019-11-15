@@ -21,6 +21,7 @@
         :isSelecting='isSelecting'
         :enableSelect='enableSelect'
         :multiSelectOptions='options'
+        :isDragging='isDragging'
         @de-select='deSelectTask'
 
         :data-id='t.id'
@@ -105,6 +106,7 @@ export default {
     return {
       addedTask: false,
       atLeastOneRenderedTask: false,
+      isDragging: false,
     }
   },
   mounted() {
@@ -195,9 +197,11 @@ export default {
         }
       },
       onStart: (evt) => {
+        this.isDragging = true
         window.navigator.vibrate(100)
       },
       onEnd: (e, t) => {
+        this.isDragging = false
         removeTaskOnHoverFromAppnavElements()
         if (move) {
           const specialTypes = ['Today', 'Completed', 'Tomorrow']
