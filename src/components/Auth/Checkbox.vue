@@ -1,6 +1,6 @@
 
 <template>
-  <div class="Checkbox cursor" :class="{fade: toggle}" @click="toggle = !toggle">
+  <div class="Checkbox cursor" :class="{fade: !toggle}" @click="toggle = !toggle">
     <span class="cont">{{name}}</span>
     <div class="box cont">
       <Icon v-if="!toggle" icon="box"/>
@@ -53,7 +53,7 @@ export default {
 
 .box {
   position: absolute;
-  right: 10px;
+  right: 26px;
   top: 55%;
   display: flex;
   align-items: center;

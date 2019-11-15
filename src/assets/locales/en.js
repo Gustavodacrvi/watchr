@@ -55,6 +55,8 @@ export default {
   "Add username": "Add username",
   "Options": "Options",
   "Appnav": "Appnav",
+  "Save options": "Save options",
+  "Please toggle at least one section.": "Please toggle at least one section.",
   "An e-mail has been sent to your e-mail account to proceed, click on the provided link to proceed.": "An e-mail has been sent to your e-mail account to proceed, click on the provided link to proceed.",
   "Change E-mail": "Change E-mail",
   "The maximum number of characters is 50.": "The maximum number of characters is 50.",

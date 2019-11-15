@@ -606,6 +606,7 @@ export default {
 .task-name {
   word-break: break-all;
   word-wrap: break-word;
+  padding-left: 4px;
 }
 
 .icon {

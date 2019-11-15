@@ -489,6 +489,7 @@ export default {
       email: userAuth.email,
       photoURL: userAuth.photoURL,
       displayName: userAuth.displayName,
+      hidedSections: userAuth.hidedSections,
       isAnonymous: false,
     }
     if (!update) obj = {...obj, ...{

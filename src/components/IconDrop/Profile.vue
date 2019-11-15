@@ -19,10 +19,15 @@
       <h3>{{ l['Options'] }}</h3>
       <h4>{{ l['Appnav'] }}</h4>
     </div>
-    <CheckboxApp
-      name="I am a checkbox"
-      v-model="check"
+    <CheckboxApp v-for="s in sections" :key="s.name"
+      :name="s.name"
+      :value='!isHided(s.name)'
+      :icon='s.icon'
+      @input='toggleSection(s.name)'
     />
+    <div class="margin" style="margin-top: 10px;">
+      <ButtonApp :value="l['Save options']" @click="save"/>
+    </div>
   </div>
 </template>
 
@@ -41,20 +46,60 @@ export default {
   },
   data() {
     return {
-      check: false,
+      sections: [
+        {
+          name: 'Lists',
+          icon: 'tasks',
+        },
+        {
+          name: 'Tags',
+          icon: 'tags',
+        }
+      ],
+      hidedSections: [],
     }
   },
+  created() {
+    this.hidedSections = this.userHidedSections
+  },
   methods: {
+    toggleSection(name) {
+      if (this.isHided(name)) {
+        const i = this.hidedSections.findIndex(el => el === name)
+        this.hidedSections.splice(i, 1)
+      } else this.hidedSections.push(name)
+    },
+    isHided(name) {
+      return this.hidedSections.includes(name)
+    },
     addDisplayName() {
       console.log('add display name')
     },
     changeEmail() {
       console.log('change email')
     },
+    save() {
+      if (this.hidedSections.length === 2) {
+        this.$store.commit('pushToast', {
+          name: this.l['Please toggle at least one section.'],
+          seconds: 4,
+          type: 'error',
+        })
+      } else {
+        this.$store.dispatch('update', {
+          ...this.user,
+          hidedSections: this.hidedSections,
+        })
+      }
+    },
   },
   computed: {
-    ...mapState(['user']),
+    ...mapState(['user', 'userInfo']),
     ...mapGetters(['l']),
+    userHidedSections() {
+      if (this.userInfo.hidedSections) return this.userInfo.hidedSections
+      return []
+    },
     displayName() {
       if (this.user.displayName) return this.user.displayName
       return this.l['Add username']

@@ -548,7 +548,7 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     minimumTaskHeight() {
-      return this.isDesktop ? 38 : 45
+      return this.isDesktop ? 38 : 50
     },
     filter() {
       return (h) => {
