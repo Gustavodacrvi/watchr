@@ -489,9 +489,9 @@ export default {
       email: userAuth.email,
       photoURL: userAuth.photoURL,
       displayName: userAuth.displayName,
-      hidedSections: userAuth.hidedSections,
       isAnonymous: false,
     }
+    if (userAuth.hidedSections) obj.hidedSections = userAuth.hidedSections
     if (!update) obj = {...obj, ...{
       viewOrders: {},
       filters: [],

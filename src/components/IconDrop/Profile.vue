@@ -72,11 +72,23 @@ export default {
     isHided(name) {
       return this.hidedSections.includes(name)
     },
+    reload() {
+      window.location.reload()
+    },
+    pop(popup) {
+      this.$store.dispatch('pushPopup', popup)
+    },
     addDisplayName() {
-      console.log('add display name')
+      this.pop({
+        comp: 'ChangeUsername',
+        callback: this.reload,
+      })
     },
     changeEmail() {
-      console.log('change email')
+      this.pop({
+        comp: 'ChangeEmail',
+        callback: this.reload,
+      })
     },
     save() {
       if (this.hidedSections.length === 2) {
