@@ -2,7 +2,7 @@
   <div class="Toast" :class="$store.getters.platform">
     <transition name="trans">
       <div v-if="toast"
-        class="toast cb rb"
+        class="toast cb rb shadow"
         :class="[toast.type, {hasCallback: toast.callback}]"
         @click="runCallback"
       >

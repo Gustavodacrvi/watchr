@@ -86,7 +86,7 @@ export default {
         if (callback) {
           const opt = callback(link, this, this.$parent)
           this.$emit('update', opt)
-          if (!opt) close()
+          if (!opt || (opt && opt.then)) close()
         }
       }
     },

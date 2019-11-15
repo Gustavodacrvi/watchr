@@ -3,7 +3,6 @@
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
     @click="rootClick"
-    v-longclick='openMobileOptions'
   >
     <transition name="edit-t" mode="out-in"
       @enter='enter'
@@ -17,18 +16,17 @@
       >
         <div class="cont">
           <div class="check" @click.stop="completeTask"
-            @touchstart.stop
-            @mousedown.stop
+            v-longclick='openMobileOptions'
+            @mouseenter="iconHover = true"
+            @mouseleave="iconHover = false"
           >
-            <Icon v-if="!completed" class="icon"
+            <Icon v-if="!showCheckedIcon" class="icon check-icon"
               icon="circle"
               :color='circleColor'
-              :primaryHover="true"
             />
-            <Icon v-else class="icon"
+            <Icon v-else class="icon check-icon"
               icon="circle-check"
               :color='circleColor'
-              :primaryHover="true"
             />
           </div>
           <div class="text">
@@ -108,6 +106,7 @@ export default {
       showingIconDropContent: false,
       isEditing: false,
       onHover: false,
+      iconHover: false,
     }
   },
   mounted() {
@@ -459,6 +458,12 @@ export default {
       if (str === this.viewNameValue) return null
       return str
     },
+    showCheckedIcon() {
+      if (!this.isDesktop) return this.completed
+      if (this.completed)
+        return !this.iconHover
+      return this.iconHover
+    },
     nextCalEvent() {
       const {t,c} = this.getTask
       if (!c || (c.type !== 'periodic' && c.type !== 'weekly')) return null
@@ -542,7 +547,7 @@ export default {
   margin-left: 6px;
 }
 
-.desktop .cont-wrapper:hover, .cont-wrapper:active {
+.desktop .cont-wrapper:hover, .desktop .cont-wrapper:active {
   background-color: var(--light-gray) !important;
 }
 
@@ -675,6 +680,10 @@ export default {
 .name-t-leave-to {
   opacity: 0;
   transform: translateY(25px);
+}
+
+.check-icon {
+  opacity: .6;
 }
 
 </style>
