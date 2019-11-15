@@ -308,7 +308,7 @@ export default {
       return opt.slice()
     },
     hidedSections() {
-      if (this.userInfo.hidedSections) return this.userInfo.hidedSections
+      if (this.userInfo && this.userInfo.hidedSections) return this.userInfo.hidedSections
       return []
     },
     notHidedSections() {

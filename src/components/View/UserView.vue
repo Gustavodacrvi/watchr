@@ -52,12 +52,12 @@ export default {
     window.addEventListener('scroll', this.getScrollTop)
   },
   mounted() {
-    setTimeout(() => {
+/*     setTimeout(() => {
       const str = localStorage.getItem('updatestring')
       if (str !== UPDATE_STRING && str !== '')
         this.$store.dispatch('pushPopup', {comp: 'Update'})
       localStorage.setItem('updatestring', UPDATE_STRING)
-    }, 1000)
+    }, 1000) */
   },
   methods: {
     getScrollTop() {

@@ -203,7 +203,7 @@ const store = new Vuex.Store({
     logOut({state}) {
       auth.signOut().then(() => {
         state.authState = false
-        window.location.reload()
+        location.reload()
       })
     },
     pushKeyShortcut({dispatch, commit, state}, key) {
@@ -236,21 +236,8 @@ const store = new Vuex.Store({
       sto.ref(str).delete().then(() => {
         auth.currentUser.updateProfile({
           photoURL: '',
-        }).then(() => window.location.reload())
+        }).then(() => location.reload())
       })
-    },
-    deleteAccount({state, dispatch}) {
-      dispatch('tag/deleteAllData')
-      dispatch('list/deleteAllData')
-      dispatch('task/deleteAllData')
-      dispatch('filter/deleteAllData')
-      dispatch('deleteAllData')
-      firebase.auth().currentUser.delete()
-      setTimeout(() => {
-        router.push('/')
-        dispatch('deleteProfilePic')
-        window.location.reload()
-      }, 100)
     },
     getData({state}) {
       return new Promise(resolve => {
@@ -271,13 +258,8 @@ const store = new Vuex.Store({
       return batch.commit()
     },
     createAnonymousUser(c, userId) {
-      return fire.collection('users').doc(userId).set({
+      firebase.firestore().collection('users').doc(userId).set({
         ...utils.getRelevantUserData(userId),
-      })
-    },
-    createUser(s, user) {
-      fire.collection('users').doc(user.uid).set({
-        ...utils.getRelevantUserData(user),
       })
     },
     addRecentCollaborators({state}, user) {
@@ -287,44 +269,26 @@ const store = new Vuex.Store({
           recentUsers: {[user.userId]: user},
         })
     },
-    deleteAllData() {
-      fire.collection('users').doc(uid()).delete()
-    },
   }
+})
+
+fire.enablePersistence().then(() => enabled = true)
+.catch(err => {
+  if (err.code === 'failed-precondition') {
+    // handle error
+  }
+  else if (err.code === 'unimplemented')
+    store.commit('pushToast', {
+      name: `Firestore's persistence is not available on your browser, therefore you won't be able to use this app offline.</br>Please chose a better browser or update the current one to the latest version.`,
+      seconds: 12,
+      type: 'error',
+    })
 })
 
 store.commit('saveUser', null)
 
-auth.getRedirectResult().then(res => {
-  const user = res.user
-  const toast = (t) => store.commit('pushToast', t)
-  const dispatch = store.dispatch
-  if (user) {
-    toast({
-      name: store.getters['l']['You have successfully logged in!'],
-      seconds: 3,
-      type: 'success',
-    })
-    dispatch('createUser', user).then(() => {
-      router.push('/user')
-      location.reload()
-    }).catch(err => {
-      firebase.auth().currentUser.delete()
-      toast({
-        name: err.message,
-        seconds: 3,
-        type: 'error',
-    })})
-  }
-}).catch(err => store.commit('pushToast', {
-  name: err.message,
-  seconds: 4,
-  type: 'error',
-}))
-
 getLanguageFile(lang).then((l) => store.commit('languageFile', l))
 
-let enabled = false
 auth.onAuthStateChanged((user) => {
   const isLogged = user !== null
   store.commit('toggleUser', isLogged)
@@ -343,20 +307,6 @@ auth.onAuthStateChanged((user) => {
   const toast = (t) => store.commit('pushToast', t)
 
   if (!user.isAnonymous) {
-    if (fire && !enabled && user && user.emailVerified)
-      fire.enablePersistence().then(() => enabled = true)
-        .catch(err => {
-          if (err.code === 'failed-precondition') {
-            // handle error
-          }
-          else if (err.code === 'unimplemented')
-            store.commit('pushToast', {
-              name: `Firestore's persistence is not available on your browser, therefore you won't be able to use this app offline.</br>Please chose a better browser or update the current one to the latest version.`,
-              seconds: 12,
-              type: 'error',
-            })
-        })
-
     if (isLogged) loadData()
   } else {
     setTimeout(() => {
@@ -369,6 +319,34 @@ auth.onAuthStateChanged((user) => {
     loadData()
   }
 })
+
+auth.getRedirectResult().then(res => {
+  const user = res.user
+  const toast = (t) => store.commit('pushToast', t)
+  if (user) {
+    toast({
+      name: store.getters['l']['You have successfully logged in!'],
+      seconds: 3,
+      type: 'success',
+    })
+    setTimeout(() => {
+      router.push('/user')
+      fire.collection('users').doc(user.uid).set({
+        ...utils.getRelevantUserData(user),
+      }).catch(err => {
+        firebase.auth().currentUser.delete()
+        toast({
+          name: err.message,
+          seconds: 3,
+          type: 'error',
+      })})
+    }, 80)
+  }
+}).catch(err => store.commit('pushToast', {
+  name: err.message,
+  seconds: 4,
+  type: 'error',
+}))
 
 window.addEventListener('resize', () => store.commit('saveWindowWidth'))
 
