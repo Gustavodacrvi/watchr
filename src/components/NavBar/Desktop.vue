@@ -14,12 +14,14 @@
         handle="user"
         handleColor="var(--gray)"
         :options="dropLinks"
+        @handle-toggle='v => isLinksIconDropOpen = v'
       />
       <DropIcon
         class="drop"
         handle="globe"
         handleColor="var(--gray)"
         :options="languages"
+        @handle-toggle='v => isLanguagesIconDropOpen = v'
       />
       <ButtonApp v-if="user && user.isAnonymous" class="no-back" :value="l['Sign in']" @click="upgradeUser"/>
     </div>
@@ -42,8 +44,17 @@ export default {
     LogoApp: LogoVue,
     ButtonApp: ButtonVue,
   },
+  data() {
+    return {
+      isLinksIconDropOpen: false,
+      isLanguagesIconDropOpen: false, 
+    }
+  },
   props: ['route', 'dropLinks'],
   methods: {
+    stopNavHide() {
+      this.$store.commit('toggleAllowNavHide', !(this.isLinksIconDropOpen || this.isLanguagesIconDropOpen))
+    },
     saveLang(lang) {
       this.$store.commit('saveLang', lang)
     },
@@ -76,6 +87,14 @@ export default {
           callback: () => this.saveLang('pt-br'),
         },
       ]
+    },
+  },
+  watch: {
+    isLinksIconDropOpen() {
+      this.stopNavHide()
+    },
+    isLanguagesIconDropOpen() {
+      this.stopNavHide()
     },
   }
 }

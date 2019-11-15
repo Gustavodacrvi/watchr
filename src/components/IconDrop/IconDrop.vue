@@ -160,7 +160,10 @@ export default {
       if (!this.justClosed)
         this.opt = this.options
       this.justClosed = false
-    }
+    },
+    showing() {
+      this.$emit('handle-toggle', this.showing)
+    },
   },
 }
 

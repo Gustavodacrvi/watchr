@@ -94,6 +94,7 @@ const store = new Vuex.Store({
     toasts: [],
     windowWidth: 0,
     isScrolling: false,
+    allowNavHide: true,
   },
   getters: {
     isDesktop(state) {
@@ -125,6 +126,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    toggleAllowNavHide(state, allow) {
+      state.allowNavHide = allow
+    },
     toggleScroll(state, isScrolling) {
       state.isScrolling = isScrolling
     },
