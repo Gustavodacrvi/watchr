@@ -1,8 +1,8 @@
 
 <template>
-  <div class="Checkbox cursor">
-    <span>{{name}}</span>
-    <div class="box">
+  <div class="Checkbox cursor" :class="{fade: toggle}" @click="toggle = !toggle">
+    <span class="cont">{{name}}</span>
+    <div class="box cont">
       <Icon v-if="!toggle" icon="box"/>
       <Icon v-else icon="box-check"/>
     </div>
@@ -58,6 +58,10 @@ export default {
   display: flex;
   align-items: center;
   transform: translateY(-50%);
+}
+
+.fade .cont {
+  opacity: .6;
 }
 
 </style>

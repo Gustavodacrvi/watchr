@@ -21,12 +21,14 @@
             @mouseleave="iconHover = false"
           >
             <Icon v-if="!showCheckedIcon" class="icon check-icon"
-              icon="circle"
+              icon="box"
               :color='circleColor'
+              width="18px"
             />
             <Icon v-else class="icon check-icon"
-              icon="circle-check"
+              icon="box-check"
               :color='circleColor'
+              width="18px"
             />
           </div>
           <div class="text">
