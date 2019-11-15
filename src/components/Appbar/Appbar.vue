@@ -26,8 +26,8 @@
                 :isSmart='true'
                 @apply='applySelectedTasks'
               />
-              <div class="header">
-                <div v-for="(s,i) in sections" :key="s.name"
+              <div v-if="!isSingleSection" class="header">
+                <div v-for="(s,i) in notHidedSections" :key="s.name"
                   class="option section-option"
                   :class="{sectionActive: s.name === section}"
                   :tabindex="i + 1 + links.length"
@@ -36,6 +36,7 @@
                 >{{ l[s.name] }}</div>
                 <div class="line section-line"></div>
               </div>
+              <div v-else style="margin-top: 28px"></div>
               <div class="comp-wrapper">
                 <transition name="sect-trans"
                   @leave="leave"
@@ -64,7 +65,7 @@
                   class="right passive"
                   handle='settings-h'
                   handleColor='var(--gray)'
-                  :options="getSectionOptions"
+                  :options="getOptions"
                 />
               </transition>
             </div>
@@ -279,6 +280,7 @@ export default {
   computed: {
     ...mapState({
       selectedTasks: state => state.selectedTasks,
+      userInfo: state => state.userInfo,
     }),
     ...mapGetters({
       platform: 'platform',
@@ -287,6 +289,34 @@ export default {
       l: 'l',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView'
     }),
+    getOptions() {
+      const opt = this.getSectionOptions.slice()
+
+      if (this.hidedSections.length > 0) {
+        opt.push({type: 'hr', name: 'division'})
+        const sect = [...this.hidedSections.filter(el => el !== this.section)]
+        if (this.isSingleSection && this.notHidedSections[0].name !== this.section)
+          sect.unshift(this.notHidedSections[0].name)
+        for (const s of sect) {
+          opt.push({
+            name: s,
+            callback: () => this.section = s
+          })
+        }
+      }
+
+      return opt.slice()
+    },
+    hidedSections() {
+      if (this.userInfo.hidedSections) return this.userInfo.hidedSections
+      return []
+    },
+    notHidedSections() {
+      return this.sections.filter(s => !this.hidedSections.includes(s.name))
+    },
+    isSingleSection() {
+      return this.notHidedSections.length === 1
+    },
     showIconDropdown() {
       return this.getSectionOptions && !this.appbarHided && this.showingIconDrop
     },

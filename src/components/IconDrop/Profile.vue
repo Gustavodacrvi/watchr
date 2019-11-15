@@ -20,7 +20,7 @@
       <h4>{{ l['Appnav'] }}</h4>
     </div>
     <CheckboxApp v-for="s in sections" :key="s.name"
-      :name="s.name"
+      :name="l[s.name]"
       :value='!isHided(s.name)'
       :icon='s.icon'
       @input='toggleSection(s.name)'
@@ -97,7 +97,7 @@ export default {
     ...mapState(['user', 'userInfo']),
     ...mapGetters(['l']),
     userHidedSections() {
-      if (this.userInfo.hidedSections) return this.userInfo.hidedSections
+      if (this.userInfo.hidedSections) return this.userInfo.hidedSections.slice()
       return []
     },
     displayName() {
