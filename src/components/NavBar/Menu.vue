@@ -10,10 +10,10 @@
           <router-link class="cursor link rb" to="/">{{ l['Home'] }}</router-link>
           <router-link class="cursor link rb" to="/user">{{ l['User'] }}</router-link>
           <router-link class="cursor link rb" to="/support/overview">{{ l['Support'] }}</router-link>
-          <router-link v-if="user && !user.isAnonymous" class="cursor link rb" to="/profile">{{ l['Profile'] }}</router-link>
           <span class="cursor link rb" @click="pop('Signin')">{{ l['Sign in'] }}</span>
           <span class="cursor link rb" @click="pop('Signup')">{{ l['Sign up'] }}</span>
-          <span v-if="user && user.isAnonymous" class="cursor link rb" @click="pop('Signup')">{{ l['Sign in'] }}</span>
+          <span class="cursor link rb" @click="profile" @click.stop @touchstart.stop>{{ l["Profile"] }}</span>
+          <span v-if="user && user.isAnonymous" class="cursor link rb" @click="$store.dispatch('logOut')">{{ l['Log out'] }}</span>
         </div>
       </transition>
     </div>
@@ -49,6 +49,12 @@ export default {
   methods: {
     toggleMenu() {
       this.appSection = !this.appSection
+    },
+    profile() {
+      this.$store.commit('pushIconDrop', {
+        comp: 'Profile',
+        content: {},
+      })
     },
     pop(comp) {
       this.$store.dispatch('pushPopup', {comp})

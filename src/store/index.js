@@ -74,11 +74,15 @@ const store = new Vuex.Store({
       taskId: null,
       bool: false,
     },
-    user: null,
+    user: {
+      displayName: null,
+      email: null,
+    },
     userInfo: {
       lists: [],
       tags: [],
       viewOrders: {},
+      hidedSections: null,
     },
     firstFireLoad: false,
     selectedTasks: [],
@@ -89,6 +93,7 @@ const store = new Vuex.Store({
     fastSearch: false,
     toasts: [],
     windowWidth: 0,
+    isScrolling: false,
   },
   getters: {
     isDesktop(state) {
@@ -120,6 +125,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    toggleScroll(state, isScrolling) {
+      state.isScrolling = isScrolling
+    },
     openFastSearch(state) {
       state.fastSearch = true
     },
@@ -254,45 +262,8 @@ const store = new Vuex.Store({
       
       const userRef = fire.collection('users').doc(info.uid)
       batch.update(userRef, {
-        ...utils.getRelevantUserData(info),
+        ...utils.getRelevantUserData(info, true),
       })
-/*       const yourListIds = []
-      const pendingIds = []
-      const sharedIds = []
-
-      const updateOwnLists = res => {
-        res.docs.forEach(list => yourListIds.push(list.id))
-        for (const id of yourListIds) {
-          const listRef = fire.collection('lists').doc(id)
-          batch.set(listRef, {
-            ownerData: {...info},
-          }, {merge: true})
-        }
-      }
-      const updateSharedLists = (pendingRes, rejectedRes, sharedRes) => {
-        pendingRes.docs.forEach(list => pendingIds.push(list.id))
-        rejectedRes.docs.forEach(list => pendingIds.push(list.id))
-        sharedRes.docs.forEach(list => sharedIds.push(list.id))
-
-        const allIds = [...pendingIds, ...sharedIds].filter(id => id !== uid())
-
-        for (const id of allIds) {
-          const listRef = fire.collection('lists').doc(id)
-          batch.set(listRef, {
-            userData: {[uid()]: {...info}},
-          }, {merge: true})
-        }
-      }
-
-      Promise.all([
-        fire.collection('lists').where('userId', '==', uid()).get({source: 'server'}),
-        fire.collection('lists').where(`pending.${uid()}`, '==', 'pending').get({source: 'server'}),
-        fire.collection('lists').where(`pending.${uid()}`, '==', 'rejected').get({source: 'server'}),
-        fire.collection('lists').where(`users.${uid()}`, '==', true).get({source: 'server'})
-      ]).then(res => {
-        updateOwnLists(res[0])
-        updateSharedLists(res[1], res[2], res[3])
-      }) */
       return batch.commit()
     },
     createAnonymousUser(c, userId) {
@@ -301,7 +272,7 @@ const store = new Vuex.Store({
       })
     },
     createUser(s, user) {
-      return fire.collection('users').doc(user.uid).set({
+      fire.collection('users').doc(user.uid).set({
         ...utils.getRelevantUserData(user),
       })
     },
@@ -317,6 +288,35 @@ const store = new Vuex.Store({
     },
   }
 })
+
+store.commit('saveUser', null)
+
+auth.getRedirectResult().then(res => {
+  const user = res.user
+  const toast = (t) => store.commit('pushToast', t)
+  const dispatch = store.dispatch
+  if (user) {
+    toast({
+      name: store.getters['l']['You have successfully logged in!'],
+      seconds: 3,
+      type: 'success',
+    })
+    dispatch('createUser', user).then(() => {
+      router.push('/user')
+      location.reload()
+    }).catch(err => {
+      firebase.auth().currentUser.delete()
+      toast({
+        name: err.message,
+        seconds: 3,
+        type: 'error',
+    })})
+  }
+}).catch(err => store.commit('pushToast', {
+  name: err.message,
+  seconds: 4,
+  type: 'error',
+}))
 
 getLanguageFile(lang).then((l) => store.commit('languageFile', l))
 

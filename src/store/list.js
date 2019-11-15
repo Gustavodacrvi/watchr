@@ -7,6 +7,8 @@ import utilsTask from "@/utils/task"
 import { listRef, userRef, uid, listColl, taskRef, fd } from '../utils/firestore'
 import router from '../router'
 
+import mom from 'moment'
+
 export default {
   namespaced: true,
   state: {
@@ -74,13 +76,18 @@ export default {
     getTasks: state => (tasks, id) => {
       return tasks.filter(el => el.list === id)
     },
-    pieProgress: (state, getters) => (tasks, id) => {
-      const ts = getters.getTasks(tasks, id)
+    pieProgress: (state, getters) => (tasks, listId) => {
+      const list = getters['getListsById']([listId])[0]
+      const ts = getters.getTasks(tasks, listId)
       const numberOfTasks = ts.length
       let completedTasks = 0
+      
+      let compareDate = null
+      if (list.calendar)
+        compareDate = utils.getCalendarObjectData(list.calendar, mom()).lastCallEvent.format('Y-M-D')
 
       ts.forEach(el => {
-        if (utilsTask.isTaskCompleted(el)) completedTasks++
+        if (utilsTask.isTaskCompleted(el, mom(), compareDate)) completedTasks++
       })
       const result = 100 * completedTasks / numberOfTasks
       if (isNaN(result)) return 0
@@ -285,6 +292,16 @@ export default {
       batch.update(savedListRef, {tasks: ids})
 
       batch.commit()
+    },
+    toggleHeadingAuthide({getters}, {listId, name}) {
+      const list = getters.getListsById([listId])[0]
+      const heads = list.headings.slice()
+      const i = heads.findIndex(el => el.name === name)
+
+      heads[i].autoHide = !heads[i].autoHide
+      listRef(listId).update({
+        headings: heads,
+      })
     },
     uncompleteHeadingTasks({getters}, {name, listId, savedTasks}) {
       const list = getters.getListsById([listId])[0]
@@ -553,18 +570,17 @@ export default {
     deleteList(c, {listId, tasks}) {
       const batch = fire.batch()
 
-      const deleteListRef = listRef(listId)
-      batch.delete(deleteListRef)
-
       const ids = []
-      for (const t of tasks) {
+      for (const t of tasks)
         if (t.list === listId) ids.push(t.id)
-      }
       for (const id of ids)
         batch.update(taskRef(id), {
           list: null,
           heading: null,
         })
+
+      const deleteListRef = listRef(listId)
+      batch.delete(deleteListRef)
 
       batch.commit()
     },

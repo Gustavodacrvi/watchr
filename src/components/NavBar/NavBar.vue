@@ -77,6 +77,13 @@ export default {
           ]
       return [
         {
+          name: this.l['Profile'],
+          icon: 'user',
+          callback: () => ({
+            comp: 'Profile',
+          })
+        },
+        {
           name: this.l['Log out'],
           icon: 'out',
           important: true,

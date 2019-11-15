@@ -1,9 +1,8 @@
 <template>
-  <div class="Task draggable" :class="{fade: completed, showingIconDropContent: showingIconDropContent || isEditing}"
+  <div class="Task draggable" :class="[{fade: completed, showingIconDropContent: showingIconDropContent || isEditing}, platform]"
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
     @click="rootClick"
-    v-longclick='openMobileOptions'
   >
     <transition name="edit-t" mode="out-in"
       @enter='enter'
@@ -12,20 +11,24 @@
       <div v-if="!isEditing" key="notediting"
         class="cont-wrapper task-cont-wrapper handle rb cursor"
         :class="platform"
-        @click="click"
+        @click.stop="click"
         @dblclick="dblclick"
       >
         <div class="cont">
-          <div class="check" @click.stop="completeTask">
-            <Icon v-if="!completed" class="icon"
-              icon="circle"
+          <div class="check" @click.stop="completeTask"
+            v-longclick='openMobileOptions'
+            @mouseenter="iconHover = true"
+            @mouseleave="iconHover = false"
+          >
+            <Icon v-if="!showCheckedIcon" class="icon check-icon"
+              icon="box"
               :color='circleColor'
-              :primaryHover="true"
+              width="18px"
             />
-            <Icon v-else class="icon"
-              icon="circle-check"
+            <Icon v-else class="icon check-icon"
+              icon="box-check"
               :color='circleColor'
-              :primaryHover="true"
+              width="18px"
             />
           </div>
           <div class="text">
@@ -93,7 +96,7 @@ import mom from 'moment'
 
 export default {
   props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'
-  , 'taskCompletionCompareDate'],
+  , 'taskCompletionCompareDate', 'isDragging', 'isScrolling'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -105,6 +108,7 @@ export default {
       showingIconDropContent: false,
       isEditing: false,
       onHover: false,
+      iconHover: false,
     }
   },
   mounted() {
@@ -115,6 +119,11 @@ export default {
     bindContextMenu(options) {
       utils.bindOptionsToEventListener(this.$el, options, this)
     },
+    deselectTask() {
+      setTimeout(() => {
+        this.$emit('de-select', this.$el)
+      }, 10)
+    },
     enter(cont) {
       if (!this.isEditing) {
         const s = cont.style
@@ -123,9 +132,7 @@ export default {
         cont.classList.add('hided')
         s.height = '0px'
         s.padding = '2px 0'
-        setTimeout(() => {
-          this.$emit('de-select', this.$el)
-        }, 10)
+        this.deselectTask()
         setTimeout(() => {
           if (lessThanMinimum) {
           cont.classList.add('show')
@@ -146,8 +153,10 @@ export default {
       }
     },
     openMobileOptions() {
-      if (!this.isDesktop)
+      if (!this.isDesktop && !this.isDragging && !this.isScrolling) {
+        window.navigator.vibrate(100)
         this.$store.commit('pushIconDrop', this.options)
+      }
     },
     completeTask() {
       const {t,c} = this.getTask
@@ -451,6 +460,12 @@ export default {
       if (str === this.viewNameValue) return null
       return str
     },
+    showCheckedIcon() {
+      if (!this.isDesktop) return this.completed
+      if (this.completed)
+        return !this.iconHover
+      return this.iconHover
+    },
     nextCalEvent() {
       const {t,c} = this.getTask
       if (!c || (c.type !== 'periodic' && c.type !== 'weekly')) return null
@@ -534,7 +549,7 @@ export default {
   margin-left: 6px;
 }
 
-.cont-wrapper:hover, .cont-wrapper:active {
+.desktop .cont-wrapper:hover, .desktop .cont-wrapper:active {
   background-color: var(--light-gray) !important;
 }
 
@@ -591,6 +606,7 @@ export default {
 .task-name {
   word-break: break-all;
   word-wrap: break-word;
+  padding-left: 4px;
 }
 
 .icon {
@@ -667,6 +683,10 @@ export default {
 .name-t-leave-to {
   opacity: 0;
   transform: translateY(25px);
+}
+
+.check-icon {
+  opacity: .6;
 }
 
 </style>

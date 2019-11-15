@@ -491,6 +491,7 @@ export default {
       displayName: userAuth.displayName,
       isAnonymous: false,
     }
+    if (userAuth.hidedSections) obj.hidedSections = userAuth.hidedSections
     if (!update) obj = {...obj, ...{
       viewOrders: {},
       filters: [],

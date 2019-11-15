@@ -21,6 +21,8 @@
         :isSelecting='isSelecting'
         :enableSelect='enableSelect'
         :multiSelectOptions='options'
+        :isDragging='isDragging'
+        :isScrolling='isScrolling'
         @de-select='deSelectTask'
 
         :data-id='t.id'
@@ -105,6 +107,8 @@ export default {
     return {
       addedTask: false,
       atLeastOneRenderedTask: false,
+      isDragging: false,
+      justScrolled: false,
     }
   },
   mounted() {
@@ -148,6 +152,9 @@ export default {
         }, 100)
       },
       onSelect: evt => {
+        if (this.justScrolled && !this.isDesktop)
+          this.deSelectTask(evt.item)
+        this.justScrolled = false
         const id = evt.item.dataset.id
         if (id !== "Edit" && !this.selected.includes(id))
           this.$store.commit('selectTask', id)
@@ -195,9 +202,11 @@ export default {
         }
       },
       onStart: (evt) => {
+        this.isDragging = true
         window.navigator.vibrate(100)
       },
       onEnd: (e, t) => {
+        this.isDragging = false
         removeTaskOnHoverFromAppnavElements()
         if (move) {
           const specialTypes = ['Today', 'Completed', 'Tomorrow']
@@ -243,7 +252,7 @@ export default {
     if (el) {
       const headsSor = new Sortable(el, {
         group: 'headings',
-        delay: 150,
+        delay: 225,
         delayOnTouchOnly: true,
         handle: '.handle',
   
@@ -269,15 +278,18 @@ export default {
       return h.saveNotes
     },
     applyEventListenersToEditVueInstance(ins, onSave, evt) {
-      this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
-      ins.$on('save', (obj) => onSave(obj, evt))
-      ins.$on('goup', () => this.moveTaskRenderer('up'))
-      ins.$on('godown', () => this.moveTaskRenderer('down'))
-      ins.$on('cancel', () => {
-        ins.$destroy()
-        const $el = ins.$el
-        $el.parentNode.removeChild($el)
-      })
+      const el =this.$el.getElementsByClassName('Edit')[0]
+      if (el) {
+        el.setAttribute('data-id', 'Edit')
+        ins.$on('save', (obj) => onSave(obj, evt))
+        ins.$on('goup', () => this.moveTaskRenderer('up'))
+        ins.$on('godown', () => this.moveTaskRenderer('down'))
+        ins.$on('cancel', () => {
+          ins.$destroy()
+          const $el = ins.$el
+          $el.parentNode.removeChild($el)
+        })
+      }
     },
     updateHeadingIds(h, ids) {
       if (h.updateIds)
@@ -526,6 +538,7 @@ export default {
     ...mapState({
       selected: state => state.selectedTasks,
       savedTasks: state => state.task.tasks,
+      isScrolling: state => state.isScrolling,
       isOnControl: state => state.isOnControl,
     }),
     ...mapGetters({
@@ -535,7 +548,7 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     minimumTaskHeight() {
-      return this.isDesktop ? 38 : 45
+      return this.isDesktop ? 38 : 50
     },
     filter() {
       return (h) => {
@@ -554,7 +567,8 @@ export default {
       }
     },
     enableSelect() {
-      return !this.isDesktop || this.isOnControl || (this.selected.length > 0)
+      return !this.isDesktop ||
+      (this.isOnControl || (this.selected.length > 0))
     },
     getMultiDragKey() {
       return this.selected.length > 0 ? null : 'CTRL'
@@ -576,7 +590,11 @@ export default {
     enableSelect() {
       this.sortable.options.multiDrag = this.enableSelect
       this.sortable.options.multiDragKey = this.getMultiDragKey
-    }
+    },
+    isScrolling() {
+      if (this.isScrolling) this.justScrolled = true
+      else setTimeout(() => this.justScrolled = false, 500)
+    },
   }
 }
 

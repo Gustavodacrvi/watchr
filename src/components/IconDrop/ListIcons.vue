@@ -86,7 +86,7 @@ export default {
         if (callback) {
           const opt = callback(link, this, this.$parent)
           this.$emit('update', opt)
-          if (!opt) close()
+          if (!opt || (opt && opt.then)) close()
         }
       }
     },
@@ -217,6 +217,14 @@ export default {
   padding: 8px;
   outline: none;
   border-bottom: 1px solid var(--gray);
+}
+
+.drop-division {
+  margin: 10px 26px;
+}
+
+.division-line {
+  border: 1px solid var(--light-gray);
 }
 
 </style>
