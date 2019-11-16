@@ -1,12 +1,17 @@
 <template>
    <div>
-      <CalendarPicker @select="selectDate"/>
+      <CalendarPicker
+        @select="selectDate"
+        :repeat='content.repeat'
+        @repeat='openRepeatOptions'
+      />
     </div>
 </template>
 
 <script>
 
 import CalendarPicker from './Calendar/CalendarPicker.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   props: ['content'],
@@ -14,6 +19,26 @@ export default {
     CalendarPicker,
   },
   methods: {
+    openRepeatOptions() {
+      this.$emit('update', [
+        {
+          name: this.l['Repeat weekly'],
+          icon: 'repeat',
+          callback: () => ({
+            comp: 'WeeklyPicker',
+            content: {callback: this.selectDate},
+          }),
+        },
+        {
+          name: this.l['Repeat periodically'],
+          icon: 'repeat',
+          callback: () => ({
+            comp: 'PeriodicPicker',
+            content: {callback: this.selectDate},
+          }),
+        },
+      ])
+    },
     selectDate(date) {
       if (this.content.callback) {
         this.content.callback(date)
@@ -25,7 +50,10 @@ export default {
       this.showing = false
       this.$store.commit('clearSelected')
     },
-  } 
+  },
+  computed: {
+    ...mapGetters(['l']),
+  }
 }
 
 </script>

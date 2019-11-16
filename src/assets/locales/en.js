@@ -81,6 +81,7 @@ export default {
   "Defered to": "Defered to",
   'Sort tasks': 'Sort tasks',
   "Add tags": "Add tags",
+  "Repeat": "Repeat",
   "Repeat list": "Repeat list",
   "Repeat every": "Repeat every",
   "Hide defered lists": "Hide defered lists",

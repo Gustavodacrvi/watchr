@@ -108,11 +108,6 @@
               class="opt-icon"
               :options="calendarOptions"
             />
-            <IconDrop
-              handle="repeat"
-              class="opt-icon"
-              :options="repeatOptions"
-            />
           </div>
         </div>
       </div>
@@ -307,28 +302,8 @@ export default {
     calendarOptions() {
       return {
         comp: 'CalendarPicker',
-        content: {callback: this.selectDate}
+        content: {callback: this.selectDate, repeat: true}
       }
-    },
-    repeatOptions() {
-      return [
-        {
-          name: this.l['Repeat weekly'],
-          icon: 'repeat',
-          callback: () => ({
-            comp: 'WeeklyPicker',
-            content: {callback: this.selectDate},
-          }),
-        },
-        {
-          name: this.l['Repeat periodically'],
-          icon: 'repeat',
-          callback: () => ({
-            comp: 'PeriodicPicker',
-            content: {callback: this.selectDate},
-          }),
-        },
-      ]
     },
     editStyle() {
       if (this.popup)

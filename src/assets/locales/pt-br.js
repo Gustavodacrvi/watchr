@@ -99,6 +99,7 @@ export default {
   "This user is already on this list.": "Esse usuário já está na lista.",
   "Accept invite": "Aceitar convite",
   "Options": "Opções",
+  "Repeat": "Repetir",
   "Please toggle at least one section.": "Por favor ative pelo menos uma seção.",
   "Add checklist": "Adicionar checklist",
   "Appnav": "Appnav",
