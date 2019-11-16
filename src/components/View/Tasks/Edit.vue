@@ -80,9 +80,12 @@
             @click="addChecklist"
           />
         </transition>
-        <div class="files">
-          <FileApp v-for="f in files" :key="f.lastModified" v-bind="f"/>
-        </div>
+<!--         <div class="files" v-if="files.length > 0">
+          <FileApp v-for="f in files" :key="f.lastModified" v-bind="f"
+            @delete="deleteFile(f)"
+          />
+        </div> -->
+        {{task.files}}
         <div class="options">
           <div class="button-wrapper">
             <div class="button">
@@ -167,8 +170,10 @@ export default {
         tags: [],
         checklist: [],
         order: [],
+        files: [],
       },
-      files: [],
+      addedFiles: [],
+      savedFileNames: [],
       optionsType: '',
       options: [],
     }
@@ -177,6 +182,7 @@ export default {
     if (this.defaultTask) {
       const t = this.defaultTask
       this.task = {...t}
+      this.savedFileNames = t.files.slice()
 
       if (this.task.checklist)
         this.task.checklist = t.checklist.slice()
@@ -193,7 +199,29 @@ export default {
   },
   methods: {
     addFile(file) {
-      this.files.push(file)
+      if (this.task.files.includes(file.name)) {
+        this.$store.commit('pushToast', {
+          message: "There's already another file with this name.",
+          seconds: 4,
+          type: 'error',
+        })
+      } else {
+        this.task.files.push(file.name)
+        this.addedFiles.push(file)
+      }
+    },
+    deleteFile(file) {
+      const i = this.task.files.findIndex(el => el === file.name)
+      const found = i > -1
+      if (found)
+        this.task.files.splice(i, 1)
+      if (found && this.addedFiles.includes(f => f.name === file.name)) {
+        const j = this.addedFiles.findIndex(f => f.name === file.name)
+        this.addedFiles.splice(j, 1)
+      }
+    },
+    blobToFile(theBlob, fileName){
+      return new File([theBlob], fileName)
     },
     addChecklist() {
       this.toggleChecklist = !this.toggleChecklist
@@ -291,6 +319,8 @@ export default {
         tags: this.tagIds,
         name: n, heading,
         calendar,
+        filesToAdd: this.addedFiles,
+        filesToRemove: this.getFilesToRemove,
       })
       t.checklist = []
       t.notes = ''
@@ -313,6 +343,15 @@ export default {
       savedLists: state => state.list.lists,
     }),
     ...mapGetters(['l']),
+    getFilesToRemove() {
+      // check if removed file is being updated with a new file on the addedFiles
+      return this.defaultTask.files(f =>
+        !this.task.files.includes(f) &&
+        !this.addedFiles.find(added => added.name === f))
+    },
+    isEditing() {
+      return this.defaultTask
+    },
     doesntHaveChecklist() {
       return this.task.checklist.length === 0
     },
