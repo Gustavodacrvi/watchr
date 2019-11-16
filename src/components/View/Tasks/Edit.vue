@@ -116,7 +116,7 @@
               class="opt-icon"
               :options="calendarOptions"
             />
-            <Icon
+<!--             <Icon
               class="opt-icon cursor"
               style="margin-right: 7px;margin-top: 2px"
               width="14px"
@@ -124,7 +124,7 @@
               :primaryHover="true"
               :file='true'
               @add='addFile'
-            />
+            /> -->
           </div>
         </div>
       </div>
@@ -351,9 +351,11 @@ export default {
         tags: this.tagIds,
         name: n, heading,
         calendar,
-        filesToAdd: this.addedFiles,
-        filesToRemove: this.getFilesToRemove,
-        filesToEdit: this.getFilesToEdit,
+/*         files: () => ({
+          filesToAdd: this.addedFiles,
+          filesToRemove: this.getFilesToRemove,
+          filesToEdit: this.getFilesToEdit,
+        }) */
       })
       t.checklist = []
       t.notes = ''

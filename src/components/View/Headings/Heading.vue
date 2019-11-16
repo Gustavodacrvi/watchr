@@ -31,8 +31,8 @@
         </div>
         <NotesApp :notes="notes" @save-notes="saveNote"/>
         <transition name="fade">
-          <div v-show="showing" class="cont">
-              <slot></slot>
+          <div v-show="showing && !movingHeading" class="cont">
+            <slot></slot>
           </div>
         </transition>
       </div>
@@ -62,7 +62,7 @@ import { mapGetters } from 'vuex'
 import utils from '@/utils/'
 
 export default {
-  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEdit', 'save', 'notes'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEdit', 'save', 'notes', 'movingHeading'],
   components: {
     IconDrop: IconDropVue,
     Icon: IconVue,

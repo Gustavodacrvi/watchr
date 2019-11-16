@@ -47,6 +47,7 @@
           :color='h.color ? h.color : ""'
           :options='h.options ? h.options : []'
           :save='h.onEdit'
+          :movingHeading='movingHeading'
           @option-click='v => getOptionClick(h)(v)'
           @save-notes='v => getNotesOption(h)(v)'
 
@@ -109,6 +110,7 @@ export default {
       atLeastOneRenderedTask: false,
       isDragging: false,
       justScrolled: false,
+      movingHeading: false,
     }
   },
   mounted() {
@@ -259,6 +261,12 @@ export default {
         onUpdate: (evt) => {
           const ids = this.getHeadingsIds()
           this.$emit('update-headings', ids)
+        },
+        onStart: evt => {
+          this.movingHeading = true
+        },
+        onEnd: evt => {
+          this.movingHeading = false
         },
       })
     }
