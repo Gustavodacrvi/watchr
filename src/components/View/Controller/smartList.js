@@ -57,7 +57,6 @@ export default {
     tasksOrder() {
       let o = this.viewOrders[this.viewName]
       if (o && o.tasks) o = this.viewOrders[this.viewName].tasks
-      if (o) return o
       return []
     },
     headingsOptions() {

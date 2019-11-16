@@ -127,8 +127,9 @@ export default {
       const type = utilsTask.taskType(obj)
       if (type && rootState.userInfo) {
         const viewOrders = rootState.userInfo.viewOrders
-        viewOrders[type] = fd().arrayUnion(ref.id)
-        batch.update(userRef(), viewOrders)
+        if (!viewOrders[type]) viewOrders[type] = {}
+        viewOrders[type].tasks = fd().arrayUnion(ref.id)
+        batch.update(userRef(), {viewOrders})
       }
       batch.commit()
     },
