@@ -80,6 +80,9 @@
             @click="addChecklist"
           />
         </transition>
+        <div class="files">
+          <FileApp v-for="f in files" :key="f.lastModified" v-bind="f"/>
+        </div>
         <div class="options">
           <div class="button-wrapper">
             <div class="button">
@@ -132,6 +135,7 @@ import ButtonVue from '../../Auth/Button.vue'
 import IconDropVue from '../../IconDrop/IconDrop.vue'
 import IconVue from '../../Icon.vue'
 import ChecklistVue from './Checklist/Checklist.vue'
+import FileApp from './File.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -141,7 +145,7 @@ import taskUtils from '@/utils/task'
 export default {
   props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup'],
   components: {
-    DropInput: DropInputVue,
+    DropInput: DropInputVue, FileApp,
     ButtonApp: ButtonVue,
     Checklist: ChecklistVue,
     IconDrop: IconDropVue,
@@ -579,6 +583,10 @@ export default {
 
 .cancel:hover {
   text-decoration: underline;
+}
+
+.files {
+  margin: 24px 10px;
 }
 
 .options {
