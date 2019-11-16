@@ -29,6 +29,11 @@ export default {
         callback: () => this.$emit('download')
       },
       {
+        name: 'Edit file name',
+        icon: 'pen',
+        callback: () => this.$emit('edit')
+      },
+      {
         name: 'Delete file',
         icon: 'trash',
         callback: () => this.$emit('delete')

@@ -81,8 +81,10 @@
           />
         </transition>
 <!--         <div class="files" v-if="files.length > 0">
-          <FileApp v-for="f in files" :key="f.lastModified" v-bind="f"
+          <FileApp v-for="f in files" :key="f"
+            :name="f"
             @delete="deleteFile(f)"
+            @edit="v => editFile(v, f)"
           />
         </div> -->
         {{task.files}}
@@ -173,7 +175,7 @@ export default {
         files: [],
       },
       addedFiles: [],
-      savedFileNames: [],
+      editedFileNames: [],
       optionsType: '',
       options: [],
     }
@@ -182,7 +184,6 @@ export default {
     if (this.defaultTask) {
       const t = this.defaultTask
       this.task = {...t}
-      this.savedFileNames = t.files.slice()
 
       if (this.task.checklist)
         this.task.checklist = t.checklist.slice()
@@ -198,26 +199,57 @@ export default {
     }
   },
   methods: {
-    addFile(file) {
-      if (this.task.files.includes(file.name)) {
+    addFile(fileName) {
+      if (this.task.files.includes(fileName)) {
         this.$store.commit('pushToast', {
           message: "There's already another file with this name.",
           seconds: 4,
           type: 'error',
         })
       } else {
-        this.task.files.push(file.name)
-        this.addedFiles.push(file)
+        this.task.files.push(fileName)
+        this.addedFiles.push(fileName)
       }
     },
-    deleteFile(file) {
-      const i = this.task.files.findIndex(el => el === file.name)
+    deleteFile(fileName) {
+      const i = this.task.files.findIndex(el => el === fileName)
       const found = i > -1
       if (found)
         this.task.files.splice(i, 1)
-      if (found && this.addedFiles.includes(f => f.name === file.name)) {
-        const j = this.addedFiles.findIndex(f => f.name === file.name)
+      if (found && this.addedFiles.find(f => f.name === fileName)) {
+        const j = this.addedFiles.findIndex(f => f.name === fileName)
         this.addedFiles.splice(j, 1)
+      }
+      if (found && this.editedFileNames.find(obj => obj.newName === fileName)) {
+        const j = this.editedFileNames.findIndex(obj => 
+        obj.newName === fileName)
+        this.editedFileNames.splice(j, 1)
+      }
+    },
+    editFile(newName, fileName) {
+      const i = this.task.files.findIndex(el => el === fileName)
+      const found = i > -1
+      if (found)
+        this.task.files.splice(i, 1, newName)
+      if (found && this.defaultTask.files.includes(fileName))
+        this.editedFileNames.push({oldName: fileName, newName})
+      if (found && this.editedFileNames.find(obj => 
+        obj.newName === fileName)) {
+          const j = this.editedFileNames.findIndex(obj => 
+        obj.newName === fileName)
+        const newFile = {...this.editedFileNames[j]}
+        newFile.newName = newName
+        this.editedFileNames.splice(j, 1, newFile)
+      }
+      if (found && this.addedFiles.find(el => el.name === fileName)) {
+        const j = this.addedFiles.findIndex(f => f.name === fileName)
+        const newFile = {...this.addedFiles[j]}
+        newFile.name = newName
+        this.addedFiles.splice(j, 1, newFile)
+      }
+      if (found && this.editedFileNames.find(obj => obj.newName === obj.oldName)) {
+        const j = this.editedFileNames.findIndex(obj => obj.newName === obj.oldName)
+        this.editedFileNames.splice(j, 1)
       }
     },
     blobToFile(theBlob, fileName){
@@ -321,6 +353,7 @@ export default {
         calendar,
         filesToAdd: this.addedFiles,
         filesToRemove: this.getFilesToRemove,
+        filesToEdit: this.getFilesToEdit,
       })
       t.checklist = []
       t.notes = ''
@@ -345,9 +378,14 @@ export default {
     ...mapGetters(['l']),
     getFilesToRemove() {
       // check if removed file is being updated with a new file on the addedFiles
-      return this.defaultTask.files(f =>
+      return this.defaultTask.files.filter(f =>
         !this.task.files.includes(f) &&
-        !this.addedFiles.find(added => added.name === f))
+        !this.addedFiles.find(added => added.name === f) &&
+        !this.getFilesToEdit.find(obj => f === obj.oldName))
+    },
+    getFilesToEdit() {
+      return this.editedFileNames.filter(({newName}) => 
+      !this.addedFiles.find(added => added.name === newName))
     },
     isEditing() {
       return this.defaultTask
