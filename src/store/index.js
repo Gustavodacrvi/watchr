@@ -257,6 +257,11 @@ const store = new Vuex.Store({
       })
       return batch.commit()
     },
+    createUser(s, user) {
+      return fire.collection('users').doc(user.uid).set({
+        ...utils.getRelevantUserData(user),
+      })
+    },
     createAnonymousUser(c, userId) {
       firebase.firestore().collection('users').doc(userId).set({
         ...utils.getRelevantUserData(userId),

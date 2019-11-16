@@ -14,11 +14,15 @@
         @click.stop="click"
         @dblclick="dblclick"
       >
-        <div class="cont">
-          <div class="check" @click.stop="completeTask"
-            v-longclick='openMobileOptions'
-            @mouseenter="iconHover = true"
+        <div class="cont"
+          v-longclick='openMobileOptions'
+        >
+          <div class="check"
+            @click.stop="completeTask"
+            @mouseenter.stop="iconHover = true"
             @mouseleave="iconHover = false"
+            @touchstart.stop
+            @mousedown.stop
           >
             <Icon v-if="!showCheckedIcon" class="icon check-icon"
               icon="box"
