@@ -266,9 +266,9 @@ export default {
 
       ids.splice(index, 0, newTaskRef.id)
 
-      const obj = {}
+      const obj = {[list]: {}}
       // list === viewName, e.g: Today, Tomorrow
-      obj[list] = ids
+      obj[list].tasks = ids
 
       const listRef = userRef()
       batch.set(listRef, {

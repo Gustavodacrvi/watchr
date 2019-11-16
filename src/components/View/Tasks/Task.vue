@@ -140,7 +140,7 @@ export default {
         setTimeout(() => {
           if (lessThanMinimum) {
           cont.classList.add('show')
-            s.height = '38px'
+            s.height = this.minimumTaskHeight + 'px'
           }
           else {
             s.height = height
