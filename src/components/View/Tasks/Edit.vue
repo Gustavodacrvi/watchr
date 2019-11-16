@@ -108,6 +108,15 @@
               class="opt-icon"
               :options="calendarOptions"
             />
+            <Icon
+              class="opt-icon cursor"
+              style="margin-right: 7px;margin-top: 2px"
+              width="14px"
+              icon='file'
+              :primaryHover="true"
+              :file='true'
+              @add='addFile'
+            />
           </div>
         </div>
       </div>
@@ -155,6 +164,7 @@ export default {
         checklist: [],
         order: [],
       },
+      files: [],
       optionsType: '',
       options: [],
     }
@@ -178,6 +188,9 @@ export default {
     }
   },
   methods: {
+    addFile(file) {
+      this.files.push(file)
+    },
     addChecklist() {
       this.toggleChecklist = !this.toggleChecklist
     },
