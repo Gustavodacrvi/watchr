@@ -70,7 +70,16 @@
           @remove='removeSubtask'
           @update='updateIds'
           @convert-task='convertTask'
+          @is-adding-toggle='v => isAddingChecklist = v'
         />
+        <transition name="btn">
+          <ButtonApp v-if="doesntHaveChecklist && !isAddingChecklist"
+            style="margin-left: 4px;margin-top: 0px;margin-bottom: 8px;opacity: .6"
+            type="card"
+            :value="l['Add checklist']"
+            @click="addChecklist"
+          />
+        </transition>
         <div class="options">
           <div class="button-wrapper">
             <div class="button">
@@ -81,29 +90,28 @@
           <div class="icons">
             <IconDrop
               handle="tag"
+              class="opt-icon"
               :options="getTags"
             />
             <IconDrop
               handle="priority"
+              class="opt-icon"
               :options="priorityOptions"
             />
             <IconDrop
               handle="tasks"
+              class="opt-icon"
               :options="listOptions"
             />
             <IconDrop
               handle="calendar"
+              class="opt-icon"
               :options="calendarOptions"
             />
             <IconDrop
               handle="repeat"
+              class="opt-icon"
               :options="repeatOptions"
-            />
-            <Icon v-if="doesntHaveChecklist"
-              style="margin-right: 6px;margin-top: 1px"
-              class="cursor"
-              icon="circle-check"
-              @click="addChecklist"
             />
           </div>
         </div>
@@ -140,6 +148,7 @@ export default {
     return {
       show: false,
       toggleChecklist: false,
+      isAddingChecklist: false,
       task: {
         name: '',
         priority: '',
@@ -603,6 +612,23 @@ export default {
   display: inline-flex;
   flex-basis: 100%;
   flex-direction: row-reverse;
+  align-items: center;
+}
+
+.opt-icon {
+  margin-right: 6px;
+}
+
+.btn-enter, .btn-leave-to {
+  opacity: 0;
+  height: 0;
+  transition-duration: .2s;
+}
+
+.btn-leave, .btn-enter-to {
+  opacity: 1;
+  height: 35px;
+  transition-duration: .2s;
 }
 
 </style>

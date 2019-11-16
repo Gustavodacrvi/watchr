@@ -106,6 +106,7 @@ export default {
         window.removeEventListener('click', hide)
       }
       window.addEventListener('click', hide)
+      this.$emit('is-adding-toggle', true)
     },
     toggleTask(id) {
       const subtask = this.list.find(el => el.id === id)
@@ -204,6 +205,7 @@ export default {
       })
     },
     calculateLeastNumberOfTasks() {
+      this.$emit('is-adding-toggle', false)
       setTimeout(() => {
         if (!this.$el) this.hasAtLeastOnSubTask = false
         const childs = this.draggableRoot.childNodes
