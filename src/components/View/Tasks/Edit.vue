@@ -316,7 +316,7 @@ export default {
       this.name = ''
     },
     downloadFile(fileName) {
-      storage().ref(`attachments/${this.user.uid}/${this.task.id}/${fileName}`).getDownloadURL().then(url => {
+      storage().ref(`attachments/${this.user.uid}/tasks/${this.task.id}/${fileName}`).getDownloadURL().then(url => {
         const xhr = new XMLHttpRequest()
         xhr.responseType = 'blob'
         xhr.onload = event => {
@@ -339,32 +339,34 @@ export default {
     },
     save() {
       const t = this.task
-      let n = t.name
-      const i = n.indexOf(' $')
-      if (i && i > -1 && t.calendar) {
-        n = n.substr(0, i)
+      if (t.name) {
+        let n = t.name
+        const i = n.indexOf(' $')
+        if (i && i > -1 && t.calendar) {
+          n = n.substr(0, i)
+        }
+        let heading = t.heading
+        let calendar = t.calendar
+        if (heading === undefined) heading = null
+        if (calendar === undefined) calendar = null
+        if (this.isEditingFiles && this.addedFiles.length > 0)
+          this.savingTask = true
+        this.$emit('save', {
+          ...t,
+          list: this.listId,
+          tags: this.tagIds,
+          name: n, heading,
+          calendar,
+          files: this.task.files,
+          handleFiles: this.isEditingFiles ? taskId => {
+            return this.saveFiles(this.getFilesToRemove, this.addedFiles, taskId)
+          } : null
+        })
+        t.checklist = []
+        t.notes = ''
+        t.name = ''
+        t.order = []
       }
-      let heading = t.heading
-      let calendar = t.calendar
-      if (heading === undefined) heading = null
-      if (calendar === undefined) calendar = null
-      if (this.isEditingFiles && this.addedFiles.length > 0)
-        this.savingTask = true
-      this.$emit('save', {
-        ...t,
-        list: this.listId,
-        tags: this.tagIds,
-        name: n, heading,
-        calendar,
-        files: this.task.files,
-        handleFiles: this.isEditingFiles ? taskId => {
-          return this.saveFiles(this.getFilesToRemove, this.addedFiles, taskId)
-        } : null
-      })
-      t.checklist = []
-      t.notes = ''
-      t.name = ''
-      t.order = []
     },
     saveFiles(toRemoveFiles, toAddFiles, taskId) {
       const rem = toRemoveFiles.slice()
@@ -390,7 +392,7 @@ export default {
         this.uploadProgress = (totalTransferred / totalBytes) * 100
       }
 
-      const taskPath = `attachments/${this.user.uid}/${taskId}/`
+      const taskPath = `attachments/${this.user.uid}/tasks/${taskId}/`
       const addFiles = () => {
         const proms = []
         for (const f of add) {
