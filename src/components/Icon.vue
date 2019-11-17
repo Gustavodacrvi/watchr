@@ -100,7 +100,6 @@ export default {
     },
     handleFile() {
       const inp = this.fileInput
-      console.log(inp.files[0])
       this.$emit('add', inp.files[0])
     }
   },
@@ -163,6 +162,7 @@ export default {
 .pie {
   fill: none;
   transition-duration: .7s;
+  transition: color 0s;
   stroke-width: 32;
   r: 16;
   cx: 16;
