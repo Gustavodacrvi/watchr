@@ -87,6 +87,7 @@
             @delete="() => deleteFile(f)"
           />
         </div>
+        <h3>{{ uploadProgress }}</h3>
         <span v-if="isEditingFiles" style="opacity: .4;margin-left: 8px">{{ l["Note: file upload/delete operations won't work while offline."] }}</span>
         <div class="options">
           <div class="button-wrapper">
@@ -177,6 +178,8 @@ export default {
         order: [],
         files: [],
       },
+      savingTask: false,
+      uploadProgress: null,
       addedFiles: [],
       optionsType: '',
       options: [],
@@ -213,8 +216,10 @@ export default {
       return ''
     },
     addFile(file) {
-      this.task.files.push(file.name)
-      this.addedFiles.push(file)
+      if (!this.task.files.includes(file.name))
+        this.task.files.push(file.name)
+      if (!this.addedFiles.find(el => el.name === file.name))
+        this.addedFiles.push(file)
     },
     deleteFile(fileName) {
       const i = this.task.files.findIndex(el => el === fileName)
@@ -316,6 +321,8 @@ export default {
       let calendar = t.calendar
       if (heading === undefined) heading = null
       if (calendar === undefined) calendar = null
+      if (this.isEditingFiles && this.addedFiles.length > 0)
+        this.savingTask = true
       this.$emit('save', {
         ...t,
         list: this.listId,
@@ -342,14 +349,33 @@ export default {
           rem.splice(i, 1)
         }
       }
+
+      let totalBytes = 0
+      this.uploadProgress = 0
+      add.forEach(file => totalBytes += file.size)
       const store = fire.storage()
+
+      const fileProgress = {}
+
+      const calcProgress = () => {
+        let totalTransferred = 0
+        const values = Object.values(fileProgress)
+        values.forEach(v => totalTransferred += v)
+        this.uploadProgress = (totalTransferred / totalBytes)
+      }
+
       const taskPath = `attachments/${this.user.uid}/${taskId}/`
       const addFiles = () => {
         const proms = []
         for (const f of add) {
           proms.push(new Promise((solve, reject) => {
             const ref = store.ref(taskPath + f.name)
-            ref.put(f).then(solve)
+            const upload = ref.put(f)
+            upload.on('state_changed', snap => {
+              fileProgress[f.name] = snap.bytesTransferred
+              calcProgress()
+            })
+            upload.then(solve)
           }))
         }
         return Promise.all(proms)
@@ -370,8 +396,10 @@ export default {
           removeFiles(),
         ]).then(() => {
           solve()
-          t.addedFiles = []
-          t.files = []
+          this.task.addedFiles = []
+          this.task.files = []
+          this.savingTask = false
+          this.uploadProgress = null
           if (this.defaultTask)
             this.$emit('cancel')
         }).catch(reject)
