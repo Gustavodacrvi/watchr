@@ -259,10 +259,6 @@ export default {
       const batch = fire.batch()
 
       const newTaskRef = taskRef()
-      /* batch.set(newTaskRef, {
-        userId: uid(),
-        ...task,
-      }) */
       addTask(batch, {
         userId: uid(),
         ...task,
@@ -285,10 +281,6 @@ export default {
       const batch = fire.batch()
 
       const newTaskRef = taskRef()
-      /*batch.set(newTaskRef, {
-        userId: uid(),
-        ...task,
-      }) */
       addTask(batch, {
         userId: uid(),
         ...task,

@@ -124,10 +124,6 @@ export default {
         userId: uid(),
         ...obj,
       }, ref).then(() => {
-        /* batch.set(ref, {
-          userId: uid(),
-          ...obj,
-        }) */
         const type = utilsTask.taskType(obj)
         if (type && rootState.userInfo) {
           const viewOrders = rootState.userInfo.viewOrders
@@ -140,9 +136,6 @@ export default {
     },
     saveTask(c, obj) {
       const batch = fire.batch()
-/*       taskRef(obj.id).update({
-        ...obj,
-      }) */
       addTask(batch, obj, taskRef(obj.id)).then(() => batch.commit())
     },
     deleteTasks(c, ids) {

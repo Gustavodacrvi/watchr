@@ -1,6 +1,6 @@
 
 <template>
-  <div class="File rb cursor" @click.stop>
+  <div class="File rb cursor" :class="status" @click.stop>
     <span class="icon-wrapper">
       <Icon icon='file' style="opacity: .6;" width="12px"/>
     </span>
@@ -15,7 +15,7 @@ import Icon from '@/components/Icon.vue'
 import utils from '@/utils'
 
 export default {
-  props: ['name'],
+  props: ['name', 'status'],
   mounted() {
     utils.bindOptionsToEventListener(this.$el, [
       {
@@ -69,6 +69,14 @@ export default {
 .name {
   word-break: break-all;
   word-wrap: break-word;
+}
+
+.update {
+  background-color: rgba(53, 73, 90, 0.6) !important;
+}
+
+.remove {
+  opacity: .6;
 }
 
 </style>

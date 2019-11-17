@@ -80,11 +80,11 @@
             @click="addChecklist"
           />
         </transition>
-        <div class="files" v-if="task.files.length > 0">
-          <FileApp v-for="f in task.files" :key="f"
+        <div class="files" v-if="getFiles.length > 0">
+          <FileApp v-for="f in getFiles" :key="f"
             :name="f"
+            :status='getFileStatus(f)'
             @delete="deleteFile(f)"
-            @edit="v => editFile(v, f)"
           />
         </div>
         <div class="options">
@@ -146,6 +146,9 @@ import { mapGetters, mapState } from 'vuex'
 import utils from '@/utils/'
 import taskUtils from '@/utils/task'
 
+import fire, { storage } from 'firebase/app'
+import 'firebase/storage'
+
 export default {
   props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup'],
   components: {
@@ -174,7 +177,6 @@ export default {
         files: [],
       },
       addedFiles: [],
-      editedFileNames: [],
       optionsType: '',
       options: [],
     }
@@ -198,17 +200,16 @@ export default {
     }
   },
   methods: {
+    getFileStatus(fileName) {
+      if (this.addedFiles.find(el => el.name === fileName))
+        return 'update'
+      if (this.defaultTask && this.defaultTask.files.includes(fileName) && !this.task.files.includes(fileName))
+        return 'remove'
+      return ''
+    },
     addFile(file) {
-      if (this.task.files.includes(file.fileName)) {
-        this.$store.commit('pushToast', {
-          message: "There's already another file with this name.",
-          seconds: 4,
-          type: 'error',
-        })
-      } else {
-        this.task.files.push(file.fileName)
-        this.addedFiles.push(file)
-      }
+      this.task.files.push(file.fileName)
+      this.addedFiles.push(file)
     },
     deleteFile(fileName) {
       const i = this.task.files.findIndex(el => el === fileName)
@@ -219,40 +220,6 @@ export default {
         const j = this.addedFiles.findIndex(f => f.name === fileName)
         this.addedFiles.splice(j, 1)
       }
-      if (found && this.editedFileNames.find(obj => obj.newName === fileName)) {
-        const j = this.editedFileNames.findIndex(obj => 
-        obj.newName === fileName)
-        this.editedFileNames.splice(j, 1)
-      }
-    },
-    editFile(newName, fileName) {
-      const i = this.task.files.findIndex(el => el === fileName)
-      const found = i > -1
-      if (found)
-        this.task.files.splice(i, 1, newName)
-      if (found && this.defaultTask.files.includes(fileName))
-        this.editedFileNames.push({oldName: fileName, newName})
-      if (found && this.editedFileNames.find(obj => 
-        obj.newName === fileName)) {
-          const j = this.editedFileNames.findIndex(obj => 
-        obj.newName === fileName)
-        const newFile = {...this.editedFileNames[j]}
-        newFile.newName = newName
-        this.editedFileNames.splice(j, 1, newFile)
-      }
-      if (found && this.addedFiles.find(el => el.name === fileName)) {
-        const j = this.addedFiles.findIndex(f => f.name === fileName)
-        const newFile = {...this.addedFiles[j]}
-        newFile.name = newName
-        this.addedFiles.splice(j, 1, newFile)
-      }
-      if (found && this.editedFileNames.find(obj => obj.newName === obj.oldName)) {
-        const j = this.editedFileNames.findIndex(obj => obj.newName === obj.oldName)
-        this.editedFileNames.splice(j, 1)
-      }
-    },
-    blobToFile(theBlob, fileName){
-      return new File([theBlob], fileName)
     },
     addChecklist() {
       this.toggleChecklist = !this.toggleChecklist
@@ -352,17 +319,28 @@ export default {
         calendar,
         files: this.task.files,
         handleFiles: this.isEditingFiles ? taskId => {
-          this.saveFiles(this.getFilesToEdit, this.getFilesToRemove, this.addedFiles, taskId)
+          return this.saveFiles(this.getFilesToEdit, this.getFilesToRemove, this.addedFiles, taskId)
         } : null
       })
-      console.log(this.isEditingFiles,this.getFilesToEdit, this.getFilesToRemove, this.addedFiles)
       t.checklist = []
       t.notes = ''
       t.name = ''
       t.order = []
     },
     saveFiles(toEditFiles, toRemoveFiles, toAddFiles, taskId) {
+      const store = fire.storage()
+      const taskPath = `attachments/${this.user.uid}/${taskId}/`
+      const editFiles = () => {
+        const promises = []
+        for (const file of toEditFiles) {
+          const ref = store.ref(taskPath + file.oldName)
+        }
+      }
+      return new Promise(solve => {
 
+
+        
+      })
     },
     getFileEditProgress() {
 
@@ -381,25 +359,27 @@ export default {
       savedTags: state => state.tag.tags,
       savedTasks: state => state.task.tasks,
       savedLists: state => state.list.lists,
+      user: state => state.user,
     }),
     ...mapGetters(['l']),
     isEditingFiles() {
       return this.getFilesToRemove.length > 0 ||
-        this.getFilesToEdit.length > 0 ||
         this.addedFiles.length > 0
+    },
+    getFiles() {
+      const files = [...this.defaultTask.files.filter(el => {
+        return !this.task.files.includes(el)
+      }), ...this.task.files]
+      files.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+      return files
     },
     getFilesToRemove() {
       // check if removed file is being updated with a new file on the addedFiles
       if (this.defaultTask)
         return this.defaultTask.files.filter(f =>
           !this.task.files.includes(f) &&
-          !this.addedFiles.find(added => added.name === f) &&
-          !this.getFilesToEdit.find(obj => f === obj.oldName))
+          !this.addedFiles.find(added => added.name === f))
       return []
-    },
-    getFilesToEdit() {
-      return this.editedFileNames.filter(({newName}) => 
-      !this.addedFiles.find(added => added.name === newName))
     },
     isEditing() {
       return this.defaultTask
