@@ -87,7 +87,6 @@
             @delete="() => deleteFile(f)"
           />
         </div>
-        <h3>{{ uploadProgress }}</h3>
         <span v-if="isEditingFiles" style="opacity: .4;margin-left: 8px">{{ l["Note: file upload/delete operations won't work while offline."] }}</span>
         <div class="options">
           <div class="button-wrapper">
@@ -129,6 +128,11 @@
           </div>
         </div>
       </div>
+      <transition name="progress-t">
+        <div v-if="savingTask" class="progress">
+          <div class="progress-line" :style="{width: `${uploadProgress}%`}"></div>
+        </div>
+      </transition>
     </div>
   </transition>
 </template>
@@ -361,7 +365,7 @@ export default {
         let totalTransferred = 0
         const values = Object.values(fileProgress)
         values.forEach(v => totalTransferred += v)
-        this.uploadProgress = (totalTransferred / totalBytes)
+        this.uploadProgress = (totalTransferred / totalBytes) * 100
       }
 
       const taskPath = `attachments/${this.user.uid}/${taskId}/`
@@ -750,6 +754,33 @@ export default {
 
 .opt-icon {
   margin-right: 6px;
+}
+
+.progress {
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  margin-top: 4px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  overflow: hidden;
+  background-color: var(--dark);
+  transition: height .1s, margin-top .1s;
+}
+
+.progress-line {
+  background-color: var(--primary);
+  height: 100%;
+}
+
+.progress-t-enter, .progress-t-leave-to {
+  height: 0;
+  margin-top: 0;
+}
+
+.progress-t-leave, .progress-t-enter-to {
+  height: 3px;
+  margin-top: 3px;
 }
 
 .btn-enter, .btn-leave-to {
