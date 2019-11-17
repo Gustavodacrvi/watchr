@@ -26,19 +26,9 @@ export default {
     options() {
       return [
         {
-          name: 'View content',
-          icon: 'file',
-          callback: () => this.$emit('view')
-        },
-        {
           name: 'Download file',
           icon: 'import',
-          callback: () => this.$emit('download')
-        },
-        {
-          name: 'Edit file name',
-          icon: 'pen',
-          callback: () => this.$emit('edit')
+          callback: () => {this.$emit('download')}
         },
         {
           name: 'Delete file',

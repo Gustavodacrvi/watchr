@@ -85,6 +85,7 @@
             :name="f"
             :status='getFileStatus(f)'
             @delete="() => deleteFile(f)"
+            @download="() => downloadFile(f)"
           />
         </div>
         <span v-if="isEditingFiles" style="opacity: .4;margin-left: 8px">{{ l["Note: file upload/delete operations won't work while offline."] }}</span>
@@ -314,6 +315,28 @@ export default {
       })
       this.name = ''
     },
+    downloadFile(fileName) {
+      storage().ref(`attachments/${this.user.uid}/${this.task.id}/${fileName}`).getDownloadURL().then(url => {
+        const xhr = new XMLHttpRequest()
+        xhr.responseType = 'blob'
+        xhr.onload = event => {
+          const blob = xhr.response
+          url = window.URL.createObjectURL(blob)
+          let element = document.createElement('a')
+          element.setAttribute('href', url)
+          element.setAttribute('download', fileName)
+        
+          element.style.display = 'none'
+          document.body.appendChild(element)
+        
+          element.click()
+        
+          document.body.removeChild(element)
+        }
+        xhr.open('GET', url)
+        xhr.send()
+      })
+    },
     save() {
       const t = this.task
       let n = t.name
@@ -338,7 +361,6 @@ export default {
           return this.saveFiles(this.getFilesToRemove, this.addedFiles, taskId)
         } : null
       })
-      console.log(this.getFilesToRemove, this.addedFiles, this.task.files)
       t.checklist = []
       t.notes = ''
       t.name = ''

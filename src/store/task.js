@@ -136,9 +136,7 @@ export default {
     },
     saveTask(c, obj) {
       const batch = fire.batch()
-      console.log('before wetn')
       addTask(batch, obj, taskRef(obj.id)).then(() => {
-        console.log('WETN')
         batch.commit()
       }).catch(err => console.log('saveTask', err))
     },
