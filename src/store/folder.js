@@ -3,7 +3,7 @@ import { fire, auth } from './index'
 import fb from 'firebase/app'
 
 import utils from '../utils'
-import { folderColl, uid } from '../utils/firestore'
+import { folderColl, uid, folderRef } from '../utils/firestore'
 
 export default {
   namespaced: true,
@@ -20,6 +20,12 @@ export default {
           utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'folders')
           solve()
         })
+      })
+    },
+    addFolder(c, fold) {
+      folderRef().set({
+        userId: uid(),
+        ...fold,
       })
     },
   },

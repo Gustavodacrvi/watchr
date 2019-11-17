@@ -309,6 +309,7 @@ auth.onAuthStateChanged((user) => {
     dispatch('list/getData')
     dispatch('tag/getData')
     dispatch('filter/getData')
+    dispatch('folder/getData')
   }
   const toast = (t) => store.commit('pushToast', t)
 

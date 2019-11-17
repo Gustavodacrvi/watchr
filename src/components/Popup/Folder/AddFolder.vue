@@ -43,7 +43,7 @@ export default {
   computed: {
     ...mapGetters(['platform', 'l']),
     ...mapState({
-      lists: state => state.list.lists,
+      folders: state => state.folder.folders,
       popup: state => state.popup,
       payload: state => state.popup.payload,
     }),
@@ -62,8 +62,8 @@ export default {
         this.$store.commit('pushToast', toast)
       }
       if (this.name) {
-        const list = this.lists.find(el => el.name === this.name)
-        if (!list && !this.isEditing) {
+        const fold = this.folders.find(el => el.name === this.name)
+        if (!fold && !this.isEditing) {
           this.$store.dispatch('folder/addFolder', {
             name: this.name,
             ...this.payload,
@@ -74,7 +74,7 @@ export default {
             seconds: 2,
           })
           this.$store.dispatch('closePopup')
-        } else if (!list && this.isEditing) {
+        } else if (!fold && this.isEditing) {
           this.$store.dispatch('folder/saveFolder', {
             name: this.name,
             id: this.payload.id,
@@ -109,7 +109,7 @@ export default {
   },
   watch: {
     name() {
-      this.options = this.lists.filter(el => el.name.toLowerCase().includes(this.name.toLowerCase())).map(el => el.name)
+      this.options = this.folders.filter(el => el.name.toLowerCase().includes(this.name.toLowerCase())).map(el => el.name)
     }
   }
 }
