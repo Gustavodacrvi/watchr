@@ -353,16 +353,20 @@ export default {
       const dispatch = this.$store.dispatch
       const arr = [
         {
-          name: this.l['Add list'],
-          icon: 'tasks',
-          callback: () => dispatch('pushPopup', {comp: 'AddList'}),
-        },
-        {
           name: this.l['Sort lists by name'],
           icon: 'sort-name',
           callback: () => dispatch('list/sortListsByName'),
         },
-
+        {
+          name: this.l['Add folder'],
+          icon: 'folder',
+          callback: () => dispatch('pushPopup', {comp: 'AddFolder'}),
+        },
+        {
+          name: this.l['Add list'],
+          icon: 'tasks',
+          callback: () => dispatch('pushPopup', {comp: 'AddList'}),
+        },
       ]
       if (this.isDesktop) {
         arr.splice(1, 0, {

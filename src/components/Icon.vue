@@ -65,6 +65,7 @@ import deadline from '@/assets/icons/deadline.svg'
 import repeat from '@/assets/icons/repeat.svg'
 import box from '@/assets/icons/box.svg'
 import file from '@/assets/icons/file.svg'
+import folder from '@/assets/icons/folder.svg'
 import boxCheck from '@/assets/icons/box-check.svg'
 
 import { mapGetters } from 'vuex'
@@ -79,6 +80,7 @@ export default {
         pen, trash, fire, bloqued, circle, users,
         copy, plus, globe, heading, search, note,
         envelope, deadline, sleep, repeat, box, file,
+        folder,
         "box-check": boxCheck,
         "import": importIcon,
         "export": exportIcon,
