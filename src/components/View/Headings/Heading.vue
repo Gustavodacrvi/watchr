@@ -134,7 +134,6 @@ export default {
 }
 
 .header-wrapper {
-  border-bottom: 1px solid var(--light-gray);
   padding: 0 6px;
   display: flex;
   align-items: center;

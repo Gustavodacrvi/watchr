@@ -321,14 +321,12 @@ export default {
       s.margin = 0
       s.padding = 0
       s.opacity = 0
-      s.borderBottom = '0px solid var(--light-gray)'
     },
     showHeading(s) {
       s.height = '45px'
       s.opacity = 1
       s.marginBottom = '10px'
       s.padding = '0 6px'
-      s.borderBottom = '1px solid var(--light-gray)'
     },
     headingsLeave(el) {
       const header = el.getElementsByClassName('header-wrapper')[0]

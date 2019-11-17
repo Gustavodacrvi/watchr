@@ -80,13 +80,13 @@
             @click="addChecklist"
           />
         </transition>
-<!--         <div class="files" v-if="files.length > 0">
+        <div class="files" v-if="files.length > 0">
           <FileApp v-for="f in files" :key="f"
             :name="f"
             @delete="deleteFile(f)"
             @edit="v => editFile(v, f)"
           />
-        </div> -->
+        </div>
         {{task.files}}
         <div class="options">
           <div class="button-wrapper">
@@ -116,7 +116,7 @@
               class="opt-icon"
               :options="calendarOptions"
             />
-<!--             <Icon
+            <Icon
               class="opt-icon cursor"
               style="margin-right: 7px;margin-top: 2px"
               width="14px"
@@ -124,7 +124,7 @@
               :primaryHover="true"
               :file='true'
               @add='addFile'
-            /> -->
+            />
           </div>
         </div>
       </div>
@@ -199,16 +199,16 @@ export default {
     }
   },
   methods: {
-    addFile(fileName) {
-      if (this.task.files.includes(fileName)) {
+    addFile(file) {
+      if (this.task.files.includes(file.fileName)) {
         this.$store.commit('pushToast', {
           message: "There's already another file with this name.",
           seconds: 4,
           type: 'error',
         })
       } else {
-        this.task.files.push(fileName)
-        this.addedFiles.push(fileName)
+        this.task.files.push(file.fileName)
+        this.addedFiles.push(file)
       }
     },
     deleteFile(fileName) {
@@ -351,16 +351,21 @@ export default {
         tags: this.tagIds,
         name: n, heading,
         calendar,
-/*         files: () => ({
-          filesToAdd: this.addedFiles,
-          filesToRemove: this.getFilesToRemove,
-          filesToEdit: this.getFilesToEdit,
-        }) */
+        files: this.task.files,
+        handleFiles: this.isEditingFiles ? taskId => {
+          this.saveFiles(this.getFilesToEdit, this.getFilesToRemove, this.addedFiles, taskId)
+        } : null
       })
       t.checklist = []
       t.notes = ''
       t.name = ''
       t.order = []
+    },
+    saveFiles() {
+
+    },
+    getFileEditProgress(toEditFiles, toRemoveFiles, toAddFiles, taskId) {
+
     },
     removeTag(name) {
       const index = this.task.tags.findIndex(el => el === name)
@@ -378,6 +383,11 @@ export default {
       savedLists: state => state.list.lists,
     }),
     ...mapGetters(['l']),
+    isEditingFiles() {
+      return this.getFilesToRemove.length > 0 ||
+        this.getFilesToEdit.length > 0 ||
+        this.addedFiles.length > 0
+    },
     getFilesToRemove() {
       // check if removed file is being updated with a new file on the addedFiles
       return this.defaultTask.files.filter(f =>

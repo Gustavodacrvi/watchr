@@ -11,3 +11,6 @@ export const tagColl = () => userRef().collection('tags')
 export const taskRef = id => id ? taskColl().doc(id) : taskColl().doc()
 export const listRef = id => id ? listColl().doc(id) : listColl().doc()
 export const tagRef = id => id ? tagColl().doc(id) : tagColl().doc()
+export const addTask = (batch, task, taskRef) => {
+  
+}
