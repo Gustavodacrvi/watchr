@@ -11,7 +11,14 @@ export default {
     folders: []
   },
   getters: {
-
+    sortedFolders(state, d, {userInfo}) {
+      const {folders} = state
+      let order = userInfo.folders
+      if (!order) order = []
+      if (userInfo)
+        return utils.checkMissingIdsAndSortArr(order, folders)
+      return []
+    },
   },
   actions: {
     getData({state}) {

@@ -483,6 +483,7 @@ export default {
         filters: [],
         tags: [],
         lists: [],
+        folders: [],
       }
     let obj = {
       userId: userAuth.uid,
@@ -497,6 +498,7 @@ export default {
       filters: [],
       tags: [],
       lists: [],
+      folders: [],
     }}
     return obj
   },

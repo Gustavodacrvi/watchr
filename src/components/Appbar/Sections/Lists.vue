@@ -7,7 +7,7 @@
       :disableSelection='true'
       :enableSort="true"
       :illustration="illustration"
-      :list="filteredByRepeat"
+      :list="rootFilters"
       :active="active"
       :viewType="viewType"
       :mapProgress='getListProgress'
@@ -17,6 +17,11 @@
       @buttonAdd='buttonAdd'
       @update='update'
     />
+    <FolderApp v-for="f in sortedFolders" :key="f.id"
+      v-bind="f"
+    >
+      
+    </FolderApp>
     <div style="height: 100px"></div>
   </div>
 </template>
@@ -24,6 +29,7 @@
 <script>
 
 import RendererVue from '../Renderer.vue'
+import FolderApp from './Folder.vue'
 
 import utilsList from '@/utils/list'
 import utilsTask from '@/utils/task'
@@ -35,7 +41,7 @@ import mom from 'moment'
 
 export default {
   components: {
-    Renderer: RendererVue,
+    Renderer: RendererVue, FolderApp,
   },
   props: ['active', 'viewType', 'showDefered', 'showRepeat'],
   methods: {
@@ -74,9 +80,30 @@ export default {
       l: 'l',
       getTasksByListId: 'list/getTasks',
       getListTasks: 'task/getListTasks',
+      sortedFolders: 'folder/sortedFolders'
     }),
     sortedLists() {
       return this.$store.getters['list/sortedLists']
+    },
+    illustration() {
+      let descr = this.l["You can add one by dropping the plus floating button in this region."]
+      if (!this.isDesktop)
+        descr = this.l["You can add one by clicking on the right corner icon."]
+      return {
+        descr,
+        name: 'List',
+        title: this.l["You don't have any lists."],
+        width: '80px'
+      }
+    },
+
+    rootFilters() {
+      const filters = this.filteredByRepeat
+
+      const arr = []
+      for (const f of filters) if (!f.folder) arr.push(f)
+      
+      return arr
     },
     filteredByRepeat() {
       if (!this.showRepeat)
@@ -113,17 +140,6 @@ export default {
         list.options = utilsList.listOptions(list, this.$store, this.getListTasks(this.tasks, list.id).slice(), this.l)
       }
       return lists
-    },
-    illustration() {
-      let descr = this.l["You can add one by dropping the plus floating button in this region."]
-      if (!this.isDesktop)
-        descr = this.l["You can add one by clicking on the right corner icon."]
-      return {
-        descr,
-        name: 'List',
-        title: this.l["You don't have any lists."],
-        width: '80px'
-      }
     },
   },
 }
