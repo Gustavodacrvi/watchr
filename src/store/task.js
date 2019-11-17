@@ -123,27 +123,27 @@ export default {
       addTask(batch, {
         userId: uid(),
         ...obj,
-      }, ref)
-      /* batch.set(ref, {
-        userId: uid(),
-        ...obj,
-      }) */
-      const type = utilsTask.taskType(obj)
-      if (type && rootState.userInfo) {
-        const viewOrders = rootState.userInfo.viewOrders
-        if (!viewOrders[type]) viewOrders[type] = {}
-        viewOrders[type].tasks = fd().arrayUnion(ref.id)
-        batch.update(userRef(), {viewOrders})
-      }
-      batch.commit()
+      }, ref).then(() => {
+        /* batch.set(ref, {
+          userId: uid(),
+          ...obj,
+        }) */
+        const type = utilsTask.taskType(obj)
+        if (type && rootState.userInfo) {
+          const viewOrders = rootState.userInfo.viewOrders
+          if (!viewOrders[type]) viewOrders[type] = {}
+          viewOrders[type].tasks = fd().arrayUnion(ref.id)
+          batch.update(userRef(), {viewOrders})
+        }
+        batch.commit()
+      })
     },
     saveTask(c, obj) {
       const batch = fire.batch()
 /*       taskRef(obj.id).update({
         ...obj,
       }) */
-      addTask(batch, {...obj}, taskRef(obj.id))
-      batch.commit()
+      addTask(batch, obj, taskRef(obj.id)).then(() => batch.commit())
     },
     deleteTasks(c, ids) {
       const batch = fire.batch()

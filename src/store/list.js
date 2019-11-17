@@ -266,40 +266,40 @@ export default {
       addTask(batch, {
         userId: uid(),
         ...task,
-      }, newTaskRef)
-
-      ids.splice(index, 0, newTaskRef.id)
-
-      const obj = {[list]: {}}
-      // list === viewName, e.g: Today, Tomorrow
-      obj[list].tasks = ids
-
-      const listRef = userRef()
-      batch.set(listRef, {
-        viewOrders: obj,
-      }, {merge: true})
-
-      batch.commit()
+      }, newTaskRef).then(() => {
+        ids.splice(index, 0, newTaskRef.id)
+  
+        const obj = {[list]: {}}
+        // list === viewName, e.g: Today, Tomorrow
+        obj[list].tasks = ids
+  
+        const listRef = userRef()
+        batch.set(listRef, {
+          viewOrders: obj,
+        }, {merge: true})
+  
+        batch.commit()
+      })
     },
     addTaskByIndex(c, {ids, index, task, listId}) {
       const batch = fire.batch()
 
-/*       const newTaskRef = taskRef()
-      batch.set(newTaskRef, {
+      const newTaskRef = taskRef()
+      /*batch.set(newTaskRef, {
         userId: uid(),
         ...task,
       }) */
       addTask(batch, {
         userId: uid(),
         ...task,
-      }, newTaskRef)
-
-      ids.splice(index, 0, newTaskRef.id)
-
-      const savedListRef = listRef(listId)
-      batch.update(savedListRef, {tasks: ids})
-
-      batch.commit()
+      }, newTaskRef).then(() => {
+        ids.splice(index, 0, newTaskRef.id)
+  
+        const savedListRef = listRef(listId)
+        batch.update(savedListRef, {tasks: ids})
+  
+        batch.commit()
+      })
     },
 
     toggleHeadingAuthide({getters}, {listId, name}) {

@@ -80,14 +80,13 @@
             @click="addChecklist"
           />
         </transition>
-        <div class="files" v-if="files.length > 0">
-          <FileApp v-for="f in files" :key="f"
+        <div class="files" v-if="task.files.length > 0">
+          <FileApp v-for="f in task.files" :key="f"
             :name="f"
             @delete="deleteFile(f)"
             @edit="v => editFile(v, f)"
           />
         </div>
-        {{task.files}}
         <div class="options">
           <div class="button-wrapper">
             <div class="button">
@@ -356,15 +355,16 @@ export default {
           this.saveFiles(this.getFilesToEdit, this.getFilesToRemove, this.addedFiles, taskId)
         } : null
       })
+      console.log(this.isEditingFiles,this.getFilesToEdit, this.getFilesToRemove, this.addedFiles)
       t.checklist = []
       t.notes = ''
       t.name = ''
       t.order = []
     },
-    saveFiles() {
+    saveFiles(toEditFiles, toRemoveFiles, toAddFiles, taskId) {
 
     },
-    getFileEditProgress(toEditFiles, toRemoveFiles, toAddFiles, taskId) {
+    getFileEditProgress() {
 
     },
     removeTag(name) {
@@ -390,10 +390,12 @@ export default {
     },
     getFilesToRemove() {
       // check if removed file is being updated with a new file on the addedFiles
-      return this.defaultTask.files.filter(f =>
-        !this.task.files.includes(f) &&
-        !this.addedFiles.find(added => added.name === f) &&
-        !this.getFilesToEdit.find(obj => f === obj.oldName))
+      if (this.defaultTask)
+        return this.defaultTask.files.filter(f =>
+          !this.task.files.includes(f) &&
+          !this.addedFiles.find(added => added.name === f) &&
+          !this.getFilesToEdit.find(obj => f === obj.oldName))
+      return []
     },
     getFilesToEdit() {
       return this.editedFileNames.filter(({newName}) => 
