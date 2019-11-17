@@ -208,7 +208,7 @@ export default {
       return ''
     },
     addFile(file) {
-      this.task.files.push(file.fileName)
+      this.task.files.push(file.name)
       this.addedFiles.push(file)
     },
     deleteFile(fileName) {
@@ -343,6 +343,7 @@ export default {
         for (const f of add) {
           proms.push(new Promise((solve, reject) => {
             const ref = store.ref(taskPath + f.name)
+            console.log(taskPath + f.name)
             ref.put(f).then(solve).catch(err => {
               this.$store.commit('pushToast', {
                 name: err.message,
@@ -384,9 +385,12 @@ export default {
         this.addedFiles.length > 0
     },
     getFiles() {
-      const files = [...this.defaultTask.files.filter(el => {
-        return !this.task.files.includes(el)
-      }), ...this.task.files]
+      let files
+      if (this.defaultTask)
+        files = [...this.defaultTask.files.filter(el => {
+          return !this.task.files.includes(el)
+        }), ...this.task.files]
+      else files = this.task.files.slice()
       files.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
       return files
     },
