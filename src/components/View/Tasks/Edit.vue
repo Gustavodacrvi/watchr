@@ -319,7 +319,7 @@ export default {
         calendar,
         files: this.task.files,
         handleFiles: this.isEditingFiles ? taskId => {
-          return this.saveFiles(this.getFilesToEdit, this.getFilesToRemove, this.addedFiles, taskId)
+          return this.saveFiles(this.getFilesToRemove, this.addedFiles, taskId)
         } : null
       })
       t.checklist = []
@@ -327,20 +327,37 @@ export default {
       t.name = ''
       t.order = []
     },
-    saveFiles(toEditFiles, toRemoveFiles, toAddFiles, taskId) {
-      const store = fire.storage()
-      const taskPath = `attachments/${this.user.uid}/${taskId}/`
-      const editFiles = () => {
-        const promises = []
-        for (const file of toEditFiles) {
-          const ref = store.ref(taskPath + file.oldName)
+    saveFiles(toRemoveFiles, toAddFiles, taskId) {
+      const rem = toRemoveFiles.slice()
+      const add = toAddFiles.slice()
+      for (const r of rem) {
+        if (add.find(el => el.name === r)) {
+          const i = rem.findIndex(f => f === r)
+          rem.splice(i, 1)
         }
       }
-      return new Promise(solve => {
-
-
-        
-      })
+      const store = fire.storage()
+      const taskPath = `attachments/${this.user.uid}/${taskId}/`
+      const addFiles = () => {
+        const proms = []
+        for (const f of add) {
+          proms.push(new Promise((solve, reject) => {
+            const ref = store.ref(taskPath + f.name)
+            ref.put(f).then(solve).catch(err => {
+              this.$store.commit('pushToast', {
+                name: err.message,
+                seconds: 5,
+                type: 'error'
+              })
+              reject(err.message)
+            })
+          }))
+        }
+        return Promise.all(proms)
+      }
+      return Promise.all([
+        addFiles(),
+      ])
     },
     getFileEditProgress() {
 

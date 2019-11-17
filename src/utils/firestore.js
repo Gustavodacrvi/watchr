@@ -12,7 +12,7 @@ export const taskRef = id => id ? taskColl().doc(id) : taskColl().doc()
 export const listRef = id => id ? listColl().doc(id) : listColl().doc()
 export const tagRef = id => id ? tagColl().doc(id) : tagColl().doc()
 export const addTask = (batch, task, ref) => {
-  return new Promise(solve => {
+  return new Promise((solve, reject) => {
     const save = () => {
       batch.set(ref, {
         ...task, handleFiles: null,
@@ -20,7 +20,7 @@ export const addTask = (batch, task, ref) => {
       solve()
     }
     if (task.handleFiles)
-      task.handleFiles(ref.id).then(save)
+      task.handleFiles(ref.id).then(save).catch(reject)
     else save()
   })
 }
