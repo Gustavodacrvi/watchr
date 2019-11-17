@@ -14,11 +14,15 @@
         @click.stop="click"
         @dblclick="dblclick"
       >
-        <div class="cont">
-          <div class="check" @click.stop="completeTask"
-            v-longclick='openMobileOptions'
-            @mouseenter="iconHover = true"
+        <div class="cont"
+          v-longclick='openMobileOptions'
+        >
+          <div class="check"
+            @click.stop="completeTask"
+            @mouseenter.stop="iconHover = true"
             @mouseleave="iconHover = false"
+            @touchstart.stop
+            @mousedown.stop
           >
             <Icon v-if="!showCheckedIcon" class="icon check-icon"
               icon="box"
@@ -43,6 +47,7 @@
                   <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
                   <span v-html="parsedName"></span>
                   <Icon v-if="haveChecklist" class="txt-icon" icon="tasks" color="var(--gray)" width="18px"/>
+                  <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
                   <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
               </span>
               <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
@@ -136,7 +141,7 @@ export default {
         setTimeout(() => {
           if (lessThanMinimum) {
           cont.classList.add('show')
-            s.height = '38px'
+            s.height = this.minimumTaskHeight + 'px'
           }
           else {
             s.height = height
@@ -172,12 +177,13 @@ export default {
       if (!this.isDesktop)
         this.isEditing = true
     },
-    saveTask(obj) {
+    saveTask(obj, force) {
       this.$store.dispatch('task/saveTask', {
         id: this.task.id,
         ...obj,
       })
-      this.isEditing = false
+      if (!obj.handleFiles || force)
+        this.isEditing = false
     },
     addPriority(pri) {
       this.$store.dispatch('task/saveTask', {
@@ -260,6 +266,9 @@ export default {
     },
     haveChecklist() {
       return this.task.checklist && this.task.checklist.length > 0
+    },
+    haveFiles() {
+      return this.task.files && this.task.files.length > 0
     },
     taskTags() {
       const ts = this.savedTags

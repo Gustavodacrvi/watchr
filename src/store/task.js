@@ -4,7 +4,7 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from '../utils/task'
-import { uid, fd, userRef, tagRef, taskColl, taskRef, listRef } from '../utils/firestore'
+import { uid, fd, userRef, tagRef, taskColl, taskRef, listRef, addTask } from '../utils/firestore'
 
 import mom from 'moment'
 
@@ -120,16 +120,74 @@ export default {
       const batch = fire.batch()
 
       const ref = taskRef()
-      batch.set(ref, {
+      addTask(batch, {
         userId: uid(),
         ...obj,
+      }, ref).then(() => {
+        const type = utilsTask.taskType(obj)
+        if (type && rootState.userInfo) {
+          const viewOrders = rootState.userInfo.viewOrders
+          if (!viewOrders[type]) viewOrders[type] = {}
+          viewOrders[type].tasks = fd().arrayUnion(ref.id)
+          batch.update(userRef(), {viewOrders})
+        }
+        batch.commit()
       })
-      const type = utilsTask.taskType(obj)
-      if (type && rootState.userInfo) {
-        const viewOrders = rootState.userInfo.viewOrders
-        viewOrders[type] = fd().arrayUnion(ref.id)
-        batch.update(userRef(), viewOrders)
+    },
+    saveTask(c, obj) {
+      const batch = fire.batch()
+      addTask(batch, obj, taskRef(obj.id)).then(() => {
+        batch.commit()
+      }).catch(err => console.log('saveTask', err))
+    },
+    deleteTasks(c, ids) {
+      const batch = fire.batch()
+
+      for (const id of ids) {
+        const ref = taskRef(id)
+        batch.delete(ref)
       }
+
+      batch.commit()
+    },
+    convertToList(c, task) {
+      const batch = fire.batch()
+
+      const list = listRef()
+      const oldTask = taskRef(task.id)
+      batch.delete(oldTask)
+      
+      const ids = []
+      if (task.checklist)
+        for (const t of task.checklist) {
+          const ref = taskRef(t.id)
+          batch.set(ref, {
+            userId: uid(),
+            users: [uid()],
+            name: t.name,
+            priority: '',
+            list: list.id,
+            notes: t.notes,
+            calendar: null,
+            heading: null,
+            tags: [],
+            checklist: [],
+            order: [],
+          })
+          ids.push(t.id)
+        }
+
+      batch.set(list, {
+        userId: uid(),
+        users: [uid()],
+        smartViewsOrders: {},
+        name: task.name,
+        descr: '',
+        tasks: ids,
+        headings: [],
+        headingsOrder: [],
+      })
+
       batch.commit()
     },
     completeTasks(c, tasks) {
@@ -184,11 +242,6 @@ export default {
 
       batch.commit()
     },
-    saveTask(c, obj) {
-      taskRef(obj.id).update({
-        ...obj,
-      })
-    },
     saveTasksById(c, {ids, task}) {
       const batch = fire.batch()
 
@@ -234,58 +287,8 @@ export default {
     },
     copyTask(c, task) {
       userRef().collection('tasks').add({
-        ...task,
+        ...task, files: [],
       })
-    },
-    convertToList(c, task) {
-      const batch = fire.batch()
-
-      const list = listRef()
-      const oldTask = taskRef(task.id)
-      batch.delete(oldTask)
-      
-      const ids = []
-      if (task.checklist)
-        for (const t of task.checklist) {
-          const ref = taskRef(t.id)
-          batch.set(ref, {
-            userId: uid(),
-            users: [uid()],
-            name: t.name,
-            priority: '',
-            list: list.id,
-            notes: t.notes,
-            calendar: null,
-            heading: null,
-            tags: [],
-            checklist: [],
-            order: [],
-          })
-          ids.push(t.id)
-        }
-
-      batch.set(list, {
-        userId: uid(),
-        users: [uid()],
-        smartViewsOrders: {},
-        name: task.name,
-        descr: '',
-        tasks: ids,
-        headings: [],
-        headingsOrder: [],
-      })
-
-      batch.commit()
-    },
-    deleteTasks(c, ids) {
-      const batch = fire.batch()
-
-      for (const id of ids) {
-        const ref = taskRef(id)
-        batch.delete(ref)
-      }
-
-      batch.commit()
     },
     handleTasksByAppnavElementDragAndDrop({dispatch, getters}, {elIds, taskIds, type}) {
       const calObj = (mom) => {

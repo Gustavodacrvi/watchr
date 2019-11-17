@@ -3,7 +3,7 @@
     class="icon"
     :class="[{primaryHover}, platform]"
     :style="{width: getWidth, color}"
-    @click="$emit('click')"
+    @click="iconClick"
   >
     <svg v-if="!hasProgress" :viewBox="getIcon.viewBox">
       <use :xlink:href="`#${getIcon.id}`"/>
@@ -14,6 +14,12 @@
       </svg>
       <div class="outline" :style='outlineStyle' style='border: .5px currentColor solid'></div>
     </div>
+    <input v-show="false"
+      ref='file'
+      type='file'
+      @click.stop
+      @change='handleFile'
+    >
   </div>
 </template>
 
@@ -58,12 +64,13 @@ import sleep from '@/assets/icons/sleep.svg'
 import deadline from '@/assets/icons/deadline.svg'
 import repeat from '@/assets/icons/repeat.svg'
 import box from '@/assets/icons/box.svg'
+import file from '@/assets/icons/file.svg'
 import boxCheck from '@/assets/icons/box-check.svg'
 
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['icon', 'width', 'primaryHover', 'color', 'progress', 'svg'],
+  props: ['icon', 'width', 'primaryHover', 'color', 'progress', 'svg', 'file'],
   data() {
     return {
       icons: {
@@ -71,7 +78,7 @@ export default {
         sort, tag, priority, menu, tasks, archive,
         pen, trash, fire, bloqued, circle, users,
         copy, plus, globe, heading, search, note,
-        envelope, deadline, sleep, repeat, box,
+        envelope, deadline, sleep, repeat, box, file,
         "box-check": boxCheck,
         "import": importIcon,
         "export": exportIcon,
@@ -85,10 +92,25 @@ export default {
       },
     }
   },
+  methods: {
+    iconClick() {
+      this.$emit('click')
+      if (this.file && this.fileInput)
+        this.fileInput.click()
+    },
+    handleFile() {
+      const inp = this.fileInput
+      console.log(inp.files[0])
+      this.$emit('add', inp.files[0])
+    }
+  },
   computed: {
     ...mapGetters(['platform']),
     getIcon() {
       return this.icons[this.icon]
+    },
+    fileInput() {
+      return this.$refs['file']
     },
     getWidth() {
       const defaultWidth = this.hasProgress ? '15px' : '20px'

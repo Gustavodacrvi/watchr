@@ -4,7 +4,7 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from "@/utils/task"
-import { listRef, userRef, uid, listColl, taskRef, fd } from '../utils/firestore'
+import { listRef, userRef, uid, listColl, taskRef, fd, addTask } from '../utils/firestore'
 import router from '../router'
 
 import mom from 'moment'
@@ -259,40 +259,41 @@ export default {
       const batch = fire.batch()
 
       const newTaskRef = taskRef()
-      batch.set(newTaskRef, {
+      addTask(batch, {
         userId: uid(),
         ...task,
+      }, newTaskRef).then(() => {
+        ids.splice(index, 0, newTaskRef.id)
+  
+        const obj = {[list]: {}}
+        // list === viewName, e.g: Today, Tomorrow
+        obj[list].tasks = ids
+  
+        const listRef = userRef()
+        batch.set(listRef, {
+          viewOrders: obj,
+        }, {merge: true})
+  
+        batch.commit()
       })
-
-      ids.splice(index, 0, newTaskRef.id)
-
-      const obj = {}
-      // list === viewName, e.g: Today, Tomorrow
-      obj[list] = ids
-
-      const listRef = userRef()
-      batch.set(listRef, {
-        viewOrders: obj,
-      }, {merge: true})
-
-      batch.commit()
     },
     addTaskByIndex(c, {ids, index, task, listId}) {
       const batch = fire.batch()
 
       const newTaskRef = taskRef()
-      batch.set(newTaskRef, {
+      addTask(batch, {
         userId: uid(),
         ...task,
+      }, newTaskRef).then(() => {
+        ids.splice(index, 0, newTaskRef.id)
+  
+        const savedListRef = listRef(listId)
+        batch.update(savedListRef, {tasks: ids})
+  
+        batch.commit()
       })
-
-      ids.splice(index, 0, newTaskRef.id)
-
-      const savedListRef = listRef(listId)
-      batch.update(savedListRef, {tasks: ids})
-
-      batch.commit()
     },
+
     toggleHeadingAuthide({getters}, {listId, name}) {
       const list = getters.getListsById([listId])[0]
       const heads = list.headings.slice()

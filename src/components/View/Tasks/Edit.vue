@@ -70,7 +70,25 @@
           @remove='removeSubtask'
           @update='updateIds'
           @convert-task='convertTask'
+          @is-adding-toggle='v => isAddingChecklist = v'
         />
+        <transition name="btn">
+          <ButtonApp v-if="doesntHaveChecklist && !isAddingChecklist"
+            style="margin-left: 4px;margin-top: 0px;margin-bottom: 8px;opacity: .6"
+            type="card"
+            :value="l['Add checklist']"
+            @click="addChecklist"
+          />
+        </transition>
+        <div class="files" v-if="getFiles.length > 0">
+          <FileApp v-for="f in getFiles" :key="f"
+            :name="f"
+            :status='getFileStatus(f)'
+            @delete="() => deleteFile(f)"
+            @download="() => downloadFile(f)"
+          />
+        </div>
+        <span v-if="isEditingFiles" style="opacity: .4;margin-left: 8px">{{ l["Note: file upload/delete operations won't work while offline."] }}</span>
         <div class="options">
           <div class="button-wrapper">
             <div class="button">
@@ -81,33 +99,41 @@
           <div class="icons">
             <IconDrop
               handle="tag"
+              class="opt-icon"
               :options="getTags"
             />
             <IconDrop
               handle="priority"
+              class="opt-icon"
               :options="priorityOptions"
             />
             <IconDrop
               handle="tasks"
+              class="opt-icon"
               :options="listOptions"
             />
             <IconDrop
               handle="calendar"
+              class="opt-icon"
               :options="calendarOptions"
             />
-            <IconDrop
-              handle="repeat"
-              :options="repeatOptions"
-            />
-            <Icon v-if="doesntHaveChecklist"
-              style="margin-right: 6px;margin-top: 1px"
-              class="cursor"
-              icon="circle-check"
-              @click="addChecklist"
+            <Icon
+              class="opt-icon cursor"
+              style="margin-right: 7px;margin-top: 2px"
+              width="14px"
+              icon='file'
+              :primaryHover="true"
+              :file='true'
+              @add='addFile'
             />
           </div>
         </div>
       </div>
+      <transition name="progress-t">
+        <div v-if="savingTask" class="progress">
+          <div class="progress-line" :style="{width: `${uploadProgress}%`}"></div>
+        </div>
+      </transition>
     </div>
   </transition>
 </template>
@@ -120,16 +146,20 @@ import ButtonVue from '../../Auth/Button.vue'
 import IconDropVue from '../../IconDrop/IconDrop.vue'
 import IconVue from '../../Icon.vue'
 import ChecklistVue from './Checklist/Checklist.vue'
+import FileApp from './File.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
 import utils from '@/utils/'
 import taskUtils from '@/utils/task'
 
+import fire, { storage } from 'firebase/app'
+import 'firebase/storage'
+
 export default {
   props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup'],
   components: {
-    DropInput: DropInputVue,
+    DropInput: DropInputVue, FileApp,
     ButtonApp: ButtonVue,
     Checklist: ChecklistVue,
     IconDrop: IconDropVue,
@@ -140,6 +170,7 @@ export default {
     return {
       show: false,
       toggleChecklist: false,
+      isAddingChecklist: false,
       task: {
         name: '',
         priority: '',
@@ -150,7 +181,11 @@ export default {
         tags: [],
         checklist: [],
         order: [],
+        files: [],
       },
+      savingTask: false,
+      uploadProgress: null,
+      addedFiles: [],
       optionsType: '',
       options: [],
     }
@@ -159,6 +194,10 @@ export default {
     if (this.defaultTask) {
       const t = this.defaultTask
       this.task = {...t}
+      this.task.tags = t.tags.slice()
+      this.task.checklist = t.checklist.slice()
+      this.task.order = t.order.slice()
+      this.task.files = t.files.slice()
 
       if (this.task.checklist)
         this.task.checklist = t.checklist.slice()
@@ -174,6 +213,29 @@ export default {
     }
   },
   methods: {
+    getFileStatus(fileName) {
+      if (this.addedFiles.find(el => el.name === fileName))
+        return 'update'
+      if (this.defaultTask && this.defaultTask.files.includes(fileName) && !this.task.files.includes(fileName))
+        return 'remove'
+      return ''
+    },
+    addFile(file) {
+      if (!this.task.files.includes(file.name))
+        this.task.files.push(file.name)
+      if (!this.addedFiles.find(el => el.name === file.name))
+        this.addedFiles.push(file)
+    },
+    deleteFile(fileName) {
+      const i = this.task.files.findIndex(el => el === fileName)
+      const found = i > -1
+      if (found)
+        this.task.files.splice(i, 1)
+      if (found && this.addedFiles.find(f => f.name === fileName)) {
+        const j = this.addedFiles.findIndex(f => f.name === fileName)
+        this.addedFiles.splice(j, 1)
+      }
+    },
     addChecklist() {
       this.toggleChecklist = !this.toggleChecklist
     },
@@ -253,28 +315,126 @@ export default {
       })
       this.name = ''
     },
+    downloadFile(fileName) {
+      storage().ref(`attachments/${this.user.uid}/tasks/${this.task.id}/${fileName}`).getDownloadURL().then(url => {
+        const xhr = new XMLHttpRequest()
+        xhr.responseType = 'blob'
+        xhr.onload = event => {
+          const blob = xhr.response
+          url = window.URL.createObjectURL(blob)
+          let element = document.createElement('a')
+          element.setAttribute('href', url)
+          element.setAttribute('download', fileName)
+        
+          element.style.display = 'none'
+          document.body.appendChild(element)
+        
+          element.click()
+        
+          document.body.removeChild(element)
+        }
+        xhr.open('GET', url)
+        xhr.send()
+      })
+    },
     save() {
       const t = this.task
-      let n = t.name
-      const i = n.indexOf(' $')
-      if (i && i > -1 && t.calendar) {
-        n = n.substr(0, i)
+      if (t.name) {
+        let n = t.name
+        const i = n.indexOf(' $')
+        if (i && i > -1 && t.calendar) {
+          n = n.substr(0, i)
+        }
+        let heading = t.heading
+        let calendar = t.calendar
+        if (heading === undefined) heading = null
+        if (calendar === undefined) calendar = null
+        if (this.isEditingFiles && this.addedFiles.length > 0)
+          this.savingTask = true
+        this.$emit('save', {
+          ...t,
+          list: this.listId,
+          tags: this.tagIds,
+          name: n, heading,
+          calendar,
+          files: this.task.files,
+          handleFiles: this.isEditingFiles ? taskId => {
+            return this.saveFiles(this.getFilesToRemove, this.addedFiles, taskId)
+          } : null
+        })
+        t.checklist = []
+        t.notes = ''
+        t.name = ''
+        t.order = []
       }
-      let heading = t.heading
-      let calendar = t.calendar
-      if (heading === undefined) heading = null
-      if (calendar === undefined) calendar = null
-      this.$emit('save', {
-        ...t,
-        list: this.listId,
-        tags: this.tagIds,
-        name: n, heading,
-        calendar,
+    },
+    saveFiles(toRemoveFiles, toAddFiles, taskId) {
+      const rem = toRemoveFiles.slice()
+      const add = toAddFiles.slice()
+      for (const r of rem) {
+        if (add.find(el => el.name === r)) {
+          const i = rem.findIndex(f => f === r)
+          rem.splice(i, 1)
+        }
+      }
+
+      let totalBytes = 0
+      this.uploadProgress = 0
+      add.forEach(file => totalBytes += file.size)
+      const store = fire.storage()
+
+      const fileProgress = {}
+
+      const calcProgress = () => {
+        let totalTransferred = 0
+        const values = Object.values(fileProgress)
+        values.forEach(v => totalTransferred += v)
+        this.uploadProgress = (totalTransferred / totalBytes) * 100
+      }
+
+      const taskPath = `attachments/${this.user.uid}/tasks/${taskId}/`
+      const addFiles = () => {
+        const proms = []
+        for (const f of add) {
+          proms.push(new Promise((solve, reject) => {
+            const ref = store.ref(taskPath + f.name)
+            const upload = ref.put(f)
+            upload.on('state_changed', snap => {
+              fileProgress[f.name] = snap.bytesTransferred
+              calcProgress()
+            })
+            upload.then(solve)
+          }))
+        }
+        return Promise.all(proms)
+      }
+      const removeFiles = () => {
+        const proms = []
+        for (const r of rem) {
+          proms.push(new Promise((solve, reject) => {
+            const ref = store.ref(taskPath + r) 
+            ref.delete().then(solve)
+          }))
+        }
+        return Promise.all(proms)
+      }
+      return new Promise((solve, reject) => {
+        Promise.all([
+          addFiles(),
+          removeFiles(),
+        ]).then(() => {
+          solve()
+          this.task.addedFiles = []
+          this.task.files = []
+          this.savingTask = false
+          this.uploadProgress = null
+          if (this.defaultTask)
+            this.$emit('cancel')
+        }).catch(reject)
       })
-      t.checklist = []
-      t.notes = ''
-      t.name = ''
-      t.order = []
+    },
+    getFileEditProgress() {
+
     },
     removeTag(name) {
       const index = this.task.tags.findIndex(el => el === name)
@@ -290,36 +450,42 @@ export default {
       savedTags: state => state.tag.tags,
       savedTasks: state => state.task.tasks,
       savedLists: state => state.list.lists,
+      user: state => state.user,
     }),
     ...mapGetters(['l']),
+    isEditingFiles() {
+      return this.getFilesToRemove.length > 0 ||
+        this.addedFiles.length > 0
+    },
+    getFiles() {
+      let files
+      if (this.defaultTask)
+        files = [...this.defaultTask.files.filter(el => {
+          return !this.task.files.includes(el)
+        }), ...this.task.files]
+      else files = this.task.files.slice()
+      files.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+      return files
+    },
+    getFilesToRemove() {
+      // check if removed file is being updated with a new file on the addedFiles
+      if (this.defaultTask)
+        return this.defaultTask.files.filter(f =>
+          !this.task.files.includes(f) &&
+          !this.addedFiles.find(added => added.name === f))
+      return []
+    },
+    isEditing() {
+      return this.defaultTask
+    },
     doesntHaveChecklist() {
       return this.task.checklist.length === 0
     },
     calendarOptions() {
       return {
         comp: 'CalendarPicker',
-        content: {callback: this.selectDate}
+        content: {callback: this.selectDate, repeat: true}
       }
-    },
-    repeatOptions() {
-      return [
-        {
-          name: this.l['Repeat weekly'],
-          icon: 'repeat',
-          callback: () => ({
-            comp: 'WeeklyPicker',
-            content: {callback: this.selectDate},
-          }),
-        },
-        {
-          name: this.l['Repeat periodically'],
-          icon: 'repeat',
-          callback: () => ({
-            comp: 'PeriodicPicker',
-            content: {callback: this.selectDate},
-          }),
-        },
-      ]
     },
     editStyle() {
       if (this.popup)
@@ -584,6 +750,10 @@ export default {
   text-decoration: underline;
 }
 
+.files {
+  margin: 24px 10px;
+}
+
 .options {
   margin-top: 4px;
   display: flex;
@@ -603,6 +773,50 @@ export default {
   display: inline-flex;
   flex-basis: 100%;
   flex-direction: row-reverse;
+  align-items: center;
+}
+
+.opt-icon {
+  margin-right: 6px;
+}
+
+.progress {
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  margin-top: 4px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  overflow: hidden;
+  background-color: var(--dark);
+  transition: height .1s, margin-top .1s;
+}
+
+.progress-line {
+  background-color: var(--primary);
+  height: 100%;
+}
+
+.progress-t-enter, .progress-t-leave-to {
+  height: 0;
+  margin-top: 0;
+}
+
+.progress-t-leave, .progress-t-enter-to {
+  height: 3px;
+  margin-top: 3px;
+}
+
+.btn-enter, .btn-leave-to {
+  opacity: 0;
+  height: 0;
+  transition-duration: .2s;
+}
+
+.btn-leave, .btn-enter-to {
+  opacity: 1;
+  height: 35px;
+  transition-duration: .2s;
 }
 
 </style>

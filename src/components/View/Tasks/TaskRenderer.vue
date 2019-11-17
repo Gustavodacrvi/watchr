@@ -47,6 +47,7 @@
           :color='h.color ? h.color : ""'
           :options='h.options ? h.options : []'
           :save='h.onEdit'
+          :movingHeading='movingHeading'
           @option-click='v => getOptionClick(h)(v)'
           @save-notes='v => getNotesOption(h)(v)'
 
@@ -109,6 +110,7 @@ export default {
       atLeastOneRenderedTask: false,
       isDragging: false,
       justScrolled: false,
+      movingHeading: false,
     }
   },
   mounted() {
@@ -260,6 +262,12 @@ export default {
           const ids = this.getHeadingsIds()
           this.$emit('update-headings', ids)
         },
+        onStart: evt => {
+          this.movingHeading = true
+        },
+        onEnd: evt => {
+          this.movingHeading = false
+        },
       })
     }
     window.addEventListener('click', this.windowClick)
@@ -313,14 +321,12 @@ export default {
       s.margin = 0
       s.padding = 0
       s.opacity = 0
-      s.borderBottom = '0px solid var(--light-gray)'
     },
     showHeading(s) {
       s.height = '45px'
       s.opacity = 1
       s.marginBottom = '10px'
       s.padding = '0 6px'
-      s.borderBottom = '1px solid var(--light-gray)'
     },
     headingsLeave(el) {
       const header = el.getElementsByClassName('header-wrapper')[0]

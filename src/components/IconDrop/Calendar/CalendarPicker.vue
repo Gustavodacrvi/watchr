@@ -36,6 +36,12 @@
             <span class="name">{{ l['No date'] }}</span>
           </span>
         </span>
+        <span v-if="repeat" class="option cursor" @click="$emit('repeat')">
+          <span class="cont">
+            <Icon class="icon" icon="repeat"/>
+            <span class="name">{{ l['Repeat'] }}</span>
+          </span>
+        </span>
         <div class="content">
           <div class="header">
             <h3 class="year">{{ thisYear() }}   {{ thisMonth() }}</h3>
@@ -122,6 +128,7 @@ import { mapGetters } from 'vuex'
 import utils from '@/utils'
 
 export default {
+  props: ['repeat'],
   components: {
     Icon: IconVue,
     Button: ButtonVue,
