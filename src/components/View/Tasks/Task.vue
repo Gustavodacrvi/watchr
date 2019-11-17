@@ -177,12 +177,13 @@ export default {
       if (!this.isDesktop)
         this.isEditing = true
     },
-    saveTask(obj) {
+    saveTask(obj, force) {
       this.$store.dispatch('task/saveTask', {
         id: this.task.id,
         ...obj,
       })
-      this.isEditing = false
+      if (!obj.handleFiles || force)
+        this.isEditing = false
     },
     addPriority(pri) {
       this.$store.dispatch('task/saveTask', {

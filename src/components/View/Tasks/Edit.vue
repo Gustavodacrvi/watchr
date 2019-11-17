@@ -84,9 +84,10 @@
           <FileApp v-for="f in getFiles" :key="f"
             :name="f"
             :status='getFileStatus(f)'
-            @delete="deleteFile(f)"
+            @delete="() => deleteFile(f)"
           />
         </div>
+        <span v-if="isEditingFiles" style="opacity: .4;margin-left: 8px">{{ l["Note: file upload/delete operations won't work while offline."] }}</span>
         <div class="options">
           <div class="button-wrapper">
             <div class="button">
@@ -185,6 +186,10 @@ export default {
     if (this.defaultTask) {
       const t = this.defaultTask
       this.task = {...t}
+      this.task.tags = t.tags.slice()
+      this.task.checklist = t.checklist.slice()
+      this.task.order = t.order.slice()
+      this.task.files = t.files.slice()
 
       if (this.task.checklist)
         this.task.checklist = t.checklist.slice()
@@ -322,6 +327,7 @@ export default {
           return this.saveFiles(this.getFilesToRemove, this.addedFiles, taskId)
         } : null
       })
+      console.log(this.getFilesToRemove, this.addedFiles, this.task.files)
       t.checklist = []
       t.notes = ''
       t.name = ''
@@ -343,22 +349,33 @@ export default {
         for (const f of add) {
           proms.push(new Promise((solve, reject) => {
             const ref = store.ref(taskPath + f.name)
-            console.log(taskPath + f.name)
-            ref.put(f).then(solve).catch(err => {
-              this.$store.commit('pushToast', {
-                name: err.message,
-                seconds: 5,
-                type: 'error'
-              })
-              reject(err.message)
-            })
+            ref.put(f).then(solve)
           }))
         }
         return Promise.all(proms)
       }
-      return Promise.all([
-        addFiles(),
-      ])
+      const removeFiles = () => {
+        const proms = []
+        for (const r of rem) {
+          proms.push(new Promise((solve, reject) => {
+            const ref = store.ref(taskPath + r) 
+            ref.delete().then(solve)
+          }))
+        }
+        return Promise.all(proms)
+      }
+      return new Promise((solve, reject) => {
+        Promise.all([
+          addFiles(),
+          removeFiles(),
+        ]).then(() => {
+          solve()
+          t.addedFiles = []
+          t.files = []
+          if (this.defaultTask)
+            this.$emit('cancel')
+        }).catch(reject)
+      })
     },
     getFileEditProgress() {
 

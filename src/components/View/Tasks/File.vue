@@ -16,33 +16,39 @@ import utils from '@/utils'
 
 export default {
   props: ['name', 'status'],
-  mounted() {
-    utils.bindOptionsToEventListener(this.$el, [
-      {
-        name: 'View content',
-        icon: 'file',
-        callback: () => this.$emit('view')
-      },
-      {
-        name: 'Download file',
-        icon: 'import',
-        callback: () => this.$emit('download')
-      },
-      {
-        name: 'Edit file name',
-        icon: 'pen',
-        callback: () => this.$emit('edit')
-      },
-      {
-        name: 'Delete file',
-        icon: 'trash',
-        callback: () => this.$emit('delete')
-      },
-    ], this, 'click')
-  },
   components: {
     Icon,
-  }
+  },
+  mounted() {
+    utils.bindOptionsToEventListener(this.$el, this.options, this.$parent, 'click')
+  },
+  computed: {
+    options() {
+      return [
+        {
+          name: 'View content',
+          icon: 'file',
+          callback: () => this.$emit('view')
+        },
+        {
+          name: 'Download file',
+          icon: 'import',
+          callback: () => this.$emit('download')
+        },
+        {
+          name: 'Edit file name',
+          icon: 'pen',
+          callback: () => this.$emit('edit')
+        },
+        {
+          name: 'Delete file',
+          icon: 'trash',
+          important: true,
+          callback: () => {this.$emit('delete')}
+        },
+      ]
+    },
+  },
 }
 
 </script>
@@ -76,7 +82,7 @@ export default {
 }
 
 .remove {
-  opacity: .6;
+  opacity: .2;
 }
 
 </style>

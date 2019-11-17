@@ -82,6 +82,7 @@ export default {
   'Sort tasks': 'Sort tasks',
   "Add tags": "Add tags",
   "Repeat": "Repeat",
+  "Note: file upload/delete operations won't work while offline.": "Note: file upload/delete operations won't work while offline.",
   "Repeat list": "Repeat list",
   "Repeat every": "Repeat every",
   "Hide defered lists": "Hide defered lists",
