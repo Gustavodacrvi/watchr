@@ -12,7 +12,7 @@
       <span class="name"><b>{{ name }}</b></span>
       <IconDrop class="drop"
         handle="settings-v"
-        :hideHandle="!headerHover"
+        :hideHandle="!headerHover && isDesktop"
         :options="options"
       />
     </div>
@@ -76,7 +76,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['l']),
+    ...mapGetters(['l', 'isDesktop']),
     options() {
       return [
         {
@@ -92,6 +92,7 @@ export default {
         {
           name: this.l['Delete folder'],
           icon: 'trash',
+          important: true,
           callback: () => this.delete()
         },
       ]
