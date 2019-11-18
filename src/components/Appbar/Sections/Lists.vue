@@ -18,7 +18,6 @@
       @buttonAdd='buttonAdd'
       @update='update'
     />
-    {{isDragginInnerList}}
     <transition-group
       class="folders-root"
       tag="div"
@@ -113,7 +112,9 @@ export default {
       })
     },
     rootAdd(folder, id, ids) {
-      console.log(`from: root`, `list: ${id}`)
+      this.$store.dispatch('folder/moveListToRoot', {
+        id, ids,
+      })
     },
     getFolderIds() {
       const el = this.$el.getElementsByClassName('folders-root')[0]
