@@ -70,9 +70,7 @@ import { mapGetters, mapState } from 'vuex'
 
 import mom from 'moment'
 
-import { MultiDrag, Sortable } from 'sortablejs'
-
-Sortable.mount(new MultiDrag())
+import { Sortable } from 'sortablejs'
 
 export default {
   components: {

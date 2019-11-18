@@ -1,5 +1,5 @@
 <template>
-  <div class="TaskRenderer" @click='click'>
+  <div class="TaskRenderer" @click.stop='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration" class="illustration">
         <Illustration v-bind="illustration"/>

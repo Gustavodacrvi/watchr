@@ -701,12 +701,12 @@ export default {
 .trans-t-leave, .trans-t-enter-to {
   opacity: 1;
   background-color: var(--card);
-  box-shadow: 0 2px 6px rgba(0,0,0,.3);
+  box-shadow: 0 2px 6px rgba(15,15,15,.3);
 }
 
 .Edit {
   background-color: var(--card);
-  box-shadow: 0 2px 6px rgba(0,0,0,.3);
+  box-shadow: 0 2px 6px rgba(15,15,15,.3);
 }
 
 .cont-wrapper {

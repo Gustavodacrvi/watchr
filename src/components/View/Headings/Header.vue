@@ -5,6 +5,7 @@
         :icon="getIcon"
         :color="getIconColor"
         :progress='progress'
+        :shadow='true'
         width="40px"
       />
       <h2 v-if="!editing || !isEditable"
@@ -263,6 +264,16 @@ export default {
   z-index: 200;
 }
 
+.icon {
+  position: relative;
+  z-index: 2;
+}
+
+.name {
+  position: relative;
+  z-index: 1;
+}
+
 .header, .tags {
   display: flex;
   align-items: center;
@@ -310,7 +321,7 @@ export default {
 }
 
 .drop {
-  transform: translateY(6px);
+  transform: translateY(3px);
 }
 
 .IconDrop {

@@ -9,15 +9,16 @@ html {
 }
 
 :root {
-  --back-color: #141414;
-  --void: #0D0D0D;
+  --back-color: #222222;
+  --void: #171717;
   --font: "Work Sans";
-  --white: #C4C4C4;
+  --white: #d9d9d9;
   --primary: #57A0DE;
-  --dark: #161616;
-  --card: #191919;
-  --dark-gray: #212121;
-  --light-gray: #282828;
+  --dark: #202020;
+  --appnav-color: #1c1c1c;
+  --card: #292929;
+  --dark-gray: #202020;
+  --light-gray: #333333;
   --gray: #515151;
   --extra-light-gray: #383838;
   --extra-extra-light-gray: #888888;
@@ -52,12 +53,12 @@ body, input, button, textarea {
   background-color: var(--card);
 }
 
-.shadow {
-  box-shadow: 0 2px 6px rgba(0,0,0,.3);
-}
-
 .cbd {
   background-color: var(--dark);
+}
+
+.shadow {
+  box-shadow: 0 3px 8px rgba(15,15,15,.3);
 }
 
 .pc {

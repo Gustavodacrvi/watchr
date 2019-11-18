@@ -9,15 +9,15 @@
       @leave='leave'
     >
       <div v-if="!isEditing" key="notediting"
-        class="cont-wrapper task-cont-wrapper handle rb cursor"
+        class="cont-wrapper task-cont-wrapper handle rb"
         :class="platform"
-        @click.stop="click"
+        @click="click"
         @dblclick="dblclick"
       >
         <div class="cont"
           v-longclick='openMobileOptions'
         >
-          <div class="check"
+          <div class="check cursor"
             @click.stop="completeTask"
             @mouseenter.stop="iconHover = true"
             @mouseleave="iconHover = false"
@@ -61,7 +61,7 @@
             </template>
           </div>
           <div class="icon-drop-wrapper">
-            <IconDrop class="icon-drop"
+            <IconDrop class="icon-drop cursor"
               v-model="showingIconDropContent"
               handle='settings-v'
               :options='options'
@@ -562,10 +562,6 @@ export default {
   background-color: var(--light-gray) !important;
 }
 
-.sortable-selected .cont-wrapper {
-  background-color: rgba(53, 73, 90, 0.6) !important;
-}
-
 .check, .text, .options, .cont {
   height: 100%;
 }
@@ -696,6 +692,10 @@ export default {
 
 .check-icon {
   opacity: .6;
+}
+
+.sortable-selected .cont-wrapper {
+  background-color: rgba(53, 73, 90, 0.6) !important;
 }
 
 </style>

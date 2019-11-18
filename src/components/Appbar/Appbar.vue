@@ -1,5 +1,6 @@
 <template>
   <div class="Appbar-wrapper scroll-thin" :class="platform">
+    <div v-if="isDesktop" class="back-layer" :class="{showing}"></div>
     <div class="Appbar" :class='platform'>
       <div class="inner-wrapper">
         <div>
@@ -58,7 +59,7 @@
           </transition>
         </div>
         <div v-if="isDesktop" style="height: 35px;"></div>
-        <div class="footer" :class="platform">
+        <div class="footer" :class="[platform, {showing}]">
           <div class="inner-footer">
             <div class="drop">
               <transition name="icon-t">
@@ -498,6 +499,11 @@ export default {
   box-shadow: 0 -3px 4px var(--back-color);
 }
 
+.footer.showing.desktop {
+  background-color: var(--appnav-color);
+  box-shadow: 0 -3px 4px var(--appnav-color);
+}
+
 .footer.mobile {
   bottom: 15px;
   height: 53px;
@@ -518,6 +524,21 @@ export default {
   display: flex;
   border-bottom: .5px solid var(--light-gray);
   position: relative;
+}
+
+.back-layer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 450px;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+  transition-duration: .3s;
+}
+
+.back-layer.showing {
+  background-color: var(--appnav-color);
 }
 
 .line {
@@ -577,7 +598,7 @@ export default {
   position: absolute;
   right: 0;
   display: flex;
-  transform: translateY(13px);
+  transform: translateY(6px);
 }
 
 .footer.mobile .drop {

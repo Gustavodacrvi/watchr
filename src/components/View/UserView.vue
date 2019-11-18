@@ -124,6 +124,7 @@ export default {
 
 .UserView {
   margin: 8px 60px;
+  margin-right: 0;
   display: flex;
   justify-content: center;
   transition-delay: .4s;
@@ -160,7 +161,7 @@ export default {
 }
 
 .cont.desktop {
-  margin-left: 60px;
+  margin-left: 90px;
 }
 
 .appbarHided .nav-shadow {

@@ -5,7 +5,7 @@
     @mouseleave="hover = false"
     @click.stop="linkCallback"
     :class="{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover}"
-    :style='`border: 1px solid ${border}`'
+    :style='{border: `1px solid ${border}`}'
   >
     <div
       class="link-wrapper AppbarElement-link rb"
