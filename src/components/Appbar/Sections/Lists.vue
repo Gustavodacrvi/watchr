@@ -88,7 +88,7 @@ export default {
 
       onUpdate: (evt) => {
         const ids = this.getFolderIds()
-        console.log('update', ids)
+        this.$store.dispatch('folder/updateFoldersOrder', ids)
       },
       onStart: evt => {
         this.movingFolder = true

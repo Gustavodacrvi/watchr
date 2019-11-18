@@ -51,6 +51,11 @@ export default {
         defaultShowing: true,
       })
     },
+    updateFoldersOrder(c, ids) {
+      userRef(uid()).update({
+        folders: ids,
+      })
+    },
     updateOrder(c, {id, ids}) {
       folderRef(id).update({
         order: ids,
