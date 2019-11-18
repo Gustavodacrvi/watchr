@@ -69,7 +69,10 @@ export default {
       })
     },
     delete() {
-
+      this.$store.dispatch('folder/deleteFolderById', {
+        id: this.id,
+        lists: this.$store.state.list.lists
+      })
     },
   },
   computed: {

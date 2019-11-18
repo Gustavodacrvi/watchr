@@ -3,7 +3,7 @@ import { fire, auth } from './index'
 import fb from 'firebase/app'
 
 import utils from '../utils'
-import { folderColl, uid, folderRef } from '../utils/firestore'
+import { folderColl, uid, folderRef, listRef } from '../utils/firestore'
 
 export default {
   namespaced: true,
@@ -18,6 +18,12 @@ export default {
       if (userInfo)
         return utils.checkMissingIdsAndSortArr(order, folders)
       return []
+    },
+    getListsByFolderId: c => ({id, lists}) => {
+      const arr = []
+      for (const l of lists)
+        if (l.folder && l.folder === id) arr.push(l)
+      return arr
     },
   },
   actions: {
@@ -40,5 +46,18 @@ export default {
         ...fold, 
       })
     },
+    deleteFolderById({getters}, {id, lists}) {
+      const batch = fire.batch()
+
+      const folderLists = getters.getListsByFolderId({id, lists})
+      for (const l of folderLists)
+        batch.update(listRef(l.id), {
+          folder: null,
+        })
+      
+      batch.delete(folderRef(id))
+
+      batch.commit()
+    }
   },
 }
