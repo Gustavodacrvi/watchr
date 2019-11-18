@@ -66,6 +66,14 @@ export default {
         ...fold, 
       })
     },
+    moveListBetweenFolders(c, {folder, id, ids}) {
+      const batch = fire.batch()
+
+      batch.update(folderRef(folder), {order: ids})
+      batch.update(listRef(id), {folder})
+
+      batch.commit()
+    },
     deleteFolderById({getters}, {id, lists}) {
       const batch = fire.batch()
 

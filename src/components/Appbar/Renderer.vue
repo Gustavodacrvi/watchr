@@ -1,5 +1,5 @@
 <template>
-  <div class="Renderer" :class="{folder}">
+  <div class="Renderer" :class="{folder: folder}">
     <transition name="illus-t">
       <div v-if="showIllustration" class="illustration">
         <Illustration
@@ -15,7 +15,6 @@
       @leave='leave'
       tag="div"
       :class="{dontHaveElements: list.length === 0}"
-      :style={}
 
       data-name='appnav-renderer'
     >
@@ -67,7 +66,7 @@ export default {
     Illustration: IllustrationVue,
     AppbarElement: AppbarElementVue,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'illustration', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapBorder', 'folder'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'illustration', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapBorder', 'folder', 'onSortableAdd'],
   data() {
     return {
       sortable: null,
@@ -97,9 +96,12 @@ export default {
       sort: this.enableSort,
       disabled: this.disabled,
       group: {name: 'appnav', pull: (e) => {
+        if (e.el.dataset.name === 'folders-root') return false
+        if (e.el.dataset.name === 'appnav-renderer') return true
         if (e.el.dataset.name === 'task-renderer') return 'clone'
       }, put: (l,j,item) => {
         const type = item.dataset.type
+        if (type === 'appnav-element') return true
         if (type === 'task') return true
         if (type === 'floatbutton') return true
       }},
@@ -144,23 +146,37 @@ export default {
             s.boxShadow = `0 2px 10px var(--primary)`
           }
         } else move = null
-        if (e && e.target && !e.target.classList.contains('AppbarElement-link'))
+        if (e.target.dataset.name !== 'appnav-renderer' &&
+          e && e.target && !e.target.classList.contains('AppbarElement-link'))
           return false
       },
-      onStart: () => window.navigator.vibrate(100),
+      onStart: () => {
+        this.$emit('is-moving', true)
+        window.navigator.vibrate(100)
+      },
+      onEnd: () => {
+        this.$emit('is-moving', false)
+      },
       onAdd: (evt) => {
-        evt.item.dataset.id = 'floating-button'
-        const childs = this.draggableRoot.childNodes
-        let i = 0
-        for (const c of childs) {
-          if (c.dataset.id === 'floating-button') break
-          i++
+        const item = evt.item
+        const type = item.dataset.type
+
+        if (type === 'floatbutton') {
+          item.dataset.id = 'floating-button'
+          const childs = this.draggableRoot.childNodes
+          let i = 0
+          for (const c of childs) {
+            if (c.dataset.id === 'floating-button') break
+            i++
+          }
+          this.$emit('buttonAdd', {
+            index: i,
+            ids: this.getIds(),
+          })
+        } else if (type === 'appnav-element') {
+          this.onSortableAdd(this.folder, item.dataset.id, this.getIds())
         }
-        this.$emit('buttonAdd', {
-          index: i,
-          ids: this.getIds(),
-        })
-        this.draggableRoot.removeChild(evt.item)
+        this.draggableRoot.removeChild(item)
       }
     })
   },
@@ -263,6 +279,7 @@ export default {
 
 .Renderer {
   position: relative;
+  pointer-events: all;
 }
 
 .illustration {

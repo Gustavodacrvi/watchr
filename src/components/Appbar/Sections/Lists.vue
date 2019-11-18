@@ -14,12 +14,17 @@
       :mapNumbers="(tasks) => tasks"
       :mapHelpIcon='getListIcon'
       :mapBorder='mapBorder'
+      :onSortableAdd="rootAdd"
       @buttonAdd='buttonAdd'
       @update='update'
     />
+    {{isDragginInnerList}}
     <transition-group
       class="folders-root"
       tag="div"
+      :class="{isDragginInnerList}"
+
+      data-name='folders-root'
     >
       <FolderApp v-for="f in sortedFolders" :key="f.id"
         v-bind="f"
@@ -31,7 +36,7 @@
           type="list"
           icon="tasks"
           iconColor='var(--purple)'
-          :folder='true'
+          :folder='f.id'
           :disableSelection='true'
           :enableSort="true"
           :list="getListsByFolderId({id: f.id, lists: listsWithFolders})"
@@ -41,7 +46,9 @@
           :mapNumbers="(tasks) => tasks"
           :mapHelpIcon='getListIcon'
           :mapBorder='mapBorder'
+          :onSortableAdd='betweenFolders'
 
+          @is-moving='v => isDragginInnerList = v'
           @buttonAdd='obj => folderButtonAdd(f.id, obj)'
           @update='ids => updateFolderIds(f.id, ids)'
         />
@@ -76,12 +83,13 @@ export default {
   data() {
     return {
       movingFolder: false,
+      isDragginInnerList: false,
     }
   },
   mounted() {
     const el = this.$el.getElementsByClassName('folders-root')[0]
     const headsSor = new Sortable(el, {
-      group: 'folders',
+      group: {name: 'folders', put: false, pull: false},
       delay: 225,
       delayOnTouchOnly: true,
       handle: '.handle-folder',
@@ -99,6 +107,14 @@ export default {
     })
   },
   methods: {
+    betweenFolders(folder, id, ids) {
+      this.$store.dispatch('folder/moveListBetweenFolders', {
+        folder, id, ids,
+      })
+    },
+    rootAdd(folder, id, ids) {
+      console.log(`from: root`, `list: ${id}`)
+    },
     getFolderIds() {
       const el = this.$el.getElementsByClassName('folders-root')[0]
       if (el) {
@@ -225,3 +241,11 @@ export default {
 }
 
 </script>
+
+<style scoped>
+
+.isDragginInnerList {
+  pointer-events: none;
+}
+
+</style>

@@ -163,8 +163,7 @@ export default {
 
 .pie {
   fill: none;
-  transition-duration: .7s;
-  transition: color 0s;
+  transition: color 0s, stroke-dasharray .7s;
   stroke-width: 32;
   r: 16;
   cx: 16;
