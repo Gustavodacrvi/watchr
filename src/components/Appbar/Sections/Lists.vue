@@ -35,7 +35,7 @@
         :mapHelpIcon='getListIcon'
         :mapBorder='mapBorder'
 
-        @buttonAdd='buttonAdd'
+        @buttonAdd='obj => folderButtonAdd(f.id, obj)'
         @update='ids => updateFolderIds(f.id, ids)'
       />
     </FolderApp>
@@ -70,6 +70,9 @@ export default {
     },
     buttonAdd(obj) {
       this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj}})
+    },
+    folderButtonAdd(id, obj) {
+      this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj, folderId: id}})
     },
     getListProgress(list) {
       return this.$store.getters['list/pieProgress'](this.tasks, list.id)

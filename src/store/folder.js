@@ -19,11 +19,14 @@ export default {
         return utils.checkMissingIdsAndSortArr(order, folders)
       return []
     },
-    getListsByFolderId: c => ({id, lists}) => {
+    getListsByFolderId: state => ({id, lists}) => {
       const arr = []
+      const fold = state.folders.find(f => f.id === id)
       for (const l of lists)
         if (l.folder && l.folder === id) arr.push(l)
-      return arr
+      let order = fold.order
+      if (!order) order = []
+      return utils.checkMissingIdsAndSortArr(fold.order, arr)
     },
     getFoldersById: state => ids => {
       const arr = []
