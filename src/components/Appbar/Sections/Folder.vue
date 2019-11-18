@@ -1,21 +1,20 @@
 
 <template>
   <div class="Folder">
-    <div class="header cursor handle"
-      @click="showing = !showing"
+    <div class="header rb cursor handle-folder"
+      @click="toggle"
       @mouseenter="headerHover = true"
       @mouseleave="headerHover = false"
     >
       <span class="icon-wrapper">
-        <Icon class="icon" icon="folder"/>
+        <Icon class="icon" :class="{headerHover}" icon="folder"/>
       </span>
       <span class="name"><b>{{ name }}</b></span>
-      <transition name="fade-t">
-        <Icon v-if="!showing || headerHover" class="arrow" :class="{showing}" icon="tiny-arrow" width="25px"/>
-      </transition>
     </div>
     <div class="content">
-
+      <div v-if="showing">
+        <slot></slot>
+      </div>
     </div>
   </div>
 </template>
@@ -25,16 +24,25 @@
 import Icon from '@/components/Icon.vue'
 
 export default {
-  props: ['name', 'id'],
+  props: ['name', 'id', 'defaultShowing'],
   components: {
     Icon,
   },
   data() {
     return {
-      showing: false,
+      showing: this.defaultShowing,
       headerHover: false,
     }
   },
+  methods: {
+    toggle() {
+      this.showing = !this.showing
+      this.$store.dispatch('folder/saveFolder', {
+        id: this.id,
+        defaultShowing: this.showing,
+      })
+    }
+  }
 }
 
 </script>
@@ -49,7 +57,21 @@ export default {
   position: relative;
   display: flex;
   height: 35px;
-  font-size: 1.05em;
+  transition-duration: .2s;
+}
+
+.header:hover {
+  background-color: var(--light-gray);
+}
+
+.icon {
+  color: var(--gray);
+  transform: translateY(2px);
+  transition-duration: .2s;
+}
+
+.icon.headerHover {
+  color: var(--white);
 }
 
 .icon-wrapper {
@@ -63,7 +85,6 @@ export default {
 .name {
   display: flex;
   align-items: center;
-  transform: translateY(-2px);
 }
 
 .arrow {

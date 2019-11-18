@@ -35,5 +35,10 @@ export default {
         ...fold,
       })
     },
+    saveFolder(c, fold) {
+      folderRef(fold.id).update({
+        ...fold, 
+      })
+    },
   },
 }

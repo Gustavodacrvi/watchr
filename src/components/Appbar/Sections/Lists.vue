@@ -20,7 +20,23 @@
     <FolderApp v-for="f in sortedFolders" :key="f.id"
       v-bind="f"
     >
-      
+      <Renderer
+        type="list"
+        icon="tasks"
+        iconColor='var(--purple)'
+        :disableSelection='true'
+        :enableSort="true"
+        :illustration="illustration"
+        :list="rootFilters"
+        :active="active"
+        :viewType="viewType"
+        :mapProgress='getListProgress'
+        :mapNumbers="(tasks) => tasks"
+        :mapHelpIcon='getListIcon'
+        :mapBorder='mapBorder'
+        @buttonAdd='buttonAdd'
+        @update='update'
+      />
     </FolderApp>
     <div style="height: 100px"></div>
   </div>
