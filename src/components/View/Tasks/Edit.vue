@@ -194,10 +194,18 @@ export default {
     if (this.defaultTask) {
       const t = this.defaultTask
       this.task = {...t}
-      this.task.tags = t.tags.slice()
-      this.task.checklist = t.checklist.slice()
-      this.task.order = t.order.slice()
-      this.task.files = t.files.slice()
+      if (t.tags)
+        this.task.tags = t.tags.slice()
+      else this.task.tags = []
+      if (t.checklist)
+        this.task.checklist = t.checklist.slice()
+      else this.task.checklist = []
+      if (t.order)
+        this.task.order = t.order.slice()
+      else this.task.order = []
+      if (t.files)
+        this.task.files = t.files.slice()
+      else this.task.files = []
 
       if (this.task.checklist)
         this.task.checklist = t.checklist.slice()
@@ -216,7 +224,7 @@ export default {
     getFileStatus(fileName) {
       if (this.addedFiles.find(el => el.name === fileName))
         return 'update'
-      if (this.defaultTask && this.defaultTask.files.includes(fileName) && !this.task.files.includes(fileName))
+      if (this.defaultTask && this.defaultTask.files && this.defaultTask.files.includes(fileName) && !this.task.files.includes(fileName))
         return 'remove'
       return ''
     },
@@ -459,7 +467,7 @@ export default {
     },
     getFiles() {
       let files
-      if (this.defaultTask)
+      if (this.defaultTask && this.defaultTask.files)
         files = [...this.defaultTask.files.filter(el => {
           return !this.task.files.includes(el)
         }), ...this.task.files]
@@ -469,7 +477,7 @@ export default {
     },
     getFilesToRemove() {
       // check if removed file is being updated with a new file on the addedFiles
-      if (this.defaultTask)
+      if (this.defaultTask && this.defaultTask.files)
         return this.defaultTask.files.filter(f =>
           !this.task.files.includes(f) &&
           !this.addedFiles.find(added => added.name === f))
