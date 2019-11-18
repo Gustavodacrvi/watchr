@@ -26,7 +26,7 @@ export default {
         if (l.folder && l.folder === id) arr.push(l)
       let order = fold.order
       if (!order) order = []
-      return utils.checkMissingIdsAndSortArr(fold.order, arr)
+      return utils.checkMissingIdsAndSortArr(order, arr)
     },
     getFoldersById: state => ids => {
       const arr = []
@@ -48,9 +48,10 @@ export default {
       folderRef().set({
         userId: uid(),
         ...fold,
+        defaultShowing: true,
       })
     },
-    updateOrder({getters}, {id, ids}) {
+    updateOrder(c, {id, ids}) {
       folderRef(id).update({
         order: ids,
       })

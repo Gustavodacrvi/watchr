@@ -17,28 +17,36 @@
       @buttonAdd='buttonAdd'
       @update='update'
     />
-    <FolderApp v-for="f in sortedFolders" :key="f.id"
-      v-bind="f"
+    <transition-group
+      class="folders-root"
+      tag="div"
     >
-      <Renderer
-        type="list"
-        icon="tasks"
-        iconColor='var(--purple)'
-        :folder='true'
-        :disableSelection='true'
-        :enableSort="true"
-        :list="getListsByFolderId({id: f.id, lists: listsWithFolders})"
-        :active="active"
-        :viewType="viewType"
-        :mapProgress='getListProgress'
-        :mapNumbers="(tasks) => tasks"
-        :mapHelpIcon='getListIcon'
-        :mapBorder='mapBorder'
+      <FolderApp v-for="f in sortedFolders" :key="f.id"
+        v-bind="f"
+        :movingFolder='movingFolder'
 
-        @buttonAdd='obj => folderButtonAdd(f.id, obj)'
-        @update='ids => updateFolderIds(f.id, ids)'
-      />
-    </FolderApp>
+        :data-id='f.id'
+      >
+        <Renderer
+          type="list"
+          icon="tasks"
+          iconColor='var(--purple)'
+          :folder='true'
+          :disableSelection='true'
+          :enableSort="true"
+          :list="getListsByFolderId({id: f.id, lists: listsWithFolders})"
+          :active="active"
+          :viewType="viewType"
+          :mapProgress='getListProgress'
+          :mapNumbers="(tasks) => tasks"
+          :mapHelpIcon='getListIcon'
+          :mapBorder='mapBorder'
+
+          @buttonAdd='obj => folderButtonAdd(f.id, obj)'
+          @update='ids => updateFolderIds(f.id, ids)'
+        />
+      </FolderApp>
+    </transition-group>
     <div style="height: 100px"></div>
   </div>
 </template>
@@ -56,12 +64,52 @@ import { mapGetters, mapState } from 'vuex'
 
 import mom from 'moment'
 
+import { MultiDrag, Sortable } from 'sortablejs'
+
+Sortable.mount(new MultiDrag())
+
 export default {
   components: {
     Renderer: RendererVue, FolderApp,
   },
   props: ['active', 'viewType', 'showDefered', 'showRepeat'],
+  data() {
+    return {
+      movingFolder: false,
+    }
+  },
+  mounted() {
+    const el = this.$el.getElementsByClassName('folders-root')[0]
+    const headsSor = new Sortable(el, {
+      group: 'folders',
+      delay: 225,
+      delayOnTouchOnly: true,
+      handle: '.handle-folder',
+
+      onUpdate: (evt) => {
+        const ids = this.getFolderIds()
+        console.log('update', ids)
+      },
+      onStart: evt => {
+        this.movingFolder = true
+      },
+      onEnd: evt => {
+        this.movingFolder = false
+      },
+    })
+  },
   methods: {
+    getFolderIds() {
+      const el = this.$el.getElementsByClassName('folders-root')[0]
+      if (el) {
+        const childs = el.childNodes
+        const arr = []
+        for (const c of childs) {
+          arr.push(c.dataset.id)
+        }
+        return arr
+      }
+    },
     updateFolderIds(id, ids) {
       this.$store.dispatch('folder/updateOrder', {id, ids})
     },

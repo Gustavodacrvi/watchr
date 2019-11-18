@@ -17,7 +17,7 @@
       />
     </div>
     <div class="content">
-      <div v-if="showing">
+      <div v-show="showing && !movingFolder">
         <slot></slot>
       </div>
     </div>
@@ -33,7 +33,7 @@ import utils from "@/utils"
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['name', 'id', 'defaultShowing'],
+  props: ['name', 'id', 'defaultShowing', 'movingFolder'],
   components: {
     Icon, IconDrop,
   },
@@ -148,7 +148,7 @@ export default {
 
 .drop {
   position: absolute;
-  right: 0;
+  right: 6px;
   top: 50%;
   transform: translateY(-50%);
 }
