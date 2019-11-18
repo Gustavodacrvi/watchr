@@ -3,7 +3,7 @@ import { fire, auth } from './index'
 import fb from 'firebase/app'
 
 import utils from '../utils'
-import { folderColl, uid, folderRef, listRef } from '../utils/firestore'
+import { folderColl, uid, folderRef, listRef, userRef } from '../utils/firestore'
 
 export default {
   namespaced: true,
@@ -25,6 +25,12 @@ export default {
         if (l.folder && l.folder === id) arr.push(l)
       return arr
     },
+    getFoldersById: state => ids => {
+      const arr = []
+      for (const f of state.folders)
+        if (ids.includes(f.id)) arr.push(f)
+      return arr
+    },
   },
   actions: {
     getData({state}) {
@@ -39,6 +45,11 @@ export default {
       folderRef().set({
         userId: uid(),
         ...fold,
+      })
+    },
+    updateOrder({getters}, {id, ids}) {
+      folderRef(id).update({
+        order: ids,
       })
     },
     saveFolder(c, fold) {

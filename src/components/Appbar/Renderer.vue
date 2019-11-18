@@ -1,5 +1,5 @@
 <template>
-  <div class="Renderer">
+  <div class="Renderer" :class="{folder}">
     <transition name="illus-t">
       <div v-if="showIllustration" class="illustration">
         <Illustration
@@ -15,6 +15,7 @@
       @leave='leave'
       tag="div"
       :class="{dontHaveElements: list.length === 0}"
+      :style={}
 
       data-name='appnav-renderer'
     >
@@ -66,7 +67,7 @@ export default {
     Illustration: IllustrationVue,
     AppbarElement: AppbarElementVue,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'illustration', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapBorder'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'illustration', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapBorder', 'folder'],
   data() {
     return {
       sortable: null,
@@ -278,6 +279,10 @@ export default {
 
 .dontHaveElements {
   height: 225px;
+}
+
+.folder .dontHaveElements {
+  height: 38px;
 }
 
 .illus-t-enter, .illus-t-leave-to {

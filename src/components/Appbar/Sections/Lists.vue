@@ -7,7 +7,7 @@
       :disableSelection='true'
       :enableSort="true"
       :illustration="illustration"
-      :list="rootFilters"
+      :list="rootLists"
       :active="active"
       :viewType="viewType"
       :mapProgress='getListProgress'
@@ -24,18 +24,19 @@
         type="list"
         icon="tasks"
         iconColor='var(--purple)'
+        :folder='true'
         :disableSelection='true'
         :enableSort="true"
-        :illustration="illustration"
-        :list="rootFilters"
+        :list="getListsByFolderId({id: f.id, lists: listsWithFolders})"
         :active="active"
         :viewType="viewType"
         :mapProgress='getListProgress'
         :mapNumbers="(tasks) => tasks"
         :mapHelpIcon='getListIcon'
         :mapBorder='mapBorder'
+
         @buttonAdd='buttonAdd'
-        @update='update'
+        @update='ids => updateFolderIds(f.id, ids)'
       />
     </FolderApp>
     <div style="height: 100px"></div>
@@ -61,6 +62,9 @@ export default {
   },
   props: ['active', 'viewType', 'showDefered', 'showRepeat'],
   methods: {
+    updateFolderIds(id, ids) {
+      this.$store.dispatch('folder/updateOrder', {id, ids})
+    },
     update(ids) {
       this.$store.dispatch('list/updateOrder', ids)
     },
@@ -96,7 +100,8 @@ export default {
       l: 'l',
       getTasksByListId: 'list/getTasks',
       getListTasks: 'task/getListTasks',
-      sortedFolders: 'folder/sortedFolders'
+      sortedFolders: 'folder/sortedFolders',
+      getListsByFolderId: 'folder/getListsByFolderId',
     }),
     sortedLists() {
       return this.$store.getters['list/sortedLists']
@@ -112,12 +117,20 @@ export default {
         width: '80px'
       }
     },
-
-    rootFilters() {
-      const filters = this.filteredByRepeat
+    listsWithFolders() {
+      const lists = this.filteredByRepeat
 
       const arr = []
-      for (const f of filters) if (!f.folder) arr.push(f)
+      for (const f of lists) if (f.folder) arr.push(f)
+
+      return arr
+    },
+
+    rootLists() {
+      const lists = this.filteredByRepeat
+
+      const arr = []
+      for (const f of lists) if (!f.folder) arr.push(f)
       
       return arr
     },
