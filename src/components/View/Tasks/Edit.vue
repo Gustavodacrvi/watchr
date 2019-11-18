@@ -120,7 +120,7 @@
             <Icon
               class="opt-icon cursor"
               style="margin-right: 7px;margin-top: 2px"
-              width="14px"
+              width="16px"
               icon='file'
               :primaryHover="true"
               :file='true'
