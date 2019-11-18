@@ -14,6 +14,8 @@ import Icon from '@/components/Icon.vue'
 
 import utils from '@/utils'
 
+import { mapGetters } from 'vuex'
+
 export default {
   props: ['name', 'status'],
   components: {
@@ -23,15 +25,16 @@ export default {
     utils.bindOptionsToEventListener(this.$el, this.options, this.$parent, 'click')
   },
   computed: {
+    ...mapGetters(['l']),
     options() {
       return [
         {
-          name: 'Download file',
+          name: this.l['Download file'],
           icon: 'import',
           callback: () => {this.$emit('download')}
         },
         {
-          name: 'Delete file',
+          name: this.l['Delete file'],
           icon: 'trash',
           important: true,
           callback: () => {this.$emit('delete')}

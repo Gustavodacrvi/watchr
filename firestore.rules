@@ -16,8 +16,11 @@ service cloud.firestore {
       }
       match /lists/{li} {
         allow create: if isSignedIn();
-        allow update, read: if isOwner();
-        allow delete: if isOwner();
+        allow update, read, delete: if isOwner();
+      }
+      match /folders/{fold} {
+        allow create: if isSignedIn();
+        allow update, read, delete: if isOwner();
       }
 
       function isOwner() {

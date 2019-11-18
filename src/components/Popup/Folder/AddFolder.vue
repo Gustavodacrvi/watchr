@@ -1,20 +1,20 @@
 <template>
-  <div class="AddList popup cb shadow rb" :class="platform">
+  <div class="addFolder popup cb shadow rb" :class="platform">
     <div class="title tac">
       <h2 class="pc">{{ title }}</h2>
     </div>
     <div class="content">
       <DropInput
-        :placeholder="['List name'] + '...'"
+        :placeholder="['Folder name'] + '...'"
         :value='name'
         @input='v => name = v'
         :focus="true"
         :options='options'
         @select="select"
         @cancel="$emit('close')"
-        @enter='addList'
+        @enter='addFolder'
       />
-      <ButtonApp :value="title" @click="addList"/>
+      <ButtonApp :value="title" @click="addFolder"/>
     </div>
   </div>
 </template>
@@ -43,7 +43,7 @@ export default {
   computed: {
     ...mapGetters(['platform', 'l']),
     ...mapState({
-      lists: state => state.list.lists,
+      folders: state => state.folder.folders,
       popup: state => state.popup,
       payload: state => state.popup.payload,
     }),
@@ -52,57 +52,42 @@ export default {
       return this.payload.editing === true
     },
     title() {
-      if (!this.isEditing) return this.l['Add list']
-      return this.l['Edit list']
+      if (!this.isEditing) return this.l['Add folder']
+      return this.l['Edit folder']
     },
-    isSmartList() {
-      const lists = [
-        'Today',
-        'Upcoming',
-        'Tomorrow',
-        'Inbox'
-      ]
-      return lists.includes(this.name)
-    }
   },
   methods: {
-    addList() {
+    addFolder() {
       const toast = (toast) => {
         this.$store.commit('pushToast', toast)
       }
       if (this.name) {
-        const list = this.lists.find(el => el.name === this.name)
-        if (this.isSmartList)
-          toast({
-            name: this.l[`This is a special list type.`],
-            type: 'error',
-            seconds: 4,
-          })
-        else if (!list && !this.isEditing) {
-          this.$store.dispatch('list/addList', {
+        const fold = this.folders.find(el => el.name === this.name)
+        if (!fold && !this.isEditing) {
+          this.$store.dispatch('folder/addFolder', {
             name: this.name,
             ...this.payload,
           })
           toast({
-            name: this.l[`List added successfully!`],
+            name: this.l[`Folder added successfully!`],
             type: 'success',
             seconds: 2,
           })
           this.$store.dispatch('closePopup')
-        } else if (!list && this.isEditing) {
-          this.$store.dispatch('list/saveList', {
+        } else if (!fold && this.isEditing) {
+          this.$store.dispatch('folder/saveFolder', {
             name: this.name,
             id: this.payload.id,
           })
           toast({
-            name: this.l[`List edited successfully!`],
+            name: this.l[`Folder edited successfully!`],
             type: 'success',
             seconds: 2,
           })
           this.$store.dispatch('closePopup')
         } else {
           toast({
-            name: this.l[`This list already exists!`],
+            name: this.l[`This folder already exists!`],
             type: 'error',
             seconds: 3,
           })
@@ -124,7 +109,7 @@ export default {
   },
   watch: {
     name() {
-      this.options = this.lists.filter(el => el.name.toLowerCase().includes(this.name.toLowerCase())).map(el => el.name)
+      this.options = this.folders.filter(el => el.name.toLowerCase().includes(this.name.toLowerCase())).map(el => el.name)
     }
   }
 }

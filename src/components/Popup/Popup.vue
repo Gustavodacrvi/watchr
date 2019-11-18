@@ -27,6 +27,7 @@ import AddList from './Lists/AddList.vue'
 import AddListNote from './Lists/AddListNote.vue'
 import AddHeadingNote from './Lists/AddHeadingNote.vue'
 import Update from './Update.vue'
+import AddFolder from './Folder/AddFolder.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -35,7 +36,7 @@ export default {
     Signup, SigninOptions, Signin, AddTag,
     AddListNote, AddTagNote, Icon, AddList,
     AddTask, Update, ChangeUsername, ChangeEmail,
-    Confirm, AddHeadingNote,
+    Confirm, AddHeadingNote, AddFolder,
   },
   methods: {
     closeMobilePopup() {

@@ -35,6 +35,7 @@ import task from './task'
 import tag from './tag'
 import list from './list'
 import filter from './filter'
+import folder from './folder'
 
 import utils from '@/utils'
 import { userRef } from "../utils/firestore"
@@ -54,7 +55,7 @@ const uid = () => auth.currentUser.uid
 
 const store = new Vuex.Store({
   modules: {
-    task, tag, list, filter,
+    task, tag, list, filter, folder,
   },
   state: {
     lang,
@@ -308,6 +309,7 @@ auth.onAuthStateChanged((user) => {
     dispatch('list/getData')
     dispatch('tag/getData')
     dispatch('filter/getData')
+    dispatch('folder/getData')
   }
   const toast = (t) => store.commit('pushToast', t)
 

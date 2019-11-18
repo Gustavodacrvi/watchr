@@ -157,9 +157,11 @@ export default {
 
       batch.commit()
     },
-    addList({rootState}, {name, ids, index}) {
+    addList({rootState}, {name, ids, index, folderId}) {
+      let folder = folderId
+      if (!folder) folder = null
       const obj = {
-        name,
+        name, folder,
         smartViewsOrders: {},
         userId: uid(),
         users: [uid()],

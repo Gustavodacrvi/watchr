@@ -2,14 +2,14 @@
 <!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="11.583px" height="15.583px" viewBox="0 0 11.583 15.583" enable-background="new 0 0 11.583 15.583" xml:space="preserve">
+	 width="11.583px" height="14.251px" viewBox="0 0 11.583 14.251" enable-background="new 0 0 11.583 14.251" xml:space="preserve">
 <g>
-	<path fill="none" stroke="currentColor" stroke-miterlimit="10" d="M1.5,0.5c-0.55,0-1,0.45-1,1v12.583c0,0.55,0.45,1,1,1h8.583
-		c0.55,0,1-0.45,1-1V4.688c0-0.55-0.311-1.325-0.692-1.722L8.722,1.222C8.342,0.825,7.581,0.5,7.031,0.5H1.5z"/>
+	<path fill="none" stroke="#000000" stroke-miterlimit="10" d="M1.5,0.5c-0.55,0-1,0.45-1,1v11.251c0,0.55,0.45,1,1,1h8.583
+		c0.55,0,1-0.45,1-1V4.397c0-0.55-0.326-1.31-0.725-1.688l-1.602-1.52C8.357,0.81,7.581,0.5,7.031,0.5H1.5z"/>
 </g>
-<line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.542" y1="7.084" x2="8.042" y2="7.084"/>
-<line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.62" y1="8.803" x2="8.12" y2="8.803"/>
-<line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.62" y1="10.646" x2="8.12" y2="10.646"/>
-<polyline fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
+<line fill="#FFFFFF" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.503" y1="6.917" x2="8.003" y2="6.917"/>
+<line fill="#FFFFFF" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.581" y1="8.636" x2="8.081" y2="8.636"/>
+<line fill="#FFFFFF" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.581" y1="10.48" x2="8.081" y2="10.48"/>
+<polyline fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
 	7.187,0.583 7.187,4.553 10.917,4.553 "/>
 </svg>

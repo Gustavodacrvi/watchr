@@ -65,6 +65,7 @@ import deadline from '@/assets/icons/deadline.svg'
 import repeat from '@/assets/icons/repeat.svg'
 import box from '@/assets/icons/box.svg'
 import file from '@/assets/icons/file.svg'
+import folder from '@/assets/icons/folder.svg'
 import boxCheck from '@/assets/icons/box-check.svg'
 
 import { mapGetters } from 'vuex'
@@ -79,6 +80,7 @@ export default {
         pen, trash, fire, bloqued, circle, users,
         copy, plus, globe, heading, search, note,
         envelope, deadline, sleep, repeat, box, file,
+        folder,
         "box-check": boxCheck,
         "import": importIcon,
         "export": exportIcon,
@@ -100,7 +102,6 @@ export default {
     },
     handleFile() {
       const inp = this.fileInput
-      console.log(inp.files[0])
       this.$emit('add', inp.files[0])
     }
   },
@@ -162,7 +163,7 @@ export default {
 
 .pie {
   fill: none;
-  transition-duration: .7s;
+  transition: color 0s, stroke-dasharray .7s;
   stroke-width: 32;
   r: 16;
   cx: 16;

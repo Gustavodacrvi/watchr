@@ -75,7 +75,7 @@ export default {
   methods: {
     bindOptions() {
       const el = this.$el.getElementsByClassName('link-wrapper')[0]
-      utils.bindOptionsToEventListener(el, this.options, this)
+      utils.bindOptionsToEventListener(el, this.options, this.$parent)
     },
     linkCallback(evt) {
       if (this.isOnControl && this.selectedEmpty) this.$emit('select')
