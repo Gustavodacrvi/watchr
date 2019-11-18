@@ -10,6 +10,11 @@
         <Icon class="icon" :class="{headerHover}" icon="folder"/>
       </span>
       <span class="name"><b>{{ name }}</b></span>
+      <IconDrop class="drop"
+        handle="settings-v"
+        :hideHandle="!headerHover"
+        :options="options"
+      />
     </div>
     <div class="content">
       <div v-if="showing">
@@ -22,11 +27,15 @@
 <script>
 
 import Icon from '@/components/Icon.vue'
+import IconDrop from '@/components/IconDrop/IconDrop.vue'
+
+import utils from "@/utils"
+import { mapGetters } from 'vuex'
 
 export default {
   props: ['name', 'id', 'defaultShowing'],
   components: {
-    Icon,
+    Icon, IconDrop,
   },
   data() {
     return {
@@ -34,13 +43,56 @@ export default {
       headerHover: false,
     }
   },
+  mounted() {
+    this.bindOptions()
+  },
   methods: {
+    bindOptions() {
+      const el = this.$el.getElementsByClassName('link-wrapper')[0]
+      utils.bindOptionsToEventListener(this.$el, this.options, this.$parent)
+    },
     toggle() {
       this.showing = !this.showing
       this.$store.dispatch('folder/saveFolder', {
         id: this.id,
         defaultShowing: this.showing,
       })
+    },
+    edit() {
+      this.$store.dispatch('pushPopup', {
+        comp: "AddFolder",
+        payload: this.id,
+      })
+    },
+    delete() {
+
+    },
+  },
+  computed: {
+    ...mapGetters(['l']),
+    options() {
+      return [
+        {
+          name: this.l['Toggle folder'],
+          icon: 'folder',
+          callback: () => this.toggle()
+        },
+        {
+          name: this.l['Edit folder'],
+          icon: 'pen',
+          callback: () => this.edit(),
+        },
+        {
+          name: this.l['Delete folder'],
+          icon: 'trash',
+          callback: () => this.delete()
+        },
+      ]
+    },
+  },
+  watch: {
+    options() {
+      this.bindOptions()
     }
   }
 }
@@ -87,7 +139,7 @@ export default {
   align-items: center;
 }
 
-.arrow {
+.drop {
   position: absolute;
   right: 0;
   top: 50%;
