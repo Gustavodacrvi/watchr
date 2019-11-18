@@ -162,12 +162,12 @@ export default {
 
 .fade-enter, .fade-leave-to {
   opacity: 0;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .fade-leave, .fade-enter-to {
   opacity: 1;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 </style>

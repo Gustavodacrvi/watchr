@@ -711,7 +711,7 @@ export default {
 
 .cont-wrapper {
   opacity: 0;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .notPopup .notes {
@@ -724,7 +724,7 @@ export default {
   float: left;
   z-index: 5;
   position: relative;
-  transition-duration: .2s;
+  transition-duration: .15s;
   display: flex;
   flex-wrap: wrap;
 }
@@ -818,13 +818,13 @@ export default {
 .btn-enter, .btn-leave-to {
   opacity: 0;
   height: 0;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .btn-leave, .btn-enter-to {
   opacity: 1;
   height: 35px;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 </style>

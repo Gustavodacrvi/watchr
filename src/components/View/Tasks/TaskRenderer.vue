@@ -336,7 +336,7 @@ export default {
         const divMargin = el.getElementsByClassName('dontHaveTasks')[0]
         const s = header.style
         if (divMargin) {
-          divMargin.style.transitionDuration = '.2s'
+          divMargin.style.transitionDuration = '.15s'
           divMargin.style.height = 0
         }
         const sw = el.style
@@ -351,16 +351,16 @@ export default {
         this.showHeading(s)
         setTimeout(() => {
           if (root) {
-            root.style.transitionDuration = '.2s'
+            root.style.transitionDuration = '.15s'
             root.style.height = '0px'
             root.style.opacity = 0
           }
-          TaskRenderer.style.transitionDuration = '.2s'
+          TaskRenderer.style.transitionDuration = '.15s'
           TaskRenderer.style.margin = 0
-          header.style.transitionDuration = '.2s'
+          header.style.transitionDuration = '.15s'
           header.style.margin = 0
-          s.transitionDuration = '.2s'
-          sw.transitionDuration = '.2s'
+          s.transitionDuration = '.15s'
+          sw.transitionDuration = '.15s'
           sw.margin = 0
           this.hideHeading(s)
         })
@@ -376,8 +376,8 @@ export default {
         sw.margin = 0
         this.hideHeading(s)
         setTimeout(() => {
-          s.transitionDuration = '.2s'
-          sw.transitionDuration = '.2s'
+          s.transitionDuration = '.15s'
+          sw.transitionDuration = '.15s'
           sw.margin = '24px 0'
           this.showHeading(s)
         })
@@ -466,7 +466,7 @@ export default {
         s.height = '0px'
         s.padding = '2px 0'
         setTimeout(() => {
-          s.transition = 'height .2s, opacity .2s, transform .1s !important'
+          s.transition = 'height .15s, opacity .15s, transform .1s !important'
           if (lessThanMinimum) {
           cont.classList.add('show')
             s.height = this.minimumTaskHeight + 'px'
@@ -616,7 +616,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .front {

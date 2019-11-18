@@ -52,7 +52,7 @@ export default {
   display: flex;
   align-items: center;
   min-height: 25px;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .File:hover {

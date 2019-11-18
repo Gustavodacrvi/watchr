@@ -521,7 +521,7 @@ export default {
 .Task {
   height: auto;
   user-select: none;
-  transition: opacity .2s;
+  transition: opacity .15s;
   position: relative;
   z-index: 2;
 }
@@ -531,7 +531,7 @@ export default {
 }
 
 .cont-wrapper {
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .hided {
@@ -677,7 +677,7 @@ export default {
 
 .name-t-enter-active, .name-t-leave-active {
   position: absolute;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .name-t-enter-to, .name-t-leave {

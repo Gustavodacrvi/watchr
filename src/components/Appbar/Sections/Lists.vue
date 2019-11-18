@@ -3,7 +3,7 @@
     <Renderer
       type="list"
       icon="tasks"
-      iconColor='var(--purple)'
+      iconColor='var(--red)'
       :disableSelection='true'
       :enableSort="true"
       :illustration="illustration"
@@ -34,7 +34,7 @@
         <Renderer
           type="list"
           icon="tasks"
-          iconColor='var(--purple)'
+          iconColor='var(--red)'
           :folder='f.id'
           :disableSelection='true'
           :enableSort="true"

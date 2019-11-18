@@ -42,7 +42,7 @@ export default {
   height: 35px;
   display: flex;
   align-items: center;
-  transition-duration: .2s;
+  transition-duration: .15s;
   position: relative;
 }
 

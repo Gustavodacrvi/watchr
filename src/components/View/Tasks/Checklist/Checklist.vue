@@ -127,7 +127,7 @@ export default {
       s.transitionDuration = '0s'
       s.height = 0
       setTimeout(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.15s'
         if (height < 36)
           s.height = '36px'
         else s.height = height + 'px'
@@ -240,7 +240,7 @@ export default {
 .Checklist {
   margin: 0;
   padding: 0 8px;
-  transition: margin .2s;
+  transition: margin .15s;
 }
 
 .hasAtLeastOnSubTask {

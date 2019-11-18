@@ -133,7 +133,7 @@ export default {
         s.width = '0px'
         s.transitionDuration = '.0s'
         setTimeout(() => {
-          s.transitionDuration = '.2s'
+          s.transitionDuration = '.15s'
           s.width = inp.offsetWidth + 'px'
           s.opacity = '1'
         })
@@ -205,7 +205,7 @@ export default {
           Completed: 'var(--brown)',
         }
         const color = obj[this.viewName]
-        if (!color) return 'var(--purple)'
+        if (!color) return 'var(--red)'
         return color
       }
       if (this.viewType === 'search') return ''
@@ -280,7 +280,7 @@ export default {
   flex-wrap: wrap;
   position: relative;
   margin: 0;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .input {

@@ -39,14 +39,14 @@ export default {
       s.opacity = '0'
       s.height = '0px'
       setTimeout(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.15s'
         s.height = '35px'
         s.opacity = '1'
       })
     },
     leave(el) {
       const s = el.style
-      s.transitionDuration = '.2s'
+      s.transitionDuration = '.15s'
       if (this.editingNote)
         s.transitionDuration = '0s'
       s.height = '0px'
@@ -74,7 +74,7 @@ export default {
   align-items: center;
   box-sizing: border-box;
   cursor: pointer;
-  transition: transform .2s;
+  transition: transform .15s;
 }
 
 .header-info:hover {

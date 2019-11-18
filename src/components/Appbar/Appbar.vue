@@ -224,7 +224,7 @@ export default {
         el.classList.add('to-left')
       }
       setTimeout(() => {
-        el.style.transitionDuration = '.2s'
+        el.style.transitionDuration = '.15s'
         el.classList.remove('to-right')
         el.classList.remove('to-left')
       })
@@ -548,7 +548,7 @@ export default {
   background-color: var(--primary);
   width: 100px;
   height: 2px;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .option {
@@ -556,7 +556,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition-duration: .2s;
+  transition-duration: .15s;
   cursor: pointer;
   color: var(--gray);
   outline: none;
@@ -650,12 +650,12 @@ export default {
 
 .icon-t-enter, .icon-t-leave-to {
   opacity: 0 !important;
-  transition-duration: .2s !important;
+  transition-duration: .15s !important;
 }
 
 .icon-t-leave, .icon-t-enter-to {
   opacity: 1 !important;
-  transition-duration: .2s !important;
+  transition-duration: .15s !important;
 }
 
 .search-t-enter, .search-t-leave-to {
