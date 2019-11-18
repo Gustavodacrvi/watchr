@@ -61,7 +61,11 @@ export default {
     edit() {
       this.$store.dispatch('pushPopup', {
         comp: "AddFolder",
-        payload: this.id,
+        payload: {
+          name: this.name,
+          id: this.id,
+          editing: true,
+        },
       })
     },
     delete() {
