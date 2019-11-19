@@ -110,14 +110,14 @@ export default {
 <style scoped>
 
 .Folder {
-  margin: 16px 0;
+  margin: 8px 0;
 }
 
 .header {
   position: relative;
   display: flex;
   height: 35px;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .header:hover {
@@ -127,7 +127,7 @@ export default {
 .icon {
   color: var(--gray);
   transform: translateY(2px);
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .icon.headerHover {

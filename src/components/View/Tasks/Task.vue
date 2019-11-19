@@ -9,15 +9,15 @@
       @leave='leave'
     >
       <div v-if="!isEditing" key="notediting"
-        class="cont-wrapper task-cont-wrapper handle rb cursor"
+        class="cont-wrapper task-cont-wrapper handle rb"
         :class="platform"
-        @click.stop="click"
+        @click="click"
         @dblclick="dblclick"
       >
         <div class="cont"
           v-longclick='openMobileOptions'
         >
-          <div class="check"
+          <div class="check cursor"
             @click.stop="completeTask"
             @mouseenter.stop="iconHover = true"
             @mouseleave="iconHover = false"
@@ -61,7 +61,7 @@
             </template>
           </div>
           <div class="icon-drop-wrapper">
-            <IconDrop class="icon-drop"
+            <IconDrop class="icon-drop cursor"
               v-model="showingIconDropContent"
               handle='settings-v'
               :options='options'
@@ -521,7 +521,7 @@ export default {
 .Task {
   height: auto;
   user-select: none;
-  transition: opacity .2s;
+  transition: opacity .15s;
   position: relative;
   z-index: 2;
 }
@@ -531,7 +531,7 @@ export default {
 }
 
 .cont-wrapper {
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .hided {
@@ -560,10 +560,6 @@ export default {
 
 .desktop .cont-wrapper:hover, .desktop .cont-wrapper:active {
   background-color: var(--light-gray) !important;
-}
-
-.sortable-selected .cont-wrapper {
-  background-color: rgba(53, 73, 90, 0.6) !important;
 }
 
 .check, .text, .options, .cont {
@@ -681,7 +677,7 @@ export default {
 
 .name-t-enter-active, .name-t-leave-active {
   position: absolute;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .name-t-enter-to, .name-t-leave {
@@ -696,6 +692,10 @@ export default {
 
 .check-icon {
   opacity: .6;
+}
+
+.sortable-selected .cont-wrapper {
+  background-color: rgba(53, 73, 90, 0.6) !important;
 }
 
 </style>

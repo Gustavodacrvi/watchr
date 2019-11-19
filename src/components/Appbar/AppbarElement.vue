@@ -5,7 +5,7 @@
     @mouseleave="hover = false"
     @click.stop="linkCallback"
     :class="{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover}"
-    :style='`border: 1px solid ${border}`'
+    :style='{border: `1px solid ${border}`}'
   >
     <div
       class="link-wrapper AppbarElement-link rb"
@@ -148,7 +148,7 @@ export default {
   left: 50%;
   transform: translate(-50%,-50%);
   margin-top: 1.5px;
-  transition: color .2s;
+  transition: color .15s;
 }
 
 .link-wrapper {
@@ -156,11 +156,11 @@ export default {
   cursor: pointer;
   position: relative;
   display: flex;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .name {
-  transition-duration: .2s;
+  transition-duration: .15s;
   max-width: 160px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -176,7 +176,7 @@ export default {
   outline: none;
   position: relative;
   height: 35px;
-  transition: background-color .2s, height .3s;
+  transition: background-color .15s, height .3s;
 }
 
 .sortable-ghost .link-wrapper {
@@ -243,7 +243,7 @@ export default {
 
 .name-t-enter-active, .name-t-leave-active {
   position: absolute;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .name-t-enter-to, .name-t-leave {

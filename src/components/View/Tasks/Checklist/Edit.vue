@@ -62,8 +62,8 @@ export default {
       c.height = 0
       c.opacity = 0
       setTimeout(() => {
-        c.transitionDuration = '.2s'
-        s.transitionDuration = '.2s'
+        c.transitionDuration = '.15s'
+        s.transitionDuration = '.15s'
         if (height < 36) {
           s.height = '35px'
           c.height = '35px'

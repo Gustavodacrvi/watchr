@@ -701,17 +701,17 @@ export default {
 .trans-t-leave, .trans-t-enter-to {
   opacity: 1;
   background-color: var(--card);
-  box-shadow: 0 2px 6px rgba(0,0,0,.3);
+  box-shadow: 0 2px 6px rgba(15,15,15,.3);
 }
 
 .Edit {
   background-color: var(--card);
-  box-shadow: 0 2px 6px rgba(0,0,0,.3);
+  box-shadow: 0 2px 6px rgba(15,15,15,.3);
 }
 
 .cont-wrapper {
   opacity: 0;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .notPopup .notes {
@@ -724,7 +724,7 @@ export default {
   float: left;
   z-index: 5;
   position: relative;
-  transition-duration: .2s;
+  transition-duration: .15s;
   display: flex;
   flex-wrap: wrap;
 }
@@ -818,13 +818,13 @@ export default {
 .btn-enter, .btn-leave-to {
   opacity: 0;
   height: 0;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .btn-leave, .btn-enter-to {
   opacity: 1;
   height: 35px;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 </style>

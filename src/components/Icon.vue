@@ -1,8 +1,8 @@
 <template>
   <div v-if="getIcon"
     class="icon"
-    :class="[{primaryHover}, platform]"
-    :style="{width: getWidth, color}"
+    :class="[{primaryHover, hideShadow: !shadow}, platform]"
+    :style="{width: getWidth, color, filter: `drop-shadow(0 0 20px ${color})`}"
     @click="iconClick"
   >
     <svg v-if="!hasProgress" :viewBox="getIcon.viewBox">
@@ -71,7 +71,7 @@ import boxCheck from '@/assets/icons/box-check.svg'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['icon', 'width', 'primaryHover', 'color', 'progress', 'svg', 'file'],
+  props: ['icon', 'width', 'primaryHover', 'color', 'progress', 'svg', 'file', 'shadow'],
   data() {
     return {
       icons: {
@@ -136,6 +136,10 @@ export default {
 
 .icon {
   display: inline-block;
+}
+
+.hideShadow {
+  filter: none !important
 }
 
 .primaryHover:hover {

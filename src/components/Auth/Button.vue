@@ -25,7 +25,7 @@ export default {
   border-radius: 10px;
   font-size: 1.01em;
   cursor: pointer;
-  transition-duration: .2s;
+  transition-duration: .15s;
   outline: none;
 }
 
@@ -57,7 +57,7 @@ export default {
   padding: 10px;
   color: var(--gray);
   transform: scale(1,1);
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .dark:active, .card:active {

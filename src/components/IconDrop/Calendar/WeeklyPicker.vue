@@ -78,7 +78,7 @@ export default {
   border-radius: 500px;
   background-color: var(--dark);
   padding: 8px;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .option:hover {

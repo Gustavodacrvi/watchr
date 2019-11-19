@@ -30,7 +30,7 @@
           </div>
         </div>
         <NotesApp :notes="notes" @save-notes="saveNote"/>
-        <transition name="fade">
+        <transition name="fade-t">
           <div v-show="showing && !movingHeading" class="cont">
             <slot></slot>
           </div>
@@ -142,6 +142,7 @@ export default {
   height: 45px;
   z-index: 50;
   position: relative;
+  border-bottom: 1px solid var(--gray);
 }
 
 .cont {
@@ -158,16 +159,6 @@ export default {
 .name {
   margin: 0;
   color: var(--primary);
-}
-
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-  transition-duration: .2s;
-}
-
-.fade-leave, .fade-enter-to {
-  opacity: 1;
-  transition-duration: .2s;
 }
 
 </style>

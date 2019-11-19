@@ -1,5 +1,6 @@
 <template>
   <div class="Appbar-wrapper scroll-thin" :class="platform">
+    <div v-if="isDesktop" class="back-layer" :class="{showing}"></div>
     <div class="Appbar" :class='platform'>
       <div class="inner-wrapper">
         <div>
@@ -58,7 +59,7 @@
           </transition>
         </div>
         <div v-if="isDesktop" style="height: 35px;"></div>
-        <div class="footer" :class="platform">
+        <div class="footer" :class="[platform, {showing}]">
           <div class="inner-footer">
             <div class="drop">
               <transition name="icon-t">
@@ -223,7 +224,7 @@ export default {
         el.classList.add('to-left')
       }
       setTimeout(() => {
-        el.style.transitionDuration = '.2s'
+        el.style.transitionDuration = '.15s'
         el.classList.remove('to-right')
         el.classList.remove('to-left')
       })
@@ -498,6 +499,11 @@ export default {
   box-shadow: 0 -3px 4px var(--back-color);
 }
 
+.footer.showing.desktop {
+  background-color: var(--appnav-color);
+  box-shadow: 0 -3px 4px var(--appnav-color);
+}
+
 .footer.mobile {
   bottom: 15px;
   height: 53px;
@@ -520,6 +526,21 @@ export default {
   position: relative;
 }
 
+.back-layer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 450px;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+  transition-duration: .3s;
+}
+
+.back-layer.showing {
+  background-color: var(--appnav-color);
+}
+
 .line {
   position: absolute;
   left: 0;
@@ -527,7 +548,7 @@ export default {
   background-color: var(--primary);
   width: 100px;
   height: 2px;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .option {
@@ -535,7 +556,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition-duration: .2s;
+  transition-duration: .15s;
   cursor: pointer;
   color: var(--gray);
   outline: none;
@@ -577,7 +598,7 @@ export default {
   position: absolute;
   right: 0;
   display: flex;
-  transform: translateY(13px);
+  transform: translateY(6px);
 }
 
 .footer.mobile .drop {
@@ -629,12 +650,12 @@ export default {
 
 .icon-t-enter, .icon-t-leave-to {
   opacity: 0 !important;
-  transition-duration: .2s !important;
+  transition-duration: .15s !important;
 }
 
 .icon-t-leave, .icon-t-enter-to {
   opacity: 1 !important;
-  transition-duration: .2s !important;
+  transition-duration: .15s !important;
 }
 
 .search-t-enter, .search-t-leave-to {

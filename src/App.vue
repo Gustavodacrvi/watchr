@@ -156,7 +156,7 @@ export default {
 .router-view {
   position: relative;
   top: 0;
-  transition: top .2s;
+  transition: top .15s;
 }
 
 .hided {
@@ -166,13 +166,13 @@ export default {
 .nav-trans-enter, .nav-trans-leave-to {
   opacity: 0;
   transform: translateY(-25px);
-  transition: opacity .2s ease-out, transform .2s ease-out;
+  transition: opacity .15s ease-out, transform .15s ease-out;
 }
 
 .nav-trans-leave, .nav-trans-enter-to {
   opacity: 1;
   transform: translateY(0px);
-  transition: opacity .2s ease-in, transform .2s ease-in;
+  transition: opacity .15s ease-in, transform .15s ease-in;
 }
 
 </style>
@@ -181,12 +181,12 @@ export default {
 
 .fade-t-enter, .fade-t-leave-to {
   opacity: 0;
-  transition: opacity .2s;
+  transition: opacity .15s;
 }
 
 .fade-t-leave, .fade-t-enter-to {
   opacity: 1;
-  transition: opacity .2s;
+  transition: opacity .15s;
 }
 
 .passive {

@@ -89,7 +89,7 @@ export default {
 }
 
 .Icon {
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .msg {

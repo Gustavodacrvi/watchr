@@ -94,7 +94,7 @@ export default {
             cont.style.width = oldWidth
             cont.style.height = oldHeight
             setTimeout(() => {
-              cont.style.transitionDuration = '.2s'
+              cont.style.transitionDuration = '.15s'
               cont.style.width = width
               cont.style.height = height
               cont.style.transitionDelay = '.0s'
@@ -183,7 +183,7 @@ export default {
   height: 0;
   padding: 18px 0;
   overflow: hidden;
-  transition-duration: .2s;
+  transition-duration: .15s;
   z-index: 5;
 }
 
@@ -215,12 +215,12 @@ export default {
 
 .fade-enter, .fade-leave-to {
   opacity: 0;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .fade-leave, .fade-enter-to {
   opacity: 1;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .drop-trans-enter-active .hide-trans {

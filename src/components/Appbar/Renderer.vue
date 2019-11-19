@@ -140,7 +140,7 @@ export default {
             setTimeout(() => {
               removeAppnavOnHoverOnTaskElements(cont)
             })
-            s.transition = 'opacity .2s, box-shadow .2s, transform .2s'
+            s.transition = 'opacity .15s, box-shadow .15s, transform .15s'
             s.transform = 'scale(1.01,1.01)'
             s.backgroundColor = 'var(--primary)'
             s.boxShadow = `0 2px 10px var(--primary)`
@@ -230,7 +230,7 @@ export default {
       }
     },
     leave(el, done) {
-      el.style.transition = 'height .2s, opacity .2s !important'
+      el.style.transition = 'height .15s, opacity .15s !important'
       el.style.opacity = 0
       el.style.height = '0px'
       setTimeout(() => done(), 300)

@@ -47,7 +47,7 @@ export default {
       s.opacity = '0'
       s.height = '0px'
       setTimeout(() => {
-        s.transitionDuration = '.2s'
+        s.transitionDuration = '.15s'
         s.height = height + 'px'
         s.opacity = '1'
       })
@@ -61,7 +61,7 @@ export default {
     },
     leaveNote(el) {
       const s = el.style
-      s.transitionDuration = '.2s'
+      s.transitionDuration = '.15s'
       if (this.editingNote)
         s.transitionDuration = '0s'
       s.height = '0px'

@@ -369,7 +369,7 @@ export default {
   flex-basis: 50px;
   height: 50px;
   width: 275px;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .time-wrapper:hover {
@@ -381,7 +381,7 @@ export default {
 }
 
 .view, .left, .right {
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .view {
@@ -487,11 +487,11 @@ export default {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .number {
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .active {

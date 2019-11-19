@@ -79,7 +79,7 @@ export default {
 .Subtask {
   position: relative;
   display: flex;
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .line-wrapper {
@@ -124,7 +124,7 @@ export default {
 }
 
 .delete {
-  transition-duration: .2s;
+  transition-duration: .15s;
 }
 
 .delete:hover {
@@ -141,7 +141,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: opacity .2s;
+  transition: opacity .15s;
 }
 
 .icon {
@@ -155,7 +155,7 @@ export default {
   display: flex;
   align-items: center;
   padding-left: 6px;
-  transition: opacity .2s;
+  transition: opacity .15s;
   flex-basis: 100%;
 }
 
