@@ -29,23 +29,24 @@ export default {
     options() {
       const obj = [
         {
-          name: this.l['Download file'],
-          icon: 'import',
-          callback: () => {this.$emit('download')}
-        },
-        {
           name: this.l['Delete file'],
           icon: 'trash',
           important: true,
           callback: () => {this.$emit('delete')}
         },
       ]
-    if (this.status !== 'update')
+    if (this.status !== 'update') {
+      obj.unshift(        {
+          name: this.l['Download file'],
+          icon: 'import',
+          callback: () => {this.$emit('download')}
+        })
       obj.unshift({
           name: this.l['View file'],
           icon: 'file',
           callback: () => {this.$emit('view')}
         })
+    }
     return obj
     },
   },

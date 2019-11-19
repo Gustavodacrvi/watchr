@@ -18,6 +18,7 @@ import LoadingComponent from '@/components/Illustrations/LoadingComponent.vue'
 import ErrorComponent from '@/components/Illustrations/ErrorComponent.vue'
 import TxtApp from './Txt.vue'
 import ImageApp from './Image.vue'
+import AudioApp from './Audio.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -26,7 +27,7 @@ import utils from "@/utils"
 export default {
   components: {
     LoadingComponent, ErrorComponent,
-    TxtApp, ImageApp,
+    TxtApp, ImageApp, AudioApp,
   },
   data() {
     return {
@@ -37,22 +38,19 @@ export default {
   },
   created() {
     utils.downloadBlobFromURL(this.fileURL, this.getProgress).then(blob => {
-      switch (blob.type) {
-        case "text/plain": {
-          this.status = 'TxtApp'
-          break
-        }
-        case "image/png": {
-          this.status = 'ImageApp'
-          break
-        }
-      }
+      console.log(blob)
+      const t = blob.type
+      if (t.includes('text/'))
+        this.status = 'TxtApp'
+      else if (t.includes('image/'))
+        this.status = 'ImageApp'
+      else if (t.includes('audio/'))
+        this.status = 'AudioApp'
       this.blob = blob
     }).catch(this.error)
   },
   methods: {
     getProgress(evt) {
-      console.log(evt)
       this.progress = (evt.loaded / evt.total) * 100
     },
     error() {
