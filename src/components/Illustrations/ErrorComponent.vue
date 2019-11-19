@@ -2,7 +2,7 @@
   <div class="ErrorComponent">
     <IllustrationError class="illustration-colors"
       name="Error"
-      :title="l['Some error occurred, please try again later.']"
+      :title="getTitle"
     />  
   </div>
 </template>
@@ -14,12 +14,16 @@ import { mapGetters } from 'vuex'
 import IllustrationVue from './Illustration.vue'
 
 export default {
+  props: ['hideTitle'],
   components: {
     IllustrationError: IllustrationVue,
   },
   computed: {
     ...mapGetters(['l']),
-  }
+    getTitle() {
+      return this.hideTitle ? "" : this.l['Some error occurred, please try again later.']
+    },
+  },
 }
 
 </script>

@@ -427,6 +427,18 @@ export default {
   
     document.body.removeChild(element)
   },
+  downloadBlobFromURL(url, getProgress) {
+    return new Promise((solve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.onprogress = getProgress
+      xhr.responseType = 'blob'
+      xhr.onload = () => solve(xhr.response)
+      xhr.onerror = () => reject()
+      xhr.abort()
+      xhr.open('GET', url)
+      xhr.send()
+    })
+  },
   exportListTemplate({list, tasks}) {
     const ts = []
     for (const t of tasks) ts.push({...t,

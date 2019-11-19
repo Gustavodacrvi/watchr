@@ -22,13 +22,13 @@
           <Tag v-if="task.list"
             icon="tasks"
             :value="task.list"
-            color='var(--purple)'
+            color='var(--red)'
             @click="task.list = ''"
           />
           <Tag v-if="task.list && task.heading"
             icon="heading"
             :value="task.heading"
-            color='var(--purple)'
+            color='var(--red)'
             @click="task.heading = ''"
           />
         </div>
@@ -86,6 +86,7 @@
             :status='getFileStatus(f)'
             @delete="() => deleteFile(f)"
             @download="() => downloadFile(f)"
+            @view="() => viewFile(f)"
           />
         </div>
         <span v-if="isEditingFiles" style="opacity: .4;margin-left: 8px">{{ l["Note: file upload/delete operations won't work while offline."] }}</span>
@@ -323,12 +324,20 @@ export default {
       })
       this.name = ''
     },
+    viewFile(fileName) {
+      storage().ref(`attachments/${this.user.uid}/tasks/${this.task.id}/${fileName}`).getDownloadURL().then(url => {
+        this.$store.commit('readFile', url)
+      }).catch(err => {
+        this.$store.commit('pushToast', {
+          name: this.l["An error occurred while downloading file"],
+          seconds: 4,
+          type: 'error',
+        })
+      })
+    },
     downloadFile(fileName) {
       storage().ref(`attachments/${this.user.uid}/tasks/${this.task.id}/${fileName}`).getDownloadURL().then(url => {
-        const xhr = new XMLHttpRequest()
-        xhr.responseType = 'blob'
-        xhr.onload = event => {
-          const blob = xhr.response
+        utils.downloadBlobFromURL(url).then(blob => {
           url = window.URL.createObjectURL(blob)
           let element = document.createElement('a')
           element.setAttribute('href', url)
@@ -340,9 +349,13 @@ export default {
           element.click()
         
           document.body.removeChild(element)
-        }
-        xhr.open('GET', url)
-        xhr.send()
+        })
+      }).catch(err => {
+        this.$store.commit('pushToast', {
+          name: this.l["An error occurred while downloading file"],
+          seconds: 4,
+          type: 'error',
+        })
       })
     },
     save() {

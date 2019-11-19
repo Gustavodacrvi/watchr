@@ -81,6 +81,8 @@ export default {
   "Defered to": "Defered to",
   'Sort tasks': 'Sort tasks',
   "Add tags": "Add tags",
+  "An error occurred while downloading file": "An error occurred while downloading file",
+  "View file": "View file",
   "Repeat": "Repeat",
   "Add folder": "Add folder",
   "Folder added successfully!": "Folder added successfully!",

@@ -90,6 +90,7 @@ const store = new Vuex.Store({
     isOnControl: false,
     fireBaseFirstLoaded: false,
     authState: false,
+    fileURL: null,
     firstFireLoad: false,
     fastSearch: false,
     toasts: [],
@@ -127,6 +128,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    readFile(state, fileURL) {
+      state.fileURL = fileURL
+    },
     toggleAllowNavHide(state, allow) {
       state.allowNavHide = allow
     },
