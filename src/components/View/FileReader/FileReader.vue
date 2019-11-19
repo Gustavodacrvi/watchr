@@ -5,6 +5,9 @@
       <transition name="fade-t">
         <component :is="status" :hideTitle='true' :blob="blob"/>
       </transition>
+      <div v-show="status === 'LoadingComponent'" class="progress">
+        <div class="line" :style="`width: ${progress}%`"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -28,19 +31,25 @@ export default {
     return {
       status: 'LoadingComponent',
       blob: null,
+      progress: 100,
     }
   },
   created() {
-    utils.downloadBlobFromURL(this.fileURL).then(blob => {
+/*     utils.downloadBlobFromURL(this.fileURL, this.getProgress).then(blob => {
+      console.log(blob)
       switch (blob.type) {
         case "text/plain": {
           this.status = 'Txt'
         }
       }
       this.blob = blob
-    }).catch(this.error)
+    }).catch(this.error) */
   },
   methods: {
+    getProgress(evt) {
+      console.log(evt)
+      this.progress = (evt.loaded / evt.total) * 100
+    },
     error() {
       this.status = 'ErrorComponent'
       this.$store.commit('pushToast', {
@@ -76,8 +85,29 @@ export default {
 }
 
 .cb {
+  position: relative;
   padding: 42px;
   margin: 0 8px;
+}
+
+.progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background-color: var(--dark);
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+  overflow: hidden;
+}
+
+.line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: var(--primary);
+  height: 100%;
 }
 
 </style>

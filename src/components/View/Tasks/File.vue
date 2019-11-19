@@ -27,12 +27,7 @@ export default {
   computed: {
     ...mapGetters(['l']),
     options() {
-      return [
-        {
-          name: this.l['View file'],
-          icon: 'file',
-          callback: () => {this.$emit('view')}
-        },
+      const obj = [
         {
           name: this.l['Download file'],
           icon: 'import',
@@ -45,6 +40,13 @@ export default {
           callback: () => {this.$emit('delete')}
         },
       ]
+    if (this.status !== 'update')
+      obj.unshift({
+          name: this.l['View file'],
+          icon: 'file',
+          callback: () => {this.$emit('view')}
+        })
+    return obj
     },
   },
 }

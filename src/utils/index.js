@@ -427,9 +427,10 @@ export default {
   
     document.body.removeChild(element)
   },
-  downloadBlobFromURL(url) {
+  downloadBlobFromURL(url, getProgress) {
     return new Promise((solve, reject) => {
       const xhr = new XMLHttpRequest()
+      xhr.onprogress = getProgress
       xhr.responseType = 'blob'
       xhr.onload = () => solve(xhr.response)
       xhr.onerror = () => reject()
