@@ -337,10 +337,7 @@ export default {
     },
     downloadFile(fileName) {
       storage().ref(`attachments/${this.user.uid}/tasks/${this.task.id}/${fileName}`).getDownloadURL().then(url => {
-        const xhr = new XMLHttpRequest()
-        xhr.responseType = 'blob'
-        xhr.onload = event => {
-          const blob = xhr.response
+        utils.downloadBlobFromURL(url).then(blob => {
           url = window.URL.createObjectURL(blob)
           let element = document.createElement('a')
           element.setAttribute('href', url)
@@ -352,9 +349,7 @@ export default {
           element.click()
         
           document.body.removeChild(element)
-        }
-        xhr.open('GET', url)
-        xhr.send()
+        })
       }).catch(err => {
         this.$store.commit('pushToast', {
           name: this.l["An error occurred while downloading file"],
