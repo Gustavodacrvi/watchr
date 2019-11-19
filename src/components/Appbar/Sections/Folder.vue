@@ -110,7 +110,7 @@ export default {
 <style scoped>
 
 .Folder {
-  margin: 16px 0;
+  margin: 8px 0;
 }
 
 .header {

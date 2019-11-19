@@ -22,6 +22,8 @@
       class="folders-root"
       tag="div"
       :class="{isDragginInnerList}"
+      @enter='enter'
+      @leave='leave'
 
       data-name='folders-root'
     >
@@ -104,6 +106,33 @@ export default {
     })
   },
   methods: {
+    enter(el) {
+      const h = el.getElementsByClassName('header')[0].style
+      const s = el.style
+      
+      s.margin = '0'
+      s.opacity = '0'
+      h.height = '0'
+      h.transitionDuration = '0s'
+      s.transitionDuration = '0s'
+      setTimeout(() => {
+        h.transitionDuration = '.15s'
+        s.transitionDuration = '.15s'
+        h.height = '35px'
+        s.opacity = '1'
+        s.margin = '8px 0'
+      })
+    },
+    leave(el) {
+      const h = el.getElementsByClassName('header')[0].style
+      const s = el.style
+
+      s.margin = '0'
+      h.transitionDuration = '.15s'
+      s.transitionDuration = '.15s'
+      s.opacity = '0'
+      h.height = '0'
+    },
     betweenFolders(folder, id, ids) {
       this.$store.dispatch('folder/moveListBetweenFolders', {
         folder, id, ids,

@@ -32,7 +32,7 @@ export default {
 
 .SearchButton {
   height: 35px;
-  background-color: var(--dark-gray);
+  background-color: var(--gray);
   display: flex;
   align-items: center;
   justify-content: center;

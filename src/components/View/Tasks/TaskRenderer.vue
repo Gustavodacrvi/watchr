@@ -1,5 +1,5 @@
 <template>
-  <div class="TaskRenderer" @click.stop='click'>
+  <div class="TaskRenderer" @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration" class="illustration">
         <Illustration v-bind="illustration"/>
@@ -320,13 +320,16 @@ export default {
       s.height = '0px'
       s.margin = 0
       s.padding = 0
+      s.marginBottom = '0px'
       s.opacity = 0
+      s.borderBottom = 'none'
     },
     showHeading(s) {
       s.height = '45px'
       s.opacity = 1
       s.marginBottom = '10px'
       s.padding = '0 6px'
+      s.borderBottom = '1px solid var(--gray)'
     },
     headingsLeave(el) {
       const header = el.getElementsByClassName('header-wrapper')[0]
