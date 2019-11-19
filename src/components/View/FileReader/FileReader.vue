@@ -16,7 +16,8 @@
 
 import LoadingComponent from '@/components/Illustrations/LoadingComponent.vue'
 import ErrorComponent from '@/components/Illustrations/ErrorComponent.vue'
-import Txt from './Txt.vue'
+import TxtApp from './Txt.vue'
+import ImageApp from './Image.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -25,25 +26,29 @@ import utils from "@/utils"
 export default {
   components: {
     LoadingComponent, ErrorComponent,
-    Txt,
+    TxtApp, ImageApp,
   },
   data() {
     return {
       status: 'LoadingComponent',
       blob: null,
-      progress: 100,
+      progress: 0,
     }
   },
   created() {
-/*     utils.downloadBlobFromURL(this.fileURL, this.getProgress).then(blob => {
-      console.log(blob)
+    utils.downloadBlobFromURL(this.fileURL, this.getProgress).then(blob => {
       switch (blob.type) {
         case "text/plain": {
-          this.status = 'Txt'
+          this.status = 'TxtApp'
+          break
+        }
+        case "image/png": {
+          this.status = 'ImageApp'
+          break
         }
       }
       this.blob = blob
-    }).catch(this.error) */
+    }).catch(this.error)
   },
   methods: {
     getProgress(evt) {
