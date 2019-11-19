@@ -15,11 +15,6 @@ export default {
   created() {
     this.url = URL.createObjectURL(this.blob)
   },
-  computed: {
-    imgUrl() {
-      return `url("${this.url}")`
-    }
-  }
 }
 
 </script>
