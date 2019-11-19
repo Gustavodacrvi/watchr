@@ -29,6 +29,11 @@ export default {
     options() {
       return [
         {
+          name: this.l['View file'],
+          icon: 'file',
+          callback: () => {this.$emit('view')}
+        },
+        {
           name: this.l['Download file'],
           icon: 'import',
           callback: () => {this.$emit('download')}

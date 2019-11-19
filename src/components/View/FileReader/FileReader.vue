@@ -1,7 +1,7 @@
 
 <template>
   <div class="FileReader">
-    çalkjsdf
+    {{fileURL}}
   </div>
 </template>
 

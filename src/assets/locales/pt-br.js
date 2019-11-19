@@ -97,6 +97,8 @@ export default {
   "Invite": "Convidar",
   "Defer date": "Data de começo",
   "This user is already on this list.": "Esse usuário já está na lista.",
+  "An error occurred while downloading file": "Um erro ocorreu ao baixar o arquivo",
+  "View file": "Ver arquivo",
   "Accept invite": "Aceitar convite",
   "Add folder": "Adicionar pasta",
   "Folder added successfully!": "Pasta adicionada com sucesso!",
