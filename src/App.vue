@@ -3,6 +3,9 @@
     <transition name="fade-t">
       <Popup v-if="$store.getters.isPopupOpened" @close="closePopup"/>
     </transition>
+    <transition name="fade-t">
+      <FileReader v-if="fileURL"/>
+    </transition>
     <Toast/>
     <transition name="fade-t">
       <Menu v-show="isMenuOpened && !isDesktop"/>
@@ -33,11 +36,13 @@ import ToastVue from './components/Toast.vue'
 import MenuVue from './components/NavBar/Menu.vue'
 import MobileIcondropVue from './components/Popup/MobileIcondrop.vue'
 import FastSearchVue from './components/Popup/FastSearch.vue'
+import FileReader from './components/View/FileReader/FileReader.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
+    FileReader,
     NavBar: NavBarVue,
     Popup: PopupVue,
     Toast: ToastVue,
@@ -108,7 +113,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['fastSearch', 'user', 'allowNavHide']),
+    ...mapState(['fastSearch', 'fileURL', 'user', 'allowNavHide']),
     ...mapGetters(['isDesktop', 'isStandAlone', 'l']),
     hideNavbar() {
       const isAnonymous = this.user && this.user.isAnonymous

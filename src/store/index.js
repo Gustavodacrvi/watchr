@@ -90,6 +90,7 @@ const store = new Vuex.Store({
     isOnControl: false,
     fireBaseFirstLoaded: false,
     authState: false,
+    fileURL: null,
     firstFireLoad: false,
     fastSearch: false,
     toasts: [],
