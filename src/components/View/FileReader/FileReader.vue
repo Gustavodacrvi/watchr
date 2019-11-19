@@ -19,6 +19,7 @@ import ErrorComponent from '@/components/Illustrations/ErrorComponent.vue'
 import TxtApp from './Txt.vue'
 import ImageApp from './Image.vue'
 import AudioApp from './Audio.vue'
+import VideoApp from './Video.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -27,7 +28,7 @@ import utils from "@/utils"
 export default {
   components: {
     LoadingComponent, ErrorComponent,
-    TxtApp, ImageApp, AudioApp,
+    TxtApp, ImageApp, AudioApp, VideoApp,
   },
   data() {
     return {
@@ -38,7 +39,6 @@ export default {
   },
   created() {
     utils.downloadBlobFromURL(this.fileURL, this.getProgress).then(blob => {
-      console.log(blob)
       const t = blob.type
       if (t.includes('text/'))
         this.status = 'TxtApp'
@@ -46,6 +46,8 @@ export default {
         this.status = 'ImageApp'
       else if (t.includes('audio/'))
         this.status = 'AudioApp'
+      else if (t.includes('video/'))
+        this.status = 'VideoApp'
       this.blob = blob
     }).catch(this.error)
   },

@@ -12,7 +12,7 @@ export default {
       url: '',
     }
   },
-  mounted() {
+  created() {
     this.url = URL.createObjectURL(this.blob)
   },
   computed: {

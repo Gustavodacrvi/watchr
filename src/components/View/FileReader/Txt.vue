@@ -16,7 +16,7 @@ export default {
       txt: '',
     }
   },
-  mounted() {
+  created() {
     const reader = new FileReader()
     reader.onload = (evt) => {
       this.txt = evt.target.result

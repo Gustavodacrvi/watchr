@@ -1,9 +1,9 @@
 
 <template>
-  <div class="Audio">
-    <audio controls>
+  <div class="Video">
+    <video class="cont" controls>
       <source :src="url" :type="blob.type">
-    </audio>
+    </video>
   </div>
 </template>
 
@@ -13,16 +13,21 @@ export default {
   props: ['blob'],
   data() {
     return {
-      url: '',
+      url: ''
     }
   },
   created() {
     this.url = URL.createObjectURL(this.blob)
-  }
+  },
 }
 
 </script>
 
 <style scoped>
+
+.cont {
+  max-width: 100%;
+  max-height: 350px;
+}
 
 </style>
