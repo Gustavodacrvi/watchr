@@ -3,9 +3,8 @@
   <div class="FileReader" @click="hide">
     <div class="cb rb shadow" @click.stop>
       <transition name="fade-t">
-        <component :is="status" :hideTitle='true'/>
+        <component :is="status" :hideTitle='true' :blob="blob"/>
       </transition>
-      {{blob}}
     </div>
   </div>
 </template>
@@ -14,6 +13,7 @@
 
 import LoadingComponent from '@/components/Illustrations/LoadingComponent.vue'
 import ErrorComponent from '@/components/Illustrations/ErrorComponent.vue'
+import Txt from './Txt.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -22,6 +22,7 @@ import utils from "@/utils"
 export default {
   components: {
     LoadingComponent, ErrorComponent,
+    Txt,
   },
   data() {
     return {
@@ -31,7 +32,11 @@ export default {
   },
   created() {
     utils.downloadBlobFromURL(this.fileURL).then(blob => {
-      console.log(blob)
+      switch (blob.type) {
+        case "text/plain": {
+          this.status = 'Txt'
+        }
+      }
       this.blob = blob
     }).catch(this.error)
   },
@@ -72,6 +77,7 @@ export default {
 
 .cb {
   padding: 42px;
+  margin: 0 8px;
 }
 
 </style>
