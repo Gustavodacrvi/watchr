@@ -12,7 +12,7 @@
       <svg class='svg' viewBox="0 0 32 32" :width='getWidth'>
         <circle class='pie' :stroke-dasharray="`${progress} 100`" fill='currentColor' stroke='currentColor'></circle>
       </svg>
-      <div class="outline" :style='outlineStyle' style='border: .5px currentColor solid'></div>
+      <div class="outline" :style='outlineStyle' style='border: 1.5px currentColor solid'></div>
     </div>
     <input v-show="false"
       ref='file'
@@ -180,8 +180,8 @@ export default {
 
 .outline {
   position: absolute;
-  left: -4px;
-  top: -4px;
+  left: -5px;
+  top: -5px;
   border-radius: 100px;
 }
 
