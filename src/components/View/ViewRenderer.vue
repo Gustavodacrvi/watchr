@@ -128,10 +128,10 @@ export default {
     toggleCompleted() {
       this.showCompleted = !this.showCompleted
     },
-    saveDates(date) {
+    saveDates(calendar) {
       this.$store.dispatch('task/saveTasksById', {
         ids: this.selectedTasks,
-        task: {calendar: date},
+        task: {calendar},
       })
     },
     addTagToTasks(id) {
@@ -293,6 +293,51 @@ export default {
       } else {
         return [
           {
+            name: l['No date'],
+            icon: 'bloqued',
+            callback: () => this.saveDates(null)
+          },
+          {
+            name: l['Someday'],
+            icon: 'archive',
+            callback: () => this.saveDates({type: 'someday'})
+          },
+          {
+            name: l['Specific day'],
+            icon: 'calendar',
+            callback: () => {return {
+              comp: 'CalendarPicker',
+              content: {callback: this.saveDates}}},
+          },
+          {
+            name: l['Repeat weekly'],
+            icon: 'repeat',
+            callback: () => ({
+              comp: 'WeeklyPicker',
+              content: {callback: this.saveDates},
+            }),
+          },
+          {
+            name: l['Repeat periodically'],
+            icon: 'repeat',
+            callback: () => ({
+              comp: 'PeriodicPicker',
+              content: {callback: this.saveDates},
+            }),
+          },
+          {
+            type: 'hr',
+            name: 'division',
+          },
+          {
+            name: l['Add tags'],
+            icon: 'tag',
+            callback: () => {return {
+              search: true,
+              links: this.getIconDropOptionsTags,
+            }}
+          },
+          {
             icon: 'priority',
             name: l['Change priority of tasks'],
             callback: () => [
@@ -320,43 +365,6 @@ export default {
                 callback: () => savePri('High priority')
               }
             ]
-          },
-          {
-            name: l['Change date'],
-            icon: 'calendar',
-            callback: () => [
-              {
-              name: l['Specific day'],
-              icon: 'calendar',
-              callback: () => {return {
-                comp: 'CalendarPicker',
-                content: {callback: this.saveDates}}},
-              },
-              {
-                name: l['Repeat weekly'],
-                icon: 'repeat',
-                callback: () => ({
-                  comp: 'WeeklyPicker',
-                  content: {callback: this.saveDates},
-                }),
-              },
-              {
-                name: l['Repeat periodically'],
-                icon: 'repeat',
-                callback: () => ({
-                  comp: 'PeriodicPicker',
-                  content: {callback: this.saveDates},
-                }),
-              },
-            ],
-          },
-          {
-            name: l['Add tags'],
-            icon: 'tag',
-            callback: () => {return {
-              search: true,
-              links: this.getIconDropOptionsTags,
-            }}
           },
           {
             name: l['Add tasks to list'],
