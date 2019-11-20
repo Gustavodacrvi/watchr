@@ -20,6 +20,11 @@
         @click="addCompFile"
       />
     </div>
+    <transition name="progress-t">
+      <div v-if="savingTask" class="progress">
+        <div class="progress-line" :style="{width: `${uploadProgress}%`}"></div>
+      </div>
+    </transition>
     <input v-show="false"
       ref='file'
       type='file'
@@ -59,6 +64,7 @@ export default {
   },
   methods: {
     saveCompFiles() {
+      this.savingTask = true
       const files = this.task.files
       this.saveFiles(this.getFilesToRemove, this.addedFiles, this.content.id, this.content.storageFolder).then(res => {
         this.content.callback(files)
@@ -91,6 +97,8 @@ export default {
 .Files {
   width: 330px;
   margin: 0 20px;
+  position: relative;
+  box-sizing: border-box;
 }
 
 .files {
@@ -103,6 +111,35 @@ export default {
 
 .btn + .btn {
   margin-left: 4px;
+}
+
+.progress {
+  position: absolute;
+  bottom: -18px;
+  left: -20px;
+  width: 370px;
+  height: 3px;
+  margin-top: 4px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  overflow: hidden;
+  background-color: var(--dark);
+  transition: height .1s, margin-top .1s;
+}
+
+.progress-line {
+  background-color: var(--primary);
+  height: 100%;
+}
+
+.progress-t-enter, .progress-t-leave-to {
+  height: 0;
+  margin-top: 0;
+}
+
+.progress-t-leave, .progress-t-enter-to {
+  height: 3px;
+  margin-top: 3px;
 }
 
 </style>
