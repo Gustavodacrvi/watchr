@@ -1,5 +1,5 @@
 <template>
-  <div class="Task draggable" :class="[{fade: completed, showingIconDropContent: showingIconDropContent || isEditing}, platform]"
+  <div class="Task draggable" :class="[{fade: completed || isSomeday, showingIconDropContent: showingIconDropContent || isEditing}, platform]"
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
     @click="rootClick"
@@ -25,12 +25,12 @@
             @mousedown.stop
           >
             <Icon v-if="!showCheckedIcon" class="icon check-icon"
-              icon="box"
+              :icon="`box${isSomeday ? '-dash' : ''}`"
               :color='circleColor'
               width="18px"
             />
             <Icon v-else class="icon check-icon"
-              icon="box-check"
+              :icon="`box-check${isSomeday ? '-dash' : ''}`"
               :color='circleColor'
               width="18px"
             />
@@ -259,6 +259,10 @@ export default {
     },
     parsedName() {
       return this.getLinkString(this.escapeHTML(this.task.name))
+    },
+    isSomeday() {
+      const {c} = this.getTask
+      return c && c.type === 'someday'
     },
     urlRegex() {
       return /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/g
