@@ -135,10 +135,10 @@ export default {
             updateIds: saveOrder,
             onAddTask: (obj) => {
               const t = obj.task
-              if (!t.calendar)
+              if (!t.calendar) {
                 obj.task.calendar = this.getCalObjectByView(this.viewName, t.calendar)
+              }
               t.list = list.id
-              t.calendar = this.getSpecificDayCalendarObj(mom())
               this.$store.dispatch('task/addTask', {
                 ...t, 
               })

@@ -42,7 +42,6 @@
             <transition name="name-t">
               <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
                   <span v-if="calendarStr && !isToday" class="tag cb rb">{{ calendarStr }}</span>
-                  <span v-if="timeStr" class="tag cb rb">{{ timeStr }}</span>
                   <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
                   <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
                   <span v-html="parsedName"></span>
@@ -482,11 +481,6 @@ export default {
       const date = utils.getHumanReadableDate(nextEventAfterCompletion.format('Y-M-D'), this.l)
       if (!date || date === this.viewName) return null
       return this.l["Next event"] + ' ' + date
-    },
-    timeStr() {
-      const {t,c} = this.getTask
-      if (!c || !c.time) return null
-      return c.time
     },
     getTask() {
       return {
