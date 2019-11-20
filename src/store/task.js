@@ -294,6 +294,7 @@ export default {
       const calObj = (mom) => {
         return getters.getSpecificDayCalendarObj(mom)
       }
+
       switch (type) {
         case 'tag': {
           dispatch('addTagsToTasksById', {
@@ -323,6 +324,15 @@ export default {
             ids: taskIds,
             task: {
               calendar: calObj(mom().add(1, 'day')),
+            }
+          })
+          break
+        }
+        case 'Someday': {
+          dispatch('saveTasksById', {
+            ids: taskIds,
+            task: {
+              calendar: {type: 'someday'}
             }
           })
           break

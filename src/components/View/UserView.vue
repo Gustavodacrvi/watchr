@@ -100,6 +100,7 @@ export default {
       }
     },
     isSmart() {
+      if (this.viewType === 'search') return true
       if (this.viewType !== 'list') return false
       switch (this.value) {
         case 'Today': return true

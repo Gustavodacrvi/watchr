@@ -46,8 +46,8 @@ export default {
   computed: {
     icon() {return null},
     viewNameValue() {
+      if (this.viewType === 'search') return this.l["Search"]
       if (this.isSmart) return this.l[this.viewName]
-      return this.l['Search']
     },
     getTasks() {
       if (this.viewType === 'search')

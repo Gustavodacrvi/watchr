@@ -40,7 +40,7 @@
       />
     </div>
     <transition name="fade-t">
-      <div v-if="hasAtLeastOneSomeday && !showSomeday" @click="showSomeday = true">
+      <div v-if="hasAtLeastOneSomeday && !showSomeday && !isSearch" @click="showSomeday = true">
         <AppButton type="dark" :value="l['Show someday tasks...']"/>
       </div>
     </transition>
@@ -163,6 +163,9 @@ export default {
       l: 'l',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
+    isSearch() {
+      return this.isSmart && this.viewNameValue === "Search"
+    },
     getActiveTags() {
       const arr = this.activeTags.slice()
       if (this.viewType === 'tag' && !arr.includes(this.viewName))
@@ -410,10 +413,11 @@ export default {
     },
     getFilterBySomeday() {
       let ts = this.sortAndFilterTasks.slice()
+      if (this.isSearch || this.showSomeday) return ts
 
       const arr = []
       for (const t of ts)
-        if (this.showSomeday || !t.calendar || t.calendar.type !== 'someday')
+        if (!t.calendar || t.calendar.type !== 'someday')
           arr.push(t)
 
       return arr

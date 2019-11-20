@@ -275,7 +275,7 @@ export default {
     },
     numberOfTasks(link) {
       const viewName = link.name
-      if (viewName === 'Upcoming')
+      if (viewName === 'Upcoming' || viewName === 'Someday')
         return {
           total: 0,
           notCompleted: 0,

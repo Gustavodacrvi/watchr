@@ -211,7 +211,7 @@ export default {
         this.isDragging = false
         removeTaskOnHoverFromAppnavElements()
         if (move) {
-          const specialTypes = ['Today', 'Completed', 'Tomorrow']
+          const specialTypes = ['Today', 'Completed', 'Tomorrow', 'Someday']
           if (specialTypes.includes(move.elId))
             move.type = move.elId
   
