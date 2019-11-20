@@ -13,7 +13,7 @@
       :mapProgress='getListProgress'
       :mapNumbers="(tasks) => tasks"
       :mapHelpIcon='getListIcon'
-      :mapBorder='mapBorder'
+      :mapString='mapString'
       :onSortableAdd="rootAdd"
       @buttonAdd='buttonAdd'
       @update='update'
@@ -46,7 +46,7 @@
           :mapProgress='getListProgress'
           :mapNumbers="(tasks) => tasks"
           :mapHelpIcon='getListIcon'
-          :mapBorder='mapBorder'
+          :mapString='mapString'
           :onSortableAdd='betweenFolders'
 
           @is-moving='v => isDragginInnerList = v'
@@ -173,17 +173,18 @@ export default {
       const arr = []
       if (list.deferDate)
         arr.push('sleep')
-      if (list.deadline)
-        arr.push('deadline')
       if (list.calendar)
         arr.push('repeat')
 
       return arr.length > 0 ? arr : undefined
     },
-    mapBorder(list) {
-      if (list.deadline && mom().isSameOrAfter(mom(list.deadline, 'Y-M-D')))
-        return 'var(--red)'
-      return 'none'
+    mapString(list) {
+      if (!list.deadline) return null
+      const isOverdue = list.deadline && mom().isAfter(mom(list.deadline, 'Y-M-D'), 'day')
+      return {
+        name: isOverdue ? this.l['overdue'] : `${mom(list.deadline, 'Y-M-D').diff(mom(), 'd') + 1} ${this.l['days left']}`,
+        color: isOverdue ? 'var(--red)' : ''
+      }
     },
   },
   computed: {

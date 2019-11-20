@@ -83,6 +83,7 @@ export default {
   "Add tags": "Add tags",
   "An error occurred while downloading file": "An error occurred while downloading file",
   "View file": "View file",
+  "overdue": 'overdue',
   "Repeat": "Repeat",
   "Add folder": "Add folder",
   "Folder added successfully!": "Folder added successfully!",

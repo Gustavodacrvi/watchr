@@ -100,6 +100,7 @@ export default {
   "An error occurred while downloading file": "Um erro ocorreu ao baixar o arquivo",
   "View file": "Ver arquivo",
   "Accept invite": "Aceitar convite",
+  "overdue": 'atrasada',
   "Add folder": "Adicionar pasta",
   "Folder added successfully!": "Pasta adicionada com sucesso!",
   "Toggle folder": "Mostrar/esconder pasta",
