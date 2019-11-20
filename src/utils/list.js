@@ -92,7 +92,7 @@ export default {
             callback: () => {return {
               comp: 'CalendarPicker',
               content: {callback: date => {
-              if (date.type && date.type !== 'specific') {
+              if (date.type && date.type !== 'specific' && date.type !== 'someday') {
                 dispatch('list/saveList', {
                   id: listId, calendar: date,
                 })}
