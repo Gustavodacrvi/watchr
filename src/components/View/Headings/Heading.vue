@@ -14,12 +14,6 @@
           <div class="header">
             <h3 class="name" :style="{color}">{{ name }}</h3>
             <div class="icons" @click.stop>
-              <transition name='fade-t'>
-                <Icon v-if="header.autoHide" class="icon"
-                  icon='archive'
-                  @click="$emit('option-click', 'archive')"
-                />
-              </transition>
               <IconDrop class="icon"
                 handle='settings-h'
                 :options='options'

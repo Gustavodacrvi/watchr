@@ -29,13 +29,6 @@ export default {
         },
       },
       {
-        name: l['Hide heading'],
-        icon: 'archive',
-        callback: () => dispatch('list/toggleHeadingAuthide', {
-          listId, name: h.name,
-        })
-      },
-      {
         name: l['Uncomplete tasks'],
         icon: 'circle',
         callback: () => dispatch('list/uncompleteHeadingTasks', {

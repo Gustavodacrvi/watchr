@@ -296,16 +296,6 @@ export default {
       })
     },
 
-    toggleHeadingAuthide({getters}, {listId, name}) {
-      const list = getters.getListsById([listId])[0]
-      const heads = list.headings.slice()
-      const i = heads.findIndex(el => el.name === name)
-
-      heads[i].autoHide = !heads[i].autoHide
-      listRef(listId).update({
-        headings: heads,
-      })
-    },
     uncompleteHeadingTasks({getters}, {name, listId, savedTasks}) {
       const list = getters.getListsById([listId])[0]
       const batch = fire.batch()

@@ -183,7 +183,6 @@ export default {
               return tasks
             },
             id: h.name,
-            autoHide: h.autoHide,
             optionClick: (iconName) => {
               switch (iconName) {
                 case 'archive': {

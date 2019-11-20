@@ -26,7 +26,7 @@
 
         :tasks='getFilterCompletedTasks'
         :viewName='viewName'
-        :headings='filteredHeadingsOptions'
+        :headings='headingsOptions'
         :addTask='addTask'
         :headingEdit='headingEdit'
         :showCompleted='showCompleted'
@@ -39,11 +39,6 @@
         @add-heading="addHeading"
       />
     </div>
-    <transition name="fade-t">
-      <div v-if="hideHeadings && hasAutoHideHeadings" @click="hideHeadings = false">
-        <AppButton type="dark" :value="l['Show hided headings...']"/>
-      </div>
-    </transition>
     <div style="height: 500px"></div>
     <ActionButtons :showHeader='showHeader'/>
   </div>
@@ -78,7 +73,6 @@ export default {
       showingListSelection: false,
       activeTags: [],
       activeList: null,
-      hideHeadings: true,
     }
   },
   created() {
@@ -169,10 +163,6 @@ export default {
       l: 'l',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
-    hasAutoHideHeadings() {
-      const hs = this.headingsOptions
-      return hs.length > 0 && hs.some(el => el.autoHide)
-    },
     getActiveTags() {
       const arr = this.activeTags.slice()
       if (this.viewType === 'tag' && !arr.includes(this.viewName))
@@ -292,11 +282,6 @@ export default {
           },
         ]
         if (this.showCompleted) opt[3].name = l['Hide completed']
-        if (this.prefix === 'list') opt.push(          {
-            name: l['Hide autohide headings'],
-            icon: 'archive',
-            callback: () => this.hideHeadings = true
-          })
         if (this.headerOptions && this.headerOptions.length > 0) {
           opt.unshift({
             type: 'hr',
@@ -421,17 +406,7 @@ export default {
 
       return notCompleted
     },
-    filteredHeadingsOptions() {
-      if (this.hideHeadings)
-        return this.headingsOptions.filter(el => !el.autoHide)
-      return this.headingsOptions
-    },
   },
-  watch: {
-    viewNameValue() {
-      this.hideHeadings = true
-    }
-  }
 }
 
 </script>
