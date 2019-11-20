@@ -654,12 +654,8 @@ export default {
 }
 
 .task-tag {
-  margin-left: 6px;
+  margin-left: 2px;
   transform: scale(.8,.8);
-}
-
-.task-tag + .task-tag {
-  margin-left: -8px;
 }
 
 .sortable-ghost .cont-wrapper {

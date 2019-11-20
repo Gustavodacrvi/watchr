@@ -6,7 +6,7 @@
       type='text'
       autocomplete='off'
       :value='str'
-      @input='v => str = v.target.value.trim()'
+      @input='v => str = v.target.value'
       @blur="blur"
       @focus="onFocus"
       @keydown="keydown"

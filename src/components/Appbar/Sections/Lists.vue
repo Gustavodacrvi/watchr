@@ -6,7 +6,7 @@
       iconColor='var(--red)'
       :disableSelection='true'
       :enableSort="true"
-      :illustration="illustration"
+      :illustration="rootIllustration"
       :list="rootLists"
       :active="active"
       :viewType="viewType"
@@ -120,7 +120,7 @@ export default {
         s.transitionDuration = '.15s'
         h.height = '35px'
         s.opacity = '1'
-        s.margin = '8px 0'
+        s.margin = '12px 0'
       })
     },
     leave(el) {
@@ -198,6 +198,9 @@ export default {
       sortedFolders: 'folder/sortedFolders',
       getListsByFolderId: 'folder/getListsByFolderId',
     }),
+    rootIllustration() {
+      return (this.rootLists.length === 0 && this.sortedFolders.length === 0) ? this.illustration : null
+    },
     sortedLists() {
       return this.$store.getters['list/sortedLists']
     },

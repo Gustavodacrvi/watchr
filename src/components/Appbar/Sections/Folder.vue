@@ -48,8 +48,8 @@ export default {
   },
   methods: {
     bindOptions() {
-      const el = this.$el.getElementsByClassName('link-wrapper')[0]
-      utils.bindOptionsToEventListener(this.$el, this.options, this.$parent)
+      const el = this.$el.getElementsByClassName('header')[0]
+      utils.bindOptionsToEventListener(el, this.options, this.$parent)
     },
     toggle() {
       this.showing = !this.showing
@@ -110,7 +110,7 @@ export default {
 <style scoped>
 
 .Folder {
-  margin: 8px 0;
+  margin: 12px 0;
 }
 
 .header {

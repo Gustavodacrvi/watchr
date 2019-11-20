@@ -14,7 +14,7 @@
       @enter='enter'
       @leave='leave'
       tag="div"
-      :class="{dontHaveElements: list.length === 0}"
+      :class="{dontHaveElements: list.length === 0 && illustration}"
 
       data-name='appnav-renderer'
     >

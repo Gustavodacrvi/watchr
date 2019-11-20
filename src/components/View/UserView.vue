@@ -123,7 +123,7 @@ export default {
 <style scoped>
 
 .UserView {
-  margin: 8px 60px;
+  margin: 8px 10px;
   margin-right: 0;
   display: flex;
   justify-content: center;
@@ -136,8 +136,8 @@ export default {
 }
 
 .nav-shadow {
-  flex-basis: 300px;
-  max-width: 300px;
+  flex-basis: 345px;
+  max-width: 345px;
   flex-grow: 0;
   flex-shrink: 0;
   transition-duration: .6s;
@@ -146,8 +146,8 @@ export default {
 
 .nav {
   position: fixed;
-  width: 300px;
-  left: 60px;
+  width: 345px;
+  left: 15px;
   z-index: 4;
 }
 

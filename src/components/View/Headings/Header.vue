@@ -120,6 +120,9 @@ export default {
     window.removeEventListener('click', this.hide)
   },
   methods: {
+    hide() {
+      this.editing = false
+    },
     saveNotes(notes) {
       this.$emit('save-notes', notes)
     },

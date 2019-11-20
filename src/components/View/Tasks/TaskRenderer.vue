@@ -329,7 +329,7 @@ export default {
       s.opacity = 1
       s.marginBottom = '10px'
       s.padding = '0 6px'
-      s.borderBottom = '1px solid var(--gray)'
+      s.borderBottom = '1px solid var(--light-gray)'
     },
     headingsLeave(el) {
       const header = el.getElementsByClassName('header-wrapper')[0]
