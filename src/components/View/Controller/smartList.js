@@ -60,7 +60,7 @@ export default {
     },
     tasksOrder() {
       let o = this.viewOrders[this.viewName]
-      if (o && o.tasks) o = this.viewOrders[this.viewName].tasks
+      if (o && o.tasks) return this.viewOrders[this.viewName].tasks
       return []
     },
     headingsOptions() {

@@ -117,11 +117,6 @@ export default {
                       saveOrder(tasks.map(el => el.id))
                     },
                   },
-                  {
-                    name: 'Sort by date',
-                    icon: 'calendar',
-                    callback: () => console.log('sort tasks by date'),
-                  }
                 ]
               },
               {
