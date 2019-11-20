@@ -205,6 +205,7 @@ export default {
       const obj = {
         Today: 'star',
         Tomorrow: 'sun',
+        Someday: 'archive',
         Inbox: 'inbox',
         Upcoming: 'calendar',
         Completed: 'circle-check',
@@ -216,9 +217,10 @@ export default {
         const obj = {
           Today: 'var(--yellow)',
           Tomorrow: 'var(--orange)',
+          Someday: 'var(--brown)',
           Inbox: 'var(--primary)',
           Upcoming: 'var(--green)',
-          Completed: 'var(--brown)',
+          Completed: 'var(--olive)',
         }
         const color = obj[this.viewName]
         if (!color) return 'var(--red)'

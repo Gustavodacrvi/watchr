@@ -6,7 +6,6 @@
       iconColor='var(--red)'
       :disableSelection='true'
       :enableSort="true"
-      :illustration="rootIllustration"
       :list="rootLists"
       :active="active"
       :viewType="viewType"
@@ -177,13 +176,13 @@ export default {
       return arr.length > 0 ? arr : undefined
     },
     mapString(list) {
-      if (list.deadline && !list.calendar) {
+      if (list.deadline && !(list.calendar && list.calendar.type !== 'someday')) {
         const isOverdue = list.deadline && mom().isAfter(mom(list.deadline, 'Y-M-D'), 'day')
         return {
           name: isOverdue ? this.l['overdue'] : `${mom(list.deadline, 'Y-M-D').diff(mom(), 'd') + 1} ${this.l['days left']}`,
           color: isOverdue ? 'var(--red)' : ''
         }
-      } else if (list.calendar) {
+      } else if (list.calendar && list.calendar.type !== 'someday') {
         const { nextCalEvent } = utils.getCalendarObjectData(list.calendar, mom())
         return {
           name: `${mom(nextCalEvent.format('Y-M-D'), 'Y-M-D').diff(mom(), 'd') + 1} ${this.l['days left']}`,
@@ -205,22 +204,8 @@ export default {
       sortedFolders: 'folder/sortedFolders',
       getListsByFolderId: 'folder/getListsByFolderId',
     }),
-    rootIllustration() {
-      return (this.rootLists.length === 0 && this.sortedFolders.length === 0) ? this.illustration : null
-    },
     sortedLists() {
       return this.$store.getters['list/sortedLists']
-    },
-    illustration() {
-      let descr = this.l["You can add one by dropping the plus floating button in this region."]
-      if (!this.isDesktop)
-        descr = this.l["You can add one by clicking on the right corner icon."]
-      return {
-        descr,
-        name: 'List',
-        title: this.l["You don't have any lists."],
-        width: '80px'
-      }
     },
     listsWithFolders() {
       const lists = this.filteredByRepeat
@@ -242,7 +227,7 @@ export default {
     filteredByRepeat() {
       if (!this.showRepeat)
         return this.filteredByDefer.filter(l => {
-          if (!l.calendar) return true
+          if (!l.calendar || l.calendar.type === 'someday') return true
           const { lastCallEvent } = utils.getCalendarObjectData(l.calendar, mom())
 
           const tasks = this.getTasksByListId(this.tasks, l.id)

@@ -26,7 +26,7 @@
 
         :tasks='getFilterCompletedTasks'
         :viewName='viewName'
-        :headings='filteredHeadingsOptions'
+        :headings='headingsOptions'
         :addTask='addTask'
         :headingEdit='headingEdit'
         :showCompleted='showCompleted'
@@ -40,8 +40,8 @@
       />
     </div>
     <transition name="fade-t">
-      <div v-if="hideHeadings && hasAutoHideHeadings" @click="hideHeadings = false">
-        <AppButton type="dark" :value="l['Show hided headings...']"/>
+      <div v-if="hasAtLeastOneSomeday && !showSomeday && !isSearch && !isSomeday" @click="showSomeday = true">
+        <AppButton type="dark" :value="l['Show someday tasks...']"/>
       </div>
     </transition>
     <div style="height: 500px"></div>
@@ -78,7 +78,7 @@ export default {
       showingListSelection: false,
       activeTags: [],
       activeList: null,
-      hideHeadings: true,
+      showSomeday: false,
     }
   },
   created() {
@@ -125,19 +125,13 @@ export default {
       this.updateIds(tasks.map(el => el.id))
     },
 
-    sortByDate() {
-      // TODO
-      /* let tasks = this.getTasks.slice()
-      tasks = utilsTask.sortTasksByDate(tasks)
-      this.updateIds(tasks.map(el => el.id)) */
-    },
     toggleCompleted() {
       this.showCompleted = !this.showCompleted
     },
-    saveDates(date) {
+    saveDates(calendar) {
       this.$store.dispatch('task/saveTasksById', {
         ids: this.selectedTasks,
-        task: {calendar: date},
+        task: {calendar},
       })
     },
     addTagToTasks(id) {
@@ -169,9 +163,11 @@ export default {
       l: 'l',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
-    hasAutoHideHeadings() {
-      const hs = this.headingsOptions
-      return hs.length > 0 && hs.some(el => el.autoHide)
+    isSearch() {
+      return this.isSmart && this.viewNameValue === "Search"
+    },
+    isSomeday() {
+      return this.isSmart && this.viewName === 'Someday'
     },
     getActiveTags() {
       const arr = this.activeTags.slice()
@@ -292,11 +288,6 @@ export default {
           },
         ]
         if (this.showCompleted) opt[3].name = l['Hide completed']
-        if (this.prefix === 'list') opt.push(          {
-            name: l['Hide autohide headings'],
-            icon: 'archive',
-            callback: () => this.hideHeadings = true
-          })
         if (this.headerOptions && this.headerOptions.length > 0) {
           opt.unshift({
             type: 'hr',
@@ -307,6 +298,51 @@ export default {
         return opt
       } else {
         return [
+          {
+            name: l['No date'],
+            icon: 'bloqued',
+            callback: () => this.saveDates(null)
+          },
+          {
+            name: l['Someday'],
+            icon: 'archive',
+            callback: () => this.saveDates({type: 'someday'})
+          },
+          {
+            name: l['Specific day'],
+            icon: 'calendar',
+            callback: () => {return {
+              comp: 'CalendarPicker',
+              content: {callback: this.saveDates}}},
+          },
+          {
+            name: l['Repeat weekly'],
+            icon: 'repeat',
+            callback: () => ({
+              comp: 'WeeklyPicker',
+              content: {callback: this.saveDates},
+            }),
+          },
+          {
+            name: l['Repeat periodically'],
+            icon: 'repeat',
+            callback: () => ({
+              comp: 'PeriodicPicker',
+              content: {callback: this.saveDates},
+            }),
+          },
+          {
+            type: 'hr',
+            name: 'division',
+          },
+          {
+            name: l['Add tags'],
+            icon: 'tag',
+            callback: () => {return {
+              search: true,
+              links: this.getIconDropOptionsTags,
+            }}
+          },
           {
             icon: 'priority',
             name: l['Change priority of tasks'],
@@ -337,43 +373,6 @@ export default {
             ]
           },
           {
-            name: l['Change date'],
-            icon: 'calendar',
-            callback: () => [
-              {
-              name: l['Specific day'],
-              icon: 'calendar',
-              callback: () => {return {
-                comp: 'CalendarPicker',
-                content: {callback: this.saveDates}}},
-              },
-              {
-                name: l['Repeat weekly'],
-                icon: 'repeat',
-                callback: () => ({
-                  comp: 'WeeklyPicker',
-                  content: {callback: this.saveDates},
-                }),
-              },
-              {
-                name: l['Repeat periodically'],
-                icon: 'repeat',
-                callback: () => ({
-                  comp: 'PeriodicPicker',
-                  content: {callback: this.saveDates},
-                }),
-              },
-            ],
-          },
-          {
-            name: l['Add tags'],
-            icon: 'tag',
-            callback: () => {return {
-              search: true,
-              links: this.getIconDropOptionsTags,
-            }}
-          },
-          {
             name: l['Add tasks to list'],
             icon: 'tasks',
             callback: () => {return {
@@ -396,7 +395,7 @@ export default {
       }
     },
     sortAndFilterTasks() {
-      let ts = this.tasks
+      let ts = this.tasks.slice()
       const order = this.tasksOrder
 
       if (order)
@@ -406,8 +405,28 @@ export default {
 
       return utilsTask.filterTasksByViewRendererFilterOptions(ts, this.getActiveTagIds, this.getActiveListId)
     },
+    hasAtLeastOneSomeday() {
+      let ts = this.tasks.slice()
+      for (const t of ts) {
+        if (t.calendar && t.calendar.type === 'someday') {
+          return true
+        }
+      }
+      return false
+    },
+    getFilterBySomeday() {
+      let ts = this.sortAndFilterTasks.slice()
+      if (this.isSomeday || this.showSomeday || this.isSearch) return ts
+
+      const arr = []
+      for (const t of ts)
+        if (!t.calendar || t.calendar.type !== 'someday')
+          arr.push(t)
+
+      return arr
+    },
     getFilterCompletedTasks() {
-      let ts = this.sortAndFilterTasks
+      let ts = this.getFilterBySomeday.slice()
       let notCompleted = []
       if (this.showCompleted) return ts
       
@@ -416,20 +435,16 @@ export default {
       if (notCompleted.length === 0)
         return ts.filter(task => {
           if (!task.calendar) return true
-          return task.calendar.type === 'specific'
+          const type = task.calendar.type
+          return type === 'specific' || type === 'someday'
         })
 
       return notCompleted
     },
-    filteredHeadingsOptions() {
-      if (this.hideHeadings)
-        return this.headingsOptions.filter(el => !el.autoHide)
-      return this.headingsOptions
-    },
   },
   watch: {
     viewNameValue() {
-      this.hideHeadings = true
+      this.showSomeday = false
     }
   }
 }

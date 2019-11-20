@@ -3,6 +3,10 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="10.563px" height="10.5px" viewBox="0 0 10.563 10.5" enable-background="new 0 0 10.563 10.5" xml:space="preserve">
-<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M10.063,9
-	c0,0.552-0.448,1-1,1H1.5c-0.552,0-1-0.448-1-1V1.5c0-0.552,0.448-1,1-1h7.563c0.552,0,1,0.448,1,1V9z"/>
+<polyline fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
+	2.407,4.815 4.323,7.028 8.156,3.472 "/>
+<g>
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2.0214,2.0214" d="M10.063,9
+		c0,0.552-0.448,1-1,1H1.5c-0.552,0-1-0.448-1-1V1.5c0-0.552,0.448-1,1-1h7.563c0.552,0,1,0.448,1,1V9z"/>
+</g>
 </svg>

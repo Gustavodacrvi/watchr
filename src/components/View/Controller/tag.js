@@ -52,13 +52,7 @@ export default {
       return []
     },
     illustration() {
-      const l = this.l
-      return {
-        name: 'SadTag',
-        title: l["This tag doesn't have any tasks."],
-        descr: l["How about adding one using the floating button?"],
-        width: '150px',
-      }
+      return 'tags'
     },
     headerOptions() {
       if (this.viewTag)

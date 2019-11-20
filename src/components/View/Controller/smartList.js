@@ -46,8 +46,8 @@ export default {
   computed: {
     icon() {return null},
     viewNameValue() {
+      if (this.viewType === 'search') return this.l["Search"]
       if (this.isSmart) return this.l[this.viewName]
-      return this.l['Search']
     },
     getTasks() {
       if (this.viewType === 'search')
@@ -71,6 +71,9 @@ export default {
           if (this.hasOverdueTasks) return this.todayHeadingsOptions
           return this.getListHeadingsByView('Today')
         }
+        case 'Someday': {
+          return this.getListHeadingsByView('Someday')
+        }
         case 'Completed': {
           return this.completedHeadingsOptions
         }
@@ -82,38 +85,12 @@ export default {
       const n = this.viewName
       if (this.isSmart) {
         switch (n) {
-          case 'Today':
-            return {
-              name: 'HappyFace',
-              title: l['Enjoy the rest of the day'],
-              descr: l['You already completed everything here!'],
-            }
-          case 'Tomorrow':
-            return {
-              name: 'Sleep',
-              title: l['Nothing here...'],
-              descr: l['You have not tasks for tomorrow.'],
-              width: '150px'
-            }
-          case 'Inbox':
-            return {
-              name: 'EmptyInbox',
-              title: l["Congrats! Your Inbox is empty."],
-              width: '150px',
-            }
-          case 'Upcoming':
-            return {
-              name: 'EmptyCalendar',
-              title: l["You don't have any upcoming tasks!"],
-              width: '150px',
-            }
-          case 'Completed':
-            return {
-              name: 'CleanCheck',
-              title: l["Hurray! Everything is clean here!"],
-              descr: l["You don't have any completed tasks, how about completing some?"],
-              width: '150px',
-            }
+          case 'Today': return 'star'
+          case 'Tomorrow': return 'sun'
+          case 'Inbox': return 'inbox'
+          case 'Upcoming': return 'calendar'
+          case 'Completed': return 'circle-check'
+          case 'Someday': return 'archive'
         }
       }
     },
@@ -121,7 +98,7 @@ export default {
       return []
     },
     headingEdit() {
-      if (this.viewName === "Today" || this.viewName === "Tomorrow")
+      if (this.viewName === "Today" || this.viewName === "Tomorrow" || this.viewName === 'Someday')
         return {
           excludeNames: this.lists.map(el => el.name),
           errorToast: "There's already another list with this name."

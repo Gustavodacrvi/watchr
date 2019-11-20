@@ -10,24 +10,13 @@
 
 <script>
 
-import HappyFace from './HappyFace.vue'
-import Sleep from './Sleep.vue'
 import Error from './Error.vue'
 import Logo from './Logo.vue'
-import SadTag from './SadTag.vue'
-import EmptyInbox from './EmptyInbox.vue'
-import EmptyCalendar from './EmptyCalendar.vue'
-import CleanCheck from './CleanCheck.vue'
-import MultipleTags from './States/MultipleTags.vue'
-import List from './States/List.vue'
-import EmptyList from './States/EmptyList.vue'
 
 export default {
   props: ['name', 'title', 'descr', 'width'],
   components: {
-    HappyFace, Sleep, Error, Logo, SadTag,
-    EmptyInbox, EmptyCalendar, CleanCheck,
-    MultipleTags, List, EmptyList,
+    Error, Logo,
   },
   computed: {
     getWidth() {

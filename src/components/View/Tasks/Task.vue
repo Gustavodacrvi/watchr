@@ -1,5 +1,5 @@
 <template>
-  <div class="Task draggable" :class="[{fade: completed, showingIconDropContent: showingIconDropContent || isEditing}, platform]"
+  <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing}, platform]"
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
     @click="rootClick"
@@ -25,12 +25,12 @@
             @mousedown.stop
           >
             <Icon v-if="!showCheckedIcon" class="icon check-icon"
-              icon="box"
+              :icon="`box${isSomeday ? '-dash' : ''}`"
               :color='circleColor'
               width="18px"
             />
             <Icon v-else class="icon check-icon"
-              icon="box-check"
+              :icon="`box-check${isSomeday ? '-dash' : ''}`"
               :color='circleColor'
               width="18px"
             />
@@ -100,7 +100,7 @@ import mom from 'moment'
 
 export default {
   props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'
-  , 'taskCompletionCompareDate', 'isDragging', 'isScrolling'],
+  , 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -260,6 +260,10 @@ export default {
     parsedName() {
       return this.getLinkString(this.escapeHTML(this.task.name))
     },
+    isSomeday() {
+      const {c} = this.getTask
+      return c && c.type === 'someday'
+    },
     urlRegex() {
       return /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/g
     },
@@ -317,46 +321,39 @@ export default {
       const l = this.l
       const arr = [
         {
-          name: l['Edit task'],
-          icon: 'pen',
-          callback: () => this.isEditing = true
+          name: l['No date'],
+          icon: 'bloqued',
+          callback: () => this.saveCalendarDate(null)
         },
         {
-          name: l['Copy task'],
-          icon: 'copy',
-          callback: () => dispatch('task/copyTask', this.task)
-        },
-        {
-          name: l['Move to list'],
-          icon: 'tasks',
-          callback: () => this.listOptions
-        },
-        {
-          name: l['Convert to list'],
-          icon: 'tasks',
-          callback: () => dispatch('task/convertToList', this.task)
-        },
-        {
-          name: l['Repeat task'],
-          icon: 'repeat',
-          callback: () => [
+          type: 'optionsList',
+          name: l['Schedule'],
+          options: [
             {
-              name: l['Repeat weekly'],
-              icon: 'repeat',
-              callback: () => ({
-                comp: 'WeeklyPicker',
-                content: {callback: this.saveCalendarDate},
-              }),
+              icon: 'star',
+              id: 'd',
+              callback: () => this.saveDate(mom().format('Y-M-D')),
             },
             {
-              name: l['Repeat periodically'],
-              icon: 'repeat',
-              callback: () => ({
-                comp: 'PeriodicPicker',
-                content: {callback: this.saveCalendarDate},
-              }),
+              icon: 'sun',
+              id: 'çljk',
+              callback: () => this.saveDate(mom().add(1, 'day').format('Y-M-D')),
             },
-          ],
+            {
+              icon: 'archive',
+              id: 'açlkjsdffds',
+              callback: () => this.saveCalendarDate({
+                type: 'someday',
+              })
+            },
+            {
+              icon: 'calendar',
+              id: 'çljkasdf',
+              callback: () => {return {
+                comp: "CalendarPicker",
+                content: {callback: this.saveCalendarDate}}},
+            },
+          ]
         },
         {
           type: 'optionsList',
@@ -389,27 +386,41 @@ export default {
           ],
         },
         {
-          type: 'optionsList',
-          name: l['Schedule'],
-          options: [
+          name: l['Repeat task'],
+          icon: 'repeat',
+          callback: () => [
             {
-              icon: 'star',
-              id: 'd',
-              callback: () => this.saveDate(mom().format('Y-M-D')),
+              name: l['Repeat weekly'],
+              icon: 'repeat',
+              callback: () => ({
+                comp: 'WeeklyPicker',
+                content: {callback: this.saveCalendarDate},
+              }),
             },
             {
-              icon: 'sun',
-              id: 'çljk',
-              callback: () => this.saveDate(mom().add(1, 'day').format('Y-M-D')),
+              name: l['Repeat periodically'],
+              icon: 'repeat',
+              callback: () => ({
+                comp: 'PeriodicPicker',
+                content: {callback: this.saveCalendarDate},
+              }),
             },
-            {
-              icon: 'calendar',
-              id: 'çljkasdf',
-              callback: () => {return {
-                comp: "CalendarPicker",
-                content: {callback: this.saveCalendarDate}}},
-            },
-          ]
+          ],
+        },
+        {
+          name: l['Copy task'],
+          icon: 'copy',
+          callback: () => dispatch('task/copyTask', this.task)
+        },
+        {
+          name: l['Move to list'],
+          icon: 'tasks',
+          callback: () => this.listOptions
+        },
+        {
+          name: l['Convert to list'],
+          icon: 'tasks',
+          callback: () => dispatch('task/convertToList', this.task)
         },
         {
           name: l['Delete task'],
@@ -419,7 +430,7 @@ export default {
         }
       ]
       if (this.task.list) {
-        arr.splice(2, 0, {
+        arr.splice(5, 0, {
           name: l["Go to list"],
           icon: 'tasks',
           callback: () => this.$router.push('/user?list='+this.savedLists.find(el => el.id === t.list).name)
@@ -461,9 +472,14 @@ export default {
       if (!savedList || (savedList.name === this.viewName)) return null
       return savedList.name
     },
+    fade() {
+      if (this.completed) return true
+      const isOnSomedaySmartView = this.isSmart && this.viewName === 'Someday'
+      return this.isSomeday && !isOnSomedaySmartView
+    },
     calendarStr() {
       const {t,c} = this.getTask
-      if (!c || this.viewName === 'Upcoming') return null
+      if ((!c || c.type === 'someday') || this.viewName === 'Upcoming') return null
       const str = utils.parseCalendarObjectToString(c, this.l)
       if (str === this.viewNameValue) return null
       return str
@@ -476,7 +492,7 @@ export default {
     },
     nextCalEvent() {
       const {t,c} = this.getTask
-      if (!c || (c.type !== 'periodic' && c.type !== 'weekly')) return null
+      if ((!c || c.type === 'someday') || (c.type !== 'periodic' && c.type !== 'weekly')) return null
       const {nextEventAfterCompletion} = utilsTask.taskData(t, mom())
       const date = utils.getHumanReadableDate(nextEventAfterCompletion.format('Y-M-D'), this.l)
       if (!date || date === this.viewName) return null

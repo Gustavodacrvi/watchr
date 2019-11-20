@@ -100,10 +100,12 @@ export default {
       }
     },
     isSmart() {
+      if (this.viewType === 'search') return true
       if (this.viewType !== 'list') return false
       switch (this.value) {
         case 'Today': return true
         case 'Upcoming': return true
+        case 'Someday': return true
         case 'Tomorrow': return true
         case 'Completed': return true
         case 'Inbox': return true

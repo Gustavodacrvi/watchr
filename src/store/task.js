@@ -195,7 +195,7 @@ export default {
 
       for (const t of tasks) {
         let calendar = t.calendar
-        if (calendar) {
+        if (calendar && calendar.type !== 'someday') {
           const {nextEventAfterCompletion} = utilsTask.taskData(t, mom())
           calendar.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
           if (calendar.times) calendar.times -= 1
@@ -294,6 +294,7 @@ export default {
       const calObj = (mom) => {
         return getters.getSpecificDayCalendarObj(mom)
       }
+
       switch (type) {
         case 'tag': {
           dispatch('addTagsToTasksById', {
@@ -323,6 +324,15 @@ export default {
             ids: taskIds,
             task: {
               calendar: calObj(mom().add(1, 'day')),
+            }
+          })
+          break
+        }
+        case 'Someday': {
+          dispatch('saveTasksById', {
+            ids: taskIds,
+            task: {
+              calendar: {type: 'someday'}
             }
           })
           break

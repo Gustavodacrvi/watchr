@@ -30,6 +30,12 @@
             <span class="name">{{ l['Tomorrow'] }}</span>
           </span>
         </span>
+        <span class="option cursor" @click="someday">
+          <span class="cont">
+            <Icon class="icon" icon="archive"/>
+            <span class="name">{{ l['Someday'] }}</span>
+          </span>
+        </span>
         <span class="option cursor" @click="noDate">
           <span class="cont">
             <Icon class="icon" icon="bloqued"/>
@@ -186,6 +192,21 @@ export default {
     },
     tomorrow() {
       this.select(this.selectedMoment.clone().add(1, 'd'))
+    },
+    someday() {
+      let time = null
+      if (this.time) time = this.time
+      const calendar = {
+        time,
+        type: 'someday',
+        editDate: mom().format('Y-M-D'),
+        specific: null,
+        weekly: null,
+        lastCompleteDate: null,
+        times: null,
+        periodic: null,
+      }
+      this.$emit('select', calendar)
     },
     select(m) {
       let time = null

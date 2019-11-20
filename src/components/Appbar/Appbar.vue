@@ -123,6 +123,13 @@ export default {
           iconColor: 'var(--orange)',
         },
         {
+          name: 'Someday',
+          id: 'Someday',
+          icon: 'archive',
+          callback: () => this.$router.push('/user?list=Someday'),
+          iconColor: 'var(--brown)'
+        },
+        {
           name: 'Inbox',
           id: 'Inbox',
           icon: 'inbox',
@@ -143,7 +150,7 @@ export default {
           id: 'Completed',
           icon: 'circle-check',
           callback: () => this.$router.push('/user?list=Completed'),
-          iconColor: 'var(--brown)'
+          iconColor: 'var(--olive)'
         },
       ],
       sections: [
@@ -268,7 +275,7 @@ export default {
     },
     numberOfTasks(link) {
       const viewName = link.name
-      if (viewName === 'Upcoming')
+      if (viewName === 'Upcoming' || viewName === 'Someday')
         return {
           total: 0,
           notCompleted: 0,

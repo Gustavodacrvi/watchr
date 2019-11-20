@@ -100,7 +100,7 @@ export default {
       return this.getRootTasksOfList
     },
     taskCompletionCompareDate() {
-      if (this.viewList && this.viewList.calendar)
+      if (this.viewList && this.viewList.calendar && this.viewList.calendar.type !== 'someday')
         return utils.getCalendarObjectData(this.viewList.calendar, mom()).lastCallEvent.format('Y-M-D')
       return null
     },
@@ -183,7 +183,6 @@ export default {
               return tasks
             },
             id: h.name,
-            autoHide: h.autoHide,
             optionClick: (iconName) => {
               switch (iconName) {
                 case 'archive': {
@@ -218,13 +217,7 @@ export default {
       return arr
     },
     illustration() {
-      const l = this.l
-      return {
-        name: 'EmptyList',
-        title: l["This list doesn't have any tasks."],
-        descr: l["You can add tasks and headings by dropping the floating buttons here."],
-        width: '150px',
-      }
+      return 'tasks'
     },
     headerOptions() {
       if (this.viewList)

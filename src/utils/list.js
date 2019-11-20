@@ -29,13 +29,6 @@ export default {
         },
       },
       {
-        name: l['Hide heading'],
-        icon: 'archive',
-        callback: () => dispatch('list/toggleHeadingAuthide', {
-          listId, name: h.name,
-        })
-      },
-      {
         name: l['Uncomplete tasks'],
         icon: 'circle',
         callback: () => dispatch('list/uncompleteHeadingTasks', {
@@ -99,7 +92,7 @@ export default {
             callback: () => {return {
               comp: 'CalendarPicker',
               content: {callback: date => {
-              if (date.type && date.type !== 'specific') {
+              if (date.type && date.type !== 'specific' && date.type !== 'someday') {
                 dispatch('list/saveList', {
                   id: listId, calendar: date,
                 })}

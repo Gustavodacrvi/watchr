@@ -64,9 +64,11 @@ import sleep from '@/assets/icons/sleep.svg'
 import deadline from '@/assets/icons/deadline.svg'
 import repeat from '@/assets/icons/repeat.svg'
 import box from '@/assets/icons/box.svg'
+import boxDash from '@/assets/icons/box-dash.svg'
 import file from '@/assets/icons/file.svg'
 import folder from '@/assets/icons/folder.svg'
 import boxCheck from '@/assets/icons/box-check.svg'
+import boxCheckDash from '@/assets/icons/box-check-dash.svg'
 
 import { mapGetters } from 'vuex'
 
@@ -81,6 +83,8 @@ export default {
         copy, plus, globe, heading, search, note,
         envelope, deadline, sleep, repeat, box, file,
         folder,
+        "box-dash": boxDash,
+        "box-check-dash": boxCheckDash,
         "box-check": boxCheck,
         "import": importIcon,
         "export": exportIcon,
