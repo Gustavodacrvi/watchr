@@ -173,18 +173,24 @@ export default {
       const arr = []
       if (list.deferDate)
         arr.push('sleep')
-      if (list.calendar)
-        arr.push('repeat')
 
       return arr.length > 0 ? arr : undefined
     },
     mapString(list) {
-      if (!list.deadline) return null
-      const isOverdue = list.deadline && mom().isAfter(mom(list.deadline, 'Y-M-D'), 'day')
-      return {
-        name: isOverdue ? this.l['overdue'] : `${mom(list.deadline, 'Y-M-D').diff(mom(), 'd') + 1} ${this.l['days left']}`,
-        color: isOverdue ? 'var(--red)' : ''
+      if (list.deadline && !list.calendar) {
+        const isOverdue = list.deadline && mom().isAfter(mom(list.deadline, 'Y-M-D'), 'day')
+        return {
+          name: isOverdue ? this.l['overdue'] : `${mom(list.deadline, 'Y-M-D').diff(mom(), 'd') + 1} ${this.l['days left']}`,
+          color: isOverdue ? 'var(--red)' : ''
+        }
+      } else if (list.calendar) {
+        const { nextCalEvent } = utils.getCalendarObjectData(list.calendar, mom())
+        return {
+          name: `${mom(nextCalEvent.format('Y-M-D'), 'Y-M-D').diff(mom(), 'd') + 1} ${this.l['days left']}`,
+          color: '',
+        }
       }
+      return null
     },
   },
   computed: {

@@ -96,10 +96,12 @@ export default {
       sort: this.enableSort,
       disabled: this.disabled,
       group: {name: 'appnav', pull: (e) => {
+        if (!this.enableSort) return false
         if (e.el.dataset.name === 'folders-root') return false
         if (e.el.dataset.name === 'appnav-renderer') return true
         if (e.el.dataset.name === 'task-renderer') return 'clone'
       }, put: (l,j,item) => {
+        if (!this.enableSort) return false
         const type = item.dataset.type
         if (type === 'appnav-element') return true
         if (type === 'task') return true
