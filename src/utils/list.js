@@ -127,10 +127,20 @@ export default {
             })
           },
           {
+            name: l['Add files'],
+            icon: 'file',
+            callback: () => ({
+              comp: 'Files',
+              content: {callback: () => {
+                
+              }, savedFiles: []}
+            }),
+          },
+          {
             name: l['Add tags'],
             icon: 'tag',
             callback: () => ({
-              search: true,
+              allowSearch: true,
               links: store.state.tag.tags.map(el => ({
                 name: el.name,
                 icon: 'tag',
