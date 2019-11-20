@@ -123,6 +123,13 @@ export default {
           iconColor: 'var(--orange)',
         },
         {
+          name: 'Someday',
+          id: 'Someday',
+          icon: 'archive',
+          callback: () => this.$router.push('/user?list=Someday'),
+          iconColor: 'var(--brown)'
+        },
+        {
           name: 'Inbox',
           id: 'Inbox',
           icon: 'inbox',

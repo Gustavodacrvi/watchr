@@ -103,6 +103,9 @@ export default {
       case 'Today': {
         return this.filterTasksByDay(tasks, mom())
       }
+      case 'Someday': {
+        return tasks.filter(t => t.calendar && t.calendar.type === 'someday')
+      }
       case 'Overdue': {
         return tasks.filter(el => {
           if (!this.hasCalendarBinding(el) || this.isTaskCompleted(el)) return false

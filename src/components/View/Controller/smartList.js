@@ -71,6 +71,9 @@ export default {
           if (this.hasOverdueTasks) return this.todayHeadingsOptions
           return this.getListHeadingsByView('Today')
         }
+        case 'Someday': {
+          return this.getListHeadingsByView('Someday')
+        }
         case 'Completed': {
           return this.completedHeadingsOptions
         }
@@ -121,7 +124,7 @@ export default {
       return []
     },
     headingEdit() {
-      if (this.viewName === "Today" || this.viewName === "Tomorrow")
+      if (this.viewName === "Today" || this.viewName === "Tomorrow" || this.viewName === 'Someday')
         return {
           excludeNames: this.lists.map(el => el.name),
           errorToast: "There's already another list with this name."

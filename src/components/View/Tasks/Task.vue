@@ -1,5 +1,5 @@
 <template>
-  <div class="Task draggable" :class="[{fade: completed || isSomeday, showingIconDropContent: showingIconDropContent || isEditing}, platform]"
+  <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing}, platform]"
     @mouseenter="onHover = true"
     @mouseleave="onHover = false"
     @click="rootClick"
@@ -100,7 +100,7 @@ import mom from 'moment'
 
 export default {
   props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'
-  , 'taskCompletionCompareDate', 'isDragging', 'isScrolling'],
+  , 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -430,7 +430,7 @@ export default {
         }
       ]
       if (this.task.list) {
-        arr.splice(4, 0, {
+        arr.splice(5, 0, {
           name: l["Go to list"],
           icon: 'tasks',
           callback: () => this.$router.push('/user?list='+this.savedLists.find(el => el.id === t.list).name)
@@ -471,6 +471,11 @@ export default {
       const savedList = this.savedLists.find(el => el.id === list)
       if (!savedList || (savedList.name === this.viewName)) return null
       return savedList.name
+    },
+    fade() {
+      if (this.completed) return true
+      const isOnSomedaySmartView = this.isSmart && this.viewName === 'Someday'
+      return this.isSomeday && !isOnSomedaySmartView
     },
     calendarStr() {
       const {t,c} = this.getTask

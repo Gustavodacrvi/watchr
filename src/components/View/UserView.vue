@@ -104,6 +104,7 @@ export default {
       switch (this.value) {
         case 'Today': return true
         case 'Upcoming': return true
+        case 'Someday': return true
         case 'Tomorrow': return true
         case 'Completed': return true
         case 'Inbox': return true
