@@ -37,7 +37,11 @@ export default {
     removeDeferDate() {},
     saveNotes() {},
     addHeading() {},
-    onSortableAdd() {},
+    onSortableAdd(evt, taskIds, type, ids) {
+      this.$store.dispatch('list/removeTasksFromList', {
+        taskIds, view: this.viewName, ids,
+      })
+    },
   },
   computed: {
     icon() {return null},
