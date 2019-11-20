@@ -143,7 +143,7 @@ export default {
           id: 'Completed',
           icon: 'circle-check',
           callback: () => this.$router.push('/user?list=Completed'),
-          iconColor: 'var(--brown)'
+          iconColor: 'var(--olive)'
         },
       ],
       sections: [

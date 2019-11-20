@@ -218,7 +218,7 @@ export default {
           Tomorrow: 'var(--orange)',
           Inbox: 'var(--primary)',
           Upcoming: 'var(--green)',
-          Completed: 'var(--brown)',
+          Completed: 'var(--olive)',
         }
         const color = obj[this.viewName]
         if (!color) return 'var(--red)'

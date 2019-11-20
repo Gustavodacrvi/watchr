@@ -401,7 +401,8 @@ export default {
       if (notCompleted.length === 0)
         return ts.filter(task => {
           if (!task.calendar) return true
-          return task.calendar.type === 'specific'
+          const type = task.calendar.type
+          return type === 'specific' || type === 'someday'
         })
 
       return notCompleted

@@ -83,6 +83,8 @@ export default {
   "Add tags": "Add tags",
   "Save files": "Save files",
   "Add file": "Add file",
+  "Someday": "Someday",
+  "CalParserSomeday": "someday",
   "An error occurred while downloading file": "An error occurred while downloading file",
   "View file": "View file",
   "overdue": 'overdue',

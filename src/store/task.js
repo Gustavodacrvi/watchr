@@ -195,7 +195,7 @@ export default {
 
       for (const t of tasks) {
         let calendar = t.calendar
-        if (calendar) {
+        if (calendar && calendar.type !== 'someday') {
           const {nextEventAfterCompletion} = utilsTask.taskData(t, mom())
           calendar.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
           if (calendar.times) calendar.times -= 1

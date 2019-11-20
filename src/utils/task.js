@@ -40,7 +40,7 @@ export default {
     // TODO
   },
   hasCalendarBinding(task) {
-    return task.calendar && task.calendar.type !== null
+    return task.calendar && task.calendar.type !== null && task.calendar.type !== 'someday'
   },
   filterTasksByDay(tasks, dayMoment) {
     return tasks.filter(el => {
@@ -50,7 +50,7 @@ export default {
   },
   isTaskCompleted(task, moment, compareDate) {
     const calc = () => {
-      if (!task.calendar) return task.completed
+      if (!task.calendar || task.calendar.type === 'someday') return task.completed
       if (!moment) moment = mom()    
       const {
         type, lastComplete, tod, times,

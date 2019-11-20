@@ -289,10 +289,15 @@ export default {
       const keyNextWeek = l['CalParserNextweek']
       const keyNextWeekend = l['CalParserNextweekend']
       const keyNextMonth = l['CalParserNextmonth']
+      const keySomeday = l['CalParserSomeday']
 
       obj.time = getTime(str)
       
       switch (str) {
+        case keySomeday: {
+          obj.type = 'someday'
+          return obj
+        }
         case keyNextWeek: {
           obj.defer = utilsMoment.getFirstDayOfNextWeekMoment(mom()).format('Y-M-D')
           obj.due = utilsMoment.getLastDayOfNextWeekMoment(mom()).format('Y-M-D')
@@ -376,6 +381,7 @@ export default {
     const DUEKey = l['CalParserDUE']
     const timesKey = l['CalParserTimesKeyword']
     const perKey = l['CalParserPersistentKey']
+    const somedayKey = l['CalParserSomeday']
     
     if (!language) throw 'Missing language object'
     let str = ''
@@ -388,6 +394,10 @@ export default {
         if (obj.periodic === 1)
           str = everyDayKey
         else str = `${everyKey} ${obj.periodic} ${daysKey}`
+        break
+      }
+      case 'someday': {
+        str = `${somedayKey}`
         break
       }
       case 'weekly': {
@@ -562,6 +572,7 @@ export default {
     return obj
   },
   isCalendarObjectShowingToday(calendar, todayMoment) {
+    if (calendar.type === 'someday') return false
     const {
       type, defer, due, tod,
       edit, spec, interval,

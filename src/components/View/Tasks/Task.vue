@@ -463,7 +463,7 @@ export default {
     },
     calendarStr() {
       const {t,c} = this.getTask
-      if (!c || this.viewName === 'Upcoming') return null
+      if ((!c || c.type === 'someday') || this.viewName === 'Upcoming') return null
       const str = utils.parseCalendarObjectToString(c, this.l)
       if (str === this.viewNameValue) return null
       return str
@@ -476,7 +476,7 @@ export default {
     },
     nextCalEvent() {
       const {t,c} = this.getTask
-      if (!c || (c.type !== 'periodic' && c.type !== 'weekly')) return null
+      if ((!c || c.type === 'someday') || (c.type !== 'periodic' && c.type !== 'weekly')) return null
       const {nextEventAfterCompletion} = utilsTask.taskData(t, mom())
       const date = utils.getHumanReadableDate(nextEventAfterCompletion.format('Y-M-D'), this.l)
       if (!date || date === this.viewName) return null

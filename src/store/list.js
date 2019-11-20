@@ -83,7 +83,7 @@ export default {
       let completedTasks = 0
       
       let compareDate = null
-      if (list.calendar)
+      if (list.calendar && list.calendar.type !== 'someday')
         compareDate = utils.getCalendarObjectData(list.calendar, mom()).lastCallEvent.format('Y-M-D')
 
       ts.forEach(el => {
