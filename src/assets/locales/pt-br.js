@@ -100,6 +100,7 @@ export default {
   "An error occurred while downloading file": "Um erro ocorreu ao baixar o arquivo",
   "Someday": "Algum dia",
   "CalParserSomeday": "algum dia",
+  "Show someday tasks...": "Mostrar tarefas guardadas...",
   "Save files": "Salvar arquivos",
   "Add file": "Adicionar arquivo",
   "View file": "Ver arquivo",

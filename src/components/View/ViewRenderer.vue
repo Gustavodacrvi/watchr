@@ -39,6 +39,11 @@
         @add-heading="addHeading"
       />
     </div>
+    <transition name="fade-t">
+      <div v-if="hasAtLeastOneSomeday && !showSomeday" @click="showSomeday = true">
+        <AppButton type="dark" :value="l['Show someday tasks...']"/>
+      </div>
+    </transition>
     <div style="height: 500px"></div>
     <ActionButtons :showHeader='showHeader'/>
   </div>
@@ -73,6 +78,7 @@ export default {
       showingListSelection: false,
       activeTags: [],
       activeList: null,
+      showSomeday: false,
     }
   },
   created() {
@@ -119,12 +125,6 @@ export default {
       this.updateIds(tasks.map(el => el.id))
     },
 
-    sortByDate() {
-      // TODO
-      /* let tasks = this.getTasks.slice()
-      tasks = utilsTask.sortTasksByDate(tasks)
-      this.updateIds(tasks.map(el => el.id)) */
-    },
     toggleCompleted() {
       this.showCompleted = !this.showCompleted
     },
@@ -381,7 +381,7 @@ export default {
       }
     },
     sortAndFilterTasks() {
-      let ts = this.tasks
+      let ts = this.tasks.slice()
       const order = this.tasksOrder
 
       if (order)
@@ -391,8 +391,27 @@ export default {
 
       return utilsTask.filterTasksByViewRendererFilterOptions(ts, this.getActiveTagIds, this.getActiveListId)
     },
+    hasAtLeastOneSomeday() {
+      let ts = this.tasks.slice()
+      for (const t of ts) {
+        if (t.calendar && t.calendar.type === 'someday') {
+          return true
+        }
+      }
+      return false
+    },
+    getFilterBySomeday() {
+      let ts = this.sortAndFilterTasks.slice()
+
+      const arr = []
+      for (const t of ts)
+        if (this.showSomeday || !t.calendar || t.calendar.type !== 'someday')
+          arr.push(t)
+
+      return arr
+    },
     getFilterCompletedTasks() {
-      let ts = this.sortAndFilterTasks
+      let ts = this.getFilterBySomeday.slice()
       let notCompleted = []
       if (this.showCompleted) return ts
       
@@ -408,6 +427,11 @@ export default {
       return notCompleted
     },
   },
+  watch: {
+    viewNameValue() {
+      this.showSomeday = false
+    }
+  }
 }
 
 </script>

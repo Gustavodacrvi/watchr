@@ -86,6 +86,7 @@ export default {
   "Someday": "Someday",
   "CalParserSomeday": "someday",
   "An error occurred while downloading file": "An error occurred while downloading file",
+  "Show someday tasks...": "Show someday tasks...",
   "View file": "View file",
   "overdue": 'overdue',
   "Repeat": "Repeat",

@@ -321,46 +321,39 @@ export default {
       const l = this.l
       const arr = [
         {
-          name: l['Edit task'],
-          icon: 'pen',
-          callback: () => this.isEditing = true
+          name: l['No date'],
+          icon: 'bloqued',
+          callback: () => this.saveCalendarDate(null)
         },
         {
-          name: l['Copy task'],
-          icon: 'copy',
-          callback: () => dispatch('task/copyTask', this.task)
-        },
-        {
-          name: l['Move to list'],
-          icon: 'tasks',
-          callback: () => this.listOptions
-        },
-        {
-          name: l['Convert to list'],
-          icon: 'tasks',
-          callback: () => dispatch('task/convertToList', this.task)
-        },
-        {
-          name: l['Repeat task'],
-          icon: 'repeat',
-          callback: () => [
+          type: 'optionsList',
+          name: l['Schedule'],
+          options: [
             {
-              name: l['Repeat weekly'],
-              icon: 'repeat',
-              callback: () => ({
-                comp: 'WeeklyPicker',
-                content: {callback: this.saveCalendarDate},
-              }),
+              icon: 'star',
+              id: 'd',
+              callback: () => this.saveDate(mom().format('Y-M-D')),
             },
             {
-              name: l['Repeat periodically'],
-              icon: 'repeat',
-              callback: () => ({
-                comp: 'PeriodicPicker',
-                content: {callback: this.saveCalendarDate},
-              }),
+              icon: 'sun',
+              id: 'çljk',
+              callback: () => this.saveDate(mom().add(1, 'day').format('Y-M-D')),
             },
-          ],
+            {
+              icon: 'archive',
+              id: 'açlkjsdffds',
+              callback: () => this.saveCalendarDate({
+                type: 'someday',
+              })
+            },
+            {
+              icon: 'calendar',
+              id: 'çljkasdf',
+              callback: () => {return {
+                comp: "CalendarPicker",
+                content: {callback: this.saveCalendarDate}}},
+            },
+          ]
         },
         {
           type: 'optionsList',
@@ -393,27 +386,41 @@ export default {
           ],
         },
         {
-          type: 'optionsList',
-          name: l['Schedule'],
-          options: [
+          name: l['Repeat task'],
+          icon: 'repeat',
+          callback: () => [
             {
-              icon: 'star',
-              id: 'd',
-              callback: () => this.saveDate(mom().format('Y-M-D')),
+              name: l['Repeat weekly'],
+              icon: 'repeat',
+              callback: () => ({
+                comp: 'WeeklyPicker',
+                content: {callback: this.saveCalendarDate},
+              }),
             },
             {
-              icon: 'sun',
-              id: 'çljk',
-              callback: () => this.saveDate(mom().add(1, 'day').format('Y-M-D')),
+              name: l['Repeat periodically'],
+              icon: 'repeat',
+              callback: () => ({
+                comp: 'PeriodicPicker',
+                content: {callback: this.saveCalendarDate},
+              }),
             },
-            {
-              icon: 'calendar',
-              id: 'çljkasdf',
-              callback: () => {return {
-                comp: "CalendarPicker",
-                content: {callback: this.saveCalendarDate}}},
-            },
-          ]
+          ],
+        },
+        {
+          name: l['Copy task'],
+          icon: 'copy',
+          callback: () => dispatch('task/copyTask', this.task)
+        },
+        {
+          name: l['Move to list'],
+          icon: 'tasks',
+          callback: () => this.listOptions
+        },
+        {
+          name: l['Convert to list'],
+          icon: 'tasks',
+          callback: () => dispatch('task/convertToList', this.task)
         },
         {
           name: l['Delete task'],
@@ -423,7 +430,7 @@ export default {
         }
       ]
       if (this.task.list) {
-        arr.splice(2, 0, {
+        arr.splice(4, 0, {
           name: l["Go to list"],
           icon: 'tasks',
           callback: () => this.$router.push('/user?list='+this.savedLists.find(el => el.id === t.list).name)
