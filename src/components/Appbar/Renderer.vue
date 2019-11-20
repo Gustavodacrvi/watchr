@@ -14,7 +14,7 @@
       @enter='enter'
       @leave='leave'
       tag="div"
-      :class="{dontHaveElements: list.length === 0}"
+      :class="{dontHaveElements: list.length === 0 && illustration}"
 
       data-name='appnav-renderer'
     >
@@ -41,7 +41,7 @@
         :totalNumber='mapNumbers(el).total'
         :importantNumber='mapNumbers(el).notCompleted'
         :helpIcons='getExraIcon(el)'
-        :border='getBorder(el)'
+        :string='getString(el)'
         @apply='() => applyEmit(el.id)'
         @select='() => selectEl(el.id)'
 
@@ -66,7 +66,7 @@ export default {
     Illustration: IllustrationVue,
     AppbarElement: AppbarElementVue,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'illustration', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapBorder', 'folder', 'onSortableAdd'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'illustration', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd'],
   data() {
     return {
       sortable: null,
@@ -96,10 +96,12 @@ export default {
       sort: this.enableSort,
       disabled: this.disabled,
       group: {name: 'appnav', pull: (e) => {
+        if (!this.enableSort) return false
         if (e.el.dataset.name === 'folders-root') return false
         if (e.el.dataset.name === 'appnav-renderer') return true
         if (e.el.dataset.name === 'task-renderer') return 'clone'
       }, put: (l,j,item) => {
+        if (!this.enableSort) return false
         const type = item.dataset.type
         if (type === 'appnav-element') return true
         if (type === 'task') return true
@@ -184,9 +186,9 @@ export default {
     this.sortable.destroy()
   },
   methods: {
-    getBorder(el) {
-      if (!this.mapBorder) return undefined
-      return this.mapBorder(el)
+    getString(el) {
+      if (!this.mapString) return undefined
+      return this.mapString(el)
     },
     getProgress(el) {
       if (!this.mapProgress) return undefined

@@ -142,7 +142,6 @@ export default {
   height: 45px;
   z-index: 50;
   position: relative;
-  border-bottom: 1px solid var(--gray);
 }
 
 .cont {

@@ -117,11 +117,6 @@ export default {
                       saveOrder(tasks.map(el => el.id))
                     },
                   },
-                  {
-                    name: 'Sort by date',
-                    icon: 'calendar',
-                    callback: () => console.log('sort tasks by date'),
-                  }
                 ]
               },
               {
@@ -219,7 +214,7 @@ export default {
         'icon', 'illustration', 'showHeader', 'showEmptyHeadings',
         'headingEdit', 'headerOptions', 'notes', 'progress', 'headingsOptions',
         'tasks', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates',
-        'headerTags', 'headerCalendar', 'taskCompletionCompareDate',
+        'headerTags', 'headerCalendar', 'taskCompletionCompareDate', 'files',
       ]
       const obj = {}
 

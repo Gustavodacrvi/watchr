@@ -6,14 +6,14 @@
       iconColor='var(--red)'
       :disableSelection='true'
       :enableSort="true"
-      :illustration="illustration"
+      :illustration="rootIllustration"
       :list="rootLists"
       :active="active"
       :viewType="viewType"
       :mapProgress='getListProgress'
       :mapNumbers="(tasks) => tasks"
       :mapHelpIcon='getListIcon'
-      :mapBorder='mapBorder'
+      :mapString='mapString'
       :onSortableAdd="rootAdd"
       @buttonAdd='buttonAdd'
       @update='update'
@@ -46,7 +46,7 @@
           :mapProgress='getListProgress'
           :mapNumbers="(tasks) => tasks"
           :mapHelpIcon='getListIcon'
-          :mapBorder='mapBorder'
+          :mapString='mapString'
           :onSortableAdd='betweenFolders'
 
           @is-moving='v => isDragginInnerList = v'
@@ -120,7 +120,7 @@ export default {
         s.transitionDuration = '.15s'
         h.height = '35px'
         s.opacity = '1'
-        s.margin = '8px 0'
+        s.margin = '12px 0'
       })
     },
     leave(el) {
@@ -173,17 +173,24 @@ export default {
       const arr = []
       if (list.deferDate)
         arr.push('sleep')
-      if (list.deadline)
-        arr.push('deadline')
-      if (list.calendar)
-        arr.push('repeat')
 
       return arr.length > 0 ? arr : undefined
     },
-    mapBorder(list) {
-      if (list.deadline && mom().isSameOrAfter(mom(list.deadline, 'Y-M-D')))
-        return 'var(--red)'
-      return 'none'
+    mapString(list) {
+      if (list.deadline && !list.calendar) {
+        const isOverdue = list.deadline && mom().isAfter(mom(list.deadline, 'Y-M-D'), 'day')
+        return {
+          name: isOverdue ? this.l['overdue'] : `${mom(list.deadline, 'Y-M-D').diff(mom(), 'd') + 1} ${this.l['days left']}`,
+          color: isOverdue ? 'var(--red)' : ''
+        }
+      } else if (list.calendar) {
+        const { nextCalEvent } = utils.getCalendarObjectData(list.calendar, mom())
+        return {
+          name: `${mom(nextCalEvent.format('Y-M-D'), 'Y-M-D').diff(mom(), 'd') + 1} ${this.l['days left']}`,
+          color: '',
+        }
+      }
+      return null
     },
   },
   computed: {
@@ -198,6 +205,9 @@ export default {
       sortedFolders: 'folder/sortedFolders',
       getListsByFolderId: 'folder/getListsByFolderId',
     }),
+    rootIllustration() {
+      return (this.rootLists.length === 0 && this.sortedFolders.length === 0) ? this.illustration : null
+    },
     sortedLists() {
       return this.$store.getters['list/sortedLists']
     },

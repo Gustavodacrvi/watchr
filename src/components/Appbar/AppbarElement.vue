@@ -5,7 +5,6 @@
     @mouseleave="hover = false"
     @click.stop="linkCallback"
     :class="{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover}"
-    :style='{border: `1px solid ${border}`}'
   >
     <div
       class="link-wrapper AppbarElement-link rb"
@@ -32,6 +31,7 @@
               :icon='i'
             />
           </template>
+          <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
           <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
           <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
           <IconDrop
@@ -58,7 +58,7 @@ import utils from '@/utils/'
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
-  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'border'],
+  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'string'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -91,6 +91,10 @@ export default {
     ...mapGetters(['l']),
     isDraggingOver() {
       return this
+    },
+    getStringObj() {
+      if (!this.string) return null
+      return {...this.string}
     },
     showSpecialInfo() {
       return this.hover && !this.isOnControl && !this.selectedEmpty
@@ -161,7 +165,7 @@ export default {
 
 .name {
   transition-duration: .15s;
-  max-width: 160px;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -104,6 +104,16 @@ export default {
         return utils.getCalendarObjectData(this.viewList.calendar, mom()).lastCallEvent.format('Y-M-D')
       return null
     },
+    files() {
+      if (this.viewList) {
+        return {
+          id: this.viewList.id,
+          storageFolder: 'lists',
+          files: this.viewList.files,
+        }
+      }
+      return null
+    },
     tasksOrder() {
       if (this.viewList)
         return this.viewList.tasks

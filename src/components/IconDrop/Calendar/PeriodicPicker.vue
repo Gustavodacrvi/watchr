@@ -1,5 +1,5 @@
 <template>
-  <div class="PeriodicPicker">
+  <div class="PeriodicPicker" :class="platform">
     <span>
       Every <input
         class="input rb"
@@ -42,7 +42,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['l']),
+    ...mapGetters(['l', 'platform']),
     getNumber() {
       const num = parseInt(this.str, 10)
       if (!isNaN(num)) return num

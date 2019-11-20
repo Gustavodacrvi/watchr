@@ -32,6 +32,7 @@ export default {
 .Txt {
   overflow: auto;
   max-height: 300px;
+  max-width: 500px;
 }
 
 .cont {

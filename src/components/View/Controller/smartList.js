@@ -37,7 +37,11 @@ export default {
     removeDeferDate() {},
     saveNotes() {},
     addHeading() {},
-    onSortableAdd() {},
+    onSortableAdd(evt, taskIds, type, ids) {
+      this.$store.dispatch('list/removeTasksFromList', {
+        taskIds, view: this.viewName, ids,
+      })
+    },
   },
   computed: {
     icon() {return null},
@@ -56,7 +60,7 @@ export default {
     },
     tasksOrder() {
       let o = this.viewOrders[this.viewName]
-      if (o && o.tasks) o = this.viewOrders[this.viewName].tasks
+      if (o && o.tasks) return this.viewOrders[this.viewName].tasks
       return []
     },
     headingsOptions() {

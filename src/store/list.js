@@ -329,17 +329,14 @@ export default {
     removeTasksFromList(c, {taskIds, view, ids}) {
       const batch = fire.batch()
 
-      for (const id of taskIds) {
-        const taskRef = taskRef(id)
-        batch.update(taskRef, {
+      for (const id of taskIds)
+        batch.update(taskRef(id), {
           list: null, heading: null,
         })
-      }
       const obj = {}
       obj[view] = {}
       obj[view].tasks = ids
-      const user = userRef()
-      batch.set(user, {
+      batch.set(userRef(), {
         viewOrders: obj,
       }, {merge: true})
 
@@ -353,14 +350,12 @@ export default {
       views[smartView] = ids
 
       for (const id of taskIds) {
-        const taskRef = taskRef(id)
-        batch.update(taskRef, {
+        batch.update(taskRef(id), {
           list: listId,
           heading: null,
         })
       }
-      const listRef = listRef(listId)
-      batch.update(listRef, {
+      batch.update(listRef(listId), {
         smartViewsOrders: views,
       })
 
