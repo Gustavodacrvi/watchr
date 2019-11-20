@@ -131,9 +131,16 @@ export default {
             icon: 'file',
             callback: () => ({
               comp: 'Files',
-              content: {callback: () => {
-                
-              }, savedFiles: []}
+              content: {
+                storageFolder: 'lists',
+                id: listId,
+                savedFiles: list.files,
+                callback: files => {
+                  dispatch('list/saveList', {
+                    id: listId, files,
+                  })
+                }
+              },
             }),
           },
           {

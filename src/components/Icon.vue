@@ -102,7 +102,9 @@ export default {
     },
     handleFile() {
       const inp = this.fileInput
-      this.$emit('add', inp.files[0])
+      if (inp.files[0])
+        this.$emit('add', inp.files[0])
+      inp.value = ''
     }
   },
   computed: {

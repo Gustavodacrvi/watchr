@@ -6,8 +6,8 @@
         :name="f"
         :status='getFileStatus(f)'
         @delete="() => deleteFile(f)"
-        @download="() => downloadFile(f)"
-        @view="() => viewFile(f)"
+        @download="() => downloadFile(f, content.storageFolder, content.id)"
+        @view="() => viewFile(f, content.storageFolder, content.id)"
       />
     </div>
     <div class="buttons">
@@ -20,6 +20,12 @@
         @click="addCompFile"
       />
     </div>
+    <input v-show="false"
+      ref='file'
+      type='file'
+      @click.stop
+      @change='handleFile'
+    >
   </div>
 </template>
 
@@ -41,25 +47,41 @@ export default {
   data() {
     return {
       defaultTask: {
-        files: this.content.savedFiles,
+        files: this.content.savedFiles.slice(),
       },
       task: {
-        files: [],
+        files: this.content.savedFiles.slice(),
       },
       addedFiles: [],
+      savingTask: false,
+      uploadProgress: null,
     }
   },
   methods: {
     saveCompFiles() {
-
+      const files = this.task.files
+      this.saveFiles(this.getFilesToRemove, this.addedFiles, this.content.id, this.content.storageFolder).then(res => {
+        this.content.callback(files)
+        this.$emit('close')
+      })
     },
     addCompFile() {
-      
+      if (this.fileInput)
+        this.fileInput.click()
     },
+    handleFile() {
+      const inp = this.fileInput
+      if (inp.files[0])
+        this.addFile(inp.files[0])
+      inp.value = ''
+    }
   },
   computed: {
     ...mapGetters(['l', 'platform']),
-  }
+    fileInput() {
+      return this.$refs['file']
+    },
+  },
 }
 
 </script>

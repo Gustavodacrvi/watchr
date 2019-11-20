@@ -1,4 +1,9 @@
 
+import { mapState } from "vuex"
+
+import fire, { storage } from 'firebase/app'
+import 'firebase/storage'
+
 export default {
   methods: {
     getFileStatus(fileName) {
@@ -24,8 +29,8 @@ export default {
         this.addedFiles.splice(j, 1)
       }
     },
-    viewFile(fileName) {
-      storage().ref(`attachments/${this.user.uid}/tasks/${this.task.id}/${fileName}`).getDownloadURL().then(url => {
+    viewFile(fileName, storageFolder, parentId) {
+      storage().ref(`attachments/${this.user.uid}/${storageFolder}/${parentId}/${fileName}`).getDownloadURL().then(url => {
         this.$store.commit('readFile', url)
       }).catch(err => {
         this.$store.commit('pushToast', {
@@ -35,8 +40,8 @@ export default {
         })
       })
     },
-    downloadFile(fileName) {
-      storage().ref(`attachments/${this.user.uid}/tasks/${this.task.id}/${fileName}`).getDownloadURL().then(url => {
+    downloadFile(fileName, storageFolder, parentId) {
+      storage().ref(`attachments/${this.user.uid}/${storageFolder}/${parentId}/${fileName}`).getDownloadURL().then(url => {
         utils.downloadBlobFromURL(url).then(blob => {
           url = window.URL.createObjectURL(blob)
           let element = document.createElement('a')
@@ -58,7 +63,7 @@ export default {
         })
       })
     },
-    saveFiles(toRemoveFiles, toAddFiles, taskId) {
+    saveFiles(toRemoveFiles, toAddFiles, parentId, storageFolder) {
       const rem = toRemoveFiles.slice()
       const add = toAddFiles.slice()
       for (const r of rem) {
@@ -82,7 +87,7 @@ export default {
         this.uploadProgress = (totalTransferred / totalBytes) * 100
       }
 
-      const taskPath = `attachments/${this.user.uid}/tasks/${taskId}/`
+      const taskPath = `attachments/${this.user.uid}/${storageFolder}/${parentId}/`
       const addFiles = () => {
         const proms = []
         for (const f of add) {
@@ -125,6 +130,7 @@ export default {
     },
   },
   computed: {
+    ...mapState(['user']),
     isEditingFiles() {
       return this.getFilesToRemove.length > 0 ||
         this.addedFiles.length > 0

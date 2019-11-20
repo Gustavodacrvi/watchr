@@ -85,8 +85,8 @@
             :name="f"
             :status='getFileStatus(f)'
             @delete="() => deleteFile(f)"
-            @download="() => downloadFile(f)"
-            @view="() => viewFile(f)"
+            @download="() => downloadFile(f, 'tasks', this.task.id)"
+            @view="() => viewFile(f, 'tasks', this.task.id)"
           />
         </div>
         <span v-if="isEditingFiles" style="opacity: .4;margin-left: 8px">{{ l["Note: file upload/delete operations won't work while offline."] }}</span>
@@ -153,9 +153,6 @@ import { mapGetters, mapState } from 'vuex'
 
 import utils from '@/utils/'
 import taskUtils from '@/utils/task'
-
-import fire, { storage } from 'firebase/app'
-import 'firebase/storage'
 
 import FileMixin from '@/mixins/file.js'
 
@@ -326,7 +323,7 @@ export default {
           calendar,
           files: this.task.files,
           handleFiles: this.isEditingFiles ? taskId => {
-            return this.saveFiles(this.getFilesToRemove, this.addedFiles, taskId)
+            return this.saveFiles(this.getFilesToRemove, this.addedFiles, taskId, 'tasks')
           } : null
         })
         t.checklist = []
