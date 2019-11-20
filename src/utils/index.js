@@ -468,8 +468,8 @@ export default {
     node.addEventListener(event ? event : 'contextmenu', evt => {
       evt.preventDefault()
       if (!contextMenuRunned) {
-        const y = evt.clientY + 'px'
-        const x = evt.clientX + 'px'
+        const y = evt.pageY + 'px'
+        const x = evt.pageX + 'px'
         const old = document.getElementById('contextmenu')
         if (old) document.body.removeChild(old)
 
@@ -488,7 +488,7 @@ export default {
 
         const drop = document.getElementById('contextmenu')
         const s = drop.style
-        s.position = 'fixed'
+        s.position = 'absolute'
         s.left = x
         s.top = y
         
