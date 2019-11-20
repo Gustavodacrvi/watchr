@@ -2,7 +2,7 @@
   <div class="TaskRenderer" @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration" class="illustration">
-        <Illustration v-bind="illustration"/>
+        <Icon :icon='illustration' color='var(--appnav-color)' width="125px"/>
       </div>
     </transition>
     <transition-group name="task-trans" class="front task-renderer-root" :class="{dontHaveTasks: tasks.length === 0 && headings.length === 0, showEmptyHeadings}"
@@ -84,6 +84,8 @@ import IllustrationVue from '@/components/Illustrations/Illustration.vue'
 import HeadingVue from './../Headings/Heading.vue'
 import HeadingEditVue from './../Headings/Edit.vue'
 
+import Icon from '@/components/Icon.vue'
+
 import { mapState, mapGetters } from 'vuex'
 
 import { MultiDrag, Sortable } from 'sortablejs'
@@ -100,7 +102,7 @@ export default {
   'viewType', 'options', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
-    Task: TaskVue,
+    Task: TaskVue, Icon,
     HeadingApp: HeadingVue,
     Illustration: IllustrationVue,
   },

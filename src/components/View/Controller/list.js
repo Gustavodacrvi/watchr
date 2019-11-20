@@ -217,13 +217,7 @@ export default {
       return arr
     },
     illustration() {
-      const l = this.l
-      return {
-        name: 'EmptyList',
-        title: l["This list doesn't have any tasks."],
-        descr: l["You can add tasks and headings by dropping the floating buttons here."],
-        width: '150px',
-      }
+      return 'tasks'
     },
     headerOptions() {
       if (this.viewList)

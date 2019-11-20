@@ -1,20 +1,10 @@
 <template>
   <div class="Renderer" :class="{folder: folder}">
-    <transition name="illus-t">
-      <div v-if="showIllustration" class="illustration">
-        <Illustration
-          :name='illustration.name'
-          :title='illustration.title'
-          :descr='illustration.descr'
-          :width='illustration.width'
-        />
-      </div>
-    </transition>
     <transition-group class="appnav-renderer appnav-renderer-root"
       @enter='enter'
       @leave='leave'
       tag="div"
-      :class="{dontHaveElements: list.length === 0 && illustration}"
+      :class="{dontHaveElements: list.length === 0}"
 
       data-name='appnav-renderer'
     >
@@ -54,7 +44,6 @@
 
 <script>
 
-import IllustrationVue from '@/components/Illustrations/Illustration.vue'
 import AppbarElementVue from './AppbarElement.vue'
 
 import Sortable from 'sortablejs'
@@ -63,10 +52,9 @@ import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    Illustration: IllustrationVue,
     AppbarElement: AppbarElementVue,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'illustration', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd'],
   data() {
     return {
       sortable: null,
@@ -255,9 +243,6 @@ export default {
     apply() {
       return this.$store.state.apply.bool
     },
-    showIllustration() {
-      return this.list.length === 0 && this.illustration
-    }
   },
   watch: {
     selected() {
@@ -283,18 +268,6 @@ export default {
 .Renderer {
   position: relative;
   pointer-events: all;
-}
-
-.illustration {
-  position: absolute;
-  width: 100%;
-  height: 175px;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .dontHaveElements {

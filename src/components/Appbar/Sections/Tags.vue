@@ -5,7 +5,6 @@
       icon="tag"
       iconColor='var(--red)'
       :enableSort='true'
-      :illustration='illustration'
       :list="getTags"
       :active="active"
       :viewType="viewType"
@@ -50,17 +49,6 @@ export default {
       l: 'l',
       isDesktop: 'isDesktop',
     }),
-    illustration() {
-      let descr = this.l["You can add one by dropping the plus floating button in this region."]
-      if (!this.isDesktop)
-        descr = this.l["You can add one by clicking on the right corner icon."]
-      return {
-        descr,
-        name: 'MultipleTags',
-        title: this.l["You don't have any tags."],
-        width: '80px',
-      }
-    },
     sortedTags() {
       return this.$store.getters['tag/sortedTags']
     },

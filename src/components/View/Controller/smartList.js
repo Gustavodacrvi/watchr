@@ -85,38 +85,12 @@ export default {
       const n = this.viewName
       if (this.isSmart) {
         switch (n) {
-          case 'Today':
-            return {
-              name: 'HappyFace',
-              title: l['Enjoy the rest of the day'],
-              descr: l['You already completed everything here!'],
-            }
-          case 'Tomorrow':
-            return {
-              name: 'Sleep',
-              title: l['Nothing here...'],
-              descr: l['You have not tasks for tomorrow.'],
-              width: '150px'
-            }
-          case 'Inbox':
-            return {
-              name: 'EmptyInbox',
-              title: l["Congrats! Your Inbox is empty."],
-              width: '150px',
-            }
-          case 'Upcoming':
-            return {
-              name: 'EmptyCalendar',
-              title: l["You don't have any upcoming tasks!"],
-              width: '150px',
-            }
-          case 'Completed':
-            return {
-              name: 'CleanCheck',
-              title: l["Hurray! Everything is clean here!"],
-              descr: l["You don't have any completed tasks, how about completing some?"],
-              width: '150px',
-            }
+          case 'Today': return 'star'
+          case 'Tomorrow': return 'sun'
+          case 'Inbox': return 'inbox'
+          case 'Upcoming': return 'calendar'
+          case 'Completed': return 'circle-check'
+          case 'Someday': return 'archive'
         }
       }
     },

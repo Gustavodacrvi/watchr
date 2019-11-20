@@ -6,7 +6,6 @@
       iconColor='var(--red)'
       :disableSelection='true'
       :enableSort="true"
-      :illustration="rootIllustration"
       :list="rootLists"
       :active="active"
       :viewType="viewType"
@@ -205,22 +204,8 @@ export default {
       sortedFolders: 'folder/sortedFolders',
       getListsByFolderId: 'folder/getListsByFolderId',
     }),
-    rootIllustration() {
-      return (this.rootLists.length === 0 && this.sortedFolders.length === 0) ? this.illustration : null
-    },
     sortedLists() {
       return this.$store.getters['list/sortedLists']
-    },
-    illustration() {
-      let descr = this.l["You can add one by dropping the plus floating button in this region."]
-      if (!this.isDesktop)
-        descr = this.l["You can add one by clicking on the right corner icon."]
-      return {
-        descr,
-        name: 'List',
-        title: this.l["You don't have any lists."],
-        width: '80px'
-      }
     },
     listsWithFolders() {
       const lists = this.filteredByRepeat
