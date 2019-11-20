@@ -63,6 +63,15 @@
         />
       </div>
     </div>
+    <div v-if="files" class="files" style="margin-top: 18px">
+      <FileApp v-for="f in files.files" :key="f"
+        :name="f"
+        :disableDelete='true'
+        @delete="() => deleteFile(f)"
+        @download="() => downloadFile(f, files.storageFolder, files.id)"
+        @view="() => viewFile(f, files.storageFolder, files.id)"
+      />
+    </div>
     <NotesApp class="tags" :notes='notes' @save-notes="saveNotes"/>
     <div class="tags" :class="{margins: tags.length > 0}">
       <Tag class="tag" v-for="t in tags" :key="t.id"
@@ -90,6 +99,9 @@ import IconDropVue from '../../IconDrop/IconDrop.vue'
 import TagVue from './../Tag.vue'
 import Notes from './Notes.vue'
 import HeaderInfo from './HeaderInfo.vue'
+import FileApp from '@/components/View/Tasks/File.vue'
+
+import FileMixin from '@/mixins/file.js'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -97,13 +109,14 @@ import mom from 'moment'
 import utils from '@/utils'
 
 export default {
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar'],
+  mixins: [FileMixin],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
     Tag: TagVue,
     NotesApp: Notes,
-    HeaderInfo,
+    HeaderInfo, FileApp,
   },
   data() {
     return {

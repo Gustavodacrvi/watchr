@@ -17,7 +17,7 @@ import utils from '@/utils'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['name', 'status'],
+  props: ['name', 'status', 'disableDelete'],
   components: {
     Icon,
   },
@@ -27,26 +27,27 @@ export default {
   computed: {
     ...mapGetters(['l']),
     options() {
-      const obj = [
-        {
+      const obj = []
+      if (!this.disableDelete) {
+        obj.push({
           name: this.l['Delete file'],
           icon: 'trash',
           important: true,
           callback: () => {this.$emit('delete')}
-        },
-      ]
-    if (this.status !== 'update') {
-      obj.unshift(        {
-          name: this.l['Download file'],
-          icon: 'import',
-          callback: () => {this.$emit('download')}
         })
-      obj.unshift({
-          name: this.l['View file'],
-          icon: 'file',
-          callback: () => {this.$emit('view')}
-        })
-    }
+      }
+      if (this.status !== 'update') {
+        obj.unshift(        {
+            name: this.l['Download file'],
+            icon: 'import',
+            callback: () => {this.$emit('download')}
+          })
+        obj.unshift({
+            name: this.l['View file'],
+            icon: 'file',
+            callback: () => {this.$emit('view')}
+          })
+      }
     return obj
     },
   },

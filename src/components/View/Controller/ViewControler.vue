@@ -214,7 +214,7 @@ export default {
         'icon', 'illustration', 'showHeader', 'showEmptyHeadings',
         'headingEdit', 'headerOptions', 'notes', 'progress', 'headingsOptions',
         'tasks', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates',
-        'headerTags', 'headerCalendar', 'taskCompletionCompareDate',
+        'headerTags', 'headerCalendar', 'taskCompletionCompareDate', 'files',
       ]
       const obj = {}
 
