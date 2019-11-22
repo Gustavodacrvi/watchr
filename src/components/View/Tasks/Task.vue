@@ -413,14 +413,20 @@ export default {
           callback: () => dispatch('task/copyTask', this.task)
         },
         {
-          name: l['Move to list'],
+          name: l['Lists'],
           icon: 'tasks',
-          callback: () => this.listOptions
-        },
-        {
-          name: l['Convert to list'],
-          icon: 'tasks',
-          callback: () => dispatch('task/convertToList', {task: this.task, savedLists: this.savedLists})
+          callback: () => [
+            {
+              name: l['Move to list'],
+              icon: 'tasks',
+              callback: () => this.listOptions
+            },
+            {
+              name: l['Convert to list'],
+              icon: 'tasks',
+              callback: () => dispatch('task/convertToList', {task: this.task, savedLists: this.savedLists})
+            },
+          ]
         },
         {
           name: l['Delete task'],
@@ -429,13 +435,6 @@ export default {
           callback: () => dispatch('task/deleteTasks', [this.task.id])
         }
       ]
-      if (this.task.list) {
-        arr.splice(5, 0, {
-          name: l["Go to list"],
-          icon: 'tasks',
-          callback: () => this.$router.push('/user?list='+this.savedLists.find(el => el.id === t.list).name)
-        })
-      }
       if (c && c.persistent && (c.type === "periodic" || c.type === "periodic"))
         arr.splice(3, 0, {
           name: l["Manual complete"],

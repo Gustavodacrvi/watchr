@@ -19,6 +19,12 @@
             :value="l[task.priority]"
             @click="task.priority = ''"
           />
+          <Tag v-if="task.folder"
+            icon="folder"
+            :value="task.folder"
+            color=''
+            @click="task.folder = ''"
+          />
           <Tag v-if="task.list"
             icon="tasks"
             :value="task.list"
@@ -114,6 +120,11 @@
               :options="listOptions"
             />
             <IconDrop
+              handle="folder"
+              class="opt-icon"
+              :options="folderOptions"
+            />
+            <IconDrop
               handle="calendar"
               class="opt-icon"
               :options="calendarOptions"
@@ -175,6 +186,7 @@ export default {
       task: {
         name: '',
         priority: '',
+        folder: '',
         list: '',
         notes: '',
         calendar: null,
@@ -318,6 +330,7 @@ export default {
         this.$emit('save', {
           ...t,
           list: this.listId,
+          folder: this.folderId,
           tags: this.tagIds,
           name: n, heading,
           calendar,
@@ -343,12 +356,15 @@ export default {
   },
   computed: {
     ...mapState({
-      savedTags: state => state.tag.tags,
       savedTasks: state => state.task.tasks,
-      savedLists: state => state.list.lists,
       user: state => state.user,
     }),
-    ...mapGetters(['l']),
+    ...mapGetters({
+      l: 'l',
+      savedLists: 'list/sortedLists',
+      savedFolders: 'folder/sortedFolders',
+      savedTags: 'tag/sortedTagsByFrequency',
+    }),
     isEditing() {
       return this.defaultTask
     },
@@ -387,6 +403,11 @@ export default {
         return this.$store.getters['list/getListsByName']([this.task.list]).map(el => el.id)[0]
       return null
     },
+    folderId() {
+      if (this.task.folder)
+        return this.$store.getters['folder/getFoldersByName']([this.task.folder]).map(el => el.id)[0]
+      return null
+    },
     selectDate() {
       return (date) => this.task.calendar = date
     },
@@ -396,7 +417,7 @@ export default {
     },
     atLeastOnSpecialTag() {
       const t = this.task
-      return this.calendarStr || t.priority || t.list || (t.list && t.heading)
+      return this.calendarStr || t.priority || t.folder || t.list || (t.list && t.heading)
     },
     calendarStr() {
       if (this.task.calendar)
@@ -427,6 +448,20 @@ export default {
     },
     priorities() {
       return this.$store.getters['task/priorityOptions']
+    },
+    folderOptions() {
+      const arr = []
+      for (const el of this.savedFolders) {
+        arr.push({
+          name: el.name,
+          icon: 'folder',
+          callback: () => {this.task.folder = el.name}
+        })
+      }
+      return {
+        links: arr,
+        allowSearch: true,
+      }
     },
     listOptions() {
       const arr = []
