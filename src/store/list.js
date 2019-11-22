@@ -120,7 +120,7 @@ export default {
         for (const t of tasks) {
           const ref = taskRef()
           batch.set(ref, {
-            ...t, id: null, list: newListRef.id
+            ...t, id: null, list: newListRef.id,
           })
           arr.push({
             oldId: t.id,
@@ -190,6 +190,8 @@ export default {
     convertHeadingToList({state, getters}, {listId, taskIds, name}) {
       const list = getters.getListsById([listId])[0]
       const batch = fire.batch()
+      let folder = null
+      if (list.folder) folder = list.folder
 
       const heads = list.headings.slice()
       const i = heads.findIndex(el => el.name === name)
@@ -202,7 +204,7 @@ export default {
       
       const newList = listRef()
       batch.set(newList, {
-        name,
+        name, folder,
         userId: uid(),
         users: [uid()],
         smartViewsOrders: {},
@@ -342,6 +344,7 @@ export default {
       for (const id of taskIds) {
         batch.update(taskRef(id), {
           list: listId,
+          folder: null,
           heading: null,
         })
       }
@@ -555,8 +558,11 @@ export default {
       batch.commit()
     },
 
-    deleteList(c, {listId, tasks}) {
+    deleteList({getters}, {listId, tasks}) {
       const batch = fire.batch()
+      const list = getters.getListsById([listId])[0]
+      let folder = null
+      if (list.folder) folder = list.folder
 
       const ids = []
       for (const t of tasks)
@@ -564,6 +570,7 @@ export default {
       for (const id of ids)
         batch.update(taskRef(id), {
           list: null,
+          folder,
           heading: null,
         })
 

@@ -150,8 +150,14 @@ export default {
 
       batch.commit()
     },
-    convertToList(c, task) {
+    convertToList(c, {task, savedLists}) {
       const batch = fire.batch()
+
+      let folder = null
+      if (task.list) {
+        const list = savedLists.find(l => l.id === task.list)
+        if (list && list.folder) folder = list.folder
+      }
 
       const list = listRef()
       const oldTask = taskRef(task.id)
@@ -162,6 +168,7 @@ export default {
         for (const t of task.checklist) {
           const ref = taskRef(t.id)
           batch.set(ref, {
+            folder,
             userId: uid(),
             users: [uid()],
             name: t.name,
@@ -276,9 +283,9 @@ export default {
       const batch = fire.batch()
 
       for (const id of ids) {
-        const ref = taskRef(id)
-        batch.update(ref, {
+        batch.update(taskRef(id), {
           list: listId,
+          folder: null,
           heading: null,
         })
       }

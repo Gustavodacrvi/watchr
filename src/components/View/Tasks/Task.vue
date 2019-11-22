@@ -420,7 +420,7 @@ export default {
         {
           name: l['Convert to list'],
           icon: 'tasks',
-          callback: () => dispatch('task/convertToList', this.task)
+          callback: () => dispatch('task/convertToList', {task: this.task, savedLists: this.savedLists})
         },
         {
           name: l['Delete task'],
