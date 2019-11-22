@@ -55,12 +55,21 @@ export default {
     this.bindOptions()
   },
   methods: {
+    apply() {
+      this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+        elIds: [this.id],
+        taskIds: this.selectedTasks,
+        type: 'folder',
+      })
+    },
     bindOptions() {
       const el = this.$el.getElementsByClassName('header')[0]
       utils.bindOptionsToEventListener(el, this.options, this.$parent)
     },
     go() {
-      this.$router.push('/user?folder=' + this.name)
+      if (!this.showSpecialInfo)
+        this.$router.push('/user?folder=' + this.name)
+      else this.apply()
     },
     toggle() {
       this.showing = !this.showing

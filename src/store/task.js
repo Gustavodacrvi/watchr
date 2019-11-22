@@ -292,6 +292,18 @@ export default {
 
       batch.commit()
     },
+    addFolderToTasksById(c, {ids, folderId}) {
+      const batch = fire.batch()
+
+      for (const id of ids)
+        batch.update(taskRef(id), {
+          list: null,
+          folder: folderId,
+          heading: null,
+        })
+      
+      batch.commit()
+    },
     copyTask(c, task) {
       userRef().collection('tasks').add({
         ...task, files: [],
@@ -301,8 +313,7 @@ export default {
       const calObj = (mom) => {
         return getters.getSpecificDayCalendarObj(mom)
       }
-      console.log(type)
-/*       switch (type) {
+      switch (type) {
         case 'tag': {
           dispatch('addTagsToTasksById', {
             tagIds: elIds.slice(),
@@ -313,6 +324,13 @@ export default {
         case 'list': {
           dispatch('addListToTasksById', {
             listId: elIds[0],
+            ids: taskIds,
+          })
+          break
+        }
+        case 'folder': {
+          dispatch('addFolderToTasksById', {
+            folderId: elIds[0],
             ids: taskIds,
           })
           break
@@ -348,7 +366,7 @@ export default {
           dispatch('completeTasks', getters.getTasksById(taskIds))
           break
         }
-      } */
+      }
     },
     deleteAllData({state}) {
       for (const el of state.tasks)
