@@ -38,7 +38,7 @@ export default {
     saveNotes() {},
     addHeading() {},
     onSortableAdd(evt, taskIds, type, ids) {
-      this.$store.dispatch('list/removeTasksFromList', {
+      this.$store.dispatch('list/removeTasksFromSmartViewHeading', {
         taskIds, view: this.viewName, ids,
       })
     },
@@ -54,7 +54,7 @@ export default {
         return this.tasks.filter(el => el.name.includes(this.viewName))
       if (this.isSmart && this.notHeadingHeaderView) {
         if (this.viewName === 'Today' && this.hasOverdueTasks) return []
-        return utilsTask.filterTasksByView(this.tasksWithoutLists, this.viewName)
+        return utilsTask.filterTasksByView(this.tasksWithoutListsAndFolders, this.viewName)
       }
       return []
     },

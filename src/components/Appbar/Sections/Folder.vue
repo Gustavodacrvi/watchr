@@ -38,6 +38,7 @@ import Icon from '@/components/Icon.vue'
 import IconDrop from '@/components/IconDrop/IconDrop.vue'
 
 import utils from "@/utils"
+import folderUtils from "@/utils/folder"
 import { mapGetters, mapState } from 'vuex'
 
 export default {
@@ -99,24 +100,9 @@ export default {
     ...mapState(['selectedTasks', 'isOnControl']),
     ...mapGetters(['l', 'isDesktop']),
     options() {
-      return [
-        {
-          name: this.l['Toggle folder'],
-          icon: 'folder',
-          callback: () => this.toggle()
-        },
-        {
-          name: this.l['Edit folder'],
-          icon: 'pen',
-          callback: () => this.edit(),
-        },
-        {
-          name: this.l['Delete folder'],
-          icon: 'trash',
-          important: true,
-          callback: () => this.delete()
-        },
-      ]
+      return folderUtils.getFolderOptions({
+        id: this.id, name: this.name,
+      },this.l, this.$store, this.showing)
     },
     isSelectingTasks() {
       return this.selectedTasks.length > 0

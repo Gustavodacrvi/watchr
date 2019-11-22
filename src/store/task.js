@@ -102,6 +102,12 @@ export default {
     tasksWithoutLists: () => tasks => {
       return tasks.filter(el => !el.list)
     },
+    tasksWithoutListsAndFolders: () => tasks => {
+      return tasks.filter(el => !el.list && !el.folder)
+    },
+    tasksWithListsOrFolders: () => tasks => {
+      return tasks.filter(el => el.list || el.folder)
+    },
   },
   actions: {
     getData({state}) {

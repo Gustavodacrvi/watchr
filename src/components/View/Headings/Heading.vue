@@ -19,7 +19,12 @@
                 :progress="progress"
                 width='15px'
               />
-              <h3 class="name" :class="{hasProgress}">{{ name }}</h3>
+              <Icon v-else-if="icon" class="icon"
+                :icon='icon'
+                color='var(--primary)'
+                width='22px'
+              />
+              <h3 class="name" :class="{hasIcon}">{{ name }}</h3>
             </span>
             <div class="icons" @click.stop>
               <IconDrop class="icon"
@@ -64,7 +69,7 @@ import { mapGetters } from 'vuex'
 import utils from '@/utils/'
 
 export default {
-  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEdit', 'save', 'notes', 'movingHeading', 'progress'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEdit', 'save', 'notes', 'movingHeading', 'progress', 'icon'],
   components: {
     IconDrop: IconDropVue,
     Icon: IconVue,
@@ -105,7 +110,10 @@ export default {
     },
     hasProgress() {
       return this.progress !== null && this.progress !== undefined
-    }
+    },
+    hasIcon() {
+      return this.hasProgress || this.icon
+    },
   }
 }
 
@@ -170,7 +178,7 @@ export default {
   color: var(--primary);
 }
 
-.name.hasProgress {
+.name.hasIcon {
   transform: translateX(8px);
 }
 

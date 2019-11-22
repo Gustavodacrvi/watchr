@@ -44,6 +44,7 @@
           :notes='h.notes'
           :allowEdit='h.allowEdit'
           :headingEdit='headingEdit'
+          :icon='h.icon'
           :progress='h.progress'
           :color='h.color ? h.color : ""'
           :options='h.options ? h.options : []'

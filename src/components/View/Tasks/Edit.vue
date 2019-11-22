@@ -230,6 +230,7 @@ export default {
         this.task.order = []
 
       this.task.list = this.listName
+      this.task.folder = this.folderName
       this.task.tags = this.getTagNames
     }
   },
@@ -396,6 +397,11 @@ export default {
     listName() {
       if (this.task.list)
         return this.$store.getters['list/getListsById']([this.task.list])[0].name
+      return ''
+    },
+    folderName() {
+      if (this.task.folder)
+        return this.$store.getters['folder/getFoldersById']([this.task.folder])[0].name
       return ''
     },
     listId() {

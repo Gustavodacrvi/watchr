@@ -318,12 +318,12 @@ export default {
 
       batch.commit()
     },
-    removeTasksFromList(c, {taskIds, view, ids}) {
+    removeTasksFromSmartViewHeading(c, {taskIds, view, ids}) {
       const batch = fire.batch()
 
       for (const id of taskIds)
         batch.update(taskRef(id), {
-          list: null, heading: null,
+          list: null, folder: null, heading: null,
         })
       const obj = {}
       obj[view] = {}
