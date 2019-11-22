@@ -112,6 +112,7 @@ export default {
   "Move to folder": "Move to folder",
   "Add Heading Notes": "Add Heading Notes",
   "You have no internet.": "You have no internet.",
+  "Add tasks to folder": "Add tasks to folder",
   'Show tag selection': 'Show tag selection',
   'Show list selection': 'Show list selection',
   'Show completed': 'Show completed',
