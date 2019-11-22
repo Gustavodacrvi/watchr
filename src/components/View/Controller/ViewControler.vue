@@ -184,6 +184,7 @@ export default {
     prefix() {
       if (this.isSmart || this.viewType === 'search') return 'smartList'
       if (this.viewType === 'list') return 'list'
+      if (this.viewType === 'folder') return 'folder'
       return 'tag'
     },
     listeners() {

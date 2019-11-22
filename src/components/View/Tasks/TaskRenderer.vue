@@ -1,5 +1,5 @@
 <template>
-  <div class="TaskRenderer" @click='click'>
+  <div class="TaskRenderer floating-btn-container" @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration" class="illustration">
         <Icon :icon='illustration' color='var(--appnav-color)' width="125px"/>

@@ -2,6 +2,7 @@
 import list from './list'
 import smartList from './smartList'
 import tag from './tag'
+import folder from './folder'
 
 const addPrefix = (object, prefix) => {
   const p = prefix
@@ -19,4 +20,5 @@ export default [
   addPrefix(list, 'list'),
   addPrefix(smartList, 'smartList'),
   addPrefix(tag, 'tag'),
+  addPrefix(folder, 'folder'),
 ]

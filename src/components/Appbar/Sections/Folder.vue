@@ -2,7 +2,7 @@
 <template>
   <div class="Folder">
     <div class="header rb cursor handle-folder"
-      @click="toggle"
+      @click="go"
       @mouseenter="headerHover = true"
       @mouseleave="headerHover = false"
     >
@@ -50,6 +50,9 @@ export default {
     bindOptions() {
       const el = this.$el.getElementsByClassName('header')[0]
       utils.bindOptionsToEventListener(el, this.options, this.$parent)
+    },
+    go() {
+      this.$router.push('/user?folder=' + this.name)
     },
     toggle() {
       this.showing = !this.showing
