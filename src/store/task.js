@@ -301,8 +301,8 @@ export default {
       const calObj = (mom) => {
         return getters.getSpecificDayCalendarObj(mom)
       }
-
-      switch (type) {
+      console.log(type)
+/*       switch (type) {
         case 'tag': {
           dispatch('addTagsToTasksById', {
             tagIds: elIds.slice(),
@@ -348,7 +348,7 @@ export default {
           dispatch('completeTasks', getters.getTasksById(taskIds))
           break
         }
-      }
+      } */
     },
     deleteAllData({state}) {
       for (const el of state.tasks)

@@ -1,10 +1,13 @@
 
 <template>
-  <div class="Folder">
-    <div class="header rb cursor handle-folder"
-      @click="go"
+  <div class="Folder AppbarElement">
+    <div class="header rb cursor handle-folder AppbarElement-link"
+      @click="toggle"
       @mouseenter="headerHover = true"
       @mouseleave="headerHover = false"
+
+      data-type='folder'
+      data-color='var(--white)'
     >
       <span class="icon-wrapper">
         <Icon class="icon" :class="{headerHover}" icon="folder"/>
@@ -124,7 +127,7 @@ export default {
 }
 
 .header:hover {
-  background-color: var(--light-gray);
+  background-color: var(--light-gray) !important;
 }
 
 .icon {

@@ -119,11 +119,11 @@
               class="opt-icon"
               :options="listOptions"
             />
-<!--             <IconDrop
+            <IconDrop
               handle="folder"
               class="opt-icon"
               :options="folderOptions"
-            /> -->
+            />
             <IconDrop
               handle="calendar"
               class="opt-icon"

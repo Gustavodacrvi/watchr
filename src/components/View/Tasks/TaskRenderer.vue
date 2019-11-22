@@ -124,6 +124,8 @@ export default {
         i.setAttribute('id', '')
         i.style.backgroundColor = 'initial'
         i.style.boxShadow = 'initial'
+        if (i.dataset.type === 'folder')
+          i.style.color = 'var(--white)'
       }
     }
     const obj = {
@@ -216,7 +218,6 @@ export default {
           const specialTypes = ['Today', 'Completed', 'Tomorrow', 'Someday']
           if (specialTypes.includes(move.elId))
             move.type = move.elId
-  
           this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
             elIds: [move.elId],
             taskIds: [move.taskId],
@@ -227,6 +228,7 @@ export default {
       },
       onMove: (t, e) => {
         let el = e.target
+
         if (!el.classList.contains('AppbarElement-link'))
           el = el.closest('.AppbarElement-link')
         if (el) {
@@ -243,6 +245,8 @@ export default {
             el.setAttribute('id', 'task-on-hover')
             el.style.backgroundColor = color
             el.style.boxShadow = `0 2px 10px ${color}`
+            if (data.type === 'folder')
+              el.style.color = 'var(--gray)'
           } else move = null
         } else move = null
         if (e && e.path && !e.path.some(el => el.classList && el.classList.contains('task-renderer-root')))
