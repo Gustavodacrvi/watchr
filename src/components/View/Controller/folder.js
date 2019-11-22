@@ -19,37 +19,30 @@ export default {
     removeHeaderTag() {},
     removeDeferDate() {},
     updateIds(ids) {
-/*       if (this.viewList) {
-        this.$store.dispatch('list/saveList', {
+      if (this.viewFolder) {
+        this.$store.dispatch('folder/saveFolder', {
           tasks: ids,
-          id: this.viewList.id,
+          id: this.viewFolder.id,
         })
-      } */
+      }
     },
-    updateHeadingIds(ids) {
-/*       if (this.viewList) {
-        this.$store.dispatch('list/updateListHeadings', {
-          listId: this.viewList.id,
-          ids,
-        })
-      } */
-    },
+    updateHeadingIds(ids) {},
     saveHeaderName(name) {
-/*       if (this.viewList) {
-        if (this.getListByName(name))
+      if (this.viewFolder) {
+        if (this.$store.getters['folder/getFoldersByName']([name])[0])
           this.pushToast({
-            name: this.l['This list already exists!'],
+            name: this.l['This folder already exists!'],
             seconds: 4,
             type: 'error',
           })
         else {
-          this.$router.push('/user?list='+name)
-          this.$store.dispatch('list/saveList', {
+          this.$router.push('/user?folder='+name)
+          this.$store.dispatch('folder/saveFolder', {
             name,
-            id: this.viewList.id,
+            id: this.viewFolder.id,
           })
         }
-      } */
+      }
     },
     saveNotes(notes) {
 /*       if (this.viewList) {
