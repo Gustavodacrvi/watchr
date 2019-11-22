@@ -34,6 +34,21 @@ export default {
       if (!order) order = []
       return utils.checkMissingIdsAndSortArr(order, arr)
     },
+    addTaskByIndex(c, {ids, index, task, folderId}) {
+      const batch = fire.batch()
+
+      const newTaskRef = taskRef()
+      addTask(batch, {
+        userId: uid(),
+        ...task,
+      }, newTaskRef).then(() => {
+        ids.splice(index, 0, newTaskRef.id)
+  
+        batch.update(folderRef(folderId), {tasks: ids})
+  
+        batch.commit()
+      })
+    },
     getFoldersByName: state => names => {
       const arr = []
       for (const n of names) {
@@ -117,12 +132,16 @@ export default {
 
       batch.commit()
     },
-    deleteFolderById({getters}, {id, lists}) {
+    deleteFolderById({getters}, {id, lists, tasks}) {
       const batch = fire.batch()
 
       const folderLists = getters.getListsByFolderId({id, lists})
       for (const l of folderLists)
         batch.update(listRef(l.id), {
+          folder: null,
+        })
+      for (const t of tasks)
+        batch.update(taskRef(t.id), {
           folder: null,
         })
       

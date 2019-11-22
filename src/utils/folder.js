@@ -22,7 +22,8 @@ export default {
         important: true,
         callback: () => dispatch('folder/deleteFolderById', {
           id: folder.id,
-          lists: store.state.list.lists
+          lists: store.state.list.lists,
+          tasks: store.state.task.tasks,
         })
       },
     ]

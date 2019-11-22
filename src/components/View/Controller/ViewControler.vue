@@ -446,6 +446,9 @@ export default {
     viewList() {
       return this.getListByName(this.viewName)
     },
+    viewFolder() {
+      return this.$store.getters['folder/getFoldersByName']([this.viewName])[0]
+    },
     notHeadingHeaderView() {
       return this.viewName !== 'Upcoming' && this.viewName !== 'Completed'
     },

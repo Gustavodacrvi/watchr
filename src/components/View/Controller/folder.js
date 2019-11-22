@@ -7,14 +7,13 @@ import mom from 'moment'
 export default {
   methods: {
     addTask(obj) {
-/*       if (this.viewList) {
+      if (this.viewFolder) {
         if (!obj.task.list)
-          obj.task.list = this.viewList.id
-        obj.task.tags = [...obj.task.tags, ...this.listgetListTags.map(el => el.id)]
-        this.$store.dispatch('list/addTaskByIndex', {
-          ...obj, listId: this.viewList.id,
+          obj.task.folder = this.viewFolder.id
+        this.$store.dispatch('folder/addTaskByIndex', {
+          ...obj, folderId: this.viewFolder.id,
         })
-      } */
+      }
     },
     removeDeadline() {},
     removeHeaderTag() {},
