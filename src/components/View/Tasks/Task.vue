@@ -248,12 +248,17 @@ export default {
   computed: {
     ...mapState({
       isOnControl: state => state.isOnControl,
-      savedLists: state => state.list.lists,
-      savedTags: state => state.tag.tags,
       selectedEls: state => state.selectedEls,
       selectedTasks: state => state.selectedTasks,
     }),
-    ...mapGetters(['isDesktop', 'platform', 'l']),
+    ...mapGetters({
+      isDesktop: 'isDesktop',
+      platform: 'platform',
+      l: 'l',
+      savedLists: 'list/sortedLists',
+      savedFolders: 'folder/sortedFolders',
+      savedTags: 'tag/sortedTagsByFrequency',
+    }),
     completed() {
       return utilsTask.isTaskCompleted(this.task, mom(), this.taskCompletionCompareDate)
     },
@@ -282,10 +287,31 @@ export default {
       }
       return arr
     },
+    folderOptions() {
+      const links = []
+      for (const fold of this.savedFolders) {
+        links.push({
+          name: fold.name,
+          icon: 'folder',
+          callback: () => {
+            this.$store.dispatch('task/saveTask', {
+              id: this.task.id,
+              folder: fold.id,
+              list: null,
+            })
+          }
+        })
+      }
+      return {
+        allowSearch: true,
+        links,
+      }
+    },
     listOptions() {
       const moveToList = (obj) => {
         this.$store.dispatch('task/saveTask', {
           id: this.task.id,
+          folder: null,
           ...obj
         })
       }
@@ -311,7 +337,7 @@ export default {
         })
       }
       return {
-        search: true,
+        allowSearch: true,
         links,
       }
     },
@@ -427,6 +453,11 @@ export default {
               callback: () => dispatch('task/convertToList', {task: this.task, savedLists: this.savedLists})
             },
           ]
+        },
+        {
+          name: l['Move to folder'],
+          icon: 'folder',
+          callback: () => this.folderOptions
         },
         {
           name: l['Delete task'],

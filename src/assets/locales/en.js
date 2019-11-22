@@ -109,6 +109,7 @@ export default {
   "Hide defered lists": "Hide defered lists",
   "Show defered lists": "Show defered lists",
   "Add heading": "Add heading",
+  "Move to folder": "Move to folder",
   "Add Heading Notes": "Add Heading Notes",
   "You have no internet.": "You have no internet.",
   'Show tag selection': 'Show tag selection',

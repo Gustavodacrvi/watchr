@@ -209,6 +209,7 @@ export default {
   "You don't have any tags.": "Você não tem nenhuma tag.",
   "E-mail sent": "E-mail mandado com sucesso.",
   "Save": "Salvar",
+  "Move to folder": "Mover para pasta",
   "Add heading": "Adicionar cabeçalho",
   "Resend confirmation e-mail": "Reenviar e-mail de confirmação",
   "Are you sure?": "Você tem certeza?",
