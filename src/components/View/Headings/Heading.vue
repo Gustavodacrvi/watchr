@@ -12,7 +12,15 @@
           @mouseleave="onHover = false"
         >
           <div class="header">
-            <h3 class="name" :style="{color}">{{ name }}</h3>
+            <span :style="{color}">
+              <Icon v-if="hasProgress" class="icon"
+                icon="tasks"
+                color='var(--primary)'
+                :progress="progress"
+                width='15px'
+              />
+              <h3 class="name" :class="{hasProgress}">{{ name }}</h3>
+            </span>
             <div class="icons" @click.stop>
               <IconDrop class="icon"
                 handle='settings-h'
@@ -56,7 +64,7 @@ import { mapGetters } from 'vuex'
 import utils from '@/utils/'
 
 export default {
-  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEdit', 'save', 'notes', 'movingHeading'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEdit', 'save', 'notes', 'movingHeading', 'progress'],
   components: {
     IconDrop: IconDropVue,
     Icon: IconVue,
@@ -95,6 +103,9 @@ export default {
       else if (!isDesktop) return true
       return false
     },
+    hasProgress() {
+      return this.progress !== null && this.progress !== undefined
+    }
   }
 }
 
@@ -143,6 +154,10 @@ export default {
   z-index: 49;
 }
 
+.icon {
+  transform: translate(-5px, 3px);
+}
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -150,8 +165,13 @@ export default {
 }
 
 .name {
+  display: inline-block;
   margin: 0;
   color: var(--primary);
+}
+
+.name.hasProgress {
+  transform: translateX(8px);
 }
 
 </style>
