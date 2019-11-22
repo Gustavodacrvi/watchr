@@ -454,11 +454,11 @@ export default {
             },
           ]
         },
-        {
+/*         {
           name: l['Move to folder'],
           icon: 'folder',
           callback: () => this.folderOptions
-        },
+        }, */
         {
           name: l['Delete task'],
           icon: 'trash',

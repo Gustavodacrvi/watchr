@@ -395,14 +395,14 @@ export default {
               }
             ]
           },
-          {
+/*           {
             name: l['Add tasks to folder'],
             icon: 'folder',
             callback: () => {return {
               allowSearch: true,
               links: this.getIconDropOptionsFolders,
             }}
-          },
+          }, */
           {
             name: l['Add tasks to list'],
             icon: 'tasks',

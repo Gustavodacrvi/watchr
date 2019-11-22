@@ -2,7 +2,7 @@
 <template>
   <div class="Folder">
     <div class="header rb cursor handle-folder"
-      @click="toggle"
+      @click="go"
       @mouseenter="headerHover = true"
       @mouseleave="headerHover = false"
     >

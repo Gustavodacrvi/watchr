@@ -39,7 +39,8 @@ export default {
         return this.getSpecificDayCalendarObj(mom(), cal)
       if (this.viewName === 'Tomorrow')
         return this.getSpecificDayCalendarObj(mom().add(1, 'day'), cal)
-      return {type: 'someday'}
+      if (this.viewName === 'Someday')
+        return {type: 'someday'}
     },
     getListHeadingsByView(view) {
       const ts = utilsTask.filterTasksByView(this.tasksWithLists, view)
