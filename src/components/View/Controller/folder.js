@@ -45,68 +45,40 @@ export default {
       }
     },
     saveNotes(notes) {
-/*       if (this.viewList) {
-        this.$store.dispatch('list/saveList', {
-          notes, id: this.viewList.id,
+      if (this.viewFolder) {
+        this.$store.dispatch('folder/saveFolder', {
+          notes, id: this.viewFolder.id,
         })
-      } */
+      }
     },
-    addHeading(obj) {
-/*       if (this.viewList) {
-        this.$store.dispatch('list/addHeading', {...obj, listId: this.viewList.id})
-      } */
-    },
-    onSortableAdd(evt, taskIds, type, ids) {
-/*       if (this.viewList) {
-        this.$store.dispatch('list/removeTasksFromHeading', {
-          taskIds, ids, listId: this.viewList.id,
-        })
-      } */
-    },
-    saveList(obj) {
-/*       this.$store.dispatch('list/saveList', {
+    addHeading(obj) {},
+    onSortableAdd(evt, taskIds, type, ids) {},
+    saveFolder(obj) {
+      this.$store.dispatch('folder/saveFolder', {
         ...obj,
-        id: this.viewList.id,
-      }) */
+        id: this.viewFolder.id,
+      })
     },
-    removeDeferDate() {
-      // this.listsaveList({deferDate: null})
-    },
-    removeRepeat(val) {
-      // this.listsaveList({calendar: null})
-    },
-    removeHeaderTag(tagName) {
-/*       this.$store.dispatch('list/removeListTag', {
-        listId: this.viewList.id,
-        tagId: this.listgetListTags.find(el => el.name === tagName).id,
-      }) */
-    },
-    removeDeadline() {
-      // this.listsaveList({deadline: null})
-    }
+    removeDeferDate() {},
+    removeRepeat() {},
+    removeHeaderTag() {},
+    removeDeadline() {}
   },
   computed: {
     icon() {return 'folder'},
     viewNameValue() {return this.viewName},
     getTasks() {
+      if (this.viewFolder)
+        return this.tasks.filter(t => t.folder === this.viewFolder.id)
       return []
     },
     taskCompletionCompareDate() {
-/*       if (this.viewList && this.viewList.calendar && this.viewList.calendar.type !== 'someday')
-        return utils.getCalendarObjectData(this.viewList.calendar, mom()).lastCallEvent.format('Y-M-D')
-      return null */
+      return null
     },
-    files() {
-/*       if (this.viewList) {
-        return {
-          id: this.viewList.id,
-          storageFolder: 'lists',
-          files: this.viewList.files,
-        }
-      }
-      return null */
-    },
+    files() {},
     tasksOrder() {
+      if (this.viewFolder)
+        return this.viewFolder.tasks
       return []
     },
     showEmptyHeadings() {
