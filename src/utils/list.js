@@ -127,7 +127,7 @@ export default {
               content: {
                 storageFolder: 'lists',
                 id: listId,
-                savedFiles: list.files,
+                savedFiles: list.files ? list.files : [],
                 callback: files => {
                   dispatch('list/saveList', {
                     id: listId, files,
