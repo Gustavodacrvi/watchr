@@ -74,10 +74,6 @@ export default {
     },
     toggle() {
       this.showing = !this.showing
-      this.$store.dispatch('folder/saveFolder', {
-        id: this.id,
-        defaultShowing: this.showing,
-      })
     },
     edit() {
       this.$store.dispatch('pushPopup', {
@@ -102,7 +98,7 @@ export default {
     options() {
       return folderUtils.getFolderOptions({
         id: this.id, name: this.name,
-      },this.l, this.$store, this.showing)
+      },this.l, this.$store, this.showing, this.toggle)
     },
     isSelectingTasks() {
       return this.selectedTasks.length > 0

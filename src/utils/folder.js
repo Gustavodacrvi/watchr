@@ -1,6 +1,6 @@
 
 export default {
-  getFolderOptions(folder, l, store, toggle) {
+  getFolderOptions(folder, l, store, toggle, onToggle) {
     // toggle is a boolean
     const dispatch = store.dispatch
     const obj = [
@@ -28,13 +28,16 @@ export default {
       },
     ]
     if (toggle !== undefined)
-      obj.unshift(      {
+      obj.unshift({
         name: l['Toggle folder'],
         icon: 'folder',
-        callback: () => dispatch('folder/saveFolder', {
-          id: folder.id,
-          defaultShowing: toggle,
-        })
+        callback: () => {
+          if (onToggle) onToggle()
+          dispatch('folder/saveFolder', {
+            id: folder.id,
+            defaultShowing: toggle,
+          })
+        }
       })
 
     return obj
