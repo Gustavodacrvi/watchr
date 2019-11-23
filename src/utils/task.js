@@ -97,6 +97,7 @@ export default {
         return tasks.filter(el =>
           !this.hasCalendarBinding(el) &&
           !el.list &&
+          !el.folder &&
           el.tags.length === 0
         )
       }

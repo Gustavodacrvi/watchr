@@ -31,6 +31,8 @@
         :movingFolder='movingFolder'
 
         :data-id='f.id'
+
+        data-type='folder'
       >
         <Renderer
           type="list"
@@ -87,7 +89,16 @@ export default {
   mounted() {
     const el = this.$el.getElementsByClassName('folders-root')[0]
     const headsSor = new Sortable(el, {
-      group: {name: 'folders', put: false, pull: false},
+      group: {name: 'folders', pull: (e) => {
+        const name = e.el.dataset.name
+        console.log(name)
+        if (name === 'task-renderer') return 'clone'
+        return false
+      }, put: (l,j,item) => {
+        const type = item.dataset.type
+        if (type === 'task') return true
+        return false
+      }},
       delay: 225,
       delayOnTouchOnly: true,
       handle: '.handle-folder',

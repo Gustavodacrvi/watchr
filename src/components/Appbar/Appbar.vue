@@ -44,7 +44,7 @@
                   @enter="enter"
                 >
                   <component
-                    class="component appnav-section"
+                    class="component appnav-section floating-btn-container"
                     :is="section"
                     :active="value"
                     :viewType='viewType'

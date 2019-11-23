@@ -3,7 +3,7 @@ import { fire, auth } from './index'
 import fb from 'firebase/app'
 
 import utils from '../utils'
-import { folderColl, uid, folderRef, listRef, userRef } from '../utils/firestore'
+import { folderColl, uid, folderRef, listRef, userRef, taskRef, addTask } from '../utils/firestore'
 
 export default {
   namespaced: true,
@@ -19,6 +19,12 @@ export default {
         return utils.checkMissingIdsAndSortArr(order, folders)
       return []
     },
+    getFolderTaskOrderById: state => folderId => {
+      const fold = state.folders.find(f => f.id === folderId)
+      if (fold && fold.tasks)
+        return fold.tasks
+      return []
+    },
     getListsByFolderId: state => ({id, lists}) => {
       const arr = []
       const fold = state.folders.find(f => f.id === id)
@@ -27,6 +33,14 @@ export default {
       let order = fold.order
       if (!order) order = []
       return utils.checkMissingIdsAndSortArr(order, arr)
+    },
+    getFoldersByName: state => names => {
+      const arr = []
+      for (const n of names) {
+        const fold = state.folders.find(f => f.name === n)
+        if (fold) arr.push(fold)
+      }
+      return arr
     },
     getFoldersById: state => ids => {
       const arr = []
@@ -62,6 +76,7 @@ export default {
       })
     },
     saveFolder(c, fold) {
+      console.log(fold.tasks)
       folderRef(fold.id).update({
         ...fold, 
       })
@@ -74,6 +89,42 @@ export default {
 
       batch.commit()
     },
+    moveTasksToFolder({getters}, {ids, taskIds, folderId, smartView}) {
+      const fold = getters.getFoldersById([folderId])[0]
+      const batch = fire.batch()
+
+      let views = fold.smartViewsOrders
+      if (!views) views = {}
+      views[smartView] = ids
+
+      for (const id of taskIds) {
+        batch.update(taskRef(id), {
+          list: null,
+          folder: folderId,
+          heading: null,
+        })
+      }
+      batch.update(folderRef(folderId), {
+        smartViewsOrders: views,
+      })
+
+      batch.commit()
+    },
+    addTaskByIndex(c, {ids, index, task, folderId}) {
+      const batch = fire.batch()
+
+      const newTaskRef = taskRef()
+      addTask(batch, {
+        userId: uid(),
+        ...task,
+      }, newTaskRef).then(() => {
+        ids.splice(index, 0, newTaskRef.id)
+  
+        batch.update(folderRef(folderId), {tasks: ids})
+  
+        batch.commit()
+      })
+    },
     moveListBetweenFolders(c, {folder, id, ids}) {
       const batch = fire.batch()
 
@@ -82,7 +133,7 @@ export default {
 
       batch.commit()
     },
-    deleteFolderById({getters}, {id, lists}) {
+    deleteFolderById({getters}, {id, lists, tasks}) {
       const batch = fire.batch()
 
       const folderLists = getters.getListsByFolderId({id, lists})
@@ -90,10 +141,23 @@ export default {
         batch.update(listRef(l.id), {
           folder: null,
         })
+      for (const t of tasks)
+        batch.update(taskRef(t.id), {
+          folder: null,
+        })
       
       batch.delete(folderRef(id))
 
       batch.commit()
-    }
+    },
+    saveSmartViewHeadingTasksOrder({getters}, {ids, folderId, smartView}) {
+      const folder = getters.getFoldersById([folderId])[0]
+      let views = folder.smartViewsOrders
+      if (!views) views = {}
+      views[smartView] = ids
+      folderRef(folderId).update({
+        smartViewsOrders: views,
+      })
+    },
   },
 }

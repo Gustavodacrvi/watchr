@@ -42,6 +42,7 @@
             <transition name="name-t">
               <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
                   <span v-if="calendarStr && !isToday" class="tag cb rb">{{ calendarStr }}</span>
+                  <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
                   <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
                   <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
                   <span v-html="parsedName"></span>
@@ -99,7 +100,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'
   , 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart'],
   components: {
     Icon: IconVue,
@@ -248,12 +249,17 @@ export default {
   computed: {
     ...mapState({
       isOnControl: state => state.isOnControl,
-      savedLists: state => state.list.lists,
-      savedTags: state => state.tag.tags,
       selectedEls: state => state.selectedEls,
       selectedTasks: state => state.selectedTasks,
     }),
-    ...mapGetters(['isDesktop', 'platform', 'l']),
+    ...mapGetters({
+      isDesktop: 'isDesktop',
+      platform: 'platform',
+      l: 'l',
+      savedLists: 'list/sortedLists',
+      savedFolders: 'folder/sortedFolders',
+      savedTags: 'tag/sortedTagsByFrequency',
+    }),
     completed() {
       return utilsTask.isTaskCompleted(this.task, mom(), this.taskCompletionCompareDate)
     },
@@ -282,10 +288,31 @@ export default {
       }
       return arr
     },
+    folderOptions() {
+      const links = []
+      for (const fold of this.savedFolders) {
+        links.push({
+          name: fold.name,
+          icon: 'folder',
+          callback: () => {
+            this.$store.dispatch('task/saveTask', {
+              id: this.task.id,
+              folder: fold.id,
+              list: null,
+            })
+          }
+        })
+      }
+      return {
+        allowSearch: true,
+        links,
+      }
+    },
     listOptions() {
       const moveToList = (obj) => {
         this.$store.dispatch('task/saveTask', {
           id: this.task.id,
+          folder: null,
           ...obj
         })
       }
@@ -311,7 +338,7 @@ export default {
         })
       }
       return {
-        search: true,
+        allowSearch: true,
         links,
       }
     },
@@ -413,14 +440,25 @@ export default {
           callback: () => dispatch('task/copyTask', this.task)
         },
         {
-          name: l['Move to list'],
+          name: l['Lists'],
           icon: 'tasks',
-          callback: () => this.listOptions
+          callback: () => [
+            {
+              name: l['Move to list'],
+              icon: 'tasks',
+              callback: () => this.listOptions
+            },
+            {
+              name: l['Convert to list'],
+              icon: 'tasks',
+              callback: () => dispatch('task/convertToList', {task: this.task, savedLists: this.savedLists})
+            },
+          ]
         },
         {
-          name: l['Convert to list'],
-          icon: 'tasks',
-          callback: () => dispatch('task/convertToList', this.task)
+          name: l['Move to folder'],
+          icon: 'folder',
+          callback: () => this.folderOptions
         },
         {
           name: l['Delete task'],
@@ -429,13 +467,6 @@ export default {
           callback: () => dispatch('task/deleteTasks', [this.task.id])
         }
       ]
-      if (this.task.list) {
-        arr.splice(5, 0, {
-          name: l["Go to list"],
-          icon: 'tasks',
-          callback: () => this.$router.push('/user?list='+this.savedLists.find(el => el.id === t.list).name)
-        })
-      }
       if (c && c.persistent && (c.type === "periodic" || c.type === "periodic"))
         arr.splice(3, 0, {
           name: l["Manual complete"],
@@ -471,6 +502,13 @@ export default {
       const savedList = this.savedLists.find(el => el.id === list)
       if (!savedList || (savedList.name === this.viewName)) return null
       return savedList.name
+    },
+    folderStr() {
+      const folder = this.task.folder
+      if (!folder || this.hideFolderName) return null
+      const fold = this.savedFolders.find(f => f.id === folder)
+      if (!fold || (fold.name === this.viewName)) return null
+      return fold.name
     },
     fade() {
       if (this.completed) return true

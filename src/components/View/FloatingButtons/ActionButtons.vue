@@ -4,7 +4,7 @@
       icon='heading'
       color='white'
       data-type='headingbutton'
-      txt='Add heading'
+      :txt='l["Add heading"]'
     />
     <span v-else></span>
     <Btn class="add button handle action-button task-adder" id="edit-component"
@@ -81,25 +81,25 @@ export default {
 
 <style>
 
-.tags-act {
-  display: none;
+.floating-btn-msg, .floating-btn-container .floating {
+  display: none !important;
 }
 
-.ActionButtons .floating, .TaskRenderer .task-renderer, .appnav-section .tags-act {
-  display: block;
-}
-
-.TaskRenderer .floating, .ActionButtons .renderer, .appnav-section .floating, .appnav-section .task-renderer {
-  display: none;
-}
-
-.TaskRenderer .ActButton, .appnav-section .ActButton {
-  width: 98%;
+.floating-btn-container .floating-btn-msg {
+  width: 98% !important;
   background-color: var(--void);
   box-shadow: none;
   border-radius: 6px;
   height: 40px;
   flex-grow: 1;
+}
+
+.TaskRenderer .task-act,
+.Lists .list-act,
+.Tags .tags-act {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
 }
 
 </style>

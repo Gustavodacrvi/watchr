@@ -19,6 +19,12 @@
             :value="l[task.priority]"
             @click="task.priority = ''"
           />
+          <Tag v-if="task.folder"
+            icon="folder"
+            :value="task.folder"
+            color=''
+            @click="task.folder = ''"
+          />
           <Tag v-if="task.list"
             icon="tasks"
             :value="task.list"
@@ -114,6 +120,11 @@
               :options="listOptions"
             />
             <IconDrop
+              handle="folder"
+              class="opt-icon"
+              :options="folderOptions"
+            />
+            <IconDrop
               handle="calendar"
               class="opt-icon"
               :options="calendarOptions"
@@ -175,6 +186,7 @@ export default {
       task: {
         name: '',
         priority: '',
+        folder: '',
         list: '',
         notes: '',
         calendar: null,
@@ -218,6 +230,7 @@ export default {
         this.task.order = []
 
       this.task.list = this.listName
+      this.task.folder = this.folderName
       this.task.tags = this.getTagNames
     }
   },
@@ -304,6 +317,14 @@ export default {
     save() {
       const t = this.task
       if (t.name) {
+        if (t.folder) {
+          this.task.list = ''
+          this.task.heading = ''
+        }
+        if (t.list) {
+          this.task.folder = ''
+        }
+        
         let n = t.name
         const i = n.indexOf(' $')
         if (i && i > -1 && t.calendar) {
@@ -318,6 +339,7 @@ export default {
         this.$emit('save', {
           ...t,
           list: this.listId,
+          folder: this.folderId,
           tags: this.tagIds,
           name: n, heading,
           calendar,
@@ -343,12 +365,15 @@ export default {
   },
   computed: {
     ...mapState({
-      savedTags: state => state.tag.tags,
       savedTasks: state => state.task.tasks,
-      savedLists: state => state.list.lists,
       user: state => state.user,
     }),
-    ...mapGetters(['l']),
+    ...mapGetters({
+      l: 'l',
+      savedLists: 'list/sortedLists',
+      savedFolders: 'folder/sortedFolders',
+      savedTags: 'tag/sortedTagsByFrequency',
+    }),
     isEditing() {
       return this.defaultTask
     },
@@ -382,9 +407,19 @@ export default {
         return this.$store.getters['list/getListsById']([this.task.list])[0].name
       return ''
     },
+    folderName() {
+      if (this.task.folder)
+        return this.$store.getters['folder/getFoldersById']([this.task.folder])[0].name
+      return ''
+    },
     listId() {
       if (this.task.list)
         return this.$store.getters['list/getListsByName']([this.task.list]).map(el => el.id)[0]
+      return null
+    },
+    folderId() {
+      if (this.task.folder)
+        return this.$store.getters['folder/getFoldersByName']([this.task.folder]).map(el => el.id)[0]
       return null
     },
     selectDate() {
@@ -396,7 +431,7 @@ export default {
     },
     atLeastOnSpecialTag() {
       const t = this.task
-      return this.calendarStr || t.priority || t.list || (t.list && t.heading)
+      return this.calendarStr || t.priority || t.folder || t.list || (t.list && t.heading)
     },
     calendarStr() {
       if (this.task.calendar)
@@ -428,6 +463,24 @@ export default {
     priorities() {
       return this.$store.getters['task/priorityOptions']
     },
+    folderOptions() {
+      const arr = []
+      for (const el of this.savedFolders) {
+        arr.push({
+          name: el.name,
+          icon: 'folder',
+          callback: () => {
+            this.task.folder = el.name
+            this.task.list = ''
+            this.task.heading = ''
+          }
+        })
+      }
+      return {
+        links: arr,
+        allowSearch: true,
+      }
+    },
     listOptions() {
       const arr = []
       for (const el of this.savedLists) {
@@ -436,6 +489,7 @@ export default {
           icon: 'tasks',
           callback: () => {
             this.task.list = el.name
+            this.task.folder = ''
             const arr = []
             for (const h of el.headings) {
               arr.push({
@@ -522,6 +576,7 @@ export default {
           if (n.includes(listName)) {
             this.task.name = n.replace(listName, '')
             this.task.list = li.name
+            this.task.folder = ''
             break
           }
         }
@@ -532,6 +587,28 @@ export default {
           const word = lastWord.substr(1)
 
           this.options = lists.map(el => el.name).filter(el => el.toLowerCase().includes(word.toLowerCase()))
+          changedOptions = true
+        }
+      }
+      const parseFolder = () => {
+        const folders = this.savedFolders
+        for (const f of folders) {
+          const folderName = ` %${f.name}`
+          if (n.includes(folderName)) {
+            this.task.name = n.replace(folderName, '')
+            this.task.folder = f.name
+            this.task.list = ''
+            this.task.heading = ''
+            break
+          }
+        }
+        const arr = n.split(' ')
+        const lastWord = arr[arr.length - 1]
+        if (lastWord[0] === '%') {
+          this.optionsType = '%'
+          const word = lastWord.substr(1)
+
+          this.options = this.savedFolders.map(el => el.name).filter(el => el.toLowerCase().includes(word.toLowerCase()))
           changedOptions = true
         }
       }
@@ -547,6 +624,7 @@ export default {
       parsePriority()
       parseTags()
       parseLists()
+      parseFolder()
       parseDate()
 
       if (!changedOptions) this.options = []

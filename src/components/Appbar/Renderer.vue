@@ -4,7 +4,6 @@
       @enter='enter'
       @leave='leave'
       tag="div"
-      :class="{dontHaveElements: list.length === 0}"
 
       data-name='appnav-renderer'
     >
@@ -268,26 +267,6 @@ export default {
 .Renderer {
   position: relative;
   pointer-events: all;
-}
-
-.dontHaveElements {
-  height: 225px;
-}
-
-.folder .dontHaveElements {
-  height: 38px;
-}
-
-.illus-t-enter, .illus-t-leave-to {
-  opacity: 0;
-  transform: translateY(20px);
-  transition-duration: .3s;
-}
-
-.illus-t-leave, .illus-t-enter-to {
-  opacity: 1;
-  transform: translateY(0px);
-  transition-duration: .3s;
 }
 
 </style>

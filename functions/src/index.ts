@@ -23,3 +23,14 @@ export const deleteListAttachments = functions.firestore
     prefix: `attachments/${userId}/lists/${listId}`
   });
 });
+
+export const deleteFolderAttachments = functions.firestore
+.document("users/{userId}/folders/{folderId}")
+.onDelete((snap, context) => {
+  const { userId, folderId } = context.params;
+  const bucket = firebase.storage().bucket();
+
+  return bucket.deleteFiles({
+    prefix: `attachments/${userId}/folders/${folderId}`
+  });
+});

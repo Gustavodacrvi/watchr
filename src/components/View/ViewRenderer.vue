@@ -153,7 +153,6 @@ export default {
   },
   computed: {
     ...mapState({
-      savedLists: state => state.list.lists,
       viewOrders: state => state.list.viewOrders,
       selectedTasks: state => state.selectedTasks,
     }),
@@ -161,6 +160,8 @@ export default {
       platform: 'platform',
       isDesktop: 'isDesktop',
       l: 'l',
+      savedLists: 'list/sortedLists',
+      savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
     isSearch() {
@@ -209,11 +210,33 @@ export default {
       }
       return arr
     },
+    getIconDropOptionsFolders() {
+      const moveToList = (obj) => {
+        this.$store.dispatch('task/saveTasksById', {
+          ids: this.selectedTasks,
+          task: {...obj, folder: null},
+        })
+      }
+      const links = []
+      for (const fold of this.savedFolders) {
+        links.push({
+          name: fold.name,
+          icon: 'folder',
+          callback: () => {
+            this.$store.dispatch('task/saveTasksById', {
+              ids: this.selectedTasks,
+              task: {folder: fold.id, list: null},
+            })
+          },
+        })
+      }
+      return links
+    },
     getIconDropOptionsLists() {
       const moveToList = (obj) => {
         this.$store.dispatch('task/saveTasksById', {
           ids: this.selectedTasks,
-          task: {...obj},
+          task: {...obj, folder: null},
         })
       }
       const links = []
@@ -339,7 +362,7 @@ export default {
             name: l['Add tags'],
             icon: 'tag',
             callback: () => {return {
-              search: true,
+              allowSearch: true,
               links: this.getIconDropOptionsTags,
             }}
           },
@@ -373,17 +396,20 @@ export default {
             ]
           },
           {
-            name: l['Add tasks to list'],
-            icon: 'tasks',
+            name: l['Add tasks to folder'],
+            icon: 'folder',
             callback: () => {return {
-              search: true,
-              links: this.getIconDropOptionsLists,
+              allowSearch: true,
+              links: this.getIconDropOptionsFolders,
             }}
           },
           {
-            name: l['Remove tasks from list'],
+            name: l['Add tasks to list'],
             icon: 'tasks',
-            callback: () => this.removeTasksFromLists(),
+            callback: () => {return {
+              allowSearch: true,
+              links: this.getIconDropOptionsLists,
+            }}
           },
           {
             name: l['Delete tasks'],

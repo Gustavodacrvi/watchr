@@ -102,6 +102,12 @@ export default {
     tasksWithoutLists: () => tasks => {
       return tasks.filter(el => !el.list)
     },
+    tasksWithoutListsAndFolders: () => tasks => {
+      return tasks.filter(el => !el.list && !el.folder)
+    },
+    tasksWithListsOrFolders: () => tasks => {
+      return tasks.filter(el => el.list || el.folder)
+    },
   },
   actions: {
     getData({state}) {
@@ -150,8 +156,14 @@ export default {
 
       batch.commit()
     },
-    convertToList(c, task) {
+    convertToList(c, {task, savedLists}) {
       const batch = fire.batch()
+
+      let folder = null
+      if (task.list) {
+        const list = savedLists.find(l => l.id === task.list)
+        if (list && list.folder) folder = list.folder
+      }
 
       const list = listRef()
       const oldTask = taskRef(task.id)
@@ -162,6 +174,7 @@ export default {
         for (const t of task.checklist) {
           const ref = taskRef(t.id)
           batch.set(ref, {
+            folder,
             userId: uid(),
             users: [uid()],
             name: t.name,
@@ -276,13 +289,25 @@ export default {
       const batch = fire.batch()
 
       for (const id of ids) {
-        const ref = taskRef(id)
-        batch.update(ref, {
+        batch.update(taskRef(id), {
           list: listId,
+          folder: null,
           heading: null,
         })
       }
 
+      batch.commit()
+    },
+    addFolderToTasksById(c, {ids, folderId}) {
+      const batch = fire.batch()
+
+      for (const id of ids)
+        batch.update(taskRef(id), {
+          list: null,
+          folder: folderId,
+          heading: null,
+        })
+      
       batch.commit()
     },
     copyTask(c, task) {
@@ -294,7 +319,6 @@ export default {
       const calObj = (mom) => {
         return getters.getSpecificDayCalendarObj(mom)
       }
-
       switch (type) {
         case 'tag': {
           dispatch('addTagsToTasksById', {
@@ -306,6 +330,13 @@ export default {
         case 'list': {
           dispatch('addListToTasksById', {
             listId: elIds[0],
+            ids: taskIds,
+          })
+          break
+        }
+        case 'folder': {
+          dispatch('addFolderToTasksById', {
+            folderId: elIds[0],
             ids: taskIds,
           })
           break

@@ -1,5 +1,5 @@
 <template>
-  <div class="TaskRenderer" @click='click'>
+  <div class="TaskRenderer floating-btn-container" @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration" class="illustration">
         <Icon :icon='illustration' color='var(--appnav-color)' width="125px"/>
@@ -44,6 +44,8 @@
           :notes='h.notes'
           :allowEdit='h.allowEdit'
           :headingEdit='headingEdit'
+          :icon='h.icon'
+          :progress='h.progress'
           :color='h.color ? h.color : ""'
           :options='h.options ? h.options : []'
           :save='h.onEdit'
@@ -58,6 +60,7 @@
 
             :tasks='filter(h)'
             :hideListName="h.hideListName"
+            :hideFolderName="h.hideFolderName"
             :showHeadingName="h.showHeadingName"
             :onSortableAdd='h.onSortableAdd'
             @add-heading='(obj) => $emit("add-heading", obj)'
@@ -98,7 +101,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
+  props: ['tasks', 'header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
   'viewType', 'options', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -124,6 +127,8 @@ export default {
         i.setAttribute('id', '')
         i.style.backgroundColor = 'initial'
         i.style.boxShadow = 'initial'
+        if (i.dataset.type === 'folder')
+          i.style.color = 'var(--white)'
       }
     }
     const obj = {
@@ -216,7 +221,6 @@ export default {
           const specialTypes = ['Today', 'Completed', 'Tomorrow', 'Someday']
           if (specialTypes.includes(move.elId))
             move.type = move.elId
-  
           this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
             elIds: [move.elId],
             taskIds: [move.taskId],
@@ -227,6 +231,7 @@ export default {
       },
       onMove: (t, e) => {
         let el = e.target
+
         if (!el.classList.contains('AppbarElement-link'))
           el = el.closest('.AppbarElement-link')
         if (el) {
@@ -243,6 +248,8 @@ export default {
             el.setAttribute('id', 'task-on-hover')
             el.style.backgroundColor = color
             el.style.boxShadow = `0 2px 10px ${color}`
+            if (data.type === 'folder')
+              el.style.color = 'var(--gray)'
           } else move = null
         } else move = null
         if (e && e.path && !e.path.some(el => el.classList && el.classList.contains('task-renderer-root')))
@@ -617,7 +624,7 @@ export default {
   position: absolute;
   width: 100%;
   top: 0;
-  height: 300px;
+  height: 500px;
   display: flex;
   justify-content: center;
   align-items: center;

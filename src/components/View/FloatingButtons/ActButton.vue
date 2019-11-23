@@ -1,7 +1,7 @@
 <template>
-  <div class="ActButton handle shadow" :class="platform">
+  <div class="ActButton handle" :class="platform">
     <div class="floating">
-      <div class="button cb">
+      <div class="inner-ball-button cb shadow">
         <Icon class="icon"
           :icon="icon"
           :color="color"
@@ -9,11 +9,14 @@
         <div class="path"></div>
       </div>
     </div>
-    <div class="renderer task-renderer">
+    <div class="floating-btn-msg task-act">
       {{ txt }}
     </div>
-    <div class="renderer tags-act">
+    <div class="floating-btn-msg tags-act">
       {{ l["Add tag"] }}
+    </div>
+    <div class="floating-btn-msg list-act">
+      {{ l["Add list"] }}
     </div>
   </div>
 </template>
@@ -38,7 +41,7 @@ export default {
 
 <style scoped>
 
-.ActButton, .button {
+.ActButton, .inner-ball-button {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -54,7 +57,8 @@ export default {
   transform: scale(1.1,1.1);
 }
 
-.button {
+.inner-ball-button {
+  position: relative;
   transition-duration: .3s;
   width: 50px;
   height: 50px;
@@ -76,11 +80,11 @@ export default {
   background-color: var(--light-gray);
 }
 
-.button:hover .path {
+.inner-ball-button:hover .path {
   clip-path: circle(50px);
 }
 
-.button:active .path {
+.inner-ball-button:active .path {
   background-color: var(--primary);
 }
 
