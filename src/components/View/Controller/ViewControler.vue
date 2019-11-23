@@ -83,6 +83,7 @@ export default {
               name: list.name,
               allowEdit: true,
               hideListName: true,
+              hideFolderName: true,
               showHeadingName: true,
               onEdit: (name) => {
                 this.$store.dispatch('list/saveList', {
@@ -179,7 +180,8 @@ export default {
             arr.push({
               name: folder.name,
               allowEdit: true,
-              hideListName: false,
+              hideListName: true,
+              hideFolderName: true,
               showHeadingName: true,
               onEdit: name => {
                 this.$store.dispatch('folder/saveFolder', {

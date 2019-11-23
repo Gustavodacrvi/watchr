@@ -1,6 +1,7 @@
 
 import utilsTask from '@/utils/task'
 import utilsList from '@/utils/list'
+import utilsFolder from '@/utils/folder'
 import utils from '@/utils/'
 import mom from 'moment'
 
@@ -75,7 +76,16 @@ export default {
     taskCompletionCompareDate() {
       return null
     },
-    files() {},
+    files() {
+      if (this.viewFolder) {
+        return {
+          id: this.viewFolder.id,
+          storageFolder: 'folders',
+          files: this.viewFolder.files,
+        }
+      }
+      return null
+    },
     tasksOrder() {
       if (this.viewFolder)
         return this.viewFolder.tasks
@@ -94,6 +104,8 @@ export default {
       return 'folder'
     },
     headerOptions() {
+      if (this.viewFolder)
+        return utilsFolder.getFolderOptions(this.viewFolder, this.l, this.$store)
       return []
     },
     headingEdit() {

@@ -17,6 +17,23 @@ export default {
         }),
       },
       {
+        name: l['Add files'],
+        icon: 'file',
+        callback: () => ({
+          comp: 'Files',
+          content: {
+            storageFolder: 'folders',
+            id: folder.id,
+            savedFiles: folder.files ? folder.files : [],
+            callback: files => {
+              dispatch('folder/saveFolder', {
+                id: folder.id, files,
+              })
+            }
+          },
+        }),
+      },
+      {
         name: l['Delete folder'],
         icon: 'trash',
         important: true,
@@ -35,7 +52,7 @@ export default {
           if (onToggle) onToggle()
           dispatch('folder/saveFolder', {
             id: folder.id,
-            defaultShowing: toggle,
+            defaultShowing: !toggle,
           })
         }
       })

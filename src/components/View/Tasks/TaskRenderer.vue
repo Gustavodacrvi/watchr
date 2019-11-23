@@ -60,6 +60,7 @@
 
             :tasks='filter(h)'
             :hideListName="h.hideListName"
+            :hideFolderName="h.hideFolderName"
             :showHeadingName="h.showHeadingName"
             :onSortableAdd='h.onSortableAdd'
             @add-heading='(obj) => $emit("add-heading", obj)'
@@ -100,7 +101,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
+  props: ['tasks', 'header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
   'viewType', 'options', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {

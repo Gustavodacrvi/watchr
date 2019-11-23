@@ -42,6 +42,7 @@
             <transition name="name-t">
               <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
                   <span v-if="calendarStr && !isToday" class="tag cb rb">{{ calendarStr }}</span>
+                  <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
                   <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
                   <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
                   <span v-html="parsedName"></span>
@@ -99,7 +100,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'
   , 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart'],
   components: {
     Icon: IconVue,
@@ -501,6 +502,13 @@ export default {
       const savedList = this.savedLists.find(el => el.id === list)
       if (!savedList || (savedList.name === this.viewName)) return null
       return savedList.name
+    },
+    folderStr() {
+      const folder = this.task.folder
+      if (!folder || this.hideFolderName) return null
+      const fold = this.savedFolders.find(f => f.id === folder)
+      if (!fold || (fold.name === this.viewName)) return null
+      return fold.name
     },
     fade() {
       if (this.completed) return true
