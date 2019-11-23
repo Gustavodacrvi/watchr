@@ -19,7 +19,7 @@ import utilsList from '@/utils/list'
 import folderUtils from '@/utils/folder'
 import utils from '@/utils/'
 
-import mom from 'moment'
+import mom from 'moment/src/moment'
 
 import mixins from './controlerModules'
 

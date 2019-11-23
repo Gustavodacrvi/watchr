@@ -1,4 +1,6 @@
 
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
+
 module.exports = {
   pwa: {
     themeColor: '#222222',
@@ -8,6 +10,13 @@ module.exports = {
     workboxOptions: {
       swSrc: 'public/service-worker.js',
     },
+  },
+  configureWebpack: {
+    plugins: [
+      new MomentLocalesPlugin({
+        localesToKeep: ['pt-br'],
+      }),
+    ],
   },
   chainWebpack: config => {
     config.plugins.delete('prefetch')

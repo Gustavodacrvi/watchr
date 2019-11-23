@@ -60,7 +60,7 @@ import { mapGetters, mapState } from 'vuex'
 
 import utilsTask from '@/utils/task'
 import utils from '@/utils/index.js'
-import mom from 'moment'
+import mom from 'moment/src/moment'
 
 export default {
   props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'notes', 'showCompletedOnHeadings', 'isSmart', 'headerOptions', 'progress', 'prefix',

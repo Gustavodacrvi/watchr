@@ -71,7 +71,7 @@ import utils from '@/utils'
 
 import { mapGetters, mapState } from 'vuex'
 
-import mom from 'moment'
+import mom from 'moment/src/moment'
 
 import { Sortable } from 'sortablejs'
 

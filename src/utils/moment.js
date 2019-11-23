@@ -1,5 +1,5 @@
 
-import mom from "moment"
+import mom from 'moment/src/moment'
 
 export default {
   getFirstDayOfNextWeekMoment(initial) {

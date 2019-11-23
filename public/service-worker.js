@@ -1,5 +1,5 @@
 
-const cacheName = '36'
+const cacheName = `watchr${Date.now()}`
 
 self.addEventListener('message', msg => {
   if (msg.data.action === 'skipWaiting')

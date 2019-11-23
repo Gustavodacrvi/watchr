@@ -97,7 +97,7 @@ import { mapState, mapGetters } from 'vuex'
 import utilsTask from '@/utils/task'
 import utils from '@/utils/index'
 
-import mom from 'moment'
+import mom from 'moment/src/moment'
 
 export default {
   props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'

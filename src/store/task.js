@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import { uid, fd, userRef, tagRef, taskColl, taskRef, listRef, addTask } from '../utils/firestore'
 
-import mom from 'moment'
+import mom from 'moment/src/moment'
 
 export default {
   namespaced: true,

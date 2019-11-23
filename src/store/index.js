@@ -2,7 +2,7 @@ import Vue from "vue"
 import Vuex from "vuex"
 import router from './../router'
 
-import moment from 'moment'
+import moment from 'moment/src/moment'
 
 Vue.use(Vuex)
 

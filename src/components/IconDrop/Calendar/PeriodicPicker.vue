@@ -17,7 +17,7 @@ import Button from '@/components/Auth/Button.vue'
 
 import { mapGetters } from 'vuex'
 
-import mom from 'moment'
+import mom from 'moment/src/moment'
 
 export default {
   props: ['content'],
