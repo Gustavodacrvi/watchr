@@ -3,7 +3,7 @@ import { fire, auth } from './index'
 import fb from 'firebase/app'
 
 import utils from '../utils'
-import { folderColl, uid, folderRef, listRef, userRef, taskRef } from '../utils/firestore'
+import { folderColl, uid, folderRef, listRef, userRef, taskRef, addTask } from '../utils/firestore'
 
 export default {
   namespaced: true,
@@ -33,21 +33,6 @@ export default {
       let order = fold.order
       if (!order) order = []
       return utils.checkMissingIdsAndSortArr(order, arr)
-    },
-    addTaskByIndex(c, {ids, index, task, folderId}) {
-      const batch = fire.batch()
-
-      const newTaskRef = taskRef()
-      addTask(batch, {
-        userId: uid(),
-        ...task,
-      }, newTaskRef).then(() => {
-        ids.splice(index, 0, newTaskRef.id)
-  
-        batch.update(folderRef(folderId), {tasks: ids})
-  
-        batch.commit()
-      })
     },
     getFoldersByName: state => names => {
       const arr = []
@@ -91,6 +76,7 @@ export default {
       })
     },
     saveFolder(c, fold) {
+      console.log(fold.tasks)
       folderRef(fold.id).update({
         ...fold, 
       })
@@ -123,6 +109,21 @@ export default {
       })
 
       batch.commit()
+    },
+    addTaskByIndex(c, {ids, index, task, folderId}) {
+      const batch = fire.batch()
+
+      const newTaskRef = taskRef()
+      addTask(batch, {
+        userId: uid(),
+        ...task,
+      }, newTaskRef).then(() => {
+        ids.splice(index, 0, newTaskRef.id)
+  
+        batch.update(folderRef(folderId), {tasks: ids})
+  
+        batch.commit()
+      })
     },
     moveListBetweenFolders(c, {folder, id, ids}) {
       const batch = fire.batch()
