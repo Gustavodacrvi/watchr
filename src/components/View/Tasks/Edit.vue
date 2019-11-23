@@ -317,6 +317,14 @@ export default {
     save() {
       const t = this.task
       if (t.name) {
+        if (t.folder) {
+          this.task.list = ''
+          this.task.heading = ''
+        }
+        if (t.list) {
+          this.task.folder = ''
+        }
+        
         let n = t.name
         const i = n.indexOf(' $')
         if (i && i > -1 && t.calendar) {
@@ -461,7 +469,11 @@ export default {
         arr.push({
           name: el.name,
           icon: 'folder',
-          callback: () => {this.task.folder = el.name}
+          callback: () => {
+            this.task.folder = el.name
+            this.task.list = ''
+            this.task.heading = ''
+          }
         })
       }
       return {
@@ -477,6 +489,7 @@ export default {
           icon: 'tasks',
           callback: () => {
             this.task.list = el.name
+            this.task.folder = ''
             const arr = []
             for (const h of el.headings) {
               arr.push({
@@ -563,6 +576,7 @@ export default {
           if (n.includes(listName)) {
             this.task.name = n.replace(listName, '')
             this.task.list = li.name
+            this.task.folder = ''
             break
           }
         }
@@ -573,6 +587,28 @@ export default {
           const word = lastWord.substr(1)
 
           this.options = lists.map(el => el.name).filter(el => el.toLowerCase().includes(word.toLowerCase()))
+          changedOptions = true
+        }
+      }
+      const parseFolder = () => {
+        const folders = this.savedFolders
+        for (const f of folders) {
+          const folderName = ` %${f.name}`
+          if (n.includes(folderName)) {
+            this.task.name = n.replace(folderName, '')
+            this.task.folder = f.name
+            this.task.list = ''
+            this.task.heading = ''
+            break
+          }
+        }
+        const arr = n.split(' ')
+        const lastWord = arr[arr.length - 1]
+        if (lastWord[0] === '%') {
+          this.optionsType = '%'
+          const word = lastWord.substr(1)
+
+          this.options = this.savedFolders.map(el => el.name).filter(el => el.toLowerCase().includes(word.toLowerCase()))
           changedOptions = true
         }
       }
@@ -588,6 +624,7 @@ export default {
       parsePriority()
       parseTags()
       parseLists()
+      parseFolder()
       parseDate()
 
       if (!changedOptions) this.options = []
