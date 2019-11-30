@@ -1,6 +1,6 @@
 <template>
   <ViewRenderer
-    v-bind="{ ...Object.freeze($props), ...Object.freeze(props) }"
+    v-bind="{ ...$props, ...Object.freeze(props) }"
     v-on="listeners"
 
     :prefix='prefix'
@@ -60,9 +60,9 @@ export default {
             setOfFolders.add(f)
           }
         }
-        let lists = Array.from(setOfLists)
+        let lists = Array.from(setOfLists).map(l => ({...l}))
         lists.forEach(l => l.smartViewControllerType = 'list')
-        let folders = Array.from(setOfFolders)
+        let folders = Array.from(setOfFolders).map(t => ({...t}))
         folders.forEach(f => f.smartViewControllerType = 'folder')
 
         let order = this.viewOrders[view] ? this.viewOrders[view].headings : []
@@ -228,7 +228,7 @@ export default {
           }
         }
 
-        return arr
+        return Object.freeze(arr)
       }
 
       return []

@@ -13,7 +13,7 @@
 
       data-name='task-renderer'
     >
-      <Task v-for="t of freezeTasks" :key="t.id"
+      <Task v-for="t of tasks" :key="t.id"
         v-bind="$props"
 
         :minimumTaskHeight='minimumTaskHeight'
@@ -36,7 +36,7 @@
       @enter='headingsEnter'
       tag="div"
     >
-      <template v-for="(h, i) in freezeHeadings">
+      <template v-for="(h, i) in headings">
         <HeadingApp v-if="showEmptyHeadings || filter(h).length > 0" :key="h.id"
           :header='h'
 
@@ -571,12 +571,6 @@ export default {
     }),
     minimumTaskHeight() {
       return this.isDesktop ? 38 : 50
-    },
-    freezeTasks() {
-      return Object.freeze(this.tasks.slice())
-    },
-    freezeHeadings() {
-      return Object.freeze(this.headings.slice())
     },
     filter() {
       return (h) => {

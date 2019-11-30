@@ -265,7 +265,7 @@ export default {
       return this.getLists
     },
     getLists() {
-      const lists = this.sortedLists
+      const lists = this.sortedLists.map(t => ({...t}))
       for (const list of lists) {
         list.callback = () => {
           this.$router.push('/user?list=' + list.name)
@@ -273,7 +273,7 @@ export default {
         const result = this.getListTasks(this.tasks, list.id).slice()
         list.options = utilsList.listOptions(list, this.$store, this.getListTasks(this.tasks, list.id).slice(), this.l)
       }
-      return lists
+      return lists.map(t => Object.freeze(t))
     },
   },
 }

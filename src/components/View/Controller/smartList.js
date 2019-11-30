@@ -50,8 +50,6 @@ export default {
       if (this.isSmart) return this.l[this.viewName]
     },
     getTasks() {
-      if (this.viewName === 'Today')
-        return this.tasks
       if (this.viewType === 'search')
         return this.tasks.filter(el => el.name.includes(this.viewName))
       if (this.isSmart && this.notHeadingHeaderView) {
