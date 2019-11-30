@@ -8,6 +8,32 @@ import { uid, fd, userRef, tagRef, taskColl, taskRef, listRef, addTask } from '.
 
 import mom from 'moment/src/moment'
 
+let storeVersion = 0
+
+// cache
+const c = func => {
+  let cache = {}
+  let versions = {}
+  return function() {
+    const key = JSON.stringify(arguments)
+    const val = cache[key]
+    const vers = versions[key]
+    if (val) {
+      if (vers === storeVersion) {
+        return val
+      } else {
+        cache = {}
+        versions = {}
+      }
+    }
+
+    const res = func.apply(null, arguments)
+    cache[key] = res
+    versions[key] = storeVersion
+    return res
+  }
+}
+
 export default {
   namespaced: true,
   state: {
@@ -59,55 +85,55 @@ export default {
       }
       return obj
     },
-    getNumberOfTasksByTag: state => tagId => {
+    getNumberOfTasksByTag: state => c(tagId => {
       const ts = state.tasks.filter(el => el.tags.includes(tagId))
 
       return {
         total: ts.length,
         notCompleted: utilsTask.filterTasksByCompletion(ts, true),length,
       }
-    },
-    getTasksById: state => ids => {
+    }),
+    getTasksById: state => c(ids => {
       const arr = []
       for (const id of ids) {
         const task = state.tasks.find(el => el.id === id)
         if (task) arr.push(task)
       }
       return arr
-    },
-    getNumberOfTasksByView: state => viewName => {
+    }),
+    getNumberOfTasksByView: state => c(viewName => {
       const ts = utilsTask.filterTasksByView(state.tasks, viewName)
 
       return {
         total: ts.length,
         notCompleted: utilsTask.filterTasksByCompletion(ts, true).length,
       }
-    },
-    getLostTasks: () => (tasks, list) => {
+    }),
+    getLostTasks: () => c((tasks, list) => {
       const headingNames = list.headings.map(el => el.name)
       return tasks.filter(el => !headingNames.includes(el.heading))
-    },
-    getTasksWithHeading: () => tasks => {
+    }),
+    getTasksWithHeading: () => c(tasks => {
       return tasks.filter(el => el.heading)
-    },
-    getRootTasksOfList: (s, getters) => (tasks, list) => {
+    }),
+    getRootTasksOfList: (s, getters) => c((tasks, list) => {
       return [...getters['tasksWithLists'](tasks).filter(t => !t.heading),...getters['getLostTasks'](tasks, list)]
-    },
-    getListTasks: (s, getters) => (tasks, listId) => {
+    }),
+    getListTasks: (s, getters) => c((tasks, listId) => {
       return getters['tasksWithLists'](tasks).filter(t => t.list === listId)
-    },
-    tasksWithLists: () => tasks => {
+    }),
+    tasksWithLists: () => c(tasks => {
       return tasks.filter(el => el.list)
-    },
-    tasksWithoutLists: () => tasks => {
+    }),
+    tasksWithoutLists: () => c(tasks => {
       return tasks.filter(el => !el.list)
-    },
-    tasksWithoutListsAndFolders: () => tasks => {
+    }),
+    tasksWithoutListsAndFolders: () => c(tasks => {
       return tasks.filter(el => !el.list && !el.folder)
-    },
-    tasksWithListsOrFolders: () => tasks => {
+    }),
+    tasksWithListsOrFolders: () => c(tasks => {
       return tasks.filter(el => el.list || el.folder)
-    },
+    }),
   },
   actions: {
     getData({state}) {
@@ -116,6 +142,7 @@ export default {
         return Promise.all([
           new Promise(resolve => {
             taskColl().where('userId', '==', id).onSnapshot(snap => {
+              storeVersion++
               utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
               resolve()
             })

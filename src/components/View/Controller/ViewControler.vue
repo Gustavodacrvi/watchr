@@ -325,15 +325,16 @@ export default {
         lastCompleteDate: null,
         periodic: null
       })
+      const filtered = this.tasks.filter(el => {
+        return el.calendar && el.calendar.type === 'specific'
+      })
       for (let i = 0;i < 31;i++) {
         tod.add(1, 'day')
         const date = tod.format('Y-M-D')
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
-          filter: (tasks) => {
-            return utilsTask.filterTasksByDay(tasks.filter(el => {
-              return el.calendar && el.calendar.type === 'specific'
-            }), mom(date, 'Y-M-D'))
+          filter: () => {
+            return utilsTask.filterTasksByDay(filtered, mom(date, 'Y-M-D'))
           },
           id: date,
           onAddTask: obj => {
@@ -356,21 +357,33 @@ export default {
     },
     completedHeadingsOptions() {
       const arr = []
-      const tod = mom()
-      for (let i = 0;i < 31;i++) {
-        const date = tod.format('Y-M-D')
+      const filtered = utilsTask.filterTasksByCompletion(this.tasks, false, mom())
+      const set = new Set()
+      for (const t of filtered)
+        if (!set.has(t.completeDate))
+          set.add(t.completeDate)
+      const dates = Array.from(set)
+      dates.sort((a, b) => {
+        const ta = mom(a, 'Y-M-D')
+        const tb = mom(b, 'Y-M-D')
+        if (ta.isAfter(tb, 'day'))
+          return -1
+        if (ta.isBefore(tb, 'day'))
+          return 1
+        return 0
+      })
+
+      for (const date of dates) {
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
-          filter: (tasks) => {
-            tasks = utilsTask.filterTasksByCompletion(tasks, false, mom(date, 'Y-M-D'))
-            return tasks.filter(t => {
-              const complete = mom(t.completeDate, 'Y-M-D')
-              return complete.isSame(mom(date, 'Y-M-D'), 'day')
+          filter: () => {
+            const result = filtered.filter(t => {
+              return t.completeDate === date
             })
+            return result
           },
           id: date,
         })
-        tod.subtract(1, 'day')
       }
       return arr
     },

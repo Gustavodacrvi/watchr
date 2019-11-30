@@ -2,8 +2,9 @@
 import mom from 'moment/src/moment'
 import utilsMoment from "./moment"
 import firebase from 'firebase/app'
+import memo from './memo'
 
-import Vue from 'vue' 
+import Vue from 'vue'
 import IconDrop from '@/components/IconDrop/IconDrop.vue'
 
 let contextMenuRunned = false
@@ -526,7 +527,6 @@ export default {
   },
   getCalendarObjectData(calendar, tod) {
     const c = calendar
-
     const obj = {
       tod,
       type: c.type,
@@ -602,5 +602,5 @@ export default {
     }
 
     return true
-  }
+  },
 }

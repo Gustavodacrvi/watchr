@@ -9,6 +9,32 @@ import router from '../router'
 
 import mom from 'moment/src/moment'
 
+let storeVersion = 0
+
+// cache
+const c = func => {
+  let cache = {}
+  let versions = {}
+  return function() {
+    const key = JSON.stringify(arguments)
+    const val = cache[key]
+    const vers = versions[key]
+    if (val) {
+      if (vers === storeVersion) {
+        return val
+      } else {
+        cache = {}
+        versions = {}
+      }
+    }
+
+    const res = func.apply(null, arguments)
+    cache[key] = res
+    versions[key] = storeVersion
+    return res
+  }
+}
+
 export default {
   namespaced: true,
   state: {
@@ -40,26 +66,26 @@ export default {
         return utils.checkMissingIdsAndSortArr(userInfo.lists, lists)
       return []
     },
-    getListsByName: state => names => {
+    getListsByName: state => c(names => {
       const arr = []
       for (const n of names) {
         const list = state.lists.find(el => el.name === n)
         if (list) arr.push(list)
       }
       return arr
-    },
-    getListsById: state => ids => {
+    }),
+    getListsById: state => c(ids => {
       const arr = []
       for (const id of ids) {
         const list = state.lists.find(el => el.id === id)
         if (list) arr.push(list)
       }
       return arr
-    },
-    getListByName: state => name => {
+    }),
+    getListByName: state => c(name => {
       return state.lists.find(l => l.name.trim() === name)
-    },
-    getAllTasksOrderByList: state => listId => {
+    }),
+    getAllTasksOrderByList: state => c(listId => {
       const list = state.lists.find(el => el.id === listId)
       let ord = list.tasks.slice()
       
@@ -72,11 +98,11 @@ export default {
       }
       
       return ord
-    },
-    getTasks: state => (tasks, id) => {
+    }),
+    getTasks: state => c((tasks, id) => {
       return tasks.filter(el => el.list === id)
-    },
-    pieProgress: (state, getters) => (tasks, listId) => {
+    }),
+    pieProgress: (state, getters) => c((tasks, listId) => {
       const list = getters['getListsById']([listId])[0]
       const ts = getters.getTasks(tasks, listId)
       const numberOfTasks = ts.length
@@ -92,7 +118,7 @@ export default {
       const result = 100 * completedTasks / numberOfTasks
       if (isNaN(result)) return 0
       return result
-    }
+    })
   },
   actions: {
     getData({state}) {
@@ -101,6 +127,7 @@ export default {
       return Promise.all([
         new Promise(resolve => {
           listColl().where('userId', '==', id).onSnapshot(snap => {
+            storeVersion++
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
             resolve()
           })

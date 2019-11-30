@@ -36,9 +36,6 @@ export default {
     tasks.sort((a, b) => priority(a, b))
     return tasks
   },
-  sortTasksByDate(tasks) {
-    // TODO
-  },
   hasCalendarBinding(task) {
     return task.calendar && task.calendar.type !== null
   },

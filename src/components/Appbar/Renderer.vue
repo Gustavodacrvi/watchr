@@ -8,6 +8,7 @@
       data-name='appnav-renderer'
     >
       <AppbarElement v-for="(el,i) in list"
+        v-bind="mapNumbersBind(el)"
         class="element"
         :iconColor='getIconColor(el)'
         :icon="getIcon(el)"
@@ -27,8 +28,6 @@
         :list="el.list"
         :id='el.id'
         :progress='getProgress(el)'
-        :totalNumber='mapNumbers(el).total'
-        :importantNumber='mapNumbers(el).notCompleted'
         :helpIcons='getExraIcon(el)'
         :string='getString(el)'
         @apply='() => applyEmit(el.id)'
@@ -174,6 +173,13 @@ export default {
     this.sortable.destroy()
   },
   methods: {
+    mapNumbersBind(el) {
+      const obj = this.mapNumbers(el)
+      return {
+        totalNumber: obj.total,
+        importantNumber: obj.notCompleted
+      }
+    },
     getString(el) {
       if (!this.mapString) return undefined
       return this.mapString(el)

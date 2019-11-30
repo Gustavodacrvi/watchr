@@ -7,6 +7,32 @@ const uid = () => {
   return auth.currentUser.uid
 }
 
+let storeVersion = 0
+
+// cache
+const c = func => {
+  let cache = {}
+  let versions = {}
+  return function() {
+    const key = JSON.stringify(arguments)
+    const val = cache[key]
+    const vers = versions[key]
+    if (val) {
+      if (vers === storeVersion) {
+        return val
+      } else {
+        cache = {}
+        versions = {}
+      }
+    }
+
+    const res = func.apply(null, arguments)
+    cache[key] = res
+    versions[key] = storeVersion
+    return res
+  }
+}
+
 export default {
   namespaced: true,
   state: {
@@ -24,22 +50,22 @@ export default {
       tags.sort((a, b) => b.times - a.times)
       return tags
     },
-    getTagsByName: state => names => {
+    getTagsByName: state => c(names => {
       const arr = []
       for (const n of names) {
         const tag = state.tags.find(el => el.name === n)
         if (tag) arr.push(tag)
       }
       return arr
-    },
-    getTagsById: state => ids => {
+    }),
+    getTagsById: state => c(ids => {
       const arr = []
       for (const id of ids) {
         const tag = state.tags.find(el => el.id === id)
         if (tag) arr.push(tag)
       }
       return arr
-    },
+    }),
   },
   actions: {
     getData({state}) {
@@ -47,6 +73,7 @@ export default {
       return Promise.all([
         new Promise(resolve => {
           tagColl().where('userId', '==', uid()).onSnapshot(snap => {
+            storeVersion++
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tags')
             resolve()
           })

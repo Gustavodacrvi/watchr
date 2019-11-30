@@ -52,7 +52,6 @@ export default {
     const isOnIt = (week) => {
       return formatedWeekdays.includes(week)
     }
-    clone.add(1, 'day')
     while (true) {
       if (isOnIt(clone.format('dddd')))
         return clone
