@@ -100,7 +100,7 @@ import utils from '@/utils/index'
 import mom from 'moment/src/moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight'
   , 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart'],
   components: {
     Icon: IconVue,
@@ -132,20 +132,13 @@ export default {
     enter(cont) {
       if (!this.isEditing) {
         const s = cont.style
-        const height = cont.offsetHeight + 'px'
-        const lessThanMinimum = (cont.offsetHeight < this.minimumTaskHeight)
         cont.classList.add('hided')
         s.height = '0px'
         s.padding = '2px 0'
         this.deselectTask()
         setTimeout(() => {
-          if (lessThanMinimum) {
           cont.classList.add('show')
-            s.height = this.minimumTaskHeight + 'px'
-          }
-          else {
-            s.height = height
-          }
+          s.height = this.taskHeight + 'px'
           s.padding = '0'
           cont.classList.remove('hided')
         })
@@ -657,9 +650,12 @@ export default {
 }
 
 .task-name {
-  word-break: break-all;
-  word-wrap: break-word;
   padding-left: 4px;
+  max-width: 100%;
+  position: absolute;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .icon {
@@ -667,6 +663,7 @@ export default {
 }
 
 .text {
+  position: relative;
   align-items: center;
   flex-basis: 100%;
   margin-left: 35px;

@@ -328,7 +328,7 @@ export default {
       const filtered = this.tasks.filter(el => {
         return el.calendar && el.calendar.type === 'specific'
       })
-      for (let i = 0;i < 31;i++) {
+      for (let i = 0;i < 7;i++) {
         tod.add(1, 'day')
         const date = tod.format('Y-M-D')
         arr.push({
@@ -357,7 +357,7 @@ export default {
     },
     completedHeadingsOptions() {
       const arr = []
-      const filtered = utilsTask.filterTasksByCompletion(this.tasks, false, mom())
+      const filtered = utilsTask.filterTasksByCompletion(this.tasks, false, mom()).slice(0, 7)
       const set = new Set()
       for (const t of filtered)
         if (!set.has(t.completeDate))
@@ -373,13 +373,16 @@ export default {
         return 0
       })
 
+      const cache = {}
       for (const date of dates) {
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
           filter: () => {
+            if (cache[date]) return cache[date]
             const result = filtered.filter(t => {
               return t.completeDate === date
             })
+            cache[date] = result
             return result
           },
           id: date,

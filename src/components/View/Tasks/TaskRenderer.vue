@@ -16,7 +16,7 @@
       <Task v-for="t of tasks" :key="t.id"
         v-bind="$props"
 
-        :minimumTaskHeight='minimumTaskHeight'
+        :taskHeight='taskHeight'
         :task='t'
         :isSelecting='isSelecting'
         :enableSelect='enableSelect'
@@ -476,20 +476,13 @@ export default {
       const cont = this.contWrapper(el)
       if (cont) {
         const s = cont.style
-        const height = cont.offsetHeight + 'px'
-        const lessThanMinimum = (cont.offsetHeight < this.minimumTaskHeight)
         cont.classList.add('hided')
         s.height = '0px'
         s.padding = '2px 0'
         setTimeout(() => {
           s.transition = 'height .15s, opacity .15s, transform .1s !important'
-          if (lessThanMinimum) {
           cont.classList.add('show')
-            s.height = this.minimumTaskHeight + 'px'
-          }
-          else {
-            s.height = height
-          }
+          s.height = this.taskHeight + 'px'
           s.padding = '0'
           cont.classList.remove('hided')
         }, 50)
@@ -569,7 +562,7 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
-    minimumTaskHeight() {
+    taskHeight() {
       return this.isDesktop ? 38 : 50
     },
     filter() {
