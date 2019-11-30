@@ -93,7 +93,6 @@ export default {
       this.listsaveList({deadline: null})
     }
   },
-  asyncComputed: {},
   computed: {
     icon() {return 'tasks'},
     viewNameValue() {return this.viewName},

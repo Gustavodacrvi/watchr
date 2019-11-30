@@ -65,7 +65,6 @@ export default {
     removeHeaderTag() {},
     removeDeadline() {}
   },
-  asyncComputed: {},
   computed: {
     icon() {return 'folder'},
     viewNameValue() {return this.viewName},

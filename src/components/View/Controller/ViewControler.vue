@@ -1,6 +1,6 @@
 <template>
   <ViewRenderer
-    v-bind="{ ...$props, ...props }"
+    v-bind="{ ...Object.freeze($props), ...Object.freeze(props) }"
     v-on="listeners"
 
     :prefix='prefix'

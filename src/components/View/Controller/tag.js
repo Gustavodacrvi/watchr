@@ -37,7 +37,6 @@ export default {
     updateHeadingIds() {},
     onSortableAdd() {},
   },
-  asyncComputed: {},
   computed: {
     icon() {return 'tag'},
     viewNameValue() {return this.viewName},
