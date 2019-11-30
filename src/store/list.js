@@ -4,60 +4,18 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from "@/utils/task"
+import MemoizeGetters from './memoFunctionGetters'
 import { listRef, userRef, uid, listColl, taskRef, fd, addTask } from '../utils/firestore'
 import router from '../router'
 
 import mom from 'moment/src/moment'
 
-let storeVersion = 0
-
-// cache
-const c = func => {
-  let cache = {}
-  let versions = {}
-  return function() {
-    const key = JSON.stringify(arguments)
-    const val = cache[key]
-    const vers = versions[key]
-    if (val) {
-      if (vers === storeVersion) {
-        return val
-      } else {
-        cache = {}
-        versions = {}
-      }
-    }
-
-    const res = func.apply(null, arguments)
-    cache[key] = res
-    versions[key] = storeVersion
-    return res
-  }
-}
+const Memoize = {cacheVersion: 0}
 
 export default {
   namespaced: true,
   state: {
     lists: [],
-    invites: [],
-    viewOrders: {
-      'Today': {
-        tasks: [],
-        headings: []
-      },
-      'Upcoming': {
-        tasks: [],
-        headings: []
-      },
-      'Inbox': {
-        tasks: [],
-        headings: []
-      },
-      'Tomorrow': {
-        tasks: [],
-        headings: []
-      },
-    },
   },
   getters: {
     sortedLists(state, d, {userInfo}) {
@@ -66,58 +24,60 @@ export default {
         return utils.checkMissingIdsAndSortArr(userInfo.lists, lists)
       return []
     },
-    getListsByName: state => c(names => {
-      const arr = []
-      for (const n of names) {
-        const list = state.lists.find(el => el.name === n)
-        if (list) arr.push(list)
-      }
-      return arr
-    }),
-    getListsById: state => c(ids => {
-      const arr = []
-      for (const id of ids) {
-        const list = state.lists.find(el => el.id === id)
-        if (list) arr.push(list)
-      }
-      return arr
-    }),
-    getListByName: state => c(name => {
-      return state.lists.find(l => l.name.trim() === name)
-    }),
-    getAllTasksOrderByList: state => c(listId => {
-      const list = state.lists.find(el => el.id === listId)
-      let ord = list.tasks.slice()
-      
-      let headsOrder = list.headingsOrder.slice() || []
-
-      const heads = utils.checkMissingIdsAndSortArr(headsOrder, list.headings, 'name')
-      
-      for (const h of heads) {
-        ord = [...ord, ...h.tasks]
-      }
-      
-      return ord
-    }),
-    getTasks: state => c((tasks, id) => {
-      return tasks.filter(el => el.list === id)
-    }),
-    pieProgress: (state, getters) => c((tasks, listId) => {
-      const list = getters['getListsById']([listId])[0]
-      const ts = getters.getTasks(tasks, listId)
-      const numberOfTasks = ts.length
-      let completedTasks = 0
-      
-      let compareDate = null
-      if (list.calendar && list.calendar.type !== 'someday')
-        compareDate = utils.getCalendarObjectData(list.calendar, mom()).lastCallEvent.format('Y-M-D')
-
-      ts.forEach(el => {
-        if (utilsTask.isTaskCompleted(el, mom(), compareDate)) completedTasks++
-      })
-      const result = 100 * completedTasks / numberOfTasks
-      if (isNaN(result)) return 0
-      return result
+    ...MemoizeGetters(Memoize, ['lists'], {
+      getListsByName({state}, names) {
+        const arr = []
+        for (const n of names) {
+          const list = state.lists.find(el => el.name === n)
+          if (list) arr.push(list)
+        }
+        return arr
+      },
+      getListsById({state}, ids) {
+        const arr = []
+        for (const id of ids) {
+          const list = state.lists.find(el => el.id === id)
+          if (list) arr.push(list)
+        }
+        return arr
+      },
+      getListByName({state}, name) {
+        return state.lists.find(l => l.name.trim() === name)
+      },
+      getAllTasksOrderByList({state}, listId) {
+        const list = state.lists.find(el => el.id === listId)
+        let ord = list.tasks.slice()
+        
+        let headsOrder = list.headingsOrder.slice() || []
+  
+        const heads = utils.checkMissingIdsAndSortArr(headsOrder, list.headings, 'name')
+        
+        for (const h of heads) {
+          ord = [...ord, ...h.tasks]
+        }
+        
+        return ord
+      },
+      getTasks({}, tasks, id) {
+        return tasks.filter(el => el.list === id)
+      },
+      pieProgress({getters}, tasks, listId) {
+        const list = getters['getListsById']([listId])[0]
+        const ts = getters.getTasks(tasks, listId)
+        const numberOfTasks = ts.length
+        let completedTasks = 0
+        
+        let compareDate = null
+        if (list.calendar && list.calendar.type !== 'someday')
+          compareDate = utils.getCalendarObjectData(list.calendar, mom()).lastCallEvent.format('Y-M-D')
+  
+        ts.forEach(el => {
+          if (utilsTask.isTaskCompleted(el, mom(), compareDate)) completedTasks++
+        })
+        const result = 100 * completedTasks / numberOfTasks
+        if (isNaN(result)) return 0
+        return result
+      },
     })
   },
   actions: {
@@ -127,7 +87,7 @@ export default {
       return Promise.all([
         new Promise(resolve => {
           listColl().where('userId', '==', id).onSnapshot(snap => {
-            storeVersion++
+            Memoize.cacheVersion++
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
             resolve()
           })
