@@ -164,6 +164,11 @@ export default {
     },
     showing() {
       this.$emit('handle-toggle', this.showing)
+      if (this.showing) {
+        window.addEventListener('click', this.hide)
+      } else {
+        window.removeEventListener('click', this.hide)
+      }
     },
   },
 }

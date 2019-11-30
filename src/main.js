@@ -3,6 +3,9 @@ import App from "./App.vue"
 import router from "./router"
 import store from "./store/"
 import "./registerServiceWorker"
+import VueWorker from 'vue-worker'
+
+Vue.use(VueWorker, '$worker')
 
 Vue.config.productionTip = false
 
