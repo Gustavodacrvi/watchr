@@ -29,11 +29,19 @@ export default {
   components: {
     Btn: ActButtonVue,
   },
+  data() {
+    return {
+      sortable: null
+    }
+  },
   mounted() {
     this.sortable = new Sortable(this.$el, {
       group: {name: ['action-buttons', 'appnav'], pull: 'clone', put: false},
       handle: '.handle',
     })
+  },
+  beforeDestroy() {
+    this.sortable.destroy()
   },
   methods: {
     click(evt) {

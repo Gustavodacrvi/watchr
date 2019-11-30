@@ -84,11 +84,12 @@ export default {
     return {
       movingFolder: false,
       isDragginInnerList: false,
+      sortable: null,
     }
   },
   mounted() {
     const el = this.$el.getElementsByClassName('folders-root')[0]
-    const headsSor = new Sortable(el, {
+    this.sortable = new Sortable(el, {
       group: {name: 'folders', pull: (e) => {
         const name = e.el.dataset.name
         console.log(name)
@@ -114,6 +115,9 @@ export default {
         this.movingFolder = false
       },
     })
+  },
+  beforeDestroy() {
+    this.sortable.destroy()
   },
   methods: {
     enter(el) {

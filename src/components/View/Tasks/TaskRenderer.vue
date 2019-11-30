@@ -116,6 +116,8 @@ export default {
       isDragging: false,
       justScrolled: false,
       movingHeading: false,
+      headSort: null,
+      sortable: null,
     }
   },
   mounted() {
@@ -261,7 +263,7 @@ export default {
     this.sortable = new Sortable(this.draggableRoot, obj)
     const el = this.$el.getElementsByClassName('headings-root')[0]
     if (el) {
-      const headsSor = new Sortable(el, {
+      this.headSort = new Sortable(el, {
         group: 'headings',
         delay: 225,
         delayOnTouchOnly: true,
@@ -283,6 +285,8 @@ export default {
     window.addEventListener('keydown', this.keydown)
   },
   beforeDestroy() {
+    this.sortable.destroy()
+    this.headSort.destroy()
     window.removeEventListener('click', this.windowClick)
   },
   methods: {
