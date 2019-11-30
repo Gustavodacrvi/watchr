@@ -90,9 +90,9 @@
           <FileApp v-for="f in getFiles" :key="f"
             :name="f"
             :status='getFileStatus(f)'
-            @delete="() => deleteFile(f)"
-            @download="() => downloadFile(f, 'tasks', task.id)"
-            @view="() => viewFile(f, 'tasks', task.id)"
+            @delete="deleteFile(f)"
+            @download="downloadFile(f, 'tasks', task.id)"
+            @view="viewFile(f, 'tasks', task.id)"
           />
         </div>
         <span v-if="isEditingFiles" style="opacity: .4;margin-left: 8px">{{ l["Note: file upload/delete operations won't work while offline."] }}</span>

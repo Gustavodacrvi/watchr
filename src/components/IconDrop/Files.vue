@@ -5,9 +5,9 @@
       <FileApp v-for="f in getFiles" :key="f"
         :name="f"
         :status='getFileStatus(f)'
-        @delete="() => deleteFile(f)"
-        @download="() => downloadFile(f, content.storageFolder, content.id)"
-        @view="() => viewFile(f, content.storageFolder, content.id)"
+        @delete="onDelete(f)"
+        @download="onDownload(f, content.storageFolder, content.id)"
+        @view="onView(f, content.storageFolder, content.id)"
       />
     </div>
     <div class="buttons">
@@ -63,6 +63,15 @@ export default {
     }
   },
   methods: {
+    onDelete(f) {
+      this.deleteFile(f)
+    },
+    onDownload(f, storageFolder, id) {
+      this.downloadFile(f, storageFolder, id)
+    },
+    onView(f, storageFolder, id) {
+      this.viewFile(f, storageFolder, id)
+    },
     saveCompFiles() {
       this.savingTask = true
       const files = this.task.files

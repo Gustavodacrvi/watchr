@@ -12,7 +12,7 @@
           <router-link class="cursor link rb" to="/support/overview">{{ l['Support'] }}</router-link>
           <span class="cursor link rb" @click="pop('Signin')">{{ l['Sign in'] }}</span>
           <span class="cursor link rb" @click="pop('Signup')">{{ l['Sign up'] }}</span>
-          <span class="cursor link rb" @click="profile" @click.stop @touchstart.stop>{{ l["Profile"] }}</span>
+          <span class="cursor link rb" @click="profile" @click.stop @touchstart.stop.passive>{{ l["Profile"] }}</span>
           <span v-if="user && user.isAnonymous" class="cursor link rb" @click="$store.dispatch('logOut')">{{ l['Log out'] }}</span>
         </div>
       </transition>

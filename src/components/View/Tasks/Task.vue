@@ -21,7 +21,7 @@
             @click.stop="completeTask"
             @mouseenter.stop="iconHover = true"
             @mouseleave="iconHover = false"
-            @touchstart.stop
+            @touchstart.stop.passive
             @mousedown.stop
           >
             <Icon v-if="!showCheckedIcon" class="icon check-icon"
