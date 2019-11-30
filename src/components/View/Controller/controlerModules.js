@@ -7,11 +7,13 @@ import folder from './folder'
 const addPrefix = (object, prefix) => {
   const p = prefix
 
-  const mod = {methods: {}, computed: {}}
+  const mod = {methods: {}, computed: {}, asyncComputed: {}}
   for (const k of Object.keys(object.methods))
     mod.methods[p + k] = object.methods[k]
   for (const k of Object.keys(object.computed))
     mod.computed[p + k] = object.computed[k]
+  for (const k of Object.keys(object.asyncComputed))
+    mod.asyncComputed[p + k] = object.asyncComputed[k]
   
   return mod
 }

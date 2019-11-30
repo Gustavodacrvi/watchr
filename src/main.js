@@ -4,8 +4,10 @@ import router from "./router"
 import store from "./store/"
 import "./registerServiceWorker"
 import VueWorker from 'vue-worker'
+import AsyncComputed from 'vue-async-computed'
 
 Vue.use(VueWorker, '$worker')
+Vue.use(AsyncComputed)
 
 Vue.config.productionTip = false
 

@@ -17,6 +17,7 @@
     "register-service-worker": "1.6.2",
     "sortablejs": "^1.10.0",
     "vue": "2.6.10",
+    "vue-async-computed": "^3.7.0",
     "vue-long-click": "0.0.4",
     "vue-router": "3.0.3",
     "vue-worker": "^1.2.1",

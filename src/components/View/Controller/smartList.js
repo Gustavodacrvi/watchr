@@ -43,12 +43,22 @@ export default {
       })
     },
   },
+  asyncComputed: {
+    viewNameValue: {
+      get() {
+        return new Promise(solve => {
+          setTimeout(() => solve('açsldkjf'), 5000)
+        })
+      },
+      default: 'FUCK YEAH',
+    }
+  },
   computed: {
     icon() {return null},
-    viewNameValue() {
+/*     viewNameValue() {
       if (this.viewType === 'search') return this.l["Search"]
       if (this.isSmart) return this.l[this.viewName]
-    },
+    }, */
     getTasks() {
       if (this.viewType === 'search')
         return this.tasks.filter(el => el.name.includes(this.viewName))
