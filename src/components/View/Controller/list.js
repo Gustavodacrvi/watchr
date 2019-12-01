@@ -178,7 +178,7 @@ export default {
             filter: (a, h, showCompleted) => {
               let tasks = headingTasks.slice()
               if (!showCompleted)
-                tasks = utilsTask.filterTasksByCompletion(tasks, true)
+                tasks = this.filterTasksByCompletion(tasks, true)
               
               return tasks
             },

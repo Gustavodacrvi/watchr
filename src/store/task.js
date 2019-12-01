@@ -63,7 +63,33 @@ export default {
       }
       return obj
     },
-    filterTasksByView() {
+    filterTasksByCompletion() {
+      let cache = {}
+      let vers = 0
+      const calc = (tasks, notCompleted, compareDate) => {
+        return tasks.filter(el => {
+          const comp = utilsTask.isTaskCompleted(el, compareDate)
+          if (notCompleted) return !comp
+          return comp
+        })
+      }
+      return (tasks, notCompleted, compareDate) => {
+        if (tasks.length === 0) return []
+        const key = tasks.reduce((str, t) => str + t.id, '') + 'TASKS_VIEW' + compareDate + notCompleted
+
+        const val = cache[key]
+        if (val) {
+          if (vers === Memoize.cacheVersion) return val
+          else cache = {}
+        }
+
+        const res = calc(tasks, notCompleted, compareDate)
+        cache[key] = res
+        vers = Memoize.cacheVersion
+        return res
+      }
+    },
+    filterTasksByView(s, getters) {
       let cache = {}
       let vers = 0
       const calc = (tasks, view) => {
@@ -142,7 +168,7 @@ export default {
             return utilsTask.filterTasksByDay(tasks, mom().add(1, 'day'))
           }
           case 'Completed': {
-            return utilsTask.filterTasksByCompletion(tasks)
+            return getters.filterTasksByCompletion(tasks)
           }
         }
         return tasks
@@ -163,12 +189,12 @@ export default {
       }
     },
     ...MemoizeGetters(Memoize, ['tasks'], {
-      getNumberOfTasksByTag(c, tagId) {
+      getNumberOfTasksByTag({getters}, tagId) {
         const ts = state.tasks.filter(el => el.tags.includes(tagId))
   
         return {
           total: ts.length,
-          notCompleted: utilsTask.filterTasksByCompletion(ts, true),length,
+          notCompleted: getters.filterTasksByCompletion(ts, true),length,
         }
       },
       getTasksById({state}, ids) {
@@ -184,7 +210,7 @@ export default {
 
         return {
           total: ts.length,
-          notCompleted: utilsTask.filterTasksByCompletion(ts, true).length,
+          notCompleted: getters.filterTasksByCompletion(ts, true).length,
         }
       },
       getLostTasks(c, tasks, list) {

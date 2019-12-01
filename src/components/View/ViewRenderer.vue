@@ -161,6 +161,7 @@ export default {
       isDesktop: 'isDesktop',
       l: 'l',
       savedLists: 'list/sortedLists',
+      filterTasksByCompletion: 'task/filterTasksByCompletion',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
@@ -456,7 +457,7 @@ export default {
       let notCompleted = []
       if (this.showCompleted) return ts
       
-      notCompleted = utilsTask.filterTasksByCompletion(ts, true)
+      notCompleted = this.filterTasksByCompletion(ts, true)
 
       if (notCompleted.length === 0)
         return ts.filter(task => {

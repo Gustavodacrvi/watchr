@@ -103,7 +103,7 @@ export default {
                 let tasks = getTasks()
   
                 if (!showCompleted)
-                  tasks = utilsTask.filterTasksByCompletion(tasks, true)
+                  tasks = this.filterTasksByCompletion(tasks, true)
   
                 return tasks
               },
@@ -201,7 +201,7 @@ export default {
                 let tasks = getTasks()
   
                 if (!showCompleted)
-                  tasks = utilsTask.filterTasksByCompletion(tasks, true)
+                  tasks = this.filterTasksByCompletion(tasks, true)
   
                 return tasks
               },
@@ -250,6 +250,7 @@ export default {
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
       getTasks: 'list/getTasks',
       filterTasksByView: 'task/filterTasksByView',
+      filterTasksByCompletion: 'task/filterTasksByCompletion',
       getTagsById: 'tag/getTagsById',
       getListsById: 'list/getListsById',
       getListByName: 'list/getListByName',
@@ -358,7 +359,7 @@ export default {
     },
     completedHeadingsOptions() {
       const arr = []
-      const filtered = utilsTask.filterTasksByCompletion(this.tasks, false, mom())
+      const filtered = this.filterTasksByCompletion(this.tasks, false, mom())
       const set = new Set()
       for (const t of filtered)
         if (!set.has(t.completeDate))

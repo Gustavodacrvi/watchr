@@ -99,13 +99,6 @@ export default {
     }
     return isCompleted
   },
-  filterTasksByCompletion(tasks, notCompleted, moment) {
-    return tasks.filter(el => {
-      const comp = this.isTaskCompleted(el, moment)
-      if (notCompleted) return !comp
-      return comp
-    })
-  },
   taskData(task, tod) {
     return utils.getCalendarObjectData(task.calendar, tod)
   },
