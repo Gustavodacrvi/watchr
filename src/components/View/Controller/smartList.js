@@ -54,7 +54,7 @@ export default {
         return this.tasks.filter(el => el.name.includes(this.viewName))
       if (this.isSmart && this.notHeadingHeaderView) {
         if (this.viewName === 'Today' && this.hasOverdueTasks) return []
-        return utilsTask.filterTasksByView(this.tasksWithoutListsAndFolders, this.viewName)
+        return this.filterTasksByView(this.tasksWithoutListsAndFolders, this.viewName)
       }
       return []
     },

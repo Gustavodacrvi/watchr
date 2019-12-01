@@ -97,6 +97,7 @@ import EditVue from './Edit.vue'
 import { mapState, mapGetters } from 'vuex'
 
 import utilsTask from '@/utils/task'
+import utilsMoment from '@/utils/moment'
 import utils from '@/utils/index'
 
 import mom from 'moment/src/moment'
@@ -251,6 +252,7 @@ export default {
       isDesktop: 'isDesktop',
       platform: 'platform',
       l: 'l',
+      filterTasksByView: 'task/filterTasksByView',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByFrequency',
@@ -482,11 +484,11 @@ export default {
     },
     isToday() {
       if (this.viewName === 'Today') return false
-      return utilsTask.filterTasksByView([this.task], 'Today').length === 1
+      return this.filterTasksByView([this.task], 'Today').length === 1
     },
     isTomorrow() {
       if (this.viewName === 'Tomorrow' || this.viewName === 'Today') return false
-      return utilsTask.filterTasksByView([this.task], 'Tomorrow').length === 1
+      return this.filterTasksByView([this.task], 'Tomorrow').length === 1
     },
     showIconDrop() {
       return this.isDesktop && this.onHover
@@ -526,7 +528,8 @@ export default {
     nextCalEvent() {
       const {t,c} = this.getTask
       if ((!c || c.type === 'someday') || (c.type !== 'periodic' && c.type !== 'weekly')) return null
-      const {nextEventAfterCompletion} = utilsTask.taskData(t, mom())
+      const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c)
+
       const date = utils.getHumanReadableDate(nextEventAfterCompletion.format('Y-M-D'), this.l)
       if (!date || date === this.viewName) return null
       return this.l["Next event"] + ' ' + date

@@ -44,7 +44,7 @@ export default {
         return {type: 'someday'}
     },
     getListHeadingsByView(view) {
-      const ts = utilsTask.filterTasksByView(this.tasksWithListsOrFolders, view)
+      const ts = this.filterTasksByView(this.tasksWithListsOrFolders, view)
       if (ts && ts.length > 0) {
         const savedLists = this.lists.slice()
         const savedFolders = this.folders.slice()
@@ -249,6 +249,7 @@ export default {
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
       getTasks: 'list/getTasks',
+      filterTasksByView: 'task/filterTasksByView',
       getTagsById: 'tag/getTagsById',
       getListsById: 'list/getListsById',
       getListByName: 'list/getListByName',
@@ -477,7 +478,7 @@ export default {
       return this.getOverdueTasks.length > 0
     },
     getOverdueTasks() {
-      return utilsTask.filterTasksByView(this.tasks, 'Overdue')
+      return this.filterTasksByView(this.tasks, 'Overdue')
     },
     viewTag() {
       return this.tags.find(el => el.name === this.viewName)

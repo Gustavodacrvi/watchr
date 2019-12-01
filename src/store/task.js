@@ -4,6 +4,7 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from '../utils/task'
+import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
 import { uid, fd, userRef, tagRef, taskColl, taskRef, listRef, addTask } from '../utils/firestore'
 
@@ -62,6 +63,105 @@ export default {
       }
       return obj
     },
+    filterTasksByView() {
+      let cache = {}
+      let vers = 0
+      const calc = (tasks, view) => {
+        switch (view) {
+          case 'Inbox': {
+            return tasks.filter(el =>
+              !utilsTask.hasCalendarBinding(el) &&
+              !el.list &&
+              !el.folder &&
+              el.tags.length === 0
+            )
+          }
+          case 'Today': {
+            return utilsTask.filterTasksByDay(tasks, mom())
+          }
+          case 'Someday': {
+            return tasks.filter(t => t.calendar && t.calendar.type === 'someday')
+          }
+          case 'Overdue': {
+            return tasks.filter(el => {
+              if (!utilsTask.hasCalendarBinding(el) || utilsTask.isTaskCompleted(el)) return false
+              
+              let tod = null
+              const getTod = () => {
+                if (tod) return tod
+                tod = mom()
+                return tod
+              }
+    
+              const c = el.calendar
+              if (c.due) {
+                const due = mom(c.due, 'Y-M-D')
+                if (due.isBefore(getTod(), 'day')) return true
+              }
+              if (c.type === 'specific') {
+                const spec = mom(c.specific, 'Y-M-D')
+                return spec.isBefore(getTod(), 'day')
+              }
+              if (c.times !== null && c.times !== undefined && c.times === 0)
+                return true
+              if (c.type === 'periodic') {
+                return utilsMoment.getNextEventAfterCompletionDate(c).isBefore(getTod(), 'day')
+              }
+              if (c.type === 'weekly') {
+                const lastWeeklyEvent = utilsMoment.getLastWeeklyEvent(c, getTod())
+                const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+                return lastWeeklyEvent.isAfter(lastComplete, 'day')
+              }
+    
+              return false
+              
+                /*           if (!utilsTask.hasCalendarBinding(el) || utilsTask.isTaskCompleted(el)) return false
+              
+              const {
+                spec, type, due, tod,
+                nextEventAfterCompletion,
+                lastComplete, lastWeeklyEvent,
+                times, hasTimesBinding
+              } = utilsTask.taskData(el, mom())
+    
+              if (due.isBefore(tod, 'day')) return true
+    
+              if (type === 'specific') return spec.isBefore(tod, 'day')
+              if (hasTimesBinding && times === 0) return true
+              if (type === 'periodic') {
+                return nextEventAfterCompletion.isBefore(tod, 'day')
+              }
+              if (type === 'weekly') {
+                return lastWeeklyEvent.isAfter(lastComplete, 'day')
+              }
+    
+              return false */
+            })
+          }
+          case 'Tomorrow': {
+            return utilsTask.filterTasksByDay(tasks, mom().add(1, 'day'))
+          }
+          case 'Completed': {
+            return utilsTask.filterTasksByCompletion(tasks)
+          }
+        }
+        return tasks
+      }
+      return (tasks, view) => {
+        if (tasks.length === 0) return []
+        const key = tasks.reduce((str, t) => str + t.id, '') + 'TASKS_VIEW' + view
+        const val = cache[key]
+        if (val) {
+          if (vers === Memoize.cacheVersion) return val
+          else cache = {}
+        }
+
+        const res = calc(tasks, view)
+        cache[key] = res
+        vers = Memoize.cacheVersion
+        return res
+      }
+    },
     ...MemoizeGetters(Memoize, ['tasks'], {
       getNumberOfTasksByTag(c, tagId) {
         const ts = state.tasks.filter(el => el.tags.includes(tagId))
@@ -79,9 +179,9 @@ export default {
         }
         return arr
       },
-      getNumberOfTasksByView({state}, viewName) {
-        const ts = utilsTask.filterTasksByView(state.tasks, viewName)
-  
+      getNumberOfTasksByView({state, getters}, viewName) {
+        const ts = getters.filterTasksByView(state.tasks, viewName)
+
         return {
           total: ts.length,
           notCompleted: utilsTask.filterTasksByCompletion(ts, true).length,
@@ -128,7 +228,7 @@ export default {
           })
         ])
     },
-    addTask({rootState}, obj) {
+    addTask({}, obj) {
       const batch = fire.batch()
 
       const ref = taskRef()
@@ -136,13 +236,6 @@ export default {
         userId: uid(),
         ...obj,
       }, ref).then(() => {
-        const type = utilsTask.taskType(obj)
-        if (type && rootState.userInfo) {
-          const viewOrders = rootState.userInfo.viewOrders
-          if (!viewOrders[type]) viewOrders[type] = {}
-          viewOrders[type].tasks = fd().arrayUnion(ref.id)
-          batch.update(userRef(), {viewOrders})
-        }
         batch.commit()
       })
     },
