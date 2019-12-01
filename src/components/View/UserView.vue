@@ -71,7 +71,8 @@ export default {
       const keys = Object.keys(query)
       let viewType = keys[0]
       let value = query[viewType]
-      if (viewType === undefined || value === undefined)
+      const name = this.$route.name
+      if (name !== 'menu' && (viewType === undefined || value === undefined))
         this.$router.replace('/user?list=Today')
       this.value = value
       this.viewType = viewType
