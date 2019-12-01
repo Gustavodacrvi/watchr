@@ -48,18 +48,38 @@ export default {
   },
   isTaskCompleted(task, moment, compareDate) {
     const calc = () => {
-      if (!task.calendar || task.calendar.type === 'someday') return task.completed
-      if (!moment) moment = mom()    
+      const c = task.calendar
+      if (!c || c.type === 'someday' || c.type === 'specific') return task.completed
+      
+      if (c.manualComplete && c.lastCompleteDate) {
+        const manualComplete = mom(c.manualComplete, 'Y-M-D')
+        const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+        if (manualComplete.isSame(lastComplete, 'day')) return true
+      }
+      // const hasTimesBinding = c.times !== null && c.times !== undefined
+      if (c.times !== null && c.times !== undefined) {
+        if (times === 0) return true
+        if (c.persistent) return c.times === 0
+      }
+      
+      if (c.type === 'periodic' || c.type === 'weekly') {
+        const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+        if (!moment) moment = mom()
+        return lastComplete.isSameOrAfter(moment, 'day')
+      }
+
+      return false
+      
+      // SLOW AND OLD CODE
+/*       if (!task.calendar || task.calendar.type === 'someday') return task.completed
+      if (!moment) moment = mom()
       const {
         type, lastComplete, tod, times,
         persistent, hasTimesBinding, manualComplete
       } = this.taskData(task, moment)
       
       if (type === 'specific') return task.completed
-  
-      /*
-        if it doesn't have persistence, then it should only return a result if times === 0, cause if it's false, then the logic at line 96 will be used to figure out the completion of the task, if it does not have persistence then it should return a false or true every time
-      */
+
       if (manualComplete.isSame(lastComplete, 'day')) return true
       if (hasTimesBinding && times === 0) return true
       if (hasTimesBinding && persistent) return times === 0
@@ -68,7 +88,7 @@ export default {
         return lastComplete.isSameOrAfter(tod, 'day')
       }
   
-      return false
+      return false */
     }
     let isCompleted = calc()
     if (compareDate) {
