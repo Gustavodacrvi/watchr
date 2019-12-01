@@ -41,7 +41,8 @@ export default {
   },
   filterTasksByDay(tasks, dayMoment) {
     return tasks.filter(el => {
-      if (!this.hasCalendarBinding(el) || el.calendar.type === 'someday') return false
+      if (!this.hasCalendarBinding(el) || el.calendar.type === 'someday')
+        return false
       return utils.isCalendarObjectShowingToday(el.calendar, dayMoment.clone())
     })
   },

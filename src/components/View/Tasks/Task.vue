@@ -36,29 +36,31 @@
             />
           </div>
           <div class="text">
-            <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
-            <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
-            <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
-            <transition name="name-t">
-              <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
-                  <span v-if="calendarStr && !isToday" class="tag cb rb">{{ calendarStr }}</span>
-                  <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
-                  <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
-                  <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
-                  <span v-html="parsedName"></span>
-                  <Icon v-if="haveChecklist" class="txt-icon" icon="tasks" color="var(--gray)" width="18px"/>
-                  <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
-                  <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
-              </span>
-              <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
-            </transition>
-            <template v-if="isDesktop">
-              <Tag class="task-tag" v-for="t in taskTags" :key="t.name"
-                icon="tag"
-                :value="t.name"
-                :disabled='true'
-              />
-            </template>
+            <div class="task-name-wrapper">
+              <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
+              <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
+              <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
+              <transition name="name-t">
+                <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
+                    <span v-if="calendarStr && !isToday" class="tag cb rb">{{ calendarStr }}</span>
+                    <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
+                    <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
+                    <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
+                    <span v-html="parsedName"></span>
+                    <Icon v-if="haveChecklist" class="txt-icon" icon="tasks" color="var(--gray)" width="18px"/>
+                    <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
+                    <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
+                </span>
+                <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
+              </transition>
+              <template v-if="isDesktop">
+                <Tag class="task-tag" v-for="t in taskTags" :key="t.name"
+                  icon="tag"
+                  :value="t.name"
+                  :disabled='true'
+                />
+              </template>
+            </div>
           </div>
           <div class="icon-drop-wrapper">
             <IconDrop class="icon-drop cursor"
@@ -573,6 +575,7 @@ export default {
 
 .cont-wrapper {
   transition-duration: .15s;
+  height: 38px;
 }
 
 .hided {
@@ -649,13 +652,16 @@ export default {
   position: relative;
 }
 
-.task-name {
-  padding-left: 4px;
+.task-name-wrapper {
   max-width: 100%;
   position: absolute;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.task-name {
+  padding-left: 4px;
 }
 
 .icon {

@@ -9,7 +9,6 @@
         :placeholder="l['Task name...']"
         :notesPlaceholder="l['Notes...']"
         @save='add'
-        @cancel="$emit('close')"
       />
     </div>
   </div>
@@ -18,6 +17,7 @@
       :placeholder="l['Task name...']"
       :notesPlaceholder="l['Notes...']"
       @save='add'
+      @cancel="$emit('close')"
     />
   </div>
 </template>

@@ -87,7 +87,7 @@ export default {
       return null
     },
     tasksOrder() {
-      if (this.viewFolder)
+      if (this.viewFolder && this.viewFolder.tasks)
         return this.viewFolder.tasks.slice()
       return []
     },

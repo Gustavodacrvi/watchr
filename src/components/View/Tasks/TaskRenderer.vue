@@ -7,17 +7,16 @@
     </transition>
     <transition-group name="task-trans" class="front task-renderer-root" :class="{dontHaveTasks: tasks.length === 0 && headings.length === 0, showEmptyHeadings}"
       appear
-      @enter='enter'
-      @leave='leave'
       tag="div"
-
+      @enter="enter"
+      @leave="leave"
       data-name='task-renderer'
     >
-      <Task v-for="t of tasks" :key="t.id"
+      <Task v-for="item of tasks" :key="item.id" 
         v-bind="$props"
 
         :taskHeight='taskHeight'
-        :task='t'
+        :task='item'
         :isSelecting='isSelecting'
         :enableSelect='enableSelect'
         :multiSelectOptions='options'
@@ -25,7 +24,7 @@
         :isScrolling='isScrolling'
         @de-select='deSelectTask'
 
-        :data-id='t.id'
+        :data-id='item.id'
         :data-type='`task`'
       />
     </transition-group>
@@ -288,8 +287,22 @@ export default {
     this.sortable.destroy()
     this.headSort.destroy()
     window.removeEventListener('click', this.windowClick)
+    window.removeEventListener('keydown', this.keydown)
   },
   methods: {
+    isInView(i) {
+      const appHeight = this.app.clientHeight
+      const scrollTop = document.scrollingElement.scrollTop
+      const rootTopOffset = this.rootTopOffset
+      const realDistance = scrollTop - rootTopOffset
+      const taskDistance = this.taskHeight * i
+      const buffer = (this.taskHeight * 2)
+      
+      return (
+        ((taskDistance + buffer) > realDistance) &&
+        ((realDistance + appHeight) > (taskDistance - buffer))
+      )
+    },
     getOptionClick(h) {
       if (!h.optionClick) return () => {}
       return h.optionClick
@@ -559,9 +572,26 @@ export default {
     ...mapGetters({
       l: 'l',
       isDesktop: 'isDesktop',
+      getTaskBodyDistance: 'task/getTaskBodyDistance',
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    app() {
+      return document.getElementById('app')
+    },
+    rootTopOffset() {
+      let el = document.getElementsByClassName('task-renderer-root')[0]
+      if (el) {
+        let distance = 0;
+
+        do {
+          distance += el.offsetTop
+          el = el.offsetParent
+        } while (el)
+        return distance < 0 ? 0 : distance
+      }
+      return 0
+    },
     taskHeight() {
       return this.isDesktop ? 38 : 50
     },

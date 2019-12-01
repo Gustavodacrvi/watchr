@@ -357,7 +357,7 @@ export default {
     },
     completedHeadingsOptions() {
       const arr = []
-      const filtered = utilsTask.filterTasksByCompletion(this.tasks, false, mom()).slice(0, 7)
+      const filtered = utilsTask.filterTasksByCompletion(this.tasks, false, mom())
       const set = new Set()
       for (const t of filtered)
         if (!set.has(t.completeDate))

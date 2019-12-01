@@ -67,6 +67,8 @@ export default {
     addFolder(c, fold) {
       folderRef().set({
         userId: uid(),
+        tasks: [],
+        files: [],
         ...fold,
         defaultShowing: true,
       })
@@ -143,11 +145,12 @@ export default {
       const batch = fire.batch()
 
       const folderLists = getters.getListsByFolderId({id, lists})
+      const folderTasks = tasks.filter(t => t.folder === id)
       for (const l of folderLists)
         batch.update(listRef(l.id), {
           folder: null,
         })
-      for (const t of tasks)
+      for (const t of folderTasks)
         batch.update(taskRef(t.id), {
           folder: null,
         })

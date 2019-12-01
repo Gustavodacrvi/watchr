@@ -441,11 +441,11 @@ export default {
   downloadBlobFromURL(url, getProgress) {
     return new Promise((solve, reject) => {
       const xhr = new XMLHttpRequest()
-      xhr.onprogress = getProgress
+      if (getProgress)
+        xhr.onprogress = getProgress
       xhr.responseType = 'blob'
       xhr.onload = () => solve(xhr.response)
       xhr.onerror = () => reject()
-      xhr.abort()
       xhr.open('GET', url)
       xhr.send()
     })
@@ -572,7 +572,40 @@ export default {
     return obj
   },
   isCalendarObjectShowingToday(calendar, todayMoment) {
-    if (calendar.type === 'someday') return false
+    const c = calendar
+    const tod = todayMoment
+    if (!calendar) return false
+    if (c.type === 'someday') return false
+    // SPECIFIC
+    if (c.type === 'specific') {
+      return tod.isSame(mom(c.specific, 'Y-M-D'), 'day')
+    }
+    // overdue
+    if (c.due) {
+      const due = mom(c.due, 'Y-M-D')
+      if (due.isBefore(tod, 'day')) return false
+    }
+    // not ready yet
+    if (c.defer) {
+      const defer = mom(c.defer, 'Y-M-D')
+      if (defer.isAfter(tod, 'day')) return false
+    }
+    if (c.persistent && c.times !== null && c.times !== undefined) return true
+    if (c.type === 'periodic') {
+      const dayDiff = tod.diff(mom(c.editDate, 'Y-M-D'), 'day')
+      const eventNotToday = dayDiff % c.periodic !== 0
+      if (eventNotToday) return false  
+    }
+    if (c.type === 'weekly') {
+      const todaysWeekDayName = tod.format('ddd').toLowerCase()
+      const eventNotToday = !c.weekly.find(w => w.toLowerCase() === todaysWeekDayName)
+      if (eventNotToday) return false
+    }
+    return true
+    
+
+    // OLD AND SLOW CODE
+/*     if (calendar.type === 'someday') return false
     const {
       type, defer, due, tod,
       edit, spec, interval,
@@ -601,6 +634,6 @@ export default {
       if (eventNotToday) return false
     }
 
-    return true
+    return true */
   },
 }
