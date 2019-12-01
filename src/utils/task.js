@@ -129,6 +129,37 @@ export default {
         return tasks.filter(el => {
           if (!this.hasCalendarBinding(el) || this.isTaskCompleted(el)) return false
           
+          let tod = null
+          const getTod = () => {
+            if (tod) return tod
+            tod = mom()
+            return tod
+          }
+
+          const c = el.calendar
+          if (c.due) {
+            const due = mom(c.due, 'Y-M-D')
+            if (due.isBefore(getTod(), 'day')) return true
+          }
+          if (c.type === 'specific') {
+            const spec = mom(c.specific, 'Y-M-D')
+            return spec.isBefore(getTod(), 'day')
+          }
+          if (c.times !== null && c.times !== undefined && c.times === 0)
+            return true
+          if (c.type === 'periodic') {
+            return utilsMoment.getNextEventAfterCompletionDate(c).isBefore(getTod(), 'day')
+          }
+          if (c.type === 'weekly') {
+            const lastWeeklyEvent = utilsMoment.getLastWeeklyEvent(c, getTod())
+            const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+            return lastWeeklyEvent.isAfter(lastComplete, 'day')
+          }
+
+          return false
+          
+/*           if (!this.hasCalendarBinding(el) || this.isTaskCompleted(el)) return false
+          
           const {
             spec, type, due, tod,
             nextEventAfterCompletion,
@@ -147,7 +178,7 @@ export default {
             return lastWeeklyEvent.isAfter(lastComplete, 'day')
           }
 
-          return false
+          return false */
         })
       }
       case 'Tomorrow': {
