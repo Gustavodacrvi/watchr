@@ -61,7 +61,7 @@ export default {
       getTasks({}, tasks, id) {
         return tasks.filter(el => el.list === id)
       },
-      pieProgress({getters}, tasks, listId) {
+      pieProgress({getters}, tasks, listId, isTaskCompleted) {
         const list = getters['getListsById']([listId])[0]
         const ts = getters.getTasks(tasks, listId)
         const numberOfTasks = ts.length
@@ -72,7 +72,7 @@ export default {
           compareDate = utils.getCalendarObjectData(list.calendar, mom()).lastCallEvent.format('Y-M-D')
   
         ts.forEach(el => {
-          if (utilsTask.isTaskCompleted(el, mom(), compareDate)) completedTasks++
+          if (isTaskCompleted(el, mom(), compareDate)) completedTasks++
         })
         const result = 100 * completedTasks / numberOfTasks
         if (isNaN(result)) return 0

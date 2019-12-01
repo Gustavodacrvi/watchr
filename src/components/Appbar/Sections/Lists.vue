@@ -181,7 +181,7 @@ export default {
       this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj, folderId: id}})
     },
     getListProgress(list) {
-      return this.$store.getters['list/pieProgress'](this.tasks, list.id)
+      return this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted)
     },
     getListIcon(list) {
       const arr = []
@@ -217,6 +217,7 @@ export default {
       getTasksByListId: 'list/getTasks',
       getListTasks: 'task/getListTasks',
       sortedFolders: 'folder/sortedFolders',
+      isTaskCompleted: 'task/isTaskCompleted',
       getListsByFolderId: 'folder/getListsByFolderId',
     }),
     sortedLists() {
@@ -248,7 +249,7 @@ export default {
           const tasks = this.getTasksByListId(this.tasks, l.id)
           let isAllTasksCompleted = true
           for (const el of tasks)
-            if (!utilsTask.isTaskCompleted(el, mom(), lastCallEvent.format('Y-M-D'))) {
+            if (!this.isTaskCompleted(el, mom(), lastCallEvent.format('Y-M-D'))) {
               isAllTasksCompleted = false
               break
             }

@@ -239,7 +239,7 @@ export default {
     },
     getPieProgress() {
       if (this.viewList)
-        return this.$store.getters['list/pieProgress'](this.tasks, this.viewList.id)
+        return this.$store.getters['list/pieProgress'](this.tasks, this.viewList.id, this.isTaskCompleted)
       return []
     },
   },

@@ -98,7 +98,7 @@ export default {
                   taskOrder = this.getAllTasksOrderByList(list.id)
                 return taskOrder
               },
-              progress: this.$store.getters['list/pieProgress'](this.tasks, list.id),
+              progress: this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted),
               filter: (a, h, showCompleted) => {
                 let tasks = getTasks()
   
@@ -251,6 +251,7 @@ export default {
       getTasks: 'list/getTasks',
       filterTasksByView: 'task/filterTasksByView',
       filterTasksByCompletion: 'task/filterTasksByCompletion',
+      isTaskCompleted: 'task/isTaskCompleted',
       getTagsById: 'tag/getTagsById',
       getListsById: 'list/getListsById',
       getListByName: 'list/getListByName',

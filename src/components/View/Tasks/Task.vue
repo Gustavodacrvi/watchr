@@ -253,12 +253,13 @@ export default {
       platform: 'platform',
       l: 'l',
       filterTasksByView: 'task/filterTasksByView',
+      isTaskCompleted: 'task/isTaskCompleted',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
     completed() {
-      return utilsTask.isTaskCompleted(this.task, mom(), this.taskCompletionCompareDate)
+      return this.isTaskCompleted(this.task, mom(), this.taskCompletionCompareDate)
     },
     parsedName() {
       return this.getLinkString(this.escapeHTML(this.task.name))

@@ -63,12 +63,12 @@ export default {
       }
       return obj
     },
-    filterTasksByCompletion() {
+    filterTasksByCompletion(c, getters) {
       let cache = {}
       let vers = 0
       const calc = (tasks, notCompleted, compareDate) => {
         return tasks.filter(el => {
-          const comp = utilsTask.isTaskCompleted(el, compareDate)
+          const comp = getters.isTaskCompleted(el, compareDate)
           if (notCompleted) return !comp
           return comp
         })
@@ -84,6 +84,80 @@ export default {
         }
 
         const res = calc(tasks, notCompleted, compareDate)
+        cache[key] = res
+        vers = Memoize.cacheVersion
+        return res
+      }
+    },
+    isTaskCompleted() {
+      let cache = {}
+      let vers = 0
+      const calc = (task, moment, compareDate) => {
+        const calc = () => {
+          const c = task.calendar
+          if (!c || c.type === 'someday' || c.type === 'specific') return task.completed
+          
+          if (c.manualComplete && c.lastCompleteDate) {
+            const manualComplete = mom(c.manualComplete, 'Y-M-D')
+            const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+            if (manualComplete.isSame(lastComplete, 'day')) return true
+          }
+          // const hasTimesBinding = c.times !== null && c.times !== undefined
+          if (c.times !== null && c.times !== undefined) {
+            if (times === 0) return true
+            if (c.persistent) return c.times === 0
+          }
+          
+          if (c.type === 'periodic' || c.type === 'weekly') {
+            const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+            if (!moment) moment = mom()
+            return lastComplete.isSameOrAfter(moment, 'day')
+          }
+    
+          return false
+          
+          // SLOW AND OLD CODE
+          /*       if (!task.calendar || task.calendar.type === 'someday') return task.completed
+          if (!moment) moment = mom()
+          const {
+            type, lastComplete, tod, times,
+            persistent, hasTimesBinding, manualComplete
+          } = this.taskData(task, moment)
+          
+          if (type === 'specific') return task.completed
+    
+          if (manualComplete.isSame(lastComplete, 'day')) return true
+          if (hasTimesBinding && times === 0) return true
+          if (hasTimesBinding && persistent) return times === 0
+          
+          if (type === 'periodic' || type === 'weekly') {
+            return lastComplete.isSameOrAfter(tod, 'day')
+          }
+      
+          return false */
+        }
+        let isCompleted = calc()
+        if (compareDate) {
+          if (!task.completeDate) return false
+          const taskCompleteDate = mom(task.completeDate, 'Y-M-D')
+          const compare = mom(compareDate, 'Y-M-D')
+          return isCompleted && taskCompleteDate.isSameOrAfter(compare, 'day')
+        }
+        return isCompleted
+      }
+      return (task, moment, compareDate) => {
+        let key = '' + task.id
+        if (moment) {
+          key += moment.format('Y-M-D')
+          if (compareDate) key += compareDate
+        }
+        const val = cache[key]
+        if (val) {
+          if (vers === Memoize.cacheVersion) return val
+          else cache = {}
+        }
+
+        const res = calc(task, moment, compareDate)
         cache[key] = res
         vers = Memoize.cacheVersion
         return res
@@ -110,7 +184,7 @@ export default {
           }
           case 'Overdue': {
             return tasks.filter(el => {
-              if (!utilsTask.hasCalendarBinding(el) || utilsTask.isTaskCompleted(el)) return false
+              if (!utilsTask.hasCalendarBinding(el) || getters.isTaskCompleted(el)) return false
               
               let tod = null
               const getTod = () => {
@@ -141,7 +215,7 @@ export default {
     
               return false
               
-                /*           if (!utilsTask.hasCalendarBinding(el) || utilsTask.isTaskCompleted(el)) return false
+                /*           if (!utilsTask.hasCalendarBinding(el) || getters.isTaskCompleted(el)) return false
               
               const {
                 spec, type, due, tod,
