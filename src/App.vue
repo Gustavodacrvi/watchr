@@ -122,7 +122,10 @@ export default {
       return this.hided
     },
     isMenuOpened() {
-      return this.$route.fullPath === '/menu'
+      return this.$route.name === 'menu'
+    },
+    path() {
+      return this.$route.fullPath
     },
     hidePassive() {
       return this.timeBeforeMouseMove > 4 && this.isStandAlone && this.isDesktop

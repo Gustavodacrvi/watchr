@@ -16,6 +16,7 @@ export default {
   namespaced: true,
   state: {
     tasks: [],
+    updatedTask: false,
   },
   getters: {
     priorityOptions() {

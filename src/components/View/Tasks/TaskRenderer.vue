@@ -12,7 +12,7 @@
       @leave="leave"
       data-name='task-renderer'
     >
-      <Task v-for="item of tasks" :key="item.id" 
+      <Task v-for="item of lazyTasks" :key="item.id" 
         v-bind="$props"
 
         :taskHeight='taskHeight'
@@ -35,7 +35,7 @@
       @enter='headingsEnter'
       tag="div"
     >
-      <template v-for="(h, i) in headings">
+      <template v-for="(h, i) in lazyHeadings">
         <HeadingApp v-if="showEmptyHeadings || filter(h).length > 0" :key="h.id"
           :header='h'
 
@@ -58,6 +58,7 @@
             v-bind="{...$props, headingPosition: undefined}"
 
             :tasks='filter(h)'
+            :initialRender='initialHeadingsRender'
             :hideListName="h.hideListName"
             :hideFolderName="h.hideFolderName"
             :showHeadingName="h.showHeadingName"
@@ -100,8 +101,8 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
-  'viewType', 'options', 'taskCompletionCompareDate'],
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
+  'viewType', 'options', 'taskCompletionCompareDate', 'initialRender'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue, Icon,
@@ -110,6 +111,12 @@ export default {
   },
   data() {
     return {
+      lazyTasks: [],
+      lazyTasksSetTimeouts: [],
+      lazyHeadingsSetTimeouts: [],
+      lazyHeadings: [],
+      initialHeadingsRender: false,
+      changedViewName: false,
       addedTask: false,
       atLeastOneRenderedTask: false,
       isDragging: false,
@@ -118,6 +125,9 @@ export default {
       headSort: null,
       sortable: null,
     }
+  },
+  created() {
+    this.updateView()
   },
   mounted() {
     let move = null
@@ -290,18 +300,39 @@ export default {
     window.removeEventListener('keydown', this.keydown)
   },
   methods: {
-    isInView(i) {
-      const appHeight = this.app.clientHeight
-      const scrollTop = document.scrollingElement.scrollTop
-      const rootTopOffset = this.rootTopOffset
-      const realDistance = scrollTop - rootTopOffset
-      const taskDistance = this.taskHeight * i
-      const buffer = (this.taskHeight * 2)
-      
-      return (
-        ((taskDistance + buffer) > realDistance) &&
-        ((realDistance + appHeight) > (taskDistance - buffer))
-      )
+    slowlyAddTasks(tasks) {
+      let i = 0
+      const length = tasks.length
+      const timeout = length / 5
+      const add = (task) => {
+        i++
+        this.lazyTasks.push(task)
+        if ((i + 1) !== length)
+          this.lazyTasksSetTimeouts.push(setTimeout(() => {
+            const t = tasks[i]
+            if (t) add(t)
+          }, timeout))
+      }
+      const t = tasks[0]
+      if (t) add(t)
+    },
+    slowlyAddHeadings(headings) {
+      let i = 0
+      const length = headings.length
+      let timeout = length * 30
+      if (length < 10) timeout = 50
+      const add = (head) => {
+        i++
+        this.lazyHeadings.push(head)
+        if ((i + 1) !== length)
+          this.lazyHeadingsSetTimeouts.push(setTimeout(() => {
+            const h = headings[i]
+            if (h) add(h)
+          }, timeout))
+        else this.initialHeadingsRender = true
+      }
+      const h = headings[0]
+      if (h) add(h)
     },
     getOptionClick(h) {
       if (!h.optionClick) return () => {}
@@ -561,6 +592,59 @@ export default {
     windowClick() {
       this.$store.commit('clearSelected')
     },
+    updateView() {
+      this.lazyTasks = []
+      this.lazyHeadings = []
+      for (const set of this.lazyTasksSetTimeouts) {
+        clearTimeout(set)
+      }
+      for (const set of this.lazyHeadingsSetTimeouts) {
+        clearTimeout(set)
+      }
+      this.slowlyAddHeadings(this.headings)
+      this.slowlyAddTasks(this.tasks)
+    },
+    updateChanged() {
+      const tasks = this.tasks
+      const saved = this.savedTasks
+      for (let i = 0;i < tasks.length;i++) {
+        const t = tasks[i]
+        const task = saved.find(task => task.id === t.id)
+        if (task) this.lazyTasks.splice(i, 1, task)
+      }
+    },
+    updateRemovedAndAdded(newArr, oldArr) {
+      // removed
+      const updated = []
+      for (const t of oldArr) {
+        const task = newArr.find(el => el.id === t.id)
+        if (task) {
+          updated.push(task)
+        }
+      }
+      
+      // add
+      let i = 0
+      for (const t of newArr) {
+        const task = oldArr.find(el => el.id === t.id)
+        if (!task) {
+          updated.splice(i, 0, t)
+        }
+
+        i++
+      }
+      // remove rpeated
+      const unique = []
+      const set = new Set()
+      for (const t of updated) {
+        if (!set.has(t.id)) {
+          set.add(t.id)
+          unique.push(t)
+        }
+      }
+
+      this.lazyTasks = unique
+    },
   },
   computed: {
     ...mapState({
@@ -576,21 +660,11 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    isRoot() {
+      return !this.header
+    },
     app() {
       return document.getElementById('app')
-    },
-    rootTopOffset() {
-      let el = document.getElementsByClassName('task-renderer-root')[0]
-      if (el) {
-        let distance = 0;
-
-        do {
-          distance += el.offsetTop
-          el = el.offsetParent
-        } while (el)
-        return distance < 0 ? 0 : distance
-      }
-      return 0
     },
     taskHeight() {
       return this.isDesktop ? 38 : 50
@@ -626,11 +700,24 @@ export default {
     },
     isSelecting() {
       return this.selected.length > 0
-    }
+    },
   },
   watch: {
-    tasks() {
+    tasks(newArr, oldArr) {
       this.atLeastOneRenderedTask = false
+      if (this.isRoot || this.initialHeadingsRender)
+        setTimeout(() => {
+          if (!this.changedViewName) {
+            this.updateRemovedAndAdded(newArr, oldArr)
+            this.updateChanged()
+          }
+          
+          this.changedViewName = false
+        })
+    },
+    viewName() {
+      this.changedViewName = true
+      this.updateView()
     },
     enableSelect() {
       this.sortable.options.multiDrag = this.enableSelect
