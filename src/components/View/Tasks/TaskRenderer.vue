@@ -1,5 +1,5 @@
 <template>
-  <div class="TaskRenderer floating-btn-container" @click='click'>
+  <div class="TaskRenderer floating-btn-container" :class='platform' @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration" class="illustration">
         <Icon :icon='illustration' color='var(--appnav-color)' width="125px"/>
@@ -615,10 +615,6 @@ export default {
         if (task) this.lazyTasks.splice(i, 1, task)
       }
     },
-
-    // A B C D
-    // A B E C D
-    
     updateRemovedAndAdded(newArr, oldArr) {
       // removed
       const updated = []
@@ -662,6 +658,7 @@ export default {
     }),
     ...mapGetters({
       l: 'l',
+      platform: 'platform',
       isDesktop: 'isDesktop',
       getTaskBodyDistance: 'task/getTaskBodyDistance',
       getTagsByName: 'tag/getTagsByName',
@@ -742,14 +739,21 @@ export default {
 <style scoped>
 
 .illustration {
-  position: absolute;
-  width: 100%;
+  position: fixed;
   top: 0;
-  height: 500px;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   transition-duration: .15s;
+}
+
+.desktop .illustration {
+  transform: translateX(300px);
+}
+
+.mobile .illustration {
+  width: 100%;
 }
 
 .front {
@@ -789,7 +793,7 @@ export default {
 }
 
 .dontHaveTasks {
-  height: 400px;
+  height: 500px;
 }
 
 .showEmptyHeadings.dontHaveTasks {
