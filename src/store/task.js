@@ -4,14 +4,19 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from '../utils/task'
+import utilsMoment from '../utils/moment'
+import MemoizeGetters from './memoFunctionGetters'
 import { uid, fd, userRef, tagRef, taskColl, taskRef, listRef, addTask } from '../utils/firestore'
 
 import mom from 'moment/src/moment'
+
+const Memoize = {cacheVersion: 0}
 
 export default {
   namespaced: true,
   state: {
     tasks: [],
+    updatedTask: false,
   },
   getters: {
     priorityOptions() {
@@ -59,55 +64,257 @@ export default {
       }
       return obj
     },
-    getNumberOfTasksByTag: state => tagId => {
-      const ts = state.tasks.filter(el => el.tags.includes(tagId))
+    filterTasksByCompletion(c, getters) {
+      let cache = {}
+      let vers = 0
+      const calc = (tasks, notCompleted, compareDate) => {
+        return tasks.filter(el => {
+          const comp = getters.isTaskCompleted(el, compareDate)
+          if (notCompleted) return !comp
+          return comp
+        })
+      }
+      return (tasks, notCompleted, compareDate) => {
+        if (tasks.length === 0) return []
+        const key = tasks.reduce((str, t) => str + t.id, '') + 'TASKS_VIEW' + compareDate + notCompleted
 
-      return {
-        total: ts.length,
-        notCompleted: utilsTask.filterTasksByCompletion(ts, true),length,
-      }
-    },
-    getTasksById: state => ids => {
-      const arr = []
-      for (const id of ids) {
-        const task = state.tasks.find(el => el.id === id)
-        if (task) arr.push(task)
-      }
-      return arr
-    },
-    getNumberOfTasksByView: state => viewName => {
-      const ts = utilsTask.filterTasksByView(state.tasks, viewName)
+        const val = cache[key]
+        if (val) {
+          if (vers === Memoize.cacheVersion) return val
+          else cache = {}
+        }
 
-      return {
-        total: ts.length,
-        notCompleted: utilsTask.filterTasksByCompletion(ts, true).length,
+        const res = calc(tasks, notCompleted, compareDate)
+        cache[key] = res
+        vers = Memoize.cacheVersion
+        return res
       }
     },
-    getLostTasks: () => (tasks, list) => {
-      const headingNames = list.headings.map(el => el.name)
-      return tasks.filter(el => !headingNames.includes(el.heading))
+    isTaskCompleted() {
+      let cache = {}
+      let vers = 0
+      const calc = (task, moment, compareDate) => {
+        const calcTask = () => {
+          const c = task.calendar
+          if (!c || c.type === 'someday' || c.type === 'specific') return task.completed
+          
+          if (c.manualComplete && c.lastCompleteDate) {
+            const manualComplete = mom(c.manualComplete, 'Y-M-D')
+            const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+            if (manualComplete.isSame(lastComplete, 'day')) return true
+          }
+          // const hasTimesBinding = c.times !== null && c.times !== undefined
+          if (c.times !== null && c.times !== undefined) {
+            if (times === 0) return true
+            if (c.persistent) return c.times === 0
+          }
+          
+          if (c.type === 'periodic' || c.type === 'weekly') {
+            const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+            if (!moment) moment = mom()
+            return lastComplete.isSameOrAfter(moment, 'day')
+          }
+    
+          return false
+          
+          // SLOW AND OLD CODE
+          /*       if (!task.calendar || task.calendar.type === 'someday') return task.completed
+          if (!moment) moment = mom()
+          const {
+            type, lastComplete, tod, times,
+            persistent, hasTimesBinding, manualComplete
+          } = this.taskData(task, moment)
+          
+          if (type === 'specific') return task.completed
+    
+          if (manualComplete.isSame(lastComplete, 'day')) return true
+          if (hasTimesBinding && times === 0) return true
+          if (hasTimesBinding && persistent) return times === 0
+          
+          if (type === 'periodic' || type === 'weekly') {
+            return lastComplete.isSameOrAfter(tod, 'day')
+          }
+      
+          return false */
+        }
+        let isCompleted = calcTask()
+        if (compareDate) {
+          if (!task.completeDate) return false
+          const taskCompleteDate = mom(task.completeDate, 'Y-M-D')
+          const compare = mom(compareDate, 'Y-M-D')
+          return isCompleted && taskCompleteDate.isSameOrAfter(compare, 'day')
+        }
+        return isCompleted
+      }
+      return (task, moment, compareDate) => {
+        let key = '' + task.id
+        if (moment) {
+          key += moment.format('Y-M-D')
+          if (compareDate) key += compareDate
+        }
+        const val = cache[key]
+        if (val) {
+          if (vers === Memoize.cacheVersion) return val
+          else cache = {}
+        }
+
+        const res = calc(task, moment, compareDate)
+        cache[key] = res
+        vers = Memoize.cacheVersion
+        return res
+      }
     },
-    getTasksWithHeading: () => tasks => {
-      return tasks.filter(el => el.heading)
+    filterTasksByView(s, getters) {
+      let cache = {}
+      let vers = 0
+      const calc = (tasks, view) => {
+        switch (view) {
+          case 'Inbox': {
+            return tasks.filter(el =>
+              !el.completed &&
+              !utilsTask.hasCalendarBinding(el) &&
+              !el.list &&
+              !el.folder &&
+              el.tags.length === 0
+            )
+          }
+          case 'Today': {
+            return utilsTask.filterTasksByDay(tasks, mom())
+          }
+          case 'Someday': {
+            return tasks.filter(t => t.calendar && t.calendar.type === 'someday')
+          }
+          case 'Overdue': {
+            return tasks.filter(el => {
+              if (!utilsTask.hasCalendarBinding(el) || getters.isTaskCompleted(el)) return false
+              
+              let tod = null
+              const getTod = () => {
+                if (tod) return tod
+                tod = mom()
+                return tod
+              }
+    
+              const c = el.calendar
+              if (c.due) {
+                const due = mom(c.due, 'Y-M-D')
+                if (due.isBefore(getTod(), 'day')) return true
+              }
+              if (c.type === 'specific') {
+                const spec = mom(c.specific, 'Y-M-D')
+                return spec.isBefore(getTod(), 'day')
+              }
+              if (c.times !== null && c.times !== undefined && c.times === 0)
+                return true
+              if (c.type === 'periodic') {
+                return utilsMoment.getNextEventAfterCompletionDate(c).isBefore(getTod(), 'day')
+              }
+              if (c.type === 'weekly') {
+                const lastWeeklyEvent = utilsMoment.getLastWeeklyEvent(c, getTod())
+                const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+                return lastWeeklyEvent.isAfter(lastComplete, 'day')
+              }
+    
+              return false
+              
+                /*           if (!utilsTask.hasCalendarBinding(el) || getters.isTaskCompleted(el)) return false
+              
+              const {
+                spec, type, due, tod,
+                nextEventAfterCompletion,
+                lastComplete, lastWeeklyEvent,
+                times, hasTimesBinding
+              } = utilsTask.taskData(el, mom())
+    
+              if (due.isBefore(tod, 'day')) return true
+    
+              if (type === 'specific') return spec.isBefore(tod, 'day')
+              if (hasTimesBinding && times === 0) return true
+              if (type === 'periodic') {
+                return nextEventAfterCompletion.isBefore(tod, 'day')
+              }
+              if (type === 'weekly') {
+                return lastWeeklyEvent.isAfter(lastComplete, 'day')
+              }
+    
+              return false */
+            })
+          }
+          case 'Tomorrow': {
+            return utilsTask.filterTasksByDay(tasks, mom().add(1, 'day'))
+          }
+          case 'Completed': {
+            return getters.filterTasksByCompletion(tasks)
+          }
+        }
+        return tasks
+      }
+      return (tasks, view) => {
+        if (tasks.length === 0) return []
+        const key = tasks.reduce((str, t) => str + t.id, '') + 'TASKS_VIEW' + view
+        const val = cache[key]
+        if (val) {
+          if (vers === Memoize.cacheVersion) return val
+          else cache = {}
+        }
+
+        const res = calc(tasks, view)
+        cache[key] = res
+        vers = Memoize.cacheVersion
+        return res
+      }
     },
-    getRootTasksOfList: (s, getters) => (tasks, list) => {
-      return [...getters['tasksWithLists'](tasks).filter(t => !t.heading),...getters['getLostTasks'](tasks, list)]
-    },
-    getListTasks: (s, getters) => (tasks, listId) => {
-      return getters['tasksWithLists'](tasks).filter(t => t.list === listId)
-    },
-    tasksWithLists: () => tasks => {
-      return tasks.filter(el => el.list)
-    },
-    tasksWithoutLists: () => tasks => {
-      return tasks.filter(el => !el.list)
-    },
-    tasksWithoutListsAndFolders: () => tasks => {
-      return tasks.filter(el => !el.list && !el.folder)
-    },
-    tasksWithListsOrFolders: () => tasks => {
-      return tasks.filter(el => el.list || el.folder)
-    },
+    ...MemoizeGetters(Memoize, ['tasks'], {
+      getNumberOfTasksByTag({getters}, tagId) {
+        const ts = state.tasks.filter(el => el.tags.includes(tagId))
+  
+        return {
+          total: ts.length,
+          notCompleted: getters.filterTasksByCompletion(ts, true),length,
+        }
+      },
+      getTasksById({state}, ids) {
+        const arr = []
+        for (const id of ids) {
+          const task = state.tasks.find(el => el.id === id)
+          if (task) arr.push(task)
+        }
+        return arr
+      },
+      getNumberOfTasksByView({state, getters}, viewName) {
+        const ts = getters.filterTasksByView(state.tasks, viewName)
+
+        return {
+          total: ts.length,
+          notCompleted: getters.filterTasksByCompletion(ts, true).length,
+        }
+      },
+      getLostTasks(c, tasks, list) {
+        const headingNames = list.headings.map(el => el.name)
+        return tasks.filter(el => !headingNames.includes(el.heading))
+      },
+      getTasksWithHeading(c, tasks) {
+        return tasks.filter(el => el.heading)
+      },
+      getRootTasksOfList({getters}, tasks, list) {
+        return [...getters['tasksWithLists'](tasks).filter(t => !t.heading),...getters['getLostTasks'](tasks, list)]
+      },
+      getListTasks({getters}, tasks, listId) {
+        return getters['tasksWithLists'](tasks).filter(t => t.list === listId)
+      },
+      tasksWithLists(c, tasks) {
+        return tasks.filter(el => el.list)
+      },
+      tasksWithoutLists(c, tasks) {
+        return tasks.filter(el => !el.list)
+      },
+      tasksWithoutListsAndFolders(c, tasks) {
+        return tasks.filter(el => !el.list && !el.folder)
+      },
+      tasksWithListsOrFolders(c, tasks) {
+        return tasks.filter(el => el.list || el.folder)
+      },
+    }),
   },
   actions: {
     getData({state}) {
@@ -116,13 +323,14 @@ export default {
         return Promise.all([
           new Promise(resolve => {
             taskColl().where('userId', '==', id).onSnapshot(snap => {
+              Memoize.cacheVersion++
               utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
               resolve()
             })
           })
         ])
     },
-    addTask({rootState}, obj) {
+    addTask({}, obj) {
       const batch = fire.batch()
 
       const ref = taskRef()
@@ -130,13 +338,6 @@ export default {
         userId: uid(),
         ...obj,
       }, ref).then(() => {
-        const type = utilsTask.taskType(obj)
-        if (type && rootState.userInfo) {
-          const viewOrders = rootState.userInfo.viewOrders
-          if (!viewOrders[type]) viewOrders[type] = {}
-          viewOrders[type].tasks = fd().arrayUnion(ref.id)
-          batch.update(userRef(), {viewOrders})
-        }
         batch.commit()
       })
     },
@@ -144,7 +345,7 @@ export default {
       const batch = fire.batch()
       addTask(batch, obj, taskRef(obj.id)).then(() => {
         batch.commit()
-      }).catch(err => console.log('saveTask', err))
+      })
     },
     deleteTasks(c, ids) {
       const batch = fire.batch()

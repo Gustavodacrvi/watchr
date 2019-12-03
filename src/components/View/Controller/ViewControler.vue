@@ -44,7 +44,7 @@ export default {
         return {type: 'someday'}
     },
     getListHeadingsByView(view) {
-      const ts = utilsTask.filterTasksByView(this.tasksWithListsOrFolders, view)
+      const ts = this.filterTasksByView(this.tasksWithListsOrFolders, view)
       if (ts && ts.length > 0) {
         const savedLists = this.lists.slice()
         const savedFolders = this.folders.slice()
@@ -60,9 +60,9 @@ export default {
             setOfFolders.add(f)
           }
         }
-        let lists = Array.from(setOfLists)
+        let lists = Array.from(setOfLists).map(l => ({...l}))
         lists.forEach(l => l.smartViewControllerType = 'list')
-        let folders = Array.from(setOfFolders)
+        let folders = Array.from(setOfFolders).map(t => ({...t}))
         folders.forEach(f => f.smartViewControllerType = 'folder')
 
         let order = this.viewOrders[view] ? this.viewOrders[view].headings : []
@@ -98,12 +98,12 @@ export default {
                   taskOrder = this.getAllTasksOrderByList(list.id)
                 return taskOrder
               },
-              progress: this.$store.getters['list/pieProgress'](this.tasks, list.id),
+              progress: this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted),
               filter: (a, h, showCompleted) => {
                 let tasks = getTasks()
   
                 if (!showCompleted)
-                  tasks = utilsTask.filterTasksByCompletion(tasks, true)
+                  tasks = this.filterTasksByCompletion(tasks, true)
   
                 return tasks
               },
@@ -201,7 +201,7 @@ export default {
                 let tasks = getTasks()
   
                 if (!showCompleted)
-                  tasks = utilsTask.filterTasksByCompletion(tasks, true)
+                  tasks = this.filterTasksByCompletion(tasks, true)
   
                 return tasks
               },
@@ -228,7 +228,7 @@ export default {
           }
         }
 
-        return arr
+        return Object.freeze(arr)
       }
 
       return []
@@ -249,6 +249,9 @@ export default {
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
       getTasks: 'list/getTasks',
+      filterTasksByView: 'task/filterTasksByView',
+      filterTasksByCompletion: 'task/filterTasksByCompletion',
+      isTaskCompleted: 'task/isTaskCompleted',
       getTagsById: 'tag/getTagsById',
       getListsById: 'list/getListsById',
       getListByName: 'list/getListByName',
@@ -325,15 +328,16 @@ export default {
         lastCompleteDate: null,
         periodic: null
       })
-      for (let i = 0;i < 31;i++) {
+      const filtered = this.tasks.filter(el => {
+        return el.calendar && el.calendar.type === 'specific'
+      })
+      for (let i = 0;i < 7;i++) {
         tod.add(1, 'day')
         const date = tod.format('Y-M-D')
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
-          filter: (tasks) => {
-            return utilsTask.filterTasksByDay(tasks.filter(el => {
-              return el.calendar && el.calendar.type === 'specific'
-            }), mom(date, 'Y-M-D'))
+          filter: () => {
+            return utilsTask.filterTasksByDay(filtered, mom(date, 'Y-M-D'))
           },
           id: date,
           onAddTask: obj => {
@@ -356,21 +360,36 @@ export default {
     },
     completedHeadingsOptions() {
       const arr = []
-      const tod = mom()
-      for (let i = 0;i < 31;i++) {
-        const date = tod.format('Y-M-D')
+      const filtered = this.filterTasksByCompletion(this.tasks, false, mom())
+      const set = new Set()
+      for (const t of filtered)
+        if (!set.has(t.completeDate))
+          set.add(t.completeDate)
+      const dates = Array.from(set)
+      dates.sort((a, b) => {
+        const ta = mom(a, 'Y-M-D')
+        const tb = mom(b, 'Y-M-D')
+        if (ta.isAfter(tb, 'day'))
+          return -1
+        if (ta.isBefore(tb, 'day'))
+          return 1
+        return 0
+      })
+
+      const cache = {}
+      for (const date of dates) {
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
-          filter: (tasks) => {
-            tasks = utilsTask.filterTasksByCompletion(tasks, false, mom(date, 'Y-M-D'))
-            return tasks.filter(t => {
-              const complete = mom(t.completeDate, 'Y-M-D')
-              return complete.isSame(mom(date, 'Y-M-D'), 'day')
+          filter: () => {
+            if (cache[date]) return cache[date]
+            const result = filtered.filter(t => {
+              return t.completeDate === date
             })
+            cache[date] = result
+            return result
           },
           id: date,
         })
-        tod.subtract(1, 'day')
       }
       return arr
     },
@@ -461,7 +480,7 @@ export default {
       return this.getOverdueTasks.length > 0
     },
     getOverdueTasks() {
-      return utilsTask.filterTasksByView(this.tasks, 'Overdue')
+      return this.filterTasksByView(this.tasks, 'Overdue')
     },
     viewTag() {
       return this.tags.find(el => el.name === this.viewName)

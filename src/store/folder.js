@@ -3,7 +3,10 @@ import { fire, auth } from './index'
 import fb from 'firebase/app'
 
 import utils from '../utils'
+import MemoizeGetters from './memoFunctionGetters'
 import { folderColl, uid, folderRef, listRef, userRef, taskRef, addTask } from '../utils/firestore'
+
+const Memoize = {cacheVersion: 0}
 
 export default {
   namespaced: true,
@@ -19,40 +22,43 @@ export default {
         return utils.checkMissingIdsAndSortArr(order, folders)
       return []
     },
-    getFolderTaskOrderById: state => folderId => {
-      const fold = state.folders.find(f => f.id === folderId)
-      if (fold && fold.tasks)
-        return fold.tasks
-      return []
-    },
-    getListsByFolderId: state => ({id, lists}) => {
-      const arr = []
-      const fold = state.folders.find(f => f.id === id)
-      for (const l of lists)
-        if (l.folder && l.folder === id) arr.push(l)
-      let order = fold.order
-      if (!order) order = []
-      return utils.checkMissingIdsAndSortArr(order, arr)
-    },
-    getFoldersByName: state => names => {
-      const arr = []
-      for (const n of names) {
-        const fold = state.folders.find(f => f.name === n)
-        if (fold) arr.push(fold)
-      }
-      return arr
-    },
-    getFoldersById: state => ids => {
-      const arr = []
-      for (const f of state.folders)
-        if (ids.includes(f.id)) arr.push(f)
-      return arr
-    },
+    ...MemoizeGetters(Memoize, ['folders'], {
+      getFolderTaskOrderById({state}, folderId) {
+        const fold = state.folders.find(f => f.id === folderId)
+        if (fold && fold.tasks)
+          return fold.tasks
+        return []
+      },
+      getListsByFolderId({state}, {id, lists}) {
+        const arr = []
+        const fold = state.folders.find(f => f.id === id)
+        for (const l of lists)
+          if (l.folder && l.folder === id) arr.push(l)
+        let order = fold.order
+        if (!order) order = []
+        return utils.checkMissingIdsAndSortArr(order, arr)
+      },
+      getFoldersByName({state}, names) {
+        const arr = []
+        for (const n of names) {
+          const fold = state.folders.find(f => f.name === n)
+          if (fold) arr.push(fold)
+        }
+        return arr
+      },
+      getFoldersById({state}, ids) {
+        const arr = []
+        for (const f of state.folders)
+          if (ids.includes(f.id)) arr.push(f)
+        return arr
+      },
+    })
   },
   actions: {
     getData({state}) {
       return new Promise(solve => {
         folderColl().where('userId', '==', uid()).onSnapshot(snap => {
+          Memoize.cacheVersion++
           utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'folders')
           solve()
         })
@@ -61,6 +67,8 @@ export default {
     addFolder(c, fold) {
       folderRef().set({
         userId: uid(),
+        tasks: [],
+        files: [],
         ...fold,
         defaultShowing: true,
       })
@@ -76,7 +84,6 @@ export default {
       })
     },
     saveFolder(c, fold) {
-      console.log(fold.tasks)
       folderRef(fold.id).update({
         ...fold, 
       })
@@ -119,7 +126,6 @@ export default {
         ...task,
       }, newTaskRef).then(() => {
         ids.splice(index, 0, newTaskRef.id)
-  
         batch.update(folderRef(folderId), {tasks: ids})
   
         batch.commit()
@@ -137,11 +143,12 @@ export default {
       const batch = fire.batch()
 
       const folderLists = getters.getListsByFolderId({id, lists})
+      const folderTasks = tasks.filter(t => t.folder === id)
       for (const l of folderLists)
         batch.update(listRef(l.id), {
           folder: null,
         })
-      for (const t of tasks)
+      for (const t of folderTasks)
         batch.update(taskRef(t.id), {
           folder: null,
         })

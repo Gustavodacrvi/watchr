@@ -29,6 +29,11 @@ export default new Router({
       component: AsyncComponent(import(/* webpackChunkName: "user-chunk" */ './views/User.vue')),
     },
     {
+      path: "/menu",
+      name: 'menu',
+      component: AsyncComponent(import(/* webpackChunkName: "user-chunk" */ './views/User.vue')),
+    },
+    {
       path: "/support",
       name: 'support',
       component: AsyncComponent(import(/* webpackChunkName: "home-chunk" */ './views/Support.vue')),

@@ -21,7 +21,7 @@
             @click.stop="completeTask"
             @mouseenter.stop="iconHover = true"
             @mouseleave="iconHover = false"
-            @touchstart.stop
+            @touchstart.stop.passive
             @mousedown.stop
           >
             <Icon v-if="!showCheckedIcon" class="icon check-icon"
@@ -36,29 +36,31 @@
             />
           </div>
           <div class="text">
-            <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
-            <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
-            <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
-            <transition name="name-t">
-              <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
-                  <span v-if="calendarStr && !isToday" class="tag cb rb">{{ calendarStr }}</span>
-                  <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
-                  <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
-                  <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
-                  <span v-html="parsedName"></span>
-                  <Icon v-if="haveChecklist" class="txt-icon" icon="tasks" color="var(--gray)" width="18px"/>
-                  <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
-                  <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
-              </span>
-              <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
-            </transition>
-            <template v-if="isDesktop">
-              <Tag class="task-tag" v-for="t in taskTags" :key="t.name"
-                icon="tag"
-                :value="t.name"
-                :disabled='true'
-              />
-            </template>
+            <div class="task-name-wrapper">
+              <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
+              <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
+              <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
+              <transition name="name-t">
+                <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
+                    <span v-if="calendarStr && !isToday" class="tag cb rb">{{ calendarStr }}</span>
+                    <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
+                    <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
+                    <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
+                    <span v-html="parsedName"></span>
+                    <Icon v-if="haveChecklist" class="txt-icon" icon="tasks" color="var(--gray)" width="18px"/>
+                    <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
+                    <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
+                </span>
+                <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
+              </transition>
+              <template v-if="isDesktop">
+                <Tag class="task-tag" v-for="t in taskTags" :key="t.name"
+                  icon="tag"
+                  :value="t.name"
+                  :disabled='true'
+                />
+              </template>
+            </div>
           </div>
           <div class="icon-drop-wrapper">
             <IconDrop class="icon-drop cursor"
@@ -95,12 +97,13 @@ import EditVue from './Edit.vue'
 import { mapState, mapGetters } from 'vuex'
 
 import utilsTask from '@/utils/task'
+import utilsMoment from '@/utils/moment'
 import utils from '@/utils/index'
 
 import mom from 'moment/src/moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'minimumTaskHeight'
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight'
   , 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart'],
   components: {
     Icon: IconVue,
@@ -132,20 +135,13 @@ export default {
     enter(cont) {
       if (!this.isEditing) {
         const s = cont.style
-        const height = cont.offsetHeight + 'px'
-        const lessThanMinimum = (cont.offsetHeight < this.minimumTaskHeight)
         cont.classList.add('hided')
         s.height = '0px'
         s.padding = '2px 0'
         this.deselectTask()
         setTimeout(() => {
-          if (lessThanMinimum) {
           cont.classList.add('show')
-            s.height = this.minimumTaskHeight + 'px'
-          }
-          else {
-            s.height = height
-          }
+          s.height = this.taskHeight + 'px'
           s.padding = '0'
           cont.classList.remove('hided')
         })
@@ -256,12 +252,14 @@ export default {
       isDesktop: 'isDesktop',
       platform: 'platform',
       l: 'l',
+      filterTasksByView: 'task/filterTasksByView',
+      isTaskCompleted: 'task/isTaskCompleted',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
     completed() {
-      return utilsTask.isTaskCompleted(this.task, mom(), this.taskCompletionCompareDate)
+      return this.isTaskCompleted(this.task, mom(), this.taskCompletionCompareDate)
     },
     parsedName() {
       return this.getLinkString(this.escapeHTML(this.task.name))
@@ -487,11 +485,11 @@ export default {
     },
     isToday() {
       if (this.viewName === 'Today') return false
-      return utilsTask.filterTasksByView([this.task], 'Today').length === 1
+      return this.filterTasksByView([this.task], 'Today').length === 1
     },
     isTomorrow() {
       if (this.viewName === 'Tomorrow' || this.viewName === 'Today') return false
-      return utilsTask.filterTasksByView([this.task], 'Tomorrow').length === 1
+      return this.filterTasksByView([this.task], 'Tomorrow').length === 1
     },
     showIconDrop() {
       return this.isDesktop && this.onHover
@@ -531,7 +529,8 @@ export default {
     nextCalEvent() {
       const {t,c} = this.getTask
       if ((!c || c.type === 'someday') || (c.type !== 'periodic' && c.type !== 'weekly')) return null
-      const {nextEventAfterCompletion} = utilsTask.taskData(t, mom())
+      const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c)
+
       const date = utils.getHumanReadableDate(nextEventAfterCompletion.format('Y-M-D'), this.l)
       if (!date || date === this.viewName) return null
       return this.l["Next event"] + ' ' + date
@@ -580,6 +579,7 @@ export default {
 
 .cont-wrapper {
   transition-duration: .15s;
+  height: 38px;
 }
 
 .hided {
@@ -656,9 +656,15 @@ export default {
   position: relative;
 }
 
+.task-name-wrapper {
+  max-width: 100%;
+  position: absolute;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .task-name {
-  word-break: break-all;
-  word-wrap: break-word;
   padding-left: 4px;
 }
 
@@ -667,6 +673,7 @@ export default {
 }
 
 .text {
+  position: relative;
   align-items: center;
   flex-basis: 100%;
   margin-left: 35px;

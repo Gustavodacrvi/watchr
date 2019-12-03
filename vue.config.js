@@ -3,7 +3,7 @@ const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 
 module.exports = {
   pwa: {
-    themeColor: '#222222',
+    themeColor: '#1c1c1c',
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: '#131313',
     workboxPluginMode: 'InjectManifest',

@@ -67,9 +67,9 @@
       <FileApp v-for="f in files.files" :key="f"
         :name="f"
         :disableDelete='true'
-        @delete="() => deleteFile(f)"
-        @download="() => downloadFile(f, files.storageFolder, files.id)"
-        @view="() => viewFile(f, files.storageFolder, files.id)"
+        @delete="deleteFile(f)"
+        @download="downloadFile(f, files.storageFolder, files.id)"
+        @view="viewFile(f, files.storageFolder, files.id)"
       />
     </div>
     <NotesApp class="tags" :notes='notes' @save-notes="saveNotes"/>

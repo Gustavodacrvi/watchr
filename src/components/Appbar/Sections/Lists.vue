@@ -84,14 +84,14 @@ export default {
     return {
       movingFolder: false,
       isDragginInnerList: false,
+      sortable: null,
     }
   },
   mounted() {
     const el = this.$el.getElementsByClassName('folders-root')[0]
-    const headsSor = new Sortable(el, {
+    this.sortable = new Sortable(el, {
       group: {name: 'folders', pull: (e) => {
         const name = e.el.dataset.name
-        console.log(name)
         if (name === 'task-renderer') return 'clone'
         return false
       }, put: (l,j,item) => {
@@ -114,6 +114,9 @@ export default {
         this.movingFolder = false
       },
     })
+  },
+  beforeDestroy() {
+    this.sortable.destroy()
   },
   methods: {
     enter(el) {
@@ -177,7 +180,7 @@ export default {
       this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj, folderId: id}})
     },
     getListProgress(list) {
-      return this.$store.getters['list/pieProgress'](this.tasks, list.id)
+      return this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted)
     },
     getListIcon(list) {
       const arr = []
@@ -213,6 +216,7 @@ export default {
       getTasksByListId: 'list/getTasks',
       getListTasks: 'task/getListTasks',
       sortedFolders: 'folder/sortedFolders',
+      isTaskCompleted: 'task/isTaskCompleted',
       getListsByFolderId: 'folder/getListsByFolderId',
     }),
     sortedLists() {
@@ -244,7 +248,7 @@ export default {
           const tasks = this.getTasksByListId(this.tasks, l.id)
           let isAllTasksCompleted = true
           for (const el of tasks)
-            if (!utilsTask.isTaskCompleted(el, mom(), lastCallEvent.format('Y-M-D'))) {
+            if (!this.isTaskCompleted(el, mom(), lastCallEvent.format('Y-M-D'))) {
               isAllTasksCompleted = false
               break
             }
@@ -261,7 +265,7 @@ export default {
       return this.getLists
     },
     getLists() {
-      const lists = this.sortedLists
+      const lists = this.sortedLists.map(t => ({...t}))
       for (const list of lists) {
         list.callback = () => {
           this.$router.push('/user?list=' + list.name)
@@ -269,7 +273,7 @@ export default {
         const result = this.getListTasks(this.tasks, list.id).slice()
         list.options = utilsList.listOptions(list, this.$store, this.getListTasks(this.tasks, list.id).slice(), this.l)
       }
-      return lists
+      return lists.map(t => Object.freeze(t))
     },
   },
 }

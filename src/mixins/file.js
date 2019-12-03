@@ -2,6 +2,7 @@
 import { mapState } from "vuex"
 
 import fire, { storage } from 'firebase/app'
+import utils from '@/utils/'
 import 'firebase/storage'
 
 export default {

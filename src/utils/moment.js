@@ -52,7 +52,6 @@ export default {
     const isOnIt = (week) => {
       return formatedWeekdays.includes(week)
     }
-    clone.add(1, 'day')
     while (true) {
       if (isOnIt(clone.format('dddd')))
         return clone
@@ -89,4 +88,22 @@ export default {
     edit.add(numberOfEvents * period, 'day')
     return edit
   },
+  getNextEventAfterCompletionDate(c) {
+    if (c.lastCompleteDate) {
+      const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+      if (lastComplete.isValid()) {
+        if (c.type === 'periodic') {
+          return lastComplete.add(c.periodic, 'day')
+        }
+        else {
+          return this.nextWeekDay(lastComplete, c.weekly)
+        }
+      }
+      return mom(c.editDate, 'Y-M-D')
+    }
+    return mom(c.editDate, 'Y-M-D')
+  },
+  getLastWeeklyEvent(c, tod) {
+    return this.getLastInstanceOfaWeek(tod, c.weekly)
+  }
 }

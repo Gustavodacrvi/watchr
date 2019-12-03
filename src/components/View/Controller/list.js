@@ -178,7 +178,7 @@ export default {
             filter: (a, h, showCompleted) => {
               let tasks = headingTasks.slice()
               if (!showCompleted)
-                tasks = utilsTask.filterTasksByCompletion(tasks, true)
+                tasks = this.filterTasksByCompletion(tasks, true)
               
               return tasks
             },
@@ -239,7 +239,7 @@ export default {
     },
     getPieProgress() {
       if (this.viewList)
-        return this.$store.getters['list/pieProgress'](this.tasks, this.viewList.id)
+        return this.$store.getters['list/pieProgress'](this.tasks, this.viewList.id, this.isTaskCompleted)
       return []
     },
   },

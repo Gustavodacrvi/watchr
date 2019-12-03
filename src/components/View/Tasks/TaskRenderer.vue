@@ -1,23 +1,22 @@
 <template>
-  <div class="TaskRenderer floating-btn-container" @click='click'>
+  <div class="TaskRenderer floating-btn-container" :class='platform' @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration" class="illustration">
-        <Icon :icon='illustration' color='var(--appnav-color)' width="125px"/>
+        <Icon :icon='illustration' color='var(--appnav-color)' width="150px"/>
       </div>
     </transition>
     <transition-group name="task-trans" class="front task-renderer-root" :class="{dontHaveTasks: tasks.length === 0 && headings.length === 0, showEmptyHeadings}"
       appear
-      @enter='enter'
-      @leave='leave'
       tag="div"
-
+      @enter="enter"
+      @leave="leave"
       data-name='task-renderer'
     >
-      <Task v-for="t of tasks" :key="t.id"
+      <Task v-for="item of lazyTasks" :key="item.id" 
         v-bind="$props"
 
-        :minimumTaskHeight='minimumTaskHeight'
-        :task='t'
+        :taskHeight='taskHeight'
+        :task='item'
         :isSelecting='isSelecting'
         :enableSelect='enableSelect'
         :multiSelectOptions='options'
@@ -25,7 +24,7 @@
         :isScrolling='isScrolling'
         @de-select='deSelectTask'
 
-        :data-id='t.id'
+        :data-id='item.id'
         :data-type='`task`'
       />
     </transition-group>
@@ -36,7 +35,7 @@
       @enter='headingsEnter'
       tag="div"
     >
-      <template v-for="(h, i) in headings">
+      <template v-for="(h, i) in lazyHeadings">
         <HeadingApp v-if="showEmptyHeadings || filter(h).length > 0" :key="h.id"
           :header='h'
 
@@ -59,6 +58,7 @@
             v-bind="{...$props, headingPosition: undefined}"
 
             :tasks='filter(h)'
+            :initialRender='initialHeadingsRender'
             :hideListName="h.hideListName"
             :hideFolderName="h.hideFolderName"
             :showHeadingName="h.showHeadingName"
@@ -101,8 +101,8 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'headings', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
-  'viewType', 'options', 'taskCompletionCompareDate'],
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
+  'viewType', 'options', 'taskCompletionCompareDate', 'initialRender'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue, Icon,
@@ -111,12 +111,25 @@ export default {
   },
   data() {
     return {
+      lazyTasks: [],
+      lazyTasksSetTimeouts: [],
+      lazyHeadingsSetTimeouts: [],
+      lazyHeadings: [],
+      initialHeadingsRender: false,
+      changedViewName: false,
       addedTask: false,
       atLeastOneRenderedTask: false,
       isDragging: false,
       justScrolled: false,
       movingHeading: false,
+      headSort: null,
+      sortable: null,
     }
+  },
+  created() {
+    if (!this.isRoot)
+      this.changedViewName = false
+    this.updateView()
   },
   mounted() {
     let move = null
@@ -261,7 +274,7 @@ export default {
     this.sortable = new Sortable(this.draggableRoot, obj)
     const el = this.$el.getElementsByClassName('headings-root')[0]
     if (el) {
-      const headsSor = new Sortable(el, {
+      this.headSort = new Sortable(el, {
         group: 'headings',
         delay: 225,
         delayOnTouchOnly: true,
@@ -283,9 +296,46 @@ export default {
     window.addEventListener('keydown', this.keydown)
   },
   beforeDestroy() {
+    this.sortable.destroy()
+    this.headSort.destroy()
     window.removeEventListener('click', this.windowClick)
+    window.removeEventListener('keydown', this.keydown)
   },
   methods: {
+    slowlyAddTasks(tasks) {
+      let i = 0
+      const length = tasks.length
+      const timeout = length / 5
+      const add = (task) => {
+        this.lazyTasks.push(task)
+        if ((i + 1) !== length)
+          this.lazyTasksSetTimeouts.push(setTimeout(() => {
+            i++
+            const t = tasks[i]
+            if (t) add(t)
+          }, timeout))
+      }
+      const t = tasks[0]
+      if (t) add(t)
+    },
+    slowlyAddHeadings(headings) {
+      let i = 0
+      const length = headings.length
+      let timeout = length * 30
+      if (length < 10) timeout = 50
+      const add = (head) => {
+        i++
+        this.lazyHeadings.push(head)
+        if ((i + 1) !== length)
+          this.lazyHeadingsSetTimeouts.push(setTimeout(() => {
+            const h = headings[i]
+            if (h) add(h)
+          }, timeout))
+        else this.initialHeadingsRender = true
+      }
+      const h = headings[0]
+      if (h) add(h)
+    },
     getOptionClick(h) {
       if (!h.optionClick) return () => {}
       return h.optionClick
@@ -472,20 +522,13 @@ export default {
       const cont = this.contWrapper(el)
       if (cont) {
         const s = cont.style
-        const height = cont.offsetHeight + 'px'
-        const lessThanMinimum = (cont.offsetHeight < this.minimumTaskHeight)
         cont.classList.add('hided')
         s.height = '0px'
         s.padding = '2px 0'
         setTimeout(() => {
           s.transition = 'height .15s, opacity .15s, transform .1s !important'
-          if (lessThanMinimum) {
           cont.classList.add('show')
-            s.height = this.minimumTaskHeight + 'px'
-          }
-          else {
-            s.height = height
-          }
+          s.height = this.taskHeight + 'px'
           s.padding = '0'
           cont.classList.remove('hided')
         }, 50)
@@ -551,6 +594,53 @@ export default {
     windowClick() {
       this.$store.commit('clearSelected')
     },
+    updateView() {
+      this.lazyTasks = []
+      this.lazyHeadings = []
+      for (const set of this.lazyTasksSetTimeouts) {
+        clearTimeout(set)
+      }
+      for (const set of this.lazyHeadingsSetTimeouts) {
+        clearTimeout(set)
+      }
+      this.slowlyAddHeadings(this.headings)
+      this.slowlyAddTasks(this.tasks)
+    },
+    updateRemovedAndAdded(newArr, oldArr) {
+      // removed
+      this.$worker.run((newArr, oldArr) => {
+        const updated = []
+        for (const t of oldArr) {
+          const task = newArr.find(el => el.id === t.id)
+          if (task) {
+            updated.push(task)
+          }
+        }
+        
+        // add
+        let i = 0
+        for (const t of newArr) {
+          const task = oldArr.find(el => el.id === t.id)
+          if (!task) {
+            updated.splice(i, 0, t)
+            break
+          }
+  
+          i++
+        }
+        // remove rpeated
+        const unique = []
+        const set = new Set()
+        for (const t of updated) {
+          if (!set.has(t.id)) {
+            set.add(t.id)
+            unique.push(t)
+          }
+        }
+
+        return unique
+      }, [newArr, oldArr]).then(res => this.lazyTasks = res)
+    },
   },
   computed: {
     ...mapState({
@@ -561,11 +651,19 @@ export default {
     }),
     ...mapGetters({
       l: 'l',
+      platform: 'platform',
       isDesktop: 'isDesktop',
+      getTaskBodyDistance: 'task/getTaskBodyDistance',
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
-    minimumTaskHeight() {
+    isRoot() {
+      return !this.header
+    },
+    app() {
+      return document.getElementById('app')
+    },
+    taskHeight() {
       return this.isDesktop ? 38 : 50
     },
     filter() {
@@ -599,11 +697,23 @@ export default {
     },
     isSelecting() {
       return this.selected.length > 0
-    }
+    },
   },
   watch: {
-    tasks() {
+    tasks(newArr, oldArr) {
       this.atLeastOneRenderedTask = false
+      if (this.isRoot || this.initialHeadingsRender)
+        setTimeout(() => {
+          if (!this.changedViewName) {
+            this.updateRemovedAndAdded(newArr, oldArr)
+          }
+          
+          this.changedViewName = false
+        })
+    },
+    viewName() {
+      this.changedViewName = true
+      this.updateView()
     },
     enableSelect() {
       this.sortable.options.multiDrag = this.enableSelect
@@ -621,14 +731,21 @@ export default {
 <style scoped>
 
 .illustration {
-  position: absolute;
-  width: 100%;
+  position: fixed;
   top: 0;
-  height: 500px;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   transition-duration: .15s;
+}
+
+.desktop .illustration {
+  transform: translateX(300px);
+}
+
+.mobile .illustration {
+  width: 100%;
 }
 
 .front {
@@ -668,7 +785,7 @@ export default {
 }
 
 .dontHaveTasks {
-  height: 400px;
+  height: 500px;
 }
 
 .showEmptyHeadings.dontHaveTasks {

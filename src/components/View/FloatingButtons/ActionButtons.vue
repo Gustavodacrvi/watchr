@@ -1,13 +1,13 @@
 <template>
   <div class="ActionButtons passive" :class="platform" @click="click">
-    <Btn v-if="showHeader" class="header button handle action-button" id="edit-component"
+    <Btn v-if="showHeader" class="header button handle action-button left-act" id="edit-component"
       icon='heading'
       color='white'
       data-type='headingbutton'
       :txt='l["Add heading"]'
     />
     <span v-else></span>
-    <Btn class="add button handle action-button task-adder" id="edit-component"
+    <Btn class="add button handle action-button task-adder right-act" id="edit-component"
       icon='plus'
       color='white'
       data-type='floatbutton'
@@ -29,11 +29,19 @@ export default {
   components: {
     Btn: ActButtonVue,
   },
+  data() {
+    return {
+      sortable: null
+    }
+  },
   mounted() {
     this.sortable = new Sortable(this.$el, {
       group: {name: ['action-buttons', 'appnav'], pull: 'clone', put: false},
       handle: '.handle',
     })
+  },
+  beforeDestroy() {
+    this.sortable.destroy()
   },
   methods: {
     click(evt) {
@@ -73,8 +81,12 @@ export default {
   pointer-events: all;
 }
 
-.ActionButtons.mobile .button {
-  transform: translateX(00px) !important;
+.ActionButtons.mobile .right-act {
+  transform: translateX(-8px) !important;
+}
+
+.ActionButtons.mobile .left-act {
+  transform: translateX(8px) !important;
 }
 
 </style>

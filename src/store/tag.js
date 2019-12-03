@@ -1,11 +1,14 @@
 
 import { fire, auth } from './index'
 import utils from '../utils'
+import MemoizeGetters from './memoFunctionGetters'
 import { tagColl, tagRef, userRef, fd, taskRef } from '../utils/firestore'
 
 const uid = () => {
   return auth.currentUser.uid
 }
+
+const Memoize = {cacheVersion: 0}
 
 export default {
   namespaced: true,
@@ -24,22 +27,24 @@ export default {
       tags.sort((a, b) => b.times - a.times)
       return tags
     },
-    getTagsByName: state => names => {
-      const arr = []
-      for (const n of names) {
-        const tag = state.tags.find(el => el.name === n)
-        if (tag) arr.push(tag)
-      }
-      return arr
-    },
-    getTagsById: state => ids => {
-      const arr = []
-      for (const id of ids) {
-        const tag = state.tags.find(el => el.id === id)
-        if (tag) arr.push(tag)
-      }
-      return arr
-    },
+    ...MemoizeGetters(Memoize, ['tags'], {
+      getTagsByName({state}, names) {
+        const arr = []
+        for (const n of names) {
+          const tag = state.tags.find(el => el.name === n)
+          if (tag) arr.push(tag)
+        }
+        return arr
+      },
+      getTagsById({state}, ids) {
+        const arr = []
+        for (const id of ids) {
+          const tag = state.tags.find(el => el.id === id)
+          if (tag) arr.push(tag)
+        }
+        return arr
+      },
+    })
   },
   actions: {
     getData({state}) {
@@ -47,6 +52,7 @@ export default {
       return Promise.all([
         new Promise(resolve => {
           tagColl().where('userId', '==', uid()).onSnapshot(snap => {
+            Memoize.cacheVersion++
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tags')
             resolve()
           })

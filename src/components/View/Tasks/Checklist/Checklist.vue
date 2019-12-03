@@ -38,10 +38,15 @@ export default {
     Subtask,
     SubtaskEdit: EditVue,
   },
+  data() {
+    return {
+      sortable: null,
+    }
+  },
   mounted() {
     this.calculateLeastNumberOfTasks()
     window.addEventListener('click', this.calculateLeastNumberOfTasks)
-    const sortable = new Sortable(this.draggableRoot, {
+    this.sortable = new Sortable(this.draggableRoot, {
       group: {name: 'sub-task-renderer',
         put: (j,o,item) => {
           const d = item.dataset
@@ -86,6 +91,7 @@ export default {
     })
   },
   beforeDestroy() {
+    this.sortable.destroy()
     window.removeEventListener('click', this.calculateLeastNumberOfTasks)
   },
   data() {

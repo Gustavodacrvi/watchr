@@ -185,6 +185,15 @@ export default {
     }, 200)
     this.moveLineToActive()
     window.addEventListener('resize', this.moveLineToActive)
+
+/*     let oldData = JSON.parse(JSON.stringify(this.$data));
+    this.$watch(vm => vm.$data, (newData) => {
+      console.log(3)
+      console.log(DeepDiff.diff(oldData, newData));
+      oldData = JSON.parse(JSON.stringify(newData));
+    }, {
+      deep: true
+    }); */
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.moveLineToActive)
@@ -395,7 +404,6 @@ export default {
               try {
                 this.$store.dispatch('list/importTemplate', data)
               } catch (err) {
-                console.log(err)
                 bug()
               }
             }).catch(bug)
