@@ -94,7 +94,7 @@ export default {
       let cache = {}
       let vers = 0
       const calc = (task, moment, compareDate) => {
-        const calc = () => {
+        const calcTask = () => {
           const c = task.calendar
           if (!c || c.type === 'someday' || c.type === 'specific') return task.completed
           
@@ -137,7 +137,7 @@ export default {
       
           return false */
         }
-        let isCompleted = calc()
+        let isCompleted = calcTask()
         if (compareDate) {
           if (!task.completeDate) return false
           const taskCompleteDate = mom(task.completeDate, 'Y-M-D')
@@ -171,6 +171,7 @@ export default {
         switch (view) {
           case 'Inbox': {
             return tasks.filter(el =>
+              !el.completed &&
               !utilsTask.hasCalendarBinding(el) &&
               !el.list &&
               !el.folder &&
@@ -344,7 +345,7 @@ export default {
       const batch = fire.batch()
       addTask(batch, obj, taskRef(obj.id)).then(() => {
         batch.commit()
-      }).catch(err => console.log('saveTask', err))
+      })
     },
     deleteTasks(c, ids) {
       const batch = fire.batch()

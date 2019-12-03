@@ -9,14 +9,14 @@ html {
 }
 
 :root {
-  --back-color: #212121;
+  --back-color: #1c1c1c;
   --void: #171717;
   --font: "Work Sans";
-  --white: #d9d9d9;
+  --white: #cccccc;
   --primary: #57A0DE;
   --dark: #202020;
-  --appnav-color: #1c1c1c;
-  --card: #292929;
+  --appnav-color: #171717;
+  --card: #222222;
   --dark-gray: #202020;
   --light-gray: #333333;
   --gray: #515151;

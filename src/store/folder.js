@@ -84,7 +84,6 @@ export default {
       })
     },
     saveFolder(c, fold) {
-      console.log(fold.tasks)
       folderRef(fold.id).update({
         ...fold, 
       })
@@ -127,7 +126,6 @@ export default {
         ...task,
       }, newTaskRef).then(() => {
         ids.splice(index, 0, newTaskRef.id)
-  
         batch.update(folderRef(folderId), {tasks: ids})
   
         batch.commit()

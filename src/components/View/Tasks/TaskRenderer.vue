@@ -127,6 +127,8 @@ export default {
     }
   },
   created() {
+    if (!this.isRoot)
+      this.changedViewName = false
     this.updateView()
   },
   mounted() {
@@ -304,11 +306,11 @@ export default {
       let i = 0
       const length = tasks.length
       const timeout = length / 5
-      const add = (task) => {
-        i++
+      const add = (task) => {// task1 - 0 task2 - 1 task3 - 2
         this.lazyTasks.push(task)
         if ((i + 1) !== length)
           this.lazyTasksSetTimeouts.push(setTimeout(() => {
+            i++
             const t = tasks[i]
             if (t) add(t)
           }, timeout))
@@ -613,6 +615,10 @@ export default {
         if (task) this.lazyTasks.splice(i, 1, task)
       }
     },
+
+    // A B C D
+    // A B E C D
+    
     updateRemovedAndAdded(newArr, oldArr) {
       // removed
       const updated = []
@@ -629,6 +635,7 @@ export default {
         const task = oldArr.find(el => el.id === t.id)
         if (!task) {
           updated.splice(i, 0, t)
+          break
         }
 
         i++
@@ -643,7 +650,7 @@ export default {
         }
       }
 
-      this.lazyTasks = unique
+      this.lazyTasks = updated
     },
   },
   computed: {

@@ -404,7 +404,6 @@ export default {
               try {
                 this.$store.dispatch('list/importTemplate', data)
               } catch (err) {
-                console.log(err)
                 bug()
               }
             }).catch(bug)

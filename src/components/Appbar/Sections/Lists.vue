@@ -92,7 +92,6 @@ export default {
     this.sortable = new Sortable(el, {
       group: {name: 'folders', pull: (e) => {
         const name = e.el.dataset.name
-        console.log(name)
         if (name === 'task-renderer') return 'clone'
         return false
       }, put: (l,j,item) => {
