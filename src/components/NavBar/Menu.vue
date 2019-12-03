@@ -95,7 +95,7 @@ export default {
 <style scoped>
 
 .Menu {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   height: 100%;

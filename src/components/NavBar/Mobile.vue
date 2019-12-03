@@ -100,8 +100,8 @@ export default {
 .drop {
   position: absolute;
   display: flex;
-  right: 12px;
-  transform: translateY(-21px);
+  right: 14px;
+  transform: translateY(-22px);
 }
 
 .central {

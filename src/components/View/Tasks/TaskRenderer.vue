@@ -2,7 +2,7 @@
   <div class="TaskRenderer floating-btn-container" :class='platform' @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration" class="illustration">
-        <Icon :icon='illustration' color='var(--appnav-color)' width="125px"/>
+        <Icon :icon='illustration' color='var(--appnav-color)' width="150px"/>
       </div>
     </transition>
     <transition-group name="task-trans" class="front task-renderer-root" :class="{dontHaveTasks: tasks.length === 0 && headings.length === 0, showEmptyHeadings}"
@@ -306,7 +306,7 @@ export default {
       let i = 0
       const length = tasks.length
       const timeout = length / 5
-      const add = (task) => {// task1 - 0 task2 - 1 task3 - 2
+      const add = (task) => {
         this.lazyTasks.push(task)
         if ((i + 1) !== length)
           this.lazyTasksSetTimeouts.push(setTimeout(() => {
@@ -606,47 +606,40 @@ export default {
       this.slowlyAddHeadings(this.headings)
       this.slowlyAddTasks(this.tasks)
     },
-    updateChanged() {
-      const tasks = this.tasks
-      const saved = this.savedTasks
-      for (let i = 0;i < tasks.length;i++) {
-        const t = tasks[i]
-        const task = saved.find(task => task.id === t.id)
-        if (task) this.lazyTasks.splice(i, 1, task)
-      }
-    },
     updateRemovedAndAdded(newArr, oldArr) {
       // removed
-      const updated = []
-      for (const t of oldArr) {
-        const task = newArr.find(el => el.id === t.id)
-        if (task) {
-          updated.push(task)
+      this.$worker.run((newArr, oldArr) => {
+        const updated = []
+        for (const t of oldArr) {
+          const task = newArr.find(el => el.id === t.id)
+          if (task) {
+            updated.push(task)
+          }
         }
-      }
-      
-      // add
-      let i = 0
-      for (const t of newArr) {
-        const task = oldArr.find(el => el.id === t.id)
-        if (!task) {
-          updated.splice(i, 0, t)
-          break
+        
+        // add
+        let i = 0
+        for (const t of newArr) {
+          const task = oldArr.find(el => el.id === t.id)
+          if (!task) {
+            updated.splice(i, 0, t)
+            break
+          }
+  
+          i++
+        }
+        // remove rpeated
+        const unique = []
+        const set = new Set()
+        for (const t of updated) {
+          if (!set.has(t.id)) {
+            set.add(t.id)
+            unique.push(t)
+          }
         }
 
-        i++
-      }
-      // remove rpeated
-      const unique = []
-      const set = new Set()
-      for (const t of updated) {
-        if (!set.has(t.id)) {
-          set.add(t.id)
-          unique.push(t)
-        }
-      }
-
-      this.lazyTasks = updated
+        return unique
+      }, [newArr, oldArr]).then(res => this.lazyTasks = res)
     },
   },
   computed: {
@@ -713,7 +706,6 @@ export default {
         setTimeout(() => {
           if (!this.changedViewName) {
             this.updateRemovedAndAdded(newArr, oldArr)
-            this.updateChanged()
           }
           
           this.changedViewName = false
