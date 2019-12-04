@@ -141,7 +141,6 @@ export default {
       })
     },
     addTask(obj, evt) {
-      obj.ids = this.sortAndFilterTasks.map(el => el.id)
       this.$emit('add-task', obj)
     },
     removeTasksFromLists() {

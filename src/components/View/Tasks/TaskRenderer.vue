@@ -303,38 +303,48 @@ export default {
   },
   methods: {
     slowlyAddTasks(tasks) {
-      let i = 0
-      const length = tasks.length
-      const timeout = length / 5
-      const add = (task) => {
-        this.lazyTasks.push(task)
-        if ((i + 1) !== length)
-          this.lazyTasksSetTimeouts.push(setTimeout(() => {
-            i++
-            const t = tasks[i]
-            if (t) add(t)
-          }, timeout))
-      }
-      const t = tasks[0]
-      if (t) add(t)
+      return new Promise(solve => {
+        let i = 0
+        const length = tasks.length
+        const timeout = length / 5
+        const add = (task) => {
+          this.lazyTasks.push(task)
+          if ((i + 1) !== length)
+            this.lazyTasksSetTimeouts.push(setTimeout(() => {
+              i++
+              const t = tasks[i]
+              if (t) add(t)
+            }, timeout))
+          else solve()
+        }
+        const t = tasks[0]
+        if (t) add(t)
+        else solve()
+      })
     },
     slowlyAddHeadings(headings) {
-      let i = 0
-      const length = headings.length
-      let timeout = length * 30
-      if (length < 10) timeout = 50
-      const add = (head) => {
-        i++
-        this.lazyHeadings.push(head)
-        if ((i + 1) !== length)
-          this.lazyHeadingsSetTimeouts.push(setTimeout(() => {
-            const h = headings[i]
-            if (h) add(h)
-          }, timeout))
-        else this.initialHeadingsRender = true
-      }
-      const h = headings[0]
-      if (h) add(h)
+      return new Promise(solve => {
+        let i = 0
+        const length = headings.length
+        let timeout = length * 30
+        if (length < 10) timeout = 50
+        const add = (head) => {
+          this.lazyHeadings.push(head)
+          if ((i + 1) !== length)
+            this.lazyHeadingsSetTimeouts.push(setTimeout(() => {
+              i++
+              const h = headings[i]
+              if (h) add(h)
+            }, timeout))
+          else {
+            this.initialHeadingsRender = true
+            solve()
+          }
+        }
+        const h = headings[0]
+        if (h) add(h)
+        else solve()
+      })
     },
     getOptionClick(h) {
       if (!h.optionClick) return () => {}
@@ -595,6 +605,7 @@ export default {
       this.$store.commit('clearSelected')
     },
     updateView() {
+      this.changedViewName = true
       this.lazyTasks = []
       this.lazyHeadings = []
       for (const set of this.lazyTasksSetTimeouts) {
@@ -603,35 +614,16 @@ export default {
       for (const set of this.lazyHeadingsSetTimeouts) {
         clearTimeout(set)
       }
-      this.slowlyAddHeadings(this.headings)
-      this.slowlyAddTasks(this.tasks)
+      Promise.all([
+        this.slowlyAddHeadings(this.headings),
+        this.slowlyAddTasks(this.tasks),
+      ]).then(() => this.changedViewName = false)
     },
-    updateRemovedAndAdded(newArr, oldArr) {
-      // removed
-      this.$worker.run((newArr, oldArr) => {
-        const updated = []
-        for (const t of oldArr) {
-          const task = newArr.find(el => el.id === t.id)
-          if (task) {
-            updated.push(task)
-          }
-        }
-        
-        // add
-        let i = 0
-        for (const t of newArr) {
-          const task = oldArr.find(el => el.id === t.id)
-          if (!task) {
-            updated.splice(i, 0, t)
-            break
-          }
-  
-          i++
-        }
-        // remove rpeated
+    removeRepeated(newArr) {
+      return this.$worker.run((newArr) => {
         const unique = []
         const set = new Set()
-        for (const t of updated) {
+        for (const t of newArr) {
           if (!set.has(t.id)) {
             set.add(t.id)
             unique.push(t)
@@ -639,7 +631,7 @@ export default {
         }
 
         return unique
-      }, [newArr, oldArr]).then(res => this.lazyTasks = res)
+      }, [newArr])
     },
   },
   computed: {
@@ -702,17 +694,29 @@ export default {
   watch: {
     tasks(newArr, oldArr) {
       this.atLeastOneRenderedTask = false
-      if (this.isRoot || this.initialHeadingsRender)
-        setTimeout(() => {
-          if (!this.changedViewName) {
-            this.updateRemovedAndAdded(newArr, oldArr)
+      setTimeout(() => {
+        if (!this.changedViewName && (this.isRoot || this.initialHeadingsRender))
+          this.removeRepeated(newArr).then(arr => {
+            this.lazyTasks = arr
+          })
+      })
+    },
+    headings(newArr) {
+      setTimeout(() => {
+        if (this.isRoot && !this.changedViewName) {
+          const unique = []
+          const set = new Set()
+          for (const t of newArr) {
+            if (!set.has(t.id)) {
+              set.add(t.id)
+              unique.push(t)
+            }
           }
-          
-          this.changedViewName = false
-        })
+          this.lazyHeadings = unique
+        }
+      })
     },
     viewName() {
-      this.changedViewName = true
       this.updateView()
     },
     enableSelect() {

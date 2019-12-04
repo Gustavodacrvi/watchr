@@ -42,7 +42,7 @@
               <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
               <transition name="name-t">
                 <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
-                    <span v-if="calendarStr && !isToday" class="tag cb rb">{{ calendarStr }}</span>
+                    <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
                     <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
                     <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
                     <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
