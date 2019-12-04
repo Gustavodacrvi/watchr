@@ -709,7 +709,6 @@ export default {
               unique.push(t)
             }
           }
-          console.log(unique)
           this.lazyHeadings = unique
         }
       }, 35)

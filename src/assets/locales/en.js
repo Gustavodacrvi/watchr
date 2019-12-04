@@ -116,6 +116,7 @@ export default {
   'Show tag selection': 'Show tag selection',
   'Show list selection': 'Show list selection',
   'Show completed': 'Show completed',
+  "File not supported.": "File not supported.",
   'Sort by name': 'Sort by name',
   'Hide completed': 'Hide completed',
   'Sort by priority': 'Sort by priority',

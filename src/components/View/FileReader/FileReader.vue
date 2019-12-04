@@ -48,6 +48,14 @@ export default {
         this.status = 'AudioApp'
       else if (t.includes('video/'))
         this.status = 'VideoApp'
+      else {
+        this.$store.commit('pushToast', {
+          name: this.l['File not supported.'],
+          seconds: 4,
+          type: 'error',
+        })
+        this.$store.commit('readFile', null)
+      }
       this.blob = blob
     }).catch(this.error)
   },
