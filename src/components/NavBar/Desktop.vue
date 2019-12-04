@@ -13,6 +13,7 @@
         class="drop"
         handle="user"
         handleColor="var(--gray)"
+        :circle='true'
         :options="dropLinks"
         @handle-toggle='v => isLinksIconDropOpen = v'
       />
@@ -20,6 +21,7 @@
         class="drop"
         handle="globe"
         handleColor="var(--gray)"
+        :circle='true'
         :options="languages"
         @handle-toggle='v => isLanguagesIconDropOpen = v'
       />

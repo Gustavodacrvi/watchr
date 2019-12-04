@@ -1,6 +1,6 @@
 <template>
   <div class="Popup" :class="platform">
-    <Icon v-if="!isDesktop && popup && popup.comp !== 'Update'" class="icon cursor" icon="arrow" :primaryHover="true" @click="closeMobilePopup"/>
+    <Icon v-if="!isDesktop && popup && popup.comp !== 'Update'" class="icon cursor primary-hover" icon="arrow" @click="closeMobilePopup" :circle='true'/>
     <component class="component"
       :is="popup.comp"
       :class="[platform, {isStandAlone}]"

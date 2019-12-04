@@ -1,8 +1,8 @@
 <template>
   <div class="Mobile">
     <div class="central">
-      <span class="cursor" @click="openMenu">
-        <Icon icon="menu" width="22px" :primaryHover="true"/>
+      <span @click="openMenu">
+        <Icon class="primary-hover cursor" icon="menu" width="22px" :circle="true"/>
       </span>
       <transition name="fade" mode="out-in" appear>
         <div v-if="isNotOnHome" key="user">
@@ -12,6 +12,7 @@
               handle="settings-v"
               :options="navBar.options"
               handle-color="var(--gray)"
+              :circle='true'
               width="100px"
             />
           </div>

@@ -22,6 +22,7 @@
         handle="settings-v"
         :hideHandle="!headerHover && isDesktop"
         :options="options"
+        :circle='true'
       />
     </div>
     <div class="content">

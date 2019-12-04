@@ -10,9 +10,9 @@
   >
     <transition name='fade-t'>
       <Icon v-if="handle && !hideHandle"
-        class="cursor handle"
+        class="cursor handle primary-hover"
         :icon="handle"
-        :primaryHover='true'
+        :circle='circle'
         :color="handleColor"
         :width="getHandleWidth"
         @click="toggleIconDrop"
@@ -51,7 +51,7 @@ import Files from './Files.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['options', 'id', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root'],
+  props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root'],
   components: {
     Icon, ListIcons, CalendarPicker, WeeklyPicker,
     PeriodicPicker, Profile, Files,

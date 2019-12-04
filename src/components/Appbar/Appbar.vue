@@ -66,13 +66,14 @@
                 <IconDrop v-if="showIconDropdown"
                   class="right passive"
                   handle='settings-h'
+                  :circle='true'
                   handleColor='var(--gray)'
                   :options="getOptions"
                 />
               </transition>
             </div>
             <div></div>
-            <Icon v-if="isDesktop" icon="arrow" id='appbar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
+            <Icon v-if="isDesktop" icon="arrow" id='appbar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" :circle='true'  @click="toggleAppbar"/>
           </div>
         </div>
       </div>

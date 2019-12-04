@@ -52,9 +52,9 @@
           <div class="header">
             <h3 class="year">{{ thisYear() }}   {{ thisMonth() }}</h3>
             <div class="icons">
-              <Icon class="arrow-right icon cursor" icon="arrow" width="18px" :primaryHover="true" @click="previousMonth"/>
-              <Icon class="icon circle cursor" icon="tiny-circle" width="14px" :primaryHover="true" @click="resetDate" style='transform: translateY(0px)'/>
-              <Icon class="arrow-left icon cursor" icon="arrow" width="18px" :primaryHover="true" @click="nextMonth"/>
+              <Icon class="arrow-right icon cursor primary-hover" icon="arrow" width="18px" @click="previousMonth"/>
+              <Icon class="icon circle cursor primary-hover" icon="tiny-circle" width="14px" @click="resetDate" style='transform: translateY(0px)'/>
+              <Icon class="primary-hover arrow-left icon cursor" icon="arrow" width="18px" @click="nextMonth"/>
             </div>
           </div>
           <div class="weeks">
@@ -84,15 +84,15 @@
         </span>
       </div>
       <div v-else class="time view content" key="time">
-        <Icon @click="calendar = true" class="back-arrow cursor" icon="arrow" :primaryHover="true"/>
+        <Icon @click="calendar = true" class="back-arrow cursor primary-hover" icon="arrow"/>
         <div class="time-comp">
           <div class="time-selector">
             <div class="select-time">
               <span class="time-wrapper rb" @click="increaseHour">
-                <Icon icon="tiny-arrow" class="icon cursor top time-icon" width="75px" :primaryHover="true"/>
+                <Icon icon="tiny-arrow" class="primary-hover icon cursor top time-icon" width="75px"/>
               </span>
               <span class="time-wrapper rb" @click="increaseMinutes">
-                <Icon icon="tiny-arrow" class="icon cursor top time-icon" width="75px" :primaryHover="true"/>
+                <Icon icon="tiny-arrow" class="icon primary-hover cursor top time-icon" width="75px"/>
               </span>
             </div>
             <div class="select-time">
@@ -105,10 +105,10 @@
             </div>
             <div class="select-time">
               <span class="time-wrapper rb" @click="decreaseHour">
-                <Icon icon="tiny-arrow" class="icon cursor time-icon bottom" width="75px" :primaryHover="true"/>
+                <Icon icon="tiny-arrow" class="icon primary-hover cursor time-icon bottom" width="75px"/>
               </span>
               <span class="time-wrapper rb" @click="decreaseMinutes">
-                <Icon icon="tiny-arrow" class="icon cursor time-icon bottom" width="75px" :primaryHover="true"/>
+                <Icon icon="tiny-arrow" class="icon cursor time-icon primary-hover bottom" width="75px"/>
               </span>
             </div>
           </div>

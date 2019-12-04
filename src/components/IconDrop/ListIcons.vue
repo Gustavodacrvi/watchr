@@ -33,11 +33,10 @@
           <div v-else-if="l.type === 'optionsList'" :key="l.name" class="header-link hide-trans">
             <div class="header-name">{{ l.name }}</div>
             <div class="values">
-              <Icon v-for="l in l.options" :key="l.id" class="val icon cursor"
+              <Icon v-for="l in l.options" :key="l.id" class="val primary-hover icon cursor"
                 width="25px"
                 :icon="l.icon"
                 :color="l.color"
-                :primaryHover="true"
                 @click="linkCallback(l.callback, l)"
               />
             </div>

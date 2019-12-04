@@ -18,6 +18,7 @@
           :class="{notActive: !isActive}"
           :icon="icon"
           :progress='progress'
+          :circle='true'
         />
       </div>
       <div class="name-wrapper">
@@ -29,6 +30,7 @@
           <template v-if="helpIcons">
             <Icon v-for="i in helpIcons" :key="i" class="inf faded"
               :icon='i'
+              :circle='true'
             />
           </template>
           <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
@@ -36,6 +38,7 @@
           <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
           <IconDrop
             class="inf drop"
+            :circle='true'
             handle="settings-v"
             :hideHandle="!showOptions"
             :options='options'

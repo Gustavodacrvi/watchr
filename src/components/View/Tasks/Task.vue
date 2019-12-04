@@ -24,12 +24,12 @@
             @touchstart.stop.passive
             @mousedown.stop
           >
-            <Icon v-if="!showCheckedIcon" class="icon check-icon"
+            <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon"
               :icon="`box${isSomeday ? '-dash' : ''}`"
               :color='circleColor'
               width="18px"
             />
-            <Icon v-else class="icon check-icon"
+            <Icon v-else :circle='true' class="icon check-icon"
               :icon="`box-check${isSomeday ? '-dash' : ''}`"
               :color='circleColor'
               width="18px"
@@ -66,6 +66,7 @@
             <IconDrop class="icon-drop cursor"
               v-model="showingIconDropContent"
               handle='settings-v'
+              :circle='true'
               :options='options'
               :hideHandle='!showIconDrop'
             />
