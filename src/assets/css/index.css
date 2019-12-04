@@ -74,6 +74,11 @@ body, input, button, textarea {
   text-align: center;
 }
 
+.remove-highlight {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: transparent;
+}
+
 .scroll-thin::-webkit-scrollbar-thumb {
   background-color: var(--light-gray);
   border-radius: 6px;

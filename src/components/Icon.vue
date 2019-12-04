@@ -1,6 +1,6 @@
 <template>
   <div v-if="getIcon"
-    class="icon"
+    class="icon remove-highlight"
     :class="[{hideShadow: !shadow}, platform]"
     :style="{width: getWidth, color, filter: `drop-shadow(0 0 20px ${color})`}"
     @click="iconClick"
@@ -193,8 +193,6 @@ export default {
 .icon {
   display: inline-block;
   position: relative;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
-  -webkit-tap-highlight-color: transparent;
 }
 
 .circle-wrapper {
