@@ -12,7 +12,6 @@
         class="cont-wrapper task-cont-wrapper handle rb"
         :class="platform"
         @click="click"
-        @dblclick="dblclick"
       >
         <div class="cont"
           v-longclick='openMobileOptions'
@@ -118,6 +117,8 @@ export default {
       isEditing: false,
       onHover: false,
       iconHover: false,
+      doubleClickListening: false,
+      doubleClickListeningTimeout: null,
     }
   },
   mounted() {
@@ -166,13 +167,27 @@ export default {
         this.$store.dispatch('task/completeTasks', [this.task])
       else this.$store.dispatch('task/uncompleteTasks', [this.task])
     },
-    click() {
+    singleClick() {
       if (this.isDesktop && !this.enableSelect)
         this.isEditing = true
     },
-    dblclick() {
+    doubleClick() {
       if (!this.isDesktop)
         this.isEditing = true
+    },
+    click() {
+      if (!this.doubleClickListening) {
+        this.singleClick()
+        this.doubleClickListening = true
+        clearTimeout(this.doubleClickListeningTimeout)
+        this.doubleClickListeningTimeout = setTimeout(() => {
+          this.doubleClickListening = false
+        }, 200)
+      } else {
+        this.doubleClick()
+        clearTimeout(this.doubleClickListeningTimeout)
+        this.doubleClickListening = false
+      }
     },
     saveTask(obj, force) {
       this.$store.dispatch('task/saveTask', {
