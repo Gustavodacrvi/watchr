@@ -169,8 +169,65 @@ export default {
       if (this.selectedTasks.length > 0) event.stopPropagation()
     },
     pushToNavbar() {
+      const dispatch = this.$store.dispatch
+      const ids = this.selectedTasks
+      const l = this.l
+
+      const savePri = (pri) => {
+        dispatch('task/saveTasksById', {ids, task: {priority: pri}})
+      }
+      
       this.$store.commit('pushNavBarData', {
-        options: this.options,
+        options: {
+          icons: this.selectedTasks.length > 0 ? [
+            {
+              icon: 'priority',
+              name: l['Change priority of tasks'],
+              callback: () => [
+                {
+                  name: 'No priority',
+                  icon: 'priority',
+                  callback: () => savePri('')
+                },
+                {
+                  name: 'Low priority',
+                  icon: 'priority',
+                  color: 'var(--green)',
+                  callback: () => savePri('Low priority')
+                },
+                {
+                  name: 'Medium priority',
+                  icon: 'priority',
+                  color: 'var(--yellow)',
+                  callback: () => savePri('Medium priority')
+                },
+                {
+                  name: 'High priority',
+                  icon: 'priority',
+                  color: 'var(--red)',
+                  callback: () => savePri('High priority')
+                }
+              ]
+            },
+            {
+              icon: 'calendar',
+              callback: () => {return {
+                comp: 'CalendarPicker',
+                content: {callback: calendar => {
+                  dispatch('task/saveTasksById', {
+                    ids,
+                    task: {calendar},
+                  })
+                }
+              }}},
+            },
+            {
+              icon: 'trash',
+              callback: () => {dispatch('task/deleteTasks', ids)},
+            },
+          ] : [],
+          icondrop: this.options,
+        },
         title: this.viewNameValue,
       })
     },

@@ -215,6 +215,8 @@ export default {
   "Resend confirmation e-mail": "Reenviar e-mail de confirmação",
   "Are you sure?": "Você tem certeza?",
   "You're going to lose all of your data forever!": "Você irá perder todos os seus dados para sempre!",
+  "More options": "Mais opções",
+  "More dates": "Mais datas",
   "File not supported.": "Não há suporte para esse tipo de arquivo.",
   "Yes, I am aware of the consequences": "Sim, estou ciente das consequências",
   "Delete account": "Deletar conta",

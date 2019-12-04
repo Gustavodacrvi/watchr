@@ -368,27 +368,31 @@ export default {
             callback: () => this.saveDates({type: 'someday'})
           },
           {
-            name: l['Specific day'],
+            name: l['More dates'],
             icon: 'calendar',
-            callback: () => {return {
-              comp: 'CalendarPicker',
-              content: {callback: this.saveDates}}},
-          },
-          {
-            name: l['Repeat weekly'],
-            icon: 'repeat',
-            callback: () => ({
-              comp: 'WeeklyPicker',
-              content: {callback: this.saveDates},
-            }),
-          },
-          {
-            name: l['Repeat periodically'],
-            icon: 'repeat',
-            callback: () => ({
-              comp: 'PeriodicPicker',
-              content: {callback: this.saveDates},
-            }),
+            callback: () => [{
+              name: l['Specific day'],
+              icon: 'calendar',
+              callback: () => {return {
+                comp: 'CalendarPicker',
+                content: {callback: this.saveDates}}},
+            },
+            {
+              name: l['Repeat weekly'],
+              icon: 'repeat',
+              callback: () => ({
+                comp: 'WeeklyPicker',
+                content: {callback: this.saveDates},
+              }),
+            },
+            {
+              name: l['Repeat periodically'],
+              icon: 'repeat',
+              callback: () => ({
+                comp: 'PeriodicPicker',
+                content: {callback: this.saveDates},
+              }),
+            }],
           },
           {
             type: 'hr',

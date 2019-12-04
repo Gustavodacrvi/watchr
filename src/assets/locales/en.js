@@ -116,6 +116,8 @@ export default {
   'Show tag selection': 'Show tag selection',
   'Show list selection': 'Show list selection',
   'Show completed': 'Show completed',
+  "More options": "More options",
+  "More dates": "More dates",
   "File not supported.": "File not supported.",
   'Sort by name': 'Sort by name',
   'Hide completed': 'Hide completed',
