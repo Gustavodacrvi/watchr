@@ -14,7 +14,7 @@
             @touchend.stop
           >
             <template v-if="showHelpIcons">
-              <transition-group name='fade-t'>
+              <transition-group name='fade'>
                 <Icon v-for="i in navBar.options.icons" :key="i.icon"
                   class="cursor option-icon"
                   color='var(--gray)'
@@ -177,7 +177,8 @@ export default {
 
 .fade-leave, .fade-enter-to {
   opacity: 1;
-  transition: opacity .3s;
+  transition-delay: .1s;
+  transition: opacity .2s;
 }
 
 </style>

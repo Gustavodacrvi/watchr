@@ -12,9 +12,20 @@
         class="cont-wrapper task-cont-wrapper handle rb"
         :class="platform"
         @click="click"
+        @touchstart='touchStart'
+        @touchend='touchEnd'
       >
+        <div class="circle-wrapper-wrapper">
+          <div class="circle-wrapper">
+            <transition
+              @enter='circleEnter'
+            >
+              <div v-if="showCircle" class="circle" :style="{left, top, backgroundImage: `radial-gradient(${innerColor}, ${outerColor})`}"></div>
+            </transition>
+          </div>
+        </div>
         <div class="cont"
-          v-longclick='openMobileOptions'
+          v-longclick='longClick'
         >
           <div class="check cursor"
             @click.stop="completeTask"
@@ -113,12 +124,20 @@ export default {
   },
   data() {
     return {
+      left: 0,
+      top: 0,
+      innerColor: 'rgba(53, 73, 90, 0.6)',
+      outerColor: 'var(--primary)',
+      showCircle: false,
       showingIconDropContent: false,
       isEditing: false,
       onHover: false,
       iconHover: false,
       doubleClickListening: false,
       doubleClickListeningTimeout: null,
+      allowMobileOptions: false,
+      startX: 0,
+      startY: 0,
     }
   },
   mounted() {
@@ -155,11 +174,14 @@ export default {
         cont.style.opacity = 0
       }
     },
-    openMobileOptions() {
+    longClick() {
       if (!this.isDesktop && !this.isDragging && !this.isScrolling) {
-        window.navigator.vibrate(100)
-        this.$store.commit('pushIconDrop', this.options)
+        this.allowMobileOptions = true
       }
+    },
+    openMobileOptions() {
+      window.navigator.vibrate(100)
+      this.$store.commit('pushIconDrop', this.options)
     },
     completeTask() {
       const {t,c} = this.getTask
@@ -175,7 +197,70 @@ export default {
       if (!this.isDesktop)
         this.isEditing = true
     },
-    click() {
+    clickTrans(evt) {
+      this.innerColor = 'rgba(53, 73, 90, 0.6)'
+      this.outerColor = 'var(--primary)'
+      this.left = evt.offsetX + 'px'
+      this.top = evt.offsetY + 'px'
+      this.showCircle = true
+    },
+    touchStart(e) {
+      this.innerColor = 'var(--light-gray)'
+      this.outerColor = 'var(--gray)'
+      this.startX = e.changedTouches[0].clientX
+      this.startY = e.changedTouches[0].clientY
+      const rect = e.target.getBoundingClientRect()
+      this.left = (e.targetTouches[0].pageX - rect.left) + 'px'
+      this.top = (e.targetTouches[0].pageY - rect.top) + 'px'
+      this.showCircle = true
+    },
+    touchEnd(e) {
+      const touch = e.changedTouches[0]
+      const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
+      const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
+      if (!movedFingerX && !movedFingerY) {
+        if (this.allowMobileOptions) {
+          this.allowMobileOptions = false
+          this.openMobileOptions()
+        }
+      } else {
+        this.deselectTask()
+        setTimeout(() => {
+          this.$store.commit('unselectTask', this.task.id)
+        })
+      }
+    },
+    circleEnter(el) {
+      const s = el.style
+
+      s.transitionDuration = '0'
+      s.opacity = 0
+      s.width = 0
+      s.height = 0
+      const width = this.$el.clientWidth + 100
+      setTimeout(() => {
+        s.transitionDuration = '.450s'
+        s.opacity = 1
+        s.width = width + 'px'
+        s.height = width + 'px'
+        s.transform = `translate(-${width/2}px, -${width/2}px)`
+        setTimeout(() => {
+          s.transitionDuration = '.250s'
+          s.width = width + 'px'
+          s.height = width + 'px'
+          s.transform = `translate(-${width/2}px, -${width/2}px)`
+          s.opacity = 0
+          setTimeout(() => {
+            s.transitionDuration = '0'
+            s.width = 0
+            s.height = 0
+            this.showCircle = false
+          }, 450)
+        }, 250)
+      }, 50)
+    },
+    click(evt) {
+      this.clickTrans(evt)
       if (!this.doubleClickListening) {
         this.singleClick()
         this.doubleClickListening = true
@@ -594,8 +679,30 @@ export default {
 }
 
 .cont-wrapper {
-  transition-duration: .15s;
+  transition-duration: .25s;
   height: 38px;
+}
+
+.circle-wrapper-wrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.circle-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.circle {
+  position: absolute;
+  opacity: .4;
+  border-radius: 100px;
 }
 
 .hided {
@@ -623,7 +730,7 @@ export default {
 }
 
 .desktop .cont-wrapper:hover, .desktop .cont-wrapper:active {
-  background-color: var(--light-gray) !important;
+  background-color: var(--light-gray);
 }
 
 .check, .text, .options, .cont {
@@ -763,6 +870,8 @@ export default {
 
 .sortable-selected .cont-wrapper {
   background-color: rgba(53, 73, 90, 0.6) !important;
+  box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
+  transition: background-color .8s !important;
 }
 
 </style>
