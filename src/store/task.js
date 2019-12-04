@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, userRef, tagRef, taskColl, taskRef, listRef, addTask } from '../utils/firestore'
+import { uid, fd, userRef, serverTimestamp, tagRef, taskColl, taskRef, listRef, addTask } from '../utils/firestore'
 
 import mom from 'moment/src/moment'
 
@@ -336,6 +336,8 @@ export default {
       const ref = taskRef()
       addTask(batch, {
         userId: uid(),
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D'),
         ...obj,
       }, ref).then(() => {
         batch.commit()

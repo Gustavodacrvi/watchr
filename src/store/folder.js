@@ -4,7 +4,8 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import MemoizeGetters from './memoFunctionGetters'
-import { folderColl, uid, folderRef, listRef, userRef, taskRef, addTask } from '../utils/firestore'
+import { folderColl, uid, folderRef, serverTimestamp, listRef, userRef, taskRef, addTask } from '../utils/firestore'
+import mom from 'moment/src/moment'
 
 const Memoize = {cacheVersion: 0}
 
@@ -69,6 +70,8 @@ export default {
         userId: uid(),
         tasks: [],
         files: [],
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D'),
         ...fold,
         defaultShowing: true,
       })

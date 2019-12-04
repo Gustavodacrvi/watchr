@@ -38,6 +38,8 @@ export default {
     this.sortable = new Sortable(this.$el, {
       group: {name: ['action-buttons', 'appnav'], pull: 'clone', put: false},
       handle: '.handle',
+      forceFallback: !this.isDesktop,
+      fallbackOnBody: !this.isDesktop,
     })
   },
   beforeDestroy() {
@@ -54,7 +56,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['platform', 'l'])
+    ...mapGetters(['platform', 'l', 'isDesktop'])
   }
 }
 

@@ -132,12 +132,12 @@ export default {
       s.height = 0
       const width = this.circleWidth
       setTimeout(() => {
-        s.transitionDuration = '.1s'
-        s.opacity = .5
+        s.transitionDuration = '.15s'
+        s.opacity = 1
         s.width = width + 'px'
         s.height = width + 'px'
         setTimeout(() => {
-          s.transitionDuration = '.4s'
+          s.transitionDuration = '.35s'
           s.width = width + 'px'
           s.height = width + 'px'
           s.opacity = 0
@@ -146,8 +146,8 @@ export default {
             s.width = 0
             s.height = 0
             this.activate = 0
-          }, 400)
-        }, 100)
+          }, 350)
+        }, 150)
       })
     },
   },

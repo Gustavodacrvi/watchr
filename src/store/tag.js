@@ -2,7 +2,8 @@
 import { fire, auth } from './index'
 import utils from '../utils'
 import MemoizeGetters from './memoFunctionGetters'
-import { tagColl, tagRef, userRef, fd, taskRef } from '../utils/firestore'
+import { tagColl, tagRef, userRef, fd, taskRef, serverTimestamp } from '../utils/firestore'
+import mom from 'moment/src/moment'
 
 const uid = () => {
   return auth.currentUser.uid
@@ -61,6 +62,8 @@ export default {
     },
     addTag(c, {name, index, ids}) {
       const obj = {
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D'),
         name,
         userId: uid(),
       }
