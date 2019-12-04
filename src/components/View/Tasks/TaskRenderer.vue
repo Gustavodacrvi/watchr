@@ -58,7 +58,6 @@
             v-bind="{...$props, headingPosition: undefined}"
 
             :tasks='filter(h)'
-            :initialRender='initialHeadingsRender'
             :hideListName="h.hideListName"
             :hideFolderName="h.hideFolderName"
             :showHeadingName="h.showHeadingName"
@@ -102,7 +101,7 @@ import utils from '@/utils/'
 
 export default {
   props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
-  'viewType', 'options', 'taskCompletionCompareDate', 'initialRender'],
+  'viewType', 'options', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue, Icon,
@@ -115,7 +114,6 @@ export default {
       lazyTasksSetTimeouts: [],
       lazyHeadingsSetTimeouts: [],
       lazyHeadings: [],
-      initialHeadingsRender: false,
       changedViewName: false,
       addedTask: false,
       atLeastOneRenderedTask: false,
@@ -337,7 +335,6 @@ export default {
               if (h) add(h)
             }, timeout))
           else {
-            this.initialHeadingsRender = true
             solve()
           }
         }
@@ -692,10 +689,10 @@ export default {
     },
   },
   watch: {
-    tasks(newArr, oldArr) {
+    tasks(newArr) {
       this.atLeastOneRenderedTask = false
       setTimeout(() => {
-        if (!this.changedViewName && (this.isRoot || this.initialHeadingsRender))
+        if (!this.changedViewName)
           this.removeRepeated(newArr).then(arr => {
             this.lazyTasks = arr
           })
@@ -703,7 +700,7 @@ export default {
     },
     headings(newArr) {
       setTimeout(() => {
-        if (this.isRoot && !this.changedViewName) {
+        if (!this.changedViewName) {
           const unique = []
           const set = new Set()
           for (const t of newArr) {
@@ -712,6 +709,7 @@ export default {
               unique.push(t)
             }
           }
+          console.log(unique)
           this.lazyHeadings = unique
         }
       }, 35)
