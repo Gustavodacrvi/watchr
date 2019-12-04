@@ -22,9 +22,9 @@ export default {
         return utils.checkMissingIdsAndSortArr(userInfo.tags, tags)
       return []
     },
-    sortedTagsByFrequency(s, getters) {
+    sortedTagsByName(s, getters) {
       const tags = getters.sortedTags
-      tags.sort((a, b) => b.times - a.times)
+      tags.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       return tags
     },
     ...MemoizeGetters(Memoize, ['tags'], {
@@ -63,7 +63,6 @@ export default {
       const obj = {
         name,
         userId: uid(),
-        times: 0,
       }
       if (!index)
         tagColl().add(obj)
@@ -102,11 +101,6 @@ export default {
       userRef().update({
         tags: ids,
       })
-    },
-    sortTagsByFrequency({state, dispatch}) {
-      const tags = state.tags.slice()
-      tags.sort((a, b) => b.times - a.times)
-      dispatch('updateOrder', tags.map(el => el.id))
     },
     sortTagsByName({state, dispatch}) {
       const tags = state.tags.slice()

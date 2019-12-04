@@ -265,7 +265,7 @@ export default {
       }
     },
     ...MemoizeGetters(Memoize, ['tasks'], {
-      getNumberOfTasksByTag({getters}, tagId) {
+      getNumberOfTasksByTag({getters, state}, tagId) {
         const ts = state.tasks.filter(el => el.tags.includes(tagId))
   
         return {
@@ -475,12 +475,6 @@ export default {
         const ref = taskRef(id)
         batch.update(ref, {
           tags: fd().arrayUnion(...tagIds),
-        })
-      }
-      for (const id of tagIds) {
-        const ref = tagRef(id)
-        batch.update(ref, {
-          times: fd().increment(1),
         })
       }
 

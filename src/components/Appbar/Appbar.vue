@@ -354,11 +354,6 @@ export default {
               icon: 'sort-name',
               callback: () => dispatch('tag/sortTagsByName')
             },
-            {
-              name: this.l['Sort tags by frequency'],
-              icon: 'fire',
-              callback: () => dispatch('tag/sortTagsByFrequency')
-            }
           ]
         },
         {

@@ -257,7 +257,7 @@ export default {
       isTaskCompleted: 'task/isTaskCompleted',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
-      savedTags: 'tag/sortedTagsByFrequency',
+      savedTags: 'tag/sortedTagsByName',
     }),
     completed() {
       return this.isTaskCompleted(this.task, mom(), this.taskCompletionCompareDate)

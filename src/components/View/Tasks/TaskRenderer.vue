@@ -699,7 +699,7 @@ export default {
           this.removeRepeated(newArr).then(arr => {
             this.lazyTasks = arr
           })
-      })
+        }, 35)
     },
     headings(newArr) {
       setTimeout(() => {
@@ -714,7 +714,7 @@ export default {
           }
           this.lazyHeadings = unique
         }
-      })
+      }, 35)
     },
     viewName() {
       this.updateView()

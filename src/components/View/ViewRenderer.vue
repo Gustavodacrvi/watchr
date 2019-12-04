@@ -195,7 +195,7 @@ export default {
       savedLists: 'list/sortedLists',
       filterTasksByCompletion: 'task/filterTasksByCompletion',
       savedFolders: 'folder/sortedFolders',
-      savedTags: 'tag/sortedTagsByFrequency',
+      savedTags: 'tag/sortedTagsByName',
     }),
     notFilteredIds() {
       return this.sortAndFilterTasks.map(el => el.id)
@@ -494,7 +494,7 @@ export default {
       
       notCompleted = this.filterTasksByCompletion(ts, true)
 
-      if (notCompleted.length === 0)
+      if (notCompleted.length === 0 && this.headingsOptions.length === 0)
         return ts.filter(task => {
           if (!task.calendar) return true
           const type = task.calendar.type

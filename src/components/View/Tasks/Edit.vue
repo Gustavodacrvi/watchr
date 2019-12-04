@@ -377,7 +377,7 @@ export default {
       l: 'l',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
-      savedTags: 'tag/sortedTagsByFrequency',
+      savedTags: 'tag/sortedTagsByName',
     }),
     isEditing() {
       return this.defaultTask
