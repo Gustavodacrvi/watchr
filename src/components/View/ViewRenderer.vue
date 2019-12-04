@@ -111,7 +111,27 @@ export default {
       this.$emit('add-heading', {...obj})
     },
     updateIds(ids) {
-      this.$emit('update-ids', ids)
+      const notFilteredIds = this.notFilteredIds
+      const removedIncludedIds = notFilteredIds.slice().filter(id => !ids.includes(id))
+
+      const final = []
+      let missing = []
+      let i = 0
+      for (const id of notFilteredIds) {
+        if (removedIncludedIds.includes(id))
+          final.push(id)
+        else missing.push(i)
+
+        i++
+      }
+      i = 0
+      for (const id of ids) {
+        removedIncludedIds.splice(missing[i], 0, id)
+        i++
+      }
+
+      
+      this.$emit('update-ids', removedIncludedIds)
     },
 
     sortByName() {
@@ -141,6 +161,19 @@ export default {
       })
     },
     addTask(obj, evt) {
+      const notFilteredIds = this.notFilteredIds
+
+      let fixPosition = 0
+      let i = 0
+      for (const id of notFilteredIds) {
+        if (!obj.ids.includes(id))
+          fixPosition++
+        if ((i - fixPosition) === obj.index) break
+        i++
+      }
+
+      obj.index += fixPosition
+      obj.ids = notFilteredIds
       this.$emit('add-task', obj)
     },
     removeTasksFromLists() {
@@ -164,6 +197,9 @@ export default {
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByFrequency',
     }),
+    notFilteredIds() {
+      return this.sortAndFilterTasks.map(el => el.id)
+    },
     isSearch() {
       return this.isSmart && this.viewNameValue === "Search"
     },
