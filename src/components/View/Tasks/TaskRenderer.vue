@@ -114,7 +114,7 @@ export default {
       lazyTasksSetTimeouts: [],
       lazyHeadingsSetTimeouts: [],
       lazyHeadings: [],
-      changedViewName: false,
+      changedViewName: true,
       addedTask: false,
       atLeastOneRenderedTask: false,
       isDragging: false,
@@ -302,6 +302,7 @@ export default {
   methods: {
     slowlyAddTasks(tasks) {
       return new Promise(solve => {
+        this.lazyTasks = []
         let i = 0
         const length = tasks.length
         const timeout = length / 5
@@ -312,8 +313,8 @@ export default {
               i++
               const t = tasks[i]
               if (t) add(t)
+              else solve()
             }, timeout))
-          else solve()
         }
         const t = tasks[0]
         if (t) add(t)
@@ -322,6 +323,7 @@ export default {
     },
     slowlyAddHeadings(headings) {
       return new Promise(solve => {
+        this.lazyHeadings = []
         let i = 0
         const length = headings.length
         let timeout = length * 30
@@ -333,10 +335,8 @@ export default {
               i++
               const h = headings[i]
               if (h) add(h)
+              else solve()
             }, timeout))
-          else {
-            solve()
-          }
         }
         const h = headings[0]
         if (h) add(h)
@@ -601,16 +601,17 @@ export default {
     windowClick() {
       this.$store.commit('clearSelected')
     },
+    clearLazySettimeout() {
+      for (const set of this.lazyTasksSetTimeouts)
+        clearTimeout(set)
+      for (const set of this.lazyHeadingsSetTimeouts)
+        clearTimeout(set)
+      this.lazyTasksSetTimeouts = []
+      this.lazyHeadingsSetTimeouts = []
+    },
     updateView() {
       this.changedViewName = true
-      this.lazyTasks = []
-      this.lazyHeadings = []
-      for (const set of this.lazyTasksSetTimeouts) {
-        clearTimeout(set)
-      }
-      for (const set of this.lazyHeadingsSetTimeouts) {
-        clearTimeout(set)
-      }
+      this.clearLazySettimeout()
       Promise.all([
         this.slowlyAddHeadings(this.headings),
         this.slowlyAddTasks(this.tasks),
@@ -692,15 +693,19 @@ export default {
     tasks(newArr) {
       this.atLeastOneRenderedTask = false
       setTimeout(() => {
-        if (!this.changedViewName)
+        if (!this.changedViewName) {
+          this.clearLazySettimeout()
           this.removeRepeated(newArr).then(arr => {
             this.lazyTasks = arr
           })
+        }
+        
         }, 35)
     },
     headings(newArr) {
       setTimeout(() => {
         if (!this.changedViewName) {
+          this.clearLazySettimeout()
           const unique = []
           const set = new Set()
           for (const t of newArr) {

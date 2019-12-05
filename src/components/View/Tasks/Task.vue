@@ -20,7 +20,7 @@
             <transition
               @enter='circleEnter'
             >
-              <div v-if="showCircle" class="circle" :style="{left, top, backgroundImage: `radial-gradient(${innerColor}, ${outerColor})`}"></div>
+              <div v-if="showCircle" class="circle-transition" :style="{left, top, backgroundImage: `radial-gradient(${innerColor}, ${outerColor})`}"></div>
             </transition>
           </div>
         </div>
@@ -200,8 +200,8 @@ export default {
     clickTrans(evt) {
       this.innerColor = 'rgba(53, 73, 90, 0.6)'
       this.outerColor = 'var(--primary)'
-      this.left = evt.offsetX + 'px'
-      this.top = evt.offsetY + 'px'
+      this.left = (evt.offsetX + 35) + 'px'
+      this.top = (evt.offsetY + 0) + 'px'
       this.showCircle = true
     },
     touchStart(e) {
@@ -210,51 +210,57 @@ export default {
       this.startX = e.changedTouches[0].clientX
       this.startY = e.changedTouches[0].clientY
       const rect = e.target.getBoundingClientRect()
-      this.left = (e.targetTouches[0].pageX - rect.left) + 'px'
-      this.top = (e.targetTouches[0].pageY - rect.top) + 'px'
-      this.showCircle = true
+      if (!this.doingTransition) {
+        this.left = (e.targetTouches[0].pageX - rect.left) + 'px'
+        this.top = (e.targetTouches[0].pageY - rect.top) + 'px'
+        this.showCircle = true
+      }
     },
     touchEnd(e) {
       const touch = e.changedTouches[0]
       const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
       const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
       if (!movedFingerX && !movedFingerY) {
-        if (this.allowMobileOptions) {
-          this.allowMobileOptions = false
+        if (this.allowMobileOptions)
           this.openMobileOptions()
-        }
       } else {
         this.deselectTask()
         setTimeout(() => {
           this.$store.commit('unselectTask', this.task.id)
         })
       }
+      this.allowMobileOptions = false
     },
     circleEnter(el) {
       const s = el.style
+      this.doingTransition = true
 
-      s.transitionDuration = '0'
+      const trans = str => {
+        s.transition = `opacity ${str}, width ${str}, height ${str}, transform 0s, left 0s, top 0s, margin 0s`
+      }
+
+      trans('0s')
       s.opacity = 0
       s.width = 0
       s.height = 0
-      const width = this.$el.clientWidth + 100
+      const client = this.$el.clientWidth
+      const width = client + 100
       setTimeout(() => {
-        s.transitionDuration = '.450s'
+        trans('.450s')
         s.opacity = 1
         s.width = width + 'px'
         s.height = width + 'px'
-        s.transform = `translate(-${width/2}px, -${width/2}px)`
         setTimeout(() => {
-          s.transitionDuration = '.250s'
+          trans('.250s')
           s.width = width + 'px'
           s.height = width + 'px'
-          s.transform = `translate(-${width/2}px, -${width/2}px)`
           s.opacity = 0
           setTimeout(() => {
-            s.transitionDuration = '0'
+            trans('0')
             s.width = 0
             s.height = 0
             this.showCircle = false
+            this.doingTransition = false
           }, 450)
         }, 250)
       }, 50)
@@ -699,10 +705,11 @@ export default {
   height: 100%;
 }
 
-.circle {
+.circle-transition {
   position: absolute;
+  transform: translate(-50%, -50%);
   opacity: .4;
-  border-radius: 100px;
+  border-radius: 1000px;
 }
 
 .hided {
