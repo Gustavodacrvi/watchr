@@ -212,9 +212,10 @@ export default {
       this.startX = e.changedTouches[0].clientX
       this.startY = e.changedTouches[0].clientY
       const rect = e.target.getBoundingClientRect()
+      const scroll = document.scrollingElement.scrollTop
       if (!this.doingTransition) {
         this.left = (e.targetTouches[0].pageX - rect.left) + 'px'
-        this.top = (e.targetTouches[0].pageY - rect.top) + 'px'
+        this.top = (e.targetTouches[0].pageY - rect.top - scroll) + 'px'
         this.showCircle = true
       }
     },

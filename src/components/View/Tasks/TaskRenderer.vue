@@ -154,6 +154,7 @@ export default {
     }
     const obj = {
       multiDrag: this.enableSelect,
+      direction: 'horizontal',
       group: {
         name: 'task-renderer',
         pull: (e,j,item) => {
@@ -779,6 +780,10 @@ export default {
 
 .desktop .illustration {
   transform: translateX(300px);
+}
+
+.mobile .illustration {
+  transform: translateX(-7px);
 }
 
 .mobile .illustration {
