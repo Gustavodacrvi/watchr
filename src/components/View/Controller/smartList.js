@@ -58,6 +58,10 @@ export default {
       }
       return []
     },
+    headingsPagination() {
+      if (this.viewName !== 'Completed') return null
+      return 7
+    },
     tasksOrder() {
       let o = this.viewOrders[this.viewName]
       if (o && o.tasks) return this.viewOrders[this.viewName].tasks

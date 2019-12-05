@@ -301,6 +301,7 @@ export default {
         'headingEdit', 'headerOptions', 'notes', 'progress', 'headingsOptions',
         'tasks', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates',
         'headerTags', 'headerCalendar', 'taskCompletionCompareDate', 'files',
+        'headingsPagination',
       ]
       const obj = {}
 
