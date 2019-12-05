@@ -372,6 +372,30 @@ export default {
         },
         id: 'this month'
       })
+      // this year
+      const inOneMonth = mom().add(1, 'M').startOf('month')
+      const inOneMonthTasks = after7DaysTasks.filter(el => {
+        return inOneMonth.isBefore(mom(el.calendar.specific, 'Y-M-D'), 'day')
+      })
+      arr.push({
+        name: this.l['This year'],
+        filter: () => {
+          return this.filterTasksByPeriod(inOneMonthTasks, tod, 'year', true)
+        },
+        id: 'this year'
+      })
+      // next years
+      const inOneYear = mom().add(1, 'y').startOf('year')
+      const inOneYearTasks = inOneMonthTasks.filter(el => {
+        return inOneYear.isBefore(mom(el.calendar.specific, 'Y-M-D'), 'day')
+      })
+      arr.push({
+        name: this.l['Next years'],
+        filter: () => {
+          return inOneYearTasks
+        },
+        id: 'nextYears',
+      })
       return arr
     },
     completedHeadingsOptions() {

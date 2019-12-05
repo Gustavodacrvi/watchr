@@ -100,6 +100,8 @@ import mom from 'moment/src/moment'
 import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
+const headingsFilterCache = {}
+
 export default {
   props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
   'viewType', 'options', 'taskCompletionCompareDate'],
@@ -155,10 +157,11 @@ export default {
         },
         put: (j,o,item) => {
           const d = item.dataset
+          if (d.type === 'appnav-element') return true
+          if (!this.onSortableAdd) return false
           if (d.type === 'task') return true
           if (d.type === 'floatbutton') return true
           if (d.type === 'subtask') return true
-          if (d.type === 'appnav-element') return true
           if (d.type === 'headingbutton') return true
           return false
         }
@@ -328,7 +331,7 @@ export default {
         let i = 0
         const length = headings.length
         let timeout = length * 30
-        if (length < 10) timeout = 50
+        if (length < 15) timeout = 50
         const add = (head) => {
           this.lazyHeadings.push(head)
           if ((i + 1) !== length)
@@ -661,8 +664,13 @@ export default {
     },
     filter() {
       return (h) => {
+        if (headingsFilterCache[h.name]) return headingsFilterCache[h.name]
+        
         let ts = h.filter(this.savedTasks, h, this.showCompleted)
-        if (ts.length === 0) return []
+        if (ts.length === 0) {
+          headingsFilterCache[h.name] = []
+          return []
+        }
 
         let order = []
         if (h.order)
@@ -672,6 +680,7 @@ export default {
 
         if (ts.length > 0) this.atLeastOneRenderedTask = true
 
+        headingsFilterCache[h.name] = ts
         return ts
       }
     },
@@ -706,6 +715,7 @@ export default {
         }, 35)
     },
     headings(newArr) {
+      this.headingsFilterCache = {}
       setTimeout(() => {
         if (!this.changedViewName) {
           this.clearLazySettimeout()

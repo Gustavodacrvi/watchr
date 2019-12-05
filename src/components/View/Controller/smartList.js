@@ -63,6 +63,9 @@ export default {
       if (o && o.tasks) return this.viewOrders[this.viewName].tasks
       return []
     },
+    showEmptyHeadings() {
+      return this.viewName === 'Upcoming'
+    },
     headingsOptions() {
       switch (this.viewName) {
         case 'Upcoming': return this.upcomingHeadingsOptions
