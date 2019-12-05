@@ -4,7 +4,9 @@ import router from "./router"
 import store from "./store/"
 import "./registerServiceWorker"
 import VueWorker from 'vue-worker'
+import vueSmoothScroll from 'vue2-smooth-scroll'
 
+Vue.use(vueSmoothScroll)
 Vue.use(VueWorker, '$worker')
 
 Vue.config.productionTip = false

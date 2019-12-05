@@ -473,6 +473,7 @@ export default {
 
         const ref = taskRef(t.id)
         batch.update(ref, {
+          completedFire: serverTimestamp(),
           completeDate: mom().format('Y-M-D'),
           completed: true,
           calendar,
@@ -503,6 +504,7 @@ export default {
         if (c && c.times === 0) c.times = null
         const ref = taskRef(t.id)
         batch.update(ref, {
+          completedFire: null,
           completeDate: null,
           completed: false,
           calendar: c,

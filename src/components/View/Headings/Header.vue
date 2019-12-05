@@ -1,5 +1,5 @@
 <template>
-  <div class="Header" @click='click'>
+  <div class="Header" id='view-header' @click='click'>
     <div v-if="$store.getters.isDesktop" class="header">
       <Icon class="icon"
         :icon="getIcon"
