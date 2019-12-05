@@ -324,7 +324,7 @@ export default {
         this.lazyTasks = []
         let i = 0
         const length = tasks.length
-        const timeout = length / 5
+        const timeout = length / 2.5
         const add = (task) => {
           this.lazyTasks.push(task)
           if ((i + 1) !== length)
@@ -346,7 +346,7 @@ export default {
         let i = 0
         const length = headings.length
         let timeout = length * 30
-        if (length < 15) timeout = 50
+        if (length < 15) timeout = this.isDesktop ? 100 : 200
         const add = (head) => {
           this.lazyHeadings.push(head)
           if ((i + 1) !== length)
