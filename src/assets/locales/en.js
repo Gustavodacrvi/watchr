@@ -110,6 +110,8 @@ export default {
   "Show defered lists": "Show defered lists",
   "Add heading": "Add heading",
   "Move to folder": "Move to folder",
+  "Show ": "Show ",
+  " more tasks...": " more tasks...",
   "This year": "This year",
   "Add Heading Notes": "Add Heading Notes",
   "You have no internet.": "You have no internet.",

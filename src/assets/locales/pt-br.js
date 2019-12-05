@@ -209,6 +209,8 @@ export default {
   "You don't have any tags.": "Você não tem nenhuma tag.",
   "E-mail sent": "E-mail mandado com sucesso.",
   "Save": "Salvar",
+  "Show ": "Mostrar ",
+  " more tasks...": " mais tarefas...",
   "Add tasks to folder": "Adicionar tarefas na pasta",
   "Move to folder": "Mover para pasta",
   "Add heading": "Adicionar cabeçalho",

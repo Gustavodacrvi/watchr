@@ -12,7 +12,7 @@
       @leave="leave"
       data-name='task-renderer'
     >
-      <Task v-for="item of lazyTasks" :key="item.id" 
+      <Task v-for="item of getTasks" :key="item.id" 
         v-bind="$props"
 
         :taskHeight='taskHeight'
@@ -28,6 +28,11 @@
         :data-type='`task`'
       />
     </transition-group>
+    <ButtonVue v-if="showMoreItemsButton"
+      type="dark"
+      :value='showMoreItemsMessage'
+      @click="showingMoreItems = true"
+    />
     <transition-group
       appear
       class="front headings-root"
@@ -86,6 +91,7 @@ import TaskEditTemplate from './Edit.vue'
 import IllustrationVue from '@/components/Illustrations/Illustration.vue'
 import HeadingVue from './../Headings/Heading.vue'
 import HeadingEditVue from './../Headings/Edit.vue'
+import ButtonVue from '@/components/Auth/Button.vue'
 
 import Icon from '@/components/Icon.vue'
 
@@ -107,12 +113,13 @@ export default {
   'viewType', 'options', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
-    Task: TaskVue, Icon,
+    Task: TaskVue, Icon, ButtonVue,
     HeadingApp: HeadingVue,
     Illustration: IllustrationVue,
   },
   data() {
     return {
+      showingMoreItems: false,
       lazyTasks: [],
       lazyTasksSetTimeouts: [],
       lazyHeadingsSetTimeouts: [],
@@ -653,6 +660,17 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    getTasks() {
+      if (this.isRoot) return this.lazyTasks
+      const arr = []
+      return this.showingMoreItems ? this.lazyTasks : this.lazyTasks.slice(0, 3)
+    },
+    showMoreItemsMessage() {
+      return `${this.l['Show ']}${this.lazyTasks.length - 3}${this.l[' more tasks...']}`
+    },
+    showMoreItemsButton() {
+      return !this.isRoot && !this.showingMoreItems && this.lazyTasks.length > 3
+    },
     isRoot() {
       return !this.header
     },
