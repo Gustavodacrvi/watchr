@@ -626,8 +626,6 @@ export default {
     },
     fade() {
       if (this.completed) return true
-      const isOnSomedaySmartView = this.isSmart && this.viewName === 'Someday'
-      return this.isSomeday && !isOnSomedaySmartView
     },
     calendarStr() {
       const {t,c} = this.getTask
