@@ -75,7 +75,7 @@ export default {
           }
           // const hasTimesBinding = c.times !== null && c.times !== undefined
           if (c.times !== null && c.times !== undefined) {
-            if (times === 0) return true
+            if (c.times === 0) return true
             if (c.persistent) return c.times === 0
           }
           moment = mom(moment, 'Y-M-D')
@@ -351,7 +351,18 @@ export default {
         return tasks.filter(el => el.heading)
       },
       getRootTasksOfList({getters}, tasks, list) {
-        return [...getters['tasksWithLists'](tasks).filter(t => !t.heading),...getters['getLostTasks'](tasks, list)]
+        const ts = [...getters['tasksWithLists'](tasks).filter(t => !t.heading), ...getters['getLostTasks'](tasks, list)]
+
+        const unique = []
+        const set = new Set()
+        for (const t of ts) {
+          if (!set.has(t.id)) {
+            unique.push(t)
+            set.add(t.id)
+          }
+        }
+
+        return unique
       },
       getListTasks({getters}, tasks, listId) {
         return getters['tasksWithLists'](tasks).filter(t => t.list === listId)

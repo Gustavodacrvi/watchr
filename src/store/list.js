@@ -102,7 +102,8 @@ export default {
 
       const createTasks = (arr, tasks) => {
         for (const t of tasks) {
-          batch.set(taskRef(), {
+          const ref = taskRef()
+          batch.set(ref, {
             ...t, id: null, list: newListRef.id,
           })
           arr.push({

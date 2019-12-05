@@ -380,6 +380,7 @@ export default {
       })
       arr.push({
         name: this.l['This year'],
+        calendarStr: true,
         filter: () => {
           return this.filterTasksByPeriod(inOneMonthTasks, tod, 'year', true)
         },
@@ -392,6 +393,7 @@ export default {
       })
       arr.push({
         name: this.l['Next years'],
+        calendarStr: true,
         filter: () => {
           return inOneYearTasks
         },

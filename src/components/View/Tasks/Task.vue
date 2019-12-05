@@ -52,7 +52,7 @@
               <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
               <transition name="name-t">
                 <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
-                    <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
+                    <span v-if="calendarStr && !isDesktop && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
                     <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
                     <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
                     <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
@@ -71,15 +71,6 @@
                 />
               </template>
             </div>
-          </div>
-          <div class="icon-drop-wrapper">
-            <IconDrop class="icon-drop cursor"
-              v-model="showingIconDropContent"
-              handle='settings-v'
-              :circle='true'
-              :options='options'
-              :hideHandle='!showIconDrop'
-            />
           </div>
         </div>
       </div>
@@ -770,7 +761,7 @@ export default {
   width: 4px;
 }
 
-.icon-drop {
+.calendarStr {
   position: absolute;
   top: 50%;
   transform: translateY(-45%);

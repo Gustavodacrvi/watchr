@@ -109,7 +109,7 @@ import utils from '@/utils/'
 let headingsFilterCache = {}
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart', 'allowCalendarStr',
   'viewType', 'options', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -142,7 +142,6 @@ export default {
   mounted() {
     let move = null
     if (this.onSortableAdd || this.addTask) {
-      console.log('tasks sortable')
       const removeTaskOnHoverFromAppnavElements = (el) => {
         const items = document.getElementsByClassName('AppbarElement-link')
         for (const i of items) {
@@ -287,7 +286,6 @@ export default {
     }
 
     if (this.isRoot) {
-      console.log('headings sortable')
       const el = this.$el.getElementsByClassName('headings-root')[0]
       if (el) {
         this.headSort = new Sortable(el, {
