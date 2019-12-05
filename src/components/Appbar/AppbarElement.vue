@@ -6,46 +6,51 @@
     @click.stop="linkCallback"
     :class="{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover}"
   >
-    <div
-      class="link-wrapper AppbarElement-link rb"
-      :data-type='type'
-      :data-color='iconColor'
-      :data-disabled='disableAction'
+    <a class='scroll-link'
+      href="#view-header"
+      v-smooth-scroll='{duration: 500, offset: -500}'
     >
-      <div class="icon-wrapper">
-        <Icon class="main-icon"
-          :style="hoverStyle"
-          :class="{notActive: !isActive}"
-          :icon="icon"
-          :progress='progress'
-          :circle='true'
-        />
-      </div>
-      <div class="name-wrapper">
-        <transition name="name-t">
-          <span v-if="!showSpecialInfo" key="normal" class="name" :style="hoverStyle">{{ getName }}</span>
-          <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
-        </transition>
-        <div class="info">
-          <template v-if="helpIcons">
-            <Icon v-for="i in helpIcons" :key="i" class="inf faded"
-              :icon='i'
-              :circle='true'
-            />
-          </template>
-          <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
-          <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
-          <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
-          <IconDrop
-            class="inf drop"
+      <div
+        class="link-wrapper AppbarElement-link rb"
+        :data-type='type'
+        :data-color='iconColor'
+        :data-disabled='disableAction'
+      >
+        <div class="icon-wrapper">
+          <Icon class="main-icon"
+            :style="hoverStyle"
+            :class="{notActive: !isActive}"
+            :icon="icon"
+            :progress='progress'
             :circle='true'
-            handle="settings-v"
-            :hideHandle="!showOptions"
-            :options='options'
           />
         </div>
+        <div class="name-wrapper">
+          <transition name="name-t">
+            <span v-if="!showSpecialInfo" key="normal" class="name" :style="hoverStyle">{{ getName }}</span>
+            <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
+          </transition>
+          <div class="info">
+            <template v-if="helpIcons">
+              <Icon v-for="i in helpIcons" :key="i" class="inf faded"
+                :icon='i'
+                :circle='true'
+              />
+            </template>
+            <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
+            <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
+            <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
+            <IconDrop
+              class="inf drop"
+              :circle='true'
+              handle="settings-v"
+              :hideHandle="!showOptions"
+              :options='options'
+            />
+          </div>
+        </div>
       </div>
-    </div>
+    </a>
   </div>
 </template>
 

@@ -66,6 +66,11 @@ body, input, button, textarea {
   color: var(--primary);
 }
 
+.scroll-link {
+  color: var(--txt);
+  text-decoration: none;
+}
+
 .rb {
   border-radius: 6px;
 }

@@ -60,11 +60,6 @@ export default {
   transition-duration: .15s;
 }
 
-.scroll-link {
-  color: var(--txt);
-  text-decoration: none;
-}
-
 .page:hover {
   background-color: var(--light-gray);
 }
