@@ -100,7 +100,7 @@ import mom from 'moment/src/moment'
 import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
-const headingsFilterCache = {}
+let headingsFilterCache = {}
 
 export default {
   props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
@@ -702,7 +702,7 @@ export default {
     },
   },
   watch: {
-    tasks(newArr) {
+    tasks(newArr, fd) {
       this.atLeastOneRenderedTask = false
       setTimeout(() => {
         if (!this.changedViewName) {
@@ -715,7 +715,7 @@ export default {
         }, 35)
     },
     headings(newArr) {
-      this.headingsFilterCache = {}
+      headingsFilterCache = {}
       setTimeout(() => {
         if (!this.changedViewName) {
           this.clearLazySettimeout()

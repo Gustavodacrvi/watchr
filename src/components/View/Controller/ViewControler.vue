@@ -229,7 +229,7 @@ export default {
           }
         }
 
-        return Object.freeze(arr)
+        return arr
       }
 
       return []

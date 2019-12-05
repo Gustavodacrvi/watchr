@@ -511,7 +511,7 @@ export default {
   watch: {
     viewNameValue() {
       this.showSomeday = false
-    }
+    },
   }
 }
 

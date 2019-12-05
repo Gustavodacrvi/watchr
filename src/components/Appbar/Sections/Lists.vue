@@ -273,7 +273,7 @@ export default {
         const result = this.getListTasks(this.tasks, list.id).slice()
         list.options = utilsList.listOptions(list, this.$store, this.getListTasks(this.tasks, list.id).slice(), this.l)
       }
-      return lists.map(t => Object.freeze(t))
+      return lists.map(t => t)
     },
   },
 }
