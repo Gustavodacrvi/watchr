@@ -5,12 +5,10 @@ import fb from 'firebase/app'
 import utils from '../utils'
 import utilsTask from "@/utils/task"
 import MemoizeGetters from './memoFunctionGetters'
-import { listRef, userRef, uid, listColl, taskRef, fd, addTask } from '../utils/firestore'
+import { listRef, userRef, uid, listColl, taskRef, serverTimestamp, fd, addTask } from '../utils/firestore'
 import router from '../router'
 
 import mom from 'moment/src/moment'
-
-const Memoize = {cacheVersion: 0}
 
 export default {
   namespaced: true,
@@ -24,7 +22,7 @@ export default {
         return utils.checkMissingIdsAndSortArr(userInfo.lists, lists)
       return []
     },
-    ...MemoizeGetters(Memoize, ['lists'], {
+    ...MemoizeGetters(['lists'], {
       getListsByName({state}, names) {
         const arr = []
         for (const n of names) {
@@ -72,7 +70,7 @@ export default {
           compareDate = utils.getCalendarObjectData(list.calendar, mom()).lastCallEvent.format('Y-M-D')
   
         ts.forEach(el => {
-          if (isTaskCompleted(el, mom(), compareDate)) completedTasks++
+          if (isTaskCompleted(el, mom().format('Y-M-D'), compareDate)) completedTasks++
         })
         const result = 100 * completedTasks / numberOfTasks
         if (isNaN(result)) return 0
@@ -87,7 +85,6 @@ export default {
       return Promise.all([
         new Promise(resolve => {
           listColl().where('userId', '==', id).onSnapshot(snap => {
-            Memoize.cacheVersion++
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
             resolve()
           })
@@ -151,6 +148,8 @@ export default {
         smartViewsOrders: {},
         userId: uid(),
         users: [uid()],
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D'),
         headings: [],
         headingsOrder: [],
         tasks: [],
@@ -251,6 +250,8 @@ export default {
       const newTaskRef = taskRef()
       addTask(batch, {
         userId: uid(),
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D'),
         ...task,
       }, newTaskRef).then(() => {
         ids.splice(index, 0, newTaskRef.id)
@@ -272,6 +273,8 @@ export default {
 
       const newTaskRef = taskRef()
       addTask(batch, {
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D'),
         userId: uid(),
         ...task,
       }, newTaskRef).then(() => {

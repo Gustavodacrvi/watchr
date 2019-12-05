@@ -1,7 +1,7 @@
 <template>
   <div v-if="getIcon"
-    class="icon"
-    :class="[{primaryHover, hideShadow: !shadow}, platform]"
+    class="icon remove-highlight"
+    :class="[{hideShadow: !shadow}, platform]"
     :style="{width: getWidth, color, filter: `drop-shadow(0 0 20px ${color})`}"
     @click="iconClick"
   >
@@ -20,6 +20,14 @@
       @click.stop
       @change='handleFile'
     >
+    <transition
+      @enter='enter'
+    >
+      <div v-if="circle && activate" class="circle-wrapper"
+        :style="{transform: `translate(-${offset/2}px, -${offset/2}px)`, width: this.circleWidth + 'px', height: this.circleWidth + 'px'}">
+        <div class="circle"></div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -73,9 +81,10 @@ import boxCheckDash from '@/assets/icons/box-check-dash.svg'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['icon', 'width', 'primaryHover', 'color', 'progress', 'svg', 'file', 'shadow'],
+  props: ['icon', 'width', 'color', 'progress', 'svg', 'file', 'shadow', 'circle'],
   data() {
     return {
+      activate: false,
       icons: {
         inbox, calendar, sun, arrow, star, user, out,
         sort, tag, priority, menu, tasks, archive,
@@ -103,24 +112,65 @@ export default {
       this.$emit('click')
       if (this.file && this.fileInput)
         this.fileInput.click()
+      if (this.circle) {
+        this.activate = true
+      }
     },
     handleFile() {
       const inp = this.fileInput
       if (inp.files[0])
         this.$emit('add', inp.files[0])
       inp.value = ''
-    }
+    },
+    enter(cir) {
+      const wrapperS = cir.style
+      const s = cir.childNodes[0].style
+
+      s.transitionDuration = '0'
+      s.opacity = 0
+      s.width = 0
+      s.height = 0
+      const width = this.circleWidth
+      setTimeout(() => {
+        s.transitionDuration = '.15s'
+        s.opacity = 1
+        s.width = width + 'px'
+        s.height = width + 'px'
+        setTimeout(() => {
+          s.transitionDuration = '.35s'
+          s.width = width + 'px'
+          s.height = width + 'px'
+          s.opacity = 0
+          setTimeout(() => {
+            s.transitionDuration = '0'
+            s.width = 0
+            s.height = 0
+            this.activate = 0
+          }, 350)
+        }, 150)
+      })
+    },
   },
   computed: {
     ...mapGetters(['platform']),
+    circleWidth() {
+      return this.getRawWidth + this.offset
+    },
+    offset() {
+      return 25
+    },
     getIcon() {
       return this.icons[this.icon]
     },
     fileInput() {
       return this.$refs['file']
     },
+    getRawWidth() {
+      const defaultWidth = this.hasProgress ? 15 : 20
+      return this.width ? parseInt(this.width, 10) : defaultWidth
+    },
     getWidth() {
-      const defaultWidth = this.hasProgress ? '15px' : '20px'
+      const defaultWidth = this.getRawWidth + 'px'
       return this.width ? this.width : defaultWidth
     },
     hasProgress() {
@@ -142,14 +192,29 @@ export default {
 
 .icon {
   display: inline-block;
+  position: relative;
+}
+
+.circle-wrapper {
+  left: 0;
+  top: 0;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle {
+  border-radius: 100px;
+  background-image: radial-gradient(rgba(0,0,0,0), var(--primary));
+}
+
+.circle-enter, .circle-enter-to {
+  transition-duration: .15s;
 }
 
 .hideShadow {
   filter: none !important
-}
-
-.primaryHover:hover {
-  color: var(--primary) !important;
 }
 
 .icon:active {

@@ -4,14 +4,13 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import MemoizeGetters from './memoFunctionGetters'
-import { folderColl, uid, folderRef, listRef, userRef, taskRef, addTask } from '../utils/firestore'
-
-const Memoize = {cacheVersion: 0}
+import { folderColl, uid, folderRef, serverTimestamp, listRef, userRef, taskRef, addTask } from '../utils/firestore'
+import mom from 'moment/src/moment'
 
 export default {
   namespaced: true,
   state: {
-    folders: []
+    folders: [],
   },
   getters: {
     sortedFolders(state, d, {userInfo}) {
@@ -22,7 +21,7 @@ export default {
         return utils.checkMissingIdsAndSortArr(order, folders)
       return []
     },
-    ...MemoizeGetters(Memoize, ['folders'], {
+    ...MemoizeGetters(['folders'], {
       getFolderTaskOrderById({state}, folderId) {
         const fold = state.folders.find(f => f.id === folderId)
         if (fold && fold.tasks)
@@ -58,7 +57,6 @@ export default {
     getData({state}) {
       return new Promise(solve => {
         folderColl().where('userId', '==', uid()).onSnapshot(snap => {
-          Memoize.cacheVersion++
           utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'folders')
           solve()
         })
@@ -69,6 +67,8 @@ export default {
         userId: uid(),
         tasks: [],
         files: [],
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D'),
         ...fold,
         defaultShowing: true,
       })

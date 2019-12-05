@@ -12,10 +12,20 @@
         class="cont-wrapper task-cont-wrapper handle rb"
         :class="platform"
         @click="click"
-        @dblclick="dblclick"
+        @touchstart='touchStart'
+        @touchend='touchEnd'
       >
+        <div class="circle-wrapper-wrapper">
+          <div class="circle-wrapper">
+            <transition
+              @enter='circleEnter'
+            >
+              <div v-if="showCircle" class="circle-transition" :style="{left, top, backgroundImage: `radial-gradient(${innerColor}, ${outerColor})`}"></div>
+            </transition>
+          </div>
+        </div>
         <div class="cont"
-          v-longclick='openMobileOptions'
+          v-longclick='longClick'
         >
           <div class="check cursor"
             @click.stop="completeTask"
@@ -24,12 +34,12 @@
             @touchstart.stop.passive
             @mousedown.stop
           >
-            <Icon v-if="!showCheckedIcon" class="icon check-icon"
+            <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon"
               :icon="`box${isSomeday ? '-dash' : ''}`"
               :color='circleColor'
               width="18px"
             />
-            <Icon v-else class="icon check-icon"
+            <Icon v-else :circle='true' class="icon check-icon"
               :icon="`box-check${isSomeday ? '-dash' : ''}`"
               :color='circleColor'
               width="18px"
@@ -42,7 +52,7 @@
               <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
               <transition name="name-t">
                 <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
-                    <span v-if="calendarStr && !isToday" class="tag cb rb">{{ calendarStr }}</span>
+                    <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
                     <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
                     <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
                     <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
@@ -66,6 +76,7 @@
             <IconDrop class="icon-drop cursor"
               v-model="showingIconDropContent"
               handle='settings-v'
+              :circle='true'
               :options='options'
               :hideHandle='!showIconDrop'
             />
@@ -103,8 +114,8 @@ import utils from '@/utils/index'
 import mom from 'moment/src/moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight'
-  , 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart'],
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr'
+  ,  'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -113,10 +124,21 @@ export default {
   },
   data() {
     return {
+      left: 0,
+      top: 0,
+      innerColor: 'rgba(53, 73, 90, 0.6)',
+      outerColor: 'var(--primary)',
+      showCircle: false,
+      isTouching: false,
       showingIconDropContent: false,
       isEditing: false,
       onHover: false,
       iconHover: false,
+      doubleClickListening: false,
+      doubleClickListeningTimeout: null,
+      allowMobileOptions: false,
+      startX: 0,
+      startY: 0,
     }
   },
   mounted() {
@@ -153,11 +175,14 @@ export default {
         cont.style.opacity = 0
       }
     },
-    openMobileOptions() {
+    longClick() {
       if (!this.isDesktop && !this.isDragging && !this.isScrolling) {
-        window.navigator.vibrate(100)
-        this.$store.commit('pushIconDrop', this.options)
+        this.allowMobileOptions = true
       }
+    },
+    openMobileOptions() {
+      window.navigator.vibrate(100)
+      this.$store.commit('pushIconDrop', this.options)
     },
     completeTask() {
       const {t,c} = this.getTask
@@ -165,13 +190,104 @@ export default {
         this.$store.dispatch('task/completeTasks', [this.task])
       else this.$store.dispatch('task/uncompleteTasks', [this.task])
     },
-    click() {
+    singleClick() {
       if (this.isDesktop && !this.enableSelect)
         this.isEditing = true
     },
-    dblclick() {
+    doubleClick() {
       if (!this.isDesktop)
         this.isEditing = true
+    },
+    clickTrans(evt) {
+      this.innerColor = 'rgba(53, 73, 90, 0.6)'
+      this.outerColor = 'var(--primary)'
+      this.left = (evt.offsetX + 35) + 'px'
+      this.top = (evt.offsetY + 0) + 'px'
+      this.showCircle = true
+    },
+    touchStart(e) {
+      this.isTouching = true
+      this.innerColor = 'var(--light-gray)'
+      this.outerColor = 'var(--gray)'
+      this.startX = e.changedTouches[0].clientX
+      this.startY = e.changedTouches[0].clientY
+      const rect = e.target.getBoundingClientRect()
+      if (!this.doingTransition) {
+        this.left = (e.targetTouches[0].pageX - rect.left) + 'px'
+        this.top = (e.targetTouches[0].pageY - rect.top) + 'px'
+        this.showCircle = true
+      }
+    },
+    touchEnd(e) {
+      this.isTouching = false
+      const touch = e.changedTouches[0]
+      const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
+      const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
+      if (!movedFingerX && !movedFingerY) {
+        if (this.allowMobileOptions)
+          this.openMobileOptions()
+      } else {
+        this.deselectTask()
+        setTimeout(() => {
+          this.$store.commit('unselectTask', this.task.id)
+        })
+      }
+      this.allowMobileOptions = false
+    },
+    circleEnter(el) {
+      const s = el.style
+      this.doingTransition = true
+
+      const trans = str => {
+        s.transition = `opacity ${str}, width ${str}, height ${str}, transform 0s, left 0s, top 0s, margin 0s`
+      }
+      let innerTrans = 450
+      let outerTrans = 250
+      if (this.isTouching) {
+        innerTrans += 150
+        outerTrans += 150
+      }
+
+      trans('0s')
+      s.opacity = 0
+      s.width = 0
+      s.height = 0
+      const client = this.$el.clientWidth
+      const width = client + 100
+      setTimeout(() => {
+        trans(`.${innerTrans}s`)
+        s.opacity = 1
+        s.width = width + 'px'
+        s.height = width + 'px'
+        setTimeout(() => {
+          trans(`.${outerTrans}s`)
+          s.width = width + 'px'
+          s.height = width + 'px'
+          s.opacity = 0
+          setTimeout(() => {
+            trans('0')
+            s.width = 0
+            s.height = 0
+            this.showCircle = false
+            this.doingTransition = false
+          }, innerTrans)
+        }, outerTrans)
+      }, 50)
+    },
+    click(evt) {
+      this.clickTrans(evt)
+      if (!this.doubleClickListening) {
+        this.singleClick()
+        this.doubleClickListening = true
+        clearTimeout(this.doubleClickListeningTimeout)
+        this.doubleClickListeningTimeout = setTimeout(() => {
+          this.doubleClickListening = false
+        }, 200)
+      } else {
+        this.doubleClick()
+        clearTimeout(this.doubleClickListeningTimeout)
+        this.doubleClickListening = false
+      }
     },
     saveTask(obj, force) {
       this.$store.dispatch('task/saveTask', {
@@ -256,10 +372,10 @@ export default {
       isTaskCompleted: 'task/isTaskCompleted',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
-      savedTags: 'tag/sortedTagsByFrequency',
+      savedTags: 'tag/sortedTagsByName',
     }),
     completed() {
-      return this.isTaskCompleted(this.task, mom(), this.taskCompletionCompareDate)
+      return this.isTaskCompleted(this.task, mom().format('Y-M-D'), this.taskCompletionCompareDate)
     },
     parsedName() {
       return this.getLinkString(this.escapeHTML(this.task.name))
@@ -510,12 +626,10 @@ export default {
     },
     fade() {
       if (this.completed) return true
-      const isOnSomedaySmartView = this.isSmart && this.viewName === 'Someday'
-      return this.isSomeday && !isOnSomedaySmartView
     },
     calendarStr() {
       const {t,c} = this.getTask
-      if ((!c || c.type === 'someday') || this.viewName === 'Upcoming') return null
+      if ((!c || c.type === 'someday') || !this.allowCalendarStr) return null
       const str = utils.parseCalendarObjectToString(c, this.l)
       if (str === this.viewNameValue) return null
       return str
@@ -578,8 +692,31 @@ export default {
 }
 
 .cont-wrapper {
-  transition-duration: .15s;
+  transition-duration: .25s;
   height: 38px;
+}
+
+.circle-wrapper-wrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.circle-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.circle-transition {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  opacity: .4;
+  border-radius: 1000px;
 }
 
 .hided {
@@ -607,7 +744,7 @@ export default {
 }
 
 .desktop .cont-wrapper:hover, .desktop .cont-wrapper:active {
-  background-color: var(--light-gray) !important;
+  background-color: var(--light-gray);
 }
 
 .check, .text, .options, .cont {
@@ -747,6 +884,8 @@ export default {
 
 .sortable-selected .cont-wrapper {
   background-color: rgba(53, 73, 90, 0.6) !important;
+  box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
+  transition: background-color .8s !important;
 }
 
 </style>

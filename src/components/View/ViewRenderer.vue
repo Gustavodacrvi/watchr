@@ -26,7 +26,7 @@
 
         :tasks='getFilterCompletedTasks'
         :viewName='viewName'
-        :headings='headingsOptions'
+        :headings='getHeadings'
         :addTask='addTask'
         :headingEdit='headingEdit'
         :showCompleted='showCompleted'
@@ -39,6 +39,11 @@
         @add-heading="addHeading"
       />
     </div>
+    <PaginationVue v-if="headingsPagination"
+      :page='pagination'
+      :numberOfPages='getNumberOfPages'
+      @select='selectPagination'
+    />
     <transition name="fade-t">
       <div v-if="hasAtLeastOneSomeday && !showSomeday && !isSearch && !isSomeday" @click="showSomeday = true">
         <AppButton type="dark" :value="l['Show someday tasks...']"/>
@@ -55,6 +60,7 @@ import HeaderVue from './Headings/Header.vue'
 import TaskRendererVue from './Tasks/TaskRenderer.vue'
 import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
 import ButtonVue from '../Auth/Button.vue'
+import PaginationVue from './Pagination.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -64,8 +70,9 @@ import mom from 'moment/src/moment'
 
 export default {
   props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'notes', 'showCompletedOnHeadings', 'isSmart', 'headerOptions', 'progress', 'prefix',
-  'headerDates', 'headerTags', 'headerCalendar', 'files', 'taskCompletionCompareDate'],
+  'headerDates', 'headerTags', 'headerCalendar', 'files', 'taskCompletionCompareDate', 'headingsPagination'],
   components: {
+    PaginationVue,
     Header: HeaderVue,
     TaskRenderer: TaskRendererVue,
     ActionButtons: ActionButtonsVue,
@@ -73,6 +80,7 @@ export default {
   },
   data() {
     return {
+      pagination: 0,
       showCompleted: false,
       showingTagSelection: false,
       showingListSelection: false,
@@ -86,6 +94,9 @@ export default {
     this.showingListSelection = localStorage.getItem(this.listSelectionStr) === 'true'
   },
   methods: {
+    selectPagination(newPage) {
+      this.pagination = newPage
+    },
     selectTag(name) {
       if (this.activeTags.includes(name)) {
         const i = this.activeTags.findIndex(el => el === name)
@@ -111,7 +122,27 @@ export default {
       this.$emit('add-heading', {...obj})
     },
     updateIds(ids) {
-      this.$emit('update-ids', ids)
+      const notFilteredIds = this.notFilteredIds
+      const removedIncludedIds = notFilteredIds.slice().filter(id => !ids.includes(id))
+
+      const final = []
+      let missing = []
+      let i = 0
+      for (const id of notFilteredIds) {
+        if (removedIncludedIds.includes(id))
+          final.push(id)
+        else missing.push(i)
+
+        i++
+      }
+      i = 0
+      for (const id of ids) {
+        removedIncludedIds.splice(missing[i], 0, id)
+        i++
+      }
+
+      
+      this.$emit('update-ids', removedIncludedIds)
     },
 
     sortByName() {
@@ -141,7 +172,19 @@ export default {
       })
     },
     addTask(obj, evt) {
-      obj.ids = this.sortAndFilterTasks.map(el => el.id)
+      const notFilteredIds = this.notFilteredIds
+
+      let fixPosition = 0
+      let i = 0
+      for (const id of notFilteredIds) {
+        if (!obj.ids.includes(id))
+          fixPosition++
+        if ((i - fixPosition) === obj.index) break
+        i++
+      }
+
+      obj.index += fixPosition
+      obj.ids = notFilteredIds
       this.$emit('add-task', obj)
     },
     removeTasksFromLists() {
@@ -163,8 +206,11 @@ export default {
       savedLists: 'list/sortedLists',
       filterTasksByCompletion: 'task/filterTasksByCompletion',
       savedFolders: 'folder/sortedFolders',
-      savedTags: 'tag/sortedTagsByFrequency',
+      savedTags: 'tag/sortedTagsByName',
     }),
+    notFilteredIds() {
+      return this.sortAndFilterTasks.map(el => el.id)
+    },
     isSearch() {
       return this.isSmart && this.viewNameValue === "Search"
     },
@@ -333,27 +379,31 @@ export default {
             callback: () => this.saveDates({type: 'someday'})
           },
           {
-            name: l['Specific day'],
+            name: l['More dates'],
             icon: 'calendar',
-            callback: () => {return {
-              comp: 'CalendarPicker',
-              content: {callback: this.saveDates}}},
-          },
-          {
-            name: l['Repeat weekly'],
-            icon: 'repeat',
-            callback: () => ({
-              comp: 'WeeklyPicker',
-              content: {callback: this.saveDates},
-            }),
-          },
-          {
-            name: l['Repeat periodically'],
-            icon: 'repeat',
-            callback: () => ({
-              comp: 'PeriodicPicker',
-              content: {callback: this.saveDates},
-            }),
+            callback: () => [{
+              name: l['Specific day'],
+              icon: 'calendar',
+              callback: () => {return {
+                comp: 'CalendarPicker',
+                content: {callback: this.saveDates}}},
+            },
+            {
+              name: l['Repeat weekly'],
+              icon: 'repeat',
+              callback: () => ({
+                comp: 'WeeklyPicker',
+                content: {callback: this.saveDates},
+              }),
+            },
+            {
+              name: l['Repeat periodically'],
+              icon: 'repeat',
+              callback: () => ({
+                comp: 'PeriodicPicker',
+                content: {callback: this.saveDates},
+              }),
+            }],
           },
           {
             type: 'hr',
@@ -452,6 +502,17 @@ export default {
 
       return arr
     },
+    getNumberOfPages() {
+      return Math.floor(this.headingsOptions.length / this.headingsPagination)
+    },
+    getHeadings() {
+      if (!this.headingsPagination) return this.headingsOptions
+      const num = this.headingsPagination
+      const page = this.pagination
+      const init = (page * num)
+
+      return this.headingsOptions.slice(init, init + num)
+    },
     getFilterCompletedTasks() {
       let ts = this.getFilterBySomeday.slice()
       let notCompleted = []
@@ -459,7 +520,7 @@ export default {
       
       notCompleted = this.filterTasksByCompletion(ts, true)
 
-      if (notCompleted.length === 0)
+      if (notCompleted.length === 0 && this.headingsOptions.length === 0)
         return ts.filter(task => {
           if (!task.calendar) return true
           const type = task.calendar.type
@@ -472,7 +533,7 @@ export default {
   watch: {
     viewNameValue() {
       this.showSomeday = false
-    }
+    },
   }
 }
 

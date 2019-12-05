@@ -1,17 +1,35 @@
 <template>
   <div class="Mobile">
     <div class="central">
-      <span class="cursor" @click="openMenu">
-        <Icon icon="menu" width="22px" :primaryHover="true"/>
+      <span @click="openMenu">
+        <Icon class="primary-hover cursor" icon="menu" width="22px" :circle="true"/>
       </span>
       <transition name="fade" mode="out-in" appear>
         <div v-if="isNotOnHome" key="user">
           <span v-if="title" class="title">{{ title }}</span>
-          <div class="drop">
-            <IconDrop v-if="isOnUserPage && navBar && navBar.options"
+          <div class="drop"
+            @click.stop
+            @pointerup.stop
+            @mouseup.stop
+            @touchend.stop
+          >
+            <template v-if="showHelpIcons">
+              <transition-group name='fade'>
+                <Icon v-for="i in navBar.options.icons" :key="i.icon"
+                  class="cursor option-icon"
+                  color='var(--gray)'
+                  width='22px'
+                  :icon='i.icon'
+                  :circle="true"
+                  @click="openCallback(i.callback)"
+                />
+              </transition-group>
+            </template>
+            <IconDrop v-if="showIcons && navBar.options.icondrop"
               handle="settings-v"
-              :options="navBar.options"
+              :options="navBar.options.icondrop"
               handle-color="var(--gray)"
+              :circle='true'
               width="100px"
             />
           </div>
@@ -47,14 +65,29 @@ export default {
     },
     goToIndexPage() {
       this.$router.push('/')
-    }
+    },
+    openCallback(callback) {
+      const res = callback()
+      if (res)
+        this.$store.commit('pushIconDrop', res)
+    },
   },
   computed: {
     ...mapState({
       navBar: state => state.navBar,
       invites: state => state.list.invites,
+      selectedTasks: state => state.selectedTasks,
     }),
     ...mapGetters(['l']),
+    showIcons() {
+      return this.isOnUserPage && this.navBar && this.navBar.options
+    },
+    showHelpIcons() {
+      return this.showIcons && this.isSelectingTask
+    },
+    isSelectingTask() {
+      return this.selectedTasks && this.selectedTasks.length > 0
+    },
     title() {
       if (this.$route.name === 'user') {
         if (this.navBar) return this.navBar.title
@@ -101,7 +134,12 @@ export default {
   position: absolute;
   display: flex;
   right: 14px;
+  align-items: center;
   transform: translateY(-22px);
+}
+
+.option-icon {
+  margin-right: 12px;
 }
 
 .central {
@@ -139,7 +177,8 @@ export default {
 
 .fade-leave, .fade-enter-to {
   opacity: 1;
-  transition: opacity .3s;
+  transition-delay: .1s;
+  transition: opacity .2s;
 }
 
 </style>

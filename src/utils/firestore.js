@@ -7,6 +7,7 @@ export const fd = () => fb.firestore.FieldValue
 export const userRef = id => fire.collection('users').doc(id ? id : uid())
 export const taskColl = () => userRef().collection('tasks')
 export const listColl = () => userRef().collection('lists')
+export const serverTimestamp = () => fb.firestore.FieldValue.serverTimestamp()
 export const folderColl = () => userRef().collection('folders')
 export const tagColl = () => userRef().collection('tags')
 export const taskRef = id => id ? taskColl().doc(id) : taskColl().doc()

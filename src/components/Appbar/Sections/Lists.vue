@@ -248,7 +248,7 @@ export default {
           const tasks = this.getTasksByListId(this.tasks, l.id)
           let isAllTasksCompleted = true
           for (const el of tasks)
-            if (!this.isTaskCompleted(el, mom(), lastCallEvent.format('Y-M-D'))) {
+            if (!this.isTaskCompleted(el, mom().format('Y-M-D'), lastCallEvent.format('Y-M-D'))) {
               isAllTasksCompleted = false
               break
             }
@@ -273,7 +273,7 @@ export default {
         const result = this.getListTasks(this.tasks, list.id).slice()
         list.options = utilsList.listOptions(list, this.$store, this.getListTasks(this.tasks, list.id).slice(), this.l)
       }
-      return lists.map(t => Object.freeze(t))
+      return lists.map(t => t)
     },
   },
 }

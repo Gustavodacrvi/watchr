@@ -108,33 +108,38 @@
               handle="tag"
               class="opt-icon"
               :options="getTags"
+              :circle='true'
             />
             <IconDrop
               handle="priority"
               class="opt-icon"
               :options="priorityOptions"
+              :circle='true'
             />
             <IconDrop
               handle="tasks"
               class="opt-icon"
               :options="listOptions"
+              :circle='true'
             />
             <IconDrop
               handle="folder"
               class="opt-icon"
               :options="folderOptions"
+              :circle='true'
             />
             <IconDrop
               handle="calendar"
               class="opt-icon"
               :options="calendarOptions"
+              :circle='true'
             />
             <Icon
-              class="opt-icon cursor"
+              class="opt-icon primary-hover cursor"
               style="margin-right: 7px;margin-top: 2px"
               width="16px"
+              :circle='true'
               icon='file'
-              :primaryHover="true"
               :file='true'
               @add='addFile'
             />
@@ -372,7 +377,7 @@ export default {
       l: 'l',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
-      savedTags: 'tag/sortedTagsByFrequency',
+      savedTags: 'tag/sortedTagsByName',
     }),
     isEditing() {
       return this.defaultTask

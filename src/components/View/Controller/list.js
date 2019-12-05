@@ -162,6 +162,7 @@ export default {
             allowEdit: true,
             showHeadingName: false,
             notes: h.notes,
+            calendarStr: true,
             saveNotes: notes => {
               this.$store.dispatch('list/saveHeadingNotes', {
                 listId: this.viewList.id, notes, heading: h.name,

@@ -18,7 +18,7 @@ html {
   --appnav-color: #171717;
   --card: #222222;
   --dark-gray: #202020;
-  --light-gray: #333333;
+  --light-gray: #292929;
   --gray: #515151;
   --extra-light-gray: #383838;
   --extra-extra-light-gray: #888888;
@@ -66,12 +66,22 @@ body, input, button, textarea {
   color: var(--primary);
 }
 
+.scroll-link {
+  color: var(--txt);
+  text-decoration: none;
+}
+
 .rb {
   border-radius: 6px;
 }
 
 .tac {
   text-align: center;
+}
+
+.remove-highlight {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .scroll-thin::-webkit-scrollbar-thumb {

@@ -1,7 +1,7 @@
 <template>
   <div class="ActButton handle" :class="platform">
     <div class="floating">
-      <div class="inner-ball-button cb shadow">
+      <div class="inner-ball-button cb shadow remove-highlight">
         <Icon class="icon"
           :icon="icon"
           :color="color"
@@ -9,13 +9,13 @@
         <div class="path"></div>
       </div>
     </div>
-    <div class="floating-btn-msg task-act">
+    <div class="floating-btn-msg task-act" :style='styles'>
       {{ txt }}
     </div>
-    <div class="floating-btn-msg tags-act">
+    <div class="floating-btn-msg tags-act" :style='styles'>
       {{ l["Add tag"] }}
     </div>
-    <div class="floating-btn-msg list-act">
+    <div class="floating-btn-msg list-act" :style='styles'>
       {{ l["Add list"] }}
     </div>
   </div>
@@ -33,7 +33,13 @@ export default {
     Icon: IconVue,
   },
   computed: {
-    ...mapGetters(['l', 'platform'])
+    ...mapGetters(['l', 'platform', 'isDesktop']),
+    styles() {
+      const height = (this.isDesktop ? 40 : 50) + 'px'
+      return {
+        height,
+      }
+    }
   }
 }
 

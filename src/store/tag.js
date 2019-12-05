@@ -2,13 +2,12 @@
 import { fire, auth } from './index'
 import utils from '../utils'
 import MemoizeGetters from './memoFunctionGetters'
-import { tagColl, tagRef, userRef, fd, taskRef } from '../utils/firestore'
+import { tagColl, tagRef, userRef, fd, taskRef, serverTimestamp } from '../utils/firestore'
+import mom from 'moment/src/moment'
 
 const uid = () => {
   return auth.currentUser.uid
 }
-
-const Memoize = {cacheVersion: 0}
 
 export default {
   namespaced: true,
@@ -22,12 +21,12 @@ export default {
         return utils.checkMissingIdsAndSortArr(userInfo.tags, tags)
       return []
     },
-    sortedTagsByFrequency(s, getters) {
+    sortedTagsByName(s, getters) {
       const tags = getters.sortedTags
-      tags.sort((a, b) => b.times - a.times)
+      tags.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       return tags
     },
-    ...MemoizeGetters(Memoize, ['tags'], {
+    ...MemoizeGetters(['tags'], {
       getTagsByName({state}, names) {
         const arr = []
         for (const n of names) {
@@ -52,7 +51,6 @@ export default {
       return Promise.all([
         new Promise(resolve => {
           tagColl().where('userId', '==', uid()).onSnapshot(snap => {
-            Memoize.cacheVersion++
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tags')
             resolve()
           })
@@ -61,9 +59,10 @@ export default {
     },
     addTag(c, {name, index, ids}) {
       const obj = {
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D'),
         name,
         userId: uid(),
-        times: 0,
       }
       if (!index)
         tagColl().add(obj)
@@ -102,11 +101,6 @@ export default {
       userRef().update({
         tags: ids,
       })
-    },
-    sortTagsByFrequency({state, dispatch}) {
-      const tags = state.tags.slice()
-      tags.sort((a, b) => b.times - a.times)
-      dispatch('updateOrder', tags.map(el => el.id))
     },
     sortTagsByName({state, dispatch}) {
       const tags = state.tags.slice()

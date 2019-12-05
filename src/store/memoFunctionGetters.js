@@ -1,27 +1,19 @@
 
-export default (info, properties, getters) => {
+export default (properties, getters) => {
   const keys = Object.keys(getters)
 
   const memo = func => {
-    let cache = {}
-    let versions = {}
+    const cache = {}
     return function() {
       const key = JSON.stringify(arguments)
       const val = cache[key]
-      const vers = versions[key]
-  
-      if (val) {
-        if (vers === info.cacheVersion) {
-          return val
-        } else {
-          cache = {}
-          versions = {}
-        }
-      }
-  
-      const res = func.apply(null, arguments)
+      
+      if (val !== undefined) return val
+      
+      let res = func.apply(null, arguments)
+      if (res === undefined)
+        res = null
       cache[key] = res
-      versions[key] = info.cacheVersion
       return res
     }
   }

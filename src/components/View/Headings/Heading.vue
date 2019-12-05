@@ -29,6 +29,7 @@
             <div class="icons" @click.stop>
               <IconDrop class="icon"
                 handle='settings-h'
+                :circle='true'
                 :options='options'
                 :hideHandle='!showOptions'
                 @edit='toggleEditing'

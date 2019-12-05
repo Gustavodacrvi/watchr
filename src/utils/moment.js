@@ -105,5 +105,11 @@ export default {
   },
   getLastWeeklyEvent(c, tod) {
     return this.getLastInstanceOfaWeek(tod, c.weekly)
-  }
+  },
+  getFirstDayOfMonth(date) {
+    return date.startOf('month')
+  },
+  getFirstLastDayOfMonth(date) {
+    return date.endOf('month')
+  },
 }

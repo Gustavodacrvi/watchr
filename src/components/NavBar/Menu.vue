@@ -2,7 +2,7 @@
   <div class="Menu cbd">
     <div class="appbar-wrapper">
       <span @click="closeMenu">
-        <Icon class="arrow cursor" icon="arrow" color="var(--gray)" width="25px" :primaryHover="true"/>
+        <Icon class="arrow primary-hover cursor" icon="arrow" color="var(--gray)" width="25px" :circle='true'/>
       </span>
       <transition :name="this.appSection ? 'mr' : 'ml'">
         <Appbar class="Appbar" v-if="appSection" key="app"/>
@@ -17,10 +17,11 @@
         </div>
       </transition>
     </div>
-    <Icon class="cursor user" icon="user" color="var(--gray)" :primaryHover="true" @click="toggleMenu"/>
+    <Icon class="cursor user primary-hover" icon="user" color="var(--gray)" @click="toggleMenu" :circle='true'/>
     <IconDrop v-if="!appSection"
       class="drop rigth"
       handle="globe"
+      :circle='true'
       handleColor="var(--gray)"
       :options='languages'
     />

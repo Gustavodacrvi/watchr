@@ -67,7 +67,7 @@ export default {
 
         let order = this.viewOrders[view] ? this.viewOrders[view].headings : []
         if (!order) order = []
-        const headings = utils.checkMissingIdsAndSortArr(order, [...lists, ...folders])
+        const headings = utils.checkMissingIdsAndSortArr(order, [...folders, ...lists])
 
         const arr = []
         for (const viewHeading of headings) {
@@ -101,9 +101,10 @@ export default {
               progress: this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted),
               filter: (a, h, showCompleted) => {
                 let tasks = getTasks()
-  
-                if (!showCompleted)
+
+                if (!showCompleted) {
                   tasks = this.filterTasksByCompletion(tasks, true)
+                }
   
                 return tasks
               },
@@ -228,7 +229,7 @@ export default {
           }
         }
 
-        return Object.freeze(arr)
+        return arr
       }
 
       return []
@@ -249,10 +250,12 @@ export default {
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
       getTasks: 'list/getTasks',
+      filterTasksByPeriod: 'task/filterTasksByPeriod',
       filterTasksByView: 'task/filterTasksByView',
       filterTasksByCompletion: 'task/filterTasksByCompletion',
       isTaskCompleted: 'task/isTaskCompleted',
       getTagsById: 'tag/getTagsById',
+      filterTasksByDay: 'task/filterTasksByDay',
       getListsById: 'list/getListsById',
       getListByName: 'list/getListByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
@@ -298,6 +301,7 @@ export default {
         'headingEdit', 'headerOptions', 'notes', 'progress', 'headingsOptions',
         'tasks', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates',
         'headerTags', 'headerCalendar', 'taskCompletionCompareDate', 'files',
+        'headingsPagination',
       ]
       const obj = {}
 
@@ -337,7 +341,7 @@ export default {
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
           filter: () => {
-            return utilsTask.filterTasksByDay(filtered, mom(date, 'Y-M-D'))
+            return this.filterTasksByDay(filtered, date, true)
           },
           id: date,
           onAddTask: obj => {
@@ -356,6 +360,43 @@ export default {
           },
         })
       }
+      const in7Days = mom().add(7, 'd')
+      const after7DaysTasks = filtered.filter(el => {
+        return in7Days.isBefore(mom(el.calendar.specific, 'Y-M-D'), 'day')
+      })
+      // this month
+      arr.push({
+        name: this.l['This month'],
+        calendarStr: true,
+        filter: () => {
+          return this.filterTasksByPeriod(after7DaysTasks, tod, 'month', true)
+        },
+        id: 'this month'
+      })
+      // this year
+      const inOneMonth = mom().add(1, 'M').startOf('month')
+      const inOneMonthTasks = after7DaysTasks.filter(el => {
+        return inOneMonth.isBefore(mom(el.calendar.specific, 'Y-M-D'), 'day')
+      })
+      arr.push({
+        name: this.l['This year'],
+        filter: () => {
+          return this.filterTasksByPeriod(inOneMonthTasks, tod, 'year', true)
+        },
+        id: 'this year'
+      })
+      // next years
+      const inOneYear = mom().add(1, 'y').startOf('year')
+      const inOneYearTasks = inOneMonthTasks.filter(el => {
+        return inOneYear.isBefore(mom(el.calendar.specific, 'Y-M-D'), 'day')
+      })
+      arr.push({
+        name: this.l['Next years'],
+        filter: () => {
+          return inOneYearTasks
+        },
+        id: 'nextYears',
+      })
       return arr
     },
     completedHeadingsOptions() {
@@ -382,9 +423,7 @@ export default {
           name: utils.getHumanReadableDate(date, this.l),
           filter: () => {
             if (cache[date]) return cache[date]
-            const result = filtered.filter(t => {
-              return t.completeDate === date
-            })
+            const result = this.filterTasksByDay(filtered, date, true)
             cache[date] = result
             return result
           },

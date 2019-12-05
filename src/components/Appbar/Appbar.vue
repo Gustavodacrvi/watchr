@@ -66,13 +66,14 @@
                 <IconDrop v-if="showIconDropdown"
                   class="right passive"
                   handle='settings-h'
+                  :circle='true'
                   handleColor='var(--gray)'
                   :options="getOptions"
                 />
               </transition>
             </div>
             <div></div>
-            <Icon v-if="isDesktop" icon="arrow" id='appbar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" @click="toggleAppbar"/>
+            <Icon v-if="isDesktop" icon="arrow" id='appbar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" :circle='true'  @click="toggleAppbar"/>
           </div>
         </div>
       </div>
@@ -353,11 +354,6 @@ export default {
               icon: 'sort-name',
               callback: () => dispatch('tag/sortTagsByName')
             },
-            {
-              name: this.l['Sort tags by frequency'],
-              icon: 'fire',
-              callback: () => dispatch('tag/sortTagsByFrequency')
-            }
           ]
         },
         {
@@ -410,30 +406,37 @@ export default {
           }
         },)
       }
+      const inner = []
       if (!this.showDefered) {
-        arr.unshift({
+        inner.unshift({
           name: this.l["Show defered lists"],
           icon: 'sleep',
           callback: () => this.showDefered = true
         })
       } else {
-        arr.unshift({
+        inner.unshift({
           name: this.l['Hide defered lists'],
           icon: 'tasks',
           callback: () => this.showDefered = false
         })
       }
       if (!this.showRepeat) {
-        arr.unshift({
+        inner.unshift({
           name: this.l['Show periodic lists'],
           icon: 'repeat',
           callback: () => this.showRepeat = true
         })
       } else {
-        arr.unshift({
+        inner.unshift({
           name: this.l['Hide periodic lists'],
           icon: 'repeat',
           callback: () => this.showRepeat = false
+        })
+      }
+      if (inner.length > 0) {
+        arr.push({
+          name: this.l['More options'],
+          callback: () => inner,
         })
       }
       return arr

@@ -1,13 +1,15 @@
 <template>
-  <div class="Popup" :class="platform">
-    <Icon v-if="!isDesktop && popup && popup.comp !== 'Update'" class="icon cursor" icon="arrow" :primaryHover="true" @click="closeMobilePopup"/>
-    <component class="component"
-      :is="popup.comp"
-      :class="[platform, {isStandAlone}]"
-      :payload="popup.payload"
-      @close="$emit('close')"
-    />
-    <div class="back" @click="$emit('close')"></div>
+  <div class="Popup scroll-thin" :class="platform">
+    <div class="popup-wrapper">
+      <Icon v-if="!isDesktop && popup && popup.comp !== 'Update'" class="icon cursor primary-hover" icon="arrow" @click="closeMobilePopup" :circle='true'/>
+      <component class="component"
+        :is="popup.comp"
+        :class="[platform, {isStandAlone}]"
+        :payload="popup.payload"
+        @close="$emit('close')"
+      />
+      <div class="back" @click="$emit('close')"></div>
+    </div>
   </div>
 </template>
 
@@ -65,9 +67,15 @@ export default {
   height: 100%;
   width: 100%;
   z-index: 100;
+  overflow: auto;
 }
 
-.Popup.desktop {
+.popup-wrapper {
+  height: 100%;
+  width: 100%;
+}
+
+.desktop .popup-wrapper {
   display: flex;
   justify-content: center;
   align-items: flex-start;

@@ -1,5 +1,5 @@
 <template>
-  <div class="ActionButtons passive" :class="platform" @click="click">
+  <div class="ActionButtons passive" :class="[platform, {moving}]" @click="click">
     <Btn v-if="showHeader" class="header button handle action-button left-act" id="edit-component"
       icon='heading'
       color='white'
@@ -31,13 +31,23 @@ export default {
   },
   data() {
     return {
-      sortable: null
+      sortable: null,
+      moving: false,
     }
   },
   mounted() {
     this.sortable = new Sortable(this.$el, {
       group: {name: ['action-buttons', 'appnav'], pull: 'clone', put: false},
       handle: '.handle',
+      forceFallback: !this.isDesktop,
+      fallbackOnBody: !this.isDesktop,
+
+      onStart: () => {
+        this.moving = true
+      },
+      onEnd: () => {
+        this.moving = false
+      },
     })
   },
   beforeDestroy() {
@@ -54,7 +64,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['platform', 'l'])
+    ...mapGetters(['platform', 'l', 'isDesktop'])
   }
 }
 
@@ -69,6 +79,12 @@ export default {
   position: sticky;
   display: flex;
   justify-content: space-between;
+  transition: opacity .15s;
+  opacity: 1;
+}
+
+.moving  .handle {
+  opacity: 0;
 }
 
 .ActionButtons .header {
@@ -102,7 +118,6 @@ export default {
   background-color: var(--void);
   box-shadow: none;
   border-radius: 6px;
-  height: 40px;
   flex-grow: 1;
 }
 
