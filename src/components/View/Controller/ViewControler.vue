@@ -160,8 +160,8 @@ export default {
                 }
                 t.list = list.id
                 t.folder = null
-                this.$store.dispatch('task/addTask', {
-                  ...t,
+                this.$store.dispatch('list/addTaskByIndexSmartViewList', {
+                  ...obj, listId: list.id, viewName: this.viewName,
                 })
               },
               onSortableAdd: (evt, taskIds, type, ids) => {
@@ -216,7 +216,7 @@ export default {
                 }
                 t.folder = folder.id
                 t.list = null
-                this.$store.dispatch('list/addTaskByIndexFolder', {
+                this.$store.dispatch('list/addTaskByIndexSmartViewFolder', {
                   ...obj, folderId: folder.id, viewName: this.viewName,
                 })
               },

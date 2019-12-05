@@ -245,7 +245,7 @@ export default {
 
     // TASKS
     
-    addTaskByIndexFolder(c, {ids, index, task, folderId, viewName}) {
+    addTaskByIndexSmartViewFolder(c, {ids, index, task, folderId, viewName}) {
       const batch = fire.batch()
 
       const newTaskRef = taskRef()
@@ -260,6 +260,27 @@ export default {
         const views = {}
         views[viewName] = ids
         batch.set(folderRef(folderId), {
+          smartViewsOrders: views,
+        }, {merge: true})
+
+        batch.commit()
+      }) 
+    },
+    addTaskByIndexSmartViewList(c, {ids, index, task, listId, viewName}) {
+      const batch = fire.batch()
+
+      const newTaskRef = taskRef()
+      addTask(batch, {
+        userId: uid(),
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D'),
+        ...task,
+      }, newTaskRef).then(() => {
+        ids.splice(index, 0, newTaskRef.id)
+
+        const views = {}
+        views[viewName] = ids
+        batch.set(listRef(listId), {
           smartViewsOrders: views,
         }, {merge: true})
 
