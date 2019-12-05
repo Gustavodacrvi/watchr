@@ -1,8 +1,8 @@
 <template>
   <div class="Pagination">
-    <a
+    <a class="scroll-link"
       href="#view-header"
-      v-smooth-scroll='{duration: 300, offset: 0}'
+      v-smooth-scroll='{duration: 500, offset: 0}'
     >
       <div class="pages rb cbd shadow">
         <div v-for="p in getPagesArray" :key="p"
@@ -21,7 +21,9 @@ export default {
   props: ['page', 'numberOfPages'],
   methods: {
     move(page) {
-      // this.$emit('select', page)
+      setTimeout(() => {
+        this.$emit('select', page)
+      }, 300)
     },
     isActive(page) {
       return page === this.page
@@ -56,6 +58,9 @@ export default {
 .page {
   padding: 14px;
   transition-duration: .15s;
+}
+
+.scroll-link {
   color: var(--txt);
   text-decoration: none;
 }
