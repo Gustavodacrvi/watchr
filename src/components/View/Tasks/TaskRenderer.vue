@@ -59,6 +59,7 @@
 
             :tasks='filter(h)'
             :hideListName="h.hideListName"
+            :allowCalendarStr='h.calendarStr'
             :hideFolderName="h.hideFolderName"
             :showHeadingName="h.showHeadingName"
             :onSortableAdd='h.onSortableAdd'
@@ -313,8 +314,8 @@ export default {
               i++
               const t = tasks[i]
               if (t) add(t)
-              else solve()
             }, timeout))
+          else solve()
         }
         const t = tasks[0]
         if (t) add(t)
@@ -335,8 +336,8 @@ export default {
               i++
               const h = headings[i]
               if (h) add(h)
-              else solve()
             }, timeout))
+          else solve()
         }
         const h = headings[0]
         if (h) add(h)
@@ -615,7 +616,9 @@ export default {
       Promise.all([
         this.slowlyAddHeadings(this.headings),
         this.slowlyAddTasks(this.tasks),
-      ]).then(() => this.changedViewName = false)
+      ]).then(() => {
+        this.changedViewName = false
+      })
     },
     removeRepeated(newArr) {
       return this.$worker.run((newArr) => {

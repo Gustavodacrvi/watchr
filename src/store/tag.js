@@ -9,8 +9,6 @@ const uid = () => {
   return auth.currentUser.uid
 }
 
-const Memoize = {cacheVersion: 0}
-
 export default {
   namespaced: true,
   state: {
@@ -28,7 +26,7 @@ export default {
       tags.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       return tags
     },
-    ...MemoizeGetters(Memoize, ['tags'], {
+    ...MemoizeGetters(['tags'], {
       getTagsByName({state}, names) {
         const arr = []
         for (const n of names) {
@@ -53,7 +51,6 @@ export default {
       return Promise.all([
         new Promise(resolve => {
           tagColl().where('userId', '==', uid()).onSnapshot(snap => {
-            Memoize.cacheVersion++
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tags')
             resolve()
           })

@@ -10,8 +10,6 @@ import { uid, fd, userRef, serverTimestamp, tagRef, taskColl, taskRef, listRef, 
 
 import mom from 'moment/src/moment'
 
-const Memoize = {cacheVersion: 0}
-
 export default {
   namespaced: true,
   state: {
@@ -64,36 +62,8 @@ export default {
       }
       return obj
     },
-    filterTasksByCompletion(c, getters) {
-      let cache = {}
-      let vers = 0
-      const calc = (tasks, notCompleted, compareDate) => {
-        return tasks.filter(el => {
-          const comp = getters.isTaskCompleted(el, compareDate)
-          if (notCompleted) return !comp
-          return comp
-        })
-      }
-      return (tasks, notCompleted, compareDate) => {
-        if (tasks.length === 0) return []
-        const key = tasks.reduce((str, t) => str + t.id, '') + 'TASKS_VIEW' + compareDate + notCompleted
-
-        const val = cache[key]
-        if (val) {
-          if (vers === Memoize.cacheVersion) return val
-          else cache = {}
-        }
-
-        const res = calc(tasks, notCompleted, compareDate)
-        cache[key] = res
-        vers = Memoize.cacheVersion
-        return res
-      }
-    },
-    isTaskCompleted() {
-      let cache = {}
-      let vers = 0
-      const calc = (task, moment, compareDate) => {
+    ...MemoizeGetters([], {
+      isTaskCompleted({}, task, moment, compareDate) {
         const calcTask = () => {
           const c = task.calendar
           if (!c || c.type === 'someday' || c.type === 'specific') return task.completed
@@ -108,7 +78,7 @@ export default {
             if (times === 0) return true
             if (c.persistent) return c.times === 0
           }
-          
+          moment = mom(moment, 'Y-M-D')
           if (c.type === 'periodic' || c.type === 'weekly') {
             const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
             if (!moment) moment = mom()
@@ -145,29 +115,160 @@ export default {
           return isCompleted && taskCompleteDate.isSameOrAfter(compare, 'day')
         }
         return isCompleted
-      }
-      return (task, moment, compareDate) => {
-        let key = '' + task.id
-        if (moment) {
-          key += moment.format('Y-M-D')
-          if (compareDate) key += compareDate
-        }
-        const val = cache[key]
-        if (val) {
-          if (vers === Memoize.cacheVersion) return val
-          else cache = {}
+      },
+      isTaskOverdue({}, calendar) {
+        let tod = null
+        const getTod = () => {
+          if (tod) return tod
+          tod = mom()
+          return tod
         }
 
-        const res = calc(task, moment, compareDate)
-        cache[key] = res
-        vers = Memoize.cacheVersion
-        return res
-      }
-    },
-    filterTasksByView(s, getters) {
-      let cache = {}
-      let vers = 0
-      const calc = (tasks, view) => {
+        const c = calendar
+        if (c.due) {
+          const due = mom(c.due, 'Y-M-D')
+          if (due.isBefore(getTod(), 'day')) return true
+        }
+        if (c.type === 'specific') {
+          const spec = mom(c.specific, 'Y-M-D')
+          return spec.isBefore(getTod(), 'day')
+        }
+        if (c.times !== null && c.times !== undefined && c.times === 0)
+          return true
+        if (c.type === 'periodic') {
+          return utilsMoment.getNextEventAfterCompletionDate(c).isBefore(getTod(), 'day')
+        }
+        if (c.type === 'weekly') {
+          const lastWeeklyEvent = utilsMoment.getLastWeeklyEvent(c, getTod())
+          const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+          return lastWeeklyEvent.isAfter(lastComplete, 'day')
+        }
+
+        return false
+        
+          /*           if (!utilsTask.hasCalendarBinding(el) || getters.isTaskCompleted(el)) return false
+        
+        const {
+          spec, type, due, tod,
+          nextEventAfterCompletion,
+          lastComplete, lastWeeklyEvent,
+          times, hasTimesBinding
+        } = utilsTask.taskData(el, mom())
+
+        if (due.isBefore(tod, 'day')) return true
+
+        if (type === 'specific') return spec.isBefore(tod, 'day')
+        if (hasTimesBinding && times === 0) return true
+        if (type === 'periodic') {
+          return nextEventAfterCompletion.isBefore(tod, 'day')
+        }
+        if (type === 'weekly') {
+          return lastWeeklyEvent.isAfter(lastComplete, 'day')
+        }
+
+        return false */
+      },
+      isCalendarObjectShowingToday({}, calendar, date, specific) {
+        const c = calendar  
+        if (!calendar) return false
+        if (specific && c.type !== 'specific') return false
+        if (c.type === 'someday') return false
+        // SPECIFIC
+        if (c.type === 'specific') {
+          return date === c.specific
+        }
+        // overdue
+        const tod = mom(date, 'Y-M-D')
+        if (c.due) {
+          const due = mom(c.due, 'Y-M-D')
+          if (due.isBefore(tod, 'day')) return false
+        }
+        // not ready yet
+        if (c.defer) {
+          const defer = mom(c.defer, 'Y-M-D')
+          if (defer.isAfter(tod, 'day')) return false
+        }
+        if (c.persistent && c.times !== null && c.times !== undefined) return true
+        if (c.type === 'periodic') {
+          const dayDiff = tod.diff(mom(c.editDate, 'Y-M-D'), 'day')
+          const eventNotToday = dayDiff % c.periodic !== 0
+          if (eventNotToday) return false  
+        }
+        if (c.type === 'weekly') {
+          const todaysWeekDayName = tod.format('ddd').toLowerCase()
+          const eventNotToday = !c.weekly.find(w => w.toLowerCase() === todaysWeekDayName)
+          if (eventNotToday) return false
+        }
+        return true
+        
+    
+        // OLD AND SLOW CODE
+          /*     if (calendar.type === 'someday') return false
+          const {
+            type, defer, due, tod,
+            edit, spec, interval,
+            weekDays, times, persistent,
+            hasTimesBinding,
+          } = this.getCalendarObjectData(calendar, todayMoment)
+          const isOverdue = (due.isBefore(tod, 'day'))
+          const isntReadyYet = (defer.isAfter(tod, 'day'))
+          const notToday = (!tod.isSame(spec, 'day'))
+          const isForToday = !notToday
+      
+          if (isOverdue) return false
+          if (isntReadyYet) return false
+          
+          if (type === 'specific') return isForToday
+          // if it passes here, then the calendar is guaranted to be periodic or weekly
+          if (persistent && hasTimesBinding) return true
+          if (type === 'periodic') {
+            const dayDiff = tod.diff(edit, 'day')
+            const eventNotToday = dayDiff % interval !== 0
+            if (eventNotToday) return false
+          }
+          if (type === 'weekly') {
+            const todaysWeekDayName = tod.format('ddd').toLowerCase()
+            const eventNotToday = !weekDays.find(w => w.toLowerCase() === todaysWeekDayName)
+            if (eventNotToday) return false
+          }
+      
+          return true */
+      },
+      isCalendarObjectShowingThisPeriod({}, calendar, date, period, specific) {
+        const c = calendar
+        if (!calendar) return false
+        if (specific && c.type !== 'specific') return false
+        if (c.type === 'someday') return false
+        // specific
+        const first = utilsMoment.getFirstDayOfMonth(date)
+        const last = utilsMoment.getFirstLastDayOfMonth(date)
+    
+        if (c.type === 'specific') {
+          const spec = mom(c.specific, 'Y-M-D')
+          return spec.isSameOrAfter(first, period) && spec.isSameOrBefore(last, period)
+        }
+        // overdue
+        if (c.due) {
+          const due = mom(c.due, 'Y-M-D')
+          return due.isSameOrAfter(first, period)
+        }
+        if (c.defer) {
+          const defer = mom(c.defer, 'Y-M-D')
+          return defer.isSameOrBefore(last, period)
+        }
+        return false
+      },
+    }),
+    ...MemoizeGetters(['tasks'], {
+      filterTasksByDay({getters}, tasks, date, specific) {
+        return tasks.filter(el => {
+          if (!utilsTask.hasCalendarBinding(el) || el.calendar.type === 'someday')
+            return false
+          if (specific && el.calendar.type !== 'specific') return false
+          return getters.isCalendarObjectShowingToday(el.calendar, date, specific)
+        })
+      },
+      filterTasksByView({getters}, tasks, view) {
         switch (view) {
           case 'Inbox': {
             return tasks.filter(el =>
@@ -179,92 +280,45 @@ export default {
             )
           }
           case 'Today': {
-            return utilsTask.filterTasksByDay(tasks, mom())
+            return getters.filterTasksByDay(tasks, mom().format('Y-M-D'))
           }
           case 'Someday': {
             return tasks.filter(t => t.calendar && t.calendar.type === 'someday')
           }
           case 'Overdue': {
-            return tasks.filter(el => {
-              if (!utilsTask.hasCalendarBinding(el) || getters.isTaskCompleted(el)) return false
-              
-              let tod = null
-              const getTod = () => {
-                if (tod) return tod
-                tod = mom()
-                return tod
-              }
-    
-              const c = el.calendar
-              if (c.due) {
-                const due = mom(c.due, 'Y-M-D')
-                if (due.isBefore(getTod(), 'day')) return true
-              }
-              if (c.type === 'specific') {
-                const spec = mom(c.specific, 'Y-M-D')
-                return spec.isBefore(getTod(), 'day')
-              }
-              if (c.times !== null && c.times !== undefined && c.times === 0)
-                return true
-              if (c.type === 'periodic') {
-                return utilsMoment.getNextEventAfterCompletionDate(c).isBefore(getTod(), 'day')
-              }
-              if (c.type === 'weekly') {
-                const lastWeeklyEvent = utilsMoment.getLastWeeklyEvent(c, getTod())
-                const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
-                return lastWeeklyEvent.isAfter(lastComplete, 'day')
-              }
-    
-              return false
-              
-                /*           if (!utilsTask.hasCalendarBinding(el) || getters.isTaskCompleted(el)) return false
-              
-              const {
-                spec, type, due, tod,
-                nextEventAfterCompletion,
-                lastComplete, lastWeeklyEvent,
-                times, hasTimesBinding
-              } = utilsTask.taskData(el, mom())
-    
-              if (due.isBefore(tod, 'day')) return true
-    
-              if (type === 'specific') return spec.isBefore(tod, 'day')
-              if (hasTimesBinding && times === 0) return true
-              if (type === 'periodic') {
-                return nextEventAfterCompletion.isBefore(tod, 'day')
-              }
-              if (type === 'weekly') {
-                return lastWeeklyEvent.isAfter(lastComplete, 'day')
-              }
-    
-              return false */
-            })
+            return getters.filterTasksByOverdue(tasks)
           }
           case 'Tomorrow': {
-            return utilsTask.filterTasksByDay(tasks, mom().add(1, 'day'))
+            return getters.filterTasksByDay(tasks, mom().add(1, 'day').format('Y-M-D'))
           }
           case 'Completed': {
             return getters.filterTasksByCompletion(tasks)
           }
         }
         return tasks
-      }
-      return (tasks, view) => {
-        if (tasks.length === 0) return []
-        const key = tasks.reduce((str, t) => str + t.id, '') + 'TASKS_VIEW' + view
-        const val = cache[key]
-        if (val) {
-          if (vers === Memoize.cacheVersion) return val
-          else cache = {}
-        }
-
-        const res = calc(tasks, view)
-        cache[key] = res
-        vers = Memoize.cacheVersion
-        return res
-      }
-    },
-    ...MemoizeGetters(Memoize, ['tasks'], {
+      },
+      filterTasksByPeriod({getters}, tasks, moment, period, specific) {
+        return tasks.filter(el => {
+          if (!utilsTask.hasCalendarBinding(el) || el.calendar.type === 'someday')
+            return false
+          if (specific && el.calendar.type !== 'specific') return false
+          return getters.isCalendarObjectShowingThisPeriod(el.calendar, moment, period, specific)
+        })
+      },
+      filterTasksByOverdue({getters}, tasks) {
+        return tasks.filter(el => {
+          if (!utilsTask.hasCalendarBinding(el) || getters.isTaskCompleted(el))
+            return false
+          return getters.isTaskOverdue(el.calendar)
+        })
+      },
+      filterTasksByCompletion({getters},tasks, notCompleted, compareDate) {
+        return tasks.filter(el => {
+          const comp = getters.isTaskCompleted(el, compareDate)
+          if (notCompleted) return !comp
+          return comp
+        })
+      },
       getNumberOfTasksByTag({getters, state}, tagId) {
         const ts = state.tasks.filter(el => el.tags.includes(tagId))
   
@@ -323,7 +377,6 @@ export default {
         return Promise.all([
           new Promise(resolve => {
             taskColl().where('userId', '==', id).onSnapshot(snap => {
-              Memoize.cacheVersion++
               utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
               resolve()
             })

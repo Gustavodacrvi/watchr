@@ -212,6 +212,7 @@ export default {
   "Add tasks to folder": "Adicionar tarefas na pasta",
   "Move to folder": "Mover para pasta",
   "Add heading": "Adicionar cabeçalho",
+  "This month": "Esse mês",
   "Resend confirmation e-mail": "Reenviar e-mail de confirmação",
   "Are you sure?": "Você tem certeza?",
   "You're going to lose all of your data forever!": "Você irá perder todos os seus dados para sempre!",

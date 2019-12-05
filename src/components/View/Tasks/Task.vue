@@ -114,8 +114,8 @@ import utils from '@/utils/index'
 import mom from 'moment/src/moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight'
-  , 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart'],
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr'
+  ,  'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -129,6 +129,7 @@ export default {
       innerColor: 'rgba(53, 73, 90, 0.6)',
       outerColor: 'var(--primary)',
       showCircle: false,
+      isTouching: false,
       showingIconDropContent: false,
       isEditing: false,
       onHover: false,
@@ -205,6 +206,7 @@ export default {
       this.showCircle = true
     },
     touchStart(e) {
+      this.isTouching = true
       this.innerColor = 'var(--light-gray)'
       this.outerColor = 'var(--gray)'
       this.startX = e.changedTouches[0].clientX
@@ -217,6 +219,7 @@ export default {
       }
     },
     touchEnd(e) {
+      this.isTouching = false
       const touch = e.changedTouches[0]
       const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
       const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
@@ -238,6 +241,12 @@ export default {
       const trans = str => {
         s.transition = `opacity ${str}, width ${str}, height ${str}, transform 0s, left 0s, top 0s, margin 0s`
       }
+      let innerTrans = 450
+      let outerTrans = 250
+      if (this.isTouching) {
+        innerTrans += 150
+        outerTrans += 150
+      }
 
       trans('0s')
       s.opacity = 0
@@ -246,12 +255,12 @@ export default {
       const client = this.$el.clientWidth
       const width = client + 100
       setTimeout(() => {
-        trans('.450s')
+        trans(`.${innerTrans}s`)
         s.opacity = 1
         s.width = width + 'px'
         s.height = width + 'px'
         setTimeout(() => {
-          trans('.250s')
+          trans(`.${outerTrans}s`)
           s.width = width + 'px'
           s.height = width + 'px'
           s.opacity = 0
@@ -261,8 +270,8 @@ export default {
             s.height = 0
             this.showCircle = false
             this.doingTransition = false
-          }, 450)
-        }, 250)
+          }, innerTrans)
+        }, outerTrans)
       }, 50)
     },
     click(evt) {
@@ -366,7 +375,7 @@ export default {
       savedTags: 'tag/sortedTagsByName',
     }),
     completed() {
-      return this.isTaskCompleted(this.task, mom(), this.taskCompletionCompareDate)
+      return this.isTaskCompleted(this.task, mom().format('Y-M-D'), this.taskCompletionCompareDate)
     },
     parsedName() {
       return this.getLinkString(this.escapeHTML(this.task.name))
@@ -622,7 +631,7 @@ export default {
     },
     calendarStr() {
       const {t,c} = this.getTask
-      if ((!c || c.type === 'someday') || this.viewName === 'Upcoming') return null
+      if ((!c || c.type === 'someday') || !this.allowCalendarStr) return null
       const str = utils.parseCalendarObjectToString(c, this.l)
       if (str === this.viewNameValue) return null
       return str

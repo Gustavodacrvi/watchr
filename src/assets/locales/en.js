@@ -115,6 +115,7 @@ export default {
   "Add tasks to folder": "Add tasks to folder",
   'Show tag selection': 'Show tag selection',
   'Show list selection': 'Show list selection',
+  "This month": "This month",
   'Show completed': 'Show completed',
   "More options": "More options",
   "More dates": "More dates",

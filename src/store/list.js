@@ -10,8 +10,6 @@ import router from '../router'
 
 import mom from 'moment/src/moment'
 
-const Memoize = {cacheVersion: 0}
-
 export default {
   namespaced: true,
   state: {
@@ -24,7 +22,7 @@ export default {
         return utils.checkMissingIdsAndSortArr(userInfo.lists, lists)
       return []
     },
-    ...MemoizeGetters(Memoize, ['lists'], {
+    ...MemoizeGetters(['lists'], {
       getListsByName({state}, names) {
         const arr = []
         for (const n of names) {
@@ -72,7 +70,7 @@ export default {
           compareDate = utils.getCalendarObjectData(list.calendar, mom()).lastCallEvent.format('Y-M-D')
   
         ts.forEach(el => {
-          if (isTaskCompleted(el, mom(), compareDate)) completedTasks++
+          if (isTaskCompleted(el, mom().format('Y-M-D'), compareDate)) completedTasks++
         })
         const result = 100 * completedTasks / numberOfTasks
         if (isNaN(result)) return 0
@@ -87,7 +85,6 @@ export default {
       return Promise.all([
         new Promise(resolve => {
           listColl().where('userId', '==', id).onSnapshot(snap => {
-            Memoize.cacheVersion++
             utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
             resolve()
           })

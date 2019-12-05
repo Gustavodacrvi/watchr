@@ -101,9 +101,10 @@ export default {
               progress: this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted),
               filter: (a, h, showCompleted) => {
                 let tasks = getTasks()
-  
-                if (!showCompleted)
+
+                if (!showCompleted) {
                   tasks = this.filterTasksByCompletion(tasks, true)
+                }
   
                 return tasks
               },
@@ -249,10 +250,12 @@ export default {
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
       getTasks: 'list/getTasks',
+      filterTasksByPeriod: 'task/filterTasksByPeriod',
       filterTasksByView: 'task/filterTasksByView',
       filterTasksByCompletion: 'task/filterTasksByCompletion',
       isTaskCompleted: 'task/isTaskCompleted',
       getTagsById: 'tag/getTagsById',
+      filterTasksByDay: 'task/filterTasksByDay',
       getListsById: 'list/getListsById',
       getListByName: 'list/getListByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
@@ -337,7 +340,7 @@ export default {
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
           filter: () => {
-            return utilsTask.filterTasksByDay(filtered, mom(date, 'Y-M-D'))
+            return this.filterTasksByDay(filtered, date, true)
           },
           id: date,
           onAddTask: obj => {
@@ -356,6 +359,19 @@ export default {
           },
         })
       }
+      const in7Days = mom().add(7, 'd')
+      const after7DaysTasks = filtered.filter(el => {
+        return in7Days.isBefore(mom(el.calendar.specific, 'Y-M-D'), 'day')
+      })
+      // this month
+      arr.push({
+        name: this.l['This month'],
+        calendarStr: true,
+        filter: () => {
+          return this.filterTasksByPeriod(after7DaysTasks, tod, 'month', true)
+        },
+        id: 'this month'
+      })
       return arr
     },
     completedHeadingsOptions() {
@@ -382,9 +398,7 @@ export default {
           name: utils.getHumanReadableDate(date, this.l),
           filter: () => {
             if (cache[date]) return cache[date]
-            const result = filtered.filter(t => {
-              return t.completeDate === date
-            })
+            const result = this.filterTasksByDay(filtered, date, true)
             cache[date] = result
             return result
           },
