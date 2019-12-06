@@ -25,7 +25,7 @@
         :options="languages"
         @handle-toggle='v => isLanguagesIconDropOpen = v'
       />
-      <div class="tag cbd cursor">v1.0.0</div>
+      <div class="tag cbd cursor" @click="showUpdates">v1.0.0</div>
       <ButtonApp v-if="user && user.isAnonymous" class="no-back" :value="l['Sign in']" @click="upgradeUser"/>
     </div>
   </div>
@@ -71,7 +71,12 @@ export default {
       if (this.$route.matched.length === 0)
         return link === this.$route.name
       return this.$route.matched.some(route => route.name === link)
-    }
+    },
+    showUpdates() {
+      this.$store.dispatch('pushPopup', {
+        comp: 'Updates',
+      })
+    },
   },
   computed: {
     ...mapState(['user']),
@@ -112,10 +117,15 @@ export default {
   padding: 8px;
   transition-duration: .15s;
   color: var(--gray);
+  transform: scale(1,1);
 }
 
 .tag:hover {
   background-color: var(--light-gray);
+}
+
+.tag:active {
+  transform: scale(.95,.95);
 }
 
 .drop {

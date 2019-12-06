@@ -28,7 +28,7 @@ import AddTagNote from './Tags/AddTagNote.vue'
 import AddList from './Lists/AddList.vue'
 import AddListNote from './Lists/AddListNote.vue'
 import AddHeadingNote from './Lists/AddHeadingNote.vue'
-import Update from './Update.vue'
+import Updates from './Updates.vue'
 import AddFolder from './Folder/AddFolder.vue'
 
 import { mapGetters, mapState } from 'vuex'
@@ -37,7 +37,7 @@ export default {
   components: {
     Signup, SigninOptions, Signin, AddTag,
     AddListNote, AddTagNote, Icon, AddList,
-    AddTask, Update, ChangeUsername, ChangeEmail,
+    AddTask, Updates, ChangeUsername, ChangeEmail,
     Confirm, AddHeadingNote, AddFolder,
   },
   methods: {
