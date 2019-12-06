@@ -112,6 +112,9 @@ import SearchButtonVue from './SearchButton.vue'
 import { mapGetters, mapState } from 'vuex'
 
 import utils from '@/utils'
+import utilsList from '@/utils/list'
+import utilsTag from '@/utils/tag'
+import utilsFolder from '@/utils/folder'
 import { userRef } from '@/utils/firestore'
 
 export default {
@@ -360,6 +363,7 @@ export default {
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView',
       favLists: 'list/getFavoriteLists',
+      getListTasks: 'task/getListTasks',
       isTaskCompleted: 'task/isTaskCompleted',
       favFolders: 'folder/getFavoriteFolders',
       favTags: 'tag/getFavoriteTags',
@@ -370,6 +374,14 @@ export default {
       const selectView = (name, type) => {
         this.$store.commit('navigate', name)
         this.$router.push(`/user?${type}=${name}`)
+      }
+      const getOptions = (link, type) => {
+        switch (type) {
+          case 'list': {
+            return utilsList.listOptions(link, this.$store, this.getListTasks(this.tasks, link.id).slice(), this.l)
+          }
+        }
+        return []
       }
 
       const final = []
@@ -382,6 +394,7 @@ export default {
           icon: f.icon,
           callback: () => selectView(f.name, type),
           iconColor: f.color,
+          options: getOptions(f, type),
         })
       }
 
