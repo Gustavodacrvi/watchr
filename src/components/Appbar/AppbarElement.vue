@@ -104,11 +104,6 @@ export default {
       const el = this.$el.getElementsByClassName('link-wrapper')[0]
       utils.bindOptionsToEventListener(el, this.options, this.$parent)
     },
-    clickTrans(evt) {
-      this.left = evt.offsetX + 'px'
-      this.top = evt.offsetY + 'px'
-      this.showCircle = true
-    },
     touchStart(e) {
       this.isTouching = true
       this.startX = e.changedTouches[0].clientX
@@ -171,7 +166,6 @@ export default {
       }, 50)
     },
     linkCallback(evt) {
-      this.clickTrans(evt)
       if (this.isDesktop) this.click()
     },
     click() {

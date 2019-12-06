@@ -6,9 +6,23 @@
       @mouseenter="headerHover = true"
       @mouseleave="headerHover = false"
 
+      @touchstart='touchStart'
+      @touchend='touchEnd'
+
       data-type='folder'
       data-color='var(--white)'
     >
+      <div class='circle-trans-wrapper-wrapper'>
+        <div class="circle-trans-wrapper">
+          <transition
+            @enter='circleEnter'
+          >
+            <div v-if="showCircle" class="circle-trans-transition"
+              :style="{left, top, backgroundImage: `radial-gradient(var(--light-gray), var(--gray))`}"
+            ></div>
+          </transition>
+        </div>
+      </div>
       <span class="icon-wrapper">
         <Icon class="icon" :class="{headerHover}" icon="folder"/>
       </span>
@@ -51,6 +65,11 @@ export default {
     return {
       showing: this.defaultShowing,
       headerHover: false,
+      showCircle: false,
+      isTouching: false,
+      left: 0,
+      top: 0,
+      doingTransition: false,
     }
   },
   mounted() {
@@ -68,7 +87,71 @@ export default {
       const el = this.$el.getElementsByClassName('header')[0]
       utils.bindOptionsToEventListener(el, this.options, this.$parent)
     },
+        touchStart(e) {
+      this.isTouching = true
+      this.startX = e.changedTouches[0].clientX
+      this.startY = e.changedTouches[0].clientY
+      const rect = e.target.getBoundingClientRect()
+      const scroll = document.scrollingElement.scrollTop
+      if (!this.doingTransition) {
+        this.left = (e.targetTouches[0].pageX - rect.left) + 'px'
+        this.top = (e.targetTouches[0].pageY - rect.top - scroll) + 'px'
+        this.showCircle = true
+      }
+    },
+    touchEnd(e) {
+      this.isTouching = false
+      const touch = e.changedTouches[0]
+      const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
+      const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
+      if (!movedFingerX && !movedFingerY) {
+        this.click()
+      }
+    },
+    circleEnter(el) {
+      const s = el.style
+      this.doingTransition = true
+
+      const trans = str => {
+        s.transition = `opacity ${str}, width ${str}, height ${str}, transform 0s, left 0s, top 0s, margin 0s`
+      }
+      let innerTrans = 450
+      let outerTrans = 250
+      if (this.isTouching) {
+        innerTrans += 150
+        outerTrans += 150
+      }
+
+      trans('0s')
+      s.opacity = 0
+      s.width = 0
+      s.height = 0
+      const client = this.$el.clientWidth
+      const width = client + 100
+      setTimeout(() => {
+        trans(`.${innerTrans}s`)
+        s.opacity = 1
+        s.width = width + 'px'
+        s.height = width + 'px'
+        setTimeout(() => {
+          trans(`.${outerTrans}s`)
+          s.width = width + 'px'
+          s.height = width + 'px'
+          s.opacity = 0
+          setTimeout(() => {
+            trans('0')
+            s.width = 0
+            s.height = 0
+            this.showCircle = false
+            this.doingTransition = false
+          }, innerTrans)
+        }, outerTrans)
+      }, 50)
+    },
     go() {
+      if (this.isDesktop) this.click()
+    },
+    click() {
       if (!this.showSpecialInfo)
         this.$router.push('/user?folder=' + this.name)
       else this.apply()
