@@ -9,7 +9,6 @@
       appear
       tag="div"
       @enter="enter"
-      @leave="leave"
       data-name='task-renderer'
     >
       <Task v-for="item of getTasks" :key="item.id" 
@@ -328,7 +327,7 @@ export default {
         this.lazyTasks = []
         let i = 0
         const length = tasks.length
-        const timeout = length / 2.5
+        const timeout = length * 2.5
         const add = (task) => {
           this.lazyTasks.push(task)
           if ((i + 1) !== length)
@@ -544,32 +543,11 @@ export default {
         if (newTask)
           this.draggableRoot.insertBefore(newTask, adder)
         this.addedTask = false
-      }, 10)
+      }, 70)
     },
     enter(el) {
       if (this.addedTask)
         this.fixTaskRenderer()
-      const cont = this.contWrapper(el)
-      if (cont) {
-        const s = cont.style
-        cont.classList.add('hided')
-        s.height = '0px'
-        s.padding = '2px 0'
-        setTimeout(() => {
-          s.transition = 'height .15s, opacity .15s, transform .1s !important'
-          cont.classList.add('show')
-          s.height = this.taskHeight + 'px'
-          s.padding = '0'
-          cont.classList.remove('hided')
-        }, 50)
-      }
-    },
-    leave(el) {
-      const cont = el.getElementsByClassName('cont-wrapper')[0]
-      if (cont) {
-        cont.classList.add('hided-leave')
-        cont.style.height = 0
-      }
     },
     keydown({key}) {
       if (!this.header) {
@@ -782,6 +760,26 @@ export default {
 
 </script>
 
+<style>
+
+.task-trans-enter .cont-wrapper, .task-trans-leave-to .cont-wrapper {
+  opacity: 0;
+  height: 0;
+  transition-duration: 0s;
+}
+
+.task-trans-leave .cont-wrapper, .task-trans-enter-to .cont-wrapper {
+  transition: height .15s, opacity .15s, transform .1s !important;
+  height: 35px;
+  opacity: 1;
+}
+
+.mobile .task-trans-leave .cont-wrapper, .mobile .task-trans-enter-to .cont-wrapper {
+  height: 50px;
+}
+
+</style>
+
 <style scoped>
 
 .illustration {
@@ -825,14 +823,6 @@ export default {
 .illus-trans-leave, .illus-trans-enter-to {
   opacity: 1;
   transform: translateY(0px);
-}
-
-.task-trans-enter, .task-trans-leave-to {
-  opacity: 0;
-}
-
-.task-trans-leave, .task-trans-enter-to {
-  opacity: 1;
 }
 
 .task-renderer-root {

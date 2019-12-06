@@ -63,13 +63,6 @@
                 </span>
                 <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
               </transition>
-              <template v-if="isDesktop">
-                <Tag class="task-tag" v-for="t in taskTags" :key="t.name"
-                  icon="tag"
-                  :value="t.name"
-                  :disabled='true'
-                />
-              </template>
             </div>
           </div>
         </div>
@@ -718,7 +711,6 @@ export default {
 
 .show {
   opacity: 1;
-  padding: 2px 0;
 }
 
 .subtasks {
