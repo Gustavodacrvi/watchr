@@ -516,6 +516,7 @@ export default {
       isAnonymous: false,
     }
     if (userAuth.hidedSections) obj.hidedSections = userAuth.hidedSections
+    if (userAuth.links) obj.links = userAuth.links
     if (!update) obj = {...obj, ...{
       viewOrders: {},
       filters: [],

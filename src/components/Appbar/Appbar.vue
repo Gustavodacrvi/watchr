@@ -16,15 +16,16 @@
             </transition>
               <AppnavRenderer
                 type='list'
-                :enableSort='false'
+                :enableSort='true'
                 :disabled='!isDesktop'
                 :disableSelection='true'
-                :list='links'
+                :list='getLinksOrdered'
                 :active='value'
                 :viewType='viewType'
                 :onTaskDrop='onTaskDrop'
                 :mapNumbers='numberOfTasks'
                 :isSmart='true'
+                @update='update'
                 @apply='applySelectedTasks'
               />
               <div v-if="!isSingleSection" class="header">
@@ -93,6 +94,9 @@ import RendererVue from './Renderer.vue'
 import SearchButtonVue from './SearchButton.vue'
 
 import { mapGetters, mapState } from 'vuex'
+
+import utils from '@/utils'
+import { userRef } from '@/utils/firestore'
 
 export default {
   props: ['value', 'viewType', 'appbarHided'],
@@ -200,6 +204,11 @@ export default {
     window.removeEventListener('resize', this.moveLineToActive)
   },
   methods: {
+    update(links) {
+      userRef(this.userInfo.userId).set({
+        links,
+      }, {merge: true})
+    },
     showSearch() {
       this.showingSearch = true
       if (this.searchTimeout)
@@ -302,12 +311,22 @@ export default {
       userInfo: state => state.userInfo,
     }),
     ...mapGetters({
+      getInitialSmartView: 'getInitialSmartView',
       platform: 'platform',
       isStandAlone: 'isStandAlone',
       isDesktop: 'isDesktop',
       l: 'l',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView'
     }),
+    linksOrder() {
+      if (this.userInfo && this.userInfo.links) {
+        return this.userInfo.links
+      }
+      return ['Today', 'Tomorrow', 'Someday', 'Inbox', 'Upcoming', 'Completed']
+    },
+    getLinksOrdered() {
+      return utils.checkMissingIdsAndSortArr(this.linksOrder, this.links)
+    },
     getOptions() {
       const opt = this.getSectionOptions.slice()
 

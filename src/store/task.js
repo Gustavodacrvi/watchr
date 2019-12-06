@@ -268,6 +268,11 @@ export default {
           return getters.isCalendarObjectShowingToday(el.calendar, date, specific)
         })
       },
+      filterTasksByCompletionDate({}, tasks, date) {
+        return tasks.filter(el => {
+          return el.completeDate === date
+        })
+      },
       filterTasksByView({getters}, tasks, view) {
         switch (view) {
           case 'Inbox': {

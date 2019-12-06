@@ -84,6 +84,7 @@ const store = new Vuex.Store({
       tags: [],
       viewOrders: {},
       hidedSections: null,
+      links: [],
     },
     firstFireLoad: false,
     selectedTasks: [],
@@ -105,6 +106,11 @@ const store = new Vuex.Store({
     platform(s, getters) {
       if (getters.isDesktop) return 'desktop'
       return 'mobile'
+    },
+    getInitialSmartView(state) {
+      const arr = state.userInfo.links
+      if (arr) return arr[0]
+      return 'Today'
     },
     isStandAlone() {
       const navigator = window.navigator
@@ -253,13 +259,13 @@ const store = new Vuex.Store({
         resolve()
       })
     },
-    update({state}, info) {
+    update({}, info) {
       const batch = fire.batch()
       
       const userRef = fire.collection('users').doc(info.uid)
-      batch.update(userRef, {
+      batch.set(userRef, {
         ...utils.getRelevantUserData(info, true),
-      })
+      }, {merge: true})
       return batch.commit()
     },
     createUser(s, user) {

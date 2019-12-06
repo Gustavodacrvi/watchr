@@ -301,6 +301,7 @@ export default {
       filterTasksByView: 'task/filterTasksByView',
       filterTasksByCompletion: 'task/filterTasksByCompletion',
       isTaskCompleted: 'task/isTaskCompleted',
+      filterTasksByCompletionDate: 'task/filterTasksByCompletionDate',
       getTagsById: 'tag/getTagsById',
       filterTasksByDay: 'task/filterTasksByDay',
       getListsById: 'list/getListsById',
@@ -478,7 +479,7 @@ export default {
           order: ts => utilsTask.sortTasksByTaskDate(ts, 'fullCompleteDate'),
           filter: () => {
             if (cache[date]) return cache[date]
-            const result = this.filterTasksByDay(filtered, date, true)
+            const result = this.filterTasksByCompletionDate(filtered, date)
             cache[date] = result
             return result
           },

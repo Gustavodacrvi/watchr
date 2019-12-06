@@ -5,10 +5,10 @@
         <Icon :icon='illustration' color='var(--appnav-color)' width="150px"/>
       </div>
     </transition>
-    <transition-group name="task-trans" class="front task-renderer-root" :class="{dontHaveTasks: tasks.length === 0 && headings.length === 0, showEmptyHeadings}"
-      appear
-      tag="div"
-      @enter="enter"
+    <div
+      class="front task-renderer-root"
+      :class="{dontHaveTasks: tasks.length === 0 && headings.length === 0, showEmptyHeadings}"
+
       data-name='task-renderer'
     >
       <Task v-for="item of getTasks" :key="item.id" 
@@ -23,11 +23,13 @@
         :isDragging='isDragging'
         :isScrolling='isScrolling'
         @de-select='deSelectTask'
+        @task-trans='fixTaskRenderer'
 
         :data-id='item.id'
+        :data-item='item.name'
         :data-type='`task`'
       />
-    </transition-group>
+    </div>
     <ButtonVue v-if="showMoreItemsButton"
       type="dark"
       :value='showMoreItemsMessage'
@@ -141,7 +143,7 @@ export default {
   },
   mounted() {
     let move = null
-    if (!this.disableSortableMount) {
+    if (this.isRoot || this.onSortableAdd || this.addTask) {
       const removeTaskOnHoverFromAppnavElements = (el) => {
         const items = document.getElementsByClassName('AppbarElement-link')
         for (const i of items) {
@@ -154,6 +156,7 @@ export default {
         }
       }
       const obj = {
+        disabled: this.disableSortableMount,
         multiDrag: this.enableSelect,
         direction: 'horizontal',
         group: {
@@ -347,8 +350,8 @@ export default {
         this.lazyHeadings = []
         let i = 0
         const length = headings.length
-        let timeout = length * 30
-        if (length < 15) timeout = this.isDesktop ? 75 : 200
+        let timeout = this.isDesktop ? 125 : 200
+        if (length < 5) timeout = 20
         const add = (head) => {
           this.lazyHeadings.push(head)
           if ((i + 1) !== length)
@@ -413,7 +416,7 @@ export default {
           index: this.getTaskRendererPosition(),
           header: this.header,
         })
-        this.addedTask = true
+        this.addedTask = task.name
       }
     },
     getTaskRendererPosition() {
@@ -464,19 +467,25 @@ export default {
       return el.getElementsByClassName('cont-wrapper')[0]
     },
     fixTaskRenderer() {
-      setTimeout(() => {
+      if (this.addedTask) {
         const i = this.getTaskRendererPosition()
-        const childNodes = this.draggableRoot.childNodes
+        const root = this.draggableRoot
+        const childNodes = root.childNodes
         const adder = childNodes[i]
-        const newTask = childNodes[i + 1]
-        if (newTask)
-          this.draggableRoot.insertBefore(newTask, adder)
-        this.addedTask = false
-      }, 70)
-    },
-    enter(el) {
-      if (this.addedTask)
-        this.fixTaskRenderer()
+
+        for (const newTask of childNodes) {
+          if (newTask.dataset.item === this.addedTask) {
+
+            setTimeout(() => {
+              root.insertBefore(newTask, adder)
+            }, this.getTasks.length)
+
+            this.addedTask = null
+            break
+          }
+        }
+        
+      }
     },
     keydown({key}) {
       if (!this.header) {
@@ -649,8 +658,7 @@ export default {
             this.lazyTasks = arr
           })
         }
-        
-        }, 35)
+      })
     },
     headings(newArr) {
       if (this.isRoot) {
@@ -668,17 +676,20 @@ export default {
             }
             this.lazyHeadings = unique
           }
-        }, 35)
+        })
       }
     },
     viewName() {
       this.updateView()
 
+      this.sortable.options.disabled = this.disableSortableMount
       this.headSort.options.disabled = !this.updateHeadingIds
     },
     enableSelect() {
-      this.sortable.options.multiDrag = this.enableSelect
-      this.sortable.options.multiDragKey = this.getMultiDragKey
+      if (this.sortable) {
+        this.sortable.options.multiDrag = this.enableSelect
+        this.sortable.options.multiDragKey = this.getMultiDragKey
+      }
     },
     isScrolling() {
       if (this.isScrolling) this.justScrolled = true
@@ -690,23 +701,6 @@ export default {
 </script>
 
 <style>
-
-.task-trans-enter .cont-wrapper, .task-trans-leave-to .cont-wrapper {
-  opacity: 0;
-  height: 0;
-  transition-duration: 0s;
-}
-
-.task-trans-leave .cont-wrapper, .task-trans-enter-to .cont-wrapper {
-  transition: height .15s, opacity .15s, transform .1s !important;
-  height: 35px;
-  opacity: 1;
-}
-
-.mobile .task-trans-leave .cont-wrapper, .mobile .task-trans-enter-to .cont-wrapper {
-  height: 50px;
-}
-
 
 .head-t-enter {
   transition-duration: 0s;
