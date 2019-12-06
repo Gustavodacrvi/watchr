@@ -178,7 +178,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['drag', 'isOnControl', 'selectedTasks']),
+    ...mapState(['drag', 'isOnControl', 'selectedTasks', 'currentView']),
     ...mapGetters(['l', 'platform', 'isDesktop']),
     isDraggingOver() {
       return this
@@ -204,9 +204,8 @@ export default {
       return `color: ${this.isActive ? this.iconColor : ''};`
     },
     isActive() {
-      let isActive = this.name === this.active && this.type === this.viewType
-      if (this.hover) isActive = true
-      return isActive      
+      if ((this.hover && this.isDesktop) || (this.isTouching && !this.isDesktop)) return true
+      return this.name === this.active && this.type === this.viewType || this.currentView === this.name
     },
     showOptions() {
       if (!this.options || this.options.length === 0) return false

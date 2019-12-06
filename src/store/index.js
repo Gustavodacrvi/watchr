@@ -98,6 +98,7 @@ const store = new Vuex.Store({
     windowWidth: 0,
     isScrolling: false,
     allowNavHide: true,
+    currentView: '',
   },
   getters: {
     isDesktop(state) {
@@ -134,6 +135,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    navigate(state, str) {
+      state.currentView = str
+    },
     readFile(state, fileURL) {
       state.fileURL = fileURL
     },
