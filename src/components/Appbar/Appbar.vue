@@ -21,10 +21,11 @@
                 :disableSelection='true'
                 :list='getLinksOrdered'
                 :active='value'
-                :viewType='viewType'
                 :onTaskDrop='onTaskDrop'
-                :mapNumbers='numberOfTasks'
+                :viewType='viewType'
                 :isSmart='true'
+
+                :mapNumbers='numberOfTasks'
                 @update='update'
                 @apply='applySelectedTasks'
               />
@@ -37,8 +38,10 @@
                 :list='getFavoritesRenderList'
                 :active='value'
                 :viewType='viewType'
+                :isSmart='false'
 
-
+                :mapNumbers='mapFavorites'
+                :mapProgress='mapProgress'
               />
               <div v-if="!isSingleSection" class="header">
                 <div v-for="(s,i) in notHidedSections" :key="s.name"
@@ -321,11 +324,27 @@ export default {
         return {total: obj.total}
       return obj
     },
+    mapProgress(link) {
+      if (link.type === 'list')
+        return this.$store.getters['list/pieProgress'](this.tasks, link.id, this.isTaskCompleted)
+      return null
+    },
+    mapFavorites(link) {
+      return {
+        total: 0
+      }
+      switch (link.type) {
+        case 'lists': {
+
+        }
+      }
+    },
   },
   computed: {
     ...mapState({
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
+      tasks: state => state.task.tasks,
     }),
     ...mapGetters({
       platform: 'platform',
@@ -334,6 +353,7 @@ export default {
       l: 'l',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView',
       favLists: 'list/getFavoriteLists',
+      isTaskCompleted: 'task/isTaskCompleted',
       favFolders: 'folder/getFavoriteFolders',
       favTags: 'tag/getFavoriteTags',
     }),
@@ -347,11 +367,13 @@ export default {
 
       const final = []
       for (const f of favs) {
+        const type = f.type ? f.type : f.icon
         final.push({
+          type,
           name: f.name,
           id: f.id,
           icon: f.icon,
-          callback: () => selectView(f.name, f.type ? f.type : f.icon),
+          callback: () => selectView(f.name, type),
           iconColor: f.color,
         })
       }
