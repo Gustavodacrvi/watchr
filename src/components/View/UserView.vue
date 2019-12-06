@@ -73,13 +73,13 @@ export default {
       let value = query[viewType]
       const name = this.$route.name
       if (name !== 'menu' && (viewType === undefined || value === undefined))
-        this.$router.replace('/user?list=Today')
+        this.$router.replace(`/user?list=${this.getInitialSmartView}`)
       this.value = value
       this.viewType = viewType
     }
   },
   computed: {
-    ...mapGetters(['platform', 'isDesktop']),
+    ...mapGetters(['platform', 'isDesktop', 'getInitialSmartView']),
     getNavTopPosition() {
       let increment = 0
       if (this.hideNavbar) increment = 22

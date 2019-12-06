@@ -311,7 +311,6 @@ export default {
       userInfo: state => state.userInfo,
     }),
     ...mapGetters({
-      getInitialSmartView: 'getInitialSmartView',
       platform: 'platform',
       isStandAlone: 'isStandAlone',
       isDesktop: 'isDesktop',
