@@ -66,11 +66,12 @@
             :tasks='filter(h)'
             :hideListName="h.hideListName"
             :allowCalendarStr='h.calendarStr'
+            :disableSortableMount='h.disableSortableMount'
             :hideFolderName="h.hideFolderName"
             :showHeadingName="h.showHeadingName"
             :onSortableAdd='h.onSortableAdd'
             @add-heading='(obj) => $emit("add-heading", obj)'
-            @update="ids => updateHeadingIds(h,ids)"
+            @update="ids => updateHeadingTaskIds(h,ids)"
 
             :headings='[]'
             :header="h"
@@ -110,7 +111,7 @@ import utils from '@/utils/'
 let headingsFilterCache = {}
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart', 'allowCalendarStr',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart', 'allowCalendarStr', 'updateHeadingIds', 'disableSortableMount',
   'viewType', 'options', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -142,7 +143,7 @@ export default {
   },
   mounted() {
     let move = null
-    if (this.onSortableAdd || this.addTask) {
+    if (!this.disableSortableMount) {
       const removeTaskOnHoverFromAppnavElements = (el) => {
         const items = document.getElementsByClassName('AppbarElement-link')
         for (const i of items) {
@@ -290,6 +291,7 @@ export default {
       const el = this.$el.getElementsByClassName('headings-root')[0]
       if (el) {
         this.headSort = new Sortable(el, {
+          disabled: !this.updateHeadingIds,
           group: 'headings',
           delay: 225,
           delayOnTouchOnly: true,
@@ -297,7 +299,8 @@ export default {
     
           onUpdate: (evt) => {
             const ids = this.getHeadingsIds()
-            this.$emit('update-headings', ids)
+            if (this.updateHeadingIds)
+              this.updateHeadingIds(ids)
           },
           onStart: evt => {
             this.movingHeading = true
@@ -385,7 +388,7 @@ export default {
         })
       }
     },
-    updateHeadingIds(h, ids) {
+    updateHeadingTaskIds(h, ids) {
       if (h.updateIds)
         h.updateIds(ids)
     },
@@ -763,6 +766,8 @@ export default {
     },
     viewName() {
       this.updateView()
+
+      this.headSort.options.disabled = !this.updateHeadingIds
     },
     enableSelect() {
       this.sortable.options.multiDrag = this.enableSelect

@@ -329,7 +329,7 @@ export default {
       const p = this.prefix
       
       const events = [
-        'save-header-name', 'save-notes', 'update-heading-ids',
+        'save-header-name', 'save-notes',
         'add-task', 'add-heading', 'update-ids', 'remove-defer-date',
         'remove-header-tag', 'remove-deadline', 'remove-repeat',
       ]
@@ -344,7 +344,7 @@ export default {
       const p = this.prefix
       
       const props = [
-        'icon', 'illustration', 'showHeader', 'showEmptyHeadings',
+        'icon', 'illustration', 'showHeader', 'showEmptyHeadings', 'updateHeadingIds',
         'headingEdit', 'headerOptions', 'notes', 'progress', 'headingsOptions',
         'tasks', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates',
         'headerTags', 'headerCalendar', 'taskCompletionCompareDate', 'files',
@@ -473,6 +473,7 @@ export default {
       const cache = {}
       for (const date of dates) {
         arr.push({
+          disableSortableMount: true,
           name: utils.getHumanReadableDate(date, this.l),
           order: ts => utilsTask.sortTasksByTaskDate(ts, 'fullCompleteDate'),
           filter: () => {

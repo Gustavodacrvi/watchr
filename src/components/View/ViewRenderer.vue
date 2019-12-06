@@ -70,7 +70,7 @@ import mom from 'moment/src/moment'
 
 export default {
   props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'notes', 'showCompletedOnHeadings', 'isSmart', 'headerOptions', 'progress', 'prefix',
-  'headerDates', 'headerTags', 'headerCalendar', 'files', 'taskCompletionCompareDate', 'headingsPagination'],
+  'headerDates', 'headerTags', 'headerCalendar', 'files', 'updateHeadingIds', 'taskCompletionCompareDate', 'headingsPagination'],
   components: {
     PaginationVue,
     Header: HeaderVue,
