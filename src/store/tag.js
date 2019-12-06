@@ -60,7 +60,7 @@ export default {
     addTag(c, {name, index, ids}) {
       const obj = {
         createdFire: serverTimestamp(),
-        created: mom().format('Y-M-D HH:mm'),
+        created: mom().format('Y-M-D HH:mm ss'),
         name,
         userId: uid(),
       }

@@ -252,7 +252,7 @@ export default {
       addTask(batch, {
         userId: uid(),
         createdFire: serverTimestamp(),
-        created: mom().format('Y-M-D HH:mm'),
+        created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, newTaskRef).then(() => {
         ids.splice(index, 0, newTaskRef.id)
@@ -273,7 +273,7 @@ export default {
       addTask(batch, {
         userId: uid(),
         createdFire: serverTimestamp(),
-        created: mom().format('Y-M-D HH:mm'),
+        created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, newTaskRef).then(() => {
         ids.splice(index, 0, newTaskRef.id)
@@ -294,7 +294,7 @@ export default {
       addTask(batch, {
         userId: uid(),
         createdFire: serverTimestamp(),
-        created: mom().format('Y-M-D HH:mm'),
+        created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, newTaskRef).then(() => {
         ids.splice(index, 0, newTaskRef.id)
@@ -317,7 +317,7 @@ export default {
       const newTaskRef = taskRef()
       addTask(batch, {
         createdFire: serverTimestamp(),
-        created: mom().format('Y-M-D HH:mm'),
+        created: mom().format('Y-M-D HH:mm ss'),
         userId: uid(),
         ...task,
       }, newTaskRef).then(() => {

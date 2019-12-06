@@ -47,9 +47,9 @@ export default {
       if (m1.isValid() && !m2.isValid()) return -1
       if (!m1.isValid() && m2.isValid()) return 1
 
-      if (m1.isSame(m2, 'minute')) return 0
-      if (m1.isBefore(m2, 'minute')) return -1
-      if (m2.isBefore(m1, 'minute')) return 1
+      if (m1.isSame(m2, 'second')) return 0
+      if (m1.isBefore(m2, 'second')) return -1
+      if (m2.isBefore(m1, 'second')) return 1
     }
     tasks.sort(creationDate)
     return tasks

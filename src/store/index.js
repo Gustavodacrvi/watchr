@@ -226,8 +226,11 @@ const store = new Vuex.Store({
         case 't': pop('AddTag'); break
         case 'l': pop('AddList'); break
         case 'f': commit('openFastSearch'); break
-        case 'Delete': {
-          if (state.selectedTasks.length > 0) dispatch('task/deleteTasks', state.selectedTasks)
+        case 'delete': {
+          if (state.selectedTasks.length > 0) {
+            dispatch('task/deleteTasks', state.selectedTasks)
+            state.selectedTasks = []
+          }
           break
         }
       }
