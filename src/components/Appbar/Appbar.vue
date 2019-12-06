@@ -380,6 +380,12 @@ export default {
           case 'list': {
             return utilsList.listOptions(link, this.$store, this.getListTasks(this.tasks, link.id).slice(), this.l)
           }
+          case 'tag': {
+            return utilsTag.tagOptions(link, this.$store, this.l)
+          }
+          case 'folder': {
+            return utilsFolder.getFolderOptions(link, this.l, this.$store)
+          }
         }
         return []
       }
