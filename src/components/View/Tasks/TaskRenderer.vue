@@ -151,7 +151,7 @@ export default {
           i.setAttribute('id', '')
           i.style.backgroundColor = 'initial'
           i.style.boxShadow = 'initial'
-          if (i.dataset.type === 'folder')
+          if (i.dataset.type === 'folder' || i.dataset.selectedtype === 'folder')
             i.style.color = 'var(--white)'
         }
       }
@@ -271,12 +271,17 @@ export default {
               move.taskId = t.dragged.dataset.id
               move.elId = wrapper.dataset.id
               move.type = data.type
+              if (move.type === 'favorite')
+                move.type = data.selectedtype
     
-              el.setAttribute('id', 'task-on-hover')
+              // force white color, css is in AppbarElement.vu
+              if (data.selectedtype !== 'folder')
+                el.setAttribute('id', 'task-on-hover')
               el.style.backgroundColor = color
               el.style.boxShadow = `0 2px 10px ${color}`
-              if (data.type === 'folder')
+              if (data.type === 'folder' || data.selectedtype === 'folder') {
                 el.style.color = 'var(--gray)'
+              }
             } else move = null
           } else move = null
           if (e && e.path && !e.path.some(el => el.classList && el.classList.contains('task-renderer-root')))

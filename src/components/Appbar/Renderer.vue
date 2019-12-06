@@ -12,6 +12,7 @@
         class="element"
         :iconColor='getIconColor(el)'
         :icon="getIcon(el)"
+        :selectedtype='el.type'
 
         :type="type"
         :subListIcon='subListIcon'
@@ -30,7 +31,7 @@
         :progress='getProgress(el)'
         :helpIcons='getExraIcon(el)'
         :string='getString(el)'
-        @apply='() => applyEmit(el.id)'
+        @apply='type => applyEmit(el.id, type)'
         @select='() => selectEl(el.id)'
 
         :data-id="el.id"
@@ -194,12 +195,12 @@ export default {
       if (!this.mapHelpIcon) return undefined
       return this.mapHelpIcon(el)
     },
-    applyEmit(elId) {
+    applyEmit(elId, type) {
       if (!this.isSmart)
         this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
           elIds: [elId],
           taskIds: this.selectedTasks,
-          type: this.type,
+          type: type ? type : this.type,
         })
       this.$emit('apply', elId)
     },

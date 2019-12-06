@@ -52,7 +52,7 @@ export default {
         return arr
       },
       getFavoriteFolders({state}) {
-        return state.folders.filter(f => f.favorite).map(f => ({...f, icon: 'folder', color: ''}))
+        return state.folders.filter(f => f.favorite).map(f => ({...f, icon: 'folder', color: 'var(--white)'}))
       },
     })
   },
