@@ -22,6 +22,7 @@ export default {
   'Tomorrow': 'Tomorrow',
   'List root': 'List root',
   'Edit heading': 'Edit heading',
+  "Toggle favorite": "Toggle favorite",
   'Uncomplete tasks': 'Uncomplete tasks',
   'Delete heading': 'Delete heading',
   "Sign up option": "Sign up option",

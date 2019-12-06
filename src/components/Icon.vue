@@ -68,6 +68,7 @@ import archive from '@/assets/icons/archive.svg'
 import importIcon from '@/assets/icons/import.svg'
 import exportIcon from '@/assets/icons/export.svg'
 import users from '@/assets/icons/users.svg'
+import heart from '@/assets/icons/heart.svg'
 import sleep from '@/assets/icons/sleep.svg'
 import deadline from '@/assets/icons/deadline.svg'
 import repeat from '@/assets/icons/repeat.svg'
@@ -91,7 +92,7 @@ export default {
         pen, trash, fire, bloqued, circle, users,
         copy, plus, globe, heading, search, note,
         envelope, deadline, sleep, repeat, box, file,
-        folder,
+        folder, heart,
         "box-dash": boxDash,
         "box-check-dash": boxCheckDash,
         "box-check": boxCheck,

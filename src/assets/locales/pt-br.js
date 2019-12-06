@@ -217,6 +217,7 @@ export default {
   "This month": "Esse mês",
   "Periodic tasks": "Tarefas periódicas",
   "Weekly tasks": "Tarefas semanais",
+  "Toggle favorite": "Favoritar lista",
   "This year": "Este ano",
   "Next years": "Próximos anos",
   "Resend confirmation e-mail": "Reenviar e-mail de confirmação",

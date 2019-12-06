@@ -163,6 +163,15 @@ export default {
         ]
       },
       {
+        name: l["Toggle favorite"],
+        icon: 'heart',
+        callback: () => {
+          dispatch('list/saveList', {
+            id: listId, favorite: !list.favorite,
+          })
+        }
+      },
+      {
         name: l["Duplicate list"],
         icon: 'copy',
         callback: () => {
