@@ -155,6 +155,11 @@ export default {
       tasks = utilsTask.sortTasksByPriority(tasks)
       this.updateIds(tasks.map(el => el.id))
     },
+    sortByDate() {
+      let tasks = this.tasks.slice()
+      tasks = utilsTask.sortTasksByCreationDate(tasks)
+      this.updateIds(tasks.map(el => el.id))
+    },
 
     toggleCompleted() {
       this.showCompleted = !this.showCompleted
@@ -335,7 +340,7 @@ export default {
                 callback: () => this.sortByPriority()
               },
               {
-                name: l['Sort by date'],
+                name: l['Sort by creation date'],
                 icon: 'calendar',
                 callback: () => this.sortByDate(),
               }

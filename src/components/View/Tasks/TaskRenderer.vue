@@ -17,6 +17,7 @@
 
         :taskHeight='taskHeight'
         :task='item'
+        :isRoot='isRoot'
         :isSelecting='isSelecting'
         :enableSelect='enableSelect'
         :multiSelectOptions='options'
@@ -729,6 +730,7 @@ export default {
   },
   watch: {
     tasks(newArr, fd) {
+      headingsFilterCache = {}
       this.atLeastOneRenderedTask = false
       setTimeout(() => {
         if (!this.changedViewName) {

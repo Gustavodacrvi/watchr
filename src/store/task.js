@@ -401,7 +401,7 @@ export default {
       addTask(batch, {
         userId: uid(),
         createdFire: serverTimestamp(),
-        created: mom().format('Y-M-D'),
+        created: mom().format('Y-M-D HH:mm'),
         ...obj,
       }, ref).then(() => {
         batch.commit()

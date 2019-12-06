@@ -218,6 +218,7 @@ export default {
   "This year": "Este ano",
   "Next years": "Próximos anos",
   "Resend confirmation e-mail": "Reenviar e-mail de confirmação",
+  "Sort by creation date": "Ordenar por data de criação",
   "Are you sure?": "Você tem certeza?",
   "You're going to lose all of your data forever!": "Você irá perder todos os seus dados para sempre!",
   "More options": "Mais opções",

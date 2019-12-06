@@ -52,7 +52,7 @@
               <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
               <transition name="name-t">
                 <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
-                    <span v-if="calendarStr && !isDesktop && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
+                    <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
                     <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
                     <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
                     <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
@@ -105,7 +105,7 @@ import utils from '@/utils/index'
 import mom from 'moment/src/moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr'
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot',
   ,  'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart'],
   components: {
     Icon: IconVue,
@@ -621,7 +621,7 @@ export default {
     },
     calendarStr() {
       const {t,c} = this.getTask
-      if ((!c || c.type === 'someday') || !this.allowCalendarStr) return null
+      if ((!c || c.type === 'someday') || (!this.allowCalendarStr && !this.isRoot)) return null
       const str = utils.parseCalendarObjectToString(c, this.l)
       if (str === this.viewNameValue) return null
       return str

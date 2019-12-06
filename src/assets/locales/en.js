@@ -128,6 +128,7 @@ export default {
   'Hide completed': 'Hide completed',
   'Sort by priority': 'Sort by priority',
   'Sort by date': 'Sort by date',
+  "Sort by creation date": "Sort by creation date",
   'Add task': 'Add task',
   'Task name': 'Task name',
   'High priority': 'High priority',
