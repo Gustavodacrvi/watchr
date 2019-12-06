@@ -215,6 +215,8 @@ export default {
   "Move to folder": "Mover para pasta",
   "Add heading": "Adicionar cabeçalho",
   "This month": "Esse mês",
+  "Periodic tasks": "Tarefas periódicas",
+  "Weekly tasks": "Tarefas semanais",
   "This year": "Este ano",
   "Next years": "Próximos anos",
   "Resend confirmation e-mail": "Reenviar e-mail de confirmação",

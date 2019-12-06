@@ -126,6 +126,8 @@ export default {
   "File not supported.": "File not supported.",
   'Sort by name': 'Sort by name',
   'Hide completed': 'Hide completed',
+  "Periodic tasks": "Periodic tasks",
+  "Weekly tasks": "Weekly tasks",
   'Sort by priority': 'Sort by priority',
   'Sort by date': 'Sort by date',
   "Sort by creation date": "Sort by creation date",

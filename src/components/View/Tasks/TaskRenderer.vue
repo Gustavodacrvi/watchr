@@ -351,7 +351,7 @@ export default {
         let i = 0
         const length = headings.length
         let timeout = this.isDesktop ? 125 : 200
-        if (length < 5) timeout = 20
+        if (length < 5 || this.viewName === 'Upcoming') timeout = 20
         const add = (head) => {
           this.lazyHeadings.push(head)
           if ((i + 1) !== length)

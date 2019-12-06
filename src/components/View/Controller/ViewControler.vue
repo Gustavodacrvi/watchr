@@ -451,6 +451,26 @@ export default {
         },
         id: 'nextYears',
       })
+      // periodic tasks
+      arr.push({
+        name: this.l['Periodic tasks'],
+        calendarStr: true,
+        order: ts => utilsTask.sortTasksByTaskDate(ts),
+        filter: () => {
+          return this.periodicTasks
+        },
+        id: 'periodic tasks'
+      })
+      // weekly tasks
+      arr.push({
+        name: this.l['Weekly tasks'],
+        calendarStr: true,
+        order: ts => utilsTask.sortTasksByTaskDate(ts),
+        filter: () => {
+          return this.weeklyTasks
+        },
+        id: 'weekly tasks'
+      })
       return arr
     },
     completedHeadingsOptions() {
@@ -550,6 +570,12 @@ export default {
     },
     tasksWithoutLists() {
       return this.$store.getters['task/tasksWithoutLists'](this.tasks)
+    },
+    periodicTasks() {
+      return this.tasks.filter(el => el.calendar && el.calendar.type === 'periodic')
+    },
+    weeklyTasks() {
+      return this.tasks.filter(el => el.calendar && el.calendar.type === 'weekly')
     },
     tasksWithoutListsAndFolders() {
       return this.$store.getters['task/tasksWithoutListsAndFolders'](this.tasks)
