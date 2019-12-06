@@ -42,6 +42,7 @@
 
                 :mapNumbers='mapFavorites'
                 :mapProgress='mapProgress'
+                @update='updateFavorites'
               />
               <div v-if="!isSingleSection" class="header">
                 <div v-for="(s,i) in notHidedSections" :key="s.name"
@@ -227,6 +228,11 @@ export default {
     update(links) {
       userRef(this.userInfo.userId).set({
         links,
+      }, {merge: true})
+    },
+    updateFavorites(favorites) {
+      userRef(this.userInfo.userId).set({
+        favorites,
       }, {merge: true})
     },
     showSearch() {
