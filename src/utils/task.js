@@ -36,14 +36,16 @@ export default {
     tasks.sort(priority)
     return tasks
   },
-  sortTasksByCreationDate(tasks) {
+  sortTasksByTaskDate(tasks, str) {
+    let name = 'created'
+    if (str) name = str
     const creationDate = (t1, t2) => {
-      const m1 = mom(t1.created, 'Y-M-D')
-      const m2 = mom(t2.created, 'Y-M-D')
+      const m1 = mom(t1[name], 'Y-M-D')
+      const m2 = mom(t2[name], 'Y-M-D')
 
-      if (m1.isValid() && m2.isValid()) return 0
+      if (!m1.isValid() && !m2.isValid()) return 0
       if (m1.isValid() && !m2.isValid()) return -1
-      if (!m1.isValid() && m2.isInvalid()) return 1
+      if (!m1.isValid() && m2.isValid()) return 1
 
       if (m1.isSame(m2, 'minute')) return 0
       if (m1.isBefore(m2, 'minute')) return -1

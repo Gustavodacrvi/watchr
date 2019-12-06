@@ -701,7 +701,7 @@ export default {
 
         let order = []
         if (h.order)
-          order = h.order()
+          order = h.order(ts)
         ts = utils.checkMissingIdsAndSortArr(order, ts)
         ts = utilsTask.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
 

@@ -139,7 +139,7 @@ export default {
                       name: this.l['Sort by creation date'],
                       icon: 'calendar',
                       callback: () => {
-                        const tasks = utilsTask.sortTasksByCreationDate(getTasks())
+                        const tasks = utilsTask.sortTasksByTaskDate(getTasks())
                         saveOrder(tasks.map(el => el.id))
                       },
                     },
@@ -236,7 +236,7 @@ export default {
                       name: this.l['Sort by creation date'],
                       icon: 'priority',
                       callback: () => {
-                        const tasks = utilsTask.sortTasksByCreationDate(getTasks())
+                        const tasks = utilsTask.sortTasksByTaskDate(getTasks())
                         saveOrder(tasks.map(el => el.id))
                       },
                     },
@@ -387,6 +387,7 @@ export default {
         const date = tod.format('Y-M-D')
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
+          order: ts => utilsTask.sortTasksByTaskDate(ts),
           filter: () => {
             return this.filterTasksByDay(filtered, date, true)
           },
@@ -415,6 +416,7 @@ export default {
       arr.push({
         name: this.l['This month'],
         calendarStr: true,
+        order: ts => utilsTask.sortTasksByTaskDate(ts),
         filter: () => {
           return this.filterTasksByPeriod(after7DaysTasks, tod, 'month', true)
         },
@@ -428,6 +430,7 @@ export default {
       arr.push({
         name: this.l['This year'],
         calendarStr: true,
+        order: ts => utilsTask.sortTasksByTaskDate(ts),
         filter: () => {
           return this.filterTasksByPeriod(inOneMonthTasks, tod, 'year', true)
         },
@@ -441,6 +444,7 @@ export default {
       arr.push({
         name: this.l['Next years'],
         calendarStr: true,
+        order: ts => utilsTask.sortTasksByTaskDate(ts),
         filter: () => {
           return inOneYearTasks
         },
@@ -470,6 +474,7 @@ export default {
       for (const date of dates) {
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
+          order: ts => utilsTask.sortTasksByTaskDate(ts, 'fullCompleteDate'),
           filter: () => {
             if (cache[date]) return cache[date]
             const result = this.filterTasksByDay(filtered, date, true)

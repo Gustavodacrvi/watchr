@@ -105,8 +105,7 @@ import utils from '@/utils/index'
 import mom from 'moment/src/moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot',
-  ,  'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart'],
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,

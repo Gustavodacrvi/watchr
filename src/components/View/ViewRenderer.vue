@@ -157,7 +157,7 @@ export default {
     },
     sortByDate() {
       let tasks = this.tasks.slice()
-      tasks = utilsTask.sortTasksByCreationDate(tasks)
+      tasks = utilsTask.sortTasksByTaskDate(tasks)
       this.updateIds(tasks.map(el => el.id))
     },
 

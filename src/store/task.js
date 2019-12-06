@@ -486,6 +486,7 @@ export default {
         batch.update(ref, {
           completedFire: serverTimestamp(),
           completeDate: mom().format('Y-M-D'),
+          fullCompleteDate: mom().format('Y-M-D HH:mm'),
           completed: true,
           calendar,
         })
