@@ -82,14 +82,17 @@ export default {
       if (callback) callback()
     },
     getOptions() {
-      const { search, tasks, tags, lists } = this
+      const { search, tasks, tags, lists, folders } = this
       if (!search) return []
       const lower = search.toLowerCase()
       const arr = []
 
-      const tg = tags.filter(el => el.name.toLowerCase().includes(lower))
-      const lt = lists.filter(el => el.name.toLowerCase().includes(lower))
-      const ts = tasks.filter(el => el.name.toLowerCase().includes(lower))
+      const filter = arr => arr.filter(el => el.name.toLowerCase().includes(lower))
+
+      const tg = filter(tags)
+      const lt = filter(lists)
+      const ts = filter(tasks)
+      const fs = filter(folders)
 
       const go = (route) => this.$router.push(route)
 
@@ -100,6 +103,14 @@ export default {
           id: t.id,
           color: 'var(--red)',
           callback: () => go('/user?tag=' + t.name)
+        })
+      for (const f of folders)
+        arr.push({
+          name: f.name,
+          icon: 'folder',
+          id: f.id,
+          color: '',
+          callback: () => go('/user?folder=' + f.name)
         })
       for (const l of lt)
         arr.push({
@@ -152,6 +163,7 @@ export default {
       tasks: state => state.task.tasks,
       tags: state => state.tag.tags,
       lists: state => state.list.lists,
+      folders: state => state.folder.folders,
     }),
     ...mapGetters(['isStandAlone']),
   },
