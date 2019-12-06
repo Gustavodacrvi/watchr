@@ -330,13 +330,13 @@ export default {
       return null
     },
     mapFavorites(link) {
+      if (link.type === 'tag')
+        return {
+          total: this.getNumberOfTasksByTag(link.id).total,
+        }
+
       return {
         total: 0
-      }
-      switch (link.type) {
-        case 'lists': {
-
-        }
       }
     },
   },
@@ -351,6 +351,7 @@ export default {
       isStandAlone: 'isStandAlone',
       isDesktop: 'isDesktop',
       l: 'l',
+      getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView',
       favLists: 'list/getFavoriteLists',
       isTaskCompleted: 'task/isTaskCompleted',
