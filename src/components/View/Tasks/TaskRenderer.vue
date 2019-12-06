@@ -722,12 +722,12 @@ export default {
 
 .head-t-enter-to, .head-t-leave {
   transition-duration: .6s;
-  margin: 18px 0;
+  margin: 14px 0;
 }
 
 .head-t-enter-to .header-wrapper, .head-t-leave .header-wrapper {
   transition-duration: .6s;
-  margin: 18px 0 !important;
+  margin: 14px 0 !important;
   margin-bottom: 10px !important;
   height: 45px !important;
   opacity: 1 !important;

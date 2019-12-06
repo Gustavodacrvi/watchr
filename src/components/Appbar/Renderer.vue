@@ -213,7 +213,7 @@ export default {
       el.style.height = '0px'
       setTimeout(() => {
         el.style.opacity = 1
-        el.style.height = '35px'
+        el.style.height = (this.isDesktop ? 35 : 42) + 'px'
         setTimeout(() => done(), 300)
       })
     },
@@ -242,6 +242,7 @@ export default {
   },
   computed: {
     ...mapState(['selectedTasks']),
+    ...mapGetters(['isDesktop']),
     draggableRoot() {
       return this.$el.getElementsByClassName('appnav-renderer-root')[0]
     },

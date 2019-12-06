@@ -17,7 +17,7 @@
               <AppnavRenderer
                 type='list'
                 :enableSort='true'
-                :disabled='!isDesktop'
+                :disabled='false'
                 :disableSelection='true'
                 :list='getLinksOrdered'
                 :active='value'

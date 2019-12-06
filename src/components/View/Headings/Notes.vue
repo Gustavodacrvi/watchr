@@ -54,9 +54,11 @@ export default {
     },
     fixHeight() {
       setTimeout(() => {
-        const el =this.$refs.notes
-        el.style.height = '5px'
-        el.style.height = (el.scrollHeight) + 'px'
+        const el = this.$refs.notes
+        if (el) {
+          el.style.height = '5px'
+          el.style.height = (el.scrollHeight) + 'px'
+        }
       })
     },
     leaveNote(el) {

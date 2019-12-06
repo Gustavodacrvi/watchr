@@ -19,12 +19,12 @@
           @touchstart='touchStart'
           @touchend='touchEnd'
         >
-          <div class="circle-wrapper-wrapper">
-            <div class="circle-wrapper">
+          <div class="circle-trans-wrapper-wrapper">
+            <div class="circle-trans-wrapper">
               <transition
                 @enter='circleEnter'
               >
-                <div v-if="showCircle" class="circle-transition" :style="{left, top, backgroundImage: `radial-gradient(${innerColor}, ${outerColor})`}"></div>
+                <div v-if="showCircle" class="circle-trans-transition" :style="{left, top, backgroundImage: `radial-gradient(${innerColor}, ${outerColor})`}"></div>
               </transition>
             </div>
           </div>
@@ -667,6 +667,33 @@ export default {
 
 </script>
 
+<style>
+
+.circle-trans-wrapper-wrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.circle-trans-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.circle-trans-transition {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  opacity: .4;
+  border-radius: 1000px;
+}
+
+</style>
+
 <style scoped>
 
 .Task {
@@ -688,29 +715,6 @@ export default {
 
 .mobile .cont-wrapper {
   height: 50px;
-}
-
-.circle-wrapper-wrapper {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.circle-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.circle-transition {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  opacity: .4;
-  border-radius: 1000px;
 }
 
 .hided {

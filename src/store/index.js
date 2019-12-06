@@ -109,7 +109,7 @@ const store = new Vuex.Store({
     },
     getInitialSmartView(state) {
       const arr = state.userInfo.links
-      if (arr) return arr[0]
+      if (arr && arr[0]) return arr[0]
       return 'Today'
     },
     isStandAlone() {

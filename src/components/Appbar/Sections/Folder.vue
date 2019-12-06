@@ -1,6 +1,6 @@
 
 <template>
-  <div class="Folder AppbarElement">
+  <div class="Folder AppbarElement" :class="platform">
     <div class="header rb cursor handle-folder AppbarElement-link"
       @click="go"
       @mouseenter="headerHover = true"
@@ -95,7 +95,7 @@ export default {
   },
   computed: {
     ...mapState(['selectedTasks', 'isOnControl']),
-    ...mapGetters(['l', 'isDesktop']),
+    ...mapGetters(['l', 'isDesktop', 'platform']),
     options() {
       return folderUtils.getFolderOptions({
         id: this.id, name: this.name,
@@ -128,6 +128,10 @@ export default {
   display: flex;
   height: 35px;
   transition-duration: .15s;
+}
+
+.mobile .header {
+  height: 42px;
 }
 
 .header:hover {

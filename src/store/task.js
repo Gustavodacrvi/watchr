@@ -258,8 +258,6 @@ export default {
         }
         return false
       },
-    }),
-    ...MemoizeGetters(['tasks'], {
       filterTasksByDay({getters}, tasks, date, specific) {
         return tasks.filter(el => {
           if (!utilsTask.hasCalendarBinding(el) || el.calendar.type === 'someday')
@@ -271,6 +269,20 @@ export default {
       filterTasksByCompletionDate({}, tasks, date) {
         return tasks.filter(el => {
           return el.completeDate === date
+        })
+      },
+      filterTasksByOverdue({getters}, tasks) {
+        return tasks.filter(el => {
+          if (!utilsTask.hasCalendarBinding(el) || getters.isTaskCompleted(el))
+            return false
+          return getters.isTaskOverdue(el.calendar)
+        })
+      },
+      filterTasksByCompletion({getters},tasks, notCompleted, compareDate) {
+        return tasks.filter(el => {
+          const comp = getters.isTaskCompleted(el, compareDate)
+          if (notCompleted) return !comp
+          return comp
         })
       },
       filterTasksByView({getters}, tasks, view) {
@@ -310,20 +322,44 @@ export default {
           return getters.isCalendarObjectShowingThisPeriod(el.calendar, moment, period, specific)
         })
       },
-      filterTasksByOverdue({getters}, tasks) {
-        return tasks.filter(el => {
-          if (!utilsTask.hasCalendarBinding(el) || getters.isTaskCompleted(el))
-            return false
-          return getters.isTaskOverdue(el.calendar)
-        })
+      getLostTasks(c, tasks, list) {
+        const headingNames = list.headings.map(el => el.name)
+        return tasks.filter(el => !headingNames.includes(el.heading))
       },
-      filterTasksByCompletion({getters},tasks, notCompleted, compareDate) {
-        return tasks.filter(el => {
-          const comp = getters.isTaskCompleted(el, compareDate)
-          if (notCompleted) return !comp
-          return comp
-        })
+      getTasksWithHeading(c, tasks) {
+        return tasks.filter(el => el.heading)
       },
+      tasksWithLists(c, tasks) {
+        return tasks.filter(el => el.list)
+      },
+      tasksWithoutLists(c, tasks) {
+        return tasks.filter(el => !el.list)
+      },
+      tasksWithoutListsAndFolders(c, tasks) {
+        return tasks.filter(el => !el.list && !el.folder)
+      },
+      tasksWithListsOrFolders(c, tasks) {
+        return tasks.filter(el => el.list || el.folder)
+      },
+      getListTasks({getters}, tasks, listId) {
+        return getters['tasksWithLists'](tasks).filter(t => t.list === listId)
+      },
+      getRootTasksOfList({getters}, tasks, list) {
+        const ts = [...getters['tasksWithLists'](tasks).filter(t => !t.heading), ...getters['getLostTasks'](tasks, list)]
+
+        const unique = []
+        const set = new Set()
+        for (const t of ts) {
+          if (!set.has(t.id)) {
+            unique.push(t)
+            set.add(t.id)
+          }
+        }
+
+        return unique
+      },
+    }),
+    ...MemoizeGetters(['tasks'], {
       getNumberOfTasksByTag({getters, state}, tagId) {
         const ts = state.tasks.filter(el => el.tags.includes(tagId))
   
@@ -347,42 +383,6 @@ export default {
           total: ts.length,
           notCompleted: getters.filterTasksByCompletion(ts, true).length,
         }
-      },
-      getLostTasks(c, tasks, list) {
-        const headingNames = list.headings.map(el => el.name)
-        return tasks.filter(el => !headingNames.includes(el.heading))
-      },
-      getTasksWithHeading(c, tasks) {
-        return tasks.filter(el => el.heading)
-      },
-      getRootTasksOfList({getters}, tasks, list) {
-        const ts = [...getters['tasksWithLists'](tasks).filter(t => !t.heading), ...getters['getLostTasks'](tasks, list)]
-
-        const unique = []
-        const set = new Set()
-        for (const t of ts) {
-          if (!set.has(t.id)) {
-            unique.push(t)
-            set.add(t.id)
-          }
-        }
-
-        return unique
-      },
-      getListTasks({getters}, tasks, listId) {
-        return getters['tasksWithLists'](tasks).filter(t => t.list === listId)
-      },
-      tasksWithLists(c, tasks) {
-        return tasks.filter(el => el.list)
-      },
-      tasksWithoutLists(c, tasks) {
-        return tasks.filter(el => !el.list)
-      },
-      tasksWithoutListsAndFolders(c, tasks) {
-        return tasks.filter(el => !el.list && !el.folder)
-      },
-      tasksWithListsOrFolders(c, tasks) {
-        return tasks.filter(el => el.list || el.folder)
       },
     }),
   },
