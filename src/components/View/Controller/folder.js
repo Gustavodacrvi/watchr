@@ -27,7 +27,6 @@ export default {
         })
       }
     },
-    updateHeadingIds(ids) {},
     saveHeaderName(name) {
       if (this.viewFolder) {
         if (this.$store.getters['folder/getFoldersByName']([name])[0])

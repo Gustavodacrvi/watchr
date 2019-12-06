@@ -33,7 +33,25 @@ export default {
       }
       return 0
     }
-    tasks.sort((a, b) => priority(a, b))
+    tasks.sort(priority)
+    return tasks
+  },
+  sortTasksByTaskDate(tasks, str) {
+    let name = 'created'
+    if (str) name = str
+    const creationDate = (t1, t2) => {
+      const m1 = mom(t1[name], 'Y-M-D')
+      const m2 = mom(t2[name], 'Y-M-D')
+
+      if (!m1.isValid() && !m2.isValid()) return 0
+      if (m1.isValid() && !m2.isValid()) return -1
+      if (!m1.isValid() && m2.isValid()) return 1
+
+      if (m1.isSame(m2, 'second')) return 0
+      if (m1.isBefore(m2, 'second')) return -1
+      if (m2.isBefore(m1, 'second')) return 1
+    }
+    tasks.sort(creationDate)
     return tasks
   },
   hasCalendarBinding(task) {

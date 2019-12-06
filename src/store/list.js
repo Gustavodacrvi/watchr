@@ -5,7 +5,7 @@ import fb from 'firebase/app'
 import utils from '../utils'
 import utilsTask from "@/utils/task"
 import MemoizeGetters from './memoFunctionGetters'
-import { listRef, userRef, uid, listColl, taskRef, serverTimestamp, fd, addTask } from '../utils/firestore'
+import { listRef, userRef, uid, listColl, taskRef, serverTimestamp, fd, addTask, folderRef } from '../utils/firestore'
 import router from '../router'
 
 import mom from 'moment/src/moment'
@@ -102,7 +102,8 @@ export default {
 
       const createTasks = (arr, tasks) => {
         for (const t of tasks) {
-          batch.set(taskRef(), {
+          const ref = taskRef()
+          batch.set(ref, {
             ...t, id: null, list: newListRef.id,
           })
           arr.push({
@@ -244,6 +245,48 @@ export default {
 
     // TASKS
     
+    addTaskByIndexSmartViewFolder(c, {ids, index, task, folderId, viewName}) {
+      const batch = fire.batch()
+
+      const newTaskRef = taskRef()
+      addTask(batch, {
+        userId: uid(),
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D HH:mm ss'),
+        ...task,
+      }, newTaskRef).then(() => {
+        ids.splice(index, 0, newTaskRef.id)
+
+        const views = {}
+        views[viewName] = ids
+        batch.set(folderRef(folderId), {
+          smartViewsOrders: views,
+        }, {merge: true})
+
+        batch.commit()
+      }) 
+    },
+    addTaskByIndexSmartViewList(c, {ids, index, task, listId, viewName}) {
+      const batch = fire.batch()
+
+      const newTaskRef = taskRef()
+      addTask(batch, {
+        userId: uid(),
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D HH:mm ss'),
+        ...task,
+      }, newTaskRef).then(() => {
+        ids.splice(index, 0, newTaskRef.id)
+
+        const views = {}
+        views[viewName] = ids
+        batch.set(listRef(listId), {
+          smartViewsOrders: views,
+        }, {merge: true})
+
+        batch.commit()
+      }) 
+    },
     addTaskByIndexSmart(c, {ids, index, task, list}) {
       const batch = fire.batch()
 
@@ -251,7 +294,7 @@ export default {
       addTask(batch, {
         userId: uid(),
         createdFire: serverTimestamp(),
-        created: mom().format('Y-M-D'),
+        created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, newTaskRef).then(() => {
         ids.splice(index, 0, newTaskRef.id)
@@ -274,7 +317,7 @@ export default {
       const newTaskRef = taskRef()
       addTask(batch, {
         createdFire: serverTimestamp(),
-        created: mom().format('Y-M-D'),
+        created: mom().format('Y-M-D HH:mm ss'),
         userId: uid(),
         ...task,
       }, newTaskRef).then(() => {

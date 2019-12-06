@@ -16,15 +16,16 @@
             </transition>
               <AppnavRenderer
                 type='list'
-                :enableSort='false'
-                :disabled='!isDesktop'
+                :enableSort='true'
+                :disabled='false'
                 :disableSelection='true'
-                :list='links'
+                :list='getLinksOrdered'
                 :active='value'
                 :viewType='viewType'
                 :onTaskDrop='onTaskDrop'
                 :mapNumbers='numberOfTasks'
                 :isSmart='true'
+                @update='update'
                 @apply='applySelectedTasks'
               />
               <div v-if="!isSingleSection" class="header">
@@ -94,6 +95,9 @@ import SearchButtonVue from './SearchButton.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
+import utils from '@/utils'
+import { userRef } from '@/utils/firestore'
+
 export default {
   props: ['value', 'viewType', 'appbarHided'],
   components: {
@@ -107,27 +111,32 @@ export default {
     SearchButton: SearchButtonVue,
   },
   data() {
+    const selectView = str => {
+      this.$store.commit('navigate', str)
+      this.$router.push(`/user?list=${str}`)
+    }
+    
     return {
       links: [
         {
           name: 'Today',
           id: 'Today',
           icon: 'star',
-          callback: () => this.$router.push('/user?list=Today'),
+          callback: () => selectView('Today'),
           iconColor: 'var(--yellow)',
         },
         {
           name: 'Tomorrow',
           id: 'Tomorrow',
           icon: 'sun',
-          callback: () => this.$router.push('/user?list=Tomorrow'),
+          callback: () => selectView('Tomorrow'),
           iconColor: 'var(--orange)',
         },
         {
           name: 'Someday',
           id: 'Someday',
           icon: 'archive',
-          callback: () => this.$router.push('/user?list=Someday'),
+          callback: () => selectView('Someday'),
           iconColor: 'var(--brown)'
         },
         {
@@ -135,7 +144,7 @@ export default {
           id: 'Inbox',
           icon: 'inbox',
           disableAction: true,
-          callback: () => this.$router.push('/user?list=Inbox'),
+          callback: () => selectView('Inbox'),
           iconColor: 'var(--primary)',
         },
         {
@@ -143,14 +152,14 @@ export default {
           id: 'Upcoming',
           icon: 'calendar',
           disableAction: true,
-          callback: () => this.$router.push('/user?list=Upcoming'),
+          callback: () => selectView('Upcoming'),
           iconColor: 'var(--green)'
         },
         {
           name: 'Completed',
           id: 'Completed',
           icon: 'circle-check',
-          callback: () => this.$router.push('/user?list=Completed'),
+          callback: () => selectView('Completed'),
           iconColor: 'var(--olive)'
         },
       ],
@@ -200,6 +209,11 @@ export default {
     window.removeEventListener('resize', this.moveLineToActive)
   },
   methods: {
+    update(links) {
+      userRef(this.userInfo.userId).set({
+        links,
+      }, {merge: true})
+    },
     showSearch() {
       this.showingSearch = true
       if (this.searchTimeout)
@@ -308,6 +322,15 @@ export default {
       l: 'l',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView'
     }),
+    linksOrder() {
+      if (this.userInfo && this.userInfo.links) {
+        return this.userInfo.links
+      }
+      return ['Today', 'Tomorrow', 'Someday', 'Inbox', 'Upcoming', 'Completed']
+    },
+    getLinksOrdered() {
+      return utils.checkMissingIdsAndSortArr(this.linksOrder, this.links)
+    },
     getOptions() {
       const opt = this.getSectionOptions.slice()
 

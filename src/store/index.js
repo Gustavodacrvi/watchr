@@ -84,6 +84,7 @@ const store = new Vuex.Store({
       tags: [],
       viewOrders: {},
       hidedSections: null,
+      links: [],
     },
     firstFireLoad: false,
     selectedTasks: [],
@@ -97,6 +98,7 @@ const store = new Vuex.Store({
     windowWidth: 0,
     isScrolling: false,
     allowNavHide: true,
+    currentView: '',
   },
   getters: {
     isDesktop(state) {
@@ -105,6 +107,11 @@ const store = new Vuex.Store({
     platform(s, getters) {
       if (getters.isDesktop) return 'desktop'
       return 'mobile'
+    },
+    getInitialSmartView(state) {
+      const arr = state.userInfo.links
+      if (arr && arr[0]) return arr[0]
+      return 'Today'
     },
     isStandAlone() {
       const navigator = window.navigator
@@ -128,6 +135,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    navigate(state, str) {
+      state.currentView = str
+    },
     readFile(state, fileURL) {
       state.fileURL = fileURL
     },
@@ -220,8 +230,11 @@ const store = new Vuex.Store({
         case 't': pop('AddTag'); break
         case 'l': pop('AddList'); break
         case 'f': commit('openFastSearch'); break
-        case 'Delete': {
-          if (state.selectedTasks.length > 0) dispatch('task/deleteTasks', state.selectedTasks)
+        case 'delete': {
+          if (state.selectedTasks.length > 0) {
+            dispatch('task/deleteTasks', state.selectedTasks)
+            state.selectedTasks = []
+          }
           break
         }
       }
@@ -253,13 +266,13 @@ const store = new Vuex.Store({
         resolve()
       })
     },
-    update({state}, info) {
+    update({}, info) {
       const batch = fire.batch()
       
       const userRef = fire.collection('users').doc(info.uid)
-      batch.update(userRef, {
+      batch.set(userRef, {
         ...utils.getRelevantUserData(info, true),
-      })
+      }, {merge: true})
       return batch.commit()
     },
     createUser(s, user) {

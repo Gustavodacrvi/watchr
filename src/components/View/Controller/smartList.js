@@ -24,12 +24,6 @@ export default {
         ids,
       })
     },
-    updateHeadingIds(ids) {
-      this.$store.dispatch('list/updateHeadingsViewOrder', {
-        view: this.viewName,
-        ids,
-      })
-    },
     removeRepeat() {},
     removeDeadline() {},
     removeHeaderTag() {},
@@ -45,6 +39,16 @@ export default {
   },
   computed: {
     icon() {return null},
+    updateHeadingIds(ids) {
+      if (this.viewName !== 'Upcoming' && this.viewName !== 'Completed')
+        return ids => {
+            this.$store.dispatch('list/updateHeadingsViewOrder', {
+            view: this.viewName,
+            ids,
+          })
+        }
+      return null
+    },
     viewNameValue() {
       if (this.viewType === 'search') return this.l["Search"]
       if (this.isSmart) return this.l[this.viewName]

@@ -5,11 +5,10 @@
         <Icon :icon='illustration' color='var(--appnav-color)' width="150px"/>
       </div>
     </transition>
-    <transition-group name="task-trans" class="front task-renderer-root" :class="{dontHaveTasks: tasks.length === 0 && headings.length === 0, showEmptyHeadings}"
-      appear
-      tag="div"
-      @enter="enter"
-      @leave="leave"
+    <div
+      class="front task-renderer-root"
+      :class="{dontHaveTasks: tasks.length === 0 && headings.length === 0, showEmptyHeadings}"
+
       data-name='task-renderer'
     >
       <Task v-for="item of getTasks" :key="item.id" 
@@ -17,27 +16,29 @@
 
         :taskHeight='taskHeight'
         :task='item'
+        :isRoot='isRoot'
         :isSelecting='isSelecting'
         :enableSelect='enableSelect'
         :multiSelectOptions='options'
         :isDragging='isDragging'
         :isScrolling='isScrolling'
         @de-select='deSelectTask'
+        @task-trans='fixTaskRenderer'
 
         :data-id='item.id'
+        :data-item='item.name'
         :data-type='`task`'
       />
-    </transition-group>
+    </div>
     <ButtonVue v-if="showMoreItemsButton"
       type="dark"
       :value='showMoreItemsMessage'
       @click="showingMoreItems = true"
     />
-    <transition-group
+    <transition-group v-if="isRoot"
       appear
       class="front headings-root"
-      @leave='headingsLeave'
-      @enter='headingsEnter'
+      name="head-t"
       tag="div"
     >
       <template v-for="(h, i) in lazyHeadings">
@@ -65,11 +66,12 @@
             :tasks='filter(h)'
             :hideListName="h.hideListName"
             :allowCalendarStr='h.calendarStr'
+            :disableSortableMount='h.disableSortableMount'
             :hideFolderName="h.hideFolderName"
             :showHeadingName="h.showHeadingName"
             :onSortableAdd='h.onSortableAdd'
             @add-heading='(obj) => $emit("add-heading", obj)'
-            @update="ids => updateHeadingIds(h,ids)"
+            @update="ids => updateHeadingTaskIds(h,ids)"
 
             :headings='[]'
             :header="h"
@@ -109,7 +111,7 @@ import utils from '@/utils/'
 let headingsFilterCache = {}
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart', 'allowCalendarStr', 'updateHeadingIds', 'disableSortableMount',
   'viewType', 'options', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -141,173 +143,183 @@ export default {
   },
   mounted() {
     let move = null
-    const removeTaskOnHoverFromAppnavElements = (el) => {
-      const items = document.getElementsByClassName('AppbarElement-link')
-      for (const i of items) {
-        if (el && i === el) continue
-        i.setAttribute('id', '')
-        i.style.backgroundColor = 'initial'
-        i.style.boxShadow = 'initial'
-        if (i.dataset.type === 'folder')
-          i.style.color = 'var(--white)'
+    if (this.isRoot || this.onSortableAdd || this.addTask) {
+      const removeTaskOnHoverFromAppnavElements = (el) => {
+        const items = document.getElementsByClassName('AppbarElement-link')
+        for (const i of items) {
+          if (el && i === el) continue
+          i.setAttribute('id', '')
+          i.style.backgroundColor = 'initial'
+          i.style.boxShadow = 'initial'
+          if (i.dataset.type === 'folder')
+            i.style.color = 'var(--white)'
+        }
       }
-    }
-    const obj = {
-      multiDrag: this.enableSelect,
-      direction: 'horizontal',
-      group: {
-        name: 'task-renderer',
-        pull: (e,j,item) => {
-          const d = item.dataset
-          if (e.el.dataset.name === 'appnav-renderer') return 'clone'
-          if (d.type === 'task') return true
-          return false
+      const obj = {
+        disabled: this.disableSortableMount,
+        multiDrag: this.enableSelect,
+        direction: 'horizontal',
+        group: {
+          name: 'task-renderer',
+          pull: (e,j,item) => {
+            const d = item.dataset
+            if (e.el.dataset.name === 'appnav-renderer') return 'clone'
+            if (d.type === 'task') return true
+            return false
+          },
+          put: (j,o,item) => {
+            const d = item.dataset
+            if (d.type === 'appnav-element') return true
+            if (!this.onSortableAdd) return false
+            if (d.type === 'task') return true
+            if (d.type === 'floatbutton') return true
+            if (d.type === 'subtask') return true
+            if (d.type === 'headingbutton') return true
+            return false
+          }
         },
-        put: (j,o,item) => {
-          const d = item.dataset
-          if (d.type === 'appnav-element') return true
-          if (!this.onSortableAdd) return false
-          if (d.type === 'task') return true
-          if (d.type === 'floatbutton') return true
-          if (d.type === 'subtask') return true
-          if (d.type === 'headingbutton') return true
-          return false
-        }
-      },
-      delay: 150,
-      delayOnTouchOnly: true,
-      handle: '.handle',
-
-      onUpdate: (evt) => {
-        setTimeout(() => {
-          this.$emit('update', this.getIds(true))
-        }, 100)
-      },
-      onSelect: evt => {
-        if (this.justScrolled && !this.isDesktop)
-          this.deSelectTask(evt.item)
-        this.justScrolled = false
-        const id = evt.item.dataset.id
-        if (id !== "Edit" && !this.selected.includes(id))
-          this.$store.commit('selectTask', id)
-      },
-      onDeselect: evt => {
-        const id = evt.item.dataset.id
-        this.$store.commit('unselectTask', id)
-      },
-      onAdd: (evt) => {
-        const items = evt.items
-        if (items.length === 0) items.push(evt.item)
-        const type = items[0].dataset.type
-
-        const addEdit = (comp, onSave, propsData) => {
-          const Constructor = Vue.extend(comp)
-          const instance = new Constructor({
-            parent: this,
-            propsData,
-          })
-          const el = this.$el.querySelector('.action-button')
-          el.setAttribute('id', 'edit-task-renderer')
-          instance.$mount('#edit-task-renderer')
-          this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
-          this.applyEventListenersToEditVueInstance(instance, onSave, evt)
-        }
-        
-        if (type !== 'addtask')
-          for (const item of items)
-            item.style.display = 'none'
-        if (type === 'task' && this.onSortableAdd)
-          this.onSortableAdd(evt, items.map(el => el.dataset.id), type, this.getIds(true))
-        if (type === 'floatbutton') {
-          addEdit(TaskEditTemplate, this.add, {
-              key: 'Edit',
-              placeholder: this.l['Task name...'],
-              notesPlaceholder: this.l['Notes...'], showCancel: true, btnText: this.l['Add task']
-            })
-        } else if (type === 'headingbutton') {
-          const h = this.headingEdit
-          addEdit(HeadingEditVue, this.addHeading, {
-              key: 'EditHeading',
-              errorToast: h.errorToast, names: h.excludeNames,
-              buttonTxt: this.l['Save'],
-            })
-        }
-      },
-      onStart: (evt) => {
-        this.isDragging = true
-        window.navigator.vibrate(100)
-      },
-      onEnd: (e, t) => {
-        this.isDragging = false
-        removeTaskOnHoverFromAppnavElements()
-        if (move) {
-          const specialTypes = ['Today', 'Completed', 'Tomorrow', 'Someday']
-          if (specialTypes.includes(move.elId))
-            move.type = move.elId
-          this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
-            elIds: [move.elId],
-            taskIds: [move.taskId],
-            type: move.type,
-          })
-        }
-        move = null
-      },
-      onMove: (t, e) => {
-        let el = e.target
-
-        if (!el.classList.contains('AppbarElement-link'))
-          el = el.closest('.AppbarElement-link')
-        if (el) {
-          const data = el.dataset
-          const wrapper = el.closest('.AppbarElement')
-          removeTaskOnHoverFromAppnavElements(el)
-          if (wrapper && !data.disabled) {
-            move = {}
-            const color = data.color
-            move.taskId = t.dragged.dataset.id
-            move.elId = wrapper.dataset.id
-            move.type = data.type
-  
-            el.setAttribute('id', 'task-on-hover')
-            el.style.backgroundColor = color
-            el.style.boxShadow = `0 2px 10px ${color}`
-            if (data.type === 'folder')
-              el.style.color = 'var(--gray)'
-          } else move = null
-        } else move = null
-        if (e && e.path && !e.path.some(el => el.classList && el.classList.contains('task-renderer-root')))
-          return false
-      },
-    }
-    if (this.isDesktop)
-      obj['multiDragKey'] = this.getMultiDragKey
-    this.sortable = new Sortable(this.draggableRoot, obj)
-    const el = this.$el.getElementsByClassName('headings-root')[0]
-    if (el) {
-      this.headSort = new Sortable(el, {
-        group: 'headings',
-        delay: 225,
+        delay: 150,
         delayOnTouchOnly: true,
         handle: '.handle',
-  
+
         onUpdate: (evt) => {
-          const ids = this.getHeadingsIds()
-          this.$emit('update-headings', ids)
+          setTimeout(() => {
+            this.$emit('update', this.getIds(true))
+          }, 100)
         },
-        onStart: evt => {
-          this.movingHeading = true
+        onSelect: evt => {
+          if (this.justScrolled && !this.isDesktop)
+            this.deSelectTask(evt.item)
+          this.justScrolled = false
+          const id = evt.item.dataset.id
+          if (id !== "Edit" && !this.selected.includes(id))
+            this.$store.commit('selectTask', id)
         },
-        onEnd: evt => {
-          this.movingHeading = false
+        onDeselect: evt => {
+          const id = evt.item.dataset.id
+          this.$store.commit('unselectTask', id)
         },
-      })
+        onAdd: (evt) => {
+          const items = evt.items
+          if (items.length === 0) items.push(evt.item)
+          const type = items[0].dataset.type
+
+          const addEdit = (comp, onSave, propsData) => {
+            const Constructor = Vue.extend(comp)
+            const instance = new Constructor({
+              parent: this,
+              propsData,
+            })
+            const el = this.$el.querySelector('.action-button')
+            el.setAttribute('id', 'edit-task-renderer')
+            instance.$mount('#edit-task-renderer')
+            this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
+            this.applyEventListenersToEditVueInstance(instance, onSave, evt)
+          }
+          
+          if (type !== 'addtask')
+            for (const item of items)
+              item.style.display = 'none'
+          if (type === 'task' && this.onSortableAdd)
+            this.onSortableAdd(evt, items.map(el => el.dataset.id), type, this.getIds(true))
+          if (type === 'floatbutton') {
+            addEdit(TaskEditTemplate, this.add, {
+                key: 'Edit',
+                placeholder: this.l['Task name...'],
+                notesPlaceholder: this.l['Notes...'], showCancel: true, btnText: this.l['Add task']
+              })
+          } else if (type === 'headingbutton') {
+            const h = this.headingEdit
+            addEdit(HeadingEditVue, this.addHeading, {
+                key: 'EditHeading',
+                errorToast: h.errorToast, names: h.excludeNames,
+                buttonTxt: this.l['Save'],
+              })
+          }
+        },
+        onStart: (evt) => {
+          this.isDragging = true
+          window.navigator.vibrate(100)
+        },
+        onEnd: (e, t) => {
+          this.isDragging = false
+          removeTaskOnHoverFromAppnavElements()
+          if (move) {
+            const specialTypes = ['Today', 'Completed', 'Tomorrow', 'Someday']
+            if (specialTypes.includes(move.elId))
+              move.type = move.elId
+            this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+              elIds: [move.elId],
+              taskIds: [move.taskId],
+              type: move.type,
+            })
+          }
+          move = null
+        },
+        onMove: (t, e) => {
+          let el = e.target
+
+          if (!el.classList.contains('AppbarElement-link'))
+            el = el.closest('.AppbarElement-link')
+          if (el) {
+            const data = el.dataset
+            const wrapper = el.closest('.AppbarElement')
+            removeTaskOnHoverFromAppnavElements(el)
+            if (wrapper && !data.disabled) {
+              move = {}
+              const color = data.color
+              move.taskId = t.dragged.dataset.id
+              move.elId = wrapper.dataset.id
+              move.type = data.type
+    
+              el.setAttribute('id', 'task-on-hover')
+              el.style.backgroundColor = color
+              el.style.boxShadow = `0 2px 10px ${color}`
+              if (data.type === 'folder')
+                el.style.color = 'var(--gray)'
+            } else move = null
+          } else move = null
+          if (e && e.path && !e.path.some(el => el.classList && el.classList.contains('task-renderer-root')))
+            return false
+        },
+      }
+      if (this.isDesktop)
+        obj['multiDragKey'] = this.getMultiDragKey
+      this.sortable = new Sortable(this.draggableRoot, obj)
+    }
+
+    if (this.isRoot) {
+      const el = this.$el.getElementsByClassName('headings-root')[0]
+      if (el) {
+        this.headSort = new Sortable(el, {
+          disabled: !this.updateHeadingIds,
+          group: 'headings',
+          delay: 225,
+          delayOnTouchOnly: true,
+          handle: '.handle',
+    
+          onUpdate: (evt) => {
+            const ids = this.getHeadingsIds()
+            if (this.updateHeadingIds)
+              this.updateHeadingIds(ids)
+          },
+          onStart: evt => {
+            this.movingHeading = true
+          },
+          onEnd: evt => {
+            this.movingHeading = false
+          },
+        })
+      }
     }
     window.addEventListener('click', this.windowClick)
     window.addEventListener('keydown', this.keydown)
   },
   beforeDestroy() {
-    this.sortable.destroy()
-    this.headSort.destroy()
+    if (this.sortable)
+      this.sortable.destroy()
+    if (this.headSort)
+      this.headSort.destroy()
     window.removeEventListener('click', this.windowClick)
     window.removeEventListener('keydown', this.keydown)
   },
@@ -317,7 +329,7 @@ export default {
         this.lazyTasks = []
         let i = 0
         const length = tasks.length
-        const timeout = length / 5
+        const timeout = length * 2.5
         const add = (task) => {
           this.lazyTasks.push(task)
           if ((i + 1) !== length)
@@ -338,8 +350,8 @@ export default {
         this.lazyHeadings = []
         let i = 0
         const length = headings.length
-        let timeout = length * 30
-        if (length < 15) timeout = 50
+        let timeout = this.isDesktop ? 125 : 200
+        if (length < 5 || this.viewName === 'Upcoming') timeout = 20
         const add = (head) => {
           this.lazyHeadings.push(head)
           if ((i + 1) !== length)
@@ -377,7 +389,7 @@ export default {
         })
       }
     },
-    updateHeadingIds(h, ids) {
+    updateHeadingTaskIds(h, ids) {
       if (h.updateIds)
         h.updateIds(ids)
     },
@@ -394,76 +406,6 @@ export default {
     click(event) {
       if (this.selected.length > 0) event.stopPropagation()
     },
-    hideHeading(s) {
-      s.height = '0px'
-      s.margin = 0
-      s.padding = 0
-      s.marginBottom = '0px'
-      s.opacity = 0
-      s.borderBottom = 'none'
-    },
-    showHeading(s) {
-      s.height = '45px'
-      s.opacity = 1
-      s.marginBottom = '10px'
-      s.padding = '0 6px'
-      s.borderBottom = '1px solid var(--light-gray)'
-    },
-    headingsLeave(el) {
-      const header = el.getElementsByClassName('header-wrapper')[0]
-      const root = el.getElementsByClassName('task-renderer-root')[0]
-      const TaskRenderer = el.getElementsByClassName('TaskRenderer')[0]
-      if (header) {
-        const divMargin = el.getElementsByClassName('dontHaveTasks')[0]
-        const s = header.style
-        if (divMargin) {
-          divMargin.style.transitionDuration = '.15s'
-          divMargin.style.height = 0
-        }
-        const sw = el.style
-
-        if (root) {
-          root.style.transitionDuration = '0s'
-          root.style.height = root.offsetHeight + 'px'
-        }
-        s.transitionDuration = '0s'
-        sw.transitionDuration = '0s'
-        sw.margin = '24px 0'
-        this.showHeading(s)
-        setTimeout(() => {
-          if (root) {
-            root.style.transitionDuration = '.15s'
-            root.style.height = '0px'
-            root.style.opacity = 0
-          }
-          TaskRenderer.style.transitionDuration = '.15s'
-          TaskRenderer.style.margin = 0
-          header.style.transitionDuration = '.15s'
-          header.style.margin = 0
-          s.transitionDuration = '.15s'
-          sw.transitionDuration = '.15s'
-          sw.margin = 0
-          this.hideHeading(s)
-        })
-      }
-    },
-    headingsEnter(el) {
-      const header = el.getElementsByClassName('header-wrapper')[0]
-      if (header) {
-        const s = header.style
-        const sw = el.style
-        s.transitionDuration = '0s'
-        sw.transitionDuration = '0s'
-        sw.margin = 0
-        this.hideHeading(s)
-        setTimeout(() => {
-          s.transitionDuration = '.15s'
-          sw.transitionDuration = '.15s'
-          sw.margin = '24px 0'
-          this.showHeading(s)
-        })
-      }
-    },
     deSelectTask(el) {
       Sortable.utils.deselect(el)
     },
@@ -474,7 +416,7 @@ export default {
           index: this.getTaskRendererPosition(),
           header: this.header,
         })
-        this.addedTask = true
+        this.addedTask = task.name
       }
     },
     getTaskRendererPosition() {
@@ -525,39 +467,24 @@ export default {
       return el.getElementsByClassName('cont-wrapper')[0]
     },
     fixTaskRenderer() {
-      setTimeout(() => {
+      if (this.addedTask) {
         const i = this.getTaskRendererPosition()
-        const childNodes = this.draggableRoot.childNodes
+        const root = this.draggableRoot
+        const childNodes = root.childNodes
         const adder = childNodes[i]
-        const newTask = childNodes[i + 1]
-        if (newTask)
-          this.draggableRoot.insertBefore(newTask, adder)
-        this.addedTask = false
-      }, 10)
-    },
-    enter(el) {
-      if (this.addedTask)
-        this.fixTaskRenderer()
-      const cont = this.contWrapper(el)
-      if (cont) {
-        const s = cont.style
-        cont.classList.add('hided')
-        s.height = '0px'
-        s.padding = '2px 0'
-        setTimeout(() => {
-          s.transition = 'height .15s, opacity .15s, transform .1s !important'
-          cont.classList.add('show')
-          s.height = this.taskHeight + 'px'
-          s.padding = '0'
-          cont.classList.remove('hided')
-        }, 50)
-      }
-    },
-    leave(el) {
-      const cont = el.getElementsByClassName('cont-wrapper')[0]
-      if (cont) {
-        cont.classList.add('hided-leave')
-        cont.style.height = 0
+
+        for (const newTask of childNodes) {
+          if (newTask.dataset.item === this.addedTask) {
+
+            setTimeout(() => {
+              root.insertBefore(newTask, adder)
+            }, this.getTasks.length)
+
+            this.addedTask = null
+            break
+          }
+        }
+        
       }
     },
     keydown({key}) {
@@ -693,7 +620,7 @@ export default {
 
         let order = []
         if (h.order)
-          order = h.order()
+          order = h.order(ts)
         ts = utils.checkMissingIdsAndSortArr(order, ts)
         ts = utilsTask.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
 
@@ -714,7 +641,7 @@ export default {
       return this.$el.getElementsByClassName('task-renderer-root')[0]
     },
     showIllustration() {
-      return !this.atLeastOneRenderedTask && this.tasks.length === 0 && this.illustration && !this.header
+      return this.isRoot && !this.atLeastOneRenderedTask && this.tasks.length === 0 && this.illustration && !this.header
     },
     isSelecting() {
       return this.selected.length > 0
@@ -722,6 +649,7 @@ export default {
   },
   watch: {
     tasks(newArr, fd) {
+      headingsFilterCache = {}
       this.atLeastOneRenderedTask = false
       setTimeout(() => {
         if (!this.changedViewName) {
@@ -730,32 +658,38 @@ export default {
             this.lazyTasks = arr
           })
         }
-        
-        }, 35)
+      })
     },
     headings(newArr) {
-      headingsFilterCache = {}
-      setTimeout(() => {
-        if (!this.changedViewName) {
-          this.clearLazySettimeout()
-          const unique = []
-          const set = new Set()
-          for (const t of newArr) {
-            if (!set.has(t.id)) {
-              set.add(t.id)
-              unique.push(t)
+      if (this.isRoot) {
+        headingsFilterCache = {}
+        setTimeout(() => {
+          if (!this.changedViewName) {
+            this.clearLazySettimeout()
+            const unique = []
+            const set = new Set()
+            for (const t of newArr) {
+              if (!set.has(t.id)) {
+                set.add(t.id)
+                unique.push(t)
+              }
             }
+            this.lazyHeadings = unique
           }
-          this.lazyHeadings = unique
-        }
-      }, 35)
+        })
+      }
     },
     viewName() {
       this.updateView()
+
+      this.sortable.options.disabled = this.disableSortableMount
+      this.headSort.options.disabled = !this.updateHeadingIds
     },
     enableSelect() {
-      this.sortable.options.multiDrag = this.enableSelect
-      this.sortable.options.multiDragKey = this.getMultiDragKey
+      if (this.sortable) {
+        this.sortable.options.multiDrag = this.enableSelect
+        this.sortable.options.multiDragKey = this.getMultiDragKey
+      }
     },
     isScrolling() {
       if (this.isScrolling) this.justScrolled = true
@@ -765,6 +699,42 @@ export default {
 }
 
 </script>
+
+<style>
+
+.head-t-enter {
+  transition-duration: 0s;
+  margin: 0;
+}
+
+.head-t-enter .header-wrapper, .head-t-leave-to .header-wrapper {
+  transition-duration: 0;
+  height: 0 !important;
+  margin: 0 !important;
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+}
+
+.head-t-leave-to .header-wrapper {
+  transition-duration: .6s;
+}
+
+.head-t-enter-to, .head-t-leave {
+  transition-duration: .6s;
+  margin: 14px 0;
+}
+
+.head-t-enter-to .header-wrapper, .head-t-leave .header-wrapper {
+  transition-duration: .6s;
+  margin: 14px 0 !important;
+  margin-bottom: 10px !important;
+  height: 45px !important;
+  opacity: 1 !important;
+  padding: 0 6px !important;
+}
+
+</style>
 
 <style scoped>
 
@@ -809,14 +779,6 @@ export default {
 .illus-trans-leave, .illus-trans-enter-to {
   opacity: 1;
   transform: translateY(0px);
-}
-
-.task-trans-enter, .task-trans-leave-to {
-  opacity: 0;
-}
-
-.task-trans-leave, .task-trans-enter-to {
-  opacity: 1;
 }
 
 .task-renderer-root {

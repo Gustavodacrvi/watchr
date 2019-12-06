@@ -75,7 +75,7 @@ export default {
           }
           // const hasTimesBinding = c.times !== null && c.times !== undefined
           if (c.times !== null && c.times !== undefined) {
-            if (times === 0) return true
+            if (c.times === 0) return true
             if (c.persistent) return c.times === 0
           }
           moment = mom(moment, 'Y-M-D')
@@ -258,14 +258,31 @@ export default {
         }
         return false
       },
-    }),
-    ...MemoizeGetters(['tasks'], {
       filterTasksByDay({getters}, tasks, date, specific) {
         return tasks.filter(el => {
           if (!utilsTask.hasCalendarBinding(el) || el.calendar.type === 'someday')
             return false
           if (specific && el.calendar.type !== 'specific') return false
           return getters.isCalendarObjectShowingToday(el.calendar, date, specific)
+        })
+      },
+      filterTasksByCompletionDate({}, tasks, date) {
+        return tasks.filter(el => {
+          return el.completeDate === date
+        })
+      },
+      filterTasksByOverdue({getters}, tasks) {
+        return tasks.filter(el => {
+          if (!utilsTask.hasCalendarBinding(el) || getters.isTaskCompleted(el))
+            return false
+          return getters.isTaskOverdue(el.calendar)
+        })
+      },
+      filterTasksByCompletion({getters},tasks, notCompleted, compareDate) {
+        return tasks.filter(el => {
+          const comp = getters.isTaskCompleted(el, compareDate)
+          if (notCompleted) return !comp
+          return comp
         })
       },
       filterTasksByView({getters}, tasks, view) {
@@ -305,20 +322,44 @@ export default {
           return getters.isCalendarObjectShowingThisPeriod(el.calendar, moment, period, specific)
         })
       },
-      filterTasksByOverdue({getters}, tasks) {
-        return tasks.filter(el => {
-          if (!utilsTask.hasCalendarBinding(el) || getters.isTaskCompleted(el))
-            return false
-          return getters.isTaskOverdue(el.calendar)
-        })
+      getLostTasks(c, tasks, list) {
+        const headingNames = list.headings.map(el => el.name)
+        return tasks.filter(el => !headingNames.includes(el.heading))
       },
-      filterTasksByCompletion({getters},tasks, notCompleted, compareDate) {
-        return tasks.filter(el => {
-          const comp = getters.isTaskCompleted(el, compareDate)
-          if (notCompleted) return !comp
-          return comp
-        })
+      getTasksWithHeading(c, tasks) {
+        return tasks.filter(el => el.heading)
       },
+      tasksWithLists(c, tasks) {
+        return tasks.filter(el => el.list)
+      },
+      tasksWithoutLists(c, tasks) {
+        return tasks.filter(el => !el.list)
+      },
+      tasksWithoutListsAndFolders(c, tasks) {
+        return tasks.filter(el => !el.list && !el.folder)
+      },
+      tasksWithListsOrFolders(c, tasks) {
+        return tasks.filter(el => el.list || el.folder)
+      },
+      getListTasks({getters}, tasks, listId) {
+        return getters['tasksWithLists'](tasks).filter(t => t.list === listId)
+      },
+      getRootTasksOfList({getters}, tasks, list) {
+        const ts = [...getters['tasksWithLists'](tasks).filter(t => !t.heading), ...getters['getLostTasks'](tasks, list)]
+
+        const unique = []
+        const set = new Set()
+        for (const t of ts) {
+          if (!set.has(t.id)) {
+            unique.push(t)
+            set.add(t.id)
+          }
+        }
+
+        return unique
+      },
+    }),
+    ...MemoizeGetters(['tasks'], {
       getNumberOfTasksByTag({getters, state}, tagId) {
         const ts = state.tasks.filter(el => el.tags.includes(tagId))
   
@@ -343,31 +384,6 @@ export default {
           notCompleted: getters.filterTasksByCompletion(ts, true).length,
         }
       },
-      getLostTasks(c, tasks, list) {
-        const headingNames = list.headings.map(el => el.name)
-        return tasks.filter(el => !headingNames.includes(el.heading))
-      },
-      getTasksWithHeading(c, tasks) {
-        return tasks.filter(el => el.heading)
-      },
-      getRootTasksOfList({getters}, tasks, list) {
-        return [...getters['tasksWithLists'](tasks).filter(t => !t.heading),...getters['getLostTasks'](tasks, list)]
-      },
-      getListTasks({getters}, tasks, listId) {
-        return getters['tasksWithLists'](tasks).filter(t => t.list === listId)
-      },
-      tasksWithLists(c, tasks) {
-        return tasks.filter(el => el.list)
-      },
-      tasksWithoutLists(c, tasks) {
-        return tasks.filter(el => !el.list)
-      },
-      tasksWithoutListsAndFolders(c, tasks) {
-        return tasks.filter(el => !el.list && !el.folder)
-      },
-      tasksWithListsOrFolders(c, tasks) {
-        return tasks.filter(el => el.list || el.folder)
-      },
     }),
   },
   actions: {
@@ -390,7 +406,7 @@ export default {
       addTask(batch, {
         userId: uid(),
         createdFire: serverTimestamp(),
-        created: mom().format('Y-M-D'),
+        created: mom().format('Y-M-D HH:mm ss'),
         ...obj,
       }, ref).then(() => {
         batch.commit()
@@ -475,6 +491,7 @@ export default {
         batch.update(ref, {
           completedFire: serverTimestamp(),
           completeDate: mom().format('Y-M-D'),
+          fullCompleteDate: mom().format('Y-M-D HH:mm ss'),
           completed: true,
           calendar,
         })

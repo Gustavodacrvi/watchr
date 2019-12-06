@@ -131,7 +131,7 @@ export default {
       setTimeout(() => {
         h.transitionDuration = '.15s'
         s.transitionDuration = '.15s'
-        h.height = '35px'
+        h.height = (this.isDesktop ? 35 : 42) + 'px'
         s.opacity = '1'
         s.margin = '12px 0'
       })
@@ -213,6 +213,7 @@ export default {
     }),
     ...mapGetters({
       l: 'l',
+      isDesktop: 'isDesktop',
       getTasksByListId: 'list/getTasks',
       getListTasks: 'task/getListTasks',
       sortedFolders: 'folder/sortedFolders',

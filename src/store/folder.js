@@ -68,7 +68,7 @@ export default {
         tasks: [],
         files: [],
         createdFire: serverTimestamp(),
-        created: mom().format('Y-M-D'),
+        created: mom().format('Y-M-D HH:mm ss'),
         ...fold,
         defaultShowing: true,
       })

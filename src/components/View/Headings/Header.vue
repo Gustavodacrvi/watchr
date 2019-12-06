@@ -296,7 +296,7 @@ export default {
     },
     deferDaysLeft() {
       if (this.headerDates && this.headerDates.defer) {
-        return `${this.getDateDifference(this.headerDates.deadline)} ${this.l['days left']}`
+        return `${this.getDateDifference(this.headerDates.defer)} ${this.l['days left']}`
       }
     },
     deadlineDaysLeft() {

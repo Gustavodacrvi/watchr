@@ -41,7 +41,7 @@ export default {
       str: this.value,
       showing: false,
       active: this.options[0],
-      control: false,
+      shift: false,
     }
   },
   created() {
@@ -119,7 +119,7 @@ export default {
       }
     },
     keyup({key}) {
-      if (key === 'Control') this.control = false
+      if (key === 'Shift') this.shift = false
     },
     keydown(event) {
       const { key } = event
@@ -127,7 +127,7 @@ export default {
         this.$emit('cancel')
       else if (key === 'ArrowDown' || key === 'ArrowUp')
         this.moveActive(key)
-      else if (key === 'Control') this.control = true
+      else if (key === 'Shift') this.shift = true
       else if (key === 'Enter') {
         if (this.active) {
           this.$emit('select', this.active)
@@ -141,7 +141,7 @@ export default {
         event.preventDefault()
       } else if (key === 'ArrowLeft' || key === 'ArrowRight') {
       this.active = ''
-      if (this.control) {
+      if (this.shift) {
         if (key === 'ArrowLeft') this.$emit('goup')
         if (key === 'ArrowRight') this.$emit('godown')
       }

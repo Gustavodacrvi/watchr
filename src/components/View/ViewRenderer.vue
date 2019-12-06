@@ -70,7 +70,7 @@ import mom from 'moment/src/moment'
 
 export default {
   props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'notes', 'showCompletedOnHeadings', 'isSmart', 'headerOptions', 'progress', 'prefix',
-  'headerDates', 'headerTags', 'headerCalendar', 'files', 'taskCompletionCompareDate', 'headingsPagination'],
+  'headerDates', 'headerTags', 'headerCalendar', 'files', 'updateHeadingIds', 'taskCompletionCompareDate', 'headingsPagination'],
   components: {
     PaginationVue,
     Header: HeaderVue,
@@ -153,6 +153,11 @@ export default {
     sortByPriority() {
       let tasks = this.tasks.slice()
       tasks = utilsTask.sortTasksByPriority(tasks)
+      this.updateIds(tasks.map(el => el.id))
+    },
+    sortByDate() {
+      let tasks = this.tasks.slice()
+      tasks = utilsTask.sortTasksByTaskDate(tasks)
       this.updateIds(tasks.map(el => el.id))
     },
 
@@ -335,7 +340,7 @@ export default {
                 callback: () => this.sortByPriority()
               },
               {
-                name: l['Sort by date'],
+                name: l['Sort by creation date'],
                 icon: 'calendar',
                 callback: () => this.sortByDate(),
               }

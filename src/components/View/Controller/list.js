@@ -27,14 +27,6 @@ export default {
         })
       }
     },
-    updateHeadingIds(ids) {
-      if (this.viewList) {
-        this.$store.dispatch('list/updateListHeadings', {
-          listId: this.viewList.id,
-          ids,
-        })
-      }
-    },
     saveHeaderName(name) {
       if (this.viewList) {
         if (this.getListByName(name))
@@ -96,6 +88,17 @@ export default {
   computed: {
     icon() {return 'tasks'},
     viewNameValue() {return this.viewName},
+    updateHeadingIds(ids) {
+      if (this.viewList) {
+        return ids => {
+          this.$store.dispatch('list/updateListHeadings', {
+            listId: this.viewList.id,
+            ids,
+          })
+        }
+      }
+      return null
+    },
     getTasks() {
       return this.getRootTasksOfList
     },

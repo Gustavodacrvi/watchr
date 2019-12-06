@@ -1,6 +1,7 @@
 
 import mom from 'moment/src/moment'
 import utilsMoment from "./moment"
+import utilsTask from "./task"
 import firebase from 'firebase/app'
 import memo from './memo'
 
@@ -32,15 +33,29 @@ export default {
     let name = 'id'
     if (property) name = property
     
-    const items = []
+    let items = []
     for (const id of order) {
       const item = arr.find(el => el[name] === id)
       if (item) items.push(item)
     }
+
+    let notIncluded = []
     for (const item of arr) {
       if (!order.includes(item[name]))
-        items.push(item)
+        notIncluded.push(item)
     }
+
+    let haveCreationDate = true
+    for (const item of notIncluded) {
+      if (!item.created) {
+        haveCreationDate = false
+        break
+      }
+    }
+    if (haveCreationDate)
+      notIncluded = utilsTask.sortTasksByTaskDate(notIncluded)
+    items = [...items, ...notIncluded]
+  
     const ids = new Set()
     const ordered = []
     for (const item of items) {
@@ -516,6 +531,7 @@ export default {
       isAnonymous: false,
     }
     if (userAuth.hidedSections) obj.hidedSections = userAuth.hidedSections
+    if (userAuth.links) obj.links = userAuth.links
     if (!update) obj = {...obj, ...{
       viewOrders: {},
       filters: [],

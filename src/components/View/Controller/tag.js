@@ -34,7 +34,6 @@ export default {
     removeDeferDate() {},
     addHeading() {},
     updateIds() {},
-    updateHeadingIds() {},
     onSortableAdd() {},
   },
   computed: {
