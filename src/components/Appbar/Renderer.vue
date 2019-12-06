@@ -174,10 +174,12 @@ export default {
   },
   methods: {
     mapNumbersBind(el) {
-      const obj = this.mapNumbers(el)
-      return {
-        totalNumber: obj.total,
-        importantNumber: obj.notCompleted
+      if (this.mapNumbers) {
+        const obj = this.mapNumbers(el)
+        return {
+          totalNumber: obj.total,
+          importantNumber: obj.notCompleted
+        }
       }
     },
     getString(el) {

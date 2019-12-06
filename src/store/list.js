@@ -79,7 +79,7 @@ export default {
         return result
       },
       getFavoriteLists({state}) {
-        return state.lists.filter(el => el.favorite)
+        return state.lists.filter(el => el.favorite).map(f => ({...f, icon: 'tasks', color: 'var(--red)', type: 'list'}))
       },
     })
   },
@@ -155,7 +155,7 @@ export default {
         userId: uid(),
         users: [uid()],
         createdFire: serverTimestamp(),
-        created: mom().format('Y-M-D'),
+        created: mom().format('Y-M-D HH:mm ss'),
         headings: [],
         headingsOrder: [],
         tasks: [],

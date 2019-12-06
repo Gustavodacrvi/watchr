@@ -28,7 +28,18 @@
                 @update='update'
                 @apply='applySelectedTasks'
               />
-              {{getFavorites}}
+              <div v-if='showFavorites' style="margin-top: 28px"></div>
+              <AppnavRenderer v-if="showFavorites"
+                type='favorite'
+                :enableSort='true'
+                :disabled='false'
+                :disableSelection='true'
+                :list='getFavoritesRenderList'
+                :active='value'
+                :viewType='viewType'
+
+
+              />
               <div v-if="!isSingleSection" class="header">
                 <div v-for="(s,i) in notHidedSections" :key="s.name"
                   class="option section-option"
@@ -326,8 +337,44 @@ export default {
       favFolders: 'folder/getFavoriteFolders',
       favTags: 'tag/getFavoriteTags',
     }),
+    getFavoritesRenderList() {
+      const favs = this.getFavorites
+
+      const selectView = (name, type) => {
+        this.$store.commit('navigate', name)
+        this.$router.push(`/user?${type}=${name}`)
+      }
+
+      const final = []
+      for (const f of favs) {
+        final.push({
+          name: f.name,
+          id: f.id,
+          icon: f.icon,
+          callback: () => selectView(f.name, f.type ? f.type : f.icon),
+          iconColor: f.color,
+        })
+      }
+
+      return final
+    },
+    showFavorites() {
+      return this.getFavoritesRenderList.length > 0
+    },
+    getFavArr() {
+      return [
+        ...this.favLists(),
+        ...this.favFolders(),
+        ...this.favTags()
+      ]
+    },
     getFavorites() {
-      return [...this.favLists(), ...this.favFolders(), ...this.favTags()]
+      return utils.checkMissingIdsAndSortArr(this.favoritesOrder, this.getFavArr)
+    },
+    favoritesOrder() {
+      if (this.userInfo && this.userInfo.favorites)
+        return this.userInfo.favorites
+      return []
     },
     linksOrder() {
       if (this.userInfo && this.userInfo.links) {
