@@ -28,6 +28,7 @@
                 @update='update'
                 @apply='applySelectedTasks'
               />
+              {{getFavorites}}
               <div v-if="!isSingleSection" class="header">
                 <div v-for="(s,i) in notHidedSections" :key="s.name"
                   class="option section-option"
@@ -320,8 +321,14 @@ export default {
       isStandAlone: 'isStandAlone',
       isDesktop: 'isDesktop',
       l: 'l',
-      getNumberOfTasksByView: 'task/getNumberOfTasksByView'
+      getNumberOfTasksByView: 'task/getNumberOfTasksByView',
+      favLists: 'list/getFavoriteLists',
+      favFolders: 'folder/getFavoriteFolders',
+      favTags: 'tag/getFavoriteTags',
     }),
+    getFavorites() {
+      return [...this.favLists(), ...this.favFolders(), ...this.favTags()]
+    },
     linksOrder() {
       if (this.userInfo && this.userInfo.links) {
         return this.userInfo.links

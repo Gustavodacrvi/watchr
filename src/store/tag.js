@@ -43,6 +43,9 @@ export default {
         }
         return arr
       },
+      getFavoriteTags({state}) {
+        return state.tags.filter(el => el.favorite)
+      },
     })
   },
   actions: {

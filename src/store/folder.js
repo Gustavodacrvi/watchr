@@ -51,6 +51,9 @@ export default {
           if (ids.includes(f.id)) arr.push(f)
         return arr
       },
+      getFavoriteFolders({state}) {
+        return state.folders.filter(f => f.favorite)
+      },
     })
   },
   actions: {

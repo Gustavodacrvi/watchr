@@ -19,7 +19,7 @@ export default {
     }
   },
   actions: {
-    getData({state}) {
+    getData({}) {
       if (uid())
         return Promise.all([
           new Promise(resolve => {
