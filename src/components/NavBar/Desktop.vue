@@ -25,6 +25,7 @@
         :options="languages"
         @handle-toggle='v => isLanguagesIconDropOpen = v'
       />
+      <div class="tag cbd cursor">v1.0.0</div>
       <ButtonApp v-if="user && user.isAnonymous" class="no-back" :value="l['Sign in']" @click="upgradeUser"/>
     </div>
   </div>
@@ -105,8 +106,21 @@ export default {
 
 <style scoped>
 
+.tag {
+  font-size: .9em;
+  border-radius: 50px;
+  padding: 8px;
+  transition-duration: .15s;
+  color: var(--gray);
+}
+
+.tag:hover {
+  background-color: var(--light-gray);
+}
+
 .drop {
   margin-left: 14px;
+  transform: translateY(5px);
 }
 
 .link {
