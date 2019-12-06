@@ -680,6 +680,10 @@ export default {
   height: 38px;
 }
 
+.mobile .cont-wrapper {
+  height: 50px;
+}
+
 .circle-wrapper-wrapper {
   position: absolute;
   left: 0;

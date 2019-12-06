@@ -36,8 +36,7 @@
     <transition-group v-if="isRoot"
       appear
       class="front headings-root"
-      @leave='headingsLeave'
-      @enter='headingsEnter'
+      name="head-t"
       tag="div"
     >
       <template v-for="(h, i) in lazyHeadings">
@@ -349,7 +348,7 @@ export default {
         let i = 0
         const length = headings.length
         let timeout = length * 30
-        if (length < 15) timeout = this.isDesktop ? 100 : 200
+        if (length < 15) timeout = this.isDesktop ? 75 : 200
         const add = (head) => {
           this.lazyHeadings.push(head)
           if ((i + 1) !== length)
@@ -403,76 +402,6 @@ export default {
     },
     click(event) {
       if (this.selected.length > 0) event.stopPropagation()
-    },
-    hideHeading(s) {
-      s.height = '0px'
-      s.margin = 0
-      s.padding = 0
-      s.marginBottom = '0px'
-      s.opacity = 0
-      s.borderBottom = 'none'
-    },
-    showHeading(s) {
-      s.height = '45px'
-      s.opacity = 1
-      s.marginBottom = '10px'
-      s.padding = '0 6px'
-      s.borderBottom = '1px solid var(--light-gray)'
-    },
-    headingsLeave(el) {
-      const header = el.getElementsByClassName('header-wrapper')[0]
-      const root = el.getElementsByClassName('task-renderer-root')[0]
-      const TaskRenderer = el.getElementsByClassName('TaskRenderer')[0]
-      if (header) {
-        const divMargin = el.getElementsByClassName('dontHaveTasks')[0]
-        const s = header.style
-        if (divMargin) {
-          divMargin.style.transitionDuration = '.15s'
-          divMargin.style.height = 0
-        }
-        const sw = el.style
-
-        if (root) {
-          root.style.transitionDuration = '0s'
-          root.style.height = root.offsetHeight + 'px'
-        }
-        s.transitionDuration = '0s'
-        sw.transitionDuration = '0s'
-        sw.margin = '24px 0'
-        this.showHeading(s)
-        setTimeout(() => {
-          if (root) {
-            root.style.transitionDuration = '.15s'
-            root.style.height = '0px'
-            root.style.opacity = 0
-          }
-          TaskRenderer.style.transitionDuration = '.15s'
-          TaskRenderer.style.margin = 0
-          header.style.transitionDuration = '.15s'
-          header.style.margin = 0
-          s.transitionDuration = '.15s'
-          sw.transitionDuration = '.15s'
-          sw.margin = 0
-          this.hideHeading(s)
-        })
-      }
-    },
-    headingsEnter(el) {
-      const header = el.getElementsByClassName('header-wrapper')[0]
-      if (header) {
-        const s = header.style
-        const sw = el.style
-        s.transitionDuration = '0s'
-        sw.transitionDuration = '0s'
-        sw.margin = 0
-        this.hideHeading(s)
-        setTimeout(() => {
-          s.transitionDuration = '.15s'
-          sw.transitionDuration = '.15s'
-          sw.margin = '24px 0'
-          this.showHeading(s)
-        })
-      }
     },
     deSelectTask(el) {
       Sortable.utils.deselect(el)
@@ -776,6 +705,39 @@ export default {
 
 .mobile .task-trans-leave .cont-wrapper, .mobile .task-trans-enter-to .cont-wrapper {
   height: 50px;
+}
+
+
+.head-t-enter {
+  transition-duration: 0s;
+  margin: 0;
+}
+
+.head-t-enter .header-wrapper, .head-t-leave-to .header-wrapper {
+  transition-duration: 0;
+  height: 0 !important;
+  margin: 0 !important;
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+}
+
+.head-t-leave-to .header-wrapper {
+  transition-duration: .6s;
+}
+
+.head-t-enter-to, .head-t-leave {
+  transition-duration: .6s;
+  margin: 18px 0;
+}
+
+.head-t-enter-to .header-wrapper, .head-t-leave .header-wrapper {
+  transition-duration: .6s;
+  margin: 18px 0 !important;
+  margin-bottom: 10px !important;
+  height: 45px !important;
+  opacity: 1 !important;
+  padding: 0 6px !important;
 }
 
 </style>

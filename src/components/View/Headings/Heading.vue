@@ -138,7 +138,7 @@ export default {
 }
 
 .Heading {
-  margin: 24px 0;
+  margin: 18px 0;
   position: relative;
   z-index: 1;
 }
@@ -151,6 +151,7 @@ export default {
   padding: 0 6px;
   display: flex;
   align-items: center;
+  margin: 18px 0;
   margin-bottom: 10px;
   cursor: pointer;
   height: 45px;
