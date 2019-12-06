@@ -59,6 +59,7 @@ const store = new Vuex.Store({
   },
   state: {
     lang,
+    version: '108',
     language: null,
     popup: {
       comp: '',

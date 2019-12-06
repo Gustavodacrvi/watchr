@@ -25,7 +25,10 @@
         :options="languages"
         @handle-toggle='v => isLanguagesIconDropOpen = v'
       />
-      <div class="tag cbd cursor" @click="showUpdates">v1.0.0</div>
+      <div class="tag cb cursor" :class="{needsUpdate}" @click="showUpdates">
+        <span>{{ parsedVersion }}</span>
+        <span v-if="needsUpdate" class="update-diff">+{{versionDiff}}</span>
+      </div>
       <ButtonApp v-if="user && user.isAnonymous" class="no-back" :value="l['Sign in']" @click="upgradeUser"/>
     </div>
   </div>
@@ -77,12 +80,30 @@ export default {
         comp: 'Updates',
       })
     },
+    getSavedVersion() {
+      return localStorage.getItem('watchr_version') // null
+    },
   },
   computed: {
-    ...mapState(['user']),
+    ...mapState(['user', 'version']),
     ...mapGetters(['l']),
+    parsedVersion() {
+      let newStr = ''
+      for (const s of this.version) {
+        newStr += '.' + s
+      }
+      return 'v' + newStr
+    },
     isntOnIndexPage() {
       return this.$route.path !== '/'
+    },
+    versionDiff() {
+      const vers = this.getSavedVersion()
+      return parseInt(this.version, 10) - parseInt(vers, 10)
+    },
+    needsUpdate() {
+      const vers = this.getSavedVersion()
+      return vers !== null && (parseInt(this.version, 10) - parseInt(vers, 10) > 0)
     },
     languages() {
       return [
@@ -114,7 +135,7 @@ export default {
 .tag {
   font-size: .9em;
   border-radius: 50px;
-  padding: 8px;
+  padding: 8px 12px;
   transition-duration: .15s;
   color: var(--gray);
   transform: scale(1,1);
@@ -126,6 +147,16 @@ export default {
 
 .tag:active {
   transform: scale(.95,.95);
+}
+
+.needsUpdate {
+  color: var(--white);
+  border: 1px solid var(--white);
+}
+
+.update-diff {
+  margin-left: 8px;
+  color: var(--white);
 }
 
 .drop {

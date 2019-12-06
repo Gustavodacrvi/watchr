@@ -7,11 +7,12 @@
       <div class="options">
         <span v-for="v in versions" :key="v"
           class="opt rb cursor"
-          :class="{active: ('v' + v) === version}"
+          :class="{active: ('v' + v) === ver}"
+          @click="ver = ('v' + v)"
         >{{ parse(v) }}</span>
       </div>
       <transition name="fade-t">
-        <component :is='version'/>
+        <component :is='ver'/>
       </transition>
     </div>
   </div>
@@ -31,19 +32,25 @@ export default {
     Button: ButtonVue,
     v100,
   },
+  created() {
+    localStorage.setItem('watchr_version', this.version)
+    this.ver = this.parse(this.version, false)
+  },
   data() {
     return {
-      version: 'v100',
+      ver: 'v100',
       versions: [
-        '100', '101', '102', '103', '104', '105'
+        '105', '104', '103', '102', '101', '100'
       ]
     }
   },
   methods: {
-    parse(str) {
+    parse(str, appendDot = true) {
       let newStr = ''
       for (const s of str) {
-        newStr += '.' + s
+        if (appendDot)
+          newStr += '.' + s
+        else newStr += s
       }
       return 'v' + newStr
     },
@@ -53,7 +60,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['lang']),
+    ...mapState(['lang', 'version']),
     ...mapGetters(['l', 'platform']),
   }
 }
@@ -81,7 +88,8 @@ export default {
   display: inline-block;
   padding: 10px;
   background-color: var(--dark);
-  transition-duration: .2s;
+  transition-duration: .3s;
+  border: none;
 }
 
 .opt:hover {
