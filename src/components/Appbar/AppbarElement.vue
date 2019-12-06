@@ -27,6 +27,7 @@
       <div
         class="link-wrapper AppbarElement-link rb"
         :data-type='type'
+        :data-selectedtype='selectedtype'
         :data-color='iconColor'
         :data-disabled='disableAction'
       >
@@ -80,11 +81,10 @@ import utils from '@/utils/'
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
-  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'string'],
+  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'string', 'selectedtype'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
-    Renderer: () => import('./Renderer.vue'),
   },
   data() {
     return {
@@ -172,7 +172,7 @@ export default {
       if (this.callback && !this.showSpecialInfo) this.callback()
       else if (this.isOnControl && this.selectedEmpty) this.$emit('select')
       else if (this.showSpecialInfo && !this.selectedEmpty) {
-        this.$emit('apply')
+        this.$emit('apply', this.selectedtype)
         this.$store.commit('clearSelected')
       }
     }

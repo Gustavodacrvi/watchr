@@ -21,12 +21,28 @@
                 :disableSelection='true'
                 :list='getLinksOrdered'
                 :active='value'
-                :viewType='viewType'
                 :onTaskDrop='onTaskDrop'
-                :mapNumbers='numberOfTasks'
+                :viewType='viewType'
                 :isSmart='true'
+
+                :mapNumbers='numberOfTasks'
                 @update='update'
                 @apply='applySelectedTasks'
+              />
+              <div v-if='showFavorites' style="margin-top: 28px"></div>
+              <AppnavRenderer v-if="showFavorites"
+                type='favorite'
+                :enableSort='true'
+                :disabled='false'
+                :disableSelection='true'
+                :list='getFavoritesRenderList'
+                :active='value'
+                :viewType='viewType'
+                :isSmart='false'
+
+                :mapNumbers='mapFavorites'
+                :mapProgress='mapProgress'
+                @update='updateFavorites'
               />
               <div v-if="!isSingleSection" class="header">
                 <div v-for="(s,i) in notHidedSections" :key="s.name"
@@ -96,6 +112,9 @@ import SearchButtonVue from './SearchButton.vue'
 import { mapGetters, mapState } from 'vuex'
 
 import utils from '@/utils'
+import utilsList from '@/utils/list'
+import utilsTag from '@/utils/tag'
+import utilsFolder from '@/utils/folder'
 import { userRef } from '@/utils/firestore'
 
 export default {
@@ -214,6 +233,11 @@ export default {
         links,
       }, {merge: true})
     },
+    updateFavorites(favorites) {
+      userRef(this.userInfo.userId).set({
+        favorites,
+      }, {merge: true})
+    },
     showSearch() {
       this.showingSearch = true
       if (this.searchTimeout)
@@ -309,19 +333,97 @@ export default {
         return {total: obj.total}
       return obj
     },
+    mapProgress(link) {
+      if (link.type === 'list')
+        return this.$store.getters['list/pieProgress'](this.tasks, link.id, this.isTaskCompleted)
+      return null
+    },
+    mapFavorites(link) {
+      if (link.type === 'tag')
+        return {
+          total: this.getNumberOfTasksByTag(link.id).total,
+        }
+
+      return {
+        total: 0
+      }
+    },
   },
   computed: {
     ...mapState({
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
+      tasks: state => state.task.tasks,
     }),
     ...mapGetters({
       platform: 'platform',
       isStandAlone: 'isStandAlone',
       isDesktop: 'isDesktop',
       l: 'l',
-      getNumberOfTasksByView: 'task/getNumberOfTasksByView'
+      getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
+      getNumberOfTasksByView: 'task/getNumberOfTasksByView',
+      favLists: 'list/getFavoriteLists',
+      getListTasks: 'task/getListTasks',
+      isTaskCompleted: 'task/isTaskCompleted',
+      favFolders: 'folder/getFavoriteFolders',
+      favTags: 'tag/getFavoriteTags',
     }),
+    getFavoritesRenderList() {
+      const favs = this.getFavorites
+
+      const selectView = (name, type) => {
+        this.$store.commit('navigate', name)
+        this.$router.push(`/user?${type}=${name}`)
+      }
+      const getOptions = (link, type) => {
+        switch (type) {
+          case 'list': {
+            return utilsList.listOptions(link, this.$store, this.getListTasks(this.tasks, link.id).slice(), this.l)
+          }
+          case 'tag': {
+            return utilsTag.tagOptions(link, this.$store, this.l)
+          }
+          case 'folder': {
+            return utilsFolder.getFolderOptions(link, this.l, this.$store)
+          }
+        }
+        return []
+      }
+
+      const final = []
+      for (const f of favs) {
+        const type = f.type ? f.type : f.icon
+        final.push({
+          type,
+          name: f.name,
+          id: f.id,
+          icon: f.icon,
+          callback: () => selectView(f.name, type),
+          iconColor: f.color,
+          options: getOptions(f, type),
+        })
+      }
+
+      return final
+    },
+    showFavorites() {
+      return this.getFavoritesRenderList.length > 0
+    },
+    getFavArr() {
+      return [
+        ...this.favLists(),
+        ...this.favFolders(),
+        ...this.favTags()
+      ]
+    },
+    getFavorites() {
+      return utils.checkMissingIdsAndSortArr(this.favoritesOrder, this.getFavArr)
+    },
+    favoritesOrder() {
+      if (this.userInfo && this.userInfo.favorites)
+        return this.userInfo.favorites
+      return []
+    },
     linksOrder() {
       if (this.userInfo && this.userInfo.links) {
         return this.userInfo.links

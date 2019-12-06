@@ -82,17 +82,27 @@ export default {
       if (callback) callback()
     },
     getOptions() {
-      const { search, tasks, tags, lists } = this
+      const { search, tasks, tags, lists, folders, views } = this
       if (!search) return []
       const lower = search.toLowerCase()
       const arr = []
 
-      const tg = tags.filter(el => el.name.toLowerCase().includes(lower))
-      const lt = lists.filter(el => el.name.toLowerCase().includes(lower))
-      const ts = tasks.filter(el => el.name.toLowerCase().includes(lower))
+      const filter = arr => arr.filter(el => el.name.toLowerCase().includes(lower))
+
+      const tg = filter(tags)
+      const lt = filter(lists)
+      const ts = filter(tasks)
+      const fs = filter(folders)
+      const vs = filter(views)
 
       const go = (route) => this.$router.push(route)
 
+      for (const v of vs)
+        arr.push({
+          ...v,
+          id: v.name + 'UNIQUE_SMART_VIEW' + Date.now(),
+          callback: () => go('/user?list=' + v.name)
+        })
       for (const t of tg)
         arr.push({
           name: t.name,
@@ -100,6 +110,14 @@ export default {
           id: t.id,
           color: 'var(--red)',
           callback: () => go('/user?tag=' + t.name)
+        })
+      for (const f of folders)
+        arr.push({
+          name: f.name,
+          icon: 'folder',
+          id: f.id,
+          color: '',
+          callback: () => go('/user?folder=' + f.name)
         })
       for (const l of lt)
         arr.push({
@@ -152,11 +170,46 @@ export default {
       tasks: state => state.task.tasks,
       tags: state => state.tag.tags,
       lists: state => state.list.lists,
+      folders: state => state.folder.folders,
     }),
     ...mapGetters(['isStandAlone']),
-  },
-  noActive() {
-    return !this.active.name || !this.active.icon
+    views() {
+      return [
+        {
+          name: 'Today',
+          color: 'var(--yellow)',
+          icon: 'star',
+        },
+        {
+          name: 'Tomorrow',
+          color: 'var(--orange)',
+          icon: 'sun',
+        },
+        {
+          name: 'Someday',
+          color: 'var(--brown)',
+          icon: 'archive',
+        },
+        {
+          name: 'Inbox',
+          color: 'var(--primary)',
+          icon: 'inbox',
+        },
+        {
+          name: 'Upcoming',
+          color: 'var(--green)',
+          icon: 'calendar',
+        },
+        {
+          name: 'Completed',
+          color: 'var(--olive)',
+          icon: 'circle-check',
+        },
+      ]
+    },
+    noActive() {
+      return !this.active.name || !this.active.icon
+    },
   },
   watch: {
     search() {

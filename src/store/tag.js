@@ -43,6 +43,9 @@ export default {
         }
         return arr
       },
+      getFavoriteTags({state}) {
+        return state.tags.filter(el => el.favorite).map(f => ({...f, icon: 'tag', color: 'var(--red)'}))
+      },
     })
   },
   actions: {

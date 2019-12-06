@@ -11,6 +11,15 @@ export default {
             comp: 'AddTag', payload: {...tag, editing: true}
           })
       },
+      {
+        name: l["Toggle favorite"],
+        icon: 'heart',
+        callback: () => {
+          dispatch('tag/saveTag', {
+            id: tag.id, favorite: !tag.favorite,
+          })
+        }
+      },
     ]
     if (!tag.notes)
       opt.push({

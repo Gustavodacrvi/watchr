@@ -22,6 +22,11 @@ export default {
         return utils.checkMissingIdsAndSortArr(userInfo.lists, lists)
       return []
     },
+    ...MemoizeGetters([], {
+      getTasks({}, tasks, id) {
+        return tasks.filter(el => el.list === id)
+      },
+    }),
     ...MemoizeGetters(['lists'], {
       getListsByName({state}, names) {
         const arr = []
@@ -56,9 +61,6 @@ export default {
         
         return ord
       },
-      getTasks({}, tasks, id) {
-        return tasks.filter(el => el.list === id)
-      },
       pieProgress({getters}, tasks, listId, isTaskCompleted) {
         const list = getters['getListsById']([listId])[0]
         const ts = getters.getTasks(tasks, listId)
@@ -75,6 +77,9 @@ export default {
         const result = 100 * completedTasks / numberOfTasks
         if (isNaN(result)) return 0
         return result
+      },
+      getFavoriteLists({state}) {
+        return state.lists.filter(el => el.favorite).map(f => ({...f, icon: 'tasks', color: 'var(--red)', type: 'list'}))
       },
     })
   },
@@ -150,7 +155,7 @@ export default {
         userId: uid(),
         users: [uid()],
         createdFire: serverTimestamp(),
-        created: mom().format('Y-M-D'),
+        created: mom().format('Y-M-D HH:mm ss'),
         headings: [],
         headingsOrder: [],
         tasks: [],

@@ -3,6 +3,7 @@
     @mouseenter="$emit('mouseenter')"
     @mouseleave="$emit('mouseleave')"
     @click="$emit('click')"
+    :class="platform"
   >
     <span>
       <Icon icon="search" width="15px"/>
@@ -22,7 +23,7 @@ export default {
     Icon: IconVue,
   },
   computed: {
-    ...mapGetters(['l']),
+    ...mapGetters(['l', 'platform']),
   }
 }
 
@@ -37,6 +38,10 @@ export default {
   align-items: center;
   justify-content: center;
   transition: background-color .15s;
+}
+
+.mobile {
+  height: 42px;
 }
 
 .search-msg {
