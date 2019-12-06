@@ -17,6 +17,15 @@ export default {
         }),
       },
       {
+        name: l["Toggle favorite"],
+        icon: 'heart',
+        callback: () => {
+          dispatch('folder/saveFolder', {
+            id: folder.id, favorite: !folder.favorite,
+          })
+        }
+      },
+      {
         name: l['Add files'],
         icon: 'file',
         callback: () => ({

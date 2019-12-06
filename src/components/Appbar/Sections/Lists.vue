@@ -29,6 +29,7 @@
       <FolderApp v-for="f in sortedFolders" :key="f.id"
         v-bind="f"
         :movingFolder='movingFolder'
+        :folder='f'
 
         :data-id='f.id'
 

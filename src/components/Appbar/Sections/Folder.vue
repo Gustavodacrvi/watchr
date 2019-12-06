@@ -57,7 +57,7 @@ import folderUtils from "@/utils/folder"
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  props: ['name', 'id', 'defaultShowing', 'movingFolder'],
+  props: ['name', 'id', 'defaultShowing', 'movingFolder', 'folder'],
   components: {
     Icon, IconDrop,
   },
@@ -87,7 +87,7 @@ export default {
       const el = this.$el.getElementsByClassName('header')[0]
       utils.bindOptionsToEventListener(el, this.options, this.$parent)
     },
-        touchStart(e) {
+    touchStart(e) {
       this.isTouching = true
       this.startX = e.changedTouches[0].clientX
       this.startY = e.changedTouches[0].clientY
@@ -181,7 +181,7 @@ export default {
     ...mapGetters(['l', 'isDesktop', 'platform']),
     options() {
       return folderUtils.getFolderOptions({
-        id: this.id, name: this.name,
+        ...this.folder, id: this.id, name: this.name,
       },this.l, this.$store, this.showing, this.toggle)
     },
     isSelectingTasks() {
@@ -193,6 +193,9 @@ export default {
   },
   watch: {
     options() {
+      this.bindOptions()
+    },
+    folder() {
       this.bindOptions()
     }
   }
