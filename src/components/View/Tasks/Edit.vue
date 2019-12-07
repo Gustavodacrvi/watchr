@@ -696,6 +696,11 @@ export default {
 .tags {
   padding-bottom: 4px;
   display: flex;
+  margin-right: 0 !important;
+}
+
+.tags + .tags {
+  margin-left: 0 !important;
 }
 
 .cancel {

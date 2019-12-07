@@ -5,21 +5,22 @@
       <Header
         v-bind="$props"
 
+        :inclusiveTags='inclusiveTags'
+        :exclusiveTags='exclusiveTags'
+
         :viewName="viewName"
         :options="options"
         :tags='tagSelectionOptions'
         :lists='listSelectionOptions'
-        :activeTags='activeTags'
-        :activeList='activeList'
         :headerTags="headerTags"
         @save-header-name='name => $emit("save-header-name", name)'
         @save-notes='notes => $emit("save-notes", notes)'
-        @tag='selectTag'
-        @list='selectList'
         @remove-defer-date='$emit("remove-defer-date")'
         @remove-deadline='$emit("remove-deadline")'
         @remove-repeat='$emit("remove-repeat")'
         @remove-header-tag="tagName => $emit('remove-header-tag', tagName)"
+        @tag='selectTag'
+        @list='selectList'
       />
       <TaskRenderer
         v-bind="$props"
@@ -30,9 +31,7 @@
         :addTask='addTask'
         :headingEdit='headingEdit'
         :showCompleted='showCompleted'
-        :activeTags='getActiveTagIds'
         :options='options'
-        :activeList='getActiveListId'
         :headingPosition='0'
         @update="updateIds"
         @update-headings='(ids) => $emit("update-heading-ids", ids)'
@@ -84,9 +83,11 @@ export default {
       showCompleted: false,
       showingTagSelection: false,
       showingListSelection: false,
-      activeTags: [],
-      activeList: null,
       showSomeday: false,
+
+      inclusiveTags: [],
+      exclusiveTags: [],
+      inclusiveList: null,
     }
   },
   created() {
@@ -98,25 +99,32 @@ export default {
       this.pagination = newPage
     },
     selectTag(name) {
-      if (this.activeTags.includes(name)) {
-        const i = this.activeTags.findIndex(el => el === name)
-        this.activeTags.splice(i, 1)
+      const inc = this.inclusiveTags
+      const exc = this.exclusiveTags
+      if (!inc.includes(name) && !exc.includes(name)) {
+        inc.push(name)
+      } else if (inc.includes(name)) {
+        const i = inc.findIndex(el => el === name)
+        inc.splice(i, 1)
+        exc.push(name)
+      } else {
+        const i = exc.findIndex(el => el === name)
+        exc.splice(i, 1)
       }
-      else this.activeTags.push(name)
     },
     selectList(name) {
-      if (this.activeList === name) this.activeList = ''
-      else this.activeList = name
+      if (this.inclusiveList === name) this.inclusiveList = ''
+      else this.inclusiveList = name
     },
     toggleTagSelection() {
       this.showingTagSelection = !this.showingTagSelection
       localStorage.setItem(this.tagSelectionStr, this.showingTagSelection)
-      this.activeTags = []
+      this.inclusiveTags = []
     },
     toggleListSelection() {
       this.showingListSelection = !this.showingListSelection
       localStorage.setItem(this.listSelectionStr, this.showingListSelection)
-      this.activeLists = ''
+      this.inclusiveLists = ''
     },
     addHeading(obj) {
       this.$emit('add-heading', {...obj})
@@ -224,7 +232,7 @@ export default {
       return this.isSmart && this.viewName === 'Someday'
     },
     getActiveTags() {
-      const arr = this.activeTags.slice()
+      const arr = this.inclusiveTags.slice()
       if (this.viewType === 'tag' && !arr.includes(this.viewName))
         arr.push(this.viewName)
       return arr
@@ -243,14 +251,6 @@ export default {
     },
     listSelectionOptions() {
       return this.showingListSelection ? this.savedLists.slice(0, this.sliceNumber) : []
-    },
-    getActiveTagIds() {
-      return this.$store.getters['tag/getTagsByName'](this.activeTags).map(el => el.id)
-    },
-    getActiveListId() {
-      if (this.activeList)
-        return this.$store.getters['list/getListsByName']([this.activeList])[0].id
-      return null
     },
     getIconDropOptionsTags() {
       const arr = []
@@ -477,17 +477,6 @@ export default {
         ]
       }
     },
-    sortAndFilterTasks() {
-      let ts = this.tasks.slice()
-      const order = this.tasksOrder
-
-      if (order)
-        ts = this.$store.getters.checkMissingIdsAndSortArr(order, ts)
-      else
-        ts = utilsTask.sortTasksByPriority(ts)
-
-      return this.filterTasksByViewRendererFilterOptions(ts, this.getActiveTagIds, this.getActiveListId)
-    },
     hasAtLeastOneSomeday() {
       let ts = this.tasks.slice()
       for (const t of ts) {
@@ -534,6 +523,40 @@ export default {
         })
 
       return notCompleted
+    },
+    sortAndFilterTasks() {
+      let ts = this.tasks.slice()
+      const order = this.tasksOrder
+
+      if (order)
+        ts = this.$store.getters.checkMissingIdsAndSortArr(order, ts)
+      else
+        ts = utilsTask.sortTasksByPriority(ts)
+
+      return this.filterTasksByViewRendererFilterOptions(ts, this.getInclusiveTagIds, this.getInclusiveListId)
+    },
+
+    getFilterOptions() {
+      return {
+        tags: {
+          inclusive: this.getInclusiveTagIds,
+          exclusive: this.getExclusiveTagIds,
+        },
+        list: {
+          inclusive: this.getInclusiveListId,
+        }
+      }
+    },
+    getInclusiveTagIds() {
+      return this.$store.getters['tag/getTagsByName'](this.inclusiveTags).map(el => el.id)
+    },
+    getExclusiveTagIds() {
+      return this.$store.getters['tag/getTagsByName'](this.exclusiveTags).map(el => el.id)
+    },
+    getInclusiveListId() {
+      if (this.inclusiveList)
+        return this.$store.getters['list/getListsByName']([this.inclusiveList])[0].id
+      return null
     },
   },
   watch: {

@@ -76,7 +76,8 @@
     <div class="tags" :class="{margins: tags.length > 0}">
       <Tag class="tag" v-for="t in tags" :key="t.id"
         :value="t.name"
-        :selected='activeTags.includes(t.name)'
+        :selected='isTagSelected(t.name)'
+        :extraIcon='getTagExclusiveIcon(t.name)'
         icon="tag"
         @click="$emit('tag', t.name)"
       />
@@ -84,7 +85,7 @@
     <div class="tags" :class="{margins: lists.length > 0}">
       <Tag class="tag" v-for="l in lists" :key="l.id"
         :value="l.name"
-        :selected='activeList === l.name'
+        :selected='filterOptions.list.inclusive === l.name'
         icon="tasks"
         @click="$emit('list', l.name)"
       />
@@ -110,7 +111,7 @@ import utils from '@/utils'
 
 export default {
   mixins: [FileMixin],
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'inclusiveTags'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -133,6 +134,14 @@ export default {
     window.removeEventListener('click', this.hide)
   },
   methods: {
+    isTagSelected(name) {
+      return this.inclusiveTags.includes(name) || this.exclusiveTags.includes(name)
+    },
+    getTagExclusiveIcon(name) {
+      if (this.exclusiveTags.includes(name))
+        return 'close'
+      return null
+    },
     hide() {
       this.editing = false
     },

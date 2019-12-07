@@ -628,7 +628,7 @@ export default {
         if (h.order)
           order = h.order(ts)
         ts = this.$store.getters.checkMissingIdsAndSortArr(order, ts)
-        ts = this.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
+        // ts = this.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
 
         if (ts.length > 0) this.atLeastOneRenderedTask = true
 
