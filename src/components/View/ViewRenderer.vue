@@ -37,6 +37,7 @@
         :viewName='viewName'
         :headings='getHeadings'
         :addTask='addTask'
+        :filterOptions='getFilterOptions'
         :headingEdit='headingEdit'
         :showCompleted='showCompleted'
         :options='options'

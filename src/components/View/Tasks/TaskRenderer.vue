@@ -111,7 +111,7 @@ import utils from '@/utils/'
 let headingsFilterCache = {}
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart', 'allowCalendarStr', 'updateHeadingIds', 'disableSortableMount',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'illustration', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds', 'disableSortableMount', 'filterOptions',
   'viewType', 'options', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -616,7 +616,7 @@ export default {
     },
     filter() {
       return (h) => {
-        // if (headingsFilterCache[h.name]) return headingsFilterCache[h.name]
+        if (headingsFilterCache[h.name]) return headingsFilterCache[h.name]
         
         let ts = h.filter(this.savedTasks, h, this.showCompleted)
         if (ts.length === 0) {
@@ -628,7 +628,7 @@ export default {
         if (h.order)
           order = h.order(ts)
         ts = this.$store.getters.checkMissingIdsAndSortArr(order, ts)
-        // ts = this.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
+        ts = this.filterTasksByViewRendererFilterOptions(ts, this.filterOptions)
 
         if (ts.length > 0) this.atLeastOneRenderedTask = true
 
@@ -690,6 +690,9 @@ export default {
 
       this.sortable.options.disabled = this.disableSortableMount
       this.headSort.options.disabled = !this.updateHeadingIds
+    },
+    filterOptions() {
+      headingsFilterCache = {}
     },
     enableSelect() {
       if (this.sortable) {
