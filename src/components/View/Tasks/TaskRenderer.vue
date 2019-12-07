@@ -483,7 +483,7 @@ export default {
 
             setTimeout(() => {
               root.insertBefore(newTask, adder)
-            }, this.getTasks.length)
+            }, this.getTasks.length * 2)
 
             this.addedTask = null
             break
@@ -595,9 +595,13 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     getTasks() {
-      if (this.isRoot) return this.lazyTasks
-      const arr = []
-      return this.showingMoreItems ? this.lazyTasks : this.lazyTasks.slice(0, 3)
+      console.time('TaskRenderer.js getTasks called by template')
+
+      let arr = []
+      if (this.isRoot) arr = this.lazyTasks
+      else arr = this.showingMoreItems ? this.lazyTasks : this.lazyTasks.slice(0, 3)
+      console.timeEnd('TaskRenderer.js getTasks called by template')
+      return arr
     },
     showMoreItemsMessage() {
       return `${this.l['Show ']}${this.lazyTasks.length - 3}${this.l[' more tasks...']}`
@@ -654,7 +658,7 @@ export default {
     },
   },
   watch: {
-    tasks(newArr, fd) {
+    tasks(newArr) {
       headingsFilterCache = {}
       this.atLeastOneRenderedTask = false
       setTimeout(() => {

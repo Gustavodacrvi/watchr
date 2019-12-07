@@ -118,43 +118,55 @@ const store = new Vuex.Store({
   },
   getters: {
     ...Memoize([], {
-      checkMissingIdsAndSortArr({}, order, arr, property) {
-        let name = 'id'
-        if (property) name = property
-        
-        let items = []
-        for (const id of order) {
-          const item = arr.find(el => el[name] === id)
-          if (item) items.push(item)
-        }
-    
-        let notIncluded = []
-        for (const item of arr) {
-          if (!order.includes(item[name]))
-            notIncluded.push(item)
-        }
-    
-        let haveCreationDate = true
-        for (const item of notIncluded) {
-          if (!item.created) {
-            haveCreationDate = false
-            break
+      checkMissingIdsAndSortArr: {
+        getter({}, order, arr, property) {
+          let name = 'id'
+          if (property) name = property
+          
+          let items = []
+          for (const id of order) {
+            const item = arr.find(el => el[name] === id)
+            if (item) items.push(item)
           }
-        }
-        if (haveCreationDate)
-          notIncluded = utilsTask.sortTasksByTaskDate(notIncluded)
-        items = [...items, ...notIncluded]
       
-        const ids = new Set()
-        const ordered = []
-        for (const item of items) {
-          if (!ids.has(item[name])) {
-            ids.add(item[name])
-            ordered.push(item)
+          let notIncluded = []
+          for (const item of arr) {
+            if (!order.includes(item[name]))
+              notIncluded.push(item)
           }
-        }
+      
+          let haveCreationDate = true
+          for (const item of notIncluded) {
+            if (!item.created) {
+              haveCreationDate = false
+              break
+            }
+          }
+          if (haveCreationDate)
+            notIncluded = utilsTask.sortTasksByTaskDate(notIncluded)
+          items = [...items, ...notIncluded]
         
-        return ordered
+          const ids = new Set()
+          const ordered = []
+          for (const item of items) {
+            if (!ids.has(item[name])) {
+              ids.add(item[name])
+              ordered.push(item)
+            }
+          }
+          
+          return ordered
+        },
+        cache(args) {
+          const arr = [args[0]]
+          if (!args[2]) {
+            arr.push(args[1].map(t => t.id))
+            return JSON.stringify(arr)
+          }
+          arr.push(args[1].map(t => t[args[2]]))
+          arr.push(args[2])
+          return JSON.stringify(arr)
+        }
       },
     }),
     isDesktop(state) {

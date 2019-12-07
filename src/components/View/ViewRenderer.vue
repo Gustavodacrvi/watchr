@@ -528,12 +528,14 @@ export default {
     getFilterBySomeday() {
       let ts = this.sortAndFilterTasks.slice()
       if (this.isSomeday || this.showSomeday || this.isSearch) return ts
+      console.time('ViewRenderer.js getFilterBySomeday called by getFilterCompletedTasks')
 
       const arr = []
       for (const t of ts)
         if (!t.calendar || t.calendar.type !== 'someday')
           arr.push(t)
 
+      console.timeEnd('ViewRenderer.js getFilterBySomeday called by getFilterCompletedTasks')
       return arr
     },
     getNumberOfPages() {
@@ -549,30 +551,32 @@ export default {
     },
     getFilterCompletedTasks() {
       let ts = this.getFilterBySomeday.slice()
-      let notCompleted = []
       if (this.showCompleted) return ts
+      console.time('ViewRenderer.js getFilterCompletedTasks called by template')
+      let notCompleted = []
       
       notCompleted = this.filterTasksByCompletion(ts, true)
 
       if (notCompleted.length === 0 && this.headingsOptions.length === 0)
-        return ts.filter(task => {
+        notCompleted = ts.filter(task => {
           if (!task.calendar) return true
           const type = task.calendar.type
           return type === 'specific' || type === 'someday'
         })
-
+      console.timeEnd('ViewRenderer.js getFilterCompletedTasks called by template')
       return notCompleted
     },
     sortAndFilterTasks() {
-      let ts = this.tasks.slice()
+      let ts = this.tasks
+      console.time('ViewRenderer.js sortAndFilterTasks called by getFilterBySomeday')
       const order = this.tasksOrder
 
       if (order)
         ts = this.$store.getters.checkMissingIdsAndSortArr(order, ts)
-      else
-        ts = utilsTask.sortTasksByPriority(ts)
+      ts = this.filterTasksByViewRendererFilterOptions(ts, this.getFilterOptions)
 
-      return this.filterTasksByViewRendererFilterOptions(ts, this.getFilterOptions)
+      console.timeEnd('ViewRenderer.js sortAndFilterTasks called by getFilterBySomeday')
+      return ts
     },
 
     getFilterOptions() {

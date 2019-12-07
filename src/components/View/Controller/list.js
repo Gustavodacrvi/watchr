@@ -88,7 +88,7 @@ export default {
   computed: {
     icon() {return 'tasks'},
     viewNameValue() {return this.viewName},
-    updateHeadingIds(ids) {
+    updateHeadingIds() {
       if (this.viewList) {
         return ids => {
           this.$store.dispatch('list/updateListHeadings', {
@@ -100,7 +100,10 @@ export default {
       return null
     },
     getTasks() {
-      return this.getRootTasksOfList
+      // console.time('list.js getTasks')
+      const res = this.getRootTasksOfList
+      // console.timeEnd('list.js getTasks')
+      return res
     },
     taskCompletionCompareDate() {
       if (this.viewList && this.viewList.calendar && this.viewList.calendar.type !== 'someday')
