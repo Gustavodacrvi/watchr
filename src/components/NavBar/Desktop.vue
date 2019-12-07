@@ -25,10 +25,7 @@
         :options="languages"
         @handle-toggle='v => isLanguagesIconDropOpen = v'
       />
-      <div class="tag cb cursor" :class="{needsUpdate}" @click="showUpdates">
-        <span>{{ parsedVersion }}</span>
-        <span v-if="needsUpdate" class="update-diff">+{{versionDiff}}</span>
-      </div>
+      <VersionApp/>
       <ButtonApp v-if="user && user.isAnonymous" class="no-back" :value="l['Sign in']" @click="upgradeUser"/>
     </div>
   </div>
@@ -39,6 +36,7 @@
 import LogoVue from '../Illustrations/Logo.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import ButtonVue from '../Auth/Button.vue'
+import VersionApp from '@/components/Version.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -47,7 +45,7 @@ import firebase from 'firebase/app'
 export default {
   components: {
     DropIcon: IconDropVue,
-    LogoApp: LogoVue,
+    LogoApp: LogoVue, VersionApp,
     ButtonApp: ButtonVue,
   },
   data() {
@@ -82,8 +80,8 @@ export default {
     },
   },
   computed: {
-    ...mapState(['user', 'version', 'lastVersion']),
-    ...mapGetters(['l', 'needsUpdate', 'versionDiff', 'parsedVersion']),
+    ...mapState(['user']),
+    ...mapGetters(['l']),
     isntOnIndexPage() {
       return this.$route.path !== '/'
     },
@@ -114,36 +112,9 @@ export default {
 
 <style scoped>
 
-.tag {
-  font-size: .9em;
-  border-radius: 50px;
-  padding: 8px 12px;
-  transition-duration: .15s;
-  color: var(--gray);
-  transform: scale(1,1);
-}
-
-.tag:hover {
-  background-color: var(--light-gray);
-}
-
-.tag:active {
-  transform: scale(.95,.95);
-}
-
-.needsUpdate {
-  color: var(--white);
-  border: 1px solid var(--white);
-}
-
-.update-diff {
-  margin-left: 8px;
-  color: var(--white);
-}
-
 .drop {
   margin-left: 14px;
-  transform: translateY(5px);
+  transform: translateY(6px);
 }
 
 .link {
