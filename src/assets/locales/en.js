@@ -151,6 +151,7 @@ export default {
   "Edit list name": "Edit list name",
   "Add deadline": "Add deadline",
   'Delete tasks': 'Delete tasks',
+  "Uncompleted tasks": "Uncompleted tasks",
   'Remove time': 'Remove time',
   "Deadline": "Deadline",
   "days left": "days left",

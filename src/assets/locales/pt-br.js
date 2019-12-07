@@ -209,6 +209,7 @@ export default {
   "E-mail sent": "E-mail mandado com sucesso.",
   "Save": "Salvar",
   "Show ": "Mostrar ",
+  "Uncompleted tasks": "Descompletar tarefas",
   " more tasks...": " mais tarefas...",
   "Add tasks to folder": "Adicionar tarefas na pasta",
   "Move to folder": "Mover para pasta",

@@ -493,13 +493,29 @@ export default {
 
       const cache = {}
       for (const date of dates) {
+        const getTasks = () => this.filterTasksByCompletionDate(filtered, date)
+        const dispatch = this.$store.dispatch
         arr.push({
           disableSortableMount: true,
           name: utils.getHumanReadableDate(date, this.l),
           order: ts => utilsTask.sortTasksByTaskDate(ts, 'fullCompleteDate'),
+          options: [
+            {
+              name: this.l['Uncompleted tasks'],
+              icon: 'circle',
+              important: true,
+              callback: () => dispatch('task/uncompleteTasks', getTasks()),
+            },
+            {
+              name: this.l['Delete tasks'],
+              icon: 'trash',
+              important: true,
+              callback: () => dispatch('task/deleteTasks', getTasks().map(t => t.id)),
+            },
+          ],
           filter: () => {
             if (cache[date]) return cache[date]
-            const result = this.filterTasksByCompletionDate(filtered, date)
+            const result = getTasks()
             cache[date] = result
             return result
           },
