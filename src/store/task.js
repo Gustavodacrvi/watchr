@@ -63,12 +63,30 @@ export default {
       return obj
     },
     ...MemoizeGetters([], {
-      filterTasksByViewRendererFilterOptions({}, tasks, tags, list) {
-        let ts = tasks
-        if (tags.length > 0)
-          ts = ts.filter(el => tags.every(id => el.tags.includes(id)))
-        if (list)
-          ts = ts.filter(el => el.list === list)
+      filterTasksByViewRendererFilterOptions({}, tasks, filterOptions) {
+        const {tags, list, folder} = filterOptions
+        let ts = tasks.slice()
+
+        // list
+        if (list.inclusive)
+          ts = ts.filter(t => t.list === list.inclusive)
+        if (list.exclusive)
+          ts = ts.filter(t => t.list !== list.exclusive)
+        
+        // folder
+        if (folder.inclusive)
+          ts = ts.filter(t => t.folder === folder.inclusive)
+        if (folder.exclusive)
+          ts = ts.filter(t => t.folder !== folder.exclusive)
+
+        // tags
+        if (tags.inclusive.length > 0)
+          for (const id of tags.inclusive)
+            ts = ts.filter(t => t.tags.includes(id))
+        if (tags.exclusive.length > 0)
+          for (const id of tags.exclusive)
+            ts = ts.filter(t => !t.tags.includes(id))
+        
         return ts
       },
       isTaskCompleted({}, task, moment, compareDate) {

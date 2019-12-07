@@ -571,7 +571,7 @@ export default {
       else
         ts = utilsTask.sortTasksByPriority(ts)
 
-      return this.filterTasksByViewRendererFilterOptions(ts, this.getInclusiveTagIds, this.getInclusiveListId)
+      return this.filterTasksByViewRendererFilterOptions(ts, this.getFilterOptions)
     },
 
     getFilterOptions() {
@@ -602,17 +602,17 @@ export default {
       return null
     },
     getExclusiveListId() {
-      if (this.inclusiveList)
+      if (this.exclusiveList)
         return this.$store.getters['list/getListsByName']([this.exclusiveList])[0].id
       return null
     },
     getInclusiveFolderId() {
-      if (this.inclusiveList)
+      if (this.inclusiveFolder)
         return this.$store.getters['folder/getFoldersByName']([this.inclusiveFolder])[0].id
       return null
     },
     getExclusiveFolderId() {
-      if (this.inclusiveList)
+      if (this.exclusiveFolder)
         return this.$store.getters['folder/getFoldersByName']([this.exclusiveFolder])[0].id
       return null
     },
