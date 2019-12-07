@@ -1,8 +1,9 @@
 <template>
   <div class="Menu cbd">
     <div class="appbar-wrapper">
-      <span @click="closeMenu">
+      <span class="arrow-wrapper" @click="closeMenu">
         <Icon class="arrow primary-hover cursor" icon="arrow" color="var(--gray)" width="25px" :circle='true'/>
+        <VersionApp class="version"/>
       </span>
       <transition :name="this.appSection ? 'mr' : 'ml'">
         <Appbar class="Appbar" v-if="appSection" key="app"/>
@@ -33,13 +34,14 @@
 import AppbarVue from '../Appbar/Appbar.vue'
 import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
+import VersionApp from '@/components/Version.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
     Appbar: AppbarVue,
-    Icon: IconVue,
+    Icon: IconVue, VersionApp,
     IconDrop: IconDropVue
   },
   data() {
@@ -95,6 +97,15 @@ export default {
 
 <style scoped>
 
+.version {
+  transform: translate(0px, -2px);
+}
+
+.arrow-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
 .Menu {
   position: fixed;
   top: 0;
@@ -110,6 +121,10 @@ export default {
   position: absolute;
   right: 8px;
   bottom: 8px;
+}
+
+.Appbar {
+  margin-top: 8px;
 }
 
 .appbar-wrapper {

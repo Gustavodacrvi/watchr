@@ -14,7 +14,7 @@ html {
   --font: "Work Sans";
   --white: #cccccc;
   --primary: #57A0DE;
-  --dark: #202020;
+  --dark: #1c1c1c;
   --appnav-color: #171717;
   --card: #222222;
   --dark-gray: #202020;
@@ -91,6 +91,15 @@ body, input, button, textarea {
 
 .scroll-thin::-webkit-scrollbar {
   width: 4px;
+}
+
+.scroll-thin-horizontal::-webkit-scrollbar-thumb {
+  background-color: var(--light-gray);
+  border-radius: 6px;
+}
+
+.scroll-thin-horizontal::-webkit-scrollbar {
+  height: 4px;
 }
 
 .scroll-main::-webkit-scrollbar-thumb {

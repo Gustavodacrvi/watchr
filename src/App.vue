@@ -114,11 +114,11 @@ export default {
   },
   computed: {
     ...mapState(['fastSearch', 'fileURL', 'user', 'allowNavHide']),
-    ...mapGetters(['isDesktop', 'isStandAlone', 'l']),
+    ...mapGetters(['isDesktop', 'isStandAlone', 'l', 'needsUpdate']),
     hideNavbar() {
       const isAnonymous = this.user && this.user.isAnonymous
       const isNotOnUser = this.$route.path !== '/user'
-      if (!this.user || !this.isStandAlone || !this.isDesktop || isAnonymous || isNotOnUser) return false
+      if (!this.user || this.needsUpdate || !this.isStandAlone || !this.isDesktop || isAnonymous || isNotOnUser) return false
       return this.hided
     },
     isMenuOpened() {

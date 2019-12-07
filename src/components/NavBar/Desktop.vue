@@ -25,6 +25,7 @@
         :options="languages"
         @handle-toggle='v => isLanguagesIconDropOpen = v'
       />
+      <VersionApp/>
       <ButtonApp v-if="user && user.isAnonymous" class="no-back" :value="l['Sign in']" @click="upgradeUser"/>
     </div>
   </div>
@@ -35,6 +36,7 @@
 import LogoVue from '../Illustrations/Logo.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import ButtonVue from '../Auth/Button.vue'
+import VersionApp from '@/components/Version.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -43,7 +45,7 @@ import firebase from 'firebase/app'
 export default {
   components: {
     DropIcon: IconDropVue,
-    LogoApp: LogoVue,
+    LogoApp: LogoVue, VersionApp,
     ButtonApp: ButtonVue,
   },
   data() {
@@ -70,7 +72,7 @@ export default {
       if (this.$route.matched.length === 0)
         return link === this.$route.name
       return this.$route.matched.some(route => route.name === link)
-    }
+    },
   },
   computed: {
     ...mapState(['user']),
@@ -107,6 +109,7 @@ export default {
 
 .drop {
   margin-left: 14px;
+  transform: translateY(6px);
 }
 
 .link {
