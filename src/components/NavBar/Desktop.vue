@@ -73,11 +73,6 @@ export default {
         return link === this.$route.name
       return this.$route.matched.some(route => route.name === link)
     },
-    showUpdates() {
-      this.$store.dispatch('pushPopup', {
-        comp: 'Updates',
-      })
-    },
   },
   computed: {
     ...mapState(['user']),

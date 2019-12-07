@@ -1,14 +1,21 @@
 <template>
-  <div class="tag cb cursor" :class="{needsUpdate}" @click="showUpdates">
+  <span class="tag cb cursor" :class="{needsUpdate}" @click.stop="showUpdates">
     <span>{{ parsedVersion }}</span>
     <span v-if="needsUpdate" class="update-diff">+{{versionDiff}}</span>
-  </div>  
+  </span>  
 </template>
 
 <script>
 import { mapGetters, mapState } from 'vuex';
 
 export default {
+  methods: {
+    showUpdates() {
+      this.$store.dispatch('pushPopup', {
+        comp: 'Updates',
+      })
+    },
+  },
   computed: {
     ...mapGetters(['needsUpdate', 'versionDiff', 'parsedVersion']),
     ...mapState(['version', 'lastVersion'])
@@ -26,6 +33,7 @@ export default {
   transition-duration: .15s;
   color: var(--gray);
   transform: scale(1,1);
+  display: inline-block;
 }
 
 .tag:hover {

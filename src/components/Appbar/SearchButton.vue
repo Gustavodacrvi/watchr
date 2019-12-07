@@ -5,10 +5,10 @@
     @click="$emit('click')"
     :class="platform"
   >
-    <span>
+    <div>
       <Icon icon="search" width="15px"/>
       <span class="search-msg">{{ l['Search'] }}</span>
-    </span>
+    </div>
   </div>
 </template>
 
@@ -34,13 +34,13 @@ export default {
 .SearchButton {
   height: 35px;
   background-color: var(--light-gray);
+  transition: background-color .15s;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color .15s;
 }
 
-.mobile {
+.SearchButton.mobile {
   height: 42px;
 }
 
