@@ -53,13 +53,25 @@ moment.locale(lang)
 
 const uid = () => auth.currentUser.uid
 
+
+const version = '123'
+
+let lastVersion = localStorage.getItem('watchr_version')
+
+if (lastVersion === null) {
+  lastVersion = version
+  localStorage.setTimeout('watchr_version')
+}
+
+
 const store = new Vuex.Store({
   modules: {
     task, tag, list, filter, folder,
   },
   state: {
     lang,
-    version: '108',
+    lastVersion,
+    version,
     language: null,
     popup: {
       comp: '',
@@ -114,6 +126,14 @@ const store = new Vuex.Store({
       if (arr && arr[0]) return arr[0]
       return 'Today'
     },
+    versionDiff(state) {
+      const vers = state.lastVersion
+      return parseInt(state.version, 10) - parseInt(vers, 10)
+    },
+    needsUpdate(state) {
+      const vers = state.lastVersion
+      return vers !== null && (parseInt(state.version, 10) - parseInt(vers, 10) > 0)
+    },
     isStandAlone() {
       const navigator = window.navigator
       return (navigator.standalone === true)
@@ -136,6 +156,10 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    updateVersion(state, vers) {
+      state.lastVersion = vers
+      localStorage.setItem('watchr_version', vers)
+    },
     navigate(state, str) {
       state.currentView = str
     },

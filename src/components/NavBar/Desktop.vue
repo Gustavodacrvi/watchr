@@ -80,13 +80,10 @@ export default {
         comp: 'Updates',
       })
     },
-    getSavedVersion() {
-      return localStorage.getItem('watchr_version') // null
-    },
   },
   computed: {
-    ...mapState(['user', 'version']),
-    ...mapGetters(['l']),
+    ...mapState(['user', 'version', 'lastVersion']),
+    ...mapGetters(['l', 'needsUpdate', 'versionDiff']),
     parsedVersion() {
       let newStr = ''
       for (const s of this.version) {
@@ -96,14 +93,6 @@ export default {
     },
     isntOnIndexPage() {
       return this.$route.path !== '/'
-    },
-    versionDiff() {
-      const vers = this.getSavedVersion()
-      return parseInt(this.version, 10) - parseInt(vers, 10)
-    },
-    needsUpdate() {
-      const vers = this.getSavedVersion()
-      return vers !== null && (parseInt(this.version, 10) - parseInt(vers, 10) > 0)
     },
     languages() {
       return [

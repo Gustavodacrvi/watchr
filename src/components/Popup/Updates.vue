@@ -7,10 +7,11 @@
       <div class="options">
         <span v-for="v in versions" :key="v"
           class="opt rb cursor"
-          :class="{active: ('v' + v) === ver}"
+          :class="{active: ('v' + v) === ver, hasToRead: didntRead(v)}"
           @click="ver = ('v' + v)"
         >{{ parse(v) }}</span>
       </div>
+      {{nonReadUpdates}}
       <transition name="fade-t">
         <component :is='ver'/>
       </transition>
@@ -33,12 +34,14 @@ export default {
     v100,
   },
   created() {
-    localStorage.setItem('watchr_version', this.version)
+    this.diff = this.versionDiff || 0
     this.ver = this.parse(this.version, false)
+    this.$store.commit('updateVersion', this.version)
   },
   data() {
     return {
       ver: 'v100',
+      diff: 0,
       versions: [
         '105', '104', '103', '102', '101', '100'
       ]
@@ -54,6 +57,9 @@ export default {
       }
       return 'v' + newStr
     },
+    didntRead(str) {
+      return this.nonReadUpdates.includes(str)
+    },
     close() {
       this.$store.dispatch('closePopup')
       this.$router.replace('/user')
@@ -61,7 +67,14 @@ export default {
   },
   computed: {
     ...mapState(['lang', 'version']),
-    ...mapGetters(['l', 'platform']),
+    ...mapGetters(['l', 'platform', 'versionDiff']),
+    nonReadUpdates() {
+      const nonRead = []
+      for (let i = 0; i < this.diff;i++) {
+        nonRead.push(this.versions[i])
+      }
+      return nonRead
+    },
   }
 }
 
@@ -89,6 +102,7 @@ export default {
   padding: 10px;
   background-color: var(--dark);
   transition-duration: .3s;
+  color: var(--gray);
   border: none;
 }
 
@@ -96,10 +110,15 @@ export default {
   background-color: var(--light-gray);
 }
 
+.hasToRead {
+  color: var(--white);
+}
+
 .opt.active {
   border: 1px solid var(--primary);
   color: var(--primary);
 }
+
 
 .opt + .opt {
   margin-left: 4px;
