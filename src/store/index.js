@@ -60,7 +60,7 @@ let lastVersion = localStorage.getItem('watchr_version')
 
 if (lastVersion === null) {
   lastVersion = version
-  localStorage.setItem('watchr_version')
+  localStorage.setItem('watchr_version', version)
 }
 
 
