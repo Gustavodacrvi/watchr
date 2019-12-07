@@ -155,11 +155,11 @@ export default {
         let order = viewList.headingsOrder
         if (!order) order = []
         
-        const heads = utils.checkMissingIdsAndSortArr(order, viewList.headings, 'name')
+        const heads = this.$store.getters.checkMissingIdsAndSortArr(order, viewList.headings, 'name')
 
         for (const h of heads) {
           let headingTasks = this.getListTasks.filter(el => el.heading === h.name)
-          headingTasks = utils.checkMissingIdsAndSortArr(h.tasks, headingTasks)
+          headingTasks = this.$store.getters.checkMissingIdsAndSortArr(h.tasks, headingTasks)
           arr.push({
             name: h.name,
             allowEdit: true,

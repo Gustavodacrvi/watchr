@@ -590,6 +590,7 @@ export default {
       platform: 'platform',
       isDesktop: 'isDesktop',
       getTaskBodyDistance: 'task/getTaskBodyDistance',
+      filterTasksByViewRendererFilterOptions: 'task/filterTasksByViewRendererFilterOptions',
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
@@ -615,7 +616,7 @@ export default {
     },
     filter() {
       return (h) => {
-        if (headingsFilterCache[h.name]) return headingsFilterCache[h.name]
+        // if (headingsFilterCache[h.name]) return headingsFilterCache[h.name]
         
         let ts = h.filter(this.savedTasks, h, this.showCompleted)
         if (ts.length === 0) {
@@ -626,8 +627,8 @@ export default {
         let order = []
         if (h.order)
           order = h.order(ts)
-        ts = utils.checkMissingIdsAndSortArr(order, ts)
-        ts = utilsTask.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
+        ts = this.$store.getters.checkMissingIdsAndSortArr(order, ts)
+        ts = this.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
 
         if (ts.length > 0) this.atLeastOneRenderedTask = true
 

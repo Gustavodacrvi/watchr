@@ -13,12 +13,12 @@ export default {
     folders: [],
   },
   getters: {
-    sortedFolders(state, d, {userInfo}) {
+    sortedFolders(state, d, {userInfo}, rootGetters) {
       const {folders} = state
       let order = userInfo.folders
       if (!order) order = []
       if (userInfo)
-        return utils.checkMissingIdsAndSortArr(order, folders)
+        return rootGetters.checkMissingIdsAndSortArr(order, folders)
       return []
     },
     ...MemoizeGetters(['folders'], {
@@ -28,14 +28,14 @@ export default {
           return fold.tasks
         return []
       },
-      getListsByFolderId({state}, {id, lists}) {
+      getListsByFolderId({state, rootGetters}, {id, lists}) {
         const arr = []
         const fold = state.folders.find(f => f.id === id)
         for (const l of lists)
           if (l.folder && l.folder === id) arr.push(l)
         let order = fold.order
         if (!order) order = []
-        return utils.checkMissingIdsAndSortArr(order, arr)
+        return rootGetters.checkMissingIdsAndSortArr(order, arr)
       },
       getFoldersByName({state}, names) {
         const arr = []

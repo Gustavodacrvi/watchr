@@ -15,10 +15,10 @@ export default {
     tags: [],
   },
   getters: {
-    sortedTags(state, asd, {userInfo}) {
+    sortedTags(state, asd, {userInfo}, rootGetters) {
       const {tags} = state
       if (userInfo)
-        return utils.checkMissingIdsAndSortArr(userInfo.tags, tags)
+        return rootGetters.checkMissingIdsAndSortArr(userInfo.tags, tags)
       return []
     },
     sortedTagsByName(s, getters) {

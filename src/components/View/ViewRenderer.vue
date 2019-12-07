@@ -30,7 +30,7 @@
         :addTask='addTask'
         :headingEdit='headingEdit'
         :showCompleted='showCompleted'
-        :activeTags='getActiveTags'
+        :activeTags='getActiveTagIds'
         :options='options'
         :activeList='getActiveListId'
         :headingPosition='0'
@@ -209,6 +209,7 @@ export default {
       isDesktop: 'isDesktop',
       l: 'l',
       savedLists: 'list/sortedLists',
+      filterTasksByViewRendererFilterOptions: 'task/filterTasksByViewRendererFilterOptions',
       filterTasksByCompletion: 'task/filterTasksByCompletion',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
@@ -481,11 +482,11 @@ export default {
       const order = this.tasksOrder
 
       if (order)
-        ts = utils.checkMissingIdsAndSortArr(order, ts)
+        ts = this.$store.getters.checkMissingIdsAndSortArr(order, ts)
       else
         ts = utilsTask.sortTasksByPriority(ts)
 
-      return utilsTask.filterTasksByViewRendererFilterOptions(ts, this.getActiveTagIds, this.getActiveListId)
+      return this.filterTasksByViewRendererFilterOptions(ts, this.getActiveTagIds, this.getActiveListId)
     },
     hasAtLeastOneSomeday() {
       let ts = this.tasks.slice()

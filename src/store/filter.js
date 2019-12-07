@@ -15,7 +15,7 @@ export default {
   getters: {
     sortedFilters(state) {
       const {order, filters} = state
-      return utils.checkMissingIdsAndSortArr(order, filters)
+      return []
     }
   },
   actions: {

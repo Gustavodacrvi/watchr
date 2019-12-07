@@ -26,6 +26,8 @@ export default (properties, getters) => {
       return memo(getters[k].bind(this, {
         state: arguments[0],
         getters: arguments[1],
+        rootState: arguments[2],
+        rootGetters: arguments[3],
       }))
     }
   }

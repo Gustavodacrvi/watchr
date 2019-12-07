@@ -67,7 +67,7 @@ export default {
 
         let order = this.viewOrders[view] ? this.viewOrders[view].headings : []
         if (!order) order = []
-        const headings = utils.checkMissingIdsAndSortArr(order, [...folders, ...lists])
+        const headings = this.$store.getters.checkMissingIdsAndSortArr(order, [...folders, ...lists])
 
         const arr = []
         for (const viewHeading of headings) {
