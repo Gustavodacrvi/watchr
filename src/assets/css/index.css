@@ -80,8 +80,8 @@ body, input, button, textarea {
 }
 
 .remove-highlight {
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .scroll-thin::-webkit-scrollbar-thumb {

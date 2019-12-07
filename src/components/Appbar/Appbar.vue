@@ -444,7 +444,7 @@ export default {
         for (const s of sect) {
           opt.push({
             name: s,
-            callback: () => this.section = s
+            callback: () => {this.section = s}
           })
         }
       }

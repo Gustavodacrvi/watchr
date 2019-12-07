@@ -8,6 +8,7 @@
       data-name='appnav-renderer'
     >
       <AppbarElement v-for="(el,i) in list"
+        :key="el.id"
         v-bind="mapNumbersBind(el)"
         class="element"
         :iconColor='getIconColor(el)'
@@ -16,7 +17,6 @@
 
         :type="type"
         :subListIcon='subListIcon'
-        :key="el.id"
         :name="el.name"
         :disableAction='el.disableAction'
         :tabindex="i + 1"
@@ -28,6 +28,7 @@
         :options='el.options'
         :list="el.list"
         :id='el.id'
+        :isDragging='isDragging'
         :progress='getProgress(el)'
         :helpIcons='getExraIcon(el)'
         :string='getString(el)'
@@ -59,6 +60,7 @@ export default {
       sortable: null,
       hover: false,
       selected: [],
+      isDragging: false,
     }
   },
   created() {
@@ -83,12 +85,14 @@ export default {
       sort: this.enableSort,
       disabled: this.disabled,
       group: {name: 'appnav', pull: (e) => {
+        if (this.isSmart) return false
         const name = e.el.dataset.name
         if (!this.enableSort && name === 'appnav-renderer') return false
         if (name === 'folders-root') return false
         if (name === 'appnav-renderer') return true
         if (name === 'task-renderer') return 'clone'
       }, put: (l,j,item) => {
+        if (this.isSmart) return false
         const type = item.dataset.type
         if (!this.enableSort && type === 'appnav-element') return false
         if (type === 'appnav-element') return true
@@ -141,10 +145,12 @@ export default {
           return false
       },
       onStart: () => {
+        this.isDragging = true
         this.$emit('is-moving', true)
         window.navigator.vibrate(100)
       },
       onEnd: () => {
+        this.isDragging = false
         this.$emit('is-moving', false)
       },
       onAdd: (evt) => {

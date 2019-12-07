@@ -8,6 +8,7 @@
     @click.stop="linkCallback"
     @touchstart='touchStart'
     @touchend='touchEnd'
+    v-longclick='longClick'
   >
     <div class='circle-trans-wrapper-wrapper'>
       <div class="circle-trans-wrapper">
@@ -22,10 +23,12 @@
     </div>
     <a class='scroll-link'
       href="#view-header"
+      @click.prevent
+      @contextmenu.prevent
       v-smooth-scroll='{duration: 500, offset: -500}'
     >
       <div
-        class="link-wrapper AppbarElement-link rb"
+        class="link-wrapper cursor remove-highlight AppbarElement-link rb"
         :data-type='type'
         :data-selectedtype='selectedtype'
         :data-color='iconColor'
@@ -55,13 +58,6 @@
             <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
             <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
             <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
-            <IconDrop
-              class="inf drop"
-              :circle='true'
-              handle="settings-v"
-              :hideHandle="!showOptions"
-              :options='options'
-            />
           </div>
         </div>
       </div>
@@ -94,15 +90,27 @@ export default {
       left: 0,
       top: 0,
       doingTransition: false,
+      allowMobileOptions: false,
     }
   },
   mounted() {
     this.bindOptions()
   },
   methods: {
+    longClick() {
+      if (!this.isDesktop && !this.isDragging) {
+        window.navigator.vibrate(100)
+        this.allowMobileOptions = true
+      }
+    },
     bindOptions() {
-      const el = this.$el.getElementsByClassName('link-wrapper')[0]
-      utils.bindOptionsToEventListener(el, this.options, this.$parent)
+      if (this.isDesktop) {
+        const el = this.$el.getElementsByClassName('link-wrapper')[0]
+        utils.bindOptionsToEventListener(el, this.options, this.$parent)
+      }
+    },
+    openMobileOptions() {
+      this.$store.commit('pushIconDrop', this.options)
     },
     touchStart(e) {
       this.isTouching = true
@@ -122,8 +130,11 @@ export default {
       const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
       const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
       if (!movedFingerX && !movedFingerY) {
-        this.click()
+        if (this.allowMobileOptions)
+          this.openMobileOptions()
+        else this.click()
       }
+      this.allowMobileOptions = false
     },
     circleEnter(el) {
       const s = el.style
@@ -207,11 +218,6 @@ export default {
       if ((this.hover && this.isDesktop) || (this.isTouching && !this.isDesktop)) return true
       return this.name === this.active && this.type === this.viewType || this.currentView === this.name
     },
-    showOptions() {
-      if (!this.options || this.options.length === 0) return false
-      if (this.$store.getters.isDesktop) return this.hover
-      return true
-    }
   },
   watch: {
     options() {
@@ -247,7 +253,6 @@ export default {
 
 .link-wrapper {
   height: 100%;
-  cursor: pointer;
   position: relative;
   display: flex;
   transition-duration: .15s;

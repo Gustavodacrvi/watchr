@@ -5,12 +5,27 @@
   >
     <transition name="fade" mode="out-in">
       <div v-if="!editing">
-        <div class="header-wrapper handle" key="wr"
-          @click="showing = !showing"
+        <div class="header-wrapper handle cursor remove-highlight" key="wr"
+          @click="click"
+          @touchstart='touchStart'
+          @touchend='touchEnd'
+          
+          v-longclick='longClick'
           @dblclick="toggleEditing"
           @mouseenter="onHover = true"
           @mouseleave="onHover = false"
         >
+          <div class='circle-trans-wrapper-wrapper'>
+            <div class="circle-trans-wrapper">
+              <transition
+                @enter='circleEnter'
+              >
+                <div v-if="showCircle" class="circle-trans-transition"
+                  :style="{left, top, backgroundImage: `radial-gradient(var(--light-gray), var(--gray))`}"
+                ></div>
+              </transition>
+            </div>
+          </div>
           <div class="header">
             <span :style="{color}">
               <Icon v-if="hasProgress" class="icon"
@@ -26,15 +41,6 @@
               />
               <h3 class="name" :class="{hasIcon}">{{ name }}</h3>
             </span>
-            <div class="icons" @click.stop>
-              <IconDrop class="icon"
-                handle='settings-h'
-                :circle='true'
-                :options='options'
-                :hideHandle='!showOptions'
-                @edit='toggleEditing'
-              />
-            </div>
           </div>
         </div>
         <NotesApp :notes="notes" @save-notes="saveNote"/>
@@ -78,18 +84,112 @@ export default {
     NotesApp: Notes,
   },
   mounted() {
-    const header = this.$el.getElementsByClassName('header')[0]
-    if (header)
-      utils.bindOptionsToEventListener(header, this.options, this)
+    this.bindOptions()
   },
   data() {
     return {
       showing: true,
       onHover: false,
       editing: false,
+      showCircle: false,
+      isTouching: false,
+      left: 0,
+      top: 0,
+      doingTransition: false,
+      allowMobileOptions: false,
     }
   },
   methods: {
+    longClick() {
+      if (!this.isDesktop && !this.movingHeading) {
+        window.navigator.vibrate(100)
+        this.allowMobileOptions = true
+      }
+    },
+    bindOptions() {
+      if (this.isDesktop) {
+        const header = this.$el.getElementsByClassName('header-wrapper')[0]
+        if (header)
+          utils.bindOptionsToEventListener(header, this.options, this.$parent)
+      }
+    },
+    openMobileOptions() {
+      this.$store.commit('pushIconDrop', this.options)
+    },
+    touchStart(e) {
+      this.isTouching = true
+      this.startX = e.changedTouches[0].clientX
+      this.startY = e.changedTouches[0].clientY
+      const rect = e.target.getBoundingClientRect()
+      const scroll = document.scrollingElement.scrollTop
+      if (!this.doingTransition) {
+        this.left = (e.targetTouches[0].pageX - rect.left) + 'px'
+        this.top = (e.targetTouches[0].pageY - rect.top - scroll) + 'px'
+        this.showCircle = true
+      }
+    },
+    click(evt) {
+      if (this.isDesktop && !this.doingTransition) {
+        this.showing = !this.showing
+        this.left = evt.offsetX + 'px'
+        this.top = evt.offsetY + 'px'
+        this.showCircle = true
+      }
+    },
+    touchEnd(e) {
+      this.isTouching = false
+      const touch = e.changedTouches[0]
+      const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
+      const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
+      if (!movedFingerX && !movedFingerY) {
+        if (this.allowMobileOptions)
+          this.openMobileOptions()
+        else this.showing = !this.showing
+      }
+      this.allowMobileOptions = false
+    },
+    circleEnter(el) {
+      const s = el.style
+      this.doingTransition = true
+
+      const trans = str => {
+        s.transition = `opacity ${str}, width ${str}, height ${str}, transform 0s, left 0s, top 0s, margin 0s`
+      }
+      let innerTrans = 450
+      let outerTrans = 250
+      if (this.isTouching) {
+        innerTrans += 150
+        outerTrans += 150
+      }
+
+      trans('0s')
+      s.opacity = 0
+      s.width = 0
+      s.height = 0
+      const client = this.$el.clientWidth
+      const width = client + 100
+      setTimeout(() => {
+        trans(`.${innerTrans}s`)
+        s.opacity = 1
+        s.width = width + 'px'
+        s.height = width + 'px'
+        setTimeout(() => {
+          trans(`.${outerTrans}s`)
+          s.width = width + 'px'
+          s.height = width + 'px'
+          s.opacity = 0
+          setTimeout(() => {
+            trans('0')
+            s.width = 0
+            s.height = 0
+            this.showCircle = false
+            setTimeout(() => {
+              this.doingTransition = false
+            }, 50)
+          }, innerTrans)
+        }, outerTrans)
+      }, 50)
+    },
     toggleEditing() {
       if (this.allowEdit)
         this.editing = !this.editing
@@ -99,10 +199,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['l']),
-    showOptions() {
-      return this.showIconDrop && this.options && this.options.length > 0
-    },
+    ...mapGetters(['l', 'isDesktop']),
     showIconDrop() {
       const isDesktop = this.$store.getters.isDesktop
       if (isDesktop && this.onHover) return true
@@ -115,6 +212,11 @@ export default {
     hasIcon() {
       return this.hasProgress || this.icon
     },
+  },
+  watch: {
+    options() {
+      this.bindOptions()
+    }
   }
 }
 
@@ -153,7 +255,6 @@ export default {
   align-items: center;
   margin: 14px 0;
   margin-bottom: 10px;
-  cursor: pointer;
   height: 45px;
   z-index: 50;
   position: relative;
