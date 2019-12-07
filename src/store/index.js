@@ -54,7 +54,7 @@ moment.locale(lang)
 const uid = () => auth.currentUser.uid
 
 
-const version = '123'
+const version = '052'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -138,6 +138,17 @@ const store = new Vuex.Store({
       const navigator = window.navigator
       return (navigator.standalone === true)
       || (window.matchMedia('(display-mode: standalone)').matches)
+    },
+    parsedVersion(state) {
+      let newStr = ''
+      let i = 0
+      for (const s of state.version) {
+        if (i > 0)
+          newStr += '.' + s
+        else newStr += s
+        i++
+      }
+      return 'v' + newStr
     },
     isPopupOpened(state) {
       return state.popup.comp !== ''

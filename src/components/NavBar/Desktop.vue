@@ -83,14 +83,7 @@ export default {
   },
   computed: {
     ...mapState(['user', 'version', 'lastVersion']),
-    ...mapGetters(['l', 'needsUpdate', 'versionDiff']),
-    parsedVersion() {
-      let newStr = ''
-      for (const s of this.version) {
-        newStr += '.' + s
-      }
-      return 'v' + newStr
-    },
+    ...mapGetters(['l', 'needsUpdate', 'versionDiff', 'parsedVersion']),
     isntOnIndexPage() {
       return this.$route.path !== '/'
     },

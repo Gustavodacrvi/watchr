@@ -93,6 +93,15 @@ body, input, button, textarea {
   width: 4px;
 }
 
+.scroll-thin-horizontal::-webkit-scrollbar-thumb {
+  background-color: var(--light-gray);
+  border-radius: 6px;
+}
+
+.scroll-thin-horizontal::-webkit-scrollbar {
+  height: 4px;
+}
+
 .scroll-main::-webkit-scrollbar-thumb {
   background-color: var(--light-gray);
   border-radius: 6px;
