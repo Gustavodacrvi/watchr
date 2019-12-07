@@ -85,9 +85,19 @@
     <div class="tags" :class="{margins: lists.length > 0}">
       <Tag class="tag" v-for="l in lists" :key="l.id"
         :value="l.name"
-        :selected='filterOptions.list.inclusive === l.name'
+        :selected='inclusiveList === l.name || exclusiveList === l.name'
+        :extraIcon="getListExclusiveIcon(l.name)"
         icon="tasks"
         @click="$emit('list', l.name)"
+      />
+    </div>
+    <div class="tags" :class="{margins: folders.length > 0}">
+      <Tag class="tag" v-for="l in folders" :key="l.id"
+        :value="l.name"
+        :selected='inclusiveFolder === l.name || exclusiveFolder === l.name'
+        :extraIcon="getFolderExclusiveIcon(l.name)"
+        icon="folder"
+        @click="$emit('folder', l.name)"
       />
     </div>
   </div>
@@ -111,7 +121,7 @@ import utils from '@/utils'
 
 export default {
   mixins: [FileMixin],
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'inclusiveTags'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'inclusiveTags', 'inclusiveList', 'exclusiveList', 'inclusiveFolder', 'exclusiveFolder', 'folders'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -139,6 +149,16 @@ export default {
     },
     getTagExclusiveIcon(name) {
       if (this.exclusiveTags.includes(name))
+        return 'close'
+      return null
+    },
+    getListExclusiveIcon(name) {
+      if (this.exclusiveList === name)
+        return 'close'
+      return null
+    },
+    getFolderExclusiveIcon(name) {
+      if (this.exclusiveFolder === name)
         return 'close'
       return null
     },

@@ -7,11 +7,17 @@
 
         :inclusiveTags='inclusiveTags'
         :exclusiveTags='exclusiveTags'
+        :inclusiveList='inclusiveList'
+        :exclusiveList='exclusiveList'
+        :inclusiveFolder='inclusiveFolder'
+        :exclusiveFolder='exclusiveFolder'
+
+        :tags='tagSelectionOptions'
+        :lists='listSelectionOptions'
+        :folders='folderSelectionOptions'
 
         :viewName="viewName"
         :options="options"
-        :tags='tagSelectionOptions'
-        :lists='listSelectionOptions'
         :headerTags="headerTags"
         @save-header-name='name => $emit("save-header-name", name)'
         @save-notes='notes => $emit("save-notes", notes)'
@@ -19,8 +25,10 @@
         @remove-deadline='$emit("remove-deadline")'
         @remove-repeat='$emit("remove-repeat")'
         @remove-header-tag="tagName => $emit('remove-header-tag', tagName)"
+
         @tag='selectTag'
         @list='selectList'
+        @folder='selectFolder'
       />
       <TaskRenderer
         v-bind="$props"
@@ -83,16 +91,16 @@ export default {
       showCompleted: false,
       showingTagSelection: false,
       showingListSelection: false,
+      showingFolderSelection: false,
       showSomeday: false,
 
       inclusiveTags: [],
       exclusiveTags: [],
       inclusiveList: null,
+      exclusiveList: null,
+      inclusiveFolder: null,
+      exclusiveFolder: null,
     }
-  },
-  created() {
-    this.showingTagSelection = localStorage.getItem(this.tagSelectionStr) === 'true'
-    this.showingListSelection = localStorage.getItem(this.listSelectionStr) === 'true'
   },
   methods: {
     selectPagination(newPage) {
@@ -113,18 +121,39 @@ export default {
       }
     },
     selectList(name) {
-      if (this.inclusiveList === name) this.inclusiveList = ''
-      else this.inclusiveList = name
+      this.inclusiveFolder = null
+      this.exclusiveFolder = null
+      if (this.inclusiveList !== name && this.exclusiveList !== name) {
+        this.inclusiveList = name
+      } else if (this.inclusiveList === name) {
+        this.inclusiveList = null
+        this.exclusiveList = name
+      } else this.exclusiveList = null
+    },
+    selectFolder(name) {
+      this.inclusiveList = null
+      this.exclusiveList = null
+      if (this.inclusiveFolder !== name && this.exclusiveFolder !== name) {
+        this.inclusiveFolder = name
+      } else if (this.inclusiveFolder === name) {
+        this.inclusiveFolder = null
+        this.exclusiveFolder = name
+      } else this.exclusiveFolder = null
     },
     toggleTagSelection() {
       this.showingTagSelection = !this.showingTagSelection
-      localStorage.setItem(this.tagSelectionStr, this.showingTagSelection)
       this.inclusiveTags = []
+      this.exclusiveTags = []
     },
     toggleListSelection() {
       this.showingListSelection = !this.showingListSelection
-      localStorage.setItem(this.listSelectionStr, this.showingListSelection)
       this.inclusiveLists = ''
+      this.exclusiveList = ''
+    },
+    toggleFolderSelection() {
+      this.showingFolderSelection = !this.showingFolderSelection
+      this.inclusiveFolders = ''
+      this.exclusiveFolder = ''
     },
     addHeading(obj) {
       this.$emit('add-heading', {...obj})
@@ -217,6 +246,7 @@ export default {
       isDesktop: 'isDesktop',
       l: 'l',
       savedLists: 'list/sortedLists',
+      savedFolders: 'folder/sortedFolders',
       filterTasksByViewRendererFilterOptions: 'task/filterTasksByViewRendererFilterOptions',
       filterTasksByCompletion: 'task/filterTasksByCompletion',
       savedFolders: 'folder/sortedFolders',
@@ -251,6 +281,9 @@ export default {
     },
     listSelectionOptions() {
       return this.showingListSelection ? this.savedLists.slice(0, this.sliceNumber) : []
+    },
+    folderSelectionOptions() {
+      return this.showingFolderSelection ? this.savedFolders.slice(0, this.sliceNumber) : []
     },
     getIconDropOptionsTags() {
       const arr = []
@@ -356,6 +389,11 @@ export default {
             name: l['Show list selection'],
             icon: 'tasks',
             callback: () => this.toggleListSelection()
+          },
+          {
+            name: l['Show folder selection'],
+            icon: 'folder',
+            callback: () => this.toggleFolderSelection()
           },
           {
             name: l['Show completed'],
@@ -544,7 +582,12 @@ export default {
         },
         list: {
           inclusive: this.getInclusiveListId,
-        }
+          exclusive: this.getExclusiveListId,
+        },
+        folder: {
+          inclusive: this.getInclusiveFolderId,
+          exclusive: this.getExclusiveFolderId,
+        },
       }
     },
     getInclusiveTagIds() {
@@ -558,8 +601,28 @@ export default {
         return this.$store.getters['list/getListsByName']([this.inclusiveList])[0].id
       return null
     },
+    getExclusiveListId() {
+      if (this.inclusiveList)
+        return this.$store.getters['list/getListsByName']([this.exclusiveList])[0].id
+      return null
+    },
+    getInclusiveFolderId() {
+      if (this.inclusiveList)
+        return this.$store.getters['folder/getFoldersByName']([this.inclusiveFolder])[0].id
+      return null
+    },
+    getExclusiveFolderId() {
+      if (this.inclusiveList)
+        return this.$store.getters['folder/getFoldersByName']([this.exclusiveFolder])[0].id
+      return null
+    },
   },
   watch: {
+    viewName() {
+      this.showingTagSelection = false
+      this.showingListSelection = false
+      this.showingFolderSelection = false
+    },
     viewNameValue() {
       this.showSomeday = false
     },

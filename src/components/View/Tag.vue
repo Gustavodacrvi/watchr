@@ -16,7 +16,7 @@
           class="extra-icon"
           :icon="extraIcon"
           :color="tagColor"
-          width="14px"
+          width="10px"
         />
       </div>
     </div>
@@ -157,7 +157,7 @@ export default {
 }
 
 .extra-icon {
-  transform: translateX(5px);
+  transform: translate(6px, -1px);
 }
 
 </style>

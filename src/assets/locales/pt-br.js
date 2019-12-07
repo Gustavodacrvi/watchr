@@ -215,6 +215,7 @@ export default {
   "Add heading": "Adicionar cabeçalho",
   "This month": "Esse mês",
   "Periodic tasks": "Tarefas periódicas",
+  "Show folder selection": "Mostrar seleção de pastas",
   "What's new": "O que há de novo",
   "Weekly tasks": "Tarefas semanais",
   "Toggle favorite": "Favoritar lista",

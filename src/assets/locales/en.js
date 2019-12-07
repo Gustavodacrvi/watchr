@@ -66,6 +66,7 @@ export default {
   'Upcoming': 'Upcoming',
   "Username (Optional)": "Username (Optional)",
   "Username": "Username",
+  "Show folder selection": "Show folder selection",
   "What's new": "What's new",
   "There is already a list with this heading name.": "There is already a list with this heading name.",
   "Collaborators": "Collaborators",
