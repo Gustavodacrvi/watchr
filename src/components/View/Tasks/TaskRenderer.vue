@@ -564,18 +564,16 @@ export default {
       })
     },
     removeRepeated(newArr) {
-      return this.$worker.run((newArr) => {
-        const unique = []
-        const set = new Set()
-        for (const t of newArr) {
-          if (!set.has(t.id)) {
-            set.add(t.id)
-            unique.push(t)
-          }
+      const unique = []
+      const set = new Set()
+      for (const t of newArr) {
+        if (!set.has(t.id)) {
+          set.add(t.id)
+          unique.push(t)
         }
+      }
 
-        return unique
-      }, [newArr])
+      return unique
     },
   },
   computed: {
@@ -595,12 +593,10 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     getTasks() {
-      console.time('TaskRenderer.js getTasks called by template')
 
       let arr = []
       if (this.isRoot) arr = this.lazyTasks
       else arr = this.showingMoreItems ? this.lazyTasks : this.lazyTasks.slice(0, 3)
-      console.timeEnd('TaskRenderer.js getTasks called by template')
       return arr
     },
     showMoreItemsMessage() {
@@ -664,9 +660,7 @@ export default {
       setTimeout(() => {
         if (!this.changedViewName) {
           this.clearLazySettimeout()
-          this.removeRepeated(newArr).then(arr => {
-            this.lazyTasks = arr
-          })
+          this.lazyTasks = this.removeRepeated(newArr)
         }
       })
     },

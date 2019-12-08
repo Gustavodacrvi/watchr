@@ -68,11 +68,9 @@ export default {
     icon() {return 'folder'},
     viewNameValue() {return this.viewName},
     getTasks() {
-      console.time('folder.js getTasks')
       let res = []
       if (this.viewFolder)
         res = this.tasks.filter(t => t.folder === this.viewFolder.id)
-      console.timeEnd('folder.js getTasks')
       return res
     },
     taskCompletionCompareDate() {

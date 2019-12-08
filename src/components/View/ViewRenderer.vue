@@ -528,14 +528,12 @@ export default {
     getFilterBySomeday() {
       let ts = this.sortAndFilterTasks.slice()
       if (this.isSomeday || this.showSomeday || this.isSearch) return ts
-      console.time('ViewRenderer.js getFilterBySomeday called by getFilterCompletedTasks')
 
       const arr = []
       for (const t of ts)
         if (!t.calendar || t.calendar.type !== 'someday')
           arr.push(t)
 
-      console.timeEnd('ViewRenderer.js getFilterBySomeday called by getFilterCompletedTasks')
       return arr
     },
     getNumberOfPages() {
@@ -552,7 +550,6 @@ export default {
     getFilterCompletedTasks() {
       let ts = this.getFilterBySomeday.slice()
       if (this.showCompleted) return ts
-      console.time('ViewRenderer.js getFilterCompletedTasks called by template')
       let notCompleted = []
       
       notCompleted = this.filterTasksByCompletion(ts, true)
@@ -563,19 +560,16 @@ export default {
           const type = task.calendar.type
           return type === 'specific' || type === 'someday'
         })
-      console.timeEnd('ViewRenderer.js getFilterCompletedTasks called by template')
       return notCompleted
     },
     sortAndFilterTasks() {
       let ts = this.tasks
-      console.time('ViewRenderer.js sortAndFilterTasks called by getFilterBySomeday')
       const order = this.tasksOrder
 
       if (order)
-        ts = this.$store.getters.checkMissingIdsAndSortArr(order, ts)
+        ts = this.$store.getters.checkMissingIdsAndSortArr(order, ts).slice()
       ts = this.filterTasksByViewRendererFilterOptions(ts, this.getFilterOptions)
 
-      console.timeEnd('ViewRenderer.js sortAndFilterTasks called by getFilterBySomeday')
       return ts
     },
 

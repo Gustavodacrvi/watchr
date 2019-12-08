@@ -2,15 +2,30 @@
 export default (properties, getters) => {
   const keys = Object.keys(getters)
 
-  const memo = (func, stringify) => {
+  const memo = (func, stringify, type) => {
     const cache = {}
     let getKey = stringify ? stringify : JSON.stringify
+    let returnCached
+
+    switch (type) {
+      case Array: {
+        returnCached = arr => arr.slice()
+        break
+      }
+      case Object: {
+        returnCached = obj => ({...obj})
+        break
+      }
+      default: {
+        returnCached = v => v
+      }
+    }
 
     return function() {
       const key = getKey(arguments)
       const val = cache[key]
       
-      if (val !== undefined) return val
+      if (val !== undefined) return returnCached(val)
       
       let res = func.apply(null, arguments)
       if (res === undefined)
@@ -36,7 +51,7 @@ export default (properties, getters) => {
         (!val.getter && val.cache) ||
         (val.getter && !val.cache))
         return memo(val.bind(this, firstArg))
-      else return memo(val.getter.bind(this, firstArg), val.cache)
+      else return memo(val.getter.bind(this, firstArg), val.cache, val.type)
     }
   }
   return obj
