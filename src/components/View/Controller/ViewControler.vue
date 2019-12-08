@@ -67,7 +67,7 @@ export default {
 
         let order = this.viewOrders[view] ? this.viewOrders[view].headings : []
         if (!order) order = []
-        const headings = utils.checkMissingIdsAndSortArr(order, [...folders, ...lists])
+        const headings = this.$store.getters.checkMissingIdsAndSortArr(order, [...folders, ...lists])
 
         const arr = []
         for (const viewHeading of headings) {
@@ -493,13 +493,29 @@ export default {
 
       const cache = {}
       for (const date of dates) {
+        const getTasks = () => this.filterTasksByCompletionDate(filtered, date)
+        const dispatch = this.$store.dispatch
         arr.push({
           disableSortableMount: true,
           name: utils.getHumanReadableDate(date, this.l),
           order: ts => utilsTask.sortTasksByTaskDate(ts, 'fullCompleteDate'),
+          options: [
+            {
+              name: this.l['Uncompleted tasks'],
+              icon: 'circle',
+              important: true,
+              callback: () => dispatch('task/uncompleteTasks', getTasks()),
+            },
+            {
+              name: this.l['Delete tasks'],
+              icon: 'trash',
+              important: true,
+              callback: () => dispatch('task/deleteTasks', getTasks().map(t => t.id)),
+            },
+          ],
           filter: () => {
             if (cache[date]) return cache[date]
-            const result = this.filterTasksByCompletionDate(filtered, date)
+            const result = getTasks()
             cache[date] = result
             return result
           },
@@ -558,12 +574,17 @@ export default {
     },
 
     getRootTasksOfList() {
+      // console.time('ViewController.vue getRootTasksOfList called by getTasks form list.js')
+      let res = []
       if (this.viewList)
-        return this.$store.getters['task/getRootTasksOfList'](this.getListTasks, this.viewList)
-      return []
+        res = this.$store.getters['task/getRootTasksOfList'](this.getListTasks, this.viewList)
+      // console.timeEnd('ViewController.vue getRootTasksOfList called by getTasks form list.js')
+      return res
     },
     tasksWithLists() {
-      return this.$store.getters['task/tasksWithLists'](this.tasks)
+      // console.time('ViewController.vue tasksWithLists called by getListTasks')
+      const res = this.$store.getters['task/tasksWithLists'](this.tasks)
+      return res
     },
     tasksWithListsOrFolders() {
       return this.$store.getters['task/tasksWithListsOrFolders'](this.tasks)
@@ -581,9 +602,12 @@ export default {
       return this.$store.getters['task/tasksWithoutListsAndFolders'](this.tasks)
     },
     getListTasks() {
+      // console.time('ViewController.vue getListTasks called by getRootTasksOfList')
+      let res = []
       if (this.viewList)
-        return this.$store.getters['task/getListTasks'](this.tasksWithLists, this.viewList.id)
-      return []
+        res = this.$store.getters['task/getListTasks'](this.tasksWithLists, this.viewList.id)
+      // console.timeEnd('ViewController.vue getListTasks called by getRootTasksOfList')
+      return res
     },
     viewList() {
       return this.getListByName(this.viewName)

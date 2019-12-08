@@ -51,7 +51,7 @@ export default {
       return []
     },
     illustration() {
-      return 'tags'
+      return 'tag'
     },
     headerOptions() {
       if (this.viewTag)

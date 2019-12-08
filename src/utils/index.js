@@ -29,44 +29,6 @@ export default {
   getUid() {
     return firebase.firestore().collection('tasks').doc().id
   },
-  checkMissingIdsAndSortArr(order, arr, property) {
-    let name = 'id'
-    if (property) name = property
-    
-    let items = []
-    for (const id of order) {
-      const item = arr.find(el => el[name] === id)
-      if (item) items.push(item)
-    }
-
-    let notIncluded = []
-    for (const item of arr) {
-      if (!order.includes(item[name]))
-        notIncluded.push(item)
-    }
-
-    let haveCreationDate = true
-    for (const item of notIncluded) {
-      if (!item.created) {
-        haveCreationDate = false
-        break
-      }
-    }
-    if (haveCreationDate)
-      notIncluded = utilsTask.sortTasksByTaskDate(notIncluded)
-    items = [...items, ...notIncluded]
-  
-    const ids = new Set()
-    const ordered = []
-    for (const item of items) {
-      if (!ids.has(item[name])) {
-        ids.add(item[name])
-        ordered.push(item)
-      }
-    }
-
-    return ordered
-  },
   parseMomentToObject(m) {
     return {
       day: m.format('D'),

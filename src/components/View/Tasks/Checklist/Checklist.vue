@@ -224,7 +224,7 @@ export default {
       return this.$el.getElementsByClassName('draggable-root')[0]
     },
     getList() {
-      return utils.checkMissingIdsAndSortArr(this.order, this.list)
+      return this.$store.getters.checkMissingIdsAndSortArr(this.order, this.list)
     },
   },
   watch: {

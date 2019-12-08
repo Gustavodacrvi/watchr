@@ -16,10 +16,10 @@ export default {
     lists: [],
   },
   getters: {
-    sortedLists(state, d, {userInfo}) {
+    sortedLists(state, d, {userInfo}, rootGetters) {
       const {lists} = state
       if (userInfo)
-        return utils.checkMissingIdsAndSortArr(userInfo.lists, lists)
+        return rootGetters.checkMissingIdsAndSortArr(userInfo.lists, lists)
       return []
     },
     ...MemoizeGetters([], {
@@ -47,13 +47,13 @@ export default {
       getListByName({state}, name) {
         return state.lists.find(l => l.name.trim() === name)
       },
-      getAllTasksOrderByList({state}, listId) {
+      getAllTasksOrderByList({state, rootGetters}, listId) {
         const list = state.lists.find(el => el.id === listId)
         let ord = list.tasks.slice()
         
         let headsOrder = list.headingsOrder.slice() || []
   
-        const heads = utils.checkMissingIdsAndSortArr(headsOrder, list.headings, 'name')
+        const heads = rootGetters.checkMissingIdsAndSortArr(headsOrder, list.headings, 'name')
         
         for (const h of heads) {
           ord = [...ord, ...h.tasks]

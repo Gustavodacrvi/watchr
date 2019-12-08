@@ -76,7 +76,8 @@
     <div class="tags" :class="{margins: tags.length > 0}">
       <Tag class="tag" v-for="t in tags" :key="t.id"
         :value="t.name"
-        :selected='activeTags.includes(t.name)'
+        :selected='isTagSelected(t.name)'
+        :extraIcon='getTagExclusiveIcon(t.name)'
         icon="tag"
         @click="$emit('tag', t.name)"
       />
@@ -84,9 +85,19 @@
     <div class="tags" :class="{margins: lists.length > 0}">
       <Tag class="tag" v-for="l in lists" :key="l.id"
         :value="l.name"
-        :selected='activeList === l.name'
+        :selected='inclusiveList === l.name || exclusiveList === l.name'
+        :extraIcon="getListExclusiveIcon(l.name)"
         icon="tasks"
         @click="$emit('list', l.name)"
+      />
+    </div>
+    <div class="tags" :class="{margins: folders.length > 0}">
+      <Tag class="tag" v-for="l in folders" :key="l.id"
+        :value="l.name"
+        :selected='inclusiveFolder === l.name || exclusiveFolder === l.name'
+        :extraIcon="getFolderExclusiveIcon(l.name)"
+        icon="folder"
+        @click="$emit('folder', l.name)"
       />
     </div>
   </div>
@@ -110,7 +121,7 @@ import utils from '@/utils'
 
 export default {
   mixins: [FileMixin],
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'activeTags', 'activeList', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'inclusiveTags', 'inclusiveList', 'exclusiveList', 'inclusiveFolder', 'exclusiveFolder', 'folders'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -133,6 +144,24 @@ export default {
     window.removeEventListener('click', this.hide)
   },
   methods: {
+    isTagSelected(name) {
+      return this.inclusiveTags.includes(name) || this.exclusiveTags.includes(name)
+    },
+    getTagExclusiveIcon(name) {
+      if (this.exclusiveTags.includes(name))
+        return 'close'
+      return null
+    },
+    getListExclusiveIcon(name) {
+      if (this.exclusiveList === name)
+        return 'close'
+      return null
+    },
+    getFolderExclusiveIcon(name) {
+      if (this.exclusiveFolder === name)
+        return 'close'
+      return null
+    },
     hide() {
       this.editing = false
     },

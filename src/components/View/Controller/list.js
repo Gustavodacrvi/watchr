@@ -88,7 +88,7 @@ export default {
   computed: {
     icon() {return 'tasks'},
     viewNameValue() {return this.viewName},
-    updateHeadingIds(ids) {
+    updateHeadingIds() {
       if (this.viewList) {
         return ids => {
           this.$store.dispatch('list/updateListHeadings', {
@@ -100,7 +100,10 @@ export default {
       return null
     },
     getTasks() {
-      return this.getRootTasksOfList
+      // console.time('list.js getTasks')
+      const res = this.getRootTasksOfList
+      // console.timeEnd('list.js getTasks')
+      return res
     },
     taskCompletionCompareDate() {
       if (this.viewList && this.viewList.calendar && this.viewList.calendar.type !== 'someday')
@@ -155,11 +158,11 @@ export default {
         let order = viewList.headingsOrder
         if (!order) order = []
         
-        const heads = utils.checkMissingIdsAndSortArr(order, viewList.headings, 'name')
+        const heads = this.$store.getters.checkMissingIdsAndSortArr(order, viewList.headings, 'name')
 
         for (const h of heads) {
           let headingTasks = this.getListTasks.filter(el => el.heading === h.name)
-          headingTasks = utils.checkMissingIdsAndSortArr(h.tasks, headingTasks)
+          headingTasks = this.$store.getters.checkMissingIdsAndSortArr(h.tasks, headingTasks)
           arr.push({
             name: h.name,
             allowEdit: true,

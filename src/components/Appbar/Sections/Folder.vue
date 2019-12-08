@@ -8,6 +8,7 @@
 
       @touchstart='touchStart'
       @touchend='touchEnd'
+      v-longclick='longClick'
 
       data-type='folder'
       data-color='var(--white)'
@@ -32,12 +33,6 @@
           <span v-else key="f">{{ l['Apply selected tasks'] }}</span>
         </transition>
       </span>
-      <IconDrop class="drop"
-        handle="settings-v"
-        :hideHandle="!headerHover && isDesktop"
-        :options="options"
-        :circle='true'
-      />
     </div>
     <div class="content">
       <div v-show="showing && !movingFolder">
@@ -84,8 +79,10 @@ export default {
       })
     },
     bindOptions() {
-      const el = this.$el.getElementsByClassName('header')[0]
-      utils.bindOptionsToEventListener(el, this.options, this.$parent)
+      if (this.isDesktop) {
+        const el = this.$el.getElementsByClassName('header')[0]
+        utils.bindOptionsToEventListener(el, this.options, this.$parent)
+      }
     },
     touchStart(e) {
       this.isTouching = true
@@ -99,13 +96,25 @@ export default {
         this.showCircle = true
       }
     },
+    openMobileOptions() {
+      this.$store.commit('pushIconDrop', this.options)
+    },
     touchEnd(e) {
       this.isTouching = false
       const touch = e.changedTouches[0]
       const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
       const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
       if (!movedFingerX && !movedFingerY) {
-        this.click()
+        if (this.allowMobileOptions)
+          this.openMobileOptions()
+        else this.click()
+      }
+      this.allowMobileOptions = false
+    },
+    longClick() {
+      if (!this.isDesktop && !this.isDragging) {
+        window.navigator.vibrate(100)
+        this.allowMobileOptions = true
       }
     },
     circleEnter(el) {

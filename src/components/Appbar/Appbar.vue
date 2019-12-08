@@ -417,7 +417,7 @@ export default {
       ]
     },
     getFavorites() {
-      return utils.checkMissingIdsAndSortArr(this.favoritesOrder, this.getFavArr)
+      return this.$store.getters.checkMissingIdsAndSortArr(this.favoritesOrder, this.getFavArr)
     },
     favoritesOrder() {
       if (this.userInfo && this.userInfo.favorites)
@@ -431,7 +431,7 @@ export default {
       return ['Today', 'Tomorrow', 'Someday', 'Inbox', 'Upcoming', 'Completed']
     },
     getLinksOrdered() {
-      return utils.checkMissingIdsAndSortArr(this.linksOrder, this.links)
+      return this.$store.getters.checkMissingIdsAndSortArr(this.linksOrder, this.links)
     },
     getOptions() {
       const opt = this.getSectionOptions.slice()
@@ -444,7 +444,7 @@ export default {
         for (const s of sect) {
           opt.push({
             name: s,
-            callback: () => this.section = s
+            callback: () => {this.section = s}
           })
         }
       }

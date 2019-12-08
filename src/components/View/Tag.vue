@@ -12,6 +12,12 @@
       >
         <Icon class="icon" :icon="icon" :color="tagColor" width="14px"/>
         <span class="name" :style="{color: tagColor}">{{ value }}</span>
+        <Icon v-if="extraIcon"
+          class="extra-icon"
+          :icon="extraIcon"
+          :color="tagColor"
+          width="10px"
+        />
       </div>
     </div>
   </transition>
@@ -27,7 +33,7 @@ export default {
   components: {
     Icon: IconVue,
   },
-  props: ['value', 'icon', 'color', 'selected', 'disabled'],
+  props: ['value', 'icon', 'color', 'selected', 'disabled', 'extraIcon'],
   data() {
     return {
       height: 0,
@@ -148,6 +154,10 @@ export default {
   background-color: initial !important;
   opacity: .4;
   color: var(--white) !important;
+}
+
+.extra-icon {
+  transform: translate(6px, -1px);
 }
 
 </style>

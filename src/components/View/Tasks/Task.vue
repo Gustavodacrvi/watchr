@@ -31,7 +31,7 @@
           <div class="cont"
             v-longclick='longClick'
           >
-            <div class="check cursor"
+            <div class="check cursor remove-highlight"
               @click.stop="completeTask"
               @mouseenter.stop="iconHover = true"
               @mouseleave="iconHover = false"
@@ -166,11 +166,11 @@ export default {
     },
     longClick() {
       if (!this.isDesktop && !this.isDragging && !this.isScrolling) {
+        window.navigator.vibrate(100)
         this.allowMobileOptions = true
       }
     },
     openMobileOptions() {
-      window.navigator.vibrate(100)
       this.$store.commit('pushIconDrop', this.options)
     },
     completeTask() {
@@ -192,7 +192,8 @@ export default {
       this.outerColor = 'var(--primary)'
       this.left = (evt.offsetX + 35) + 'px'
       this.top = (evt.offsetY + 0) + 'px'
-      this.showCircle = true
+      if (!this.doingTransition)
+        this.showCircle = true
     },
     touchStart(e) {
       this.isTouching = true

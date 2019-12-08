@@ -68,9 +68,10 @@ export default {
     icon() {return 'folder'},
     viewNameValue() {return this.viewName},
     getTasks() {
+      let res = []
       if (this.viewFolder)
-        return this.tasks.filter(t => t.folder === this.viewFolder.id)
-      return []
+        res = this.tasks.filter(t => t.folder === this.viewFolder.id)
+      return res
     },
     taskCompletionCompareDate() {
       return null
@@ -87,7 +88,7 @@ export default {
     },
     tasksOrder() {
       if (this.viewFolder && this.viewFolder.tasks)
-        return this.viewFolder.tasks.slice()
+        return this.viewFolder.tasks
       return []
     },
     showEmptyHeadings() {

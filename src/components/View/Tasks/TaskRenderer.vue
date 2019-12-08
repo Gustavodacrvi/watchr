@@ -111,7 +111,7 @@ import utils from '@/utils/'
 let headingsFilterCache = {}
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'illustration', 'activeTags', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'activeList', 'isSmart', 'allowCalendarStr', 'updateHeadingIds', 'disableSortableMount',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'illustration', 'headingEdit', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds', 'disableSortableMount', 'filterOptions',
   'viewType', 'options', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -483,7 +483,7 @@ export default {
 
             setTimeout(() => {
               root.insertBefore(newTask, adder)
-            }, this.getTasks.length)
+            }, this.getTasks.length * 2)
 
             this.addedTask = null
             break
@@ -564,18 +564,16 @@ export default {
       })
     },
     removeRepeated(newArr) {
-      return this.$worker.run((newArr) => {
-        const unique = []
-        const set = new Set()
-        for (const t of newArr) {
-          if (!set.has(t.id)) {
-            set.add(t.id)
-            unique.push(t)
-          }
+      const unique = []
+      const set = new Set()
+      for (const t of newArr) {
+        if (!set.has(t.id)) {
+          set.add(t.id)
+          unique.push(t)
         }
+      }
 
-        return unique
-      }, [newArr])
+      return unique
     },
   },
   computed: {
@@ -590,13 +588,16 @@ export default {
       platform: 'platform',
       isDesktop: 'isDesktop',
       getTaskBodyDistance: 'task/getTaskBodyDistance',
+      filterTasksByViewRendererFilterOptions: 'task/filterTasksByViewRendererFilterOptions',
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     getTasks() {
-      if (this.isRoot) return this.lazyTasks
-      const arr = []
-      return this.showingMoreItems ? this.lazyTasks : this.lazyTasks.slice(0, 3)
+
+      let arr = []
+      if (this.isRoot) arr = this.lazyTasks
+      else arr = this.showingMoreItems ? this.lazyTasks : this.lazyTasks.slice(0, 3)
+      return arr
     },
     showMoreItemsMessage() {
       return `${this.l['Show ']}${this.lazyTasks.length - 3}${this.l[' more tasks...']}`
@@ -626,8 +627,8 @@ export default {
         let order = []
         if (h.order)
           order = h.order(ts)
-        ts = utils.checkMissingIdsAndSortArr(order, ts)
-        ts = utilsTask.filterTasksByViewRendererFilterOptions(ts, this.activeTags, this.activeList)
+        ts = this.$store.getters.checkMissingIdsAndSortArr(order, ts)
+        ts = this.filterTasksByViewRendererFilterOptions(ts, this.filterOptions)
 
         if (ts.length > 0) this.atLeastOneRenderedTask = true
 
@@ -653,15 +654,13 @@ export default {
     },
   },
   watch: {
-    tasks(newArr, fd) {
+    tasks(newArr) {
       headingsFilterCache = {}
       this.atLeastOneRenderedTask = false
       setTimeout(() => {
         if (!this.changedViewName) {
           this.clearLazySettimeout()
-          this.removeRepeated(newArr).then(arr => {
-            this.lazyTasks = arr
-          })
+          this.lazyTasks = this.removeRepeated(newArr)
         }
       })
     },
@@ -689,6 +688,9 @@ export default {
 
       this.sortable.options.disabled = this.disableSortableMount
       this.headSort.options.disabled = !this.updateHeadingIds
+    },
+    filterOptions() {
+      headingsFilterCache = {}
     },
     enableSelect() {
       if (this.sortable) {

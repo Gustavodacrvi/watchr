@@ -5,21 +5,30 @@
       <Header
         v-bind="$props"
 
-        :viewName="viewName"
-        :options="options"
+        :inclusiveTags='inclusiveTags'
+        :exclusiveTags='exclusiveTags'
+        :inclusiveList='inclusiveList'
+        :exclusiveList='exclusiveList'
+        :inclusiveFolder='inclusiveFolder'
+        :exclusiveFolder='exclusiveFolder'
+
         :tags='tagSelectionOptions'
         :lists='listSelectionOptions'
-        :activeTags='activeTags'
-        :activeList='activeList'
+        :folders='folderSelectionOptions'
+
+        :viewName="viewName"
+        :options="options"
         :headerTags="headerTags"
         @save-header-name='name => $emit("save-header-name", name)'
         @save-notes='notes => $emit("save-notes", notes)'
-        @tag='selectTag'
-        @list='selectList'
         @remove-defer-date='$emit("remove-defer-date")'
         @remove-deadline='$emit("remove-deadline")'
         @remove-repeat='$emit("remove-repeat")'
         @remove-header-tag="tagName => $emit('remove-header-tag', tagName)"
+
+        @tag='selectTag'
+        @list='selectList'
+        @folder='selectFolder'
       />
       <TaskRenderer
         v-bind="$props"
@@ -28,11 +37,10 @@
         :viewName='viewName'
         :headings='getHeadings'
         :addTask='addTask'
+        :filterOptions='getFilterOptions'
         :headingEdit='headingEdit'
         :showCompleted='showCompleted'
-        :activeTags='getActiveTags'
         :options='options'
-        :activeList='getActiveListId'
         :headingPosition='0'
         @update="updateIds"
         @update-headings='(ids) => $emit("update-heading-ids", ids)'
@@ -84,39 +92,69 @@ export default {
       showCompleted: false,
       showingTagSelection: false,
       showingListSelection: false,
-      activeTags: [],
-      activeList: null,
+      showingFolderSelection: false,
       showSomeday: false,
+
+      inclusiveTags: [],
+      exclusiveTags: [],
+      inclusiveList: null,
+      exclusiveList: null,
+      inclusiveFolder: null,
+      exclusiveFolder: null,
     }
-  },
-  created() {
-    this.showingTagSelection = localStorage.getItem(this.tagSelectionStr) === 'true'
-    this.showingListSelection = localStorage.getItem(this.listSelectionStr) === 'true'
   },
   methods: {
     selectPagination(newPage) {
       this.pagination = newPage
     },
     selectTag(name) {
-      if (this.activeTags.includes(name)) {
-        const i = this.activeTags.findIndex(el => el === name)
-        this.activeTags.splice(i, 1)
+      const inc = this.inclusiveTags
+      const exc = this.exclusiveTags
+      if (!inc.includes(name) && !exc.includes(name)) {
+        inc.push(name)
+      } else if (inc.includes(name)) {
+        const i = inc.findIndex(el => el === name)
+        inc.splice(i, 1)
+        exc.push(name)
+      } else {
+        const i = exc.findIndex(el => el === name)
+        exc.splice(i, 1)
       }
-      else this.activeTags.push(name)
     },
     selectList(name) {
-      if (this.activeList === name) this.activeList = ''
-      else this.activeList = name
+      this.inclusiveFolder = null
+      this.exclusiveFolder = null
+      if (this.inclusiveList !== name && this.exclusiveList !== name) {
+        this.inclusiveList = name
+      } else if (this.inclusiveList === name) {
+        this.inclusiveList = null
+        this.exclusiveList = name
+      } else this.exclusiveList = null
+    },
+    selectFolder(name) {
+      this.inclusiveList = null
+      this.exclusiveList = null
+      if (this.inclusiveFolder !== name && this.exclusiveFolder !== name) {
+        this.inclusiveFolder = name
+      } else if (this.inclusiveFolder === name) {
+        this.inclusiveFolder = null
+        this.exclusiveFolder = name
+      } else this.exclusiveFolder = null
     },
     toggleTagSelection() {
       this.showingTagSelection = !this.showingTagSelection
-      localStorage.setItem(this.tagSelectionStr, this.showingTagSelection)
-      this.activeTags = []
+      this.inclusiveTags = []
+      this.exclusiveTags = []
     },
     toggleListSelection() {
       this.showingListSelection = !this.showingListSelection
-      localStorage.setItem(this.listSelectionStr, this.showingListSelection)
-      this.activeLists = ''
+      this.inclusiveLists = ''
+      this.exclusiveList = ''
+    },
+    toggleFolderSelection() {
+      this.showingFolderSelection = !this.showingFolderSelection
+      this.inclusiveFolders = ''
+      this.exclusiveFolder = ''
     },
     addHeading(obj) {
       this.$emit('add-heading', {...obj})
@@ -209,6 +247,8 @@ export default {
       isDesktop: 'isDesktop',
       l: 'l',
       savedLists: 'list/sortedLists',
+      savedFolders: 'folder/sortedFolders',
+      filterTasksByViewRendererFilterOptions: 'task/filterTasksByViewRendererFilterOptions',
       filterTasksByCompletion: 'task/filterTasksByCompletion',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
@@ -223,7 +263,7 @@ export default {
       return this.isSmart && this.viewName === 'Someday'
     },
     getActiveTags() {
-      const arr = this.activeTags.slice()
+      const arr = this.inclusiveTags.slice()
       if (this.viewType === 'tag' && !arr.includes(this.viewName))
         arr.push(this.viewName)
       return arr
@@ -243,13 +283,8 @@ export default {
     listSelectionOptions() {
       return this.showingListSelection ? this.savedLists.slice(0, this.sliceNumber) : []
     },
-    getActiveTagIds() {
-      return this.$store.getters['tag/getTagsByName'](this.activeTags).map(el => el.id)
-    },
-    getActiveListId() {
-      if (this.activeList)
-        return this.$store.getters['list/getListsByName']([this.activeList])[0].id
-      return null
+    folderSelectionOptions() {
+      return this.showingFolderSelection ? this.savedFolders.slice(0, this.sliceNumber) : []
     },
     getIconDropOptionsTags() {
       const arr = []
@@ -355,6 +390,11 @@ export default {
             name: l['Show list selection'],
             icon: 'tasks',
             callback: () => this.toggleListSelection()
+          },
+          {
+            name: l['Show folder selection'],
+            icon: 'folder',
+            callback: () => this.toggleFolderSelection()
           },
           {
             name: l['Show completed'],
@@ -476,17 +516,6 @@ export default {
         ]
       }
     },
-    sortAndFilterTasks() {
-      let ts = this.tasks.slice()
-      const order = this.tasksOrder
-
-      if (order)
-        ts = utils.checkMissingIdsAndSortArr(order, ts)
-      else
-        ts = utilsTask.sortTasksByPriority(ts)
-
-      return utilsTask.filterTasksByViewRendererFilterOptions(ts, this.getActiveTagIds, this.getActiveListId)
-    },
     hasAtLeastOneSomeday() {
       let ts = this.tasks.slice()
       for (const t of ts) {
@@ -520,22 +549,79 @@ export default {
     },
     getFilterCompletedTasks() {
       let ts = this.getFilterBySomeday.slice()
-      let notCompleted = []
       if (this.showCompleted) return ts
+      let notCompleted = []
       
       notCompleted = this.filterTasksByCompletion(ts, true)
 
       if (notCompleted.length === 0 && this.headingsOptions.length === 0)
-        return ts.filter(task => {
+        notCompleted = ts.filter(task => {
           if (!task.calendar) return true
           const type = task.calendar.type
           return type === 'specific' || type === 'someday'
         })
-
       return notCompleted
+    },
+    sortAndFilterTasks() {
+      let ts = this.tasks
+      const order = this.tasksOrder
+
+      if (order)
+        ts = this.$store.getters.checkMissingIdsAndSortArr(order, ts).slice()
+      ts = this.filterTasksByViewRendererFilterOptions(ts, this.getFilterOptions)
+
+      return ts
+    },
+
+    getFilterOptions() {
+      return {
+        tags: {
+          inclusive: this.getInclusiveTagIds,
+          exclusive: this.getExclusiveTagIds,
+        },
+        list: {
+          inclusive: this.getInclusiveListId,
+          exclusive: this.getExclusiveListId,
+        },
+        folder: {
+          inclusive: this.getInclusiveFolderId,
+          exclusive: this.getExclusiveFolderId,
+        },
+      }
+    },
+    getInclusiveTagIds() {
+      return this.$store.getters['tag/getTagsByName'](this.inclusiveTags).map(el => el.id)
+    },
+    getExclusiveTagIds() {
+      return this.$store.getters['tag/getTagsByName'](this.exclusiveTags).map(el => el.id)
+    },
+    getInclusiveListId() {
+      if (this.inclusiveList)
+        return this.$store.getters['list/getListsByName']([this.inclusiveList])[0].id
+      return null
+    },
+    getExclusiveListId() {
+      if (this.exclusiveList)
+        return this.$store.getters['list/getListsByName']([this.exclusiveList])[0].id
+      return null
+    },
+    getInclusiveFolderId() {
+      if (this.inclusiveFolder)
+        return this.$store.getters['folder/getFoldersByName']([this.inclusiveFolder])[0].id
+      return null
+    },
+    getExclusiveFolderId() {
+      if (this.exclusiveFolder)
+        return this.$store.getters['folder/getFoldersByName']([this.exclusiveFolder])[0].id
+      return null
     },
   },
   watch: {
+    viewName() {
+      this.showingTagSelection = false
+      this.showingListSelection = false
+      this.showingFolderSelection = false
+    },
     viewNameValue() {
       this.showSomeday = false
     },
