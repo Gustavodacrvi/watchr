@@ -195,6 +195,13 @@ export default {
       filterTasksByCompletion: 'task/filterTasksByCompletion',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
+
+      doesTaskPassExclusiveFolder: 'task/doesTaskPassExclusiveFolder',
+      doesTaskPassInclusiveFolder: 'task/doesTaskPassInclusiveFolder',
+      doesTaskPassExclusiveList: 'task/doesTaskPassExclusiveList',
+      doesTaskPassInclusiveList: 'task/doesTaskPassInclusiveList',
+      doesTaskPassExclusiveTags: 'task/doesTaskPassExclusiveTags',
+      doesTaskPassInclusiveTags: 'task/doesTaskPassInclusiveTags',
     }),
     isSearch() {
       return this.isSmart && this.viewNameValue === "Search"

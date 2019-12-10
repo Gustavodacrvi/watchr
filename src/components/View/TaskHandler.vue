@@ -47,29 +47,31 @@ export default {
   },
   methods: {
     addTask(obj, evt) {
-      const notFilteredIds = this.notFilteredIds
+      const rootNonFilteredIds = this.rootNonFilteredIds
 
       let fixPosition = 0
       let i = 0
-      for (const id of notFilteredIds) {
+      for (const id of rootNonFilteredIds) {
         if (!obj.ids.includes(id))
           fixPosition++
         if ((i - fixPosition) === obj.index) break
         i++
       }
 
+      
       obj.index += fixPosition
-      obj.ids = notFilteredIds
+      obj.ids = rootNonFilteredIds
+
       this.$parent.$emit('add-task', obj)
     },
     updateIds(ids) {
-      const notFilteredIds = this.notFilteredIds
-      const removedIncludedIds = notFilteredIds.slice().filter(id => !ids.includes(id))
+      const rootNonFilteredIds = this.rootNonFilteredIds
+      const removedIncludedIds = rootNonFilteredIds.slice().filter(id => !ids.includes(id))
 
       const final = []
       let missing = []
       let i = 0
-      for (const id of notFilteredIds) {
+      for (const id of rootNonFilteredIds) {
         if (removedIncludedIds.includes(id))
           final.push(id)
         else missing.push(i)
@@ -82,7 +84,6 @@ export default {
         i++
       }
 
-      
       this.$parent.$emit('update-ids', removedIncludedIds)
     },
     updateHeadingIds(ids) {
@@ -97,19 +98,13 @@ export default {
       storeTasks: state => state.task.tasks,
     }),
     ...mapGetters({
-      doesTaskPassExclusiveFolder: 'task/doesTaskPassExclusiveFolder',
-      doesTaskPassInclusiveFolder: 'task/doesTaskPassInclusiveFolder',
-      doesTaskPassExclusiveList: 'task/doesTaskPassExclusiveList',
-      doesTaskPassInclusiveList: 'task/doesTaskPassInclusiveList',
-      doesTaskPassExclusiveTags: 'task/doesTaskPassExclusiveTags',
-      doesTaskPassInclusiveTags: 'task/doesTaskPassInclusiveTags',
       isTaskSomeday: 'task/isTaskSomeday',
       isTaskCompleted: 'task/isTaskCompleted',
 
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
     }),
-    notFilteredIds() {
-      return this.mainTasks.map(el => el.id)
+    rootNonFilteredIds() {
+      return this.rootNonFiltered.map(el => el.id)
     },
 
     sortHeadings() {
@@ -119,52 +114,43 @@ export default {
       return this.headings.map(head => ({
         ...head,
         filter: undefined,
-        tasks: head.sort(this.mainTasks.filter(head.filter))
+        tasks: head.sort(this.mainTasks.filter(
+          pipeBooleanFilters(
+            head.filter,
+            this.filterOptionsPipe,
+          )
+        ))
       }))
     },
 
     sortLaseredTasks() {
-      // console.time('tasks sorting')
-      const res = this.sortTasksFunction(this.laserTasks)
-      // console.timeEnd('tasks sorting')
-      return res
+      return this.rootNonFiltered.filter(this.filterOptionsPipe)
     },
-    laserTasks() {
-      // console.time('filtered lasering')
-      const res = this.mainTasks.filter(this.rootPipe)
-      // console.timeEnd('filtered lasering')
-      return res
+    rootNonFiltered() {
+      return this.sortTasksFunction(this.mainTasks.filter(this.rootFilter))
     },
     mainTasks() {
-      // console.time('nonFiltered lasering')
-      const res = this.storeTasks.filter(this.mainPipe)
-      // console.timeEnd('nonFiltered lasering')
-      return res
+      return this.storeTasks.filter(this.mainFilter)
     },
 
     sortHeadingsFunction() {
+      const order = this.headingsOrder
       return headings => {
-        return this.checkMissingIdsAndSortArr(this.headingsOrder() || [], headings)
+        return this.checkMissingIdsAndSortArr(order || [], headings)
       }
     },
     sortTasksFunction() {
+      const order = this.tasksOrder
       return tasks => {
-        return this.checkMissingIdsAndSortArr(this.tasksOrder() || [], tasks)
+        return this.checkMissingIdsAndSortArr(order || [], tasks)
       }
     },
 
-    mainPipe() {
+    filterOptionsPipe() {
       return pipeBooleanFilters(
-        this.mainFilter,
         this.pipeFilterOptions,
         this.pipeSomeday,
         this.pipeCompleted,
-      )
-    },
-    rootPipe() {
-      return pipeBooleanFilters(
-        this.mainFilter,
-        this.rootFilter,
       )
     },
     hasAtLeastOneSomeday() {

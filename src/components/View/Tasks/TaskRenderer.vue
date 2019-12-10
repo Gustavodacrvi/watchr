@@ -5,12 +5,15 @@
         <Icon :icon='icon' color='var(--appnav-color)' width="150px"/>
       </div>
     </transition>
-    <transition-group name="task-trans"
+    <transition-group
       class="front task-renderer-root"
       :class="{dontHaveTasks: getTasks.length === 0 && lazyHeadings.length === 0, showEmptyHeadings}"
       appear
-      :css='true'
+      :css='false'
       tag="div"
+
+      @enter='taskEnter'
+      @leave='taskLeave'
 
       data-name='task-renderer'
     >
@@ -28,7 +31,7 @@
         @de-select='deSelectTask'
 
         :data-id='item.id'
-        :data-item='item.name'
+        :data-name='item.name'
         :data-type='`task`'
       />
     </transition-group>
@@ -157,27 +160,41 @@ export default {
     window.removeEventListener('keydown', this.keydown)
   },
   methods: {
-    fixTaskRenderer() {
-      if (this.addedTask) {
-        const i = this.getTaskRendererPosition()
-        const root = this.draggableRoot
-        const childNodes = root.childNodes
-        const adder = childNodes[i]
+    taskEnter(el, done) {
+      const cont = el.getElementsByClassName('cont-wrapper')[0]
+      if (cont) {
+        const s = cont.style
 
-        if (adder)
-          for (const newTask of childNodes) {
-            if (newTask.dataset.item === this.addedTask) {
-
-              setTimeout(() => {
-                root.insertBefore(newTask, adder)
-              })
-
-              this.addedTask = null
-              break
-            }
-          }
+        s.transitionDuration = '0'
+        s.opacity = 0
+        s.height = '0px'
+        if (el.dataset.name === this.addedTask) {
+          setTimeout(() => {
+              this.draggableRoot.insertBefore(el, this.taskAdder())
+          }, 5)
+          this.addedTask = null
+        }
+        
+        setTimeout(() => {
+          s.transitionDuration = '.15s'
+          s.opacity = 1
+          s.height = this.taskHeight + 'px'
+        }, 49)
+        
+        setTimeout(done, 200)
       }
     },
+    taskLeave(el, done) {
+      const cont = el.getElementsByClassName('cont-wrapper')[0]
+      if (cont) {
+        const s = cont.style
+        s.transitionDuration = '.2s'
+        s.opacity = 0
+        s.height = '0px'
+        setTimeout(done, 200)
+      }
+    },
+
     destroySortables() {
       if (this.sortable)
         this.sortable.destroy()
@@ -225,7 +242,7 @@ export default {
             return false
           }
         },
-        delay: 150,
+        delay: 100,
         delayOnTouchOnly: true,
         handle: '.handle',
 
@@ -253,9 +270,6 @@ export default {
 
           const ids = items.map(el => el.dataset.id)
 
-          for (const item of items)
-            this.draggableRoot.removeChild(item)
-
           if (type === 'task' && this.onSortableAdd && this.sourceVueInstance) {
             const indicies = evt.newIndicies.map(el => el.index )
             if (indicies.length === 0) indicies.push(evt.newIndex)
@@ -279,8 +293,9 @@ export default {
               destinyLazyTasks.splice(indicies[i], 0, tasks[i])
             }
 
-            this.onSortableAdd(evt, ids, type, destinyLazyTasks.map(el => el.id))
-            
+            setTimeout(() => {
+              this.onSortableAdd(evt, ids, type, destinyLazyTasks.map(el => el.id))
+            })
             this.sourceVueInstance = null
           } else {
             const addEdit = (comp, onSave, propsData) => {
@@ -309,6 +324,9 @@ export default {
                   buttonTxt: this.l['Save'],
                 })
             }
+          }
+          for (const item of items) {
+            item.remove()
           }
         },
         onStart: evt => {
@@ -382,7 +400,6 @@ export default {
             disabled: !this.updateHeadingIds,
             group: 'headings',
             delay: 225,
-            delayOnTouchOnly: true,
             handle: '.handle',
       
             onUpdate: (evt) => {
@@ -595,6 +612,11 @@ export default {
     windowClick() {
       this.$store.commit('clearSelected')
     },
+    taskAdder() {
+      const root = this.draggableRoot
+      const childNodes = root.childNodes
+      return childNodes[this.getTaskRendererPosition()]
+    },
     clearLazySettimeout() {
       for (const set of this.lazyTasksSetTimeouts)
         clearTimeout(set)
@@ -774,33 +796,6 @@ export default {
   height: 45px !important;
   opacity: 1 !important;
   padding: 0 6px !important;
-}
-
-.task-trans-enter .cont-wrapper, .task-trans-leave-to .cont-wrapper {
-  opacity: 0;
-  height: 0;
-  transition: height .15s, opacity .15s, transform .2s !important;
-}
-
-.task-trans-leave-to .cont-wrapper, .task-trans-leave-to, .task-trans-leave, .task-trans-enter-to  {
-  transition: height .15s, opacity .15s, transform .2s !important;
-}
-
-
-.task-trans-leave .cont-wrapper, .task-trans-enter-to .cont-wrapper {
-  transition: height .15s, opacity .15s, transform .2s !important;
-  height: 35px;
-  opacity: 1;
-}
-
-.mobile .task-trans-leave .cont-wrapper, .mobile .task-trans-enter-to .cont-wrapper {
-  height: 50px;
-}
-
-.sortable-selected .cont-wrapper {
-  background-color: rgba(53, 73, 90, 0.6) !important;
-  box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
-  transition: background-color .8s !important;
 }
 
 </style>

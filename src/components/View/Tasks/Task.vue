@@ -842,6 +842,12 @@ export default {
   transform: scale(.8,.8);
 }
 
+.sortable-selected .cont-wrapper {
+  background-color: rgba(53, 73, 90, 0.6) !important;
+  box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
+  transition: background-color .8s !important;
+}
+
 .sortable-ghost .cont-wrapper {
   background-color: var(--void) !important;
   transition-duration: 0;

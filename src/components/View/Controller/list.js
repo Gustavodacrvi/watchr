@@ -154,10 +154,9 @@ export default {
       return arr
     },
     headingsOrder() {
-      // console.log(0)
-      if (this.viewList)
-        return () => this.viewList.headingsOrder
-      return () => []
+      if (this.viewList && this.viewList.headingsOrder)
+        return this.viewList.headingsOrder
+      return []
     },
     
     icon() {return 'tasks'},
@@ -189,10 +188,9 @@ export default {
       return null
     },
     tasksOrder() {
-      // console.log('açslkdfj')
-      if (this.viewList)
-        return () => this.viewList.tasks
-      return () => []
+      if (this.viewList && this.viewList.tasks)
+        return this.viewList.tasks
+      return[]
     },
     showEmptyHeadings() {
       return true
