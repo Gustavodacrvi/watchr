@@ -297,10 +297,15 @@ export default {
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
       getTasks: 'list/getTasks',
+      isTaskInList: 'task/isTaskInList',
+      isTaskInListRoot: 'task/isTaskInListRoot',
       filterTasksByPeriod: 'task/filterTasksByPeriod',
       filterTasksByView: 'task/filterTasksByView',
       filterTasksByCompletion: 'task/filterTasksByCompletion',
       isTaskCompleted: 'task/isTaskCompleted',
+      doesTaskPassInclusiveTags: 'task/doesTaskPassInclusiveTags',
+      doesTaskIncludeText: 'task/doesTaskIncludeText',
+      isTaskInHeading: 'task/isTaskInHeading',
       filterTasksByCompletionDate: 'task/filterTasksByCompletionDate',
       getTagsById: 'tag/getTagsById',
       filterTasksByDay: 'task/filterTasksByDay',
@@ -345,9 +350,9 @@ export default {
       const p = this.prefix
       
       const props = [
-        'icon', 'illustration', 'showHeader', 'showEmptyHeadings', 'updateHeadingIds',
-        'headingEdit', 'headerOptions', 'notes', 'progress', 'headingsOptions',
-        'tasks', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates',
+        'icon', 'showEmptyHeadings', 'updateHeadingIds',
+        'headingEditOptions', 'headerOptions', 'notes', 'progress', 'headings', 'headingsOrder',
+        'mainFilter', 'rootFilter', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates',
         'headerTags', 'headerCalendar', 'taskCompletionCompareDate', 'files',
         'headingsPagination',
       ]
@@ -357,7 +362,7 @@ export default {
         obj[v] = this[p + v]
       
       obj['showEmptyHeadings'] = this['isListType']
-      obj['showHeader'] = this['isListType']
+      obj['showHeadadingFloatingButton'] = this['isListType']
       obj['notes'] = this[p + 'getViewNotes']
       obj['progress'] = this[p + 'getPieProgress']
       obj['tasks'] = this[p + 'getTasks']
@@ -573,25 +578,6 @@ export default {
       ]
     },
 
-    getRootTasksOfList() {
-      // console.time('ViewController.vue getRootTasksOfList called by getTasks form list.js')
-      let res = []
-      if (this.viewList)
-        res = this.$store.getters['task/getRootTasksOfList'](this.getListTasks, this.viewList)
-      // console.timeEnd('ViewController.vue getRootTasksOfList called by getTasks form list.js')
-      return res
-    },
-    tasksWithLists() {
-      // console.time('ViewController.vue tasksWithLists called by getListTasks')
-      const res = this.$store.getters['task/tasksWithLists'](this.tasks)
-      return res
-    },
-    tasksWithListsOrFolders() {
-      return this.$store.getters['task/tasksWithListsOrFolders'](this.tasks)
-    },
-    tasksWithoutLists() {
-      return this.$store.getters['task/tasksWithoutLists'](this.tasks)
-    },
     periodicTasks() {
       return this.tasks.filter(el => el.calendar && el.calendar.type === 'periodic')
     },
@@ -600,14 +586,6 @@ export default {
     },
     tasksWithoutListsAndFolders() {
       return this.$store.getters['task/tasksWithoutListsAndFolders'](this.tasks)
-    },
-    getListTasks() {
-      // console.time('ViewController.vue getListTasks called by getRootTasksOfList')
-      let res = []
-      if (this.viewList)
-        res = this.$store.getters['task/getListTasks'](this.tasksWithLists, this.viewList.id)
-      // console.timeEnd('ViewController.vue getListTasks called by getRootTasksOfList')
-      return res
     },
     viewList() {
       return this.getListByName(this.viewName)

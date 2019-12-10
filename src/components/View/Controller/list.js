@@ -1,6 +1,7 @@
 
 import utilsTask from '@/utils/task'
 import utilsList from '@/utils/list'
+import { pipeBooleanFilters, memoize } from '@/utils/memo'
 import utils from '@/utils/'
 import mom from 'moment/src/moment'
 
@@ -86,6 +87,79 @@ export default {
     }
   },
   computed: {
+    mainFilter() {
+      if (this.viewList) {
+        return task => this.isTaskInList(task, this.viewList.id)
+      }
+      return () => false
+    },
+    rootFilter() {
+      return this.isTaskInListRoot
+    },
+    headings() {
+      const arr = []
+      if (this.viewList) {
+        const viewList = this.viewList
+
+        for (const h of viewList.headings) {
+          const pipedFilter = task => this.isTaskInHeading(task, h)
+          const sort = tasks => this.$store.getters.checkMissingIdsAndSortArr(h.tasks, tasks)
+
+          arr.push({
+            name: h.name,
+            id: h.name,
+            allowEdit: true,
+            showHeadingName: false,
+            notes: h.notes,
+            calendarStr: true,
+
+            onEdit: tasks => name => {
+              this.$store.dispatch('list/saveHeadingName', {
+                listId: this.viewList.id,
+                oldName: h.name,
+                newName: name,
+                tasksIds: tasks.filter(pipedFilter).map(el => el.id),
+              })
+            },
+            sort,
+            filter: pipedFilter,
+            options: tasks => {
+              return utilsList.listHeadingOptions(this.viewList, h, this.$store, sort(tasks.filter(pipedFilter)), this.l)
+            },
+
+            saveNotes: notes => {
+              this.$store.dispatch('list/saveHeadingNotes', {
+                listId: this.viewList.id, notes, heading: h.name,
+              })
+            },
+            updateIds: ids => {
+              this.$store.dispatch('list/updateHeadingsTaskIds', {
+                name: h.name, listId: viewList.id, ids,
+              })
+            },
+            onAddTask: obj => {
+              obj.task.tags = [...obj.task.tags, ...this.listgetListTags.map(el => el.id)]
+              this.$store.dispatch('list/addTaskHeading', {
+                name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
+              })
+            },
+            onSortableAdd: (evt, taskIds, type, ids) => {
+              this.$store.dispatch('list/moveTasksBetweenHeadings', {
+                taskIds, ids, name: h.name, listId: viewList.id,
+              })
+            }
+          })
+        }
+      }
+      return arr
+    },
+    headingsOrder() {
+      // console.log(0)
+      if (this.viewList)
+        return () => this.viewList.headingsOrder
+      return () => []
+    },
+    
     icon() {return 'tasks'},
     viewNameValue() {return this.viewName},
     updateHeadingIds() {
@@ -98,12 +172,6 @@ export default {
         }
       }
       return null
-    },
-    getTasks() {
-      // console.time('list.js getTasks')
-      const res = this.getRootTasksOfList
-      // console.timeEnd('list.js getTasks')
-      return res
     },
     taskCompletionCompareDate() {
       if (this.viewList && this.viewList.calendar && this.viewList.calendar.type !== 'someday')
@@ -121,9 +189,10 @@ export default {
       return null
     },
     tasksOrder() {
+      // console.log('açslkdfj')
       if (this.viewList)
-        return this.viewList.tasks
-      return []
+        return () => this.viewList.tasks
+      return () => []
     },
     showEmptyHeadings() {
       return true
@@ -151,93 +220,18 @@ export default {
         return this.viewList.calendar
       return null
     },
-    headingsOptions() {
-      const arr = []
-      if (this.viewList) {
-        const viewList = this.viewList
-        let order = viewList.headingsOrder
-        if (!order) order = []
-        
-        const heads = this.$store.getters.checkMissingIdsAndSortArr(order, viewList.headings, 'name')
-
-        for (const h of heads) {
-          let headingTasks = this.getListTasks.filter(el => el.heading === h.name)
-          headingTasks = this.$store.getters.checkMissingIdsAndSortArr(h.tasks, headingTasks)
-          arr.push({
-            name: h.name,
-            allowEdit: true,
-            showHeadingName: false,
-            notes: h.notes,
-            calendarStr: true,
-            saveNotes: notes => {
-              this.$store.dispatch('list/saveHeadingNotes', {
-                listId: this.viewList.id, notes, heading: h.name,
-              })
-            },
-            onEdit: (name) => {
-              this.$store.dispatch('list/saveHeadingName', {
-                listId: this.viewList.id,
-                oldName: h.name,
-                newName: name,
-                tasksIds: headingTasks.map(el => el.id)
-              })
-            },
-            filter: (a, h, showCompleted) => {
-              let tasks = headingTasks.slice()
-              if (!showCompleted)
-                tasks = this.filterTasksByCompletion(tasks, true)
-              
-              return tasks
-            },
-            id: h.name,
-            optionClick: (iconName) => {
-              switch (iconName) {
-                case 'archive': {
-                  this.$store.dispatch('list/toggleHeadingAuthide', {
-                    listId: this.viewList.id,
-                    name: h.name,
-                  })
-                  break
-                }
-              }
-            },
-            options: utilsList.listHeadingOptions(this.viewList, h, this.$store, headingTasks, this.l),
-            updateIds: ids => {
-              this.$store.dispatch('list/updateHeadingsTaskIds', {
-                name: h.name, listId: viewList.id, ids,
-              })
-            },
-            onAddTask: obj => {
-              obj.task.tags = [...obj.task.tags, ...this.listgetListTags.map(el => el.id)]
-              this.$store.dispatch('list/addTaskHeading', {
-                name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
-              })
-            },
-            onSortableAdd: (evt, taskIds, type, ids) => {
-              this.$store.dispatch('list/moveTasksBetweenHeadings', {
-                taskIds, ids, name: h.name, listId: viewList.id,
-              })
-            }
-          })
-        }
-      }
-      return arr
-    },
-    illustration() {
-      return 'tasks'
-    },
     headerOptions() {
       if (this.viewList)
         return utilsList.listOptions(this.viewList, this.$store, this.getListTasks, this.l)
       return []
     },
-    headingEdit() {
+    headingEditOptions() {
       if (this.viewList)
         return {
           excludeNames: this.viewList.headings.map(el => el.name),
           errorToast: "There's already another heading with this name.",
         }
-      return []
+      return null
     },
     getViewNotes() {
       if (this.viewList)

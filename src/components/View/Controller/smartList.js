@@ -55,12 +55,12 @@ export default {
     },
     getTasks() {
       if (this.viewType === 'search')
-        return this.tasks.filter(el => el.name.includes(this.viewName))
+        return task => this.doesTaskIncludeText(task, this.viewName)
       if (this.isSmart && this.notHeadingHeaderView) {
         if (this.viewName === 'Today' && this.hasOverdueTasks) return []
-        return this.filterTasksByView(this.tasksWithoutListsAndFolders, this.viewName)
+        return task => this.filterTasksByView([task], this.viewName).length > 0
       }
-      return []
+      return () => false
     },
     headingsPagination() {
       if (this.viewName !== 'Completed') return null
@@ -79,7 +79,7 @@ export default {
         case 'Upcoming': return this.upcomingHeadingsOptions
         case 'Tomorrow': return this.getListHeadingsByView('Tomorrow')
         case 'Today': {
-          if (this.hasOverdueTasks) return this.todayHeadingsOptions
+          // if (this.hasOverdueTasks) return this.todayHeadingsOptions
           return this.getListHeadingsByView('Today')
         }
         case 'Someday': {
@@ -91,30 +91,16 @@ export default {
       }
       return []
     },
-    illustration() {
-      const l = this.l
-      const n = this.viewName
-      if (this.isSmart) {
-        switch (n) {
-          case 'Today': return 'star'
-          case 'Tomorrow': return 'sun'
-          case 'Inbox': return 'inbox'
-          case 'Upcoming': return 'calendar'
-          case 'Completed': return 'circle-check'
-          case 'Someday': return 'archive'
-        }
-      }
-    },
     headerOptions() {
       return []
     },
-    headingEdit() {
+    headingEditOptions() {
       if (this.viewName === "Today" || this.viewName === "Tomorrow" || this.viewName === 'Someday')
         return {
           excludeNames: this.lists.map(el => el.name),
           errorToast: "There's already another list with this name."
         }
-      return []
+      return null
     },
     getViewNotes() {
       return null

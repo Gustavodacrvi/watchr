@@ -36,7 +36,7 @@
           :info="`${l['Defered to']}:`"
           :content="defer"
           :left="deferDaysLeft"
-          @click="$emit('remove-defer-date')"
+          @click="$parent.$emit('remove-defer-date')"
         />
       </div>
       <div>
@@ -45,21 +45,21 @@
           :info='`${l["Deadline"]}:`'
           :content="deadline"
           :left="deadlineDaysLeft"
-          @click="$emit('remove-deadline')"
+          @click="$parent.$emit('remove-deadline')"
         />
         <HeaderInfo
           icon='repeat'
           info=''
           :content='repeatCalendar'
           :left='repeatCalendarNextEvent'
-          @click="$emit('remove-repeat')"
+          @click="$parent.$emit('remove-repeat')"
         />
       </div>
       <div class="tags">
         <Tag class="tag" v-for="t in headerTags" :key="t"
           :value="t"
           icon="tag"
-          @click="$emit('remove-header-tag', t)"
+          @click="$parent.$emit('remove-header-tag', t)"
         />
       </div>
     </div>
@@ -166,7 +166,7 @@ export default {
       this.editing = false
     },
     saveNotes(notes) {
-      this.$emit('save-notes', notes)
+      this.$parent.$emit('save-notes', notes)
     },
     lineEnter(el) {
       const s = el.style
@@ -190,7 +190,7 @@ export default {
     },
     keydown({key}) {
       if (key === "Enter" && this.isEditable) {
-        this.$emit('save-header-name', this.title.trim())
+        this.$parent.$emit('save-header-name', this.title.trim())
         this.editing = false
       }
     },

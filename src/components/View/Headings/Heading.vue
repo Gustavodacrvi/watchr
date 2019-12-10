@@ -53,8 +53,8 @@
       <div v-else key="edig">
         <EditHeading
           :name='name'
-          :errorToast='headingEdit.errorToast'
-          :names='headingEdit.excludeNames'
+          :errorToast='headingEditOptions.errorToast'
+          :names='headingEditOptions.excludeNames'
           :buttonTxt='l["Save"]'
           @save='save'
           @cancel='toggleEditing'
@@ -76,7 +76,7 @@ import { mapGetters } from 'vuex'
 import utils from '@/utils/'
 
 export default {
-  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEdit', 'save', 'notes', 'movingHeading', 'progress', 'icon'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEditOptions', 'save', 'notes', 'movingHeading', 'progress', 'icon'],
   components: {
     IconDrop: IconDropVue,
     Icon: IconVue,

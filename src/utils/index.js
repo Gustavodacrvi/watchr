@@ -3,7 +3,6 @@ import mom from 'moment/src/moment'
 import utilsMoment from "./moment"
 import utilsTask from "./task"
 import firebase from 'firebase/app'
-import memo from './memo'
 
 import Vue from 'vue'
 import IconDrop from '@/components/IconDrop/IconDrop.vue'
@@ -21,8 +20,8 @@ export default {
         const index = state[arrName].findIndex(el => el.id === change.doc.id)
         state[arrName].splice(index, 1)
       } else {
-        const index = state[arrName].findIndex(el => el.id === change.doc.id)
-        state[arrName].splice(index, 1, {...change.doc.data(), id: change.doc.id})
+        const doc = state[arrName].find(el => el.id === change.doc.id)
+        Object.assign(doc, {...change.doc.data(), id: change.doc.id})
       }
     })
   },

@@ -63,32 +63,6 @@ export default {
       return obj
     },
     ...MemoizeGetters([], {
-      filterTasksByViewRendererFilterOptions({}, tasks, filterOptions) {
-        const {tags, list, folder} = filterOptions
-        let ts = tasks.slice()
-
-        // list
-        if (list.inclusive)
-          ts = ts.filter(t => t.list === list.inclusive)
-        if (list.exclusive)
-          ts = ts.filter(t => t.list !== list.exclusive)
-        
-        // folder
-        if (folder.inclusive)
-          ts = ts.filter(t => t.folder === folder.inclusive)
-        if (folder.exclusive)
-          ts = ts.filter(t => t.folder !== folder.exclusive)
-
-        // tags
-        if (tags.inclusive.length > 0)
-          for (const id of tags.inclusive)
-            ts = ts.filter(t => t.tags.includes(id))
-        if (tags.exclusive.length > 0)
-          for (const id of tags.exclusive)
-            ts = ts.filter(t => !t.tags.includes(id))
-        
-        return ts
-      },
       isTaskCompleted: {
         getter({}, task, moment, compareDate) {
           const calcTask = () => {
@@ -304,19 +278,13 @@ export default {
       filterTasksByView({getters}, tasks, view) {
         switch (view) {
           case 'Inbox': {
-            return tasks.filter(el =>
-              !el.completed &&
-              !utilsTask.hasCalendarBinding(el) &&
-              !el.list &&
-              !el.folder &&
-              el.tags.length === 0
-            )
+            return tasks.filter(getters.isTaskInbox)
           }
           case 'Today': {
             return getters.filterTasksByDay(tasks, mom().format('Y-M-D'))
           }
           case 'Someday': {
-            return tasks.filter(t => t.calendar && t.calendar.type === 'someday')
+            return tasks.filter(getters.isTaskSomeday)
           }
           case 'Overdue': {
             return getters.filterTasksByOverdue(tasks)
@@ -360,7 +328,7 @@ export default {
       getListTasks({getters}, tasks, listId) {
         return getters['tasksWithLists'](tasks).filter(t => t.list === listId)
       },
-      getRootTasksOfList({getters}, tasks, list) {
+/*       getRootTasksOfList({getters}, tasks, list) {
         const ts = [...getters['tasksWithLists'](tasks).filter(t => !t.heading), ...getters['getLostTasks'](tasks, list)]
 
         const unique = []
@@ -373,6 +341,128 @@ export default {
         }
 
         return unique
+      }, */
+      isTaskInbox: {
+        getter({}, task) {
+          return !task.completed &&
+          !utilsTask.hasCalendarBinding(task) &&
+          !task.list &&
+          !task.folder &&
+          task.tags.length === 0
+        },
+        cache(args) {
+          const t = args[0]
+          return JSON.stringify({
+            completed: t.completed,
+            calendar: t.calendar,
+            list: t.list,
+            folder: t.folder,
+            tags: t.tags,
+          })
+        },
+      },
+      isTaskSomeday: {
+        getter({}, task) {
+          return task.calendar && task.calendar.type === 'someday'
+        },
+        cache(args) {
+          if (args[0].calendar)
+            return JSON.stringify({
+              t: args[0].calendar.type
+            })
+          return ''
+        }
+      },
+      doesTaskPassExclusiveFolder: {
+        getter({}, task, folderId) {
+          return task.folder !== folderId
+        },
+        cache(args) {
+          return JSON.stringify({t: args[0].folder, l: args[1]})
+        }
+      },
+      doesTaskIncludeText: {
+        getter({}, task, name) {
+          return task.name.includes(name)
+        },
+        cache(args) {
+          return JSON.stringify({t: args[0].name, n: args[1]})
+        }
+      },
+      doesTaskPassInclusiveFolder: {
+        getter({}, task, folderId) {
+          return task.folder === folderId
+        },
+        cache(args) {
+          return JSON.stringify({t: args[0].folder, l: args[1]})
+        }
+      },
+      doesTaskPassExclusiveList: {
+        getter({}, task, listId) {
+          return task.list !== listId
+        },
+        cache(args) {
+          return JSON.stringify({t: args[0].list, l: args[1]})
+        }
+      },
+      doesTaskPassInclusiveList: {
+        getter({}, task, listId) {
+          return task.list === listId
+        },
+        cache(args) {
+          return JSON.stringify({t: args[0].list, l: args[1]})
+        }
+      },
+      doesTaskPassExclusiveTags: {
+        getter({}, task, tags) {
+          return tags.every(id => !task.tags.includes(id))
+        },
+        cache(args) {
+          if (args[1].length === 0)
+            return ''
+          return JSON.stringify({k: args[0].tags, t: args[1]})
+        }
+      },
+      doesTaskPassInclusiveTags: {
+        getter({}, task, tags) {
+          return tags.every(id => task.tags.includes(id))
+        },
+        cache(args) {
+          return JSON.stringify({k: args[0].tags, t: args[1]})
+        }
+      },
+      isTaskInList: {
+        getter({}, task, listId) {
+          return task.list === listId
+        },
+        cache(args) {
+          return JSON.stringify({
+            t: args[0].list,
+            l: args[1],
+          })
+        }
+      },
+      isTaskInHeading: {
+        getter({}, task, heading) {
+          return task.heading === heading.name
+        },
+        cache(args) {
+          return JSON.stringify({
+            t: args[0].heading,
+            h: args[1].name,
+          })
+        },
+      },
+      isTaskInListRoot: {
+        getter({}, task) {
+          return task.list && !task.heading
+        },
+        cache(args) {
+          return JSON.stringify({
+            l: args[0].list,
+            h: args[0].heading,
+          })
+        },
       },
     }),
     ...MemoizeGetters(['tasks'], {

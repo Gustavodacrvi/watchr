@@ -71,10 +71,13 @@ export default {
   listOptions(list, store, getListTasks, l) {
     const dispatch = store.dispatch
     const getters = store.getters
-    const rootTasks = getters['task/getRootTasksOfList'](getListTasks, list)
-    const headingTasks = getters['task/getTasksWithHeading'](getListTasks, list.id)
+    // const rootTasks = getters['task/getRootTasksOfList'](getListTasks, list)
+    const rootTasks = []
+    // const headingTasks = getters['task/getTasksWithHeading'](getListTasks, list.id)
+    const headingTasks = []
     const listId = list.id
-    const tasks = [...getListTasks]
+    // const tasks = [...getListTasks]
+    const tasks = []
     const pop = obj => dispatch('pushPopup', obj)
     const opt = [
       {

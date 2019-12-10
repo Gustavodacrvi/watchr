@@ -41,8 +41,8 @@ export default {
     viewNameValue() {return this.viewName},
     getTasks() {
       if (this.viewTag)
-        return this.tasks.filter(el => el.tags.includes(this.viewTag.id))
-      return []
+        return task => this.doesTaskPassInclusiveTags(task, [this.viewTag.id])
+      return () => false
     },
     tasksOrder() {
       return []
@@ -50,15 +50,9 @@ export default {
     headingsOptions() {
       return []
     },
-    illustration() {
-      return 'tag'
-    },
     headerOptions() {
       if (this.viewTag)
         return utilsTag.tagOptions(this.viewTag, this.$store, this.l)
-      return []
-    },
-    headingEdit() {
       return []
     },
     getViewNotes() {
