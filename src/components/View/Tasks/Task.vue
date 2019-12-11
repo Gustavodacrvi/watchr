@@ -1,85 +1,91 @@
 <template>
-  <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing}, platform]"
-    @mouseenter="onHover = true"
-    @mouseleave="onHover = false"
-    @click="rootClick"
+  <transition name='task-trans'
+    appear
+    :css="true"
+    @enter='taskEnter'
   >
-    <transition name="edit-t" mode="out-in"
-      @enter='enter'
-      @leave='leave'
+    <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing}, platform]"
+      @mouseenter="onHover = true"
+      @mouseleave="onHover = false"
+      @click="rootClick"
     >
-      <div v-if="!isEditing" key="notediting"
-        class="cont-wrapper task-cont-wrapper task-handle rb"
-        :class="platform"
-        @click="click"
-        @touchstart='touchStart'
-        @touchend='touchEnd'
+      <transition name="edit-t" mode="out-in"
+        @enter='enter'
+        @leave='leave'
       >
-        <div class="circle-trans-wrapper-wrapper">
-          <div class="circle-trans-wrapper">
-            <transition
-              @enter='circleEnter'
-            >
-              <div v-if="showCircle" class="circle-trans-transition" :style="{left, top, backgroundImage: `radial-gradient(${innerColor}, ${outerColor})`}"></div>
-            </transition>
-          </div>
-        </div>
-        <div class="cont"
-          v-longclick='longClick'
+        <div v-if="!isEditing" key="notediting"
+          class="cont-wrapper task-cont-wrapper task-handle rb"
+          :class="platform"
+          @click="click"
+          @touchstart='touchStart'
+          @touchend='touchEnd'
         >
-          <div class="check cursor remove-highlight"
-            @click.stop="completeTask"
-            @mouseenter.stop="iconHover = true"
-            @mouseleave="iconHover = false"
-            @touchstart.stop.passive
-            @mousedown.stop
-          >
-            <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon"
-              :icon="`box${isSomeday ? '-dash' : ''}`"
-              :color='circleColor'
-              width="18px"
-            />
-            <Icon v-else :circle='true' class="icon check-icon"
-              :icon="`box-check${isSomeday ? '-dash' : ''}`"
-              :color='circleColor'
-              width="18px"
-            />
-          </div>
-          <div class="text">
-            <div class="task-name-wrapper">
-              <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
-              <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
-              <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
-              <transition name="name-t">
-                <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
-                    <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
-                    <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
-                    <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
-                    <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
-                    <span v-html="parsedName"></span>
-                    <Icon v-if="haveChecklist" class="txt-icon" icon="tasks" color="var(--gray)" width="18px"/>
-                    <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
-                    <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
-                </span>
-                <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
+          <div class="circle-trans-wrapper-wrapper">
+            <div class="circle-trans-wrapper">
+              <transition
+                @enter='circleEnter'
+              >
+                <div v-if="showCircle" class="circle-trans-transition" :style="{left, top, backgroundImage: `radial-gradient(${innerColor}, ${outerColor})`}"></div>
               </transition>
             </div>
           </div>
+          <div class="cont"
+            v-longclick='longClick'
+          >
+            <div class="check cursor remove-highlight"
+              @click.stop="completeTask"
+              @mouseenter.stop="iconHover = true"
+              @mouseleave="iconHover = false"
+              @touchstart.stop.passive
+              @mousedown.stop
+            >
+              <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon"
+                :icon="`box${isSomeday ? '-dash' : ''}`"
+                :color='circleColor'
+                width="18px"
+              />
+              <Icon v-else :circle='true' class="icon check-icon"
+                :icon="`box-check${isSomeday ? '-dash' : ''}`"
+                :color='circleColor'
+                width="18px"
+              />
+            </div>
+            <div class="text">
+              <div class="task-name-wrapper">
+                <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
+                <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
+                <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
+                <transition name="name-t">
+                  <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
+                      <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
+                      <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
+                      <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
+                      <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
+                      <span v-html="parsedName"></span>
+                      <Icon v-if="haveChecklist" class="txt-icon" icon="tasks" color="var(--gray)" width="18px"/>
+                      <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
+                      <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
+                  </span>
+                  <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
+                </transition>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div v-else-if="isEditing" key="editing">
-        <Edit class="handle"
-          :placeholder="l['Task name...']"
-          :notesPlaceholder="l['Notes...']"
-          :btnText="l['Save task']"
-          :defaultTask='task'
-          :showCancel='true'
-          @cancel='isEditing = false'
-          @save='saveTask'
-        />
-      </div>
-    </transition>
-  </div>
+        <div v-else-if="isEditing" key="editing">
+          <Edit class="handle"
+            :placeholder="l['Task name...']"
+            :notesPlaceholder="l['Notes...']"
+            :btnText="l['Save task']"
+            :defaultTask='task'
+            :showCancel='true'
+            @cancel='isEditing = false'
+            @save='saveTask'
+          />
+        </div>
+      </transition>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -136,6 +142,24 @@ export default {
       setTimeout(() => {
         this.$emit('de-select', this.$el)
       }, 10)
+    },
+    taskEnter(el, done) {
+      const cont = el.getElementsByClassName('cont-wrapper')[0]
+      if (cont) {
+        const s = cont.style
+
+        s.transitionDuration = '0'
+        s.opacity = 0
+        s.height = '0px'
+        
+        setTimeout(() => {
+          s.transitionDuration = '.15s'
+          s.opacity = 1
+          s.height = this.taskHeight + 'px'
+        })
+        
+        setTimeout(done, 150)
+      }
     },
     enter(cont) {
       if (!this.isEditing) {
@@ -878,6 +902,25 @@ export default {
 
 .check-icon {
   opacity: .6;
+}
+
+.task-trans-leave-active {
+  transition-duration: .2s !important;
+  transition: height .2s, opacity .2s !important;
+}
+
+.task-trans-leave {
+  height: 38px;
+}
+
+.mobile .task-trans-leave {
+  height: 50px;
+}
+
+.task-trans-leave-to, .task-trans-leave-to .cont-wrapper {
+  height: 0px !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
 }
 
 </style>

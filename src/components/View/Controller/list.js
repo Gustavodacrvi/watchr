@@ -24,7 +24,6 @@ export default {
       if (!task.list && !task.folder)
         task.list = this.viewList.id
       task.tags = [...task.tags, ...this.listgetListTags.map(el => el.id)]
-      console.log(task.tags)
       return task
     },
     

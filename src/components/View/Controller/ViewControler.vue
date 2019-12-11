@@ -298,6 +298,7 @@ export default {
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
       getTasks: 'list/getTasks',
       isTaskInList: 'task/isTaskInList',
+      isTaskInFolder: 'task/isTaskInFolder',
       isTaskInListRoot: 'task/isTaskInListRoot',
       filterTasksByPeriod: 'task/filterTasksByPeriod',
       filterTasksByView: 'task/filterTasksByView',

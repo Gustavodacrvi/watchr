@@ -431,6 +431,17 @@ export default {
           return JSON.stringify({k: args[0].tags, t: args[1]})
         }
       },
+      isTaskInFolder: {
+        getter({}, task, folderId) {
+          return task.folder === folderId
+        },
+        cache(args) {
+          return JSON.stringify({
+            t: args[0].folder,
+            l: args[1],
+          })
+        }
+      },
       isTaskInList: {
         getter({}, task, listId) {
           return task.list === listId

@@ -575,6 +575,8 @@ export default {
       task.heading = name
       batch.set(newTaskRef, {
         userId: uid(),
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       })
       const heads = list.headings.slice()

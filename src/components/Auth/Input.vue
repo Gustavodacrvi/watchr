@@ -5,7 +5,7 @@
 <script>
 
 export default {
-  props: ['focus', 'value'],
+  props: ['focus', 'value', 'focusToggle'],
   data() {
     return {
       str: '',
@@ -48,7 +48,11 @@ export default {
     },
     value() {
       this.str = this.value
-    }
+    },
+    focusToggle() {
+      console.log(1)
+      this.focusInput()
+    },
   }
 }
 

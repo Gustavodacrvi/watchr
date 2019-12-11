@@ -35,6 +35,7 @@
         :updateHeadingIds='updateHeadingIds'
 
         @allow-someday='showSomeday = true'
+        @root-non-filtered='getRootNonFilteredFromTaskHandler'
       />
     </div>
     <PaginationVue v-if="headingsPagination"
@@ -83,6 +84,8 @@ export default {
       showingListSelection: false,
       showingFolderSelection: false,
       showSomeday: false,
+
+      rootNonFiltered: [],
 
       inclusiveTags: [],
       exclusiveTags: [],
@@ -146,18 +149,24 @@ export default {
       this.exclusiveFolder = ''
     },
 
+    getRootNonFilteredFromTaskHandler(rootNonFiltered) {
+      this.rootNonFiltered = rootNonFiltered
+    },
+    updateIds(ids) {
+      this.$emit('update-ids', ids)
+    },
     sortByName() {
-      const tasks = this.mainFilter.slice()
+      const tasks = this.rootNonFiltered.slice()
       tasks.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       this.updateIds(tasks.map(el => el.id))
     },
     sortByPriority() {
-      let tasks = this.mainFilter.slice()
+      let tasks = this.rootNonFiltered.slice()
       tasks = utilsTask.sortTasksByPriority(tasks)
       this.updateIds(tasks.map(el => el.id))
     },
     sortByDate() {
-      let tasks = this.mainFilter.slice()
+      let tasks = this.rootNonFiltered.slice()
       tasks = utilsTask.sortTasksByTaskDate(tasks)
       this.updateIds(tasks.map(el => el.id))
     },

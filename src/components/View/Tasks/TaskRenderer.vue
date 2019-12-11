@@ -5,35 +5,53 @@
         <Icon :icon='icon' color='var(--appnav-color)' width="150px"/>
       </div>
     </transition>
-    <transition-group name="task-trans"
+    <div name="task-trans"
       class="front task-renderer-root"
       :class="{dontHaveTasks: getTasks.length === 0 && lazyHeadings.length === 0, showEmptyHeadings}"
-      appear
-      :css="true"
-      tag="div"
-
-      @enter='taskEnter'
 
       data-name='task-renderer'
     >
-      <Task v-for="item of getTasks" :key="item.id" 
-        v-bind="$props"
+      <template v-for="item of getTasks">
+        <Task v-if="!item.isEdit" :key="item.id" 
+          v-bind="$props"
 
-        :taskHeight='taskHeight'
-        :task='item'
-        :isRoot='isRoot'
-        :isSelecting='isSelecting'
-        :enableSelect='enableSelect'
-        :multiSelectOptions='taskIconDropOptions'
-        :isDragging='isDragging'
-        :isScrolling='isScrolling'
-        @de-select='deSelectTask'
+          :taskHeight='taskHeight'
+          :task='item'
+          :isRoot='isRoot'
+          :isSelecting='isSelecting'
+          :enableSelect='enableSelect'
+          :multiSelectOptions='taskIconDropOptions'
+          :isDragging='isDragging'
+          :isScrolling='isScrolling'
+          @de-select='deSelectTask'
 
-        :data-id='item.id'
-        :data-name='item.name'
-        :data-type='`task`'
-      />
-    </transition-group>
+          :data-id='item.id'
+          :data-name='item.name'
+          :data-type='`task`'
+        />
+        <TaskEdit v-else-if="item.isEdit === 'Edit'"
+          :key="item.isEdit"
+
+          v-bind='item.propsData'
+          :focusToggle='focusToggle'
+
+          :data-id='item.isEdit'
+
+          @save='item.onSave'
+          @cancel='removeEdit'
+        />
+        <HeadingEdit v-else
+          :key="item.isEdit"
+
+          v-bind='item.propsData'
+
+          :data-id='item.isEdit'
+
+          @save='item.onSave'
+          @cancel='removeEdit'
+        />
+      </template>
+    </div>
     <ButtonVue v-if="showMoreItemsButton"
       type="dark"
       :value='showMoreItemsMessage'
@@ -46,7 +64,7 @@
       tag="div"
     >
       <template v-for="(h, i) in lazyHeadings">
-        <HeadingApp v-if="showEmptyHeadings || h.tasks.length > 0" :key="h.id"
+        <HeadingApp v-if="showEmptyHeadings || h.tasks.length > 0" :key="h.name"
           :header='h'
 
           :name='h.name'
@@ -97,10 +115,10 @@
 import Vue from 'vue'
 
 import TaskVue from './Task.vue'
-import TaskEditTemplate from './Edit.vue'
+import TaskEdit from './Edit.vue'
 import IllustrationVue from '@/components/Illustrations/Illustration.vue'
 import HeadingVue from './../Headings/Heading.vue'
-import headingEditOptionsVue from './../Headings/Edit.vue'
+import HeadingEdit from './../Headings/Edit.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
 
 
@@ -126,7 +144,8 @@ export default {
   name: 'TaskRenderer',
   components: {
     Task: TaskVue, Icon, ButtonVue,
-    HeadingApp: HeadingVue,
+    HeadingEdit,
+    HeadingApp: HeadingVue, TaskEdit,
     Illustration: IllustrationVue,
   },
   data() {
@@ -137,11 +156,13 @@ export default {
       lazyHeadingsSetTimeouts: [],
       lazyHeadings: [],
       changedViewName: true,
-      addedTask: false,
       atLeastOneRenderedTask: false,
       isDragging: false,
       justScrolled: false,
       movingHeading: false,
+
+      hasEdit: null,
+      focusToggle: false,
 
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
@@ -163,29 +184,42 @@ export default {
     window.removeEventListener('keydown', this.keydown)
   },
   methods: {
-    taskEnter(el, done) {
-      const cont = el.getElementsByClassName('cont-wrapper')[0]
-      if (cont) {
-        const s = cont.style
-
-        s.transitionDuration = '0'
-        s.opacity = 0
-        s.height = '0px'
-        if (el.dataset.id === this.addedTask) {
-          setTimeout(() => {
-            this.draggableRoot.insertBefore(el, this.taskAdder())
-          }, 5)
-          this.addedTask = null
-        }
-        
-        setTimeout(() => {
-          s.transitionDuration = '.15s'
-          s.opacity = 1
-          s.height = this.taskHeight + 'px'
-        }, 49)
-        
-        setTimeout(done, 200)
+    removeEdit() {
+      const i = this.lazyTasks.findIndex(el => el.isEdit)
+      if (i > -1) {
+        this.lazyTasks.splice(i, 1)
+        this.hasEdit = false
       }
+    },
+    addEdit(isEdit, index, onSave, propsData) {
+      this.removeEdit()
+      this.lazyTasks.splice(index, 0, {
+        isEdit,
+        onSave,
+        propsData,
+      })
+      this.hasEdit = true
+    },
+    addTaskEdit(index) {
+      this.addEdit('Edit', index, this.add, {
+        key: 'Edit',
+        placeholder: this.l['Task name...'],
+        notesPlaceholder: this.l['Notes...'], showCancel: true, btnText: this.l['Add task']
+      })
+    },
+    addHeadingsEdit(index) {
+      const h = this.headingEditOptions
+      const onSave = (...args) => {
+        this.addHeading(...args)
+        setTimeout(() => {
+          this.removeEdit()
+        }, 50)
+      }
+      this.addEdit('EditHeading', index, onSave, {
+          key: 'EditHeading',
+          errorToast: h.errorToast, names: h.excludeNames,
+          buttonTxt: this.l['Save'],
+        })
     },
 
     destroySortables() {
@@ -236,7 +270,6 @@ export default {
           }
         },
         delay: 100,
-        delayOnTouchOnly: true,
         handle: '.task-handle',
 
         onUpdate: (evt) => {
@@ -291,31 +324,10 @@ export default {
             })
             this.sourceVueInstance = null
           } else {
-            const addEdit = (comp, onSave, propsData) => {
-              const Constructor = Vue.extend(comp)
-              const instance = new Constructor({
-                parent: this,
-                propsData,
-              })
-              const el = this.$el.querySelector('.action-button')
-              el.setAttribute('id', 'edit-task-renderer')
-              instance.$mount('#edit-task-renderer')
-              this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
-              this.applyEventListenersToEditVueInstance(instance, onSave, evt)
-            }
             if (type === 'floatbutton') {
-              addEdit(TaskEditTemplate, this.add, {
-                  key: 'Edit',
-                  placeholder: this.l['Task name...'],
-                  notesPlaceholder: this.l['Notes...'], showCancel: true, btnText: this.l['Add task']
-                })
+              this.addTaskEdit(evt.newIndex)
             } else if (type === 'headingbutton') {
-              const h = this.headingEditOptions
-              addEdit(headingEditOptionsVue, this.addHeading, {
-                  key: 'EditHeading',
-                  errorToast: h.errorToast, names: h.excludeNames,
-                  buttonTxt: this.l['Save'],
-                })
+              this.addHeadingsEdit(evt.newIndex)
             }
           }
           for (const item of items) {
@@ -462,20 +474,6 @@ export default {
       if (!h.saveNotes) return () => {}
       return h.saveNotes
     },
-    applyEventListenersToEditVueInstance(ins, onSave, evt) {
-      const el =this.$el.getElementsByClassName('Edit')[0]
-      if (el) {
-        el.setAttribute('data-id', 'Edit')
-        ins.$on('save', (obj) => onSave(obj, evt))
-        ins.$on('goup', () => this.moveTaskRenderer('up'))
-        ins.$on('godown', () => this.moveTaskRenderer('down'))
-        ins.$on('cancel', () => {
-          ins.$destroy()
-          const $el = ins.$el
-          $el.parentNode.removeChild($el)
-        })
-      }
-    },
     updateHeadingTaskIds(h, ids) {
       if (h.updateIds)
         h.updateIds(ids)
@@ -530,24 +528,17 @@ export default {
           this.lazyTasks.splice(index, 0, t)
         }
 
-        let timeout = isNotEditingFiles ? 100 : 0
-        
-        this.addedTask = t.id
         setTimeout(() => {
           this.addTask({
             task: t, ids: this.getIds(true),
             index, newTaskRef,
             header: this.header,
           })
-        }, timeout)
+        }, 10)
       }
     },
     getTaskRendererPosition() {
-      const ids = this.getIds()
-      for (let i = 0;i < ids.length;i++) {
-        if (ids[i] === 'Edit')
-          return i
-      }
+      return this.lazyTasks.findIndex(el => el.isEdit)
     },
     moveTaskRenderer(dire) {
       const i = this.getTaskRendererPosition()
@@ -583,7 +574,7 @@ export default {
       for (const el of childs)
         ids.push(el.dataset.id)
       if (removeAdders)
-        ids = ids.filter(id => id !== 'Edit' && id !== undefined)
+        ids = ids.filter(id => id !== 'Edit' && id !== 'EditHeading' && id !== undefined)
       return ids
     },
     contWrapper(el) {
@@ -591,61 +582,24 @@ export default {
     },
     keydown({key}) {
       if (!this.header) {
-        const addEdit = (comp, propsData, onSave, pos) => {
-          const Constructor = Vue.extend(comp)
-          const instance = new Constructor({
-            parent: this,
-            propsData,
-          })
-          const node = document.createElement('div')
-          node.setAttribute('id', 'edit-task-renderer')
-          if (pos === 'begin') {
-            const child = this.draggableRoot.childNodes[0]
-            if (child)
-              child.prepend(node)
-            else this.draggableRoot.appendChild(node)
-          } else if (pos === 'end') {
-            this.draggableRoot.appendChild(node)
-          }
-          instance.$mount('#edit-task-renderer')
-          this.applyEventListenersToEditVueInstance(instance, onSave) 
-        }
-
-        const addTaskEdit = pos => addEdit(TaskEditTemplate, {
-          key: 'Edit',
-          placeholder: this.l['Task name...'],
-          notesPlaceholder: this.l['Notes...'], showCancel: true, btnText: this.l['Add task']
-        }, this.add, pos)
-        const h = this.headingEditOptions
-        const addheadingEditOptions = (pos) => addEdit(headingEditOptionsVue, {
-          key: 'EditHeading',
-          errorToast: h.errorToast, names: h.excludeNames,
-          buttonTxt: this.l['Save'],
-        }, this.addHeading, pos)
-
         const active = document.activeElement
         const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
         if (!isTyping) {
           if (key === 'a')
-            addTaskEdit('end')
+            this.addTaskEdit(this.lazyTasks.length)
           else if (key === 'A')
-            addTaskEdit('begin')
+            this.addTaskEdit(0)
           if (this.viewType === 'list') {
             if (key === 'h')
-              addheadingEditOptions('end')
+              this.addHeadingsEdit(this.lazyHeadings.length)
             else if (key === 'H')
-              addheadingEditOptions('begin')
+              this.addHeadingsEdit(0)
           }
         }
       }
     },
     windowClick() {
       this.$store.commit('clearSelected')
-    },
-    taskAdder() {
-      const root = this.draggableRoot
-      const childNodes = root.childNodes
-      return childNodes[this.getTaskRendererPosition()]
     },
     clearLazySettimeout() {
       for (const set of this.lazyTasksSetTimeouts)
@@ -664,44 +618,6 @@ export default {
       ]).then(() => {
         this.changedViewName = false
       })
-    },
-
-    copy(tasks) {
-      for (const newTask of tasks) {
-        let i = 0
-        let found = false
-        for (const oldTask of this.lazyTasks) {
-          if (oldTask.id === newTask.id) {
-            found = true
-
-            this.lazyTasks.splice(i, 1, Object.assign(oldTask, newTask))
-          }
-          if (found) break
-          i++
-        }
-      }
-    },
-    removeTasks(tasks){
-      let i = 0
-      for (const oldTask of this.lazyTasks) {
-        const newTask = tasks.find(el => el.id === oldTask.id)
-        if (!newTask) {
-          this.lazyTasks.splice(i, 1)
-        }
-
-        i++
-      }
-    },
-    addNewTasks(tasks) {
-      let i = 0
-      for (const newTask of tasks) {
-        const oldTask = this.lazyTasks.find(el => el.id === newTask.id)
-        if (!oldTask) {
-          this.lazyTasks.splice(i, 0, newTask)
-        }
-        
-        i++
-      }
     },
   },
   computed: {
@@ -763,9 +679,21 @@ export default {
         if (!this.changedViewName) {
           this.clearLazySettimeout()
 
-          this.removeTasks(tasks)
-          this.copy(tasks)
-          this.addNewTasks(tasks)
+          let edit
+          let editIndex
+          if (this.hasEdit) {
+            editIndex = this.lazyTasks.findIndex(el => el.isEdit)
+            edit = this.lazyTasks[editIndex]
+          }
+
+          this.lazyTasks = tasks
+
+          if (edit) {
+            this.lazyTasks.splice(editIndex, 0, edit)
+            setTimeout(() => {
+              this.focusToggle = !this.focusToggle
+            })
+          }
         }
       })
     },
@@ -873,7 +801,6 @@ export default {
 .TaskRenderer {
   position: relative;
   margin-top: 16px;
-  min-height: 500px;
 }
 
 
@@ -900,25 +827,6 @@ export default {
 
 .showEmptyHeadings.dontHaveTasks {
   height: 50px;
-}
-
-.task-trans-leave-active {
-  transition-duration: .2s !important;
-  transition: height .2s, opacity .2s !important;
-}
-
-.task-trans-leave {
-  height: 38px;
-}
-
-.mobile .task-trans-leave {
-  height: 50px;
-}
-
-.task-trans-leave-to, .task-trans-leave-to .cont-wrapper {
-  height: 0px !important;
-  opacity: 0 !important;
-  overflow: hidden !important;
 }
 
 </style>

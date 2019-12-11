@@ -116,6 +116,7 @@ export default {
       return this.sortHeadingsFunction(this.laserHeadingsTasks)
     },
     laserHeadingsTasks() {
+      if (!this.headings) return []
       return this.headings.map(head => {
         const nonFiltered = head.sort(this.mainTasks.filter(head.filter))
         const tasks = nonFiltered.filter(this.filterOptionsPipe)
@@ -197,6 +198,11 @@ export default {
     pipeCompleted() {
       if (this.showCompleted) () => true
       return task => !this.isTaskCompleted(task)
+    },
+  },
+  watch: {
+    rootNonFiltered() {
+      this.$emit('root-non-filtered', this.rootNonFiltered)
     },
   }
 }

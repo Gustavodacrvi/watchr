@@ -120,10 +120,9 @@ export default {
 
       batch.commit()
     },
-    addTaskByIndex(c, {ids, index, task, folderId}) {
+    addTaskByIndex(c, {ids, index, task, folderId, newTaskRef}) {
       const batch = fire.batch()
 
-      const newTaskRef = taskRef()
       addTask(batch, {
         userId: uid(),
         ...task,

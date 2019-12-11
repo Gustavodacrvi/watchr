@@ -9,16 +9,20 @@ export default {
   methods: {
     addTask(obj) {
       if (this.viewFolder) {
-        if (!obj.task.list)
-          obj.task.folder = this.viewFolder.id
         this.$store.dispatch('folder/addTaskByIndex', {
           ...obj, folderId: this.viewFolder.id,
         })
       }
     },
-    removeDeadline() {},
-    removeHeaderTag() {},
-    removeDeferDate() {},
+    rootFallbackTask(task) {
+      return task
+    },
+    mainFallbackTask(task) {
+      if (!task.list && !task.folder && !task.heading)
+        task.folder = this.viewFolder.id
+      return task
+    },
+    
     updateIds(ids) {
       if (this.viewFolder) {
         this.$store.dispatch('folder/saveFolder', {
@@ -62,17 +66,23 @@ export default {
     removeDeferDate() {},
     removeRepeat() {},
     removeHeaderTag() {},
-    removeDeadline() {}
+    removeDeadline() {},
+    removeDeadline() {},
+    removeHeaderTag() {},
+    removeDeferDate() {},
   },
   computed: {
+    mainFilter() {
+      if (this.viewFolder)
+        return task => this.isTaskInFolder(task, this.viewFolder.id)
+      return () => false
+    },
+    rootFilter() {
+      return () => true
+    },
+    
     icon() {return 'folder'},
     viewNameValue() {return this.viewName},
-    getTasks() {
-      let res = []
-      if (this.viewFolder)
-        res = this.tasks.filter(t => t.folder === this.viewFolder.id)
-      return res
-    },
     taskCompletionCompareDate() {
       return null
     },
@@ -87,8 +97,9 @@ export default {
       return null
     },
     tasksOrder() {
-      if (this.viewFolder && this.viewFolder.tasks)
+      if (this.viewFolder && this.viewFolder.tasks) {
         return this.viewFolder.tasks
+      }
       return []
     },
     showEmptyHeadings() {

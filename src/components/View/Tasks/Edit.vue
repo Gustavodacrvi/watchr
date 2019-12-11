@@ -5,7 +5,7 @@
     @leave='leave'
   >
     <div class="Edit handle rb" :class="{notPopup: !popup}" :style="editStyle">
-      <div class="cont-wrapper" :class="{show}">
+      <div class="edit-wrapper" :class="{show}">
         <div class="tags" :class="{show: atLeastOnSpecialTag}">
           <Tag v-if="calendarStr"
             icon="calendar"
@@ -52,6 +52,7 @@
           :focus="true"
           :options="options"
           :placeholder="placeholder"
+          :focusToggle='focusToggle'
           @select="select"
           @enter='save'
           @cancel="cancel"
@@ -174,7 +175,7 @@ import FileMixin from '@/mixins/file.js'
 
 export default {
   mixins: [FileMixin],
-  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup'],
+  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup', 'focusToggle'],
   components: {
     DropInput: DropInputVue, FileApp,
     ButtonApp: ButtonVue,
@@ -658,7 +659,7 @@ export default {
   box-shadow: 0 2px 6px rgba(15,15,15,.3);
 }
 
-.cont-wrapper {
+.edit-wrapper {
   opacity: 0;
   transition-duration: .15s;
 }
