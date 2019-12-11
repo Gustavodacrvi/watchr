@@ -386,7 +386,7 @@ export default {
         },
       },
       isTaskShowingOnDate: {
-        getter({}, task, date) {
+        getter({getters}, task, date) {
           if (!utilsTask.hasCalendarBinding(task) || task.calendar.type === 'someday')
             return false
           return getters.isCalendarObjectShowingToday(task.calendar, date)

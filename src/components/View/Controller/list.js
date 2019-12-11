@@ -134,9 +134,7 @@ export default {
             },
             sort,
             filter: pipedFilter,
-            options: tasks => {
-              return utilsList.listHeadingOptions(this.viewList, h, this.$store, tasks, this.l)
-            },
+            options: tasks => utilsList.listHeadingOptions(this.viewList, h, this.$store, tasks, this.l),
             fallbackTask: task => {
               if (!task.heading && !task.folder && task.list === viewList.id)
                 task.heading = h.name

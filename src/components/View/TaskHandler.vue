@@ -129,8 +129,8 @@ export default {
             head.filter,
             this.mainFilterFunction,
           ),
-          onEdit: head.onEdit(nonFiltered),
-          options: head.options(nonFiltered),
+          onEdit: head.onEdit ? head.onEdit(nonFiltered) : () => {},
+          options: head.options ? head.options(nonFiltered) : () => {},
           updateIds: ids => {
             head.updateIds(
               this.getFixedIdsFromNonFilteredAndFiltered(ids,

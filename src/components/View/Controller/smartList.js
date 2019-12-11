@@ -60,15 +60,20 @@ export default {
       if (this.isSmart) return this.l[this.viewName]
     },
 
-    getTasks() {
+    mainFilter() {
       if (this.viewType === 'search')
         return task => this.doesTaskIncludeText(task, this.viewName)
       if (this.isSmart && this.notHeadingHeaderView) {
-        if (this.viewName === 'Today' && this.hasOverdueTasks) return () => false
+        if (this.viewName === 'Today' && this.hasOverdueTasks) return task => {
+          return this.isTaskInView(task, 'Today') ||
+                this.isTaskInView(task, 'Overdue')
+        }
         return task => this.isTaskInView(task, this.viewName)
-        // return task => this.filterTasksByView([task], this.viewName).length > 0
       }
       return () => false
+    },
+    rootFilter() {
+      return task => !task.list && !task.folder
     },
     tasksOrder() {
       let o = this.viewOrders[this.viewName]
@@ -83,13 +88,15 @@ export default {
     showEmptyHeadings() {
       return this.viewName === 'Upcoming'
     },
-    headingsOptions() {
+    headings() {
       switch (this.viewName) {
         case 'Upcoming': return this.upcomingHeadingsOptions
         case 'Tomorrow': return this.getListHeadingsByView('Tomorrow')
         case 'Today': {
           // if (this.hasOverdueTasks) return this.todayHeadingsOptions
-          return this.getListHeadingsByView('Today')
+          console.log(this.todayHeadingsOptions)
+          return this.todayHeadingsOptions
+          // return this.getListHeadingsByView('Today')
         }
         case 'Someday': {
           return this.getListHeadingsByView('Someday')

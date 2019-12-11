@@ -304,6 +304,7 @@ export default {
       filterTasksByView: 'task/filterTasksByView',
       filterTasksByCompletion: 'task/filterTasksByCompletion',
       isTaskCompleted: 'task/isTaskCompleted',
+      isTaskInView: 'task/isTaskInView',
       doesTaskPassInclusiveTags: 'task/doesTaskPassInclusiveTags',
       doesTaskIncludeText: 'task/doesTaskIncludeText',
       isTaskInHeading: 'task/isTaskInHeading',
@@ -538,43 +539,52 @@ export default {
           ids, task: {calendar: this.$store.getters['task/getSpecificDayCalendarObj'](mom)}
         })
       }
-      const overIds = this.getOverdueTasks.map(el => el.id)
+      const sort = utilsTask.sortTasksByTaskDate
+      
       return [
         {
           name: l['Overdue'],
           id: 'overdue',
-          filter: () => this.getOverdueTasks,
           color: 'var(--red)',
-          options: [
-            {
-              name: 'Move to today',
-              icon: 'star',
-              callback: () => saveTasksDay(overIds, mom())
-            },
-            {
-              name: 'Move to tomorrow',
-              icon: 'sun',
-              callback: () => saveTasksDay(overIds, mom().add(1, 'd'))
-            },
-            {
-              name: 'Select date',
-              icon: 'calendar',
-              callback: () => {return {
-                comp: 'CalendarPicker',
-                content: {callback: (calendar) => {
-                  dispatch('task/saveTasksById', {
-                    ids: overIds,
-                    task: {calendar},
-                  })}
-                }
-              }}
-            }
-          ]
+
+          sort,
+          filter: task => {
+            return this.isTaskInView(task, 'Overdue')
+          },
+          options: tasks => {
+            const overIds = tasks.map(el => el.id)
+            return [
+              {
+                name: 'Move to today',
+                icon: 'star',
+                callback: () => saveTasksDay(overIds, mom())
+              },
+              {
+                name: 'Move to tomorrow',
+                icon: 'sun',
+                callback: () => saveTasksDay(overIds, mom().add(1, 'd'))
+              },
+              {
+                name: 'Select date',
+                icon: 'calendar',
+                callback: () => {return {
+                  comp: 'CalendarPicker',
+                  content: {callback: (calendar) => {
+                    dispatch('task/saveTasksById', {
+                      ids: overIds,
+                      task: {calendar},
+                    })}
+                  }
+                }}
+              }
+            ]
+          },
         },
         {
+          sort,
           name: l['Today'],
           id: 'todya',
-          filter: (tasks) => this[this.prefix + 'getTasks'],
+          filter: task => this.isTaskInView(task, 'Today'),
         },
       ]
     },
@@ -604,7 +614,7 @@ export default {
       return this.getOverdueTasks.length > 0
     },
     getOverdueTasks() {
-      return this.filterTasksByView(this.tasks, 'Overdue')
+      return this.tasks.filter(task => this.isTaskInView(task, 'Overdue'))
     },
     viewTag() {
       return this.tags.find(el => el.name === this.viewName)
