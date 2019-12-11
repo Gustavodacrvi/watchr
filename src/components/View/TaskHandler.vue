@@ -13,8 +13,8 @@
       :headingEditOptions='headingEditOptions'
       :taskIconDropOptions='taskIconDropOptions'
       :headingPosition='0'
+      :updateHeadingIds='updateHeadingIds'
       @update="updateIds"
-      @update-headings='updateHeadingIds'
       @add-heading="addHeading"
     />
     <transition name="fade-t">
@@ -40,6 +40,7 @@ export default {
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder',
+    'updateHeadingIds',
   ],
   components: {
     TaskRendererVue,
@@ -89,9 +90,6 @@ export default {
     },
     updateIds(ids) {
       this.$parent.$emit('update-ids', this.getFixedIdsFromNonFilteredAndFiltered(ids, this.rootNonFilteredIds))
-    },
-    updateHeadingIds(ids) {
-      this.$parent.$emit("update-heading-ids", ids)
     },
     addHeading(obj) {
       this.$parent.$emit('add-heading', {...obj})

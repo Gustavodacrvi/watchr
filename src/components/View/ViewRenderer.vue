@@ -32,6 +32,7 @@
         :showSomeday='passSomedayTasks'
         :pipeFilterOptions='pipeFilterOptions'
         :taskIconDropOptions='taskIconDropOptions'
+        :updateHeadingIds='updateHeadingIds'
 
         @allow-someday='showSomeday = true'
       />

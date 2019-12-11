@@ -399,7 +399,8 @@ export default {
           this.headSort = new Sortable(el, {
             disabled: !this.updateHeadingIds,
             group: 'headings',
-            delay: 225,
+            delay: 100,
+            delayOnTouchOnly: true,
             handle: '.handle',
       
             onUpdate: (evt) => {
@@ -744,6 +745,9 @@ export default {
       this.updateView()
 
       this.sortable.options.disabled = this.disableSortableMount
+      this.headSort.options.disabled = !this.updateHeadingIds
+    },
+    updateHeadingIds() {
       this.headSort.options.disabled = !this.updateHeadingIds
     },
     filterOptions() {
