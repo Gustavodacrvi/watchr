@@ -9,7 +9,7 @@
       @leave='leave'
     >
       <div v-if="!isEditing" key="notediting"
-        class="cont-wrapper task-cont-wrapper handle rb"
+        class="cont-wrapper task-cont-wrapper task-handle rb"
         :class="platform"
         @click="click"
         @touchstart='touchStart'

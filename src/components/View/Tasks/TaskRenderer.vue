@@ -5,19 +5,18 @@
         <Icon :icon='icon' color='var(--appnav-color)' width="150px"/>
       </div>
     </transition>
-    <transition-group
+    <transition-group name="task-trans"
       class="front task-renderer-root"
       :class="{dontHaveTasks: getTasks.length === 0 && lazyHeadings.length === 0, showEmptyHeadings}"
       appear
-      :css='false'
+      :css="true"
       tag="div"
 
       @enter='taskEnter'
-      @leave='taskLeave'
 
       data-name='task-renderer'
     >
-      <Task v-for="item of lazyTasks" :key="item.id" 
+      <Task v-for="item of getTasks" :key="item.id" 
         v-bind="$props"
 
         :taskHeight='taskHeight'
@@ -184,16 +183,6 @@ export default {
         setTimeout(done, 200)
       }
     },
-    taskLeave(el, done) {
-      const cont = el.getElementsByClassName('cont-wrapper')[0]
-      if (cont) {
-        const s = cont.style
-        s.transitionDuration = '.2s'
-        s.opacity = 0
-        s.height = '0px'
-        setTimeout(done, 200)
-      }
-    },
 
     destroySortables() {
       if (this.sortable)
@@ -244,7 +233,7 @@ export default {
         },
         delay: 100,
         delayOnTouchOnly: true,
-        handle: '.handle',
+        handle: '.task-handle',
 
         onUpdate: (evt) => {
           setTimeout(() => {
@@ -836,6 +825,7 @@ export default {
 .TaskRenderer {
   position: relative;
   margin-top: 16px;
+  min-height: 500px;
 }
 
 
@@ -862,6 +852,25 @@ export default {
 
 .showEmptyHeadings.dontHaveTasks {
   height: 50px;
+}
+
+.task-trans-leave-active {
+  transition-duration: .2s !important;
+  transition: height .2s, opacity .2s !important;
+}
+
+.task-trans-leave {
+  height: 38px;
+}
+
+.mobile .task-trans-leave {
+  height: 50px;
+}
+
+.task-trans-leave-to, .task-trans-leave-to .cont-wrapper {
+  height: 0px !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
 }
 
 </style>
