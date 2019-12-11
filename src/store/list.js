@@ -250,10 +250,9 @@ export default {
 
     // TASKS
     
-    addTaskByIndexSmartViewFolder(c, {ids, index, task, folderId, viewName}) {
+    addTaskByIndexSmartViewFolder(c, {ids, index, task, folderId, viewName, newTaskRef}) {
       const batch = fire.batch()
-
-      const newTaskRef = taskRef()
+      
       addTask(batch, {
         userId: uid(),
         createdFire: serverTimestamp(),
@@ -271,10 +270,9 @@ export default {
         batch.commit()
       }) 
     },
-    addTaskByIndexSmartViewList(c, {ids, index, task, listId, viewName}) {
+    addTaskByIndexSmartViewList(c, {ids, index, task, listId, viewName, newTaskRef}) {
       const batch = fire.batch()
-
-      const newTaskRef = taskRef()
+      
       addTask(batch, {
         userId: uid(),
         createdFire: serverTimestamp(),
@@ -292,10 +290,9 @@ export default {
         batch.commit()
       }) 
     },
-    addTaskByIndexSmart(c, {ids, index, task, list}) {
+    addTaskByIndexSmart(c, {ids, index, task, list, newTaskRef}) {
       const batch = fire.batch()
-
-      const newTaskRef = taskRef()
+      
       addTask(batch, {
         userId: uid(),
         createdFire: serverTimestamp(),
@@ -316,10 +313,8 @@ export default {
         batch.commit()
       })
     },
-    addTaskByIndex(c, {ids, index, task, listId}) {
+    addTaskByIndex(c, {ids, index, task, listId, newTaskRef}) {
       const batch = fire.batch()
-
-      const newTaskRef = taskRef()
       addTask(batch, {
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
@@ -572,11 +567,10 @@ export default {
         viewOrders: obj,
       }, {merge: true})
     },
-    addTaskHeading({getters}, {name, ids, listId, task, index}) {
+    addTaskHeading({getters}, {name, ids, listId, task, index, newTaskRef}) {
       const list = getters.getListsById([listId])[0]
       const batch = fire.batch()
 
-      const newTaskRef = taskRef()
       task.list = listId
       task.heading = name
       batch.set(newTaskRef, {

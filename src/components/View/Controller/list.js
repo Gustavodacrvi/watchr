@@ -9,17 +9,25 @@ export default {
   methods: {
     addTask(obj) {
       if (this.viewList) {
-        if (!obj.task.list)
-          obj.task.list = this.viewList.id
-        obj.task.tags = [...obj.task.tags, ...this.listgetListTags.map(el => el.id)]
         this.$store.dispatch('list/addTaskByIndex', {
           ...obj, listId: this.viewList.id,
         })
       }
     },
-    removeDeadline() {},
-    removeHeaderTag() {},
-    removeDeferDate() {},
+    rootFallbackTask(task) {
+      if (!task.heading) {
+        task.heading = null
+      }
+      return task
+    },
+    mainFallbackTask(task) {
+      if (!task.list && !task.folder)
+        task.list = this.viewList.id
+      task.tags = [...task.tags, ...this.listgetListTags.map(el => el.id)]
+      console.log(task.tags)
+      return task
+    },
+    
     updateIds(ids) {
       if (this.viewList) {
         this.$store.dispatch('list/saveList', {
@@ -84,7 +92,11 @@ export default {
     },
     removeDeadline() {
       this.listsaveList({deadline: null})
-    }
+    },
+
+    removeDeadline() {},
+    removeHeaderTag() {},
+    removeDeferDate() {},
   },
   computed: {
     mainFilter() {
@@ -118,13 +130,18 @@ export default {
                 listId: this.viewList.id,
                 oldName: h.name,
                 newName: name,
-                tasksIds: tasks.filter(pipedFilter).map(el => el.id),
+                tasksIds: tasks.map(el => el.id),
               })
             },
             sort,
             filter: pipedFilter,
             options: tasks => {
-              return utilsList.listHeadingOptions(this.viewList, h, this.$store, sort(tasks.filter(pipedFilter)), this.l)
+              return utilsList.listHeadingOptions(this.viewList, h, this.$store, tasks, this.l)
+            },
+            fallbackTask: task => {
+              if (!task.heading && !task.folder && task.list === viewList.id)
+                task.heading = h.name
+              return task
             },
 
             saveNotes: notes => {
@@ -140,7 +157,7 @@ export default {
             onAddTask: obj => {
               obj.task.tags = [...obj.task.tags, ...this.listgetListTags.map(el => el.id)]
               this.$store.dispatch('list/addTaskHeading', {
-                name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
+                ...obj, name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
               })
             },
             onSortableAdd: (evt, taskIds, type, ids) => {
@@ -193,6 +210,9 @@ export default {
       return[]
     },
     showEmptyHeadings() {
+      return true
+    },
+    showAllHeadingsItems() {
       return true
     },
     getListTags() {

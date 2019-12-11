@@ -351,8 +351,8 @@ export default {
       
       const props = [
         'icon', 'showEmptyHeadings', 'updateHeadingIds',
-        'headingEditOptions', 'headerOptions', 'notes', 'progress', 'headings', 'headingsOrder',
-        'mainFilter', 'rootFilter', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates',
+        'headingEditOptions', 'headerOptions', 'notes', 'progress', 'headings', 'headingsOrder', 'showAllHeadingsItems', 'rootFallbackTask',
+        'mainFilter', 'rootFilter', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates', 'mainFallbackTask',
         'headerTags', 'headerCalendar', 'taskCompletionCompareDate', 'files',
         'headingsPagination',
       ]

@@ -10,6 +10,7 @@
       :headings='sortHeadings'
 
       :addTask='addTask'
+      :rootFilterFunction='rootFilterFunction'
       :headingEditOptions='headingEditOptions'
       :taskIconDropOptions='taskIconDropOptions'
       :headingPosition='0'
@@ -39,8 +40,9 @@ export default {
     'pipeFilterOptions', 'showCompleted', 'showSomeday',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
-    'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder',
-    'updateHeadingIds',
+    'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackTask',
+    'taskCompletionCompareDate', 'rootFallbackTask',
+    'updateHeadingIds', 'showEmptyHeadings', 'showAllHeadingsItems',
   ],
   components: {
     TaskRendererVue,
@@ -69,7 +71,7 @@ export default {
 
       return removedIncludedIds
     },
-    
+
     addTask(obj, evt) {
       const rootNonFilteredIds = this.rootNonFilteredIds
 
@@ -114,23 +116,42 @@ export default {
       return this.sortHeadingsFunction(this.laserHeadingsTasks)
     },
     laserHeadingsTasks() {
-      return this.headings.map(head => ({
-        ...head,
-        filter: undefined,
-        updateIds: ids => {
-          head.updateIds(
-            this.getFixedIdsFromNonFilteredAndFiltered(ids,
-              this.mainTasks.filter(head.filter).map(el => el.id)
-            ),
-          )
-        },
-        tasks: head.sort(this.mainTasks.filter(
-          pipeBooleanFilters(
+      return this.headings.map(head => {
+        const nonFiltered = head.sort(this.mainTasks.filter(head.filter))
+        const tasks = nonFiltered.filter(this.filterOptionsPipe)
+
+        return {
+          ...head,
+          filter: undefined,
+          tasks,
+          filterFunction: pipeBooleanFilters(
             head.filter,
-            this.filterOptionsPipe,
-          )
-        ))
-      }))
+            this.mainFilterFunction,
+          ),
+          onEdit: head.onEdit(nonFiltered),
+          options: head.options(nonFiltered),
+          updateIds: ids => {
+            head.updateIds(
+              this.getFixedIdsFromNonFilteredAndFiltered(ids,
+                nonFiltered.map(el => el.id),
+              )
+            )
+          },
+        }
+      })
+    },
+
+    rootFilterFunction() {
+      return pipeBooleanFilters(
+        this.rootFilter,
+        this.mainFilterFunction,
+      )
+    },
+    mainFilterFunction() {
+      return pipeBooleanFilters(
+        this.mainFilter,
+        this.filterOptionsPipe,
+      )
     },
 
     sortLaseredTasks() {

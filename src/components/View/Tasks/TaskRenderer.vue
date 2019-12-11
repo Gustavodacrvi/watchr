@@ -56,8 +56,8 @@
           :icon='h.icon'
           :progress='h.progress'
           :color='h.color ? h.color : ""'
-          :options='h.options ? h.options(mainTasks) : []'
-          :save='h.onEdit(mainTasks)'
+          :options='h.options ? h.options : []'
+          :save='h.onEdit'
           :movingHeading='movingHeading'
 
           @option-click='v => getOptionClick(h)(v)'
@@ -72,6 +72,8 @@
             :headings='[]'
 
             :hideListName="h.hideListName"
+            :headingFilterFunction='h.filterFunction'
+            :headingFallbackTask='h.fallbackTask'
             :allowCalendarStr='h.calendarStr'
             :disableSortableMount='h.disableSortableMount'
             :hideFolderName="h.hideFolderName"
@@ -101,6 +103,10 @@ import HeadingVue from './../Headings/Heading.vue'
 import headingEditOptionsVue from './../Headings/Edit.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
 
+
+import { taskRef, serverTimestamp, uid } from '@/utils/firestore'
+
+
 import Icon from '@/components/Icon.vue'
 
 import { mapState, mapGetters } from 'vuex'
@@ -114,10 +120,8 @@ import mom from 'moment/src/moment'
 import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
-let headingsFilterCache = {}
-
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds', 'disableSortableMount', 'filterOptions', 'mainTasks',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'rootFilterFunction', 'headingFilterFunction',
   'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -167,9 +171,9 @@ export default {
         s.transitionDuration = '0'
         s.opacity = 0
         s.height = '0px'
-        if (el.dataset.name === this.addedTask) {
+        if (el.dataset.id === this.addedTask) {
           setTimeout(() => {
-              this.draggableRoot.insertBefore(el, this.taskAdder())
+            this.draggableRoot.insertBefore(el, this.taskAdder())
           }, 5)
           this.addedTask = null
         }
@@ -494,12 +498,48 @@ export default {
     },
     add(task) {
       if (task.name) {
-        this.addTask({
-          task, ids: this.getIds(true),
-          index: this.getTaskRendererPosition(),
-          header: this.header,
-        })
-        this.addedTask = task.name
+        let t = this.mainFallbackTask(task)
+
+        if (this.isRoot)
+          t = this.rootFallbackTask(t)
+        else t = this.headingFallbackTask(t)
+
+        let shouldRender = false
+        const isNotEditingFiles = !t.handleFiles
+
+        if (isNotEditingFiles) {
+          if (this.isRoot)
+            shouldRender = this.rootFilterFunction(t)
+          else
+            shouldRender = this.headingFilterFunction(t)
+        }
+
+        const newTaskRef = taskRef()
+
+        t = {
+          ...t,
+          id: newTaskRef.id,
+          userId: uid(),
+          createdFire: serverTimestamp(),
+          created: mom().format('Y-M-D HH:mm ss'),
+        }
+
+        const index = this.getTaskRendererPosition()
+
+        if (shouldRender) {
+          this.lazyTasks.splice(index, 0, t)
+        }
+
+        let timeout = isNotEditingFiles ? 100 : 0
+        
+        this.addedTask = t.id
+        setTimeout(() => {
+          this.addTask({
+            task: t, ids: this.getIds(true),
+            index, newTaskRef,
+            header: this.header,
+          })
+        }, timeout)
       }
     },
     getTaskRendererPosition() {
@@ -625,6 +665,44 @@ export default {
         this.changedViewName = false
       })
     },
+
+    copy(tasks) {
+      for (const newTask of tasks) {
+        let i = 0
+        let found = false
+        for (const oldTask of this.lazyTasks) {
+          if (oldTask.id === newTask.id) {
+            found = true
+
+            this.lazyTasks.splice(i, 1, Object.assign(oldTask, newTask))
+          }
+          if (found) break
+          i++
+        }
+      }
+    },
+    removeTasks(tasks){
+      let i = 0
+      for (const oldTask of this.lazyTasks) {
+        const newTask = tasks.find(el => el.id === oldTask.id)
+        if (!newTask) {
+          this.lazyTasks.splice(i, 1)
+        }
+
+        i++
+      }
+    },
+    addNewTasks(tasks) {
+      let i = 0
+      for (const newTask of tasks) {
+        const oldTask = this.lazyTasks.find(el => el.id === newTask.id)
+        if (!oldTask) {
+          this.lazyTasks.splice(i, 0, newTask)
+        }
+        
+        i++
+      }
+    },
   },
   computed: {
     ...mapState({
@@ -643,14 +721,14 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     getTasks() {
-      if (this.isRoot) return this.lazyTasks
+      if (this.isRoot || this.showAllHeadingsItems) return this.lazyTasks
       return this.showingMoreItems ? this.lazyTasks : this.lazyTasks.slice(0, 3)
     },
     showMoreItemsMessage() {
       return `${this.l['Show ']}${this.lazyTasks.length - 3}${this.l[' more tasks...']}`
     },
     showMoreItemsButton() {
-      return !this.isRoot && !this.showingMoreItems && this.lazyTasks.length > 3
+      return !this.isRoot && !this.showAllHeadingsItems && !this.showingMoreItems && this.lazyTasks.length > 3
     },
     isRoot() {
       return !this.header
@@ -660,28 +738,6 @@ export default {
     },
     taskHeight() {
       return this.isDesktop ? 38 : 50
-    },
-    filter() {
-      return (h) => {
-        if (headingsFilterCache[h.name]) return headingsFilterCache[h.name]
-        
-        let ts = h.filter(this.savedTasks, h, this.showCompleted)
-        if (ts.length === 0) {
-          headingsFilterCache[h.name] = []
-          return []
-        }
-
-        let order = []
-        if (h.order)
-          order = h.order(ts)
-        ts = this.$store.getters.checkMissingIdsAndSortArr(order, ts)
-        ts = this.filterTasksByViewRendererFilterOptions(ts, this.filterOptions)
-
-        if (ts.length > 0) this.atLeastOneRenderedTask = true
-
-        headingsFilterCache[h.name] = ts
-        return ts
-      }
     },
     enableSelect() {
       return !this.isDesktop ||
@@ -702,30 +758,22 @@ export default {
   },
   watch: {
     tasks(tasks) {
-      headingsFilterCache = {}
       this.atLeastOneRenderedTask = false
       setTimeout(() => {
         if (!this.changedViewName) {
           this.clearLazySettimeout()
-          this.lazyTasks = tasks
+
+          this.removeTasks(tasks)
+          this.copy(tasks)
+          this.addNewTasks(tasks)
         }
       })
     },
     headings(newArr) {
       if (this.isRoot) {
-        headingsFilterCache = {}
         setTimeout(() => {
           if (!this.changedViewName) {
-            this.clearLazySettimeout()
-            const unique = []
-            const set = new Set()
-            for (const t of newArr) {
-              if (!set.has(t.id)) {
-                set.add(t.id)
-                unique.push(t)
-              }
-            }
-            this.lazyHeadings = unique
+            this.lazyHeadings = newArr
           }
         })
       }

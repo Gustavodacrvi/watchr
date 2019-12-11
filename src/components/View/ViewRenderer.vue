@@ -67,9 +67,9 @@ export default {
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes',
   'headerOptions', 'headerDates', 'headerTags', 'headerCalendar', 'files',
-  'progress', 'tasksOrder',
+  'progress', 'tasksOrder',  'rootFallbackTask', 'mainFallbackTask',
   
-  'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'showHeadadingFloatingButton', 'updateHeadingIds', 'taskCompletionCompareDate', 'headingsPagination'],
+  'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'showHeadadingFloatingButton', 'updateHeadingIds', 'showAllHeadingsItems', 'taskCompletionCompareDate', 'headingsPagination'],
   components: {
     PaginationVue, TaskHandler,
     Header: HeaderVue,
