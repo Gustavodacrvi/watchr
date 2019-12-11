@@ -10,6 +10,9 @@ import { uid, fd, userRef, serverTimestamp, tagRef, taskColl, taskRef, listRef, 
 
 import mom from 'moment/src/moment'
 
+const TODAY_DATE = mom().format('Y-M-D')
+const TOM_DATE = mom().add(1, 'day').format('Y-M-D')
+
 export default {
   namespaced: true,
   state: {
@@ -105,58 +108,6 @@ export default {
           }
           return JSON.stringify({i, a: [args[1], args[2]]})
         },
-      },
-      isTaskOverdue({}, calendar) {
-        let tod = null
-        const getTod = () => {
-          if (tod) return tod
-          tod = mom()
-          return tod
-        }
-
-        const c = calendar
-        if (c.due) {
-          const due = mom(c.due, 'Y-M-D')
-          if (due.isBefore(getTod(), 'day')) return true
-        }
-        if (c.type === 'specific') {
-          const spec = mom(c.specific, 'Y-M-D')
-          return spec.isBefore(getTod(), 'day')
-        }
-        if (c.times !== null && c.times !== undefined && c.times === 0)
-          return true
-        if (c.type === 'periodic') {
-          return utilsMoment.getNextEventAfterCompletionDate(c).isBefore(getTod(), 'day')
-        }
-        if (c.type === 'weekly') {
-          const lastWeeklyEvent = utilsMoment.getLastWeeklyEvent(c, getTod())
-          const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
-          return lastWeeklyEvent.isAfter(lastComplete, 'day')
-        }
-
-        return false
-        
-          /*           if (!utilsTask.hasCalendarBinding(el) || getters.isTaskCompleted(el)) return false
-        
-        const {
-          spec, type, due, tod,
-          nextEventAfterCompletion,
-          lastComplete, lastWeeklyEvent,
-          times, hasTimesBinding
-        } = utilsTask.taskData(el, mom())
-
-        if (due.isBefore(tod, 'day')) return true
-
-        if (type === 'specific') return spec.isBefore(tod, 'day')
-        if (hasTimesBinding && times === 0) return true
-        if (type === 'periodic') {
-          return nextEventAfterCompletion.isBefore(tod, 'day')
-        }
-        if (type === 'weekly') {
-          return lastWeeklyEvent.isAfter(lastComplete, 'day')
-        }
-
-        return false */
       },
       isCalendarObjectShowingToday({}, calendar, date, specific) {
         const c = calendar  
@@ -265,7 +216,7 @@ export default {
         return tasks.filter(el => {
           if (!utilsTask.hasCalendarBinding(el) || getters.isTaskCompleted(el))
             return false
-          return getters.isTaskOverdue(el.calendar)
+          return getters.isTaskOverdue(el)
         })
       },
       filterTasksByCompletion({getters},tasks, notCompleted, compareDate) {
@@ -274,29 +225,6 @@ export default {
           if (notCompleted) return !comp
           return comp
         })
-      },
-      filterTasksByView({getters}, tasks, view) {
-        switch (view) {
-          case 'Inbox': {
-            return tasks.filter(getters.isTaskInbox)
-          }
-          case 'Today': {
-            return getters.filterTasksByDay(tasks, mom().format('Y-M-D'))
-          }
-          case 'Someday': {
-            return tasks.filter(getters.isTaskSomeday)
-          }
-          case 'Overdue': {
-            return getters.filterTasksByOverdue(tasks)
-          }
-          case 'Tomorrow': {
-            return getters.filterTasksByDay(tasks, mom().add(1, 'day').format('Y-M-D'))
-          }
-          case 'Completed': {
-            return getters.filterTasksByCompletion(tasks)
-          }
-        }
-        return tasks
       },
       filterTasksByPeriod({getters}, tasks, moment, period, specific) {
         return tasks.filter(el => {
@@ -342,6 +270,134 @@ export default {
 
         return unique
       }, */
+      filterTasksByView({getters}, tasks, view) {
+        switch (view) {
+          case 'Inbox': {
+            return tasks.filter(getters.isTaskInbox)
+          }
+          case 'Today': {
+            return getters.filterTasksByDay(tasks, TODAY_DATE)
+          }
+          case 'Someday': {
+            return tasks.filter(getters.isTaskSomeday)
+          }
+          case 'Overdue': {
+            return getters.filterTasksByOverdue(tasks)
+          }
+          case 'Tomorrow': {
+            return getters.filterTasksByDay(tasks, TOM_DATE)
+          }
+          case 'Completed': {
+            return getters.filterTasksByCompletion(tasks)
+          }
+        }
+        return tasks
+      },
+      isTaskInView: {
+        getter({getters}, task, view) {
+          switch (view) {
+            case 'Inbox': return getters.isTaskInbox(task)
+            case 'Today': return getters.isTaskShowingOnDate(task, TODAY_DATE)
+            case 'Someday': return getters.isTaskSomeday(task)
+            case 'Overdue': return getters.isTaskOverdue(task)
+            case 'Tomorrow': return getters.isTaskShowingOnDate(task, TOM_DATE)
+            case 'Completed': return getters.isTaskCompleted(task)
+          }
+        },
+        cache(args) {
+          const view = args[1]
+          const t = args[0]
+          let obj = {}
+
+          switch (view) {
+            case 'Inbox': {
+              obj = {
+                completed: t.completed,
+                calendar: t.calendar,
+                list: t.list,
+                folder: t.folder,
+                tags: t.tags,
+              }
+              break
+            }
+            case 'Today': {
+              obj = {
+                calendar: t.calendar,
+                today: TODAY_DATE,
+              }
+              break
+            }
+            case 'Someday': {
+              obj = t.calendar
+            }
+            case 'Overdue': {
+              obj = t.calendar
+            }
+            case 'Tomorrow': {
+              obj = {
+                calendar: t.calendar,
+                today: TOM_DATE,
+              }
+            }
+            case 'Completed': {
+              obj = t.calendar
+            }
+          }
+
+          return JSON.stringify({obj, view})
+        },
+      },
+      isTaskOverdue: {
+        getter({}, task) {
+          const calendar = task.calendar
+          if (!calendar) return false
+          
+          let tod = null
+          const getTod = () => {
+            if (tod) return tod
+            tod = mom()
+            return tod
+          }
+  
+          const c = calendar
+          if (c.due) {
+            const due = mom(c.due, 'Y-M-D')
+            if (due.isBefore(getTod(), 'day')) return true
+          }
+          if (c.type === 'specific') {
+            const spec = mom(c.specific, 'Y-M-D')
+            return spec.isBefore(getTod(), 'day')
+          }
+          if (c.times !== null && c.times !== undefined && c.times === 0)
+            return true
+          if (c.type === 'periodic') {
+            return utilsMoment.getNextEventAfterCompletionDate(c).isBefore(getTod(), 'day')
+          }
+          if (c.type === 'weekly') {
+            const lastWeeklyEvent = utilsMoment.getLastWeeklyEvent(c, getTod())
+            const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+            return lastWeeklyEvent.isAfter(lastComplete, 'day')
+          }
+  
+          return false
+        },
+        cache(args) {
+          return JSON.stringify(args[0].calendar)
+        },
+      },
+      isTaskShowingOnDate: {
+        getter({}, task, date) {
+          if (!utilsTask.hasCalendarBinding(task) || task.calendar.type === 'someday')
+            return false
+          return getters.isCalendarObjectShowingToday(task.calendar, date)
+        },
+        cache(args) {
+          return JSON.stringify({
+            task: args[0].calendar,
+            date: args[1],
+          })
+        }
+      },
       isTaskInbox: {
         getter({}, task) {
           return !task.completed &&

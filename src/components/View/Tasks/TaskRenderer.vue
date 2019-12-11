@@ -160,6 +160,7 @@ export default {
       isDragging: false,
       justScrolled: false,
       movingHeading: false,
+      addedTask: null,
 
       hasEdit: null,
       focusToggle: false,
@@ -528,6 +529,7 @@ export default {
           this.lazyTasks.splice(index, 0, t)
         }
 
+        this.addedTask = t.id
         setTimeout(() => {
           this.addTask({
             task: t, ids: this.getIds(true),
@@ -619,6 +621,19 @@ export default {
         this.changedViewName = false
       })
     },
+    updateLazyTasks(tasks, addedId, hasEdit) {
+      if (hasEdit && addedId) {
+        const taskIndex = tasks.findIndex(el => el.id === addedId)
+        if (taskIndex > -1) {
+          const editIndex = this.lazyTasks.findIndex(el => el.isEdit)
+          if (editIndex > -1) {
+            tasks.splice(taskIndex + 1, 0, this.lazyTasks[editIndex])
+          }
+        }
+      }
+
+      this.lazyTasks = tasks
+    },
   },
   computed: {
     ...mapState({
@@ -666,7 +681,7 @@ export default {
       return this.$el.getElementsByClassName('task-renderer-root')[0]
     },
     showIllustration() {
-      return this.isRoot && !this.atLeastOneRenderedTask && this.tasks.length === 0 && this.icon && !this.header
+      return this.isRoot && !this.atLeastOneRenderedTask && this.lazyTasks.length === 0 && this.lazyHeadings.length === 0 && this.icon && !this.header
     },
     isSelecting() {
       return this.selected.length > 0
@@ -679,21 +694,12 @@ export default {
         if (!this.changedViewName) {
           this.clearLazySettimeout()
 
-          let edit
-          let editIndex
-          if (this.hasEdit) {
-            editIndex = this.lazyTasks.findIndex(el => el.isEdit)
-            edit = this.lazyTasks[editIndex]
-          }
 
-          this.lazyTasks = tasks
+          this.updateLazyTasks(tasks.slice(), this.addedTask, this.hasEdit)
 
-          if (edit) {
-            this.lazyTasks.splice(editIndex, 0, edit)
-            setTimeout(() => {
-              this.focusToggle = !this.focusToggle
-            })
-          }
+          setTimeout(() => {
+            this.focusToggle = !this.focusToggle
+          })
         }
       })
     },

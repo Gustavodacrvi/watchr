@@ -40,7 +40,7 @@ export default {
     'pipeFilterOptions', 'showCompleted', 'showSomeday',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
-    'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackTask',
+    'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackTask', 'icon',
     'taskCompletionCompareDate', 'rootFallbackTask',
     'updateHeadingIds', 'showEmptyHeadings', 'showAllHeadingsItems',
   ],
