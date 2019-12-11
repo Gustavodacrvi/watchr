@@ -18,7 +18,7 @@
       @add-heading="addHeading"
     />
     <transition name="fade-t">
-      <div v-if="hasAtLeastOneSomeday && !showSomeday" @click="showSomeday = true">
+      <div v-if="hasAtLeastOneSomeday && !showSomeday" @click="allowSomeday">
         <AppButton type="dark" :value="l['Show someday tasks...']"/>
       </div>
     </transition>
@@ -46,6 +46,29 @@ export default {
     AppButton,
   },
   methods: {
+    allowSomeday() {
+      this.$emit('allow-someday')
+    },
+    getFixedIdsFromNonFilteredAndFiltered(filtered, nonFiltered) {
+      const removedIncludedIds = nonFiltered.slice().filter(id => !filtered.includes(id))
+
+      let missing = []
+      let i = 0
+      for (const id of nonFiltered) {
+        if (!removedIncludedIds.includes(id))
+          missing.push(i)
+
+        i++
+      }
+      i = 0
+      for (const id of filtered) {
+        removedIncludedIds.splice(missing[i], 0, id)
+        i++
+      }
+
+      return removedIncludedIds
+    },
+    
     addTask(obj, evt) {
       const rootNonFilteredIds = this.rootNonFilteredIds
 
@@ -65,26 +88,7 @@ export default {
       this.$parent.$emit('add-task', obj)
     },
     updateIds(ids) {
-      const rootNonFilteredIds = this.rootNonFilteredIds
-      const removedIncludedIds = rootNonFilteredIds.slice().filter(id => !ids.includes(id))
-
-      const final = []
-      let missing = []
-      let i = 0
-      for (const id of rootNonFilteredIds) {
-        if (removedIncludedIds.includes(id))
-          final.push(id)
-        else missing.push(i)
-
-        i++
-      }
-      i = 0
-      for (const id of ids) {
-        removedIncludedIds.splice(missing[i], 0, id)
-        i++
-      }
-
-      this.$parent.$emit('update-ids', removedIncludedIds)
+      this.$parent.$emit('update-ids', this.getFixedIdsFromNonFilteredAndFiltered(ids, this.rootNonFilteredIds))
     },
     updateHeadingIds(ids) {
       this.$parent.$emit("update-heading-ids", ids)
@@ -98,6 +102,7 @@ export default {
       storeTasks: state => state.task.tasks,
     }),
     ...mapGetters({
+      l: 'l',
       isTaskSomeday: 'task/isTaskSomeday',
       isTaskCompleted: 'task/isTaskCompleted',
 
@@ -114,6 +119,13 @@ export default {
       return this.headings.map(head => ({
         ...head,
         filter: undefined,
+        updateIds: ids => {
+          head.updateIds(
+            this.getFixedIdsFromNonFilteredAndFiltered(ids,
+              this.mainTasks.filter(head.filter).map(el => el.id)
+            ),
+          )
+        },
         tasks: head.sort(this.mainTasks.filter(
           pipeBooleanFilters(
             head.filter,

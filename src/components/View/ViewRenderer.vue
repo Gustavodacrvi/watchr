@@ -32,6 +32,8 @@
         :showSomeday='passSomedayTasks'
         :pipeFilterOptions='pipeFilterOptions'
         :taskIconDropOptions='taskIconDropOptions'
+
+        @allow-someday='showSomeday = true'
       />
     </div>
     <PaginationVue v-if="headingsPagination"
