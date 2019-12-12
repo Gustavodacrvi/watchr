@@ -294,6 +294,16 @@ const store = new Vuex.Store({
     },
   },
   actions: {
+    getOptions(context, options) {
+      const {state} = context
+      return options({
+        ...context,
+        tags: state.tag.tags,
+        tasks: state.task.tasks,
+        lists: state.list.lists,
+        folders: state.folder.folders,
+      })
+    },
     logOut({state}) {
       auth.signOut().then(() => {
         state.authState = false

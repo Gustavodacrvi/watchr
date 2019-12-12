@@ -54,11 +54,11 @@ export default {
     },
     getTags() {
       let tags = this.sortedTags.slice()
-      for (const el of tags) {
-        el.callback = () => {
-          this.$router.push('/user?tag=' + el.name)
+      for (const tag of tags) {
+        tag.callback = () => {
+          this.$router.push('/user?tag=' + tag.name)
         }
-        el.options = utilsTag.tagOptions(el, this.$store, this.l)
+        tag.options = utilsTag.tagOptions(tag)
       }
       return tags
     },

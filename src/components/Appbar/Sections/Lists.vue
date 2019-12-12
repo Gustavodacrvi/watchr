@@ -215,7 +215,7 @@ export default {
     ...mapGetters({
       l: 'l',
       isDesktop: 'isDesktop',
-      getTasksByListId: 'list/getTasks',
+      isTaskInList: 'task/isTaskInList',
       sortedFolders: 'folder/sortedFolders',
       isTaskCompleted: 'task/isTaskCompleted',
       getListsByFolderId: 'folder/getListsByFolderId',
@@ -246,7 +246,7 @@ export default {
           if (!l.calendar || l.calendar.type === 'someday') return true
           const { lastCallEvent } = utils.getCalendarObjectData(l.calendar, mom())
 
-          const tasks = this.getTasksByListId(this.tasks, l.id)
+          const tasks = this.tasks.filter(task => this.isTaskInList(task, l.id))
           let isAllTasksCompleted = true
           for (const el of tasks)
             if (!this.isTaskCompleted(el, mom().format('Y-M-D'), lastCallEvent.format('Y-M-D'))) {
@@ -271,8 +271,7 @@ export default {
         list.callback = () => {
           this.$router.push('/user?list=' + list.name)
         }
-        // const result = this.getListTasks(this.tasks, list.id).slice()
-        // list.options = utilsList.listOptions(list, this.$store, this.getListTasks(this.tasks, list.id).slice(), this.l)
+        list.options = utilsList.listOptions(list)
       }
       return lists.map(t => t)
     },

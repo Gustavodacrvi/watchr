@@ -290,7 +290,6 @@ export default {
       isDesktop: 'isDesktop',
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
-      getTasks: 'list/getTasks',
       isTaskInList: 'task/isTaskInList',
       isTaskInSevenDays: 'task/isTaskInSevenDays',
       isTaskInFolder: 'task/isTaskInFolder',
@@ -363,7 +362,6 @@ export default {
       obj['showHeadadingFloatingButton'] = this['isListType']
       obj['notes'] = this[p + 'getViewNotes']
       obj['progress'] = this[p + 'getPieProgress']
-      obj['tasks'] = this[p + 'getTasks']
       
       return obj
     },

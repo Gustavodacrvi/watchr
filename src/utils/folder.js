@@ -1,8 +1,8 @@
 
 export default {
-  getFolderOptions(folder, l, store, toggle, onToggle) {
+  getFolderOptions: (folder, toggle, onToggle) => ({dispatch, getters}) => {
     // toggle is a boolean
-    const dispatch = store.dispatch
+    const l = getters['l']
     const obj = [
       {
         name: l['Edit folder'],

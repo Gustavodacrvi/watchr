@@ -1,8 +1,8 @@
 
 
 export default {
-  tagOptions(tag, store, l) {
-    const dispatch = store.dispatch
+  tagOptions: tag => ({dispatch, getters, tasks}) => {
+    const l = getters['l']
     const opt = [
       {
         name: l['Edit tag'],
@@ -34,7 +34,7 @@ export default {
       name: l['Delete tag'],
       icon: 'trash',
       important: true,
-      callback: () => dispatch('tag/deleteTag', {id: tag.id, tasks: store.state.task.tasks})
+      callback: () => dispatch('tag/deleteTag', {id: tag.id, tasks})
     })
     return opt
   }

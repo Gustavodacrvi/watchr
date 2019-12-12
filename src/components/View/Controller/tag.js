@@ -63,7 +63,7 @@ export default {
     },
     headerOptions() {
       if (this.viewTag)
-        return utilsTag.tagOptions(this.viewTag, this.$store, this.l)
+        return utilsTag.tagOptions(this.viewTag)
       return []
     },
     getViewNotes() {

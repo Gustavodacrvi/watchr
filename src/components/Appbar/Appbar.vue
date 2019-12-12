@@ -377,13 +377,13 @@ export default {
       const getOptions = (link, type) => {
         switch (type) {
           case 'list': {
-            // return utilsList.listOptions(link, this.$store, this.getListTasks(this.tasks, link.id).slice(), this.l)
+            return utilsList.listOptions(link)
           }
           case 'tag': {
-            return utilsTag.tagOptions(link, this.$store, this.l)
+            return utilsTag.tagOptions(link)
           }
           case 'folder': {
-            return utilsFolder.getFolderOptions(link, this.l, this.$store)
+            return utilsFolder.getFolderOptions(link)
           }
         }
         return []
@@ -410,9 +410,9 @@ export default {
     },
     getFavArr() {
       return [
-        ...this.favLists(),
-        ...this.favFolders(),
-        ...this.favTags()
+        ...this.favLists,
+        ...this.favFolders,
+        ...this.favTags
       ]
     },
     getFavorites() {

@@ -113,7 +113,7 @@ export default {
     },
     headerOptions() {
       if (this.viewFolder)
-        return utilsFolder.getFolderOptions(this.viewFolder, this.l, this.$store)
+        return utilsFolder.getFolderOptions(this.viewFolder)
       return []
     },
     getViewNotes() {

@@ -78,10 +78,10 @@ export default {
         if (isNaN(result)) return 0
         return result
       },
-      getFavoriteLists({state}) {
-        return state.lists.filter(el => el.favorite).map(f => ({...f, icon: 'tasks', color: 'var(--red)', type: 'list'}))
-      },
-    })
+    }),
+    getFavoriteLists(state) {
+      return state.lists.filter(el => el.favorite).map(f => ({...f, icon: 'tasks', color: 'var(--red)', type: 'list'}))
+    },
   },
   actions: {
     getData({state}) {

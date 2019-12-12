@@ -1,5 +1,6 @@
 
 import utils from '@/utils'
+import { pipeBooleanFilters } from '@/utils/memo'
 
 export default {
   listHeadingOptions(list, heading, store, headingTasks, l) {
@@ -68,16 +69,21 @@ export default {
       },
     ]
   },
-  listOptions(list, store, getListTasks, l) {
-    const dispatch = store.dispatch
-    const getters = store.getters
-    // const rootTasks = getters['task/getRootTasksOfList'](getListTasks, list)
-    const rootTasks = []
-    // const headingTasks = getters['task/getTasksWithHeading'](getListTasks, list.id)
-    const headingTasks = []
+  listOptions: list => ({tasks, getters, dispatch}) => {
+    const l = getters['l']
     const listId = list.id
-    // const tasks = [...getListTasks]
-    const tasks = []
+
+    const isTaskInRoot = task => getters['task/isTaskInListRoot'](task)
+    const isTaskInList = task => getters['task/isTaskInList'](task, listId)
+
+    const rootTaskPipe = pipeBooleanFilters(
+      isTaskInList,
+      isTaskInRoot,
+    )
+    const headingsTaskPipe = pipeBooleanFilters(
+      isTaskInList,
+      task => !isTaskInRoot(task),
+    )
     const pop = obj => dispatch('pushPopup', obj)
     const opt = [
       {
@@ -179,18 +185,18 @@ export default {
         icon: 'copy',
         callback: () => {
           dispatch('list/duplicateList', {
-            list, rootTasks, headingTasks,
+            list, rootTasks: tasks.filter(rootTaskPipe), headingTasks: tasks.filter(headingsTaskPipe),
           })
         }
       },
     ]
-    if (store.getters.isDesktop)
+    if (getters.isDesktop)
       opt.push({
         name: l["Export as template"],
         icon: 'export',
         callback: l => {
           utils.exportListTemplate({
-          list, tasks,
+          list, tasks: tasks.filter(isTaskInList),
         })}
       })
     opt.push({
@@ -199,7 +205,7 @@ export default {
       important: true,
       callback: () => {
         dispatch('list/deleteList', {
-          listId, tasks,
+          listId, tasks: tasks.filter(isTaskInList),
         })
       }
     })

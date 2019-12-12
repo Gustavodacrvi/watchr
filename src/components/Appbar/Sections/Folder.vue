@@ -191,7 +191,7 @@ export default {
     options() {
       return folderUtils.getFolderOptions({
         ...this.folder, id: this.id, name: this.name,
-      },this.l, this.$store, this.showing, this.toggle)
+      }, this.showing, this.toggle)
     },
     isSelectingTasks() {
       return this.selectedTasks.length > 0

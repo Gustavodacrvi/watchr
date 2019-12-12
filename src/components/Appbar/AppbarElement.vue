@@ -70,7 +70,7 @@
 import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
 
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapState, mapActions } from 'vuex'
 
 import utils from '@/utils/'
 
@@ -97,16 +97,19 @@ export default {
     this.bindOptions()
   },
   methods: {
+    ...mapActions(['getOptions']),
     longClick() {
       if (!this.isDesktop && !this.isDragging) {
         window.navigator.vibrate(100)
         this.allowMobileOptions = true
       }
     },
-    bindOptions() {
+    async bindOptions() {
       if (this.isDesktop) {
-        const el = this.$el.getElementsByClassName('link-wrapper')[0]
-        utils.bindOptionsToEventListener(el, this.options, this.$parent)
+        if (this.options) {
+          const el = this.$el.getElementsByClassName('link-wrapper')[0]
+          utils.bindOptionsToEventListener(el, await this.getOptions(this.options), this.$parent)
+        }
       }
     },
     openMobileOptions() {
