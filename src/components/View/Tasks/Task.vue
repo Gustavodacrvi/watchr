@@ -153,12 +153,12 @@ export default {
         s.height = '0px'
         
         setTimeout(() => {
-          s.transitionDuration = '.15s'
+          s.transitionDuration = '.25s'
           s.opacity = 1
           s.height = this.taskHeight + 'px'
         })
         
-        setTimeout(done, 150)
+        setTimeout(done, 249)
       }
     },
     enter(cont) {
@@ -905,8 +905,8 @@ export default {
 }
 
 .task-trans-leave-active {
-  transition-duration: .2s !important;
-  transition: height .2s, opacity .2s !important;
+  transition-duration: .25s !important;
+  transition: height .25s, opacity .25s !important;
 }
 
 .task-trans-leave {

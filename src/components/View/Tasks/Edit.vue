@@ -4,7 +4,8 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="Edit handle rb" :class="{notPopup: !popup}" :style="editStyle">
+    <div class="Edit handle rb TaskEditComp" :class="[{notPopup: !popup}, platform]" :style="editStyle">
+      <div class="fix-back fade" @click="cancel"></div>
       <div class="edit-wrapper" :class="{show}">
         <div class="tags" :class="{show: atLeastOnSpecialTag}">
           <Tag v-if="calendarStr"
@@ -79,14 +80,6 @@
           @convert-task='convertTask'
           @is-adding-toggle='v => isAddingChecklist = v'
         />
-        <transition name="btn">
-          <ButtonApp v-if="doesntHaveChecklist && !isAddingChecklist"
-            style="margin-left: 4px;margin-top: 0px;margin-bottom: 8px;opacity: .6"
-            type="card"
-            :value="l['Add checklist']"
-            @click="addChecklist"
-          />
-        </transition>
         <div class="files" v-if="getFiles.length > 0">
           <FileApp v-for="f in getFiles" :key="f"
             :name="f"
@@ -98,39 +91,47 @@
         </div>
         <span v-if="isEditingFiles" style="opacity: .4;margin-left: 8px">{{ l["Note: file upload/delete operations won't work while offline."] }}</span>
         <div class="options">
-          <div class="button-wrapper">
-            <div class="button">
-              <ButtonApp class="tiny" :value="buttonText" @click="save"/>
-            </div>
-            <span v-if="showCancel" class="cancel cursor" @click="cancel">{{ l['Cancel'] }}</span>
-          </div>
+          <transition name="btn">
+            <ButtonApp v-if="doesntHaveChecklist && !isAddingChecklist"
+              class="add-checklist-button"
+              style="margin-left: 4px;margin-top: 0px;margin-bottom: 8px;opacity: .6"
+              type="card"
+              :value="l['Add checklist']"
+              @click="addChecklist"
+            />
+          </transition>
           <div class="icons">
             <IconDrop
               handle="tag"
               class="opt-icon"
+              width="22px"
               :options="getTags"
               :circle='true'
             />
             <IconDrop
               handle="priority"
               class="opt-icon"
+              width="22px"
               :options="priorityOptions"
               :circle='true'
             />
             <IconDrop
               handle="tasks"
+              width="22px"
               class="opt-icon"
               :options="listOptions"
               :circle='true'
             />
             <IconDrop
               handle="folder"
+              width="22px"
               class="opt-icon"
               :options="folderOptions"
               :circle='true'
             />
             <IconDrop
               handle="calendar"
+              width="22px"
               class="opt-icon"
               :options="calendarOptions"
               :circle='true'
@@ -138,7 +139,7 @@
             <Icon
               class="opt-icon primary-hover cursor"
               style="margin-right: 7px;margin-top: 2px"
-              width="16px"
+              width="15px"
               :circle='true'
               icon='file'
               :file='true'
@@ -239,8 +240,22 @@ export default {
       this.task.folder = this.folderName
       this.task.tags = this.getTagNames
     }
+
+    window.addEventListener('click', this.remove)
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this.remove)
   },
   methods: {
+    remove(evt) {
+      let found = false
+      for (const node of evt.path)
+        if (node.classList && node.classList.contains('TaskEditComp')) {
+          found = true
+          break
+        }
+      if (!found) this.cancel()
+    },
     addChecklist() {
       this.toggleChecklist = !this.toggleChecklist
     },
@@ -376,6 +391,8 @@ export default {
     }),
     ...mapGetters({
       l: 'l',
+      isDesktop: 'isDesktop',
+      platform: 'platform',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
@@ -642,6 +659,20 @@ export default {
 
 <style scoped>
 
+.fix-back {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  left: 0;
+  top: 0;
+}
+
+.edit-wrapper {
+  position: relative;
+  z-index: 11;
+}
+
 .trans-t-enter, .trans-t-leave-to {
   opacity: 0;
   background-color: var(--back-color);
@@ -677,6 +708,15 @@ export default {
   transition-duration: .15s;
   display: flex;
   flex-wrap: wrap;
+}
+
+.add-checklist-button {
+  display: inline-block;
+  flex-basis: 180px;
+}
+
+.mobile .add-checklist-button {
+  flex-basis: 0;
 }
 
 .show {
@@ -724,6 +764,11 @@ export default {
   align-items: center;
 }
 
+.mobile .options {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .button-wrapper {
   flex-basis: 100%;
 }
@@ -737,10 +782,16 @@ export default {
   flex-basis: 100%;
   flex-direction: row-reverse;
   align-items: center;
+  min-height: 35px;
+}
+
+.mobile .icons {
+  display: flex;
+  width: 100%;
 }
 
 .opt-icon {
-  margin-right: 6px;
+  margin-right: 12px !important;
 }
 
 .progress {

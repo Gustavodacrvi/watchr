@@ -50,7 +50,7 @@ import Files from './Files.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root'],
+  props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width'],
   components: {
     Icon, ListIcons, CalendarPicker, WeeklyPicker,
     PeriodicPicker, Profile, Files,
@@ -165,7 +165,7 @@ export default {
       }
     },
     getHandleWidth() {
-      return this.handleWidth ? this.handleWidth : ''
+      return this.width ? this.width : ''
     },
   },
   watch: {

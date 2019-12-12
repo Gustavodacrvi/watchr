@@ -30,7 +30,6 @@
               :options="navBar.options.icondrop"
               handle-color="var(--gray)"
               :circle='true'
-              width="100px"
             />
           </div>
         </div>
