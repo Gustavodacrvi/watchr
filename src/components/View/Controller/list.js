@@ -138,6 +138,7 @@ export default {
             fallbackTask: task => {
               if (!task.heading && !task.folder && task.list === viewList.id)
                 task.heading = h.name
+              task.tags = [...task.tags, ...this.listgetListTags.map(el => el.id)]
               return task
             },
 
@@ -152,7 +153,6 @@ export default {
               })
             },
             onAddTask: obj => {
-              obj.task.tags = [...obj.task.tags, ...this.listgetListTags.map(el => el.id)]
               this.$store.dispatch('list/addTaskHeading', {
                 ...obj, name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
               })

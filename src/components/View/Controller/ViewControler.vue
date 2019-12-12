@@ -44,242 +44,244 @@ export default {
         return {type: 'someday'}
     },
     getListHeadingsByView(view) {
-      const ts = this.filterTasksByView(this.tasksWithListsOrFolders, view)
-      if (ts && ts.length > 0) {
-        const savedLists = this.lists.slice()
-        const savedFolders = this.folders.slice()
-        const setOfLists = new Set()
-        const setOfFolders = new Set()
-        for (const t of savedLists) {
-          if (!setOfLists.has(t)) {
-            setOfLists.add(t)
-          }
-        }
-        for (const f of savedFolders) {
-          if (!setOfFolders.has(f)) {
-            setOfFolders.add(f)
-          }
-        }
-        let lists = Array.from(setOfLists).map(l => ({...l}))
-        lists.forEach(l => l.smartViewControllerType = 'list')
-        let folders = Array.from(setOfFolders).map(t => ({...t}))
-        folders.forEach(f => f.smartViewControllerType = 'folder')
+      const savedLists = this.lists
+      const savedFolders = this.folders
+      const setOfLists = new Set()
+      const setOfFolders = new Set()
 
-        let order = this.viewOrders[view] ? this.viewOrders[view].headings : []
-        if (!order) order = []
-        const headings = this.$store.getters.checkMissingIdsAndSortArr(order, [...folders, ...lists])
+      for (const t of savedLists) {
+        if (!setOfLists.has(t)) {
+          setOfLists.add(t)
+        }
+      }
+      for (const f of savedFolders) {
+        if (!setOfFolders.has(f)) {
+          setOfFolders.add(f)
+        }
+      }
+      let lists = Array.from(setOfLists)
+      lists.forEach(l => l.smartViewControllerType = 'list')
+      let folders = Array.from(setOfFolders)
+      folders.forEach(f => f.smartViewControllerType = 'folder')
 
-        const arr = []
-        for (const viewHeading of headings) {
-          if (viewHeading.smartViewControllerType === 'list') {
-            const list = viewHeading
-            const saveOrder = ids =>
-              this.$store.dispatch('list/saveSmartViewHeadingTasksOrder', {
-                ids, listId: list.id, smartView: this.viewName,
+      const sortArray = this.$store.getters.checkMissingIdsAndSortArr 
+
+      let order = this.viewOrders[view] ? this.viewOrders[view].headings : []
+      if (!order) order = []
+      // const headings = sortArray(order, [...folders, ...lists])
+      const headings = sortArray(order, [...folders])
+
+      const arr = []
+      for (const viewHeading of headings) {
+        if (viewHeading.smartViewControllerType === 'list') {
+          const list = viewHeading
+          const saveOrder = ids =>
+            this.$store.dispatch('list/saveSmartViewHeadingTasksOrder', {
+              ids, listId: list.id, smartView: this.viewName,
+            })
+          const getTasks = () => ts.filter(el => el.list === list.id)
+          let taskOrder = []
+          if (list.smartViewsOrders && list.smartViewsOrders[this.viewName])
+            taskOrder = list.smartViewsOrders[this.viewName]
+          else
+            taskOrder = this.getAllTasksOrderByList(list.id)
+          
+          arr.push({
+            name: list.name,
+            allowEdit: true,
+            hideListName: true,
+            hideFolderName: true,
+            showHeadingName: true,
+            onEdit: (name) => {
+              this.$store.dispatch('list/saveList', {
+                name, id: list.id,
               })
-            const getTasks = () => ts.filter(el => el.list === list.id)
-            let taskOrder = []
-            if (list.smartViewsOrders && list.smartViewsOrders[this.viewName])
-              taskOrder = list.smartViewsOrders[this.viewName]
-            else
-              taskOrder = this.getAllTasksOrderByList(list.id)
-            
-            arr.push({
-              name: list.name,
-              allowEdit: true,
-              hideListName: true,
-              hideFolderName: true,
-              showHeadingName: true,
-              onEdit: (name) => {
-                this.$store.dispatch('list/saveList', {
-                  name, id: list.id,
-                })
-              },
-              order: () => taskOrder,
-              progress: this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted),
-              filter: (a, h, showCompleted) => {
-                let tasks = getTasks()
+            },
+            order: () => taskOrder,
+            progress: this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted),
+            filter: (a, h, showCompleted) => {
+              let tasks = getTasks()
 
-                if (!showCompleted) {
-                  tasks = this.filterTasksByCompletion(tasks, true)
+              if (!showCompleted) {
+                tasks = this.filterTasksByCompletion(tasks, true)
+              }
+
+              return tasks
+            },
+            options: [
+              {
+                name: 'Edit list',
+                icon: 'pen',
+                callback: (j, vm, l) => {
+                  vm.$emit('edit')
                 }
-  
-                return tasks
               },
-              options: [
-                {
-                  name: 'Edit list',
-                  icon: 'pen',
-                  callback: (j, vm, l) => {
-                    vm.$emit('edit')
-                  }
-                },
-                {
-                  name: this.l['Sort tasks'],
-                  icon: 'sort',
-                  callback: () => [
-                    {
-                      name: this.l['Sort by name'],
-                      icon: 'sort-name',
-                      callback: () => {
-                        const tasks = getTasks()
-                        tasks.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
-                        saveOrder(tasks.map(el => el.id))
-                      },
+              {
+                name: this.l['Sort tasks'],
+                icon: 'sort',
+                callback: () => [
+                  {
+                    name: this.l['Sort by name'],
+                    icon: 'sort-name',
+                    callback: () => {
+                      const tasks = getTasks()
+                      tasks.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+                      saveOrder(tasks.map(el => el.id))
                     },
-                    {
-                      name: this.l['Sort by priority'],
-                      icon: 'priority',
-                      callback: () => {
-                        const tasks = utilsTask.sortTasksByPriority(getTasks())
-                        saveOrder(tasks.map(el => el.id))
-                      },
+                  },
+                  {
+                    name: this.l['Sort by priority'],
+                    icon: 'priority',
+                    callback: () => {
+                      const tasks = utilsTask.sortTasksByPriority(getTasks())
+                      saveOrder(tasks.map(el => el.id))
                     },
-                    {
-                      name: this.l['Sort by creation date'],
-                      icon: 'calendar',
-                      callback: () => {
-                        const tasks = utilsTask.sortTasksByTaskDate(getTasks())
-                        saveOrder(tasks.map(el => el.id))
-                      },
+                  },
+                  {
+                    name: this.l['Sort by creation date'],
+                    icon: 'calendar',
+                    callback: () => {
+                      const tasks = utilsTask.sortTasksByTaskDate(getTasks())
+                      saveOrder(tasks.map(el => el.id))
                     },
-                  ]
-                },
-                {
-                  name: this.l['Change date'],
-                  icon: 'calendar',
-                  callback: () => ({
-                    comp: "CalendarPicker",
-                    content: {callback: (calendar) => this.$store.dispatch('task/saveTasksById', {
-                      ids: getTasks().map(el => el.id),
-                      task: {calendar},
-                    })}
-                  })
-                }
-              ],
-              id: list.id,
-              updateIds: saveOrder,
-              onAddTask: (obj) => {
-                const t = obj.task
-                if (!t.calendar) {
-                  obj.task.calendar = this.getCalObjectByView(this.viewName, t.calendar)
-                }
-                t.list = list.id
-                t.folder = null
-                this.$store.dispatch('list/addTaskByIndexSmartViewList', {
-                  ...obj, listId: list.id, viewName: this.viewName,
-                })
+                  },
+                ]
               },
-              onSortableAdd: (evt, taskIds, type, ids) => {
-                this.$store.dispatch('list/moveTasksToList', {
-                  taskIds, ids, listId: list.id, smartView: this.viewName,
+              {
+                name: this.l['Change date'],
+                icon: 'calendar',
+                callback: () => ({
+                  comp: "CalendarPicker",
+                  content: {callback: (calendar) => this.$store.dispatch('task/saveTasksById', {
+                    ids: getTasks().map(el => el.id),
+                    task: {calendar},
+                  })}
                 })
               }
-            })
-          } else if (viewHeading.smartViewControllerType === 'folder') {
-            const folder = viewHeading
-            const saveOrder = ids =>
-              this.$store.dispatch('folder/saveSmartViewHeadingTasksOrder', {
-                ids, folderId: folder.id, smartView: this.viewName,
+            ],
+            id: list.id,
+            updateIds: saveOrder,
+            onAddTask: (obj) => {
+              const t = obj.task
+              if (!t.calendar) {
+                obj.task.calendar = this.getCalObjectByView(this.viewName, t.calendar)
+              }
+              t.list = list.id
+              t.folder = null
+              this.$store.dispatch('list/addTaskByIndexSmartViewList', {
+                ...obj, listId: list.id, viewName: this.viewName,
               })
-            const getTasks = () => ts.filter(el => el.folder === folder.id)
-            let taskOrder = []
-            if (folder.smartViewsOrders && folder.smartViewsOrders[this.viewName])
-              taskOrder = folder.smartViewsOrders[this.viewName]
-            else
-              taskOrder = this.getFolderTaskOrderById(folder.id)
-            
-            arr.push({
-              name: folder.name,
-              allowEdit: true,
-              hideListName: true,
-              hideFolderName: true,
-              showHeadingName: true,
-              onEdit: name => {
-                this.$store.dispatch('folder/saveFolder', {
-                  name, id: folder.id,
-                })
-              },
-              order: () => taskOrder,
-              icon: 'folder',
-              filter: (a, h, showCompleted) => {
-                let tasks = getTasks()
-  
-                if (!showCompleted)
-                  tasks = this.filterTasksByCompletion(tasks, true)
-  
-                return tasks
-              },
-              options: [
-                {
-                  name: this.l['Sort tasks'],
-                  icon: 'sort',
-                  callback: () => [
-                    {
-                      name: this.l['Sort by name'],
-                      icon: 'sort-name',
-                      callback: () => {
-                        const tasks = getTasks()
-                        tasks.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
-                        saveOrder(tasks.map(el => el.id))
-                      },
+            },
+            onSortableAdd: (evt, taskIds, type, ids) => {
+              this.$store.dispatch('list/moveTasksToList', {
+                taskIds, ids, listId: list.id, smartView: this.viewName,
+              })
+            }
+          })
+        } else if (viewHeading.smartViewControllerType === 'folder') {
+          const folder = viewHeading
+          const saveOrder = ids =>
+            this.$store.dispatch('folder/saveSmartViewHeadingTasksOrder', {
+              ids, folderId: folder.id, smartView: this.viewName,
+            })
+
+          // const getTasks = () => ts.filter(el => el.folder === folder.id)
+          const filterFunction = task => this.isTaskInFolder(task, folder.id)
+
+          let taskOrder = []
+          if (folder.smartViewsOrders && folder.smartViewsOrders[this.viewName])
+            taskOrder = folder.smartViewsOrders[this.viewName]
+          else
+            taskOrder = this.getFolderTaskOrderById(folder.id)
+          
+          const sort = tasks => sortArray(taskOrder, tasks)
+
+          
+          arr.push({
+            name: folder.name,
+            allowEdit: true,
+            hideListName: true,
+            hideFolderName: true,
+            showHeadingName: true,
+            icon: 'folder',
+            id: folder.id,
+
+            onEdit: tasks => name => {
+              this.$store.dispatch('folder/saveFolder', {
+                name, id: folder.id,
+              })
+            },
+            sort,
+            filter: filterFunction,
+            options: tasks => [
+              {
+                name: this.l['Sort tasks'],
+                icon: 'sort',
+                callback: () => [
+                  {
+                    name: this.l['Sort by name'],
+                    icon: 'sort-name',
+                    callback: () => {
+                      const ts = tasks.slice()
+                      ts.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+                      saveOrder(ts.map(el => el.id))
                     },
-                    {
-                      name: this.l['Sort by priority'],
-                      icon: 'priority',
-                      callback: () => {
-                        const tasks = utilsTask.sortTasksByPriority(getTasks())
-                        saveOrder(tasks.map(el => el.id))
-                      },
+                  },
+                  {
+                    name: this.l['Sort by priority'],
+                    icon: 'priority',
+                    callback: () => {
+                      const ts = utilsTask.sortTasksByPriority(tasks.slice())
+                      saveOrder(ts.map(el => el.id))
                     },
-                    {
-                      name: this.l['Sort by creation date'],
-                      icon: 'priority',
-                      callback: () => {
-                        const tasks = utilsTask.sortTasksByTaskDate(getTasks())
-                        saveOrder(tasks.map(el => el.id))
-                      },
+                  },
+                  {
+                    name: this.l['Sort by creation date'],
+                    icon: 'priority',
+                    callback: () => {
+                      const ts = utilsTask.sortTasksByTaskDate(tasks.slice())
+                      saveOrder(ts.map(el => el.id))
                     },
-                  ]
-                },
-                {
-                  name: this.l['Change date'],
-                  icon: 'calendar',
-                  callback: () => ({
-                    comp: "CalendarPicker",
-                    content: {callback: (calendar) => this.$store.dispatch('task/saveTasksById', {
-                      ids: getTasks().map(el => el.id),
-                      task: {calendar},
-                    })}
-                  })
-                }
-              ],
-              id: folder.id,
-              updateIds: saveOrder,
-              onAddTask: (obj) => {
-                const t = obj.task
-                if (!t.calendar) {
-                  obj.task.calendar = this.getCalObjectByView(this.viewName, t.calendar)
-                }
-                t.folder = folder.id
-                t.list = null
-                this.$store.dispatch('list/addTaskByIndexSmartViewFolder', {
-                  ...obj, folderId: folder.id, viewName: this.viewName,
-                })
+                  },
+                ]
               },
-              onSortableAdd: (evt, taskIds, type, ids) => {
-                this.$store.dispatch('folder/moveTasksToFolder', {
-                  taskIds, ids, folderId: folder.id, smartView: this.viewName,
+              {
+                name: this.l['Change date'],
+                icon: 'calendar',
+                callback: () => ({
+                  comp: "CalendarPicker",
+                  content: {callback: (calendar) => this.$store.dispatch('task/saveTasksById', {
+                    ids: tasks.map(el => el.id),
+                    task: {calendar},
+                  })}
                 })
               }
-            })
-          }
+            ],
+            updateIds: saveOrder,
+            fallbackTask: task => {
+              const t = task
+              if (!t.calendar) {
+                task.calendar = this.getCalObjectByView(this.viewName, t.calendar)
+              }
+              t.folder = folder.id
+              t.list = null
+              return t
+            },
+            onAddTask: obj => {
+              this.$store.dispatch('list/addTaskByIndexSmartViewFolder', {
+                ...obj, folderId: folder.id, viewName: this.viewName,
+              })
+            },
+            onSortableAdd: (evt, taskIds, type, ids) => {
+              this.$store.dispatch('folder/moveTasksToFolder', {
+                taskIds, ids, folderId: folder.id, smartView: this.viewName,
+              })
+            }
+          })
         }
-
-        return arr
       }
 
-      return []
+      return arr
     },
   },
   computed: {
@@ -540,6 +542,11 @@ export default {
         })
       }
       const sort = utilsTask.sortTasksByTaskDate
+
+      let todayTasks = []
+      const viewOrder = this.viewOrders['Today']
+      if (viweOrder)
+        todayTasks = viweOrder.tasks || []
       
       return [
         {
@@ -581,7 +588,7 @@ export default {
           },
         },
         {
-          sort,
+          sort: tasks => this.$store.getters.checkMissingIdsAndSortArr(todayTasks, tasks),
           name: l['Today'],
           id: 'todya',
           filter: task => this.isTaskInView(task, 'Today'),

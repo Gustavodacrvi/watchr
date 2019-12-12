@@ -11,7 +11,7 @@ export default {
       })
     },
     rootFallbackTask(task) {
-      return () => true
+      return task
     },
     mainFallbackTask(task) {
       let calendar = null
@@ -93,10 +93,8 @@ export default {
         case 'Upcoming': return this.upcomingHeadingsOptions
         case 'Tomorrow': return this.getListHeadingsByView('Tomorrow')
         case 'Today': {
-          // if (this.hasOverdueTasks) return this.todayHeadingsOptions
-          console.log(this.todayHeadingsOptions)
-          return this.todayHeadingsOptions
-          // return this.getListHeadingsByView('Today')
+          if (this.hasOverdueTasks) return this.todayHeadingsOptions
+          return this.getListHeadingsByView('Today')
         }
         case 'Someday': {
           return this.getListHeadingsByView('Someday')
