@@ -3,7 +3,6 @@ import mom from 'moment/src/moment'
 import utilsMoment from "./moment"
 import utilsTask from "./task"
 import firebase from 'firebase/app'
-import memo from './memo'
 
 import Vue from 'vue'
 import IconDrop from '@/components/IconDrop/IconDrop.vue'
@@ -13,16 +12,20 @@ let contextMenuRunned = false
 export default {
   getDataFromFirestoreSnapshot(state, changes, arrName) {
     changes.forEach(change => {
+      const newDoc = {...change.doc.data(), id: change.doc.id}
       if (change.type === 'added') {
         const el = state[arrName].find(el => el.id === change.doc.id)
         if (!el)
-          state[arrName].push({...change.doc.data(), id: change.doc.id})
+          state[arrName].push(newDoc)
       } else if (change.type === 'removed') {
         const index = state[arrName].findIndex(el => el.id === change.doc.id)
         state[arrName].splice(index, 1)
       } else {
+        const doc = state[arrName].find(el => el.id === change.doc.id)
+        Object.assign(doc, newDoc)
+
         const index = state[arrName].findIndex(el => el.id === change.doc.id)
-        state[arrName].splice(index, 1, {...change.doc.data(), id: change.doc.id})
+        state[arrName].splice(index, 1, newDoc)
       }
     })
   },

@@ -3,21 +3,30 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 import mom from 'moment/src/moment'
 
+import { pipeBooleanFilters } from '@/utils/memo'
+
 export default {
   methods: {
     addTask(obj) {
-      let calendar = null
-
-      if (!obj.task.calendar) {
-        calendar = this.getCalObjectByView(this.viewName, obj.task.calendar)
-        obj.task.calendar = calendar
-      }
-      if (obj.task.calendar === undefined)
-        obj.task.calendar = null
       this.$store.dispatch('list/addTaskByIndexSmart', {
         ...obj, list: this.viewName,
       })
     },
+    rootFallbackTask(task) {
+      return task
+    },
+    mainFallbackTask(task) {
+      let calendar = null
+
+      if (!task.calendar) {
+        calendar = this.getCalObjectByView(this.viewName, task.calendar)
+        task.calendar = calendar
+      }
+      if (task.calendar === undefined)
+        task.calendar = null
+      return task
+    },
+    
     updateIds(ids) {
       this.$store.dispatch('list/updateViewOrder', {
         view: this.viewName,
@@ -38,8 +47,7 @@ export default {
     },
   },
   computed: {
-    icon() {return null},
-    updateHeadingIds(ids) {
+    updateHeadingIds() {
       if (this.viewName !== 'Upcoming' && this.viewName !== 'Completed')
         return ids => {
             this.$store.dispatch('list/updateHeadingsViewOrder', {
@@ -53,28 +61,53 @@ export default {
       if (this.viewType === 'search') return this.l["Search"]
       if (this.isSmart) return this.l[this.viewName]
     },
-    getTasks() {
+
+    mainFilter() {
       if (this.viewType === 'search')
-        return this.tasks.filter(el => el.name.includes(this.viewName))
+        return task => this.doesTaskIncludeText(task, this.viewName)
       if (this.isSmart && this.notHeadingHeaderView) {
-        if (this.viewName === 'Today' && this.hasOverdueTasks) return []
-        return this.filterTasksByView(this.tasksWithoutListsAndFolders, this.viewName)
+        if (this.viewName === 'Today' && this.hasOverdueTasks) return task => {
+          return this.isTaskInView(task, 'Today') ||
+                this.isTaskInView(task, 'Overdue')
+        }
+        return task => this.isTaskInView(task, this.viewName)
       }
-      return []
+      if (this.viewName === 'Inbox')
+        return this.isTaskInbox
+      if (this.viewName === 'Upcoming')
+        return task => task.calendar
+      return this.isTaskCompleted
     },
-    headingsPagination() {
-      if (this.viewName !== 'Completed') return null
-      return 7
+    rootFilter() {
+      if (this.viewType === 'search')
+        return () => true
+      if (this.isSmart && this.notHeadingHeaderView)
+        if (!this.hasOverdueTasks)
+          return pipeBooleanFilters(
+            task => this.isTaskInView(task, this.viewName),
+            task => !task.list && !task.folder,
+          )
+      return () => false
+    },
+    configFilterOptions() {
+      if (this.viewName === 'Completed')
+        return pipe => pipe !== 'pipeCompleted' && pipe !== 'pipeSomeday'
+      return null
     },
     tasksOrder() {
       let o = this.viewOrders[this.viewName]
       if (o && o.tasks) return this.viewOrders[this.viewName].tasks
       return []
     },
+
+    headingsPagination() {
+      if (this.viewName !== 'Completed') return null
+      return 7
+    },
     showEmptyHeadings() {
       return this.viewName === 'Upcoming'
     },
-    headingsOptions() {
+    headings() {
       switch (this.viewName) {
         case 'Upcoming': return this.upcomingHeadingsOptions
         case 'Tomorrow': return this.getListHeadingsByView('Tomorrow')
@@ -91,7 +124,21 @@ export default {
       }
       return []
     },
-    illustration() {
+    headerOptions() {
+      return null
+    },
+    headingEditOptions() {
+      if (this.viewName === "Today" || this.viewName === "Tomorrow" || this.viewName === 'Someday')
+        return {
+          excludeNames: this.lists.map(el => el.name),
+          errorToast: "There's already another list with this name."
+        }
+      return null
+    },
+    getViewNotes() {
+      return null
+    },
+    icon() {
       const l = this.l
       const n = this.viewName
       if (this.isSmart) {
@@ -104,20 +151,6 @@ export default {
           case 'Someday': return 'archive'
         }
       }
-    },
-    headerOptions() {
-      return []
-    },
-    headingEdit() {
-      if (this.viewName === "Today" || this.viewName === "Tomorrow" || this.viewName === 'Someday')
-        return {
-          excludeNames: this.lists.map(el => el.name),
-          errorToast: "There's already another list with this name."
-        }
-      return []
-    },
-    getViewNotes() {
-      return null
     },
     getPieProgress() {
       return undefined

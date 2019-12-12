@@ -3,7 +3,6 @@
     class="IconDrop"
     :class="{root, left: root}"
     :id='id'
-    @click.stop
     @pointerup.stop
     @mouseup.stop
     @touchend.stop
@@ -51,7 +50,7 @@ import Files from './Files.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root'],
+  props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width'],
   components: {
     Icon, ListIcons, CalendarPicker, WeeklyPicker,
     PeriodicPicker, Profile, Files,
@@ -109,9 +108,22 @@ export default {
         this.opt = opt
       }
     },
-    hide() {
-      this.showing = false
-      setTimeout(() => this.opt = this.options, 200)
+    hide(evt) {
+      let hide = true
+      if (evt) {
+        let found = false
+        for (const node of evt.path)
+          if (node.classList && node.classList.contains('IconDrop')) {
+            found = true
+            break
+          }
+        hide = !found
+      }
+
+      if (hide) {
+        this.showing = false
+        setTimeout(() => this.opt = this.options, 150)
+      }
     },
     toggleIconDrop() {
       if (this.isDesktop) {
@@ -153,7 +165,7 @@ export default {
       }
     },
     getHandleWidth() {
-      return this.handleWidth ? this.handleWidth : ''
+      return this.width ? this.width : ''
     },
   },
   watch: {

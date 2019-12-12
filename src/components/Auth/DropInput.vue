@@ -35,7 +35,7 @@
 <script>
 
 export default {
-  props: ['options', 'focus', 'value', 'placeholder'],
+  props: ['options', 'focus', 'value', 'placeholder', 'focusToggle'],
   data() {
     return {
       str: this.value,
@@ -48,13 +48,16 @@ export default {
     this.active = this.options[0]
   },
   mounted() {
-    if (this.focus) {
-      const el = this.$el.getElementsByClassName('input')[0]
-      setTimeout(() => el.focus(), 200)
-    }
+    this.focusInput(200)
     setTimeout(this.fixHeight)
   },
   methods: {
+    focusInput(timeout) {
+      if (this.focus) {
+        const el = this.$el.getElementsByClassName('input')[0]
+        setTimeout(() => el.focus(), timeout)
+      }
+    },
     fixHeight() {
       const el = this.$el.getElementsByClassName('input')[0]
       el.style.height = '5px'
@@ -197,6 +200,9 @@ export default {
     }
   },
   watch: {
+    focusToggle() {
+      this.focusInput(0)
+    },
     str() {
       this.fixHeight()
       this.$emit('input', this.str)

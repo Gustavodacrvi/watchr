@@ -53,7 +53,7 @@
             <h3 class="year">{{ thisYear() }}   {{ thisMonth() }}</h3>
             <div class="icons">
               <Icon class="arrow-right icon cursor primary-hover" icon="arrow" width="18px" @click="previousMonth"/>
-              <Icon class="icon circle cursor primary-hover" icon="tiny-circle" width="14px" @click="resetDate" style='transform: translateY(0px)'/>
+              <Icon class="icon cursor primary-hover" icon="tiny-circle" width="14px" @click="resetDate" style='transform: translateY(0px)'/>
               <Icon class="primary-hover arrow-left icon cursor" icon="arrow" width="18px" @click="nextMonth"/>
             </div>
           </div>

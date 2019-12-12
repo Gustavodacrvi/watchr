@@ -17,34 +17,25 @@
         :folders='folderSelectionOptions'
 
         :viewName="viewName"
-        :options="options"
+        :options="taskIconDropOptions"
         :headerTags="headerTags"
-        @save-header-name='name => $emit("save-header-name", name)'
-        @save-notes='notes => $emit("save-notes", notes)'
-        @remove-defer-date='$emit("remove-defer-date")'
-        @remove-deadline='$emit("remove-deadline")'
-        @remove-repeat='$emit("remove-repeat")'
-        @remove-header-tag="tagName => $emit('remove-header-tag', tagName)"
 
         @tag='selectTag'
         @list='selectList'
         @folder='selectFolder'
       />
-      <TaskRenderer
+      <TaskHandler
         v-bind="$props"
 
-        :tasks='getFilterCompletedTasks'
-        :viewName='viewName'
-        :headings='getHeadings'
-        :addTask='addTask'
-        :filterOptions='getFilterOptions'
-        :headingEdit='headingEdit'
+        :headings="getHeadings"
         :showCompleted='showCompleted'
-        :options='options'
-        :headingPosition='0'
-        @update="updateIds"
-        @update-headings='(ids) => $emit("update-heading-ids", ids)'
-        @add-heading="addHeading"
+        :showSomeday='passSomedayTasks'
+        :pipeFilterOptions='pipeFilterOptions'
+        :taskIconDropOptions='taskIconDropOptions'
+        :updateHeadingIds='updateHeadingIds'
+
+        @allow-someday='showSomeday = true'
+        @root-non-filtered='getRootNonFilteredFromTaskHandler'
       />
     </div>
     <PaginationVue v-if="headingsPagination"
@@ -52,39 +43,38 @@
       :numberOfPages='getNumberOfPages'
       @select='selectPagination'
     />
-    <transition name="fade-t">
-      <div v-if="hasAtLeastOneSomeday && !showSomeday && !isSearch && !isSomeday" @click="showSomeday = true">
-        <AppButton type="dark" :value="l['Show someday tasks...']"/>
-      </div>
-    </transition>
     <div style="height: 500px"></div>
-    <ActionButtons :showHeader='showHeader'/>
+    <ActionButtons :showHeader='showHeadadingFloatingButton'/>
   </div>
 </template>
 
 <script>
 
 import HeaderVue from './Headings/Header.vue'
-import TaskRendererVue from './Tasks/TaskRenderer.vue'
 import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
-import ButtonVue from '../Auth/Button.vue'
 import PaginationVue from './Pagination.vue'
+import TaskHandler from './TaskHandler.vue'
 
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapState, mapActions } from 'vuex'
 
 import utilsTask from '@/utils/task'
 import utils from '@/utils/index.js'
 import mom from 'moment/src/moment'
 
+import { pipeBooleanFilters } from '@/utils/memo'
+
 export default {
-  props: ['headingsOptions', 'viewName', 'viewType', 'tasks', 'tasksOrder', 'showHeader', 'headingEdit', 'icon', 'viewNameValue', 'emptyIcon', 'illustration', 'showEmptyHeadings', 'onSortableAdd', 'notes', 'showCompletedOnHeadings', 'isSmart', 'headerOptions', 'progress', 'prefix',
-  'headerDates', 'headerTags', 'headerCalendar', 'files', 'updateHeadingIds', 'taskCompletionCompareDate', 'headingsPagination'],
+  props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
+
+  'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes',
+  'headerOptions', 'headerDates', 'headerTags', 'headerCalendar', 'files',
+  'progress', 'tasksOrder',  'rootFallbackTask', 'mainFallbackTask',
+  
+  'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'showHeadadingFloatingButton', 'updateHeadingIds', 'showAllHeadingsItems', 'taskCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
   components: {
-    PaginationVue,
+    PaginationVue, TaskHandler,
     Header: HeaderVue,
-    TaskRenderer: TaskRendererVue,
     ActionButtons: ActionButtonsVue,
-    AppButton: ButtonVue,
   },
   data() {
     return {
@@ -95,6 +85,9 @@ export default {
       showingFolderSelection: false,
       showSomeday: false,
 
+      rootNonFiltered: [],
+      computedHeaderOptions: [],
+
       inclusiveTags: [],
       exclusiveTags: [],
       inclusiveList: null,
@@ -103,7 +96,18 @@ export default {
       exclusiveFolder: null,
     }
   },
+  created() {
+    this.getComputedOptions()
+  },
+  mounted() {
+    this.getComputedOptions()
+  },
   methods: {
+    ...mapActions(['getOptions']),
+    async getComputedOptions() {
+      if (this.headerOptions)
+        this.computedHeaderOptions = await this.getOptions(this.headerOptions)
+    },
     selectPagination(newPage) {
       this.pagination = newPage
     },
@@ -156,55 +160,34 @@ export default {
       this.inclusiveFolders = ''
       this.exclusiveFolder = ''
     },
-    addHeading(obj) {
-      this.$emit('add-heading', {...obj})
+
+    getRootNonFilteredFromTaskHandler(rootNonFiltered) {
+      this.rootNonFiltered = rootNonFiltered
     },
     updateIds(ids) {
-      const notFilteredIds = this.notFilteredIds
-      const removedIncludedIds = notFilteredIds.slice().filter(id => !ids.includes(id))
-
-      const final = []
-      let missing = []
-      let i = 0
-      for (const id of notFilteredIds) {
-        if (removedIncludedIds.includes(id))
-          final.push(id)
-        else missing.push(i)
-
-        i++
-      }
-      i = 0
-      for (const id of ids) {
-        removedIncludedIds.splice(missing[i], 0, id)
-        i++
-      }
-
-      
-      this.$emit('update-ids', removedIncludedIds)
+      this.$emit('update-ids', ids)
     },
-
     sortByName() {
-      const tasks = this.tasks.slice()
+      const tasks = this.rootNonFiltered.slice()
       tasks.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       this.updateIds(tasks.map(el => el.id))
     },
     sortByPriority() {
-      let tasks = this.tasks.slice()
+      let tasks = this.rootNonFiltered.slice()
       tasks = utilsTask.sortTasksByPriority(tasks)
       this.updateIds(tasks.map(el => el.id))
     },
     sortByDate() {
-      let tasks = this.tasks.slice()
-      tasks = utilsTask.sortTasksByTaskDate(tasks)
+      const tasks = utilsTask.sortTasksByTaskDate(this.rootNonFiltered.slice())
       this.updateIds(tasks.map(el => el.id))
     },
 
     toggleCompleted() {
       this.showCompleted = !this.showCompleted
     },
-    saveDates(calendar) {
+    saveDates(calendar, ids) {
       this.$store.dispatch('task/saveTasksById', {
-        ids: this.selectedTasks,
+        ids,
         task: {calendar},
       })
     },
@@ -213,22 +196,6 @@ export default {
         ids: this.selectedTasks,
         tagIds: [id],
       })
-    },
-    addTask(obj, evt) {
-      const notFilteredIds = this.notFilteredIds
-
-      let fixPosition = 0
-      let i = 0
-      for (const id of notFilteredIds) {
-        if (!obj.ids.includes(id))
-          fixPosition++
-        if ((i - fixPosition) === obj.index) break
-        i++
-      }
-
-      obj.index += fixPosition
-      obj.ids = notFilteredIds
-      this.$emit('add-task', obj)
     },
     removeTasksFromLists() {
       this.$store.dispatch('task/saveTasksById', {
@@ -248,16 +215,45 @@ export default {
       l: 'l',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
-      filterTasksByViewRendererFilterOptions: 'task/filterTasksByViewRendererFilterOptions',
-      filterTasksByCompletion: 'task/filterTasksByCompletion',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
+
+      doesTaskPassExclusiveFolder: 'task/doesTaskPassExclusiveFolder',
+      doesTaskPassInclusiveFolder: 'task/doesTaskPassInclusiveFolder',
+      doesTaskPassExclusiveList: 'task/doesTaskPassExclusiveList',
+      doesTaskPassInclusiveList: 'task/doesTaskPassInclusiveList',
+      doesTaskPassExclusiveTags: 'task/doesTaskPassExclusiveTags',
+      doesTaskPassInclusiveTags: 'task/doesTaskPassInclusiveTags',
     }),
-    notFilteredIds() {
-      return this.sortAndFilterTasks.map(el => el.id)
-    },
     isSearch() {
       return this.isSmart && this.viewNameValue === "Search"
+    },
+    pipeFilterOptions() {
+      const toPipe = []
+      const {tags, list, folder} = this.getFilterOptions
+
+      if (tags.inclusive.length > 0)
+        toPipe.push(t => this.doesTaskPassInclusiveTags(t, tags.inclusive))
+      if (tags.exclusive.length > 0)
+        toPipe.push(t => this.doesTaskPassExclusiveTags(t, tags.exclusive))
+
+      if (list.inclusive)
+        toPipe.push(t => this.doesTaskPassInclusiveList(t, list.inclusive))
+      if (list.exclusive)
+        toPipe.push(t => this.doesTaskPassExclusiveList(t, list.exclusive))
+
+      if (folder.inclusive)
+        toPipe.push(t => this.doesTaskPassInclusiveFolder(t, folder.inclusive))
+      if (folder.exclusive)
+        toPipe.push(t => this.doesTaskPassExclusiveFolder(t, folder.exclusive))
+      
+      if (toPipe.length > 0) {
+        return pipeBooleanFilters(...toPipe)
+      }
+      return () => true
+    },
+    passSomedayTasks() {
+      return this.isSomeday || this.showSomeday || this.isSearch
     },
     isSomeday() {
       return this.isSmart && this.viewName === 'Someday'
@@ -349,7 +345,7 @@ export default {
       }
       return links
     },
-    options() {
+    taskIconDropOptions() {
       const dispatch = this.$store.dispatch
       const ids = this.selectedTasks
 
@@ -382,19 +378,25 @@ export default {
             ],
           },
           {
-            name: l['Show tag selection'],
-            icon: 'tag',
-            callback: () => this.toggleTagSelection()
-          },
-          {
-            name: l['Show list selection'],
-            icon: 'tasks',
-            callback: () => this.toggleListSelection()
-          },
-          {
-            name: l['Show folder selection'],
-            icon: 'folder',
-            callback: () => this.toggleFolderSelection()
+            name: l['Filter tasks'],
+            icon: 'filter',
+            callback: () => [
+              {
+                name: l['Filter by tags'],
+                icon: 'tag',
+                callback: () => this.toggleTagSelection()
+              },
+              {
+                name: l['Filter by lists'],
+                icon: 'tasks',
+                callback: () => this.toggleListSelection()
+              },
+              {
+                name: l['Filter by folders'],
+                icon: 'folder',
+                callback: () => this.toggleFolderSelection()
+              },
+            ],
           },
           {
             name: l['Show completed'],
@@ -402,13 +404,13 @@ export default {
             callback: () => this.toggleCompleted()
           },
         ]
-        if (this.showCompleted) opt[3].name = l['Hide completed']
-        if (this.headerOptions && this.headerOptions.length > 0) {
+        if (this.showCompleted) opt[4].name = l['Hide completed']
+        if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
           opt.unshift({
             type: 'hr',
             name: 'division',
           })
-          opt = [...this.headerOptions, ...opt]
+          opt = [...this.computedHeaderOptions, ...opt]
         }
         return opt
       } else {
@@ -416,12 +418,12 @@ export default {
           {
             name: l['No date'],
             icon: 'bloqued',
-            callback: () => this.saveDates(null)
+            callback: () => this.saveDates(null, ids)
           },
           {
             name: l['Someday'],
             icon: 'archive',
-            callback: () => this.saveDates({type: 'someday'})
+            callback: () => this.saveDates({type: 'someday'}, ids)
           },
           {
             name: l['More dates'],
@@ -431,14 +433,14 @@ export default {
               icon: 'calendar',
               callback: () => {return {
                 comp: 'CalendarPicker',
-                content: {callback: this.saveDates}}},
+                content: {callback: date => this.saveDates(date, ids)}}},
             },
             {
               name: l['Repeat weekly'],
               icon: 'repeat',
               callback: () => ({
                 comp: 'WeeklyPicker',
-                content: {callback: this.saveDates},
+                content: {callback: date => this.saveDates(date, ids)},
               }),
             },
             {
@@ -446,7 +448,7 @@ export default {
               icon: 'repeat',
               callback: () => ({
                 comp: 'PeriodicPicker',
-                content: {callback: this.saveDates},
+                content: {callback: data => this.saveDates(date, ids)},
               }),
             }],
           },
@@ -516,61 +518,16 @@ export default {
         ]
       }
     },
-    hasAtLeastOneSomeday() {
-      let ts = this.tasks.slice()
-      for (const t of ts) {
-        if (t.calendar && t.calendar.type === 'someday') {
-          return true
-        }
-      }
-      return false
-    },
-    getFilterBySomeday() {
-      let ts = this.sortAndFilterTasks.slice()
-      if (this.isSomeday || this.showSomeday || this.isSearch) return ts
-
-      const arr = []
-      for (const t of ts)
-        if (!t.calendar || t.calendar.type !== 'someday')
-          arr.push(t)
-
-      return arr
-    },
     getNumberOfPages() {
-      return Math.floor(this.headingsOptions.length / this.headingsPagination)
+      return Math.floor(this.headings.length / this.headingsPagination)
     },
     getHeadings() {
-      if (!this.headingsPagination) return this.headingsOptions
+      if (!this.headingsPagination) return this.headings
       const num = this.headingsPagination
       const page = this.pagination
       const init = (page * num)
 
-      return this.headingsOptions.slice(init, init + num)
-    },
-    getFilterCompletedTasks() {
-      let ts = this.getFilterBySomeday.slice()
-      if (this.showCompleted) return ts
-      let notCompleted = []
-      
-      notCompleted = this.filterTasksByCompletion(ts, true)
-
-      if (notCompleted.length === 0 && this.headingsOptions.length === 0)
-        notCompleted = ts.filter(task => {
-          if (!task.calendar) return true
-          const type = task.calendar.type
-          return type === 'specific' || type === 'someday'
-        })
-      return notCompleted
-    },
-    sortAndFilterTasks() {
-      let ts = this.tasks
-      const order = this.tasksOrder
-
-      if (order)
-        ts = this.$store.getters.checkMissingIdsAndSortArr(order, ts).slice()
-      ts = this.filterTasksByViewRendererFilterOptions(ts, this.getFilterOptions)
-
-      return ts
+      return this.headings.slice(init, init + num)
     },
 
     getFilterOptions() {
@@ -621,10 +578,14 @@ export default {
       this.showingTagSelection = false
       this.showingListSelection = false
       this.showingFolderSelection = false
+      this.getComputedOptions()
     },
     viewNameValue() {
       this.showSomeday = false
     },
+    headerOptions() {
+      this.getComputedOptions()
+    }
   }
 }
 

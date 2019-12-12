@@ -7,13 +7,20 @@ export default {
   methods: {
     addTask(obj) {
       if (this.viewTag) {
-        if (obj.task.tags.length === 0 || !obj.task.tags.includes(this.viewTag.id))
-          obj.task.tags.push(this.viewTag.id)
         this.$store.dispatch('task/addTask', {
           ...obj.task,
         })
       }
     },
+    rootFallbackTask(task) {
+      return task
+    },
+    mainFallbackTask(task) {
+      if (task.tags.length === 0 || !task.tags.includes(this.viewTag.id))
+        task.tags.push(this.viewTag.id)
+      return task
+    },
+    
     saveHeaderName(name) {
       if (this.viewTag) {
         this.$router.push('/user?tag='+name)
@@ -39,27 +46,25 @@ export default {
   computed: {
     icon() {return 'tag'},
     viewNameValue() {return this.viewName},
-    getTasks() {
+    mainFilter() {
       if (this.viewTag)
-        return this.tasks.filter(el => el.tags.includes(this.viewTag.id))
-      return []
+        return task => this.doesTaskPassInclusiveTags(task, [this.viewTag.id])
+      return () => false
     },
+    rootFilter() {
+      return () => true
+    },
+    
     tasksOrder() {
       return []
     },
     headingsOptions() {
       return []
     },
-    illustration() {
-      return 'tag'
-    },
     headerOptions() {
       if (this.viewTag)
-        return utilsTag.tagOptions(this.viewTag, this.$store, this.l)
-      return []
-    },
-    headingEdit() {
-      return []
+        return utilsTag.tagOptions(this.viewTag)
+      return null
     },
     getViewNotes() {
       if (this.viewTag)

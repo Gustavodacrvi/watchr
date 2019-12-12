@@ -1,7 +1,8 @@
 <template>
   <transition name='task-trans'
-    :css="true"
     appear
+    :css="true"
+    @enter='taskEnter'
   >
     <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing}, platform]"
       @mouseenter="onHover = true"
@@ -13,7 +14,7 @@
         @leave='leave'
       >
         <div v-if="!isEditing" key="notediting"
-          class="cont-wrapper task-cont-wrapper handle rb"
+          class="cont-wrapper task-cont-wrapper task-handle rb"
           :class="platform"
           @click="click"
           @touchstart='touchStart'
@@ -53,7 +54,7 @@
               <div class="task-name-wrapper">
                 <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
                 <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
-                <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
+                <Icon v-else-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
                 <transition name="name-t">
                   <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
                       <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
@@ -130,7 +131,6 @@ export default {
     }
   },
   mounted() {
-    this.$emit('task-trans')
     if (this.isDesktop)
       this.bindContextMenu(this.options)
   },
@@ -142,6 +142,24 @@ export default {
       setTimeout(() => {
         this.$emit('de-select', this.$el)
       }, 10)
+    },
+    taskEnter(el, done) {
+      const cont = el.getElementsByClassName('cont-wrapper')[0]
+      if (cont) {
+        const s = cont.style
+
+        s.transitionDuration = '0'
+        s.opacity = 0
+        s.height = '0px'
+        
+        setTimeout(() => {
+          s.transitionDuration = '.25s'
+          s.opacity = 1
+          s.height = this.taskHeight + 'px'
+        })
+        
+        setTimeout(done, 249)
+      }
     },
     enter(cont) {
       if (!this.isEditing) {
@@ -359,8 +377,8 @@ export default {
       isDesktop: 'isDesktop',
       platform: 'platform',
       l: 'l',
-      filterTasksByView: 'task/filterTasksByView',
       isTaskCompleted: 'task/isTaskCompleted',
+      isTaskInView: 'task/isTaskInView',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
@@ -592,11 +610,15 @@ export default {
     },
     isToday() {
       if (this.viewName === 'Today') return false
-      return this.filterTasksByView([this.task], 'Today').length === 1
+      return this.isTaskInView(this.task, 'Today')
+    },
+    isTaskOverdue() {
+      if (this.viewName === 'Today') return false
+      return this.isTaskInView(this.task, 'Overdue')
     },
     isTomorrow() {
       if (this.viewName === 'Tomorrow' || this.viewName === 'Today') return false
-      return this.filterTasksByView([this.task], 'Tomorrow').length === 1
+      return this.isTaskInView(this.task, 'Tomorrow')
     },
     showIconDrop() {
       return this.isDesktop && this.onHover
@@ -848,6 +870,12 @@ export default {
   transform: scale(.8,.8);
 }
 
+.sortable-selected .cont-wrapper {
+  background-color: rgba(53, 73, 90, 0.6) !important;
+  box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
+  transition: background-color .8s !important;
+}
+
 .sortable-ghost .cont-wrapper {
   background-color: var(--void) !important;
   transition-duration: 0;
@@ -880,31 +908,24 @@ export default {
   opacity: .6;
 }
 
-.task-trans-enter .cont-wrapper, .task-trans-leave-to .cont-wrapper {
-  opacity: 0;
-  height: 0;
-  transition: height .15s, opacity .15s, transform .2s !important;
+.task-trans-leave-active {
+  transition-duration: .25s !important;
+  transition: height .25s, opacity .25s !important;
 }
 
-.task-trans-leave-to .cont-wrapper, .task-trans-leave-to, .task-trans-leave, .task-trans-enter-to  {
-  transition: height .15s, opacity .15s, transform .2s !important;
-}
-
-
-.task-trans-leave .cont-wrapper, .task-trans-enter-to .cont-wrapper {
-  transition: height .15s, opacity .15s, transform .2s !important;
-  height: 35px;
+.task-trans-leave {
+  height: 38px;
   opacity: 1;
 }
 
-.mobile .task-trans-leave .cont-wrapper, .mobile .task-trans-enter-to .cont-wrapper {
+.mobile .task-trans-leave {
   height: 50px;
 }
 
-.sortable-selected .cont-wrapper {
-  background-color: rgba(53, 73, 90, 0.6) !important;
-  box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
-  transition: background-color .8s !important;
+.task-trans-leave-to, .task-trans-leave-to .cont-wrapper {
+  height: 0px !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
 }
 
 </style>

@@ -40,8 +40,8 @@ export default {
     let name = 'created'
     if (str) name = str
     const creationDate = (t1, t2) => {
-      const m1 = mom(t1[name], 'Y-M-D')
-      const m2 = mom(t2[name], 'Y-M-D')
+      const m1 = mom(t1[name], 'Y-M-D HH:mm ss')
+      const m2 = mom(t2[name], 'Y-M-D HH:mm ss')
 
       if (!m1.isValid() && !m2.isValid()) return 0
       if (m1.isValid() && !m2.isValid()) return -1

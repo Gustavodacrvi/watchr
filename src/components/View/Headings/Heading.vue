@@ -53,8 +53,8 @@
       <div v-else key="edig">
         <EditHeading
           :name='name'
-          :errorToast='headingEdit.errorToast'
-          :names='headingEdit.excludeNames'
+          :errorToast='headingEditOptions.errorToast'
+          :names='headingEditOptions.excludeNames'
           :buttonTxt='l["Save"]'
           @save='save'
           @cancel='toggleEditing'
@@ -76,7 +76,7 @@ import { mapGetters } from 'vuex'
 import utils from '@/utils/'
 
 export default {
-  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEdit', 'save', 'notes', 'movingHeading', 'progress', 'icon'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEditOptions', 'save', 'notes', 'movingHeading', 'progress', 'icon'],
   components: {
     IconDrop: IconDropVue,
     Icon: IconVue,
@@ -109,8 +109,7 @@ export default {
     bindOptions() {
       if (this.isDesktop) {
         const header = this.$el.getElementsByClassName('header-wrapper')[0]
-        if (header)
-          utils.bindOptionsToEventListener(header, this.options, this.$parent)
+        utils.bindOptionsToEventListener(header, this.options, this)
       }
     },
     openMobileOptions() {
@@ -216,7 +215,7 @@ export default {
   watch: {
     options() {
       this.bindOptions()
-    }
+    },
   }
 }
 
@@ -255,7 +254,7 @@ export default {
   align-items: center;
   margin: 14px 0;
   margin-bottom: 10px;
-  height: 45px;
+  height: 30px;
   z-index: 50;
   position: relative;
 }

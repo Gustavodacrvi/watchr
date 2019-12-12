@@ -170,6 +170,7 @@ export default {
 .appbarHided .cont {
   flex-basis: 925px;
   flex-grow: 0;
+  margin-left: 0;
 }
 
 </style>

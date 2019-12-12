@@ -51,10 +51,10 @@ export default {
           if (ids.includes(f.id)) arr.push(f)
         return arr
       },
-      getFavoriteFolders({state}) {
-        return state.folders.filter(f => f.favorite).map(f => ({...f, icon: 'folder', color: 'var(--white)'}))
-      },
-    })
+    }),
+    getFavoriteFolders(state) {
+      return state.folders.filter(f => f.favorite).map(f => ({...f, icon: 'folder', color: 'var(--white)'}))
+    },
   },
   actions: {
     getData({state}) {
@@ -120,10 +120,9 @@ export default {
 
       batch.commit()
     },
-    addTaskByIndex(c, {ids, index, task, folderId}) {
+    addTaskByIndex(c, {ids, index, task, folderId, newTaskRef}) {
       const batch = fire.batch()
 
-      const newTaskRef = taskRef()
       addTask(batch, {
         userId: uid(),
         ...task,

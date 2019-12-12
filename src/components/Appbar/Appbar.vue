@@ -348,6 +348,12 @@ export default {
         total: 0
       }
     },
+    getIconByType(type) {
+      switch (type) {
+        case 'Tags': return 'tag'
+        case 'Lists': return 'tasks'
+      }
+    },
   },
   computed: {
     ...mapState({
@@ -363,7 +369,6 @@ export default {
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView',
       favLists: 'list/getFavoriteLists',
-      getListTasks: 'task/getListTasks',
       isTaskCompleted: 'task/isTaskCompleted',
       favFolders: 'folder/getFavoriteFolders',
       favTags: 'tag/getFavoriteTags',
@@ -378,13 +383,13 @@ export default {
       const getOptions = (link, type) => {
         switch (type) {
           case 'list': {
-            return utilsList.listOptions(link, this.$store, this.getListTasks(this.tasks, link.id).slice(), this.l)
+            return utilsList.listOptions(link)
           }
           case 'tag': {
-            return utilsTag.tagOptions(link, this.$store, this.l)
+            return utilsTag.tagOptions(link)
           }
           case 'folder': {
-            return utilsFolder.getFolderOptions(link, this.l, this.$store)
+            return utilsFolder.getFolderOptions(link)
           }
         }
         return []
@@ -411,9 +416,9 @@ export default {
     },
     getFavArr() {
       return [
-        ...this.favLists(),
-        ...this.favFolders(),
-        ...this.favTags()
+        ...this.favLists,
+        ...this.favFolders,
+        ...this.favTags
       ]
     },
     getFavorites() {
@@ -444,6 +449,7 @@ export default {
         for (const s of sect) {
           opt.push({
             name: s,
+            icon: this.getIconByType(s),
             callback: () => {this.section = s}
           })
         }
@@ -471,15 +477,9 @@ export default {
       const dispatch = this.$store.dispatch
       return [
         {
-          name: this.l['Sort tags'],
-          icon: 'sort',
-          callback: () => [
-            {
-              name: this.l['Sort tags by name'],
-              icon: 'sort-name',
-              callback: () => dispatch('tag/sortTagsByName')
-            },
-          ]
+          name: this.l['Sort tags by name'],
+          icon: 'sort-name',
+          callback: () => dispatch('tag/sortTagsByName')
         },
         {
           name: this.l['Add tag'],
@@ -561,6 +561,7 @@ export default {
       if (inner.length > 0) {
         arr.push({
           name: this.l['More options'],
+          icon: 'settings-h',
           callback: () => inner,
         })
       }
