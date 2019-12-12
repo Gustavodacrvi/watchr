@@ -156,7 +156,6 @@ export default {
       lazyHeadingsSetTimeouts: [],
       lazyHeadings: [],
       changedViewName: true,
-      atLeastOneRenderedTask: false,
       isDragging: false,
       justScrolled: false,
       movingHeading: false,
@@ -682,7 +681,9 @@ export default {
       return this.$el.getElementsByClassName('task-renderer-root')[0]
     },
     showIllustration() {
-      return this.isRoot && !this.atLeastOneRenderedTask && this.lazyTasks.length === 0 && this.lazyHeadings.length === 0 && this.icon && !this.header
+      for (const head of this.lazyHeadings)
+        if (head.tasks.length > 0) return false
+      return this.isRoot && this.lazyTasks.length === 0 && this.icon && !this.header
     },
     isSelecting() {
       return this.selected.length > 0
@@ -690,7 +691,6 @@ export default {
   },
   watch: {
     tasks(tasks) {
-      this.atLeastOneRenderedTask = false
       setTimeout(() => {
         if (!this.changedViewName) {
           this.clearLazySettimeout()

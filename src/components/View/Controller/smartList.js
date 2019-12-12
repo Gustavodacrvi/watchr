@@ -3,6 +3,8 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 import mom from 'moment/src/moment'
 
+import { pipeBooleanFilters } from '@/utils/memo'
+
 export default {
   methods: {
     addTask(obj) {
@@ -70,14 +72,23 @@ export default {
         }
         return task => this.isTaskInView(task, this.viewName)
       }
-      return () => true
+      if (this.viewName === 'Inbox')
+        return this.isTaskInbox
+      return this.isTaskCompleted
     },
     rootFilter() {
       if (this.viewType === 'search')
         return () => true
       if (this.isSmart && this.notHeadingHeaderView)
-        return task => !task.list && !task.folder
+        if (!this.hasOverdueTasks)
+          return pipeBooleanFilters(
+            task => this.isTaskInView(task, this.viewName),
+            task => !task.list && !task.folder,
+          )
       return () => false
+    },
+    configFilterOptions() {
+      return pipe => pipe !== 'pipeCompleted'
     },
     tasksOrder() {
       let o = this.viewOrders[this.viewName]

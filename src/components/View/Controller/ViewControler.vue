@@ -298,6 +298,8 @@ export default {
       isTaskInPeriod: 'task/isTaskInPeriod',
       filterTasksByPeriod: 'task/filterTasksByPeriod',
       filterTasksByView: 'task/filterTasksByView',
+      isTaskInbox: 'task/isTaskInbox',
+      hasTaskBeenCompletedOnDate: 'task/hasTaskBeenCompletedOnDate',
       isTaskShowingOnDate: 'task/isTaskShowingOnDate',
       isTaskInOneMonth: 'task/isTaskInOneMonth',
       isTaskInOneYear: 'task/isTaskInOneYear',
@@ -355,7 +357,7 @@ export default {
         'headingEditOptions', 'headerOptions', 'notes', 'progress', 'headings', 'headingsOrder', 'showAllHeadingsItems', 'rootFallbackTask',
         'mainFilter', 'rootFilter', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates', 'mainFallbackTask',
         'headerTags', 'headerCalendar', 'taskCompletionCompareDate', 'files',
-        'headingsPagination',
+        'headingsPagination', 'configFilterOptions',
       ]
       const obj = {}
 
@@ -477,7 +479,7 @@ export default {
     },
     completedHeadingsOptions() {
       const arr = []
-      const filtered = this.filterTasksByCompletion(this.tasks, false, mom())
+      const filtered = this.tasks.filter(task => this.isTaskCompleted(task, mom().format('Y-M-D')))
       const set = new Set()
       for (const t of filtered)
         if (!set.has(t.completeDate))
@@ -493,15 +495,16 @@ export default {
         return 0
       })
 
-      const cache = {}
       for (const date of dates) {
-        const getTasks = () => this.filterTasksByCompletionDate(filtered, date)
+        console.log(date)
+        const filterFunction = task => this.hasTaskBeenCompletedOnDate(task, date)
+
         const dispatch = this.$store.dispatch
         arr.push({
           disableSortableMount: true,
           name: utils.getHumanReadableDate(date, this.l),
-          order: ts => utilsTask.sortTasksByTaskDate(ts, 'fullCompleteDate'),
-          options: [
+          sort: tasks => utilsTask.sortTasksByTaskDate(tasks, 'fullCompleteDate'), 
+          options: tasks => [
             {
               name: this.l['Uncompleted tasks'],
               icon: 'circle',
@@ -512,15 +515,10 @@ export default {
               name: this.l['Delete tasks'],
               icon: 'trash',
               important: true,
-              callback: () => dispatch('task/deleteTasks', getTasks().map(t => t.id)),
+              callback: () => dispatch('task/deleteTasks', tasks.map(t => t.id)),
             },
           ],
-          filter: () => {
-            if (cache[date]) return cache[date]
-            const result = getTasks()
-            cache[date] = result
-            return result
-          },
+          filter: filterFunction,
           id: date,
         })
       }
@@ -538,8 +536,8 @@ export default {
 
       let todayTasks = []
       const viewOrder = this.viewOrders['Today']
-      if (viweOrder)
-        todayTasks = viweOrder.tasks || []
+      if (viewOrder)
+        todayTasks = viewOrder.tasks || []
       
       return [
         {

@@ -40,7 +40,7 @@ export default {
     'pipeFilterOptions', 'showCompleted', 'showSomeday',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
-    'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackTask', 'icon',
+    'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackTask', 'icon', 'configFilterOptions',
     'taskCompletionCompareDate', 'rootFallbackTask',
     'updateHeadingIds', 'showEmptyHeadings', 'showAllHeadingsItems',
   ],
@@ -118,7 +118,7 @@ export default {
     laserHeadingsTasks() {
       if (!this.headings) return []
       return this.headings.map(head => {
-        const nonFiltered = head.sort(this.mainTasks.filter(head.filter))
+        const nonFiltered = head.sort(this.mainTasks.filter(task => head.filter(task)))
         const tasks = nonFiltered.filter(this.filterOptionsPipe)
 
         return {
@@ -160,10 +160,10 @@ export default {
       return this.rootNonFiltered.filter(this.filterOptionsPipe)
     },
     rootNonFiltered() {
-      return this.sortTasksFunction(this.mainTasks.filter(this.rootFilter))
+      return this.sortTasksFunction(this.mainTasks.filter(task => this.rootFilter(task)))
     },
     mainTasks() {
-      return this.storeTasks.filter(this.mainFilter)
+      return this.storeTasks.filter(task => this.mainFilter(task))
     },
 
     sortHeadingsFunction() {
@@ -180,11 +180,15 @@ export default {
     },
 
     filterOptionsPipe() {
-      return pipeBooleanFilters(
-        this.pipeFilterOptions,
-        this.pipeSomeday,
-        this.pipeCompleted,
-      )
+      let pipes = [
+        'pipeFilterOptions', 'pipeSomeday', 'pipeCompleted',
+      ]
+
+      if (this.configFilterOptions)
+        pipes = pipes.filter(this.configFilterOptions)
+
+      
+      return pipeBooleanFilters(...pipes.map(p => this[p]))
     },
     hasAtLeastOneSomeday() {
       for (const task of this.mainTasks)

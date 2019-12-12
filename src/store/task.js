@@ -92,6 +92,7 @@ export default {
             return false
           }
           let isCompleted = calcTask()
+          // console.log(isCompleted, task, moment, compareDate)
           if (compareDate) {
             if (!task.completeDate) return false
             const taskCompleteDate = mom(task.completeDate, 'Y-M-D')
@@ -183,11 +184,6 @@ export default {
           return getters.isCalendarObjectShowingToday(el.calendar, date, specific)
         })
       },
-      filterTasksByCompletionDate({}, tasks, date) {
-        return tasks.filter(el => {
-          return el.completeDate === date
-        })
-      },
       filterTasksByOverdue({getters}, tasks) {
         return tasks.filter(el => {
           if (!utilsTask.hasCalendarBinding(el) || getters.isTaskCompleted(el))
@@ -268,6 +264,14 @@ export default {
           }
         }
         return tasks
+      },
+      hasTaskBeenCompletedOnDate: {
+        getter({}, task, date) {
+          return task.completeDate === date
+        },
+        cache(args) {
+          return JSON.stringify({t: args[0].completeDate, date: args[1]})
+        }
       },
       isTaskInView: {
         getter({getters}, task, view) {
