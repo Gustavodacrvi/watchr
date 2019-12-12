@@ -271,6 +271,7 @@ export default {
           }
         },
         delay: 100,
+        touchStartThreshold: 50,
         handle: '.task-handle',
 
         onUpdate: (evt) => {
@@ -715,11 +716,14 @@ export default {
     viewName() {
       this.updateView()
 
-      this.sortable.options.disabled = this.disableSortableMount
-      this.headSort.options.disabled = !this.updateHeadingIds
+      if (this.sortable)
+        this.sortable.options.disabled = this.disableSortableMount
+      if (this.headSort)
+        this.headSort.options.disabled = !this.updateHeadingIds
     },
     updateHeadingIds() {
-      this.headSort.options.disabled = !this.updateHeadingIds
+      if (this.headSort)
+        this.headSort.options.disabled = !this.updateHeadingIds
     },
     filterOptions() {
       headingsFilterCache = {}

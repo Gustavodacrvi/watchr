@@ -70,10 +70,14 @@ export default {
         }
         return task => this.isTaskInView(task, this.viewName)
       }
-      return () => false
+      return () => true
     },
     rootFilter() {
-      return task => !task.list && !task.folder
+      if (this.viewType === 'search')
+        return () => true
+      if (this.isSmart && this.notHeadingHeaderView)
+        return task => !task.list && !task.folder
+      return () => false
     },
     tasksOrder() {
       let o = this.viewOrders[this.viewName]

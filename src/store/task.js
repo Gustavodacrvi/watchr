@@ -175,30 +175,6 @@ export default {
       
           return true */
       },
-      isCalendarObjectShowingThisPeriod({}, calendar, date, period, specific) {
-        const c = calendar
-        if (!calendar) return false
-        if (specific && c.type !== 'specific') return false
-        if (c.type === 'someday') return false
-        // specific
-        const first = utilsMoment.getFirstDayOfMonth(date)
-        const last = utilsMoment.getFirstLastDayOfMonth(date)
-    
-        if (c.type === 'specific') {
-          const spec = mom(c.specific, 'Y-M-D')
-          return spec.isSameOrAfter(first, period) && spec.isSameOrBefore(last, period)
-        }
-        // overdue
-        if (c.due) {
-          const due = mom(c.due, 'Y-M-D')
-          return due.isSameOrAfter(first, period)
-        }
-        if (c.defer) {
-          const defer = mom(c.defer, 'Y-M-D')
-          return defer.isSameOrBefore(last, period)
-        }
-        return false
-      },
       filterTasksByDay({getters}, tasks, date, specific) {
         return tasks.filter(el => {
           if (!utilsTask.hasCalendarBinding(el) || el.calendar.type === 'someday')
@@ -347,6 +323,33 @@ export default {
           return JSON.stringify({obj, view})
         },
       },
+      isTaskInOneYear: {
+        getter({}, task) {
+          if (!task.calendar) return false
+          return mom().add(1, 'y').startOf('year').isBefore(mom(task.calendar.specific, 'Y-M-D'), 'day')
+        },
+        cache(args) {
+          return JSON.stringify(args[0].calendar)
+        },
+      },
+      isTaskInSevenDays: {
+        getter({}, task) {
+          if (!task.calendar) return false
+          return mom().add(7, 'd').isBefore(mom(task.calendar.specific, 'Y-M-D'), 'day')
+        },
+        cache(args) {
+          return JSON.stringify(args[0].calendar)
+        },
+      },
+      isTaskInOneMonth: {
+        getter({}, task) {
+          if (!task.calendar) return false
+          return mom().add(1, 'M').startOf('month').isBefore(mom(task.calendar.specific, 'Y-M-D'), 'day')
+        },
+        cache(args) {
+          return JSON.stringify(args[0].calendar)
+        },
+      },
       isTaskOverdue: {
         getter({}, task) {
           const calendar = task.calendar
@@ -385,16 +388,50 @@ export default {
           return JSON.stringify(args[0].calendar)
         },
       },
+      isTaskInPeriod: {
+        getter({}, task, initial, period, onlySpecific) {
+          const c = task.calendar
+          if (!calendar) return false
+          if (onlySpecific && c.type !== 'specific') return false
+          if (c.type === 'someday') return false
+          // specific
+          const first = utilsMoment.getFirstDayOfMonth(mom(initial, 'Y-M-D'))
+          const last = utilsMoment.getFirstLastDayOfMonth(mom(initial, 'Y-M-D'))
+      
+          if (c.type === 'specific') {
+            const spec = mom(c.specific, 'Y-M-D')
+            return spec.isSameOrAfter(first, period) && spec.isSameOrBefore(last, period)
+          }
+          // overdue
+          if (c.due) {
+            const due = mom(c.due, 'Y-M-D')
+            return due.isSameOrAfter(first, period)
+          }
+          if (c.defer) {
+            const defer = mom(c.defer, 'Y-M-D')
+            return defer.isSameOrBefore(last, period)
+          }
+          return false
+        },
+        cache(args) {
+          return JSON.stringify({
+            calendar: args[0].calendar,
+            i: args[1], p: args[2], s: args[3],
+          })
+        },
+      },
       isTaskShowingOnDate: {
-        getter({getters}, task, date) {
+        getter({getters}, task, date, onlySpecific) {
           if (!utilsTask.hasCalendarBinding(task) || task.calendar.type === 'someday')
             return false
-          return getters.isCalendarObjectShowingToday(task.calendar, date)
+          if (onlySpecific && task.calendar.type !== 'specific') return false
+          return getters.isCalendarObjectShowingToday(task.calendar, date, onlySpecific)
         },
         cache(args) {
           return JSON.stringify({
             task: args[0].calendar,
             date: args[1],
+            onlySpecific: args[2],
           })
         }
       },

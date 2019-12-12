@@ -129,6 +129,7 @@ export default {
             head.filter,
             this.mainFilterFunction,
           ),
+          progress: head.progress ? head.progress() : undefined,
           onEdit: head.onEdit ? head.onEdit(nonFiltered) : () => {},
           options: head.options ? head.options(nonFiltered) : () => {},
           updateIds: ids => {

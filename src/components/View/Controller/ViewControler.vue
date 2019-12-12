@@ -19,6 +19,8 @@ import utilsList from '@/utils/list'
 import folderUtils from '@/utils/folder'
 import utils from '@/utils/'
 
+import { pipeBooleanFilters } from '@/utils/memo'
+
 import mom from 'moment/src/moment'
 
 import mixins from './controlerModules'
@@ -68,8 +70,7 @@ export default {
 
       let order = this.viewOrders[view] ? this.viewOrders[view].headings : []
       if (!order) order = []
-      // const headings = sortArray(order, [...folders, ...lists])
-      const headings = sortArray(order, [...folders])
+      const headings = sortArray(order, [...folders, ...lists])
 
       const arr = []
       for (const viewHeading of headings) {
@@ -79,36 +80,34 @@ export default {
             this.$store.dispatch('list/saveSmartViewHeadingTasksOrder', {
               ids, listId: list.id, smartView: this.viewName,
             })
-          const getTasks = () => ts.filter(el => el.list === list.id)
+
+          const filterFunction = task => this.isTaskInList(task, list.id)
+
           let taskOrder = []
           if (list.smartViewsOrders && list.smartViewsOrders[this.viewName])
             taskOrder = list.smartViewsOrders[this.viewName]
           else
             taskOrder = this.getAllTasksOrderByList(list.id)
-          
+
+          const sort = tasks => sortArray(taskOrder, tasks)
+
           arr.push({
             name: list.name,
             allowEdit: true,
             hideListName: true,
             hideFolderName: true,
             showHeadingName: true,
-            onEdit: (name) => {
+            id: list.id,
+            
+            onEdit: tasks => name => {
               this.$store.dispatch('list/saveList', {
                 name, id: list.id,
               })
             },
-            order: () => taskOrder,
-            progress: this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted),
-            filter: (a, h, showCompleted) => {
-              let tasks = getTasks()
-
-              if (!showCompleted) {
-                tasks = this.filterTasksByCompletion(tasks, true)
-              }
-
-              return tasks
-            },
-            options: [
+            sort,
+            progress: () => this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted),
+            filter: filterFunction,
+            options: tasks => [
               {
                 name: 'Edit list',
                 icon: 'pen',
@@ -124,7 +123,7 @@ export default {
                     name: this.l['Sort by name'],
                     icon: 'sort-name',
                     callback: () => {
-                      const tasks = getTasks()
+                      const ts = tasks.slice()
                       tasks.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
                       saveOrder(tasks.map(el => el.id))
                     },
@@ -133,16 +132,16 @@ export default {
                     name: this.l['Sort by priority'],
                     icon: 'priority',
                     callback: () => {
-                      const tasks = utilsTask.sortTasksByPriority(getTasks())
-                      saveOrder(tasks.map(el => el.id))
+                      const ts = utilsTask.sortTasksByPriority(tasks.slice())
+                      saveOrder(ts.map(el => el.id))
                     },
                   },
                   {
                     name: this.l['Sort by creation date'],
                     icon: 'calendar',
                     callback: () => {
-                      const tasks = utilsTask.sortTasksByTaskDate(getTasks())
-                      saveOrder(tasks.map(el => el.id))
+                      const ts = utilsTask.sortTasksByTaskDate(tasks.slice())
+                      saveOrder(ts.map(el => el.id))
                     },
                   },
                 ]
@@ -153,21 +152,19 @@ export default {
                 callback: () => ({
                   comp: "CalendarPicker",
                   content: {callback: (calendar) => this.$store.dispatch('task/saveTasksById', {
-                    ids: getTasks().map(el => el.id),
+                    ids: tasks.map(el => el.id),
                     task: {calendar},
                   })}
                 })
               }
             ],
-            id: list.id,
             updateIds: saveOrder,
-            onAddTask: (obj) => {
-              const t = obj.task
-              if (!t.calendar) {
-                obj.task.calendar = this.getCalObjectByView(this.viewName, t.calendar)
-              }
-              t.list = list.id
-              t.folder = null
+            fallbackTask: task => {
+              if (!task.list && !task.folder)
+                task.list = list.id
+              return task
+            },
+            onAddTask: obj => {
               this.$store.dispatch('list/addTaskByIndexSmartViewList', {
                 ...obj, listId: list.id, viewName: this.viewName,
               })
@@ -185,7 +182,6 @@ export default {
               ids, folderId: folder.id, smartView: this.viewName,
             })
 
-          // const getTasks = () => ts.filter(el => el.folder === folder.id)
           const filterFunction = task => this.isTaskInFolder(task, folder.id)
 
           let taskOrder = []
@@ -259,13 +255,9 @@ export default {
             ],
             updateIds: saveOrder,
             fallbackTask: task => {
-              const t = task
-              if (!t.calendar) {
-                task.calendar = this.getCalObjectByView(this.viewName, t.calendar)
-              }
-              t.folder = folder.id
-              t.list = null
-              return t
+              if (!task.list && !task.folder)
+                task.folder = folder.id
+              return task
             },
             onAddTask: obj => {
               this.$store.dispatch('list/addTaskByIndexSmartViewFolder', {
@@ -300,10 +292,15 @@ export default {
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
       getTasks: 'list/getTasks',
       isTaskInList: 'task/isTaskInList',
+      isTaskInSevenDays: 'task/isTaskInSevenDays',
       isTaskInFolder: 'task/isTaskInFolder',
       isTaskInListRoot: 'task/isTaskInListRoot',
+      isTaskInPeriod: 'task/isTaskInPeriod',
       filterTasksByPeriod: 'task/filterTasksByPeriod',
       filterTasksByView: 'task/filterTasksByView',
+      isTaskShowingOnDate: 'task/isTaskShowingOnDate',
+      isTaskInOneMonth: 'task/isTaskInOneMonth',
+      isTaskInOneYear: 'task/isTaskInOneYear',
       filterTasksByCompletion: 'task/filterTasksByCompletion',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskInView: 'task/isTaskInView',
@@ -392,20 +389,30 @@ export default {
       const filtered = this.tasks.filter(el => {
         return el.calendar && el.calendar.type === 'specific'
       })
+      const sort = utilsTask.sortTasksByTaskDate
+      const TOD_STR = mom().format('Y-M-D')
+      
       for (let i = 0;i < 7;i++) {
         tod.add(1, 'day')
         const date = tod.format('Y-M-D')
+
+        const filterFunction = task => this.isTaskShowingOnDate(task, date, true)
+        
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
-          order: ts => utilsTask.sortTasksByTaskDate(ts),
-          filter: () => {
-            return this.filterTasksByDay(filtered, date, true)
-          },
           id: date,
+
+          sort,
+          filter: filterFunction,
+          fallbackTask: task => {
+            if (!task.calendar)
+              task.calendar = calObj(date)
+            return task
+          },
           onAddTask: obj => {
             const date = obj.header.id
             this.$store.dispatch('task/addTask', {
-              ...obj.task, calendar: calObj(date)
+              ...obj.task
             })
           },
           onSortableAdd: evt => {
@@ -418,66 +425,52 @@ export default {
           },
         })
       }
-      const in7Days = mom().add(7, 'd')
-      const after7DaysTasks = filtered.filter(el => {
-        return in7Days.isBefore(mom(el.calendar.specific, 'Y-M-D'), 'day')
-      })
+      const thisMonthPipe = pipeBooleanFilters(
+        this.isTaskInSevenDays,
+        task => this.isTaskInPeriod(task, TOD_STR, 'month', true)
+      )
       // this month
       arr.push({
         name: this.l['This month'],
         calendarStr: true,
-        order: ts => utilsTask.sortTasksByTaskDate(ts),
-        filter: () => {
-          return this.filterTasksByPeriod(after7DaysTasks, tod, 'month', true)
-        },
-        id: 'this month'
+        sort,
+        filter: thisMonthPipe,
+        id: 'this month',
       })
       // this year
-      const inOneMonth = mom().add(1, 'M').startOf('month')
-      const inOneMonthTasks = after7DaysTasks.filter(el => {
-        return inOneMonth.isBefore(mom(el.calendar.specific, 'Y-M-D'), 'day')
-      })
+      const thisYearPipe = pipeBooleanFilters(
+        this.isTaskInOneMonth,
+        task => this.isTaskInPeriod(task, TOD_STR, 'year', true)
+      )
       arr.push({
         name: this.l['This year'],
         calendarStr: true,
-        order: ts => utilsTask.sortTasksByTaskDate(ts),
-        filter: () => {
-          return this.filterTasksByPeriod(inOneMonthTasks, tod, 'year', true)
-        },
+        sort,
+        filter: thisYearPipe,
         id: 'this year'
       })
       // next years
-      const inOneYear = mom().add(1, 'y').startOf('year')
-      const inOneYearTasks = inOneMonthTasks.filter(el => {
-        return inOneYear.isBefore(mom(el.calendar.specific, 'Y-M-D'), 'day')
-      })
       arr.push({
         name: this.l['Next years'],
         calendarStr: true,
-        order: ts => utilsTask.sortTasksByTaskDate(ts),
-        filter: () => {
-          return inOneYearTasks
-        },
+        sort,
+        filter: this.isTaskInOneYear,
         id: 'nextYears',
       })
       // periodic tasks
       arr.push({
         name: this.l['Periodic tasks'],
         calendarStr: true,
-        order: ts => utilsTask.sortTasksByTaskDate(ts),
-        filter: () => {
-          return this.periodicTasks
-        },
+        sort,
+        filter: task => task.calendar && task.calendar.type === 'periodic',
         id: 'periodic tasks'
       })
       // weekly tasks
       arr.push({
         name: this.l['Weekly tasks'],
         calendarStr: true,
-        order: ts => utilsTask.sortTasksByTaskDate(ts),
-        filter: () => {
-          return this.weeklyTasks
-        },
+        sort,
+        filter: task => task.calendar && task.calendar.type === 'weekly',
         id: 'weekly tasks'
       })
       return arr
@@ -513,7 +506,7 @@ export default {
               name: this.l['Uncompleted tasks'],
               icon: 'circle',
               important: true,
-              callback: () => dispatch('task/uncompleteTasks', getTasks()),
+              callback: () => dispatch('task/uncompleteTasks',),
             },
             {
               name: this.l['Delete tasks'],
@@ -541,7 +534,7 @@ export default {
           ids, task: {calendar: this.$store.getters['task/getSpecificDayCalendarObj'](mom)}
         })
       }
-      const sort = utilsTask.sortTasksByTaskDate
+      const sort = tasks => utilsTask.sortTasksByTaskDate(tasks)
 
       let todayTasks = []
       const viewOrder = this.viewOrders['Today']
