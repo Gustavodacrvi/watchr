@@ -38,6 +38,8 @@
           :data-id='item.isEdit'
 
           @save='item.onSave'
+          @goup='moveEdit(-1)'
+          @godown='moveEdit(1)'
           @cancel='removeEdit'
         />
         <HeadingEdit v-else
@@ -48,6 +50,8 @@
           :data-id='item.isEdit'
 
           @save='item.onSave'
+          @goup='moveEdit(-1)'
+          @godown='moveEdit(1)'
           @cancel='removeEdit'
         />
       </template>
@@ -185,6 +189,21 @@ export default {
     window.removeEventListener('keydown', this.keydown)
   },
   methods: {
+    moveEdit(offset) {
+      const index = this.lazyTasks.findIndex(el => el.isEdit)
+      const move = () => {
+        this.lazyTasks.splice(
+          offset + index,
+          0,
+          this.lazyTasks.splice(index, 1)[0]
+        )
+      }
+      if (offset > 0 && (offset + index) < this.lazyTasks.length)
+        move()
+      else if ((index + offset) > -1)
+        move()
+      setTimeout(() => this.focusToggle = !this.focusToggle, 10)
+    },
     removeEdit() {
       const i = this.lazyTasks.findIndex(el => el.isEdit)
       if (i > -1) {

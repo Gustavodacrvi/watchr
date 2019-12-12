@@ -663,14 +663,14 @@ export default {
   position: fixed;
   height: 100%;
   width: 100%;
-  z-index: 10;
+  z-index: 200;
   left: 0;
   top: 0;
 }
 
 .edit-wrapper {
   position: relative;
-  z-index: 11;
+  z-index: 201;
 }
 
 .trans-t-enter, .trans-t-leave-to {
