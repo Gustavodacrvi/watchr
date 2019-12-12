@@ -5,7 +5,7 @@
     @leave='leave'
   >
     <div class="Edit handle rb TaskEditComp" :class="[{notPopup: !popup}, platform]" :style="editStyle">
-      <div class="fix-back fade" @click="cancel"></div>
+      <div class="fix-back" @click="cancel"></div>
       <div class="edit-wrapper" :class="{show}">
         <div class="tags" :class="{show: atLeastOnSpecialTag}">
           <Tag v-if="calendarStr"
@@ -92,7 +92,7 @@
         <span v-if="isEditingFiles" style="opacity: .4;margin-left: 8px">{{ l["Note: file upload/delete operations won't work while offline."] }}</span>
         <div class="options">
           <transition name="btn">
-            <ButtonApp v-if="doesntHaveChecklist && !isAddingChecklist"
+            <ButtonApp v-if="showingOptions"
               class="add-checklist-button"
               style="margin-left: 4px;margin-top: 0px;margin-bottom: 8px;opacity: .6"
               type="card"
@@ -100,52 +100,54 @@
               @click="addChecklist"
             />
           </transition>
-          <div class="icons">
-            <IconDrop
-              handle="tag"
-              class="opt-icon"
-              width="22px"
-              :options="getTags"
-              :circle='true'
-            />
-            <IconDrop
-              handle="priority"
-              class="opt-icon"
-              width="22px"
-              :options="priorityOptions"
-              :circle='true'
-            />
-            <IconDrop
-              handle="tasks"
-              width="22px"
-              class="opt-icon"
-              :options="listOptions"
-              :circle='true'
-            />
-            <IconDrop
-              handle="folder"
-              width="22px"
-              class="opt-icon"
-              :options="folderOptions"
-              :circle='true'
-            />
-            <IconDrop
-              handle="calendar"
-              width="22px"
-              class="opt-icon"
-              :options="calendarOptions"
-              :circle='true'
-            />
-            <Icon
-              class="opt-icon primary-hover cursor"
-              style="margin-right: 7px;margin-top: 2px"
-              width="15px"
-              :circle='true'
-              icon='file'
-              :file='true'
-              @add='addFile'
-            />
-          </div>
+          <transition name="btn">
+            <div v-if="showingOptions" class="icons">
+              <IconDrop
+                handle="tag"
+                class="opt-icon"
+                width="22px"
+                :options="getTags"
+                :circle='true'
+              />
+              <IconDrop
+                handle="priority"
+                class="opt-icon"
+                width="22px"
+                :options="priorityOptions"
+                :circle='true'
+              />
+              <IconDrop
+                handle="tasks"
+                width="22px"
+                class="opt-icon"
+                :options="listOptions"
+                :circle='true'
+              />
+              <IconDrop
+                handle="folder"
+                width="22px"
+                class="opt-icon"
+                :options="folderOptions"
+                :circle='true'
+              />
+              <IconDrop
+                handle="calendar"
+                width="22px"
+                class="opt-icon"
+                :options="calendarOptions"
+                :circle='true'
+              />
+              <Icon
+                class="opt-icon primary-hover cursor"
+                style="margin-right: 7px;margin-top: 2px"
+                width="15px"
+                :circle='true'
+                icon='file'
+                :file='true'
+                @add='addFile'
+              />
+            </div>
+          </transition>
         </div>
       </div>
       <transition name="progress-t">
@@ -397,6 +399,9 @@ export default {
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
     }),
+    showingOptions() {
+      return this.doesntHaveChecklist && !this.isAddingChecklist
+    },
     isEditing() {
       return this.defaultTask
     },

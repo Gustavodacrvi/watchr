@@ -5,7 +5,8 @@
     @leave='leave'
   >
     <div class="HeadingEdit Edit handle rb shadow">
-      <div class="cont-wrapper" :class="{show}">
+      <div class="fix-back fade" @click="cancel"></div>
+      <div class="edit-wrapper" :class="{show}">
         <InputApp
           class="no-back"
           placeholder="Heading name..."
@@ -19,15 +20,6 @@
           @goup='$emit("goup")'
           @godown='$emit("godown")'
         />
-        <div class="button">
-          <div class="btn">
-            <ButtonApp class="tiny"
-              :value="buttonTxt"
-              @click="save"
-            />
-          </div>
-          <span class="cancel cursor" @click="cancel">{{ l['Cancel'] }}</span>
-        </div>
       </div>
     </div>
   </transition>
@@ -55,9 +47,23 @@ export default {
   },
   created() {
     if (this.name) this.str = this.name
+
+    window.addEventListener('click', this.remove)
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this.remove)
   },
   methods: {
-        cancel() {
+    remove(evt) {
+      let found = false
+      for (const node of evt.path)
+        if (node.classList && node.classList.contains('TaskEditComp')) {
+          found = true
+          break
+        }
+      if (!found) this.cancel()
+    },
+    cancel() {
       this.leave(this.$el)
       setTimeout(() => {
         this.$emit('cancel')
@@ -83,19 +89,16 @@ export default {
     },
     leave(el) {
       const s = el.style
-      const btn = el.getElementsByClassName('button')[0]
 
       s.transitionDuration = '0s'
       s.height = el.offsetHeight + 'px'
       setTimeout(() => {
         this.show = false
-        btn.style.transitionDuration = '.3s'
-        btn.style.paddding = '0'
         s.transitionDuration = '.3s'
         s.overflow = 'hidden'
         s.backgroundColor = 'var(--back-color)'
         s.boxShadow = '0 0 0 #000'
-        s.height = 0
+        s.height = '0px'
       })
     },
     select(val) {
@@ -129,6 +132,20 @@ export default {
 
 <style scoped>
 
+.fix-back {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: 200;
+  left: 0;
+  top: 0;
+}
+
+.edit-wrapper {
+  position: relative;
+  z-index: 201;
+}
+
 .Edit {
   background-color: var(--card);
 }
@@ -161,7 +178,7 @@ export default {
   margin-left: 6px;
 }
 
-.cont-wrapper {
+.edit-wrapper {
   opacity: 0;
   transition-duration: .3s;
 }
