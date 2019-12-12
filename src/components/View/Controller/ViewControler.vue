@@ -439,7 +439,7 @@ export default {
           sort: tasks => utilsTask.sortTasksByTaskDate(tasks, 'fullCompleteDate'), 
           options: tasks => [
             {
-              name: this.l['Uncompleted tasks'],
+              name: this.l['Uncomplete tasks'],
               icon: 'circle',
               important: true,
               callback: () => dispatch('task/uncompleteTasks', tasks),

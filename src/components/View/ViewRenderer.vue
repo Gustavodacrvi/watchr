@@ -96,10 +96,17 @@ export default {
       exclusiveFolder: null,
     }
   },
+  created() {
+    this.getComputedOptions()
+  },
+  mounted() {
+    this.getComputedOptions()
+  },
   methods: {
     ...mapActions(['getOptions']),
     async getComputedOptions() {
-      this.computedHeaderOptions = await this.getOptions(this.headerOptions)
+      if (this.headerOptions)
+        this.computedHeaderOptions = await this.getOptions(this.headerOptions)
     },
     selectPagination(newPage) {
       this.pagination = newPage
@@ -371,19 +378,25 @@ export default {
             ],
           },
           {
-            name: l['Show tag selection'],
-            icon: 'tag',
-            callback: () => this.toggleTagSelection()
-          },
-          {
-            name: l['Show list selection'],
-            icon: 'tasks',
-            callback: () => this.toggleListSelection()
-          },
-          {
-            name: l['Show folder selection'],
-            icon: 'folder',
-            callback: () => this.toggleFolderSelection()
+            name: l['Filter tasks'],
+            icon: 'filter',
+            callback: () => [
+              {
+                name: l['Filter by tags'],
+                icon: 'tag',
+                callback: () => this.toggleTagSelection()
+              },
+              {
+                name: l['Filter by lists'],
+                icon: 'tasks',
+                callback: () => this.toggleListSelection()
+              },
+              {
+                name: l['Filter by folders'],
+                icon: 'folder',
+                callback: () => this.toggleFolderSelection()
+              },
+            ],
           },
           {
             name: l['Show completed'],

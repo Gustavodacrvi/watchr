@@ -480,21 +480,15 @@ export default {
       batch.commit()
     },
     deleteHeadingFromList({getters}, {listId, name, savedTasks}) {
-      const list = getters.getListsById([listId])[0]
       const batch = fire.batch()
-
+      
+      const list = getters.getListsById([listId])[0]
       const heads = list.headings.slice()
       const i = heads.findIndex(el => el.name === name)
-      const tasks = heads[i].tasks.slice()
-      const ts = []
-      for (const t of tasks) {
-        const task = savedTasks.find(el => el.id === t.id)
-        if (task) ts.push(task)
-      }
       heads.splice(i, 1)
-      for (const id of ts) {
-        const ref = taskRef(id)
-        batch.update(ref, {
+      
+      for (const task of savedTasks) {
+        batch.update(taskRef(task.id), {
           heading: null,
         })
       }

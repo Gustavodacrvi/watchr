@@ -71,15 +71,12 @@
         <HeadingApp v-if="showEmptyHeadings || h.tasks.length > 0" :key="h.name"
           :header='h'
 
-          :name='h.name'
-          :notes='h.notes'
-          :allowEdit='h.allowEdit'
+          v-bind="h"
+
           :headingEditOptions='headingEditOptions'
-          :icon='h.icon'
-          :progress='h.progress'
+
           :color='h.color ? h.color : ""'
-          :options='h.options ? h.options : []'
-          :save='h.onEdit'
+          :options='h.options ? h.options(h.nonFiltered) : []'
           :movingHeading='movingHeading'
 
           @option-click='v => getOptionClick(h)(v)'
@@ -378,7 +375,8 @@ export default {
           const isTaskRender = t.to.classList.contains('task-renderer-root')
           const isComingFromAnotherTaskRenderer = t.to !== this.draggableRoot
           if (isTaskRender && isComingFromAnotherTaskRenderer) {
-            let vue = t.related.__vue__
+            let vue = t.related.__vue__ ||
+                  t.related.parentNode.__vue__
             while (true) {
               if (vue.$el.classList && vue.$el.classList.contains('TaskRenderer'))
                 break
@@ -802,7 +800,7 @@ export default {
   transition-duration: .6s;
   margin: 14px 0 !important;
   margin-bottom: 10px !important;
-  height: 45px !important;
+  height: 30px !important;
   opacity: 1 !important;
   padding: 0 6px !important;
 }

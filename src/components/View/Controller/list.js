@@ -134,7 +134,9 @@ export default {
             },
             sort,
             filter: pipedFilter,
-            options: tasks => utilsList.listHeadingOptions(this.viewList, h, this.$store, tasks, this.l),
+            options: tasks => {
+              return utilsList.listHeadingOptions(this.viewList, h, this.$store, tasks, this.l)
+            },
             fallbackTask: task => {
               if (!task.heading && !task.folder && task.list === viewList.id)
                 task.heading = h.name
@@ -154,7 +156,7 @@ export default {
             },
             onAddTask: obj => {
               this.$store.dispatch('list/addTaskHeading', {
-                ...obj, name: obj.header.name, ids: obj.ids, listId: viewList.id, task: obj.task, index: obj.index,
+                ...obj, name: obj.header.name, listId: viewList.id,
               })
             },
             onSortableAdd: (evt, taskIds, type, ids) => {
@@ -238,7 +240,7 @@ export default {
     headerOptions() {
       if (this.viewList)
         return utilsList.listOptions(this.viewList)
-      return []
+      return null
     },
     headingEditOptions() {
       if (this.viewList)

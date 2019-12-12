@@ -64,7 +64,7 @@ export default {
     headerOptions() {
       if (this.viewTag)
         return utilsTag.tagOptions(this.viewTag)
-      return []
+      return null
     },
     getViewNotes() {
       if (this.viewTag)

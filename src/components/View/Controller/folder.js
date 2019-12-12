@@ -114,7 +114,7 @@ export default {
     headerOptions() {
       if (this.viewFolder)
         return utilsFolder.getFolderOptions(this.viewFolder)
-      return []
+      return null
     },
     getViewNotes() {
       return null

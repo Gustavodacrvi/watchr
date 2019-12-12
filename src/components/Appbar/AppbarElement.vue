@@ -108,7 +108,7 @@ export default {
       if (this.isDesktop) {
         if (this.options) {
           const el = this.$el.getElementsByClassName('link-wrapper')[0]
-          utils.bindOptionsToEventListener(el, await this.getOptions(this.options), this.$parent)
+          utils.bindOptionsToEventListener(el, await this.getOptions(this.options), this)
         }
       }
     },

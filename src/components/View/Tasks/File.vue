@@ -22,7 +22,7 @@ export default {
     Icon,
   },
   mounted() {
-    utils.bindOptionsToEventListener(this.$el, this.options, this.$parent, 'click')
+    utils.bindOptionsToEventListener(this.$el, this.options, this, 'click')
   },
   computed: {
     ...mapGetters(['l']),

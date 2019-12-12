@@ -915,6 +915,7 @@ export default {
 
 .task-trans-leave {
   height: 38px;
+  opacity: 1;
 }
 
 .mobile .task-trans-leave {

@@ -81,7 +81,7 @@ export default {
     bindOptions() {
       if (this.isDesktop) {
         const el = this.$el.getElementsByClassName('header')[0]
-        utils.bindOptionsToEventListener(el, this.options, this.$parent)
+        utils.bindOptionsToEventListener(el, this.options, this)
       }
     },
     touchStart(e) {

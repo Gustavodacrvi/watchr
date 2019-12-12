@@ -127,6 +127,7 @@ export default {
                 nonFiltered.map(el => el.id),
               )
             )
+        
         const unshiftSortingOptions = options => {
           const opt = [
             {
@@ -172,16 +173,18 @@ export default {
         if (!head.updateIds)
           updateIds = undefined
 
-        let options = head.options ? head.options(nonFiltered) : []
-
-        if (updateIds)
-          options = unshiftSortingOptions(options)
-
         return {
           ...head,
           filter: undefined,
           tasks,
-          options,
+          nonFiltered,
+          options: tasks => {
+            let options = head.options ? head.options(tasks) : []
+
+            if (updateIds)
+              options = unshiftSortingOptions(options)
+            return options
+          },
           updateIds,
           filterFunction: pipeBooleanFilters(
             head.filter,

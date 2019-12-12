@@ -125,7 +125,7 @@ export default {
       return []
     },
     headerOptions() {
-      return []
+      return null
     },
     headingEditOptions() {
       if (this.viewName === "Today" || this.viewName === "Tomorrow" || this.viewName === 'Someday')

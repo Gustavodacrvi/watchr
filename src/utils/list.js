@@ -3,12 +3,15 @@ import utils from '@/utils'
 import { pipeBooleanFilters } from '@/utils/memo'
 
 export default {
-  listHeadingOptions(list, heading, store, headingTasks, l) {
+  listHeadingOptions(list, heading, store, tasks, l) {
     const li = list
     const listId = li.id
     const h = heading
     const dispatch = store.dispatch
     const toast = t => store.commit('pushToast', t)
+
+    const headingTasks = tasks.slice()
+
     return [
       {
         name: l['Edit heading'],
@@ -30,43 +33,49 @@ export default {
         },
       },
       {
-        name: l['Uncomplete tasks'],
-        icon: 'circle',
-        callback: () => dispatch('list/uncompleteHeadingTasks', {
-          listId, name: h.name, savedTasks: store.state.task.tasks,
-        })
-      },
-      {
-        name: l['Duplicate heading'],
-        icon: 'copy',
-        callback: () => dispatch('list/duplicateHeading', {
-            listId, name: h.name, tasks: headingTasks.slice(),
-          })
-      },
-      {
-        name: l["Convert to list"],
-        icon: 'tasks',
-        important: true,
-        callback: () => {
-          if (store.state.list.lists.some(l => l.name === h.name))
-            toast({
-              name: l['There is already a list with this heading name.'],
-              seconds: 3,
-              type: 'error',
+        name: l['More options'],
+        icon: 'settings-h',
+        callback: () => [
+          {
+            name: l['Uncomplete tasks'],
+            icon: 'circle',
+            callback: () => dispatch('list/uncompleteHeadingTasks', {
+              listId, name: h.name, savedTasks: store.state.task.tasks,
             })
-          else dispatch('list/convertHeadingToList', {
-              listId, name: h.name, taskIds: headingTasks.map(el => el.id)
+          },
+          {
+            name: l['Duplicate heading'],
+            icon: 'copy',
+            callback: () => dispatch('list/duplicateHeading', {
+                listId, name: h.name, tasks: headingTasks.slice(),
+              })
+          },
+          {
+            name: l["Convert to list"],
+            icon: 'tasks',
+            important: true,
+            callback: () => {
+              if (store.state.list.lists.some(l => l.name === h.name))
+                toast({
+                  name: l['There is already a list with this heading name.'],
+                  seconds: 3,
+                  type: 'error',
+                })
+              else dispatch('list/convertHeadingToList', {
+                  listId, name: h.name, taskIds: headingTasks.map(el => el.id)
+                })
+            }
+          },
+          {
+            name: l['Delete heading'],
+            icon: 'trash',
+            important: true,
+            callback: () => dispatch('list/deleteHeadingFromList', {
+              listId, name: h.name, savedTasks: headingTasks,
             })
-        }
-      },
-      {
-        name: l['Delete heading'],
-        icon: 'trash',
-        important: true,
-        callback: () => dispatch('list/deleteHeadingFromList', {
-            listId, name: h.name, savedTasks: headingTasks,
-          })
-      },
+          },
+        ]
+      }
     ]
   },
   listOptions: list => ({tasks, getters, dispatch}) => {
@@ -85,7 +94,7 @@ export default {
       task => !isTaskInRoot(task),
     )
     const pop = obj => dispatch('pushPopup', obj)
-    const opt = [
+    let opt = [
       {
         name: l["Edit list"],
         icon: 'pen',
@@ -180,6 +189,8 @@ export default {
           })
         }
       },
+    ]
+    const moreOptions = [
       {
         name: l["Duplicate list"],
         icon: 'copy',
@@ -191,7 +202,7 @@ export default {
       },
     ]
     if (getters.isDesktop)
-      opt.push({
+      moreOptions.push({
         name: l["Export as template"],
         icon: 'export',
         callback: l => {
@@ -199,7 +210,7 @@ export default {
           list, tasks: tasks.filter(isTaskInList),
         })}
       })
-    opt.push({
+    moreOptions.push({
       name: l['Delete list'],
       icon: 'trash',
       important: true,
@@ -209,6 +220,11 @@ export default {
         })
       }
     })
+    opt = [...opt, {
+      name: l['More options'],
+      icon: 'settings-h',
+      callback: () => moreOptions
+    }]
     return opt
   },
 }
