@@ -296,14 +296,11 @@ export default {
       isTaskInFolder: 'task/isTaskInFolder',
       isTaskInListRoot: 'task/isTaskInListRoot',
       isTaskInPeriod: 'task/isTaskInPeriod',
-      filterTasksByPeriod: 'task/filterTasksByPeriod',
-      filterTasksByView: 'task/filterTasksByView',
       isTaskInbox: 'task/isTaskInbox',
       hasTaskBeenCompletedOnDate: 'task/hasTaskBeenCompletedOnDate',
       isTaskShowingOnDate: 'task/isTaskShowingOnDate',
       isTaskInOneMonth: 'task/isTaskInOneMonth',
       isTaskInOneYear: 'task/isTaskInOneYear',
-      filterTasksByCompletion: 'task/filterTasksByCompletion',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskInView: 'task/isTaskInView',
       doesTaskPassInclusiveTags: 'task/doesTaskPassInclusiveTags',
@@ -311,11 +308,9 @@ export default {
       isTaskInHeading: 'task/isTaskInHeading',
       filterTasksByCompletionDate: 'task/filterTasksByCompletionDate',
       getTagsById: 'tag/getTagsById',
-      filterTasksByDay: 'task/filterTasksByDay',
       getListsById: 'list/getListsById',
       getListByName: 'list/getListByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
-      getTasksWithHeading: 'task/getTasksWithHeading',
     }),
     viewOrders() {
       if (this.userInfo) return this.userInfo.viewOrders
@@ -496,7 +491,6 @@ export default {
       })
 
       for (const date of dates) {
-        console.log(date)
         const filterFunction = task => this.hasTaskBeenCompletedOnDate(task, date)
 
         const dispatch = this.$store.dispatch
@@ -592,9 +586,6 @@ export default {
     },
     weeklyTasks() {
       return this.tasks.filter(el => el.calendar && el.calendar.type === 'weekly')
-    },
-    tasksWithoutListsAndFolders() {
-      return this.$store.getters['task/tasksWithoutListsAndFolders'](this.tasks)
     },
     viewList() {
       return this.getListByName(this.viewName)

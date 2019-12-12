@@ -377,8 +377,8 @@ export default {
       isDesktop: 'isDesktop',
       platform: 'platform',
       l: 'l',
-      filterTasksByView: 'task/filterTasksByView',
       isTaskCompleted: 'task/isTaskCompleted',
+      isTaskInView: 'task/isTaskInView',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
@@ -610,11 +610,11 @@ export default {
     },
     isToday() {
       if (this.viewName === 'Today') return false
-      return this.filterTasksByView([this.task], 'Today').length === 1
+      return this.isTaskInView(this.task, 'Today')
     },
     isTomorrow() {
       if (this.viewName === 'Tomorrow' || this.viewName === 'Today') return false
-      return this.filterTasksByView([this.task], 'Tomorrow').length === 1
+      return this.isTaskInView(this.task, 'Tomorrow')
     },
     showIconDrop() {
       return this.isDesktop && this.onHover

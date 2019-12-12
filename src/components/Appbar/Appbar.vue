@@ -363,7 +363,6 @@ export default {
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView',
       favLists: 'list/getFavoriteLists',
-      getListTasks: 'task/getListTasks',
       isTaskCompleted: 'task/isTaskCompleted',
       favFolders: 'folder/getFavoriteFolders',
       favTags: 'tag/getFavoriteTags',
@@ -378,7 +377,7 @@ export default {
       const getOptions = (link, type) => {
         switch (type) {
           case 'list': {
-            return utilsList.listOptions(link, this.$store, this.getListTasks(this.tasks, link.id).slice(), this.l)
+            // return utilsList.listOptions(link, this.$store, this.getListTasks(this.tasks, link.id).slice(), this.l)
           }
           case 'tag': {
             return utilsTag.tagOptions(link, this.$store, this.l)

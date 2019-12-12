@@ -647,7 +647,6 @@ export default {
       platform: 'platform',
       isDesktop: 'isDesktop',
       getTaskBodyDistance: 'task/getTaskBodyDistance',
-      filterTasksByViewRendererFilterOptions: 'task/filterTasksByViewRendererFilterOptions',
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),

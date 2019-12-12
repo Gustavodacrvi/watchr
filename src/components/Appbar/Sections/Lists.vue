@@ -216,7 +216,6 @@ export default {
       l: 'l',
       isDesktop: 'isDesktop',
       getTasksByListId: 'list/getTasks',
-      getListTasks: 'task/getListTasks',
       sortedFolders: 'folder/sortedFolders',
       isTaskCompleted: 'task/isTaskCompleted',
       getListsByFolderId: 'folder/getListsByFolderId',
@@ -272,8 +271,8 @@ export default {
         list.callback = () => {
           this.$router.push('/user?list=' + list.name)
         }
-        const result = this.getListTasks(this.tasks, list.id).slice()
-        list.options = utilsList.listOptions(list, this.$store, this.getListTasks(this.tasks, list.id).slice(), this.l)
+        // const result = this.getListTasks(this.tasks, list.id).slice()
+        // list.options = utilsList.listOptions(list, this.$store, this.getListTasks(this.tasks, list.id).slice(), this.l)
       }
       return lists.map(t => t)
     },

@@ -236,8 +236,8 @@ export default {
       return null
     },
     headerOptions() {
-      if (this.viewList)
-        return utilsList.listOptions(this.viewList, this.$store, this.getListTasks, this.l)
+      // if (this.viewList)
+      //   return utilsList.listOptions(this.viewList, this.$store, this.getListTasks, this.l)
       return []
     },
     headingEditOptions() {
