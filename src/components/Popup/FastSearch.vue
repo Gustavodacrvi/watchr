@@ -124,7 +124,7 @@ export default {
           name: l.name,
           icon: 'tasks',
           id: l.id,
-          color: 'var(--purple)',
+          color: 'var(--primary)',
           callback: () => go('/user?list=' + l.name)
         })
      for (const t of ts)

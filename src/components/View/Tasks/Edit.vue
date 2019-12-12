@@ -29,13 +29,13 @@
           <Tag v-if="task.list"
             icon="tasks"
             :value="task.list"
-            color='var(--red)'
+            color='var(--primary)'
             @click="task.list = ''"
           />
           <Tag v-if="task.list && task.heading"
             icon="heading"
             :value="task.heading"
-            color='var(--red)'
+            color='var(--primary)'
             @click="task.heading = ''"
           />
         </div>

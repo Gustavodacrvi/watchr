@@ -54,7 +54,7 @@
               <div class="task-name-wrapper">
                 <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
                 <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
-                <Icon v-else-if="isOverdue" class="name-icon" icon="star" color="var(--red)"/>
+                <Icon v-else-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
                 <transition name="name-t">
                   <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
                       <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
@@ -611,6 +611,10 @@ export default {
     isToday() {
       if (this.viewName === 'Today') return false
       return this.isTaskInView(this.task, 'Today')
+    },
+    isTaskOverdue() {
+      if (this.viewName === 'Today') return false
+      return this.isTaskInView(this.task, 'Overdue')
     },
     isTomorrow() {
       if (this.viewName === 'Tomorrow' || this.viewName === 'Today') return false

@@ -3,7 +3,7 @@
     <Renderer
       type="list"
       icon="tasks"
-      iconColor='var(--red)'
+      iconColor='var(--primary)'
       :disableSelection='true'
       :enableSort="true"
       :list="rootLists"
@@ -38,7 +38,7 @@
         <Renderer
           type="list"
           icon="tasks"
-          iconColor='var(--red)'
+          iconColor='var(--primary)'
           :folder='f.id'
           :disableSelection='true'
           :enableSort="true"
@@ -195,7 +195,7 @@ export default {
         const isOverdue = list.deadline && mom().isAfter(mom(list.deadline, 'Y-M-D'), 'day')
         return {
           name: isOverdue ? this.l['overdue'] : `${mom(list.deadline, 'Y-M-D').diff(mom(), 'd') + 1} ${this.l['days left']}`,
-          color: isOverdue ? 'var(--red)' : ''
+          color: isOverdue ? 'var(--primary)' : ''
         }
       } else if (list.calendar && list.calendar.type !== 'someday') {
         const { nextCalEvent } = utils.getCalendarObjectData(list.calendar, mom())

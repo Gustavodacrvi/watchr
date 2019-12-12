@@ -55,7 +55,7 @@ import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
 import PaginationVue from './Pagination.vue'
 import TaskHandler from './TaskHandler.vue'
 
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapState, mapActions } from 'vuex'
 
 import utilsTask from '@/utils/task'
 import utils from '@/utils/index.js'
@@ -86,6 +86,7 @@ export default {
       showSomeday: false,
 
       rootNonFiltered: [],
+      computedHeaderOptions: [],
 
       inclusiveTags: [],
       exclusiveTags: [],
@@ -96,6 +97,10 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['getOptions']),
+    async getComputedOptions() {
+      this.computedHeaderOptions = await this.getOptions(this.headerOptions)
+    },
     selectPagination(newPage) {
       this.pagination = newPage
     },
@@ -387,12 +392,12 @@ export default {
           },
         ]
         if (this.showCompleted) opt[4].name = l['Hide completed']
-        if (this.headerOptions && this.headerOptions.length > 0) {
+        if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
           opt.unshift({
             type: 'hr',
             name: 'division',
           })
-          opt = [...this.headerOptions, ...opt]
+          opt = [...this.computedHeaderOptions, ...opt]
         }
         return opt
       } else {
@@ -560,10 +565,14 @@ export default {
       this.showingTagSelection = false
       this.showingListSelection = false
       this.showingFolderSelection = false
+      this.getComputedOptions()
     },
     viewNameValue() {
       this.showSomeday = false
     },
+    headerOptions() {
+      this.getComputedOptions()
+    }
   }
 }
 

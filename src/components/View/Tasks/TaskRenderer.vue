@@ -843,6 +843,9 @@ export default {
   margin-top: 16px;
 }
 
+.TaskRenderer.mobile {
+  margin-top: 0;
+}
 
 .illus-trans-enter, .illus-trans-leave-to {
   opacity: 0;

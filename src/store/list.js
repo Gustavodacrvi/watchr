@@ -80,7 +80,7 @@ export default {
       },
     }),
     getFavoriteLists(state) {
-      return state.lists.filter(el => el.favorite).map(f => ({...f, icon: 'tasks', color: 'var(--red)', type: 'list'}))
+      return state.lists.filter(el => el.favorite).map(f => ({...f, icon: 'tasks', color: 'var(--primary)', type: 'list'}))
     },
   },
   actions: {

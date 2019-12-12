@@ -310,7 +310,7 @@ export default {
           Completed: 'var(--olive)',
         }
         const color = obj[this.viewName]
-        if (!color) return 'var(--red)'
+        if (!color) return 'var(--primary)'
         return color
       }
       if (this.viewType === 'search') return ''
