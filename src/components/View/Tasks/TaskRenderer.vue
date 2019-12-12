@@ -160,6 +160,7 @@ export default {
       justScrolled: false,
       movingHeading: false,
       addedTask: null,
+      waitingUpdateTimeout: null,
 
       hasEdit: null,
       focusToggle: false,
@@ -358,7 +359,12 @@ export default {
           const isTaskRender = t.to.classList.contains('task-renderer-root')
           const isComingFromAnotherTaskRenderer = t.to !== this.draggableRoot
           if (isTaskRender && isComingFromAnotherTaskRenderer) {
-            const vue = t.related.__vue__.$parent.$parent
+            let vue = t.related.__vue__
+            while (true) {
+              if (vue.$el.classList && vue.$el.classList.contains('TaskRenderer'))
+                break
+              else vue = vue.$parent
+            }
 
             vue.sourceVueInstance = this
           } else {
@@ -530,13 +536,11 @@ export default {
         }
 
         this.addedTask = t.id
-        setTimeout(() => {
-          this.addTask({
-            task: t, ids: this.getIds(true),
-            index, newTaskRef,
-            header: this.header,
-          })
-        }, 10)
+        this.addTask({
+          task: t, ids: this.getIds(true),
+          index, newTaskRef,
+          header: this.header,
+        })
       }
     },
     getTaskRendererPosition() {
@@ -634,6 +638,20 @@ export default {
 
       this.lazyTasks = tasks
     },
+    updateTasks(tasks) {
+      setTimeout(() => {
+        if (!this.changedViewName) {
+          this.clearLazySettimeout()
+
+
+          this.updateLazyTasks([...tasks], this.addedTask, this.hasEdit)
+
+          setTimeout(() => {
+            this.focusToggle = !this.focusToggle
+          })
+        }
+      })
+    },
   },
   computed: {
     ...mapState({
@@ -690,18 +708,12 @@ export default {
   },
   watch: {
     tasks(tasks) {
-      setTimeout(() => {
-        if (!this.changedViewName) {
-          this.clearLazySettimeout()
-
-
-          this.updateLazyTasks(tasks.slice(), this.addedTask, this.hasEdit)
-
-          setTimeout(() => {
-            this.focusToggle = !this.focusToggle
-          })
-        }
-      })
+      if (this.waitingUpdateTimeout)
+        clearTimeout(this.waitingUpdateTimeout)
+      
+      this.waitingUpdateTimeout = setTimeout(() => {
+        this.updateTasks(tasks)
+      }, 150)
     },
     headings(newArr) {
       if (this.isRoot) {

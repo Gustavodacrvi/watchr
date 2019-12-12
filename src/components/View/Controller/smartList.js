@@ -74,6 +74,8 @@ export default {
       }
       if (this.viewName === 'Inbox')
         return this.isTaskInbox
+      if (this.viewName === 'Upcoming')
+        return task => task.calendar
       return this.isTaskCompleted
     },
     rootFilter() {
@@ -88,7 +90,9 @@ export default {
       return () => false
     },
     configFilterOptions() {
-      return pipe => pipe !== 'pipeCompleted'
+      if (this.viewName === 'Completed')
+        return pipe => pipe !== 'pipeCompleted' && pipe !== 'pipeSomeday'
+      return null
     },
     tasksOrder() {
       let o = this.viewOrders[this.viewName]

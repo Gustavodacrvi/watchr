@@ -20,8 +20,8 @@ export default {
         const index = state[arrName].findIndex(el => el.id === change.doc.id)
         state[arrName].splice(index, 1)
       } else {
-        const doc = state[arrName].find(el => el.id === change.doc.id)
-        Object.assign(doc, {...change.doc.data(), id: change.doc.id})
+        const index = state[arrName].findIndex(el => el.id === change.doc.id)
+        state[arrName].splice(index, 1, {...change.doc.data(), id: change.doc.id})
       }
     })
   },

@@ -116,37 +116,6 @@ export default {
                 }
               },
               {
-                name: this.l['Sort tasks'],
-                icon: 'sort',
-                callback: () => [
-                  {
-                    name: this.l['Sort by name'],
-                    icon: 'sort-name',
-                    callback: () => {
-                      const ts = tasks.slice()
-                      tasks.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
-                      saveOrder(tasks.map(el => el.id))
-                    },
-                  },
-                  {
-                    name: this.l['Sort by priority'],
-                    icon: 'priority',
-                    callback: () => {
-                      const ts = utilsTask.sortTasksByPriority(tasks.slice())
-                      saveOrder(ts.map(el => el.id))
-                    },
-                  },
-                  {
-                    name: this.l['Sort by creation date'],
-                    icon: 'calendar',
-                    callback: () => {
-                      const ts = utilsTask.sortTasksByTaskDate(tasks.slice())
-                      saveOrder(ts.map(el => el.id))
-                    },
-                  },
-                ]
-              },
-              {
                 name: this.l['Change date'],
                 icon: 'calendar',
                 callback: () => ({
@@ -210,37 +179,6 @@ export default {
             sort,
             filter: filterFunction,
             options: tasks => [
-              {
-                name: this.l['Sort tasks'],
-                icon: 'sort',
-                callback: () => [
-                  {
-                    name: this.l['Sort by name'],
-                    icon: 'sort-name',
-                    callback: () => {
-                      const ts = tasks.slice()
-                      ts.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
-                      saveOrder(ts.map(el => el.id))
-                    },
-                  },
-                  {
-                    name: this.l['Sort by priority'],
-                    icon: 'priority',
-                    callback: () => {
-                      const ts = utilsTask.sortTasksByPriority(tasks.slice())
-                      saveOrder(ts.map(el => el.id))
-                    },
-                  },
-                  {
-                    name: this.l['Sort by creation date'],
-                    icon: 'priority',
-                    callback: () => {
-                      const ts = utilsTask.sortTasksByTaskDate(tasks.slice())
-                      saveOrder(ts.map(el => el.id))
-                    },
-                  },
-                ]
-              },
               {
                 name: this.l['Change date'],
                 icon: 'calendar',
@@ -368,7 +306,7 @@ export default {
     upcomingHeadingsOptions() {
       const arr = []
       const tod = mom()
-      const calObj = (date) => ({
+      const calObj = date => ({
         defer: null,
         due: null,
 
@@ -410,11 +348,9 @@ export default {
               ...obj.task
             })
           },
-          onSortableAdd: evt => {
-            const items = evt.items
-            if (items.length === 0) items.push(evt.item)
+          onSortableAdd: (evt, taskIds, type, ids) => {
             this.$store.dispatch('task/saveTasksById', {
-              ids: items.map(el => el.dataset.id),
+              ids: taskIds,
               task: {calendar: calObj(date)},
             })
           },
@@ -427,6 +363,7 @@ export default {
       // this month
       arr.push({
         name: this.l['This month'],
+        disableSortableMount: true,
         calendarStr: true,
         sort,
         filter: thisMonthPipe,
@@ -439,6 +376,7 @@ export default {
       )
       arr.push({
         name: this.l['This year'],
+        disableSortableMount: true,
         calendarStr: true,
         sort,
         filter: thisYearPipe,
@@ -447,6 +385,7 @@ export default {
       // next years
       arr.push({
         name: this.l['Next years'],
+        disableSortableMount: true,
         calendarStr: true,
         sort,
         filter: this.isTaskInOneYear,
@@ -454,6 +393,7 @@ export default {
       })
       // periodic tasks
       arr.push({
+        disableSortableMount: true,
         name: this.l['Periodic tasks'],
         calendarStr: true,
         sort,
@@ -462,6 +402,7 @@ export default {
       })
       // weekly tasks
       arr.push({
+        disableSortableMount: true,
         name: this.l['Weekly tasks'],
         calendarStr: true,
         sort,
@@ -501,7 +442,7 @@ export default {
               name: this.l['Uncompleted tasks'],
               icon: 'circle',
               important: true,
-              callback: () => dispatch('task/uncompleteTasks',),
+              callback: () => dispatch('task/uncompleteTasks', tasks),
             },
             {
               name: this.l['Delete tasks'],

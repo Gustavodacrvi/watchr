@@ -28,7 +28,7 @@
         v-bind="$props"
 
         :headings="getHeadings"
-        :showCompleted='passCompletedTasks'
+        :showCompleted='showCompleted'
         :showSomeday='passSomedayTasks'
         :pipeFilterOptions='pipeFilterOptions'
         :taskIconDropOptions='taskIconDropOptions'
@@ -166,17 +166,16 @@ export default {
       this.updateIds(tasks.map(el => el.id))
     },
     sortByDate() {
-      let tasks = this.rootNonFiltered.slice()
-      tasks = utilsTask.sortTasksByTaskDate(tasks)
+      const tasks = utilsTask.sortTasksByTaskDate(this.rootNonFiltered.slice())
       this.updateIds(tasks.map(el => el.id))
     },
 
     toggleCompleted() {
       this.showCompleted = !this.showCompleted
     },
-    saveDates(calendar) {
+    saveDates(calendar, ids) {
       this.$store.dispatch('task/saveTasksById', {
-        ids: this.selectedTasks,
+        ids,
         task: {calendar},
       })
     },
@@ -387,7 +386,7 @@ export default {
             callback: () => this.toggleCompleted()
           },
         ]
-        if (this.showCompleted) opt[3].name = l['Hide completed']
+        if (this.showCompleted) opt[4].name = l['Hide completed']
         if (this.headerOptions && this.headerOptions.length > 0) {
           opt.unshift({
             type: 'hr',
@@ -401,12 +400,12 @@ export default {
           {
             name: l['No date'],
             icon: 'bloqued',
-            callback: () => this.saveDates(null)
+            callback: () => this.saveDates(null, ids)
           },
           {
             name: l['Someday'],
             icon: 'archive',
-            callback: () => this.saveDates({type: 'someday'})
+            callback: () => this.saveDates({type: 'someday'}, ids)
           },
           {
             name: l['More dates'],
@@ -416,14 +415,14 @@ export default {
               icon: 'calendar',
               callback: () => {return {
                 comp: 'CalendarPicker',
-                content: {callback: this.saveDates}}},
+                content: {callback: date => this.saveDates(date, ids)}}},
             },
             {
               name: l['Repeat weekly'],
               icon: 'repeat',
               callback: () => ({
                 comp: 'WeeklyPicker',
-                content: {callback: this.saveDates},
+                content: {callback: date => this.saveDates(date, ids)},
               }),
             },
             {
@@ -431,7 +430,7 @@ export default {
               icon: 'repeat',
               callback: () => ({
                 comp: 'PeriodicPicker',
-                content: {callback: this.saveDates},
+                content: {callback: data => this.saveDates(date, ids)},
               }),
             }],
           },
@@ -528,9 +527,6 @@ export default {
           exclusive: this.getExclusiveFolderId,
         },
       }
-    },
-    passCompletedTasks() {
-      return this.showCompleted || this.viewName === 'Someday'
     },
     getInclusiveTagIds() {
       return this.$store.getters['tag/getTagsByName'](this.inclusiveTags).map(el => el.id)

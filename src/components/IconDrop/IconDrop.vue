@@ -3,7 +3,6 @@
     class="IconDrop"
     :class="{root, left: root}"
     :id='id'
-    @click.stop
     @pointerup.stop
     @mouseup.stop
     @touchend.stop
@@ -109,9 +108,22 @@ export default {
         this.opt = opt
       }
     },
-    hide() {
-      this.showing = false
-      setTimeout(() => this.opt = this.options, 200)
+    hide(evt) {
+      let hide = true
+      if (evt) {
+        let found = false
+        for (const node of evt.path)
+          if (node.classList && node.classList.contains('IconDrop')) {
+            found = true
+            break
+          }
+        hide = !found
+      }
+
+      if (hide) {
+        this.showing = false
+        setTimeout(() => this.opt = this.options, 150)
+      }
     },
     toggleIconDrop() {
       if (this.isDesktop) {

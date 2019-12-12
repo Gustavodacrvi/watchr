@@ -676,8 +676,7 @@ export default {
       const batch = fire.batch()
 
       for (const id of ids) {
-        const ref = taskRef(id)
-        batch.update(ref, {
+        batch.update(taskRef(id), {
           ...task,
         })
       }

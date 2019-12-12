@@ -19,7 +19,7 @@
       @add-heading="addHeading"
     />
     <transition name="fade-t">
-      <div v-if="hasAtLeastOneSomeday && !showSomeday" @click="allowSomeday">
+      <div v-if="showSomedayButton" @click="allowSomeday">
         <AppButton type="dark" :value="l['Show someday tasks...']"/>
       </div>
     </transition>
@@ -113,32 +113,82 @@ export default {
     },
 
     sortHeadings() {
-      return this.sortHeadingsFunction(this.laserHeadingsTasks)
+      return this.sortHeadingsFunction(this.laserHeadings)
     },
-    laserHeadingsTasks() {
+    laserHeadings() {
       if (!this.headings) return []
       return this.headings.map(head => {
         const nonFiltered = head.sort(this.mainTasks.filter(task => head.filter(task)))
         const tasks = nonFiltered.filter(this.filterOptionsPipe)
 
+        let updateIds = ids =>
+            head.updateIds(
+              this.getFixedIdsFromNonFilteredAndFiltered(ids,
+                nonFiltered.map(el => el.id),
+              )
+            )
+        const unshiftSortingOptions = options => {
+          const opt = [
+            {
+              name: this.l['Sort tasks'],
+              icon: 'sort',
+              callback: () => [
+                {
+                  name: this.l['Sort by name'],
+                  icon: 'sort-name',
+                  callback: () => {
+                    const ts = nonFiltered.slice()
+                    tasks.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+                    updateIds(tasks.map(el => el.id))
+                  },
+                },
+                {
+                  name: this.l['Sort by priority'],
+                  icon: 'priority',
+                  callback: () => {
+                    const ts = utilsTask.sortTasksByPriority(tasks.slice())
+                    updateIds(ts.map(el => el.id))
+                  },
+                },
+                {
+                  name: this.l['Sort by creation date'],
+                  icon: 'calendar',
+                  callback: () => {
+                    const ts = utilsTask.sortTasksByTaskDate(tasks.slice())
+                    updateIds(ts.map(el => el.id))
+                  },
+                },
+              ]
+            },
+          ]
+          if (options && options.length > 0)
+            opt.push({
+              type: 'hr',
+              name: 'division',
+            })
+          return [...opt, ...options]
+        }
+        
+        if (!head.updateIds)
+          updateIds = undefined
+
+        let options = head.options ? head.options(nonFiltered) : []
+
+        if (updateIds)
+          options = unshiftSortingOptions(options)
+
         return {
           ...head,
           filter: undefined,
           tasks,
+          options,
+          updateIds,
           filterFunction: pipeBooleanFilters(
             head.filter,
             this.mainFilterFunction,
           ),
           progress: head.progress ? head.progress() : undefined,
           onEdit: head.onEdit ? head.onEdit(nonFiltered) : () => {},
-          options: head.options ? head.options(nonFiltered) : () => {},
-          updateIds: ids => {
-            head.updateIds(
-              this.getFixedIdsFromNonFilteredAndFiltered(ids,
-                nonFiltered.map(el => el.id),
-              )
-            )
-          },
         }
       })
     },
@@ -179,20 +229,35 @@ export default {
       }
     },
 
-    filterOptionsPipe() {
-      let pipes = [
+    showSomedayButton() {
+      return this.hasAtLeastOneSomeday &&
+          !this.showSomeday &&
+          this.filteredFilterOptionsByConfig.includes('pipeSomeday')
+    },
+    filterOptionsPipes() {
+      return [
         'pipeFilterOptions', 'pipeSomeday', 'pipeCompleted',
       ]
+    },
+    filteredFilterOptionsByConfig() {
+      let pipes = this.filterOptionsPipes
 
       if (this.configFilterOptions)
         pipes = pipes.filter(this.configFilterOptions)
 
-      
-      return pipeBooleanFilters(...pipes.map(p => this[p]))
+      return pipes
+    },
+    filterOptionsPipe() {
+      return pipeBooleanFilters(
+        ...this.filteredFilterOptionsByConfig.map(p => this[p])
+      )
     },
     hasAtLeastOneSomeday() {
-      for (const task of this.mainTasks)
+      for (const task of this.sortLaseredTasks)
         if (this.isTaskSomeday(task))
+          return true
+      for (const head of this.laserHeadings)
+        if (head.tasks.some(task => this.isTaskSomeday(task)))
           return true
       return false
     },
@@ -201,7 +266,7 @@ export default {
       return task => !this.isTaskSomeday(task)
     },
     pipeCompleted() {
-      if (this.showCompleted) () => true
+      if (this.showCompleted) return () => true
       return task => !this.isTaskCompleted(task)
     },
   },

@@ -25,7 +25,7 @@
         :options="languages"
         @handle-toggle='v => isLanguagesIconDropOpen = v'
       />
-      <VersionApp/>
+      <VersionApp style="position: relative;z-index: 2"/>
       <ButtonApp v-if="user && user.isAnonymous" class="no-back" :value="l['Sign in']" @click="upgradeUser"/>
     </div>
   </div>
@@ -110,6 +110,8 @@ export default {
 .drop {
   margin-left: 14px;
   transform: translateY(6px);
+  position: relative;
+  z-index: 3;
 }
 
 .link {
