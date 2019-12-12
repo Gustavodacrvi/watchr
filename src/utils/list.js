@@ -103,10 +103,15 @@ export default {
             callback: () => {return {
               comp: 'CalendarPicker',
               content: {callback: date => {
-              if (date.type && date.type !== 'specific' && date.type !== 'someday') {
+              if (date && date.type && date.type !== 'specific' && date.type !== 'someday') {
                 dispatch('list/saveList', {
                   id: listId, calendar: date,
-                })}
+                })
+              }
+              else if (date === null)
+                dispatch('list/saveList', {
+                  id: listId, calendar: null,
+                })
               }
             }}},
           },
@@ -116,10 +121,15 @@ export default {
             callback: () => {return {
               comp: 'CalendarPicker',
               content: {callback: date => {
-              if (date.type === 'specific')
+              if (date && date.type === 'specific')
                 dispatch('list/saveList', {
                   id: listId, deferDate: date.specific,
-                })}
+                })
+              else if (date === null)
+                dispatch('list/saveList', {
+                  id: listId, deferDate: null,
+                })
+              }
             }}},
           },
           {
@@ -165,10 +175,15 @@ export default {
             callback: () => {return {
               comp: 'CalendarPicker',
               content: {callback: date => {
-              if (date.type === 'specific')
+              if (date && date.type === 'specific')
                 dispatch('list/saveList', {
                   id: listId, deadline: date.specific,
-                })}
+                })
+              else if (date === null)
+                dispatch('list/saveList', {
+                  id: listId, deadline: null,
+                })
+              }
             }}},
           },
         ]
