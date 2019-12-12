@@ -49,7 +49,7 @@ import IconDrop from '@/components/IconDrop/IconDrop.vue'
 
 import utils from "@/utils"
 import folderUtils from "@/utils/folder"
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapState, mapActions } from 'vuex'
 
 export default {
   props: ['name', 'id', 'defaultShowing', 'movingFolder', 'folder'],
@@ -71,6 +71,7 @@ export default {
     this.bindOptions()
   },
   methods: {
+    ...mapActions(['getOptions']),
     apply() {
       this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
         elIds: [this.id],
@@ -78,10 +79,10 @@ export default {
         type: 'folder',
       })
     },
-    bindOptions() {
+    async bindOptions() {
       if (this.isDesktop) {
         const el = this.$el.getElementsByClassName('header')[0]
-        utils.bindOptionsToEventListener(el, this.options, this)
+        utils.bindOptionsToEventListener(el, await this.getOptions(this.options), this)
       }
     },
     touchStart(e) {

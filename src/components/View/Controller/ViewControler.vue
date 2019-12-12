@@ -109,13 +109,6 @@ export default {
             filter: filterFunction,
             options: tasks => [
               {
-                name: 'Edit list',
-                icon: 'pen',
-                callback: (j, vm, l) => {
-                  vm.$emit('edit')
-                }
-              },
-              {
                 name: this.l['Change date'],
                 icon: 'calendar',
                 callback: () => ({

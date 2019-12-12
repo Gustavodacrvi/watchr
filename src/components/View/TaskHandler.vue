@@ -34,6 +34,8 @@ import AppButton from '../Auth/Button.vue'
 import { pipeBooleanFilters } from '@/utils/memo'
 import { mapGetters, mapState } from 'vuex'
 
+import utilsTask from '@/utils/task'
+
 export default {
   props: ['mainFilter', 'rootFilter', 'tasksOrder', 'headings', 'headingsOrder',
 

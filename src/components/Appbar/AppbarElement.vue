@@ -22,7 +22,7 @@
       </div>
     </div>
     <a class='scroll-link'
-      href="#view-header"
+      :href="isDesktop ? '' : '#view-header'"
       @click.prevent
       @contextmenu.prevent
       v-smooth-scroll='{duration: 500, offset: -500}'

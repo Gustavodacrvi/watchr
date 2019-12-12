@@ -14,13 +14,6 @@ export default {
 
     return [
       {
-        name: l['Edit heading'],
-        icon: 'pen',
-        callback: (j, vm, l) => {
-          vm.$emit('edit')
-        }
-      },
-      {
         name: l['Add notes'],
         icon: 'note',
         callback: () => {

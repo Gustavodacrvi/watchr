@@ -1,6 +1,6 @@
 
 export default {
-  getFolderOptions: (folder, toggle, onToggle) => ({dispatch, getters}) => {
+  getFolderOptions: (folder, toggle, onToggle) => ({dispatch, getters, lists, tasks}) => {
     // toggle is a boolean
     const l = getters['l']
     const obj = [
@@ -48,8 +48,7 @@ export default {
         important: true,
         callback: () => dispatch('folder/deleteFolderById', {
           id: folder.id,
-          lists: store.state.list.lists,
-          tasks: store.state.task.tasks,
+          lists, tasks,
         })
       },
     ]
