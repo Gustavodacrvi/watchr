@@ -258,11 +258,11 @@ export default {
       )
     },
     hasAtLeastOneSomeday() {
-      for (const task of this.sortLaseredTasks)
+      for (const task of this.rootNonFiltered)
         if (this.isTaskSomeday(task))
           return true
       for (const head of this.laserHeadings)
-        if (head.tasks.some(task => this.isTaskSomeday(task)))
+        if (head.nonFiltered.some(task => this.isTaskSomeday(task)))
           return true
       return false
     },
