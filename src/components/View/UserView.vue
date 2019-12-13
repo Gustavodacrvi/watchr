@@ -56,7 +56,7 @@ export default {
     toggleAppbar(isHided) {
       this.appbarHided = isHided
     },
-    updateViewType() {
+    updateViewType(saveRoute) {
       const query = this.$route.query
       const keys = Object.keys(query)
       let viewType = keys[0]
@@ -65,10 +65,15 @@ export default {
       if (name !== 'menu' && (viewType === undefined || value === undefined)) {
         const view = this.getInitialSmartView
         this.$router.replace(`/user?list=${view}`)
-        this.$store.commit('navigate', view)
       }
-      this.value = value
-      this.viewType = viewType
+      if (saveRoute) {
+        this.value = value
+        this.viewType = viewType
+        this.$store.commit('navigate', {
+          viewName: this.value,
+          viewType: this.viewType,
+        })
+      }
     }
   },
   computed: {
@@ -108,8 +113,8 @@ export default {
     },
   },
   watch: {
-    $route() {
-      this.updateViewType()
+    $route(newRoute) {
+      this.updateViewType(this.isDesktop || newRoute.path !== '/menu')
     }
   }
 }
