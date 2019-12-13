@@ -254,7 +254,7 @@ export default {
   align-items: center;
   margin: 14px 0;
   margin-bottom: 10px;
-  height: 30px;
+  height: 40px;
   z-index: 50;
   position: relative;
 }

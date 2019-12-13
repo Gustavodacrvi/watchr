@@ -3,6 +3,7 @@
     class="IconDrop"
     :class="{root, left: root}"
     :id='id'
+    @click.stop
     @pointerup.stop
     @mouseup.stop
     @touchend.stop
@@ -113,7 +114,7 @@ export default {
       if (evt) {
         let found = false
         for (const node of evt.path)
-          if (node.classList && node.classList.contains('IconDrop')) {
+          if (node.classList && (node.classList.contains('IconDrop') || node.classList.contains('MobileIcondrop'))) {
             found = true
             break
           }

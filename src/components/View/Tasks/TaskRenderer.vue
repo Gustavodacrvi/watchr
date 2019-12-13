@@ -286,8 +286,8 @@ export default {
             return false
           }
         },
-        delay: 100,
-        touchStartThreshold: 50,
+        delay: 150,
+        delayOnTouchOnly: true,
         handle: '.task-handle',
 
         onUpdate: (evt) => {
@@ -428,7 +428,7 @@ export default {
           this.headSort = new Sortable(el, {
             disabled: !this.updateHeadingIds,
             group: 'headings',
-            delay: 100,
+            delay: 150,
             delayOnTouchOnly: true,
             handle: '.handle',
       
@@ -800,7 +800,7 @@ export default {
   transition-duration: .6s;
   margin: 14px 0 !important;
   margin-bottom: 10px !important;
-  height: 30px !important;
+  height: 40px !important;
   opacity: 1 !important;
   padding: 0 6px !important;
 }
