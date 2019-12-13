@@ -14,36 +14,13 @@
           @keydown="keydown"
         >
       </div>
-      <span class="option cursor" @click="today">
-        <span class="cont">
-          <Icon class="icon" icon="star"/>
-          <span class="name">{{ l['Today'] }}</span>
-        </span>
-      </span>
-      <span class="option cursor" @click="tomorrow">
-        <span class="cont">
-          <Icon class="icon" icon="sun"/>
-          <span class="name">{{ l['Tomorrow'] }}</span>
-        </span>
-      </span>
-      <span class="option cursor" @click="someday">
-        <span class="cont">
-          <Icon class="icon" icon="archive"/>
-          <span class="name">{{ l['Someday'] }}</span>
-        </span>
-      </span>
-      <span class="option cursor" @click="noDate">
-        <span class="cont">
-          <Icon class="icon" icon="bloqued"/>
-          <span class="name">{{ l['No date'] }}</span>
-        </span>
-      </span>
-      <span v-if="repeat" class="option cursor" @click="$emit('repeat')">
-        <span class="cont">
-          <Icon class="icon" icon="repeat"/>
-          <span class="name">{{ l['Repeat'] }}</span>
-        </span>
-      </span>
+      <div class="fast-options">
+        <Icon class="icon option-icon cursor primary-hover" width="24px" icon="star" @click="today"/>
+        <Icon class="icon option-icon cursor primary-hover" width="24px" icon="sun" @click="tomorrow"/>
+        <Icon class="icon option-icon cursor primary-hover" width="24px" icon="archive" @click="someday"/>
+        <Icon class="icon option-icon cursor primary-hover" width="24px" icon="bloqued" @click="noDate"/>
+        <Icon v-if="repeat" class="icon option-icon cursor primary-hover" width="24px" icon="repeat" @click="$emit('repeat')"/>
+      </div>
       <div class="content">
         <div class="header">
           <h3 class="year">{{ thisYear() }}   {{ thisMonth() }}</h3>
@@ -54,13 +31,13 @@
           </div>
         </div>
         <div class="weeks">
-          <span class="week">S</span>
-          <span class="week">M</span>
-          <span class="week">T</span>
-          <span class="week">W</span>
-          <span class="week">T</span>
-          <span class="week">F</span>
-          <span class="week">S</span>
+          <span class="week">{{ l['S'] }}</span>
+          <span class="week">{{ l['M'] }}</span>
+          <span class="week">{{ l['T'] }}</span>
+          <span class="week">{{ l['W'] }}</span>
+          <span class="week">{{ l['T'] }}</span>
+          <span class="week">{{ l['F'] }}</span>
+          <span class="week">{{ l['S'] }}</span>
         </div>
         <div class="dates">
           <span v-for='i in firstWeekDayRange()' :key='i + 100' class="dark-date"></span>
@@ -255,6 +232,17 @@ export default {
 
 <style scoped>
 
+.fast-options {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  margin-left: 26px;
+}
+
+.option-icon {
+  margin-right: 12px;
+}
+
 .time-comp {
   display: flex;
   flex-direction: column;
@@ -372,27 +360,6 @@ export default {
   transform: translateY(4px);
 }
 
-.option {
-  display: flex;
-  align-items: center;
-  height: 35px;
-  white-space: nowrap;
-  transition-duration: .3s;
-}
-
-.option:hover {
-  color: var(--primary);
-  background-color: rgba(87,160,222,.1);
-}
-
-.cont {
-  height: 100%;
-  display: flex;
-  margin: 0 26px;
-  align-items: center;
-  justify-content: center;
-}
-
 .content {
   margin: 0 26px;
 }
@@ -401,6 +368,7 @@ export default {
   display: flex;
   justify-content: space-around;
   margin: 6px 0;
+  transform: translateX(-3px);
 }
 
 .week {

@@ -269,11 +269,6 @@ export default {
     let str = getDateString()
     const tod = mom()
     if (str) {
-      if (str.includes(l['CalParserPersistentKey']) || str.includes(l['CalParserPerKey'])) obj.persistent = true
-      
-      const keyNextWeek = l['CalParserNextweek']
-      const keyNextWeekend = l['CalParserNextweekend']
-      const keyNextMonth = l['CalParserNextmonth']
       const keySomeday = l['CalParserSomeday']
 
       obj.time = getTime(str)
@@ -281,22 +276,6 @@ export default {
       switch (str) {
         case keySomeday: {
           obj.type = 'someday'
-          return obj
-        }
-        case keyNextWeek: {
-          obj.defer = utilsMoment.getFirstDayOfNextWeekMoment(mom()).format('Y-M-D')
-          obj.due = utilsMoment.getLastDayOfNextWeekMoment(mom()).format('Y-M-D')
-          return obj
-        }
-        case keyNextWeekend: {
-          const sat = utilsMoment.nextWeekDay(mom(), 'Saturday')
-          obj.defer = sat.format('Y-M-D')
-          obj.due = sat.clone().add(1, 'd').format('Y-M-D')
-          return obj
-        }
-        case keyNextMonth: {
-          obj.defer = utilsMoment.getFirstDayOfNextMonth(mom()).format('Y-M-D')
-          obj.due = utilsMoment.getLastDayOfNextMonth(mom()).format('Y-M-D')
           return obj
         }
       }
