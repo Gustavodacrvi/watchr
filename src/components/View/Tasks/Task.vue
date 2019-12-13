@@ -372,6 +372,7 @@ export default {
       isOnControl: state => state.isOnControl,
       selectedEls: state => state.selectedEls,
       selectedTasks: state => state.selectedTasks,
+      userInfo: state => state.userInfo,
     }),
     ...mapGetters({
       isDesktop: 'isDesktop',
@@ -649,7 +650,7 @@ export default {
     calendarStr() {
       const {t,c} = this.getTask
       if ((!c || c.type === 'someday') || (!this.allowCalendarStr && !this.isRoot)) return null
-      const str = utils.parseCalendarObjectToString(c, this.l)
+      const str = utils.parseCalendarObjectToString(c, this.l, this.userInfo)
       if (str === this.viewNameValue) return null
       return str
     },

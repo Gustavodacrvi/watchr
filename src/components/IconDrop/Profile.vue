@@ -16,7 +16,16 @@
         :value="user.email"
         @click="changeEmail"
       />
+
+      
       <h3>{{ l['Options'] }}</h3>
+    </div>
+    <CheckboxApp
+      :name='l["Use 1:00pm format"]'
+      :value='pmFormat'
+      @input="togglepmFormat"
+    />
+    <div class="margin">
       <h4>{{ l['Appnav'] }}</h4>
     </div>
     <CheckboxApp v-for="s in sections" :key="s.name"
@@ -35,6 +44,8 @@
 
 import ButtonVue from '../Auth/Button.vue'
 import CheckboxApp from '../Auth/Checkbox.vue'
+
+import { userRef } from '@/utils/firestore'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -57,12 +68,16 @@ export default {
         }
       ],
       hidedSections: [],
+      pmFormat: true,
     }
   },
   created() {
     this.hidedSections = this.userHidedSections
   },
   methods: {
+    togglepmFormat() {
+      this.pmFormat = !this.pmFormat
+    },
     toggleSection(name) {
       if (this.isHided(name)) {
         const i = this.hidedSections.findIndex(el => el === name)
@@ -98,6 +113,9 @@ export default {
           type: 'error',
         })
       } else {
+        userRef().set({
+          disablePmFormat: !this.pmFormat,
+        }, {merge: true})
         this.$store.dispatch('update', {
           ...this.user,
           hidedSections: this.hidedSections,
@@ -108,6 +126,9 @@ export default {
   computed: {
     ...mapState(['user', 'userInfo']),
     ...mapGetters(['l']),
+    getPmFormat() {
+      return !this.userInfo.disablePmFormat
+    },
     userHidedSections() {
       if (this.userInfo.hidedSections) return this.userInfo.hidedSections.slice()
       return []
@@ -117,6 +138,11 @@ export default {
       return this.l['Add username']
     },
   },
+  watch: {
+    userInfo() {
+      this.pmFormat = this.getPmFormat
+    }
+  }
 }
 
 </script>

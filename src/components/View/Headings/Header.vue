@@ -271,11 +271,11 @@ export default {
     },
   },
   computed: {
-    ...mapState(['selectedTasks']),
+    ...mapState(['selectedTasks', 'userInfo']),
     ...mapGetters(['isDesktop', 'platform', 'l']),
     repeatCalendar() {
       if (!this.headerCalendar) return ''
-      return utils.parseCalendarObjectToString(this.headerCalendar, this.l)
+      return utils.parseCalendarObjectToString(this.headerCalendar, this.l, this.userInfo)
     },
     repeatCalendarNextEvent() {
       if (!this.headerCalendar) return ''

@@ -408,6 +408,7 @@ export default {
       iconDrop: state => state.iconDrop,
       savedTasks: state => state.task.tasks,
       user: state => state.user,
+      userInfo: state => state.userInfo,
     }),
     ...mapGetters({
       l: 'l',
@@ -481,7 +482,7 @@ export default {
     },
     calendarStr() {
       if (this.task.calendar)
-        return utils.parseCalendarObjectToString(this.task.calendar, this.l)
+        return utils.parseCalendarObjectToString(this.task.calendar, this.l, this.userInfo)
       return null
     },
     getTaskName() {
@@ -660,7 +661,7 @@ export default {
       }
       const parseDate = () => {
         if (n.includes(' $')) {
-          const obj = utils.parseInputToCalendarObject(n, this.l)
+          const obj = utils.parseInputToCalendarObject(n, this.l, false, this.userInfo)
           this.task.calendar = obj
         } else if (this.task) {
           this.task.calendar = this.task.calendar

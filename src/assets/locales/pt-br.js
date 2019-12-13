@@ -99,6 +99,7 @@ export default {
   "Defer date": "Data de começo",
   "This user is already on this list.": "Esse usuário já está na lista.",
   "An error occurred while downloading file": "Um erro ocorreu ao baixar o arquivo.",
+  "Use 1:00pm format": "Usar format 1:00pm",
   "An error occurred while editing files.": "Um erro ocorreu ao editar arquivos.",
   "Someday": "Algum dia",
   "CalParserSomeday": "algum dia",

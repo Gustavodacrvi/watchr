@@ -86,6 +86,7 @@ export default {
   "Add file": "Add file",
   "Someday": "Someday",
   "CalParserSomeday": "someday",
+  "Use 1:00pm format": "Use 1:00pm format",
   "An error occurred while downloading file": "An error occurred while downloading file.",
   "An error occurred while editing files.": "An error occurred while editing files.",
   "Show someday tasks...": "Show someday tasks...",
