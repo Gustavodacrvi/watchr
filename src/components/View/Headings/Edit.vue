@@ -30,7 +30,7 @@
 import DropInputVue from '../../Auth/DropInput.vue'
 import ButtonVue from '../../Auth/Button.vue'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   props: ['buttonTxt', 'name', 'names', 'errorToast'],
@@ -119,6 +119,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['iconDrop']),
     ...mapGetters(['l']),
   },
   watch: {

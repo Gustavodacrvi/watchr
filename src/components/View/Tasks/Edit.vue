@@ -5,7 +5,7 @@
     @leave='leave'
   >
     <div class="Edit handle rb TaskEditComp" :class="[{notPopup: !popup}, platform]" :style="editStyle">
-      <div class="fix-back" @click="cancel"></div>
+      <div class="fix-back" @click="remove"></div>
       <div class="edit-wrapper" :class="{show}">
         <div class="tags" :class="{show: atLeastOnSpecialTag}">
           <Tag v-if="calendarStr"
@@ -256,7 +256,9 @@ export default {
           found = true
           break
         }
-      if (!found) this.cancel()
+      if (!found && !this.iconDrop && !this.popup) {
+        this.cancel()
+      }
     },
     addChecklist() {
       this.toggleChecklist = !this.toggleChecklist
@@ -388,6 +390,7 @@ export default {
   },
   computed: {
     ...mapState({
+      iconDrop: state => state.iconDrop,
       savedTasks: state => state.task.tasks,
       user: state => state.user,
     }),
