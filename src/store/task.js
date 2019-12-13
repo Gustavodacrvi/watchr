@@ -158,7 +158,6 @@ export default {
             return false
           }
           let isCompleted = calcTask()
-          // console.log(isCompleted, task, moment, compareDate)
           if (compareDate) {
             if (!task.completeDate) return false
             const taskCompleteDate = mom(task.completeDate, 'Y-M-D')
@@ -174,6 +173,26 @@ export default {
             calendar: task.calendar,
           }
           return JSON.stringify({i, a: [args[1], args[2]]})
+        },
+      },
+      isTaskWeekly: {
+        getter({}, task) {
+          return task.calendar && task.calendar.type === 'weekly'
+        },
+        cache(args) {
+          return JSON.stringify({
+            t: args[0].calendar
+          })
+        },
+      },
+      isTaskPeriodic: {
+        getter({}, task) {
+          return task.calendar && task.calendar.type === 'periodic'
+        },
+        cache(args) {
+          return JSON.stringify({
+            t: args[0].calendar
+          })
         },
       },
       hasTaskBeenCompletedOnDate: {
@@ -623,7 +642,7 @@ export default {
       for (const t of tasks) {
         let calendar = t.calendar
         if (calendar && calendar.type !== 'someday') {
-          const {nextEventAfterCompletion} = utilsTask.taskData(t, mom())
+          const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(calendar)
           calendar.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
           if (calendar.times) calendar.times -= 1
           if (calendar.times === 0) calendar.times = null

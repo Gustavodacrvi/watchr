@@ -230,6 +230,8 @@ export default {
       hasTaskBeenCompletedOnDate: 'task/hasTaskBeenCompletedOnDate',
       isTaskShowingOnDate: 'task/isTaskShowingOnDate',
       isTaskInOneMonth: 'task/isTaskInOneMonth',
+      isTaskPeriodic: 'task/isTaskPeriodic',
+      isTaskWeekly: 'task/isTaskWeekly',
       isTaskInOneYear: 'task/isTaskInOneYear',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskInView: 'task/isTaskInView',
@@ -423,7 +425,11 @@ export default {
       })
 
       for (const date of dates) {
-        const filterFunction = task => this.hasTaskBeenCompletedOnDate(task, date)
+        const filterFunction = pipeBooleanFilters(
+          task => this.hasTaskBeenCompletedOnDate(task, date),
+          task => !this.isTaskPeriodic(task),
+          task => !this.isTaskWeekly(task),
+        )
 
         const dispatch = this.$store.dispatch
         arr.push({

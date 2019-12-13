@@ -89,17 +89,14 @@ export default {
     return edit
   },
   getNextEventAfterCompletionDate(c) {
-    if (c.lastCompleteDate) {
-      const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
-      if (lastComplete.isValid()) {
-        if (c.type === 'periodic') {
-          return lastComplete.add(c.periodic, 'day')
-        }
-        else {
-          return this.nextWeekDay(lastComplete, c.weekly)
-        }
-      }
-      return mom(c.editDate, 'Y-M-D')
+    let usedDate = c.lastCompleteDate || c.editDate
+
+    const lastComplete = mom(usedDate, 'Y-M-D')
+    if (lastComplete.isValid()) {
+      if (c.type === 'periodic')
+        return lastComplete.add(c.periodic, 'day')
+      else
+        return this.nextWeekDay(lastComplete, c.weekly)
     }
     return mom(c.editDate, 'Y-M-D')
   },
