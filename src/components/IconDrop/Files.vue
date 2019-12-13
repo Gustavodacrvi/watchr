@@ -78,6 +78,13 @@ export default {
       this.saveFiles(this.getFilesToRemove, this.addedFiles, this.content.id, this.content.storageFolder).then(res => {
         this.content.callback(files)
         this.$emit('close')
+      }).catch(() => {
+        this.$emit('close')
+        this.$store.commit('pushToast', {
+          name: this.l['An error occurred while editing files.'],
+          seconds: 4,
+          type: 'error',
+        })
       })
     },
     addCompFile() {

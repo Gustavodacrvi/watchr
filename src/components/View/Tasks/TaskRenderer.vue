@@ -286,8 +286,7 @@ export default {
             return false
           }
         },
-        delay: 150,
-        delayOnTouchOnly: true,
+        delay: 100,
         handle: '.task-handle',
 
         onUpdate: (evt) => {

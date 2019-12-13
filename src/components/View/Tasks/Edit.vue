@@ -370,7 +370,22 @@ export default {
           calendar,
           files: this.task.files,
           handleFiles: this.isEditingFiles ? taskId => {
-            return this.saveFiles(this.getFilesToRemove, this.addedFiles, taskId, 'tasks')
+            return new Promise((solve, reject) => {
+              this.saveFiles(this.getFilesToRemove, this.addedFiles, taskId, 'tasks')
+              .then(() => {
+                this.files = []
+                this.addedFiles = []
+                solve()
+              })
+              .catch(() => {
+                this.$store.commit('pushToast', {
+                  name: this.l['An error occurred while editing files.'],
+                  seconds: 4,
+                  type: 'error',
+                })
+                reject()
+              })
+            })
           } : null
         })
         t.checklist = []

@@ -536,59 +536,65 @@ export default {
           ],
         },
         {
-          name: l['Repeat task'],
-          icon: 'repeat',
+          name: l['More options'],
+          icon: 'settings-h',
           callback: () => [
             {
-              name: l['Repeat weekly'],
+              name: l['Repeat task'],
               icon: 'repeat',
-              callback: () => ({
-                comp: 'WeeklyPicker',
-                content: {callback: this.saveCalendarDate},
-              }),
+              callback: () => [
+                {
+                  name: l['Repeat weekly'],
+                  icon: 'repeat',
+                  callback: () => ({
+                    comp: 'WeeklyPicker',
+                    content: {callback: this.saveCalendarDate},
+                  }),
+                },
+                {
+                  name: l['Repeat periodically'],
+                  icon: 'repeat',
+                  callback: () => ({
+                    comp: 'PeriodicPicker',
+                    content: {callback: this.saveCalendarDate},
+                  }),
+                },
+              ],
             },
             {
-              name: l['Repeat periodically'],
-              icon: 'repeat',
-              callback: () => ({
-                comp: 'PeriodicPicker',
-                content: {callback: this.saveCalendarDate},
-              }),
+              name: l['Copy task'],
+              icon: 'copy',
+              callback: () => dispatch('task/copyTask', this.task)
             },
-          ],
-        },
-        {
-          name: l['Copy task'],
-          icon: 'copy',
-          callback: () => dispatch('task/copyTask', this.task)
-        },
-        {
-          name: l['Lists'],
-          icon: 'tasks',
-          callback: () => [
             {
-              name: l['Move to list'],
+              name: l['Lists'],
               icon: 'tasks',
-              callback: () => this.listOptions
+              callback: () => [
+                {
+                  name: l['Move to list'],
+                  icon: 'tasks',
+                  callback: () => this.listOptions
+                },
+                {
+                  name: l['Convert to list'],
+                  icon: 'tasks',
+                  callback: () => dispatch('task/convertToList', {task: this.task, savedLists: this.savedLists})
+                },
+              ]
             },
             {
-              name: l['Convert to list'],
-              icon: 'tasks',
-              callback: () => dispatch('task/convertToList', {task: this.task, savedLists: this.savedLists})
+              name: l['Move to folder'],
+              icon: 'folder',
+              callback: () => this.folderOptions
             },
+            {
+              name: l['Delete task'],
+              icon: 'trash',
+              important: true,
+              callback: () => dispatch('task/deleteTasks', [this.task.id])
+            }
           ]
         },
-        {
-          name: l['Move to folder'],
-          icon: 'folder',
-          callback: () => this.folderOptions
-        },
-        {
-          name: l['Delete task'],
-          icon: 'trash',
-          important: true,
-          callback: () => dispatch('task/deleteTasks', [this.task.id])
-        }
       ]
       if (c && c.persistent && (c.type === "periodic" || c.type === "periodic"))
         arr.splice(3, 0, {

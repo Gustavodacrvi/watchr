@@ -421,99 +421,120 @@ export default {
             callback: () => this.saveDates(null, ids)
           },
           {
-            name: l['Someday'],
-            icon: 'archive',
-            callback: () => this.saveDates({type: 'someday'}, ids)
-          },
-          {
-            name: l['More dates'],
-            icon: 'calendar',
-            callback: () => [{
-              name: l['Specific day'],
-              icon: 'calendar',
-              callback: () => {return {
-                comp: 'CalendarPicker',
-                content: {callback: date => this.saveDates(date, ids)}}},
-            },
-            {
-              name: l['Repeat weekly'],
-              icon: 'repeat',
-              callback: () => ({
-                comp: 'WeeklyPicker',
-                content: {callback: date => this.saveDates(date, ids)},
-              }),
-            },
-            {
-              name: l['Repeat periodically'],
-              icon: 'repeat',
-              callback: () => ({
-                comp: 'PeriodicPicker',
-                content: {callback: data => this.saveDates(date, ids)},
-              }),
-            }],
-          },
-          {
-            type: 'hr',
-            name: 'division',
-          },
-          {
-            name: l['Add tags'],
-            icon: 'tag',
-            callback: () => {return {
-              allowSearch: true,
-              links: this.getIconDropOptionsTags,
-            }}
-          },
-          {
-            icon: 'priority',
-            name: l['Change priority of tasks'],
-            callback: () => [
+            type: 'optionsList',
+            name: l['Schedule'],
+            options: [
               {
-                name: 'No priority',
+                icon: 'star',
+                id: 'd',
+                callback: () => this.saveDates({
+                  type: 'specific',
+                  specific: mom().format('Y-M-D'),
+                }, ids),
+              },
+              {
+                icon: 'sun',
+                id: 'çljk',
+                callback: () => this.saveDates({
+                  type: 'specific',
+                  specific: mom().add(1, 'day').format('Y-M-D'),
+                }, ids),
+              },
+              {
+                icon: 'archive',
+                id: 'açlkjsdffds',
+                callback: () => this.saveDates({
+                  type: 'someday',
+                }, ids)
+              },
+              {
+                icon: 'calendar',
+                id: 'çljkasdf',
+                callback: () => {return {
+                  comp: "CalendarPicker",
+                  content: {callback: date => this.saveDates(date, ids)}}},
+              },
+            ]
+          },
+          {
+            type: 'optionsList',
+            name: l['Priority'],
+            options: [
+              {
                 icon: 'priority',
+                id: 'd',
+                color: 'var(--gray)',
                 callback: () => savePri('')
               },
               {
-                name: 'Low priority',
                 icon: 'priority',
+                id: 'f',
                 color: 'var(--green)',
                 callback: () => savePri('Low priority')
               },
               {
-                name: 'Medium priority',
                 icon: 'priority',
+                id: 'j',
                 color: 'var(--yellow)',
                 callback: () => savePri('Medium priority')
               },
               {
-                name: 'High priority',
                 icon: 'priority',
+                id: 'l',
                 color: 'var(--red)',
                 callback: () => savePri('High priority')
+              },
+            ],
+          },
+          {
+            name: l['More options'],
+            icon: 'settings-h',
+            callback: () => [
+              {
+                name: l['Repeat task'],
+                icon: 'repeat',
+                callback: () => [
+                  {
+                    name: l['Repeat weekly'],
+                    icon: 'repeat',
+                    callback: () => ({
+                      comp: 'WeeklyPicker',
+                      content: {callback: date => this.saveDates(date, ids)},
+                    }),
+                  },
+                  {
+                    name: l['Repeat periodically'],
+                    icon: 'repeat',
+                    callback: () => ({
+                      comp: 'PeriodicPicker',
+                      content: {callback: date => this.saveDates(date, ids)},
+                    }),
+                  },
+                ],
+              },
+              {
+                name: l['Move to list'],
+                icon: 'tasks',
+                callback: () => {return {
+                  allowSearch: true,
+                  links: this.getIconDropOptionsLists,
+                }}
+              },
+              {
+                name: l['Move to folder'],
+                icon: 'folder',
+                callback: () => {return {
+                  allowSearch: true,
+                  links: this.getIconDropOptionsFolders,
+                }}
+              },
+              {
+                name: l['Delete task'],
+                icon: 'trash',
+                important: true,
+                callback: () => dispatch('task/deleteTasks', ids)
               }
             ]
-          },
-          {
-            name: l['Add tasks to folder'],
-            icon: 'folder',
-            callback: () => {return {
-              allowSearch: true,
-              links: this.getIconDropOptionsFolders,
-            }}
-          },
-          {
-            name: l['Add tasks to list'],
-            icon: 'tasks',
-            callback: () => {return {
-              allowSearch: true,
-              links: this.getIconDropOptionsLists,
-            }}
-          },
-          {
-            name: l['Delete tasks'],
-            icon: 'trash',
-            important: true,
-            callback: () => dispatch('task/deleteTasks', ids)
           },
         ]
       }

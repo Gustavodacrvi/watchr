@@ -45,7 +45,7 @@ export default {
   },
   created() {
     setTimeout(() => this.test = true, 2000)
-    this.updateViewType()
+    this.updateViewType(true)
     this.getScrollTop()
     window.addEventListener('scroll', this.getScrollTop)
   },
