@@ -252,7 +252,7 @@ export default {
     remove(evt) {
       let found = false
       for (const node of evt.path)
-        if (node.classList && node.classList.contains('TaskEditComp')) {
+        if (node.classList && node.classList.contains('edit-wrapper')) {
           found = true
           break
         }

@@ -74,6 +74,10 @@ export default {
   border-radius: 100px;
 }
 
+.mobile .inner-ball-button {
+  height: 55px;
+}
+
 .path {
   position: absolute;
   top: 50%;
