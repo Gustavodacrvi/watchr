@@ -206,7 +206,7 @@ export default {
     tasksOrder() {
       if (this.viewList && this.viewList.tasks)
         return this.viewList.tasks
-      return[]
+      return []
     },
     showEmptyHeadings() {
       return true
