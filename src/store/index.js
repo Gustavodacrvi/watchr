@@ -369,7 +369,7 @@ const store = new Vuex.Store({
     createUser(s, user) {
       return fire.collection('users').doc(user.uid).set({
         ...utils.getRelevantUserData(user),
-      })
+      }, {merge: true})
     },
     createAnonymousUser(c, userId) {
       firebase.firestore().collection('users').doc(userId).set({

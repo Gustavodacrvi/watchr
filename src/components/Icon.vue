@@ -9,11 +9,25 @@
       <use :xlink:href="`#${getIcon.id}`"/>
     </svg>
     <div v-else class="pie-wrapper" :style='outlineStyle'>
-      <svg class='svg' viewBox="0 0 32 32" :width='getWidth'>
-        <circle class='pie' :stroke-dasharray="`${progress} 100`" fill='currentColor' stroke='currentColor'></circle>
+      <svg class="svg" viewBox="0 0 18.375 18.375">
+        <circle fill="none" stroke="currentColor" stroke-width='1.5px' cx="50%" cy="50%" r="8.688" />
+        <circle class="pie" :stroke-dasharray="`${getProgress} 100`" fill="none" stroke="currentColor" stroke-width='6' cx="50%" cy="50%" r="3"/>
       </svg>
-      <div class="outline" :style='outlineStyle' style='border: 1.5px currentColor solid'></div>
     </div>
+<!--       <svg class='svg' viewBox="0 0 18 18" :width='getWidth'>
+        <circle stroke="currentColor" fill='none' stroke-miterlimit="10" cx="50%" cy="50%" r="50%" stroke-width="1.5px"/>
+        <circle fill="currentColor" stroke='none' :stroke-dasharray="`${progress} 100`" cx="50%" cy="50%" r="12"/>
+
+        19 - 100
+        x  - progress
+
+        x100 - 19progress
+        x - 19 progress / 100
+        
+      </svg> -->
+      <!-- <svg class='svg' viewBox="0 0 32 32" :width='getWidth'> -->
+    <!-- <circle class='pie' :stroke-dasharray="`${progress} 100`" fill='currentColor' stroke='currentColor'></circle> -->
+    <!-- <div class="outline" :style='outlineStyle' style='border: 1.5px currentColor solid'></div> -->
     <input v-show="false"
       ref='file'
       type='file'
@@ -156,6 +170,9 @@ export default {
   },
   computed: {
     ...mapGetters(['platform']),
+    getProgress() {
+      return 19 * this.progress / 100
+    },
     circleWidth() {
       return this.getRawWidth + this.offset
     },
@@ -169,7 +186,7 @@ export default {
       return this.$refs['file']
     },
     getRawWidth() {
-      const defaultWidth = this.hasProgress ? 15 : 20
+      const defaultWidth = this.hasProgress ? 17 : 20
       return this.width ? parseInt(this.width, 10) : defaultWidth
     },
     getWidth() {
@@ -230,11 +247,10 @@ export default {
 }
 
 .svg {
-  left: 0;
-  top: 0;
+  left: -3px;
+  top: -3px;
   border-radius: 50%;
-  transform: rotate(-90deg);
-  position: absolute;
+  position: relative;
 }
 
 .pie-wrapper {
@@ -245,23 +261,13 @@ export default {
 }
 
 .pie {
-  fill: none;
   transition: color 0s, stroke-dasharray .7s;
-  stroke-width: 32;
-  r: 16;
-  cx: 16;
-  cy: 16;
+  transform: rotate(-90deg);
+  transform-origin: 50%;
 }
 
 .light {
   stroke: var(--white);
-}
-
-.outline {
-  position: absolute;
-  left: -5px;
-  top: -5px;
-  border-radius: 100px;
 }
 
 </style>
