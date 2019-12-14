@@ -103,7 +103,7 @@
     <div class="tags" :class="{margins: folders.length > 0}">
       <Tag class="tag" v-for="l in folders" :key="l.id"
         :value="l.name"
-        :selected='inclusiveFolder === l.name || exclusiveFolders.includes(l.exclusiveTagsname)'
+        :selected='inclusiveFolder === l.name || exclusiveFolders.includes(l.name)'
         :extraIcon="getFolderExclusiveIcon(l.name)"
         icon="folder"
         @click="$emit('folder', l.name)"
