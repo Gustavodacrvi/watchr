@@ -57,6 +57,10 @@ export default {
       hideTimeout: null,
       timeBeforeMouseMove: 0,
       scrollTimeout: null,
+
+      initialSmartViewRender: false,
+
+      lastRouteCameFromMenu: false,
     }
   },
   created() {
@@ -93,8 +97,8 @@ export default {
         this.$store.commit('toggleControl', true)
       if (!isTyping) this.$store.dispatch('pushKeyShortcut', key)
     },
-    closePopup() {
-      this.$store.dispatch('closePopup')
+    closePopup(persistOnTheSameView) {
+      this.$store.dispatch('closePopup', persistOnTheSameView)
     },
     getMousePos(evt) {
       const clear = () => {
@@ -122,9 +126,15 @@ export default {
       let viewName = query[viewType]
       const name = this.$route.name
       const path = this.$route.path
-      if (name !== 'menu' && path !== '/popup' && (viewType === undefined || viewName === undefined)) {
+      const atLeastOneUndefined = (viewName === undefined || viewType === undefined)
+
+      if (
+        (this.isStandAlone && !this.initialSmartViewRender) || 
+        (path === '/user' && atLeastOneUndefined)
+      ) {
         const view = this.getInitialSmartView
         this.$router.replace(`/user?list=${view}`)
+        this.initialSmartViewRender = true
       }
       if (saveRoute) {
         if (viewName && viewType)
@@ -147,7 +157,10 @@ export default {
       return this.hided
     },
     isMenuOpened() {
-      return this.$route.name === 'menu'
+      const isInMenu = this.$route.name === 'menu'
+      const isInPopup = this.$route.path === '/popup'
+      
+      return isInMenu || (isInPopup && this.lastRouteCameFromMenu)
     },
     path() {
       return this.$route.fullPath
@@ -163,10 +176,13 @@ export default {
     $route(to, from) {
       const isGoingToPopup = to.path === '/popup'
       const isGoingToMenu = to.path === '/menu'
+      const notGoingToAnyOfTheTwo = (!isGoingToPopup && !isGoingToMenu)
       
       if (to && !isGoingToPopup && this.$store.getters.isPopupOpened)
-        this.closePopup()
-      this.updateViewType(this.isDesktop || (!isGoingToPopup && !isGoingToMenu))
+        this.closePopup(true)
+      this.updateViewType(this.isDesktop || notGoingToAnyOfTheTwo)
+
+      this.lastRouteCameFromMenu = from.path === '/menu'
     }
   }
 }

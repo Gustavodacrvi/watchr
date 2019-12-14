@@ -4,6 +4,8 @@
     v-on="listeners"
 
     :prefix='prefix'
+    :viewName='viewName'
+    :viewType='viewType'
 
     @show-completed='v => showCompleted = v'
   />

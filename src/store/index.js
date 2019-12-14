@@ -344,9 +344,9 @@ const store = new Vuex.Store({
       if (!getters.isDesktop)
         router.push('/popup')
     },
-    closePopup({state, getters}) {
+    closePopup({state, getters}, persistOnTheSameView) {
       state.popup = {comp: '', payload: null, naked: false}
-      if (!getters.isDesktop)
+      if (!getters.isDesktop && !persistOnTheSameView)
         router.go(-1)
     },
     deleteProfilePic() {

@@ -222,7 +222,7 @@ export default {
       const savePri = (pri) => {
         dispatch('task/saveTasksById', {ids, task: {priority: pri}})
       }
-      
+
       this.$store.commit('pushNavBarData', {
         options: {
           icons: this.selectedTasks.length > 0 ? [

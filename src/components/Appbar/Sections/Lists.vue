@@ -175,10 +175,10 @@ export default {
       this.$store.dispatch('list/updateOrder', ids)
     },
     buttonAdd(obj) {
-      this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj}})
+      this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj}, naked: true})
     },
     folderButtonAdd(id, obj) {
-      this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj, folderId: id}})
+      this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj, folderId: id}, naked: true})
     },
     getListProgress(list) {
       return this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted)

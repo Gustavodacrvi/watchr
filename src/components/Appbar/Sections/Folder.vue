@@ -177,6 +177,7 @@ export default {
           id: this.id,
           editing: true,
         },
+        naked: true
       })
     },
     delete() {

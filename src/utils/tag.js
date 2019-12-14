@@ -8,7 +8,7 @@ export default {
         name: l['Edit tag'],
         icon: 'pen',
         callback: () => dispatch('pushPopup', {
-            comp: 'AddTag', payload: {...tag, editing: true}
+            comp: 'AddTag', payload: {...tag, editing: true}, naked: true
           })
       },
       {
@@ -28,6 +28,7 @@ export default {
         callback: () => dispatch('pushPopup', {
           comp: 'AddTagNote',
           payload: tag.id,
+          naked: true
         })
       })
     opt.push(      {

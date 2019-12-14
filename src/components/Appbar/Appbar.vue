@@ -483,7 +483,7 @@ export default {
         {
           name: this.l['Add tag'],
           icon: 'tag',
-          callback: () => dispatch('pushPopup', {comp: 'AddTag'})
+          callback: () => dispatch('pushPopup', {comp: 'AddTag', naked: true})
         }
       ]
     },
@@ -498,12 +498,12 @@ export default {
         {
           name: this.l['Add folder'],
           icon: 'folder',
-          callback: () => dispatch('pushPopup', {comp: 'AddFolder'}),
+          callback: () => dispatch('pushPopup', {comp: 'AddFolder', naked: true}),
         },
         {
           name: this.l['Add list'],
           icon: 'tasks',
-          callback: () => dispatch('pushPopup', {comp: 'AddList'}),
+          callback: () => dispatch('pushPopup', {comp: 'AddList', naked: true}),
         },
       ]
       if (this.isDesktop) {
@@ -572,7 +572,7 @@ export default {
         {
           name: 'Add filter',
           icon: 'filter',
-          callback: () => dispatch('pushPopup', {comp: 'AddFilter'}),
+          callback: () => dispatch('pushPopup', {comp: 'AddFilter', naked: true}),
         },
         {
           name: 'Sort lists by name',

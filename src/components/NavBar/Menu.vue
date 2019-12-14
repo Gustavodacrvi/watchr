@@ -70,10 +70,6 @@ export default {
     saveLang(lang) {
       this.$store.commit('saveLang', lang)
     },
-    goback() {
-      this.$emit('close-menu')
-      this.$router.go(-1)
-    }
   },
   computed: {
     ...mapState(['user']),
@@ -113,7 +109,7 @@ export default {
   height: 100%;
   width: 100%;
   box-sizing: border-box;
-  z-index: 498;
+  z-index: 497;
   overflow: hidden;
 }
 
