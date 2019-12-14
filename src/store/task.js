@@ -195,6 +195,34 @@ export default {
           })
         },
       },
+      doesTaskPassInclusivePriority: {
+        getter({}, task, inclusive) {
+          if (inclusive === 'No priority')
+            return !task.priority
+          return inclusive === task.priority
+        },
+        cache(args) {
+          return JSON.stringify({
+            t: args[0].priority,
+            p: args[1],
+          })
+        }
+      },
+      doesTaskPassExclusivePriorities: {
+        getter({}, task, exclusive) {
+          return exclusive.every(p => {
+            if (p === 'No priority')
+              return task.priority
+            return task.priority !== p
+          })
+        },
+        cache(args) {
+          return JSON.stringify({
+            t: args[0].priority,
+            p: args[1],
+          })
+        }
+      },
       hasTaskBeenCompletedOnDate: {
         getter({}, task, date) {
           return task.completeDate === date
@@ -409,9 +437,9 @@ export default {
           return ''
         }
       },
-      doesTaskPassExclusiveFolder: {
-        getter({}, task, folderId) {
-          return task.folder !== folderId
+      doesTaskPassExclusiveFolders: {
+        getter({}, task, ids) {
+          return ids.every(el => task.folder !== el)
         },
         cache(args) {
           return JSON.stringify({t: args[0].folder, l: args[1]})
@@ -433,9 +461,9 @@ export default {
           return JSON.stringify({t: args[0].folder, l: args[1]})
         }
       },
-      doesTaskPassExclusiveList: {
-        getter({}, task, listId) {
-          return task.list !== listId
+      doesTaskPassExclusiveLists: {
+        getter({}, task, ids) {
+          return ids.every(el => task.list !== el)
         },
         cache(args) {
           return JSON.stringify({t: args[0].list, l: args[1]})

@@ -82,10 +82,19 @@
         @click="$emit('tag', t.name)"
       />
     </div>
+    <div class="tags" :class="{margins: priorities.length > 0}">
+      <Tag class="tag" v-for="p in priorities" :key="p"
+        :value="l[p]"
+        :selected='isPrioritySelected(p)'
+        :extraIcon='getPriorityExclusiveIcon(p)'
+        icon="priority"
+        @click="$emit('priority', p)"
+      />
+    </div>
     <div class="tags" :class="{margins: lists.length > 0}">
       <Tag class="tag" v-for="l in lists" :key="l.id"
         :value="l.name"
-        :selected='inclusiveList === l.name || exclusiveList === l.name'
+        :selected='inclusiveList === l.name || exclusiveList.includes(name)'
         :extraIcon="getListExclusiveIcon(l.name)"
         icon="tasks"
         @click="$emit('list', l.name)"
@@ -94,7 +103,7 @@
     <div class="tags" :class="{margins: folders.length > 0}">
       <Tag class="tag" v-for="l in folders" :key="l.id"
         :value="l.name"
-        :selected='inclusiveFolder === l.name || exclusiveFolder === l.name'
+        :selected='inclusiveFolder === l.name || exclusiveFolders.includes(name)'
         :extraIcon="getFolderExclusiveIcon(l.name)"
         icon="folder"
         @click="$emit('folder', l.name)"
@@ -121,7 +130,7 @@ import utils from '@/utils'
 
 export default {
   mixins: [FileMixin],
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'inclusiveTags', 'inclusiveList', 'exclusiveList', 'inclusiveFolder', 'exclusiveFolder', 'folders'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'priorities', 'inclusiveTags', 'inclusivePriority', 'exclusivePriorities', 'inclusiveList', 'exclusiveLists', 'inclusiveFolder', 'exclusiveFolders', 'folders'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -146,6 +155,14 @@ export default {
   methods: {
     isTagSelected(name) {
       return this.inclusiveTags.includes(name) || this.exclusiveTags.includes(name)
+    },
+    isPrioritySelected(name) {
+      return this.inclusivePriority === name || this.exclusivePriorities.includes(name)
+    },
+    getPriorityExclusiveIcon(name) {
+      if (this.exclusivePriorities.includes(name))
+        return 'close'
+      return null
     },
     getTagExclusiveIcon(name) {
       if (this.exclusiveTags.includes(name))
