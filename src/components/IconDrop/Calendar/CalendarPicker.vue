@@ -1,124 +1,55 @@
 <template>
   <div class="CalendarPicker">
-    <transition name="cal-trans"
-      @enter="enter"
-      @leave="leave"
-    >
-      <div v-if="calendar" key="calendar" class="view calendar">
-        <div style="margin: 4px 22px;">
-          <Tag v-if="calendarStr"
-            icon="calendar"
-            color="var(--green)"
-            :value="calendarStr"
-            @click="calStr = ''"
-          />
-          <input class="input"
-            :value="calStr"
-            @input="v => calStr = v.target.value"
-            @keydown="keydown"
+    <div key="calendar" class="view calendar">
+      <div style="margin: 4px 22px;">
+        <Tag v-if="calendarStr"
+          icon="calendar"
+          color="var(--green)"
+          :value="calendarStr"
+          @click="calStr = ''"
+        />
+        <input class="input"
+          :value="calStr"
+          @input="v => calStr = v.target.value"
+          @keydown="keydown"
+        >
+      </div>
+      <div class="fast-options">
+        <Icon class="icon option-icon cursor primary-hover" width="24px" icon="star" @click="today"/>
+        <Icon class="icon option-icon cursor primary-hover" width="24px" icon="sun" @click="tomorrow"/>
+        <Icon class="icon option-icon cursor primary-hover" width="24px" icon="archive" @click="someday"/>
+        <Icon class="icon option-icon cursor primary-hover" width="24px" icon="bloqued" @click="noDate"/>
+        <Icon v-if="repeat" class="icon option-icon cursor primary-hover" width="24px" icon="repeat" @click="$emit('repeat')"/>
+      </div>
+      <div class="content">
+        <div class="header">
+          <h3 class="year">{{ thisYear() }}   {{ thisMonth() }}</h3>
+          <div class="icons">
+            <Icon class="arrow-right icon cursor primary-hover" icon="arrow" width="18px" @click="previousMonth"/>
+            <Icon class="icon cursor primary-hover" icon="tiny-circle" width="14px" @click="resetDate" style='transform: translateY(0px)'/>
+            <Icon class="primary-hover arrow-left icon cursor" icon="arrow" width="18px" @click="nextMonth"/>
+          </div>
+        </div>
+        <div class="weeks">
+          <span class="week">{{ l['S'] }}</span>
+          <span class="week">{{ l['M'] }}</span>
+          <span class="week">{{ l['T'] }}</span>
+          <span class="week">{{ l['W'] }}</span>
+          <span class="week">{{ l['T'] }}</span>
+          <span class="week">{{ l['F'] }}</span>
+          <span class="week">{{ l['S'] }}</span>
+        </div>
+        <div class="dates">
+          <span v-for='i in firstWeekDayRange()' :key='i + 100' class="dark-date"></span>
+          <span v-for="i in monthDays()" :key="i" class="day cursor rb"
+            :class="{active: isSelectedDate(i)}"
+            @click="selectDate(i)"
           >
-        </div>
-        <span class="option cursor" @click="today">
-          <span class="cont">
-            <Icon class="icon" icon="star"/>
-            <span class="name">{{ l['Today'] }}</span>
+            <span class="number">{{ i }}</span>
           </span>
-        </span>
-        <span class="option cursor" @click="tomorrow">
-          <span class="cont">
-            <Icon class="icon" icon="sun"/>
-            <span class="name">{{ l['Tomorrow'] }}</span>
-          </span>
-        </span>
-        <span class="option cursor" @click="someday">
-          <span class="cont">
-            <Icon class="icon" icon="archive"/>
-            <span class="name">{{ l['Someday'] }}</span>
-          </span>
-        </span>
-        <span class="option cursor" @click="noDate">
-          <span class="cont">
-            <Icon class="icon" icon="bloqued"/>
-            <span class="name">{{ l['No date'] }}</span>
-          </span>
-        </span>
-        <span v-if="repeat" class="option cursor" @click="$emit('repeat')">
-          <span class="cont">
-            <Icon class="icon" icon="repeat"/>
-            <span class="name">{{ l['Repeat'] }}</span>
-          </span>
-        </span>
-        <div class="content">
-          <div class="header">
-            <h3 class="year">{{ thisYear() }}   {{ thisMonth() }}</h3>
-            <div class="icons">
-              <Icon class="arrow-right icon cursor primary-hover" icon="arrow" width="18px" @click="previousMonth"/>
-              <Icon class="icon cursor primary-hover" icon="tiny-circle" width="14px" @click="resetDate" style='transform: translateY(0px)'/>
-              <Icon class="primary-hover arrow-left icon cursor" icon="arrow" width="18px" @click="nextMonth"/>
-            </div>
-          </div>
-          <div class="weeks">
-            <span class="week">S</span>
-            <span class="week">M</span>
-            <span class="week">T</span>
-            <span class="week">W</span>
-            <span class="week">T</span>
-            <span class="week">F</span>
-            <span class="week">S</span>
-          </div>
-          <div class="dates">
-            <span v-for='i in firstWeekDayRange()' :key='i + 100' class="dark-date"></span>
-            <span v-for="i in monthDays()" :key="i" class="day cursor rb"
-              :class="{active: isSelectedDate(i)}"
-              @click="selectDate(i)"
-            >
-              <span class="number">{{ i }}</span>
-            </span>
-          </div>
-        </div>
-        <span class="option cursor" @click="calendar = false">
-          <span class="cont">
-            <span v-if="!time" class="name">{{l['Add time']}}</span>
-            <span v-else class="name">At: {{ time }}</span>
-          </span>
-        </span>
-      </div>
-      <div v-else class="time view content" key="time">
-        <Icon @click="calendar = true" class="back-arrow cursor primary-hover" icon="arrow"/>
-        <div class="time-comp">
-          <div class="time-selector">
-            <div class="select-time">
-              <span class="time-wrapper rb" @click="increaseHour">
-                <Icon icon="tiny-arrow" class="primary-hover icon cursor top time-icon" width="75px"/>
-              </span>
-              <span class="time-wrapper rb" @click="increaseMinutes">
-                <Icon icon="tiny-arrow" class="icon primary-hover cursor top time-icon" width="75px"/>
-              </span>
-            </div>
-            <div class="select-time">
-              <span class="date">
-                {{ hour() }}
-              </span>
-              <span class="date">
-                {{ minutes() }}
-              </span>
-            </div>
-            <div class="select-time">
-              <span class="time-wrapper rb" @click="decreaseHour">
-                <Icon icon="tiny-arrow" class="icon primary-hover cursor time-icon bottom" width="75px"/>
-              </span>
-              <span class="time-wrapper rb" @click="decreaseMinutes">
-                <Icon icon="tiny-arrow" class="icon cursor time-icon primary-hover bottom" width="75px"/>
-              </span>
-            </div>
-          </div>
-          <div class="buttons">
-            <Button class="btn-time" :value="l['Add time']" @click="addTime"/>
-            <Button class="btn-time" :value="l['Remove time']" @click="removeTime"/>
-          </div>
         </div>
       </div>
-    </transition>
+    </div>
   </div>
 </template>
 
@@ -129,7 +60,7 @@ import ButtonVue from '@/components/Auth/Button.vue'
 import TagVue from '@/components/View/Tag.vue'
 
 import mom from 'moment/src/moment'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 import utils from '@/utils'
 
@@ -142,7 +73,6 @@ export default {
   },
   data() {
     return {
-      calendar: true,
       visualMoment: mom(),
       originalMoment: mom(),
       selectedMoment: mom(),
@@ -152,10 +82,11 @@ export default {
     }
   },
   computed: {
+    ...mapState(['userInfo']),
     ...mapGetters(['l']),
     calendarStr() {
       if (this.calendarObj)
-        return utils.parseCalendarObjectToString(this.calendarObj, this.l)
+        return utils.parseCalendarObjectToString(this.calendarObj, this.l, this.userInfo)
       return null
     },
   },
@@ -163,26 +94,6 @@ export default {
     keydown({key}) {
       if (key === "Enter")
         this.$emit('select', this.calendarObj)
-    },
-    leave(el) {
-      if (this.calendar) {
-        el.classList.add('right')
-      } else {
-        el.classList.add('left')
-      }
-    },
-    enter(el) {
-      el.style.transitionDuration = '.0s'
-      if (this.calendar) {
-        el.classList.add('left')
-      } else {
-        el.classList.add('right')
-      }
-      setTimeout(() => {
-        el.style.transitionDuration = '.3s'
-        el.classList.remove('left')
-        el.classList.remove('right')
-      })
     },
     noDate() {
       this.$emit('select', null)
@@ -287,14 +198,6 @@ export default {
         arr.push(i)
       return arr
     },
-    addTime() {
-      this.calendar = true
-      this.time = this.selectedMoment.format('H:m')
-    },
-    removeTime() {
-      this.calendar = true
-      this.time = null
-    },
     hour() {
       return this.selectedMoment.format('H') 
     },
@@ -320,7 +223,7 @@ export default {
   },
   watch: {
     calStr() {
-      this.calendarObj = utils.parseInputToCalendarObject(this.calStr, this.l, true)
+      this.calendarObj = utils.parseInputToCalendarObject(this.calStr, this.l, true, this.userInfo)
     },
   }
 }
@@ -328,6 +231,17 @@ export default {
 </script>
 
 <style scoped>
+
+.fast-options {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  margin-left: 26px;
+}
+
+.option-icon {
+  margin-right: 12px;
+}
 
 .time-comp {
   display: flex;
@@ -446,27 +360,6 @@ export default {
   transform: translateY(4px);
 }
 
-.option {
-  display: flex;
-  align-items: center;
-  height: 35px;
-  white-space: nowrap;
-  transition-duration: .3s;
-}
-
-.option:hover {
-  color: var(--primary);
-  background-color: rgba(87,160,222,.1);
-}
-
-.cont {
-  height: 100%;
-  display: flex;
-  margin: 0 26px;
-  align-items: center;
-  justify-content: center;
-}
-
 .content {
   margin: 0 26px;
 }
@@ -475,6 +368,7 @@ export default {
   display: flex;
   justify-content: space-around;
   margin: 6px 0;
+  transform: translateX(-3px);
 }
 
 .week {

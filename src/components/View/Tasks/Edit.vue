@@ -370,7 +370,22 @@ export default {
           calendar,
           files: this.task.files,
           handleFiles: this.isEditingFiles ? taskId => {
-            return this.saveFiles(this.getFilesToRemove, this.addedFiles, taskId, 'tasks')
+            return new Promise((solve, reject) => {
+              this.saveFiles(this.getFilesToRemove, this.addedFiles, taskId, 'tasks')
+              .then(() => {
+                this.files = []
+                this.addedFiles = []
+                solve()
+              })
+              .catch(() => {
+                this.$store.commit('pushToast', {
+                  name: this.l['An error occurred while editing files.'],
+                  seconds: 4,
+                  type: 'error',
+                })
+                reject()
+              })
+            })
           } : null
         })
         t.checklist = []
@@ -393,6 +408,7 @@ export default {
       iconDrop: state => state.iconDrop,
       savedTasks: state => state.task.tasks,
       user: state => state.user,
+      userInfo: state => state.userInfo,
     }),
     ...mapGetters({
       l: 'l',
@@ -466,7 +482,7 @@ export default {
     },
     calendarStr() {
       if (this.task.calendar)
-        return utils.parseCalendarObjectToString(this.task.calendar, this.l)
+        return utils.parseCalendarObjectToString(this.task.calendar, this.l, this.userInfo)
       return null
     },
     getTaskName() {
@@ -645,7 +661,7 @@ export default {
       }
       const parseDate = () => {
         if (n.includes(' $')) {
-          const obj = utils.parseInputToCalendarObject(n, this.l)
+          const obj = utils.parseInputToCalendarObject(n, this.l, false, this.userInfo)
           this.task.calendar = obj
         } else if (this.task) {
           this.task.calendar = this.task.calendar
@@ -684,7 +700,7 @@ export default {
 .trans-t-enter, .trans-t-leave-to {
   opacity: 0;
   background-color: var(--back-color);
-  box-shadow: 0 0 0 #000;
+  box-shadow: 0 0 0 rgba(15,15,15,0);
 }
 
 .trans-t-leave, .trans-t-enter-to {

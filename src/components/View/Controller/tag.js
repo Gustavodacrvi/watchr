@@ -7,8 +7,8 @@ export default {
   methods: {
     addTask(obj) {
       if (this.viewTag) {
-        this.$store.dispatch('task/addTask', {
-          ...obj.task,
+        this.$store.dispatch('tag/addTaskByIndex', {
+          ...obj, tagId: this.viewTag.id,
         })
       }
     },
@@ -35,12 +35,19 @@ export default {
           notes, id: this.viewTag.id
         })
     },
+    updateIds(ids) {
+      if (this.viewTag) {
+        this.$store.dispatch('tag/saveTag', {
+          tasks: ids,
+          id: this.viewTag.id,
+        })
+      }
+    },
     removeRepeat() {},
     removeDeadline() {},
     removeHeaderTag() {},
     removeDeferDate() {},
     addHeading() {},
-    updateIds() {},
     onSortableAdd() {},
   },
   computed: {
@@ -56,6 +63,8 @@ export default {
     },
     
     tasksOrder() {
+      if (this.viewTag && this.viewTag.tasks)
+        return this.viewTag.tasks
       return []
     },
     headingsOptions() {

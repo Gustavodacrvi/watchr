@@ -39,7 +39,7 @@ export default {
       year: m.format('Y'),
     }
   },
-  parseInputToCalendarObject(name, language, returnEntireStr) {
+  parseInputToCalendarObject(name, language, returnEntireStr, userInfo) {
     if (!language) throw 'Missing language object'
     const l = language
     const isStrNumber = str => !isNaN(parseInt(str, 10))
@@ -54,13 +54,17 @@ export default {
     }
     const getTime = str => {
       const vals = str.split(' ')
-      const isValidTime = (time) => {
-        return mom(time, 'H:m', true).isValid()
+      const receivingFormat = userInfo.disablePmFormat ? 'HH:mm' : 'LT'
+      
+      const isValidTime = time => mom(time, receivingFormat).isValid()
+
+      const parseTo24 = time => {
+        return mom(time, receivingFormat).format('HH:mm')
       }
 
       for (const v of vals) {
         if (v && v.includes(':') && !v.includes('24:00') && isValidTime(v)) {
-          return v
+          return parseTo24(v)
         }
       }
       return null
@@ -265,11 +269,6 @@ export default {
     let str = getDateString()
     const tod = mom()
     if (str) {
-      if (str.includes(l['CalParserPersistentKey']) || str.includes(l['CalParserPerKey'])) obj.persistent = true
-      
-      const keyNextWeek = l['CalParserNextweek']
-      const keyNextWeekend = l['CalParserNextweekend']
-      const keyNextMonth = l['CalParserNextmonth']
       const keySomeday = l['CalParserSomeday']
 
       obj.time = getTime(str)
@@ -277,22 +276,6 @@ export default {
       switch (str) {
         case keySomeday: {
           obj.type = 'someday'
-          return obj
-        }
-        case keyNextWeek: {
-          obj.defer = utilsMoment.getFirstDayOfNextWeekMoment(mom()).format('Y-M-D')
-          obj.due = utilsMoment.getLastDayOfNextWeekMoment(mom()).format('Y-M-D')
-          return obj
-        }
-        case keyNextWeekend: {
-          const sat = utilsMoment.nextWeekDay(mom(), 'Saturday')
-          obj.defer = sat.format('Y-M-D')
-          obj.due = sat.clone().add(1, 'd').format('Y-M-D')
-          return obj
-        }
-        case keyNextMonth: {
-          obj.defer = utilsMoment.getFirstDayOfNextMonth(mom()).format('Y-M-D')
-          obj.due = utilsMoment.getLastDayOfNextMonth(mom()).format('Y-M-D')
           return obj
         }
       }
@@ -352,7 +335,12 @@ export default {
     if (!tod.isSame(date, 'month')) return date.format('MMM Do, ddd')
     return date.format('Do, ddd')
   },
-  parseCalendarObjectToString(obj, language) {
+  parseTime(time, userInfo) {
+    if (userInfo.disablePmFormat)
+      return time
+    return mom(time, 'H:m').format('h:m A')
+  },
+  parseCalendarObjectToString(obj, language, userInfo) {
     const l = language
     
     const everyDayKey = l['CalParserEveryDay']
@@ -399,7 +387,7 @@ export default {
       if (str !== '') str += ', '
       str += `${DUEKey} ` + this.getHumanReadableDate(obj.due, language)
     }
-    if (obj.time) str += ` at ${obj.time}`
+    if (obj.time) str += ` at ${this.parseTime(obj.time, userInfo)}`
     const hasTimesBinding = obj.times !== null && obj.times !== undefined
     if (hasTimesBinding) str += ` ${obj.times} ${timesKey}`
     if (obj.persistent && hasTimesBinding) str += ' ' + perKey

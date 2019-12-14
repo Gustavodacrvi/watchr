@@ -212,6 +212,11 @@ export default {
   background-image: radial-gradient(rgba(0,0,0,0), var(--primary));
 }
 
+.primary-hover:hover {
+  transition-duration: .15s;
+  color: var(--primary);
+}
+
 .circle-enter, .circle-enter-to {
   transition-duration: .15s;
 }

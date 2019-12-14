@@ -192,7 +192,13 @@ export default {
     }
   },
   computed: {
-    ...mapState(['drag', 'isOnControl', 'selectedTasks', 'currentView']),
+    ...mapState({
+      drag: 'drag',
+      isOnControl: 'isOnControl',
+      selectedTasks: 'selectedTasks',
+      viewName: 'viewName',
+      storeViewType: 'viewType',
+    }),
     ...mapGetters(['l', 'platform', 'isDesktop']),
     isDraggingOver() {
       return this
@@ -219,7 +225,7 @@ export default {
     },
     isActive() {
       if ((this.hover && this.isDesktop) || (this.isTouching && !this.isDesktop)) return true
-      return this.name === this.active && this.type === this.viewType || this.currentView === this.name
+      return this.name === this.active && this.type === this.viewType || (this.viewName === this.name && this.type === this.storeViewType)
     },
   },
   watch: {

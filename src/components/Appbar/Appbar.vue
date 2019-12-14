@@ -131,7 +131,6 @@ export default {
   },
   data() {
     const selectView = str => {
-      this.$store.commit('navigate', str)
       this.$router.push(`/user?list=${str}`)
     }
     

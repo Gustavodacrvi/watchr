@@ -9,7 +9,7 @@
     <router-link class="link" tabindex="-1" :class="{active: isLinkActive('support')}" to="/support/overview">{{ l['Support'] }}</router-link>
     <div class="line"></div>
     <div class="icons">
-      <DropIcon
+      <DropIcon style="z-index: 3"
         class="drop"
         handle="user"
         handleColor="var(--gray)"
@@ -17,7 +17,7 @@
         :options="dropLinks"
         @handle-toggle='v => isLinksIconDropOpen = v'
       />
-      <DropIcon
+      <DropIcon style="z-index: 2"
         class="drop"
         handle="globe"
         handleColor="var(--gray)"
@@ -25,7 +25,7 @@
         :options="languages"
         @handle-toggle='v => isLanguagesIconDropOpen = v'
       />
-      <VersionApp style="position: relative;z-index: 2"/>
+      <VersionApp style="position: relative;z-index: 1"/>
       <ButtonApp v-if="user && user.isAnonymous" class="no-back" :value="l['Sign in']" @click="upgradeUser"/>
     </div>
   </div>

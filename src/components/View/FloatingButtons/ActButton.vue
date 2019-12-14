@@ -75,7 +75,8 @@ export default {
 }
 
 .mobile .inner-ball-button {
-  height: 55px;
+  height: 57px;
+  width: 57px;
 }
 
 .path {

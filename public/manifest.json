@@ -3,6 +3,12 @@
   "short_name": "watchr",
   "icons": [
     {
+      "src": "./img/icons/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
       "src": "./img/icons/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png"

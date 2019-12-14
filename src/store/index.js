@@ -57,7 +57,7 @@ moment.locale(lang)
 const uid = () => auth.currentUser.uid
 
 
-const version = '054'
+const version = '055'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -114,7 +114,8 @@ const store = new Vuex.Store({
     windowWidth: 0,
     isScrolling: false,
     allowNavHide: true,
-    currentView: '',
+    viewName: '',
+    viewType: '',
   },
   getters: {
     ...Memoize([], {
@@ -210,12 +211,13 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    navigate(state, {viewName, viewType}) {
+      state.viewName = viewName
+      state.viewType = viewType
+    },
     updateVersion(state, vers) {
       state.lastVersion = vers
       localStorage.setItem('watchr_version', vers)
-    },
-    navigate(state, str) {
-      state.currentView = str
     },
     readFile(state, fileURL) {
       state.fileURL = fileURL

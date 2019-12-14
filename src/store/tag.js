@@ -2,7 +2,7 @@
 import { fire, auth } from './index'
 import utils from '../utils'
 import MemoizeGetters from './memoFunctionGetters'
-import { tagColl, tagRef, userRef, fd, taskRef, serverTimestamp } from '../utils/firestore'
+import { tagColl, tagRef, userRef, fd, taskRef, serverTimestamp, addTask } from '../utils/firestore'
 import mom from 'moment/src/moment'
 
 const uid = () => {
@@ -83,6 +83,21 @@ export default {
   
         batch.commit()
       }
+    },
+    addTaskByIndex(c, {ids, index, task, tagId, newTaskRef}) {
+      const batch = fire.batch()
+      addTask(batch, {
+        createdFire: serverTimestamp(),
+        created: mom().format('Y-M-D HH:mm ss'),
+        userId: uid(),
+        ...task,
+      }, newTaskRef).then(() => {
+        ids.splice(index, 0, newTaskRef.id)
+  
+        batch.update(tagRef(tagId), {tasks: ids})
+  
+        batch.commit()
+      })
     },
     deleteTag(c, {id, tasks}) {
       const batch = fire.batch()
