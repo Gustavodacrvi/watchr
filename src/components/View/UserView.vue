@@ -69,6 +69,11 @@ export default {
       if (saveRoute) {
         this.value = value
         this.viewType = viewType
+
+        if (value && viewType)
+          document.getElementById('meta-title')
+            .innerHTML = `${value} - ${viewType.replace(/^[a-z]/, m => m.toUpperCase())}`
+        
         this.$store.commit('navigate', {
           viewName: this.value,
           viewType: this.viewType,
