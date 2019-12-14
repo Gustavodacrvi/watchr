@@ -14,20 +14,6 @@
         <circle class="pie" :stroke-dasharray="`${getProgress} 100`" fill="none" stroke="currentColor" stroke-width='6' cx="50%" cy="50%" r="3"/>
       </svg>
     </div>
-<!--       <svg class='svg' viewBox="0 0 18 18" :width='getWidth'>
-        <circle stroke="currentColor" fill='none' stroke-miterlimit="10" cx="50%" cy="50%" r="50%" stroke-width="1.5px"/>
-        <circle fill="currentColor" stroke='none' :stroke-dasharray="`${progress} 100`" cx="50%" cy="50%" r="12"/>
-
-        19 - 100
-        x  - progress
-
-        x100 - 19progress
-        x - 19 progress / 100
-        
-      </svg> -->
-      <!-- <svg class='svg' viewBox="0 0 32 32" :width='getWidth'> -->
-    <!-- <circle class='pie' :stroke-dasharray="`${progress} 100`" fill='currentColor' stroke='currentColor'></circle> -->
-    <!-- <div class="outline" :style='outlineStyle' style='border: 1.5px currentColor solid'></div> -->
     <input v-show="false"
       ref='file'
       type='file'
@@ -226,7 +212,7 @@ export default {
 
 .circle {
   border-radius: 100px;
-  background-image: radial-gradient(rgba(0,0,0,0), var(--primary));
+  background-image: radial-gradient(rgba(0,0,0,0), var(--gray));
 }
 
 .primary-hover:hover {
