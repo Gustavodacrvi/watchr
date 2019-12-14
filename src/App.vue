@@ -79,6 +79,7 @@ export default {
       }, 80)
     },
     keyup({key}) {
+      this.$store.commit('unpressKey')
       if (key === 'Control')
         this.$store.commit('toggleControl', false)
     },
@@ -113,7 +114,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['fastSearch', 'fileURL', 'user', 'allowNavHide']),
+    ...mapState(['fastSearch', 'fileURL', 'user', 'allowNavHide', 'pressingKey']),
     ...mapGetters(['isDesktop', 'isStandAlone', 'l', 'needsUpdate']),
     hideNavbar() {
       const isAnonymous = this.user && this.user.isAnonymous

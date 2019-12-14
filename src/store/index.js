@@ -116,6 +116,8 @@ const store = new Vuex.Store({
     allowNavHide: true,
     viewName: '',
     viewType: '',
+
+    pressingKey: null,
   },
   getters: {
     ...Memoize([], {
@@ -211,6 +213,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    unpressKey(state) {
+      state.pressingKey = null
+    },
     navigate(state, {viewName, viewType}) {
       state.viewName = viewName
       state.viewType = viewType
@@ -262,15 +267,17 @@ const store = new Vuex.Store({
       state.iconDrop = drop
     },
     unselectTask(state, id) {
-      setTimeout(() => {
-        const i = state.selectedTasks.findIndex(el => el === id)
-        state.selectedTasks.splice(i, 1)
-      }, 10)
+      if (id && state.selectedTasks.includes(id))
+        setTimeout(() => {
+          const i = state.selectedTasks.findIndex(el => el === id)
+          state.selectedTasks.splice(i, 1)
+        }, 5)
     },
     selectTask(state, id) {
-      setTimeout(() => {
-        state.selectedTasks.push(id)
-      }, 10)
+      if (id && !state.selectedTasks.includes(id))
+        setTimeout(() => {
+          state.selectedTasks.push(id)
+        }, 5)
     },
     clearSelected(state) {
       if (state.selectedTasks.length !== 0)
@@ -316,6 +323,7 @@ const store = new Vuex.Store({
       const pop = (comp) => {
         dispatch('pushPopup', {comp})
       }
+      state.pressingKey = key
       switch (key.toLowerCase()) {
         case 'q': pop('AddTask'); break
         case 't': pop('AddTag'); break

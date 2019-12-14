@@ -166,6 +166,8 @@ export default {
       hasEdit: null,
       focusToggle: false,
 
+      lastSelectedId: null,
+
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
     }
@@ -186,6 +188,37 @@ export default {
     window.removeEventListener('keydown', this.keydown)
   },
   methods: {
+    selectMultipleIds(newId) {
+      if (this.lastSelectedId && newId && this.lazyTasks.find(el => el.id === newId) && this.lazyTasks.find(el => el.id === this.lastSelectedId)) {
+        const idsToSelect = []
+
+        let selecting = false
+        for (const t of this.lazyTasks) {
+          const isOneOfTheTwo = t.id === this.lastSelectedId || t.id === newId
+          if (selecting && !isOneOfTheTwo) {
+            idsToSelect.push(t.id)
+          } else if (!selecting && isOneOfTheTwo) {
+            selecting = true
+          } else if (isOneOfTheTwo) break
+        }
+
+        if (idsToSelect.length > 0) {
+          const root = this.draggableRoot
+          const childNodes = root.childNodes
+
+          const nodes = []
+          for (const node of childNodes) {
+            if (idsToSelect.includes(node.dataset.id) && !nodes.includes(node)) {
+              nodes.push(node)
+            }
+          }
+
+          for (const node of nodes) {
+            this.selectTask(node)
+          }
+        }
+      }
+    },
     moveEdit(offset) {
       const index = this.lazyTasks.findIndex(el => el.isEdit)
       const move = () => {
@@ -299,8 +332,14 @@ export default {
             this.deSelectTask(evt.item)
           this.justScrolled = false
           const id = evt.item.dataset.id
-          if (id !== "Edit" && !this.selected.includes(id))
+
+          
+          if (id !== "Edit" && !this.selected.includes(id)) {
+            if (this.selectMultiple)
+              this.selectMultipleIds(id)
+            this.lastSelectedId = id
             this.$store.commit('selectTask', id)
+          }
         },
         onDeselect: evt => {
           const id = evt.item.dataset.id
@@ -514,7 +553,12 @@ export default {
     click(event) {
       if (this.selected.length > 0) event.stopPropagation()
     },
+    selectTask(el) {
+      this.$store.commit('selectTask', el.dataset.id)
+      Sortable.utils.select(el)
+    },
     deSelectTask(el) {
+      this.$store.commit('unselectTask', el.dataset.id)
       Sortable.utils.deselect(el)
     },
     add(task) {
@@ -673,6 +717,7 @@ export default {
     ...mapState({
       selected: state => state.selectedTasks,
       savedTasks: state => state.task.tasks,
+      pressingKey: state => state.pressingKey,
       isScrolling: state => state.isScrolling,
       isOnControl: state => state.isOnControl,
     }),
@@ -718,6 +763,9 @@ export default {
         if (head.tasks.length > 0) return false
       return this.isRoot && this.lazyTasks.length === 0 && this.icon && !this.header
     },
+    selectMultiple() {
+      return this.pressingKey === 'Shift' || this.pressingKey === 'Control'
+    },
     isSelecting() {
       return this.selected.length > 0
     },
@@ -729,7 +777,7 @@ export default {
       
       this.waitingUpdateTimeout = setTimeout(() => {
         this.updateTasks(tasks)
-      }, 150)
+      }, 500)
     },
     headings(newArr) {
       if (this.isRoot) {
