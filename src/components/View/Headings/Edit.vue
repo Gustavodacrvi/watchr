@@ -154,7 +154,7 @@ export default {
 .trans-t-enter, .trans-t-leave-to {
   opacity: 0;
   background-color: var(--back-color);
-  box-shadow: 0 0 0 #000;
+  box-shadow: 0 0 0 rgba(0,0,0,.3);
 }
 
 .trans-t-leave, .trans-t-enter-to {

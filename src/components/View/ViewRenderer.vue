@@ -404,7 +404,7 @@ export default {
             callback: () => this.toggleCompleted()
           },
         ]
-        if (this.showCompleted) opt[3].name = l['Hide completed']
+        if (this.showCompleted) opt[2].name = l['Hide completed']
         if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
           opt.unshift({
             type: 'hr',
