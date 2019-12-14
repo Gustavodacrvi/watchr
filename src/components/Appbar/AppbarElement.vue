@@ -112,8 +112,8 @@ export default {
         }
       }
     },
-    openMobileOptions() {
-      this.$store.commit('pushIconDrop', this.options)
+    async openMobileOptions() {
+      this.$store.commit('pushIconDrop', await this.getOptions(this.options))
     },
     touchStart(e) {
       this.isTouching = true
