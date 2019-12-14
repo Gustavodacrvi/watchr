@@ -22,7 +22,8 @@
       </transition>
       <div v-if="!isDesktop" style="height: 65px"></div>
       <transition name="fade-t" appear mode="out-in">
-        <router-view class="router-view" :class="{hided: hideNavbar}" :hideNavbar='hideNavbar'/>
+        <router-view class="router-view" :class="{hided: hideNavbar}" :hideNavbar='hideNavbar'
+        />
       </transition>
     </div>
   </div>
@@ -66,6 +67,8 @@ export default {
     window.addEventListener('keyup', this.keyup)
     window.addEventListener('mousemove', this.getMousePos)
     document.addEventListener('scroll', this.toggleScroll)
+
+    this.updateViewType(true)
   },
   methods: {
     toggleScroll() {
@@ -112,10 +115,31 @@ export default {
         }, 300)
       }
     },
+    updateViewType(saveRoute) {
+      const query = this.$route.query
+      const keys = Object.keys(query)
+      let viewType = keys[0]
+      let viewName = query[viewType]
+      const name = this.$route.name
+      const path = this.$route.path
+      if (name !== 'menu' && path !== '/popup' && (viewType === undefined || viewName === undefined)) {
+        const view = this.getInitialSmartView
+        this.$router.replace(`/user?list=${view}`)
+      }
+      if (saveRoute) {
+        if (viewName && viewType)
+          document.getElementById('meta-title')
+            .innerHTML = `${viewName} - ${viewType.replace(/^[a-z]/, m => m.toUpperCase())}`
+        
+        this.$store.commit('navigate', {
+          viewName, viewType,
+        })
+      }
+    }
   },
   computed: {
     ...mapState(['fastSearch', 'fileURL', 'user', 'allowNavHide', 'pressingKey']),
-    ...mapGetters(['isDesktop', 'isStandAlone', 'l', 'needsUpdate']),
+    ...mapGetters(['isDesktop', 'isStandAlone', 'l', 'getInitialSmartView', 'needsUpdate']),
     hideNavbar() {
       const isAnonymous = this.user && this.user.isAnonymous
       const isNotOnUser = this.$route.path !== '/user'
@@ -137,8 +161,12 @@ export default {
   },
   watch: {
     $route(to, from) {
-      if (to && to.path !== '/popup' && this.$store.getters.isPopupOpened)
+      const isGoingToPopup = to.path === '/popup'
+      const isGoingToMenu = to.path === '/menu'
+      
+      if (to && !isGoingToPopup && this.$store.getters.isPopupOpened)
         this.closePopup()
+      this.updateViewType(this.isDesktop || (!isGoingToPopup && !isGoingToMenu))
     }
   }
 }

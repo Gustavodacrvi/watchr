@@ -59,7 +59,7 @@ export default {
       const els = evt.path
       for (const e of els)
         if (e.classList.contains('task-adder')) {
-          this.$store.dispatch('pushPopup', {comp: 'AddTask'})
+          this.$store.dispatch('pushPopup', {comp: 'AddTask', naked: true})
           break
         }
     }

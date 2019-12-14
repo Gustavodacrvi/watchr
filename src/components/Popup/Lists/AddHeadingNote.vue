@@ -1,21 +1,16 @@
 <template>
   <div class="AddNote popup cb shadow rb" :class="platform">
-    <div class="title tac">
-      <h2 class="pc">{{ l['Add Heading Notes'] }}</h2>
-    </div>
-    <div class="content">
-      <InputApp
-        :focus="true"
-        v-model="note"
-        :value='note'
-        @input='v => note = v'
-        :options="[]"
-        :placeholder="l['Note...']"
-        @enter='addNote'
-        @cancel="$emit('close')"
-      />
-      <ButtonApp :value='l["Add notes"]' @click="addNote"/>
-    </div>
+    <InputApp
+      back-color='var(--card)'
+      :focus="true"
+      v-model="note"
+      :value='note'
+      @input='v => note = v'
+      :options="[]"
+      :placeholder="l['Note...']"
+      @enter='addNote'
+      @cancel="$emit('close')"
+    />
   </div>
 </template>
 

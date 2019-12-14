@@ -29,7 +29,7 @@
               <Icon v-if="!showHelpIcons"
                 class="cursor option-icon"
                 icon="search"
-                width="22px"
+                width="21px"
                 :circle="true"
                 @click="openSearchBar"
               />
@@ -100,7 +100,7 @@ export default {
       return this.selectedTasks && this.selectedTasks.length > 0
     },
     title() {
-      if (this.$route.name === 'user') {
+      if (this.isOnUserPage) {
         if (this.navBar) return this.navBar.title
         else return null
       }
@@ -117,7 +117,11 @@ export default {
       }
     },
     isOnUserPage() {
-      return this.$route.name === 'user' || this.$route.path === '/menu'
+      const isInUser = this.$route.name === 'user'
+      const isInMenu = this.$route.path === '/menu'
+      const isInPopup = this.$route.path === '/popup'
+      
+      return isInUser || isInPopup || isInMenu
     },
   }
 }

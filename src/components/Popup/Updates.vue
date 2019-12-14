@@ -44,13 +44,14 @@ import v052 from './Updates/v052.vue'
 import v053 from './Updates/v053.vue'
 import v054 from './Updates/v054.vue'
 import v055 from './Updates/v055.vue'
+import v056 from './Updates/v056.vue'
 
 
 export default {
   components: {
     Button: ButtonVue,
     v040, v041, v042, v043, v044, v045, v046, v047, v048, v049, v050,
-    v051, v052, v053, v054, v055,
+    v051, v052, v053, v054, v055, v056,
   },
   created() {
     this.diff = this.versionDiff || 0
@@ -62,7 +63,7 @@ export default {
       ver: '',
       diff: 0,
       versions: [
-        '055', '054', '053', '052', '051', '050', '049', '048', '047', '046', '045', '044', '043', '042', '041', '040',
+        '056', '055', '054', '053', '052', '051', '050', '049', '048', '047', '046', '045', '044', '043', '042', '041', '040',
       ]
     }
   },

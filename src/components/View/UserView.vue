@@ -4,7 +4,7 @@
     <div v-if="isDesktop" class="nav-shadow"></div>
     <div v-if="isDesktop" class="nav" :style="getNavTopPosition">
       <Appbar class="Appbar"
-        :value="value"
+        :value="viewName"
         :view-type="viewType"
         :appbarHided='appbarHided'
         @appbar="toggleAppbar"
@@ -12,11 +12,7 @@
       />
     </div>
     <div class="cont" :class="platform">
-      <ViewControler
-        :isSmart="isSmart"
-        :viewType='viewType'
-        :viewName='value'
-      />
+      <ViewControler :isSmart="isSmart"/>
     </div>
   </div>
 </template>
@@ -26,7 +22,7 @@
 import AppbarVue from '../Appbar/Appbar.vue'
 import ViewControlerVue from '../View/Controller/ViewControler.vue'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   props: ['hideNavbar'],
@@ -36,16 +32,11 @@ export default {
   },
   data() {
     return {
-      viewType: null,
-      value: null,
       appbarHided: false,
       scrollTop: null,
-      test: false,
     }
   },
   created() {
-    setTimeout(() => this.test = true, 2000)
-    this.updateViewType(true)
     this.getScrollTop()
     window.addEventListener('scroll', this.getScrollTop)
   },
@@ -56,33 +47,10 @@ export default {
     toggleAppbar(isHided) {
       this.appbarHided = isHided
     },
-    updateViewType(saveRoute) {
-      const query = this.$route.query
-      const keys = Object.keys(query)
-      let viewType = keys[0]
-      let value = query[viewType]
-      const name = this.$route.name
-      if (name !== 'menu' && (viewType === undefined || value === undefined)) {
-        const view = this.getInitialSmartView
-        this.$router.replace(`/user?list=${view}`)
-      }
-      if (saveRoute) {
-        this.value = value
-        this.viewType = viewType
-
-        if (value && viewType)
-          document.getElementById('meta-title')
-            .innerHTML = `${value} - ${viewType.replace(/^[a-z]/, m => m.toUpperCase())}`
-        
-        this.$store.commit('navigate', {
-          viewName: this.value,
-          viewType: this.viewType,
-        })
-      }
-    }
   },
   computed: {
-    ...mapGetters(['platform', 'isDesktop', 'getInitialSmartView']),
+    ...mapState(['viewName', 'viewType']),
+    ...mapGetters(['platform', 'isDesktop']),
     getNavTopPosition() {
       let increment = 0
       if (this.hideNavbar) increment = 22
@@ -106,7 +74,7 @@ export default {
     isSmart() {
       if (this.viewType === 'search') return true
       if (this.viewType !== 'list') return false
-      switch (this.value) {
+      switch (this.viewName) {
         case 'Today': return true
         case 'Upcoming': return true
         case 'Someday': return true
@@ -117,11 +85,6 @@ export default {
       return false
     },
   },
-  watch: {
-    $route(newRoute) {
-      this.updateViewType(this.isDesktop || newRoute.path !== '/menu')
-    }
-  }
 }
 
 </script>

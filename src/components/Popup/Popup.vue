@@ -1,10 +1,10 @@
 <template>
-  <div class="Popup scroll-thin" :class="platform">
+  <div class="Popup scroll-thin" :class="{fillSpace}">
     <div class="popup-wrapper">
-      <Icon v-if="!isDesktop && popup && popup.comp !== 'Update'" class="icon cursor primary-hover" icon="arrow" @click="closeMobilePopup" :circle='true'/>
+      <Icon v-if="!isDesktop && popup && popup.comp !== 'Update' && fillSpace" class="icon cursor primary-hover" icon="arrow" @click="closeMobilePopup" :circle='true'/>
       <component class="component"
         :is="popup.comp"
-        :class="[platform, {isStandAlone}]"
+        :class="{isStandAlone, fillSpace}"
         :payload="popup.payload"
         @close="$emit('close')"
       />
@@ -49,11 +49,14 @@ export default {
     },
     card() {
       return this.$el.getElementsByClassName('component')[0]
-    }
+    },
   },
   computed: {
     ...mapState(['popup']),
-    ...mapGetters(['isPopupOpened', 'platform', 'isDesktop', 'isStandAlone'])
+    ...mapGetters(['isPopupOpened', 'platform', 'isDesktop', 'isStandAlone']),
+    fillSpace() {
+      return !this.isDesktop && !this.popup.naked
+    },
   }
 }
 
@@ -73,15 +76,18 @@ export default {
 .popup-wrapper {
   height: 100%;
   width: 100%;
-}
-
-.desktop .popup-wrapper {
   display: flex;
   justify-content: center;
   align-items: flex-start;
 }
 
-.Popup.mobile .component {
+.Popup.fillSpace .popup-wrapper {
+  display: initial;
+  justify-content: initial;
+  align-items: initial;
+}
+
+.Popup.fillSpace .component {
   width: 100%;
   height: 100%;
 }

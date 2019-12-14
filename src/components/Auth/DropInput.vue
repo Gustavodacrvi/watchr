@@ -11,6 +11,8 @@
       @focus="onFocus"
       @keydown="keydown"
       @keyup="keyup"
+
+      :style="backColor ? `background-color: ${backColor}` : ''"
     ></textarea>
     <transition
       @enter="enter"
@@ -35,17 +37,18 @@
 <script>
 
 export default {
-  props: ['options', 'focus', 'value', 'placeholder', 'focusToggle'],
+  props: ['options', 'focus', 'value', 'placeholder', 'focusToggle', 'back-color', 'disable-auto-select'],
   data() {
     return {
       str: this.value,
       showing: false,
-      active: this.options[0],
+      active: '',
       shift: false,
     }
   },
   created() {
-    this.active = this.options[0]
+    if (!this.disableAutoSelect)
+      this.active = this.options[0]
   },
   mounted() {
     this.focusInput(200)
@@ -79,7 +82,9 @@ export default {
     },
     onFocus() {
       this.showing = true
-      this.active = this.options[0]
+      if (!this.disableAutoSelect)
+        this.active = this.options[0]
+      else this.active = ''
     },
     blur() {
       this.showing = false

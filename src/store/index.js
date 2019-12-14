@@ -78,6 +78,7 @@ const store = new Vuex.Store({
     language: null,
     popup: {
       comp: '',
+      naked: false,
       payload: null,
       callback: null,
     },
@@ -321,7 +322,7 @@ const store = new Vuex.Store({
     },
     pushKeyShortcut({dispatch, commit, state}, key) {
       const pop = (comp) => {
-        dispatch('pushPopup', {comp})
+        dispatch('pushPopup', {comp, naked: true})
       }
       state.pressingKey = key
       switch (key.toLowerCase()) {
@@ -344,7 +345,7 @@ const store = new Vuex.Store({
         router.push('/popup')
     },
     closePopup({state, getters}) {
-      state.popup = {comp: '', payload: null}
+      state.popup = {comp: '', payload: null, naked: false}
       if (!getters.isDesktop)
         router.go(-1)
     },

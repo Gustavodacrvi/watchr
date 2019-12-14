@@ -162,6 +162,7 @@ export default {
       movingHeading: false,
       addedTask: null,
       waitingUpdateTimeout: null,
+      numberOfTimeoutUpdates: 0,
 
       hasEdit: null,
       focusToggle: false,
@@ -319,7 +320,7 @@ export default {
             return false
           }
         },
-        delay: 100,
+        delay: this.isDesktop ? 0 : 100,
         handle: '.task-handle',
 
         onUpdate: (evt) => {
@@ -772,12 +773,15 @@ export default {
   },
   watch: {
     tasks(tasks) {
-      if (this.waitingUpdateTimeout)
+      if (this.waitingUpdateTimeout) {
         clearTimeout(this.waitingUpdateTimeout)
+        this.numberOfTimeoutUpdates++
+      }
       
       this.waitingUpdateTimeout = setTimeout(() => {
         this.updateTasks(tasks)
-      }, 500)
+        this.numberOfTimeoutUpdates = 0
+      }, (this.numberOfTimeoutUpdates * 150) + 150)
     },
     headings(newArr) {
       if (this.isRoot) {
@@ -789,6 +793,7 @@ export default {
       }
     },
     viewName() {
+      this.numberOfTimeoutUpdates = 0
       this.updateView()
 
       if (this.sortable)
@@ -807,6 +812,15 @@ export default {
       if (this.sortable) {
         this.sortable.options.multiDrag = this.enableSelect
         this.sortable.options.multiDragKey = this.getMultiDragKey
+        setTimeout(() => {
+          if (this.selectedTasks.length === 0)
+            this.lastSelectedId = null
+        })
+        if (this.isDesktop) {
+          if (this.enableSelect)
+            this.sortable.options.delay = 50
+          else this.sortable.options.delay = 0
+        }
       }
     },
     isScrolling() {

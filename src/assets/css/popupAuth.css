@@ -3,9 +3,19 @@
   margin-top: 8px;
 }
 
-.popup.desktop {
+.popup {
+  margin: 12px;
   margin-top: 75px;
   flex-basis: 650px;
+}
+
+.popup.fillSpace {
+  margin-top: initial;
+  flex-basis: initial;
+}
+
+.content.fillSpace {
+  margin: 10px;
 }
 
 .title {
@@ -17,9 +27,6 @@
   margin-top: 0;
 }
 
-.content.mobile {
-  margin: 10px;
-}
 
 .scroll {
   overflow: auto;
