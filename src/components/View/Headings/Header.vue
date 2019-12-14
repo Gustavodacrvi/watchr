@@ -94,7 +94,7 @@
     <div class="tags" :class="{margins: lists.length > 0}">
       <Tag class="tag" v-for="l in lists" :key="l.id"
         :value="l.name"
-        :selected='inclusiveList === l.name || exclusiveList.includes(name)'
+        :selected='inclusiveList === l.name || exclusiveLists.includes(l.name)'
         :extraIcon="getListExclusiveIcon(l.name)"
         icon="tasks"
         @click="$emit('list', l.name)"
@@ -103,7 +103,7 @@
     <div class="tags" :class="{margins: folders.length > 0}">
       <Tag class="tag" v-for="l in folders" :key="l.id"
         :value="l.name"
-        :selected='inclusiveFolder === l.name || exclusiveFolders.includes(name)'
+        :selected='inclusiveFolder === l.name || exclusiveFolders.includes(l.exclusiveTagsname)'
         :extraIcon="getFolderExclusiveIcon(l.name)"
         icon="folder"
         @click="$emit('folder', l.name)"
@@ -170,12 +170,12 @@ export default {
       return null
     },
     getListExclusiveIcon(name) {
-      if (this.exclusiveList === name)
+      if (this.exclusiveLists.includes(name))
         return 'close'
       return null
     },
     getFolderExclusiveIcon(name) {
-      if (this.exclusiveFolder === name)
+      if (this.exclusiveFolders.includes(name))
         return 'close'
       return null
     },

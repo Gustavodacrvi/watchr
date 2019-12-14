@@ -148,7 +148,7 @@ export default {
     selectList(name) {
       this.inclusiveFolder = null
       this.exclusiveFolders = []
-      if (this.inclusiveList !== name && this.exclusiveLists.includes(name)) {
+      if (this.inclusiveList !== name && !this.exclusiveLists.includes(name)) {
         this.inclusiveList = name
       } else if (this.inclusiveList === name) {
         this.inclusiveList = null
@@ -161,7 +161,7 @@ export default {
     selectFolder(name) {
       this.inclusiveList = null
       this.exclusiveLists = []
-      if (this.inclusiveFolder !== name && this.exclusiveFolders.includes(name)) {
+      if (this.inclusiveFolder !== name && !this.exclusiveFolders.includes(name)) {
         this.inclusiveFolder = name
       } else if (this.inclusiveFolder === name) {
         this.inclusiveFolder = null
