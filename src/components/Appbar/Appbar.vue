@@ -6,7 +6,7 @@
         <div>
           <div class="search-shadow" @mouseenter="showSearch" @mouseleave="hideSearch"></div>
           <transition name="bar-trans">
-          <div v-if="showing" class="content">
+          <div v-if="showing" class="appbar-content">
             <transition name="search-t">
               <SearchButton v-if="showingSearch || !isDesktop"
                 @click="$store.commit('openFastSearch')"
@@ -608,7 +608,7 @@ export default {
   height: 35px;
 }
 
-.content {
+.appbar-content {
   position: relative;
 }
 
@@ -617,6 +617,10 @@ export default {
   width: 100%;
   padding-right: 25px;
   overflow: visible;
+}
+
+.Appbar.mobile {
+  padding-right: 0;
 }
 
 .Appbar-wrapper {
@@ -634,8 +638,8 @@ export default {
   position: absolute;
   left: 0;
   bottom: 0;
-  height: 35px;
-  width: 100%;
+  height: 40px;
+  width: 338px;
   background-color: var(--back-color);
   border: none;
   margin-left: 32px;

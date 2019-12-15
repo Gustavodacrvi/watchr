@@ -105,8 +105,8 @@ export default {
 }
 
 .nav-shadow {
-  flex-basis: 345px;
-  max-width: 345px;
+  flex-basis: 425px;
+  max-width: 425px;
   flex-grow: 0;
   flex-shrink: 0;
   transition-duration: .6s;
@@ -115,7 +115,7 @@ export default {
 
 .nav {
   position: fixed;
-  width: 345px;
+  width: 425px;
   left: 15px;
   z-index: 4;
 }
@@ -127,10 +127,6 @@ export default {
   transition-delay: .4s;
   transition-duration: .6s;
   z-index: 5;
-}
-
-.cont.desktop {
-  margin-left: 90px;
 }
 
 .appbarHided .nav-shadow {
