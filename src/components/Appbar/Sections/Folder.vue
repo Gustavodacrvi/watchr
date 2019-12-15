@@ -97,8 +97,8 @@ export default {
         this.showCircle = true
       }
     },
-    openMobileOptions() {
-      this.$store.commit('pushIconDrop', this.options)
+    async openMobileOptions() {
+      this.$store.commit('pushIconDrop', await this.getOptions(this.options))
     },
     touchEnd(e) {
       this.isTouching = false

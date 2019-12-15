@@ -3,6 +3,7 @@
     <li>New logo.</li>
     <li>New list progress icon.</li>
     <li>Much better popup interface.</li>
+    <li>Filter by priority.</li>
     
     <h4>Desktop</h4>
 
