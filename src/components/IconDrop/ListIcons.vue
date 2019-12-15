@@ -27,7 +27,7 @@
                 :color="l.color"
               />
               <input v-if="l.file" :ref="`file-icondrop-link-${l.name}`" type="file" :accept="l.accept" style="display: none" @change='handleFiles(l)'>
-              <span class="name">{{ priorityParser(l.name) }}</span>
+              <span class="name" v-html="priorityParser(l.name)"></span>
             </div>
           </div>
           <div v-else-if="l.type === 'optionsList'" :key="l.name" class="header-link hide-trans">
@@ -144,6 +144,10 @@ export default {
 </script>
 
 <style scoped>
+
+.fade {
+  opacity: .6;
+}
 
 .ListIcons {
   max-height: 360px;

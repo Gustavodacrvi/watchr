@@ -91,6 +91,8 @@ export default {
   "Filter by priority": "Filtrar por prioridade",
   "Auto schedule": "Auto programar",
   "Start from:": "Começar a partir de:",
+  "Buffer time:": "Tempo de intervalo:",
+  "Fallback time:": "Tempo padrão:",
   'S': 'D',
   'M': 'S',
   'T': 'T',

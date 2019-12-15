@@ -216,6 +216,8 @@ export default {
   "Filter by priority": "Filter by priority",
   "Auto schedule": "Auto schedule",
   "Start from:": "Start from:",
+  "Buffer time:": "Buffer time:",
+  "Fallback time:": "Fallback time:",
   'S': 'S',
   'M': 'M',
   'T': 'T',

@@ -239,6 +239,7 @@ export default {
     ...mapState({
       viewOrders: state => state.list.viewOrders,
       selectedTasks: state => state.selectedTasks,
+      userInfo: state => state.userInfo,
     }),
     ...mapGetters({
       platform: 'platform',
@@ -399,6 +400,77 @@ export default {
         dispatch('task/saveTasksById', {ids, task: {priority: pri}})
       }
       const l = this.l
+
+      const formatTime = time => mom(time, 'HH:mm').format(this.userInfo.disablePmFormat ? 'HH:mm' : 'LT')
+      const formatQuantity = time => {
+        const split = mom(time, 'HH:mm').format('H:m').split(':')
+
+        const hours = split[0] + 'h'
+        const minutes = split[1] + 'm'
+
+        if (split[0] === '0' && split[1] === '0')
+          return '0m'
+        if (split[0] === '0')
+          return minutes
+        if (split[1] === '0')
+          return hours
+        return `${hours} ${minutes}`
+      }
+
+      const getScheduleIconDropObject = info => {
+        if (!info)
+          return {
+            comp: 'TimePicker',
+            content: {
+              msg: l['Start from:'],
+              callback: time => getScheduleIconDropObject({
+                time, buffer: '00:00am', fallback: '00:00',
+              })
+            }
+          }
+        const {time, buffer, fallback} = info
+
+        return [
+          {
+            name: `${l['Start from:']} <span class="fade">${formatTime(time)}</span>`,
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                msg: l['Start from:'],
+                callback: newTime => getScheduleIconDropObject({
+                  time: newTime, buffer, fallback,
+                })
+              }
+            })
+          },
+          {
+            name: `${l['Buffer time:']} <span class="fade">${formatQuantity(buffer)}</span>`,
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                format: '24hr',
+                msg: l["Buffer time:"],
+                callback: newBuffer => getScheduleIconDropObject({
+                  time, buffer: newBuffer, fallback,
+                })
+              }
+            })
+          },
+          {
+            name: `${l['Fallback time:']} <span class="fade">${formatQuantity(fallback)}</span>`,
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                format: '24hr',
+                msg: l["Buffer time:"],
+                callback: newFallback => getScheduleIconDropObject({
+                  time, buffer, fallback: newFallback,
+                })
+              }
+            })
+          },
+        ]
+      }
       
       if (ids.length === 0) {
         let opt = [
@@ -452,13 +524,7 @@ export default {
           {
             name: l['Auto schedule'],
             icon: 'magic',
-            callback: () => ({
-              comp: 'TimePicker',
-              content: {
-                msg: l['Start from:'],
-                callback: console.log
-              }
-            })
+            callback: () => getScheduleIconDropObject()
           },
           {
             name: l['Show completed'],

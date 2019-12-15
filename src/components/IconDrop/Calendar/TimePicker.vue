@@ -6,8 +6,10 @@
         :noTitle='true'
         :scrollable='true'
         :dark='true'
+        :format='getFormat'
 
         width='225px'
+        @change='callback'
       />
     </div>
   </div>
@@ -15,8 +17,26 @@
 
 <script>
 
+import { mapState } from 'vuex'
+
 export default {
-  props: ['content']
+  props: ['content'],
+  methods: {
+    callback(str) {
+      const res = this.content.callback(str)
+      this.$emit('update', res)
+      if (!res || (res && res.then)) close()
+    }
+  },
+  computed: {
+    ...mapState(['userInfo']),
+    getFormat() {
+      if (this.content.format) return this.content.format
+      if (this.userInfo.disablePmFormat)
+        return '24hr'
+      return 'ampm'
+    },
+  },
 }
 
 </script>
@@ -47,6 +67,10 @@ export default {
 
 .v-time-picker-clock__hand, .v-time-picker-clock__item--active {
   background-color: var(--primary) !important;
+}
+
+.v-time-picker-clock__hand::before, .v-time-picker-clock__hand::after {
+  color: var(--primary);
 }
 
 </style>
