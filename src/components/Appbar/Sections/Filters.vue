@@ -43,7 +43,7 @@ export default {
             icon: 'pen',
             callback: () => {
               this.$store.dispatch('pushPopup', {
-                comp: 'AddFilter', payload: el,
+                comp: 'AddFilter', payload: el, naked: true,
               })
             },
           },

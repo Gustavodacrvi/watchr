@@ -88,6 +88,7 @@ export default {
   'CalParserDefer': 'atrasar',
   'CalParserDue': 'vence',
   'CalParserEvery': 'todo',
+  "Filter by priority": "Filtrar por prioridade",
   'S': 'D',
   'M': 'S',
   'T': 'T',

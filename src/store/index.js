@@ -57,7 +57,7 @@ moment.locale(lang)
 const uid = () => auth.currentUser.uid
 
 
-const version = '055'
+const version = '056'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -78,6 +78,7 @@ const store = new Vuex.Store({
     language: null,
     popup: {
       comp: '',
+      naked: false,
       payload: null,
       callback: null,
     },
@@ -116,6 +117,8 @@ const store = new Vuex.Store({
     allowNavHide: true,
     viewName: '',
     viewType: '',
+
+    pressingKey: null,
   },
   getters: {
     ...Memoize([], {
@@ -211,6 +214,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    unpressKey(state) {
+      state.pressingKey = null
+    },
     navigate(state, {viewName, viewType}) {
       state.viewName = viewName
       state.viewType = viewType
@@ -262,15 +268,17 @@ const store = new Vuex.Store({
       state.iconDrop = drop
     },
     unselectTask(state, id) {
-      setTimeout(() => {
-        const i = state.selectedTasks.findIndex(el => el === id)
-        state.selectedTasks.splice(i, 1)
-      }, 10)
+      if (id && state.selectedTasks.includes(id))
+        setTimeout(() => {
+          const i = state.selectedTasks.findIndex(el => el === id)
+          state.selectedTasks.splice(i, 1)
+        }, 5)
     },
     selectTask(state, id) {
-      setTimeout(() => {
-        state.selectedTasks.push(id)
-      }, 10)
+      if (id && !state.selectedTasks.includes(id))
+        setTimeout(() => {
+          state.selectedTasks.push(id)
+        }, 5)
     },
     clearSelected(state) {
       if (state.selectedTasks.length !== 0)
@@ -314,8 +322,9 @@ const store = new Vuex.Store({
     },
     pushKeyShortcut({dispatch, commit, state}, key) {
       const pop = (comp) => {
-        dispatch('pushPopup', {comp})
+        dispatch('pushPopup', {comp, naked: true})
       }
+      state.pressingKey = key
       switch (key.toLowerCase()) {
         case 'q': pop('AddTask'); break
         case 't': pop('AddTag'); break
@@ -335,9 +344,9 @@ const store = new Vuex.Store({
       if (!getters.isDesktop)
         router.push('/popup')
     },
-    closePopup({state, getters}) {
-      state.popup = {comp: '', payload: null}
-      if (!getters.isDesktop)
+    closePopup({state, getters}, persistOnTheSameView) {
+      state.popup = {comp: '', payload: null, naked: false}
+      if (!getters.isDesktop && !persistOnTheSameView)
         router.go(-1)
     },
     deleteProfilePic() {
@@ -369,7 +378,7 @@ const store = new Vuex.Store({
     createUser(s, user) {
       return fire.collection('users').doc(user.uid).set({
         ...utils.getRelevantUserData(user),
-      })
+      }, {merge: true})
     },
     createAnonymousUser(c, userId) {
       firebase.firestore().collection('users').doc(userId).set({

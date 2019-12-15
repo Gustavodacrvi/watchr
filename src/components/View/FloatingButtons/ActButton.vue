@@ -75,11 +75,12 @@ export default {
 }
 
 .mobile .inner-ball-button {
-  height: 57px;
-  width: 57px;
+  height: 55px;
+  width: 55px;
 }
 
 .path {
+  background-color: var(--light-gray);
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -88,7 +89,6 @@ export default {
   clip-path: circle(0px);
   z-index: 10;
   transition-duration: .3s;
-  background-color: var(--light-gray);
 }
 
 .inner-ball-button:hover .path {

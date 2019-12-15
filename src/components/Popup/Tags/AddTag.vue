@@ -1,21 +1,17 @@
 <template>
   <div class="AddTag popup cb shadow rb" :class="platform">
-    <div class="title tac">
-      <h2 class="pc">{{ title }}</h2>
-    </div>
-    <div class="content">
-      <DropInput
-        :placeholder="l['Tag name'] + '...'"
-        :value='name'
-        @input='v => name = v'
-        :focus="true"
-        :options='options'
-        @select="select"
-        @cancel="$emit('close')"
-        @enter='addTag'
-      />
-      <ButtonApp :value="title" @click="addTag"/>
-    </div>
+    <DropInput
+      back-color='var(--card)'
+      :placeholder="l['Tag name'] + '...'"
+      :value='name'
+      @input='v => name = v'
+      :focus="true"
+      :disable-auto-select='true'
+      :options='options'
+      @select="select"
+      @cancel="$emit('close')"
+      @enter='addTag'
+    />
   </div>
 </template>
 
@@ -84,7 +80,6 @@ export default {
             type: 'success',
             seconds: 2,
           })
-          this.$store.dispatch('closePopup')
         } else {
           toast({
             name: this.l[`This tag already exists!`],

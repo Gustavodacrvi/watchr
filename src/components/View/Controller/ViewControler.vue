@@ -4,6 +4,8 @@
     v-on="listeners"
 
     :prefix='prefix'
+    :viewName='viewName'
+    :viewType='viewType'
 
     @show-completed='v => showCompleted = v'
   />
@@ -27,7 +29,7 @@ import mixins from './controlerModules'
 
 export default {
   mixins,
-  props: ['isSmart', 'viewType', 'viewName'],
+  props: ['isSmart'],
   components: {
     ViewRenderer: ViewRendererVue,
   },
@@ -209,6 +211,8 @@ export default {
   },
   computed: {
     ...mapState({
+      viewName: state => state.viewName,
+      viewType: state => state.viewType,
       tags: state => state.tag.tags,
       tasks: state => state.task.tasks,
       lists: state => state.list.lists,

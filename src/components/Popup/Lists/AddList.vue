@@ -1,21 +1,17 @@
 <template>
   <div class="AddList popup cb shadow rb" :class="platform">
-    <div class="title tac">
-      <h2 class="pc">{{ title }}</h2>
-    </div>
-    <div class="content">
-      <DropInput
-        :placeholder="['List name'] + '...'"
-        :value='name'
-        @input='v => name = v'
-        :focus="true"
-        :options='options'
-        @select="select"
-        @cancel="$emit('close')"
-        @enter='addList'
-      />
-      <ButtonApp :value="title" @click="addList"/>
-    </div>
+    <DropInput
+      back-color='var(--card)'
+      :disable-auto-select='true'
+      :placeholder="['List name'] + '...'"
+      :value='name'
+      @input='v => name = v'
+      :focus="true"
+      :options='options'
+      @select="select"
+      @cancel="$emit('close')"
+      @enter='addList'
+    />
   </div>
 </template>
 
@@ -88,7 +84,6 @@ export default {
             type: 'success',
             seconds: 2,
           })
-          this.$store.dispatch('closePopup')
         } else if (!list && this.isEditing) {
           this.$store.dispatch('list/saveList', {
             name: this.name,

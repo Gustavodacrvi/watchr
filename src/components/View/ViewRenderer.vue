@@ -7,12 +7,15 @@
 
         :inclusiveTags='inclusiveTags'
         :exclusiveTags='exclusiveTags'
+        :inclusivePriority='inclusivePriority'
+        :exclusivePriorities='exclusivePriorities'
         :inclusiveList='inclusiveList'
-        :exclusiveList='exclusiveList'
+        :exclusiveLists='exclusiveLists'
         :inclusiveFolder='inclusiveFolder'
-        :exclusiveFolder='exclusiveFolder'
+        :exclusiveFolders='exclusiveFolders'
 
         :tags='tagSelectionOptions'
+        :priorities='priorityOptions'
         :lists='listSelectionOptions'
         :folders='folderSelectionOptions'
 
@@ -21,6 +24,7 @@
         :headerTags="headerTags"
 
         @tag='selectTag'
+        @priority='selectPriority'
         @list='selectList'
         @folder='selectFolder'
       />
@@ -83,6 +87,7 @@ export default {
       showingTagSelection: false,
       showingListSelection: false,
       showingFolderSelection: false,
+      showingPrioritySelection: false,
       showSomeday: false,
 
       rootNonFiltered: [],
@@ -90,10 +95,12 @@ export default {
 
       inclusiveTags: [],
       exclusiveTags: [],
+      inclusivePriority: null,
+      exclusivePriorities: [],
       inclusiveList: null,
-      exclusiveList: null,
+      exclusiveLists: [],
       inclusiveFolder: null,
-      exclusiveFolder: null,
+      exclusiveFolders: [],
     }
   },
   created() {
@@ -125,25 +132,44 @@ export default {
         exc.splice(i, 1)
       }
     },
+    selectPriority(name) {
+      const inc = this.inclusivePriority
+      const exc = this.exclusivePriorities
+      if (inc !== name && !exc.includes(name)) {
+        this.inclusivePriority = name
+      } else if (inc === name) {
+        this.inclusivePriority = null
+        exc.push(name)
+      } else {
+        const i = exc.findIndex(el => el === name)
+        exc.splice(i, 1)
+      }
+    },
     selectList(name) {
       this.inclusiveFolder = null
-      this.exclusiveFolder = null
-      if (this.inclusiveList !== name && this.exclusiveList !== name) {
+      this.exclusiveFolders = []
+      if (this.inclusiveList !== name && !this.exclusiveLists.includes(name)) {
         this.inclusiveList = name
       } else if (this.inclusiveList === name) {
         this.inclusiveList = null
-        this.exclusiveList = name
-      } else this.exclusiveList = null
+        this.exclusiveLists.push(name)
+      } else {
+        const index = this.exclusiveLists.findIndex(el => el === name)
+        this.exclusiveLists.splice(index, 1)
+      }
     },
     selectFolder(name) {
       this.inclusiveList = null
-      this.exclusiveList = null
-      if (this.inclusiveFolder !== name && this.exclusiveFolder !== name) {
+      this.exclusiveLists = []
+      if (this.inclusiveFolder !== name && !this.exclusiveFolders.includes(name)) {
         this.inclusiveFolder = name
       } else if (this.inclusiveFolder === name) {
         this.inclusiveFolder = null
-        this.exclusiveFolder = name
-      } else this.exclusiveFolder = null
+        this.exclusiveFolders.push(name)
+      } else {
+        const index = this.exclusiveFolders.findIndex(el => el === name)
+        this.exclusiveFolders.splice(index, 1)
+      }
     },
     toggleTagSelection() {
       this.showingTagSelection = !this.showingTagSelection
@@ -152,8 +178,13 @@ export default {
     },
     toggleListSelection() {
       this.showingListSelection = !this.showingListSelection
-      this.inclusiveLists = ''
-      this.exclusiveList = ''
+      this.inclusiveList = ''
+      this.exclusiveLists = []
+    },
+    togglePrioritySelection() {
+      this.showingPrioritySelection = !this.showingPrioritySelection
+      this.inclusivePriority = null
+      this.exclusivePriorities = []
     },
     toggleFolderSelection() {
       this.showingFolderSelection = !this.showingFolderSelection
@@ -218,39 +249,54 @@ export default {
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
 
-      doesTaskPassExclusiveFolder: 'task/doesTaskPassExclusiveFolder',
+      doesTaskPassExclusiveFolders: 'task/doesTaskPassExclusiveFolders',
       doesTaskPassInclusiveFolder: 'task/doesTaskPassInclusiveFolder',
-      doesTaskPassExclusiveList: 'task/doesTaskPassExclusiveList',
+      doesTaskPassExclusiveLists: 'task/doesTaskPassExclusiveLists',
       doesTaskPassInclusiveList: 'task/doesTaskPassInclusiveList',
       doesTaskPassExclusiveTags: 'task/doesTaskPassExclusiveTags',
       doesTaskPassInclusiveTags: 'task/doesTaskPassInclusiveTags',
+      doesTaskPassInclusivePriority: 'task/doesTaskPassInclusivePriority',
+      doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
     isSearch() {
       return this.isSmart && this.viewNameValue === "Search"
     },
     pipeFilterOptions() {
       const toPipe = []
-      const {tags, list, folder} = this.getFilterOptions
+      const {tags, list, folder, priorities} = this.getFilterOptions
 
       if (tags.inclusive.length > 0)
         toPipe.push(t => this.doesTaskPassInclusiveTags(t, tags.inclusive))
       if (tags.exclusive.length > 0)
         toPipe.push(t => this.doesTaskPassExclusiveTags(t, tags.exclusive))
 
+      if (priorities.inclusive)
+        toPipe.push(t => this.doesTaskPassInclusivePriority(t, priorities.inclusive))
+      if (priorities.exclusive.length > 0)
+        toPipe.push(t => this.doesTaskPassExclusivePriorities(t, priorities.exclusive))
+
       if (list.inclusive)
         toPipe.push(t => this.doesTaskPassInclusiveList(t, list.inclusive))
-      if (list.exclusive)
-        toPipe.push(t => this.doesTaskPassExclusiveList(t, list.exclusive))
+      if (list.exclusive.length > 0)
+        toPipe.push(t => this.doesTaskPassExclusiveLists(t, list.exclusive))
 
       if (folder.inclusive)
         toPipe.push(t => this.doesTaskPassInclusiveFolder(t, folder.inclusive))
-      if (folder.exclusive)
-        toPipe.push(t => this.doesTaskPassExclusiveFolder(t, folder.exclusive))
+      if (folder.exclusive.length > 0)
+        toPipe.push(t => this.doesTaskPassExclusiveFolders(t, folder.exclusive))
       
       if (toPipe.length > 0) {
         return pipeBooleanFilters(...toPipe)
       }
       return () => true
+    },
+    priorityOptions() {
+      return this.showingPrioritySelection ? [
+        'High priority',
+        'Medium priority',
+        'Low priority',
+        'No priority',
+      ] : []
     },
     passSomedayTasks() {
       return this.isSomeday || this.showSomeday || this.isSearch
@@ -385,6 +431,11 @@ export default {
                 name: l['Filter by tags'],
                 icon: 'tag',
                 callback: () => this.toggleTagSelection()
+              },
+              {
+                name: l['Filter by priority'],
+                icon: 'priority',
+                callback: () => this.togglePrioritySelection()
               },
               {
                 name: l['Filter by lists'],
@@ -557,13 +608,17 @@ export default {
           inclusive: this.getInclusiveTagIds,
           exclusive: this.getExclusiveTagIds,
         },
+        priorities: {
+          inclusive: this.inclusivePriority,
+          exclusive: this.exclusivePriorities,
+        },
         list: {
           inclusive: this.getInclusiveListId,
-          exclusive: this.getExclusiveListId,
+          exclusive: this.getExclusiveListsId,
         },
         folder: {
           inclusive: this.getInclusiveFolderId,
-          exclusive: this.getExclusiveFolderId,
+          exclusive: this.getExclusiveFoldersId,
         },
       }
     },
@@ -578,9 +633,9 @@ export default {
         return this.$store.getters['list/getListsByName']([this.inclusiveList])[0].id
       return null
     },
-    getExclusiveListId() {
-      if (this.exclusiveList)
-        return this.$store.getters['list/getListsByName']([this.exclusiveList])[0].id
+    getExclusiveListsId() {
+      if (this.exclusiveLists)
+        return this.$store.getters['list/getListsByName'](this.exclusiveLists).map(el => el.id)
       return null
     },
     getInclusiveFolderId() {
@@ -588,9 +643,9 @@ export default {
         return this.$store.getters['folder/getFoldersByName']([this.inclusiveFolder])[0].id
       return null
     },
-    getExclusiveFolderId() {
-      if (this.exclusiveFolder)
-        return this.$store.getters['folder/getFoldersByName']([this.exclusiveFolder])[0].id
+    getExclusiveFoldersId() {
+      if (this.exclusiveFolders)
+        return this.$store.getters['folder/getFoldersByName'](this.exclusiveFolders).map(el => el.id)
       return null
     },
   },

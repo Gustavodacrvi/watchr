@@ -21,7 +21,8 @@ export default {
             comp: 'AddHeadingNote',
             payload: {
               listId, heading: heading.name,
-            }
+            },
+            naked: true
           })
         },
       },
@@ -95,7 +96,7 @@ export default {
           {
             name: l['Edit list name'],
             icon: 'pen',
-            callback: () => pop({comp: 'AddList', payload: {...list, editing: true}})
+            callback: () => pop({comp: 'AddList', payload: {...list, editing: true}, naked: true})
           },
           {
             name: l['Repeat list'],
@@ -138,6 +139,7 @@ export default {
             callback: () => dispatch('pushPopup', {
               comp: 'AddListNote',
               payload: listId,
+              naked: true
             })
           },
           {

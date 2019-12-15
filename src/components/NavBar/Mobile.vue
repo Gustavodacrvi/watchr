@@ -17,7 +17,7 @@
               <transition-group name='fade'>
                 <Icon v-for="i in navBar.options.icons" :key="i.icon"
                   class="cursor option-icon"
-                  color='var(--gray)'
+                  color='var(--white)'
                   width='22px'
                   :icon='i.icon'
                   :circle="true"
@@ -25,10 +25,19 @@
                 />
               </transition-group>
             </template>
+            <transition name="fade">
+              <Icon v-if="!showHelpIcons"
+                class="cursor option-icon"
+                icon="search"
+                width="21px"
+                :circle="true"
+                @click="openSearchBar"
+              />
+            </transition>
             <IconDrop v-if="showIcons && navBar.options.icondrop"
               handle="settings-v"
               :options="navBar.options.icondrop"
-              handle-color="var(--gray)"
+              handle-color="var(--white)"
               :circle='true'
             />
           </div>
@@ -62,6 +71,9 @@ export default {
         this.$router.push({path: '/menu'})
       })
     },
+    openSearchBar() {
+      this.$store.commit('openFastSearch')
+    },
     goToIndexPage() {
       this.$router.push('/')
     },
@@ -88,7 +100,7 @@ export default {
       return this.selectedTasks && this.selectedTasks.length > 0
     },
     title() {
-      if (this.$route.name === 'user') {
+      if (this.isOnUserPage) {
         if (this.navBar) return this.navBar.title
         else return null
       }
@@ -105,7 +117,11 @@ export default {
       }
     },
     isOnUserPage() {
-      return this.$route.name === 'user' || this.$route.path === '/menu'
+      const isInUser = this.$route.name === 'user'
+      const isInMenu = this.$route.path === '/menu'
+      const isInPopup = this.$route.path === '/popup'
+      
+      return isInUser || isInPopup || isInMenu
     },
   }
 }

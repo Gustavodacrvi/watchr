@@ -39,7 +39,7 @@ export default {
       }
     },
     buttonAdd(obj) {
-      this.$store.dispatch('pushPopup', {comp: 'AddTag', payload: {...obj}})
+      this.$store.dispatch('pushPopup', {comp: 'AddTag', payload: {...obj}, naked: true})
     }
   },
   computed: {

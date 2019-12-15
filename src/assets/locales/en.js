@@ -213,6 +213,7 @@ export default {
   "CalParserPerKey": "per",
   'CalParserTODAY': 'Today',
   'CalParserTOMORROW': 'Tomorrow',
+  "Filter by priority": "Filter by priority",
   'S': 'S',
   'M': 'M',
   'T': 'T',
