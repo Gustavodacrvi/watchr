@@ -457,11 +457,11 @@ export default {
         ]
         if (this.showCompleted) opt[2].name = l['Hide completed']
         if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
-          opt.unshift({
+          opt.push({
             type: 'hr',
             name: 'division',
           })
-          opt = [...this.computedHeaderOptions, ...opt]
+          opt = [...opt, ...this.computedHeaderOptions]
         }
         return opt
       } else {

@@ -814,7 +814,7 @@ export default {
         this.sortable.options.multiDrag = this.enableSelect
         this.sortable.options.multiDragKey = this.getMultiDragKey
         setTimeout(() => {
-          if (this.selectedTasks.length === 0)
+          if (this.selected.length === 0)
             this.lastSelectedId = null
         })
         if (this.isDesktop) {
