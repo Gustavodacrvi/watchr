@@ -3,6 +3,8 @@ import App from "./App.vue"
 import router from "./router"
 import store from "./store/"
 import "./registerServiceWorker"
+import vuetify from '@/plugins/vuetify'
+
 import VueWorker from 'vue-worker'
 import vueSmoothScroll from 'vue2-smooth-scroll'
 
@@ -17,6 +19,7 @@ const longClickInstance = longClickDirective({delay: 300, interval: 5000})
 Vue.directive('longclick', longClickInstance)
 
 new Vue({
+  vuetify,
   router,
   store,
   render: h => h(App)

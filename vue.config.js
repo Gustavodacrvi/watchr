@@ -1,5 +1,5 @@
 
-const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin')
 
 module.exports = {
   pwa: {
@@ -21,6 +21,7 @@ module.exports = {
   chainWebpack: config => {
     config.plugins.delete('prefetch')
 
+    
     const svgRule = config.module.rule('svg')
 
     svgRule.uses.clear()
