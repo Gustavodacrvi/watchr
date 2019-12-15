@@ -81,6 +81,7 @@
 
           @option-click='v => getOptionClick(h)(v)'
           @save-notes='v => getNotesOption(h)(v)'
+          :save='h.onEdit'
 
           :data-id='h.id'
         >
