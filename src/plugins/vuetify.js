@@ -1,8 +1,10 @@
 
 import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
+import Vuetify, { VTimePicker } from 'vuetify/lib'
 
-Vue.use(Vuetify)
+Vue.use(Vuetify, {
+  components: {VTimePicker}
+})
 
 const opts = {}
 

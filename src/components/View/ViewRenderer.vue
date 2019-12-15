@@ -450,6 +450,17 @@ export default {
             ],
           },
           {
+            name: l['Auto schedule'],
+            icon: 'magic',
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                msg: l['Start from:'],
+                callback: console.log
+              }
+            })
+          },
+          {
             name: l['Show completed'],
             icon: 'circle-check',
             callback: () => this.toggleCompleted()

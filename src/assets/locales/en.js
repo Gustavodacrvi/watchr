@@ -214,6 +214,8 @@ export default {
   'CalParserTODAY': 'Today',
   'CalParserTOMORROW': 'Tomorrow',
   "Filter by priority": "Filter by priority",
+  "Auto schedule": "Auto schedule",
+  "Start from:": "Start from:",
   'S': 'S',
   'M': 'M',
   'T': 'T',

@@ -89,6 +89,8 @@ export default {
   'CalParserDue': 'vence',
   'CalParserEvery': 'todo',
   "Filter by priority": "Filtrar por prioridade",
+  "Auto schedule": "Auto programar",
+  "Start from:": "Começar a partir de:",
   'S': 'D',
   'M': 'S',
   'T': 'T',
