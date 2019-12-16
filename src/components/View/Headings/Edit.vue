@@ -14,6 +14,7 @@
           :value='str'
           @input="v => str = v"
           :focus="true"
+          :disableAutoSelect='true'
           :options="options"
           @select="select"
           @enter='save'

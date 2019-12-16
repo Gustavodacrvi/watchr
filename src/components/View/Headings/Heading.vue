@@ -109,7 +109,8 @@ export default {
     bindOptions() {
       if (this.isDesktop) {
         const header = this.$el.getElementsByClassName('header-wrapper')[0]
-        utils.bindOptionsToEventListener(header, this.options, this)
+        if (header)
+          utils.bindOptionsToEventListener(header, this.options, this)
       }
     },
     openMobileOptions() {

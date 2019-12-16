@@ -8,6 +8,12 @@
       <div class="fix-back" @click="remove"></div>
       <div class="edit-wrapper" :class="{show}">
         <div class="tags" :class="{show: atLeastOnSpecialTag}">
+          <Tag v-if="task.taskDuration"
+            icon="clock"
+            color="var(--purple)"
+            :value="taskDurationStr"
+            @click="task.taskDuration = ''"
+          />
           <Tag v-if="calendarStr"
             icon="calendar"
             color="var(--green)"
@@ -137,6 +143,13 @@
                 :options="calendarOptions"
                 :circle='true'
               />
+              <IconDrop
+                handle="clock"
+                width="22px"
+                class="opt-icon"
+                :options="durationOptions"
+                :circle='true'
+              />
               <Icon
                 class="opt-icon primary-hover cursor"
                 style="margin-right: 7px;margin-top: 2px"
@@ -195,6 +208,7 @@ export default {
       task: {
         name: '',
         priority: '',
+        taskDuration: '',
         folder: '',
         list: '',
         notes: '',
@@ -215,7 +229,7 @@ export default {
   created() {
     if (this.defaultTask) {
       const t = this.defaultTask
-      this.task = {...t}
+      this.task = {...this.task, ...t}
       if (t.tags)
         this.task.tags = t.tags.slice()
       else this.task.tags = []
@@ -391,6 +405,7 @@ export default {
         t.checklist = []
         t.notes = ''
         t.name = ''
+        t.taskDuration = ''
         t.order = []
       }
     },
@@ -401,6 +416,9 @@ export default {
     addTag(name) {
       if (!this.task.tags.some(e => e === name))
         this.task.tags.push(name)
+    },
+    selectDuration(time) {
+      this.task.taskDuration = time
     },
   },
   computed: {
@@ -431,6 +449,16 @@ export default {
       return {
         comp: 'CalendarPicker',
         content: {callback: this.selectDate, repeat: true}
+      }
+    },
+    durationOptions() {
+      return {
+        comp: 'TimePicker',
+        content: {
+          callback: this.selectDuration,
+          msg: this.l['Task duration'] + ':',
+          format: '24hr',
+        }
       }
     },
     editStyle() {
@@ -470,7 +498,7 @@ export default {
       return null
     },
     selectDate() {
-      return (date) => this.task.calendar = date
+      return date => this.task.calendar = date
     },
     buttonText() {
       if (this.btnText) return this.btnText
@@ -478,11 +506,16 @@ export default {
     },
     atLeastOnSpecialTag() {
       const t = this.task
-      return this.calendarStr || t.priority || t.folder || t.list || (t.list && t.heading)
+      return this.calendarStr || t.priority || t.folder || t.taskDuration || t.list || (t.list && t.heading)
     },
     calendarStr() {
       if (this.task.calendar)
         return utils.parseCalendarObjectToString(this.task.calendar, this.l, this.userInfo)
+      return null
+    },
+    taskDurationStr() {
+      if (this.task.taskDuration)
+        return this.l['Takes '] + utils.formatQuantity(this.task.taskDuration)
       return null
     },
     getTaskName() {

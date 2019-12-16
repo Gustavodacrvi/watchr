@@ -37,7 +37,7 @@
 <script>
 
 export default {
-  props: ['options', 'focus', 'value', 'placeholder', 'focusToggle', 'back-color', 'disable-auto-select'],
+  props: ['options', 'focus', 'value', 'placeholder', 'focusToggle', 'back-color', 'disableAutoSelect'],
   data() {
     return {
       str: this.value,

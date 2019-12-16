@@ -36,6 +36,10 @@ body {
   background-color: var(--back-color);
 }
 
+.fade {
+  opacity: .6;
+}
+
 .cursor {
   touch-action: manipulation;
   cursor: pointer;

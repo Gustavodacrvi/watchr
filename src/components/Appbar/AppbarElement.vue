@@ -36,7 +36,7 @@
       >
         <div class="icon-wrapper">
           <Icon class="main-icon"
-            :style="hoverStyle"
+            :style="{color: iconColor}"
             :class="{notActive: !isActive}"
             :icon="icon"
             :progress='progress'

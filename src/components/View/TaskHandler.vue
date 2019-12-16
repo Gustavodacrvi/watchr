@@ -8,6 +8,7 @@
       :tasks='sortLaseredTasks'
 
       :headings='sortHeadings'
+      :scheduleObject='scheduleObject'
 
       :addTask='addTask'
       :rootFilterFunction='rootFilterFunction'
@@ -36,6 +37,8 @@ import { mapGetters, mapState } from 'vuex'
 
 import utilsTask from '@/utils/task'
 
+import mom from 'moment/src/moment'
+
 export default {
   props: ['mainFilter', 'rootFilter', 'tasksOrder', 'headings', 'headingsOrder',
 
@@ -43,7 +46,7 @@ export default {
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackTask', 'icon', 'configFilterOptions',
-    'taskCompletionCompareDate', 'rootFallbackTask',
+    'taskCompletionCompareDate', 'rootFallbackTask', 'autoSchedule',
     'updateHeadingIds', 'showEmptyHeadings', 'showAllHeadingsItems',
   ],
   components: {
@@ -102,6 +105,7 @@ export default {
   computed: {
     ...mapState({
       storeTasks: state => state.task.tasks,
+      userInfo: state => state.userInfo,
     }),
     ...mapGetters({
       l: 'l',
@@ -112,6 +116,80 @@ export default {
     }),
     rootNonFilteredIds() {
       return this.rootNonFiltered.map(el => el.id)
+    },
+    scheduleObject() {
+      if (!this.autoSchedule) return null
+      
+      const { time, buffer, fallback } = this.autoSchedule
+      
+      const init = mom(time, 'HH:mm')
+
+      let headingTasks = []
+
+      for (const t of this.sortHeadings)
+        headingTasks = [...headingTasks, ...t.tasks]
+
+      const tasks = [
+        ...this.sortLaseredTasks,
+        ...headingTasks,
+      ]
+
+      const bufferSplit = buffer.split(':')
+
+      const finalObj = {}
+
+      const format = this.userInfo.disablePmFormat ? 'H:mm' : 'LT'
+
+      const notChar = s => s !== 'A' && s !== 'M' && s !== 'P'
+
+      let i = 0
+      for (const t of tasks) {
+        const start = init.format(format)
+        const split = start.split(':')
+
+        const region = init.format('a')
+
+        const startHour = split[0]
+        let startMin = ''
+        const startSplit = split[1]
+        for (const s of startSplit)
+          if (notChar(s))
+            startMin += s
+
+        const taskDuration = t.taskDuration ? t.taskDuration : fallback
+
+        const durationSplit = taskDuration.split(':')
+
+        init.add(parseInt(durationSplit[0], 10), 'h')
+        init.add(parseInt(durationSplit[1], 10), 'm')
+
+        const end = init.format(format)
+        const endSplit = end.split(':')
+
+        const endHour = endSplit[0]
+        let endMin = ''
+        const endSplitStr = split[1]
+        for (const s of endSplitStr)
+          if (notChar(s))
+            endMin += s
+
+        init.add(parseInt(bufferSplit[0], 10), 'h')
+        init.add(parseInt(bufferSplit[1], 10), 'm')
+
+        const obj = {
+          id: t.id,
+          buffer, region,
+          index: i,
+          start, startHour, startMin,
+          end, endHour, endMin,
+        }
+
+        finalObj[t.id] = obj
+
+        i++
+      }
+
+      return finalObj
     },
 
     sortHeadings() {

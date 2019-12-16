@@ -1,5 +1,6 @@
 
-const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin')
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 
 module.exports = {
   pwa: {
@@ -16,11 +17,20 @@ module.exports = {
       new MomentLocalesPlugin({
         localesToKeep: ['pt-br'],
       }),
+      new VuetifyLoaderPlugin(),
     ],
   },
   chainWebpack: config => {
     config.plugins.delete('prefetch')
 
+    /* config.plugin('VuetifyLoaderPlugin').tap(args => [{
+      match (originalTag, { kebabTag, camelTag, path, component }) {
+        if (kebabTag.startsWith('core-')) {
+          return [camelTag, `import ${camelTag} from '@/components/core/${camelTag.substring(4)}.vue'`]
+        }
+      }
+    }]) */
+    
     const svgRule = config.module.rule('svg')
 
     svgRule.uses.clear()

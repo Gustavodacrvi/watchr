@@ -4,11 +4,16 @@
     :css="true"
     @enter='taskEnter'
   >
-    <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing}, platform]"
+    <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing}, platform]"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
       @click="rootClick"
     >
+      <transition name="fade-t">
+        <Timeline v-if="schedule && !isEditing"
+          v-bind="schedule"
+        />
+      </transition>
       <transition name="edit-t" mode="out-in"
         @enter='enter'
         @leave='leave'
@@ -94,6 +99,7 @@ import IconVue from '../../Icon.vue'
 import IconDropVue from '../../IconDrop/IconDrop.vue'
 import TagVue from '../Tag.vue'
 import EditVue from './Edit.vue'
+import Timeline from './Timeline.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -104,8 +110,9 @@ import utils from '@/utils/index'
 import mom from 'moment/src/moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart'],
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject'],
   components: {
+    Timeline,
     Icon: IconVue,
     IconDrop: IconDropVue,
     Edit: EditVue,
@@ -684,6 +691,11 @@ export default {
       }
       return obj[this.task.priority]
     },
+    schedule() {
+      if (this.scheduleObject)
+        return this.scheduleObject[this.task.id]
+      return null
+    },
   },
   watch: {
     selectedTasks() {
@@ -741,6 +753,10 @@ export default {
 .cont-wrapper {
   transition-duration: .25s;
   height: 38px;
+}
+
+.schedule.mobile {
+  margin-left: 60px;
 }
 
 .mobile .cont-wrapper {

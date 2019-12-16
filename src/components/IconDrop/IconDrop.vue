@@ -44,6 +44,7 @@ import Icon from './../Icon.vue'
 import ListIcons from './ListIcons.vue'
 import CalendarPicker from './Calendar.vue'
 import WeeklyPicker from './Calendar/WeeklyPicker.vue'
+import TimePicker from './Calendar/TimePicker.vue'
 import PeriodicPicker from './Calendar/PeriodicPicker.vue'
 import Profile from './Profile.vue'
 import Files from './Files.vue'
@@ -54,7 +55,7 @@ export default {
   props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width'],
   components: {
     Icon, ListIcons, CalendarPicker, WeeklyPicker,
-    PeriodicPicker, Profile, Files,
+    PeriodicPicker, Profile, Files, TimePicker,
   },
   data() {
     return {
@@ -75,6 +76,7 @@ export default {
       this.showing = false
       this.showingCont = false
       setTimeout(() => {
+        this.opt = this.options
         this.$store.commit('pushIconDrop', null)
       }, 200)
     },

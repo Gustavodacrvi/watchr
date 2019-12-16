@@ -37,6 +37,7 @@
         :pipeFilterOptions='pipeFilterOptions'
         :taskIconDropOptions='taskIconDropOptions'
         :updateHeadingIds='updateHeadingIds'
+        :autoSchedule='autoSchedule'
 
         @allow-someday='showSomeday = true'
         @root-non-filtered='getRootNonFilteredFromTaskHandler'
@@ -92,6 +93,7 @@ export default {
 
       rootNonFiltered: [],
       computedHeaderOptions: [],
+      autoSchedule: null,
 
       inclusiveTags: [],
       exclusiveTags: [],
@@ -239,6 +241,7 @@ export default {
     ...mapState({
       viewOrders: state => state.list.viewOrders,
       selectedTasks: state => state.selectedTasks,
+      userInfo: state => state.userInfo,
     }),
     ...mapGetters({
       platform: 'platform',
@@ -399,6 +402,71 @@ export default {
         dispatch('task/saveTasksById', {ids, task: {priority: pri}})
       }
       const l = this.l
+
+      const formatTime = time => mom(time, 'HH:mm').format(this.userInfo.disablePmFormat ? 'HH:mm' : 'LT')
+
+      const getScheduleIconDropObject = info => {
+        if (!info)
+          return {
+            comp: 'TimePicker',
+            content: {
+              msg: l['Start from:'],
+              callback: time => getScheduleIconDropObject({
+                time, buffer: '00:05', fallback: '00:15',
+              })
+            }
+          }
+        const {time, buffer, fallback} = info
+
+        return [
+          {
+            name: `${l['Start from:']} <span class="fade">${formatTime(time)}</span>`,
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                msg: l['Start from:'],
+                callback: newTime => getScheduleIconDropObject({
+                  time: newTime, buffer, fallback,
+                })
+              }
+            })
+          },
+          {
+            name: `${l['Buffer time:']} <span class="fade">${utils.formatQuantity(buffer)}</span>`,
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                format: '24hr',
+                msg: l["Buffer time:"],
+                callback: newBuffer => getScheduleIconDropObject({
+                  time, buffer: newBuffer, fallback,
+                })
+              }
+            })
+          },
+          {
+            name: `${l['Fallback time:']} <span class="fade">${utils.formatQuantity(fallback)}</span>`,
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                format: '24hr',
+                msg: l["Buffer time:"],
+                callback: newFallback => getScheduleIconDropObject({
+                  time, buffer, fallback: newFallback,
+                })
+              }
+            })
+          },
+          {
+            name: l['Auto schedule'],
+            callback: () => {
+              this.autoSchedule = {...info}
+              return null
+            },
+            type: 'button',
+          },
+        ]
+      }
       
       if (ids.length === 0) {
         let opt = [
@@ -450,6 +518,11 @@ export default {
             ],
           },
           {
+            name: l['Auto schedule'],
+            icon: 'magic',
+            callback: () => getScheduleIconDropObject(this.autoSchedule)
+          },
+          {
             name: l['Show completed'],
             icon: 'circle-check',
             callback: () => this.toggleCompleted()
@@ -457,11 +530,11 @@ export default {
         ]
         if (this.showCompleted) opt[2].name = l['Hide completed']
         if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
-          opt.unshift({
+          opt.push({
             type: 'hr',
             name: 'division',
           })
-          opt = [...this.computedHeaderOptions, ...opt]
+          opt = [...opt, ...this.computedHeaderOptions]
         }
         return opt
       } else {
@@ -670,7 +743,7 @@ export default {
 <style scoped>
 
 .ViewRenderer {
-  margin: 0 90px;
+  margin: 0 100px;
   min-height: 100%;
   display: flex;
   flex-direction: column;
