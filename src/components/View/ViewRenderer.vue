@@ -37,6 +37,7 @@
         :pipeFilterOptions='pipeFilterOptions'
         :taskIconDropOptions='taskIconDropOptions'
         :updateHeadingIds='updateHeadingIds'
+        :autoSchedule='autoSchedule'
 
         @allow-someday='showSomeday = true'
         @root-non-filtered='getRootNonFilteredFromTaskHandler'

@@ -104,7 +104,7 @@ import utils from '@/utils/index'
 import mom from 'moment/src/moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart'],
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -683,6 +683,11 @@ export default {
         'High priority': 'var(--red)',
       }
       return obj[this.task.priority]
+    },
+    schedule() {
+      if (this.scheduleObject)
+        return this.scheduleObject[this.task.id]
+      return null
     },
   },
   watch: {
