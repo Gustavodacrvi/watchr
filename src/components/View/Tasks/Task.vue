@@ -9,6 +9,11 @@
       @mouseleave="onHover = false"
       @click="rootClick"
     >
+      <transition name="fade-t">
+        <Timeline v-if="schedule"
+          v-bind="schedule"
+        />
+      </transition>
       <transition name="edit-t" mode="out-in"
         @enter='enter'
         @leave='leave'
@@ -94,6 +99,7 @@ import IconVue from '../../Icon.vue'
 import IconDropVue from '../../IconDrop/IconDrop.vue'
 import TagVue from '../Tag.vue'
 import EditVue from './Edit.vue'
+import Timeline from './Timeline.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -106,6 +112,7 @@ import mom from 'moment/src/moment'
 export default {
   props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject'],
   components: {
+    Timeline,
     Icon: IconVue,
     IconDrop: IconDropVue,
     Edit: EditVue,

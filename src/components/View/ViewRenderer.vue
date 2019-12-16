@@ -743,7 +743,7 @@ export default {
 <style scoped>
 
 .ViewRenderer {
-  margin: 0 90px;
+  margin: 0 100px;
   min-height: 100%;
   display: flex;
   flex-direction: column;
