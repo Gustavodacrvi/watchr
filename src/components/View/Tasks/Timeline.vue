@@ -1,5 +1,5 @@
 <template>
-  <div class="Timeline">
+  <div class="Timeline" :class="platform">
     <div class="wrapper">
       <div class="hour">
         <span class="h">{{ startHour }}</span>
@@ -14,14 +14,15 @@
 
 <script>
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   props: ['id', 'buffer', 'index', 'start', 'startHour', 'startMin', 'end', 'endHour', 'endMin', 'region'],
   computed: {
     ...mapState({
       userInfo: state => state.userInfo,
-    })
+    }),
+    ...mapGetters(['platform'])
   }
 }
 
@@ -30,11 +31,14 @@ export default {
 <style scoped>
 
 .Timeline {
-  position: absolute;
-  right: calc(100% + 10px);
   top: 50%;
   transform: translateY(-50%);
   float: right;
+  position: absolute;
+  right: calc(100% + 10px);
+}
+
+.Timeline.desktop {
 }
 
 .wrapper {

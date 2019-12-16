@@ -4,7 +4,7 @@
     :css="true"
     @enter='taskEnter'
   >
-    <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing}, platform]"
+    <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing, schedule}, platform]"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
       @click="rootClick"
@@ -753,6 +753,10 @@ export default {
 .cont-wrapper {
   transition-duration: .25s;
   height: 38px;
+}
+
+.schedule.mobile {
+  margin-left: 60px;
 }
 
 .mobile .cont-wrapper {

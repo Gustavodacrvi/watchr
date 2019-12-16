@@ -118,6 +118,8 @@ export default {
       return this.rootNonFiltered.map(el => el.id)
     },
     scheduleObject() {
+      if (!this.autoSchedule) return null
+      
       const { time, buffer, fallback } = this.autoSchedule
       
       const init = mom(time, 'HH:mm')
