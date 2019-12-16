@@ -412,7 +412,7 @@ export default {
             content: {
               msg: l['Start from:'],
               callback: time => getScheduleIconDropObject({
-                time, buffer: '00:00am', fallback: '00:15',
+                time, buffer: '00:05', fallback: '00:15',
               })
             }
           }
