@@ -44,6 +44,15 @@
           <div v-else-if="l.type === 'hr'" :key="l.name"
             class="drop-division hide-trans"
           ><div class="division-line hide-trans"></div></div>
+          <div v-else-if="l.type === 'button'" :key="l.name">
+            <div class="btn">
+              <ButtonApp
+                type='tiny'
+                :value='l.name'
+                @click='linkCallback(l.callback, l)'
+              />
+            </div>
+          </div>
         </template>
       </transition-group>
     </div>
@@ -52,14 +61,16 @@
 
 <script>
 
+import Icon from './../Icon.vue'
+import ButtonApp from '@/components/Auth/Button.vue' 
+
 import { mapGetters } from 'vuex'
 
-import Icon from './../Icon.vue'
 
 export default {
   props: ['content'],
   components: {
-    Icon,
+    Icon, ButtonApp,
   },
   data() {
     return {
@@ -84,8 +95,8 @@ export default {
         }
         if (callback) {
           const opt = callback(link, this, this.$parent)
-          this.$emit('update', opt)
           if (!opt || (opt && opt.then)) close()
+          else this.$emit('update', opt)
         }
       }
     },
@@ -228,6 +239,10 @@ export default {
 
 .division-line {
   border: 1px solid var(--light-gray);
+}
+
+.btn {
+  margin: 4px 26px;
 }
 
 </style>

@@ -494,6 +494,20 @@ export default {
     }}
     return obj
   },
+  formatQuantity(time) {
+    const split = mom(time, 'HH:mm').format('H:m').split(':')
+
+    const hours = split[0] + 'h'
+    const minutes = split[1] + 'm'
+
+    if (split[0] === '0' && split[1] === '0')
+      return '0m'
+    if (split[0] === '0')
+      return minutes
+    if (split[1] === '0')
+      return hours
+    return `${hours} ${minutes}`
+  },
   getCalendarObjectData(calendar, tod) {
     const c = calendar
     const obj = {

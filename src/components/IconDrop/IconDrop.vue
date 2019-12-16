@@ -76,6 +76,7 @@ export default {
       this.showing = false
       this.showingCont = false
       setTimeout(() => {
+        this.opt = this.options
         this.$store.commit('pushIconDrop', null)
       }, 200)
     },

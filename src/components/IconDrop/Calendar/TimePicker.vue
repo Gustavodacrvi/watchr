@@ -23,9 +23,14 @@ export default {
   props: ['content'],
   methods: {
     callback(str) {
+      const close = () => {
+        this.$emit('close')
+        this.$store.commit('clearSelected')
+      }
+      
       const res = this.content.callback(str)
-      this.$emit('update', res)
       if (!res || (res && res.then)) close()
+      else this.$emit('update', res)
     }
   },
   computed: {

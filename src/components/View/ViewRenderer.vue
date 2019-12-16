@@ -92,6 +92,7 @@ export default {
 
       rootNonFiltered: [],
       computedHeaderOptions: [],
+      autoSchedule: null,
 
       inclusiveTags: [],
       exclusiveTags: [],
@@ -402,20 +403,6 @@ export default {
       const l = this.l
 
       const formatTime = time => mom(time, 'HH:mm').format(this.userInfo.disablePmFormat ? 'HH:mm' : 'LT')
-      const formatQuantity = time => {
-        const split = mom(time, 'HH:mm').format('H:m').split(':')
-
-        const hours = split[0] + 'h'
-        const minutes = split[1] + 'm'
-
-        if (split[0] === '0' && split[1] === '0')
-          return '0m'
-        if (split[0] === '0')
-          return minutes
-        if (split[1] === '0')
-          return hours
-        return `${hours} ${minutes}`
-      }
 
       const getScheduleIconDropObject = info => {
         if (!info)
@@ -424,7 +411,7 @@ export default {
             content: {
               msg: l['Start from:'],
               callback: time => getScheduleIconDropObject({
-                time, buffer: '00:00am', fallback: '00:00',
+                time, buffer: '00:00am', fallback: '00:15',
               })
             }
           }
@@ -444,7 +431,7 @@ export default {
             })
           },
           {
-            name: `${l['Buffer time:']} <span class="fade">${formatQuantity(buffer)}</span>`,
+            name: `${l['Buffer time:']} <span class="fade">${utils.formatQuantity(buffer)}</span>`,
             callback: () => ({
               comp: 'TimePicker',
               content: {
@@ -457,7 +444,7 @@ export default {
             })
           },
           {
-            name: `${l['Fallback time:']} <span class="fade">${formatQuantity(fallback)}</span>`,
+            name: `${l['Fallback time:']} <span class="fade">${utils.formatQuantity(fallback)}</span>`,
             callback: () => ({
               comp: 'TimePicker',
               content: {
@@ -468,6 +455,14 @@ export default {
                 })
               }
             })
+          },
+          {
+            name: l['Auto schedule'],
+            callback: () => {
+              this.autoSchedule = {...info}
+              return null
+            },
+            type: 'button',
           },
         ]
       }
@@ -524,7 +519,7 @@ export default {
           {
             name: l['Auto schedule'],
             icon: 'magic',
-            callback: () => getScheduleIconDropObject()
+            callback: () => getScheduleIconDropObject(this.autoSchedule)
           },
           {
             name: l['Show completed'],

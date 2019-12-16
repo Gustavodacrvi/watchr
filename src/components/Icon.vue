@@ -79,6 +79,7 @@ import file from '@/assets/icons/file.svg'
 import folder from '@/assets/icons/folder.svg'
 import filter from '@/assets/icons/filter.svg'
 import magic from '@/assets/icons/magic.svg'
+import clock from '@/assets/icons/clock.svg'
 import boxCheck from '@/assets/icons/box-check.svg'
 import boxCheckDash from '@/assets/icons/box-check-dash.svg'
 
@@ -95,7 +96,7 @@ export default {
         pen, trash, fire, bloqued, circle, users,
         copy, plus, globe, heading, search, note,
         envelope, deadline, sleep, repeat, box, file,
-        folder, heart, close, filter, magic,
+        folder, heart, close, filter, magic, clock,
         "box-dash": boxDash,
         "box-check-dash": boxCheckDash,
         "box-check": boxCheck,
