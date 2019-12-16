@@ -4,13 +4,13 @@
     :css="true"
     @enter='taskEnter'
   >
-    <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing, schedule}, platform]"
+    <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing}, platform]"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
       @click="rootClick"
     >
       <transition name="fade-t">
-        <Timeline v-if="schedule"
+        <Timeline v-if="schedule && !isEditing"
           v-bind="schedule"
         />
       </transition>
