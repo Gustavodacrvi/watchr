@@ -672,7 +672,7 @@ export default {
       const parseFolder = () => {
         const folders = this.savedFolders
         for (const f of folders) {
-          const folderName = ` %${f.name}`
+          const folderName = ` $${f.name}`
           if (n.includes(folderName)) {
             this.task.name = n.replace(folderName, '')
             this.task.folder = f.name
@@ -683,20 +683,12 @@ export default {
         }
         const arr = n.split(' ')
         const lastWord = arr[arr.length - 1]
-        if (lastWord[0] === '%') {
-          this.optionsType = '%'
+        if (lastWord[0] === '$') {
+          this.optionsType = '$'
           const word = lastWord.substr(1)
 
           this.options = this.savedFolders.map(el => el.name).filter(el => el.toLowerCase().includes(word.toLowerCase()))
           changedOptions = true
-        }
-      }
-      const parseDate = () => {
-        if (n.includes(' $')) {
-          const obj = utils.parseInputToCalendarObject(n, this.l, false, this.userInfo)
-          this.task.calendar = obj
-        } else if (this.task) {
-          this.task.calendar = this.task.calendar
         }
       }
 
@@ -704,7 +696,6 @@ export default {
       parseTags()
       parseLists()
       parseFolder()
-      parseDate()
 
       if (!changedOptions) this.options = []
     },

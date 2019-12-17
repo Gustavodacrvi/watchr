@@ -1,19 +1,6 @@
 <template>
   <div class="CalendarPicker">
     <div key="calendar" class="view calendar">
-      <div style="margin: 4px 22px;">
-        <Tag v-if="calendarStr"
-          icon="calendar"
-          color="var(--green)"
-          :value="calendarStr"
-          @click="calStr = ''"
-        />
-        <input class="input"
-          :value="calStr"
-          @input="v => calStr = v.target.value"
-          @keydown="keydown"
-        >
-      </div>
       <div class="fast-options">
         <Icon class="icon option-icon cursor primary-hover" width="24px" icon="star" @click="today"/>
         <Icon class="icon option-icon cursor primary-hover" width="24px" icon="sun" @click="tomorrow"/>
@@ -77,7 +64,6 @@ export default {
       originalMoment: mom(),
       selectedMoment: mom(),
       time: null,
-      calStr: '',
       calendarObj: null,
     }
   },
@@ -221,11 +207,6 @@ export default {
       return this.visualMoment.clone().date(day).isSame(this.selectedMoment, 'day')
     },
   },
-  watch: {
-    calStr() {
-      this.calendarObj = utils.parseInputToCalendarObject(this.calStr, this.l, true, this.userInfo)
-    },
-  }
 }
 
 </script>

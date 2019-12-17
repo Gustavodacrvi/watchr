@@ -20,24 +20,13 @@ export default {
   },
   methods: {
     openRepeatOptions() {
-      this.$emit('update', [
-        {
-          name: this.l['Repeat weekly'],
-          icon: 'repeat',
-          callback: () => ({
-            comp: 'WeeklyPicker',
-            content: {callback: this.selectDate},
-          }),
-        },
-        {
-          name: this.l['Repeat periodically'],
-          icon: 'repeat',
-          callback: () => ({
-            comp: 'PeriodicPicker',
-            content: {callback: this.selectDate},
-          }),
-        },
-      ])
+      this.$emit('update', {
+        comp: "RepeatPicker",
+        content: {
+          callback: this.selectDate,
+        }
+      })
+
     },
     selectDate(date) {
       if (this.content.callback) {

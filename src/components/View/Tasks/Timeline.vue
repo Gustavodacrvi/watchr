@@ -38,9 +38,6 @@ export default {
   right: calc(100% + 10px);
 }
 
-.Timeline.desktop {
-}
-
 .wrapper {
   display: flex;
 }
