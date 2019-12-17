@@ -411,6 +411,7 @@ export default {
             comp: 'TimePicker',
             content: {
               msg: l['Start from:'],
+              initial: mom().format('HH:mm'),
               callback: time => getScheduleIconDropObject({
                 time, buffer: '00:05', fallback: '00:15',
               })

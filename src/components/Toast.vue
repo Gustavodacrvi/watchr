@@ -64,7 +64,7 @@ export default {
   position: fixed;
   height: 100%;
   width: 100%;
-  z-index: 150;
+  z-index: 1000;
   pointer-events: none;
   overflow: hidden;
 }
@@ -91,15 +91,15 @@ export default {
 }
 
 .toast.success {
-  border: 1px solid var(--green);
+  border: .5px solid var(--green);
 }
 
 .toast.error {
-  border: 1px solid var(--red);
+  border: .5px solid var(--red);
 }
 
 .toast.warning {
-  border: 1px solid var(--yellow);
+  border: .5px solid var(--yellow);
 }
 
 .hasCallback {

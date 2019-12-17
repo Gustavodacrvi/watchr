@@ -405,7 +405,6 @@ export default {
         t.checklist = []
         t.notes = ''
         t.name = ''
-        t.taskDuration = ''
         t.order = []
       }
     },

@@ -97,9 +97,15 @@ export default {
   transform: translate(0px, -2px);
 }
 
+.nav-links {
+  margin: 16px;
+}
+
 .arrow-wrapper {
   display: flex;
   justify-content: space-between;
+  margin: 16px;
+  margin-bottom: 0;
 }
 
 .Menu {
@@ -113,6 +119,11 @@ export default {
   overflow: hidden;
 }
 
+.appbar-wrapper {
+  position: relative;
+  height: 100%;
+}
+
 .drop {
   position: absolute;
   right: 8px;
@@ -123,11 +134,6 @@ export default {
   margin-top: 8px;
 }
 
-.appbar-wrapper {
-  position: relative;
-  margin: 16px;
-  height: 100%;
-}
 
 .arrow {
   transform: rotate(90deg);
