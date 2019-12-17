@@ -54,7 +54,7 @@ export default {
     ...mapGetters(['l', 'platform']),
     getDays() {
       return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-    }
+    },
   },
 }
 

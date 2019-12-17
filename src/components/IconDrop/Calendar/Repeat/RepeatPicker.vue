@@ -17,10 +17,27 @@
        days after task completion.
     </div>
     <div v-else-if="data.activeRepeatOption === 'Daily'">
-      Daily
+      Every
+      <AuthSimpleInput
+        v-model="data.days"
+        width='15px'
+      />
+       days.
     </div>
     <div v-else-if="data.activeRepeatOption === 'Weekly'">
-      Weekly
+      Every
+      <AuthSimpleInput
+        v-model="data.days"
+        width='15px'
+      />
+       weeks.
+       <div class="days">
+        <span v-for="d of getDays" :key="d"
+          class="option cursor week"
+          :class="{active: isActive(d)}"
+          @click="toggle(d)"
+        >{{ d }}</span>
+      </div>
     </div>
     <div v-else-if="data.activeRepeatOption === 'Monthly'">
       Monthly
@@ -122,6 +139,7 @@ export default {
           'After',
           'On date'
         ],
+        weeks: ['Mon'],
         endTimes: '1',
         endDate: TOD_STR,
       }
@@ -132,6 +150,16 @@ export default {
       this.data = this.content.data
   },
   methods: {
+    toggle(d) {
+      if (this.isActive(d)) {
+        const i = this.data.weeks.findIndex(e => e === d)
+        this.data.weeks.splice(i, 1)
+      }
+      else this.data.weeks.push(d)
+    },
+    isActive(d) {
+      return this.data.weeks.includes(d)
+    },
     update() {
 
     },
@@ -180,7 +208,10 @@ export default {
       if (!this.data.deadline)
         return 'No deadline'
       return this.data.deadline
-    }
+    },
+    getDays() {
+      return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    },
   }
 }
 
@@ -223,6 +254,21 @@ export default {
 
 .option:hover {
   background-color: var(--light-gray);
+}
+
+.week {
+  border-radius: 50px;
+  margin-right: 8px;
+}
+
+
+.week:active {
+  transform: scale(.9, .9);
+}
+
+.active {
+  background-color: var(--primary);
+  color: white;
 }
 
 </style>
