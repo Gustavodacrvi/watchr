@@ -7,7 +7,7 @@
       <span v-for="o in options" :key="o"
         class="element opt cb cursor"
         :class="{active: o === active}"
-        @click="$emit('select', o)"
+        @click="select(o)"
       >{{ o }}</span>
     </div>
   </div>
@@ -26,6 +26,10 @@ export default {
     this.removeEvent()
   },
   methods: {
+    select(val) {
+      this.$emit('select', val)
+      this.showing = false
+    },
     hide(evt) {
       let hide = true
       if (evt) {

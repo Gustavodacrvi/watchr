@@ -8,13 +8,25 @@
       @select='v => data.activeRepeatOption = v'
     />
     <div class="margin"></div>
-    <div>
+    <div v-if="data.activeRepeatOption === 'After completion'">
       Repeat
       <AuthSimpleInput
         v-model="data.days"
         width='15px'
       />
        days after task completion.
+    </div>
+    <div v-else-if="data.activeRepeatOption === 'Daily'">
+      Daily
+    </div>
+    <div v-else-if="data.activeRepeatOption === 'Weekly'">
+      Weekly
+    </div>
+    <div v-else-if="data.activeRepeatOption === 'Monthly'">
+      Monthly
+    </div>
+    <div v-else-if="data.activeRepeatOption === 'Yearly'">
+      Yearl
     </div>
     <div class="hr"></div>
     <div class="extra-options margin">
@@ -32,8 +44,8 @@
         Deadline:
       </div>
       <div class="cont">
-        <span class="option rb cursor">
-          No Deadline
+        <span class="option rb cursor" @click="getDeadlineDate">
+          {{ deadlineStr }}
         </span>
       </div>
     </div>
@@ -42,11 +54,32 @@
         Ends:
       </div>
       <div class="cont">
-        <span class="option rb cursor">
-          Never
-        </span>
+        <AuthOptions
+          :options='data.endOptions'
+          :active='data.ends'
+          minWidth='200px'
+          @select='v => data.ends = v'
+        />
+        <template v-if="data.ends === 'After'">
+          <span>&nbsp;</span>
+          <AuthSimpleInput
+            v-model="data.endTimes"
+            width='15px'
+          />
+           <span>&nbsp;times</span>
+        </template>
+        <template  v-else-if="data.ends === 'On date'">
+          <span>&nbsp;</span>
+          <div class="option rb cursor"  @click="getEndDate">
+            {{ data.endDate }}
+          </div>
+        </template>
       </div>
     </div>
+    <AuthButton class="margin"
+      value='Repeat task'
+      @click="update"
+    />
   </div>
 </template>
 
@@ -54,15 +87,19 @@
 
 import AuthOptions from "@/components/Auth/Options.vue"
 import AuthSimpleInput from "@/components/Auth/SimpleInput.vue"
+import AuthButton from "@/components/Auth/Button.vue"
 
 import { mapGetters } from 'vuex'
 
 import mom from 'moment/src/moment'
 
+const TOD_STR = mom().format('Y/M/D')
+
 export default {
   props: ['content'],
   components: {
     AuthOptions, AuthSimpleInput,
+    AuthButton,
   },
   data() {
     return {
@@ -76,7 +113,17 @@ export default {
           'Monthly',
           'Yearly',
         ],
-        begins: mom().format('Y/M/D'),
+        begins: TOD_STR,
+        deadline: null,
+
+        ends: 'Never',
+        endOptions: [
+          'Never',
+          'After',
+          'On date'
+        ],
+        endTimes: '1',
+        endDate: TOD_STR,
       }
     }
   },
@@ -88,7 +135,7 @@ export default {
     update() {
 
     },
-    getBeginDate() {
+    getDate(callback) {
       this.$emit('update', {
         comp: 'CalendarPicker',
         content: {
@@ -103,7 +150,7 @@ export default {
               content: {
                 data: {
                   ...this.data,
-                  begins: date.specific,
+                  ...callback(date.specific),
                 },
               }
             }
@@ -111,9 +158,29 @@ export default {
         }
       })
     },
+    getBeginDate() {
+      this.getDate(date => ({
+        begins: date,
+      }))
+    },
+    getDeadlineDate() {
+      this.getDate(date => ({
+        deadline: date,
+      }))
+    },
+    getEndDate() {
+      this.getDate(date => ({
+        endDate: date,
+      }))
+    },
   },
   computed: {
-    ...mapGetters(['platform', 'l'])
+    ...mapGetters(['platform', 'l']),
+    deadlineStr() {
+      if (!this.data.deadline)
+        return 'No deadline'
+      return this.data.deadline
+    }
   }
 }
 
