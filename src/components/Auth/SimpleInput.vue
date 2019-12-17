@@ -4,7 +4,7 @@
     type="text"
     :value="str"
     @input="v => str = v.target.value"
-    onkeydown="this.style.width = ((this.value.length + 1) * 12) + 'px';"
+    @keydown="fixWidth"
   />
 </template>
 
@@ -14,15 +14,23 @@ export default {
   props: ['value'],
   data() {
     return {
-      str: this.value + '',
+      str: this.value,
+    }
+  },
+  mounted() {
+    this.fixWidth()
+  },
+  methods: {
+    fixWidth() {
+      this.$el.style.width = ((this.$el.value.length + 1) * 12) + 'px'
     }
   },
   watch: {
     str() {
-      this.$emit('input', parseInt(this.str, 10))
+      this.$emit('input', this.str)
     },
     value() {
-      this.str = this.value + ''
+      this.str = this.value
     }
   }  
 }

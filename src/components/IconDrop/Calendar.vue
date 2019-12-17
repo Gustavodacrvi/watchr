@@ -3,6 +3,7 @@
       <CalendarPicker
         @select="selectDate"
         :repeat='content.repeat'
+        :onlyDates='content.onlyDates'
         @repeat='openRepeatOptions'
       />
     </div>
@@ -33,14 +34,14 @@ export default {
     },
     selectDate(date) {
       if (this.content.callback) {
-        this.content.callback(date)
-        this.$emit('close')
-        setTimeout(() => {
-          this.$store.commit('clearSelected')
-        }, 100)
+        const obj = this.content.callback(date)
+        if (!obj) {
+          this.$emit('close')
+        } else this.$emit('update', obj)
       }
-      this.showing = false
-      this.$store.commit('clearSelected')
+      setTimeout(() => {
+        this.$store.commit('clearSelected')
+      }, 100)
     },
   },
   computed: {

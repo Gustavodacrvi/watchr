@@ -66,7 +66,7 @@ export default {
 
 .element {
   display: inline-block;
-  padding: 8px;
+  padding: 6px;
   transition-duration: .2s;
 }
 

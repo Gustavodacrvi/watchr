@@ -4,9 +4,9 @@
       <div class="fast-options">
         <Icon class="icon option-icon cursor primary-hover" width="24px" icon="star" @click="today"/>
         <Icon class="icon option-icon cursor primary-hover" width="24px" icon="sun" @click="tomorrow"/>
-        <Icon class="icon option-icon cursor primary-hover" width="24px" icon="archive" @click="someday"/>
-        <Icon class="icon option-icon cursor primary-hover" width="24px" icon="bloqued" @click="noDate"/>
-        <Icon v-if="repeat" class="icon option-icon cursor primary-hover" width="24px" icon="repeat" @click="$emit('repeat')"/>
+        <Icon v-if="!onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="archive" @click="someday"/>
+        <Icon v-if="!onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="bloqued" @click="noDate"/>
+        <Icon v-if="repeat && !onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="repeat" @click="$emit('repeat')"/>
       </div>
       <div class="content">
         <div class="header">
@@ -52,7 +52,7 @@ import { mapGetters, mapState } from 'vuex'
 import utils from '@/utils'
 
 export default {
-  props: ['repeat'],
+  props: ['repeat', 'onlyDates'],
   components: {
     Icon: IconVue,
     Button: ButtonVue,
