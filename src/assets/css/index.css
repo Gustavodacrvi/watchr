@@ -70,6 +70,10 @@ body, input, button, textarea {
   color: var(--primary);
 }
 
+.bd {
+  border: 1px solid var(--dark); 
+}
+
 .scroll-link {
   color: var(--txt);
   text-decoration: none;

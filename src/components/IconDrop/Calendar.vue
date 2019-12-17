@@ -22,9 +22,12 @@ export default {
     openRepeatOptions() {
       this.$emit('update', {
         comp: "RepeatPicker",
+        cardOptions: {
+          overflow: true,
+        },
         content: {
           callback: this.selectDate,
-        }
+        },
       })
 
     },
