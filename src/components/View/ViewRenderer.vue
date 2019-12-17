@@ -225,6 +225,16 @@ export default {
       const tasks = utilsTask.sortTasksByTaskDate(this.rootNonFiltered.slice())
       this.updateIds(tasks.map(el => el.id))
     },
+    sortByDurationLong() {
+      let tasks = utilsTask.sortTasksByTaskDate(this.rootNonFiltered.slice())
+      tasks = utilsTask.sortTasksByDuration(tasks, 'long')
+      this.updateIds(tasks.map(el => el.id))
+    },
+    sortByDurationShort() {
+      let tasks = utilsTask.sortTasksByTaskDate(this.rootNonFiltered.slice())
+      tasks = utilsTask.sortTasksByDuration(tasks, 'short')
+      this.updateIds(tasks.map(el => el.id))
+    },
 
     toggleCompleted() {
       this.showCompleted = !this.showCompleted
@@ -500,7 +510,17 @@ export default {
                 name: l['Sort by creation date'],
                 icon: 'calendar',
                 callback: () => this.sortByDate(),
-              }
+              },
+              {
+                name: l['Sort by duration(long to short)'],
+                icon: 'magic',
+                callback: () => this.sortByDurationLong()
+              },
+              {
+                name: l['Sort by duration(short to long)'],
+                icon: 'magic',
+                callback: () => this.sortByDurationShort()
+              },
             ],
           },
           {

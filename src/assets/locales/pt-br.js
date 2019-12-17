@@ -88,6 +88,8 @@ export default {
   'CalParserDefer': 'atrasar',
   "Remove schedule": "Remover programação",
   "Edit schedule": "Editar programação",
+  "Sort by duration(long to short)": "Ordenar por duração(longa para curta)",
+  "Sort by duration(short to long)": "Ordenar por duração(curta para longa)",
   'CalParserDue': 'vence',
   'CalParserEvery': 'todo',
   "Filter by priority": "Filtrar por prioridade",

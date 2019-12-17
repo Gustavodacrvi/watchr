@@ -205,6 +205,8 @@ export default {
   'CalParserTomorrow': 'tom',
   'CalParserDefer': 'defer',
   'CalParserDue': 'due',
+  "Sort by duration(long to short)": "Sort by duration(long to short)",
+  "Sort by duration(short to long)": "Sort by duration(short to long)",
   'CalParserDayKey': 'day',
   "Edit schedule": "Edit schedule",
   "Remove schedule": "Remove schedule",
