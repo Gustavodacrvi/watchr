@@ -206,6 +206,8 @@ export default {
   'CalParserDefer': 'defer',
   'CalParserDue': 'due',
   'CalParserDayKey': 'day',
+  "Edit schedule": "Edit schedule",
+  "Remove schedule": "Remove schedule",
   'CalParserEvery': 'every',
   "CalParserTimesKeyword": "times",
   "Next event": "Next event",

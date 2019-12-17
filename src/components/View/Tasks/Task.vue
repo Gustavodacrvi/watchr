@@ -76,7 +76,7 @@
               <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
               <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
               <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
-              <span v-if="taskDuration" class="tag cb rb">{{ taskDuration }}</span>
+              <span v-if="taskDuration && schedule" class="tag cb rb">{{ taskDuration }}</span>
             </span>
           </div>
         </div>

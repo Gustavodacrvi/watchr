@@ -117,6 +117,17 @@ export default {
       if (this.headerOptions)
         this.computedHeaderOptions = await this.getOptions(this.headerOptions)
     },
+    activeAutoSchedule(info) {
+      this.autoSchedule = info
+      localStorage.setItem(`schedule_${this.viewName}`, JSON.stringify(info))
+    },
+    getLocalStorageSchedule() {
+      const str = localStorage.getItem(`schedule_${this.viewName}`)
+      if (str)
+        this.autoSchedule = JSON.parse(str)
+      else this.autoSchedule = null
+    },
+
     selectPagination(newPage) {
       this.pagination = newPage
     },
@@ -461,7 +472,7 @@ export default {
           {
             name: l['Auto schedule'],
             callback: () => {
-              this.autoSchedule = {...info}
+              this.activeAutoSchedule({...info})
               return null
             },
             type: 'button',
@@ -521,7 +532,20 @@ export default {
           {
             name: l['Auto schedule'],
             icon: 'magic',
-            callback: () => getScheduleIconDropObject(this.autoSchedule)
+            callback: () => {
+              if (this.autoSchedule)
+                return [
+                  {
+                    name: l['Remove schedule'],
+                    callback: () => this.activeAutoSchedule(null)
+                  },
+                  {
+                    name: l['Edit schedule'],
+                    callback: () => getScheduleIconDropObject(this.autoSchedule)
+                  }
+                ]
+              return getScheduleIconDropObject(null)
+            }
           },
           {
             name: l['Show completed'],
@@ -729,13 +753,15 @@ export default {
       this.showingListSelection = false
       this.showingFolderSelection = false
       this.getComputedOptions()
+      this.autoSchedule = null
+      this.getLocalStorageSchedule()
     },
     viewNameValue() {
       this.showSomeday = false
     },
     headerOptions() {
       this.getComputedOptions()
-    }
+    },
   }
 }
 

@@ -86,6 +86,8 @@ export default {
   'CalParserToday': 'hoj',
   'CalParserTomorrow': 'ama',
   'CalParserDefer': 'atrasar',
+  "Remove schedule": "Remover programação",
+  "Edit schedule": "Editar programação",
   'CalParserDue': 'vence',
   'CalParserEvery': 'todo',
   "Filter by priority": "Filtrar por prioridade",
