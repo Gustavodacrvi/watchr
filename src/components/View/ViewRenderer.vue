@@ -428,16 +428,8 @@ export default {
 
       const getScheduleIconDropObject = info => {
         if (!info)
-          return {
-            comp: 'TimePicker',
-            content: {
-              msg: l['Start from:'],
-              initial: mom().format('HH:mm'),
-              callback: time => getScheduleIconDropObject({
-                time, buffer: '00:05', fallback: '00:15',
-              })
-            }
-          }
+            info = {time: mom().format('HH:mm'), buffer: '00:05', fallback: '00:15'}
+        
         const {time, buffer, fallback} = info
 
         return [
@@ -573,7 +565,7 @@ export default {
             callback: () => this.toggleCompleted()
           },
         ]
-        if (this.showCompleted) opt[2].name = l['Hide completed']
+        if (this.showCompleted) opt[3].name = l['Hide completed']
         if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
           opt.push({
             type: 'hr',

@@ -7,6 +7,7 @@ import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
 import { uid, fd, userRef, serverTimestamp, tagRef, taskColl, taskRef, listRef, addTask } from '../utils/firestore'
+import { pipeBooleanFilters } from '@/utils/memo'
 
 import mom from 'moment/src/moment'
 
@@ -138,11 +139,6 @@ export default {
             const c = task.calendar
             if (!c || c.type === 'someday' || c.type === 'specific') return task.completed
             
-            if (c.manualComplete && c.lastCompleteDate) {
-              const manualComplete = mom(c.manualComplete, 'Y-M-D')
-              const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
-              if (manualComplete.isSame(lastComplete, 'day')) return true
-            }
             // const hasTimesBinding = c.times !== null && c.times !== undefined
             if (c.times !== null && c.times !== undefined) {
               if (c.times === 0) return true
@@ -151,7 +147,7 @@ export default {
             moment = mom(moment, 'Y-M-D')
             if (c.type === 'periodic' || c.type === 'weekly') {
               const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
-              if (!moment) moment = mom()
+              if (!moment.isValid()) moment = mom()
               return lastComplete.isSameOrAfter(moment, 'day')
             }
       
@@ -231,6 +227,19 @@ export default {
           return JSON.stringify({t: args[0].completeDate, date: args[1]})
         }
       },
+      isTaskInCompletedView: {
+        getter({getters}, task) {
+          return getters.isTaskCompleted(task) &&
+          !getters.isTaskPeriodic(task) &&
+          !getters.isTaskWeekly(task)
+        },
+        cache(args) {
+          return JSON.stringify({
+            t: args[0].calendar,
+            c: args[0].completed,
+          })
+        },
+      },
       isTaskInView: {
         getter({getters}, task, view) {
           switch (view) {
@@ -239,7 +248,7 @@ export default {
             case 'Someday': return getters.isTaskSomeday(task)
             case 'Overdue': return getters.isTaskOverdue(task)
             case 'Tomorrow': return getters.isTaskShowingOnDate(task, TOM_DATE)
-            case 'Completed': return getters.isTaskCompleted(task)
+            case 'Completed': return getters.isTaskInCompletedView(task)
           }
         },
         cache(args) {
