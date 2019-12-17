@@ -239,6 +239,22 @@ export default {
                     updateIds(ts.map(el => el.id))
                   },
                 },
+                {
+                  name: this.l['Sort by duration(long to short)'],
+                  icon: 'magic',
+                  callback: () => {
+                    const ts = utilsTask.sortTasksByDuration(tasks.slice(), 'long')
+                    updateIds(ts.map(el => el.id))
+                  }
+                },
+                {
+                  name: this.l['Sort by duration(short to long)'],
+                  icon: 'magic',
+                  callback: () => {
+                    const ts = utilsTask.sortTasksByDuration(tasks.slice(), 'short')
+                    updateIds(ts.map(el => el.id))
+                  }
+                },
               ]
             },
           ]
