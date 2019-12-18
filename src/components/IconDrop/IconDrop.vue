@@ -23,7 +23,10 @@
       @enter="enter"
       @leave="leave"
     >
-      <div v-if="opt && showing" class="content shadow cb rb">
+      <div v-if="opt && showing"
+        class="content shadow cb rb"
+        :class="{overflow: cardOptions && cardOptions.overflow}"
+      >
         <transition name="fade" appear>
           <component v-if="showingCont"
             :is='getComp'

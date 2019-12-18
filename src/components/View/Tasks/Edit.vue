@@ -445,13 +445,9 @@ export default {
       return this.task.checklist.length === 0
     },
     calendarOptions() {
-      /* return {
-        comp: 'CalendarPicker',
-        content: {callback: this.selectDate, repeat: true}
-      } */
       return {
         comp: 'CalendarPicker',
-        content: {callback: console.log, repeat: true}
+        content: {callback: date => {this.task.calendar = date}, repeat: true}
       }
     },
     durationOptions() {
@@ -499,9 +495,6 @@ export default {
       if (this.task.folder)
         return this.$store.getters['folder/getFoldersByName']([this.task.folder]).map(el => el.id)[0]
       return null
-    },
-    selectDate() {
-      return date => this.task.calendar = date
     },
     buttonText() {
       if (this.btnText) return this.btnText

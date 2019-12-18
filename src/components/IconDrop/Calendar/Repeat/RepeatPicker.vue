@@ -99,16 +99,6 @@
     </div>
     <div class="extra-options margin">
       <div class="cont">
-        {{ l['Deadline:'] }}
-      </div>
-      <div class="cont">
-        <span class="option rb cursor" @click="getDeadlineDate">
-          {{ deadlineStr }}
-        </span>
-      </div>
-    </div>
-    <div class="extra-options margin">
-      <div class="cont">
         {{ l['Ends:'] }}
       </div>
       <div class="cont">
@@ -172,7 +162,6 @@ export default {
           'Yearly',
         ],
         begins: TOD_STR,
-        deadline: undefined,
 
         ends: 'Never',
         endTimes: '1',
@@ -232,7 +221,6 @@ export default {
       const editDate = TOD_STR
       const obj = {
         begins: this.data.begins,
-        deadline: this.data.deadline,
       }
       if (this.data.ends !== 'Never') {
         if (this.data.ends === 'On date') {
@@ -294,7 +282,7 @@ export default {
             monthly: {
               every: days,
               place: monthDay,
-              week: weekDay,
+              type: weekDay,
             }
           }
         }
@@ -306,7 +294,7 @@ export default {
             yearly: {
               every: days,
               place: monthDay,
-              week: weekDay,
+              type: weekDay,
               months: this.data.months.map(w => mom(w, 'MMM').format('M'))
             }
           }
@@ -368,11 +356,6 @@ export default {
         begins: date,
       }))
     },
-    getDeadlineDate() {
-      this.getDate(date => ({
-        deadline: date,
-      }))
-    },
     getEndDate() {
       this.getDate(date => ({
         endDate: date,
@@ -381,11 +364,6 @@ export default {
   },
   computed: {
     ...mapGetters(['platform', 'l']),
-    deadlineStr() {
-      if (!this.data.deadline)
-        return this.l['No deadline']
-      return this.data.deadline
-    },
     getDays() {
       return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     },

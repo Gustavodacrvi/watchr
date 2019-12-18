@@ -319,9 +319,6 @@ export default {
   getHumanReadableDate(str, language) {
     const l = language
     
-    const todayKey = l['CalParserTODAY']
-    const tomorrowKey = l['CalParserTOMORROW']
-    
     if (!language) throw 'Missing language object'
     const tod = mom()
     const sameDay = (mom1, mom2) => {
@@ -329,8 +326,8 @@ export default {
     }
     
     let date = mom(str, 'Y-M-D', true)
-    if (sameDay(tod, date)) return todayKey
-    if (sameDay(mom().add(1, 'day'), date)) return tomorrowKey
+    if (sameDay(tod, date)) return 'Today'
+    if (sameDay(mom().add(1, 'day'), date)) return 'Tomorrow'
     if (!tod.isSame(date, 'year')) return date.format('MMM Do, ddd, Y')
     if (!tod.isSame(date, 'month')) return date.format('MMM Do, ddd')
     return date.format('Do, ddd')
@@ -341,6 +338,74 @@ export default {
     return mom(time, 'H:m').format('h:m A')
   },
   parseCalendarObjectToString(obj, language, userInfo) {
+    let str = ''
+
+    const c = obj
+
+    switch (c.type) {
+      case 'specific': {
+        str += this.getHumanReadableDate(c.specific, language)
+        break
+      }
+      case 'after completion': {
+        str += `${c.afterCompletion} days after`
+        break
+      }
+      case 'daily': {
+        str += `Every ${c.daily} days`
+        break
+      }
+      case 'weekly': {
+        str += `Every ${c.weekly.every} weeks on `
+        let i = 0
+        for (const w of c.weekly.weeks) {
+          str += mom(w, 'e').format('ddd')
+
+          if ((i + 1) !== c.weekly.weeks.length)
+            str += ', '
+          i++
+        }
+        break
+      }
+      case 'monthly': {
+        str += `Every ${c.monthly.every} months on the ${c.monthly.place} ${c.monthly.type === 'day' ? c.monthly.type : mom(c.monthly.type, 'e').format('ddd')}`
+      }
+      case 'yearly': {
+        str += `Every ${c.yearly.every} months on the ${c.yearly.place} ${c.yearly.type === 'day' ? c.yearly.type : mom(c.yearly.type, 'e').format('ddd')} on `
+        let i = 0
+        for (const w of c.yearly.months) {
+          str += mom(w, 'M').format('MMM')
+
+          if ((i + 1) !== c.yearly.months.length)
+            str += ', '
+          i++
+        }
+        break
+      }
+    }
+
+    if (c.time) str += ` at ${this.parseTime(c.time, userInfo)}`
+
+    if (c.begins && c.begins !== c.editDate) {
+      str += `, begins on ${this.getHumanReadableDate(c.begins, language)}`
+    }
+
+    if (c.ends) {
+      if (c.ends.type === 'on date') {
+        str += `, ends on ${this.getHumanReadableDate(c.ends.onDate, language)}`
+      } else {
+        str += `, ends after ${c.ends.times} times`
+      }
+    }
+
+    return str
+  },
+
+
+
+
+
+  /*
     const l = language
     
     const everyDayKey = l['CalParserEveryDay']
@@ -393,7 +458,9 @@ export default {
     if (obj.persistent && hasTimesBinding) str += ' ' + perKey
     
     return str
-  },
+  */
+  
+  
   download(filename, text) {
     let element = document.createElement('a')
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
