@@ -9,28 +9,28 @@
     />
     <div class="margin"></div>
     <div class="special-options" v-if="data.activeRepeatOption === 'After completion'">
-      Repeat
+      {{ l['Repeat'] }}
       <AuthSimpleInput
         v-model="data.days"
         width='15px'
       />
-       days after task completion.
+       {{ l['days after task completion.'] }}
     </div>
     <div class="special-options" v-else-if="data.activeRepeatOption === 'Daily'">
-      Every
+      {{ l['Every'] }}
       <AuthSimpleInput
         v-model="data.days"
         width='15px'
       />
-       days.
+       {{ l['days.'] }}
     </div>
     <div class="special-options" v-else-if="data.activeRepeatOption === 'Weekly'">
-      Every
+      {{ l['Every'] }}
       <AuthSimpleInput
         v-model="data.days"
         width='15px'
       />
-       weeks.
+       {{ l['weeks.'] }}
        <div class="days margin">
         <span v-for="d of getDays" :key="d"
           class="option cursor week"
@@ -40,12 +40,12 @@
       </div>
     </div>
     <div class="special-options" v-else-if="data.activeRepeatOption === 'Monthly'">
-      Every
+      {{ l['Every'] }}
       <AuthSimpleInput
         v-model="data.days"
         width='15px'
       />
-       months on the
+       {{ l['months on the'] }}
       <AuthOptions
         :options='data.monthDayOptions'
         :active='data.monthDay'
@@ -60,12 +60,12 @@
       />
     </div>
     <div class="special-options" v-else-if="data.activeRepeatOption === 'Yearly'">
-      Every 
+      {{ l['Every'] }}
       <AuthSimpleInput
         v-model="data.days"
         width='15px'
       />
-       years on the 
+       {{ l['years on the'] }} 
        <AuthOptions
         :options='data.monthDayOptions'
         :active='data.monthDay'
@@ -89,7 +89,7 @@
     <div class="hr"></div>
     <div class="extra-options margin">
       <div class="cont">
-        Begins:
+        {{ l['Begins:'] }}
       </div>
       <div class="cont">
         <span class="option rb cursor" @click="getBeginDate">
@@ -99,7 +99,7 @@
     </div>
     <div class="extra-options margin">
       <div class="cont">
-        Deadline:
+        {{ l['Deadline:'] }}
       </div>
       <div class="cont">
         <span class="option rb cursor" @click="getDeadlineDate">
@@ -109,7 +109,7 @@
     </div>
     <div class="extra-options margin">
       <div class="cont">
-        Ends:
+        {{ l['Ends:'] }}
       </div>
       <div class="cont">
         <AuthOptions
@@ -124,7 +124,7 @@
             v-model="data.endTimes"
             width='15px'
           />
-           <span>&nbsp;times</span>
+           <span>&nbsp;{{ l['times'] }}</span>
         </template>
         <template  class="special-options" v-else-if="data.ends === 'On date'">
           <span>&nbsp;</span>
@@ -383,7 +383,7 @@ export default {
     ...mapGetters(['platform', 'l']),
     deadlineStr() {
       if (!this.data.deadline)
-        return 'No deadline'
+        return this.l['No deadline']
       return this.data.deadline
     },
     getDays() {
