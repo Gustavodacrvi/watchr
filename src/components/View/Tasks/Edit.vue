@@ -445,9 +445,13 @@ export default {
       return this.task.checklist.length === 0
     },
     calendarOptions() {
-      return {
+      /* return {
         comp: 'CalendarPicker',
         content: {callback: this.selectDate, repeat: true}
+      } */
+      return {
+        comp: 'CalendarPicker',
+        content: {callback: console.log, repeat: true}
       }
     },
     durationOptions() {

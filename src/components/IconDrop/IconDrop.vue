@@ -23,7 +23,7 @@
       @enter="enter"
       @leave="leave"
     >
-      <div v-if="opt && showing" class="content shadow cb rb" :class="{overflow: cardOptions && cardOptions.overflow}">
+      <div v-if="opt && showing" class="content shadow cb rb">
         <transition name="fade" appear>
           <component v-if="showingCont"
             :is='getComp'
@@ -82,6 +82,20 @@ export default {
       }, 200)
     },
     calcStyles() {
+      const cont = this.$el.getElementsByClassName('content')[0]
+
+      const s = cont.style
+
+      s.transitionDuration = '0'
+      setTimeout(() => {
+        s.width = 'auto'
+        s.height = 'auto'
+        setTimeout(() => {
+          const {height, width} = getComputedStyle(cont)
+          s.width = width
+          s.height = height
+        }, 80)
+      })
     },
     update(opt) {
       if (opt) {
@@ -106,11 +120,7 @@ export default {
               cont.style.width = width
               cont.style.height = height
               cont.style.transitionDelay = '.0s'
-              setTimeout(() => {
-                cont.style.width = 'auto'
-                cont.style.height = 'auto'
-              }, 200)
-            }, 50)
+            }, 150)
           })
         }, 300)
         this.showingCont = false

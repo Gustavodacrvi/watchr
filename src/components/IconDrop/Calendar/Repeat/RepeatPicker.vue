@@ -136,7 +136,7 @@
     </div>
     <AuthButton class="margin"
       value='Repeat task'
-      @click="update"
+      @click="emit"
     />
   </div>
 </template>
@@ -172,9 +172,11 @@ export default {
           'Yearly',
         ],
         begins: TOD_STR,
-        deadline: null,
+        deadline: undefined,
 
         ends: 'Never',
+        endTimes: '1',
+        endDate: TOD_STR,
         endOptions: [
           'Never',
           'After',
@@ -217,8 +219,6 @@ export default {
         ],
         months: ['Jan'],
         weeks: ['Mon'],
-        endTimes: '1',
-        endDate: TOD_STR,
       }
     }
   },
@@ -227,6 +227,98 @@ export default {
       this.data = this.content.data
   },
   methods: {
+    update() {
+      const days = parseInt(this.data.days, 10)
+      const editDate = TOD_STR
+      const obj = {
+        begins: this.data.begins,
+        deadline: this.data.deadline,
+      }
+      if (this.data.ends !== 'Never') {
+        if (this.data.ends === 'On date') {
+          obj.ends = {
+            type: 'on date',
+            onDate: this.data.endDate,
+          }
+        } else {
+          obj.ends = {
+            type: 'times',
+            times: this.data.endTimes,
+          }
+        }
+      }
+
+      let monthDay = undefined
+      if (this.data.monthDay === 'last') {
+        monthDay = 'last'
+      } else monthDay = parseInt(this.data.monthDay, 10)
+
+      let weekDay = undefined
+      if (this.data.weekDay === 'day') {
+        weekDay = 'day'
+      } else weekDay = parseInt(mom(this.data.weekDay, 'dddd').format('e'), 10)
+      
+      switch (this.data.activeRepeatOption) {
+        case 'After completion': {
+          return {
+            ...obj,
+            editDate,
+            type: 'after completion',
+            afterCompletion: days,
+          }
+        }
+        case 'Daily': {
+          return {
+            ...obj,
+            editDate,
+            type: 'daily',
+            daily: days,
+          }
+        }
+        case 'Weekly': {
+          return {
+            ...obj,
+            editDate,
+            type: 'weekly',
+            weekly: {
+              every: days,
+              weeks: this.data.weeks.map(w => mom(w, 'ddd').format('e')),
+            },
+          }
+        }
+        case 'Monthly': {
+          return {
+            ...obj,
+            editDate,
+            type: 'monthly',
+            monthly: {
+              every: days,
+              place: monthDay,
+              week: weekDay,
+            }
+          }
+        }
+        case 'Yearly': {
+          return {
+            ...obj,
+            editDate,
+            type: 'yearly',
+            yearly: {
+              every: days,
+              place: monthDay,
+              week: weekDay,
+              months: this.data.months.map(w => mom(w, 'MMM').format('M'))
+            }
+          }
+        }
+      }
+    },
+    emit() {
+      const obj = this.content.callback(this.update())
+      if (!obj) {
+        this.$emit('close')
+      } else this.$emit('update', obj)
+    },
     toggle(d) {
       if (this.isActive(d)) {
         const i = this.data.weeks.findIndex(e => e === d)
@@ -247,9 +339,6 @@ export default {
     isActive(d) {
       return this.data.weeks.includes(d)
     },
-    update() {
-
-    },
     getDate(callback) {
       this.$emit('update', {
         comp: 'CalendarPicker',
@@ -267,6 +356,7 @@ export default {
                   ...this.data,
                   ...callback(date.specific),
                 },
+                callback: this.content.callback,
               }
             }
           }
@@ -302,7 +392,9 @@ export default {
   },
   watch: {
     'data.activeRepeatOption'() {
-      this.$emit('calc')
+      setTimeout(() => {
+        this.$emit('calc')
+      })
     },
   }
 }

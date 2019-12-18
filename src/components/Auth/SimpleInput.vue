@@ -22,7 +22,9 @@ export default {
   },
   methods: {
     fixWidth() {
-      this.$el.style.width = ((this.$el.value.length + 1) * 12) + 'px'
+      setTimeout(() => {
+        this.$el.style.width = ((this.$el.value.length + 1) * 12) + 'px'
+      })
     }
   },
   watch: {
