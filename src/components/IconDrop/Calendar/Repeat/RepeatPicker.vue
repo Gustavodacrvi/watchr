@@ -45,7 +45,7 @@
         v-model="data.days"
         width='15px'
       />
-       on the
+       months on the
       <AuthOptions
         :options='data.monthDayOptions'
         :active='data.monthDay'
@@ -60,7 +60,30 @@
       />
     </div>
     <div class="special-options" v-else-if="data.activeRepeatOption === 'Yearly'">
-      Yearl
+      Every 
+      <AuthSimpleInput
+        v-model="data.days"
+        width='15px'
+      />
+       years on the 
+       <AuthOptions
+        :options='data.monthDayOptions'
+        :active='data.monthDay'
+        minWidth='200px'
+        @select='v => data.monthDay = v'
+      />&nbsp;
+      <AuthOptions
+        :options='data.weekDayOptions'
+        :active='data.weekDay'
+        minWidth='200px'
+        @select='v => data.weekDay = v'
+      />&nbsp;
+      <AuthOptions
+        :options='data.yearMonthOptions'
+        :active='data.yearMonth'
+        minWidth='200px'
+        @select='v => data.yearMonth = v'
+      />
     </div>
     <div class="hr"></div>
     <div class="extra-options margin">
@@ -158,7 +181,7 @@ export default {
         ],
         monthDay: '1st',
         monthDayOptions: [
-          '1st', '2nd', '3rd', '4th', '5th',
+          'last', '1st', '2nd', '3rd', '4th', '5th',
           '6th', '7th', '8th', '9th', '10th',
           '11th', '12th', '13th', '14th', '15th',
           '16th', '17th', '18th', '19th', '20th',
@@ -176,6 +199,21 @@ export default {
           'Thursday',
           'Friday',
           'Saturday',
+        ],
+        yearMonth: 'January',
+        yearMonthOptions: [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
         ],
         weeks: ['Mon'],
         endTimes: '1',
