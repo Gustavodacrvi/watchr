@@ -1,14 +1,14 @@
 <template>
   <div class="RepeatPicker" :class="platform">
     <span>{{ l["Repeat:"] }}   </span>
-    <AuthOptions
+    <AuthOptions class='special-options' style="z-index: 3"
       :options='data.repeatOptions'
       :active='data.activeRepeatOption'
       minWidth='200px'
       @select='v => data.activeRepeatOption = v'
     />
     <div class="margin"></div>
-    <div v-if="data.activeRepeatOption === 'After completion'">
+    <div class="special-options" v-if="data.activeRepeatOption === 'After completion'">
       Repeat
       <AuthSimpleInput
         v-model="data.days"
@@ -16,7 +16,7 @@
       />
        days after task completion.
     </div>
-    <div v-else-if="data.activeRepeatOption === 'Daily'">
+    <div class="special-options" v-else-if="data.activeRepeatOption === 'Daily'">
       Every
       <AuthSimpleInput
         v-model="data.days"
@@ -24,14 +24,14 @@
       />
        days.
     </div>
-    <div v-else-if="data.activeRepeatOption === 'Weekly'">
+    <div class="special-options" v-else-if="data.activeRepeatOption === 'Weekly'">
       Every
       <AuthSimpleInput
         v-model="data.days"
         width='15px'
       />
        weeks.
-       <div class="days">
+       <div class="days margin">
         <span v-for="d of getDays" :key="d"
           class="option cursor week"
           :class="{active: isActive(d)}"
@@ -39,10 +39,27 @@
         >{{ d }}</span>
       </div>
     </div>
-    <div v-else-if="data.activeRepeatOption === 'Monthly'">
-      Monthly
+    <div class="special-options" v-else-if="data.activeRepeatOption === 'Monthly'">
+      Every
+      <AuthSimpleInput
+        v-model="data.days"
+        width='15px'
+      />
+       on the
+      <AuthOptions
+        :options='data.monthDayOptions'
+        :active='data.monthDay'
+        minWidth='200px'
+        @select='v => data.monthDay = v'
+      />&nbsp;
+      <AuthOptions
+        :options='data.weekDayOptions'
+        :active='data.weekDay'
+        minWidth='200px'
+        @select='v => data.weekDay = v'
+      />
     </div>
-    <div v-else-if="data.activeRepeatOption === 'Yearly'">
+    <div class="special-options" v-else-if="data.activeRepeatOption === 'Yearly'">
       Yearl
     </div>
     <div class="hr"></div>
@@ -85,7 +102,7 @@
           />
            <span>&nbsp;times</span>
         </template>
-        <template  v-else-if="data.ends === 'On date'">
+        <template  class="special-options" v-else-if="data.ends === 'On date'">
           <span>&nbsp;</span>
           <div class="option rb cursor"  @click="getEndDate">
             {{ data.endDate }}
@@ -110,7 +127,7 @@ import { mapGetters } from 'vuex'
 
 import mom from 'moment/src/moment'
 
-const TOD_STR = mom().format('Y/M/D')
+const TOD_STR = mom().format('Y-M-D')
 
 export default {
   props: ['content'],
@@ -138,6 +155,27 @@ export default {
           'Never',
           'After',
           'On date'
+        ],
+        monthDay: '1st',
+        monthDayOptions: [
+          '1st', '2nd', '3rd', '4th', '5th',
+          '6th', '7th', '8th', '9th', '10th',
+          '11th', '12th', '13th', '14th', '15th',
+          '16th', '17th', '18th', '19th', '20th',
+          '21st', '22nd', '23rd', '24th', '25th',
+          '26th', '27th', '28th', '29th', '30th',
+          '31st'
+        ],
+        weekDay: 'day',
+        weekDayOptions: [
+          'day',
+          'Sunday',
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday',
         ],
         weeks: ['Mon'],
         endTimes: '1',
@@ -212,6 +250,11 @@ export default {
     getDays() {
       return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     },
+  },
+  watch: {
+    'data.activeRepeatOption'() {
+      this.$emit('calc')
+    },
   }
 }
 
@@ -236,6 +279,8 @@ export default {
 
 .extra-options {
   display: flex;
+  position: relative;
+  z-index: 1;
 }
 
 .cont {
@@ -250,6 +295,11 @@ export default {
   border: 1px solid var(--dark);
   transition-duration: .2s;
   background-color: none;
+}
+
+.special-options {
+  position: relative;
+  z-index: 2;
 }
 
 .option:hover {
@@ -267,8 +317,9 @@ export default {
 }
 
 .active {
-  background-color: var(--primary);
+  background-color: var(--primary) !important;
   color: white;
+  border: none;
 }
 
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="Options AuthOptions">
     <span class="element rb cb cursor bd" @click="showing = !showing">{{ active }}</span>
-    <div v-if="showing" class="options-content rb cb bd thin-scroll"
+    <div v-if="showing" class="options-content rb cb bd scroll-thin"
       :style="{minWidth}"
     >
       <span v-for="o in options" :key="o"
@@ -85,16 +85,13 @@ export default {
 }
 
 .options-content {
-  max-height: 300px;
-  overflow: auto;
+  max-height: 200px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .opt {
   display: block;
-}
-
-.options-content {
-  overflow: hidden;
 }
 
 </style>

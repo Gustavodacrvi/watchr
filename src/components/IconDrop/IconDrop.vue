@@ -29,6 +29,7 @@
             :is='getComp'
             :content='compContent'
             @close='closeIconDrop'
+            @calc='calcStyles'
             @update='update'
           />
         </transition>
@@ -80,6 +81,8 @@ export default {
         this.$store.commit('pushIconDrop', null)
       }, 200)
     },
+    calcStyles() {
+    },
     update(opt) {
       if (opt) {
         if (opt.cardOptions) this.cardOptions = opt.cardOptions
@@ -103,6 +106,10 @@ export default {
               cont.style.width = width
               cont.style.height = height
               cont.style.transitionDelay = '.0s'
+              setTimeout(() => {
+                cont.style.width = 'auto'
+                cont.style.height = 'auto'
+              }, 200)
             }, 50)
           })
         }, 300)
