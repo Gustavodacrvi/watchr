@@ -78,12 +78,13 @@
         minWidth='200px'
         @select='v => data.weekDay = v'
       />&nbsp;
-      <AuthOptions
-        :options='data.yearMonthOptions'
-        :active='data.yearMonth'
-        minWidth='200px'
-        @select='v => data.yearMonth = v'
-      />
+      <div class="days margin">
+        <span v-for="d of data.yearMonthOptions" :key="d"
+          class="option cursor week"
+          :class="{active: isMonthActive(d)}"
+          @click="toggleMonth(d)"
+        >{{ d }}</span>
+      </div>
     </div>
     <div class="hr"></div>
     <div class="extra-options margin">
@@ -200,21 +201,21 @@ export default {
           'Friday',
           'Saturday',
         ],
-        yearMonth: 'January',
         yearMonthOptions: [
-          'January',
-          'February',
-          'March',
-          'April',
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
           'May',
-          'June',
-          'July',
-          'August',
-          'September',
-          'October',
-          'November',
-          'December',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec',
         ],
+        months: ['Jan'],
         weeks: ['Mon'],
         endTimes: '1',
         endDate: TOD_STR,
@@ -232,6 +233,16 @@ export default {
         this.data.weeks.splice(i, 1)
       }
       else this.data.weeks.push(d)
+    },
+    toggleMonth(d) {
+      if (this.isMonthActive(d)) {
+        const i = this.data.months.findIndex(e => e === d)
+        this.data.months.splice(i, 1)
+      }
+      else this.data.months.push(d)
+    },
+    isMonthActive(d) {
+      return this.data.months.includes(d)
     },
     isActive(d) {
       return this.data.weeks.includes(d)
