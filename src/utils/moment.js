@@ -3,7 +3,7 @@ import mom from 'moment/src/moment'
 
 export default {
   getFirstDayOfNextWeekMoment(initial) {
-    return this.nextWeekDay(initial, 'Sunday')
+    return this.nextWeekDay(initial, 'Sunday', 'dddd')
   },
   getLastDayOfNextWeekMoment(initial) {
     const clone = this.getFirstDayOfNextWeekMoment(initial)
@@ -39,7 +39,9 @@ export default {
     }
     return clone
   },
-  nextWeekDay(initial, weekday) {
+  nextWeekDay(initial, weekday, format) {
+    if (!format) format = 'd'
+    
     const clone = initial.clone()
     let i = 0
     let possibleWeekdays = []
@@ -48,7 +50,7 @@ export default {
     else possibleWeekdays = weekday
     const formatedWeekdays = []
     for (const week of possibleWeekdays)
-      formatedWeekdays.push(mom(week, 'ddd').format('dddd'))
+      formatedWeekdays.push(mom(week, format).format('dddd'))
     const isOnIt = (week) => {
       return formatedWeekdays.includes(week)
     }
@@ -88,17 +90,124 @@ export default {
     edit.add(numberOfEvents * period, 'day')
     return edit
   },
+  getNextMonthlyDate(c, initial) {
+    const begins = mom(c.begins, 'Y-M-D')
+    const every = c.monthly.every
+    const type = c.monthly.type
+    const place = c.monthly.place
+    
+    while (true) {
+      const monthDiff = initial.diff(begins, 'month')
+      if (monthDiff < 0 || monthDiff % every !== 0) {
+        initial.add(1, 'M').startOf('month')
+        continue
+      }
+
+      if (type === 'day') {
+        if (place !== 'last') {
+          const date = initial.date()
+          if (date > place) {
+            initial.add(1, 'M').startOf('month')
+            continue
+          } else if (date === place)
+            return initial
+          else {
+            initial.date(place)
+            continue
+          }
+        } else {
+          initial.endOf('month')
+          return initial
+        }
+      } else {
+        if (place !== 'last') {
+          const date = initial.date()
+
+          initial.startOf('month')
+
+          let num = 0
+          while (num < place) {
+            initial = this.nextWeekDay(initial, type)
+
+            num++
+          }
+
+          if (date > initial.date()) {
+            initial.add(1, 'M').startOf('month')
+            continue
+          }
+          
+          return initial
+        } else {
+          initial.endOf('month')
+          const weekType = initial.day()
+          const target = type
+          
+          if (weekType === target)
+            return initial
+
+          let subtract
+
+          const offset = 6 - weekType
+
+          if (target > weekType)
+            subtract = 7 - (offset + (target - 6))
+          else
+            subtract = 6 - (target + offset)
+          
+          initial.subtract(subtract, 'd')
+          return initial
+        }
+      }
+    }
+  },
   getNextEventAfterCompletionDate(c) {
-    let usedDate = c.lastCompleteDate || c.editDate
+    let usedDate = c.lastCompleteDate || c.begins
 
     const lastComplete = mom(usedDate, 'Y-M-D')
     if (lastComplete.isValid()) {
-      if (c.type === 'periodic')
-        return lastComplete.add(c.periodic, 'day')
-      else
-        return this.nextWeekDay(lastComplete, c.weekly)
+      const begins = mom(c.begins, 'Y-M-D')
+      if (c.type === 'daily')
+        return lastComplete.add(c.periodic, 'd')
+      else if (c.type === 'weekly') {
+        while (true) {
+          const week = this.nextWeekDay(lastComplete, c.weekly.days)
+
+          const weekDiff = week.diff(begins, 'weeks')
+          if (weekDiff < 0 || weekDiff % c.weekly.every !== 0) {
+            lastComplete.add(1, 'w').startOf('week')
+            continue
+          }
+
+          return week
+        }
+      } else if (c.type === 'monthly') {
+        return this.getNextMonthlyDate(c, lastComplete)
+      } else if (c.type === 'yearly') {
+        const getNext = () =>
+          this.getNextMonthlyDate({
+            monthly: {...c.yearly, every: 1}
+          }, lastComplete)
+        
+        while (true) {
+          lastComplete = getNext()
+  
+          const yearDiff = lastComplete.diff(begins, 'years')
+          if (yearDiff < 0 || yearDiff % c.yearly.every !== 0) {
+            lastComplete.add(1, 'y').startOf('year')
+            continue
+          }
+
+          if (!c.yearly.months.includes(lastComplete.month() + 1)) {
+            lastComplete.add(1, 'M').startOf('month')
+            continue
+          }
+
+          return lastComplete
+        }
+      }
     }
-    return mom(c.editDate, 'Y-M-D')
+    return mom(c.begins, 'Y-M-D')
   },
   getLastWeeklyEvent(c, tod) {
     return this.getLastInstanceOfaWeek(tod, c.weekly)

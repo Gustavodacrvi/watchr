@@ -68,27 +68,72 @@ export default {
     },
     ...MemoizeGetters([], {
       isCalendarObjectShowingToday({}, calendar, date, specific) {
-        const c = calendar  
+        const c = calendar
         if (!calendar) return false
+
         if (specific && c.type !== 'specific') return false
         if (c.type === 'someday') return false
-        // SPECIFIC
+        // specific
         if (c.type === 'specific') {
           return date === c.specific
         }
-        // overdue
+
         const tod = mom(date, 'Y-M-D')
-        if (c.due) {
-          const due = mom(c.due, 'Y-M-D')
-          if (due.isBefore(tod, 'day')) return false
+        const begins = mom(c.begins, 'Y-M-D')
+        if (c.type === 'after completion') {
+          const lastComplete = c.lastCompleteDate ? mom(c.lastCompleteDate, 'Y-M-D') : begins
+          if (begins.isSame(tod, 'day')) return true
+
+          const dayDiff = tod.diff(lastComplete, 'days')
+          const eventNotToday = dayDiff < c.afterCompletion
+          if (eventNotToday) return false
         }
-        // not ready yet
-        if (c.defer) {
-          const defer = mom(c.defer, 'Y-M-D')
-          if (defer.isAfter(tod, 'day')) return false
+        
+        if (c.type === 'daily') {
+          const dayDiff = tod.diff(begins, 'days')
+          if (dayDiff < 0) return false
+          const eventNotToday = dayDiff % c.periodic !== 0
+          if (eventNotToday) return false
         }
-        if (c.persistent && c.times !== null && c.times !== undefined) return true
-        if (c.type === 'periodic') {
+        if (c.type === 'weekly') {
+          const dayOfTheWeek = parseInt(tod.format('d'), 10)
+          if (!c.weekly.days.includes(dayOfTheWeek))
+            return false
+          
+          const weekDiff = tod.diff(begins, 'weeks')
+          if (weekDiff < 0) return false
+          const eventNotToday = weekDiff % c.weekly.every !== 0
+          if (eventNotToday) return false
+        }
+        if (c.type === 'monthly') {
+          const monthDiff = tod.diff(begins, 'months')
+          if (monthDiff < 0) return false
+          const eventNotToday = monthDiff % c.monthly.every !== 0
+          if (eventNotToday) return false
+
+          if (!utilsMoment.getNextMonthlyDate(c, tod.clone().subtract(1, 'd')).isSame(tod), 'day') return false
+        }
+        if (c.type === 'yearly') {
+          const month = tod.month() + 1
+          if (!c.yearly.months.includes(month))
+            return false
+          
+          const yearDiff = tod.diff(begins, 'years')
+          if (yearDiff < 0) return false
+          const eventNotToday = yearDiff % c.yearly.every !== 0
+          if (eventNotToday) return false
+
+          if (!utilsMoment.getNextMonthlyDate({
+            monthly: {...c.yearly, every: 1}
+          }, tod.clone().subtract(1, 'd')).isSame(tod), 'day') return false
+        }
+
+
+
+        return true
+        
+        
+        /* if (c.type === 'periodic') {
           const dayDiff = tod.diff(mom(c.editDate, 'Y-M-D'), 'day')
           const eventNotToday = dayDiff % c.periodic !== 0
           if (eventNotToday) return false  
@@ -97,41 +142,7 @@ export default {
           const todaysWeekDayName = tod.format('ddd').toLowerCase()
           const eventNotToday = !c.weekly.find(w => w.toLowerCase() === todaysWeekDayName)
           if (eventNotToday) return false
-        }
-        return true
-        
-    
-        // OLD AND SLOW CODE
-          /*     if (calendar.type === 'someday') return false
-          const {
-            type, defer, due, tod,
-            edit, spec, interval,
-            weekDays, times, persistent,
-            hasTimesBinding,
-          } = this.getCalendarObjectData(calendar, todayMoment)
-          const isOverdue = (due.isBefore(tod, 'day'))
-          const isntReadyYet = (defer.isAfter(tod, 'day'))
-          const notToday = (!tod.isSame(spec, 'day'))
-          const isForToday = !notToday
-      
-          if (isOverdue) return false
-          if (isntReadyYet) return false
-          
-          if (type === 'specific') return isForToday
-          // if it passes here, then the calendar is guaranted to be periodic or weekly
-          if (persistent && hasTimesBinding) return true
-          if (type === 'periodic') {
-            const dayDiff = tod.diff(edit, 'day')
-            const eventNotToday = dayDiff % interval !== 0
-            if (eventNotToday) return false
-          }
-          if (type === 'weekly') {
-            const todaysWeekDayName = tod.format('ddd').toLowerCase()
-            const eventNotToday = !weekDays.find(w => w.toLowerCase() === todaysWeekDayName)
-            if (eventNotToday) return false
-          }
-      
-          return true */
+        } */
       },
       isTaskCompleted: {
         getter({}, task, moment, compareDate) {
@@ -139,17 +150,25 @@ export default {
             const c = task.calendar
             if (!c || c.type === 'someday' || c.type === 'specific') return task.completed
             
-            // const hasTimesBinding = c.times !== null && c.times !== undefined
-            if (c.times !== null && c.times !== undefined) {
-              if (c.times === 0) return true
-              if (c.persistent) return c.times === 0
-            }
             moment = mom(moment, 'Y-M-D')
-            if (c.type === 'periodic' || c.type === 'weekly') {
+            if (!moment.isValid()) moment = mom()
+            if (c.type === 'after completion') {
+              if (!c.lastCompleteDate) return false
+              const last = mom(c.lastCompleteDate, 'Y-M-D')
+              const dayDiff = moment.diff(last, 'days')
+              return dayDiff < c.afterCompletion
+            }
+
+            if (c.type === 'daily' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
+              const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+              return lastComplete.isSameOrAfter(moment, 'day')
+            }
+            
+/*             if (c.type === 'periodic' || c.type === 'weekly') {
               const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
               if (!moment.isValid()) moment = mom()
               return lastComplete.isSameOrAfter(moment, 'day')
-            }
+            } */
       
             return false
           }
@@ -170,6 +189,80 @@ export default {
           }
           return JSON.stringify({i, a: [args[1], args[2]]})
         },
+      },
+      isTaskOverdue: {
+        getter({}, task) {
+          const calendar = task.calendar
+          if (!calendar) return false
+          
+          let tod = null
+          const getTod = () => {
+            if (tod) return tod
+            tod = mom()
+            return tod
+          }
+  
+          const c = calendar
+          if (c.type === 'specific') {
+            const spec = mom(c.specific, 'Y-M-D')
+            return spec.isBefore(getTod(), 'day')
+          }
+          if (c.type === 'after completion') return false
+          if (c.type === 'daily' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
+            return utilsMoment.getNextEventAfterCompletionDate(c).isBefore(getTod(), 'day')
+          }
+/*           if (c.type === 'periodic') {
+            return utilsMoment.getNextEventAfterCompletionDate(c).isBefore(getTod(), 'day')
+          }
+          if (c.type === 'weekly') {
+            const lastWeeklyEvent = utilsMoment.getLastWeeklyEvent(c, getTod())
+            const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+            return lastWeeklyEvent.isAfter(lastComplete, 'day')
+          } */
+  
+          return false
+        },
+        cache(args) {
+          return JSON.stringify(args[0].calendar)
+        },
+      },
+      isTaskInPeriod: {
+        getter({}, task, initial, period, onlySpecific) {
+          const c = task.calendar
+          if (!calendar) return false
+          if (onlySpecific && c.type !== 'specific') return false
+          if (c.type === 'someday') return false
+          // specific
+          const first = utilsMoment.getFirstDayOfMonth(mom(initial, 'Y-M-D'))
+          const last = utilsMoment.getFirstLastDayOfMonth(mom(initial, 'Y-M-D'))
+      
+          if (c.type === 'specific') {
+            const spec = mom(c.specific, 'Y-M-D')
+            return spec.isSameOrAfter(first, period) && spec.isSameOrBefore(last, period)
+          }
+          return false
+        },
+        cache(args) {
+          return JSON.stringify({
+            calendar: args[0].calendar,
+            i: args[1], p: args[2], s: args[3],
+          })
+        },
+      },
+      isTaskShowingOnDate: {
+        getter({getters}, task, date, onlySpecific) {
+          if (!utilsTask.hasCalendarBinding(task) || task.calendar.type === 'someday')
+            return false
+          if (onlySpecific && task.calendar.type !== 'specific') return false
+          return getters.isCalendarObjectShowingToday(task.calendar, date, onlySpecific)
+        },
+        cache(args) {
+          return JSON.stringify({
+            task: args[0].calendar,
+            date: args[1],
+            onlySpecific: args[2],
+          })
+        }
       },
       isTaskWeekly: {
         getter({}, task) {
@@ -329,91 +422,6 @@ export default {
         cache(args) {
           return JSON.stringify(args[0].calendar)
         },
-      },
-      isTaskOverdue: {
-        getter({}, task) {
-          const calendar = task.calendar
-          if (!calendar) return false
-          
-          let tod = null
-          const getTod = () => {
-            if (tod) return tod
-            tod = mom()
-            return tod
-          }
-  
-          const c = calendar
-          if (c.due) {
-            const due = mom(c.due, 'Y-M-D')
-            if (due.isBefore(getTod(), 'day')) return true
-          }
-          if (c.type === 'specific') {
-            const spec = mom(c.specific, 'Y-M-D')
-            return spec.isBefore(getTod(), 'day')
-          }
-          if (c.times !== null && c.times !== undefined && c.times === 0)
-            return true
-          if (c.type === 'periodic') {
-            return utilsMoment.getNextEventAfterCompletionDate(c).isBefore(getTod(), 'day')
-          }
-          if (c.type === 'weekly') {
-            const lastWeeklyEvent = utilsMoment.getLastWeeklyEvent(c, getTod())
-            const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
-            return lastWeeklyEvent.isAfter(lastComplete, 'day')
-          }
-  
-          return false
-        },
-        cache(args) {
-          return JSON.stringify(args[0].calendar)
-        },
-      },
-      isTaskInPeriod: {
-        getter({}, task, initial, period, onlySpecific) {
-          const c = task.calendar
-          if (!calendar) return false
-          if (onlySpecific && c.type !== 'specific') return false
-          if (c.type === 'someday') return false
-          // specific
-          const first = utilsMoment.getFirstDayOfMonth(mom(initial, 'Y-M-D'))
-          const last = utilsMoment.getFirstLastDayOfMonth(mom(initial, 'Y-M-D'))
-      
-          if (c.type === 'specific') {
-            const spec = mom(c.specific, 'Y-M-D')
-            return spec.isSameOrAfter(first, period) && spec.isSameOrBefore(last, period)
-          }
-          // overdue
-          if (c.due) {
-            const due = mom(c.due, 'Y-M-D')
-            return due.isSameOrAfter(first, period)
-          }
-          if (c.defer) {
-            const defer = mom(c.defer, 'Y-M-D')
-            return defer.isSameOrBefore(last, period)
-          }
-          return false
-        },
-        cache(args) {
-          return JSON.stringify({
-            calendar: args[0].calendar,
-            i: args[1], p: args[2], s: args[3],
-          })
-        },
-      },
-      isTaskShowingOnDate: {
-        getter({getters}, task, date, onlySpecific) {
-          if (!utilsTask.hasCalendarBinding(task) || task.calendar.type === 'someday')
-            return false
-          if (onlySpecific && task.calendar.type !== 'specific') return false
-          return getters.isCalendarObjectShowingToday(task.calendar, date, onlySpecific)
-        },
-        cache(args) {
-          return JSON.stringify({
-            task: args[0].calendar,
-            date: args[1],
-            onlySpecific: args[2],
-          })
-        }
       },
       isTaskInbox: {
         getter({}, task) {
@@ -677,12 +685,18 @@ export default {
       const batch = fire.batch()
 
       for (const t of tasks) {
-        let calendar = t.calendar
-        if (calendar && calendar.type !== 'someday') {
-          const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(calendar)
-          calendar.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
-          if (calendar.times) calendar.times -= 1
-          if (calendar.times === 0) calendar.times = null
+        let calendar = c = t.calendar
+        if (c && c.type !== 'someday') {
+          if (c.type === 'after completion') {
+            c.lastCompleteDate = mom().format('Y-M-D')
+          }
+          else if (c.type === 'daily' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
+            const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c)
+            c.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
+          }
+
+          if (c.times) c.times -= 1
+          if (c.times === 0) c.times = null
         }
 
         const ref = taskRef(t.id)

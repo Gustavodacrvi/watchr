@@ -270,7 +270,7 @@ export default {
             type: 'weekly',
             weekly: {
               every: days,
-              weeks: this.data.weeks.map(w => mom(w, 'ddd').format('e')),
+              days: this.data.weeks.map(w => parseInt(mom(w, 'ddd').format('e'), 10)),
             },
           }
         }
@@ -295,7 +295,7 @@ export default {
               every: days,
               place: monthDay,
               type: weekDay,
-              months: this.data.months.map(w => mom(w, 'MMM').format('M'))
+              months: this.data.months.map(w => parseInt(mom(w, 'MMM').format('M'), 10))
             }
           }
         }
