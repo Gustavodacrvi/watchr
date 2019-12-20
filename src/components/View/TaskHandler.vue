@@ -53,6 +53,11 @@ export default {
     TaskRendererVue,
     AppButton,
   },
+  data() {
+    return {
+      scheduleObject: null,
+    }
+  },
   methods: {
     allowSomeday() {
       this.$emit('allow-someday')
@@ -101,28 +106,10 @@ export default {
     addHeading(obj) {
       this.$parent.$emit('add-heading', {...obj})
     },
-  },
-  computed: {
-    ...mapState({
-      storeTasks: state => state.task.tasks,
-      userInfo: state => state.userInfo,
-    }),
-    ...mapGetters({
-      l: 'l',
-      isTaskSomeday: 'task/isTaskSomeday',
-      isTaskCompleted: 'task/isTaskCompleted',
-
-      checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
-    }),
-    rootNonFilteredIds() {
-      return this.rootNonFiltered.map(el => el.id)
-    },
-    scheduleObject() {
+    updateSchedule() {
       if (!this.autoSchedule) return null
       
       const { time, buffer, fallback } = this.autoSchedule
-      
-      const init = mom(time, 'HH:mm')
 
       let headingTasks = []
 
@@ -133,6 +120,8 @@ export default {
         ...this.sortLaseredTasks,
         ...headingTasks,
       ]
+      
+      const init = mom(time, 'HH:mm')
 
       const bufferSplit = buffer.split(':')
 
@@ -189,7 +178,23 @@ export default {
         i++
       }
 
-      return finalObj
+      this.scheduleObject = finalObj
+    },
+  },
+  computed: {
+    ...mapState({
+      storeTasks: state => state.task.tasks,
+      userInfo: state => state.userInfo,
+    }),
+    ...mapGetters({
+      l: 'l',
+      isTaskSomeday: 'task/isTaskSomeday',
+      isTaskCompleted: 'task/isTaskCompleted',
+
+      checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
+    }),
+    rootNonFilteredIds() {
+      return this.rootNonFiltered.map(el => el.id)
     },
 
     sortHeadings() {
@@ -238,6 +243,22 @@ export default {
                     const ts = utilsTask.sortTasksByTaskDate(tasks.slice())
                     updateIds(ts.map(el => el.id))
                   },
+                },
+                {
+                  name: this.l['Sort by duration(long to short)'],
+                  icon: 'magic',
+                  callback: () => {
+                    const ts = utilsTask.sortTasksByDuration(tasks.slice(), 'long')
+                    updateIds(ts.map(el => el.id))
+                  }
+                },
+                {
+                  name: this.l['Sort by duration(short to long)'],
+                  icon: 'magic',
+                  callback: () => {
+                    const ts = utilsTask.sortTasksByDuration(tasks.slice(), 'short')
+                    updateIds(ts.map(el => el.id))
+                  }
                 },
               ]
             },
@@ -356,6 +377,11 @@ export default {
   watch: {
     rootNonFiltered() {
       this.$emit('root-non-filtered', this.rootNonFiltered)
+    },
+    autoSchedule() {
+      if (this.autoSchedule)
+        this.updateSchedule()
+      else this.scheduleObject = null
     },
   }
 }

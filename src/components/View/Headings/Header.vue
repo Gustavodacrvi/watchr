@@ -295,9 +295,10 @@ export default {
       return utils.parseCalendarObjectToString(this.headerCalendar, this.l, this.userInfo)
     },
     repeatCalendarNextEvent() {
-      if (!this.headerCalendar) return ''
+      return ''
+/*       if (!this.headerCalendar) return ''
       const { nextCalEvent } = utils.getCalendarObjectData(this.headerCalendar, mom())
-      return utils.getHumanReadableDate(nextCalEvent.format('Y-M-D'), this.l)
+      return utils.getHumanReadableDate(nextCalEvent.format('Y-M-D'), this.l) */
     },
     isEditable() {
       return !this.isSmart && (this.viewType === 'list' || this.viewType === 'tag') && this.isDesktop

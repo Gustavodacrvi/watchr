@@ -62,10 +62,6 @@
                 <Icon v-else-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
                 <transition name="name-t">
                   <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
-                      <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
-                      <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
-                      <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
-                      <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
                       <span v-html="parsedName"></span>
                       <Icon v-if="haveChecklist" class="txt-icon" icon="tasks" color="var(--gray)" width="18px"/>
                       <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
@@ -75,6 +71,13 @@
                 </transition>
               </div>
             </div>
+            <span class="info">
+              <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
+              <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
+              <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
+              <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
+              <span v-if="taskDuration && !schedule" class="tag cb rb">{{ taskDuration }}</span>
+            </span>
           </div>
         </div>
         <div v-else-if="isEditing" key="editing">
@@ -334,17 +337,12 @@ export default {
       this.$store.dispatch('task/saveTask', {
         id: this.task.id,
         calendar: {
-          defer: null,
-          due: null,
-
           type: 'specific',
           time: null,
           editDate: mom().format('Y-M-D'),
+          begins: mom().format('Y-M-D'),
 
           specific: date,
-          times: null,
-          lastCompleteDate: null,
-          periodic: null
         },
       })
     },
@@ -676,6 +674,9 @@ export default {
       if (!date || date === this.viewName) return null
       return this.l["Next event"] + ' ' + date
     },
+    taskDuration() {
+      return this.task.taskDuration ? utils.formatQuantity(this.task.taskDuration) : null
+    },
     getTask() {
       return {
         t: this.task,
@@ -800,6 +801,12 @@ export default {
 
 .text .icon {
   flex-shrink: 0;
+}
+
+.info {
+  flex-basis: 20px;
+  display: flex;
+  align-items: center;
 }
 
 .check, .icon-drop-wrapper {

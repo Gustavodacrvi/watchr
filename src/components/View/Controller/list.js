@@ -189,8 +189,6 @@ export default {
       return null
     },
     taskCompletionCompareDate() {
-      if (this.viewList && this.viewList.calendar && this.viewList.calendar.type !== 'someday')
-        return utils.getCalendarObjectData(this.viewList.calendar, mom()).lastCallEvent.format('Y-M-D')
       return null
     },
     files() {

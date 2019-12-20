@@ -3,6 +3,7 @@
       <CalendarPicker
         @select="selectDate"
         :repeat='content.repeat'
+        :onlyDates='content.onlyDates'
         @repeat='openRepeatOptions'
       />
     </div>
@@ -20,35 +21,27 @@ export default {
   },
   methods: {
     openRepeatOptions() {
-      this.$emit('update', [
-        {
-          name: this.l['Repeat weekly'],
-          icon: 'repeat',
-          callback: () => ({
-            comp: 'WeeklyPicker',
-            content: {callback: this.selectDate},
-          }),
+      this.$emit('update', {
+        comp: "RepeatPicker",
+        cardOptions: {
+          overflow: true,
         },
-        {
-          name: this.l['Repeat periodically'],
-          icon: 'repeat',
-          callback: () => ({
-            comp: 'PeriodicPicker',
-            content: {callback: this.selectDate},
-          }),
+        content: {
+          callback: this.selectDate,
         },
-      ])
+      })
+
     },
     selectDate(date) {
       if (this.content.callback) {
-        this.content.callback(date)
-        this.$emit('close')
-        setTimeout(() => {
-          this.$store.commit('clearSelected')
-        }, 100)
+        const obj = this.content.callback(date)
+        if (!obj) {
+          this.$emit('close')
+        } else this.$emit('update', obj)
       }
-      this.showing = false
-      this.$store.commit('clearSelected')
+      setTimeout(() => {
+        this.$store.commit('clearSelected')
+      }, 100)
     },
   },
   computed: {

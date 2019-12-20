@@ -23,12 +23,16 @@
       @enter="enter"
       @leave="leave"
     >
-      <div v-if="opt && showing" class="content shadow cb rb">
+      <div v-if="opt && showing"
+        class="content shadow cb rb"
+        :class="{overflow: cardOptions && cardOptions.overflow}"
+      >
         <transition name="fade" appear>
           <component v-if="showingCont"
             :is='getComp'
             :content='compContent'
             @close='closeIconDrop'
+            @calc='calcStyles'
             @update='update'
           />
         </transition>
@@ -43,9 +47,8 @@ import Icon from './../Icon.vue'
 
 import ListIcons from './ListIcons.vue'
 import CalendarPicker from './Calendar.vue'
-import WeeklyPicker from './Calendar/WeeklyPicker.vue'
+import RepeatPicker from './Calendar/Repeat/RepeatPicker.vue'
 import TimePicker from './Calendar/TimePicker.vue'
-import PeriodicPicker from './Calendar/PeriodicPicker.vue'
 import Profile from './Profile.vue'
 import Files from './Files.vue'
 
@@ -54,8 +57,8 @@ import { mapGetters } from 'vuex'
 export default {
   props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width'],
   components: {
-    Icon, ListIcons, CalendarPicker, WeeklyPicker,
-    PeriodicPicker, Profile, Files, TimePicker,
+    Icon, ListIcons, CalendarPicker,
+    Profile, Files, TimePicker, RepeatPicker,
   },
   data() {
     return {
@@ -63,6 +66,7 @@ export default {
       showing: this.defaultShowing,
       justClosed: false,
       showingCont: this.defaultShowing,
+      cardOptions: null,
     }
   },
   mounted() {
@@ -80,8 +84,26 @@ export default {
         this.$store.commit('pushIconDrop', null)
       }, 200)
     },
+    calcStyles() {
+      const cont = this.$el.getElementsByClassName('content')[0]
+
+      const s = cont.style
+
+      s.transitionDuration = '0'
+      setTimeout(() => {
+        s.width = 'auto'
+        s.height = 'auto'
+        setTimeout(() => {
+          const {height, width} = getComputedStyle(cont)
+          s.width = width
+          s.height = height
+        }, 80)
+      })
+    },
     update(opt) {
       if (opt) {
+        if (opt.cardOptions) this.cardOptions = opt.cardOptions
+        
         const cont = this.$el.getElementsByClassName('content')[0]
         const s = getComputedStyle(cont)
         const oldWidth = s.width
@@ -101,7 +123,7 @@ export default {
               cont.style.width = width
               cont.style.height = height
               cont.style.transitionDelay = '.0s'
-            }, 50)
+            }, 150)
           })
         }, 300)
         this.showingCont = false
@@ -206,6 +228,10 @@ export default {
   overflow: hidden;
   transition-duration: .15s;
   z-index: 5;
+}
+
+.overflow {
+  overflow: visible;
 }
 
 .central {

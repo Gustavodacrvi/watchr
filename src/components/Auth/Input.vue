@@ -50,7 +50,6 @@ export default {
       this.str = this.value
     },
     focusToggle() {
-      console.log(1)
       this.focusInput()
     },
   }

@@ -36,6 +36,27 @@ export default {
     tasks.sort(priority)
     return tasks
   },
+  sortTasksByDuration(tasks, order) {
+    let num = 1
+    if (order !== 'long') num = -1
+    const calc = (t1, t2) => {
+      const d1 = t1.taskDuration
+      const d2 = t2.taskDuration
+
+      if (!d1 && !d2) return 0
+      if (d1 && !d2) return -1
+      if (d2 && !d1) return 1
+
+      const m1 = mom(d1, 'HH:mm')
+      const m2 = mom(d2, 'HH:mm')
+
+      if (m1.isSame(m2, 'minute')) return 0
+      if (m1.isBefore(m2, 'minute')) return num
+      if (m2.isBefore(m1, 'minute')) return -num
+    }
+    tasks.sort(calc)
+    return tasks
+  },
   sortTasksByTaskDate(tasks, str) {
     let name = 'created'
     if (str) name = str
@@ -56,8 +77,5 @@ export default {
   },
   hasCalendarBinding(task) {
     return task.calendar && task.calendar.type !== null
-  },
-  taskData(task, tod) {
-    return utils.getCalendarObjectData(task.calendar, tod)
   },
 }

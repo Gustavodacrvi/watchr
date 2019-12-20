@@ -117,6 +117,17 @@ export default {
       if (this.headerOptions)
         this.computedHeaderOptions = await this.getOptions(this.headerOptions)
     },
+    activeAutoSchedule(info) {
+      this.autoSchedule = info
+      localStorage.setItem(`schedule_${this.viewName}`, JSON.stringify(info))
+    },
+    getLocalStorageSchedule() {
+      const str = localStorage.getItem(`schedule_${this.viewName}`)
+      if (str)
+        this.autoSchedule = JSON.parse(str)
+      else this.autoSchedule = null
+    },
+
     selectPagination(newPage) {
       this.pagination = newPage
     },
@@ -212,6 +223,16 @@ export default {
     },
     sortByDate() {
       const tasks = utilsTask.sortTasksByTaskDate(this.rootNonFiltered.slice())
+      this.updateIds(tasks.map(el => el.id))
+    },
+    sortByDurationLong() {
+      let tasks = utilsTask.sortTasksByTaskDate(this.rootNonFiltered.slice())
+      tasks = utilsTask.sortTasksByDuration(tasks, 'long')
+      this.updateIds(tasks.map(el => el.id))
+    },
+    sortByDurationShort() {
+      let tasks = utilsTask.sortTasksByTaskDate(this.rootNonFiltered.slice())
+      tasks = utilsTask.sortTasksByDuration(tasks, 'short')
       this.updateIds(tasks.map(el => el.id))
     },
 
@@ -407,15 +428,8 @@ export default {
 
       const getScheduleIconDropObject = info => {
         if (!info)
-          return {
-            comp: 'TimePicker',
-            content: {
-              msg: l['Start from:'],
-              callback: time => getScheduleIconDropObject({
-                time, buffer: '00:05', fallback: '00:15',
-              })
-            }
-          }
+            info = {time: mom().format('HH:mm'), buffer: '00:05', fallback: '00:15'}
+        
         const {time, buffer, fallback} = info
 
         return [
@@ -460,7 +474,7 @@ export default {
           {
             name: l['Auto schedule'],
             callback: () => {
-              this.autoSchedule = {...info}
+              this.activeAutoSchedule({...info})
               return null
             },
             type: 'button',
@@ -488,7 +502,17 @@ export default {
                 name: l['Sort by creation date'],
                 icon: 'calendar',
                 callback: () => this.sortByDate(),
-              }
+              },
+              {
+                name: l['Sort by duration(long to short)'],
+                icon: 'magic',
+                callback: () => this.sortByDurationLong()
+              },
+              {
+                name: l['Sort by duration(short to long)'],
+                icon: 'magic',
+                callback: () => this.sortByDurationShort()
+              },
             ],
           },
           {
@@ -520,7 +544,20 @@ export default {
           {
             name: l['Auto schedule'],
             icon: 'magic',
-            callback: () => getScheduleIconDropObject(this.autoSchedule)
+            callback: () => {
+              if (this.autoSchedule)
+                return [
+                  {
+                    name: l['Remove schedule'],
+                    callback: () => this.activeAutoSchedule(null)
+                  },
+                  {
+                    name: l['Edit schedule'],
+                    callback: () => getScheduleIconDropObject(this.autoSchedule)
+                  }
+                ]
+              return getScheduleIconDropObject(null)
+            }
           },
           {
             name: l['Show completed'],
@@ -528,7 +565,7 @@ export default {
             callback: () => this.toggleCompleted()
           },
         ]
-        if (this.showCompleted) opt[2].name = l['Hide completed']
+        if (this.showCompleted) opt[3].name = l['Hide completed']
         if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
           opt.push({
             type: 'hr',
@@ -728,13 +765,15 @@ export default {
       this.showingListSelection = false
       this.showingFolderSelection = false
       this.getComputedOptions()
+      this.autoSchedule = null
+      this.getLocalStorageSchedule()
     },
     viewNameValue() {
       this.showSomeday = false
     },
     headerOptions() {
       this.getComputedOptions()
-    }
+    },
   }
 }
 

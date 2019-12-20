@@ -98,7 +98,7 @@ export default {
             icon: 'pen',
             callback: () => pop({comp: 'AddList', payload: {...list, editing: true}, naked: true})
           },
-          {
+/*           {
             name: l['Repeat list'],
             icon: 'repeat',
             callback: () => {return {
@@ -115,8 +115,8 @@ export default {
                 })
               }
             }}},
-          },
-          {
+          }, */
+/*           {
             name: l['Defer date'],
             icon: 'sleep',
             callback: () => {return {
@@ -132,7 +132,7 @@ export default {
                 })
               }
             }}},
-          },
+          }, */
           {
             name: l['Add notes'],
             icon: 'note',
@@ -171,7 +171,7 @@ export default {
               })),
             }),
           },
-          {
+/*           {
             name: l['Add deadline'],
             icon: 'deadline',
             callback: () => {return {
@@ -187,7 +187,7 @@ export default {
                 })
               }
             }}},
-          },
+          }, */
         ]
       },
       {

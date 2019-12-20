@@ -7,6 +7,7 @@
         :scrollable='true'
         :dark='true'
         :format='getFormat'
+        :value='content.initial ? content.initial : undefined'
 
         width='225px'
         @change='callback'

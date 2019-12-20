@@ -1,7 +1,9 @@
 <template>
   <div class="Appbar-wrapper scroll-thin" :class="platform">
-    <div v-if="isDesktop" class="back-layer" :class="{showing}"></div>
-    <div class="Appbar" :class='platform'>
+    <div class="margin-wrapper">
+      <div v-if="isDesktop" class="back-layer" :class="{showing}"></div>
+      <div class="Appbar" :class='platform'>
+    </div>
       <div class="inner-wrapper">
         <div>
           <div class="search-shadow" @mouseenter="showSearch" @mouseleave="hideSearch"></div>
@@ -614,9 +616,13 @@ export default {
 
 .Appbar {
   height: 100%;
-  width: 100%;
   padding-right: 25px;
   overflow: visible;
+}
+
+.mobile .margin-wrapper {
+  margin: 16px;
+  margin-top: 0;
 }
 
 .Appbar.mobile {
@@ -630,8 +636,7 @@ export default {
 }
 
 .Appbar-wrapper.desktop {
-  left: -35px;
-  padding-left: 35px;
+  padding-left: 22px;
 }
 
 .footer {
@@ -745,7 +750,11 @@ export default {
   position: absolute;
   right: 0;
   display: flex;
-  transform: translateY(6px);
+  transform: translate(16px, 10px);
+}
+
+.mobile .drop {
+  transform: translate(-8px, 10px);
 }
 
 .footer.mobile .drop {
