@@ -159,7 +159,7 @@ export default {
               return dayDiff < c.afterCompletion
             }
 
-            if (c.type === 'daily' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
+            if (c.type === 'daily' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly' || c.type === 'yearly') {
               const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
               return lastComplete.isSameOrAfter(moment, 'day')
             }
@@ -208,7 +208,7 @@ export default {
             return spec.isBefore(getTod(), 'day')
           }
           if (c.type === 'after completion') return false
-          if (c.type === 'daily' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
+          if (c.type === 'daily' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly' || c.type === 'yearly') {
             return utilsMoment.getNextEventAfterCompletionDate(c).isBefore(getTod(), 'day')
           }
 /*           if (c.type === 'periodic') {
