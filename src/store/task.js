@@ -82,9 +82,10 @@ export default {
         const begins = mom(c.begins, 'Y-M-D')
         if (c.type === 'after completion') {
           const lastComplete = c.lastCompleteDate ? mom(c.lastCompleteDate, 'Y-M-D') : begins
-          if (begins.isSame(tod, 'day')) return true
+          if (begins.isSame(tod, 'day') || (!c.lastCompleteDate && tod.isAfter(begins, 'day'))) return true
 
           const dayDiff = tod.diff(lastComplete, 'days')
+          if (dayDiff < 0) return false
           const eventNotToday = dayDiff < c.afterCompletion
           if (eventNotToday) return false
         }
