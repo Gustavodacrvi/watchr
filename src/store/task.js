@@ -47,17 +47,12 @@ export default {
     },
     getSpecificDayCalendarObj: () => (moment, cal) => {
       const obj = {
-        defer: null,
-        due: null,
   
         type: 'specific',
-        time: null,
         editDate: mom().format('Y-M-D'),
+        begins: mom().format('Y-M-D'),
   
         specific: moment.format('Y-M-D'),
-        lastCompleteDate: null,
-        times: null,
-        periodic: null
       }
       if (cal) {
         obj.time = cal.time
@@ -288,16 +283,6 @@ export default {
       isTaskWeekly: {
         getter({}, task) {
           return task.calendar && task.calendar.type === 'weekly'
-        },
-        cache(args) {
-          return JSON.stringify({
-            t: args[0].calendar
-          })
-        },
-      },
-      isTaskPeriodic: {
-        getter({}, task) {
-          return task.calendar && task.calendar.type === 'periodic'
         },
         cache(args) {
           return JSON.stringify({

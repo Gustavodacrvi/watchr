@@ -337,17 +337,12 @@ export default {
       this.$store.dispatch('task/saveTask', {
         id: this.task.id,
         calendar: {
-          defer: null,
-          due: null,
-
           type: 'specific',
           time: null,
           editDate: mom().format('Y-M-D'),
+          begins: mom().format('Y-M-D'),
 
           specific: date,
-          times: null,
-          lastCompleteDate: null,
-          periodic: null
         },
       })
     },

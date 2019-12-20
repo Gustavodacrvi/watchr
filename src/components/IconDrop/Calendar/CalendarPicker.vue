@@ -97,11 +97,7 @@ export default {
         time,
         type: 'someday',
         editDate: mom().format('Y-M-D'),
-        specific: null,
-        weekly: null,
-        lastCompleteDate: null,
-        times: null,
-        periodic: null,
+        begins: mom().format('Y-M-D'),
       }
       this.$emit('select', calendar)
     },
@@ -113,10 +109,7 @@ export default {
         type: 'specific',
         editDate: mom().format('Y-M-D'),
         specific: m.format('Y-M-D'),
-        weekly: null,
-        lastCompleteDate: null,
-        times: null,
-        periodic: null,
+        begins: mom().format('Y-M-D'),
       }
       this.$emit('select', calendar)
     },

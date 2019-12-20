@@ -78,7 +78,4 @@ export default {
   hasCalendarBinding(task) {
     return task.calendar && task.calendar.type !== null
   },
-  taskData(task, tod) {
-    return utils.getCalendarObjectData(task.calendar, tod)
-  },
 }

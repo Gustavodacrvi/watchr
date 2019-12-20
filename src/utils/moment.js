@@ -103,7 +103,6 @@ export default {
         continue
       }
 
-
       if (type === 'day') {
         if (place !== 'last') {
           const date = initial.date()

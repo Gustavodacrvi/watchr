@@ -191,19 +191,19 @@ export default {
       return arr.length > 0 ? arr : undefined
     },
     mapString(list) {
-      if (list.deadline && !(list.calendar && list.calendar.type !== 'someday')) {
+      /* if (list.deadline && !(list.calendar && list.calendar.type !== 'someday')) {
         const isOverdue = list.deadline && mom().isAfter(mom(list.deadline, 'Y-M-D'), 'day')
         return {
           name: isOverdue ? this.l['overdue'] : `${mom(list.deadline, 'Y-M-D').diff(mom(), 'd') + 1} ${this.l['days left']}`,
           color: isOverdue ? 'var(--primary)' : ''
         }
-      } else if (list.calendar && list.calendar.type !== 'someday') {
+      } *//*  else if (list.calendar && list.calendar.type !== 'someday') {
         const { nextCalEvent } = utils.getCalendarObjectData(list.calendar, mom())
         return {
           name: `${mom(nextCalEvent.format('Y-M-D'), 'Y-M-D').diff(mom(), 'd') + 1} ${this.l['days left']}`,
           color: '',
         }
-      }
+      } */
       return null
     },
   },
@@ -243,7 +243,8 @@ export default {
     filteredByRepeat() {
       if (!this.showRepeat)
         return this.filteredByDefer.filter(l => {
-          if (!l.calendar || l.calendar.type === 'someday') return true
+          return true
+/*           if (!l.calendar || l.calendar.type === 'someday') return true
           const { lastCallEvent } = utils.getCalendarObjectData(l.calendar, mom())
 
           const tasks = this.tasks.filter(task => this.isTaskInList(task, l.id))
@@ -254,7 +255,7 @@ export default {
               break
             }
 
-          return !isAllTasksCompleted || tasks.length === 0
+          return !isAllTasksCompleted || tasks.length === 0 */
         })
       return this.filteredByDefer
     },

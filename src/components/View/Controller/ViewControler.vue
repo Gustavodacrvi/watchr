@@ -234,7 +234,6 @@ export default {
       hasTaskBeenCompletedOnDate: 'task/hasTaskBeenCompletedOnDate',
       isTaskShowingOnDate: 'task/isTaskShowingOnDate',
       isTaskInOneMonth: 'task/isTaskInOneMonth',
-      isTaskPeriodic: 'task/isTaskPeriodic',
       isTaskWeekly: 'task/isTaskWeekly',
       isTaskInOneYear: 'task/isTaskInOneYear',
       isTaskCompleted: 'task/isTaskCompleted',
@@ -306,17 +305,12 @@ export default {
       const arr = []
       const tod = mom()
       const calObj = date => ({
-        defer: null,
-        due: null,
-
         type: 'specific',
         time: null,
         editDate: mom().format('Y-M-D'),
+        begins: mom().format('Y-M-D'),
 
         specific: date,
-        weekly: null,
-        lastCompleteDate: null,
-        periodic: null
       })
       const filtered = this.tasks.filter(el => {
         return el.calendar && el.calendar.type === 'specific'
@@ -431,8 +425,6 @@ export default {
       for (const date of dates) {
         const filterFunction = pipeBooleanFilters(
           task => this.hasTaskBeenCompletedOnDate(task, date),
-          task => !this.isTaskPeriodic(task),
-          task => !this.isTaskWeekly(task),
         )
 
         const dispatch = this.$store.dispatch
