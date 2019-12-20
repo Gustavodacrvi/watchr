@@ -11,7 +11,7 @@
             @click.stop
             @pointerup.stop
             @mouseup.stop
-            @touchend.stop
+            @touchend.stop.passive
           >
             <template v-if="showHelpIcons">
               <transition-group name='fade'>

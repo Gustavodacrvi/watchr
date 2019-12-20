@@ -22,8 +22,8 @@
           class="cont-wrapper task-cont-wrapper task-handle rb"
           :class="platform"
           @click="click"
-          @touchstart='touchStart'
-          @touchend='touchEnd'
+          @touchstart.passive='touchStart'
+          @touchend.passive='touchEnd'
         >
           <div class="circle-trans-wrapper-wrapper">
             <div class="circle-trans-wrapper">
@@ -42,7 +42,7 @@
               @mouseenter.stop="iconHover = true"
               @mouseleave="iconHover = false"
               @touchstart.stop.passive
-              @mousedown.stop
+              @mousedown.stop.passive
             >
               <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon"
                 :icon="`box${isSomeday ? '-dash' : ''}`"

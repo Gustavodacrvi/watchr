@@ -6,8 +6,8 @@
       @mouseenter="headerHover = true"
       @mouseleave="headerHover = false"
 
-      @touchstart='touchStart'
-      @touchend='touchEnd'
+      @touchstart.passive='touchStart'
+      @touchend.passive='touchEnd'
       v-longclick='longClick'
 
       data-type='folder'

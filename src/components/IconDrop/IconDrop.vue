@@ -6,7 +6,7 @@
     @click.stop
     @pointerup.stop
     @mouseup.stop
-    @touchend.stop
+    @touchend.stop.passive
   >
     <transition name='fade-t'>
       <Icon v-if="handle && !hideHandle"
