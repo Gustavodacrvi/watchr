@@ -328,9 +328,7 @@ export default {
       },
       isTaskInCompletedView: {
         getter({getters}, task) {
-          return getters.isTaskCompleted(task) &&
-          !getters.isTaskPeriodic(task) &&
-          !getters.isTaskWeekly(task)
+          return getters.isTaskCompleted(task)
         },
         cache(args) {
           return JSON.stringify({
