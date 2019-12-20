@@ -198,6 +198,7 @@ export default {
         this.$store.dispatch('update', {
           ...this.user,
           hidedSections: this.hidedSections,
+          hidedViews: this.hidedSmartViews,
         })
         this.changedSection = false
       }
@@ -205,6 +206,7 @@ export default {
     update() {
       this.pmFormat = this.getPmFormat
       this.hidedSections = this.userHidedSections
+      this.hidedSmartViews = this.userHidedSmartViews
     }
   },
   computed: {
@@ -225,6 +227,10 @@ export default {
     },
     userHidedSections() {
       if (this.userInfo.hidedSections) return this.userInfo.hidedSections.slice()
+      return []
+    },
+    userHidedSmartViews() {
+      if (this.userInfo.hidedViews) return this.userInfo.hidedViews.slice()
       return []
     },
   },
