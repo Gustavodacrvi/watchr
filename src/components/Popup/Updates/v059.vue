@@ -15,10 +15,10 @@
 
     <li>
       <strong>After completion:</strong> repeat tasks X days after its previous instance completion, if a task isn't checked off, it won't go to Overdue, it'll simply sit there waiting to be checked, then it'll repeat after X days.
+    </li>
       <br>
       <br>
       <li><strong>Daily:</strong> the same as periodic and similar to after completion, but, if a task isn't checked off, it goes to overdue, then it'll need to be checked off twice.
       </li>
-    </li>
   </div>
 </template>

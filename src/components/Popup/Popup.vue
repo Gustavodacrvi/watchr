@@ -18,6 +18,7 @@
 import Signup from './Auth/Signup.vue'
 import SigninOptions from './Auth/SigninOptions.vue'
 import Signin from './Auth/Signin.vue'
+import Profile from './Auth/Profile.vue'
 import ChangeUsername from './Auth/ChangeUsername.vue'
 import ChangeEmail from './Auth/ChangeEmail.vue'
 import Confirm from './Auth/Confirm.vue'
@@ -38,7 +39,7 @@ export default {
     Signup, SigninOptions, Signin, AddTag,
     AddListNote, AddTagNote, Icon, AddList,
     AddTask, Updates, ChangeUsername, ChangeEmail,
-    Confirm, AddHeadingNote, AddFolder,
+    Confirm, AddHeadingNote, AddFolder, Profile,
   },
   methods: {
     closeMobilePopup() {
