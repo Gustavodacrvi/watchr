@@ -440,7 +440,11 @@ export default {
       return ['Today', 'Tomorrow', 'Someday', 'Inbox', 'Upcoming', 'Completed']
     },
     getLinksOrdered() {
-      return this.$store.getters.checkMissingIdsAndSortArr(this.linksOrder, this.links)
+      return this.$store.getters.checkMissingIdsAndSortArr(this.linksOrder, this.nonHidedLinks)
+    },
+    nonHidedLinks() {
+      if (!this.userInfo.hidedViews) return this.links
+      return this.links.filter(link => !this.userInfo.hidedViews.includes(link.name))
     },
     getOptions() {
       const opt = this.getSectionOptions.slice()
