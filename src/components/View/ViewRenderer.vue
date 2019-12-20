@@ -1,6 +1,12 @@
 
 <template>
-  <div class="ViewRenderer" :class="platform">
+  <div class="ViewRenderer"
+    :class="platform"
+
+    @touchend.passive='touchend'
+    @touchstart.passive='touchstart'
+    @touchmove.passive='touchmove'
+  >
     <div>
       <Header
         v-bind="$props"
@@ -103,6 +109,10 @@ export default {
       exclusiveLists: [],
       inclusiveFolder: null,
       exclusiveFolders: [],
+
+      initialX: 0,
+      initialY: 0,
+      touchFail: false,
     }
   },
   created() {
@@ -113,6 +123,50 @@ export default {
   },
   methods: {
     ...mapActions(['getOptions']),
+
+    transform(x, transition) {
+      const s = this.el
+
+      const getOpacity = () => 1 - (Math.abs(x) / 100)
+      
+      if (!transition) {
+        s.transitionDuration = '0s'
+        s.transform = `translate(${x}px)`
+        s.opacity = getOpacity()
+      } else {
+        s.transitionDuration = '.2s'
+        setTimeout(() => {
+          s.transform = `translateX(${x}px)`
+          s.opacity = getOpacity()
+        }, 80)
+      }
+    },
+    touchmove(evt) {
+      if (!this.touchFail) {
+        const t = evt.touches[0]
+        const diffX = t.screenX - this.initialX
+        const diffY = t.screenY - this.initialY
+        
+        if ((Math.abs(diffY) > 10) || (Math.abs(diffX) > 100)) {
+          this.touchFail = true
+          this.transform(0, true)
+        } else {
+          this.transform(diffX)
+
+          console.log(diffX, diffY)
+        }
+      }
+    },
+    touchstart(evt) {
+      const t = evt.touches[0]
+      this.initialX = t.screenX
+      this.initialY = t.screenY
+      this.touchFail = false
+    },
+    touchend() {
+      this.transform(0, true)
+    },
+    
     async getComputedOptions() {
       if (this.headerOptions)
         this.computedHeaderOptions = await this.getOptions(this.headerOptions)
@@ -282,6 +336,11 @@ export default {
       doesTaskPassInclusivePriority: 'task/doesTaskPassInclusivePriority',
       doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
+    el() {
+      // const el = this.$el.getElementsByClassName('cont')[0]
+      const el = this.$el
+      return el.style
+    },
     isSearch() {
       return this.isSmart && this.viewNameValue === "Search"
     },
@@ -792,6 +851,7 @@ export default {
 .ViewRenderer.mobile {
   margin: 0 8px;
   margin-top: -4px;
+  position: relative;
 }
 
 </style>

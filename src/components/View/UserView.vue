@@ -1,6 +1,8 @@
 
 <template>
-  <div class="UserView" :class="[{appbarHided}, platform]">
+  <div class="UserView"
+    :class="[{appbarHided}, platform]"
+  >
     <div v-if="isDesktop" class="nav-shadow"></div>
     <div v-if="isDesktop" class="nav" :style="getNavTopPosition">
       <Appbar class="Appbar"
@@ -102,6 +104,7 @@ export default {
 
 .UserView.mobile {
   margin: 0;
+  position: relative;
 }
 
 .nav-shadow {
@@ -127,6 +130,10 @@ export default {
   transition-delay: .4s;
   transition-duration: .6s;
   z-index: 5;
+}
+
+.cont.mobile {
+  overflow-x: hidden;
 }
 
 .appbarHided .nav-shadow {
