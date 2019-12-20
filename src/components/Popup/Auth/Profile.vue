@@ -3,16 +3,19 @@
     <div class="nav-wrapper">
       <div class="nav">
         <div>
+          <div v-if="!isDesktop" style="height: 30px"></div>
           <span class="option rb cursor remove-highlight" :class="{active: 'General' === option}" @click="option = 'General'">General</span>
           <span class="option rb cursor remove-highlight" :class="{active: 'Appnav' === option}" @click="option = 'Appnav'">Appnav</span>
         </div>
         <div>
-          <transition name="fade-t">
-            <AuthButton v-if="changedOptions" class="button"
-              type='card'
-              value='Save options'
-              @click="save"
-            />
+          <transition name="btn-trans">
+            <div v-if="changedOptions" class="btn-wrapper">
+              <AuthButton class="button"
+                type='card'
+                value='Save options'
+                @click="save"
+              />
+            </div>
           </transition>
         </div>
       </div>
@@ -210,7 +213,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['platform', 'l']),
+    ...mapGetters(['platform', 'isDesktop', 'l']),
     ...mapState(['user', 'userInfo']),
     changedOptions() {
       if (this.pmFormat !== this.getPmFormat) return true
@@ -258,6 +261,15 @@ export default {
   overflow: auto;
 }
 
+.Profile.mobile {
+  flex-direction: column;
+  background-color: var(--dark);
+}
+
+.mobile .cont-wrapper {
+  background-color: var(--card);
+}
+
 .nav-wrapper {
   position: sticky;
   left: 0;
@@ -265,8 +277,18 @@ export default {
   width: 300px;
   height: 100%;
   background-color: var(--dark);
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
+  border-top-right-radius: 14px;
+  border-bottom-right-radius: 14px;
+}
+
+.mobile .nav-wrapper {
+  border-top-right-radius: unset;
+  border-bottom-right-radius: unset;
+}
+
+.mobile .nav-wrapper {
+  height: unset;
+  width: 100%;
 }
 
 .title {
@@ -285,6 +307,11 @@ export default {
   flex-basis: 100%;
 }
 
+.mobile .cont-wrapper {
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+}
+
 .cont {
   margin: 14px;
   margin-bottom: 40px;
@@ -294,9 +321,13 @@ export default {
   height: 35px;
   display: flex;
   align-items: center;
-  padding-left: 18px;
+  padding: 0 18px;
   transform: scale(1,1);
   transition-duration: .2s;
+}
+
+.mobile .option {
+  display: inline-flex;
 }
 
 .option:hover, .option.active {
@@ -310,10 +341,29 @@ export default {
 
 .button {
   width: 100%;
+  margin: 0;
 }
 
 .button:hover {
   background-color: var(--light-gray);
+}
+
+.btn-wrapper {
+  margin-top: 12px;
+}
+
+.btn-trans-enter, .btn-trans-leave-to {
+  opacity: 0;
+  height: 0;
+  margin-top: 0;
+  transition-duration: .2s;
+}
+
+.btn-trans-leave, .btn-trans-enter-to {
+  transition-duration: .2s;
+  opacity: 1;
+  margin-top: 12px;
+  height: 35px;
 }
 
 </style>
