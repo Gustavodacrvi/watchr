@@ -78,7 +78,7 @@ export default {
           return date === c.specific
         }
 
-        date = '2019-12-20'
+        // date = '2020-1-27'
         const tod = mom(date, 'Y-M-D')
         const begins = mom(c.begins, 'Y-M-D')
 

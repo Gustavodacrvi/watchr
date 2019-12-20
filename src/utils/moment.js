@@ -173,7 +173,7 @@ export default {
         while (true) {
           const week = this.nextWeekDay(lastComplete, c.weekly.days)
 
-          const weekDiff = week.diff(begins, 'weeks')
+          const weekDiff = week.diff(begins.startOf('week'), 'weeks')
           if (weekDiff < 0 || weekDiff % c.weekly.every !== 0) {
             lastComplete.add(1, 'w').startOf('week')
             continue
@@ -192,7 +192,7 @@ export default {
         while (true) {
           lastComplete = getNext()
   
-          const yearDiff = lastComplete.diff(begins, 'years')
+          const yearDiff = lastComplete.diff(begins.startOf('year'), 'years')
           if (yearDiff < 0 || yearDiff % c.yearly.every !== 0) {
             lastComplete.add(1, 'y').startOf('year')
             continue
