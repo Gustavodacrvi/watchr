@@ -34,6 +34,7 @@
         @list='selectList'
         @folder='selectFolder'
       />
+      {{test}}
       <TaskHandler
         v-bind="$props"
 
@@ -100,6 +101,7 @@ export default {
       rootNonFiltered: [],
       computedHeaderOptions: [],
       autoSchedule: null,
+      test: null,
 
       inclusiveTags: [],
       exclusiveTags: [],
@@ -113,6 +115,7 @@ export default {
       initialX: 0,
       initialY: 0,
       touchFail: false,
+      right: false,
     }
   },
   created() {
@@ -153,7 +156,9 @@ export default {
         } else {
           this.transform(diffX)
 
-          console.log(diffX, diffY)
+          if (Math.abs(diffX) > 75) {
+            this.right = diffX > 0
+          }
         }
       }
     },
@@ -162,9 +167,22 @@ export default {
       this.initialX = t.screenX
       this.initialY = t.screenY
       this.touchFail = false
+      this.startTime = new Date()
     },
     touchend() {
       this.transform(0, true)
+
+      const time = new Date() - this.startTime
+
+      if (time <= 350) {
+        if (this.right) this.test = 'right'
+        else this.test = 'left'
+
+
+        setTimeout(() => {
+          this.test = null
+        }, 1000)
+      }
     },
     
     async getComputedOptions() {
