@@ -49,7 +49,6 @@ import ListIcons from './ListIcons.vue'
 import CalendarPicker from './Calendar.vue'
 import RepeatPicker from './Calendar/Repeat/RepeatPicker.vue'
 import TimePicker from './Calendar/TimePicker.vue'
-import Profile from './Profile.vue'
 import Files from './Files.vue'
 
 import { mapGetters } from 'vuex'
@@ -58,7 +57,7 @@ export default {
   props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width'],
   components: {
     Icon, ListIcons, CalendarPicker,
-    Profile, Files, TimePicker, RepeatPicker,
+    Files, TimePicker, RepeatPicker,
   },
   data() {
     return {

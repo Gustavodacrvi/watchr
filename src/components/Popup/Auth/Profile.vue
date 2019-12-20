@@ -53,7 +53,17 @@
               :name="l[s.name]"
               :value='!isHided(s.name)'
               :icon='s.icon'
+              :color='s.color'
               @input='toggleSection(s.name)'
+            />
+            <h4 class="title">Enabled Smart Views</h4>
+            <CheckboxApp v-for="s in appnavSmartViews" :key="s.name"
+              class="rb"
+              :name="l[s.name]"
+              :value='!isSmartViewHided(s.name)'
+              :icon='s.icon'
+              :color='s.color'
+              @input='toggleSmartView(s.name)'
             />
           </div>
         </transition>
@@ -83,13 +93,48 @@ export default {
         {
           name: 'Lists',
           icon: 'tasks',
+          color: 'var(--primary)'
         },
         {
           name: 'Tags',
-          icon: 'tags',
+          icon: 'tag',
+          color: 'var(--red)'
+        }
+      ],
+      appnavSmartViews: [
+        {
+          name: 'Today',
+          icon: 'star',
+          color: 'var(--yellow)'
+        },
+        {
+          name: 'Tomorrow',
+          icon: 'sun',
+          color: 'var(--orange)'
+        },
+        {
+          name: 'Someday',
+          icon: 'archive',
+          color: 'var(--brown)'
+        },
+        {
+          name: 'Inbox',
+          icon: 'inbox',
+          color: 'var(--primary)'
+        },
+        {
+          name: 'Upcoming',
+          icon: 'calendar',
+          color: 'var(--green)'
+        },
+        {
+          name: 'Completed',
+          icon: 'circle-check',
+          color: 'var(--olive)'
         }
       ],
       hidedSections: [],
+      hidedSmartViews: [],
       pmFormat: true,
       changedSection: false,
     }
@@ -110,6 +155,16 @@ export default {
     },
     isHided(name) {
       return this.hidedSections.includes(name)
+    },
+    toggleSmartView(name) {
+      this.changedSection = true
+      if (this.isSmartViewHided(name)) {
+        const i = this.hidedSmartViews.findIndex(el => el === name)
+        this.hidedSmartViews.splice(i, 1)
+      } else this.hidedSmartViews.push(name)
+    },
+    isSmartViewHided(name) {
+      return this.hidedSmartViews.includes(name)
     },
     reload() {
       window.location.reload()
@@ -226,6 +281,7 @@ export default {
 
 .cont {
   margin: 14px;
+  margin-bottom: 40px;
 }
 
 .option {

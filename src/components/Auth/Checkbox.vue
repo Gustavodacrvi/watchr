@@ -1,7 +1,12 @@
 
 <template>
   <div class="Checkbox cursor" :class="{fade: !toggle}" @click="toggle = !toggle">
-    <span class="cont">{{name}}</span>
+      <Icon v-if="icon" class="behind-icon"
+        :icon='icon'
+        :color='color'
+      />
+    <span class="cont">
+      {{name}}</span>
     <div class="box cont">
       <Icon v-if="!toggle" icon="box"/>
       <Icon v-else icon="box-check"/>
@@ -14,7 +19,7 @@
 import Icon from '@/components/Icon.vue'
 
 export default {
-  props: ['name', 'value'],
+  props: ['name', 'value', 'icon', 'color'],
   components: {
     Icon,
   },
@@ -49,6 +54,10 @@ export default {
 .Checkbox:hover {
   background-color: rgba(87,160,222,.1);
   color: var(--primary);
+}
+
+.behind-icon {
+  transform: translate(-6px, 1px);
 }
 
 .box {
