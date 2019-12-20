@@ -80,6 +80,21 @@ export default {
 
         const tod = mom(date, 'Y-M-D')
         const begins = mom(c.begins, 'Y-M-D')
+
+        if (c.ends) {
+          if (c.ends.type === 'on date') {
+            if (tod.isAfter(mom(c.ends.onDate, 'Y-M-D'), 'day')) {
+              return false
+            }
+          } else {
+            if (c.ends.times === null)
+              return false
+          }
+        }
+        console.log(begins.isAfter(tod, 'day'))
+        if (c.begins && begins.isAfter(tod, 'day'))
+          return false
+
         if (c.type === 'after completion') {
           const lastComplete = c.lastCompleteDate ? mom(c.lastCompleteDate, 'Y-M-D') : begins
           if (begins.isSame(tod, 'day') || (!c.lastCompleteDate && tod.isAfter(begins, 'day'))) return true
@@ -696,7 +711,7 @@ export default {
             c.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
           }
 
-          if (c.times) c.times -= 1
+          if (c.times) c.times--
           if (c.times === 0) c.times = null
         }
 
