@@ -47,7 +47,7 @@
       />
        {{ l['months on the'] }}
       <AuthOptions
-        :options='data.monthDayOptions'
+        :options='computedMonthDayOptions'
         :active='data.monthDay'
         minWidth='200px'
         @select='v => data.monthDay = v'
@@ -67,7 +67,7 @@
       />
        {{ l['years on the'] }} 
        <AuthOptions
-        :options='data.monthDayOptions'
+        :options='computedMonthDayOptions'
         :active='data.monthDay'
         minWidth='200px'
         @select='v => data.monthDay = v'
@@ -366,6 +366,11 @@ export default {
     ...mapGetters(['platform', 'l']),
     getDays() {
       return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    },
+    computedMonthDayOptions() {
+      if (this.data.weekDay === 'day')
+        return this.data.monthDayOptions
+      return this.data.monthDayOptions.slice(0, 4)
     },
   },
   watch: {

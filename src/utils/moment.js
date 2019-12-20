@@ -97,11 +97,12 @@ export default {
     const place = c.monthly.place
     
     while (true) {
-      const monthDiff = initial.diff(begins, 'month')
+      const monthDiff = initial.diff(begins.startOf('month'), 'month')
       if (monthDiff < 0 || monthDiff % every !== 0) {
         initial.add(1, 'M').startOf('month')
         continue
       }
+
 
       if (type === 'day') {
         if (place !== 'last') {
@@ -124,11 +125,11 @@ export default {
           const date = initial.date()
 
           initial.startOf('month')
-
+          
           let num = 0
           while (num < place) {
-            initial = this.nextWeekDay(initial, type)
-
+            initial = this.nextWeekDay(initial.add(1, 'd'), type)
+            
             num++
           }
 
@@ -159,10 +160,11 @@ export default {
           return initial
         }
       }
+      break
     }
   },
   getNextEventAfterCompletionDate(c) {
-    const lastComplete = mom(c.lastCompleteDate || c.begins, 'Y-M-D')
+    let lastComplete = mom(c.lastCompleteDate || c.begins, 'Y-M-D')
     if (lastComplete.isValid()) {
       const begins = mom(c.begins, 'Y-M-D')
       if (c.type === 'daily') {
@@ -186,12 +188,12 @@ export default {
       } else if (c.type === 'yearly') {
         const getNext = () =>
           this.getNextMonthlyDate({
-            monthly: {...c.yearly, every: 1}
-          }, lastComplete)
+            monthly: {...c.yearly, every: 1, begins: c.begins}, begins: c.begins
+          }, lastComplete.clone())
         
         while (true) {
           lastComplete = getNext()
-  
+
           const yearDiff = lastComplete.diff(begins.startOf('year'), 'years')
           if (yearDiff < 0 || yearDiff % c.yearly.every !== 0) {
             lastComplete.add(1, 'y').startOf('year')

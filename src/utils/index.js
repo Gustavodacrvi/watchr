@@ -369,9 +369,10 @@ export default {
       }
       case 'monthly': {
         str += `Every ${c.monthly.every} months on the ${c.monthly.place} ${c.monthly.type === 'day' ? c.monthly.type : mom(c.monthly.type, 'e').format('ddd')}`
+        break
       }
       case 'yearly': {
-        str += `Every ${c.yearly.every} months on the ${c.yearly.place} ${c.yearly.type === 'day' ? c.yearly.type : mom(c.yearly.type, 'e').format('ddd')} on `
+        str += `Every ${c.yearly.every} years on the ${c.yearly.place} ${c.yearly.type === 'day' ? c.yearly.type : mom(c.yearly.type, 'e').format('ddd')} of `
         let i = 0
         for (const w of c.yearly.months) {
           str += mom(w, 'M').format('MMM')

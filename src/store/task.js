@@ -78,7 +78,6 @@ export default {
           return date === c.specific
         }
 
-        // date = '2020-1-27'
         const tod = mom(date, 'Y-M-D')
         const begins = mom(c.begins, 'Y-M-D')
 
@@ -123,7 +122,9 @@ export default {
           const eventNotToday = monthDiff % c.monthly.every !== 0
           if (eventNotToday) return false
 
-          if (!utilsMoment.getNextMonthlyDate(c, tod.clone().subtract(1, 'd')).isSame(tod), 'day') return false
+          const next = utilsMoment.getNextMonthlyDate(c, tod.clone().subtract(1, 'd'))
+
+          if (!next.isSame(tod, 'day')) return false
         }
         if (c.type === 'yearly') {
           const month = tod.month() + 1
@@ -135,9 +136,11 @@ export default {
           const eventNotToday = yearDiff % c.yearly.every !== 0
           if (eventNotToday) return false
 
-          if (!utilsMoment.getNextMonthlyDate({
-            monthly: {...c.yearly, every: 1}
-          }, tod.clone().subtract(1, 'd')).isSame(tod), 'day') return false
+          const next = utilsMoment.getNextMonthlyDate({
+            monthly: {...c.yearly, every: 1}, begins: c.begins
+          }, tod.clone().subtract(1, 'd'))
+
+          if (!next.isSame(tod, 'day')) return false
         }
 
 
@@ -225,7 +228,7 @@ export default {
             return spec.isBefore(getTod(), 'day')
           }
           if (c.type === 'after completion') return false
-          if (c.type === 'daily' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly' || c.type === 'yearly') {
+          if (c.type === 'daily' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
             const nextEvent = utilsMoment.getNextEventAfterCompletionDate(c)
             return nextEvent.isBefore(getTod(), 'day')
           }
