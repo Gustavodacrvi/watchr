@@ -393,6 +393,11 @@ export default {
   padding: 0 12px;
 }
 
+.RepeatPicker.mobile {
+  width: 275px;
+  margin: 12px;
+}
+
 .margin, .hr {
   margin-top: 12px;
 }

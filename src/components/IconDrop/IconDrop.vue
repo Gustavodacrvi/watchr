@@ -24,7 +24,7 @@
       @leave="leave"
     >
       <div v-if="opt && showing"
-        class="content shadow cb rb"
+        class="icon-drop-content shadow cb rb"
         :class="{overflow: cardOptions && cardOptions.overflow}"
       >
         <transition name="fade" appear>
@@ -49,7 +49,6 @@ import ListIcons from './ListIcons.vue'
 import CalendarPicker from './Calendar.vue'
 import RepeatPicker from './Calendar/Repeat/RepeatPicker.vue'
 import TimePicker from './Calendar/TimePicker.vue'
-import Profile from './Profile.vue'
 import Files from './Files.vue'
 
 import { mapGetters } from 'vuex'
@@ -58,7 +57,7 @@ export default {
   props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width'],
   components: {
     Icon, ListIcons, CalendarPicker,
-    Profile, Files, TimePicker, RepeatPicker,
+    Files, TimePicker, RepeatPicker,
   },
   data() {
     return {
@@ -85,7 +84,7 @@ export default {
       }, 200)
     },
     calcStyles() {
-      const cont = this.$el.getElementsByClassName('content')[0]
+      const cont = this.$el.getElementsByClassName('icon-drop-content')[0]
 
       const s = cont.style
 
@@ -104,7 +103,7 @@ export default {
       if (opt) {
         if (opt.cardOptions) this.cardOptions = opt.cardOptions
         
-        const cont = this.$el.getElementsByClassName('content')[0]
+        const cont = this.$el.getElementsByClassName('icon-drop-content')[0]
         const s = getComputedStyle(cont)
         const oldWidth = s.width
         const oldHeight = s.height
@@ -123,6 +122,10 @@ export default {
               cont.style.width = width
               cont.style.height = height
               cont.style.transitionDelay = '.0s'
+              setTimeout(() => {
+                cont.style.height = 'auto'
+                cont.style.width = 'auto'
+              }, 150)
             }, 150)
           })
         }, 300)
@@ -218,7 +221,7 @@ export default {
   position: relative;
 }
 
-.content {
+.icon-drop-content {
   position: absolute;
   right: 0;
   top: 0;
@@ -242,19 +245,19 @@ export default {
   z-index: 900;
 }
 
-.left .content {
+.left .icon-drop-content {
   top: unset;
   left: 0;
   right: unset;
 }
 
-.right .content {
+.right .icon-drop-content {
   bottom: 0;
   top: unset;
   right: 0;
 }
 
-.central .content {
+.central .icon-drop-content {
   right: 50%;
   top: 50%;
   transform: translate(50%, -50%);

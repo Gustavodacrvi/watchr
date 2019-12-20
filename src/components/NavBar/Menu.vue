@@ -54,9 +54,8 @@ export default {
       this.appSection = !this.appSection
     },
     profile() {
-      this.$store.commit('pushIconDrop', {
-        comp: 'Profile',
-        content: {},
+      this.$store.dispatch('pushPopup', {
+        comp: 'Profile'
       })
     },
     pop(comp) {
