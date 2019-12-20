@@ -78,6 +78,7 @@ export default {
           return date === c.specific
         }
 
+        date = '2019-12-20'
         const tod = mom(date, 'Y-M-D')
         const begins = mom(c.begins, 'Y-M-D')
 
@@ -109,15 +110,15 @@ export default {
         if (c.type === 'weekly') {
           const dayOfTheWeek = parseInt(tod.format('d'), 10)
           if (!c.weekly.days.includes(dayOfTheWeek))
-            return false
+          return false
           
-          const weekDiff = tod.diff(begins, 'weeks')
+          const weekDiff = tod.diff(begins.startOf('week'), 'weeks')
           if (weekDiff < 0) return false
           const eventNotToday = weekDiff % c.weekly.every !== 0
           if (eventNotToday) return false
         }
         if (c.type === 'monthly') {
-          const monthDiff = tod.diff(begins, 'months')
+          const monthDiff = tod.diff(begins.startOf('month'), 'months')
           if (monthDiff < 0) return false
           const eventNotToday = monthDiff % c.monthly.every !== 0
           if (eventNotToday) return false
@@ -129,7 +130,7 @@ export default {
           if (!c.yearly.months.includes(month))
             return false
           
-          const yearDiff = tod.diff(begins, 'years')
+          const yearDiff = tod.diff(begins.startOf('year'), 'years')
           if (yearDiff < 0) return false
           const eventNotToday = yearDiff % c.yearly.every !== 0
           if (eventNotToday) return false

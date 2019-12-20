@@ -358,10 +358,10 @@ export default {
       case 'weekly': {
         str += `Every ${c.weekly.every} weeks on `
         let i = 0
-        for (const w of c.weekly.weeks) {
+        for (const w of c.weekly.days) {
           str += mom(w, 'e').format('ddd')
 
-          if ((i + 1) !== c.weekly.weeks.length)
+          if ((i + 1) !== c.weekly.days.length)
             str += ', '
           i++
         }
