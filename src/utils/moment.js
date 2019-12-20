@@ -162,14 +162,14 @@ export default {
     }
   },
   getNextEventAfterCompletionDate(c) {
-    let usedDate = c.lastCompleteDate || c.begins
-
-    const lastComplete = mom(usedDate, 'Y-M-D')
+    const lastComplete = mom(c.lastCompleteDate || c.begins, 'Y-M-D')
     if (lastComplete.isValid()) {
       const begins = mom(c.begins, 'Y-M-D')
-      if (c.type === 'daily')
-        return lastComplete.add(c.periodic, 'd')
-      else if (c.type === 'weekly') {
+      if (c.type === 'daily') {
+        if (!c.lastCompleteDate)
+          return mom(c.begins, 'Y-M-D')
+        return lastComplete.add(c.daily, 'd')
+      } else if (c.type === 'weekly') {
         while (true) {
           const week = this.nextWeekDay(lastComplete, c.weekly.days)
 

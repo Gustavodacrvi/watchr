@@ -91,10 +91,9 @@ export default {
               return false
           }
         }
-        console.log(begins.isAfter(tod, 'day'))
         if (c.begins && begins.isAfter(tod, 'day'))
           return false
-
+        
         if (c.type === 'after completion') {
           const lastComplete = c.lastCompleteDate ? mom(c.lastCompleteDate, 'Y-M-D') : begins
           if (begins.isSame(tod, 'day') || (!c.lastCompleteDate && tod.isAfter(begins, 'day'))) return true
@@ -108,7 +107,7 @@ export default {
         if (c.type === 'daily') {
           const dayDiff = tod.diff(begins, 'days')
           if (dayDiff < 0) return false
-          const eventNotToday = dayDiff % c.periodic !== 0
+          const eventNotToday = dayDiff % c.daily !== 0
           if (eventNotToday) return false
         }
         if (c.type === 'weekly') {
@@ -166,18 +165,23 @@ export default {
             const c = task.calendar
             if (!c || c.type === 'someday' || c.type === 'specific') return task.completed
             
-            moment = mom(moment, 'Y-M-D')
-            if (!moment.isValid()) moment = mom()
+            const tod = mom(moment, 'Y-M-D')
+            if (!tod.isValid()) tod = mom()
             if (c.type === 'after completion') {
               if (!c.lastCompleteDate) return false
               const last = mom(c.lastCompleteDate, 'Y-M-D')
-              const dayDiff = moment.diff(last, 'days')
+              const dayDiff = tod.diff(last, 'days')
               return dayDiff < c.afterCompletion
             }
-
-            if (c.type === 'daily' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly' || c.type === 'yearly') {
+            if (c.type === 'daily') {
               const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
-              return lastComplete.isSameOrAfter(moment, 'day')
+              const diff = tod.diff(lastComplete, 'days')
+              return lastComplete.isSameOrAfter(tod, 'day') ||
+                      diff < c.daily
+            }
+
+            if (c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly' || c.type === 'yearly') {
+              return mom(c.lastCompleteDate, 'Y-M-D').isSameOrAfter(tod, 'day')
             }
             
 /*             if (c.type === 'periodic' || c.type === 'weekly') {
@@ -225,7 +229,8 @@ export default {
           }
           if (c.type === 'after completion') return false
           if (c.type === 'daily' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly' || c.type === 'yearly') {
-            return utilsMoment.getNextEventAfterCompletionDate(c).isBefore(getTod(), 'day')
+            const nextEvent = utilsMoment.getNextEventAfterCompletionDate(c)
+            return nextEvent.isBefore(getTod(), 'day')
           }
 /*           if (c.type === 'periodic') {
             return utilsMoment.getNextEventAfterCompletionDate(c).isBefore(getTod(), 'day')
