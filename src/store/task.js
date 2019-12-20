@@ -82,14 +82,10 @@ export default {
         const begins = mom(c.begins, 'Y-M-D')
 
         if (c.ends) {
-          if (c.ends.type === 'on date') {
-            if (tod.isAfter(mom(c.ends.onDate, 'Y-M-D'), 'day')) {
-              return false
-            }
-          } else {
-            if (c.ends.times === null)
-              return false
-          }
+          if (c.ends.type === 'on date' && tod.isAfter(mom(c.ends.onDate, 'Y-M-D'), 'day'))
+            return false
+          else if (c.ends.times === null)
+            return false
         }
         if (c.begins && begins.isAfter(tod, 'day'))
           return false
@@ -165,7 +161,7 @@ export default {
             const c = task.calendar
             if (!c || c.type === 'someday' || c.type === 'specific') return task.completed
             
-            const tod = mom(moment, 'Y-M-D')
+            let tod = mom(moment, 'Y-M-D')
             if (!tod.isValid()) tod = mom()
             if (c.type === 'after completion') {
               if (!c.lastCompleteDate) return false
