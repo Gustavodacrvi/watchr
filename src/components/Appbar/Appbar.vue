@@ -208,6 +208,9 @@ export default {
   created() {
     const saved = localStorage.getItem('section')
     if (saved) this.section = saved
+
+    if (this.isSingleSection)
+      this.section = this.notHidedSections[0].name
   },
   mounted() {
     setInterval(() => {

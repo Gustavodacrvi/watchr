@@ -9,20 +9,13 @@
     <router-link class="link" tabindex="-1" :class="{active: isLinkActive('support')}" to="/support/overview">{{ l['Support'] }}</router-link>
     <div class="line"></div>
     <div class="icons">
-      <!-- <DropIcon style="z-index: 3"
+      <DropIcon style="z-index: 3"
         class="drop"
         handle="user"
         handleColor="var(--gray)"
         :circle='true'
         :options="dropLinks"
         @handle-toggle='v => isLinksIconDropOpen = v'
-      /> -->
-      <Icon style="z-index: 3"
-        class="drop cursor remove-highlight"
-        icon='user'
-        :circle='true'
-        color='var(--gray)'
-        @click="openProfile"
       />
       <DropIcon style="z-index: 2"
         class="drop"
@@ -65,11 +58,6 @@ export default {
   },
   props: ['route', 'dropLinks'],
   methods: {
-    openProfile() {
-      this.$store.dispatch('pushPopup', {
-        comp: 'Profile'
-      })
-    },
     stopNavHide() {
       this.$store.commit('toggleAllowNavHide', !(this.isLinksIconDropOpen || this.isLanguagesIconDropOpen))
     },

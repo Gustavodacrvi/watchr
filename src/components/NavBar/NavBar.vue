@@ -51,6 +51,11 @@ export default {
     logOut() {
       this.$store.dispatch('logOut')
     },
+      openProfile() {
+      this.$store.dispatch('pushPopup', {
+        comp: 'Profile'
+      })
+    },
   },
   computed: {
     ...mapState(['user']),
@@ -79,9 +84,7 @@ export default {
         {
           name: this.l['Profile'],
           icon: 'user',
-          callback: () => ({
-            comp: 'Profile',
-          })
+          callback: () => {this.openProfile()}
         },
         {
           name: this.l['Log out'],

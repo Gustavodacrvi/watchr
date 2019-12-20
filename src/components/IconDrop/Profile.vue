@@ -141,7 +141,7 @@ export default {
   watch: {
     userInfo() {
       this.pmFormat = this.getPmFormat
-    }
+    },
   }
 }
 
