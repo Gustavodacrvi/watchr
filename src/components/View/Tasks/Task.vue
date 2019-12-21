@@ -22,9 +22,15 @@
           class="cont-wrapper task-cont-wrapper task-handle rb"
           :class="platform"
           @click="click"
+
+          @mouseup.stop
+          @pointerup.stop
+          @pointerdown='pointerDown'
+          @touchcancel.stop
+          
+          @touchend.passive='touchEnd'
           @touchmove.passive='touchmove'
           @touchstart.passive='touchStart'
-          @touchend.passive='touchEnd'
         >
           <div class="circle-trans-wrapper-wrapper">
             <div class="circle-trans-wrapper">
@@ -139,6 +145,7 @@ export default {
       allowMobileOptions: false,
       startX: 0,
       startY: 0,
+      startTime: 0,
 
       move: false,
     }
@@ -146,6 +153,11 @@ export default {
   mounted() {
     if (this.isDesktop)
       this.bindContextMenu(this.options)
+
+    window.addEventListener('click', this.deselectTask)
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this.deselectTask)
   },
   methods: {
     bindContextMenu(options) {
@@ -170,9 +182,7 @@ export default {
       }
     },
     deselectTask() {
-      setTimeout(() => {
-        this.$emit('de-select', this.$el)
-      }, 2)
+      this.$emit('de-select', this.$el)
     },
     enter(cont) {
       if (!this.isEditing) {
@@ -225,7 +235,12 @@ export default {
       if (!this.doingTransition)
         this.showCircle = true
     },
+    pointerDown(evt) {
+      if (!this.isTaskSelected)
+        evt.stopPropagation()
+    },
     touchStart(e) {
+      this.startTime = new Date()
       this.move = false
       this.isTouching = true
       this.innerColor = 'var(--light-gray)'
@@ -244,18 +259,27 @@ export default {
       this.move = true
     },
     touchEnd(e) {
+      const time = new Date() - this.startTime
+      
       this.isTouching = false
       const touch = e.changedTouches[0]
       const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
       const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
 
-      if (this.move) this.deselectTask()
+      /* if (this.move || (time > 200) || movedFingerX || movedFingerY)
+        this.deselectTask() */
+
+      if (!this.move && (time < 201) && !movedFingerX && !movedFingerY)
+        this.selectTask()
 
       if (!movedFingerX && !movedFingerY) {
         if (this.allowMobileOptions)
           this.openMobileOptions()
       }
       this.allowMobileOptions = false
+    },
+    selectTask() {
+      this.$emit('select', this.$el)
     },
     circleEnter(el) {
       const s = el.style
@@ -395,6 +419,9 @@ export default {
     }),
     completed() {
       return this.isTaskCompleted(this.task, mom().format('Y-M-D'), this.taskCompletionCompareDate)
+    },
+    isTaskSelected() {
+      return this.selectedTasks.includes(this.task.id)
     },
     parsedName() {
       return this.getLinkString(this.escapeHTML(this.task.name))

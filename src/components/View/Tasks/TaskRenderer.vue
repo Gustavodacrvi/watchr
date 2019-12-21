@@ -331,8 +331,6 @@ export default {
           }, 100)
         },
         onSelect: evt => {
-          if (this.justScrolled && !this.isDesktop)
-            this.deSelectTask(evt.item)
           this.justScrolled = false
           const id = evt.item.dataset.id
 
@@ -492,7 +490,10 @@ export default {
         this.lazyTasks = []
         let i = 0
         const length = tasks.length
-        const timeout = length * 2.5
+
+        const multiplier = this.isDesktop ? 3.5 : 5
+        const timeout = length * multiplier
+        
         const add = (task) => {
           this.lazyTasks.push(task)
           if ((i + 1) !== length)
@@ -500,7 +501,7 @@ export default {
               i++
               const t = tasks[i]
               if (t) add(t)
-            }, timeout))
+            }, multiplier))
           else solve()
         }
         const t = tasks[0]
@@ -513,8 +514,10 @@ export default {
         this.lazyHeadings = []
         let i = 0
         const length = headings.length
-        let timeout = this.isDesktop ? 125 : 200
-        if (length < 5 || this.viewName === 'Upcoming') timeout = 20
+        let timeout = this.isDesktop ? 155 : 230
+
+        if (length < 5 || this.viewName === 'Upcoming') timeout = 40
+        
         const add = (head) => {
           this.lazyHeadings.push(head)
           if ((i + 1) !== length)
@@ -556,9 +559,11 @@ export default {
       if (this.selected.length > 0) event.stopPropagation()
     },
     selectTask(el) {
+      this.$store.commit('selectTask', el.dataset.id)
       Sortable.utils.select(el)
     },
     deSelectTask(el) {
+      this.$store.commit('unselectTask', el.dataset.id)
       Sortable.utils.deselect(el)
     },
     add(task) {
@@ -771,6 +776,9 @@ export default {
     },
   },
   watch: {
+    selectedTasks() {
+      console.log(this.selectedTasks)
+    },
     tasks(tasks) {
       if (this.waitingUpdateTimeout) {
         clearTimeout(this.waitingUpdateTimeout)

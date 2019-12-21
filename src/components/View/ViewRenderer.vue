@@ -34,20 +34,22 @@
         @list='selectList'
         @folder='selectFolder'
       />
-      <TaskHandler class='view-renderer-move'
-        v-bind="$props"
+      <div class="handler-wrapper">
+        <TaskHandler class='view-renderer-move'
+          v-bind="$props"
 
-        :headings="getHeadings"
-        :showCompleted='showCompleted'
-        :showSomeday='passSomedayTasks'
-        :pipeFilterOptions='pipeFilterOptions'
-        :taskIconDropOptions='taskIconDropOptions'
-        :updateHeadingIds='updateHeadingIds'
-        :autoSchedule='autoSchedule'
+          :headings="getHeadings"
+          :showCompleted='showCompleted'
+          :showSomeday='passSomedayTasks'
+          :pipeFilterOptions='pipeFilterOptions'
+          :taskIconDropOptions='taskIconDropOptions'
+          :updateHeadingIds='updateHeadingIds'
+          :autoSchedule='autoSchedule'
 
-        @allow-someday='showSomeday = true'
-        @root-non-filtered='getRootNonFilteredFromTaskHandler'
-      />
+          @allow-someday='showSomeday = true'
+          @root-non-filtered='getRootNonFilteredFromTaskHandler'
+        />
+      </div>
     </div>
     <PaginationVue v-if="headingsPagination"
       :page='pagination'
@@ -871,6 +873,10 @@ export default {
 .ViewRenderer.mobile {
   margin: 0 8px;
   margin-top: -4px;
+}
+
+.handler-wrapper {
+  overflow: hidden;
 }
 
 .view-renderer-move {
