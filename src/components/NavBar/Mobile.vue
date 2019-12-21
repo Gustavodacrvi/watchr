@@ -7,11 +7,12 @@
     <div class="mobile-wrapper">
       <div class="search" ref="search">
         <div class="search-icon-wrapper">
-          <svg class="svg search-el" viewBox="0 0 12.375 12.375" width='43px' height='43px'>
+          <svg class="svg search-el" viewBox="0 0 12.375 12.375" width='35px' height='35px'>
             <circle ref='circle' class="pie" stroke-dasharray="0 100" fill="none" :stroke="circleStroke" stroke-width="6" cx="50%" cy="50%" r="3"/>
           </svg>
           <Icon class="cursor remove-highlight search-el"
             icon="search"
+            width="16px"
             :color="searchColor"
             :circle="true"
             @click="openSearchBar"
@@ -69,7 +70,7 @@ import LogoVue from '../Illustrations/Logo.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
-const MAXIMUM_TOUCH_DISTANCE = 140
+const MAXIMUM_TOUCH_DISTANCE = 120
 
 export default {
   components: {
@@ -91,6 +92,7 @@ export default {
         g: 41,
         b: 41,
       },
+      fireSearchFallback: false,
     }
   },
   methods: {
@@ -98,29 +100,26 @@ export default {
       this.y = evt.touches[0].screenY
     },
     move(x, transition) {
-      if (x > MAXIMUM_TOUCH_DISTANCE) return undefined
+      const achievedMax = x >= MAXIMUM_TOUCH_DISTANCE
+      this.fireSearchFallback = achievedMax
+      if (achievedMax) x = MAXIMUM_TOUCH_DISTANCE
+      
       const s = this.$refs.search.style
       const cir = this.$refs.circle.style
 
       const transitionColor = (oldNum, newNum) => (newNum * x / MAXIMUM_TOUCH_DISTANCE) + oldNum - (oldNum * x / MAXIMUM_TOUCH_DISTANCE)
-
-
       const getOpacity = () =>  x / MAXIMUM_TOUCH_DISTANCE
       const getTransform = () => {
         const scale = 1 + (.6 * x / MAXIMUM_TOUCH_DISTANCE)
         return `translateY(${x}px) scale(${scale}, ${scale})`
       }
       const getStrokeDasharray = () => `${19 * x / MAXIMUM_TOUCH_DISTANCE} 100`
-      
-      const dur = transition ? '.8s' : '0s'
+
+      const dur = transition ? '.4s' : '0s'
 
       s.transitionDuration = dur
       cir.transitionDuration = dur
 
-      s.transform = getTransform()
-      s.opacity = getOpacity()
-      cir.strokeDasharray = getStrokeDasharray()
-      
       this.circle.r = transitionColor(41, 89)
       this.circle.g = transitionColor(41, 160)
       this.circle.b = transitionColor(41, 222)
@@ -129,6 +128,10 @@ export default {
       this.search.r = newOffset
       this.search.g = newOffset
       this.search.b = newOffset
+
+      cir.strokeDasharray = getStrokeDasharray()
+      s.opacity = getOpacity()
+      s.transform = getTransform()
     },
     touchmove(evt) {
       const diff = evt.touches[0].screenY - this.y
@@ -136,6 +139,9 @@ export default {
       this.move(diff)
     },
     touchend() {
+      if (this.fireSearchFallback)
+        this.openSearchBar()
+
       this.move(0, true)
     },
     
@@ -240,13 +246,13 @@ export default {
 }
 
 .search-icon-wrapper {
-  transform: translateX(-7px);
+  transform: translateX(-5px);
   overflow: visible;
   position: relative;
 }
 
 .svg {
-  transform: translate(-10px,-10px);
+  transform: translate(-9px,-9px);
 }
 
 .pie {
@@ -267,7 +273,7 @@ export default {
 .drop {
   position: absolute;
   display: flex;
-  right: 14px;
+  right: 0;
   align-items: center;
   transform: translateY(-22px);
 }
