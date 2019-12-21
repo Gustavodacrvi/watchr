@@ -74,7 +74,7 @@ import mom from 'moment/src/moment'
 
 import { pipeBooleanFilters } from '@/utils/memo'
 
-const MAXIMUM_TOUCH_DISTANCE = 75
+const MAXIMUM_TOUCH_DISTANCE = 150
 const MINIMUM_DISTANCE = 30
 
 export default {

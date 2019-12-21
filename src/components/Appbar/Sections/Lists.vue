@@ -26,7 +26,7 @@
 
       data-name='folders-root'
     >
-      <FolderApp v-for="f in sortedFolders" :key="f.id"
+      <FolderApp v-for="f in laseredFolders" :key="f.id"
         v-bind="f"
         :movingFolder='movingFolder'
         :folder='f'
@@ -42,7 +42,7 @@
           :folder='f.id'
           :disableSelection='true'
           :enableSort="true"
-          :list="getListsByFolderId({id: f.id, lists: listsWithFolders})"
+          :list="f.list"
           :active="active"
           :viewType="viewType"
           :mapProgress='getListProgress'
@@ -220,6 +220,12 @@ export default {
       isTaskCompleted: 'task/isTaskCompleted',
       getListsByFolderId: 'folder/getListsByFolderId',
     }),
+    laseredFolders() {
+      return this.sortedFolders.map(fold => ({
+        ...fold,
+        list: this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders})
+      }))
+    },
     sortedLists() {
       return this.$store.getters['list/sortedLists']
     },
@@ -277,6 +283,24 @@ export default {
       return lists.map(t => t)
     },
   },
+  watch: {
+    rootLists() {
+      this.$emit('root-view-list', this.rootLists.map(l => ({viewName: l.name, viewType: 'list'})))
+    },
+    laseredFolders() {
+      const folders = this.laseredFolders
+      const arr = []
+      for (const fold of folders) {
+        arr.push({
+          viewName: fold.name,
+          viewType: 'folder'
+        })
+        arr.push(...fold.list.map(l => ({viewName: l.name, viewType: 'list'})))
+      }
+      
+      this.$emit('view-list', arr)
+    },
+  }
 }
 
 </script>
