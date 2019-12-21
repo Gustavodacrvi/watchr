@@ -76,8 +76,8 @@ import mom from 'moment/src/moment'
 
 import { pipeBooleanFilters } from '@/utils/memo'
 
-const MAXIMUM_TOUCH_DISTANCE = 150
-const MINIMUM_DISTANCE = 30
+const MAXIMUM_TOUCH_DISTANCE = 100
+const MINIMUM_DISTANCE = 20
 
 export default {
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
@@ -134,7 +134,7 @@ export default {
     transform(x, transition) {
       const s = this.el
 
-      const getOpacity = () => 1 - (Math.abs(x) / MAXIMUM_TOUCH_DISTANCE)
+      const getOpacity = () => 1.4 - (Math.abs(x) / MAXIMUM_TOUCH_DISTANCE)
       
       if (!transition) {
         s.transitionDuration = '0s'
@@ -184,7 +184,7 @@ export default {
 
       const time = new Date() - this.startTime
 
-      if (this.move && Math.abs(this.diffX) > MINIMUM_DISTANCE && time <= 325 && !this.touchFail) {
+      if (this.move && Math.abs(this.diffX) > MINIMUM_DISTANCE && time <= 350 && !this.touchFail) {
         if (this.right) this.$emit('slide', -1)
         else this.$emit('slide', 1)
       }

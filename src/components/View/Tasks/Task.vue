@@ -23,8 +23,8 @@
           :class="platform"
           @click="click"
 
-          @mouseup.stop
-          @pointerup.stop
+          @mouseup='stopPropagation'
+          @pointerup='stopPropagation'
           @pointerdown='pointerDown'
           @touchcancel.stop
           
@@ -160,6 +160,10 @@ export default {
     window.removeEventListener('click', this.deselectTask)
   },
   methods: {
+    stopPropagation(evt) {
+      if (!this.isDesktop)
+        evt.stopPropagation()
+    },
     bindContextMenu(options) {
       utils.bindOptionsToEventListener(this.$el, options, this)
     },
@@ -236,7 +240,7 @@ export default {
         this.showCircle = true
     },
     pointerDown(evt) {
-      if (!this.isTaskSelected)
+      if (!this.isTaskSelected && !this.isDesktop)
         evt.stopPropagation()
     },
     touchStart(e) {
