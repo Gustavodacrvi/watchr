@@ -22,6 +22,7 @@
           class="cont-wrapper task-cont-wrapper task-handle rb"
           :class="platform"
           @click="click"
+          @touchmove.passive='touchmove'
           @touchstart.passive='touchStart'
           @touchend.passive='touchEnd'
         >
@@ -38,11 +39,11 @@
             v-longclick='longClick'
           >
             <div class="check cursor remove-highlight"
-              @click.stop="completeTask"
-              @mouseenter.stop="iconHover = true"
+              @click="completeTask"
+              @mouseenter="iconHover = true"
               @mouseleave="iconHover = false"
-              @touchstart.stop.passive
-              @mousedown.stop.passive
+              @touchstart.passive.stop
+              @mousedown.passive.stop
             >
               <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon"
                 :icon="`box${isSomeday ? '-dash' : ''}`"
@@ -138,6 +139,8 @@ export default {
       allowMobileOptions: false,
       startX: 0,
       startY: 0,
+
+      move: false,
     }
   },
   mounted() {
@@ -147,11 +150,6 @@ export default {
   methods: {
     bindContextMenu(options) {
       utils.bindOptionsToEventListener(this.$el, options, this)
-    },
-    deselectTask() {
-      setTimeout(() => {
-        this.$emit('de-select', this.$el)
-      }, 10)
     },
     taskEnter(el, done) {
       const cont = el.getElementsByClassName('cont-wrapper')[0]
@@ -171,13 +169,17 @@ export default {
         setTimeout(done, 249)
       }
     },
+    deselectTask() {
+      setTimeout(() => {
+        this.$emit('de-select', this.$el)
+      }, 2)
+    },
     enter(cont) {
       if (!this.isEditing) {
         const s = cont.style
         cont.classList.add('hided')
         s.height = '0px'
         s.padding = '2px 0'
-        this.deselectTask()
         setTimeout(() => {
           cont.classList.add('show')
           s.height = this.taskHeight + 'px'
@@ -224,6 +226,7 @@ export default {
         this.showCircle = true
     },
     touchStart(e) {
+      this.move = false
       this.isTouching = true
       this.innerColor = 'var(--light-gray)'
       this.outerColor = 'var(--gray)'
@@ -237,19 +240,20 @@ export default {
         this.showCircle = true
       }
     },
+    touchmove() {
+      this.move = true
+    },
     touchEnd(e) {
       this.isTouching = false
       const touch = e.changedTouches[0]
       const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
       const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
+
+      if (this.move) this.deselectTask()
+
       if (!movedFingerX && !movedFingerY) {
         if (this.allowMobileOptions)
           this.openMobileOptions()
-      } else {
-        this.deselectTask()
-        setTimeout(() => {
-          this.$store.commit('unselectTask', this.task.id)
-        })
       }
       this.allowMobileOptions = false
     },

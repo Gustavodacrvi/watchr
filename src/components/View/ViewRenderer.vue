@@ -34,8 +34,7 @@
         @list='selectList'
         @folder='selectFolder'
       />
-      {{test}}
-      <TaskHandler
+      <TaskHandler class='view-renderer-move'
         v-bind="$props"
 
         :headings="getHeadings"
@@ -75,6 +74,9 @@ import mom from 'moment/src/moment'
 
 import { pipeBooleanFilters } from '@/utils/memo'
 
+const MAXIMUM_TOUCH_DISTANCE = 75
+const MINIMUM_DISTANCE = 30
+
 export default {
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
 
@@ -101,7 +103,6 @@ export default {
       rootNonFiltered: [],
       computedHeaderOptions: [],
       autoSchedule: null,
-      test: null,
 
       inclusiveTags: [],
       exclusiveTags: [],
@@ -114,6 +115,7 @@ export default {
 
       initialX: 0,
       initialY: 0,
+      diffX: 0,
       touchFail: false,
       right: false,
     }
@@ -130,34 +132,38 @@ export default {
     transform(x, transition) {
       const s = this.el
 
-      const getOpacity = () => 1 - (Math.abs(x) / 100)
+      const getOpacity = () => 1 - (Math.abs(x) / MAXIMUM_TOUCH_DISTANCE)
       
       if (!transition) {
         s.transitionDuration = '0s'
-        s.transform = `translate(${x}px)`
+        // s.transform = `translate(${x}px)`
+        s.left = `${x}px`
         s.opacity = getOpacity()
       } else {
         s.transitionDuration = '.2s'
         setTimeout(() => {
-          s.transform = `translateX(${x}px)`
+          s.left = `${x}px`
           s.opacity = getOpacity()
-        }, 80)
+        }, 10)
       }
     },
     touchmove(evt) {
+      this.move = true
       if (!this.touchFail) {
         const t = evt.touches[0]
-        const diffX = t.screenX - this.initialX
-        const diffY = t.screenY - this.initialY
-        
-        if ((Math.abs(diffY) > 10) || (Math.abs(diffX) > 100)) {
+        this.diffX = t.screenX - this.initialX
+        this.diffY = t.screenY - this.initialY
+
+        const x = Math.abs(this.diffX)
+
+        if ((Math.abs(this.diffY) > 20)) {
           this.touchFail = true
           this.transform(0, true)
         } else {
-          this.transform(diffX)
+          this.transform(this.diffX)
 
-          if (Math.abs(diffX) > 75) {
-            this.right = diffX > 0
+          if (x > MINIMUM_DISTANCE) {
+            this.right = this.diffX > 0
           }
         }
       }
@@ -166,22 +172,19 @@ export default {
       const t = evt.touches[0]
       this.initialX = t.screenX
       this.initialY = t.screenY
+
       this.touchFail = false
       this.startTime = new Date()
+      this.move = false
     },
     touchend() {
       this.transform(0, true)
 
       const time = new Date() - this.startTime
 
-      if (time <= 350) {
-        if (this.right) this.test = 'right'
-        else this.test = 'left'
-
-
-        setTimeout(() => {
-          this.test = null
-        }, 1000)
+      if (this.move && Math.abs(this.diffX) > MINIMUM_DISTANCE && time <= 325 && !this.touchFail) {
+        if (this.right) this.$emit('slide', -1)
+        else this.$emit('slide', 1)
       }
     },
     
@@ -355,8 +358,7 @@ export default {
       doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
     el() {
-      // const el = this.$el.getElementsByClassName('cont')[0]
-      const el = this.$el
+      const el = this.$el.getElementsByClassName('view-renderer-move')[0]
       return el.style
     },
     isSearch() {
@@ -869,6 +871,9 @@ export default {
 .ViewRenderer.mobile {
   margin: 0 8px;
   margin-top: -4px;
+}
+
+.view-renderer-move {
   position: relative;
 }
 

@@ -187,12 +187,13 @@ export default {
 
 .fade-enter, .fade-leave-to {
   opacity: 0;
+  transition-delay: .3s;
   transition: opacity .3s;
 }
 
 .fade-leave, .fade-enter-to {
   opacity: 1;
-  transition-delay: .1s;
+  transition-delay: .3s;
   transition: opacity .2s;
 }
 

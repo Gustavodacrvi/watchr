@@ -117,6 +117,7 @@ const store = new Vuex.Store({
     allowNavHide: true,
     viewName: '',
     viewType: '',
+    slide: 0,
 
     pressingKey: null,
   },
@@ -214,6 +215,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    slide(state, num) {
+      state.slide += num
+    },
     unpressKey(state) {
       state.pressingKey = null
     },
@@ -268,17 +272,15 @@ const store = new Vuex.Store({
       state.iconDrop = drop
     },
     unselectTask(state, id) {
-      if (id && state.selectedTasks.includes(id))
-        setTimeout(() => {
-          const i = state.selectedTasks.findIndex(el => el === id)
-          state.selectedTasks.splice(i, 1)
-        }, 5)
+      if (id && state.selectedTasks.includes(id)) {
+        const i = state.selectedTasks.findIndex(el => el === id)
+        state.selectedTasks.splice(i, 1)
+      }
     },
     selectTask(state, id) {
-      if (id && !state.selectedTasks.includes(id))
-        setTimeout(() => {
-          state.selectedTasks.push(id)
-        }, 5)
+      if (id && !state.selectedTasks.includes(id)) {
+        state.selectedTasks.push(id)
+      }
     },
     clearSelected(state) {
       if (state.selectedTasks.length !== 0)

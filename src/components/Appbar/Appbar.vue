@@ -593,6 +593,9 @@ export default {
     newIndex() {
       return this.getAppnavIndex(this.section)
     },
+    slideDirection() {
+      return this.$store.state.slide
+    },
   },
   watch: {
     section() {
@@ -602,6 +605,11 @@ export default {
         this.showingIconDrop = true
       }, 200)
     },
+    slideDirection(newNum, oldNum) {
+      const dire = newNum - oldNum
+
+      
+    }
   }
 }
 

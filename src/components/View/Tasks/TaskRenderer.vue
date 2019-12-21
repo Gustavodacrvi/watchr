@@ -24,6 +24,7 @@
           :isDragging='isDragging'
           :isScrolling='isScrolling'
           @de-select='deSelectTask'
+          @select='selectTask'
 
           :data-id='item.id'
           :data-name='item.name'
@@ -296,7 +297,7 @@ export default {
       const obj = {
         disabled: this.disableSortableMount,
         multiDrag: this.enableSelect,
-        direction: 'horizontal',
+        direction: 'vertical',
 
         forceFallback: true,
         fallbackOnBody: true,
@@ -335,7 +336,6 @@ export default {
           this.justScrolled = false
           const id = evt.item.dataset.id
 
-          
           if (id !== "Edit" && !this.selected.includes(id)) {
             if (this.selectMultiple)
               this.selectMultipleIds(id)
@@ -556,11 +556,9 @@ export default {
       if (this.selected.length > 0) event.stopPropagation()
     },
     selectTask(el) {
-      this.$store.commit('selectTask', el.dataset.id)
       Sortable.utils.select(el)
     },
     deSelectTask(el) {
-      this.$store.commit('unselectTask', el.dataset.id)
       Sortable.utils.deselect(el)
     },
     add(task) {
