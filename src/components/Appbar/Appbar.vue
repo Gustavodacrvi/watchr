@@ -70,6 +70,8 @@
                     :showDefered='showDefered'
                     :showRepeat='showRepeat'
                     :data-transindex="getAppnavIndex(section)"
+                    @root-view-list='getRootViewList'
+                    @view-list='getViewListFromComp'
                   />
                 </transition>
               </div>
@@ -120,7 +122,7 @@ import utilsFolder from '@/utils/folder'
 import { userRef } from '@/utils/firestore'
 
 export default {
-  props: ['value', 'viewType', 'appbarHided'],
+  props: ['value', 'appbarHided'],
   components: {
     Icon: IconVue,
     AppbarElement: AppbarElementVue,
@@ -202,7 +204,10 @@ export default {
       showRepeat: false,
       searchTimeout: null,
       oldIndex: 0,
-      section: 'Lists'
+      section: 'Lists',
+
+      compViewList: [],
+      compRootViewList: [],
     }
   },
   created() {
@@ -232,6 +237,12 @@ export default {
     window.removeEventListener('resize', this.moveLineToActive)
   },
   methods: {
+    getRootViewList(list) {
+      this.compRootViewList = list
+    },
+    getViewListFromComp(list) {
+      this.compViewList = list
+    },
     update(links) {
       userRef(this.userInfo.userId).set({
         links,
@@ -364,6 +375,8 @@ export default {
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
       tasks: state => state.task.tasks,
+      viewName: state => state.viewName,
+      viewType: state => state.viewType,
     }),
     ...mapGetters({
       platform: 'platform',
@@ -593,15 +606,37 @@ export default {
     newIndex() {
       return this.getAppnavIndex(this.section)
     },
+    slideDirection() {
+      return this.$store.state.slide
+    },
+
+    getViewList() {
+      return [
+        ...this.getLinksOrdered.map(el => ({viewName: el.name, viewType: 'list'})),
+        /* ...this.compRootViewList,
+        ...this.compViewList, */
+      ]
+    },
   },
   watch: {
     section() {
+      this.compRootViewList = []
+      this.compViewList = []
       this.$emit('section', this.section)
       this.showingIconDrop = false
       setTimeout(() => {
         this.showingIconDrop = true
       }, 200)
     },
+    slideDirection(newNum, oldNum) {
+      const dire = newNum - oldNum
+
+      const index = this.getViewList.findIndex(obj => obj.viewName === this.viewName && obj.viewType === this.viewType)
+      const view = this.getViewList[index + dire]
+      if (index > -1 && view) {
+        this.$router.push(`user?${view.viewType}=${view.viewName}`)
+      }
+    }
   }
 }
 

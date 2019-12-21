@@ -1,8 +1,8 @@
 <template>
   <div class='circle-trans-wrapper-wrapper'
-    @touchstart='touchStart'
+    @touchstart.passive='touchStart'
   >
-    <div class="circle-trans-wrapper" @touchstart='touchStart'>
+    <div class="circle-trans-wrapper" @touchstart.passive='touchStart'>
       <transition
         @enter='circleEnter'
       >

@@ -6,8 +6,8 @@
     :class="[platform,{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover}]"
 
     @click.stop="linkCallback"
-    @touchstart='touchStart'
-    @touchend='touchEnd'
+    @touchstart.passive='touchStart'
+    @touchend.passive='touchEnd'
     v-longclick='longClick'
   >
     <div class='circle-trans-wrapper-wrapper'>

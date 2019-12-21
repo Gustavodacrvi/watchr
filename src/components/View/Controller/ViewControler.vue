@@ -7,6 +7,7 @@
     :viewName='viewName'
     :viewType='viewType'
 
+    @slide='slide'
     @show-completed='v => showCompleted = v'
   />
 </template>
@@ -46,6 +47,9 @@ export default {
         return this.getSpecificDayCalendarObj(mom().add(1, 'day'), cal)
       if (this.viewName === 'Someday')
         return {type: 'someday'}
+    },
+    slide(num) {
+      this.$store.commit('slide', num)
     },
     getListHeadingsByView(view) {
       const savedLists = this.lists

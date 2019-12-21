@@ -7,8 +7,8 @@
       <div v-if="!editing">
         <div class="header-wrapper handle cursor remove-highlight" key="wr"
           @click="click"
-          @touchstart='touchStart'
-          @touchend='touchEnd'
+          @touchstart.passive='touchStart'
+          @touchend.passive='touchEnd'
           
           v-longclick='longClick'
           @dblclick="toggleEditing"

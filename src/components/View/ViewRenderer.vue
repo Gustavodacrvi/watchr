@@ -1,6 +1,12 @@
 
 <template>
-  <div class="ViewRenderer" :class="platform">
+  <div class="ViewRenderer"
+    :class="platform"
+
+    @touchend.passive='touchend'
+    @touchstart.passive='touchstart'
+    @touchmove.passive='touchmove'
+  >
     <div>
       <Header
         v-bind="$props"
@@ -28,20 +34,22 @@
         @list='selectList'
         @folder='selectFolder'
       />
-      <TaskHandler
-        v-bind="$props"
+      <div class="handler-wrapper">
+        <TaskHandler class='view-renderer-move'
+          v-bind="$props"
 
-        :headings="getHeadings"
-        :showCompleted='showCompleted'
-        :showSomeday='passSomedayTasks'
-        :pipeFilterOptions='pipeFilterOptions'
-        :taskIconDropOptions='taskIconDropOptions'
-        :updateHeadingIds='updateHeadingIds'
-        :autoSchedule='autoSchedule'
+          :headings="getHeadings"
+          :showCompleted='showCompleted'
+          :showSomeday='passSomedayTasks'
+          :pipeFilterOptions='pipeFilterOptions'
+          :taskIconDropOptions='taskIconDropOptions'
+          :updateHeadingIds='updateHeadingIds'
+          :autoSchedule='autoSchedule'
 
-        @allow-someday='showSomeday = true'
-        @root-non-filtered='getRootNonFilteredFromTaskHandler'
-      />
+          @allow-someday='showSomeday = true'
+          @root-non-filtered='getRootNonFilteredFromTaskHandler'
+        />
+      </div>
     </div>
     <PaginationVue v-if="headingsPagination"
       :page='pagination'
@@ -67,6 +75,9 @@ import utils from '@/utils/index.js'
 import mom from 'moment/src/moment'
 
 import { pipeBooleanFilters } from '@/utils/memo'
+
+const MAXIMUM_TOUCH_DISTANCE = 150
+const MINIMUM_DISTANCE = 30
 
 export default {
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
@@ -103,6 +114,12 @@ export default {
       exclusiveLists: [],
       inclusiveFolder: null,
       exclusiveFolders: [],
+
+      initialX: 0,
+      initialY: 0,
+      diffX: 0,
+      touchFail: false,
+      right: false,
     }
   },
   created() {
@@ -113,6 +130,66 @@ export default {
   },
   methods: {
     ...mapActions(['getOptions']),
+
+    transform(x, transition) {
+      const s = this.el
+
+      const getOpacity = () => 1 - (Math.abs(x) / MAXIMUM_TOUCH_DISTANCE)
+      
+      if (!transition) {
+        s.transitionDuration = '0s'
+        // s.transform = `translate(${x}px)`
+        s.left = `${x}px`
+        s.opacity = getOpacity()
+      } else {
+        s.transitionDuration = '.2s'
+        setTimeout(() => {
+          s.left = `${x}px`
+          s.opacity = getOpacity()
+        }, 10)
+      }
+    },
+    touchmove(evt) {
+      this.move = true
+      if (!this.touchFail) {
+        const t = evt.touches[0]
+        this.diffX = t.screenX - this.initialX
+        this.diffY = t.screenY - this.initialY
+
+        const x = Math.abs(this.diffX)
+
+        if ((Math.abs(this.diffY) > 20)) {
+          this.touchFail = true
+          this.transform(0, true)
+        } else {
+          this.transform(this.diffX)
+
+          if (x > MINIMUM_DISTANCE) {
+            this.right = this.diffX > 0
+          }
+        }
+      }
+    },
+    touchstart(evt) {
+      const t = evt.touches[0]
+      this.initialX = t.screenX
+      this.initialY = t.screenY
+
+      this.touchFail = false
+      this.startTime = new Date()
+      this.move = false
+    },
+    touchend() {
+      this.transform(0, true)
+
+      const time = new Date() - this.startTime
+
+      if (this.move && Math.abs(this.diffX) > MINIMUM_DISTANCE && time <= 325 && !this.touchFail) {
+        if (this.right) this.$emit('slide', -1)
+        else this.$emit('slide', 1)
+      }
+    },
+    
     async getComputedOptions() {
       if (this.headerOptions)
         this.computedHeaderOptions = await this.getOptions(this.headerOptions)
@@ -282,6 +359,10 @@ export default {
       doesTaskPassInclusivePriority: 'task/doesTaskPassInclusivePriority',
       doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
+    el() {
+      const el = this.$el.getElementsByClassName('view-renderer-move')[0]
+      return el.style
+    },
     isSearch() {
       return this.isSmart && this.viewNameValue === "Search"
     },
@@ -792,6 +873,14 @@ export default {
 .ViewRenderer.mobile {
   margin: 0 8px;
   margin-top: -4px;
+}
+
+.handler-wrapper {
+  overflow: hidden;
+}
+
+.view-renderer-move {
+  position: relative;
 }
 
 </style>

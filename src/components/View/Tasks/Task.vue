@@ -22,8 +22,15 @@
           class="cont-wrapper task-cont-wrapper task-handle rb"
           :class="platform"
           @click="click"
-          @touchstart='touchStart'
-          @touchend='touchEnd'
+
+          @mouseup.stop
+          @pointerup.stop
+          @pointerdown='pointerDown'
+          @touchcancel.stop
+          
+          @touchend.passive='touchEnd'
+          @touchmove.passive='touchmove'
+          @touchstart.passive='touchStart'
         >
           <div class="circle-trans-wrapper-wrapper">
             <div class="circle-trans-wrapper">
@@ -38,11 +45,11 @@
             v-longclick='longClick'
           >
             <div class="check cursor remove-highlight"
-              @click.stop="completeTask"
-              @mouseenter.stop="iconHover = true"
+              @click="completeTask"
+              @mouseenter="iconHover = true"
               @mouseleave="iconHover = false"
-              @touchstart.stop.passive
-              @mousedown.stop
+              @touchstart.passive.stop
+              @mousedown.passive.stop
             >
               <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon"
                 :icon="`box${isSomeday ? '-dash' : ''}`"
@@ -138,20 +145,23 @@ export default {
       allowMobileOptions: false,
       startX: 0,
       startY: 0,
+      startTime: 0,
+
+      move: false,
     }
   },
   mounted() {
     if (this.isDesktop)
       this.bindContextMenu(this.options)
+
+    window.addEventListener('click', this.deselectTask)
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this.deselectTask)
   },
   methods: {
     bindContextMenu(options) {
       utils.bindOptionsToEventListener(this.$el, options, this)
-    },
-    deselectTask() {
-      setTimeout(() => {
-        this.$emit('de-select', this.$el)
-      }, 10)
     },
     taskEnter(el, done) {
       const cont = el.getElementsByClassName('cont-wrapper')[0]
@@ -171,13 +181,15 @@ export default {
         setTimeout(done, 249)
       }
     },
+    deselectTask() {
+      this.$emit('de-select', this.$el)
+    },
     enter(cont) {
       if (!this.isEditing) {
         const s = cont.style
         cont.classList.add('hided')
         s.height = '0px'
         s.padding = '2px 0'
-        this.deselectTask()
         setTimeout(() => {
           cont.classList.add('show')
           s.height = this.taskHeight + 'px'
@@ -223,7 +235,13 @@ export default {
       if (!this.doingTransition)
         this.showCircle = true
     },
+    pointerDown(evt) {
+      if (!this.isTaskSelected)
+        evt.stopPropagation()
+    },
     touchStart(e) {
+      this.startTime = new Date()
+      this.move = false
       this.isTouching = true
       this.innerColor = 'var(--light-gray)'
       this.outerColor = 'var(--gray)'
@@ -237,21 +255,31 @@ export default {
         this.showCircle = true
       }
     },
+    touchmove() {
+      this.move = true
+    },
     touchEnd(e) {
+      const time = new Date() - this.startTime
+      
       this.isTouching = false
       const touch = e.changedTouches[0]
       const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
       const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
+
+      /* if (this.move || (time > 200) || movedFingerX || movedFingerY)
+        this.deselectTask() */
+
+      if (!this.move && (time < 201) && !movedFingerX && !movedFingerY)
+        this.selectTask()
+
       if (!movedFingerX && !movedFingerY) {
         if (this.allowMobileOptions)
           this.openMobileOptions()
-      } else {
-        this.deselectTask()
-        setTimeout(() => {
-          this.$store.commit('unselectTask', this.task.id)
-        })
       }
       this.allowMobileOptions = false
+    },
+    selectTask() {
+      this.$emit('select', this.$el)
     },
     circleEnter(el) {
       const s = el.style
@@ -391,6 +419,9 @@ export default {
     }),
     completed() {
       return this.isTaskCompleted(this.task, mom().format('Y-M-D'), this.taskCompletionCompareDate)
+    },
+    isTaskSelected() {
+      return this.selectedTasks.includes(this.task.id)
     },
     parsedName() {
       return this.getLinkString(this.escapeHTML(this.task.name))

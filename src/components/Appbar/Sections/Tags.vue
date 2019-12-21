@@ -63,6 +63,11 @@ export default {
       return tags
     },
   },
+  watch: {
+    getTags() {
+      this.$emit('view-list', this.getTags.map(el => ({viewName: el.name, viewType: 'tag'})))
+    }
+  }
 }
 
 </script>
