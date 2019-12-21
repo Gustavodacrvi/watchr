@@ -1,52 +1,56 @@
 <template>
-  <div class="Mobile">
-    <div class="central">
-      <span @click="openMenu">
-        <Icon class="primary-hover cursor" icon="menu" width="22px" :circle="true"/>
-      </span>
-      <transition name="fade" mode="out-in" appear>
-        <div v-if="isNotOnHome" key="user">
-          <span v-if="title" class="title">{{ title }}</span>
-          <div class="drop"
-            @click.stop
-            @pointerup.stop
-            @mouseup.stop
-            @touchend.stop.passive
-          >
-            <template v-if="showHelpIcons">
-              <transition-group name='fade'>
-                <Icon v-for="i in navBar.options.icons" :key="i.icon"
-                  class="cursor option-icon"
-                  color='var(--white)'
-                  width='22px'
-                  :icon='i.icon'
-                  :circle="true"
-                  @click="openCallback(i.callback)"
-                />
-              </transition-group>
-            </template>
-            <transition name="fade">
-              <Icon v-if="!showHelpIcons"
-                class="cursor option-icon"
-                icon="search"
-                width="21px"
-                :circle="true"
-                @click="openSearchBar"
+  <div class="Mobile"
+    @touchstart.passive='touchstart'
+    @touchmove.prevent='touchmove'
+    @touchend.passive='touchend'
+  >
+    <div class="mobile-wrapper">
+      <div class="search" ref="search">
+        <Icon class="cursor remove-highlight"
+          icon="search"
+          @click="openSearchBar"
+          :circle="true"
+        />
+      </div>
+      <div class="central">
+        <span @click="openMenu">
+          <Icon class="primary-hover cursor" icon="menu" width="22px" :circle="true"/>
+        </span>
+        <transition name="fade" mode="out-in" appear>
+          <div v-if="isNotOnHome" key="user">
+            <span v-if="title" class="title">{{ title }}</span>
+            <div class="drop"
+              @click.stop
+              @pointerup.stop
+              @mouseup.stop
+              @touchend.stop.passive
+            >
+              <template v-if="showHelpIcons">
+                <transition-group name='fade'>
+                  <Icon v-for="i in navBar.options.icons" :key="i.icon"
+                    class="cursor option-icon remove-highlight"
+                    color='var(--white)'
+                    width='22px'
+                    :icon='i.icon'
+                    :circle="true"
+                    @click="openCallback(i.callback)"
+                  />
+                </transition-group>
+              </template>
+              <IconDrop v-if="showIcons && navBar.options.icondrop"
+                handle="settings-v"
+                :options="navBar.options.icondrop"
+                handle-color="var(--white)"
+                :circle='true'
               />
-            </transition>
-            <IconDrop v-if="showIcons && navBar.options.icondrop"
-              handle="settings-v"
-              :options="navBar.options.icondrop"
-              handle-color="var(--white)"
-              :circle='true'
-            />
+            </div>
           </div>
-        </div>
-        <div v-else class="logo cursor" @click="goToIndexPage" key="notuser">
-          <span class="watchr"><b>watchr</b></span>
-          <LogoApp width="35px"/>
-        </div>
-      </transition>
+          <div v-else class="logo cursor" @click="goToIndexPage" key="notuser">
+            <span class="watchr"><b>watchr</b></span>
+            <LogoApp width="35px"/>
+          </div>
+        </transition>
+      </div>
     </div>
   </div>
 </template>
@@ -59,13 +63,58 @@ import LogoVue from '../Illustrations/Logo.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
+const MAXIMUM_TOUCH_DISTANCE = 125
+
 export default {
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
     LogoApp: LogoVue,
   },
+  data() {
+    return {
+      y: 0,
+    }
+  },
   methods: {
+    touchstart(evt) {
+      this.y = evt.touches[0].screenY
+    },
+    move(x, transition) {
+      if (x > MAXIMUM_TOUCH_DISTANCE) return undefined
+      const s = this.$refs.search.style
+
+      const getOpacity = () =>  x / MAXIMUM_TOUCH_DISTANCE
+      const getTransform = () => {
+        const scale = 1 + (.6 * x / MAXIMUM_TOUCH_DISTANCE)
+        return `translateY(${x}px) scale(${scale}, ${scale})`
+      }
+
+      /*
+
+        1.4  -   100
+        x    -    d
+
+        x100 = 1.4 d
+
+        x = 1.4 .d / 100
+        
+      */
+      
+      if (!transition) {
+        s.transform = getTransform()
+        s.opacity = getOpacity()
+      }
+    },
+    touchmove(evt) {
+      const diff = evt.touches[0].screenY - this.y
+
+      this.move(diff)
+    },
+    touchend() {
+      this.move(0)
+    },
+    
     openMenu() {
       setTimeout(() => {
         this.$router.push({path: '/menu'})
@@ -136,6 +185,22 @@ export default {
   padding: 0 16px;
 }
 
+.mobile-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.search {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  position: absolute;
+  top: -20px;
+  opacity: 0;
+}
+
 .Icon {
   transition-duration: .15s;
 }
@@ -187,13 +252,11 @@ export default {
 
 .fade-enter, .fade-leave-to {
   opacity: 0;
-  transition-delay: .3s;
   transition: opacity .3s;
 }
 
 .fade-leave, .fade-enter-to {
   opacity: 1;
-  transition-delay: .3s;
   transition: opacity .2s;
 }
 

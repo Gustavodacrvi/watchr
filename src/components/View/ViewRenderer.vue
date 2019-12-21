@@ -138,7 +138,6 @@ export default {
       
       if (!transition) {
         s.transitionDuration = '0s'
-        // s.transform = `translate(${x}px)`
         s.left = `${x}px`
         s.opacity = getOpacity()
       } else {
