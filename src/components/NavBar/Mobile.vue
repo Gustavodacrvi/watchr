@@ -6,11 +6,16 @@
   >
     <div class="mobile-wrapper">
       <div class="search" ref="search">
-        <Icon class="cursor remove-highlight"
-          icon="search"
-          @click="openSearchBar"
-          :circle="true"
-        />
+        <div class="search-icon-wrapper">
+          <svg class="svg search-el" viewBox="0 0 12.375 12.375" width='43px' height='43px'>
+            <circle ref='circle' class="pie" stroke-dasharray="0 100" fill="none" stroke="var(--light-gray)" stroke-width="6" cx="50%" cy="50%" r="3"/>
+          </svg>
+          <Icon class="cursor remove-highlight search-el"
+            icon="search"
+            @click="openSearchBar"
+            :circle="true"
+          />
+        </div>
       </div>
       <div class="central">
         <span @click="openMenu">
@@ -63,7 +68,7 @@ import LogoVue from '../Illustrations/Logo.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
-const MAXIMUM_TOUCH_DISTANCE = 125
+const MAXIMUM_TOUCH_DISTANCE = 140
 
 export default {
   components: {
@@ -83,27 +88,19 @@ export default {
     move(x, transition) {
       if (x > MAXIMUM_TOUCH_DISTANCE) return undefined
       const s = this.$refs.search.style
+      const cir = this.$refs.circle.style
 
       const getOpacity = () =>  x / MAXIMUM_TOUCH_DISTANCE
       const getTransform = () => {
         const scale = 1 + (.6 * x / MAXIMUM_TOUCH_DISTANCE)
         return `translateY(${x}px) scale(${scale}, ${scale})`
       }
-
-      /*
-
-        1.4  -   100
-        x    -    d
-
-        x100 = 1.4 d
-
-        x = 1.4 .d / 100
-        
-      */
+      const getStrokeDasharray = () => `${19 * x / MAXIMUM_TOUCH_DISTANCE} 100`
       
       if (!transition) {
         s.transform = getTransform()
         s.opacity = getOpacity()
+        cir.strokeDasharray = getStrokeDasharray()
       }
     },
     touchmove(evt) {
@@ -191,6 +188,10 @@ export default {
   position: relative;
 }
 
+.search-el {
+  position: absolute;
+}
+
 .search {
   box-sizing: border-box;
   display: flex;
@@ -199,6 +200,22 @@ export default {
   position: absolute;
   top: -20px;
   opacity: 0;
+  overflow: visible;
+}
+
+.search-icon-wrapper {
+  overflow: visible;
+  position: relative;
+}
+
+.svg {
+  transform: translate(-10px,-10px);
+}
+
+.pie {
+  /* transition: color 0s, stroke-dasharray .7s; */
+  transform: rotate(-90deg);
+  transform-origin: 50%;
 }
 
 .Icon {
