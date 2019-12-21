@@ -1,14 +1,15 @@
 <template>
-  <div class="ActionButtons passive" :class="[platform, {moving}]" @click="click">
+  <div class="ActionButtons passive" :class="[platform, {moving, notMoving: !moving}]" @click="click">
     <Btn v-if="showHeader" class="header button handle action-button left-act" id="edit-component"
       icon='heading'
+      onMoveIcon='plus'
       color='white'
       data-type='headingbutton'
       :txt='l["Add heading"]'
     />
     <span v-else></span>
     <Btn class="add button handle action-button task-adder right-act" id="edit-component"
-      icon='plus'
+      icon='inbox'
       color='white'
       data-type='floatbutton'
       :txt='l["Add task"]'
