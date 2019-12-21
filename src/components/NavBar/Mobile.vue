@@ -8,12 +8,13 @@
       <div class="search" ref="search">
         <div class="search-icon-wrapper">
           <svg class="svg search-el" viewBox="0 0 12.375 12.375" width='43px' height='43px'>
-            <circle ref='circle' class="pie" stroke-dasharray="0 100" fill="none" stroke="var(--light-gray)" stroke-width="6" cx="50%" cy="50%" r="3"/>
+            <circle ref='circle' class="pie" stroke-dasharray="0 100" fill="none" :stroke="circleStroke" stroke-width="6" cx="50%" cy="50%" r="3"/>
           </svg>
           <Icon class="cursor remove-highlight search-el"
             icon="search"
-            @click="openSearchBar"
+            :color="searchColor"
             :circle="true"
+            @click="openSearchBar"
           />
         </div>
       </div>
@@ -79,6 +80,17 @@ export default {
   data() {
     return {
       y: 0,
+
+      search: {
+        r: 179,
+        g: 179,
+        b: 179,
+      },
+      circle: {
+        r: 41,
+        g: 41,
+        b: 41,
+      },
     }
   },
   methods: {
@@ -90,6 +102,9 @@ export default {
       const s = this.$refs.search.style
       const cir = this.$refs.circle.style
 
+      const transitionColor = (oldNum, newNum) => (newNum * x / MAXIMUM_TOUCH_DISTANCE) + oldNum - (oldNum * x / MAXIMUM_TOUCH_DISTANCE)
+
+
       const getOpacity = () =>  x / MAXIMUM_TOUCH_DISTANCE
       const getTransform = () => {
         const scale = 1 + (.6 * x / MAXIMUM_TOUCH_DISTANCE)
@@ -97,11 +112,23 @@ export default {
       }
       const getStrokeDasharray = () => `${19 * x / MAXIMUM_TOUCH_DISTANCE} 100`
       
-      if (!transition) {
-        s.transform = getTransform()
-        s.opacity = getOpacity()
-        cir.strokeDasharray = getStrokeDasharray()
-      }
+      const dur = transition ? '.8s' : '0s'
+
+      s.transitionDuration = dur
+      cir.transitionDuration = dur
+
+      s.transform = getTransform()
+      s.opacity = getOpacity()
+      cir.strokeDasharray = getStrokeDasharray()
+      
+      this.circle.r = transitionColor(41, 89)
+      this.circle.g = transitionColor(41, 160)
+      this.circle.b = transitionColor(41, 222)
+
+      const newOffset = transitionColor(179, 28)
+      this.search.r = newOffset
+      this.search.g = newOffset
+      this.search.b = newOffset
     },
     touchmove(evt) {
       const diff = evt.touches[0].screenY - this.y
@@ -109,7 +136,7 @@ export default {
       this.move(diff)
     },
     touchend() {
-      this.move(0)
+      this.move(0, true)
     },
     
     openMenu() {
@@ -136,6 +163,14 @@ export default {
       selectedTasks: state => state.selectedTasks,
     }),
     ...mapGetters(['l']),
+    searchColor() {
+      const {r,g,b} = this.search
+      return `rgb(${r}, ${g}, ${b})`
+    },
+    circleStroke() {
+      const {r,g,b} = this.circle
+      return `rgb(${r}, ${g}, ${b})`
+    },
     showIcons() {
       return this.isOnUserPage && this.navBar && this.navBar.options
     },
@@ -197,6 +232,7 @@ export default {
   display: flex;
   justify-content: center;
   width: 100%;
+  height: 20px;
   position: absolute;
   top: -20px;
   opacity: 0;
@@ -204,6 +240,7 @@ export default {
 }
 
 .search-icon-wrapper {
+  transform: translateX(-7px);
   overflow: visible;
   position: relative;
 }
