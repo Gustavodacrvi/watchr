@@ -75,6 +75,8 @@ export default {
   'Add filter': "Add filter",
   "Edit filter": "Edit filter",
   "Filter added successfully!": "Filter added successfully!",
+  "Must be in at list one of the lists:": "Must be in at list one of the lists:",
+  "No lists selected": "No lists selected",
   "Filter edited successfully!": "Filter edited successfully!",
   "This filter already exists": "This filter already exists",
   "Fill in all the required fields.": "Fill in all the required fields.",

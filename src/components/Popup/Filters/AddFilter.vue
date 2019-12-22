@@ -17,6 +17,7 @@
         <div v-for="i in tabs" :key="i.icon"
           class="element cursor remove-highlight"
           @click="comp = i.icon"
+          :class="{active: i.icon === comp}"
         >
           <Icon
             :icon='i.icon'
@@ -42,12 +43,13 @@ import ButtonVue from '../../Auth/Button.vue'
 import Icon from '@/components/Icon.vue'
 
 import priority from './FilterTabs/priority.vue'
+import tasks from './FilterTabs/tasks.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    Icon, priority,
+    Icon, priority, tasks,
     DropInput: DropInputVue,
     ButtonApp: ButtonVue,
   },
@@ -62,11 +64,18 @@ export default {
           icon: 'priority',
           color: 'var(--yellow)',
         },
+        {
+          icon: 'tasks',
+          color: 'var(--primary)',
+        },
       ],
       filterOptions: {
         priority: {
           inclusiveOR: [],
         },
+        tasks: {
+          inclusiveOR: [],
+        }
       },
     }
   },
@@ -151,7 +160,7 @@ export default {
 <style scoped>
 
 .options-wrapper {
-  margin: 6px;
+  margin: 12px;
 }
 
 .header {
@@ -176,7 +185,7 @@ export default {
   background-color: var(--light-gray);
 }
 
-.element:active {
+.element:active, .element.active {
   background-color: var(--extra-light-gray);
 }
 

@@ -27,6 +27,8 @@ export default {
   'Filter name': "Nome do filtro",
   'Add filter': "Adicionar filtro",
   "Edit filter": "Editar filtro",
+  "Must be in at list one of the lists:": "Deve estar em apenas em uma das listas:",
+  "No lists selected": "Nenhuma lista selecionada",
   "Filter added successfully!": "Filtro adicionado com sucesso!",
   "Filter edited successfully!": "Filtro editado com sucesso!",
   "This filter already exists": "Esse filtro já existe",
