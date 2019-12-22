@@ -119,10 +119,12 @@ export default {
       this.select(this.selectedMoment.clone())
     },
     nextMonth() {
+      this.$emit('calc')
       this.visualMoment.add(1, 'M')
       this.$forceUpdate()
     },
     previousMonth() {
+      this.$emit('calc')
       this.visualMoment.subtract(1, 'M')
       this.$forceUpdate()
     },

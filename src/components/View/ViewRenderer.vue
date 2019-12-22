@@ -157,11 +157,13 @@ export default {
 
         const x = Math.abs(this.diffX)
 
-        if ((Math.abs(this.diffY) > 40)) {
+        if ((Math.abs(this.diffY) > 50)) {
           this.touchFail = true
           this.transform(0, true)
         } else {
-          this.transform(this.diffX)
+          if (x > 20)
+            this.transform(this.diffX)
+          else this.transform(0)
 
           if (x > MINIMUM_DISTANCE) {
             this.right = this.diffX > 0
@@ -874,7 +876,7 @@ export default {
   margin-top: -4px;
 }
 
-.handler-wrapper {
+.mobile .handler-wrapper {
   overflow: hidden;
 }
 

@@ -77,7 +77,7 @@ import utils from '@/utils/'
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
-  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'string', 'selectedtype'],
+  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'string', 'selectedtype', 'showColor'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -91,6 +91,8 @@ export default {
       top: 0,
       doingTransition: false,
       allowMobileOptions: false,
+
+      selectedTasks: [],
     }
   },
   mounted() {
@@ -186,7 +188,7 @@ export default {
       if (this.callback && !this.showSpecialInfo) this.callback()
       else if (this.isOnControl && this.selectedEmpty) this.$emit('select')
       else if (this.showSpecialInfo && !this.selectedEmpty) {
-        this.$emit('apply', this.selectedtype)
+        this.$emit('apply', {type: this.selectedtype, tasks: this.selectedTasks})
         this.$store.commit('clearSelected')
       }
     }
@@ -195,7 +197,7 @@ export default {
     ...mapState({
       drag: 'drag',
       isOnControl: 'isOnControl',
-      selectedTasks: 'selectedTasks',
+      storeTasks: 'selectedTasks',
       viewName: 'viewName',
       storeViewType: 'viewType',
     }),
@@ -229,6 +231,11 @@ export default {
     },
   },
   watch: {
+    storeTasks() {
+      setTimeout(() => {
+        this.selectedTasks = [...this.storeTasks]
+      }, 50)
+    },
     options() {
       this.bindOptions()
     },

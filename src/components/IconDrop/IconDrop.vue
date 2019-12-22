@@ -230,6 +230,7 @@ export default {
   padding: 18px 0;
   overflow: hidden;
   transition-duration: .15s;
+  will-change: height, width;
   z-index: 5;
 }
 

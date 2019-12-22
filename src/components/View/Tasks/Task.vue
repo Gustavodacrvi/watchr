@@ -37,29 +37,31 @@
               <transition
                 @enter='circleEnter'
               >
-                <div v-if="showCircle" class="circle-trans-transition" :style="{left, top, backgroundImage: `radial-gradient(${innerColor}, ${outerColor})`}"></div>
+                <div v-show="showCircle" class="circle-trans-transition" :style="{left, top, backgroundImage: `radial-gradient(${innerColor}, ${outerColor})`}"></div>
               </transition>
             </div>
           </div>
           <div class="cont"
             v-longclick='longClick'
           >
-            <div class="check cursor remove-highlight"
-              @click="completeTask"
+            <div class="check"
               @mouseenter="iconHover = true"
               @mouseleave="iconHover = false"
               @touchstart.passive.stop
               @mousedown.passive.stop
             >
-              <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon"
+              <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon cursor remove-highlight" @click="completeTask"
                 :icon="`box${isSomeday ? '-dash' : ''}`"
                 :color='circleColor'
+                :stop='true'
                 width="18px"
               />
-              <Icon v-else :circle='true' class="icon check-icon"
+              <Icon v-else :circle='true' class="icon check-icon cursor remove-highlight"
                 :icon="`box-check${isSomeday ? '-dash' : ''}`"
                 :color='circleColor'
                 width="18px"
+                :stop='true'
+                @click="completeTask"
               />
             </div>
             <div class="text">
@@ -269,9 +271,6 @@ export default {
       const touch = e.changedTouches[0]
       const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
       const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
-
-      /* if (this.move || (time > 200) || movedFingerX || movedFingerY)
-        this.deselectTask() */
 
       if (!this.move && (time < 201) && !movedFingerX && !movedFingerY)
         this.selectTask()
@@ -764,6 +763,7 @@ export default {
 }
 
 .circle-trans-transition {
+  will-change: opacity, height, width, left, top;
   position: absolute;
   transform: translate(-50%, -50%);
   opacity: .4;
@@ -787,6 +787,7 @@ export default {
 }
 
 .cont-wrapper {
+  will-change: height, width;
   transition-duration: .25s;
   height: 38px;
 }

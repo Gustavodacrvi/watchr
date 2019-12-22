@@ -5,6 +5,7 @@
       icon="tag"
       iconColor='var(--red)'
       :enableSort='true'
+      :showColor='true'
       :list="getTags"
       :active="active"
       :viewType="viewType"

@@ -59,7 +59,7 @@ export default {
     click(evt) {
       const els = evt.path
       for (const e of els)
-        if (e.classList.contains('task-adder')) {
+        if (e.classList && e.classList.contains('task-adder')) {
           setTimeout(() => {
             this.$store.dispatch('pushPopup', {comp: 'AddTask', naked: true,})
           }, 50)

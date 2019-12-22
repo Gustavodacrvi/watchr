@@ -86,7 +86,7 @@ import boxCheckDash from '@/assets/icons/box-check-dash.svg'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['icon', 'width', 'color', 'progress', 'svg', 'file', 'shadow', 'circle'],
+  props: ['icon', 'width', 'color', 'progress', 'svg', 'file', 'shadow', 'circle', 'stop'],
   data() {
     return {
       activate: false,
@@ -113,7 +113,10 @@ export default {
     }
   },
   methods: {
-    iconClick() {
+    iconClick(evt) {
+      if (this.stop)
+        evt.stopPropagation()
+      
       this.$emit('click')
       if (this.file && this.fileInput)
         this.fileInput.click()

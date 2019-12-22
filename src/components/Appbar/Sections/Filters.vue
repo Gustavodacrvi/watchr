@@ -1,13 +1,18 @@
 <template>
   <div class="Filters">
     <Renderer
+      v-bind="$props"
+
       type="filter"
       icon="filter"
-      :list="getLists"
-      :active="active"
-      :viewType="viewType"
+      iconColor='var(--dark-blue)'
+      :enableSort='true'
+      :list="getFilters"
+      :mapNumbers='numberOfTasks'
+      @buttonAdd='buttonAdd'
       @update='update'
     />
+    <div style="height: 100px"></div>
   </div>
 </template>
 
@@ -15,7 +20,9 @@
 
 import RendererVue from '../Renderer.vue'
 
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
+
+// import utilsFilter from '@/utils/filter'
 
 export default {
   components: {
@@ -25,40 +32,42 @@ export default {
   methods: {
     update(ids) {
       this.$store.dispatch('filter/updateOrder', ids)
+    },
+    numberOfTasks(filter) {
+      return {
+        total: this.getNumberOfTasksByFilter(filter.id).total,
+      }
+    },
+    buttonAdd(obj) {
+      this.$store.dispatch('pushPopup', {comp: 'AddFilter', payload: {...obj}, naked: true})
     }
   },
   computed: {
+    ...mapState(['selectedTasks']),
+    ...mapGetters({
+      getNumberOfTasksByFilter: 'task/getNumberOfTasksByFilter',
+      l: 'l',
+      isDesktop: 'isDesktop',
+    }),
     sortedFilters() {
       return this.$store.getters['filter/sortedFilters']
     },
-    getLists() {
-      let tags = this.sortedFilters.slice()
-      for (const el of tags) {
-        el.callback = () => {
-          this.$router.push('/user?filter=' + el.name)
+    getFilters() {
+      let filters = this.sortedFilters.slice()
+      for (const filter of filters) {
+        filter.callback = () => {
+          this.$router.push('/user?filter=' + filter.name)
         }
-        el.options = [
-          {
-            name: 'Edit filter',
-            icon: 'pen',
-            callback: () => {
-              this.$store.dispatch('pushPopup', {
-                comp: 'AddFilter', payload: el, naked: true,
-              })
-            },
-          },
-          {
-            name: 'Delete filter',
-            icon: 'trash',
-            callback: () => {
-              this.$store.dispatch('tag/deleteTag', el.id)
-            }
-          }
-        ]
+        filter.options = utilsFilter.filterOptions(filter)
       }
-      return tags
+      return filters
     },
   },
+  watch: {
+    getFilters() {
+      this.$emit('view-list', this.getFilters.map(el => ({viewName: el.name, viewType: 'filter'})))
+    }
+  }
 }
 
 </script>

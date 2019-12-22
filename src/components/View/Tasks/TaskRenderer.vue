@@ -162,11 +162,11 @@ export default {
       isDragging: false,
       justScrolled: false,
       movingHeading: false,
-      addedTask: null,
       waitingUpdateTimeout: null,
-      numberOfTimeoutUpdates: 0,
 
+      addedTask: null,
       hasEdit: null,
+      edit: null,
       focusToggle: false,
 
       lastSelectedId: null,
@@ -242,16 +242,19 @@ export default {
       if (i > -1) {
         this.lazyTasks.splice(i, 1)
         this.hasEdit = false
+        this.edit = null
       }
     },
     addEdit(isEdit, index, onSave, propsData) {
       this.removeEdit()
-      this.lazyTasks.splice(index, 0, {
+      const edit = {
         isEdit,
         onSave,
         propsData,
-      })
+      }
+      this.lazyTasks.splice(index, 0, edit)
       this.hasEdit = true
+      this.edit = {...edit}
     },
     addTaskEdit(index) {
       this.addEdit('Edit', index, this.add, {
@@ -690,33 +693,6 @@ export default {
         this.changedViewName = false
       })
     },
-    updateLazyTasks(tasks, addedId, hasEdit) {
-      if (hasEdit && addedId) {
-        const taskIndex = tasks.findIndex(el => el.id === addedId)
-        if (taskIndex > -1) {
-          const editIndex = this.lazyTasks.findIndex(el => el.isEdit)
-          if (editIndex > -1) {
-            tasks.splice(taskIndex + 1, 0, this.lazyTasks[editIndex])
-          }
-        }
-      }
-
-      this.lazyTasks = tasks
-    },
-    updateTasks(tasks) {
-      setTimeout(() => {
-        if (!this.changedViewName) {
-          this.clearLazySettimeout()
-
-
-          this.updateLazyTasks([...tasks], this.addedTask, this.hasEdit)
-
-          setTimeout(() => {
-            this.focusToggle = !this.focusToggle
-          })
-        }
-      })
-    },
   },
   computed: {
     ...mapState({
@@ -776,19 +752,34 @@ export default {
     },
   },
   watch: {
-    selectedTasks() {
-      console.log(this.selectedTasks)
-    },
     tasks(tasks) {
       if (this.waitingUpdateTimeout) {
         clearTimeout(this.waitingUpdateTimeout)
-        this.numberOfTimeoutUpdates++
+        this.waitingUpdateTimeout = null
       }
       
       this.waitingUpdateTimeout = setTimeout(() => {
-        this.updateTasks(tasks)
-        this.numberOfTimeoutUpdates = 0
-      }, (this.numberOfTimeoutUpdates * 150) + 150)
+        if (!this.changedViewName) {
+          this.clearLazySettimeout()
+
+
+          if (this.hasEdit && this.addedTask && this.edit) {
+            const oldEditIndex = this.lazyTasks.findIndex(el => el.isEdit)
+            if (oldEditIndex > -1)
+              this.lazyTasks.splice(oldEditIndex, 1)
+            const taskIndex = tasks.findIndex(el => el.id === this.addedTask)
+            if (taskIndex > -1) {
+              tasks.splice(taskIndex + 1, 0, this.edit)
+            }
+          }
+
+          this.lazyTasks = tasks
+
+          setTimeout(() => {
+            this.focusToggle = !this.focusToggle
+          })
+        }
+      }, 20)
     },
     headings(newArr) {
       if (this.isRoot) {
