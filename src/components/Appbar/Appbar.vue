@@ -21,6 +21,7 @@
                 :enableSort='true'
                 :disabled='false'
                 :disableSelection='true'
+                :showColor='true'
                 :list='getLinksOrdered'
                 :active='value'
                 :onTaskDrop='onTaskDrop'

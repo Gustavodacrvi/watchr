@@ -77,7 +77,7 @@ import utils from '@/utils/'
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
-  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'string', 'selectedtype'],
+  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'string', 'selectedtype', 'showColor'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,

@@ -14,6 +14,7 @@
         :iconColor='getIconColor(el)'
         :icon="getIcon(el)"
         :selectedtype='el.type'
+        :showColor='showColor'
 
         :type="type"
         :subListIcon='subListIcon'
@@ -54,7 +55,7 @@ export default {
   components: {
     AppbarElement: AppbarElementVue,
   },
-  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd'],
+  props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor'],
   data() {
     return {
       sortable: null,
