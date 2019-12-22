@@ -25,6 +25,7 @@ import Confirm from './Auth/Confirm.vue'
 import Icon from '../Icon.vue'
 import AddTask from './Tasks/AddTask.vue'
 import AddTag from './Tags/AddTag.vue'
+import AddFilter from './Filters/AddFilter.vue'
 import AddTagNote from './Tags/AddTagNote.vue'
 import AddList from './Lists/AddList.vue'
 import AddListNote from './Lists/AddListNote.vue'
@@ -37,7 +38,7 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   components: {
     Signup, SigninOptions, Signin, AddTag,
-    AddListNote, AddTagNote, Icon, AddList,
+    AddListNote, AddTagNote, Icon, AddList, AddFilter,
     AddTask, Updates, ChangeUsername, ChangeEmail,
     Confirm, AddHeadingNote, AddFolder, Profile,
   },
