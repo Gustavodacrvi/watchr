@@ -44,12 +44,14 @@ import Icon from '@/components/Icon.vue'
 
 import priority from './FilterTabs/priority.vue'
 import tasks from './FilterTabs/tasks.vue'
+import calendar from './FilterTabs/calendar.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
     Icon, priority, tasks,
+    calendar,
     DropInput: DropInputVue,
     ButtonApp: ButtonVue,
   },
