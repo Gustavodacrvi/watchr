@@ -25,7 +25,11 @@
         </div>
       </div>
       <transition name="fade-t" mode="out-in">
-        <component :is="comp"/>
+        <component class="component-options" :is="comp"
+          v-bind="{
+            options: filterOptions[comp],
+          }"
+        />
       </transition>
     </div>
   </div>
@@ -59,6 +63,11 @@ export default {
           color: 'var(--yellow)',
         },
       ],
+      filterOptions: {
+        priority: {
+          inclusiveOR: [],
+        },
+      },
     }
   },
   created() {
@@ -169,6 +178,10 @@ export default {
 
 .element:active {
   background-color: var(--extra-light-gray);
+}
+
+.component-options {
+  margin: 8px;
 }
 
 </style>

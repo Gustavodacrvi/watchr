@@ -31,6 +31,7 @@ export default {
   "Filter edited successfully!": "Filtro editado com sucesso!",
   "This filter already exists": "Esse filtro já existe",
   "Fill in all the required fields.": "Preencha todos os campos.",
+  "Must have at least one of:": "Precisa ter pelo menos um dos:",
   'Hide completed': 'Esconder completadas',
   'Lists': 'Listas',
   'Filters': 'Filtros',

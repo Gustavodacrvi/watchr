@@ -78,6 +78,7 @@ export default {
   "Filter edited successfully!": "Filter edited successfully!",
   "This filter already exists": "This filter already exists",
   "Fill in all the required fields.": "Fill in all the required fields.",
+  "Must have at least one of:": "Must have at least one of:",
   'Filters': 'Filters',
   'Add list notes': 'Add list notes',
   "Sort filters by name": "Sort filters by name",
