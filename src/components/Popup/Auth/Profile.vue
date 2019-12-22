@@ -102,6 +102,11 @@ export default {
           name: 'Tags',
           icon: 'tag',
           color: 'var(--red)'
+        },
+        {
+          name: 'Filters',
+          icon: 'filter',
+          color: 'var(--dark-blue)'
         }
       ],
       appnavSmartViews: [

@@ -108,8 +108,8 @@
 import IconVue from '../Icon.vue'
 import AppbarElementVue from './AppbarElement.vue'
 import ListsVue from './Sections/Lists.vue'
-import TagsVue from './Sections/Tags.vue'
 import FiltersVue from './Sections/Filters.vue'
+import TagsVue from './Sections/Tags.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import RendererVue from './Renderer.vue'
 import SearchButtonVue from './SearchButton.vue'
@@ -190,9 +190,9 @@ export default {
         {
           name: 'Lists',
         },
-        /*         {
+                {
           name: 'Filters',
-        }, */
+        },
         {
           name: 'Tags',
         },
@@ -368,6 +368,7 @@ export default {
       switch (type) {
         case 'Tags': return 'tag'
         case 'Lists': return 'tasks'
+        case 'Filters': return 'filter'
       }
     },
   },
@@ -387,6 +388,7 @@ export default {
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView',
       favLists: 'list/getFavoriteLists',
+      // getfavfilters
       isTaskCompleted: 'task/isTaskCompleted',
       favFolders: 'folder/getFavoriteFolders',
       favTags: 'tag/getFavoriteTags',
@@ -593,12 +595,12 @@ export default {
       const dispatch = this.$store.dispatch
       return [
         {
-          name: 'Add filter',
+          name: this.l['Add filter'],
           icon: 'filter',
           callback: () => dispatch('pushPopup', {comp: 'AddFilter', naked: true}),
         },
         {
-          name: 'Sort lists by name',
+          name: this.l['Sort filters by name'],
           icon: 'sort-name',
           callback: () => dispatch('list/sortFiltersByName'),
         }

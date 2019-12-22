@@ -33,7 +33,7 @@
         :progress='getProgress(el)'
         :helpIcons='getExraIcon(el)'
         :string='getString(el)'
-        @apply='type => applyEmit(el.id, type)'
+        @apply='obj => applyEmit(el.id, obj)'
         @select='() => selectEl(el.id)'
 
         :data-id="el.id"
@@ -202,11 +202,11 @@ export default {
       if (!this.mapHelpIcon) return undefined
       return this.mapHelpIcon(el)
     },
-    applyEmit(elId, type) {
+    applyEmit(elId, {tasks, type}) {
       if (!this.isSmart)
         this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
           elIds: [elId],
-          taskIds: this.selectedTasks,
+          taskIds: tasks,
           type: type ? type : this.type,
         })
       this.$emit('apply', elId)
