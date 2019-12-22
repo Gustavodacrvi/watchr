@@ -12,6 +12,22 @@
       @cancel="$emit('close')"
       @enter='addFilter'
     />
+    <div class="options-wrapper">
+      <div class="header">
+        <div v-for="i in tabs" :key="i.icon"
+          class="element cursor remove-highlight"
+          @click="comp = i.icon"
+        >
+          <Icon
+            :icon='i.icon'
+            :color='i.color'
+          />
+        </div>
+      </div>
+      <transition name="fade-t" mode="out-in">
+        <component :is="comp"/>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -19,11 +35,15 @@
 
 import DropInputVue from '../../Auth/DropInput.vue'
 import ButtonVue from '../../Auth/Button.vue'
+import Icon from '@/components/Icon.vue'
+
+import priority from './FilterTabs/priority.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
+    Icon, priority,
     DropInput: DropInputVue,
     ButtonApp: ButtonVue,
   },
@@ -31,6 +51,14 @@ export default {
     return {
       name: '',
       options: [],
+
+      comp: 'priority',
+      tabs: [
+        {
+          icon: 'priority',
+          color: 'var(--yellow)',
+        },
+      ],
     }
   },
   created() {
@@ -110,6 +138,40 @@ export default {
 }
 
 </script>
+
+<style scoped>
+
+.options-wrapper {
+  margin: 6px;
+}
+
+.header {
+  display: flex;
+  height: 35px;
+  overflow: hidden;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.element {
+  flex-basis: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: scale(1,1);
+  transition-duration: .2s;
+}
+
+.element:hover {
+  background-color: var(--light-gray);
+}
+
+.element:active {
+  background-color: var(--extra-light-gray);
+}
+
+</style>
 
 <style scoped src="@/assets/css/popupAuth.css">
 </style>
