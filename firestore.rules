@@ -14,6 +14,10 @@ service cloud.firestore {
         allow create: if isSignedIn();
         allow read, update, delete: if isOwner();
       }
+      match /filters/{tag} {
+        allow create: if isSignedIn();
+        allow read, update, delete: if isOwner();
+      }
       match /lists/{li} {
         allow create: if isSignedIn();
         allow update, read, delete: if isOwner();

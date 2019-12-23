@@ -10,47 +10,40 @@
     @touchend.passive='touchEnd'
     v-longclick='longClick'
   >
-    <a class='scroll-link'
-      :href="isDesktop ? '' : '#view-header'"
-      @click.prevent
-      @contextmenu.prevent
-      v-smooth-scroll='{duration: 500, offset: -500}'
+    <div
+      class="link-wrapper cursor remove-highlight AppbarElement-link rb"
+      :data-type='type'
+      :data-selectedtype='selectedtype'
+      :data-color='iconColor'
+      :data-disabled='disableAction'
     >
-      <div
-        class="link-wrapper cursor remove-highlight AppbarElement-link rb"
-        :data-type='type'
-        :data-selectedtype='selectedtype'
-        :data-color='iconColor'
-        :data-disabled='disableAction'
-      >
-        <div class="icon-wrapper">
-          <Icon class="main-icon"
-            :style="hoverStyle"
-            :class="{notActive: !isActive}"
-            :icon="icon"
-            :progress='progress'
-            :circle='true'
-          />
-        </div>
-        <div class="name-wrapper">
-          <transition name="name-t">
-            <span v-if="!showSpecialInfo" key="normal" class="name" :style="hoverStyle">{{ getName }}</span>
-            <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
-          </transition>
-          <div class="info">
-            <template v-if="helpIcons">
-              <Icon v-for="i in helpIcons" :key="i" class="inf faded"
-                :icon='i'
-                :circle='true'
-              />
-            </template>
-            <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
-            <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
-            <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
-          </div>
+      <div class="icon-wrapper">
+        <Icon class="main-icon"
+          :style="hoverStyle"
+          :class="{notActive: !isActive}"
+          :icon="icon"
+          :progress='progress'
+          :circle='true'
+        />
+      </div>
+      <div class="name-wrapper">
+        <transition name="name-t">
+          <span v-if="!showSpecialInfo" key="normal" class="name" :style="hoverStyle">{{ getName }}</span>
+          <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
+        </transition>
+        <div class="info">
+          <template v-if="helpIcons">
+            <Icon v-for="i in helpIcons" :key="i" class="inf faded"
+              :icon='i'
+              :circle='true'
+            />
+          </template>
+          <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
+          <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
+          <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
         </div>
       </div>
-    </a>
+    </div>
     <CircleBubble
       innerColor='var(--light-gray)'
       outerColor='var(--gray)'
@@ -109,6 +102,9 @@ export default {
     },
     touchStart(e) {
       this.isTouching = true
+      const touch = e.changedTouches[0]
+      this.startX = touch.clientX
+      this.startY = touch.clientY
     },
     touchEnd(e) {
       this.isTouching = false

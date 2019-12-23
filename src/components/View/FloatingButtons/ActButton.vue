@@ -1,6 +1,6 @@
 <template>
-  <div class="ActButton handle" :class="platform">
-    <div class="floating">
+  <div class="ActButton floating-button-handle" :class="platform">
+    <div class="floating no-pointer">
       <div class="inner-ball-button cb shadow remove-highlight">
         <Icon class="icon"
           :icon="icon"
@@ -9,13 +9,13 @@
         <div class="path"></div>
       </div>
     </div>
-    <div class="floating-btn-msg task-act" :style='styles'>
+    <div class="floating-btn-msg task-act no-pointer" :style='styles'>
       {{ txt }}
     </div>
-    <div class="floating-btn-msg tags-act" :style='styles'>
+    <div class="floating-btn-msg tags-act no-pointer" :style='styles'>
       {{ l["Add tag"] }}
     </div>
-    <div class="floating-btn-msg list-act" :style='styles'>
+    <div class="floating-btn-msg list-act no-pointer" :style='styles'>
       {{ l["Add list"] }}
     </div>
   </div>
@@ -51,6 +51,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  transition-duration: 0s !important;
 }
 
 .floating {
@@ -72,6 +73,10 @@ export default {
   overflow: hidden;
   cursor: pointer;
   border-radius: 100px;
+}
+
+.no-pointer {
+  pointer-events: none;
 }
 
 .mobile .inner-ball-button {

@@ -27,6 +27,7 @@
           @pointerup='stopPropagation'
           @pointerdown='pointerDown'
           @touchcancel.stop
+          ref='cont-wrapper'
           
           @touchend.passive='touchEnd'
           @touchmove.passive='touchmove'
@@ -122,7 +123,7 @@ import utils from '@/utils/index'
 import mom from 'moment/src/moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject'],
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName'],
   components: {
     Timeline,
     Icon: IconVue,
@@ -148,6 +149,7 @@ export default {
       startX: 0,
       startY: 0,
       startTime: 0,
+      initialScroll: 0,
 
       move: false,
     }
@@ -163,7 +165,10 @@ export default {
   },
   methods: {
     stopPropagation(evt) {
-      if (!this.isDesktop)
+      const time = new Date() - this.startTime
+      const scrolled = Math.abs((document.scrollingElement.scrollTop - this.initialScroll)) > 20
+
+      if (!this.isDesktop && time < 300 && !scrolled)
         evt.stopPropagation()
     },
     bindContextMenu(options) {
@@ -174,17 +179,19 @@ export default {
       if (cont) {
         const s = cont.style
 
-        s.transitionDuration = '0'
-        s.opacity = 0
-        s.height = '0px'
-        
-        setTimeout(() => {
-          s.transitionDuration = '.25s'
-          s.opacity = 1
-          s.height = this.taskHeight + 'px'
-        })
-        
-        setTimeout(done, 249)
+        if (this.changingViewName && !this.isDesktop) done()
+        else {
+          s.transitionDuration = '0'
+          s.opacity = 0
+          s.height = '0px'
+          
+          setTimeout(() => {
+            s.transitionDuration = '.25s'
+            s.opacity = 1
+            s.height = this.taskHeight + 'px'
+          })
+          setTimeout(done, 249)
+        }
       }
     },
     deselectTask() {
@@ -254,10 +261,10 @@ export default {
       this.startX = e.changedTouches[0].clientX
       this.startY = e.changedTouches[0].clientY
       const rect = e.target.getBoundingClientRect()
-      const scroll = document.scrollingElement.scrollTop
+      this.initialScroll = document.scrollingElement.scrollTop
       if (!this.doingTransition) {
         this.left = (e.targetTouches[0].pageX - rect.left) + 'px'
-        this.top = (e.targetTouches[0].pageY - rect.top - scroll) + 'px'
+        this.top = (e.targetTouches[0].pageY - rect.top - this.initialScroll) + 'px'
         this.showCircle = true
       }
     },
@@ -265,6 +272,7 @@ export default {
       this.move = true
     },
     touchEnd(e) {
+      const scrolled = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 20
       const time = new Date() - this.startTime
       
       this.isTouching = false
@@ -272,11 +280,11 @@ export default {
       const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
       const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
 
-      if (!this.move && (time < 201) && !movedFingerX && !movedFingerY)
+      if (!this.move && !scrolled && (time < 201) && !movedFingerX && !movedFingerY)
         this.selectTask()
 
       if (!movedFingerX && !movedFingerY) {
-        if (this.allowMobileOptions)
+        if (this.allowMobileOptions && !this.scrolled)
           this.openMobileOptions()
       }
       this.allowMobileOptions = false
@@ -790,6 +798,10 @@ export default {
   will-change: height, width;
   transition-duration: .25s;
   height: 38px;
+}
+
+.cont-wrapper.mobile {
+  height: 50px;
 }
 
 .schedule.mobile {

@@ -19,7 +19,7 @@ Vue.config.productionTip = false
 
 import { longClickDirective } from 'vue-long-click'
  
-const longClickInstance = longClickDirective({delay: 300, interval: 5000})
+const longClickInstance = longClickDirective({delay: 500, interval: 5000})
 Vue.directive('longclick', longClickInstance)
 
 new Vue({

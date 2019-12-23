@@ -7,6 +7,13 @@
         @click="runCallback"
       >
         <span class="name" v-html="toast.name"></span>
+        <div v-if="toast.callback" class="bubble">
+          <CircleBubble
+            innerColor='var(--light-gray)'
+            outerColor='var(--gray)'
+            opacity='0'
+          />
+        </div>
       </div>
     </transition>
   </div>
@@ -74,6 +81,12 @@ export default {
   bottom: 40px;
   pointer-events: all;
   transition: background-color .15s;
+}
+
+.bubble {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 .Toast.desktop .toast {
