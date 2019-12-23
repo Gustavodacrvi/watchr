@@ -1,5 +1,11 @@
 <template>
-  <button class="Button cbd" :class="getType" @click="$emit('click')">{{ value }}</button>  
+  <button class="Button cbd" :class="getType" @click="$emit('click')">{{ value }}
+    <CircleBubble
+      innerColor='var(--light-gray)'
+      outerColor='var(--gray)'
+      opacity='0'
+    />
+  </button>  
 </template>
 
 <script>
@@ -27,6 +33,8 @@ export default {
   cursor: pointer;
   transition-duration: .15s;
   outline: none;
+  overflow: hidden;
+  position: relative;
 }
 
 .Button.normal:hover, .Button.normal:focus {

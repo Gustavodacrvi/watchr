@@ -4,8 +4,20 @@
       <div class="nav">
         <div>
           <div v-if="!isDesktop" style="height: 30px"></div>
-          <span class="option rb cursor remove-highlight" :class="{active: 'General' === option}" @click="option = 'General'">General</span>
-          <span class="option rb cursor remove-highlight" :class="{active: 'Appnav' === option}" @click="option = 'Appnav'">Appnav</span>
+          <span class="option rb cursor remove-highlight" :class="{active: 'General' === option}" @click="option = 'General'">General
+            <CircleBubble
+              innerColor='var(--light-gray)'
+              outerColor='var(--gray)'
+              opacity='0'
+            />
+          </span>
+          <span class="option rb cursor remove-highlight" :class="{active: 'Appnav' === option}" @click="option = 'Appnav'">Appnav
+            <CircleBubble
+              innerColor='var(--light-gray)'
+              outerColor='var(--gray)'
+              opacity='0'
+            />
+          </span>
         </div>
         <div>
           <transition name="btn-trans">
@@ -103,11 +115,11 @@ export default {
           icon: 'tag',
           color: 'var(--red)'
         },
-        {
+        /* {
           name: 'Filters',
           icon: 'filter',
           color: 'var(--dark-blue)'
-        }
+        } */
       ],
       appnavSmartViews: [
         {
@@ -329,6 +341,8 @@ export default {
   padding: 0 18px;
   transform: scale(1,1);
   transition-duration: .2s;
+  overflow: hidden;
+  position: relative;
 }
 
 .mobile .option {

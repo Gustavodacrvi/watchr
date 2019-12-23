@@ -54,7 +54,13 @@
                   :tabindex="i + 1 + links.length"
                   @click="moveLine(i)"
                   :data-section="s.name"
-                >{{ l[s.name] }}</div>
+                >{{ l[s.name] }}
+                  <CircleBubble
+                    innerColor='var(--light-gray)'
+                    outerColor='var(--gray)'
+                    opacity='0'
+                  />
+                </div>
                 <div class="line section-line"></div>
               </div>
               <div v-else style="margin-top: 28px"></div>
@@ -759,15 +765,17 @@ export default {
   outline: none;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
+  overflow: hidden;
+  position: relative;
 }
 
 .option:hover {
   color: var(--white);
-  background-color: var(--light-gray);
+  background-color: var(--card);
 }
 
 .option:active {
-  background-color: var(--card);
+  background-color: var(--light-gray);
 }
 
 .sectionActive {

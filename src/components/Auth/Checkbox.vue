@@ -11,6 +11,11 @@
       <Icon v-if="!toggle" icon="box"/>
       <Icon v-else icon="box-check"/>
     </div>
+    <CircleBubble
+      innerColor='var(--light-gray)'
+      outerColor='var(--primary)'
+      opacity='0'
+    />
   </div>
 </template>
 
@@ -49,6 +54,7 @@ export default {
   align-items: center;
   transition-duration: .15s;
   position: relative;
+  overflow: hidden;
 }
 
 .Checkbox:hover {
