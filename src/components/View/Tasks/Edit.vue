@@ -153,7 +153,7 @@
               <Icon
                 class="opt-icon primary-hover cursor"
                 style="margin-right: 7px;margin-top: 2px"
-                width="15px"
+                width="22px"
                 :circle='true'
                 icon='file'
                 :file='true'

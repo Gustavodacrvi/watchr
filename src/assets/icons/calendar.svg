@@ -2,24 +2,24 @@
 <!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="12.653px" height="12.653px" viewBox="0 0 12.653 12.653" enable-background="new 0 0 12.653 12.653" xml:space="preserve">
+	 width="11.375px" height="11.519px" viewBox="0 0 11.375 11.519" enable-background="new 0 0 11.375 11.519" xml:space="preserve">
 <g>
-	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M3.927,11.586
-		c-1.1,0-2-0.9-2-2V4.621c0-1.1,0.9-2,2-2h4.799c1.1,0,2,0.9,2,2v4.965c0,1.1-0.9,2-2,2H3.927z"/>
+	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M2.5,11.019
+		c-1.1,0-2-0.9-2-2V4.054c0-1.1,0.9-2,2-2h6.375c1.1,0,2,0.9,2,2v4.965c0,1.1-0.9,2-2,2H2.5z"/>
 </g>
-<line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="4.889" y1="2.621" x2="4.889" y2="1.067"/>
-<line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="7.73" y1="2.621" x2="7.73" y2="1.067"/>
-<line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="1.927" y1="4.964" x2="10.726" y2="4.964"/>
-<path fill="currentColor" stroke="none" d="M5.062,6.84c0,0.342-0.228,0.619-0.51,0.619H3.787c-0.282,0-0.51-0.277-0.51-0.619l0,0c0-0.342,0.228-0.619,0.51-0.619
-	h0.765C4.834,6.221,5.062,6.498,5.062,6.84L5.062,6.84z"/>
-<path fill="currentColor" stroke="none" d="M7.166,6.84c0,0.342-0.228,0.619-0.51,0.619H5.891c-0.282,0-0.51-0.277-0.51-0.619l0,0c0-0.342,0.228-0.619,0.51-0.619
-	h0.765C6.937,6.221,7.166,6.498,7.166,6.84L7.166,6.84z"/>
-<path fill="currentColor" stroke="none" d="M9.269,6.84c0,0.342-0.228,0.619-0.51,0.619H7.994c-0.282,0-0.51-0.277-0.51-0.619l0,0c0-0.342,0.228-0.619,0.51-0.619
-	h0.765C9.041,6.221,9.269,6.498,9.269,6.84L9.269,6.84z"/>
-<path fill="currentColor" stroke="none" d="M5.062,8.461c0,0.342-0.228,0.619-0.51,0.619H3.787c-0.282,0-0.51-0.277-0.51-0.619l0,0c0-0.342,0.228-0.619,0.51-0.619
-	h0.765C4.834,7.842,5.062,8.119,5.062,8.461L5.062,8.461z"/>
-<path fill="currentColor" stroke="none" d="M7.166,8.461c0,0.342-0.228,0.619-0.51,0.619H5.891c-0.282,0-0.51-0.277-0.51-0.619l0,0c0-0.342,0.228-0.619,0.51-0.619
-	h0.765C6.937,7.842,7.166,8.119,7.166,8.461L7.166,8.461z"/>
-<path fill="currentColor" stroke="none" d="M9.269,8.461c0,0.342-0.228,0.619-0.51,0.619H7.994c-0.282,0-0.51-0.277-0.51-0.619l0,0c0-0.342,0.228-0.619,0.51-0.619
-	h0.765C9.041,7.842,9.269,8.119,9.269,8.461L9.269,8.461z"/>
+<line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.993" y1="2.054" x2="3.993" y2="0.5"/>
+<line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="7.343" y1="2.054" x2="7.343" y2="0.5"/>
+<line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="0.5" y1="4.397" x2="10.875" y2="4.397"/>
+<path fill="currentColor" d="M4.197,6.273c0,0.342-0.269,0.619-0.601,0.619H2.694c-0.332,0-0.601-0.277-0.601-0.619l0,0c0-0.342,0.269-0.619,0.601-0.619
+	h0.902C3.928,5.654,4.197,5.931,4.197,6.273L4.197,6.273z"/>
+<path fill="currentColor" d="M6.677,6.273c0,0.342-0.269,0.619-0.601,0.619H5.174c-0.332,0-0.601-0.277-0.601-0.619l0,0c0-0.342,0.269-0.619,0.601-0.619
+	h0.902C6.408,5.654,6.677,5.931,6.677,6.273L6.677,6.273z"/>
+<path fill="currentColor" d="M9.157,6.273c0,0.342-0.269,0.619-0.601,0.619H7.654c-0.332,0-0.601-0.277-0.601-0.619l0,0c0-0.342,0.269-0.619,0.601-0.619
+	h0.902C8.888,5.654,9.157,5.931,9.157,6.273L9.157,6.273z"/>
+<path fill="currentColor" d="M4.197,7.894c0,0.342-0.269,0.619-0.601,0.619H2.694c-0.332,0-0.601-0.277-0.601-0.619l0,0c0-0.342,0.269-0.619,0.601-0.619
+	h0.902C3.928,7.275,4.197,7.552,4.197,7.894L4.197,7.894z"/>
+<path fill="currentColor" d="M6.677,7.894c0,0.342-0.269,0.619-0.601,0.619H5.174c-0.332,0-0.601-0.277-0.601-0.619l0,0c0-0.342,0.269-0.619,0.601-0.619
+	h0.902C6.408,7.275,6.677,7.552,6.677,7.894L6.677,7.894z"/>
+<path fill="currentColor" d="M9.157,7.894c0,0.342-0.269,0.619-0.601,0.619H7.654c-0.332,0-0.601-0.277-0.601-0.619l0,0c0-0.342,0.269-0.619,0.601-0.619
+	h0.902C8.888,7.275,9.157,7.552,9.157,7.894L9.157,7.894z"/>
 </svg>
