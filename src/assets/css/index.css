@@ -16,7 +16,7 @@ html {
   --primary: #57A0DE;
   --dark: #1c1c1c;
   --appnav-color: #171717;
-  --card: #222222;
+  --card: #1f1f1f;
   --dark-gray: #202020;
   --light-gray: #292929;
   --gray: #515151;
@@ -81,7 +81,7 @@ body, input, button, textarea {
 }
 
 .rb {
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .tac {

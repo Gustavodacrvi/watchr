@@ -8,6 +8,10 @@ import vuetify from '@/plugins/vuetify'
 import VueWorker from 'vue-worker'
 import vueSmoothScroll from 'vue2-smooth-scroll'
 
+import CircleBubble from "@/components/CircleBubble.vue"
+
+Vue.component('CircleBubble', CircleBubble)
+
 Vue.use(vueSmoothScroll)
 Vue.use(VueWorker, '$worker')
 

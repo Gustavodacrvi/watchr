@@ -17,7 +17,7 @@
             :class="{important: l.important}"
             :key="l.name"
             :ref="l.name"
-            @click="l.important ? blink(l.name) : linkCallback(l.callback, l)"
+            @click="linkClick(l)"
             @dblclick="l.important ? linkCallback(l.callback, l) : () => {}"
           >
             <div class="link-cont">
@@ -29,6 +29,10 @@
               <input v-if="l.file" :ref="`file-icondrop-link-${l.name}`" type="file" :accept="l.accept" style="display: none" @change='handleFiles(l)'>
               <span class="name" v-html="priorityParser(l.name)"></span>
             </div>
+            <CircleBubble
+              innerColor='rgba(87,160,222,.1)'
+              outerColor='var(--primary)'
+            />
           </div>
           <div v-else-if="l.type === 'optionsList'" :key="l.name" class="header-link hide-trans">
             <div class="header-name">{{ l.name }}</div>
@@ -62,7 +66,7 @@
 <script>
 
 import Icon from './../Icon.vue'
-import ButtonApp from '@/components/Auth/Button.vue' 
+import ButtonApp from '@/components/Auth/Button.vue'
 
 import { mapGetters } from 'vuex'
 
@@ -79,6 +83,9 @@ export default {
     }
   },
   methods: {
+    linkClick(l) {
+      l.important ? blink(l.name) : this.linkCallback(l.callback, l)
+    },
     blink(ref) {
       const el = this.$refs[ref][0]
       if (el) {
@@ -173,7 +180,11 @@ export default {
   align-items: center;
   transition-duration: .15s;
   white-space: nowrap;
-  height: 35px;
+  height: 38px;
+  border-radius: 8px;
+  margin: 0 18px;
+  overflow: hidden;
+  position: relative;
 }
 
 .link:hover {
@@ -197,7 +208,7 @@ export default {
 .link .link-cont {
   display: flex;
   height: 100%;
-  margin: 0 26px;
+  margin: 0 12px;
   align-items: center;
   justify-content: center;
 }
