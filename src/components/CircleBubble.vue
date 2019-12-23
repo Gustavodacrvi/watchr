@@ -5,7 +5,9 @@
         @enter='enter'
       >
         <div v-if="showing"
-          :style="{left, top, backgroundImage: `radial-gradient(${inner} 0%, ${outer})`}"
+          :style="{left, top,
+            backgroundImage: `radial-gradient(${inner}, ${outer} 49%)`,
+          }"
           class="circle"
         >
         </div>
@@ -16,7 +18,7 @@
 <script>
 
 export default {
-  props: ['innerColor', 'outerColor'],
+  props: ['innerColor', 'outerColor', 'opacity'],
   data() {
     return {
       showing: false,
@@ -68,7 +70,6 @@ export default {
       }
     },
     touchEnd(e) {
-      this.isTouching = false
       const touch = e.changedTouches[0]
       const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
       const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
@@ -88,10 +89,6 @@ export default {
       }
       let innerTrans = 900
       let outerTrans = 600
-      if (this.isTouching) {
-        innerTrans += 500
-        outerTrans += 500
-      }
 
       trans('0s')
       s.width = 0
@@ -100,7 +97,7 @@ export default {
       const width = client + 200
       setTimeout(() => {
         trans(`.${innerTrans}s`)
-        s.opacity = 1
+        s.opacity = this.opacity ? this.opacity : 1
         s.width = width + 'px'
         s.height = width + 'px'
         setTimeout(() => {
@@ -122,6 +119,14 @@ export default {
       this.el = this.$el.parentElement
       return this.el
     }
+  },
+  watch: {
+    innerColor() {
+      this.inner = this.innerColor
+    },
+    outerColor() {
+      this.outer = this.outerColor
+    },
   }
 }
 
@@ -131,6 +136,8 @@ export default {
 
 .CircleBubble {
   position: absolute;
+  left: 0;
+  top: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -144,6 +151,7 @@ export default {
 }
 
 .circle {
+  will-change: opacity, width, height;
   position: absolute;
   transform: translate(-50%,-50%);
   border-radius: 1000px;

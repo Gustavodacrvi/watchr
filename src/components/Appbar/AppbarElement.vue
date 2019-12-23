@@ -10,17 +10,6 @@
     @touchend.passive='touchEnd'
     v-longclick='longClick'
   >
-    <div class='circle-trans-wrapper-wrapper'>
-      <div class="circle-trans-wrapper">
-        <transition
-          @enter='circleEnter'
-        >
-          <div v-if="showCircle" class="circle-trans-transition"
-            :style="{left, top, backgroundImage: `radial-gradient(var(--light-gray), var(--gray))`}"
-          ></div>
-        </transition>
-      </div>
-    </div>
     <a class='scroll-link'
       :href="isDesktop ? '' : '#view-header'"
       @click.prevent
@@ -62,6 +51,11 @@
         </div>
       </div>
     </a>
+    <CircleBubble
+      innerColor='var(--light-gray)'
+      outerColor='var(--gray)'
+      opacity='0'
+    />
   </div>
 </template>
 
@@ -85,11 +79,7 @@ export default {
   data() {
     return {
       hover: false,
-      showCircle: false,
       isTouching: false,
-      left: 0,
-      top: 0,
-      doingTransition: false,
       allowMobileOptions: false,
 
       selectedTasks: [],
@@ -119,15 +109,6 @@ export default {
     },
     touchStart(e) {
       this.isTouching = true
-      this.startX = e.changedTouches[0].clientX
-      this.startY = e.changedTouches[0].clientY
-      const rect = e.target.getBoundingClientRect()
-      const scroll = document.scrollingElement.scrollTop
-      if (!this.doingTransition) {
-        this.left = (e.targetTouches[0].pageX - rect.left) + 'px'
-        this.top = (e.targetTouches[0].pageY - rect.top - scroll) + 'px'
-        this.showCircle = true
-      }
     },
     touchEnd(e) {
       this.isTouching = false
@@ -140,46 +121,6 @@ export default {
         else this.click()
       }
       this.allowMobileOptions = false
-    },
-    circleEnter(el) {
-      const s = el.style
-      this.doingTransition = true
-
-      const trans = str => {
-        s.transition = `opacity ${str}, width ${str}, height ${str}, transform 0s, left 0s, top 0s, margin 0s`
-      }
-      let innerTrans = 450
-      let outerTrans = 250
-      if (this.isTouching) {
-        innerTrans += 150
-        outerTrans += 150
-      }
-
-      trans('0s')
-      s.opacity = 0
-      s.width = 0
-      s.height = 0
-      const client = this.$el.clientWidth
-      const width = client + 100
-      setTimeout(() => {
-        trans(`.${innerTrans}s`)
-        s.opacity = 1
-        s.width = width + 'px'
-        s.height = width + 'px'
-        setTimeout(() => {
-          trans(`.${outerTrans}s`)
-          s.width = width + 'px'
-          s.height = width + 'px'
-          s.opacity = 0
-          setTimeout(() => {
-            trans('0')
-            s.width = 0
-            s.height = 0
-            this.showCircle = false
-            this.doingTransition = false
-          }, innerTrans)
-        }, outerTrans)
-      }, 50)
     },
     linkCallback(evt) {
       if (this.isDesktop) this.click()
@@ -292,6 +233,7 @@ export default {
   position: relative;
   height: 35px;
   transition: background-color .15s, height .3s;
+  overflow: hidden;
 }
 
 .AppbarElement.mobile {
@@ -304,7 +246,7 @@ export default {
 
 
 .desktop .link-wrapper:hover, .notSmartActive {
-  background-color: var(--light-gray) !important;
+  background-color: var(--card) !important;
 }
 
 .link-wrapper:active {
