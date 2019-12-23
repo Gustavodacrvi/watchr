@@ -84,7 +84,7 @@ export default {
   },
   methods: {
     linkClick(l) {
-      l.important ? blink(l.name) : this.linkCallback(l.callback, l)
+      l.important ? this.blink(l.name) : this.linkCallback(l.callback, l)
     },
     blink(ref) {
       const el = this.$refs[ref][0]

@@ -85,6 +85,7 @@ export default {
     this.sortable = new Sortable(this.draggableRoot, {
       sort: this.enableSort,
       disabled: this.disabled,
+      animation: 80,
       group: {name: 'appnav', pull: (e) => {
         if (this.isSmart) return false
         const name = e.el.dataset.name

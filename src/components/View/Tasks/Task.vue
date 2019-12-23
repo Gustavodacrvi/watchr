@@ -150,8 +150,10 @@ export default {
       startY: 0,
       startTime: 0,
       initialScroll: 0,
+      timeout: null,
 
       move: false,
+      customEvent: false,
     }
   },
   mounted() {
@@ -249,12 +251,13 @@ export default {
         this.showCircle = true
     },
     pointerDown(evt) {
-      if (!this.isTaskSelected && !this.isDesktop)
+      console.log(this.move)
+      if ((!this.customEvent || this.move) && !this.isTaskSelected && !this.isDesktop)
         evt.stopPropagation()
+      this.customEvent = false
     },
     touchStart(e) {
       this.startTime = new Date()
-      this.move = false
       this.isTouching = true
       this.innerColor = 'var(--light-gray)'
       this.outerColor = 'var(--gray)'
@@ -267,12 +270,18 @@ export default {
         this.top = (e.targetTouches[0].pageY - rect.top - this.initialScroll) + 'px'
         this.showCircle = true
       }
+      this.move = false
+
+      this.timeout = setTimeout(() => {
+        this.customEvent = true
+        const evt = new CustomEvent('pointerdown')
+        this.$el.dispatchEvent(evt)
+      }, 10)
     },
     touchmove() {
-      this.move = true
+      this.move = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 10
     },
     touchEnd(e) {
-      const scrolled = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 20
       const time = new Date() - this.startTime
       
       this.isTouching = false
@@ -280,8 +289,11 @@ export default {
       const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
       const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
 
-      if (!this.move && !scrolled && (time < 201) && !movedFingerX && !movedFingerY)
-        this.selectTask()
+      if (!this.move && (time < 201) && !movedFingerX && !movedFingerY) {
+        if (!this.isTaskSelected)
+          this.selectTask()
+        else this.deselectTask()
+      }
 
       if (!movedFingerX && !movedFingerY) {
         if (this.allowMobileOptions && !this.scrolled)

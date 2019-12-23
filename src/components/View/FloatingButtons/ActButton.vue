@@ -75,7 +75,7 @@ export default {
   border-radius: 100px;
 }
 
-.no-pointer {
+.mobile .no-pointer {
   pointer-events: none;
 }
 

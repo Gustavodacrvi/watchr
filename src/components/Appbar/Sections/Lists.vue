@@ -101,6 +101,7 @@ export default {
         return false
       }},
       delay: 225,
+      animation: 80,
       delayOnTouchOnly: true,
       handle: '.handle-folder',
 

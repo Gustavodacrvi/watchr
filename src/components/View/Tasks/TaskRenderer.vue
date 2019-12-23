@@ -307,6 +307,7 @@ export default {
 
         forceFallback: true,
         fallbackOnBody: true,
+        animation: 80,
         delay: this.isDesktop ? 0 : 100,
         handle: '.task-handle',
         
@@ -472,6 +473,7 @@ export default {
             disabled: !this.updateHeadingIds,
             group: 'headings',
             delay: 150,
+            animation: 80,
             delayOnTouchOnly: true,
             handle: '.handle',
       
@@ -561,7 +563,17 @@ export default {
       }
     },
     click(event) {
-      if (this.selected.length > 0) event.stopPropagation()
+      if (this.selected.length > 0) {
+        let found = false
+        for (const node of event.path) {
+          if (node.classList && node.classList.contains('Task')) {
+            found = true
+            break
+          }
+        }
+
+        if (found) event.stopPropagation()
+      }
     },
     selectTask(el) {
       this.$store.commit('selectTask', el.dataset.id)
@@ -722,8 +734,10 @@ export default {
     inflate() {
       const hasHeadings = this.lazyHeadings.length > 0
       const isLastHeading = this.isLast
+
+      // root, no headings
       
-      return (this.isRoot && (!hasHeadings || !this.showEmptyHeadings)) || this.isLast
+      return (this.isRoot && !hasHeadings || (this.isRoot && hasHeadings && this.lazyHeadings.every(h => h.tasks.length === 0) && !this.showEmptyHeadings)) || this.isLast
     },
     getTasks() {
       if (this.isRoot || this.showAllHeadingsItems) return this.lazyTasks
@@ -940,11 +954,11 @@ export default {
 }
 
 .dontHaveTasks {
-  height: 50px;
+  min-height: 5px;
 }
 
 .inflate {
-  height: 1200px;
+  min-height: 1200px;
 }
 
 </style>

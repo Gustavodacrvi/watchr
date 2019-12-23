@@ -56,6 +56,7 @@ export default {
         }
       },
       delay: 150,
+      animation: 80,
       delayOnTouchOnly: true,
       handle: '.handle',
 
