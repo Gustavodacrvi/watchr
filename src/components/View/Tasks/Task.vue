@@ -43,6 +43,7 @@
             </div>
           </div>
           <div class="cont"
+            ref='cont'
             v-longclick='longClick'
           >
             <div class="check"
@@ -251,9 +252,9 @@ export default {
         this.showCircle = true
     },
     pointerDown(evt) {
-      console.log(this.move)
-      if ((!this.customEvent || this.move) && !this.isTaskSelected && !this.isDesktop)
+      if ((this.customEvent || this.move) && !this.isTaskSelected && !this.isDesktop) {
         evt.stopPropagation()
+      }
       this.customEvent = false
     },
     touchStart(e) {
@@ -275,24 +276,23 @@ export default {
       this.timeout = setTimeout(() => {
         this.customEvent = true
         const evt = new CustomEvent('pointerdown')
-        this.$el.dispatchEvent(evt)
+        this.$refs['cont-wrapper'].dispatchEvent(evt)
       }, 10)
     },
-    touchmove() {
-      this.move = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 10
+    touchmove(evt) {
+      this.move = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 5
     },
     touchEnd(e) {
       const time = new Date() - this.startTime
       
       this.isTouching = false
       const touch = e.changedTouches[0]
-      const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
-      const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
+      const movedFingerX = Math.abs(touch.clientX - this.startX) > 5
+      const movedFingerY = Math.abs(touch.clientY - this.startY) > 5
 
       if (!this.move && (time < 201) && !movedFingerX && !movedFingerY) {
-        if (!this.isTaskSelected)
-          this.selectTask()
-        else this.deselectTask()
+        if (this.isTaskSelected)
+          this.deselectTask()
       }
 
       if (!movedFingerX && !movedFingerY) {
