@@ -5,6 +5,7 @@
         :repeat='content.repeat'
         :onlyDates='content.onlyDates'
         @repeat='openRepeatOptions'
+        @calc='$emit("calc")'
       />
     </div>
 </template>

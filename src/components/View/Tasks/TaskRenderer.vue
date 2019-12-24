@@ -57,6 +57,11 @@
           @cancel='removeEdit'
         />
       </template>
+      <transition name="fade-t">
+        <div v-if="showSomedayButton" @click="$emit('allow-someday')">
+          <ButtonVue type="dark" :value="l['Show someday tasks...']"/>
+        </div>
+      </transition>
     </div>
     <ButtonVue v-if="showMoreItemsButton"
       type="dark"
@@ -144,7 +149,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'headingFilterFunction', 'scheduleObject', 'isLast',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton',
   'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -214,7 +219,7 @@ export default {
 
           const nodes = []
           for (const node of childNodes) {
-            if (idsToSelect.includes(node.dataset.id) && !nodes.includes(node)) {
+            if (node.dataset && idsToSelect.includes(node.dataset.id) && !nodes.includes(node)) {
               nodes.push(node)
             }
           }
@@ -356,14 +361,28 @@ export default {
           if (items.length === 0) items.push(evt.item)
           const type = items[0].dataset.type
 
-          const ids = items.map(el => el.dataset.id)
+          const repeated = items.map(el => el.dataset.id)
+          const ids = []
+          const set = new Set()
+          for (const id of repeated) {
+            if (!set.has(id)) {
+              ids.push(id)
+              set.add(id)
+            }
+          }
+          
 
           if (type === 'task' && this.onSortableAdd && this.sourceVueInstance) {
-            const indicies = evt.newIndicies.map(el => el.index )
+            this.removeEdit()
+            this.sourceVueInstance.removeEdit()
+            
+            const indicies = evt.newIndicies.map(el => el.index)
             if (indicies.length === 0) indicies.push(evt.newIndex)
             
-            const sourceLazyTasks = this.sourceVueInstance.lazyTasks
-            const destinyLazyTasks = this.lazyTasks
+            let sourceLazyTasks = this.sourceVueInstance.lazyTasks
+            let destinyLazyTasks = this.lazyTasks
+            console.log('before', destinyLazyTasks.map(el => el.name))
+            console.log('before', sourceLazyTasks.map(el => el.name))
 
             const tasks = []
             for (const id of ids) {
@@ -377,10 +396,14 @@ export default {
               }
             }
 
+            console.log(ids)
+            console.log(tasks)
             for (let i = 0; i < ids.length;i++) {
               destinyLazyTasks.splice(indicies[i], 0, tasks[i])
             }
 
+            console.log('after', destinyLazyTasks.map(el => el.name))
+            console.log('after', sourceLazyTasks.map(el => el.name))
             setTimeout(() => {
               this.onSortableAdd(evt, ids, type, destinyLazyTasks.map(el => el.id))
             })
@@ -660,7 +683,8 @@ export default {
       const childs = this.draggableRoot.childNodes
       let ids = []
       for (const el of childs)
-        ids.push(el.dataset.id)
+        if (el.dataset)
+          ids.push(el.dataset.id)
       if (removeAdders)
         ids = ids.filter(id => id !== 'Edit' && id !== 'EditHeading' && id !== undefined)
       return ids

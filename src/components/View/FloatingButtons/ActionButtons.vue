@@ -150,4 +150,8 @@ export default {
   align-items: center;
 }
 
+.Lists .floating-btn-msg, .Tags .floating-btn-msg {
+  background-color: var(--dark);
+}
+
 </style>

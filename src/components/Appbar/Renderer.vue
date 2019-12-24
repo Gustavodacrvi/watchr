@@ -98,8 +98,8 @@ export default {
         const type = item.dataset.type
         if (!this.enableSort && type === 'appnav-element') return false
         if (type === 'appnav-element') return true
-        if (type === 'task') return true
-        if (type === 'floatbutton') return true
+        if (type === 'task') return false
+        if (type === 'add-task-floatbutton') return true
       }},
       delay: 150,
       delayOnTouchOnly: true,
@@ -159,7 +159,7 @@ export default {
         const item = evt.item
         const type = item.dataset.type
 
-        if (type === 'floatbutton') {
+        if (type === 'add-task-floatbutton') {
           item.dataset.id = 'floating-button'
           const childs = this.draggableRoot.childNodes
           let i = 0

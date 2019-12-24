@@ -1,6 +1,9 @@
 <template>
   <div class="CalendarPicker">
     <div key="calendar" class="view calendar">
+      <div class="opt">
+        
+      </div>
       <div class="fast-options">
         <Icon class="icon option-icon cursor primary-hover" width="24px" icon="star" @click="today"/>
         <Icon class="icon option-icon cursor primary-hover" width="24px" icon="sun" @click="tomorrow"/>
@@ -8,7 +11,7 @@
         <Icon v-if="!onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="bloqued" @click="noDate"/>
         <Icon v-if="repeat && !onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="repeat" @click="$emit('repeat')"/>
       </div>
-      <div class="content">
+      <div class="cont">
         <div class="header">
           <h3 class="year">{{ thisYear() }}   {{ thisMonth() }}</h3>
           <div class="icons">
@@ -119,12 +122,16 @@ export default {
       this.select(this.selectedMoment.clone())
     },
     nextMonth() {
-      this.$emit('calc')
       this.visualMoment.add(1, 'M')
+      setTimeout(() => {
+        this.$emit('calc')
+      }, 50)
       this.$forceUpdate()
     },
     previousMonth() {
-      this.$emit('calc')
+      setTimeout(() => {
+        this.$emit('calc')
+      }, 50)
       this.visualMoment.subtract(1, 'M')
       this.$forceUpdate()
     },
@@ -336,7 +343,7 @@ export default {
   transform: translateY(4px);
 }
 
-.content {
+.cont {
   margin: 0 26px;
 }
 
@@ -369,7 +376,7 @@ export default {
 .dark-date {
   display: inline-block;
   width: 31px;
-  height: 31px;
+  height: 18px;
 }
 
 .day {

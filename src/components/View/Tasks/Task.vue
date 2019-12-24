@@ -23,8 +23,8 @@
           :class="platform"
           @click="click"
 
-          @mouseup='stopPropagation'
-          @pointerup='stopPropagation'
+          @mouseup='stopMouseUp'
+          @pointerup.stop
           @pointerdown='pointerDown'
           @touchcancel.stop
           ref='cont-wrapper'
@@ -44,7 +44,6 @@
           </div>
           <div class="cont"
             ref='cont'
-            v-longclick='longClick'
           >
             <div class="check"
               @mouseenter="iconHover = true"
@@ -146,15 +145,13 @@ export default {
       iconHover: false,
       doubleClickListening: false,
       doubleClickListeningTimeout: null,
-      allowMobileOptions: false,
       startX: 0,
       startY: 0,
       startTime: 0,
       initialScroll: 0,
       timeout: null,
 
-      move: false,
-      customEvent: false,
+      fail: false,
     }
   },
   mounted() {
@@ -167,13 +164,6 @@ export default {
     window.removeEventListener('click', this.deselectTask)
   },
   methods: {
-    stopPropagation(evt) {
-      const time = new Date() - this.startTime
-      const scrolled = Math.abs((document.scrollingElement.scrollTop - this.initialScroll)) > 20
-
-      if (!this.isDesktop && time < 300 && !scrolled)
-        evt.stopPropagation()
-    },
     bindContextMenu(options) {
       utils.bindOptionsToEventListener(this.$el, options, this)
     },
@@ -196,6 +186,10 @@ export default {
           setTimeout(done, 249)
         }
       }
+    },
+    stopMouseUp(evt) {
+      if (!this.isDesktop)
+        evt.stopPropagation()
     },
     deselectTask() {
       this.$emit('de-select', this.$el)
@@ -220,13 +214,8 @@ export default {
         cont.style.opacity = 0
       }
     },
-    longClick() {
-      if (!this.isDesktop && !this.isDragging && !this.isScrolling) {
-        window.navigator.vibrate(100)
-        this.allowMobileOptions = true
-      }
-    },
     openMobileOptions() {
+        window.navigator.vibrate(100)
       this.$store.commit('pushIconDrop', this.options)
     },
     completeTask() {
@@ -252,10 +241,9 @@ export default {
         this.showCircle = true
     },
     pointerDown(evt) {
-      if ((this.customEvent || this.move) && !this.isTaskSelected && !this.isDesktop) {
+      if (!this.isDesktop && !this.isTaskSelected) {
         evt.stopPropagation()
       }
-      this.customEvent = false
     },
     touchStart(e) {
       this.startTime = new Date()
@@ -271,35 +259,30 @@ export default {
         this.top = (e.targetTouches[0].pageY - rect.top - this.initialScroll) + 'px'
         this.showCircle = true
       }
-      this.move = false
-
-      this.timeout = setTimeout(() => {
-        this.customEvent = true
-        const evt = new CustomEvent('pointerdown')
-        this.$refs['cont-wrapper'].dispatchEvent(evt)
-      }, 10)
     },
     touchmove(evt) {
-      this.move = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 5
+      const touch = evt.changedTouches[0]
+      const move = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 5 || Math.abs(touch.clientX - this.startX) > 5 || Math.abs(touch.clientY - this.startY) > 5
+      if (move) this.fail = true
     },
     touchEnd(e) {
       const time = new Date() - this.startTime
       
       this.isTouching = false
       const touch = e.changedTouches[0]
-      const movedFingerX = Math.abs(touch.clientX - this.startX) > 5
-      const movedFingerY = Math.abs(touch.clientY - this.startY) > 5
 
-      if (!this.move && (time < 201) && !movedFingerX && !movedFingerY) {
-        if (this.isTaskSelected)
-          this.deselectTask()
+      if (!this.fail && (time < 200)) {
+        if (!this.isTaskSelected)
+          this.selectTask()
+        else this.deselectTask()
       }
 
-      if (!movedFingerX && !movedFingerY) {
-        if (this.allowMobileOptions && !this.scrolled)
+      if (!this.fail) {
+        if (time > 250)
           this.openMobileOptions()
       }
       this.allowMobileOptions = false
+      this.fail = false
     },
     selectTask() {
       this.$emit('select', this.$el)

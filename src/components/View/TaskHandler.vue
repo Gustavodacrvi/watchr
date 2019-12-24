@@ -11,6 +11,7 @@
       :scheduleObject='scheduleObject'
 
       :addTask='addTask'
+      :showSomedayButton='showSomedayButton'
       :rootFilterFunction='rootFilterFunction'
       :headingEditOptions='headingEditOptions'
       :taskIconDropOptions='taskIconDropOptions'
@@ -18,12 +19,8 @@
       :updateHeadingIds='updateHeadingIds'
       @update="updateIds"
       @add-heading="addHeading"
+      @allow-someday='allowSomeday'
     />
-    <transition name="fade-t">
-      <div v-if="showSomedayButton" @click="allowSomeday">
-        <AppButton type="dark" :value="l['Show someday tasks...']"/>
-      </div>
-    </transition>
   </div>
 </template>
 

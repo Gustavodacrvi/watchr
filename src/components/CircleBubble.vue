@@ -29,6 +29,7 @@ export default {
 
       inner: 'rgba(53, 73, 90, 0.6)',
       outer: 'var(--primary)',
+      toDestroy: null,
     }
   },
   created() {
@@ -39,14 +40,29 @@ export default {
   },
   mounted() {
     this.getEl()
-    this.el.addEventListener('click', evt => this.click(evt))
-    this.el.addEventListener('touchstart', evt => this.touchStart(evt), {passive: true})
-    this.el.addEventListener('touchend', evt => this.touchEnd(evt), {passive: true})
+
+    const onClick = this.click
+    const onTouch = this.touchStart
+    const onTouchend = this.touchEnd
+
+    const click = evt => onClick(evt)
+    const touchstart = evt => onTouch(evt)
+    const touchend = evt => onTouchend(evt)
+    
+    const el = this.el
+    
+    el.addEventListener('click', click)
+    el.addEventListener('touchstart', touchstart, {passive: true})
+    el.addEventListener('touchend', touchend, {passive: true})
+
+    this.toDestroy = () => {
+      el.removeEventListener('click', click)
+      el.removeEventListener('touchstart', touchstart)
+      el.removeEventListener('touchend', touchend)
+    }
   },
   beforeDestroy() {
-    this.el.removeEventListener('click', this.click)
-    this.el.removeEventListener('touchstart', this.touchStart)
-    this.el.removeEventListener('touchend', this.touchEnd)
+    this.toDestroy()
   },
   methods: {
     click(evt) {
