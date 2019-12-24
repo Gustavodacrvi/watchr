@@ -22,6 +22,8 @@ export default {
   "Sign in as a guest": "Entrar como convidado",
   'You have successfully signed in as a guest.': 'Você entrou como convidado com sucesso!',
   'Add time': 'Adicionar hora',
+  "Time:": "Horário:",
+  "No time": "Sem horário",
   'Inbox': 'Inbox',
   'Upcoming': 'Próximos dias',
   'Filter name': "Nome do filtro",

@@ -65,6 +65,8 @@ export default {
 
     const c = obj
 
+    if (c.type === 'someday') return "Someday"
+
     switch (c.type) {
       case 'specific': {
         str += this.getHumanReadableDate(c.specific, language)

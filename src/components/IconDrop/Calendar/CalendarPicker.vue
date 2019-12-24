@@ -1,15 +1,19 @@
 <template>
   <div class="CalendarPicker">
     <div key="calendar" class="view calendar">
-      <div class="opt">
-        
-      </div>
       <div class="fast-options">
         <Icon class="icon option-icon cursor primary-hover" width="24px" icon="star" @click="today"/>
         <Icon class="icon option-icon cursor primary-hover" width="24px" icon="sun" @click="tomorrow"/>
         <Icon v-if="!onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="archive" @click="someday"/>
         <Icon v-if="!onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="bloqued" @click="noDate"/>
         <Icon v-if="repeat && !onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="repeat" @click="$emit('repeat')"/>
+      </div>
+      <div class="opt cursor remove-highlight rb" @click='$emit("get-time", this.selectedMoment.format("Y-M-D"))'>
+        <span class="msg">{{ l['Time:'] }} {{ getTime }}</span>
+        <CircleBubble
+          innerColor='rgba(87,160,222,.1)'
+          outerColor='var(--primary)'
+        />
       </div>
       <div class="cont">
         <div class="header">
@@ -55,7 +59,7 @@ import { mapGetters, mapState } from 'vuex'
 import utils from '@/utils'
 
 export default {
-  props: ['repeat', 'onlyDates'],
+  props: ['repeat', 'onlyDates', 'defaultTime', 'initial'],
   components: {
     Icon: IconVue,
     Button: ButtonVue,
@@ -63,12 +67,16 @@ export default {
   },
   data() {
     return {
-      visualMoment: mom(),
-      originalMoment: mom(),
-      selectedMoment: mom(),
+      visualMoment: this.initalDate ? mom(this.initalDate, 'Y-M-D') : mom(),
+      originalMoment: this.initalDate ? mom(this.initalDate, 'Y-M-D') : mom(),
+      selectedMoment: this.initalDate ? mom(this.initalDate, 'Y-M-D') : mom(),
       time: null,
       calendarObj: null,
     }
+  },
+  created() {
+    if (this.defaultTime)
+      this.time = this.defaultTime
   },
   computed: {
     ...mapState(['userInfo']),
@@ -209,11 +217,44 @@ export default {
       return this.visualMoment.clone().date(day).isSame(this.selectedMoment, 'day')
     },
   },
+  computed: {
+    ...mapState({
+      userInfo: state => state.userInfo,
+    }),
+    ...mapGetters(['l']),
+    getTime() {
+      if (this.time) {
+        if (this.userInfo.disablePmFormat)
+          return this.time
+        return mom(this.time, 'H:m').format('h:m A')
+      }
+      return this.l['No time']
+    },
+  },
 }
 
 </script>
 
 <style scoped>
+
+.opt {
+  margin: 0 26px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition-duration: .2s;
+}
+
+.opt:hover {
+  background-color: rgba(87,160,222,.1); 
+  color: var(--primary);
+}
+
+.opt .msg {
+  margin-left: 8px;
+}
 
 .fast-options {
   height: 50px;

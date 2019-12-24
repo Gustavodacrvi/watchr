@@ -4,8 +4,11 @@
         @select="selectDate"
         :repeat='content.repeat'
         :onlyDates='content.onlyDates'
+        :defaultTime='content.time'
+        :initalDate='content.initial'
         @repeat='openRepeatOptions'
         @calc='$emit("calc")'
+        @get-time='getTime'
       />
     </div>
 </template>
@@ -15,12 +18,28 @@
 import CalendarPicker from './Calendar/CalendarPicker.vue'
 import { mapGetters } from 'vuex'
 
+import mom from 'moment/src/moment'
+
 export default {
   props: ['content'],
   components: {
     CalendarPicker,
   },
   methods: {
+    getTime(initial) {
+      this.$emit('update', {
+        comp: 'TimePicker',
+        content: {
+          callback: time => {
+            return {
+              comp: 'CalendarPicker',
+              content: {...this.content, time, initial},
+            }
+          },
+          initial: this.content.time ? this.content.time : mom().format('HH:mm'),
+        }
+      })
+    },
     openRepeatOptions() {
       this.$emit('update', {
         comp: "RepeatPicker",
