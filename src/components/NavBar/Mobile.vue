@@ -279,7 +279,7 @@ export default {
 }
 
 .option-icon {
-  margin-right: 12px;
+  margin-right: 24px;
 }
 
 .central {

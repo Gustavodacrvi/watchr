@@ -213,7 +213,7 @@ export default {
 
 .name {
   transition-duration: .15s;
-  max-width: 200px;
+  max-width: 230px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

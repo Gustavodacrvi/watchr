@@ -270,10 +270,10 @@ export default {
         this.showingSearch = false
       }, 1000)
     },
-    applySelectedTasks(elId) {
+    applySelectedTasks({elId, tasks}) {
       this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
         elIds: [elId],
-        taskIds: this.selectedTasks,
+        taskIds: tasks,
         type: elId,
       })
     },

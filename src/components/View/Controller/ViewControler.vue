@@ -72,7 +72,15 @@ export default {
       let folders = Array.from(setOfFolders)
       folders.forEach(f => f.smartViewControllerType = 'folder')
 
-      const sortArray = this.$store.getters.checkMissingIdsAndSortArr 
+      const sortArray = this.$store.getters.checkMissingIdsAndSortArr
+
+      let smartViewOrderKey = this.viewName
+      /* if (this.viewName !== 'Someday') {
+        const tod = mom()
+        if (this.viewName === 'Today')
+          smartViewOrderKey = tod.format('Y-M-D')
+        else smartViewOrderKey = tod.add(1, 'd').format('Y-M-D')
+      } */
 
       let order = this.viewOrders[view] ? this.viewOrders[view].headings : []
       if (!order) order = []
@@ -84,14 +92,14 @@ export default {
           const list = viewHeading
           const saveOrder = ids =>
             this.$store.dispatch('list/saveSmartViewHeadingTasksOrder', {
-              ids, listId: list.id, smartView: this.viewName,
+              ids, listId: list.id, smartView: smartViewOrderKey,
             })
 
           const filterFunction = task => this.isTaskInList(task, list.id)
 
           let taskOrder = []
-          if (list.smartViewsOrders && list.smartViewsOrders[this.viewName])
-            taskOrder = list.smartViewsOrders[this.viewName]
+          if (list.smartViewsOrders && list.smartViewsOrders[smartViewOrderKey])
+            taskOrder = list.smartViewsOrders[smartViewOrderKey]
           else
             taskOrder = this.getAllTasksOrderByList(list.id)
 
@@ -147,14 +155,14 @@ export default {
           const folder = viewHeading
           const saveOrder = ids =>
             this.$store.dispatch('folder/saveSmartViewHeadingTasksOrder', {
-              ids, folderId: folder.id, smartView: this.viewName,
+              ids, folderId: folder.id, smartView: smartViewOrderKey,
             })
 
           const filterFunction = task => this.isTaskInFolder(task, folder.id)
 
           let taskOrder = []
-          if (folder.smartViewsOrders && folder.smartViewsOrders[this.viewName])
-            taskOrder = folder.smartViewsOrders[this.viewName]
+          if (folder.smartViewsOrders && folder.smartViewsOrders[smartViewOrderKey])
+            taskOrder = folder.smartViewsOrders[smartViewOrderKey]
           else
             taskOrder = this.getFolderTaskOrderById(folder.id)
           

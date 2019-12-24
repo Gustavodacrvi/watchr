@@ -805,11 +805,12 @@ export default {
     },
   },
   watch: {
-    tasks(tasks) {
+    tasks(newArr) {
       if (this.waitingUpdateTimeout) {
         clearTimeout(this.waitingUpdateTimeout)
         this.waitingUpdateTimeout = null
       }
+      const tasks = newArr.slice()
       
       this.waitingUpdateTimeout = setTimeout(() => {
         if (!this.changedViewName) {
@@ -837,7 +838,7 @@ export default {
       if (this.isRoot) {
         setTimeout(() => {
           if (!this.changedViewName) {
-            this.lazyHeadings = newArr
+            this.lazyHeadings = newArr.slice()
           }
         })
       }

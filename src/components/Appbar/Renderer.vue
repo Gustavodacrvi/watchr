@@ -208,9 +208,9 @@ export default {
         this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
           elIds: [elId],
           taskIds: tasks,
-          type: type ? type : this.type,
+          type: type ? type : elId,
         })
-      this.$emit('apply', elId)
+      this.$emit('apply', {elId, tasks})
     },
     getIds() {
       const childs = this.draggableRoot.childNodes
