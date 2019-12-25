@@ -180,6 +180,11 @@ export default {
         }
       }
     },
+    smartComponent() {
+      if (this.viewName === 'Calendar')
+        return 'ViewRendererLongCalendarPicker'
+      return null
+    },
     getPieProgress() {
       return undefined
     },

@@ -354,7 +354,7 @@ export default {
         'headingEditOptions', 'headerOptions', 'notes', 'progress', 'headings', 'headingsOrder', 'showAllHeadingsItems', 'rootFallbackTask',
         'mainFilter', 'rootFilter', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates', 'mainFallbackTask', 'showHeading',
         'headerTags', 'headerCalendar', 'taskCompletionCompareDate', 'files',
-        'headingsPagination', 'configFilterOptions',
+        'headingsPagination', 'configFilterOptions', 'smartComponent',
       ]
       const obj = {}
 
