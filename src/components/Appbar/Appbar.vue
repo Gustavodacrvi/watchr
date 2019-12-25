@@ -54,7 +54,13 @@
                   :tabindex="i + 1 + links.length"
                   @click="moveLine(i)"
                   :data-section="s.name"
-                >{{ l[s.name] }}</div>
+                >{{ l[s.name] }}
+                  <CircleBubble
+                    innerColor='var(--light-gray)'
+                    outerColor='var(--gray)'
+                    opacity='0'
+                  />
+                </div>
                 <div class="line section-line"></div>
               </div>
               <div v-else style="margin-top: 28px"></div>
@@ -264,10 +270,10 @@ export default {
         this.showingSearch = false
       }, 1000)
     },
-    applySelectedTasks(elId) {
+    applySelectedTasks({elId, tasks}) {
       this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
         elIds: [elId],
-        taskIds: this.selectedTasks,
+        taskIds: tasks,
         type: elId,
       })
     },
@@ -368,7 +374,7 @@ export default {
       switch (type) {
         case 'Tags': return 'tag'
         case 'Lists': return 'tasks'
-        case 'Filters': return 'filter'
+        // case 'Filters': return 'filter'
       }
     },
   },
@@ -467,7 +473,7 @@ export default {
 
       if (this.hidedSections.length > 0) {
         opt.push({type: 'hr', name: 'division'})
-        const sect = [...this.hidedSections.filter(el => el !== this.section)]
+        const sect = [...this.hidedSections.filter(el => el !== this.section && el !== 'Filters')]
         if (this.isSingleSection && this.notHidedSections[0].name !== this.section)
           sect.unshift(this.notHidedSections[0].name)
         for (const s of sect) {
@@ -486,7 +492,9 @@ export default {
       return []
     },
     notHidedSections() {
-      return this.sections.filter(s => !this.hidedSections.includes(s.name))
+      const res = this.sections.filter(s => !this.hidedSections.includes(s.name))
+      if (res.length === 0) return [{name: 'Lists'}]
+      return res
     },
     isSingleSection() {
       return this.notHidedSections.length === 1
@@ -759,15 +767,17 @@ export default {
   outline: none;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
+  overflow: hidden;
+  position: relative;
 }
 
 .option:hover {
   color: var(--white);
-  background-color: var(--light-gray);
+  background-color: var(--card);
 }
 
 .option:active {
-  background-color: var(--card);
+  background-color: var(--light-gray);
 }
 
 .sectionActive {

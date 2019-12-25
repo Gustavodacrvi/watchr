@@ -7,61 +7,48 @@
 
     @click.stop="linkCallback"
     @touchstart.passive='touchStart'
+    @touchmove.passive='touchmove'
     @touchend.passive='touchEnd'
-    v-longclick='longClick'
   >
-    <div class='circle-trans-wrapper-wrapper'>
-      <div class="circle-trans-wrapper">
-        <transition
-          @enter='circleEnter'
-        >
-          <div v-if="showCircle" class="circle-trans-transition"
-            :style="{left, top, backgroundImage: `radial-gradient(var(--light-gray), var(--gray))`}"
-          ></div>
+    <div
+      class="link-wrapper cursor remove-highlight AppbarElement-link rb"
+      :data-type='type'
+      :data-selectedtype='selectedtype'
+      :data-color='iconColor'
+      :data-disabled='disableAction'
+    >
+      <div class="icon-wrapper">
+        <Icon class="main-icon"
+          :style="hoverStyle"
+          :class="{notActive: !isActive}"
+          :icon="icon"
+          :progress='progress'
+          :circle='true'
+        />
+      </div>
+      <div class="name-wrapper">
+        <transition name="name-t">
+          <span v-if="!showSpecialInfo" key="normal" class="name" :style="hoverStyle">{{ getName }}</span>
+          <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
         </transition>
+        <div class="info">
+          <template v-if="helpIcons">
+            <Icon v-for="i in helpIcons" :key="i" class="inf faded"
+              :icon='i'
+              :circle='true'
+            />
+          </template>
+          <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
+          <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
+          <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
+        </div>
       </div>
     </div>
-    <a class='scroll-link'
-      :href="isDesktop ? '' : '#view-header'"
-      @click.prevent
-      @contextmenu.prevent
-      v-smooth-scroll='{duration: 500, offset: -500}'
-    >
-      <div
-        class="link-wrapper cursor remove-highlight AppbarElement-link rb"
-        :data-type='type'
-        :data-selectedtype='selectedtype'
-        :data-color='iconColor'
-        :data-disabled='disableAction'
-      >
-        <div class="icon-wrapper">
-          <Icon class="main-icon"
-            :style="hoverStyle"
-            :class="{notActive: !isActive}"
-            :icon="icon"
-            :progress='progress'
-            :circle='true'
-          />
-        </div>
-        <div class="name-wrapper">
-          <transition name="name-t">
-            <span v-if="!showSpecialInfo" key="normal" class="name" :style="hoverStyle">{{ getName }}</span>
-            <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
-          </transition>
-          <div class="info">
-            <template v-if="helpIcons">
-              <Icon v-for="i in helpIcons" :key="i" class="inf faded"
-                :icon='i'
-                :circle='true'
-              />
-            </template>
-            <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
-            <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
-            <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
-          </div>
-        </div>
-      </div>
-    </a>
+    <CircleBubble
+      innerColor='var(--light-gray)'
+      outerColor='var(--gray)'
+      opacity='0'
+    />
   </div>
 </template>
 
@@ -85,12 +72,9 @@ export default {
   data() {
     return {
       hover: false,
-      showCircle: false,
       isTouching: false,
-      left: 0,
-      top: 0,
-      doingTransition: false,
-      allowMobileOptions: false,
+      fail: false,
+      startTime: 0,
 
       selectedTasks: [],
     }
@@ -100,12 +84,6 @@ export default {
   },
   methods: {
     ...mapActions(['getOptions']),
-    longClick() {
-      if (!this.isDesktop && !this.isDragging) {
-        window.navigator.vibrate(100)
-        this.allowMobileOptions = true
-      }
-    },
     async bindOptions() {
       if (this.isDesktop) {
         if (this.options) {
@@ -115,71 +93,38 @@ export default {
       }
     },
     async openMobileOptions() {
+      window.navigator.vibrate(100)
       this.$store.commit('pushIconDrop', await this.getOptions(this.options))
     },
     touchStart(e) {
       this.isTouching = true
-      this.startX = e.changedTouches[0].clientX
-      this.startY = e.changedTouches[0].clientY
-      const rect = e.target.getBoundingClientRect()
-      const scroll = document.scrollingElement.scrollTop
-      if (!this.doingTransition) {
-        this.left = (e.targetTouches[0].pageX - rect.left) + 'px'
-        this.top = (e.targetTouches[0].pageY - rect.top - scroll) + 'px'
-        this.showCircle = true
-      }
-    },
-    touchEnd(e) {
-      this.isTouching = false
+      this.fail = false
+      this.startTime = new Date()
+      this.initialScroll = document.scrollingElement.scrollTop
       const touch = e.changedTouches[0]
-      const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
-      const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
-      if (!movedFingerX && !movedFingerY) {
-        if (this.allowMobileOptions)
-          this.openMobileOptions()
-        else this.click()
-      }
-      this.allowMobileOptions = false
+      this.startX = touch.clientX
+      this.startY = touch.clientY
+
+      this.timeout = setTimeout(() => {
+        this.openMobileOptions()
+      }, 250)
     },
-    circleEnter(el) {
-      const s = el.style
-      this.doingTransition = true
-
-      const trans = str => {
-        s.transition = `opacity ${str}, width ${str}, height ${str}, transform 0s, left 0s, top 0s, margin 0s`
+    touchmove(evt) {
+      const touch = evt.changedTouches[0]
+      const move = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 5 || Math.abs(touch.clientX - this.startX) > 5 || Math.abs(touch.clientY - this.startY) > 5
+      if (move) {
+        clearTimeout(this.timeout)
+        this.fail = true
       }
-      let innerTrans = 450
-      let outerTrans = 250
-      if (this.isTouching) {
-        innerTrans += 150
-        outerTrans += 150
-      }
+    },
+    touchEnd() {
+      clearTimeout(this.timeout)
+      const time = new Date() - this.startTime
 
-      trans('0s')
-      s.opacity = 0
-      s.width = 0
-      s.height = 0
-      const client = this.$el.clientWidth
-      const width = client + 100
-      setTimeout(() => {
-        trans(`.${innerTrans}s`)
-        s.opacity = 1
-        s.width = width + 'px'
-        s.height = width + 'px'
-        setTimeout(() => {
-          trans(`.${outerTrans}s`)
-          s.width = width + 'px'
-          s.height = width + 'px'
-          s.opacity = 0
-          setTimeout(() => {
-            trans('0')
-            s.width = 0
-            s.height = 0
-            this.showCircle = false
-            this.doingTransition = false
-          }, innerTrans)
-        }, outerTrans)
-      }, 50)
+      if (!this.fail && time < 201)
+          this.click()
+      this.isTouching = false
+      this.fail = false
     },
     linkCallback(evt) {
       if (this.isDesktop) this.click()
@@ -276,7 +221,7 @@ export default {
 
 .name {
   transition-duration: .15s;
-  max-width: 200px;
+  max-width: 230px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -292,6 +237,7 @@ export default {
   position: relative;
   height: 35px;
   transition: background-color .15s, height .3s;
+  overflow: hidden;
 }
 
 .AppbarElement.mobile {
@@ -304,7 +250,7 @@ export default {
 
 
 .desktop .link-wrapper:hover, .notSmartActive {
-  background-color: var(--light-gray) !important;
+  background-color: var(--card) !important;
 }
 
 .link-wrapper:active {

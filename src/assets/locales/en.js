@@ -68,6 +68,8 @@ export default {
   "Username": "Username",
   "What's new": "What's new",
   "There is already a list with this heading name.": "There is already a list with this heading name.",
+  "Time:": "Time:",
+  "No time": "No time",
   "Collaborators": "Collaborators",
   "Convert to list": "Convert to list",
   'Lists': 'Lists',

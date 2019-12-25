@@ -85,6 +85,7 @@ export default {
     this.sortable = new Sortable(this.draggableRoot, {
       sort: this.enableSort,
       disabled: this.disabled,
+      animation: 80,
       group: {name: 'appnav', pull: (e) => {
         if (this.isSmart) return false
         const name = e.el.dataset.name
@@ -97,8 +98,8 @@ export default {
         const type = item.dataset.type
         if (!this.enableSort && type === 'appnav-element') return false
         if (type === 'appnav-element') return true
-        if (type === 'task') return true
-        if (type === 'floatbutton') return true
+        if (type === 'task') return false
+        if (type === 'add-task-floatbutton') return true
       }},
       delay: 150,
       delayOnTouchOnly: true,
@@ -158,7 +159,7 @@ export default {
         const item = evt.item
         const type = item.dataset.type
 
-        if (type === 'floatbutton') {
+        if (type === 'add-task-floatbutton') {
           item.dataset.id = 'floating-button'
           const childs = this.draggableRoot.childNodes
           let i = 0
@@ -207,9 +208,9 @@ export default {
         this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
           elIds: [elId],
           taskIds: tasks,
-          type: type ? type : this.type,
+          type: type ? type : elId,
         })
-      this.$emit('apply', elId)
+      this.$emit('apply', {elId, tasks})
     },
     getIds() {
       const childs = this.draggableRoot.childNodes

@@ -23,10 +23,11 @@
           :class="platform"
           @click="click"
 
-          @mouseup='stopPropagation'
-          @pointerup='stopPropagation'
+          @mouseup='stopMouseUp'
+          @pointerup.stop
           @pointerdown='pointerDown'
           @touchcancel.stop
+          ref='cont-wrapper'
           
           @touchend.passive='touchEnd'
           @touchmove.passive='touchmove'
@@ -42,29 +43,32 @@
             </div>
           </div>
           <div class="cont"
-            v-longclick='longClick'
+            ref='cont'
           >
             <div class="check"
               @mouseenter="iconHover = true"
               @mouseleave="iconHover = false"
-              @touchstart.passive.stop
-              @mousedown.passive.stop
+              @touchend.passive='touchComplete'
+              :class="{changeColor}"
             >
-              <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon cursor remove-highlight" @click="completeTask"
+              <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon cursor remove-highlight"
                 :icon="`box${isSomeday ? '-dash' : ''}`"
                 :color='circleColor'
                 :stop='true'
                 width="18px"
+                @click="desktopComplete"
               />
               <Icon v-else :circle='true' class="icon check-icon cursor remove-highlight"
                 :icon="`box-check${isSomeday ? '-dash' : ''}`"
                 :color='circleColor'
                 width="18px"
                 :stop='true'
-                @click="completeTask"
+                @click="desktopComplete"
               />
             </div>
-            <div class="text">
+            <div class="text"
+              :class="{changeColor}"
+            >
               <div class="task-name-wrapper">
                 <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
                 <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
@@ -122,7 +126,7 @@ import utils from '@/utils/index'
 import mom from 'moment/src/moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject'],
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName'],
   components: {
     Timeline,
     Icon: IconVue,
@@ -144,12 +148,15 @@ export default {
       iconHover: false,
       doubleClickListening: false,
       doubleClickListeningTimeout: null,
-      allowMobileOptions: false,
       startX: 0,
       startY: 0,
       startTime: 0,
+      initialScroll: 0,
+      timeout: null,
+      changeColor: false,
+      justCompleted: false,
 
-      move: false,
+      fail: false,
     }
   },
   mounted() {
@@ -162,10 +169,6 @@ export default {
     window.removeEventListener('click', this.deselectTask)
   },
   methods: {
-    stopPropagation(evt) {
-      if (!this.isDesktop)
-        evt.stopPropagation()
-    },
     bindContextMenu(options) {
       utils.bindOptionsToEventListener(this.$el, options, this)
     },
@@ -174,18 +177,24 @@ export default {
       if (cont) {
         const s = cont.style
 
-        s.transitionDuration = '0'
-        s.opacity = 0
-        s.height = '0px'
-        
-        setTimeout(() => {
-          s.transitionDuration = '.25s'
-          s.opacity = 1
-          s.height = this.taskHeight + 'px'
-        })
-        
-        setTimeout(done, 249)
+        if (this.changingViewName && !this.isDesktop) done()
+        else {
+          s.transitionDuration = '0'
+          s.opacity = 0
+          s.height = '0px'
+          
+          setTimeout(() => {
+            s.transitionDuration = '.25s'
+            s.opacity = 1
+            s.height = this.taskHeight + 'px'
+          })
+          setTimeout(done, 249)
+        }
       }
+    },
+    stopMouseUp(evt) {
+      if (!this.isDesktop)
+        evt.stopPropagation()
     },
     deselectTask() {
       this.$emit('de-select', this.$el)
@@ -210,14 +219,13 @@ export default {
         cont.style.opacity = 0
       }
     },
-    longClick() {
-      if (!this.isDesktop && !this.isDragging && !this.isScrolling) {
-        window.navigator.vibrate(100)
-        this.allowMobileOptions = true
-      }
-    },
     openMobileOptions() {
+      window.navigator.vibrate(100)
       this.$store.commit('pushIconDrop', this.options)
+    },
+    desktopComplete() {
+      if (this.isDesktop)
+        this.completeTask()
     },
     completeTask() {
       const {t,c} = this.getTask
@@ -242,44 +250,58 @@ export default {
         this.showCircle = true
     },
     pointerDown(evt) {
-      if (!this.isTaskSelected && !this.isDesktop)
+      if (!this.isDesktop && !this.isTaskSelected) {
         evt.stopPropagation()
+      }
     },
     touchStart(e) {
       this.startTime = new Date()
-      this.move = false
       this.isTouching = true
       this.innerColor = 'var(--light-gray)'
       this.outerColor = 'var(--gray)'
       this.startX = e.changedTouches[0].clientX
       this.startY = e.changedTouches[0].clientY
       const rect = e.target.getBoundingClientRect()
-      const scroll = document.scrollingElement.scrollTop
+      this.initialScroll = document.scrollingElement.scrollTop
       if (!this.doingTransition) {
         this.left = (e.targetTouches[0].pageX - rect.left) + 'px'
-        this.top = (e.targetTouches[0].pageY - rect.top - scroll) + 'px'
+        this.top = (e.targetTouches[0].pageY - rect.top - this.initialScroll) + 'px'
         this.showCircle = true
       }
+
+      this.changeColor = true
+      this.timeout = setTimeout(() => {
+        this.openMobileOptions()
+      }, 250)
     },
-    touchmove() {
-      this.move = true
+    touchmove(evt) {
+      const touch = evt.changedTouches[0]
+      const move = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 5 || Math.abs(touch.clientX - this.startX) > 5 || Math.abs(touch.clientY - this.startY) > 5
+      if (move) {
+        clearTimeout(this.timeout)
+        this.fail = true
+      }
     },
     touchEnd(e) {
+      clearTimeout(this.timeout)
       const time = new Date() - this.startTime
       
       this.isTouching = false
       const touch = e.changedTouches[0]
-      const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
-      const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
 
-      if (!this.move && (time < 201) && !movedFingerX && !movedFingerY)
-        this.selectTask()
-
-      if (!movedFingerX && !movedFingerY) {
-        if (this.allowMobileOptions)
-          this.openMobileOptions()
+      if (!this.fail && (time < 250)) {
+        if (!this.isTaskSelected && !this.justCompleted)
+          this.selectTask()
+        else this.deselectTask()
       }
       this.allowMobileOptions = false
+      this.fail = false
+      this.changeColor = false
+      this.justCompleted = false
+    },
+    touchComplete() {
+      this.justCompleted = true
+      this.completeTask()
     },
     selectTask() {
       this.$emit('select', this.$el)
@@ -782,6 +804,10 @@ export default {
   z-index: 2;
 }
 
+.changeColor {
+  color: var(--primary) !important;
+}
+
 .Task.showingIconDropContent {
   z-index: 5;
 }
@@ -790,6 +816,10 @@ export default {
   will-change: height, width;
   transition-duration: .25s;
   height: 38px;
+}
+
+.cont-wrapper.mobile {
+  height: 50px;
 }
 
 .schedule.mobile {

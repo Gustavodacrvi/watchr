@@ -9,6 +9,11 @@
       <Icon icon="search" width="15px"/>
       <span class="search-msg">{{ l['Search'] }}</span>
     </div>
+    <CircleBubble
+      innerColor='var(--light-gray)'
+      outerColor='var(--gray)'
+      opacity='0'
+    />
   </div>
 </template>
 
@@ -33,11 +38,13 @@ export default {
 
 .SearchButton {
   height: 35px;
-  background-color: var(--light-gray);
+  background-color: var(--card);
   transition: background-color .15s;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .SearchButton.mobile {
@@ -49,7 +56,7 @@ export default {
 }
 
 .SearchButton:hover {
-  background-color: var(--gray);
+  background-color: var(--light-gray);
 }
 
 </style>

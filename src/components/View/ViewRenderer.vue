@@ -34,30 +34,28 @@
         @list='selectList'
         @folder='selectFolder'
       />
-      <div class="handler-wrapper">
-        <TaskHandler class='view-renderer-move'
-          v-bind="$props"
+      <TaskHandler class='view-renderer-move'
+        v-bind="$props"
 
-          :headings="getHeadings"
-          :showCompleted='showCompleted'
-          :showSomeday='passSomedayTasks'
-          :pipeFilterOptions='pipeFilterOptions'
-          :taskIconDropOptions='taskIconDropOptions'
-          :updateHeadingIds='updateHeadingIds'
-          :autoSchedule='autoSchedule'
+        :headings="getHeadings"
+        :movingButton='movingButton'
+        :showCompleted='showCompleted'
+        :showSomeday='passSomedayTasks'
+        :pipeFilterOptions='pipeFilterOptions'
+        :taskIconDropOptions='taskIconDropOptions'
+        :updateHeadingIds='updateHeadingIds'
+        :autoSchedule='autoSchedule'
 
-          @allow-someday='showSomeday = true'
-          @root-non-filtered='getRootNonFilteredFromTaskHandler'
-        />
-      </div>
+        @allow-someday='showSomeday = true'
+        @root-non-filtered='getRootNonFilteredFromTaskHandler'
+      />
     </div>
     <PaginationVue v-if="headingsPagination"
       :page='pagination'
       :numberOfPages='getNumberOfPages'
       @select='selectPagination'
     />
-    <div style="height: 500px"></div>
-    <ActionButtons :showHeader='showHeadadingFloatingButton'/>
+    <ActionButtons :showHeader='showHeadadingFloatingButton' @moving='v => movingButton = v'/>
   </div>
 </template>
 
@@ -85,6 +83,7 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes',
   'headerOptions', 'headerDates', 'headerTags', 'headerCalendar', 'files',
   'progress', 'tasksOrder',  'rootFallbackTask', 'mainFallbackTask',
+  'showHeading',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'showHeadadingFloatingButton', 'updateHeadingIds', 'showAllHeadingsItems', 'taskCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
   components: {
@@ -94,6 +93,7 @@ export default {
   },
   data() {
     return {
+      movingButton: false,
       pagination: 0,
       showCompleted: false,
       showingTagSelection: false,
@@ -130,9 +130,8 @@ export default {
   },
   methods: {
     ...mapActions(['getOptions']),
-
     transform(x, transition) {
-      const s = this.el
+/*       const s = this.el
 
       const getOpacity = () => 1.4 - (Math.abs(x) / MAXIMUM_TOUCH_DISTANCE)
       
@@ -146,7 +145,7 @@ export default {
           s.left = `${x}px`
           s.opacity = getOpacity()
         }, 10)
-      }
+      } */
     },
     touchmove(evt) {
       this.move = true
@@ -874,10 +873,6 @@ export default {
 .ViewRenderer.mobile {
   margin: 0 8px;
   margin-top: -4px;
-}
-
-.mobile .handler-wrapper {
-  overflow: hidden;
 }
 
 .view-renderer-move {

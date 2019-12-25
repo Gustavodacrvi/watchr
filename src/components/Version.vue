@@ -2,6 +2,11 @@
   <span class="tag cb cursor" :class="{needsUpdate}" @click.stop="showUpdates">
     <span>{{ parsedVersion }}</span>
     <span v-if="needsUpdate" class="update-diff">+{{versionDiff}}</span>
+    <CircleBubble
+      innerColor='var(--light-gray)'
+      outerColor='var(--gray)'
+      opacity='0'
+    />
   </span>  
 </template>
 
@@ -34,6 +39,8 @@ export default {
   color: var(--gray);
   transform: scale(1,1);
   display: inline-block;
+  position: relative;
+  overflow: hidden;
 }
 
 .tag:hover {

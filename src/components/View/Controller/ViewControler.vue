@@ -72,7 +72,16 @@ export default {
       let folders = Array.from(setOfFolders)
       folders.forEach(f => f.smartViewControllerType = 'folder')
 
-      const sortArray = this.$store.getters.checkMissingIdsAndSortArr 
+      const sortArray = this.$store.getters.checkMissingIdsAndSortArr
+
+      let currentDate = mom()
+      if (this.viewName === 'Tomorrow')
+        currentDate.add(1, 'd')
+
+      currentDate = currentDate.format('Y-M-D')
+      
+      const calendarOrder = this.calendarOrders[currentDate] || []
+      // const { rootTasks, folderTasks, listTasks } = utilsTask.groupTaskIds()
 
       let order = this.viewOrders[view] ? this.viewOrders[view].headings : []
       if (!order) order = []
@@ -82,20 +91,44 @@ export default {
       for (const viewHeading of headings) {
         if (viewHeading.smartViewControllerType === 'list') {
           const list = viewHeading
-          const saveOrder = ids =>
-            this.$store.dispatch('list/saveSmartViewHeadingTasksOrder', {
-              ids, listId: list.id, smartView: this.viewName,
-            })
+          const saveOrder = ids => {
+            if (this.viewName === 'Someday') {
+              this.$store.dispatch('list/saveSmartViewHeadingTasksOrder', {
+                ids, listId: list.id, smartView: this.viewName,
+              })
+            } else {
+              this.$store.dispatch('task/saveCalendarOrder', {
+                ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, calendarOrder),
+                date: currentDate,
+              })
+            }
+          }
 
           const filterFunction = task => this.isTaskInList(task, list.id)
+          const getSmartViewOrder = () => {
+            if (list.smartViewsOrders && list.smartViewsOrders[this.viewName])
+              return list.smartViewsOrders[this.viewName]
+            else
+              return this.getAllTasksOrderByList(list.id)
+          }
+          let tasksOrder = []
+          if (this.viewName === 'Someday')
+            tasksOrder = getSmartViewOrder()
+          else {
+            const taskIdsFromList = this.getAllTasksOrderByList(list.id)
 
-          let taskOrder = []
-          if (list.smartViewsOrders && list.smartViewsOrders[this.viewName])
-            taskOrder = list.smartViewsOrders[this.viewName]
-          else
-            taskOrder = this.getAllTasksOrderByList(list.id)
+            let found = false
+            for (const id of calendarOrder)
+              if (taskIdsFromList.includes(id)) {
+                found = true
+                break
+              }
 
-          const sort = tasks => sortArray(taskOrder, tasks)
+            if (found) tasksOrder = calendarOrder
+            else tasksOrder = taskIdsFromList
+          }
+
+          const sort = tasks => sortArray(tasksOrder, tasks)
 
           arr.push({
             name: list.name,
@@ -145,21 +178,46 @@ export default {
           })
         } else if (viewHeading.smartViewControllerType === 'folder') {
           const folder = viewHeading
-          const saveOrder = ids =>
-            this.$store.dispatch('folder/saveSmartViewHeadingTasksOrder', {
-              ids, folderId: folder.id, smartView: this.viewName,
-            })
+          const saveOrder = ids => {
+            if (this.viewName === 'Someday') {
+              this.$store.dispatch('folder/saveSmartViewHeadingTasksOrder', {
+                ids, folderId: folder.id, smartView: this.viewName,
+              })
+            } else {
+              this.$store.dispatch('task/saveCalendarOrder', {
+                ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, calendarOrder),
+                date: currentDate,
+              })
+            }
+          }
 
           const filterFunction = task => this.isTaskInFolder(task, folder.id)
+          const getSmartViewOrder = () => {
+            if (folder.smartViewsOrders && folder.smartViewsOrders[this.viewName])
+              return folder.smartViewsOrders[this.viewName]
+            else
+              return this.getFolderTaskOrderById(folder.id)
+          }
 
-          let taskOrder = []
-          if (folder.smartViewsOrders && folder.smartViewsOrders[this.viewName])
-            taskOrder = folder.smartViewsOrders[this.viewName]
-          else
-            taskOrder = this.getFolderTaskOrderById(folder.id)
+          let tasksOrder = []
+          if (this.viewName === 'Someday')
+            tasksOrder = getSmartViewOrder()
+          else {
+            const taskIdsFromFolder = this.getFolderTaskOrderById(folder.id)
+
+            let found = false
+            for (const id of calendarOrder)
+              if (taskIdsFromFolder.includes(id)) {
+                found = true
+                break
+              }
+
+            if (found) tasksOrder = calendarOrder
+            else tasksOrder = taskIdsFromFolder
+          }
           
-          const sort = tasks => sortArray(taskOrder, tasks)
 
+          const sort = tasks => sortArray(tasksOrder, tasks)
           
           arr.push({
             name: folder.name,
@@ -252,7 +310,12 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     viewOrders() {
-      if (this.userInfo) return this.userInfo.viewOrders
+      if (this.userInfo && this.userInfo.viewOrders) return this.userInfo.viewOrders
+      return {}
+    },
+    calendarOrders() {
+      if (this.userInfo && this.userInfo.calendarOrders)
+        return this.userInfo.calendarOrders
       return {}
     },
     prefix() {
@@ -289,7 +352,7 @@ export default {
       const props = [
         'icon', 'showEmptyHeadings', 'updateHeadingIds',
         'headingEditOptions', 'headerOptions', 'notes', 'progress', 'headings', 'headingsOrder', 'showAllHeadingsItems', 'rootFallbackTask',
-        'mainFilter', 'rootFilter', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates', 'mainFallbackTask',
+        'mainFilter', 'rootFilter', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates', 'mainFallbackTask', 'showHeading',
         'headerTags', 'headerCalendar', 'taskCompletionCompareDate', 'files',
         'headingsPagination', 'configFilterOptions',
       ]
@@ -321,18 +384,22 @@ export default {
       })
       const sort = utilsTask.sortTasksByTaskDate
       const TOD_STR = mom().format('Y-M-D')
-      
+
       for (let i = 0;i < 7;i++) {
         tod.add(1, 'day')
         const date = tod.format('Y-M-D')
+
+        const sortHeading = tasks =>
+          this.$store.getters.checkMissingIdsAndSortArr(this.calendarOrders[date] || [], tasks)
 
         const filterFunction = task => this.isTaskShowingOnDate(task, date, true)
         
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
           id: date,
+          showHeading: true,
 
-          sort,
+          sort: sortHeading,
           filter: filterFunction,
           fallbackTask: task => {
             if (!task.calendar)
@@ -351,6 +418,9 @@ export default {
               task: {calendar: calObj(date)},
             })
           },
+          updateIds: ids => {
+            this.$store.dispatch('task/saveCalendarOrder', {ids, date})
+          }
         })
       }
       const thisMonthPipe = pipeBooleanFilters(

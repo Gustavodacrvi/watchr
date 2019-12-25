@@ -5,9 +5,9 @@
         <Icon :icon='icon' color='var(--appnav-color)' width="150px"/>
       </div>
     </transition>
-    <div name="task-trans"
+    <div
       class="front task-renderer-root"
-      :class="{dontHaveTasks: getTasks.length === 0 && lazyHeadings.length === 0, showEmptyHeadings}"
+      :class="{inflate, dontHaveTasks: lazyTasks.length === 0}"
 
       data-name='task-renderer'
     >
@@ -17,6 +17,7 @@
 
           :taskHeight='taskHeight'
           :task='item'
+          :changingViewName='changingViewName'
           :isRoot='isRoot'
           :isSelecting='isSelecting'
           :enableSelect='enableSelect'
@@ -56,6 +57,11 @@
           @cancel='removeEdit'
         />
       </template>
+      <transition name="fade-t">
+        <div v-if="showSomedayButton" @click="$emit('allow-someday')">
+          <ButtonVue type="dark" :value="l['Show someday tasks...']"/>
+        </div>
+      </transition>
     </div>
     <ButtonVue v-if="showMoreItemsButton"
       type="dark"
@@ -69,7 +75,7 @@
       tag="div"
     >
       <template v-for="(h, i) in lazyHeadings">
-        <HeadingApp v-if="showEmptyHeadings || h.tasks.length > 0" :key="h.name"
+        <HeadingApp v-if="renderHeading(h)" :key="h.name"
           :header='h'
 
           v-bind="h"
@@ -106,6 +112,7 @@
             :header="h"
             :addTask="h.onAddTask"
             :headingPosition='i + 1'
+            :isLast='false'
           />
         </HeadingApp>
       </template>
@@ -142,7 +149,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'rootFilterFunction', 'headingFilterFunction', 'scheduleObject',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton',
   'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -163,13 +170,16 @@ export default {
       justScrolled: false,
       movingHeading: false,
       waitingUpdateTimeout: null,
+      changingViewName: false,
 
       addedTask: null,
       hasEdit: null,
       edit: null,
       focusToggle: false,
+      stopRootInflation: false,
 
       lastSelectedId: null,
+      lastHeadingName: null,
 
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
@@ -191,6 +201,14 @@ export default {
     window.removeEventListener('keydown', this.keydown)
   },
   methods: {
+    renderHeading(h) {
+      if (this.showHeading && this.showHeading(h)) {
+        this.stopRootInflation = true
+        return true
+      }
+
+      return this.showEmptyHeadings || h.tasks.length > 0
+    },
     selectMultipleIds(newId) {
       if (this.lastSelectedId && newId && this.lazyTasks.find(el => el.id === newId) && this.lazyTasks.find(el => el.id === this.lastSelectedId)) {
         const idsToSelect = []
@@ -211,7 +229,7 @@ export default {
 
           const nodes = []
           for (const node of childNodes) {
-            if (idsToSelect.includes(node.dataset.id) && !nodes.includes(node)) {
+            if (node.dataset && idsToSelect.includes(node.dataset.id) && !nodes.includes(node)) {
               nodes.push(node)
             }
           }
@@ -304,6 +322,9 @@ export default {
 
         forceFallback: true,
         fallbackOnBody: true,
+        animation: 80,
+        delay: this.isDesktop ? 0 : 100,
+        handle: '.task-handle',
         
         group: {
           name: 'task-renderer',
@@ -316,17 +337,14 @@ export default {
           put: (j,o,item) => {
             const d = item.dataset
             const type = d.type
+            if (type === 'headingbutton' || type === 'add-task-floatbutton') return true
             if (type === 'appnav-element') return true
-            if (type === 'headingbutton') return true
             if (!this.onSortableAdd) return false
             if (type === 'task') return true
-            if (type === 'floatbutton') return true
             if (type === 'subtask') return true
             return false
           }
         },
-        delay: this.isDesktop ? 0 : 100,
-        handle: '.task-handle',
 
         onUpdate: (evt) => {
           setTimeout(() => {
@@ -353,14 +371,26 @@ export default {
           if (items.length === 0) items.push(evt.item)
           const type = items[0].dataset.type
 
-          const ids = items.map(el => el.dataset.id)
+          const repeated = items.map(el => el.dataset.id)
+          const ids = []
+          const set = new Set()
+          for (const id of repeated) {
+            if (!set.has(id)) {
+              ids.push(id)
+              set.add(id)
+            }
+          }
+          
 
           if (type === 'task' && this.onSortableAdd && this.sourceVueInstance) {
-            const indicies = evt.newIndicies.map(el => el.index )
+            this.removeEdit()
+            this.sourceVueInstance.removeEdit()
+            
+            const indicies = evt.newIndicies.map(el => el.index)
             if (indicies.length === 0) indicies.push(evt.newIndex)
             
-            const sourceLazyTasks = this.sourceVueInstance.lazyTasks
-            const destinyLazyTasks = this.lazyTasks
+            let sourceLazyTasks = this.sourceVueInstance.lazyTasks
+            let destinyLazyTasks = this.lazyTasks
 
             const tasks = []
             for (const id of ids) {
@@ -383,7 +413,7 @@ export default {
             })
             this.sourceVueInstance = null
           } else {
-            if (type === 'floatbutton') {
+            if (type === 'add-task-floatbutton') {
               this.addTaskEdit(evt.newIndex)
             } else if (type === 'headingbutton') {
               this.addHeadingsEdit(evt.newIndex)
@@ -470,6 +500,7 @@ export default {
             disabled: !this.updateHeadingIds,
             group: 'headings',
             delay: 150,
+            animation: 80,
             delayOnTouchOnly: true,
             handle: '.handle',
       
@@ -559,7 +590,17 @@ export default {
       }
     },
     click(event) {
-      if (this.selected.length > 0) event.stopPropagation()
+      if (this.selected.length > 0) {
+        let found = false
+        for (const node of event.path) {
+          if (node.classList && node.classList.contains('Task')) {
+            found = true
+            break
+          }
+        }
+
+        if (found) event.stopPropagation()
+      }
     },
     selectTask(el) {
       this.$store.commit('selectTask', el.dataset.id)
@@ -646,7 +687,8 @@ export default {
       const childs = this.draggableRoot.childNodes
       let ids = []
       for (const el of childs)
-        ids.push(el.dataset.id)
+        if (el.dataset)
+          ids.push(el.dataset.id)
       if (removeAdders)
         ids = ids.filter(id => id !== 'Edit' && id !== 'EditHeading' && id !== undefined)
       return ids
@@ -686,12 +728,19 @@ export default {
     updateView() {
       this.changedViewName = true
       this.clearLazySettimeout()
-      Promise.all([
-        this.slowlyAddHeadings(this.headings),
-        this.slowlyAddTasks(this.tasks),
-      ]).then(() => {
+      
+      if (this.isDesktop)
+        Promise.all([
+          this.slowlyAddHeadings(this.headings),
+          this.slowlyAddTasks(this.tasks),
+        ]).then(() => {
+          this.changedViewName = false
+        })
+      else {
+        this.lazyTasks = this.tasks.slice()
+        this.lazyHeadings = this.headings.slice()
         this.changedViewName = false
-      })
+      }
     },
   },
   computed: {
@@ -710,6 +759,12 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    inflate() {
+      if (this.stopRootInflation) return false
+      const hasHeadings = this.lazyHeadings.length > 0
+      
+      return (this.isRoot && !hasHeadings || (this.isRoot && hasHeadings && this.lazyHeadings.every(h => h.tasks.length === 0) && !this.showEmptyHeadings)) || this.isLast
+    },
     getTasks() {
       if (this.isRoot || this.showAllHeadingsItems) return this.lazyTasks
       return this.showingMoreItems ? this.lazyTasks : this.lazyTasks.slice(0, 3)
@@ -752,11 +807,12 @@ export default {
     },
   },
   watch: {
-    tasks(tasks) {
+    tasks(newArr) {
       if (this.waitingUpdateTimeout) {
         clearTimeout(this.waitingUpdateTimeout)
         this.waitingUpdateTimeout = null
       }
+      const tasks = newArr.slice()
       
       this.waitingUpdateTimeout = setTimeout(() => {
         if (!this.changedViewName) {
@@ -772,25 +828,27 @@ export default {
               tasks.splice(taskIndex + 1, 0, this.edit)
             }
           }
-
           this.lazyTasks = tasks
 
           setTimeout(() => {
             this.focusToggle = !this.focusToggle
           })
         }
-      }, 20)
+      })
     },
     headings(newArr) {
       if (this.isRoot) {
         setTimeout(() => {
           if (!this.changedViewName) {
-            this.lazyHeadings = newArr
+            this.lazyHeadings = newArr.slice()
           }
         })
       }
     },
     viewName() {
+      this.changingViewName = true
+      setTimeout(() => this.changingViewName = false, 500)
+      
       this.numberOfTimeoutUpdates = 0
       this.updateView()
 
@@ -919,14 +977,15 @@ export default {
   position: relative;
   z-index: 2;
   overflow: visible;
+  height: 100%;
 }
 
 .dontHaveTasks {
-  height: 500px;
+  min-height: 5px;
 }
 
-.showEmptyHeadings.dontHaveTasks {
-  height: 50px;
+.inflate {
+  min-height: 1200px;
 }
 
 </style>

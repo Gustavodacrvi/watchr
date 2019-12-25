@@ -6,24 +6,13 @@
       @mouseenter="headerHover = true"
       @mouseleave="headerHover = false"
 
-      @touchstart.passive='touchStart'
       @touchend.passive='touchEnd'
-      v-longclick='longClick'
+      @touchstart.passive='touchstart'
+      @touchmove.passive='touchmove'
 
       data-type='folder'
       data-color='var(--white)'
     >
-      <div class='circle-trans-wrapper-wrapper'>
-        <div class="circle-trans-wrapper">
-          <transition
-            @enter='circleEnter'
-          >
-            <div v-if="showCircle" class="circle-trans-transition"
-              :style="{left, top, backgroundImage: `radial-gradient(var(--light-gray), var(--gray))`}"
-            ></div>
-          </transition>
-        </div>
-      </div>
       <span class="icon-wrapper">
         <Icon class="icon" :class="{headerHover}" icon="folder"/>
       </span>
@@ -33,6 +22,11 @@
           <span v-else key="f">{{ l['Apply selected tasks'] }}</span>
         </transition>
       </span>
+      <CircleBubble
+        innerColor='var(--light-gray)'
+        outerColor='var(--gray)'
+        opacity='0'
+      />
     </div>
     <div class="content">
       <div v-show="showing && !movingFolder">
@@ -60,11 +54,13 @@ export default {
     return {
       showing: this.defaultShowing,
       headerHover: false,
-      showCircle: false,
-      isTouching: false,
-      left: 0,
-      top: 0,
-      doingTransition: false,
+
+      startTime: 0,
+      fail: 0,
+      startX: 0,
+      startY: 0,
+      initialScroll: 0,
+      timeout: null,
     }
   },
   mounted() {
@@ -85,78 +81,37 @@ export default {
         utils.bindOptionsToEventListener(el, await this.getOptions(this.options), this)
       }
     },
-    touchStart(e) {
-      this.isTouching = true
-      this.startX = e.changedTouches[0].clientX
-      this.startY = e.changedTouches[0].clientY
-      const rect = e.target.getBoundingClientRect()
-      const scroll = document.scrollingElement.scrollTop
-      if (!this.doingTransition) {
-        this.left = (e.targetTouches[0].pageX - rect.left) + 'px'
-        this.top = (e.targetTouches[0].pageY - rect.top - scroll) + 'px'
-        this.showCircle = true
-      }
-    },
     async openMobileOptions() {
+      window.navigator.vibrate(100)
       this.$store.commit('pushIconDrop', await this.getOptions(this.options))
     },
     touchEnd(e) {
-      this.isTouching = false
-      const touch = e.changedTouches[0]
-      const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
-      const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
-      if (!movedFingerX && !movedFingerY) {
-        if (this.allowMobileOptions)
-          this.openMobileOptions()
-        else this.click()
-      }
+      clearTimeout(this.timeout)
+      const time = new Date() - this.startTime
+      
+      if (!this.fail && (time < 250))
+        this.click()
+      this.fail = false
       this.allowMobileOptions = false
     },
-    longClick() {
-      if (!this.isDesktop && !this.isDragging) {
-        window.navigator.vibrate(100)
-        this.allowMobileOptions = true
+    touchmove(evt) {
+      const touch = evt.changedTouches[0]
+      const move = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 5 || Math.abs(touch.clientX - this.startX) > 5 || Math.abs(touch.clientY - this.startY) > 5
+      if (move) {
+        clearTimeout(this.timeout)
+        this.fail = true
       }
     },
-    circleEnter(el) {
-      const s = el.style
-      this.doingTransition = true
-
-      const trans = str => {
-        s.transition = `opacity ${str}, width ${str}, height ${str}, transform 0s, left 0s, top 0s, margin 0s`
-      }
-      let innerTrans = 450
-      let outerTrans = 250
-      if (this.isTouching) {
-        innerTrans += 150
-        outerTrans += 150
-      }
-
-      trans('0s')
-      s.opacity = 0
-      s.width = 0
-      s.height = 0
-      const client = this.$el.clientWidth
-      const width = client + 100
-      setTimeout(() => {
-        trans(`.${innerTrans}s`)
-        s.opacity = 1
-        s.width = width + 'px'
-        s.height = width + 'px'
-        setTimeout(() => {
-          trans(`.${outerTrans}s`)
-          s.width = width + 'px'
-          s.height = width + 'px'
-          s.opacity = 0
-          setTimeout(() => {
-            trans('0')
-            s.width = 0
-            s.height = 0
-            this.showCircle = false
-            this.doingTransition = false
-          }, innerTrans)
-        }, outerTrans)
-      }, 50)
+    touchstart(e) {
+      this.initialScroll = document.scrollingElement.scrollTop
+      this.startTime = new Date()
+      const touch = e.changedTouches[0]
+      this.startX = touch.clientX
+      this.startY = touch.clientY
+      
+      this.timeout = setTimeout(() => {
+        this.openMobileOptions()
+      }, 250)
     },
     go() {
       if (this.isDesktop) this.click()
@@ -225,6 +180,7 @@ export default {
   display: flex;
   height: 35px;
   transition-duration: .15s;
+  overflow: hidden;
 }
 
 .mobile .header {

@@ -28,10 +28,23 @@ export default {
     },
     
     updateIds(ids) {
-      this.$store.dispatch('list/updateViewOrder', {
-        view: this.viewName,
-        ids,
-      })
+      if (this.viewName === 'Someday' || this.viewName === 'Inbox') {
+        this.$store.dispatch('list/updateViewOrder', {
+          view: this.viewName,
+          ids,
+        })
+      } else {
+        let currentDate = mom()
+        if (this.viewName === 'Tomorrow')
+          currentDate.add(1, 'd')
+
+        currentDate = currentDate.format('Y-M-D')
+
+        this.$store.dispatch('task/saveCalendarOrder', {
+          ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.calendarOrders[currentDate] || []),
+          date: currentDate,
+        })
+      }
     },
     removeRepeat() {},
     removeDeadline() {},
@@ -65,6 +78,10 @@ export default {
     mainFilter() {
       if (this.viewType === 'search')
         return task => this.doesTaskIncludeText(task, this.viewName)
+      if (this.viewName === 'Inbox')
+        return this.isTaskInbox
+      if (this.viewName === 'Upcoming')
+        return task => task.calendar
       if (this.isSmart && this.notHeadingHeaderView) {
         if (this.viewName === 'Today' && this.hasOverdueTasks) return task => {
           return this.isTaskInView(task, 'Today') ||
@@ -72,21 +89,18 @@ export default {
         }
         return task => this.isTaskInView(task, this.viewName)
       }
-      if (this.viewName === 'Inbox')
-        return this.isTaskInbox
-      if (this.viewName === 'Upcoming')
-        return task => task.calendar
       return this.isTaskCompleted
     },
     rootFilter() {
       if (this.viewType === 'search')
         return () => true
+      if (this.viewName === 'Today' && this.hasOverdueTasks)
+        return () => false
       if (this.isSmart && this.notHeadingHeaderView)
-        if (!this.hasOverdueTasks)
-          return pipeBooleanFilters(
-            task => this.isTaskInView(task, this.viewName),
-            task => !task.list && !task.folder,
-          )
+        return pipeBooleanFilters(
+          task => this.isTaskInView(task, this.viewName),
+          task => !task.list && !task.folder,
+        )
       return () => false
     },
     configFilterOptions() {
@@ -95,9 +109,16 @@ export default {
       return null
     },
     tasksOrder() {
-      let o = this.viewOrders[this.viewName]
-      if (o && o.tasks) return this.viewOrders[this.viewName].tasks
-      return []
+      if (this.viewName === 'Someday' || this.viewName === 'Inbox') {
+        let o = this.viewOrders[this.viewName]
+        if (o && o.tasks) return this.viewOrders[this.viewName].tasks
+        return []
+      }
+      const currentDate = mom()
+      if (this.viewName === 'Tomorrow')
+        currentDate.add(1, 'd')
+
+      return this.calendarOrders[currentDate.format('Y-M-D')] || []
     },
 
     headingsPagination() {
@@ -106,6 +127,12 @@ export default {
     },
     showEmptyHeadings() {
       return this.viewName === 'Upcoming'
+    },
+    showHeading() {
+      if (this.viewName !== 'Upcoming') return null
+      return h => {
+        return h.showHeading
+      }
     },
     headings() {
       switch (this.viewName) {

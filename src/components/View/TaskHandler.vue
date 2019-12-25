@@ -11,6 +11,7 @@
       :scheduleObject='scheduleObject'
 
       :addTask='addTask'
+      :showSomedayButton='showSomedayButton'
       :rootFilterFunction='rootFilterFunction'
       :headingEditOptions='headingEditOptions'
       :taskIconDropOptions='taskIconDropOptions'
@@ -18,12 +19,8 @@
       :updateHeadingIds='updateHeadingIds'
       @update="updateIds"
       @add-heading="addHeading"
+      @allow-someday='allowSomeday'
     />
-    <transition name="fade-t">
-      <div v-if="showSomedayButton" @click="allowSomeday">
-        <AppButton type="dark" :value="l['Show someday tasks...']"/>
-      </div>
-    </transition>
   </div>
 </template>
 
@@ -45,7 +42,7 @@ export default {
     'pipeFilterOptions', 'showCompleted', 'showSomeday',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
-    'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackTask', 'icon', 'configFilterOptions',
+    'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackTask', 'icon', 'configFilterOptions', 'showHeading',
     'taskCompletionCompareDate', 'rootFallbackTask', 'autoSchedule',
     'updateHeadingIds', 'showEmptyHeadings', 'showAllHeadingsItems',
   ],
@@ -61,25 +58,6 @@ export default {
   methods: {
     allowSomeday() {
       this.$emit('allow-someday')
-    },
-    getFixedIdsFromNonFilteredAndFiltered(filtered, nonFiltered) {
-      const removedIncludedIds = nonFiltered.slice().filter(id => !filtered.includes(id))
-
-      let missing = []
-      let i = 0
-      for (const id of nonFiltered) {
-        if (!removedIncludedIds.includes(id))
-          missing.push(i)
-
-        i++
-      }
-      i = 0
-      for (const id of filtered) {
-        removedIncludedIds.splice(missing[i], 0, id)
-        i++
-      }
-
-      return removedIncludedIds
     },
 
     addTask(obj, evt) {
@@ -101,7 +79,7 @@ export default {
       this.$parent.$emit('add-task', obj)
     },
     updateIds(ids) {
-      this.$parent.$emit('update-ids', this.getFixedIdsFromNonFilteredAndFiltered(ids, this.rootNonFilteredIds))
+      this.$parent.$emit('update-ids', utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.rootNonFilteredIds))
     },
     addHeading(obj) {
       this.$parent.$emit('add-heading', {...obj})
@@ -208,7 +186,7 @@ export default {
 
         let updateIds = ids =>
             head.updateIds(
-              this.getFixedIdsFromNonFilteredAndFiltered(ids,
+              utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids,
                 nonFiltered.map(el => el.id),
               )
             )
@@ -295,7 +273,7 @@ export default {
           onEdit: head.onEdit ? head.onEdit(nonFiltered) : () => {},
         }
       })
-    },
+      },
 
     rootFilterFunction() {
       return pipeBooleanFilters(

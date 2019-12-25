@@ -1,17 +1,16 @@
 <template>
-  <div class="ActionButtons passive" :class="[platform, {moving, notMoving: !moving}]" @click="click">
+  <div class="ActionButtons passive" :class="[platform, {moving}]" @click="click">
     <Btn v-if="showHeader" class="header button handle action-button left-act" id="edit-component"
       icon='heading'
-      onMoveIcon='plus'
       color='white'
       data-type='headingbutton'
       :txt='l["Add heading"]'
     />
     <span v-else></span>
-    <Btn class="add button handle action-button task-adder right-act" id="edit-component"
-      icon='inbox'
+    <Btn v-if="showingTaskAdder" class="add-task-floating-button button handle action-button right-action-floating-button bright" id="edit-component"
+      icon='plus'
       color='white'
-      data-type='floatbutton'
+      data-type='add-task-floatbutton'
       :txt='l["Add task"]'
     />
   </div>
@@ -33,16 +32,26 @@ export default {
   data() {
     return {
       sortable: null,
+      showingTaskAdder: false,
       moving: false,
     }
   },
+  created() {
+    this.showingTaskAdder = false
+  },
   mounted() {
+    setTimeout(() => {
+      this.showingTaskAdder = true
+    }, 700)
     this.sortable = new Sortable(this.$el, {
       group: {name: ['action-buttons', 'appnav'], pull: 'clone', put: false},
-      handle: '.handle',
+      handle: '.floating-button-handle',
+      animation: 80,
 
+      fallbackClass: "sortable-fallback",
       forceFallback: true,
       fallbackOnBody: true,
+      fallbackTolerance: 0,
 
       onStart: () => {
         this.moving = true
@@ -59,7 +68,7 @@ export default {
     click(evt) {
       const els = evt.path
       for (const e of els)
-        if (e.classList && e.classList.contains('task-adder')) {
+        if (e.classList && e.classList.contains('add-task-floating-button')) {
           setTimeout(() => {
             this.$store.dispatch('pushPopup', {comp: 'AddTask', naked: true,})
           }, 50)
@@ -69,6 +78,11 @@ export default {
   },
   computed: {
     ...mapGetters(['platform', 'l', 'isDesktop'])
+  },
+  watch: {
+    moving() {
+      this.$emit('moving', this.moving)
+    }
   }
 }
 
@@ -79,7 +93,6 @@ export default {
 .ActionButtons {
   bottom: 16px;
   z-index: 15;
-  pointer-events: none;
   position: sticky;
   display: flex;
   justify-content: space-between;
@@ -87,21 +100,17 @@ export default {
   opacity: 1;
 }
 
-.moving  .handle {
-  opacity: 0;
-}
-
 .ActionButtons .header {
   transform: translateX(-48px) !important;
   pointer-events: all;
 }
 
-.ActionButtons .add {
+.ActionButtons .add-task-floating-button {
   transform: translateX(48px) !important;
   pointer-events: all;
 }
 
-.ActionButtons.mobile .right-act {
+.ActionButtons.mobile .right-action-floating-button {
   transform: translateX(-8px) !important;
 }
 
@@ -112,6 +121,14 @@ export default {
 </style>
 
 <style>
+
+.moving .ActButton {
+  display: none;
+}
+
+.ActButton {
+  transition-duration: 0s !important;
+}
 
 .floating-btn-msg, .floating-btn-container .floating {
   display: none !important;
@@ -131,6 +148,10 @@ export default {
   display: flex !important;
   justify-content: center;
   align-items: center;
+}
+
+.Lists .floating-btn-msg, .Tags .floating-btn-msg {
+  background-color: var(--dark);
 }
 
 </style>

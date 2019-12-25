@@ -153,7 +153,7 @@
               <Icon
                 class="opt-icon primary-hover cursor"
                 style="margin-right: 7px;margin-top: 2px"
-                width="15px"
+                width="22px"
                 :circle='true'
                 icon='file'
                 :file='true'
@@ -726,12 +726,13 @@ export default {
 .trans-t-leave, .trans-t-enter-to {
   opacity: 1;
   background-color: var(--card);
-  box-shadow: 0 2px 6px rgba(15,15,15,.3);
+  box-shadow: 0 2px 8px rgba(15,15,15,.3);
 }
 
 .Edit {
   background-color: var(--card);
-  box-shadow: 0 2px 6px rgba(15,15,15,.3);
+  box-shadow: 0 2px 8px rgba(15,15,15,.3);
+  will-change: height;
 }
 
 .edit-wrapper {
@@ -760,7 +761,7 @@ export default {
 }
 
 .mobile .add-checklist-button {
-  flex-basis: 0;
+  flex-basis: 40px;
 }
 
 .show {
@@ -827,6 +828,7 @@ export default {
   flex-direction: row-reverse;
   align-items: center;
   min-height: 35px;
+  position: relative;
 }
 
 .mobile .icons {

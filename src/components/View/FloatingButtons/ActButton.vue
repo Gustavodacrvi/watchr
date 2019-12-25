@@ -1,7 +1,7 @@
 <template>
-  <div class="ActButton handle" :class="platform">
-    <div class="floating">
-      <div class="inner-ball-button cb shadow remove-highlight">
+  <div class="ActButton floating-button-handle" :class="platform">
+    <div class="floating no-pointer">
+      <div class="inner-ball-button remove-highlight">
         <Icon class="icon"
           :icon="icon"
           :color="color"
@@ -9,13 +9,13 @@
         <div class="path"></div>
       </div>
     </div>
-    <div class="floating-btn-msg task-act" :style='styles'>
+    <div class="floating-btn-msg task-act no-pointer" :style='styles'>
       {{ txt }}
     </div>
-    <div class="floating-btn-msg tags-act" :style='styles'>
+    <div class="floating-btn-msg tags-act no-pointer" :style='styles'>
       {{ l["Add tag"] }}
     </div>
-    <div class="floating-btn-msg list-act" :style='styles'>
+    <div class="floating-btn-msg list-act no-pointer" :style='styles'>
       {{ l["Add list"] }}
     </div>
   </div>
@@ -51,6 +51,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  transition-duration: 0s !important;
 }
 
 .floating {
@@ -72,6 +73,24 @@ export default {
   overflow: hidden;
   cursor: pointer;
   border-radius: 100px;
+  background-color: var(--card);
+  box-shadow: 0 3px 8px rgba(15,15,15,.3);
+}
+
+
+.bright .inner-ball-button {
+  color: white;
+  box-shadow: 0 0 24px rgba(89, 160, 222, .2);
+  background-color: rgba(89, 160, 222, .9);
+}
+
+.bright .inner-ball-button:hover {
+  transition: box-shadow .2s;
+  box-shadow: 0 0 24px rgba(120, 201, 263, .2);
+}
+
+.mobile .no-pointer {
+  pointer-events: none;
 }
 
 .mobile .inner-ball-button {
@@ -80,7 +99,6 @@ export default {
 }
 
 .path {
-  background-color: var(--light-gray);
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -89,6 +107,11 @@ export default {
   clip-path: circle(0px);
   z-index: 10;
   transition-duration: .3s;
+  background-color: var(--light-gray);
+}
+
+.bright .path {
+  background-color: rgba(120, 201, 263, .9);
 }
 
 .inner-ball-button:hover .path {
