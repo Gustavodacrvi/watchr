@@ -28,10 +28,23 @@ export default {
     },
     
     updateIds(ids) {
-      this.$store.dispatch('list/updateViewOrder', {
-        view: this.viewName,
-        ids,
-      })
+      if (this.viewName === 'Someday' || this.viewName === 'Inbox') {
+        this.$store.dispatch('list/updateViewOrder', {
+          view: this.viewName,
+          ids,
+        })
+      } else {
+        let currentDate = mom()
+        if (this.viewName === 'Tomorrow')
+          currentDate.add(1, 'd')
+
+        currentDate = currentDate.format('Y-M-D')
+
+        this.$store.dispatch('task/saveCalendarOrder', {
+          ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.calendarOrders[currentDate] || []),
+          date: currentDate,
+        })
+      }
     },
     removeRepeat() {},
     removeDeadline() {},
@@ -96,9 +109,16 @@ export default {
       return null
     },
     tasksOrder() {
-      let o = this.viewOrders[this.viewName]
-      if (o && o.tasks) return this.viewOrders[this.viewName].tasks
-      return []
+      if (this.viewName === 'Someday' || this.viewName === 'Inbox') {
+        let o = this.viewOrders[this.viewName]
+        if (o && o.tasks) return this.viewOrders[this.viewName].tasks
+        return []
+      }
+      const currentDate = mom()
+      if (this.viewName === 'Tomorrow')
+        currentDate.add(1, 'd')
+
+      return this.calendarOrders[currentDate.format('Y-M-D')] || []
     },
 
     headingsPagination() {

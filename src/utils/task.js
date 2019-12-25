@@ -78,4 +78,53 @@ export default {
   hasCalendarBinding(task) {
     return task.calendar && task.calendar.type !== null
   },
+  groupTaskIds(tasks) {
+    const rootTasks = []
+    const folderTasksArr = []
+    const listTasksArr = []
+
+    for (const t of tasks)
+      if (!t.folder && !t.list)
+        rootTasks.push(t)
+      else if (t.folder && !t.list)
+        folderTasksArr(t)
+      else listTasksArr.push(t)
+
+    const folderTasks = {}
+    for (const t of folderTasksArr) {
+      if (!folderTasks[t.folder])
+        folderTasks[t.folder] = []
+      
+      folderTasks[t.folder].push(t)
+    }
+
+    const listTasks = {}
+    for (const t of listTasksArr) {
+      if (!listTasks[t.list])
+        listTasks[t.list] = []
+      
+      listTasks[t.list].push(t)
+    }
+
+    return {rootTasks, folderTasks, listTasks}
+  },
+  getFixedIdsFromNonFilteredAndFiltered(filtered, nonFiltered) {
+    const removedIncludedIds = nonFiltered.slice().filter(id => !filtered.includes(id))
+    
+    let missing = []
+    let i = 0
+    for (const id of nonFiltered) {
+      if (!removedIncludedIds.includes(id))
+        missing.push(i)
+
+      i++
+    }
+    i = 0
+    for (const id of filtered) {
+      removedIncludedIds.splice(missing[i], 0, id)
+      i++
+    }
+
+    return removedIncludedIds
+  },
 }

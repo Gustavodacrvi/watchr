@@ -59,25 +59,6 @@ export default {
     allowSomeday() {
       this.$emit('allow-someday')
     },
-    getFixedIdsFromNonFilteredAndFiltered(filtered, nonFiltered) {
-      const removedIncludedIds = nonFiltered.slice().filter(id => !filtered.includes(id))
-
-      let missing = []
-      let i = 0
-      for (const id of nonFiltered) {
-        if (!removedIncludedIds.includes(id))
-          missing.push(i)
-
-        i++
-      }
-      i = 0
-      for (const id of filtered) {
-        removedIncludedIds.splice(missing[i], 0, id)
-        i++
-      }
-
-      return removedIncludedIds
-    },
 
     addTask(obj, evt) {
       const rootNonFilteredIds = this.rootNonFilteredIds
@@ -98,7 +79,7 @@ export default {
       this.$parent.$emit('add-task', obj)
     },
     updateIds(ids) {
-      this.$parent.$emit('update-ids', this.getFixedIdsFromNonFilteredAndFiltered(ids, this.rootNonFilteredIds))
+      this.$parent.$emit('update-ids', utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.rootNonFilteredIds))
     },
     addHeading(obj) {
       this.$parent.$emit('add-heading', {...obj})
@@ -205,7 +186,7 @@ export default {
 
         let updateIds = ids =>
             head.updateIds(
-              this.getFixedIdsFromNonFilteredAndFiltered(ids,
+              utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids,
                 nonFiltered.map(el => el.id),
               )
             )

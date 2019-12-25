@@ -74,13 +74,14 @@ export default {
 
       const sortArray = this.$store.getters.checkMissingIdsAndSortArr
 
-      let smartViewOrderKey = this.viewName
-      /* if (this.viewName !== 'Someday') {
-        const tod = mom()
-        if (this.viewName === 'Today')
-          smartViewOrderKey = tod.format('Y-M-D')
-        else smartViewOrderKey = tod.add(1, 'd').format('Y-M-D')
-      } */
+      let currentDate = mom()
+      if (this.viewName === 'Tomorrow')
+        currentDate.add(1, 'd')
+
+      currentDate = currentDate.format('Y-M-D')
+      
+      const calendarOrder = this.calendarOrders[currentDate] || []
+      // const { rootTasks, folderTasks, listTasks } = utilsTask.groupTaskIds()
 
       let order = this.viewOrders[view] ? this.viewOrders[view].headings : []
       if (!order) order = []
@@ -90,20 +91,44 @@ export default {
       for (const viewHeading of headings) {
         if (viewHeading.smartViewControllerType === 'list') {
           const list = viewHeading
-          const saveOrder = ids =>
-            this.$store.dispatch('list/saveSmartViewHeadingTasksOrder', {
-              ids, listId: list.id, smartView: smartViewOrderKey,
-            })
+          const saveOrder = ids => {
+            if (this.viewName === 'Someday') {
+              this.$store.dispatch('list/saveSmartViewHeadingTasksOrder', {
+                ids, listId: list.id, smartView: this.viewName,
+              })
+            } else {
+              this.$store.dispatch('task/saveCalendarOrder', {
+                ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, calendarOrder),
+                date: currentDate,
+              })
+            }
+          }
 
           const filterFunction = task => this.isTaskInList(task, list.id)
+          const getSmartViewOrder = () => {
+            if (list.smartViewsOrders && list.smartViewsOrders[this.viewName])
+              return list.smartViewsOrders[this.viewName]
+            else
+              return this.getAllTasksOrderByList(list.id)
+          }
+          let tasksOrder = []
+          if (this.viewName === 'Someday')
+            tasksOrder = getSmartViewOrder()
+          else {
+            const taskIdsFromList = this.getAllTasksOrderByList(list.id)
 
-          let taskOrder = []
-          if (list.smartViewsOrders && list.smartViewsOrders[smartViewOrderKey])
-            taskOrder = list.smartViewsOrders[smartViewOrderKey]
-          else
-            taskOrder = this.getAllTasksOrderByList(list.id)
+            let found = false
+            for (const id of calendarOrder)
+              if (taskIdsFromList.includes(id)) {
+                found = true
+                break
+              }
 
-          const sort = tasks => sortArray(taskOrder, tasks)
+            if (found) tasksOrder = calendarOrder
+            else tasksOrder = taskIdsFromList
+          }
+
+          const sort = tasks => sortArray(tasksOrder, tasks)
 
           arr.push({
             name: list.name,
@@ -153,21 +178,46 @@ export default {
           })
         } else if (viewHeading.smartViewControllerType === 'folder') {
           const folder = viewHeading
-          const saveOrder = ids =>
-            this.$store.dispatch('folder/saveSmartViewHeadingTasksOrder', {
-              ids, folderId: folder.id, smartView: smartViewOrderKey,
-            })
+          const saveOrder = ids => {
+            if (this.viewName === 'Someday') {
+              this.$store.dispatch('folder/saveSmartViewHeadingTasksOrder', {
+                ids, folderId: folder.id, smartView: this.viewName,
+              })
+            } else {
+              this.$store.dispatch('task/saveCalendarOrder', {
+                ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, calendarOrder),
+                date: currentDate,
+              })
+            }
+          }
 
           const filterFunction = task => this.isTaskInFolder(task, folder.id)
+          const getSmartViewOrder = () => {
+            if (folder.smartViewsOrders && folder.smartViewsOrders[this.viewName])
+              return folder.smartViewsOrders[this.viewName]
+            else
+              return this.getFolderTaskOrderById(folder.id)
+          }
 
-          let taskOrder = []
-          if (folder.smartViewsOrders && folder.smartViewsOrders[smartViewOrderKey])
-            taskOrder = folder.smartViewsOrders[smartViewOrderKey]
-          else
-            taskOrder = this.getFolderTaskOrderById(folder.id)
+          let tasksOrder = []
+          if (this.viewName === 'Someday')
+            tasksOrder = getSmartViewOrder()
+          else {
+            const taskIdsFromFolder = this.getFolderTaskOrderById(folder.id)
+
+            let found = false
+            for (const id of calendarOrder)
+              if (taskIdsFromFolder.includes(id)) {
+                found = true
+                break
+              }
+
+            if (found) tasksOrder = calendarOrder
+            else tasksOrder = taskIdsFromFolder
+          }
           
-          const sort = tasks => sortArray(taskOrder, tasks)
 
+          const sort = tasks => sortArray(tasksOrder, tasks)
           
           arr.push({
             name: folder.name,
