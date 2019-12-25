@@ -638,6 +638,23 @@ export default {
 
       batch.commit()
     },
+    saveCalendarOrder({rootState}, {ids, date}) {
+      const calendarOrders = {[date]: ids}
+
+      const orders = rootState.userInfo.calendarOrders || {}
+
+      const savedKeys = Object.keys(orders)
+      const keysToRemove = []
+      const tod = mom()
+      for (const key of savedKeys)
+        if (mom(key, 'Y-M-D').isBefore(tod, 'day'))
+          keysToRemove.push(key)
+
+      for (const key of keysToRemove)
+        calendarOrders[key] = fd().delete()
+      
+      userRef().set({calendarOrders}, {merge: true})
+    },
     convertToList(c, {task, savedLists}) {
       const batch = fire.batch()
 

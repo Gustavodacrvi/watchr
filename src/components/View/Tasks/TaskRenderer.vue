@@ -75,7 +75,7 @@
       tag="div"
     >
       <template v-for="(h, i) in lazyHeadings">
-        <HeadingApp v-if="showEmptyHeadings || h.tasks.length > 0" :key="h.name"
+        <HeadingApp v-if="renderHeading(h)" :key="h.name"
           :header='h'
 
           v-bind="h"
@@ -112,7 +112,7 @@
             :header="h"
             :addTask="h.onAddTask"
             :headingPosition='i + 1'
-            :isLast='(i + 1) === lazyHeadings.length'
+            :isLast='false'
           />
         </HeadingApp>
       </template>
@@ -149,7 +149,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton',
   'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -176,8 +176,10 @@ export default {
       hasEdit: null,
       edit: null,
       focusToggle: false,
+      stopRootInflation: false,
 
       lastSelectedId: null,
+      lastHeadingName: null,
 
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
@@ -199,6 +201,14 @@ export default {
     window.removeEventListener('keydown', this.keydown)
   },
   methods: {
+    renderHeading(h) {
+      if (this.showHeading && this.showHeading(h)) {
+        this.stopRootInflation = true
+        return true
+      }
+
+      return this.showEmptyHeadings || h.tasks.length > 0
+    },
     selectMultipleIds(newId) {
       if (this.lastSelectedId && newId && this.lazyTasks.find(el => el.id === newId) && this.lazyTasks.find(el => el.id === this.lastSelectedId)) {
         const idsToSelect = []
@@ -381,8 +391,6 @@ export default {
             
             let sourceLazyTasks = this.sourceVueInstance.lazyTasks
             let destinyLazyTasks = this.lazyTasks
-            console.log('before', destinyLazyTasks.map(el => el.name))
-            console.log('before', sourceLazyTasks.map(el => el.name))
 
             const tasks = []
             for (const id of ids) {
@@ -396,14 +404,10 @@ export default {
               }
             }
 
-            console.log(ids)
-            console.log(tasks)
             for (let i = 0; i < ids.length;i++) {
               destinyLazyTasks.splice(indicies[i], 0, tasks[i])
             }
 
-            console.log('after', destinyLazyTasks.map(el => el.name))
-            console.log('after', sourceLazyTasks.map(el => el.name))
             setTimeout(() => {
               this.onSortableAdd(evt, ids, type, destinyLazyTasks.map(el => el.id))
             })
@@ -756,10 +760,8 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     inflate() {
+      if (this.stopRootInflation) return false
       const hasHeadings = this.lazyHeadings.length > 0
-      const isLastHeading = this.isLast
-
-      // root, no headings
       
       return (this.isRoot && !hasHeadings || (this.isRoot && hasHeadings && this.lazyHeadings.every(h => h.tasks.length === 0) && !this.showEmptyHeadings)) || this.isLast
     },

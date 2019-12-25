@@ -205,23 +205,15 @@ export default {
       })
     },
     save() {
-      if (this.hidedSections.length === 2) {
-        this.$store.commit('pushToast', {
-          name: this.l['Please toggle at least one section.'],
-          seconds: 4,
-          type: 'error',
-        })
-      } else {
-        userRef().set({
-          disablePmFormat: !this.pmFormat,
-        }, {merge: true})
-        this.$store.dispatch('update', {
-          ...this.user,
-          hidedSections: this.hidedSections,
-          hidedViews: this.hidedSmartViews,
-        })
-        this.changedSection = false
-      }
+      userRef().set({
+        disablePmFormat: !this.pmFormat,
+      }, {merge: true})
+      this.$store.dispatch('update', {
+        ...this.user,
+        hidedSections: this.hidedSections,
+        hidedViews: this.hidedSmartViews,
+      })
+      this.changedSection = false
     },
     update() {
       this.pmFormat = this.getPmFormat

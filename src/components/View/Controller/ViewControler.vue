@@ -260,7 +260,12 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     viewOrders() {
-      if (this.userInfo) return this.userInfo.viewOrders
+      if (this.userInfo && this.userInfo.viewOrders) return this.userInfo.viewOrders
+      return {}
+    },
+    calendarOrders() {
+      if (this.userInfo && this.userInfo.calendarOrders)
+        return this.userInfo.calendarOrders
       return {}
     },
     prefix() {
@@ -297,7 +302,7 @@ export default {
       const props = [
         'icon', 'showEmptyHeadings', 'updateHeadingIds',
         'headingEditOptions', 'headerOptions', 'notes', 'progress', 'headings', 'headingsOrder', 'showAllHeadingsItems', 'rootFallbackTask',
-        'mainFilter', 'rootFilter', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates', 'mainFallbackTask',
+        'mainFilter', 'rootFilter', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates', 'mainFallbackTask', 'showHeading',
         'headerTags', 'headerCalendar', 'taskCompletionCompareDate', 'files',
         'headingsPagination', 'configFilterOptions',
       ]
@@ -329,18 +334,22 @@ export default {
       })
       const sort = utilsTask.sortTasksByTaskDate
       const TOD_STR = mom().format('Y-M-D')
-      
+
       for (let i = 0;i < 7;i++) {
         tod.add(1, 'day')
         const date = tod.format('Y-M-D')
+
+        const sortHeading = tasks =>
+          this.$store.getters.checkMissingIdsAndSortArr(this.calendarOrders[date] || [], tasks)
 
         const filterFunction = task => this.isTaskShowingOnDate(task, date, true)
         
         arr.push({
           name: utils.getHumanReadableDate(date, this.l),
           id: date,
+          showHeading: true,
 
-          sort,
+          sort: sortHeading,
           filter: filterFunction,
           fallbackTask: task => {
             if (!task.calendar)
@@ -359,6 +368,9 @@ export default {
               task: {calendar: calObj(date)},
             })
           },
+          updateIds: ids => {
+            this.$store.dispatch('task/saveCalendarOrder', {ids, date})
+          }
         })
       }
       const thisMonthPipe = pipeBooleanFilters(

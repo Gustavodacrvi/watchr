@@ -97,6 +97,17 @@
         </span>
       </div>
     </div>
+    {{data.time}}
+    <div class="extra-options margin">
+      <div class="cont">
+        {{ l['Time:'] }}
+      </div>
+      <div class="cont">
+        <span class="option rb cursor" @click="getTimeInput">
+          {{ getTime }}
+        </span>
+      </div>
+    </div>
     <div class="extra-options margin">
       <div class="cont">
         {{ l['Ends:'] }}
@@ -137,7 +148,7 @@ import AuthOptions from "@/components/Auth/Options.vue"
 import AuthSimpleInput from "@/components/Auth/SimpleInput.vue"
 import AuthButton from "@/components/Auth/Button.vue"
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 import mom from 'moment/src/moment'
 
@@ -208,6 +219,7 @@ export default {
         ],
         months: ['Jan'],
         weeks: ['Mon'],
+        time: null,
       }
     }
   },
@@ -221,6 +233,7 @@ export default {
       const editDate = TOD_STR
       const obj = {
         begins: this.data.begins,
+        time: this.data.time,
       }
       if (this.data.ends !== 'Never') {
         if (this.data.ends === 'On date') {
@@ -332,7 +345,6 @@ export default {
         comp: 'CalendarPicker',
         content: {
           onlyDates: true,
-          payload: this.$data,
           callback: date => {
             return {
               comp: 'RepeatPicker',
@@ -343,6 +355,28 @@ export default {
                 data: {
                   ...this.data,
                   ...callback(date.specific),
+                },
+                callback: this.content.callback,
+              }
+            }
+          }
+        }
+      })
+    },
+    getTimeInput() {
+      this.$emit('update', {
+        comp: 'TimePicker',
+        content: {
+          callback: time => {
+            return {
+              comp: 'RepeatPicker',
+              cardOptions: {
+                overflow: true,
+              },
+              content: {
+                data: {
+                  ...this.data,
+                  time,
                 },
                 callback: this.content.callback,
               }
@@ -363,6 +397,9 @@ export default {
     },
   },
   computed: {
+    ...mapState({
+      userInfo: state => state.userInfo,
+    }),
     ...mapGetters(['platform', 'l']),
     getDays() {
       return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -371,6 +408,14 @@ export default {
       if (this.data.weekDay === 'day')
         return this.data.monthDayOptions
       return this.data.monthDayOptions.slice(0, 4)
+    },
+    getTime() {
+      if (this.data.time) {
+        if (this.userInfo.disablePmFormat)
+          return this.data.time
+        return mom(this.data.time, 'H:m').format('h:m A')
+      }
+      return this.l['No time']
     },
   },
   watch: {

@@ -83,6 +83,7 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes',
   'headerOptions', 'headerDates', 'headerTags', 'headerCalendar', 'files',
   'progress', 'tasksOrder',  'rootFallbackTask', 'mainFallbackTask',
+  'showHeading',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'showHeadadingFloatingButton', 'updateHeadingIds', 'showAllHeadingsItems', 'taskCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
   components: {

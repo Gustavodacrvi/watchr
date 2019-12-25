@@ -4,7 +4,7 @@
     :css="true"
     @enter='taskEnter'
   >
-    <div class="Task draggable" :class="[{fade, changeColor, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing}, platform]"
+    <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing}, platform]"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
       @click="rootClick"
@@ -49,6 +49,7 @@
               @mouseenter="iconHover = true"
               @mouseleave="iconHover = false"
               @touchend.passive='touchComplete'
+              :class="{changeColor}"
             >
               <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon cursor remove-highlight"
                 :icon="`box${isSomeday ? '-dash' : ''}`"
@@ -65,7 +66,9 @@
                 @click="desktopComplete"
               />
             </div>
-            <div class="text">
+            <div class="text"
+              :class="{changeColor}"
+            >
               <div class="task-name-wrapper">
                 <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
                 <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
@@ -286,7 +289,7 @@ export default {
       this.isTouching = false
       const touch = e.changedTouches[0]
 
-      if (!this.fail && (time < 300)) {
+      if (!this.fail && (time < 250)) {
         if (!this.isTaskSelected && !this.justCompleted)
           this.selectTask()
         else this.deselectTask()

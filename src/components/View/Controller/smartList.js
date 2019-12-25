@@ -108,6 +108,12 @@ export default {
     showEmptyHeadings() {
       return this.viewName === 'Upcoming'
     },
+    showHeading() {
+      if (this.viewName !== 'Upcoming') return null
+      return h => {
+        return h.showHeading
+      }
+    },
     headings() {
       switch (this.viewName) {
         case 'Upcoming': return this.upcomingHeadingsOptions
