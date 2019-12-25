@@ -7,7 +7,7 @@
       :txt='l["Add heading"]'
     />
     <span v-else></span>
-    <Btn v-if="showingTaskAdder" class="add-task-floating-button button handle action-button right-action-floating-button" id="edit-component"
+    <Btn v-if="showingTaskAdder" class="add-task-floating-button button handle action-button right-action-floating-button bright" id="edit-component"
       icon='plus'
       color='white'
       data-type='add-task-floatbutton'

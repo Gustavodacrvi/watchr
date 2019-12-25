@@ -1,7 +1,7 @@
 <template>
   <div class="ActButton floating-button-handle" :class="platform">
     <div class="floating no-pointer">
-      <div class="inner-ball-button cb shadow remove-highlight">
+      <div class="inner-ball-button remove-highlight">
         <Icon class="icon"
           :icon="icon"
           :color="color"
@@ -73,6 +73,15 @@ export default {
   overflow: hidden;
   cursor: pointer;
   border-radius: 100px;
+  background-color: var(--card);
+  box-shadow: 0 3px 8px rgba(15,15,15,.3);
+}
+
+
+.bright .inner-ball-button {
+  color: white;
+  box-shadow: 0 0 20px rgba(89, 160, 222, .9);
+  background-color: rgba(89, 160, 222, .9);
 }
 
 .mobile .no-pointer {
@@ -85,7 +94,6 @@ export default {
 }
 
 .path {
-  background-color: var(--light-gray);
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -94,6 +102,11 @@ export default {
   clip-path: circle(0px);
   z-index: 10;
   transition-duration: .3s;
+  background-color: var(--light-gray);
+}
+
+.bright .path {
+  background-color: rgba(120, 201, 263, .9);
 }
 
 .inner-ball-button:hover .path {

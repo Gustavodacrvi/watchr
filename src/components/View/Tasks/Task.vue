@@ -4,7 +4,7 @@
     :css="true"
     @enter='taskEnter'
   >
-    <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing}, platform]"
+    <div class="Task draggable" :class="[{fade, changeColor, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing}, platform]"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
       @click="rootClick"
@@ -48,21 +48,21 @@
             <div class="check"
               @mouseenter="iconHover = true"
               @mouseleave="iconHover = false"
-              @touchstart.passive.stop
-              @mousedown.passive.stop
+              @touchend.passive='touchComplete'
             >
-              <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon cursor remove-highlight" @click="completeTask"
+              <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon cursor remove-highlight"
                 :icon="`box${isSomeday ? '-dash' : ''}`"
                 :color='circleColor'
                 :stop='true'
                 width="18px"
+                @click="desktopComplete"
               />
               <Icon v-else :circle='true' class="icon check-icon cursor remove-highlight"
                 :icon="`box-check${isSomeday ? '-dash' : ''}`"
                 :color='circleColor'
                 width="18px"
                 :stop='true'
-                @click="completeTask"
+                @click="desktopComplete"
               />
             </div>
             <div class="text">
@@ -150,6 +150,8 @@ export default {
       startTime: 0,
       initialScroll: 0,
       timeout: null,
+      changeColor: false,
+      justCompleted: false,
 
       fail: false,
     }
@@ -218,6 +220,10 @@ export default {
         window.navigator.vibrate(100)
       this.$store.commit('pushIconDrop', this.options)
     },
+    desktopComplete() {
+      if (this.isDesktop)
+        this.completeTask()
+    },
     completeTask() {
       const {t,c} = this.getTask
       if (!this.completed || (c && c.type === 'periodic' || c && c.type === 'weekly'))
@@ -259,6 +265,8 @@ export default {
         this.top = (e.targetTouches[0].pageY - rect.top - this.initialScroll) + 'px'
         this.showCircle = true
       }
+
+      this.changeColor = true
     },
     touchmove(evt) {
       const touch = evt.changedTouches[0]
@@ -272,7 +280,7 @@ export default {
       const touch = e.changedTouches[0]
 
       if (!this.fail && (time < 200)) {
-        if (!this.isTaskSelected)
+        if (!this.isTaskSelected && !this.justCompleted)
           this.selectTask()
         else this.deselectTask()
       }
@@ -283,6 +291,12 @@ export default {
       }
       this.allowMobileOptions = false
       this.fail = false
+      this.changeColor = false
+      this.justCompleted = false
+    },
+    touchComplete() {
+      this.justCompleted = true
+      this.completeTask()
     },
     selectTask() {
       this.$emit('select', this.$el)
@@ -783,6 +797,10 @@ export default {
   transition: opacity .15s;
   position: relative;
   z-index: 2;
+}
+
+.changeColor {
+  color: var(--primary) !important;
 }
 
 .Task.showingIconDropContent {

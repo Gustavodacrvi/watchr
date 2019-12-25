@@ -65,6 +65,10 @@ export default {
     mainFilter() {
       if (this.viewType === 'search')
         return task => this.doesTaskIncludeText(task, this.viewName)
+      if (this.viewName === 'Inbox')
+        return this.isTaskInbox
+      if (this.viewName === 'Upcoming')
+        return task => task.calendar
       if (this.isSmart && this.notHeadingHeaderView) {
         if (this.viewName === 'Today' && this.hasOverdueTasks) return task => {
           return this.isTaskInView(task, 'Today') ||
@@ -72,21 +76,22 @@ export default {
         }
         return task => this.isTaskInView(task, this.viewName)
       }
-      if (this.viewName === 'Inbox')
-        return this.isTaskInbox
-      if (this.viewName === 'Upcoming')
-        return task => task.calendar
       return this.isTaskCompleted
     },
     rootFilter() {
       if (this.viewType === 'search')
         return () => true
-      if (this.isSmart && this.notHeadingHeaderView)
-        if (!this.hasOverdueTasks)
+      if (this.isSmart && this.notHeadingHeaderView) {
+        if (!this.hasOverdueTasks && this.viewName === 'Today')
           return pipeBooleanFilters(
             task => this.isTaskInView(task, this.viewName),
             task => !task.list && !task.folder,
           )
+        else return pipeBooleanFilters(
+          task => this.isTaskInView(task, this.viewName),
+          task => !task.list && !task.folder,
+        )
+      }
       return () => false
     },
     configFilterOptions() {
