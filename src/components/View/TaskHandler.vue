@@ -292,7 +292,7 @@ export default {
           onEdit: head.onEdit ? head.onEdit(nonFiltered) : () => {},
         }
       })
-    },
+      },
 
     rootFilterFunction() {
       return pipeBooleanFilters(

@@ -81,17 +81,13 @@ export default {
     rootFilter() {
       if (this.viewType === 'search')
         return () => true
-      if (this.isSmart && this.notHeadingHeaderView) {
-        if (!this.hasOverdueTasks && this.viewName === 'Today')
-          return pipeBooleanFilters(
-            task => this.isTaskInView(task, this.viewName),
-            task => !task.list && !task.folder,
-          )
-        else return pipeBooleanFilters(
+      if (this.viewName === 'Today' && this.hasOverdueTasks)
+        return () => false
+      if (this.isSmart && this.notHeadingHeaderView)
+        return pipeBooleanFilters(
           task => this.isTaskInView(task, this.viewName),
           task => !task.list && !task.folder,
         )
-      }
       return () => false
     },
     configFilterOptions() {

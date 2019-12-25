@@ -217,7 +217,7 @@ export default {
       }
     },
     openMobileOptions() {
-        window.navigator.vibrate(100)
+      window.navigator.vibrate(100)
       this.$store.commit('pushIconDrop', this.options)
     },
     desktopComplete() {
@@ -267,27 +267,29 @@ export default {
       }
 
       this.changeColor = true
+      this.timeout = setTimeout(() => {
+        this.openMobileOptions()
+      }, 250)
     },
     touchmove(evt) {
       const touch = evt.changedTouches[0]
       const move = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 5 || Math.abs(touch.clientX - this.startX) > 5 || Math.abs(touch.clientY - this.startY) > 5
-      if (move) this.fail = true
+      if (move) {
+        clearTimeout(this.timeout)
+        this.fail = true
+      }
     },
     touchEnd(e) {
+      clearTimeout(this.timeout)
       const time = new Date() - this.startTime
       
       this.isTouching = false
       const touch = e.changedTouches[0]
 
-      if (!this.fail && (time < 200)) {
+      if (!this.fail && (time < 300)) {
         if (!this.isTaskSelected && !this.justCompleted)
           this.selectTask()
         else this.deselectTask()
-      }
-
-      if (!this.fail) {
-        if (time > 250)
-          this.openMobileOptions()
       }
       this.allowMobileOptions = false
       this.fail = false

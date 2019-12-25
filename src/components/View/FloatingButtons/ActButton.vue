@@ -80,8 +80,13 @@ export default {
 
 .bright .inner-ball-button {
   color: white;
-  box-shadow: 0 0 20px rgba(89, 160, 222, .9);
+  box-shadow: 0 0 24px rgba(89, 160, 222, .2);
   background-color: rgba(89, 160, 222, .9);
+}
+
+.bright .inner-ball-button:hover {
+  transition: box-shadow .2s;
+  box-shadow: 0 0 24px rgba(120, 201, 263, .2);
 }
 
 .mobile .no-pointer {

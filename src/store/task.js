@@ -206,9 +206,9 @@ export default {
         },
       },
       isTaskOverdue: {
-        getter({}, task) {
+        getter({getters}, task) {
           const calendar = task.calendar
-          if (!calendar) return false
+          if (!calendar || getters.isTaskCompleted(task)) return false
           
           let tod = null
           const getTod = () => {

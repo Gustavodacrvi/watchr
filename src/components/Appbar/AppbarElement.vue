@@ -7,8 +7,8 @@
 
     @click.stop="linkCallback"
     @touchstart.passive='touchStart'
+    @touchmove.passive='touchmove'
     @touchend.passive='touchEnd'
-    v-longclick='longClick'
   >
     <div
       class="link-wrapper cursor remove-highlight AppbarElement-link rb"
@@ -73,7 +73,8 @@ export default {
     return {
       hover: false,
       isTouching: false,
-      allowMobileOptions: false,
+      fail: false,
+      startTime: 0,
 
       selectedTasks: [],
     }
@@ -83,12 +84,6 @@ export default {
   },
   methods: {
     ...mapActions(['getOptions']),
-    longClick() {
-      if (!this.isDesktop && !this.isDragging) {
-        window.navigator.vibrate(100)
-        this.allowMobileOptions = true
-      }
-    },
     async bindOptions() {
       if (this.isDesktop) {
         if (this.options) {
@@ -98,25 +93,38 @@ export default {
       }
     },
     async openMobileOptions() {
+      window.navigator.vibrate(100)
       this.$store.commit('pushIconDrop', await this.getOptions(this.options))
     },
     touchStart(e) {
       this.isTouching = true
+      this.fail = false
+      this.startTime = new Date()
+      this.initialScroll = document.scrollingElement.scrollTop
       const touch = e.changedTouches[0]
       this.startX = touch.clientX
       this.startY = touch.clientY
+
+      this.timeout = setTimeout(() => {
+        this.openMobileOptions()
+      }, 250)
     },
-    touchEnd(e) {
-      this.isTouching = false
-      const touch = e.changedTouches[0]
-      const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
-      const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
-      if (!movedFingerX && !movedFingerY) {
-        if (this.allowMobileOptions)
-          this.openMobileOptions()
-        else this.click()
+    touchmove(evt) {
+      const touch = evt.changedTouches[0]
+      const move = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 5 || Math.abs(touch.clientX - this.startX) > 5 || Math.abs(touch.clientY - this.startY) > 5
+      if (move) {
+        clearTimeout(this.timeout)
+        this.fail = true
       }
-      this.allowMobileOptions = false
+    },
+    touchEnd() {
+      clearTimeout(this.timeout)
+      const time = new Date() - this.startTime
+
+      if (!this.fail && time < 201)
+          this.click()
+      this.isTouching = false
+      this.fail = false
     },
     linkCallback(evt) {
       if (this.isDesktop) this.click()

@@ -8,9 +8,9 @@
         <div class="header-wrapper handle cursor remove-highlight" key="wr"
           @click="click"
           @touchstart.passive='touchStart'
+          @touchmove.passive='touchmove'
           @touchend.passive='touchEnd'
           
-          v-longclick='longClick'
           @dblclick="toggleEditing"
           @mouseenter="onHover = true"
           @mouseleave="onHover = false"
@@ -97,15 +97,13 @@ export default {
       top: 0,
       doingTransition: false,
       allowMobileOptions: false,
+      timeout: null,
+      startTime: 0,
+      initialScroll: 0,
+      fail: false,
     }
   },
   methods: {
-    longClick() {
-      if (!this.isDesktop && !this.movingHeading) {
-        window.navigator.vibrate(100)
-        this.allowMobileOptions = true
-      }
-    },
     bindOptions() {
       if (this.isDesktop) {
         const header = this.$el.getElementsByClassName('header-wrapper')[0]
@@ -114,18 +112,32 @@ export default {
       }
     },
     openMobileOptions() {
+      window.navigator.vibrate(100)
       this.$store.commit('pushIconDrop', this.options)
     },
     touchStart(e) {
       this.isTouching = true
+      this.startTime = new Date()
       this.startX = e.changedTouches[0].clientX
       this.startY = e.changedTouches[0].clientY
       const rect = e.target.getBoundingClientRect()
-      const scroll = document.scrollingElement.scrollTop
+      this.initialScroll = document.scrollingElement.scrollTop
       if (!this.doingTransition) {
         this.left = (e.targetTouches[0].pageX - rect.left) + 'px'
-        this.top = (e.targetTouches[0].pageY - rect.top - scroll) + 'px'
+        this.top = (e.targetTouches[0].pageY - rect.top - this.initialScroll) + 'px'
         this.showCircle = true
+      }
+
+      this.timeout = setTimeout(() => {
+        this.openMobileOptions()
+      }, 250)
+    },
+    touchmove(evt) {
+      const touch = evt.changedTouches[0]
+      const move = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 5 || Math.abs(touch.clientX - this.startX) > 5 || Math.abs(touch.clientY - this.startY) > 5
+      if (move) {
+        clearTimeout(this.timeout)
+        this.fail = true
       }
     },
     click(evt) {
@@ -137,15 +149,13 @@ export default {
       }
     },
     touchEnd(e) {
+      clearTimeout(this.timeout)
+      const time = new Date() - this.startTime
+      
       this.isTouching = false
-      const touch = e.changedTouches[0]
-      const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
-      const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
-      if (!movedFingerX && !movedFingerY) {
-        if (this.allowMobileOptions)
-          this.openMobileOptions()
-        else this.showing = !this.showing
-      }
+      if (!this.fail && (time < 250))
+        this.showing = !this.showing
+      this.fail = false
       this.allowMobileOptions = false
     },
     circleEnter(el) {

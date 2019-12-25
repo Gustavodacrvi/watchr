@@ -7,7 +7,8 @@
       @mouseleave="headerHover = false"
 
       @touchend.passive='touchEnd'
-      v-longclick='longClick'
+      @touchstart.passive='touchstart'
+      @touchmove.passive='touchmove'
 
       data-type='folder'
       data-color='var(--white)'
@@ -53,6 +54,13 @@ export default {
     return {
       showing: this.defaultShowing,
       headerHover: false,
+
+      startTime: 0,
+      fail: 0,
+      startX: 0,
+      startY: 0,
+      initialScroll: 0,
+      timeout: null,
     }
   },
   mounted() {
@@ -74,24 +82,36 @@ export default {
       }
     },
     async openMobileOptions() {
+      window.navigator.vibrate(100)
       this.$store.commit('pushIconDrop', await this.getOptions(this.options))
     },
     touchEnd(e) {
-      const touch = e.changedTouches[0]
-      const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
-      const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
-      if (!movedFingerX && !movedFingerY) {
-        if (this.allowMobileOptions)
-          this.openMobileOptions()
-        else this.click()
-      }
+      clearTimeout(this.timeout)
+      const time = new Date() - this.startTime
+      
+      if (!this.fail && (time < 250))
+        this.click()
+      this.fail = false
       this.allowMobileOptions = false
     },
-    longClick() {
-      if (!this.isDesktop && !this.isDragging) {
-        window.navigator.vibrate(100)
-        this.allowMobileOptions = true
+    touchmove(evt) {
+      const touch = evt.changedTouches[0]
+      const move = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 5 || Math.abs(touch.clientX - this.startX) > 5 || Math.abs(touch.clientY - this.startY) > 5
+      if (move) {
+        clearTimeout(this.timeout)
+        this.fail = true
       }
+    },
+    touchstart(e) {
+      this.initialScroll = document.scrollingElement.scrollTop
+      this.startTime = new Date()
+      const touch = e.changedTouches[0]
+      this.startX = touch.clientX
+      this.startY = touch.clientY
+      
+      this.timeout = setTimeout(() => {
+        this.openMobileOptions()
+      }, 250)
     },
     go() {
       if (this.isDesktop) this.click()
