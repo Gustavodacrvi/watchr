@@ -81,6 +81,7 @@ import filter from '@/assets/icons/filter.svg'
 import magic from '@/assets/icons/magic.svg'
 import clock from '@/assets/icons/clock.svg'
 import boxCheck from '@/assets/icons/box-check.svg'
+import calendarStar from '@/assets/icons/calendar-star.svg'
 import boxCheckDash from '@/assets/icons/box-check-dash.svg'
 
 import { mapGetters } from 'vuex'
@@ -100,6 +101,7 @@ export default {
         "box-dash": boxDash,
         "box-check-dash": boxCheckDash,
         "box-check": boxCheck,
+        "calendar-star": calendarStar,
         "import": importIcon,
         "export": exportIcon,
         "user-plus": userPlus,
