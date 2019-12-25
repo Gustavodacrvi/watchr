@@ -76,6 +76,7 @@ export default {
       if (this.viewType !== 'list') return false
       switch (this.viewName) {
         case 'Today': return true
+        case 'Calendar': return true
         case 'Upcoming': return true
         case 'Someday': return true
         case 'Tomorrow': return true

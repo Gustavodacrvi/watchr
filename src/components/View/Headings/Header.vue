@@ -311,6 +311,7 @@ export default {
         Tomorrow: 'sun',
         Someday: 'archive',
         Inbox: 'inbox',
+        Calendar: 'calendar-star',
         Upcoming: 'calendar',
         Completed: 'circle-check',
       }
@@ -324,6 +325,7 @@ export default {
           Tomorrow: 'var(--orange)',
           Someday: 'var(--brown)',
           Inbox: 'var(--primary)',
+          Calendar: 'var(--purple)',
           Upcoming: 'var(--green)',
           Completed: 'var(--olive)',
         }

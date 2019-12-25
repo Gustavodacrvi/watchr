@@ -173,6 +173,7 @@ export default {
           case 'Today': return 'star'
           case 'Tomorrow': return 'sun'
           case 'Inbox': return 'inbox'
+          case 'Calendar': return 'calendar-star'
           case 'Upcoming': return 'calendar'
           case 'Completed': return 'circle-check'
           case 'Someday': return 'archive'
