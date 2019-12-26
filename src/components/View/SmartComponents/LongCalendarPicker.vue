@@ -75,6 +75,9 @@
         </div>
       </div>
     </div>
+    <div class="header">
+      <span class="title">{{ title }}</span>
+    </div>
 
     <div v-if="isDesktop"
       class="btn shadow right-btn cursor"
@@ -112,6 +115,9 @@
 import Icon from '@/components/Icon.vue'
 
 import mom from 'moment/src/moment'
+
+import utils from "@/utils/"
+
 import { mapGetters } from 'vuex'
 
 const TOD = mom()
@@ -129,22 +135,38 @@ export default {
 
       startTime: 0,
       startX: 0,
+
+      doingTransition: false,
     }
   },
   mounted() {
-    const el = this.$refs['wrapper']
-    el.scrollLeft = el.scrollWidth * (1 / 3)
-
+    this.fixWidth()
     this.moveBall()
+
+    window.addEventListener('resize', this.fixWidth)
+    window.addEventListener('resize', this.moveBall)
+
+    const ball = this.$refs['ball'].style
+    setTimeout(() => {
+      ball.transitionDuration = '.3s'
+    }, 1000)
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.fixWidth)
+    window.removeEventListener('resize', this.moveBall)
   },
   methods: {
+    fixWidth() {
+      const el = this.$refs['wrapper']
+      el.scrollLeft = el.scrollWidth * (1 / 3)
+    },
     touchstart(evt) {
       this.startTime = new Date()
-      const touch = evt.changedTouches[0]
+      const touch = evt.touches[0]
       this.startX = touch.pageX
     },
     touchmove(evt) {
-      const newPos = evt.changedTouches[0].pageX
+      const newPos = evt.touches[0].pageX
       this.diff = newPos - this.startX
 
       const t = this.$refs['this-week'].style
@@ -170,14 +192,16 @@ export default {
       let runTransition = true
       const diff = Math.abs(this.diff)
 
-      if ((diff > (width / 2)) || ((time < 150) && this.diff > 20)) {
+      if ((diff > (width / 2)) || ((time < 250) && (diff > 5))) {
         runTransition = false
         if (this.diff > 0) {
           this.swipeLeft()
-          } else {
+        } else {
           this.swipeRight()
         }
       }
+
+      this.diff = 0
       
       const ball = this.$refs['ball'].style
       if (runTransition) {
@@ -208,51 +232,69 @@ export default {
         ball.opacity = 1
         const el = this.$refs[this.active][0]
 
-        this.left = (el.offsetLeft - 8) + 'px'
+        this.left = el.offsetLeft + 'px'
       })
     },
     select(date) {
       this.active = date
     },
     swipeLeft() {
-      const width = this.$refs['wrapper'].clientWidth
-      const t = this.$refs['this-week'].style
-      const n = this.$refs['last-week'].style
-
-      t.transitionDuration = '.4s'
-      n.transitionDuration = '.4s'
-
-      t.transform = `translateX(${width}px)`
-      n.transform = `translateX(${width}px)`
-
-      setTimeout(() => {
-        t.transitionDuration = '0s'
-        n.transitionDuration = '0s'
-        this.weekStart = this.lastWeek
-        this.active = this.weekStart
-        t.transform = `translateX(0px)`
-        n.transform = `translateX(0px)`
-      }, 610)
+      if (!this.doingTransition) {
+        this.doingTransition = true
+        const width = this.$refs['wrapper'].clientWidth
+        const t = this.$refs['this-week'].style
+        const n = this.$refs['last-week'].style
+        const ball = this.$refs['ball'].style
+  
+        t.transitionDuration = '.4s'
+        n.transitionDuration = '.4s'
+  
+        ball.opacity = 0
+        this.left = 0
+  
+        t.transform = `translateX(${width}px)`
+        n.transform = `translateX(${width}px)`
+  
+        setTimeout(() => {
+          t.transitionDuration = '0s'
+          n.transitionDuration = '0s'
+          this.weekStart = this.lastWeek
+          this.active = this.weekStart
+          t.transform = `translateX(0px)`
+          n.transform = `translateX(0px)`
+          ball.opacity = 1
+          this.doingTransition = false
+        }, 610)
+      }
     },
     swipeRight() {
-      const width = this.$refs['wrapper'].clientWidth
-      const t = this.$refs['this-week'].style
-      const n = this.$refs['next-week'].style
-
-      t.transitionDuration = '.4s'
-      n.transitionDuration = '.4s'
-
-      t.transform = `translateX(-${width}px)`
-      n.transform = `translateX(-${width}px)`
-
-      setTimeout(() => {
-        t.transitionDuration = '0s'
-        n.transitionDuration = '0s'
-        this.weekStart = this.nextWeek
-        this.active = this.weekStart
-        t.transform = `translateX(0px)`
-        n.transform = `translateX(0px)`
-      }, 610)
+      if (!this.doingTransition) {
+        this.doingTransition = true
+        const width = this.$refs['wrapper'].clientWidth
+        const t = this.$refs['this-week'].style
+        const n = this.$refs['next-week'].style
+        const ball = this.$refs['ball'].style
+  
+        t.transitionDuration = '.4s'
+        n.transitionDuration = '.4s'
+  
+        ball.opacity = 0
+        this.left = 0
+  
+        t.transform = `translateX(-${width}px)`
+        n.transform = `translateX(-${width}px)`
+  
+        setTimeout(() => {
+          t.transitionDuration = '0s'
+          n.transitionDuration = '0s'
+          this.weekStart = this.nextWeek
+          this.active = this.weekStart
+          t.transform = `translateX(0px)`
+          n.transform = `translateX(0px)`
+          ball.opacity = 1
+          this.doingTransition = false
+        }, 610)
+      }
     },
     getWeekDates(weekStart) {
       const date = mom(weekStart, 'Y-M-D')
@@ -270,7 +312,10 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktop', 'platform']),
+    ...mapGetters(['isDesktop', 'platform', 'l']),
+    title() {
+      return utils.getHumanReadableDate(this.active, this.l)
+    },
     todayDay() {
       return mom(TOD_STR, 'Y-M-D').format('D')
     },
@@ -321,6 +366,17 @@ export default {
   overflow: hidden;
 }
 
+.header {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  padding-left: 14px;
+}
+
+.mobile .header {
+  padding-left: 9px;
+}
+
 .btn {
   position: absolute;
   display: flex;
@@ -367,15 +423,20 @@ export default {
   transition-duration: .6s;
 }
 
+.mobile .week-view {
+  justify-content: space-between;
+}
+
 .date-wrapper {
   height: 100%;
   display: flex;
   justify-content: space-around;
   flex-direction: column;
+  align-items: center;
 }
 
 .weekday {
-  font-size: .8;
+  font-size: .8em;
   opacity: .6;
 }
 
@@ -389,8 +450,11 @@ export default {
   height: 45px;
   border-radius: 1000px;
   overflow: hidden;
-  transform: translateX(-8px);
   transition-duration: .2s;
+}
+
+.mobile .day-wrapper {
+  font-size: 1.2em;
 }
 
 .ball {
@@ -402,7 +466,6 @@ export default {
   position: absolute;
   bottom: 4px;
   transition-timing-function: ease-out;
-  transition-duration: .3s;
 }
 
 .date-wrapper.active .day-wrapper {
