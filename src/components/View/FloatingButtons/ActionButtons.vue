@@ -102,7 +102,7 @@ export default {
 
 .ActionButtons .header {
   transform: translateX(-48px) !important;
-  pointer-events: all;
+  pointer-events: none;
 }
 
 .ActionButtons .add-task-floating-button {

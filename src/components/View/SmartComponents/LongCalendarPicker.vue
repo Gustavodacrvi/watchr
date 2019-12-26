@@ -125,7 +125,7 @@ import mom from 'moment/src/moment'
 
 import utils from "@/utils/"
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 const TOD = mom()
 const TOD_STR = TOD.format('Y-M-D')
@@ -144,6 +144,7 @@ export default {
       startX: 0,
 
       doingTransition: false,
+      savedSelected: [],
     }
   },
   created() {
@@ -283,8 +284,22 @@ export default {
       })
     },
     select(date) {
-      this.active = date
-      this.$emit('select', date)
+      if (this.savedSelected.length === 0) {
+        this.active = date
+        this.$emit('select', date)
+      } else {
+        this.$store.dispatch('task/saveTasksById', {
+            ids: this.savedSelected,
+            task: {
+              calendar: {
+                type: 'specific',
+                begins: date,
+                editDate: TOD_STR,
+                specific: date,
+              }
+            },
+          })
+      }
     },
     swipeLeft() {
       if (!this.doingTransition) {
@@ -360,6 +375,9 @@ export default {
     },
   },
   computed: {
+    ...mapState({
+      selectedTasks: state => state.selectedTasks,
+    }),
     ...mapGetters(['isDesktop', 'platform', 'l']),
     title() {
       return utils.getHumanReadableDate(this.active, this.l)
@@ -392,6 +410,11 @@ export default {
   watch: {
     active() {
       this.moveBall()
+    },
+    selectedTasks() {
+      setTimeout(() => {
+        this.savedSelected = [...this.selectedTasks]
+      }, 10)
     },
   }
 }
