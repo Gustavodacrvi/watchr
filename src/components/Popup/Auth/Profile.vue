@@ -143,6 +143,11 @@ export default {
           color: 'var(--primary)'
         },
         {
+          name: 'Calendar',
+          icon: 'calendar-star',
+          color: 'var(--purple)'
+        },
+        {
           name: 'Upcoming',
           icon: 'calendar',
           color: 'var(--green)'

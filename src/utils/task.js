@@ -127,4 +127,21 @@ export default {
 
     return removedIncludedIds
   },
+  getUpdatedCalendarOrders(ids, date, rootState, property = 'tasks') {
+    const calendarOrders = { [date]: { [property]: ids } }
+
+    const orders = rootState.userInfo.calendarOrders || {}
+
+    const savedKeys = Object.keys(orders)
+    const keysToRemove = []
+    const tod = mom()
+    for (const key of savedKeys)
+      if (mom(key, 'Y-M-D').isBefore(tod, 'day'))
+        keysToRemove.push(key)
+
+    for (const key of keysToRemove)
+      calendarOrders[key] = fd().delete()
+
+    return calendarOrders
+  },
 }

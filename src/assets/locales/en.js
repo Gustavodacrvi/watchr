@@ -70,6 +70,7 @@ export default {
   "There is already a list with this heading name.": "There is already a list with this heading name.",
   "Time:": "Time:",
   "No time": "No time",
+  "Calendar": "Calendar",
   "Collaborators": "Collaborators",
   "Convert to list": "Convert to list",
   'Lists': 'Lists',

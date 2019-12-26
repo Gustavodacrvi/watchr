@@ -29,6 +29,7 @@ export default {
   'Filter name': "Nome do filtro",
   'Add filter': "Adicionar filtro",
   "Edit filter": "Editar filtro",
+  "Calendar": "Calendário",
   "Must be in at least one of the lists:": "Deve estar em pelo menos uma das listas:",
   "Can't be in any of the lists:": "Não pode estar em nenhuma das listas:",
   "No lists selected": "Nenhuma lista selecionada",

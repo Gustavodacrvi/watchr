@@ -185,6 +185,14 @@ export default {
           iconColor: 'var(--green)'
         },
         {
+          name: 'Calendar',
+          id: 'Calendar',
+          icon: 'calendar-star',
+          disableAction: true,
+          callback: () => selectView('Calendar'),
+          iconColor: 'var(--purple)'
+        },
+        {
           name: 'Completed',
           id: 'Completed',
           icon: 'circle-check',

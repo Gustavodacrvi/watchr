@@ -34,6 +34,12 @@
         @list='selectList'
         @folder='selectFolder'
       />
+      <component v-if='smartComponent'
+        class='component'
+        :is='smartComponent'
+
+        @update='onSmartComponentUpdate'
+      />
       <TaskHandler class='view-renderer-move'
         v-bind="$props"
 
@@ -66,6 +72,8 @@ import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
 import PaginationVue from './Pagination.vue'
 import TaskHandler from './TaskHandler.vue'
 
+import ViewRendererLongCalendarPicker from '@/components/View/SmartComponents/ViewRendererLongCalendarPicker.vue'
+
 import { mapGetters, mapState, mapActions } from 'vuex'
 
 import utilsTask from '@/utils/task'
@@ -83,13 +91,14 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes',
   'headerOptions', 'headerDates', 'headerTags', 'headerCalendar', 'files',
   'progress', 'tasksOrder',  'rootFallbackTask', 'mainFallbackTask',
-  'showHeading',
+  'showHeading', 'smartComponent', 'onSmartComponentUpdate',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'showHeadadingFloatingButton', 'updateHeadingIds', 'showAllHeadingsItems', 'taskCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
   components: {
     PaginationVue, TaskHandler,
     Header: HeaderVue,
     ActionButtons: ActionButtonsVue,
+    ViewRendererLongCalendarPicker,
   },
   data() {
     return {
@@ -131,7 +140,7 @@ export default {
   methods: {
     ...mapActions(['getOptions']),
     transform(x, transition) {
-/*       const s = this.el
+      /*const s = this.el
 
       const getOpacity = () => 1.4 - (Math.abs(x) / MAXIMUM_TOUCH_DISTANCE)
       
@@ -875,8 +884,13 @@ export default {
   margin-top: -4px;
 }
 
+.component {
+  z-index: 3;
+}
+
 .view-renderer-move {
   position: relative;
+  z-index: 2;
 }
 
 </style>

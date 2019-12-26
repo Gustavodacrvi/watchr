@@ -111,7 +111,7 @@ export default {
           color: 'var(--red)',
           callback: () => go('/user?tag=' + t.name)
         })
-      for (const f of folders)
+      for (const f of fs)
         arr.push({
           name: f.name,
           icon: 'folder',
@@ -194,6 +194,11 @@ export default {
           name: 'Inbox',
           color: 'var(--primary)',
           icon: 'inbox',
+        },
+        {
+          name: 'Calendar',
+          color: 'var(--purple)',
+          icon: 'calendar-star',
         },
         {
           name: 'Upcoming',
