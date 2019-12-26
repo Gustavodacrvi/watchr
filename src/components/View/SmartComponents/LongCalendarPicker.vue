@@ -2,9 +2,11 @@
   <div class="LongCalendarPicker" :class="platform"
     @scroll.prevent
     @whell.prevent
-    @touchmove.prevent
+    @touchmove.stop.prevent='touchmove'
+    @touchstart.stop.passive='touchstart'
+    @touchend.stop.passive='touchend'
   >
-    <div class="ball" :style="{left}"></div>
+    <div class="ball" ref="ball" :style="{left}"></div>
     <div class="wrapper" ref="wrapper">
       <div class="week-view last-week" ref="last-week">
         <div v-for="d in lastWeekDates" :key="d.date"
@@ -124,6 +126,9 @@ export default {
       active: TOD_STR,
       weekStart: TOD.clone().startOf('week').format('Y-M-D'),
       left: 0,
+
+      startTime: 0,
+      startX: 0,
     }
   },
   mounted() {
@@ -133,8 +138,74 @@ export default {
     this.moveBall()
   },
   methods: {
+    touchstart(evt) {
+      this.startTime = new Date()
+      const touch = evt.changedTouches[0]
+      this.startX = touch.pageX
+    },
+    touchmove(evt) {
+      const newPos = evt.changedTouches[0].pageX
+      this.diff = newPos - this.startX
+
+      const t = this.$refs['this-week'].style
+      const l = this.$refs['last-week'].style
+      const n = this.$refs['next-week'].style
+      const ball = this.$refs['ball'].style
+
+      t.transitionDuration = '0s'
+      l.transitionDuration = '0s'
+      n.transitionDuration = '0s'
+      ball.transitionDuration = '0s'
+
+      t.transform = `translateX(${this.diff}px)`
+      l.transform = `translateX(${this.diff}px)`
+      n.transform = `translateX(${this.diff}px)`
+      ball.transform = `translateX(${this.diff}px)`
+    },
+    touchend(evt) {
+      const time = new Date() - this.startTime
+
+      const width = this.$refs['wrapper'].clientWidth
+
+      let runTransition = true
+      const diff = Math.abs(this.diff)
+
+      if ((diff > (width / 2)) || ((time < 150) && this.diff > 20)) {
+        runTransition = false
+        if (this.diff > 0) {
+          this.swipeLeft()
+          } else {
+          this.swipeRight()
+        }
+      }
+      
+      const ball = this.$refs['ball'].style
+      if (runTransition) {
+        const t = this.$refs['this-week'].style
+        const l = this.$refs['last-week'].style
+        const n = this.$refs['next-week'].style
+  
+        t.transitionDuration = '.4s'
+        l.transitionDuration = '.4s'
+        n.transitionDuration = '.4s'
+        ball.transitionDuration = '.4s'
+  
+        setTimeout(() => {
+          t.transform = `translateX(0px)`
+          l.transform = `translateX(0px)`
+          n.transform = `translateX(0px)`
+          ball.transform = `translateX(0px)`
+        })
+      } else {
+        ball.transform = `translateX(0px)`
+        ball.opacity = 0
+      }
+    },
+    
     moveBall() {
       setTimeout(() => {
+        const ball = this.$refs['ball'].style
+        ball.opacity = 1
         const el = this.$refs[this.active][0]
 
         this.left = (el.offsetLeft - 8) + 'px'
@@ -330,7 +401,8 @@ export default {
   box-shadow: 0 0 28px rgba(161, 96, 235, .4);
   position: absolute;
   bottom: 4px;
-  transition-duration: .3s; 
+  transition-timing-function: ease-out;
+  transition-duration: .3s;
 }
 
 .date-wrapper.active .day-wrapper {

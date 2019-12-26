@@ -140,7 +140,7 @@ export default {
   methods: {
     ...mapActions(['getOptions']),
     transform(x, transition) {
-/*       const s = this.el
+      /*const s = this.el
 
       const getOpacity = () => 1.4 - (Math.abs(x) / MAXIMUM_TOUCH_DISTANCE)
       
