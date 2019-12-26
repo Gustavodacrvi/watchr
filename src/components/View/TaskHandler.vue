@@ -17,6 +17,7 @@
       :taskIconDropOptions='taskIconDropOptions'
       :headingPosition='0'
       :updateHeadingIds='updateHeadingIds'
+      :smartComponent='smartComponent'
       @update="updateIds"
       @add-heading="addHeading"
       @allow-someday='allowSomeday'
@@ -39,7 +40,7 @@ import mom from 'moment/src/moment'
 export default {
   props: ['mainFilter', 'rootFilter', 'tasksOrder', 'headings', 'headingsOrder',
 
-    'pipeFilterOptions', 'showCompleted', 'showSomeday',
+    'pipeFilterOptions', 'showCompleted', 'showSomeday', 'smartComponent',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackTask', 'icon', 'configFilterOptions', 'showHeading',

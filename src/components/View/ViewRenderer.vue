@@ -34,7 +34,11 @@
         @list='selectList'
         @folder='selectFolder'
       />
-      <component v-if='smartComponent' :is='smartComponent'/>
+      <component v-if='smartComponent'
+        :is='smartComponent'
+
+        @update='onSmartComponentUpdate'
+      />
       <TaskHandler class='view-renderer-move'
         v-bind="$props"
 
@@ -86,7 +90,7 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes',
   'headerOptions', 'headerDates', 'headerTags', 'headerCalendar', 'files',
   'progress', 'tasksOrder',  'rootFallbackTask', 'mainFallbackTask',
-  'showHeading', 'smartComponent',
+  'showHeading', 'smartComponent', 'onSmartComponentUpdate',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'showHeadadingFloatingButton', 'updateHeadingIds', 'showAllHeadingsItems', 'taskCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
   components: {

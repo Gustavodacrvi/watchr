@@ -1,7 +1,7 @@
 <template>
   <div class="TaskRenderer floating-btn-container" :class='platform' @click='click'>
     <transition name="illus-trans" appear>
-      <div v-if="showIllustration" class="illustration">
+      <div v-if="showIllustration" class="illustration" :class="{smartComponent}">
         <Icon :icon='icon' color='var(--appnav-color)' width="150px"/>
       </div>
     </transition>
@@ -149,7 +149,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'smartComponent', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton',
   'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -934,6 +934,10 @@ export default {
   justify-content: center;
   align-items: center;
   transition-duration: .15s;
+}
+
+.illustration.smartComponent {
+  top: 70px;
 }
 
 .desktop .illustration {

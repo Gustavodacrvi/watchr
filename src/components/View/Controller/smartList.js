@@ -180,13 +180,18 @@ export default {
         }
       }
     },
+    getPieProgress() {
+      return undefined
+    },
     smartComponent() {
       if (this.viewName === 'Calendar')
         return 'ViewRendererLongCalendarPicker'
       return null
     },
-    getPieProgress() {
-      return undefined
+    onSmartComponentUpdate() {
+      return date => {
+        console.log('from ViewControler.vue', date)
+      }
     },
   },
 }
