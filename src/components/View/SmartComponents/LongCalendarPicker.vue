@@ -21,7 +21,7 @@
             :ref="d.date"
             @click="select(d.date)"
           >
-            <div class="weekday">
+            <div class="weekday" :class="{'has-task': hasTaskInDate(d.date)}">
               {{ d.weekday }}
             </div>
             <div class="day-wrapper cursor remove-highlight">
@@ -43,7 +43,7 @@
             :ref="d.date"
             @click="select(d.date)"
           >
-            <div class="weekday">
+            <div class="weekday" :class="{'has-task': hasTaskInDate(d.date)}">
               {{ d.weekday }}
             </div>
             <div class="day-wrapper cursor remove-highlight">
@@ -65,7 +65,7 @@
             :ref="d.date"
             @click="select(d.date)"
           >
-            <div class="weekday">
+            <div class="weekday" :class="{'has-task': hasTaskInDate(d.date)}">
               {{ d.weekday }}
             </div>
             <div class="day-wrapper cursor remove-highlight">
@@ -203,6 +203,11 @@ export default {
       r.height = 0
       r.opacity = 0
       w.height = 0
+    },
+    hasTaskInDate(date) {
+      return this.tasks.some(task =>
+        this.isTaskShowingOnDate(task, date)
+      )
     },
     fixWidth() {
       const el = this.$refs['wrapper']
@@ -377,8 +382,14 @@ export default {
   computed: {
     ...mapState({
       selectedTasks: state => state.selectedTasks,
+      tasks: state => state.task.tasks,
     }),
-    ...mapGetters(['isDesktop', 'platform', 'l']),
+    ...mapGetters({
+      l: 'l',
+      isDesktop: 'isDesktop',
+      platform: 'platform',
+      isTaskShowingOnDate: 'task/isTaskShowingOnDate',
+    }),
     title() {
       return utils.getHumanReadableDate(this.active, this.l)
     },
@@ -510,11 +521,17 @@ export default {
   justify-content: space-around;
   flex-direction: column;
   align-items: center;
+  position: relative;
 }
 
 .weekday {
   font-size: .8em;
-  opacity: .6;
+  opacity: .4;
+}
+
+.weekday.has-task {
+  color: white !important;
+  opacity: 1;
 }
 
 .day-wrapper {
