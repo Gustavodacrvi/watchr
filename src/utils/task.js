@@ -127,8 +127,8 @@ export default {
 
     return removedIncludedIds
   },
-  getUpdatedCalendarOrders(ids, date, rootState) {
-    const calendarOrders = {[date]: ids}
+  getUpdatedCalendarOrders(ids, date, rootState, property = 'tasks') {
+    const calendarOrders = { [date]: { [property]: ids } }
 
     const orders = rootState.userInfo.calendarOrders || {}
 

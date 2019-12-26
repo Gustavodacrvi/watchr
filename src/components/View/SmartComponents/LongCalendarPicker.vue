@@ -76,7 +76,7 @@
       </div>
     </div>
     <div class="header">
-      <span class="title">{{ title }}</span>
+      <h3 class="title">{{ title }}</h3>
     </div>
 
     <div v-if="isDesktop"
@@ -138,6 +138,9 @@ export default {
 
       doingTransition: false,
     }
+  },
+  created() {
+    this.select(TOD_STR)
   },
   mounted() {
     this.fixWidth()
@@ -355,19 +358,19 @@ export default {
 
 .LongCalendarPicker {
   position: relative;
-  height: 80px;
   overflow: visible;
   margin: 8px 0;
 }
 
 .wrapper {
   position: relative;
-  height: 100%;
   width: 100%;
+  height: 80px;
   overflow: hidden;
 }
 
 .header {
+  position: relative;
   height: 30px;
   display: flex;
   align-items: center;
@@ -465,7 +468,7 @@ export default {
   background-color: var(--purple);
   box-shadow: 0 0 28px rgba(161, 96, 235, .4);
   position: absolute;
-  bottom: 4px;
+  top: 30px;
   transition-timing-function: ease-out;
 }
 

@@ -52,7 +52,7 @@ export default {
     slide(num) {
       this.$store.commit('slide', num)
     },
-    getListHeadingsByView(view) {
+    getListHeadingsByView(viewName) {
       const savedLists = this.lists
       const savedFolders = this.folders
       const setOfLists = new Set()
@@ -76,15 +76,24 @@ export default {
       const sortArray = this.$store.getters.checkMissingIdsAndSortArr
 
       let currentDate = mom()
-      if (this.viewName === 'Tomorrow')
+      if (viewName === 'Tomorrow')
         currentDate.add(1, 'd')
 
       currentDate = currentDate.format('Y-M-D')
-      
-      const calendarOrder = this.calendarOrders[currentDate] || []
+
+      if (viewName === 'Calendar')
+        currentDate = this.calendarDate
+
+      const calendarOrder = (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].tasks) || []
       // const { rootTasks, folderTasks, listTasks } = utilsTask.groupTaskIds()
 
-      let order = this.viewOrders[view] ? this.viewOrders[view].headings : []
+      let order
+      if (viewName === 'Someday')
+        order = this.viewOrders[view] ? this.viewOrders[view].headings : []
+      else {
+        order = (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].headings) || []
+      }
+
       if (!order) order = []
       const headings = sortArray(order, [...folders, ...lists])
 
@@ -93,9 +102,9 @@ export default {
         if (viewHeading.smartViewControllerType === 'list') {
           const list = viewHeading
           const saveOrder = ids => {
-            if (this.viewName === 'Someday') {
+            if (viewName === 'Someday') {
               this.$store.dispatch('list/saveSmartViewHeadingTasksOrder', {
-                ids, listId: list.id, smartView: this.viewName,
+                ids, listId: list.id, smartView: viewName,
               })
             } else {
               this.$store.dispatch('task/saveCalendarOrder', {
@@ -107,13 +116,13 @@ export default {
 
           const filterFunction = task => this.isTaskInList(task, list.id)
           const getSmartViewOrder = () => {
-            if (list.smartViewsOrders && list.smartViewsOrders[this.viewName])
-              return list.smartViewsOrders[this.viewName]
+            if (list.smartViewsOrders && list.smartViewsOrders[viewName])
+              return list.smartViewsOrders[viewName]
             else
               return this.getAllTasksOrderByList(list.id)
           }
           let tasksOrder = []
-          if (this.viewName === 'Someday')
+          if (viewName === 'Someday')
             tasksOrder = getSmartViewOrder()
           else {
             const taskIdsFromList = this.getAllTasksOrderByList(list.id)
@@ -168,21 +177,21 @@ export default {
             },
             onAddTask: obj => {
               this.$store.dispatch('list/addTaskByIndexSmartViewList', {
-                ...obj, listId: list.id, viewName: this.viewName,
+                ...obj, listId: list.id, viewName: viewName,
               })
             },
             onSortableAdd: (evt, taskIds, type, ids) => {
               this.$store.dispatch('list/moveTasksToList', {
-                taskIds, ids, listId: list.id, smartView: this.viewName,
+                taskIds, ids, listId: list.id, smartView: viewName,
               })
             }
           })
         } else if (viewHeading.smartViewControllerType === 'folder') {
           const folder = viewHeading
           const saveOrder = ids => {
-            if (this.viewName === 'Someday') {
+            if (viewName === 'Someday') {
               this.$store.dispatch('folder/saveSmartViewHeadingTasksOrder', {
-                ids, folderId: folder.id, smartView: this.viewName,
+                ids, folderId: folder.id, smartView: viewName,
               })
             } else {
               this.$store.dispatch('task/saveCalendarOrder', {
@@ -194,14 +203,14 @@ export default {
 
           const filterFunction = task => this.isTaskInFolder(task, folder.id)
           const getSmartViewOrder = () => {
-            if (folder.smartViewsOrders && folder.smartViewsOrders[this.viewName])
-              return folder.smartViewsOrders[this.viewName]
+            if (folder.smartViewsOrders && folder.smartViewsOrders[viewName])
+              return folder.smartViewsOrders[viewName]
             else
               return this.getFolderTaskOrderById(folder.id)
           }
 
           let tasksOrder = []
-          if (this.viewName === 'Someday')
+          if (viewName === 'Someday')
             tasksOrder = getSmartViewOrder()
           else {
             const taskIdsFromFolder = this.getFolderTaskOrderById(folder.id)
@@ -257,12 +266,12 @@ export default {
             },
             onAddTask: obj => {
               this.$store.dispatch('list/addTaskByIndexSmartViewFolder', {
-                ...obj, folderId: folder.id, viewName: this.viewName,
+                ...obj, folderId: folder.id, viewName: viewName,
               })
             },
             onSortableAdd: (evt, taskIds, type, ids) => {
               this.$store.dispatch('folder/moveTasksToFolder', {
-                taskIds, ids, folderId: folder.id, smartView: this.viewName,
+                taskIds, ids, folderId: folder.id, smartView: viewName,
               })
             }
           })

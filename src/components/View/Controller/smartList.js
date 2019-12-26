@@ -13,7 +13,7 @@ export default {
           ...obj, list: this.viewName,
         })
       } else {
-        obj.ids = utilsTask.getFixedIdsFromNonFilteredAndFiltered(obj.ids, this.calendarOrders[this.calendarDate] || []),
+        obj.ids = utilsTask.getFixedIdsFromNonFilteredAndFiltered(obj.ids, (this.calendarOrders[this.calendarDate] && this.calendarOrders[this.calendarDate].tasks) || []),
         this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
           ...obj, date: this.calendarDate,
         })
@@ -23,12 +23,25 @@ export default {
       return task
     },
     mainFallbackTask(task) {
-      let calendar = null
+      if (this.viewName === 'Calendar') {
+        const date = this.calendarDate
+  
+        if (!task.calendar)
+          task.calendar = {
+            type: 'specific',
+            begins: date,
+            editDate: date,
+            specific: date,
+          }
+      } else {
+        let calendar = null
 
-      if (!task.calendar) {
-        calendar = this.getCalObjectByView(this.viewName, task.calendar)
-        task.calendar = calendar
+        if (!task.calendar) {
+          calendar = this.getCalObjectByView(this.viewName, task.calendar)
+          task.calendar = calendar
+        }
       }
+
       if (task.calendar === undefined)
         task.calendar = null
       return task
@@ -47,8 +60,11 @@ export default {
 
         currentDate = currentDate.format('Y-M-D')
 
+        if (this.viewName === 'Calendar')
+          currentDate = this.calendarDate
+
         this.$store.dispatch('task/saveCalendarOrder', {
-          ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.calendarOrders[currentDate] || []),
+          ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].tasks) || []),
           date: currentDate,
         })
       }
@@ -61,20 +77,44 @@ export default {
     saveNotes() {},
     addHeading() {},
     onSortableAdd(evt, taskIds, type, ids) {
-      this.$store.dispatch('list/removeTasksFromSmartViewHeading', {
-        taskIds, view: this.viewName, ids,
-      })
+      if (this.viewName === 'Inbox' || this.viewName === 'Someday')
+        this.$store.dispatch('list/removeTasksFromSmartViewHeading', {
+          taskIds, view: this.viewName, ids,
+        })
+      else {
+        let currentDate = mom()
+        if (this.viewName === 'Tomorrow')
+          currentDate.add(1, 'd')
+
+        currentDate = currentDate.format('Y-M-D')
+
+        if (this.viewName === 'Calendar')
+          currentDate = this.calendarDate
+
+        this.$store.dispatch('list/removeTasksFromSmartViewCalendarHeading', {
+          taskIds, ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].tasks) || []),
+          date: currentDate,
+        })
+      }
     },
   },
   computed: {
     updateHeadingIds() {
-      if (this.viewName !== 'Upcoming' && this.viewName !== 'Completed')
+      if (this.viewName === 'Someday')
         return ids => {
             this.$store.dispatch('list/updateHeadingsViewOrder', {
             view: this.viewName,
             ids,
           })
         }
+      
+      return ids => {
+        this.$store.dispatch('list/updateHeadingsCalendarOrder', {
+          date: this.calendarDate,
+          ids,
+        })
+      }
+
       return null
     },
     viewNameValue() {
@@ -85,6 +125,8 @@ export default {
     mainFilter() {
       if (this.viewType === 'search')
         return task => this.doesTaskIncludeText(task, this.viewName)
+      if (this.viewName === 'Calendar')
+        return task => this.isTaskShowingOnDate(task, this.calendarDate)
       if (this.viewName === 'Inbox')
         return this.isTaskInbox
       if (this.viewName === 'Upcoming')
@@ -101,6 +143,8 @@ export default {
     rootFilter() {
       if (this.viewType === 'search')
         return () => true
+      if (this.viewName === 'Calendar')
+        return task => !task.list && !task.folder
       if (this.viewName === 'Today' && this.hasOverdueTasks)
         return () => false
       if (this.isSmart && this.notHeadingHeaderView)
@@ -121,11 +165,16 @@ export default {
         if (o && o.tasks) return this.viewOrders[this.viewName].tasks
         return []
       }
-      const currentDate = mom()
+      let currentDate = mom()
       if (this.viewName === 'Tomorrow')
         currentDate.add(1, 'd')
 
-      return this.calendarOrders[currentDate.format('Y-M-D')] || []
+      currentDate = currentDate.format('Y-M-D')
+
+      if (this.viewName === 'Calendar')
+        currentDate = this.calendarDate
+
+      return (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].tasks) || []
     },
 
     headingsPagination() {
@@ -144,13 +193,16 @@ export default {
     headings() {
       switch (this.viewName) {
         case 'Upcoming': return this.upcomingHeadingsOptions
-        case 'Tomorrow': return this.getListHeadingsByView('Tomorrow')
         case 'Today': {
           if (this.hasOverdueTasks) return this.todayHeadingsOptions
           return this.getListHeadingsByView('Today')
         }
+        case 'Tomorrow': return this.getListHeadingsByView('Tomorrow')
         case 'Someday': {
           return this.getListHeadingsByView('Someday')
+        }
+        case 'Calendar': {
+          return this.getListHeadingsByView('Calendar')
         }
         case 'Completed': {
           return this.completedHeadingsOptions

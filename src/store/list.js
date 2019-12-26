@@ -288,29 +288,6 @@ export default {
         batch.commit()
       })
     },
-
-
-    /*
-        saveCalendarOrder({rootState}, {ids, date}) {
-        const calendarOrders = {[date]: ids}
-
-        const orders = rootState.userInfo.calendarOrders || {}
-
-        const savedKeys = Object.keys(orders)
-        const keysToRemove = []
-        const tod = mom()
-        for (const key of savedKeys)
-          if (mom(key, 'Y-M-D').isBefore(tod, 'day'))
-            keysToRemove.push(key)
-
-        for (const key of keysToRemove)
-          calendarOrders[key] = fd().delete()
-        
-        userRef().set({calendarOrders}, {merge: true})
-      },
-    */
-    
-    
     addTaskByIndexSmartViewList(c, {ids, index, task, listId, viewName, newTaskRef}) {
       const batch = fire.batch()
       
@@ -404,6 +381,20 @@ export default {
       batch.set(userRef(), {
         viewOrders: obj,
       }, {merge: true})
+
+      batch.commit()
+    },
+    removeTasksFromSmartViewCalendarHeading({rootState}, {taskIds, date, ids}) {
+      const batch = fire.batch()
+
+      for (const id of taskIds)
+        batch.update(taskRef(id), {
+          list: null, folder: null, heading: null,
+        })
+      
+      const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
+
+      batch.set(userRef(), {calendarOrders}, {merge: true})
 
       batch.commit()
     },
@@ -601,6 +592,11 @@ export default {
       userRef().set({
         viewOrders: obj,
       }, {merge: true})
+    },
+    updateHeadingsCalendarOrder({rootState}, {date, ids}) {
+      const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState, 'headings')
+
+      userRef().set({calendarOrders}, { merge: true })
     },
     addTaskHeading({getters}, {name, ids, listId, task, index, newTaskRef}) {
       const list = getters.getListsById([listId])[0]

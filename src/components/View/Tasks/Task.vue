@@ -677,7 +677,7 @@ export default {
       return false
     },
     isToday() {
-      if (this.viewName === 'Today') return false
+      if (this.viewName === 'Today' || this.viewName === 'Calendar') return false
       return this.isTaskInView(this.task, 'Today')
     },
     isTaskOverdue() {
@@ -685,7 +685,7 @@ export default {
       return this.isTaskInView(this.task, 'Overdue')
     },
     isTomorrow() {
-      if (this.viewName === 'Tomorrow' || this.viewName === 'Today') return false
+      if (this.viewName === 'Tomorrow' || this.viewName === 'Today' || this.viewName === 'Calendar') return false
       return this.isTaskInView(this.task, 'Tomorrow')
     },
     showIconDrop() {
@@ -712,7 +712,7 @@ export default {
       const {t,c} = this.getTask
       if ((!c || c.type === 'someday') || (!this.allowCalendarStr && !this.isRoot)) return null
       const str = utils.parseCalendarObjectToString(c, this.l, this.userInfo)
-      if (str === this.viewNameValue) return null
+      if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
       return str
     },
     showCheckedIcon() {
