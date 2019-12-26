@@ -192,7 +192,7 @@ export default {
       let runTransition = true
       const diff = Math.abs(this.diff)
 
-      if ((diff > (width / 2)) || ((time < 250) && (diff > 5))) {
+        if ((diff > (width / 2)) || ((time < 250) && (diff > 5))) {
         runTransition = false
         if (this.diff > 0) {
           this.swipeLeft()
@@ -237,6 +237,7 @@ export default {
     },
     select(date) {
       this.active = date
+      this.$emit('select', date)
     },
     swipeLeft() {
       if (!this.doingTransition) {

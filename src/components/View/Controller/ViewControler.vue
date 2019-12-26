@@ -37,6 +37,7 @@ export default {
   data() {
     return {
       showCompleted: false,
+      calendarDate: null,
     }
   },
   methods: {

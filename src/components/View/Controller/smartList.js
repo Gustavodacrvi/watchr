@@ -8,9 +8,16 @@ import { pipeBooleanFilters } from '@/utils/memo'
 export default {
   methods: {
     addTask(obj) {
-      this.$store.dispatch('list/addTaskByIndexSmart', {
-        ...obj, list: this.viewName,
-      })
+      if (this.viewName === 'Someday' || this.viewName === 'Inbox') {
+        this.$store.dispatch('list/addTaskByIndexSmart', {
+          ...obj, list: this.viewName,
+        })
+      } else {
+        obj.ids = utilsTask.getFixedIdsFromNonFilteredAndFiltered(obj.ids, this.calendarOrders[this.calendarDate] || []),
+        this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
+          ...obj, date: this.calendarDate,
+        })
+      }
     },
     rootFallbackTask(task) {
       return task
@@ -189,9 +196,7 @@ export default {
       return null
     },
     onSmartComponentUpdate() {
-      return date => {
-        console.log('from ViewControler.vue', date)
-      }
+      return date => this.calendarDate = date
     },
   },
 }
