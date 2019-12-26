@@ -9,7 +9,25 @@
         last-week
       </div>
       <div class="week-view this-week" ref='this-week'>
-        this-week
+        <div v-for="d in thisWeekDates" :key="d.date"
+          class="date-wrapper"
+          :class="{active: d.day === activeDay}"
+          @click="select(d.date)"
+        >
+          <div class="weekday">
+            {{ d.weekday }}
+          </div>
+          <div class="day-wrapper cursor remove-highlight">
+            <span class="day">
+              {{ d.day }}
+            </span>
+            <CircleBubble
+              innerColor='var(--light-gray)'
+              outerColor='var(--gray)'
+              opacity='0'
+            />
+          </div>
+        </div>
       </div>
       <div class="week-view next-week" ref="next-week">
         next-week
@@ -67,13 +85,32 @@ export default {
     const el = this.$refs['wrapper']
     el.scrollLeft = el.scrollWidth * (1 / 3)
   },
+  methods: {
+    select(date) {
+      this.active = date
+    },
+  },
   computed: {
     ...mapGetters(['isDesktop', 'platform']),
     mom() {
       return mom(this.active, 'Y-M-D')
     },
-    displayArr() {
+    activeDay() {
+      return mom(this.active, 'Y-M-D').format('D')
+    },
+    thisWeekDates() {
+      const date = mom(this.weekStart, 'Y-M-D')
 
+      const arr = []
+      for (let i = 0;i < 7;i++) {
+        arr.push({
+          date: date.format('Y-M-D'),
+          day: date.format('D'),
+          weekday: date.format('ddd'),
+        })
+        date.add(1, 'd')
+      }
+      return arr
     },
   },
 }
@@ -84,9 +121,9 @@ export default {
 
 .LongCalendarPicker {
   position: relative;
-  height: 60px;
+  height: 75px;
   overflow: visible;
-  background: var(--purple);
+  margin: 8px 0;
 }
 
 .wrapper {
@@ -120,7 +157,7 @@ export default {
 }
 
 .right-btn .icon {
-  transform: rotate(-90deg) translateY(-3px);
+  transform: rotate(-90deg) translateY(2px);
 }
 
 .left-btn {
@@ -135,21 +172,55 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.date-wrapper {
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+}
+
+.weekday {
+  font-size: .8;
+  opacity: .6;
+}
+
+.day-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.3em;
+  position: relative;
+  width: 45px;
+  height: 45px;
+  border-radius: 1000px;
+  overflow: hidden;
+  transform: translateX(-8px);
+  transition-duration: .2s;
+}
+
+.date-wrapper.active .day-wrapper {
+  color: var(--primary);
+}
+
+.desktop .day-wrapper:hover {
+  background-color: var(--card);
+  box-shadow: 0 3px 8px rgba(15,15,15,.3);
 }
 
 .last-week {
   left: 0;
-  background-color: red;
 }
 
 .this-week {
   left: 100%;
-  background-color: yellow;
 }
 
 .next-week {
   left: 200%;
-  background-color: green;
 }
 
 </style>
