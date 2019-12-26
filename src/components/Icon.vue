@@ -82,6 +82,7 @@ import magic from '@/assets/icons/magic.svg'
 import clock from '@/assets/icons/clock.svg'
 import boxCheck from '@/assets/icons/box-check.svg'
 import calendarStar from '@/assets/icons/calendar-star.svg'
+import circleFilled from '@/assets/icons/circle-filled.svg'
 import boxCheckDash from '@/assets/icons/box-check-dash.svg'
 
 import { mapGetters } from 'vuex'
@@ -99,6 +100,7 @@ export default {
         envelope, deadline, sleep, repeat, box, file,
         folder, heart, close, filter, magic, clock,
         "box-dash": boxDash,
+        "circle-filled": circleFilled,
         "box-check-dash": boxCheckDash,
         "box-check": boxCheck,
         "calendar-star": calendarStar,

@@ -51,20 +51,36 @@
               @touchend.passive='touchComplete'
               :class="{changeColor}"
             >
-              <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon cursor remove-highlight"
-                :icon="`box${isSomeday ? '-dash' : ''}`"
-                :color='circleColor'
-                :stop='true'
-                width="18px"
-                @click="desktopComplete"
-              />
-              <Icon v-else :circle='true' class="icon check-icon cursor remove-highlight"
-                :icon="`box-check${isSomeday ? '-dash' : ''}`"
-                :color='circleColor'
-                width="18px"
-                :stop='true'
-                @click="desktopComplete"
-              />
+              <template v-if='!isSelecting'>
+                <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon cursor remove-highlight"
+                  :icon="`box${isSomeday ? '-dash' : ''}`"
+                  :color='circleColor'
+                  :stop='true'
+                  width="18px"
+                  @click="desktopComplete"
+                />
+                <Icon v-else :circle='true' class="icon check-icon cursor remove-highlight"
+                  :icon="`box-check${isSomeday ? '-dash' : ''}`"
+                  :color='circleColor'
+                  width="18px"
+                  :stop='true'
+                  @click="desktopComplete"
+                />
+              </template>
+              <template v-else>
+                <Icon v-if="!isTaskSelected" :circle='true' class="icon check-icon cursor remove-highlight"
+                  icon="circle"
+                  :color='circleColor'
+                  :stop='true'
+                  width="20px"
+                />
+                <Icon v-else :circle='true' class="icon check-icon cursor remove-highlight"
+                  icon="circle-filled"
+                  :color='circleColor'
+                  width="20px"
+                  :stop='true'
+                />
+              </template>
             </div>
             <div class="text"
               :class="{changeColor}"
@@ -126,7 +142,8 @@ import utils from '@/utils/index'
 import mom from 'moment/src/moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName'],
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName',
+  'isSelecting'],
   components: {
     Timeline,
     Icon: IconVue,
