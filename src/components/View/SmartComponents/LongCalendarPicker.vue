@@ -1,113 +1,120 @@
 <template>
-  <div class="LongCalendarPicker" :class="platform"
-    @scroll.prevent
-    @whell.prevent
-    @touchmove.stop.prevent='touchmove'
-    @touchstart.stop.passive='touchstart'
-    @touchend.stop.passive='touchend'
+  <transition
+    appear
+    :css="false"
+    @enter='enter'
+    @leave='leave'
   >
-    <div class="ball" ref="ball" :style="{left}"></div>
-    <div class="wrapper" ref="wrapper">
-      <div class="week-view last-week" ref="last-week">
-        <div v-for="d in lastWeekDates" :key="d.date"
-          class="date-wrapper"
-          :class="{active: d.day === activeDay, notActive: d.day !== activeDay, tod: todayDay === d.day}"
-          :ref="d.date"
-          @click="select(d.date)"
-        >
-          <div class="weekday">
-            {{ d.weekday }}
+    <div class="LongCalendarPicker" :class="platform"
+      @scroll.prevent
+      @whell.prevent
+      @touchmove.stop.prevent='touchmove'
+      @touchstart.stop.passive='touchstart'
+      @touchend.stop.passive='touchend'
+    >
+      <div class="ball" ref="ball" :style="{left}"></div>
+      <div class="wrapper" ref="wrapper">
+        <div class="week-view last-week" ref="last-week">
+          <div v-for="d in lastWeekDates" :key="d.date"
+            class="date-wrapper"
+            :class="{active: d.day === activeDay, notActive: d.day !== activeDay, tod: todayDay === d.day}"
+            :ref="d.date"
+            @click="select(d.date)"
+          >
+            <div class="weekday">
+              {{ d.weekday }}
+            </div>
+            <div class="day-wrapper cursor remove-highlight">
+              <span class="day">
+                {{ d.day }}
+              </span>
+              <CircleBubble
+                innerColor='var(--white)'
+                outerColor='white'
+                opacity='0'
+              />
+            </div>
           </div>
-          <div class="day-wrapper cursor remove-highlight">
-            <span class="day">
-              {{ d.day }}
-            </span>
-            <CircleBubble
-              innerColor='var(--white)'
-              outerColor='white'
-              opacity='0'
-            />
+        </div>
+        <div class="week-view this-week" ref='this-week'>
+          <div v-for="d in thisWeekDates" :key="d.date"
+            class="date-wrapper"
+            :class="{active: d.day === activeDay, notActive: d.day !== activeDay}"
+            :ref="d.date"
+            @click="select(d.date)"
+          >
+            <div class="weekday">
+              {{ d.weekday }}
+            </div>
+            <div class="day-wrapper cursor remove-highlight">
+              <span class="day">
+                {{ d.day }}
+              </span>
+              <CircleBubble
+                innerColor='var(--white)'
+                outerColor='white'
+                opacity='0'
+              />
+            </div>
+          </div>
+        </div>
+        <div class="week-view next-week" ref="next-week">
+          <div v-for="d in nextWeekDates" :key="d.date"
+            class="date-wrapper"
+            :class="{active: d.day === activeDay}"
+            :ref="d.date"
+            @click="select(d.date)"
+          >
+            <div class="weekday">
+              {{ d.weekday }}
+            </div>
+            <div class="day-wrapper cursor remove-highlight">
+              <span class="day">
+                {{ d.day }}
+              </span>
+              <CircleBubble
+                innerColor='var(--white)'
+                outerColor='white'
+                opacity='0'
+              />
+            </div>
           </div>
         </div>
       </div>
-      <div class="week-view this-week" ref='this-week'>
-        <div v-for="d in thisWeekDates" :key="d.date"
-          class="date-wrapper"
-          :class="{active: d.day === activeDay, notActive: d.day !== activeDay}"
-          :ref="d.date"
-          @click="select(d.date)"
-        >
-          <div class="weekday">
-            {{ d.weekday }}
-          </div>
-          <div class="day-wrapper cursor remove-highlight">
-            <span class="day">
-              {{ d.day }}
-            </span>
-            <CircleBubble
-              innerColor='var(--white)'
-              outerColor='white'
-              opacity='0'
-            />
-          </div>
-        </div>
+      <div class="header">
+        <span class="title">{{ title }}</span>
       </div>
-      <div class="week-view next-week" ref="next-week">
-        <div v-for="d in nextWeekDates" :key="d.date"
-          class="date-wrapper"
-          :class="{active: d.day === activeDay}"
-          :ref="d.date"
-          @click="select(d.date)"
-        >
-          <div class="weekday">
-            {{ d.weekday }}
-          </div>
-          <div class="day-wrapper cursor remove-highlight">
-            <span class="day">
-              {{ d.day }}
-            </span>
-            <CircleBubble
-              innerColor='var(--white)'
-              outerColor='white'
-              opacity='0'
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="header">
-      <h3 class="title">{{ title }}</h3>
-    </div>
 
-    <div v-if="isDesktop"
-      class="btn shadow right-btn cursor"
-      @click="swipeRight"
-    >
-      <Icon class="icon"
-        icon='tiny-arrow'
-        width='35px'
-      />
-      <CircleBubble
-        innerColor='var(--light-gray)'
-        outerColor='var(--gray)'
-        opacity='0'
-      />
+      <div v-if="isDesktop"
+        class="btn shadow right-btn cursor"
+        @click="swipeRight"
+      >
+        <Icon class="icon"
+          icon='tiny-arrow'
+          width='35px'
+        />
+        <CircleBubble
+          innerColor='var(--light-gray)'
+          outerColor='var(--gray)'
+          opacity='0'
+        />
+      </div>
+      <div v-if="isDesktop"
+        class="btn shadow left-btn cursor"
+        @click="swipeLeft"
+      >
+        <Icon class="icon"
+          icon='tiny-arrow'
+          width='35px'
+        />
+        <CircleBubble
+          innerColor='var(--light-gray)'
+          outerColor='var(--gray)'
+          opacity='0'
+        />
+      </div>
     </div>
-    <div v-if="isDesktop"
-      class="btn shadow left-btn cursor"
-      @click="swipeLeft"
-    >
-      <Icon class="icon"
-        icon='tiny-arrow'
-        width='35px'
-      />
-      <CircleBubble
-        innerColor='var(--light-gray)'
-        outerColor='var(--gray)'
-        opacity='0'
-      />
-    </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -159,6 +166,43 @@ export default {
     window.removeEventListener('resize', this.moveBall)
   },
   methods: {
+    enter(root) {
+      const r = root.style
+      const w = this.$refs['wrapper'].style
+
+      const rHeight = root.offsetHeight
+      const wHeight = this.$refs['wrapper'].offsetHeight
+
+      r.transitionDuration = '0'
+      w.transitionDuration = '0'
+
+      r.margin = 0
+      r.height = 0
+      r.opacity = 0
+      w.height = 0
+
+      setTimeout(() => {
+        r.transitionDuration = '.3s'
+        w.transitionDuration = '.3s'
+
+        r.margin = '8px 0'
+        r.opacity = 1
+        r.height = rHeight + 'px'
+        w.height = wHeight + 'px'
+      })
+    },
+    leave(root) {
+      const r = root.style
+      const w = this.$refs['wrapper'].style
+
+      r.transitionDuration = '.3s'
+      w.transitionDuration = '.3s'
+
+      r.margin = 0
+      r.height = 0
+      r.opacity = 0
+      w.height = 0
+    },
     fixWidth() {
       const el = this.$refs['wrapper']
       el.scrollLeft = el.scrollWidth * (1 / 3)
@@ -367,6 +411,12 @@ export default {
   width: 100%;
   height: 80px;
   overflow: hidden;
+}
+
+.title {
+  font-size: 1.4em;
+  color: var(--purple);
+  text-shadow: 0 0 40px rgba(161, 96, 235, .4);
 }
 
 .header {
