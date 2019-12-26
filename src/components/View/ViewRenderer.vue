@@ -35,6 +35,7 @@
         @folder='selectFolder'
       />
       <component v-if='smartComponent'
+        class='component'
         :is='smartComponent'
 
         @update='onSmartComponentUpdate'
@@ -883,8 +884,13 @@ export default {
   margin-top: -4px;
 }
 
+.component {
+  z-index: 3;
+}
+
 .view-renderer-move {
   position: relative;
+  z-index: 2;
 }
 
 </style>

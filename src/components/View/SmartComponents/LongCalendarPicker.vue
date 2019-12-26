@@ -4,14 +4,13 @@
     @whell.prevent
     @touchmove.prevent
   >
+    <div class="ball" :style="{left}"></div>
     <div class="wrapper" ref="wrapper">
       <div class="week-view last-week" ref="last-week">
-        last-week
-      </div>
-      <div class="week-view this-week" ref='this-week'>
-        <div v-for="d in thisWeekDates" :key="d.date"
+        <div v-for="d in lastWeekDates" :key="d.date"
           class="date-wrapper"
-          :class="{active: d.day === activeDay}"
+          :class="{active: d.day === activeDay, notActive: d.day !== activeDay, tod: todayDay === d.day}"
+          :ref="d.date"
           @click="select(d.date)"
         >
           <div class="weekday">
@@ -22,19 +21,63 @@
               {{ d.day }}
             </span>
             <CircleBubble
-              innerColor='var(--light-gray)'
-              outerColor='var(--gray)'
+              innerColor='var(--white)'
+              outerColor='white'
+              opacity='0'
+            />
+          </div>
+        </div>
+      </div>
+      <div class="week-view this-week" ref='this-week'>
+        <div v-for="d in thisWeekDates" :key="d.date"
+          class="date-wrapper"
+          :class="{active: d.day === activeDay, notActive: d.day !== activeDay}"
+          :ref="d.date"
+          @click="select(d.date)"
+        >
+          <div class="weekday">
+            {{ d.weekday }}
+          </div>
+          <div class="day-wrapper cursor remove-highlight">
+            <span class="day">
+              {{ d.day }}
+            </span>
+            <CircleBubble
+              innerColor='var(--white)'
+              outerColor='white'
               opacity='0'
             />
           </div>
         </div>
       </div>
       <div class="week-view next-week" ref="next-week">
-        next-week
+        <div v-for="d in nextWeekDates" :key="d.date"
+          class="date-wrapper"
+          :class="{active: d.day === activeDay}"
+          :ref="d.date"
+          @click="select(d.date)"
+        >
+          <div class="weekday">
+            {{ d.weekday }}
+          </div>
+          <div class="day-wrapper cursor remove-highlight">
+            <span class="day">
+              {{ d.day }}
+            </span>
+            <CircleBubble
+              innerColor='var(--white)'
+              outerColor='white'
+              opacity='0'
+            />
+          </div>
+        </div>
       </div>
     </div>
 
-    <div v-if="isDesktop" class="btn shadow right-btn cursor">
+    <div v-if="isDesktop"
+      class="btn shadow right-btn cursor"
+      @click="swipeRight"
+    >
       <Icon class="icon"
         icon='tiny-arrow'
         width='35px'
@@ -45,7 +88,10 @@
         opacity='0'
       />
     </div>
-    <div v-if="isDesktop" class="btn shadow left-btn cursor">
+    <div v-if="isDesktop"
+      class="btn shadow left-btn cursor"
+      @click="swipeLeft"
+    >
       <Icon class="icon"
         icon='tiny-arrow'
         width='35px'
@@ -76,30 +122,69 @@ export default {
   data() {
     return {
       active: TOD_STR,
-      lastWeek: TOD.clone().subtract(1, 'week').startOf('week').format('Y-M-D'),
       weekStart: TOD.clone().startOf('week').format('Y-M-D'),
-      nextWeek: TOD.clone().add(1, 'week').startOf('week').format('Y-M-D'),
+      left: 0,
     }
   },
   mounted() {
     const el = this.$refs['wrapper']
     el.scrollLeft = el.scrollWidth * (1 / 3)
+
+    this.moveBall()
   },
   methods: {
+    moveBall() {
+      setTimeout(() => {
+        const el = this.$refs[this.active][0]
+
+        this.left = (el.offsetLeft - 8) + 'px'
+      })
+    },
     select(date) {
       this.active = date
     },
-  },
-  computed: {
-    ...mapGetters(['isDesktop', 'platform']),
-    mom() {
-      return mom(this.active, 'Y-M-D')
+    swipeLeft() {
+      const width = this.$refs['wrapper'].clientWidth
+      const t = this.$refs['this-week'].style
+      const n = this.$refs['last-week'].style
+
+      t.transitionDuration = '.4s'
+      n.transitionDuration = '.4s'
+
+      t.transform = `translateX(${width}px)`
+      n.transform = `translateX(${width}px)`
+
+      setTimeout(() => {
+        t.transitionDuration = '0s'
+        n.transitionDuration = '0s'
+        this.weekStart = this.lastWeek
+        this.active = this.weekStart
+        t.transform = `translateX(0px)`
+        n.transform = `translateX(0px)`
+      }, 610)
     },
-    activeDay() {
-      return mom(this.active, 'Y-M-D').format('D')
+    swipeRight() {
+      const width = this.$refs['wrapper'].clientWidth
+      const t = this.$refs['this-week'].style
+      const n = this.$refs['next-week'].style
+
+      t.transitionDuration = '.4s'
+      n.transitionDuration = '.4s'
+
+      t.transform = `translateX(-${width}px)`
+      n.transform = `translateX(-${width}px)`
+
+      setTimeout(() => {
+        t.transitionDuration = '0s'
+        n.transitionDuration = '0s'
+        this.weekStart = this.nextWeek
+        this.active = this.weekStart
+        t.transform = `translateX(0px)`
+        n.transform = `translateX(0px)`
+      }, 610)
     },
-    thisWeekDates() {
-      const date = mom(this.weekStart, 'Y-M-D')
+    getWeekDates(weekStart) {
+      const date = mom(weekStart, 'Y-M-D')
 
       const arr = []
       for (let i = 0;i < 7;i++) {
@@ -113,6 +198,38 @@ export default {
       return arr
     },
   },
+  computed: {
+    ...mapGetters(['isDesktop', 'platform']),
+    todayDay() {
+      return mom(TOD_STR, 'Y-M-D').format('D')
+    },
+    mom() {
+      return mom(this.active, 'Y-M-D')
+    },
+    activeDay() {
+      return mom(this.active, 'Y-M-D').format('D')
+    },
+    lastWeek() {
+      return mom(this.weekStart, 'Y-M-D').subtract(1, 'week').startOf('week').format('Y-M-D')
+    },
+    nextWeek() {
+      return mom(this.weekStart, 'Y-M-D').add(1, 'week').startOf('week').format('Y-M-D')
+    },
+    lastWeekDates() {
+      return this.getWeekDates(this.lastWeek)
+    },
+    thisWeekDates() {
+      return this.getWeekDates(this.weekStart)
+    },
+    nextWeekDates() {
+      return this.getWeekDates(this.nextWeek)
+    },
+  },
+  watch: {
+    active() {
+      this.moveBall()
+    },
+  }
 }
 
 </script>
@@ -121,7 +238,7 @@ export default {
 
 .LongCalendarPicker {
   position: relative;
-  height: 75px;
+  height: 80px;
   overflow: visible;
   margin: 8px 0;
 }
@@ -174,6 +291,9 @@ export default {
   height: 100%;
   display: flex;
   justify-content: space-around;
+  transform: translateX(0px);
+  transition-timing-function: ease-out;
+  transition-duration: .6s;
 }
 
 .date-wrapper {
@@ -202,11 +322,26 @@ export default {
   transition-duration: .2s;
 }
 
+.ball {
+  width: 45px;
+  height: 45px;
+  border-radius: 1000px;
+  background-color: var(--purple);
+  box-shadow: 0 0 28px rgba(161, 96, 235, .4);
+  position: absolute;
+  bottom: 4px;
+  transition-duration: .3s; 
+}
+
+.date-wrapper.active .day-wrapper {
+  color: white !important;
+}
+
 .date-wrapper.active .day-wrapper {
   color: var(--primary);
 }
 
-.desktop .day-wrapper:hover {
+.desktop .day-wrapper.notActive:hover {
   background-color: var(--card);
   box-shadow: 0 3px 8px rgba(15,15,15,.3);
 }
