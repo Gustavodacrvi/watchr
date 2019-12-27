@@ -216,7 +216,8 @@ export default {
       const childs = this.draggableRoot.childNodes
       const ids = []
       for (const el of childs)
-        ids.push(el.dataset.id)
+        if (el.dataset.id !== 'floating-button')
+          ids.push(el.dataset.id)
       return ids
     },
     enter(el, done) {

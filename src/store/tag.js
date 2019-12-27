@@ -67,7 +67,7 @@ export default {
         name,
         userId: uid(),
       }
-      if (!index)
+      if (index === undefined)
         tagColl().add(obj)
       else {
         const batch = fire.batch()

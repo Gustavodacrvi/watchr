@@ -89,7 +89,7 @@ export default {
 
       let order
       if (viewName === 'Someday')
-        order = this.viewOrders[view] ? this.viewOrders[view].headings : []
+        order = this.viewOrders[viewName] ? this.viewOrders[viewName].headings : []
       else {
         order = (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].headings) || []
       }

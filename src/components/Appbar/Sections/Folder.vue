@@ -61,6 +61,7 @@ export default {
       startY: 0,
       initialScroll: 0,
       timeout: null,
+      selected: [],
     }
   },
   mounted() {
@@ -71,7 +72,7 @@ export default {
     apply() {
       this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
         elIds: [this.id],
-        taskIds: this.selectedTasks,
+        taskIds: this.selected,
         type: 'folder',
       })
     },
@@ -151,7 +152,7 @@ export default {
       }, this.showing, this.toggle)
     },
     isSelectingTasks() {
-      return this.selectedTasks.length > 0
+      return this.selected.length > 0
     },
     showSpecialInfo() {
       return this.headerHover && !this.isOnControl && this.isSelectingTasks
@@ -160,6 +161,11 @@ export default {
   watch: {
     options() {
       this.bindOptions()
+    },
+    selectedTasks() {
+      setTimeout(() => {
+        this.selected = [...this.selectedTasks]
+      }, 10)
     },
     folder() {
       this.bindOptions()
