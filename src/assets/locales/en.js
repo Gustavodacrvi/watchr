@@ -74,6 +74,7 @@ export default {
   "Collaborators": "Collaborators",
   "Convert to list": "Convert to list",
   'Lists': 'Lists',
+  "Go to the last visited view on app start instead of the first smart view": "Go to the last visited view on app start instead of the first smart view",
   'Filter name': "Filter name",
   'Add filter': "Add filter",
   "Edit filter": "Edit filter",

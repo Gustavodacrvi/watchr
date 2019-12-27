@@ -133,7 +133,7 @@ export default {
         (path === '/user' && atLeastOneUndefined)
       ) {
         const view = this.getInitialSmartView
-        this.$router.replace(`/user?list=${view}`)
+        this.$router.replace(`/user?${view.viewType}=${view.viewName}`)
         this.initialSmartViewRender = true
       }
       if (saveRoute) {

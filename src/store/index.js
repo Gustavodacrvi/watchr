@@ -170,9 +170,18 @@ const store = new Vuex.Store({
       return 'mobile'
     },
     getInitialSmartView(state) {
-      const arr = state.userInfo.links
-      if (arr && arr[0]) return arr[0]
-      return 'Today'
+      const goToLastViewOnEnter = localStorage.getItem('goToLastViewOnEnter')
+
+      if (goToLastViewOnEnter !== 'true') {
+        const arr = state.userInfo.links
+        let viewName = 'Today'
+        if (arr && arr[0]) viewName = arr[0]
+        return { viewName, viewType: 'list'}
+      } else {
+        const viewName = localStorage.getItem('watchr_last_view_name')
+        const viewType = localStorage.getItem('watchr_last_view_type')
+        return {viewType, viewName}
+      }
     },
     versionDiff(state) {
       const vers = state.lastVersion
@@ -222,6 +231,11 @@ const store = new Vuex.Store({
       state.pressingKey = null
     },
     navigate(state, {viewName, viewType}) {
+      if (viewName && viewType) {
+        localStorage.setItem('watchr_last_view_name', viewName)
+        localStorage.setItem('watchr_last_view_type', viewType)
+      }
+      
       state.viewName = viewName
       state.viewType = viewType
     },

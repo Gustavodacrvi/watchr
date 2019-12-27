@@ -26,6 +26,7 @@ export default {
   "No time": "Sem horário",
   'Inbox': 'Inbox',
   'Upcoming': 'Próximos dias',
+  "Go to the last visited view on app start instead of the first smart view": "Ir para a última lista visitada em vez da primeira lista inteligente",
   'Filter name': "Nome do filtro",
   'Add filter': "Adicionar filtro",
   "Edit filter": "Editar filtro",
