@@ -1,6 +1,6 @@
 <template>
   <transition appear name="card-t">
-    <div class="FastSearch" @click="$store.commit('closeFastSearch')">
+    <div class="FastSearch" @click="close">
       <div class="cb rb card shadow scroll-thin" @click.stop>
         <div class="cont">
           <InputApp
@@ -78,8 +78,11 @@ export default {
       s.height = 0
     },
     click(callback) {
-      this.$store.commit('closeFastSearch')
+      this.close()
       if (callback) callback()
+    },
+    close() {
+      this.$store.dispatch('closePopup')
     },
     getOptions() {
       const { search, tasks, tags, lists, folders, views } = this

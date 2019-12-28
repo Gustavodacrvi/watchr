@@ -151,7 +151,7 @@ export default {
       })
     },
     openSearchBar() {
-      this.$store.commit('openFastSearch')
+      this.$store.dispatch('pushPopup', {comp: 'FastSearch', naked: true})
     },
     goToIndexPage() {
       this.$router.push('/')

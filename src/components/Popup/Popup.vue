@@ -31,13 +31,14 @@ import AddList from './Lists/AddList.vue'
 import AddListNote from './Lists/AddListNote.vue'
 import AddHeadingNote from './Lists/AddHeadingNote.vue'
 import Updates from './Updates.vue'
+import FastSearch from './FastSearch.vue'
 import AddFolder from './Folder/AddFolder.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    Signup, SigninOptions, Signin, AddTag,
+    Signup, SigninOptions, Signin, AddTag, FastSearch,
     AddListNote, AddTagNote, Icon, AddList, AddFilter,
     AddTask, Updates, ChangeUsername, ChangeEmail,
     Confirm, AddHeadingNote, AddFolder, Profile,

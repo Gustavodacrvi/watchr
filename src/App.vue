@@ -10,7 +10,6 @@
     <transition name="fade-t">
       <Menu v-show="isMenuOpened && !isDesktop"/>
     </transition>
-    <FastSearch v-if="fastSearch"/>
     <transition name="fade-t">
       <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
     </transition>
@@ -36,7 +35,6 @@ import PopupVue from './components/Popup/Popup.vue'
 import ToastVue from './components/Toast.vue'
 import MenuVue from './components/NavBar/Menu.vue'
 import MobileIcondropVue from './components/Popup/MobileIcondrop.vue'
-import FastSearchVue from './components/Popup/FastSearch.vue'
 import FileReader from './components/View/FileReader/FileReader.vue'
 
 import { mapGetters, mapState } from 'vuex'
@@ -49,7 +47,6 @@ export default {
     Toast: ToastVue,
     Menu: MenuVue,
     MobileIcondrop: MobileIcondropVue,
-    FastSearch: FastSearchVue,
   },
   data() {
     return {
@@ -148,7 +145,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['fastSearch', 'fileURL', 'user', 'allowNavHide', 'pressingKey']),
+    ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey']),
     ...mapGetters(['isDesktop', 'isStandAlone', 'l', 'getInitialSmartView', 'needsUpdate']),
     hideNavbar() {
       const isAnonymous = this.user && this.user.isAnonymous

@@ -110,7 +110,6 @@ const store = new Vuex.Store({
     authState: false,
     fileURL: null,
     firstFireLoad: false,
-    fastSearch: false,
     toasts: [],
     windowWidth: 0,
     isScrolling: false,
@@ -252,12 +251,6 @@ const store = new Vuex.Store({
     toggleScroll(state, isScrolling) {
       state.isScrolling = isScrolling
     },
-    openFastSearch(state) {
-      state.fastSearch = true
-    },
-    closeFastSearch(state) {
-      state.fastSearch = false
-    },
     saveUser(state, user) {
       state.user = user
     },
@@ -345,7 +338,7 @@ const store = new Vuex.Store({
         case 'q': pop('AddTask'); break
         case 't': pop('AddTag'); break
         case 'l': pop('AddList'); break
-        case 'f': commit('openFastSearch'); break
+        case 'f': pop('FastSearch'); break
         case 'delete': {
           if (state.selectedTasks.length > 0) {
             dispatch('task/deleteTasks', state.selectedTasks)
