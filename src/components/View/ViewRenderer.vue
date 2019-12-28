@@ -73,7 +73,7 @@ import HeaderVue from './Headings/Header.vue'
 import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
 import PaginationVue from './Pagination.vue'
 import TaskHandler from './Views/TaskHandler.vue'
-import Pomodoro from './Views/Pomodoro.vue'
+import Pomodoro from './Views/Pomodoro/Pomodoro.vue'
 
 import ViewRendererLongCalendarPicker from '@/components/View/SmartComponents/ViewRendererLongCalendarPicker.vue'
 
