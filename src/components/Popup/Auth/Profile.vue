@@ -62,6 +62,11 @@
               :value='pmFormat'
               @input="togglepmFormat"
             />
+            <CheckboxApp class="rb"
+              :name='l["Go to the last visited view on app start instead of the first smart view"]'
+              :value='goToLastViewOnEnter'
+              @input="toggleGoToLastViewOnEnter"
+            />
             <h4 class="title">Enabled Sections</h4>
             <CheckboxApp v-for="s in sections" :key="s.name"
               class="rb"
@@ -161,13 +166,18 @@ export default {
       hidedSections: [],
       hidedSmartViews: [],
       pmFormat: true,
+      goToLastViewOnEnter: false,
       changedSection: false,
+      forceUpdate: false,
     }
   },
   created() {
     this.update()
   },
   methods: {
+    toggleGoToLastViewOnEnter() {
+      this.goToLastViewOnEnter = !this.goToLastViewOnEnter
+    },
     togglepmFormat() {
       this.pmFormat = !this.pmFormat
     },
@@ -210,18 +220,18 @@ export default {
       })
     },
     save() {
+      localStorage.setItem('goToLastViewOnEnter', this.goToLastViewOnEnter)
       userRef().set({
         disablePmFormat: !this.pmFormat,
-      }, {merge: true})
-      this.$store.dispatch('update', {
-        ...this.user,
         hidedSections: this.hidedSections,
         hidedViews: this.hidedSmartViews,
-      })
+      }, {merge: true})
       this.changedSection = false
+      this.forceUpdate = !this.forceUpdate
     },
     update() {
       this.pmFormat = this.getPmFormat
+      this.goToLastViewOnEnter = localStorage.getItem('goToLastViewOnEnter') === 'true'
       this.hidedSections = this.userHidedSections
       this.hidedSmartViews = this.userHidedSmartViews
     }
@@ -230,7 +240,9 @@ export default {
     ...mapGetters(['platform', 'isDesktop', 'l']),
     ...mapState(['user', 'userInfo']),
     changedOptions() {
+      this.forceUpdate
       if (this.pmFormat !== this.getPmFormat) return true
+      if (this.goToLastViewOnEnter !== (localStorage.getItem('goToLastViewOnEnter') === 'true')) return true
       if (this.changedSection) return true
       
       return false

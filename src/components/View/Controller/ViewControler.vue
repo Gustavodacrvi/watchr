@@ -89,7 +89,7 @@ export default {
 
       let order
       if (viewName === 'Someday')
-        order = this.viewOrders[view] ? this.viewOrders[view].headings : []
+        order = this.viewOrders[viewName] ? this.viewOrders[viewName].headings : []
       else {
         order = (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].headings) || []
       }
@@ -170,8 +170,8 @@ export default {
               }
             ],
             updateIds: saveOrder,
-            fallbackTask: task => {
-              if (!task.list && !task.folder)
+            fallbackTask: (task, force) => {
+              if (force || (!task.list && !task.folder))
                 task.list = list.id
               return task
             },
@@ -259,8 +259,8 @@ export default {
               }
             ],
             updateIds: saveOrder,
-            fallbackTask: task => {
-              if (!task.list && !task.folder)
+            fallbackTask: (task, force) => {
+              if (force || (!task.list && !task.folder))
                 task.folder = folder.id
               return task
             },
@@ -400,7 +400,7 @@ export default {
         const date = tod.format('Y-M-D')
 
         const sortHeading = tasks =>
-          this.$store.getters.checkMissingIdsAndSortArr(this.calendarOrders[date] || [], tasks)
+          this.$store.getters.checkMissingIdsAndSortArr((this.calendarOrders[date] && this.calendarOrders[date].tasks) || [], tasks)
 
         const filterFunction = task => this.isTaskShowingOnDate(task, date, true)
         

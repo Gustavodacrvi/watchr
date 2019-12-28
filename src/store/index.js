@@ -57,7 +57,7 @@ moment.locale(lang)
 const uid = () => auth.currentUser.uid
 
 
-const version = '065'
+const version = '066'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -110,7 +110,6 @@ const store = new Vuex.Store({
     authState: false,
     fileURL: null,
     firstFireLoad: false,
-    fastSearch: false,
     toasts: [],
     windowWidth: 0,
     isScrolling: false,
@@ -170,9 +169,18 @@ const store = new Vuex.Store({
       return 'mobile'
     },
     getInitialSmartView(state) {
-      const arr = state.userInfo.links
-      if (arr && arr[0]) return arr[0]
-      return 'Today'
+      const goToLastViewOnEnter = localStorage.getItem('goToLastViewOnEnter')
+
+      if (goToLastViewOnEnter !== 'true') {
+        const arr = state.userInfo.links
+        let viewName = 'Today'
+        if (arr && arr[0]) viewName = arr[0]
+        return { viewName, viewType: 'list'}
+      } else {
+        const viewName = localStorage.getItem('watchr_last_view_name')
+        const viewType = localStorage.getItem('watchr_last_view_type')
+        return {viewType, viewName}
+      }
     },
     versionDiff(state) {
       const vers = state.lastVersion
@@ -222,6 +230,11 @@ const store = new Vuex.Store({
       state.pressingKey = null
     },
     navigate(state, {viewName, viewType}) {
+      if (viewName && viewType) {
+        localStorage.setItem('watchr_last_view_name', viewName)
+        localStorage.setItem('watchr_last_view_type', viewType)
+      }
+      
       state.viewName = viewName
       state.viewType = viewType
     },
@@ -237,12 +250,6 @@ const store = new Vuex.Store({
     },
     toggleScroll(state, isScrolling) {
       state.isScrolling = isScrolling
-    },
-    openFastSearch(state) {
-      state.fastSearch = true
-    },
-    closeFastSearch(state) {
-      state.fastSearch = false
     },
     saveUser(state, user) {
       state.user = user
@@ -331,7 +338,7 @@ const store = new Vuex.Store({
         case 'q': pop('AddTask'); break
         case 't': pop('AddTag'); break
         case 'l': pop('AddList'); break
-        case 'f': commit('openFastSearch'); break
+        case 'f': pop('FastSearch'); break
         case 'delete': {
           if (state.selectedTasks.length > 0) {
             dispatch('task/deleteTasks', state.selectedTasks)

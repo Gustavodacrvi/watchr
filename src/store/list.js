@@ -161,9 +161,9 @@ export default {
         tasks: [],
         ownerInfo: rootState.userInfo,
       }
-      if (!index)
+      if (index === undefined && folder === null)
         userRef().collection('lists').add(obj)
-      else {
+      else if (index !== undefined && folder === null) {
         const batch = fire.batch()
   
         const ord = ids.slice()
@@ -175,6 +175,19 @@ export default {
           lists: ord,
         })
   
+        batch.commit()
+      } else {
+        const batch = fire.batch()
+
+        const ord = ids.slice()
+        const ref = listRef()
+        batch.set(ref, obj)
+        ord.splice(index, 0, ref.id)
+
+        batch.update(folderRef(folder), {
+          order: ord,
+        })
+
         batch.commit()
       }
     },

@@ -133,7 +133,7 @@ export default {
       if (this.callback && !this.showSpecialInfo) this.callback()
       else if (this.isOnControl && this.selectedEmpty) this.$emit('select')
       else if (this.showSpecialInfo && !this.selectedEmpty) {
-        this.$emit('apply', {type: this.selectedtype, tasks: this.selectedTasks})
+        this.$emit('apply', {type: this.selectedtype || this.type, tasks: this.selectedTasks})
         this.$store.commit('clearSelected')
       }
     }

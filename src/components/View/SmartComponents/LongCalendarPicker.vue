@@ -327,7 +327,7 @@ export default {
           t.transitionDuration = '0s'
           n.transitionDuration = '0s'
           this.weekStart = this.lastWeek
-          this.active = this.weekStart
+          this.select(this.weekStart)
           t.transform = `translateX(0px)`
           n.transform = `translateX(0px)`
           ball.opacity = 1
@@ -356,7 +356,7 @@ export default {
           t.transitionDuration = '0s'
           n.transitionDuration = '0s'
           this.weekStart = this.nextWeek
-          this.active = this.weekStart
+          this.select(this.weekStart)
           t.transform = `translateX(0px)`
           n.transform = `translateX(0px)`
           ball.opacity = 1

@@ -14,14 +14,14 @@ export default {
         })
       }
     },
-    rootFallbackTask(task) {
-      if (!task.heading) {
+    rootFallbackTask(task, force) {
+      if (force || !task.heading) {
         task.heading = null
       }
       return task
     },
-    mainFallbackTask(task) {
-      if (!task.list && !task.folder)
+    mainFallbackTask(task, force) {
+      if (force || (!task.list && !task.folder))
         task.list = this.viewList.id
       task.tags = [...task.tags, ...this.listgetListTags.map(el => el.id)]
       return task
@@ -137,8 +137,8 @@ export default {
             options: tasks => {
               return utilsList.listHeadingOptions(this.viewList, h, this.$store, tasks, this.l)
             },
-            fallbackTask: task => {
-              if (!task.heading && !task.folder && task.list === viewList.id)
+            fallbackTask: (task, force) => {
+              if (force || (!task.heading && !task.folder && task.list === viewList.id))
                 task.heading = h.name
               task.tags = [...task.tags, ...this.listgetListTags.map(el => el.id)]
               return task

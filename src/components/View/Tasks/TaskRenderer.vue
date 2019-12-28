@@ -58,7 +58,7 @@
         />
       </template>
       <transition name="fade-t">
-        <div v-if="showSomedayButton" @click="$emit('allow-someday')">
+        <div v-if="showSomedayButton && !header" @click="$emit('allow-someday')">
           <ButtonVue type="dark" :value="l['Show someday tasks...']"/>
         </div>
       </transition>
@@ -149,7 +149,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton',
   'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -180,6 +180,7 @@ export default {
 
       lastSelectedId: null,
       lastHeadingName: null,
+      editMoveType: 'add',
 
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
@@ -194,13 +195,64 @@ export default {
     this.mountSortables()
     window.addEventListener('click', this.windowClick)
     window.addEventListener('keydown', this.keydown)
+    window.addEventListener('mousemove', this.mousemove)
+    window.addEventListener('touchmove', this.mousemove)
   },
   beforeDestroy() {
     this.destroySortables()
     window.removeEventListener('click', this.windowClick)
     window.removeEventListener('keydown', this.keydown)
+    window.removeEventListener('mousemove', this.mousemove)
+    window.removeEventListener('touchmove', this.mousemove)
   },
   methods: {
+    mousemove(evt) {
+      // showHeadadingFloatingButton
+      if (this.movingButton) {
+        const obj = {
+          'action-heading': document.getElementById('action-heading').style,
+          create: document.getElementById('create').style,
+          add: document.getElementById('add').style,
+        }
+        
+        const { left, width } = this.$el.getBoundingClientRect()
+        const pos = (evt.pageX || evt.touches[0].pageX) - left
+        
+        const headingStart = width * .333333
+        const addStart = this.showHeadadingFloatingButton ? width * .66666 : width * .5
+
+        let type
+        if (pos < headingStart)
+          type = 'action-heading'
+        else if (pos < addStart)
+          type = 'create'
+        else type = 'add'
+
+        if (!this.showHeadadingFloatingButton && type === 'action-heading')
+          type = 'create'
+
+        const possibleValues = ['action-heading', 'create', 'add']
+
+        if (!this.showHeadadingFloatingButton) {
+          obj['action-heading'].flexBasis = '0px'
+          obj['action-heading'].overflow = 'hidden'
+        }
+        const act = obj[type]
+        for (const s of possibleValues)
+          if (s !== type) {
+            obj[s].backgroundColor = 'var(--void)'
+            obj[s].zIndex = '1'
+            obj[s].boxShadow = 'none'
+          }
+
+        act.backgroundColor = 'var(--dark-gray)'
+        act.boxShadow = '0 3px 8px rgba(15,15,15,.3)'
+        act.color = 'white'
+        act.zIndex = '2'
+
+        this.editMoveType = type
+      }
+    },
     renderHeading(h) {
       if (this.showHeading && this.showHeading(h)) {
         this.stopRootInflation = true
@@ -349,7 +401,7 @@ export default {
         onUpdate: (evt) => {
           setTimeout(() => {
             this.$emit('update', this.getIds(true))
-          }, 100)
+          }, 10)
         },
         onSelect: evt => {
           this.justScrolled = false
@@ -413,11 +465,26 @@ export default {
             })
             this.sourceVueInstance = null
           } else {
-            if (type === 'add-task-floatbutton') {
-              this.addTaskEdit(evt.newIndex)
-            } else if (type === 'headingbutton') {
-              this.addHeadingsEdit(evt.newIndex)
-            }
+            const i = evt.newIndex
+            if (this.editMoveType === 'create')
+              this.addTaskEdit(i)
+            else if (this.editMoveType === 'action-heading')
+              this.addHeadingsEdit(i)
+            else
+              this.$store.dispatch('pushPopup', {
+                comp: 'FastSearch',
+                payload: {
+                  callback: (route, task) => {
+                    this.lazyTasks.splice(i, 0, task)
+                    const t = this.fallbackTask(task, true)
+                    this.$store.dispatch('task/saveTask', t)
+                    setTimeout(() => {
+                      this.$emit('update', this.getIds(true))
+                    }, 10)
+                  },
+                  onlyTasks: true,
+                }
+              })
           }
           for (const item of items) {
             item.remove()
@@ -445,6 +512,7 @@ export default {
         onMove: (t, e) => {
           const isTaskRender = t.to.classList.contains('task-renderer-root')
           const isComingFromAnotherTaskRenderer = t.to !== this.draggableRoot
+          
           if (isTaskRender && isComingFromAnotherTaskRenderer) {
             let vue = t.related.__vue__ ||
                   t.related.parentNode.__vue__
@@ -610,13 +678,18 @@ export default {
       this.$store.commit('unselectTask', el.dataset.id)
       Sortable.utils.deselect(el)
     },
+    fallbackTask(task, force) {
+      let t = this.mainFallbackTask(task, force)
+
+      if (this.isRoot)
+        t = this.rootFallbackTask(t, force)
+      else t = this.headingFallbackTask(t, force)
+
+      return t
+    },
     add(task) {
       if (task.name) {
-        let t = this.mainFallbackTask(task)
-
-        if (this.isRoot)
-          t = this.rootFallbackTask(t)
-        else t = this.headingFallbackTask(t)
+        let t = this.fallbackTask(task)
 
         let shouldRender = false
         const isNotEditingFiles = !t.handleFiles

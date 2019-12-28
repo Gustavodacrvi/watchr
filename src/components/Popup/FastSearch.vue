@@ -1,12 +1,12 @@
 <template>
   <transition appear name="card-t">
-    <div class="FastSearch" @click="$store.commit('closeFastSearch')">
+    <div class="FastSearch" @click="close">
       <div class="cb rb card shadow scroll-thin" @click.stop>
         <div class="cont">
           <InputApp
             :focus='true'
             v-model="search"
-            placeholder="Search for tags, lists and tasks..."
+            :placeholder="placeholder"
             @keydown="keydown"
             @cancel="$emit('close')"
           />
@@ -44,6 +44,7 @@ import IconVue from '@/components/Icon.vue'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
+  props: ['payload'],
   components: {
     InputApp: InputVue,
     Icon: IconVue,
@@ -78,8 +79,11 @@ export default {
       s.height = 0
     },
     click(callback) {
-      this.$store.commit('closeFastSearch')
+      this.close()
       if (callback) callback()
+    },
+    close() {
+      this.$store.dispatch('closePopup')
     },
     getOptions() {
       const { search, tasks, tags, lists, folders, views } = this
@@ -95,44 +99,48 @@ export default {
       const fs = filter(folders)
       const vs = filter(views)
 
-      const go = (route) => this.$router.push(route)
+      const go = this.hasCallback ? this.payload.callback : route => this.$router.push(route)
 
-      for (const v of vs)
-        arr.push({
-          ...v,
-          id: v.name + 'UNIQUE_SMART_VIEW' + Date.now(),
-          callback: () => go('/user?list=' + v.name)
-        })
-      for (const t of tg)
-        arr.push({
-          name: t.name,
-          icon: 'tag',
-          id: t.id,
-          color: 'var(--red)',
-          callback: () => go('/user?tag=' + t.name)
-        })
-      for (const f of fs)
-        arr.push({
-          name: f.name,
-          icon: 'folder',
-          id: f.id,
-          color: '',
-          callback: () => go('/user?folder=' + f.name)
-        })
-      for (const l of lt)
-        arr.push({
-          name: l.name,
-          icon: 'tasks',
-          id: l.id,
-          color: 'var(--primary)',
-          callback: () => go('/user?list=' + l.name)
-        })
+      if (!this.onlyTasks)
+        for (const v of vs)
+          arr.push({
+            ...v,
+            id: v.name + 'UNIQUE_SMART_VIEW' + Date.now(),
+            callback: () => go('/user?list=' + v.name, v)
+          })
+      if (!this.onlyTasks)
+        for (const t of tg)
+          arr.push({
+            name: t.name,
+            icon: 'tag',
+            id: t.id,
+            color: 'var(--red)',
+            callback: () => go('/user?tag=' + t.name, t)
+          })
+      if (!this.onlyTasks)
+        for (const f of fs)
+          arr.push({
+            name: f.name,
+            icon: 'folder',
+            id: f.id,
+            color: '',
+            callback: () => go('/user?folder=' + f.name, f)
+          })
+      if (!this.onlyTasks)
+        for (const l of lt)
+          arr.push({
+            name: l.name,
+            icon: 'tasks',
+            id: l.id,
+            color: 'var(--primary)',
+            callback: () => go('/user?list=' + l.name, l)
+          })
      for (const t of ts)
         arr.push({
           name: t.name,
           icon: 'circle-check',
           id: t.id,
-          callback: () => go('/user?search=' + t.name)
+          callback: () => go('/user?search=' + t.name, t)
         })
 
       return arr.slice(0, 10)
@@ -172,7 +180,18 @@ export default {
       lists: state => state.list.lists,
       folders: state => state.folder.folders,
     }),
-    ...mapGetters(['isStandAlone']),
+    ...mapGetters(['isStandAlone', 'l']),
+    hasCallback() {
+      return this.payload && this.payload.callback
+    },
+    onlyTasks() {
+      return this.payload && this.payload.onlyTasks
+    },
+    placeholder() {
+      if (this.onlyTasks)
+        return this.l['Search task...']
+      return this.l['Search for tags, lists, folders and tasks...']
+    },
     views() {
       return [
         {

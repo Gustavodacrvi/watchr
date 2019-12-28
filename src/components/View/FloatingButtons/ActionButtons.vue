@@ -1,17 +1,11 @@
 <template>
   <div class="ActionButtons passive" :class="[platform, {moving}]" @click="click">
-    <Btn v-if="showHeader" class="header button handle action-button left-act" id="edit-component"
-      icon='heading'
-      color='white'
-      data-type='headingbutton'
-      :txt='l["Add heading"]'
-    />
-    <span v-else></span>
+    <span></span>
     <Btn v-if="showingTaskAdder" class="add-task-floating-button button handle action-button right-action-floating-button bright" id="edit-component"
       icon='plus'
       color='white'
       data-type='add-task-floatbutton'
-      :txt='l["Add task"]'
+      :txt='l["Create"]'
     />
   </div>
 </template>
@@ -25,7 +19,6 @@ import { mapGetters } from 'vuex'
 import Sortable from 'sortablejs'
 
 export default {
-  props: ['showHeader'],
   components: {
     Btn: ActButtonVue,
   },
@@ -74,7 +67,7 @@ export default {
           }, 50)
           break
         }
-    }
+    },
   },
   computed: {
     ...mapGetters(['platform', 'l', 'isDesktop'])
@@ -98,6 +91,7 @@ export default {
   justify-content: space-between;
   transition: opacity .15s;
   opacity: 1;
+  pointer-events: none;
 }
 
 .ActionButtons .header {
@@ -130,28 +124,53 @@ export default {
   transition-duration: 0s !important;
 }
 
-.floating-btn-msg, .floating-btn-container .floating {
+.ActButton .act-button-wrapper, .floating-btn-container .floating, .floating-btn-msg {
   display: none !important;
 }
 
-.floating-btn-container .floating-btn-msg {
+.floating-btn-container .act-button-wrapper {
+  display: flex !important;
   width: 98% !important;
-  background-color: var(--void);
   box-shadow: none;
   border-radius: 6px;
   flex-grow: 1;
+}
+
+.act-button-wrapper .cont {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 100%;
+  flex-basis: 100%;
+  background-color: var(--void);
+  border-radius: 10px;
+  transition: background-color .2s, box-shadow;
+}
+
+.floating-btn-container .floating-btn-msg {
+  height: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
 .TaskRenderer .task-act,
 .Lists .list-act,
 .Tags .tags-act {
   display: flex !important;
-  justify-content: center;
-  align-items: center;
 }
 
-.Lists .floating-btn-msg, .Tags .floating-btn-msg {
-  background-color: var(--dark);
+.Lists .act-button-wrapper .cont, .Tags .act-button-wrapper .cont {
+  display: none !important;
+}
+
+.Lists .act-button-wrapper .main, .Tags .act-button-wrapper .main {
+  display: block !important;
+  flex-basis: 100%;
+}
+
+.Lists .list-act, .Tags .tags-act {
+  border-radius: 10px;
+  background-color: var(--card);
 }
 
 </style>

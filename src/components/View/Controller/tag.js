@@ -15,8 +15,8 @@ export default {
     rootFallbackTask(task) {
       return task
     },
-    mainFallbackTask(task) {
-      if (task.tags.length === 0 || !task.tags.includes(this.viewTag.id))
+    mainFallbackTask(task, force) {
+      if (force || (task.tags.length === 0 || !task.tags.includes(this.viewTag.id)))
         task.tags.push(this.viewTag.id)
       return task
     },
