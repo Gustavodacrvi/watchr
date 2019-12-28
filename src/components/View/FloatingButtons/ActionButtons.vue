@@ -5,7 +5,7 @@
       icon='plus'
       color='white'
       data-type='add-task-floatbutton'
-      :txt='l["Add task"]'
+      :txt='l["Create"]'
     />
   </div>
 </template>
@@ -144,15 +144,7 @@ export default {
   flex-basis: 100%;
   background-color: var(--void);
   border-radius: 10px;
-  transition-duration: .3s;
-}
-
-.act-button-wrapper .main {
-  flex-basis: 80%;
-}
-
-.act-button-wrapper .side {
-  flex-basis: 10%;
+  transition: background-color .2s, box-shadow;
 }
 
 .floating-btn-container .floating-btn-msg {

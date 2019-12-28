@@ -12,7 +12,7 @@
     <div class="act-button-wrapper" :style='styles'>
       <div class="heading cont side" id="action-heading">
         <div class="floating-btn-msg task-act no-pointer">
-          heading
+          {{ l['Heading'] }}
         </div>
       </div>
       <div class="main cont" id="create">
@@ -28,7 +28,7 @@
       </div>
       <div class="existing side cont" id="add">
         <div class="floating-btn-msg task-act no-pointer">
-          exiting
+          {{ l['Add'] }}
         </div>
       </div>
     </div>

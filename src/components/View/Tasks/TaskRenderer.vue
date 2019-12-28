@@ -209,11 +209,17 @@ export default {
     mousemove(evt) {
       // showHeadadingFloatingButton
       if (this.movingButton) {
-        const { left, width } = this.$el.getBoundingClientRect()
-        const pos = evt.pageX - left
+        const obj = {
+          'action-heading': document.getElementById('action-heading').style,
+          create: document.getElementById('create').style,
+          add: document.getElementById('add').style,
+        }
         
-        const headingStart = width * .10
-        const addStart = width * .90
+        const { left, width } = this.$el.getBoundingClientRect()
+        const pos = (evt.pageX || evt.touches[0].pageX) - left
+        
+        const headingStart = width * .333333
+        const addStart = this.showHeadadingFloatingButton ? width * .66666 : width * .5
 
         let type
         if (pos < headingStart)
@@ -222,12 +228,14 @@ export default {
           type = 'create'
         else type = 'add'
 
+        if (!this.showHeadadingFloatingButton && type === 'action-heading')
+          type = 'create'
+
         const possibleValues = ['action-heading', 'create', 'add']
 
-        const obj = {
-          'action-heading': document.getElementById('action-heading').style,
-          create: document.getElementById('create').style,
-          add: document.getElementById('add').style,
+        if (!this.showHeadadingFloatingButton) {
+          obj['action-heading'].flexBasis = '0px'
+          obj['action-heading'].overflow = 'hidden'
         }
         const act = obj[type]
         for (const s of possibleValues)
@@ -241,6 +249,8 @@ export default {
         act.boxShadow = '0 3px 8px rgba(15,15,15,.3)'
         act.color = 'white'
         act.zIndex = '2'
+
+        this.editMoveType = type
       }
     },
     renderHeading(h) {
@@ -455,11 +465,10 @@ export default {
             })
             this.sourceVueInstance = null
           } else {
-            if (type === 'add-task-floatbutton') {
+            if (this.editMoveType === 'create')
               this.addTaskEdit(evt.newIndex)
-            } else if (type === 'headingbutton') {
+            else if (this.editMoveType === 'action-heading')
               this.addHeadingsEdit(evt.newIndex)
-            }
           }
           for (const item of items) {
             item.remove()
