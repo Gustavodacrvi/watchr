@@ -39,7 +39,8 @@ import mom from 'moment/src/moment'
 export default {
   props: ['mainFilter', 'rootFilter', 'tasksOrder', 'headings', 'headingsOrder',
 
-    'pipeFilterOptions', 'showCompleted', 'showSomeday',
+    'pipeFilterOptions', 'showCompleted', 'showSomeday', 'movingButton',
+    'showHeadadingFloatingButton',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackTask', 'icon', 'configFilterOptions', 'showHeading',
@@ -99,7 +100,7 @@ export default {
         ...headingTasks,
       ]
       
-      const init = mom(time, 'HH:mm')
+      let init = mom(time, 'HH:mm')
 
       const bufferSplit = buffer.split(':')
 
@@ -111,6 +112,9 @@ export default {
 
       let i = 0
       for (const t of tasks) {
+        if (t.calendar && t.calendar.time)
+          init = mom(t.calendar.time, 'HH:mm')
+        
         const start = init.format(format)
         const split = start.split(':')
 

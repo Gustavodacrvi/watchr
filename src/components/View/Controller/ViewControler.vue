@@ -400,7 +400,7 @@ export default {
         const date = tod.format('Y-M-D')
 
         const sortHeading = tasks =>
-          this.$store.getters.checkMissingIdsAndSortArr(this.calendarOrders[date] || [], tasks)
+          this.$store.getters.checkMissingIdsAndSortArr((this.calendarOrders[date] && this.calendarOrders[date].tasks) || [], tasks)
 
         const filterFunction = task => this.isTaskShowingOnDate(task, date, true)
         

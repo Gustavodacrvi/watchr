@@ -61,7 +61,7 @@
       :numberOfPages='getNumberOfPages'
       @select='selectPagination'
     />
-    <ActionButtons :showHeader='showHeadadingFloatingButton' @moving='v => movingButton = v'/>
+    <ActionButtons @moving='v => movingButton = v'/>
   </div>
 </template>
 

@@ -149,7 +149,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton',
   'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -180,6 +180,7 @@ export default {
 
       lastSelectedId: null,
       lastHeadingName: null,
+      editMoveType: 'add',
 
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
@@ -194,13 +195,54 @@ export default {
     this.mountSortables()
     window.addEventListener('click', this.windowClick)
     window.addEventListener('keydown', this.keydown)
+    window.addEventListener('mousemove', this.mousemove)
+    window.addEventListener('touchmove', this.mousemove)
   },
   beforeDestroy() {
     this.destroySortables()
     window.removeEventListener('click', this.windowClick)
     window.removeEventListener('keydown', this.keydown)
+    window.removeEventListener('mousemove', this.mousemove)
+    window.removeEventListener('touchmove', this.mousemove)
   },
   methods: {
+    mousemove(evt) {
+      // showHeadadingFloatingButton
+      if (this.movingButton) {
+        const { left, width } = this.$el.getBoundingClientRect()
+        const pos = evt.pageX - left
+        
+        const headingStart = width * .10
+        const addStart = width * .90
+
+        let type
+        if (pos < headingStart)
+          type = 'action-heading'
+        else if (pos < addStart)
+          type = 'create'
+        else type = 'add'
+
+        const possibleValues = ['action-heading', 'create', 'add']
+
+        const obj = {
+          'action-heading': document.getElementById('action-heading').style,
+          create: document.getElementById('create').style,
+          add: document.getElementById('add').style,
+        }
+        const act = obj[type]
+        for (const s of possibleValues)
+          if (s !== type) {
+            obj[s].backgroundColor = 'var(--void)'
+            obj[s].zIndex = '1'
+            obj[s].boxShadow = 'none'
+          }
+
+        act.backgroundColor = 'var(--dark-gray)'
+        act.boxShadow = '0 3px 8px rgba(15,15,15,.3)'
+        act.color = 'white'
+        act.zIndex = '2'
+      }
+    },
     renderHeading(h) {
       if (this.showHeading && this.showHeading(h)) {
         this.stopRootInflation = true
@@ -445,6 +487,7 @@ export default {
         onMove: (t, e) => {
           const isTaskRender = t.to.classList.contains('task-renderer-root')
           const isComingFromAnotherTaskRenderer = t.to !== this.draggableRoot
+          
           if (isTaskRender && isComingFromAnotherTaskRenderer) {
             let vue = t.related.__vue__ ||
                   t.related.parentNode.__vue__

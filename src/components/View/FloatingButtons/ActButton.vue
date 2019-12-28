@@ -9,14 +9,28 @@
         <div class="path"></div>
       </div>
     </div>
-    <div class="floating-btn-msg task-act no-pointer" :style='styles'>
-      {{ txt }}
-    </div>
-    <div class="floating-btn-msg tags-act no-pointer" :style='styles'>
-      {{ l["Add tag"] }}
-    </div>
-    <div class="floating-btn-msg list-act no-pointer" :style='styles'>
-      {{ l["Add list"] }}
+    <div class="act-button-wrapper" :style='styles'>
+      <div class="heading cont side" id="action-heading">
+        <div class="floating-btn-msg task-act no-pointer">
+          heading
+        </div>
+      </div>
+      <div class="main cont" id="create">
+        <div class="floating-btn-msg task-act no-pointer">
+          {{ txt }}
+        </div>
+        <div class="floating-btn-msg tags-act no-pointer">
+          {{ l["Add tag"] }}
+        </div>
+        <div class="floating-btn-msg list-act no-pointer">
+          {{ l["Add list"] }}
+        </div>
+      </div>
+      <div class="existing side cont" id="add">
+        <div class="floating-btn-msg task-act no-pointer">
+          exiting
+        </div>
+      </div>
     </div>
   </div>
 </template>

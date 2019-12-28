@@ -8,7 +8,7 @@
         <Icon v-if="!onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="bloqued" @click="noDate"/>
         <Icon v-if="repeat && !onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="repeat" @click="$emit('repeat')"/>
       </div>
-      <div class="opt cursor remove-highlight rb" @click='$emit("get-time", this.selectedMoment.format("Y-M-D"))'>
+      <div class="opt cursor remove-highlight rb" @click='$emit("get-time", selectedMoment.format("Y-M-D"))'>
         <span class="msg">{{ l['Time:'] }} {{ getTime }}</span>
         <CircleBubble
           innerColor='rgba(87,160,222,.1)'

@@ -3,6 +3,8 @@ import mom from 'moment/src/moment'
 import utilsMoment from './moment'
 import utils from './index'
 
+import { fd } from '../utils/firestore'
+
 export default {
   sortTasksByPriority(tasks) {
     const priority = (t1, t2) => {
