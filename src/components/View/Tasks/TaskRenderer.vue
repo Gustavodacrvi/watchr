@@ -469,6 +469,14 @@ export default {
               this.addTaskEdit(evt.newIndex)
             else if (this.editMoveType === 'action-heading')
               this.addHeadingsEdit(evt.newIndex)
+            else
+              this.$store.dispatch('pushPopup', {
+                comp: 'FastSearch',
+                payload: {
+                  callback: console.log,
+                  onlyTasks: true,
+                }
+              })
           }
           for (const item of items) {
             item.remove()

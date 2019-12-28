@@ -28,6 +28,8 @@ export default {
   "Heading": "Cabeçalho",
   'Inbox': 'Inbox',
   "Create": "Criar",
+  "Search for tags, lists, folders and tasks...": "Pesquisar etiquetas, listas, pastas e tarefas...",
+  "Search task...": "Procurar tarefa...",
   'Upcoming': 'Próximos dias',
   "Go to the last visited view on app start instead of the first smart view": "Ir para a última lista visitada em vez da primeira lista inteligente",
   'Filter name': "Nome do filtro",

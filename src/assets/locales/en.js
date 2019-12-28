@@ -76,6 +76,8 @@ export default {
   'Lists': 'Lists',
   "Create": "Create",
   "Add": "Add",
+  "Search for tags, lists, folders and tasks...": "Search for tags, lists, folders and tasks...",
+  "Search task...": "Search task...",
   "Heading": "Heading",
   "Go to the last visited view on app start instead of the first smart view": "Go to the last visited view on app start instead of the first smart view",
   'Filter name': "Filter name",
