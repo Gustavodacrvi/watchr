@@ -58,7 +58,7 @@
         />
       </template>
       <transition name="fade-t">
-        <div v-if="showSomedayButton" @click="$emit('allow-someday')">
+        <div v-if="showSomedayButton && !header" @click="$emit('allow-someday')">
           <ButtonVue type="dark" :value="l['Show someday tasks...']"/>
         </div>
       </transition>
