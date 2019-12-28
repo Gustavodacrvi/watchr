@@ -26,8 +26,8 @@
 
 <script>
 
-import TaskRendererVue from './Tasks/TaskRenderer.vue'
-import AppButton from '../Auth/Button.vue'
+import TaskRendererVue from './../Tasks/TaskRenderer.vue'
+import AppButton from '../../Auth/Button.vue'
 
 import { pipeBooleanFilters } from '@/utils/memo'
 import { mapGetters, mapState } from 'vuex'

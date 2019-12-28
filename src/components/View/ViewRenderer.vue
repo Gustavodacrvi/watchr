@@ -40,21 +40,23 @@
 
         @update='onSmartComponentUpdate'
       />
-      <TaskHandler class='view-renderer-move'
-        v-bind="$props"
+      <transition name="fade-t" mode="out-in">
+        <component :is='getViewComp' class='view-renderer-move'
+          v-bind="$props"
 
-        :headings="getHeadings"
-        :movingButton='movingButton'
-        :showCompleted='showCompleted'
-        :showSomeday='passSomedayTasks'
-        :pipeFilterOptions='pipeFilterOptions'
-        :taskIconDropOptions='taskIconDropOptions'
-        :updateHeadingIds='updateHeadingIds'
-        :autoSchedule='autoSchedule'
+          :headings="getHeadings"
+          :movingButton='movingButton'
+          :showCompleted='showCompleted'
+          :showSomeday='passSomedayTasks'
+          :pipeFilterOptions='pipeFilterOptions'
+          :taskIconDropOptions='taskIconDropOptions'
+          :updateHeadingIds='updateHeadingIds'
+          :autoSchedule='autoSchedule'
 
-        @allow-someday='showSomeday = true'
-        @root-non-filtered='getRootNonFilteredFromTaskHandler'
-      />
+          @allow-someday='showSomeday = true'
+          @root-non-filtered='getRootNonFilteredFromTaskHandler'
+        />
+      </transition>
     </div>
     <PaginationVue v-if="headingsPagination"
       :page='pagination'
@@ -70,7 +72,8 @@
 import HeaderVue from './Headings/Header.vue'
 import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
 import PaginationVue from './Pagination.vue'
-import TaskHandler from './TaskHandler.vue'
+import TaskHandler from './Views/TaskHandler.vue'
+import Pomodoro from './Views/Pomodoro.vue'
 
 import ViewRendererLongCalendarPicker from '@/components/View/SmartComponents/ViewRendererLongCalendarPicker.vue'
 
@@ -91,7 +94,7 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes',
   'headerOptions', 'headerDates', 'headerTags', 'headerCalendar', 'files',
   'progress', 'tasksOrder',  'rootFallbackTask', 'mainFallbackTask',
-  'showHeading', 'smartComponent', 'onSmartComponentUpdate',
+  'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'showHeadadingFloatingButton', 'updateHeadingIds', 'showAllHeadingsItems', 'taskCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
   components: {
@@ -99,6 +102,7 @@ export default {
     Header: HeaderVue,
     ActionButtons: ActionButtonsVue,
     ViewRendererLongCalendarPicker,
+    Pomodoro,
   },
   data() {
     return {
@@ -474,6 +478,9 @@ export default {
         })
       }
       return links
+    },
+    getViewComp() {
+      return this.viewComponent || "TaskHandler"
     },
     getIconDropOptionsLists() {
       const moveToList = (obj) => {

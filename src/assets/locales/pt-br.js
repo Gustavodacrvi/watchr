@@ -27,6 +27,7 @@ export default {
   "No time": "Sem horário",
   "Heading": "Cabeçalho",
   'Inbox': 'Inbox',
+  "Pomodoro": "Pomodoro",
   "Create": "Criar",
   "Search for tags, lists, folders and tasks...": "Pesquisar etiquetas, listas, pastas e tarefas...",
   "Search task...": "Procurar tarefa...",

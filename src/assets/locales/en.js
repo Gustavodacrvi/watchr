@@ -71,6 +71,7 @@ export default {
   "Time:": "Time:",
   "No time": "No time",
   "Calendar": "Calendar",
+  "Pomodoro": "Pomodoro",
   "Collaborators": "Collaborators",
   "Convert to list": "Convert to list",
   'Lists': 'Lists',
