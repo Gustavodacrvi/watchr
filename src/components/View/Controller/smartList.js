@@ -22,11 +22,11 @@ export default {
     rootFallbackTask(task) {
       return task
     },
-    mainFallbackTask(task) {
+    mainFallbackTask(task, force) {
       if (this.viewName === 'Calendar') {
         const date = this.calendarDate
   
-        if (!task.calendar)
+        if (force || !task.calendar)
           task.calendar = {
             type: 'specific',
             begins: date,
@@ -36,7 +36,7 @@ export default {
       } else {
         let calendar = null
 
-        if (!task.calendar) {
+        if (force || !task.calendar) {
           calendar = this.getCalObjectByView(this.viewName, task.calendar)
           task.calendar = calendar
         }

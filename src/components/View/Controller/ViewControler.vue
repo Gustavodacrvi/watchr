@@ -170,8 +170,8 @@ export default {
               }
             ],
             updateIds: saveOrder,
-            fallbackTask: task => {
-              if (!task.list && !task.folder)
+            fallbackTask: (task, force) => {
+              if (force || (!task.list && !task.folder))
                 task.list = list.id
               return task
             },
@@ -259,8 +259,8 @@ export default {
               }
             ],
             updateIds: saveOrder,
-            fallbackTask: task => {
-              if (!task.list && !task.folder)
+            fallbackTask: (task, force) => {
+              if (force || (!task.list && !task.folder))
                 task.folder = folder.id
               return task
             },

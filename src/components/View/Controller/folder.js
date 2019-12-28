@@ -17,8 +17,8 @@ export default {
     rootFallbackTask(task) {
       return task
     },
-    mainFallbackTask(task) {
-      if (!task.list && !task.folder && !task.heading)
+    mainFallbackTask(task, force) {
+      if (force || (!task.list && !task.folder && !task.heading))
         task.folder = this.viewFolder.id
       return task
     },

@@ -401,7 +401,7 @@ export default {
         onUpdate: (evt) => {
           setTimeout(() => {
             this.$emit('update', this.getIds(true))
-          }, 100)
+          }, 10)
         },
         onSelect: evt => {
           this.justScrolled = false
@@ -465,15 +465,23 @@ export default {
             })
             this.sourceVueInstance = null
           } else {
+            const i = evt.newIndex
             if (this.editMoveType === 'create')
-              this.addTaskEdit(evt.newIndex)
+              this.addTaskEdit(i)
             else if (this.editMoveType === 'action-heading')
-              this.addHeadingsEdit(evt.newIndex)
+              this.addHeadingsEdit(i)
             else
               this.$store.dispatch('pushPopup', {
                 comp: 'FastSearch',
                 payload: {
-                  callback: console.log,
+                  callback: (route, task) => {
+                    this.lazyTasks.splice(i, 0, task)
+                    const t = this.fallbackTask(task, true)
+                    this.$store.dispatch('task/saveTask', t)
+                    setTimeout(() => {
+                      this.$emit('update', this.getIds(true))
+                    }, 10)
+                  },
                   onlyTasks: true,
                 }
               })
@@ -670,13 +678,18 @@ export default {
       this.$store.commit('unselectTask', el.dataset.id)
       Sortable.utils.deselect(el)
     },
+    fallbackTask(task, force) {
+      let t = this.mainFallbackTask(task, force)
+
+      if (this.isRoot)
+        t = this.rootFallbackTask(t, force)
+      else t = this.headingFallbackTask(t, force)
+
+      return t
+    },
     add(task) {
       if (task.name) {
-        let t = this.mainFallbackTask(task)
-
-        if (this.isRoot)
-          t = this.rootFallbackTask(t)
-        else t = this.headingFallbackTask(t)
+        let t = this.fallbackTask(task)
 
         let shouldRender = false
         const isNotEditingFiles = !t.handleFiles
