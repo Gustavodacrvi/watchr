@@ -294,6 +294,10 @@ export default {
   margin-left: 10px;
   font-size: 1.15em;
   transform: translateY(-2.5px);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .logo {
