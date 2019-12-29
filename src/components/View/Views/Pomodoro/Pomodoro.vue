@@ -29,6 +29,9 @@
         />
       </button>
     </div>
+    <!-- <audio ref='tick-sound' loop='true' preload='auto'>
+      <source src="/public/mp3/clock-tick.mp3" type="audio/mpeg">
+    </audio> -->
   </div>
 </template>
 
@@ -67,10 +70,14 @@ export default {
       rest: null,
 
       addInterval: null,
+      tickSound: new Audio(require('@/assets/mp3/clock-tick.mp3')),
     }
   },
   created() {
     this.update()
+  },
+  beforeDestroy() {
+    this.tickSound.pause()
   },
   methods: {
     update() {
@@ -123,6 +130,7 @@ export default {
             clearInterval(this.addInterval)
             this.running = false
             this.addInterval = null
+            this.tickSound.pause()
             this.saveUser()
           } else if (completed) {
             this.rest = null
@@ -136,6 +144,7 @@ export default {
             if (this.cicles === 4) {
               this.cicles = 0
               this.longCicles++
+              this.tickSound.pause()
               this.saveUser()
             }
           }
@@ -156,6 +165,9 @@ export default {
     click() {
       this.toggleInterval()
       this.running = !this.running
+
+      if (this.running) console.log(this.tickSound.play())
+      else this.tickSound.pause()
     },
   },
   computed: {
@@ -258,9 +270,10 @@ export default {
 }
 
 .long-msg {
+  position: relative;
+  bottom: 5px;
   color: var(--dark-red);
   font-size: 1.5em;
-  transform: translateY(-5px);
 }
 
 </style>
