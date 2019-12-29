@@ -7,6 +7,7 @@
       <svg viewBox='0 0 100 100' width='300px' height='300px' class="svg drop-red">
         <circle ref='circle' class="pie" stroke-width="2px" cx="50%" cy="50%" r="40" :stroke-dasharray='`${dasharray} 300`'/>
       </svg>
+      <span class="time">{{ getTime }}</span>
     </div>
   </div>
 </template>
@@ -14,6 +15,8 @@
 <script>
 
 // 252
+
+import mom from 'moment/src/moment'
 
 export default {
   props: ['total', 'current'],
@@ -36,6 +39,12 @@ export default {
     },
     totalValue() {
       return this.getValueFromTime(this.total)
+    },
+    getTime() {
+      const total = mom(this.total, 'HH:mm')
+      const current = mom(this.current, 'HH:mm')
+
+      return mom(total.diff(current, 'minutes'), 'mm').format('HH:mm')
     },
   },
 }
@@ -76,6 +85,7 @@ export default {
   fill: none;
   transform: rotate(-90deg);
   transform-origin: 50%;
+  transition-duration: .4s;
 }
 
 .back-pie {
@@ -84,6 +94,14 @@ export default {
 
 .pie {
   stroke: var(--dark-red);
+}
+
+.time {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 2.4em;
 }
 
 </style>
