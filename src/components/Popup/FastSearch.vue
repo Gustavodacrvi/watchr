@@ -219,11 +219,11 @@ export default {
           color: 'var(--purple)',
           icon: 'calendar-star',
         },
-        /* {
+        {
           name: 'Pomodoro',
           color: 'var(--dark-red)',
           icon: 'pomo',
-        }, */
+        },
         {
           name: 'Upcoming',
           color: 'var(--green)',

@@ -1,22 +1,25 @@
 <template>
   <div class="Pomodoro">
-    <DisplayPomodoros/>
-    pomo
+    <PomoClock/>
   </div>  
 </template>
 
 <script>
 
-import DisplayPomodoros from './DisplayPomodoros.vue'
+import PomoClock from './PomoClock.vue'
 
 export default {
   components: {
-    DisplayPomodoros,
+    PomoClock,
   },
 }
 
 </script>
 
 <style scoped>
+
+.Pomodoro {
+  padding: 38px;
+}
 
 </style>

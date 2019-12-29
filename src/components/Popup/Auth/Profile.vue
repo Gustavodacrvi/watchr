@@ -158,6 +158,11 @@ export default {
           color: 'var(--green)'
         },
         {
+          name: 'Pomodoro',
+          icon: 'pomo',
+          color: 'var(--dark-red)'
+        },
+        {
           name: 'Completed',
           icon: 'circle-check',
           color: 'var(--olive)'

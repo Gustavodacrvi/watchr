@@ -252,7 +252,7 @@ export default {
       return date => this.calendarDate = date
     },
     viewComponent() {
-      // if (this.viewName === 'Pomodoro') return 'Pomodoro'
+      if (this.viewName === 'Pomodoro') return 'Pomodoro'
     },
   },
 }
