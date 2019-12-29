@@ -16,6 +16,8 @@
 
 import mom from 'moment/src/moment'
 
+import { mapGetters } from 'vuex'
+
 export default {
   props: ['total', 'current'],
   methods: {
@@ -29,6 +31,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(['l']),
     dasharray() {
       return 252 * this.currentValue / this.totalValue
     },

@@ -6,6 +6,12 @@
       <Square/>
       <Square/>
     </div>
+    <div class="task-wrapper">
+      <div class="task rb cursor">
+        <span class="msg">{{ msg }}</span>
+        <CircleBubble/>
+      </div>
+    </div>
     <PomoClock
       total='00:50'
       current='00:10'
@@ -39,6 +45,10 @@ export default {
   },
   computed: {
     ...mapGetters(['l', 'platform']),
+    msg() {
+      if (this.task) return this.task.name
+      return this.l['Select task']
+    },
   },
 }
 
@@ -63,9 +73,30 @@ export default {
   justify-content: center;
 }
 
+.task-wrapper {
+  display: flex;
+  justify-content: center;
+  transform: translateY(30px);
+}
+
+.task {
+  position: relative;
+  display: inline-block;
+  padding: 10px;
+  max-width: 270px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition-duration: .2s;
+}
+
+.task:hover {
+  background-color: var(--light-gray);
+}
+
 .btn {
   position: relative;
-  padding: 16px 32px;
+  padding: 16px 38px;
   background-color: var(--dark-red);
   border-radius: 500px;
   color: white;
