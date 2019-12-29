@@ -1,6 +1,9 @@
 <template>
   <div class="Pomodoro">
-    <PomoClock/>
+    <PomoClock
+      total='00:50'
+      current='00:1'
+    />
   </div>  
 </template>
 

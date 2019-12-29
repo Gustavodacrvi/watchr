@@ -5,7 +5,7 @@
         <circle ref='circle' class="back-pie" stroke-width="2px" cx="50%" cy="50%" r="40"/>
       </svg>
       <svg viewBox='0 0 100 100' width='300px' height='300px' class="svg drop-red">
-        <circle ref='circle' class="pie" stroke-width="2px" cx="50%" cy="50%" r="40" stroke-dasharray='100 300'/>
+        <circle ref='circle' class="pie" stroke-width="2px" cx="50%" cy="50%" r="40" :stroke-dasharray='`${dasharray} 300`'/>
       </svg>
     </div>
   </div>
@@ -16,7 +16,28 @@
 // 252
 
 export default {
-  
+  props: ['total', 'current'],
+  methods: {
+    getValueFromTime(time) {
+      const split = time.split(':')
+      
+      const hour = parseInt(split[0], 10)
+      const sec = parseInt(split[1], 10)
+
+      return sec + (hour * 60)
+    },
+  },
+  computed: {
+    dasharray() {
+      return 252 * this.currentValue / this.totalValue
+    },
+    currentValue() {
+      return this.getValueFromTime(this.current)
+    },
+    totalValue() {
+      return this.getValueFromTime(this.total)
+    },
+  },
 }
 
 </script>
