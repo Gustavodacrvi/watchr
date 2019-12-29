@@ -13,10 +13,10 @@
 import LongCalendarPicker from './SmartComponents/LongCalendarPicker.vue'
 
 export default {
+  props: ['comp'],
   components: {
     LongCalendarPicker,
   },
-  props: ['comp'], 
 }
 
 </script>

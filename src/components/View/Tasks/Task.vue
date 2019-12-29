@@ -214,7 +214,9 @@ export default {
         evt.stopPropagation()
     },
     deselectTask() {
-      this.$emit('de-select', this.$el)
+      setTimeout(() => {
+        this.$emit('de-select', this.$el)
+      }, 10)
     },
     enter(cont) {
       if (!this.isEditing) {

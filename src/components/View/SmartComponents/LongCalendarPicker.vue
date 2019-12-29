@@ -19,7 +19,8 @@
             class="date-wrapper"
             :class="{active: d.day === activeDay, notActive: d.day !== activeDay, tod: todayDay === d.day}"
             :ref="d.date"
-            @click="select(d.date)"
+            @click="desktopSelect(d.date)"
+            @touchend='mobileSelect(d.date)'
           >
             <div class="weekday" :class="{'has-task': hasTaskInDate(d.date)}">
               {{ d.weekday }}
@@ -41,7 +42,8 @@
             class="date-wrapper"
             :class="{active: d.day === activeDay, notActive: d.day !== activeDay}"
             :ref="d.date"
-            @click="select(d.date)"
+            @click="desktopSelect(d.date)"
+            @touchend='mobileSelect(d.date)'
           >
             <div class="weekday" :class="{'has-task': hasTaskInDate(d.date)}">
               {{ d.weekday }}
@@ -63,7 +65,8 @@
             class="date-wrapper"
             :class="{active: d.day === activeDay}"
             :ref="d.date"
-            @click="select(d.date)"
+            @click="desktopSelect(d.date)"
+            @touchend='mobileSelect(d.date)'
           >
             <div class="weekday" :class="{'has-task': hasTaskInDate(d.date)}">
               {{ d.weekday }}
@@ -145,6 +148,7 @@ export default {
       startX: 0,
 
       doingTransition: false,
+      moved: false,
       savedSelected: [],
     }
   },
@@ -218,10 +222,15 @@ export default {
       this.startTime = new Date()
       const touch = evt.touches[0]
       this.startX = touch.pageX
+      this.moved = false
     },
     touchmove(evt) {
-      const newPos = evt.touches[0].pageX
+      const touch = evt.touches[0]
+      const newPos = touch.pageX
       this.diff = newPos - this.startX
+
+      const move = Math.abs(this.startX - newPos) > 10 
+      if (move) this.moved = true
 
       const t = this.$refs['this-week'].style
       const l = this.$refs['last-week'].style
@@ -289,23 +298,30 @@ export default {
         this.left = el.offsetLeft + 'px'
       })
     },
+    desktopSelect(date) {
+      if (this.isDesktop) this.select(date)
+    },
+    mobileSelect(date) {
+      if (!this.moved) this.saveDates(date)
+    },
     select(date) {
-      if (this.savedSelected.length === 0 && !this.helper) {
+      if (this.savedSelected.length === 0 || this.helper) {
         this.active = date
         this.$emit('select', date)
-      } else {
-        this.$store.dispatch('task/saveTasksById', {
-            ids: this.savedSelected,
-            task: {
-              calendar: {
-                type: 'specific',
-                begins: date,
-                editDate: TOD_STR,
-                specific: date,
-              }
-            },
-          })
-      }
+      } else this.saveDates(date)
+    },
+    saveDates(date) {
+      this.$store.dispatch('task/saveTasksById', {
+        ids: this.savedSelected,
+        task: {
+          calendar: {
+            type: 'specific',
+            begins: date,
+            editDate: TOD_STR,
+            specific: date,
+          }
+        },
+      })
     },
     swipeLeft() {
       if (!this.doingTransition) {
