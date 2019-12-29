@@ -52,6 +52,7 @@
           :taskIconDropOptions='taskIconDropOptions'
           :updateHeadingIds='updateHeadingIds'
           :autoSchedule='autoSchedule'
+          :openCalendar='openCalendar'
 
           @allow-someday='showSomeday = true'
           @root-non-filtered='getRootNonFilteredFromTaskHandler'
@@ -63,7 +64,14 @@
       :numberOfPages='getNumberOfPages'
       @select='selectPagination'
     />
-    <ActionButtons @moving='v => movingButton = v'/>
+    <transition name="fade-t" mode="out-in">
+      <ActionButtons v-if="!openCalendar" key="buttons" @moving='v => movingButton = v'/>
+      <HelperComponent v-else
+        comp='LongCalendarPicker'
+        key="helper"
+        @close='openCalendar = false'
+      />
+    </transition>
   </div>
 </template>
 
@@ -72,6 +80,7 @@
 import HeaderVue from './Headings/Header.vue'
 import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
 import PaginationVue from './Pagination.vue'
+import HelperComponent from './HelperComponent.vue'
 import TaskHandler from './Views/TaskHandler.vue'
 import Pomodoro from './Views/Pomodoro/Pomodoro.vue'
 
@@ -99,7 +108,7 @@ export default {
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'showHeadadingFloatingButton', 'updateHeadingIds', 'showAllHeadingsItems', 'taskCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
   components: {
     PaginationVue, TaskHandler,
-    Header: HeaderVue,
+    Header: HeaderVue, HelperComponent,
     ActionButtons: ActionButtonsVue,
     ViewRendererLongCalendarPicker,
     Pomodoro,
@@ -114,6 +123,7 @@ export default {
       showingFolderSelection: false,
       showingPrioritySelection: false,
       showSomeday: false,
+      openCalendar: false,
 
       rootNonFiltered: [],
       computedHeaderOptions: [],
@@ -637,6 +647,11 @@ export default {
                 callback: () => this.toggleFolderSelection()
               },
             ],
+          },
+          {
+            name: l['Open calendar'],
+            icon: 'calendar',
+            callback: () => {this.openCalendar = !this.openCalendar}
           },
           {
             name: l['Auto schedule'],

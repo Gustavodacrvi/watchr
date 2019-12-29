@@ -73,6 +73,7 @@ export default {
   "Calendar": "Calendar",
   "Pomodoro": "Pomodoro",
   "Collaborators": "Collaborators",
+  "Open calendar": "Open calendar",
   "Convert to list": "Convert to list",
   'Lists': 'Lists',
   "Create": "Create",

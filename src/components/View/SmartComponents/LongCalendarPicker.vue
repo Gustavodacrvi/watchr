@@ -81,7 +81,7 @@
           </div>
         </div>
       </div>
-      <div class="header">
+      <div class="header" v-show="!helper">
         <span class="title">{{ title }}</span>
       </div>
 
@@ -131,6 +131,7 @@ const TOD = mom()
 const TOD_STR = TOD.format('Y-M-D')
 
 export default {
+  props: ['helper'],
   components: {
     Icon,
   },
