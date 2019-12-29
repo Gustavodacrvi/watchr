@@ -56,8 +56,10 @@ export default {
 .PomoClock {
   position: absolute;
   width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .wrapper {
@@ -65,6 +67,7 @@ export default {
   position: relative;
   width: 300px;
   height: 300px;
+  transform: translateY(-88px);
 }
 
 .svg {

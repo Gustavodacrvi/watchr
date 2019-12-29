@@ -7,7 +7,7 @@
     @touchstart.passive='touchstart'
     @touchmove.passive='touchmove'
   >
-    <div>
+    <div :class="{extend: (smartComponent !== 'TaskRenderer')}">
       <Header
         v-bind="$props"
 
@@ -65,8 +65,8 @@
       @select='selectPagination'
     />
     <transition name="fade-t" mode="out-in">
-      <ActionButtons v-if="!openCalendar" key="buttons" @moving='v => movingButton = v'/>
-      <HelperComponent v-else
+      <ActionButtons v-if="!openCalendar && (smartComponent === 'TaskRenderer')" key="buttons" @moving='v => movingButton = v'/>
+      <HelperComponent v-else-if='openCalendar'
         comp='LongCalendarPicker'
         key="helper"
         @close='openCalendar = false'
@@ -896,9 +896,16 @@ export default {
 .ViewRenderer {
   margin: 0 100px;
   min-height: 100%;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.extend {
+  position: absolute;
+  height: 100%;
+  width: 100%;
 }
 
 .ViewRenderer.mobile {
