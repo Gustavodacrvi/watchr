@@ -29,9 +29,6 @@
         />
       </button>
     </div>
-    <!-- <audio ref='tick-sound' loop='true' preload='auto'>
-      <source src="/public/mp3/clock-tick.mp3" type="audio/mpeg">
-    </audio> -->
   </div>
 </template>
 
@@ -255,6 +252,10 @@ export default {
   margin-left: 8px;
 }
 
+.mobile .squares {
+  margin-top: 0;
+}
+
 .btn-wrapper {
   display: flex;
   justify-content: center;
@@ -264,6 +265,10 @@ export default {
   display: flex;
   justify-content: center;
   transform: translateY(30px);
+}
+
+.mobile .task-wrapper {
+  transform: translateY(10px);
 }
 
 .task {

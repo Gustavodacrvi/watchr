@@ -1,10 +1,10 @@
 <template>
-  <div class="PomoClock">
+  <div class="PomoClock" :class="platform">
     <div class="wrapper">
-      <svg viewBox='0 0 100 100' width='300px' height='300px' class="svg drop-black">
+      <svg viewBox='0 0 100 100' width='250px' height='250px' class="svg drop-black">
         <circle ref='circle' class="back-pie" stroke-width="2px" cx="50%" cy="50%" r="40"/>
       </svg>
-      <svg viewBox='0 0 100 100' width='300px' height='300px' class="svg drop-red" :style="{filter: `drop-shadow(0 0 18px ${shadow})`}">
+      <svg viewBox='0 0 100 100' width='250px' height='250px' class="svg drop-red" :style="{filter: `drop-shadow(0 0 18px ${shadow})`}">
         <circle ref='circle' class="pie" stroke-width="2px" cx="50%" cy="50%" r="40" :stroke-dasharray='`${dasharray} 300`' :stroke='color'/>
       </svg>
       <span class="time">{{ getTime }}</span>
@@ -31,7 +31,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['l']),
+    ...mapGetters(['platform']),
     dasharray() {
       return 252 * this.currentValue / this.totalValue
     },
@@ -61,11 +61,15 @@ export default {
   align-items: center;
 }
 
+.mobile {
+  height: 325px;
+}
+
 .wrapper {
   display: inline-block;
   position: relative;
-  width: 300px;
-  height: 300px;
+  width: 250px;
+  height: 250px;
 }
 
 .svg {
