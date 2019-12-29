@@ -78,6 +78,7 @@ export default {
   'Lists': 'Lists',
   "Create": "Create",
   "Add": "Add",
+  "Start": "Start",
   "Search for tags, lists, folders and tasks...": "Search for tags, lists, folders and tasks...",
   "Search task...": "Search task...",
   "Heading": "Heading",

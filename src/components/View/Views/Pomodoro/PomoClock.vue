@@ -14,8 +14,6 @@
 
 <script>
 
-// 252
-
 import mom from 'moment/src/moment'
 
 export default {
@@ -54,9 +52,8 @@ export default {
 <style scoped>
 
 .PomoClock {
-  position: absolute;
   width: 100%;
-  height: 100%;
+  height: 375px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -67,7 +64,6 @@ export default {
   position: relative;
   width: 300px;
   height: 300px;
-  transform: translateY(-88px);
 }
 
 .svg {

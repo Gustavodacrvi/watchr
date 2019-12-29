@@ -30,6 +30,7 @@ export default {
   "Open calendar": "Abrir calendário",
   "Pomodoro": "Pomodoro",
   "Create": "Criar",
+  "Start": "Começar",
   "Search for tags, lists, folders and tasks...": "Pesquisar etiquetas, listas, pastas e tarefas...",
   "Search task...": "Procurar tarefa...",
   'Upcoming': 'Próximos dias',
