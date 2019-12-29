@@ -19,7 +19,8 @@ export default {
 <style scoped>
 
 .Pomodoro {
-  padding: 38px;
+  position: relative;
+  width: 100%;
 }
 
 </style>
