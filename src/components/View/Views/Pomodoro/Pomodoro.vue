@@ -7,8 +7,8 @@
       />
       <span v-show="longCicles > 0" class="long-msg">+{{ longCicles }}</span>
     </div>
-    <div class="task-wrapper">
-      <div class="task rb cursor">
+    <div class="task-wrapper" @click.stop="selectTask">
+      <div class="task rb cursor" ref="task">
         <span class="msg">{{ msg }}</span>
         <CircleBubble/>
       </div>
@@ -45,6 +45,8 @@ import { userRef } from '@/utils/firestore'
 
 import { mapGetters, mapState } from 'vuex'
 
+import utils from '@/utils/'
+
 import mom from 'moment/src/moment'
 
 const TOD_STR = mom().format('Y-M-D')
@@ -61,10 +63,11 @@ export default {
       longCicles: 0,
       current: '00:00',
 
-      duration: '00:10',
-      currentDuration: '00:10',
-      shortRest: '00:05',
-      longRest: '00:15',
+      duration: '25:00',
+      currentDuration: '25:00',
+      shortRest: '05:00',
+      longRest: '15:00',
+      task: null,
 
       running: false,
       rest: null,
@@ -80,6 +83,45 @@ export default {
     this.tickSound.pause()
   },
   methods: {
+    bindTaskOptions(opt) {
+      utils.bindOptionsToEventListener(this.$refs['task'], opt, this, 'click')
+    },
+    findTask() {
+      this.$store.dispatch('pushPopup', {
+        comp: 'FastSearch',
+        payload: {
+          callback: (route, task) => {
+            this.task = task
+            this.bindTaskOptions([
+              {
+                name: this.l['Complete task'],
+                callback: () => {
+                  this.$store.dispatch('task/completeTasks', [this.task])
+                  this.task = null
+                },
+              },
+              {
+                name: this.l['Remove task'],
+                callback: () => {
+                  this.bindTaskOptions([])
+                  this.task = null
+                },
+              },
+              {
+                name: this.l['Select another task'],
+                callback: () => {
+                  this.findTask()
+                }
+              },
+            ])
+          },
+          onlyTasks: true,
+        }
+      })
+    },
+    selectTask() {
+      if (!this.task) this.findTask()
+    },
     update() {
       if (this.userInfo && this.userInfo.pomoDate === TOD_STR) {
         this.cicles = this.userInfo.cicles
@@ -131,6 +173,7 @@ export default {
             this.running = false
             this.addInterval = null
             this.tickSound.pause()
+            this.vibrate()
             this.saveUser()
           } else if (completed) {
             this.rest = null
@@ -145,6 +188,7 @@ export default {
               this.cicles = 0
               this.longCicles++
               this.tickSound.pause()
+              this.vibrate()
               this.saveUser()
             }
           }
@@ -154,6 +198,9 @@ export default {
         clearInterval(this.addInterval)
         this.addInterval = null
       }
+    },
+    vibrate() {
+      window.navigator.vibrate(200)
     },
     saveUser() {
       userRef(this.userInfo.userId).set({
@@ -166,7 +213,7 @@ export default {
       this.toggleInterval()
       this.running = !this.running
 
-      if (this.running) console.log(this.tickSound.play())
+      if (this.running) this.tickSound.play()
       else this.tickSound.pause()
     },
   },
