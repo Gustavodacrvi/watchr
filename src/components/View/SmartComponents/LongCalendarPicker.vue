@@ -5,14 +5,14 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="LongCalendarPicker" :class="platform"
+    <div class="LongCalendarPicker" :class="[platform, {helper}]"
       @scroll.prevent
       @whell.prevent
       @touchmove.stop.prevent='touchmove'
       @touchstart.stop.passive='touchstart'
       @touchend.stop.passive='touchend'
     >
-      <div class="ball" ref="ball" :style="{left}"></div>
+      <div v-show="!helper" class="ball" ref="ball" :style="{left}"></div>
       <div class="wrapper" ref="wrapper">
         <div class="week-view last-week" ref="last-week">
           <div v-for="d in lastWeekDates" :key="d.date"
@@ -81,7 +81,7 @@
           </div>
         </div>
       </div>
-      <div class="header" v-show="!helper">
+      <div v-show="!helper" class="header">
         <span class="title">{{ title }}</span>
       </div>
 
@@ -290,7 +290,7 @@ export default {
       })
     },
     select(date) {
-      if (this.savedSelected.length === 0) {
+      if (this.savedSelected.length === 0 && !this.helper) {
         this.active = date
         this.$emit('select', date)
       } else {
@@ -567,8 +567,13 @@ export default {
   color: white !important;
 }
 
+
 .date-wrapper.active .day-wrapper {
   color: var(--primary);
+}
+
+.helper .date-wrapper.active .day-wrapper {
+  color: var(--white) !important;
 }
 
 .desktop .day-wrapper.notActive:hover {

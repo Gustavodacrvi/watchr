@@ -40,7 +40,7 @@ export default {
   props: ['mainFilter', 'rootFilter', 'tasksOrder', 'headings', 'headingsOrder',
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 'movingButton',
-    'showHeadadingFloatingButton',
+    'showHeadadingFloatingButton', 'openCalendar',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackTask', 'icon', 'configFilterOptions', 'showHeading',

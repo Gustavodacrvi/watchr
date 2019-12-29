@@ -149,7 +149,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton', 'openCalendar',
   'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -858,11 +858,11 @@ export default {
       return this.isDesktop ? 38 : 50
     },
     enableSelect() {
-      return !this.isDesktop ||
+      return this.openCalendar || !this.isDesktop ||
       (this.isOnControl || (this.selected.length > 0))
     },
     getMultiDragKey() {
-      return this.selected.length > 0 ? null : 'CTRL'
+      return (this.openCalendar || this.selected.length > 0) ? null : 'CTRL'
     },
     draggableRoot() {
       return this.$el.getElementsByClassName('task-renderer-root')[0]
