@@ -4,8 +4,8 @@
       <svg viewBox='0 0 100 100' width='300px' height='300px' class="svg drop-black">
         <circle ref='circle' class="back-pie" stroke-width="2px" cx="50%" cy="50%" r="40"/>
       </svg>
-      <svg viewBox='0 0 100 100' width='300px' height='300px' class="svg drop-red">
-        <circle ref='circle' class="pie" stroke-width="2px" cx="50%" cy="50%" r="40" :stroke-dasharray='`${dasharray} 300`'/>
+      <svg viewBox='0 0 100 100' width='300px' height='300px' class="svg drop-red" :style="{filter: `drop-shadow(0 0 18px ${shadow})`}">
+        <circle ref='circle' class="pie" stroke-width="2px" cx="50%" cy="50%" r="40" :stroke-dasharray='`${dasharray} 300`' :stroke='color'/>
       </svg>
       <span class="time">{{ getTime }}</span>
     </div>
@@ -19,7 +19,7 @@ import mom from 'moment/src/moment'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['total', 'current'],
+  props: ['total', 'current', 'color', 'shadow'],
   methods: {
     getValueFromTime(time) {
       const split = time.split(':')
@@ -42,10 +42,9 @@ export default {
       return this.getValueFromTime(this.total)
     },
     getTime() {
-      const total = mom(this.total, 'HH:mm')
-      const current = mom(this.current, 'HH:mm')
+      const diff = this.totalValue - this.currentValue
 
-      return mom(total.diff(current, 'minutes'), 'mm').format('HH:mm')
+      return mom(`${diff / 60}:${diff % 60}`, 'mm:ss').format('mm:ss')
     },
   },
 }
@@ -75,10 +74,6 @@ export default {
   top: 0;
 }
 
-.drop-red {
-  filter: drop-shadow(0 0 18px rgba(234, 58, 52, .8));
-}
-
 .drop-black {
   filter: drop-shadow(0 0 18px rgba(31, 31, 31, .4));
 }
@@ -92,10 +87,6 @@ export default {
 
 .back-pie {
   stroke: var(--card);
-}
-
-.pie {
-  stroke: var(--dark-red);
 }
 
 .time {

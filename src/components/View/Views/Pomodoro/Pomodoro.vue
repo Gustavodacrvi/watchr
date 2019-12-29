@@ -1,10 +1,11 @@
 <template>
   <div class="Pomodoro" :class="platform">
     <div class="squares">
-      <Square :check='true'/>
-      <Square/>
-      <Square/>
-      <Square/>
+      <Square v-for="i in 4"
+        :key="i"
+        :check="i < (cicles + 1)"
+      />
+      <span v-show="longCicles > 0" class="long-msg">+{{ longCicles }}</span>
     </div>
     <div class="task-wrapper">
       <div class="task rb cursor">
@@ -13,12 +14,14 @@
       </div>
     </div>
     <PomoClock
-      total='00:50'
-      current='00:10'
+      :total='currentDuration'
+      :current='current'
+      :color='getPomoColor'
+      :shadow='getPomoShadow'
     />
     <div class="btn-wrapper">
-      <button class="btn cursor remove-highlight">
-        {{ l['Start'] }}
+      <button class="btn cursor remove-highlight" :class="{running, rest}" @click="click">
+        {{ btnMsg }}
         <CircleBubble
           innerColor='var(--white)'
           outerColor='white'
@@ -43,11 +46,106 @@ export default {
     PomoClock,
     Square,
   },
+  data() {
+    return {
+      cicles: 0,
+      longCicles: 0,
+      current: '00:00',
+
+      duration: '00:10',
+      currentDuration: '00:10',
+      shortRest: '00:05',
+      longRest: '00:15',
+
+      running: false,
+      rest: null,
+
+      addInterval: null,
+    }
+  },
+  methods: {
+    areEqual(s1, s2) {
+      const split1 = s1.split(':')
+      const split2 = s2.split(':')
+
+      const p = s => parseInt(s, 10)
+
+      return p(split1[0]) === p(split2[0]) && p(split1[1]) === p(split2[1])
+    },
+    toggleInterval() {
+      if (!this.addInterval)
+        this.addInterval = setInterval(() => {
+          const split = this.current.split(':')
+
+          let min = parseInt(split[0], 10)
+          let sec = parseInt(split[1], 10)
+
+          sec++
+
+          if (sec >= 60) {
+            min++
+            sec = 0
+          }
+          
+          this.current = `${min}:${sec}`
+          const completed = this.areEqual(this.current, this.currentDuration)
+
+          if (completed && !this.rest) {
+            this.cicles++
+            console.log(this.cicles)
+
+            const longRest = this.cicles === 4
+
+            this.rest = longRest ? 'long' : 'short'
+            this.currentDuration = longRest ? this.longRest : this.shortRest
+            this.current = '00:00'
+
+            clearInterval(this.addInterval)
+            this.running = false
+            this.addInterval = null
+          } else if (completed) {
+            this.rest = null
+            this.currentDuration = this.duration
+            this.current = '00:00'
+
+            clearInterval(this.addInterval)
+            this.running = false
+            this.addInterval = null
+
+            if (this.cicles === 4) {
+              this.cicles = 0
+              this.longCicles++
+            }
+          }
+        }, 1000)
+      else {
+        this.current = '00:00'
+        clearInterval(this.addInterval)
+        this.addInterval = null
+      }
+    },
+    click() {
+      this.toggleInterval()
+      this.running = !this.running
+    },
+  },
   computed: {
     ...mapGetters(['l', 'platform']),
+    btnMsg() {
+      if (this.running) return this.l['Stop']
+      if (this.rest)
+        return this.rest === 'short' ? this.l['Short rest'] : this.l['Long rest']
+      return this.l['Start']
+    },
     msg() {
       if (this.task) return this.task.name
       return this.l['Select task']
+    },
+    getPomoColor() {
+      return this.rest ? 'var(--primary)' : 'var(--dark-red)'
+    },
+    getPomoShadow() {
+      return this.rest ? 'rgba(89, 160, 222, .2)' : 'rgba(234, 58, 52, .8)'
     },
   },
 }
@@ -103,11 +201,36 @@ export default {
   box-shadow: 0 0 40px rgba(234, 58, 52, .4);
   transition-duration: .2s;
   overflow: hidden;
+  border: none;
 }
 
 .desktop .btn:hover {
   background-color: rgb(236, 80, 75);
   outline: none;
+}
+
+.running {
+  background-color: transparent;
+  border: 1px solid var(--dark-red);
+  color: var(--dark-red);
+}
+
+.rest {
+  box-shadow: 0 0 24px rgba(89, 160, 222, .2);
+  background-color: var(--primary);
+  color: white;
+}
+
+.rest.running {
+  background-color: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+.long-msg {
+  color: var(--dark-red);
+  font-size: 1.5em;
+  transform: translateY(-5px);
 }
 
 </style>

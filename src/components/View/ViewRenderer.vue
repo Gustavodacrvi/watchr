@@ -7,7 +7,7 @@
     @touchstart.passive='touchstart'
     @touchmove.passive='touchmove'
   >
-    <div :class="{extend: (smartComponent !== 'TaskRenderer')}">
+    <div :class="{extend: !isTaskRenderer}">
       <Header
         v-bind="$props"
 
@@ -26,7 +26,7 @@
         :folders='folderSelectionOptions'
 
         :viewName="viewName"
-        :options="taskIconDropOptions"
+        :options="getHeaderOptions"
         :headerTags="headerTags"
 
         @tag='selectTag'
@@ -65,7 +65,7 @@
       @select='selectPagination'
     />
     <transition name="fade-t" mode="out-in">
-      <ActionButtons v-if="!openCalendar && (smartComponent === 'TaskRenderer')" key="buttons" @moving='v => movingButton = v'/>
+      <ActionButtons v-if="!openCalendar && isTaskRenderer" key="buttons" @moving='v => movingButton = v'/>
       <HelperComponent v-else-if='openCalendar'
         comp='LongCalendarPicker'
         key="helper"
@@ -382,6 +382,12 @@ export default {
       doesTaskPassInclusivePriority: 'task/doesTaskPassInclusivePriority',
       doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
+    isTaskRenderer() {
+      return this.getViewComp === 'TaskRenderer'
+    },
+    getHeaderOptions() {
+      return !this.isTaskRenderer ? [] : this.taskIconDropOptions
+    },
     el() {
       const el = this.$el.getElementsByClassName('view-renderer-move')[0]
       return el.style

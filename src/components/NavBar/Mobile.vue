@@ -44,7 +44,7 @@
                   />
                 </transition-group>
               </template>
-              <IconDrop v-if="showIcons && navBar.options.icondrop"
+              <IconDrop v-if="showIcons && navBar.options.icondrop && navBar.options.icondrop.length > 0"
                 handle="settings-v"
                 :options="navBar.options.icondrop"
                 handle-color="var(--white)"
