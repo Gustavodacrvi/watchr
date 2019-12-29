@@ -38,7 +38,13 @@ import PomoClock from './PomoClock.vue'
 import AuthButton from '@/components/Auth/Button.vue'
 import Square from './Square.vue'
 
-import { mapGetters } from 'vuex'
+import { userRef } from '@/utils/firestore'
+
+import { mapGetters, mapState } from 'vuex'
+
+import mom from 'moment/src/moment'
+
+const TOD_STR = mom().format('Y-M-D')
 
 export default {
   components: {
@@ -63,7 +69,22 @@ export default {
       addInterval: null,
     }
   },
+  created() {
+    this.update()
+  },
   methods: {
+    update() {
+      if (this.userInfo && this.userInfo.pomoDate === TOD_STR) {
+        this.cicles = this.userInfo.cicles
+        this.longCicles = this.userInfo.longCicles
+
+        if (this.cicles === 4) {
+          this.cicles = 0
+          this.longCicles++
+          this.saveUser()
+        }
+      }
+    },
     areEqual(s1, s2) {
       const split1 = s1.split(':')
       const split2 = s2.split(':')
@@ -92,7 +113,6 @@ export default {
 
           if (completed && !this.rest) {
             this.cicles++
-            console.log(this.cicles)
 
             const longRest = this.cicles === 4
 
@@ -103,6 +123,7 @@ export default {
             clearInterval(this.addInterval)
             this.running = false
             this.addInterval = null
+            this.saveUser()
           } else if (completed) {
             this.rest = null
             this.currentDuration = this.duration
@@ -115,6 +136,7 @@ export default {
             if (this.cicles === 4) {
               this.cicles = 0
               this.longCicles++
+              this.saveUser()
             }
           }
         }, 1000)
@@ -124,12 +146,20 @@ export default {
         this.addInterval = null
       }
     },
+    saveUser() {
+      userRef(this.userInfo.userId).set({
+        pomoDate: mom().format('Y-M-D'),
+        cicles: this.cicles,
+        longCicles: this.longCicles,
+      }, {merge: true})
+    },
     click() {
       this.toggleInterval()
       this.running = !this.running
     },
   },
   computed: {
+    ...mapState(['userInfo']),
     ...mapGetters(['l', 'platform']),
     btnMsg() {
       if (this.running) return this.l['Stop']
