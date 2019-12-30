@@ -54,32 +54,6 @@ export default {
     PomoClock,
     Square,
   },
-  data() {
-    return {
-      cycles: 0,
-      longCycles: 0,
-      current: '00:00',
-
-      duration: '25:00',
-      currentDuration: '25:00',
-      shortRest: '05:00',
-      longRest: '15:00',
-      task: null,
-
-      running: false,
-      rest: null,
-
-      addInterval: null,
-      tickSound: new Audio(require('@/assets/mp3/clock-tick.mp3')),
-    }
-  },
-  created() {
-    this.tickSound.loop = true
-    this.update()
-  },
-  beforeDestroy() {
-    this.tickSound.pause()
-  },
   methods: {
     bindTaskOptions(opt) {
       utils.bindOptionsToEventListener(this.$refs['task'], opt, this, 'click')
@@ -89,20 +63,20 @@ export default {
         comp: 'FastSearch',
         payload: {
           callback: (route, task) => {
-            this.task = task
+            this.$store.commit('pomo/selectTask', task)
             this.bindTaskOptions([
               {
                 name: this.l['Complete task'],
                 callback: () => {
                   this.$store.dispatch('task/completeTasks', [this.task])
-                  this.task = null
+                  this.$store.commit('pomo/removeTask')
                 },
               },
               {
                 name: this.l['Remove task'],
                 callback: () => {
                   this.bindTaskOptions([])
-                  this.task = null
+                  this.$store.commit('pomo/removeTask')
                 },
               },
               {
@@ -120,106 +94,23 @@ export default {
     selectTask() {
       if (!this.task) this.findTask()
     },
-    update() {
-      if (this.userInfo && this.userInfo.pomoDate === TOD_STR) {
-        this.cycles = this.userInfo.cycles
-        this.longCycles = this.userInfo.longCycles
-
-        if (this.cycles === undefined) this.cycles = 0
-        if (this.longCycles === undefined) this.cycles = 0
-
-        if (this.cycles === 4) {
-          this.cycles = 0
-          this.longCycles++
-          this.saveUser()
-        }
-      }
-    },
-    areEqual(s1, s2) {
-      const split1 = s1.split(':')
-      const split2 = s2.split(':')
-
-      const p = s => parseInt(s, 10)
-
-      return p(split1[0]) === p(split2[0]) && p(split1[1]) === p(split2[1])
-    },
-    toggleInterval() {
-      if (!this.addInterval)
-        this.addInterval = setInterval(() => {
-          const split = this.current.split(':')
-
-          let min = parseInt(split[0], 10)
-          let sec = parseInt(split[1], 10)
-
-          sec++
-
-          if (sec >= 60) {
-            min++
-            sec = 0
-          }
-          
-          this.current = `${min}:${sec}`
-          const completed = this.areEqual(this.current, this.currentDuration)
-
-          if (completed && !this.rest) {
-            this.cycles++
-
-            const longRest = this.cycles === 4
-
-            this.rest = longRest ? 'long' : 'short'
-            this.currentDuration = longRest ? this.longRest : this.shortRest
-            this.current = '00:00'
-
-            clearInterval(this.addInterval)
-            this.running = false
-            this.addInterval = null
-            this.tickSound.pause()
-            this.vibrate()
-            this.saveUser()
-          } else if (completed) {
-            this.rest = null
-            this.currentDuration = this.duration
-            this.current = '00:00'
-
-            clearInterval(this.addInterval)
-            this.running = false
-            this.addInterval = null
-
-            this.tickSound.pause()
-            this.vibrate()
-            if (this.cycles === 4) {
-              this.cycles = 0
-              this.longCycles++
-              this.saveUser()
-            }
-          }
-        }, 1000)
-      else {
-        this.current = '00:00'
-        clearInterval(this.addInterval)
-        this.addInterval = null
-      }
-    },
-    vibrate() {
-      window.navigator.vibrate(200)
-    },
-    saveUser() {
-      userRef(this.userInfo.userId).set({
-        pomoDate: mom().format('Y-M-D'),
-        cycles: this.cycles,
-        longCycles: this.longCycles,
-      }, {merge: true})
-    },
     click() {
-      this.toggleInterval()
-      this.running = !this.running
-
-      if (this.running) this.tickSound.play()
-      else this.tickSound.pause()
+      this.$store.dispatch('pomo/toggle')
     },
   },
   computed: {
-    ...mapState(['userInfo']),
+    ...mapState({
+      userInfo: state => state.userInfo,
+
+      running: state => state.pomo.running,
+      task: state => state.pomo.task,
+      rest: state => state.pomo.rest,
+      cycles: state => state.pomo.cycles,
+      longCycles: state => state.pomo.longCycles,
+      duration: state => state.pomo.duration,
+      currentDuration: state => state.pomo.currentDuration,
+      current: state => state.pomo.current,
+    }),
     ...mapGetters(['l', 'platform']),
     btnMsg() {
       if (this.running) return this.l['Stop']

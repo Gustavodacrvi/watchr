@@ -291,7 +291,7 @@ export default {
       this.changeColor = true
       this.timeout = setTimeout(() => {
         this.openMobileOptions()
-      }, 250)
+      }, 350)
     },
     touchmove(evt) {
       const touch = evt.changedTouches[0]
