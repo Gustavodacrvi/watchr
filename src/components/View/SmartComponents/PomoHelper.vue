@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="bottom">
-        <div>
+        <div class="task-wrapper">
           <TaskComp class="no-transform"/>
         </div>
         <div>
@@ -125,6 +125,10 @@ export default {
 
 .time {
   font-size: 1.4em;
+}
+
+.task-wrapper {
+  max-width: 45%;
 }
 
 </style>

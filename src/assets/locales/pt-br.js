@@ -34,6 +34,7 @@ export default {
   "Complete task": "Completar tarefa",
   "Remove task": "Remover tarefa",
   "Select another task": "Selecionar outra tarefa",
+  "Pomo this task": "Usar pomodoro",
   "Start": "Começar",
   "Search for tags, lists, folders and tasks...": "Pesquisar etiquetas, listas, pastas e tarefas...",
   "Select task": "Selecionar tarefa",

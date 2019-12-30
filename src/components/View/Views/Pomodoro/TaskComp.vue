@@ -14,35 +14,42 @@ import utils from '@/utils/'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
+  mounted() {
+    if (this.task)
+      this.bindTask(this.task)
+  },
   methods: {
+    bindTask(task) {
+      this.$store.commit('pomo/selectTask', task)
+      this.bindTaskOptions([
+        {
+          name: this.l['Complete task'],
+          callback: () => {
+            this.$store.dispatch('task/completeTasks', [this.task])
+            this.$store.commit('pomo/removeTask')
+          },
+        },
+        {
+          name: this.l['Remove task'],
+          callback: () => {
+            this.bindTaskOptions([])
+            this.$store.commit('pomo/removeTask')
+          },
+        },
+        {
+          name: this.l['Select another task'],
+          callback: () => {
+            this.findTask()
+          }
+        },
+      ])
+    },
     findTask() {
       this.$store.dispatch('pushPopup', {
         comp: 'FastSearch',
         payload: {
           callback: (route, task) => {
-            this.$store.commit('pomo/selectTask', task)
-            this.bindTaskOptions([
-              {
-                name: this.l['Complete task'],
-                callback: () => {
-                  this.$store.dispatch('task/completeTasks', [this.task])
-                  this.$store.commit('pomo/removeTask')
-                },
-              },
-              {
-                name: this.l['Remove task'],
-                callback: () => {
-                  this.bindTaskOptions([])
-                  this.$store.commit('pomo/removeTask')
-                },
-              },
-              {
-                name: this.l['Select another task'],
-                callback: () => {
-                  this.findTask()
-                }
-              },
-            ])
+            this.bindTask(task)
           },
           onlyTasks: true,
         }
@@ -52,7 +59,7 @@ export default {
       if (!this.task) this.findTask()
     },
     bindTaskOptions(opt) {
-      utils.bindOptionsToEventListener(this.$refs['task'], opt, this, 'click')
+      utils.bindOptionsToEventListener(this.$refs['task'], opt, this, 'click', '-150px')
     },
   },
   computed: {

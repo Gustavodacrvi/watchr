@@ -75,6 +75,7 @@ export default {
   "Close": "Close",
   "No time": "No time",
   "Calendar": "Calendar",
+  "Pomo this task": "Pomo this task",
   "Pomodoro": "Pomodoro",
   "Collaborators": "Collaborators",
   "Select task": "Select task",

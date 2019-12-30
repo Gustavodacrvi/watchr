@@ -108,7 +108,10 @@ export default {
         }
       }
     },
-    toggle({dispatch, state}) {
+    toggle({dispatch, state}, task) {
+      if (task)
+        state.task = task
+      
       dispatch('toggleInterval')
       state.running = !state.running
 

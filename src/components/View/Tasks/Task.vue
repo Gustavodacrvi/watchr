@@ -552,6 +552,13 @@ export default {
       const l = this.l
       const arr = [
         {
+          name: l['Pomo this task'],
+          icon: 'pomo',
+          callback: () => {
+            this.$store.dispatch('pomo/toggle', this.task)
+          },
+        },
+        {
           name: l['No date'],
           icon: 'bloqued',
           callback: () => this.saveCalendarDate(null)
