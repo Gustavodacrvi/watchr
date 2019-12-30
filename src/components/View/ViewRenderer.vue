@@ -7,7 +7,7 @@
     @touchstart.passive='touchstart'
     @touchmove.passive='touchmove'
   >
-    <div :class="{extend: !isTaskRenderer}">
+    <div :class="{extend: !isTaskHandler}">
       <Header
         v-bind="$props"
 
@@ -65,7 +65,7 @@
       @select='selectPagination'
     />
     <transition name="fade-t" mode="out-in">
-      <ActionButtons v-if="!openCalendar && isTaskRenderer" key="buttons" @moving='v => movingButton = v'/>
+      <ActionButtons v-if="!openCalendar && isTaskHandler" key="buttons" @moving='v => movingButton = v'/>
       <HelperComponent v-else-if='openCalendar'
         comp='LongCalendarPicker'
         key="helper"
@@ -382,11 +382,11 @@ export default {
       doesTaskPassInclusivePriority: 'task/doesTaskPassInclusivePriority',
       doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
-    isTaskRenderer() {
-      return this.getViewComp === 'TaskRenderer'
+    isTaskHandler() {
+      return this.getViewComp === 'TaskHandler'
     },
     getHeaderOptions() {
-      return !this.isTaskRenderer ? [] : this.taskIconDropOptions
+      return !this.isTaskHandler ? [] : this.taskIconDropOptions
     },
     el() {
       const el = this.$el.getElementsByClassName('view-renderer-move')[0]
