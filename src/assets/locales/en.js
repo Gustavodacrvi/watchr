@@ -72,6 +72,7 @@ export default {
   "Complete task": "Complete task",
   "Remove task": "Remove task",
   "Select another task": "Select another task",
+  "Close": "Close",
   "No time": "No time",
   "Calendar": "Calendar",
   "Pomodoro": "Pomodoro",

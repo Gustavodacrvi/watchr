@@ -366,6 +366,7 @@ export default {
       userInfo: state => state.userInfo,
       runningPomo: state => state.pomo.running,
       rest: state => state.pomo.rest,
+      openHelper: state => state.pomo.openHelper,
     }),
     ...mapGetters({
       platform: 'platform',
@@ -386,7 +387,7 @@ export default {
       doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
     getHelperComponent() {
-      return ((this.runningPomo || this.rest) &&  this.viewName !== 'Pomodoro') ? 'PomoHelper' : this.helperComponent
+      return (this.openHelper && this.viewName !== 'Pomodoro') ? 'PomoHelper' : this.helperComponent
     },
     isTaskHandler() {
       return this.getViewComp === 'TaskHandler'

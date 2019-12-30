@@ -30,6 +30,7 @@ export default {
   "Open calendar": "Abrir calendário",
   "Pomodoro": "Pomodoro",
   "Create": "Criar",
+  "Close": "Fechar",
   "Complete task": "Completar tarefa",
   "Remove task": "Remover tarefa",
   "Select another task": "Selecionar outra tarefa",

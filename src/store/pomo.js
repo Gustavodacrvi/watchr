@@ -35,6 +35,7 @@ export default {
     cycles: 0,
     longCycles: 0,
     current: '00:00',
+    openHelper: false,
 
     duration: '00:10',
     currentDuration: '00:10',
@@ -57,6 +58,9 @@ export default {
     },
     removeTask(state) {
       state.task = null
+    },
+    closeHelper(state) {
+      state.openHelper = false
     },
   },
   getters: {
@@ -108,7 +112,10 @@ export default {
       dispatch('toggleInterval')
       state.running = !state.running
 
-      if (state.running) tickSound.play()
+      if (state.running) {
+        state.openHelper = true
+        tickSound.play()
+      }
       else tickSound.pause()
     },
     toggleInterval({state, dispatch}) {

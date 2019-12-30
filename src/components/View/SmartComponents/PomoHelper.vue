@@ -17,7 +17,13 @@
           <TaskComp class="no-transform"/>
         </div>
         <div>
-          <PomoBtn class="tiny"/>
+          <div class="auth-wrapper">
+            <AuthButton class="btn"
+              :value='l["Close"]'
+              @click="close"
+            />
+          </div>
+          <PomoBtn class="tiny" style="display: inline-block !important;"/>
         </div>
       </div>
     </div>
@@ -30,12 +36,19 @@ import Squares from './../Views/Pomodoro/Squares.vue'
 import TaskComp from './../Views/Pomodoro/TaskComp.vue'
 import PomoBtn from './../Views/Pomodoro/PomoBtn.vue'
 
+import AuthButton from '@/components/Auth/Button.vue'
+
 import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: {
     Squares, TaskComp,
-    PomoBtn,
+    PomoBtn, AuthButton,
+  },
+  methods: {
+    close() {
+      this.$store.commit('pomo/closeHelper')
+    },
   },
   computed: {
     ...mapState({
@@ -43,6 +56,7 @@ export default {
       current: state => state.pomo.current,
     }),
     ...mapGetters({
+      l: 'l',
       platform: 'platform',
       color: 'pomo/getPomoColor',
       shadow: 'pomo/getPomoShadow',
@@ -97,6 +111,16 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.auth-wrapper {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.btn {
+  border-radius: 50px !important;
+  padding: 9px 18px;
 }
 
 .time {

@@ -79,7 +79,7 @@ export default {
 }
 
 .tiny .btn {
-    padding: 8px 18px;
+  padding: 8px 18px;
 }
 
 </style>
