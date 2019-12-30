@@ -104,31 +104,27 @@ export default {
         if (opt.cardOptions) this.cardOptions = opt.cardOptions
         
         const cont = this.$el.getElementsByClassName('icon-drop-content')[0]
-        const s = getComputedStyle(cont)
-        const oldWidth = s.width
-        const oldHeight = s.height
-  
-        cont.style.transitionDelay = '.05s'
-        cont.style.transitionDuration = '0s'
+        const comp = getComputedStyle(cont)
+        const oldWidth = comp.width
+        const oldHeight = comp.height
+
+        const s = cont.style
+
+        s.transitionDuration = '0s'
         setTimeout(() => {
-          cont.style.width = 'auto'
-          cont.style.height = 'auto'
+          s.width = 'auto'
+          s.height = 'auto'
           setTimeout(() => {
             const {height, width} = getComputedStyle(cont)
-            cont.style.width = oldWidth
-            cont.style.height = oldHeight
+            s.width = oldWidth
+            s.height = oldHeight
             setTimeout(() => {
-              cont.style.transitionDuration = '.15s'
-              cont.style.width = width
-              cont.style.height = height
-              cont.style.transitionDelay = '.0s'
-              setTimeout(() => {
-                cont.style.height = 'auto'
-                cont.style.width = 'auto'
-              }, 150)
-            }, 150)
+              s.transitionDuration = '.2s'
+              s.width = width
+              s.height = height
+            }, 125)
           })
-        }, 300)
+        }, 210)
         this.showingCont = false
         setTimeout(() => {
           this.showingCont = true

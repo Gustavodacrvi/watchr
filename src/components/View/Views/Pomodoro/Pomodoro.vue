@@ -185,11 +185,11 @@ export default {
             this.running = false
             this.addInterval = null
 
+            this.tickSound.pause()
+            this.vibrate()
             if (this.cycles === 4) {
               this.cycles = 0
               this.longCycles++
-              this.tickSound.pause()
-              this.vibrate()
               this.saveUser()
             }
           }
