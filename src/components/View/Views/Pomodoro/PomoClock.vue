@@ -16,35 +16,24 @@
 
 import mom from 'moment/src/moment'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
-  props: ['total', 'current', 'color', 'shadow'],
-  methods: {
-    getValueFromTime(time) {
-      const split = time.split(':')
-      
-      const hour = parseInt(split[0], 10)
-      const sec = parseInt(split[1], 10)
-
-      return sec + (hour * 60)
-    },
-  },
   computed: {
-    ...mapGetters(['platform']),
+    ...mapState({
+      total: state => state.pomo.currentDuration,
+      current: state => state.pomo.current,
+    }),
+    ...mapGetters({
+      platform: 'platform',
+      color: 'pomo/getPomoColor',
+      shadow: 'pomo/getPomoShadow',
+      currentValue: 'pomo/currentValue',
+      totalValue: 'pomo/totalValue',
+      getTime: 'pomo/getTime',
+    }),
     dasharray() {
       return 252 * this.currentValue / this.totalValue
-    },
-    currentValue() {
-      return this.getValueFromTime(this.current)
-    },
-    totalValue() {
-      return this.getValueFromTime(this.total)
-    },
-    getTime() {
-      const diff = this.totalValue - this.currentValue
-
-      return mom(`${diff / 60}:${diff % 60}`, 'mm:ss').format('mm:ss')
     },
   },
 }

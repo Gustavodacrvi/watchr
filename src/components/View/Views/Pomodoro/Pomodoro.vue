@@ -13,12 +13,7 @@
         <CircleBubble/>
       </div>
     </div>
-    <PomoClock
-      :total='currentDuration'
-      :current='current'
-      :color='getPomoColor'
-      :shadow='getPomoShadow'
-    />
+    <PomoClock/>
     <div class="btn-wrapper">
       <button class="btn cursor remove-highlight" :class="{running, rest}" @click="click">
         {{ btnMsg }}
@@ -121,12 +116,6 @@ export default {
     msg() {
       if (this.task) return this.task.name
       return this.l['Select task']
-    },
-    getPomoColor() {
-      return this.rest ? 'var(--primary)' : 'var(--dark-red)'
-    },
-    getPomoShadow() {
-      return this.rest ? 'rgba(89, 160, 222, .2)' : 'rgba(234, 58, 52, .8)'
     },
   },
 }

@@ -20,6 +20,14 @@ const areEqual = (s1, s2) =>  {
 
   return p(split1[0]) === p(split2[0]) && p(split1[1]) === p(split2[1])
 }
+const getValueFromTime = time => {
+  const split = time.split(':')
+  
+  const hour = parseInt(split[0], 10)
+  const sec = parseInt(split[1], 10)
+
+  return sec + (hour * 60)
+}
 
 export default {
   namespaced: true,
@@ -29,9 +37,13 @@ export default {
     current: '00:00',
 
     duration: '00:10',
-    currentDuration: '00:05',
-    shortRest: '00:5',
+    currentDuration: '00:10',
+    shortRest: '00:05',
     longRest: '00:10',
+/*     duration: '25:00',
+    currentDuration: '25:00',
+    shortRest: '05:00',
+    longRest: '15:00', */
     task: null,
 
     running: false,
@@ -45,6 +57,25 @@ export default {
     },
     removeTask(state) {
       state.task = null
+    },
+  },
+  getters: {
+    getPomoColor(state) {
+      return state.rest ? 'var(--primary)' : 'var(--dark-red)'
+    },
+    getPomoShadow(state) {
+      return state.rest ? 'rgba(89, 160, 222, .2)' : 'rgba(234, 58, 52, .8)'
+    },
+    currentValue(state) {
+      return getValueFromTime(state.current)
+    },
+    totalValue(state) {
+      return getValueFromTime(state.currentDuration)
+    },
+    getTime(state, getters) {
+      const diff = getters.totalValue - getters.currentValue
+
+      return mom(`${diff / 60}:${diff % 60}`, 'mm:ss').format('mm:ss')
     },
   },
   actions: {

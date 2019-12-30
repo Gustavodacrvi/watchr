@@ -27,7 +27,7 @@
       >
         <div v-if="isEditable && editing" class="line"></div>
       </transition>
-      <IconDrop class="passive drop" handle="settings-h" handleColor="var(--gray)" :options="options" :circle='true'/>
+      <IconDrop v-if="options.length > 0" class="passive drop" handle="settings-h" handleColor="var(--gray)" :options="options" :circle='true'/>
     </div>
     <div class="tags" style="flex-direction: column; align-items: flex-start;margin-top: 4px">
       <div>

@@ -52,12 +52,13 @@
           :taskIconDropOptions='taskIconDropOptions'
           :updateHeadingIds='updateHeadingIds'
           :autoSchedule='autoSchedule'
-          :openCalendar='openCalendar'
+          :openCalendar='getHelperComponent === "LongCalendarPicker"'
 
           @allow-someday='showSomeday = true'
           @root-non-filtered='getRootNonFilteredFromTaskHandler'
         />
       </transition>
+      <div style='height: 300px'></div>
     </div>
     <PaginationVue v-if="headingsPagination"
       :page='pagination'
@@ -65,11 +66,11 @@
       @select='selectPagination'
     />
     <transition name="fade-t" mode="out-in">
-      <ActionButtons v-if="!openCalendar && isTaskHandler" key="buttons" @moving='v => movingButton = v'/>
-      <HelperComponent v-else-if='openCalendar'
-        comp='LongCalendarPicker'
+      <ActionButtons v-if="!getHelperComponent && isTaskHandler" key="buttons" @moving='v => movingButton = v'/>
+      <HelperComponent v-else-if='getHelperComponent'
+        :comp='getHelperComponent'
         key="helper"
-        @close='openCalendar = false'
+        @close='helperComponent = null'
       />
     </transition>
   </div>
@@ -123,7 +124,7 @@ export default {
       showingFolderSelection: false,
       showingPrioritySelection: false,
       showSomeday: false,
-      openCalendar: false,
+      helperComponent: false,
 
       rootNonFiltered: [],
       computedHeaderOptions: [],
@@ -363,6 +364,8 @@ export default {
       viewOrders: state => state.list.viewOrders,
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
+      runningPomo: state => state.pomo.running,
+      rest: state => state.pomo.rest,
     }),
     ...mapGetters({
       platform: 'platform',
@@ -382,6 +385,9 @@ export default {
       doesTaskPassInclusivePriority: 'task/doesTaskPassInclusivePriority',
       doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
+    getHelperComponent() {
+      return ((this.runningPomo || this.rest) &&  this.viewName !== 'Pomodoro') ? 'PomoHelper' : this.helperComponent
+    },
     isTaskHandler() {
       return this.getViewComp === 'TaskHandler'
     },
@@ -657,7 +663,11 @@ export default {
           {
             name: l['Open calendar'],
             icon: 'calendar',
-            callback: () => {this.openCalendar = !this.openCalendar}
+            callback: () => {
+              if (this.helperComponent !== 'LongCalendarPicker')
+                this.helperComponent = 'LongCalendarPicker'
+              else this.helperComponent = null
+            }
           },
           {
             name: l['Auto schedule'],
