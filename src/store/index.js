@@ -39,6 +39,7 @@ import tag from './tag'
 import list from './list'
 import filter from './filter'
 import folder from './folder'
+import pomo from './pomo'
 
 import utils from '@/utils'
 import { userRef } from "../utils/firestore"
@@ -57,7 +58,7 @@ moment.locale(lang)
 const uid = () => auth.currentUser.uid
 
 
-const version = '066'
+const version = '068'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -70,6 +71,7 @@ if (lastVersion === null) {
 const store = new Vuex.Store({
   modules: {
     task, tag, list, filter, folder,
+    pomo,
   },
   state: {
     lang,
@@ -434,6 +436,7 @@ auth.onAuthStateChanged((user) => {
     dispatch('task/getData')
     dispatch('list/getData')
     dispatch('tag/getData')
+    dispatch('pomo/getData')
     dispatch('filter/getData')
     dispatch('folder/getData')
   }

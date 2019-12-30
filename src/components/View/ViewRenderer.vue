@@ -7,7 +7,7 @@
     @touchstart.passive='touchstart'
     @touchmove.passive='touchmove'
   >
-    <div>
+    <div :class="{extend: !isTaskRenderer}">
       <Header
         v-bind="$props"
 
@@ -26,7 +26,7 @@
         :folders='folderSelectionOptions'
 
         :viewName="viewName"
-        :options="taskIconDropOptions"
+        :options="getHeaderOptions"
         :headerTags="headerTags"
 
         @tag='selectTag'
@@ -40,28 +40,38 @@
 
         @update='onSmartComponentUpdate'
       />
-      <TaskHandler class='view-renderer-move'
-        v-bind="$props"
+      <transition name="fade-t" mode="out-in">
+        <component :is='getViewComp' class='view-renderer-move'
+          v-bind="$props"
 
-        :headings="getHeadings"
-        :movingButton='movingButton'
-        :showCompleted='showCompleted'
-        :showSomeday='passSomedayTasks'
-        :pipeFilterOptions='pipeFilterOptions'
-        :taskIconDropOptions='taskIconDropOptions'
-        :updateHeadingIds='updateHeadingIds'
-        :autoSchedule='autoSchedule'
+          :headings="getHeadings"
+          :movingButton='movingButton'
+          :showCompleted='showCompleted'
+          :showSomeday='passSomedayTasks'
+          :pipeFilterOptions='pipeFilterOptions'
+          :taskIconDropOptions='taskIconDropOptions'
+          :updateHeadingIds='updateHeadingIds'
+          :autoSchedule='autoSchedule'
+          :openCalendar='openCalendar'
 
-        @allow-someday='showSomeday = true'
-        @root-non-filtered='getRootNonFilteredFromTaskHandler'
-      />
+          @allow-someday='showSomeday = true'
+          @root-non-filtered='getRootNonFilteredFromTaskHandler'
+        />
+      </transition>
     </div>
     <PaginationVue v-if="headingsPagination"
       :page='pagination'
       :numberOfPages='getNumberOfPages'
       @select='selectPagination'
     />
-    <ActionButtons @moving='v => movingButton = v'/>
+    <transition name="fade-t" mode="out-in">
+      <ActionButtons v-if="!openCalendar && isTaskRenderer" key="buttons" @moving='v => movingButton = v'/>
+      <HelperComponent v-else-if='openCalendar'
+        comp='LongCalendarPicker'
+        key="helper"
+        @close='openCalendar = false'
+      />
+    </transition>
   </div>
 </template>
 
@@ -70,7 +80,9 @@
 import HeaderVue from './Headings/Header.vue'
 import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
 import PaginationVue from './Pagination.vue'
-import TaskHandler from './TaskHandler.vue'
+import HelperComponent from './HelperComponent.vue'
+import TaskHandler from './Views/TaskHandler.vue'
+import Pomodoro from './Views/Pomodoro/Pomodoro.vue'
 
 import ViewRendererLongCalendarPicker from '@/components/View/SmartComponents/ViewRendererLongCalendarPicker.vue'
 
@@ -91,14 +103,15 @@ export default {
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes',
   'headerOptions', 'headerDates', 'headerTags', 'headerCalendar', 'files',
   'progress', 'tasksOrder',  'rootFallbackTask', 'mainFallbackTask',
-  'showHeading', 'smartComponent', 'onSmartComponentUpdate',
+  'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'showHeadadingFloatingButton', 'updateHeadingIds', 'showAllHeadingsItems', 'taskCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
   components: {
     PaginationVue, TaskHandler,
-    Header: HeaderVue,
+    Header: HeaderVue, HelperComponent,
     ActionButtons: ActionButtonsVue,
     ViewRendererLongCalendarPicker,
+    Pomodoro,
   },
   data() {
     return {
@@ -110,6 +123,7 @@ export default {
       showingFolderSelection: false,
       showingPrioritySelection: false,
       showSomeday: false,
+      openCalendar: false,
 
       rootNonFiltered: [],
       computedHeaderOptions: [],
@@ -368,6 +382,12 @@ export default {
       doesTaskPassInclusivePriority: 'task/doesTaskPassInclusivePriority',
       doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
+    isTaskRenderer() {
+      return this.getViewComp === 'TaskRenderer'
+    },
+    getHeaderOptions() {
+      return !this.isTaskRenderer ? [] : this.taskIconDropOptions
+    },
     el() {
       const el = this.$el.getElementsByClassName('view-renderer-move')[0]
       return el.style
@@ -474,6 +494,9 @@ export default {
         })
       }
       return links
+    },
+    getViewComp() {
+      return this.viewComponent || "TaskHandler"
     },
     getIconDropOptionsLists() {
       const moveToList = (obj) => {
@@ -630,6 +653,11 @@ export default {
                 callback: () => this.toggleFolderSelection()
               },
             ],
+          },
+          {
+            name: l['Open calendar'],
+            icon: 'calendar',
+            callback: () => {this.openCalendar = !this.openCalendar}
           },
           {
             name: l['Auto schedule'],
@@ -874,9 +902,16 @@ export default {
 .ViewRenderer {
   margin: 0 100px;
   min-height: 100%;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.extend {
+  position: absolute;
+  height: 100%;
+  width: 100%;
 }
 
 .ViewRenderer.mobile {

@@ -193,6 +193,14 @@ export default {
           iconColor: 'var(--purple)'
         },
         {
+          name: 'Pomodoro',
+          id: 'Pomodoro',
+          icon: 'pomo',
+          disableAction: true,
+          callback: () => selectView('Pomodoro'),
+          iconColor: 'var(--dark-red)',
+        },
+        {
           name: 'Completed',
           id: 'Completed',
           icon: 'circle-check',

@@ -233,6 +233,7 @@ export default {
           case 'Tomorrow': return 'sun'
           case 'Inbox': return 'inbox'
           case 'Calendar': return 'calendar-star'
+          case 'Pomodoro': return 'pomo'
           case 'Upcoming': return 'calendar'
           case 'Completed': return 'circle-check'
           case 'Someday': return 'archive'
@@ -249,6 +250,9 @@ export default {
     },
     onSmartComponentUpdate() {
       return date => this.calendarDate = date
+    },
+    viewComponent() {
+      if (this.viewName === 'Pomodoro') return 'Pomodoro'
     },
   },
 }

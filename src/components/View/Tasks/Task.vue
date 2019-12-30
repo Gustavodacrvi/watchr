@@ -51,7 +51,7 @@
               @touchend.passive='touchComplete'
               :class="{changeColor}"
             >
-              <template v-if='!isSelecting'>
+              <template v-if='!isSelecting && !openCalendar'>
                 <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon cursor remove-highlight"
                   :icon="`box${isSomeday ? '-dash' : ''}`"
                   :color='circleColor'
@@ -143,7 +143,7 @@ import mom from 'moment/src/moment'
 
 export default {
   props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName',
-  'isSelecting'],
+  'isSelecting', 'openCalendar'],
   components: {
     Timeline,
     Icon: IconVue,
@@ -214,7 +214,9 @@ export default {
         evt.stopPropagation()
     },
     deselectTask() {
-      this.$emit('de-select', this.$el)
+      setTimeout(() => {
+        this.$emit('de-select', this.$el)
+      }, 10)
     },
     enter(cont) {
       if (!this.isEditing) {

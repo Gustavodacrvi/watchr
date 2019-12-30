@@ -80,6 +80,7 @@ import folder from '@/assets/icons/folder.svg'
 import filter from '@/assets/icons/filter.svg'
 import magic from '@/assets/icons/magic.svg'
 import clock from '@/assets/icons/clock.svg'
+import pomo from '@/assets/icons/pomo.svg'
 import boxCheck from '@/assets/icons/box-check.svg'
 import calendarStar from '@/assets/icons/calendar-star.svg'
 import circleFilled from '@/assets/icons/circle-filled.svg'
@@ -99,6 +100,7 @@ export default {
         copy, plus, globe, heading, search, note,
         envelope, deadline, sleep, repeat, box, file,
         folder, heart, close, filter, magic, clock,
+        pomo,
         "box-dash": boxDash,
         "circle-filled": circleFilled,
         "box-check-dash": boxCheckDash,

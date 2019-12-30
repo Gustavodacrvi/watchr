@@ -312,6 +312,7 @@ export default {
         Someday: 'archive',
         Inbox: 'inbox',
         Calendar: 'calendar-star',
+        Pomodoro: 'pomo',
         Upcoming: 'calendar',
         Completed: 'circle-check',
       }
@@ -326,6 +327,7 @@ export default {
           Someday: 'var(--brown)',
           Inbox: 'var(--primary)',
           Calendar: 'var(--purple)',
+          Pomodoro: 'var(--dark-red)',
           Upcoming: 'var(--green)',
           Completed: 'var(--olive)',
         }
