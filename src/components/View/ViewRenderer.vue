@@ -7,7 +7,7 @@
     @touchstart.passive='touchstart'
     @touchmove.passive='touchmove'
   >
-    <div :class="{extend: !isTaskHandler}">
+    <div class='view-wrapper'>
       <Header
         v-bind="$props"
 
@@ -879,11 +879,8 @@ export default {
   },
   watch: {
     viewName() {
-      this.showingTagSelection = false
-      this.showingListSelection = false
-      this.showingFolderSelection = false
-      this.getComputedOptions()
       this.autoSchedule = null
+      this.getComputedOptions()
       this.getLocalStorageSchedule()
     },
     viewNameValue() {
@@ -909,15 +906,20 @@ export default {
 }
 
 .extend {
-  position: absolute;
   height: 100%;
   width: 100%;
+}
+
+.view-wrapper {
+  width: 100%;
+  min-height: 100%;
 }
 
 .ViewRenderer.mobile {
   margin: 0 8px;
   margin-top: -4px;
 }
+
 
 .component {
   z-index: 3;

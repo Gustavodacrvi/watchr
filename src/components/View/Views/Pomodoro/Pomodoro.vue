@@ -74,6 +74,7 @@ export default {
     }
   },
   created() {
+    this.tickSound.loop = true
     this.update()
   },
   beforeDestroy() {
@@ -322,6 +323,10 @@ export default {
   background-color: transparent;
   border: 1px solid var(--primary);
   color: var(--primary);
+}
+
+.running:hover {
+  color: white;
 }
 
 .long-msg {

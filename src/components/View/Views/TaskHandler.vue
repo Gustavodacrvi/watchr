@@ -56,6 +56,11 @@ export default {
       scheduleObject: null,
     }
   },
+  created() {
+    if (this.autoSchedule)
+      this.updateSchedule()
+    else this.scheduleObject = null
+  },
   methods: {
     allowSomeday() {
       this.$emit('allow-someday')
@@ -360,11 +365,14 @@ export default {
     rootNonFiltered() {
       this.$emit('root-non-filtered', this.rootNonFiltered)
     },
-    autoSchedule() {
-      if (this.autoSchedule)
-        this.updateSchedule()
-      else this.scheduleObject = null
-    },
+    autoSchedule: {
+      handler() {
+        if (this.autoSchedule)
+          this.updateSchedule()
+        else this.scheduleObject = null
+      },
+      deep: true,
+    }
   }
 }
 
