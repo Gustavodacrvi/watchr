@@ -35,15 +35,15 @@ export default {
     cycles: 0,
     longCycles: 0,
     current: '00:00',
-/* 
+
     duration: '00:10',
     currentDuration: '00:10',
     shortRest: '00:05',
-    longRest: '00:10', */
-    duration: '25:00',
+    longRest: '00:10',
+/*     duration: '25:00',
     currentDuration: '25:00',
     shortRest: '05:00',
-    longRest: '15:00',
+    longRest: '15:00', */
     task: null,
 
     running: false,

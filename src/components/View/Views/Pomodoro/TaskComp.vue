@@ -81,6 +81,10 @@ export default {
   transform: translateY(10px);
 }
 
+.no-transform {
+  transform: translateY(0px);
+}
+
 .task {
   position: relative;
   display: inline-block;

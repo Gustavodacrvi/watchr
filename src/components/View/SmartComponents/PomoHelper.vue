@@ -14,10 +14,10 @@
       </div>
       <div class="bottom">
         <div>
-          bottom left
+          <TaskComp class="no-transform"/>
         </div>
         <div>
-          bottom rigth
+          <PomoBtn class="tiny"/>
         </div>
       </div>
     </div>
@@ -27,12 +27,15 @@
 <script>
 
 import Squares from './../Views/Pomodoro/Squares.vue'
+import TaskComp from './../Views/Pomodoro/TaskComp.vue'
+import PomoBtn from './../Views/Pomodoro/PomoBtn.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: {
-    Squares,
+    Squares, TaskComp,
+    PomoBtn,
   },
   computed: {
     ...mapState({
@@ -59,7 +62,7 @@ export default {
 <style scoped>
 
 .PomoHelper {
-  height: 90px;
+  height: 110px;
   border-radius: 16px;
   position: relative;
   overflow: hidden;
