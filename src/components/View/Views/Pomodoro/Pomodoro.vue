@@ -3,9 +3,9 @@
     <div class="squares">
       <Square v-for="i in 4"
         :key="i"
-        :check="i < (cicles + 1)"
+        :check="i < (cycles + 1)"
       />
-      <span v-show="longCicles > 0" class="long-msg">+{{ longCicles }}</span>
+      <span v-show="longCycles > 0" class="long-msg">+{{ longCycles }}</span>
     </div>
     <div class="task-wrapper" @click.stop="selectTask">
       <div class="task rb cursor" ref="task">
@@ -56,8 +56,8 @@ export default {
   },
   data() {
     return {
-      cicles: 0,
-      longCicles: 0,
+      cycles: 0,
+      longCycles: 0,
       current: '00:00',
 
       duration: '25:00',
@@ -121,12 +121,15 @@ export default {
     },
     update() {
       if (this.userInfo && this.userInfo.pomoDate === TOD_STR) {
-        this.cicles = this.userInfo.cicles
-        this.longCicles = this.userInfo.longCicles
+        this.cycles = this.userInfo.cycles
+        this.longCycles = this.userInfo.longCycles
 
-        if (this.cicles === 4) {
-          this.cicles = 0
-          this.longCicles++
+        if (this.cycles === undefined) this.cycles = 0
+        if (this.longCycles === undefined) this.cycles = 0
+
+        if (this.cycles === 4) {
+          this.cycles = 0
+          this.longCycles++
           this.saveUser()
         }
       }
@@ -158,9 +161,9 @@ export default {
           const completed = this.areEqual(this.current, this.currentDuration)
 
           if (completed && !this.rest) {
-            this.cicles++
+            this.cycles++
 
-            const longRest = this.cicles === 4
+            const longRest = this.cycles === 4
 
             this.rest = longRest ? 'long' : 'short'
             this.currentDuration = longRest ? this.longRest : this.shortRest
@@ -181,9 +184,9 @@ export default {
             this.running = false
             this.addInterval = null
 
-            if (this.cicles === 4) {
-              this.cicles = 0
-              this.longCicles++
+            if (this.cycles === 4) {
+              this.cycles = 0
+              this.longCycles++
               this.tickSound.pause()
               this.vibrate()
               this.saveUser()
@@ -202,8 +205,8 @@ export default {
     saveUser() {
       userRef(this.userInfo.userId).set({
         pomoDate: mom().format('Y-M-D'),
-        cicles: this.cicles,
-        longCicles: this.longCicles,
+        cycles: this.cycles,
+        longCycles: this.longCycles,
       }, {merge: true})
     },
     click() {
