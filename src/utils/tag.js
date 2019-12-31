@@ -1,8 +1,9 @@
 
 
 export default {
-  tagOptions: tag => ({dispatch, getters, tasks, commit}) => {
+  tagOptions: tag => ({dispatch, getters, tags, tasks, commit}) => {
     const l = getters['l']
+    const showDelete = tags.filter(el => el.parent === tag.id).length === 0
     const opt = [
       {
         name: l['Edit tag'],
@@ -50,12 +51,13 @@ export default {
           naked: true
         })
       })
-    opt.push(      {
-      name: l['Delete tag'],
-      icon: 'trash',
-      important: true,
-      callback: () => dispatch('tag/deleteTag', {id: tag.id, tasks})
-    })
+    if (showDelete)
+      opt.push({
+        name: l['Delete tag'],
+        icon: 'trash',
+        important: true,
+        callback: () => dispatch('tag/deleteTag', {id: tag.id, tasks})
+      })
     return opt
   }
 }
