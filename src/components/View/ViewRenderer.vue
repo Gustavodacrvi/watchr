@@ -364,14 +364,17 @@ export default {
 
       const fix = s => `${s.split(':')[1]}:00`
 
-      
-      userRef().set({
+      const obj = {
         pomo: {
           duration: fix(opt.duration),
           shortRest: fix(opt.shortRest),
           longRest: fix(opt.longRest),
         }
-      }, {merge: true})
+      }
+      
+      userRef().set(obj, {merge: true})
+
+      this.$store.dispatch('pomo/updateDurations', obj)
     },
   },
   computed: {

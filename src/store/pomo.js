@@ -92,6 +92,18 @@ export default {
         dispatch('update')
       }, 300)
     },
+    updateDurations({rootState, state}, obj) {
+      let pomo = rootState.userInfo.pomo
+
+      if (obj) pomo = obj.pomo
+      
+      if (pomo) {
+        state.shortRest = pomo.shortRest
+        state.longRest = pomo.longRest
+        state.duration = pomo.duration
+        state.currentDuration = pomo.duration
+      }
+    },
     update({state, rootState, dispatch}) {
       const {userInfo} = rootState
       if (userInfo && userInfo.pomoDate === TOD_STR) {
@@ -106,6 +118,8 @@ export default {
           state.longCycles++
           dispatch('saveUser')
         }
+
+        dispatch('updateDurations')
       }
     },
     toggle({dispatch, state}, obj) {
