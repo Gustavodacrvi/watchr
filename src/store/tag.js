@@ -15,10 +15,12 @@ export default {
     tags: [],
   },
   getters: {
-    sortedTags(state, asd, {userInfo}, rootGetters) {
-      const {tags} = state
+    rootTags(state) {
+      return state.tags.filter(tag => !tag.parent && (tag.level === undefined || tag.level === 0))
+    },
+    sortedTags(state, getters, {userInfo}, rootGetters) {
       if (userInfo)
-        return rootGetters.checkMissingIdsAndSortArr(userInfo.tags, tags)
+        return rootGetters.checkMissingIdsAndSortArr(userInfo.tags, getters.rootTags)
       return []
     },
     sortedTagsByName(s, getters) {
@@ -27,6 +29,16 @@ export default {
       return tags
     },
     ...MemoizeGetters(['tags'], {
+      getSubTagsByLevel({state, getters}, level) {
+        if (level === 0)
+          return getters.rootTags
+        return state.tags.filter(tag => tag.level === level)
+      },
+      getSubTagsByParentId({getters}, {parentId, level}) {
+        if (!parentId)
+          return getters.getSubTagsByLevel(0)
+        return getters.getSubTagsByLevel(level).filter(tag => tag.parent === parentId)
+      },
       getTagsByName({state}, names) {
         const arr = []
         for (const n of names) {

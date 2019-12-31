@@ -44,9 +44,13 @@ export default {
     }
   },
   computed: {
-    ...mapState(['selectedTasks']),
+    ...mapState({
+      selectedTasks: state => state.selectedTasks,
+      tags: state => state.tag.tags,
+    }),
     ...mapGetters({
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
+      getSubTagsByParentId: 'tag/getSubTagsByParentId',
       l: 'l',
       isDesktop: 'isDesktop',
     }),
@@ -54,28 +58,31 @@ export default {
       return this.$store.getters['tag/sortedTags']
     },
     getTags() {
-      let tags = this.sortedTags.map(el => ({...el}))
+      const getSubTagsByParentId = this.getSubTagsByParentId
+      const getNumberOfTasksByTag = this.getNumberOfTasksByTag
+      const pushRouter = this.$router.push
+      const getTags = (level, parentId) => {
+        const tags = getSubTagsByParentId({level, parentId}).map(tag => ({...tag}))
+        if (tags.length === 0) return []
 
-      let level = 0
-      for (const tag of tags) {
-        tag.callback = () => this.$router.push('/user?tag=' + tag.name)
-        tag.options = utilsTag.tagOptions(tag, level + 1)
+        for (const tag of tags) {
+          tag.callback = () => pushRouter('/user?tag=' + tag.name)
+          tag.options = utilsTag.tagOptions(tag, level + 1)
 
-        tag.onSubTagUpdate = () => console.log('onUpdate')
-        tag.onSubTagAdd = () => console.log('onAdd')
-        tag.onSubTagSortableAdd = () => console.log('onSortableAdd')
+          tag.onSubTagUpdate = () => console.log('onUpdate')
+          tag.onSubTagAdd = () => console.log('onAdd')
+          tag.onSubTagSortableAdd = () => console.log('onSortableAdd')
 
-        tag.mapSubTagNumbers = () => {
-          console.log('mapNumbers')
-          return {
-            total: 10,
-            completed: 5,
-          }
+          tag.numberOfTasks = tag => ({
+              total: getNumberOfTasksByTag(tag.id).total,
+          })
+
+          tag.subList = getTags(level + 1, tag.id)
         }
-
-        tag.subList = []
+        return tags
       }
-      return tags
+
+      return getTags(0)
     },
   },
   watch: {
