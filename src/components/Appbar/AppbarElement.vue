@@ -4,65 +4,85 @@
     :class="platform"
   >
     <div
-      class="link-wrapper handle cursor remove-highlight AppbarElement-link rb"
+      class="link-wrapper AppbarElement-link rb"
       :data-type='type'
       :data-selectedtype='selectedtype'
       :data-color='iconColor'
       :data-disabled='disableAction'
-      :class="{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover}"
-
-      @mouseenter="hover = true"
-      @mouseleave="hover = false"
-      @click.stop="linkCallback"
-      @touchstart.passive='touchStart'
-      @touchmove.passive='touchmove'
-      @touchend.passive='touchEnd'
     >
-      <div class="icon-wrapper">
-        <Icon class="main-icon"
-          :style="hoverStyle"
-          :class="{notActive: !isActive}"
-          :icon="icon"
-          :progress='progress'
-          :circle='true'
+      <div
+        class="link-inner-wrapper rb handle cursor remove-highlight"
+        :class="{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover}"
+
+        @mouseenter="hover = true"
+        @mouseleave="hover = false"
+        @click.stop="linkCallback"
+        @touchstart.passive='touchStart'
+        @touchmove.passive='touchmove'
+        @touchend.passive='touchEnd'
+      >
+        <div class="icon-wrapper">
+          <Icon class="main-icon"
+            :style="hoverStyle"
+            :class="{notActive: !isActive}"
+            :icon="icon"
+            :progress='progress'
+            :circle='true'
+          />
+        </div>
+        <div class="name-wrapper">
+          <transition name="name-t">
+            <span v-if="!showSpecialInfo" key="normal" class="name" :style="hoverStyle">{{ getName }}</span>
+            <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
+          </transition>
+          <div class="info">
+            <template v-if="helpIcons">
+              <Icon v-for="i in helpIcons" :key="i" class="inf faded"
+                :icon='i'
+                :circle='true'
+              />
+            </template>
+            <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
+            <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
+            <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
+          </div>
+        </div>
+        <CircleBubble class="bubble"
+          innerColor='var(--light-gray)'
+          outerColor='var(--gray)'
+          opacity='0'
         />
       </div>
-      <div class="name-wrapper">
-        <transition name="name-t">
-          <span v-if="!showSpecialInfo" key="normal" class="name" :style="hoverStyle">{{ getName }}</span>
-          <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
-        </transition>
-        <div class="info">
-          <template v-if="helpIcons">
-            <Icon v-for="i in helpIcons" :key="i" class="inf faded"
-              :icon='i'
-              :circle='true'
-            />
-          </template>
-          <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
-          <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
-          <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
-        </div>
+      <Icon v-if="hasSubList"
+        class="toggle-icon cursor remove-highlight primary-hover"
+        :class="{showingSublist}"
+        icon="tiny-arrow"
+        width="26px"
+        :circle="true"
+        @click="showingSublist = !showingSublist"
+      />
+    </div>
+    <transition
+      :css="false"
+      @enter='sublistEnter'
+      @leave='sublistLeave'
+    >
+      <div v-if="hasSubList && showingSublist"
+        class="sub-list"
+      >
+        <Renderer
+          v-bind="$props"
+
+          :enableSort='true'
+          :showColor='true'
+          :list="subList"
+
+          :mapNumbers='mapSubTagNumbers'
+          @buttonAdd='onSubTagAdd'
+          @update='onSubTagUpdate'
+        />
       </div>
-      <CircleBubble class="bubble"
-        innerColor='var(--light-gray)'
-        outerColor='var(--gray)'
-        opacity='0'
-      />
-    </div>
-    <div v-if="subList && subList.length > 0" class="sub-list">
-      <Renderer
-        v-bind="$props"
-
-        :enableSort='true'
-        :showColor='true'
-        :list="subList"
-
-        :mapNumbers='mapSubTagNumbers'
-        @buttonAdd='onSubTagAdd'
-        @update='onSubTagUpdate'
-      />
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -90,6 +110,7 @@ export default {
       isTouching: false,
       fail: false,
       startTime: 0,
+      showingSublist: false,
 
       selectedTasks: [],
     }
@@ -110,6 +131,35 @@ export default {
     async openMobileOptions() {
       window.navigator.vibrate(100)
       this.$store.commit('pushIconDrop', await this.getOptions(this.options))
+    },
+    sublistEnter(el, done) {
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.overflow = 'hidden'
+      s.height = 0
+      s.opacity = 0
+      setTimeout(() => {
+        s.transitionDuration = '.3s'
+        s.height = (this.subList.length * (this.isDesktop ? 35 : 42)) + 'px'
+        s.opacity = 1
+        setTimeout(() => {
+          s.height = 'auto'
+          s.overflow = 'visible'
+          done()
+        }, 310)
+      })
+    },
+    sublistLeave(el, done) {
+      const s = el.style
+      
+      s.height = (this.subList.length * (this.isDesktop ? 35 : 42)) + 'px'
+      setTimeout(() => {
+        s.transitionDuration = '.3s'
+        s.height = '0px'
+        s.overflow = 'hidden'
+        setTimeout(done, 310)
+      })
     },
     touchStart(e) {
       this.isTouching = true
@@ -162,6 +212,9 @@ export default {
       storeViewType: 'viewType',
     }),
     ...mapGetters(['l', 'platform', 'isDesktop']),
+    hasSubList() {
+      return this.subList && this.subList.length > 0
+    },
     isDraggingOver() {
       return this
     },
@@ -210,6 +263,16 @@ export default {
   margin-left: 14px;
 }
 
+.toggle-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-40%);
+}
+
+.desktop .toggle-icon {
+  left: -24px;
+}
+
 .icon-wrapper {
   height: 100%;
   width: 40px;
@@ -234,9 +297,14 @@ export default {
 .link-wrapper {
   height: 35px;
   position: relative;
-  display: flex;
-  overflow: hidden;
   transition-duration: .15s;
+}
+
+.link-inner-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .mobile .link-wrapper {
@@ -262,15 +330,15 @@ export default {
   transition: background-color .15s, height .3s;
 }
 
-.sortable-ghost .name-wrapper, .sortable-ghost .icon-wrapper, .sortable-ghost .bubble {
+.sortable-ghost .name-wrapper, .sortable-ghost .icon-wrapper, .sortable-ghost .bubble, .sortable-ghost .toggle-icon {
   display: none;
 }
 
-.desktop .link-wrapper:hover, .notSmartActive {
+.desktop .link-inner-wrapper:hover, .notSmartActive {
   background-color: var(--card);
 }
 
-.link-wrapper:active {
+.link-inner-wrapper:active {
   background-color: var(--card);
 }
 
@@ -278,7 +346,7 @@ export default {
   background-color: var(--card) !important;
 }
 
-.sortable-ghost .link-wrapper {
+.sortable-ghost, .sortable-ghost .link-inner-wrapper {
   background-color: var(--dark-void) !important;
   transition-duration: 0 !important;
   transition: none !important;
