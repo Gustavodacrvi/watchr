@@ -1,7 +1,7 @@
 <template>
   <div class="AppbarElement AppbarElement-link rb"
     :tabindex="tabindex"
-    :class="platform"
+    :class="[platform, {hasSubList}]"
   >
     <div
       class="link-wrapper AppbarElement-link rb"
@@ -266,7 +266,12 @@ export default {
 .toggle-icon {
   position: absolute;
   top: 50%;
-  transform: translateY(-40%);
+  transform: translateY(-47%) rotate(-90deg);
+  transition-duration: .3s;
+}
+
+.showingSublist {
+  transform: translateY(-47%) rotate(0deg);
 }
 
 .desktop .toggle-icon {
@@ -300,7 +305,12 @@ export default {
   transition-duration: .15s;
 }
 
+.mobile.hasSubList .link-inner-wrapper {
+  margin-left: 28px;
+}
+
 .link-inner-wrapper {
+  position: relative;
   display: flex;
   width: 100%;
   height: 100%;
