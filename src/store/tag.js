@@ -16,7 +16,7 @@ export default {
   },
   getters: {
     rootTags(state) {
-      return state.tags.filter(tag => !tag.parent && (tag.level === undefined || tag.level === 0))
+      return state.tags.filter(tag => !tag.parent)
     },
     sortedTags(state, getters, {userInfo}, rootGetters) {
       if (userInfo)
@@ -29,15 +29,10 @@ export default {
       return tags
     },
     ...MemoizeGetters(['tags'], {
-      getSubTagsByLevel({state, getters}, level) {
-        if (level === 0)
-          return getters.sortedTags
-        return state.tags.filter(tag => tag.level === level)
-      },
-      getSubTagsByParentId({getters}, {parentId, level}) {
+      getSubTagsByParentId({state, getters}, parentId) {
         if (!parentId)
-          return getters.getSubTagsByLevel(0)
-        return getters.getSubTagsByLevel(level).filter(tag => tag.parent === parentId)
+          return getters.rootTags
+        return state.tags.filter(tag => tag.parent === parentId)
       },
       getTagsByName({state}, names) {
         const arr = []
@@ -72,15 +67,14 @@ export default {
         })
       ])
     },
-    addTag(c, {name, index, ids, level, parent}) {
-      if (level === undefined) level = 0
+    addTag(c, {name, index, ids, parent}) {
       if (!parent) parent = null
       const obj = {
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         name,
         userId: uid(),
-        level, parent,
+        parent,
       }
       if (index === undefined) {
         tagColl().add(obj)
@@ -115,14 +109,14 @@ export default {
         ...tag
       }, {merge: true})
     },
-    moveTagBetweenTags({}, {tagId, ids, parent, level}) {
+    moveTagBetweenTags({}, {tagId, ids, parent}) {
       const batch = fire.batch()
 
       batch.set(tagRef(parent), {
         order: ids,
       }, {merge: true})
       batch.set(tagRef(tagId), {
-        parent, level,
+        parent,
       }, {merge: true})
 
       batch.commit()
@@ -131,7 +125,7 @@ export default {
       const batch = fire.batch()
 
       batch.set(tagRef(tagId), {
-        parent: null, level: 0,
+        parent: null,
       }, {merge: true})
       batch.update(userRef(), {
         tags: ids,
@@ -170,9 +164,9 @@ export default {
       
       batch.commit()
     },
-    moveTagBelow({}, {tagId, target, level}) {
+    moveTagBelow({}, {tagId, target}) {
       tagRef(tagId).update({
-        parent: target, level,
+        parent: target, 
       })
     },
     updateOrder(c, ids) {

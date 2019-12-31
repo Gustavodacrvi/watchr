@@ -67,8 +67,8 @@ export default {
     getTags() {
       const getSubTagsByParentId = this.getSubTagsByParentId
       const getNumberOfTasksByTag = this.getNumberOfTasksByTag
-      const getTags = (level, parentId, order) => {
-        const tags = getSubTagsByParentId({level, parentId}).map(tag => ({...tag}))
+      const getTags = (parentId, order) => {
+        const tags = getSubTagsByParentId(parentId).map(tag => ({...tag}))
         if (tags.length === 0) return []
 
         for (const tag of tags) {
@@ -81,11 +81,11 @@ export default {
             })
           }
           tag.onSubTagAdd = obj => {
-            this.$store.dispatch('pushPopup', {comp: 'AddTag', payload: {...obj, level: level + 1, parent: tag.id}, naked: true})
+            this.$store.dispatch('pushPopup', {comp: 'AddTag', payload: {...obj, parent: tag.id}, naked: true})
           }
           tag.onSubTagSortableAdd = (d, tagId, ids) => {
             this.$store.dispatch('tag/moveTagBetweenTags', {
-              parent: tag.id, tagId, ids, level: level + 1,
+              parent: tag.id, tagId, ids
             })
           }
 
@@ -93,13 +93,13 @@ export default {
               total: getNumberOfTasksByTag(tag.id).total,
           })
 
-          tag.subList = getTags(level + 1, tag.id, tag.order || [])
+          tag.subList = getTags(tag.id, tag.order || [])
         }
-        if (level === 0) return tags
+        if (!parentId) return tags
         return this.checkMissingIdsAndSortArr(order, tags)
       }
 
-      return getTags(0)
+      return getTags()
     },
   },
   watch: {

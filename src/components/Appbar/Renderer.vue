@@ -88,6 +88,7 @@ export default {
       }, put: (l,j,item) => {
         if (this.isSmart) return false
         const type = item.dataset.type
+
         if (!this.enableSort && type === 'appnav-element') return false
         if (type === 'appnav-element') return true
         if (type === 'task') return false

@@ -16,47 +16,27 @@ export default {
         name: l['Add subtag'],
         icon: 'arrow',
         callback: () => {
-          let level = tag.level
-          if (level === undefined) level = 0
-          if ((level + 1) >= 4) {
-            commit('pushToast', {
-              name: l['Reached maximum subtag depth.'],
-              seconds: 3,
-              type: 'error',
-            })
-          } else
-            dispatch('pushPopup', {comp: 'AddTag', payload: {
-              level: level + 1,
-              parent: tag.id,
-            }, naked: true})
+          dispatch('pushPopup', {comp: 'AddTag', payload: {
+            parent: tag.id,
+          }, naked: true})
         },
       },
       {
         name: l['Move tag below'],
         icon: 'tag',
         callback: () => {
-          let level = tag.level
-          if (level === undefined) level = 0
-          if ((level + 1) >= 4) {
-            commit('pushToast', {
-              name: l['Reached maximum subtag depth.'],
-              seconds: 3,
-              type: 'error',
-            })
-          } else
-            dispatch('pushPopup', {
-              comp: 'FastSearch',
-              payload: {
-                callback: (route, {id}) => {
-                  if (id !== tag.id)
-                    dispatch('tag/moveTagBelow', {
-                      target: tag.id, tagId: id,
-                      level: level + 1,
-                    })
-                },
-                allowed: ['tags'],
-              }
-            })
+          dispatch('pushPopup', {
+            comp: 'FastSearch',
+            payload: {
+              callback: (route, {id}) => {
+                if (id !== tag.id)
+                  dispatch('tag/moveTagBelow', {
+                    target: tag.id, tagId: id,
+                  })
+              },
+              allowed: ['tags'],
+            }
+          })
         },
       },
       {
