@@ -115,6 +115,18 @@ export default {
         ...tag
       }, {merge: true})
     },
+    moveTagBetweenTags({}, {tagId, ids, parent, level}) {
+      const batch = fire.batch()
+
+      batch.set(tagRef(parent), {
+        order: ids,
+      }, {merge: true})
+      batch.set(tagRef(tagId), {
+        parent, level,
+      }, {merge: true})
+
+      batch.commit()
+    },
     addTaskByIndex(c, {ids, index, task, tagId, newTaskRef}) {
       const batch = fire.batch()
       addTask(batch, {

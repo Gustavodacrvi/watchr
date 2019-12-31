@@ -76,6 +76,7 @@
           :enableSort='true'
           :showColor='true'
           :list="subList"
+          :onSortableAdd='onSubTagSortableAdd'
 
           :mapNumbers='mapSubTagNumbers'
           @buttonAdd='onSubTagAdd'

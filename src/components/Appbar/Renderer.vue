@@ -166,8 +166,6 @@ export default {
             ids: this.getIds(),
           })
         } else if (type === 'appnav-element') {
-          console.log(this.onSortableAdd)
-          
           if (this.onSortableAdd)
             this.onSortableAdd(this.folder, item.dataset.id, this.getIds())
         }
