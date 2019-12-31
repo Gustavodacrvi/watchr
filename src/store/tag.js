@@ -75,7 +75,6 @@ export default {
     addTag(c, {name, index, ids, level, parent}) {
       if (level === undefined) level = 0
       if (!parent) parent = null
-      console.log(name, index, ids, level, parent)
       const obj = {
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
@@ -83,20 +82,31 @@ export default {
         userId: uid(),
         level, parent,
       }
-      if (index === undefined)
+      if (index === undefined) {
         tagColl().add(obj)
-      else {
+      } else if (!parent) {
         const batch = fire.batch()
   
         const ord = ids.slice()
         const ref = tagRef()
         batch.set(ref, obj)
         ord.splice(index, 0, ref.id)
-        const user = userRef()
-        batch.update(user, {
+        batch.update(userRef(), {
           tags: ord,
         })
   
+        batch.commit()
+      } else {
+        const batch = fire.batch()
+
+        const order = ids.slice()
+        const ref = tagRef()
+        batch.set(ref, obj)
+        order.splice(index, 0, ref.id)
+        batch.update(tagRef(parent), {
+          order,
+        })
+
         batch.commit()
       }
     },

@@ -486,7 +486,7 @@ export default {
       return getOptions(unfix(this.getPomoOptions))
     },
     headerHandle() {
-      return !this.isTaskHandler ? 'pomo' : 'settings-h'
+      return !this.isTaskHandler ? 'pomo' : 'settings-v'
     },
     el() {
       const el = this.$el.getElementsByClassName('view-renderer-move')[0]

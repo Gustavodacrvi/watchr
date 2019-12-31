@@ -231,10 +231,15 @@ export default {
     leave(el, done) {
       const s = el.getElementsByClassName('link-wrapper')[0]
       
-      s.transition = 'height .15s, opacity .15s !important'
-      s.opacity = 0
-      s.height = '0px'
-      setTimeout(() => done(), 300)
+      s.transition = 'none'
+      s.opacity = 1
+      s.height = (this.isDesktop ? 35 : 42) + 'px'
+      setTimeout(() => {
+        s.transition = 'height .15s, opacity .15s'
+        s.opacity = 0
+        s.height = '0px'
+        setTimeout(done, 160)
+      })
     },
     selectEl(id) {
       if (!this.disableSelection) {

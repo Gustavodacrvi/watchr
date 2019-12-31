@@ -74,7 +74,9 @@ export default {
               id: tag.id, order: ids,
             })
           }
-          tag.onSubTagAdd = () => console.log('onAdd')
+          tag.onSubTagAdd = obj => {
+            this.$store.dispatch('pushPopup', {comp: 'AddTag', payload: {...obj, level: level + 1, parent: tag.id}, naked: true})
+          }
           tag.onSubTagSortableAdd = () => console.log('onSortableAdd')
 
           tag.numberOfTasks = tag => ({
