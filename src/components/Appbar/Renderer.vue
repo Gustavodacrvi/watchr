@@ -216,19 +216,23 @@ export default {
           ids.push(el.dataset.id)
       return ids
     },
-    enter(el, done) {
-      const s = el.getElementsByClassName('link-wrapper')[0]
+    enter(el) {
+      const s = el.style
       
+      s.transitionDuration = '.2s'
       s.opacity = 0
       s.height = '0px'
       setTimeout(() => {
+        s.transitionDuration = '.2s'
         s.opacity = 1
         s.height = (this.isDesktop ? 35 : 42) + 'px'
-        setTimeout(() => done(), 300)
+        setTimeout(() => {
+          s.height = 'auto'
+        }, 220)
       })
     },
-    leave(el, done) {
-      const s = el.getElementsByClassName('link-wrapper')[0]
+    leave(el) {
+      const s = el.style
       
       s.transition = 'none'
       s.opacity = 1
@@ -237,7 +241,6 @@ export default {
         s.transition = 'height .15s, opacity .15s'
         s.opacity = 0
         s.height = '0px'
-        setTimeout(done, 160)
       })
     },
     selectEl(id) {
