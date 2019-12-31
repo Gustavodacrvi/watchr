@@ -170,6 +170,11 @@ export default {
       
       batch.commit()
     },
+    moveTagBelow({}, {tagId, target, level}) {
+      tagRef(tagId).update({
+        parent: target, level,
+      })
+    },
     updateOrder(c, ids) {
       userRef().update({
         tags: ids,

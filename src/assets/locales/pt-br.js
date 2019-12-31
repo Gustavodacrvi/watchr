@@ -28,6 +28,7 @@ export default {
   "Heading": "Cabeçalho",
   'Inbox': 'Inbox',
   "Reached maximum subtag depth.": "Limite de profundidade de subtags atingida.",
+  "Move tag below": "Mover tag abaixo",
   "Add subtag": "Adicionar subtag",
   "Open calendar": "Abrir calendário",
   "Pomodoro": "Pomodoro",

@@ -51,7 +51,7 @@ export default {
           callback: (route, task) => {
             this.bindTask(task)
           },
-          onlyTasks: true,
+          allowed: ['tasks'],
         }
       })
     },
