@@ -127,6 +127,18 @@ export default {
 
       batch.commit()
     },
+    moveTagToRoot({}, {tagId, ids}) {
+      const batch = fire.batch()
+
+      batch.set(tagRef(tagId), {
+        parent: null, level: 0,
+      }, {merge: true})
+      batch.update(userRef(), {
+        tags: ids,
+      })
+
+      batch.commit()
+    },
     addTaskByIndex(c, {ids, index, task, tagId, newTaskRef}) {
       const batch = fire.batch()
       addTask(batch, {

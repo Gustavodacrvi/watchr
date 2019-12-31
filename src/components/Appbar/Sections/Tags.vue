@@ -10,6 +10,7 @@
       :active="active"
       :viewType="viewType"
       :mapNumbers='numberOfTasks'
+      :onSortableAdd="onSortableAdd"
       @buttonAdd='buttonAdd'
       @update='update'
     />
@@ -41,7 +42,12 @@ export default {
     },
     buttonAdd(obj) {
       this.$store.dispatch('pushPopup', {comp: 'AddTag', payload: {...obj}, naked: true})
-    }
+    },
+    onSortableAdd(f, tagId, ids) {
+      this.$store.dispatch('tag/moveTagToRoot', {
+        tagId, ids,
+      })
+    },
   },
   computed: {
     ...mapState({
