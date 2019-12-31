@@ -37,14 +37,14 @@ export default {
     current: '00:00',
     openHelper: false,
 
-    duration: '00:10',
+/*     duration: '00:10',
     currentDuration: '00:10',
     shortRest: '00:05',
-    longRest: '00:10',
-/*     duration: '25:00',
+    longRest: '00:10', */
+    duration: '25:00',
     currentDuration: '25:00',
     shortRest: '05:00',
-    longRest: '15:00', */
+    longRest: '15:00',
     task: null,
 
     running: false,
@@ -108,18 +108,20 @@ export default {
         }
       }
     },
-    toggle({dispatch, state}, task) {
-      if (task)
+    toggle({dispatch, state}, obj) {
+      if (obj.task)
         state.task = task
       
-      dispatch('toggleInterval')
-      state.running = !state.running
-
-      if (state.running) {
-        state.openHelper = true
-        tickSound.play()
+      if (!obj.stopToggle) {
+        dispatch('toggleInterval')
+        state.running = !state.running
+  
+        if (state.running) {
+          state.openHelper = true
+          tickSound.play()
+        }
+        else tickSound.pause()
       }
-      else tickSound.pause()
     },
     toggleInterval({state, dispatch}) {
       if (!state.addInterval)

@@ -555,7 +555,7 @@ export default {
           name: l['Pomo this task'],
           icon: 'pomo',
           callback: () => {
-            this.$store.dispatch('pomo/toggle', this.task)
+            this.$store.dispatch('pomo/toggle', {task: this.task, stopToggle: true})
           },
         },
         {

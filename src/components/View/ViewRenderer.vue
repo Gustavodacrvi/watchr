@@ -27,6 +27,7 @@
 
         :viewName="viewName"
         :options="getHeaderOptions"
+        :optionsHandle='headerHandle'
         :headerTags="headerTags"
 
         @tag='selectTag'
@@ -94,6 +95,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment/src/moment'
 
 import { pipeBooleanFilters } from '@/utils/memo'
+import { userRef } from '@/utils/firestore'
 
 const MAXIMUM_TOUCH_DISTANCE = 100
 const MINIMUM_DISTANCE = 10
@@ -358,6 +360,19 @@ export default {
         task: {list: ''},
       })
     },
+    savePomoOpt(opt) {
+
+      const fix = s => `${s.split(':')[1]}:00`
+
+      
+      userRef().set({
+        pomo: {
+          duration: fix(opt.duration),
+          shortRest: fix(opt.shortRest),
+          longRest: fix(opt.longRest),
+        }
+      }, {merge: true})
+    },
   },
   computed: {
     ...mapState({
@@ -386,6 +401,15 @@ export default {
       doesTaskPassInclusivePriority: 'task/doesTaskPassInclusivePriority',
       doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
+    getPomoOptions() {
+      if (this.userInfo && this.userInfo.pomo)
+        return this.userInfo.pomo
+      return {
+        duration: '25:00',
+        shortRest: '05:00',
+        longRest: '15:00',
+      }
+    },
     getHelperComponent() {
       return (this.openHelper && this.viewName !== 'Pomodoro') ? 'PomoHelper' : this.helperComponent
     },
@@ -393,7 +417,73 @@ export default {
       return this.getViewComp === 'TaskHandler'
     },
     getHeaderOptions() {
-      return !this.isTaskHandler ? [] : this.taskIconDropOptions
+      return !this.isTaskHandler ? this.pomoOptions : this.taskIconDropOptions
+    },
+    pomoOptions() {
+      const l = this.l
+      const getOptions = (opt, save) => {
+        const {duration, shortRest, longRest} = opt
+
+        if (save) this.savePomoOpt(opt)
+
+        const f = utils.formatQuantity
+
+        return [
+          {
+            name: `${l['Duration: ']}<span class="fade">${f(duration)}</span>`,
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                msg: l['Duration: '],
+                callback: newTime => getOptions({
+                  duration: newTime, shortRest, longRest,
+                }, true)
+              }
+            }),
+          },
+          {
+            name: `${l['Short rest: ']}<span class="fade">${f(shortRest)}</span>`,
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                msg: l['Short rest: '],
+                callback: newTime => getOptions({
+                  duration, shortRest: newTime, longRest,
+                }, true)
+              }
+            }),
+          },
+          {
+            name: `${l['Long rest: ']}<span class="fade">${f(longRest)}</span>`,
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                msg: l['Long rest: '],
+                callback: newTime => getOptions({
+                  duration, shortRest, longRest: newTime,
+                }, true)
+              }
+            }),
+          },
+        ]
+      }
+
+      const unfix = obj => {
+        const fix = str => `00:${str.split(':')[0]}`
+        
+        const {duration, longRest, shortRest} = obj
+        return {
+          ...obj,
+          duration: fix(duration),
+          longRest: fix(longRest),
+          shortRest: fix(shortRest),
+        }
+      }
+      
+      return getOptions(unfix(this.getPomoOptions))
+    },
+    headerHandle() {
+      return !this.isTaskHandler ? 'pomo' : 'settings-h'
     },
     el() {
       const el = this.$el.getElementsByClassName('view-renderer-move')[0]
@@ -694,7 +784,7 @@ export default {
             callback: () => this.toggleCompleted()
           },
         ]
-        if (this.showCompleted) opt[3].name = l['Hide completed']
+        if (this.showCompleted) opt[4].name = l['Hide completed']
         if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
           opt.push({
             type: 'hr',
