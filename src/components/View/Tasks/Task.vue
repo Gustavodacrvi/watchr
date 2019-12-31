@@ -291,7 +291,7 @@ export default {
       this.changeColor = true
       this.timeout = setTimeout(() => {
         this.openMobileOptions()
-      }, 250)
+      }, 350)
     },
     touchmove(evt) {
       const touch = evt.changedTouches[0]
@@ -551,6 +551,13 @@ export default {
       const dispatch = this.$store.dispatch
       const l = this.l
       const arr = [
+        {
+          name: l['Pomo this task'],
+          icon: 'pomo',
+          callback: () => {
+            this.$store.dispatch('pomo/toggle', {task: this.task, stopToggle: true})
+          },
+        },
         {
           name: l['No date'],
           icon: 'bloqued',

@@ -130,7 +130,7 @@ export default {
 
       this.timeout = setTimeout(() => {
         this.openMobileOptions()
-      }, 250)
+      }, 350)
     },
     touchmove(evt) {
       const touch = evt.changedTouches[0]

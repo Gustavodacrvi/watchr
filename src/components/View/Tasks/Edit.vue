@@ -436,7 +436,7 @@ export default {
       savedTags: 'tag/sortedTagsByName',
     }),
     showingOptions() {
-      return this.doesntHaveChecklist && !this.isAddingChecklist
+      return !this.isAddingChecklist
     },
     isEditing() {
       return this.defaultTask

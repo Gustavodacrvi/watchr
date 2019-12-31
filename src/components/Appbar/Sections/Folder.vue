@@ -112,7 +112,7 @@ export default {
       
       this.timeout = setTimeout(() => {
         this.openMobileOptions()
-      }, 250)
+      }, 350)
     },
     go() {
       if (this.isDesktop) this.click()

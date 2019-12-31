@@ -83,7 +83,7 @@ export default {
       if (callback) callback()
     },
     close() {
-      this.$store.dispatch('closePopup')
+      this.$store.dispatch('closePopup', true)
     },
     getOptions() {
       const { search, tasks, tags, lists, folders, views } = this

@@ -54,6 +54,8 @@ export default {
     isSmartList() {
       const lists = [
         'Today',
+        'Pomodoro',
+        'Someday',
         'Calendar',
         'Upcoming',
         'Tomorrow',

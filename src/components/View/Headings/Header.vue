@@ -27,7 +27,7 @@
       >
         <div v-if="isEditable && editing" class="line"></div>
       </transition>
-      <IconDrop class="passive drop" handle="settings-h" handleColor="var(--gray)" :options="options" :circle='true'/>
+      <IconDrop v-if="options.length > 0" class="passive drop" :handle="optionsHandle" handleColor="var(--gray)" :options="options" :circle='true'/>
     </div>
     <div class="tags" style="flex-direction: column; align-items: flex-start;margin-top: 4px">
       <div>
@@ -130,7 +130,7 @@ import utils from '@/utils'
 
 export default {
   mixins: [FileMixin],
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'priorities', 'inclusiveTags', 'inclusivePriority', 'exclusivePriorities', 'inclusiveList', 'exclusiveLists', 'inclusiveFolder', 'exclusiveFolders', 'folders'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'priorities', 'inclusiveTags', 'inclusivePriority', 'exclusivePriorities', 'inclusiveList', 'exclusiveLists', 'inclusiveFolder', 'exclusiveFolders', 'folders', 'optionsHandle'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -273,6 +273,7 @@ export default {
             },
           ] : [],
           icondrop: this.options,
+          handle: this.optionsHandle,
         },
         title: this.viewNameValue,
       })

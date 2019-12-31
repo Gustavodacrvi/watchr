@@ -11,11 +11,13 @@
 <script>
 
 import LongCalendarPicker from './SmartComponents/LongCalendarPicker.vue'
+import PomoHelper from './SmartComponents/PomoHelper.vue'
 
 export default {
   props: ['comp'],
   components: {
     LongCalendarPicker,
+    PomoHelper,
   },
 }
 
@@ -26,7 +28,7 @@ export default {
 .HelperComponent {
   position: sticky;
   bottom: 16px;
-  border-radius: 8px;
+  border-radius: 16px;
   z-index: 3;
 }
 

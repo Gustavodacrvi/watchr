@@ -226,7 +226,7 @@ export default {
 
     this.download(list.name + '.json', JSON.stringify(template))
   },
-  bindOptionsToEventListener(node, options, parent, event) {
+  bindOptionsToEventListener(node, options, parent, event, translateY) {
     node.addEventListener(event ? event : 'contextmenu', evt => {
       evt.preventDefault()
       if (!contextMenuRunned) {
@@ -253,6 +253,8 @@ export default {
         s.position = 'absolute'
         s.left = x
         s.top = y
+        if (translateY)
+          s.transform = `translateY(${translateY})`
         
         setTimeout(() => contextMenuRunned = false)
       }

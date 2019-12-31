@@ -3,6 +3,8 @@
     <span v-if="content.msg" class="msg">{{ content.msg }}</span>
     <div class="wrapper">
       <VTimePicker
+        v-bind="getProps"
+      
         :noTitle='true'
         :scrollable='true'
         :dark='true'
@@ -36,6 +38,9 @@ export default {
   },
   computed: {
     ...mapState(['userInfo']),
+    getProps() {
+      return (this.content && this.content.props) ? this.content.props : {}
+    },
     getFormat() {
       if (this.content.format) return this.content.format
       if (this.userInfo.disablePmFormat)

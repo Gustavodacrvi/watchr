@@ -7,7 +7,7 @@
     @touchstart.passive='touchstart'
     @touchmove.passive='touchmove'
   >
-    <div :class="{extend: !isTaskHandler}">
+    <div class='view-wrapper'>
       <Header
         v-bind="$props"
 
@@ -27,6 +27,7 @@
 
         :viewName="viewName"
         :options="getHeaderOptions"
+        :optionsHandle='headerHandle'
         :headerTags="headerTags"
 
         @tag='selectTag'
@@ -52,12 +53,13 @@
           :taskIconDropOptions='taskIconDropOptions'
           :updateHeadingIds='updateHeadingIds'
           :autoSchedule='autoSchedule'
-          :openCalendar='openCalendar'
+          :openCalendar='getHelperComponent === "LongCalendarPicker"'
 
           @allow-someday='showSomeday = true'
           @root-non-filtered='getRootNonFilteredFromTaskHandler'
         />
       </transition>
+      <div style='height: 300px'></div>
     </div>
     <PaginationVue v-if="headingsPagination"
       :page='pagination'
@@ -65,11 +67,11 @@
       @select='selectPagination'
     />
     <transition name="fade-t" mode="out-in">
-      <ActionButtons v-if="!openCalendar && isTaskHandler" key="buttons" @moving='v => movingButton = v'/>
-      <HelperComponent v-else-if='openCalendar'
-        comp='LongCalendarPicker'
+      <ActionButtons v-if="!getHelperComponent && isTaskHandler" key="buttons" @moving='v => movingButton = v'/>
+      <HelperComponent v-else-if='getHelperComponent'
+        :comp='getHelperComponent'
         key="helper"
-        @close='openCalendar = false'
+        @close='helperComponent = null'
       />
     </transition>
   </div>
@@ -93,6 +95,7 @@ import utils from '@/utils/index.js'
 import mom from 'moment/src/moment'
 
 import { pipeBooleanFilters } from '@/utils/memo'
+import { userRef } from '@/utils/firestore'
 
 const MAXIMUM_TOUCH_DISTANCE = 100
 const MINIMUM_DISTANCE = 10
@@ -123,7 +126,7 @@ export default {
       showingFolderSelection: false,
       showingPrioritySelection: false,
       showSomeday: false,
-      openCalendar: false,
+      helperComponent: false,
 
       rootNonFiltered: [],
       computedHeaderOptions: [],
@@ -357,12 +360,31 @@ export default {
         task: {list: ''},
       })
     },
+    savePomoOpt(opt) {
+
+      const fix = s => `${s.split(':')[1]}:00`
+
+      const obj = {
+        pomo: {
+          duration: fix(opt.duration),
+          shortRest: fix(opt.shortRest),
+          longRest: fix(opt.longRest),
+        }
+      }
+      
+      userRef().set(obj, {merge: true})
+
+      this.$store.dispatch('pomo/updateDurations', obj)
+    },
   },
   computed: {
     ...mapState({
       viewOrders: state => state.list.viewOrders,
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
+      runningPomo: state => state.pomo.running,
+      rest: state => state.pomo.rest,
+      openHelper: state => state.pomo.openHelper,
     }),
     ...mapGetters({
       platform: 'platform',
@@ -382,11 +404,89 @@ export default {
       doesTaskPassInclusivePriority: 'task/doesTaskPassInclusivePriority',
       doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
+    getPomoOptions() {
+      if (this.userInfo && this.userInfo.pomo)
+        return this.userInfo.pomo
+      return {
+        duration: '25:00',
+        shortRest: '05:00',
+        longRest: '15:00',
+      }
+    },
+    getHelperComponent() {
+      return (this.openHelper && this.viewName !== 'Pomodoro') ? 'PomoHelper' : this.helperComponent
+    },
     isTaskHandler() {
       return this.getViewComp === 'TaskHandler'
     },
     getHeaderOptions() {
-      return !this.isTaskHandler ? [] : this.taskIconDropOptions
+      return !this.isTaskHandler ? this.pomoOptions : this.taskIconDropOptions
+    },
+    pomoOptions() {
+      const l = this.l
+      const getOptions = (opt, save) => {
+        const {duration, shortRest, longRest} = opt
+
+        if (save) this.savePomoOpt(opt)
+
+        const f = utils.formatQuantity
+
+        return [
+          {
+            name: `${l['Duration: ']}<span class="fade">${f(duration)}</span>`,
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                msg: l['Duration: '],
+                callback: newTime => getOptions({
+                  duration: newTime, shortRest, longRest,
+                }, true)
+              }
+            }),
+          },
+          {
+            name: `${l['Short rest: ']}<span class="fade">${f(shortRest)}</span>`,
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                msg: l['Short rest: '],
+                callback: newTime => getOptions({
+                  duration, shortRest: newTime, longRest,
+                }, true)
+              }
+            }),
+          },
+          {
+            name: `${l['Long rest: ']}<span class="fade">${f(longRest)}</span>`,
+            callback: () => ({
+              comp: 'TimePicker',
+              content: {
+                msg: l['Long rest: '],
+                callback: newTime => getOptions({
+                  duration, shortRest, longRest: newTime,
+                }, true)
+              }
+            }),
+          },
+        ]
+      }
+
+      const unfix = obj => {
+        const fix = str => `00:${str.split(':')[0]}`
+        
+        const {duration, longRest, shortRest} = obj
+        return {
+          ...obj,
+          duration: fix(duration),
+          longRest: fix(longRest),
+          shortRest: fix(shortRest),
+        }
+      }
+      
+      return getOptions(unfix(this.getPomoOptions))
+    },
+    headerHandle() {
+      return !this.isTaskHandler ? 'pomo' : 'settings-h'
     },
     el() {
       const el = this.$el.getElementsByClassName('view-renderer-move')[0]
@@ -657,7 +757,11 @@ export default {
           {
             name: l['Open calendar'],
             icon: 'calendar',
-            callback: () => {this.openCalendar = !this.openCalendar}
+            callback: () => {
+              if (this.helperComponent !== 'LongCalendarPicker')
+                this.helperComponent = 'LongCalendarPicker'
+              else this.helperComponent = null
+            }
           },
           {
             name: l['Auto schedule'],
@@ -683,7 +787,7 @@ export default {
             callback: () => this.toggleCompleted()
           },
         ]
-        if (this.showCompleted) opt[3].name = l['Hide completed']
+        if (this.showCompleted) opt[4].name = l['Hide completed']
         if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
           opt.push({
             type: 'hr',
@@ -879,11 +983,8 @@ export default {
   },
   watch: {
     viewName() {
-      this.showingTagSelection = false
-      this.showingListSelection = false
-      this.showingFolderSelection = false
-      this.getComputedOptions()
       this.autoSchedule = null
+      this.getComputedOptions()
       this.getLocalStorageSchedule()
     },
     viewNameValue() {
@@ -909,15 +1010,20 @@ export default {
 }
 
 .extend {
-  position: absolute;
   height: 100%;
   width: 100%;
+}
+
+.view-wrapper {
+  width: 100%;
+  min-height: 100%;
 }
 
 .ViewRenderer.mobile {
   margin: 0 8px;
   margin-top: -4px;
 }
+
 
 .component {
   z-index: 3;
