@@ -1,7 +1,7 @@
 
 
 export default {
-  tagOptions: (tag, level) => ({dispatch, getters, tasks}) => {
+  tagOptions: tag => ({dispatch, getters, tasks, commit}) => {
     const l = getters['l']
     const opt = [
       {
@@ -15,10 +15,19 @@ export default {
         name: l['Add subtag'],
         icon: 'arrow',
         callback: () => {
-          dispatch('pushPopup', {comp: 'AddTag', payload: {
-            level,
-            parent: tag.id,
-          }, naked: true})
+          let level = tag.level
+          if (level === undefined) level = 0
+          if ((level + 1) >= 4) {
+            commit('pushToast', {
+              name: l['Reached maximum subtag depth.'],
+              seconds: 3,
+              type: 'error',
+            })
+          } else
+            dispatch('pushPopup', {comp: 'AddTag', payload: {
+              level: level + 1,
+              parent: tag.id,
+            }, naked: true})
         },
       },
       {

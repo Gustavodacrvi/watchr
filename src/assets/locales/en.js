@@ -111,6 +111,7 @@ export default {
   "Duration: ": "Duration: ",
   "Short rest: ": "Short rest: ", 
   "Long rest: ": "Long rest: ",
+  "Reached maximum subtag depth.": "Reached maximum subtag depth.",
   'Tags': 'Tags',
   'Sort lists by name': 'Sort lists by name',
   'Sort tags': 'Sort tags',

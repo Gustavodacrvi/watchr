@@ -27,6 +27,7 @@ export default {
   "No time": "Sem horário",
   "Heading": "Cabeçalho",
   'Inbox': 'Inbox',
+  "Reached maximum subtag depth.": "Limite de profundidade de subtags atingida.",
   "Add subtag": "Adicionar subtag",
   "Open calendar": "Abrir calendário",
   "Pomodoro": "Pomodoro",

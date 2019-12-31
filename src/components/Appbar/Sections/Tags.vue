@@ -60,14 +60,13 @@ export default {
     getTags() {
       const getSubTagsByParentId = this.getSubTagsByParentId
       const getNumberOfTasksByTag = this.getNumberOfTasksByTag
-      const pushRouter = this.$router.push
       const getTags = (level, parentId) => {
         const tags = getSubTagsByParentId({level, parentId}).map(tag => ({...tag}))
         if (tags.length === 0) return []
 
         for (const tag of tags) {
-          tag.callback = () => pushRouter('/user?tag=' + tag.name)
-          tag.options = utilsTag.tagOptions(tag, level + 1)
+          tag.callback = () => this.$router.push('/user?tag=' + tag.name)
+          tag.options = utilsTag.tagOptions(tag)
 
           tag.onSubTagUpdate = () => console.log('onUpdate')
           tag.onSubTagAdd = () => console.log('onAdd')

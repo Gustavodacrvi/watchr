@@ -207,7 +207,7 @@ export default {
 <style scoped>
 
 .sub-list {
-  margin-left: 20px;
+  margin-left: 14px;
 }
 
 .icon-wrapper {

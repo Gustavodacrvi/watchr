@@ -218,13 +218,23 @@ export default {
       return ids
     },
     enter(el, done) {
-      el.style.opacity = 0
-      el.style.height = '0px'
+      const s = el.getElementsByClassName('link-wrapper')[0]
+      
+      s.opacity = 0
+      s.height = '0px'
       setTimeout(() => {
-        el.style.opacity = 1
-        el.style.height = (this.isDesktop ? 35 : 42) + 'px'
+        s.opacity = 1
+        s.height = (this.isDesktop ? 35 : 42) + 'px'
         setTimeout(() => done(), 300)
       })
+    },
+    leave(el, done) {
+      const s = el.getElementsByClassName('link-wrapper')[0]
+      
+      s.transition = 'height .15s, opacity .15s !important'
+      s.opacity = 0
+      s.height = '0px'
+      setTimeout(() => done(), 300)
     },
     selectEl(id) {
       if (!this.disableSelection) {
@@ -233,12 +243,6 @@ export default {
           this.selected.splice(i, 1)
         } else this.selected.push(id)
       }
-    },
-    leave(el, done) {
-      el.style.transition = 'height .15s, opacity .15s !important'
-      el.style.opacity = 0
-      el.style.height = '0px'
-      setTimeout(() => done(), 300)
     },
     getIcon(el) {
       if (this.icon) return this.icon

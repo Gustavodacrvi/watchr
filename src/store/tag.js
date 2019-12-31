@@ -31,7 +31,7 @@ export default {
     ...MemoizeGetters(['tags'], {
       getSubTagsByLevel({state, getters}, level) {
         if (level === 0)
-          return getters.rootTags
+          return getters.sortedTags
         return state.tags.filter(tag => tag.level === level)
       },
       getSubTagsByParentId({getters}, {parentId, level}) {
