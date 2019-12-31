@@ -1,21 +1,22 @@
 <template>
-  <div class="AppbarElement AppbarElement-link rb handle"
+  <div class="AppbarElement AppbarElement-link rb"
     :tabindex="tabindex"
-    @mouseenter="hover = true"
-    @mouseleave="hover = false"
-    :class="[platform,{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover}]"
-
-    @click.stop="linkCallback"
-    @touchstart.passive='touchStart'
-    @touchmove.passive='touchmove'
-    @touchend.passive='touchEnd'
+    :class="platform"
   >
     <div
-      class="link-wrapper cursor remove-highlight AppbarElement-link rb"
+      class="link-wrapper handle cursor remove-highlight AppbarElement-link rb"
       :data-type='type'
       :data-selectedtype='selectedtype'
       :data-color='iconColor'
       :data-disabled='disableAction'
+      :class="{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover}"
+
+      @mouseenter="hover = true"
+      @mouseleave="hover = false"
+      @click.stop="linkCallback"
+      @touchstart.passive='touchStart'
+      @touchmove.passive='touchmove'
+      @touchend.passive='touchEnd'
     >
       <div class="icon-wrapper">
         <Icon class="main-icon"
@@ -43,12 +44,25 @@
           <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
         </div>
       </div>
+      <CircleBubble class="bubble"
+        innerColor='var(--light-gray)'
+        outerColor='var(--gray)'
+        opacity='0'
+      />
     </div>
-    <CircleBubble
-      innerColor='var(--light-gray)'
-      outerColor='var(--gray)'
-      opacity='0'
-    />
+    <div v-if="subList && subList.length > 0" class="sub-list">
+      <Renderer
+        v-bind="$props"
+
+        :enableSort='true'
+        :showColor='true'
+        :list="subList"
+
+        :mapNumbers='mapSubTagNumbers'
+        @buttonAdd='onSubTagAdd'
+        @update='onSubTagUpdate'
+      />
+    </div>
   </div>
 </template>
 
@@ -64,8 +78,9 @@ import utils from '@/utils/'
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
-  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'string', 'selectedtype', 'showColor'],
+  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'string', 'onSubTagSortableAdd', 'onSubTagAdd', 'selectedtype', 'showColor', 'subList', 'mapSubTagNumbers', 'onSubTagUpdate'],
   components: {
+    Renderer: () => import('./Renderer.vue'),
     Icon: IconVue,
     IconDrop: IconDropVue,
   },
@@ -191,6 +206,10 @@ export default {
 
 <style scoped>
 
+.sub-list {
+  margin-left: 20px;
+}
+
 .icon-wrapper {
   height: 100%;
   width: 40px;
@@ -213,10 +232,15 @@ export default {
 }
 
 .link-wrapper {
-  height: 100%;
+  height: 35px;
   position: relative;
   display: flex;
+  overflow: hidden;
   transition-duration: .15s;
+}
+
+.mobile .link-wrapper {
+  height: 42px;
 }
 
 .name {
@@ -235,30 +259,27 @@ export default {
 .AppbarElement {
   outline: none;
   position: relative;
-  height: 35px;
   transition: background-color .15s, height .3s;
-  overflow: hidden;
 }
 
-.AppbarElement.mobile {
-  height: 42px;
-}
-
-.sortable-ghost .link-wrapper {
+.sortable-ghost .name-wrapper, .sortable-ghost .icon-wrapper, .sortable-ghost .bubble {
   display: none;
 }
 
-
 .desktop .link-wrapper:hover, .notSmartActive {
-  background-color: var(--card) !important;
+  background-color: var(--card);
 }
 
 .link-wrapper:active {
+  background-color: var(--card);
+}
+
+.sortable-drag {
   background-color: var(--card) !important;
 }
 
-.sortable-ghost {
-  background-color: var(--void) !important;
+.sortable-ghost .link-wrapper {
+  background-color: var(--dark-void) !important;
   transition-duration: 0 !important;
   transition: none !important;
 }
@@ -297,9 +318,9 @@ export default {
   stroke: white;
 }
 
-.isSelectedEl {
+/* .isSelectedEl {
   background-color: rgba(53, 73, 90, 0.6) !important;
-}
+} */
 
 .name-t-enter {
   opacity: 0;

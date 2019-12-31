@@ -54,12 +54,26 @@ export default {
       return this.$store.getters['tag/sortedTags']
     },
     getTags() {
-      let tags = this.sortedTags.slice()
+      let tags = this.sortedTags.map(el => ({...el}))
+
+      let level = 0
       for (const tag of tags) {
-        tag.callback = () => {
-          this.$router.push('/user?tag=' + tag.name)
+        tag.callback = () => this.$router.push('/user?tag=' + tag.name)
+        tag.options = utilsTag.tagOptions(tag, level + 1)
+
+        tag.onSubTagUpdate = () => console.log('onUpdate')
+        tag.onSubTagAdd = () => console.log('onAdd')
+        tag.onSubTagSortableAdd = () => console.log('onSortableAdd')
+
+        tag.mapSubTagNumbers = () => {
+          console.log('mapNumbers')
+          return {
+            total: 10,
+            completed: 5,
+          }
         }
-        tag.options = utilsTag.tagOptions(tag)
+
+        tag.subList = []
       }
       return tags
     },

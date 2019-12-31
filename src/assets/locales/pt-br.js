@@ -27,6 +27,7 @@ export default {
   "No time": "Sem horário",
   "Heading": "Cabeçalho",
   'Inbox': 'Inbox',
+  "Add subtag": "Adicionar subtag",
   "Open calendar": "Abrir calendário",
   "Pomodoro": "Pomodoro",
   "Duration: ": "Duração: ",

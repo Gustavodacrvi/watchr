@@ -1,7 +1,7 @@
 
 
 export default {
-  tagOptions: tag => ({dispatch, getters, tasks}) => {
+  tagOptions: (tag, level) => ({dispatch, getters, tasks}) => {
     const l = getters['l']
     const opt = [
       {
@@ -10,6 +10,16 @@ export default {
         callback: () => dispatch('pushPopup', {
             comp: 'AddTag', payload: {...tag, editing: true}, naked: true
           })
+      },
+      {
+        name: l['Add subtag'],
+        icon: 'arrow',
+        callback: () => {
+          dispatch('pushPopup', {comp: 'AddTag', payload: {
+            level,
+            parent: tag.id,
+          }, naked: true})
+        },
       },
       {
         name: l["Toggle favorite"],

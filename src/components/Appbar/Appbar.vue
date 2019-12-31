@@ -82,7 +82,7 @@
                   />
                 </transition>
               </div>
-              <div v-if="!isDesktop" style="height: 300px"></div>
+              <div style="height: 300px"></div>
             </div>
           </transition>
         </div>

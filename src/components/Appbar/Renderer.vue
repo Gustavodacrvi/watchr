@@ -9,26 +9,18 @@
     >
       <AppbarElement v-for="(el,i) in list"
         :key="el.id"
-        v-bind="mapNumbersBind(el)"
+        v-bind="{...mapNumbersBind(el), ...el}"
         class="element"
         :iconColor='getIconColor(el)'
         :icon="getIcon(el)"
-        :selectedtype='el.type'
         :showColor='showColor'
-
         :type="type"
-        :subListIcon='subListIcon'
-        :name="el.name"
-        :disableAction='el.disableAction'
+
         :tabindex="i + 1"
         :selected='selected'
         :active="active"
         :isSmart='isSmart'
         :viewType="viewType"
-        :callback="el.callback"
-        :options='el.options'
-        :list="el.list"
-        :id='el.id'
         :isDragging='isDragging'
         :progress='getProgress(el)'
         :helpIcons='getExraIcon(el)'
@@ -103,6 +95,8 @@ export default {
       }},
       delay: 150,
       delayOnTouchOnly: true,
+      forceFallback: true,
+      fallbackOnBody: true,
       handle: '.handle',
 
       onUpdate: (evt) => {
@@ -172,7 +166,10 @@ export default {
             ids: this.getIds(),
           })
         } else if (type === 'appnav-element') {
-          this.onSortableAdd(this.folder, item.dataset.id, this.getIds())
+          console.log(this.onSortableAdd)
+          
+          if (this.onSortableAdd)
+            this.onSortableAdd(this.folder, item.dataset.id, this.getIds())
         }
         this.draggableRoot.removeChild(item)
       }

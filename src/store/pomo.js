@@ -125,8 +125,10 @@ export default {
     toggle({dispatch, state}, obj) {
       if (obj && obj.task)
         state.task = obj.task
+
+      const stop = (obj && obj.stopToggle)
       
-      if (!obj || !obj.stopToggle) {
+      if (!state.running || !stop) {
         dispatch('toggleInterval')
         state.running = !state.running
   

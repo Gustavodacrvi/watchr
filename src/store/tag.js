@@ -60,12 +60,16 @@ export default {
         })
       ])
     },
-    addTag(c, {name, index, ids}) {
+    addTag(c, {name, index, ids, level, parent}) {
+      if (level === undefined) level = 0
+      if (!parent) parent = null
+      console.log(name, index, ids, level, parent)
       const obj = {
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         name,
         userId: uid(),
+        level, parent,
       }
       if (index === undefined)
         tagColl().add(obj)
@@ -83,6 +87,11 @@ export default {
   
         batch.commit()
       }
+    },
+    saveTag(c, tag) {
+      tagRef(tag.id).set({
+        ...tag
+      }, {merge: true})
     },
     addTaskByIndex(c, {ids, index, task, tagId, newTaskRef}) {
       const batch = fire.batch()
@@ -124,11 +133,6 @@ export default {
       const tags = state.tags.slice()
       tags.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       dispatch('updateOrder', tags.map(el => el.id))
-    },
-    saveTag(c, tag) {
-      tagRef(tag.id).update({
-        ...tag
-      })
     },
     deleteAllData({state}) {
       for (const el of state.tags)

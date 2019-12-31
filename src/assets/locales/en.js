@@ -106,6 +106,7 @@ export default {
   'Filters': 'Filters',
   'Add list notes': 'Add list notes',
   "Sort filters by name": "Sort filters by name",
+  "Add subtag": "Add subtag",
   "Add filter": "Add filter",
   "Duration: ": "Duration: ",
   "Short rest: ": "Short rest: ", 
