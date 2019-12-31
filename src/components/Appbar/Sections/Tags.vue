@@ -51,6 +51,7 @@ export default {
     ...mapGetters({
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getSubTagsByParentId: 'tag/getSubTagsByParentId',
+      checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
       l: 'l',
       isDesktop: 'isDesktop',
     }),
@@ -68,7 +69,11 @@ export default {
           tag.callback = () => this.$router.push('/user?tag=' + tag.name)
           tag.options = utilsTag.tagOptions(tag)
 
-          tag.onSubTagUpdate = () => console.log('onUpdate')
+          tag.onSubTagUpdate = ids => {
+            this.$store.dispatch('tag/saveTag', {
+              id: tag.id, order: ids,
+            })
+          }
           tag.onSubTagAdd = () => console.log('onAdd')
           tag.onSubTagSortableAdd = () => console.log('onSortableAdd')
 
@@ -78,7 +83,8 @@ export default {
 
           tag.subList = getTags(level + 1, tag.id)
         }
-        return tags
+        if (level === 0) return tags
+        return this.checkMissingIdsAndSortArr(tag.order || [], tags)
       }
 
       return getTags(0)
