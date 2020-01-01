@@ -34,7 +34,6 @@ export default {
   state: {
     stats: null,
     cycles: 0,
-    longCycles: 0,
     current: '00:00',
     openHelper: false,
 
@@ -61,6 +60,12 @@ export default {
     },
   },
   getters: {
+    cyclePomos(state) {
+      return state.cycles % 4
+    },
+    longCycles(state) {
+      return Math.floor(state.cycles / 4)
+    },
     getPomoColor(state) {
       return state.rest ? 'var(--primary)' : 'var(--dark-red)'
     },
@@ -84,14 +89,22 @@ export default {
     }
   },
   actions: {
-    getData({dispatch, state}) {
+    getData({state, dispatch}) {
       setTimeout(() => {
-        dispatch('update')
+        dispatch('updateDurations')
       }, 1000)
       return Promise.all([
         new Promise(resolve => {
           pomoDoc().onSnapshot(snap => {
             state.stats = snap.data()
+
+            const info = state.stats && state.stats.dates[TOD_STR]
+            if (info) {
+              state.cycles = info.completedPomos
+      
+              if (state.cycles === undefined) state.cycles = 0
+            }
+            
             resolve()
           })
         })
@@ -109,24 +122,6 @@ export default {
         state.currentDuration = pomo.duration
       }
     },
-    update({state, rootState, dispatch}) {
-      const {userInfo} = rootState
-      if (userInfo && userInfo.pomoDate === TOD_STR) {
-        state.cycles = userInfo.cycles
-        state.longCycles = userInfo.longCycles
-
-        if (state.cycles === undefined) state.cycles = 0
-        if (state.longCycles === undefined) state.longCycles = 0
-
-        if (state.cycles === 4) {
-          state.cycles = 0
-          state.longCycles++
-          ///////////////////////////////////////////////////////// SAVE LONG CYCLE
-        }
-
-      }
-      dispatch('updateDurations')
-    },
     toggle({dispatch, state}, obj) {
       if (obj && obj.task)
         state.task = obj.task
@@ -142,11 +137,11 @@ export default {
 
           if (!state.rest)
             dispatch('updateStats', {
-              pomoEntries: fd().arrayUnion(mom().format('HH:mm')),
+              pomoEntries: fd().arrayUnion(mom().format('HH:mm:ss')),
             })
           else
             dispatch('updateStats', {
-              restEntries: fd().arrayUnion(mom().format('HH:mm')),
+              restEntries: fd().arrayUnion(mom().format('HH:mm:ss')),
             })
         } else {
           if (!state.rest)
@@ -180,7 +175,7 @@ export default {
             dispatch('saveFocusTime', true)
             state.cycles++
 
-            const longRest = state.cycles === 4
+            const longRest = state.cycles % 4 === 0
 
             state.rest = longRest ? 'long' : 'short'
             state.currentDuration = longRest ? state.longRest : state.shortRest
@@ -203,10 +198,6 @@ export default {
 
             tickSound.pause()
             window.navigator.vibrate(200)
-            if (state.cycles === 4) {
-              state.cycles = 0
-              state.longCycles++
-            }
           }
         }, 1000)
       else {

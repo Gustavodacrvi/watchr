@@ -19,14 +19,14 @@
 
 <script>
 
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   computed: {
-    ...mapState({
-      cycles: state => state.pomo.cycles,
-      longCycles: state => state.pomo.longCycles,
-    }),
+    ...mapGetters({
+      longCycles: 'pomo/longCycles',
+      cycles: 'pomo/cyclePomos',
+    })
   },
 }
 

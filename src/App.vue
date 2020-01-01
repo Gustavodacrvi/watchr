@@ -171,10 +171,10 @@ export default {
   },
   watch: {
     userInfo() {
-      this.$store.dispatch('pomo/update')
+      this.$store.dispatch('pomo/updateDurations')
     },
     user() {
-      this.$store.dispatch('pomo/update')
+      this.$store.dispatch('pomo/updateDurations')
     },
     $route(to, from) {
       const isGoingToPopup = to.path === '/popup'
