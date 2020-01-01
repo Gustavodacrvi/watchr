@@ -535,7 +535,8 @@ export default {
           }
 
           for (const id of tags) {
-            if (!task.tags.includes(id) && !foundChild(id)) return false
+            if (task.tags.includes(id)) continue
+            if (!foundChild(id)) return false
           }
           return true
         },
