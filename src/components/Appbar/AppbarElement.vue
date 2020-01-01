@@ -1,54 +1,89 @@
 <template>
-  <div class="AppbarElement AppbarElement-link rb handle"
+  <div class="AppbarElement AppbarElement-link rb"
     :tabindex="tabindex"
-    @mouseenter="hover = true"
-    @mouseleave="hover = false"
-    :class="[platform,{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover}]"
-
-    @click.stop="linkCallback"
-    @touchstart.passive='touchStart'
-    @touchmove.passive='touchmove'
-    @touchend.passive='touchEnd'
+    :class="[platform, {hasSubList}]"
   >
     <div
-      class="link-wrapper cursor remove-highlight AppbarElement-link rb"
+      class="link-wrapper AppbarElement-link rb"
       :data-type='type'
       :data-selectedtype='selectedtype'
       :data-color='iconColor'
       :data-disabled='disableAction'
     >
-      <div class="icon-wrapper">
-        <Icon class="main-icon"
-          :style="hoverStyle"
-          :class="{notActive: !isActive}"
-          :icon="icon"
-          :progress='progress'
-          :circle='true'
+      <div
+        class="link-inner-wrapper rb handle cursor remove-highlight"
+        :class="{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover}"
+
+        @mouseenter="hover = true"
+        @mouseleave="hover = false"
+        @click.stop="linkCallback"
+        @touchstart.passive='touchStart'
+        @touchmove.passive='touchmove'
+        @touchend.passive='touchEnd'
+      >
+        <div class="icon-wrapper">
+          <Icon class="main-icon"
+            :style="hoverStyle"
+            :class="{notActive: !isActive}"
+            :icon="icon"
+            :progress='progress'
+            :circle='true'
+          />
+        </div>
+        <div class="name-wrapper">
+          <transition name="name-t">
+            <span v-if="!showSpecialInfo" key="normal" class="name" :style="hoverStyle">{{ getName }}</span>
+            <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
+          </transition>
+          <div class="info">
+            <template v-if="helpIcons">
+              <Icon v-for="i in helpIcons" :key="i" class="inf faded"
+                :icon='i'
+                :circle='true'
+              />
+            </template>
+            <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
+            <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
+            <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
+          </div>
+        </div>
+        <CircleBubble class="bubble"
+          innerColor='var(--light-gray)'
+          outerColor='var(--gray)'
+          opacity='0'
         />
       </div>
-      <div class="name-wrapper">
-        <transition name="name-t">
-          <span v-if="!showSpecialInfo" key="normal" class="name" :style="hoverStyle">{{ getName }}</span>
-          <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
-        </transition>
-        <div class="info">
-          <template v-if="helpIcons">
-            <Icon v-for="i in helpIcons" :key="i" class="inf faded"
-              :icon='i'
-              :circle='true'
-            />
-          </template>
-          <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
-          <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
-          <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
-        </div>
-      </div>
+      <Icon v-if="hasSubList"
+        class="toggle-icon cursor remove-highlight primary-hover"
+        :class="{showingSublist}"
+        icon="tiny-arrow"
+        width="26px"
+        :circle="true"
+        @click="showingSublist = !showingSublist"
+      />
     </div>
-    <CircleBubble
-      innerColor='var(--light-gray)'
-      outerColor='var(--gray)'
-      opacity='0'
-    />
+    <transition
+      :css="false"
+      @enter='sublistEnter'
+      @leave='sublistLeave'
+    >
+      <div v-if="hasSubList && showingSublist"
+        class="sub-list"
+      >
+        <Renderer
+          v-bind="$props"
+
+          :enableSort='true'
+          :showColor='true'
+          :list="subList"
+          :onSortableAdd='onSubTagSortableAdd'
+
+          :mapNumbers='mapSubTagNumbers'
+          @buttonAdd='onSubTagAdd'
+          @update='onSubTagUpdate'
+        />
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -64,8 +99,9 @@ import utils from '@/utils/'
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
-  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'string', 'selectedtype', 'showColor'],
+  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'string', 'onSubTagSortableAdd', 'onSubTagAdd', 'selectedtype', 'showColor', 'subList', 'mapSubTagNumbers', 'onSubTagUpdate'],
   components: {
+    Renderer: () => import('./Renderer.vue'),
     Icon: IconVue,
     IconDrop: IconDropVue,
   },
@@ -75,6 +111,7 @@ export default {
       isTouching: false,
       fail: false,
       startTime: 0,
+      showingSublist: false,
 
       selectedTasks: [],
     }
@@ -95,6 +132,35 @@ export default {
     async openMobileOptions() {
       window.navigator.vibrate(100)
       this.$store.commit('pushIconDrop', await this.getOptions(this.options))
+    },
+    sublistEnter(el, done) {
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.overflow = 'hidden'
+      s.height = 0
+      s.opacity = 0
+      setTimeout(() => {
+        s.transitionDuration = '.3s'
+        s.height = (this.subList.length * (this.isDesktop ? 35 : 42)) + 'px'
+        s.opacity = 1
+        setTimeout(() => {
+          s.height = 'auto'
+          s.overflow = 'visible'
+          done()
+        }, 310)
+      })
+    },
+    sublistLeave(el, done) {
+      const s = el.style
+      
+      s.height = (this.subList.length * (this.isDesktop ? 35 : 42)) + 'px'
+      setTimeout(() => {
+        s.transitionDuration = '.3s'
+        s.height = '0px'
+        s.overflow = 'hidden'
+        setTimeout(done, 310)
+      })
     },
     touchStart(e) {
       this.isTouching = true
@@ -147,6 +213,9 @@ export default {
       storeViewType: 'viewType',
     }),
     ...mapGetters(['l', 'platform', 'isDesktop']),
+    hasSubList() {
+      return this.subList && this.subList.length > 0
+    },
     isDraggingOver() {
       return this
     },
@@ -191,6 +260,25 @@ export default {
 
 <style scoped>
 
+.sub-list {
+  margin-left: 14px;
+}
+
+.toggle-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-47%) rotate(-90deg);
+  transition-duration: .3s;
+}
+
+.showingSublist {
+  transform: translateY(-47%) rotate(0deg);
+}
+
+.desktop .toggle-icon {
+  left: -24px;
+}
+
 .icon-wrapper {
   height: 100%;
   width: 40px;
@@ -213,10 +301,25 @@ export default {
 }
 
 .link-wrapper {
-  height: 100%;
+  height: 35px;
+  position: relative;
+  transition-duration: .15s;
+}
+
+.mobile.hasSubList .link-inner-wrapper {
+  margin-left: 28px;
+}
+
+.link-inner-wrapper {
   position: relative;
   display: flex;
-  transition-duration: .15s;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.mobile .link-wrapper {
+  height: 42px;
 }
 
 .name {
@@ -235,30 +338,27 @@ export default {
 .AppbarElement {
   outline: none;
   position: relative;
-  height: 35px;
   transition: background-color .15s, height .3s;
-  overflow: hidden;
 }
 
-.AppbarElement.mobile {
-  height: 42px;
-}
-
-.sortable-ghost .link-wrapper {
+.sortable-ghost .name-wrapper, .sortable-ghost .icon-wrapper, .sortable-ghost .bubble, .sortable-ghost .toggle-icon {
   display: none;
 }
 
+.desktop .link-inner-wrapper:hover, .notSmartActive {
+  background-color: var(--card);
+}
 
-.desktop .link-wrapper:hover, .notSmartActive {
+.link-inner-wrapper:active {
+  background-color: var(--card);
+}
+
+.sortable-drag {
   background-color: var(--card) !important;
 }
 
-.link-wrapper:active {
-  background-color: var(--card) !important;
-}
-
-.sortable-ghost {
-  background-color: var(--void) !important;
+.sortable-ghost, .sortable-ghost .link-inner-wrapper {
+  background-color: var(--dark-void) !important;
   transition-duration: 0 !important;
   transition: none !important;
 }
@@ -297,9 +397,9 @@ export default {
   stroke: white;
 }
 
-.isSelectedEl {
+/* .isSelectedEl {
   background-color: rgba(53, 73, 90, 0.6) !important;
-}
+} */
 
 .name-t-enter {
   opacity: 0;

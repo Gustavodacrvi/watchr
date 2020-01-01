@@ -482,7 +482,7 @@ export default {
                       this.$emit('update', this.getIds(true))
                     }, 10)
                   },
-                  onlyTasks: true,
+                  allowed: ['tasks'],
                 }
               })
           }

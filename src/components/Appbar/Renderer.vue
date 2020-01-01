@@ -9,26 +9,18 @@
     >
       <AppbarElement v-for="(el,i) in list"
         :key="el.id"
-        v-bind="mapNumbersBind(el)"
+        v-bind="{...mapNumbersBind(el), ...el}"
         class="element"
         :iconColor='getIconColor(el)'
         :icon="getIcon(el)"
-        :selectedtype='el.type'
         :showColor='showColor'
-
         :type="type"
-        :subListIcon='subListIcon'
-        :name="el.name"
-        :disableAction='el.disableAction'
+
         :tabindex="i + 1"
         :selected='selected'
         :active="active"
         :isSmart='isSmart'
         :viewType="viewType"
-        :callback="el.callback"
-        :options='el.options'
-        :list="el.list"
-        :id='el.id'
         :isDragging='isDragging'
         :progress='getProgress(el)'
         :helpIcons='getExraIcon(el)'
@@ -96,6 +88,7 @@ export default {
       }, put: (l,j,item) => {
         if (this.isSmart) return false
         const type = item.dataset.type
+
         if (!this.enableSort && type === 'appnav-element') return false
         if (type === 'appnav-element') return true
         if (type === 'task') return false
@@ -103,6 +96,8 @@ export default {
       }},
       delay: 150,
       delayOnTouchOnly: true,
+      forceFallback: true,
+      fallbackOnBody: true,
       handle: '.handle',
 
       onUpdate: (evt) => {
@@ -172,7 +167,8 @@ export default {
             ids: this.getIds(),
           })
         } else if (type === 'appnav-element') {
-          this.onSortableAdd(this.folder, item.dataset.id, this.getIds())
+          if (this.onSortableAdd)
+            this.onSortableAdd(this.folder, item.dataset.id, this.getIds())
         }
         this.draggableRoot.removeChild(item)
       }
@@ -220,13 +216,31 @@ export default {
           ids.push(el.dataset.id)
       return ids
     },
-    enter(el, done) {
-      el.style.opacity = 0
-      el.style.height = '0px'
+    enter(el) {
+      const s = el.style
+      
+      s.transitionDuration = '.2s'
+      s.opacity = 0
+      s.height = '0px'
       setTimeout(() => {
-        el.style.opacity = 1
-        el.style.height = (this.isDesktop ? 35 : 42) + 'px'
-        setTimeout(() => done(), 300)
+        s.transitionDuration = '.2s'
+        s.opacity = 1
+        s.height = (this.isDesktop ? 35 : 42) + 'px'
+        setTimeout(() => {
+          s.height = 'auto'
+        }, 220)
+      })
+    },
+    leave(el) {
+      const s = el.style
+      
+      s.transition = 'none'
+      s.opacity = 1
+      s.height = (this.isDesktop ? 35 : 42) + 'px'
+      setTimeout(() => {
+        s.transition = 'height .15s, opacity .15s'
+        s.opacity = 0
+        s.height = '0px'
       })
     },
     selectEl(id) {
@@ -236,12 +250,6 @@ export default {
           this.selected.splice(i, 1)
         } else this.selected.push(id)
       }
-    },
-    leave(el, done) {
-      el.style.transition = 'height .15s, opacity .15s !important'
-      el.style.opacity = 0
-      el.style.height = '0px'
-      setTimeout(() => done(), 300)
     },
     getIcon(el) {
       if (this.icon) return this.icon

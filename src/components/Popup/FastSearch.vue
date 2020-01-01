@@ -85,6 +85,11 @@ export default {
     close() {
       this.$store.dispatch('closePopup', true)
     },
+    allow(str) {
+      if (!this.payload || !this.payload.allowed)
+        return true
+      return this.payload.allowed.find(s => s === str)
+    },
     getOptions() {
       const { search, tasks, tags, lists, folders, views } = this
       if (!search) return []
@@ -101,14 +106,16 @@ export default {
 
       const go = this.hasCallback ? this.payload.callback : route => this.$router.push(route)
 
-      if (!this.onlyTasks)
+      const a = this.allow
+
+      if (a('smartViews'))
         for (const v of vs)
           arr.push({
             ...v,
             id: v.name + 'UNIQUE_SMART_VIEW' + Date.now(),
             callback: () => go('/user?list=' + v.name, v)
           })
-      if (!this.onlyTasks)
+      if (a('tags'))
         for (const t of tg)
           arr.push({
             name: t.name,
@@ -117,7 +124,7 @@ export default {
             color: 'var(--red)',
             callback: () => go('/user?tag=' + t.name, t)
           })
-      if (!this.onlyTasks)
+      if (a('folders'))
         for (const f of fs)
           arr.push({
             name: f.name,
@@ -126,7 +133,7 @@ export default {
             color: '',
             callback: () => go('/user?folder=' + f.name, f)
           })
-      if (!this.onlyTasks)
+      if (a('lists'))
         for (const l of lt)
           arr.push({
             name: l.name,
@@ -135,13 +142,14 @@ export default {
             color: 'var(--primary)',
             callback: () => go('/user?list=' + l.name, l)
           })
-     for (const t of ts)
-        arr.push({
-          name: t.name,
-          icon: 'circle-check',
-          id: t.id,
-          callback: () => go('/user?search=' + t.name, t)
-        })
+      if (a('tasks'))
+        for (const t of ts)
+          arr.push({
+            name: t.name,
+            icon: 'circle-check',
+            id: t.id,
+            callback: () => go('/user?search=' + t.name, t)
+          })
 
       return arr.slice(0, 10)
     },
@@ -183,9 +191,6 @@ export default {
     ...mapGetters(['isStandAlone', 'l']),
     hasCallback() {
       return this.payload && this.payload.callback
-    },
-    onlyTasks() {
-      return this.payload && this.payload.onlyTasks
     },
     placeholder() {
       if (this.onlyTasks)

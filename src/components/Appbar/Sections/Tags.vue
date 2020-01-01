@@ -10,6 +10,7 @@
       :active="active"
       :viewType="viewType"
       :mapNumbers='numberOfTasks'
+      :onSortableAdd="onSortableAdd"
       @buttonAdd='buttonAdd'
       @update='update'
     />
@@ -36,17 +37,27 @@ export default {
     },
     numberOfTasks(tag) {
       return {
-        total: this.getNumberOfTasksByTag(tag.id).total,
+        total: this.getNumberOfTasksByTag({tagId: tag.id, tags: this.tags}).total,
       }
     },
     buttonAdd(obj) {
       this.$store.dispatch('pushPopup', {comp: 'AddTag', payload: {...obj}, naked: true})
-    }
+    },
+    onSortableAdd(f, tagId, ids) {
+      this.$store.dispatch('tag/moveTagToRoot', {
+        tagId, ids,
+      })
+    },
   },
   computed: {
-    ...mapState(['selectedTasks']),
+    ...mapState({
+      selectedTasks: state => state.selectedTasks,
+      tags: state => state.tag.tags,
+    }),
     ...mapGetters({
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
+      getSubTagsByParentId: 'tag/getSubTagsByParentId',
+      checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
       l: 'l',
       isDesktop: 'isDesktop',
     }),
@@ -54,14 +65,41 @@ export default {
       return this.$store.getters['tag/sortedTags']
     },
     getTags() {
-      let tags = this.sortedTags.slice()
-      for (const tag of tags) {
-        tag.callback = () => {
-          this.$router.push('/user?tag=' + tag.name)
+      const getSubTagsByParentId = this.getSubTagsByParentId
+      const getNumberOfTasksByTag = this.getNumberOfTasksByTag
+      const getTags = (parentId, order) => {
+        const tags = getSubTagsByParentId(parentId).map(tag => ({...tag}))
+        if (tags.length === 0) return []
+
+        for (const tag of tags) {
+          tag.callback = () => this.$router.push('/user?tag=' + tag.name)
+          tag.options = utilsTag.tagOptions(tag)
+
+          tag.onSubTagUpdate = ids => {
+            this.$store.dispatch('tag/saveTag', {
+              id: tag.id, order: ids,
+            })
+          }
+          tag.onSubTagAdd = obj => {
+            this.$store.dispatch('pushPopup', {comp: 'AddTag', payload: {...obj, parent: tag.id}, naked: true})
+          }
+          tag.onSubTagSortableAdd = (d, tagId, ids) => {
+            this.$store.dispatch('tag/moveTagBetweenTags', {
+              parent: tag.id, tagId, ids
+            })
+          }
+
+          tag.numberOfTasks = tag => ({
+              total: getNumberOfTasksByTag({tagId: tag.id, tags: this.tags}).total,
+          })
+
+          tag.subList = getTags(tag.id, tag.order || [])
         }
-        tag.options = utilsTag.tagOptions(tag)
+        if (!parentId) return tags
+        return this.checkMissingIdsAndSortArr(order, tags)
       }
-      return tags
+
+      return getTags()
     },
   },
   watch: {
