@@ -89,7 +89,7 @@ export default {
             })
           }
 
-          tag.numberOfTasks = tag => ({
+          tag.mapSubTagNumbers = tag => ({
               total: getNumberOfTasksByTag({tagId: tag.id, tags: this.tags}).total,
           })
 
