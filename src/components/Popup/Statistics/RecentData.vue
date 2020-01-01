@@ -8,7 +8,7 @@
         <div class="row">
           <div class="cell">
             <span class="num">
-              0
+              {{dailyPomos}}
             </span>
             <span class="label">
               Daily Pomos
@@ -16,7 +16,7 @@
           </div>
           <div class="cell">
             <span class="num">
-              0
+              {{weeklyPomos}}
             </span>
             <span class="label">
               Weekly Pomos
@@ -24,17 +24,17 @@
           </div>
           <div class="cell">
             <span class="num">
-              0
+              {{totalPomos}}
             </span>
             <span class="label">
               Total Pomos
             </span>
           </div>
         </div>
-        <div class="row">
+        <div class="row blue">
           <div class="cell">
             <span class="num">
-              0
+              {{dailyFocus}}
             </span>
             <span class="label">
               Daily Focus(h)
@@ -42,7 +42,7 @@
           </div>
           <div class="cell">
             <span class="num">
-              0
+              {{weeklyFocus}}
             </span>
             <span class="label">
               Weekly Focus(h)
@@ -50,14 +50,14 @@
           </div>
           <div class="cell">
             <span class="num">
-              0
+              {{totalFocus}}
             </span>
             <span class="label">
               Total Focus(h)
             </span>
           </div>
         </div>
-        <div class="row">
+        <div class="row green">
           <div class="cell">
             <span class="num">
               0
@@ -90,11 +90,93 @@
 
 <script>
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
+
+import mom from 'moment/src/moment'
+
+import utils from '@/utils'
+
+const TOD_STR = mom().format('Y-M-D')
+
+const getValueFromTime = time => {
+  const split = time.split(':')
+  
+  const hour = parseInt(split[0], 10)
+  const min = parseInt(split[1], 10)
+  let sec = 0
+  if (split[2])
+    sec = parseInt(split[2], 10)
+
+  return sec + ((min * 60) + (hour * 3600))
+}
+
+const trunc = (x, n) => {
+  const v = (typeof x === 'string' ? x : x.toString()).split('.')
+  if (n <= 0) return v[0]
+  let f = v[1] || ''
+  if (f.length > n) return `${v[0]}.${f.substr(0,n)}`
+  while (f.length < n) f += '0'
+  return `${v[0]}.${f}`
+}
 
 export default {
   computed: {
+    ...mapState({
+      stats: state => state.pomo.stats,
+    }),
     ...mapGetters(['l', 'platform']),
+    tod() {
+      return this.stats.dates[TOD_STR]
+    },
+    dailyPomos() {
+      if (this.tod.completedPomos)
+        return this.tod.completedPomos
+      return 0
+    },
+    thisWeekKeys() {
+      const keys = Object.keys(this.stats.dates || {})
+      const weekStart = mom().startOf('week')
+
+      const thisWeek = []
+      for (const k of keys)
+        if (mom(k, 'Y-M-D').isAfter(weekStart, 'day'))
+          thisWeek.push(k)
+
+      return thisWeek
+    },
+    weeklyPomos() {
+      return this.thisWeekKeys.reduce((tot, key) => tot + this.stats.dates[key].completedPomos, 0)
+    },
+    totalPomos() {
+      return Object.keys(this.stats.dates).reduce((tot, key) => {
+        let pomos = this.stats.dates[key].completedPomos
+        if (!this.stats.dates[key].completedPomos)
+          pomos = 0
+        return tot + pomos
+      }, 0)
+    },
+    dailyFocus() {
+      const focus = this.tod.focus || 0
+      return trunc(focus / 3600, 2) + 'h'
+    },
+    weeklyFocus() {
+      return (trunc(
+        this.thisWeekKeys.reduce((tot, key) => {
+          let focus = this.stats.dates[key].focus
+          if (!focus) focus = 0
+          return tot + focus
+        }, 0) / 3600,
+      2)) + 'h'
+    },
+    totalFocus() {
+      return (trunc(
+        Object.keys(this.stats.dates).reduce((tot, key) => {
+          let focus = this.stats.dates[key].focus
+          if (!focus) focus = 0
+          return tot + focus
+        }, 0) / 3600,
+      2)) + 'h'
+    },
   },
 }
 
@@ -151,6 +233,14 @@ export default {
 
 .mobile .label {
   font-size: .65em;
+}
+
+.blue .num {
+  color: var(--primary);
+}
+
+.green .num {
+  color: var(--green);
 }
 
 </style>
