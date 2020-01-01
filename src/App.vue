@@ -170,6 +170,12 @@ export default {
     },
   },
   watch: {
+    userInfo() {
+      this.$store.dispatch('pomo/update')
+    },
+    user() {
+      this.$store.dispatch('pomo/update')
+    },
     $route(to, from) {
       const isGoingToPopup = to.path === '/popup'
       const isGoingToMenu = to.path === '/menu'

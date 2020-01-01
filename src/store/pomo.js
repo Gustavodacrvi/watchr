@@ -2,7 +2,7 @@
 import { fire, auth } from './index'
 import fb from 'firebase/app'
 
-import { userRef } from "@/utils/firestore"
+import { userRef, pomoDoc, uid, fd } from "@/utils/firestore"
 
 import mom from 'moment/src/moment'
 
@@ -32,15 +32,12 @@ const getValueFromTime = time => {
 export default {
   namespaced: true,
   state: {
+    stats: null,
     cycles: 0,
     longCycles: 0,
     current: '00:00',
     openHelper: false,
 
-/*     duration: '00:10',
-    currentDuration: '00:10',
-    shortRest: '00:05',
-    longRest: '00:10', */
     duration: '25:00',
     currentDuration: '25:00',
     shortRest: '05:00',
@@ -87,10 +84,18 @@ export default {
     }
   },
   actions: {
-    getData({dispatch}) {
+    getData({dispatch, state}) {
       setTimeout(() => {
         dispatch('update')
-      }, 300)
+      }, 1000)
+      return Promise.all([
+        new Promise(resolve => {
+          pomoDoc().onSnapshot(snap => {
+            state.stats = snap.data()
+            resolve()
+          })
+        })
+      ])
     },
     updateDurations({rootState, state}, obj) {
       let pomo = rootState.userInfo.pomo
@@ -116,11 +121,11 @@ export default {
         if (state.cycles === 4) {
           state.cycles = 0
           state.longCycles++
-          dispatch('saveUser')
+          ///////////////////////////////////////////////////////// SAVE LONG CYCLE
         }
 
-        dispatch('updateDurations')
       }
+      dispatch('updateDurations')
     },
     toggle({dispatch, state}, obj) {
       if (obj && obj.task)
@@ -129,14 +134,19 @@ export default {
       const stop = (obj && obj.stopToggle)
       
       if (!state.running || !stop) {
-        dispatch('toggleInterval')
         state.running = !state.running
   
         if (state.running) {
           state.openHelper = true
           tickSound.play()
+        } else {
+          if (!state.rest)
+            dispatch('saveFocusTime')
+          else dispatch('saveRestTime')
+          tickSound.pause()
         }
-        else tickSound.pause()
+
+        dispatch('toggleInterval')
       }
     },
     toggleInterval({state, dispatch}) {
@@ -158,6 +168,7 @@ export default {
           const completed = areEqual(state.current, state.currentDuration)
 
           if (completed && !state.rest) {
+            dispatch('saveFocusTime', true)
             state.cycles++
 
             const longRest = state.cycles === 4
@@ -171,8 +182,8 @@ export default {
             state.addInterval = null
             tickSound.pause()
             window.navigator.vibrate(200)
-            dispatch('saveUser')
           } else if (completed) {
+            dispatch('saveRestTime', true)
             state.rest = null
             state.currentDuration = state.duration
             state.current = '00:00'
@@ -186,7 +197,6 @@ export default {
             if (state.cycles === 4) {
               state.cycles = 0
               state.longCycles++
-              dispatch('saveUser')
             }
           }
         }, 1000)
@@ -196,12 +206,45 @@ export default {
         state.addInterval = null
       }
     },
-    saveUser({state}) {
-      userRef().set({
-        pomoDate: mom().format('Y-M-D'),
-        cycles: state.cycles,
-        longCycles: state.longCycles,
+    updateStats({}, obj) {
+      console.log('rodou')
+      pomoDoc().set({
+        userId: uid(),
+        dates: {
+          [TOD_STR]: obj,
+        }
       }, {merge: true})
+    },
+    saveFocusTime({state, dispatch}, completed) {
+      const sec = getValueFromTime(state.current)
+
+      if (sec > 0) {
+        const obj = {
+          focus: fd().increment(sec),
+          pomoEntries: fd().arrayUnion(mom().format('HH:mm'))
+        }
+
+        if (completed)
+          obj['completedPomos'] = fd().increment(1),
+      
+        console.log(3)
+        dispatch('updateStats', obj)
+      }
+    },
+    saveRestTime({state}, completed) {
+      const sec = getValueFromTime(state.current)
+
+      if (sec > 0) {
+        const obj = {
+          rest: fd().increment(sec),
+          restEntries: fd().arrayUnion(mom().format('HH:mm'))
+        }
+
+        if (completed)
+          obj['completedRest'] = fd().increment(1),
+      
+        dispatch('updateStats', obj)
+      }
     },
   },
 }

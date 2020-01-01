@@ -22,7 +22,7 @@ service cloud.firestore {
         allow create: if isSignedIn();
         allow update, read, delete: if isOwner();
       }
-      match /pomodoros/{li} {
+      match /stats/{li} {
         allow create: if isSignedIn();
         allow update, read, delete: if isOwner();
       }
