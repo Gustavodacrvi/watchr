@@ -139,6 +139,15 @@ export default {
         if (state.running) {
           state.openHelper = true
           tickSound.play()
+
+          if (!state.rest)
+            dispatch('updateStats', {
+              pomoEntries: fd().arrayUnion(mom().format('HH:mm')),
+            })
+          else
+            dispatch('updateStats', {
+              restEntries: fd().arrayUnion(mom().format('HH:mm')),
+            })
         } else {
           if (!state.rest)
             dispatch('saveFocusTime')
@@ -207,41 +216,39 @@ export default {
       }
     },
     updateStats({}, obj) {
-      console.log('rodou')
       pomoDoc().set({
         userId: uid(),
         dates: {
           [TOD_STR]: obj,
-        }
+        },
       }, {merge: true})
     },
     saveFocusTime({state, dispatch}, completed) {
       const sec = getValueFromTime(state.current)
 
-      if (sec > 0) {
+      if (sec > 3) {
         const obj = {
           focus: fd().increment(sec),
-          pomoEntries: fd().arrayUnion(mom().format('HH:mm'))
+          pomoEntries: fd().arrayUnion(mom().format('HH:mm:ss')),
         }
-
+        
         if (completed)
-          obj['completedPomos'] = fd().increment(1),
-      
-        console.log(3)
+          obj['completedPomos'] = fd().increment(1)
+        
         dispatch('updateStats', obj)
       }
     },
-    saveRestTime({state}, completed) {
+    saveRestTime({state, dispatch}, completed) {
       const sec = getValueFromTime(state.current)
 
-      if (sec > 0) {
+      if (sec > 3) {
         const obj = {
           rest: fd().increment(sec),
-          restEntries: fd().arrayUnion(mom().format('HH:mm'))
+          restEntries: fd().arrayUnion(mom().format('HH:mm:ss'))
         }
 
         if (completed)
-          obj['completedRest'] = fd().increment(1),
+          obj['completedRest'] = fd().increment(1)
       
         dispatch('updateStats', obj)
       }
