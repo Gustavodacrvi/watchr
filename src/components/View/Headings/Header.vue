@@ -314,6 +314,7 @@ export default {
         Inbox: 'inbox',
         Calendar: 'calendar-star',
         Pomodoro: 'pomo',
+        Statistics: 'pie',
         Upcoming: 'calendar',
         Completed: 'circle-check',
       }
@@ -329,6 +330,7 @@ export default {
           Inbox: 'var(--primary)',
           Calendar: 'var(--purple)',
           Pomodoro: 'var(--dark-red)',
+          Statistics: 'var(--primary)',
           Upcoming: 'var(--green)',
           Completed: 'var(--olive)',
         }

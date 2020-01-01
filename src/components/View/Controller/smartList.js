@@ -234,6 +234,7 @@ export default {
           case 'Inbox': return 'inbox'
           case 'Calendar': return 'calendar-star'
           case 'Pomodoro': return 'pomo'
+          case 'Statistics': return 'pie'
           case 'Upcoming': return 'calendar'
           case 'Completed': return 'circle-check'
           case 'Someday': return 'archive'
@@ -253,6 +254,7 @@ export default {
     },
     viewComponent() {
       if (this.viewName === 'Pomodoro') return 'Pomodoro'
+      if (this.viewName === 'Statistics') return 'Statistics'
     },
   },
 }

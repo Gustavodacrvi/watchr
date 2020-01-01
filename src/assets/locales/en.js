@@ -109,6 +109,7 @@ export default {
   "Add subtag": "Add subtag",
   "Add filter": "Add filter",
   "Duration: ": "Duration: ",
+  "Statistics": "Statistics",
   "Move tag below": "Move tag below",
   "Short rest: ": "Short rest: ", 
   "Long rest: ": "Long rest: ",

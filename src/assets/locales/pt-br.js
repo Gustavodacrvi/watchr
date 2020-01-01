@@ -29,6 +29,7 @@ export default {
   'Inbox': 'Inbox',
   "Reached maximum subtag depth.": "Limite de profundidade de subtags atingida.",
   "Move tag below": "Mover tag abaixo",
+  "Statistics": "Estatísticas",
   "Add subtag": "Adicionar subtag",
   "Open calendar": "Abrir calendário",
   "Pomodoro": "Pomodoro",

@@ -207,6 +207,13 @@ export default {
           callback: () => selectView('Completed'),
           iconColor: 'var(--olive)'
         },
+        {
+          name: 'Statistics',
+          id: 'Statistics',
+          icon: 'pie',
+          callback: () => selectView('Statistics'),
+          iconColor: 'var(--primary)'
+        },
       ],
       sections: [
         {
