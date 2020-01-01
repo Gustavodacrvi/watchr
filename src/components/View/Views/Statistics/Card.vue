@@ -1,5 +1,5 @@
 <template>
-  <div class="Card cursor remove-highlight shadow cb">
+  <div class="Card cursor remove-highlight shadow cb" @click="$emit('click')">
     <Icon class="icon"
       :icon='icon'
       color='var(--gray)'

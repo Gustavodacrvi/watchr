@@ -107,6 +107,8 @@ export default {
   'Add list notes': 'Add list notes',
   "Sort filters by name": "Sort filters by name",
   "Add subtag": "Add subtag",
+  "Recent Data": "Recent Data",
+  "Predict the efficiency changes by comparing your activity in a certain period of time.": "Predict the efficiency changes by comparing your activity in a certain period of time.",
   "Add filter": "Add filter",
   "Duration: ": "Duration: ",
   "Statistics": "Statistics",

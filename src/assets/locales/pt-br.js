@@ -27,6 +27,8 @@ export default {
   "No time": "Sem horário",
   "Heading": "Cabeçalho",
   'Inbox': 'Inbox',
+  "Recent Data": "Dados Recentes",
+  "Predict the efficiency changes by comparing your activity in a certain period of time.": "Preveja as mudanças de eficiência comparando sua atividade em um determinado período de tempo.",
   "Reached maximum subtag depth.": "Limite de profundidade de subtags atingida.",
   "Move tag below": "Mover tag abaixo",
   "Statistics": "Estatísticas",
