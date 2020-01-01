@@ -60,7 +60,7 @@
         <div class="row green">
           <div class="cell">
             <span class="num">
-              0
+              {{dailyRest}}
             </span>
             <span class="label">
               Daily Rest(h)
@@ -68,7 +68,7 @@
           </div>
           <div class="cell">
             <span class="num">
-              0
+              {{weeklyRest}}
             </span>
             <span class="label">
               Weekly Rest(h)
@@ -76,7 +76,7 @@
           </div>
           <div class="cell">
             <span class="num">
-              0
+              {{totalRest}}
             </span>
             <span class="label">
               Total Rest(h)
@@ -174,6 +174,28 @@ export default {
           let focus = this.stats.dates[key].focus
           if (!focus) focus = 0
           return tot + focus
+        }, 0) / 3600,
+      2)) + 'h'
+    },
+    dailyRest() {
+      const rest = this.tod.rest || 0
+      return trunc(rest / 3600, 2) + 'h'
+    },
+    weeklyRest() {
+      return (trunc(
+        this.thisWeekKeys.reduce((tot, key) => {
+          let rest = this.stats.dates[key].rest
+          if (!rest) rest = 0
+          return tot + rest
+        }, 0) / 3600,
+      2)) + 'h'
+    },
+    totalRest() {
+      return (trunc(
+        Object.keys(this.stats.dates).reduce((tot, key) => {
+          let rest = this.stats.dates[key].rest
+          if (!rest) rest = 0
+          return tot + rest
         }, 0) / 3600,
       2)) + 'h'
     },
