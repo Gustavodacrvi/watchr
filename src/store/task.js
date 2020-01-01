@@ -509,11 +509,26 @@ export default {
         }
       },
       doesTaskPassInclusiveTags: {
-        getter({}, task, tags) {
-          return tags.every(id => task.tags.includes(id))
+        getter({}, task, tags, savedTags) {
+          const foundChild = parent => {
+
+            const childs = savedTags.filter(tag => tag.parent === parent)
+            for (const tag of childs)
+              if (task.tags.includes(tag.id) || foundChild(tag.id))
+                return true
+            return false
+          }
+
+          for (const id of tags) {
+            if (!task.tags.includes(id) && !foundChild(id)) return false
+          }
+          return true
         },
         cache(args) {
-          return JSON.stringify({k: args[0].tags, t: args[1]})
+          return JSON.stringify({
+            k: args[0].tags, t: args[1],
+            s: args[2].map(el => ({i: el.id, p: el.parent})),
+        })
         }
       },
       isTaskInFolder: {
@@ -562,9 +577,9 @@ export default {
       },
     }),
     ...MemoizeGetters(['tasks'], {
-      getNumberOfTasksByTag({getters, state}, tagId) {
+      getNumberOfTasksByTag({getters, state}, {tagId, tags}) {
         const ts = state.tasks.filter(
-          task => getters.doesTaskPassInclusiveTags(task, [tagId])
+          task => getters.doesTaskPassInclusiveTags(task, [tagId], tags)
         )
   
         return {

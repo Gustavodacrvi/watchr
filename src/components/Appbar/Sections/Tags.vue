@@ -37,7 +37,7 @@ export default {
     },
     numberOfTasks(tag) {
       return {
-        total: this.getNumberOfTasksByTag(tag.id).total,
+        total: this.getNumberOfTasksByTag({tagId: tag.id, tags: this.tags}).total,
       }
     },
     buttonAdd(obj) {
@@ -90,7 +90,7 @@ export default {
           }
 
           tag.numberOfTasks = tag => ({
-              total: getNumberOfTasksByTag(tag.id).total,
+              total: getNumberOfTasksByTag({tagId: tag.id, tags: this.tags}).total,
           })
 
           tag.subList = getTags(tag.id, tag.order || [])

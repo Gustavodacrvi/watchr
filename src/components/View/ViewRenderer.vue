@@ -384,6 +384,7 @@ export default {
       userInfo: state => state.userInfo,
       runningPomo: state => state.pomo.running,
       rest: state => state.pomo.rest,
+      tags: state => state.tag.tags,
       openHelper: state => state.pomo.openHelper,
     }),
     ...mapGetters({
@@ -500,9 +501,9 @@ export default {
       const {tags, list, folder, priorities} = this.getFilterOptions
 
       if (tags.inclusive.length > 0)
-        toPipe.push(t => this.doesTaskPassInclusiveTags(t, tags.inclusive))
+        toPipe.push(t => this.doesTaskPassInclusiveTags(t, tags.inclusive, this.tags))
       if (tags.exclusive.length > 0)
-        toPipe.push(t => this.doesTaskPassExclusiveTags(t, tags.exclusive))
+        toPipe.push(t => this.doesTaskPassExclusiveTags(t, tags.exclusive, this.tags))
 
       if (priorities.inclusive)
         toPipe.push(t => this.doesTaskPassInclusivePriority(t, priorities.inclusive))
