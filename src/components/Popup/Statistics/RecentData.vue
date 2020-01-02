@@ -5,7 +5,7 @@
     </div>
     <div class="cont">
       <div class="numbers">
-        <div class="row">
+        <div class="display-row">
           <div class="cell">
             <span class="num">
               {{dailyPomos}}
@@ -31,7 +31,7 @@
             </span>
           </div>
         </div>
-        <div class="row blue">
+        <div class="display-row blue">
           <div class="cell">
             <span class="num">
               {{dailyFocus}}
@@ -57,7 +57,7 @@
             </span>
           </div>
         </div>
-        <div class="row green">
+        <div class="display-row green">
           <div class="cell">
             <span class="num">
               {{dailyRest}}
@@ -130,15 +130,21 @@ export default {
       stats: state => state.pomo.stats,
     }),
     ...mapGetters(['l', 'platform']),
+    firstTime() {
+      return !this.stats
+    },
     tod() {
+      if (this.firstTime) return null
       return this.stats.dates[TOD_STR]
     },
     dailyPomos() {
+      if (this.firstTime) return 0
       if (this.tod.completedPomos)
         return this.tod.completedPomos
       return 0
     },
     thisWeekKeys() {
+      if (this.firstTime) return 0
       const keys = Object.keys(this.stats.dates || {})
       const weekStart = mom().startOf('week')
 
@@ -150,9 +156,16 @@ export default {
       return thisWeek
     },
     weeklyPomos() {
-      return this.thisWeekKeys.reduce((tot, key) => tot + this.stats.dates[key].completedPomos, 0)
+      if (this.firstTime) return 0
+      return this.thisWeekKeys.reduce((tot, key) => {
+        let comp = this.stats.dates[key].completedPomos
+        if (!comp)
+          comp = 0
+        return tot + comp
+      }, 0)
     },
     totalPomos() {
+      if (this.firstTime) return 0
       return Object.keys(this.stats.dates).reduce((tot, key) => {
         let pomos = this.stats.dates[key].completedPomos
         if (!this.stats.dates[key].completedPomos)
@@ -161,10 +174,12 @@ export default {
       }, 0)
     },
     dailyFocus() {
+      if (this.firstTime) return '0h'
       const focus = this.tod.focus || 0
       return trunc(focus / 3600, 2) + 'h'
     },
     weeklyFocus() {
+      if (this.firstTime) return '0h'
       return (trunc(
         this.thisWeekKeys.reduce((tot, key) => {
           let focus = this.stats.dates[key].focus
@@ -174,6 +189,7 @@ export default {
       2)) + 'h'
     },
     totalFocus() {
+      if (this.firstTime) return '0h'
       return (trunc(
         Object.keys(this.stats.dates).reduce((tot, key) => {
           let focus = this.stats.dates[key].focus
@@ -183,10 +199,12 @@ export default {
       2)) + 'h'
     },
     dailyRest() {
+      if (this.firstTime) return '0h'
       const rest = this.tod.rest || 0
       return trunc(rest / 3600, 2) + 'h'
     },
     weeklyRest() {
+      if (this.firstTime) return '0h'
       return (trunc(
         this.thisWeekKeys.reduce((tot, key) => {
           let rest = this.stats.dates[key].rest
@@ -196,6 +214,7 @@ export default {
       2)) + 'h'
     },
     totalRest() {
+      if (this.firstTime) return '0h'
       return (trunc(
         Object.keys(this.stats.dates).reduce((tot, key) => {
           let rest = this.stats.dates[key].rest
@@ -230,15 +249,16 @@ export default {
 .numbers {
   display: flex;
   flex-direction: column;
-  height: 300px;
+  height: 325px;
   flex-wrap: nowrap;
 }
 
-.row {
+.display-row {
   display: flex;
   align-items: center;
   justify-content: space-around;
   flex-wrap: nowrap;
+  flex-basis: 100%;
 }
 
 .cell {

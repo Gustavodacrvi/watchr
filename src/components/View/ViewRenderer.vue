@@ -416,7 +416,7 @@ export default {
       }
     },
     getHelperComponent() {
-      return (this.openHelper && this.viewName !== 'Pomodoro') ? 'PomoHelper' : this.helperComponent
+      return (this.openHelper && this.viewName === 'Pomodoro') ? 'PomoHelper' : this.helperComponent
     },
     isTaskHandler() {
       return this.getViewComp === 'TaskHandler'
@@ -424,7 +424,7 @@ export default {
     getHeaderOptions() {
       if (this.getViewComp === 'Statistics')
         return []
-      return (this.openHelper && this.viewName !== 'Pomodoro') ? this.pomoOptions : this.taskIconDropOptions
+      return this.viewName === 'Pomodoro' ? this.pomoOptions : this.taskIconDropOptions
     },
     pomoOptions() {
       const l = this.l
