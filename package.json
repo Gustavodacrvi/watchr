@@ -10,6 +10,7 @@
     "deploy-prod": "firebase deploy --project watchr-prod"
   },
   "dependencies": {
+    "chart.js": "^2.9.3",
     "core-js": "^2.6.5",
     "firebase": "^6.6.1",
     "moment": "^2.24.0",

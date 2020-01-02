@@ -96,6 +96,8 @@ import mom from 'moment/src/moment'
 
 import utils from '@/utils'
 
+import Graph from '@/components/Chartjs/Graph'
+
 const TOD_STR = mom().format('Y-M-D')
 
 const getValueFromTime = time => {
@@ -120,6 +122,9 @@ const trunc = (x, n) => {
 }
 
 export default {
+  components: {
+    Graph,
+  },
   computed: {
     ...mapState({
       stats: state => state.pomo.stats,
@@ -255,6 +260,10 @@ export default {
 
 .mobile .label {
   font-size: .65em;
+}
+
+.mobile .num {
+  font-size: 1.4em;
 }
 
 .blue .num {
