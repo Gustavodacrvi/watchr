@@ -8,6 +8,7 @@ import Chartjs from 'chart.js'
 import 'chartjs-plugin-datalabels'
 
 export default {
+  props: ['data', 'labels'],
   data() {
     return {
       graph: null,
@@ -27,15 +28,20 @@ export default {
       type: 'line',
       data: {
         datasets: [{
-          data: [10, 20, 30, 40, 70, 45, 47],
+          data: this.data,
           borderColor: '#57A0DE',
           pointBackgroundColor: '#57A0DE',
           backgroundColor: gradient,
         }],
-        labels: ['28', '29', '30', '31', '1', '2', '3']
+        labels: this.labels,
       },
       options: {
-          layout: {
+        elements: {
+          line: {
+            tension: 0,
+          },
+        },
+        layout: {
           padding: {
             top: 45,
             left: 0,
@@ -76,6 +82,19 @@ export default {
         },
       },
     })
+  },
+  watch: {
+    data() {
+      this.graph.data.datasets = [{
+          data: this.data,
+          borderColor: '#57A0DE',
+          pointBackgroundColor: '#57A0DE',
+          backgroundColor: gradient,
+        }]
+    },
+    labels() {
+      this.graph.data.labels = this.labels
+    },
   },
 }
 
