@@ -41,8 +41,8 @@ export default {
           layout: {
             padding: {
               top: 45,
-              left: 0,
-              right: 0,
+              left: 10,
+              right: 10,
               bottom: 0,
             },
           },
@@ -69,9 +69,9 @@ export default {
           },
           plugins: {
             datalabels: {
+              formatter: v => v,
               color: '#57A0DE',
               align: 'top',
-              formatter: Math.round,
               font: {
                 weight: 'bold',
               },

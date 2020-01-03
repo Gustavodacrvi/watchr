@@ -97,6 +97,18 @@
         :getDataFunction='getCompletedRestFromDate'
         :dataReducer='completedReducer'
       />
+      <StatsGraph
+        title='Recent focus time(h)'
+        :stats='stats'
+        :getDataFunction='getFocusTimeFromDate'
+        :dataReducer='timeReducer'
+      />
+      <StatsGraph
+        title='Recent rest time(h)'
+        :stats='stats'
+        :getDataFunction='getRestTimeFromDate'
+        :dataReducer='timeReducer'
+      />
     </div>
   </div>
 </template>
@@ -152,8 +164,19 @@ export default {
       const data = this.stats.dates[date]
       return (data && data.completedRest) || 0
     },
+    getFocusTimeFromDate(date) {
+      const data = this.stats.dates[date]
+      return trunc(((data && data.focus) || 0) / 3600, 2)
+    },
+    getRestTimeFromDate(date) {
+      const data = this.stats.dates[date]
+      return trunc(((data && data.rest) || 0) / 3600, 2)
+    },
     completedReducer(tot, num) {
       return tot + num
+    },
+    timeReducer(tot, num) {
+      return tot + parseFloat(num, 10)
     },
   },
   computed: {
