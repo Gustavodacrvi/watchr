@@ -84,6 +84,8 @@
           </div>
         </div>
       </div>
+
+      <Graph/>
     </div>
   </div>
 </template>
@@ -138,7 +140,7 @@ export default {
       return this.stats.dates[TOD_STR]
     },
     dailyPomos() {
-      if (this.firstTime) return 0
+      if (this.firstTime || !this.tod) return 0
       if (this.tod.completedPomos)
         return this.tod.completedPomos
       return 0
@@ -158,6 +160,7 @@ export default {
     weeklyPomos() {
       if (this.firstTime) return 0
       return this.thisWeekKeys.reduce((tot, key) => {
+        if (!this.stats.dates || !this.stats.dates[key]) return tot + 0
         let comp = this.stats.dates[key].completedPomos
         if (!comp)
           comp = 0
@@ -167,6 +170,7 @@ export default {
     totalPomos() {
       if (this.firstTime) return 0
       return Object.keys(this.stats.dates).reduce((tot, key) => {
+        if (!this.stats.dates || !this.stats.dates[key]) return tot + 0
         let pomos = this.stats.dates[key].completedPomos
         if (!this.stats.dates[key].completedPomos)
           pomos = 0
@@ -174,7 +178,7 @@ export default {
       }, 0)
     },
     dailyFocus() {
-      if (this.firstTime) return '0h'
+      if (this.firstTime || !this.tod) return '0h'
       const focus = this.tod.focus || 0
       return trunc(focus / 3600, 2) + 'h'
     },
@@ -182,6 +186,7 @@ export default {
       if (this.firstTime) return '0h'
       return (trunc(
         this.thisWeekKeys.reduce((tot, key) => {
+          if (!this.stats.dates || !this.stats.dates[key]) return tot + 0
           let focus = this.stats.dates[key].focus
           if (!focus) focus = 0
           return tot + focus
@@ -192,6 +197,7 @@ export default {
       if (this.firstTime) return '0h'
       return (trunc(
         Object.keys(this.stats.dates).reduce((tot, key) => {
+          if (!this.stats.dates || !this.stats.dates[key]) return tot + 0
           let focus = this.stats.dates[key].focus
           if (!focus) focus = 0
           return tot + focus
@@ -199,7 +205,7 @@ export default {
       2)) + 'h'
     },
     dailyRest() {
-      if (this.firstTime) return '0h'
+      if (this.firstTime || !this.tod) return '0h'
       const rest = this.tod.rest || 0
       return trunc(rest / 3600, 2) + 'h'
     },
@@ -207,6 +213,7 @@ export default {
       if (this.firstTime) return '0h'
       return (trunc(
         this.thisWeekKeys.reduce((tot, key) => {
+          if (!this.stats.dates || !this.stats.dates[key]) return tot + 0
           let rest = this.stats.dates[key].rest
           if (!rest) rest = 0
           return tot + rest
@@ -217,6 +224,7 @@ export default {
       if (this.firstTime) return '0h'
       return (trunc(
         Object.keys(this.stats.dates).reduce((tot, key) => {
+          if (!this.stats.dates || !this.stats.dates[key]) return tot + 0
           let rest = this.stats.dates[key].rest
           if (!rest) rest = 0
           return tot + rest
@@ -235,6 +243,8 @@ export default {
 
 .RecentData {
   overflow: auto;
+  flex-basis: 750px;
+  padding-bottom: 74px;
 }
 
 .desktop {

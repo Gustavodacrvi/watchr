@@ -416,7 +416,7 @@ export default {
       }
     },
     getHelperComponent() {
-      return (this.openHelper && this.viewName === 'Pomodoro') ? 'PomoHelper' : this.helperComponent
+      return (this.openHelper && this.viewName !== 'Pomodoro') ? 'PomoHelper' : this.helperComponent
     },
     isTaskHandler() {
       return this.getViewComp === 'TaskHandler'
