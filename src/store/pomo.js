@@ -144,14 +144,17 @@ export default {
               restEntries: fd().arrayUnion(mom().format('HH:mm:ss')),
             })
         } else {
-          if (!state.rest)
-            dispatch('saveFocusTime')
-          else dispatch('saveRestTime')
+          dispatch('save')
           tickSound.pause()
         }
 
         dispatch('toggleInterval')
       }
+    },
+    save({state, dispatch}) {
+      if (!state.rest)
+        dispatch('saveFocusTime')
+      else dispatch('saveRestTime')
     },
     toggleInterval({state, dispatch}) {
       if (!state.addInterval)

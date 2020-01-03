@@ -1,10 +1,10 @@
 <template>
-  <canvas id="Graph" width="100%" :height="isDesktop ? '30px' : '40px'"></canvas>
+  <canvas id="Graph" width="100%" :height="isDesktop ? '30px' : '50px'"></canvas>
 </template>
 
 <script>
 
-import Chart from 'chart.js/dist/Chart.min.js'
+import Chartjs from 'chart.js/dist/Chart.min.js'
 import 'chartjs-plugin-datalabels'
 
 import { mapGetters } from 'vuex'

@@ -85,6 +85,8 @@
         </div>
       </div>
 
+      <TimeGraph/>
+
       <StatsGraph
         title='Recent Pomos'
         :stats='stats'
@@ -122,6 +124,7 @@ import mom from 'moment'
 import utils from '@/utils'
 
 import StatsGraph from './StatsGraph.vue'
+import TimeGraph from '@/components/Chartjs/Time.vue'
 
 const TOD_STR = mom().format('Y-M-D')
 
@@ -148,6 +151,7 @@ const trunc = (x, n) => {
 
 export default {
   components: {
+    TimeGraph,
     StatsGraph,
   },
   data() {

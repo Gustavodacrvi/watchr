@@ -68,6 +68,8 @@ import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import LogoVue from '../Illustrations/Logo.vue'
 
+import utils from '@/utils'
+
 import { mapState, mapGetters } from 'vuex'
 
 const MAXIMUM_TOUCH_DISTANCE = 120
@@ -107,7 +109,7 @@ export default {
       const s = this.$refs.search.style
       const cir = this.$refs.circle.style
 
-      const transitionColor = (oldNum, newNum) => (newNum * x / MAXIMUM_TOUCH_DISTANCE) + oldNum - (oldNum * x / MAXIMUM_TOUCH_DISTANCE)
+      const transitionColor = (oldNum, newNum) => utils.transitionColor(oldNum, newNum, x, MAXIMUM_TOUCH_DISTANCE)
       const getOpacity = () =>  x / MAXIMUM_TOUCH_DISTANCE
       const getTransform = () => {
         const scale = 1 + (.6 * x / MAXIMUM_TOUCH_DISTANCE)

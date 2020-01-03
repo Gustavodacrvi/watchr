@@ -39,6 +39,9 @@ export default {
       year: m.format('Y'),
     }
   },
+  transitionColor(oldNum, newNum, offset, max) {
+    return (newNum * offset / max) + oldNum - (oldNum * offset / max)
+  },
   getHumanReadableDate(str, language) {
     const l = language
     
