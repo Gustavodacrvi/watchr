@@ -4,7 +4,7 @@
 
 <script>
 
-import Chartjs from 'chart.js'
+import Chart from 'chart.js/dist/Chart.min.js'
 import 'chartjs-plugin-datalabels'
 
 import { mapGetters } from 'vuex'

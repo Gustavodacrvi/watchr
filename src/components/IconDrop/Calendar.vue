@@ -18,7 +18,7 @@
 import CalendarPicker from './Calendar/CalendarPicker.vue'
 import { mapGetters } from 'vuex'
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 export default {
   props: ['content'],

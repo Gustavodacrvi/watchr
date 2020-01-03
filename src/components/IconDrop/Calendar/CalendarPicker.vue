@@ -53,7 +53,7 @@ import IconVue from '../../Icon.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
 import TagVue from '@/components/View/Tag.vue'
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 import { mapGetters, mapState } from 'vuex'
 
 import utils from '@/utils'

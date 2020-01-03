@@ -5,7 +5,7 @@ import router from './../router'
 import Memoize from './memoFunctionGetters'
 import utilsTask from '../utils/task'
 
-import moment from 'moment/src/moment'
+import moment from 'moment'
 
 Vue.use(Vuex)
 

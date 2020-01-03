@@ -124,7 +124,7 @@
 
 import Icon from '@/components/Icon.vue'
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 import utils from "@/utils/"
 

@@ -143,7 +143,7 @@ import { MultiDrag, Sortable } from 'sortablejs'
 
 Sortable.mount(new MultiDrag())
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 import utilsTask from '@/utils/task'
 import utils from '@/utils/'

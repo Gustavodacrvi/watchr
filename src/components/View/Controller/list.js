@@ -3,7 +3,7 @@ import utilsTask from '@/utils/task'
 import utilsList from '@/utils/list'
 import { pipeBooleanFilters, memoize } from '@/utils/memo'
 import utils from '@/utils/'
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 export default {
   methods: {

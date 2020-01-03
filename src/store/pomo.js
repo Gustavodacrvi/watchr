@@ -4,7 +4,7 @@ import fb from 'firebase/app'
 
 import { userRef, pomoDoc, uid, fd } from "@/utils/firestore"
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 const TOD_STR = mom().format('Y-M-D')
 

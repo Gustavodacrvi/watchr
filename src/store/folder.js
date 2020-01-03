@@ -5,7 +5,7 @@ import fb from 'firebase/app'
 import utils from '../utils'
 import MemoizeGetters from './memoFunctionGetters'
 import { folderColl, uid, folderRef, serverTimestamp, listRef, userRef, taskRef, addTask } from '../utils/firestore'
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 export default {
   namespaced: true,

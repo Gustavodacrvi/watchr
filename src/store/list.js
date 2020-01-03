@@ -8,7 +8,7 @@ import MemoizeGetters from './memoFunctionGetters'
 import { listRef, userRef, uid, listColl, taskRef, serverTimestamp, fd, addTask, folderRef } from '../utils/firestore'
 import router from '../router'
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 export default {
   namespaced: true,

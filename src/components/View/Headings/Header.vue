@@ -125,7 +125,7 @@ import FileMixin from '@/mixins/file.js'
 
 import { mapState, mapGetters } from 'vuex'
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 import utils from '@/utils'
 
 export default {

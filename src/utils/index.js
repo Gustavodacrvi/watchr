@@ -1,5 +1,5 @@
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 import utilsMoment from "./moment"
 import utilsTask from "./task"
 import firebase from 'firebase/app'

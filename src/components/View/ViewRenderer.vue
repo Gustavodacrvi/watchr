@@ -93,7 +93,7 @@ import { mapGetters, mapState, mapActions } from 'vuex'
 
 import utilsTask from '@/utils/task'
 import utils from '@/utils/index.js'
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 import { pipeBooleanFilters } from '@/utils/memo'
 import { userRef } from '@/utils/firestore'

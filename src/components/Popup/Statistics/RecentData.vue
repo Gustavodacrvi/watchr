@@ -117,7 +117,7 @@
 
 import { mapGetters, mapState } from 'vuex'
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 import utils from '@/utils'
 

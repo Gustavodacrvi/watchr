@@ -14,7 +14,7 @@
 
 <script>
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 import { mapGetters, mapState } from 'vuex'
 
