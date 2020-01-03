@@ -1,11 +1,13 @@
 <template>
-  <canvas id="Graph" width="100%" height="30px"></canvas>
+  <canvas id="Graph" width="100%" :height="isDesktop ? '30px' : '40px'"></canvas>
 </template>
 
 <script>
 
 import Chartjs from 'chart.js'
 import 'chartjs-plugin-datalabels'
+
+import { mapGetters } from 'vuex'
 
 export default {
   props: ['data', 'labels'],
@@ -15,73 +17,81 @@ export default {
     }
   },
   mounted() {
-    const chart = this.$el
-
-    const gradient = chart.getContext('2d').createLinearGradient(0, 0, 0, 400)
-
-    gradient.addColorStop(0, 'rgba(89, 160, 222, .2)')
-    gradient.addColorStop(0.5, 'rgba(89, 160, 222, 0.1)')
-    gradient.addColorStop(1, 'rgba(89, 160, 222, 0)')
-
-    
-    this.graph = new Chartjs(chart, {
-      type: 'line',
-      data: {
-        datasets: [{
-          data: this.data,
-          borderColor: '#57A0DE',
-          pointBackgroundColor: '#57A0DE',
-          backgroundColor: gradient,
-        }],
-        labels: this.labels,
-      },
-      options: {
-        elements: {
-          line: {
-            tension: 0,
-          },
-        },
-        layout: {
-          padding: {
-            top: 45,
-            left: 0,
-            right: 0,
-            bottom: 0,
-          },
-        },
-        legend: {
-          display: false,
-        },
-        scales: {
-          xAxes: [{
-            ticks: {
-              fontColor: "white",
-            },
-            gridLines: {
-              display: false,
-            },
+    this.mount()
+  },
+  methods: {
+    mount() {
+      this.graph = new Chartjs(this.$el, {
+        type: 'line',
+        data: {
+          datasets: [{
+            data: this.data,
+            borderColor: '#57A0DE',
+            pointBackgroundColor: '#57A0DE',
+            backgroundColor: this.gradient,
           }],
-          yAxes: [{
-            ticks: {
-              display: false,
-            },
-            gridLines: {
-              display: false,
-            },
-          }]
+          labels: this.labels,
         },
-        plugins: {
-          datalabels: {
-            color: '#57A0DE',
-            align: 'top',
-            formatter: Math.round,
-            font: {
-              weight: 'bold',
+        options: {
+          elements: {
+            line: {
+              tension: 0,
+            },
+          },
+          layout: {
+            padding: {
+              top: 45,
+              left: 0,
+              right: 0,
+              bottom: 0,
+            },
+          },
+          legend: {
+            display: false,
+          },
+          scales: {
+            xAxes: [{
+              ticks: {
+                fontColor: "white",
+              },
+              gridLines: {
+                display: false,
+              },
+            }],
+            yAxes: [{
+              ticks: {
+                display: false,
+              },
+              gridLines: {
+                display: false,
+              },
+            }]
+          },
+          plugins: {
+            datalabels: {
+              color: '#57A0DE',
+              align: 'top',
+              formatter: Math.round,
+              font: {
+                weight: 'bold',
+              },
             },
           },
         },
-      },
-    })
+      })
+    },
+  },
+  computed: {
+    ...mapGetters(['isDesktop']),
+    gradient() {
+      const gradient = this.$el.getContext('2d').createLinearGradient(0, 0, 0, 400)
+
+      gradient.addColorStop(0, 'rgba(89, 160, 222, .2)')
+      gradient.addColorStop(0.5, 'rgba(89, 160, 222, 0.1)')
+      gradient.addColorStop(1, 'rgba(89, 160, 222, 0)')
+
+      return gradient
+    },
   },
   watch: {
     data() {
@@ -89,11 +99,13 @@ export default {
           data: this.data,
           borderColor: '#57A0DE',
           pointBackgroundColor: '#57A0DE',
-          backgroundColor: gradient,
+          backgroundColor: this.gradient,
         }]
+      this.graph.update()
     },
     labels() {
       this.graph.data.labels = this.labels
+      this.graph.update()
     },
   },
 }

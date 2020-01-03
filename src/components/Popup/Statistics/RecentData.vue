@@ -85,10 +85,30 @@
         </div>
       </div>
 
-      <Graph
-        :data='[0,0,0,0,0,1,0]'
-        :labels='["31","1","2","3","4","5","6"]'
-      />
+      <div class="graph">
+        <div class="float">
+          <div>
+            <h4>
+              Recent Pomos
+            </h4>
+          </div>
+          <div>
+            <span class="opt cursor remove-highlight" :class="{active: recentPomo === 'Day'}" @click="recentPomo = 'Day'">
+              Day
+            </span>
+            <span class="opt cursor remove-highlight" :class="{active: recentPomo === 'Week'}" @click="recentPomo = 'Week'">
+              Week
+            </span>
+            <span class="opt cursor remove-highlight" :class="{active: recentPomo === 'Month'}" @click="recentPomo = 'Month'">
+              Month
+            </span>
+          </div>
+        </div>
+        <Graph
+          :data='recentPomoData'
+          :labels='recentPomoLabels'
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -125,16 +145,98 @@ const trunc = (x, n) => {
   while (f.length < n) f += '0'
   return `${v[0]}.${f}`
 }
+const reduceSum = (tot, num) => tot + num
 
 export default {
   components: {
     Graph,
+  },
+  data() {
+    return {
+      recentPomo: 'Day',
+    }
+  },
+  methods: {
+    mapEachWeekday(firstDayOfTheWeek, callback) {
+      const arr = []
+      const tod = mom(firstDayOfTheWeek, 'Y-M-D')
+
+      for (let i = 0;i < 7;i++) {
+        arr.push(callback(tod.format('Y-M-D')))
+        tod.add(1, 'd')
+      }
+
+      return arr
+    },
+    mapEachMonthDay(firstDayOfTheMonth, callback) {
+      const tod = mom(firstDayOfTheMonth, 'Y-M-D')
+      const days = tod.daysInMonth()
+
+      const arr = []
+
+      for (let i = 0;i < days;i++) {
+        arr.push(callback(tod.format('Y-M-D')))
+        tod.add(1, 'd')
+      }
+
+      return arr
+    },
+    getCompletedPomosFromDate(date) {
+      const data = this.stats.dates[date]
+      return (data && data.completedPomos) || 0
+    },
+    getLastSeventDateStringArraysByMomentUnit(unit) {
+      const tod = mom().startOf(unit)
+
+      const dates = []
+      for (let i = 0; i < 7;i++) {
+        dates.push(tod.format('Y-M-D'))
+        tod.subtract(1, unit)
+      }
+
+      return dates
+    },
   },
   computed: {
     ...mapState({
       stats: state => state.pomo.stats,
     }),
     ...mapGetters(['l', 'platform']),
+    lastSevenDays() {
+      return this.getLastSeventDateStringArraysByMomentUnit('d')
+    },
+    lastSevenWeeks() {
+      return this.getLastSeventDateStringArraysByMomentUnit('week')
+    },
+    lastSevenMonths() {
+      return this.getLastSeventDateStringArraysByMomentUnit('month')
+    },
+    recentPomoData() {
+      if (this.firstTime) return [0,0,0,0,0,0,0]
+      switch (this.recentPomo) {
+        case 'Day':
+          return this.lastSevenDays.map(this.getCompletedPomosFromDate).reverse()
+        case 'Week':
+          return this.lastSevenWeeks.map(firstDay => 
+            this.mapEachWeekday(firstDay, this.getCompletedPomosFromDate).reduce(reduceSum, 0)
+          ).reverse()
+        case 'Month':
+          return this.lastSevenMonths.map(firstDay =>
+            this.mapEachMonthDay(firstDay, this.getCompletedPomosFromDate).reduce(reduceSum, 0)
+          ).reverse()
+      }
+    },
+    recentPomoLabels() {
+      if (this.firstTime) return ['28','29','30','31','1','2','3']
+      switch (this.recentPomo) {
+        case 'Day':
+          return this.lastSevenDays.map(dt => mom(dt, 'Y-M-D').format('D')).reverse()
+        case 'Week':
+          return this.lastSevenWeeks.map(dt => mom(dt, 'Y-M-D').format('M.D')).reverse()
+        case 'Month':
+          return this.lastSevenMonths.map(dt => mom(dt, 'Y-M-D').format('MMM')).reverse()
+      }
+    },
     firstTime() {
       return !this.stats
     },
@@ -250,6 +352,12 @@ export default {
   padding-bottom: 74px;
 }
 
+.float {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .desktop {
   max-height: 500px;
 }
@@ -258,6 +366,22 @@ export default {
   margin: 18px;
   margin-top: 0;
 }
+
+.opt {
+  margin-right: 6px;
+  transform: scale(1,1);
+  transition-duration: .2s;
+}
+
+.opt:active {
+  transform: scale(1.1,1.1); 
+}
+
+.opt.active {
+  display: inline-block;
+  color: var(--primary);
+}
+
 
 .numbers {
   display: flex;
@@ -272,6 +396,10 @@ export default {
   justify-content: space-around;
   flex-wrap: nowrap;
   flex-basis: 100%;
+}
+
+.graph {
+  margin-top: 40px;
 }
 
 .cell {
