@@ -31,13 +31,11 @@ import mom from 'moment/src/moment'
 
 import Graph from '@/components/Chartjs/Graph.vue'
 
-const reduceSum = (tot, num) => tot + num
-
 export default {
   components: {
     Graph,
   },
-  props: ['title', 'stats', 'getDataFunction'],
+  props: ['title', 'stats', 'getDataFunction', 'dataReducer'],
   data() {
     return {
       type: 'Day'
@@ -88,11 +86,11 @@ export default {
           return this.lastSevenDays.map(this.getDataFunction).reverse()
         case 'Week':
           return this.lastSevenWeeks.map(firstDay => 
-            this.mapEachWeekday(firstDay, this.getDataFunction).reduce(reduceSum, 0)
+            this.mapEachWeekday(firstDay, this.getDataFunction).reduce(this.dataReducer, 0)
           ).reverse()
         case 'Month':
           return this.lastSevenMonths.map(firstDay =>
-            this.mapEachMonthDay(firstDay, this.getDataFunction).reduce(reduceSum, 0)
+            this.mapEachMonthDay(firstDay, this.getDataFunction).reduce(this.dataReducer, 0)
           ).reverse()
       }
     },

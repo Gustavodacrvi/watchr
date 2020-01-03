@@ -89,6 +89,13 @@
         title='Recent Pomos'
         :stats='stats'
         :getDataFunction='getCompletedPomosFromDate'
+        :dataReducer='completedReducer'
+      />
+      <StatsGraph
+        title='Recent Rest'
+        :stats='stats'
+        :getDataFunction='getCompletedRestFromDate'
+        :dataReducer='completedReducer'
       />
     </div>
   </div>
@@ -140,6 +147,13 @@ export default {
     getCompletedPomosFromDate(date) {
       const data = this.stats.dates[date]
       return (data && data.completedPomos) || 0
+    },
+    getCompletedRestFromDate(date) {
+      const data = this.stats.dates[date]
+      return (data && data.completedRest) || 0
+    },
+    completedReducer(tot, num) {
+      return tot + num
     },
   },
   computed: {
