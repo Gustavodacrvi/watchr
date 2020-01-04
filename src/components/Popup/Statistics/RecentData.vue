@@ -214,23 +214,27 @@ export default {
           m.isSameOrAfter(start, 'second') && m.isBefore(end, 'second')
         )
         const even = insideMoms.length % 2 === 0
+        // false
       
         if (expectingEnd) {
           expectingEnd = false
           time += insideMoms[0].diff(start, 'seconds')
           insideMoms.shift()
           if (insideMoms.length > 0) {
-            if (!even)
+            if (!even) {
               for (let j = 0;j < insideMoms.length;j++)
                 if (j % 2 !== 0)
                   time += insideMoms[j].diff(insideMoms[j - 1], 'seconds')
-            else {
+            } else {
               expectingEnd = true
-              for (let j = 0;j < insideMoms.length;j++)
-                if ((j + 1) === insideMoms.length)
+              for (let j = 0;j < insideMoms.length;j++) {
+                if ((j + 1) === insideMoms.length) {
                   time += end.diff(insideMoms[j], 'seconds')
+                  break
+                }
                 if (j % 2 !== 0)
                   time += insideMoms[j].diff(insideMoms[j - 1], 'seconds')
+              }
             }
           }
         } else if (even) {
@@ -239,11 +243,14 @@ export default {
               time += insideMoms[j].diff(insideMoms[j - 1], 'seconds')
         } else {
           expectingEnd = true
-          for (let j = 0;j < insideMoms.length;j++)
-            if ((j + 1) === insideMoms.length)
+          for (let j = 0;j < insideMoms.length;j++) {
+            if ((j + 1) === insideMoms.length) {
               time += end.diff(insideMoms[j], 'seconds')
+              break
+            }
             if (j % 2 !== 0)
               time += insideMoms[j].diff(insideMoms[j - 1], 'seconds')
+          }
         }
 
 
