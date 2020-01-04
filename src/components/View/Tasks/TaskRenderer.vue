@@ -615,7 +615,7 @@ export default {
       return new Promise(solve => {
         this.lazyHeadings = []
         let i = 0
-        const length = headings.length
+        const length = headings.filter(h => h.tasks && h.tasks.length > 0).length
         let timeout = this.isDesktop ? 155 : 230
 
         if (length < 5 || this.viewName === 'Upcoming') timeout = 20

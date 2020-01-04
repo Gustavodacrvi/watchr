@@ -1,12 +1,10 @@
 <template>
   <div>
-    <h3>Advanced Pomodoro Statistics</h3>
+    <h3>Pomodoro Statistics</h3>
     <br>
 
-    <li>Today Focus Time.</li>
-    <li>Recent pomos: day, week, year.</li>
-    <li>Recent focus time: day, week, year.</li>
-    <li>Recent rest time: day, week, year.</li>
+    <li>New pomodoro smart view.</li>
+    <li>Simple pomodoro statistics.</li>
 
   </div>
 </template>

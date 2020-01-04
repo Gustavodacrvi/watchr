@@ -85,30 +85,47 @@
         </div>
       </div>
 
-      <h4>Focus time today(min)</h4>
-      <TimeGraph
-        :data='todayTimeData'
-      />
+      <div class="graph">
+        <div class="float">
+          <div>
+            <h4>Focus time(min)</h4>
+          </div>
+          <div>
+            <span class="opt cursor remove-highlight" :class="{active: focusTime === 'Day'}" @click="focusTime = 'Day'">
+              Today
+            </span>
+            <span class="opt cursor remove-highlight" :class="{active: focusTime === 'Week'}" @click="focusTime = 'Week'">
+              Last 7 days
+            </span>
+            <span class="opt cursor remove-highlight" :class="{active: focusTime === 'Month'}" @click="focusTime = 'Month'">
+              Last month
+            </span>
+          </div>
+        </div>
+        <TimeGraph
+          :data='focusTimeData'
+        />
+      </div>
 
-      <StatsGraph
+      <StatsGraph class="graph"
         title='Recent Pomos'
         :stats='stats'
         :getDataFunction='getCompletedPomosFromDate'
         :dataReducer='completedReducer'
       />
-      <StatsGraph
+      <StatsGraph class="graph"
         title='Recent Rest'
         :stats='stats'
         :getDataFunction='getCompletedRestFromDate'
         :dataReducer='completedReducer'
       />
-      <StatsGraph
+      <StatsGraph class="graph"
         title='Recent focus time(h)'
         :stats='stats'
         :getDataFunction='getFocusTimeFromDate'
         :dataReducer='timeReducer'
       />
-      <StatsGraph
+      <StatsGraph class="graph"
         title='Recent rest time(h)'
         :stats='stats'
         :getDataFunction='getRestTimeFromDate'
@@ -159,7 +176,7 @@ export default {
   },
   data() {
     return {
-      recentPomo: 'Day',
+      focusTime: 'Day',
     }
   },
   methods: {
@@ -185,25 +202,12 @@ export default {
     timeReducer(tot, num) {
       return tot + parseFloat(num, 10)
     },
-  },
-  computed: {
-    ...mapState({
-      stats: state => state.pomo.stats,
-    }),
-    ...mapGetters(['l', 'platform']),
-    firstTime() {
-      return !this.stats
-    },
-    tod() {
-      if (this.firstTime) return null
-      return this.stats.dates[TOD_STR]
-    },
-    todayTimeData() {
-      if (this.firstTime || !this.stats.dates[TOD_STR] || !this.tod.pomoEntries) return []
-      const entries = this.tod.pomoEntries
+    getFocusTimeDataByDate(date) {
+      if (this.firstTime || !this.stats.dates[date] || !this.stats.dates[date].pomoEntries) return []
+      const entries = this.stats.dates[date].pomoEntries
       if (entries.length % 2 !== 0) return []
       const moments = entries.map(dt => mom(dt, 'HH:mm:ss'))
-      const start = mom().startOf('day')
+      const start = mom(date, 'Y-M-D').startOf('day')
       const end = start.clone().add(1, 'h')
       const arr = []
 
@@ -214,9 +218,10 @@ export default {
           m.isSameOrAfter(start, 'second') && m.isBefore(end, 'second')
         )
         const even = insideMoms.length % 2 === 0
-        // false
-      
-        if (expectingEnd) {
+        
+        if (expectingEnd && insideMoms.length === 0) {
+          time += 3600
+        } else if (expectingEnd) {
           expectingEnd = false
           time += insideMoms[0].diff(start, 'seconds')
           insideMoms.shift()
@@ -260,6 +265,71 @@ export default {
       }
 
       return arr
+    },
+    getLastSeventDateStringArraysByMomentUnit(unit) {
+      const tod = mom().startOf(unit)
+
+      const dates = []
+      for (let i = 0; i < 7;i++) {
+        dates.push(tod.format('Y-M-D'))
+        tod.subtract(1, unit)
+      }
+
+      return dates
+    },
+    sumAllDateFocusTimes(arr) {
+      const sum = []
+
+      for (let i = 0;i < 24;i++)
+        sum.push(0)
+
+      for (const day of arr)
+        for (let i = 0;i < 24;i++)
+          if (day[i])
+            sum[i] += parseFloat(day[i])
+      
+      return sum
+    },
+  },
+  computed: {
+    ...mapState({
+      stats: state => state.pomo.stats,
+    }),
+    ...mapGetters(['l', 'platform']),
+    firstTime() {
+      return !this.stats
+    },
+    tod() {
+      if (this.firstTime) return null
+      return this.stats.dates[TOD_STR]
+    },
+    lastSevenDays() {
+      return this.getLastSeventDateStringArraysByMomentUnit('day')
+    },
+    lastMonth() {
+      const tod = mom()
+
+      const dates = []
+      for (let i = 0;i < 28;i++) {
+        dates.push(tod.format('Y-M-D'))
+        tod.subtract(1, 'd')
+      }
+
+      return dates
+    },
+    focusTimeData() {
+      switch (this.focusTime) {
+        case 'Day':
+          return this.getFocusTimeDataByDate(TOD_STR)
+        case 'Week':
+          return this.sumAllDateFocusTimes(
+            this.lastSevenDays.map(this.getFocusTimeDataByDate)
+          )
+        case 'Month':
+          return this.sumAllDateFocusTimes(
+            this.lastMonth.map(this.getFocusTimeDataByDate)
+          )
+      }
     },
     dailyPomos() {
       if (this.firstTime || !this.tod) return 0
@@ -402,6 +472,11 @@ export default {
   text-align: center;
 }
 
+.float {
+  display: flex;
+  justify-content: space-between;
+}
+
 .num {
   font-size: 2em;
 }
@@ -424,6 +499,25 @@ export default {
 
 .green .num {
   color: var(--green);
+}
+
+.graph {
+  margin-top: 40px;
+}
+
+.opt {
+  margin-right: 6px;
+  transform: scale(1,1);
+  transition-duration: .2s;
+}
+
+.opt:active {
+  transform: scale(1.1,1.1); 
+}
+
+.opt.active {
+  display: inline-block;
+  color: var(--primary);
 }
 
 </style>

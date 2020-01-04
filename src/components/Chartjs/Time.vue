@@ -20,13 +20,14 @@ export default {
   },
   mounted() {
     this.graph = new Chartjs(this.$el, {
-      type: 'bar',
+      type: 'line',
       data: {
         datasets: [{
-          barPercentage: .5,
           data: this.data,
-          backgroundColor: val => this.getColor(val.dataset.data[val.dataIndex]),
+          borderColor: 'rgba(89, 160, 222, .2)',
+          pointBackgroundColor: val => this.getColor(val.dataset.data[val.dataIndex]),
           hoverBackgroundColor: 'white',
+          backgroundColor: this.gradient,
         }],
         labels: this.getTimeLabels,
       },
@@ -62,7 +63,7 @@ export default {
         },
         plugins: {
           datalabels: {
-            formatter: v => v === '0.0' ? '' : v,
+            formatter: v => v === '0.0' || v === 0 ? '' : v,
             clamp: true,
             color: '#fff',
             align: 'top',
@@ -95,6 +96,15 @@ export default {
   computed: {
     ...mapState(['userInfo']),
     ...mapGetters(['isDesktop']),
+    gradient() {
+      const gradient = this.$el.getContext('2d').createLinearGradient(0, 0, 0, 400)
+
+      gradient.addColorStop(0, 'rgba(89, 160, 222, .2)')
+      gradient.addColorStop(0.5, 'rgba(89, 160, 222, 0.1)')
+      gradient.addColorStop(1, 'rgba(89, 160, 222, 0)')
+
+      return gradient
+    },
     getTimeLabels() {
       return !this.userInfo.disablePmFormat ? [
         '1am', '2am', '3am', '4am', '5am', '6am',
@@ -111,10 +121,11 @@ export default {
   watch: {
     data() {
       this.graph.data.datasets = [{
-          barPercentage: .5,
           data: this.data,
-          backgroundColor: val => this.getColor(val.dataset.data[val.dataIndex]),
+          borderColor: 'rgba(89, 160, 222, .2)',
+          pointBackgroundColor: val => this.getColor(val.dataset.data[val.dataIndex]),
           hoverBackgroundColor: 'white',
+          backgroundColor: this.gradient,
         }],
       this.graph.update()
     },

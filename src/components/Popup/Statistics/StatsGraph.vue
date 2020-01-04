@@ -142,8 +142,4 @@ export default {
   align-items: center;
 }
 
-.graph {
-  margin-top: 40px;
-}
-
 </style>
