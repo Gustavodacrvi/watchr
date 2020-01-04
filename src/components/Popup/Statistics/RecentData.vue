@@ -92,13 +92,13 @@
           </div>
           <div>
             <span class="opt cursor remove-highlight" :class="{active: focusTime === 'Day'}" @click="focusTime = 'Day'">
-              Today
+              Day
             </span>
             <span class="opt cursor remove-highlight" :class="{active: focusTime === 'Week'}" @click="focusTime = 'Week'">
-              Last 7 days
+              Week
             </span>
             <span class="opt cursor remove-highlight" :class="{active: focusTime === 'Month'}" @click="focusTime = 'Month'">
-              Last month
+              Month
             </span>
           </div>
         </div>
@@ -205,8 +205,7 @@ export default {
     getFocusTimeDataByDate(date) {
       if (this.firstTime || !this.stats.dates[date] || !this.stats.dates[date].pomoEntries) return []
       const entries = this.stats.dates[date].pomoEntries
-      if (entries.length % 2 !== 0) return []
-      const moments = entries.map(dt => mom(dt, 'HH:mm:ss'))
+      const moments = entries.map(dt => mom(`${date} ${dt}`, 'Y-M-D HH:mm:ss'))
       const start = mom(date, 'Y-M-D').startOf('day')
       const end = start.clone().add(1, 'h')
       const arr = []
