@@ -287,7 +287,7 @@ export default {
           if (day[i])
             sum[i] += parseFloat(day[i])
       
-      return sum
+      return sum.map(n => trunc(n, 1))
     },
   },
   computed: {
