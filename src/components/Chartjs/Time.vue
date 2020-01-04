@@ -4,7 +4,7 @@
 
 <script>
 
-import Chartjs from 'chart.js/dist/Chart.min.js'
+import Chartjs from 'chart.js/dist/Chart.js'
 import 'chartjs-plugin-datalabels'
 
 import utils from '@/utils'
@@ -12,6 +12,7 @@ import utils from '@/utils'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
+  props: ['data'],
   data() {
     return {
       graph: null,
@@ -23,21 +24,14 @@ export default {
       data: {
         datasets: [{
           barPercentage: .5,
-          data: [
-            5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60
-          ],
+          data: this.data,
           backgroundColor: val => this.getColor(val.dataset.data[val.dataIndex]),
           hoverBackgroundColor: 'white',
         }],
         labels: this.getTimeLabels,
       },
       options: {
-        elements: {
-          line: {
-            tension: 0,
-          },
-        },
-        layout: {
+        layout: { 
           padding: {
             top: 45,
             left: 10,
@@ -68,12 +62,12 @@ export default {
         },
         plugins: {
           datalabels: {
-            formatter: v => v,
-            color: '#57A0DE',
+            formatter: v => v === '0.0' ? '' : v,
+            clamp: true,
+            color: '#fff',
             align: 'top',
-            font: {
-              weight: 'bold',
-            },
+            anchor: 'end',
+            offset: 10,
           },
         },
       },
@@ -112,6 +106,17 @@ export default {
         '10h', '11h', '12h', '13h', '14h', '15h', '16h', '17h',
         '18h', '19h', '20h', '21h', '22h', '23h',
       ]
+    },
+  },
+  watch: {
+    data() {
+      this.graph.data.datasets = [{
+          barPercentage: .5,
+          data: this.data,
+          backgroundColor: val => this.getColor(val.dataset.data[val.dataIndex]),
+          hoverBackgroundColor: 'white',
+        }],
+      this.graph.update()
     },
   },
 }

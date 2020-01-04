@@ -85,7 +85,10 @@
         </div>
       </div>
 
-      <TimeGraph/>
+      <h4>Focus time today(min)</h4>
+      <TimeGraph
+        :data='todayTimeData'
+      />
 
       <StatsGraph
         title='Recent Pomos'
@@ -194,6 +197,62 @@ export default {
     tod() {
       if (this.firstTime) return null
       return this.stats.dates[TOD_STR]
+    },
+    todayTimeData() {
+      if (this.firstTime || !this.stats.dates[TOD_STR] || !this.tod.pomoEntries) return []
+      const entries = this.tod.pomoEntries
+      if (entries.length % 2 !== 0) return []
+      const moments = entries.map(dt => mom(dt, 'HH:mm:ss'))
+      const start = mom().startOf('day')
+      const end = start.clone().add(1, 'h')
+      const arr = []
+
+      let expectingEnd = false
+      for (let i = 0;i < 24;i++) {
+        let time = 0
+        const insideMoms = moments.filter(m => 
+          m.isSameOrAfter(start, 'second') && m.isBefore(end, 'second')
+        )
+        const even = insideMoms.length % 2 === 0
+      
+        if (expectingEnd) {
+          expectingEnd = false
+          time += insideMoms[0].diff(start, 'seconds')
+          insideMoms.shift()
+          if (insideMoms.length > 0) {
+            if (!even)
+              for (let j = 0;j < insideMoms.length;j++)
+                if (j % 2 !== 0)
+                  time += insideMoms[j].diff(insideMoms[j - 1], 'seconds')
+            else {
+              expectingEnd = true
+              for (let j = 0;j < insideMoms.length;j++)
+                if ((j + 1) === insideMoms.length)
+                  time += end.diff(insideMoms[j], 'seconds')
+                if (j % 2 !== 0)
+                  time += insideMoms[j].diff(insideMoms[j - 1], 'seconds')
+            }
+          }
+        } else if (even) {
+          for (let j = 0;j < insideMoms.length;j++)
+            if (j % 2 !== 0)
+              time += insideMoms[j].diff(insideMoms[j - 1], 'seconds')
+        } else {
+          expectingEnd = true
+          for (let j = 0;j < insideMoms.length;j++)
+            if ((j + 1) === insideMoms.length)
+              time += end.diff(insideMoms[j], 'seconds')
+            if (j % 2 !== 0)
+              time += insideMoms[j].diff(insideMoms[j - 1], 'seconds')
+        }
+
+
+        start.add(1, 'h')
+        end.add(1, 'h')
+        arr.push(trunc(time / 60, 1))
+      }
+
+      return arr
     },
     dailyPomos() {
       if (this.firstTime || !this.tod) return 0

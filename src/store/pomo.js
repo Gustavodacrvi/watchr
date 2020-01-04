@@ -35,6 +35,7 @@ export default {
     stats: null,
     cycles: 0,
     current: '00:00',
+    start: null,
     openHelper: false,
 
     duration: '25:00',
@@ -135,14 +136,7 @@ export default {
           state.openHelper = true
           tickSound.play()
 
-          if (!state.rest)
-            dispatch('updateStats', {
-              pomoEntries: fd().arrayUnion(mom().format('HH:mm:ss')),
-            })
-          else
-            dispatch('updateStats', {
-              restEntries: fd().arrayUnion(mom().format('HH:mm:ss')),
-            })
+          state.start = mom().format('HH:mm:ss')
         } else {
           dispatch('save')
           tickSound.pause()
@@ -220,10 +214,10 @@ export default {
     saveFocusTime({state, dispatch}, completed) {
       const sec = getValueFromTime(state.current)
 
-      if (sec > 3) {
+      if (sec > 3 && state.start) {
         const obj = {
           focus: fd().increment(sec),
-          pomoEntries: fd().arrayUnion(mom().format('HH:mm:ss')),
+          pomoEntries: fd().arrayUnion(state.start, mom().format('HH:mm:ss')),
         }
         
         if (completed)
@@ -235,10 +229,10 @@ export default {
     saveRestTime({state, dispatch}, completed) {
       const sec = getValueFromTime(state.current)
 
-      if (sec > 3) {
+      if (sec > 3 && state.start) {
         const obj = {
           rest: fd().increment(sec),
-          restEntries: fd().arrayUnion(mom().format('HH:mm:ss'))
+          restEntries: fd().arrayUnion(state.start, mom().format('HH:mm:ss'))
         }
 
         if (completed)
