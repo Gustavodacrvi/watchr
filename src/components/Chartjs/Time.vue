@@ -63,6 +63,7 @@ export default {
         },
         plugins: {
           datalabels: {
+            display: this.isDesktop,
             formatter: v => v === '0.0' || v === 0 ? '' : v,
             clamp: true,
             color: '#fff',
