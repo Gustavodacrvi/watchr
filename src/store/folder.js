@@ -21,7 +21,7 @@ export default {
         return rootGetters.checkMissingIdsAndSortArr(order, folders)
       return []
     },
-    ...MemoizeGetters(['folders'], {
+    ...MemoizeGetters('folders', {
       getFolderTaskOrderById({state}, folderId) {
         const fold = state.folders.find(f => f.id === folderId)
         if (fold && fold.tasks)
@@ -37,13 +37,18 @@ export default {
         if (!order) order = []
         return rootGetters.checkMissingIdsAndSortArr(order, arr)
       },
-      getFoldersByName({state}, names) {
-        const arr = []
-        for (const n of names) {
-          const fold = state.folders.find(f => f.name === n)
-          if (fold) arr.push(fold)
-        }
-        return arr
+      getFoldersByName: {
+        react: [
+          'name',
+        ],
+        getter({state}, names) {
+          const arr = []
+          for (const n of names) {
+            const fold = state.folders.find(f => f.name === n)
+            if (fold) arr.push(fold)
+          }
+          return arr
+        },
       },
       getFoldersById({state}, ids) {
         const arr = []

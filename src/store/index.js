@@ -123,7 +123,7 @@ const store = new Vuex.Store({
     pressingKey: null,
   },
   getters: {
-    ...Memoize([], {
+    ...Memoize(null, {
       checkMissingIdsAndSortArr({}, order, arr, property) {
         let name = 'id'
         if (property) name = property

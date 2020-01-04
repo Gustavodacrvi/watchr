@@ -1,5 +1,5 @@
 
-export default (properties, getters) => {
+export default (property, getters) => {
   const keys = Object.keys(getters)
 
   const memo = (func, stringify, type) => {
@@ -38,7 +38,7 @@ export default (properties, getters) => {
   const obj = {}
   for (const k of keys) {
     obj[k] = function(state) {
-      for (const p of properties) state[p]
+      if (property) state[property]
       const val = getters[k]
       const firstArg = {
         state: arguments[0],
@@ -47,9 +47,12 @@ export default (properties, getters) => {
         rootGetters: arguments[3],
       }
 
-      if ((!val.getter && !val.cache) ||
-        (!val.getter && val.cache) ||
-        (val.getter && !val.cache))
+      if (property && val.react)
+        for (const el of state[property])
+          for (const p of val.react)
+            el[p]
+
+      if (!val.getter)
         return memo(val.bind(this, firstArg))
       else return memo(val.getter.bind(this, firstArg), val.cache, val.type)
     }

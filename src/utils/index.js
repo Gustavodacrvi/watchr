@@ -13,6 +13,7 @@ export default {
   getDataFromFirestoreSnapshot(state, changes, arrName) {
     changes.forEach(change => {
       const newDoc = {...change.doc.data(), id: change.doc.id}
+
       if (change.type === 'added') {
         const el = state[arrName].find(el => el.id === change.doc.id)
         if (!el)
@@ -21,11 +22,17 @@ export default {
         const index = state[arrName].findIndex(el => el.id === change.doc.id)
         state[arrName].splice(index, 1)
       } else {
-        const doc = state[arrName].find(el => el.id === change.doc.id)
+/*         const doc = state[arrName].find(el => el.id === change.doc.id)
         Object.assign(doc, newDoc)
 
         const index = state[arrName].findIndex(el => el.id === change.doc.id)
-        state[arrName].splice(index, 1, newDoc)
+        state[arrName].splice(index, 1, newDoc) */
+
+        const i = state[arrName].findIndex(el => el.id === change.doc.id)
+
+        const keys = Object.keys(newDoc)
+        for (const k of keys)
+          Vue.set(state[arrName][i], k, newDoc[k])
       }
     })
   },
