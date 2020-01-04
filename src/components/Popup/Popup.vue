@@ -33,6 +33,7 @@ import AddHeadingNote from './Lists/AddHeadingNote.vue'
 import Updates from './Updates.vue'
 import FastSearch from './FastSearch.vue'
 import AddFolder from './Folder/AddFolder.vue'
+import RecentData from './Statistics/RecentData.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -42,6 +43,7 @@ export default {
     AddListNote, AddTagNote, Icon, AddList, AddFilter,
     AddTask, Updates, ChangeUsername, ChangeEmail,
     Confirm, AddHeadingNote, AddFolder, Profile,
+    RecentData,
   },
   methods: {
     closeMobilePopup() {

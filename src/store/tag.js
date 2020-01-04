@@ -3,7 +3,7 @@ import { fire, auth } from './index'
 import utils from '../utils'
 import MemoizeGetters from './memoFunctionGetters'
 import { tagColl, tagRef, userRef, fd, taskRef, serverTimestamp, addTask } from '../utils/firestore'
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 const uid = () => {
   return auth.currentUser.uid

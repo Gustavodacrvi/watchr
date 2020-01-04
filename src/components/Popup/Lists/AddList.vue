@@ -55,6 +55,7 @@ export default {
       const lists = [
         'Today',
         'Pomodoro',
+        'Statistics',
         'Someday',
         'Calendar',
         'Upcoming',

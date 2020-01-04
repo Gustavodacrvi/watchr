@@ -5,7 +5,7 @@ import router from './../router'
 import Memoize from './memoFunctionGetters'
 import utilsTask from '../utils/task'
 
-import moment from 'moment/src/moment'
+import moment from 'moment'
 
 Vue.use(Vuex)
 
@@ -58,7 +58,7 @@ moment.locale(lang)
 const uid = () => auth.currentUser.uid
 
 
-const version = '071'
+const version = '073'
 
 let lastVersion = localStorage.getItem('watchr_version')
 

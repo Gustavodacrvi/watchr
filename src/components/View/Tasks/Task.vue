@@ -139,7 +139,7 @@ import utilsTask from '@/utils/task'
 import utilsMoment from '@/utils/moment'
 import utils from '@/utils/index'
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 export default {
   props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName',

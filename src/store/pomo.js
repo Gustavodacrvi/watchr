@@ -2,9 +2,9 @@
 import { fire, auth } from './index'
 import fb from 'firebase/app'
 
-import { userRef } from "@/utils/firestore"
+import { userRef, pomoDoc, uid, fd } from "@/utils/firestore"
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 const TOD_STR = mom().format('Y-M-D')
 
@@ -32,15 +32,12 @@ const getValueFromTime = time => {
 export default {
   namespaced: true,
   state: {
+    stats: null,
     cycles: 0,
-    longCycles: 0,
     current: '00:00',
+    start: null,
     openHelper: false,
 
-/*     duration: '00:10',
-    currentDuration: '00:10',
-    shortRest: '00:05',
-    longRest: '00:10', */
     duration: '25:00',
     currentDuration: '25:00',
     shortRest: '05:00',
@@ -64,6 +61,12 @@ export default {
     },
   },
   getters: {
+    cyclePomos(state) {
+      return state.cycles % 4
+    },
+    longCycles(state) {
+      return Math.floor(state.cycles / 4)
+    },
     getPomoColor(state) {
       return state.rest ? 'var(--primary)' : 'var(--dark-red)'
     },
@@ -87,10 +90,26 @@ export default {
     }
   },
   actions: {
-    getData({dispatch}) {
+    getData({state, dispatch}) {
       setTimeout(() => {
-        dispatch('update')
-      }, 300)
+        dispatch('updateDurations')
+      }, 1000)
+      return Promise.all([
+        new Promise(resolve => {
+          pomoDoc().onSnapshot(snap => {
+            state.stats = snap.data()
+
+            const info = state.stats && state.stats.dates[TOD_STR]
+            if (info) {
+              state.cycles = info.completedPomos
+      
+              if (state.cycles === undefined) state.cycles = 0
+            }
+            
+            resolve()
+          })
+        })
+      ])
     },
     updateDurations({rootState, state}, obj) {
       let pomo = rootState.userInfo.pomo
@@ -104,24 +123,6 @@ export default {
         state.currentDuration = pomo.duration
       }
     },
-    update({state, rootState, dispatch}) {
-      const {userInfo} = rootState
-      if (userInfo && userInfo.pomoDate === TOD_STR) {
-        state.cycles = userInfo.cycles
-        state.longCycles = userInfo.longCycles
-
-        if (state.cycles === undefined) state.cycles = 0
-        if (state.longCycles === undefined) state.longCycles = 0
-
-        if (state.cycles === 4) {
-          state.cycles = 0
-          state.longCycles++
-          dispatch('saveUser')
-        }
-
-        dispatch('updateDurations')
-      }
-    },
     toggle({dispatch, state}, obj) {
       if (obj && obj.task)
         state.task = obj.task
@@ -129,15 +130,25 @@ export default {
       const stop = (obj && obj.stopToggle)
       
       if (!state.running || !stop) {
-        dispatch('toggleInterval')
         state.running = !state.running
   
         if (state.running) {
           state.openHelper = true
           tickSound.play()
+
+          state.start = mom().format('HH:mm:ss')
+        } else {
+          dispatch('save')
+          tickSound.pause()
         }
-        else tickSound.pause()
+
+        dispatch('toggleInterval')
       }
+    },
+    save({state, dispatch}) {
+      if (!state.rest)
+        dispatch('saveFocusTime')
+      else dispatch('saveRestTime')
     },
     toggleInterval({state, dispatch}) {
       if (!state.addInterval)
@@ -158,9 +169,10 @@ export default {
           const completed = areEqual(state.current, state.currentDuration)
 
           if (completed && !state.rest) {
+            dispatch('saveFocusTime', true)
             state.cycles++
 
-            const longRest = state.cycles === 4
+            const longRest = state.cycles % 4 === 0
 
             state.rest = longRest ? 'long' : 'short'
             state.currentDuration = longRest ? state.longRest : state.shortRest
@@ -171,8 +183,8 @@ export default {
             state.addInterval = null
             tickSound.pause()
             window.navigator.vibrate(200)
-            dispatch('saveUser')
           } else if (completed) {
+            dispatch('saveRestTime', true)
             state.rest = null
             state.currentDuration = state.duration
             state.current = '00:00'
@@ -183,11 +195,6 @@ export default {
 
             tickSound.pause()
             window.navigator.vibrate(200)
-            if (state.cycles === 4) {
-              state.cycles = 0
-              state.longCycles++
-              dispatch('saveUser')
-            }
           }
         }, 1000)
       else {
@@ -196,12 +203,43 @@ export default {
         state.addInterval = null
       }
     },
-    saveUser({state}) {
-      userRef().set({
-        pomoDate: mom().format('Y-M-D'),
-        cycles: state.cycles,
-        longCycles: state.longCycles,
+    updateStats({}, obj) {
+      pomoDoc().set({
+        userId: uid(),
+        dates: {
+          [TOD_STR]: obj,
+        },
       }, {merge: true})
+    },
+    saveFocusTime({state, dispatch}, completed) {
+      const sec = getValueFromTime(state.current)
+
+      if (sec > 3 && state.start) {
+        const obj = {
+          focus: fd().increment(sec),
+          pomoEntries: fd().arrayUnion(state.start, mom().format('HH:mm:ss')),
+        }
+        
+        if (completed)
+          obj['completedPomos'] = fd().increment(1)
+        
+        dispatch('updateStats', obj)
+      }
+    },
+    saveRestTime({state, dispatch}, completed) {
+      const sec = getValueFromTime(state.current)
+
+      if (sec > 3 && state.start) {
+        const obj = {
+          rest: fd().increment(sec),
+          restEntries: fd().arrayUnion(state.start, mom().format('HH:mm:ss'))
+        }
+
+        if (completed)
+          obj['completedRest'] = fd().increment(1)
+      
+        dispatch('updateStats', obj)
+      }
     },
   },
 }

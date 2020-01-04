@@ -3,7 +3,7 @@ import utilsTask from '@/utils/task'
 import utilsList from '@/utils/list'
 import utilsFolder from '@/utils/folder'
 import utils from '@/utils/'
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 export default {
   methods: {

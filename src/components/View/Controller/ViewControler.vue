@@ -24,7 +24,7 @@ import utils from '@/utils/'
 
 import { pipeBooleanFilters } from '@/utils/memo'
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 import mixins from './controlerModules'
 

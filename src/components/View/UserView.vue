@@ -78,6 +78,7 @@ export default {
         case 'Today': return true
         case 'Calendar': return true
         case 'Pomodoro': return true
+        case 'Statistics': return true
         case 'Upcoming': return true
         case 'Someday': return true
         case 'Tomorrow': return true

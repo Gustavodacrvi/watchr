@@ -1,5 +1,5 @@
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 import utilsMoment from "./moment"
 import utilsTask from "./task"
 import firebase from 'firebase/app'
@@ -38,6 +38,9 @@ export default {
       month: m.format('MMM').toLowerCase(),
       year: m.format('Y'),
     }
+  },
+  transitionColor(oldNum, newNum, offset, max) {
+    return (newNum * offset / max) + oldNum - (oldNum * offset / max)
   },
   getHumanReadableDate(str, language) {
     const l = language

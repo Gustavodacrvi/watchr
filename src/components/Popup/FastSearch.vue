@@ -239,6 +239,11 @@ export default {
           color: 'var(--olive)',
           icon: 'circle-check',
         },
+        {
+          name: 'Statistics',
+          color: 'var(--primary)',
+          icon: 'pie',
+        },
       ]
     },
     noActive() {

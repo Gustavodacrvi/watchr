@@ -143,7 +143,7 @@ import { MultiDrag, Sortable } from 'sortablejs'
 
 Sortable.mount(new MultiDrag())
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 import utilsTask from '@/utils/task'
 import utils from '@/utils/'
@@ -615,10 +615,10 @@ export default {
       return new Promise(solve => {
         this.lazyHeadings = []
         let i = 0
-        const length = headings.length
+        const length = headings.filter(h => h.tasks && h.tasks.length > 0).length
         let timeout = this.isDesktop ? 155 : 230
 
-        if (length < 5 || this.viewName === 'Upcoming') timeout = 40
+        if (length < 5 || this.viewName === 'Upcoming') timeout = 20
         
         const add = (head) => {
           this.lazyHeadings.push(head)

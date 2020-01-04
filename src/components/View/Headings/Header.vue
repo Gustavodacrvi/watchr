@@ -125,7 +125,7 @@ import FileMixin from '@/mixins/file.js'
 
 import { mapState, mapGetters } from 'vuex'
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 import utils from '@/utils'
 
 export default {
@@ -314,6 +314,7 @@ export default {
         Inbox: 'inbox',
         Calendar: 'calendar-star',
         Pomodoro: 'pomo',
+        Statistics: 'pie',
         Upcoming: 'calendar',
         Completed: 'circle-check',
       }
@@ -329,6 +330,7 @@ export default {
           Inbox: 'var(--primary)',
           Calendar: 'var(--purple)',
           Pomodoro: 'var(--dark-red)',
+          Statistics: 'var(--primary)',
           Upcoming: 'var(--green)',
           Completed: 'var(--olive)',
         }

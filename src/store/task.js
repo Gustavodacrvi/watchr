@@ -9,7 +9,7 @@ import MemoizeGetters from './memoFunctionGetters'
 import { uid, fd, userRef, serverTimestamp, tagRef, taskColl, taskRef, listRef, addTask } from '../utils/firestore'
 import { pipeBooleanFilters } from '@/utils/memo'
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 const TODAY_DATE = mom().format('Y-M-D')
 const TOM_DATE = mom().add(1, 'day').format('Y-M-D')
@@ -534,10 +534,9 @@ export default {
             return false
           }
 
-          for (const id of tags) {
-            if (task.tags.includes(id)) continue
-            if (!foundChild(id)) return false
-          }
+          for (const id of tags)
+            if (!task.tags.includes(id) && !foundChild(id)) return false
+
           return true
         },
         cache(args) {

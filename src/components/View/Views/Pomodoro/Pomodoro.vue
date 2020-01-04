@@ -21,7 +21,7 @@ import { mapGetters, mapState } from 'vuex'
 
 import utils from '@/utils/'
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 const TOD_STR = mom().format('Y-M-D')
 

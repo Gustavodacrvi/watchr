@@ -124,7 +124,7 @@
 
 import Icon from '@/components/Icon.vue'
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 import utils from "@/utils/"
 
@@ -302,7 +302,7 @@ export default {
       if (this.isDesktop) this.select(date)
     },
     mobileSelect(date) {
-      if (!this.moved) this.saveDates(date)
+      if (!this.moved) this.select(date)
     },
     select(date) {
       if (this.savedSelected.length === 0 || this.helper) {

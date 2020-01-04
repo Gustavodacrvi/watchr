@@ -34,7 +34,7 @@ import { mapGetters, mapState } from 'vuex'
 
 import utilsTask from '@/utils/task'
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 export default {
   props: ['mainFilter', 'rootFilter', 'tasksOrder', 'headings', 'headingsOrder',

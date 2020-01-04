@@ -150,7 +150,7 @@ import AuthButton from "@/components/Auth/Button.vue"
 
 import { mapGetters, mapState } from 'vuex'
 
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 const TOD_STR = mom().format('Y-M-D')
 

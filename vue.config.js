@@ -19,17 +19,14 @@ module.exports = {
       }),
       new VuetifyLoaderPlugin(),
     ],
+    resolve: {
+      alias: {
+        moment: 'moment/src/moment',
+      },
+    },
   },
   chainWebpack: config => {
     config.plugins.delete('prefetch')
-
-    /* config.plugin('VuetifyLoaderPlugin').tap(args => [{
-      match (originalTag, { kebabTag, camelTag, path, component }) {
-        if (kebabTag.startsWith('core-')) {
-          return [camelTag, `import ${camelTag} from '@/components/core/${camelTag.substring(4)}.vue'`]
-        }
-      }
-    }]) */
     
     const svgRule = config.module.rule('svg')
 

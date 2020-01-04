@@ -166,7 +166,12 @@ export default {
           name: 'Completed',
           icon: 'circle-check',
           color: 'var(--olive)'
-        }
+        },
+        {
+          name: 'Statistics',
+          icon: 'pie',
+          color: 'var(--primary)'
+        },
       ],
       hidedSections: [],
       hidedSmartViews: [],

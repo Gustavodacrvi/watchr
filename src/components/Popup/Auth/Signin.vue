@@ -1,5 +1,5 @@
 <template>
-  <div class="Signin popup cb shadow rb scroll" :class="platform">
+  <div class="Signin popup cb shadow rb scroll-thin" :class="platform">
     <div class="tac title">
       <h3 class="pc">{{ l['Sign in'] }}</h3>
     </div>

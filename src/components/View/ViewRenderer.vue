@@ -85,6 +85,7 @@ import PaginationVue from './Pagination.vue'
 import HelperComponent from './HelperComponent.vue'
 import TaskHandler from './Views/TaskHandler.vue'
 import Pomodoro from './Views/Pomodoro/Pomodoro.vue'
+import Statistics from './Views/Statistics/Statistics.vue'
 
 import ViewRendererLongCalendarPicker from '@/components/View/SmartComponents/ViewRendererLongCalendarPicker.vue'
 
@@ -92,7 +93,7 @@ import { mapGetters, mapState, mapActions } from 'vuex'
 
 import utilsTask from '@/utils/task'
 import utils from '@/utils/index.js'
-import mom from 'moment/src/moment'
+import mom from 'moment'
 
 import { pipeBooleanFilters } from '@/utils/memo'
 import { userRef } from '@/utils/firestore'
@@ -114,7 +115,7 @@ export default {
     Header: HeaderVue, HelperComponent,
     ActionButtons: ActionButtonsVue,
     ViewRendererLongCalendarPicker,
-    Pomodoro,
+    Pomodoro, Statistics,
   },
   data() {
     return {
@@ -421,7 +422,9 @@ export default {
       return this.getViewComp === 'TaskHandler'
     },
     getHeaderOptions() {
-      return !this.isTaskHandler ? this.pomoOptions : this.taskIconDropOptions
+      if (this.getViewComp === 'Statistics')
+        return []
+      return this.viewName === 'Pomodoro' ? this.pomoOptions : this.taskIconDropOptions
     },
     pomoOptions() {
       const l = this.l
@@ -487,7 +490,7 @@ export default {
       return getOptions(unfix(this.getPomoOptions))
     },
     headerHandle() {
-      return !this.isTaskHandler ? 'pomo' : 'settings-v'
+      return (this.viewComponent === 'Pomodoro') ? 'pomo' : 'settings-v'
     },
     el() {
       const el = this.$el.getElementsByClassName('view-renderer-move')[0]
