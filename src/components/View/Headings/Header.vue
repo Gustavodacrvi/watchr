@@ -446,7 +446,7 @@ export default {
   margin-top: 30px;
 }
 
-.margins + .margins {
+.tags + .margins {
   margin-top: 4px;
 }
 
