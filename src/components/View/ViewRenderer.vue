@@ -24,6 +24,7 @@
         :priorities='priorityOptions'
         :lists='listSelectionOptions'
         :folders='folderSelectionOptions'
+        :extraIcons='extraIcons'
 
         :viewName="viewName"
         :options="getHeaderOptions"
@@ -162,6 +163,9 @@ export default {
   },
   created() {
     this.getComputedOptions()
+    this.showingTagSelection = localStorage.getItem('tagFilters') === 'true'
+    this.showingFolderSelection = localStorage.getItem('folderFilters') === 'true'
+    this.showingListSelection = localStorage.getItem('listFilters') === 'true'
   },
   mounted() {
     this.getComputedOptions()
@@ -514,6 +518,25 @@ export default {
     el() {
       const el = this.$el.getElementsByClassName('view-renderer-move')[0]
       return el.style
+    },
+    extraIcons() {
+      const arr = []
+      if (this.showingListSelection)
+        arr.push({
+          icon: 'tasks',
+          callback: () => this.showingListSelection = false
+        })
+      if (this.showingTagSelection)
+        arr.push({
+          icon: 'tag',
+          callback: () => this.showingTagSelection = false
+        })
+      if (this.showingFolderSelection)
+        arr.push({
+          icon: 'folder',
+          callback: () => this.showingFolderSelection = false
+        })
+      return arr
     },
     isSearch() {
       return this.isSmart && this.viewNameValue === "Search"

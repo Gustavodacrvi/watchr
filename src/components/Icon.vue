@@ -229,7 +229,7 @@ export default {
 
 .primary-hover:hover {
   transition-duration: .15s;
-  color: var(--primary);
+  color: var(--primary) !important;
 }
 
 .circle-enter, .circle-enter-to {
