@@ -201,48 +201,53 @@ export default {
       return [
         {
           name: 'Today',
-          color: 'var(--yellow)',
           icon: 'star',
+          color: 'var(--yellow)'
         },
         {
           name: 'Tomorrow',
-          color: 'var(--orange)',
           icon: 'sun',
-        },
-        {
-          name: 'Someday',
-          color: 'var(--brown)',
-          icon: 'archive',
+          color: 'var(--orange)'
         },
         {
           name: 'Inbox',
-          color: 'var(--primary)',
           icon: 'inbox',
-        },
-        {
-          name: 'Calendar',
-          color: 'var(--purple)',
-          icon: 'calendar-star',
-        },
-        {
-          name: 'Pomodoro',
-          color: 'var(--dark-red)',
-          icon: 'pomo',
+          color: 'var(--primary)'
         },
         {
           name: 'Upcoming',
-          color: 'var(--green)',
           icon: 'calendar',
+          color: 'var(--green)'
+        },
+        {
+          name: 'Anytime',
+          icon: 'layer-group',
+          color: 'var(--dark-blue)',
+        },
+        {
+          name: 'Someday',
+          icon: 'archive',
+          color: 'var(--brown)'
+        },
+        {
+          name: 'Pomodoro',
+          icon: 'pomo',
+          color: 'var(--dark-red)'
+        },
+        {
+          name: 'Calendar',
+          icon: 'calendar-star',
+          color: 'var(--purple)'
         },
         {
           name: 'Completed',
-          color: 'var(--olive)',
           icon: 'circle-check',
+          color: 'var(--olive)'
         },
         {
           name: 'Statistics',
-          color: 'var(--primary)',
           icon: 'pie',
+          color: 'var(--primary)'
         },
       ]
     },

@@ -57,6 +57,7 @@ export default {
       const savedFolders = this.folders
       const setOfLists = new Set()
       const setOfFolders = new Set()
+      const isSmartOrderViewType = viewName === 'Someday' || viewName === 'Anytime'
 
       for (const t of savedLists) {
         if (!setOfLists.has(t)) {
@@ -88,7 +89,7 @@ export default {
       // const { rootTasks, folderTasks, listTasks } = utilsTask.groupTaskIds()
 
       let order
-      if (viewName === 'Someday')
+      if (isSmartOrderViewType)
         order = this.viewOrders[viewName] ? this.viewOrders[viewName].headings : []
       else {
         order = (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].headings) || []
@@ -102,7 +103,7 @@ export default {
         if (viewHeading.smartViewControllerType === 'list') {
           const list = viewHeading
           const saveOrder = ids => {
-            if (viewName === 'Someday') {
+            if (isSmartOrderViewType) {
               this.$store.dispatch('list/saveSmartViewHeadingTasksOrder', {
                 ids, listId: list.id, smartView: viewName,
               })
@@ -122,7 +123,7 @@ export default {
               return this.getAllTasksOrderByList(list.id)
           }
           let tasksOrder = []
-          if (viewName === 'Someday')
+          if (isSmartOrderViewType)
             tasksOrder = getSmartViewOrder()
           else {
             const taskIdsFromList = this.getAllTasksOrderByList(list.id)
@@ -189,7 +190,7 @@ export default {
         } else if (viewHeading.smartViewControllerType === 'folder') {
           const folder = viewHeading
           const saveOrder = ids => {
-            if (viewName === 'Someday') {
+            if (isSmartOrderViewType) {
               this.$store.dispatch('folder/saveSmartViewHeadingTasksOrder', {
                 ids, folderId: folder.id, smartView: viewName,
               })
@@ -210,7 +211,7 @@ export default {
           }
 
           let tasksOrder = []
-          if (viewName === 'Someday')
+          if (isSmartOrderViewType)
             tasksOrder = getSmartViewOrder()
           else {
             const taskIdsFromFolder = this.getFolderTaskOrderById(folder.id)
@@ -616,6 +617,11 @@ export default {
     },
     isListType() {
       return !this.isSmart && this.viewList && this.viewType === 'list'
+    },
+    isSmartOrderViewType() {
+      const n = this.viewName
+      return this.viewType === 'list' && this.isSmart &&
+        (n === 'Someday' || n === 'Anytime' || n === 'Inbox')
     },
     hasOverdueTasks() {
       return this.getOverdueTasks.length > 0

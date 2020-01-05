@@ -154,11 +154,6 @@ export default {
             iconColor: 'var(--orange)',
           },
           {
-            name: 'Someday',
-            icon: 'archive',
-            iconColor: 'var(--brown)'
-          },
-          {
             name: 'Inbox',
             icon: 'inbox',
             disableAction: true,
@@ -171,16 +166,27 @@ export default {
             iconColor: 'var(--green)'
           },
           {
-            name: 'Calendar',
-            icon: 'calendar-star',
+            name: 'Anytime',
+            icon: 'layer-group',
             disableAction: true,
-            iconColor: 'var(--purple)'
+            iconColor: 'var(--dark-blue)',
+          },
+          {
+            name: 'Someday',
+            icon: 'archive',
+            iconColor: 'var(--brown)'
           },
           {
             name: 'Pomodoro',
             icon: 'pomo',
             disableAction: true,
             iconColor: 'var(--dark-red)',
+          },
+          {
+            name: 'Calendar',
+            icon: 'calendar-star',
+            disableAction: true,
+            iconColor: 'var(--purple)'
           },
           {
             name: 'Completed',
@@ -355,7 +361,7 @@ export default {
     },
     numberOfTasks(link) {
       const viewName = link.name
-      if (viewName === 'Upcoming' || viewName === 'Someday')
+      if (viewName === 'Upcoming' || viewName === 'Someday' || viewName === 'Anytime')
         return {
           total: 0,
           notCompleted: 0,
@@ -470,7 +476,7 @@ export default {
       if (this.userInfo && this.userInfo.links) {
         return this.userInfo.links
       }
-      return ['Today', 'Tomorrow', 'Someday', 'Inbox', 'Upcoming', 'Completed']
+      return ['Today', 'Tomorrow', 'Inbox', 'Upcoming', 'Anytime', 'Someday', 'Pomodoro', 'Calendar', 'Completed', 'Completed']
     },
     getLinksOrdered() {
       return this.$store.getters.checkMissingIdsAndSortArr(this.linksOrder, this.nonHidedLinks)

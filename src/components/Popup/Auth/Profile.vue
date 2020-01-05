@@ -155,19 +155,9 @@ export default {
           color: 'var(--orange)'
         },
         {
-          name: 'Someday',
-          icon: 'archive',
-          color: 'var(--brown)'
-        },
-        {
           name: 'Inbox',
           icon: 'inbox',
           color: 'var(--primary)'
-        },
-        {
-          name: 'Calendar',
-          icon: 'calendar-star',
-          color: 'var(--purple)'
         },
         {
           name: 'Upcoming',
@@ -175,9 +165,24 @@ export default {
           color: 'var(--green)'
         },
         {
+          name: 'Anytime',
+          icon: 'layer-group',
+          color: 'var(--dark-blue)',
+        },
+        {
+          name: 'Someday',
+          icon: 'archive',
+          color: 'var(--brown)'
+        },
+        {
           name: 'Pomodoro',
           icon: 'pomo',
           color: 'var(--dark-red)'
+        },
+        {
+          name: 'Calendar',
+          icon: 'calendar-star',
+          color: 'var(--purple)'
         },
         {
           name: 'Completed',

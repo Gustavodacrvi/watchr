@@ -344,6 +344,7 @@ export default {
             case 'Today': return getters.isTaskShowingOnDate(task, TODAY_DATE)
             case 'Someday': return getters.isTaskSomeday(task)
             case 'Overdue': return getters.isTaskOverdue(task)
+            case 'Anytime': return getters.isTaskAnytime(task)
             case 'Tomorrow': return getters.isTaskShowingOnDate(task, TOM_DATE)
             case 'Completed': return getters.isTaskInCompletedView(task)
           }
@@ -357,6 +358,15 @@ export default {
             case 'Inbox': {
               obj = {
                 completed: t.completed,
+                calendar: t.calendar,
+                list: t.list,
+                folder: t.folder,
+                tags: t.tags,
+              }
+              break
+            }
+            case 'Anytime': {
+              obj = {
                 calendar: t.calendar,
                 list: t.list,
                 folder: t.folder,
@@ -443,6 +453,20 @@ export default {
             list: t.list,
             folder: t.folder,
             tags: t.tags,
+          })
+        },
+      },
+      isTaskAnytime: {
+        getter({}, task) {
+          const hasListOrFolderOrTag = task.list || task.folder || (task.tags && task.tags.length > 0)
+          return hasListOrFolderOrTag &&
+            !utilsTask.hasCalendarBinding(task)
+        },
+        cache(args) {
+          const t = args[0]
+          return JSON.stringify({
+            l: t.list, f: t.folder, t: t.tags,
+            c: t.calendar,
           })
         },
       },

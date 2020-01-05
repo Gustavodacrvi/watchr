@@ -8,7 +8,7 @@ import { pipeBooleanFilters } from '@/utils/memo'
 export default {
   methods: {
     addTask(obj) {
-      if (this.viewName === 'Someday' || this.viewName === 'Inbox') {
+      if (this.isSmartOrderViewType) {
         this.$store.dispatch('list/addTaskByIndexSmart', {
           ...obj, list: this.viewName,
         })
@@ -48,7 +48,7 @@ export default {
     },
     
     updateIds(ids) {
-      if (this.viewName === 'Someday' || this.viewName === 'Inbox') {
+      if (this.isSmartOrderViewType) {
         this.$store.dispatch('list/updateViewOrder', {
           view: this.viewName,
           ids,
@@ -77,7 +77,7 @@ export default {
     saveNotes() {},
     addHeading() {},
     onSortableAdd(evt, taskIds, type, ids) {
-      if (this.viewName === 'Inbox' || this.viewName === 'Someday')
+      if (this.isSmartOrderViewType)
         this.$store.dispatch('list/removeTasksFromSmartViewHeading', {
           taskIds, view: this.viewName, ids,
         })
@@ -100,7 +100,7 @@ export default {
   },
   computed: {
     updateHeadingIds() {
-      if (this.viewName === 'Someday')
+      if (this.isSmartOrderViewType)
         return ids => {
             this.$store.dispatch('list/updateHeadingsViewOrder', {
             view: this.viewName,
@@ -148,10 +148,7 @@ export default {
       if (this.viewName === 'Today' && this.hasOverdueTasks)
         return () => false
       if (this.isSmart && this.notHeadingHeaderView)
-        return pipeBooleanFilters(
-          task => this.isTaskInView(task, this.viewName),
-          task => !task.list && !task.folder,
-        )
+        return task => !task.list && !task.folder
       return () => false
     },
     configFilterOptions() {
@@ -160,7 +157,7 @@ export default {
       return null
     },
     tasksOrder() {
-      if (this.viewName === 'Someday' || this.viewName === 'Inbox') {
+      if (this.isSmartOrderViewType) {
         let o = this.viewOrders[this.viewName]
         if (o && o.tasks) return this.viewOrders[this.viewName].tasks
         return []
@@ -201,6 +198,9 @@ export default {
         case 'Someday': {
           return this.getListHeadingsByView('Someday')
         }
+        case 'Anytime': {
+          return this.getListHeadingsByView('Anytime')
+        }
         case 'Calendar': {
           return this.getListHeadingsByView('Calendar')
         }
@@ -214,7 +214,7 @@ export default {
       return null
     },
     headingEditOptions() {
-      if (this.viewName === "Today" || this.viewName === "Tomorrow" || this.viewName === 'Someday')
+      if (this.viewName === "Today" || this.viewName === "Tomorrow" || this.viewName === 'Someday' || this.viewName === 'Anytime')
         return {
           excludeNames: this.lists.map(el => el.name),
           errorToast: "There's already another list with this name."
@@ -236,6 +236,7 @@ export default {
           case 'Pomodoro': return 'pomo'
           case 'Statistics': return 'pie'
           case 'Upcoming': return 'calendar'
+          case 'Anytime': return 'layer-group'
           case 'Completed': return 'circle-check'
           case 'Someday': return 'archive'
         }
