@@ -6,8 +6,8 @@
   >
     <div class="Edit handle rb TaskEditComp" :class="[{notPopup: !popup}, platform]" :style="editStyle">
       <div class="fix-back" @click="remove"></div>
-      <div class="edit-wrapper" :class="{show}">
-        <div class="tags" :class="{show: atLeastOnSpecialTag}">
+      <div class="edit-wrapper">
+        <!-- <div class="tags" :class="{show: atLeastOnSpecialTag}">
           <Tag v-if="task.taskDuration"
             icon="clock"
             color="var(--purple)"
@@ -52,9 +52,9 @@
             :value="t"
             @click="removeTag(t)"
           />
-        </div>
-        <DropInput
-          :class="{'no-back': !popup}"
+        </div> -->
+        <DropInput ref="task-name"
+          :class="{'no-back': !popup, hide: !defaultTask, show}"
           v-model="task.name"
           :focus="true"
           :options="options"
@@ -67,8 +67,8 @@
           @godown='$emit("godown")'
         />
         <DropInput
-          class="notes"
-          :class="{'no-back': !popup}"
+          class="notes hide"
+          :class="{'no-back': !popup, show}"
           v-model="task.notes"
           :options="[]"
           :placeholder="notesPlaceholder"
@@ -76,7 +76,7 @@
           @goup='$emit("goup")'
           @godown='$emit("godown")'
         />
-        <Checklist
+        <Checklist class="hide" :class="{show}"
           :list='task.checklist'
           :order='task.order'
           :toggle='toggleChecklist'
@@ -86,7 +86,7 @@
           @convert-task='convertTask'
           @is-adding-toggle='v => isAddingChecklist = v'
         />
-        <div class="files" v-if="getFiles.length > 0">
+        <div class="files show" :class="{show}" v-if="getFiles.length > 0">
           <FileApp v-for="f in getFiles" :key="f"
             :name="f"
             :status='getFileStatus(f)'
@@ -95,8 +95,8 @@
             @view="viewFile(f, 'tasks', task.id)"
           />
         </div>
-        <span v-if="isEditingFiles" style="opacity: .4;margin-left: 8px">{{ l["Note: file upload/delete operations won't work while offline."] }}</span>
-        <div class="options">
+        <span v-if="isEditingFiles" class="files show" :class="{show}" style="opacity: .4;margin-left: 8px">{{ l["Note: file upload/delete operations won't work while offline."] }}</span>
+        <div class="options hide" :class="{show}">
           <transition name="btn">
             <ButtonApp v-if="showingOptions"
               class="add-checklist-button"
@@ -191,7 +191,7 @@ import FileMixin from '@/mixins/file.js'
 
 export default {
   mixins: [FileMixin],
-  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup', 'focusToggle'],
+  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup', 'focusToggle', 'taskHeight'],
   components: {
     DropInput: DropInputVue, FileApp,
     ButtonApp: ButtonVue,
@@ -219,6 +219,7 @@ export default {
         order: [],
         files: [],
       },
+      readyToRemove: false,
       savingTask: false,
       uploadProgress: null,
       addedFiles: [],
@@ -227,6 +228,9 @@ export default {
     }
   },
   created() {
+    setTimeout(() => {
+      this.readyToRemove = true
+    }, 80)
     if (this.defaultTask) {
       const t = this.defaultTask
       this.task = {...this.task, ...t}
@@ -264,14 +268,16 @@ export default {
   },
   methods: {
     remove(evt) {
-      let found = false
-      for (const node of evt.path)
-        if (node.classList && node.classList.contains('edit-wrapper')) {
-          found = true
-          break
+      if (this.readyToRemove) {
+        let found = false
+        for (const node of evt.path)
+          if (node.classList && node.classList.contains('edit-wrapper')) {
+            found = true
+            break
+          }
+        if (!found && !this.iconDrop && !this.popup) {
+          this.cancel()
         }
-      if (!found && !this.iconDrop && !this.popup) {
-        this.cancel()
       }
     },
     addChecklist() {
@@ -279,18 +285,32 @@ export default {
     },
     cancel() {
       this.leave(this.$el)
-      setTimeout(() => {
+      if (this.defaultTask)
         this.$emit('cancel')
-      }, 301)
+      else
+        setTimeout(() => {
+          this.$emit('cancel')
+        }, 301)
     },
     enter(el) {
       const s = el.style
       const height = el.offsetHeight
 
+      if (this.defaultTask) {
+        const t = this.$refs['task-name'].$el.style
+
+        t.transitionDuration = 0
+        t.transform = 'translate(27px, -2px)'
+        setTimeout(() => {
+          t.transitionDuration = '.25s'
+          t.transform = 'translate(0, -2px)'
+        })
+      }
+
       s.transitionDuration = '0s'
-      s.height = 0
+      s.height = this.taskHeight ? this.taskHeight + 'px' : 0
       setTimeout(() => {
-        s.transitionDuration = '.3s'
+        s.transitionDuration = '.25s'
         if (height < 36)
           s.height = '35px'
         else
@@ -306,15 +326,26 @@ export default {
     leave(el) {
       const s = el.style
 
+      if (this.defaultTask) {
+        const t = this.$refs['task-name'].$el.style
+
+        t.transitionDuration = 0
+        t.transform = 'translate(0, -2px)'
+        setTimeout(() => {
+          t.transitionDuration = '.25s'
+          t.transform = 'translate(27px, -2px)'
+        })
+      }
+
       s.transitionDuration = '0s'
       s.height = el.offsetHeight + 'px'
       setTimeout(() => {
         this.show = false
-        s.transitionDuration = '.3s'
+        s.transitionDuration = '.25s'
         s.overflow = 'hidden'
         s.backgroundColor = 'var(--back-color)'
         s.boxShadow = '0 0 0 #000'
-        s.height = 0
+        s.height = this.taskHeight ? this.taskHeight + 'px' : 0
       })
     },
     select(value) {
@@ -355,6 +386,7 @@ export default {
     },
     save() {
       const t = this.task
+      this.leave(this.$el)
       if (t.name) {
         if (t.folder) {
           this.task.list = ''
@@ -417,7 +449,8 @@ export default {
         this.task.tags.push(name)
     },
     selectDuration(time) {
-      this.task.taskDuration = time
+      if (time !== '00:00')
+        this.task.taskDuration = time
     },
   },
   computed: {
@@ -717,6 +750,14 @@ export default {
   z-index: 201;
 }
 
+.trans-t-enter-active {
+  transition-timing-function: ease-out;
+}
+
+.trans-t-leave-active {
+  transition-timing-function: ease-in;
+}
+
 .trans-t-enter, .trans-t-leave-to {
   opacity: 0;
   background-color: var(--back-color);
@@ -736,8 +777,11 @@ export default {
 }
 
 .edit-wrapper {
-  opacity: 0;
   transition-duration: .15s;
+}
+
+.hide {
+  opacity: 0;
 }
 
 .notPopup .notes {
@@ -766,6 +810,7 @@ export default {
 
 .show {
   opacity: 1;
+  transition-duration: .2s;
 }
 
 .options {
