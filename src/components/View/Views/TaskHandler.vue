@@ -180,6 +180,11 @@ export default {
         head => head.tasks
       ).flat()]
     },
+    allNonFilteredViewTasks() {
+      return [...this.rootNonFiltered,...this.sortHeadings.map(
+        head => head.nonFiltered
+      ).flat()]
+    },
 
     sortHeadings() {
       return this.sortHeadingsFunction(this.laserHeadings)
@@ -360,7 +365,7 @@ export default {
 
     presentTags() {
       const unique = new Set()
-      return this.allViewTasks.map(t => t.tags || []).flat().filter(id => {
+      return this.allNonFilteredViewTasks.map(t => t.tags || []).flat().filter(id => {
         if (!unique.has(id)) {
           unique.add(id) 
           return id
@@ -369,7 +374,7 @@ export default {
     },
     presentLists() {
       const unique = new Set()
-      return this.allViewTasks.map(t => t.list).filter(id => {
+      return this.allNonFilteredViewTasks.map(t => t.list).filter(id => {
         if (id && !unique.has(id)) {
           unique.add(id) 
           return id
@@ -378,7 +383,7 @@ export default {
     },
     presentFolder() {
       const unique = new Set()
-      return this.allViewTasks.map(t => t.folder).filter(id => {
+      return this.allNonFilteredViewTasks.map(t => t.folder).filter(id => {
         if (id && !unique.has(id)) {
           unique.add(id) 
           return id

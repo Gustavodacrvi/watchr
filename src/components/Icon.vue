@@ -82,6 +82,7 @@ import magic from '@/assets/icons/magic.svg'
 import clock from '@/assets/icons/clock.svg'
 import pomo from '@/assets/icons/pomo.svg'
 import pie from '@/assets/icons/pie.svg'
+import layerGroup from '@/assets/icons/layer-group.svg'
 import boxCheck from '@/assets/icons/box-check.svg'
 import calendarStar from '@/assets/icons/calendar-star.svg'
 import circleFilled from '@/assets/icons/circle-filled.svg'
@@ -103,6 +104,7 @@ export default {
         folder, heart, close, filter, magic, clock,
         pomo, pie,
         "box-dash": boxDash,
+        "layer-group": layerGroup,
         "circle-filled": circleFilled,
         "box-check-dash": boxCheckDash,
         "box-check": boxCheck,
