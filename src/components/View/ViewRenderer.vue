@@ -536,6 +536,21 @@ export default {
           icon: 'folder',
           callback: () => this.showingFolderSelection = false
         })
+      if (this.showingPrioritySelection)
+        arr.push({
+          icon: 'priority',
+          callback: () => this.showingPrioritySelection = false
+        })
+      if (this.showCompleted)
+        arr.push({
+          icon: 'circle-check',
+          callback: () => this.showCompleted = false,
+        })
+      if (this.showSomeday)
+        arr.push({
+          icon: 'archive',
+          callback: () => this.showSomeday = false,
+        })
       return arr
     },
     isSearch() {
@@ -838,7 +853,6 @@ export default {
             callback: () => this.toggleCompleted()
           },
         ]
-        if (this.showCompleted) opt[4].name = l['Hide completed']
         if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
           opt.push({
             type: 'hr',
