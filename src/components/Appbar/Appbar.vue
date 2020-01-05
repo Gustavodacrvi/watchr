@@ -141,80 +141,67 @@ export default {
     SearchButton: SearchButtonVue,
   },
   data() {
-    const selectView = str => {
-      this.$router.push(`/user?list=${str}`)
-    }
+    const links = [
+          {
+            name: 'Today',
+            icon: 'star',
+            iconColor: 'var(--yellow)',
+          },
+          {
+            name: 'Tomorrow',
+            id: 'Tomorrow',
+            icon: 'sun',
+            iconColor: 'var(--orange)',
+          },
+          {
+            name: 'Someday',
+            icon: 'archive',
+            iconColor: 'var(--brown)'
+          },
+          {
+            name: 'Inbox',
+            icon: 'inbox',
+            disableAction: true,
+            iconColor: 'var(--primary)',
+          },
+          {
+            name: 'Upcoming',
+            icon: 'calendar',
+            disableAction: true,
+            iconColor: 'var(--green)'
+          },
+          {
+            name: 'Calendar',
+            icon: 'calendar-star',
+            disableAction: true,
+            iconColor: 'var(--purple)'
+          },
+          {
+            name: 'Pomodoro',
+            icon: 'pomo',
+            disableAction: true,
+            iconColor: 'var(--dark-red)',
+          },
+          {
+            name: 'Completed',
+            icon: 'circle-check',
+            iconColor: 'var(--olive)'
+          },
+          {
+            name: 'Statistics',
+            icon: 'pie',
+            iconColor: 'var(--primary)'
+          },
+        ]
+
+    links.forEach(link => {
+      link.callback = () => this.$router.push(`/user?list=${link.name}`)
+      link.id = link.name
+    })
+
     
     return {
-      links: [
-        {
-          name: 'Today',
-          id: 'Today',
-          icon: 'star',
-          callback: () => selectView('Today'),
-          iconColor: 'var(--yellow)',
-        },
-        {
-          name: 'Tomorrow',
-          id: 'Tomorrow',
-          icon: 'sun',
-          callback: () => selectView('Tomorrow'),
-          iconColor: 'var(--orange)',
-        },
-        {
-          name: 'Someday',
-          id: 'Someday',
-          icon: 'archive',
-          callback: () => selectView('Someday'),
-          iconColor: 'var(--brown)'
-        },
-        {
-          name: 'Inbox',
-          id: 'Inbox',
-          icon: 'inbox',
-          disableAction: true,
-          callback: () => selectView('Inbox'),
-          iconColor: 'var(--primary)',
-        },
-        {
-          name: 'Upcoming',
-          id: 'Upcoming',
-          icon: 'calendar',
-          disableAction: true,
-          callback: () => selectView('Upcoming'),
-          iconColor: 'var(--green)'
-        },
-        {
-          name: 'Calendar',
-          id: 'Calendar',
-          icon: 'calendar-star',
-          disableAction: true,
-          callback: () => selectView('Calendar'),
-          iconColor: 'var(--purple)'
-        },
-        {
-          name: 'Pomodoro',
-          id: 'Pomodoro',
-          icon: 'pomo',
-          disableAction: true,
-          callback: () => selectView('Pomodoro'),
-          iconColor: 'var(--dark-red)',
-        },
-        {
-          name: 'Completed',
-          id: 'Completed',
-          icon: 'circle-check',
-          callback: () => selectView('Completed'),
-          iconColor: 'var(--olive)'
-        },
-        {
-          name: 'Statistics',
-          id: 'Statistics',
-          icon: 'pie',
-          callback: () => selectView('Statistics'),
-          iconColor: 'var(--primary)'
-        },
-      ],
+      links,
       sections: [
         {
           name: 'Lists',
