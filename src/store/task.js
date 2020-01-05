@@ -61,7 +61,7 @@ export default {
       }
       return obj
     },
-    ...MemoizeGetters([], {
+    ...MemoizeGetters(null, {
       isCalendarObjectShowingToday({}, calendar, date, specific) {
         const c = calendar
         if (!calendar) return false
@@ -591,18 +591,23 @@ export default {
         },
       },
     }),
-    ...MemoizeGetters(['tasks'], {
-      getNumberOfTasksByTag({getters, state}, {tagId, tags}) {
-        const ts = state.tasks.filter(
-          task => getters.doesTaskPassInclusiveTags(task, [tagId], tags)
-        )
-  
-        return {
-          total: ts.length,
-          notCompleted: ts.filter(
-            task => !getters.isTaskCompleted(task)
-          ).length,
-        }
+    ...MemoizeGetters('tasks', {
+      getNumberOfTasksByTag: {
+        react: [
+          'tags',
+        ],
+        getter({getters, state}, {tagId, tags}) {
+          const ts = state.tasks.filter(
+            task => getters.doesTaskPassInclusiveTags(task, [tagId], tags)
+          )
+    
+          return {
+            total: ts.length,
+            notCompleted: ts.filter(
+              task => !getters.isTaskCompleted(task)
+            ).length,
+          }
+        },
       },
       getTasksById({state}, ids) {
         const arr = []
@@ -612,17 +617,27 @@ export default {
         }
         return arr
       },
-      getNumberOfTasksByView({state, getters}, viewName) {
-        const ts = state.tasks.filter(
-          task => getters.isTaskInView(task, viewName)
-        )
-
-        return {
-          total: ts.length,
-          notCompleted: ts.filter(
-            task => !getters.isTaskCompleted(task)
-          ).length,
-        }
+      getNumberOfTasksByView: {
+        react: [
+          'calendar',
+          'completed',
+          'list',
+          'folder',
+          'tags',
+          'completeDate',
+        ],
+        getter({state, getters}, viewName) {
+          const ts = state.tasks.filter(
+            task => getters.isTaskInView(task, viewName)
+          )
+  
+          return {
+            total: ts.length,
+            notCompleted: ts.filter(
+              task => !getters.isTaskCompleted(task)
+            ).length,
+          }
+        },
       },
     }),
   },

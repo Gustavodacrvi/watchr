@@ -22,19 +22,24 @@ export default {
         return rootGetters.checkMissingIdsAndSortArr(userInfo.lists, lists)
       return []
     },
-    ...MemoizeGetters([], {
+    ...MemoizeGetters(null, {
       getTasks({}, tasks, id) {
         return tasks.filter(el => el.list === id)
       },
     }),
-    ...MemoizeGetters(['lists'], {
-      getListsByName({state}, names) {
-        const arr = []
-        for (const n of names) {
-          const list = state.lists.find(el => el.name === n)
-          if (list) arr.push(list)
-        }
-        return arr
+    ...MemoizeGetters('lists', {
+      getListsByName: {
+        react: [
+          'name',
+        ],
+        getter({state}, names) {
+          const arr = []
+          for (const n of names) {
+            const list = state.lists.find(el => el.name === n)
+            if (list) arr.push(list)
+          }
+          return arr
+        },
       },
       getListsById({state}, ids) {
         const arr = []
@@ -44,40 +49,47 @@ export default {
         }
         return arr
       },
-      getListByName({state}, name) {
-        return state.lists.find(l => l.name.trim() === name)
+      getListByName: {
+        react: ['name'],
+        getter({state}, name) {
+          return state.lists.find(l => l.name.trim() === name)
+        },
       },
-      getAllTasksOrderByList({state, rootGetters}, listId) {
-        const list = state.lists.find(el => el.id === listId)
-        let ord = list.tasks.slice()
-        
-        let headsOrder = list.headingsOrder.slice() || []
-  
-        const heads = rootGetters.checkMissingIdsAndSortArr(headsOrder, list.headings, 'name')
-        
-        for (const h of heads) {
-          ord = [...ord, ...h.tasks]
-        }
-        
-        return ord
+      getAllTasksOrderByList: {
+        react: [
+          'headingsOrder',
+          'headings',
+          'tasks',
+        ],
+        getter({state, rootGetters}, listId) {
+          const list = state.lists.find(el => el.id === listId)
+          let ord = list.tasks.slice()
+          
+          let headsOrder = list.headingsOrder.slice() || []
+    
+          const heads = rootGetters.checkMissingIdsAndSortArr(headsOrder, list.headings, 'name')
+          
+          for (const h of heads) {
+            ord = [...ord, ...h.tasks]
+          }
+          
+          return ord
+        },
       },
       pieProgress({getters}, tasks, listId, isTaskCompleted) {
-        const list = getters['getListsById']([listId])[0]
-        const ts = getters.getTasks(tasks, listId)
-        const numberOfTasks = ts.length
-        let completedTasks = 0
-        
-        let compareDate = null
-/*         if (list.calendar && list.calendar.type !== 'someday')
-          compareDate = utils.getCalendarObjectData(list.calendar, mom()).lastCallEvent.format('Y-M-D') */
-  
-        ts.forEach(el => {
-          if (isTaskCompleted(el, mom().format('Y-M-D'), compareDate)) completedTasks++
-        })
-        const result = 100 * completedTasks / numberOfTasks
-        if (isNaN(result)) return 0
-        return result
-      },
+          const ts = getters.getTasks(tasks, listId)
+          const numberOfTasks = ts.length
+          let completedTasks = 0
+          
+          let compareDate = null
+    
+          ts.forEach(el => {
+            if (isTaskCompleted(el, mom().format('Y-M-D'), compareDate)) completedTasks++
+          })
+          const result = 100 * completedTasks / numberOfTasks
+          if (isNaN(result)) return 0
+          return result
+        },
     }),
     getFavoriteLists(state) {
       return state.lists.filter(el => el.favorite).map(f => ({...f, icon: 'tasks', color: 'var(--primary)', type: 'list'}))

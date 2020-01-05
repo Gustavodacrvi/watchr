@@ -28,19 +28,27 @@ export default {
       tags.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       return tags
     },
-    ...MemoizeGetters(['tags'], {
-      getSubTagsByParentId({state, getters}, parentId) {
-        if (!parentId)
-          return getters.rootTags
-        return state.tags.filter(tag => tag.parent === parentId)
+    ...MemoizeGetters('tags', {
+      getSubTagsByParentId: {
+        react: ['parent'],
+        getter({state, getters}, parentId) {
+          if (!parentId)
+            return getters.rootTags
+          return state.tags.filter(tag => tag.parent === parentId)
+        },
       },
-      getTagsByName({state}, names) {
-        const arr = []
-        for (const n of names) {
-          const tag = state.tags.find(el => el.name === n)
-          if (tag) arr.push(tag)
-        }
-        return arr
+      getTagsByName: {
+        react: [
+          'name',
+        ],
+        getter({state}, names) {
+          const arr = []
+          for (const n of names) {
+            const tag = state.tags.find(el => el.name === n)
+            if (tag) arr.push(tag)
+          }
+          return arr
+        },
       },
       getTagsById({state}, ids) {
         const arr = []

@@ -26,7 +26,7 @@ export default {
       filters.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       return filters
     },
-    ...MemoizeGetters(['filters'], {
+    ...MemoizeGetters('filters', {
       getFiltersByName({state}, names) {
         const arr = []
         for (const n of names) {
