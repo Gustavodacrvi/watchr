@@ -301,6 +301,7 @@ export default {
       getAllTasksOrderByList: 'list/getAllTasksOrderByList',
       getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
       isTaskInList: 'task/isTaskInList',
+      getOverdueTasks: 'task/getOverdueTasks',
       isTaskInSevenDays: 'task/isTaskInSevenDays',
       isTaskInFolder: 'task/isTaskInFolder',
       isTaskInListRoot: 'task/isTaskInListRoot',
@@ -561,9 +562,11 @@ export default {
           color: 'var(--red)',
 
           sort,
-          filter: task => {
-            return this.isTaskInView(task, 'Overdue')
-          },
+          react: [
+            'calendar',
+            'completed',
+          ],
+          filter: task => this.isTaskInView(task, 'Overdue'),
           options: tasks => {
             const overIds = tasks.map(el => el.id)
             return [
@@ -626,10 +629,7 @@ export default {
         (n === 'Someday' || n === 'Anytime' || n === 'Inbox')
     },
     hasOverdueTasks() {
-      return this.getOverdueTasks.length > 0
-    },
-    getOverdueTasks() {
-      return this.tasks.filter(task => this.isTaskInView(task, 'Overdue'))
+      return this.getOverdueTasks().length > 0
     },
     viewTag() {
       return this.tags.find(el => el.name === this.viewName)

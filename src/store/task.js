@@ -239,7 +239,10 @@ export default {
           return false
         },
         cache(args) {
-          return JSON.stringify(args[0].calendar)
+          const t = args[0]
+          return JSON.stringify({
+            c: t.calendar, co: t.completed,
+          })
         },
       },
       isTaskInPeriod: {
@@ -387,7 +390,10 @@ export default {
               break
             }
             case 'Overdue': {
-              obj = t.calendar
+              obj = {
+                c: t.calendar,
+                t: t.completed,
+              }
               break
             }
             case 'Tomorrow': {
@@ -631,6 +637,16 @@ export default {
               task => !getters.isTaskCompleted(task)
             ).length,
           }
+        },
+      },
+      getOverdueTasks: {
+        react: [
+          'calendar',
+          'completed',
+        ],
+        getter({getters, state}) {
+          const res = state.tasks.filter(getters.isTaskOverdue)
+          return res
         },
       },
       getTasksById({state}, ids) {

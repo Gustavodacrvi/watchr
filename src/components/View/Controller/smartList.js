@@ -132,10 +132,9 @@ export default {
       if (this.viewName === 'Upcoming')
         return task => task.calendar
       if (this.isSmart && this.notHeadingHeaderView) {
-        if (this.viewName === 'Today' && this.hasOverdueTasks) return task => {
-          return this.isTaskInView(task, 'Today') ||
-                this.isTaskInView(task, 'Overdue')
-        }
+        if (this.viewName === 'Today' && this.hasOverdueTasks)
+          return task => this.isTaskInView(task, 'Overdue') ||
+                        this.isTaskInView(task, 'Today')
         return task => this.isTaskInView(task, this.viewName)
       }
       return this.isTaskCompleted

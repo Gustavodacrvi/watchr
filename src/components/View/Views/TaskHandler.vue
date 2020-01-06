@@ -192,6 +192,8 @@ export default {
     laserHeadings() {
       if (!this.headings) return []
       return this.headings.map(head => {
+        if (head.react)
+          for (const p of head.react) this.mainTasks[p]
         const nonFiltered = head.sort(this.mainTasks.filter(task => head.filter(task)))
         const tasks = nonFiltered.filter(this.filterOptionsPipe)
 

@@ -241,6 +241,7 @@ export default {
       localStorage.setItem(`schedule_${this.viewName}`, JSON.stringify(info))
     },
     getLocalStorageSchedule() {
+      const n = this.viewName
       const str = localStorage.getItem(`schedule_${this.viewName}`)
       if (str)
         this.autoSchedule = JSON.parse(str)
