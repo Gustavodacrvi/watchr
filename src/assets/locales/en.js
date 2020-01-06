@@ -110,6 +110,7 @@ export default {
   "Recent Data": "Recent Data",
   "Predict the efficiency changes by comparing your activity in a certain period of time.": "Predict the efficiency changes by comparing your activity in a certain period of time.",
   "Anytime": 'Anytime',
+  "Skip interval": "Skip interval",
   "Add filter": "Add filter",
   "Duration: ": "Duration: ",
   "Always open tag filters": "Always open tag filters",

@@ -31,6 +31,7 @@ export default {
   "Recent Data": "Dados Recentes",
   "Predict the efficiency changes by comparing your activity in a certain period of time.": "Preveja as mudanças de eficiência comparando sua atividade em um determinado período de tempo.",
   "Reached maximum subtag depth.": "Limite de profundidade de subtags atingida.",
+  "Skip interval": "Pular descanso",
   "Always open tag filters": "Sempre abrir filtros de tags",
   "Always open list filters": "Sempre abir filtros de listas",
   "Always open folder filters": "Sempre abrir filtros de pastas",

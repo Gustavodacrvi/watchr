@@ -150,6 +150,18 @@ export default {
         dispatch('saveFocusTime')
       else dispatch('saveRestTime')
     },
+    skipRest({state}) {
+      state.rest = null
+      state.currentDuration = state.duration
+      state.current = '00:00'
+
+      if (state.addInterval)
+        clearInterval(state.addInterval)
+      state.addInterval = null
+      state.running = false
+
+      tickSound.pause()
+    },
     toggleInterval({state, dispatch}) {
       if (!state.addInterval)
         state.addInterval = setInterval(() => {
