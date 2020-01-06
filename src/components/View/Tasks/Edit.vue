@@ -7,52 +7,6 @@
     <div class="Edit handle rb TaskEditComp" :class="[{notPopup: !popup}, platform]" :style="editStyle">
       <div class="fix-back" @click="remove"></div>
       <div class="edit-wrapper">
-        <!-- <div class="tags" :class="{show: atLeastOnSpecialTag}">
-          <Tag v-if="task.taskDuration"
-            icon="clock"
-            color="var(--purple)"
-            :value="taskDurationStr"
-            @click="task.taskDuration = ''"
-          />
-          <Tag v-if="calendarStr"
-            icon="calendar"
-            color="var(--green)"
-            :value="calendarStr"
-            @click="task.calendar = null"
-          />
-          <Tag v-if="task.priority"
-            icon="priority"
-            :color="getPriorityColor"
-            :value="l[task.priority]"
-            @click="task.priority = ''"
-          />
-          <Tag v-if="task.folder"
-            icon="folder"
-            :value="task.folder"
-            color=''
-            @click="task.folder = ''"
-          />
-          <Tag v-if="task.list"
-            icon="tasks"
-            :value="task.list"
-            color='var(--primary)'
-            @click="task.list = ''"
-          />
-          <Tag v-if="task.list && task.heading"
-            icon="heading"
-            :value="task.heading"
-            color='var(--primary)'
-            @click="task.heading = ''"
-          />
-        </div>
-        <div class="tags" :class="{show: task.tags.length > 0}">
-          <Tag v-for="t in task.tags"
-            :key="t"
-            icon="tag"
-            :value="t"
-            @click="removeTag(t)"
-          />
-        </div> -->
         <DropInput ref="task-name"
           :class="{'no-back': !popup, hide: !defaultTask, show}"
           v-model="task.name"
@@ -76,6 +30,54 @@
           @goup='$emit("goup")'
           @godown='$emit("godown")'
         />
+        <div class="tags-wrapper" :class="{showTag: atLeastOnSpecialTag || task.tags.length > 0}">
+          <div class="tags" :class="{show}">
+            <Tag v-if="task.taskDuration"
+              icon="clock"
+              color="var(--purple)"
+              :value="taskDurationStr"
+              @click="task.taskDuration = ''"
+            />
+            <Tag v-if="calendarStr"
+              icon="calendar"
+              color="var(--green)"
+              :value="calendarStr"
+              @click="task.calendar = null"
+            />
+            <Tag v-if="task.priority"
+              icon="priority"
+              :color="getPriorityColor"
+              :value="l[task.priority]"
+              @click="task.priority = ''"
+            />
+            <Tag v-if="task.folder"
+              icon="folder"
+              :value="task.folder"
+              color=''
+              @click="task.folder = ''"
+            />
+            <Tag v-if="task.list"
+              icon="tasks"
+              :value="task.list"
+              color='var(--primary)'
+              @click="task.list = ''"
+            />
+            <Tag v-if="task.list && task.heading"
+              icon="heading"
+              :value="task.heading"
+              color='var(--primary)'
+              @click="task.heading = ''"
+            />
+          </div>
+          <div class="tags" :class="{show}">
+            <Tag v-for="t in task.tags"
+              :key="t"
+              icon="tag"
+              :value="t"
+              @click="removeTag(t)"
+            />
+          </div>
+        </div>
         <Checklist class="hide" :class="{show}"
           :list='task.checklist'
           :order='task.order'
@@ -100,7 +102,7 @@
           <transition name="btn">
             <ButtonApp v-if="showingOptions"
               class="add-checklist-button"
-              style="margin-left: 4px;margin-top: 0px;margin-bottom: 8px;opacity: .6"
+              style="margin-left: 4px;margin-top: 0px;opacity: .6"
               type="card"
               :value="l['Add checklist']"
               @click="addChecklist"
@@ -300,10 +302,11 @@ export default {
         const t = this.$refs['task-name'].$el.style
 
         t.transitionDuration = 0
-        t.transform = 'translate(27px, -2px)'
+        const y = this.isDesktop ? -2 : 4
+        t.transform = `translate(27px, ${y}px)`
         setTimeout(() => {
           t.transitionDuration = '.25s'
-          t.transform = 'translate(0, -2px)'
+          t.transform = `translate(0px, ${y}px)`
         })
       }
 
@@ -330,10 +333,11 @@ export default {
         const t = this.$refs['task-name'].$el.style
 
         t.transitionDuration = 0
-        t.transform = 'translate(0, -2px)'
+        const y = this.isDesktop ? -2 : 4
+        t.transform = `translate(0px, ${y}px)`
         setTimeout(() => {
           t.transitionDuration = '.25s'
-          t.transform = 'translate(27px, -2px)'
+          t.transform = `translate(27px, ${y}px)`
         })
       }
 
@@ -818,9 +822,18 @@ export default {
   padding-bottom: 4px;
 }
 
-.show .tags.show {
-  margin: 6px;
-  margin-bottom: 0;
+.tags-wrapper {
+  position: relative;
+  width: 100%;
+  height: 0;
+  min-height: 0;
+  transition-duration: .2s;
+}
+
+.showTag {
+  margin: 10px 0;
+  padding: 0 10px;
+  min-height: 30px;
   height: auto;
 }
 

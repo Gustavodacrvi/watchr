@@ -14,7 +14,19 @@
           v-bind="schedule"
         />
       </transition>
-      <div class="cont-wrapper task-handle rb" :class='{doneTransition}' ref="cont-wrapper">
+      <div
+        class="cont-wrapper task-handle rb"
+        :class='{doneTransition}' ref="cont-wrapper"
+
+        @mouseup='stopMouseUp'
+        @pointerup.stop
+        @pointerdown='pointerDown'
+        @touchcancel.stop
+        
+        @touchend.passive='touchEnd'
+        @touchmove.passive='touchmove'
+        @touchstart.passive='touchStart'
+      >
         <transition name='task-edit'
           @enter='enter'
           @leave='leave'
@@ -24,15 +36,6 @@
             :class="platform"
             @click="click"
             :style='{height: taskHeight + "px"}'
-
-            @mouseup='stopMouseUp'
-            @pointerup.stop
-            @pointerdown='pointerDown'
-            @touchcancel.stop
-            
-            @touchend.passive='touchEnd'
-            @touchmove.passive='touchmove'
-            @touchstart.passive='touchStart'
           >
             <div class="circle-trans-wrapper-wrapper">
               <div class="circle-trans-wrapper">
@@ -120,6 +123,7 @@
               :showCancel='true'
               @cancel='isEditing = false'
               @save='saveTask'
+
             />
           </div>
         </transition>
@@ -200,6 +204,7 @@ export default {
         co.transitionDuration = 0
         c.opacity = 0
         co.transform = 'translateX(-27px)'
+        this.deselectTask()
         setTimeout(() => {
           c.transitionDuration = '.25s'
           co.transitionDuration = '.25s'
