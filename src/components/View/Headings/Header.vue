@@ -27,7 +27,16 @@
       >
         <div v-if="isEditable && editing" class="line"></div>
       </transition>
-      <IconDrop v-if="options.length > 0" class="passive drop" :handle="optionsHandle" handleColor="var(--gray)" :options="options" :circle='true'/>
+      <div class="drop passive">
+        <Icon v-for="i in extraIcons" :key="i.icon"
+          class="cursor remove-highlight primary-hover"
+          :icon="i.icon"
+          color='var(--gray)'
+          :circle="true"
+          @click="i.callback"
+        />
+        <IconDrop v-if="options.length > 0" :handle="optionsHandle" handleColor="var(--gray)" :options="options" :circle='true'/>
+      </div>
     </div>
     <div class="tags" style="flex-direction: column; align-items: flex-start;margin-top: 4px">
       <div>
@@ -130,7 +139,7 @@ import utils from '@/utils'
 
 export default {
   mixins: [FileMixin],
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'priorities', 'inclusiveTags', 'inclusivePriority', 'exclusivePriorities', 'inclusiveList', 'exclusiveLists', 'inclusiveFolder', 'exclusiveFolders', 'folders', 'optionsHandle'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'priorities', 'inclusiveTags', 'inclusivePriority', 'exclusivePriorities', 'inclusiveList', 'exclusiveLists', 'inclusiveFolder', 'exclusiveFolders', 'folders', 'optionsHandle', 'extraIcons'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -311,6 +320,7 @@ export default {
         Today: 'star',
         Tomorrow: 'sun',
         Someday: 'archive',
+        Anytime: 'layer-group',
         Inbox: 'inbox',
         Calendar: 'calendar-star',
         Pomodoro: 'pomo',
@@ -327,6 +337,7 @@ export default {
           Today: 'var(--yellow)',
           Tomorrow: 'var(--orange)',
           Someday: 'var(--brown)',
+          Anytime: 'var(--dark-blue)',
           Inbox: 'var(--primary)',
           Calendar: 'var(--purple)',
           Pomodoro: 'var(--dark-red)',
@@ -446,17 +457,16 @@ export default {
   margin-top: 30px;
 }
 
-.margins + .margins {
+.tags + .margins {
   margin-top: 4px;
 }
 
 .drop {
   transform: translateY(3px);
-}
-
-.IconDrop {
   position: absolute;
   right: 0;
+  display: flex;
+  align-items: center;
 }
 
 .icon {

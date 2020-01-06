@@ -57,6 +57,7 @@ export default {
         'Pomodoro',
         'Statistics',
         'Someday',
+        'Anytime',
         'Calendar',
         'Upcoming',
         'Tomorrow',

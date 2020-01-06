@@ -239,7 +239,10 @@ export default {
           return false
         },
         cache(args) {
-          return JSON.stringify(args[0].calendar)
+          const t = args[0]
+          return JSON.stringify({
+            c: t.calendar, co: t.completed,
+          })
         },
       },
       isTaskInPeriod: {
@@ -344,6 +347,7 @@ export default {
             case 'Today': return getters.isTaskShowingOnDate(task, TODAY_DATE)
             case 'Someday': return getters.isTaskSomeday(task)
             case 'Overdue': return getters.isTaskOverdue(task)
+            case 'Anytime': return getters.isTaskAnytime(task)
             case 'Tomorrow': return getters.isTaskShowingOnDate(task, TOM_DATE)
             case 'Completed': return getters.isTaskInCompletedView(task)
           }
@@ -364,6 +368,15 @@ export default {
               }
               break
             }
+            case 'Anytime': {
+              obj = {
+                calendar: t.calendar,
+                list: t.list,
+                folder: t.folder,
+                tags: t.tags,
+              }
+              break
+            }
             case 'Today': {
               obj = {
                 calendar: t.calendar,
@@ -377,7 +390,10 @@ export default {
               break
             }
             case 'Overdue': {
-              obj = t.calendar
+              obj = {
+                c: t.calendar,
+                t: t.completed,
+              }
               break
             }
             case 'Tomorrow': {
@@ -443,6 +459,20 @@ export default {
             list: t.list,
             folder: t.folder,
             tags: t.tags,
+          })
+        },
+      },
+      isTaskAnytime: {
+        getter({}, task) {
+          const hasListOrFolderOrTag = task.list || task.folder || (task.tags && task.tags.length > 0)
+          return hasListOrFolderOrTag &&
+            !utilsTask.hasCalendarBinding(task)
+        },
+        cache(args) {
+          const t = args[0]
+          return JSON.stringify({
+            l: t.list, f: t.folder, t: t.tags,
+            c: t.calendar,
           })
         },
       },
@@ -607,6 +637,16 @@ export default {
               task => !getters.isTaskCompleted(task)
             ).length,
           }
+        },
+      },
+      getOverdueTasks: {
+        react: [
+          'calendar',
+          'completed',
+        ],
+        getter({getters, state}) {
+          const res = state.tasks.filter(getters.isTaskOverdue)
+          return res
         },
       },
       getTasksById({state}, ids) {

@@ -54,14 +54,31 @@
                 @click="changeEmail"
               />
             </div>
-          </div>
-          <div v-else class="Appnav" key="appnav">
             <h4 class="title">Options</h4>
             <CheckboxApp class="rb"
               :name='l["Use 1:00pm format"]'
               :value='pmFormat'
               @input="togglepmFormat"
             />
+            <h3 class="title">View</h3>
+            <CheckboxApp class="rb"
+              :name='l["Always open tag filters"]'
+              :value='tagFilters'
+              @input="toggleTagFilters"
+            />
+            <CheckboxApp class="rb"
+              :name='l["Always open list filters"]'
+              :value='listFilters'
+              @input="toggleListFilters"
+            />
+            <CheckboxApp class="rb"
+              :name='l["Always open folder filters"]'
+              :value='folderFilters'
+              @input="toggleFolderFilters"
+            />
+          </div>
+          <div v-else class="Appnav" key="appnav">
+            <h4 class="title">Options</h4>
             <CheckboxApp class="rb"
               :name='l["Go to the last visited view on app start instead of the first smart view"]'
               :value='goToLastViewOnEnter'
@@ -138,19 +155,9 @@ export default {
           color: 'var(--orange)'
         },
         {
-          name: 'Someday',
-          icon: 'archive',
-          color: 'var(--brown)'
-        },
-        {
           name: 'Inbox',
           icon: 'inbox',
           color: 'var(--primary)'
-        },
-        {
-          name: 'Calendar',
-          icon: 'calendar-star',
-          color: 'var(--purple)'
         },
         {
           name: 'Upcoming',
@@ -158,9 +165,24 @@ export default {
           color: 'var(--green)'
         },
         {
+          name: 'Anytime',
+          icon: 'layer-group',
+          color: 'var(--dark-blue)',
+        },
+        {
+          name: 'Someday',
+          icon: 'archive',
+          color: 'var(--brown)'
+        },
+        {
           name: 'Pomodoro',
           icon: 'pomo',
           color: 'var(--dark-red)'
+        },
+        {
+          name: 'Calendar',
+          icon: 'calendar-star',
+          color: 'var(--purple)'
         },
         {
           name: 'Completed',
@@ -179,12 +201,26 @@ export default {
       goToLastViewOnEnter: false,
       changedSection: false,
       forceUpdate: false,
+
+      folderFilters: false,
+      tagFilters: false,
+      listFilters: false,
     }
   },
   created() {
     this.update()
   },
   methods: {
+    toggleTagFilters() {
+      this.tagFilters = !this.tagFilters
+    },
+    toggleFolderFilters() {
+      this.folderFilters = !this.folderFilters
+    },
+    toggleListFilters() {
+      this.listFilters = !this.listFilters
+    },
+    
     toggleGoToLastViewOnEnter() {
       this.goToLastViewOnEnter = !this.goToLastViewOnEnter
     },
@@ -231,6 +267,10 @@ export default {
     },
     save() {
       localStorage.setItem('goToLastViewOnEnter', this.goToLastViewOnEnter)
+      localStorage.setItem('tagFilters', this.tagFilters)
+      localStorage.setItem('listFilters', this.listFilters)
+      localStorage.setItem('folderFilters', this.folderFilters)
+
       userRef().set({
         disablePmFormat: !this.pmFormat,
         hidedSections: this.hidedSections,
@@ -242,9 +282,12 @@ export default {
     update() {
       this.pmFormat = this.getPmFormat
       this.goToLastViewOnEnter = localStorage.getItem('goToLastViewOnEnter') === 'true'
+      this.tagFilters = localStorage.getItem('tagFilters') === 'true'
+      this.folderFilters = localStorage.getItem('folderFilters') === 'true'
+      this.listFilters = localStorage.getItem('listFilters') === 'true'
       this.hidedSections = this.userHidedSections
       this.hidedSmartViews = this.userHidedSmartViews
-    }
+    },
   },
   computed: {
     ...mapGetters(['platform', 'isDesktop', 'l']),
@@ -253,6 +296,9 @@ export default {
       this.forceUpdate
       if (this.pmFormat !== this.getPmFormat) return true
       if (this.goToLastViewOnEnter !== (localStorage.getItem('goToLastViewOnEnter') === 'true')) return true
+      if (this.tagFilters !== (localStorage.getItem('tagFilters') === 'true')) return true
+      if (this.folderFilters !== (localStorage.getItem('folderFilters') === 'true')) return true
+      if (this.listFilters !== (localStorage.getItem('listFilters') === 'true')) return true
       if (this.changedSection) return true
       
       return false

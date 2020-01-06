@@ -95,15 +95,7 @@ export default {
       
       const { time, buffer, fallback } = this.autoSchedule
 
-      let headingTasks = []
-
-      for (const t of this.sortHeadings)
-        headingTasks = [...headingTasks, ...t.tasks]
-
-      const tasks = [
-        ...this.sortLaseredTasks,
-        ...headingTasks,
-      ]
+      const tasks = this.allViewTasks
       
       let init = mom(time, 'HH:mm')
 
@@ -183,6 +175,16 @@ export default {
     rootNonFilteredIds() {
       return this.rootNonFiltered.map(el => el.id)
     },
+    allViewTasks() {
+      return [...this.sortLaseredTasks,...this.sortHeadings.map(
+        head => head.tasks
+      ).flat()]
+    },
+    allNonFilteredViewTasks() {
+      return [...this.rootNonFiltered,...this.sortHeadings.map(
+        head => head.nonFiltered
+      ).flat()]
+    },
 
     sortHeadings() {
       return this.sortHeadingsFunction(this.laserHeadings)
@@ -190,6 +192,8 @@ export default {
     laserHeadings() {
       if (!this.headings) return []
       return this.headings.map(head => {
+        if (head.react)
+          for (const p of head.react) this.mainTasks[p]
         const nonFiltered = head.sort(this.mainTasks.filter(task => head.filter(task)))
         const tasks = nonFiltered.filter(this.filterOptionsPipe)
 
@@ -360,8 +364,45 @@ export default {
       if (this.showCompleted) return () => true
       return task => !this.isTaskCompleted(task)
     },
+
+    presentTags() {
+      const unique = new Set()
+      return this.allNonFilteredViewTasks.map(t => t.tags || []).flat().filter(id => {
+        if (!unique.has(id)) {
+          unique.add(id) 
+          return id
+        }
+      })
+    },
+    presentLists() {
+      const unique = new Set()
+      return this.allNonFilteredViewTasks.map(t => t.list).filter(id => {
+        if (id && !unique.has(id)) {
+          unique.add(id) 
+          return id
+        }
+      })
+    },
+    presentFolder() {
+      const unique = new Set()
+      return this.allNonFilteredViewTasks.map(t => t.folder).filter(id => {
+        if (id && !unique.has(id)) {
+          unique.add(id) 
+          return id
+        }
+      })
+    },
   },
   watch: {
+    presentTags() {
+      this.$emit('present-tags', this.presentTags)
+    },
+    presentLists() {
+      this.$emit('present-lists', this.presentLists)
+    },
+    presentFolders() {
+      this.$emit('present-folders', this.presentFolders)
+    },
     rootNonFiltered() {
       this.$emit('root-non-filtered', this.rootNonFiltered)
     },

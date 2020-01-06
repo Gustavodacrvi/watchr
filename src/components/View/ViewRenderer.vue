@@ -24,6 +24,7 @@
         :priorities='priorityOptions'
         :lists='listSelectionOptions'
         :folders='folderSelectionOptions'
+        :extraIcons='extraIcons'
 
         :viewName="viewName"
         :options="getHeaderOptions"
@@ -57,6 +58,10 @@
 
           @allow-someday='showSomeday = true'
           @root-non-filtered='getRootNonFilteredFromTaskHandler'
+
+          @present-tags='v => presentTags = v'
+          @present-lists='v => presentLists = v'
+          @present-folders='v => presentFolders = v'
         />
       </transition>
       <div style='height: 300px'></div>
@@ -129,6 +134,13 @@ export default {
       showSomeday: false,
       helperComponent: false,
 
+      presentTags: [],
+      presentLists: [],
+      presentFolders: [],
+      additionalTags: [],
+      additionalLists: [],
+      additionalFolders: [],
+
       rootNonFiltered: [],
       computedHeaderOptions: [],
       autoSchedule: null,
@@ -151,6 +163,9 @@ export default {
   },
   created() {
     this.getComputedOptions()
+    this.showingTagSelection = localStorage.getItem('tagFilters') === 'true'
+    this.showingFolderSelection = localStorage.getItem('folderFilters') === 'true'
+    this.showingListSelection = localStorage.getItem('listFilters') === 'true'
   },
   mounted() {
     this.getComputedOptions()
@@ -185,11 +200,11 @@ export default {
 
         if ((Math.abs(this.diffY) > 50)) {
           this.touchFail = true
-          this.transform(0, true)
+          // this.transform(0, true)
         } else {
           if (x > 20)
             this.transform(this.diffX)
-          else this.transform(0)
+          // else this.transform(0)
 
           if (x > MINIMUM_DISTANCE) {
             this.right = this.diffX > 0
@@ -207,7 +222,7 @@ export default {
       this.move = false
     },
     touchend() {
-      this.transform(0, true)
+      // this.transform(0, true)
 
       const time = new Date() - this.startTime
 
@@ -226,6 +241,7 @@ export default {
       localStorage.setItem(`schedule_${this.viewName}`, JSON.stringify(info))
     },
     getLocalStorageSchedule() {
+      const n = this.viewName
       const str = localStorage.getItem(`schedule_${this.viewName}`)
       if (str)
         this.autoSchedule = JSON.parse(str)
@@ -397,6 +413,14 @@ export default {
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
 
+      getTagsByName: 'tag/getTagsByName',
+      getTagsById: 'tag/getTagsById',
+      getSubTagsByTagId: 'tag/getSubTagsByTagId',
+      getListsById: 'list/getListsById',
+      getListsByName: 'list/getListsByName',
+      getFoldersByName: 'folder/getFoldersByName',
+      getFoldersById: 'folder/getFoldersById',
+
       doesTaskPassExclusiveFolders: 'task/doesTaskPassExclusiveFolders',
       doesTaskPassInclusiveFolder: 'task/doesTaskPassInclusiveFolder',
       doesTaskPassExclusiveLists: 'task/doesTaskPassExclusiveLists',
@@ -496,6 +520,40 @@ export default {
       const el = this.$el.getElementsByClassName('view-renderer-move')[0]
       return el.style
     },
+    extraIcons() {
+      const arr = []
+      if (this.showingListSelection)
+        arr.push({
+          icon: 'tasks',
+          callback: () => this.showingListSelection = false
+        })
+      if (this.showingTagSelection)
+        arr.push({
+          icon: 'tag',
+          callback: () => this.showingTagSelection = false
+        })
+      if (this.showingFolderSelection)
+        arr.push({
+          icon: 'folder',
+          callback: () => this.showingFolderSelection = false
+        })
+      if (this.showingPrioritySelection)
+        arr.push({
+          icon: 'priority',
+          callback: () => this.showingPrioritySelection = false
+        })
+      if (this.showCompleted)
+        arr.push({
+          icon: 'circle-check',
+          callback: () => this.showCompleted = false,
+        })
+      if (this.showSomeday)
+        arr.push({
+          icon: 'archive',
+          callback: () => this.showSomeday = false,
+        })
+      return arr
+    },
     isSearch() {
       return this.isSmart && this.viewNameValue === "Search"
     },
@@ -554,17 +612,22 @@ export default {
     listSelectionStr() {
       return 'showingListSelection' + this.viewName + this.viewType
     },
-    sliceNumber() {
-      return this.isDesktop ? 8 : 4
-    },
     tagSelectionOptions() {
-      return this.showingTagSelection ? this.savedTags.slice(0, this.sliceNumber) : []
+      let arr = [...this.getTagsById(this.presentTags)]
+      if (this.viewType === 'tag') {
+        const tags = this.getTagsByName([this.viewName])
+        if (tags[0])
+          arr = [...arr, ...this.getSubTagsByTagId(tags[0].id)]
+      }
+      return this.showingTagSelection ?
+         arr :
+        []
     },
     listSelectionOptions() {
-      return this.showingListSelection ? this.savedLists.slice(0, this.sliceNumber) : []
+      return this.showingListSelection ? this.getListsById(this.presentLists) : []
     },
     folderSelectionOptions() {
-      return this.showingFolderSelection ? this.savedFolders.slice(0, this.sliceNumber) : []
+      return this.showingFolderSelection ? this.getFoldersById(this.presentFolders) : []
     },
     getIconDropOptionsTags() {
       const arr = []
@@ -791,7 +854,6 @@ export default {
             callback: () => this.toggleCompleted()
           },
         ]
-        if (this.showCompleted) opt[4].name = l['Hide completed']
         if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
           opt.push({
             type: 'hr',
@@ -959,29 +1021,29 @@ export default {
       }
     },
     getInclusiveTagIds() {
-      return this.$store.getters['tag/getTagsByName'](this.inclusiveTags).map(el => el.id)
+      return this.getTagsByName(this.inclusiveTags).map(el => el.id)
     },
     getExclusiveTagIds() {
-      return this.$store.getters['tag/getTagsByName'](this.exclusiveTags).map(el => el.id)
+      return this.getTagsByName(this.exclusiveTags).map(el => el.id)
     },
     getInclusiveListId() {
       if (this.inclusiveList)
-        return this.$store.getters['list/getListsByName']([this.inclusiveList])[0].id
+        return this.getListsByName([this.inclusiveList])[0].id
       return null
     },
     getExclusiveListsId() {
       if (this.exclusiveLists)
-        return this.$store.getters['list/getListsByName'](this.exclusiveLists).map(el => el.id)
+        return this.getListsByName(this.exclusiveLists).map(el => el.id)
       return null
     },
     getInclusiveFolderId() {
       if (this.inclusiveFolder)
-        return this.$store.getters['folder/getFoldersByName']([this.inclusiveFolder])[0].id
+        return this.getFoldersByName([this.inclusiveFolder])[0].id
       return null
     },
     getExclusiveFoldersId() {
       if (this.exclusiveFolders)
-        return this.$store.getters['folder/getFoldersByName'](this.exclusiveFolders).map(el => el.id)
+        return this.getFoldersByName(this.exclusiveFolders).map(el => el.id)
       return null
     },
   },

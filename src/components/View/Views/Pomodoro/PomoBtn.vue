@@ -8,6 +8,14 @@
         opacity='0'
       />
     </button>
+    <button v-if="rest && !running" class="btn cursor remove-highlight" @click="skipRest">
+      {{ l['Skip interval'] }}
+      <CircleBubble
+        innerColor='var(--white)'
+        outerColor='white'
+        opacity='0'
+      />
+    </button>
   </div>
 </template>
 
@@ -19,6 +27,9 @@ export default {
   methods: {
     click() {
       this.$store.dispatch('pomo/toggle')
+    },
+    skipRest() {
+      this.$store.dispatch('pomo/skipRest')
     },
   },
   computed: {
@@ -56,6 +67,11 @@ export default {
   overflow: hidden;
   border: none;
 }
+
+.btn + .btn {
+  margin-left: 10px;
+}
+
 .running {
   background-color: transparent;
   border: 1px solid var(--dark-red);

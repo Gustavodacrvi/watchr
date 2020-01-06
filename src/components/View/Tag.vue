@@ -6,17 +6,22 @@
     <div class="wrapper" @click="$emit('click')">
       <div class="Tag cursor"
         :class="[{selected, disabled}, platform]"
-        :style="`border: 1px solid ${tagColor}`"
+        :style="{border: selectedBorder}"
         @mouseenter="hover = true"
         @mouseleave="hover = false"
       >
-        <Icon class="icon" :icon="icon" :color="tagColor" width="14px"/>
-        <span class="name" :style="{color: tagColor}">{{ value }}</span>
+        <Icon class="icon" :icon="icon" :color="color" width="14px"/>
+        <span class="name">{{ value }}</span>
         <Icon v-if="extraIcon"
           class="extra-icon"
           :icon="extraIcon"
-          :color="tagColor"
+          :color="color"
           width="10px"
+        />
+        <CircleBubble
+          innerColor='var(--white)'
+          outerColor='white'
+          opacity='0'
         />
       </div>
     </div>
@@ -109,6 +114,10 @@ export default {
     tagColor() {
       return !this.hover ? this.color : ''
     },
+    selectedBorder() {
+      const color = this.color ? this.color : 'var(--primary)'
+      return this.selected ? `1px solid ${color}` : ``
+    },
   }
 }
 
@@ -121,14 +130,15 @@ export default {
 }
 
 .Tag {
-  border-radius: 100px;
-  border: 1px solid var(--white);
-  height: 20px;
+  border: 1px solid var(--light-gray);
+  height: 22px;
   display: inline-flex;
   align-items: center;
-  padding: .5px 12px;
+  padding: 1px 14px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 125px;
 }
-
 
 .icon {
   margin-right: 4px;
@@ -143,11 +153,17 @@ export default {
 .Tag {
   margin-right: 4px;
   outline: none;
+  transition-duration: .2s;
 }
 
-.selected, .Tag.desktop:hover {
+.Tag:hover {
+  background-color: var(--gray);
+  background-color: var(--light-gray);
+}
+
+.Tag:active {
   background-color: var(--white);
-  color: var(--void);
+  transition-duration: .2s;
 }
 
 .disabled {

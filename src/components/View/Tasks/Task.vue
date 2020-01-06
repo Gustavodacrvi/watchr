@@ -14,113 +14,120 @@
           v-bind="schedule"
         />
       </transition>
-      <transition name="edit-t" mode="out-in"
-        @enter='enter'
-        @leave='leave'
-      >
-        <div v-if="!isEditing" key="notediting"
-          class="cont-wrapper task-cont-wrapper task-handle rb"
-          :class="platform"
-          @click="click"
+      <div
+        class="cont-wrapper task-handle rb"
+        :class='{doneTransition}' ref="cont-wrapper"
 
-          @mouseup='stopMouseUp'
-          @pointerup.stop
-          @pointerdown='pointerDown'
-          @touchcancel.stop
-          ref='cont-wrapper'
-          
-          @touchend.passive='touchEnd'
-          @touchmove.passive='touchmove'
-          @touchstart.passive='touchStart'
+        @mouseup='stopMouseUp'
+        @pointerup.stop
+        @pointerdown='pointerDown'
+        @touchcancel.stop
+        
+        @touchend.passive='touchEnd'
+        @touchmove.passive='touchmove'
+        @touchstart.passive='touchStart'
+      >
+        <transition name='task-edit'
+          @enter='enter'
+          @leave='leave'
         >
-          <div class="circle-trans-wrapper-wrapper">
-            <div class="circle-trans-wrapper">
-              <transition
-                @enter='circleEnter'
-              >
-                <div v-show="showCircle" class="circle-trans-transition" :style="{left, top, backgroundImage: `radial-gradient(${innerColor}, ${outerColor})`}"></div>
-              </transition>
-            </div>
-          </div>
-          <div class="cont"
-            ref='cont'
+          <div v-if="!isEditing" key="notediting"
+            class="cont-wrapper-wrapper task-cont-wrapper"
+            :class="platform"
+            @click="click"
+            :style='{height: taskHeight + "px"}'
           >
-            <div class="check"
-              @mouseenter="iconHover = true"
-              @mouseleave="iconHover = false"
-              @touchend.passive='touchComplete'
-              :class="{changeColor}"
-            >
-              <template v-if='!isSelecting && !openCalendar'>
-                <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon cursor remove-highlight"
-                  :icon="`box${isSomeday ? '-dash' : ''}`"
-                  :color='circleColor'
-                  :stop='true'
-                  width="18px"
-                  @click="desktopComplete"
-                />
-                <Icon v-else :circle='true' class="icon check-icon cursor remove-highlight"
-                  :icon="`box-check${isSomeday ? '-dash' : ''}`"
-                  :color='circleColor'
-                  width="18px"
-                  :stop='true'
-                  @click="desktopComplete"
-                />
-              </template>
-              <template v-else>
-                <Icon v-if="!isTaskSelected" :circle='true' class="icon check-icon cursor remove-highlight"
-                  icon="circle"
-                  :color='circleColor'
-                  :stop='true'
-                  width="20px"
-                />
-                <Icon v-else :circle='true' class="icon check-icon cursor remove-highlight"
-                  icon="circle-filled"
-                  :color='circleColor'
-                  width="20px"
-                  :stop='true'
-                />
-              </template>
-            </div>
-            <div class="text"
-              :class="{changeColor}"
-            >
-              <div class="task-name-wrapper">
-                <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
-                <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
-                <Icon v-else-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
-                <transition name="name-t">
-                  <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
-                      <span v-html="parsedName"></span>
-                      <Icon v-if="haveChecklist" class="txt-icon" icon="tasks" color="var(--gray)" width="18px"/>
-                      <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
-                      <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
-                  </span>
-                  <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
+            <div class="circle-trans-wrapper-wrapper">
+              <div class="circle-trans-wrapper">
+                <transition
+                  @enter='circleEnter'
+                >
+                  <div v-show="showCircle" class="circle-trans-transition" :style="{left, top, backgroundImage: `radial-gradient(${innerColor}, ${outerColor})`}"></div>
                 </transition>
               </div>
             </div>
-            <span class="info">
-              <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
-              <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
-              <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
-              <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
-              <span v-if="taskDuration && !schedule" class="tag cb rb">{{ taskDuration }}</span>
-            </span>
+            <div class="cont"
+              ref='cont'
+            >
+              <div class="check" ref='check'
+                @mouseenter="iconHover = true"
+                @mouseleave="iconHover = false"
+                @touchend.passive='touchComplete'
+                :class="{changeColor}"
+              >
+                <template v-if='!isSelecting && !openCalendar'>
+                  <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon cursor remove-highlight"
+                    :icon="`box${isSomeday ? '-dash' : ''}`"
+                    :color='circleColor'
+                    :stop='true'
+                    width="18px"
+                    @click="desktopComplete"
+                  />
+                  <Icon v-else :circle='true' class="icon check-icon cursor remove-highlight"
+                    :icon="`box-check${isSomeday ? '-dash' : ''}`"
+                    :color='circleColor'
+                    width="18px"
+                    :stop='true'
+                    @click="desktopComplete"
+                  />
+                </template>
+                <template v-else>
+                  <Icon v-if="!isTaskSelected" :circle='true' class="icon check-icon cursor remove-highlight"
+                    icon="circle"
+                    :color='circleColor'
+                    :stop='true'
+                    width="20px"
+                  />
+                  <Icon v-else :circle='true' class="icon check-icon cursor remove-highlight"
+                    icon="circle-filled"
+                    :color='circleColor'
+                    width="20px"
+                    :stop='true'
+                  />
+                </template>
+              </div>
+              <div class="text"
+                :class="{changeColor}"
+              >
+                <div class="task-name-wrapper">
+                  <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
+                  <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
+                  <Icon v-else-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
+                  <transition name="name-t">
+                    <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
+                        <span v-html="parsedName"></span>
+                        <Icon v-if="haveChecklist" class="txt-icon" icon="tasks" color="var(--gray)" width="18px"/>
+                        <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
+                        <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
+                    </span>
+                    <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
+                  </transition>
+                </div>
+              </div>
+              <span class="info">
+                <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
+                <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
+                <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
+                <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
+                <span v-if="taskDuration && !schedule" class="tag cb rb">{{ taskDuration }}</span>
+              </span>
+            </div>
           </div>
-        </div>
-        <div v-else-if="isEditing" key="editing">
-          <Edit class="handle"
-            :placeholder="l['Task name...']"
-            :notesPlaceholder="l['Notes...']"
-            :btnText="l['Save task']"
-            :defaultTask='task'
-            :showCancel='true'
-            @cancel='isEditing = false'
-            @save='saveTask'
-          />
-        </div>
-      </transition>
+          <div v-else-if="isEditing" key="editing">
+            <Edit class="handle"
+              :placeholder="l['Task name...']"
+              :notesPlaceholder="l['Notes...']"
+              :btnText="l['Save task']"
+              :defaultTask='task'
+              :taskHeight='taskHeight'
+              :showCancel='true'
+              @cancel='isEditing = false'
+              @save='saveTask'
+
+            />
+          </div>
+        </transition>
+      </div>
     </div>
   </transition>
 </template>
@@ -163,6 +170,7 @@ export default {
       isEditing: false,
       onHover: false,
       iconHover: false,
+      doneTransition: true,
       doubleClickListening: false,
       doubleClickListeningTimeout: null,
       startX: 0,
@@ -186,11 +194,56 @@ export default {
     window.removeEventListener('click', this.deselectTask)
   },
   methods: {
+    enter(el) {
+      if (!this.isEditing) {
+        const co = el.style
+        const c = this.$refs['check'].style
+        this.doneTransition = false
+
+        c.transitionDuration = 0
+        co.transitionDuration = 0
+        c.opacity = 0
+        co.transform = 'translateX(-27px)'
+        this.deselectTask()
+        setTimeout(() => {
+          c.transitionDuration = '.25s'
+          co.transitionDuration = '.25s'
+          c.opacity = 1
+          co.transform = 'translateX(0px)'
+          setTimeout(() => {
+            this.doneTransition = true
+          }, 252)
+        })
+      }
+    },
+    leave(el) {
+      if (this.isEditing) {
+        const co = el.style
+        const c = this.$refs['check'].style
+        this.doneTransition = false
+
+        c.transitionDuration = 0
+        co.transitionDuration = 0
+        c.opacity = 1
+        co.transform = 'translateX(0px)'
+        setTimeout(() => {
+          c.transitionDuration = '.25s'
+          co.transitionDuration = '.25s'
+          c.opacity = 0
+          co.transform = 'translateX(-27px)'
+          setTimeout(() => {
+            this.doneTransition = true
+          }, 252)
+        })
+      } else {
+        el.style.transitionDuration = '.25s'
+      }
+    },
     bindContextMenu(options) {
       utils.bindOptionsToEventListener(this.$el, options, this)
     },
     taskEnter(el, done) {
-      const cont = el.getElementsByClassName('cont-wrapper')[0]
+      const cont = this.$refs['cont-wrapper']
       if (cont) {
         const s = cont.style
 
@@ -205,7 +258,11 @@ export default {
             s.opacity = 1
             s.height = this.taskHeight + 'px'
           })
-          setTimeout(done, 249)
+          setTimeout(() => {
+            done()
+            s.height = 'auto'
+            s.minHeight = this.taskHeight + 'px'
+          }, 251)
         }
       }
     },
@@ -217,26 +274,6 @@ export default {
       setTimeout(() => {
         this.$emit('de-select', this.$el)
       }, 10)
-    },
-    enter(cont) {
-      if (!this.isEditing) {
-        const s = cont.style
-        cont.classList.add('hided')
-        s.height = '0px'
-        s.padding = '2px 0'
-        setTimeout(() => {
-          cont.classList.add('show')
-          s.height = this.taskHeight + 'px'
-          s.padding = '0'
-          cont.classList.remove('hided')
-        })
-      }
-    },
-    leave(cont) {
-      if (this.isEditing) {
-        cont.style.transitionDuration = '.1s'
-        cont.style.opacity = 0
-      }
     },
     openMobileOptions() {
       window.navigator.vibrate(100)
@@ -839,13 +876,20 @@ export default {
 }
 
 .cont-wrapper {
-  will-change: height, width;
+  will-change: min-height, width;
   transition-duration: .25s;
-  height: 38px;
+  min-height: 38px;
+}
+
+.cont-wrapper-wrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
 }
 
 .cont-wrapper.mobile {
-  height: 50px;
+  min-height: 50px;
 }
 
 .schedule.mobile {
@@ -879,7 +923,7 @@ export default {
   margin-left: 6px;
 }
 
-.desktop .cont-wrapper:hover, .desktop .cont-wrapper:active {
+.desktop .cont-wrapper.doneTransition:hover, .desktop .cont-wrapper:active {
   background-color: var(--light-gray);
 }
 

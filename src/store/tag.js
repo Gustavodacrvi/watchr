@@ -18,7 +18,12 @@ export default {
     rootTags(state) {
       return state.tags.filter(tag => !tag.parent)
     },
-    sortedTags(state, getters, {userInfo}, rootGetters) {
+    sortedTags(state, g, {userInfo}, rootGetters) {
+      if (userInfo)
+        return rootGetters.checkMissingIdsAndSortArr(userInfo.tags, state.tags)
+      return []
+    },
+    sortedRootTags(state, getters, {userInfo}, rootGetters) {
       if (userInfo)
         return rootGetters.checkMissingIdsAndSortArr(userInfo.tags, getters.rootTags)
       return []
@@ -32,10 +37,17 @@ export default {
       getSubTagsByParentId: {
         react: ['parent'],
         getter({state, getters}, parentId) {
-          if (!parentId)
-            return getters.rootTags
           return state.tags.filter(tag => tag.parent === parentId)
         },
+      },
+      getSubTagsByTagId({state}, id) {
+        const walk = (parent, tags = []) => {
+          const childs = state.tags.filter(tag => tag.parent === parent)
+          tags.push(childs)
+          for (const tag of childs) walk(tag.id, tags)
+          return tags
+        }
+        return walk(id).flat(Infinity)
       },
       getTagsByName: {
         react: [

@@ -60,15 +60,14 @@ export default {
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
       l: 'l',
       isDesktop: 'isDesktop',
+      sortedRootTags: 'tag/sortedRootTags',
     }),
-    sortedTags() {
-      return this.$store.getters['tag/sortedTags']
-    },
     getTags() {
       const getSubTagsByParentId = this.getSubTagsByParentId
       const getNumberOfTasksByTag = this.getNumberOfTasksByTag
       const getTags = (parentId, order) => {
-        const tags = getSubTagsByParentId(parentId).map(tag => ({...tag}))
+        const tags = parentId ? getSubTagsByParentId(parentId).map(tag => ({...tag})) : this.sortedRootTags.map(tag => ({...tag}))
+
         if (tags.length === 0) return []
 
         for (const tag of tags) {
