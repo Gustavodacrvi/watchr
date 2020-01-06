@@ -4,10 +4,10 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
 <g>
-	<path fill="none" stroke="#1E1E1E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M67.331,29.076v33.861c0,3.3-2.7,6-6,6H10.753c-3.3,0-6-2.7-6-6V29.076"/>
 </g>
-<ellipse fill="#373837" stroke="#1D1D1D" stroke-width="5" stroke-miterlimit="10" cx="36.042" cy="44.452" rx="13.75" ry="7.683"/>
-<path fill="#373837" stroke="#1E1E1E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+<ellipse fill="currentColor" fill-opacity='.2' stroke="currentColor" stroke-width="5" stroke-miterlimit="10" cx="36.042" cy="44.452" rx="13.75" ry="7.683"/>
+<path fill="currentColor" fill-opacity='.2' stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 	M5.738,19.979h58.625h2.158c0,0,0-3.787,0-8.417s-4.5-8.417-10-8.417H14.753c-5.5,0-10,3.787-10,8.417s0,8.417,0,8.417H5.738z"/>
 </svg>

@@ -4,16 +4,16 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
 <g>
-	<path fill="#373837" d="M24.414,31.598c-2.75,0-3.875-1.949-2.5-4.33l11.628-20.14c1.375-2.382,3.625-2.382,5,0l11.628,20.14
+	<path fill="currentColor" fill-opacity='.2' d="M24.414,31.598c-2.75,0-3.875-1.949-2.5-4.33l11.628-20.14c1.375-2.382,3.625-2.382,5,0l11.628,20.14
 		c1.375,2.382,0.25,4.33-2.5,4.33H24.414z"/>
-	<path fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M24.414,31.598c-2.75,0-3.875-1.949-2.5-4.33l11.628-20.14c1.375-2.382,3.625-2.382,5,0l11.628,20.14
 		c1.375,2.382,0.25,4.33-2.5,4.33H24.414z"/>
 </g>
 <g>
-	<path fill="#373837" d="M24.414,40.486c-2.75,0-3.875,1.949-2.5,4.33l11.628,20.14c1.375,2.382,3.625,2.382,5,0l11.628-20.14
+	<path fill="currentColor" fill-opacity='.2' d="M24.414,40.486c-2.75,0-3.875,1.949-2.5,4.33l11.628,20.14c1.375,2.382,3.625,2.382,5,0l11.628-20.14
 		c1.375-2.382,0.25-4.33-2.5-4.33H24.414z"/>
-	<path fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M24.414,40.486c-2.75,0-3.875,1.949-2.5,4.33l11.628,20.14c1.375,2.382,3.625,2.382,5,0l11.628-20.14
 		c1.375-2.382,0.25-4.33-2.5-4.33H24.414z"/>
 </g>

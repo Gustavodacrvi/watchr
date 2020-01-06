@@ -3,13 +3,13 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
-<line fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="35.976" y1="48.099" x2="35.871" y2="16.945"/>
+<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="35.976" y1="48.099" x2="35.871" y2="16.945"/>
 <g>
-	<path fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M57.863,24.09L39.669,5.897c-1.945-1.945-5.127-1.945-7.071,0L14.05,24.445"/>
 </g>
 <g>
-	<path fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M8.029,39.522v20.062c0,3.3,2.7,6,6,6h44.025c3.3,0,6-2.7,6-6V39.522"/>
 </g>
 </svg>

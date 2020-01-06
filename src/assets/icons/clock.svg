@@ -4,17 +4,17 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
 <g>
-	<path fill="none" stroke="#181818" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M36.042,16.262v13.779c0,3.3,2.046,7.632,4.546,9.627c2.5,1.995,4.546,3.627,4.546,3.627"/>
 </g>
 <g>
-	<path fill="none" stroke="#181818" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M62.691,19.586c2.931,4.787,4.621,10.423,4.621,16.456c0,17.362-14,31.437-31.271,31.437S4.771,53.404,4.771,36.042
 		s14-31.438,31.271-31.438c7.857,0,15.407,4.601,15.407,4.601c2.818,1.717,6.442,1.583,8.054-0.298c1.612-1.881,2.93-3.42,2.93-3.42
 		"/>
 </g>
 <g>
-	<path fill="none" stroke="#181818" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M61.523,17.814c0.409,0.576,0.798,1.167,1.168,1.771"/>
 </g>
 </svg>

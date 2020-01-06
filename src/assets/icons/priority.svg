@@ -5,12 +5,12 @@
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
 <g>
 	
-		<line fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="10.003" y1="4.567" x2="10.003" y2="67.517"/>
+		<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="10.003" y1="4.567" x2="10.003" y2="67.517"/>
 </g>
 <g>
-	<path fill="#373837" d="M23.345,4.567c-2.2,0-4,1.8-4,4v19.347c0,2.2,1.8,4,4,4H58.08c2.2,0,2.919-1.439,1.598-3.198l-5.465-7.277
+	<path fill="currentColor" fill-opacity='.2' d="M23.345,4.567c-2.2,0-4,1.8-4,4v19.347c0,2.2,1.8,4,4,4H58.08c2.2,0,2.919-1.439,1.598-3.198l-5.465-7.277
 		c-1.321-1.759-1.321-4.638,0-6.397l5.465-7.277c1.321-1.759,0.602-3.198-1.598-3.198H23.345z"/>
-	<path fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M23.345,4.567c-2.2,0-4,1.8-4,4v19.347c0,2.2,1.8,4,4,4H58.08c2.2,0,2.919-1.439,1.598-3.198l-5.465-7.277
 		c-1.321-1.759-1.321-4.638,0-6.397l5.465-7.277c1.321-1.759,0.602-3.198-1.598-3.198H23.345z"/>
 </g>

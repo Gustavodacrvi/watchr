@@ -3,10 +3,10 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
-<circle fill="#373837" stroke="#1D1D1D" stroke-width="5" stroke-miterlimit="10" cx="14.006" cy="13.131" r="6.881"/>
-<circle fill="#373837" stroke="#1D1D1D" stroke-width="5" stroke-miterlimit="10" cx="14.006" cy="36.042" r="6.881"/>
-<circle fill="#373837" stroke="#1D1D1D" stroke-width="5" stroke-miterlimit="10" cx="14.006" cy="58.952" r="6.881"/>
-<line fill="#373837" stroke="#1D1D1D" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="29.161" y1="11.391" x2="64.958" y2="11.391"/>
-<line fill="#373837" stroke="#1D1D1D" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="29.161" y1="36.042" x2="64.958" y2="36.042"/>
-<line fill="#373837" stroke="#1D1D1D" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="29.161" y1="60.692" x2="64.958" y2="60.692"/>
+<circle fill="currentColor" fill-opacity='.2' stroke="currentColor" stroke-width="5" stroke-miterlimit="10" cx="14.006" cy="13.131" r="6.881"/>
+<circle fill="currentColor" fill-opacity='.2' stroke="currentColor" stroke-width="5" stroke-miterlimit="10" cx="14.006" cy="36.042" r="6.881"/>
+<circle fill="currentColor" fill-opacity='.2' stroke="currentColor" stroke-width="5" stroke-miterlimit="10" cx="14.006" cy="58.952" r="6.881"/>
+<line fill="currentColor" fill-opacity='.2' stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="29.161" y1="11.391" x2="64.958" y2="11.391"/>
+<line fill="currentColor" fill-opacity='.2' stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="29.161" y1="36.042" x2="64.958" y2="36.042"/>
+<line fill="currentColor" fill-opacity='.2' stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="29.161" y1="60.692" x2="64.958" y2="60.692"/>
 </svg>

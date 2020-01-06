@@ -3,10 +3,10 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
-<path fill="none" stroke="#000000" stroke-width="5" stroke-miterlimit="10" d="M65.977,30.761"/>
-<path fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+<path fill="none" stroke="currentColor" stroke-width="5" stroke-miterlimit="10" d="M65.977,30.761"/>
+<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 	M65.977,30.761c0.3,1.715,0.457,3.479,0.457,5.28c0,16.785-13.607,30.392-30.392,30.392S5.649,52.827,5.649,36.042
 	S19.256,5.649,36.042,5.649c11.74,0,21.926,6.657,26.988,16.402"/>
-<polyline fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
+<polyline fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
 	48.759,19.628 63.163,22.656 66.231,8.683 "/>
 </svg>

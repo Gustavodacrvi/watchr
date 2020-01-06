@@ -4,14 +4,14 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
 <g>
-	<path fill="none" stroke="#1E1E1E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M63.614,36.042v26.356c0,3.85-3.15,7-7,7H15.47c-3.85,0-7-3.15-7-7V9.685c0-3.85,3.15-7,7-7h22.538"/>
 </g>
 <g>
-	<path fill="#373837" d="M38.008,2.685v16.912c0,3.85,3.15,7,7,7h11.606c3.85,0,7-3.15,7-7V9.685c0-3.85-3.15-7-7-7H38.555"/>
-	<path fill="none" stroke="#1E1E1E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	<path fill="currentColor" fill-opacity='.2' d="M38.008,2.685v16.912c0,3.85,3.15,7,7,7h11.606c3.85,0,7-3.15,7-7V9.685c0-3.85-3.15-7-7-7H38.555"/>
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
 		M38.008,2.685v16.912c0,3.85,3.15,7,7,7h11.606c3.85,0,7-3.15,7-7V9.685c0-3.85-3.15-7-7-7H38.555"/>
 </g>
-<line fill="none" stroke="#1E1E1E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="50.283" y1="40.839" x2="21.8" y2="40.839"/>
-<line fill="none" stroke="#1E1E1E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="50.283" y1="54.377" x2="21.8" y2="54.377"/>
+<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="50.283" y1="40.839" x2="21.8" y2="40.839"/>
+<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="50.283" y1="54.377" x2="21.8" y2="54.377"/>
 </svg>
