@@ -73,6 +73,7 @@
             <Tag v-for="t in task.tags"
               :key="t"
               icon="tag"
+              color='var(--red)'
               :value="t"
               @click="removeTag(t)"
             />
