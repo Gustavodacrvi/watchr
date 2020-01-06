@@ -2,14 +2,12 @@
 <!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="11.466px" height="10.434px" viewBox="0 0 11.466 10.434" enable-background="new 0 0 11.466 10.434" xml:space="preserve">
-<path fill="var(--back-color)" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M6.26,9.837
-	c-0.298,0.129-0.779,0.13-1.076,0.001L0.722,7.9C0.425,7.772,0.426,7.562,0.724,7.433l4.482-1.945
-	c0.298-0.129,0.779-0.13,1.076-0.001l4.463,1.938c0.297,0.129,0.295,0.338-0.002,0.467L6.26,9.837z"/>
-<path fill="var(--back-color)" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M6.26,7.218
-	c-0.298,0.129-0.779,0.13-1.076,0.001L0.722,5.281C0.425,5.152,0.426,4.943,0.724,4.814l4.482-1.945
-	c0.298-0.129,0.779-0.13,1.076-0.001l4.463,1.938c0.297,0.129,0.295,0.338-0.002,0.467L6.26,7.218z"/>
-<path fill="var(--back-color)" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M6.26,4.946
-	c-0.298,0.129-0.779,0.13-1.076,0.001L0.722,3.009C0.425,2.881,0.426,2.672,0.724,2.542l4.482-1.945
-	c0.298-0.129,0.779-0.13,1.076-0.001l4.463,1.938c0.297,0.129,0.295,0.338-0.002,0.467L6.26,4.946z"/>
+	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
+<path fill="#373837" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	M39.093,35.784c-1.803,0.936-4.707,0.938-6.487,0.005L5.815,21.75c-1.78-0.933-1.761-2.448,0.041-3.383L32.991,4.283
+	c1.803-0.936,4.707-0.938,6.487-0.005l26.791,14.04c1.78,0.933,1.761,2.448-0.041,3.383L39.093,35.784z"/>
+<polyline fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
+	4.493,35.616 36.043,52.06 67.59,35.616 "/>
+<polyline fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
+	4.493,52.06 36.043,68.504 67.59,52.06 "/>
 </svg>
