@@ -90,9 +90,6 @@
                 :class="{changeColor}"
               >
                 <div class="task-name-wrapper">
-                  <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
-                  <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
-                  <Icon v-else-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
                   <transition name="name-t">
                     <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
                         <span v-html="parsedName"></span>
@@ -105,6 +102,9 @@
                 </div>
               </div>
               <span class="info">
+                <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
+                <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
+                <Icon v-else-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
                 <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
                 <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
                 <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
@@ -114,7 +114,7 @@
             </div>
           </div>
           <div v-else-if="isEditing" key="editing">
-            <Edit class="handle"
+            <Edit class="handle" @pointerdown.native.stop
               :placeholder="l['Task name...']"
               :notesPlaceholder="l['Notes...']"
               :btnText="l['Save task']"
@@ -197,18 +197,23 @@ export default {
     enter(el) {
       if (!this.isEditing) {
         const co = el.style
+        let ni
+        if (this.$refs['name-icon'])
+          ni = this.$refs['name-icon'].style
         const c = this.$refs['check'].style
         this.doneTransition = false
 
         c.transitionDuration = 0
         co.transitionDuration = 0
         c.opacity = 0
+        if (ni) ni.opacity = 0
         co.transform = 'translateX(-27px)'
         this.deselectTask()
         setTimeout(() => {
           c.transitionDuration = '.25s'
           co.transitionDuration = '.25s'
-          c.opacity = 1
+          c.opacity = .6
+          if (ni) ni.opacity = .6
           co.transform = 'translateX(0px)'
           setTimeout(() => {
             this.doneTransition = true
@@ -219,17 +224,22 @@ export default {
     leave(el) {
       if (this.isEditing) {
         const co = el.style
+        let ni
+        if (this.$refs['name-icon'])
+          ni = this.$refs['name-icon'].style
         const c = this.$refs['check'].style
         this.doneTransition = false
 
         c.transitionDuration = 0
         co.transitionDuration = 0
-        c.opacity = 1
+        c.opacity = .6
+        if (ni) ni.opacity = .6
         co.transform = 'translateX(0px)'
         setTimeout(() => {
           c.transitionDuration = '.25s'
           co.transitionDuration = '.25s'
           c.opacity = 0
+          if (ni) ni.opacity = 0
           co.transform = 'translateX(-27px)'
           setTimeout(() => {
             this.doneTransition = true

@@ -5,13 +5,13 @@
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
 <g>
 	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
-		M63.614,36.042v26.356c0,3.85-3.15,7-7,7H15.47c-3.85,0-7-3.15-7-7V9.685c0-3.85,3.15-7,7-7h22.538"/>
+		M63.042,36.042v25.664c0,3.85-3.15,7-7,7h-40c-3.85,0-7-3.15-7-7V10.378c0-3.85,3.15-7,7-7h21.925"/>
 </g>
 <g>
-	<path fill="currentColor" fill-opacity='.2' d="M38.008,2.685v16.912c0,3.85,3.15,7,7,7h11.606c3.85,0,7-3.15,7-7V9.685c0-3.85-3.15-7-7-7H38.555"/>
+	<path fill="currentColor" fill-opacity='.2' d="M37.967,3.378v16.416c0,3.85,3.15,7,7,7h11.075c3.85,0,7-3.15,7-7v-9.416c0-3.85-3.15-7-7-7H38.503"/>
 	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
-		M38.008,2.685v16.912c0,3.85,3.15,7,7,7h11.606c3.85,0,7-3.15,7-7V9.685c0-3.85-3.15-7-7-7H38.555"/>
+		M37.967,3.378v16.416c0,3.85,3.15,7,7,7h11.075c3.85,0,7-3.15,7-7v-9.416c0-3.85-3.15-7-7-7H38.503"/>
 </g>
-<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="50.283" y1="40.839" x2="21.8" y2="40.839"/>
-<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="50.283" y1="54.377" x2="21.8" y2="54.377"/>
+<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="49.988" y1="40.739" x2="22.096" y2="40.739"/>
+<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="49.988" y1="53.997" x2="22.096" y2="53.997"/>
 </svg>

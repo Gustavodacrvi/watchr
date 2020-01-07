@@ -23,7 +23,7 @@
       >
         <div class="icon-wrapper">
           <Icon class="main-icon"
-            :style="hoverStyle"
+            :style="iconStyle"
             :class="{notActive: !isActive}"
             :icon="icon"
             :progress='progress'
@@ -238,6 +238,11 @@ export default {
     },
     hoverStyle() {
       return `color: ${this.isActive ? this.iconColor : ''};`
+    },
+    iconStyle() {
+      if (this.isSmart)
+        return `color: ${this.iconColor}`
+      return this.hoverStyle
     },
     isActive() {
       if ((this.hover && this.isDesktop) || (this.isTouching && !this.isDesktop)) return true

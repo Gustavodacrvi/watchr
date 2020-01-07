@@ -4,17 +4,17 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
 <path fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
-	M3.827,19.127"/>
+	M2.182,18.263"/>
 <path fill="currentColor" fill-opacity='.2' stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
-	M3.827,19.127"/>
+	M2.182,18.263"/>
 <g>
 	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
-		M3.827,25.218v35.625c0,3.3,2.7,6,6,6h52.429c3.3,0,6-2.7,6-6V24.613c0-3.3-2.7-6-6-6H50.88"/>
+		M2.182,24.666v37.751c0,3.3,2.7,6,6,6h55.72c3.3,0,6-2.7,6-6V23.722c0-3.3-2.7-6-6-6H51.638"/>
 </g>
 <g>
-	<path fill="currentColor" fill-opacity='.2' d="M43.604,18.613H7.827c-2.2,0-4-1.8-4-4V9.24c0-2.2,1.8-4,4-4h12.688c2.2,0,5.474,1.033,7.276,2.295
-		L43.604,18.613"/>
+	<path fill="currentColor" fill-opacity='.2' d="M43.99,17.722H6.182c-2.2,0-4-1.8-4-4V7.667c0-2.2,1.8-4,4-4h13.745c2.2,0,5.474,1.033,7.276,2.295
+		L43.99,17.722"/>
 	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
-		M43.604,18.613H7.827c-2.2,0-4-1.8-4-4V9.24c0-2.2,1.8-4,4-4h12.688c2.2,0,5.474,1.033,7.276,2.295L43.604,18.613"/>
+		M43.99,17.722H6.182c-2.2,0-4-1.8-4-4V7.667c0-2.2,1.8-4,4-4h13.745c2.2,0,5.474,1.033,7.276,2.295L43.99,17.722"/>
 </g>
 </svg>
