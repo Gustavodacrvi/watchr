@@ -30,6 +30,7 @@
         :progress='progress'
         :shadow='true'
         :width="isDesktop ? '40px' : '30px'"
+        @click="openMenu"
       />
       <h2 v-if="!editing || !isEditable"
         class="name"
@@ -194,13 +195,16 @@ export default {
     }
   },
   created() {
-    this.pushToNavbar()
     window.addEventListener('click', this.hide)
   },
   beforeDestroy() {
     window.removeEventListener('click', this.hide)
   },
   methods: {
+    openMenu() {
+      if (!this.isDesktop)
+        this.$router.push({path: '/menu'})
+    },
     touchstart(evt) {
       this.y = evt.touches[0].screenY
     },
@@ -314,70 +318,6 @@ export default {
     click(event) {
       if (this.selectedTasks.length > 0) event.stopPropagation()
     },
-    pushToNavbar() {
-      const dispatch = this.$store.dispatch
-      const ids = this.selectedTasks
-      const l = this.l
-
-      const savePri = (pri) => {
-        dispatch('task/saveTasksById', {ids, task: {priority: pri}})
-      }
-
-      this.$store.commit('pushNavBarData', {
-        options: {
-          icons: this.selectedTasks.length > 0 ? [
-            {
-              icon: 'priority',
-              name: l['Change priority of tasks'],
-              callback: () => [
-                {
-                  name: 'No priority',
-                  icon: 'priority',
-                  callback: () => savePri('')
-                },
-                {
-                  name: 'Low priority',
-                  icon: 'priority',
-                  color: 'var(--green)',
-                  callback: () => savePri('Low priority')
-                },
-                {
-                  name: 'Medium priority',
-                  icon: 'priority',
-                  color: 'var(--yellow)',
-                  callback: () => savePri('Medium priority')
-                },
-                {
-                  name: 'High priority',
-                  icon: 'priority',
-                  color: 'var(--red)',
-                  callback: () => savePri('High priority')
-                }
-              ]
-            },
-            {
-              icon: 'calendar',
-              callback: () => {return {
-                comp: 'CalendarPicker',
-                content: {callback: calendar => {
-                  dispatch('task/saveTasksById', {
-                    ids,
-                    task: {calendar},
-                  })
-                }
-              }}},
-            },
-            {
-              icon: 'trash',
-              callback: () => {dispatch('task/deleteTasks', ids)},
-            },
-          ] : [],
-          icondrop: this.options,
-          handle: this.optionsHandle,
-        },
-        title: this.viewNameValue,
-      })
-    },
     focusOnInput() {
       setTimeout(() => {
         const inp = this.$refs.input
@@ -478,15 +418,11 @@ export default {
   },
   watch: {
     viewName() {
-      this.pushToNavbar()
       this.editing = false
     },
     viewNameValue() {
       this.title = this.viewNameValue
       this.note = this.notes
-    },
-    options() {
-      this.pushToNavbar()
     },
     editing() {
       if (this.editing)
@@ -585,7 +521,6 @@ export default {
   transform: translateX(-5px);
   overflow: visible;
   position: relative;
-  background-color:
 }
 
 .svg {
@@ -615,7 +550,8 @@ export default {
 }
 
 .mobile .header {
-  padding-top: 34px;
+  padding-top: 22px;
+  margin-bottom: 18px;
   margin-left: 6px;
 }
 

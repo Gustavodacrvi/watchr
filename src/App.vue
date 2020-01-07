@@ -7,9 +7,7 @@
       <FileReader v-if="fileURL"/>
     </transition>
     <Toast/>
-    <transition name="fade-t">
-      <Menu v-show="isMenuOpened && !isDesktop"/>
-    </transition>
+    <Menu class="menu" :class='{slideMenu: isMenuOpened && !isDesktop}'/>
     <transition name="fade-t">
       <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
     </transition>
@@ -155,10 +153,12 @@ export default {
       return this.$route.name
     },
     appRoute() {
-      return this.route === 'user' || this.route === 'popup'
+      return this.route === 'user' ||
+          this.route === 'popup' ||
+          this.route === 'menu'
     },
     hideNavbar() {
-      if (!this.isDesktop && this.appRoute) return true
+      if (!this.route || (!this.isDesktop && this.appRoute)) return true
       const isAnonymous = this.user && this.user.isAnonymous
       const isNotOnUser = this.$route.path !== '/user'
       if (!this.user || this.needsUpdate || !this.isStandAlone || !this.isDesktop || isAnonymous || isNotOnUser) return false
@@ -228,6 +228,18 @@ export default {
 
 .hided {
   top: -22px !important;
+}
+
+.menu {
+  transition: transform .2s;
+  will-change: transform;
+  transform: translateX(-100%);
+  transition-timing-function: ease-in;
+}
+
+.slideMenu {
+  transform: translateX(0px);
+  transition-timing-function: ease-out;
 }
 
 .nav-trans-enter, .nav-trans-leave-to {

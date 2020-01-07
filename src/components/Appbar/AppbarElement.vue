@@ -12,7 +12,7 @@
     >
       <div
         class="link-inner-wrapper rb handle cursor remove-highlight"
-        :class="{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover}"
+        :class="{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover, isActive}"
 
         @mouseenter="hover = true"
         @mouseleave="hover = false"
@@ -350,11 +350,7 @@ export default {
   display: none;
 }
 
-.desktop .link-inner-wrapper:hover, .notSmartActive {
-  background-color: var(--card);
-}
-
-.link-inner-wrapper:active {
+.desktop .link-inner-wrapper:hover, .notSmartActive, .link-inner-wrapper:active, .isActive {
   background-color: var(--card);
 }
 

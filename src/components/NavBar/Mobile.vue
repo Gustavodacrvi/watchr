@@ -5,41 +5,10 @@
         <span @click="openMenu">
           <Icon class="primary-hover cursor" icon="menu" width="22px" :circle="true"/>
         </span>
-        <transition name="fade" mode="out-in" appear>
-          <div v-if="isNotOnHome" class='cont-wrapper' key="user">
-            <span v-if="title" class="title">{{ title }}</span>
-            <div class="drop"
-              @click.stop
-              @pointerup.stop
-              @mouseup.stop
-              @touchend.stop.passive
-            >
-              <template v-if="showHelpIcons">
-                <transition-group name='fade'>
-                  <Icon v-for="i in navBar.options.icons" :key="i.icon"
-                    class="cursor option-icon remove-highlight"
-                    color='var(--white)'
-                    width='22px'
-                    :icon='i.icon'
-                    :circle="true"
-                    @click="openCallback(i.callback)"
-                  />
-                </transition-group>
-              </template>
-              <IconDrop v-if="showIcons && navBar.options.icondrop && navBar.options.icondrop.length > 0"
-                :handle="navBar.options.handle"
-                :options="navBar.options.icondrop"
-                handle-color="var(--white)"
-                width='25px'
-                :circle='true'
-              />
-            </div>
-          </div>
-          <div v-else class="logo cursor" @click="goToIndexPage" key="notuser">
-            <span class="watchr"><b>watchr</b></span>
-            <LogoApp width="35px"/>
-          </div>
-        </transition>
+        <div class="logo cursor" @click="goToIndexPage" key="notuser">
+          <span class="watchr"><b>watchr</b></span>
+          <LogoApp width="35px"/>
+        </div>
       </div>
     </div>
   </div>
@@ -56,6 +25,7 @@ import utils from '@/utils'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
+  props: ['route'],
   components: {
     Icon: IconVue,
     IconDrop: IconDropVue,
@@ -77,44 +47,9 @@ export default {
     },
   },
   computed: {
-    ...mapState({
-      navBar: state => state.navBar,
-      invites: state => state.list.invites,
-      selectedTasks: state => state.selectedTasks,
-    }),
     ...mapGetters(['l']),
-    showIcons() {
-      return this.isOnUserPage && this.navBar && this.navBar.options
-    },
-    showHelpIcons() {
-      return this.showIcons && this.isSelectingTask
-    },
-    isSelectingTask() {
-      return this.selectedTasks && this.selectedTasks.length > 0
-    },
     title() {
-      if (this.isOnUserPage) {
-        if (this.navBar) return this.navBar.title
-        else return null
-      }
-      return this.viewTitle
-    },
-    isNotOnHome() {
-      return this.$route.name !== 'home'
-    },
-    viewTitle() {
-      const n = this.$route.name
-      switch (n) {
-        case 'profile': return this.l['Profile']
-        case 'collaborators': return this.l['Collaborators']
-      }
-    },
-    isOnUserPage() {
-      const isInUser = this.$route.name === 'user'
-      const isInMenu = this.$route.path === '/menu'
-      const isInPopup = this.$route.path === '/popup'
-      
-      return isInUser || isInPopup || isInMenu
+      return this.$route.name
     },
   }
 }

@@ -84,10 +84,6 @@ const store = new Vuex.Store({
       payload: null,
       callback: null,
     },
-    navBar: {
-      options: null,
-      title: "",
-    },
     iconDrop: null,
     selectedEls: [],
     apply: {
@@ -294,9 +290,6 @@ const store = new Vuex.Store({
     clearSelected(state) {
       if (state.selectedTasks.length !== 0)
         state.selectedTasks = []
-    },
-    pushNavBarData(state, navBar) {
-      state.navBar = navBar
     },
     toggleUser(state, isLogged) {
       state.authState = isLogged
