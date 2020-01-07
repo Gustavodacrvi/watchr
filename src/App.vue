@@ -16,12 +16,13 @@
 
     <div class="content">
       <transition name="nav-trans" mode="out-in">
-        <NavBar v-if='!hideNavbar || !allowNavHide'/>
-        <div v-if="hideNavbar" style="height: 65px;"></div>
+        <NavBar v-if='(!hideNavbar || !allowNavHide)'
+          :route='route'
+        />
       </transition>
-      <div v-if="!isDesktop" style="height: 65px"></div>
+      <div v-if="!hideNavbar" style="height: 65px;"></div>
       <transition name="fade-t" appear mode="out-in">
-        <router-view class="router-view" :class="{hided: hideNavbar}" :hideNavbar='hideNavbar'
+          <router-view class="router-view" :class="{hided: hideNavbar && isDesktop}" :hideNavbar='hideNavbar'
         />
       </transition>
     </div>
@@ -147,7 +148,17 @@ export default {
   computed: {
     ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey']),
     ...mapGetters(['isDesktop', 'isStandAlone', 'l', 'getInitialSmartView', 'needsUpdate']),
+    route() {
+      if (this.$route.matched[0]) {
+        return this.$route.matched[0].name
+      }
+      return this.$route.name
+    },
+    appRoute() {
+      return this.route === 'user' || this.route === 'popup'
+    },
     hideNavbar() {
+      if (!this.isDesktop && this.appRoute) return true
       const isAnonymous = this.user && this.user.isAnonymous
       const isNotOnUser = this.$route.path !== '/user'
       if (!this.user || this.needsUpdate || !this.isStandAlone || !this.isDesktop || isAnonymous || isNotOnUser) return false
