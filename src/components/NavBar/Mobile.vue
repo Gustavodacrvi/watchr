@@ -24,7 +24,7 @@
           <Icon class="primary-hover cursor" icon="menu" width="22px" :circle="true"/>
         </span>
         <transition name="fade" mode="out-in" appear>
-          <div v-if="isNotOnHome" key="user">
+          <div v-if="isNotOnHome" class='cont-wrapper' key="user">
             <span v-if="title" class="title">{{ title }}</span>
             <div class="drop"
               @click.stop
@@ -37,7 +37,7 @@
                   <Icon v-for="i in navBar.options.icons" :key="i.icon"
                     class="cursor option-icon remove-highlight"
                     color='var(--white)'
-                    width='22px'
+                    width='26px'
                     :icon='i.icon'
                     :circle="true"
                     @click="openCallback(i.callback)"
@@ -235,6 +235,11 @@ export default {
   position: absolute;
 }
 
+.cont-wrapper {
+  display: flex;
+  align-items: center;
+}
+
 .search {
   box-sizing: border-box;
   display: flex;
@@ -277,7 +282,6 @@ export default {
   display: flex;
   right: 0;
   align-items: center;
-  transform: translateY(-22px);
 }
 
 .option-icon {

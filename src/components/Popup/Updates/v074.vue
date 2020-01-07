@@ -1,13 +1,3 @@
-
-New Smart View.
-New task add transition.
-New tag design.
-
- Bug fixes
-
-couldn't sort root tags
-
-
 <template>
   <div>
     <h3>Changes</h3>
@@ -22,8 +12,8 @@ couldn't sort root tags
     <h3>Improvements</h3>
     <br>
 
-    <li>New task add transition.</lid>
-    <li>New tag design.</lid>
+    <li>New task add transition.</li>
+    <li>New tag design.</li>
     <br>
 
     <h4>New Smart View</h4>

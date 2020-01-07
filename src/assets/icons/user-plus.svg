@@ -2,21 +2,16 @@
 <!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="12.26px" height="10.237px" viewBox="0 0 12.26 10.237" enable-background="new 0 0 12.26 10.237" xml:space="preserve">
-<line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="10.093" y1="0.911" x2="10.093" y2="4.001"/>
-<polyline fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
-	8.573,2.407 8.573,2.407 11.76,2.407 "/>
+	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
+<circle fill="currentColor" fill-opacity='.2' stroke="currentColor" stroke-width="5" stroke-miterlimit="10" cx="32.871" cy="16.05" r="12.151"/>
+<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	M4.61,68.184c0-15.608,12.653-28.262,28.262-28.262s28.262,12.653,28.262,28.262"/>
 <g>
-	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M5.345,9.737h3.821
-		c0.55,0,1-0.45,1-1V7.622"/>
+	
+		<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="58.18" y1="21.908" x2="58.18" y2="39.922"/>
 </g>
-<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M5.333,6.44
-	C6.505,6.378,7.38,5.799,7.38,5.799c1.034-0.176,1.909,0.207,2.472,1.077c0.148,0.228,0.25,0.483,0.314,0.746"/>
 <g>
-	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M5.321,9.737H1.5
-		c-0.55,0-1-0.45-1-1V7.622"/>
+	
+		<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="48.887" y1="30.757" x2="67.474" y2="30.757"/>
 </g>
-<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M5.333,6.44
-	C4.161,6.378,3.286,5.799,3.286,5.799C0.989,5.409,0.5,7.51,0.5,7.51"/>
-<circle fill="none" stroke="currentColor" stroke-miterlimit="10" cx="5.321" cy="2.456" r="1.956"/>
 </svg>

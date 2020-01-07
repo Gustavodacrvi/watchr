@@ -142,6 +142,7 @@ export default {
 
 .icon {
   margin-right: 4px;
+  transform: translateY(1px);
 }
 
 .name {

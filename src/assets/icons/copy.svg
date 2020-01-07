@@ -2,11 +2,23 @@
 <!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="12.653px" height="12.653px" viewBox="0 0 12.653 12.653" enable-background="new 0 0 12.653 12.653" xml:space="preserve">
-<polyline fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
-	2.183,3.069 2.183,10.438 9.745,10.438 "/>
-<rect x="3.714" y="1.562" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" width="7.563" height="7.344"/>
-<line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="7.484" y1="3.688" x2="7.484" y2="6.777"/>
-<polyline fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
-	5.964,5.183 5.964,5.183 9.152,5.183 "/>
+	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
+<g>
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+		M4.223,15.533v45.562c0,3.3,2.7,6,6,6h46.921"/>
+</g>
+<g>
+	<path fill="currentColor" fill-opacity='.2' d="M20.939,4.989c-3.3,0-6,2.7-6,6v39.391c0,3.3,2.7,6,6,6H61.86c3.3,0,6-2.7,6-6V10.989c0-3.3-2.7-6-6-6
+		H20.939z"/>
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+		M20.939,4.989c-3.3,0-6,2.7-6,6v39.391c0,3.3,2.7,6,6,6H61.86c3.3,0,6-2.7,6-6V10.989c0-3.3-2.7-6-6-6H20.939z"/>
+</g>
+<g>
+	
+		<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="41.318" y1="19.859" x2="41.318" y2="41.479"/>
+</g>
+<g>
+	
+		<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="30.684" y1="30.327" x2="52.99" y2="30.327"/>
+</g>
 </svg>

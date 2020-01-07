@@ -2,11 +2,15 @@
 <!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="11.649px" height="10.661px" viewBox="0 0 11.649 10.661" enable-background="new 0 0 11.649 10.661" xml:space="preserve">
-<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M5.192,5.476H5.185
-	V0.79C2.598,0.79,0.5,2.888,0.5,5.476s2.098,4.685,4.685,4.685c1.345,0,2.55-0.575,3.404-1.483L5.192,5.476z"/>
-<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M10.355,4.275
-	c0-2.085-1.69-3.775-3.775-3.775v3.775H10.355z"/>
-<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M7.392,5.574
-	L7.388,5.58l2.799,2.532c0.655-0.724,0.964-1.633,0.962-2.537H7.392z"/>
+	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
+<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	M59.565,40.478c0,15.102-12.243,27.345-27.345,27.345S4.875,55.58,4.875,40.478S17.118,13.133,32.22,13.133"/>
+<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+	M59.567,40.477c-0.008,8.781-4.237,17.401-12.066,22.677"/>
+<g>
+	<path fill="currentColor" fill-opacity='.2' d="M67.208,31.608c0.005-5.264-1.508-10.587-4.671-15.281C57.261,8.498,48.641,4.269,39.861,4.261v21.347
+		c0,3.3,2.7,6,6,6H67.208z"/>
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+		M67.208,31.608c0.005-5.264-1.508-10.587-4.671-15.281C57.261,8.498,48.641,4.269,39.861,4.261v21.347c0,3.3,2.7,6,6,6H67.208z"/>
+</g>
 </svg>

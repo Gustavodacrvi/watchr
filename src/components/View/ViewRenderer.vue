@@ -235,6 +235,7 @@ export default {
     async getComputedOptions() {
       if (this.headerOptions)
         this.computedHeaderOptions = await this.getOptions(this.headerOptions)
+      else this.computedHeaderOptions = []
     },
     activeAutoSchedule(info) {
       this.autoSchedule = info
@@ -854,6 +855,7 @@ export default {
             callback: () => this.toggleCompleted()
           },
         ]
+        console.log(this.computedHeaderOptions)
         if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
           opt.push({
             type: 'hr',

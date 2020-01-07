@@ -2,14 +2,16 @@
 <!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="11.583px" height="11.574px" viewBox="0 0 11.583 11.574" enable-background="new 0 0 11.583 11.574" xml:space="preserve">
+	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
 <g>
-	<path fill="none" stroke="currentColor" stroke-miterlimit="10" d="M1.5,0.5c-0.55,0-1,0.45-1,1v8.574c0,0.55,0.45,1,1,1h8.583
-		c0.55,0,1-0.45,1-1V3.812c0-0.55-0.359-1.272-0.797-1.604L8.828,1.104C8.39,0.772,7.581,0.5,7.031,0.5H1.5z"/>
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+		M63.042,36.042v25.664c0,3.85-3.15,7-7,7h-40c-3.85,0-7-3.15-7-7V10.378c0-3.85,3.15-7,7-7h21.925"/>
 </g>
-<line fill="#FFFFFF" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.503" y1="5.367" x2="8.003" y2="5.367"/>
-<line fill="#FFFFFF" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.542" y1="7.04" x2="8.042" y2="7.04"/>
-<line fill="#FFFFFF" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="3.581" y1="8.758" x2="8.081" y2="8.758"/>
-<polyline fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
-	7.187,0.567 7.187,3.602 10.917,3.602 "/>
+<g>
+	<path fill="currentColor" fill-opacity='.2' d="M37.967,3.378v16.416c0,3.85,3.15,7,7,7h11.075c3.85,0,7-3.15,7-7v-9.416c0-3.85-3.15-7-7-7H38.503"/>
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+		M37.967,3.378v16.416c0,3.85,3.15,7,7,7h11.075c3.85,0,7-3.15,7-7v-9.416c0-3.85-3.15-7-7-7H38.503"/>
+</g>
+<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="49.988" y1="40.739" x2="22.096" y2="40.739"/>
+<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="49.988" y1="53.997" x2="22.096" y2="53.997"/>
 </svg>

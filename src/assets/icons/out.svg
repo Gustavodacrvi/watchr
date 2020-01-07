@@ -2,12 +2,14 @@
 <!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="13.953px" height="10.505px" viewBox="0 0 13.953 10.505" enable-background="new 0 0 13.953 10.505" xml:space="preserve">
-<polyline fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="2.25,5.283 
-	8.968,5.283 7.359,3.674 "/>
-<line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="7.375" y1="7.002" x2="9.015" y2="5.283"/>
+	 width="72.083px" height="72.083px" viewBox="0 0 72.083 72.083" enable-background="new 0 0 72.083 72.083" xml:space="preserve">
+<line fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="4.43" y1="36.147" x2="35.585" y2="36.042"/>
 <g>
-	<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M7.662,0.994
-		c0,0,0.909,0,2.021,0s2.021,1.35,2.021,3v2.688c0,1.65-0.909,3-2.021,3s-2.021,0-2.021,0"/>
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+		M28.439,58.033L46.633,39.84c1.945-1.945,1.945-5.127,0-7.071L28.085,14.221"/>
+</g>
+<g>
+	<path fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="
+		M41.592,64.054h20.062c3.3,0,6-2.7,6-6V14.029c0-3.3-2.7-6-6-6H41.592"/>
 </g>
 </svg>
