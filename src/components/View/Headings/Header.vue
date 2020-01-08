@@ -550,8 +550,8 @@ export default {
 }
 
 .mobile .header {
-  padding-top: 22px;
-  margin-bottom: 18px;
+  padding-top: 30px;
+  margin-bottom: 24px;
   margin-left: 6px;
 }
 

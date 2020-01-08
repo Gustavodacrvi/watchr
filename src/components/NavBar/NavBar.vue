@@ -52,7 +52,7 @@ export default {
     logOut() {
       this.$store.dispatch('logOut')
     },
-      openProfile() {
+    openProfile() {
       this.$store.dispatch('pushPopup', {
         comp: 'Profile'
       })

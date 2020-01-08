@@ -167,7 +167,6 @@ export default {
 }
 
 .circle {
-  will-change: opacity, width, height;
   position: absolute;
   transform: translate(-50%,-50%);
   border-radius: 1000px;

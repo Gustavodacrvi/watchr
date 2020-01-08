@@ -1,5 +1,5 @@
 <template>
-  <div class="Appbar-wrapper scroll-thin" :class="platform">
+  <div class="Appbar-wrapper" :class="{platform, 'scroll-thin': isDesktop}">
     <div class="margin-wrapper">
       <div v-if="isDesktop" class="back-layer" :class="{showing}"></div>
       <div class="Appbar" :class='platform'>
@@ -8,7 +8,7 @@
         <div>
           <div class="search-shadow" @mouseenter="showSearch" @mouseleave="hideSearch"></div>
           <transition name="bar-trans">
-          <div v-if="showing" class="appbar-content">
+          <div v-if="!isDesktop || showing" class="appbar-content">
             <transition name="search-t">
               <SearchButton v-if="showingSearch && isDesktop"
                 @click="$store.dispatch('pushPopup', {comp: 'FastSearch', naked: true})"
@@ -87,7 +87,7 @@
           </transition>
         </div>
         <div v-if="isDesktop" style="height: 35px;"></div>
-        <div class="footer" :class="[platform, {showing}]">
+        <div v-if="isDesktop" class="footer" :class="[platform, {showing}]">
           <div class="inner-footer">
             <div class="drop">
               <transition name="icon-t">
@@ -686,7 +686,6 @@ export default {
 
 .Appbar {
   height: 100%;
-  padding-right: 25px;
   overflow: visible;
 }
 
@@ -701,8 +700,7 @@ export default {
 
 .Appbar-wrapper {
   height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
+  margin: 0 12px;
 }
 
 .Appbar-wrapper.desktop {

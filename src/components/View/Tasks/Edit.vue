@@ -778,7 +778,6 @@ export default {
 .Edit {
   background-color: var(--card);
   box-shadow: 0 2px 8px rgba(15,15,15,.3);
-  will-change: height;
 }
 
 .edit-wrapper {

@@ -18,7 +18,7 @@
           :route='route'
         />
       </transition>
-      <div v-if="!hideNavbar" style="height: 65px;"></div>
+      <div v-if="isDesktop && hideNavbar" style="height: 65px;"></div>
       <transition name="fade-t" appear mode="out-in">
           <router-view class="router-view" :class="{hided: hideNavbar && isDesktop}" :hideNavbar='hideNavbar'
         />
@@ -63,9 +63,11 @@ export default {
     setInterval(() => {
       this.timeBeforeMouseMove++
     }, 1000)
-    window.addEventListener('keydown', this.keydown)
-    window.addEventListener('keyup', this.keyup)
-    window.addEventListener('mousemove', this.getMousePos)
+    if (this.isDesktop) {
+      window.addEventListener('keydown', this.keydown)
+      window.addEventListener('keyup', this.keyup)
+      window.addEventListener('mousemove', this.getMousePos)
+    }
     document.addEventListener('scroll', this.toggleScroll)
 
     this.updateViewType(true)
@@ -231,9 +233,8 @@ export default {
 }
 
 .menu {
-  transition: transform .2s;
-  will-change: transform;
   transform: translateX(-100%);
+  transition: transform .2s;
   transition-timing-function: ease-in;
 }
 

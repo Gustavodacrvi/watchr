@@ -2,7 +2,7 @@
   <div v-if="getIcon"
     class="icon remove-highlight"
     :class="[{hideShadow: !shadow}, platform]"
-    :style="{width: getWidth, color, filter: `drop-shadow(0 0 20px ${color})`}"
+    :style="{width: getWidth, color, filter: `drop-shadow(0 0 ${isDesktop ? 20 : 10}px ${color})`}"
     @click="iconClick"
   >
     <svg v-if="!hasProgress" :viewBox="getIcon.viewBox">
@@ -169,7 +169,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['platform', 'isDesktop']),
     getProgress() {
       return 19 * this.progress / 100
     },
