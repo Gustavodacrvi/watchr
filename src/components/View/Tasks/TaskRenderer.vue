@@ -17,7 +17,7 @@
 
           :taskHeight='taskHeight'
           :task='item'
-          :changingViewName='changingViewName'
+          :changingViewName='changingViewName || rootChanging'
           :isRoot='isRoot'
           :isSelecting='isSelecting'
           :enableSelect='enableSelect'
@@ -71,7 +71,7 @@
     <transition-group v-if="isRoot"
       appear
       class="front headings-root"
-      name="head-t"
+      :name="headingsTrans"
       tag="div"
     >
       <template v-for="(h, i) in lazyHeadings">
@@ -99,6 +99,7 @@
             :headings='[]'
 
             :hideListName="h.hideListName"
+            :rootChanging='changingViewName'
             :headingFilterFunction='h.filterFunction'
             :headingFallbackTask='h.fallbackTask'
             :allowCalendarStr='h.calendarStr'
@@ -149,7 +150,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton', 'openCalendar',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton', 'openCalendar', 'rootChanging',
   'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -194,16 +195,20 @@ export default {
   mounted() {
     this.mountSortables()
     window.addEventListener('click', this.windowClick)
-    window.addEventListener('keydown', this.keydown)
-    window.addEventListener('mousemove', this.mousemove)
     window.addEventListener('touchmove', this.mousemove)
+    if (this.isDesktop) {
+      window.addEventListener('keydown', this.keydown)
+      window.addEventListener('mousemove', this.mousemove)
+    }
   },
   beforeDestroy() {
     this.destroySortables()
     window.removeEventListener('click', this.windowClick)
-    window.removeEventListener('keydown', this.keydown)
-    window.removeEventListener('mousemove', this.mousemove)
     window.removeEventListener('touchmove', this.mousemove)
+    if (this.isDesktop) {
+      window.removeEventListener('keydown', this.keydown)
+      window.removeEventListener('mousemove', this.mousemove)
+    }
   },
   methods: {
     mousemove(evt) {
@@ -832,6 +837,10 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    headingsTrans() {
+      if (this.isDesktop) return 'head-t'
+      return (this.changingViewName || this.rootChanging) ? '' : 'head-t'
+    },
     inflate() {
       if (this.stopRootInflation) return false
       const hasHeadings = this.lazyHeadings.length > 0
@@ -920,7 +929,7 @@ export default {
     },
     viewName() {
       this.changingViewName = true
-      setTimeout(() => this.changingViewName = false, 500)
+      setTimeout(() => this.changingViewName = false, 2000)
       
       this.numberOfTimeoutUpdates = 0
       this.updateView()

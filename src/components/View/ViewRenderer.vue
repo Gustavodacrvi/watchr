@@ -855,7 +855,6 @@ export default {
             callback: () => this.toggleCompleted()
           },
         ]
-        console.log(this.computedHeaderOptions)
         if (this.computedHeaderOptions && this.computedHeaderOptions.length > 0) {
           opt.push({
             type: 'hr',

@@ -60,13 +60,13 @@
                     :icon="`box${isSomeday ? '-dash' : ''}`"
                     :color='circleColor'
                     :stop='true'
-                    width="18px"
+                    width="20px"
                     @click="desktopComplete"
                   />
                   <Icon v-else :circle='true' class="icon check-icon cursor remove-highlight"
                     :icon="`box-check${isSomeday ? '-dash' : ''}`"
                     :color='circleColor'
-                    width="18px"
+                    width="20px"
                     :stop='true'
                     @click="desktopComplete"
                   />
@@ -257,9 +257,9 @@ export default {
       if (cont) {
         const s = cont.style
 
+        s.transitionDuration = '0'
         if (this.changingViewName && !this.isDesktop) done()
         else {
-          s.transitionDuration = '0'
           s.opacity = 0
           s.height = '0px'
           
@@ -858,7 +858,6 @@ export default {
 }
 
 .circle-trans-transition {
-  will-change: opacity, height, width, left, top;
   position: absolute;
   transform: translate(-50%, -50%);
   opacity: .4;
@@ -886,7 +885,6 @@ export default {
 }
 
 .cont-wrapper {
-  will-change: min-height, width;
   transition-duration: .25s;
   min-height: 38px;
 }

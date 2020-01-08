@@ -7,21 +7,20 @@
       <FileReader v-if="fileURL"/>
     </transition>
     <Toast/>
-    <transition name="fade-t">
-      <Menu v-show="isMenuOpened && !isDesktop"/>
-    </transition>
+    <Menu class="menu" :class='{slideMenu: isMenuOpened && !isDesktop}'/>
     <transition name="fade-t">
       <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
     </transition>
 
     <div class="content">
       <transition name="nav-trans" mode="out-in">
-        <NavBar v-if='!hideNavbar || !allowNavHide'/>
-        <div v-if="hideNavbar" style="height: 65px;"></div>
+        <NavBar v-if='(!hideNavbar || !allowNavHide)'
+          :route='route'
+        />
       </transition>
-      <div v-if="!isDesktop" style="height: 65px"></div>
+      <div v-if="isDesktop && hideNavbar" style="height: 65px;"></div>
       <transition name="fade-t" appear mode="out-in">
-        <router-view class="router-view" :class="{hided: hideNavbar}" :hideNavbar='hideNavbar'
+          <router-view class="router-view" :class="{hided: hideNavbar && isDesktop}" :hideNavbar='hideNavbar'
         />
       </transition>
     </div>
@@ -64,9 +63,11 @@ export default {
     setInterval(() => {
       this.timeBeforeMouseMove++
     }, 1000)
-    window.addEventListener('keydown', this.keydown)
-    window.addEventListener('keyup', this.keyup)
-    window.addEventListener('mousemove', this.getMousePos)
+    if (this.isDesktop) {
+      window.addEventListener('keydown', this.keydown)
+      window.addEventListener('keyup', this.keyup)
+      window.addEventListener('mousemove', this.getMousePos)
+    }
     document.addEventListener('scroll', this.toggleScroll)
 
     this.updateViewType(true)
@@ -147,7 +148,19 @@ export default {
   computed: {
     ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey']),
     ...mapGetters(['isDesktop', 'isStandAlone', 'l', 'getInitialSmartView', 'needsUpdate']),
+    route() {
+      if (this.$route.matched[0]) {
+        return this.$route.matched[0].name
+      }
+      return this.$route.name
+    },
+    appRoute() {
+      return this.route === 'user' ||
+          this.route === 'popup' ||
+          this.route === 'menu'
+    },
     hideNavbar() {
+      if (!this.route || (!this.isDesktop && this.appRoute)) return true
       const isAnonymous = this.user && this.user.isAnonymous
       const isNotOnUser = this.$route.path !== '/user'
       if (!this.user || this.needsUpdate || !this.isStandAlone || !this.isDesktop || isAnonymous || isNotOnUser) return false
@@ -217,6 +230,17 @@ export default {
 
 .hided {
   top: -22px !important;
+}
+
+.menu {
+  transform: translateX(-100%);
+  transition: transform .2s;
+  transition-timing-function: ease-in;
+}
+
+.slideMenu {
+  transform: translateX(0px);
+  transition-timing-function: ease-out;
 }
 
 .nav-trans-enter, .nav-trans-leave-to {

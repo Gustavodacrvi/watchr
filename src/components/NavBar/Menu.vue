@@ -1,9 +1,19 @@
 <template>
   <div class="Menu cbd">
     <div class="appbar-wrapper">
-      <span class="arrow-wrapper" @click="closeMenu">
-        <Icon class="arrow primary-hover cursor" icon="arrow" color="var(--gray)" width="25px" :circle='true'/>
-        <VersionApp class="version"/>
+      <span class="arrow-wrapper">
+        <Icon @click="closeMenu" class="arrow primary-hover cursor" icon="arrow" color="var(--gray)" width="25px" :circle='true'/>
+        <div>
+          <Icon class="cursor help-icon primary-hover" icon="user" color="var(--gray)" @click="toggleMenu" :circle='true'/>
+          <IconDrop v-if="!appSection"
+            class="help-icon drop rigth"
+            handle="globe"
+            :circle='true'
+            handleColor="var(--gray)"
+            :options='languages'
+          />
+          <VersionApp class="version"/>
+        </div>
       </span>
       <transition :name="this.appSection ? 'mr' : 'ml'">
         <Appbar class="Appbar" v-if="appSection" key="app"/>
@@ -18,14 +28,6 @@
         </div>
       </transition>
     </div>
-    <Icon class="cursor user primary-hover" icon="user" color="var(--gray)" @click="toggleMenu" :circle='true'/>
-    <IconDrop v-if="!appSection"
-      class="drop rigth"
-      handle="globe"
-      :circle='true'
-      handleColor="var(--gray)"
-      :options='languages'
-    />
   </div>
 </template>
 
@@ -72,7 +74,7 @@ export default {
   },
   computed: {
     ...mapState(['user']),
-    ...mapGetters(['l']),
+    ...mapGetters(['l', 'isDesktop']),
     languages() {
       return [
         {
@@ -123,16 +125,18 @@ export default {
   height: 100%;
 }
 
-.drop {
-  position: absolute;
-  right: 8px;
-  bottom: 8px;
-}
-
 .Appbar {
   margin-top: 8px;
 }
 
+.help-icon {
+  transform: translate(-9px, -7px);
+}
+
+.drop {
+  margin-left: 8px;
+  display: inline-block;
+}
 
 .arrow {
   transform: rotate(90deg);
@@ -151,12 +155,6 @@ export default {
 
 .link:hover {
   background-color: var(--light-gray);
-}
-
-.user {
-  position: absolute;
-  bottom: 16px;
-  left: 16px;
 }
 
 .mr-enter-active, .mr-leave-active, .ml-enter-active, .ml-leave-active {

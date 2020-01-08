@@ -13,6 +13,7 @@ import MobileVue from './Mobile.vue'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
+  props: ['route'],
   components: {
     Desktop: DesktopVue,
     Mobile: MobileVue,
@@ -51,7 +52,7 @@ export default {
     logOut() {
       this.$store.dispatch('logOut')
     },
-      openProfile() {
+    openProfile() {
       this.$store.dispatch('pushPopup', {
         comp: 'Profile'
       })
@@ -60,12 +61,6 @@ export default {
   computed: {
     ...mapState(['user']),
     ...mapGetters(['isDesktop', 'platform', 'l']),
-    route() {
-      if (this.$route.matched[0]) {
-        return this.$route.matched[0].name
-      }
-      return this.$route.name
-    },
     dropLinks() {
       if (!this.user)
         return [
@@ -118,5 +113,6 @@ export default {
   width: 100%;
   background-color: var(--back-color);
 }
+
 
 </style>
