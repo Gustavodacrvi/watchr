@@ -1,5 +1,6 @@
 <template>
   <div class="DropInput">
+    <span v-if="msg" class="msg">{{ msg }}</span>
     <textarea class="input rb cbd"
       :placeholder='placeholder'
       rows='1'
@@ -37,7 +38,7 @@
 <script>
 
 export default {
-  props: ['options', 'focus', 'value', 'placeholder', 'focusToggle', 'back-color', 'disableAutoSelect'],
+  props: ['options', 'focus', 'value', 'placeholder', 'focusToggle', 'back-color', 'disableAutoSelect', 'enterOnShift', 'msg'],
   data() {
     return {
       str: this.value,
@@ -137,16 +138,20 @@ export default {
         this.moveActive(key)
       else if (key === 'Shift') this.shift = true
       else if (key === 'Enter') {
-        if (this.active) {
-          this.$emit('select', this.active)
-          this.active = ''
-        } else {
+        if (!this.enterOnShift) {
+          if (this.active) {
+            this.$emit('select', this.active)
+            this.active = ''
+          } else {
+            this.$emit('enter')
+            setTimeout(() => {
+              this.fixHeight() 
+            })
+          }
+          event.preventDefault()
+        } else if (this.shift) {
           this.$emit('enter')
-          setTimeout(() => {
-            this.fixHeight() 
-          })
         }
-        event.preventDefault()
       } else if (key === 'ArrowLeft' || key === 'ArrowRight') {
       this.active = ''
       if (this.shift) {
@@ -224,6 +229,14 @@ export default {
 
 .DropInput {
   position: relative;
+}
+
+.msg {
+  position: absolute;
+  right: 12px;
+  bottom: 0;
+  opacity: .4;
+  font-size: .7em;
 }
 
 .input {

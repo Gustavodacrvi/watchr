@@ -22,10 +22,13 @@
         />
         <DropInput
           class="notes hide"
+          :msg='isDesktop ? "Shift + Enter to save" : ""'
           :class="{'no-back': !popup, show}"
           v-model="task.notes"
+          :enterOnShift='true'
           :options="[]"
           :placeholder="notesPlaceholder"
+          @enter='save'
           @cancel="cancel"
           @goup='$emit("goup")'
           @godown='$emit("godown")'
