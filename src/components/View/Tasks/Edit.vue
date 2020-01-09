@@ -391,7 +391,8 @@ export default {
     },
     save() {
       const t = this.task
-      this.leave(this.$el)
+      if (this.defaultTask)
+        this.leave(this.$el)
       if (t.name) {
         if (t.folder) {
           this.task.list = ''

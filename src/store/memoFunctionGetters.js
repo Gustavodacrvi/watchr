@@ -2,30 +2,15 @@
 export default (property, getters) => {
   const keys = Object.keys(getters)
 
-  const memo = (func, stringify, type) => {
+  const memo = (func, stringify) => {
     const cache = {}
     let getKey = stringify ? stringify : JSON.stringify
-    let returnCached
-
-    switch (type) {
-      case Array: {
-        returnCached = arr => arr.slice()
-        break
-      }
-      case Object: {
-        returnCached = obj => ({...obj})
-        break
-      }
-      default: {
-        returnCached = v => v
-      }
-    }
 
     return function() {
       const key = getKey(arguments)
       const val = cache[key]
       
-      if (val !== undefined) return returnCached(val)
+      if (val !== undefined) return val
       
       let res = func.apply(null, arguments)
       if (res === undefined)
@@ -38,7 +23,14 @@ export default (property, getters) => {
   const obj = {}
   for (const k of keys) {
     obj[k] = function(state) {
-      if (property) state[property]
+      if (property) {
+        if (property.length === undefined) {
+          if (property) state[property]
+        }
+        else
+          for (const k of property)
+            state[k]        
+      }
       const val = getters[k]
       const firstArg = {
         state: arguments[0],

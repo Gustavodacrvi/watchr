@@ -16,7 +16,8 @@
       </transition>
       <div
         class="cont-wrapper task-handle rb"
-        :class='{doneTransition}' ref="cont-wrapper"
+        :class='{doneTransition}'
+        ref="cont-wrapper"
 
         @mouseup='stopMouseUp'
         @pointerup.stop
@@ -262,17 +263,19 @@ export default {
         else {
           s.opacity = 0
           s.height = '0px'
+          s.minHeight = '0px'
           
           setTimeout(() => {
             s.transitionDuration = '.25s'
             s.opacity = 1
             s.height = this.taskHeight + 'px'
+            done()
           })
           setTimeout(() => {
-            done()
+            s.transitionDuration = '0s'
             s.height = 'auto'
             s.minHeight = this.taskHeight + 'px'
-          }, 251)
+          }, 255)
         }
       }
     },

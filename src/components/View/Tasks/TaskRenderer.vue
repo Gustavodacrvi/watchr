@@ -636,7 +636,7 @@ export default {
           else solve()
         }
         const h = headings[0]
-        if (h) add(h)
+        if (h && h.tasks.length > 0) add(h)
         else solve()
       })
     },
@@ -899,7 +899,6 @@ export default {
       this.waitingUpdateTimeout = setTimeout(() => {
         if (!this.changedViewName) {
           this.clearLazySettimeout()
-
 
           if (this.hasEdit && this.addedTask && this.edit) {
             const oldEditIndex = this.lazyTasks.findIndex(el => el.isEdit)
