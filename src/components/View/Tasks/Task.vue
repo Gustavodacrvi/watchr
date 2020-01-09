@@ -3,6 +3,7 @@
     appear
     :css="true"
     @enter='taskEnter'
+    @beforeLeave='taskLeave'
   >
     <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing}, platform]"
       @mouseenter="onHover = true"
@@ -27,7 +28,7 @@
           <Icon class="back-icon"
             icon='circle-filled'
             color='white'
-            width="22px"
+            width="22px"  
           />
         </div>
       </div>
@@ -275,6 +276,9 @@ export default {
     bindContextMenu(options) {
       utils.bindOptionsToEventListener(this.$el, options, this)
     },
+    taskLeave() {
+      this.doneTransition = false
+    },
     taskEnter(el, done) {
       const cont = this.$refs['cont-wrapper']
       this.doneTransition = false
@@ -282,8 +286,8 @@ export default {
         const s = cont.style
 
         s.transitionDuration = '0'
+        setTimeout(() => this.doneTransition = true, 300)
         if (this.changingViewName && !this.isDesktop) {
-          setTimeout(() => this.doneTransition, 300)
           done()
         } else {
           s.opacity = 0
@@ -297,7 +301,6 @@ export default {
             done()
           })
           setTimeout(() => {
-            this.doneTransition = true
             s.transitionDuration = '0s'
             s.height = 'auto'
             s.minHeight = this.taskHeight + 'px'
@@ -366,6 +369,7 @@ export default {
       }
     },
     touchEnd(e) {
+      const select = this.right > 60
       if (this.moved) {
         const cont = this.$refs['cont-wrapper'].style
 
@@ -387,10 +391,14 @@ export default {
         else this.deselectTask()
       }
 
-      if (!this.isSelecting) {
-        if (!this.moved) this.isEditing = true
+      if (select) {
+        this.selectTask()
       } else {
-        if (!fail) toggleTask()
+        if (!this.isSelecting) {
+          if (!this.moved && !this.justCompleted) this.isEditing = true
+        } else {
+          if (!fail) toggleTask()
+        }
       }
 
       this.fail = false
@@ -843,18 +851,6 @@ export default {
   z-index: 5;
 }
 
-.back {
-  position: absolute;
-  left: 2px;
-  top: 3px;
-  background-color: var(--primary);
-  width: 98%;
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .back-icons-wrapper {
   flex-basis: 85%;
   justify-content: space-between;
@@ -1037,6 +1033,11 @@ export default {
   transition: background-color .8s !important;
 }
 
+.sortable-selected .back {
+  opacity: 0;
+  transition-delay: 0s;
+}
+
 .sortable-ghost .cont-wrapper {
   background-color: var(--void) !important;
   transition-duration: 0;
@@ -1072,6 +1073,25 @@ export default {
 .task-trans-leave-active {
   transition-duration: .25s !important;
   transition: height .25s, opacity .25s !important;
+}
+
+.task-trans-leave-active .back {
+  opacity: 0;
+  transition-delay: 0s;
+}
+
+.back {
+  position: absolute;
+  left: 2px;
+  top: 3px;
+  background-color: var(--primary);
+  width: 98%;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  opacity: 1;
+  justify-content: center;
+  transition-delay: .3s;
 }
 
 .task-trans-leave {
