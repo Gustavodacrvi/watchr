@@ -686,7 +686,8 @@ export default {
 
 .Appbar {
   height: 100%;
-  overflow: auto;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .mobile .margin-wrapper {

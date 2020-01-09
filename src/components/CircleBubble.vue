@@ -43,22 +43,18 @@ export default {
 
     const onClick = this.click
     const onTouch = this.touchStart
-    const onTouchend = this.touchEnd
 
     const click = evt => onClick(evt)
     const touchstart = evt => onTouch(evt)
-    const touchend = evt => onTouchend(evt)
     
     const el = this.el
     
     el.addEventListener('click', click)
     el.addEventListener('touchstart', touchstart, {passive: true})
-    el.addEventListener('touchend', touchend, {passive: true})
 
     this.toDestroy = () => {
       el.removeEventListener('click', click)
       el.removeEventListener('touchstart', touchstart)
-      el.removeEventListener('touchend', touchend)
     }
   },
   beforeDestroy() {
@@ -75,8 +71,6 @@ export default {
       }
     },
     touchStart(e) {
-      /* this.startX = e.changedTouches[0].clientX
-      this.startY = e.changedTouches[0].clientY */
       const rect = e.target.getBoundingClientRect()
       const scroll = document.scrollingElement.scrollTop
       if (!this.doingTransition) {
@@ -84,17 +78,6 @@ export default {
         this.top = (e.targetTouches[0].pageY - rect.top - scroll) + 'px'
         this.showing = true
       }
-    },
-    touchEnd(e) {
-      const touch = e.changedTouches[0]
-      const movedFingerX = Math.abs(touch.clientX - this.startX) > 10
-      const movedFingerY = Math.abs(touch.clientY - this.startY) > 10
-      if (!movedFingerX && !movedFingerY) {
-        if (this.allowMobileOptions)
-          this.openMobileOptions()
-        else this.click()
-      }
-      this.allowMobileOptions = false
     },
     enter(el) {
       const s = el.style

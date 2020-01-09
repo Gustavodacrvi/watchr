@@ -14,10 +14,28 @@
           v-bind="schedule"
         />
       </transition>
+      <div v-if="doneTransition && !isEditing && !isDesktop"
+        class="back rb"
+        :style="{height: (taskHeight - 5) + 'px'}"
+      >
+        <div class="back-icons-wrapper">
+          <Icon class="back-icon"
+            icon='circle-filled'
+            color='white'
+            width="22px"
+          />
+          <Icon class="back-icon"
+            icon='circle-filled'
+            color='white'
+            width="22px"
+          />
+        </div>
+      </div>
       <div
         class="cont-wrapper task-handle rb"
         :class='{doneTransition}'
         ref="cont-wrapper"
+        :style="{right: right + 'px'}"
 
         @mouseup='stopMouseUp'
         @pointerup.stop
@@ -33,20 +51,16 @@
           @leave='leave'
         >
           <div v-if="!isEditing" key="notediting"
-            class="cont-wrapper-wrapper task-cont-wrapper"
+            class="cont-wrapper-wrapper rb task-cont-wrapper"
             :class="platform"
             @click="click"
             :style='{height: taskHeight + "px"}'
           >
-            <div class="circle-trans-wrapper-wrapper">
-              <div class="circle-trans-wrapper">
-                <transition
-                  @enter='circleEnter'
-                >
-                  <div v-show="showCircle" class="circle-trans-transition" :style="{left, top, backgroundImage: `radial-gradient(${innerColor}, ${outerColor})`}"></div>
-                </transition>
-              </div>
-            </div>
+            <CircleBubble
+              innerColor='var(--light-gray)'
+              outerColor='var(--gray)'
+              opacity='0'
+            />
             <div class="cont"
               ref='cont'
             >
@@ -56,7 +70,7 @@
                 @touchend.passive='touchComplete'
                 :class="{changeColor}"
               >
-                <template v-if='!isSelecting && !openCalendar'>
+                <template v-if='!isSelecting'>
                   <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon cursor remove-highlight"
                     :icon="`box${isSomeday ? '-dash' : ''}`"
                     :color='circleColor'
@@ -156,8 +170,8 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions', 'enableSelect', 'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName',
-  'isSelecting', 'openCalendar'],
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName',
+  'isSelecting'],
   components: {
     Timeline,
     Icon: IconVue,
@@ -167,28 +181,20 @@ export default {
   },
   data() {
     return {
-      left: 0,
-      top: 0,
-      innerColor: 'rgba(53, 73, 90, 0.6)',
-      outerColor: 'var(--primary)',
-      showCircle: false,
-      isTouching: false,
       showingIconDropContent: false,
       isEditing: false,
       onHover: false,
       iconHover: false,
-      doneTransition: true,
-      doubleClickListening: false,
-      doubleClickListeningTimeout: null,
       startX: 0,
       startY: 0,
       startTime: 0,
       initialScroll: 0,
+      moved: false,
+      right: 0,
       timeout: null,
       changeColor: false,
       justCompleted: false,
-
-      fail: false,
+      doneTransition: false,
     }
   },
   mounted() {
@@ -229,7 +235,7 @@ export default {
           co.transform = 'translateX(0px)'
           setTimeout(() => {
             this.doneTransition = true
-          }, 252)
+          }, 254)
         })
       }
     },
@@ -271,12 +277,15 @@ export default {
     },
     taskEnter(el, done) {
       const cont = this.$refs['cont-wrapper']
+      this.doneTransition = false
       if (cont) {
         const s = cont.style
 
         s.transitionDuration = '0'
-        if (this.changingViewName && !this.isDesktop) done()
-        else {
+        if (this.changingViewName && !this.isDesktop) {
+          setTimeout(() => this.doneTransition, 300)
+          done()
+        } else {
           s.opacity = 0
           s.height = '0px'
           s.minHeight = '0px'
@@ -288,16 +297,13 @@ export default {
             done()
           })
           setTimeout(() => {
+            this.doneTransition = true
             s.transitionDuration = '0s'
             s.height = 'auto'
             s.minHeight = this.taskHeight + 'px'
-          }, 255)
+          }, 300)
         }
       }
-    },
-    stopMouseUp(evt) {
-      if (!this.isDesktop)
-        evt.stopPropagation()
     },
     deselectTask() {
       setTimeout(() => {
@@ -318,21 +324,9 @@ export default {
         this.$store.dispatch('task/completeTasks', [this.task])
       else this.$store.dispatch('task/uncompleteTasks', [this.task])
     },
-    singleClick() {
-      if (this.isDesktop && !this.enableSelect)
-        this.isEditing = true
-    },
-    doubleClick() {
+    stopMouseUp(evt) {
       if (!this.isDesktop)
-        this.isEditing = true
-    },
-    clickTrans(evt) {
-      this.innerColor = 'rgba(53, 73, 90, 0.6)'
-      this.outerColor = 'var(--primary)'
-      this.left = (evt.offsetX + 35) + 'px'
-      this.top = (evt.offsetY + 0) + 'px'
-      if (!this.doingTransition)
-        this.showCircle = true
+        evt.stopPropagation()
     },
     pointerDown(evt) {
       if (!this.isDesktop && !this.isTaskSelected) {
@@ -341,18 +335,12 @@ export default {
     },
     touchStart(e) {
       this.startTime = new Date()
-      this.isTouching = true
-      this.innerColor = 'var(--light-gray)'
-      this.outerColor = 'var(--gray)'
-      this.startX = e.changedTouches[0].clientX
-      this.startY = e.changedTouches[0].clientY
-      const rect = e.target.getBoundingClientRect()
+      const touch = e.changedTouches[0]
+
+      this.startX = touch.clientX
+      this.startY = touch.clientY
+
       this.initialScroll = document.scrollingElement.scrollTop
-      if (!this.doingTransition) {
-        this.left = (e.targetTouches[0].pageX - rect.left) + 'px'
-        this.top = (e.targetTouches[0].pageY - rect.top - this.initialScroll) + 'px'
-        this.showCircle = true
-      }
 
       this.changeColor = true
       this.timeout = setTimeout(() => {
@@ -360,27 +348,53 @@ export default {
       }, 350)
     },
     touchmove(evt) {
+      this.moved = true
       const touch = evt.changedTouches[0]
       const move = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 5 || Math.abs(touch.clientX - this.startX) > 5 || Math.abs(touch.clientY - this.startY) > 5
       if (move) {
         clearTimeout(this.timeout)
         this.fail = true
       }
+
+      const diff = this.startX - touch.clientX
+      if (diff > 0) {
+        if (diff < 75)
+          this.right = diff
+        else this.right = 75
+      } else {
+        this.right = 0
+      }
     },
     touchEnd(e) {
+      if (this.moved) {
+        const cont = this.$refs['cont-wrapper'].style
+
+        cont.transitionDuration = '.2s'
+        this.right = 0
+        setTimeout(() => {
+          cont.transitionDuration = 0
+        }, 280)
+      }
+      
       clearTimeout(this.timeout)
       const time = new Date() - this.startTime
-      
-      this.isTouching = false
-      const touch = e.changedTouches[0]
 
-      if (!this.fail && (time < 250)) {
+      const fail = this.fail || time > 250
+
+      const toggleTask = () => {
         if (!this.isTaskSelected && !this.justCompleted)
           this.selectTask()
         else this.deselectTask()
       }
-      this.allowMobileOptions = false
+
+      if (!this.isSelecting) {
+        if (!this.moved) this.isEditing = true
+      } else {
+        if (!fail) toggleTask()
+      }
+
       this.fail = false
+      this.moved = false
       this.changeColor = false
       this.justCompleted = false
     },
@@ -391,60 +405,9 @@ export default {
     selectTask() {
       this.$emit('select', this.$el)
     },
-    circleEnter(el) {
-      const s = el.style
-      this.doingTransition = true
-
-      const trans = str => {
-        s.transition = `opacity ${str}, width ${str}, height ${str}, transform 0s, left 0s, top 0s, margin 0s`
-      }
-      let innerTrans = 450
-      let outerTrans = 250
-      if (this.isTouching) {
-        innerTrans += 150
-        outerTrans += 150
-      }
-
-      trans('0s')
-      s.opacity = 0
-      s.width = 0
-      s.height = 0
-      const client = this.$el.clientWidth
-      const width = client + 100
-      setTimeout(() => {
-        trans(`.${innerTrans}s`)
-        s.opacity = 1
-        s.width = width + 'px'
-        s.height = width + 'px'
-        setTimeout(() => {
-          trans(`.${outerTrans}s`)
-          s.width = width + 'px'
-          s.height = width + 'px'
-          s.opacity = 0
-          setTimeout(() => {
-            trans('0')
-            s.width = 0
-            s.height = 0
-            this.showCircle = false
-            this.doingTransition = false
-          }, innerTrans)
-        }, outerTrans)
-      }, 50)
-    },
-    click(evt) {
-      this.clickTrans(evt)
-      if (!this.doubleClickListening) {
-        this.singleClick()
-        this.doubleClickListening = true
-        clearTimeout(this.doubleClickListeningTimeout)
-        this.doubleClickListeningTimeout = setTimeout(() => {
-          this.doubleClickListening = false
-        }, 200)
-      } else {
-        this.doubleClick()
-        clearTimeout(this.doubleClickListeningTimeout)
-        this.doubleClickListening = false
-      }
+    click() {
+      if (this.isDesktop && !this.isSelecting)
+        this.isEditing = true
     },
     saveTask(obj, force) {
       this.$store.dispatch('task/saveTask', {
@@ -862,33 +825,6 @@ export default {
 
 </script>
 
-<style>
-
-.circle-trans-wrapper-wrapper {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.circle-trans-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.circle-trans-transition {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  opacity: .4;
-  border-radius: 1000px;
-}
-
-</style>
-
 <style scoped>
 
 .Task {
@@ -907,9 +843,30 @@ export default {
   z-index: 5;
 }
 
+.back {
+  position: absolute;
+  left: 2px;
+  top: 3px;
+  background-color: var(--primary);
+  width: 98%;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-icons-wrapper {
+  flex-basis: 85%;
+  justify-content: space-between;
+  display: flex;
+}
+
 .cont-wrapper {
-  transition-duration: .25s;
+  position: relative;
   min-height: 38px;
+  background-color: var(--back-color);
+  z-index: 5;
+  transition-duration: .25s;
 }
 
 .cont-wrapper-wrapper {
@@ -917,7 +874,9 @@ export default {
   left: 0;
   top: 0;
   width: 100%;
+  overflow: hidden;
 }
+
 
 .cont-wrapper.mobile {
   min-height: 50px;
@@ -1016,6 +975,7 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transform: translateY(1px);
 }
 
 .task-name {

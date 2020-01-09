@@ -121,6 +121,7 @@
                 width="22px"
                 :options="getTags"
                 :circle='true'
+                handleColor='var(--red)'
               />
               <IconDrop
                 handle="priority"
@@ -128,6 +129,7 @@
                 width="22px"
                 :options="priorityOptions"
                 :circle='true'
+                handleColor='var(--yellow)'
               />
               <IconDrop
                 handle="tasks"
@@ -135,6 +137,7 @@
                 class="opt-icon"
                 :options="listOptions"
                 :circle='true'
+                handleColor='var(--primary)'
               />
               <IconDrop
                 handle="folder"
@@ -149,6 +152,7 @@
                 class="opt-icon"
                 :options="calendarOptions"
                 :circle='true'
+                handleColor='var(--green)'
               />
               <IconDrop
                 handle="clock"
@@ -156,6 +160,7 @@
                 class="opt-icon"
                 :options="durationOptions"
                 :circle='true'
+                handleColor='var(--purple)'
               />
               <Icon
                 class="opt-icon primary-hover cursor"
