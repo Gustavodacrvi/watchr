@@ -94,7 +94,6 @@
                   <transition name="name-t">
                     <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
                         <span v-html="parsedName"></span>
-                        <Icon v-if="haveChecklist" class="txt-icon" icon="tasks" color="var(--gray)" width="18px"/>
                         <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
                         <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
                     </span>
@@ -102,7 +101,14 @@
                   </transition>
                 </div>
               </div>
-              <span class="info">
+              <span class="info" ref='info'>
+                <Icon v-if="haveChecklist"
+                  class="txt-icon checklist-icon"
+                  icon="pie"
+                  color="var(--gray)"
+                  width="18px"
+                  :progress='checklistPieProgress'
+                />
                 <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
                 <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
                 <Icon v-else-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
@@ -198,6 +204,7 @@ export default {
     enter(el) {
       if (!this.isEditing) {
         const co = el.style
+        const inf = this.$refs['info'].style
         let ni
         if (this.$refs['name-icon'])
           ni = this.$refs['name-icon'].style
@@ -206,14 +213,18 @@ export default {
 
         c.transitionDuration = 0
         co.transitionDuration = 0
+        inf.transitionDuration = 0
         c.opacity = 0
+        inf.opacity = 0
         if (ni) ni.opacity = 0
         co.transform = 'translateX(-27px)'
         this.deselectTask()
         setTimeout(() => {
           c.transitionDuration = '.25s'
           co.transitionDuration = '.25s'
+          inf.transitionDuration = '.25s'
           c.opacity = .6
+          inf.opacity = 1
           if (ni) ni.opacity = .6
           co.transform = 'translateX(0px)'
           setTimeout(() => {
@@ -225,6 +236,7 @@ export default {
     leave(el) {
       if (this.isEditing) {
         const co = el.style
+        const inf = this.$refs['info'].style
         let ni
         if (this.$refs['name-icon'])
           ni = this.$refs['name-icon'].style
@@ -233,13 +245,17 @@ export default {
 
         c.transitionDuration = 0
         co.transitionDuration = 0
+        inf.transitionDuration = 0
         c.opacity = .6
+        inf.opacity = 1
         if (ni) ni.opacity = .6
         co.transform = 'translateX(0px)'
         setTimeout(() => {
           c.transitionDuration = '.25s'
           co.transitionDuration = '.25s'
+          inf.transitionDuration = '.25s'
           c.opacity = 0
+          inf.opacity = 0
           if (ni) ni.opacity = 0
           co.transform = 'translateX(-27px)'
           setTimeout(() => {
@@ -511,6 +527,10 @@ export default {
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
     }),
+    checklistPieProgress() {
+      let completed = this.task.checklist.reduce((acc, opt) => opt.completed ? acc + 1 : acc, 0)
+      return 100 * completed / this.task.checklist.length
+    },
     completed() {
       return this.isTaskCompleted(this.task, mom().format('Y-M-D'), this.taskCompletionCompareDate)
     },
@@ -1045,6 +1065,10 @@ export default {
 .task-tag {
   margin-left: 2px;
   transform: scale(.8,.8);
+}
+
+.checklist-icon {
+  transform: translate(-9px, 1px);
 }
 
 .sortable-selected .cont-wrapper {

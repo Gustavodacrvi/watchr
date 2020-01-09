@@ -1,6 +1,6 @@
 <template>
   <div class="DropInput">
-    <span v-if="msg" class="msg">{{ msg }}</span>
+    <span v-if="msg && showing" class="msg">{{ msg }}</span>
     <textarea class="input rb cbd"
       :placeholder='placeholder'
       rows='1'

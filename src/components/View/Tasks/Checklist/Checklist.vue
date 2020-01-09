@@ -49,9 +49,9 @@ export default {
     this.sortable = new Sortable(this.draggableRoot, {
       group: {name: 'sub-task-renderer',
         put: (j,o,item) => {
-          const d = item.dataset
-          if (d.type === 'floatbutton') return true
-          if (d.type === 'task') return true
+          const type = item.dataset.type
+          if (type === 'add-task-floatbutton') return true
+          if (type === 'task') return true
           return false
         }
       },
@@ -67,7 +67,7 @@ export default {
         const item = evt.item
         const type = item.dataset.type
 
-        if (type === 'floatbutton') {
+        if (type === 'add-task-floatbutton') {
           const ins = this.taskAdderInstance()
 
           const el = this.$el.querySelector('.action-button')
@@ -118,6 +118,7 @@ export default {
     toggleTask(id) {
       const subtask = this.list.find(el => el.id === id)
       subtask.completed = !subtask.completed
+      this.$emit('save-checklist')
     },
     remove(id) {
       this.$emit("remove", id)
@@ -212,11 +213,17 @@ export default {
       })
     },
     calculateLeastNumberOfTasks() {
-      this.$emit('is-adding-toggle', false)
       setTimeout(() => {
         if (!this.$el) this.hasAtLeastOnSubTask = false
         const childs = this.draggableRoot.childNodes
         this.hasAtLeastOnSubTask = childs && childs.length > 0
+        let found = false
+        for (const node of childs)
+          if (node.dataset.id === 'Edit') {
+            found = true
+            break
+          }
+        this.$emit('is-adding-toggle', found)
       })
     },
   },
