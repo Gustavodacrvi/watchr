@@ -107,7 +107,7 @@ export default {
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes',
   'headerOptions', 'headerDates', 'headerTags', 'headerCalendar', 'files',
-  'progress', 'tasksOrder',  'rootFallbackTask', 'mainFallbackTask',
+  'progress', 'tasksOrder',  'rootFallbackTask', 'mainFallbackTask', 'savedSchedule',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'showHeadadingFloatingButton', 'updateHeadingIds', 'showAllHeadingsItems', 'taskCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
@@ -158,6 +158,7 @@ export default {
     }
   },
   created() {
+    this.autoSchedule = this.savedSchedule
     this.getComputedOptions()
     this.showingTagSelection = localStorage.getItem('tagFilters') === 'true'
     this.showingFolderSelection = localStorage.getItem('folderFilters') === 'true'
@@ -173,16 +174,9 @@ export default {
         this.computedHeaderOptions = await this.getOptions(this.headerOptions)
       else this.computedHeaderOptions = []
     },
-    activeAutoSchedule(info) {
+    saveAutoSchedule(info) {
       this.autoSchedule = info
-      localStorage.setItem(`schedule_${this.viewName}`, JSON.stringify(info))
-    },
-    getLocalStorageSchedule() {
-      const n = this.viewName
-      const str = localStorage.getItem(`schedule_${this.viewName}`)
-      if (str)
-        this.autoSchedule = JSON.parse(str)
-      else this.autoSchedule = null
+      this.$emit('save-schedule', info)
     },
 
     selectPagination(newPage) {
@@ -691,7 +685,7 @@ export default {
           {
             name: l['Auto schedule'],
             callback: () => {
-              this.activeAutoSchedule({...info})
+              this.saveAutoSchedule({...info})
               return null
             },
             type: 'button',
@@ -775,7 +769,7 @@ export default {
                 return [
                   {
                     name: l['Remove schedule'],
-                    callback: () => this.activeAutoSchedule(null)
+                    callback: () => this.saveAutoSchedule(null)
                   },
                   {
                     name: l['Edit schedule'],
@@ -988,7 +982,9 @@ export default {
     viewName() {
       this.autoSchedule = null
       this.getComputedOptions()
-      this.getLocalStorageSchedule()
+    },
+    savedSchedule() {
+      this.autoSchedule = this.savedSchedule
     },
     viewNameValue() {
       this.showSomeday = false

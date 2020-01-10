@@ -69,6 +69,9 @@ export default {
         })
       }
     },
+    saveSchedule(info) {
+      localStorage.setItem('schedule_' + this.viewName, JSON.stringify(info))
+    },
     removeRepeat() {},
     removeDeadline() {},
     removeHeaderTag() {},
@@ -255,6 +258,24 @@ export default {
     viewComponent() {
       if (this.viewName === 'Pomodoro') return 'Pomodoro'
       if (this.viewName === 'Statistics') return 'Statistics'
+    },
+    savedSchedule() {
+      if (!this.isCalendarOrderViewType) {
+        const schedule = localStorage.getItem('schedule_' + this.viewName)
+        return schedule !== 'null' ? JSON.parse(schedule) : null
+      }
+      if (this.calendarOrders) {
+        let date = ''
+
+        if (this.viewName === 'Today')
+          date = mom().format('Y-M-D')
+        else if (this.viewName === 'Tomorrow')
+          date = mom().add(1, 'd').format('Y-M-D')
+        else if (this.viewName === 'Calendar')
+          date = (this.calendarOrders[this.calendarDate] && this.calendarOrders[this.calendarDate].schedule) || null
+
+      }
+      return null
     },
   },
 }

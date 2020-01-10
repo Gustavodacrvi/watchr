@@ -94,6 +94,9 @@ export default {
     },
 
     removeDeadline() {},
+    saveSchedule(info) {
+      localStorage.setItem('schedule_' + this.viewName, JSON.stringify(info))
+    },
     removeHeaderTag() {},
     removeDeferDate() {},
   },
@@ -257,6 +260,10 @@ export default {
       if (this.viewList)
         return this.$store.getters['list/pieProgress'](this.tasks, this.viewList.id, this.isTaskCompleted)
       return []
+    },
+    savedSchedule() {
+      const schedule = localStorage.getItem('schedule_' + this.viewName)
+      return schedule !== 'null' ? JSON.parse(schedule) : null
     },
   },
 }

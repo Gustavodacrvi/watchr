@@ -46,6 +46,9 @@ export default {
     removeRepeat() {},
     removeDeadline() {},
     removeHeaderTag() {},
+    saveSchedule(info) {
+      localStorage.setItem('schedule_' + this.viewName, JSON.stringify(info))
+    },
     removeDeferDate() {},
     addHeading() {},
     onSortableAdd() {},
@@ -82,6 +85,10 @@ export default {
     },
     getPieProgress() {
       return undefined
+    },
+    savedSchedule() {
+      const schedule = localStorage.getItem('schedule_' + this.viewName)
+      return schedule !== 'null' ? JSON.parse(schedule) : null
     },
   },
 }
