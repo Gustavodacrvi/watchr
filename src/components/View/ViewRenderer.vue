@@ -66,7 +66,9 @@
       @select='selectPagination'
     />
     <transition name="fade-t" mode="out-in">
-      <ActionButtons v-if="!getHelperComponent && isTaskHandler" key="buttons" @moving='v => movingButton = v'/>
+      <ActionButtons
+        v-if="!getHelperComponent && isTaskHandler" key="buttons" @moving='v => movingButton = v'
+      />
       <HelperComponent v-else-if='getHelperComponent'
         :comp='getHelperComponent'
         key="helper"
