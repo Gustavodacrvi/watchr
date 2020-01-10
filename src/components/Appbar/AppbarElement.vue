@@ -188,7 +188,7 @@ export default {
       const time = new Date() - this.startTime
 
       if (!this.fail && time < 201)
-          this.click()
+        this.click()
       this.isTouching = false
       this.fail = false
     },

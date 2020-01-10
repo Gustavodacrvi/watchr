@@ -1,12 +1,6 @@
 
 <template>
-  <div class="ViewRenderer"
-    :class="platform"
-
-    @touchend.passive='touchend'
-    @touchstart.passive='touchstart'
-    @touchmove.passive='touchmove'
-  >
+  <div class="ViewRenderer" :class="platform">
     <div class='view-wrapper'>
       <Header
         v-bind="$props"
@@ -172,66 +166,6 @@ export default {
   },
   methods: {
     ...mapActions(['getOptions']),
-    transform(x, transition) {
-      /*const s = this.el
-
-      const getOpacity = () => 1.4 - (Math.abs(x) / MAXIMUM_TOUCH_DISTANCE)
-      
-      if (!transition) {
-        s.transitionDuration = '0s'
-        s.left = `${x}px`
-        s.opacity = getOpacity()
-      } else {
-        s.transitionDuration = '.2s'
-        setTimeout(() => {
-          s.left = `${x}px`
-          s.opacity = getOpacity()
-        }, 10)
-      } */
-    },
-    touchmove(evt) {
-      this.move = true
-      if (!this.touchFail) {
-        const t = evt.touches[0]
-        this.diffX = t.screenX - this.initialX
-        this.diffY = t.screenY - this.initialY
-
-        const x = Math.abs(this.diffX)
-
-        if ((Math.abs(this.diffY) > 50)) {
-          this.touchFail = true
-          // this.transform(0, true)
-        } else {
-          if (x > 20)
-            this.transform(this.diffX)
-          // else this.transform(0)
-
-          if (x > MINIMUM_DISTANCE) {
-            this.right = this.diffX > 0
-          }
-        }
-      }
-    },
-    touchstart(evt) {
-      const t = evt.touches[0]
-      this.initialX = t.screenX
-      this.initialY = t.screenY
-
-      this.touchFail = false
-      this.startTime = new Date()
-      this.move = false
-    },
-    touchend() {
-      // this.transform(0, true)
-
-      const time = new Date() - this.startTime
-
-      if (this.move && (Math.abs(this.diffX) > MINIMUM_DISTANCE) && time <= 300 && !this.touchFail) {
-        if (this.right) this.$emit('slide', -1)
-        else this.$emit('slide', 1)
-      }
-    },
-    
     async getComputedOptions() {
       if (this.headerOptions)
         this.computedHeaderOptions = await this.getOptions(this.headerOptions)
