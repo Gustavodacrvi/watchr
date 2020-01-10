@@ -173,4 +173,8 @@ export default {
   background-color: var(--card);
 }
 
+.Checklist .heading, .Checklist .existing {
+  display: none !important;
+}
+
 </style>

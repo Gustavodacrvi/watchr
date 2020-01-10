@@ -20,7 +20,6 @@
           :changingViewName='changingViewName || rootChanging'
           :isRoot='isRoot'
           :isSelecting='isSelecting'
-          :enableSelect='enableSelect'
           :multiSelectOptions='taskIconDropOptions'
           :isDragging='isDragging'
           :isScrolling='isScrolling'
@@ -413,7 +412,7 @@ export default {
           const id = evt.item.dataset.id
 
           if (id !== "Edit" && !this.selected.includes(id)) {
-            if (this.selectMultiple)
+            if (this.pressingSelectKeys)
               this.selectMultipleIds(id)
             this.lastSelectedId = id
             this.$store.commit('selectTask', id)
@@ -422,6 +421,11 @@ export default {
         onDeselect: evt => {
           const id = evt.item.dataset.id
           this.$store.commit('unselectTask', id)
+          if (this.selected.length === 0)
+            setTimeout(() => {
+              if (this.selected.length === 0)
+                this.lastSelectedId = null
+            })
         },
         onAdd: (evt, original) => {
           const items = evt.items
@@ -827,7 +831,6 @@ export default {
       savedTasks: state => state.task.tasks,
       pressingKey: state => state.pressingKey,
       isScrolling: state => state.isScrolling,
-      isOnControl: state => state.isOnControl,
     }),
     ...mapGetters({
       l: 'l',
@@ -866,12 +869,20 @@ export default {
     taskHeight() {
       return this.isDesktop ? 38 : 50
     },
+    pressingSelectKeys() {
+      return this.pressingKey === 'Control' || this.pressingKey === 'Shift'
+    },
     enableSelect() {
       return this.openCalendar || !this.isDesktop ||
-      (this.isOnControl || (this.selected.length > 0))
+      (this.pressingSelectKeys || (this.selected.length > 0))
     },
     getMultiDragKey() {
       return (this.openCalendar || this.selected.length > 0) ? null : 'CTRL'
+    },
+    isSelecting() {
+      if (this.selected.length > 0 || this.openCalendar) return true
+      if (this.isDesktop)
+        return this.pressingSelectKeys
     },
     draggableRoot() {
       return this.$el.getElementsByClassName('task-renderer-root')[0]
@@ -880,12 +891,6 @@ export default {
       for (const head of this.lazyHeadings)
         if (head.tasks.length > 0) return false
       return this.isRoot && this.lazyTasks.length === 0 && this.icon && !this.header
-    },
-    selectMultiple() {
-      return this.pressingKey === 'Shift' || this.pressingKey === 'Control'
-    },
-    isSelecting() {
-      return this.selected.length > 0
     },
   },
   watch: {
@@ -949,10 +954,6 @@ export default {
       if (this.sortable) {
         this.sortable.options.multiDrag = this.enableSelect
         this.sortable.options.multiDragKey = this.getMultiDragKey
-        setTimeout(() => {
-          if (this.selected.length === 0)
-            this.lastSelectedId = null
-        })
         if (this.isDesktop) {
           if (this.enableSelect)
             this.sortable.options.delay = 50

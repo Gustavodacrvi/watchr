@@ -1,56 +1,66 @@
 <template>
-  <div>
-    <transition name="note-t"
-      @enter='enterNote'
-      @leave='leaveNote'
-    >
-      <div v-if="notes && !editingNote" class="saved-notes" @click.stop="editingNote = true" :class="platform">
-        <p>{{ notes }}</p>
-      </div>
-    </transition>
+  <div class="Notes" :class="{hasNotes: notes}">
+    <span v-if="isDesktop && notes && editingNote" class="msg">Shift + Enter to save</span>
+    <p v-if="notes && !editingNote" class="saved-notes" @click="editingNote = true" :class="platform">{{ notes }}</p>
     <textarea v-show="notes && editingNote" @click.stop
     :value='note'
     @input='v => note = v.target.value'
     ref="notes"
     class="notes"
+    @keyup="keyup"
     @keydown="noteKeydown"
   ></textarea>
+  <div v-if="!isDesktop && notes && editingNote">
+    <AuthButton
+      type='card'
+      value='Save notes'
+      @click="saveNotes"
+    />
+  </div>
 </div>
 </template>
 
 <script>
+
+import AuthButton from '@/components/Auth/Button.vue'
+
 import { mapGetters } from 'vuex'
 
 export default {
+  components: {
+    AuthButton,
+  },
   props: ['notes'],
   data() {
     return {
       editingNote: false,
       note: this.notes,
+      shift: false,
     }
   },
   mounted() {
     this.fixHeight()
+    window.addEventListener('click', this.windowClick)
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this.windowClick)
   },
   methods: {
+    windowClick(evt) {
+      let found = false
+      for (const node of evt.path)
+        if (node === this.$el)
+          found = true
+      if (!found) this.editingNote = false
+    },
+    keyup({key}) {
+      if (key === 'Shift') this.shift = false
+    },
     focusOnNotes() {
       setTimeout(() => {
         const el = this.$refs.notes
         if (el) el.focus()
       }, 100)
-    },
-    enterNote(el) {
-      const s = el.style
-      const height = el.offsetHeight
-
-      s.transitionDuration = '0s'
-      s.opacity = '0'
-      s.height = '0px'
-      setTimeout(() => {
-        s.transitionDuration = '.15s'
-        s.height = height + 'px'
-        s.opacity = '1'
-      })
     },
     fixHeight() {
       setTimeout(() => {
@@ -61,21 +71,15 @@ export default {
         }
       })
     },
-    leaveNote(el) {
-      const s = el.style
-      s.transitionDuration = '.15s'
-      if (this.editingNote)
-        s.transitionDuration = '0s'
-      s.height = '0px'
-      s.opacity = '0'
+    saveNotes() {
+      this.$emit('save-notes', this.note.trim())
+      this.editingNote = false
     },
     noteKeydown(evt) {
+      this.fixHeight()
       const {key} = evt
-      if (key === "Enter") {
-        evt.preventDefault()
-        this.$emit('save-notes', this.note.trim())
-        this.editingNote = false
-      }
+      if (key === 'Shift') this.shift = true
+      else if (key === 'Enter' && this.shift) this.saveNotes()
     },
     hide() {
       this.editing = false
@@ -83,7 +87,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['platform']),
+    ...mapGetters(['platform', 'isDesktop']),
   },
   watch: {
     editingNote() {
@@ -101,8 +105,25 @@ export default {
 
 <style scoped>
 
-.saved-notes.mobile {
-  margin: 0 12px;
+.Notes {
+  position: relative;
+}
+
+.hasNotes {
+  margin: 16px 0 !important;
+}
+
+.msg {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  opacity: .4;
+  font-size: .7em;
+}
+
+.saved-notes {
+  margin: 0;
+  white-space: pre-line;
 }
 
 .notes {
@@ -110,9 +131,9 @@ export default {
   border: none;
   font-size: 1em;
   width: 100%;
-  margin: 16px 0;
   outline: none;
   resize: none;
+  overflow: hidden;
 }
 
 </style>

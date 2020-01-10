@@ -67,7 +67,6 @@ export default {
       }, 50)
     },
     touchStart(e) {
-      console.log('3Z')
       this.startX = e.changedTouches[0].clientX
       this.startY = e.changedTouches[0].clientY
       const rect = e.target.getBoundingClientRect()
@@ -75,7 +74,6 @@ export default {
       if (!this.doingTransition) {
         this.left = (e.targetTouches[0].pageX - rect.left) + 'px'
         this.top = (e.targetTouches[0].pageY - rect.top - scroll) + 'px'
-        console.log(this.left, this.top)
         this.showCircle = true
       }
     },

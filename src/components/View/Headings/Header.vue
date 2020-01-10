@@ -59,7 +59,12 @@
           :circle="true"
           @click="i.callback"
         />
-        <IconDrop v-if="options.length > 0" :handle="optionsHandle" handleColor="var(--gray)" :options="options" :circle='true'/>
+        <IconDrop v-if="options.length > 0"
+          :handle="optionsHandle"
+          handleColor="var(--gray)"
+          :options="options"
+          :circle='true'
+        />
       </div>
     </div>
     <div class="tags" style="flex-direction: column; align-items: flex-start;margin-top: 4px">

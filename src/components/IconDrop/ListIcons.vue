@@ -168,7 +168,7 @@ export default {
 }
 
 .ListIcons {
-  max-height: 360px;
+  max-height: 400px;
 }
 
 .overflow {

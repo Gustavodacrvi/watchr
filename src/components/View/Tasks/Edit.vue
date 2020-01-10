@@ -22,10 +22,13 @@
         />
         <DropInput
           class="notes hide"
+          :msg='isDesktop ? "Shift + Enter to save" : ""'
           :class="{'no-back': !popup, show}"
           v-model="task.notes"
+          :enterOnShift='true'
           :options="[]"
           :placeholder="notesPlaceholder"
+          @enter='save'
           @cancel="cancel"
           @goup='$emit("goup")'
           @godown='$emit("godown")'
@@ -86,6 +89,7 @@
           @add='addSubtask'
           @remove='removeSubtask'
           @update='updateIds'
+          @save-checklist='saveChecklist'
           @convert-task='convertTask'
           @is-adding-toggle='v => isAddingChecklist = v'
         />
@@ -101,7 +105,7 @@
         <span v-if="isEditingFiles" class="files show" :class="{show}" style="opacity: .4;margin-left: 8px">{{ l["Note: file upload/delete operations won't work while offline."] }}</span>
         <div class="options hide" :class="{show}">
           <transition name="btn">
-            <ButtonApp v-if="showingOptions"
+            <ButtonApp v-if="showingOptions && doesntHaveChecklist"
               class="add-checklist-button"
               style="margin-left: 4px;margin-top: 0px;opacity: .6"
               type="card"
@@ -117,6 +121,7 @@
                 width="22px"
                 :options="getTags"
                 :circle='true'
+                handleColor='var(--red)'
               />
               <IconDrop
                 handle="priority"
@@ -124,6 +129,7 @@
                 width="22px"
                 :options="priorityOptions"
                 :circle='true'
+                handleColor='var(--yellow)'
               />
               <IconDrop
                 handle="tasks"
@@ -131,6 +137,7 @@
                 class="opt-icon"
                 :options="listOptions"
                 :circle='true'
+                handleColor='var(--primary)'
               />
               <IconDrop
                 handle="folder"
@@ -145,6 +152,7 @@
                 class="opt-icon"
                 :options="calendarOptions"
                 :circle='true'
+                handleColor='var(--green)'
               />
               <IconDrop
                 handle="clock"
@@ -152,6 +160,7 @@
                 class="opt-icon"
                 :options="durationOptions"
                 :circle='true'
+                handleColor='var(--purple)'
               />
               <Icon
                 class="opt-icon primary-hover cursor"
@@ -270,6 +279,14 @@ export default {
     window.removeEventListener('click', this.remove)
   },
   methods: {
+    saveChecklist() {
+      if (this.task.checklist)
+        this.$store.dispatch('task/saveTask', {
+          id: this.task.id,
+          checklist: this.task.checklist,
+          order: this.task.order,
+        })
+    },
     remove(evt) {
       if (this.readyToRemove) {
         let found = false
@@ -365,9 +382,11 @@ export default {
     removeSubtask(id) {
       const i = this.task.checklist.findIndex(el => el.id === id)
       this.task.checklist.splice(i, 1)
+      this.saveChecklist()
     },
     updateIds(ids) {
       this.task.order = ids
+      this.saveChecklist()
     },
     convertTask({ids, index, id}) {
       ids.splice(index, 0, id)
@@ -387,7 +406,7 @@ export default {
       this.task.checklist.push({
         name, completed: false, id,
       })
-      this.name = ''
+      this.saveChecklist()
     },
     save() {
       const t = this.task
@@ -481,7 +500,7 @@ export default {
       return this.defaultTask
     },
     doesntHaveChecklist() {
-      return this.task.checklist.length === 0
+      return !this.task.checklist || this.task.checklist.length === 0
     },
     calendarOptions() {
       return {
