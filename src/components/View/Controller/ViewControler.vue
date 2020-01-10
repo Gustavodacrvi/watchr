@@ -631,7 +631,7 @@ export default {
     isCalendarOrderViewType() {
       const n = this.viewName
       return this.viewType === 'list' && this.isSmart && 
-        (n === 'Today' || n === 'Tomorrow' || 'Calendar')
+        (n === 'Today' || n === 'Tomorrow' || n === 'Calendar')
     },
     hasOverdueTasks() {
       return this.getOverdueTasks().length > 0

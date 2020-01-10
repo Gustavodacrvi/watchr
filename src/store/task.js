@@ -723,6 +723,13 @@ export default {
 
       batch.commit()
     },
+    saveSchedule(c, {date, schedule}) {
+      userRef().set({
+        calendarOrders: {
+          [date]: {schedule},
+        }
+      }, {merge: true})
+    },
     saveCalendarOrder({rootState}, {ids, date}) {
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
       userRef().set({calendarOrders}, {merge: true})

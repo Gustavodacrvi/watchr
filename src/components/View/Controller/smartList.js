@@ -69,8 +69,23 @@ export default {
         })
       }
     },
-    saveSchedule(info) {
-      localStorage.setItem('schedule_' + this.viewName, JSON.stringify(info))
+    saveSchedule(schedule) {
+      if (!this.isCalendarOrderViewType) {
+        localStorage.setItem('schedule_' + this.viewName, JSON.stringify(schedule))
+      } else {
+        const save = date =>
+          this.$store.dispatch('task/saveSchedule', {
+            schedule, date,
+          })
+        
+        if (this.viewName === 'Today')
+          save(mom().format('Y-M-D'))
+        else if (this.viewName === 'Tomorrow')
+          save(mom().add(1, 'd').format('Y-M-D'))
+        else
+          save(this.calendarDate)
+        
+      }
     },
     removeRepeat() {},
     removeDeadline() {},
@@ -272,8 +287,10 @@ export default {
         else if (this.viewName === 'Tomorrow')
           date = mom().add(1, 'd').format('Y-M-D')
         else if (this.viewName === 'Calendar')
-          date = (this.calendarOrders[this.calendarDate] && this.calendarOrders[this.calendarDate].schedule) || null
+          date = this.calendarDate || null
 
+        if (date)
+          return (this.calendarOrders[date] && this.calendarOrders[date].schedule)
       }
       return null
     },

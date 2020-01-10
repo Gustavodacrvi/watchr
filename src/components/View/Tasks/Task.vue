@@ -40,7 +40,6 @@
 
         @mouseup='stopMouseUp'
         @pointerup.stop
-        @pointerdown='pointerDown'
         @touchcancel.stop
         
         @touchend.passive='touchEnd'
@@ -330,11 +329,6 @@ export default {
     stopMouseUp(evt) {
       if (!this.isDesktop)
         evt.stopPropagation()
-    },
-    pointerDown(evt) {
-      if (!this.isDesktop && !this.isTaskSelected) {
-        evt.stopPropagation()
-      }
     },
     touchStart(e) {
       this.startTime = new Date()
@@ -1044,6 +1038,10 @@ export default {
   transition: none;
   height: 38px;
   padding: 0;
+}
+
+.mobile.sortable-ghost .cont-wrapper {
+  height: 50px;
 }
 
 .name-t-enter {
