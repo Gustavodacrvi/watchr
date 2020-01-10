@@ -562,7 +562,8 @@ export default {
     },
     getIconDropOptionsTags() {
       const arr = []
-      for (const t of this.savedTags) {
+      const tags = this.savedTags
+      for (const t of tags) {
         arr.push({
           name: t.name,
           icon: 'tag',
@@ -579,7 +580,8 @@ export default {
         })
       }
       const links = []
-      for (const fold of this.savedFolders) {
+      const folders = this.savedFolders
+      for (const fold of folders) {
         links.push({
           name: fold.name,
           icon: 'folder',
@@ -604,7 +606,8 @@ export default {
         })
       }
       const links = []
-      for (const list of this.savedLists) {
+      const lists = this.savedLists
+      for (const list of lists) {
         links.push({
           name: list.name,
           icon: 'tasks',

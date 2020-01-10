@@ -324,18 +324,21 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     viewOrders() {
-      if (this.userInfo && this.userInfo.viewOrders) return this.userInfo.viewOrders
+      const info = this.userInfo
+      if (info && info.viewOrders) return info.viewOrders
       return {}
     },
     calendarOrders() {
-      if (this.userInfo && this.userInfo.calendarOrders)
-        return this.userInfo.calendarOrders
+      const info = this.userInfo
+      if (info && info.calendarOrders)
+        return info.calendarOrders
       return {}
     },
     prefix() {
-      if (this.isSmart || this.viewType === 'search') return 'smartList'
-      if (this.viewType === 'list') return 'list'
-      if (this.viewType === 'folder') return 'folder'
+      const type = this.viewType
+      if (this.isSmart || type === 'search') return 'smartList'
+      if (type === 'list') return 'list'
+      if (type === 'folder') return 'folder'
       return 'tag'
     },
     listeners() {
@@ -396,6 +399,7 @@ export default {
       const filtered = this.tasks.filter(el => {
         return el.calendar && el.calendar.type === 'specific'
       })
+      const calendarOrders = this.calendarOrders
       const sort = utilsTask.sortTasksByTaskDate
       const TOD_STR = mom().format('Y-M-D')
 
@@ -404,7 +408,7 @@ export default {
         const date = tod.format('Y-M-D')
 
         const sortHeading = tasks =>
-          this.$store.getters.checkMissingIdsAndSortArr((this.calendarOrders[date] && this.calendarOrders[date].tasks) || [], tasks)
+          this.$store.getters.checkMissingIdsAndSortArr((calendarOrders[date] && calendarOrders[date].tasks) || [], tasks)
 
         const filterFunction = task => this.isTaskShowingOnDate(task, date, true)
         
@@ -618,7 +622,8 @@ export default {
       return this.$store.getters['folder/getFoldersByName']([this.viewName])[0]
     },
     notHeadingHeaderView() {
-      return this.viewName !== 'Upcoming' && this.viewName !== 'Completed'
+      const n = this.viewName
+      return n !== 'Upcoming' && n !== 'Completed'
     },
     isListType() {
       return !this.isSmart && this.viewList && this.viewType === 'list'

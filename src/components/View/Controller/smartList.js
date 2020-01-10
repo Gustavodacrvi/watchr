@@ -141,28 +141,30 @@ export default {
     },
 
     mainFilter() {
+      const n = this.viewName
       if (this.viewType === 'search')
-        return task => this.doesTaskIncludeText(task, this.viewName)
-      if (this.viewName === 'Calendar')
+        return task => this.doesTaskIncludeText(task, n)
+      if (n === 'Calendar')
         return task => this.isTaskShowingOnDate(task, this.calendarDate)
-      if (this.viewName === 'Inbox')
+      if (n === 'Inbox')
         return this.isTaskInbox
-      if (this.viewName === 'Upcoming')
+      if (n === 'Upcoming')
         return task => task.calendar
       if (this.isSmart && this.notHeadingHeaderView) {
-        if (this.viewName === 'Today' && this.hasOverdueTasks)
+        if (n === 'Today' && this.hasOverdueTasks)
           return task => this.isTaskInView(task, 'Overdue') ||
                         this.isTaskInView(task, 'Today')
-        return task => this.isTaskInView(task, this.viewName)
+        return task => this.isTaskInView(task, n)
       }
       return this.isTaskCompleted
     },
     rootFilter() {
+      const n = this.viewName
       if (this.viewType === 'search')
         return () => true
-      if (this.viewName === 'Calendar')
+      if (n === 'Calendar')
         return task => !task.list && !task.folder
-      if (this.viewName === 'Today' && this.hasOverdueTasks)
+      if (n === 'Today' && this.hasOverdueTasks)
         return () => false
       if (this.isSmart && this.notHeadingHeaderView)
         return task => !task.list && !task.folder
@@ -174,18 +176,19 @@ export default {
       return null
     },
     tasksOrder() {
+      const n = this.viewName
       if (this.isSmartOrderViewType) {
-        let o = this.viewOrders[this.viewName]
-        if (o && o.tasks) return this.viewOrders[this.viewName].tasks
+        let o = this.viewOrders[n]
+        if (o && o.tasks) return this.viewOrders[n].tasks
         return []
       }
       let currentDate = mom()
-      if (this.viewName === 'Tomorrow')
+      if (n === 'Tomorrow')
         currentDate.add(1, 'd')
 
       currentDate = currentDate.format('Y-M-D')
 
-      if (this.viewName === 'Calendar')
+      if (n === 'Calendar')
         currentDate = this.calendarDate
 
       return (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].tasks) || []
@@ -231,7 +234,8 @@ export default {
       return null
     },
     headingEditOptions() {
-      if (this.viewName === "Today" || this.viewName === "Tomorrow" || this.viewName === 'Someday' || this.viewName === 'Anytime')
+      const n = this.viewName
+      if (n === "Today" || n === "Tomorrow" || n === 'Someday' || n === 'Anytime')
         return {
           excludeNames: this.lists.map(el => el.name),
           errorToast: "There's already another list with this name."
@@ -242,10 +246,8 @@ export default {
       return null
     },
     icon() {
-      const l = this.l
-      const n = this.viewName
       if (this.isSmart) {
-        switch (n) {
+        switch (this.viewName) {
           case 'Today': return 'star'
           case 'Tomorrow': return 'sun'
           case 'Inbox': return 'inbox'
@@ -271,22 +273,24 @@ export default {
       return date => this.calendarDate = date
     },
     viewComponent() {
-      if (this.viewName === 'Pomodoro') return 'Pomodoro'
-      if (this.viewName === 'Statistics') return 'Statistics'
+      const n = this.viewName
+      if (n === 'Pomodoro') return 'Pomodoro'
+      if (n === 'Statistics') return 'Statistics'
     },
     savedSchedule() {
+      const n = this.viewName
       if (!this.isCalendarOrderViewType) {
-        const schedule = localStorage.getItem('schedule_' + this.viewName)
+        const schedule = localStorage.getItem('schedule_' + n)
         return schedule !== 'null' ? JSON.parse(schedule) : null
       }
       if (this.calendarOrders) {
         let date = ''
 
-        if (this.viewName === 'Today')
+        if (n === 'Today')
           date = mom().format('Y-M-D')
-        else if (this.viewName === 'Tomorrow')
+        else if (n === 'Tomorrow')
           date = mom().add(1, 'd').format('Y-M-D')
-        else if (this.viewName === 'Calendar')
+        else if (n === 'Calendar')
           date = this.calendarDate || null
 
         if (date)

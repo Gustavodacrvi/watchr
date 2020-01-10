@@ -870,7 +870,8 @@ export default {
       return this.isDesktop ? 38 : 50
     },
     pressingSelectKeys() {
-      return this.pressingKey === 'Control' || this.pressingKey === 'Shift'
+      const pressingKey = this.pressingKey
+      return pressingKey === 'Control' || pressingKey === 'Shift'
     },
     enableSelect() {
       return this.openCalendar || !this.isDesktop ||
@@ -888,7 +889,8 @@ export default {
       return this.$el.getElementsByClassName('task-renderer-root')[0]
     },
     showIllustration() {
-      for (const head of this.lazyHeadings)
+      const lazyHeadings = this.lazyHeadings
+      for (const head of lazyHeadings)
         if (head.tasks.length > 0) return false
       return this.isRoot && this.lazyTasks.length === 0 && this.icon && !this.header
     },

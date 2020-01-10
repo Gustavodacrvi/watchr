@@ -76,8 +76,9 @@ export default {
   },
   computed: {
     mainFilter() {
-      if (this.viewFolder)
-        return task => this.isTaskInFolder(task, this.viewFolder.id)
+      const fold = this.viewFolder
+      if (fold)
+        return task => this.isTaskInFolder(task, fold.id)
       return () => false
     },
     rootFilter() {
@@ -90,18 +91,20 @@ export default {
       return null
     },
     files() {
-      if (this.viewFolder) {
+      const fold = this.viewFolder
+      if (fold) {
         return {
-          id: this.viewFolder.id,
+          id: fold.id,
           storageFolder: 'folders',
-          files: this.viewFolder.files,
+          files: fold.files,
         }
       }
       return null
     },
     tasksOrder() {
-      if (this.viewFolder && this.viewFolder.tasks) {
-        return this.viewFolder.tasks
+      const fold = this.viewFolder
+      if (fold && fold.tasks) {
+        return fold.tasks
       }
       return []
     },
@@ -115,8 +118,9 @@ export default {
       return []
     },
     headerOptions() {
-      if (this.viewFolder)
-        return utilsFolder.getFolderOptions(this.viewFolder)
+      const fold = this.viewFolder
+      if (fold)
+        return utilsFolder.getFolderOptions(fold)
       return null
     },
     getViewNotes() {
