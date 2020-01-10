@@ -9,16 +9,30 @@
 
 import DotSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/antd.css'
+import { mapState } from 'vuex'
 
 export default {
   components: {
     DotSlider,
+  },
+  created() {
+    this.value = this.saved * 100
   },
   data() {
     return {
       value: 50,
     }
   },
+  computed: {
+    ...mapState({
+      saved: state => state.pomo.volume
+    })
+  },
+  watch: {
+    value() {
+      this.$store.commit('pomo/saveVolume', this.value / 100)
+    },
+  }
 }
 
 </script>
