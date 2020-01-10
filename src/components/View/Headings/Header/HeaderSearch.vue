@@ -56,7 +56,6 @@ export default {
   },
   methods: {
     touchstart(evt) {
-      console.log(3)
       this.y = evt.touches[0].screenY
     },
     move(x, transition) {

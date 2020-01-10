@@ -1,349 +1,70 @@
 <template>
   <div
-    :class="platform"
     class="Header"
     id='view-header'
-    @click='click'
   >
-    <HeaderSearch v-if="!isDesktop"/>
-    <div class="header">
-      <Icon class="icon"
-        :icon="getIcon"
-        :color="getIconColor"
-        :progress='progress'
-        :shadow='true'
-        :width="isDesktop ? '40px' : '30px'"
-        @click="openMenu"
-      />
-      <h2 v-if="!editing || !isEditable"
-        class="name"
-        @click.stop="editing = true"
-      >{{ viewNameValue }}</h2>
-      <input v-else-if="isEditable"
-        class="input"
-        autocomplete="off"
-        :value="title"
-        @input='v => title = v.target.value'
-        ref='input'
-        @click.stop
-        @keydown="keydown"
-      >
-      <transition name="line-t"
-        @enter="lineEnter"
-        @leave="lineLeave"
-      >
-        <div v-if="isEditable && editing" class="line"></div>
-      </transition>
-      <div class="drop passive">
-        <Icon v-for="i in extraIcons" :key="i.icon"
-          class="cursor remove-highlight primary-hover"
-          :icon="i.icon"
-          color='var(--gray)'
-          :circle="true"
-          @click="i.callback"
-        />
-        <IconDrop v-if="options.length > 0"
-          :handle="optionsHandle"
-          handleColor="var(--gray)"
-          :options="options"
-          :circle='true'
-        />
-      </div>
-    </div>
-    <div class="tags" style="flex-direction: column; align-items: flex-start;margin-top: 4px">
-      <div>
-        <HeaderInfo
-          icon="sleep"
-          :info="`${l['Defered to']}:`"
-          :content="defer"
-          :left="deferDaysLeft"
-          @click="$parent.$emit('remove-defer-date')"
-        />
-      </div>
-      <div>
-        <HeaderInfo
-          icon="deadline"
-          :info='`${l["Deadline"]}:`'
-          :content="deadline"
-          :left="deadlineDaysLeft"
-          @click="$parent.$emit('remove-deadline')"
-        />
-        <HeaderInfo
-          icon='repeat'
-          info=''
-          :content='repeatCalendar'
-          :left='repeatCalendarNextEvent'
-          @click="$parent.$emit('remove-repeat')"
-        />
-      </div>
-      <div class="tags">
-        <Tag class="tag" v-for="t in headerTags" :key="t"
-          :value="t"
-          icon="tag"
-          @click="$parent.$emit('remove-header-tag', t)"
-        />
-      </div>
-    </div>
-    <div v-if="files" class="files" style="margin-top: 18px">
-      <FileApp v-for="f in files.files" :key="f"
-        :name="f"
-        :disableDelete='true'
-        @delete="deleteFile(f)"
-        @download="downloadFile(f, files.storageFolder, files.id)"
-        @view="viewFile(f, files.storageFolder, files.id)"
-      />
-    </div>
+    <HeaderBar
+      :progress='progress'
+      :viewType='viewType'
+      :viewName='viewName'
+      :extraIcons='extraIcons'
+      :options='options'
+      :notes='notes'
+      :icon='icon'
+      :optionsHandle='optionsHandle'
+      :viewNameValue='viewNameValue'
+    />
+    <Info class="tags"
+      :headerTags='headerTags'
+      :headerDates='headerDates'
+      :headerCalendar='headerCalendar'
+    />
+    <HeaderFiles v-if="files"
+      :files='files'
+    />
+    <FilterTags
+      :tags='tags'
+      :inclusivePriority='inclusivePriority'
+      :exclusivePriorities='exclusivePriorities'
+
+      :inclusiveFolder='inclusiveFolder'
+      :exclusiveFolders='exclusiveFolders'
+      
+      :inclusiveList='inclusiveList'
+      :exclusiveLists='exclusiveLists'
+      
+      :priorities='priorities'
+      :lists='lists'
+      :folders='folders'
+      :inclusiveTags='inclusiveTags'
+      :exclusiveTags='exclusiveTags'
+    />
     <NotesApp class="tags" :notes='notes' @save-notes="saveNotes"/>
-    <div class="tags" :class="{margins: tags.length > 0}">
-      <Tag class="tag" v-for="t in tags" :key="t.id"
-        :value="t.name"
-        :selected='isTagSelected(t.name)'
-        :extraIcon='getTagExclusiveIcon(t.name)'
-        icon="tag"
-        @click="$emit('tag', t.name)"
-      />
-    </div>
-    <div class="tags" :class="{margins: priorities.length > 0}">
-      <Tag class="tag" v-for="p in priorities" :key="p"
-        :value="l[p]"
-        :selected='isPrioritySelected(p)'
-        :extraIcon='getPriorityExclusiveIcon(p)'
-        icon="priority"
-        @click="$emit('priority', p)"
-      />
-    </div>
-    <div class="tags" :class="{margins: lists.length > 0}">
-      <Tag class="tag" v-for="l in lists" :key="l.id"
-        :value="l.name"
-        :selected='inclusiveList === l.name || exclusiveLists.includes(l.name)'
-        :extraIcon="getListExclusiveIcon(l.name)"
-        icon="tasks"
-        @click="$emit('list', l.name)"
-      />
-    </div>
-    <div class="tags" :class="{margins: folders.length > 0}">
-      <Tag class="tag" v-for="l in folders" :key="l.id"
-        :value="l.name"
-        :selected='inclusiveFolder === l.name || exclusiveFolders.includes(l.name)'
-        :extraIcon="getFolderExclusiveIcon(l.name)"
-        icon="folder"
-        @click="$emit('folder', l.name)"
-      />
-    </div>
   </div>
 </template>
 
 <script>
 
-import IconVue from '../../../Icon.vue'
-import IconDropVue from '../../../IconDrop/IconDrop.vue'
-import TagVue from './../../Tag.vue'
-import Notes from './../Notes.vue'
-import HeaderInfo from './../HeaderInfo.vue'
-import FileApp from '@/components/View/Tasks/File.vue'
-import HeaderSearch from './HeaderSearch.vue'
-
-import FileMixin from '@/mixins/file.js'
-
-import { mapState, mapGetters } from 'vuex'
-
-import mom from 'moment'
-import utils from '@/utils'
+import NotesApp from './../Notes.vue'
+import HeaderFiles from './HeaderFiles.vue'
+import Info from './Info.vue'
+import HeaderBar from './Bar.vue'
+import FilterTags from './FilterTags.vue'
 
 export default {
-  mixins: [FileMixin],
   props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'priorities', 'inclusiveTags', 'inclusivePriority', 'exclusivePriorities', 'inclusiveList', 'exclusiveLists', 'inclusiveFolder', 'exclusiveFolders', 'folders', 'optionsHandle', 'extraIcons'],
   components: {
-    HeaderSearch,
-    Icon: IconVue,
-    IconDrop: IconDropVue,
-    Tag: TagVue,
-    NotesApp: Notes,
-    HeaderInfo, FileApp,
-  },
-  data() {
-    return {
-      editing: false,
-      title: this.viewNameValue,
-      note: this.notes,
-    }
-  },
-  created() {
-    window.addEventListener('click', this.hide)
-  },
-  beforeDestroy() {
-    window.removeEventListener('click', this.hide)
+    FilterTags,
+    HeaderBar,
+    HeaderFiles,
+    NotesApp,
+    Info,
   },
   methods: {
-    openMenu() {
-      if (!this.isDesktop)
-        this.$router.push({path: '/menu'})
-    },
-    
-    isTagSelected(name) {
-      return this.inclusiveTags.includes(name) || this.exclusiveTags.includes(name)
-    },
-    isPrioritySelected(name) {
-      return this.inclusivePriority === name || this.exclusivePriorities.includes(name)
-    },
-    getPriorityExclusiveIcon(name) {
-      if (this.exclusivePriorities.includes(name))
-        return 'close'
-      return null
-    },
-    getTagExclusiveIcon(name) {
-      if (this.exclusiveTags.includes(name))
-        return 'close'
-      return null
-    },
-    getListExclusiveIcon(name) {
-      if (this.exclusiveLists.includes(name))
-        return 'close'
-      return null
-    },
-    getFolderExclusiveIcon(name) {
-      if (this.exclusiveFolders.includes(name))
-        return 'close'
-      return null
-    },
-    hide() {
-      this.editing = false
-    },
     saveNotes(notes) {
       this.$parent.$emit('save-notes', notes)
     },
-    lineEnter(el) {
-      const s = el.style
-      
-      const inp = this.$refs.input
-      if (inp) {
-        s.left = inp.offsetLeft + 'px'
-        s.opacity = '0'
-        s.width = '0px'
-        s.transitionDuration = '.0s'
-        setTimeout(() => {
-          s.transitionDuration = '.15s'
-          s.width = inp.offsetWidth + 'px'
-          s.opacity = '1'
-        })
-      }
-    },
-    lineLeave(el) {
-      el.style.width = '0px'
-      el.style.opacity = '0'
-    },
-    keydown({key}) {
-      if (key === "Enter" && this.isEditable) {
-        this.$parent.$emit('save-header-name', this.title.trim())
-        this.editing = false
-      }
-    },
-    click(event) {
-      if (this.selectedTasks.length > 0) event.stopPropagation()
-    },
-    focusOnInput() {
-      setTimeout(() => {
-        const inp = this.$refs.input
-        if (inp) inp.focus()
-      }, 100)
-    },
-    getDateDifference(date) {
-      return mom(date, 'Y-M-D').diff(mom(), 'd') + 1
-    },
   },
-  computed: {
-    ...mapState(['selectedTasks', 'userInfo']),
-    ...mapGetters(['isDesktop', 'platform', 'l']),
-    repeatCalendar() {
-      if (!this.headerCalendar) return ''
-      return utils.parseCalendarObjectToString(this.headerCalendar, this.l, this.userInfo)
-    },
-    repeatCalendarNextEvent() {
-      return ''
-/*       if (!this.headerCalendar) return ''
-      const { nextCalEvent } = utils.getCalendarObjectData(this.headerCalendar, mom())
-      return utils.getHumanReadableDate(nextCalEvent.format('Y-M-D'), this.l) */
-    },
-    isEditable() {
-      return !this.isSmart && (this.viewType === 'list' || this.viewType === 'tag') && this.isDesktop
-    },
-    getIcon() {
-      if (this.icon) return this.icon
-      if (this.viewType === 'search') return 'search'
-      const obj = {
-        Today: 'star',
-        Tomorrow: 'sun',
-        Someday: 'archive',
-        Anytime: 'layer-group',
-        Inbox: 'inbox',
-        Calendar: 'calendar-star',
-        Pomodoro: 'pomo',
-        Statistics: 'pie',
-        Upcoming: 'calendar',
-        Completed: 'circle-check',
-      }
-      return obj[this.viewName]
-    },
-    getIconColor() {
-      if (this.viewType === 'folder') return ''
-      if (this.viewType === 'list') {
-        const obj = {
-          Today: 'var(--yellow)',
-          Tomorrow: 'var(--orange)',
-          Someday: 'var(--brown)',
-          Anytime: 'var(--dark-blue)',
-          Inbox: 'var(--primary)',
-          Calendar: 'var(--purple)',
-          Pomodoro: 'var(--dark-red)',
-          Statistics: 'var(--primary)',
-          Upcoming: 'var(--green)',
-          Completed: 'var(--olive)',
-        }
-        const color = obj[this.viewName]
-        if (!color) return 'var(--primary)'
-        return color
-      }
-      if (this.viewType === 'search') return ''
-      return 'var(--red)'
-    },
-    defer() {
-      const l = this.l
-      if (this.headerDates && this.headerDates.defer) {
-        return utils.getHumanReadableDate(this.headerDates.defer, this.l)
-      }
-      return null
-    },
-    deferDaysLeft() {
-      if (this.headerDates && this.headerDates.defer) {
-        return `${this.getDateDifference(this.headerDates.defer)} ${this.l['days left']}`
-      }
-    },
-    deadlineDaysLeft() {
-      if (this.headerDates && this.headerDates.deadline) {
-        return `${this.getDateDifference(this.headerDates.deadline)} ${this.l['days left']}`
-      }
-    },
-    deadline() {
-      const l = this.l
-      if (this.headerDates && this.headerDates.deadline) {
-        return utils.getHumanReadableDate(this.headerDates.deadline, this.l)
-        return `${l["Deadline"]}: ${date}, ${this.getDateDifference(this.headerDates.deadline)} ${l['days left']}`
-      }
-    },
-  },
-  watch: {
-    viewName() {
-      this.editing = false
-    },
-    viewNameValue() {
-      this.title = this.viewNameValue
-      this.note = this.notes
-    },
-    editing() {
-      if (this.editing)
-        this.focusOnInput()
-    },
-  }
 }
 
 </script>
@@ -355,16 +76,6 @@ export default {
   z-index: 200;
 }
 
-.icon {
-  position: relative;
-  z-index: 2;
-}
-
-.name {
-  position: relative;
-  z-index: 1;
-}
-
 .header, .tags {
   display: flex;
   align-items: center;
@@ -374,76 +85,8 @@ export default {
   transition-duration: .15s;
 }
 
-.input {
-  background-color: var(--back-color);
-  border: none;
-  font-size: 1.5em;
-  width: 500px;
-  font-weight: bold;
-  outline: none;
-}
-
-.line {
-  position: absolute;
-  bottom: 0;
-  display: inline-block;
-  height: 2px;
-  background-color: var(--white);
-}
-
-.header {
-  z-index: 200;
-}
-
 .tags {
   z-index: 199;
-}
-
-.tag {
-  margin-top: 4px;
-}
-
-.margins {
-  margin-top: 30px;
-}
-
-.tags + .margins {
-  margin-top: 4px;
-}
-
-.drop {
-  transform: translateY(3px);
-  position: absolute;
-  right: 0;
-  display: flex;
-  align-items: center;
-}
-
-.icon {
-  margin-right: 16px;
-}
-
-.name {
-  margin: 0;
-  max-width: 550px;
-  word-break: break-all;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.mobile .header {
-  padding-top: 30px;
-  margin-bottom: 24px;
-  margin-left: 6px;
-}
-
-.mobile .name {
-  font-size: 1.15em;
-}
-
-.mobile .drop {
-  margin-right: 5px;
 }
 
 </style>

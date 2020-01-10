@@ -16,6 +16,7 @@ Vue.use(vueSmoothScroll)
 Vue.use(VueWorker, '$worker')
 
 Vue.config.productionTip = false
+// Vue.config.performance = process.env.NODE_ENV !== "production"
 
 import { longClickDirective } from 'vue-long-click'
  
