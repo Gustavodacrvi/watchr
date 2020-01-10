@@ -131,6 +131,7 @@
                 :options="priorityOptions"
                 :circle='true'
                 handleColor='var(--yellow)'
+                title='Add priority'
               />
               <IconDrop
                 handle="tasks"
@@ -139,6 +140,7 @@
                 :options="listOptions"
                 :circle='true'
                 handleColor='var(--primary)'
+                title='Add to list'
               />
               <IconDrop
                 handle="folder"
@@ -146,6 +148,7 @@
                 class="opt-icon"
                 :options="folderOptions"
                 :circle='true'
+                title='Add to folder'
               />
               <IconDrop
                 handle="calendar"
@@ -154,6 +157,7 @@
                 :options="calendarOptions"
                 :circle='true'
                 handleColor='var(--green)'
+                title='Add date'
               />
               <IconDrop
                 handle="clock"
@@ -162,6 +166,7 @@
                 :options="durationOptions"
                 :circle='true'
                 handleColor='var(--purple)'
+                title='Add task duration'
               />
               <Icon
                 class="opt-icon primary-hover cursor"
@@ -171,6 +176,7 @@
                 icon='file'
                 :file='true'
                 @add='addFile'
+                title='Add files'
               />
             </div>
           </transition>

@@ -1,6 +1,6 @@
 <template>
   <div class="Icon">
-    <div v-if="getIcon"
+    <span v-if="getIcon"
       class="icon remove-highlight"
       :class="[{hideShadow: !shadow}, platform]"
       :style="{width: getWidth, color, filter: `drop-shadow(0 0 ${isDesktop ? 20 : 10}px ${color})`}"
@@ -32,7 +32,7 @@
           <div class="circle"></div>
         </div>
       </transition>
-    </div>
+    </span>
     <transition name="title-trans">
       <div v-if="showingTitle && title && isDesktop"
         class="icon-title rb"
