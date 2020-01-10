@@ -87,7 +87,7 @@
           </transition>
         </div>
         <div v-if="isDesktop" style="height: 35px;"></div>
-        <div v-if="isDesktop" class="footer" :class="[platform, {showing}]">
+        <div class="footer" :class="[platform, {showing}]">
           <div class="inner-footer">
             <div class="drop">
               <transition name="icon-t">
@@ -824,18 +824,14 @@ export default {
   transform: translate(16px, 10px);
 }
 
-.mobile .drop {
-  transform: translate(-8px, 10px);
-}
-
 .footer.mobile .drop {
   right: 0;
   bottom: 24px;
 }
 
 .mobile .drop {
-  left: unset;
-  right: 7px;
+  right: unset;
+  left: 0;
 }
 
 .bar-trans-enter, .bar-trans-leave-to {

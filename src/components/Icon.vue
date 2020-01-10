@@ -1,31 +1,43 @@
 <template>
-  <div v-if="getIcon"
-    class="icon remove-highlight"
-    :class="[{hideShadow: !shadow}, platform]"
-    :style="{width: getWidth, color, filter: `drop-shadow(0 0 ${isDesktop ? 20 : 10}px ${color})`}"
-    @click="iconClick"
-  >
-    <svg v-if="!hasProgress" :viewBox="getIcon.viewBox">
-      <use :xlink:href="`#${getIcon.id}`"/>
-    </svg>
-    <div v-else class="pie-wrapper" :style='outlineStyle'>
-      <svg class="svg" viewBox="0 0 18.375 18.375">
-        <circle fill="none" stroke="currentColor" stroke-width='1.5px' cx="50%" cy="50%" r="8.688" />
-        <circle class="pie" :stroke-dasharray="`${getProgress} 100`" fill="none" stroke="currentColor" stroke-width='6' cx="50%" cy="50%" r="3"/>
+  <div class="Icon">
+    <span v-if="getIcon"
+      class="icon remove-highlight"
+      :class="[{hideShadow: !shadow}, platform]"
+      :style="{width: getWidth, color, filter: `drop-shadow(0 0 ${isDesktop ? 20 : 10}px ${color})`}"
+      @click="iconClick"
+
+      @mouseenter='iconEnter'
+      @mouseleave="iconLeave"
+    >
+      <svg v-if="!hasProgress" :viewBox="getIcon.viewBox">
+        <use :xlink:href="`#${getIcon.id}`"/>
       </svg>
-    </div>
-    <input v-show="false"
-      ref='file'
-      type='file'
-      @click.stop
-      @change='handleFile'
-    >
-    <transition
-      @enter='enter'
-    >
-      <div v-if="circle && activate" class="circle-wrapper"
-        :style="{transform: `translate(-${offset/2}px, -${offset/2}px)`, width: this.circleWidth + 'px', height: this.circleWidth + 'px'}">
-        <div class="circle"></div>
+      <div v-else class="pie-wrapper" :style='outlineStyle'>
+        <svg class="svg" viewBox="0 0 18.375 18.375">
+          <circle fill="none" stroke="currentColor" stroke-width='1.5px' cx="50%" cy="50%" r="8.688" />
+          <circle class="pie" :stroke-dasharray="`${getProgress} 100`" fill="none" stroke="currentColor" stroke-width='6' cx="50%" cy="50%" r="3"/>
+        </svg>
+      </div>
+      <input v-show="false"
+        ref='file'
+        type='file'
+        @click.stop
+        @change='handleFile'
+      >
+      <transition
+        @enter='enter'
+      >
+        <div v-if="circle && activate" class="circle-wrapper"
+          :style="{transform: `translate(-${offset/2}px, -${offset/2}px)`, width: this.circleWidth + 'px', height: this.circleWidth + 'px'}">
+          <div class="circle"></div>
+        </div>
+      </transition>
+    </span>
+    <transition name="title-trans">
+      <div v-if="showingTitle && title && isDesktop"
+        class="icon-title rb"
+      >
+        {{ title }}
       </div>
     </transition>
   </div>
@@ -91,10 +103,12 @@ import boxCheckDash from '@/assets/icons/box-check-dash.svg'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['icon', 'width', 'color', 'progress', 'svg', 'file', 'shadow', 'circle', 'stop'],
+  props: ['icon', 'width', 'color', 'progress', 'svg', 'file', 'shadow', 'circle', 'stop', 'title'],
   data() {
     return {
       activate: false,
+      showingTitle: false,
+      timeoutTitle: null,
       icons: {
         inbox, calendar, sun, arrow, star, user, out,
         sort, tag, priority, menu, tasks, archive,
@@ -122,6 +136,13 @@ export default {
     }
   },
   methods: {
+    iconEnter() {
+      this.timeoutTitle = setTimeout(() => this.showingTitle = true, 500)
+    },
+    iconLeave() {
+      clearTimeout(this.timeoutTitle)
+      this.showingTitle = false
+    },
     iconClick(evt) {
       if (this.stop)
         evt.stopPropagation()
@@ -210,6 +231,33 @@ export default {
 
 <style scoped>
 
+.Icon {
+  position: relative;
+}
+
+.icon-title {
+  position: absolute;
+  top: 135%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 12px;
+  font-size: .9em;
+  background-color: var(--appnav-color);
+  cursor: initial;
+}
+
+.icon-title::before {
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  transform: translateX(-50%);
+  content: '';
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid var(--appnav-color);
+}
+
 .icon {
   display: inline-block;
   position: relative;
@@ -229,7 +277,7 @@ export default {
   background-image: radial-gradient(rgba(0,0,0,0), var(--gray));
 }
 
-.primary-hover:hover {
+.primary-hover .icon:hover {
   transition-duration: .15s;
   color: var(--primary) !important;
 }
@@ -268,6 +316,18 @@ export default {
 
 .light {
   stroke: var(--white);
+}
+
+.title-trans-enter, .title-trans-leave-to {
+  opacity: 0;
+  transform: translate(-50%, 25px);
+  transition-duration: .25s;
+}
+
+.title-trans-leave, .title-trans-enter-to {
+  opacity: 1;
+  transform: translate(-50%, 0px);
+  transition-duration: .25s;
 }
 
 </style>

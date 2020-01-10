@@ -13,6 +13,7 @@
         class="cursor handle primary-hover"
         :icon="handle"
         :circle='circle'
+        :title='title'
         :color="handleColor"
         :width="getHandleWidth"
         @click="toggleIconDrop"
@@ -54,7 +55,7 @@ import Files from './Files.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width'],
+  props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width', 'title'],
   components: {
     Icon, ListIcons, CalendarPicker,
     Files, TimePicker, RepeatPicker,

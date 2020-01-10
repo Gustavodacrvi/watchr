@@ -349,7 +349,7 @@ export default {
       const p = this.prefix
       
       const events = [
-        'save-header-name', 'save-notes',
+        'save-header-name', 'save-notes', 'save-schedule',
         'add-task', 'add-heading', 'update-ids', 'remove-defer-date',
         'remove-header-tag', 'remove-deadline', 'remove-repeat',
       ]
@@ -364,7 +364,7 @@ export default {
       const p = this.prefix
       
       const props = [
-        'icon', 'showEmptyHeadings', 'updateHeadingIds',
+        'icon', 'showEmptyHeadings', 'updateHeadingIds', 'savedSchedule',
         'headingEditOptions', 'headerOptions', 'notes', 'progress', 'headings', 'headingsOrder', 'showAllHeadingsItems', 'rootFallbackTask',
         'mainFilter', 'rootFilter', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates', 'mainFallbackTask', 'showHeading',
         'headerTags', 'headerCalendar', 'taskCompletionCompareDate', 'files',
@@ -627,6 +627,11 @@ export default {
       const n = this.viewName
       return this.viewType === 'list' && this.isSmart &&
         (n === 'Someday' || n === 'Anytime' || n === 'Inbox')
+    },
+    isCalendarOrderViewType() {
+      const n = this.viewName
+      return this.viewType === 'list' && this.isSmart && 
+        (n === 'Today' || n === 'Tomorrow' || 'Calendar')
     },
     hasOverdueTasks() {
       return this.getOverdueTasks().length > 0

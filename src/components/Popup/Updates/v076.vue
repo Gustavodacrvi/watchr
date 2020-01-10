@@ -19,6 +19,7 @@
 
     <li>Tap on a task to edit instead of double click.</li>
     <li>Swipe left on task to select.</li>
+    <li>Floating action button on the menu.</li>
 
 
   </div>

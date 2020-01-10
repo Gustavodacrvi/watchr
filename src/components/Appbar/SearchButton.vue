@@ -6,7 +6,7 @@
     :class="platform"
   >
     <div>
-      <Icon icon="search" width="15px"/>
+      <Icon class="search" icon="search" width="16px"/>
       <span class="search-msg">{{ l['Search'] }}</span>
     </div>
     <CircleBubble
@@ -53,6 +53,10 @@ export default {
 
 .search-msg {
   margin-left: 8px;
+}
+
+.search {
+  display: inline-block;
 }
 
 .SearchButton:hover {

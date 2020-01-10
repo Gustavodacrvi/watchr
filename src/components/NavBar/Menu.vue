@@ -27,6 +27,7 @@
           <span v-if="user && user.isAnonymous" class="cursor link rb" @click="$store.dispatch('logOut')">{{ l['Log out'] }}</span>
         </div>
       </transition>
+      <ActionButtons class="action-buttons" v-if="appSection"/>
     </div>
   </div>
 </template>
@@ -37,11 +38,13 @@ import AppbarVue from '../Appbar/Appbar.vue'
 import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import VersionApp from '@/components/Version.vue'
+import ActionButtons from '@/components/View/FloatingButtons/ActionButtons.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
+    ActionButtons,
     Appbar: AppbarVue,
     Icon: IconVue, VersionApp,
     IconDrop: IconDropVue
@@ -127,6 +130,10 @@ export default {
 
 .Appbar {
   margin-top: 8px;
+}
+
+.action-buttons {
+  margin-right: 6px;
 }
 
 .help-icon {
