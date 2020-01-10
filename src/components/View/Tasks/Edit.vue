@@ -122,6 +122,7 @@
                 :options="getTags"
                 :circle='true'
                 handleColor='var(--red)'
+                title='Add tags'
               />
               <IconDrop
                 handle="priority"
