@@ -4,25 +4,8 @@
     class="Header"
     id='view-header'
     @click='click'
-
-    @touchstart.passive.stop='touchstart'
-    @touchmove.prevent.stop='touchmove'
-    @touchend.passive.stop='touchend'
   >
-    <div v-if='!isDesktop' class="search" ref="search">
-      <div class="search-icon-wrapper">
-        <svg class="svg search-el" viewBox="0 0 12.375 12.375" width='35px' height='35px'>
-          <circle ref='circle' class="pie" stroke-dasharray="0 100" fill="none" :stroke="circleStroke" stroke-width="6" cx="50%" cy="50%" r="3"/>
-        </svg>
-        <Icon class="cursor remove-highlight search-el"
-          icon="search"
-          width="16px"
-          :color="searchColor"
-          :circle="true"
-          @click="openSearchBar"
-        />
-      </div>
-    </div>
+    <HeaderSearch v-if="!isDesktop"/>
     <div class="header">
       <Icon class="icon"
         :icon="getIcon"
@@ -152,12 +135,13 @@
 
 <script>
 
-import IconVue from '../../Icon.vue'
-import IconDropVue from '../../IconDrop/IconDrop.vue'
-import TagVue from './../Tag.vue'
-import Notes from './Notes.vue'
-import HeaderInfo from './HeaderInfo.vue'
+import IconVue from '../../../Icon.vue'
+import IconDropVue from '../../../IconDrop/IconDrop.vue'
+import TagVue from './../../Tag.vue'
+import Notes from './../Notes.vue'
+import HeaderInfo from './../HeaderInfo.vue'
 import FileApp from '@/components/View/Tasks/File.vue'
+import HeaderSearch from './HeaderSearch.vue'
 
 import FileMixin from '@/mixins/file.js'
 
@@ -166,12 +150,11 @@ import { mapState, mapGetters } from 'vuex'
 import mom from 'moment'
 import utils from '@/utils'
 
-const MAXIMUM_TOUCH_DISTANCE = 120
-
 export default {
   mixins: [FileMixin],
   props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'priorities', 'inclusiveTags', 'inclusivePriority', 'exclusivePriorities', 'inclusiveList', 'exclusiveLists', 'inclusiveFolder', 'exclusiveFolders', 'folders', 'optionsHandle', 'extraIcons'],
   components: {
+    HeaderSearch,
     Icon: IconVue,
     IconDrop: IconDropVue,
     Tag: TagVue,
@@ -183,20 +166,6 @@ export default {
       editing: false,
       title: this.viewNameValue,
       note: this.notes,
-
-      y: 0,
-
-      search: {
-        r: 179,
-        g: 179,
-        b: 179,
-      },
-      circle: {
-        r: 41,
-        g: 41,
-        b: 41,
-      },
-      fireSearchFallback: false,
     }
   },
   created() {
@@ -209,57 +178,6 @@ export default {
     openMenu() {
       if (!this.isDesktop)
         this.$router.push({path: '/menu'})
-    },
-    touchstart(evt) {
-      this.y = evt.touches[0].screenY
-    },
-    move(x, transition) {
-      const achievedMax = x >= MAXIMUM_TOUCH_DISTANCE
-      this.fireSearchFallback = achievedMax
-      if (achievedMax) x = MAXIMUM_TOUCH_DISTANCE
-      
-      const s = this.$refs.search.style
-      const cir = this.$refs.circle.style
-
-      const transitionColor = (oldNum, newNum) => utils.transitionColor(oldNum, newNum, x, MAXIMUM_TOUCH_DISTANCE)
-      const getOpacity = () =>  x / MAXIMUM_TOUCH_DISTANCE
-      const getTransform = () => {
-        const scale = 1 + (.6 * x / MAXIMUM_TOUCH_DISTANCE)
-        return `translateY(${x}px) scale(${scale}, ${scale})`
-      }
-      const getStrokeDasharray = () => `${19 * x / MAXIMUM_TOUCH_DISTANCE} 100`
-
-      const dur = transition ? '.4s' : '0s'
-
-      s.transitionDuration = dur
-      cir.transitionDuration = dur
-
-      this.circle.r = transitionColor(41, 89)
-      this.circle.g = transitionColor(41, 160)
-      this.circle.b = transitionColor(41, 222)
-
-      const newOffset = transitionColor(179, 28)
-      this.search.r = newOffset
-      this.search.g = newOffset
-      this.search.b = newOffset
-
-      cir.strokeDasharray = getStrokeDasharray()
-      s.opacity = getOpacity()
-      s.transform = getTransform()
-    },
-    touchmove(evt) {
-      const diff = evt.touches[0].screenY - this.y
-
-      this.move(diff)
-    },
-    touchend() {
-      if (this.fireSearchFallback)
-        this.openSearchBar()
-
-      this.move(0, true)
-    },
-    openSearchBar() {
-      this.$store.dispatch('pushPopup', {comp: 'FastSearch', naked: true})
     },
     
     isTagSelected(name) {
@@ -336,14 +254,6 @@ export default {
   computed: {
     ...mapState(['selectedTasks', 'userInfo']),
     ...mapGetters(['isDesktop', 'platform', 'l']),
-    circleStroke() {
-      const {r,g,b} = this.circle
-      return `rgb(${r}, ${g}, ${b})`
-    },
-    searchColor() {
-      const {r,g,b} = this.search
-      return `rgb(${r}, ${g}, ${b})`
-    },
     repeatCalendar() {
       if (!this.headerCalendar) return ''
       return utils.parseCalendarObjectToString(this.headerCalendar, this.l, this.userInfo)
@@ -520,38 +430,6 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.search-icon-wrapper {
-  transform: translateX(-5px);
-  overflow: visible;
-  position: relative;
-}
-
-.svg {
-  transform: translate(-9px,-9px);
-}
-
-.search-el {
-  position: absolute;
-}
-
-.search {
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  height: 20px;
-  position: absolute;
-  top: -20px;
-  opacity: 0;
-  overflow: visible;
-}
-
-.pie {
-  /* transition: color 0s, stroke-dasharray .7s; */
-  transform: rotate(-90deg);
-  transform-origin: 50%;
 }
 
 .mobile .header {

@@ -39,6 +39,7 @@
         :style="{right: right + 'px'}"
 
         @mouseup='stopMouseUp'
+        @pointerdown='pointerdown'
         @pointerup.stop
         @touchcancel.stop
         
@@ -361,6 +362,10 @@ export default {
       } else {
         this.right = 0
       }
+    },
+    pointerdown(evt) {
+      if (!this.isDesktop)
+        evt.stopPropagation()
     },
     touchEnd(e) {
       const select = this.right > 60
@@ -1092,12 +1097,12 @@ export default {
   transition-delay: .3s;
 }
 
-.task-trans-leave {
+.task-trans-leave, .task-trans-leave .cont-wrapper {
   height: 38px;
   opacity: 1;
 }
 
-.mobile .task-trans-leave {
+.mobile .task-trans-leave, .task-trans-leave .cont-wrapper {
   height: 50px;
 }
 

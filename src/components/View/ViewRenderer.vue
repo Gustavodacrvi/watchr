@@ -80,7 +80,7 @@
 
 <script>
 
-import HeaderVue from './Headings/Header.vue'
+import HeaderVue from './Headings/Header/Header.vue'
 import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
 import PaginationVue from './Pagination.vue'
 import HelperComponent from './HelperComponent.vue'
