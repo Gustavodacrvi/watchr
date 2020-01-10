@@ -13,15 +13,21 @@
       </g>
       </svg>
     </div>
+    <VolumeSlider/>
     <span v-show="longCycles > 0" class="long-msg">+{{ longCycles }}</span>
   </div>
 </template>
 
 <script>
 
+import VolumeSlider from './VolumeSlider.vue'
+
 import { mapGetters } from 'vuex'
 
 export default {
+  components: {
+    VolumeSlider,
+  },
   computed: {
     ...mapGetters({
       longCycles: 'pomo/longCycles',

@@ -162,11 +162,6 @@ export default {
   background-color: var(--light-gray);
 }
 
-.Tag:active {
-  background-color: var(--white);
-  transition-duration: .2s;
-}
-
 .disabled {
   background-color: initial !important;
   opacity: .4;

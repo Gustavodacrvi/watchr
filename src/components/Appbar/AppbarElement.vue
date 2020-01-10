@@ -24,7 +24,6 @@
         <div class="icon-wrapper">
           <Icon class="main-icon"
             :style="iconStyle"
-            :class="{notActive: !isActive}"
             :icon="icon"
             :progress='progress'
             :circle='true'
@@ -242,7 +241,7 @@ export default {
     iconStyle() {
       if (this.isSmart)
         return `color: ${this.iconColor}`
-      return this.hoverStyle
+      return `color: ${this.isActive ? this.iconColor : 'var(--gray)'};`
     },
     isActive() {
       if ((this.hover && this.isDesktop) || (this.isTouching && !this.isDesktop)) return true
@@ -334,10 +333,6 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
   transform: translateY(0px);
-}
-
-.icon.notActive {
-  color: var(--gray);
 }
 
 .AppbarElement {

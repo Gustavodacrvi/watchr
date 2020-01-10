@@ -39,8 +39,8 @@
         :style="{right: right + 'px'}"
 
         @mouseup='stopMouseUp'
+        @pointerdown='pointerdown'
         @pointerup.stop
-        @pointerdown='pointerDown'
         @touchcancel.stop
         
         @touchend.passive='touchEnd'
@@ -331,11 +331,6 @@ export default {
       if (!this.isDesktop)
         evt.stopPropagation()
     },
-    pointerDown(evt) {
-      if (!this.isDesktop && !this.isTaskSelected) {
-        evt.stopPropagation()
-      }
-    },
     touchStart(e) {
       this.startTime = new Date()
       const touch = e.changedTouches[0]
@@ -367,6 +362,10 @@ export default {
       } else {
         this.right = 0
       }
+    },
+    pointerdown(evt) {
+      if (!this.isDesktop)
+        evt.stopPropagation()
     },
     touchEnd(e) {
       const select = this.right > 60
@@ -1046,6 +1045,10 @@ export default {
   padding: 0;
 }
 
+.mobile.sortable-ghost .cont-wrapper {
+  height: 50px;
+}
+
 .name-t-enter {
   opacity: 0;
   transform: translateY(-25px); 
@@ -1094,12 +1097,12 @@ export default {
   transition-delay: .3s;
 }
 
-.task-trans-leave {
+.task-trans-leave, .task-trans-leave .cont-wrapper {
   height: 38px;
   opacity: 1;
 }
 
-.mobile .task-trans-leave {
+.mobile .task-trans-leave, .task-trans-leave .cont-wrapper {
   height: 50px;
 }
 

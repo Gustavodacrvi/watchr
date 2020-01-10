@@ -102,8 +102,9 @@ export default {
   },
   computed: {
     mainFilter() {
-      if (this.viewList) {
-        return task => this.isTaskInList(task, this.viewList.id)
+      const list = this.viewList
+      if (list) {
+        return task => this.isTaskInList(task, list.id)
       }
       return () => false
     },
@@ -112,8 +113,8 @@ export default {
     },
     headings() {
       const arr = []
-      if (this.viewList) {
-        const viewList = this.viewList
+      const viewList = this.viewList
+      if (viewList) {
 
         for (const h of viewList.headings) {
           const pipedFilter = task => this.isTaskInHeading(task, h)
@@ -129,7 +130,7 @@ export default {
 
             onEdit: tasks => name => {
               this.$store.dispatch('list/saveHeadingName', {
-                listId: this.viewList.id,
+                listId: viewList.id,
                 oldName: h.name,
                 newName: name,
                 tasksIds: tasks.map(el => el.id),
@@ -138,7 +139,7 @@ export default {
             sort,
             filter: pipedFilter,
             options: tasks => {
-              return utilsList.listHeadingOptions(this.viewList, h, this.$store, tasks, this.l)
+              return utilsList.listHeadingOptions(viewList, h, this.$store, tasks, this.l)
             },
             fallbackTask: (task, force) => {
               if (force || (!task.heading && !task.folder && task.list === viewList.id))
@@ -149,7 +150,7 @@ export default {
 
             saveNotes: notes => {
               this.$store.dispatch('list/saveHeadingNotes', {
-                listId: this.viewList.id, notes, heading: h.name,
+                listId: viewList.id, notes, heading: h.name,
               })
             },
             updateIds: ids => {
@@ -173,18 +174,20 @@ export default {
       return arr
     },
     headingsOrder() {
-      if (this.viewList && this.viewList.headingsOrder)
-        return this.viewList.headingsOrder
+      const list = this.viewList
+      if (list && list.headingsOrder)
+        return list.headingsOrder
       return []
     },
     
     icon() {return 'tasks'},
     viewNameValue() {return this.viewName},
     updateHeadingIds() {
-      if (this.viewList) {
+      const list = this.viewList
+      if (list) {
         return ids => {
           this.$store.dispatch('list/updateListHeadings', {
-            listId: this.viewList.id,
+            listId: list.id,
             ids,
           })
         }
@@ -195,18 +198,20 @@ export default {
       return null
     },
     files() {
-      if (this.viewList) {
+      const list = this.viewList
+      if (list) {
         return {
-          id: this.viewList.id,
+          id: list.id,
           storageFolder: 'lists',
-          files: this.viewList.files,
+          files: list.files,
         }
       }
       return null
     },
     tasksOrder() {
-      if (this.viewList && this.viewList.tasks)
-        return this.viewList.tasks
+      const list = this.viewList
+      if (list && list.tasks)
+        return list.tasks
       return []
     },
     showEmptyHeadings() {
@@ -216,8 +221,9 @@ export default {
       return true
     },
     getListTags() {
-      if (this.viewList && this.viewList.tags)
-        return this.getTagsById(this.viewList.tags)
+      const list = this.viewList
+      if (list && list.tags)
+        return this.getTagsById(list.tags)
       return []
     },
     headerTags() {
@@ -234,31 +240,36 @@ export default {
       return obj
     },
     headerCalendar() {
-      if (this.viewList)
-        return this.viewList.calendar
+      const list = this.viewList
+      if (list)
+        return list.calendar
       return null
     },
     headerOptions() {
-      if (this.viewList)
-        return utilsList.listOptions(this.viewList)
+      const list = this.viewList
+      if (list)
+        return utilsList.listOptions(list)
       return null
     },
     headingEditOptions() {
-      if (this.viewList)
+      const list = this.viewList
+      if (list)
         return {
-          excludeNames: this.viewList.headings.map(el => el.name),
+          excludeNames: list.headings.map(el => el.name),
           errorToast: "There's already another heading with this name.",
         }
       return null
     },
     getViewNotes() {
-      if (this.viewList)
-        return this.viewList.notes
+      const list = this.viewList
+      if (list)
+        return list.notes
       return null
     },
     getPieProgress() {
-      if (this.viewList)
-        return this.$store.getters['list/pieProgress'](this.tasks, this.viewList.id, this.isTaskCompleted)
+      const list = this.viewList
+      if (list)
+        return this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted)
       return []
     },
     savedSchedule() {

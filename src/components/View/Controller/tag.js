@@ -57,8 +57,9 @@ export default {
     icon() {return 'tag'},
     viewNameValue() {return this.viewName},
     mainFilter() {
-      if (this.viewTag)
-        return task => this.doesTaskPassInclusiveTags(task, [this.viewTag.id], this.tags)
+      const tag = this.viewTag
+      if (tag)
+        return task => this.doesTaskPassInclusiveTags(task, [tag.id], this.tags)
       return () => false
     },
     rootFilter() {
@@ -66,21 +67,24 @@ export default {
     },
     
     tasksOrder() {
-      if (this.viewTag && this.viewTag.tasks)
-        return this.viewTag.tasks
+      const tag = this.viewTag
+      if (tag && tag.tasks)
+        return tag.tasks
       return []
     },
     headingsOptions() {
       return []
     },
     headerOptions() {
-      if (this.viewTag)
-        return utilsTag.tagOptions(this.viewTag)
+      const tag = this.viewTag
+      if (tag)
+        return utilsTag.tagOptions(tag)
       return null
     },
     getViewNotes() {
-      if (this.viewTag)
-        return this.viewTag.notes
+      const tag = this.viewTag
+      if (tag)
+        return tag.notes
       return null
     },
     getPieProgress() {

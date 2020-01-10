@@ -119,7 +119,7 @@ export default {
     },
     click() {
       if (!this.showSpecialInfo)
-        this.$router.push('/user?folder=' + this.name)
+        this.$router.push({ path: '/user?folder=' + this.name })
       else this.apply()
     },
     toggle() {

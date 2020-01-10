@@ -9,8 +9,22 @@ import mom from 'moment'
 const TOD_STR = mom().format('Y-M-D')
 
 const tickSound = new Audio(require('@/assets/mp3/clock-tick.mp3'))
+const alarmClock = new Audio(require('@/assets/mp3/alarm-clock.mp3'))
 
 tickSound.loop = true
+alarmClock.loop = false
+
+let savedVolume = localStorage.getItem('pomo_volume')
+
+if (!savedVolume)
+  savedVolume = .5
+
+console.log(savedVolume)
+
+const parsedVol = JSON.parse(savedVolume)
+
+tickSound.volume = parsedVol
+alarmClock.volume = parsedVol
 
 const areEqual = (s1, s2) =>  {
   const split1 = s1.split(':')
@@ -33,6 +47,7 @@ export default {
   namespaced: true,
   state: {
     stats: null,
+    volume: parsedVol,
     cycles: 0,
     current: '00:00',
     start: null,
@@ -50,6 +65,12 @@ export default {
     addInterval: null,
   },
   mutations: {
+    saveVolume(state, vol) {
+      state.volume = vol
+      tickSound.volume = vol
+      alarmClock.volume = vol
+      localStorage.setItem('pomo_volume', vol)
+    },
     selectTask(state, task) {
       state.task = task || null
     },
@@ -179,6 +200,13 @@ export default {
           
           state.current = `${min}:${sec}`
           const completed = areEqual(state.current, state.currentDuration)
+
+          if (completed) {
+            alarmClock.play()
+            setTimeout(() => {
+              alarmClock.pause()
+            }, 10000)
+          }
 
           if (completed && !state.rest) {
             dispatch('saveFocusTime', true)

@@ -190,8 +190,9 @@ export default {
       return this.sortHeadingsFunction(this.laserHeadings)
     },
     laserHeadings() {
-      if (!this.headings) return []
-      return this.headings.map(head => {
+      const headings = this.headings
+      if (!headings) return []
+      return headings.map(head => {
         if (head.react)
           for (const p of head.react) this.mainTasks[p]
         const nonFiltered = head.sort(this.mainTasks.filter(task => head.filter(task)))
@@ -348,10 +349,12 @@ export default {
       )
     },
     hasAtLeastOneSomeday() {
-      for (const task of this.rootNonFiltered)
+      const rootNonFiltered = this.rootNonFiltered
+      for (const task of rootNonFiltered)
         if (this.isTaskSomeday(task))
           return true
-      for (const head of this.laserHeadings)
+      const laserHeadings = this.laserHeadings
+      for (const head of laserHeadings)
         if (head.nonFiltered.some(task => this.isTaskSomeday(task)))
           return true
       return false
