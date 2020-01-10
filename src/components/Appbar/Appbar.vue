@@ -201,7 +201,7 @@ export default {
         ]
 
     links.forEach(link => {
-      link.callback = () => this.$router.push(`/user?list=${link.name}`)
+      link.callback = () => this.$router.push({ path: `/user?list=${link.name}`})
       link.id = link.name
     })
 

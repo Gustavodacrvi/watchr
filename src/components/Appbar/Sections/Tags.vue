@@ -71,7 +71,7 @@ export default {
         if (tags.length === 0) return []
 
         for (const tag of tags) {
-          tag.callback = () => this.$router.push('/user?tag=' + tag.name)
+          tag.callback = () => this.$router.push({ path: '/user?tag=' + tag.name })
           tag.options = utilsTag.tagOptions(tag)
 
           tag.onSubTagUpdate = ids => {

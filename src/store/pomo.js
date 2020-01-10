@@ -9,8 +9,10 @@ import mom from 'moment'
 const TOD_STR = mom().format('Y-M-D')
 
 const tickSound = new Audio(require('@/assets/mp3/clock-tick.mp3'))
+const alarmClock = new Audio(require('@/assets/mp3/alarm-clock.mp3'))
 
 tickSound.loop = true
+alarmClock.loop = false
 
 const areEqual = (s1, s2) =>  {
   const split1 = s1.split(':')
@@ -179,6 +181,13 @@ export default {
           
           state.current = `${min}:${sec}`
           const completed = areEqual(state.current, state.currentDuration)
+
+          if (completed) {
+            alarmClock.play()
+            setTimeout(() => {
+              alarmClock.pause()
+            }, 10000)
+          }
 
           if (completed && !state.rest) {
             dispatch('saveFocusTime', true)
