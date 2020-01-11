@@ -71,36 +71,13 @@
                 @touchend.passive='touchComplete'
                 :class="{changeColor}"
               >
-                <template v-if='!isSelecting'>
-                  <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon cursor remove-highlight"
-                    :icon="`box${isSomeday ? '-dash' : ''}`"
-                    :color='circleColor'
-                    :stop='true'
-                    width="20px"
-                    @click="desktopComplete"
-                  />
-                  <Icon v-else :circle='true' class="icon check-icon cursor remove-highlight"
-                    :icon="`box-check${isSomeday ? '-dash' : ''}`"
-                    :color='circleColor'
-                    width="20px"
-                    :stop='true'
-                    @click="desktopComplete"
-                  />
-                </template>
-                <template v-else>
-                  <Icon v-if="!isTaskSelected" :circle='true' class="icon check-icon cursor remove-highlight"
-                    icon="circle"
-                    :color='circleColor'
-                    :stop='true'
-                    width="20px"
-                  />
-                  <Icon v-else :circle='true' class="icon check-icon cursor remove-highlight"
-                    icon="circle-filled"
-                    :color='circleColor'
-                    width="20px"
-                    :stop='true'
-                  />
-                </template>
+                <Icon :circle='true' class="icon check-icon cursor remove-highlight"
+                  :icon="getTaskIcon"
+                  :color='circleColor'
+                  :stop='true'
+                  width="20px"
+                  @click="desktopComplete"
+                />
               </div>
               <div class="text"
                 :class="{changeColor}"
@@ -813,6 +790,15 @@ export default {
       if (this.scheduleObject)
         return this.scheduleObject[this.task.id]
       return null
+    },
+    getTaskIcon() {
+      const t = this.task
+
+      let icon = this.isSelecting ? 'circle' : 'box'
+      icon += this.completed ? '-check' : ''
+      icon += this.isSomeday ? '-dash' : ''
+
+      return icon
     },
   },
   watch: {
