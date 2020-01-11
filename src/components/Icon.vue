@@ -94,6 +94,7 @@ import magic from '@/assets/icons/magic.svg'
 import clock from '@/assets/icons/clock.svg'
 import pomo from '@/assets/icons/pomo.svg'
 import pie from '@/assets/icons/pie.svg'
+import check from '@/assets/icons/check.svg'
 import layerGroup from '@/assets/icons/layer-group.svg'
 import boxCheck from '@/assets/icons/box-check.svg'
 import calendarStar from '@/assets/icons/calendar-star.svg'
@@ -118,7 +119,7 @@ export default {
         copy, plus, globe, heading, search, note,
         envelope, deadline, sleep, repeat, box, file,
         folder, heart, close, filter, magic, clock,
-        pomo, pie,
+        pomo, pie, check,
         "box-dash": boxDash,
         "circle-dash": circleDash,
         "circle-check-dash": circleCheckDash,

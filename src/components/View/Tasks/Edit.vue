@@ -620,6 +620,8 @@ export default {
       }
       return {
         links: arr,
+        select: true,
+        onSave: console.log,
         allowSearch: true,
       }
     },

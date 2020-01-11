@@ -80,6 +80,7 @@ export default {
     return {
       links: this.content,
       search: '',
+      selected: [],
     }
   },
   methods: {
@@ -149,6 +150,9 @@ export default {
   },
   computed: {
     ...mapGetters(['l']),
+    select() {
+      return this.links && this.links.select
+    },
     getLinks() {
       let arr = this.links
       if (this.links.links) arr = this.links.links
