@@ -621,7 +621,8 @@ export default {
       return {
         links: arr,
         select: true,
-        onSave: console.log,
+        onSave: names => this.task.tags = names,
+        selected: this.task.tags || [],
         allowSearch: true,
       }
     },
