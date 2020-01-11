@@ -623,7 +623,8 @@ export default {
       return new Promise(solve => {
         this.lazyHeadings = []
         let i = 0
-        const length = headings.filter(h => h.tasks && h.tasks.length > 0).length
+        const headinsgWithTasks = headings.filter(h => h.tasks && h.tasks.length > 0)
+        const length = headinsgWithTasks.length
         let timeout = this.isDesktop ? 155 : 230
 
         if (length < 5 || this.viewName === 'Upcoming') timeout = 20
@@ -633,12 +634,12 @@ export default {
           if ((i + 1) !== length)
             this.lazyHeadingsSetTimeouts.push(setTimeout(() => {
               i++
-              const h = headings[i]
+              const h = headinsgWithTasks[i]
               if (h) add(h)
             }, timeout))
           else solve()
         }
-        const h = headings[0]
+        const h = headinsgWithTasks[0]
         if (h) add(h)
         else solve()
       })

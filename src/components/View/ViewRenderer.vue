@@ -52,6 +52,7 @@
 
           @allow-someday='showSomeday = true'
           @root-non-filtered='getRootNonFilteredFromTaskHandler'
+          @save-schedule-object='saveScheduleObject'
 
           @present-tags='v => presentTags = v'
           @present-lists='v => presentLists = v'
@@ -174,9 +175,16 @@ export default {
         this.computedHeaderOptions = await this.getOptions(this.headerOptions)
       else this.computedHeaderOptions = []
     },
+    saveScheduleObject(obj) {
+      this.$emit('save-schedule', {
+        ...this.autoSchedule,
+        scheduleObject: obj,
+      })
+    },
     saveAutoSchedule(info) {
       this.autoSchedule = info
-      this.$emit('save-schedule', info)
+      if (info === null)
+        this.$emit('save-schedule', info)
     },
 
     selectPagination(newPage) {

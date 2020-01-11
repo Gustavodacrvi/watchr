@@ -60,6 +60,11 @@
               :value='pmFormat'
               @input="togglepmFormat"
             />
+            <!-- <CheckboxApp class="rb"
+              name='Group folder/list tasks in headings on smart views.'
+              :value='!ungroupTasksInHeadings'
+              @input="ungroupTasksInHeadings = !ungroupTasksInHeadings"
+            /> -->
             <h3 class="title">View</h3>
             <CheckboxApp class="rb"
               :name='l["Always open tag filters"]'
@@ -198,6 +203,7 @@ export default {
       hidedSections: [],
       hidedSmartViews: [],
       pmFormat: true,
+      ungroupTasksInHeadings: false,
       goToLastViewOnEnter: false,
       changedSection: false,
       forceUpdate: false,

@@ -233,6 +233,7 @@ export default {
 
 .Icon {
   position: relative;
+  display: inline-block;
 }
 
 .icon-title {

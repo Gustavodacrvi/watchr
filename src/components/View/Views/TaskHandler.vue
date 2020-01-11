@@ -57,9 +57,7 @@ export default {
     }
   },
   created() {
-    if (this.autoSchedule)
-      this.updateSchedule()
-    else this.scheduleObject = null
+    this.updateSchedule()
   },
   methods: {
     allowSomeday() {
@@ -91,6 +89,16 @@ export default {
       this.$parent.$emit('add-heading', {...obj})
     },
     updateSchedule() {
+      const schedule = this.autoSchedule
+      if (schedule) {
+        if (!schedule.scheduleObject)
+          this.createSchedule()
+        else
+          this.scheduleObject = schedule.scheduleObject
+      }
+      else this.scheduleObject = null
+    },
+    createSchedule() {
       if (!this.autoSchedule) return null
       
       const { time, buffer, fallback } = this.autoSchedule
@@ -158,6 +166,7 @@ export default {
       }
 
       this.scheduleObject = finalObj
+      this.$emit('save-schedule-object', finalObj)
     },
   },
   computed: {
@@ -411,9 +420,7 @@ export default {
     },
     autoSchedule: {
       handler() {
-        if (this.autoSchedule)
-          this.updateSchedule()
-        else this.scheduleObject = null
+        this.updateSchedule()
       },
       deep: true,
     }
