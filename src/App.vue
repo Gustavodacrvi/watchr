@@ -9,7 +9,7 @@
     <Toast/>
     <Menu class="menu" :class='{slideMenu: isMenuOpened && !isDesktop}'/>
     <transition name="fade-t">
-      <MobileIcondrop v-if="isIconDropOpened && !isDesktop"/>
+      <MobileIcondrop v-if="isIconDropOpened"/>
     </transition>
 
     <div class="content">

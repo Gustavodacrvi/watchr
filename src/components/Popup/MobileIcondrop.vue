@@ -4,6 +4,7 @@
       :options='iconDrop'
       :circle='true'
       :defaultShowing='true'
+      :center='true'
     />
   </div>
 </template>
