@@ -122,7 +122,7 @@ export default {
 
           arr.push({
             name: h.name,
-            id: h.name,
+            id: h.id,
             allowEdit: true,
             showHeadingName: false,
             notes: h.notes,
@@ -130,10 +130,9 @@ export default {
 
             onEdit: tasks => name => {
               this.$store.dispatch('list/saveHeadingName', {
+                name,
                 listId: viewList.id,
-                oldName: h.name,
-                newName: name,
-                tasksIds: tasks.map(el => el.id),
+                headingId: h.id,
               })
             },
             sort,
@@ -143,29 +142,29 @@ export default {
             },
             fallbackTask: (task, force) => {
               if (force || (!task.heading && !task.folder && task.list === viewList.id))
-                task.heading = h.name
+                task.heading = h.id
               task.tags = [...task.tags, ...this.listgetListTags.map(el => el.id)]
               return task
             },
 
             saveNotes: notes => {
               this.$store.dispatch('list/saveHeadingNotes', {
-                listId: viewList.id, notes, heading: h.name,
+                listId: viewList.id, notes, heading: h.id,
               })
             },
             updateIds: ids => {
               this.$store.dispatch('list/updateHeadingsTaskIds', {
-                name: h.name, listId: viewList.id, ids,
+                headingId: h.id, listId: viewList.id, ids,
               })
             },
             onAddTask: obj => {
               this.$store.dispatch('list/addTaskHeading', {
-                ...obj, name: obj.header.name, listId: viewList.id,
+                ...obj, headingId: h.id, listId: viewList.id,
               })
             },
             onSortableAdd: (evt, taskIds, type, ids) => {
               this.$store.dispatch('list/moveTasksBetweenHeadings', {
-                taskIds, ids, name: h.name, listId: viewList.id,
+                taskIds, ids, headingId: h.id, listId: viewList.id,
               })
             }
           })
@@ -253,11 +252,13 @@ export default {
     },
     headingEditOptions() {
       const list = this.viewList
-      if (list)
+      if (list) {
+        const headings = list.headings || []
         return {
-          excludeNames: list.headings.map(el => el.name),
+          excludeNames: headings.map(el => el.name),
           errorToast: "There's already another heading with this name.",
         }
+      }
       return null
     },
     getViewNotes() {

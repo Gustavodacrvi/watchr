@@ -15,17 +15,6 @@
           @mouseenter="onHover = true"
           @mouseleave="onHover = false"
         >
-          <div class='circle-trans-wrapper-wrapper'>
-            <div class="circle-trans-wrapper">
-              <transition
-                @enter='circleEnter'
-              >
-                <div v-if="showCircle" class="circle-trans-transition"
-                  :style="{left, top, backgroundImage: `radial-gradient(var(--light-gray), var(--gray))`}"
-                ></div>
-              </transition>
-            </div>
-          </div>
           <div class="header">
             <span :style="{color}">
               <Icon v-if="hasProgress" class="icon"
@@ -267,7 +256,6 @@ export default {
   margin-bottom: 10px;
   height: 40px;
   z-index: 50;
-  position: relative;
 }
 
 .cont {

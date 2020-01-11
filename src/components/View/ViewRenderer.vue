@@ -628,7 +628,7 @@ export default {
               arr.push({
                 name: h.name,
                 icon: 'heading',
-                callback: () => moveToList({list: list.id, heading: h.name})
+                callback: () => moveToList({list: list.id, heading: h.id})
               })
             }
             return arr

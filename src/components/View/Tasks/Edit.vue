@@ -69,7 +69,7 @@
               icon="heading"
               :value="task.heading"
               color='var(--primary)'
-              @click="task.heading = ''"
+              @click="removeHeading"
             />
           </div>
           <div class="tags" :class="{show}">
@@ -233,6 +233,7 @@ export default {
         notes: '',
         calendar: null,
         heading: null,
+        headingId: null,
         tags: [],
         checklist: [],
         order: [],
@@ -265,6 +266,10 @@ export default {
       if (t.files)
         this.task.files = t.files.slice()
       else this.task.files = []
+      if (t.heading) {
+        this.task.headingId = t.heading
+        this.task.heading = this.listHeadingName
+      }
 
       if (this.task.checklist)
         this.task.checklist = t.checklist.slice()
@@ -423,6 +428,7 @@ export default {
         if (t.folder) {
           this.task.list = ''
           this.task.heading = ''
+          this.task.headingId = ''
         }
         if (t.list) {
           this.task.folder = ''
@@ -433,7 +439,7 @@ export default {
         if (i && i > -1 && t.calendar) {
           n = n.substr(0, i)
         }
-        let heading = t.heading
+        let heading = t.headingId
         let calendar = t.calendar
         if (heading === undefined) heading = null
         if (calendar === undefined) calendar = null
@@ -483,6 +489,10 @@ export default {
     selectDuration(time) {
       if (time !== '00:00')
         this.task.taskDuration = time
+    },
+    removeHeading() {
+      this.task.heading = ''
+      this.task.headingId = ''
     },
   },
   computed: {
@@ -544,6 +554,15 @@ export default {
     listName() {
       if (this.task.list)
         return this.$store.getters['list/getListsById']([this.task.list])[0].name
+      return ''
+    },
+    listHeadingName() {
+      if (this.task.list && this.task.heading) {
+        const list = this.$store.getters['list/getListsById']([this.task.list])[0]
+        if (list.headings && list.headings.length > 0) {
+          return list.headings.find(head => head.id === this.task.heading).name
+        }
+      }
       return ''
     },
     folderName() {
@@ -614,6 +633,7 @@ export default {
             this.task.folder = el.name
             this.task.list = ''
             this.task.heading = ''
+            this.task.headingId = ''
           }
         })
       }
@@ -636,7 +656,10 @@ export default {
               arr.push({
                 name: h.name,
                 icon: 'heading',
-                callback: () => this.task.heading = h.name
+                callback: () => {
+                  this.task.headingId = h.id
+                  this.task.heading = h.name
+                }
               })
             }
             return arr
@@ -740,6 +763,7 @@ export default {
             this.task.folder = f.name
             this.task.list = ''
             this.task.heading = ''
+            this.task.headingId = ''
             break
           }
         }

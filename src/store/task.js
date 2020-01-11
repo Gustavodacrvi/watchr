@@ -600,7 +600,7 @@ export default {
       },
       isTaskInHeading: {
         getter({}, task, heading) {
-          return task.heading === heading.name
+          return task.heading === heading.id
         },
         cache(args) {
           return JSON.stringify({

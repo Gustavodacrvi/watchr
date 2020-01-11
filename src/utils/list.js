@@ -20,7 +20,7 @@ export default {
           dispatch('pushPopup', {
             comp: 'AddHeadingNote',
             payload: {
-              listId, heading: heading.name,
+              listId, heading: h.id,
             },
             naked: true
           })
@@ -34,14 +34,14 @@ export default {
             name: l['Uncomplete tasks'],
             icon: 'circle',
             callback: () => dispatch('list/uncompleteHeadingTasks', {
-              listId, name: h.name, savedTasks: store.state.task.tasks,
+              listId, headingId: h.id, savedTasks: store.state.task.tasks,
             })
           },
           {
             name: l['Duplicate heading'],
             icon: 'copy',
             callback: () => dispatch('list/duplicateHeading', {
-                listId, name: h.name, tasks: headingTasks.slice(),
+                listId, headingId: h.id, name, tasks: headingTasks.slice(),
               })
           },
           {
@@ -56,7 +56,7 @@ export default {
                   type: 'error',
                 })
               else dispatch('list/convertHeadingToList', {
-                  listId, name: h.name, taskIds: headingTasks.map(el => el.id)
+                  listId, headingId: h.id, taskIds: headingTasks.map(el => el.id)
                 })
             }
           },
@@ -65,7 +65,7 @@ export default {
             icon: 'trash',
             important: true,
             callback: () => dispatch('list/deleteHeadingFromList', {
-              listId, name: h.name, savedTasks: headingTasks,
+              listId, headingId: h.id, savedTasks: headingTasks,
             })
           },
         ]

@@ -74,7 +74,7 @@
       tag="div"
     >
       <template v-for="(h, i) in lazyHeadings">
-        <HeadingApp v-if="renderHeading(h)" :key="h.name"
+        <HeadingApp v-if="renderHeading(h)" :key="h.id"
           :header='h'
 
           v-bind="h"
@@ -623,7 +623,7 @@ export default {
       return new Promise(solve => {
         this.lazyHeadings = []
         let i = 0
-        const headinsgWithTasks = headings.filter(h => h.tasks && h.tasks.length > 0)
+        const headinsgWithTasks = this.showEmptyHeadings ? headings.slice() : headings.filter(h => h.tasks && h.tasks.length > 0)
         const length = headinsgWithTasks.length
         let timeout = this.isDesktop ? 155 : 230
 
