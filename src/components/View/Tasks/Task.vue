@@ -108,22 +108,23 @@
                 <div class="task-name-wrapper">
                   <transition name="name-t">
                     <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
-                        <span v-html="parsedName"></span>
-                        <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
-                        <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
+                      <span v-html="parsedName"></span>
+                      <Icon v-if="haveChecklist"
+                        class="txt-icon checklist-icon"
+                        icon="pie"
+                        color="var(--gray)"
+                        width="12px"
+                        :progress='checklistPieProgress'
+                      />
+                      <Icon v-if="hasTags" class="txt-icon" icon="tag" color="var(--gray)" width="14px"/>
+                      <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
+                      <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
                     </span>
                     <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
                   </transition>
                 </div>
               </div>
               <span class="info" ref='info'>
-                <Icon v-if="haveChecklist"
-                  class="txt-icon checklist-icon"
-                  icon="pie"
-                  color="var(--gray)"
-                  width="18px"
-                  :progress='checklistPieProgress'
-                />
                 <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
                 <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
                 <Icon v-else-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
@@ -523,14 +524,8 @@ export default {
     haveFiles() {
       return this.task.files && this.task.files.length > 0
     },
-    taskTags() {
-      const ts = this.savedTags
-      const arr = []
-      for (const id of this.task.tags) {
-        const tag = ts.find(el => el.id === id)
-        if (tag && !this.activeTags.includes(tag.name)) arr.push(tag)
-      }
-      return arr
+    hasTags() {
+      return this.task.tags && this.task.tags.length > 0
     },
     folderOptions() {
       const links = []
@@ -905,7 +900,7 @@ export default {
 }
 
 .txt-icon {
-  margin-left: 6px;
+  margin-left: 12px;
 }
 
 .desktop .cont-wrapper.doneTransition:hover, .desktop .cont-wrapper:active {
@@ -970,7 +965,7 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transform: translateY(1px);
+  transform: translateY(-1px);
 }
 
 .task-name {
@@ -1023,7 +1018,7 @@ export default {
 }
 
 .checklist-icon {
-  transform: translate(-9px, 1px);
+  transform: translateY(1px);
 }
 
 .sortable-selected .cont-wrapper {

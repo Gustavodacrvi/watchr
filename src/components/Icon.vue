@@ -98,6 +98,8 @@ import layerGroup from '@/assets/icons/layer-group.svg'
 import boxCheck from '@/assets/icons/box-check.svg'
 import calendarStar from '@/assets/icons/calendar-star.svg'
 import circleFilled from '@/assets/icons/circle-filled.svg'
+import circleDash from '@/assets/icons/circle-dash.svg'
+import circleCheckDash from '@/assets/icons/circle-check-dash.svg'
 import boxCheckDash from '@/assets/icons/box-check-dash.svg'
 
 import { mapGetters } from 'vuex'
@@ -118,6 +120,8 @@ export default {
         folder, heart, close, filter, magic, clock,
         pomo, pie,
         "box-dash": boxDash,
+        "circle-dash": circleDash,
+        "circle-check-dash": circleCheckDash,
         "layer-group": layerGroup,
         "circle-filled": circleFilled,
         "box-check-dash": boxCheckDash,
