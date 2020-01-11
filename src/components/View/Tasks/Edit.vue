@@ -292,11 +292,11 @@ export default {
   },
   methods: {
     saveChecklist() {
-      if (this.task.checklist)
+      if (this.defaultTask && this.task.checklist)
         this.$store.dispatch('task/saveTask', {
           id: this.task.id,
-          checklist: this.task.checklist,
-          order: this.task.order,
+          checklist: this.task.checklist || [],
+          order: this.task.order || [],
         })
     },
     remove(evt) {

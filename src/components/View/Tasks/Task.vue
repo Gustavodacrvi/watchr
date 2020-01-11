@@ -678,7 +678,17 @@ export default {
                 {
                   name: l['Convert to list'],
                   icon: 'tasks',
-                  callback: () => dispatch('task/convertToList', {task: this.task, savedLists: this.savedLists})
+                  callback: () => {
+                    const existingList = this.savedLists.find(l => l.name === this.task.name)
+                    if (existingList)
+                      this.$store.commit('pushToast', {
+                        name: 'There is already another list with this name.',
+                        seconds: 3,
+                        type: 'error',
+                      })
+                    else
+                      dispatch('task/convertToList', {task: this.task, savedLists: this.savedLists})
+                  }
                 },
               ]
             },

@@ -43,9 +43,11 @@ import { mapGetters } from 'vuex'
 
 import mom from 'moment'
 
+import Tag from './../../Tag.vue'
+
 export default {
   components: {
-    HeaderInfo,
+    HeaderInfo, Tag,
   },
   props: ['headerTags', 'headerDates', 'headerCalendar'],
   methods: {
