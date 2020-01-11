@@ -79,12 +79,11 @@ export default {
   height: 110px;
   border-radius: 16px;
   position: relative;
-  overflow: hidden;
 }
 
 .progress-line {
   position: absolute;
-  top: 0;
+  top: 1px;
   left: 0;
   width: 100%;
   height: 4px;

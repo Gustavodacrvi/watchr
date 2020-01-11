@@ -19,8 +19,6 @@ let savedVolume = localStorage.getItem('pomo_volume')
 if (!savedVolume)
   savedVolume = .5
 
-console.log(savedVolume)
-
 const parsedVol = JSON.parse(savedVolume)
 
 tickSound.volume = parsedVol

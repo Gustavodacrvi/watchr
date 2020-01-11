@@ -292,9 +292,10 @@ export default {
           date = mom().add(1, 'd').format('Y-M-D')
         else if (n === 'Calendar')
           date = this.calendarDate || null
-
-        if (date)
-          return (this.calendarOrders[date] && this.calendarOrders[date].schedule)
+        
+        const schedule = (this.calendarOrders[date] && this.calendarOrders[date].schedule)
+        if (date && schedule)
+          return {...schedule}
       }
       return null
     },

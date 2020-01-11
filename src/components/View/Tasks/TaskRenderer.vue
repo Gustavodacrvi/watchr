@@ -211,12 +211,11 @@ export default {
   },
   methods: {
     mousemove(evt) {
-      // showHeadadingFloatingButton
       if (this.movingButton) {
         const obj = {
-          'action-heading': document.getElementById('action-heading').style,
-          create: document.getElementById('create').style,
-          add: document.getElementById('add').style,
+          'action-heading': document.querySelector('.TaskRenderer .action-heading').style,
+          create: document.querySelector('.TaskRenderer .create').style,
+          add: document.querySelector('.TaskRenderer .add').style,
         }
         
         const { left, width } = this.$el.getBoundingClientRect()
@@ -640,7 +639,7 @@ export default {
           else solve()
         }
         const h = headings[0]
-        if (h && h.tasks.length > 0) add(h)
+        if (h) add(h)
         else solve()
       })
     },

@@ -158,11 +158,11 @@ export default {
     }
   },
   created() {
-    this.autoSchedule = this.savedSchedule
     this.getComputedOptions()
     this.showingTagSelection = localStorage.getItem('tagFilters') === 'true'
     this.showingFolderSelection = localStorage.getItem('folderFilters') === 'true'
     this.showingListSelection = localStorage.getItem('listFilters') === 'true'
+    this.autoSchedule = this.savedSchedule
   },
   mounted() {
     this.getComputedOptions()

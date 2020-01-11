@@ -10,12 +10,12 @@
       </div>
     </div>
     <div class="act-button-wrapper" :style='styles'>
-      <div class="heading cont side" id="action-heading">
+      <div class="heading cont side action-heading">
         <div class="floating-btn-msg task-act no-pointer">
           {{ l['Heading'] }}
         </div>
       </div>
-      <div class="main cont" id="create">
+      <div class="main cont create">
         <div class="floating-btn-msg task-act no-pointer">
           {{ txt }}
         </div>
@@ -26,7 +26,7 @@
           {{ l["Add list"] }}
         </div>
       </div>
-      <div class="existing side cont" id="add">
+      <div class="existing side cont add">
         <div class="floating-btn-msg task-act no-pointer">
           {{ l['Add'] }}
         </div>

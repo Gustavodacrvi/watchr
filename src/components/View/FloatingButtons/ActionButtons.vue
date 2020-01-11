@@ -137,7 +137,7 @@ export default {
 }
 
 .act-button-wrapper .cont {
-  display: flex !important;
+  display: flex;
   justify-content: center !important;
   align-items: center !important;
   height: 100%;
