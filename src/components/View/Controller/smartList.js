@@ -160,6 +160,8 @@ export default {
     },
     rootFilter() {
       const n = this.viewName
+      if (this.isCalendarOrderViewType && this.ungroupTasksInHeadings)
+        return () => true
       if (this.viewType === 'search')
         return () => true
       if (n === 'Calendar')
@@ -208,6 +210,8 @@ export default {
       }
     },
     headings() {
+      if (this.isCalendarOrderViewType && this.ungroupTasksInHeadings) 
+        return []
       switch (this.viewName) {
         case 'Upcoming': return this.upcomingHeadingsOptions
         case 'Today': {

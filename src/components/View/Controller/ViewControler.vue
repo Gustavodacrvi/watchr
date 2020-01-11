@@ -633,6 +633,9 @@ export default {
       return this.viewType === 'list' && this.isSmart &&
         (n === 'Someday' || n === 'Anytime' || n === 'Inbox')
     },
+    ungroupTasksInHeadings() {
+      return this.userInfo.ungroupTasksInHeadings
+    },
     isCalendarOrderViewType() {
       const n = this.viewName
       return this.viewType === 'list' && this.isSmart && 
