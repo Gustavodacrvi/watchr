@@ -5,7 +5,7 @@
     @enter='taskEnter'
     @beforeLeave='taskLeave'
   >
-    <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing}, platform]"
+    <div class="Task draggable" :class="[{fade, isTaskSelected, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing, isTaskMainSelection}, platform]"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
       @click="rootClick"
@@ -34,7 +34,7 @@
       </div>
       <div
         class="cont-wrapper task-handle rb"
-        :class='{doneTransition, isTaskMainSelection}'
+        :class='{doneTransition}'
         ref="cont-wrapper"
         :style="{right: right + 'px'}"
 
@@ -209,8 +209,22 @@ export default {
 
       switch (key) {
         case 'Enter': {
-          if (!this.justSaved)
+          if (!this.isOnControl && !this.justSaved)
             this.isEditing = true
+          else if (this.isOnControl) {
+            if (!this.isTaskSelected) {
+              if (this.selectedTasks.length === 0) {
+                this.selectTask()
+                setTimeout(() => {
+                  this.selectTask()
+                })
+              } else {
+                this.selectTask()
+              }
+            } else {
+              this.deselectTask()
+            }
+          }
           break
         }
         case ' ': {
@@ -985,7 +999,7 @@ export default {
   background-color: var(--light-gray);
 }
 
-.isTaskMainSelection {
+.isTaskMainSelection .cont-wrapper {
   background-color: var(--light-gray);
 }
 
@@ -1103,13 +1117,18 @@ export default {
   transform: translateY(1px);
 }
 
-.sortable-selected .cont-wrapper {
+.isTaskSelected .cont-wrapper {
   background-color: rgba(53, 73, 90, 0.6) !important;
   box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
   transition: background-color .8s !important;
 }
 
-.sortable-selected .back {
+.isTaskSelected.isTaskMainSelection .cont-wrapper,
+.isTaskSelected:hover .cont-wrapper {
+  background-color: rgba(53, 73, 90, 0.9) !important;
+}
+
+.isTaskSelected .back {
   opacity: 0;
   transition-delay: 0s;
 }

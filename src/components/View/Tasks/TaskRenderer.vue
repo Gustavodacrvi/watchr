@@ -166,6 +166,7 @@ export default {
       lazyTasksSetTimeouts: [],
       lazyHeadingsSetTimeouts: [],
       lazyHeadings: [],
+      selectedElements: [],
       changedViewName: true,
       isDragging: false,
       justScrolled: false,
@@ -684,12 +685,22 @@ export default {
       }
     },
     selectTask(el) {
+      this.selectedElements.push(el)
       this.$store.commit('selectTask', el.dataset.id)
       Sortable.utils.select(el)
     },
     deSelectTask(el) {
       this.$store.commit('unselectTask', el.dataset.id)
       Sortable.utils.deselect(el)
+
+      const i = this.selectedElements.findIndex(el => el === el)
+      if (i > -1)
+        this.selectedElements.splice(i, 1)
+    },
+    windowClick() {
+      for (const el of this.selectedElements)
+        this.deSelectTask(el)
+      this.$store.commit('clearSelected')
     },
     fallbackTask(task, force) {
       let t = this.mainFallbackTask(task, force)
@@ -799,9 +810,6 @@ export default {
           }
         }
       }
-    },
-    windowClick() {
-      this.$store.commit('clearSelected')
     },
     clearLazySettimeout() {
       for (const set of this.lazyTasksSetTimeouts)
