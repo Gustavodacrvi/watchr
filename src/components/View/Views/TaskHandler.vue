@@ -9,6 +9,7 @@
 
       :headings='sortHeadings'
       :scheduleObject='scheduleObject'
+      :mainSelection='mainSelection'
 
       :addTask='addTask'
       :showSomedayButton='showSomedayButton'
@@ -54,12 +55,59 @@ export default {
   data() {
     return {
       scheduleObject: null,
+      
+      mainSelection: null,
+      mainSelectionIndex: null,
     }
   },
   created() {
     this.updateSchedule()
+
+    window.addEventListener('keydown', this.keydown)
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.keydown)
   },
   methods: {
+    keydown(evt) {
+      const p = () => evt.preventDefault()
+      const {key} = evt
+      switch (key) {
+        case 'ArrowDown': {
+          this.go(true)
+          p()
+          break
+        }
+        case 'ArrowUp': {
+          this.go(false)
+          p()
+          break
+        }
+      }
+    },
+    select(i) {
+      const ids = this.allViewTasksIds
+
+      if (ids[i]) {
+        this.mainSelection = ids[i]
+        this.mainSelectionIndex = i
+        return true
+      }
+      return false
+    },
+    go(dire) {
+      const ids = this.allViewTasksIds
+      
+      if (this.mainSelection) {
+        if (dire === true || dire === false)
+          this.select(this.mainSelectionIndex + (dire === true ? 1 : -1))
+        else
+          this.select(dire)  
+      } else if (dire > 0)
+        this.select(0)
+      else
+        this.select(ids.length - 1)
+    },
     allowSomeday() {
       this.$emit('allow-someday')
     },
@@ -188,6 +236,9 @@ export default {
       return [...this.sortLaseredTasks,...this.sortHeadings.map(
         head => head.tasks
       ).flat()]
+    },
+    allViewTasksIds() {
+      return this.allViewTasks.map(el => el.id)
     },
     allNonFilteredViewTasks() {
       return [...this.rootNonFiltered,...this.sortHeadings.map(

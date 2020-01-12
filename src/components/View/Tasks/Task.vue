@@ -34,7 +34,7 @@
       </div>
       <div
         class="cont-wrapper task-handle rb"
-        :class='{doneTransition}'
+        :class='{doneTransition, isTaskMainSelection}'
         ref="cont-wrapper"
         :style="{right: right + 'px'}"
 
@@ -149,7 +149,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName',
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName', 'mainSelection',
   'isSelecting'],
   components: {
     Timeline,
@@ -724,6 +724,9 @@ export default {
       if (this.viewName === 'Overdue') return false
       return false
     },
+    isTaskMainSelection() {
+      return this.task.id === this.mainSelection
+    },
     isToday() {
       if (this.viewName === 'Today' || this.viewName === 'Calendar') return false
       return this.isTaskInView(this.task, 'Today')
@@ -853,6 +856,7 @@ export default {
   background-color: var(--back-color);
   z-index: 5;
   transition-duration: .25s;
+  transition: background-color .2s !important;
 }
 
 .cont-wrapper-wrapper {
@@ -900,6 +904,10 @@ export default {
 }
 
 .desktop .cont-wrapper.doneTransition:hover, .desktop .cont-wrapper:active {
+  background-color: var(--light-gray);
+}
+
+.isTaskMainSelection {
   background-color: var(--light-gray);
 }
 

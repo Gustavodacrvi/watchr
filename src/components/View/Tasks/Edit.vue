@@ -621,7 +621,7 @@ export default {
       return {
         links: arr,
         select: true,
-        onSave: names => this.task.tags = names,
+        onSave: names => this.task.tags = names.slice(),
         selected: this.task.tags || [],
         allowSearch: true,
       }
