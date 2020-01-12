@@ -393,7 +393,7 @@ export default {
     },
     completeTask() {
       const {t,c} = this.getTask
-      if (!this.completed || (c && c.type === 'periodic' || c && c.type === 'weekly'))
+      if (!this.completed)
         this.$store.dispatch('task/completeTasks', [this.task])
       else this.$store.dispatch('task/uncompleteTasks', [this.task])
     },

@@ -109,6 +109,13 @@ export default {
               this.selectEverythingToggle = false
             })
           }
+          case '.': {
+            const tasks = this.getTasksById(this.selectedTasks)
+            const completed = tasks.filter(t => t.completed)
+            const uncompleted = tasks.filter(t => !t.completed)
+            this.$store.dispatch('task/completeTasks', uncompleted)
+            this.$store.dispatch('task/uncompleteTasks', completed)
+          }
         }
       }
 
@@ -268,6 +275,7 @@ export default {
   computed: {
     ...mapState({
       storeTasks: state => state.task.tasks,
+      selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
@@ -276,6 +284,7 @@ export default {
       l: 'l',
       isTaskSomeday: 'task/isTaskSomeday',
       isTaskCompleted: 'task/isTaskCompleted',
+      getTasksById: 'task/getTasksById',
 
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
     }),
@@ -507,6 +516,10 @@ export default {
     },
   },
   watch: {
+    viewName() {
+      this.mainSelection = null
+      this.mainSelectionIndex = null
+    },
     presentTags() {
       this.$emit('present-tags', this.presentTags)
     },
