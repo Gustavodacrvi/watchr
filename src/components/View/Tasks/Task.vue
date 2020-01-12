@@ -242,9 +242,16 @@ export default {
               this.editAction = 'addChecklist'
             }
             break
-          }          
+          }
+          case "D": {
+            this.copyTask()
+            break
+          }
         }
       }
+    },
+    copyTask() {
+      this.$store.dispatch('task/copyTask', this.task)
     },
     enter(el) {
       if (!this.isEditing) {
@@ -728,7 +735,7 @@ export default {
             {
               name: l['Copy task'],
               icon: 'copy',
-              callback: () => dispatch('task/copyTask', this.task)
+              callback: () => this.copyTask()
             },
             {
               name: l['Lists'],
