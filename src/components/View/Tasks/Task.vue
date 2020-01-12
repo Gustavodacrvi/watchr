@@ -197,11 +197,18 @@ export default {
         else
           window.removeEventListener('keydown', this.mainSelectionKeyDown)
     },
-    mainSelectionKeyDown({key}) {
+    mainSelectionKeyDown(evt) {
+      const p = () => evt.preventDefault()
+      const {key} = evt
       switch (key) {
         case 'Enter': {
           if (!this.justSaved)
             this.isEditing = true
+          break
+        }
+        case ' ': {
+          p()
+          this.$emit('add-task-after-selection')
           break
         }
       }

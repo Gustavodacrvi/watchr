@@ -10,6 +10,7 @@
       :headings='sortHeadings'
       :scheduleObject='scheduleObject'
       :mainSelection='mainSelection'
+      :mainSelectionIndex='mainSelectionIndex'
 
       :addTask='addTask'
       :showSomedayButton='showSomedayButton'
