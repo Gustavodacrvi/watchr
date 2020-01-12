@@ -87,12 +87,16 @@ export default {
       this.$store.commit('unpressKey')
       if (key === 'Control')
         this.$store.commit('toggleControl', false)
+      if (key === "Shift")
+        this.$store.commit('toggleShift', false)
     },
     keydown({key}) {
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
       if (!isTyping && key === 'Control')
         this.$store.commit('toggleControl', true)
+      if (!isTyping && key === "Shift")
+        this.$store.commit('toggleShift', true)
       if (!isTyping) this.$store.dispatch('pushKeyShortcut', key)
     },
     closePopup(persistOnTheSameView) {

@@ -23,6 +23,7 @@
       @update="updateIds"
       @add-heading="addHeading"
       @allow-someday='allowSomeday'
+      @go='go'
     />
   </div>
 </template>
@@ -60,9 +61,6 @@ export default {
       
       mainSelection: null,
       mainSelectionIndex: null,
-
-      keydownSettimeout: null,
-      lastKeys: [],
     }
   },
   created() {
@@ -77,17 +75,21 @@ export default {
     keydown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
+      if (!this.mainSelection) {
+        switch (key) {
+          case 'ArrowDown': {
+            this.go(true)
+            p()
+            break
+          }
+          case 'ArrowUp': {
+            this.go(false)
+            p()
+            break
+          }
+        }
+      }
       switch (key) {
-        case 'ArrowDown': {
-          this.go(true)
-          p()
-          break
-        }
-        case 'ArrowUp': {
-          this.go(false)
-          p()
-          break
-        }
         case 'ArrowLeft': {
           this.go(null)
           break
@@ -98,26 +100,8 @@ export default {
         }
       }
 
-      if (this.keydownSettimeout)
-        clearTimeout(this.keydownSettimeout)
-
-      this.lastKeys.push(key)
-      this.keydownSettimeout = setTimeout(() => this.lastKeys = [], 200)
-
-      const mustSelect = (toBeSelected, callback) => {
-        const keys = this.lastKeys.slice()
-        if (keys.length === 2 && keys.includes(toBeSelected)) {
-          p()
-          let k
-          for (const ke of keys)
-            if (ke !== "Shift")
-              k = ke
-          callback(k)
-        }
-      }
-
-      mustSelect('Control', k => {
-        switch (k) {
+      if (this.isOnControl && !this.isOnShift) {
+        switch (key) {
           case "ArrowUp": {
             this.go(0)
             break
@@ -127,7 +111,7 @@ export default {
             break
           }
         }
-      })
+      }
     },
     select(i) {
       if (i === null) {
@@ -273,6 +257,8 @@ export default {
     ...mapState({
       storeTasks: state => state.task.tasks,
       userInfo: state => state.userInfo,
+      isOnControl: state => state.isOnControl,
+      isOnShift: state => state.isOnShift,
     }),
     ...mapGetters({
       l: 'l',

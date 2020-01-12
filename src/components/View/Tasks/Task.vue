@@ -177,8 +177,6 @@ export default {
       justSaved: false,
       doneTransition: false,
 
-      keydownSettimeout: null,
-      lastKeys: [],
       editAction: null,
     }
   },
@@ -207,23 +205,37 @@ export default {
       const p = () => evt.preventDefault()
       const {key} = evt
 
+      const toggleSelect = () => {
+        if (!this.isTaskSelected) {
+          if (this.selectedTasks.length === 0) {
+            this.selectTask()
+            setTimeout(() => {
+              this.selectTask()
+            })
+          } else {
+            this.selectTask()
+          }
+        } else {
+          this.deselectTask()
+        }
+      }
+
       switch (key) {
+        case 'ArrowDown': {
+          this.$parent.$emit('go', true)
+          p()
+          break
+        }
+        case 'ArrowUp': {
+          this.$parent.$emit('go', false)
+          p()
+          break
+        }
         case 'Enter': {
           if (!this.isOnControl && !this.justSaved)
             this.isEditing = true
           else if (this.isOnControl) {
-            if (!this.isTaskSelected) {
-              if (this.selectedTasks.length === 0) {
-                this.selectTask()
-                setTimeout(() => {
-                  this.selectTask()
-                })
-              } else {
-                this.selectTask()
-              }
-            } else {
-              this.deselectTask()
-            }
+            toggleSelect()
           }
           break
         }
@@ -234,26 +246,8 @@ export default {
         }
       }
 
-      if (this.keydownSettimeout)
-        clearTimeout(this.keydownSettimeout)
-
-      this.lastKeys.push(key)
-      this.keydownSettimeout = setTimeout(() => this.lastKeys = [], 200)
-
-      const mustSelect = (toBeSelected, callback) => {
-        const keys = this.lastKeys.slice()
-        if (keys.length === 2 && keys.includes(toBeSelected)) {
-          p()
-          let k
-          for (const ke of keys)
-            if (ke !== "Shift")
-              k = ke
-          callback(k)
-        }
-      }
-
-      mustSelect('Shift', k => {
-        switch (k) {
+      if (this.isOnShift) {
+        switch (key) {
           case "C": {
             if (!this.isEditing) {
               this.isEditing = true
@@ -266,7 +260,20 @@ export default {
             break
           }
         }
-      })
+      }
+
+      if (this.isOnShift && this.isOnControl) {
+        switch (key) {
+          case "ArrowUp": {
+            toggleSelect()
+            break
+          }
+          case "ArrowDown": {
+            toggleSelect()
+            break
+          }
+        }
+      }
     },
     copyTask() {
       this.$store.dispatch('task/copyTask', this.task)
@@ -550,6 +557,7 @@ export default {
   computed: {
     ...mapState({
       isOnControl: state => state.isOnControl,
+      isOnShift: state => state.isOnShift,
       selectedEls: state => state.selectedEls,
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,

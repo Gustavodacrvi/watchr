@@ -104,6 +104,7 @@ const store = new Vuex.Store({
     firstFireLoad: false,
     selectedTasks: [],
     isOnControl: false,
+    isOnShift: false,
     fireBaseFirstLoaded: false,
     authState: false,
     fileURL: null,
@@ -306,6 +307,9 @@ const store = new Vuex.Store({
     toggleControl(state, clicked) {
       state.isOnControl = clicked
     },
+    toggleShift(state, clicked) {
+      state.isOnShift = clicked
+    }
   },
   actions: {
     getOptions(context, options) {
