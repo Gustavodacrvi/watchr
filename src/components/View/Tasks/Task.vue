@@ -121,6 +121,8 @@
               :defaultTask='task'
               :taskHeight='taskHeight'
               :showCancel='true'
+              :editAction='editAction'
+              @done-action='editAction = null'
               @cancel='isEditing = false'
               @save='saveTask'
             />
@@ -174,6 +176,10 @@ export default {
       justCompleted: false,
       justSaved: false,
       doneTransition: false,
+
+      keydownSettimeout: null,
+      lastKeys: [],
+      editAction: null,
     }
   },
   mounted() {
@@ -200,6 +206,7 @@ export default {
     mainSelectionKeyDown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
+
       switch (key) {
         case 'Enter': {
           if (!this.justSaved)
@@ -210,6 +217,32 @@ export default {
           p()
           this.$emit('add-task-after-selection')
           break
+        }
+      }
+
+      if (this.keydownSettimeout)
+        clearTimeout(this.keydownSettimeout)
+
+      this.lastKeys.push(key)
+      this.keydownSettimeout = setTimeout(() => this.lastKeys = [], 200)
+      const keys = this.lastKeys.slice()
+      
+      if (keys.length === 2 && keys.includes('Shift')) {
+        p()
+        let k
+        for (const ke of keys)
+          if (ke !== "Shift")
+            k = ke
+
+        console.log(k)
+        switch (k) {
+          case "C": {
+            if (!this.isEditing) {
+              this.isEditing = true
+              this.editAction = 'addChecklist'
+            }
+            break
+          }          
         }
       }
     },
