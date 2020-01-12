@@ -222,12 +222,12 @@ export default {
 
       switch (key) {
         case 'ArrowDown': {
-          this.$parent.$emit('go', true)
+          this.$emit('go', true)
           p()
           break
         }
         case 'ArrowUp': {
-          this.$parent.$emit('go', false)
+          this.$emit('go', false)
           p()
           break
         }

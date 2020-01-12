@@ -26,6 +26,7 @@
           @de-select='deSelectTask'
           @select='selectTask'
           @add-task-after-selection='addTaskAfterSelection'
+          @go='moveTaskHandlerSelection'
 
           :data-id='item.id'
           :data-name='item.name'
@@ -109,6 +110,7 @@
             :onSortableAdd='h.onSortableAdd'
             @add-heading='(obj) => $emit("add-heading", obj)'
             @update="ids => updateHeadingTaskIds(h,ids)"
+            @go='moveTaskHandlerSelection'
 
             :header="h"
             :addTask="h.onAddTask"
@@ -212,6 +214,9 @@ export default {
     }
   },
   methods: {
+    moveTaskHandlerSelection(bool) {
+      this.$emit('go', bool)
+    },
     mousemove(evt) {
       if (this.movingButton) {
         const obj = {

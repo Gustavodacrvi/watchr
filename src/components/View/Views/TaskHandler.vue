@@ -118,6 +118,38 @@ export default {
           }
         }
       }
+      if (this.isOnShift) {
+        const save = task => {
+          this.$store.dispatch('task/saveTasksById', {
+              ids: this.selectedTasks,
+              task,
+            })
+        }
+        
+        switch (key) {
+          case 'S': {
+            save({
+              calendar: {
+                type: 'someday'
+              }
+            })
+            break
+          }
+          case 'T': {
+            const TOD_STR = mom().format('Y-M-D')
+            save({
+              calendar: {
+                type: 'specific',
+                editDate: TOD_STR,
+                begins: TOD_STR,
+          
+                specific: TOD_STR,
+              }
+            })
+            break
+          }
+        }
+      }
 
       if (this.isOnControl && !this.isOnShift) {
         switch (key) {

@@ -45,7 +45,7 @@ export default {
         }
       ]
     },
-    getSpecificDayCalendarObj: () => (moment, cal) => {
+    getSpecificDayCalendarObj: () => moment => {
       const obj = {
   
         type: 'specific',
@@ -53,11 +53,6 @@ export default {
         begins: mom().format('Y-M-D'),
   
         specific: moment.format('Y-M-D'),
-      }
-      if (cal) {
-        obj.time = cal.time
-        obj.times = cal.times
-        obj.persistent = cal.persistent
       }
       return obj
     },
@@ -898,7 +893,7 @@ export default {
         ...task, files: [],
       })
     },
-    handleTasksByAppnavElementDragAndDrop({dispatch, getters}, {elIds, taskIds, type}) {
+    handleTasksByAppnavElementDragAndDrop({dispatch, getters, rootState}, {elIds, taskIds, type}) {
       const calObj = (mom) => {
         return getters.getSpecificDayCalendarObj(mom)
       }

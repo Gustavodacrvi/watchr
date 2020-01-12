@@ -333,19 +333,20 @@ const store = new Vuex.Store({
         dispatch('pushPopup', {comp, naked: true})
       }
       state.pressingKey = key
-      switch (key.toLowerCase()) {
-        case 'q': pop('AddTask'); break
-        case 't': pop('AddTag'); break
-        case 'l': pop('AddList'); break
-        case 'f': pop('FastSearch'); break
-        case 'delete': {
-          if (state.selectedTasks.length > 0) {
-            dispatch('task/deleteTasks', state.selectedTasks)
-            state.selectedTasks = []
+      if (!state.isOnControl && !state.isOnShift)
+        switch (key.toLowerCase()) {
+          case 'q': pop('AddTask'); break
+          case 't': pop('AddTag'); break
+          case 'l': pop('AddList'); break
+          case 'f': pop('FastSearch'); break
+          case 'delete': {
+            if (state.selectedTasks.length > 0) {
+              dispatch('task/deleteTasks', state.selectedTasks)
+              state.selectedTasks = []
+            }
+            break
           }
-          break
         }
-      }
     },
     pushPopup({state, getters}, popup) {
       state.popup = popup
