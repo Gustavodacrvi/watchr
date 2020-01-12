@@ -5,7 +5,7 @@
     @enter='taskEnter'
     @beforeLeave='taskLeave'
   >
-    <div class="Task draggable" :class="[{fade, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing}, platform]"
+    <div class="Task draggable" :class="[{fade, isTaskSelected, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing, isTaskMainSelection}, platform]"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
       @click="rootClick"
@@ -71,36 +71,13 @@
                 @touchend.passive='touchComplete'
                 :class="{changeColor}"
               >
-                <template v-if='!isSelecting'>
-                  <Icon v-if="!showCheckedIcon" :circle='true' class="icon check-icon cursor remove-highlight"
-                    :icon="`box${isSomeday ? '-dash' : ''}`"
-                    :color='circleColor'
-                    :stop='true'
-                    width="20px"
-                    @click="desktopComplete"
-                  />
-                  <Icon v-else :circle='true' class="icon check-icon cursor remove-highlight"
-                    :icon="`box-check${isSomeday ? '-dash' : ''}`"
-                    :color='circleColor'
-                    width="20px"
-                    :stop='true'
-                    @click="desktopComplete"
-                  />
-                </template>
-                <template v-else>
-                  <Icon v-if="!isTaskSelected" :circle='true' class="icon check-icon cursor remove-highlight"
-                    icon="circle"
-                    :color='circleColor'
-                    :stop='true'
-                    width="20px"
-                  />
-                  <Icon v-else :circle='true' class="icon check-icon cursor remove-highlight"
-                    icon="circle-filled"
-                    :color='circleColor'
-                    width="20px"
-                    :stop='true'
-                  />
-                </template>
+                <Icon :circle='true' class="icon check-icon cursor remove-highlight"
+                  :icon="getTaskIcon"
+                  :color='circleColor'
+                  :stop='true'
+                  width="20px"
+                  @click="desktopComplete"
+                />
               </div>
               <div class="text"
                 :class="{changeColor}"
@@ -108,22 +85,23 @@
                 <div class="task-name-wrapper">
                   <transition name="name-t">
                     <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
-                        <span v-html="parsedName"></span>
-                        <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
-                        <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
+                      <span v-html="parsedName"></span>
+                      <Icon v-if="haveChecklist"
+                        class="txt-icon checklist-icon"
+                        icon="pie"
+                        color="var(--gray)"
+                        width="12px"
+                        :progress='checklistPieProgress'
+                      />
+                      <Icon v-if="hasTags" class="txt-icon" icon="tag" color="var(--gray)" width="14px"/>
+                      <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
+                      <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
                     </span>
                     <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
                   </transition>
                 </div>
               </div>
               <span class="info" ref='info'>
-                <Icon v-if="haveChecklist"
-                  class="txt-icon checklist-icon"
-                  icon="pie"
-                  color="var(--gray)"
-                  width="18px"
-                  :progress='checklistPieProgress'
-                />
                 <Icon v-if="isTomorrow" class="name-icon" icon="sun" color="var(--orange)"/>
                 <Icon v-else-if="isToday" class="name-icon" icon="star" color="var(--yellow)"/>
                 <Icon v-else-if="isTaskOverdue" class="name-icon" icon="star" color="var(--red)"/>
@@ -143,9 +121,10 @@
               :defaultTask='task'
               :taskHeight='taskHeight'
               :showCancel='true'
+              :editAction='editAction'
+              @done-action='editAction = null'
               @cancel='isEditing = false'
               @save='saveTask'
-
             />
           </div>
         </transition>
@@ -171,7 +150,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName',
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName', 'mainSelection', 'selectEverythingToggle',
   'isSelecting'],
   components: {
     Timeline,
@@ -195,7 +174,10 @@ export default {
       timeout: null,
       changeColor: false,
       justCompleted: false,
+      justSaved: false,
       doneTransition: false,
+
+      editAction: null,
     }
   },
   mounted() {
@@ -203,11 +185,99 @@ export default {
       this.bindContextMenu(this.options)
 
     window.addEventListener('click', this.deselectTask)
+
+    this.bindMainSelection()
   },
   beforeDestroy() {
     window.removeEventListener('click', this.deselectTask)
+    if (this.isTaskMainSelection)
+      window.removeEventListener('keydown', this.mainSelectionKeyDown)
   },
   methods: {
+    bindMainSelection() {
+      if (this.isDesktop)
+        if (this.isTaskMainSelection)
+          window.addEventListener('keydown', this.mainSelectionKeyDown)
+        else
+          window.removeEventListener('keydown', this.mainSelectionKeyDown)
+    },
+    mainSelectionKeyDown(evt) {
+      const p = () => evt.preventDefault()
+      const {key} = evt
+
+      const toggleSelect = () => {
+        if (!this.isTaskSelected) {
+          if (this.selectedTasks.length === 0) {
+            this.selectTask()
+            setTimeout(() => {
+              this.selectTask()
+            })
+          } else {
+            this.selectTask()
+          }
+        } else {
+          this.deselectTask()
+        }
+      }
+
+      switch (key) {
+        case 'ArrowDown': {
+          this.$emit('go', true)
+          p()
+          break
+        }
+        case 'ArrowUp': {
+          this.$emit('go', false)
+          p()
+          break
+        }
+        case 'Enter': {
+          if (!this.isOnControl && !this.justSaved)
+            this.isEditing = true
+          else if (this.isOnControl) {
+            toggleSelect()
+          }
+          break
+        }
+        case ' ': {
+          p()
+          this.$emit('add-task-after-selection')
+          break
+        }
+      }
+
+      if (this.isOnShift) {
+        switch (key) {
+          case "C": {
+            if (!this.isEditing) {
+              this.isEditing = true
+              this.editAction = 'addChecklist'
+            }
+            break
+          }
+          case "D": {
+            this.copyTask()
+            break
+          }
+        }
+      }
+
+      if (this.isOnShift && this.isOnControl) {
+        switch (key) {
+          case "ArrowUp": {
+            toggleSelect()
+            break
+          }
+          case "ArrowDown": {
+            toggleSelect()
+            break
+          }
+        }
+      }
+    },
+    copyTask() {
+      this.$store.dispatch('task/copyTask', this.task)
+    },
     enter(el) {
       if (!this.isEditing) {
         const co = el.style
@@ -323,7 +393,7 @@ export default {
     },
     completeTask() {
       const {t,c} = this.getTask
-      if (!this.completed || (c && c.type === 'periodic' || c && c.type === 'weekly'))
+      if (!this.completed)
         this.$store.dispatch('task/completeTasks', [this.task])
       else this.$store.dispatch('task/uncompleteTasks', [this.task])
     },
@@ -417,6 +487,10 @@ export default {
         this.isEditing = true
     },
     saveTask(obj, force) {
+      this.justSaved = true
+      setTimeout(() => {
+        this.justSaved = false
+      }, 100)
       this.$store.dispatch('task/saveTask', {
         id: this.task.id,
         ...obj,
@@ -483,6 +557,7 @@ export default {
   computed: {
     ...mapState({
       isOnControl: state => state.isOnControl,
+      isOnShift: state => state.isOnShift,
       selectedEls: state => state.selectedEls,
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
@@ -523,14 +598,8 @@ export default {
     haveFiles() {
       return this.task.files && this.task.files.length > 0
     },
-    taskTags() {
-      const ts = this.savedTags
-      const arr = []
-      for (const id of this.task.tags) {
-        const tag = ts.find(el => el.id === id)
-        if (tag && !this.activeTags.includes(tag.name)) arr.push(tag)
-      }
-      return arr
+    hasTags() {
+      return this.task.tags && this.task.tags.length > 0
     },
     folderOptions() {
       const links = []
@@ -574,7 +643,7 @@ export default {
               arr.push({
                 name: h.name,
                 icon: 'heading',
-                callback: () => moveToList({list: list.id, heading: h.name})
+                callback: () => moveToList({list: list.id, heading: h.id})
               })
             }
             return arr
@@ -692,7 +761,7 @@ export default {
             {
               name: l['Copy task'],
               icon: 'copy',
-              callback: () => dispatch('task/copyTask', this.task)
+              callback: () => this.copyTask()
             },
             {
               name: l['Lists'],
@@ -706,7 +775,17 @@ export default {
                 {
                   name: l['Convert to list'],
                   icon: 'tasks',
-                  callback: () => dispatch('task/convertToList', {task: this.task, savedLists: this.savedLists})
+                  callback: () => {
+                    const existingList = this.savedLists.find(l => l.name === this.task.name)
+                    if (existingList)
+                      this.$store.commit('pushToast', {
+                        name: 'There is already another list with this name.',
+                        seconds: 3,
+                        type: 'error',
+                      })
+                    else
+                      dispatch('task/convertToList', {task: this.task, savedLists: this.savedLists})
+                  }
                 },
               ]
             },
@@ -741,6 +820,9 @@ export default {
     isOverdue() {
       if (this.viewName === 'Overdue') return false
       return false
+    },
+    isTaskMainSelection() {
+      return this.task.id === this.mainSelection
     },
     isToday() {
       if (this.viewName === 'Today' || this.viewName === 'Calendar') return false
@@ -819,6 +901,15 @@ export default {
         return this.scheduleObject[this.task.id]
       return null
     },
+    getTaskIcon() {
+      const t = this.task
+
+      let icon = this.isSelecting ? 'circle' : 'box'
+      icon += this.completed ? '-check' : ''
+      icon += this.isSomeday ? '-dash' : ''
+
+      return icon
+    },
   },
   watch: {
     selectedTasks() {
@@ -826,7 +917,14 @@ export default {
         if (this.selectedTasks && this.selectedTasks.length > 0)
           this.bindContextMenu(this.multiSelectOptions)
         else this.bindContextMenu(this.options)
-    }
+    },
+    isTaskMainSelection() {
+      this.bindMainSelection()
+    },
+    selectEverythingToggle() {
+      if (this.selectEverythingToggle)
+        this.selectTask()
+    },
   }
 }
 
@@ -862,6 +960,7 @@ export default {
   background-color: var(--back-color);
   z-index: 5;
   transition-duration: .25s;
+  transition: background-color .2s !important;
 }
 
 .cont-wrapper-wrapper {
@@ -905,10 +1004,14 @@ export default {
 }
 
 .txt-icon {
-  margin-left: 6px;
+  margin-left: 12px;
 }
 
 .desktop .cont-wrapper.doneTransition:hover, .desktop .cont-wrapper:active {
+  background-color: var(--light-gray);
+}
+
+.isTaskMainSelection .cont-wrapper {
   background-color: var(--light-gray);
 }
 
@@ -970,7 +1073,7 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transform: translateY(1px);
+  transform: translateY(-1px);
 }
 
 .task-name {
@@ -1023,16 +1126,21 @@ export default {
 }
 
 .checklist-icon {
-  transform: translate(-9px, 1px);
+  transform: translateY(1px);
 }
 
-.sortable-selected .cont-wrapper {
+.isTaskSelected .cont-wrapper {
   background-color: rgba(53, 73, 90, 0.6) !important;
   box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
   transition: background-color .8s !important;
 }
 
-.sortable-selected .back {
+.isTaskSelected.isTaskMainSelection .cont-wrapper,
+.isTaskSelected:hover .cont-wrapper {
+  background-color: rgba(53, 73, 90, 0.9) !important;
+}
+
+.isTaskSelected .back {
   opacity: 0;
   transition-delay: 0s;
 }

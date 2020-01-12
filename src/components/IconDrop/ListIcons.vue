@@ -28,10 +28,15 @@
               />
               <input v-if="l.file" :ref="`file-icondrop-link-${l.name}`" type="file" :accept="l.accept" style="display: none" @change='handleFiles(l)'>
               <span class="name" v-html="priorityParser(l.name)"></span>
+              <Icon v-if="select && selected.includes(l.name)"
+                class='check-icon'
+                icon='check'
+              />
             </div>
             <CircleBubble
               innerColor='rgba(87,160,222,.1)'
               outerColor='var(--primary)'
+              opacity='0'
             />
           </div>
           <div v-else-if="l.type === 'optionsList'" :key="l.name" class="header-link hide-trans">
@@ -60,6 +65,19 @@
         </template>
       </transition-group>
     </div>
+    <div v-if="select && links.onSave" class="btn">
+      <div style="height: 40px"></div>
+      <div class="absolute-btn">
+        <div class="abs-wrapper">
+          <div class="back-layer"></div>
+          <ButtonApp class="abs-btn"
+            type='tiny'
+            value='Save'
+            @click='saveSelected'
+          />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -80,7 +98,12 @@ export default {
     return {
       links: this.content,
       search: '',
+      selected: [],
     }
+  },
+  created() {
+    if (this.select && this.links.selected)
+      this.selected = this.links.selected.slice()
   },
   methods: {
     linkClick(l) {
@@ -93,17 +116,30 @@ export default {
         setTimeout(() => el.classList.remove('blink'), 200)
       }
     },
+    saveSelected() {
+      this.links.onSave(this.selected)
+      this.$emit('close')
+    },
     linkCallback(callback, link) {
-      if (link.file) this.getFile(link)
-      else {
-        const close = () => {
-          this.$emit('close')
-          this.$store.commit('clearSelected')
+      if (!this.select) {
+        if (link.file) this.getFile(link)
+        else {
+          const close = () => {
+            this.$emit('close')
+            this.$store.commit('clearSelected')
+          }
+          if (callback) {
+            const opt = callback(link, this, this.$parent)
+            if (!opt || (opt && opt.then)) close()
+            else this.$emit('update', opt)
+          }
         }
-        if (callback) {
-          const opt = callback(link, this, this.$parent)
-          if (!opt || (opt && opt.then)) close()
-          else this.$emit('update', opt)
+      } else {
+        if ((!this.selected.includes(link.name))) {
+          this.selected.push(link.name)
+        } else {
+          const i = this.selected.findIndex(el => el === link.name)
+          this.selected.splice(i, 1)
         }
       }
     },
@@ -149,6 +185,9 @@ export default {
   },
   computed: {
     ...mapGetters(['l']),
+    select() {
+      return this.links && this.links.select
+    },
     getLinks() {
       let arr = this.links
       if (this.links.links) arr = this.links.links
@@ -190,6 +229,17 @@ export default {
 .link:hover {
   color: var(--primary);
   background-color: rgba(87,160,222,.1);
+}
+
+.link:hover .check-icon {
+  color: var(--primary) !important;
+}
+
+.check-icon {
+  position: absolute;
+  right: 8px;
+  top: 55%;
+  transform: translateY(-50%);
 }
 
 .link.important {
@@ -254,6 +304,36 @@ export default {
 
 .btn {
   margin: 4px 26px;
+}
+
+.absolute-btn {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 6px;
+  padding: 0 18px;
+}
+
+.abs-wrapper {
+  position: relative;
+  height: 45px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.back-layer {
+  bottom: 0;
+  height: 55px;
+  width: 100%;
+  position: absolute;
+}
+
+.abs-btn {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  margin-bottom: 6px;
 }
 
 </style>

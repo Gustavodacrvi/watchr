@@ -74,6 +74,7 @@
                     :is="section"
                     :active="value"
                     :viewType='viewType'
+                    :viewName='viewName'
                     :showDefered='showDefered'
                     :showRepeat='showRepeat'
                     :data-transindex="getAppnavIndex(section)"

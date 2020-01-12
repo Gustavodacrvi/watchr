@@ -94,10 +94,13 @@ import magic from '@/assets/icons/magic.svg'
 import clock from '@/assets/icons/clock.svg'
 import pomo from '@/assets/icons/pomo.svg'
 import pie from '@/assets/icons/pie.svg'
+import check from '@/assets/icons/check.svg'
 import layerGroup from '@/assets/icons/layer-group.svg'
 import boxCheck from '@/assets/icons/box-check.svg'
 import calendarStar from '@/assets/icons/calendar-star.svg'
 import circleFilled from '@/assets/icons/circle-filled.svg'
+import circleDash from '@/assets/icons/circle-dash.svg'
+import circleCheckDash from '@/assets/icons/circle-check-dash.svg'
 import boxCheckDash from '@/assets/icons/box-check-dash.svg'
 
 import { mapGetters } from 'vuex'
@@ -116,8 +119,10 @@ export default {
         copy, plus, globe, heading, search, note,
         envelope, deadline, sleep, repeat, box, file,
         folder, heart, close, filter, magic, clock,
-        pomo, pie,
+        pomo, pie, check,
         "box-dash": boxDash,
+        "circle-dash": circleDash,
+        "circle-check-dash": circleCheckDash,
         "layer-group": layerGroup,
         "circle-filled": circleFilled,
         "box-check-dash": boxCheckDash,
@@ -233,6 +238,7 @@ export default {
 
 .Icon {
   position: relative;
+  display: inline-block;
 }
 
 .icon-title {

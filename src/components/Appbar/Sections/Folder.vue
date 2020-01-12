@@ -2,6 +2,7 @@
 <template>
   <div class="Folder AppbarElement" :class="platform">
     <div class="header rb cursor handle-folder AppbarElement-link"
+      :class="{isActive}"
       @click="go"
       @mouseenter="headerHover = true"
       @mouseleave="headerHover = false"
@@ -46,7 +47,7 @@ import folderUtils from "@/utils/folder"
 import { mapGetters, mapState, mapActions } from 'vuex'
 
 export default {
-  props: ['name', 'id', 'defaultShowing', 'movingFolder', 'folder'],
+  props: ['name', 'id', 'defaultShowing', 'movingFolder', 'folder', 'viewName', 'viewType'],
   components: {
     Icon, IconDrop,
   },
@@ -157,6 +158,9 @@ export default {
     showSpecialInfo() {
       return this.headerHover && !this.isOnControl && this.isSelectingTasks
     },
+    isActive() {
+      return this.name === this.viewName && this.viewType === 'folder'
+    },
   },
   watch: {
     options() {
@@ -193,7 +197,7 @@ export default {
   height: 42px;
 }
 
-.header:hover {
+.header:hover, .isActive {
   background-color: var(--light-gray) !important;
 }
 

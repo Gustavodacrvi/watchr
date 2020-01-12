@@ -52,6 +52,7 @@
 
           @allow-someday='showSomeday = true'
           @root-non-filtered='getRootNonFilteredFromTaskHandler'
+          @save-schedule-object='saveScheduleObject'
 
           @present-tags='v => presentTags = v'
           @present-lists='v => presentLists = v'
@@ -158,11 +159,11 @@ export default {
     }
   },
   created() {
-    this.autoSchedule = this.savedSchedule
     this.getComputedOptions()
     this.showingTagSelection = localStorage.getItem('tagFilters') === 'true'
     this.showingFolderSelection = localStorage.getItem('folderFilters') === 'true'
     this.showingListSelection = localStorage.getItem('listFilters') === 'true'
+    this.autoSchedule = this.savedSchedule
   },
   mounted() {
     this.getComputedOptions()
@@ -174,9 +175,16 @@ export default {
         this.computedHeaderOptions = await this.getOptions(this.headerOptions)
       else this.computedHeaderOptions = []
     },
+    saveScheduleObject(obj) {
+      this.$emit('save-schedule', {
+        ...this.autoSchedule,
+        scheduleObject: obj,
+      })
+    },
     saveAutoSchedule(info) {
       this.autoSchedule = info
-      this.$emit('save-schedule', info)
+      if (info === null)
+        this.$emit('save-schedule', info)
     },
 
     selectPagination(newPage) {
@@ -620,7 +628,7 @@ export default {
               arr.push({
                 name: h.name,
                 icon: 'heading',
-                callback: () => moveToList({list: list.id, heading: h.name})
+                callback: () => moveToList({list: list.id, heading: h.id})
               })
             }
             return arr

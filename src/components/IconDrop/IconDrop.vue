@@ -55,7 +55,7 @@ import Files from './Files.vue'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width', 'title'],
+  props: ['options', 'id', 'circle', 'hideHandle', 'handle', 'handleColor', 'defaultShowing', 'root', 'width', 'title', 'center'],
   components: {
     Icon, ListIcons, CalendarPicker,
     Files, TimePicker, RepeatPicker,
@@ -151,7 +151,7 @@ export default {
       }
     },
     toggleIconDrop() {
-      if (this.isDesktop) {
+      if (!this.center) {
         this.showingCont = true
         this.showing = !this.showing
       }
@@ -178,7 +178,6 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isDesktop']),
     getComp() {
       if (this.opt && this.opt.comp) return this.opt.comp
       return 'ListIcons'

@@ -45,7 +45,7 @@ export default {
         }
       ]
     },
-    getSpecificDayCalendarObj: () => (moment, cal) => {
+    getSpecificDayCalendarObj: () => moment => {
       const obj = {
   
         type: 'specific',
@@ -53,11 +53,6 @@ export default {
         begins: mom().format('Y-M-D'),
   
         specific: moment.format('Y-M-D'),
-      }
-      if (cal) {
-        obj.time = cal.time
-        obj.times = cal.times
-        obj.persistent = cal.persistent
       }
       return obj
     },
@@ -600,7 +595,7 @@ export default {
       },
       isTaskInHeading: {
         getter({}, task, heading) {
-          return task.heading === heading.name
+          return task.heading === heading.id
         },
         cache(args) {
           return JSON.stringify({
@@ -735,51 +730,54 @@ export default {
       userRef().set({calendarOrders}, {merge: true})
     },
     convertToList(c, {task, savedLists}) {
-      const batch = fire.batch()
-
-      let folder = null
-      if (task.list) {
-        const list = savedLists.find(l => l.id === task.list)
-        if (list && list.folder) folder = list.folder
-      }
-
-      const list = listRef()
-      const oldTask = taskRef(task.id)
-      batch.delete(oldTask)
-      
-      const ids = []
-      if (task.checklist)
-        for (const t of task.checklist) {
-          const ref = taskRef(t.id)
-          batch.set(ref, {
-            folder,
-            userId: uid(),
-            users: [uid()],
-            name: t.name,
-            priority: '',
-            list: list.id,
-            notes: t.notes,
-            calendar: null,
-            heading: null,
-            tags: [],
-            checklist: [],
-            order: [],
-          })
-          ids.push(t.id)
+      const existingList = savedLists.find(l => l.name === task.name)
+      if (!existingList) {
+        const batch = fire.batch()
+  
+        let folder = null
+        if (task.list) {
+          const list = savedLists.find(l => l.id === task.list)
+          if (list && list.folder) folder = list.folder
         }
-
-      batch.set(list, {
-        userId: uid(),
-        users: [uid()],
-        smartViewsOrders: {},
-        name: task.name,
-        descr: '',
-        tasks: ids,
-        headings: [],
-        headingsOrder: [],
-      })
-
-      batch.commit()
+  
+        const list = listRef()
+        batch.delete(taskRef(task.id))
+        
+        const ids = []
+        if (task.checklist)
+          for (const t of task.checklist) {
+            const ref = taskRef(t.id)
+            batch.set(ref, {
+              folder,
+              userId: uid(),
+              users: [uid()],
+              name: t.name,
+              priority: '',
+              list: list.id,
+              calendar: null,
+              heading: null,
+              tags: [],
+              checklist: [],
+              order: [],
+            })
+            ids.push(t.id)
+          }
+  
+        batch.set(list, {
+          userId: uid(),
+          users: [uid()],
+          smartViewsOrders: {},
+          name: task.name,
+          notes: task.notes || null,
+          tags: task.tags || [],
+          descr: '',
+          tasks: ids,
+          headings: [],
+          headingsOrder: [],
+        })
+  
+        batch.commit()
+      }
     },
     completeTasks(c, tasks) {
       const batch = fire.batch()
@@ -895,7 +893,7 @@ export default {
         ...task, files: [],
       })
     },
-    handleTasksByAppnavElementDragAndDrop({dispatch, getters}, {elIds, taskIds, type}) {
+    handleTasksByAppnavElementDragAndDrop({dispatch, getters, rootState}, {elIds, taskIds, type}) {
       const calObj = (mom) => {
         return getters.getSpecificDayCalendarObj(mom)
       }

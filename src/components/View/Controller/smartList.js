@@ -160,6 +160,8 @@ export default {
     },
     rootFilter() {
       const n = this.viewName
+      if (this.isCalendarOrderViewType && this.ungroupTasksInHeadings)
+        return () => true
       if (this.viewType === 'search')
         return () => true
       if (n === 'Calendar')
@@ -208,6 +210,8 @@ export default {
       }
     },
     headings() {
+      if (this.isCalendarOrderViewType && this.ungroupTasksInHeadings) 
+        return []
       switch (this.viewName) {
         case 'Upcoming': return this.upcomingHeadingsOptions
         case 'Today': {
@@ -292,9 +296,10 @@ export default {
           date = mom().add(1, 'd').format('Y-M-D')
         else if (n === 'Calendar')
           date = this.calendarDate || null
-
-        if (date)
-          return (this.calendarOrders[date] && this.calendarOrders[date].schedule)
+        
+        const schedule = (this.calendarOrders[date] && this.calendarOrders[date].schedule)
+        if (date && schedule)
+          return {...schedule}
       }
       return null
     },

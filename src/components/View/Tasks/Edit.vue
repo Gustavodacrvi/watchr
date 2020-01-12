@@ -69,7 +69,7 @@
               icon="heading"
               :value="task.heading"
               color='var(--primary)'
-              @click="task.heading = ''"
+              @click="removeHeading"
             />
           </div>
           <div class="tags" :class="{show}">
@@ -123,6 +123,7 @@
                 :circle='true'
                 handleColor='var(--red)'
                 title='Add tags'
+                :center='true'
               />
               <IconDrop
                 handle="priority"
@@ -132,6 +133,7 @@
                 :circle='true'
                 handleColor='var(--yellow)'
                 title='Add priority'
+                :center='true'
               />
               <IconDrop
                 handle="tasks"
@@ -141,6 +143,7 @@
                 :circle='true'
                 handleColor='var(--primary)'
                 title='Add to list'
+                :center='true'
               />
               <IconDrop
                 handle="folder"
@@ -149,6 +152,7 @@
                 :options="folderOptions"
                 :circle='true'
                 title='Add to folder'
+                :center='true'
               />
               <IconDrop
                 handle="calendar"
@@ -158,6 +162,7 @@
                 :circle='true'
                 handleColor='var(--green)'
                 title='Add date'
+                :center='true'
               />
               <IconDrop
                 handle="clock"
@@ -167,6 +172,7 @@
                 :circle='true'
                 handleColor='var(--purple)'
                 title='Add task duration'
+                :center='true'
               />
               <Icon
                 class="opt-icon primary-hover cursor"
@@ -210,7 +216,7 @@ import FileMixin from '@/mixins/file.js'
 
 export default {
   mixins: [FileMixin],
-  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup', 'focusToggle', 'taskHeight'],
+  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup', 'focusToggle', 'taskHeight', 'editAction'],
   components: {
     DropInput: DropInputVue, FileApp,
     ButtonApp: ButtonVue,
@@ -233,6 +239,7 @@ export default {
         notes: '',
         calendar: null,
         heading: null,
+        headingId: null,
         tags: [],
         checklist: [],
         order: [],
@@ -244,6 +251,9 @@ export default {
       addedFiles: [],
       optionsType: '',
       options: [],
+
+      lastKeys: [],
+      keydownSettimeout: null,
     }
   },
   created() {
@@ -265,6 +275,10 @@ export default {
       if (t.files)
         this.task.files = t.files.slice()
       else this.task.files = []
+      if (t.heading) {
+        this.task.headingId = t.heading
+        this.task.heading = this.listHeadingName
+      }
 
       if (this.task.checklist)
         this.task.checklist = t.checklist.slice()
@@ -285,13 +299,19 @@ export default {
   beforeDestroy() {
     window.removeEventListener('click', this.remove)
   },
+  mounted() {
+    if (this.editAction) {
+      this[this.editAction]()
+      this.$emit('done-action')
+    }
+  },
   methods: {
     saveChecklist() {
-      if (this.task.checklist)
+      if (this.defaultTask && this.task.checklist)
         this.$store.dispatch('task/saveTask', {
           id: this.task.id,
-          checklist: this.task.checklist,
-          order: this.task.order,
+          checklist: this.task.checklist || [],
+          order: this.task.order || [],
         })
     },
     remove(evt) {
@@ -423,6 +443,7 @@ export default {
         if (t.folder) {
           this.task.list = ''
           this.task.heading = ''
+          this.task.headingId = ''
         }
         if (t.list) {
           this.task.folder = ''
@@ -433,7 +454,7 @@ export default {
         if (i && i > -1 && t.calendar) {
           n = n.substr(0, i)
         }
-        let heading = t.heading
+        let heading = t.headingId
         let calendar = t.calendar
         if (heading === undefined) heading = null
         if (calendar === undefined) calendar = null
@@ -483,6 +504,10 @@ export default {
     selectDuration(time) {
       if (time !== '00:00')
         this.task.taskDuration = time
+    },
+    removeHeading() {
+      this.task.heading = ''
+      this.task.headingId = ''
     },
   },
   computed: {
@@ -546,6 +571,15 @@ export default {
         return this.$store.getters['list/getListsById']([this.task.list])[0].name
       return ''
     },
+    listHeadingName() {
+      if (this.task.list && this.task.heading) {
+        const list = this.$store.getters['list/getListsById']([this.task.list])[0]
+        if (list.headings && list.headings.length > 0) {
+          return list.headings.find(head => head.id === this.task.heading).name
+        }
+      }
+      return ''
+    },
     folderName() {
       if (this.task.folder)
         return this.$store.getters['folder/getFoldersById']([this.task.folder])[0].name
@@ -595,6 +629,9 @@ export default {
       }
       return {
         links: arr,
+        select: true,
+        onSave: names => this.task.tags = names.slice(),
+        selected: this.task.tags || [],
         allowSearch: true,
       }
     },
@@ -614,6 +651,7 @@ export default {
             this.task.folder = el.name
             this.task.list = ''
             this.task.heading = ''
+            this.task.headingId = ''
           }
         })
       }
@@ -636,7 +674,10 @@ export default {
               arr.push({
                 name: h.name,
                 icon: 'heading',
-                callback: () => this.task.heading = h.name
+                callback: () => {
+                  this.task.headingId = h.id
+                  this.task.heading = h.name
+                }
               })
             }
             return arr
@@ -740,6 +781,7 @@ export default {
             this.task.folder = f.name
             this.task.list = ''
             this.task.heading = ''
+            this.task.headingId = ''
             break
           }
         }

@@ -25,6 +25,8 @@
           :isScrolling='isScrolling'
           @de-select='deSelectTask'
           @select='selectTask'
+          @add-task-after-selection='addTaskAfterSelection'
+          @go='moveTaskHandlerSelection'
 
           :data-id='item.id'
           :data-name='item.name'
@@ -74,7 +76,7 @@
       tag="div"
     >
       <template v-for="(h, i) in lazyHeadings">
-        <HeadingApp v-if="renderHeading(h)" :key="h.name"
+        <HeadingApp v-if="renderHeading(h)" :key="h.id"
           :header='h'
 
           v-bind="h"
@@ -108,6 +110,7 @@
             :onSortableAdd='h.onSortableAdd'
             @add-heading='(obj) => $emit("add-heading", obj)'
             @update="ids => updateHeadingTaskIds(h,ids)"
+            @go='moveTaskHandlerSelection'
 
             :header="h"
             :addTask="h.onAddTask"
@@ -149,7 +152,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton', 'openCalendar', 'rootChanging',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton', 'openCalendar', 'rootChanging', 'mainSelection', 'mainSelectionIndex', 'selectEverythingToggle',
   'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -165,6 +168,7 @@ export default {
       lazyTasksSetTimeouts: [],
       lazyHeadingsSetTimeouts: [],
       lazyHeadings: [],
+      selectedElements: [],
       changedViewName: true,
       isDragging: false,
       justScrolled: false,
@@ -210,13 +214,15 @@ export default {
     }
   },
   methods: {
+    moveTaskHandlerSelection(bool) {
+      this.$emit('go', bool)
+    },
     mousemove(evt) {
-      // showHeadadingFloatingButton
       if (this.movingButton) {
         const obj = {
-          'action-heading': document.getElementById('action-heading').style,
-          create: document.getElementById('create').style,
-          add: document.getElementById('add').style,
+          'action-heading': document.querySelector('.TaskRenderer .action-heading').style,
+          create: document.querySelector('.TaskRenderer .create').style,
+          add: document.querySelector('.TaskRenderer .add').style,
         }
         
         const { left, width } = this.$el.getBoundingClientRect()
@@ -336,6 +342,9 @@ export default {
         placeholder: this.l['Task name...'],
         notesPlaceholder: this.l['Notes...'], showCancel: true, btnText: this.l['Add task']
       })
+    },
+    addTaskAfterSelection() {
+      this.addTaskEdit(this.mainSelectionIndex + 1)
     },
     addHeadingsEdit(index) {
       const h = this.headingEditOptions
@@ -624,7 +633,8 @@ export default {
       return new Promise(solve => {
         this.lazyHeadings = []
         let i = 0
-        const length = headings.filter(h => h.tasks && h.tasks.length > 0).length
+        const headinsgWithTasks = this.showEmptyHeadings ? headings.slice() : headings.filter(h => h.tasks && h.tasks.length > 0)
+        const length = headinsgWithTasks.length
         let timeout = this.isDesktop ? 155 : 230
 
         if (length < 5 || this.viewName === 'Upcoming') timeout = 20
@@ -634,13 +644,13 @@ export default {
           if ((i + 1) !== length)
             this.lazyHeadingsSetTimeouts.push(setTimeout(() => {
               i++
-              const h = headings[i]
+              const h = headinsgWithTasks[i]
               if (h) add(h)
             }, timeout))
           else solve()
         }
-        const h = headings[0]
-        if (h && h.tasks.length > 0) add(h)
+        const h = headinsgWithTasks[0]
+        if (h) add(h)
         else solve()
       })
     },
@@ -680,12 +690,22 @@ export default {
       }
     },
     selectTask(el) {
+      this.selectedElements.push(el)
       this.$store.commit('selectTask', el.dataset.id)
       Sortable.utils.select(el)
     },
     deSelectTask(el) {
       this.$store.commit('unselectTask', el.dataset.id)
       Sortable.utils.deselect(el)
+
+      const i = this.selectedElements.findIndex(el => el === el)
+      if (i > -1)
+        this.selectedElements.splice(i, 1)
+    },
+    windowClick() {
+      for (const el of this.selectedElements)
+        this.deSelectTask(el)
+      this.$store.commit('clearSelected')
     },
     fallbackTask(task, force) {
       let t = this.mainFallbackTask(task, force)
@@ -782,7 +802,7 @@ export default {
       if (!this.header) {
         const active = document.activeElement
         const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
-        if (!isTyping) {
+        if (!isTyping && !this.isOnControl) {
           if (key === 'a')
             this.addTaskEdit(this.lazyTasks.length)
           else if (key === 'A')
@@ -795,9 +815,6 @@ export default {
           }
         }
       }
-    },
-    windowClick() {
-      this.$store.commit('clearSelected')
     },
     clearLazySettimeout() {
       for (const set of this.lazyTasksSetTimeouts)
@@ -828,6 +845,7 @@ export default {
   computed: {
     ...mapState({
       selected: state => state.selectedTasks,
+      isOnControl: state => state.isOnControl,
       savedTasks: state => state.task.tasks,
       pressingKey: state => state.pressingKey,
       isScrolling: state => state.isScrolling,

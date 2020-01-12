@@ -9,6 +9,9 @@
 
       :headings='sortHeadings'
       :scheduleObject='scheduleObject'
+      :mainSelection='mainSelection'
+      :mainSelectionIndex='mainSelectionIndex'
+      :selectEverythingToggle='selectEverythingToggle'
 
       :addTask='addTask'
       :showSomedayButton='showSomedayButton'
@@ -17,9 +20,11 @@
       :taskIconDropOptions='taskIconDropOptions'
       :headingPosition='0'
       :updateHeadingIds='updateHeadingIds'
+
       @update="updateIds"
       @add-heading="addHeading"
       @allow-someday='allowSomeday'
+      @go='go'
     />
   </div>
 </template>
@@ -54,14 +59,142 @@ export default {
   data() {
     return {
       scheduleObject: null,
+      
+      mainSelection: null,
+      selectEverythingToggle: false,
+      mainSelectionIndex: null,
     }
   },
   created() {
-    if (this.autoSchedule)
-      this.updateSchedule()
-    else this.scheduleObject = null
+    this.updateSchedule()
+
+    window.addEventListener('keydown', this.keydown)
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.keydown)
   },
   methods: {
+    keydown(evt) {
+      const p = () => evt.preventDefault()
+      const {key} = evt
+      if (!this.mainSelection) {
+        switch (key) {
+          case 'ArrowDown': {
+            this.go(true)
+            p()
+            break
+          }
+          case 'ArrowUp': {
+            this.go(false)
+            p()
+            break
+          }
+        }
+      }
+      switch (key) {
+        case 'ArrowLeft': {
+          this.go(null)
+          break
+        }
+        case 'ArrowRight': {
+          this.go(null)
+          break
+        }
+      }
+      if (this.isOnControl) {
+        switch (key) {
+          case "a": {
+            this.selectEverythingToggle = true
+            setTimeout(() => {
+              this.selectEverythingToggle = false
+            })
+          }
+          case '.': {
+            const tasks = this.getTasksById(this.selectedTasks)
+            const completed = tasks.filter(t => t.completed)
+            const uncompleted = tasks.filter(t => !t.completed)
+            this.$store.dispatch('task/completeTasks', uncompleted)
+            this.$store.dispatch('task/uncompleteTasks', completed)
+          }
+        }
+      }
+      if (this.isOnShift) {
+        const save = task => {
+          this.$store.dispatch('task/saveTasksById', {
+              ids: this.selectedTasks,
+              task,
+            })
+        }
+        
+        switch (key) {
+          case 'S': {
+            save({
+              calendar: {
+                type: 'someday'
+              }
+            })
+            break
+          }
+          case 'T': {
+            const TOD_STR = mom().format('Y-M-D')
+            save({
+              calendar: {
+                type: 'specific',
+                editDate: TOD_STR,
+                begins: TOD_STR,
+          
+                specific: TOD_STR,
+              }
+            })
+            break
+          }
+        }
+      }
+
+      if (this.isOnControl && !this.isOnShift) {
+        switch (key) {
+          case "ArrowUp": {
+            this.go(0)
+            break
+          }
+          case "ArrowDown": {
+            this.go(this.allViewTasksIds.length - 1)
+            break
+          }
+        }
+      }
+    },
+    select(i) {
+      if (i === null) {
+        this.mainSelection = null
+        this.mainSelectionIndex = null
+        return true
+      } else {
+        const ids = this.allViewTasksIds
+  
+        if (ids[i]) {
+          this.mainSelection = ids[i]
+          this.mainSelectionIndex = i
+          return true
+        }
+        return false
+      }
+    },
+    go(dire) {
+      const ids = this.allViewTasksIds
+      
+      if (dire === null)
+        this.select(null)
+      else if (this.mainSelection) {
+        if (dire === true || dire === false)
+          this.select(this.mainSelectionIndex + (dire === true ? 1 : -1))
+        else
+          this.select(dire)  
+      } else if (dire > 0)
+        this.select(0)
+      else
+        this.select(ids.length - 1)
+    },
     allowSomeday() {
       this.$emit('allow-someday')
     },
@@ -91,6 +224,16 @@ export default {
       this.$parent.$emit('add-heading', {...obj})
     },
     updateSchedule() {
+      const schedule = this.autoSchedule
+      if (schedule) {
+        if (!schedule.scheduleObject)
+          this.createSchedule()
+        else
+          this.scheduleObject = schedule.scheduleObject
+      }
+      else this.scheduleObject = null
+    },
+    createSchedule() {
       if (!this.autoSchedule) return null
       
       const { time, buffer, fallback } = this.autoSchedule
@@ -158,17 +301,22 @@ export default {
       }
 
       this.scheduleObject = finalObj
+      this.$emit('save-schedule-object', finalObj)
     },
   },
   computed: {
     ...mapState({
       storeTasks: state => state.task.tasks,
+      selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
+      isOnControl: state => state.isOnControl,
+      isOnShift: state => state.isOnShift,
     }),
     ...mapGetters({
       l: 'l',
       isTaskSomeday: 'task/isTaskSomeday',
       isTaskCompleted: 'task/isTaskCompleted',
+      getTasksById: 'task/getTasksById',
 
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
     }),
@@ -179,6 +327,9 @@ export default {
       return [...this.sortLaseredTasks,...this.sortHeadings.map(
         head => head.tasks
       ).flat()]
+    },
+    allViewTasksIds() {
+      return this.allViewTasks.map(el => el.id)
     },
     allNonFilteredViewTasks() {
       return [...this.rootNonFiltered,...this.sortHeadings.map(
@@ -397,6 +548,10 @@ export default {
     },
   },
   watch: {
+    viewName() {
+      this.mainSelection = null
+      this.mainSelectionIndex = null
+    },
     presentTags() {
       this.$emit('present-tags', this.presentTags)
     },
@@ -411,9 +566,7 @@ export default {
     },
     autoSchedule: {
       handler() {
-        if (this.autoSchedule)
-          this.updateSchedule()
-        else this.scheduleObject = null
+        this.updateSchedule()
       },
       deep: true,
     }

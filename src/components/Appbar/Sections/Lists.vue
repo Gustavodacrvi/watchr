@@ -30,6 +30,8 @@
         v-bind="f"
         :movingFolder='movingFolder'
         :folder='f'
+        :viewName='viewName'
+        :viewType='viewType'
 
         :data-id='f.id'
 
@@ -80,7 +82,7 @@ export default {
   components: {
     Renderer: RendererVue, FolderApp,
   },
-  props: ['active', 'viewType', 'showDefered', 'showRepeat'],
+  props: ['active', 'viewName', 'viewType', 'showDefered', 'showRepeat'],
   data() {
     return {
       movingFolder: false,

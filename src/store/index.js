@@ -58,7 +58,7 @@ moment.locale(lang)
 const uid = () => auth.currentUser.uid
 
 
-const version = '077'
+const version = '078'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -104,6 +104,7 @@ const store = new Vuex.Store({
     firstFireLoad: false,
     selectedTasks: [],
     isOnControl: false,
+    isOnShift: false,
     fireBaseFirstLoaded: false,
     authState: false,
     fileURL: null,
@@ -306,6 +307,9 @@ const store = new Vuex.Store({
     toggleControl(state, clicked) {
       state.isOnControl = clicked
     },
+    toggleShift(state, clicked) {
+      state.isOnShift = clicked
+    }
   },
   actions: {
     getOptions(context, options) {
@@ -329,19 +333,21 @@ const store = new Vuex.Store({
         dispatch('pushPopup', {comp, naked: true})
       }
       state.pressingKey = key
-      switch (key.toLowerCase()) {
-        case 'q': pop('AddTask'); break
-        case 't': pop('AddTag'); break
-        case 'l': pop('AddList'); break
-        case 'f': pop('FastSearch'); break
-        case 'delete': {
-          if (state.selectedTasks.length > 0) {
-            dispatch('task/deleteTasks', state.selectedTasks)
-            state.selectedTasks = []
+      if (!state.isOnControl && !state.isOnShift)
+        switch (key.toLowerCase()) {
+          case 'q': pop('AddTask'); break
+          case 't': pop('AddTag'); break
+          case 'l': pop('AddList'); break
+          case 's': pop('Shortcuts'); break
+          case 'f': pop('FastSearch'); break
+          case 'delete': {
+            if (state.selectedTasks.length > 0) {
+              dispatch('task/deleteTasks', state.selectedTasks)
+              state.selectedTasks = []
+            }
+            break
           }
-          break
         }
-      }
     },
     pushPopup({state, getters}, popup) {
       state.popup = popup

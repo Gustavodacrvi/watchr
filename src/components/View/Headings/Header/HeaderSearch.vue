@@ -40,6 +40,9 @@ export default {
   data() {
     return {
       y: 0,
+      x: 0,
+      startTime: null,
+      swipeDiff: 0,
 
       search: {
         r: 179,
@@ -57,6 +60,8 @@ export default {
   methods: {
     touchstart(evt) {
       this.y = evt.touches[0].screenY
+      this.x = evt.touches[0].screenX
+      this.startTime = new Date()
     },
     move(x, transition) {
       const achievedMax = x >= MAXIMUM_TOUCH_DISTANCE
@@ -96,12 +101,20 @@ export default {
       const diff = evt.touches[0].screenY - this.y
 
       this.move(diff)
+
+      this.swipeDiff = evt.touches[0].screenX - this.x
     },
     touchend() {
+      const time = new Date() - this.startTime
+      const name = this.$route
+      if (this.swipeDiff > 40 && time < 200)
+        this.$router.push({path: '/menu'})
+      
       if (this.fireSearchFallback)
         this.openSearchBar()
 
       this.move(0, true)
+      this.swipeDiff = 0
     },
     openSearchBar() {
       this.$store.dispatch('pushPopup', {comp: 'FastSearch', naked: true})
