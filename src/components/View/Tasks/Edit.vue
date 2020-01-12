@@ -251,6 +251,9 @@ export default {
       addedFiles: [],
       optionsType: '',
       options: [],
+
+      lastKeys: [],
+      keydownSettimeout: null,
     }
   },
   created() {
@@ -293,10 +296,38 @@ export default {
 
     window.addEventListener('click', this.remove)
   },
+  mounted() {
+    window.addEventListener('keydown', this.keydown)
+  },
   beforeDestroy() {
     window.removeEventListener('click', this.remove)
+    window.removeEventListener('keydown', this.keydown)
   },
   methods: {
+    keydown(evt) {
+      if (this.keydownSettimeout)
+        clearTimeout(this.keydownSettimeout)
+      const {key} = evt
+
+      this.lastKeys.push(key)
+      this.keydownSettimeout = setTimeout(() => this.lastKeys = [], 200)
+      const keys = this.lastKeys.slice()
+      
+      if (keys.length === 3 && keys.includes('Shift') && keys.includes('Control')) {
+        evt.preventDefault()
+        let k
+        for (const ke of keys)
+          if (ke !== "Shift" && ke !== 'Control')
+            k = ke
+        
+        switch (k) {
+          case "C": {
+            this.addChecklist()
+            break
+          }          
+        }
+      }
+    },
     saveChecklist() {
       if (this.defaultTask && this.task.checklist)
         this.$store.dispatch('task/saveTask', {
