@@ -123,7 +123,6 @@
               :showCancel='true'
               @cancel='isEditing = false'
               @save='saveTask'
-
             />
           </div>
         </transition>
@@ -173,6 +172,7 @@ export default {
       timeout: null,
       changeColor: false,
       justCompleted: false,
+      justSaved: false,
       doneTransition: false,
     }
   },
@@ -181,11 +181,31 @@ export default {
       this.bindContextMenu(this.options)
 
     window.addEventListener('click', this.deselectTask)
+
+    this.bindMainSelection()
   },
   beforeDestroy() {
     window.removeEventListener('click', this.deselectTask)
+    if (this.isTaskMainSelection)
+      window.removeEventListener('keydown', this.mainSelectionKeyDown)
   },
   methods: {
+    bindMainSelection() {
+      if (this.isDesktop)
+        if (this.isTaskMainSelection)
+          window.addEventListener('keydown', this.mainSelectionKeyDown)
+        else
+          window.removeEventListener('keydown', this.mainSelectionKeyDown)
+    },
+    mainSelectionKeyDown({key}) {
+      switch (key) {
+        case 'Enter': {
+          if (!this.justSaved)
+            this.isEditing = true
+          break
+        }
+      }
+    },
     enter(el) {
       if (!this.isEditing) {
         const co = el.style
@@ -395,6 +415,10 @@ export default {
         this.isEditing = true
     },
     saveTask(obj, force) {
+      this.justSaved = true
+      setTimeout(() => {
+        this.justSaved = false
+      }, 100)
       this.$store.dispatch('task/saveTask', {
         id: this.task.id,
         ...obj,
@@ -820,7 +844,10 @@ export default {
         if (this.selectedTasks && this.selectedTasks.length > 0)
           this.bindContextMenu(this.multiSelectOptions)
         else this.bindContextMenu(this.options)
-    }
+    },
+    isTaskMainSelection() {
+      this.bindMainSelection()
+    },
   }
 }
 

@@ -83,22 +83,38 @@ export default {
           p()
           break
         }
+        case 'ArrowLeft': {
+          this.go(null)
+          break
+        }
+        case 'ArrowRight': {
+          this.go(null)
+          break
+        }
       }
     },
     select(i) {
-      const ids = this.allViewTasksIds
-
-      if (ids[i]) {
-        this.mainSelection = ids[i]
-        this.mainSelectionIndex = i
+      if (i === null) {
+        this.mainSelection = null
+        this.mainSelectionIndex = null
         return true
+      } else {
+        const ids = this.allViewTasksIds
+  
+        if (ids[i]) {
+          this.mainSelection = ids[i]
+          this.mainSelectionIndex = i
+          return true
+        }
+        return false
       }
-      return false
     },
     go(dire) {
       const ids = this.allViewTasksIds
       
-      if (this.mainSelection) {
+      if (dire === null)
+        this.select(null)
+      else if (this.mainSelection) {
         if (dire === true || dire === false)
           this.select(this.mainSelectionIndex + (dire === true ? 1 : -1))
         else
