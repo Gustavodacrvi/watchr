@@ -225,16 +225,20 @@ export default {
 
       this.lastKeys.push(key)
       this.keydownSettimeout = setTimeout(() => this.lastKeys = [], 200)
-      const keys = this.lastKeys.slice()
-      
-      if (keys.length === 2 && keys.includes('Shift')) {
-        p()
-        let k
-        for (const ke of keys)
-          if (ke !== "Shift")
-            k = ke
 
-        console.log(k)
+      const mustSelect = (toBeSelected, callback) => {
+        const keys = this.lastKeys.slice()
+        if (keys.length === 2 && keys.includes(toBeSelected)) {
+          p()
+          let k
+          for (const ke of keys)
+            if (ke !== "Shift")
+              k = ke
+          callback(k)
+        }
+      }
+
+      mustSelect('Shift', k => {
         switch (k) {
           case "C": {
             if (!this.isEditing) {
@@ -248,7 +252,7 @@ export default {
             break
           }
         }
-      }
+      })
     },
     copyTask() {
       this.$store.dispatch('task/copyTask', this.task)

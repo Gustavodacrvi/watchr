@@ -19,6 +19,7 @@
       :taskIconDropOptions='taskIconDropOptions'
       :headingPosition='0'
       :updateHeadingIds='updateHeadingIds'
+
       @update="updateIds"
       @add-heading="addHeading"
       @allow-someday='allowSomeday'
@@ -59,6 +60,9 @@ export default {
       
       mainSelection: null,
       mainSelectionIndex: null,
+
+      keydownSettimeout: null,
+      lastKeys: [],
     }
   },
   created() {
@@ -93,6 +97,37 @@ export default {
           break
         }
       }
+
+      if (this.keydownSettimeout)
+        clearTimeout(this.keydownSettimeout)
+
+      this.lastKeys.push(key)
+      this.keydownSettimeout = setTimeout(() => this.lastKeys = [], 200)
+
+      const mustSelect = (toBeSelected, callback) => {
+        const keys = this.lastKeys.slice()
+        if (keys.length === 2 && keys.includes(toBeSelected)) {
+          p()
+          let k
+          for (const ke of keys)
+            if (ke !== "Shift")
+              k = ke
+          callback(k)
+        }
+      }
+
+      mustSelect('Control', k => {
+        switch (k) {
+          case "ArrowUp": {
+            this.go(0)
+            break
+          }
+          case "ArrowDown": {
+            this.go(this.allViewTasksIds.length - 1)
+            break
+          }
+        }
+      })
     },
     select(i) {
       if (i === null) {
