@@ -150,7 +150,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName', 'mainSelection',
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName', 'mainSelection', 'selectEverythingToggle',
   'isSelecting'],
   components: {
     Timeline,
@@ -920,6 +920,10 @@ export default {
     },
     isTaskMainSelection() {
       this.bindMainSelection()
+    },
+    selectEverythingToggle() {
+      if (this.selectEverythingToggle)
+        this.selectTask()
     },
   }
 }

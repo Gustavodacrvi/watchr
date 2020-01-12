@@ -11,6 +11,7 @@
       :scheduleObject='scheduleObject'
       :mainSelection='mainSelection'
       :mainSelectionIndex='mainSelectionIndex'
+      :selectEverythingToggle='selectEverythingToggle'
 
       :addTask='addTask'
       :showSomedayButton='showSomedayButton'
@@ -60,6 +61,7 @@ export default {
       scheduleObject: null,
       
       mainSelection: null,
+      selectEverythingToggle: false,
       mainSelectionIndex: null,
     }
   },
@@ -97,6 +99,16 @@ export default {
         case 'ArrowRight': {
           this.go(null)
           break
+        }
+      }
+      if (this.isOnControl) {
+        switch (key) {
+          case "a": {
+            this.selectEverythingToggle = true
+            setTimeout(() => {
+              this.selectEverythingToggle = false
+            })
+          }
         }
       }
 

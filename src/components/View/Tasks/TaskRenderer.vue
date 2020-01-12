@@ -150,7 +150,7 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton', 'openCalendar', 'rootChanging', 'mainSelection', 'mainSelectionIndex',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton', 'openCalendar', 'rootChanging', 'mainSelection', 'mainSelectionIndex', 'selectEverythingToggle',
   'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -797,7 +797,7 @@ export default {
       if (!this.header) {
         const active = document.activeElement
         const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
-        if (!isTyping) {
+        if (!isTyping && !this.isOnControl) {
           if (key === 'a')
             this.addTaskEdit(this.lazyTasks.length)
           else if (key === 'A')
@@ -840,6 +840,7 @@ export default {
   computed: {
     ...mapState({
       selected: state => state.selectedTasks,
+      isOnControl: state => state.isOnControl,
       savedTasks: state => state.task.tasks,
       pressingKey: state => state.pressingKey,
       isScrolling: state => state.isScrolling,
