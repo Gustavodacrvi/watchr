@@ -338,6 +338,7 @@ const store = new Vuex.Store({
           case 'q': pop('AddTask'); break
           case 't': pop('AddTag'); break
           case 'l': pop('AddList'); break
+          case 's': pop('Shortcuts'); break
           case 'f': pop('FastSearch'); break
           case 'delete': {
             if (state.selectedTasks.length > 0) {
