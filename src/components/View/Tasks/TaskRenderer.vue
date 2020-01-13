@@ -715,7 +715,8 @@ export default {
     },
     windowClick() {
       for (const el of this.selectedElements)
-        this.deSelectTask(el)
+        if (this.lazyTasks.find(el => el.id === el.dataset.id))
+          this.deSelectTask(el)
       this.$store.commit('clearSelected')
     },
     fallbackTask(task, force) {

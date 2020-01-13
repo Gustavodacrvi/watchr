@@ -168,6 +168,7 @@ export default {
         }
       }
 
+      const iconDrop = opt => this.$store.commit('pushIconDrop', opt)
       if (this.isOnAlt)
         switch (key) {
           case "ArrowUp": {
@@ -180,10 +181,23 @@ export default {
             this.moveSelected(false)
             break
           }
+          case 's': {
+            if (hasSelected) {
+              p()
+              iconDrop({
+                comp: 'CalendarPicker',
+                content: {callback: calendar => this.$store.dispatch('task/saveTasksById', {
+                  ids: this.selectedTasks,
+                  task: {calendar}
+                }), repeat: true}
+              })
+            }
+            break
+          }
           case "t": {
             if (hasSelected) {
               p()
-              this.$store.commit('pushIconDrop', {
+              iconDrop({
                 links: this.tags.map(t => ({...t, icon: 'tag'})),
                 select: true,
                 onSave: names => {
@@ -201,7 +215,7 @@ export default {
           case "l": {
             if (hasSelected) {
               p()
-              this.$store.commit('pushIconDrop', {
+              iconDrop({
                 links: this.lists.map(t => ({
                   ...t,
                   icon: 'tasks',
@@ -217,7 +231,7 @@ export default {
           case "f": {
             if (hasSelected) {
               p()
-              this.$store.commit('pushIconDrop', {
+              iconDrop({
                 links: this.folders.map(t => ({
                   ...t,
                   icon: 'tasks',
