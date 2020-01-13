@@ -702,6 +702,19 @@ export default {
         batch.commit()
       })
     },
+    addMultipleTasks(c, tasks) {
+      const batch = fire.batch()
+
+      for (const t of tasks)
+        batch.set(taskRef(), {
+          createdFire: serverTimestamp(),
+          created: mom().format('Y-M-D HH:mm ss'),
+          userId: uid(),
+          ...t,
+        })
+
+      batch.commit()
+    },
     saveTask(c, obj) {
       const batch = fire.batch()
       addTask(batch, obj, taskRef(obj.id)).then(() => {

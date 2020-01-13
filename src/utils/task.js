@@ -146,4 +146,29 @@ export default {
 
     return calendarOrders
   },
+  parsePriorityFromString(n) {
+    const pri = priority => {
+      const obj = {
+        'Low priority': ' !l',
+        'Medium priority': ' !m',
+        'High priority': ' !h',
+      }
+      return {
+        priority,
+        str: n.replace(obj[priority], ''),
+      }
+    }
+    if (n.includes(' !l')) return pri('Low priority')
+    if (n.includes(' !m')) return pri('Medium priority')
+    if (n.includes(' !h')) return pri('High priority')
+    if (n.includes(' !n'))
+      return {
+        priority: '',
+        str: n.replace(' !no', ''),
+      }
+    return {
+      priority: null,
+      str: n,
+    }
+  },
 }

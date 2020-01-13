@@ -14,6 +14,7 @@
           :options="options"
           :placeholder="placeholder"
           :focusToggle='focusToggle'
+          :onPaste='onPaste'
           @select="select"
           @enter='save'
           @cancel="cancel"
@@ -216,7 +217,7 @@ import FileMixin from '@/mixins/file.js'
 
 export default {
   mixins: [FileMixin],
-  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup', 'focusToggle', 'taskHeight', 'editAction'],
+  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup', 'focusToggle', 'taskHeight', 'editAction', 'fallbackTask'],
   components: {
     DropInput: DropInputVue, FileApp,
     ButtonApp: ButtonVue,
@@ -306,6 +307,34 @@ export default {
     }
   },
   methods: {
+    onPaste(txt) {
+      if (this.fallbackTask) {
+        let str = ''
+        const lines = txt.split('\n').map(el => el.trim()).filter(el => el.length > 0)
+  
+        const tasks = []
+        for (const l of lines) {
+          const { str, priority } = taskUtils.parsePriorityFromString(l)
+          tasks.push(this.fallbackTask({
+            name: str,
+            priority,
+            taskDuration: '',
+            folder: '',
+            list: '',
+            notes: '',
+            calendar: null,
+            heading: null,
+            headingId: null,
+            tags: [],
+            checklist: [],
+            order: [],
+            files: [],
+          }))
+        }
+        if (lines.length > 0 && lines[0].length > 0)
+          this.$store.dispatch('task/addMultipleTasks', tasks)
+      }
+    },
     saveChecklist() {
       if (this.defaultTask && this.task.checklist)
         this.$store.dispatch('task/saveTask', {
@@ -704,21 +733,10 @@ export default {
       const n = this.task.name
       let changedOptions = false
       const parsePriority = () => {
-        const pri = (priority) => {
-          const obj = {
-            'Low priority': ' !l',
-            'Medium priority': ' !m',
-            'High priority': ' !h',
-          }
+        const { priority, str } = taskUtils.parsePriorityFromString(n)
+        if (priority !== null) {
+          this.task.name = str
           this.task.priority = priority
-          this.task.name = n.replace(obj[priority], '')
-        }
-        if (n.includes(' !l')) pri('Low priority')
-        else if (n.includes(' !m')) pri('Medium priority')
-        else if (n.includes(' !h')) pri('High priority')
-        else if (n.includes(' !no')) {
-          this.task.priority = null
-          this.task.name = n.replace(' !no', '')
         }
       }
       const parseTags = () => {

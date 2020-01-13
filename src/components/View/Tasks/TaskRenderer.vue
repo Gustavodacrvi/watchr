@@ -38,6 +38,7 @@
 
           v-bind='item.propsData'
           :focusToggle='focusToggle'
+          :fallbackTask='fallbackTask'
 
           :data-id='item.isEdit'
 
