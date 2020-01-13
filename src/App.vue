@@ -89,6 +89,8 @@ export default {
         this.$store.commit('toggleControl', false)
       if (key === "Shift")
         this.$store.commit('toggleShift', false)
+      if (key === "Alt")
+        this.$store.commit('toggleAlt', false)
     },
     keydown({key}) {
       const active = document.activeElement
@@ -97,6 +99,8 @@ export default {
         this.$store.commit('toggleControl', true)
       if (!isTyping && key === "Shift")
         this.$store.commit('toggleShift', true)
+      if (!isTyping && key === "Alt")
+        this.$store.commit('toggleAlt', true)
       if (!isTyping) this.$store.dispatch('pushKeyShortcut', key)
     },
     closePopup(persistOnTheSameView) {

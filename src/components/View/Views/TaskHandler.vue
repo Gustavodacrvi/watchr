@@ -129,25 +129,6 @@ export default {
         }
         
         switch (key) {
-    // addTagsToTasksById(c, {ids, tagIds}) {
-          case "T": {
-            if (this.selectedTasks.length > 0) {
-              p()
-              this.$store.commit('pushIconDrop', {
-                links: this.tags.map(t => ({...t, icon: 'tag'})),
-                select: true,
-                onSave: names => {
-                  this.$store.dispatch('task/addTagsToTasksById', {
-                    ids: this.selectedTasks,
-                    tagIds: this.tags.filter(t => names.includes(t.name)).map(el => el.id),
-                  })
-                },
-                selected: [],
-                allowSearch: true,
-              })
-            }
-            break
-          }
           case 'S': {
             save({
               calendar: {
@@ -184,6 +165,45 @@ export default {
           }
         }
       }
+
+      const hasSelected = this.selectedTasks.length > 0
+      if (this.isOnAlt)
+        switch (key) {
+          case "t": {
+            if (hasSelected) {
+              p()
+              this.$store.commit('pushIconDrop', {
+                links: this.tags.map(t => ({...t, icon: 'tag'})),
+                select: true,
+                onSave: names => {
+                  this.$store.dispatch('task/addTagsToTasksById', {
+                    ids: this.selectedTasks,
+                    tagIds: this.tags.filter(t => names.includes(t.name)).map(el => el.id),
+                  })
+                },
+                selected: [],
+                allowSearch: true,
+              })
+            }
+            break
+          }
+          case "l": {
+            if (hasSelected) {
+              p()
+              this.$store.commit('pushIconDrop', {
+                links: this.lists.map(t => ({
+                  ...t,
+                  icon: 'tasks',
+                  callback: () => this.$store.dispatch('task/addListToTasksById', {
+                    ids: this.selectedTasks,
+                    listId: t.id,
+                  }),
+                })),
+                allowSearch: true,
+              })
+            }
+          }
+        }
     },
     select(i) {
       if (i === null) {
@@ -405,9 +425,11 @@ export default {
       storeTasks: state => state.task.tasks,
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
+      tags: state => state.tag.tags,
+      lists: state => state.list.lists,
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
-      tags: state => state.tag.tags,
+      isOnAlt: state => state.isOnAlt,
     }),
     ...mapGetters({
       l: 'l',
