@@ -182,8 +182,7 @@ export default {
         const ref = listRef()
         batch.set(ref, obj)
         ord.splice(index, 0, ref.id)
-        const orderRef = userRef()
-        batch.update(orderRef, {
+        batch.update(userRef(), {
           lists: ord,
         })
   
@@ -193,12 +192,15 @@ export default {
 
         const ord = ids.slice()
         const ref = listRef()
-        batch.set(ref, obj)
         ord.splice(index, 0, ref.id)
 
         batch.update(folderRef(folder), {
           order: ord,
         })
+
+        setTimeout(() => {
+          ref.set(obj)
+        }, 60)
 
         batch.commit()
       }
@@ -446,23 +448,22 @@ export default {
 
     // HEADING
     
-    addHeading({getters}, {ids, name, listId, index}) {
+    addHeading({getters}, {ids, name, headings, listId, index}) {
       const list = getters.getListsById([listId])[0]
       const batch = fire.batch()
       const id = utils.getUid()
 
-      for (const id of ids) {
-        const ref = taskRef(id)
-        batch.update(ref, {
+      for (const id of ids)
+        batch.update(taskRef(id), {
           heading: id,
         })
-      }
-      const headings = list.headings.slice()
-      headings.splice(index, 0, {name, tasks: ids, id})
-      const ref = listRef(listId)
-      batch.update(ref, {
-        headings,
-        headingsOrder: headings.map(el => el.id)
+      const listHeadings = list.headings.slice()
+      listHeadings.push({name, tasks: ids, id})
+      headings.splice(index, 0, id)
+      
+      batch.update(listRef(listId), {
+        headings: listHeadings,
+        headingsOrder: headings,
       })
 
       batch.commit()

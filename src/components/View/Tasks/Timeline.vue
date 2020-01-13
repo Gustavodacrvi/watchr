@@ -1,6 +1,6 @@
 <template>
-  <div class="Timeline" :class="platform">
-    <div class="wrapper">
+  <div class="Timeline" :class="platform" @click.stop>
+    <div class="wrapper cursor">
       <div class="hour">
         <span class="h">{{ startHour }}</span>
       </div>
@@ -14,15 +14,50 @@
 
 <script>
 
+import utils from '@/utils/'
+
 import { mapState, mapGetters } from 'vuex'
 
 export default {
   props: ['id', 'buffer', 'index', 'start', 'startHour', 'startMin', 'end', 'endHour', 'endMin', 'region'],
+  mounted() {
+    utils.bindOptionsToEventListener(this.$el, this.options, this, 'click')
+  },
+  methods: {
+    add(time) {
+      this.$emit('change-time', {time, add: true})
+    },
+    remove(time) {
+      this.$emit('change-time', {time, add: false})
+    },
+  },
   computed: {
     ...mapState({
       userInfo: state => state.userInfo,
     }),
-    ...mapGetters(['platform'])
+    ...mapGetters(['platform']),
+    options() {
+      return [
+        {
+          name: 'Add time',
+          callback: () => ({
+            comp: "TimePicker",
+            content: {
+              callback: this.add
+            }
+          }),
+        },
+        {
+          name: 'Remove time',
+          callback: () => ({
+            comp: "TimePicker",
+            content: {
+              callback: this.remove
+            }
+          }),
+        },
+      ]
+    },
   }
 }
 
@@ -40,6 +75,12 @@ export default {
 
 .wrapper {
   display: flex;
+  transform: scale(1,1);
+  transition-duration: .2s;
+}
+
+.wrapper:hover {
+  transform: scale(1.1,1.1);
 }
 
 .hour {

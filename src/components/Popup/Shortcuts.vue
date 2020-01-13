@@ -4,7 +4,7 @@
       <h2 class="pc">Shortcuts</h2>
     </div>
     <div class="content">
-      <h3>Select</h3>
+      <h3 class="pc">Select</h3>
       <div class="line">
         <span>Move selection up</span>
         <span class="tag">Up Arrow</span>
@@ -63,6 +63,10 @@
         <span class="tag">Shift + D</span>
       </div>
       <div class="line">
+        <span>Add tags to selection</span>
+        <span class="tag">Alt + T</span>
+      </div>
+      <div class="line">
         <span>Complete selected</span>
         <span class="tag">Shift + .</span>
       </div>
@@ -74,6 +78,42 @@
         <span>Move to Today</span>
         <span class="tag">Shift + T</span>
       </div>
+    </div>
+
+    <h3 class="pc">Move items</h3>
+    <div class="line">
+      <span>Move selection up</span>
+      <span class="tag">Alt + Arrow Up</span>
+    </div>
+    <div class="line">
+      <span>Move selection down</span>
+      <span class="tag">Alt + Arrow Down</span>
+    </div>
+    <div class="line">
+      <span>Move to list</span>
+      <span class="tag">Alt + L</span>
+    </div>
+    <div class="line">
+      <span>Move to folder</span>
+      <span class="tag">Alt + F</span>
+    </div>
+    <div class="line">
+      <span>Use calendar on selection</span>
+      <span class="tag">Alt + S</span>
+    </div>
+
+    <h3 class="pc">View</h3>
+    <div class="line">
+      <span>Toggle completed tasks</span>
+      <span class="tag">Alt + C</span>
+    </div>
+    <div class="line">
+      <span>Toggle someday tasks</span>
+      <span class="tag">Alt + O</span>
+    </div>
+    <div class="line">
+      <span>Toggle scheduler</span>
+      <span class="tag">Control + Alt + S</span>
     </div>
   </div>
 </template>
@@ -111,6 +151,11 @@ export default {
 
 h3 {
   margin: 24px 0;
+}
+
+.popup {
+  max-height: 550px;
+  overflow: auto;
 }
 
 </style>

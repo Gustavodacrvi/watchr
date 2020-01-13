@@ -25,6 +25,7 @@
       @add-heading="addHeading"
       @allow-someday='allowSomeday'
       @go='go'
+      @change-time='changeTime'
     />
   </div>
 </template>
@@ -77,7 +78,14 @@ export default {
     keydown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
-      if (!this.mainSelection) {
+      const hasSelected = this.selectedTasks.length > 0
+
+      let fallbackTasks = []
+      if (hasSelected)
+        fallbackTasks = this.selectedTasks
+      else fallbackTasks = this.mainSelection ? [this.mainSelection] : null
+      
+      if (!this.mainSelection || this.mainSelectionIsNotInView) {
         switch (key) {
           case 'ArrowDown': {
             this.go(true)
@@ -91,6 +99,7 @@ export default {
           }
         }
       }
+
       switch (key) {
         case 'ArrowLeft': {
           this.go(null)
@@ -104,26 +113,30 @@ export default {
       if (this.isOnControl) {
         switch (key) {
           case "a": {
+            p()
             this.selectEverythingToggle = true
             setTimeout(() => {
               this.selectEverythingToggle = false
             })
           }
           case '.': {
-            const tasks = this.getTasksById(this.selectedTasks)
-            const completed = tasks.filter(t => t.completed)
-            const uncompleted = tasks.filter(t => !t.completed)
-            this.$store.dispatch('task/completeTasks', uncompleted)
-            this.$store.dispatch('task/uncompleteTasks', completed)
+            if (fallbackTasks) {
+              const tasks = this.getTasksById(fallbackTasks)
+              const completed = tasks.filter(t => t.completed)
+              const uncompleted = tasks.filter(t => !t.completed)
+              this.$store.dispatch('task/completeTasks', uncompleted)
+              this.$store.dispatch('task/uncompleteTasks', completed)
+            }
           }
         }
       }
       if (this.isOnShift) {
         const save = task => {
-          this.$store.dispatch('task/saveTasksById', {
-              ids: this.selectedTasks,
-              task,
-            })
+          if (fallbackTasks)
+            this.$store.dispatch('task/saveTasksById', {
+                ids: fallbackTasks,
+                task,
+              })
         }
         
         switch (key) {
@@ -163,6 +176,123 @@ export default {
           }
         }
       }
+
+      const iconDrop = opt => this.$store.commit('pushIconDrop', opt)
+      if (this.isOnAlt && this.isOnControl)
+        switch (key) {
+          case 's': {
+            this.$emit('calendar')
+            break
+          }
+        }
+      
+      if (this.isOnAlt && !this.isOnControl)
+        switch (key) {
+          case "ArrowUp": {
+            p()
+            this.moveSelected(true)
+            break
+          }
+          case "ArrowDown": {
+            p()
+            this.moveSelected(false)
+            break
+          }
+          case 'c': {
+            this.$emit('completed')
+            break
+          }
+          case 'o': {
+            this.$emit('someday')
+            break
+          }
+          case 's': {
+            if (fallbackTasks) {
+              p()
+              iconDrop({
+                comp: 'CalendarPicker',
+                content: {callback: calendar => this.$store.dispatch('task/saveTasksById', {
+                  ids: fallbackTasks,
+                  task: {calendar}
+                }), repeat: true}
+              })
+              break
+            }
+          }
+          case "t": {
+            if (fallbackTasks) {
+              p()
+              iconDrop({
+                links: this.tags.map(t => ({...t, icon: 'tag'})),
+                select: true,
+                onSave: names => {
+                  this.$store.dispatch('task/addTagsToTasksById', {
+                    ids: fallbackTasks,
+                    tagIds: this.tags.filter(t => names.includes(t.name)).map(el => el.id),
+                  })
+                },
+                selected: [],
+                allowSearch: true,
+              })
+            }
+            break
+          }
+          case "l": {
+            if (fallbackTasks) {
+              p()
+              iconDrop({
+                links: this.lists.map(t => ({
+                  ...t,
+                  icon: 'tasks',
+                  callback: () => this.$store.dispatch('task/addListToTasksById', {
+                    ids: fallbackTasks,
+                    listId: t.id,
+                  }),
+                })),
+                allowSearch: true,
+              })
+            }
+            break
+          }
+          case "f": {
+            if (fallbackTasks) {
+              p()
+              iconDrop({
+                links: this.folders.map(t => ({
+                  ...t,
+                  icon: 'tasks',
+                  callback: () => this.$store.dispatch('task/addFolderToTasksById', {
+                    ids: fallbackTasks,
+                    folderId: t.id,
+                  }),
+                })),
+                allowSearch: true,
+              })
+            }
+            break
+          }
+        }
+    },
+    moveSelected(up) {
+      const selected = this.selectedTasks
+      const ids = this.laseredIds
+      const newOrder = ids.slice()
+      const increment = up ? -1 : 1
+
+      const sort = i => {
+        const newIndex = i + increment
+        if (selected.includes(ids[i]) && ids[newIndex] && !selected.includes(newOrder[newIndex]))
+          newOrder.splice(newIndex, 0, newOrder.splice(i, 1)[0])
+      }
+
+      if (!up)
+        for (let i = ids.length; i > -1; i--)
+          sort(i)
+      else
+        for (let i = 0; i < ids.length; i++)
+          sort(i)
+
+      this.updateIds(newOrder)
     },
     select(i) {
       if (i === null) {
@@ -176,6 +306,8 @@ export default {
           this.mainSelection = ids[i]
           this.mainSelectionIndex = i
           return true
+        } else if (this.mainSelectionIsNotInView) {
+          this.select(null)
         }
         return false
       }
@@ -233,38 +365,45 @@ export default {
       }
       else this.scheduleObject = null
     },
-    createSchedule() {
-      if (!this.autoSchedule) return null
-      
-      const { time, buffer, fallback } = this.autoSchedule
+    changeTime({from, add, time}) {
+      const obj = this.scheduleObject
+      const target = obj[from]
+      const timeSplited = time.split(':')
 
-      const tasks = this.allViewTasks
-      
-      let init = mom(time, 'HH:mm')
+      const affectedTasks = []
+      const objKeys = Object.keys(obj)
+      for (const key of objKeys)
+        if (obj[key].index >= target.index)
+          affectedTasks.push(obj[key])
 
+      const format = this.timeFormat
+      
+      const init = mom(affectedTasks[0].start, 'HH:mm')
+
+      const hoursToAdd = parseInt(timeSplited[0], 10)
+      const minutesToAdd = parseInt(timeSplited[1], 10)
+      if (add) {
+        init.add(hoursToAdd, 'h')
+        init.add(minutesToAdd, 'm')
+      } else {
+        init.subtract(hoursToAdd, 'h')
+        init.subtract(minutesToAdd, 'm')
+      }
+
+      const { buffer, fallback } = this.autoSchedule
       const bufferSplit = buffer.split(':')
-
-      const finalObj = {}
-
-      const format = this.userInfo.disablePmFormat ? 'H:mm' : 'LT'
-
-      const notChar = s => s !== 'A' && s !== 'M' && s !== 'P'
-
-      let i = 0
-      for (const t of tasks) {
-        if (t.calendar && t.calendar.time)
-          init = mom(t.calendar.time, 'HH:mm')
+      
+      for (const el of affectedTasks) {
+        const t = this.allViewTasks.filter(task => task.id === el.id)
         
         const start = init.format(format)
         const split = start.split(':')
-
-        const region = init.format('a')
 
         const startHour = split[0]
         let startMin = ''
         const startSplit = split[1]
         for (const s of startSplit)
-          if (notChar(s))
+          if (this.notChar(s))
             startMin += s
 
         const taskDuration = t.taskDuration ? t.taskDuration : fallback
@@ -281,7 +420,74 @@ export default {
         let endMin = ''
         const endSplitStr = split[1]
         for (const s of endSplitStr)
-          if (notChar(s))
+          if (this.notChar(s))
+            endMin += s
+
+        init.add(parseInt(bufferSplit[0], 10), 'h')
+        init.add(parseInt(bufferSplit[1], 10), 'm')
+
+        obj[el.id] = {...el, ...{
+          start, startHour, startMin,
+          end, endHour, endMin,
+        }}
+      }
+      this.createSchedule({...obj})
+    },
+    createSchedule(newObj) {
+      const obj = newObj || this.getScheduleObject()
+      this.scheduleObject = obj
+      this.$emit('save-schedule-object', obj)
+    },
+    notChar(s) {
+      return s => s !== 'A' && s !== 'M' && s !== 'P'
+    },
+    getScheduleObject() {
+      if (!this.autoSchedule) return null
+      
+      const { time, buffer, fallback } = this.autoSchedule
+
+      const tasks = this.allViewTasks
+      
+      let init = mom(time, 'HH:mm')
+
+      const bufferSplit = buffer.split(':')
+
+      const finalObj = {}
+
+      const format = this.timeFormat
+
+      let i = 0
+      for (const t of tasks) {
+        if (t.calendar && t.calendar.time)
+          init = mom(t.calendar.time, 'HH:mm')
+        
+        const start = init.format(format)
+        const split = start.split(':')
+
+        const region = init.format('a')
+
+        const startHour = split[0]
+        let startMin = ''
+        const startSplit = split[1]
+        for (const s of startSplit)
+          if (this.notChar(s))
+            startMin += s
+
+        const taskDuration = t.taskDuration ? t.taskDuration : fallback
+
+        const durationSplit = taskDuration.split(':')
+
+        init.add(parseInt(durationSplit[0], 10), 'h')
+        init.add(parseInt(durationSplit[1], 10), 'm')
+
+        const end = init.format(format)
+        const endSplit = end.split(':')
+
+        const endHour = endSplit[0]
+        let endMin = ''
+        const endSplitStr = split[1]
+        for (const s of endSplitStr)
+          if (this.notChar(s))
             endMin += s
 
         init.add(parseInt(bufferSplit[0], 10), 'h')
@@ -289,7 +495,7 @@ export default {
 
         const obj = {
           id: t.id,
-          buffer, region,
+          region,
           index: i,
           start, startHour, startMin,
           end, endHour, endMin,
@@ -300,8 +506,7 @@ export default {
         i++
       }
 
-      this.scheduleObject = finalObj
-      this.$emit('save-schedule-object', finalObj)
+      return finalObj
     },
   },
   computed: {
@@ -309,8 +514,12 @@ export default {
       storeTasks: state => state.task.tasks,
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
+      tags: state => state.tag.tags,
+      lists: state => state.list.lists,
+      folders: state => state.folder.folders,
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
+      isOnAlt: state => state.isOnAlt,
     }),
     ...mapGetters({
       l: 'l',
@@ -320,8 +529,20 @@ export default {
 
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
     }),
+    mainSelectionTask() {
+      return this.allViewTasks.find(el => el.id === this.mainSelection)
+    },
+    mainSelectionIsNotInView() {
+      return !this.allViewTasksIds.includes(this.mainSelection)
+    },
+    timeFormat() {
+      return this.userInfo.disablePmFormat ? 'H:mm' : 'LT'
+    },
     rootNonFilteredIds() {
       return this.rootNonFiltered.map(el => el.id)
+    },
+    laseredIds() {
+      return this.sortLaseredTasks.map(el => el.id)
     },
     allViewTasks() {
       return [...this.sortLaseredTasks,...this.sortHeadings.map(

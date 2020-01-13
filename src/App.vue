@@ -70,6 +70,12 @@ export default {
     }
     document.addEventListener('scroll', this.toggleScroll)
 
+    window.addEventListener('focus', () => {
+      this.$store.commit('toggleControl', false)
+      this.$store.commit('toggleShift', false)
+      this.$store.commit('toggleAlt', false)
+    })
+
     this.updateViewType(true)
   },
   methods: {
@@ -89,14 +95,30 @@ export default {
         this.$store.commit('toggleControl', false)
       if (key === "Shift")
         this.$store.commit('toggleShift', false)
+      if (key === "Alt")
+        this.$store.commit('toggleAlt', false)
     },
     keydown({key}) {
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
+
+      switch (key) {
+        case 'ArrowLeft': {
+          this.$router.go(-1)
+          break
+        }
+        case 'ArrowRight': {
+          this.$router.go(1)
+          break
+        }
+      }
+      
       if (!isTyping && key === 'Control')
         this.$store.commit('toggleControl', true)
       if (!isTyping && key === "Shift")
         this.$store.commit('toggleShift', true)
+      if (!isTyping && key === "Alt")
+        this.$store.commit('toggleAlt', true)
       if (!isTyping) this.$store.dispatch('pushKeyShortcut', key)
     },
     closePopup(persistOnTheSameView) {

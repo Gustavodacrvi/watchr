@@ -286,24 +286,6 @@ export default {
       return lists.map(t => t)
     },
   },
-  watch: {
-    rootLists() {
-      this.$emit('root-view-list', this.rootLists.map(l => ({viewName: l.name, viewType: 'list'})))
-    },
-    laseredFolders() {
-      const folders = this.laseredFolders
-      const arr = []
-      for (const fold of folders) {
-        arr.push({
-          viewName: fold.name,
-          viewType: 'folder'
-        })
-        arr.push(...fold.list.map(l => ({viewName: l.name, viewType: 'list'})))
-      }
-      
-      this.$emit('view-list', arr)
-    },
-  }
 }
 
 </script>

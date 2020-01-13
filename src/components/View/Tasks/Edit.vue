@@ -617,18 +617,8 @@ export default {
       return this.task.name
     },
     getTags() {
-      const arr = []
-      for (const el of this.savedTags) {
-        arr.push({
-          name: el.name,
-          icon: 'tag',
-          callback: () => {
-            this.addTag(el.name)
-          },
-        })
-      }
       return {
-        links: arr,
+        links: this.savedTags.map(t => ({...t, icon: 'tag'})),
         select: true,
         onSave: names => this.task.tags = names.slice(),
         selected: this.task.tags || [],

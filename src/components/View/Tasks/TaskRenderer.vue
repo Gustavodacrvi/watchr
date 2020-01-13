@@ -27,6 +27,7 @@
           @select='selectTask'
           @add-task-after-selection='addTaskAfterSelection'
           @go='moveTaskHandlerSelection'
+          @change-time='changeTime'
 
           :data-id='item.id'
           :data-name='item.name'
@@ -100,6 +101,7 @@
             :headings='[]'
 
             :hideListName="h.hideListName"
+            :rootHeadings='getLazyHeadingsIds'
             :rootChanging='changingViewName'
             :headingFilterFunction='h.filterFunction'
             :headingFallbackTask='h.fallbackTask'
@@ -111,6 +113,7 @@
             @add-heading='(obj) => $emit("add-heading", obj)'
             @update="ids => updateHeadingTaskIds(h,ids)"
             @go='moveTaskHandlerSelection'
+            @change-time='changeTime'
 
             :header="h"
             :addTask="h.onAddTask"
@@ -152,7 +155,8 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton', 'openCalendar', 'rootChanging', 'mainSelection', 'mainSelectionIndex', 'selectEverythingToggle',
+  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton', 'openCalendar', 'rootChanging', 
+  'rootHeadings', 'mainSelection', 'mainSelectionIndex', 'selectEverythingToggle',
   'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -214,15 +218,21 @@ export default {
     }
   },
   methods: {
+    changeTime(args) {
+      this.$emit('change-time', args)
+    },
     moveTaskHandlerSelection(bool) {
       this.$emit('go', bool)
     },
     mousemove(evt) {
       if (this.movingButton) {
+        const addHeadingElement = document.querySelector('.TaskRenderer .action-heading') || {}
+        const createElement = document.querySelector('.TaskRenderer .create') || {}
+        const addElement = document.querySelector('.TaskRenderer .add') || {}
         const obj = {
-          'action-heading': document.querySelector('.TaskRenderer .action-heading').style,
-          create: document.querySelector('.TaskRenderer .create').style,
-          add: document.querySelector('.TaskRenderer .add').style,
+          'action-heading': addHeadingElement.style || {},
+          create: createElement.style || {},
+          add: addElement.style || {},
         }
         
         const { left, width } = this.$el.getBoundingClientRect()
@@ -348,8 +358,8 @@ export default {
     },
     addHeadingsEdit(index) {
       const h = this.headingEditOptions
-      const onSave = (...args) => {
-        this.addHeading(...args)
+      const onSave = name => {
+        this.addHeading(name)
         setTimeout(() => {
           this.removeEdit()
         }, 50)
@@ -666,13 +676,14 @@ export default {
       if (h.updateIds)
         h.updateIds(ids)
     },
-    addHeading(name) {
+    addHeading(name, ...args) {
       if (name) {
         const i = this.getTaskRendererPosition()
         const ids = this.getIds(true)
         this.$emit('add-heading', {
           ids: ids.slice(i),
           name, index: this.headingPosition,
+          headings: this.rootHeadings,
         })
       }
     },
@@ -704,7 +715,8 @@ export default {
     },
     windowClick() {
       for (const el of this.selectedElements)
-        this.deSelectTask(el)
+        if (this.lazyTasks.find(t => t.id === el.dataset.id))
+          this.deSelectTask(el)
       this.$store.commit('clearSelected')
     },
     fallbackTask(task, force) {
@@ -858,6 +870,9 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
+    getLazyHeadingsIds() {
+      return this.lazyHeadings.map(el => el.id)
+    },
     headingsTrans() {
       if (this.isDesktop) return 'head-t'
       return (this.changingViewName || this.rootChanging) ? '' : 'head-t'

@@ -71,7 +71,13 @@ export default {
         if (tags.length === 0) return []
 
         for (const tag of tags) {
-          tag.callback = () => this.$router.push({ path: '/user?tag=' + tag.name })
+          tag.callback = () => {
+            this.$store.commit('navigate', {
+              viewName: tag.name,
+              viewType: 'tag',
+            })
+            this.$router.push({ path: '/user?tag=' + tag.name })
+          }
           tag.options = utilsTag.tagOptions(tag)
 
           tag.onSubTagUpdate = ids => {
@@ -101,11 +107,6 @@ export default {
       return getTags()
     },
   },
-  watch: {
-    getTags() {
-      this.$emit('view-list', this.getTags.map(el => ({viewName: el.name, viewType: 'tag'})))
-    }
-  }
 }
 
 </script>

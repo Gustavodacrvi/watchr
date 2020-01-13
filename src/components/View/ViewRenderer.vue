@@ -57,6 +57,10 @@
           @present-tags='v => presentTags = v'
           @present-lists='v => presentLists = v'
           @present-folders='v => presentFolders = v'
+
+          @someday='showSomeday = !showSomeday'
+          @completed='showCompleted = !showCompleted'
+          @calendar='toggleCalendar'
         />
       </transition>
       <div style='height: 300px'></div>
@@ -123,11 +127,11 @@ export default {
     return {
       movingButton: false,
       pagination: 0,
-      showCompleted: false,
       showingTagSelection: false,
       showingListSelection: false,
       showingFolderSelection: false,
       showingPrioritySelection: false,
+      showCompleted: false,
       showSomeday: false,
       helperComponent: false,
 
@@ -174,6 +178,12 @@ export default {
       if (this.headerOptions)
         this.computedHeaderOptions = await this.getOptions(this.headerOptions)
       else this.computedHeaderOptions = []
+    },
+    toggleCalendar() {
+      if (this.helperComponent === "LongCalendarPicker")
+        this.helperComponent = null
+      else
+        this.helperComponent = "LongCalendarPicker"
     },
     saveScheduleObject(obj) {
       this.$emit('save-schedule', {

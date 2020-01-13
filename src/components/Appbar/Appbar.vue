@@ -78,8 +78,6 @@
                     :showDefered='showDefered'
                     :showRepeat='showRepeat'
                     :data-transindex="getAppnavIndex(section)"
-                    @root-view-list='getRootViewList'
-                    @view-list='getViewListFromComp'
                   />
                 </transition>
               </div>
@@ -229,9 +227,6 @@ export default {
       searchTimeout: null,
       oldIndex: 0,
       section: 'Lists',
-
-      compViewList: [],
-      compRootViewList: [],
     }
   },
   created() {
@@ -261,12 +256,6 @@ export default {
     window.removeEventListener('resize', this.moveLineToActive)
   },
   methods: {
-    getRootViewList(list) {
-      this.compRootViewList = list
-    },
-    getViewListFromComp(list) {
-      this.compViewList = list
-    },
     update(links) {
       userRef(this.userInfo.userId).set({
         links,
@@ -421,7 +410,10 @@ export default {
       const favs = this.getFavorites
 
       const selectView = (name, type) => {
-        this.$store.commit('navigate', name)
+        this.$store.commit('navigate', {
+          viewName: name,
+          viewType: type,
+        })
         this.$router.push(`/user?${type}=${name}`)
       }
       const getOptions = (link, type) => {
@@ -635,37 +627,15 @@ export default {
     newIndex() {
       return this.getAppnavIndex(this.section)
     },
-    slideDirection() {
-      return this.$store.state.slide
-    },
-
-    getViewList() {
-      return [
-        ...this.getLinksOrdered.map(el => ({viewName: el.name, viewType: 'list'})),
-        /* ...this.compRootViewList,
-        ...this.compViewList, */
-      ]
-    },
   },
   watch: {
     section() {
-      this.compRootViewList = []
-      this.compViewList = []
       this.$emit('section', this.section)
       this.showingIconDrop = false
       setTimeout(() => {
         this.showingIconDrop = true
       }, 200)
     },
-    slideDirection(newNum, oldNum) {
-      const dire = newNum - oldNum
-
-      const index = this.getViewList.findIndex(obj => obj.viewName === this.viewName && obj.viewType === this.viewType)
-      const view = this.getViewList[index + dire]
-      if (index > -1 && view) {
-        this.$router.push(`user?${view.viewType}=${view.viewName}`)
-      }
-    }
   }
 }
 

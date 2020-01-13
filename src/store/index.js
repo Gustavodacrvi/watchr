@@ -58,7 +58,7 @@ moment.locale(lang)
 const uid = () => auth.currentUser.uid
 
 
-const version = '078'
+const version = '079'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -103,8 +103,6 @@ const store = new Vuex.Store({
     },
     firstFireLoad: false,
     selectedTasks: [],
-    isOnControl: false,
-    isOnShift: false,
     fireBaseFirstLoaded: false,
     authState: false,
     fileURL: null,
@@ -115,8 +113,10 @@ const store = new Vuex.Store({
     allowNavHide: true,
     viewName: '',
     viewType: '',
-    slide: 0,
-
+    
+    isOnControl: false,
+    isOnShift: false,
+    isOnAlt: false,
     pressingKey: null,
   },
   getters: {
@@ -222,9 +222,6 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
-    slide(state, num) {
-      state.slide += num
-    },
     unpressKey(state) {
       state.pressingKey = null
     },
@@ -309,7 +306,10 @@ const store = new Vuex.Store({
     },
     toggleShift(state, clicked) {
       state.isOnShift = clicked
-    }
+    },
+    toggleAlt(state, clicked) {
+      state.isOnAlt = clicked
+    },
   },
   actions: {
     getOptions(context, options) {
@@ -333,7 +333,7 @@ const store = new Vuex.Store({
         dispatch('pushPopup', {comp, naked: true})
       }
       state.pressingKey = key
-      if (!state.isOnControl && !state.isOnShift)
+      if (!state.isOnControl && !state.isOnShift && !state.isOnAlt)
         switch (key.toLowerCase()) {
           case 'q': pop('AddTask'); break
           case 't': pop('AddTag'); break
