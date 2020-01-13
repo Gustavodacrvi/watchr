@@ -129,6 +129,25 @@ export default {
         }
         
         switch (key) {
+    // addTagsToTasksById(c, {ids, tagIds}) {
+          case "T": {
+            if (this.selectedTasks.length > 0) {
+              p()
+              this.$store.commit('pushIconDrop', {
+                links: this.tags.map(t => ({...t, icon: 'tag'})),
+                select: true,
+                onSave: names => {
+                  this.$store.dispatch('task/addTagsToTasksById', {
+                    ids: this.selectedTasks,
+                    tagIds: this.tags.filter(t => names.includes(t.name)).map(el => el.id),
+                  })
+                },
+                selected: [],
+                allowSearch: true,
+              })
+            }
+            break
+          }
           case 'S': {
             save({
               calendar: {
@@ -388,6 +407,7 @@ export default {
       userInfo: state => state.userInfo,
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
+      tags: state => state.tag.tags,
     }),
     ...mapGetters({
       l: 'l',
