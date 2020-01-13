@@ -203,6 +203,22 @@ export default {
               })
             }
           }
+          case "f": {
+            if (hasSelected) {
+              p()
+              this.$store.commit('pushIconDrop', {
+                links: this.folders.map(t => ({
+                  ...t,
+                  icon: 'tasks',
+                  callback: () => this.$store.dispatch('task/addFolderToTasksById', {
+                    ids: this.selectedTasks,
+                    folderId: t.id,
+                  }),
+                })),
+                allowSearch: true,
+              })
+            }
+          }
         }
     },
     select(i) {
@@ -427,6 +443,7 @@ export default {
       userInfo: state => state.userInfo,
       tags: state => state.tag.tags,
       lists: state => state.list.lists,
+      folders: state => state.folder.folders,
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
       isOnAlt: state => state.isOnAlt,
