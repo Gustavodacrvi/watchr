@@ -70,6 +70,12 @@ export default {
     }
     document.addEventListener('scroll', this.toggleScroll)
 
+    window.addEventListener('focus', () => {
+      this.$store.commit('toggleControl', false)
+      this.$store.commit('toggleShift', false)
+      this.$store.commit('toggleAlt', false)
+    })
+
     this.updateViewType(true)
   },
   methods: {

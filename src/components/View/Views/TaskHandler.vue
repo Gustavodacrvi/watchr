@@ -79,6 +79,11 @@ export default {
       const p = () => evt.preventDefault()
       const {key} = evt
       const hasSelected = this.selectedTasks.length > 0
+
+      let fallbackTasks = []
+      if (hasSelected)
+        fallbackTasks = this.selectedTasks
+      else fallbackTasks = this.mainSelection ? [this.mainSelection] : null
       
       if (!this.mainSelection || this.mainSelectionIsNotInView) {
         switch (key) {
@@ -94,6 +99,7 @@ export default {
           }
         }
       }
+
       switch (key) {
         case 'ArrowLeft': {
           this.go(null)
@@ -114,20 +120,23 @@ export default {
             })
           }
           case '.': {
-            const tasks = this.getTasksById(this.selectedTasks)
-            const completed = tasks.filter(t => t.completed)
-            const uncompleted = tasks.filter(t => !t.completed)
-            this.$store.dispatch('task/completeTasks', uncompleted)
-            this.$store.dispatch('task/uncompleteTasks', completed)
+            if (fallbackTasks) {
+              const tasks = this.getTasksById(fallbackTasks)
+              const completed = tasks.filter(t => t.completed)
+              const uncompleted = tasks.filter(t => !t.completed)
+              this.$store.dispatch('task/completeTasks', uncompleted)
+              this.$store.dispatch('task/uncompleteTasks', completed)
+            }
           }
         }
       }
       if (this.isOnShift) {
         const save = task => {
-          this.$store.dispatch('task/saveTasksById', {
-              ids: this.selectedTasks,
-              task,
-            })
+          if (fallbackTasks)
+            this.$store.dispatch('task/saveTasksById', {
+                ids: fallbackTasks,
+                task,
+              })
         }
         
         switch (key) {
@@ -169,7 +178,15 @@ export default {
       }
 
       const iconDrop = opt => this.$store.commit('pushIconDrop', opt)
-      if (this.isOnAlt)
+      if (this.isOnAlt && this.isOnControl)
+        switch (key) {
+          case 's': {
+            this.$emit('calendar')
+            break
+          }
+        }
+      
+      if (this.isOnAlt && !this.isOnControl)
         switch (key) {
           case "ArrowUp": {
             p()
@@ -190,31 +207,27 @@ export default {
             break
           }
           case 's': {
-            this.$emit('calendar')
-            break
-          }
-          case 's': {
-            if (hasSelected) {
+            if (fallbackTasks) {
               p()
               iconDrop({
                 comp: 'CalendarPicker',
                 content: {callback: calendar => this.$store.dispatch('task/saveTasksById', {
-                  ids: this.selectedTasks,
+                  ids: fallbackTasks,
                   task: {calendar}
                 }), repeat: true}
               })
+              break
             }
-            break
           }
           case "t": {
-            if (hasSelected) {
+            if (fallbackTasks) {
               p()
               iconDrop({
                 links: this.tags.map(t => ({...t, icon: 'tag'})),
                 select: true,
                 onSave: names => {
                   this.$store.dispatch('task/addTagsToTasksById', {
-                    ids: this.selectedTasks,
+                    ids: fallbackTasks,
                     tagIds: this.tags.filter(t => names.includes(t.name)).map(el => el.id),
                   })
                 },
@@ -225,36 +238,38 @@ export default {
             break
           }
           case "l": {
-            if (hasSelected) {
+            if (fallbackTasks) {
               p()
               iconDrop({
                 links: this.lists.map(t => ({
                   ...t,
                   icon: 'tasks',
                   callback: () => this.$store.dispatch('task/addListToTasksById', {
-                    ids: this.selectedTasks,
+                    ids: fallbackTasks,
                     listId: t.id,
                   }),
                 })),
                 allowSearch: true,
               })
             }
+            break
           }
           case "f": {
-            if (hasSelected) {
+            if (fallbackTasks) {
               p()
               iconDrop({
                 links: this.folders.map(t => ({
                   ...t,
                   icon: 'tasks',
                   callback: () => this.$store.dispatch('task/addFolderToTasksById', {
-                    ids: this.selectedTasks,
+                    ids: fallbackTasks,
                     folderId: t.id,
                   }),
                 })),
                 allowSearch: true,
               })
             }
+            break
           }
         }
     },
@@ -514,6 +529,9 @@ export default {
 
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
     }),
+    mainSelectionTask() {
+      return this.allViewTasks.find(el => el.id === this.mainSelection)
+    },
     mainSelectionIsNotInView() {
       return !this.allViewTasksIds.includes(this.mainSelection)
     },
