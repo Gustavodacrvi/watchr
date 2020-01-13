@@ -96,10 +96,12 @@ export default {
       }
       switch (key) {
         case 'ArrowLeft': {
+          this.$router.go(-1)
           this.go(null)
           break
         }
         case 'ArrowRight': {
+          this.$router.go(1)
           this.go(null)
           break
         }

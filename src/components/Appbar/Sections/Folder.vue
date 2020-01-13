@@ -119,8 +119,9 @@ export default {
       if (this.isDesktop) this.click()
     },
     click() {
-      if (!this.showSpecialInfo)
+      if (!this.showSpecialInfo) {
         this.$router.push({ path: '/user?folder=' + this.name })
+      }
       else this.apply()
     },
     toggle() {

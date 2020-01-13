@@ -113,7 +113,6 @@ const store = new Vuex.Store({
     allowNavHide: true,
     viewName: '',
     viewType: '',
-    slide: 0,
     
     isOnControl: false,
     isOnShift: false,
@@ -223,9 +222,6 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
-    slide(state, num) {
-      state.slide += num
-    },
     unpressKey(state) {
       state.pressingKey = null
     },

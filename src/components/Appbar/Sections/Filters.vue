@@ -56,6 +56,10 @@ export default {
       let filters = this.sortedFilters.slice()
       for (const filter of filters) {
         filter.callback = () => {
+          this.$store.commit('navigate', {
+            viewName: filter.name,
+            viewType: 'filter',
+          })
           this.$router.push('/user?filter=' + filter.name)
         }
         filter.options = utilsFilter.filterOptions(filter)
@@ -63,11 +67,6 @@ export default {
       return filters
     },
   },
-  watch: {
-    getFilters() {
-      this.$emit('view-list', this.getFilters.map(el => ({viewName: el.name, viewType: 'filter'})))
-    }
-  }
 }
 
 </script>
