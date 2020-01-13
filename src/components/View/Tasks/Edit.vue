@@ -331,8 +331,14 @@ export default {
             files: [],
           }))
         }
-        if (lines.length > 0 && lines[0].length > 0)
-          this.$store.dispatch('task/addMultipleTasks', tasks)
+        if (lines.length > 1 && lines[0].length > 0)
+          this.$store.commit('pushIconDrop', {
+            comp: "Confirm",
+            content: {
+              msg: `Do you want to add ${tasks.length} tasks?`,
+              callback: () => this.$store.dispatch('task/addMultipleTasks', tasks),
+            },
+          })
       }
     },
     saveChecklist() {

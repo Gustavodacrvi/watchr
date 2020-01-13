@@ -51,6 +51,7 @@ import CalendarPicker from './Calendar.vue'
 import RepeatPicker from './Calendar/Repeat/RepeatPicker.vue'
 import TimePicker from './Calendar/TimePicker.vue'
 import Files from './Files.vue'
+import Confirm from './Confirm.vue'
 
 import { mapGetters } from 'vuex'
 
@@ -59,6 +60,7 @@ export default {
   components: {
     Icon, ListIcons, CalendarPicker,
     Files, TimePicker, RepeatPicker,
+    Confirm,
   },
   data() {
     return {
