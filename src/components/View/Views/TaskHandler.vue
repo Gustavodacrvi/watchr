@@ -96,12 +96,10 @@ export default {
       }
       switch (key) {
         case 'ArrowLeft': {
-          this.$router.go(-1)
           this.go(null)
           break
         }
         case 'ArrowRight': {
-          this.$router.go(1)
           this.go(null)
           break
         }
@@ -181,6 +179,18 @@ export default {
           case "ArrowDown": {
             p()
             this.moveSelected(false)
+            break
+          }
+          case 'c': {
+            this.$emit('completed')
+            break
+          }
+          case 'o': {
+            this.$emit('someday')
+            break
+          }
+          case 's': {
+            this.$emit('calendar')
             break
           }
           case 's': {

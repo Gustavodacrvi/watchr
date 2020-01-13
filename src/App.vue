@@ -95,6 +95,18 @@ export default {
     keydown({key}) {
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
+
+      switch (key) {
+        case 'ArrowLeft': {
+          this.$router.go(-1)
+          break
+        }
+        case 'ArrowRight': {
+          this.$router.go(1)
+          break
+        }
+      }
+      
       if (!isTyping && key === 'Control')
         this.$store.commit('toggleControl', true)
       if (!isTyping && key === "Shift")
