@@ -108,7 +108,7 @@
                 <span v-if="calendarStr && !isToday && !isTomorrow" class="tag cb rb">{{ calendarStr }}</span>
                 <span v-if="folderStr" class="tag cb rb">{{ folderStr }}</span>
                 <span v-if="listStr" class="tag cb rb">{{ listStr }}</span>
-                <span v-if="task.heading && showHeadingName" class="tag cb rb">{{ task.heading }}</span>
+                <span v-if="headingName && showHeadingName" class="tag cb rb">{{ headingName }}</span>
                 <span v-if="taskDuration && !schedule" class="tag cb rb">{{ taskDuration }}</span>
               </span>
             </div>
@@ -204,6 +204,8 @@ export default {
     mainSelectionKeyDown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
+      const active = document.activeElement
+      const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
 
       const toggleSelect = () => {
         if (!this.isTaskSelected) {
@@ -232,16 +234,19 @@ export default {
           break
         }
         case 'Enter': {
-          if (!this.isOnControl && !this.justSaved)
-            this.isEditing = true
-          else if (this.isOnControl) {
-            toggleSelect()
-          }
+          if (!isTyping)
+            if (!this.isOnControl && !this.justSaved)
+              this.isEditing = true
+            else if (this.isOnControl) {
+              toggleSelect()
+            }
           break
         }
         case ' ': {
-          p()
-          this.$emit('add-task-after-selection')
+          if (!isTyping) {
+            p()
+            this.$emit('add-task-after-selection')
+          }
           break
         }
       }
@@ -839,12 +844,21 @@ export default {
     showIconDrop() {
       return this.isDesktop && this.onHover
     },
+    taskList() {
+      return this.savedLists.find(el => el.id === this.task.list)
+    },
     listStr() {
       const list = this.task.list
       if (!list || this.hideListName) return null
-      const savedList = this.savedLists.find(el => el.id === list)
+      const savedList = this.taskList
       if (!savedList || (savedList.name === this.viewName)) return null
       return savedList.name
+    },
+    headingName() {
+      const list = this.taskList
+      if (!list) return ''
+      const head = list.headings.find(h => h.id === this.task.heading)
+      return (head && head.name) || ''
     },
     folderStr() {
       const folder = this.task.folder
@@ -960,7 +974,6 @@ export default {
   background-color: var(--back-color);
   z-index: 5;
   transition-duration: .25s;
-  transition: background-color .2s !important;
 }
 
 .cont-wrapper-wrapper {

@@ -77,7 +77,7 @@ export default {
     keydown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
-      if (!this.mainSelection) {
+      if (!this.mainSelection || this.mainSelectionIsNotInView) {
         switch (key) {
           case 'ArrowDown': {
             this.go(true)
@@ -104,6 +104,7 @@ export default {
       if (this.isOnControl) {
         switch (key) {
           case "a": {
+            p()
             this.selectEverythingToggle = true
             setTimeout(() => {
               this.selectEverythingToggle = false
@@ -176,6 +177,8 @@ export default {
           this.mainSelection = ids[i]
           this.mainSelectionIndex = i
           return true
+        } else if (this.mainSelectionIsNotInView) {
+          this.select(null)
         }
         return false
       }
@@ -320,6 +323,9 @@ export default {
 
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
     }),
+    mainSelectionIsNotInView() {
+      return !this.allViewTasksIds.includes(this.mainSelection)
+    },
     rootNonFilteredIds() {
       return this.rootNonFiltered.map(el => el.id)
     },
