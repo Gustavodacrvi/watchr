@@ -229,17 +229,22 @@ export default {
         }
       }
 
+      const hasSelected = this.selectedTasks.length > 0
+      if (!(hasSelected && this.isOnAlt))
+        switch (key) {
+          case 'ArrowDown': {
+            this.$emit('go', true)
+            p()
+            break
+          }
+          case 'ArrowUp': {
+            this.$emit('go', false)
+            p()
+            break
+          }
+        }
+
       switch (key) {
-        case 'ArrowDown': {
-          this.$emit('go', true)
-          p()
-          break
-        }
-        case 'ArrowUp': {
-          this.$emit('go', false)
-          p()
-          break
-        }
         case 'Enter': {
           if (!isTyping)
             if (!this.isOnControl && !this.justSaved)
@@ -570,6 +575,7 @@ export default {
     ...mapState({
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
+      isOnAlt: state => state.isOnAlt,
       selectedEls: state => state.selectedEls,
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,

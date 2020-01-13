@@ -78,6 +78,8 @@ export default {
     keydown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
+      const hasSelected = this.selectedTasks.length > 0
+      
       if (!this.mainSelection || this.mainSelectionIsNotInView) {
         switch (key) {
           case 'ArrowDown': {
@@ -166,9 +168,18 @@ export default {
         }
       }
 
-      const hasSelected = this.selectedTasks.length > 0
       if (this.isOnAlt)
         switch (key) {
+          case "ArrowUp": {
+            p()
+            this.moveSelected(true)
+            break
+          }
+          case "ArrowDown": {
+            p()
+            this.moveSelected(false)
+            break
+          }
           case "t": {
             if (hasSelected) {
               p()
@@ -220,6 +231,27 @@ export default {
             }
           }
         }
+    },
+    moveSelected(up) {
+      const selected = this.selectedTasks
+      const ids = this.laseredIds
+      const newOrder = ids.slice()
+      const increment = up ? -1 : 1
+
+      const sort = i => {
+        const newIndex = i + increment
+        if (selected.includes(ids[i]) && ids[newIndex] && !selected.includes(newOrder[newIndex]))
+          newOrder.splice(newIndex, 0, newOrder.splice(i, 1)[0])
+      }
+
+      if (!up)
+        for (let i = ids.length; i > -1; i--)
+          sort(i)
+      else
+        for (let i = 0; i < ids.length; i++)
+          sort(i)
+
+      this.updateIds(newOrder)
     },
     select(i) {
       if (i === null) {
@@ -464,6 +496,9 @@ export default {
     },
     rootNonFilteredIds() {
       return this.rootNonFiltered.map(el => el.id)
+    },
+    laseredIds() {
+      return this.sortLaseredTasks.map(el => el.id)
     },
     allViewTasks() {
       return [...this.sortLaseredTasks,...this.sortHeadings.map(
