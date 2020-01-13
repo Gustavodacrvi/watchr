@@ -13,6 +13,7 @@
       <transition name="fade-t">
         <Timeline v-if="schedule && !isEditing"
           v-bind="schedule"
+          @change-time='changeTime'
         />
       </transition>
       <div v-if="doneTransition && !isEditing && !isDesktop"
@@ -194,6 +195,12 @@ export default {
       window.removeEventListener('keydown', this.mainSelectionKeyDown)
   },
   methods: {
+    changeTime(obj) {
+      this.$emit('change-time', {
+        ...obj,
+        from: this.task.id,
+      })
+    },
     bindMainSelection() {
       if (this.isDesktop)
         if (this.isTaskMainSelection)

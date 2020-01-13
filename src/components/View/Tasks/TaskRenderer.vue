@@ -27,6 +27,7 @@
           @select='selectTask'
           @add-task-after-selection='addTaskAfterSelection'
           @go='moveTaskHandlerSelection'
+          @change-time='changeTime'
 
           :data-id='item.id'
           :data-name='item.name'
@@ -112,6 +113,7 @@
             @add-heading='(obj) => $emit("add-heading", obj)'
             @update="ids => updateHeadingTaskIds(h,ids)"
             @go='moveTaskHandlerSelection'
+            @change-time='changeTime'
 
             :header="h"
             :addTask="h.onAddTask"
@@ -216,6 +218,9 @@ export default {
     }
   },
   methods: {
+    changeTime(args) {
+      this.$emit('change-time', args)
+    },
     moveTaskHandlerSelection(bool) {
       this.$emit('go', bool)
     },

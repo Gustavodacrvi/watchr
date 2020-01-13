@@ -25,6 +25,7 @@
       @add-heading="addHeading"
       @allow-someday='allowSomeday'
       @go='go'
+      @change-time='changeTime'
     />
   </div>
 </template>
@@ -236,38 +237,45 @@ export default {
       }
       else this.scheduleObject = null
     },
-    createSchedule() {
-      if (!this.autoSchedule) return null
-      
-      const { time, buffer, fallback } = this.autoSchedule
+    changeTime({from, add, time}) {
+      const obj = this.scheduleObject
+      const target = obj[from]
+      const timeSplited = time.split(':')
 
-      const tasks = this.allViewTasks
-      
-      let init = mom(time, 'HH:mm')
+      const affectedTasks = []
+      const objKeys = Object.keys(obj)
+      for (const key of objKeys)
+        if (obj[key].index >= target.index)
+          affectedTasks.push(obj[key])
 
+      const format = this.timeFormat
+      
+      const init = mom(affectedTasks[0].start, 'HH:mm')
+
+      const hoursToAdd = parseInt(timeSplited[0], 10)
+      const minutesToAdd = parseInt(timeSplited[1], 10)
+      if (add) {
+        init.add(hoursToAdd, 'h')
+        init.add(minutesToAdd, 'm')
+      } else {
+        init.subtract(hoursToAdd, 'h')
+        init.subtract(minutesToAdd, 'm')
+      }
+
+      const { buffer, fallback } = this.autoSchedule
       const bufferSplit = buffer.split(':')
-
-      const finalObj = {}
-
-      const format = this.userInfo.disablePmFormat ? 'H:mm' : 'LT'
-
-      const notChar = s => s !== 'A' && s !== 'M' && s !== 'P'
-
-      let i = 0
-      for (const t of tasks) {
-        if (t.calendar && t.calendar.time)
-          init = mom(t.calendar.time, 'HH:mm')
+      
+      for (const el of affectedTasks) {
+        const t = this.allViewTasks.filter(task => task.id === el.id)
         
         const start = init.format(format)
         const split = start.split(':')
-
-        const region = init.format('a')
 
         const startHour = split[0]
         let startMin = ''
         const startSplit = split[1]
         for (const s of startSplit)
-          if (notChar(s))
+          if (this.notChar(s))
             startMin += s
 
         const taskDuration = t.taskDuration ? t.taskDuration : fallback
@@ -284,7 +292,74 @@ export default {
         let endMin = ''
         const endSplitStr = split[1]
         for (const s of endSplitStr)
-          if (notChar(s))
+          if (this.notChar(s))
+            endMin += s
+
+        init.add(parseInt(bufferSplit[0], 10), 'h')
+        init.add(parseInt(bufferSplit[1], 10), 'm')
+
+        obj[el.id] = {...el, ...{
+          start, startHour, startMin,
+          end, endHour, endMin,
+        }}
+      }
+      this.createSchedule({...obj})
+    },
+    createSchedule(newObj) {
+      const obj = newObj || this.getScheduleObject()
+      this.scheduleObject = obj
+      this.$emit('save-schedule-object', obj)
+    },
+    notChar(s) {
+      return s => s !== 'A' && s !== 'M' && s !== 'P'
+    },
+    getScheduleObject() {
+      if (!this.autoSchedule) return null
+      
+      const { time, buffer, fallback } = this.autoSchedule
+
+      const tasks = this.allViewTasks
+      
+      let init = mom(time, 'HH:mm')
+
+      const bufferSplit = buffer.split(':')
+
+      const finalObj = {}
+
+      const format = this.timeFormat
+
+      let i = 0
+      for (const t of tasks) {
+        if (t.calendar && t.calendar.time)
+          init = mom(t.calendar.time, 'HH:mm')
+        
+        const start = init.format(format)
+        const split = start.split(':')
+
+        const region = init.format('a')
+
+        const startHour = split[0]
+        let startMin = ''
+        const startSplit = split[1]
+        for (const s of startSplit)
+          if (this.notChar(s))
+            startMin += s
+
+        const taskDuration = t.taskDuration ? t.taskDuration : fallback
+
+        const durationSplit = taskDuration.split(':')
+
+        init.add(parseInt(durationSplit[0], 10), 'h')
+        init.add(parseInt(durationSplit[1], 10), 'm')
+
+        const end = init.format(format)
+        const endSplit = end.split(':')
+
+        const endHour = endSplit[0]
+        let endMin = ''
+        const endSplitStr = split[1]
+        for (const s of endSplitStr)
+          if (this.notChar(s))
             endMin += s
 
         init.add(parseInt(bufferSplit[0], 10), 'h')
@@ -292,7 +367,7 @@ export default {
 
         const obj = {
           id: t.id,
-          buffer, region,
+          region,
           index: i,
           start, startHour, startMin,
           end, endHour, endMin,
@@ -303,8 +378,7 @@ export default {
         i++
       }
 
-      this.scheduleObject = finalObj
-      this.$emit('save-schedule-object', finalObj)
+      return finalObj
     },
   },
   computed: {
@@ -325,6 +399,9 @@ export default {
     }),
     mainSelectionIsNotInView() {
       return !this.allViewTasksIds.includes(this.mainSelection)
+    },
+    timeFormat() {
+      return this.userInfo.disablePmFormat ? 'H:mm' : 'LT'
     },
     rootNonFilteredIds() {
       return this.rootNonFiltered.map(el => el.id)
