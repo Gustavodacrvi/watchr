@@ -702,9 +702,16 @@ export default {
       }
     },
     selectTask(el) {
-      this.selectedElements.push(el)
-      this.$store.commit('selectTask', el.dataset.id)
-      Sortable.utils.select(el)
+      if (!this.selectedElements.includes(el)) {
+        this.selectedElements.push(el)
+        this.$store.commit('selectTask', el.dataset.id)
+        Sortable.utils.select(el)
+      }
+    },
+    deselectAll() {
+      const els = this.selectedElements
+      for (const e of els)
+        this.deSelectTask(e)
     },
     deSelectTask(el) {
       this.$store.commit('unselectTask', el.dataset.id)
@@ -932,6 +939,9 @@ export default {
     },
   },
   watch: {
+    viewName() {
+      this.deselectAll()
+    },
     tasks(newArr) {
       if (this.waitingUpdateTimeout) {
         clearTimeout(this.waitingUpdateTimeout)
@@ -953,6 +963,10 @@ export default {
             }
           }
           this.lazyTasks = tasks
+          const ts = this.lazyTasks
+          const removedEls = this.selectedElements.filter(el => el && !ts.find(t => t.id === el.dataset.id))
+          for (const el of removedEls)
+            this.deSelectTask(el)
 
           setTimeout(() => {
             this.focusToggle = !this.focusToggle
