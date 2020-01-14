@@ -254,15 +254,17 @@ export default {
             }
           break
         }
-        case ' ': {
-          if (!isTyping) {
-            p()
-            this.$emit('add-task-after-selection')
-          }
-          break
-        }
       }
 
+      if (!this.isOnShift) {
+        switch (key) {case ' ': {
+          if (!isTyping) {
+            p()
+            this.$emit('add-task-after', 1)
+          }
+          break
+        }}
+      }
       if (this.isOnShift) {
         switch (key) {
           case "C": {
@@ -276,11 +278,36 @@ export default {
             this.copyTask()
             break
           }
+          case ' ': {
+            if (!isTyping) {
+              p()
+              this.$emit('add-task-after', 0)
+            }
+            break
+          }
+        }
+      }
+      if (this.isOnControl && !this.isOnShift) {
+        switch (key) {
+          case ' ': {
+            if (!isTyping) {
+              p()
+              this.$emit('add-heading-after', +1)
+            }
+            break
+          }
         }
       }
 
       if (this.isOnShift && this.isOnControl) {
         switch (key) {
+          case ' ': {
+            if (!isTyping) {
+              p()
+              this.$emit('add-heading-after', 0)
+            }
+            break
+          }
           case "ArrowUp": {
             toggleSelect()
             break

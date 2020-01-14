@@ -45,7 +45,7 @@ export default {
   props: ['mainFilter', 'rootFilter', 'tasksOrder', 'headings', 'headingsOrder',
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 'movingButton',
-    'showHeadadingFloatingButton', 'openCalendar',
+    'showHeadadingFloatingButton', 'openCalendar', 'isSmart',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackTask', 'icon', 'configFilterOptions', 'showHeading',
@@ -147,6 +147,13 @@ export default {
           this.go(null)
           break
         }
+        case 'Delete': {
+            if (fallbackTasks) {
+              this.$store.dispatch('task/deleteTasks', fallbackTasks)
+              this.$store.commit('clearSelected')
+            }
+            break
+          }
       }
       if (this.isOnControl) {
         switch (key) {

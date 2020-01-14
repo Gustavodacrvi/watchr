@@ -20,6 +20,7 @@
           @enter='save'
           @goup='$emit("goup")'
           @godown='$emit("godown")'
+          @cancel='cancel'
         />
       </div>
     </div>

@@ -360,13 +360,6 @@ const store = new Vuex.Store({
           case 'l': pop('AddList'); break
           case 's': pop('Shortcuts'); break
           case 'f': pop('FastSearch'); break
-          case 'delete': {
-            if (state.selectedTasks.length > 0) {
-              dispatch('task/deleteTasks', state.selectedTasks)
-              state.selectedTasks = []
-            }
-            break
-          }
         }
     },
     pushPopup({state, getters}, popup) {

@@ -25,7 +25,8 @@
           :isScrolling='isScrolling'
           @de-select='deSelectTask'
           @select='selectTask'
-          @add-task-after-selection='addTaskAfterSelection'
+          @add-task-after='addTaskAfterSelection'
+          @add-heading-after='addHeadingAfterSelection'
           @go='moveTaskHandlerSelection'
           @change-time='changeTime'
 
@@ -354,8 +355,12 @@ export default {
         notesPlaceholder: this.l['Notes...'], showCancel: true, btnText: this.l['Add task']
       })
     },
-    addTaskAfterSelection() {
-      this.addTaskEdit(this.mainSelectionIndex + 1)
+    addTaskAfterSelection(dir) {
+      this.addTaskEdit(this.mainSelectionIndex + dir)
+    },
+    addHeadingAfterSelection(dir) {
+      if (this.viewType === 'list' && !this.isSmart)
+        this.addHeadingsEdit(this.mainSelectionIndex + dir)
     },
     addHeadingsEdit(index) {
       const h = this.headingEditOptions
