@@ -80,10 +80,10 @@ export default {
       const {key} = evt
       const hasSelected = this.selectedTasks.length > 0
 
-      let fallbackTasks = []
-      if (hasSelected)
-        fallbackTasks = this.selectedTasks
-      else fallbackTasks = this.mainSelection ? [this.mainSelection] : null
+      const fallbackTasks = this.fallbackSelected
+
+      const active = document.activeElement
+      const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
       
       if (!this.mainSelection || this.mainSelectionIsNotInView) {
         switch (key) {
@@ -274,7 +274,7 @@ export default {
         }
     },
     moveSelected(up) {
-      const selected = this.selectedTasks
+      const selected = this.fallbackSelected
       const ids = this.laseredIds
       const newOrder = ids.slice()
       const increment = up ? -1 : 1
@@ -529,6 +529,11 @@ export default {
 
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
     }),
+    fallbackSelected() {
+      if (this.selectedTasks.length > 0)
+        return this.selectedTasks
+      else return this.mainSelection ? [this.mainSelection] : null
+    },
     mainSelectionTask() {
       return this.allViewTasks.find(el => el.id === this.mainSelection)
     },

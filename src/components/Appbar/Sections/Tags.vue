@@ -72,10 +72,6 @@ export default {
 
         for (const tag of tags) {
           tag.callback = () => {
-            this.$store.commit('navigate', {
-              viewName: tag.name,
-              viewType: 'tag',
-            })
             this.$router.push({ path: '/user?tag=' + tag.name })
           }
           tag.options = utilsTag.tagOptions(tag)

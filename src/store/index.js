@@ -118,6 +118,7 @@ const store = new Vuex.Store({
     isOnShift: false,
     isOnAlt: false,
     pressingKey: null,
+    historyPos: 0,
   },
   getters: {
     ...Memoize(null, {
@@ -225,7 +226,15 @@ const store = new Vuex.Store({
     unpressKey(state) {
       state.pressingKey = null
     },
-    navigate(state, {viewName, viewType}) {
+    decreaseHistory(state) {
+      state.historyPos--
+    },
+    increaseHistory(state) {
+      state.historyPos++
+    },
+    navigate(state, {viewName, viewType, newRoute}) {
+      if (!newRoute)
+        state.historyPos++
       if (viewName && viewType) {
         localStorage.setItem('watchr_last_view_name', viewName)
         localStorage.setItem('watchr_last_view_type', viewType)

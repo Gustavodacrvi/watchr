@@ -57,6 +57,7 @@ export default {
       initialSmartViewRender: false,
 
       lastRouteCameFromMenu: false,
+      saveHistory: true,
     }
   },
   created() {
@@ -102,16 +103,27 @@ export default {
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
 
-      switch (key) {
-        case 'ArrowLeft': {
-          this.$router.go(-1)
-          break
+      if (!isTyping)
+        switch (key) {
+          case 'ArrowLeft': {
+            if (this.historyPos > 1) {
+              this.saveHistory = false
+              this.$store.commit('decreaseHistory')
+              this.$router.go(-1)
+            }
+            break
+          }
+          case 'ArrowRight': {
+            this.saveHistory = false
+            const old = this.$route.fullPath
+            this.$router.go(1)
+            setTimeout(() => {
+              if (old !== this.$route.fullPath)
+                this.$store.commit('increaseHistory')
+            })
+            break
+          }
         }
-        case 'ArrowRight': {
-          this.$router.go(1)
-          break
-        }
-      }
       
       if (!isTyping && key === 'Control')
         this.$store.commit('toggleControl', true)
@@ -151,11 +163,13 @@ export default {
       const name = this.$route.name
       const path = this.$route.path
       const atLeastOneUndefined = (viewName === undefined || viewType === undefined)
+      let firstNav = false
 
       if (
         (this.isStandAlone && !this.initialSmartViewRender) || 
         (path === '/user' && atLeastOneUndefined)
       ) {
+        firstNav = true
         const view = this.getInitialSmartView
         this.$router.replace(`/user?${view.viewType}=${view.viewName}`)
         this.initialSmartViewRender = true
@@ -164,15 +178,15 @@ export default {
         if (viewName && viewType)
           document.getElementById('meta-title')
             .innerHTML = `${viewName} - ${viewType.replace(/^[a-z]/, m => m.toUpperCase())}`
-        
         this.$store.commit('navigate', {
-          viewName, viewType,
+          viewName, viewType, newRoute: !this.saveHistory || firstNav || !viewName,
         })
+        this.saveHistory = true
       }
     }
   },
   computed: {
-    ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey']),
+    ...mapState(['fileURL', 'user', 'allowNavHide', 'pressingKey', 'historyPos']),
     ...mapGetters(['isDesktop', 'isStandAlone', 'l', 'getInitialSmartView', 'needsUpdate']),
     route() {
       if (this.$route.matched[0]) {
