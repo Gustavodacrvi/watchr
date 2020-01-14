@@ -113,6 +113,8 @@ const store = new Vuex.Store({
     allowNavHide: true,
     viewName: '',
     viewType: '',
+    mainSelection: null,
+    mainSelectionIndex: null,
     
     isOnControl: false,
     isOnShift: false,
@@ -161,6 +163,11 @@ const store = new Vuex.Store({
         return ordered
       },
     }),
+    fallbackSelected(state) {
+      if (state.selectedTasks.length > 0)
+        return state.selectedTasks
+      else return state.mainSelection ? [state.mainSelection] : null
+    },
     isDesktop(state) {
       return state.windowWidth >= MINIMUM_DESKTOP_SCREEN_WIDTH
     },
@@ -223,6 +230,10 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    saveMainSelection(state, {id, index}) {
+      state.mainSelection = id
+      state.mainSelectionIndex = index
+    },
     unpressKey(state) {
       state.pressingKey = null
     },

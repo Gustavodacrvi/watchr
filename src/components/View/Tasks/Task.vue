@@ -151,7 +151,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName', 'mainSelection', 'selectEverythingToggle',
+  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName', 'selectEverythingToggle',
   'isSelecting'],
   components: {
     Timeline,
@@ -230,7 +230,7 @@ export default {
       }
 
       const hasSelected = this.selectedTasks.length > 0
-      if (!(hasSelected && this.isOnAlt))
+      if (!(this.isOnAlt && this.fallbackSelected) && !(hasSelected && this.isOnAlt))
         switch (key) {
           case 'ArrowDown': {
             this.$emit('go', true)
@@ -575,6 +575,7 @@ export default {
     ...mapState({
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
+      mainSelection: state => state.mainSelection,
       isOnAlt: state => state.isOnAlt,
       selectedEls: state => state.selectedEls,
       selectedTasks: state => state.selectedTasks,
@@ -583,6 +584,7 @@ export default {
     ...mapGetters({
       isDesktop: 'isDesktop',
       platform: 'platform',
+      fallbackSelected: 'fallbackSelected',
       l: 'l',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskInView: 'task/isTaskInView',

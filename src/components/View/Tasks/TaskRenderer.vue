@@ -157,7 +157,7 @@ import utils from '@/utils/'
 
 export default {
   props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton', 'openCalendar', 'rootChanging', 
-  'rootHeadings', 'mainSelection', 'mainSelectionIndex', 'selectEverythingToggle',
+  'rootHeadings', 'selectEverythingToggle',
   'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
@@ -862,6 +862,8 @@ export default {
       savedTasks: state => state.task.tasks,
       pressingKey: state => state.pressingKey,
       isScrolling: state => state.isScrolling,
+      mainSelectionIndex: state => state.mainSelectionIndex,
+      mainSelection: state => state.mainSelection,
     }),
     ...mapGetters({
       l: 'l',

@@ -9,8 +9,6 @@
 
       :headings='sortHeadings'
       :scheduleObject='scheduleObject'
-      :mainSelection='mainSelection'
-      :mainSelectionIndex='mainSelectionIndex'
       :selectEverythingToggle='selectEverythingToggle'
 
       :addTask='addTask'
@@ -36,7 +34,7 @@ import TaskRendererVue from './../Tasks/TaskRenderer.vue'
 import AppButton from '../../Auth/Button.vue'
 
 import { pipeBooleanFilters } from '@/utils/memo'
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapState, mapMutations } from 'vuex'
 
 import utilsTask from '@/utils/task'
 import utils from '@/utils'
@@ -62,9 +60,7 @@ export default {
     return {
       scheduleObject: null,
       
-      mainSelection: null,
       selectEverythingToggle: false,
-      mainSelectionIndex: null,
 
       keypressed: '',
       keypressedSettimeout: null,
@@ -81,6 +77,7 @@ export default {
     window.removeEventListener('keypress', this.keypress)
   },
   methods: {
+    ...mapMutations(['saveMainSelection']),
     addDuration() {
       const ids = this.fallbackSelected
 
@@ -95,8 +92,9 @@ export default {
         }
         
         const dur = mom(`${h}:${m}`, 'H:m', true)
+        const time = dur.format('HH:mm')
 
-        if (dur.isValid())
+        if (dur.isValid() && time !== '00:00')
           this.$store.dispatch('task/saveTasksById', {
             ids,
             task: {
@@ -320,36 +318,42 @@ export default {
     },
     moveSelected(up) {
       const selected = this.fallbackSelected
-      const ids = this.laseredIds
-      const newOrder = ids.slice()
-      const increment = up ? -1 : 1
-
-      const sort = i => {
-        const newIndex = i + increment
-        if (selected.includes(ids[i]) && ids[newIndex] && !selected.includes(newOrder[newIndex]))
-          newOrder.splice(newIndex, 0, newOrder.splice(i, 1)[0])
+      if (selected) {
+        const ids = this.laseredIds
+        const newOrder = ids.slice()
+        const increment = up ? -1 : 1
+  
+        const sort = i => {
+          const newIndex = i + increment
+          if (selected.includes(ids[i]) && ids[newIndex] && !selected.includes(newOrder[newIndex]))
+            newOrder.splice(newIndex, 0, newOrder.splice(i, 1)[0])
+        }
+  
+        if (!up)
+          for (let i = ids.length; i > -1; i--)
+            sort(i)
+        else
+          for (let i = 0; i < ids.length; i++)
+            sort(i)
+  
+        this.updateIds(newOrder)
       }
-
-      if (!up)
-        for (let i = ids.length; i > -1; i--)
-          sort(i)
-      else
-        for (let i = 0; i < ids.length; i++)
-          sort(i)
-
-      this.updateIds(newOrder)
     },
     select(i) {
       if (i === null) {
-        this.mainSelection = null
-        this.mainSelectionIndex = null
+        this.saveMainSelection({
+          id: null,
+          index: null,
+        })
         return true
       } else {
         const ids = this.allViewTasksIds
   
         if (ids[i]) {
-          this.mainSelection = ids[i]
-          this.mainSelectionIndex = i
+          this.saveMainSelection({
+            id: ids[i],
+            index: i,
+          })
           return true
         } else if (this.mainSelectionIsNotInView) {
           this.select(null)
@@ -565,20 +569,18 @@ export default {
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
       isOnAlt: state => state.isOnAlt,
+      mainSelection: state => state.mainSelection,
+      mainSelectionIndex: state => state.mainSelectionIndex,
     }),
     ...mapGetters({
       l: 'l',
+      fallbackSelected: 'fallbackSelected',
       isTaskSomeday: 'task/isTaskSomeday',
       isTaskCompleted: 'task/isTaskCompleted',
       getTasksById: 'task/getTasksById',
 
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
     }),
-    fallbackSelected() {
-      if (this.selectedTasks.length > 0)
-        return this.selectedTasks
-      else return this.mainSelection ? [this.mainSelection] : null
-    },
     mainSelectionTask() {
       return this.allViewTasks.find(el => el.id === this.mainSelection)
     },
@@ -820,8 +822,10 @@ export default {
   },
   watch: {
     viewName() {
-      this.mainSelection = null
-      this.mainSelectionIndex = null
+      this.saveMainSelection({
+        id: null,
+        index: null,
+      })
     },
     presentTags() {
       this.$emit('present-tags', this.presentTags)
