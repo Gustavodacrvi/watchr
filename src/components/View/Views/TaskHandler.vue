@@ -39,6 +39,7 @@ import { pipeBooleanFilters } from '@/utils/memo'
 import { mapGetters, mapState } from 'vuex'
 
 import utilsTask from '@/utils/task'
+import utils from '@/utils'
 
 import mom from 'moment'
 
@@ -64,17 +65,56 @@ export default {
       mainSelection: null,
       selectEverythingToggle: false,
       mainSelectionIndex: null,
+
+      keypressed: '',
+      keypressedSettimeout: null,
     }
   },
   created() {
     this.updateSchedule()
 
     window.addEventListener('keydown', this.keydown)
+    window.addEventListener('keypress', this.keypress)
   },
   beforeDestroy() {
     window.removeEventListener('keydown', this.keydown)
+    window.removeEventListener('keypress', this.keypress)
   },
   methods: {
+    addDuration() {
+      const ids = this.fallbackSelected
+
+      const split = this.keypressed.split(':')
+      if (ids && this.keypressed.length > 0) {
+        let h = split[0]
+        let m = split[1]
+
+        if (!m) {
+          m = h
+          h = '0'
+        }
+        
+        const dur = mom(`${h}:${m}`, 'H:m', true)
+
+        if (dur.isValid())
+          this.$store.dispatch('task/saveTasksById', {
+            ids,
+            task: {
+              taskDuration: dur.format('HH:mm')
+            }
+          })
+      }
+    },
+    keypress({key}) {
+      this.keypressed += key
+
+      if (this.keypressedSettimeout)
+        clearTimeout(this.keypressedSettimeout)
+
+      this.keypressedSettimeout = setTimeout(() => {
+        this.keypressed = ''
+      }, 3000)
+    },
     keydown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
@@ -173,6 +213,11 @@ export default {
           case "ArrowDown": {
             this.go(this.allViewTasksIds.length - 1)
             break
+          }
+          case 'd': {
+            if (this.fallbackSelected)
+              p()
+            this.addDuration()
           }
         }
       }
