@@ -769,6 +769,7 @@ export default {
         this.addedTask = t.id
         this.addTask({
           task: t, ids: this.getIds(true),
+          newId: newTaskRef.id,
           index, newTaskRef,
           header: this.header,
         })
@@ -895,13 +896,16 @@ export default {
     },
     getTasks() {
       if (this.isRoot || this.showAllHeadingsItems) return this.lazyTasks
-      return this.showingMoreItems ? this.lazyTasks : this.lazyTasks.slice(0, 3)
+      return this.showingMoreItems ? this.lazyTasks : this.lazyTasks.slice(0, this.hasEdit ? 4 : 3)
+    },
+    nonEditLazyTasks() {
+      return this.lazyTasks.filter(el => !el.isEdit)
     },
     showMoreItemsMessage() {
-      return `${this.l['Show ']}${this.lazyTasks.length - 3}${this.l[' more tasks...']}`
+      return `${this.l['Show ']}${this.nonEditLazyTasks.length - 3}${this.l[' more tasks...']}`
     },
     showMoreItemsButton() {
-      return !this.isRoot && !this.showAllHeadingsItems && !this.showingMoreItems && this.lazyTasks.length > 3
+      return !this.isRoot && !this.showAllHeadingsItems && !this.showingMoreItems && this.nonEditLazyTasks.length > 3
     },
     isRoot() {
       return !this.header

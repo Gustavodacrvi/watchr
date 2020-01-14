@@ -286,8 +286,6 @@ export default {
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, newTaskRef).then(() => {
-        ids.splice(index, 0, newTaskRef.id)
-
         const views = {}
         views[viewName] = ids
         batch.set(folderRef(folderId), {
@@ -306,8 +304,6 @@ export default {
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, newTaskRef).then(() => {
-        ids.splice(index, 0, newTaskRef.id)
-
         const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
 
         batch.set(userRef(), {calendarOrders}, {merge: true})
@@ -324,8 +320,6 @@ export default {
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, newTaskRef).then(() => {
-        ids.splice(index, 0, newTaskRef.id)
-
         const views = {}
         views[viewName] = ids
         batch.set(listRef(listId), {
@@ -344,8 +338,6 @@ export default {
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
       }, newTaskRef).then(() => {
-        ids.splice(index, 0, newTaskRef.id)
-  
         const obj = {[list]: {}}
         // list === viewName, e.g: Today, Tomorrow
         obj[list].tasks = ids
@@ -366,8 +358,6 @@ export default {
         userId: uid(),
         ...task,
       }, newTaskRef).then(() => {
-        ids.splice(index, 0, newTaskRef.id)
-  
         const savedListRef = listRef(listId)
         batch.update(savedListRef, {tasks: ids})
   
@@ -421,6 +411,22 @@ export default {
       
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
 
+      batch.set(userRef(), {calendarOrders}, {merge: true})
+
+      batch.commit()
+    },
+    moveTasksToListCalendarOrder({rootState}, {ids, taskIds, date, listId}) {
+      const batch = fire.batch()
+
+      for (const id of taskIds)
+        batch.update(taskRef(id), {
+          list: listId,
+          folder: null,
+          heading: null,
+        })
+
+      const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
+      
       batch.set(userRef(), {calendarOrders}, {merge: true})
 
       batch.commit()

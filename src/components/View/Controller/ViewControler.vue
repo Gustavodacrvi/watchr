@@ -85,7 +85,7 @@ export default {
       if (viewName === 'Calendar')
         currentDate = this.calendarDate
 
-      const calendarOrder = (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].tasks) || []
+      let calendarOrder = (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].tasks) || []
       // const { rootTasks, folderTasks, listTasks } = utilsTask.groupTaskIds()
 
       let order
@@ -126,6 +126,7 @@ export default {
             if (found) tasksOrder = calendarOrder
             else tasksOrder = taskIdsFromList
           }
+          calendarOrder = utilsTask.concatArraysRemovingOldEls(calendarOrder, tasksOrder)
           
           const saveOrder = ids => {
             if (isSmartOrderViewType) {
@@ -134,7 +135,7 @@ export default {
               })
             } else {
               this.$store.dispatch('task/saveCalendarOrder', {
-                ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, tasksOrder),
+                ids: utilsTask.concatArraysRemovingOldEls(calendarOrder, ids),
                 date: currentDate,
               })
             }
@@ -142,7 +143,7 @@ export default {
 
           const filterFunction = task => this.isTaskInList(task, list.id)
 
-          const sort = tasks => sortArray(tasksOrder, tasks)
+          const sort = tasks => sortArray(calendarOrder, tasks)
 
           arr.push({
             name: list.name,
@@ -180,14 +181,27 @@ export default {
               return task
             },
             onAddTask: obj => {
-              this.$store.dispatch('list/addTaskByIndexSmartViewList', {
-                ...obj, listId: list.id, viewName: viewName,
-              })
+              if (isSmartOrderViewType)
+                this.$store.dispatch('list/addTaskByIndexSmartViewList', {
+                  ...obj, listId: list.id, viewName: viewName,
+                })
+              else
+                this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
+                  ...obj,
+                  ids: utilsTask.concatArraysRemovingOldEls(calendarOrder, obj.ids),
+                  date: currentDate,
+                })
             },
             onSortableAdd: (evt, taskIds, type, ids) => {
-              this.$store.dispatch('list/moveTasksToList', {
-                taskIds, ids, listId: list.id, smartView: viewName,
-              })
+              if (isSmartOrderViewType)
+                this.$store.dispatch('list/moveTasksToList', {
+                  taskIds, ids, listId: list.id, smartView: viewName,
+                })
+              else
+                this.$store.dispatch('list/moveTasksToListCalendarOrder', {
+                  taskIds, ids, date: currentDate, listId: list.id,
+                  ids: utilsTask.concatArraysRemovingOldEls(calendarOrder, ids)
+                })
             }
           })
         } else if (viewHeading.smartViewControllerType === 'folder') {
@@ -215,6 +229,7 @@ export default {
               if (found) tasksOrder = calendarOrder
               else tasksOrder = taskIdsFromFolder
             }
+          calendarOrder = utilsTask.concatArraysRemovingOldEls(calendarOrder, tasksOrder)
           
           const saveOrder = ids => {
             if (isSmartOrderViewType)
@@ -223,14 +238,14 @@ export default {
               })
             else
               this.$store.dispatch('task/saveCalendarOrder', {
-                ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, tasksOrder),
+                ids: utilsTask.concatArraysRemovingOldEls(calendarOrder, ids),
                 date: currentDate,
               })
           }
 
           const filterFunction = task => this.isTaskInFolder(task, folder.id)
 
-          const sort = tasks => sortArray(tasksOrder, tasks)
+          const sort = tasks => sortArray(calendarOrder, tasks)
           
           arr.push({
             name: folder.name,
@@ -268,14 +283,27 @@ export default {
               return task
             },
             onAddTask: obj => {
-              this.$store.dispatch('list/addTaskByIndexSmartViewFolder', {
-                ...obj, folderId: folder.id, viewName: viewName,
-              })
+              if (isSmartOrderViewType)
+                this.$store.dispatch('folder/addTaskByIndexSmartViewFolder', {
+                  ...obj, folderId: folder.id, viewName: viewName,
+                })
+              else
+                this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
+                  ...obj,
+                  ids: utilsTask.concatArraysRemovingOldEls(calendarOrder, obj.ids),
+                  date: currentDate,
+                })
             },
             onSortableAdd: (evt, taskIds, type, ids) => {
-              this.$store.dispatch('folder/moveTasksToFolder', {
-                taskIds, ids, folderId: folder.id, smartView: viewName,
-              })
+              if (isSmartOrderViewType)
+                this.$store.dispatch('folder/moveTasksToFolder', {
+                  taskIds, ids, folderId: folder.id, smartView: viewName,
+                })
+              else
+                this.$store.dispatch('folder/moveTasksToFolderCalendarOrder', {
+                  taskIds, ids, date: currentDate, folderId: folder.id,
+                  ids: utilsTask.concatArraysRemovingOldEls(calendarOrder, ids)
+                })
             }
           })
         }
@@ -632,6 +660,28 @@ export default {
       const n = this.viewName
       return this.viewType === 'list' && this.isSmart &&
         (n === 'Someday' || n === 'Anytime' || n === 'Inbox')
+    },
+    getCalendarOrderDate() {
+      let currentDate = mom()
+      const n = this.viewName
+      if (n === 'Tomorrow')
+        currentDate.add(1, 'd')
+
+      currentDate = currentDate.format('Y-M-D')
+
+      if (n === 'Calendar')
+        currentDate = this.calendarDate
+
+      return currentDate
+    },
+    getCurrentCalendarDateSchedule() {
+      const order = this.calendarOrders
+      const date = this.getCalendarOrderDate
+      return order[date]
+    },
+    getCurrentScheduleTasksOrder() {
+      const order = this.getCurrentCalendarDateSchedule
+      return (order && order.tasks) || []
     },
     ungroupTasksInHeadings() {
       return this.userInfo.ungroupTasksInHeadings

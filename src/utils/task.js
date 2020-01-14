@@ -110,6 +110,16 @@ export default {
 
     return {rootTasks, folderTasks, listTasks}
   },
+  concatArraysRemovingOldEls(arr, toMerge) {
+    const newArr = [...toMerge, ...arr]
+    const set = new Set()
+    return newArr.filter(id => {
+      if (!set.has(id)) {
+        set.add(id)
+        return true
+      }
+    })
+  },
   getFixedIdsFromNonFilteredAndFiltered(filtered, nonFiltered) {
     const removedIncludedIds = nonFiltered.slice().filter(id => !filtered.includes(id))
     

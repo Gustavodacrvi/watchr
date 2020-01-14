@@ -380,23 +380,27 @@ export default {
       this.$emit('allow-someday')
     },
 
-    addTask(obj, evt) {
-      const rootNonFilteredIds = this.rootNonFilteredIds
+    fixPosition(obj, nonFilteredIds, callback) {
+      nonFilteredIds = nonFilteredIds.slice()
 
       let fixPosition = 0
       let i = 0
-      for (const id of rootNonFilteredIds) {
+      for (const id of nonFilteredIds) {
         if (!obj.ids.includes(id))
           fixPosition++
         if ((i - fixPosition) === obj.index) break
         i++
       }
-
       
       obj.index += fixPosition
-      obj.ids = rootNonFilteredIds
+      if (obj.newId)
+        nonFilteredIds.splice(obj.index, 0, obj.newId)
+      obj.ids = nonFilteredIds
 
-      this.$parent.$emit('add-task', obj)
+      callback()
+    },
+    addTask(obj) {
+      this.fixPosition(obj, this.rootNonFilteredIds, () => this.$parent.$emit('add-task', obj))
     },
     updateIds(ids) {
       this.$parent.$emit('update-ids', utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.rootNonFilteredIds))
@@ -707,6 +711,9 @@ export default {
             head.filter,
             this.mainFilterFunction,
           ),
+          onAddTask: obj => {
+            this.fixPosition(obj, nonFiltered.map(el => el.id), () => head.onAddTask(obj))
+          },
           progress: head.progress ? head.progress() : undefined,
           onEdit: head.onEdit ? head.onEdit(nonFiltered) : () => {},
         }
@@ -744,9 +751,7 @@ export default {
     },
     sortTasksFunction() {
       const order = this.tasksOrder
-      return tasks => {
-        return this.checkMissingIdsAndSortArr(order || [], tasks)
-      }
+      return tasks => this.checkMissingIdsAndSortArr(order || [], tasks)
     },
 
     showSomedayButton() {

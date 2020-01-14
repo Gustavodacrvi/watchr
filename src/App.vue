@@ -70,12 +70,14 @@ export default {
       window.addEventListener('mousemove', this.getMousePos)
     }
     document.addEventListener('scroll', this.toggleScroll)
-
-    window.addEventListener('focus', () => {
+    const unToggle = () => {
       this.$store.commit('toggleControl', false)
       this.$store.commit('toggleShift', false)
       this.$store.commit('toggleAlt', false)
-    })
+    }
+
+    window.addEventListener('focus', () => unToggle())
+    window.addEventListener('visibilitychange', () => unToggle())
 
     this.updateViewType(true)
   },
