@@ -6,101 +6,121 @@ import utils from '@/utils/'
 import mom from 'moment'
 
 export default {
-  methods: {
-    addTask(obj) {
-      if (this.viewList) {
-        this.$store.dispatch('list/addTaskByIndex', {
-          ...obj, listId: this.viewList.id,
-        })
+  computed: {
+    addTask() {
+      return obj => {
+        if (this.viewList) {
+          this.$store.dispatch('list/addTaskByIndex', {
+            ...obj, listId: this.viewList.id,
+          })
+        }
       }
     },
-    rootFallbackTask(task, force) {
-      if (force || !task.heading) {
-        task.heading = null
+    rootFallbackTask() {
+      return (task, force) => {
+        if (force || !task.heading) {
+          task.heading = null
+        }
+        return task
       }
-      return task
     },
-    mainFallbackTask(task, force) {
-      if (force || (!task.list && !task.folder))
-        task.list = this.viewList.id
-      task.tags = [...task.tags, ...this.listgetListTags.map(el => el.id)]
-      return task
+    mainFallbackTask() {
+      return (task, force) => {
+        if (force || (!task.list && !task.folder))
+          task.list = this.viewList.id
+        task.tags = [...task.tags, ...this.listgetListTags.map(el => el.id)]
+        return task
+      }
     },
     
-    updateIds(ids) {
-      if (this.viewList) {
-        this.$store.dispatch('list/saveList', {
-          tasks: ids,
-          id: this.viewList.id,
-        })
-      }
-    },
-    saveHeaderName(name) {
-      if (this.viewList) {
-        if (this.getListByName(name))
-          this.pushToast({
-            name: this.l['This list already exists!'],
-            seconds: 4,
-            type: 'error',
-          })
-        else {
-          this.$router.push('/user?list='+name)
+    updateIds() {
+      return ids => {
+        if (this.viewList) {
           this.$store.dispatch('list/saveList', {
-            name,
+            tasks: ids,
             id: this.viewList.id,
           })
         }
       }
     },
-    saveNotes(notes) {
-      if (this.viewList) {
+    saveHeaderName() {
+      return name => {
+        if (this.viewList) {
+          if (this.getListByName(name))
+            this.pushToast({
+              name: this.l['This list already exists!'],
+              seconds: 4,
+              type: 'error',
+            })
+          else {
+            this.$router.push('/user?list='+name)
+            this.$store.dispatch('list/saveList', {
+              name,
+              id: this.viewList.id,
+            })
+          }
+        }
+      }
+    },
+    saveNotes() {
+      return notes => {
+        if (this.viewList) {
+          this.$store.dispatch('list/saveList', {
+            notes, id: this.viewList.id,
+          })
+        }
+      }
+    },
+    addHeading() {
+      return obj => {
+        if (this.viewList) {
+          this.$store.dispatch('list/addHeading', {...obj, listId: this.viewList.id})
+        }
+      }
+    },
+    onSortableAdd() {
+      return (evt, taskIds, type, ids) => {
+        if (this.viewList) {
+          this.$store.dispatch('list/removeTasksFromHeading', {
+            taskIds, ids, listId: this.viewList.id,
+          })
+        }
+      }
+    },
+    saveList() {
+      return obj => {
         this.$store.dispatch('list/saveList', {
-          notes, id: this.viewList.id,
+          ...obj,
+          id: this.viewList.id,
         })
       }
-    },
-    addHeading(obj) {
-      if (this.viewList) {
-        this.$store.dispatch('list/addHeading', {...obj, listId: this.viewList.id})
-      }
-    },
-    onSortableAdd(evt, taskIds, type, ids) {
-      if (this.viewList) {
-        this.$store.dispatch('list/removeTasksFromHeading', {
-          taskIds, ids, listId: this.viewList.id,
-        })
-      }
-    },
-    saveList(obj) {
-      this.$store.dispatch('list/saveList', {
-        ...obj,
-        id: this.viewList.id,
-      })
     },
     removeDeferDate() {
-      this.listsaveList({deferDate: null})
+      return () => this.listsaveList({deferDate: null})
     },
-    removeRepeat(val) {
-      this.listsaveList({calendar: null})
+    removeRepeat() {
+      return () => this.listsaveList({calendar: null})
     },
-    removeHeaderTag(tagName) {
-      this.$store.dispatch('list/removeListTag', {
-        listId: this.viewList.id,
-        tagId: this.listgetListTags.find(el => el.name === tagName).id,
-      })
+    removeHeaderTag() {
+      return tagName => {
+        this.$store.dispatch('list/removeListTag', {
+          listId: this.viewList.id,
+          tagId: this.listgetListTags.find(el => el.name === tagName).id,
+        })
+      }
     },
     removeDeadline() {
       this.listsaveList({deadline: null})
     },
 
     removeDeadline() {},
-    saveSchedule(info) {
-      localStorage.setItem('schedule_' + this.viewName, JSON.stringify(info))
+    saveSchedule() {
+      return info =>  localStorage.setItem('schedule_' + this.viewName, JSON.stringify(info))
     },
     removeHeaderTag() {},
     removeDeferDate() {},
-  },
-  computed: {
+    
+    
     mainFilter() {
       const list = this.viewList
       if (list) {

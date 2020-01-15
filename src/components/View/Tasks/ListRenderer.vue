@@ -17,7 +17,7 @@
 
           :itemHeight='itemHeight'
           :item='item'
-          :changingViewName='changingViewName || rootChanging'
+          :changingViewName='isChangingViewName'
           :isRoot='isRoot'
           :isSelecting='isSelecting'
           :multiSelectOptions='taskIconDropOptions'
@@ -72,59 +72,30 @@
       :value='showMoreItemsMessage'
       @click="showingMoreItems = true"
     />
-    <transition-group v-if="isRoot"
-      appear
-      class="front headings-root"
-      :name="headingsTrans"
-      tag="div"
-    >
-      <template v-for="(h, i) in lazyHeadings">
-        <HeadingApp v-if="renderHeading(h)" :key="h.id"
-          :header='h'
+    <HeadingsRenderer v-if="isRoot"
+      :viewName='viewName'
+      :showEmptyHeadings='showEmptyHeadings'
+      :viewType='viewType'
+      :viewNameValue='viewNameValue'
+      :headings='lazyHeadings'
+      :isChangingViewName='isChangingViewName'
+      :showHeading='showHeading'
+      :movingHeading='movingHeading'
+      :headingEditOptions='headingEditOptions'
+      :isSmart='isSmart'
+      :comp='comp'
+      :editComp='editComp'
+      :taskIconDropOptions='taskIconDropOptions'
+      :selectEverythingToggle='selectEverythingToggle'
+      :showAllHeadingsItems='showAllHeadingsItems'
+      :taskCompletionCompareDate='taskCompletionCompareDate'
+      :mainFallbackTask='mainFallbackTask'
+      :scheduleObject='scheduleObject'
 
-          v-bind="h"
-
-          :headingEditOptions='headingEditOptions'
-
-          :color='h.color ? h.color : ""'
-          :options='h.options ? h.options(h.nonFiltered) : []'
-          :movingHeading='movingHeading'
-
-          @option-click='v => getOptionClick(h)(v)'
-          @save-notes='v => getNotesOption(h)(v)'
-          :save='h.onEdit'
-
-          :data-id='h.id'
-        >
-          <TaskRenderer
-            v-bind="{...$props, headingPosition: undefined}"
-
-            :items='h.items'
-            :headings='[]'
-
-            :hideListName="h.hideListName"
-            :rootHeadings='getLazyHeadingsIds'
-            :rootChanging='changingViewName'
-            :headingFilterFunction='h.filterFunction'
-            :headingFallbackTask='h.fallbackTask'
-            :allowCalendarStr='h.calendarStr'
-            :disableSortableMount='h.disableSortableMount'
-            :hideFolderName="h.hideFolderName"
-            :showHeadingName="h.showHeadingName"
-            :onSortableAdd='h.onSortableAdd'
-            @add-heading='(obj) => $emit("add-heading", obj)'
-            @update="ids => updateHeadingTaskIds(h,ids)"
-            @go='moveItemHandlerSelection'
-            @change-time='changeTime'
-
-            :header="h"
-            :addTask="h.onAddTask"
-            :headingPosition='i + 1'
-            :isLast='false'
-          />
-        </HeadingApp>
-      </template>
-    </transition-group>
+      @change-time='changeTime'
+      @go='moveItemHandlerSelection'
+      @add-heading='addHeading'
+    />
   </div>
 </template>
 
@@ -135,14 +106,12 @@ import Vue from 'vue'
 import TaskVue from './Task.vue'
 import TaskEdit from './Edit.vue'
 import IllustrationVue from '@/components/Illustrations/Illustration.vue'
-import HeadingVue from './../Headings/Heading.vue'
 import EditComp from './../RenderComponents/Edit.vue'
+import Icon from '@/components/Icon.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
+import HeadingsRenderer from './HeadingsRenderer.vue' 
 
 import { taskRef, serverTimestamp, uid } from '@/utils/firestore'
-
-
-import Icon from '@/components/Icon.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -156,13 +125,12 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton', 'openCalendar', 'rootChanging', 
+  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate', 'comp', 'editComp'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue, Icon, ButtonVue,
-    EditComp,
-    HeadingApp: HeadingVue, TaskEdit,
+    EditComp, HeadingsRenderer, TaskEdit,
     Illustration: IllustrationVue,
   },
   data() {
@@ -219,6 +187,9 @@ export default {
     changeTime(args) {
       this.$emit('change-time', args)
     },
+    addHeading(obj) {
+      this.$emit("add-heading", obj)
+    },
     moveItemHandlerSelection(bool) {
       this.$emit('go', bool)
     },
@@ -270,14 +241,6 @@ export default {
 
         this.editMoveType = type
       }
-    },
-    renderHeading(h) {
-      if (this.showHeading && this.showHeading(h)) {
-        this.stopRootInflation = true
-        return true
-      }
-
-      return this.showEmptyHeadings || h.items.length > 0
     },
     selectMultipleIds(newId) {
       if (this.lastSelectedId && newId && this.lazyItems.find(el => el.id === newId) && this.lazyItems.find(el => el.id === this.lastSelectedId)) {
@@ -344,7 +307,7 @@ export default {
       this.hasEdit = true
       this.edit = {...edit}
     },
-    addTaskEdit(index) {
+    addEditComp(index) {
       this.addEdit('Edit', index, this.add, {
         key: 'Edit',
         placeholder: this.l['Task name...'],
@@ -352,11 +315,11 @@ export default {
       })
     },
     addItemAfterSelection(dir) {
-      this.addTaskEdit(this.mainSelectionIndex + dir)
+      this.addEditComp(this.getMainSelectionIndex + dir)
     },
     addHeadingAfterSelection(dir) {
       if (this.viewType === 'list' && !this.isSmart)
-        this.addHeadingsEdit(this.mainSelectionIndex + dir)
+        this.addHeadingsEdit(this.getMainSelectionIndex + dir)
     },
     addHeadingsEdit(index) {
       const h = this.headingEditOptions
@@ -496,7 +459,7 @@ export default {
           } else {
             const i = evt.newIndex
             if (this.editMoveType === 'create')
-              this.addTaskEdit(i)
+              this.addEditComp(i)
             else if (this.editMoveType === 'action-heading')
               this.addHeadingsEdit(i)
             else
@@ -663,18 +626,6 @@ export default {
         else solve()
       })
     },
-    getOptionClick(h) {
-      if (!h.optionClick) return () => {}
-      return h.optionClick
-    },
-    getNotesOption(h) {
-      if (!h.saveNotes) return () => {}
-      return h.saveNotes
-    },
-    updateHeadingTaskIds(h, ids) {
-      if (h.updateIds)
-        h.updateIds(ids)
-    },
     addHeading(name, ...args) {
       if (name) {
         const i = this.getTaskRendererPosition()
@@ -823,9 +774,9 @@ export default {
         const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
         if (!isTyping && !this.isOnControl) {
           if (key === 'a')
-            this.addTaskEdit(this.lazyItems.length)
+            this.addEditComp(this.lazyItems.length)
           else if (key === 'A')
-            this.addTaskEdit(0)
+            this.addEditComp(0)
           if (this.viewType === 'list') {
             if (key === 'h')
               this.addHeadingsEdit(this.lazyHeadings.length)
@@ -878,12 +829,11 @@ export default {
       getTagsByName: 'tag/getTagsByName',
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
-    getLazyHeadingsIds() {
-      return this.lazyHeadings.map(el => el.id)
+    getMainSelectionIndex() {
+      return this.isRoot ? this.mainSelectionIndex : this.lazyItems.findIndex(i => i.id === this.mainSelection)
     },
-    headingsTrans() {
-      if (this.isDesktop) return 'head-t'
-      return (this.changingViewName || this.rootChanging) ? '' : 'head-t'
+    isChangingViewName() {
+      return this.changingViewName || this.rootChanging
     },
     getItems() {
       if (this.isRoot || this.showAllHeadingsItems) return this.lazyItems
@@ -993,9 +943,6 @@ export default {
     updateHeadingIds() {
       if (this.headSort)
         this.headSort.options.disabled = !this.updateHeadingIds
-    },
-    filterOptions() {
-      headingsFilterCache = {}
     },
     enableSelect() {
       if (this.sortable) {

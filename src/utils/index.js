@@ -31,8 +31,25 @@ export default {
         const i = state[arrName].findIndex(el => el.id === change.doc.id)
 
         const keys = Object.keys(newDoc)
-        for (const k of keys)
-          Vue.set(state[arrName][i], k, newDoc[k])
+        for (const k of keys) {
+          const old = state[arrName][i][k]
+          const val = newDoc[k]
+          const type = typeof val
+          let change = false
+
+          switch (type) {
+            case 'object': {
+              change = JSON.stringify(val) !== JSON.stringify(old)
+              break
+            }
+            default: {
+              change = old !== val
+            }
+          }
+          
+          if (change)
+            Vue.set(state[arrName][i], k, val)
+        }
       }
     })
   },

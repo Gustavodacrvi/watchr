@@ -18,7 +18,7 @@
       :headingPosition='0'
       :updateHeadingIds='updateHeadingIds'
       comp='Task'
-      edit='TaskEdit'
+      editComp='TaskEdit'
 
       @update="updateIds"
       @add-heading="addHeading"
@@ -652,10 +652,11 @@ export default {
     laserHeadings() {
       const headings = this.headings
       if (!headings) return []
+      const mainTasks = this.mainTasks
       return headings.map(head => {
         if (head.react)
-          for (const p of head.react) this.mainTasks[p]
-        const nonFiltered = head.sort(this.mainTasks.filter(task => head.filter(task)))
+          for (const p of head.react) mainTasks[p]
+        const nonFiltered = head.sort(mainTasks.filter(task => head.filter(task)))
         const tasks = nonFiltered.filter(this.filterOptionsPipe)
 
         let updateIds = ids =>

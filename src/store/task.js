@@ -640,8 +640,7 @@ export default {
           'completed',
         ],
         getter({getters, state}) {
-          const res = state.tasks.filter(getters.isTaskOverdue)
-          return res
+          return state.tasks.filter(getters.isTaskOverdue)
         },
       },
       getTasksById({state}, ids) {
