@@ -206,6 +206,30 @@ export default {
             })
             break
           }
+          case 'P': {
+            save({
+              priority: 'High priority',
+            })
+            break
+          }
+          case 'M': {
+            save({
+              priority: 'Medium priority',
+            })
+            break
+          }
+          case 'L': {
+            save({
+              priority: 'Low priority',
+            })
+            break
+          }
+          case 'N': {
+            save({
+              priority: '',
+            })
+            break
+          }
         }
       }
 
