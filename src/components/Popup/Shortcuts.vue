@@ -52,6 +52,18 @@
         <span class="tag">Space</span>
       </div>
       <div class="line">
+        <span>New task before selection</span>
+        <span class="tag">Shift + Space</span>
+      </div>
+      <div class="line">
+        <span>New heading after selection</span>
+        <span class="tag">Control + Space</span>
+      </div>
+      <div class="line">
+        <span>New heading before selection</span>
+        <span class="tag">Shift + Control + Space</span>
+      </div>
+      <div class="line">
         <span>Add checklist to task</span>
         <span class="tag">Shift + C</span>
       </div>

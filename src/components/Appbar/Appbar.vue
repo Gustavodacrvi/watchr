@@ -410,10 +410,6 @@ export default {
       const favs = this.getFavorites
 
       const selectView = (name, type) => {
-        this.$store.commit('navigate', {
-          viewName: name,
-          viewType: type,
-        })
         this.$router.push(`/user?${type}=${name}`)
       }
       const getOptions = (link, type) => {

@@ -15,18 +15,20 @@
         <Task v-if="!item.isEdit" :key="item.id" 
           v-bind="$props"
 
-          :taskHeight='taskHeight'
-          :task='item'
+          :itemHeight='itemHeight'
+          :item='item'
           :changingViewName='changingViewName || rootChanging'
           :isRoot='isRoot'
           :isSelecting='isSelecting'
           :multiSelectOptions='taskIconDropOptions'
           :isDragging='isDragging'
           :isScrolling='isScrolling'
-          @de-select='deSelectTask'
-          @select='selectTask'
-          @add-task-after-selection='addTaskAfterSelection'
-          @go='moveTaskHandlerSelection'
+
+          @de-select='deSelectItem'
+          @select='selectItem'
+          @add-item-after='addItemAfterSelection'
+          @add-heading-after='addHeadingAfterSelection'
+          @go='moveItemHandlerSelection'
           @change-time='changeTime'
 
           :data-id='item.id'
@@ -38,6 +40,7 @@
 
           v-bind='item.propsData'
           :focusToggle='focusToggle'
+          :fallbackTask='fallbackTask'
 
           :data-id='item.isEdit'
 
@@ -46,7 +49,7 @@
           @godown='moveEdit(1)'
           @cancel='removeEdit'
         />
-        <HeadingEdit v-else
+        <EditComp v-else
           :key="item.isEdit"
 
           v-bind='item.propsData'
@@ -112,7 +115,7 @@
             :onSortableAdd='h.onSortableAdd'
             @add-heading='(obj) => $emit("add-heading", obj)'
             @update="ids => updateHeadingTaskIds(h,ids)"
-            @go='moveTaskHandlerSelection'
+            @go='moveItemHandlerSelection'
             @change-time='changeTime'
 
             :header="h"
@@ -134,9 +137,8 @@ import TaskVue from './Task.vue'
 import TaskEdit from './Edit.vue'
 import IllustrationVue from '@/components/Illustrations/Illustration.vue'
 import HeadingVue from './../Headings/Heading.vue'
-import HeadingEdit from './../Headings/Edit.vue'
+import EditComp from './../RenderComponents/Edit.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
-
 
 import { taskRef, serverTimestamp, uid } from '@/utils/firestore'
 
@@ -156,12 +158,12 @@ import utils from '@/utils/'
 
 export default {
   props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton', 'openCalendar', 'rootChanging', 
-  'rootHeadings', 'mainSelection', 'mainSelectionIndex', 'selectEverythingToggle',
+  'rootHeadings', 'selectEverythingToggle',
   'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue, Icon, ButtonVue,
-    HeadingEdit,
+    EditComp,
     HeadingApp: HeadingVue, TaskEdit,
     Illustration: IllustrationVue,
   },
@@ -221,7 +223,7 @@ export default {
     changeTime(args) {
       this.$emit('change-time', args)
     },
-    moveTaskHandlerSelection(bool) {
+    moveItemHandlerSelection(bool) {
       this.$emit('go', bool)
     },
     mousemove(evt) {
@@ -307,7 +309,7 @@ export default {
           }
 
           for (const node of nodes) {
-            this.selectTask(node)
+            this.selectItem(node)
           }
         }
       }
@@ -353,8 +355,12 @@ export default {
         notesPlaceholder: this.l['Notes...'], showCancel: true, btnText: this.l['Add task']
       })
     },
-    addTaskAfterSelection() {
-      this.addTaskEdit(this.mainSelectionIndex + 1)
+    addItemAfterSelection(dir) {
+      this.addTaskEdit(this.mainSelectionIndex + dir)
+    },
+    addHeadingAfterSelection(dir) {
+      if (this.viewType === 'list' && !this.isSmart)
+        this.addHeadingsEdit(this.mainSelectionIndex + dir)
     },
     addHeadingsEdit(index) {
       const h = this.headingEditOptions
@@ -364,10 +370,10 @@ export default {
           this.removeEdit()
         }, 50)
       }
-      this.addEdit('EditHeading', index, onSave, {
-          key: 'EditHeading',
-          errorToast: h.errorToast, names: h.excludeNames,
-          buttonTxt: this.l['Save'],
+      this.addEdit('EditComp', index, onSave, {
+          key: 'EditComp',
+          ...h,
+          names: h.excludeNames,
         })
     },
 
@@ -700,12 +706,19 @@ export default {
         if (found) event.stopPropagation()
       }
     },
-    selectTask(el) {
-      this.selectedElements.push(el)
-      this.$store.commit('selectTask', el.dataset.id)
-      Sortable.utils.select(el)
+    selectItem(el) {
+      if (!this.selectedElements.includes(el)) {
+        this.selectedElements.push(el)
+        this.$store.commit('selectTask', el.dataset.id)
+        Sortable.utils.select(el)
+      }
     },
-    deSelectTask(el) {
+    deselectAll() {
+      const els = this.selectedElements
+      for (const e of els)
+        this.deSelectItem(e)
+    },
+    deSelectItem(el) {
       this.$store.commit('unselectTask', el.dataset.id)
       Sortable.utils.deselect(el)
 
@@ -716,7 +729,7 @@ export default {
     windowClick() {
       for (const el of this.selectedElements)
         if (this.lazyTasks.find(t => t.id === el.dataset.id))
-          this.deSelectTask(el)
+          this.deSelectItem(el)
       this.$store.commit('clearSelected')
     },
     fallbackTask(task, force) {
@@ -761,6 +774,7 @@ export default {
         this.addedTask = t.id
         this.addTask({
           task: t, ids: this.getIds(true),
+          newId: newTaskRef.id,
           index, newTaskRef,
           header: this.header,
         })
@@ -804,7 +818,7 @@ export default {
         if (el.dataset)
           ids.push(el.dataset.id)
       if (removeAdders)
-        ids = ids.filter(id => id !== 'Edit' && id !== 'EditHeading' && id !== undefined)
+        ids = ids.filter(id => id !== 'Edit' && id !== 'EditComp' && id !== undefined)
       return ids
     },
     contWrapper(el) {
@@ -861,6 +875,8 @@ export default {
       savedTasks: state => state.task.tasks,
       pressingKey: state => state.pressingKey,
       isScrolling: state => state.isScrolling,
+      mainSelectionIndex: state => state.mainSelectionIndex,
+      mainSelection: state => state.mainSelection,
     }),
     ...mapGetters({
       l: 'l',
@@ -885,13 +901,16 @@ export default {
     },
     getTasks() {
       if (this.isRoot || this.showAllHeadingsItems) return this.lazyTasks
-      return this.showingMoreItems ? this.lazyTasks : this.lazyTasks.slice(0, 3)
+      return this.showingMoreItems ? this.lazyTasks : this.lazyTasks.slice(0, this.hasEdit ? 4 : 3)
+    },
+    nonEditLazyTasks() {
+      return this.lazyTasks.filter(el => !el.isEdit)
     },
     showMoreItemsMessage() {
-      return `${this.l['Show ']}${this.lazyTasks.length - 3}${this.l[' more tasks...']}`
+      return `${this.l['Show ']}${this.nonEditLazyTasks.length - 3}${this.l[' more tasks...']}`
     },
     showMoreItemsButton() {
-      return !this.isRoot && !this.showAllHeadingsItems && !this.showingMoreItems && this.lazyTasks.length > 3
+      return !this.isRoot && !this.showAllHeadingsItems && !this.showingMoreItems && this.nonEditLazyTasks.length > 3
     },
     isRoot() {
       return !this.header
@@ -899,7 +918,7 @@ export default {
     app() {
       return document.getElementById('app')
     },
-    taskHeight() {
+    itemHeight() {
       return this.isDesktop ? 38 : 50
     },
     pressingSelectKeys() {
@@ -929,6 +948,9 @@ export default {
     },
   },
   watch: {
+    viewName() {
+      this.deselectAll()
+    },
     tasks(newArr) {
       if (this.waitingUpdateTimeout) {
         clearTimeout(this.waitingUpdateTimeout)
@@ -950,6 +972,10 @@ export default {
             }
           }
           this.lazyTasks = tasks
+          const ts = this.lazyTasks
+          const removedEls = this.selectedElements.filter(el => el && !ts.find(t => t.id === el.dataset.id))
+          for (const el of removedEls)
+            this.deSelectItem(el)
 
           setTimeout(() => {
             this.focusToggle = !this.focusToggle

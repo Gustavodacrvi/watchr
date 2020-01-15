@@ -11,6 +11,7 @@
       @blur="blur"
       @focus="onFocus"
       @keydown="keydown"
+      @paste='onpaste'
       @keyup="keyup"
 
       :style="backColor ? `background-color: ${backColor}` : ''"
@@ -38,7 +39,7 @@
 <script>
 
 export default {
-  props: ['options', 'focus', 'value', 'placeholder', 'focusToggle', 'back-color', 'disableAutoSelect', 'enterOnShift', 'msg'],
+  props: ['options', 'focus', 'value', 'placeholder', 'focusToggle', 'back-color', 'disableAutoSelect', 'enterOnShift', 'msg', 'onPaste'],
   data() {
     return {
       str: this.value,
@@ -56,6 +57,10 @@ export default {
     setTimeout(this.fixHeight)
   },
   methods: {
+    onpaste(...args) {
+      if (this.onPaste)
+        this.onPaste(args[0].clipboardData.getData('text/plain'), ...args)
+    },
     focusInput(timeout) {
       if (this.focus) {
         const el = this.$el.getElementsByClassName('input')[0]

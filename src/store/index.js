@@ -58,7 +58,7 @@ moment.locale(lang)
 const uid = () => auth.currentUser.uid
 
 
-const version = '079'
+const version = '080'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -113,11 +113,14 @@ const store = new Vuex.Store({
     allowNavHide: true,
     viewName: '',
     viewType: '',
+    mainSelection: null,
+    mainSelectionIndex: null,
     
     isOnControl: false,
     isOnShift: false,
     isOnAlt: false,
     pressingKey: null,
+    historyPos: 0,
   },
   getters: {
     ...Memoize(null, {
@@ -160,6 +163,11 @@ const store = new Vuex.Store({
         return ordered
       },
     }),
+    fallbackSelected(state) {
+      if (state.selectedTasks.length > 0)
+        return state.selectedTasks
+      else return state.mainSelection ? [state.mainSelection] : null
+    },
     isDesktop(state) {
       return state.windowWidth >= MINIMUM_DESKTOP_SCREEN_WIDTH
     },
@@ -222,10 +230,22 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    saveMainSelection(state, {id, index}) {
+      state.mainSelection = id
+      state.mainSelectionIndex = index
+    },
     unpressKey(state) {
       state.pressingKey = null
     },
-    navigate(state, {viewName, viewType}) {
+    decreaseHistory(state) {
+      state.historyPos--
+    },
+    increaseHistory(state) {
+      state.historyPos++
+    },
+    navigate(state, {viewName, viewType, newRoute}) {
+      if (!newRoute)
+        state.historyPos++
       if (viewName && viewType) {
         localStorage.setItem('watchr_last_view_name', viewName)
         localStorage.setItem('watchr_last_view_type', viewType)
@@ -340,13 +360,6 @@ const store = new Vuex.Store({
           case 'l': pop('AddList'); break
           case 's': pop('Shortcuts'); break
           case 'f': pop('FastSearch'); break
-          case 'delete': {
-            if (state.selectedTasks.length > 0) {
-              dispatch('task/deleteTasks', state.selectedTasks)
-              state.selectedTasks = []
-            }
-            break
-          }
         }
     },
     pushPopup({state, getters}, popup) {

@@ -42,9 +42,9 @@
       <div v-else key="edig">
         <EditHeading
           :name='name'
+          placeholder='Heading name...'
           :errorToast='headingEditOptions.errorToast'
           :names='headingEditOptions.excludeNames'
-          :buttonTxt='l["Save"]'
           @save='save'
           @cancel='toggleEditing'
         />
@@ -57,7 +57,7 @@
 
 import IconDropVue from '../../IconDrop/IconDrop.vue'
 import IconVue from '../../Icon.vue'
-import EditVue from './Edit.vue'
+import EditVue from './../RenderComponents/Edit.vue'
 import Notes from './Notes.vue'
 
 import { mapGetters } from 'vuex'

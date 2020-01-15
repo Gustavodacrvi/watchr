@@ -3,6 +3,7 @@ import { fire, auth } from './index'
 import fb from 'firebase/app'
 
 import utils from '../utils'
+import utilsTask from '../utils/task'
 import MemoizeGetters from './memoFunctionGetters'
 import { folderColl, uid, folderRef, serverTimestamp, listRef, userRef, taskRef, addTask } from '../utils/firestore'
 import mom from 'moment'
@@ -122,6 +123,22 @@ export default {
       batch.update(folderRef(folderId), {
         smartViewsOrders: views,
       })
+
+      batch.commit()
+    },
+    moveTasksToFolderCalendarOrder({rootState}, {ids, taskIds, date, folderId}) {
+      const batch = fire.batch()
+
+      for (const id of taskIds)
+        batch.update(taskRef(id), {
+          folder: folderId,
+          list: null,
+          heading: null,
+        })
+
+      const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
+      
+      batch.set(userRef(), {calendarOrders}, {merge: true})
 
       batch.commit()
     },

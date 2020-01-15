@@ -13,9 +13,9 @@ export default {
           ...obj, list: this.viewName,
         })
       } else {
-        obj.ids = utilsTask.getFixedIdsFromNonFilteredAndFiltered(obj.ids, (this.calendarOrders[this.calendarDate] && this.calendarOrders[this.calendarDate].tasks) || []),
         this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
-          ...obj, date: this.calendarDate,
+          ...obj, date: this.getCalendarOrderDate,
+          ids: utilsTask.concatArraysRemovingOldEls(this.getCurrentScheduleTasksOrder, obj.ids),
         })
       }
     },
@@ -54,18 +54,9 @@ export default {
           ids,
         })
       } else {
-        let currentDate = mom()
-        if (this.viewName === 'Tomorrow')
-          currentDate.add(1, 'd')
-
-        currentDate = currentDate.format('Y-M-D')
-
-        if (this.viewName === 'Calendar')
-          currentDate = this.calendarDate
-
         this.$store.dispatch('task/saveCalendarOrder', {
-          ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].tasks) || []),
-          date: currentDate,
+          ids: utilsTask.concatArraysRemovingOldEls( this.getCurrentScheduleTasksOrder, ids),
+          date: this.getCalendarOrderDate,
         })
       }
     },
@@ -73,18 +64,9 @@ export default {
       if (!this.isCalendarOrderViewType) {
         localStorage.setItem('schedule_' + this.viewName, JSON.stringify(schedule))
       } else {
-        const save = date =>
-          this.$store.dispatch('task/saveSchedule', {
-            schedule, date,
-          })
-        
-        if (this.viewName === 'Today')
-          save(mom().format('Y-M-D'))
-        else if (this.viewName === 'Tomorrow')
-          save(mom().add(1, 'd').format('Y-M-D'))
-        else
-          save(this.calendarDate)
-        
+        this.$store.dispatch('task/saveSchedule', {
+          schedule, date: this.getCalendarOrderDate,
+        })
       }
     },
     removeRepeat() {},
@@ -100,18 +82,9 @@ export default {
           taskIds, view: this.viewName, ids,
         })
       else {
-        let currentDate = mom()
-        if (this.viewName === 'Tomorrow')
-          currentDate.add(1, 'd')
-
-        currentDate = currentDate.format('Y-M-D')
-
-        if (this.viewName === 'Calendar')
-          currentDate = this.calendarDate
-
         this.$store.dispatch('list/removeTasksFromSmartViewCalendarHeading', {
-          taskIds, ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].tasks) || []),
-          date: currentDate,
+          taskIds, ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.getCurrentScheduleTasksOrder || []),
+          date: this.getCalendarOrderDate,
         })
       }
     },
@@ -179,21 +152,13 @@ export default {
     },
     tasksOrder() {
       const n = this.viewName
+      const orders = this.viewOrders
       if (this.isSmartOrderViewType) {
-        let o = this.viewOrders[n]
-        if (o && o.tasks) return this.viewOrders[n].tasks
+        let o = orders[n]
+        if (o && o.tasks) return orders[n].tasks
         return []
       }
-      let currentDate = mom()
-      if (n === 'Tomorrow')
-        currentDate.add(1, 'd')
-
-      currentDate = currentDate.format('Y-M-D')
-
-      if (n === 'Calendar')
-        currentDate = this.calendarDate
-
-      return (this.calendarOrders[currentDate] && this.calendarOrders[currentDate].tasks) || []
+      return this.getCurrentScheduleTasksOrder
     },
 
     headingsPagination() {
@@ -288,15 +253,7 @@ export default {
         return schedule !== 'null' ? JSON.parse(schedule) : null
       }
       if (this.calendarOrders) {
-        let date = ''
-
-        if (n === 'Today')
-          date = mom().format('Y-M-D')
-        else if (n === 'Tomorrow')
-          date = mom().add(1, 'd').format('Y-M-D')
-        else if (n === 'Calendar')
-          date = this.calendarDate || null
-        
+        let date = this.getCalendarOrderDate
         const schedule = (this.calendarOrders[date] && this.calendarOrders[date].schedule)
         if (date && schedule)
           return {...schedule}

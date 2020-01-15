@@ -9,8 +9,6 @@
 
       :headings='sortHeadings'
       :scheduleObject='scheduleObject'
-      :mainSelection='mainSelection'
-      :mainSelectionIndex='mainSelectionIndex'
       :selectEverythingToggle='selectEverythingToggle'
 
       :addTask='addTask'
@@ -36,9 +34,10 @@ import TaskRendererVue from './../Tasks/TaskRenderer.vue'
 import AppButton from '../../Auth/Button.vue'
 
 import { pipeBooleanFilters } from '@/utils/memo'
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapState, mapMutations } from 'vuex'
 
 import utilsTask from '@/utils/task'
+import utils from '@/utils'
 
 import mom from 'moment'
 
@@ -46,7 +45,7 @@ export default {
   props: ['mainFilter', 'rootFilter', 'tasksOrder', 'headings', 'headingsOrder',
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 'movingButton',
-    'showHeadadingFloatingButton', 'openCalendar',
+    'showHeadadingFloatingButton', 'openCalendar', 'isSmart',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackTask', 'icon', 'configFilterOptions', 'showHeading',
@@ -61,31 +60,70 @@ export default {
     return {
       scheduleObject: null,
       
-      mainSelection: null,
       selectEverythingToggle: false,
-      mainSelectionIndex: null,
+
+      keypressed: '',
+      keypressedSettimeout: null,
     }
   },
   created() {
     this.updateSchedule()
 
     window.addEventListener('keydown', this.keydown)
+    window.addEventListener('keypress', this.keypress)
   },
   beforeDestroy() {
     window.removeEventListener('keydown', this.keydown)
+    window.removeEventListener('keypress', this.keypress)
   },
   methods: {
+    ...mapMutations(['saveMainSelection']),
+    addDuration() {
+      const ids = this.fallbackSelected
+
+      const split = this.keypressed.split(':')
+      if (ids && this.keypressed.length > 0) {
+        let h = split[0]
+        let m = split[1]
+
+        if (!m) {
+          m = h
+          h = '0'
+        }
+        
+        const dur = mom(`${h}:${m}`, 'H:m', true)
+        const time = dur.format('HH:mm')
+
+        if (dur.isValid() && time !== '00:00')
+          this.$store.dispatch('task/saveTasksById', {
+            ids,
+            task: {
+              taskDuration: dur.format('HH:mm')
+            }
+          })
+      }
+    },
+    keypress({key}) {
+      this.keypressed += key
+
+      if (this.keypressedSettimeout)
+        clearTimeout(this.keypressedSettimeout)
+
+      this.keypressedSettimeout = setTimeout(() => {
+        this.keypressed = ''
+      }, 3000)
+    },
     keydown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
       const hasSelected = this.selectedTasks.length > 0
 
-      let fallbackTasks = []
-      if (hasSelected)
-        fallbackTasks = this.selectedTasks
-      else fallbackTasks = this.mainSelection ? [this.mainSelection] : null
+      const fallbackTasks = this.fallbackSelected
+
+      const active = document.activeElement
+      const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
       
-      if (!this.mainSelection || this.mainSelectionIsNotInView) {
+      if (!isTyping && (!this.mainSelection || this.mainSelectionIsNotInView)) {
         switch (key) {
           case 'ArrowDown': {
             this.go(true)
@@ -109,6 +147,13 @@ export default {
           this.go(null)
           break
         }
+        case 'Delete': {
+            if (fallbackTasks) {
+              this.$store.dispatch('task/deleteTasks', fallbackTasks)
+              this.$store.commit('clearSelected')
+            }
+            break
+          }
       }
       if (this.isOnControl) {
         switch (key) {
@@ -161,6 +206,30 @@ export default {
             })
             break
           }
+          case 'P': {
+            save({
+              priority: 'High priority',
+            })
+            break
+          }
+          case 'M': {
+            save({
+              priority: 'Medium priority',
+            })
+            break
+          }
+          case 'L': {
+            save({
+              priority: 'Low priority',
+            })
+            break
+          }
+          case 'N': {
+            save({
+              priority: '',
+            })
+            break
+          }
         }
       }
 
@@ -173,6 +242,11 @@ export default {
           case "ArrowDown": {
             this.go(this.allViewTasksIds.length - 1)
             break
+          }
+          case 'd': {
+            if (this.fallbackSelected)
+              p()
+            this.addDuration()
           }
         }
       }
@@ -274,37 +348,43 @@ export default {
         }
     },
     moveSelected(up) {
-      const selected = this.selectedTasks
-      const ids = this.laseredIds
-      const newOrder = ids.slice()
-      const increment = up ? -1 : 1
-
-      const sort = i => {
-        const newIndex = i + increment
-        if (selected.includes(ids[i]) && ids[newIndex] && !selected.includes(newOrder[newIndex]))
-          newOrder.splice(newIndex, 0, newOrder.splice(i, 1)[0])
+      const selected = this.fallbackSelected
+      if (selected) {
+        const ids = this.laseredIds
+        const newOrder = ids.slice()
+        const increment = up ? -1 : 1
+  
+        const sort = i => {
+          const newIndex = i + increment
+          if (selected.includes(ids[i]) && ids[newIndex] && !selected.includes(newOrder[newIndex]))
+            newOrder.splice(newIndex, 0, newOrder.splice(i, 1)[0])
+        }
+  
+        if (!up)
+          for (let i = ids.length; i > -1; i--)
+            sort(i)
+        else
+          for (let i = 0; i < ids.length; i++)
+            sort(i)
+  
+        this.updateIds(newOrder)
       }
-
-      if (!up)
-        for (let i = ids.length; i > -1; i--)
-          sort(i)
-      else
-        for (let i = 0; i < ids.length; i++)
-          sort(i)
-
-      this.updateIds(newOrder)
     },
     select(i) {
       if (i === null) {
-        this.mainSelection = null
-        this.mainSelectionIndex = null
+        this.saveMainSelection({
+          id: null,
+          index: null,
+        })
         return true
       } else {
         const ids = this.allViewTasksIds
   
         if (ids[i]) {
-          this.mainSelection = ids[i]
-          this.mainSelectionIndex = i
+          this.saveMainSelection({
+            id: ids[i],
+            index: i,
+          })
           return true
         } else if (this.mainSelectionIsNotInView) {
           this.select(null)
@@ -331,23 +411,27 @@ export default {
       this.$emit('allow-someday')
     },
 
-    addTask(obj, evt) {
-      const rootNonFilteredIds = this.rootNonFilteredIds
+    fixPosition(obj, nonFilteredIds, callback) {
+      nonFilteredIds = nonFilteredIds.slice()
 
       let fixPosition = 0
       let i = 0
-      for (const id of rootNonFilteredIds) {
+      for (const id of nonFilteredIds) {
         if (!obj.ids.includes(id))
           fixPosition++
         if ((i - fixPosition) === obj.index) break
         i++
       }
-
       
       obj.index += fixPosition
-      obj.ids = rootNonFilteredIds
+      if (obj.newId)
+        nonFilteredIds.splice(obj.index, 0, obj.newId)
+      obj.ids = nonFilteredIds
 
-      this.$parent.$emit('add-task', obj)
+      callback()
+    },
+    addTask(obj) {
+      this.fixPosition(obj, this.rootNonFilteredIds, () => this.$parent.$emit('add-task', obj))
     },
     updateIds(ids) {
       this.$parent.$emit('update-ids', utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.rootNonFilteredIds))
@@ -520,9 +604,12 @@ export default {
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
       isOnAlt: state => state.isOnAlt,
+      mainSelection: state => state.mainSelection,
+      mainSelectionIndex: state => state.mainSelectionIndex,
     }),
     ...mapGetters({
       l: 'l',
+      fallbackSelected: 'fallbackSelected',
       isTaskSomeday: 'task/isTaskSomeday',
       isTaskCompleted: 'task/isTaskCompleted',
       getTasksById: 'task/getTasksById',
@@ -655,6 +742,9 @@ export default {
             head.filter,
             this.mainFilterFunction,
           ),
+          onAddTask: obj => {
+            this.fixPosition(obj, nonFiltered.map(el => el.id), () => head.onAddTask(obj))
+          },
           progress: head.progress ? head.progress() : undefined,
           onEdit: head.onEdit ? head.onEdit(nonFiltered) : () => {},
         }
@@ -692,9 +782,7 @@ export default {
     },
     sortTasksFunction() {
       const order = this.tasksOrder
-      return tasks => {
-        return this.checkMissingIdsAndSortArr(order || [], tasks)
-      }
+      return tasks => this.checkMissingIdsAndSortArr(order || [], tasks)
     },
 
     showSomedayButton() {
@@ -770,8 +858,10 @@ export default {
   },
   watch: {
     viewName() {
-      this.mainSelection = null
-      this.mainSelectionIndex = null
+      this.saveMainSelection({
+        id: null,
+        index: null,
+      })
     },
     presentTags() {
       this.$emit('present-tags', this.presentTags)
