@@ -15,19 +15,20 @@
         <Task v-if="!item.isEdit" :key="item.id" 
           v-bind="$props"
 
-          :taskHeight='taskHeight'
-          :task='item'
+          :itemHeight='itemHeight'
+          :item='item'
           :changingViewName='changingViewName || rootChanging'
           :isRoot='isRoot'
           :isSelecting='isSelecting'
           :multiSelectOptions='taskIconDropOptions'
           :isDragging='isDragging'
           :isScrolling='isScrolling'
-          @de-select='deSelectTask'
-          @select='selectTask'
-          @add-task-after='addTaskAfterSelection'
+
+          @de-select='deSelectItem'
+          @select='selectItem'
+          @add-item-after='addItemAfterSelection'
           @add-heading-after='addHeadingAfterSelection'
-          @go='moveTaskHandlerSelection'
+          @go='moveItemHandlerSelection'
           @change-time='changeTime'
 
           :data-id='item.id'
@@ -114,7 +115,7 @@
             :onSortableAdd='h.onSortableAdd'
             @add-heading='(obj) => $emit("add-heading", obj)'
             @update="ids => updateHeadingTaskIds(h,ids)"
-            @go='moveTaskHandlerSelection'
+            @go='moveItemHandlerSelection'
             @change-time='changeTime'
 
             :header="h"
@@ -222,7 +223,7 @@ export default {
     changeTime(args) {
       this.$emit('change-time', args)
     },
-    moveTaskHandlerSelection(bool) {
+    moveItemHandlerSelection(bool) {
       this.$emit('go', bool)
     },
     mousemove(evt) {
@@ -308,7 +309,7 @@ export default {
           }
 
           for (const node of nodes) {
-            this.selectTask(node)
+            this.selectItem(node)
           }
         }
       }
@@ -354,7 +355,7 @@ export default {
         notesPlaceholder: this.l['Notes...'], showCancel: true, btnText: this.l['Add task']
       })
     },
-    addTaskAfterSelection(dir) {
+    addItemAfterSelection(dir) {
       this.addTaskEdit(this.mainSelectionIndex + dir)
     },
     addHeadingAfterSelection(dir) {
@@ -705,7 +706,7 @@ export default {
         if (found) event.stopPropagation()
       }
     },
-    selectTask(el) {
+    selectItem(el) {
       if (!this.selectedElements.includes(el)) {
         this.selectedElements.push(el)
         this.$store.commit('selectTask', el.dataset.id)
@@ -715,9 +716,9 @@ export default {
     deselectAll() {
       const els = this.selectedElements
       for (const e of els)
-        this.deSelectTask(e)
+        this.deSelectItem(e)
     },
-    deSelectTask(el) {
+    deSelectItem(el) {
       this.$store.commit('unselectTask', el.dataset.id)
       Sortable.utils.deselect(el)
 
@@ -728,7 +729,7 @@ export default {
     windowClick() {
       for (const el of this.selectedElements)
         if (this.lazyTasks.find(t => t.id === el.dataset.id))
-          this.deSelectTask(el)
+          this.deSelectItem(el)
       this.$store.commit('clearSelected')
     },
     fallbackTask(task, force) {
@@ -917,7 +918,7 @@ export default {
     app() {
       return document.getElementById('app')
     },
-    taskHeight() {
+    itemHeight() {
       return this.isDesktop ? 38 : 50
     },
     pressingSelectKeys() {
@@ -974,7 +975,7 @@ export default {
           const ts = this.lazyTasks
           const removedEls = this.selectedElements.filter(el => el && !ts.find(t => t.id === el.dataset.id))
           for (const el of removedEls)
-            this.deSelectTask(el)
+            this.deSelectItem(el)
 
           setTimeout(() => {
             this.focusToggle = !this.focusToggle

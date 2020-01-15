@@ -18,7 +18,7 @@
       </transition>
       <div v-if="doneTransition && !isEditing && !isDesktop"
         class="back rb"
-        :style="{height: (taskHeight - 5) + 'px'}"
+        :style="{height: (itemHeight - 5) + 'px'}"
       >
         <div class="back-icons-wrapper">
           <Icon class="back-icon"
@@ -56,7 +56,7 @@
             class="cont-wrapper-wrapper rb task-cont-wrapper"
             :class="platform"
             @click="click"
-            :style='{height: taskHeight + "px"}'
+            :style='{height: itemHeight + "px"}'
           >
             <CircleBubble
               innerColor='var(--light-gray)'
@@ -120,7 +120,7 @@
               :notesPlaceholder="l['Notes...']"
               :btnText="l['Save task']"
               :defaultTask='task'
-              :taskHeight='taskHeight'
+              :taskHeight='itemHeight'
               :showCancel='true'
               :editAction='editAction'
               @done-action='editAction = null'
@@ -151,7 +151,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['task', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'taskHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName', 'selectEverythingToggle',
+  props: ['item', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'itemHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName', 'selectEverythingToggle',
   'isSelecting'],
   components: {
     Timeline,
@@ -198,7 +198,7 @@ export default {
     changeTime(obj) {
       this.$emit('change-time', {
         ...obj,
-        from: this.task.id,
+        from: this.item.id,
       })
     },
     bindMainSelection() {
@@ -260,7 +260,7 @@ export default {
         switch (key) {case ' ': {
           if (!isTyping) {
             p()
-            this.$emit('add-task-after', 1)
+            this.$emit('add-item-after', 1)
           }
           break
         }}
@@ -281,7 +281,7 @@ export default {
           case ' ': {
             if (!isTyping) {
               p()
-              this.$emit('add-task-after', 0)
+              this.$emit('add-item-after', 0)
             }
             break
           }
@@ -320,7 +320,7 @@ export default {
       }
     },
     copyTask() {
-      this.$store.dispatch('task/copyTask', this.task)
+      this.$store.dispatch('task/copyTask', this.item)
     },
     enter(el) {
       if (!this.isEditing) {
@@ -411,13 +411,13 @@ export default {
           setTimeout(() => {
             s.transitionDuration = '.25s'
             s.opacity = 1
-            s.height = this.taskHeight + 'px'
+            s.height = this.itemHeight + 'px'
             done()
           })
           setTimeout(() => {
             s.transitionDuration = '0s'
             s.height = 'auto'
-            s.minHeight = this.taskHeight + 'px'
+            s.minHeight = this.itemHeight + 'px'
           }, 300)
         }
       }
@@ -438,8 +438,8 @@ export default {
     completeTask() {
       const {t,c} = this.getTask
       if (!this.completed)
-        this.$store.dispatch('task/completeTasks', [this.task])
-      else this.$store.dispatch('task/uncompleteTasks', [this.task])
+        this.$store.dispatch('task/completeTasks', [this.item])
+      else this.$store.dispatch('task/uncompleteTasks', [this.item])
     },
     stopMouseUp(evt) {
       if (!this.isDesktop)
@@ -536,7 +536,7 @@ export default {
         this.justSaved = false
       }, 100)
       this.$store.dispatch('task/saveTask', {
-        id: this.task.id,
+        id: this.item.id,
         ...obj,
       })
       if (!obj.handleFiles || force)
@@ -544,24 +544,24 @@ export default {
     },
     addPriority(pri) {
       this.$store.dispatch('task/saveTask', {
-        id: this.task.id,
+        id: this.item.id,
         priority: pri,
       })
     },
     applySelected() {
       setTimeout(() => {
-        this.$store.commit('applyAppnavSelected', this.task.id)
+        this.$store.commit('applyAppnavSelected', this.item.id)
       })
     },
     saveCalendarDate(calendar) {
       this.$store.dispatch('task/saveTasksById', {
-        ids: [this.task.id],
+        ids: [this.item.id],
         task: {calendar},
       })
     },
     saveDate(date) {
       this.$store.dispatch('task/saveTask', {
-        id: this.task.id,
+        id: this.item.id,
         calendar: {
           type: 'specific',
           time: null,
@@ -620,17 +620,17 @@ export default {
       savedTags: 'tag/sortedTagsByName',
     }),
     checklistPieProgress() {
-      let completed = this.task.checklist.reduce((acc, opt) => opt.completed ? acc + 1 : acc, 0)
-      return 100 * completed / this.task.checklist.length
+      let completed = this.item.checklist.reduce((acc, opt) => opt.completed ? acc + 1 : acc, 0)
+      return 100 * completed / this.item.checklist.length
     },
     completed() {
-      return this.isTaskCompleted(this.task, mom().format('Y-M-D'), this.taskCompletionCompareDate)
+      return this.isTaskCompleted(this.item, mom().format('Y-M-D'), this.itemCompletionCompareDate)
     },
     isTaskSelected() {
-      return this.selectedTasks.includes(this.task.id)
+      return this.selectedTasks.includes(this.item.id)
     },
     parsedName() {
-      return this.getLinkString(this.escapeHTML(this.task.name))
+      return this.getLinkString(this.escapeHTML(this.item.name))
     },
     isSomeday() {
       const {c} = this.getTask
@@ -640,13 +640,13 @@ export default {
       return /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/g
     },
     haveChecklist() {
-      return this.task.checklist && this.task.checklist.length > 0
+      return this.item.checklist && this.item.checklist.length > 0
     },
     haveFiles() {
-      return this.task.files && this.task.files.length > 0
+      return this.item.files && this.item.files.length > 0
     },
     hasTags() {
-      return this.task.tags && this.task.tags.length > 0
+      return this.item.tags && this.item.tags.length > 0
     },
     folderOptions() {
       const links = []
@@ -656,7 +656,7 @@ export default {
           icon: 'folder',
           callback: () => {
             this.$store.dispatch('task/saveTask', {
-              id: this.task.id,
+              id: this.item.id,
               folder: fold.id,
               list: null,
             })
@@ -671,7 +671,7 @@ export default {
     listOptions() {
       const moveToList = (obj) => {
         this.$store.dispatch('task/saveTask', {
-          id: this.task.id,
+          id: this.item.id,
           folder: null,
           ...obj
         })
@@ -711,7 +711,7 @@ export default {
           name: l['Pomo this task'],
           icon: 'pomo',
           callback: () => {
-            this.$store.dispatch('pomo/toggle', {task: this.task, stopToggle: true})
+            this.$store.dispatch('pomo/toggle', {task: this.item, stopToggle: true})
           },
         },
         {
@@ -823,7 +823,7 @@ export default {
                   name: l['Convert to list'],
                   icon: 'tasks',
                   callback: () => {
-                    const existingList = this.savedLists.find(l => l.name === this.task.name)
+                    const existingList = this.savedLists.find(l => l.name === this.item.name)
                     if (existingList)
                       this.$store.commit('pushToast', {
                         name: 'There is already another list with this name.',
@@ -831,7 +831,7 @@ export default {
                         type: 'error',
                       })
                     else
-                      dispatch('task/convertToList', {task: this.task, savedLists: this.savedLists})
+                      dispatch('task/convertToList', {task: this.item, savedLists: this.savedLists})
                   }
                 },
               ]
@@ -845,7 +845,7 @@ export default {
               name: l['Delete task'],
               icon: 'trash',
               important: true,
-              callback: () => dispatch('task/deleteTasks', [this.task.id])
+              callback: () => dispatch('task/deleteTasks', [this.item.id])
             }
           ]
         },
@@ -869,41 +869,41 @@ export default {
       return false
     },
     isTaskMainSelection() {
-      return this.task.id === this.mainSelection
+      return this.item.id === this.mainSelection
     },
     isToday() {
       if (this.viewName === 'Today' || this.viewName === 'Calendar') return false
-      return this.isTaskInView(this.task, 'Today')
+      return this.isTaskInView(this.item, 'Today')
     },
     isTaskOverdue() {
       if (this.viewName === 'Today') return false
-      return this.isTaskInView(this.task, 'Overdue')
+      return this.isTaskInView(this.item, 'Overdue')
     },
     isTomorrow() {
       if (this.viewName === 'Tomorrow' || this.viewName === 'Today' || this.viewName === 'Calendar') return false
-      return this.isTaskInView(this.task, 'Tomorrow')
+      return this.isTaskInView(this.item, 'Tomorrow')
     },
     showIconDrop() {
       return this.isDesktop && this.onHover
     },
     taskList() {
-      return this.savedLists.find(el => el.id === this.task.list)
+      return this.savedLists.find(el => el.id === this.item.list)
     },
     listStr() {
-      const list = this.task.list
+      const list = this.item.list
       if (!list || this.hideListName) return null
-      const savedList = this.taskList
+      const savedList = this.itemList
       if (!savedList || (savedList.name === this.viewName)) return null
       return savedList.name
     },
     headingName() {
-      const list = this.taskList
+      const list = this.itemList
       if (!list) return ''
-      const head = list.headings.find(h => h.id === this.task.heading)
+      const head = list.headings.find(h => h.id === this.item.heading)
       return (head && head.name) || ''
     },
     folderStr() {
-      const folder = this.task.folder
+      const folder = this.item.folder
       if (!folder || this.hideFolderName) return null
       const fold = this.savedFolders.find(f => f.id === folder)
       if (!fold || (fold.name === this.viewName)) return null
@@ -935,30 +935,30 @@ export default {
       return this.l["Next event"] + ' ' + date
     },
     taskDuration() {
-      return this.task.taskDuration ? utils.formatQuantity(this.task.taskDuration) : null
+      return this.item.taskDuration ? utils.formatQuantity(this.item.taskDuration) : null
     },
     getTask() {
       return {
-        t: this.task,
-        c: this.task.calendar
+        t: this.item,
+        c: this.item.calendar
       }
     },
     circleColor() {
-      if (!this.task.priority) return ''
+      if (!this.item.priority) return ''
       const obj = {
         'Low priority': 'var(--green)',
         'Medium priority': 'var(--yellow)',
         'High priority': 'var(--red)',
       }
-      return obj[this.task.priority]
+      return obj[this.item.priority]
     },
     schedule() {
       if (this.scheduleObject)
-        return this.scheduleObject[this.task.id]
+        return this.scheduleObject[this.item.id]
       return null
     },
     getTaskIcon() {
-      const t = this.task
+      const t = this.item
 
       let icon = this.isSelecting ? 'circle' : 'box'
       icon += this.completed ? '-check' : ''
