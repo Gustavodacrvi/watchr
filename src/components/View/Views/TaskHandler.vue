@@ -123,7 +123,7 @@ export default {
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
       
-      if (!this.mainSelection || this.mainSelectionIsNotInView) {
+      if (!isTyping && (!this.mainSelection || this.mainSelectionIsNotInView)) {
         switch (key) {
           case 'ArrowDown': {
             this.go(true)

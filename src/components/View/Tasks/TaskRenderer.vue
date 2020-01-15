@@ -48,7 +48,7 @@
           @godown='moveEdit(1)'
           @cancel='removeEdit'
         />
-        <HeadingEdit v-else
+        <EditComp v-else
           :key="item.isEdit"
 
           v-bind='item.propsData'
@@ -136,9 +136,8 @@ import TaskVue from './Task.vue'
 import TaskEdit from './Edit.vue'
 import IllustrationVue from '@/components/Illustrations/Illustration.vue'
 import HeadingVue from './../Headings/Heading.vue'
-import HeadingEdit from './../Headings/Edit.vue'
+import EditComp from './../RenderComponents/Edit.vue'
 import ButtonVue from '@/components/Auth/Button.vue'
-
 
 import { taskRef, serverTimestamp, uid } from '@/utils/firestore'
 
@@ -163,7 +162,7 @@ export default {
   name: 'TaskRenderer',
   components: {
     Task: TaskVue, Icon, ButtonVue,
-    HeadingEdit,
+    EditComp,
     HeadingApp: HeadingVue, TaskEdit,
     Illustration: IllustrationVue,
   },
@@ -370,10 +369,10 @@ export default {
           this.removeEdit()
         }, 50)
       }
-      this.addEdit('EditHeading', index, onSave, {
-          key: 'EditHeading',
-          errorToast: h.errorToast, names: h.excludeNames,
-          buttonTxt: this.l['Save'],
+      this.addEdit('EditComp', index, onSave, {
+          key: 'EditComp',
+          ...h,
+          names: h.excludeNames,
         })
     },
 
@@ -818,7 +817,7 @@ export default {
         if (el.dataset)
           ids.push(el.dataset.id)
       if (removeAdders)
-        ids = ids.filter(id => id !== 'Edit' && id !== 'EditHeading' && id !== undefined)
+        ids = ids.filter(id => id !== 'Edit' && id !== 'EditComp' && id !== undefined)
       return ids
     },
     contWrapper(el) {

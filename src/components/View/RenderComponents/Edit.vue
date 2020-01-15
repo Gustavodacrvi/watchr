@@ -4,12 +4,12 @@
     @afterEnter='afterEnter'
     @leave='leave'
   >
-    <div class="HeadingEdit Edit handle rb shadow">
+    <div class="Edit handle rb shadow">
       <div class="fix-back fade" @click="cancel"></div>
       <div class="edit-wrapper" :class="{show}">
         <InputApp
           class="no-back"
-          placeholder="Heading name..."
+          :placeholder="placeholder"
           v-model="str"
           :value='str'
           @input="v => str = v"
@@ -35,7 +35,7 @@ import ButtonVue from '../../Auth/Button.vue'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  props: ['buttonTxt', 'name', 'names', 'errorToast'],
+  props: ['name', 'names', 'errorToast', 'placeholder'],
   components: {
     InputApp: DropInputVue,
     ButtonApp: ButtonVue,
@@ -59,7 +59,7 @@ export default {
     remove(evt) {
       let found = false
       for (const node of evt.path)
-        if (node.classList && node.classList.contains('TaskEditComp')) {
+        if (node === this.$el) {
           found = true
           break
         }
@@ -133,61 +133,5 @@ export default {
 
 </script>
 
-<style scoped>
-
-.fix-back {
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  z-index: 200;
-  left: 0;
-  top: 0;
-}
-
-.edit-wrapper {
-  position: relative;
-  z-index: 201;
-}
-
-.Edit {
-  background-color: var(--card);
-}
-
-.trans-t-enter, .trans-t-leave-to {
-  opacity: 0;
-  background-color: var(--back-color);
-  box-shadow: 0 0 0 rgba(0,0,0,.3);
-}
-
-.trans-t-leave, .trans-t-enter-to {
-  opacity: 1;
-  background-color: var(--card);
-  box-shadow: 0 2px 6px rgba(0,0,0,.3);
-}
-
-.button {
-  display: flex;
-  padding-bottom: 4px;
-  padding-left: 4px;
-  align-items: center;
-}
-
-.btn {
-  flex-basis: 100px;
-}
-
-.cancel {
-  color: var(--red);
-  margin-left: 6px;
-}
-
-.edit-wrapper {
-  opacity: 0;
-  transition-duration: .3s;
-}
-
-.show {
-  opacity: 1;
-}
-
+<style scoped src="@/assets/css/editor.css">
 </style>

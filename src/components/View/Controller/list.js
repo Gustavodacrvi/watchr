@@ -257,6 +257,7 @@ export default {
         return {
           excludeNames: headings.map(el => el.name),
           errorToast: "There's already another heading with this name.",
+          placeholder: 'Heading name...',
         }
       }
       return null

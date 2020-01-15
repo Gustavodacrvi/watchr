@@ -230,7 +230,7 @@ export default {
       }
 
       const hasSelected = this.selectedTasks.length > 0
-      if (!(this.isOnAlt && this.fallbackSelected) && !(hasSelected && this.isOnAlt))
+      if (!isTyping && !(this.isOnAlt && this.fallbackSelected) && !(hasSelected && this.isOnAlt))
         switch (key) {
           case 'ArrowDown': {
             this.$emit('go', true)
