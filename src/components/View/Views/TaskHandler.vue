@@ -4,8 +4,7 @@
     <TaskRendererVue
       v-bind="$props"
 
-      :mainTasks='mainTasks'
-      :tasks='sortLaseredTasks'
+      :items='sortLaseredTasks'
 
       :headings='sortHeadings'
       :scheduleObject='scheduleObject'
@@ -18,6 +17,8 @@
       :taskIconDropOptions='taskIconDropOptions'
       :headingPosition='0'
       :updateHeadingIds='updateHeadingIds'
+      comp='Task'
+      edit='TaskEdit'
 
       @update="updateIds"
       @add-heading="addHeading"
@@ -30,7 +31,7 @@
 
 <script>
 
-import TaskRendererVue from './../Tasks/TaskRenderer.vue'
+import TaskRendererVue from './../Tasks/ListRenderer.vue'
 import AppButton from '../../Auth/Button.vue'
 
 import { pipeBooleanFilters } from '@/utils/memo'
@@ -633,7 +634,7 @@ export default {
     },
     allViewTasks() {
       return [...this.sortLaseredTasks,...this.sortHeadings.map(
-        head => head.tasks
+        head => head.items
       ).flat()]
     },
     allViewTasksIds() {
@@ -728,7 +729,7 @@ export default {
         return {
           ...head,
           filter: undefined,
-          tasks,
+          items: tasks,
           nonFiltered,
           options: tasks => {
             let options = head.options ? head.options(tasks) : []

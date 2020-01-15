@@ -7,12 +7,12 @@
     </transition>
     <div
       class="front task-renderer-root"
-      :class="{inflate, dontHaveTasks: lazyTasks.length === 0}"
+      :class="{dontHaveTasks: lazyItems.length === 0}"
 
       data-name='task-renderer'
     >
-      <template v-for="item of getTasks">
-        <Task v-if="!item.isEdit" :key="item.id" 
+      <template v-for="item of getItems">
+        <component v-if="!item.isEdit" :is='comp' :key="item.id" 
           v-bind="$props"
 
           :itemHeight='itemHeight'
@@ -21,8 +21,6 @@
           :isRoot='isRoot'
           :isSelecting='isSelecting'
           :multiSelectOptions='taskIconDropOptions'
-          :isDragging='isDragging'
-          :isScrolling='isScrolling'
 
           @de-select='deSelectItem'
           @select='selectItem'
@@ -35,7 +33,8 @@
           :data-name='item.name'
           :data-type='`task`'
         />
-        <TaskEdit v-else-if="item.isEdit === 'Edit'"
+        <component v-else-if="item.isEdit === 'Edit'"
+          :is='editComp'
           :key="item.isEdit"
 
           v-bind='item.propsData'
@@ -64,12 +63,12 @@
       </template>
       <transition name="fade-t">
         <div v-if="showSomedayButton && !header" @click="$emit('allow-someday')">
-          <ButtonVue type="dark" :value="l['Show someday tasks...']"/>
+          <ButtonVue type="no-padding" :value="l['Show someday tasks...']"/>
         </div>
       </transition>
     </div>
     <ButtonVue v-if="showMoreItemsButton"
-      type="dark"
+      type="no-padding"
       :value='showMoreItemsMessage'
       @click="showingMoreItems = true"
     />
@@ -100,7 +99,7 @@
           <TaskRenderer
             v-bind="{...$props, headingPosition: undefined}"
 
-            :tasks='h.tasks'
+            :items='h.items'
             :headings='[]'
 
             :hideListName="h.hideListName"
@@ -157,9 +156,8 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['tasks', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton', 'openCalendar', 'rootChanging', 
-  'rootHeadings', 'selectEverythingToggle',
-  'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate'],
+  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addTask', 'viewNameValue', 'emptyIcon', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'showCompleted', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackTask' ,'disableSortableMount', 'filterOptions', 'mainTasks', 'showAllHeadingsItems', 'rootFallbackTask', 'headingFallbackTask', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'isLast', 'showSomedayButton', 'openCalendar', 'rootChanging', 
+  'rootHeadings', 'selectEverythingToggle', 'viewType', 'taskIconDropOptions', 'taskCompletionCompareDate', 'comp', 'editComp'],
   name: 'TaskRenderer',
   components: {
     Task: TaskVue, Icon, ButtonVue,
@@ -170,14 +168,12 @@ export default {
   data() {
     return {
       showingMoreItems: false,
-      lazyTasks: [],
-      lazyTasksSetTimeouts: [],
+      lazyItems: [],
+      lazyItemsSetTimeouts: [],
       lazyHeadingsSetTimeouts: [],
       lazyHeadings: [],
       selectedElements: [],
       changedViewName: true,
-      isDragging: false,
-      justScrolled: false,
       movingHeading: false,
       waitingUpdateTimeout: null,
       changingViewName: false,
@@ -281,14 +277,14 @@ export default {
         return true
       }
 
-      return this.showEmptyHeadings || h.tasks.length > 0
+      return this.showEmptyHeadings || h.items.length > 0
     },
     selectMultipleIds(newId) {
-      if (this.lastSelectedId && newId && this.lazyTasks.find(el => el.id === newId) && this.lazyTasks.find(el => el.id === this.lastSelectedId)) {
+      if (this.lastSelectedId && newId && this.lazyItems.find(el => el.id === newId) && this.lazyItems.find(el => el.id === this.lastSelectedId)) {
         const idsToSelect = []
 
         let selecting = false
-        for (const t of this.lazyTasks) {
+        for (const t of this.lazyItems) {
           const isOneOfTheTwo = t.id === this.lastSelectedId || t.id === newId
           if (selecting && !isOneOfTheTwo) {
             idsToSelect.push(t.id)
@@ -315,24 +311,24 @@ export default {
       }
     },
     moveEdit(offset) {
-      const index = this.lazyTasks.findIndex(el => el.isEdit)
+      const index = this.lazyItems.findIndex(el => el.isEdit)
       const move = () => {
-        this.lazyTasks.splice(
+        this.lazyItems.splice(
           offset + index,
           0,
-          this.lazyTasks.splice(index, 1)[0]
+          this.lazyItems.splice(index, 1)[0]
         )
       }
-      if (offset > 0 && (offset + index) < this.lazyTasks.length)
+      if (offset > 0 && (offset + index) < this.lazyItems.length)
         move()
       else if ((index + offset) > -1)
         move()
       setTimeout(() => this.focusToggle = !this.focusToggle, 10)
     },
     removeEdit() {
-      const i = this.lazyTasks.findIndex(el => el.isEdit)
+      const i = this.lazyItems.findIndex(el => el.isEdit)
       if (i > -1) {
-        this.lazyTasks.splice(i, 1)
+        this.lazyItems.splice(i, 1)
         this.hasEdit = false
         this.edit = null
       }
@@ -344,7 +340,7 @@ export default {
         onSave,
         propsData,
       }
-      this.lazyTasks.splice(index, 0, edit)
+      this.lazyItems.splice(index, 0, edit)
       this.hasEdit = true
       this.edit = {...edit}
     },
@@ -433,7 +429,6 @@ export default {
           }, 10)
         },
         onSelect: evt => {
-          this.justScrolled = false
           const id = evt.item.dataset.id
 
           if (id !== "Edit" && !this.selected.includes(id)) {
@@ -475,8 +470,8 @@ export default {
             const indicies = evt.newIndicies.map(el => el.index)
             if (indicies.length === 0) indicies.push(evt.newIndex)
             
-            let sourceLazyTasks = this.sourceVueInstance.lazyTasks
-            let destinyLazyTasks = this.lazyTasks
+            let sourceLazyTasks = this.sourceVueInstance.lazyItems
+            let destinyLazyTasks = this.lazyItems
 
             const tasks = []
             for (const id of ids) {
@@ -509,7 +504,7 @@ export default {
                 comp: 'FastSearch',
                 payload: {
                   callback: (route, task) => {
-                    this.lazyTasks.splice(i, 0, task)
+                    this.lazyItems.splice(i, 0, task)
                     const t = this.fallbackTask(task, true)
                     this.$store.dispatch('task/saveTask', t)
                     setTimeout(() => {
@@ -525,11 +520,9 @@ export default {
           }
         },
         onStart: evt => {
-          this.isDragging = true
           window.navigator.vibrate(100)
         },
         onEnd: (e, t) => {
-          this.isDragging = false
           removeTaskOnHoverFromAppnavElements()
           if (move) {
             const specialTypes = ['Today', 'Completed', 'Tomorrow', 'Someday']
@@ -623,7 +616,7 @@ export default {
     },
     slowlyAddTasks(tasks) {
       return new Promise(solve => {
-        this.lazyTasks = []
+        this.lazyItems = []
         let i = 0
         const length = tasks.length
 
@@ -631,9 +624,9 @@ export default {
         const timeout = length * multiplier
         
         const add = (task) => {
-          this.lazyTasks.push(task)
+          this.lazyItems.push(task)
           if ((i + 1) !== length)
-            this.lazyTasksSetTimeouts.push(setTimeout(() => {
+            this.lazyItemsSetTimeouts.push(setTimeout(() => {
               i++
               const t = tasks[i]
               if (t) add(t)
@@ -649,8 +642,8 @@ export default {
       return new Promise(solve => {
         this.lazyHeadings = []
         let i = 0
-        const headinsgWithTasks = this.showEmptyHeadings ? headings.slice() : headings.filter(h => h.tasks && h.tasks.length > 0)
-        const length = headinsgWithTasks.length
+        const headinsgWithItems = this.showEmptyHeadings ? headings.slice() : headings.filter(h => h.items && h.items.length > 0)
+        const length = headinsgWithItems.length
         let timeout = this.isDesktop ? 155 : 230
 
         if (length < 5 || this.viewName === 'Upcoming') timeout = 20
@@ -660,12 +653,12 @@ export default {
           if ((i + 1) !== length)
             this.lazyHeadingsSetTimeouts.push(setTimeout(() => {
               i++
-              const h = headinsgWithTasks[i]
+              const h = headinsgWithItems[i]
               if (h) add(h)
             }, timeout))
           else solve()
         }
-        const h = headinsgWithTasks[0]
+        const h = headinsgWithItems[0]
         if (h) add(h)
         else solve()
       })
@@ -728,7 +721,7 @@ export default {
     },
     windowClick() {
       for (const el of this.selectedElements)
-        if (this.lazyTasks.find(t => t.id === el.dataset.id))
+        if (this.lazyItems.find(t => t.id === el.dataset.id))
           this.deSelectItem(el)
       this.$store.commit('clearSelected')
     },
@@ -768,7 +761,7 @@ export default {
         const index = this.getTaskRendererPosition()
 
         if (shouldRender) {
-          this.lazyTasks.splice(index, 0, t)
+          this.lazyItems.splice(index, 0, t)
         }
 
         this.addedTask = t.id
@@ -781,7 +774,7 @@ export default {
       }
     },
     getTaskRendererPosition() {
-      return this.lazyTasks.findIndex(el => el.isEdit)
+      return this.lazyItems.findIndex(el => el.isEdit)
     },
     moveTaskRenderer(dire) {
       const i = this.getTaskRendererPosition()
@@ -830,7 +823,7 @@ export default {
         const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
         if (!isTyping && !this.isOnControl) {
           if (key === 'a')
-            this.addTaskEdit(this.lazyTasks.length)
+            this.addTaskEdit(this.lazyItems.length)
           else if (key === 'A')
             this.addTaskEdit(0)
           if (this.viewType === 'list') {
@@ -843,11 +836,11 @@ export default {
       }
     },
     clearLazySettimeout() {
-      for (const set of this.lazyTasksSetTimeouts)
+      for (const set of this.lazyItemsSetTimeouts)
         clearTimeout(set)
       for (const set of this.lazyHeadingsSetTimeouts)
         clearTimeout(set)
-      this.lazyTasksSetTimeouts = []
+      this.lazyItemsSetTimeouts = []
       this.lazyHeadingsSetTimeouts = []
     },
     updateView() {
@@ -857,12 +850,12 @@ export default {
       if (this.isDesktop)
         Promise.all([
           this.slowlyAddHeadings(this.headings),
-          this.slowlyAddTasks(this.tasks),
+          this.slowlyAddTasks(this.items),
         ]).then(() => {
           this.changedViewName = false
         })
       else {
-        this.lazyTasks = this.tasks.slice()
+        this.lazyItems = this.items.slice()
         this.lazyHeadings = this.headings.slice()
         this.changedViewName = false
       }
@@ -874,7 +867,6 @@ export default {
       isOnControl: state => state.isOnControl,
       savedTasks: state => state.task.tasks,
       pressingKey: state => state.pressingKey,
-      isScrolling: state => state.isScrolling,
       mainSelectionIndex: state => state.mainSelectionIndex,
       mainSelection: state => state.mainSelection,
     }),
@@ -893,18 +885,12 @@ export default {
       if (this.isDesktop) return 'head-t'
       return (this.changingViewName || this.rootChanging) ? '' : 'head-t'
     },
-    inflate() {
-      if (this.stopRootInflation) return false
-      const hasHeadings = this.lazyHeadings.length > 0
-      
-      return (this.isRoot && !hasHeadings || (this.isRoot && hasHeadings && this.lazyHeadings.every(h => h.tasks.length === 0) && !this.showEmptyHeadings)) || this.isLast
-    },
-    getTasks() {
-      if (this.isRoot || this.showAllHeadingsItems) return this.lazyTasks
-      return this.showingMoreItems ? this.lazyTasks : this.lazyTasks.slice(0, this.hasEdit ? 4 : 3)
+    getItems() {
+      if (this.isRoot || this.showAllHeadingsItems) return this.lazyItems
+      return this.showingMoreItems ? this.lazyItems : this.lazyItems.slice(0, this.hasEdit ? 4 : 3)
     },
     nonEditLazyTasks() {
-      return this.lazyTasks.filter(el => !el.isEdit)
+      return this.lazyItems.filter(el => !el.isEdit)
     },
     showMoreItemsMessage() {
       return `${this.l['Show ']}${this.nonEditLazyTasks.length - 3}${this.l[' more tasks...']}`
@@ -943,36 +929,36 @@ export default {
     showIllustration() {
       const lazyHeadings = this.lazyHeadings
       for (const head of lazyHeadings)
-        if (head.tasks.length > 0) return false
-      return this.isRoot && this.lazyTasks.length === 0 && this.icon && !this.header
+        if (head.items.length > 0) return false
+      return this.isRoot && this.lazyItems.length === 0 && this.icon && !this.header
     },
   },
   watch: {
     viewName() {
       this.deselectAll()
     },
-    tasks(newArr) {
+    items(newArr) {
       if (this.waitingUpdateTimeout) {
         clearTimeout(this.waitingUpdateTimeout)
         this.waitingUpdateTimeout = null
       }
-      const tasks = newArr.slice()
+      const items = newArr.slice()
       
       this.waitingUpdateTimeout = setTimeout(() => {
         if (!this.changedViewName) {
           this.clearLazySettimeout()
 
           if (this.hasEdit && this.addedTask && this.edit) {
-            const oldEditIndex = this.lazyTasks.findIndex(el => el.isEdit)
+            const oldEditIndex = this.lazyItems.findIndex(el => el.isEdit)
             if (oldEditIndex > -1)
-              this.lazyTasks.splice(oldEditIndex, 1)
-            const taskIndex = tasks.findIndex(el => el.id === this.addedTask)
+              this.lazyItems.splice(oldEditIndex, 1)
+            const taskIndex = items.findIndex(el => el.id === this.addedTask)
             if (taskIndex > -1) {
-              tasks.splice(taskIndex + 1, 0, this.edit)
+              items.splice(taskIndex + 1, 0, this.edit)
             }
           }
-          this.lazyTasks = tasks
-          const ts = this.lazyTasks
+          this.lazyItems = items
+          const ts = this.lazyItems
           const removedEls = this.selectedElements.filter(el => el && !ts.find(t => t.id === el.dataset.id))
           for (const el of removedEls)
             this.deSelectItem(el)
@@ -1021,10 +1007,6 @@ export default {
           else this.sortable.options.delay = 0
         }
       }
-    },
-    isScrolling() {
-      if (this.isScrolling) this.justScrolled = true
-      else setTimeout(() => this.justScrolled = false, 500)
     },
   }
 }
@@ -1124,11 +1106,7 @@ export default {
 }
 
 .dontHaveTasks {
-  min-height: 5px;
-}
-
-.inflate {
-  min-height: 1200px;
+  min-height: 50px;
 }
 
 </style>
