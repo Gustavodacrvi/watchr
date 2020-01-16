@@ -1,7 +1,7 @@
 
 <template>
   <div class="TaskHandler">
-    <TaskRendererVue
+    <ListRendererVue
       v-bind="$props"
 
       :items='sortLaseredTasks'
@@ -20,7 +20,7 @@
       :getItemFirestoreRef='getItemFirestoreRef'
       :onAddExistingItem='onAddExistingItem'
       comp='Task'
-      editComp='TaskEdit'
+      editComp='ItemEdit'
       itemPlaceholder='Task name...'
 
       @update="updateIds"
@@ -37,7 +37,7 @@
 
 <script>
 
-import TaskRendererVue from './../Tasks/ListRenderer.vue'
+import ListRendererVue from './../Tasks/ListRenderer.vue'
 import AppButton from '../../Auth/Button.vue'
 
 import { pipeBooleanFilters } from '@/utils/memo'
@@ -54,7 +54,7 @@ export default {
   props: ['mainFilter', 'rootFilter', 'tasksOrder', 'headings', 'headingsOrder',
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 'movingButton',
-    'showHeadadingFloatingButton', 'openCalendar', 'isSmart',
+    'showHeadingFloatingButton', 'openCalendar', 'isSmart',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackItem', 'icon', 'configFilterOptions', 'showHeading',
@@ -62,7 +62,7 @@ export default {
     'updateHeadingIds', 'showEmptyHeadings', 'showAllHeadingsItems',
   ],
   components: {
-    TaskRendererVue,
+    ListRendererVue,
     AppButton,
   },
   data() {

@@ -65,8 +65,6 @@ export default {
         }
       }
     },
-    addHeading() {},
-    onSortableAdd() {},
     saveFolder() {
       return obj => {
         this.$store.dispatch('folder/saveFolder', {
@@ -75,17 +73,9 @@ export default {
         })
       }
     },
-    removeDeferDate() {},
-    removeRepeat() {},
     saveSchedule() {
       return info => localStorage.setItem('schedule_' + this.viewName, JSON.stringify(info))
     },
-    removeHeaderTag() {},
-    removeDeadline() {},
-    removeDeadline() {},
-    removeHeaderTag() {},
-    removeDeferDate() {},
-    
     
     
     mainFilter() {
@@ -142,6 +132,14 @@ export default {
     savedSchedule() {
       const schedule = localStorage.getItem('schedule_' + this.viewName)
       return schedule !== 'null' ? JSON.parse(schedule) : null
+    },
+    extraListView() {
+      return {
+        comp: 'ListHandler',
+        rootFilter: () => {
+
+        },
+      }
     },
   },
 }

@@ -107,7 +107,7 @@
 import Vue from 'vue'
 
 import Task from './Task.vue'
-import TaskEdit from './Edit.vue'
+import ItemEdit from './Edit.vue'
 import IllustrationVue from '@/components/Illustrations/Illustration.vue'
 import EditComp from './../RenderComponents/Edit.vue'
 import Icon from '@/components/Icon.vue'
@@ -128,11 +128,11 @@ import utilsTask from '@/utils/task'
 import utils from '@/utils/'
 
 export default {
-  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton', 'rootFilterFunction', 'showHeadadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 
+  props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton', 'rootFilterFunction', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem'],
   components: {
     Task, Icon, ButtonVue,
-    EditComp, HeadingsRenderer, TaskEdit,
+    EditComp, HeadingsRenderer, ItemEdit,
     Illustration: IllustrationVue,
   },
   data() {
@@ -210,7 +210,7 @@ export default {
         const pos = (evt.pageX || evt.touches[0].pageX) - left
         
         const headingStart = width * .333333
-        const addStart = this.showHeadadingFloatingButton ? width * .66666 : width * .5
+        const addStart = this.showHeadingFloatingButton ? width * .66666 : width * .5
 
         let type
         if (pos < headingStart)
@@ -219,12 +219,12 @@ export default {
           type = 'create'
         else type = 'add'
 
-        if (!this.showHeadadingFloatingButton && type === 'action-heading')
+        if (!this.showHeadingFloatingButton && type === 'action-heading')
           type = 'create'
 
         const possibleValues = ['action-heading', 'create', 'add']
 
-        if (!this.showHeadadingFloatingButton) {
+        if (!this.showHeadingFloatingButton) {
           obj['action-heading'].flexBasis = '0px'
           obj['action-heading'].overflow = 'hidden'
         }

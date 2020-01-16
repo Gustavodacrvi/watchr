@@ -37,7 +37,7 @@
     :onSmartComponentUpdate='onSmartComponentUpdate'
     :viewComponent='viewComponent'
     :isListType='isListType'
-
+    :extraListView='extraListView'
 
     @save-schedule='saveSchedule'
     @save-header-name='saveHeaderName'
