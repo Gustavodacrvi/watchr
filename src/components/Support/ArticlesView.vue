@@ -36,7 +36,7 @@ export default {
       s.height = 0
       s.margin = 0
       s.opacity = 0
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         s.transitionDuration = '.15s'
         title.style.transitionDuration = '.15s'
         s.height = height

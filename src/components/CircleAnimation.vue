@@ -46,17 +46,17 @@ export default {
       s.height = 0
       const client = this.$el.clientWidth
       const width = client + 100
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         trans(`.${innerTrans}s`)
         s.opacity = 1
         s.width = width + 'px'
         s.height = width + 'px'
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           trans(`.${outerTrans}s`)
           s.width = width + 'px'
           s.height = width + 'px'
           s.opacity = 0
-          setTimeout(() => {
+          requestAnimationFrame(() => {
             trans('0')
             s.width = 0
             s.height = 0
@@ -64,7 +64,7 @@ export default {
             this.doingTransition = false
           }, innerTrans)
         }, outerTrans)
-      }, 50)
+      })
     },
     touchStart(e) {
       this.startX = e.changedTouches[0].clientX

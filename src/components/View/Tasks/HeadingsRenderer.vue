@@ -81,7 +81,7 @@ export default {
     ListRenderer: () => import('./ListRenderer.vue'),
   },
   props: ['headings', 'isChangingViewName', 'showHeading', 'viewType', 'viewName', 'viewNameValue', 'showEmptyHeadings', 'mainFallbackItem', 'showAllHeadingsItems', 'scheduleObject', 'selectEverythingToggle', 
-  'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'movingHeading', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem'],
+  'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'movingHeading', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'movingButton'],
   methods: {
     getOptionClick(h) {
       if (!h.optionClick) return () => {}

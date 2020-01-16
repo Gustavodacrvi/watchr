@@ -77,7 +77,7 @@ export default {
 
       s.transitionDuration = '0s'
       s.height = 0
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         s.transitionDuration = '.3s'
         if (height < 36)
           s.height = '35px'
@@ -94,7 +94,7 @@ export default {
 
       s.transitionDuration = '0s'
       s.height = el.offsetHeight + 'px'
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         this.show = false
         s.transitionDuration = '.3s'
         s.overflow = 'hidden'

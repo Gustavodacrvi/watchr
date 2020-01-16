@@ -132,7 +132,7 @@ export default {
       h.height = '0'
       h.transitionDuration = '0s'
       s.transitionDuration = '0s'
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         h.transitionDuration = '.15s'
         s.transitionDuration = '.15s'
         h.height = (this.isDesktop ? 35 : 42) + 'px'

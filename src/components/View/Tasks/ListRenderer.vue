@@ -93,6 +93,7 @@
       :scheduleObject='scheduleObject'
       :onAddExistingItem='onAddExistingItem'
       :getItemFirestoreRef='getItemFirestoreRef'
+      :movingButton='movingButton'
       :itemPlaceholder='itemPlaceholder'
 
       @change-time='changeTime'

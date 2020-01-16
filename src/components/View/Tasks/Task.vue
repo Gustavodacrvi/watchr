@@ -340,7 +340,7 @@ export default {
         if (ni) ni.opacity = 0
         co.transform = 'translateX(-27px)'
         this.deselectTask()
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           c.transitionDuration = '.25s'
           co.transitionDuration = '.25s'
           inf.transitionDuration = '.25s'
@@ -371,7 +371,7 @@ export default {
         inf.opacity = 1
         if (ni) ni.opacity = .6
         co.transform = 'translateX(0px)'
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           c.transitionDuration = '.25s'
           co.transitionDuration = '.25s'
           inf.transitionDuration = '.25s'
@@ -406,7 +406,7 @@ export default {
           s.height = 0
           s.minHeight = 0
           
-          setTimeout(() => {
+          requestAnimationFrame(() => {
             s.transitionDuration = '.25s'
             s.opacity = 1
             s.height = this.itemHeight + 'px'

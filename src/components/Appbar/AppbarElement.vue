@@ -139,7 +139,7 @@ export default {
       s.overflow = 'hidden'
       s.height = 0
       s.opacity = 0
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         s.transitionDuration = '.3s'
         s.height = (this.subList.length * (this.isDesktop ? 35 : 42)) + 'px'
         s.opacity = 1
@@ -154,7 +154,7 @@ export default {
       const s = el.style
       
       s.height = (this.subList.length * (this.isDesktop ? 35 : 42)) + 'px'
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         s.transitionDuration = '.3s'
         s.height = '0px'
         s.overflow = 'hidden'

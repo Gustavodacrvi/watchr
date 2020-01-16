@@ -60,11 +60,11 @@ export default {
       w.width = 0 + 'px'
       icon.opacity = '0'
       el.style.opacity = '0'
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         el.style.transitionDuration = '.3s'
         name.transitionDuration = '.3s'
         icon.transitionDuration = '.3s'
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           w.height = this.height + 'px'
           w.width = this.width + 'px'
           setTimeout(() => {
@@ -87,10 +87,10 @@ export default {
       w.height = el.offsetHeight + 'px'
       w.width = el.offsetWidth + 'px'
       
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         el.style.transitionDuration = '.3s'
         w.transitionDuration = '.35s'
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           w.height = '0px'
           w.width = '0px'
           setTimeout(() => {

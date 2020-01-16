@@ -187,7 +187,7 @@ export default {
       r.opacity = 0
       w.height = 0
 
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         r.transitionDuration = '.3s'
         w.transitionDuration = '.3s'
 
@@ -277,7 +277,7 @@ export default {
         n.transitionDuration = '.4s'
         ball.transitionDuration = '.4s'
   
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           t.transform = `translateX(0px)`
           l.transform = `translateX(0px)`
           n.transform = `translateX(0px)`
@@ -290,7 +290,7 @@ export default {
     },
     
     moveBall() {
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         const ball = this.$refs['ball'].style
         ball.opacity = 1
         const el = this.$refs[this.active][0]

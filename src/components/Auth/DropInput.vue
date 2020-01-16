@@ -75,7 +75,7 @@ export default {
     enterItems(el, done) {
       el.style.opacity = 0
       el.style.height = '0px'
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         el.style.opacity = 1
         el.style.height = '40px'
         setTimeout(() => done(), 300)
@@ -101,9 +101,9 @@ export default {
       el.style.height = '0px'
       el.style.transitionDuration = '.4s'
       this.hideLinks()
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         el.style.height = height + 'px'
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           done()
           el.style.height = 'auto'
           setTimeout(() => {

@@ -384,7 +384,7 @@ export default {
         t.transitionDuration = 0
         const y = this.isDesktop ? -2 : 4
         t.transform = `translate(27px, ${y}px)`
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           t.transitionDuration = '.25s'
           t.transform = `translate(0px, ${y}px)`
         })
@@ -392,7 +392,7 @@ export default {
 
       s.transitionDuration = '0s'
       s.height = this.taskHeight ? this.taskHeight + 'px' : 0
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
         if (height < 36)
           s.height = '35px'
@@ -404,7 +404,7 @@ export default {
         setTimeout(() => {
           el.style.height = 'auto'
         }, 300)
-      }, 50)
+      })
     },
     leave(el) {
       const s = el.style
@@ -415,7 +415,7 @@ export default {
         t.transitionDuration = 0
         const y = this.isDesktop ? -2 : 4
         t.transform = `translate(0px, ${y}px)`
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           t.transitionDuration = '.25s'
           t.transform = `translate(27px, ${y}px)`
         })
@@ -423,7 +423,7 @@ export default {
 
       s.transitionDuration = '0s'
       s.height = el.offsetHeight + 'px'
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         this.show = false
         s.transitionDuration = '.25s'
         s.overflow = 'hidden'

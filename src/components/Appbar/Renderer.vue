@@ -222,7 +222,7 @@ export default {
       s.transitionDuration = '.2s'
       s.opacity = 0
       s.height = '0px'
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         s.transitionDuration = '.2s'
         s.opacity = 1
         s.height = (this.isDesktop ? 35 : 42) + 'px'
@@ -237,7 +237,7 @@ export default {
       s.transition = 'none'
       s.opacity = 1
       s.height = (this.isDesktop ? 35 : 42) + 'px'
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         s.transition = 'height .15s, opacity .15s'
         s.opacity = 0
         s.height = '0px'

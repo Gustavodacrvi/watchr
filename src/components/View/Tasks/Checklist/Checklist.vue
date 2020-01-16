@@ -134,12 +134,12 @@ export default {
 
       s.transitionDuration = '0s'
       s.height = 0
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         s.transitionDuration = '.15s'
         if (height < 36)
           s.height = '36px'
         else s.height = height + 'px'
-      }, 10)
+      })
     },
     leave(el) {
       el.style.height = 0
