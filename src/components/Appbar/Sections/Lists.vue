@@ -95,11 +95,11 @@ export default {
     this.sortable = new Sortable(el, {
       group: {name: 'folders', pull: (e) => {
         const name = e.el.dataset.name
-        if (name === 'task-renderer') return 'clone'
+        if (name === 'item-renderer') return 'clone'
         return false
       }, put: (l,j,item) => {
         const type = item.dataset.type
-        if (type === 'task') return true
+        if (type === 'Task') return true
         return false
       }},
       delay: 225,

@@ -48,6 +48,7 @@
           :taskIconDropOptions='taskIconDropOptions'
           :updateHeadingIds='updateHeadingIds'
           :autoSchedule='autoSchedule'
+          :showHeadadingFloatingButton='showHeadadingFloatingButton'
           :openCalendar='getHelperComponent === "LongCalendarPicker"'
 
           @allow-someday='showSomeday = true'
@@ -116,10 +117,10 @@ export default {
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes',
   'headerOptions', 'headerDates', 'headerTags', 'headerCalendar', 'files',
-  'progress', 'tasksOrder',  'rootFallbackTask', 'mainFallbackTask', 'savedSchedule',
+  'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
   
-  'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'showHeadadingFloatingButton', 'updateHeadingIds', 'showAllHeadingsItems', 'taskCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
+  'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
   components: {
     PaginationVue, TaskHandler,
     Header: HeaderVue, HelperComponent,
@@ -383,6 +384,9 @@ export default {
       doesTaskPassInclusivePriority: 'task/doesTaskPassInclusivePriority',
       doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
+    showHeadadingFloatingButton() {
+      return this.viewType === 'list' && !this.isSmart
+    },
     getPomoOptions() {
       if (this.userInfo && this.userInfo.pomo)
         return this.userInfo.pomo

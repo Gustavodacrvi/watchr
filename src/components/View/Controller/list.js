@@ -16,7 +16,7 @@ export default {
         }
       }
     },
-    rootFallbackTask() {
+    rootFallbackItem() {
       return (task, force) => {
         if (force || !task.heading) {
           task.heading = null
@@ -24,7 +24,7 @@ export default {
         return task
       }
     },
-    mainFallbackTask() {
+    mainFallbackItem() {
       return (task, force) => {
         if (force || (!task.list && !task.folder))
           task.list = this.viewList.id
@@ -160,7 +160,7 @@ export default {
             options: tasks => {
               return utilsList.listHeadingOptions(viewList, h, this.$store, tasks, this.l)
             },
-            fallbackTask: (task, force) => {
+            fallbackItem: (task, force) => {
               if (force || (!task.heading && !task.folder && task.list === viewList.id))
                 task.heading = h.id
               task.tags = [...task.tags, ...this.listgetListTags.map(el => el.id)]
@@ -211,9 +211,6 @@ export default {
           })
         }
       }
-      return null
-    },
-    taskCompletionCompareDate() {
       return null
     },
     files() {

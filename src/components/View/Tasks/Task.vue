@@ -34,7 +34,7 @@
         </div>
       </div>
       <div
-        class="cont-wrapper task-handle rb"
+        class="cont-wrapper item-handle rb"
         :class='{doneTransition}'
         ref="cont-wrapper"
         :style="{right: right + 'px'}"

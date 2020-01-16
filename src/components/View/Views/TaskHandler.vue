@@ -10,21 +10,27 @@
       :scheduleObject='scheduleObject'
       :selectEverythingToggle='selectEverythingToggle'
 
-      :addTask='addTask'
+      :addItem='addTask'
       :showSomedayButton='showSomedayButton'
       :rootFilterFunction='rootFilterFunction'
       :headingEditOptions='headingEditOptions'
-      :taskIconDropOptions='taskIconDropOptions'
+      :itemIconDropOptions='taskIconDropOptions'
       :headingPosition='0'
       :updateHeadingIds='updateHeadingIds'
+      :getItemFirestoreRef='getItemFirestoreRef'
+      :onAddExistingItem='onAddExistingItem'
       comp='Task'
       editComp='TaskEdit'
+      itemPlaceholder='Task name...'
 
       @update="updateIds"
       @add-heading="addHeading"
       @allow-someday='allowSomeday'
       @go='go'
       @change-time='changeTime'
+
+      @selectTask='selectTask'
+      @unselectTask='unselectTask'
     />
   </div>
 </template>
@@ -42,6 +48,8 @@ import utils from '@/utils'
 
 import mom from 'moment'
 
+import { taskRef } from '@/utils/firestore'
+
 export default {
   props: ['mainFilter', 'rootFilter', 'tasksOrder', 'headings', 'headingsOrder',
 
@@ -49,8 +57,8 @@ export default {
     'showHeadadingFloatingButton', 'openCalendar', 'isSmart',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
-    'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackTask', 'icon', 'configFilterOptions', 'showHeading',
-    'taskCompletionCompareDate', 'rootFallbackTask', 'autoSchedule',
+    'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackItem', 'icon', 'configFilterOptions', 'showHeading',
+    'itemCompletionCompareDate', 'rootFallbackItem', 'autoSchedule',
     'updateHeadingIds', 'showEmptyHeadings', 'showAllHeadingsItems',
   ],
   components: {
@@ -79,6 +87,29 @@ export default {
   },
   methods: {
     ...mapMutations(['saveMainSelection']),
+    onAddExistingItem(index, lazyItems, fallbackItem, callback) {
+      this.$store.dispatch('pushPopup', {
+        comp: 'FastSearch',
+        payload: {
+          callback: (route, task) => {
+            lazyItems.splice(index, 0, task)
+            const t = fallbackItem(task, true)
+            this.$store.dispatch('task/saveTask', t)
+            callback()
+          },
+          allowed: ['tasks'],
+        }
+      })
+    },
+    selectTask(id) {
+      this.$store.commit('selectTask', id)
+    },
+    unselectTask(id) {
+      this.$store.commit('unselectTask', id)
+    },
+    getItemFirestoreRef() {
+      return taskRef()
+    },
     addDuration() {
       const ids = this.fallbackSelected
 
@@ -432,7 +463,12 @@ export default {
       callback()
     },
     addTask(obj) {
-      this.fixPosition(obj, this.rootNonFilteredIds, () => this.$parent.$emit('add-task', obj))
+      const newObj = {
+        ...obj,
+        task: obj.item,
+        newTaskRef: obj.newItemRef,
+      }
+      this.fixPosition(newObj, this.rootNonFilteredIds, () => this.$parent.$emit('add-task', newObj))
     },
     updateIds(ids) {
       this.$parent.$emit('update-ids', utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.rootNonFilteredIds))

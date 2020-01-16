@@ -17,7 +17,7 @@
     :headings='headings'
     :headingsOrder='headingsOrder'
     :showAllHeadingsItems='showAllHeadingsItems'
-    :rootFallbackTask='rootFallbackTask'
+    :rootFallbackItem='rootFallbackItem'
 
     :mainFilter='mainFilter'
     :rootFilter='rootFilter'
@@ -25,11 +25,11 @@
     :onSortableAdd='onSortableAdd'
     :viewNameValue='viewNameValue'
     :headerDates='headerDates'
-    :mainFallbackTask='mainFallbackTask'
+    :mainFallbackItem='mainFallbackItem'
     :showHeading='showHeading'
     :headerTags='headerTags'
     :headerCalendar='headerCalendar'
-    :taskCompletionCompareDate='taskCompletionCompareDate'
+    :itemCompletionCompareDate='itemCompletionCompareDate'
     :files='files'
     :headingsPagination='headingsPagination'
     :configFilterOptions='configFilterOptions'
@@ -258,7 +258,7 @@ export default {
               }
             ],
             updateIds: saveOrder,
-            fallbackTask: (task, force) => {
+            fallbackItem: (task, force) => {
               if (force || (!task.list && !task.folder))
                 task.list = list.id
               return task
@@ -360,7 +360,7 @@ export default {
               }
             ],
             updateIds: saveOrder,
-            fallbackTask: (task, force) => {
+            fallbackItem: (task, force) => {
               if (force || (!task.list && !task.folder))
                 task.folder = folder.id
               return task
@@ -446,7 +446,7 @@ export default {
 
           sort: sortHeading,
           filter: filterFunction,
-          fallbackTask: task => {
+          fallbackItem: task => {
             if (!task.calendar)
               task.calendar = calObj(date)
             return task

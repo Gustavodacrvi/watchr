@@ -28,10 +28,13 @@
           :items='h.items'
           :headings='emptyHeadings'
           :isSmart='isSmart'
-          :mainFallbackTask='mainFallbackTask'
+          :mainFallbackItem='mainFallbackItem'
           :showAllHeadingsItems='showAllHeadingsItems'
           :selectEverythingToggle='selectEverythingToggle'
-          :taskIconDropOptions='taskIconDropOptions'
+          :itemIconDropOptions='itemIconDropOptions'
+          :getItemFirestoreRef='getItemFirestoreRef'
+          :itemPlaceholder='itemPlaceholder'
+          :onAddExistingItem='onAddExistingItem'
 
           :hideListName="h.hideListName"
           :viewName='viewName'
@@ -39,7 +42,7 @@
           :rootHeadings='getLazyHeadingsIds'
           :rootChanging='isChangingViewName'
           :headingFilterFunction='h.filterFunction'
-          :headingFallbackTask='h.fallbackTask'
+          :headingFallbackItem='h.fallbackItem'
           :allowCalendarStr='h.calendarStr'
           :disableSortableMount='h.disableSortableMount'
           :hideFolderName="h.hideFolderName"
@@ -49,12 +52,12 @@
           :editComp='editComp'
           :onSortableAdd='h.onSortableAdd'
           @add-heading='addHeading'
-          @update="ids => updateHeadingTaskIds(h,ids)"
+          @update="ids => updateHeadingItemIds(h,ids)"
           @go='moveItemHandlerSelection'
           @change-time='changeTime'
 
           :header="h"
-          :addTask="h.onAddTask"
+          :addItem="h.onAddItem"
           :headingPosition='i + 1'
         />
       </HeadingVue>
@@ -77,8 +80,8 @@ export default {
     HeadingVue,
     ListRenderer: () => import('./ListRenderer.vue'),
   },
-  props: ['headings', 'isChangingViewName', 'showHeading', 'viewType', 'viewName', 'viewNameValue', 'showEmptyHeadings', 'mainFallbackTask', 'showAllHeadingsItems', 'scheduleObject', 'selectEverythingToggle', 
-  'headingEditOptions', 'taskIconDropOptions', 'taskCompletionCompareDate', 'comp', 'editComp', 'movingHeading', 'isSmart'],
+  props: ['headings', 'isChangingViewName', 'showHeading', 'viewType', 'viewName', 'viewNameValue', 'showEmptyHeadings', 'mainFallbackItem', 'showAllHeadingsItems', 'scheduleObject', 'selectEverythingToggle', 
+  'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'movingHeading', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem'],
   methods: {
     getOptionClick(h) {
       if (!h.optionClick) return () => {}
@@ -88,7 +91,7 @@ export default {
       if (!h.saveNotes) return () => {}
       return h.saveNotes
     },
-    updateHeadingTaskIds(h, ids) {
+    updateHeadingItemIds(h, ids) {
       if (h.updateIds)
         h.updateIds(ids)
     },

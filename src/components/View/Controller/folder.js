@@ -16,10 +16,10 @@ export default {
         }
       }
     },
-    rootFallbackTask() {
+    rootFallbackItem() {
       return task => task
     },
-    mainFallbackTask() {
+    mainFallbackItem() {
       return (task, force) => {
         if (force || (!task.list && !task.folder && !task.heading))
           task.folder = this.viewFolder.id
@@ -100,9 +100,6 @@ export default {
     
     icon() {return 'folder'},
     viewNameValue() {return this.viewName},
-    taskCompletionCompareDate() {
-      return null
-    },
     files() {
       const fold = this.viewFolder
       if (fold) {

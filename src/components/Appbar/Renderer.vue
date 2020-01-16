@@ -84,14 +84,14 @@ export default {
         if (!this.enableSort && name === 'appnav-renderer') return false
         if (name === 'folders-root') return false
         if (name === 'appnav-renderer') return true
-        if (name === 'task-renderer') return 'clone'
+        if (name === 'item-renderer') return 'clone'
       }, put: (l,j,item) => {
         if (this.isSmart) return false
         const type = item.dataset.type
 
         if (!this.enableSort && type === 'appnav-element') return false
         if (type === 'appnav-element') return true
-        if (type === 'task') return false
+        if (type === 'Task') return false
         if (type === 'add-task-floatbutton') return true
       }},
       delay: 150,

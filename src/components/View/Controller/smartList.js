@@ -21,10 +21,10 @@ export default {
         }
       }
     },
-    rootFallbackTask() {
+    rootFallbackItem() {
       return task => task
     },
-    mainFallbackTask() {
+    mainFallbackItem() {
       return (task, force) => {
         if (this.viewName === 'Calendar') {
           const date = this.calendarDate

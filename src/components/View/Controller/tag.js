@@ -14,10 +14,10 @@ export default {
         }
       }
     },
-    rootFallbackTask() {
+    rootFallbackItem() {
       return task => task
     },
-    mainFallbackTask() {
+    mainFallbackItem() {
       return (task, force) => {
         if (force || (task.tags.length === 0 || !task.tags.includes(this.viewTag.id)))
           task.tags.push(this.viewTag.id)
