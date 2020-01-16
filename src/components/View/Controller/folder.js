@@ -135,10 +135,19 @@ export default {
     },
     extraListView() {
       const fold = this.viewFolder
+      const save = obj => {
+        this.$store.dispatch('folder/saveFolder', {
+          id: fold.id,
+          ...obj,
+        })
+      }
+      
       if (fold)
         return {
           comp: 'ListHandler',
           rootFilter: list => fold.id === list.folder,
+          itemsOrder: fold.order || [],
+          updateIds: order => save({order}),
         }
     },
   },

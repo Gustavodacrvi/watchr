@@ -3,7 +3,7 @@
     <ListRendererVue
       v-bind='$props'
 
-      :items="lists"
+      :items="sortLaseredLists"
       :headings='emptyArr'
       :showSomedayButton='false'
       :itemIconDropOptions='emptyArr'
@@ -17,7 +17,7 @@
       editComp='EditComp'
       itemPlaceholder='List name...'
 
-      @update="updateIds"
+      @update="updateListIds"
       @allow-someday='allowSomeday'
 
       @selectTask='selectTask'
@@ -30,10 +30,12 @@
 
 import ListRendererVue from './../Tasks/ListRenderer.vue'
 
-import { mapState } from 'vuex'
+import utilsTask from "@/utils/task"
+
+import { mapState, mapGetters } from 'vuex'
 
 export default {
-  props: ['rootFilter', 'comp'],
+  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds'],
   components: {
     ListRendererVue,
   },
@@ -50,8 +52,10 @@ export default {
     onAddExistingItem() {
 
     },
-    updateIds() {
-
+    updateListIds(ids) {
+      this.updateIds(
+        utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.nonFilteredIds)
+      )
     },
     selectTask() {
 
@@ -64,11 +68,25 @@ export default {
     ...mapState({
       storeLists: state => state.list.lists,
     }),
+    ...mapGetters({
+      checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
+    }),
     emptyArr() {
       return []
     },
-    lists() {
-      return this.storeLists.filter(this.rootFilter)
+    nonFilteredIds() {
+      return this.nonFiltered.map(el => el.id)
+    },
+    sortLaseredLists() {
+      return this.nonFiltered
+    },
+    
+    nonFiltered() {
+      return this.sortFunction(this.storeLists.filter(this.rootFilter))
+    },
+    sortFunction() {
+      const order = this.itemsOrder
+      return lists => this.checkMissingIdsAndSortArr(order || [], lists)
     },
   },
 }
