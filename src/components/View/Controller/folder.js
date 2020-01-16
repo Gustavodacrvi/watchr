@@ -134,12 +134,12 @@ export default {
       return schedule !== 'null' ? JSON.parse(schedule) : null
     },
     extraListView() {
-      return {
-        comp: 'ListHandler',
-        rootFilter: () => {
-
-        },
-      }
+      const fold = this.viewFolder
+      if (fold)
+        return {
+          comp: 'ListHandler',
+          rootFilter: list => fold.id === list.folder,
+        }
     },
   },
 }

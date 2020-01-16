@@ -20,7 +20,7 @@
       :getItemFirestoreRef='getItemFirestoreRef'
       :onAddExistingItem='onAddExistingItem'
       comp='Task'
-      editComp='ItemEdit'
+      editComp='TaskEdit'
       itemPlaceholder='Task name...'
 
       @update="updateIds"

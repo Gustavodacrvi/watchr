@@ -107,7 +107,8 @@
 import Vue from 'vue'
 
 import Task from './Task.vue'
-import ItemEdit from './Edit.vue'
+import List from './../Lists/List.vue'
+import TaskEdit from './Edit.vue'
 import IllustrationVue from '@/components/Illustrations/Illustration.vue'
 import EditComp from './../RenderComponents/Edit.vue'
 import Icon from '@/components/Icon.vue'
@@ -131,8 +132,8 @@ export default {
   props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton', 'rootFilterFunction', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem'],
   components: {
-    Task, Icon, ButtonVue,
-    EditComp, HeadingsRenderer, ItemEdit,
+    Task, Icon, ButtonVue, List,
+    EditComp, HeadingsRenderer, TaskEdit,
     Illustration: IllustrationVue,
   },
   data() {

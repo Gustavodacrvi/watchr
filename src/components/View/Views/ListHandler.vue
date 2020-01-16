@@ -3,17 +3,17 @@
     <ListRendererVue
       v-bind='$props'
 
-      :items="[]"
-      :headings='[]'
+      :items="lists"
+      :headings='emptyArr'
       :showSomedayButton='false'
-      :itemIconDropOptions='[]'
+      :itemIconDropOptions='emptyArr'
 
       :addItem='addList'
       :getItemFirestoreRef='getItemFirestoreRef'
       :onAddExistingItem='onAddExistingItem'
       
       comp='List'
-      editComp='ItemEdit'
+      editComp='EditComp'
       itemPlaceholder='List name...'
 
       @update="updateIds"
@@ -28,6 +28,8 @@
 <script>
 
 import ListRendererVue from './../Tasks/ListRenderer.vue'
+
+import { mapState } from 'vuex'
 
 export default {
   props: ['rootFilter', 'comp'],
@@ -55,6 +57,19 @@ export default {
     },
     unselectTask() {
 
+    },
+  },
+  computed: {
+    ...mapState({
+      storeLists: state => state.list.lists,
+    }),
+    emptyArr() {
+      return []
+    },
+    lists() {
+      const res = this.storeLists.filter(this.rootFilter)
+      console.log(res)
+      return res
     },
   },
 }
