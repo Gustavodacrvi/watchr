@@ -2,7 +2,7 @@
 <template>
   <div class="ViewRenderer" :class="platform">
     <div class='view-wrapper'>
-      <Header
+      <Header v-if="defer(2)"
         v-bind="$props"
 
         :inclusiveTags='inclusiveTags'
@@ -36,7 +36,7 @@
 
         @update='onSmartComponentUpdate'
       />
-      <transition name="fade-t" mode="out-in">
+      <transition v-if="defer(3)" name="fade-t" mode="out-in">
         <component :is='getViewComp' class='view-renderer-move'
           v-bind="$props"
 
@@ -65,21 +65,23 @@
       </transition>
       <div style='height: 300px'></div>
     </div>
-    <PaginationVue v-if="headingsPagination"
-      :page='pagination'
-      :numberOfPages='getNumberOfPages'
-      @select='selectPagination'
-    />
-    <transition name="fade-t" mode="out-in">
-      <ActionButtons
-        v-if="!getHelperComponent && isTaskHandler" key="buttons" @moving='v => movingButton = v'
+    <template v-if="defer(3)">
+      <PaginationVue v-if="headingsPagination"
+        :page='pagination'
+        :numberOfPages='getNumberOfPages'
+        @select='selectPagination'
       />
-      <HelperComponent v-else-if='getHelperComponent'
-        :comp='getHelperComponent'
-        key="helper"
-        @close='helperComponent = null'
-      />
-    </transition>
+      <transition name="fade-t" mode="out-in">
+        <ActionButtons
+          v-if="!getHelperComponent && isTaskHandler" key="buttons" @moving='v => movingButton = v'
+        />
+        <HelperComponent v-else-if='getHelperComponent'
+          :comp='getHelperComponent'
+          key="helper"
+          @close='helperComponent = null'
+        />
+      </transition>
+    </template>
   </div>
 </template>
 
@@ -92,6 +94,7 @@ import HelperComponent from './HelperComponent.vue'
 import TaskHandler from './Views/TaskHandler.vue'
 import Pomodoro from './Views/Pomodoro/Pomodoro.vue'
 import Statistics from './Views/Statistics/Statistics.vue'
+import Defer from '@/mixins/defer'
 
 import ViewRendererLongCalendarPicker from '@/components/View/SmartComponents/ViewRendererLongCalendarPicker.vue'
 
@@ -108,6 +111,9 @@ const MAXIMUM_TOUCH_DISTANCE = 100
 const MINIMUM_DISTANCE = 10
 
 export default {
+  mixins: [
+    Defer(true),
+  ],
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes',

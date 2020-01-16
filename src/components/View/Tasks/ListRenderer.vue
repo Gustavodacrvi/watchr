@@ -1053,7 +1053,7 @@ export default {
 }
 
 .dontHaveTasks {
-  min-height: 50px;
+  min-height: 5px;
 }
 
 </style>
