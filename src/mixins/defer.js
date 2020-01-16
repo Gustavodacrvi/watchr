@@ -1,12 +1,5 @@
 
-export default function (watchViewName = false, count = 10) {
-  const watch = {}
-  if (watchViewName)
-    watch['viewName'] = function() {
-      this.displayPriority = 0
-      this.runDisplayPriority()
-    }
-  
+export default function (count = 10) {
   return {
     data() {
       return {
@@ -31,6 +24,5 @@ export default function (watchViewName = false, count = 10) {
         return this.displayPriority >= priority 
       },
     },
-    watch,
   }
 }

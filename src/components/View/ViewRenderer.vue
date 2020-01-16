@@ -2,7 +2,7 @@
 <template>
   <div class="ViewRenderer" :class="platform">
     <div class='view-wrapper'>
-      <Header v-if="defer(2)"
+      <Header
         v-bind="$props"
 
         :inclusiveTags='inclusiveTags'
@@ -36,7 +36,7 @@
 
         @update='onSmartComponentUpdate'
       />
-      <transition v-if="defer(3)" name="fade-t" mode="out-in">
+      <transition v-if="defer(2)" name="fade-t" mode="out-in">
         <component :is='getViewComp' class='view-renderer-move'
           v-bind="$props"
 
@@ -65,23 +65,21 @@
       </transition>
       <div style='height: 300px'></div>
     </div>
-    <template v-if="defer(3)">
-      <PaginationVue v-if="headingsPagination"
-        :page='pagination'
-        :numberOfPages='getNumberOfPages'
-        @select='selectPagination'
+    <PaginationVue v-if="headingsPagination"
+      :page='pagination'
+      :numberOfPages='getNumberOfPages'
+      @select='selectPagination'
+    />
+    <transition name="fade-t" mode="out-in">
+      <ActionButtons
+        v-if="!getHelperComponent && isTaskHandler" key="buttons" @moving='v => movingButton = v'
       />
-      <transition name="fade-t" mode="out-in">
-        <ActionButtons
-          v-if="!getHelperComponent && isTaskHandler" key="buttons" @moving='v => movingButton = v'
-        />
-        <HelperComponent v-else-if='getHelperComponent'
-          :comp='getHelperComponent'
-          key="helper"
-          @close='helperComponent = null'
-        />
-      </transition>
-    </template>
+      <HelperComponent v-else-if='getHelperComponent'
+        :comp='getHelperComponent'
+        key="helper"
+        @close='helperComponent = null'
+      />
+    </transition>
   </div>
 </template>
 
@@ -112,7 +110,7 @@ const MINIMUM_DISTANCE = 10
 
 export default {
   mixins: [
-    Defer(true),
+    Defer(),
   ],
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
 

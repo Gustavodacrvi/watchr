@@ -74,7 +74,7 @@ import mainMixin from './mixins/controler.js'
 
 export default {
   mixins: [...mixins, mainMixin],
-  props: ['isSmart'],
+  props: ['isSmart', 'viewName', 'viewType'],
   components: {
     ViewRenderer: ViewRendererVue,
   },
@@ -99,8 +99,6 @@ export default {
   },
   computed: {
     ...mapState({
-      viewName: state => state.viewName,
-      viewType: state => state.viewType,
       tags: state => state.tag.tags,
       tasks: state => state.task.tasks,
       lists: state => state.list.lists,
