@@ -67,8 +67,6 @@
               ref='cont'
             >
               <div class="check" ref='check'
-                @mouseenter="iconHover = true"
-                @mouseleave="iconHover = false"
                 @touchend.passive='touchComplete'
                 :class="{changeColor}"
               >
@@ -165,7 +163,6 @@ export default {
       showingIconDropContent: false,
       isEditing: false,
       onHover: false,
-      iconHover: false,
       startX: 0,
       startY: 0,
       startTime: 0,
@@ -916,12 +913,6 @@ export default {
       const str = utils.parseCalendarObjectToString(c, this.l, this.userInfo)
       if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
       return str
-    },
-    showCheckedIcon() {
-      if (!this.isDesktop) return this.completed
-      if (this.completed)
-        return !this.iconHover
-      return this.iconHover
     },
     nextCalEvent() {
       const {t,c} = this.getTask

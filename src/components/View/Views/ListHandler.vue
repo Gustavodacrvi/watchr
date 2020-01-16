@@ -11,6 +11,7 @@
       :addItem='addList'
       :getItemFirestoreRef='getItemFirestoreRef'
       :onAddExistingItem='onAddExistingItem'
+      :disableSelect='true'
       
       comp='List'
       editComp='EditComp'
@@ -67,11 +68,17 @@ export default {
       return []
     },
     lists() {
-      const res = this.storeLists.filter(this.rootFilter)
-      console.log(res)
-      return res
+      return this.storeLists.filter(this.rootFilter)
     },
   },
 }
 
 </script>
+
+<style scoped>
+
+.ListHandler {
+  margin-top: 10px;
+}
+
+</style>

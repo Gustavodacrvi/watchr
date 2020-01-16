@@ -131,7 +131,7 @@ import utils from '@/utils/'
 
 export default {
   props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton', 'rootFilterFunction', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 
-  'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem'],
+  'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect'],
   components: {
     Task, Icon, ButtonVue, List,
     EditComp, HeadingsRenderer, TaskEdit,
@@ -767,6 +767,7 @@ export default {
       return pressingKey === 'Control' || pressingKey === 'Shift'
     },
     enableSelect() {
+      if (this.disableSelect) return true
       return this.openCalendar || !this.isDesktop ||
       (this.pressingSelectKeys || (this.selected.length > 0))
     },
