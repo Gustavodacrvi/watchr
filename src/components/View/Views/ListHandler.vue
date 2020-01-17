@@ -21,9 +21,6 @@
 
       @update="updateListIds"
       @allow-someday='allowSomeday'
-
-      @selectTask='selectTask'
-      @unselectTask='unselectTask'
     />
   </div>  
 </template>
@@ -46,7 +43,7 @@ export default {
   mixins: [
     HandlerMixin,
   ],
-  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem', 'showCompleted'],
+  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem', 'showCompleted', 'folderId'],
   components: {
     ListRendererVue,
   },
@@ -74,19 +71,26 @@ export default {
     getItemFirestoreRef() {
       return listRef()
     },
-    onAddExistingItem() {
-
+    onAddExistingItem(index, lazyItems, fallbackItem, callback) {
+      this.$store.dispatch('pushPopup', {
+        comp: 'FastSearch',
+        payload: {
+          callback: (route, list) => {
+            lazyItems.splice(index, 0, list)
+            this.$store.dispatch('list/saveList', {
+              ...list,
+              folder: this.folderId,
+            })
+            callback()
+          },
+          allowed: ['lists'],
+        }
+      })
     },
     updateListIds(ids) {
       this.updateIds(
         utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.nonFilteredIds)
       )
-    },
-    selectTask() {
-
-    },
-    unselectTask() {
-
     },
     rootFilterFunction(list) {
       return true

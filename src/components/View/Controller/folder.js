@@ -149,6 +149,7 @@ export default {
       if (fold)
         return {
           comp: 'ListHandler',
+          folderId: fold.id,
           rootFilter: list => fold.id === list.folder,
           itemsOrder: fold.order || [],
           updateIds: order => save({order}),
