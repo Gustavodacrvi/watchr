@@ -35,7 +35,7 @@ import ButtonVue from '../../Auth/Button.vue'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  props: ['name', 'names', 'errorToast', 'placeholder'],
+  props: ['name', 'names', 'errorToast', 'placeholder', 'keepOpen'],
   components: {
     InputApp: DropInputVue,
     ButtonApp: ButtonVue,
@@ -110,7 +110,9 @@ export default {
       if (this.str) {
         if (!this.options.includes(this.str)) {
           this.$emit('save', this.str)
-          this.$emit('cancel')
+          this.str = ''
+          if (!this.keepOpen)
+            this.$emit('cancel')
         }
         else this.$store.commit('pushToast', {
           name: this.errorToast,

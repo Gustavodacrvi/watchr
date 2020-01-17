@@ -335,6 +335,7 @@ const store = new Vuex.Store({
     getOptions(context, options) {
       const {state} = context
       return options({
+        router,
         ...context,
         tags: state.tag.tags,
         tasks: state.task.tasks,

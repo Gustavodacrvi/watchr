@@ -3,6 +3,7 @@
     <EditVue
       :name='list.name'
       placeholder='List name...'
+      :keepOpen='true'
       @save='save'
       @cancel='$emit("cancel")'
     />

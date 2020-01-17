@@ -167,9 +167,7 @@ export default {
 
       list.folder = folderId
 
-      setTimeout(() => {
-        newItemRef.set(list)
-      })
+      batch.set(newItemRef, list)
 
       batch.commit()
     },
