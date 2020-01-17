@@ -199,7 +199,9 @@ export default {
       return []
     },
     
-    icon() {return 'tasks'},
+    icon() {
+      return this.isViewListSomeday ? 'archive' : 'tasks'
+    },
     viewNameValue() {return this.viewName},
     updateHeadingIds() {
       const list = this.viewList
@@ -245,15 +247,22 @@ export default {
     headerTags() {
       return this.listgetListTags.map(el => el.name)
     },
-    headerDates() {
-      const obj = {}
+    saveHeaderContent() {
+      const save = obj => {
+        this.$store.dispatch('list/saveList', {
+          id: this.viewList.id,
+          ...obj
+        })
+      }
+      
+      return obj => {
+        if (obj.deadline !== undefined)
+          save(obj)
+      }
+    },
+    deadline() {
       const list = this.viewList
-      if (!list) return obj
-
-      obj.defer = list.deferDate
-      obj.deadline = list.deadline
-
-      return obj
+      return list ? list.deadline : null
     },
     headerCalendar() {
       const list = this.viewList
@@ -287,9 +296,9 @@ export default {
     },
     getPieProgress() {
       const list = this.viewList
-      if (list)
+      if (list && !this.isViewListSomeday)
         return this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted)
-      return []
+      return null
     },
     savedSchedule() {
       const schedule = localStorage.getItem('schedule_' + this.viewName)

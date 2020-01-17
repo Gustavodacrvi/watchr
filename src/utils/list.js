@@ -89,12 +89,13 @@ export default {
     )
     const pop = obj => dispatch('pushPopup', obj)
     
-    const saveCalendarDate = calendar => {
+    const saveList = obj => {
       dispatch('list/saveList', {
         id: listId,
-        calendar,
+        ...obj,
       })
     }
+    const saveCalendarDate = calendar => saveList({calendar})
     
     let opt = [
       {
@@ -103,6 +104,19 @@ export default {
         callback: () => {
           router.push(`user?list=${list.name}`) 
         },
+      },
+      {
+        name: 'Deadline',
+        icon: 'deadline',
+        callback: () => ({
+          comp: 'CalendarPicker',
+          content: {
+            onlyDates: true,
+            noTime: true,
+            allowNull: true,
+            callback: ({specific}) => saveList({deadline: specific})
+          }
+        })
       },
       {
         name: l['No date'],

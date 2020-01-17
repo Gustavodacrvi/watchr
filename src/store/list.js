@@ -63,6 +63,31 @@ export default {
           })
         },
       },
+      getListDeadlineStr: {
+        getter(c, list, l) {
+          return list.deadline ? utils.getHumanReadableDate(list.deadline, l) : null
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].deadline,
+          })
+        },
+      },
+      getListDeadlineDaysLeftStr: {
+        getter(c, deadline, date) {
+          const dead = mom(deadline, 'Y-M-D')
+          const compare = mom(date, 'Y-M-D')
+          const diff = dead.diff(compare, 'days')
+          if (diff === 0)
+            return 'ends today'
+          else if (diff === 1)
+            return `1 day left`
+          return `${diff} days left`
+        },
+        cache(args) {
+          return JSON.stringify(args)
+        }
+      },
     }),
     ...MemoizeGetters('lists', {
       getListsByName: {
