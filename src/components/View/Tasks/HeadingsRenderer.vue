@@ -73,9 +73,7 @@ import Defer from '@/mixins/defer'
 
 import { mapGetters } from 'vuex'
 
-import { MultiDrag, Sortable } from 'sortablejs'
-
-Sortable.mount(new MultiDrag())
+import { Sortable } from 'sortablejs'
 
 export default {
   mixins: [

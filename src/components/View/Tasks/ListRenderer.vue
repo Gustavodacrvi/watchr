@@ -17,6 +17,7 @@
 
           :itemHeight='itemHeight'
           :item='item'
+          :selectOnClick='selectOnClick'
           :changingViewName='isChangingViewName'
           :isRoot='isRoot'
           :isSelecting='isSelecting'
@@ -348,10 +349,9 @@ export default {
         this.sortable.destroy()
     },
     mountSortables() {
-      let move = null
       const obj = {
         disabled: this.disableSortableMount,
-        multiDrag: this.enableSelect,
+        multiDrag: this.enableSelect || !this.isDesktop,
         direction: 'vertical',
 
         forceFallback: true,
@@ -488,7 +488,7 @@ export default {
         },
       }
       if (this.isDesktop)
-        obj['multiDragKey'] = this.getMultiDragKey
+        obj['multiDragKey'] = 'CTRL'
       this.sortable = new Sortable(this.draggableRoot, obj)
     },
     slowlyAddItems(items) {
@@ -761,12 +761,12 @@ export default {
       return pressingKey === 'Control' || pressingKey === 'Shift'
     },
     enableSelect() {
-      if (this.disableSelect) return true
+      if (this.disableSelect) return false
       return this.openCalendar || !this.isDesktop ||
       (this.pressingSelectKeys || (this.selected.length > 0))
     },
-    getMultiDragKey() {
-      return (this.openCalendar || this.selected.length > 0) ? null : 'CTRL'
+    selectOnClick() {
+      return (this.openCalendar || this.selected.length > 0)
     },
     isSelecting() {
       if (this.selected.length > 0 || this.openCalendar) return true
@@ -839,14 +839,15 @@ export default {
         this.sortable.options.disabled = this.disableSortableMount
     },
     enableSelect() {
-      if (this.sortable) {
-        this.sortable.options.multiDrag = this.enableSelect
-        this.sortable.options.multiDragKey = this.getMultiDragKey
-        if (this.isDesktop) {
-          if (this.enableSelect)
-            this.sortable.options.delay = 50
-          else this.sortable.options.delay = 0
-        }
+      if (this.sortable && this.isDesktop) {
+        setTimeout(() => {
+          this.sortable.options.multiDrag = this.enableSelect
+          if (this.isDesktop) {
+            if (this.enableSelect)
+              this.sortable.options.delay = 50
+            else this.sortable.options.delay = 0
+          }
+        })
       }
     },
   }

@@ -215,9 +215,6 @@ export default {
         if (!this.isTaskSelected) {
           if (this.selectedTasks.length === 0) {
             this.selectTask()
-            setTimeout(() => {
-              this.selectTask()
-            })
           } else {
             this.selectTask()
           }
@@ -568,6 +565,8 @@ export default {
       })
     },
     rootClick(event) {
+      if (this.selectOnClick)
+        this.selectTask()
       if (this.isSelectingAppnavEls) event.stopPropagation()
     },
     escapeHTML(string) {
