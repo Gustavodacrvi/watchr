@@ -7,21 +7,23 @@
   >
     <div class="List" :class="[platform]">
       <div class="cont-wrapper item-handle rb" ref="cont-wrapper">
-        <div class="icon-wrapper">
-          <Icon class="progress-icon"
-            icon='pie'
-            width='16px'
-            :progress='getListProgress'
-            color='var(--gray)'
-          />
-        </div>
-        <div class="name">
-          <div class="list-name-wrapper">
-            {{ item.name }}
-            <span v-if="listTasksLength" class="list-inf">{{ listTasksLength }}</span>
+        <div class="cont">
+          <div class="icon-wrapper">
+            <Icon class="progress-icon"
+              icon='pie'
+              width='16px'
+              :progress='getListProgress'
+              color='var(--gray)'
+            />
           </div>
-        </div>
-        <div class="info">
+          <div class="name">
+            <div class="list-name-wrapper">
+              {{ item.name }}
+              <span v-if="listTasksLength" class="list-inf">{{ listTasksLength }}</span>
+            </div>
+          </div>
+          <div class="info">
+          </div>
         </div>
       </div>
     </div>
@@ -116,17 +118,17 @@ export default {
 
 <style scoped>
 
-.List {
+.List .cont-wrapper {
   height: 38px;
 }
 
-.mobile {
+.mobile .cont-wrapper {
   height: 50px;
 }
 
-.cont-wrapper {
+.cont {
   display: flex;
-  cursor: pointer;
+  height: 100%;
 }
 
 .desktop .cont-wrapper:hover {
@@ -175,6 +177,27 @@ export default {
 .list-inf {
   margin-left: 4px;
   opacity: .6;
+}
+
+
+.sortable-drag {
+  background-color: var(--light-gray) !important; 
+  border-radius: 6px;
+}
+
+.sortable-ghost .cont {
+  display: none;
+}
+
+.sortable-ghost .cont-wrapper {
+  background-color: var(--void) !important;
+  transition-duration: 0;
+  height: 38px;
+  padding: 0;
+}
+
+.mobile.sortable-ghost .cont-wrapper {
+  height: 50px;
 }
 
 </style>

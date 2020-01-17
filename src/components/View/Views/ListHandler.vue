@@ -12,9 +12,11 @@
       :getItemFirestoreRef='getItemFirestoreRef'
       :onAddExistingItem='onAddExistingItem'
       :disableSelect='true'
+      :disableFallback='true'
+      :rootFilterFunction='rootFilterFunction'
       
       comp='List'
-      editComp='EditComp'
+      editComp='ListEdit'
       itemPlaceholder='List name...'
 
       @update="updateListIds"
@@ -34,8 +36,17 @@ import utilsTask from "@/utils/task"
 
 import { mapState, mapGetters } from 'vuex'
 
+import { listRef, serverTimestamp } from '@/utils/firestore'
+
+import HandlerMixin from "@/mixins/handlerMixin"
+
+import mom from 'moment'
+
 export default {
-  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds'],
+  mixins: [
+    HandlerMixin,
+  ],
+  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem'],
   components: {
     ListRendererVue,
   },
@@ -43,11 +54,25 @@ export default {
     allowSomeday() {
       this.$emit('allow-someday')
     },
-    addList() {
+    addList(obj) {
+      const newObj = {
+        ...obj,
+        list: {
+          ...obj.item,
 
+          smartViewsOrders: {},
+          createdFire: serverTimestamp(),
+          created: mom().format('Y-M-D HH:mm ss'),
+          headings: [],
+          headingsOrder: [],
+          tasks: [],
+        },
+        newListRef: obj.newItemRef,
+      }
+      this.fixPosition(newObj, this.nonFilteredIds, () => this.addItem(newObj))
     },
     getItemFirestoreRef() {
-
+      return listRef()
     },
     onAddExistingItem() {
 
@@ -62,6 +87,9 @@ export default {
     },
     unselectTask() {
 
+    },
+    rootFilterFunction(list) {
+      return true
     },
   },
   computed: {

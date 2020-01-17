@@ -34,6 +34,7 @@
           :itemIconDropOptions='itemIconDropOptions'
           :getItemFirestoreRef='getItemFirestoreRef'
           :itemPlaceholder='itemPlaceholder'
+          :disableFallback='disableFallback'
           :onAddExistingItem='onAddExistingItem'
 
           :hideListName="h.hideListName"
@@ -81,7 +82,7 @@ export default {
     ListRenderer: () => import('./ListRenderer.vue'),
   },
   props: ['headings', 'isChangingViewName', 'showHeading', 'viewType', 'viewName', 'viewNameValue', 'showEmptyHeadings', 'mainFallbackItem', 'showAllHeadingsItems', 'scheduleObject', 'selectEverythingToggle', 
-  'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'movingHeading', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'movingButton'],
+  'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'movingHeading', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'movingButton',  'disableFallback', 'showHeadingFloatingButton'],
   methods: {
     getOptionClick(h) {
       if (!h.optionClick) return () => {}

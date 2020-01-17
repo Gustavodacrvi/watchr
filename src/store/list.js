@@ -158,20 +158,33 @@ export default {
 
       batch.commit()
     },
-    addList({rootState}, {name, ids, index, folderId}) {
+    addListInFolderByIndexFromView(c, {list, newItemRef, ids, folderId}) {
+      const batch = fire.batch()
+
+      batch.update(folderRef(folderId), {
+        order: ids,
+      })
+
+      list.folder = folderId
+
+      setTimeout(() => {
+        newItemRef.set(list)
+      })
+
+      batch.commit()
+    },
+    addList({}, {name, ids, index, folderId}) {
       let folder = folderId
       if (!folder) folder = null
       const obj = {
         name, folder,
         smartViewsOrders: {},
         userId: uid(),
-        users: [uid()],
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         headings: [],
         headingsOrder: [],
         tasks: [],
-        ownerInfo: rootState.userInfo,
       }
       if (index === undefined && folder === null)
         userRef().collection('lists').add(obj)

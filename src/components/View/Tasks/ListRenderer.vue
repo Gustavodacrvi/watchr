@@ -93,8 +93,10 @@
       :scheduleObject='scheduleObject'
       :onAddExistingItem='onAddExistingItem'
       :getItemFirestoreRef='getItemFirestoreRef'
+      :showHeadingFloatingButton='showHeadingFloatingButton'
       :movingButton='movingButton'
       :itemPlaceholder='itemPlaceholder'
+      :disableFallback='disableFallback'
 
       @change-time='changeTime'
       @go='moveItemHandlerSelection'
@@ -110,6 +112,7 @@ import Vue from 'vue'
 import Task from './Task.vue'
 import List from './../Lists/List.vue'
 import TaskEdit from './Edit.vue'
+import ListEdit from './../Lists/Edit.vue'
 import IllustrationVue from '@/components/Illustrations/Illustration.vue'
 import EditComp from './../RenderComponents/Edit.vue'
 import Icon from '@/components/Icon.vue'
@@ -131,9 +134,10 @@ import utils from '@/utils/'
 
 export default {
   props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton', 'rootFilterFunction', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 
-  'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect'],
+  'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect',
+   'disableFallback'],
   components: {
-    Task, Icon, ButtonVue, List,
+    Task, Icon, ButtonVue, List, ListEdit,
     EditComp, HeadingsRenderer, TaskEdit,
     Illustration: IllustrationVue,
   },
@@ -609,7 +613,9 @@ export default {
     },
     add(item) {
       if (item.name) {
-        let t = this.fallbackItem(item)
+        let t = item
+        if (!this.disableFallback)
+          t = this.fallbackItem(item)
 
         let shouldRender = false
         const isNotEditingFiles = !t.handleFiles

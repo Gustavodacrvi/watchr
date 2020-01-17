@@ -144,6 +144,7 @@ export default {
           ...obj,
         })
       }
+      const dispatch = this.$store.dispatch
       
       if (fold)
         return {
@@ -151,6 +152,7 @@ export default {
           rootFilter: list => fold.id === list.folder,
           itemsOrder: fold.order || [],
           updateIds: order => save({order}),
+          addItem: obj => dispatch('list/addListInFolderByIndexFromView', {...obj, folderId: fold.id}),
         }
     },
   },

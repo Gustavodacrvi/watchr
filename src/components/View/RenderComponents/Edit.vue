@@ -126,7 +126,8 @@ export default {
   },
   watch: {
     str() {
-      this.options = this.names.filter(el => el.toLowerCase().includes(this.str.toLowerCase()))
+      if (this.names)
+        this.options = this.names.filter(el => el.toLowerCase().includes(this.str.toLowerCase()))
     }
   }
 }

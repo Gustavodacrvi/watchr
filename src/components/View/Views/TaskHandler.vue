@@ -50,7 +50,12 @@ import mom from 'moment'
 
 import { taskRef } from '@/utils/firestore'
 
+import HandlerMixin from "@/mixins/handlerMixin"
+
 export default {
+  mixins: [
+    HandlerMixin,
+  ],
   props: ['mainFilter', 'rootFilter', 'tasksOrder', 'headings', 'headingsOrder',
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 'movingButton',
@@ -443,25 +448,6 @@ export default {
       this.$emit('allow-someday')
     },
 
-    fixPosition(obj, nonFilteredIds, callback) {
-      nonFilteredIds = nonFilteredIds.slice()
-
-      let fixPosition = 0
-      let i = 0
-      for (const id of nonFilteredIds) {
-        if (!obj.ids.includes(id))
-          fixPosition++
-        if ((i - fixPosition) === obj.index) break
-        i++
-      }
-      
-      obj.index += fixPosition
-      if (obj.newId)
-        nonFilteredIds.splice(obj.index, 0, obj.newId)
-      obj.ids = nonFilteredIds
-
-      callback()
-    },
     addTask(obj) {
       const newObj = {
         ...obj,
