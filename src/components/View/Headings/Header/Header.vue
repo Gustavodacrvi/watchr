@@ -19,7 +19,7 @@
       :deadline='deadline'
       :headerCalendar='headerCalendar'
 
-      @save='saveHeaderContent'
+      :save='saveHeaderContent'
     />
     <HeaderFiles v-if="defer(3) && files"
       :files='files'

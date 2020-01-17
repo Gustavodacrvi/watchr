@@ -33,11 +33,18 @@
           <div class="name">
             <div class="list-name-wrapper">
               {{ item.name }}
-              <span v-if="listTasksLength" class="list-inf">{{ listTasksLength }}</span>
+              <span v-if="listTasksLength" class="list-inf fade">{{ listTasksLength }}</span>
             </div>
           </div>
           <div class="info">
-            <Icon v-if="isSomeday" class="progress-icon cursor remove-highlight"
+            <template>
+              <Icon v-if="deadlineStr" class="deadline list-inf icon"
+                icon='deadline'
+                width='16px'
+              />
+              <span v-if="deadlineStr" class='list-inf deadline'>{{ deadlineStr }}</span>
+            </template>
+            <Icon v-if="isSomeday" class="progress-icon"
               icon='archive'
               width='22px'
               color='var(--gray)'
@@ -66,6 +73,8 @@ import utilsList from "@/utils/list"
 import ListEdit from "./Edit.vue"
 
 import { mapGetters, mapState, mapActions } from 'vuex'
+
+import mom from 'moment'
 
 export default {
   components: {
@@ -128,18 +137,25 @@ export default {
       tasks: state => state.task.tasks,
     }),
     ...mapGetters({
+      l: 'l',
       platform: 'platform',
       isDesktop: 'isDesktop',
       getListTasks: 'list/getTasks',
 
       isListCompleted: 'list/isListCompleted',
       isListSomeday: 'list/isListSomeday',
+      getListDeadlineStr: 'list/getListDeadlineStr',
     }),
     completed() {
       return this.isListCompleted(this.item)
     },
     isSomeday() {
       return this.isListSomeday(this.item)
+    },
+    deadlineStr() {
+      const list = this.item
+      if (!list.deadline) return null
+      return this.getListDeadlineStr(list, mom().format('Y-M-D'), this.l)
     },
     listTasks() {
       return this.getListTasks(this.tasks, this.item.id)
@@ -206,7 +222,6 @@ export default {
   height: 100%;
   display: flex;
   align-items: center;
-  margin-left: 20px;
   margin-right: 6px;
 }
 
@@ -216,6 +231,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .progress-icon {
@@ -230,7 +246,21 @@ export default {
 
 .list-inf {
   margin-left: 4px;
+  margin-right: 4px;
+  font-size: .8em;
+}
+
+.icon {
+  transform: translateY(2px);
+}
+
+.fade {
   opacity: .6;
+}
+
+.deadline {
+  white-space: nowrap;
+  color: var(--red);
 }
 
 .completed {

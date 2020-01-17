@@ -76,6 +76,8 @@ import { mapGetters, mapState } from 'vuex'
 
 import mom from 'moment'
 
+const TOD_STR = mom().format('Y-M-D')
+
 import { Sortable } from 'sortablejs'
 
 export default {
@@ -194,19 +196,13 @@ export default {
       return arr.length > 0 ? arr : undefined
     },
     mapString(list) {
-      /* if (list.deadline && !(list.calendar && list.calendar.type !== 'someday')) {
-        const isOverdue = list.deadline && mom().isAfter(mom(list.deadline, 'Y-M-D'), 'day')
+      if (list.deadline)
         return {
-          name: isOverdue ? this.l['overdue'] : `${mom(list.deadline, 'Y-M-D').diff(mom(), 'd') + 1} ${this.l['days left']}`,
-          color: isOverdue ? 'var(--primary)' : ''
+          name: this.getListDeadlineDaysLeftStr(list.deadline, TOD_STR)
+,
+          color: 'var(--red)'
         }
-      } *//*  else if (list.calendar && list.calendar.type !== 'someday') {
-        const { nextCalEvent } = utils.getCalendarObjectData(list.calendar, mom())
-        return {
-          name: `${mom(nextCalEvent.format('Y-M-D'), 'Y-M-D').diff(mom(), 'd') + 1} ${this.l['days left']}`,
-          color: '',
-        }
-      } */
+      
       return null
     },
   },
@@ -224,6 +220,7 @@ export default {
       getListsByFolderId: 'folder/getListsByFolderId',
 
       filterAppnavLists: 'list/filterAppnavLists',
+      getListDeadlineDaysLeftStr: 'list/getListDeadlineDaysLeftStr',
     }),
     laseredFolders() {
       return this.sortedFolders.map(fold => ({

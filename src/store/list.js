@@ -64,8 +64,10 @@ export default {
         },
       },
       getListDeadlineStr: {
-        getter(c, list, l) {
-          return list.deadline ? utils.getHumanReadableDate(list.deadline, l) : null
+        getter({getters}, list, date, l) {
+          if (!list.deadline)
+            return null
+          return utils.getHumanReadableDate(list.deadline, l) + ' ' + getters.getListDeadlineDaysLeftStr(list.deadline, date)
         },
         cache(args) {
           return JSON.stringify({
@@ -79,7 +81,7 @@ export default {
           const compare = mom(date, 'Y-M-D')
           const diff = dead.diff(compare, 'days')
           if (diff === 0)
-            return 'ends today'
+            return ''
           else if (diff === 1)
             return `1 day left`
           return `${diff} days left`

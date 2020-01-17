@@ -37,10 +37,11 @@ export default {
   },
   methods: {
     bindContext() {
-      utils.bindOptionsToEventListener(this.$el, this.options(this.save), this, 'click')
+      if (this.options)
+        utils.bindOptionsToEventListener(this.$el, this.options(this.save), this, 'click')
     },
     save(obj) {
-      this.$parent.$emit('save', obj)
+      this.$emit('save', obj)
     },
 
     enter(el) {

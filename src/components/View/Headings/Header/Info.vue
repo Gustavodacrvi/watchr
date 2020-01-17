@@ -15,6 +15,7 @@
         :content="deadlineHumanReadable"
         :left="deadlineDaysLeft"
         :options='deadlineOptions'
+        @save='saveOptions'
       />
 <!--       <HeaderInfo
         icon='repeat'
@@ -52,7 +53,13 @@ export default {
   components: {
     HeaderInfo, Tag,
   },
-  props: ['headerTags', 'deadline', 'headerCalendar'],
+  props: ['headerTags', 'deadline', 'headerCalendar', 'save'],
+  methods: {
+    saveOptions(obj) {
+      if (this.save)
+        this.save(obj)
+    },
+  },
   computed: {
     ...mapGetters({
       l: 'l',
