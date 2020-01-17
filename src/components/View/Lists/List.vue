@@ -6,7 +6,17 @@
     @leave='leave'
   >
     <div class="List" :class="[platform]">
-      <div class="cont-wrapper item-handle rb" ref="cont-wrapper">
+      <div v-if="!editing"
+        class="cont-wrapper item-handle rb"
+        ref="cont-wrapper"
+
+        @click.stop="editing = true"
+      >
+        <CircleBubble v-if="!isDesktop"
+          innerColor='var(--light-gray)'
+          outerColor='var(--gray)'
+          opacity='0'
+        />
         <div class="cont">
           <div class="icon-wrapper">
             <Icon class="progress-icon"
@@ -26,6 +36,13 @@
           </div>
         </div>
       </div>
+      <div v-else>
+        <ListEdit
+          :name='item.name'
+          @save='save'
+          @cancel='editing = false'
+        />
+      </div>
     </div>
   </transition>
 </template>
@@ -37,13 +54,21 @@ import Icon from '@/components/Icon.vue'
 import utils from "@/utils"
 import utilsList from "@/utils/list"
 
+import ListEdit from "./Edit.vue"
+
 import { mapGetters, mapState, mapActions } from 'vuex'
 
 export default {
   components: {
     Icon,
+    ListEdit,
   },
   props: ['item', 'changingViewName', 'itemHeight'],
+  data() {
+    return {
+      editing: false,
+    }
+  },
   mounted() {
     this.bindContextMenu()
   },
@@ -82,6 +107,17 @@ export default {
           s.height = 0
         })
       }
+    },
+
+    saveList(obj) {
+      this.$store.dispatch('list/saveList', {
+        id: this.item.id,
+        ...obj,
+      })
+    },
+    save(obj) {
+      this.saveList(obj)
+      this.editing = false
     },
 
     async bindContextMenu() {
@@ -124,6 +160,11 @@ export default {
 
 .mobile .cont-wrapper {
   height: 50px;
+}
+
+.cont-wrapper {
+  position: relative;
+  overflow: hidden;
 }
 
 .cont {

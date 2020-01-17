@@ -58,7 +58,7 @@
             @click="click"
             :style='{height: itemHeight + "px"}'
           >
-            <CircleBubble
+            <CircleBubble v-if="!isDesktop"
               innerColor='var(--light-gray)'
               outerColor='var(--gray)'
               opacity='0'

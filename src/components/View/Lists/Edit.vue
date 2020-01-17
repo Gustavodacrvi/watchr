@@ -15,13 +15,14 @@
 import EditVue from './../RenderComponents/Edit.vue'
 
 export default {
+  props: ['name'],
   components: {
     EditVue,
   },
   data() {
     return {
       list: {
-        name: '',
+        name: this.name || '',
       },
     }
   },
