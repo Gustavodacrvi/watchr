@@ -5,7 +5,7 @@
 
       :items="sortLaseredLists"
       :headings='emptyArr'
-      :showSomedayButton='false'
+      :showSomedayButton='showSomedayButton'
       :itemIconDropOptions='emptyArr'
 
       :addItem='addList'
@@ -39,13 +39,15 @@ import { listRef, serverTimestamp } from '@/utils/firestore'
 
 import HandlerMixin from "@/mixins/handlerMixin"
 
+import { pipeBooleanFilters } from '@/utils/memo'
+
 import mom from 'moment'
 
 export default {
   mixins: [
     HandlerMixin,
   ],
-  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem', 'showCompleted', 'folderId'],
+  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem', 'showCompleted', 'folderId', 'showSomeday', 'showSomeday'],
   components: {
     ListRendererVue,
   },
@@ -113,6 +115,7 @@ export default {
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
 
       isListCompleted: 'list/isListCompleted',
+      isListSomeday: 'list/isListSomeday',
     }),
     getFolder() {
       return this.storeFolders.find(el => el.id === this.folderId)
@@ -146,6 +149,24 @@ export default {
     },
     
     filterOptions() {
+      return pipeBooleanFilters(
+        list => this.isListCompletedPipe(list),
+        this.isSomedayPipe,
+      )
+    },
+    isSomedayPipe() {
+      if (this.showSomeday) return () => true
+      return list => !this.isListSomeday(list)
+    },
+
+    hasAtLeastOneSomeday() {
+      return this.nonFiltered.some(this.isListSomeday)
+    },
+    showSomedayButton() {
+      return this.hasAtLeastOneSomeday &&
+          !this.showSomeday
+    },
+    isListCompletedPipe() {
       return this.showCompleted ?
         () => true :
         list => !this.isListCompleted(list)

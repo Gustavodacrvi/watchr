@@ -222,11 +222,13 @@ export default {
       sortedFolders: 'folder/sortedFolders',
       isTaskCompleted: 'task/isTaskCompleted',
       getListsByFolderId: 'folder/getListsByFolderId',
+
+      filterAppnavLists: 'list/filterAppnavLists',
     }),
     laseredFolders() {
       return this.sortedFolders.map(fold => ({
         ...fold,
-        list: this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders})
+        list: this.filterAppnavLists(this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders}))
       }))
     },
     sortedLists() {

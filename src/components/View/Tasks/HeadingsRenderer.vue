@@ -115,7 +115,7 @@ export default {
             delayOnTouchOnly: true,
             handle: '.handle',
       
-            onUpdate: (evt) => {
+            onUpdate: () => {
               const ids = this.getHeadingsIds()
               if (this.updateHeadingIds)
                 this.updateHeadingIds(ids)

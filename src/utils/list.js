@@ -88,6 +88,14 @@ export default {
       task => !isTaskInRoot(task),
     )
     const pop = obj => dispatch('pushPopup', obj)
+    
+    const saveCalendarDate = calendar => {
+      dispatch('list/saveList', {
+        id: listId,
+        calendar,
+      })
+    }
+    
     let opt = [
       {
         name: 'Go to list',
@@ -95,6 +103,41 @@ export default {
         callback: () => {
           router.push(`user?list=${list.name}`) 
         },
+      },
+      {
+        name: l['No date'],
+        icon: 'bloqued',
+        callback: () => saveCalendarDate(null)
+      },
+      {
+        type: 'optionsList',
+        name: 'Schedule',
+        options: [
+/*           {
+            icon: 'star',
+            id: 'd',
+            callback: () => saveDate(mom().format('Y-M-D')),
+          },
+          {
+            icon: 'sun',
+            id: 'çljk',
+            callback: () => saveDate(mom().add(1, 'day').format('Y-M-D')),
+          }, */
+          {
+            icon: 'archive',
+            id: 'açlkjsdffds',
+            callback: () => saveCalendarDate({
+              type: 'someday',
+            })
+          },
+/*           {
+            icon: 'calendar',
+            id: 'çljkasdf',
+            callback: () => {return {
+              comp: "CalendarPicker",
+              content: {callback: saveCalendarDate}}},
+          }, */
+        ]
       },
       {
         name: l["Edit list"],

@@ -38,7 +38,31 @@ export default {
           }
           return JSON.stringify({i, a: [args[1], args[2]]})
         },
-      }
+      },
+      isListSomeday: {
+        getter(c, list) {
+          return list.calendar && list.calendar.type === 'someday'
+        },
+        cache(args) {
+          return JSON.stringify({c: args[0].calendar})
+        },
+      },
+      filterAppnavLists: {
+        getter({getters}, lists) {
+          return lists.filter(l =>
+              !getters.isListCompleted(l) &&
+              !getters.isListSomeday(l)
+            )
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].map(el => ({
+              c: el.completed,
+              ca: el.calendar,
+            }))
+          })
+        },
+      },
     }),
     ...MemoizeGetters('lists', {
       getListsByName: {

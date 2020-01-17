@@ -37,6 +37,11 @@
             </div>
           </div>
           <div class="info">
+            <Icon v-if="isSomeday" class="progress-icon cursor remove-highlight"
+              icon='archive'
+              width='22px'
+              color='var(--gray)'
+            />
           </div>
         </div>
       </div>
@@ -128,9 +133,13 @@ export default {
       getListTasks: 'list/getTasks',
 
       isListCompleted: 'list/isListCompleted',
+      isListSomeday: 'list/isListSomeday',
     }),
     completed() {
       return this.isListCompleted(this.item)
+    },
+    isSomeday() {
+      return this.isListSomeday(this.item)
     },
     listTasks() {
       return this.getListTasks(this.tasks, this.item.id)
