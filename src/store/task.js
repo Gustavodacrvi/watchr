@@ -151,38 +151,7 @@ export default {
       },
       isTaskCompleted: {
         getter({}, task, moment, compareDate) {
-          const calcTask = () => {
-            const c = task.calendar
-            if (!c || c.type === 'someday' || c.type === 'specific') return task.completed
-            
-            let tod = mom(moment, 'Y-M-D')
-            if (!tod.isValid()) tod = mom()
-            if (c.type === 'after completion') {
-              if (!c.lastCompleteDate) return false
-              const last = mom(c.lastCompleteDate, 'Y-M-D')
-              const dayDiff = tod.diff(last, 'days')
-              return dayDiff < c.afterCompletion
-            }
-            if (c.type === 'daily') {
-              const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
-              const diff = tod.diff(lastComplete, 'days')
-              return lastComplete.isSameOrAfter(tod, 'day') ||
-                      diff < c.daily
-            }
-
-            if (c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly' || c.type === 'yearly') {
-              return mom(c.lastCompleteDate, 'Y-M-D').isSameOrAfter(tod, 'day')
-            }
-            
-/*             if (c.type === 'periodic' || c.type === 'weekly') {
-              const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
-              if (!moment.isValid()) moment = mom()
-              return lastComplete.isSameOrAfter(moment, 'day')
-            } */
-      
-            return false
-          }
-          let isCompleted = calcTask()
+          let isCompleted = utils.isItemCompleted(task, moment)
           if (compareDate) {
             if (!task.completeDate) return false
             const taskCompleteDate = mom(task.completeDate, 'Y-M-D')

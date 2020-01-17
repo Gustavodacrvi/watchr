@@ -46,7 +46,7 @@ export default {
   mixins: [
     HandlerMixin,
   ],
-  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem'],
+  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem', 'showCompleted'],
   components: {
     ListRendererVue,
   },
@@ -98,6 +98,8 @@ export default {
     }),
     ...mapGetters({
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
+
+      isListCompleted: 'list/isListCompleted',
     }),
     emptyArr() {
       return []
@@ -106,9 +108,14 @@ export default {
       return this.nonFiltered.map(el => el.id)
     },
     sortLaseredLists() {
-      return this.nonFiltered
+      return this.nonFiltered.filter(this.filterOptions)
     },
     
+    filterOptions() {
+      return this.showCompleted ?
+        () => true :
+        list => !this.isListCompleted(list)
+    },
     nonFiltered() {
       return this.sortFunction(this.storeLists.filter(this.rootFilter))
     },

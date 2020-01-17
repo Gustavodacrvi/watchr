@@ -26,6 +26,19 @@ export default {
       getTasks({}, tasks, id) {
         return tasks.filter(el => el.list === id)
       },
+      isListCompleted: {
+        getter(c, list, moment) {
+          return utils.isItemCompleted(list, moment)
+        },
+        cache(args) {
+          let task = args[0]
+          const i = {
+            completed: task.completed,
+            calendar: task.calendar,
+          }
+          return JSON.stringify({i, a: [args[1], args[2]]})
+        },
+      }
     }),
     ...MemoizeGetters('lists', {
       getListsByName: {
