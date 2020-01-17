@@ -5,7 +5,7 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="List" :class="[platform]">
+    <div class="List" :class="[platform, {completed}]">
       <div v-if="!editing"
         class="cont-wrapper item-handle rb"
         ref="cont-wrapper"
@@ -18,11 +18,16 @@
           opacity='0'
         />
         <div class="cont">
-          <div class="icon-wrapper">
-            <Icon class="progress-icon"
+          <div @click.stop="completeList" class="icon-wrapper">
+            <Icon v-if="!completed" class="progress-icon cursor remove-highlight"
               icon='pie'
-              width='16px'
+              width='15px'
               :progress='getListProgress'
+              color='var(--gray)'
+            />
+            <Icon v-else class="progress-icon cursor remove-highlight"
+              icon='circle-check'
+              width='22px'
               color='var(--gray)'
             />
           </div>
@@ -119,6 +124,11 @@ export default {
       this.saveList(obj)
       this.editing = false
     },
+    completeList() {
+      if (!this.completed)
+        this.$store.dispatch('list/completeLists', [this.item])
+      else this.$store.dispatch('list/uncompleteLists', [this.item])
+    },
 
     async bindContextMenu() {
       utils.bindOptionsToEventListener(this.$el, await this.getOptions(utilsList.listOptions(this.item)), this)
@@ -132,7 +142,12 @@ export default {
       platform: 'platform',
       isDesktop: 'isDesktop',
       getListTasks: 'list/getTasks',
+
+      isListCompleted: 'list/isListCompleted',
     }),
+    completed() {
+      return this.isListCompleted(this.item)
+    },
     listTasks() {
       return this.getListTasks(this.tasks, this.item.id)
     },
@@ -212,7 +227,12 @@ export default {
 
 .progress-icon {
   opacity: .6;
-  transform: translate(2px, 1px);
+  transform: translate(2px, 2px) scale(1,1);
+  transition-duration: .2s;
+}
+
+.progress-icon:hover {
+  transform: translate(2px, 2px) scale(1.05,1.05);
 }
 
 .list-inf {
@@ -220,6 +240,9 @@ export default {
   opacity: .6;
 }
 
+.completed {
+  opacity: .4;
+}
 
 .sortable-drag {
   background-color: var(--light-gray) !important; 

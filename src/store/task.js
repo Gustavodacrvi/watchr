@@ -791,19 +791,6 @@ export default {
       
       batch.commit()
     },
-    manualCompleteTasks(c, tasks) {
-      const batch = fire.batch()
-
-      for (const t of tasks) {
-        const ref = taskRef(t.id)
-        t.calendar.manualComplete = t.calendar.lastCompleteDate
-        batch.update(ref, {
-          calendar: t.calendar
-        })
-      }
-
-      batch.commit()
-    },
     uncompleteTasks(c, tasks) {
       const batch = fire.batch()
 
