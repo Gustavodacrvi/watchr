@@ -14,6 +14,8 @@
       :disableSelect='true'
       :disableFallback='true'
       :rootFilterFunction='rootFilterFunction'
+      :group='group'
+      :onSortableAdd='onSortableAdd'
       
       comp='List'
       editComp='ListEdit'
@@ -95,16 +97,44 @@ export default {
     rootFilterFunction(list) {
       return true
     },
+    onSortableAdd(o, ids, indicies, order) {
+      this.$store.dispatch('task/convertTasksToListByIndex', {
+        tasks: this.storeTasks.filter(el => ids.includes(el.id)), folderId: this.folderId, savedLists: this.storeLists, indicies, order,
+      })
+    },
   },
   computed: {
     ...mapState({
+      storeTasks: state => state.task.tasks,
       storeLists: state => state.list.lists,
+      storeFolders: state => state.folder.folders,
     }),
     ...mapGetters({
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
 
       isListCompleted: 'list/isListCompleted',
     }),
+    getFolder() {
+      return this.storeFolders.find(el => el.id === this.folderId)
+    },
+    group() {
+      return {
+        name: 'item-renderer',
+        pull: (e,j,item) => {
+          const type = item.dataset.type
+          if (type === 'Task') return true
+          return false
+        },
+        put: (j,o,item) => {
+          const d = item.dataset
+          const type = d.type
+          if (type === 'Task') return true
+          if (type === 'headingbutton' || type === 'add-task-floatbutton')  
+            return true
+          return false
+        }
+      }
+    },
     emptyArr() {
       return []
     },

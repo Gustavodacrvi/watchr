@@ -100,7 +100,7 @@
 
       @change-time='changeTime'
       @go='moveItemHandlerSelection'
-      @add-heading='addHeading'
+      @add-heading='addHeadingFromRootHeadings'
     />
   </div>
 </template>
@@ -134,7 +134,7 @@ import utils from '@/utils/'
 
 export default {
   props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton', 'rootFilterFunction', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 
-  'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect',
+  'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback'],
   components: {
     Task, Icon, ButtonVue, List, ListEdit,
@@ -195,7 +195,7 @@ export default {
     changeTime(args) {
       this.$emit('change-time', args)
     },
-    addHeading(obj) {
+    addHeadingFromRootHeadings(obj) {
       this.$emit("add-heading", obj)
     },
     moveItemHandlerSelection(bool) {
@@ -363,7 +363,7 @@ export default {
         delay: this.isDesktop ? 0 : 100,
         handle: '.item-handle',
         
-        group: {
+        group: this.group || {
           name: 'item-renderer',
           pull: (e,j,item) => {
             const d = item.dataset
@@ -421,14 +421,15 @@ export default {
               set.add(id)
             }
           }
+          const indicies = evt.newIndicies.map(el => el.index)
+          if (indicies.length === 0) indicies.push(evt.newIndex)
           
-
-          if (type === 'Task' && this.onSortableAdd && this.sourceVueInstance) {
+          if (type === 'Task' && this.comp === 'List') {
+            this.onSortableAdd(items, ids, indicies, this.getIds(true))
+          } else if (type === 'Task' && this.onSortableAdd && this.sourceVueInstance) {
             this.removeEdit()
             this.sourceVueInstance.removeEdit()
             
-            const indicies = evt.newIndicies.map(el => el.index)
-            if (indicies.length === 0) indicies.push(evt.newIndex)
             
             let sourceLazyTasks = this.sourceVueInstance.lazyItems
             let destinyLazyTasks = this.lazyItems
@@ -468,6 +469,21 @@ export default {
           }
           for (const item of items) {
             item.remove()
+          }
+        },
+        onMove: (t, e) => {
+          const isTaskRender = t.to.classList.contains('item-renderer-root')
+          const isComingFromAnotherTaskRenderer = t.to !== this.draggableRoot
+
+          if (isTaskRender && isComingFromAnotherTaskRenderer) {
+            let vue = t.related.__vue__ ||
+                  t.related.parentNode.__vue__
+            while (true) {
+              if (vue.$el.classList && vue.$el.classList.contains('ListRenderer'))
+                break
+              else vue = vue.$parent
+            }
+            vue.sourceVueInstance = this
           }
         },
         onStart: evt => {
@@ -557,10 +573,11 @@ export default {
       if (name) {
         const i = this.getListRendererPosition()
         const ids = this.getIds(true)
+        const headings = this.isRoot ? this.getHeadingsIds() : this.rootHeadings
         this.$emit('add-heading', {
           ids: ids.slice(i),
           name, index: this.headingPosition,
-          headings: this.rootHeadings,
+          headings,
         })
       }
     },
