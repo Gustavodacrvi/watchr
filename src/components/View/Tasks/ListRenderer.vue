@@ -80,7 +80,6 @@
       :headings='lazyHeadings'
       :isChangingViewName='isChangingViewName'
       :showHeading='showHeading'
-      :movingHeading='movingHeading'
       :headingEditOptions='headingEditOptions'
       :isSmart='isSmart'
       :comp='comp'
@@ -95,6 +94,7 @@
       :getItemFirestoreRef='getItemFirestoreRef'
       :showHeadingFloatingButton='showHeadingFloatingButton'
       :movingButton='movingButton'
+      :updateHeadingIds='updateHeadingIds'
       :itemPlaceholder='itemPlaceholder'
       :disableFallback='disableFallback'
 
@@ -150,7 +150,6 @@ export default {
       lazyHeadings: [],
       selectedElements: [],
       changedViewName: true,
-      movingHeading: false,
       waitingUpdateTimeout: null,
       changingViewName: false,
 
@@ -347,8 +346,6 @@ export default {
     destroySortables() {
       if (this.sortable)
         this.sortable.destroy()
-      if (this.headSort)
-        this.headSort.destroy()
     },
     mountSortables() {
       let move = null
@@ -493,32 +490,6 @@ export default {
       if (this.isDesktop)
         obj['multiDragKey'] = this.getMultiDragKey
       this.sortable = new Sortable(this.draggableRoot, obj)
-
-      if (this.isRoot) {
-        const el = this.$el.getElementsByClassName('headings-root')[0]
-        if (el) {
-          this.headSort = new Sortable(el, {
-            disabled: !this.updateHeadingIds,
-            group: 'headings',
-            delay: 150,
-            animation: 80,
-            delayOnTouchOnly: true,
-            handle: '.handle',
-      
-            onUpdate: (evt) => {
-              const ids = this.getHeadingsIds()
-              if (this.updateHeadingIds)
-                this.updateHeadingIds(ids)
-            },
-            onStart: evt => {
-              this.movingHeading = true
-            },
-            onEnd: evt => {
-              this.movingHeading = false
-            },
-          })
-        }
-      }
     },
     slowlyAddItems(items) {
       return new Promise(solve => {
@@ -866,12 +837,6 @@ export default {
 
       if (this.sortable)
         this.sortable.options.disabled = this.disableSortableMount
-      if (this.headSort)
-        this.headSort.options.disabled = !this.updateHeadingIds
-    },
-    updateHeadingIds() {
-      if (this.headSort)
-        this.headSort.options.disabled = !this.updateHeadingIds
     },
     enableSelect() {
       if (this.sortable) {

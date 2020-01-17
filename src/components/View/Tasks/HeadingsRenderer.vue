@@ -73,6 +73,10 @@ import Defer from '@/mixins/defer'
 
 import { mapGetters } from 'vuex'
 
+import { MultiDrag, Sortable } from 'sortablejs'
+
+Sortable.mount(new MultiDrag())
+
 export default {
   mixins: [
     Defer(),
@@ -82,8 +86,63 @@ export default {
     ListRenderer: () => import('./ListRenderer.vue'),
   },
   props: ['headings', 'isChangingViewName', 'showHeading', 'viewType', 'viewName', 'viewNameValue', 'showEmptyHeadings', 'mainFallbackItem', 'showAllHeadingsItems', 'scheduleObject', 'selectEverythingToggle', 
-  'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'movingHeading', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'movingButton',  'disableFallback', 'showHeadingFloatingButton'],
+  'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'movingButton',  'disableFallback', 'showHeadingFloatingButton', 'updateHeadingIds'],
+  data() {
+    return {
+      sortable: null,
+      movingHeading: false,
+    }
+  },
+  mounted() {
+    this.mountSortable()
+  },
+  beforeUpdate() {
+    if (this.sortable === null)
+      this.mountSortable()
+  },
+  beforeDestroy() {
+    if (this.sortable)
+      this.sortable.destroy()
+  },
   methods: {
+    mountSortable() {
+      if (this.displayPriority > 2) {
+        const el = this.$el.getElementsByClassName('headings-root')[0]
+        if (el) {
+          this.sortable = new Sortable(el, {
+            disabled: !this.updateHeadingIds,
+            group: 'headings',
+            delay: 150,
+            animation: 80,
+            delayOnTouchOnly: true,
+            handle: '.handle',
+      
+            onUpdate: (evt) => {
+              const ids = this.getHeadingsIds()
+              if (this.updateHeadingIds)
+                this.updateHeadingIds(ids)
+            },
+            onStart: evt => {
+              this.movingHeading = true
+            },
+            onEnd: evt => {
+              this.movingHeading = false
+            },
+          })
+        }
+      }
+    },
+    getHeadingsIds() {
+      const el = this.$el.getElementsByClassName('headings-root')[0]
+      if (el) {
+        const childs = el.childNodes
+        const arr = []
+        for (const c of childs) {
+          arr.push(c.dataset.id)
+        }
+        return arr
+      }
+    },
     getOptionClick(h) {
       if (!h.optionClick) return () => {}
       return h.optionClick
@@ -127,6 +186,16 @@ export default {
 
         return this.showEmptyHeadings || h.items.length > 0
       })
+    },
+  },
+  watch: {
+    viewName() {
+      if (this.sortable)
+        this.sortable.options.disabled = !this.updateHeadingIds
+    },
+    updateHeadingIds() {
+      if (this.sortable)
+        this.sortable.options.disabled = !this.updateHeadingIds
     },
   },
 }
