@@ -128,7 +128,7 @@ export default {
   ],
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
 
-  'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes',
+  'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeTaskHandlerWhenThereArentTasks',
   'headerOptions', 'headerDates', 'headerTags', 'headerCalendar', 'files',
   'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',

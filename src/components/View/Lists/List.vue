@@ -16,7 +16,12 @@
           />
         </div>
         <div class="name">
-          {{ item.name }}
+          <div class="list-name-wrapper">
+            {{ item.name }}
+            <span v-if="listTasksLength" class="list-inf">{{ listTasksLength }}</span>
+          </div>
+        </div>
+        <div class="info">
         </div>
       </div>
     </div>
@@ -27,14 +32,21 @@
 
 import Icon from '@/components/Icon.vue'
 
-import { mapGetters, mapState } from 'vuex'
+import utils from "@/utils"
+import utilsList from "@/utils/list"
+
+import { mapGetters, mapState, mapActions } from 'vuex'
 
 export default {
   components: {
     Icon,
   },
   props: ['item', 'changingViewName', 'itemHeight'],
+  mounted() {
+    this.bindContextMenu()
+  },
   methods: {
+    ...mapActions(['getOptions']),
     enter(el, done) {
       const cont = this.$refs['cont-wrapper']
       if (cont) {
@@ -69,14 +81,33 @@ export default {
         })
       }
     },
+
+    async bindContextMenu() {
+      utils.bindOptionsToEventListener(this.$el, await this.getOptions(utilsList.listOptions(this.item)), this)
+    },
   },
   computed: {
     ...mapState({
       tasks: state => state.task.tasks,
     }),
-    ...mapGetters(['isDesktop', 'platform']),
+    ...mapGetters({
+      platform: 'platform',
+      isDesktop: 'isDesktop',
+      getListTasks: 'list/getTasks',
+    }),
+    listTasks() {
+      return this.getListTasks(this.tasks, this.item.id)
+    },
+    listTasksLength() {
+      return this.listTasks.length
+    },
     getListProgress() {
       return this.$store.getters['list/pieProgress'](this.tasks, this.item.id, this.$store.getters['task/isTaskCompleted'])
+    },
+  },
+  watch: {
+    list() {
+      this.bindContextMenu()
     },
   },
 }
@@ -109,6 +140,23 @@ export default {
   display: flex;
   align-items: center;
   margin-left: 6px;
+  position: relative;
+}
+
+.list-name-wrapper {
+  max-width: 100%;
+  position: absolute;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.info {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  margin-right: 6px;
 }
 
 .icon-wrapper {
@@ -122,6 +170,11 @@ export default {
 .progress-icon {
   opacity: .6;
   transform: translate(2px, 1px);
+}
+
+.list-inf {
+  margin-left: 4px;
+  opacity: .6;
 }
 
 </style>

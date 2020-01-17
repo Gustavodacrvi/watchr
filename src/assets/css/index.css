@@ -66,7 +66,7 @@ body, input, button, textarea {
 }
 
 .shadow {
-  box-shadow: 0 4px 12px rgba(25,25,25,.2);
+  box-shadow: 0 4px 14px rgba(10,10,10,.3);
 }
 
 .pc {

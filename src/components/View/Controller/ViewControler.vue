@@ -18,6 +18,7 @@
     :headingsOrder='headingsOrder'
     :showAllHeadingsItems='showAllHeadingsItems'
     :rootFallbackItem='rootFallbackItem'
+    :removeTaskHandlerWhenThereArentTasks='removeTaskHandlerWhenThereArentTasks'
 
     :mainFilter='mainFilter'
     :rootFilter='rootFilter'
