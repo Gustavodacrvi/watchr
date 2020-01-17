@@ -1,9 +1,8 @@
 <template>
-  <transition
+  <transition name="list-trans"
     appear
-    :css='false'
+    :css='true'
     @enter='enter'
-    @leave='leave'
   >
     <div class="List" :class="[platform, {completed}]">
       <div v-if="!editing"
@@ -96,21 +95,6 @@ export default {
             done()
           })
         }
-      }
-    },
-    leave(el) {
-      const cont = this.$refs['cont-wrapper']
-      if (cont) {
-        const s = cont.style
-
-        s.transitionDuration = '0'
-        s.height = this.itemHeight + 'px'
-        s.opacity = 1
-        requestAnimationFrame(() => {
-          s.transitionDuration = '.25s'
-          s.opacity = 0
-          s.height = 0
-        })
       }
     },
 
@@ -262,6 +246,25 @@ export default {
 
 .mobile.sortable-ghost .cont-wrapper {
   height: 50px;
+}
+
+.list-trans-leave-active, .list-trans-enter-active {
+  transition-duration: .25s !important;
+}
+
+.list-trans-leave, .list-trans-leave .cont-wrapper {
+  height: 38px;
+  opacity: 1;
+}
+
+.mobile .list-trans-leave, .list-trans-leave .cont-wrapper {
+  height: 50px;
+}
+
+.list-trans-leave-to, .list-trans-leave-to .cont-wrapper {
+  height: 0px !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
 }
 
 </style>
