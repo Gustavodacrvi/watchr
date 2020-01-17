@@ -1,12 +1,56 @@
 <template>
   <ViewRenderer
-    v-bind="{ ...$props, ...props }"
-    v-on="listeners"
+    v-bind="$props"
 
     :prefix='prefix'
     :viewName='viewName'
     :viewType='viewType'
 
+    :icon='icon'
+    :showEmptyHeadings='showEmptyHeadings'
+    :updateHeadingIds='updateHeadingIds'
+    :savedSchedule='savedSchedule'
+    :headingEditOptions='headingEditOptions'
+    :headerOptions='headerOptions'
+    :notes='getViewNotes'
+    :progress='getPieProgress'
+    :headings='headings'
+    :headingsOrder='headingsOrder'
+    :showAllHeadingsItems='showAllHeadingsItems'
+    :rootFallbackItem='rootFallbackItem'
+    :removeTaskHandlerWhenThereArentTasks='removeTaskHandlerWhenThereArentTasks'
+
+    :mainFilter='mainFilter'
+    :rootFilter='rootFilter'
+    :tasksOrder='tasksOrder'
+    :onSortableAdd='onSortableAdd'
+    :viewNameValue='viewNameValue'
+    :headerDates='headerDates'
+    :mainFallbackItem='mainFallbackItem'
+    :showHeading='showHeading'
+    :headerTags='headerTags'
+    :headerCalendar='headerCalendar'
+    :itemCompletionCompareDate='itemCompletionCompareDate'
+    :files='files'
+    :headingsPagination='headingsPagination'
+    :configFilterOptions='configFilterOptions'
+    :smartComponent='smartComponent'
+    :onSmartComponentUpdate='onSmartComponentUpdate'
+    :viewComponent='viewComponent'
+    :isListType='isListType'
+    :extraListView='extraListView'
+
+    @save-schedule='saveSchedule'
+    @save-header-name='saveHeaderName'
+    @save-notes='saveNotes'
+    @add-task='addTask'
+    @add-heading='addHeading'
+    @update-ids='updateIds'
+    @remove-defer-date='removeDeferDate'
+    @remove-header-tag='removeHeaderTag'
+    @remove-deadline='removeDeadline'
+    @remove-repeat='removeRepeat'
+    
     @slide='slide'
     @show-completed='v => showCompleted = v'
   />
@@ -27,10 +71,11 @@ import { pipeBooleanFilters } from '@/utils/memo'
 import mom from 'moment'
 
 import mixins from './controlerModules'
+import mainMixin from './mixins/controler.js'
 
 export default {
-  mixins,
-  props: ['isSmart'],
+  mixins: [...mixins, mainMixin],
+  props: ['isSmart', 'viewName', 'viewType'],
   components: {
     ViewRenderer: ViewRendererVue,
   },
@@ -52,7 +97,46 @@ export default {
     slide(num) {
       this.$store.commit('slide', num)
     },
-    getListHeadingsByView(viewName) {
+  },
+  computed: {
+    ...mapState({
+      tags: state => state.tag.tags,
+      tasks: state => state.task.tasks,
+      lists: state => state.list.lists,
+      folders: state => state.folder.folders,
+      userInfo: state => state.userInfo,      
+    }),
+    ...mapMutations(['pushToast']),
+    ...mapGetters({
+      l: 'l',
+      isDesktop: 'isDesktop',
+      getAllTasksOrderByList: 'list/getAllTasksOrderByList',
+      getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
+      isTaskInList: 'task/isTaskInList',
+      getOverdueTasks: 'task/getOverdueTasks',
+      isTaskInSevenDays: 'task/isTaskInSevenDays',
+      isTaskInFolder: 'task/isTaskInFolder',
+      isTaskInListRoot: 'task/isTaskInListRoot',
+      isTaskInPeriod: 'task/isTaskInPeriod',
+      isTaskInbox: 'task/isTaskInbox',
+      hasTaskBeenCompletedOnDate: 'task/hasTaskBeenCompletedOnDate',
+      isTaskShowingOnDate: 'task/isTaskShowingOnDate',
+      isTaskInOneMonth: 'task/isTaskInOneMonth',
+      isTaskWeekly: 'task/isTaskWeekly',
+      isTaskInOneYear: 'task/isTaskInOneYear',
+      isTaskCompleted: 'task/isTaskCompleted',
+      isTaskInView: 'task/isTaskInView',
+      doesTaskPassInclusiveTags: 'task/doesTaskPassInclusiveTags',
+      doesTaskIncludeText: 'task/doesTaskIncludeText',
+      isTaskInHeading: 'task/isTaskInHeading',
+      filterTasksByCompletionDate: 'task/filterTasksByCompletionDate',
+      getTagsById: 'tag/getTagsById',
+      getListsById: 'list/getListsById',
+      getListByName: 'list/getListByName',
+      getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
+    }),
+    getListHeadingsByView() {
+      const viewName = this.viewName
       const savedLists = this.lists
       const savedFolders = this.folders
       const setOfLists = new Set()
@@ -175,7 +259,7 @@ export default {
               }
             ],
             updateIds: saveOrder,
-            fallbackTask: (task, force) => {
+            fallbackItem: (task, force) => {
               if (force || (!task.list && !task.folder))
                 task.list = list.id
               return task
@@ -277,7 +361,7 @@ export default {
               }
             ],
             updateIds: saveOrder,
-            fallbackTask: (task, force) => {
+            fallbackItem: (task, force) => {
               if (force || (!task.list && !task.folder))
                 task.folder = folder.id
               return task
@@ -311,46 +395,6 @@ export default {
 
       return arr
     },
-  },
-  computed: {
-    ...mapState({
-      viewName: state => state.viewName,
-      viewType: state => state.viewType,
-      tags: state => state.tag.tags,
-      tasks: state => state.task.tasks,
-      lists: state => state.list.lists,
-      folders: state => state.folder.folders,
-      userInfo: state => state.userInfo,      
-    }),
-    ...mapMutations(['pushToast']),
-    ...mapGetters({
-      l: 'l',
-      isDesktop: 'isDesktop',
-      getAllTasksOrderByList: 'list/getAllTasksOrderByList',
-      getFolderTaskOrderById: 'folder/getFolderTaskOrderById',
-      isTaskInList: 'task/isTaskInList',
-      getOverdueTasks: 'task/getOverdueTasks',
-      isTaskInSevenDays: 'task/isTaskInSevenDays',
-      isTaskInFolder: 'task/isTaskInFolder',
-      isTaskInListRoot: 'task/isTaskInListRoot',
-      isTaskInPeriod: 'task/isTaskInPeriod',
-      isTaskInbox: 'task/isTaskInbox',
-      hasTaskBeenCompletedOnDate: 'task/hasTaskBeenCompletedOnDate',
-      isTaskShowingOnDate: 'task/isTaskShowingOnDate',
-      isTaskInOneMonth: 'task/isTaskInOneMonth',
-      isTaskWeekly: 'task/isTaskWeekly',
-      isTaskInOneYear: 'task/isTaskInOneYear',
-      isTaskCompleted: 'task/isTaskCompleted',
-      isTaskInView: 'task/isTaskInView',
-      doesTaskPassInclusiveTags: 'task/doesTaskPassInclusiveTags',
-      doesTaskIncludeText: 'task/doesTaskIncludeText',
-      isTaskInHeading: 'task/isTaskInHeading',
-      filterTasksByCompletionDate: 'task/filterTasksByCompletionDate',
-      getTagsById: 'tag/getTagsById',
-      getListsById: 'list/getListsById',
-      getListByName: 'list/getListByName',
-      getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
-    }),
     viewOrders() {
       const info = this.userInfo
       if (info && info.viewOrders) return info.viewOrders
@@ -368,50 +412,6 @@ export default {
       if (type === 'list') return 'list'
       if (type === 'folder') return 'folder'
       return 'tag'
-    },
-    listeners() {
-      const toCamel = s => {
-        return s.replace(/([-_][a-z])/ig, $1 => {
-          return $1.toUpperCase()
-            .replace('-', '')
-            .replace('_', '')
-        })
-      }
-      const p = this.prefix
-      
-      const events = [
-        'save-header-name', 'save-notes', 'save-schedule',
-        'add-task', 'add-heading', 'update-ids', 'remove-defer-date',
-        'remove-header-tag', 'remove-deadline', 'remove-repeat',
-      ]
-      const obj = {}
-      
-      for (const e of events)
-        obj[e] = this[p + toCamel(e)]
-      
-      return obj
-    },
-    props() {
-      const p = this.prefix
-      
-      const props = [
-        'icon', 'showEmptyHeadings', 'updateHeadingIds', 'savedSchedule',
-        'headingEditOptions', 'headerOptions', 'notes', 'progress', 'headings', 'headingsOrder', 'showAllHeadingsItems', 'rootFallbackTask',
-        'mainFilter', 'rootFilter', 'tasksOrder', 'onSortableAdd', 'viewNameValue', 'headerDates', 'mainFallbackTask', 'showHeading',
-        'headerTags', 'headerCalendar', 'taskCompletionCompareDate', 'files',
-        'headingsPagination', 'configFilterOptions', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
-      ]
-      const obj = {}
-
-      for (const v of props)
-        obj[v] = this[p + v]
-      
-      obj['showEmptyHeadings'] = this['isListType']
-      obj['showHeadadingFloatingButton'] = this['isListType']
-      obj['notes'] = this[p + 'getViewNotes']
-      obj['progress'] = this[p + 'getPieProgress']
-      
-      return obj
     },
     upcomingHeadingsOptions() {
       const arr = []
@@ -447,7 +447,7 @@ export default {
 
           sort: sortHeading,
           filter: filterFunction,
-          fallbackTask: task => {
+          fallbackItem: task => {
             if (!task.calendar)
               task.calendar = calObj(date)
             return task

@@ -171,7 +171,7 @@ export default {
     enterItems(el, done) {
       el.style.opacity = 0
       el.style.height = '0px'
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         el.style.opacity = 1
         el.style.height = '35px'
         setTimeout(() => done(), 200)

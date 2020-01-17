@@ -92,14 +92,14 @@ export default {
       const s = cont.style
 
       s.transitionDuration = '0'
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         s.width = 'auto'
         s.height = 'auto'
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           const {height, width} = getComputedStyle(cont)
           s.width = width
           s.height = height
-        }, 80)
+        })
       })
     },
     update(opt) {
@@ -117,7 +117,7 @@ export default {
         setTimeout(() => {
           s.width = 'auto'
           s.height = 'auto'
-          setTimeout(() => {
+          requestAnimationFrame(() => {
             const {height, width} = getComputedStyle(cont)
             s.width = oldWidth
             s.height = oldHeight
@@ -173,7 +173,7 @@ export default {
       el.style.width = 0
       el.style.height = 0
 
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         el.style.width = width
         el.style.height = height
       })

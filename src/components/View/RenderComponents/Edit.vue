@@ -35,7 +35,7 @@ import ButtonVue from '../../Auth/Button.vue'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  props: ['name', 'names', 'errorToast', 'placeholder'],
+  props: ['name', 'names', 'errorToast', 'placeholder', 'keepOpen'],
   components: {
     InputApp: DropInputVue,
     ButtonApp: ButtonVue,
@@ -77,7 +77,7 @@ export default {
 
       s.transitionDuration = '0s'
       s.height = 0
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         s.transitionDuration = '.3s'
         if (height < 36)
           s.height = '35px'
@@ -94,13 +94,12 @@ export default {
 
       s.transitionDuration = '0s'
       s.height = el.offsetHeight + 'px'
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         this.show = false
         s.transitionDuration = '.3s'
         s.overflow = 'hidden'
         s.backgroundColor = 'var(--back-color)'
         s.boxShadow = '0 0 0 #000'
-        s.height = '0px'
       })
     },
     select(val) {
@@ -110,7 +109,9 @@ export default {
       if (this.str) {
         if (!this.options.includes(this.str)) {
           this.$emit('save', this.str)
-          this.$emit('cancel')
+          this.str = ''
+          if (!this.keepOpen)
+            this.$emit('cancel')
         }
         else this.$store.commit('pushToast', {
           name: this.errorToast,
@@ -126,7 +127,8 @@ export default {
   },
   watch: {
     str() {
-      this.options = this.names.filter(el => el.toLowerCase().includes(this.str.toLowerCase()))
+      if (this.names)
+        this.options = this.names.filter(el => el.toLowerCase().includes(this.str.toLowerCase()))
     }
   }
 }

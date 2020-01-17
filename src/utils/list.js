@@ -72,7 +72,7 @@ export default {
       }
     ]
   },
-  listOptions: list => ({tasks, getters, dispatch}) => {
+  listOptions: list => ({tasks, getters, dispatch, router}) => {
     const l = getters['l']
     const listId = list.id
 
@@ -89,6 +89,13 @@ export default {
     )
     const pop = obj => dispatch('pushPopup', obj)
     let opt = [
+      {
+        name: 'Go to list',
+        icon: 'tasks',
+        callback: () => {
+          router.push(`user?list=${list.name}`) 
+        },
+      },
       {
         name: l["Edit list"],
         icon: 'pen',

@@ -58,7 +58,7 @@ moment.locale(lang)
 const uid = () => auth.currentUser.uid
 
 
-const version = '080'
+const version = '081'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -335,6 +335,7 @@ const store = new Vuex.Store({
     getOptions(context, options) {
       const {state} = context
       return options({
+        router,
         ...context,
         tags: state.tag.tags,
         tasks: state.task.tasks,

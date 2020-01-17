@@ -38,7 +38,7 @@ export default {
       s.transitionDuration = '0s'
       s.opacity = '0'
       s.height = '0px'
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         s.transitionDuration = '.15s'
         s.height = '35px'
         s.opacity = '1'

@@ -31,8 +31,25 @@ export default {
         const i = state[arrName].findIndex(el => el.id === change.doc.id)
 
         const keys = Object.keys(newDoc)
-        for (const k of keys)
-          Vue.set(state[arrName][i], k, newDoc[k])
+        for (const k of keys) {
+          const old = state[arrName][i][k]
+          const val = newDoc[k]
+          const type = typeof val
+          let change = false
+
+          switch (type) {
+            case 'object': {
+              change = JSON.stringify(val) !== JSON.stringify(old)
+              break
+            }
+            default: {
+              change = old !== val
+            }
+          }
+          
+          if (change)
+            Vue.set(state[arrName][i], k, val)
+        }
       }
     })
   },
@@ -313,5 +330,36 @@ export default {
     if (split[1] === '0')
       return hours
     return `${hours} ${minutes}`
+  },
+  isItemCompleted(item, moment) {
+    const c = item.calendar
+    if (!c || c.type === 'someday' || c.type === 'specific') return item.completed
+    
+    let tod = mom(moment, 'Y-M-D')
+    if (!tod.isValid()) tod = mom()
+    if (c.type === 'after completion') {
+      if (!c.lastCompleteDate) return false
+      const last = mom(c.lastCompleteDate, 'Y-M-D')
+      const dayDiff = tod.diff(last, 'days')
+      return dayDiff < c.afterCompletion
+    }
+    if (c.type === 'daily') {
+      const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+      const diff = tod.diff(lastComplete, 'days')
+      return lastComplete.isSameOrAfter(tod, 'day') ||
+              diff < c.daily
+    }
+
+    if (c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly' || c.type === 'yearly') {
+      return mom(c.lastCompleteDate, 'Y-M-D').isSameOrAfter(tod, 'day')
+    }
+    
+/*             if (c.type === 'periodic' || c.type === 'weekly') {
+      const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+      if (!moment.isValid()) moment = mom()
+      return lastComplete.isSameOrAfter(moment, 'day')
+    } */
+
+    return false
   },
 }

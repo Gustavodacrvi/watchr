@@ -95,11 +95,11 @@ export default {
     this.sortable = new Sortable(el, {
       group: {name: 'folders', pull: (e) => {
         const name = e.el.dataset.name
-        if (name === 'task-renderer') return 'clone'
+        if (name === 'item-renderer') return 'clone'
         return false
       }, put: (l,j,item) => {
         const type = item.dataset.type
-        if (type === 'task') return true
+        if (type === 'Task') return true
         return false
       }},
       delay: 225,
@@ -132,7 +132,7 @@ export default {
       h.height = '0'
       h.transitionDuration = '0s'
       s.transitionDuration = '0s'
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         h.transitionDuration = '.15s'
         s.transitionDuration = '.15s'
         h.height = (this.isDesktop ? 35 : 42) + 'px'

@@ -51,7 +51,7 @@ export default {
         put: (j,o,item) => {
           const type = item.dataset.type
           if (type === 'add-task-floatbutton') return true
-          if (type === 'task') return true
+          if (type === 'Task') return true
           return false
         }
       },
@@ -75,7 +75,7 @@ export default {
           ins.$mount('#edit-subtask-task-renderer')
           this.$el.getElementsByClassName('Edit')[0].setAttribute('data-id', 'Edit')
           this.applyTaskAdderEventListeners(ins)
-        } else if (type === 'task') {
+        } else if (type === 'Task') {
           const childs = this.draggableRoot.childNodes
           let i = 0
           for (const c of childs) {
@@ -134,12 +134,12 @@ export default {
 
       s.transitionDuration = '0s'
       s.height = 0
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         s.transitionDuration = '.15s'
         if (height < 36)
           s.height = '36px'
         else s.height = height + 'px'
-      }, 10)
+      })
     },
     leave(el) {
       el.style.height = 0

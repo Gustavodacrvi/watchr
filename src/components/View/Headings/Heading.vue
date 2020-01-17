@@ -34,7 +34,7 @@
         </div>
         <NotesApp :notes="notes" @save-notes="saveNote"/>
         <transition name="fade-t">
-          <div v-show="showing && !movingHeading" class="cont">
+          <div v-show="defer(2) && showing && !movingHeading" class="cont">
             <slot></slot>
           </div>
         </transition>
@@ -59,12 +59,16 @@ import IconDropVue from '../../IconDrop/IconDrop.vue'
 import IconVue from '../../Icon.vue'
 import EditVue from './../RenderComponents/Edit.vue'
 import Notes from './Notes.vue'
+import Defer from '@/mixins/defer'
 
 import { mapGetters } from 'vuex'
 
 import utils from '@/utils/'
 
 export default {
+  mixins: [
+    Defer(),
+  ],
   props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEditOptions', 'save', 'notes', 'movingHeading', 'progress', 'icon'],
   components: {
     IconDrop: IconDropVue,

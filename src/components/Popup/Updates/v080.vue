@@ -3,10 +3,6 @@
     <h3>Additions</h3>
     <br>
 
-    <br>
-    <h4>More keyboard shortcuts</h4>
-    <br>
-
     <li><strong>Add multiple tasks from txt file:</strong> Add multiple tasks by copying and pasting them on the task name from a text file, each line will be a task, you can add priorities to them using !h, !m, !l.</li>
     <br>
     <li><strong>Add task duration using keyboard:</strong> Select some tasks, then type its duration in the format: "hours:minutes/hh:mm", then press "Shift + D", the typing needs to occur before 3 seconds, if no hours are given, the number will be treated as seconds, examples:<br>

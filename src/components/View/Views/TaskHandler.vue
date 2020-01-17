@@ -1,36 +1,43 @@
 
 <template>
   <div class="TaskHandler">
-    <TaskRendererVue
+    <ListRendererVue v-if="!hideList"
       v-bind="$props"
 
-      :mainTasks='mainTasks'
-      :tasks='sortLaseredTasks'
+      :items='sortLaseredTasks'
 
       :headings='sortHeadings'
       :scheduleObject='scheduleObject'
       :selectEverythingToggle='selectEverythingToggle'
 
-      :addTask='addTask'
+      :addItem='addTask'
       :showSomedayButton='showSomedayButton'
       :rootFilterFunction='rootFilterFunction'
       :headingEditOptions='headingEditOptions'
-      :taskIconDropOptions='taskIconDropOptions'
+      :itemIconDropOptions='taskIconDropOptions'
       :headingPosition='0'
       :updateHeadingIds='updateHeadingIds'
+      :getItemFirestoreRef='getItemFirestoreRef'
+      :onAddExistingItem='onAddExistingItem'
+      comp='Task'
+      editComp='TaskEdit'
+      itemPlaceholder='Task name...'
 
       @update="updateIds"
       @add-heading="addHeading"
       @allow-someday='allowSomeday'
       @go='go'
       @change-time='changeTime'
+
+      @selectTask='selectTask'
+      @unselectTask='unselectTask'
     />
   </div>
 </template>
 
 <script>
 
-import TaskRendererVue from './../Tasks/TaskRenderer.vue'
+import ListRendererVue from './../Tasks/ListRenderer.vue'
 import AppButton from '../../Auth/Button.vue'
 
 import { pipeBooleanFilters } from '@/utils/memo'
@@ -41,19 +48,26 @@ import utils from '@/utils'
 
 import mom from 'moment'
 
+import { taskRef } from '@/utils/firestore'
+
+import HandlerMixin from "@/mixins/handlerMixin"
+
 export default {
+  mixins: [
+    HandlerMixin,
+  ],
   props: ['mainFilter', 'rootFilter', 'tasksOrder', 'headings', 'headingsOrder',
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 'movingButton',
-    'showHeadadingFloatingButton', 'openCalendar', 'isSmart',
+    'showHeadingFloatingButton', 'openCalendar', 'isSmart', 'removeTaskHandlerWhenThereArentTasks',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
-    'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackTask', 'icon', 'configFilterOptions', 'showHeading',
-    'taskCompletionCompareDate', 'rootFallbackTask', 'autoSchedule',
+    'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackItem', 'icon', 'configFilterOptions', 'showHeading',
+    'itemCompletionCompareDate', 'rootFallbackItem', 'autoSchedule',
     'updateHeadingIds', 'showEmptyHeadings', 'showAllHeadingsItems',
   ],
   components: {
-    TaskRendererVue,
+    ListRendererVue,
     AppButton,
   },
   data() {
@@ -78,6 +92,29 @@ export default {
   },
   methods: {
     ...mapMutations(['saveMainSelection']),
+    onAddExistingItem(index, lazyItems, fallbackItem, callback) {
+      this.$store.dispatch('pushPopup', {
+        comp: 'FastSearch',
+        payload: {
+          callback: (route, task) => {
+            lazyItems.splice(index, 0, task)
+            const t = fallbackItem(task, true)
+            this.$store.dispatch('task/saveTask', t)
+            callback()
+          },
+          allowed: ['tasks'],
+        }
+      })
+    },
+    selectTask(id) {
+      this.$store.commit('selectTask', id)
+    },
+    unselectTask(id) {
+      this.$store.commit('unselectTask', id)
+    },
+    getItemFirestoreRef() {
+      return taskRef()
+    },
     addDuration() {
       const ids = this.fallbackSelected
 
@@ -411,27 +448,13 @@ export default {
       this.$emit('allow-someday')
     },
 
-    fixPosition(obj, nonFilteredIds, callback) {
-      nonFilteredIds = nonFilteredIds.slice()
-
-      let fixPosition = 0
-      let i = 0
-      for (const id of nonFilteredIds) {
-        if (!obj.ids.includes(id))
-          fixPosition++
-        if ((i - fixPosition) === obj.index) break
-        i++
-      }
-      
-      obj.index += fixPosition
-      if (obj.newId)
-        nonFilteredIds.splice(obj.index, 0, obj.newId)
-      obj.ids = nonFilteredIds
-
-      callback()
-    },
     addTask(obj) {
-      this.fixPosition(obj, this.rootNonFilteredIds, () => this.$parent.$emit('add-task', obj))
+      const newObj = {
+        ...obj,
+        task: obj.item,
+        newTaskRef: obj.newItemRef,
+      }
+      this.fixPosition(newObj, this.rootNonFilteredIds, () => this.$parent.$emit('add-task', newObj))
     },
     updateIds(ids) {
       this.$parent.$emit('update-ids', utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.rootNonFilteredIds))
@@ -633,7 +656,7 @@ export default {
     },
     allViewTasks() {
       return [...this.sortLaseredTasks,...this.sortHeadings.map(
-        head => head.tasks
+        head => head.items
       ).flat()]
     },
     allViewTasksIds() {
@@ -651,10 +674,11 @@ export default {
     laserHeadings() {
       const headings = this.headings
       if (!headings) return []
+      const mainTasks = this.mainTasks
       return headings.map(head => {
         if (head.react)
-          for (const p of head.react) this.mainTasks[p]
-        const nonFiltered = head.sort(this.mainTasks.filter(task => head.filter(task)))
+          for (const p of head.react) mainTasks[p]
+        const nonFiltered = head.sort(mainTasks.filter(task => head.filter(task)))
         const tasks = nonFiltered.filter(this.filterOptionsPipe)
 
         let updateIds = ids =>
@@ -728,7 +752,7 @@ export default {
         return {
           ...head,
           filter: undefined,
-          tasks,
+          items: tasks,
           nonFiltered,
           options: tasks => {
             let options = head.options ? head.options(tasks) : []
@@ -818,6 +842,13 @@ export default {
         if (head.nonFiltered.some(task => this.isTaskSomeday(task)))
           return true
       return false
+    },
+    isViewEmpty() {
+      return this.rootNonFiltered.length === 0 &&
+        this.laserHeadings.every(h => h.items.length === 0)
+    },
+    hideList() {
+      return this.removeTaskHandlerWhenThereArentTasks && this.isViewEmpty
     },
     pipeSomeday() {
       if (this.showSomeday) return () => true

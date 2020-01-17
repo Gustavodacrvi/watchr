@@ -217,7 +217,7 @@ import FileMixin from '@/mixins/file.js'
 
 export default {
   mixins: [FileMixin],
-  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup', 'focusToggle', 'taskHeight', 'editAction', 'fallbackTask'],
+  props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup', 'focusToggle', 'taskHeight', 'editAction', 'fallbackItem'],
   components: {
     DropInput: DropInputVue, FileApp,
     ButtonApp: ButtonVue,
@@ -308,14 +308,14 @@ export default {
   },
   methods: {
     onPaste(txt) {
-      if (this.fallbackTask) {
+      if (this.fallbackItem) {
         let str = ''
         const lines = txt.split('\n').map(el => el.trim()).filter(el => el.length > 0)
   
         const tasks = []
         for (const l of lines) {
           const { str, priority } = taskUtils.parsePriorityFromString(l)
-          tasks.push(this.fallbackTask({
+          tasks.push(this.fallbackItem({
             name: str,
             priority,
             taskDuration: '',
@@ -384,7 +384,7 @@ export default {
         t.transitionDuration = 0
         const y = this.isDesktop ? -2 : 4
         t.transform = `translate(27px, ${y}px)`
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           t.transitionDuration = '.25s'
           t.transform = `translate(0px, ${y}px)`
         })
@@ -392,7 +392,7 @@ export default {
 
       s.transitionDuration = '0s'
       s.height = this.taskHeight ? this.taskHeight + 'px' : 0
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
         if (height < 36)
           s.height = '35px'
@@ -404,7 +404,7 @@ export default {
         setTimeout(() => {
           el.style.height = 'auto'
         }, 300)
-      }, 50)
+      })
     },
     leave(el) {
       const s = el.style
@@ -415,7 +415,7 @@ export default {
         t.transitionDuration = 0
         const y = this.isDesktop ? -2 : 4
         t.transform = `translate(0px, ${y}px)`
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           t.transitionDuration = '.25s'
           t.transform = `translate(27px, ${y}px)`
         })
@@ -423,7 +423,7 @@ export default {
 
       s.transitionDuration = '0s'
       s.height = el.offsetHeight + 'px'
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         this.show = false
         s.transitionDuration = '.25s'
         s.overflow = 'hidden'
@@ -855,12 +855,12 @@ export default {
 .trans-t-leave, .trans-t-enter-to {
   opacity: 1;
   background-color: var(--card);
-  box-shadow: 0 2px 8px rgba(15,15,15,.3);
+  box-shadow: 0 4px 12px rgba(15,15,15,.2);
 }
 
 .Edit {
   background-color: var(--card);
-  box-shadow: 0 2px 8px rgba(15,15,15,.3);
+  box-shadow: 0 4px 12px rgba(15,15,15,.2);
 }
 
 .edit-wrapper {

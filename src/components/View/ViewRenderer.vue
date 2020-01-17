@@ -37,16 +37,17 @@
         @update='onSmartComponentUpdate'
       />
       <transition name="fade-t" mode="out-in">
-        <component :is='getViewComp' class='view-renderer-move'
+        <component v-if="defer(2)" :is='getViewComp' class='view-renderer-move'
           v-bind="$props"
 
           :headings="getHeadings"
+          :updateHeadingIds='updateHeadingIds'
+          :showHeadingFloatingButton='showHeadingFloatingButton'
           :movingButton='movingButton'
           :showCompleted='showCompleted'
           :showSomeday='passSomedayTasks'
           :pipeFilterOptions='pipeFilterOptions'
           :taskIconDropOptions='taskIconDropOptions'
-          :updateHeadingIds='updateHeadingIds'
           :autoSchedule='autoSchedule'
           :openCalendar='getHelperComponent === "LongCalendarPicker"'
 
@@ -61,6 +62,18 @@
           @someday='showSomeday = !showSomeday'
           @completed='showCompleted = !showCompleted'
           @calendar='toggleCalendar'
+        />
+      </transition>
+      <transition name="fade-t" mode="out-in">
+        <component v-if="extraListView && defer(3)" :is='extraListView.comp'
+          v-bind="{...$props, ...extraListView}"
+
+          :movingButton='movingButton'
+          :showCompleted='showCompleted'
+          :showSomeday='passSomedayTasks'
+          :openCalendar='getHelperComponent === "LongCalendarPicker"'
+
+          @allow-someday='showSomeday = true'
         />
       </transition>
       <div style='height: 300px'></div>
@@ -90,8 +103,10 @@ import ActionButtonsVue from './FloatingButtons/ActionButtons.vue'
 import PaginationVue from './Pagination.vue'
 import HelperComponent from './HelperComponent.vue'
 import TaskHandler from './Views/TaskHandler.vue'
+import ListHandler from './Views/ListHandler.vue'
 import Pomodoro from './Views/Pomodoro/Pomodoro.vue'
 import Statistics from './Views/Statistics/Statistics.vue'
+import Defer from '@/mixins/defer'
 
 import ViewRendererLongCalendarPicker from '@/components/View/SmartComponents/ViewRendererLongCalendarPicker.vue'
 
@@ -108,15 +123,19 @@ const MAXIMUM_TOUCH_DISTANCE = 100
 const MINIMUM_DISTANCE = 10
 
 export default {
+  mixins: [
+    Defer(),
+  ],
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
 
-  'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes',
+  'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeTaskHandlerWhenThereArentTasks',
   'headerOptions', 'headerDates', 'headerTags', 'headerCalendar', 'files',
-  'progress', 'tasksOrder',  'rootFallbackTask', 'mainFallbackTask', 'savedSchedule',
+  'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
   
-  'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'showHeadadingFloatingButton', 'updateHeadingIds', 'showAllHeadingsItems', 'taskCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
+  'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
   components: {
+    ListHandler,
     PaginationVue, TaskHandler,
     Header: HeaderVue, HelperComponent,
     ActionButtons: ActionButtonsVue,
@@ -379,6 +398,9 @@ export default {
       doesTaskPassInclusivePriority: 'task/doesTaskPassInclusivePriority',
       doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
+    showHeadingFloatingButton() {
+      return this.viewType === 'list' && !this.isSmart
+    },
     getPomoOptions() {
       if (this.userInfo && this.userInfo.pomo)
         return this.userInfo.pomo

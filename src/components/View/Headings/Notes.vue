@@ -63,7 +63,7 @@ export default {
       }, 100)
     },
     fixHeight() {
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         const el = this.$refs.notes
         if (el) {
           el.style.height = '5px'

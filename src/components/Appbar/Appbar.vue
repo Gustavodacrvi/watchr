@@ -306,7 +306,7 @@ export default {
       } else {
         el.classList.add('to-left')
       }
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         el.style.transitionDuration = '.15s'
         el.classList.remove('to-right')
         el.classList.remove('to-left')

@@ -34,7 +34,7 @@
         </div>
       </div>
       <div
-        class="cont-wrapper task-handle rb"
+        class="cont-wrapper item-handle rb"
         :class='{doneTransition}'
         ref="cont-wrapper"
         :style="{right: right + 'px'}"
@@ -58,7 +58,7 @@
             @click="click"
             :style='{height: itemHeight + "px"}'
           >
-            <CircleBubble
+            <CircleBubble v-if="!isDesktop"
               innerColor='var(--light-gray)'
               outerColor='var(--gray)'
               opacity='0'
@@ -67,8 +67,6 @@
               ref='cont'
             >
               <div class="check" ref='check'
-                @mouseenter="iconHover = true"
-                @mouseleave="iconHover = false"
                 @touchend.passive='touchComplete'
                 :class="{changeColor}"
               >
@@ -119,7 +117,7 @@
               :placeholder="l['Task name...']"
               :notesPlaceholder="l['Notes...']"
               :btnText="l['Save task']"
-              :defaultTask='task'
+              :defaultTask='item'
               :taskHeight='itemHeight'
               :showCancel='true'
               :editAction='editAction'
@@ -151,7 +149,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['item', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'itemHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'isDragging', 'isScrolling', 'isSmart', 'scheduleObject', 'changingViewName', 'selectEverythingToggle',
+  props: ['item', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'itemHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'scheduleObject', 'changingViewName', 'selectEverythingToggle',
   'isSelecting'],
   components: {
     Timeline,
@@ -165,7 +163,6 @@ export default {
       showingIconDropContent: false,
       isEditing: false,
       onHover: false,
-      iconHover: false,
       startX: 0,
       startY: 0,
       startTime: 0,
@@ -340,7 +337,7 @@ export default {
         if (ni) ni.opacity = 0
         co.transform = 'translateX(-27px)'
         this.deselectTask()
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           c.transitionDuration = '.25s'
           co.transitionDuration = '.25s'
           inf.transitionDuration = '.25s'
@@ -371,7 +368,7 @@ export default {
         inf.opacity = 1
         if (ni) ni.opacity = .6
         co.transform = 'translateX(0px)'
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           c.transitionDuration = '.25s'
           co.transitionDuration = '.25s'
           inf.transitionDuration = '.25s'
@@ -393,26 +390,24 @@ export default {
     taskLeave() {
       this.doneTransition = false
     },
-    taskEnter(el, done) {
+    taskEnter(el) {
       const cont = this.$refs['cont-wrapper']
       this.doneTransition = false
       if (cont) {
         const s = cont.style
 
-        s.transitionDuration = '0'
         setTimeout(() => this.doneTransition = true, 300)
-        if (this.changingViewName && !this.isDesktop) {
-          done()
-        } else {
+        if (!(this.changingViewName && !this.isDesktop)) {
+          s.transitionDuration = '0s'
           s.opacity = 0
-          s.height = '0px'
-          s.minHeight = '0px'
+          s.height = 0
+          s.minHeight = 0
           
-          setTimeout(() => {
+          requestAnimationFrame(() => {
             s.transitionDuration = '.25s'
             s.opacity = 1
             s.height = this.itemHeight + 'px'
-            done()
+            s.minHeight = this.itemHeight + 'px'
           })
           setTimeout(() => {
             s.transitionDuration = '0s'
@@ -919,12 +914,6 @@ export default {
       if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
       return str
     },
-    showCheckedIcon() {
-      if (!this.isDesktop) return this.completed
-      if (this.completed)
-        return !this.iconHover
-      return this.iconHover
-    },
     nextCalEvent() {
       const {t,c} = this.getTask
       if ((!c || c.type === 'someday') || (c.type !== 'periodic' && c.type !== 'weekly')) return null
@@ -991,7 +980,6 @@ export default {
 .Task {
   height: auto;
   user-select: none;
-  transition: opacity .15s;
   position: relative;
   z-index: 2;
 }
@@ -1187,7 +1175,7 @@ export default {
 .isTaskSelected .cont-wrapper {
   background-color: rgba(53, 73, 90, 0.6) !important;
   box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
-  transition: background-color .8s !important;
+  transition-duration: .8s;
 }
 
 .isTaskSelected.isTaskMainSelection .cont-wrapper,
@@ -1203,7 +1191,6 @@ export default {
 .sortable-ghost .cont-wrapper {
   background-color: var(--void) !important;
   transition-duration: 0;
-  transition: none;
   height: 38px;
   padding: 0;
 }
@@ -1236,16 +1223,6 @@ export default {
   opacity: .6;
 }
 
-.task-trans-leave-active {
-  transition-duration: .25s !important;
-  transition: height .25s, opacity .25s !important;
-}
-
-.task-trans-leave-active .back {
-  opacity: 0;
-  transition-delay: 0s;
-}
-
 .back {
   position: absolute;
   left: 2px;
@@ -1258,6 +1235,15 @@ export default {
   opacity: 1;
   justify-content: center;
   transition-delay: .3s;
+}
+
+.task-trans-leave-active, .task-trans-enter-active {
+  transition-duration: .25s !important;
+}
+
+.task-trans-leave-active .back {
+  opacity: 0;
+  transition-delay: 0s;
 }
 
 .task-trans-leave, .task-trans-leave .cont-wrapper {

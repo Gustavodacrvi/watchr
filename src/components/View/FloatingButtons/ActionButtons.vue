@@ -153,7 +153,7 @@ export default {
   align-items: center;
 }
 
-.TaskRenderer .task-act,
+.ListRenderer .task-act,
 .Lists .list-act,
 .Tags .tags-act {
   display: flex !important;

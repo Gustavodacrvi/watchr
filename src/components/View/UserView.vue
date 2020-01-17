@@ -12,7 +12,11 @@
       />
     </div>
     <div class="cont" :class="platform">
-      <ViewControler :isSmart="isSmart"/>
+      <ViewControler
+        :isSmart="isSmart"
+        :viewType='viewType'
+        :viewName='viewName'
+      />
     </div>
   </div>
 </template>

@@ -26,6 +26,19 @@ export default {
       getTasks({}, tasks, id) {
         return tasks.filter(el => el.list === id)
       },
+      isListCompleted: {
+        getter(c, list, moment) {
+          return utils.isItemCompleted(list, moment)
+        },
+        cache(args) {
+          let task = args[0]
+          const i = {
+            completed: task.completed,
+            calendar: task.calendar,
+          }
+          return JSON.stringify({i, a: [args[1], args[2]]})
+        },
+      }
     }),
     ...MemoizeGetters('lists', {
       getListsByName: {
@@ -158,20 +171,31 @@ export default {
 
       batch.commit()
     },
-    addList({rootState}, {name, ids, index, folderId}) {
+    addListInFolderByIndexFromView(c, {list, newItemRef, ids, folderId}) {
+      const batch = fire.batch()
+
+      batch.update(folderRef(folderId), {
+        order: ids,
+      })
+
+      list.folder = folderId
+
+      batch.set(newItemRef, list)
+
+      batch.commit()
+    },
+    addList({}, {name, ids, index, folderId}) {
       let folder = folderId
       if (!folder) folder = null
       const obj = {
         name, folder,
         smartViewsOrders: {},
         userId: uid(),
-        users: [uid()],
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         headings: [],
         headingsOrder: [],
         tasks: [],
-        ownerInfo: rootState.userInfo,
       }
       if (index === undefined && folder === null)
         userRef().collection('lists').add(obj)
@@ -204,6 +228,53 @@ export default {
 
         batch.commit()
       }
+    },
+    completeLists(c, lists) {
+      const batch = fire.batch()
+
+      for (const l of lists) {
+        let calendar = c = l.calendar || null
+        if (c && c.type !== 'someday') {
+          if (c.type === 'after completion') {
+            c.lastCompleteDate = mom().format('Y-M-D')
+          }
+          else if (c.type === 'daily' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
+            const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c)
+            c.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
+          }
+
+          if (c.times) c.times--
+          if (c.times === 0) c.times = null
+        }
+
+        batch.update(listRef(l.id), {
+          completedFire: serverTimestamp(),
+          completeDate: mom().format('Y-M-D'),
+          fullCompleteDate: mom().format('Y-M-D HH:mm ss'),
+          completed: true,
+          calendar,
+        })
+
+      }
+      
+      batch.commit()
+    },
+    uncompleteLists(c, lists) {
+      const batch = fire.batch()
+
+      for (const l of lists) {
+        const c = l.calendar
+        if (c && c.times === 0) c.times = null
+        const ref = listRef(l.id)
+        batch.update(ref, {
+          completedFire: null,
+          completeDate: null,
+          completed: false,
+          calendar: c,
+        })
+      }
+
+      batch.commit()
     },
     convertHeadingToList({state, getters}, {listId, taskIds, headingId}) {
       const list = getters.getListsById([listId])[0]

@@ -14,15 +14,15 @@
       :optionsHandle='optionsHandle'
       :viewNameValue='viewNameValue'
     />
-    <Info class="tags"
+    <Info class="tags" v-if="defer(2)"
       :headerTags='headerTags'
       :headerDates='headerDates'
       :headerCalendar='headerCalendar'
     />
-    <HeaderFiles v-if="files"
+    <HeaderFiles v-if="defer(3) && files"
       :files='files'
     />
-    <FilterTags
+    <FilterTags v-if="defer(4)"
       :tags='tags'
       :inclusivePriority='inclusivePriority'
       :exclusivePriorities='exclusivePriorities'
@@ -50,8 +50,12 @@ import HeaderFiles from './HeaderFiles.vue'
 import Info from './Info.vue'
 import HeaderBar from './Bar.vue'
 import FilterTags from './FilterTags.vue'
+import Defer from '@/mixins/defer'
 
 export default {
+  mixins: [
+    Defer(),
+  ],
   props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'headerDates', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'priorities', 'inclusiveTags', 'inclusivePriority', 'exclusivePriorities', 'inclusiveList', 'exclusiveLists', 'inclusiveFolder', 'exclusiveFolders', 'folders', 'optionsHandle', 'extraIcons'],
   components: {
     FilterTags,

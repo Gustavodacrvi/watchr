@@ -29,14 +29,21 @@ export default {
           return fold.tasks
         return []
       },
-      getListsByFolderId({state, rootGetters}, {id, lists}) {
-        const arr = []
-        const fold = state.folders.find(f => f.id === id)
-        for (const l of lists)
-          if (l.folder && l.folder === id) arr.push(l)
-        let order = fold.order
-        if (!order) order = []
-        return rootGetters.checkMissingIdsAndSortArr(order, arr)
+      getListsByFolderId: {
+        react: [
+          'order'
+        ],
+        getter({state, rootGetters}, {id, lists}) {
+          const arr = []
+          const fold = state.folders.find(f => f.id === id)
+          for (const l of lists)
+            if (l.folder && l.folder === id) arr.push(l)
+          let order = fold.order
+          if (!order) order = []
+          return rootGetters.checkMissingIdsAndSortArr(order, 
+            arr.filter(l => !utils.isItemCompleted(l))
+          )
+        },
       },
       getFoldersByName: {
         react: [

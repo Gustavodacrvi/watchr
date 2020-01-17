@@ -6,67 +6,75 @@ import mom from 'moment'
 import { pipeBooleanFilters } from '@/utils/memo'
 
 export default {
-  methods: {
-    addTask(obj) {
-      if (this.isSmartOrderViewType) {
-        this.$store.dispatch('list/addTaskByIndexSmart', {
-          ...obj, list: this.viewName,
-        })
-      } else {
-        this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
-          ...obj, date: this.getCalendarOrderDate,
-          ids: utilsTask.concatArraysRemovingOldEls(this.getCurrentScheduleTasksOrder, obj.ids),
-        })
-      }
-    },
-    rootFallbackTask(task) {
-      return task
-    },
-    mainFallbackTask(task, force) {
-      if (this.viewName === 'Calendar') {
-        const date = this.calendarDate
-  
-        if (force || !task.calendar)
-          task.calendar = {
-            type: 'specific',
-            begins: date,
-            editDate: date,
-            specific: date,
-          }
-      } else {
-        let calendar = null
-
-        if (force || !task.calendar) {
-          calendar = this.getCalObjectByView(this.viewName, task.calendar)
-          task.calendar = calendar
+  computed: {
+    addTask() {
+      return obj => {
+        if (this.isSmartOrderViewType) {
+          this.$store.dispatch('list/addTaskByIndexSmart', {
+            ...obj, list: this.viewName,
+          })
+        } else {
+          this.$store.dispatch('list/addTaskByIndexCalendarOrder', {
+            ...obj, date: this.getCalendarOrderDate,
+            ids: utilsTask.concatArraysRemovingOldEls(this.getCurrentScheduleTasksOrder, obj.ids),
+          })
         }
       }
-
-      if (task.calendar === undefined)
-        task.calendar = null
-      return task
     },
+    rootFallbackItem() {
+      return task => task
+    },
+    mainFallbackItem() {
+      return (task, force) => {
+        if (this.viewName === 'Calendar') {
+          const date = this.calendarDate
     
-    updateIds(ids) {
-      if (this.isSmartOrderViewType) {
-        this.$store.dispatch('list/updateViewOrder', {
-          view: this.viewName,
-          ids,
-        })
-      } else {
-        this.$store.dispatch('task/saveCalendarOrder', {
-          ids: utilsTask.concatArraysRemovingOldEls( this.getCurrentScheduleTasksOrder, ids),
-          date: this.getCalendarOrderDate,
-        })
+          if (force || !task.calendar)
+            task.calendar = {
+              type: 'specific',
+              begins: date,
+              editDate: date,
+              specific: date,
+            }
+        } else {
+          let calendar = null
+  
+          if (force || !task.calendar) {
+            calendar = this.getCalObjectByView(this.viewName, task.calendar)
+            task.calendar = calendar
+          }
+        }
+  
+        if (task.calendar === undefined)
+          task.calendar = null
+        return task
       }
     },
-    saveSchedule(schedule) {
-      if (!this.isCalendarOrderViewType) {
-        localStorage.setItem('schedule_' + this.viewName, JSON.stringify(schedule))
-      } else {
-        this.$store.dispatch('task/saveSchedule', {
-          schedule, date: this.getCalendarOrderDate,
-        })
+    
+    updateIds() {
+      return ids => {
+        if (this.isSmartOrderViewType) {
+          this.$store.dispatch('list/updateViewOrder', {
+            view: this.viewName,
+            ids,
+          })
+        } else {
+          this.$store.dispatch('task/saveCalendarOrder', {
+            ids: utilsTask.concatArraysRemovingOldEls( this.getCurrentScheduleTasksOrder, ids),
+            date: this.getCalendarOrderDate,
+          })
+        }
+      }
+    },
+    saveSchedule() {
+      return schedule => {
+        if (!this.isCalendarOrderViewType) {
+          localStorage.setItem('schedule_' + this.viewName, JSON.stringify(schedule))
+        } else {
+          this.$store.dispatch('task/saveSchedule', {
+            schedule, date: this.getCalendarOrderDate,
+          })
+        }
       }
     },
     removeRepeat() {},
@@ -76,43 +84,47 @@ export default {
     removeDeferDate() {},
     saveNotes() {},
     addHeading() {},
-    onSortableAdd(evt, taskIds, type, ids) {
-      if (this.isSmartOrderViewType)
-        this.$store.dispatch('list/removeTasksFromSmartViewHeading', {
-          taskIds, view: this.viewName, ids,
-        })
-      else {
-        this.$store.dispatch('list/removeTasksFromSmartViewCalendarHeading', {
-          taskIds, ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.getCurrentScheduleTasksOrder || []),
-          date: this.getCalendarOrderDate,
-        })
+    onSortableAdd() {
+      return (evt, taskIds, type, ids) => {
+        if (this.isSmartOrderViewType)
+          this.$store.dispatch('list/removeTasksFromSmartViewHeading', {
+            taskIds, view: this.viewName, ids,
+          })
+        else {
+          this.$store.dispatch('list/removeTasksFromSmartViewCalendarHeading', {
+            taskIds, ids: utilsTask.getFixedIdsFromNonFilteredAndFiltered(ids, this.getCurrentScheduleTasksOrder || []),
+            date: this.getCalendarOrderDate,
+          })
+        }
       }
     },
-  },
-  computed: {
+    
+    
     updateHeadingIds() {
-      if (this.isSmartOrderViewType)
+      return () => {
+        if (this.isSmartOrderViewType)
+          return ids => {
+              this.$store.dispatch('list/updateHeadingsViewOrder', {
+              view: this.viewName,
+              ids,
+            })
+          }
+        
         return ids => {
-            this.$store.dispatch('list/updateHeadingsViewOrder', {
-            view: this.viewName,
+          this.$store.dispatch('list/updateHeadingsCalendarOrder', {
+            date: this.calendarDate,
             ids,
           })
         }
-      
-      return ids => {
-        this.$store.dispatch('list/updateHeadingsCalendarOrder', {
-          date: this.calendarDate,
-          ids,
-        })
+  
+        return null
       }
-
-      return null
     },
+
     viewNameValue() {
       if (this.viewType === 'search') return this.l["Search"]
       if (this.isSmart) return this.l[this.viewName]
     },
-
     mainFilter() {
       const n = this.viewName
       if (this.viewType === 'search')
@@ -125,8 +137,8 @@ export default {
         return task => task.calendar
       if (this.isSmart && this.notHeadingHeaderView) {
         if (n === 'Today' && this.hasOverdueTasks)
-          return task => this.isTaskInView(task, 'Overdue') ||
-                        this.isTaskInView(task, 'Today')
+           return task => this.isTaskInView(task, 'Overdue') ||
+                         this.isTaskInView(task, 'Today')
         return task => this.isTaskInView(task, n)
       }
       return this.isTaskCompleted
@@ -177,21 +189,22 @@ export default {
     headings() {
       if (this.isCalendarOrderViewType && this.ungroupTasksInHeadings) 
         return []
+      const heads = this.getListHeadingsByView
       switch (this.viewName) {
         case 'Upcoming': return this.upcomingHeadingsOptions
         case 'Today': {
           if (this.hasOverdueTasks) return this.todayHeadingsOptions
-          return this.getListHeadingsByView('Today')
+          return heads
         }
-        case 'Tomorrow': return this.getListHeadingsByView('Tomorrow')
+        case 'Tomorrow': return heads
         case 'Someday': {
-          return this.getListHeadingsByView('Someday')
+          return heads
         }
         case 'Anytime': {
-          return this.getListHeadingsByView('Anytime')
+          return heads
         }
         case 'Calendar': {
-          return this.getListHeadingsByView('Calendar')
+          return heads
         }
         case 'Completed': {
           return this.completedHeadingsOptions

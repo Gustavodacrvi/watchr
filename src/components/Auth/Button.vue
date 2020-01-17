@@ -64,11 +64,26 @@ export default {
   width: unset;
   padding: 10px;
   color: var(--gray);
-  transform: scale(1,1);
   transition-duration: .15s;
+  transform: scale(1,1);
 }
 
-.dark:active, .card:active {
+.no-padding {
+  display: inline-block;
+  transform: scale(1,1);
+  padding: 2px;
+  margin-top: 12px;
+  margin-left: 6px;
+  width: unset;
+  transition-duration: .15s;
+  color: var(--gray);
+}
+
+.no-padding:hover {
+  color: var(--white);
+}
+
+.dark:active, .card:active, .no-padding:active {
   transform: scale(.9,.9);
 }
 
