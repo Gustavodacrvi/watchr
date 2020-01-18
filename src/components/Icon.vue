@@ -1,6 +1,6 @@
 <template>
   <div class="Icon">
-    <span v-if="getIcon"
+    <span v-if="getIcon || hasProgress"
       class="icon remove-highlight"
       :class="[{hideShadow: !shadow}, platform]"
       :style="{width: getWidth, color, filter: `drop-shadow(0 0 ${isDesktop ? 20 : 10}px ${color})`}"
@@ -12,6 +12,12 @@
       <svg v-if="!hasProgress" :viewBox="getIcon.viewBox">
         <use :xlink:href="`#${getIcon.id}`"/>
       </svg>
+      <div v-else-if="icon === 'pie-someday'" class="pie-wrapper" :style='outlineStyle'>
+        <svg class="svg" viewBox="0 0 18.375 18.375">
+          <circle fill="none" stroke="currentColor" stroke-width='1.5px' cx="50%" cy="50%" r="8.688" stroke-dasharray="2.7713,2.7713" />
+          <circle class="pie" :stroke-dasharray="`${getProgress} 100`" fill="none" stroke="currentColor" stroke-width='6' cx="50%" cy="50%" r="3"/>
+        </svg>
+      </div>
       <div v-else class="pie-wrapper" :style='outlineStyle'>
         <svg class="svg" viewBox="0 0 18.375 18.375">
           <circle fill="none" stroke="currentColor" stroke-width='1.5px' cx="50%" cy="50%" r="8.688" />

@@ -317,6 +317,11 @@ export default {
             this.$emit('someday')
             break
           }
+          case 'p': {
+            if (fallbackTasks && fallbackTasks.length === 1)
+              this.$store.dispatch('pomo/toggle', {task: this.getTasksById(fallbackTasks)[0], stopToggle: true})
+            break
+          }
           case 's': {
             if (fallbackTasks) {
               p()

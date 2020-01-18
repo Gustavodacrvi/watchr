@@ -680,10 +680,10 @@ export default {
   left: 0;
   bottom: 0;
   height: 40px;
-  width: 338px;
+  width: 397px;
   background-color: var(--back-color);
   border: none;
-  margin-left: 32px;
+  margin-left: 12px;
   box-shadow: 0 -3px 4px var(--back-color);
 }
 
@@ -786,7 +786,7 @@ export default {
 
 .drop {
   position: absolute;
-  right: 0;
+  right: 17px;
   display: flex;
   transform: translate(16px, 10px);
 }

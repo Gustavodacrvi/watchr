@@ -258,6 +258,9 @@ export default {
           this.$router.push({ path: '/user?list=' + list.name })
         }
         list.options = utilsList.listOptions(list)
+        list.iconClick = () => {
+          this.$store.dispatch('list/completeLists', [list])
+        }
       }
       return lists.map(t => t)
     },

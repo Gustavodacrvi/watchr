@@ -100,6 +100,7 @@ export default {
         s.overflow = 'hidden'
         s.backgroundColor = 'var(--back-color)'
         s.boxShadow = '0 0 0 #000'
+        s.height = '0px'
       })
     },
     select(val) {

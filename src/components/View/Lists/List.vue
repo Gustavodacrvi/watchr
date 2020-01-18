@@ -19,13 +19,13 @@
         <div class="cont">
           <div @click.stop="completeList" class="icon-wrapper">
             <Icon v-if="!completed" class="progress-icon cursor remove-highlight"
-              icon='pie'
+              :icon='progressIcon'
               width='15px'
               :progress='getListProgress'
               color='var(--gray)'
             />
             <Icon v-else class="progress-icon cursor remove-highlight"
-              icon='circle-check'
+              :icon='circleIcon'
               width='22px'
               color='var(--gray)'
             />
@@ -151,6 +151,12 @@ export default {
     }),
     completed() {
       return this.isListCompleted(this.item)
+    },
+    progressIcon() {
+      return this.isSomeday ? 'pie-someday' : 'pie'
+    },
+    circleIcon() {
+      return this.isSomeday ? 'circle-check-dash' : 'circle-check'
     },
     isSomeday() {
       return this.isListSomeday(this.item)

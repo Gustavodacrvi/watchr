@@ -27,6 +27,7 @@
             :icon="icon"
             :progress='progress'
             :circle='true'
+            @click='clickIcon'
           />
         </div>
         <div class="name-wrapper">
@@ -98,7 +99,7 @@ import utils from '@/utils/'
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
-  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'string', 'onSubTagSortableAdd', 'onSubTagAdd', 'selectedtype', 'showColor', 'subList', 'mapSubTagNumbers', 'onSubTagUpdate'],
+  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'string', 'onSubTagSortableAdd', 'onSubTagAdd', 'selectedtype', 'showColor', 'subList', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick'],
   components: {
     Renderer: () => import('./Renderer.vue'),
     Icon: IconVue,
@@ -201,7 +202,13 @@ export default {
         this.$emit('apply', {type: this.selectedtype || this.type, tasks: this.selectedTasks})
         this.$store.commit('clearSelected')
       }
-    }
+    },
+    clickIcon(evt) {
+      if (this.iconClick) {
+        this.iconClick()
+        evt.stopPropagation()
+      }
+    },
   },
   computed: {
     ...mapState({
