@@ -783,7 +783,7 @@ export default {
           for (const t of task.checklist) {
             const ref = taskRef(t.id)
             batch.set(ref, {
-              folder,
+              folder: null,
               userId: uid(),
               name: t.name,
               priority: '',
@@ -798,6 +798,7 @@ export default {
           }
   
         batch.set(list, {
+          folder,
           userId: uid(),
           users: [uid()],
           smartViewsOrders: {},

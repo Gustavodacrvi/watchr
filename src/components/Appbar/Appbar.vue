@@ -1,9 +1,13 @@
 <template>
-  <div class="Appbar-wrapper" :class="{platform, 'scroll-thin': isDesktop}">
+  <div class="Appbar-wrapper"
+    :class="[platform, {'scroll-thin': isDesktop}]"
+  >
     <div class="margin-wrapper">
-      <div v-if="isDesktop" class="back-layer" :class="{showing}"></div>
-      <div class="Appbar" :class='platform'>
-    </div>
+      <div v-if="isDesktop"
+        class="back-layer"
+        :class="{showing}"
+        :style="{width}"
+      ></div>
       <div class="inner-wrapper">
         <div>
           <div class="search-shadow" @mouseenter="showSearch" @mouseleave="hideSearch"></div>
@@ -86,7 +90,7 @@
           </transition>
         </div>
         <div v-if="isDesktop" style="height: 35px;"></div>
-        <div class="footer" :class="[platform, {showing}]">
+        <div class="footer" :class="[platform, {showing}]" :style="{width}">
           <div class="inner-footer">
             <div class="drop">
               <transition name="icon-t">
@@ -128,7 +132,7 @@ import utilsFolder from '@/utils/folder'
 import { userRef } from '@/utils/firestore'
 
 export default {
-  props: ['value', 'appbarHided'],
+  props: ['value', 'width', 'appbarHided'],
   components: {
     Icon: IconVue,
     AppbarElement: AppbarElementVue,
@@ -668,11 +672,14 @@ export default {
 
 .Appbar-wrapper {
   height: 100%;
-  margin: 0 12px;
+}
+
+.Appbar-wrapper.desktop::-webkit-scrollbar {
+  display: none;
 }
 
 .Appbar-wrapper.desktop {
-  padding-left: 22px;
+  padding: 0 25px;
 }
 
 .footer {
@@ -680,16 +687,8 @@ export default {
   left: 0;
   bottom: 0;
   height: 40px;
-  width: 397px;
-  background-color: var(--back-color);
   border: none;
-  margin-left: 12px;
-  box-shadow: 0 -3px 4px var(--back-color);
-}
-
-.footer.showing.desktop {
-  background-color: var(--appnav-color);
-  box-shadow: 0 -3px 4px var(--appnav-color);
+  padding: 0 25px;
 }
 
 .footer.mobile {
@@ -697,7 +696,10 @@ export default {
   height: 53px;
   width: 100%;
   margin-left: 0;
-  background-color: var(--dark);
+  padding: 0;
+}
+
+.mobile .inner-footer {
   box-shadow: 0 -3px 4px var(--dark);
 }
 
@@ -719,7 +721,6 @@ export default {
   left: 0;
   top: 0;
   height: 100%;
-  width: 450px;
   border-top-right-radius: 50px;
   border-bottom-right-radius: 50px;
   transition-duration: .3s;
@@ -776,12 +777,24 @@ export default {
 
 #appbar-arrow.hided {
   transform: translateY(5px) rotate(-90deg);
-  left: -30px;
 }
 
 .inner-footer {
   position: relative;
+  background-color: none;
+  box-shadow: none;
+  transition-duration: 0;
   height: 100%;
+}
+
+.showing .inner-footer {
+  background-color: var(--appnav-color);
+  box-shadow: 0 -3px 4px var(--appnav-color);
+}
+
+.mobile .showing .inner-footer {
+  background-color: var(--back-color);
+  box-shadow: 0 -3px 4px var(--back-color);
 }
 
 .drop {
@@ -792,7 +805,7 @@ export default {
 }
 
 .footer.mobile .drop {
-  right: 0;
+  right: unset;
   bottom: 24px;
 }
 

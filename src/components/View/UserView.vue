@@ -1,12 +1,19 @@
 
 <template>
   <div class="UserView" :class="[{appbarHided}, platform]">
-    <div v-if="isDesktop" class="nav-shadow"></div>
-    <div v-if="isDesktop" class="nav" :style="getNavTopPosition">
+    <div v-if="isDesktop"
+      class="nav-shadow"
+      :style="{width: navWidth, maxWidth: navWidth, flexBasis: navWidth}"
+    ></div>
+    <div v-if="isDesktop"
+      class="nav"
+      :style="[getNavTopPosition, {width: navWidth}]"
+    >
       <Appbar class="Appbar"
         :value="viewName"
         :view-type="viewType"
         :appbarHided='appbarHided'
+        :width='navWidth'
         @appbar="toggleAppbar"
         @section="v => section = v"
       />
@@ -38,6 +45,7 @@ export default {
     return {
       appbarHided: false,
       scrollTop: null,
+      width: 700,
     }
   },
   created() {
@@ -92,6 +100,9 @@ export default {
       }
       return false
     },
+    navWidth() {
+      return this.width + 'px'
+    },
   },
 }
 
@@ -100,7 +111,7 @@ export default {
 <style scoped>
 
 .UserView {
-  margin: 8px 10px;
+  margin: 8px 0;
   margin-right: 0;
   display: flex;
   justify-content: center;
@@ -113,8 +124,6 @@ export default {
 }
 
 .nav-shadow {
-  flex-basis: 425px;
-  max-width: 425px;
   flex-grow: 0;
   flex-shrink: 0;
   transition-duration: .6s;
@@ -123,8 +132,7 @@ export default {
 
 .nav {
   position: fixed;
-  width: 425px;
-  left: 15px;
+  left: 0;
   z-index: 4;
 }
 
@@ -138,14 +146,14 @@ export default {
 }
 
 .appbarHided .nav-shadow {
-  flex-basis: 0;
-  max-width: 0;
+  flex-basis: 0 !important;
+  max-width: 0 !important;
   transition-delay: .6s;
   transition-duration: .6s;
 }
 
 .appbarHided .cont {
-  flex-basis: 925px;
+  flex-basis: 925px !important;
   flex-grow: 0;
   margin-left: 0;
 }
