@@ -82,7 +82,7 @@ export default {
         
         if (c.type === 'after completion') {
           const lastComplete = c.lastCompleteDate ? mom(c.lastCompleteDate, 'Y-M-D') : begins
-          if (!c.lastCompleteDate && begins.isSameOrBefore(tod, 'day')) return true
+          if (!c.lastCompleteDate && begins.isSame(tod, 'day')) return true
           
           const dayDiff = tod.diff(lastComplete, 'days')
           if (dayDiff < 0) return false

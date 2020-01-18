@@ -49,6 +49,7 @@ export default {
           overflow: true,
         },
         content: {
+          disableDaily: this.content.disableDaily,
           callback: this.selectDate,
         },
       })

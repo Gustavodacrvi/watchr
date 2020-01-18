@@ -4,6 +4,7 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from "@/utils/task"
+import utilsMoment from "@/utils/moment"
 import MemoizeGetters from './memoFunctionGetters'
 import { listRef, userRef, uid, listColl, taskRef, serverTimestamp, fd, addTask, folderRef } from '../utils/firestore'
 import router from '../router'
@@ -40,12 +41,6 @@ export default {
             const last = mom(c.lastCompleteDate, 'Y-M-D')
             const dayDiff = tod.diff(last, 'days')
             return dayDiff < c.afterCompletion
-          }
-          if (c.type === 'daily') {
-            const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
-            const diff = tod.diff(lastComplete, 'days')
-            return lastComplete.isSameOrAfter(tod, 'day') ||
-                    diff < c.daily
           }
       
           if (c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly' || c.type === 'yearly') {
@@ -94,56 +89,16 @@ export default {
             if (!c.lastCompleteDate && begins.isSameOrBefore(tod, 'day')) return true
             
             const dayDiff = tod.diff(lastComplete, 'days')
-            console.log(dayDiff)
             if (dayDiff < 0) return false
-            const eventNotToday = dayDiff % c.afterCompletion !== 0
+            const eventNotToday = dayDiff < c.afterCompletion
             if (eventNotToday) return false
           }
           
-          if (c.type === 'daily') {
-            const dayDiff = tod.diff(begins, 'days')
-            if (dayDiff < 0) return false
-            const eventNotToday = dayDiff % c.daily !== 0
-            if (eventNotToday) return false
-          }
-          if (c.type === 'weekly') {
-            const dayOfTheWeek = parseInt(tod.format('d'), 10)
-            if (!c.weekly.days.includes(dayOfTheWeek))
-            return false
-            
-            const weekDiff = tod.diff(begins.startOf('week'), 'weeks')
-            if (weekDiff < 0) return false
-            const eventNotToday = weekDiff % c.weekly.every !== 0
-            if (eventNotToday) return false
-          }
-          if (c.type === 'monthly') {
-            const monthDiff = tod.diff(begins.startOf('month'), 'months')
-            if (monthDiff < 0) return false
-            const eventNotToday = monthDiff % c.monthly.every !== 0
-            if (eventNotToday) return false
-  
-            const next = utilsMoment.getNextMonthlyDate(c, tod.clone().subtract(1, 'd'))
-  
-            if (!next.isSame(tod, 'day')) return false
-          }
-          if (c.type === 'yearly') {
-            const month = tod.month() + 1
-            if (!c.yearly.months.includes(month))
-              return false
-            
-            const yearDiff = tod.diff(begins.startOf('year'), 'years')
-            if (yearDiff < 0) return false
-            const eventNotToday = yearDiff % c.yearly.every !== 0
-            if (eventNotToday) return false
-  
-            const next = utilsMoment.getNextMonthlyDate({
-              monthly: {...c.yearly, every: 1}, begins: c.begins
-            }, tod.clone().subtract(1, 'd'))
-  
-            if (!next.isSame(tod, 'day')) return false
-          }
-  
-  
+          if (c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
+            return tod.isSameOrAfter(
+              utilsMoment.getNextEventAfterCompletionDate(c)
+              , 'day')
+          }  
   
           return true
         },
@@ -430,7 +385,7 @@ export default {
           if (c.type === 'after completion') {
             c.lastCompleteDate = mom().format('Y-M-D')
           }
-          else if (c.type === 'daily' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
+          else if (c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
             const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c)
             c.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
           }

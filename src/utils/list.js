@@ -160,7 +160,7 @@ export default {
             id: 'çljkasdf',
             callback: () => {return {
               comp: "CalendarPicker",
-              content: {repeat: true, callback: saveCalendarDate}}},
+              content: {repeat: true, disableDaily: true, callback: saveCalendarDate}}},
           },
         ]
       },
