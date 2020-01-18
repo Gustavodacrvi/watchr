@@ -32,7 +32,9 @@
         </div>
         <div class="name-wrapper">
           <transition name="name-t">
-            <span v-if="!showSpecialInfo" key="normal" class="name" :style="hoverStyle">{{ getName }}</span>
+            <span v-if="!showSpecialInfo" key="normal" class="name" :style="hoverStyle">
+              {{ getName }}
+            </span>
             <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
           </transition>
           <div class="info">
@@ -293,13 +295,28 @@ export default {
 .icon-wrapper {
   height: 100%;
   width: 40px;
+  flex-shrink: 0;
   position: relative;
 }
 
 .name-wrapper {
+  position: relative;
   height: 100%;
-  display: inline-flex;
+  flex-basis: 100%;
+  display: flex;
   align-items: center;
+}
+
+.name {
+  max-width: 100%;
+  position: absolute;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  transition-duration: .15s;
+  transform: translateY(0px);
 }
 
 .main-icon {
@@ -326,20 +343,11 @@ export default {
   display: flex;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .mobile .link-wrapper {
   height: 42px;
-}
-
-.name {
-  transition-duration: .15s;
-  max-width: 230px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  transform: translateY(0px);
 }
 
 .AppbarElement {

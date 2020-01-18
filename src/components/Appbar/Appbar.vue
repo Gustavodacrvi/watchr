@@ -2,6 +2,7 @@
   <div class="Appbar-wrapper"
     :class="[platform, {'scroll-thin': isDesktop}]"
   >
+    <div class="appnav-handle"></div>
     <div class="margin-wrapper">
       <div v-if="isDesktop"
         class="back-layer"
@@ -649,6 +650,16 @@ export default {
   width: 100%;
   position: absolute;
   height: 35px;
+}
+
+.appnav-handle {
+  background-color: var(--card);
+  width: 10px;
+  height: 50px;
+  position: fixed;
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%);
 }
 
 .appbar-content {
