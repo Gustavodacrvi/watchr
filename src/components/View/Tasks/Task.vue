@@ -1109,15 +1109,6 @@ export default {
   position: relative;
 }
 
-.task-name-wrapper {
-  max-width: 100%;
-  position: absolute;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transform: translateY(-1px);
-}
-
 .task-name {
   padding-left: 4px;
 }
@@ -1131,6 +1122,15 @@ export default {
   align-items: center;
   flex-basis: 100%;
   margin-left: 35px;
+}
+
+.task-name-wrapper {
+  max-width: 100%;
+  position: absolute;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: translateY(-1px);
 }
 
 .check-drop {

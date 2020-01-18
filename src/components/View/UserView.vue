@@ -1,17 +1,32 @@
 
 <template>
-  <div class="UserView" :class="[{appbarHided}, platform]">
-    <div v-if="isDesktop" class="nav-shadow"></div>
-    <div v-if="isDesktop" class="nav" :style="getNavTopPosition">
+  <div class="UserView" :class="[{appbarHided}, platform]"
+    @pointerup='pointerup'
+    @pointermove='handlePointermove'
+  >
+    <div v-if="isDesktop"
+      class="nav-shadow"
+      :class="{pressingHandle}"
+      :style="{width: navWidth, maxWidth: navWidth, flexBasis: navWidth}"
+    ></div>
+    <div v-if="isDesktop"
+      class="nav"
+      :class="{pressingHandle}"
+      :style="[getNavTopPosition, {width: navWidth}]"
+    >
       <Appbar class="Appbar"
         :value="viewName"
+        :pressingHandle='pressingHandle'
         :view-type="viewType"
         :appbarHided='appbarHided'
+        :width='navWidth'
         @appbar="toggleAppbar"
         @section="v => section = v"
+
+        @handle-pointerdown='pointerdown'
       />
     </div>
-    <div class="cont" :class="platform">
+    <div class="cont" :class="[platform, {pressingHandle}]">
       <ViewControler
         :isSmart="isSmart"
         :viewType='viewType'
@@ -38,13 +53,35 @@ export default {
     return {
       appbarHided: false,
       scrollTop: null,
+      width: 450,
+
+      pressingHandle: false,
+      handleStart: 0,
     }
   },
   created() {
     this.getScrollTop()
     window.addEventListener('scroll', this.getScrollTop)
+
+    const savedWidth = localStorage.getItem('watchr_menu_width')
+    if (savedWidth !== null)
+      this.width = parseInt(savedWidth, 10)
   },
   methods: {
+    handlePointermove(evt) {
+      if (this.pressingHandle) {
+        this.width += evt.screenX - this.handleStart
+        localStorage.setItem('watchr_menu_width', this.width)
+        this.handleStart = evt.screenX
+      }
+    },
+    pointerdown(evt) {
+      this.pressingHandle = true
+      this.handleStart = evt.screenX
+    },
+    pointerup() {
+      this.pressingHandle = false
+    },
     getScrollTop() {
       this.scrollTop = window.scrollY
     },
@@ -92,6 +129,9 @@ export default {
       }
       return false
     },
+    navWidth() {
+      return this.width + 'px'
+    },
   },
 }
 
@@ -100,7 +140,7 @@ export default {
 <style scoped>
 
 .UserView {
-  margin: 8px 10px;
+  margin: 8px 0;
   margin-right: 0;
   display: flex;
   justify-content: center;
@@ -113,8 +153,6 @@ export default {
 }
 
 .nav-shadow {
-  flex-basis: 425px;
-  max-width: 425px;
   flex-grow: 0;
   flex-shrink: 0;
   transition-duration: .6s;
@@ -123,8 +161,7 @@ export default {
 
 .nav {
   position: fixed;
-  width: 425px;
-  left: 15px;
+  left: 0;
   z-index: 4;
 }
 
@@ -138,16 +175,21 @@ export default {
 }
 
 .appbarHided .nav-shadow {
-  flex-basis: 0;
-  max-width: 0;
+  flex-basis: 0 !important;
+  max-width: 0 !important;
   transition-delay: .6s;
   transition-duration: .6s;
 }
 
 .appbarHided .cont {
-  flex-basis: 925px;
+  flex-basis: 925px !important;
   flex-grow: 0;
   margin-left: 0;
+}
+
+.pressingHandle {
+  transition: none !important;
+  transition-duration: 0s !important;
 }
 
 </style>
