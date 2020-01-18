@@ -12,15 +12,15 @@
       <svg v-if="!hasProgress" :viewBox="getIcon.viewBox">
         <use :xlink:href="`#${getIcon.id}`"/>
       </svg>
-      <div v-else-if="icon === 'pie'" class="pie-wrapper" :style='outlineStyle'>
+      <div v-else-if="icon === 'pie-someday'" class="pie-wrapper" :style='outlineStyle'>
         <svg class="svg" viewBox="0 0 18.375 18.375">
-          <circle fill="none" stroke="currentColor" stroke-width='1.5px' cx="50%" cy="50%" r="8.688" />
+          <circle fill="none" stroke="currentColor" stroke-width='1.5px' cx="50%" cy="50%" r="8.688" stroke-dasharray="2.7713,2.7713" />
           <circle class="pie" :stroke-dasharray="`${getProgress} 100`" fill="none" stroke="currentColor" stroke-width='6' cx="50%" cy="50%" r="3"/>
         </svg>
       </div>
       <div v-else class="pie-wrapper" :style='outlineStyle'>
         <svg class="svg" viewBox="0 0 18.375 18.375">
-          <circle fill="none" stroke="currentColor" stroke-width='1.5px' cx="50%" cy="50%" r="8.688" stroke-dasharray="2.7713,2.7713" />
+          <circle fill="none" stroke="currentColor" stroke-width='1.5px' cx="50%" cy="50%" r="8.688" />
           <circle class="pie" :stroke-dasharray="`${getProgress} 100`" fill="none" stroke="currentColor" stroke-width='6' cx="50%" cy="50%" r="3"/>
         </svg>
       </div>

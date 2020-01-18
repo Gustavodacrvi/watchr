@@ -668,7 +668,7 @@ export default {
       return el.getElementsByClassName('cont-wrapper')[0]
     },
     keydown({key}) {
-      if (!this.header) {
+      if (!this.header && this.comp !== 'List') {
         const active = document.activeElement
         const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
         if (!isTyping && !this.isOnControl) {
@@ -678,7 +678,7 @@ export default {
             this.addEditComp(0)
           if (this.viewType === 'list') {
             if (key === 'h')
-              this.addHeadingsEdit(this.lazyHeadings.length)
+              this.addHeadingsEdit(this.lazyItems.length)
             else if (key === 'H')
               this.addHeadingsEdit(0)
           }

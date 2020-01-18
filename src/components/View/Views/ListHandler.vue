@@ -182,11 +182,3 @@ export default {
 }
 
 </script>
-
-<style scoped>
-
-.ListHandler {
-  margin-top: 10px;
-}
-
-</style>
