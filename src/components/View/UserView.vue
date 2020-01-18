@@ -53,7 +53,7 @@ export default {
     return {
       appbarHided: false,
       scrollTop: null,
-      width: 700,
+      width: 450,
 
       pressingHandle: false,
       handleStart: 0,
@@ -62,11 +62,16 @@ export default {
   created() {
     this.getScrollTop()
     window.addEventListener('scroll', this.getScrollTop)
+
+    const savedWidth = localStorage.getItem('watchr_menu_width')
+    if (savedWidth !== null)
+      this.width = parseInt(savedWidth, 10)
   },
   methods: {
     handlePointermove(evt) {
       if (this.pressingHandle) {
         this.width += evt.screenX - this.handleStart
+        localStorage.setItem('watchr_menu_width', this.width)
         this.handleStart = evt.screenX
       }
     },
