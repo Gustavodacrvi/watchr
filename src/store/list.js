@@ -10,6 +10,8 @@ import router from '../router'
 
 import mom from 'moment'
 
+const TOD_STR = mom().format('Y-M-D')
+
 export default {
   namespaced: true,
   state: {
@@ -39,6 +41,97 @@ export default {
           return JSON.stringify({i, a: [args[1], args[2]]})
         },
       },
+      isListShowingOnDate: {
+        getter({}, list, date) {
+          if (!utilsTask.hasCalendarBinding(list) || list.calendar.type === 'someday')
+            return true
+          
+          const c = list.calendar
+  
+          // specific
+          const tod = mom(date, 'Y-M-D')
+          if (c.type === 'specific') {
+            const specific = mom(c.specific, 'Y-M-D')
+
+            return specific.isSameOrBefore(tod, 'day')
+          }
+  
+          const begins = mom(c.begins, 'Y-M-D')
+  
+          if (c.ends) {
+            if (c.ends.type === 'on date' && tod.isAfter(mom(c.ends.onDate, 'Y-M-D'), 'day'))
+              return false
+            else if (c.ends.times === null)
+              return false
+          }
+          if (c.begins && begins.isAfter(tod, 'day'))
+            return false
+          
+          if (c.type === 'after completion') {
+            const lastComplete = c.lastCompleteDate ? mom(c.lastCompleteDate, 'Y-M-D') : begins
+            if (begins.isSame(tod, 'day')) return true
+            
+            const dayDiff = tod.diff(lastComplete, 'days')
+            if (dayDiff < 0) return false
+            const eventNotToday = dayDiff % c.afterCompletion !== 0
+            if (eventNotToday) return false
+          }
+          
+          if (c.type === 'daily') {
+            const dayDiff = tod.diff(begins, 'days')
+            if (dayDiff < 0) return false
+            const eventNotToday = dayDiff % c.daily !== 0
+            if (eventNotToday) return false
+          }
+          if (c.type === 'weekly') {
+            const dayOfTheWeek = parseInt(tod.format('d'), 10)
+            if (!c.weekly.days.includes(dayOfTheWeek))
+            return false
+            
+            const weekDiff = tod.diff(begins.startOf('week'), 'weeks')
+            if (weekDiff < 0) return false
+            const eventNotToday = weekDiff % c.weekly.every !== 0
+            if (eventNotToday) return false
+          }
+          if (c.type === 'monthly') {
+            const monthDiff = tod.diff(begins.startOf('month'), 'months')
+            if (monthDiff < 0) return false
+            const eventNotToday = monthDiff % c.monthly.every !== 0
+            if (eventNotToday) return false
+  
+            const next = utilsMoment.getNextMonthlyDate(c, tod.clone().subtract(1, 'd'))
+  
+            if (!next.isSame(tod, 'day')) return false
+          }
+          if (c.type === 'yearly') {
+            const month = tod.month() + 1
+            if (!c.yearly.months.includes(month))
+              return false
+            
+            const yearDiff = tod.diff(begins.startOf('year'), 'years')
+            if (yearDiff < 0) return false
+            const eventNotToday = yearDiff % c.yearly.every !== 0
+            if (eventNotToday) return false
+  
+            const next = utilsMoment.getNextMonthlyDate({
+              monthly: {...c.yearly, every: 1}, begins: c.begins
+            }, tod.clone().subtract(1, 'd'))
+  
+            if (!next.isSame(tod, 'day')) return false
+          }
+  
+  
+  
+          return true
+        },
+        cache(args) {
+          return JSON.stringify({
+            task: args[0].calendar,
+            date: args[1],
+            onlySpecific: args[2],
+          })
+        },
+      },
       isListSomeday: {
         getter(c, list) {
           return list.calendar && list.calendar.type === 'someday'
@@ -47,11 +140,30 @@ export default {
           return JSON.stringify({c: args[0].calendar})
         },
       },
+      getListCalendarStr: {
+        getter({}, list, l) {
+          const c = list.calendar
+          if (!c) return null
+    
+          if (c.type === 'specific') {
+            const str = utils.getHumanReadableDate(c.specific, l)
+            if (str === 'Today') return 'Today'
+            if (str === 'Tomorrow') return 'Tomorrow'
+            return str
+          }
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].calendar,
+          })
+        },
+      },
       filterAppnavLists: {
         getter({getters}, lists) {
           return lists.filter(l =>
               !getters.isListCompleted(l) &&
-              !getters.isListSomeday(l)
+              !getters.isListSomeday(l) &&
+              getters.isListShowingOnDate(l, TOD_STR)
             )
         },
         cache(args) {

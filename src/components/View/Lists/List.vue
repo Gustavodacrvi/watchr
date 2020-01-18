@@ -44,6 +44,7 @@
               />
               <span v-if="deadlineStr" class='list-inf deadline'>{{ deadlineStr }}</span>
             </template>
+            <span v-if="calendarStr" class="list-inf">{{ calendarStr }}</span>
             <Icon v-if="isSomeday" class="progress-icon"
               icon='archive'
               width='22px'
@@ -145,12 +146,16 @@ export default {
       isListCompleted: 'list/isListCompleted',
       isListSomeday: 'list/isListSomeday',
       getListDeadlineStr: 'list/getListDeadlineStr',
+      getListCalendarStr: 'list/getListCalendarStr',
     }),
     completed() {
       return this.isListCompleted(this.item)
     },
     isSomeday() {
       return this.isListSomeday(this.item)
+    },
+    calendarStr() {
+      return this.getListCalendarStr(this.item, this.l)
     },
     deadlineStr() {
       const list = this.item
@@ -248,6 +253,7 @@ export default {
   margin-left: 4px;
   margin-right: 4px;
   font-size: .8em;
+  white-space: nowrap;
 }
 
 .icon {
