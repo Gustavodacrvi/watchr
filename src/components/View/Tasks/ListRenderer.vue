@@ -17,6 +17,7 @@
 
           :itemHeight='itemHeight'
           :item='item'
+          :selectOnClick='selectOnClick'
           :changingViewName='isChangingViewName'
           :isRoot='isRoot'
           :isSelecting='isSelecting'
@@ -80,7 +81,6 @@
       :headings='lazyHeadings'
       :isChangingViewName='isChangingViewName'
       :showHeading='showHeading'
-      :movingHeading='movingHeading'
       :headingEditOptions='headingEditOptions'
       :isSmart='isSmart'
       :comp='comp'
@@ -95,12 +95,13 @@
       :getItemFirestoreRef='getItemFirestoreRef'
       :showHeadingFloatingButton='showHeadingFloatingButton'
       :movingButton='movingButton'
+      :updateHeadingIds='updateHeadingIds'
       :itemPlaceholder='itemPlaceholder'
       :disableFallback='disableFallback'
 
       @change-time='changeTime'
       @go='moveItemHandlerSelection'
-      @add-heading='addHeading'
+      @add-heading='addHeadingFromRootHeadings'
     />
   </div>
 </template>
@@ -134,7 +135,7 @@ import utils from '@/utils/'
 
 export default {
   props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton', 'rootFilterFunction', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 
-  'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect',
+  'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
    'disableFallback'],
   components: {
     Task, Icon, ButtonVue, List, ListEdit,
@@ -150,7 +151,6 @@ export default {
       lazyHeadings: [],
       selectedElements: [],
       changedViewName: true,
-      movingHeading: false,
       waitingUpdateTimeout: null,
       changingViewName: false,
 
@@ -195,7 +195,7 @@ export default {
     changeTime(args) {
       this.$emit('change-time', args)
     },
-    addHeading(obj) {
+    addHeadingFromRootHeadings(obj) {
       this.$emit("add-heading", obj)
     },
     moveItemHandlerSelection(bool) {
@@ -347,14 +347,11 @@ export default {
     destroySortables() {
       if (this.sortable)
         this.sortable.destroy()
-      if (this.headSort)
-        this.headSort.destroy()
     },
     mountSortables() {
-      let move = null
       const obj = {
         disabled: this.disableSortableMount,
-        multiDrag: this.enableSelect,
+        multiDrag: this.enableSelect || !this.isDesktop,
         direction: 'vertical',
 
         forceFallback: true,
@@ -363,7 +360,7 @@ export default {
         delay: this.isDesktop ? 0 : 100,
         handle: '.item-handle',
         
-        group: {
+        group: this.group || {
           name: 'item-renderer',
           pull: (e,j,item) => {
             const d = item.dataset
@@ -421,14 +418,15 @@ export default {
               set.add(id)
             }
           }
+          const indicies = evt.newIndicies.map(el => el.index)
+          if (indicies.length === 0) indicies.push(evt.newIndex)
           
-
-          if (type === 'Task' && this.onSortableAdd && this.sourceVueInstance) {
+          if (type === 'Task' && this.comp === 'List') {
+            this.onSortableAdd(items, ids, indicies, this.getIds(true))
+          } else if (type === 'Task' && this.onSortableAdd && this.sourceVueInstance) {
             this.removeEdit()
             this.sourceVueInstance.removeEdit()
             
-            const indicies = evt.newIndicies.map(el => el.index)
-            if (indicies.length === 0) indicies.push(evt.newIndex)
             
             let sourceLazyTasks = this.sourceVueInstance.lazyItems
             let destinyLazyTasks = this.lazyItems
@@ -470,39 +468,28 @@ export default {
             item.remove()
           }
         },
+        onMove: (t, e) => {
+          const isTaskRender = t.to.classList.contains('item-renderer-root')
+          const isComingFromAnotherTaskRenderer = t.to !== this.draggableRoot
+
+          if (isTaskRender && isComingFromAnotherTaskRenderer) {
+            let vue = t.related.__vue__ ||
+                  t.related.parentNode.__vue__
+            while (true) {
+              if (vue.$el.classList && vue.$el.classList.contains('ListRenderer'))
+                break
+              else vue = vue.$parent
+            }
+            vue.sourceVueInstance = this
+          }
+        },
         onStart: evt => {
           window.navigator.vibrate(100)
         },
       }
       if (this.isDesktop)
-        obj['multiDragKey'] = this.getMultiDragKey
+        obj['multiDragKey'] = 'CTRL'
       this.sortable = new Sortable(this.draggableRoot, obj)
-
-      if (this.isRoot) {
-        const el = this.$el.getElementsByClassName('headings-root')[0]
-        if (el) {
-          this.headSort = new Sortable(el, {
-            disabled: !this.updateHeadingIds,
-            group: 'headings',
-            delay: 150,
-            animation: 80,
-            delayOnTouchOnly: true,
-            handle: '.handle',
-      
-            onUpdate: (evt) => {
-              const ids = this.getHeadingsIds()
-              if (this.updateHeadingIds)
-                this.updateHeadingIds(ids)
-            },
-            onStart: evt => {
-              this.movingHeading = true
-            },
-            onEnd: evt => {
-              this.movingHeading = false
-            },
-          })
-        }
-      }
     },
     slowlyAddItems(items) {
       return new Promise(solve => {
@@ -557,10 +544,11 @@ export default {
       if (name) {
         const i = this.getListRendererPosition()
         const ids = this.getIds(true)
+        const headings = this.isRoot ? this.getHeadingsIds() : this.rootHeadings
         this.$emit('add-heading', {
           ids: ids.slice(i),
           name, index: this.headingPosition,
-          headings: this.rootHeadings,
+          headings,
         })
       }
     },
@@ -773,12 +761,12 @@ export default {
       return pressingKey === 'Control' || pressingKey === 'Shift'
     },
     enableSelect() {
-      if (this.disableSelect) return true
+      if (this.disableSelect) return false
       return this.openCalendar || !this.isDesktop ||
       (this.pressingSelectKeys || (this.selected.length > 0))
     },
-    getMultiDragKey() {
-      return (this.openCalendar || this.selected.length > 0) ? null : 'CTRL'
+    selectOnClick() {
+      return (this.openCalendar || this.selected.length > 0)
     },
     isSelecting() {
       if (this.selected.length > 0 || this.openCalendar) return true
@@ -849,22 +837,17 @@ export default {
 
       if (this.sortable)
         this.sortable.options.disabled = this.disableSortableMount
-      if (this.headSort)
-        this.headSort.options.disabled = !this.updateHeadingIds
-    },
-    updateHeadingIds() {
-      if (this.headSort)
-        this.headSort.options.disabled = !this.updateHeadingIds
     },
     enableSelect() {
-      if (this.sortable) {
-        this.sortable.options.multiDrag = this.enableSelect
-        this.sortable.options.multiDragKey = this.getMultiDragKey
-        if (this.isDesktop) {
-          if (this.enableSelect)
-            this.sortable.options.delay = 50
-          else this.sortable.options.delay = 0
-        }
+      if (this.sortable && this.isDesktop) {
+        setTimeout(() => {
+          this.sortable.options.multiDrag = this.enableSelect
+          if (this.isDesktop) {
+            if (this.enableSelect)
+              this.sortable.options.delay = 50
+            else this.sortable.options.delay = 0
+          }
+        })
       }
     },
   }

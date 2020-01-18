@@ -6,10 +6,9 @@
     <div v-show="content" class="header-info rb"
       @mouseenter="hover = true"
       @mouseleave="hover = false"
-      @click="$emit('click')"
+      @click.stop
     >
       <Icon class="mg faded" :icon="icon"/>
-      <span v-if="hover" class="mg faded">{{ info }}</span>
       <span class="mg">{{ content }}</span>
       <span class="mg"></span>
       <span class="faded">{{ left }}</span>
@@ -21,8 +20,10 @@
 
 import Icon from '@/components/Icon.vue'
 
+import utils from '@/utils'
+
 export default {
-  props: ['content', 'props', 'info', 'left', 'icon'],
+  props: ['content', 'props', 'left', 'icon', 'options'],
   components: {
     Icon,
   },
@@ -31,7 +32,18 @@ export default {
       hover: false,
     }
   },
+  mounted() {
+    this.bindContext()
+  },
   methods: {
+    bindContext() {
+      if (this.options)
+        utils.bindOptionsToEventListener(this.$el, this.options(this.save), this, 'click')
+    },
+    save(obj) {
+      this.$emit('save', obj)
+    },
+
     enter(el) {
       const s = el.style
 
@@ -52,7 +64,12 @@ export default {
       s.height = '0px'
       s.opacity = '0'
     },
-  }
+  },
+  watch: {
+    options() {
+      this.bindContext()
+    },
+  },
 }
 
 </script>

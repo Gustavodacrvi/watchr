@@ -25,7 +25,8 @@
     :tasksOrder='tasksOrder'
     :onSortableAdd='onSortableAdd'
     :viewNameValue='viewNameValue'
-    :headerDates='headerDates'
+    :deadline='deadline'
+    :saveHeaderContent='saveHeaderContent'
     :mainFallbackItem='mainFallbackItem'
     :showHeading='showHeading'
     :headerTags='headerTags'
@@ -645,6 +646,10 @@ export default {
     },
     viewList() {
       return this.getListByName(this.viewName)
+    },
+    isViewListSomeday() {
+      const list = this.viewList
+      return list && this.$store.getters['list/isListSomeday'](list)
     },
     viewFolder() {
       return this.$store.getters['folder/getFoldersByName']([this.viewName])[0]

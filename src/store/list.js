@@ -4,11 +4,14 @@ import fb from 'firebase/app'
 
 import utils from '../utils'
 import utilsTask from "@/utils/task"
+import utilsMoment from "@/utils/moment"
 import MemoizeGetters from './memoFunctionGetters'
 import { listRef, userRef, uid, listColl, taskRef, serverTimestamp, fd, addTask, folderRef } from '../utils/firestore'
 import router from '../router'
 
 import mom from 'moment'
+
+const TOD_STR = mom().format('Y-M-D')
 
 export default {
   namespaced: true,
@@ -27,18 +30,158 @@ export default {
         return tasks.filter(el => el.list === id)
       },
       isListCompleted: {
-        getter(c, list, moment) {
-          return utils.isItemCompleted(list, moment)
+        getter({}, list, moment) {
+          const c = list.calendar
+          if (!c || c.type === 'someday' || c.type === 'specific') return list.completed
+          
+          let tod = mom(moment, 'Y-M-D')
+          if (!tod.isValid()) tod = mom(TOD_STR,' Y-M-D')
+          if (c.type === 'after completion') {
+            if (!c.lastCompleteDate) return false
+            const last = mom(c.lastCompleteDate, 'Y-M-D')
+            const dayDiff = tod.diff(last, 'days')
+            return dayDiff < c.afterCompletion
+          }
+      
+          if (c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly' || c.type === 'yearly') {
+            return mom(c.lastCompleteDate, 'Y-M-D').isSameOrAfter(tod, 'day')
+          }
+
+          return false
         },
         cache(args) {
-          let task = args[0]
+          let list = args[0]
           const i = {
-            completed: task.completed,
-            calendar: task.calendar,
+            completed: list.completed,
+            calendar: list.calendar,
           }
           return JSON.stringify({i, a: [args[1], args[2]]})
         },
-      }
+      },
+      isListShowingOnDate: {
+        getter({}, list, date) {
+          if (!utilsTask.hasCalendarBinding(list) || list.calendar.type === 'someday')
+            return true
+          
+          const c = list.calendar
+  
+          // specific
+          const tod = mom(date, 'Y-M-D')
+          if (c.type === 'specific') {
+            const specific = mom(c.specific, 'Y-M-D')
+
+            return specific.isSameOrBefore(tod, 'day')
+          }
+  
+          const begins = mom(c.begins, 'Y-M-D')
+  
+          if (c.ends) {
+            if (c.ends.type === 'on date' && tod.isAfter(mom(c.ends.onDate, 'Y-M-D'), 'day'))
+              return false
+            else if (c.ends.times === null)
+              return false
+          }
+          if (c.begins && begins.isAfter(tod, 'day'))
+            return false
+          
+          if (c.type === 'after completion') {
+            const lastComplete = c.lastCompleteDate ? mom(c.lastCompleteDate, 'Y-M-D') : begins
+            if (!c.lastCompleteDate && begins.isSameOrBefore(tod, 'day')) return true
+            
+            const dayDiff = tod.diff(lastComplete, 'days')
+            if (dayDiff < 0) return false
+            const eventNotToday = dayDiff < c.afterCompletion
+            if (eventNotToday) return false
+          }
+          
+          if (c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
+            return tod.isSameOrAfter(
+              utilsMoment.getNextEventAfterCompletionDate(c)
+              , 'day')
+          }  
+  
+          return true
+        },
+        cache(args) {
+          return JSON.stringify({
+            task: args[0].calendar,
+            date: args[1],
+            onlySpecific: args[2],
+          })
+        },
+      },
+      isListSomeday: {
+        getter(c, list) {
+          return list.calendar && list.calendar.type === 'someday'
+        },
+        cache(args) {
+          return JSON.stringify({c: args[0].calendar})
+        },
+      },
+      getListCalendarStr: {
+        getter({}, list, l, userInfo) {
+          const c = list.calendar
+          if (!c) return null
+    
+          if (c.type === 'specific') {
+            const str = utils.getHumanReadableDate(c.specific, l)
+            if (str === 'Today') return 'Today'
+            if (str === 'Tomorrow') return 'Tomorrow'
+            return str
+          }
+          return utils.parseCalendarObjectToString(c, l, userInfo)
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].calendar,
+            u: args[2],
+          })
+        },
+      },
+      filterAppnavLists: {
+        getter({getters}, lists) {
+          return lists.filter(l =>
+              !getters.isListCompleted(l) &&
+              !getters.isListSomeday(l) &&
+              getters.isListShowingOnDate(l, TOD_STR)
+            )
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].map(el => ({
+              c: el.completed,
+              ca: el.calendar,
+            }))
+          })
+        },
+      },
+      getListDeadlineStr: {
+        getter({getters}, list, date, l) {
+          if (!list.deadline)
+            return null
+          return utils.getHumanReadableDate(list.deadline, l) + ' ' + getters.getListDeadlineDaysLeftStr(list.deadline, date)
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].deadline,
+          })
+        },
+      },
+      getListDeadlineDaysLeftStr: {
+        getter(c, deadline, date) {
+          const dead = mom(deadline, 'Y-M-D')
+          const compare = mom(date, 'Y-M-D')
+          const diff = dead.diff(compare, 'days')
+          if (diff === 0)
+            return ''
+          else if (diff === 1)
+            return `1 day left`
+          return `${diff} days left`
+        },
+        cache(args) {
+          return JSON.stringify(args)
+        }
+      },
     }),
     ...MemoizeGetters('lists', {
       getListsByName: {
@@ -89,20 +232,24 @@ export default {
           return ord
         },
       },
-      pieProgress({getters}, tasks, listId, isTaskCompleted) {
-          const ts = getters.getTasks(tasks, listId)
-          const numberOfTasks = ts.length
-          let completedTasks = 0
-          
-          let compareDate = null
-    
-          ts.forEach(el => {
-            if (isTaskCompleted(el, mom().format('Y-M-D'), compareDate)) completedTasks++
-          })
-          const result = 100 * completedTasks / numberOfTasks
-          if (isNaN(result)) return 0
-          return result
-        },
+      pieProgress({getters, state}, tasks, listId, isTaskCompleted) {
+        const list = state.lists.find(el => el.id === listId)
+        const c = list.calendar
+        const ts = getters.getTasks(tasks, listId)
+        const numberOfTasks = ts.length
+        let completedTasks = 0
+        
+        let compareDate = null
+        if (c && c.lastCompleteDate)
+          compareDate = c.lastCompleteDate
+  
+        ts.forEach(el => {
+          if (isTaskCompleted(el, TOD_STR, compareDate)) completedTasks++
+        })
+        const result = 100 * completedTasks / numberOfTasks
+        if (isNaN(result)) return 0
+        return result
+      },
     }),
     getFavoriteLists(state) {
       return state.lists.filter(el => el.favorite).map(f => ({...f, icon: 'tasks', color: 'var(--primary)', type: 'list'}))
@@ -238,7 +385,7 @@ export default {
           if (c.type === 'after completion') {
             c.lastCompleteDate = mom().format('Y-M-D')
           }
-          else if (c.type === 'daily' || c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
+          else if (c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
             const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c)
             c.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
           }
@@ -265,6 +412,9 @@ export default {
       for (const l of lists) {
         const c = l.calendar
         if (c && c.times === 0) c.times = null
+        if (c) {
+          c.lastCompleteDate = null
+        }
         const ref = listRef(l.id)
         batch.update(ref, {
           completedFire: null,

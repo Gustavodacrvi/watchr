@@ -5,10 +5,10 @@
         <Icon class="icon option-icon cursor primary-hover" width="24px" icon="star" @click="today"/>
         <Icon class="icon option-icon cursor primary-hover" width="24px" icon="sun" @click="tomorrow"/>
         <Icon v-if="!onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="archive" @click="someday"/>
-        <Icon v-if="!onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="bloqued" @click="noDate"/>
+        <Icon v-if="!onlyDates || allowNull" class="icon option-icon cursor primary-hover" width="24px" icon="bloqued" @click="noDate"/>
         <Icon v-if="repeat && !onlyDates" class="icon option-icon cursor primary-hover" width="24px" icon="repeat" @click="$emit('repeat')"/>
       </div>
-      <div class="opt cursor remove-highlight rb" @click='$emit("get-time", selectedMoment.format("Y-M-D"))'>
+      <div v-if="!noTime" class="opt cursor remove-highlight rb" @click='$emit("get-time", selectedMoment.format("Y-M-D"))'>
         <span class="msg">{{ l['Time:'] }} {{ getTime }}</span>
         <CircleBubble
           innerColor='rgba(87,160,222,.1)'
@@ -59,7 +59,7 @@ import { mapGetters, mapState } from 'vuex'
 import utils from '@/utils'
 
 export default {
-  props: ['repeat', 'onlyDates', 'defaultTime', 'initial'],
+  props: ['repeat', 'onlyDates', 'defaultTime', 'initial', 'noTime', 'allowNull'],
   components: {
     Icon: IconVue,
     Button: ButtonVue,
@@ -93,7 +93,10 @@ export default {
         this.$emit('select', this.calendarObj)
     },
     noDate() {
-      this.$emit('select', null)
+      if (this.allowNull && this.onlyDates)
+        this.$emit('select', {specific: null})
+      else
+        this.$emit('select', null)
     },
     today() {
       this.select(this.selectedMoment.clone())

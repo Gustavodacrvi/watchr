@@ -2,6 +2,8 @@
 import utils from '@/utils'
 import { pipeBooleanFilters } from '@/utils/memo'
 
+import mom from 'moment'
+
 export default {
   listHeadingOptions(list, heading, store, tasks, l) {
     const li = list
@@ -88,6 +90,22 @@ export default {
       task => !isTaskInRoot(task),
     )
     const pop = obj => dispatch('pushPopup', obj)
+    const TOD_STR = mom().format('Y-M-D')
+    
+    const saveList = obj => {
+      dispatch('list/saveList', {
+        id: listId,
+        ...obj,
+      })
+    }
+    const saveCalendarDate = calendar => saveList({calendar})
+    const saveSpecificDate = specific => saveCalendarDate({
+      specific,
+      type: 'specific',
+      editDate: TOD_STR,
+      begins: TOD_STR,
+    })
+    
     let opt = [
       {
         name: 'Go to list',
@@ -95,6 +113,56 @@ export default {
         callback: () => {
           router.push(`user?list=${list.name}`) 
         },
+      },
+      {
+        name: 'Deadline',
+        icon: 'deadline',
+        callback: () => ({
+          comp: 'CalendarPicker',
+          content: {
+            onlyDates: true,
+            noTime: true,
+            allowNull: true,
+            callback: ({specific}) => saveList({deadline: specific})
+          }
+        })
+      },
+      {
+        name: l['No date'],
+        icon: 'bloqued',
+        callback: () => saveCalendarDate(null)
+      },
+      {
+        type: 'optionsList',
+        name: 'Schedule',
+        options: [
+          {
+            icon: 'star',
+            id: 'd',
+            callback: () => saveSpecificDate(mom().format('Y-M-D')),
+          },
+          {
+            icon: 'sun',
+            id: 'çljk',
+            callback: () => saveSpecificDate(mom().add(1, 'day').format('Y-M-D')),
+          },
+          {
+            icon: 'archive',
+            id: 'açlkjsdffds',
+            callback: () => saveCalendarDate({
+              type: 'someday',
+              editDate: TOD_STR,
+              begins: TOD_STR,
+            })
+          },
+          {
+            icon: 'calendar',
+            id: 'çljkasdf',
+            callback: () => {return {
+              comp: "CalendarPicker",
+              content: {repeat: true, disableDaily: true, callback: saveCalendarDate}}},
+          },
+        ]
       },
       {
         name: l["Edit list"],

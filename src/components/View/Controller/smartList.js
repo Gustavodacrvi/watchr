@@ -101,23 +101,18 @@ export default {
     
     
     updateHeadingIds() {
-      return () => {
-        if (this.isSmartOrderViewType)
-          return ids => {
-              this.$store.dispatch('list/updateHeadingsViewOrder', {
-              view: this.viewName,
-              ids,
-            })
-          }
-        
+      if (this.isSmartOrderViewType)
         return ids => {
-          this.$store.dispatch('list/updateHeadingsCalendarOrder', {
-            date: this.calendarDate,
+            this.$store.dispatch('list/updateHeadingsViewOrder', {
+            view: this.viewName,
             ids,
           })
         }
-  
-        return null
+      return ids => {
+        this.$store.dispatch('list/updateHeadingsCalendarOrder', {
+          date: this.getCalendarOrderDate,
+          ids,
+        })
       }
     },
 

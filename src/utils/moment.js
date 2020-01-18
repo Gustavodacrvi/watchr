@@ -166,9 +166,9 @@ export default {
     let lastComplete = mom(c.lastCompleteDate || c.begins, 'Y-M-D')
     if (lastComplete.isValid()) {
       const begins = mom(c.begins, 'Y-M-D')
+      if (!c.lastCompleteDate)
+        return mom(c.begins, 'Y-M-D')
       if (c.type === 'daily') {
-        if (!c.lastCompleteDate)
-          return mom(c.begins, 'Y-M-D')
         return lastComplete.add(c.daily, 'd')
       } else if (c.type === 'weekly') {
         while (true) {

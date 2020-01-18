@@ -6,6 +6,8 @@
         :onlyDates='content.onlyDates'
         :defaultTime='content.time'
         :initalDate='content.initial'
+        :noTime='content.noTime'
+        :allowNull='content.allowNull'
         @repeat='openRepeatOptions'
         @calc='$emit("calc")'
         @get-time='getTime'
@@ -47,6 +49,7 @@ export default {
           overflow: true,
         },
         content: {
+          disableDaily: this.content.disableDaily,
           callback: this.selectDate,
         },
       })

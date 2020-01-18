@@ -76,6 +76,8 @@ import { mapGetters, mapState } from 'vuex'
 
 import mom from 'moment'
 
+const TOD_STR = mom().format('Y-M-D')
+
 import { Sortable } from 'sortablejs'
 
 export default {
@@ -194,19 +196,13 @@ export default {
       return arr.length > 0 ? arr : undefined
     },
     mapString(list) {
-      /* if (list.deadline && !(list.calendar && list.calendar.type !== 'someday')) {
-        const isOverdue = list.deadline && mom().isAfter(mom(list.deadline, 'Y-M-D'), 'day')
+      if (list.deadline)
         return {
-          name: isOverdue ? this.l['overdue'] : `${mom(list.deadline, 'Y-M-D').diff(mom(), 'd') + 1} ${this.l['days left']}`,
-          color: isOverdue ? 'var(--primary)' : ''
+          name: this.getListDeadlineDaysLeftStr(list.deadline, TOD_STR)
+,
+          color: 'var(--red)'
         }
-      } *//*  else if (list.calendar && list.calendar.type !== 'someday') {
-        const { nextCalEvent } = utils.getCalendarObjectData(list.calendar, mom())
-        return {
-          name: `${mom(nextCalEvent.format('Y-M-D'), 'Y-M-D').diff(mom(), 'd') + 1} ${this.l['days left']}`,
-          color: '',
-        }
-      } */
+      
       return null
     },
   },
@@ -222,18 +218,21 @@ export default {
       sortedFolders: 'folder/sortedFolders',
       isTaskCompleted: 'task/isTaskCompleted',
       getListsByFolderId: 'folder/getListsByFolderId',
+
+      filterAppnavLists: 'list/filterAppnavLists',
+      getListDeadlineDaysLeftStr: 'list/getListDeadlineDaysLeftStr',
     }),
     laseredFolders() {
       return this.sortedFolders.map(fold => ({
         ...fold,
-        list: this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders})
+        list: this.filterAppnavLists(this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders}))
       }))
     },
     sortedLists() {
       return this.$store.getters['list/sortedLists']
     },
     listsWithFolders() {
-      const lists = this.filteredByRepeat
+      const lists = this.filteredLists
 
       const arr = []
       for (const f of lists) if (f.folder) arr.push(f)
@@ -242,38 +241,15 @@ export default {
     },
 
     rootLists() {
-      const lists = this.filteredByRepeat
+      const lists = this.filteredLists
 
       const arr = []
       for (const f of lists) if (!f.folder) arr.push(f)
       
       return arr
     },
-    filteredByRepeat() {
-      if (!this.showRepeat)
-        return this.filteredByDefer.filter(l => {
-          return true
-/*           if (!l.calendar || l.calendar.type === 'someday') return true
-          const { lastCallEvent } = utils.getCalendarObjectData(l.calendar, mom())
-
-          const tasks = this.tasks.filter(task => this.isTaskInList(task, l.id))
-          let isAllTasksCompleted = true
-          for (const el of tasks)
-            if (!this.isTaskCompleted(el, mom().format('Y-M-D'), lastCallEvent.format('Y-M-D'))) {
-              isAllTasksCompleted = false
-              break
-            }
-
-          return !isAllTasksCompleted || tasks.length === 0 */
-        })
-      return this.filteredByDefer
-    },
-    filteredByDefer() {
-      if (!this.showDefered)
-        return this.getLists.filter(l => {
-          return !l.deferDate || mom().isSameOrAfter(mom(l.deferDate, 'Y-M-D'))
-        })
-      return this.getLists
+    filteredLists() {
+      return this.filterAppnavLists(this.getLists)
     },
     getLists() {
       const lists = this.sortedLists.map(t => ({...t}))

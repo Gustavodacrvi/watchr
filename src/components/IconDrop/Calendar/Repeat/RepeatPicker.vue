@@ -165,9 +165,14 @@ export default {
       data: {
         days: '1',
         activeRepeatOption: 'After completion',
-        repeatOptions: [
+        repeatOptions: !this.content.disableDaily ? [
           'After completion',
           'Daily',
+          'Weekly',
+          'Monthly',
+          'Yearly',
+        ] : [
+          'After completion',
           'Weekly',
           'Monthly',
           'Yearly',

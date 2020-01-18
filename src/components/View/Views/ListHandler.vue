@@ -5,7 +5,7 @@
 
       :items="sortLaseredLists"
       :headings='emptyArr'
-      :showSomedayButton='false'
+      :showSomedayButton='showSomedayButton'
       :itemIconDropOptions='emptyArr'
 
       :addItem='addList'
@@ -14,6 +14,8 @@
       :disableSelect='true'
       :disableFallback='true'
       :rootFilterFunction='rootFilterFunction'
+      :group='group'
+      :onSortableAdd='onSortableAdd'
       
       comp='List'
       editComp='ListEdit'
@@ -37,13 +39,15 @@ import { listRef, serverTimestamp } from '@/utils/firestore'
 
 import HandlerMixin from "@/mixins/handlerMixin"
 
+import { pipeBooleanFilters } from '@/utils/memo'
+
 import mom from 'moment'
 
 export default {
   mixins: [
     HandlerMixin,
   ],
-  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem', 'showCompleted', 'folderId'],
+  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem', 'showCompleted', 'folderId', 'showSomeday', 'showSomeday'],
   components: {
     ListRendererVue,
   },
@@ -95,16 +99,45 @@ export default {
     rootFilterFunction(list) {
       return true
     },
+    onSortableAdd(o, ids, indicies, order) {
+      this.$store.dispatch('task/convertTasksToListByIndex', {
+        tasks: this.storeTasks.filter(el => ids.includes(el.id)), folderId: this.folderId, savedLists: this.storeLists, indicies, order,
+      })
+    },
   },
   computed: {
     ...mapState({
+      storeTasks: state => state.task.tasks,
       storeLists: state => state.list.lists,
+      storeFolders: state => state.folder.folders,
     }),
     ...mapGetters({
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
 
       isListCompleted: 'list/isListCompleted',
+      isListSomeday: 'list/isListSomeday',
     }),
+    getFolder() {
+      return this.storeFolders.find(el => el.id === this.folderId)
+    },
+    group() {
+      return {
+        name: 'item-renderer',
+        pull: (e,j,item) => {
+          const type = item.dataset.type
+          if (type === 'Task') return true
+          return false
+        },
+        put: (j,o,item) => {
+          const d = item.dataset
+          const type = d.type
+          if (type === 'Task') return true
+          if (type === 'headingbutton' || type === 'add-task-floatbutton')  
+            return true
+          return false
+        }
+      }
+    },
     emptyArr() {
       return []
     },
@@ -116,6 +149,24 @@ export default {
     },
     
     filterOptions() {
+      return pipeBooleanFilters(
+        list => this.isListCompletedPipe(list),
+        this.isSomedayPipe,
+      )
+    },
+    isSomedayPipe() {
+      if (this.showSomeday) return () => true
+      return list => !this.isListSomeday(list)
+    },
+
+    hasAtLeastOneSomeday() {
+      return this.nonFiltered.some(this.isListSomeday)
+    },
+    showSomedayButton() {
+      return this.hasAtLeastOneSomeday &&
+          !this.showSomeday
+    },
+    isListCompletedPipe() {
       return this.showCompleted ?
         () => true :
         list => !this.isListCompleted(list)

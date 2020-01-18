@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, userRef, serverTimestamp, tagRef, taskColl, taskRef, listRef, addTask } from '../utils/firestore'
+import { uid, fd, userRef, folderRef, serverTimestamp, tagRef, taskColl, taskRef, listRef, addTask } from '../utils/firestore'
 import { pipeBooleanFilters } from '@/utils/memo'
 
 import mom from 'moment'
@@ -82,7 +82,7 @@ export default {
         
         if (c.type === 'after completion') {
           const lastComplete = c.lastCompleteDate ? mom(c.lastCompleteDate, 'Y-M-D') : begins
-          if (begins.isSame(tod, 'day')) return true
+          if (!c.lastCompleteDate && begins.isSame(tod, 'day')) return true
           
           const dayDiff = tod.diff(lastComplete, 'days')
           if (dayDiff < 0) return false
@@ -710,6 +710,60 @@ export default {
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
       userRef().set({calendarOrders}, {merge: true})
     },
+    convertTasksToListByIndex(c, {tasks, folderId, order, savedLists, indicies}) {
+      const tasksWithConflictingListNames = {}
+
+      tasks.forEach(task => {
+        if (savedLists.find(l => l.name === task.name))
+          tasksWithConflictingListNames[task.id] = true
+      })
+      
+      const batch = fire.batch()
+
+      tasks.forEach(task => {
+
+        const list = listRef(task.id)
+        batch.delete(taskRef(task.id))
+
+        const subIds = []
+        if (task.checklist)
+          for (const t of task.checklist) {
+            batch.set(taskRef(t.id), {
+              folder: null,
+              userId: uid(),
+              name: t.name,
+              priority: '',
+              list: list.id,
+              calendar: null,
+              heading: null,
+              tags: [],
+              checklist: [],
+              order: [],
+            })
+            subIds.push(t.id)
+          }
+
+        batch.set(list, {
+          userId: uid(),
+          smartViewsOrders: {},
+          folder: folderId,
+          name: tasksWithConflictingListNames[task.id] ? task.name + ' (list)' : task.name,
+          notes: task.notes || null,
+          tags: task.tags || [],
+          descr: '',
+          tasks: subIds,
+          headings: [],
+          headingsOrder: [],
+        })
+        
+      })
+
+      batch.set(folderRef(folderId), {
+        order,
+      }, {merge: true})
+      
+      batch.commit()
+    },
     convertToList(c, {task, savedLists}) {
       const existingList = savedLists.find(l => l.name === task.name)
       if (!existingList) {
@@ -731,7 +785,6 @@ export default {
             batch.set(ref, {
               folder,
               userId: uid(),
-              users: [uid()],
               name: t.name,
               priority: '',
               list: list.id,
@@ -797,6 +850,9 @@ export default {
       for (const t of tasks) {
         const c = t.calendar
         if (c && c.times === 0) c.times = null
+        if (c) {
+          c.lastCompleteDate = null
+        }
         const ref = taskRef(t.id)
         batch.update(ref, {
           completedFire: null,

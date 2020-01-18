@@ -40,9 +40,7 @@ export default {
             if (l.folder && l.folder === id) arr.push(l)
           let order = fold.order
           if (!order) order = []
-          return rootGetters.checkMissingIdsAndSortArr(order, 
-            arr.filter(l => !utils.isItemCompleted(l))
-          )
+          return rootGetters.checkMissingIdsAndSortArr(order, arr)
         },
       },
       getFoldersByName: {
