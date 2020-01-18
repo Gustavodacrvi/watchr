@@ -136,6 +136,7 @@ export default {
   computed: {
     ...mapState({
       tasks: state => state.task.tasks,
+      userInfo: state => state.userInfo,
     }),
     ...mapGetters({
       l: 'l',
@@ -155,7 +156,7 @@ export default {
       return this.isListSomeday(this.item)
     },
     calendarStr() {
-      return this.getListCalendarStr(this.item, this.l)
+      return this.getListCalendarStr(this.item, this.l, this.userInfo)
     },
     deadlineStr() {
       const list = this.item

@@ -294,6 +294,11 @@ export default {
         return list.notes
       return null
     },
+    itemCompletionCompareDate() {
+      const list = this.viewList
+      const c = list && list.calendar
+      return c && c.lastCompleteDate
+    },
     getPieProgress() {
       const list = this.viewList
       if (list && !this.isViewListSomeday)

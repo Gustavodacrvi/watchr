@@ -149,7 +149,7 @@ import utils from '@/utils/index'
 import mom from 'moment'
 
 export default {
-  props: ['item', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'itemHeight', 'allowCalendarStr', 'isRoot', 'taskCompletionCompareDate', 'scheduleObject', 'changingViewName', 'selectEverythingToggle',
+  props: ['item', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName', 'selectEverythingToggle',
   'isSelecting'],
   components: {
     Timeline,

@@ -82,7 +82,7 @@ export default {
         
         if (c.type === 'after completion') {
           const lastComplete = c.lastCompleteDate ? mom(c.lastCompleteDate, 'Y-M-D') : begins
-          if (begins.isSame(tod, 'day')) return true
+          if (!c.lastCompleteDate && begins.isSameOrBefore(tod, 'day')) return true
           
           const dayDiff = tod.diff(lastComplete, 'days')
           if (dayDiff < 0) return false
@@ -850,6 +850,9 @@ export default {
       for (const t of tasks) {
         const c = t.calendar
         if (c && c.times === 0) c.times = null
+        if (c) {
+          c.lastCompleteDate = null
+        }
         const ref = taskRef(t.id)
         batch.update(ref, {
           completedFire: null,

@@ -29,14 +29,36 @@ export default {
         return tasks.filter(el => el.list === id)
       },
       isListCompleted: {
-        getter(c, list, moment) {
-          return utils.isItemCompleted(list, moment)
+        getter({}, list, moment) {
+          const c = list.calendar
+          if (!c || c.type === 'someday' || c.type === 'specific') return list.completed
+          
+          let tod = mom(moment, 'Y-M-D')
+          if (!tod.isValid()) tod = mom(TOD_STR,' Y-M-D')
+          if (c.type === 'after completion') {
+            if (!c.lastCompleteDate) return false
+            const last = mom(c.lastCompleteDate, 'Y-M-D')
+            const dayDiff = tod.diff(last, 'days')
+            return dayDiff < c.afterCompletion
+          }
+          if (c.type === 'daily') {
+            const lastComplete = mom(c.lastCompleteDate, 'Y-M-D')
+            const diff = tod.diff(lastComplete, 'days')
+            return lastComplete.isSameOrAfter(tod, 'day') ||
+                    diff < c.daily
+          }
+      
+          if (c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly' || c.type === 'yearly') {
+            return mom(c.lastCompleteDate, 'Y-M-D').isSameOrAfter(tod, 'day')
+          }
+
+          return false
         },
         cache(args) {
-          let task = args[0]
+          let list = args[0]
           const i = {
-            completed: task.completed,
-            calendar: task.calendar,
+            completed: list.completed,
+            calendar: list.calendar,
           }
           return JSON.stringify({i, a: [args[1], args[2]]})
         },
@@ -69,9 +91,10 @@ export default {
           
           if (c.type === 'after completion') {
             const lastComplete = c.lastCompleteDate ? mom(c.lastCompleteDate, 'Y-M-D') : begins
-            if (begins.isSame(tod, 'day')) return true
+            if (!c.lastCompleteDate && begins.isSameOrBefore(tod, 'day')) return true
             
             const dayDiff = tod.diff(lastComplete, 'days')
+            console.log(dayDiff)
             if (dayDiff < 0) return false
             const eventNotToday = dayDiff % c.afterCompletion !== 0
             if (eventNotToday) return false
@@ -141,7 +164,7 @@ export default {
         },
       },
       getListCalendarStr: {
-        getter({}, list, l) {
+        getter({}, list, l, userInfo) {
           const c = list.calendar
           if (!c) return null
     
@@ -151,10 +174,12 @@ export default {
             if (str === 'Tomorrow') return 'Tomorrow'
             return str
           }
+          return utils.parseCalendarObjectToString(c, l, userInfo)
         },
         cache(args) {
           return JSON.stringify({
             c: args[0].calendar,
+            u: args[2],
           })
         },
       },
@@ -252,20 +277,24 @@ export default {
           return ord
         },
       },
-      pieProgress({getters}, tasks, listId, isTaskCompleted) {
-          const ts = getters.getTasks(tasks, listId)
-          const numberOfTasks = ts.length
-          let completedTasks = 0
-          
-          let compareDate = null
-    
-          ts.forEach(el => {
-            if (isTaskCompleted(el, mom().format('Y-M-D'), compareDate)) completedTasks++
-          })
-          const result = 100 * completedTasks / numberOfTasks
-          if (isNaN(result)) return 0
-          return result
-        },
+      pieProgress({getters, state}, tasks, listId, isTaskCompleted) {
+        const list = state.lists.find(el => el.id === listId)
+        const c = list.calendar
+        const ts = getters.getTasks(tasks, listId)
+        const numberOfTasks = ts.length
+        let completedTasks = 0
+        
+        let compareDate = null
+        if (c && c.lastCompleteDate)
+          compareDate = c.lastCompleteDate
+  
+        ts.forEach(el => {
+          if (isTaskCompleted(el, TOD_STR, compareDate)) completedTasks++
+        })
+        const result = 100 * completedTasks / numberOfTasks
+        if (isNaN(result)) return 0
+        return result
+      },
     }),
     getFavoriteLists(state) {
       return state.lists.filter(el => el.favorite).map(f => ({...f, icon: 'tasks', color: 'var(--primary)', type: 'list'}))
@@ -428,6 +457,9 @@ export default {
       for (const l of lists) {
         const c = l.calendar
         if (c && c.times === 0) c.times = null
+        if (c) {
+          c.lastCompleteDate = null
+        }
         const ref = listRef(l.id)
         batch.update(ref, {
           completedFire: null,
