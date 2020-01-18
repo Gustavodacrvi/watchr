@@ -37,17 +37,17 @@
             </span>
             <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
           </transition>
-          <div class="info">
-            <template v-if="helpIcons">
-              <Icon v-for="i in helpIcons" :key="i" class="inf faded"
-                :icon='i'
-                :circle='true'
-              />
-            </template>
-            <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
-            <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
-            <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
-          </div>
+        </div>
+        <div class="info">
+          <template v-if="helpIcons">
+            <Icon v-for="i in helpIcons" :key="i" class="inf faded"
+              :icon='i'
+              :circle='true'
+            />
+          </template>
+          <span v-if="getStringObj" :style="{color: getStringObj.color}">{{ getStringObj.name }}</span>
+          <span v-if="importantNumber" class="inf important">{{ importantNumber }}</span>
+          <span v-if="totalNumber" class="inf total">{{ totalNumber }}</span>
         </div>
         <CircleBubble class="bubble"
           innerColor='var(--light-gray)'
@@ -307,6 +307,17 @@ export default {
   align-items: center;
 }
 
+.info {
+  display: flex;
+  align-items: center;
+  right: 6px;
+  flex-shrink: 0;
+  margin-left: 4px;
+  height: 100%;
+  z-index: 5;
+  font-size: .85em;
+}
+
 .name {
   max-width: 100%;
   position: absolute;
@@ -372,16 +383,6 @@ export default {
   background-color: var(--dark-void) !important;
   transition-duration: 0 !important;
   transition: none !important;
-}
-
-.info {
-  display: flex;
-  align-items: center;
-  position: absolute;
-  right: 6px;
-  height: 100%;
-  z-index: 5;
-  font-size: .85em;
 }
 
 .inf {

@@ -1,12 +1,14 @@
 <template>
   <div class="Appbar-wrapper"
     :class="[platform, {'scroll-thin': isDesktop}]"
+
+    @mouseenter="appnavHover = true"
+    @mouseleave="appnavHover = false"
   >
-    <div class="appnav-handle"></div>
     <div class="margin-wrapper">
       <div v-if="isDesktop"
         class="back-layer"
-        :class="{showing}"
+        :class="{showing, pressingHandle}"
         :style="{width}"
       ></div>
       <div class="inner-wrapper">
@@ -110,6 +112,13 @@
         </div>
       </div>
     </div>
+    <div v-if="isDesktop"
+      class="appnav-handle passive"
+      :class="{appnavHover}"
+      :style="appnavHandle"
+
+      @pointerdown='pointerdown'
+    ></div>
   </div>
 </template>
 
@@ -133,7 +142,7 @@ import utilsFolder from '@/utils/folder'
 import { userRef } from '@/utils/firestore'
 
 export default {
-  props: ['value', 'width', 'appbarHided'],
+  props: ['value', 'width', 'appbarHided', 'pressingHandle'],
   components: {
     Icon: IconVue,
     AppbarElement: AppbarElementVue,
@@ -224,6 +233,7 @@ export default {
         },
       ],
       showing: true,
+      appnavHover: false,
       transRight: true,
       showingIconDrop: true,
       showingSearch: false,
@@ -261,6 +271,12 @@ export default {
     window.removeEventListener('resize', this.moveLineToActive)
   },
   methods: {
+    pointerdown(evt) {
+      this.$emit('handle-pointerdown', evt)
+    },
+    handleMousemove(evt) {
+      evt.preventDefault()
+    },
     update(links) {
       userRef(this.userInfo.userId).set({
         links,
@@ -411,6 +427,11 @@ export default {
       favFolders: 'folder/getFavoriteFolders',
       favTags: 'tag/getFavoriteTags',
     }),
+    appnavHandle() {
+      return {
+        left: (parseInt(this.width, 10) - 18) + 'px'
+      }
+    },
     getFavoritesRenderList() {
       const favs = this.getFavorites
 
@@ -653,13 +674,27 @@ export default {
 }
 
 .appnav-handle {
-  background-color: var(--card);
-  width: 10px;
-  height: 50px;
   position: fixed;
+  background-color: var(--card);
+  width: 8px;
+  height: 145px;
   top: 50%;
-  right: 5px;
+  border-radius: 100px;
   transform: translateY(-50%);
+  z-index: 1000px;
+  cursor: pointer;
+  opacity: 0 !important;
+  transition: opacity .2s, background-color .2s, width .2s, transform .2s;
+}
+
+.appnav-handle.appnavHover {
+  opacity: 1 !important;
+}
+
+.appnav-handle:hover {
+  background-color: var(--light-gray);
+  width: 14px;
+  transform: translate(-6px, -50%);
 }
 
 .appbar-content {
@@ -690,7 +725,7 @@ export default {
 }
 
 .Appbar-wrapper.desktop {
-  padding: 0 25px;
+  padding: 0 30px;
 }
 
 .footer {
@@ -749,6 +784,11 @@ export default {
   width: 100px;
   height: 2px;
   transition-duration: .15s;
+}
+
+.pressingHandle {
+  transition-duration: 0s !important;
+  transition: none !important;
 }
 
 .option {

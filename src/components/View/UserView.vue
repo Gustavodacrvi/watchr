@@ -1,24 +1,32 @@
 
 <template>
-  <div class="UserView" :class="[{appbarHided}, platform]">
+  <div class="UserView" :class="[{appbarHided}, platform]"
+    @pointerup='pointerup'
+    @pointermove='handlePointermove'
+  >
     <div v-if="isDesktop"
       class="nav-shadow"
+      :class="{pressingHandle}"
       :style="{width: navWidth, maxWidth: navWidth, flexBasis: navWidth}"
     ></div>
     <div v-if="isDesktop"
       class="nav"
+      :class="{pressingHandle}"
       :style="[getNavTopPosition, {width: navWidth}]"
     >
       <Appbar class="Appbar"
         :value="viewName"
+        :pressingHandle='pressingHandle'
         :view-type="viewType"
         :appbarHided='appbarHided'
         :width='navWidth'
         @appbar="toggleAppbar"
         @section="v => section = v"
+
+        @handle-pointerdown='pointerdown'
       />
     </div>
-    <div class="cont" :class="platform">
+    <div class="cont" :class="[platform, {pressingHandle}]">
       <ViewControler
         :isSmart="isSmart"
         :viewType='viewType'
@@ -46,6 +54,9 @@ export default {
       appbarHided: false,
       scrollTop: null,
       width: 700,
+
+      pressingHandle: false,
+      handleStart: 0,
     }
   },
   created() {
@@ -53,6 +64,19 @@ export default {
     window.addEventListener('scroll', this.getScrollTop)
   },
   methods: {
+    handlePointermove(evt) {
+      if (this.pressingHandle) {
+        this.width += evt.screenX - this.handleStart
+        this.handleStart = evt.screenX
+      }
+    },
+    pointerdown(evt) {
+      this.pressingHandle = true
+      this.handleStart = evt.screenX
+    },
+    pointerup() {
+      this.pressingHandle = false
+    },
     getScrollTop() {
       this.scrollTop = window.scrollY
     },
@@ -156,6 +180,11 @@ export default {
   flex-basis: 925px !important;
   flex-grow: 0;
   margin-left: 0;
+}
+
+.pressingHandle {
+  transition: none !important;
+  transition-duration: 0s !important;
 }
 
 </style>
