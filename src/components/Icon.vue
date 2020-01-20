@@ -304,10 +304,6 @@ export default {
   filter: none !important
 }
 
-.icon:active {
-  color: var(--light-gray) !important;
-}
-
 .svg {
   left: -3px;
   top: -3px;

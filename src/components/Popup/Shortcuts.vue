@@ -80,7 +80,7 @@
       </div>
       <div class="line">
         <span>Complete selected</span>
-        <span class="tag">Shift + .</span>
+        <span class="tag">Alt + .</span>
       </div>
       <div class="line">
         <span>Move to Someday</span>
@@ -116,7 +116,7 @@
 
     <h3 class="pc">View</h3>
     <div class="line">
-      <span>Toggle completed tasks</span>
+      <span>Toggle completed tasks view</span>
       <span class="tag">Alt + C</span>
     </div>
     <div class="line">
