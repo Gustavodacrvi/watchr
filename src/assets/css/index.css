@@ -10,7 +10,9 @@ html {
 
 :root {
   --back-color: #1c1c1c;
-  --primary: #3F81D9;
+  --primary-dark: #64a0bb;
+  --primary: #64a0bb;
+  --primary-light: #9fc4d5;
   --appnav-color: #171717;
   --card: #1f1f1f;
   --txt: #b3b3b3;

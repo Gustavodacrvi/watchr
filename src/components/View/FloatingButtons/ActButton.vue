@@ -95,7 +95,7 @@ export default {
 .bright .inner-ball-button {
   color: white;
   box-shadow: 0 0 24px rgba(89, 160, 222, .2);
-  background-color: rgba(89, 160, 222, .9);
+  background-color: var(--primary);
 }
 
 .bright .inner-ball-button:hover {
