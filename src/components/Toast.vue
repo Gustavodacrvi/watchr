@@ -10,7 +10,7 @@
         <div v-if="toast.callback" class="bubble">
           <CircleBubble
             innerColor='var(--light-gray)'
-            outerColor='var(--gray)'
+            outerColor='var(--fade)'
             opacity='0'
           />
         </div>

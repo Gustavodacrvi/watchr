@@ -12,7 +12,7 @@
       <DropIcon style="z-index: 3"
         class="drop"
         handle="user"
-        handleColor="var(--gray)"
+        handleColor="var(--fade)"
         :circle='true'
         :options="dropLinks"
         @handle-toggle='v => isLinksIconDropOpen = v'
@@ -20,7 +20,7 @@
       <DropIcon style="z-index: 2"
         class="drop"
         handle="globe"
-        handleColor="var(--gray)"
+        handleColor="var(--fade)"
         :circle='true'
         :options="languages"
         @handle-toggle='v => isLanguagesIconDropOpen = v'
@@ -118,7 +118,7 @@ export default {
 
 .link {
   text-decoration: none;
-  color: var(--gray);
+  color: var(--fade);
   font-size: 1.05em;
   display: inline-block;
   padding: 0 14px;
@@ -127,7 +127,7 @@ export default {
 }
 
 .link:hover {
-  color: var(--white);
+  color: var(--txt);
 }
 
 .link.active {
@@ -135,7 +135,7 @@ export default {
 }
 
 .link:active {
-  color: var(--gray);
+  color: var(--fade);
   transform: scale(.9, .9);
 }
 

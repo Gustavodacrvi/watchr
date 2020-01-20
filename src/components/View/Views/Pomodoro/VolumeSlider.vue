@@ -55,7 +55,7 @@ export default {
 }
 
 .vue-slider-process {
-  background-color: var(--gray) !important;
+  background-color: var(--fade) !important;
 }
 
 .vue-slider-dot-handle {

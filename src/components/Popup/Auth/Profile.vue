@@ -7,14 +7,14 @@
           <span class="option rb cursor remove-highlight" :class="{active: 'General' === option}" @click="option = 'General'">General
             <CircleBubble
               innerColor='var(--light-gray)'
-              outerColor='var(--gray)'
+              outerColor='var(--fade)'
               opacity='0'
             />
           </span>
           <span class="option rb cursor remove-highlight" :class="{active: 'Appnav' === option}" @click="option = 'Appnav'">Appnav
             <CircleBubble
               innerColor='var(--light-gray)'
-              outerColor='var(--gray)'
+              outerColor='var(--fade)'
               opacity='0'
             />
           </span>

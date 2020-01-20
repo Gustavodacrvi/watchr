@@ -60,7 +60,7 @@
           >
             <CircleBubble v-if="!isDesktop"
               innerColor='var(--light-gray)'
-              outerColor='var(--gray)'
+              outerColor='var(--fade)'
               opacity='0'
             />
             <div class="cont"
@@ -88,12 +88,12 @@
                       <Icon v-if="haveChecklist"
                         class="txt-icon checklist-icon"
                         icon="pie"
-                        color="var(--gray)"
+                        color="var(--fade)"
                         width="12px"
                         :progress='checklistPieProgress'
                       />
-                      <Icon v-if="hasTags" class="txt-icon" icon="tag" color="var(--gray)" width="14px"/>
-                      <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--gray)" width="12px"/>
+                      <Icon v-if="hasTags" class="txt-icon" icon="tag" color="var(--fade)" width="14px"/>
+                      <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--fade)" width="12px"/>
                       <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
                     </span>
                     <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
@@ -750,7 +750,7 @@ export default {
             {
               icon: 'priority',
               id: 'd',
-              color: 'var(--gray)',
+              color: 'var(--fade)',
               callback: () => this.addPriority('')
             },
             {
@@ -1050,11 +1050,11 @@ export default {
 }
 
 .desktop .cont-wrapper.doneTransition:hover, .desktop .cont-wrapper:active {
-  background-color: var(--light-gray);
+  background-color: var(--appnav-color);
 }
 
 .isTaskMainSelection .cont-wrapper {
-  background-color: var(--light-gray);
+  background-color: var(--appnav-color);
 }
 
 .check, .text, .options, .cont {
@@ -1172,14 +1172,14 @@ export default {
 }
 
 .isTaskSelected .cont-wrapper {
-  background-color: rgba(53, 73, 90, 0.6) !important;
+  background-color: var(--appnav-color) !important;
   box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
   transition-duration: .8s;
 }
 
 .isTaskSelected.isTaskMainSelection .cont-wrapper,
 .isTaskSelected:hover .cont-wrapper {
-  background-color: rgba(53, 73, 90, 0.9) !important;
+  background-color: var(--appnav-color) !important;
 }
 
 .isTaskSelected .back {
@@ -1188,7 +1188,7 @@ export default {
 }
 
 .sortable-ghost .cont-wrapper {
-  background-color: var(--void) !important;
+  background-color: var(--appnav-color) !important;
   transition-duration: 0;
   height: 38px;
   padding: 0;

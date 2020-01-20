@@ -51,7 +51,7 @@
         </div>
         <CircleBubble class="bubble"
           innerColor='var(--light-gray)'
-          outerColor='var(--gray)'
+          outerColor='var(--fade)'
           opacity='0'
         />
       </div>
@@ -250,7 +250,7 @@ export default {
     iconStyle() {
       if (this.isSmart)
         return `color: ${this.iconColor}`
-      return `color: ${this.isActive ? this.iconColor : 'var(--gray)'};`
+      return `color: ${this.isActive ? this.iconColor : 'var(--fade)'};`
     },
     isActive() {
       if ((this.hover && this.isDesktop) || (this.isTouching && !this.isDesktop)) return true
@@ -398,7 +398,7 @@ export default {
 }
 
 .total {
-  color: var(--gray);
+  color: var(--fade);
 }
 
 #task-on-hover {

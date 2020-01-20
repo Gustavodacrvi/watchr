@@ -142,7 +142,7 @@ export default {
   align-items: center !important;
   height: 100%;
   flex-basis: 100%;
-  background-color: var(--void);
+  background-color: var(--appnav-color);
   border-radius: 10px;
   transition: background-color .2s, box-shadow;
 }

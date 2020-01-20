@@ -187,17 +187,17 @@ export default {
 }
 
 .path-link {
-  color: var(--gray);
+  color: var(--fade);
   transition-duration: .15s;
   cursor: pointer;
 }
 
 .path-link:hover {
-  color: var(--white);
+  color: var(--txt);
 }
 
 .path-link:active, .break {
-  color: var(--gray);
+  color: var(--fade);
 }
 
 .path-wrapper {

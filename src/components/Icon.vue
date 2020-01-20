@@ -286,7 +286,7 @@ export default {
 
 .circle {
   border-radius: 100px;
-  background-image: radial-gradient(rgba(0,0,0,0), var(--gray));
+  background-image: radial-gradient(rgba(0,0,0,0), var(--fade));
 }
 
 .primary-hover .icon:hover {
@@ -317,7 +317,7 @@ export default {
   position: relative;
   transform: translateY(4px);
   display: inline-block;
-  stroke: var(--white);
+  stroke: var(--txt);
 }
 
 .pie {
@@ -327,7 +327,7 @@ export default {
 }
 
 .light {
-  stroke: var(--white);
+  stroke: var(--txt);
 }
 
 .title-trans-enter, .title-trans-leave-to {

@@ -6,7 +6,7 @@
         :name="headingsTrans"
         tag="div"
       >
-      <HeadingVue v-for="(h, i) in getHeadings" :key="h.id"
+      <HeadingVue v-for="(h, i) in headings" :key="h.id"
         :header='h'
 
         v-bind="h"
@@ -52,6 +52,7 @@
           :scheduleObject='scheduleObject'
           :editComp='editComp'
           :onSortableAdd='h.onSortableAdd'
+          :isLast='(i + 1) === headings.length'
           @add-heading='addHeading'
           @update="ids => updateHeadingItemIds(h,ids)"
           @go='moveItemHandlerSelection'
@@ -83,7 +84,7 @@ export default {
     HeadingVue,
     ListRenderer: () => import('./ListRenderer.vue'),
   },
-  props: ['headings', 'isChangingViewName', 'showHeading', 'viewType', 'viewName', 'viewNameValue', 'showEmptyHeadings', 'mainFallbackItem', 'showAllHeadingsItems', 'scheduleObject', 'selectEverythingToggle', 
+  props: ['headings', 'isChangingViewName', 'viewType', 'viewName', 'viewNameValue', 'mainFallbackItem', 'showAllHeadingsItems', 'scheduleObject', 'selectEverythingToggle', 
   'headingEditOptions', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'isSmart', 'getItemFirestoreRef', 'itemPlaceholder', 'onAddExistingItem', 'movingButton',  'disableFallback', 'showHeadingFloatingButton', 'updateHeadingIds'],
   data() {
     return {
@@ -173,17 +174,7 @@ export default {
       return (this.isChangingViewName) ? '' : 'head-t'
     },
     getLazyHeadingsIds() {
-      return this.getHeadings.map(el => el.id)
-    },
-    getHeadings() {
-      return this.headings.filter(h => {
-        if (this.showHeading && this.showHeading(h)) {
-          this.stopRootInflation = true
-          return true
-        }
-
-        return this.showEmptyHeadings || h.items.length > 0
-      })
+      return this.headings.map(el => el.id)
     },
   },
   watch: {

@@ -3,7 +3,7 @@
     <button class="btn cursor remove-highlight" :class="{running, rest}" @click="click">
       {{ btnMsg }}
       <CircleBubble
-        innerColor='var(--white)'
+        innerColor='var(--txt)'
         outerColor='white'
         opacity='0'
       />
@@ -11,7 +11,7 @@
     <button v-if="rest && !running" class="btn cursor remove-highlight" @click="skipRest">
       {{ l['Skip interval'] }}
       <CircleBubble
-        innerColor='var(--white)'
+        innerColor='var(--txt)'
         outerColor='white'
         opacity='0'
       />

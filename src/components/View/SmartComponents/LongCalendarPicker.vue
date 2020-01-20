@@ -30,7 +30,7 @@
                 {{ d.day }}
               </span>
               <CircleBubble
-                innerColor='var(--white)'
+                innerColor='var(--txt)'
                 outerColor='white'
                 opacity='0'
               />
@@ -53,7 +53,7 @@
                 {{ d.day }}
               </span>
               <CircleBubble
-                innerColor='var(--white)'
+                innerColor='var(--txt)'
                 outerColor='white'
                 opacity='0'
               />
@@ -76,7 +76,7 @@
                 {{ d.day }}
               </span>
               <CircleBubble
-                innerColor='var(--white)'
+                innerColor='var(--txt)'
                 outerColor='white'
                 opacity='0'
               />
@@ -98,7 +98,7 @@
         />
         <CircleBubble
           innerColor='var(--light-gray)'
-          outerColor='var(--gray)'
+          outerColor='var(--fade)'
           opacity='0'
         />
       </div>
@@ -112,7 +112,7 @@
         />
         <CircleBubble
           innerColor='var(--light-gray)'
-          outerColor='var(--gray)'
+          outerColor='var(--fade)'
           opacity='0'
         />
       </div>
@@ -589,7 +589,7 @@ export default {
 }
 
 .helper .date-wrapper.active .day-wrapper {
-  color: var(--white) !important;
+  color: var(--txt) !important;
 }
 
 .desktop .day-wrapper.notActive:hover {

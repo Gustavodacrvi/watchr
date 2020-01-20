@@ -70,9 +70,12 @@ export default {
   methods: {
     handlePointermove(evt) {
       if (this.pressingHandle) {
-        this.width += evt.screenX - this.handleStart
-        localStorage.setItem('watchr_menu_width', this.width)
-        this.handleStart = evt.screenX
+        const newWidth = this.width + (evt.screenX - this.handleStart)
+        if (newWidth > 300 && newWidth < 800) {
+          this.width = newWidth
+          localStorage.setItem('watchr_menu_width', this.width)
+          this.handleStart = evt.screenX
+        } else this.pressingHandle = false
       }
     },
     pointerdown(evt) {

@@ -2,14 +2,14 @@
   <div class="Menu cbd">
     <div class="appbar-wrapper">
       <span class="arrow-wrapper">
-        <Icon @click="closeMenu" class="arrow primary-hover cursor" icon="arrow" color="var(--gray)" width="25px" :circle='true'/>
+        <Icon @click="closeMenu" class="arrow primary-hover cursor" icon="arrow" color="var(--fade)" width="25px" :circle='true'/>
         <div>
-          <Icon class="cursor help-icon primary-hover" icon="user" color="var(--gray)" @click="toggleMenu" :circle='true'/>
+          <Icon class="cursor help-icon primary-hover" icon="user" color="var(--fade)" @click="toggleMenu" :circle='true'/>
           <IconDrop v-if="!appSection"
             class="help-icon drop rigth"
             handle="globe"
             :circle='true'
-            handleColor="var(--gray)"
+            handleColor="var(--fade)"
             :options='languages'
           />
           <VersionApp class="version"/>
@@ -154,7 +154,7 @@ export default {
   text-decoration: none;
   display: flex;
   align-items: center;
-  color: var(--white);
+  color: var(--txt);
   height: 35px;
   transition-duration: .3s;
   padding: 0 6px;

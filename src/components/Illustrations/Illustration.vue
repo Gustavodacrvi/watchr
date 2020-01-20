@@ -43,7 +43,7 @@ export default {
 }
 
 .fade {
-  color: var(--gray);
+  color: var(--fade);
 }
 
 </style>

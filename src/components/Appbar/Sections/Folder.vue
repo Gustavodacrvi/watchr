@@ -12,7 +12,7 @@
       @touchmove.passive='touchmove'
 
       data-type='folder'
-      data-color='var(--white)'
+      data-color='var(--txt)'
     >
       <span class="icon-wrapper">
         <Icon class="icon" :class="{headerHover}" icon="folder"/>
@@ -25,7 +25,7 @@
       </span>
       <CircleBubble
         innerColor='var(--light-gray)'
-        outerColor='var(--gray)'
+        outerColor='var(--fade)'
         opacity='0'
       />
     </div>
@@ -203,13 +203,13 @@ export default {
 }
 
 .icon {
-  color: var(--gray);
+  color: var(--fade);
   transform: translateY(2px);
   transition-duration: .15s;
 }
 
 .icon.headerHover {
-  color: var(--white);
+  color: var(--txt);
 }
 
 .icon-wrapper {

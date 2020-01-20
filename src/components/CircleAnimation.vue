@@ -7,7 +7,7 @@
         @enter='circleEnter'
       >
         <div v-if="showCircle" class="circle-trans-transition"
-          :style="{left, top, backgroundImage: `radial-gradient(var(--light-gray), var(--gray))`}"
+          :style="{left, top, backgroundImage: `radial-gradient(var(--light-gray), var(--fade))`}"
         ></div>
       </transition>
     </div>
