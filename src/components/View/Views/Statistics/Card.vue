@@ -2,7 +2,7 @@
   <div class="Card cursor remove-highlight shadow cb" @click="$emit('click')">
     <Icon class="icon"
       :icon='icon'
-      color='var(--gray)'
+      color='var(--fade)'
       width='150px'
     />
     <div class="wrapper">
@@ -14,7 +14,7 @@
       </div>
       <CircleBubble class="bubble"
         innerColor='var(--light-gray)'
-        outerColor='var(--gray)'
+        outerColor='var(--fade)'
         opacity='0'
       />
     </div>

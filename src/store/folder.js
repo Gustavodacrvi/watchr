@@ -64,7 +64,7 @@ export default {
       },
     }),
     getFavoriteFolders(state) {
-      return state.folders.filter(f => f.favorite).map(f => ({...f, icon: 'folder', color: 'var(--white)'}))
+      return state.folders.filter(f => f.favorite).map(f => ({...f, icon: 'folder', color: 'var(--txt)'}))
     },
   },
   actions: {

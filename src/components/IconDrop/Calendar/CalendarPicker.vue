@@ -316,7 +316,7 @@ export default {
   font-size: 1em;
   padding: 8px;
   outline: none;
-  border-bottom: 1px solid var(--gray);
+  border-bottom: 1px solid var(--fade);
 }
 
 .bottom {

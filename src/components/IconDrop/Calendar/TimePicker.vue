@@ -55,7 +55,7 @@ export default {
 <style>
 
 .v-picker {
-  color: var(--white) !important;
+  color: var(--txt) !important;
   box-shadow: none !important;
 }
 

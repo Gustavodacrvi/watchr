@@ -26,7 +26,7 @@ export default {
         {
           name: 'No priority',
           icon: 'priority',
-          color: 'var(--gray)',
+          color: 'var(--fade)',
         },
         {
           name: 'Low priority',

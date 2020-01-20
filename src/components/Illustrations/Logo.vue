@@ -42,11 +42,11 @@ export default {
 }
 
 .illustration-colors .shape {
-  fill: var(--white);
+  fill: var(--txt);
 }
 
 .illustration-colors .path {
-  fill: var(--gray);
+  fill: var(--fade);
 }
 
 @keyframes path {
@@ -54,7 +54,7 @@ export default {
     fill: var(--dark-gray);
   }
   to {
-    fill: var(--white);
+    fill: var(--txt);
   }
 }
 
@@ -63,7 +63,7 @@ export default {
 }
 
 .loading .path {
-  fill: var(--gray);
+  fill: var(--fade);
   animation: .85s path linear 0s infinite alternate;
 }
 

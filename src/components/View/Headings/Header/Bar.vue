@@ -13,10 +13,10 @@
       @click="openMenu"
     />
     <HeaderSearch v-if="!isDesktop"/>
-    <h2 v-if="!editing || !isEditable"
+    <span v-if="!editing || !isEditable"
       class="name"
       @click.stop="editing = true"
-    >{{ viewNameValue }}</h2>
+    >{{ viewNameValue }}</span>
     <input v-else-if="isEditable"
       class="input"
       autocomplete="off"
@@ -36,14 +36,14 @@
       <Icon v-for="i in extraIcons" :key="i.icon"
         class="cursor opt remove-highlight primary-hover"
         :icon="i.icon"
-        color='var(--gray)'
+        color='var(--fade)'
         :circle="true"
         @click="i.callback"
       />
       <IconDrop v-if="options && options.length > 0"
         class="opt"
         :handle="optionsHandle"
-        handleColor="var(--gray)"
+        handleColor="var(--fade)"
         :options="options"
         :circle='true'
       />
@@ -201,6 +201,7 @@ export default {
   position: relative;
   z-index: 1;
   margin: 0;
+  font-size: 1.6em;
   max-width: 550px;
   word-break: break-all;
   white-space: nowrap;
@@ -209,7 +210,7 @@ export default {
 }
 
 .opt {
-  margin-right: 8px;
+  margin-left: 8px;
 }
 
 .line {
@@ -217,7 +218,7 @@ export default {
   bottom: 0;
   display: inline-block;
   height: 2px;
-  background-color: var(--white);
+  background-color: var(--txt);
 }
 
 .input {

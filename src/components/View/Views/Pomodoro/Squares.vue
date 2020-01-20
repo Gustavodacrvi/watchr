@@ -8,7 +8,7 @@
       <polyline class="trans" fill="none" :stroke="i < (cycles + 1) ? 'var(--dark-red)' : 'var(--light-gray)'" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
         2.407,4.815 4.323,7.028 8.156,3.472 "/>
       <g>
-        <path class="trans" fill="none" :stroke="i < (cycles + 1) ? 'var(--white)' : 'var(--light-gray)'" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2.0214,2.0214" d="M10.063,9
+        <path class="trans" fill="none" :stroke="i < (cycles + 1) ? 'var(--txt)' : 'var(--light-gray)'" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2.0214,2.0214" d="M10.063,9
           c0,0.552-0.448,1-1,1H1.5c-0.552,0-1-0.448-1-1V1.5c0-0.552,0.448-1,1-1h7.563c0.552,0,1,0.448,1,1V9z"/>
       </g>
       </svg>

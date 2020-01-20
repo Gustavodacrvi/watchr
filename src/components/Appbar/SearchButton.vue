@@ -11,7 +11,7 @@
     </div>
     <CircleBubble
       innerColor='var(--light-gray)'
-      outerColor='var(--gray)'
+      outerColor='var(--fade)'
       opacity='0'
     />
   </div>

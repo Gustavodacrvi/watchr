@@ -10,19 +10,21 @@ html {
 
 :root {
   --back-color: #1c1c1c;
-  --void: #171717;
-  --dark-void: #121212;
-  --font: "Work Sans";
-  --white: #b3b3b3;
-  --primary: #57A0DE;
-  --dark: #1c1c1c;
+  --primary: #3F81D9;
   --appnav-color: #171717;
   --card: #1f1f1f;
+  --txt: #b3b3b3;
+  --fade: #696969;
+
+  --dark: #1c1c1c;
   --dark-gray: #202020;
   --light-gray: #292929;
-  --gray: #515151;
   --extra-light-gray: #383838;
+  --dark-void: #121212;
   --extra-extra-light-gray: #888888;
+
+  --font: "Work Sans";
+
   --orange: #FFA166;
   --green: #57DE5B;
   --purple: #a160eb;
@@ -54,7 +56,7 @@ body {
 
 body, input, button, textarea {
   font-family: var(--font);
-  color: var(--white);
+  color: var(--txt);
 }
 
 .cb {

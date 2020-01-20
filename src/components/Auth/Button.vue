@@ -2,7 +2,7 @@
   <button class="Button cbd" :class="getType" @click="$emit('click')">{{ value }}
     <CircleBubble
       innerColor='var(--light-gray)'
-      outerColor='var(--gray)'
+      outerColor='var(--fade)'
       opacity='0'
     />
   </button>  
@@ -63,7 +63,7 @@ export default {
   margin-top: 8px;
   width: unset;
   padding: 10px;
-  color: var(--gray);
+  color: var(--fade);
   transition-duration: .15s;
   transform: scale(1,1);
 }
@@ -76,11 +76,11 @@ export default {
   margin-left: 6px;
   width: unset;
   transition-duration: .15s;
-  color: var(--gray);
+  color: var(--fade);
 }
 
 .no-padding:hover {
-  color: var(--white);
+  color: var(--txt);
 }
 
 .dark:active, .card:active, .no-padding:active {
@@ -97,7 +97,7 @@ export default {
 
 .card {
   background-color: var(--card);
-  color: var(--white);
+  color: var(--txt);
 }
 
 .card:hover {

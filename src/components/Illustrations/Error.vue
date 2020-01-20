@@ -52,11 +52,11 @@ export default {
 <style scoped>
 
 .illustration-colors .shape {
-  fill: var(--white);
+  fill: var(--txt);
 }
 
 .illustration-colors .path {
-  fill: var(--gray);
+  fill: var(--fade);
 }
 
 </style>

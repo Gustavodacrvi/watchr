@@ -4,7 +4,7 @@
     <span v-if="needsUpdate" class="update-diff">+{{versionDiff}}</span>
     <CircleBubble
       innerColor='var(--light-gray)'
-      outerColor='var(--gray)'
+      outerColor='var(--fade)'
       opacity='0'
     />
   </span>  
@@ -36,7 +36,7 @@ export default {
   border-radius: 50px;
   padding: 8px 12px;
   transition-duration: .15s;
-  color: var(--gray);
+  color: var(--fade);
   transform: scale(1,1);
   display: inline-block;
   position: relative;
@@ -52,13 +52,13 @@ export default {
 }
 
 .needsUpdate {
-  color: var(--white);
-  border: 1px solid var(--white);
+  color: var(--txt);
+  border: 1px solid var(--txt);
 }
 
 .update-diff {
   margin-left: 8px;
-  color: var(--white);
+  color: var(--txt);
 }
 
 </style>

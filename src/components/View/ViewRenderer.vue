@@ -886,7 +886,7 @@ export default {
               {
                 icon: 'priority',
                 id: 'd',
-                color: 'var(--gray)',
+                color: 'var(--fade)',
                 callback: () => savePri('')
               },
               {
@@ -1072,7 +1072,6 @@ export default {
 }
 
 .view-renderer-move {
-  position: relative;
   z-index: 2;
 }
 

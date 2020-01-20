@@ -894,17 +894,15 @@ export default {
 <style scoped>
 
 .illustration {
-  position: fixed;
+  position: absolute;
   top: 0;
   height: 100%;
+  min-height: 100%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   transition-duration: .15s;
-}
-
-.desktop .illustration {
-  transform: translateX(300px);
 }
 
 .mobile .illustration {
@@ -921,7 +919,6 @@ export default {
 }
 
 .ListRenderer {
-  position: relative;
   margin-top: 16px;
 }
 

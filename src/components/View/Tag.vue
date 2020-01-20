@@ -19,7 +19,7 @@
           width="10px"
         />
         <CircleBubble
-          innerColor='var(--white)'
+          innerColor='var(--txt)'
           outerColor='white'
           opacity='0'
         />
@@ -158,14 +158,14 @@ export default {
 }
 
 .Tag:hover {
-  background-color: var(--gray);
+  background-color: var(--fade);
   background-color: var(--light-gray);
 }
 
 .disabled {
   background-color: initial !important;
   opacity: .4;
-  color: var(--white) !important;
+  color: var(--txt) !important;
 }
 
 .extra-icon {

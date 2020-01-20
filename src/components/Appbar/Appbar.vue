@@ -64,7 +64,7 @@
                 >{{ l[s.name] }}
                   <CircleBubble
                     innerColor='var(--light-gray)'
-                    outerColor='var(--gray)'
+                    outerColor='var(--fade)'
                     opacity='0'
                   />
                 </div>
@@ -101,7 +101,7 @@
                   class="right passive"
                   handle='settings-h'
                   :circle='true'
-                  handleColor='var(--gray)'
+                  handleColor='var(--fade)'
                   :options="getOptions"
                 />
               </transition>
@@ -798,7 +798,7 @@ export default {
   align-items: center;
   transition-duration: .15s;
   cursor: pointer;
-  color: var(--gray);
+  color: var(--fade);
   outline: none;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
@@ -807,7 +807,7 @@ export default {
 }
 
 .option:hover {
-  color: var(--white);
+  color: var(--txt);
   background-color: var(--card);
 }
 

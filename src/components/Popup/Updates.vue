@@ -159,7 +159,7 @@ export default {
   padding: 10px;
   background-color: var(--dark);
   transition-duration: .3s;
-  color: var(--gray);
+  color: var(--fade);
   border: none;
 }
 
@@ -168,7 +168,7 @@ export default {
 }
 
 .hasToRead {
-  color: var(--white);
+  color: var(--txt);
 }
 
 .opt.active {

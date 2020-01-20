@@ -89,7 +89,7 @@ export default {
   height: 4px;
   border-radius: 16px;
   overflow: hidden;
-  background-color: var(--void);
+  background-color: var(--appnav-color);
 }
 
 .line {

@@ -13,7 +13,7 @@
       >
         <CircleBubble v-if="!isDesktop"
           innerColor='var(--light-gray)'
-          outerColor='var(--gray)'
+          outerColor='var(--fade)'
           opacity='0'
         />
         <div class="cont">
@@ -22,12 +22,12 @@
               :icon='progressIcon'
               width='15px'
               :progress='getListProgress'
-              color='var(--gray)'
+              color='var(--fade)'
             />
             <Icon v-else class="progress-icon cursor remove-highlight"
               :icon='circleIcon'
               width='22px'
-              color='var(--gray)'
+              color='var(--fade)'
             />
           </div>
           <div class="name">
@@ -48,7 +48,7 @@
             <Icon v-if="isSomeday" class="progress-icon"
               icon='archive'
               width='22px'
-              color='var(--gray)'
+              color='var(--fade)'
             />
           </div>
         </div>
@@ -290,7 +290,7 @@ export default {
 }
 
 .sortable-ghost .cont-wrapper {
-  background-color: var(--void) !important;
+  background-color: var(--appnav-color) !important;
   transition-duration: 0;
   height: 38px;
   padding: 0;
