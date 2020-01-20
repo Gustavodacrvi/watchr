@@ -201,15 +201,6 @@ export default {
               this.selectEverythingToggle = false
             })
           }
-          case '.': {
-            if (fallbackTasks) {
-              const tasks = this.getTasksById(fallbackTasks)
-              const completed = tasks.filter(t => t.completed)
-              const uncompleted = tasks.filter(t => !t.completed)
-              this.$store.dispatch('task/completeTasks', uncompleted)
-              this.$store.dispatch('task/uncompleteTasks', completed)
-            }
-          }
         }
       }
       if (this.isOnShift) {
@@ -299,6 +290,15 @@ export default {
       
       if (this.isOnAlt && !this.isOnControl)
         switch (key) {
+          case '.': {
+            if (fallbackTasks) {
+              const tasks = this.getTasksById(fallbackTasks)
+              const completed = tasks.filter(t => t.completed)
+              const uncompleted = tasks.filter(t => !t.completed)
+              this.$store.dispatch('task/completeTasks', uncompleted)
+              this.$store.dispatch('task/uncompleteTasks', completed)
+            }
+          }
           case "ArrowUp": {
             p()
             this.moveSelected(true)

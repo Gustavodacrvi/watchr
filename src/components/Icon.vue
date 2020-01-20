@@ -106,6 +106,7 @@ import boxCheck from '@/assets/icons/box-check.svg'
 import calendarStar from '@/assets/icons/calendar-star.svg'
 import circleFilled from '@/assets/icons/circle-filled.svg'
 import circleDash from '@/assets/icons/circle-dash.svg'
+import boxCheckFilled from '@/assets/icons/box-check-filled.svg'
 import circleCheckDash from '@/assets/icons/circle-check-dash.svg'
 import boxCheckDash from '@/assets/icons/box-check-dash.svg'
 
@@ -126,6 +127,7 @@ export default {
         envelope, deadline, sleep, repeat, box, file,
         folder, heart, close, filter, magic, clock,
         pomo, pie, check,
+        "box-check-filled": boxCheckFilled,
         "box-dash": boxDash,
         "circle-dash": circleDash,
         "circle-check-dash": circleCheckDash,
@@ -300,10 +302,6 @@ export default {
 
 .hideShadow {
   filter: none !important
-}
-
-.icon:active {
-  color: var(--light-gray) !important;
 }
 
 .svg {

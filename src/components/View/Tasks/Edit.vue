@@ -391,6 +391,7 @@ export default {
       }
 
       s.transitionDuration = '0s'
+      s.transitionTimingFunction = 'ease-out'
       s.height = this.taskHeight ? this.taskHeight + 'px' : 0
       requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
@@ -413,6 +414,7 @@ export default {
         const t = this.$refs['task-name'].$el.style
 
         t.transitionDuration = 0
+        t.opacity = 0
         const y = this.isDesktop ? -2 : 4
         t.transform = `translate(0px, ${y}px)`
         requestAnimationFrame(() => {
@@ -422,6 +424,7 @@ export default {
       }
 
       s.transitionDuration = '0s'
+      s.transitionTimingFunction = 'ease-in'
       s.height = el.offsetHeight + 'px'
       requestAnimationFrame(() => {
         this.show = false

@@ -1,11 +1,11 @@
 <template>
-  <transition name='task-trans'
+  <transition
     appear
-    :css="true"
+    :css="false"
     @enter='taskEnter'
-    @beforeLeave='taskLeave'
+    @leave='taskLeave'
   >
-    <div class="Task draggable" :class="[{fade, isTaskSelected, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing, isTaskMainSelection}, platform]"
+    <div class="Task draggable" :class="[{isTaskSelected, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing, isTaskMainSelection}, platform]"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
       @click="rootClick"
@@ -48,7 +48,7 @@
         @touchmove.passive='touchmove'
         @touchstart.passive='touchStart'
       >
-        <transition name='task-edit'
+        <transition
           @enter='enter'
           @leave='leave'
         >
@@ -70,12 +70,12 @@
                 @touchend.passive='touchComplete'
                 :class="{changeColor}"
               >
-                <Icon :circle='true' class="icon check-icon cursor remove-highlight"
-                  :icon="getTaskIcon"
+                <TaskIcons class="check-icon icon"
+                  :co='completed'
                   :color='circleColor'
-                  :stop='true'
-                  width="20px"
-                  @click="desktopComplete"
+                  :se='isSelecting'
+                  :so='isSomeday'
+                  @click.native.stop="desktopComplete"
                 />
               </div>
               <div class="text"
@@ -83,8 +83,9 @@
               >
                 <div class="task-name-wrapper">
                   <transition name="name-t">
-                    <span v-if="!showApplyOnTasks" class="task-name" key="normal" style="margin-right: 30px">
-                      <span v-html="parsedName"></span>
+                    <span v-if="!showApplyOnTasks" class="task-name" key="normal">
+                      <span class="completed-line" ref='completed-line'></span>
+                      <span v-html="parsedName" ref='parsed-name'></span>
                       <Icon v-if="haveChecklist"
                         class="txt-icon checklist-icon"
                         icon="pie"
@@ -139,6 +140,7 @@ import IconDropVue from '../../IconDrop/IconDrop.vue'
 import TagVue from '../Tag.vue'
 import EditVue from './Edit.vue'
 import Timeline from './Timeline.vue'
+import TaskIcons from './TaskIcons.vue'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -152,7 +154,7 @@ export default {
   props: ['item', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName', 'selectEverythingToggle',
   'isSelecting'],
   components: {
-    Timeline,
+    Timeline, TaskIcons,
     Icon: IconVue,
     IconDrop: IconDropVue,
     Edit: EditVue,
@@ -170,6 +172,8 @@ export default {
       moved: false,
       right: 0,
       timeout: null,
+      completed: false,
+      completeAnimation: false,
       changeColor: false,
       justCompleted: false,
       justSaved: false,
@@ -177,6 +181,9 @@ export default {
 
       editAction: null,
     }
+  },
+  created() {
+    this.completed = this.completedTask
   },
   mounted() {
     if (this.isDesktop)
@@ -320,9 +327,6 @@ export default {
       if (!this.isEditing) {
         const co = el.style
         const inf = this.$refs['info'].style
-        let ni
-        if (this.$refs['name-icon'])
-          ni = this.$refs['name-icon'].style
         const c = this.$refs['check'].style
         this.doneTransition = false
 
@@ -331,16 +335,14 @@ export default {
         inf.transitionDuration = 0
         c.opacity = 0
         inf.opacity = 0
-        if (ni) ni.opacity = 0
         co.transform = 'translateX(-27px)'
         this.deselectTask()
         requestAnimationFrame(() => {
           c.transitionDuration = '.25s'
           co.transitionDuration = '.25s'
           inf.transitionDuration = '.25s'
-          c.opacity = .6
+          c.opacity = 1
           inf.opacity = 1
-          if (ni) ni.opacity = .6
           co.transform = 'translateX(0px)'
           setTimeout(() => {
             this.doneTransition = true
@@ -352,18 +354,14 @@ export default {
       if (this.isEditing) {
         const co = el.style
         const inf = this.$refs['info'].style
-        let ni
-        if (this.$refs['name-icon'])
-          ni = this.$refs['name-icon'].style
         const c = this.$refs['check'].style
         this.doneTransition = false
 
         c.transitionDuration = 0
         co.transitionDuration = 0
         inf.transitionDuration = 0
-        c.opacity = .6
+        c.opacity = 1
         inf.opacity = 1
-        if (ni) ni.opacity = .6
         co.transform = 'translateX(0px)'
         requestAnimationFrame(() => {
           c.transitionDuration = '.25s'
@@ -371,7 +369,6 @@ export default {
           inf.transitionDuration = '.25s'
           c.opacity = 0
           inf.opacity = 0
-          if (ni) ni.opacity = 0
           co.transform = 'translateX(-27px)'
           setTimeout(() => {
             this.doneTransition = true
@@ -384,18 +381,68 @@ export default {
     bindContextMenu(options) {
       utils.bindOptionsToEventListener(this.$el, options, this)
     },
-    taskLeave() {
+    taskLeave(el, done) {
       this.doneTransition = false
+      const s = this.$refs['cont-wrapper'].style
+      let l
+      let n
+      if (this.completeAnimation) {
+        l = this.$refs['completed-line'].style
+        n = this.$refs['parsed-name'].style
+      }
+      
+      s.opacity = 1
+      s.transitionDuration = '0s'
+      if (this.completeAnimation) {
+        l.transitionDuration = '0s'
+        n.transitionDuration = '0s'
+        l.width = 0
+        l.border = '0 solid transparent'
+        n.opacity = 1
+      }
+      s.transitionTimingFunction = 'ease-in'
+      s.height = this.itemHeight + 'px'
+      s.minHeight = this.itemHeight + 'px'
+      requestAnimationFrame(() => {
+        const dur = this.completeAnimation ? 300 : 0
+        
+        s.transitionDuration = '.25s'
+        s.transitionDelay = `.${dur}s`
+        s.opacity = 0
+        s.height = 0
+        s.minHeight = 0
+
+        if (this.completeAnimation) {
+          l.transitionDuration = `.2s`
+          n.transitionDuration = `.2s`
+          n.transitionTimingFunction = 'ease-in'
+          l.transitionTimingFunction = 'ease-in'
+
+          l.width = '100%'
+          l.border = '2px solid var(--txt)'
+
+          n.opacity = '.4'
+        }
+        
+        setTimeout(() => {
+          done
+          this.completeAnimation = false
+        }, 250 + dur)
+      })
     },
-    taskEnter(el) {
+    taskEnter(el, done) {
       const cont = this.$refs['cont-wrapper']
       this.doneTransition = false
       if (cont) {
         const s = cont.style
 
-        setTimeout(() => this.doneTransition = true, 300)
+        setTimeout(() => {
+          this.doneTransition = true
+          done()
+        }, 300)
         if (!(this.changingViewName && !this.isDesktop)) {
           s.transitionDuration = '0s'
+          s.transitionTimingFunction = 'ease-out'
           s.opacity = 0
           s.height = 0
           s.minHeight = 0
@@ -405,6 +452,7 @@ export default {
             s.opacity = 1
             s.height = this.itemHeight + 'px'
             s.minHeight = this.itemHeight + 'px'
+            done()
           })
           setTimeout(() => {
             s.transitionDuration = '0s'
@@ -429,7 +477,11 @@ export default {
     },
     completeTask() {
       const {t,c} = this.getTask
-      if (!this.completed)
+      const comp = this.completed
+      if (!comp)
+        this.completeAnimation = true
+      this.completed = !this.completed
+      if (!comp)
         this.$store.dispatch('task/completeTasks', [this.item])
       else this.$store.dispatch('task/uncompleteTasks', [this.item])
     },
@@ -617,7 +669,7 @@ export default {
       let completed = this.item.checklist.reduce((acc, opt) => opt.completed ? acc + 1 : acc, 0)
       return 100 * completed / this.item.checklist.length
     },
-    completed() {
+    completedTask() {
       return this.isTaskCompleted(this.item, mom().format('Y-M-D'), this.itemCompletionCompareDate)
     },
     isTaskSelected() {
@@ -903,9 +955,6 @@ export default {
       if (!fold || (fold.name === this.viewName)) return null
       return fold.name
     },
-    fade() {
-      if (this.completed) return true
-    },
     calendarStr() {
       const {t,c} = this.getTask
       if ((!c || c.type === 'someday') || (!this.allowCalendarStr && !this.isRoot)) return null
@@ -932,7 +981,7 @@ export default {
       }
     },
     circleColor() {
-      if (!this.item.priority) return ''
+      if (!this.item.priority) return 'var(--fade)'
       const obj = {
         'Low priority': 'var(--green)',
         'Medium priority': 'var(--yellow)',
@@ -945,15 +994,6 @@ export default {
         return this.scheduleObject[this.item.id]
       return null
     },
-    getTaskIcon() {
-      const t = this.item
-
-      let icon = this.isSelecting ? 'circle' : 'box'
-      icon += this.completed ? '-check' : ''
-      icon += this.isSomeday ? '-dash' : ''
-
-      return icon
-    },
   },
   watch: {
     selectedTasks() {
@@ -961,6 +1001,9 @@ export default {
         if (this.selectedTasks && this.selectedTasks.length > 0)
           this.bindContextMenu(this.multiSelectOptions)
         else this.bindContextMenu(this.options)
+    },
+    completedTask() {
+      this.completed = this.completedTask
     },
     isTaskMainSelection() {
       this.bindMainSelection()
@@ -1018,6 +1061,16 @@ export default {
   min-height: 50px;
 }
 
+.completed-line {
+  position: absolute;
+  top: 50%;
+  width: 0;
+  transform: translateY(-50%);
+  border-radius: 100px;
+  border: 0 solid transparent;
+  transition-duration: .25s;
+}
+
 .schedule.mobile {
   margin-left: 60px;
 }
@@ -1050,11 +1103,11 @@ export default {
 }
 
 .desktop .cont-wrapper.doneTransition:hover, .desktop .cont-wrapper:active {
-  background-color: var(--appnav-color);
+  background-color: var(--light-gray);
 }
 
 .isTaskMainSelection .cont-wrapper {
-  background-color: var(--appnav-color);
+  background-color: var(--light-gray);
 }
 
 .check, .text, .options, .cont {
@@ -1071,6 +1124,7 @@ export default {
 
 .info {
   flex-basis: 20px;
+  margin-left: 25px;
   display: flex;
   align-items: center;
 }
@@ -1093,12 +1147,10 @@ export default {
 }
 
 .check {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
   width: 35px;
   height: 100%;
-  opacity: .6;
+  margin-left: 2px;
+  transition-duration: .2s;
 }
 
 .handle, .Task, .cont {
@@ -1110,7 +1162,8 @@ export default {
 }
 
 .task-name {
-  padding-left: 4px;
+  margin: 0 4px;
+  position: relative;
 }
 
 .icon {
@@ -1121,7 +1174,6 @@ export default {
   position: relative;
   align-items: center;
   flex-basis: 100%;
-  margin-left: 35px;
 }
 
 .task-name-wrapper {
@@ -1172,19 +1224,18 @@ export default {
 }
 
 .isTaskSelected .cont-wrapper {
-  background-color: var(--appnav-color) !important;
+  background-color: rgba(53, 73, 90, 0.6) !important;
   box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
   transition-duration: .8s;
 }
 
 .isTaskSelected.isTaskMainSelection .cont-wrapper,
 .isTaskSelected:hover .cont-wrapper {
-  background-color: var(--appnav-color) !important;
+  background-color: rgba(53, 73, 90, 0.9) !important;
 }
 
 .isTaskSelected .back {
   opacity: 0;
-  transition-delay: 0s;
 }
 
 .sortable-ghost .cont-wrapper {
@@ -1218,10 +1269,6 @@ export default {
   transform: translateY(25px);
 }
 
-.check-icon {
-  opacity: .6;
-}
-
 .back {
   position: absolute;
   left: 2px;
@@ -1233,31 +1280,6 @@ export default {
   align-items: center;
   opacity: 1;
   justify-content: center;
-  transition-delay: .3s;
-}
-
-.task-trans-leave-active, .task-trans-enter-active {
-  transition-duration: .25s !important;
-}
-
-.task-trans-leave-active .back {
-  opacity: 0;
-  transition-delay: 0s;
-}
-
-.task-trans-leave, .task-trans-leave .cont-wrapper {
-  height: 38px;
-  opacity: 1;
-}
-
-.mobile .task-trans-leave, .task-trans-leave .cont-wrapper {
-  height: 50px;
-}
-
-.task-trans-leave-to, .task-trans-leave-to .cont-wrapper {
-  height: 0px !important;
-  opacity: 0 !important;
-  overflow: hidden !important;
 }
 
 </style>

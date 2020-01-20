@@ -36,19 +36,17 @@
 
         @update='onSmartComponentUpdate'
       />
-      <transition name="fade-t" mode="out-in">
-        <component v-if="extraListView && defer(3)" :is='extraListView.comp'
-          v-bind="{...$props, ...extraListView}"
+      <component v-if="extraListView && defer(3)" :is='extraListView.comp'
+        v-bind="{...$props, ...extraListView}"
 
-          :movingButton='movingButton'
-          :showCompleted='showCompleted'
-          :showSomeday='passSomedayTasks'
-          :openCalendar='getHelperComponent === "LongCalendarPicker"'
+        :movingButton='movingButton'
+        :showCompleted='showCompleted'
+        :showSomeday='passSomedayTasks'
+        :openCalendar='getHelperComponent === "LongCalendarPicker"'
 
-          @allow-someday='showSomeday = true'
-        />
-      </transition>
-      <transition name="fade-t" mode="out-in">
+        @allow-someday='showSomeday = true'
+      />
+      <transition name="fade-t">
         <component v-if="defer(2)" :is='getViewComp' class='view-renderer-move'
           v-bind="$props"
 
