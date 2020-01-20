@@ -161,6 +161,7 @@ export default {
 
       lastSelectedId: null,
       lastHeadingName: null,
+      lastButtonElement: null,
       editMoveType: 'add',
       compHeight: 0,
 
@@ -244,7 +245,7 @@ export default {
         const act = obj[type]
         for (const s of possibleValues)
           if (s !== type) {
-            obj[s].backgroundColor = 'var(--void)'
+            obj[s].backgroundColor = 'var(--appnav-color)'
             obj[s].zIndex = '1'
             obj[s].boxShadow = 'none'
           }
@@ -356,6 +357,9 @@ export default {
         this.sortable.destroy()
     },
     mountSortables() {
+      let ball = null
+      let cont = null
+      
       const obj = {
         disabled: this.disableSortableMount,
         multiDrag: this.enableSelect || !this.isDesktop,
@@ -491,7 +495,31 @@ export default {
           }
         },
         onStart: evt => {
-          window.navigator.vibrate(100)
+          if (!this.isDesktop)
+            window.navigator.vibrate(100)
+        },
+        onChange: evt => {
+          const item = evt.item
+          if (item.dataset.type === 'add-task-floatbutton') {
+            if (this.lastButtonElement !== item) {
+              const s = item.childNodes[0].style
+
+              this.lastButtonElement = item
+  
+              s.transitionDuration = '.0s'
+              s.transitionTimingFunction = 'ease-out'
+              s.overflow = 'hidden'
+              s.height = 0
+              s.opacity = 0
+  
+              requestAnimationFrame(() => {
+                s.transitionDuration = '.1s'
+                
+                s.height = this.itemHeight + 'px'
+                s.opacity = 1
+              })
+            }
+          }
         },
       }
       if (this.isDesktop)

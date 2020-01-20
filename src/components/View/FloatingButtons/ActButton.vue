@@ -1,14 +1,5 @@
 <template>
   <div class="ActButton floating-button-handle" :class="platform">
-    <div class="floating no-pointer">
-      <div class="inner-ball-button remove-highlight">
-        <Icon class="icon"
-          :icon="icon"
-          :color="color"
-        />
-        <div class="path"></div>
-      </div>
-    </div>
     <div class="act-button-wrapper" :style='styles'>
       <div class="heading cont side action-heading">
         <div class="floating-btn-msg task-act no-pointer">
@@ -30,6 +21,15 @@
         <div class="floating-btn-msg task-act no-pointer">
           {{ l['Add'] }}
         </div>
+      </div>
+    </div>
+    <div class="floating no-pointer">
+      <div class="inner-ball-button remove-highlight">
+        <Icon class="icon"
+          :icon="icon"
+          :color="color"
+        />
+        <div class="path"></div>
       </div>
     </div>
   </div>
@@ -66,6 +66,7 @@ export default {
   justify-content: center;
   align-items: center;
   transition-duration: 0s !important;
+  position: relative;
 }
 
 .floating {
