@@ -69,12 +69,12 @@
           <ButtonVue type="no-padding" value="Show someday items..."/>
         </div>
       </transition>
+      <ButtonVue v-if="showMoreItemsButton"
+        type="no-padding"
+        :value='showMoreItemsMessage'
+        @click="showingMoreItems = true"
+      />
     </div>
-    <ButtonVue v-if="showMoreItemsButton"
-      type="no-padding"
-      :value='showMoreItemsMessage'
-      @click="showingMoreItems = true"
-    />
     <HeadingsRenderer v-if="isRoot && getHeadings.length > 0"
       :viewName='viewName'
       :viewType='viewType'
