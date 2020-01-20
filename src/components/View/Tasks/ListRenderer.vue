@@ -394,7 +394,7 @@ export default {
         onUpdate: (evt) => {
           setTimeout(() => {
             this.$emit('update', this.getIds(true))
-          }, 10)
+          })
         },
         onSelect: evt => {
           const id = evt.item.dataset.id

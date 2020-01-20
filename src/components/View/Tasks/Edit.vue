@@ -391,7 +391,6 @@ export default {
       }
 
       s.transitionDuration = '0s'
-      s.transitionTimingFunction = 'ease-out'
       s.height = this.taskHeight ? this.taskHeight + 'px' : 0
       requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
@@ -424,7 +423,6 @@ export default {
       }
 
       s.transitionDuration = '0s'
-      s.transitionTimingFunction = 'ease-in'
       s.height = el.offsetHeight + 'px'
       requestAnimationFrame(() => {
         this.show = false

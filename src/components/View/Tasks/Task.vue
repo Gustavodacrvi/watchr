@@ -341,7 +341,7 @@ export default {
           c.transitionDuration = '.25s'
           co.transitionDuration = '.25s'
           inf.transitionDuration = '.25s'
-          c.opacity = 1
+          c.opacity = .25
           inf.opacity = 1
           co.transform = 'translateX(0px)'
           setTimeout(() => {
@@ -360,7 +360,7 @@ export default {
         c.transitionDuration = 0
         co.transitionDuration = 0
         inf.transitionDuration = 0
-        c.opacity = 1
+        c.opacity = .25
         inf.opacity = 1
         co.transform = 'translateX(0px)'
         requestAnimationFrame(() => {
@@ -400,11 +400,10 @@ export default {
         l.border = '0 solid transparent'
         n.opacity = 1
       }
-      s.transitionTimingFunction = 'ease-in'
       s.height = this.itemHeight + 'px'
       s.minHeight = this.itemHeight + 'px'
       requestAnimationFrame(() => {
-        const dur = this.completeAnimation ? 300 : 0
+        const dur = this.completeAnimation ? 275 : 0
         
         s.transitionDuration = '.25s'
         s.transitionDelay = `.${dur}s`
@@ -415,8 +414,6 @@ export default {
         if (this.completeAnimation) {
           l.transitionDuration = `.2s`
           n.transitionDuration = `.2s`
-          n.transitionTimingFunction = 'ease-in'
-          l.transitionTimingFunction = 'ease-in'
 
           l.width = '100%'
           l.border = '2px solid var(--txt)'
@@ -425,7 +422,7 @@ export default {
         }
         
         setTimeout(() => {
-          done
+          done()
           this.completeAnimation = false
         }, 250 + dur)
       })
@@ -442,7 +439,6 @@ export default {
         }, 300)
         if (!(this.changingViewName && !this.isDesktop)) {
           s.transitionDuration = '0s'
-          s.transitionTimingFunction = 'ease-out'
           s.opacity = 0
           s.height = 0
           s.minHeight = 0
@@ -478,8 +474,7 @@ export default {
     completeTask() {
       const {t,c} = this.getTask
       const comp = this.completed
-      if (!comp)
-        this.completeAnimation = true
+      this.completeAnimation = !comp
       this.completed = !this.completed
       if (!comp)
         this.$store.dispatch('task/completeTasks', [this.item])
@@ -981,7 +976,7 @@ export default {
       }
     },
     circleColor() {
-      if (!this.item.priority) return 'var(--fade)'
+      if (!this.item.priority) return ''
       const obj = {
         'Low priority': 'var(--green)',
         'Medium priority': 'var(--yellow)',
@@ -1150,7 +1145,9 @@ export default {
   width: 35px;
   height: 100%;
   margin-left: 2px;
+  flex-shrink: 0;
   transition-duration: .2s;
+  opacity: .25;
 }
 
 .handle, .Task, .cont {
