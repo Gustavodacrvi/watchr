@@ -386,7 +386,7 @@ export default {
             c.lastCompleteDate = mom().format('Y-M-D')
           }
           else if (c.type === 'weekly' || c.type === 'monthly' || c.type === 'yearly') {
-            const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c)
+            const nextEventAfterCompletion = utilsMoment.getNextEventAfterCompletionDate(c, true)
             c.lastCompleteDate = nextEventAfterCompletion.format('Y-M-D')
           }
 

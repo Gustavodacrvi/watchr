@@ -162,11 +162,11 @@ export default {
       break
     }
   },
-  getNextEventAfterCompletionDate(c) {
+  getNextEventAfterCompletionDate(c, ignoreBeginsWhenThereIsNoLastCompleteDate = false) {
     let lastComplete = mom(c.lastCompleteDate || c.begins, 'Y-M-D')
     if (lastComplete.isValid()) {
       const begins = mom(c.begins, 'Y-M-D')
-      if (!c.lastCompleteDate)
+      if (!c.lastCompleteDate && !ignoreBeginsWhenThereIsNoLastCompleteDate)
         return mom(c.begins, 'Y-M-D')
       if (c.type === 'daily') {
         return lastComplete.add(c.daily, 'd')

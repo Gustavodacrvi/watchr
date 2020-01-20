@@ -76,7 +76,6 @@
           @calendar='toggleCalendar'
         />
       </transition>
-      <div style='height: 300px'></div>
     </div>
     <PaginationVue v-if="headingsPagination"
       :page='pagination'

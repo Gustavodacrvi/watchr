@@ -8,6 +8,8 @@
     <div
       class="front item-renderer-root"
       :class="{dontHaveItems: lazyItems.length === 0}"
+      :style="inflate"
+      ref='item-renderer-root'
 
       data-name='item-renderer'
     >
@@ -73,14 +75,12 @@
       :value='showMoreItemsMessage'
       @click="showingMoreItems = true"
     />
-    <HeadingsRenderer v-if="isRoot"
+    <HeadingsRenderer v-if="isRoot && getHeadings.length > 0"
       :viewName='viewName'
-      :showEmptyHeadings='showEmptyHeadings'
       :viewType='viewType'
       :viewNameValue='viewNameValue'
-      :headings='lazyHeadings'
+      :headings='getHeadings'
       :isChangingViewName='isChangingViewName'
-      :showHeading='showHeading'
       :headingEditOptions='headingEditOptions'
       :isSmart='isSmart'
       :comp='comp'
@@ -136,7 +136,7 @@ import utils from '@/utils/'
 export default {
   props: ['items', 'headings','header', 'onSortableAdd', 'viewName', 'addItem', 'viewNameValue', 'icon', 'headingEditOptions', 'headingPosition', 'showEmptyHeadings', 'showHeading', 'hideFolderName', 'hideListName', 'showHeadingName', 'isSmart', 'allowCalendarStr', 'updateHeadingIds',  'mainFallbackItem' ,'disableSortableMount', 'showAllHeadingsItems', 'rootFallbackItem', 'headingFallbackItem', 'movingButton', 'rootFilterFunction', 'showHeadingFloatingButton', 'headingFilterFunction', 'scheduleObject', 'showSomedayButton', 'openCalendar', 'rootChanging', 
   'rootHeadings', 'selectEverythingToggle', 'viewType', 'itemIconDropOptions', 'itemCompletionCompareDate', 'comp', 'editComp', 'itemPlaceholder', 'getItemFirestoreRef', 'onAddExistingItem', 'disableSelect', 'group',
-   'disableFallback'],
+   'disableFallback', 'isLast'],
   components: {
     Task, Icon, ButtonVue, List, ListEdit,
     EditComp, HeadingsRenderer, TaskEdit,
@@ -158,11 +158,11 @@ export default {
       hasEdit: null,
       edit: null,
       focusToggle: false,
-      stopRootInflation: false,
 
       lastSelectedId: null,
       lastHeadingName: null,
       editMoveType: 'add',
+      compHeight: 0,
 
       isAboutToMoveBetweenSortables: false,
       sourceVueInstance: null,
@@ -174,6 +174,7 @@ export default {
     this.updateView()
   },
   mounted() {
+    this.getCompHeight()
     this.mountSortables()
     window.addEventListener('click', this.windowClick)
     window.addEventListener('touchmove', this.mousemove)
@@ -192,6 +193,12 @@ export default {
     }
   },
   methods: {
+    getCompHeight() {
+      const el = this.$refs['item-renderer-root']
+      const offsetTop = el.getBoundingClientRect().top
+      const height = document.documentElement.clientHeight
+      this.compHeight = (height - offsetTop) + 'px'
+    },
     changeTime(args) {
       this.$emit('change-time', args)
     },
@@ -747,6 +754,15 @@ export default {
     showMoreItemsButton() {
       return !this.isRoot && !this.showAllHeadingsItems && !this.showingMoreItems && this.nonEditLazyTasks.length > 3
     },
+    getHeadings() {
+      return this.lazyHeadings.filter(h => {
+        if (this.showHeading && this.showHeading(h)) {
+          return true
+        }
+
+        return this.showEmptyHeadings || h.items.length > 0
+      })
+    },
     isRoot() {
       return !this.header
     },
@@ -765,6 +781,14 @@ export default {
       return this.openCalendar || !this.isDesktop ||
       (this.pressingSelectKeys || (this.selected.length > 0))
     },
+    inflate() {
+      if (!((this.isRoot && this.getHeadings.length === 0) || this.isLast)) return null
+      return this.isRoot ? {
+        minHeight: this.compHeight,
+      } : {
+        minHeight: '700px',
+      }
+    },
     selectOnClick() {
       return (this.openCalendar || this.selected.length > 0)
     },
@@ -777,10 +801,10 @@ export default {
       return this.$el.getElementsByClassName('item-renderer-root')[0]
     },
     showIllustration() {
-      const lazyHeadings = this.lazyHeadings
-      for (const head of lazyHeadings)
+      const getHeadings = this.getHeadings
+      for (const head of getHeadings)
         if (head.items.length > 0) return false
-      return this.isRoot && this.lazyItems.length === 0 && this.icon && !this.header
+      return this.isRoot && this.lazyItems.length === 0 && getHeadings.length === 0 && this.icon && !this.header
     },
   },
   watch: {
