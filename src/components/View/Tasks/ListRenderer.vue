@@ -65,7 +65,7 @@
         />
       </template>
       <transition name="fade-t">
-        <div v-if="showSomedayButton && !header" @click="$emit('allow-someday')">
+        <div v-if="computedShowSomedayButton" @click="$emit('allow-someday')">
           <ButtonVue type="no-padding" value="Show someday items..."/>
         </div>
       </transition>
@@ -748,6 +748,9 @@ export default {
     nonEditLazyTasks() {
       return this.lazyItems.filter(el => !el.isEdit)
     },
+    computedShowSomedayButton() {
+      return this.isRoot & this.showSomedayButton && this.getItems.filter(el => !el.isEdit).length > 0
+    },
     showMoreItemsMessage() {
       return `${this.l['Show ']}${this.nonEditLazyTasks.length - 3} more items...`
     },
@@ -782,7 +785,7 @@ export default {
       (this.pressingSelectKeys || (this.selected.length > 0))
     },
     inflate() {
-      if (!((this.isRoot && this.getHeadings.length === 0) || this.isLast)) return null
+      if (!((this.isRoot && this.comp === 'Task' && this.getHeadings.length === 0) || this.isLast)) return null
       return this.isRoot ? {
         minHeight: this.compHeight,
       } : {

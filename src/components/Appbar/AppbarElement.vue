@@ -312,7 +312,7 @@ export default {
   align-items: center;
   right: 6px;
   flex-shrink: 0;
-  margin-left: 4px;
+  margin-right: 6px;
   height: 100%;
   z-index: 5;
   font-size: .85em;

@@ -1,11 +1,11 @@
 <template>
-  <transition name='task-trans'
+  <transition
     appear
-    :css="true"
+    :css="false"
     @enter='taskEnter'
-    @beforeLeave='taskLeave'
+    @leave='taskLeave'
   >
-    <div class="Task draggable" :class="[{fade, isTaskSelected, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing, isTaskMainSelection}, platform]"
+    <div class="Task draggable" :class="[{isTaskSelected, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing, isTaskMainSelection}, platform]"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
       @click="rootClick"
@@ -70,7 +70,7 @@
                 @touchend.passive='touchComplete'
                 :class="{changeColor}"
               >
-                <Icon :circle='true' class="icon check-icon cursor remove-highlight"
+                <Icon :circle='true' class="icon cursor remove-highlight"
                   :icon="getTaskIcon"
                   :color='circleColor'
                   :stop='true'
@@ -384,16 +384,32 @@ export default {
     bindContextMenu(options) {
       utils.bindOptionsToEventListener(this.$el, options, this)
     },
-    taskLeave() {
+    taskLeave(el, done) {
       this.doneTransition = false
+      const s = this.$refs['cont-wrapper'].style
+      
+      s.opacity = 1
+      s.transitionDuration = '0s'
+      s.height = this.itemHeight + 'px'
+      s.minHeight = this.itemHeight + 'px'
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.25s'
+        s.opacity = 0
+        s.height = 0
+        s.minHeight = 0
+        setTimeout(done, 250)
+      })
     },
-    taskEnter(el) {
+    taskEnter(el, done) {
       const cont = this.$refs['cont-wrapper']
       this.doneTransition = false
       if (cont) {
         const s = cont.style
 
-        setTimeout(() => this.doneTransition = true, 300)
+        setTimeout(() => {
+          this.doneTransition = true
+          done()
+        }, 300)
         if (!(this.changingViewName && !this.isDesktop)) {
           s.transitionDuration = '0s'
           s.opacity = 0
@@ -405,6 +421,7 @@ export default {
             s.opacity = 1
             s.height = this.itemHeight + 'px'
             s.minHeight = this.itemHeight + 'px'
+            done()
           })
           setTimeout(() => {
             s.transitionDuration = '0s'
@@ -903,9 +920,6 @@ export default {
       if (!fold || (fold.name === this.viewName)) return null
       return fold.name
     },
-    fade() {
-      if (this.completed) return true
-    },
     calendarStr() {
       const {t,c} = this.getTask
       if ((!c || c.type === 'someday') || (!this.allowCalendarStr && !this.isRoot)) return null
@@ -949,8 +963,10 @@ export default {
       const t = this.item
 
       let icon = this.isSelecting ? 'circle' : 'box'
-      icon += this.completed ? '-check' : ''
+      icon += this.completed ? '-check-filled' : ''
       icon += this.isSomeday ? '-dash' : ''
+      if (this.item.name === 'j')
+        console.log(icon)
 
       return icon
     },
@@ -1050,11 +1066,11 @@ export default {
 }
 
 .desktop .cont-wrapper.doneTransition:hover, .desktop .cont-wrapper:active {
-  background-color: var(--appnav-color);
+  background-color: var(--light-gray);
 }
 
 .isTaskMainSelection .cont-wrapper {
-  background-color: var(--appnav-color);
+  background-color: var(--light-gray);
 }
 
 .check, .text, .options, .cont {
@@ -1098,7 +1114,6 @@ export default {
   transform: translateY(-50%);
   width: 35px;
   height: 100%;
-  opacity: .6;
 }
 
 .handle, .Task, .cont {
@@ -1172,14 +1187,14 @@ export default {
 }
 
 .isTaskSelected .cont-wrapper {
-  background-color: var(--appnav-color) !important;
+  background-color: rgba(53, 73, 90, 0.6) !important;
   box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
   transition-duration: .8s;
 }
 
 .isTaskSelected.isTaskMainSelection .cont-wrapper,
 .isTaskSelected:hover .cont-wrapper {
-  background-color: var(--appnav-color) !important;
+  background-color: rgba(53, 73, 90, 0.9) !important;
 }
 
 .isTaskSelected .back {
@@ -1218,10 +1233,6 @@ export default {
   transform: translateY(25px);
 }
 
-.check-icon {
-  opacity: .6;
-}
-
 .back {
   position: absolute;
   left: 2px;
@@ -1234,30 +1245,6 @@ export default {
   opacity: 1;
   justify-content: center;
   transition-delay: .3s;
-}
-
-.task-trans-leave-active, .task-trans-enter-active {
-  transition-duration: .25s !important;
-}
-
-.task-trans-leave-active .back {
-  opacity: 0;
-  transition-delay: 0s;
-}
-
-.task-trans-leave, .task-trans-leave .cont-wrapper {
-  height: 38px;
-  opacity: 1;
-}
-
-.mobile .task-trans-leave, .task-trans-leave .cont-wrapper {
-  height: 50px;
-}
-
-.task-trans-leave-to, .task-trans-leave-to .cont-wrapper {
-  height: 0px !important;
-  opacity: 0 !important;
-  overflow: hidden !important;
 }
 
 </style>
