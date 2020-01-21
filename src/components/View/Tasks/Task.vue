@@ -8,7 +8,6 @@
     <div class="Task draggable" :class="[{isTaskSelected, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing, isTaskMainSelection}, platform]"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
-      @click="rootClick"
     >
       <transition name="fade-t">
         <Timeline v-if="schedule && !isEditing"
@@ -82,23 +81,20 @@
                 :class="{changeColor}"
               >
                 <div class="task-name-wrapper">
-                  <transition name="name-t">
-                    <span v-if="!showApplyOnTasks" class="task-name" key="normal">
-                      <span class="completed-line" ref='completed-line'></span>
-                      <span v-html="parsedName" ref='parsed-name'></span>
-                      <Icon v-if="haveChecklist"
-                        class="txt-icon checklist-icon"
-                        icon="pie"
-                        color="var(--fade)"
-                        width="12px"
-                        :progress='checklistPieProgress'
-                      />
-                      <Icon v-if="hasTags" class="txt-icon" icon="tag" color="var(--fade)" width="14px"/>
-                      <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--fade)" width="12px"/>
-                      <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
-                    </span>
-                    <span v-else @click.stop="applySelected" class="apply" key="apply">{{ l['Apply selected on tasks'] }}</span>
-                  </transition>
+                  <span class="task-name" key="normal">
+                    <span class="completed-line" ref='completed-line'></span>
+                    <span v-html="parsedName" ref='parsed-name'></span>
+                    <Icon v-if="haveChecklist"
+                      class="txt-icon checklist-icon"
+                      icon="pie"
+                      color="var(--fade)"
+                      width="12px"
+                      :progress='checklistPieProgress'
+                    />
+                    <Icon v-if="hasTags" class="txt-icon" icon="tag" color="var(--fade)" width="14px"/>
+                    <Icon v-if="haveFiles" class="txt-icon" icon="file" color="var(--fade)" width="12px"/>
+                    <span v-if="nextCalEvent" class="tag cb rb">{{ nextCalEvent }}</span>
+                  </span>
                 </div>
               </div>
               <span class="info" ref='info'>
@@ -587,11 +583,6 @@ export default {
         priority: pri,
       })
     },
-    applySelected() {
-      setTimeout(() => {
-        this.$store.commit('applyAppnavSelected', this.item.id)
-      })
-    },
     saveCalendarDate(calendar) {
       this.$store.dispatch('task/saveTasksById', {
         ids: [this.item.id],
@@ -610,9 +601,6 @@ export default {
           specific: date,
         },
       })
-    },
-    rootClick(event) {
-      if (this.isSelectingAppnavEls) event.stopPropagation()
     },
     escapeHTML(string) {
       let div = document.createElement("div")
@@ -643,7 +631,6 @@ export default {
       isOnShift: state => state.isOnShift,
       mainSelection: state => state.mainSelection,
       isOnAlt: state => state.isOnAlt,
-      selectedEls: state => state.selectedEls,
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
     }),
@@ -896,12 +883,6 @@ export default {
           callback: () => dispatch('task/manualCompleteTasks', [t])
         })
       return arr
-    },
-    showApplyOnTasks() {
-      return !this.isOnControl && this.isSelectingAppnavEls && this.onHover
-    },
-    isSelectingAppnavEls() {
-      return this.selectedEls.length > 0
     },
     isOverdue() {
       if (this.viewName === 'Overdue') return false
@@ -1242,26 +1223,6 @@ export default {
 
 .mobile.sortable-ghost .cont-wrapper {
   height: 50px;
-}
-
-.name-t-enter {
-  opacity: 0;
-  transform: translateY(-25px); 
-}
-
-.name-t-enter-active, .name-t-leave-active {
-  position: absolute;
-  transition-duration: .15s;
-}
-
-.name-t-enter-to, .name-t-leave {
-  transform: translateY(0px);
-  opacity: 1;
-}
-
-.name-t-leave-to {
-  opacity: 0;
-  transform: translateY(25px);
 }
 
 .back {

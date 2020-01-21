@@ -85,11 +85,6 @@ const store = new Vuex.Store({
       callback: null,
     },
     iconDrop: null,
-    selectedEls: [],
-    apply: {
-      taskId: null,
-      bool: false,
-    },
     user: {
       displayName: null,
       email: null,
@@ -115,6 +110,7 @@ const store = new Vuex.Store({
     viewType: '',
     mainSelection: null,
     mainSelectionIndex: null,
+    movingTask: false,
     
     isOnControl: false,
     isOnShift: false,
@@ -230,6 +226,9 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    movingTask(state, bool) {
+      state.movingTask = bool
+    },
     saveMainSelection(state, {id, index}) {
       state.mainSelection = id
       state.mainSelectionIndex = index
@@ -272,13 +271,6 @@ const store = new Vuex.Store({
     },
     firstFirebaseLoad(state) {
       state.firstFireLoad = true
-    },
-    applyAppnavSelected(state, id) {
-      state.apply.taskId = id
-      state.apply.bool = !state.apply.bool
-    },
-    appnavSelected(state, selected) {
-      state.selectedEls = selected
     },
     languageFile(state, language) {
       state.language = language

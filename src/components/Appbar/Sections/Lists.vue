@@ -1,5 +1,5 @@
 <template>
-  <div class="Lists">
+  <div class="Lists" :class="{movingTask}">
     <Renderer
       type="list"
       icon="tasks"
@@ -209,6 +209,7 @@ export default {
   computed: {
     ...mapState({
       tasks: state => state.task.tasks,
+      movingTask: state => state.movingTask,
       user: state => state.user,
     }),
     ...mapGetters({

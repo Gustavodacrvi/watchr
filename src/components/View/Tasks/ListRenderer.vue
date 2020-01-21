@@ -374,6 +374,7 @@ export default {
           name: 'item-renderer',
           pull: (e,j,item) => {
             const d = item.dataset
+            return true
             if (e.el.dataset.name === 'appnav-renderer') return 'clone'
             if (d.type === 'Task') return true
             return false
@@ -491,11 +492,40 @@ export default {
               else vue = vue.$parent
             }
             vue.sourceVueInstance = this
+          } else {
+            const evt = t
+            const taskIds = this.selected
+            if (taskIds.length === 0)
+              taskIds.push(evt.dragged.dataset.id)
+            
+            const specialClass = 'DRAG-AND-DROP-EL'
+            const containsInfo = el => el.classList && el.classList.contains(specialClass)
+            
+            let target = evt.related
+            if (!containsInfo(target))
+              target = target.childNodes[0]
+            if (!target || !containsInfo(target))
+              target = target.closest(`.${specialClass}`)
+
+            if (containsInfo(target)) {
+              const data = target.dataset
+            } else {
+
+            }
+            
+            return false
           }
         },
         onStart: evt => {
+          if (this.isDesktop && this.comp === 'Task')
+            this.$store.commit('movingTask', true)
+          
           if (!this.isDesktop)
             window.navigator.vibrate(100)
+        },
+        onEnd: evt => {
+          if (this.isDesktop && this.comp === 'Task')
+            this.$store.commit('movingTask', false)
         },
         onChange: evt => {
           const item = evt.item
@@ -687,6 +717,7 @@ export default {
         }
         return arr
       }
+      return []
     },
     getIds(removeAdders) {
       const childs = this.draggableRoot.childNodes

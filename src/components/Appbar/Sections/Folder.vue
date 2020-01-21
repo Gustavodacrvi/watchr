@@ -1,7 +1,7 @@
 
 <template>
   <div class="Folder AppbarElement" :class="platform">
-    <div class="header rb cursor handle-folder AppbarElement-link"
+    <div class="header rb cursor handle-folder AppbarElement-link DRAG-AND-DROP-EL"
       :class="{isActive}"
       @click="go"
       @mouseenter="headerHover = true"
@@ -18,10 +18,7 @@
         <Icon class="icon" :class="{headerHover}" icon="folder"/>
       </span>
       <span class="name-wrapper">
-        <transition name="name-t">
-          <span v-if="!showSpecialInfo" class="name" key="nam"><b>{{ name }}</b></span>
-          <span v-else key="f">{{ l['Apply selected tasks'] }}</span>
-        </transition>
+        <span class="name" key="nam"><b>{{ name }}</b></span>
       </span>
       <CircleBubble
         innerColor='var(--light-gray)'
@@ -119,10 +116,7 @@ export default {
       if (this.isDesktop) this.click()
     },
     click() {
-      if (!this.showSpecialInfo) {
-        this.$router.push('/user?folder=' + this.name)
-      }
-      else this.apply()
+      this.$router.push('/user?folder=' + this.name)
     },
     toggle() {
       this.showing = !this.showing
@@ -152,12 +146,6 @@ export default {
       return folderUtils.getFolderOptions({
         ...this.folder, id: this.id, name: this.name,
       }, this.showing, this.toggle)
-    },
-    isSelectingTasks() {
-      return this.selected.length > 0
-    },
-    showSpecialInfo() {
-      return this.headerHover && !this.isOnControl && this.isSelectingTasks
     },
     isActive() {
       return this.name === this.viewName && this.viewType === 'folder'
@@ -190,6 +178,7 @@ export default {
   position: relative;
   display: flex;
   height: 35px;
+  transform: scale(1,1); /* used for drag and drop */
   transition-duration: .15s;
   overflow: hidden;
 }
@@ -199,7 +188,7 @@ export default {
 }
 
 .header:hover, .isActive {
-  background-color: var(--light-gray) !important;
+  background-color: var(--dark);
 }
 
 .icon {
@@ -230,26 +219,6 @@ export default {
   right: 6px;
   top: 50%;
   transform: translateY(-50%);
-}
-
-.name-t-enter {
-  opacity: 0;
-  transform: translateY(-25px); 
-}
-
-.name-t-enter-active, .name-t-leave-active {
-  position: absolute;
-  transition-duration: .15s;
-}
-
-.name-t-enter-to, .name-t-leave {
-  transform: translateY(0px);
-  opacity: 1;
-}
-
-.name-t-leave-to {
-  opacity: 0;
-  transform: translateY(25px);
 }
 
 </style>

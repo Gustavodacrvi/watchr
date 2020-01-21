@@ -4,15 +4,14 @@
     :class="[platform, {hasSubList}]"
   >
     <div
-      class="link-wrapper AppbarElement-link rb"
+      class="link-wrapper AppbarElement-link rb DRAG-AND-DROP-EL"
       :data-type='type'
-      :data-selectedtype='selectedtype'
       :data-color='iconColor'
       :data-disabled='disableAction'
     >
       <div
-        class="link-inner-wrapper rb handle cursor remove-highlight"
-        :class="{notSmartActive: !isSmart && isActive, isSelectedEl, onHover: hover, isActive}"
+        class="link-inner-wrapper rb item-handle cursor remove-highlight"
+        :class="{notSmartActive: !isSmart && isActive, onHover: hover, isActive}"
 
         @mouseenter="hover = true"
         @mouseleave="hover = false"
@@ -32,10 +31,9 @@
         </div>
         <div class="name-wrapper">
           <transition name="name-t">
-            <span v-if="!showSpecialInfo" key="normal" class="name" :style="hoverStyle">
+            <span key="normal" class="name" :style="hoverStyle">
               {{ getName }}
             </span>
-            <span v-else class="name" key="apply" :style="hoverStyle">{{ l['Apply selected tasks'] }}</span>
           </transition>
         </div>
         <div class="info">
@@ -101,7 +99,7 @@ import utils from '@/utils/'
 export default {
   props: ['name', 'icon', 'callback', 'iconColor', 'tabindex', 'active',
     'viewType', 'type', 'isSmart', 'options', 'totalNumber', 'importantNumber',
-  'disableAction', 'selected', 'id', 'progress', 'helpIcons', 'string', 'onSubTagSortableAdd', 'onSubTagAdd', 'selectedtype', 'showColor', 'subList', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick'],
+  'disableAction', 'id', 'progress', 'helpIcons', 'string', 'onSubTagSortableAdd', 'onSubTagAdd', 'showColor', 'subList', 'mapSubTagNumbers', 'onSubTagUpdate', 'iconClick'],
   components: {
     Renderer: () => import('./Renderer.vue'),
     Icon: IconVue,
@@ -198,12 +196,8 @@ export default {
       if (this.isDesktop) this.click()
     },
     click() {
-      if (this.callback && !this.showSpecialInfo) this.callback()
+      if (this.callback) this.callback()
       else if (this.isOnControl && this.selectedEmpty) this.$emit('select')
-      else if (this.showSpecialInfo && !this.selectedEmpty) {
-        this.$emit('apply', {type: this.selectedtype || this.type, tasks: this.selectedTasks})
-        this.$store.commit('clearSelected')
-      }
     },
     clickIcon(evt) {
       if (this.iconClick) {
@@ -236,9 +230,6 @@ export default {
     },
     selectedEmpty() {
       return this.selectedTasks.length === 0
-    },
-    isSelectedEl() {
-      return this.selected.includes(this.id)
     },
     getName() {
       if (this.isSmart) return this.l[this.name]
@@ -353,6 +344,8 @@ export default {
   position: relative;
   display: flex;
   width: 100%;
+  transform: scale(1,1); /* used for drag and drop */
+  transition-duration: .2s;
   height: 100%;
   overflow: hidden;
 }
@@ -409,10 +402,6 @@ export default {
   color: white !important;
   stroke: white;
 }
-
-/* .isSelectedEl {
-  background-color: rgba(53, 73, 90, 0.6) !important;
-} */
 
 .name-t-enter {
   opacity: 0;

@@ -1,5 +1,5 @@
 <template>
-  <div class="Renderer" :class="{folder: folder}">
+  <div class="Renderer" :class="[{folder, movingTask}]">
     <transition-group class="appnav-renderer appnav-renderer-root"
       @enter='enter'
       @leave='leave'
@@ -17,7 +17,6 @@
         :type="type"
 
         :tabindex="i + 1"
-        :selected='selected'
         :active="active"
         :isSmart='isSmart'
         :viewType="viewType"
@@ -25,8 +24,6 @@
         :progress='getProgress(el)'
         :helpIcons='getExraIcon(el)'
         :string='getString(el)'
-        @apply='obj => applyEmit(el.id, obj)'
-        @select='() => selectEl(el.id)'
 
         :data-id="el.id"
         data-type="appnav-element"
@@ -52,94 +49,44 @@ export default {
     return {
       sortable: null,
       hover: false,
-      selected: [],
       isDragging: false,
     }
   },
-  created() {
-    window.addEventListener('click', () => {
-      this.selected = []
-    })
-  },
   mounted() {
-    let move = null
-    const removeAppnavOnHoverOnTaskElements = (el) => {
-      const items = document.getElementsByClassName('task-cont-wrapper')
-      for (const item of items) {
-        if (el && item === el) continue
-        const s = item.style
-        s.transition = 'initial'
-        s.transform = 'scale(1,1)'
-        s.backgroundColor = 'initial'
-        s.boxShadow = `initial`
-      }
-    }
     this.sortable = new Sortable(this.draggableRoot, {
       sort: this.enableSort,
       disabled: this.disabled,
       animation: 80,
-      group: {name: 'appnav', pull: (e) => {
-        if (this.isSmart) return false
-        const name = e.el.dataset.name
-        if (!this.enableSort && name === 'appnav-renderer') return false
-        if (name === 'folders-root') return false
-        if (name === 'appnav-renderer') return true
-        if (name === 'item-renderer') return 'clone'
-      }, put: (l,j,item) => {
-        if (this.isSmart) return false
-        const type = item.dataset.type
+      direction: 'vertical',
+      group: {name: 'appnav',
+        pull: (e) => {
+          if (this.isSmart) return false
 
-        if (!this.enableSort && type === 'appnav-element') return false
-        if (type === 'appnav-element') return true
-        if (type === 'Task') return false
-        if (type === 'add-task-floatbutton') return true
-      }},
+          const name = e.el.dataset.name
+          if (!this.enableSort && name === 'appnav-renderer') return false
+          if (name === 'folders-root') return false
+          if (name === 'appnav-renderer') return true
+          if (name === 'item-renderer') return 'clone'
+        }, put: (l,j,item) => {
+          return true
+          if (this.isSmart) return false
+          const type = item.dataset.type
+
+          if (!this.enableSort && type === 'appnav-element') return false
+          if (type === 'appnav-element') return true
+          if (type === 'Task') return true
+          if (type === 'add-task-floatbutton') return true
+        }},
       delay: 150,
       delayOnTouchOnly: true,
       forceFallback: true,
       fallbackOnBody: true,
-      handle: '.handle',
+      handle: '.item-handle',
 
-      onUpdate: (evt) => {
+      onUpdate: evt => {
         setTimeout(() => {
           this.$emit('update', this.getIds())
-        }, 100)
-      },
-      onEnd: (e, j) => {
-        removeAppnavOnHoverOnTaskElements()
-        if (move && !this.isSmart) {
-          this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
-            elIds: [move.elId],
-            taskIds: [move.taskId],
-            type: this.type,
-          })
-        }
-        this.$emit('on-task-drop')
-        move = null
-      },
-      onMove: (t, e) => {
-        let el = e.target
-        if (el && !el.classList.contains('Task'))
-          el = el.closest('.Task')
-        if (el) {
-          const cont = el.getElementsByClassName('task-cont-wrapper')[0]
-          if (cont) {
-            move = {}
-            move.taskId = el.dataset.id
-            move.elId = t.dragged.dataset.id
-            const s = cont.style
-            setTimeout(() => {
-              removeAppnavOnHoverOnTaskElements(cont)
-            })
-            s.transition = 'opacity .15s, box-shadow .15s, transform .15s'
-            s.transform = 'scale(1.01,1.01)'
-            s.backgroundColor = 'var(--primary)'
-            s.boxShadow = `0 2px 10px var(--primary)`
-          }
-        } else move = null
-        if (e.target.dataset.name !== 'appnav-renderer' &&
-          e && e.target && !e.target.classList.contains('AppbarElement-link'))
-          return false
+        }, 10)
       },
       onStart: () => {
         this.isDragging = true
@@ -150,9 +97,10 @@ export default {
         this.isDragging = false
         this.$emit('is-moving', false)
       },
-      onAdd: (evt) => {
+      onAdd: evt => {
         const item = evt.item
         const type = item.dataset.type
+        const items = evt.items
 
         if (type === 'add-task-floatbutton') {
           item.dataset.id = 'floating-button'
@@ -171,7 +119,7 @@ export default {
             this.onSortableAdd(this.folder, item.dataset.id, this.getIds())
         }
         this.draggableRoot.removeChild(item)
-      }
+      },
     })
   },
   beforeDestroy() {
@@ -198,15 +146,6 @@ export default {
     getExraIcon(el) {
       if (!this.mapHelpIcon) return undefined
       return this.mapHelpIcon(el)
-    },
-    applyEmit(elId, {tasks, type}) {
-      if (!this.isSmart)
-        this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
-          elIds: [elId],
-          taskIds: tasks,
-          type: type ? type : elId,
-        })
-      this.$emit('apply', {elId, tasks})
     },
     getIds() {
       const childs = this.draggableRoot.childNodes
@@ -243,14 +182,6 @@ export default {
         s.height = '0px'
       })
     },
-    selectEl(id) {
-      if (!this.disableSelection) {
-        if (this.selected.some(el => el === id)) {
-          const i = this.selected.findIndex(el => el === id)
-          this.selected.splice(i, 1)
-        } else this.selected.push(id)
-      }
-    },
     getIcon(el) {
       if (this.icon) return this.icon
       return el.icon
@@ -261,7 +192,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['selectedTasks']),
+    ...mapState(['selectedTasks', 'movingTask']),
     ...mapGetters(['isDesktop']),
     draggableRoot() {
       return this.$el.getElementsByClassName('appnav-renderer-root')[0]
@@ -270,24 +201,23 @@ export default {
       return this.$store.state.apply.bool
     },
   },
-  watch: {
-    selected() {
-      this.$store.commit('appnavSelected', this.selected)
-    },
-    apply() {
-      setTimeout(() => {
-        if (!this.isSmart)
-          this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
-            elIds: this.selected,
-            taskIds: [this.$store.state.apply.taskId],
-            type: this.type,
-          })
-      })
-    }
-  }
 }
 
 </script>
+
+<style>
+
+.Renderer .Task {
+  height: 0 !important;
+}
+
+.movingTask .link-inner-wrapper:hover, .movingTask .header:hover {
+  transform: scale(1.05, 1.05);
+  background-color: var(--light-gray) !important;
+  cursor: move !important;
+}
+
+</style>
 
 <style scoped>
 
