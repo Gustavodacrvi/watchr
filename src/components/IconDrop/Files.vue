@@ -1,7 +1,15 @@
 
 <template>
   <div class="Files" :class="platform">
-    <div class="files">
+    <div class="files"
+      @drop.prevent.stop='drop'
+      @drag.stop.prevent
+      @dragend.stop.prevent
+      @dragstart.stop.prevent
+      @dragenter.stop.prevent
+      @dragleave.stop.prevent
+      @dragover.stop.prevent
+    >
       <FileApp v-for="f in getFiles" :key="f"
         :name="f"
         :status='getFileStatus(f)'
@@ -63,6 +71,11 @@ export default {
     }
   },
   methods: {
+    drop(evt) {
+      const files = evt.dataTransfer.files
+      for (const f of files)
+        this.addFile(f)
+    },
     onDelete(f) {
       this.deleteFile(f)
     },
@@ -104,6 +117,13 @@ export default {
       return this.$refs['file']
     },
   },
+  watch: {
+    getFiles() {
+      requestAnimationFrame(() => {
+        this.$emit('calc')
+      })
+    }
+  }
 }
 
 </script>

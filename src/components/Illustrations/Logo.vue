@@ -42,7 +42,7 @@ export default {
 
 @keyframes path {
   from {
-    fill: var(--primary-dark);
+    fill: var(--light-gray);
   }
   to {
     fill: var(--primary-light);

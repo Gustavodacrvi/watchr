@@ -25,6 +25,7 @@
             </transition>
               <AppnavRenderer
                 type='list'
+                :isSmart='true'
                 :enableSort='true'
                 :disabled='false'
                 :disableSelection='true'
@@ -33,15 +34,12 @@
                 :active='value'
                 :onTaskDrop='onTaskDrop'
                 :viewType='viewType'
-                :isSmart='true'
 
                 :mapNumbers='numberOfTasks'
                 @update='update'
-                @apply='applySelectedTasks'
               />
               <div v-if='showFavorites' style="margin-top: 28px"></div>
               <AppnavRenderer v-if="showFavorites"
-                type='favorite'
                 :enableSort='true'
                 :disabled='false'
                 :disableSelection='true'
@@ -298,11 +296,11 @@ export default {
       }, 1000)
     },
     applySelectedTasks({elId, tasks}) {
-      this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+/*       this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
         elIds: [elId],
         taskIds: tasks,
         type: elId,
-      })
+      }) */
     },
     onTaskDrop({taskId, elId}) {
       this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
@@ -458,6 +456,7 @@ export default {
         const type = f.type ? f.type : f.icon
         final.push({
           type,
+          rendererType: type,
           name: f.name,
           id: f.id,
           icon: f.icon,

@@ -83,6 +83,11 @@
             />
           </div>
         </div>
+        <div class="file-drag-drop-wrapper">
+          <FileDragDrop
+            :onDrop='onDrop'
+          />
+        </div>
         <Checklist class="hide" :class="{show}"
           :list='task.checklist'
           :order='task.order'
@@ -175,16 +180,6 @@
                 title='Add task duration'
                 :center='true'
               />
-              <Icon
-                class="opt-icon primary-hover cursor"
-                style="margin-right: 7px;margin-top: 2px"
-                width="22px"
-                :circle='true'
-                icon='file'
-                :file='true'
-                @add='addFile'
-                title='Add files'
-              />
             </div>
           </transition>
         </div>
@@ -207,6 +202,7 @@ import IconDropVue from '../../IconDrop/IconDrop.vue'
 import IconVue from '../../Icon.vue'
 import ChecklistVue from './Checklist/Checklist.vue'
 import FileApp from './File.vue'
+import FileDragDrop from './../RenderComponents/FileDragDrop.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -219,6 +215,7 @@ export default {
   mixins: [FileMixin],
   props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup', 'focusToggle', 'taskHeight', 'editAction', 'fallbackItem'],
   components: {
+    FileDragDrop,
     DropInput: DropInputVue, FileApp,
     ButtonApp: ButtonVue,
     Checklist: ChecklistVue,
@@ -340,6 +337,10 @@ export default {
             },
           })
       }
+    },
+    onDrop(files) {
+      for (const f of files)
+        this.addFile(f)
     },
     saveChecklist() {
       if (this.defaultTask && this.task.checklist)
@@ -912,6 +913,10 @@ export default {
   height: 0;
   min-height: 0;
   transition-duration: .2s;
+}
+
+.file-drag-drop-wrapper {
+  margin: 0 12px;
 }
 
 .showTag {

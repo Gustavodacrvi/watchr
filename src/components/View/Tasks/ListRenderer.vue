@@ -19,10 +19,9 @@
 
           :itemHeight='itemHeight'
           :item='item'
-          :selectOnClick='selectOnClick'
           :changingViewName='isChangingViewName'
           :isRoot='isRoot'
-          :isSelecting='isSelecting'
+          :enableSelect='enableSelect'
           :multiSelectOptions='itemIconDropOptions'
 
           @de-select='deSelectItem'
@@ -357,8 +356,14 @@ export default {
         this.sortable.destroy()
     },
     mountSortables() {
-      let ball = null
-      let cont = null
+      let cancel = true
+      let cancelTimeout = null
+
+      let moveType = null
+      let moveId = null
+      let moveIsSmart = null
+      let finalIds = []
+      let lastToElement = null
       
       const obj = {
         disabled: this.disableSortableMount,
@@ -375,6 +380,7 @@ export default {
           name: 'item-renderer',
           pull: (e,j,item) => {
             const d = item.dataset
+            return true
             if (e.el.dataset.name === 'appnav-renderer') return 'clone'
             if (d.type === 'Task') return true
             return false
@@ -400,7 +406,7 @@ export default {
           const id = evt.item.dataset.id
 
           if (id !== "Edit" && !this.selected.includes(id)) {
-            if (this.pressingSelectKeys)
+            if (this.pressingMultiSelectKeys)
               this.selectMultipleIds(id)
             this.lastSelectedId = id
             this.$emit('selectTask', id)
@@ -492,9 +498,75 @@ export default {
               else vue = vue.$parent
             }
             vue.sourceVueInstance = this
+          } else {
+            const evt = t
+            const taskIds = this.selected
+            if (taskIds.length === 0)
+              taskIds.push(evt.dragged.dataset.id)
+            finalIds = taskIds
+            
+            const specialClass = 'DRAG-AND-DROP-EL'
+            const containsInfo = el => el.classList && el.classList.contains(specialClass)
+            
+            let target = evt.related
+
+            if (target) {
+              if (!containsInfo(target))
+                target = target.childNodes[0]
+              if (target && target.nodeType === 1) {
+                if (!containsInfo(target))
+                  target = target.closest(`.${specialClass}`)
+  
+                if (containsInfo(target)) {
+                  const d = target.dataset
+                  if (!lastToElement || lastToElement === evt.to || moveType === d.type || (moveType === 'folder' && d.type === 'list')) {
+                    cancel = false
+                    
+                    moveType = d.type
+                    moveId = d.id
+                    moveIsSmart = d.smart
+                  }
+
+                  lastToElement = evt.to
+                }
+              }
+            }
+
+            if (cancelTimeout)
+              clearTimeout(cancelTimeout)
+            cancelTimeout = setTimeout(() => cancel = true, 70)
+            
+            return false
           }
         },
+        onEnd: evt => {
+          if (!cancel) {
+            const handle = obj => this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', obj)
+            
+            if (moveIsSmart)
+              handle({
+                type: moveId,
+                taskIds: finalIds,
+              })
+            else
+              handle({
+                taskIds: finalIds,
+                type: moveType,
+                elIds: [moveId],
+              })
+          }
+          
+          if (this.isDesktop && this.comp === 'Task')
+            this.$store.commit('movingTask', false)
+        },
         onStart: evt => {
+          cancel = true
+          lastToElement = null
+          moveIsSmart = null
+
+          if (this.isDesktop && this.comp === 'Task')
+            this.$store.commit('movingTask', true)
+          
           if (!this.isDesktop)
             window.navigator.vibrate(100)
         },
@@ -688,6 +760,7 @@ export default {
         }
         return arr
       }
+      return []
     },
     getIds(removeAdders) {
       const childs = this.draggableRoot.childNodes
@@ -803,14 +876,16 @@ export default {
     itemHeight() {
       return this.isDesktop ? 38 : 50
     },
+    pressingMultiSelectKeys() {
+      return this.pressingKey === 'Shift'
+    },
     pressingSelectKeys() {
-      const pressingKey = this.pressingKey
-      return pressingKey === 'Control' || pressingKey === 'Shift'
+      return this.pressingKey === 'Control'
     },
     enableSelect() {
       if (this.disableSelect) return false
       return this.openCalendar || !this.isDesktop ||
-      (this.pressingSelectKeys || (this.selected.length > 0))
+      (this.pressingSelectKeys)
     },
     inflate() {
       if (!((this.isRoot && this.comp === 'Task' && this.getHeadings.length === 0) || this.isLast)) return null
@@ -819,14 +894,6 @@ export default {
       } : {
         minHeight: '700px',
       }
-    },
-    selectOnClick() {
-      return (this.openCalendar || this.selected.length > 0)
-    },
-    isSelecting() {
-      if (this.selected.length > 0 || this.openCalendar) return true
-      if (this.isDesktop)
-        return this.pressingSelectKeys
     },
     draggableRoot() {
       return this.$el.getElementsByClassName('item-renderer-root')[0]
