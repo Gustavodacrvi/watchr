@@ -12,8 +12,8 @@
       @dragover.stop.prevent
     >
       <div class="wrapper">
-        <Icon class="icon" icon='import' width='100px'/>
-        Drag it here.
+        <Icon class="icon" icon='import' width='100px' color='var(--appnav-color)'/>
+        <span class="msg">Drag it here.</span>
       </div>
     </div>
   </transition>
@@ -55,7 +55,7 @@ export default {
 
       this.dragOverTimeout = setTimeout(() => {
         this.dragging = false
-      }, 3000)
+      }, 1250)
     },
     dragEnd() {
       this.dragging = false
@@ -84,7 +84,13 @@ export default {
   left: 50%;
   top: 50%;
   transform: translate(-50%,-50%);
-  opacity: .1;
+  opacity: 1;
+  z-index: 1;
+}
+
+.msg {
+  position: relative;
+  z-index: 2;
 }
 
 .trans-enter, .trans-leave-to {

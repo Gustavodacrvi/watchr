@@ -119,7 +119,9 @@ export default {
   },
   watch: {
     getFiles() {
-      this.$emit('calc')
+      requestAnimationFrame(() => {
+        this.$emit('calc')
+      })
     }
   }
 }
