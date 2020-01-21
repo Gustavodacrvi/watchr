@@ -71,8 +71,6 @@ export default {
         this.onPaste(args[0].clipboardData.getData('text/plain'), ...args)
     },
     drop(...args) {
-      args[0].preventDefault()
-      args[0].stopPropagation()
       if (this.onDrop)
         this.onDrop(args[0].dataTransfer.files, ...args)
     },
