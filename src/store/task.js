@@ -918,7 +918,7 @@ export default {
         ...task, files: [],
       })
     },
-    handleTasksByAppnavElementDragAndDrop({dispatch, getters, rootState}, {elIds, taskIds, type}) {
+    handleTasksByAppnavElementDragAndDrop({dispatch, getters}, {elIds, taskIds, type}) {
       const calObj = (mom) => {
         return getters.getSpecificDayCalendarObj(mom)
       }

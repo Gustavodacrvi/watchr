@@ -356,8 +356,14 @@ export default {
         this.sortable.destroy()
     },
     mountSortables() {
-      let ball = null
-      let cont = null
+      let cancel = true
+      let cancelTimeout = null
+
+      let moveType = null
+      let moveId = null
+      let moveIsSmart = null
+      let finalIds = []
+      let lastToElement = null
       
       const obj = {
         disabled: this.disableSortableMount,
@@ -497,35 +503,72 @@ export default {
             const taskIds = this.selected
             if (taskIds.length === 0)
               taskIds.push(evt.dragged.dataset.id)
+            finalIds = taskIds
             
             const specialClass = 'DRAG-AND-DROP-EL'
             const containsInfo = el => el.classList && el.classList.contains(specialClass)
             
             let target = evt.related
-            if (!containsInfo(target))
-              target = target.childNodes[0]
-            if (!target || !containsInfo(target))
-              target = target.closest(`.${specialClass}`)
 
-            if (containsInfo(target)) {
-              const data = target.dataset
-            } else {
+            if (target) {
+              if (!containsInfo(target))
+                target = target.childNodes[0]
+              if (target && target.nodeType === 1) {
+                if (!containsInfo(target))
+                  target = target.closest(`.${specialClass}`)
+  
+                if (containsInfo(target)) {
+                  const d = target.dataset
+                  if (!lastToElement || lastToElement === evt.to || moveType === d.type || (moveType === 'folder' && d.type === 'list')) {
+                    cancel = false
+                    
+                    moveType = d.type
+                    moveId = d.id
+                    moveIsSmart = d.smart
+                  }
 
+                  lastToElement = evt.to
+                }
+              }
             }
+
+            if (cancelTimeout)
+              clearTimeout(cancelTimeout)
+            cancelTimeout = setTimeout(() => cancel = true, 70)
             
             return false
           }
         },
+        onEnd: evt => {
+          if (!cancel) {
+            const handle = obj => this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', obj)
+            
+            if (moveIsSmart)
+              handle({
+                type: moveId,
+                taskIds: finalIds,
+              })
+            else
+              handle({
+                taskIds: finalIds,
+                type: moveType,
+                elIds: [moveId],
+              })
+          }
+          
+          if (this.isDesktop && this.comp === 'Task')
+            this.$store.commit('movingTask', false)
+        },
         onStart: evt => {
+          cancel = true
+          lastToElement = null
+          moveIsSmart = null
+
           if (this.isDesktop && this.comp === 'Task')
             this.$store.commit('movingTask', true)
           
           if (!this.isDesktop)
             window.navigator.vibrate(100)
-        },
-        onEnd: evt => {
-          if (this.isDesktop && this.comp === 'Task')
-            this.$store.commit('movingTask', false)
         },
         onChange: evt => {
           const item = evt.item

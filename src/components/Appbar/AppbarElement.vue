@@ -6,7 +6,8 @@
     <div
       class="link-wrapper AppbarElement-link rb DRAG-AND-DROP-EL"
       :data-type='type'
-      :data-color='iconColor'
+      :data-id='id'
+      :data-smart='isSmart'
       :data-disabled='disableAction'
     >
       <div

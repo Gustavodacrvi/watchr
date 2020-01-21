@@ -12,6 +12,7 @@
       @touchmove.passive='touchmove'
 
       data-type='folder'
+      :data-id='id'
       data-color='var(--txt)'
     >
       <span class="icon-wrapper">
@@ -26,7 +27,7 @@
         opacity='0'
       />
     </div>
-    <div class="content">
+    <div class="cont">
       <div v-show="showing && !movingFolder">
         <slot></slot>
       </div>

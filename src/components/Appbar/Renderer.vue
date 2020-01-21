@@ -68,13 +68,12 @@ export default {
           if (name === 'appnav-renderer') return true
           if (name === 'item-renderer') return 'clone'
         }, put: (l,j,item) => {
-          return true
-          if (this.isSmart) return false
           const type = item.dataset.type
 
+          if (type === 'Task') return true
+          if (this.isSmart) return false
           if (!this.enableSort && type === 'appnav-element') return false
           if (type === 'appnav-element') return true
-          if (type === 'Task') return true
           if (type === 'add-task-floatbutton') return true
         }},
       delay: 150,
@@ -212,9 +211,9 @@ export default {
 }
 
 .movingTask .link-inner-wrapper:hover, .movingTask .header:hover {
-  transform: scale(1.05, 1.05);
+  transform: scale(1.03, 1.05);
   background-color: var(--light-gray) !important;
-  cursor: move !important;
+  cursor: move;
 }
 
 </style>
