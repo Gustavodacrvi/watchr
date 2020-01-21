@@ -14,7 +14,7 @@
         :iconColor='getIconColor(el)'
         :icon="getIcon(el)"
         :showColor='showColor'
-        :type="type"
+        :type="type || el.rendererType"
 
         :tabindex="i + 1"
         :active="active"

@@ -40,7 +40,6 @@
               />
               <div v-if='showFavorites' style="margin-top: 28px"></div>
               <AppnavRenderer v-if="showFavorites"
-                type='favorite'
                 :enableSort='true'
                 :disabled='false'
                 :disableSelection='true'
