@@ -387,6 +387,7 @@ export default {
           put: (j,o,item) => {
             const d = item.dataset
             const type = d.type
+            if (type === 'headingbutton' || type === 'add-task-floatbutton') return true
             if (type === 'appnav-element') return true
             if (!this.onSortableAdd) return false
             if (type === 'Task') return true
