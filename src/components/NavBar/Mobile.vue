@@ -34,7 +34,7 @@ export default {
   methods: {
     openMenu() {
       setTimeout(() => {
-        this.$router.push({path: '/menu'})
+        this.$router.push('/menu')
       })
     },
     goToIndexPage() {

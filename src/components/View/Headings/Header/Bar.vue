@@ -87,7 +87,7 @@ export default {
     },
     openMenu() {
       if (!this.isDesktop)
-        this.$router.push({path: '/menu'})
+        this.$router.push('/menu')
     },
     lineEnter(el) {
       const s = el.style

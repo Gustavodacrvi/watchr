@@ -255,7 +255,7 @@ export default {
       const lists = this.sortedLists.map(t => ({...t}))
       for (const list of lists) {
         list.callback = () => {
-          this.$router.push({ path: '/user?list=' + list.name })
+          this.$router.push('/user?list=' + list.name)
         }
         list.options = utilsList.listOptions(list)
         list.iconClick = () => {

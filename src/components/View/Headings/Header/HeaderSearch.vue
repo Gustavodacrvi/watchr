@@ -108,7 +108,7 @@ export default {
       const time = new Date() - this.startTime
       const name = this.$route
       if (this.swipeDiff > 40 && time < 200)
-        this.$router.push({path: '/menu'})
+        this.$router.push('/menu')
       
       if (this.fireSearchFallback)
         this.openSearchBar()

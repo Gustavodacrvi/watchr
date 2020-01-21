@@ -72,7 +72,7 @@ export default {
 
         for (const tag of tags) {
           tag.callback = () => {
-            this.$router.push({ path: '/user?tag=' + tag.name })
+            this.$router.push('/user?tag=' + tag.name)
           }
           tag.options = utilsTag.tagOptions(tag)
 
