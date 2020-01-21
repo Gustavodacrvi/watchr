@@ -380,7 +380,6 @@ export default {
           name: 'item-renderer',
           pull: (e,j,item) => {
             const d = item.dataset
-            return true
             if (e.el.dataset.name === 'appnav-renderer') return 'clone'
             if (d.type === 'Task') return true
             return false
@@ -388,7 +387,6 @@ export default {
           put: (j,o,item) => {
             const d = item.dataset
             const type = d.type
-            if (type === 'headingbutton' || type === 'add-task-floatbutton') return true
             if (type === 'appnav-element') return true
             if (!this.onSortableAdd) return false
             if (type === 'Task') return true
@@ -498,7 +496,8 @@ export default {
               else vue = vue.$parent
             }
             vue.sourceVueInstance = this
-          } else {
+          } else if (t.to !== this.draggableRoot) {
+            
             const evt = t
             const taskIds = this.selected
             if (taskIds.length === 0)
