@@ -73,7 +73,7 @@
                 <TaskIcons class="check-icon icon"
                   :co='completed'
                   :color='circleColor'
-                  :se='isSelecting'
+                  :se='enableSelect'
                   :so='isSomeday'
                   @click.native.stop="desktopComplete"
                 />
@@ -152,7 +152,7 @@ import mom from 'moment'
 
 export default {
   props: ['item', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName', 'selectEverythingToggle',
-  'isSelecting'],
+  'enableSelect'],
   components: {
     Timeline, TaskIcons,
     Icon: IconVue,
@@ -403,7 +403,7 @@ export default {
       s.height = this.itemHeight + 'px'
       s.minHeight = this.itemHeight + 'px'
       requestAnimationFrame(() => {
-        const dur = this.completeAnimation ? 275 : 0
+        const dur = this.completeAnimation ? 750 : 0
         
         s.transitionDuration = '.25s'
         s.transitionDelay = `.${dur}s`
@@ -546,7 +546,7 @@ export default {
       if (select) {
         this.selectTask()
       } else {
-        if (!this.isSelecting) {
+        if (!this.enableSelect) {
           if (!this.moved && !this.justCompleted) this.isEditing = true
         } else {
           if (!fail) toggleTask()
@@ -566,7 +566,7 @@ export default {
       this.$emit('select', this.$el)
     },
     click() {
-      if (this.isDesktop && !this.isSelecting)
+      if (this.isDesktop && !this.enableSelect)
         this.isEditing = true
     },
     saveTask(obj, force) {
@@ -612,8 +612,6 @@ export default {
       })
     },
     rootClick(event) {
-      if (this.selectOnClick)
-        this.selectTask()
       if (this.isSelectingAppnavEls) event.stopPropagation()
     },
     escapeHTML(string) {

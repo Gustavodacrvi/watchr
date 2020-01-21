@@ -19,10 +19,9 @@
 
           :itemHeight='itemHeight'
           :item='item'
-          :selectOnClick='selectOnClick'
           :changingViewName='isChangingViewName'
           :isRoot='isRoot'
-          :isSelecting='isSelecting'
+          :enableSelect='enableSelect'
           :multiSelectOptions='itemIconDropOptions'
 
           @de-select='deSelectItem'
@@ -400,7 +399,7 @@ export default {
           const id = evt.item.dataset.id
 
           if (id !== "Edit" && !this.selected.includes(id)) {
-            if (this.pressingSelectKeys)
+            if (this.pressingMultiSelectKeys)
               this.selectMultipleIds(id)
             this.lastSelectedId = id
             this.$emit('selectTask', id)
@@ -803,14 +802,16 @@ export default {
     itemHeight() {
       return this.isDesktop ? 38 : 50
     },
+    pressingMultiSelectKeys() {
+      return this.pressingKey === 'Shift'
+    },
     pressingSelectKeys() {
-      const pressingKey = this.pressingKey
-      return pressingKey === 'Control' || pressingKey === 'Shift'
+      return this.pressingKey === 'Control'
     },
     enableSelect() {
       if (this.disableSelect) return false
       return this.openCalendar || !this.isDesktop ||
-      (this.pressingSelectKeys || (this.selected.length > 0))
+      (this.pressingSelectKeys)
     },
     inflate() {
       if (!((this.isRoot && this.comp === 'Task' && this.getHeadings.length === 0) || this.isLast)) return null
@@ -819,14 +820,6 @@ export default {
       } : {
         minHeight: '700px',
       }
-    },
-    selectOnClick() {
-      return (this.openCalendar || this.selected.length > 0)
-    },
-    isSelecting() {
-      if (this.selected.length > 0 || this.openCalendar) return true
-      if (this.isDesktop)
-        return this.pressingSelectKeys
     },
     draggableRoot() {
       return this.$el.getElementsByClassName('item-renderer-root')[0]

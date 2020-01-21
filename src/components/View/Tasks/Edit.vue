@@ -15,6 +15,7 @@
           :placeholder="placeholder"
           :focusToggle='focusToggle'
           :onPaste='onPaste'
+          :onDrop='onDrop'
           @select="select"
           @enter='save'
           @cancel="cancel"
@@ -29,6 +30,7 @@
           :enterOnShift='true'
           :options="[]"
           :placeholder="notesPlaceholder"
+          :onDrop='onDrop'
           @enter='save'
           @cancel="cancel"
           @goup='$emit("goup")'
@@ -340,6 +342,10 @@ export default {
             },
           })
       }
+    },
+    onDrop(files) {
+      for (const f of files)
+        this.addFile(f)
     },
     saveChecklist() {
       if (this.defaultTask && this.task.checklist)

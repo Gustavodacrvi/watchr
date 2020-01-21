@@ -14,6 +14,14 @@
       @paste='onpaste'
       @keyup="keyup"
 
+      @drop.prevent.stop='drop'
+      @drag.stop.prevent
+      @dragend.stop.prevent
+      @dragstart.stop.prevent
+      @dragenter.stop.prevent
+      @dragleave.stop.prevent
+      @dragover.stop.prevent
+      
       :style="backColor ? `background-color: ${backColor}` : ''"
     ></textarea>
     <transition
@@ -39,7 +47,8 @@
 <script>
 
 export default {
-  props: ['options', 'focus', 'value', 'placeholder', 'focusToggle', 'back-color', 'disableAutoSelect', 'enterOnShift', 'msg', 'onPaste'],
+  props: ['options', 'focus', 'value', 'placeholder', 'focusToggle', 'back-color', 'disableAutoSelect', 'enterOnShift', 'msg', 'onPaste',
+  'onDrop'],
   data() {
     return {
       str: this.value,
@@ -60,6 +69,12 @@ export default {
     onpaste(...args) {
       if (this.onPaste)
         this.onPaste(args[0].clipboardData.getData('text/plain'), ...args)
+    },
+    drop(...args) {
+      args[0].preventDefault()
+      args[0].stopPropagation()
+      if (this.onDrop)
+        this.onDrop(args[0].dataTransfer.files, ...args)
     },
     focusInput(timeout) {
       if (this.focus) {
