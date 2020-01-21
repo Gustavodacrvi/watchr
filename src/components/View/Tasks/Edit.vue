@@ -15,7 +15,6 @@
           :placeholder="placeholder"
           :focusToggle='focusToggle'
           :onPaste='onPaste'
-          :onDrop='onDrop'
           @select="select"
           @enter='save'
           @cancel="cancel"
@@ -30,7 +29,6 @@
           :enterOnShift='true'
           :options="[]"
           :placeholder="notesPlaceholder"
-          :onDrop='onDrop'
           @enter='save'
           @cancel="cancel"
           @goup='$emit("goup")'
@@ -84,6 +82,11 @@
               @click="removeTag(t)"
             />
           </div>
+        </div>
+        <div class="file-drag-drop-wrapper">
+          <FileDragDrop
+            :onDrop='onDrop'
+          />
         </div>
         <Checklist class="hide" :class="{show}"
           :list='task.checklist'
@@ -209,6 +212,7 @@ import IconDropVue from '../../IconDrop/IconDrop.vue'
 import IconVue from '../../Icon.vue'
 import ChecklistVue from './Checklist/Checklist.vue'
 import FileApp from './File.vue'
+import FileDragDrop from './../RenderComponents/FileDragDrop.vue'
 
 import { mapGetters, mapState } from 'vuex'
 
@@ -221,6 +225,7 @@ export default {
   mixins: [FileMixin],
   props: ['placeholder', 'notesPlaceholder', 'defaultTask', 'showCancel', 'btnText', 'popup', 'focusToggle', 'taskHeight', 'editAction', 'fallbackItem'],
   components: {
+    FileDragDrop,
     DropInput: DropInputVue, FileApp,
     ButtonApp: ButtonVue,
     Checklist: ChecklistVue,
@@ -918,6 +923,10 @@ export default {
   height: 0;
   min-height: 0;
   transition-duration: .2s;
+}
+
+.file-drag-drop-wrapper {
+  margin: 0 12px;
 }
 
 .showTag {
