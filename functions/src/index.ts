@@ -1,27 +1,37 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+
 const firebase = admin.initializeApp();
 const db = admin.firestore()
-
+const FieldValue = admin.firestore.FieldValue
 
 
 // APP CACHING
 
-export const updateAppCache = functions.firestore
+export const updateTaskCache = functions.firestore
   .document("users/{userId}/tasks/{taskId}")
-  .onUpdate((snap, context) => {
+  .onWrite((snap, context) => {
     const { userId, taskId } = context.params
 
     const data = snap.after.data()
 
-    if (data && data.from !== 'watchr_web_app')
-      return db.collection('users').doc(userId).collection('cache').doc('cache').set({
+    if (data !== undefined) {
+      
+      if (data.from !== 'watchr_web_app')
+        return db.collection('users').doc(userId).collection('cache').doc('cache').set({
+          tasks: {
+            [taskId]: data,
+          },
+        }, {merge: true})
+
+      return;
+    } else return db.collection('users').doc(userId).collection('cache').doc('cache').set({
         tasks: {
-          [taskId]: data,
-        },
+          [taskId]: FieldValue.delete(),
+        }
       }, {merge: true})
-    return;
   })
+
 
 
 
