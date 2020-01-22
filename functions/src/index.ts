@@ -17,6 +17,7 @@ const updateCache = (snap: functions.Change<FirebaseFirestore.DocumentSnapshot>,
     
     if (data.from !== 'watchr_web_app')
       return db.collection('users').doc(userId).collection('cache').doc('cache').set({
+        userId,
         [collection]: {
           [docId]: data,
         },
@@ -28,6 +29,7 @@ const updateCache = (snap: functions.Change<FirebaseFirestore.DocumentSnapshot>,
     
     promises.push(
       db.collection('users').doc(userId).collection('cache').doc('cache').set({
+        userId,
         [collection]: {
           [docId]: FieldValue.delete(),
         }
