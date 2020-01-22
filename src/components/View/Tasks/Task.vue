@@ -72,7 +72,7 @@
                 <TaskIcons class="check-icon icon"
                   :co='completed'
                   :color='circleColor'
-                  :se='enableSelect'
+                  :se='isSelecting'
                   :so='isSomeday'
                   @click.native.stop="desktopComplete"
                 />
@@ -148,7 +148,7 @@ import mom from 'moment'
 
 export default {
   props: ['item', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName', 'selectEverythingToggle',
-  'enableSelect'],
+  'isSelecting'],
   components: {
     Timeline, TaskIcons,
     Icon: IconVue,
@@ -542,7 +542,7 @@ export default {
       if (select) {
         this.selectTask()
       } else {
-        if (!this.enableSelect) {
+        if (!this.isSelecting) {
           if (!this.moved && !this.justCompleted) this.isEditing = true
         } else {
           if (!fail) toggleTask()
@@ -562,7 +562,7 @@ export default {
       this.$emit('select', this.$el)
     },
     click() {
-      if (this.isDesktop && !this.enableSelect)
+      if (this.isDesktop && !this.isSelecting)
         this.isEditing = true
     },
     saveTask(obj, force) {

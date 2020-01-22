@@ -21,7 +21,7 @@
           :item='item'
           :changingViewName='isChangingViewName'
           :isRoot='isRoot'
-          :enableSelect='enableSelect'
+          :isSelecting='isSelecting'
           :multiSelectOptions='itemIconDropOptions'
 
           @de-select='deSelectItem'
@@ -886,6 +886,11 @@ export default {
       if (this.disableSelect) return false
       return this.openCalendar || !this.isDesktop ||
       (this.pressingSelectKeys)
+    },
+    isSelecting() {
+      if (this.selected.length > 0 || this.openCalendar) return true
+      if (this.isDesktop)
+        return this.pressingSelectKeys
     },
     inflate() {
       if (!((this.isRoot && this.comp === 'Task' && this.getHeadings.length === 0) || this.isLast)) return null
