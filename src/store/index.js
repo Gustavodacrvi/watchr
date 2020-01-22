@@ -42,7 +42,7 @@ import folder from './folder'
 import pomo from './pomo'
 
 import utils from '@/utils'
-import { userRef } from "../utils/firestore"
+import { userRef, cacheRef } from "../utils/firestore"
 
 const lang = localStorage.getItem('watchrlanguage') || 'en'
 
@@ -325,12 +325,12 @@ const store = new Vuex.Store({
   },
   actions: {
     getOptions(context, options) {
-      const {state} = context
+      const {state, getters} = context
       return options({
         router,
         ...context,
         tags: state.tag.tags,
-        tasks: state.task.tasks,
+        tasks: getters['task/tasks'],
         lists: state.list.lists,
         folders: state.folder.folders,
       })
@@ -374,13 +374,26 @@ const store = new Vuex.Store({
       })
     },
     getData({state}) {
-      return new Promise(resolve => {
-        userRef().onSnapshot(snap => {
-          state.userInfo = snap.data()
+      return Promise.all([
+        new Promise(resolve => {
+          userRef().onSnapshot(snap => {
+            state.userInfo = snap.data()
+            resolve()
+          })
           resolve()
+        }),
+        new Promise(solve => {
+          cacheRef().onSnapshot(snap => {
+            const data = snap.data()
+            console.log(data)
+
+            state.task.tasks = data.tasks
+            
+            console.log(state.task.tasks)
+            solve()
+          })
         })
-        resolve()
-      })
+      ])
     },
     update({}, info) {
       const batch = fire.batch()
@@ -438,7 +451,6 @@ auth.onAuthStateChanged((user) => {
   const dispatch = store.dispatch
   const loadData = () => {
     dispatch('getData')
-    dispatch('task/getData')
     dispatch('list/getData')
     dispatch('tag/getData')
     dispatch('pomo/getData')

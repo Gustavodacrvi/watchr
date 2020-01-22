@@ -623,7 +623,6 @@ export default {
   },
   computed: {
     ...mapState({
-      storeTasks: state => state.task.tasks,
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
       tags: state => state.tag.tags,
@@ -636,6 +635,7 @@ export default {
       mainSelectionIndex: state => state.mainSelectionIndex,
     }),
     ...mapGetters({
+      storeTasks: 'task/tasks',
       l: 'l',
       fallbackSelected: 'fallbackSelected',
       isTaskSomeday: 'task/isTaskSomeday',

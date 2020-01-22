@@ -36,7 +36,7 @@ export default {
             name: l['Uncomplete tasks'],
             icon: 'circle',
             callback: () => dispatch('list/uncompleteHeadingTasks', {
-              listId, headingId: h.id, savedTasks: store.state.task.tasks,
+              listId, headingId: h.id, savedTasks: store.getters['task/tasks'],
             })
           },
           {

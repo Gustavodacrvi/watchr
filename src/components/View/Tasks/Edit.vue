@@ -550,11 +550,11 @@ export default {
   computed: {
     ...mapState({
       iconDrop: state => state.iconDrop,
-      savedTasks: state => state.task.tasks,
       user: state => state.user,
       userInfo: state => state.userInfo,
     }),
     ...mapGetters({
+      savedTasks: 'task/tasks',
       l: 'l',
       isDesktop: 'isDesktop',
       platform: 'platform',

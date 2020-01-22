@@ -8,7 +8,7 @@ service cloud.firestore {
       
       match /cache/{cache} {
         allow read: if isSignedIn() && isOwner();
-        allow write: false;
+        allow update: if isOwner();
       }
       match /tasks/{task} {
         allow create: if isSignedIn();

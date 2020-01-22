@@ -17,10 +17,13 @@ const TOM_DATE = mom().add(1, 'day').format('Y-M-D')
 export default {
   namespaced: true,
   state: {
-    tasks: [],
-    updatedTask: false,
+    tasks: {},
   },
   getters: {
+    tasks(state) {
+      const keys = Object.keys(state.tasks)
+      return keys.map(k => state.tasks[k])
+    },
     priorityOptions() {
       return [
         {
@@ -591,7 +594,7 @@ export default {
           'tags',
         ],
         getter({getters, state}, {tagId, tags}) {
-          const ts = state.tasks.filter(
+          const ts = getters.tasks.filter(
             task => getters.doesTaskPassInclusiveTags(task, [tagId], tags)
           )
     
@@ -609,13 +612,13 @@ export default {
           'completed',
         ],
         getter({getters, state}) {
-          return state.tasks.filter(getters.isTaskOverdue)
+          return getters.tasks.filter(getters.isTaskOverdue)
         },
       },
-      getTasksById({state}, ids) {
+      getTasksById({state, getters}, ids) {
         const arr = []
         for (const id of ids) {
-          const task = state.tasks.find(el => el.id === id)
+          const task = getters.tasks.find(el => el.id === id)
           if (task) arr.push(task)
         }
         return arr
@@ -630,7 +633,7 @@ export default {
           'completeDate',
         ],
         getter({state, getters}, viewName) {
-          const ts = state.tasks.filter(
+          const ts = getters.tasks.filter(
             task => getters.isTaskInView(task, viewName)
           )
   
@@ -642,21 +645,9 @@ export default {
           }
         },
       },
-    }),
+    }, true),
   },
   actions: {
-    getData({state}) {
-      const id = uid()
-      if (id)
-        return Promise.all([
-          new Promise(resolve => {
-            taskColl().where('userId', '==', id).onSnapshot(snap => {
-              utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tasks')
-              resolve()
-            })
-          })
-        ])
-    },
     addTask({}, obj) {
       const batch = fire.batch()
 
@@ -976,10 +967,6 @@ export default {
           break
         }
       }
-    },
-    deleteAllData({state}) {
-      for (const el of state.tasks)
-        taskRef(el.id).delete()
     },
   },
 }

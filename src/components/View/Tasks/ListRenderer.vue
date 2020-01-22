@@ -823,12 +823,12 @@ export default {
     ...mapState({
       selected: state => state.selectedTasks,
       isOnControl: state => state.isOnControl,
-      savedTasks: state => state.task.tasks,
       pressingKey: state => state.pressingKey,
       mainSelectionIndex: state => state.mainSelectionIndex,
       mainSelection: state => state.mainSelection,
     }),
     ...mapGetters({
+      savedTasks: 'task/tasks',
       l: 'l',
       platform: 'platform',
       isDesktop: 'isDesktop',
