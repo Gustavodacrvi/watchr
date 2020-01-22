@@ -8,7 +8,9 @@ const FieldValue = admin.firestore.FieldValue
 
 // APP CACHING
 
-const updateCache = (snap: functions.Change<FirebaseFirestore.DocumentSnapshot>, collection: string, userId: string, docId: string) => {
+const updateCache = (snap: functions.Change<FirebaseFirestore.DocumentSnapshot>,  context: functions.EventContext, collection: string, removeAttachmentsOnDelete: boolean) => {
+  const { userId, docId } = context.params
+  
   const data = snap.after.data()
 
   if (data !== undefined) {
@@ -21,33 +23,46 @@ const updateCache = (snap: functions.Change<FirebaseFirestore.DocumentSnapshot>,
       }, {merge: true})
 
     return;
-  } else return db.collection('users').doc(userId).collection('cache').doc('cache').set({
-      [collection]: {
-        [docId]: FieldValue.delete(),
-      }
-    }, {merge: true})
+  } else {
+    const promises: any[] = []
+    
+    promises.push(
+      db.collection('users').doc(userId).collection('cache').doc('cache').set({
+        [collection]: {
+          [docId]: FieldValue.delete(),
+        }
+      }, {merge: true})
+    )
+    if (removeAttachmentsOnDelete)
+      promises.push(
+        firebase.storage().bucket().deleteFiles({
+          prefix: `attachments/${userId}/${collection}/${docId}`
+        })
+      )
+    
+    return Promise.all(promises)
+  }
 }
 
 export const updateTaskCache = functions.firestore
-  .document("users/{userId}/tasks/{taskId}")
-  .onWrite(async (snap, context) => {
-    const { userId, taskId } = context.params
-    return updateCache(snap, 'tasks', userId, taskId)
-  })
-
+  .document("users/{userId}/tasks/{docId}")
+  .onWrite((a, b) => updateCache(a, b, 'tasks', true))
+  
 export const updateListCache = functions.firestore
-  .document("users/{userId}/lists/{listId}")
-  .onWrite(async (snap, context) => {
-    const { userId, listId } = context.params
-    return updateCache(snap, 'lists', userId, listId)
-  })
+  .document("users/{userId}/lists/{docId}")
+  .onWrite((a, b) => updateCache(a, b, 'lists', true))
 
 export const updateFoldersCache = functions.firestore
-  .document("users/{userId}/folders/{folderId}")
-  .onWrite(async (snap, context) => {
-    const { userId, folderId } = context.params
-    return updateCache(snap, 'folders', userId, folderId)
-  })
+  .document("users/{userId}/folders/{docId}")
+  .onWrite((a, b) => updateCache(a, b, 'folders', true))
+
+export const updateStatsCache = functions.firestore
+  .document("users/{userId}/stats/{docId}")
+  .onWrite((a, b) => updateCache(a, b, 'stats', false))
+
+export const updateTagsCache = functions.firestore
+  .document("users/{userId}/tags/{docId}")
+  .onWrite((a, b) => updateCache(a, b, 'tags', false))
 
 
 /*
@@ -71,38 +86,3 @@ export const updateFoldersCache = functions.firestore
     return Promise.all(promises)
 */
 
-
-// ATTACHMENTS
-
-export const deleteTaskAttachments = functions.firestore
-  .document("users/{userId}/tasks/{taskId}")
-  .onDelete((snap, context) => {
-    const { userId, taskId } = context.params;
-    const bucket = firebase.storage().bucket();
-
-    return bucket.deleteFiles({
-      prefix: `attachments/${userId}/tasks/${taskId}`
-    });
-  });
-
-export const deleteListAttachments = functions.firestore
-.document("users/{userId}/lists/{listId}")
-.onDelete((snap, context) => {
-  const { userId, listId } = context.params;
-  const bucket = firebase.storage().bucket();
-
-  return bucket.deleteFiles({
-    prefix: `attachments/${userId}/lists/${listId}`
-  });
-});
-
-export const deleteFolderAttachments = functions.firestore
-.document("users/{userId}/folders/{folderId}")
-.onDelete((snap, context) => {
-  const { userId, folderId } = context.params;
-  const bucket = firebase.storage().bucket();
-
-  return bucket.deleteFiles({
-    prefix: `attachments/${userId}/folders/${folderId}`
-  });
-});
