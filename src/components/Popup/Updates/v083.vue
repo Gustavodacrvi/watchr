@@ -7,6 +7,7 @@
     <li>Click on the list icon on the menu to complete it.</li>
     <li>Resize the menu on desktop.</li>
     <li>New task animation when completing tasks.</li>
+    <li>You can easily move tasks on mobile to the menu on desktop, drop them on Today, Tomorrow and Completed, or any other list/folder/tag to move tasks.</li>
 
   </div>
 </template>

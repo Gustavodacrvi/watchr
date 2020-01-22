@@ -1,6 +1,32 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 const firebase = admin.initializeApp();
+const db = admin.firestore()
+
+
+
+// APP CACHING
+
+export const updateAppCache = functions.firestore
+  .document("users/{userId}/tasks/{taskId}")
+  .onUpdate((snap, context) => {
+    const { userId, taskId } = context.params
+
+    const data = snap.after.data()
+
+    if (data && data.from !== 'watchr_web_app')
+      return db.collection('users').doc(userId).collection('cache').doc('cache').set({
+        tasks: {
+          [taskId]: data,
+        },
+      }, {merge: true})
+    return;
+  })
+
+
+
+
+// ATTACHMENTS
 
 export const deleteTaskAttachments = functions.firestore
   .document("users/{userId}/tasks/{taskId}")
