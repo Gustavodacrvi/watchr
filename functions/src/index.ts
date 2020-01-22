@@ -8,32 +8,68 @@ const FieldValue = admin.firestore.FieldValue
 
 // APP CACHING
 
+const updateCache = (snap: functions.Change<FirebaseFirestore.DocumentSnapshot>, collection: string, userId: string, docId: string) => {
+  const data = snap.after.data()
+
+  if (data !== undefined) {
+    
+    if (data.from !== 'watchr_web_app')
+      return db.collection('users').doc(userId).collection('cache').doc('cache').set({
+        [collection]: {
+          [docId]: data,
+        },
+      }, {merge: true})
+
+    return;
+  } else return db.collection('users').doc(userId).collection('cache').doc('cache').set({
+      [collection]: {
+        [docId]: FieldValue.delete(),
+      }
+    }, {merge: true})
+}
+
 export const updateTaskCache = functions.firestore
   .document("users/{userId}/tasks/{taskId}")
-  .onWrite((snap, context) => {
+  .onWrite(async (snap, context) => {
     const { userId, taskId } = context.params
+    return updateCache(snap, 'tasks', userId, taskId)
+  })
 
-    const data = snap.after.data()
+export const updateListCache = functions.firestore
+  .document("users/{userId}/lists/{listId}")
+  .onWrite(async (snap, context) => {
+    const { userId, listId } = context.params
+    return updateCache(snap, 'lists', userId, listId)
+  })
 
-    if (data !== undefined) {
-      
-      if (data.from !== 'watchr_web_app')
-        return db.collection('users').doc(userId).collection('cache').doc('cache').set({
-          tasks: {
-            [taskId]: data,
-          },
-        }, {merge: true})
-
-      return;
-    } else return db.collection('users').doc(userId).collection('cache').doc('cache').set({
-        tasks: {
-          [taskId]: FieldValue.delete(),
-        }
-      }, {merge: true})
+export const updateFoldersCache = functions.firestore
+  .document("users/{userId}/folders/{folderId}")
+  .onWrite(async (snap, context) => {
+    const { userId, folderId } = context.params
+    return updateCache(snap, 'folders', userId, folderId)
   })
 
 
+/*
+      const { userId } = context.params
 
+    
+    const res = await db.collection('users').doc(userId).collection('tasks').where('userId', '==', userId).get()
+    
+    const promises: Array<Promise<FirebaseFirestore.WriteResult>> = []
+
+    res.docs.forEach(doc => {
+      promises.push(
+        db.collection('users').doc(userId).collection('cache').doc('cache').set({
+          tasks: {
+            [doc.id]: doc.data(),
+          },
+        }, {merge: true})
+      )
+    })
+
+    return Promise.all(promises)
+*/
 
 
 // ATTACHMENTS
