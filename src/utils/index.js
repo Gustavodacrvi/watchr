@@ -10,6 +10,47 @@ import IconDrop from '@/components/IconDrop/IconDrop.vue'
 let contextMenuRunned = false
 
 export default {
+  updateVuexObject(target, source) {
+    const targetKeys = Object.keys(target)
+    const sourceKeys = Object.keys(source)
+
+    sourceKeys.forEach(k => {
+      const oldObj = target[k]
+      const newObj = source[k]
+      if (!oldObj)
+        target[k] = newObj
+      else this.findChangesBetweenObjs(oldObj, newObj,
+          (key, val) => Vue.set(oldObj, key, val)
+        )
+    })
+
+    targetKeys.forEach(k => {
+      if (!source[k])
+        target[k] = undefined
+    })
+
+  },
+  findChangesBetweenObjs(oldObj, newObj, onFoundChange) {
+    const keys = Object.keys(newObj)
+    for (const k of keys) {
+      const old = oldObj[k]
+      const val = newObj[k]
+      const type = typeof val
+      let change = false
+
+      switch (type) {
+        case 'object': {
+          change = JSON.stringify(val) !== JSON.stringify(old)
+          break
+        }
+        default: {
+          change = old !== val
+        }
+      }
+      
+      if (change) onFoundChange(k, val)
+    }
+  },
   getDataFromFirestoreSnapshot(state, changes, arrName) {
     changes.forEach(change => {
       const newDoc = {...change.doc.data(), id: change.doc.id}
@@ -29,27 +70,8 @@ export default {
         state[arrName].splice(index, 1, newDoc) */
 
         const i = state[arrName].findIndex(el => el.id === change.doc.id)
-
-        const keys = Object.keys(newDoc)
-        for (const k of keys) {
-          const old = state[arrName][i][k]
-          const val = newDoc[k]
-          const type = typeof val
-          let change = false
-
-          switch (type) {
-            case 'object': {
-              change = JSON.stringify(val) !== JSON.stringify(old)
-              break
-            }
-            default: {
-              change = old !== val
-            }
-          }
-          
-          if (change)
-            Vue.set(state[arrName][i], k, val)
-        }
+        
+        this.findChangesBetweenObjs(state[arrName][i], newDoc, (key, val) => Vue.set(state[arrName][i], key, val))
       }
     })
   },

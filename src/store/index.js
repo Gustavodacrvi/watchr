@@ -117,6 +117,8 @@ const store = new Vuex.Store({
     isOnAlt: false,
     pressingKey: null,
     historyPos: 0,
+
+    isFirstSnapshot: true,
   },
   getters: {
     ...Memoize(null, {
@@ -385,11 +387,15 @@ const store = new Vuex.Store({
         new Promise(solve => {
           cacheRef().onSnapshot(snap => {
             const data = snap.data()
-            console.log(data)
 
-            state.task.tasks = data.tasks
+            if (!state.isFirstSnapshot) {
+              utils.updateVuexObject(state.task.tasks, data.tasks)
+            } else {
+              state.task.tasks = data.tasks
+
+              state.isFirstSnapshot = false
+            }
             
-            console.log(state.task.tasks)
             solve()
           })
         })

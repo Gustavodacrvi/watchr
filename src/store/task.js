@@ -21,7 +21,7 @@ export default {
   },
   getters: {
     tasks(state) {
-      const keys = Object.keys(state.tasks)
+      const keys = Object.keys(state.tasks).filter(k => state.tasks[k])
       return keys.map(k => state.tasks[k])
     },
     priorityOptions() {
