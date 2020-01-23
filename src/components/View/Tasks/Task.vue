@@ -17,6 +17,7 @@
       </transition>
       <div v-if="doneTransition && !isEditing && !isDesktop"
         class="back rb"
+        ref='back'
         :style="{height: (itemHeight - 5) + 'px'}"
       >
         <div class="back-icons-wrapper">
@@ -379,6 +380,8 @@ export default {
     },
     taskLeave(el, done) {
       this.doneTransition = false
+      const back = this.$refs['back']
+      if (back) back.style.display = 'none'
       const s = this.$refs['cont-wrapper'].style
       let l
       let n

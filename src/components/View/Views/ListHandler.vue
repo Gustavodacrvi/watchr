@@ -106,12 +106,10 @@ export default {
     },
   },
   computed: {
-    ...mapState({
-      storeTasks: state => state.task.tasks,
-      storeLists: state => state.list.lists,
-      storeFolders: state => state.folder.folders,
-    }),
     ...mapGetters({
+      storeLists: 'list/lists',
+      storeFolders: 'folder/folders',
+      storeTasks: 'task/tasks',
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
 
       isListCompleted: 'list/isListCompleted',

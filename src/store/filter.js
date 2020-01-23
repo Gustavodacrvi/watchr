@@ -86,7 +86,7 @@ export default {
     },
     addTaskByIndex(c, {ids, index, task, filterId, newTaskRef}) {
       const batch = fire.batch()
-      addTask(batch, {
+      setTask(batch, {
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         userId: uid(),

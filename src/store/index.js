@@ -42,7 +42,7 @@ import folder from './folder'
 import pomo from './pomo'
 
 import utils from '@/utils'
-import { userRef } from "../utils/firestore"
+import { userRef, cacheRef } from "../utils/firestore"
 
 const lang = localStorage.getItem('watchrlanguage') || 'en'
 
@@ -117,6 +117,9 @@ const store = new Vuex.Store({
     isOnAlt: false,
     pressingKey: null,
     historyPos: 0,
+
+    isFirstSnapshot: true,
+    changedIds: [],
   },
   getters: {
     ...Memoize(null, {
@@ -322,17 +325,22 @@ const store = new Vuex.Store({
     toggleAlt(state, clicked) {
       state.isOnAlt = clicked
     },
+    change(state, ids) {
+      for (const id of ids)
+        if (!state.changedIds.includes(id))
+          state.changedIds.push(id)
+    },
   },
   actions: {
     getOptions(context, options) {
-      const {state} = context
+      const {state, getters} = context
       return options({
         router,
         ...context,
-        tags: state.tag.tags,
-        tasks: state.task.tasks,
-        lists: state.list.lists,
-        folders: state.folder.folders,
+        tags: getters['tag/tags'],
+        tasks: getters['task/tasks'],
+        lists: getters['list/lists'],
+        folders: getters['folder/folders'],
       })
     },
     logOut({state}) {
@@ -374,12 +382,37 @@ const store = new Vuex.Store({
       })
     },
     getData({state}) {
-      return new Promise(resolve => {
-        userRef().onSnapshot(snap => {
-          state.userInfo = snap.data()
-          resolve()
-        })
-        resolve()
+      userRef().onSnapshot(snap => {
+        state.userInfo = snap.data()
+      })
+      
+      cacheRef().onSnapshot(snap => {
+        const data = snap.data()
+        const isFromHere = snap.metadata.hasPendingWrites
+
+        utils.addIdsToObjectFromKeys(data.tasks)
+        utils.addIdsToObjectFromKeys(data.tags)
+        utils.addIdsToObjectFromKeys(data.folders)
+        utils.addIdsToObjectFromKeys(data.stats)
+        utils.addIdsToObjectFromKeys(data.lists)
+        
+        if (!state.isFirstSnapshot) {
+          utils.updateVuexObject(state.task, 'tasks', data.tasks || {}, state.changedIds, isFromHere)
+          utils.updateVuexObject(state.tag, 'tags', data.tags || {}, state.changedIds, isFromHere)
+          utils.updateVuexObject(state.folder, 'folders', data.folders || {}, state.changedIds, isFromHere)
+          utils.updateVuexObject(state.list, 'lists', data.lists || {}, state.changedIds, isFromHere)
+          
+          if (isFromHere) {
+            state.changedIds = []
+          }
+        } else {
+          state.task.tasks = data.tasks || {}
+          state.tag.tags = data.tags || {}
+          state.folder.folders = data.folders || {}
+          state.list.lists = data.lists || {}
+
+          state.isFirstSnapshot = false
+        }
       })
     },
     update({}, info) {
@@ -438,12 +471,7 @@ auth.onAuthStateChanged((user) => {
   const dispatch = store.dispatch
   const loadData = () => {
     dispatch('getData')
-    dispatch('task/getData')
-    dispatch('list/getData')
-    dispatch('tag/getData')
     dispatch('pomo/getData')
-    dispatch('filter/getData')
-    dispatch('folder/getData')
   }
   const toast = (t) => store.commit('pushToast', t)
 

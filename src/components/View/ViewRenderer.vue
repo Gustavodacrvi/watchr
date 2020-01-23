@@ -367,10 +367,10 @@ export default {
       userInfo: state => state.userInfo,
       runningPomo: state => state.pomo.running,
       rest: state => state.pomo.rest,
-      tags: state => state.tag.tags,
       openHelper: state => state.pomo.openHelper,
     }),
     ...mapGetters({
+      tags: 'tag/tags',
       platform: 'platform',
       isDesktop: 'isDesktop',
       l: 'l',

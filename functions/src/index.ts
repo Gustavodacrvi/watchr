@@ -1,36 +1,91 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+
 const firebase = admin.initializeApp();
+const db = admin.firestore()
+const FieldValue = admin.firestore.FieldValue
 
-export const deleteTaskAttachments = functions.firestore
-  .document("users/{userId}/tasks/{taskId}")
-  .onDelete((snap, context) => {
-    const { userId, taskId } = context.params;
-    const bucket = firebase.storage().bucket();
 
-    return bucket.deleteFiles({
-      prefix: `attachments/${userId}/tasks/${taskId}`
-    });
-  });
+// APP CACHING
 
-export const deleteListAttachments = functions.firestore
-.document("users/{userId}/lists/{listId}")
-.onDelete((snap, context) => {
-  const { userId, listId } = context.params;
-  const bucket = firebase.storage().bucket();
+const updateCache = (snap: functions.Change<FirebaseFirestore.DocumentSnapshot>,  context: functions.EventContext, collection: string, removeAttachmentsOnDelete: boolean) => {
+  const { userId, docId } = context.params
+  
+  const data = snap.after.data()
 
-  return bucket.deleteFiles({
-    prefix: `attachments/${userId}/lists/${listId}`
-  });
-});
+  if (data !== undefined) {
+    if (data.from !== 'watchr_web_app') {
+      console.log(data)
+      return db.collection('users').doc(userId).collection('cache').doc('cache').set({
+        userId,
+        [collection]: {
+          [docId]: {...data, id: docId},
+        },
+      }, {merge: true})
+    }
 
-export const deleteFolderAttachments = functions.firestore
-.document("users/{userId}/folders/{folderId}")
-.onDelete((snap, context) => {
-  const { userId, folderId } = context.params;
-  const bucket = firebase.storage().bucket();
+    return null
+  } else {
+    const promises: any[] = []
+    
+    promises.push(
+      db.collection('users').doc(userId).collection('cache').doc('cache').set({
+        userId,
+        [collection]: {
+          [docId]: FieldValue.delete(),
+        }
+      }, {merge: true})
+    )
+    if (removeAttachmentsOnDelete)
+      promises.push(
+        firebase.storage().bucket().deleteFiles({
+          prefix: `attachments/${userId}/${collection}/${docId}`
+        })
+      )
+    
+    return Promise.all(promises)
+  }
+}
 
-  return bucket.deleteFiles({
-    prefix: `attachments/${userId}/folders/${folderId}`
-  });
-});
+export const updateTaskCache = functions.firestore
+  .document("users/{userId}/tasks/{docId}")
+  .onWrite((a, b) => updateCache(a, b, 'tasks', true))
+  
+export const updateListCache = functions.firestore
+  .document("users/{userId}/lists/{docId}")
+  .onWrite((a, b) => updateCache(a, b, 'lists', true))
+
+export const updateFoldersCache = functions.firestore
+  .document("users/{userId}/folders/{docId}")
+  .onWrite((a, b) => updateCache(a, b, 'folders', true))
+
+export const updateStatsCache = functions.firestore
+  .document("users/{userId}/stats/{docId}")
+  .onWrite((a, b) => updateCache(a, b, 'stats', false))
+
+export const updateTagsCache = functions.firestore
+  .document("users/{userId}/tags/{docId}")
+  .onWrite((a, b) => updateCache(a, b, 'tags', false))
+
+
+/*
+      const { userId } = context.params
+
+    
+    const res = await db.collection('users').doc(userId).collection('tasks').where('userId', '==', userId).get()
+    
+    const promises: Array<Promise<FirebaseFirestore.WriteResult>> = []
+
+    res.docs.forEach(doc => {
+      promises.push(
+        db.collection('users').doc(userId).collection('cache').doc('cache').set({
+          tasks: {
+            [doc.id]: doc.data(),
+          },
+        }, {merge: true})
+      )
+    })
+
+    return Promise.all(promises)
+*/
+

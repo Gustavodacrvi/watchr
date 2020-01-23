@@ -182,13 +182,14 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      tasks: state => state.task.tasks,
-      tags: state => state.tag.tags,
-      lists: state => state.list.lists,
-      folders: state => state.folder.folders,
+    ...mapGetters({
+      lists: 'list/lists',
+      tags: 'tag/tags',
+      folders: 'folder/folders',
+      isStandAlone: 'isStandAlone',
+      l: 'l',
+      tasks: 'task/tasks',
     }),
-    ...mapGetters(['isStandAlone', 'l']),
     hasCallback() {
       return this.payload && this.payload.callback
     },

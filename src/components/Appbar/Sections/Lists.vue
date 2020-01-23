@@ -208,11 +208,11 @@ export default {
   },
   computed: {
     ...mapState({
-      tasks: state => state.task.tasks,
       movingTask: state => state.movingTask,
       user: state => state.user,
     }),
     ...mapGetters({
+      tasks: 'task/tasks',
       l: 'l',
       isDesktop: 'isDesktop',
       isTaskInList: 'task/isTaskInList',

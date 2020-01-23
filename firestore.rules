@@ -6,6 +6,10 @@ service cloud.firestore {
     	allow read: if isSignedIn();
       allow delete, update: if isOwner();
       
+      match /cache/{cache} {
+        allow read: if isSignedIn() && isOwner();
+        allow update: if isOwner();
+      }
       match /tasks/{task} {
         allow create: if isSignedIn();
         allow read, update, delete: if isOwner();

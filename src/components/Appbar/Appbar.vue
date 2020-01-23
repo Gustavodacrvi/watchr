@@ -407,12 +407,12 @@ export default {
     ...mapState({
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
-      tasks: state => state.task.tasks,
-      tags: state => state.tag.tags,
       viewName: state => state.viewName,
       viewType: state => state.viewType,
     }),
     ...mapGetters({
+      tags: 'tag/tags',
+      tasks: 'task/tasks',
       platform: 'platform',
       isStandAlone: 'isStandAlone',
       isDesktop: 'isDesktop',
@@ -691,9 +691,14 @@ export default {
 }
 
 .appnav-handle:hover {
+  cursor: grab;
   background-color: var(--light-gray);
   width: 14px;
   transform: translate(-6px, -50%);
+}
+
+.appnav-handle:active {
+  cursor: grabbing;
 }
 
 .appbar-content {

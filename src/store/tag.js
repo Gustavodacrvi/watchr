@@ -2,7 +2,7 @@
 import { fire, auth } from './index'
 import utils from '../utils'
 import MemoizeGetters from './memoFunctionGetters'
-import { tagColl, tagRef, userRef, fd, taskRef, serverTimestamp, addTask } from '../utils/firestore'
+import { tagColl, tagRef, userRef, fd, taskRef, setTag, serverTimestamp, cacheRef, setTask, deleteTag } from '../utils/firestore'
 import mom from 'moment'
 
 const uid = () => {
@@ -12,15 +12,19 @@ const uid = () => {
 export default {
   namespaced: true,
   state: {
-    tags: [],
+    tags: {},
   },
   getters: {
-    rootTags(state) {
-      return state.tags.filter(tag => !tag.parent)
+    tags(state) {
+      const keys = Object.keys(state.tags).filter(k => state.tags[k])
+      return keys.map(k => state.tags[k])
+    },
+    rootTags(state, getters) {
+      return getters.tags.filter(tag => !tag.parent)
     },
     sortedTags(state, g, {userInfo}, rootGetters) {
       if (userInfo)
-        return rootGetters.checkMissingIdsAndSortArr(userInfo.tags, state.tags)
+        return rootGetters.checkMissingIdsAndSortArr(userInfo.tags, g.tags)
       return []
     },
     sortedRootTags(state, getters, {userInfo}, rootGetters) {
@@ -37,12 +41,12 @@ export default {
       getSubTagsByParentId: {
         react: ['parent'],
         getter({state, getters}, parentId) {
-          return state.tags.filter(tag => tag.parent === parentId)
+          return getters.tags.filter(tag => tag.parent === parentId)
         },
       },
-      getSubTagsByTagId({state}, id) {
+      getSubTagsByTagId({state, getters}, id) {
         const walk = (parent, tags = []) => {
-          const childs = state.tags.filter(tag => tag.parent === parent)
+          const childs = getters.tags.filter(tag => tag.parent === parent)
           tags.push(childs)
           for (const tag of childs) walk(tag.id, tags)
           return tags
@@ -53,30 +57,30 @@ export default {
         react: [
           'name',
         ],
-        getter({state}, names) {
+        getter({state, getters}, names) {
           const arr = []
           for (const n of names) {
-            const tag = state.tags.find(el => el.name === n)
+            const tag = getters.tags.find(el => el.name === n)
             if (tag) arr.push(tag)
           }
           return arr
         },
       },
-      getTagsById({state}, ids) {
+      getTagsById({state, getters}, ids) {
         const arr = []
         for (const id of ids) {
-          const tag = state.tags.find(el => el.id === id)
+          const tag = getters.tags.find(el => el.id === id)
           if (tag) arr.push(tag)
         }
         return arr
       },
-    }),
-    getFavoriteTags(state) {
-      return state.tags.filter(el => el.favorite).map(f => ({...f, icon: 'tag', color: 'var(--red)'}))
+    }, true),
+    getFavoriteTags(state, getters) {
+      return getters.tags.filter(el => el.favorite).map(f => ({...f, icon: 'tag', color: 'var(--red)'}))
     },
   },
   actions: {
-    getData({state}) {
+/*     getData({state}) {
       if (uid())
       return Promise.all([
         new Promise(resolve => {
@@ -86,7 +90,7 @@ export default {
           })
         })
       ])
-    },
+    }, */
     addTag(c, {name, index, ids, parent}) {
       if (!parent) parent = null
       const obj = {
@@ -97,56 +101,62 @@ export default {
         parent,
       }
       if (index === undefined) {
-        tagColl().add(obj)
+        const batch = fire.batch()
+        
+        setTag(batch, obj, tagRef())
+        
+        batch.commit()
       } else if (!parent) {
         const batch = fire.batch()
   
         const ord = ids.slice()
         const ref = tagRef()
-        batch.set(ref, obj)
+        setTag(batch, obj, ref)
+        
         ord.splice(index, 0, ref.id)
         batch.update(userRef(), {
           tags: ord,
         })
-  
+        
         batch.commit()
       } else {
         const batch = fire.batch()
-
+        
         const order = ids.slice()
+        
         const ref = tagRef()
-        batch.set(ref, obj)
+        setTag(batch, obj, ref)
         order.splice(index, 0, ref.id)
-        batch.update(tagRef(parent), {
+        
+        setTag(batch, {
           order,
-        })
+        }, tagRef(parent))
 
         batch.commit()
       }
     },
-    saveTag(c, tag) {
-      tagRef(tag.id).set({
-        ...tag
-      }, {merge: true})
+    saveTag({commit}, tag) {
+      const batch = fire.batch()
+
+      setTag(batch, tag, tagRef(tag.id))
+      commit('change', [ref.id], {root: true})
+
+      batch.commit()
     },
     moveTagBetweenTags({}, {tagId, ids, parent}) {
       const batch = fire.batch()
 
-      batch.set(tagRef(parent), {
-        order: ids,
-      }, {merge: true})
-      batch.set(tagRef(tagId), {
-        parent,
-      }, {merge: true})
+      setTag(batch, {order: ids}, tagRef(parent))
+      setTag(batch, {parent}, tagRef(tagId))
+      commit('change', [parent, tagId], {root: true})
 
       batch.commit()
     },
     moveTagToRoot({}, {tagId, ids}) {
       const batch = fire.batch()
 
-      batch.set(tagRef(tagId), {
-        parent: null,
-      }, {merge: true})
+      setTag(batch, {parent: null}, tagRef(tagId))
+      commit('change', [ref.id], {root: true})
       batch.update(userRef(), {
         tags: ids,
       })
@@ -155,15 +165,16 @@ export default {
     },
     addTaskByIndex(c, {ids, index, task, tagId, newTaskRef}) {
       const batch = fire.batch()
-      addTask(batch, {
+      setTask(batch, {
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         userId: uid(),
         ...task,
       }, newTaskRef).then(() => {
         ids.splice(index, 0, newTaskRef.id)
-  
-        batch.update(tagRef(tagId), {tasks: ids})
+
+        setTag(batch, {tasks: ids}, tagRef(tagId))
+        commit('change', [ref.id], {root: true})
   
         batch.commit()
       })
@@ -173,36 +184,31 @@ export default {
       const ts = tasks.filter(t => t.tags.includes(id))
       
       for (const t of ts) {
-        const ref = taskRef(t.id)
-        batch.update(ref, {
+        setTask(batch, {
           tags: fd().arrayRemove(id)
-        })
+        }, taskRef(t.id))
       }
 
-      const ref = tagRef(id)
-      batch.delete(ref)
-      
+      deleteTag(batch, id)
+
       batch.commit()
     },
     moveTagBelow({}, {tagId, target}) {
-      tagRef(tagId).update({
-        parent: target, 
-      })
+      const batch = fire.batch()
+      
+      setTag(batch, {parent: target}, tagRef(tagId))
+
+      batch.commit()
     },
     updateOrder(c, ids) {
       userRef().update({
         tags: ids,
       })
     },
-    sortTagsByName({state, dispatch}) {
-      const tags = state.tags.slice()
+    sortTagsByName({state, getters, dispatch}) {
+      const tags = getters.tags.slice()
       tags.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       dispatch('updateOrder', tags.map(el => el.id))
-    },
-    deleteAllData({state}) {
-      for (const el of state.tags)
-        fire.collection('tags').doc(el.id).delete()
-      fire.collection('tagsOrder').doc(uid()).delete()
     },
   },
 }

@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from "@/utils/task"
 import utilsMoment from "@/utils/moment"
 import MemoizeGetters from './memoFunctionGetters'
-import { listRef, userRef, uid, listColl, taskRef, serverTimestamp, fd, addTask, folderRef } from '../utils/firestore'
+import { listRef, userRef, uid, listColl, taskRef, serverTimestamp, fd, setTask, folderRef, setFolder, setList, deleteList, deleteTask } from '../utils/firestore'
 import router from '../router'
 
 import mom from 'moment'
@@ -16,13 +16,16 @@ const TOD_STR = mom().format('Y-M-D')
 export default {
   namespaced: true,
   state: {
-    lists: [],
+    lists: {},
   },
   getters: {
+    lists(state) {
+      const keys = Object.keys(state.lists).filter(k => state.lists[k])
+      return keys.map(k => state.lists[k])
+    },
     sortedLists(state, d, {userInfo}, rootGetters) {
-      const {lists} = state
       if (userInfo)
-        return rootGetters.checkMissingIdsAndSortArr(userInfo.lists, lists)
+        return rootGetters.checkMissingIdsAndSortArr(userInfo.lists, d.lists)
       return []
     },
     ...MemoizeGetters(null, {
@@ -188,27 +191,27 @@ export default {
         react: [
           'name',
         ],
-        getter({state}, names) {
+        getter({getters}, names) {
           const arr = []
           for (const n of names) {
-            const list = state.lists.find(el => el.name === n)
+            const list = getters.lists.find(el => el.name === n)
             if (list) arr.push(list)
           }
           return arr
         },
       },
-      getListsById({state}, ids) {
+      getListsById({getters}, ids) {
         const arr = []
         for (const id of ids) {
-          const list = state.lists.find(el => el.id === id)
+          const list = getters.lists.find(el => el.id === id)
           if (list) arr.push(list)
         }
         return arr
       },
       getListByName: {
         react: ['name'],
-        getter({state}, name) {
-          return state.lists.find(l => l.name.trim() === name)
+        getter({getters}, name) {
+          return getters.lists.find(l => l.name.trim() === name)
         },
       },
       getAllTasksOrderByList: {
@@ -217,8 +220,8 @@ export default {
           'headings',
           'tasks',
         ],
-        getter({state, rootGetters}, listId) {
-          const list = state.lists.find(el => el.id === listId)
+        getter({getters, rootGetters}, listId) {
+          const list = getters.lists.find(el => el.id === listId)
           let ord = list.tasks.slice()
           
           let headsOrder = list.headingsOrder.slice() || []
@@ -233,7 +236,7 @@ export default {
         },
       },
       pieProgress({getters, state}, tasks, listId, isTaskCompleted) {
-        const list = state.lists.find(el => el.id === listId)
+        const list = getters.lists.find(el => el.id === listId)
         const c = list.calendar
         const ts = getters.getTasks(tasks, listId)
         const numberOfTasks = ts.length
@@ -250,25 +253,12 @@ export default {
         if (isNaN(result)) return 0
         return result
       },
-    }),
-    getFavoriteLists(state) {
-      return state.lists.filter(el => el.favorite).map(f => ({...f, icon: 'tasks', color: 'var(--primary)', type: 'list'}))
+    }, true),
+    getFavoriteLists(state, getters) {
+      return getters.lists.filter(el => el.favorite).map(f => ({...f, icon: 'tasks', color: 'var(--primary)', type: 'list'}))
     },
   },
   actions: {
-    getData({state}) {
-      const id = uid()
-      if (id)
-      return Promise.all([
-        new Promise(resolve => {
-          listColl().where('userId', '==', id).onSnapshot(snap => {
-            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'lists')
-            resolve()
-          })
-        }),
-      ])
-    },
-
     // ADD
 
     duplicateList(c, {list, rootTasks, headingTasks}) {
@@ -279,10 +269,9 @@ export default {
 
       const createTasks = (arr, tasks) => {
         for (const t of tasks) {
-          const ref = taskRef()
-          batch.set(ref, {
+          setTask(batch, {
             ...t, id: null, list: newListRef.id,
-          })
+          }, taskRef())
           arr.push({
             oldId: t.id,
             newId: ref.id,
@@ -307,23 +296,20 @@ export default {
         h.tasks = newIds
       }
 
-      batch.set(newListRef, {
+      setList(batch, {
         headingsOrder,
         headings,
         name,
         tasks: newRootTasks.map(t => t.newId),
         userId: uid(),
-        users: [uid()],
-      })
+      }, newListRef)
 
       batch.commit()
     },
     addListInFolderByIndexFromView(c, {list, newItemRef, ids, folderId}) {
       const batch = fire.batch()
 
-      batch.update(folderRef(folderId), {
-        order: ids,
-      })
+      setFolder(batch, {order: ids}, folderRef(folderId))
 
       list.folder = folderId
 
@@ -345,13 +331,13 @@ export default {
         tasks: [],
       }
       if (index === undefined && folder === null)
-        userRef().collection('lists').add(obj)
+        setList(batch, obj, listRef())
       else if (index !== undefined && folder === null) {
         const batch = fire.batch()
   
         const ord = ids.slice()
         const ref = listRef()
-        batch.set(ref, obj)
+        setList(batch, obj, ref)
         ord.splice(index, 0, ref.id)
         batch.update(userRef(), {
           lists: ord,
@@ -365,13 +351,9 @@ export default {
         const ref = listRef()
         ord.splice(index, 0, ref.id)
 
-        batch.update(folderRef(folder), {
-          order: ord,
-        })
+        setFolder(batch, {order: ord}, folderRef(folder))
 
-        setTimeout(() => {
-          ref.set(obj)
-        }, 60)
+        listRef(batch, obj, ref)
 
         batch.commit()
       }
@@ -394,13 +376,13 @@ export default {
           if (c.times === 0) c.times = null
         }
 
-        batch.update(listRef(l.id), {
+        setList(batch, {
           completedFire: serverTimestamp(),
           completeDate: mom().format('Y-M-D'),
           fullCompleteDate: mom().format('Y-M-D HH:mm ss'),
           completed: true,
           calendar,
-        })
+        }, listRef(l.id))
 
       }
       
@@ -415,13 +397,12 @@ export default {
         if (c) {
           c.lastCompleteDate = null
         }
-        const ref = listRef(l.id)
-        batch.update(ref, {
+        setList(batch, {
           completedFire: null,
           completeDate: null,
           completed: false,
           calendar: c,
-        })
+        }, listRef(l.id))
       }
 
       batch.commit()
@@ -437,12 +418,12 @@ export default {
       const oldHeading = {...heads[i]}
       heads.splice(i, 1)
 
-      batch.update(listRef(listId), {
+      setList(batch, {
         headings: heads,
-      })
+      }, listRef(listId))
       
       const newList = listRef()
-      batch.set(newList, {
+      setList(batch, {
         folder,
         userId: uid(),
         users: [uid()],
@@ -452,12 +433,12 @@ export default {
         headings: [],
         headingsOrder: [],
         tasks: taskIds,
-      })
+      }, newList)
       for (const id of taskIds)
-        batch.update(taskRef(id), {
+        setTask(batch, {
           list: newList.id,
           heading: null,
-        })
+        }, taskRef(id))
 
       batch.commit()
     },
@@ -465,19 +446,29 @@ export default {
     // EDIT
     
     saveList(c, list) {
-      listRef(list.id).update({
-        ...list,
-      })
+      const b = fire.batch()
+      
+      setList(b, list, listRef(list.id))
+
+      b.commit()
     },
     addListTag(c, {tagId, listId}) {
-      listRef(listId).update({
+      const b = fire.batch()
+      
+      setList(batch, {
         tags: fd().arrayUnion(tagId),
-      })
+      }, listRef(listId))
+  
+      b.commit()
     },
     removeListTag(c, {tagId, listId}) {
-      listRef(listId).update({
+      const b = fire.batch()
+      
+      setList(batch, {
         tags: fd().arrayRemove(tagId),
-      })
+      }, listRef(listId))
+  
+      b.commit()
     },
     updateOrder(c, lists) {
       userRef().update({lists})
@@ -490,8 +481,8 @@ export default {
         viewOrders: obj,
       }, {merge: true})
     },
-    sortListsByName({state, dispatch}) {
-      const lists = state.lists.slice()
+    sortListsByName({getters, dispatch}) {
+      const lists = getters.lists.slice()
       lists.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
       dispatch('updateOrder', lists.map(el => el.id))
     },
@@ -501,7 +492,7 @@ export default {
     addTaskByIndexSmartViewFolder(c, {ids, index, task, folderId, viewName, newTaskRef}) {
       const batch = fire.batch()
       
-      addTask(batch, {
+      setTask(batch, {
         userId: uid(),
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
@@ -509,9 +500,8 @@ export default {
       }, newTaskRef).then(() => {
         const views = {}
         views[viewName] = ids
-        batch.set(folderRef(folderId), {
-          smartViewsOrders: views,
-        }, {merge: true})
+
+        setFolder(batch, {smartViewsOrders: views}, folderRef(folderId))
 
         batch.commit()
       })
@@ -519,7 +509,7 @@ export default {
     addTaskByIndexCalendarOrder({rootState}, {ids, index, task, date, newTaskRef}) {
       const batch = fire.batch()
       
-      addTask(batch, {
+      setTask(batch, {
         userId: uid(),
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
@@ -535,7 +525,7 @@ export default {
     addTaskByIndexSmartViewList(c, {ids, index, task, listId, viewName, newTaskRef}) {
       const batch = fire.batch()
       
-      addTask(batch, {
+      setTask(batch, {
         userId: uid(),
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
@@ -543,9 +533,9 @@ export default {
       }, newTaskRef).then(() => {
         const views = {}
         views[viewName] = ids
-        batch.set(listRef(listId), {
+        setList(batch, {
           smartViewsOrders: views,
-        }, {merge: true})
+        }, listRef(listId))
 
         batch.commit()
       }) 
@@ -553,7 +543,7 @@ export default {
     addTaskByIndexSmart(c, {ids, index, task, list, newTaskRef}) {
       const batch = fire.batch()
       
-      addTask(batch, {
+      setTask(batch, {
         userId: uid(),
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
@@ -563,8 +553,7 @@ export default {
         // list === viewName, e.g: Today, Tomorrow
         obj[list].tasks = ids
   
-        const listRef = userRef()
-        batch.set(listRef, {
+        batch.set(userRef(), {
           viewOrders: obj,
         }, {merge: true})
   
@@ -573,14 +562,14 @@ export default {
     },
     addTaskByIndex(c, {ids, index, task, listId, newTaskRef}) {
       const batch = fire.batch()
-      addTask(batch, {
+      setTask(batch, {
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         userId: uid(),
         ...task,
       }, newTaskRef).then(() => {
-        const savedListRef = listRef(listId)
-        batch.update(savedListRef, {tasks: ids})
+
+        setList(batch, {tasks: ids}, listRef(listId))
   
         batch.commit()
       })
@@ -597,11 +586,10 @@ export default {
         if (task) ids.push(task.id)
       }
       for (const id of ids) {
-        const ref = taskRef(id)
-        batch.update(ref, {
+        setTask(batch, {
           completeDate: null,
           completed: false,
-        })
+        }, taskRef(id))
       }
 
       batch.commit()
@@ -610,9 +598,9 @@ export default {
       const batch = fire.batch()
 
       for (const id of taskIds)
-        batch.update(taskRef(id), {
+        setTask(batch, {
           list: null, folder: null, heading: null,
-        })
+        }, taskRef(id))
       const obj = {}
       obj[view] = {}
       obj[view].tasks = ids
@@ -626,9 +614,9 @@ export default {
       const batch = fire.batch()
 
       for (const id of taskIds)
-        batch.update(taskRef(id), {
+        setTask({
           list: null, folder: null, heading: null,
-        })
+        }, taskRef(id))
       
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
 
@@ -640,11 +628,11 @@ export default {
       const batch = fire.batch()
 
       for (const id of taskIds)
-        batch.update(taskRef(id), {
+        setTask(batch, {
           list: listId,
           folder: null,
           heading: null,
-        })
+        }, taskRef(id))
 
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
       
@@ -660,15 +648,15 @@ export default {
       views[smartView] = ids
 
       for (const id of taskIds) {
-        batch.update(taskRef(id), {
+        setTask(batch, {
           list: listId,
           folder: null,
           heading: null,
-        })
+        }, taskRef(id))
       }
-      batch.update(listRef(listId), {
+      setList(batch, {
         smartViewsOrders: views,
-      })
+      }, listRef(listId))
 
       batch.commit()
     },
@@ -681,17 +669,17 @@ export default {
       const id = utils.getUid()
 
       for (const id of ids)
-        batch.update(taskRef(id), {
+        setTask(batch, {
           heading: id,
-        })
+        }, taskRef(id))
       const listHeadings = list.headings.slice()
       listHeadings.push({name, tasks: ids, id})
       headings.splice(index, 0, id)
       
-      batch.update(listRef(listId), {
+      setList(batch, {
         headings: listHeadings,
         headingsOrder: headings,
-      })
+      }, listRef(listId))
 
       batch.commit()
     },
@@ -703,9 +691,7 @@ export default {
       const i = heads.findIndex(el => el.id === headingId)
       heads[i].name = name
 
-      batch.update(listRef(listId), {
-        headings: heads,
-      })
+      setList(batch, {headings: heads}, listRef(listId))
 
       batch.commit()
     },
@@ -716,9 +702,9 @@ export default {
       const heads = list.headings.slice()
       const i = heads.findIndex(el => el.id === heading)
       heads[i].notes = notes
-      batch.update(listRef(listId), {
+      setList(batch, {
         headings: heads,
-      })
+      }, listRef(listId))
 
       batch.commit()
     },
@@ -727,15 +713,13 @@ export default {
       const batch = fire.batch()
 
       for (const id of taskIds)
-        batch.update(taskRef(id), {
+        setTask(batch, {
           heading: headingId,
-        })
+        }, taskRef(id))
       const heads = list.headings.slice()
       const i = heads.findIndex(el => el.id === headingId)
       heads[i].tasks = ids
-      batch.update(listRef(listId), {
-        headings: heads,
-      })
+      setList(batch, {headings: heads}, listRef(listId))
 
       batch.commit()
     },
@@ -743,15 +727,11 @@ export default {
       const batch = fire.batch()
 
       for (const id of taskIds) {
-        const task = taskRef(id)
-        batch.update(task, {
+        setTask(batch, {
           heading: null,
-        })
+        }, taskRef(id))
       }
-      const savedListRef = listRef(listId)
-      batch.update(savedListRef, {
-        tasks: ids,
-      })
+      setList(batch, {tasks: ids}, listRef(listId))
 
       batch.commit()
     },
@@ -764,13 +744,11 @@ export default {
       heads.splice(i, 1)
       
       for (const task of savedTasks) {
-        batch.update(taskRef(task.id), {
+        setTask(batch, {
           heading: null,
-        })
+        }, taskRef(task.id))
       }
-      batch.update(listRef(listId), {
-        headings: heads,
-      })
+      setList(batch, {headings: heads}, listRef(listId))
 
       batch.commit()
     },
@@ -779,23 +757,31 @@ export default {
       const heads = list.headings.slice()
       const i = heads.findIndex(el => el.id === headingId)
       heads[i].tasks = ids
-      listRef(listId).update({
-        headings: heads,
-      })
+      const b = fire.batch()
+      
+      setList(b, {headings: heads}, listRef(listId))
+
+      b.commit()
     },
     updateListHeadings(c, {ids, listId}) {
-      listRef(listId).update({
-        headingsOrder: ids,
-      })
+      const b = fire.batch()
+      
+      setList(batch, {headingsOrder: ids}, listRef(listId))
+
+      b.commit()
     },
     saveSmartViewHeadingTasksOrder({getters}, {ids, listId, smartView}) {
       const list = getters.getListsById([listId])[0]
       let views = list.smartViewsOrders
       if (!views) views = {}
       views[smartView] = ids
-      listRef(listId).update({
+      const batch = fire.batch()
+      
+      setList(batch, {
         smartViewsOrders: views,
-      })
+      }, listRef(listId))
+
+      batch.commit()
     },
     duplicateHeading({getters}, {headingId, name, listId, tasks}) {
       const list = getters.getListsById([listId])[0]
@@ -805,10 +791,9 @@ export default {
 
       const newTaskIds = []
       for (const t of tasks) {
-        const ref = taskRef()
-        batch.set(taskRef(), {
+        setTask(batch, {
           ...t, heading: newId, id: null,
-        })
+        }, taskRef())
         newTaskIds.push(ref.id)
       }
 
@@ -823,11 +808,10 @@ export default {
       const i = order.findIndex(n => n === headingId)
       order.splice(i, 0, newId)
 
-      const newListRef = listRef(listId)
-      batch.update(newListRef, {
+      setList(batch, {
         headingsOrder: order,
         headings: heads,
-      })
+      }, listRef(listId))
 
       batch.commit()
     },
@@ -850,19 +834,19 @@ export default {
 
       task.list = listId
       task.heading = headingId
-      batch.set(newTaskRef, {
+      setTask(batch, {
         userId: uid(),
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...task,
-      })
+      }, newTaskRef)
       const heads = list.headings.slice()
       const i = heads.findIndex(el => el.id === headingId)
       ids.splice(index, 0, newTaskRef.id)
       heads[i].tasks = ids
-      batch.update(listRef(listId), {
+      setList(batch, {
         headings: heads,
-      })
+      }, listRef(listId))
 
       batch.commit()
     },
@@ -877,14 +861,13 @@ export default {
       for (const t of tasks)
       if (t.list === listId) ids.push(t.id)
       for (const id of ids)
-        batch.update(taskRef(id), {
+        setTask(batch, {
           list: null,
           folder,
           heading: null,
-        })
+        }, taskRef(id))
 
-      const deleteListRef = listRef(listId)
-      batch.delete(deleteListRef)
+      deleteList(batch, listId)
 
       batch.commit()
     },
@@ -896,11 +879,10 @@ export default {
       const taskIds = {}
       const listId = newListRef.id
       for (const t of tasks) {
-        const ref = taskRef()
-        batch.set(ref, {
+        setTask(batch, {
           ...t, list: listId, id: ref.id, userId: uid(),
           users: [uid()],
-        })
+        }, taskRef())
         taskIds[t.id] = ref.id
       }
 
@@ -918,18 +900,12 @@ export default {
       list.tasks = newTasks
       
       list.smartViewsOrders = {}
-      batch.set(newListRef, {
+      setList(batch, {
         ...list, id: listId, userId: uid(),
         users: [uid()],
-      })
+      }, newListRef)
 
       batch.commit()
-    },
-    deleteAllData({state}) {
-      for (const el of state.lists)
-        fire.collection('lists').doc(el.id).delete()
-      fire.collection('listsOrder').doc(uid()).delete()
-      fire.collection('viewOrders').doc(uid()).delete()
     },
   },
 }

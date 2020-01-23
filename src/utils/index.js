@@ -9,7 +9,61 @@ import IconDrop from '@/components/IconDrop/IconDrop.vue'
 
 let contextMenuRunned = false
 
+import { mergeWith, isEqual } from 'lodash'
+
 export default {
+  addIdsToObjectFromKeys(obj) {
+    for (const k in obj)
+      if (obj.hasOwnProperty(k))
+        obj[k] = {...obj[k], id: k}
+  },
+  updateVuexObject(state, arrName, source, changed, isFromHere) {
+    const target = state[arrName]
+    const targetKeys = Object.keys(target)
+    const sourceKeys = Object.keys(source)
+
+    for (const k of sourceKeys)
+      if (!target[k])
+        return Vue.set(state, arrName, {...source})
+        
+    for (const k of targetKeys)
+      if (!source[k])
+        return Vue.set(state, arrName, {...source})
+
+    const changedKeys = !isFromHere || changed.length === 0 ? sourceKeys : changed
+
+    console.time('ignore')
+    changedKeys.forEach(k => {
+      if (target[k])
+        this.findChangesBetweenObjs(target[k], source[k],
+          (key, val) => Vue.set(target[k], key, val)
+        )
+    })
+    console.timeEnd('ignore')
+  },
+  findChangesBetweenObjs(oldObj, newObj, onFoundChange) {
+    if (oldObj && newObj) {
+      const keys = Object.keys(newObj)
+      for (const k of keys) {
+        const old = oldObj[k]
+        const val = newObj[k]
+        const type = typeof val
+        let change = false
+
+        switch (type) {
+          case 'object': {
+            change = JSON.stringify(val) !== JSON.stringify(old)
+            break
+          }
+          default: {
+            change = old !== val
+          }
+        }
+        
+        if (change) onFoundChange(k, val)
+      }
+    }
+  },
   getDataFromFirestoreSnapshot(state, changes, arrName) {
     changes.forEach(change => {
       const newDoc = {...change.doc.data(), id: change.doc.id}
@@ -22,34 +76,9 @@ export default {
         const index = state[arrName].findIndex(el => el.id === change.doc.id)
         state[arrName].splice(index, 1)
       } else {
-/*         const doc = state[arrName].find(el => el.id === change.doc.id)
-        Object.assign(doc, newDoc)
-
-        const index = state[arrName].findIndex(el => el.id === change.doc.id)
-        state[arrName].splice(index, 1, newDoc) */
-
         const i = state[arrName].findIndex(el => el.id === change.doc.id)
-
-        const keys = Object.keys(newDoc)
-        for (const k of keys) {
-          const old = state[arrName][i][k]
-          const val = newDoc[k]
-          const type = typeof val
-          let change = false
-
-          switch (type) {
-            case 'object': {
-              change = JSON.stringify(val) !== JSON.stringify(old)
-              break
-            }
-            default: {
-              change = old !== val
-            }
-          }
-          
-          if (change)
-            Vue.set(state[arrName][i], k, val)
-        }
+        
+        this.findChangesBetweenObjs(state[arrName][i], newDoc, (key, val) => Vue.set(state[arrName][i], key, val))
       }
     })
   },

@@ -1,5 +1,5 @@
 
-export default (property, getters) => {
+export default (property, getters, getPropertyFromGetter) => {
   const keys = Object.keys(getters)
 
   const memo = (func, stringify) => {
@@ -22,14 +22,16 @@ export default (property, getters) => {
 
   const obj = {}
   for (const k of keys) {
-    obj[k] = function(state) {
+    obj[k] = function(vuexState, vuexGetters) {
+      const origin = getPropertyFromGetter ? vuexGetters : vuexState
+      
       if (property) {
         if (property.length === undefined) {
-          if (property) state[property]
+          if (property) origin[property]
         }
         else
           for (const k of property)
-            state[k]        
+            origin[k]        
       }
       const val = getters[k]
       const firstArg = {
@@ -40,7 +42,7 @@ export default (property, getters) => {
       }
 
       if (property && val.react)
-        for (const el of state[property])
+        for (const el of origin[property])
           for (const p of val.react)
             el[p]
 

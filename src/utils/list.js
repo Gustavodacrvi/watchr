@@ -36,7 +36,7 @@ export default {
             name: l['Uncomplete tasks'],
             icon: 'circle',
             callback: () => dispatch('list/uncompleteHeadingTasks', {
-              listId, headingId: h.id, savedTasks: store.state.task.tasks,
+              listId, headingId: h.id, savedTasks: store.getters['task/tasks'],
             })
           },
           {
@@ -51,7 +51,7 @@ export default {
             icon: 'tasks',
             important: true,
             callback: () => {
-              if (store.state.list.lists.some(l => l.name === h.name))
+              if (store.getters['list/lists'].some(l => l.name === h.name))
                 toast({
                   name: l['There is already a list with this heading name.'],
                   seconds: 3,
@@ -239,7 +239,7 @@ export default {
             icon: 'tag',
             callback: () => ({
               allowSearch: true,
-              links: store.state.tag.tags.map(el => ({
+              links: store.getters['tag/tags'].map(el => ({
                 name: el.name,
                 icon: 'tag',
                 callback: () => dispatch('list/addListTag', {tagId: el.id, listId}),

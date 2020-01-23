@@ -399,9 +399,9 @@ export default {
   computed: {
     ...mapState({
       selectedTasks: state => state.selectedTasks,
-      tasks: state => state.task.tasks,
     }),
     ...mapGetters({
+      tasks: 'task/tasks',
       l: 'l',
       isDesktop: 'isDesktop',
       platform: 'platform',

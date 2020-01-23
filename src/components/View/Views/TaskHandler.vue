@@ -623,12 +623,8 @@ export default {
   },
   computed: {
     ...mapState({
-      storeTasks: state => state.task.tasks,
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
-      tags: state => state.tag.tags,
-      lists: state => state.list.lists,
-      folders: state => state.folder.folders,
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
       isOnAlt: state => state.isOnAlt,
@@ -636,6 +632,10 @@ export default {
       mainSelectionIndex: state => state.mainSelectionIndex,
     }),
     ...mapGetters({
+      lists: 'list/lists',
+      folders: 'folder/folders',
+      tags: 'tag/tags',
+      storeTasks: 'task/tasks',
       l: 'l',
       fallbackSelected: 'fallbackSelected',
       isTaskSomeday: 'task/isTaskSomeday',
