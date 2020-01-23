@@ -37,9 +37,12 @@ export default {
     if (this.isEditing) this.name = this.payload.name
   },
   computed: {
-    ...mapGetters(['platform', 'l']),
+    ...mapGetters({
+      platform: 'platform',
+      l: 'l',
+      folders: 'tag/folders',
+    }),
     ...mapState({
-      folders: state => state.folder.folders,
       popup: state => state.popup,
       payload: state => state.popup.payload,
     }),

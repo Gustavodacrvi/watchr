@@ -184,10 +184,10 @@ export default {
   computed: {
     ...mapState({
       lists: state => state.list.lists,
-      folders: state => state.folder.folders,
     }),
     ...mapGetters({
       tags: 'tag/tags',
+      folders: 'tag/folders',
       isStandAlone: 'isStandAlone',
       l: 'l',
       tasks: 'task/tasks',

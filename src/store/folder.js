@@ -11,20 +11,23 @@ import mom from 'moment'
 export default {
   namespaced: true,
   state: {
-    folders: [],
+    folders: {},
   },
   getters: {
+    folders(state) {
+      const keys = Object.keys(state.folders).filter(k => state.folders[k])
+      return keys.map(k => state.folders[k])
+    },
     sortedFolders(state, d, {userInfo}, rootGetters) {
-      const {folders} = state
       let order = userInfo.folders
       if (!order) order = []
       if (userInfo)
-        return rootGetters.checkMissingIdsAndSortArr(order, folders)
+        return rootGetters.checkMissingIdsAndSortArr(order, d.folders)
       return []
     },
     ...MemoizeGetters('folders', {
-      getFolderTaskOrderById({state}, folderId) {
-        const fold = state.folders.find(f => f.id === folderId)
+      getFolderTaskOrderById({state, getters}, folderId) {
+        const fold = getters.folders.find(f => f.id === folderId)
         if (fold && fold.tasks)
           return fold.tasks
         return []
@@ -33,9 +36,9 @@ export default {
         react: [
           'order'
         ],
-        getter({state, rootGetters}, {id, lists}) {
+        getter({state, getters, rootGetters}, {id, lists}) {
           const arr = []
-          const fold = state.folders.find(f => f.id === id)
+          const fold = getters.folders.find(f => f.id === id)
           for (const l of lists)
             if (l.folder && l.folder === id) arr.push(l)
           let order = fold.order
@@ -47,37 +50,32 @@ export default {
         react: [
           'name',
         ],
-        getter({state}, names) {
+        getter({state, getters}, names) {
           const arr = []
           for (const n of names) {
-            const fold = state.folders.find(f => f.name === n)
+            const fold = getters.folders.find(f => f.name === n)
             if (fold) arr.push(fold)
           }
           return arr
         },
       },
-      getFoldersById({state}, ids) {
+      getFoldersById({state, getters}, ids) {
         const arr = []
-        for (const f of state.folders)
+        for (const f of getters.folders)
           if (ids.includes(f.id)) arr.push(f)
         return arr
       },
-    }),
-    getFavoriteFolders(state) {
-      return state.folders.filter(f => f.favorite).map(f => ({...f, icon: 'folder', color: 'var(--txt)'}))
+    }, true),
+    getFavoriteFolders(state, getters) {
+      return getters.folders.filter(f => f.favorite).map(f => ({...f, icon: 'folder', color: 'var(--txt)'}))
     },
   },
   actions: {
-    getData({state}) {
-      return new Promise(solve => {
-        folderColl().where('userId', '==', uid()).onSnapshot(snap => {
-          utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'folders')
-          solve()
-        })
-      })
-    },
     addFolder(c, fold) {
-      folderRef().set({
+      const batch = fire.batch()
+      
+      const ref = folderRef()
+      const obj = {
         userId: uid(),
         tasks: [],
         files: [],
@@ -85,7 +83,17 @@ export default {
         created: mom().format('Y-M-D HH:mm ss'),
         ...fold,
         defaultShowing: true,
-      })
+        from: 'watchr_web_app',
+      }
+      
+      batch.set(ref, obj, {merge: true})
+      batch.set(cacheRef(), {
+        folders: {
+          [ref.id]: obj,
+        },
+      }, {merge: true})
+
+      batch.commit()
     },
     updateFoldersOrder(c, ids) {
       userRef(uid()).update({
@@ -93,14 +101,40 @@ export default {
       })
     },
     updateOrder(c, {id, ids}) {
-      folderRef(id).update({
+      const batch = fire.batch()
+      
+      const ref = folderRef(id)
+      const obj = {
         order: ids,
-      })
+        from: 'watchr_web_app',
+      }
+
+      batch.set(ref, obj, {merge: true})
+      batch.set(cacheRef(), {
+        folders: {
+          [ref.id]: obj,
+        },
+      }, {merge: true})
+
+      batch.commit()
     },
     saveFolder(c, fold) {
-      folderRef(fold.id).update({
-        ...fold, 
-      })
+      const batch = fire.batch()
+      
+      const ref = folderRef(fold.id)
+      const obj = {
+        ...fold,
+        from: 'watchr_web_app',
+      }
+      
+      batch.set(ref, obj, {merge: true})
+      batch.set(cacheRef(), {
+        folders: {
+          [ref.id]: obj,
+        },
+      }, {merge: true})
+      
+      batch.commit()
     },
     moveListToRoot(c, {id, ids}) {
       const batch = fire.batch()
@@ -119,27 +153,56 @@ export default {
       views[smartView] = ids
 
       for (const id of taskIds) {
-        batch.update(taskRef(id), {
+        const ref = taskRef(id)
+        
+        const obj = {
           list: null,
           folder: folderId,
           heading: null,
+          from: 'watchr_web_app'
+        }
+        
+        batch.update(ref, obj)
+        batch.set(cacheRef(), {
+          tasks: {
+            [id]: obj,
+          }
         })
       }
-      batch.update(folderRef(folderId), {
+      const ref = folderRef(folderId)
+      const obj = {
         smartViewsOrders: views,
-      })
+        from: 'watchr_web_app',
+      }
+      
+      batch.set(ref, obj, {merge: true})
+      batch.set(cacheRef(), {
+        folders: {
+          [ref.id]: obj,
+        },
+      }, {merge: true})
 
       batch.commit()
     },
     moveTasksToFolderCalendarOrder({rootState}, {ids, taskIds, date, folderId}) {
       const batch = fire.batch()
 
-      for (const id of taskIds)
-        batch.update(taskRef(id), {
+      for (const id of taskIds) {
+        const ref = taskRef(id)
+        const obj = {
           folder: folderId,
           list: null,
           heading: null,
+          from: 'watchr_web_app',
+        }
+        
+        batch.update(ref, obj)
+        batch.set(cacheRef(), {
+          tasks: {
+            [id]: obj,
+          }
         })
+      }
 
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
       
@@ -155,7 +218,18 @@ export default {
         ...task,
       }, newTaskRef).then(() => {
         ids.splice(index, 0, newTaskRef.id)
-        batch.update(folderRef(folderId), {tasks: ids})
+        const ref = folderRef(folderId)
+        const obj = {
+          tasks: ids,
+          from: 'watchr_web_app',
+        }
+        
+        batch.set(ref, obj, {merge: true})
+        batch.set(cacheRef(), {
+          folders: {
+            [ref.id]: obj,
+          },
+        }, {merge: true})
   
         batch.commit()
       })
@@ -163,8 +237,28 @@ export default {
     moveListBetweenFolders(c, {folder, id, ids}) {
       const batch = fire.batch()
 
-      batch.update(folderRef(folder), {order: ids})
-      batch.update(listRef(id), {folder})
+      const foldRef = folderRef(folder)
+      const liRef = listRef(id)
+      const foldObj = {
+        order: ids,
+        from: 'watchr_web_app',
+      }
+      const liObj = {
+        folder,
+        from: 'watchr_web_app',
+      }
+
+      batch.set(foldRef, foldObj, {merge: true})
+      batch.set(liRef, liObj, {merge: true})
+
+      batch.set(cacheRef(), {
+        folders: {
+          [folder]: foldObj,
+        },
+        lists: {
+          [id]: liObj,
+        },
+      }, {merge: true})
 
       batch.commit()
     },
@@ -177,10 +271,20 @@ export default {
         batch.update(listRef(l.id), {
           folder: null,
         })
-      for (const t of folderTasks)
-        batch.update(taskRef(t.id), {
+      for (const t of folderTasks) {
+        const ref = taskRef(t.id)
+        const obj = {
           folder: null,
+          from: 'watchr_web_app',
+        }
+
+        batch.update(ref, obj)
+        batch.set(cacheRef(), {
+          tasks: {
+            [id]: obj,
+          }
         })
+      }
       
       batch.delete(folderRef(id))
 
@@ -191,9 +295,14 @@ export default {
       let views = folder.smartViewsOrders
       if (!views) views = {}
       views[smartView] = ids
-      folderRef(folderId).update({
+
+      const ref = folderRef(folderId)
+      const obj = {
+        from: 'watchr_web_app',
         smartViewsOrders: views,
-      })
+      }
+      
+      batch.set(ref, obj, {merge: true})
     },
   },
 }

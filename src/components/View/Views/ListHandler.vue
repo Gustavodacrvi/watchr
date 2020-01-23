@@ -108,9 +108,9 @@ export default {
   computed: {
     ...mapState({
       storeLists: state => state.list.lists,
-      storeFolders: state => state.folder.folders,
     }),
     ...mapGetters({
+      storeFolders: 'tag/folders',
       storeTasks: 'task/tasks',
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
 

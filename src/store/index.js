@@ -340,7 +340,7 @@ const store = new Vuex.Store({
         tags: getters['tag/tags'],
         tasks: getters['task/tasks'],
         lists: state.list.lists,
-        folders: state.folder.folders,
+        folders: getters['folder/folders'],
       })
     },
     logOut({state}) {
@@ -399,6 +399,7 @@ const store = new Vuex.Store({
         if (!state.isFirstSnapshot) {
           utils.updateVuexObject(state.task, 'tasks', data.tasks, state.changedIds, isFromHere)
           utils.updateVuexObject(state.tag, 'tags', data.tags, state.changedIds, isFromHere)
+          utils.updateVuexObject(state.folder, 'folders', data.folders, state.changedIds, isFromHere)
           
           if (isFromHere) {
             state.changedIds = []
@@ -406,6 +407,7 @@ const store = new Vuex.Store({
         } else {
           state.task.tasks = data.tasks
           state.tag.tags = data.tags
+          state.folder.folders = data.folders
 
           state.isFirstSnapshot = false
         }
@@ -469,8 +471,6 @@ auth.onAuthStateChanged((user) => {
     dispatch('getData')
     dispatch('list/getData')
     dispatch('pomo/getData')
-    dispatch('filter/getData')
-    dispatch('folder/getData')
   }
   const toast = (t) => store.commit('pushToast', t)
 
