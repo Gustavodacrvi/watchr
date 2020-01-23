@@ -119,6 +119,7 @@ const store = new Vuex.Store({
     historyPos: 0,
 
     isFirstSnapshot: true,
+    changedIds: [],
   },
   getters: {
     ...Memoize(null, {
@@ -324,6 +325,11 @@ const store = new Vuex.Store({
     toggleAlt(state, clicked) {
       state.isOnAlt = clicked
     },
+    change(state, ids) {
+      for (const id of ids)
+        if (!state.changedIds.includes(id))
+          state.changedIds.push(id)
+    },
   },
   actions: {
     getOptions(context, options) {
@@ -376,30 +382,26 @@ const store = new Vuex.Store({
       })
     },
     getData({state}) {
-      return Promise.all([
-        new Promise(resolve => {
-          userRef().onSnapshot(snap => {
-            state.userInfo = snap.data()
-            resolve()
-          })
-          resolve()
-        }),
-        new Promise(solve => {
-          cacheRef().onSnapshot(snap => {
-            const data = snap.data()
+      userRef().onSnapshot(snap => {
+        state.userInfo = snap.data()
+      })
+      
+      cacheRef().onSnapshot(snap => {
+        const data = snap.data()
+        const isFromHere = snap.metadata.hasPendingWrites
 
-            if (!state.isFirstSnapshot) {
-              utils.updateVuexObject(state.task.tasks, data.tasks)
-            } else {
-              state.task.tasks = data.tasks
+        if (!state.isFirstSnapshot) {
+          utils.updateVuexObject(state.task, 'tasks', data.tasks, state.changedIds, isFromHere)
 
-              state.isFirstSnapshot = false
-            }
-            
-            solve()
-          })
-        })
-      ])
+          if (isFromHere) {
+            state.changedIds = []
+          }
+        } else {
+          state.task.tasks = data.tasks
+
+          state.isFirstSnapshot = false
+        }
+      })
     },
     update({}, info) {
       const batch = fire.batch()

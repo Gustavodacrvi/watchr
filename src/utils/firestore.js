@@ -6,6 +6,7 @@ export const uid = () => auth.currentUser.uid
 export const fd = () => fb.firestore.FieldValue
 export const userRef = id => fire.collection('users').doc(id ? id : uid())
 export const cacheRef = id => fire.collection('users').doc(id ? id : uid()).collection('cache').doc('cache')
+export const setCache = obj => cacheRef().set(obj, {merge: true})
 export const taskColl = () => userRef().collection('tasks')
 export const listColl = () => userRef().collection('lists')
 export const serverTimestamp = () => fb.firestore.FieldValue.serverTimestamp()
@@ -22,8 +23,16 @@ export const filterRef = id => id ? filterColl().doc(id) : filterColl().doc()
 export const addTask = (batch, task, ref) => {
   return new Promise((solve, reject) => {
     const save = () => {
-      batch.set(ref, {
+      const obj = {
         ...task, handleFiles: null,
+        from: 'watchr_web_app', id: ref.id,
+        userId: uid(),
+      }
+      batch.set(ref, obj, {merge: true})
+      batch.set(cacheRef(), {
+        tasks: {
+          [ref.id]: obj,
+        }
       }, {merge: true})
       solve()
     }

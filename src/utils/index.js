@@ -9,46 +9,54 @@ import IconDrop from '@/components/IconDrop/IconDrop.vue'
 
 let contextMenuRunned = false
 
+import { mergeWith, isEqual } from 'lodash'
+
 export default {
-  updateVuexObject(target, source) {
+  updateVuexObject(state, arrName, source, changed, isFromHere) {
+    const target = state[arrName]
     const targetKeys = Object.keys(target)
     const sourceKeys = Object.keys(source)
 
-    sourceKeys.forEach(k => {
-      const oldObj = target[k]
-      const newObj = source[k]
-      if (!oldObj)
-        target[k] = newObj
-      else this.findChangesBetweenObjs(oldObj, newObj,
-          (key, val) => Vue.set(oldObj, key, val)
+    for (const k of sourceKeys)
+      if (!target[k])
+        return Vue.set(state, arrName, {...source})
+        
+    for (const k of targetKeys)
+      if (!source[k])
+        return Vue.set(state, arrName, {...source})
+
+    const changedKeys = !isFromHere || changed.length === 0 ? sourceKeys : changed
+
+    console.time('ignore')
+    changedKeys.forEach(k => {
+      if (target[k])
+        this.findChangesBetweenObjs(target[k], source[k],
+          (key, val) => Vue.set(target[k], key, val)
         )
     })
-
-    targetKeys.forEach(k => {
-      if (!source[k])
-        target[k] = undefined
-    })
-
+    console.timeEnd('ignore')
   },
   findChangesBetweenObjs(oldObj, newObj, onFoundChange) {
-    const keys = Object.keys(newObj)
-    for (const k of keys) {
-      const old = oldObj[k]
-      const val = newObj[k]
-      const type = typeof val
-      let change = false
+    if (oldObj && newObj) {
+      const keys = Object.keys(newObj)
+      for (const k of keys) {
+        const old = oldObj[k]
+        const val = newObj[k]
+        const type = typeof val
+        let change = false
 
-      switch (type) {
-        case 'object': {
-          change = JSON.stringify(val) !== JSON.stringify(old)
-          break
+        switch (type) {
+          case 'object': {
+            change = JSON.stringify(val) !== JSON.stringify(old)
+            break
+          }
+          default: {
+            change = old !== val
+          }
         }
-        default: {
-          change = old !== val
-        }
+        
+        if (change) onFoundChange(k, val)
       }
-      
-      if (change) onFoundChange(k, val)
     }
   },
   getDataFromFirestoreSnapshot(state, changes, arrName) {
@@ -63,12 +71,6 @@ export default {
         const index = state[arrName].findIndex(el => el.id === change.doc.id)
         state[arrName].splice(index, 1)
       } else {
-/*         const doc = state[arrName].find(el => el.id === change.doc.id)
-        Object.assign(doc, newDoc)
-
-        const index = state[arrName].findIndex(el => el.id === change.doc.id)
-        state[arrName].splice(index, 1, newDoc) */
-
         const i = state[arrName].findIndex(el => el.id === change.doc.id)
         
         this.findChangesBetweenObjs(state[arrName][i], newDoc, (key, val) => Vue.set(state[arrName][i], key, val))
