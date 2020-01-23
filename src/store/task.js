@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, userRef, folderRef, serverTimestamp, taskColl, taskRef, listRef, setTask, cacheRef, deleteTask } from '../utils/firestore'
+import { uid, fd, userRef, folderRef, serverTimestamp, taskColl, taskRef, listRef, setTask, cacheRef, deleteTask, setFolder } from '../utils/firestore'
 import { pipeBooleanFilters } from '@/utils/memo'
 
 import mom from 'moment'
@@ -750,9 +750,7 @@ export default {
         
       })
 
-      batch.set(folderRef(folderId), {
-        order,
-      }, {merge: true})
+      setFolder(batch, {order}, folderRef(folderId))
       
       batch.commit()
     },
