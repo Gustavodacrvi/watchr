@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, userRef, folderRef, serverTimestamp, taskColl, taskRef, listRef, setTask, cacheRef, deleteTask, setFolder } from '../utils/firestore'
+import { uid, fd, userRef, folderRef, serverTimestamp, taskColl, taskRef, listRef, setTask, cacheRef, deleteTask, setFolder, setList } from '../utils/firestore'
 import { pipeBooleanFilters } from '@/utils/memo'
 
 import mom from 'moment'
@@ -735,7 +735,7 @@ export default {
             subIds.push(t.id)
           }
 
-        batch.set(list, {
+        setList(batch, {
           userId: uid(),
           smartViewsOrders: {},
           folder: folderId,
@@ -746,7 +746,7 @@ export default {
           tasks: subIds,
           headings: [],
           headingsOrder: [],
-        })
+        }, list)
         
       })
 
@@ -790,7 +790,7 @@ export default {
             ids.push(t.id)
           }
   
-        batch.set(list, {
+        setList(batch, {
           folder,
           userId: uid(),
           users: [uid()],
@@ -802,7 +802,7 @@ export default {
           tasks: ids,
           headings: [],
           headingsOrder: [],
-        })
+        }, list)
   
         batch.commit()
       }

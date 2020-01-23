@@ -106,11 +106,9 @@ export default {
     },
   },
   computed: {
-    ...mapState({
-      storeLists: state => state.list.lists,
-    }),
     ...mapGetters({
-      storeFolders: 'tag/folders',
+      storeLists: 'list/lists',
+      storeFolders: 'folder/folders',
       storeTasks: 'task/tasks',
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
 

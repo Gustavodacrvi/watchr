@@ -40,7 +40,7 @@ export default {
     ...mapGetters({
       platform: 'platform',
       l: 'l',
-      folders: 'tag/folders',
+      folders: 'folder/folders',
     }),
     ...mapState({
       popup: state => state.popup,

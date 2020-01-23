@@ -101,12 +101,12 @@ export default {
   },
   computed: {
     ...mapState({
-      lists: state => state.list.lists,
       userInfo: state => state.userInfo,      
     }),
     ...mapMutations(['pushToast']),
     ...mapGetters({
-      folders: 'tag/folders',
+      lists: 'list/lists',
+      folders: 'folder/folders',
       tags: 'tag/tags',
       tasks: 'task/tasks',
       l: 'l',

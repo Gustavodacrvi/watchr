@@ -110,7 +110,7 @@ export default {
       const batch = fire.batch()
 
       batch.update(userRef(uid()), {lists: ids})
-      batch.update(listRef(id), {folder: null})
+      setList(batch, {folder: null}, listRef(id))
 
       batch.commit()
     },
@@ -179,9 +179,7 @@ export default {
       const folderLists = getters.getListsByFolderId({id, lists})
       const folderTasks = tasks.filter(t => t.folder === id)
       for (const l of folderLists)
-        batch.update(listRef(l.id), {
-          folder: null,
-        })
+        setList(batch, {folder: null}, listRef(l.id))
       for (const t of folderTasks) {
         setTask({
           folder: null,

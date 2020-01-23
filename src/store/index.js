@@ -339,7 +339,7 @@ const store = new Vuex.Store({
         ...context,
         tags: getters['tag/tags'],
         tasks: getters['task/tasks'],
-        lists: state.list.lists,
+        lists: getters['list/lists'],
         folders: getters['folder/folders'],
       })
     },
@@ -397,17 +397,19 @@ const store = new Vuex.Store({
         utils.addIdsToObjectFromKeys(data.lists)
         
         if (!state.isFirstSnapshot) {
-          utils.updateVuexObject(state.task, 'tasks', data.tasks, state.changedIds, isFromHere)
-          utils.updateVuexObject(state.tag, 'tags', data.tags, state.changedIds, isFromHere)
-          utils.updateVuexObject(state.folder, 'folders', data.folders, state.changedIds, isFromHere)
+          utils.updateVuexObject(state.task, 'tasks', data.tasks || {}, state.changedIds, isFromHere)
+          utils.updateVuexObject(state.tag, 'tags', data.tags || {}, state.changedIds, isFromHere)
+          utils.updateVuexObject(state.folder, 'folders', data.folders || {}, state.changedIds, isFromHere)
+          utils.updateVuexObject(state.list, 'lists', data.lists || {}, state.changedIds, isFromHere)
           
           if (isFromHere) {
             state.changedIds = []
           }
         } else {
-          state.task.tasks = data.tasks
-          state.tag.tags = data.tags
-          state.folder.folders = data.folders
+          state.task.tasks = data.tasks || {}
+          state.tag.tags = data.tags || {}
+          state.folder.folders = data.folders || {}
+          state.list.lists = data.lists || {}
 
           state.isFirstSnapshot = false
         }
@@ -469,7 +471,6 @@ auth.onAuthStateChanged((user) => {
   const dispatch = store.dispatch
   const loadData = () => {
     dispatch('getData')
-    dispatch('list/getData')
     dispatch('pomo/getData')
   }
   const toast = (t) => store.commit('pushToast', t)

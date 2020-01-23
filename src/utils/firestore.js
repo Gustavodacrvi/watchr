@@ -2,6 +2,10 @@
 import { fire, auth } from '../store/index'
 import fb from 'firebase/app'
 
+
+const CLOUD_FUNCTION_KEY_WORD = 'watchr_web_app'
+
+
 export const uid = () => auth.currentUser.uid
 export const fd = () => fb.firestore.FieldValue
 export const userRef = id => fire.collection('users').doc(id ? id : uid())
@@ -25,7 +29,7 @@ export const setTask = (batch, task, ref) => {
     const save = () => {
       const obj = {
         ...task, handleFiles: null,
-        from: 'watchr_web_app', id: ref.id,
+        from: CLOUD_FUNCTION_KEY_WORD, id: ref.id,
         userId: uid(),
       }
       batch.set(cacheRef(), {
@@ -45,7 +49,7 @@ export const setTask = (batch, task, ref) => {
 export const setTag = (batch, tag, ref) => {
   const obj = {
     ...tag, id: ref.id,
-    from: 'watchr_web_app',
+    from: CLOUD_FUNCTION_KEY_WORD,
     userId: uid(),
   }
   batch.set(cacheRef(), {
@@ -59,7 +63,7 @@ export const setTag = (batch, tag, ref) => {
 export const setFolder = (batch, folder, ref) => {
   const obj = {
     ...folder, id: ref.id,
-    from: 'watchr_web_app',
+    from: CLOUD_FUNCTION_KEY_WORD,
     userId: uid(),
   }
   batch.set(cacheRef(), {
@@ -72,7 +76,7 @@ export const setFolder = (batch, folder, ref) => {
 export const setList = (batch, list, ref) => {
   const obj = {
     ...list, id: ref.id,
-    from: 'watchr_web_app',
+    from: CLOUD_FUNCTION_KEY_WORD,
     userId: uid(),
   }
   batch.set(cacheRef(), {
@@ -90,6 +94,14 @@ export const deleteTag = (batch, id) => {
     },
   }, {merge: true})
   batch.delete(tagRef(id))
+}
+export const deleteList = (batch, id) => {
+  batch.set(cacheRef(), {
+    lists: {
+      [id]: fd().delete(),
+    },
+  }, {merge: true})
+  batch.delete(listRef(id))
 }
 export const deleteTask = (batch, id) => {
   batch.set(cacheRef(), {

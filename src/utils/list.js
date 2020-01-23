@@ -51,7 +51,7 @@ export default {
             icon: 'tasks',
             important: true,
             callback: () => {
-              if (store.state.list.lists.some(l => l.name === h.name))
+              if (store.getters['list/lists'].some(l => l.name === h.name))
                 toast({
                   name: l['There is already a list with this heading name.'],
                   seconds: 3,
