@@ -2,7 +2,7 @@
 import { fire, auth } from './index'
 import utils from '../utils'
 import MemoizeGetters from './memoFunctionGetters'
-import { tagColl, tagRef, userRef, fd, taskRef, serverTimestamp, cacheRef, addTask } from '../utils/firestore'
+import { tagColl, tagRef, userRef, fd, taskRef, setTag, serverTimestamp, cacheRef, setTask, deleteTag } from '../utils/firestore'
 import mom from 'moment'
 
 const uid = () => {
@@ -99,18 +99,11 @@ export default {
         name,
         userId: uid(),
         parent,
-        from: 'watchr_web_app',
       }
       if (index === undefined) {
         const batch = fire.batch()
         
-        const ref = tagRef()
-        batch.set(ref, obj)
-        batch.set(cacheRef(), {
-          tags: {
-            [ref.id]: obj,
-          },
-        }, {merge: true})
+        setTag(batch, obj, tagRef())
         
         batch.commit()
       } else if (!parent) {
@@ -118,39 +111,26 @@ export default {
   
         const ord = ids.slice()
         const ref = tagRef()
-        batch.set(ref, obj)
-        batch.set(cacheRef(), {
-          tags: {
-            [ref.id]: obj,
-          },
-        }, {merge: true})
+        setTag(batch, obj, ref)
         
         ord.splice(index, 0, ref.id)
         batch.update(userRef(), {
           tags: ord,
         })
-  
+        
         batch.commit()
       } else {
         const batch = fire.batch()
-
+        
         const order = ids.slice()
-        order.splice(index, 0, ref.id)
+        
         const ref = tagRef()
-        const parRef = tagRef(parent)
-        const parObj = {
+        setTag(batch, obj, ref)
+        order.splice(index, 0, ref.id)
+        
+        setTag(batch, {
           order,
-        }
-
-        batch.set(ref, obj)
-
-        batch.update(parRef, parObj)
-        batch.set(cacheRef(), {
-          tags: {
-            [ref.id]: obj,
-            [parRef.id]: parObj,
-          },
-        }, {merge: true})
+        }, tagRef(parent))
 
         batch.commit()
       }
@@ -158,65 +138,25 @@ export default {
     saveTag({commit}, tag) {
       const batch = fire.batch()
 
-      const ref = tagRef(tag.id)
-      const obj = {
-        ...tag,
-        from: 'watchr_web_app',
-      }
-      
-      batch.set(ref, obj)
+      setTag(batch, tag, tagRef(tag.id))
       commit('change', [ref.id], {root: true})
-      batch.set(cacheRef(), {
-        tags: {
-          [ref.id]: obj,
-        },
-      }, {merge: true})
 
       batch.commit()
     },
     moveTagBetweenTags({}, {tagId, ids, parent}) {
       const batch = fire.batch()
 
-      const parRef = tagRef(parent)
-      const tarRef = tagRef(tagId)
-
-      const parObj = {
-        order: ids,
-        from: 'watchr_web_app',
-      }
-      const tarObj = {
-        parent,
-        from: 'watchr_web_app',
-      }
-
-      batch.set(parRef, parObj, {merge: true})
-      batch.set(tarRef, tarObj, {merge: true})
-      commit('change', [parRef.id, tarRef.id], {root: true})
-      batch.set(cacheRef(), {
-        tags: {
-          [parRef.id]: parObj,
-          [tarRef.id]: tarObj,
-        },
-      }, {merge: true})
+      setTag(batch, {order: ids}, tagRef(parent))
+      setTag(batch, {parent}, tagRef(tagId))
+      commit('change', [parent, tagId], {root: true})
 
       batch.commit()
     },
     moveTagToRoot({}, {tagId, ids}) {
       const batch = fire.batch()
 
-      const ref = tagRef(tagId)
-      const obj = {
-        parent: null,
-        from: 'watchr_web_app',
-      }
-      
-      batch.set(ref, obj, {merge: true})
+      setTag(batch, {parent: null}, tagRef(tagId))
       commit('change', [ref.id], {root: true})
-      batch.set(cacheRef(), {
-        tags: {
-          [ref.id]: obj,
-        },
-      }, {merge: true})
       batch.update(userRef(), {
         tags: ids,
       })
@@ -225,7 +165,7 @@ export default {
     },
     addTaskByIndex(c, {ids, index, task, tagId, newTaskRef}) {
       const batch = fire.batch()
-      addTask(batch, {
+      setTask(batch, {
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         userId: uid(),
@@ -233,19 +173,8 @@ export default {
       }, newTaskRef).then(() => {
         ids.splice(index, 0, newTaskRef.id)
 
-        const ref = tagRef(tagId)
-        const obj = {
-          tasks: ids,
-          from: 'watchr_web_app',
-        }
-  
-        batch.set(ref, obj, {merge: true})
+        setTag(batch, {tasks: ids}, tagRef(tagId))
         commit('change', [ref.id], {root: true})
-        batch.set(cacheRef(), {
-          tags: {
-            [ref.id]: obj,
-          },
-        }, {merge: true})
   
         batch.commit()
       })
@@ -255,37 +184,19 @@ export default {
       const ts = tasks.filter(t => t.tags.includes(id))
       
       for (const t of ts) {
-        const ref = taskRef(t.id)
-        batch.update(ref, {
+        setTask(batch, {
           tags: fd().arrayRemove(id)
-        })
+        }, taskRef(t.id))
       }
 
-      const ref = tagRef(id)
-      batch.delete(ref)
-      batch.set(cacheRef(), {
-        tags: {
-          [ref.id]: fd().delete(),
-        },
-      }, {merge: true})
-      
+      deleteTag(batch, id)
+
       batch.commit()
     },
     moveTagBelow({}, {tagId, target}) {
       const batch = fire.batch()
       
-      const ref = tagRef(tagId)
-      const obj = {
-        parent: target,
-        from: 'watchr_web_app',
-      }
-      
-      batch.set(ref, obj, {merge: true})
-      batch.set(cacheRef(), {
-        tags: {
-          [ref.id]: obj,
-        },
-      }, {merge: true})
+      setTag(batch, {parent: target}, tagRef(tagId))
 
       batch.commit()
     },

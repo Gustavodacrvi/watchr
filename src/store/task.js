@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, userRef, folderRef, serverTimestamp, taskColl, taskRef, listRef, addTask, cacheRef } from '../utils/firestore'
+import { uid, fd, userRef, folderRef, serverTimestamp, taskColl, taskRef, listRef, setTask, cacheRef, deleteTask } from '../utils/firestore'
 import { pipeBooleanFilters } from '@/utils/memo'
 
 import mom from 'moment'
@@ -651,56 +651,40 @@ export default {
     addTask({}, obj) {
       const batch = fire.batch()
 
-      const ref = taskRef()
-      addTask(batch, {
+      setTask(batch, {
         userId: uid(),
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...obj,
-      }, ref).then(() => {
+      }, taskRef()).then(() => {
         batch.commit()
       })
     },
     addMultipleTasks(c, tasks) {
       const batch = fire.batch()
 
-      for (const t of tasks) {
-        const ref = taskRef()
-        const obj = {
+      for (const t of tasks)
+        setTask(batch, {
           ...t,
           createdFire: serverTimestamp(),
           created: mom().format('Y-M-D HH:mm ss'),
-          from: 'watchr_web_app',
           userId: uid(),
           id: ref.id,
-        }
-        batch.set(ref, obj)
-        batch.set(cacheRef(), {
-          tasks: {
-            [ref.id]: obj,
-          }
-        }, {merge: true})
-      }
+        }, taskRef())
 
       batch.commit()
     },
     saveTask(c, obj) {
       const batch = fire.batch()
-      addTask(batch, obj, taskRef(obj.id)).then(() => {
+      setTask(batch, obj, taskRef(obj.id)).then(() => {
         batch.commit()
       })
     },
     deleteTasks(c, ids) {
       const batch = fire.batch()
 
-      for (const id of ids) {
-        batch.delete(taskRef(id))
-        batch.set(cacheRef(), {
-          tasks: {
-            [id]: fd().delete(),
-          },
-        }, {merge: true})
-      }
+      for (const id of ids)
+        deleteTask(batch, id)
 
       batch.commit()
     },
@@ -728,18 +712,12 @@ export default {
       tasks.forEach(task => {
 
         const list = listRef(task.id)
-        batch.delete(taskRef(task.id))
-        batch.set(cacheRef(), {
-          tasks: {
-            [task.id]: fd().delete(),
-          }
-        }, {merge: true})
+        deleteTask(batch, task.id)
 
         const subIds = []
         if (task.checklist)
           for (const t of task.checklist) {
-            const obj = {
-              from: 'watchr_web_app',
+            setTask(batch, {
               folder: null,
               userId: uid(),
               name: t.name,
@@ -753,13 +731,7 @@ export default {
               tags: [],
               checklist: [],
               order: [],
-            }
-            batch.set(taskRef(t.id), obj)
-            batch.set(cacheRef(), {
-              tasks: {
-                [t.id]: obj,
-              }
-            }, {merge: true})
+            }, taskRef(t.id))
             subIds.push(t.id)
           }
 
@@ -796,18 +768,12 @@ export default {
         }
   
         const list = listRef()
-        batch.delete(taskRef(task.id))
-        batch.set(cacheRef(), {
-          tasks: {
-            [task.id]: fd().delete(),
-          }
-        }, {merge: true})
+        deleteTask(batch, task.i)
         
         const ids = []
         if (task.checklist)
           for (const t of task.checklist) {
-            const ref = taskRef(t.id)
-            const obj = {
+            setTask(batch, {
               id: ref.id,
               createdFire: serverTimestamp(),
               created: mom().format('Y-M-D HH:mm ss'),
@@ -822,13 +788,7 @@ export default {
               tags: [],
               checklist: [],
               order: [],
-            }
-            batch.set(ref, obj)
-            batch.set(cacheRef(), {
-              tasks: {
-                [t.id]: obj,
-              }
-            }, {merge: true})
+            }, taskRef(t.id))
             ids.push(t.id)
           }
   
@@ -868,23 +828,14 @@ export default {
           if (c.times === 0) c.times = null
         }
 
-        const ref = taskRef(t.id)
-        const obj = {
+        setTask(batch, {
           completedFire: serverTimestamp(),
           completeDate: mom().format('Y-M-D'),
-          from: 'watchr_web_app',
           fullCompleteDate: mom().format('Y-M-D HH:mm ss'),
           completed: true,
           calendar,
-        }
-        batch.update(ref, obj)
+        }, taskRef(t.id))
         commit('change', [t.id], {root: true})
-        batch.set(cacheRef(), {
-          tasks: {
-            [t.id]: obj,
-          }
-        }, {merge: true})
-
       }
       
       batch.commit()
@@ -898,21 +849,14 @@ export default {
         if (c) {
           c.lastCompleteDate = null
         }
-        const ref = taskRef(t.id)
-        const obj = {
-          from: 'watchr_web_app',
+
+        setTask(batch, {
           completedFire: null,
           completeDate: null,
           completed: false,
           calendar: c,
-        }
-        batch.update(ref, obj)
+        }, taskRef(t.id))
         commit('change', [t.id], {root: true})
-        batch.set(cacheRef(), {
-          tasks: {
-            [t.id]: obj,
-          }
-        }, {merge: true})
       }
 
       batch.commit()
@@ -921,17 +865,8 @@ export default {
       const batch = fire.batch()
 
       for (const id of ids) {
-        const obj = {
-          ...task,
-          from: 'watchr_web_app',
-        }
-        batch.update(taskRef(id), obj)
+        setTask(batch, task, taskRef(id))
         commit('change', [id], {root: true})
-        batch.set(cacheRef(), {
-          tasks: {
-            [id]: obj,
-          }
-        }, {merge: true})
       }
 
       batch.commit()
@@ -940,18 +875,11 @@ export default {
       const batch = fire.batch()
 
       for (const id of ids) {
-        const ref = taskRef(id)
-        const obj = {
+        setTask(batch, {
           tags: fd().arrayUnion(...tagIds),
-          from: 'watchr_web_app',
-        }
-        batch.update(ref, obj)
+        }, taskRef(id))
+        
         commit('change', [id], {root: true})
-        batch.set(cacheRef(), {
-          tasks: {
-            [id]: obj,
-          }
-        }, {merge: true})
       }
 
       batch.commit()
@@ -960,19 +888,12 @@ export default {
       const batch = fire.batch()
 
       for (const id of ids) {
-        const obj = {
+        setTask(batch, {
           list: listId,
           folder: null,
           heading: null,
-          from: 'watchr_web_app',
-        }
-        batch.update(taskRef(id), obj)
+        }, taskRef(id))
         commit('change', [id], {root: true})
-        batch.set(cacheRef(), {
-          tasks: {
-            [id]: obj,
-          }
-        }, {merge: true})
       }
 
       batch.commit()
@@ -981,41 +902,24 @@ export default {
       const batch = fire.batch()
 
       for (const id of ids) {
-        const obj = {
+        setTask(batch, {
           list: null,
           folder: folderId,
           heading: null,
-          from: 'watchr_web_app',
-        }
-        batch.update(taskRef(id), obj)
+        }, taskRef(id))
         commit('change', [id], {root: true})
-        batch.set(cacheRef(), {
-          tasks: {
-            [id]: obj,
-          }
-        }, {merge: true})
       }
       
       batch.commit()
     },
     copyTask(c, task) {
-      const ref = taskRef()
       const b = fire.batch()
 
-      const obj = {
-        ...task, files: [], id: ref.id,
-        from: 'watchr_web_app',
+      setTask(b, {
+        ...task, files: [],
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
-      }
-
-      b.set(ref, obj)
-
-      b.set(cacheRef(), {
-        tasks: {
-          [ref.id]: obj,
-        },
-      }, {merge: true})
+      }, taskRef())
 
       b.commit()
     },

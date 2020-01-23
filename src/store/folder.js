@@ -5,7 +5,7 @@ import fb from 'firebase/app'
 import utils from '../utils'
 import utilsTask from '../utils/task'
 import MemoizeGetters from './memoFunctionGetters'
-import { folderColl, uid, folderRef, serverTimestamp, listRef, userRef, taskRef, addTask } from '../utils/firestore'
+import { folderColl, uid, folderRef, deleteFolder, setFolder, serverTimestamp, listRef, userRef, taskRef, setTask, setList } from '../utils/firestore'
 import mom from 'moment'
 
 export default {
@@ -74,24 +74,14 @@ export default {
     addFolder(c, fold) {
       const batch = fire.batch()
       
-      const ref = folderRef()
-      const obj = {
-        userId: uid(),
+      setFolder(batch, {
         tasks: [],
         files: [],
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...fold,
         defaultShowing: true,
-        from: 'watchr_web_app',
-      }
-      
-      batch.set(ref, obj, {merge: true})
-      batch.set(cacheRef(), {
-        folders: {
-          [ref.id]: obj,
-        },
-      }, {merge: true})
+      }, folderRef())
 
       batch.commit()
     },
@@ -103,37 +93,17 @@ export default {
     updateOrder(c, {id, ids}) {
       const batch = fire.batch()
       
-      const ref = folderRef(id)
-      const obj = {
+      setFolder(batch, {
         order: ids,
-        from: 'watchr_web_app',
-      }
-
-      batch.set(ref, obj, {merge: true})
-      batch.set(cacheRef(), {
-        folders: {
-          [ref.id]: obj,
-        },
-      }, {merge: true})
+      }, folderRef(id))
 
       batch.commit()
     },
     saveFolder(c, fold) {
       const batch = fire.batch()
       
-      const ref = folderRef(fold.id)
-      const obj = {
-        ...fold,
-        from: 'watchr_web_app',
-      }
-      
-      batch.set(ref, obj, {merge: true})
-      batch.set(cacheRef(), {
-        folders: {
-          [ref.id]: obj,
-        },
-      }, {merge: true})
-      
+      setFolder(batch, fold, folderRef(fold.id))
+
       batch.commit()
     },
     moveListToRoot(c, {id, ids}) {
@@ -153,34 +123,15 @@ export default {
       views[smartView] = ids
 
       for (const id of taskIds) {
-        const ref = taskRef(id)
-        
-        const obj = {
+        setTask(batch, {
           list: null,
           folder: folderId,
           heading: null,
-          from: 'watchr_web_app'
-        }
-        
-        batch.update(ref, obj)
-        batch.set(cacheRef(), {
-          tasks: {
-            [id]: obj,
-          }
-        })
+        }, taskRef(id))
       }
-      const ref = folderRef(folderId)
-      const obj = {
+      setFolder(batch, {
         smartViewsOrders: views,
-        from: 'watchr_web_app',
-      }
-      
-      batch.set(ref, obj, {merge: true})
-      batch.set(cacheRef(), {
-        folders: {
-          [ref.id]: obj,
-        },
-      }, {merge: true})
+      }, folderRef(folderId))
 
       batch.commit()
     },
@@ -188,20 +139,11 @@ export default {
       const batch = fire.batch()
 
       for (const id of taskIds) {
-        const ref = taskRef(id)
-        const obj = {
+        setTask({
           folder: folderId,
           list: null,
           heading: null,
-          from: 'watchr_web_app',
-        }
-        
-        batch.update(ref, obj)
-        batch.set(cacheRef(), {
-          tasks: {
-            [id]: obj,
-          }
-        })
+        }, taskRef(id))
       }
 
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
@@ -213,23 +155,12 @@ export default {
     addTaskByIndex(c, {ids, index, task, folderId, newTaskRef}) {
       const batch = fire.batch()
 
-      addTask(batch, {
+      setTask(batch, {
         userId: uid(),
         ...task,
       }, newTaskRef).then(() => {
         ids.splice(index, 0, newTaskRef.id)
-        const ref = folderRef(folderId)
-        const obj = {
-          tasks: ids,
-          from: 'watchr_web_app',
-        }
-        
-        batch.set(ref, obj, {merge: true})
-        batch.set(cacheRef(), {
-          folders: {
-            [ref.id]: obj,
-          },
-        }, {merge: true})
+        setFolder(batch, {tasks: ids}, folderRef(folderId))
   
         batch.commit()
       })
@@ -237,28 +168,8 @@ export default {
     moveListBetweenFolders(c, {folder, id, ids}) {
       const batch = fire.batch()
 
-      const foldRef = folderRef(folder)
-      const liRef = listRef(id)
-      const foldObj = {
-        order: ids,
-        from: 'watchr_web_app',
-      }
-      const liObj = {
-        folder,
-        from: 'watchr_web_app',
-      }
-
-      batch.set(foldRef, foldObj, {merge: true})
-      batch.set(liRef, liObj, {merge: true})
-
-      batch.set(cacheRef(), {
-        folders: {
-          [folder]: foldObj,
-        },
-        lists: {
-          [id]: liObj,
-        },
-      }, {merge: true})
+      setFolder(batch, {order: ids}, folderRef(folder))
+      setList(batch, {folder}, listRef(id))
 
       batch.commit()
     },
@@ -272,21 +183,12 @@ export default {
           folder: null,
         })
       for (const t of folderTasks) {
-        const ref = taskRef(t.id)
-        const obj = {
+        setTask({
           folder: null,
-          from: 'watchr_web_app',
-        }
-
-        batch.update(ref, obj)
-        batch.set(cacheRef(), {
-          tasks: {
-            [id]: obj,
-          }
-        })
+        }, taskRef(t.id))
       }
       
-      batch.delete(folderRef(id))
+      deleteFolder(id)
 
       batch.commit()
     },
@@ -296,13 +198,11 @@ export default {
       if (!views) views = {}
       views[smartView] = ids
 
-      const ref = folderRef(folderId)
-      const obj = {
-        from: 'watchr_web_app',
-        smartViewsOrders: views,
-      }
-      
-      batch.set(ref, obj, {merge: true})
+      const batch = fire.batch()
+
+      setFolder(batch, {smartViewsOrders: views}, folderRef(folderId))
+
+      batch.commit()
     },
   },
 }
