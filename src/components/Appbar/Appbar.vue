@@ -691,9 +691,14 @@ export default {
 }
 
 .appnav-handle:hover {
+  cursor: grab;
   background-color: var(--light-gray);
   width: 14px;
   transform: translate(-6px, -50%);
+}
+
+.appnav-handle:active {
+  cursor: grabbing;
 }
 
 .appbar-content {
