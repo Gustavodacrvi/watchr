@@ -15,10 +15,11 @@ const updateCache = (snap: functions.Change<FirebaseFirestore.DocumentSnapshot>,
 
   if (data !== undefined) {
     if (data.from !== 'watchr_web_app') {
+      console.log(data)
       return db.collection('users').doc(userId).collection('cache').doc('cache').set({
         userId,
         [collection]: {
-          [docId]: data,
+          [docId]: {...data, id: docId},
         },
       }, {merge: true})
     }

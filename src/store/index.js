@@ -337,7 +337,7 @@ const store = new Vuex.Store({
       return options({
         router,
         ...context,
-        tags: state.tag.tags,
+        tags: getters['tag/tags'],
         tasks: getters['task/tasks'],
         lists: state.list.lists,
         folders: state.folder.folders,
@@ -390,14 +390,22 @@ const store = new Vuex.Store({
         const data = snap.data()
         const isFromHere = snap.metadata.hasPendingWrites
 
+        utils.addIdsToObjectFromKeys(data.tasks)
+        utils.addIdsToObjectFromKeys(data.tags)
+        utils.addIdsToObjectFromKeys(data.folders)
+        utils.addIdsToObjectFromKeys(data.stats)
+        utils.addIdsToObjectFromKeys(data.lists)
+        
         if (!state.isFirstSnapshot) {
           utils.updateVuexObject(state.task, 'tasks', data.tasks, state.changedIds, isFromHere)
-
+          utils.updateVuexObject(state.tag, 'tags', data.tags, state.changedIds, isFromHere)
+          
           if (isFromHere) {
             state.changedIds = []
           }
         } else {
           state.task.tasks = data.tasks
+          state.tag.tags = data.tags
 
           state.isFirstSnapshot = false
         }
@@ -460,7 +468,6 @@ auth.onAuthStateChanged((user) => {
   const loadData = () => {
     dispatch('getData')
     dispatch('list/getData')
-    dispatch('tag/getData')
     dispatch('pomo/getData')
     dispatch('filter/getData')
     dispatch('folder/getData')

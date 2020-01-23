@@ -407,11 +407,11 @@ export default {
     ...mapState({
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
-      tags: state => state.tag.tags,
       viewName: state => state.viewName,
       viewType: state => state.viewType,
     }),
     ...mapGetters({
+      tags: 'tag/tags',
       tasks: 'task/tasks',
       platform: 'platform',
       isStandAlone: 'isStandAlone',

@@ -239,7 +239,7 @@ export default {
             icon: 'tag',
             callback: () => ({
               allowSearch: true,
-              links: store.state.tag.tags.map(el => ({
+              links: store.getters['tag/tags'].map(el => ({
                 name: el.name,
                 icon: 'tag',
                 callback: () => dispatch('list/addListTag', {tagId: el.id, listId}),

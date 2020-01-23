@@ -12,6 +12,11 @@ let contextMenuRunned = false
 import { mergeWith, isEqual } from 'lodash'
 
 export default {
+  addIdsToObjectFromKeys(obj) {
+    for (const k in obj)
+      if (obj.hasOwnProperty(k))
+        obj[k] = {...obj[k], id: k}
+  },
   updateVuexObject(state, arrName, source, changed, isFromHere) {
     const target = state[arrName]
     const targetKeys = Object.keys(target)

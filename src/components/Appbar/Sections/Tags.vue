@@ -52,9 +52,9 @@ export default {
   computed: {
     ...mapState({
       selectedTasks: state => state.selectedTasks,
-      tags: state => state.tag.tags,
     }),
     ...mapGetters({
+      tags: 'tag/tags',
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getSubTagsByParentId: 'tag/getSubTagsByParentId',
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',

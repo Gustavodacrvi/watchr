@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, userRef, folderRef, serverTimestamp, tagRef, taskColl, taskRef, listRef, addTask, cacheRef } from '../utils/firestore'
+import { uid, fd, userRef, folderRef, serverTimestamp, taskColl, taskRef, listRef, addTask, cacheRef } from '../utils/firestore'
 import { pipeBooleanFilters } from '@/utils/memo'
 
 import mom from 'moment'
@@ -921,14 +921,15 @@ export default {
       const batch = fire.batch()
 
       for (const id of ids) {
-        batch.update(taskRef(id), {
+        const obj = {
           ...task,
           from: 'watchr_web_app',
-        })
+        }
+        batch.update(taskRef(id), obj)
         commit('change', [id], {root: true})
         batch.set(cacheRef(), {
           tasks: {
-            [id]: {...tasks},
+            [id]: obj,
           }
         }, {merge: true})
       }

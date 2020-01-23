@@ -625,7 +625,6 @@ export default {
     ...mapState({
       selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
-      tags: state => state.tag.tags,
       lists: state => state.list.lists,
       folders: state => state.folder.folders,
       isOnControl: state => state.isOnControl,
@@ -635,6 +634,7 @@ export default {
       mainSelectionIndex: state => state.mainSelectionIndex,
     }),
     ...mapGetters({
+      tags: 'tag/tags',
       storeTasks: 'task/tasks',
       l: 'l',
       fallbackSelected: 'fallbackSelected',
