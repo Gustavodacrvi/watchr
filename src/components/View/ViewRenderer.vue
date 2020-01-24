@@ -433,6 +433,7 @@ export default {
             callback: () => ({
               comp: 'TimePicker',
               content: {
+                format: '24hr',
                 msg: l['Duration: '],
                 callback: newTime => getOptions({
                   duration: newTime, shortRest, longRest,
@@ -445,6 +446,7 @@ export default {
             callback: () => ({
               comp: 'TimePicker',
               content: {
+                format: '24hr',
                 msg: l['Short rest: '],
                 callback: newTime => getOptions({
                   duration, shortRest: newTime, longRest,
@@ -457,6 +459,7 @@ export default {
             callback: () => ({
               comp: 'TimePicker',
               content: {
+                format: '24hr',
                 msg: l['Long rest: '],
                 callback: newTime => getOptions({
                   duration, shortRest, longRest: newTime,

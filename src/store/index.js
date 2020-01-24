@@ -7,6 +7,8 @@ import utilsTask from '../utils/task'
 
 import moment from 'moment'
 
+const TOD_STR = moment().format('Y-M-D')
+
 Vue.use(Vuex)
 
 const MINIMUM_DESKTOP_SCREEN_WIDTH = 820
@@ -401,7 +403,7 @@ const store = new Vuex.Store({
 
       b.commit()
     },
-    getData({state}) {
+    getData({state, dispatch}) {
       cacheRef().onSnapshot(snap => {
         const data = snap.data()
         const isFromHere = snap.metadata.hasPendingWrites
@@ -415,6 +417,10 @@ const store = new Vuex.Store({
         if (data.info && data.info.info)
           utils.findChangesBetweenObjs(state.userInfo, data.info.info, (key, val) => Vue.set(state.userInfo, key, val))
         
+        setTimeout(() => {
+          dispatch('pomo/updateDurations')
+        })
+
         if (!state.isFirstSnapshot) {
           utils.updateVuexObject(state.task, 'tasks', data.tasks || {}, state.changedIds, isFromHere)
           utils.updateVuexObject(state.tag, 'tags', data.tags || {}, state.changedIds, isFromHere)
@@ -425,6 +431,7 @@ const store = new Vuex.Store({
             state.changedIds = []
           }
         } else {
+          state.pomo.stats = data.stats.pomo
           state.task.tasks = data.tasks || {}
           state.tag.tags = data.tags || {}
           state.folder.folders = data.folders || {}
@@ -432,6 +439,19 @@ const store = new Vuex.Store({
 
           state.isFirstSnapshot = false
         }
+
+        if (data.stats) {
+          utils.findChangesBetweenObjs(state.pomo.stats, data.stats.pomo, (key, val) => Vue.set(state.pomo.stats, key, val))
+
+          const info = state.pomo.stats && state.pomo.stats.dates[TOD_STR]
+          if (info) {
+            if (info.completedPomos !== state.pomo.cycles)
+              state.pomo.cycles = info.completedPomos
+    
+            if (state.pomo.cycles === undefined) state.pomo.cycles = 0
+          }
+        }
+        
       })
     },
     update({}, info) {
@@ -490,7 +510,6 @@ auth.onAuthStateChanged((user) => {
   const dispatch = store.dispatch
   const loadData = () => {
     dispatch('getData')
-    dispatch('pomo/getData')
   }
   const toast = (t) => store.commit('pushToast', t)
 

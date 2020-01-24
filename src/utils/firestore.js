@@ -87,6 +87,19 @@ export const setList = (batch, list, ref) => {
   }, {merge: true})
   batch.set(ref, obj, {merge: true})
 }
+export const setPomo = (batch, doc) => {
+  const obj = {
+    ...doc, id: 'pomo',
+    from: CLOUD_FUNCTION_KEY_WORD,
+    userId: uid(),
+  }
+  batch.set(cacheRef(), {
+    stats: {
+      pomo: obj,
+    },
+  }, {merge: true})
+  batch.set(pomoDoc(), obj, {merge: true})
+}
 export const setInfo = (batch, info) => {
   const obj = {
     ...info, id: 'info',
