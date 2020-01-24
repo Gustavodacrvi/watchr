@@ -12,6 +12,24 @@ let contextMenuRunned = false
 import { mergeWith, isEqual } from 'lodash'
 
 export default {
+  filterObj(toFilter, filter, merge) {
+    const reducer = !merge ? 
+    (obj, key) => {
+      obj[key] = toFilter[key]
+      return obj
+    } :
+    (obj, key) => {
+      obj[key] = {
+        ...toFilter[key],
+        ...merge(key)
+      }
+      return obj
+    }
+    
+    return Object.keys(toFilter)
+        .filter(k => filter(toFilter[k], k))
+        .reduce(reducer, {})
+  },
   addIdsToObjectFromKeys(obj) {
     for (const k in obj)
       if (obj.hasOwnProperty(k))

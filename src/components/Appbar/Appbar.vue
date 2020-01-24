@@ -471,15 +471,15 @@ export default {
     showFavorites() {
       return this.getFavoritesRenderList.length > 0
     },
-    getFavArr() {
-      return [
+    getFavObj() {
+      return {
         ...this.favLists,
         ...this.favFolders,
         ...this.favTags
-      ]
+      }
     },
     getFavorites() {
-      return this.$store.getters.checkMissingIdsAndSortArr(this.favoritesOrder, this.getFavArr)
+      return this.$store.getters.sortObjectByIds(this.favoritesOrder, this.getFavObj)
     },
     favoritesOrder() {
       if (this.userInfo && this.userInfo.favorites)

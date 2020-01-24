@@ -254,8 +254,8 @@ export default {
         return result
       },
     }, true),
-    getFavoriteLists(state, getters) {
-      return getters.lists.filter(el => el.favorite).map(f => ({...f, icon: 'tasks', color: 'var(--primary)', type: 'list'}))
+    getFavoriteLists(state) {
+      return utils.filterObj(state.lists, l => l.favorite, () => ({icon: 'tasks', color: 'var(--primary)', type: 'list',}))
     },
   },
   actions: {
@@ -318,6 +318,8 @@ export default {
       batch.commit()
     },
     addList({}, {name, ids, index, folderId}) {
+      const batch = fire.batch()
+      
       let folder = folderId
       if (!folder) folder = null
       const obj = {
@@ -330,11 +332,9 @@ export default {
         headingsOrder: [],
         tasks: [],
       }
-      if (index === undefined && folder === null)
+      if (index === undefined && folder === null) {
         setList(batch, obj, listRef())
-      else if (index !== undefined && folder === null) {
-        const batch = fire.batch()
-  
+      } else if (index !== undefined && folder === null) {
         const ord = ids.slice()
         const ref = listRef()
         setList(batch, obj, ref)
@@ -342,11 +342,7 @@ export default {
         batch.update(userRef(), {
           lists: ord,
         })
-  
-        batch.commit()
       } else {
-        const batch = fire.batch()
-
         const ord = ids.slice()
         const ref = listRef()
         ord.splice(index, 0, ref.id)
@@ -354,9 +350,9 @@ export default {
         setFolder(batch, {order: ord}, folderRef(folder))
 
         listRef(batch, obj, ref)
-
-        batch.commit()
       }
+
+      batch.commit()
     },
     completeLists(c, lists) {
       const batch = fire.batch()

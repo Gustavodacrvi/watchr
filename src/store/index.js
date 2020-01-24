@@ -123,6 +123,43 @@ const store = new Vuex.Store({
   },
   getters: {
     ...Memoize(null, {
+      sortObjectByIds({}, order, obj) {
+        const keys = Object.keys(obj)
+        
+        let items = []
+
+        order.forEach(id => {
+          if (obj[id])
+            items.push(obj[id])
+        })
+        
+        let notIncluded = []
+        keys.forEach(k => {
+          if (!order.includes(k))
+            notIncluded.push(obj[k])
+        })
+
+        let haveCreationDate = true
+        for (const item of notIncluded)
+          if (!item.created) {
+            haveCreationDate = false
+            break
+          }
+        
+        if (haveCreationDate)
+          notIncluded = utilsTask.sortTasksByTaskDate(notIncluded)
+        items = [...items, ...notIncluded]
+
+        const set = new Set()
+        const unique = []
+        for (const item of items)
+          if (!set.has(item.id)) {
+            set.add(item.id)
+            unique.push(item)
+          }
+        
+        return unique
+      },
       checkMissingIdsAndSortArr({}, order, arr, property) {
         let name = 'id'
         if (property) name = property
