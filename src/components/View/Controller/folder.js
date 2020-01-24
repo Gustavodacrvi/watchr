@@ -133,7 +133,7 @@ export default {
       const schedule = localStorage.getItem('schedule_' + this.viewName)
       return schedule !== 'null' ? JSON.parse(schedule) : null
     },
-    removeTaskHandlerWhenThereArentTasks() {
+    removeListHandlerWhenThereArentLists() {
       return true
     },
     extraListView() {

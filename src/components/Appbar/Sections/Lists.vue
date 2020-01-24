@@ -278,3 +278,11 @@ export default {
 }
 
 </style>
+
+<style scoped>
+
+.folders-root {
+  min-height: 15px;
+}
+
+</style>

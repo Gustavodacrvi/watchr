@@ -1,7 +1,7 @@
 
 <template>
   <div class="TaskHandler">
-    <ListRendererVue v-if="!hideList"
+    <ListRendererVue
       v-bind="$props"
 
       :items='sortLaseredTasks'
@@ -59,7 +59,7 @@ export default {
   props: ['mainFilter', 'rootFilter', 'tasksOrder', 'headings', 'headingsOrder',
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 'movingButton',
-    'showHeadingFloatingButton', 'openCalendar', 'isSmart', 'removeTaskHandlerWhenThereArentTasks',
+    'showHeadingFloatingButton', 'openCalendar', 'isSmart', 
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackItem', 'icon', 'configFilterOptions', 'showHeading',
@@ -852,13 +852,6 @@ export default {
         if (head.nonFiltered.some(task => this.isTaskSomeday(task)))
           return true
       return false
-    },
-    isViewEmpty() {
-      return this.rootNonFiltered.length === 0 &&
-        this.laserHeadings.every(h => h.items.length === 0)
-    },
-    hideList() {
-      return this.removeTaskHandlerWhenThereArentTasks && this.isViewEmpty
     },
     pipeSomeday() {
       if (this.showSomeday) return () => true

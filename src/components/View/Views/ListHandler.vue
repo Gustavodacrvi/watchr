@@ -1,6 +1,6 @@
 <template>
   <div class="ListHandler">
-    <ListRendererVue
+    <ListRendererVue v-if="!hideList"
       v-bind='$props'
 
       :items="sortLaseredLists"
@@ -47,7 +47,8 @@ export default {
   mixins: [
     HandlerMixin,
   ],
-  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem', 'showCompleted', 'folderId', 'showSomeday', 'showSomeday'],
+  props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem', 'showCompleted', 'folderId', 'showSomeday', 'showSomeday',
+  'removeListHandlerWhenThereArentLists'],
   components: {
     ListRendererVue,
   },
@@ -117,6 +118,12 @@ export default {
     }),
     getFolder() {
       return this.storeFolders.find(el => el.id === this.folderId)
+    },
+    hideList() {
+      return this.removeListHandlerWhenThereArentLists && this.isViewEmpty
+    },
+    isViewEmpty() {
+      return this.nonFiltered.length === 0
     },
     group() {
       return {

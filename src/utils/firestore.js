@@ -84,6 +84,19 @@ export const batchSetTasks = (batch, task, ids, rootWrites) => {
     solve()
   })
 }
+export const batchSetLists = (batch, list, ids, rootWrites) => {
+  return new Promise(async solve => {
+  
+    const writes = rootWrites || []
+    ids.forEach(id => {
+      setList(batch, list, listRef(id), writes)
+    })
+    
+    if (!rootWrites)
+      cacheBatchedItems(batch, writes)
+    solve()
+  })
+}
 
 export const setTag = (batch, tag, ref, writes) => {
   const obj = {
@@ -223,11 +236,17 @@ export const batchDeleteTasks = (batch, ids) => {
     },
   }, {merge: true})
 }
-export const deleteFolder = (batch, id) => {
-  batch.set(cacheRef(), {
-    folders: {
-      [id]: fd().delete(),
-    },
-  }, {merge: true})
+export const deleteFolder = (batch, id, writes) => {
+  if (!writes)
+    batch.set(cacheRef(), {
+      folders: {
+        [id]: fd().delete(),
+      },
+    }, {merge: true})
+  else if (writes.push)
+    writes.push({
+      collection: 'folders',
+      [id]: fd().delete()
+    })
   batch.delete(folderRef(id))
 }

@@ -1072,7 +1072,7 @@ export default {
 }
 
 .dontHaveItems {
-  min-height: 5px;
+  min-height: 15px;
 }
 
 </style>
