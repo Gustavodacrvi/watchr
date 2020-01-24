@@ -58,6 +58,47 @@ export const cacheBatchedTasks = (batch, writes) => {
     },
   }, {merge: true})
 }
+export const batchSetTasks = (batch, task, ids) => {
+  return new Promise(async solve => {
+    const promises = []
+  
+    ids.forEach(id => {
+      promises.push(
+        setTask(batch, task, taskRef(id), false)
+      )
+    })
+    
+    await Promise.all(promises)
+    const userId = uid()
+    console.log({
+      ...ids.reduce((obj, id) => ({
+        ...obj, ...{
+          [id]: {
+            ...task,
+            ...task, handleFiles: null,
+            from: CLOUD_FUNCTION_KEY_WORD, id,
+            userId,
+          },
+        },
+      }), {}),
+    })
+/*     batch.set(cacheRef(), {
+      tasks: {
+        ...ids.reduce((obj, id) => ({
+          ...obj, ...{
+            [id]: {
+              ...task,
+              ...task, handleFiles: null,
+              from: CLOUD_FUNCTION_KEY_WORD, id,
+              userId,
+            },
+          },
+        }), {}),
+      },
+    }, {merge: true}) */
+    // solve()
+  })
+}
 
 export const setTag = (batch, tag, ref) => {
   const obj = {
@@ -144,13 +185,23 @@ export const deleteList = (batch, id) => {
   }, {merge: true})
   batch.delete(listRef(id))
 }
-export const deleteTask = (batch, id) => {
+export const deleteTask = (batch, id, cache = true) => {
+  if (cache)
+    batch.set(cacheRef(), {
+      tasks: {
+        [id]: fd().delete(),
+      },
+    }, {merge: true})
+  batch.delete(taskRef(id))
+}
+export const batchDeleteTasks = (batch, ids) => {
+  for (const id of ids)
+    deleteTask(batch, id, false)
   batch.set(cacheRef(), {
     tasks: {
-      [id]: fd().delete(),
+      ...ids.reduce((obj, id) => ({...obj, [id]: fd().delete()}), {})
     },
   }, {merge: true})
-  batch.delete(taskRef(id))
 }
 export const deleteFolder = (batch, id) => {
   batch.set(cacheRef(), {

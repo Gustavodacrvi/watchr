@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask, deleteTask, cacheBatchedTasks, setFolder, setList } from '../utils/firestore'
+import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask, deleteTask, cacheBatchedTasks, batchDeleteTasks, setFolder, setList } from '../utils/firestore'
 
 import mom from 'moment'
 
@@ -648,50 +648,53 @@ export default {
   },
   actions: {
     addTask({}, obj) {
-      const batch = fire.batch()
+      const b = fire.batch()
 
-      setTask(batch, {
+      setTask(b, {
         userId: uid(),
         createdFire: serverTimestamp(),
         created: mom().format('Y-M-D HH:mm ss'),
         ...obj,
       }, taskRef()).then(() => {
-        batch.commit()
+        b.commit()
       })
     },
     addMultipleTasks(c, tasks) {
-      const batch = fire.batch()
+      const b = fire.batch()
 
       const writes = []
+      const pros = []
       
       for (const t of tasks) {
         const ref = taskRef()
-        setTask(batch, {
-          ...t,
-          createdFire: serverTimestamp(),
-          created: mom().format('Y-M-D HH:mm ss'),
-          userId: uid(),
-          id: ref.id,
-        }, ref, writes)
+        pros.push(
+          setTask(b, {
+            ...t,
+            createdFire: serverTimestamp(),
+            created: mom().format('Y-M-D HH:mm ss'),
+            userId: uid(),
+            id: ref.id,
+          }, ref, writes)
+        )
       }
 
-      cacheBatchedTasks(batch, writes)
-
-      batch.commit()
+      cachebedTasks(b, writes)
+      Promise.all(pros).then(() => {
+        b.commit()
+      })
     },
     saveTask(c, obj) {
-      const batch = fire.batch()
-      setTask(batch, obj, taskRef(obj.id)).then(() => {
-        batch.commit()
+      const b = fire.batch()
+      setTask(b, obj, taskRef(obj.id)).then(() => {
+        b.commit()
       })
     },
     deleteTasks(c, ids) {
-      const batch = fire.batch()
+      const b = fire.batch()
 
-      for (const id of ids)
-        deleteTask(batch, id)
+      batchDeleteTasks(b, ids)
 
-      batch.commit()
+      b.commit()
     },
     saveSchedule(c, {date, schedule}) {
       const b = fire.batch()
