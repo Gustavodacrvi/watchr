@@ -42,7 +42,7 @@ import folder from './folder'
 import pomo from './pomo'
 
 import utils from '@/utils'
-import { userRef, cacheRef } from "../utils/firestore"
+import { userRef, cacheRef, setInfo } from "../utils/firestore"
 
 const lang = localStorage.getItem('watchrlanguage') || 'en'
 
@@ -90,6 +90,21 @@ const store = new Vuex.Store({
       email: null,
     },
     userInfo: {
+      pomo: null,
+      
+      tags: [],
+      lists: [],
+      favorites: [],
+      filters: [],
+      folders: [],
+      hidedSections: [],
+      hidedViews: [],
+      links: [],
+      
+      calendarOrders: null,
+      
+      disablePmFormat: false,
+      
       lists: [],
       tags: [],
       viewOrders: {},
@@ -379,11 +394,14 @@ const store = new Vuex.Store({
         }).then(() => location.reload())
       })
     },
+    setInfo(c, obj) {
+      const b = fire.batch()
+
+      setInfo(b, obj)
+
+      b.commit()
+    },
     getData({state}) {
-      userRef().onSnapshot(snap => {
-        state.userInfo = snap.data()
-      })
-      
       cacheRef().onSnapshot(snap => {
         const data = snap.data()
         const isFromHere = snap.metadata.hasPendingWrites
@@ -393,6 +411,9 @@ const store = new Vuex.Store({
         utils.addIdsToObjectFromKeys(data.folders)
         utils.addIdsToObjectFromKeys(data.stats)
         utils.addIdsToObjectFromKeys(data.lists)
+
+        if (data.info && data.info.info)
+          utils.findChangesBetweenObjs(state.userInfo, data.info.info, (key, val) => Vue.set(state.userInfo, key, val))
         
         if (!state.isFirstSnapshot) {
           utils.updateVuexObject(state.task, 'tasks', data.tasks || {}, state.changedIds, isFromHere)
@@ -418,7 +439,7 @@ const store = new Vuex.Store({
       
       const userRef = fire.collection('users').doc(info.uid)
       batch.set(userRef, {
-        ...utils.getRelevantUserData(info, true),
+        ...utils.getRelevantUserData(info),
       }, {merge: true})
       return batch.commit()
     },

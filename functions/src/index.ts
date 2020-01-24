@@ -55,6 +55,10 @@ export const updateListCache = functions.firestore
   .document("users/{userId}/lists/{docId}")
   .onWrite((a, b) => updateCache(a, b, 'lists', true))
 
+export const updateInfoCache = functions.firestore
+  .document("users/{userId}/info/{docId}")
+  .onWrite((a, b) => updateCache(a, b, 'info', false))
+
 export const updateFoldersCache = functions.firestore
   .document("users/{userId}/folders/{docId}")
   .onWrite((a, b) => updateCache(a, b, 'folders', true))

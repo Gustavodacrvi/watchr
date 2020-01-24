@@ -15,8 +15,6 @@ import Squares from './Squares.vue'
 import TaskComp from './TaskComp.vue'
 import PomoBtn from './PomoBtn.vue'
 
-import { userRef } from '@/utils/firestore'
-
 import { mapGetters, mapState } from 'vuex'
 
 import utils from '@/utils/'

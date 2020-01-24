@@ -316,16 +316,11 @@ export default {
       }
     })
   },
-  getRelevantUserData(userAuth, update) {
+  getRelevantUserData(userAuth) {
     if (!userAuth.email)
       return {
         userId: userAuth,
         isAnonymous: true,
-        viewOrders: {},
-        filters: [],
-        tags: [],
-        lists: [],
-        folders: [],
       }
     let obj = {
       userId: userAuth.uid,
@@ -334,16 +329,6 @@ export default {
       displayName: userAuth.displayName,
       isAnonymous: false,
     }
-    if (userAuth.hidedSections) obj.hidedSections = userAuth.hidedSections
-    if (userAuth.hidedViews) obj.hidedViews = userAuth.hidedViews
-    if (userAuth.links) obj.links = userAuth.links
-    if (!update) obj = {...obj, ...{
-      viewOrders: {},
-      filters: [],
-      tags: [],
-      lists: [],
-      folders: [],
-    }}
     return obj
   },
   formatQuantity(time) {

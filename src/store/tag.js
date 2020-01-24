@@ -2,7 +2,7 @@
 import { fire, auth } from './index'
 import utils from '../utils'
 import MemoizeGetters from './memoFunctionGetters'
-import { tagColl, tagRef, userRef, fd, taskRef, setTag, serverTimestamp, cacheRef, setTask, deleteTag } from '../utils/firestore'
+import { tagColl, tagRef, setInfo, fd, taskRef, setTag, serverTimestamp, cacheRef, setTask, deleteTag } from '../utils/firestore'
 import mom from 'moment'
 
 const uid = () => {
@@ -114,9 +114,7 @@ export default {
         setTag(batch, obj, ref)
         
         ord.splice(index, 0, ref.id)
-        batch.update(userRef(), {
-          tags: ord,
-        })
+        setInfo(batch, {tags: ord})
         
         batch.commit()
       } else {
@@ -157,9 +155,7 @@ export default {
 
       setTag(batch, {parent: null}, tagRef(tagId))
       commit('change', [ref.id], {root: true})
-      batch.update(userRef(), {
-        tags: ids,
-      })
+      setInfo(batch, {tags: ids})
 
       batch.commit()
     },
@@ -201,9 +197,11 @@ export default {
       batch.commit()
     },
     updateOrder(c, ids) {
-      userRef().update({
-        tags: ids,
-      })
+      const b = fire.batch()
+      
+      setInfo(b, {tags: ids})
+
+      b.commit()
     },
     sortTagsByName({state, getters, dispatch}) {
       const tags = getters.tags.slice()

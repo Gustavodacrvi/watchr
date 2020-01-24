@@ -115,7 +115,6 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 import { pipeBooleanFilters } from '@/utils/memo'
-import { userRef } from '@/utils/firestore'
 
 const MAXIMUM_TOUCH_DISTANCE = 100
 const MINIMUM_DISTANCE = 10
@@ -355,7 +354,7 @@ export default {
         }
       }
       
-      userRef().set(obj, {merge: true})
+      this.$store.dispatch('setInfo', obj)
 
       this.$store.dispatch('pomo/updateDurations', obj)
     },

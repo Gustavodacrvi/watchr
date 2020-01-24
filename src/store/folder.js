@@ -5,7 +5,7 @@ import fb from 'firebase/app'
 import utils from '../utils'
 import utilsTask from '../utils/task'
 import MemoizeGetters from './memoFunctionGetters'
-import { folderColl, uid, folderRef, deleteFolder, setFolder, serverTimestamp, listRef, userRef, taskRef, setTask, setList } from '../utils/firestore'
+import { folderColl, uid, folderRef, deleteFolder, setFolder, serverTimestamp, listRef, setInfo, taskRef, setTask, setList } from '../utils/firestore'
 import mom from 'moment'
 
 export default {
@@ -86,9 +86,13 @@ export default {
       batch.commit()
     },
     updateFoldersOrder(c, ids) {
-      userRef(uid()).update({
+      const b = fire.batch()
+      
+      setInfo(b, {
         folders: ids,
       })
+
+      b.commit()
     },
     updateOrder(c, {id, ids}) {
       const batch = fire.batch()
@@ -109,7 +113,7 @@ export default {
     moveListToRoot(c, {id, ids}) {
       const batch = fire.batch()
 
-      batch.update(userRef(uid()), {lists: ids})
+      setInfo(batch, {lists: ids})
       setList(batch, {folder: null}, listRef(id))
 
       batch.commit()
@@ -148,7 +152,7 @@ export default {
 
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
       
-      batch.set(userRef(), {calendarOrders}, {merge: true})
+      setInfo(batch, {calendarOrders})
 
       batch.commit()
     },

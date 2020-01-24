@@ -2,7 +2,7 @@
 import { fire, auth } from './index'
 import fb from 'firebase/app'
 
-import { userRef, pomoDoc, uid, fd } from "@/utils/firestore"
+import { pomoDoc, uid, fd } from "@/utils/firestore"
 
 import mom from 'moment'
 

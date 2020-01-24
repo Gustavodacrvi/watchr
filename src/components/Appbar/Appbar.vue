@@ -137,7 +137,6 @@ import utils from '@/utils'
 import utilsList from '@/utils/list'
 import utilsTag from '@/utils/tag'
 import utilsFolder from '@/utils/folder'
-import { userRef } from '@/utils/firestore'
 
 export default {
   props: ['value', 'width', 'appbarHided', 'pressingHandle'],
@@ -276,14 +275,14 @@ export default {
       evt.preventDefault()
     },
     update(links) {
-      userRef(this.userInfo.userId).set({
+      this.$store.dispatch('setInfo', {
         links,
-      }, {merge: true})
+      })
     },
     updateFavorites(favorites) {
-      userRef(this.userInfo.userId).set({
+      this.$store.dispatch('setInfo', {
         favorites,
-      }, {merge: true})
+      })
     },
     showSearch() {
       this.showingSearch = true

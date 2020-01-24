@@ -9,6 +9,7 @@ const CLOUD_FUNCTION_KEY_WORD = 'watchr_web_app'
 export const uid = () => auth.currentUser.uid
 export const fd = () => fb.firestore.FieldValue
 export const userRef = id => fire.collection('users').doc(id ? id : uid())
+export const infoRef = () => userRef().collection('info').doc('info')
 export const cacheRef = id => fire.collection('users').doc(id ? id : uid()).collection('cache').doc('cache')
 export const setCache = obj => cacheRef().set(obj, {merge: true})
 export const taskColl = () => userRef().collection('tasks')
@@ -85,6 +86,21 @@ export const setList = (batch, list, ref) => {
     }
   }, {merge: true})
   batch.set(ref, obj, {merge: true})
+}
+export const setInfo = (batch, info) => {
+  const obj = {
+    ...info, id: 'info',
+    from: CLOUD_FUNCTION_KEY_WORD,
+    userId: uid(),
+  }
+  batch.set(cacheRef(), {
+    info: {
+      info: obj,
+    },
+  }, {merge: true})
+  batch.set(
+      userRef().collection('info').doc('info')
+    , obj, {merge: true})
 }
 
 export const deleteTag = (batch, id) => {
