@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask, deleteTask, cacheBatchedTasks, batchDeleteTasks, setFolder, setList } from '../utils/firestore'
+import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask, deleteTask, cacheBatchedItems, batchSetTasks, batchDeleteTasks, setFolder, setList } from '../utils/firestore'
 
 import mom from 'moment'
 
@@ -415,7 +415,7 @@ export default {
           !utilsTask.hasCalendarBinding(task) &&
           !task.list &&
           !task.folder &&
-          task.tags.length === 0
+          (task.tags && task.tags.length === 0)
         },
         cache(args) {
           const t = args[0]
@@ -678,7 +678,7 @@ export default {
         )
       }
 
-      cachebedTasks(b, writes)
+      cacheBatchedItems(b, writes)
       Promise.all(pros).then(() => {
         b.commit()
       })
@@ -723,17 +723,19 @@ export default {
           tasksWithConflictingListNames[task.id] = true
       })
       
-      const batch = fire.batch()
+      const b = fire.batch()
+
+      const writes = []
 
       tasks.forEach(task => {
 
         const list = listRef(task.id)
-        deleteTask(batch, task.id)
+        deleteTask(b, task.id, writes)
 
         const subIds = []
         if (task.checklist)
           for (const t of task.checklist) {
-            setTask(batch, {
+            setTask(b, {
               folder: null,
               userId: uid(),
               name: t.name,
@@ -747,11 +749,11 @@ export default {
               tags: [],
               checklist: [],
               order: [],
-            }, taskRef(t.id))
+            }, taskRef(t.id), writes)
             subIds.push(t.id)
           }
 
-        setList(batch, {
+        setList(b, {
           userId: uid(),
           smartViewsOrders: {},
           folder: folderId,
@@ -762,33 +764,37 @@ export default {
           tasks: subIds,
           headings: [],
           headingsOrder: [],
-        }, list)
+        }, list, writes)
         
       })
 
-      setFolder(batch, {order}, folderRef(folderId))
+      setFolder(b, {order}, folderRef(folderId), writes)
+
+      cacheBatchedItems(b, writes)
       
-      batch.commit()
+      b.commit()
     },
     convertToList(c, {task, savedLists}) {
       const existingList = savedLists.find(l => l.name === task.name)
       if (!existingList) {
-        const batch = fire.batch()
+        const b = fire.batch()
   
         let folder = null
         if (task.list) {
           const list = savedLists.find(l => l.id === task.list)
           if (list && list.folder) folder = list.folder
         }
+
+        const writes = []
   
         const list = listRef()
-        deleteTask(batch, task.i)
+        deleteTask(b, task.id, writes)
         
         const ids = []
         if (task.checklist)
-          for (const t of task.checklist) {
-            setTask(batch, {
-              id: ref.id,
+        for (const t of task.checklist) {
+            setTask(b, {
+              id: t.id,
               createdFire: serverTimestamp(),
               created: mom().format('Y-M-D HH:mm ss'),
               from: 'watchr_web_app',
@@ -802,11 +808,11 @@ export default {
               tags: [],
               checklist: [],
               order: [],
-            }, taskRef(t.id))
+            }, taskRef(t.id), writes)
             ids.push(t.id)
           }
   
-        setList(batch, {
+        setList(b, {
           folder,
           userId: uid(),
           users: [uid()],
@@ -818,14 +824,17 @@ export default {
           tasks: ids,
           headings: [],
           headingsOrder: [],
-        }, list)
+        }, list, writes)
+
+        cacheBatchedItems(b, writes)
   
-        batch.commit()
+        b.commit()
       }
     },
     completeTasks({commit}, tasks) {
-      const batch = fire.batch()
+      const b = fire.batch()
 
+      const writes = []
       for (const t of tasks) {
         let c
         let calendar = c = t.calendar
@@ -842,21 +851,23 @@ export default {
           if (c.times === 0) c.times = null
         }
 
-        setTask(batch, {
+        setTask(b, {
           completedFire: serverTimestamp(),
           completeDate: mom().format('Y-M-D'),
           fullCompleteDate: mom().format('Y-M-D HH:mm ss'),
           completed: true,
           calendar,
-        }, taskRef(t.id))
+        }, taskRef(t.id), writes)
         commit('change', [t.id], {root: true})
       }
+      cacheBatchedItems(b, writes)
       
-      batch.commit()
+      b.commit()
     },
     uncompleteTasks({commit}, tasks) {
-      const batch = fire.batch()
+      const b = fire.batch()
 
+      const writes = []
       for (const t of tasks) {
         const c = t.calendar
         if (c && c.times === 0) c.times = null
@@ -864,26 +875,26 @@ export default {
           c.lastCompleteDate = null
         }
 
-        setTask(batch, {
+        setTask(b, {
           completedFire: null,
           completeDate: null,
           completed: false,
           calendar: c,
-        }, taskRef(t.id))
+        }, taskRef(t.id), writes)
         commit('change', [t.id], {root: true})
       }
+      cacheBatchedItems(b, writes)
 
-      batch.commit()
+      b.commit()
     },
-    saveTasksById({commit}, {ids, task}) {
-      const batch = fire.batch()
+    async saveTasksById({commit}, {ids, task}) {
+      const b = fire.batch()
 
-      for (const id of ids) {
-        setTask(batch, task, taskRef(id))
+      await batchSetTasks(b, task, ids)
+      for (const id of ids)
         commit('change', [id], {root: true})
-      }
 
-      batch.commit()
+      b.commit()
     },
     addTagsToTasksById({commit}, {ids, tagIds}) {
       const batch = fire.batch()
