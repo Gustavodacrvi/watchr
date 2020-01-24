@@ -205,12 +205,18 @@ export const deleteTag = (batch, id, writes) => {
     })
   batch.delete(tagRef(id))
 }
-export const deleteList = (batch, id) => {
-  batch.set(cacheRef(), {
-    lists: {
+export const deleteList = (batch, id, writes) => {
+  if (!writes)
+    batch.set(cacheRef(), {
+      lists: {
+        [id]: fd().delete(),
+      },
+    }, {merge: true})
+  else if (writes.push)
+    writes.push({
+      collection: 'lists',
       [id]: fd().delete(),
-    },
-  }, {merge: true})
+    })
   batch.delete(listRef(id))
 }
 export const deleteTask = (batch, id, writes) => {

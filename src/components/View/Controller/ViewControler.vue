@@ -369,7 +369,7 @@ export default {
             },
             onAddTask: obj => {
               if (isSmartOrderViewType)
-                this.$store.dispatch('folder/addTaskByIndexSmartViewFolder', {
+                this.$store.dispatch('list/addTaskByIndexSmartViewFolder', {
                   ...obj, folderId: folder.id, viewName: viewName,
                 })
               else
