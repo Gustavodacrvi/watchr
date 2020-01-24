@@ -2,7 +2,7 @@
 import { fire, auth } from './index'
 import fb from 'firebase/app'
 
-import { userRef, pomoDoc, uid, fd } from "@/utils/firestore"
+import { setPomo, uid, fd } from "@/utils/firestore"
 
 import mom from 'moment'
 
@@ -109,27 +109,6 @@ export default {
     }
   },
   actions: {
-    getData({state, dispatch}) {
-      setTimeout(() => {
-        dispatch('updateDurations')
-      }, 1000)
-      return Promise.all([
-        new Promise(resolve => {
-          pomoDoc().onSnapshot(snap => {
-            state.stats = snap.data()
-
-            const info = state.stats && state.stats.dates[TOD_STR]
-            if (info) {
-              state.cycles = info.completedPomos
-      
-              if (state.cycles === undefined) state.cycles = 0
-            }
-            
-            resolve()
-          })
-        })
-      ])
-    },
     updateDurations({rootState, state}, obj) {
       let pomo = rootState.userInfo.pomo
 
@@ -242,12 +221,15 @@ export default {
       }
     },
     updateStats({}, obj) {
-      pomoDoc().set({
-        userId: uid(),
+      const b = fire.batch()
+      
+      setPomo(b, {
         dates: {
           [TOD_STR]: obj,
         },
-      }, {merge: true})
+      })
+
+      b.commit()
     },
     saveFocusTime({state, dispatch}, completed) {
       const sec = getValueFromTime(state.current)

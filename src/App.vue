@@ -71,9 +71,11 @@ export default {
     }
     document.addEventListener('scroll', this.toggleScroll)
     const unToggle = () => {
-      this.$store.commit('toggleControl', false)
-      this.$store.commit('toggleShift', false)
-      this.$store.commit('toggleAlt', false)
+      setTimeout(() => {
+        this.$store.commit('toggleControl', false)
+        this.$store.commit('toggleShift', false)
+        this.$store.commit('toggleAlt', false)
+      })
     }
 
     window.addEventListener('focus', () => unToggle())

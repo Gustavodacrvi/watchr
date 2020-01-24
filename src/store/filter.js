@@ -2,7 +2,7 @@
 import { fire, auth } from './index'
 import utils from '../utils'
 import MemoizeGetters from './memoFunctionGetters'
-import { filterColl, filterRef, userRef, fd, taskRef, serverTimestamp, addTask } from '../utils/firestore'
+import { filterColl, filterRef, setInfo, fd, taskRef, serverTimestamp, addTask } from '../utils/firestore'
 import mom from 'moment'
 
 const uid = () => {
@@ -76,8 +76,7 @@ export default {
         const ref = filterRef()
         batch.set(ref, obj)
         ord.splice(index, 0, ref.id)
-        const user = userRef()
-        batch.update(user, {
+        setInfo(batch, {
           filters: ord,
         })
   
@@ -116,9 +115,13 @@ export default {
       batch.commit()
     },
     updateOrder(c, ids) {
-      userRef().update({
+      const b = fire.batch()
+
+      setInfo(b, {
         filters: ids,
       })
+
+      b.commit()
     },
     sortFiltersByName({state, dispatch}) {
       const filters = state.filters.slice()

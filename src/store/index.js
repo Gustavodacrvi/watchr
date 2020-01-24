@@ -7,6 +7,8 @@ import utilsTask from '../utils/task'
 
 import moment from 'moment'
 
+const TOD_STR = moment().format('Y-M-D')
+
 Vue.use(Vuex)
 
 const MINIMUM_DESKTOP_SCREEN_WIDTH = 820
@@ -42,7 +44,7 @@ import folder from './folder'
 import pomo from './pomo'
 
 import utils from '@/utils'
-import { userRef, cacheRef } from "../utils/firestore"
+import { userRef, cacheRef, setInfo } from "../utils/firestore"
 
 const lang = localStorage.getItem('watchrlanguage') || 'en'
 
@@ -90,6 +92,21 @@ const store = new Vuex.Store({
       email: null,
     },
     userInfo: {
+      pomo: null,
+      
+      tags: [],
+      lists: [],
+      favorites: [],
+      filters: [],
+      folders: [],
+      hidedSections: [],
+      hidedViews: [],
+      links: [],
+      
+      calendarOrders: null,
+      
+      disablePmFormat: false,
+      
       lists: [],
       tags: [],
       viewOrders: {},
@@ -379,11 +396,14 @@ const store = new Vuex.Store({
         }).then(() => location.reload())
       })
     },
-    getData({state}) {
-      userRef().onSnapshot(snap => {
-        state.userInfo = snap.data()
-      })
-      
+    setInfo(c, obj) {
+      const b = fire.batch()
+
+      setInfo(b, obj)
+
+      b.commit()
+    },
+    getData({state, dispatch}) {
       cacheRef().onSnapshot(snap => {
         const data = snap.data()
         const isFromHere = snap.metadata.hasPendingWrites
@@ -393,7 +413,14 @@ const store = new Vuex.Store({
         utils.addIdsToObjectFromKeys(data.folders)
         utils.addIdsToObjectFromKeys(data.stats)
         utils.addIdsToObjectFromKeys(data.lists)
+
+        if (data.info && data.info.info)
+          utils.findChangesBetweenObjs(state.userInfo, data.info.info, (key, val) => Vue.set(state.userInfo, key, val))
         
+        setTimeout(() => {
+          dispatch('pomo/updateDurations')
+        })
+
         if (!state.isFirstSnapshot) {
           utils.updateVuexObject(state.task, 'tasks', data.tasks || {}, state.changedIds, isFromHere)
           utils.updateVuexObject(state.tag, 'tags', data.tags || {}, state.changedIds, isFromHere)
@@ -404,6 +431,7 @@ const store = new Vuex.Store({
             state.changedIds = []
           }
         } else {
+          state.pomo.stats = data.stats.pomo
           state.task.tasks = data.tasks || {}
           state.tag.tags = data.tags || {}
           state.folder.folders = data.folders || {}
@@ -411,6 +439,19 @@ const store = new Vuex.Store({
 
           state.isFirstSnapshot = false
         }
+
+        if (data.stats) {
+          utils.findChangesBetweenObjs(state.pomo.stats, data.stats.pomo, (key, val) => Vue.set(state.pomo.stats, key, val))
+
+          const info = state.pomo.stats && state.pomo.stats.dates[TOD_STR]
+          if (info) {
+            if (info.completedPomos !== state.pomo.cycles)
+              state.pomo.cycles = info.completedPomos
+    
+            if (state.pomo.cycles === undefined) state.pomo.cycles = 0
+          }
+        }
+        
       })
     },
     update({}, info) {
@@ -418,7 +459,7 @@ const store = new Vuex.Store({
       
       const userRef = fire.collection('users').doc(info.uid)
       batch.set(userRef, {
-        ...utils.getRelevantUserData(info, true),
+        ...utils.getRelevantUserData(info),
       }, {merge: true})
       return batch.commit()
     },
@@ -469,7 +510,6 @@ auth.onAuthStateChanged((user) => {
   const dispatch = store.dispatch
   const loadData = () => {
     dispatch('getData')
-    dispatch('pomo/getData')
   }
   const toast = (t) => store.commit('pushToast', t)
 

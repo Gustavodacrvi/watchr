@@ -115,7 +115,6 @@ import utils from '@/utils/index.js'
 import mom from 'moment'
 
 import { pipeBooleanFilters } from '@/utils/memo'
-import { userRef } from '@/utils/firestore'
 
 const MAXIMUM_TOUCH_DISTANCE = 100
 const MINIMUM_DISTANCE = 10
@@ -355,7 +354,7 @@ export default {
         }
       }
       
-      userRef().set(obj, {merge: true})
+      this.$store.dispatch('setInfo', obj)
 
       this.$store.dispatch('pomo/updateDurations', obj)
     },
@@ -434,6 +433,7 @@ export default {
             callback: () => ({
               comp: 'TimePicker',
               content: {
+                format: '24hr',
                 msg: l['Duration: '],
                 callback: newTime => getOptions({
                   duration: newTime, shortRest, longRest,
@@ -446,6 +446,7 @@ export default {
             callback: () => ({
               comp: 'TimePicker',
               content: {
+                format: '24hr',
                 msg: l['Short rest: '],
                 callback: newTime => getOptions({
                   duration, shortRest: newTime, longRest,
@@ -458,6 +459,7 @@ export default {
             callback: () => ({
               comp: 'TimePicker',
               content: {
+                format: '24hr',
                 msg: l['Long rest: '],
                 callback: newTime => getOptions({
                   duration, shortRest, longRest: newTime,

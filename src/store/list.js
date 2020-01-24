@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from "@/utils/task"
 import utilsMoment from "@/utils/moment"
 import MemoizeGetters from './memoFunctionGetters'
-import { listRef, userRef, uid, listColl, taskRef, serverTimestamp, fd, setTask, folderRef, setFolder, setList, deleteList, deleteTask } from '../utils/firestore'
+import { listRef, setInfo, uid, listColl, taskRef, serverTimestamp, fd, setTask, folderRef, setFolder, setList, deleteList, deleteTask } from '../utils/firestore'
 import router from '../router'
 
 import mom from 'moment'
@@ -339,7 +339,7 @@ export default {
         const ref = listRef()
         setList(batch, obj, ref)
         ord.splice(index, 0, ref.id)
-        batch.update(userRef(), {
+        setInfo(batch, {
           lists: ord,
         })
       } else {
@@ -467,15 +467,23 @@ export default {
       b.commit()
     },
     updateOrder(c, lists) {
-      userRef().update({lists})
+      const b = fire.batch()
+      
+      setInfo(b, {lists})
+
+      b.commit()
     },
     updateViewOrder({state}, {view, ids}) {
       const obj = {}
       obj[view] = {}
       obj[view].tasks = ids
-      userRef().set({
+      const b = fire.batch()
+      
+      setInfo(b, {
         viewOrders: obj,
-      }, {merge: true})
+      })
+
+      b.commit()
     },
     sortListsByName({getters, dispatch}) {
       const lists = getters.lists.slice()
@@ -513,7 +521,7 @@ export default {
       }, newTaskRef).then(() => {
         const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
 
-        batch.set(userRef(), {calendarOrders}, {merge: true})
+        setInfo(batch, {calendarOrders})
 
         batch.commit()
       })
@@ -549,9 +557,9 @@ export default {
         // list === viewName, e.g: Today, Tomorrow
         obj[list].tasks = ids
   
-        batch.set(userRef(), {
+        setInfo(batch, {
           viewOrders: obj,
-        }, {merge: true})
+        })
   
         batch.commit()
       })
@@ -600,9 +608,9 @@ export default {
       const obj = {}
       obj[view] = {}
       obj[view].tasks = ids
-      batch.set(userRef(), {
+      setInfo(batch, {
         viewOrders: obj,
-      }, {merge: true})
+      })
 
       batch.commit()
     },
@@ -616,7 +624,7 @@ export default {
       
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
 
-      batch.set(userRef(), {calendarOrders}, {merge: true})
+      setInfo(batch, {calendarOrders})
 
       batch.commit()
     },
@@ -632,7 +640,7 @@ export default {
 
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
       
-      batch.set(userRef(), {calendarOrders}, {merge: true})
+      setInfo(batch, {calendarOrders})
 
       batch.commit()
     },
@@ -662,15 +670,15 @@ export default {
     addHeading({getters}, {ids, name, headings, listId, index}) {
       const list = getters.getListsById([listId])[0]
       const batch = fire.batch()
-      const id = utils.getUid()
+      const headindgId = utils.getUid()
 
       for (const id of ids)
         setTask(batch, {
-          heading: id,
+          heading: headindgId,
         }, taskRef(id))
       const listHeadings = list.headings.slice()
-      listHeadings.push({name, tasks: ids, id})
-      headings.splice(index, 0, id)
+      listHeadings.push({name, tasks: ids, id: headindgId})
+      headings.splice(index, 0, headindgId)
       
       setList(batch, {
         headings: listHeadings,
@@ -815,14 +823,21 @@ export default {
       const obj = {}
       obj[view] = {}
       obj[view].headings = ids
-      userRef().set({
+      const b = fire.batch()
+      
+      setInfo(b, {
         viewOrders: obj,
-      }, {merge: true})
+      })
+
+      b.commit()
     },
     updateHeadingsCalendarOrder({rootState}, {date, ids}) {
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState, 'headings')
+      const b = fire.batch()
 
-      userRef().set({calendarOrders}, { merge: true })
+      setInfo(b, {calendarOrders})
+
+      b.commit()
     },
     addTaskHeading({getters}, {headingId, ids, listId, task, index, newTaskRef}) {
       const list = getters.getListsById([listId])[0]

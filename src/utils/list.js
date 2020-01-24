@@ -74,7 +74,7 @@ export default {
       }
     ]
   },
-  listOptions: list => ({tasks, getters, dispatch, router}) => {
+  listOptions: (list, removeGoToListOption = false) => ({tasks, getters, dispatch, router}) => {
     const l = getters['l']
     const listId = list.id
 
@@ -107,13 +107,6 @@ export default {
     })
     
     let opt = [
-      {
-        name: 'Go to list',
-        icon: 'tasks',
-        callback: () => {
-          router.push(`user?list=${list.name}`) 
-        },
-      },
       {
         name: 'Deadline',
         icon: 'deadline',
@@ -275,6 +268,16 @@ export default {
         }
       },
     ]
+
+    if (!removeGoToListOption)
+      opt.unshift(      {
+        name: 'Go to list',
+        icon: 'tasks',
+        callback: () => {
+          router.push(`user?list=${list.name}`) 
+        },
+      },)
+    
     const moreOptions = [
       {
         name: l["Duplicate list"],

@@ -119,8 +119,6 @@
 import AuthButton from '@/components/Auth/Button.vue'
 import CheckboxApp from '@/components/Auth/Checkbox.vue'
 
-import { userRef } from '@/utils/firestore'
-
 import { mapGetters, mapState } from 'vuex'
 
 export default {
@@ -277,12 +275,12 @@ export default {
       localStorage.setItem('listFilters', this.listFilters)
       localStorage.setItem('folderFilters', this.folderFilters)
 
-      userRef().set({
+      this.$store.dispatch('setInfo', {
         disablePmFormat: !this.pmFormat,
-        hidedSections: this.hidedSections,
-        hidedViews: this.hidedSmartViews,
-        ungroupTasksInHeadings: this.ungroupTasksInHeadings,
-      }, {merge: true})
+        hidedSections: this.hidedSections || null,
+        hidedViews: this.hidedSmartViews || null,
+        ungroupTasksInHeadings: this.ungroupTasksInHeadings || null,
+      })
       this.changedSection = false
       this.forceUpdate = !this.forceUpdate
     },

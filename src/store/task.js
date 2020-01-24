@@ -6,8 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, userRef, folderRef, serverTimestamp, taskColl, taskRef, listRef, setTask, cacheRef, deleteTask, setFolder, setList } from '../utils/firestore'
-import { pipeBooleanFilters } from '@/utils/memo'
+import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask, deleteTask, setFolder, setList } from '../utils/firestore'
 
 import mom from 'moment'
 
@@ -689,15 +688,23 @@ export default {
       batch.commit()
     },
     saveSchedule(c, {date, schedule}) {
-      userRef().set({
+      const b = fire.batch()
+      
+      setInfo(b, {
         calendarOrders: {
           [date]: {schedule},
         }
-      }, {merge: true})
+      })
+
+      b.commit()
     },
     saveCalendarOrder({rootState}, {ids, date}) {
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
-      userRef().set({calendarOrders}, {merge: true})
+      const b = fire.batch()
+      
+      setInfo(b, {calendarOrders})
+
+      b.commit()
     },
     convertTasksToListByIndex(c, {tasks, folderId, order, savedLists, indicies}) {
       const tasksWithConflictingListNames = {}

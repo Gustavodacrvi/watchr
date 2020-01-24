@@ -771,8 +771,13 @@ export default {
             head.filter,
             this.mainFilterFunction,
           ),
-          onAddTask: obj => {
-            this.fixPosition(obj, nonFiltered.map(el => el.id), () => head.onAddTask(obj))
+          onAddItem: obj => {
+            const newObj = {
+              ...obj,
+              task: obj.item,
+              newTaskRef: obj.newItemRef,
+            }
+            this.fixPosition(newObj, nonFiltered.map(el => el.id), () => head.onAddTask(newObj))
           },
           progress: head.progress ? head.progress() : undefined,
           onEdit: head.onEdit ? head.onEdit(nonFiltered) : () => {},
