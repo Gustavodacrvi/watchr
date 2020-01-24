@@ -80,17 +80,6 @@ export default {
     },
   },
   actions: {
-/*     getData({state}) {
-      if (uid())
-      return Promise.all([
-        new Promise(resolve => {
-          tagColl().where('userId', '==', uid()).onSnapshot(snap => {
-            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'tags')
-            resolve()
-          })
-        })
-      ])
-    }, */
     addTag(c, {name, index, ids, parent}) {
       if (!parent) parent = null
       const obj = {

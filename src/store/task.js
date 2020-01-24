@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from '../utils/task'
 import utilsMoment from '../utils/moment'
 import MemoizeGetters from './memoFunctionGetters'
-import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask, deleteTask, setFolder, setList } from '../utils/firestore'
+import { uid, fd, setInfo, folderRef, serverTimestamp, taskRef, listRef, setTask, deleteTask, cacheBatchedTasks, setFolder, setList } from '../utils/firestore'
 
 import mom from 'moment'
 
@@ -662,14 +662,20 @@ export default {
     addMultipleTasks(c, tasks) {
       const batch = fire.batch()
 
-      for (const t of tasks)
+      const writes = []
+      
+      for (const t of tasks) {
+        const ref = taskRef()
         setTask(batch, {
           ...t,
           createdFire: serverTimestamp(),
           created: mom().format('Y-M-D HH:mm ss'),
           userId: uid(),
           id: ref.id,
-        }, taskRef())
+        }, ref, writes)
+      }
+
+      cacheBatchedTasks(batch, writes)
 
       batch.commit()
     },

@@ -49,17 +49,6 @@ export default {
     },
   },
   actions: {
-    getData({state}) {
-      if (uid())
-      return Promise.all([
-        new Promise(resolve => {
-          filterColl().where('userId', '==', uid()).onSnapshot(snap => {
-            utils.getDataFromFirestoreSnapshot(state, snap.docChanges(), 'filters')
-            resolve()
-          })
-        })
-      ])
-    },
     addFilter(c, {name, index, ids}) {
       const obj = {
         createdFire: serverTimestamp(),

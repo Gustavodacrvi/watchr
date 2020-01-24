@@ -25,7 +25,7 @@ export const tagColl = () => userRef().collection('tags')
 export const tagRef = id => id ? tagColl().doc(id) : tagColl().doc()
 export const filterColl = () => userRef().collection('filters')
 export const filterRef = id => id ? filterColl().doc(id) : filterColl().doc()
-export const setTask = (batch, task, ref) => {
+export const setTask = (batch, task, ref, writes) => {
   return new Promise((solve, reject) => {
     const save = () => {
       const obj = {
@@ -33,11 +33,16 @@ export const setTask = (batch, task, ref) => {
         from: CLOUD_FUNCTION_KEY_WORD, id: ref.id,
         userId: uid(),
       }
-      batch.set(cacheRef(), {
-        tasks: {
+      if (!writes)
+        batch.set(cacheRef(), {
+          tasks: {
+            [ref.id]: obj,
+          }
+        }, {merge: true})
+      else
+        writes.push({
           [ref.id]: obj,
-        }
-      }, {merge: true})
+        })
       batch.set(ref, obj, {merge: true})
       solve()
     }
@@ -45,6 +50,13 @@ export const setTask = (batch, task, ref) => {
       task.handleFiles(ref.id).then(save).catch(reject)
     else save()
   })
+}
+export const cacheBatchedTasks = (batch, writes) => {
+  batch.set(cacheRef(), {
+    tasks: {
+      ...writes.reduce((obj, t) => ({...obj, ...t}), {}),
+    },
+  }, {merge: true})
 }
 
 export const setTag = (batch, tag, ref) => {
