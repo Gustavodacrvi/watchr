@@ -27,7 +27,7 @@
             :icon="icon"
             :progress='progress'
             :circle='true'
-            @click='clickIcon'
+            @click.native='clickIcon'
           />
         </div>
         <div class="name-wrapper">

@@ -66,7 +66,7 @@ export default {
       const getSubTagsByParentId = this.getSubTagsByParentId
       const getNumberOfTasksByTag = this.getNumberOfTasksByTag
       const getTags = (parentId, order) => {
-        const tags = parentId ? getSubTagsByParentId(parentId).map(tag => ({...tag})) : this.sortedRootTags.map(tag => ({...tag}))
+        const tags = parentId ? getSubTagsByParentId(parentId) : this.sortedRootTags
 
         if (tags.length === 0) return []
 

@@ -254,8 +254,8 @@ export default {
         return result
       },
     }, true),
-    getFavoriteLists(state) {
-      return utils.filterObj(state.lists, l => l.favorite, () => ({icon: 'tasks', color: 'var(--primary)', type: 'list',}))
+    getFavoriteLists(s, getters) {
+      return getters.lists.filter(el => el.favorite).map(f => ({...f, icon: 'tasks', color: 'var(--primary)', type: 'list'}))
     },
   },
   actions: {
@@ -349,7 +349,7 @@ export default {
 
         setFolder(batch, {order: ord}, folderRef(folder))
 
-        listRef(batch, obj, ref)
+        setList(batch, obj, ref)
       }
 
       batch.commit()
