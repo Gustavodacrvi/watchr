@@ -117,7 +117,6 @@ export default {
     saveSchedule() {
       return info =>  localStorage.setItem('schedule_' + this.viewName, JSON.stringify(info))
     },
-    removeHeaderTag() {},
     removeDeferDate() {},
     
     

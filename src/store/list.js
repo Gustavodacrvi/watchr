@@ -448,11 +448,11 @@ export default {
 
       b.commit()
     },
-    addListTag(c, {tagId, listId}) {
+    editListTags(c, {tagIds, listId}) {
       const b = fire.batch()
       
-      setList(batch, {
-        tags: fd().arrayUnion(tagId),
+      setList(b, {
+        tags: tagIds,
       }, listRef(listId))
   
       b.commit()
@@ -460,7 +460,7 @@ export default {
     removeListTag(c, {tagId, listId}) {
       const b = fire.batch()
       
-      setList(batch, {
+      setList(b, {
         tags: fd().arrayRemove(tagId),
       }, listRef(listId))
   

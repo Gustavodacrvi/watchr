@@ -40,6 +40,7 @@
     :viewComponent='viewComponent'
     :isListType='isListType'
     :extraListView='extraListView'
+    :removeHeaderTag='removeHeaderTag'
 
     @save-schedule='saveSchedule'
     @save-header-name='saveHeaderName'
@@ -48,7 +49,6 @@
     @add-heading='addHeading'
     @update-ids='updateIds'
     @remove-defer-date='removeDeferDate'
-    @remove-header-tag='removeHeaderTag'
     @remove-deadline='removeDeadline'
     @remove-repeat='removeRepeat'
     

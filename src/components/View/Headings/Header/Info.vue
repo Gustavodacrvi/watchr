@@ -25,13 +25,13 @@
         @click="$parent.$emit('remove-repeat')"
       /> -->
     </div>
-<!--     <div class="tags">
+    <div class="tags">
       <Tag class="tag" v-for="t in headerTags" :key="t"
         :value="t"
         icon="tag"
-        @click="$parent.$emit('remove-header-tag', t)"
+        @click="removeTag(t)"
       />
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -53,11 +53,15 @@ export default {
   components: {
     HeaderInfo, Tag,
   },
-  props: ['headerTags', 'deadline', 'headerCalendar', 'save'],
+  props: ['headerTags', 'deadline', 'headerCalendar', 'save', 'removeHeaderTag'],
   methods: {
     saveOptions(obj) {
       if (this.save)
         this.save(obj)
+    },
+    removeTag(name) {
+      if (this.removeHeaderTag)
+        this.removeHeaderTag(name)
     },
   },
   computed: {
@@ -88,3 +92,16 @@ export default {
 }
 
 </script>
+
+<style scoped>
+
+.tags {
+  margin-top: 4px;
+  display: flex;
+}
+
+.tag {
+  margin-right: 4px;
+}
+
+</style>
