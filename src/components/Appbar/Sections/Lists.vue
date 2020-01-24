@@ -224,10 +224,11 @@ export default {
       getListDeadlineDaysLeftStr: 'list/getListDeadlineDaysLeftStr',
     }),
     laseredFolders() {
-      return this.sortedFolders.map(fold => ({
-        ...fold,
-        list: this.filterAppnavLists(this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders}))
-      }))
+      const sortedFolders = this.sortedFolders
+      sortedFolders.forEach(fold => {
+        fold.list = this.filterAppnavLists(this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders}))
+      })
+      return sortedFolders
     },
     sortedLists() {
       return this.$store.getters['list/sortedLists']
@@ -253,7 +254,7 @@ export default {
       return this.filterAppnavLists(this.getLists)
     },
     getLists() {
-      const lists = this.sortedLists.map(t => ({...t}))
+      const lists = this.sortedLists
       for (const list of lists) {
         list.callback = () => {
           this.$router.push('/user?list=' + list.name)

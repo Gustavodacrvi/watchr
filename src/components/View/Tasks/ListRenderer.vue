@@ -197,7 +197,7 @@ export default {
       const el = this.$refs['item-renderer-root']
       const offsetTop = el.getBoundingClientRect().top
       const height = document.documentElement.clientHeight
-      this.compHeight = (height - offsetTop) + 'px'
+      this.compHeight = (height - offsetTop - 300) + 'px'
     },
     changeTime(args) {
       this.$emit('change-time', args)

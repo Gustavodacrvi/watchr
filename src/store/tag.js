@@ -139,7 +139,7 @@ export default {
       const batch = fire.batch()
 
       setTag(batch, tag, tagRef(tag.id))
-      commit('change', [ref.id], {root: true})
+      commit('change', [tag.id], {root: true})
 
       batch.commit()
     },

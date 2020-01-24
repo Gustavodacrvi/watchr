@@ -615,7 +615,7 @@ export default {
           return getters.tasks.filter(getters.isTaskOverdue)
         },
       },
-      getTasksById({state, getters}, ids) {
+      getTasksById({getters}, ids) {
         const arr = []
         for (const id of ids) {
           const task = getters.tasks.find(el => el.id === id)

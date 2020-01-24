@@ -123,19 +123,17 @@ const store = new Vuex.Store({
   },
   getters: {
     ...Memoize(null, {
-      checkMissingIdsAndSortArr({}, order, arr, property) {
-        let name = 'id'
-        if (property) name = property
-        
+      checkMissingIdsAndSortArr({}, order, arr) {
+
         let items = []
         for (const id of order) {
-          const item = arr.find(el => el[name] === id)
+          const item = arr.find(el => el.id === id)
           if (item) items.push(item)
         }
     
         let notIncluded = []
         for (const item of arr) {
-          if (!order.includes(item[name]))
+          if (!order.includes(item.id))
             notIncluded.push(item)
         }
     
@@ -153,8 +151,8 @@ const store = new Vuex.Store({
         const ids = new Set()
         const ordered = []
         for (const item of items) {
-          if (!ids.has(item[name])) {
-            ids.add(item[name])
+          if (!ids.has(item.id)) {
+            ids.add(item.id)
             ordered.push(item)
           }
         }
