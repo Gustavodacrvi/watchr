@@ -64,14 +64,14 @@ export const cacheBatchedItems = (batch, writes) => {
   }
   const keys = Object.keys(obj)
   keys.forEach(k => delete obj[k].collection)
-  
+
   batch.set(cacheRef(), obj, {merge: true})
 }
-export const batchSetTasks = (batch, task, ids) => {
+export const batchSetTasks = (batch, task, ids, rootWrites) => {
   return new Promise(async solve => {
     const promises = []
   
-    const writes = []
+    const writes = rootWrites || []
     ids.forEach(id => {
       promises.push(
         setTask(batch, task, taskRef(id), writes)
@@ -79,22 +79,29 @@ export const batchSetTasks = (batch, task, ids) => {
     })
     
     await Promise.all(promises)
-    cacheBatchedItems(batch, writes)
+    if (!rootWrites)
+      cacheBatchedItems(batch, writes)
     solve()
   })
 }
 
-export const setTag = (batch, tag, ref) => {
+export const setTag = (batch, tag, ref, writes) => {
   const obj = {
     ...tag, id: ref.id,
     from: CLOUD_FUNCTION_KEY_WORD,
     userId: uid(),
   }
-  batch.set(cacheRef(), {
-    tags: {
+  if (!writes)
+    batch.set(cacheRef(), {
+      tags: {
+        [ref.id]: obj,
+      }
+    }, {merge: true})
+  else if (writes.push)
+    writes.push({
+      collection: 'tags',
       [ref.id]: obj,
-    }
-  }, {merge: true})
+    })
   batch.set(ref, obj, {merge: true})
 }
 
@@ -149,28 +156,40 @@ export const setPomo = (batch, doc) => {
   }, {merge: true})
   batch.set(pomoDoc(), obj, {merge: true})
 }
-export const setInfo = (batch, info) => {
+export const setInfo = (batch, info, writes) => {
   const obj = {
     ...info, id: 'info',
     from: CLOUD_FUNCTION_KEY_WORD,
     userId: uid(),
   }
-  batch.set(cacheRef(), {
-    info: {
+  if (!writes)
+    batch.set(cacheRef(), {
+      info: {
+        info: obj,
+      },
+    }, {merge: true})
+  else if (writes.push)
+    writes.push({
+      collection: 'info',
       info: obj,
-    },
-  }, {merge: true})
+    })
   batch.set(
       userRef().collection('info').doc('info')
     , obj, {merge: true})
 }
 
-export const deleteTag = (batch, id) => {
-  batch.set(cacheRef(), {
-    tags: {
+export const deleteTag = (batch, id, writes) => {
+  if (!writes)
+    batch.set(cacheRef(), {
+      tags: {
+        [id]: fd().delete(),
+      },
+    }, {merge: true})
+  else if (writes.push)
+    writes.push({
+      collection: 'tags',
       [id]: fd().delete(),
-    },
-  }, {merge: true})
+    })
   batch.delete(tagRef(id))
 }
 export const deleteList = (batch, id) => {
