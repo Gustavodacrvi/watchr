@@ -533,9 +533,9 @@ export default {
       const {tags, list, folder, priorities} = this.getFilterOptions
 
       if (tags.inclusive.length > 0)
-        toPipe.push(t => this.doesTaskPassInclusiveTags(t, tags.inclusive, this.tags))
+        toPipe.push(t => this.doesTaskPassInclusiveTags(t, tags.inclusive, this.tags || []))
       if (tags.exclusive.length > 0)
-        toPipe.push(t => this.doesTaskPassExclusiveTags(t, tags.exclusive, this.tags))
+        toPipe.push(t => this.doesTaskPassExclusiveTags(t, tags.exclusive, this.tags || []))
 
       if (priorities.inclusive)
         toPipe.push(t => this.doesTaskPassInclusivePriority(t, priorities.inclusive))

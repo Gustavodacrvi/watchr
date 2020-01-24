@@ -339,12 +339,12 @@ export default {
             if (fallbackTasks) {
               p()
               iconDrop({
-                links: this.tags.map(t => ({...t, icon: 'tag'})),
+                links: (this.tags || []).map(t => ({...t, icon: 'tag'})),
                 select: true,
                 onSave: names => {
                   this.$store.dispatch('task/addTagsToTasksById', {
                     ids: fallbackTasks,
-                    tagIds: this.tags.filter(t => names.includes(t.name)).map(el => el.id),
+                    tagIds: (this.tags || []).filter(t => names.includes(t.name)).map(el => el.id),
                   })
                 },
                 selected: [],

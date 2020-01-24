@@ -501,13 +501,13 @@ export default {
 
             const childs = savedTags.filter(tag => tag.parent === parent)
             for (const tag of childs)
-              if (task.tags.includes(tag.id) || foundChild(tag.id))
+              if ((task.tags && task.tags.includes(tag.id)) || foundChild(tag.id))
                 return true
             return false
           }
 
           for (const id of tags) {
-            if (task.tags.includes(id) || foundChild(id)) return false
+            if ((task.tags && task.tags.includes(id)) || foundChild(id)) return false
           }
 
           return true
@@ -525,13 +525,13 @@ export default {
 
             const childs = savedTags.filter(tag => tag.parent === parent)
             for (const tag of childs)
-              if (task.tags.includes(tag.id) || foundChild(tag.id))
+              if ((task.tags && task.tags.includes(tag.id)) || foundChild(tag.id))
                 return true
             return false
           }
 
           for (const id of tags)
-            if (!task.tags.includes(id) && !foundChild(id)) return false
+            if ((!task.tags || !task.tags.includes(id)) && !foundChild(id)) return false
 
           return true
         },
@@ -891,51 +891,43 @@ export default {
       const b = fire.batch()
 
       await batchSetTasks(b, task, ids)
-      for (const id of ids)
-        commit('change', [id], {root: true})
+      commit('change', ids, {root: true})
 
       b.commit()
     },
-    addTagsToTasksById({commit}, {ids, tagIds}) {
-      const batch = fire.batch()
+    async addTagsToTasksById({commit}, {ids, tagIds}) {
+      const b = fire.batch()
 
-      for (const id of ids) {
-        setTask(batch, {
-          tags: fd().arrayUnion(...tagIds),
-        }, taskRef(id))
-        
-        commit('change', [id], {root: true})
-      }
+      await batchSetTasks(b, {
+        tags: fd().arrayUnion(...tagIds),
+      }, ids)
+      commit('change', ids, {root: true})
 
-      batch.commit()
+      b.commit()
     },
-    addListToTasksById({commit}, {ids, listId}) {
-      const batch = fire.batch()
+    async addListToTasksById({commit}, {ids, listId}) {
+      const b = fire.batch()
 
-      for (const id of ids) {
-        setTask(batch, {
-          list: listId,
-          folder: null,
-          heading: null,
-        }, taskRef(id))
-        commit('change', [id], {root: true})
-      }
+      await batchSetTasks(b, {
+        list: listId,
+        folder: null,
+        heading: null,
+      }, ids)
+      commit('change', ids, {root: true})
 
-      batch.commit()
+      b.commit()
     },
-    addFolderToTasksById({commit}, {ids, folderId}) {
-      const batch = fire.batch()
+    async addFolderToTasksById({commit}, {ids, folderId}) {
+      const b = fire.batch()
 
-      for (const id of ids) {
-        setTask(batch, {
-          list: null,
-          folder: folderId,
-          heading: null,
-        }, taskRef(id))
-        commit('change', [id], {root: true})
-      }
+      await batchSetTasks(b, {
+        list: null,
+        folder: folderId,
+        heading: null,
+      }, ids)
+      commit('change', ids, {root: true})
       
-      batch.commit()
+      b.commit()
     },
     copyTask(c, task) {
       const b = fire.batch()

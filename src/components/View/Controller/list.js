@@ -28,7 +28,7 @@ export default {
       return (task, force) => {
         if (force || (!task.list && !task.folder))
           task.list = this.viewList.id
-        task.tags = [...task.tags, ...this.listgetListTags.map(el => el.id)]
+        task.tags = [...task.tags || [], ...this.listgetListTags.map(el => el.id)]
         return task
       }
     },
@@ -163,7 +163,7 @@ export default {
             fallbackItem: (task, force) => {
               if (force || (!task.heading && !task.folder && task.list === viewList.id))
                 task.heading = h.id
-              task.tags = [...task.tags, ...this.listgetListTags.map(el => el.id)]
+              task.tags = [...task.tags || [], ...this.listgetListTags.map(el => el.id)]
               return task
             },
 
