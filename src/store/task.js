@@ -184,7 +184,7 @@ export default {
       isTaskOverdue: {
         getter({getters}, task) {
           const calendar = task.calendar
-          if (!calendar || getters.isTaskCompleted(task)) return false
+          if (!calendar || getters.isTaskInView(task, "Completed")) return false
           
           let tod = null
           const getTod = () => {
@@ -299,20 +299,21 @@ export default {
       },
       hasTaskBeenCompletedOnDate: {
         getter({}, task, date) {
-          return task.completeDate === date
+          return task.completeDate === date || task.checkDate === date
         },
         cache(args) {
-          return JSON.stringify({t: args[0].completeDate, date: args[1]})
+          return JSON.stringify({t: args[0].completeDate, c: args[0].checkDate})
         }
       },
       isTaskInCompletedView: {
         getter({getters}, task) {
-          return getters.isTaskCompleted(task)
+          return getters.isTaskCompleted(task) || getters.isTaskCanceled(task)
         },
         cache(args) {
           return JSON.stringify({
             t: args[0].calendar,
             c: args[0].completed,
+            ca: args[0].canceled,
           })
         },
       },
@@ -357,7 +358,8 @@ export default {
               obj = {
                 calendar: t.calendar,
                 today: TODAY_DATE,
-                complete: t.completeDate
+                complete: t.completeDate,
+                checkCom: t.checkDate,
               }
               break
             }
@@ -376,14 +378,16 @@ export default {
               obj = {
                 calendar: t.calendar,
                 today: TOM_DATE,
-                complete: t.completeDate
+                complete: t.completeDate,
+                checkCom: t.checkDate,
               }
               break
             }
             case 'Completed': {
               obj = {
                 cal: t.calendar,
-                complete: t.completeDate
+                complete: t.completeDate,
+                ca: t.canceled,
               }
               break
             }
@@ -610,7 +614,7 @@ export default {
           return {
             total: ts.length,
             notCompleted: ts.filter(
-              task => !getters.isTaskCompleted(task)
+              task => !getters.isTaskInView(task, "Completed")
             ).length,
           }
         },
@@ -649,7 +653,7 @@ export default {
           return {
             total: ts.length,
             notCompleted: ts.filter(
-              task => !getters.isTaskCompleted(task)
+              task => !getters.isTaskInView(task, "Completed")
             ).length,
           }
         },

@@ -827,7 +827,7 @@ export default {
     },
     filterOptionsPipes() {
       return [
-        'pipeFilterOptions', 'pipeSomeday', 'pipeCompleted', 'pipeCanceled',
+        'pipeCompleted', 'pipeSomeday', 'pipeCanceled',, 'pipeFilterOptions',
       ]
     },
     filteredFilterOptionsByConfig() {

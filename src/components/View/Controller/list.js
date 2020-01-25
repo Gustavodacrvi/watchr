@@ -301,7 +301,7 @@ export default {
     getPieProgress() {
       const list = this.viewList
       if (list && !this.isViewListSomeday)
-        return this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted)
+        return this.$store.getters['list/pieProgress'](this.tasks, list.id, task => this.isTaskInView(task, "Completed"))
       return null
     },
     savedSchedule() {

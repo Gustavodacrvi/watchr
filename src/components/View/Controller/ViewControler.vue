@@ -527,11 +527,11 @@ export default {
     },
     completedHeadingsOptions() {
       const arr = []
-      const filtered = this.tasks.filter(task => this.isTaskCompleted(task, mom().format('Y-M-D')))
+      const filtered = this.tasks.filter(task => this.isTaskInView(task, 'Completed'))
       const set = new Set()
       for (const t of filtered)
-        if (!set.has(t.completeDate))
-          set.add(t.completeDate)
+        if (!set.has(t.checkDate || t.completeDate))
+          set.add(t.checkDate || t.completeDate)
       const dates = Array.from(set)
       dates.sort((a, b) => {
         const ta = mom(a, 'Y-M-D')
@@ -552,7 +552,7 @@ export default {
         arr.push({
           disableSortableMount: true,
           name: utils.getHumanReadableDate(date, this.l),
-          sort: tasks => utilsTask.sortTasksByTaskDate(tasks, 'fullCompleteDate'), 
+          sort: tasks => utilsTask.sortTasksByTaskDate(tasks, 'fullCheckDate'), 
           options: tasks => [
             {
               name: this.l['Uncomplete tasks'],
