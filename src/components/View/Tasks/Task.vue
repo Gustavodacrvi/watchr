@@ -88,6 +88,13 @@
                 <div class="task-name-wrapper">
                   <span class="task-name" key="normal">
                     <span class="completed-line" ref='completed-line'></span>
+                    <transition
+                      appear
+                      @enter='infoEnter'
+                      @leave='infoLeave'
+                    >
+                      <span v-if="showCheckDate" class="check-date" ref='check-name'>{{ showCheckDate }}</span>
+                    </transition>
                     <span v-html="parsedName" ref='parsed-name'></span>
                     <Icon v-if="haveChecklist"
                       class="txt-icon checklist-icon"
@@ -326,6 +333,30 @@ export default {
     },
     copyTask() {
       this.$store.dispatch('task/copyTask', this.item)
+    },
+    infoEnter(el) {
+      const s = el.style
+
+      const {width} = el.getBoundingClientRect()
+      s.transitionDuration = 0
+      s.width = 0
+      s.opacity = 0
+      s.marginRight = 0
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.25s'
+        s.width = width + 'px'
+        s.marginRight = '8px'
+        s.opacity = 1
+      })
+    },
+    infoLeave(el) {
+      const s = el.style
+
+      s.transitionDuration = '.25s'
+      s.width = 0
+      s.marginRight = 0
+      s.opacity = 0
     },
     enter(el) {
       if (!this.isEditing) {
@@ -982,6 +1013,12 @@ export default {
       if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
       return str
     },
+    showCheckDate() {
+      const n = this.viewName
+      if (!(this.canceled || this.completed) || !this.item.checkDate || n === 'Completed' || n === 'Logbook' || n === 'Canceled')
+        return null
+      return utils.getHumanReadableDate(this.item.checkDate, this.l)
+    },
     nextCalEvent() {
       const {t,c} = this.getTask
       if ((!c || c.type === 'someday') || (c.type !== 'periodic' && c.type !== 'weekly')) return null
@@ -1143,6 +1180,18 @@ export default {
 
 .text .icon {
   flex-shrink: 0;
+}
+
+.check-date {
+  display: inline-block;
+  position: relative;
+  top: 3px;
+  height: 100%;
+  margin-right: 8px;
+  color: var(--primary);
+  font-size: .9em;
+  overflow: hidden;
+  opacity: .4;
 }
 
 .info {

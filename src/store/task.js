@@ -861,10 +861,13 @@ export default {
           if (c.times === 0) c.times = null
         }
 
+        const tod = mom()
         setTask(b, {
           completedFire: serverTimestamp(),
-          completeDate: mom().format('Y-M-D'),
-          fullCompleteDate: mom().format('Y-M-D HH:mm ss'),
+          completeDate: tod.format('Y-M-D'),
+          checkDate: tod.format('Y-M-D'),
+          fullCheckDate: tod.format('Y-M-D HH:mm ss'),
+          fullCompleteDate: tod.format('Y-M-D HH:mm ss'),
           completed: true,
           calendar,
         }, taskRef(t.id), writes)
@@ -889,6 +892,8 @@ export default {
           completedFire: null,
           completeDate: null,
           completed: false,
+          checkDate: null,
+          fullCheckDate: null,
           calendar: c,
         }, taskRef(t.id), writes)
         commit('change', [t.id], {root: true})
@@ -897,17 +902,32 @@ export default {
 
       b.commit()
     },
-    async cancelTasks({commit}, ids) {
+    async cancelTasks({}, ids) {
       const b = fire.batch()
 
+      const tod = mom()
       await batchSetTasks(b, {
         canceled: true,
+        cancelDate: tod.format('Y-M-D'),
+        checkDate: tod.format('Y-M-D'),
+        fullCancelDate: tod.format('Y-M-D HH:mm ss'),
+        fullCheckDate: tod.format('Y-M-D HH:mm ss'),
       }, ids)
 
       b.commit()
     },
-    uncancelTasks({commit}, uncancelTasks) {
+    async uncancelTasks({}, ids) {
+      const b = fire.batch()
 
+      await batchSetTasks(b, {
+        canceled: false,
+        cancelDate: null,
+        checkDate: null,
+        fullCancelDate: null,
+        fullCheckDate: null,
+      }, ids)
+
+      b.commit()
     },
     async saveTasksById({commit}, {ids, task}) {
       const b = fire.batch()
