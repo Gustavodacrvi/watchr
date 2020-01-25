@@ -27,10 +27,15 @@
         opacity='0'
       />
     </div>
-    <div class="cont">
-      <div v-show="showing && !movingFolder">
-        <slot></slot>
-      </div>
+    <div class="cont" :class="{showCont}">
+      <transition
+        @enter='contEnter'
+        @leave='contLeave'
+      >
+        <div v-if="showCont">
+          <slot></slot>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -45,7 +50,7 @@ import folderUtils from "@/utils/folder"
 import { mapGetters, mapState, mapActions } from 'vuex'
 
 export default {
-  props: ['name', 'id', 'defaultShowing', 'movingFolder', 'folder', 'viewName', 'viewType'],
+  props: ['name', 'id', 'defaultShowing', 'movingFolder', 'folder', 'viewName', 'viewType', 'listLength'],
   components: {
     Icon, IconDrop,
   },
@@ -139,14 +144,50 @@ export default {
         lists: this.$store.state.list.lists
       })
     },
+    contEnter(el) {
+
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.height = 0
+      s.opacity = 0
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.25s'
+        s.height = this.getFolderContHeight
+        s.opacity = 1
+      })
+    },
+    contLeave(el) {
+      const s = el.style
+      
+      s.transitionDuration = 0
+      s.height = this.getFolderContHeight
+      s.opacity = 1
+      
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.25s'
+        s.height = 0
+        s.opacity = 0
+      })
+    },
   },
   computed: {
     ...mapState(['selectedTasks', 'isOnControl']),
     ...mapGetters(['l', 'isDesktop', 'platform']),
+    showCont() {
+      return this.showing && !this.movingFolder
+    },
     options() {
       return folderUtils.getFolderOptions({
         ...this.folder, id: this.id, name: this.name,
       }, this.showing, this.toggle)
+    },
+    getFolderContHeight() {
+      return (this.itemHeight * this.listLength) + 'px'
+    },
+    itemHeight() {
+      return this.isDesktop ? 35 : 42
     },
     isActive() {
       return this.name === this.viewName && this.viewType === 'folder'
@@ -171,8 +212,8 @@ export default {
 
 <style scoped>
 
-.Folder {
-  margin: 12px 0;
+.showCont {
+  margin-bottom: 12px;
 }
 
 .header {

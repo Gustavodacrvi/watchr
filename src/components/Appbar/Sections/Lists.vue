@@ -32,6 +32,7 @@
         :folder='f'
         :viewName='viewName'
         :viewType='viewType'
+        :listLength='f.list.length'
 
         :data-id='f.id'
 
@@ -129,7 +130,6 @@ export default {
       const h = el.getElementsByClassName('header')[0].style
       const s = el.style
       
-      s.margin = '0'
       s.opacity = '0'
       h.height = '0'
       h.transitionDuration = '0s'
@@ -139,7 +139,6 @@ export default {
         s.transitionDuration = '.15s'
         h.height = (this.isDesktop ? 35 : 42) + 'px'
         s.opacity = '1'
-        s.margin = '12px 0'
       })
     },
     leave(el) {
