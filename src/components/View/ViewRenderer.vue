@@ -333,13 +333,13 @@ export default {
     },
     addTagToTasks(id) {
       this.$store.dispatch('task/addTagsToTasksById', {
-        ids: this.selectedTasks,
+        ids: this.selectedItems,
         tagIds: [id],
       })
     },
     removeTasksFromLists() {
       this.$store.dispatch('task/saveTasksById', {
-        ids: this.selectedTasks,
+        ids: this.selectedItems,
         task: {list: ''},
       })
     },
@@ -363,7 +363,7 @@ export default {
   computed: {
     ...mapState({
       viewOrders: state => state.list.viewOrders,
-      selectedTasks: state => state.selectedTasks,
+      selectedItems: state => state.selectedItems,
       userInfo: state => state.userInfo,
       runningPomo: state => state.pomo.running,
       rest: state => state.pomo.rest,
@@ -616,7 +616,7 @@ export default {
     getIconDropOptionsFolders() {
       const moveToList = (obj) => {
         this.$store.dispatch('task/saveTasksById', {
-          ids: this.selectedTasks,
+          ids: this.selectedItems,
           task: {...obj, folder: null},
         })
       }
@@ -628,7 +628,7 @@ export default {
           icon: 'folder',
           callback: () => {
             this.$store.dispatch('task/saveTasksById', {
-              ids: this.selectedTasks,
+              ids: this.selectedItems,
               task: {folder: fold.id, list: null},
             })
           },
@@ -642,7 +642,7 @@ export default {
     getIconDropOptionsLists() {
       const moveToList = (obj) => {
         this.$store.dispatch('task/saveTasksById', {
-          ids: this.selectedTasks,
+          ids: this.selectedItems,
           task: {...obj, folder: null},
         })
       }
@@ -672,7 +672,7 @@ export default {
     },
     taskIconDropOptions() {
       const dispatch = this.$store.dispatch
-      const ids = this.selectedTasks
+      const ids = this.selectedItems
 
       const savePri = (pri) => {
         dispatch('task/saveTasksById', {ids, task: {priority: pri}})

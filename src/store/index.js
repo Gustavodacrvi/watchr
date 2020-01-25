@@ -114,7 +114,7 @@ const store = new Vuex.Store({
       links: [],
     },
     firstFireLoad: false,
-    selectedTasks: [],
+    selectedItems: [],
     fireBaseFirstLoaded: false,
     authState: false,
     fileURL: null,
@@ -178,8 +178,8 @@ const store = new Vuex.Store({
       },
     }),
     fallbackSelected(state) {
-      if (state.selectedTasks.length > 0)
-        return state.selectedTasks
+      if (state.selectedItems.length > 0)
+        return state.selectedItems
       else return state.mainSelection ? [state.mainSelection] : null
     },
     isDesktop(state) {
@@ -305,19 +305,19 @@ const store = new Vuex.Store({
       state.iconDrop = drop
     },
     unselectTask(state, id) {
-      if (id && state.selectedTasks.includes(id)) {
-        const i = state.selectedTasks.findIndex(el => el === id)
-        state.selectedTasks.splice(i, 1)
+      if (id && state.selectedItems.includes(id)) {
+        const i = state.selectedItems.findIndex(el => el === id)
+        state.selectedItems.splice(i, 1)
       }
     },
     selectTask(state, id) {
-      if (id && !state.selectedTasks.includes(id)) {
-        state.selectedTasks.push(id)
+      if (id && !state.selectedItems.includes(id)) {
+        state.selectedItems.push(id)
       }
     },
     clearSelected(state) {
-      if (state.selectedTasks.length !== 0)
-        state.selectedTasks = []
+      if (state.selectedItems.length !== 0)
+        state.selectedItems = []
     },
     toggleUser(state, isLogged) {
       state.authState = isLogged

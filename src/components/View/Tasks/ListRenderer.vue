@@ -821,7 +821,7 @@ export default {
   },
   computed: {
     ...mapState({
-      selected: state => state.selectedTasks,
+      selected: state => state.selectedItems,
       isOnControl: state => state.isOnControl,
       pressingKey: state => state.pressingKey,
       mainSelectionIndex: state => state.mainSelectionIndex,

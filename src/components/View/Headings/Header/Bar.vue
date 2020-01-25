@@ -80,7 +80,7 @@ export default {
   },
   methods: {
     click(event) {
-      if (this.selectedTasks.length > 0) event.stopPropagation()
+      if (this.selectedItems.length > 0) event.stopPropagation()
     },
     hide() {
       this.editing = false
@@ -123,7 +123,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['selectedTasks']),
+    ...mapState(['selectedItems']),
     ...mapGetters(['platform', 'isDesktop']),
     getIcon() {
       if (this.icon) return this.icon

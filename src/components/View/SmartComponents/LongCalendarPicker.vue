@@ -398,7 +398,7 @@ export default {
   },
   computed: {
     ...mapState({
-      selectedTasks: state => state.selectedTasks,
+      selectedItems: state => state.selectedItems,
     }),
     ...mapGetters({
       tasks: 'task/tasks',
@@ -439,9 +439,9 @@ export default {
     active() {
       this.moveBall()
     },
-    selectedTasks() {
+    selectedItems() {
       setTimeout(() => {
-        this.savedSelected = [...this.selectedTasks]
+        this.savedSelected = [...this.selectedItems]
       }, 10)
     },
   }

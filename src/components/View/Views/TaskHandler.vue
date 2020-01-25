@@ -153,7 +153,7 @@ export default {
     keydown(evt) {
       const p = () => evt.preventDefault()
       const {key} = evt
-      const hasSelected = this.selectedTasks.length > 0
+      const hasSelected = this.selectedItems.length > 0
 
       const fallbackTasks = this.fallbackSelected
 
@@ -623,7 +623,7 @@ export default {
   },
   computed: {
     ...mapState({
-      selectedTasks: state => state.selectedTasks,
+      selectedItems: state => state.selectedItems,
       userInfo: state => state.userInfo,
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
