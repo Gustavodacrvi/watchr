@@ -5,47 +5,52 @@
     mode="out-in"
     tag="span"
   >
-    <Icon v-if="!co && !se && !so" class="tra-icon cursor remove-highlight" key="1"
+    <Icon v-if="!ca && !co && !se && !so" class="tra-icon cursor remove-highlight" key="1"
       icon="box"
       :color='color'
       width="20px"
     />
-    <Icon v-else-if="co && !se && !so" class="tra-icon cursor remove-highlight" key="2"
+    <Icon v-else-if="ca && !co && !se && !so" class="tra-icon cursor remove-highlight" key="2"
+      icon="box-close"
+      :color='color'
+      width="20px"
+    />
+    <Icon v-else-if="co && !se && !so" class="tra-icon cursor remove-highlight" key="3"
       icon="box-check-filled"
       :color='color'
       width="20px"
     />
-    <Icon v-else-if="!co && !se && so" class="tra-icon cursor remove-highlight" key="2"
+    <Icon v-else-if="!co && !se && so" class="tra-icon cursor remove-highlight" key="4"
       icon="box-dash"
       :color='color'
       width="20px"
     />
-    <Icon v-else-if="co && !se && so" class="tra-icon cursor remove-highlight" key="3"
+    <Icon v-else-if="co && !se && so" class="tra-icon cursor remove-highlight" key="5"
       icon="box-check-dash"
       :color='color'
       width="20px"
     />
-    <Icon v-else-if="!co && se && !so" class="tra-icon cursor remove-highlight" key="4"
+    <Icon v-else-if="!co && se && !so" class="tra-icon cursor remove-highlight" key="6"
       icon="circle"
       :color='color'
       width="20px"
     />
-    <Icon v-else-if="!co && se && so" class="tra-icon cursor remove-highlight" key="5"
+    <Icon v-else-if="!co && se && so" class="tra-icon cursor remove-highlight" key="7"
       icon="circle-dash"
       :color='color'
       width="20px"
     />
-    <Icon v-else-if="co && !se && !so" class="tra-icon cursor remove-highlight" key="6"
+    <Icon v-else-if="co && !se && !so" class="tra-icon cursor remove-highlight" key="8"
       icon="box-check"
       :color='color'
       width="20px"
     />
-    <Icon v-else-if="co && se && !so" class="tra-icon cursor remove-highlight" key="7"
+    <Icon v-else-if="co && se && !so" class="tra-icon cursor remove-highlight" key="9"
       icon="circle-check"
       :color='color'
       width="20px"
     />
-    <Icon v-else-if="co && se && so" class="tra-icon cursor remove-highlight" key="8"
+    <Icon v-else-if="co && se && so" class="tra-icon cursor remove-highlight" key="10"
       icon="circle-check-dash"
       :color='color'
       width="20px"
@@ -58,7 +63,7 @@
 import Icon from "@/components/Icon.vue"
 
 export default {
-  props: ['co', 'so', 'se', 'color'],
+  props: ['co', 'so', 'ca', 'se', 'color'],
   components: {Icon},
 }
 

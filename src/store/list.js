@@ -176,7 +176,7 @@ export default {
           const compare = mom(date, 'Y-M-D')
           const diff = dead.diff(compare, 'days')
           if (diff === 0)
-            return ''
+            return 'Ends today'
           else if (diff === 1)
             return `1 day left`
           return `${diff} days left`

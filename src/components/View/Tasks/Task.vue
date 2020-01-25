@@ -67,15 +67,19 @@
               ref='cont'
             >
               <div class="check" ref='check'
-                @touchend.passive='touchComplete'
                 :class="{changeColor}"
               >
                 <TaskIcons class="check-icon icon"
                   :co='completed'
                   :color='circleColor'
                   :se='isSelecting'
+                  :ca='canceled'
                   :so='isSomeday'
                   @click.native.stop="desktopComplete"
+                  @contextmenu.native.stop='desktopCancel'
+                  
+                  @touchstart.native.passive='checkTouchStart'
+                  @touchend.native.passive='touchComplete'
                 />
               </div>
               <div class="text"
@@ -84,6 +88,13 @@
                 <div class="task-name-wrapper">
                   <span class="task-name" key="normal">
                     <span class="completed-line" ref='completed-line'></span>
+                    <transition
+                      appear
+                      @enter='infoEnter'
+                      @leave='infoLeave'
+                    >
+                      <span v-if="showCheckDate" class="check-date" ref='check-name'>{{ showCheckDate }}</span>
+                    </transition>
                     <span v-html="parsedName" ref='parsed-name'></span>
                     <Icon v-if="haveChecklist"
                       class="txt-icon checklist-icon"
@@ -170,9 +181,11 @@ export default {
       right: 0,
       timeout: null,
       completed: false,
+      checkStartTimeout: null,
+      canceled: false,
       completeAnimation: false,
       changeColor: false,
-      justCompleted: false,
+      stopTouchEvents: false,
       justSaved: false,
       doneTransition: false,
 
@@ -181,6 +194,7 @@ export default {
   },
   created() {
     this.completed = this.completedTask
+    this.canceled = this.canceledTask
   },
   mounted() {
     if (this.isDesktop)
@@ -319,6 +333,30 @@ export default {
     },
     copyTask() {
       this.$store.dispatch('task/copyTask', this.item)
+    },
+    infoEnter(el) {
+      const s = el.style
+
+      const {width} = el.getBoundingClientRect()
+      s.transitionDuration = 0
+      s.width = 0
+      s.opacity = 0
+      s.marginRight = 0
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.25s'
+        s.width = width + 'px'
+        s.marginRight = '8px'
+        s.opacity = 1
+      })
+    },
+    infoLeave(el) {
+      const s = el.style
+
+      s.transitionDuration = '.25s'
+      s.width = 0
+      s.marginRight = 0
+      s.opacity = 0
     },
     enter(el) {
       if (!this.isEditing) {
@@ -462,22 +500,42 @@ export default {
         this.$emit('de-select', this.$el)
       }, 10)
     },
-    openMobileOptions() {
+    vibrate() {
       window.navigator.vibrate(100)
+    },
+    openMobileOptions() {
+      this.vibrate()
       this.$store.commit('pushIconDrop', this.options)
     },
     desktopComplete() {
       if (this.isDesktop)
         this.completeTask()
     },
-    completeTask() {
-      const {t,c} = this.getTask
-      const comp = this.completed
-      this.completeAnimation = !comp
-      this.completed = !this.completed
-      if (!comp)
-        this.$store.dispatch('task/completeTasks', [this.item])
-      else this.$store.dispatch('task/uncompleteTasks', [this.item])
+    desktopCancel() {
+      if (this.isDesktop)
+        this.cancelTask()
+    },
+    completeTask(force = false) {
+      if (this.canceled && !force) {
+        this.cancelTask(true)
+      } else {
+        this.completeAnimation = !this.completed
+        this.completed = !this.completed
+        if (this.completed)
+          this.$store.dispatch('task/completeTasks', [this.item])
+        else this.$store.dispatch('task/uncompleteTasks', [this.item])
+      }
+    },
+    cancelTask(force = false) {
+      if (this.completed && !force) {
+        this.completeTask(true)
+      } else {
+        this.completeAnimation = !this.canceled
+        this.canceled = !this.canceled
+        if (this.canceled)
+          this.$store.dispatch('task/cancelTasks', [this.item.id])
+        else this.$store.dispatch('task/uncancelTasks', [this.item.id])
+      }
     },
     stopMouseUp(evt) {
       if (!this.isDesktop)
@@ -494,7 +552,9 @@ export default {
 
       this.changeColor = true
       this.timeout = setTimeout(() => {
-        this.openMobileOptions()
+        console.log(this.stopTouchEvents)
+        if (!this.stopTouchEvents)
+          this.openMobileOptions()
       }, 350)
     },
     touchmove(evt) {
@@ -537,7 +597,7 @@ export default {
       const fail = this.fail || time > 250
 
       const toggleTask = () => {
-        if (!this.isTaskSelected && !this.justCompleted)
+        if (!this.isTaskSelected && !this.stopTouchEvents)
           this.selectTask()
         else this.deselectTask()
       }
@@ -546,7 +606,7 @@ export default {
         this.selectTask()
       } else {
         if (!this.isSelecting) {
-          if (!this.moved && !this.justCompleted) this.isEditing = true
+          if (!this.moved && !this.stopTouchEvents) this.isEditing = true
         } else {
           if (!fail) toggleTask()
         }
@@ -555,11 +615,21 @@ export default {
       this.fail = false
       this.moved = false
       this.changeColor = false
-      this.justCompleted = false
+      this.stopTouchEvents = false
+    },
+    checkTouchStart() {
+      this.stopTouchEvents = true
+      this.checkStartTimeout = setTimeout(() => {
+        this.vibrate()
+        this.cancelTask()
+        this.checkStartTimeout = null
+      }, 300)
     },
     touchComplete() {
-      this.justCompleted = true
-      this.completeTask()
+      if (this.checkStartTimeout) {
+        this.completeTask() 
+        clearTimeout(this.checkStartTimeout)
+      }
     },
     selectTask() {
       this.$emit('select', this.$el)
@@ -643,6 +713,7 @@ export default {
       fallbackSelected: 'fallbackSelected',
       l: 'l',
       isTaskCompleted: 'task/isTaskCompleted',
+      isTaskCanceled: 'task/isTaskCanceled',
       isTaskInView: 'task/isTaskInView',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
@@ -654,6 +725,9 @@ export default {
     },
     completedTask() {
       return this.isTaskCompleted(this.item, mom().format('Y-M-D'), this.itemCompletionCompareDate)
+    },
+    canceledTask() {
+      return this.isTaskCanceled(this.item)
     },
     isTaskSelected() {
       return this.selectedTasks.includes(this.item.id)
@@ -939,6 +1013,12 @@ export default {
       if (str === this.viewNameValue || (str === 'Today' && this.viewName === 'Calendar')) return null
       return str
     },
+    showCheckDate() {
+      const n = this.viewName
+      if (!(this.canceled || this.completed) || !this.item.checkDate || n === 'Completed' || n === 'Logbook' || n === 'Canceled')
+        return null
+      return utils.getHumanReadableDate(this.item.checkDate, this.l)
+    },
     nextCalEvent() {
       const {t,c} = this.getTask
       if ((!c || c.type === 'someday') || (c.type !== 'periodic' && c.type !== 'weekly')) return null
@@ -981,6 +1061,9 @@ export default {
     },
     completedTask() {
       this.completed = this.completedTask
+    },
+    canceledTask() {
+      this.canceled = this.canceledTask
     },
     isTaskMainSelection() {
       this.bindMainSelection()
@@ -1097,6 +1180,18 @@ export default {
 
 .text .icon {
   flex-shrink: 0;
+}
+
+.check-date {
+  display: inline-block;
+  position: relative;
+  top: 3px;
+  height: 100%;
+  margin-right: 8px;
+  color: var(--primary);
+  font-size: .9em;
+  overflow: hidden;
+  opacity: .4;
 }
 
 .info {

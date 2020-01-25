@@ -381,7 +381,7 @@ export default {
     },
     mapProgress(link) {
       if (link.type === 'list')
-        return this.$store.getters['list/pieProgress'](this.tasks, link.id, this.isTaskCompleted)
+        return this.$store.getters['list/pieProgress'](this.tasks, link.id, task => this.isTaskInView(task, "Completed"))
       return null
     },
     mapFavorites(link) {
@@ -419,6 +419,7 @@ export default {
       getNumberOfTasksByTag: 'task/getNumberOfTasksByTag',
       getNumberOfTasksByView: 'task/getNumberOfTasksByView',
       favLists: 'list/getFavoriteLists',
+      isTaskInView: 'task/isTaskInView',
       // getfavfilters
       isTaskCompleted: 'task/isTaskCompleted',
       favFolders: 'folder/getFavoriteFolders',

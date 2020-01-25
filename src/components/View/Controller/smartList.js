@@ -136,7 +136,7 @@ export default {
                          this.isTaskInView(task, 'Today')
         return task => this.isTaskInView(task, n)
       }
-      return this.isTaskCompleted
+      return task => this.isTaskInView(task, 'Completed')
     },
     rootFilter() {
       const n = this.viewName
@@ -154,7 +154,7 @@ export default {
     },
     configFilterOptions() {
       if (this.viewName === 'Completed')
-        return pipe => pipe !== 'pipeCompleted' && pipe !== 'pipeSomeday'
+        return pipe => pipe !== 'pipeCanceled' && pipe !== 'pipeCompleted' && pipe !== 'pipeSomeday'
       return null
     },
     tasksOrder() {

@@ -18,14 +18,16 @@ const updateCache = async (snap: any,  context: functions.EventContext, collecti
   const promises: Array<Promise<FirebaseFirestore.WriteResult>> = []
 
   res.docs.forEach(doc => {
-    promises.push(
-      db.collection('users').doc(userId).collection('cache').doc('cache').set({
-        userId,
-        [collection]: {
-          [docId]: {...doc.data(), id: docId},
-        },
-      }, {merge: true})
-    )
+    const data = doc.data()
+    if (data.cloud_function_edit)
+      promises.push(
+        db.collection('users').doc(userId).collection('cache').doc('cache').set({
+          userId,
+          [collection]: {
+            [docId]: {...data, id: docId},
+          },
+        }, {merge: true})
+      )
   })
   
 

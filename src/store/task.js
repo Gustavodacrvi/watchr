@@ -171,10 +171,20 @@ export default {
           return JSON.stringify({i, a: [args[1], args[2]]})
         },
       },
+      isTaskCanceled: {
+        getter({}, task) {
+          return task.canceled
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].canceled,
+          }) 
+        },
+      },
       isTaskOverdue: {
         getter({getters}, task) {
           const calendar = task.calendar
-          if (!calendar || getters.isTaskCompleted(task)) return false
+          if (!calendar || getters.isTaskInView(task, "Completed")) return false
           
           let tod = null
           const getTod = () => {
@@ -289,20 +299,21 @@ export default {
       },
       hasTaskBeenCompletedOnDate: {
         getter({}, task, date) {
-          return task.completeDate === date
+          return task.completeDate === date || task.checkDate === date
         },
         cache(args) {
-          return JSON.stringify({t: args[0].completeDate, date: args[1]})
+          return JSON.stringify({t: args[0].completeDate, c: args[0].checkDate})
         }
       },
       isTaskInCompletedView: {
         getter({getters}, task) {
-          return getters.isTaskCompleted(task)
+          return getters.isTaskCompleted(task) || getters.isTaskCanceled(task)
         },
         cache(args) {
           return JSON.stringify({
             t: args[0].calendar,
             c: args[0].completed,
+            ca: args[0].canceled,
           })
         },
       },
@@ -347,7 +358,8 @@ export default {
               obj = {
                 calendar: t.calendar,
                 today: TODAY_DATE,
-                complete: t.completeDate
+                complete: t.completeDate,
+                checkCom: t.checkDate,
               }
               break
             }
@@ -366,14 +378,16 @@ export default {
               obj = {
                 calendar: t.calendar,
                 today: TOM_DATE,
-                complete: t.completeDate
+                complete: t.completeDate,
+                checkCom: t.checkDate,
               }
               break
             }
             case 'Completed': {
               obj = {
                 cal: t.calendar,
-                complete: t.completeDate
+                complete: t.completeDate,
+                ca: t.canceled,
               }
               break
             }
@@ -600,7 +614,7 @@ export default {
           return {
             total: ts.length,
             notCompleted: ts.filter(
-              task => !getters.isTaskCompleted(task)
+              task => !getters.isTaskInView(task, "Completed")
             ).length,
           }
         },
@@ -639,7 +653,7 @@ export default {
           return {
             total: ts.length,
             notCompleted: ts.filter(
-              task => !getters.isTaskCompleted(task)
+              task => !getters.isTaskInView(task, "Completed")
             ).length,
           }
         },
@@ -851,10 +865,13 @@ export default {
           if (c.times === 0) c.times = null
         }
 
+        const tod = mom()
         setTask(b, {
           completedFire: serverTimestamp(),
-          completeDate: mom().format('Y-M-D'),
-          fullCompleteDate: mom().format('Y-M-D HH:mm ss'),
+          completeDate: tod.format('Y-M-D'),
+          checkDate: tod.format('Y-M-D'),
+          fullCheckDate: tod.format('Y-M-D HH:mm ss'),
+          fullCompleteDate: tod.format('Y-M-D HH:mm ss'),
           completed: true,
           calendar,
         }, taskRef(t.id), writes)
@@ -879,11 +896,40 @@ export default {
           completedFire: null,
           completeDate: null,
           completed: false,
+          checkDate: null,
+          fullCheckDate: null,
           calendar: c,
         }, taskRef(t.id), writes)
         commit('change', [t.id], {root: true})
       }
       cacheBatchedItems(b, writes)
+
+      b.commit()
+    },
+    async cancelTasks({}, ids) {
+      const b = fire.batch()
+
+      const tod = mom()
+      await batchSetTasks(b, {
+        canceled: true,
+        cancelDate: tod.format('Y-M-D'),
+        checkDate: tod.format('Y-M-D'),
+        fullCancelDate: tod.format('Y-M-D HH:mm ss'),
+        fullCheckDate: tod.format('Y-M-D HH:mm ss'),
+      }, ids)
+
+      b.commit()
+    },
+    async uncancelTasks({}, ids) {
+      const b = fire.batch()
+
+      await batchSetTasks(b, {
+        canceled: false,
+        cancelDate: null,
+        checkDate: null,
+        fullCancelDate: null,
+        fullCheckDate: null,
+      }, ids)
 
       b.commit()
     },

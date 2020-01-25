@@ -32,6 +32,7 @@
         :folder='f'
         :viewName='viewName'
         :viewType='viewType'
+        :listLength='f.list.length'
 
         :data-id='f.id'
 
@@ -129,7 +130,6 @@ export default {
       const h = el.getElementsByClassName('header')[0].style
       const s = el.style
       
-      s.margin = '0'
       s.opacity = '0'
       h.height = '0'
       h.transitionDuration = '0s'
@@ -139,7 +139,6 @@ export default {
         s.transitionDuration = '.15s'
         h.height = (this.isDesktop ? 35 : 42) + 'px'
         s.opacity = '1'
-        s.margin = '12px 0'
       })
     },
     leave(el) {
@@ -186,7 +185,7 @@ export default {
       this.$store.dispatch('pushPopup', {comp: 'AddList', payload: {...obj, folderId: id}, naked: true})
     },
     getListProgress(list) {
-      return this.$store.getters['list/pieProgress'](this.tasks, list.id, this.isTaskCompleted)
+      return this.$store.getters['list/pieProgress'](this.tasks, list.id, task => this.isTaskInView(task, "Completed"))
     },
     getListIcon(list) {
       const arr = []
@@ -218,6 +217,7 @@ export default {
       isTaskInList: 'task/isTaskInList',
       sortedFolders: 'folder/sortedFolders',
       isTaskCompleted: 'task/isTaskCompleted',
+      isTaskInView: 'task/isTaskInView',
       getListsByFolderId: 'folder/getListsByFolderId',
 
       filterAppnavLists: 'list/filterAppnavLists',
@@ -280,6 +280,10 @@ export default {
 </style>
 
 <style scoped>
+
+.folders-root {
+  margin-top: 12px;
+}
 
 .folders-root {
   min-height: 15px;
