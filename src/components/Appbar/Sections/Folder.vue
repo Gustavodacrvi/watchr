@@ -167,7 +167,7 @@ export default {
       
       requestAnimationFrame(() => {
         s.transitionDuration = '.25s'
-        s.height = 0
+        s.height = this.itemHeight + 'px'
         s.opacity = 0
       })
     },

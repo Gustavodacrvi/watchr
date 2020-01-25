@@ -281,6 +281,10 @@ export default {
 <style scoped>
 
 .folders-root {
+  margin-top: 12px;
+}
+
+.folders-root {
   min-height: 15px;
 }
 
