@@ -67,7 +67,6 @@
               ref='cont'
             >
               <div class="check" ref='check'
-                @touchend.passive='touchComplete'
                 :class="{changeColor}"
               >
                 <TaskIcons class="check-icon icon"
@@ -78,6 +77,9 @@
                   :so='isSomeday'
                   @click.native.stop="desktopComplete"
                   @contextmenu.native.stop='desktopCancel'
+                  
+                  @touchstart.native.passive='checkTouchStart'
+                  @touchend.native.passive='touchComplete'
                 />
               </div>
               <div class="text"
@@ -172,10 +174,11 @@ export default {
       right: 0,
       timeout: null,
       completed: false,
+      checkStartTimeout: null,
       canceled: false,
       completeAnimation: false,
       changeColor: false,
-      justCompleted: false,
+      stopTouchEvents: false,
       justSaved: false,
       doneTransition: false,
 
@@ -466,8 +469,11 @@ export default {
         this.$emit('de-select', this.$el)
       }, 10)
     },
-    openMobileOptions() {
+    vibrate() {
       window.navigator.vibrate(100)
+    },
+    openMobileOptions() {
+      this.vibrate()
       this.$store.commit('pushIconDrop', this.options)
     },
     desktopComplete() {
@@ -478,9 +484,9 @@ export default {
       if (this.isDesktop)
         this.cancelTask()
     },
-    completeTask() {
-      if (this.canceled) {
-        this.cancelTask()
+    completeTask(force = false) {
+      if (this.canceled && !force) {
+        this.cancelTask(true)
       } else {
         this.completeAnimation = !this.completed
         this.completed = !this.completed
@@ -489,9 +495,9 @@ export default {
         else this.$store.dispatch('task/uncompleteTasks', [this.item])
       }
     },
-    cancelTask() {
-      if (this.completed) {
-        this.completeTask()
+    cancelTask(force = false) {
+      if (this.completed && !force) {
+        this.completeTask(true)
       } else {
         this.completeAnimation = !this.canceled
         this.canceled = !this.canceled
@@ -515,7 +521,9 @@ export default {
 
       this.changeColor = true
       this.timeout = setTimeout(() => {
-        this.openMobileOptions()
+        console.log(this.stopTouchEvents)
+        if (!this.stopTouchEvents)
+          this.openMobileOptions()
       }, 350)
     },
     touchmove(evt) {
@@ -558,7 +566,7 @@ export default {
       const fail = this.fail || time > 250
 
       const toggleTask = () => {
-        if (!this.isTaskSelected && !this.justCompleted)
+        if (!this.isTaskSelected && !this.stopTouchEvents)
           this.selectTask()
         else this.deselectTask()
       }
@@ -567,7 +575,7 @@ export default {
         this.selectTask()
       } else {
         if (!this.isSelecting) {
-          if (!this.moved && !this.justCompleted) this.isEditing = true
+          if (!this.moved && !this.stopTouchEvents) this.isEditing = true
         } else {
           if (!fail) toggleTask()
         }
@@ -576,11 +584,21 @@ export default {
       this.fail = false
       this.moved = false
       this.changeColor = false
-      this.justCompleted = false
+      this.stopTouchEvents = false
+    },
+    checkTouchStart() {
+      this.stopTouchEvents = true
+      this.checkStartTimeout = setTimeout(() => {
+        this.vibrate()
+        this.cancelTask()
+        this.checkStartTimeout = null
+      }, 300)
     },
     touchComplete() {
-      this.justCompleted = true
-      this.completeTask()
+      if (this.checkStartTimeout) {
+        this.completeTask() 
+        clearTimeout(this.checkStartTimeout)
+      }
     },
     selectTask() {
       this.$emit('select', this.$el)
