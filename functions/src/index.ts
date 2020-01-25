@@ -8,68 +8,119 @@ const FieldValue = admin.firestore.FieldValue
 
 // APP CACHING
 
-const updateCache = (snap: functions.Change<FirebaseFirestore.DocumentSnapshot>,  context: functions.EventContext, collection: string, removeAttachmentsOnDelete: boolean) => {
+const updateCache = async (snap: any,  context: functions.EventContext, collection: string) => {
   const { userId, docId } = context.params
-  
-  const data = snap.after.data()
 
-  if (data !== undefined) {
-    if (data.from !== 'watchr_web_app') {
-      console.log(data)
-      return db.collection('users').doc(userId).collection('cache').doc('cache').set({
-        userId,
-        [collection]: {
-          [docId]: {...data, id: docId},
-        },
-      }, {merge: true})
-    }
+  const res = await db.collection('users').doc(userId).collection(collection)
+    .where('id', '==', docId)
+    .where('cloud_function_edit', '==', true).get()
 
-    return null
-  } else {
-    const promises: any[] = []
-    
+  const promises: Array<Promise<FirebaseFirestore.WriteResult>> = []
+
+  console.log('RAN')
+  res.docs.forEach(doc => {
+    console.log('CHANGED_DOC')
     promises.push(
       db.collection('users').doc(userId).collection('cache').doc('cache').set({
         userId,
         [collection]: {
-          [docId]: FieldValue.delete(),
-        }
+          [docId]: {...doc.data(), id: docId},
+        },
       }, {merge: true})
     )
-    if (removeAttachmentsOnDelete)
-      promises.push(
-        firebase.storage().bucket().deleteFiles({
-          prefix: `attachments/${userId}/${collection}/${docId}`
-        })
-      )
-    
-    return Promise.all(promises)
-  }
+  })
+  
+
+  return Promise.all(promises)
 }
+
+const deleteCache = (snap: FirebaseFirestore.DocumentSnapshot, context: functions.EventContext, collection: string) => {
+  const { userId, docId } = context.params
+  
+  return Promise.all([
+    db.collection('users').doc(userId).collection('cache').doc('cache').set({
+      userId,
+      [collection]: {
+        [docId]: FieldValue.delete(),
+      }
+    }, {merge: true}),
+    firebase.storage().bucket().deleteFiles({
+      prefix: `attachments/${userId}/${collection}/${docId}`
+    }),
+  ])
+}
+
+export const createTaskCache = functions.firestore
+  .document("users/{userId}/tasks/{docId}")
+  .onCreate((a, b) => updateCache(a, b, 'tasks'))
+  
+export const createListCache = functions.firestore
+  .document("users/{userId}/lists/{docId}")
+  .onCreate((a, b) => updateCache(a, b, 'lists'))
+
+export const createInfoCache = functions.firestore
+  .document("users/{userId}/info/{docId}")
+  .onCreate((a, b) => updateCache(a, b, 'info'))
+
+export const createFoldersCache = functions.firestore
+  .document("users/{userId}/folders/{docId}")
+  .onCreate((a, b) => updateCache(a, b, 'folders'))
+
+export const createStatsCache = functions.firestore
+  .document("users/{userId}/stats/{docId}")
+  .onCreate((a, b) => updateCache(a, b, 'stats'))
+
+export const createTagsCache = functions.firestore
+  .document("users/{userId}/tags/{docId}")
+  .onCreate((a, b) => updateCache(a, b, 'tags'))
 
 export const updateTaskCache = functions.firestore
   .document("users/{userId}/tasks/{docId}")
-  .onWrite((a, b) => updateCache(a, b, 'tasks', true))
+  .onUpdate((a, b) => updateCache(a, b, 'tasks'))
   
 export const updateListCache = functions.firestore
   .document("users/{userId}/lists/{docId}")
-  .onWrite((a, b) => updateCache(a, b, 'lists', true))
+  .onUpdate((a, b) => updateCache(a, b, 'lists'))
 
 export const updateInfoCache = functions.firestore
   .document("users/{userId}/info/{docId}")
-  .onWrite((a, b) => updateCache(a, b, 'info', false))
+  .onUpdate((a, b) => updateCache(a, b, 'info'))
 
 export const updateFoldersCache = functions.firestore
   .document("users/{userId}/folders/{docId}")
-  .onWrite((a, b) => updateCache(a, b, 'folders', true))
+  .onUpdate((a, b) => updateCache(a, b, 'folders'))
 
 export const updateStatsCache = functions.firestore
   .document("users/{userId}/stats/{docId}")
-  .onWrite((a, b) => updateCache(a, b, 'stats', false))
+  .onUpdate((a, b) => updateCache(a, b, 'stats'))
 
 export const updateTagsCache = functions.firestore
   .document("users/{userId}/tags/{docId}")
-  .onWrite((a, b) => updateCache(a, b, 'tags', false))
+  .onUpdate((a, b) => updateCache(a, b, 'tags'))
+
+export const deleteTaskCache = functions.firestore
+  .document("users/{userId}/tasks/{docId}")
+  .onDelete((a, b) => deleteCache(a, b, 'tasks'))
+  
+export const deleteListCache = functions.firestore
+  .document("users/{userId}/lists/{docId}")
+  .onDelete((a, b) => deleteCache(a, b, 'lists'))
+
+export const deleteInfoCache = functions.firestore
+  .document("users/{userId}/info/{docId}")
+  .onDelete((a, b) => deleteCache(a, b, 'info'))
+
+export const deleteFoldersCache = functions.firestore
+  .document("users/{userId}/folders/{docId}")
+  .onDelete((a, b) => deleteCache(a, b, 'folders'))
+
+export const deleteStatsCache = functions.firestore
+  .document("users/{userId}/stats/{docId}")
+  .onDelete((a, b) => deleteCache(a, b, 'stats'))
+
+export const deleteTagsCache = functions.firestore
+  .document("users/{userId}/tags/{docId}")
+  .onDelete((a, b) => deleteCache(a, b, 'tags'))
 
 
 /*

@@ -797,7 +797,7 @@ export default {
               id: t.id,
               createdFire: serverTimestamp(),
               created: mom().format('Y-M-D HH:mm ss'),
-              from: 'watchr_web_app',
+              cloud_function_edit: false,
               folder: null,
               userId: uid(),
               name: t.name,

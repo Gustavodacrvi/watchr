@@ -2,10 +2,6 @@
 import { fire, auth } from '../store/index'
 import fb from 'firebase/app'
 
-
-const CLOUD_FUNCTION_KEY_WORD = 'watchr_web_app'
-
-
 export const uid = () => auth.currentUser.uid
 export const fd = () => fb.firestore.FieldValue
 export const userRef = id => fire.collection('users').doc(id ? id : uid())
@@ -30,7 +26,7 @@ export const setTask = (batch, task, ref, writes) => {
     const save = () => {
       const obj = {
         ...task, handleFiles: null,
-        from: CLOUD_FUNCTION_KEY_WORD, id: ref.id,
+        cloud_function_edit: false, id: ref.id,
         userId: uid(),
       }
       if (!writes)
@@ -101,7 +97,7 @@ export const batchSetLists = (batch, list, ids, rootWrites) => {
 export const setTag = (batch, tag, ref, writes) => {
   const obj = {
     ...tag, id: ref.id,
-    from: CLOUD_FUNCTION_KEY_WORD,
+    cloud_function_edit: false,
     userId: uid(),
   }
   if (!writes)
@@ -121,7 +117,7 @@ export const setTag = (batch, tag, ref, writes) => {
 export const setFolder = (batch, folder, ref, writes) => {
   const obj = {
     ...folder, id: ref.id,
-    from: CLOUD_FUNCTION_KEY_WORD,
+    cloud_function_edit: false,
     userId: uid(),
   }
   if (!writes)
@@ -140,7 +136,7 @@ export const setFolder = (batch, folder, ref, writes) => {
 export const setList = (batch, list, ref, writes) => {
   const obj = {
     ...list, id: ref.id,
-    from: CLOUD_FUNCTION_KEY_WORD,
+    cloud_function_edit: false,
     userId: uid(),
   }
   if (!writes)
@@ -159,7 +155,7 @@ export const setList = (batch, list, ref, writes) => {
 export const setPomo = (batch, doc) => {
   const obj = {
     ...doc, id: 'pomo',
-    from: CLOUD_FUNCTION_KEY_WORD,
+    cloud_function_edit: false,
     userId: uid(),
   }
   batch.set(cacheRef(), {
@@ -172,7 +168,7 @@ export const setPomo = (batch, doc) => {
 export const setInfo = (batch, info, writes) => {
   const obj = {
     ...info, id: 'info',
-    from: CLOUD_FUNCTION_KEY_WORD,
+    cloud_function_edit: false,
     userId: uid(),
   }
   if (!writes)
