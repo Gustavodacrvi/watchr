@@ -640,6 +640,7 @@ export default {
       fallbackSelected: 'fallbackSelected',
       isTaskSomeday: 'task/isTaskSomeday',
       isTaskCompleted: 'task/isTaskCompleted',
+      isTaskCanceled: 'task/isTaskCanceled',
       getTasksById: 'task/getTasksById',
 
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
@@ -826,7 +827,7 @@ export default {
     },
     filterOptionsPipes() {
       return [
-        'pipeFilterOptions', 'pipeSomeday', 'pipeCompleted',
+        'pipeFilterOptions', 'pipeSomeday', 'pipeCompleted', 'pipeCanceled',
       ]
     },
     filteredFilterOptionsByConfig() {
@@ -861,6 +862,10 @@ export default {
       const TOD_STR = mom().format('Y-M-D')
       if (this.showCompleted) return () => true
       return task => !this.isTaskCompleted(task, TOD_STR, this.itemCompletionCompareDate)
+    },
+    pipeCanceled() {
+      if (this.showCompleted) return () => true
+      return task => !this.isTaskCanceled(task)
     },
 
     presentTags() {

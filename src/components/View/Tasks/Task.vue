@@ -74,8 +74,10 @@
                   :co='completed'
                   :color='circleColor'
                   :se='isSelecting'
+                  :ca='canceled'
                   :so='isSomeday'
                   @click.native.stop="desktopComplete"
+                  @contextmenu.native.stop='desktopCancel'
                 />
               </div>
               <div class="text"
@@ -170,6 +172,7 @@ export default {
       right: 0,
       timeout: null,
       completed: false,
+      canceled: false,
       completeAnimation: false,
       changeColor: false,
       justCompleted: false,
@@ -181,6 +184,7 @@ export default {
   },
   created() {
     this.completed = this.completedTask
+    this.canceled = this.canceledTask
   },
   mounted() {
     if (this.isDesktop)
@@ -470,14 +474,31 @@ export default {
       if (this.isDesktop)
         this.completeTask()
     },
+    desktopCancel() {
+      if (this.isDesktop)
+        this.cancelTask()
+    },
     completeTask() {
-      const {t,c} = this.getTask
-      const comp = this.completed
-      this.completeAnimation = !comp
-      this.completed = !this.completed
-      if (!comp)
-        this.$store.dispatch('task/completeTasks', [this.item])
-      else this.$store.dispatch('task/uncompleteTasks', [this.item])
+      if (this.canceled) {
+        this.cancelTask()
+      } else {
+        this.completeAnimation = !this.completed
+        this.completed = !this.completed
+        if (this.completed)
+          this.$store.dispatch('task/completeTasks', [this.item])
+        else this.$store.dispatch('task/uncompleteTasks', [this.item])
+      }
+    },
+    cancelTask() {
+      if (this.completed) {
+        this.completeTask()
+      } else {
+        this.completeAnimation = !this.canceled
+        this.canceled = !this.canceled
+        if (this.canceled)
+          this.$store.dispatch('task/cancelTasks', [this.item.id])
+        else this.$store.dispatch('task/uncancelTasks', [this.item.id])
+      }
     },
     stopMouseUp(evt) {
       if (!this.isDesktop)
@@ -643,6 +664,7 @@ export default {
       fallbackSelected: 'fallbackSelected',
       l: 'l',
       isTaskCompleted: 'task/isTaskCompleted',
+      isTaskCanceled: 'task/isTaskCanceled',
       isTaskInView: 'task/isTaskInView',
       savedLists: 'list/sortedLists',
       savedFolders: 'folder/sortedFolders',
@@ -654,6 +676,9 @@ export default {
     },
     completedTask() {
       return this.isTaskCompleted(this.item, mom().format('Y-M-D'), this.itemCompletionCompareDate)
+    },
+    canceledTask() {
+      return this.isTaskCanceled(this.item)
     },
     isTaskSelected() {
       return this.selectedTasks.includes(this.item.id)
@@ -981,6 +1006,9 @@ export default {
     },
     completedTask() {
       this.completed = this.completedTask
+    },
+    canceledTask() {
+      this.canceled = this.canceledTask
     },
     isTaskMainSelection() {
       this.bindMainSelection()

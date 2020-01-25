@@ -171,6 +171,16 @@ export default {
           return JSON.stringify({i, a: [args[1], args[2]]})
         },
       },
+      isTaskCanceled: {
+        getter({}, task) {
+          return task.canceled
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].canceled,
+          }) 
+        },
+      },
       isTaskOverdue: {
         getter({getters}, task) {
           const calendar = task.calendar
@@ -886,6 +896,18 @@ export default {
       cacheBatchedItems(b, writes)
 
       b.commit()
+    },
+    async cancelTasks({commit}, ids) {
+      const b = fire.batch()
+
+      await batchSetTasks(b, {
+        canceled: true,
+      }, ids)
+
+      b.commit()
+    },
+    uncancelTasks({commit}, uncancelTasks) {
+
     },
     async saveTasksById({commit}, {ids, task}) {
       const b = fire.batch()
