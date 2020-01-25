@@ -105,6 +105,7 @@ export default {
       editDate: TOD_STR,
       begins: TOD_STR,
     })
+    const savedTags = getters['tag/tags']
     
     let opt = [
       {
@@ -232,10 +233,17 @@ export default {
             icon: 'tag',
             callback: () => ({
               allowSearch: true,
-              links: store.getters['tag/tags'].map(el => ({
+              select: true,
+              onSave: names => {
+                dispatch('list/editListTags', {
+                  tagIds: savedTags.filter(el => names.includes(el.name)).map(el => el.id),
+                  listId,
+                })
+              },
+              selected: (list.tags && list.tags.map(id => savedTags.find(el => el.id === id).name)) || [],
+              links: savedTags.map(el => ({
                 name: el.name,
                 icon: 'tag',
-                callback: () => dispatch('list/addListTag', {tagId: el.id, listId}),
               })),
             }),
           },

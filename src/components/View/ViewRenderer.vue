@@ -15,6 +15,7 @@
         :exclusiveFolders='exclusiveFolders'
 
         :tags='tagSelectionOptions'
+        :removeHeaderTag='removeHeaderTag'
         :priorities='priorityOptions'
         :lists='listSelectionOptions'
         :folders='folderSelectionOptions'
@@ -125,9 +126,9 @@ export default {
   ],
   props: ['viewName', 'viewType', 'isSmart', 'viewNameValue',
 
-  'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeTaskHandlerWhenThereArentTasks', 'saveHeaderContent',
+  'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'deadline', 'headerTags', 'headerCalendar', 'files',
-  'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView',
+  'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
@@ -533,9 +534,9 @@ export default {
       const {tags, list, folder, priorities} = this.getFilterOptions
 
       if (tags.inclusive.length > 0)
-        toPipe.push(t => this.doesTaskPassInclusiveTags(t, tags.inclusive, this.tags))
+        toPipe.push(t => this.doesTaskPassInclusiveTags(t, tags.inclusive, this.tags || []))
       if (tags.exclusive.length > 0)
-        toPipe.push(t => this.doesTaskPassExclusiveTags(t, tags.exclusive, this.tags))
+        toPipe.push(t => this.doesTaskPassExclusiveTags(t, tags.exclusive, this.tags || []))
 
       if (priorities.inclusive)
         toPipe.push(t => this.doesTaskPassInclusivePriority(t, priorities.inclusive))

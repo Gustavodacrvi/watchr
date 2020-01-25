@@ -16,7 +16,8 @@ service cloud.firestore {
       }
       match /tasks/{task} {
         allow create: if isSignedIn();
-        allow read, update, delete: if isOwner();
+        allow update: if isOwner();
+        allow read, delete: if isOwner();
       }
       match /tags/{tag} {
         allow create: if isSignedIn();
@@ -43,7 +44,7 @@ service cloud.firestore {
         return isSignedIn() && (request.auth.uid == resource.data.userId);
       }
       function isSignedIn() {
-        return request.auth.uid != null
+        return request.auth.uid != null;
       }
     }
   }

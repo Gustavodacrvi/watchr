@@ -34,7 +34,7 @@
           @goup='$emit("goup")'
           @godown='$emit("godown")'
         />
-        <div class="tags-wrapper" :class="{showTag: atLeastOnSpecialTag || task.tags.length > 0}">
+        <div class="tags-wrapper" :class="{showTag: atLeastOnSpecialTag || task.tags && task.tags.length > 0}">
           <div class="tags" :class="{show}">
             <Tag v-if="task.taskDuration"
               icon="clock"
@@ -74,13 +74,15 @@
             />
           </div>
           <div class="tags" :class="{show}">
-            <Tag v-for="t in task.tags"
-              :key="t"
-              icon="tag"
-              color='var(--red)'
-              :value="t"
-              @click="removeTag(t)"
-            />
+            <template v-if="task.tags">
+              <Tag v-for="t in task.tags"
+                :key="t"
+                icon="tag"
+                color='var(--red)'
+                :value="t"
+                @click="removeTag(t)"
+              />
+            </template>
           </div>
         </div>
         <div class="file-drag-drop-wrapper">
@@ -531,10 +533,14 @@ export default {
       }
     },
     removeTag(name) {
-      const index = this.task.tags.findIndex(el => el === name)
-      this.task.tags.splice(index, 1)
+      if (this.task.tags) {
+        const index = this.task.tags.findIndex(el => el === name)
+        this.task.tags.splice(index, 1)
+      }
     },
     addTag(name) {
+      if (!this.task.tags)
+        this.task.tags = []
       if (!this.task.tags.some(e => e === name))
         this.task.tags.push(name)
     },
@@ -597,10 +603,11 @@ export default {
     getTagNames() {
       const tags = this.savedTags
       const names = []
-      for (const id of this.task.tags) {
-        const tag = tags.find(el => el.id === id)
-        if (tag) names.push(tag.name)
-      }
+      if (this.task.tags)
+        for (const id of this.task.tags) {
+          const tag = tags.find(el => el.id === id)
+          if (tag) names.push(tag.name)
+        }
       return names
     },
     listName() {
@@ -663,7 +670,7 @@ export default {
       }
     },
     tagIds() {
-      return this.$store.getters['tag/getTagsByName'](this.task.tags).map(el => el.id)
+      return this.$store.getters['tag/getTagsByName'](this.task.tags || []).map(el => el.id)
     },
     priorities() {
       return this.$store.getters['task/priorityOptions']

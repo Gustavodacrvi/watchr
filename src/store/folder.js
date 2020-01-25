@@ -5,7 +5,7 @@ import fb from 'firebase/app'
 import utils from '../utils'
 import utilsTask from '../utils/task'
 import MemoizeGetters from './memoFunctionGetters'
-import { folderColl, uid, folderRef, deleteFolder, setFolder, serverTimestamp, listRef, setInfo, taskRef, setTask, setList } from '../utils/firestore'
+import { folderColl, uid, folderRef, deleteFolder, setFolder, serverTimestamp, listRef, setInfo, taskRef, setTask, batchSetLists,setList, cacheBatchedItems, batchSetTasks } from '../utils/firestore'
 import mom from 'moment'
 
 export default {
@@ -72,9 +72,9 @@ export default {
   },
   actions: {
     addFolder(c, fold) {
-      const batch = fire.batch()
+      const b = fire.batch()
       
-      setFolder(batch, {
+      setFolder(b, {
         tasks: [],
         files: [],
         createdFire: serverTimestamp(),
@@ -83,7 +83,7 @@ export default {
         defaultShowing: true,
       }, folderRef())
 
-      batch.commit()
+      b.commit()
     },
     updateFoldersOrder(c, ids) {
       const b = fire.batch()
@@ -95,104 +95,125 @@ export default {
       b.commit()
     },
     updateOrder(c, {id, ids}) {
-      const batch = fire.batch()
+      const b = fire.batch()
       
-      setFolder(batch, {
+      setFolder(b, {
         order: ids,
       }, folderRef(id))
 
-      batch.commit()
+      b.commit()
     },
     saveFolder(c, fold) {
-      const batch = fire.batch()
+      const b = fire.batch()
       
-      setFolder(batch, fold, folderRef(fold.id))
+      setFolder(b, fold, folderRef(fold.id))
 
-      batch.commit()
+      b.commit()
     },
     moveListToRoot(c, {id, ids}) {
-      const batch = fire.batch()
+      const b = fire.batch()
 
-      setInfo(batch, {lists: ids})
-      setList(batch, {folder: null}, listRef(id))
+      const writes = []
 
-      batch.commit()
+      setInfo(b, {lists: ids}, writes)
+      setList(b, {folder: null}, listRef(id), writes)
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
+    },
+    moveListBetweenFolders(c, {folder, id, ids}) {
+      const b = fire.batch()
+
+      const writes = []
+
+      setFolder(b, {order: ids}, folderRef(folder), writes)
+      setList(b, {folder}, listRef(id), writes)
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
     },
     moveTasksToFolder({getters}, {ids, taskIds, folderId, smartView}) {
       const fold = getters.getFoldersById([folderId])[0]
-      const batch = fire.batch()
+      const b = fire.batch()
 
       let views = fold.smartViewsOrders
       if (!views) views = {}
       views[smartView] = ids
 
-      for (const id of taskIds) {
-        setTask(batch, {
-          list: null,
-          folder: folderId,
-          heading: null,
-        }, taskRef(id))
-      }
-      setFolder(batch, {
-        smartViewsOrders: views,
-      }, folderRef(folderId))
+      const writes = []
 
-      batch.commit()
+      batchSetTasks(b, {
+        list: null,
+        folder: folderId,
+        heading: null,
+      }, taskIds, writes)
+
+      setFolder(b, {
+        smartViewsOrders: views,
+      }, folderRef(folderId), writes)
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
     },
     moveTasksToFolderCalendarOrder({rootState}, {ids, taskIds, date, folderId}) {
-      const batch = fire.batch()
+      const b = fire.batch()
 
-      for (const id of taskIds) {
-        setTask({
-          folder: folderId,
-          list: null,
-          heading: null,
-        }, taskRef(id))
-      }
+      const writes = []
+      
+      batchSetTasks(b, {
+        folder: folderId,
+        list: null,
+        heading: null,
+      }, taskIds, writes)
 
       const calendarOrders = utilsTask.getUpdatedCalendarOrders(ids, date, rootState)
       
-      setInfo(batch, {calendarOrders})
+      setInfo(b, {calendarOrders}, writes)
 
-      batch.commit()
+      cacheBatchedItems(b, writes)
+
+      b.commit()
     },
-    addTaskByIndex(c, {ids, index, task, folderId, newTaskRef}) {
-      const batch = fire.batch()
+    async addTaskByIndex(c, {ids, index, task, folderId, newTaskRef}) {
+      const b = fire.batch()
 
-      setTask(batch, {
+      const writes = []
+
+      await setTask(b, {
         userId: uid(),
         ...task,
-      }, newTaskRef).then(() => {
-        ids.splice(index, 0, newTaskRef.id)
-        setFolder(batch, {tasks: ids}, folderRef(folderId))
-  
-        batch.commit()
-      })
-    },
-    moveListBetweenFolders(c, {folder, id, ids}) {
-      const batch = fire.batch()
+      }, newTaskRef, writes)
+      ids.splice(index, 0, newTaskRef.id)
+      setFolder(b, {tasks: ids}, folderRef(folderId), writes)
 
-      setFolder(batch, {order: ids}, folderRef(folder))
-      setList(batch, {folder}, listRef(id))
+      cacheBatchedItems(b, writes)
 
-      batch.commit()
+      b.commit()
     },
     deleteFolderById({getters}, {id, lists, tasks}) {
-      const batch = fire.batch()
+      const b = fire.batch()
 
       const folderLists = getters.getListsByFolderId({id, lists})
       const folderTasks = tasks.filter(t => t.folder === id)
-      for (const l of folderLists)
-        setList(batch, {folder: null}, listRef(l.id))
-      for (const t of folderTasks) {
-        setTask({
-          folder: null,
-        }, taskRef(t.id))
-      }
-      
-      deleteFolder(id)
 
-      batch.commit()
+      const writes = []
+      
+      batchSetLists(b, {
+        folder: null,
+      }, folderLists.map(el => el.id), writes)
+
+      batchSetTasks(b, {
+        folder: null,
+      }, folderTasks.map(el => el.id), writes)
+    
+      deleteFolder(b, id, writes)
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
     },
     saveSmartViewHeadingTasksOrder({getters}, {ids, folderId, smartView}) {
       const folder = getters.getFoldersById([folderId])[0]

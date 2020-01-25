@@ -19,6 +19,7 @@ export default {
     },
     mainFallbackItem() {
       return (task, force) => {
+        task.tags = []
         if (force || (task.tags.length === 0 || !task.tags.includes(this.viewTag.id)))
           task.tags.push(this.viewTag.id)
         return task
@@ -69,7 +70,7 @@ export default {
     mainFilter() {
       const tag = this.viewTag
       if (tag)
-        return task => this.doesTaskPassInclusiveTags(task, [tag.id], this.tags)
+        return task => this.doesTaskPassInclusiveTags(task, [tag.id], this.tags || [])
       return () => false
     },
     rootFilter() {

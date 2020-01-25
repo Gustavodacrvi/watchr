@@ -18,7 +18,7 @@
     :headingsOrder='headingsOrder'
     :showAllHeadingsItems='showAllHeadingsItems'
     :rootFallbackItem='rootFallbackItem'
-    :removeTaskHandlerWhenThereArentTasks='removeTaskHandlerWhenThereArentTasks'
+    :removeListHandlerWhenThereArentLists='removeListHandlerWhenThereArentLists'
 
     :mainFilter='mainFilter'
     :rootFilter='rootFilter'
@@ -40,6 +40,7 @@
     :viewComponent='viewComponent'
     :isListType='isListType'
     :extraListView='extraListView'
+    :removeHeaderTag='removeHeaderTag'
 
     @save-schedule='saveSchedule'
     @save-header-name='saveHeaderName'
@@ -48,7 +49,6 @@
     @add-heading='addHeading'
     @update-ids='updateIds'
     @remove-defer-date='removeDeferDate'
-    @remove-header-tag='removeHeaderTag'
     @remove-deadline='removeDeadline'
     @remove-repeat='removeRepeat'
     
@@ -369,7 +369,7 @@ export default {
             },
             onAddTask: obj => {
               if (isSmartOrderViewType)
-                this.$store.dispatch('folder/addTaskByIndexSmartViewFolder', {
+                this.$store.dispatch('list/addTaskByIndexSmartViewFolder', {
                   ...obj, folderId: folder.id, viewName: viewName,
                 })
               else
