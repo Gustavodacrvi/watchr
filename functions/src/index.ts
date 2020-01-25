@@ -17,9 +17,7 @@ const updateCache = async (snap: any,  context: functions.EventContext, collecti
 
   const promises: Array<Promise<FirebaseFirestore.WriteResult>> = []
 
-  console.log('RAN')
   res.docs.forEach(doc => {
-    console.log('CHANGED_DOC')
     promises.push(
       db.collection('users').doc(userId).collection('cache').doc('cache').set({
         userId,

@@ -60,7 +60,7 @@ moment.locale(lang)
 const uid = () => auth.currentUser.uid
 
 
-const version = '083'
+const version = '084'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
