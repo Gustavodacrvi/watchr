@@ -296,7 +296,7 @@ export default {
       const {key} = evt
       const hasSelected = this.selectedItems.length > 0
 
-      const fallbackTasks = this.fallbackSelected
+      const fallbackItems = this.fallbackSelected
 
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
@@ -340,24 +340,24 @@ export default {
       }
 
       utils.saveByShortcut(this, key, p, (type, task) => {
+        const dispatch = this.$store.dispatch
         if ((this.isMainSelectionInTasks === null) || this.isMainSelectionInTasks || this.selectedType === 'Task') {
-          const dispatch = this.$store.dispatch
 
-          if (fallbackTasks)
+          if (fallbackItems)
             switch (type) {
               case 'delete': {
-                dispatch('task/deleteTasks', fallbackTasks)
+                dispatch('task/deleteTasks', fallbackItems)
                 break
               }
               case 'save': {
                 dispatch('task/saveTasksById', {
-                  ids: fallbackTasks,
+                  ids: fallbackItems,
                   task,
                 })
                 break
               }
               case 'toggleCompletion': {
-                const tasks = this.getTasksById(fallbackTasks)
+                const tasks = this.getTasksById(fallbackItems)
                 const completed = tasks.filter(t => t.completed)
                 const uncompleted = tasks.filter(t => !t.completed)
                 dispatch('task/completeTasks', uncompleted)
@@ -365,13 +365,21 @@ export default {
                 break
               }
               case 'pomo': {
-                dispatch('pomo/save', this.selectTask(fallbackTasks)[0])
+                dispatch('pomo/save', this.selectTask(fallbackItems)[0])
                 break
               }
             }
 
-        } else if (this.selectedType === 'List') {
+        } else if ((this.isMainSelectionInTasks !== null && !this.isMainSelectionInTasks) || this.selectedType === 'List') {
 
+          switch (type) {
+            case 'delete': {
+              dispatch('list/deleteMultipleListsByIds', {
+                ids: fallbackItems,
+                tasks: this.savedTasks,
+              })
+            }
+          }
         }
       })
       
@@ -655,7 +663,7 @@ export default {
       lists: 'list/lists',
       folders: 'folder/folders',
       savedLists: 'list/sortedLists',
-      savedFolders: 'folder/sortedFolders',
+      savedTasks: 'task/tasks',
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
       fallbackSelected: 'fallbackSelected',

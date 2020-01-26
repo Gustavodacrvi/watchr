@@ -960,6 +960,35 @@ export default {
 
       b.commit()
     },
+    deleteMultipleListsByIds({getters}, {ids, tasks}) {
+      const b = fire.batch()
+
+      const writes = []
+
+      ids.forEach(id => {
+
+        const list = getters.getListsById([id])[0]
+        let folder = null
+        if (list.folder) folder = list.folder
+
+        const taskIds = []
+        tasks.forEach(el => {
+          if (el.list === id) taskIds.push(el.id)
+        })
+        batchSetTasks(b, {
+          list: null,
+          folder,
+          heading: null,
+        }, taskIds, writes)
+
+        deleteList(b, id, writes)
+        
+      })
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
+    },
     importTemplate(c, {list, tasks}) {
       const b = fire.batch()
 
