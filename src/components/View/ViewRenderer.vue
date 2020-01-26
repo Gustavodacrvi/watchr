@@ -43,9 +43,14 @@
         :movingButton='movingButton'
         :showCompleted='showCompleted'
         :showSomeday='passSomedayTasks'
+        :selectEverythingToggle='selectEverythingToggle'
         :openCalendar='getHelperComponent === "LongCalendarPicker"'
 
         @allow-someday='showSomeday = true'
+
+        @go='go'
+
+        @items-ids='getAllListsIds'
       />
       <transition name="fade-t">
         <component v-if="defer(2)" :is='getViewComp' class='view-renderer-move'
@@ -58,6 +63,7 @@
           :showCompleted='showCompleted'
           :showSomeday='passSomedayTasks'
           :pipeFilterOptions='pipeFilterOptions'
+          :selectEverythingToggle='selectEverythingToggle'
           :taskIconDropOptions='taskIconDropOptions'
           :autoSchedule='autoSchedule'
           :openCalendar='getHelperComponent === "LongCalendarPicker"'
@@ -70,9 +76,9 @@
           @present-lists='v => presentLists = v'
           @present-folders='v => presentFolders = v'
 
-          @someday='showSomeday = !showSomeday'
-          @completed='showCompleted = !showCompleted'
-          @calendar='toggleCalendar'
+          @go='go'
+
+          @items-ids='getAllTasksIds'
         />
       </transition>
       <div style='height: 400px'></div>
@@ -109,7 +115,7 @@ import Defer from '@/mixins/defer'
 
 import ViewRendererLongCalendarPicker from '@/components/View/SmartComponents/ViewRendererLongCalendarPicker.vue'
 
-import { mapGetters, mapState, mapActions } from 'vuex'
+import { mapGetters, mapState, mapActions, mapMutations } from 'vuex'
 
 import utilsTask from '@/utils/task'
 import utils from '@/utils/index.js'
@@ -128,7 +134,7 @@ export default {
 
   'headingEditOptions', 'showEmptyHeadings', 'icon', 'notes', 'removeListHandlerWhenThereArentLists', 'saveHeaderContent',
   'headerOptions', 'deadline', 'headerTags', 'headerCalendar', 'files',
-  'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag',
+  'progress', 'tasksOrder',  'rootFallbackItem', 'mainFallbackItem', 'savedSchedule', 'extraListView', 'removeHeaderTag', 'saveHeaderName',
   'showHeading', 'smartComponent', 'onSmartComponentUpdate', 'viewComponent',
   
   'mainFilter', 'rootFilter' ,'headings', 'headingsOrder', 'onSortableAdd',  'updateHeadingIds', 'showAllHeadingsItems', 'itemCompletionCompareDate', 'headingsPagination', 'configFilterOptions'],
@@ -177,6 +183,13 @@ export default {
       diffX: 0,
       touchFail: false,
       right: false,
+
+      selectEverythingToggle: false,
+      keypressed: '',
+      keypressedSettimeout: null,
+
+      allViewTasksIds: [],
+      allListsIds: [],
     }
   },
   created() {
@@ -185,12 +198,312 @@ export default {
     this.showingFolderSelection = localStorage.getItem('folderFilters') === 'true'
     this.showingListSelection = localStorage.getItem('listFilters') === 'true'
     this.autoSchedule = this.savedSchedule
+
+    window.addEventListener('keydown', this.keydown)
+    window.addEventListener('keypress', this.keypress)
   },
   mounted() {
     this.getComputedOptions()
   },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.keydown)
+    window.removeEventListener('keypress', this.keypress)
+  },
   methods: {
+    ...mapMutations(['saveMainSelection']),
     ...mapActions(['getOptions']),
+    getAllTasksIds(ids) {
+      this.allViewTasksIds = ids
+    },
+    getAllListsIds(ids) {
+      this.allListsIds = ids
+    },
+
+
+    go(dire) {
+      const ids = this.allViewItemsIds
+      
+      if (dire === null)
+        this.select(null)
+      else if (this.mainSelection) {
+        if (dire === true || dire === false)
+          this.select(this.mainSelectionIndex + (dire === true ? 1 : -1), dire)
+        else
+          this.select(dire)  
+      } else if (dire > 0)
+        this.select(0)
+      else
+        this.select(ids.length - 1)
+    },
+    select(i, dire) {
+      if (i === null) {
+        this.saveMainSelection({
+          id: null,
+          index: null,
+        })
+      } else {
+        const ids = this.allViewItemsIds
+
+        if (ids[i]) {
+          this.saveMainSelection({
+            id: ids[i],
+            index: i,
+          })
+        } else if (dire !== undefined) {
+          if (dire) {
+            this.saveMainSelection({
+              id: ids[0],
+              index: 0,
+            })
+          } else {
+            this.saveMainSelection({
+              id: ids[ids.length - 1],
+              index: ids.length - 1,
+            })
+          }
+        } else if (!ids[i] && this.mainSelectionIsNotInView) {
+          this.select(null)
+        }
+      }
+    },
+    addDuration() {
+      const ids = this.fallbackSelected
+
+      const split = this.keypressed.split(':')
+      if (ids && this.keypressed.length > 0) {
+        let h = split[0]
+        let m = split[1]
+
+        if (!m) {
+          m = h
+          h = '0'
+        }
+        
+        const dur = mom(`${h}:${m}`, 'H:m', true)
+        const time = dur.format('HH:mm')
+
+        if (dur.isValid() && time !== '00:00')
+          this.$store.dispatch('task/saveTasksById', {
+            ids,
+            task: {
+              taskDuration: dur.format('HH:mm')
+            }
+          })
+      }
+    },
+    keydown(evt) {
+      const active = document.activeElement
+      const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
+      
+      if (!isTyping) {
+        const p = () => evt.preventDefault()
+        const {key} = evt
+        const hasSelected = this.selectedItems.length > 0
+  
+        const fallbackItems = this.fallbackSelected
+        
+        if (!isTyping && (!this.mainSelection || this.mainSelectionIsNotInView)) {
+          switch (key) {
+            case 'ArrowDown': {
+              this.go(true)
+              p()
+              break
+            }
+            case 'ArrowUp': {
+              this.go(false)
+              p()
+              break
+            }
+          }
+        }
+  
+        switch (key) {
+          case 'ArrowLeft': {
+            this.go(null)
+            break
+          }
+          case 'ArrowRight': {
+            this.go(null)
+            break
+          }
+        }
+        if (this.isOnControl) {
+          switch (key) {
+            case "a": {
+              p()
+              this.selectEverythingToggle = true
+              setTimeout(() => {
+                this.selectEverythingToggle = false
+              })
+            }
+          }
+        }
+  
+        utils.saveByShortcut(this, key, p, (type, item) => {
+          const dispatch = this.$store.dispatch
+  
+          const isList = (this.isMainSelectionInTasks !== null || !this.isMainSelectionInTasks) && this.selectedType === 'List'
+  
+          const isTask = ((this.isMainSelectionInTasks === null || this.isMainSelectionInTasks) && this.selectedType !== 'List') || this.selectedType === 'Task'
+  
+          if (isTask) {
+  
+            if (fallbackItems)
+              switch (type) {
+                case 'delete': {
+                  dispatch('task/deleteTasks', fallbackItems)
+                  break
+                }
+                case 'save': {
+                  dispatch('task/saveTasksById', {
+                    ids: fallbackItems,
+                    task: item,
+                  })
+                  break
+                }
+                case 'toggleCompletion': {
+                  const tasks = this.getTasksById(fallbackItems)
+                  const completed = tasks.filter(t => t.completed)
+                  const uncompleted = tasks.filter(t => !t.completed)
+                  if (uncompleted.length > 0)
+                    dispatch('task/completeTasks', uncompleted)
+                  if (completed.length > 0)
+                    dispatch('task/uncompleteTasks', completed)
+                  break
+                }
+                case 'pomo': {
+                  dispatch('pomo/save', this.selectTask(fallbackItems)[0])
+                  break
+                }
+              }
+  
+          } else {
+  
+            switch (type) {
+              case 'delete': {
+                dispatch('list/deleteMultipleListsByIds', {
+                  ids: fallbackItems,
+                  tasks: this.tasks,
+                })
+                break
+              }
+              case 'toggleCompletion': {
+                const lists = this.getListsById(fallbackItems)
+                const completed = lists.filter(l => l.completed)
+                const uncompleted = lists.filter(t => !t.completed)
+                if (uncompleted.length > 0)
+                  dispatch('list/completeLists', uncompleted)
+                if (completed.length > 0)
+                  dispatch('list/uncompleteLists', completed)
+                break
+              }
+              case 'save': {
+                if (item.tags) {
+                  dispatch('list/saveListsById', {
+                    list: item,
+                    ids: fallbackItems,
+                  })
+                } else if (item.calendar && item.calendar.specific) {
+                  dispatch('list/saveListsById', {
+                    list: {deadline: item.calendar.specific},
+                    ids: fallbackItems
+                  })
+                } else if (item.calendar || (item.calendar === null)) {
+                  dispatch('list/saveListsById', {
+                    list: {calendar: item.calendar},
+                    ids: fallbackItems,
+                  })
+                } else if (item.folder) {
+                  dispatch('list/saveListsById', {
+                    list: {folder: item.folder},
+                    ids: fallbackItems,
+                  })
+                }
+                break
+              }
+            }
+          }
+        })
+        
+        if (this.isOnShift)
+          switch (key) {
+            case "ArrowUp": {
+              this.go(0)
+              break
+            }
+            case "ArrowDown": {
+              this.go(this.allViewItemsIds.length - 1)
+              break
+            }
+          }
+        
+        if (this.isOnControl && !this.isOnShift) {
+          switch (key) {
+            case 'd': {
+              if (this.fallbackSelected)
+                p()
+              this.addDuration()
+            }
+          }
+        }
+  
+        if (this.isOnAlt && this.isOnControl)
+          switch (key) {
+            case 's': {
+              this.toggleCalendar()
+              break
+            }
+          }
+        
+        if (this.isOnAlt && !this.isOnControl)
+          switch (key) {
+
+            case 'c': {
+              this.showCompleted = !this.showCompleted
+              break
+            }
+            case 'o': {
+              this.showSomeday = !this.showSomeday
+              break
+            }
+          }
+      }
+    },
+/*     moveSelected(up) {
+      const selected = this.fallbackSelected
+      if (selected) {
+        const ids = this.currentSelectionTypeIds
+        const newOrder = ids.slice()
+        const increment = up ? -1 : 1
+  
+        const sort = i => {
+          const newIndex = i + increment
+          if (selected.includes(ids[i]) && ids[newIndex] && !selected.includes(newOrder[newIndex]))
+            newOrder.splice(newIndex, 0, newOrder.splice(i, 1)[0])
+        }
+  
+        if (!up)
+          for (let i = ids.length; i > -1; i--)
+            sort(i)
+        else
+          for (let i = 0; i < ids.length; i++)
+            sort(i)
+  
+        this.updateIds(newOrder)
+      }
+    }, */
+    keypress({key}) {
+      this.keypressed += key
+
+      if (this.keypressedSettimeout)
+        clearTimeout(this.keypressedSettimeout)
+
+      this.keypressedSettimeout = setTimeout(() => {
+        this.keypressed = ''
+      }, 3000)
+    },
+
+    
     async getComputedOptions() {
       if (this.headerOptions)
         this.computedHeaderOptions = await this.getOptions(this.headerOptions)
@@ -333,13 +646,13 @@ export default {
     },
     addTagToTasks(id) {
       this.$store.dispatch('task/addTagsToTasksById', {
-        ids: this.selectedTasks,
+        ids: this.selectedItems,
         tagIds: [id],
       })
     },
     removeTasksFromLists() {
       this.$store.dispatch('task/saveTasksById', {
-        ids: this.selectedTasks,
+        ids: this.selectedItems,
         task: {list: ''},
       })
     },
@@ -363,21 +676,28 @@ export default {
   computed: {
     ...mapState({
       viewOrders: state => state.list.viewOrders,
-      selectedTasks: state => state.selectedTasks,
+      selectedItems: state => state.selectedItems,
       userInfo: state => state.userInfo,
+      selectedType: state => state.selectedType,
       runningPomo: state => state.pomo.running,
       rest: state => state.pomo.rest,
       openHelper: state => state.pomo.openHelper,
+      mainSelection: state => state.mainSelection,
+      mainSelectionIndex: state => state.mainSelectionIndex,
+
+      isOnControl: state => state.isOnControl,
+      isOnShift: state => state.isOnShift,
+      isOnAlt: state => state.isOnAlt,
     }),
     ...mapGetters({
-      tags: 'tag/tags',
       platform: 'platform',
       isDesktop: 'isDesktop',
       l: 'l',
-      savedLists: 'list/sortedLists',
-      savedFolders: 'folder/sortedFolders',
-      savedFolders: 'folder/sortedFolders',
-      savedTags: 'tag/sortedTagsByName',
+      lists: 'list/sortedLists',
+      tasks: 'task/tasks',
+      folders: 'folder/sortedFolders',
+      tags: 'tag/sortedTagsByName',
+      fallbackSelected: 'fallbackSelected',
 
       getTagsByName: 'tag/getTagsByName',
       getTagsById: 'tag/getTagsById',
@@ -386,6 +706,7 @@ export default {
       getListsByName: 'list/getListsByName',
       getFoldersByName: 'folder/getFoldersByName',
       getFoldersById: 'folder/getFoldersById',
+      getTasksById: 'task/getTasksById',
 
       doesTaskPassExclusiveFolders: 'task/doesTaskPassExclusiveFolders',
       doesTaskPassInclusiveFolder: 'task/doesTaskPassInclusiveFolder',
@@ -396,8 +717,24 @@ export default {
       doesTaskPassInclusivePriority: 'task/doesTaskPassInclusivePriority',
       doesTaskPassExclusivePriorities: 'task/doesTaskPassExclusivePriorities',
     }),
+    allViewItemsIds() {
+      return [...this.allListsIds, ...this.allViewTasksIds]
+    },
+    isMainSelectionInTasks() {
+      if (!this.mainSelection)
+        return null
+      return this.allViewTasksIds.includes(this.mainSelection)
+    },
+    currentSelectionTypeIds() {
+      if (this.isMainSelectionInTasks)
+        return this.allViewTasksIds
+      return this.allListsIds
+    },
     showHeadingFloatingButton() {
       return this.viewType === 'list' && !this.isSmart
+    },
+    mainSelectionIsNotInView() {
+      return !this.allViewItemsIds.includes(this.mainSelection)
     },
     getPomoOptions() {
       if (this.userInfo && this.userInfo.pomo)
@@ -603,7 +940,7 @@ export default {
     },
     getIconDropOptionsTags() {
       const arr = []
-      const tags = this.savedTags
+      const tags = this.tags
       for (const t of tags) {
         arr.push({
           name: t.name,
@@ -616,19 +953,19 @@ export default {
     getIconDropOptionsFolders() {
       const moveToList = (obj) => {
         this.$store.dispatch('task/saveTasksById', {
-          ids: this.selectedTasks,
+          ids: this.selectedItems,
           task: {...obj, folder: null},
         })
       }
       const links = []
-      const folders = this.savedFolders
+      const folders = this.folders
       for (const fold of folders) {
         links.push({
           name: fold.name,
           icon: 'folder',
           callback: () => {
             this.$store.dispatch('task/saveTasksById', {
-              ids: this.selectedTasks,
+              ids: this.selectedItems,
               task: {folder: fold.id, list: null},
             })
           },
@@ -642,12 +979,12 @@ export default {
     getIconDropOptionsLists() {
       const moveToList = (obj) => {
         this.$store.dispatch('task/saveTasksById', {
-          ids: this.selectedTasks,
+          ids: this.selectedItems,
           task: {...obj, folder: null},
         })
       }
       const links = []
-      const lists = this.savedLists
+      const lists = this.lists
       for (const list of lists) {
         links.push({
           name: list.name,
@@ -672,7 +1009,7 @@ export default {
     },
     taskIconDropOptions() {
       const dispatch = this.$store.dispatch
-      const ids = this.selectedTasks
+      const ids = this.selectedItems
 
       const savePri = (pri) => {
         dispatch('task/saveTasksById', {ids, task: {priority: pri}})
@@ -1026,6 +1363,10 @@ export default {
     viewName() {
       this.autoSchedule = null
       this.getComputedOptions()
+      this.saveMainSelection({
+        id: null,
+        index: null,
+      })
     },
     savedSchedule() {
       this.autoSchedule = this.savedSchedule
@@ -1036,6 +1377,7 @@ export default {
     headerOptions() {
       this.getComputedOptions()
     },
+    
   }
 }
 

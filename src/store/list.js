@@ -237,21 +237,24 @@ export default {
       },
       pieProgress({getters, state}, tasks, listId, isTaskCompleted) {
         const list = getters.lists.find(el => el.id === listId)
-        const c = list.calendar
-        const ts = getters.getTasks(tasks, listId)
-        const numberOfTasks = ts.length
-        let completedTasks = 0
-        
-        let compareDate = null
-        if (c && c.lastCompleteDate)
-          compareDate = c.lastCompleteDate
-  
-        ts.forEach(el => {
-          if (isTaskCompleted(el, TOD_STR, compareDate)) completedTasks++
-        })
-        const result = 100 * completedTasks / numberOfTasks
-        if (isNaN(result)) return 0
-        return result
+        if (list) {
+          const c = list.calendar
+          const ts = getters.getTasks(tasks, listId)
+          const numberOfTasks = ts.length
+          let completedTasks = 0
+          
+          let compareDate = null
+          if (c && c.lastCompleteDate)
+            compareDate = c.lastCompleteDate
+    
+          ts.forEach(el => {
+            if (isTaskCompleted(el, TOD_STR, compareDate)) completedTasks++
+          })
+          const result = 100 * completedTasks / numberOfTasks
+          if (isNaN(result)) return 0
+          return result
+        }
+        return 0
       },
     }, true),
     getFavoriteLists(s, getters) {
@@ -262,16 +265,19 @@ export default {
     // ADD
 
     duplicateList(c, {list, rootTasks, headingTasks}) {
-      const batch = fire.batch()
+      const b = fire.batch()
 
-      const name = list.name + ' (2)'
+      const name = list.name + ' (copy)'
       const newListRef = listRef()
+
+      const writes = []
 
       const createTasks = (arr, tasks) => {
         for (const t of tasks) {
-          setTask(batch, {
+          const ref = taskRef()
+          setTask(b, {
             ...t, id: null, list: newListRef.id,
-          }, taskRef())
+          }, ref, writes)
           arr.push({
             oldId: t.id,
             newId: ref.id,
@@ -296,26 +302,37 @@ export default {
         h.tasks = newIds
       }
 
-      setList(batch, {
+      setList(b, {
         headingsOrder,
         headings,
         name,
+        folder: list.folder || null,
+        deadline: list.deadline || null,
+        tags: list.tags || [],
+        calendar: list.calendar || null,
+        notes: list.notes || null,
         tasks: newRootTasks.map(t => t.newId),
         userId: uid(),
-      }, newListRef)
+      }, newListRef, writes)
 
-      batch.commit()
+      cacheBatchedItems(b, writes)
+
+      b.commit()
     },
     addListInFolderByIndexFromView(c, {list, newItemRef, ids, folderId}) {
-      const batch = fire.batch()
+      const b = fire.batch()
 
-      setFolder(batch, {order: ids}, folderRef(folderId))
+      const writes = []
+
+      setFolder(b, {order: ids}, folderRef(folderId), writes)
 
       list.folder = folderId
 
-      batch.set(newItemRef, list)
+      setList(b, list, newItemRef, writes)
 
-      batch.commit()
+      cacheBatchedItems(b, writes)
+      
+      b.commit()
     },
     addList({}, {name, ids, index, folderId}) {
       const batch = fire.batch()
@@ -445,6 +462,17 @@ export default {
       const b = fire.batch()
       
       setList(b, list, listRef(list.id))
+
+      b.commit()
+    },
+    saveListsById(c, {list, ids}) {
+      const b = fire.batch()
+
+      const writes = []
+      
+      ids.forEach(id => setList(b, list, listRef(id), writes))
+
+      cacheBatchedItems(b, writes)
 
       b.commit()
     },
@@ -938,6 +966,35 @@ export default {
       }, ids, writes)
 
       deleteList(b, listId, writes)
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
+    },
+    deleteMultipleListsByIds({getters}, {ids, tasks}) {
+      const b = fire.batch()
+
+      const writes = []
+
+      ids.forEach(id => {
+
+        const list = getters.getListsById([id])[0]
+        let folder = null
+        if (list.folder) folder = list.folder
+
+        const taskIds = []
+        tasks.forEach(el => {
+          if (el.list === id) taskIds.push(el.id)
+        })
+        batchSetTasks(b, {
+          list: null,
+          folder,
+          heading: null,
+        }, taskIds, writes)
+
+        deleteList(b, id, writes)
+        
+      })
 
       cacheBatchedItems(b, writes)
 

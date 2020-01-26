@@ -51,7 +51,7 @@ export default {
   },
   computed: {
     ...mapState({
-      selectedTasks: state => state.selectedTasks,
+      selectedItems: state => state.selectedItems,
     }),
     ...mapGetters({
       tags: 'tag/tags',

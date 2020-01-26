@@ -23,6 +23,7 @@
           :isRoot='isRoot'
           :isSelecting='isSelecting'
           :multiSelectOptions='itemIconDropOptions'
+          :comp='comp'
 
           @de-select='deSelectItem'
           @select='selectItem'
@@ -408,12 +409,15 @@ export default {
             if (this.pressingMultiSelectKeys)
               this.selectMultipleIds(id)
             this.lastSelectedId = id
-            this.$emit('selectTask', id)
+
+
+            this.saveType(id)
+            this.$store.commit('selectItem', id)
           }
         },
         onDeselect: evt => {
           const id = evt.item.dataset.id
-          this.$emit('unselectTask', id)
+          this.$store.commit('unselectItem', id)
           if (this.selected.length === 0)
             setTimeout(() => {
               if (this.selected.length === 0)
@@ -675,9 +679,19 @@ export default {
     selectItem(el) {
       if (!this.selectedElements.includes(el)) {
         this.selectedElements.push(el)
-        this.$store.commit('selectTask', el.dataset.id)
+        this.saveType(el.dataset.id)
+        this.$store.commit('selectItem', el.dataset.id)
         Sortable.utils.select(el)
       }
+    },
+    saveType(id) {
+      if (this.selectedType !== this.comp) {
+        this.$store.commit('clearSelected')
+        setTimeout(() => {
+          this.$store.commit('selectItem', id)
+        })
+      }
+      this.$store.commit('selectType', this.comp)
     },
     deselectAll() {
       const els = this.selectedElements
@@ -685,7 +699,7 @@ export default {
         this.deSelectItem(e)
     },
     deSelectItem(el) {
-      this.$store.commit('unselectTask', el.dataset.id)
+      this.$store.commit('unselectItem', el.dataset.id)
       Sortable.utils.deselect(el)
 
       const i = this.selectedElements.findIndex(el => el === el)
@@ -821,8 +835,10 @@ export default {
   },
   computed: {
     ...mapState({
-      selected: state => state.selectedTasks,
+      selected: state => state.selectedItems,
       isOnControl: state => state.isOnControl,
+      selectedType: state => state.selectedType,
+      isOnShift: state => state.isOnShift,
       pressingKey: state => state.pressingKey,
       mainSelectionIndex: state => state.mainSelectionIndex,
       mainSelection: state => state.mainSelection,
@@ -837,7 +853,7 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     getMainSelectionIndex() {
-      return this.isRoot ? this.mainSelectionIndex : this.lazyItems.findIndex(i => i.id === this.mainSelection)
+      return this.lazyItems.findIndex(i => i.id === this.mainSelection)
     },
     isChangingViewName() {
       return this.changingViewName || this.rootChanging
@@ -877,10 +893,10 @@ export default {
       return this.isDesktop ? 38 : 50
     },
     pressingMultiSelectKeys() {
-      return this.pressingKey === 'Shift'
+      return this.isOnShift
     },
     pressingSelectKeys() {
-      return this.pressingKey === 'Control'
+      return this.isOnControl
     },
     enableSelect() {
       if (this.disableSelect) return false
@@ -913,6 +929,12 @@ export default {
   watch: {
     viewName() {
       this.deselectAll()
+    },
+    selected() {
+      const ids = this.selected
+      const removedEls = this.selectedElements.filter(el => el && !ids.find(id => id === el.dataset.id))
+      for (const el of removedEls)
+        this.deSelectItem(el)
     },
     items(newArr) {
       if (this.waitingUpdateTimeout) {

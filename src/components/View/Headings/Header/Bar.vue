@@ -64,7 +64,7 @@ export default {
     HeaderSearch,
     Icon, IconDrop,
   },
-  props: ['optionsHandle', 'options', 'progress', 'extraIcons', 'viewNameValue', 'notes', 'viewType', 'icon', 'viewName'],
+  props: ['optionsHandle', 'options', 'progress', 'extraIcons', 'viewNameValue', 'notes', 'viewType', 'icon', 'viewName', 'saveHeaderName'],
   data() {
     return {
       editing: false,
@@ -80,7 +80,7 @@ export default {
   },
   methods: {
     click(event) {
-      if (this.selectedTasks.length > 0) event.stopPropagation()
+      if (this.selectedItems.length > 0) event.stopPropagation()
     },
     hide() {
       this.editing = false
@@ -107,7 +107,8 @@ export default {
     },
     keydown({key}) {
       if (key === "Enter" && this.isEditable) {
-        this.$parent.$emit('save-header-name', this.title.trim())
+        if (this.saveHeaderName)
+          this.saveHeaderName(this.title.trim())
         this.editing = false
       }
     },
@@ -123,7 +124,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['selectedTasks']),
+    ...mapState(['selectedItems']),
     ...mapGetters(['platform', 'isDesktop']),
     getIcon() {
       if (this.icon) return this.icon
@@ -165,7 +166,7 @@ export default {
       return 'var(--red)'
     },
     isEditable() {
-      return !this.isSmart && (this.viewType === 'list' || this.viewType === 'tag') && this.isDesktop
+      return !this.isSmart && (this.viewType === 'list' || this.viewType === 'tag' || this.viewType === 'folder') && this.isDesktop
     },
   },
   watch: {

@@ -11,6 +11,7 @@
       :addItem='addList'
       :getItemFirestoreRef='getItemFirestoreRef'
       :onAddExistingItem='onAddExistingItem'
+      :selectEverythingToggle='selectEverythingToggle'
       :disableSelect='true'
       :disableFallback='true'
       :rootFilterFunction='rootFilterFunction'
@@ -23,6 +24,10 @@
 
       @update="updateListIds"
       @allow-someday='allowSomeday'
+
+      @go='go'
+      @selectItem='selectItem'
+      @unselectItem='unselectItem'
     />
   </div>  
 </template>
@@ -48,7 +53,7 @@ export default {
     HandlerMixin,
   ],
   props: ['rootFilter', 'comp', 'itemsOrder', 'updateIds', 'movingButton', 'addItem', 'showCompleted', 'folderId', 'showSomeday', 'showSomeday',
-  'removeListHandlerWhenThereArentLists'],
+  'removeListHandlerWhenThereArentLists', 'selectEverythingToggle'],
   components: {
     ListRendererVue,
   },
@@ -148,6 +153,9 @@ export default {
     },
     nonFilteredIds() {
       return this.nonFiltered.map(el => el.id)
+    },
+    allItemsIds() {
+      return this.sortLaseredLists.map(el => el.id)
     },
     sortLaseredLists() {
       return this.nonFiltered.filter(this.filterOptions)

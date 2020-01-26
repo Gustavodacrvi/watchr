@@ -5,7 +5,7 @@
     @enter='taskEnter'
     @leave='taskLeave'
   >
-    <div class="Task draggable" :class="[{isTaskSelected, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing, isTaskMainSelection}, platform]"
+    <div class="Task draggable" :class="[{isItemSelected, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing, isItemMainSelection}, platform]"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
     >
@@ -44,9 +44,9 @@
         @pointerup.stop
         @touchcancel.stop
         
-        @touchend.passive='touchEnd'
-        @touchmove.passive='touchmove'
         @touchstart.passive='touchStart'
+        @touchmove.passive='touchmove'
+        @touchend.passive='touchEnd'
       >
         <transition
           @enter='enter'
@@ -76,7 +76,7 @@
                   :ca='canceled'
                   :so='isSomeday'
                   @click.native.stop="desktopComplete"
-                  @contextmenu.native.stop='desktopCancel'
+                  @contextmenu.native.stop.prevent='desktopCancel'
                   
                   @touchstart.native.passive='checkTouchStart'
                   @touchend.native.passive='touchComplete'
@@ -158,9 +158,12 @@ import utils from '@/utils/index'
 
 import mom from 'moment'
 
+import ListItemMixin from "@/mixins/listItem"
+
 export default {
-  props: ['item', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'multiSelectOptions',  'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName', 'selectEverythingToggle',
-  'isSelecting'],
+  mixins: [ListItemMixin],
+  props: ['item', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
+  'isSelecting', 'selectEverythingToggle'],
   components: {
     Timeline, TaskIcons,
     Icon: IconVue,
@@ -173,167 +176,29 @@ export default {
       showingIconDropContent: false,
       isEditing: false,
       onHover: false,
-      startX: 0,
-      startY: 0,
-      startTime: 0,
-      initialScroll: 0,
-      moved: false,
-      right: 0,
-      timeout: null,
-      completed: false,
-      checkStartTimeout: null,
-      canceled: false,
-      completeAnimation: false,
-      changeColor: false,
-      stopTouchEvents: false,
       justSaved: false,
       doneTransition: false,
 
       editAction: null,
     }
   },
-  created() {
-    this.completed = this.completedTask
-    this.canceled = this.canceledTask
-  },
-  mounted() {
-    if (this.isDesktop)
-      this.bindContextMenu(this.options)
-
-    window.addEventListener('click', this.deselectTask)
-
-    this.bindMainSelection()
-  },
-  beforeDestroy() {
-    window.removeEventListener('click', this.deselectTask)
-    if (this.isTaskMainSelection)
-      window.removeEventListener('keydown', this.mainSelectionKeyDown)
-  },
   methods: {
-    changeTime(obj) {
-      this.$emit('change-time', {
-        ...obj,
-        from: this.item.id,
-      })
+    dispatchCompleteItem() {
+      this.$store.dispatch('task/completeTasks', [this.item])
     },
-    bindMainSelection() {
-      if (this.isDesktop)
-        if (this.isTaskMainSelection)
-          window.addEventListener('keydown', this.mainSelectionKeyDown)
-        else
-          window.removeEventListener('keydown', this.mainSelectionKeyDown)
+    dispatchUncompleteItem() {
+      this.$store.dispatch('task/uncompleteTasks', [this.item])
     },
-    mainSelectionKeyDown(evt) {
-      const p = () => evt.preventDefault()
-      const {key} = evt
-      const active = document.activeElement
-      const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
-
-      const toggleSelect = () => {
-        if (!this.isTaskSelected) {
-          if (this.selectedTasks.length === 0) {
-            this.selectTask()
-          } else {
-            this.selectTask()
-          }
-        } else {
-          this.deselectTask()
-        }
-      }
-
-      const hasSelected = this.selectedTasks.length > 0
-      if (!isTyping && !(this.isOnAlt && this.fallbackSelected) && !(hasSelected && this.isOnAlt))
-        switch (key) {
-          case 'ArrowDown': {
-            this.$emit('go', true)
-            p()
-            break
-          }
-          case 'ArrowUp': {
-            this.$emit('go', false)
-            p()
-            break
-          }
-        }
-
-      switch (key) {
-        case 'Enter': {
-          if (!isTyping)
-            if (!this.isOnControl && !this.justSaved)
-              this.isEditing = true
-            else if (this.isOnControl) {
-              toggleSelect()
-            }
-          break
-        }
-      }
-
-      if (!this.isOnShift) {
-        switch (key) {case ' ': {
-          if (!isTyping) {
-            p()
-            this.$emit('add-item-after', 1)
-          }
-          break
-        }}
-      }
-      if (this.isOnShift) {
-        switch (key) {
-          case "C": {
-            if (!this.isEditing) {
-              this.isEditing = true
-              this.editAction = 'addChecklist'
-            }
-            break
-          }
-          case "D": {
-            this.copyTask()
-            break
-          }
-          case ' ': {
-            if (!isTyping) {
-              p()
-              this.$emit('add-item-after', 0)
-            }
-            break
-          }
-        }
-      }
-      if (this.isOnControl && !this.isOnShift) {
-        switch (key) {
-          case ' ': {
-            if (!isTyping) {
-              p()
-              this.$emit('add-heading-after', +1)
-            }
-            break
-          }
-        }
-      }
-
-      if (this.isOnShift && this.isOnControl) {
-        switch (key) {
-          case ' ': {
-            if (!isTyping) {
-              p()
-              this.$emit('add-heading-after', 0)
-            }
-            break
-          }
-          case "ArrowUp": {
-            toggleSelect()
-            break
-          }
-          case "ArrowDown": {
-            toggleSelect()
-            break
-          }
-        }
-      }
+    dispatchCancelItem() {
+      this.$store.dispatch('task/cancelTasks', [this.item.id])
     },
-    copyTask() {
+    dispatchUncancelItem() {
+      this.$store.dispatch('task/uncancelTasks', [this.item.id])
+    },
+    copyItem() {
       this.$store.dispatch('task/copyTask', this.item)
     },
+
     infoEnter(el) {
       const s = el.style
 
@@ -371,7 +236,7 @@ export default {
         c.opacity = 0
         inf.opacity = 0
         co.transform = 'translateX(-27px)'
-        this.deselectTask()
+        this.deselectItem()
         requestAnimationFrame(() => {
           c.transitionDuration = '.25s'
           co.transitionDuration = '.25s'
@@ -412,9 +277,6 @@ export default {
       } else {
         el.style.transitionDuration = '.25s'
       }
-    },
-    bindContextMenu(options) {
-      utils.bindOptionsToEventListener(this.$el, options, this)
     },
     taskLeave(el, done) {
       this.doneTransition = false
@@ -495,144 +357,11 @@ export default {
         }
       }
     },
-    deselectTask() {
-      setTimeout(() => {
-        this.$emit('de-select', this.$el)
-      }, 10)
-    },
-    vibrate() {
-      window.navigator.vibrate(100)
-    },
-    openMobileOptions() {
-      this.vibrate()
-      this.$store.commit('pushIconDrop', this.options)
-    },
-    desktopComplete() {
-      if (this.isDesktop)
-        this.completeTask()
-    },
-    desktopCancel() {
-      if (this.isDesktop)
-        this.cancelTask()
-    },
-    completeTask(force = false) {
-      if (this.canceled && !force) {
-        this.cancelTask(true)
-      } else {
-        this.completeAnimation = !this.completed
-        this.completed = !this.completed
-        if (this.completed)
-          this.$store.dispatch('task/completeTasks', [this.item])
-        else this.$store.dispatch('task/uncompleteTasks', [this.item])
-      }
-    },
-    cancelTask(force = false) {
-      if (this.completed && !force) {
-        this.completeTask(true)
-      } else {
-        this.completeAnimation = !this.canceled
-        this.canceled = !this.canceled
-        if (this.canceled)
-          this.$store.dispatch('task/cancelTasks', [this.item.id])
-        else this.$store.dispatch('task/uncancelTasks', [this.item.id])
-      }
-    },
-    stopMouseUp(evt) {
-      if (!this.isDesktop)
-        evt.stopPropagation()
-    },
-    touchStart(e) {
-      this.startTime = new Date()
-      const touch = e.changedTouches[0]
-
-      this.startX = touch.clientX
-      this.startY = touch.clientY
-
-      this.initialScroll = document.scrollingElement.scrollTop
-
-      this.changeColor = true
-      this.timeout = setTimeout(() => {
-        console.log(this.stopTouchEvents)
-        if (!this.stopTouchEvents)
-          this.openMobileOptions()
-      }, 350)
-    },
-    touchmove(evt) {
-      this.moved = true
-      const touch = evt.changedTouches[0]
-      const move = Math.abs(document.scrollingElement.scrollTop - this.initialScroll) > 5 || Math.abs(touch.clientX - this.startX) > 5 || Math.abs(touch.clientY - this.startY) > 5
-      if (move) {
-        clearTimeout(this.timeout)
-        this.fail = true
-      }
-
-      const diff = this.startX - touch.clientX
-      if (diff > 0) {
-        if (diff < 75)
-          this.right = diff
-        else this.right = 75
-      } else {
-        this.right = 0
-      }
-    },
-    pointerdown(evt) {
-      if (!this.isDesktop)
-        evt.stopPropagation()
-    },
-    touchEnd(e) {
-      const select = this.right > 60
-      if (this.moved) {
-        const cont = this.$refs['cont-wrapper'].style
-
-        cont.transitionDuration = '.2s'
-        this.right = 0
-        setTimeout(() => {
-          cont.transitionDuration = 0
-        }, 280)
-      }
-      
-      clearTimeout(this.timeout)
-      const time = new Date() - this.startTime
-
-      const fail = this.fail || time > 250
-
-      const toggleTask = () => {
-        if (!this.isTaskSelected && !this.stopTouchEvents)
-          this.selectTask()
-        else this.deselectTask()
-      }
-
-      if (select) {
-        this.selectTask()
-      } else {
-        if (!this.isSelecting) {
-          if (!this.moved && !this.stopTouchEvents) this.isEditing = true
-        } else {
-          if (!fail) toggleTask()
-        }
-      }
-
-      this.fail = false
-      this.moved = false
-      this.changeColor = false
-      this.stopTouchEvents = false
-    },
-    checkTouchStart() {
-      this.stopTouchEvents = true
-      this.checkStartTimeout = setTimeout(() => {
-        this.vibrate()
-        this.cancelTask()
-        this.checkStartTimeout = null
-      }, 300)
-    },
-    touchComplete() {
-      if (this.checkStartTimeout) {
-        this.completeTask() 
-        clearTimeout(this.checkStartTimeout)
-      }
-    },
-    selectTask() {
-      this.$emit('select', this.$el)
+    changeTime(obj) {
+      this.$emit('change-time', {
+        ...obj,
+        from: this.item.id,
+      })
     },
     click() {
       if (this.isDesktop && !this.isSelecting)
@@ -700,11 +429,6 @@ export default {
   },
   computed: {
     ...mapState({
-      isOnControl: state => state.isOnControl,
-      isOnShift: state => state.isOnShift,
-      mainSelection: state => state.mainSelection,
-      isOnAlt: state => state.isOnAlt,
-      selectedTasks: state => state.selectedTasks,
       userInfo: state => state.userInfo,
     }),
     ...mapGetters({
@@ -719,92 +443,6 @@ export default {
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
     }),
-    checklistPieProgress() {
-      let completed = this.item.checklist.reduce((acc, opt) => opt.completed ? acc + 1 : acc, 0)
-      return 100 * completed / this.item.checklist.length
-    },
-    completedTask() {
-      return this.isTaskCompleted(this.item, mom().format('Y-M-D'), this.itemCompletionCompareDate)
-    },
-    canceledTask() {
-      return this.isTaskCanceled(this.item)
-    },
-    isTaskSelected() {
-      return this.selectedTasks.includes(this.item.id)
-    },
-    parsedName() {
-      return this.getLinkString(this.escapeHTML(this.item.name))
-    },
-    isSomeday() {
-      const {c} = this.getTask
-      return c && c.type === 'someday'
-    },
-    urlRegex() {
-      return /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/g
-    },
-    haveChecklist() {
-      return this.item.checklist && this.item.checklist.length > 0
-    },
-    haveFiles() {
-      return this.item.files && this.item.files.length > 0
-    },
-    hasTags() {
-      return this.item.tags && this.item.tags.length > 0
-    },
-    folderOptions() {
-      const links = []
-      for (const fold of this.savedFolders) {
-        links.push({
-          name: fold.name,
-          icon: 'folder',
-          callback: () => {
-            this.$store.dispatch('task/saveTask', {
-              id: this.item.id,
-              folder: fold.id,
-              list: null,
-            })
-          }
-        })
-      }
-      return {
-        allowSearch: true,
-        links,
-      }
-    },
-    listOptions() {
-      const moveToList = (obj) => {
-        this.$store.dispatch('task/saveTask', {
-          id: this.item.id,
-          folder: null,
-          ...obj
-        })
-      }
-      const links = []
-      for (const list of this.savedLists) {
-        links.push({
-          name: list.name,
-          icon: 'tasks',
-          callback: () => {
-            const arr = [{
-              name: this.l['List root'],
-              callback: () => moveToList({list: list.id, heading: null})
-            }]
-            for (const h of list.headings) {
-              arr.push({
-                name: h.name,
-                icon: 'heading',
-                callback: () => moveToList({list: list.id, heading: h.id})
-              })
-            }
-            return arr
-          }
-        })
-      }
-      return {
-        allowSearch: true,
-        links,
-      }
-    },
     options() {
       const {c,t} = this.getTask
       const dispatch = this.$store.dispatch
@@ -911,7 +549,7 @@ export default {
             {
               name: l['Copy task'],
               icon: 'copy',
-              callback: () => this.copyTask()
+              callback: () => this.copyItem()
             },
             {
               name: l['Lists'],
@@ -961,12 +599,94 @@ export default {
         })
       return arr
     },
+    completedItem() {
+      return this.isTaskCompleted(this.item, mom().format('Y-M-D'), this.itemCompletionCompareDate)
+    },
+    canceledItem() {
+      return this.isTaskCanceled(this.item)
+    },
+
+    
+    checklistPieProgress() {
+      let completed = this.item.checklist.reduce((acc, opt) => opt.completed ? acc + 1 : acc, 0)
+      return 100 * completed / this.item.checklist.length
+    },
+    parsedName() {
+      return this.getLinkString(this.escapeHTML(this.item.name))
+    },
+    isSomeday() {
+      const {c} = this.getTask
+      return c && c.type === 'someday'
+    },
+    urlRegex() {
+      return /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/g
+    },
+    haveChecklist() {
+      return this.item.checklist && this.item.checklist.length > 0
+    },
+    haveFiles() {
+      return this.item.files && this.item.files.length > 0
+    },
+    hasTags() {
+      return this.item.tags && this.item.tags.length > 0
+    },
+    folderOptions() {
+      const links = []
+      for (const fold of this.savedFolders) {
+        links.push({
+          name: fold.name,
+          icon: 'folder',
+          callback: () => {
+            this.$store.dispatch('task/saveTask', {
+              id: this.item.id,
+              folder: fold.id,
+              list: null,
+            })
+          }
+        })
+      }
+      return {
+        allowSearch: true,
+        links,
+      }
+    },
+    listOptions() {
+      const moveToList = (obj) => {
+        this.$store.dispatch('task/saveTask', {
+          id: this.item.id,
+          folder: null,
+          ...obj
+        })
+      }
+      const links = []
+      for (const list of this.savedLists) {
+        links.push({
+          name: list.name,
+          icon: 'tasks',
+          callback: () => {
+            const arr = [{
+              name: this.l['List root'],
+              callback: () => moveToList({list: list.id, heading: null})
+            }]
+            for (const h of list.headings) {
+              arr.push({
+                name: h.name,
+                icon: 'heading',
+                callback: () => moveToList({list: list.id, heading: h.id})
+              })
+            }
+            return arr
+          }
+        })
+      }
+      return {
+        allowSearch: true,
+        links,
+      }
+    },
     isOverdue() {
       if (this.viewName === 'Overdue') return false
       return false
-    },
-    isTaskMainSelection() {
-      return this.item.id === this.mainSelection
     },
     isToday() {
       if (this.viewName === 'Today' || this.viewName === 'Calendar') return false
@@ -1053,26 +773,11 @@ export default {
     },
   },
   watch: {
-    selectedTasks() {
-      if (this.isDesktop)
-        if (this.selectedTasks && this.selectedTasks.length > 0)
-          this.bindContextMenu(this.multiSelectOptions)
-        else this.bindContextMenu(this.options)
-    },
-    completedTask() {
-      this.completed = this.completedTask
-    },
-    canceledTask() {
-      this.canceled = this.canceledTask
-    },
-    isTaskMainSelection() {
-      this.bindMainSelection()
-    },
     selectEverythingToggle() {
       if (this.selectEverythingToggle)
-        this.selectTask()
+        this.selectItem()
     },
-  }
+  },
 }
 
 </script>
@@ -1166,7 +871,7 @@ export default {
   background-color: var(--light-gray);
 }
 
-.isTaskMainSelection .cont-wrapper {
+.isItemMainSelection .cont-wrapper {
   background-color: var(--light-gray);
 }
 
@@ -1256,7 +961,6 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transform: translateY(-1px);
 }
 
 .check-drop {
@@ -1297,18 +1001,18 @@ export default {
   transform: translateY(1px);
 }
 
-.isTaskSelected .cont-wrapper {
+.isItemSelected .cont-wrapper {
   background-color: rgba(53, 73, 90, 0.6) !important;
   box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
   transition-duration: .8s;
 }
 
-.isTaskSelected.isTaskMainSelection .cont-wrapper,
-.isTaskSelected:hover .cont-wrapper {
+.isItemSelected.isItemMainSelection .cont-wrapper,
+.isItemSelected:hover .cont-wrapper {
   background-color: rgba(53, 73, 90, 0.9) !important;
 }
 
-.isTaskSelected .back {
+.isItemSelected .back {
   opacity: 0;
 }
 

@@ -173,7 +173,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['selectedTasks', 'isOnControl']),
+    ...mapState(['selectedItems', 'isOnControl']),
     ...mapGetters(['l', 'isDesktop', 'platform']),
     showCont() {
       return this.showing && !this.movingFolder
@@ -197,9 +197,9 @@ export default {
     options() {
       this.bindOptions()
     },
-    selectedTasks() {
+    selectedItems() {
       setTimeout(() => {
-        this.selected = [...this.selectedTasks]
+        this.selected = [...this.selectedItems]
       }, 10)
     },
     folder() {

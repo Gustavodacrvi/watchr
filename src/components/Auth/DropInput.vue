@@ -149,6 +149,7 @@ export default {
       if (key === 'Shift') this.shift = false
     },
     keydown(event) {
+      this.$emit('keydown', event)
       const { key } = event
       if (key === "Escape")
         this.$emit('cancel')

@@ -191,7 +191,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['selectedTasks', 'movingTask']),
+    ...mapState(['selectedItems', 'movingTask']),
     ...mapGetters(['isDesktop']),
     draggableRoot() {
       return this.$el.getElementsByClassName('appnav-renderer-root')[0]

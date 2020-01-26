@@ -26,11 +26,11 @@
       @update="updateIds"
       @add-heading="addHeading"
       @allow-someday='allowSomeday'
-      @go='go'
       @change-time='changeTime'
 
-      @selectTask='selectTask'
-      @unselectTask='unselectTask'
+      @go='go'
+      @selectItem='selectItem'
+      @unselectItem='unselectItem'
     />
   </div>
 </template>
@@ -60,6 +60,7 @@ export default {
 
     'pipeFilterOptions', 'showCompleted', 'showSomeday', 'movingButton',
     'showHeadingFloatingButton', 'openCalendar', 'isSmart', 
+    'selectEverythingToggle',
 
     'headingEditOptions', 'taskIconDropOptions', 'onSortableAdd',
     'viewName', 'viewType', 'viewNameValue', 'mainFilterOrder', 'mainFallbackItem', 'icon', 'configFilterOptions', 'showHeading',
@@ -73,25 +74,15 @@ export default {
   data() {
     return {
       scheduleObject: null,
-      
-      selectEverythingToggle: false,
-
-      keypressed: '',
-      keypressedSettimeout: null,
     }
   },
   created() {
     this.updateSchedule()
-
-    window.addEventListener('keydown', this.keydown)
-    window.addEventListener('keypress', this.keypress)
   },
-  beforeDestroy() {
-    window.removeEventListener('keydown', this.keydown)
-    window.removeEventListener('keypress', this.keypress)
+  mounted() {
+    this.emitIds()
   },
   methods: {
-    ...mapMutations(['saveMainSelection']),
     onAddExistingItem(index, lazyItems, fallbackItem, callback) {
       this.$store.dispatch('pushPopup', {
         comp: 'FastSearch',
@@ -106,348 +97,8 @@ export default {
         }
       })
     },
-    selectTask(id) {
-      this.$store.commit('selectTask', id)
-    },
-    unselectTask(id) {
-      this.$store.commit('unselectTask', id)
-    },
     getItemFirestoreRef() {
       return taskRef()
-    },
-    addDuration() {
-      const ids = this.fallbackSelected
-
-      const split = this.keypressed.split(':')
-      if (ids && this.keypressed.length > 0) {
-        let h = split[0]
-        let m = split[1]
-
-        if (!m) {
-          m = h
-          h = '0'
-        }
-        
-        const dur = mom(`${h}:${m}`, 'H:m', true)
-        const time = dur.format('HH:mm')
-
-        if (dur.isValid() && time !== '00:00')
-          this.$store.dispatch('task/saveTasksById', {
-            ids,
-            task: {
-              taskDuration: dur.format('HH:mm')
-            }
-          })
-      }
-    },
-    keypress({key}) {
-      this.keypressed += key
-
-      if (this.keypressedSettimeout)
-        clearTimeout(this.keypressedSettimeout)
-
-      this.keypressedSettimeout = setTimeout(() => {
-        this.keypressed = ''
-      }, 3000)
-    },
-    keydown(evt) {
-      const p = () => evt.preventDefault()
-      const {key} = evt
-      const hasSelected = this.selectedTasks.length > 0
-
-      const fallbackTasks = this.fallbackSelected
-
-      const active = document.activeElement
-      const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
-      
-      if (!isTyping && (!this.mainSelection || this.mainSelectionIsNotInView)) {
-        switch (key) {
-          case 'ArrowDown': {
-            this.go(true)
-            p()
-            break
-          }
-          case 'ArrowUp': {
-            this.go(false)
-            p()
-            break
-          }
-        }
-      }
-
-      switch (key) {
-        case 'ArrowLeft': {
-          this.go(null)
-          break
-        }
-        case 'ArrowRight': {
-          this.go(null)
-          break
-        }
-        case 'Delete': {
-            if (fallbackTasks) {
-              this.$store.dispatch('task/deleteTasks', fallbackTasks)
-              this.$store.commit('clearSelected')
-            }
-            break
-          }
-      }
-      if (this.isOnControl) {
-        switch (key) {
-          case "a": {
-            p()
-            this.selectEverythingToggle = true
-            setTimeout(() => {
-              this.selectEverythingToggle = false
-            })
-          }
-        }
-      }
-      if (this.isOnShift) {
-        const save = task => {
-          if (fallbackTasks)
-            this.$store.dispatch('task/saveTasksById', {
-                ids: fallbackTasks,
-                task,
-              })
-        }
-        
-        switch (key) {
-          case 'S': {
-            save({
-              calendar: {
-                type: 'someday'
-              }
-            })
-            break
-          }
-          case 'T': {
-            const TOD_STR = mom().format('Y-M-D')
-            save({
-              calendar: {
-                type: 'specific',
-                editDate: TOD_STR,
-                begins: TOD_STR,
-          
-                specific: TOD_STR,
-              }
-            })
-            break
-          }
-          case 'P': {
-            save({
-              priority: 'High priority',
-            })
-            break
-          }
-          case 'M': {
-            save({
-              priority: 'Medium priority',
-            })
-            break
-          }
-          case 'L': {
-            save({
-              priority: 'Low priority',
-            })
-            break
-          }
-          case 'N': {
-            save({
-              priority: '',
-            })
-            break
-          }
-        }
-      }
-
-      if (this.isOnControl && !this.isOnShift) {
-        switch (key) {
-          case "ArrowUp": {
-            this.go(0)
-            break
-          }
-          case "ArrowDown": {
-            this.go(this.allViewTasksIds.length - 1)
-            break
-          }
-          case 'd': {
-            if (this.fallbackSelected)
-              p()
-            this.addDuration()
-          }
-        }
-      }
-
-      const iconDrop = opt => this.$store.commit('pushIconDrop', opt)
-      if (this.isOnAlt && this.isOnControl)
-        switch (key) {
-          case 's': {
-            this.$emit('calendar')
-            break
-          }
-        }
-      
-      if (this.isOnAlt && !this.isOnControl)
-        switch (key) {
-          case '.': {
-            if (fallbackTasks) {
-              const tasks = this.getTasksById(fallbackTasks)
-              const completed = tasks.filter(t => t.completed)
-              const uncompleted = tasks.filter(t => !t.completed)
-              this.$store.dispatch('task/completeTasks', uncompleted)
-              this.$store.dispatch('task/uncompleteTasks', completed)
-            }
-          }
-          case "ArrowUp": {
-            p()
-            this.moveSelected(true)
-            break
-          }
-          case "ArrowDown": {
-            p()
-            this.moveSelected(false)
-            break
-          }
-          case 'c': {
-            this.$emit('completed')
-            break
-          }
-          case 'o': {
-            this.$emit('someday')
-            break
-          }
-          case 'p': {
-            if (fallbackTasks && fallbackTasks.length === 1)
-              this.$store.dispatch('pomo/toggle', {task: this.getTasksById(fallbackTasks)[0], stopToggle: true})
-            break
-          }
-          case 's': {
-            if (fallbackTasks) {
-              p()
-              iconDrop({
-                comp: 'CalendarPicker',
-                content: {callback: calendar => this.$store.dispatch('task/saveTasksById', {
-                  ids: fallbackTasks,
-                  task: {calendar}
-                }), repeat: true}
-              })
-              break
-            }
-          }
-          case "t": {
-            if (fallbackTasks) {
-              p()
-              iconDrop({
-                links: (this.tags || []).map(t => ({...t, icon: 'tag'})),
-                select: true,
-                onSave: names => {
-                  this.$store.dispatch('task/addTagsToTasksById', {
-                    ids: fallbackTasks,
-                    tagIds: (this.tags || []).filter(t => names.includes(t.name)).map(el => el.id),
-                  })
-                },
-                selected: [],
-                allowSearch: true,
-              })
-            }
-            break
-          }
-          case "l": {
-            if (fallbackTasks) {
-              p()
-              iconDrop({
-                links: this.lists.map(t => ({
-                  ...t,
-                  icon: 'tasks',
-                  callback: () => this.$store.dispatch('task/addListToTasksById', {
-                    ids: fallbackTasks,
-                    listId: t.id,
-                  }),
-                })),
-                allowSearch: true,
-              })
-            }
-            break
-          }
-          case "f": {
-            if (fallbackTasks) {
-              p()
-              iconDrop({
-                links: this.folders.map(t => ({
-                  ...t,
-                  icon: 'tasks',
-                  callback: () => this.$store.dispatch('task/addFolderToTasksById', {
-                    ids: fallbackTasks,
-                    folderId: t.id,
-                  }),
-                })),
-                allowSearch: true,
-              })
-            }
-            break
-          }
-        }
-    },
-    moveSelected(up) {
-      const selected = this.fallbackSelected
-      if (selected) {
-        const ids = this.laseredIds
-        const newOrder = ids.slice()
-        const increment = up ? -1 : 1
-  
-        const sort = i => {
-          const newIndex = i + increment
-          if (selected.includes(ids[i]) && ids[newIndex] && !selected.includes(newOrder[newIndex]))
-            newOrder.splice(newIndex, 0, newOrder.splice(i, 1)[0])
-        }
-  
-        if (!up)
-          for (let i = ids.length; i > -1; i--)
-            sort(i)
-        else
-          for (let i = 0; i < ids.length; i++)
-            sort(i)
-  
-        this.updateIds(newOrder)
-      }
-    },
-    select(i) {
-      if (i === null) {
-        this.saveMainSelection({
-          id: null,
-          index: null,
-        })
-        return true
-      } else {
-        const ids = this.allViewTasksIds
-  
-        if (ids[i]) {
-          this.saveMainSelection({
-            id: ids[i],
-            index: i,
-          })
-          return true
-        } else if (this.mainSelectionIsNotInView) {
-          this.select(null)
-        }
-        return false
-      }
-    },
-    go(dire) {
-      const ids = this.allViewTasksIds
-      
-      if (dire === null)
-        this.select(null)
-      else if (this.mainSelection) {
-        if (dire === true || dire === false)
-          this.select(this.mainSelectionIndex + (dire === true ? 1 : -1))
-        else
-          this.select(dire)  
-      } else if (dire > 0)
-        this.select(0)
-      else
-        this.select(ids.length - 1)
     },
     allowSomeday() {
       this.$emit('allow-someday')
@@ -620,16 +271,14 @@ export default {
 
       return finalObj
     },
+    emitIds() {
+      this.$emit('items-ids', this.allItemsIds)
+    },
   },
   computed: {
     ...mapState({
-      selectedTasks: state => state.selectedTasks,
+      selectedItems: state => state.selectedItems,
       userInfo: state => state.userInfo,
-      isOnControl: state => state.isOnControl,
-      isOnShift: state => state.isOnShift,
-      isOnAlt: state => state.isOnAlt,
-      mainSelection: state => state.mainSelection,
-      mainSelectionIndex: state => state.mainSelectionIndex,
     }),
     ...mapGetters({
       lists: 'list/lists',
@@ -637,35 +286,24 @@ export default {
       tags: 'tag/tags',
       storeTasks: 'task/tasks',
       l: 'l',
-      fallbackSelected: 'fallbackSelected',
       isTaskSomeday: 'task/isTaskSomeday',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskCanceled: 'task/isTaskCanceled',
-      getTasksById: 'task/getTasksById',
 
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
     }),
-    mainSelectionTask() {
-      return this.allViewTasks.find(el => el.id === this.mainSelection)
-    },
-    mainSelectionIsNotInView() {
-      return !this.allViewTasksIds.includes(this.mainSelection)
-    },
     timeFormat() {
       return this.userInfo.disablePmFormat ? 'H:mm' : 'LT'
     },
     rootNonFilteredIds() {
       return this.rootNonFiltered.map(el => el.id)
     },
-    laseredIds() {
-      return this.sortLaseredTasks.map(el => el.id)
-    },
     allViewTasks() {
       return [...this.sortLaseredTasks,...this.sortHeadings.map(
         head => head.items
       ).flat()]
     },
-    allViewTasksIds() {
+    allItemsIds() {
       return this.allViewTasks.map(el => el.id)
     },
     allNonFilteredViewTasks() {
@@ -897,12 +535,6 @@ export default {
     },
   },
   watch: {
-    viewName() {
-      this.saveMainSelection({
-        id: null,
-        index: null,
-      })
-    },
     presentTags() {
       this.$emit('present-tags', this.presentTags)
     },
@@ -920,7 +552,10 @@ export default {
         this.updateSchedule()
       },
       deep: true,
-    }
+    },
+    allItemsIds() {
+      this.emitIds()
+    },
   }
 }
 

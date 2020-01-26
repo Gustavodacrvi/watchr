@@ -404,7 +404,7 @@ export default {
   },
   computed: {
     ...mapState({
-      selectedTasks: state => state.selectedTasks,
+      selectedItems: state => state.selectedItems,
       userInfo: state => state.userInfo,
       viewName: state => state.viewName,
       viewType: state => state.viewType,

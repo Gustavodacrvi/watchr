@@ -114,7 +114,7 @@ export default {
       startTime: 0,
       showingSublist: false,
 
-      selectedTasks: [],
+      selectedItems: [],
     }
   },
   mounted() {
@@ -211,7 +211,7 @@ export default {
     ...mapState({
       drag: 'drag',
       isOnControl: 'isOnControl',
-      storeTasks: 'selectedTasks',
+      storeTasks: 'selectedItems',
       viewName: 'viewName',
       storeViewType: 'viewType',
     }),
@@ -230,7 +230,7 @@ export default {
       return this.hover && !this.isOnControl && !this.selectedEmpty
     },
     selectedEmpty() {
-      return this.selectedTasks.length === 0
+      return this.selectedItems.length === 0
     },
     getName() {
       if (this.isSmart) return this.l[this.name]
@@ -252,7 +252,7 @@ export default {
   watch: {
     storeTasks() {
       setTimeout(() => {
-        this.selectedTasks = [...this.storeTasks]
+        this.selectedItems = [...this.storeTasks]
       }, 50)
     },
     options() {

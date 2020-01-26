@@ -60,7 +60,7 @@ moment.locale(lang)
 const uid = () => auth.currentUser.uid
 
 
-const version = '085'
+const version = '086'
 
 let lastVersion = localStorage.getItem('watchr_version')
 
@@ -114,7 +114,7 @@ const store = new Vuex.Store({
       links: [],
     },
     firstFireLoad: false,
-    selectedTasks: [],
+    selectedItems: [],
     fireBaseFirstLoaded: false,
     authState: false,
     fileURL: null,
@@ -128,6 +128,7 @@ const store = new Vuex.Store({
     mainSelection: null,
     mainSelectionIndex: null,
     movingTask: false,
+    selectedType: null,
     
     isOnControl: false,
     isOnShift: false,
@@ -178,8 +179,8 @@ const store = new Vuex.Store({
       },
     }),
     fallbackSelected(state) {
-      if (state.selectedTasks.length > 0)
-        return state.selectedTasks
+      if (state.selectedItems.length > 0)
+        return state.selectedItems
       else return state.mainSelection ? [state.mainSelection] : null
     },
     isDesktop(state) {
@@ -304,20 +305,23 @@ const store = new Vuex.Store({
     pushIconDrop(state, drop) {
       state.iconDrop = drop
     },
-    unselectTask(state, id) {
-      if (id && state.selectedTasks.includes(id)) {
-        const i = state.selectedTasks.findIndex(el => el === id)
-        state.selectedTasks.splice(i, 1)
+    unselectItem(state, id) {
+      if (id && state.selectedItems.includes(id)) {
+        const i = state.selectedItems.findIndex(el => el === id)
+        state.selectedItems.splice(i, 1)
       }
     },
-    selectTask(state, id) {
-      if (id && !state.selectedTasks.includes(id)) {
-        state.selectedTasks.push(id)
+    selectType(state, type) {
+      state.selectedType = type
+    },
+    selectItem(state, id) {
+      if (id && !state.selectedItems.includes(id)) {
+        state.selectedItems.push(id)
       }
     },
     clearSelected(state) {
-      if (state.selectedTasks.length !== 0)
-        state.selectedTasks = []
+      if (state.selectedItems.length !== 0)
+        state.selectedItems = []
     },
     toggleUser(state, isLogged) {
       state.authState = isLogged

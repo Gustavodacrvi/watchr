@@ -13,6 +13,7 @@
       :icon='icon'
       :optionsHandle='optionsHandle'
       :viewNameValue='viewNameValue'
+      :saveHeaderName='saveHeaderName'
     />
     <Info class="tags" v-if="defer(2)"
       :headerTags='headerTags'
@@ -59,7 +60,7 @@ export default {
   mixins: [
     Defer(),
   ],
-  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'deadline', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'priorities', 'inclusiveTags', 'inclusivePriority', 'exclusivePriorities', 'inclusiveList', 'exclusiveLists', 'inclusiveFolder', 'exclusiveFolders', 'folders', 'optionsHandle',  'saveHeaderContent', 'extraIcons','removeHeaderTag'],
+  props: ['viewName', 'viewNameValue', 'options', 'tags', 'lists', 'icon', 'viewType', 'isSmart', 'notes', 'progress', 'deadline', 'headerTags', 'headerCalendar', 'files', 'exclusiveTags', 'priorities', 'inclusiveTags', 'inclusivePriority', 'exclusivePriorities', 'inclusiveList', 'exclusiveLists', 'inclusiveFolder', 'exclusiveFolders', 'folders', 'optionsHandle', 'saveHeaderName',  'saveHeaderContent', 'extraIcons','removeHeaderTag'],
   components: {
     FilterTags,
     HeaderBar,

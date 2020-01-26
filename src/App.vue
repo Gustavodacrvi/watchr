@@ -129,11 +129,11 @@ export default {
           }
         }
       
-      if (!isTyping && key === 'Control')
+      if (key === 'Control')
         this.$store.commit('toggleControl', true)
-      if (!isTyping && key === "Shift")
+      if (key === "Shift")
         this.$store.commit('toggleShift', true)
-      if (!isTyping && key === "Alt")
+      if (key === "Alt")
         this.$store.commit('toggleAlt', true)
       if (!isTyping) this.$store.dispatch('pushKeyShortcut', key)
     },

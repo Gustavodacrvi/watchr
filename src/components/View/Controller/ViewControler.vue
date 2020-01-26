@@ -41,9 +41,9 @@
     :isListType='isListType'
     :extraListView='extraListView'
     :removeHeaderTag='removeHeaderTag'
+    :saveHeaderName='saveHeaderName'
 
     @save-schedule='saveSchedule'
-    @save-header-name='saveHeaderName'
     @save-notes='saveNotes'
     @add-task='addTask'
     @add-heading='addHeading'
