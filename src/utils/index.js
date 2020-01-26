@@ -446,6 +446,10 @@ export default {
           save('toggleCompletion')
           break
         }
+        case ',': {
+          save('toggleCancel')
+          break
+        }
         case 'p': {
           save('pomo')
           break

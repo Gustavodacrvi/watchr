@@ -75,12 +75,20 @@
         <span class="tag">Shift + D</span>
       </div>
       <div class="line">
+        <span>Delete selection</span>
+        <span class="tag">Delete</span>
+      </div>
+      <div class="line">
         <span>Add tags to selection</span>
         <span class="tag">Alt + T</span>
       </div>
       <div class="line">
         <span>Complete selected</span>
         <span class="tag">Alt + .</span>
+      </div>
+      <div class="line">
+        <span>Cancel selected</span>
+        <span class="tag">Alt + ,</span>
       </div>
       <div class="line">
         <span>Move to Someday</span>

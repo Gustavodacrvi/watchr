@@ -371,8 +371,18 @@ export default {
                     dispatch('task/uncompleteTasks', completed)
                   break
                 }
+                case 'toggleCancel': {
+                  const tasks = this.getTasksById(fallbackItems)
+                  const canceled = tasks.filter(t => t.canceled)
+                  const uncanceled = tasks.filter(t => !t.canceled)
+                  if (uncanceled.length > 0)
+                    dispatch('task/cancelTasks', uncanceled.map(el => el.id))
+                  if (canceled.length > 0)
+                    dispatch('task/uncancelTasks', canceled.map(el => el.id))
+                  break
+                }
                 case 'pomo': {
-                  dispatch('pomo/save', this.selectTask(fallbackItems)[0])
+                  dispatch('pomo/save', this.getTasksById(fallbackItems)[0])
                   break
                 }
               }
