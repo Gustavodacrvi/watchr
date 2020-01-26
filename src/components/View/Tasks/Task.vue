@@ -5,7 +5,7 @@
     @enter='taskEnter'
     @leave='taskLeave'
   >
-    <div class="Task draggable" :class="[{isItemSelected, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing, isTaskMainSelection}, platform]"
+    <div class="Task draggable" :class="[{isItemSelected, showingIconDropContent: showingIconDropContent || isEditing, schedule: schedule && !isEditing, isItemMainSelection}, platform]"
       @mouseenter="onHover = true"
       @mouseleave="onHover = false"
     >
@@ -162,8 +162,8 @@ import ListItemMixin from "@/mixins/listItem"
 
 export default {
   mixins: [ListItemMixin],
-  props: ['item', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName', 'selectEverythingToggle',
-  'isSelecting'],
+  props: ['item', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
+  'isSelecting', 'selectEverythingToggle'],
   components: {
     Timeline, TaskIcons,
     Icon: IconVue,
@@ -182,13 +182,6 @@ export default {
       editAction: null,
     }
   },
-  mounted() {
-    this.bindMainSelection()
-  },
-  beforeDestroy() {
-    if (this.isTaskMainSelection)
-      window.removeEventListener('keydown', this.mainSelectionKeyDown)
-  },
   methods: {
     dispatchCompleteItem() {
       this.$store.dispatch('task/completeTasks', [this.item])
@@ -202,134 +195,10 @@ export default {
     dispatchUncancelItem() {
       this.$store.dispatch('task/uncancelTasks', [this.item.id])
     },
-
-
-
-    
-    changeTime(obj) {
-      this.$emit('change-time', {
-        ...obj,
-        from: this.item.id,
-      })
-    },
-    bindMainSelection() {
-      if (this.isDesktop)
-        if (this.isTaskMainSelection)
-          window.addEventListener('keydown', this.mainSelectionKeyDown)
-        else
-          window.removeEventListener('keydown', this.mainSelectionKeyDown)
-    },
-    mainSelectionKeyDown(evt) {
-      const p = () => evt.preventDefault()
-      const {key} = evt
-      const active = document.activeElement
-      const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
-
-      const toggleSelect = () => {
-        if (!this.isItemSelected) {
-          if (this.selectedItems.length === 0) {
-            this.selectItem()
-          } else {
-            this.selectItem()
-          }
-        } else {
-          this.deselectItem()
-        }
-      }
-
-      const hasSelected = this.selectedItems.length > 0
-      if (!isTyping && !(this.isOnAlt && this.fallbackSelected) && !(hasSelected && this.isOnAlt))
-        switch (key) {
-          case 'ArrowDown': {
-            this.$emit('go', true)
-            p()
-            break
-          }
-          case 'ArrowUp': {
-            this.$emit('go', false)
-            p()
-            break
-          }
-        }
-
-      switch (key) {
-        case 'Enter': {
-          if (!isTyping)
-            if (!this.isOnControl && !this.justSaved)
-              this.isEditing = true
-            else if (this.isOnControl) {
-              toggleSelect()
-            }
-          break
-        }
-      }
-
-      if (!this.isOnShift) {
-        switch (key) {case ' ': {
-          if (!isTyping) {
-            p()
-            this.$emit('add-item-after', 1)
-          }
-          break
-        }}
-      }
-      if (this.isOnShift) {
-        switch (key) {
-          case "C": {
-            if (!this.isEditing) {
-              this.isEditing = true
-              this.editAction = 'addChecklist'
-            }
-            break
-          }
-          case "D": {
-            this.copyTask()
-            break
-          }
-          case ' ': {
-            if (!isTyping) {
-              p()
-              this.$emit('add-item-after', 0)
-            }
-            break
-          }
-        }
-      }
-      if (this.isOnControl && !this.isOnShift) {
-        switch (key) {
-          case ' ': {
-            if (!isTyping) {
-              p()
-              this.$emit('add-heading-after', +1)
-            }
-            break
-          }
-        }
-      }
-
-      if (this.isOnShift && this.isOnControl) {
-        switch (key) {
-          case ' ': {
-            if (!isTyping) {
-              p()
-              this.$emit('add-heading-after', 0)
-            }
-            break
-          }
-          case "ArrowUp": {
-            toggleSelect()
-            break
-          }
-          case "ArrowDown": {
-            toggleSelect()
-            break
-          }
-        }
-      }
-    },
-    copyTask() {
+    copyItem() {
       this.$store.dispatch('task/copyTask', this.item)
     },
+
     infoEnter(el) {
       const s = el.style
 
@@ -488,6 +357,12 @@ export default {
         }
       }
     },
+    changeTime(obj) {
+      this.$emit('change-time', {
+        ...obj,
+        from: this.item.id,
+      })
+    },
     click() {
       if (this.isDesktop && !this.isSelecting)
         this.isEditing = true
@@ -554,11 +429,6 @@ export default {
   },
   computed: {
     ...mapState({
-      isOnControl: state => state.isOnControl,
-      isOnShift: state => state.isOnShift,
-      mainSelection: state => state.mainSelection,
-      isOnAlt: state => state.isOnAlt,
-      selectedItems: state => state.selectedItems,
       userInfo: state => state.userInfo,
     }),
     ...mapGetters({
@@ -573,9 +443,6 @@ export default {
       savedFolders: 'folder/sortedFolders',
       savedTags: 'tag/sortedTagsByName',
     }),
-    isItemSelected() {
-      return this.selectedItems.includes(this.item.id)
-    },
     options() {
       const {c,t} = this.getTask
       const dispatch = this.$store.dispatch
@@ -682,7 +549,7 @@ export default {
             {
               name: l['Copy task'],
               icon: 'copy',
-              callback: () => this.copyTask()
+              callback: () => this.copyItem()
             },
             {
               name: l['Lists'],
@@ -821,9 +688,6 @@ export default {
       if (this.viewName === 'Overdue') return false
       return false
     },
-    isTaskMainSelection() {
-      return this.item.id === this.mainSelection
-    },
     isToday() {
       if (this.viewName === 'Today' || this.viewName === 'Calendar') return false
       return this.isTaskInView(this.item, 'Today')
@@ -909,14 +773,11 @@ export default {
     },
   },
   watch: {
-    isTaskMainSelection() {
-      this.bindMainSelection()
-    },
     selectEverythingToggle() {
       if (this.selectEverythingToggle)
         this.selectItem()
     },
-  }
+  },
 }
 
 </script>
@@ -1010,7 +871,7 @@ export default {
   background-color: var(--light-gray);
 }
 
-.isTaskMainSelection .cont-wrapper {
+.isItemMainSelection .cont-wrapper {
   background-color: var(--light-gray);
 }
 
@@ -1146,7 +1007,7 @@ export default {
   transition-duration: .8s;
 }
 
-.isItemSelected.isTaskMainSelection .cont-wrapper,
+.isItemSelected.isItemMainSelection .cont-wrapper,
 .isItemSelected:hover .cont-wrapper {
   background-color: rgba(53, 73, 90, 0.9) !important;
 }

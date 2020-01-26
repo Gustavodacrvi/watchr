@@ -376,4 +376,127 @@ export default {
 
     return false
   },
+  saveByShortcut(vm, key, preventDefault, save) {
+    const p = preventDefault
+    const {isOnControl, isOnShift, isOnAlt} = vm
+
+    switch (key) {
+      case 'Delete': {
+        save('delete')
+        vm.$store.commit('clearSelected')
+        break
+      }
+    }
+    
+    if (isOnShift) {
+      switch (key) {
+        case 'S': {
+          save('save', {
+            calendar: {
+              type: 'someday'
+            }
+          })
+          break
+        }
+        case 'T': {
+          const TOD_STR = mom().format('Y-M-D')
+          save('save', {
+            calendar: {
+              type: 'specific',
+              editDate: TOD_STR,
+              begins: TOD_STR,
+        
+              specific: TOD_STR,
+            }
+          })
+          break
+        }
+        case 'P': {
+          save('save', {
+            priority: 'High priority',
+          })
+          break
+        }
+        case 'M': {
+          save('save', {
+            priority: 'Medium priority',
+          })
+          break
+        }
+        case 'L': {
+          save('save', {
+            priority: 'Low priority',
+          })
+          break
+        }
+        case 'N': {
+          save('save', {
+            priority: '',
+          })
+          break
+        }
+      }
+    }
+
+    const iconDrop = opt => vm.$store.commit('pushIconDrop', opt)
+          
+    if (isOnAlt && !isOnControl)
+    switch (key) {
+      case '.': {
+        save('toggleCompletion')
+        break
+      }
+      case 'p': {
+        save('pomo')
+        break
+      }
+      case 's': {
+        p()
+        iconDrop({
+          comp: 'CalendarPicker',
+          repeat: true,
+          content: {callback: calendar => save('save', {task: {calendar}})},
+        })
+        break
+      }
+      case "t": {
+        p()
+        iconDrop({
+          links: (vm.tags || []).map(t => ({...t, icon: 'tag'})),
+          select: true,
+          onSave: names => save('save', {
+            tags: (vm.tags || []).filter(t => names.includes(t.name)).map(el => el.id),
+          }),
+          selected: [],
+          allowSearch: true,
+        })
+        break
+      }
+      case "l": {
+        p()
+        iconDrop({
+          links: vm.lists.map(t => ({
+            ...t,
+            icon: 'tasks',
+            callback: () => save('save', {list: t.id}),
+          })),
+          allowSearch: true,
+        })
+        break
+      }
+      case "f": {
+        p()
+        iconDrop({
+          links: vm.folders.map(t => ({
+            ...t,
+            icon: 'tasks',
+            callback: () => save('save', {folder: t.id}),
+          })),
+          allowSearch: true,
+        })
+        break
+      }
+    }
+
+  },
 }

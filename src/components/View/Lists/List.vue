@@ -4,7 +4,7 @@
     :css='true'
     @enter='enter'
   >
-    <div class="List" :class="[platform, {completed}]">
+    <div class="List" :class="[platform, {completed, isItemMainSelection, isItemSelected}]">
       <div v-if="!editing"
         class="cont-wrapper item-handle rb"
         ref="cont-wrapper"
@@ -77,7 +77,10 @@ import { mapGetters, mapState, mapActions } from 'vuex'
 
 import mom from 'moment'
 
+import ListItemMixin from "@/mixins/listItem"
+
 export default {
+  mixins: [ListItemMixin],
   components: {
     Icon,
     ListEdit,
@@ -149,9 +152,13 @@ export default {
       getListDeadlineStr: 'list/getListDeadlineStr',
       getListCalendarStr: 'list/getListCalendarStr',
     }),
-    completed() {
+    completedItem() {
       return this.isListCompleted(this.item)
     },
+    canceledItem() {
+      return false
+    },
+    
     progressIcon() {
       return this.isSomeday ? 'pie-someday' : 'pie'
     },
@@ -317,6 +324,26 @@ export default {
   height: 0px !important;
   opacity: 0 !important;
   overflow: hidden !important;
+}
+
+.isItemMainSelection .cont-wrapper {
+  background-color: var(--light-gray);
+}
+
+.isItemSelected.isItemMainSelection .cont-wrapper,
+.isItemSelected:hover .cont-wrapper {
+  background-color: rgba(53, 73, 90, 0.9) !important;
+}
+
+.isItemSelected .cont-wrapper {
+  background-color: rgba(53, 73, 90, 0.6) !important;
+  box-shadow: 1px 0 1px rgba(53, 73, 90, 0.1);
+  transition-duration: .8s;
+}
+
+.isItemSelected.isItemMainSelection .cont-wrapper,
+.isItemSelected:hover .cont-wrapper {
+  background-color: rgba(53, 73, 90, 0.9) !important;
 }
 
 </style>

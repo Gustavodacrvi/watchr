@@ -1,6 +1,21 @@
 
 export default {
+  mounted() {
+    this.emitIds()
+  },
   methods: {
+    go(...args) {
+      this.$emit('go', ...args)
+    },
+    selectItem(...args) {
+      this.$emit('select-item', ...args)
+    },
+    unselectItem(...args) {
+      this.$emit('unselect-item', ...args)
+    },
+    emitIds() {
+      this.$emit('items-ids', this.allItemsIds)
+    },
     fixPosition(obj, nonFilteredIds, callback) {
       nonFilteredIds = nonFilteredIds.slice()
 
@@ -20,5 +35,10 @@ export default {
 
       callback()
     },
-  }
+  },
+  watch: {
+    allItemsIds() {
+      this.emitIds()
+    },
+  },
 }

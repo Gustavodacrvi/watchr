@@ -6,7 +6,7 @@ import utilsMoment from '@/utils/moment'
 import utils from '@/utils/index'
 
 export default {
-  props: ['multiSelectOptions'],
+  props: ['multiSelectOptions', 'comp'],
   data() {
     return {
       startX: 0,
@@ -30,6 +30,7 @@ export default {
     this.canceled = this.canceledItem
   },
   mounted() {
+    this.bindMainSelection()
     if (this.isDesktop)
       this.bindContextMenu(this.options)
     
@@ -37,8 +38,131 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('click', this.deselectItem)
+
+    if (this.isItemMainSelection)
+      window.removeEventListener('keydown', this.mainSelectionKeyDown)
   },
   methods: {
+    bindMainSelection() {
+      if (this.isDesktop)
+        if (this.isItemMainSelection)
+          window.addEventListener('keydown', this.mainSelectionKeyDown)
+        else
+          window.removeEventListener('keydown', this.mainSelectionKeyDown)
+    },
+    mainSelectionKeyDown(evt) {
+      const p = () => evt.preventDefault()
+      const {key} = evt
+      const active = document.activeElement
+      const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
+
+      const toggleSelect = () => {
+        if (!this.isItemSelected) {
+          if (this.selectedItems.length === 0) {
+            this.selectItem()
+          } else {
+            this.selectItem()
+          }
+        } else {
+          this.deselectItem()
+        }
+      }
+
+      const hasSelected = this.selectedItems.length > 0
+      if (!isTyping && !(this.isOnAlt && this.fallbackSelected) && !(hasSelected && this.isOnAlt))
+        switch (key) {
+          case 'ArrowDown': {
+            this.$emit('go', true)
+            p()
+            break
+          }
+          case 'ArrowUp': {
+            this.$emit('go', false)
+            p()
+            break
+          }
+        }
+
+      switch (key) {
+        case 'Enter': {
+          if (!isTyping)
+            if (!this.isOnControl && !this.justSaved)
+              this.isEditing = true
+            else if (this.isOnControl) {
+              toggleSelect()
+            }
+          break
+        }
+      }
+
+      if (!this.isOnShift) {
+        switch (key) {case ' ': {
+          if (!isTyping) {
+            p()
+            this.$emit('add-item-after', 1)
+          }
+          break
+        }}
+      }
+      if (this.isOnShift) {
+        switch (key) {
+          case "C": {
+            if (!this.isEditing && this.comp === 'Task') {
+              this.isEditing = true
+              this.editAction = 'addChecklist'
+            }
+            break
+          }
+          case "D": {
+            if (this.copyItem)
+              this.copyItem()
+            break
+          }
+          case ' ': {
+            if (!isTyping) {
+              p()
+              this.$emit('add-item-after', 0)
+            }
+            break
+          }
+        }
+      }
+      if (this.isOnControl && !this.isOnShift) {
+        switch (key) {
+          case ' ': {
+            if (!isTyping) {
+              p()
+              this.$emit('add-heading-after', +1)
+            }
+            break
+          }
+        }
+      }
+
+      if (this.isOnControl && !this.isOnShift)
+        switch (key) {
+          case "ArrowUp": {
+            toggleSelect()
+            break
+          }
+          case "ArrowDown": {
+            toggleSelect()
+            break
+          }
+        }
+      
+      if (this.isOnShift && this.isOnControl) {
+        switch (key) {
+          case ' ': {
+            if (!isTyping) {
+              p()
+              this.$emit('add-heading-after', 0)
+            }
+            break
+          }
+        }
+      }
+    },
     bindContextMenu(options) {
       utils.bindOptionsToEventListener(this.$el, options, this)
     },
@@ -184,10 +308,23 @@ export default {
   computed: {
     ...mapState({
       selectedItems: state => state.selectedItems,
+      mainSelection: state => state.mainSelection,
+      isOnControl: state => state.isOnControl,
+      isOnShift: state => state.isOnShift,
+      isOnAlt: state => state.isOnAlt,
     }),
-    ...mapGetters(['isDesktop'])
+    ...mapGetters(['isDesktop']),
+    isItemMainSelection() {
+      return this.item.id === this.mainSelection
+    },
+    isItemSelected() {
+      return this.selectedItems.includes(this.item.id)
+    },
   },
   watch: {
+    isItemMainSelection() {
+      this.bindMainSelection()
+    },
     completedItem() {
       this.completed = this.completedItem
     },

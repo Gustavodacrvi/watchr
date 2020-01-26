@@ -128,6 +128,7 @@ const store = new Vuex.Store({
     mainSelection: null,
     mainSelectionIndex: null,
     movingTask: false,
+    selectedType: null,
     
     isOnControl: false,
     isOnShift: false,
@@ -304,13 +305,17 @@ const store = new Vuex.Store({
     pushIconDrop(state, drop) {
       state.iconDrop = drop
     },
-    unselectTask(state, id) {
+    unselectItem(state, id) {
       if (id && state.selectedItems.includes(id)) {
         const i = state.selectedItems.findIndex(el => el === id)
         state.selectedItems.splice(i, 1)
       }
     },
-    selectTask(state, id) {
+    selectType(state, type) {
+      console.log(type)
+      state.selectedType = type
+    },
+    selectItem(state, id) {
       if (id && !state.selectedItems.includes(id)) {
         state.selectedItems.push(id)
       }
