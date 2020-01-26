@@ -80,7 +80,6 @@ export default {
     removeRepeat() {},
     removeDeadline() {},
     removeHeaderTag() {},
-    saveHeaderName() {},
     removeDeferDate() {},
     saveNotes() {},
     addHeading() {},

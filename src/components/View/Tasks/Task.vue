@@ -76,7 +76,7 @@
                   :ca='canceled'
                   :so='isSomeday'
                   @click.native.stop="desktopComplete"
-                  @contextmenu.native.stop='desktopCancel'
+                  @contextmenu.native.stop.prevent='desktopCancel'
                   
                   @touchstart.native.passive='checkTouchStart'
                   @touchend.native.passive='touchComplete'
@@ -1100,7 +1100,6 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transform: translateY(-1px);
 }
 
 .check-drop {
