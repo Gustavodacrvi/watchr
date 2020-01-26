@@ -11,6 +11,7 @@ service cloud.firestore {
         allow read, update, delete: if isOwner();
       }
       match /cache/{cache} {
+        allow create: if true;
         allow read: if isSignedIn() && isOwner();
         allow update: if isOwner();
       }

@@ -435,11 +435,16 @@ const store = new Vuex.Store({
             state.changedIds = []
           }
         } else {
-          state.pomo.stats = data.stats.pomo
-          state.task.tasks = data.tasks || {}
-          state.tag.tags = data.tags || {}
-          state.folder.folders = data.folders || {}
-          state.list.lists = data.lists || {}
+          if (data.stats)
+            state.pomo.stats = data.stats.pomo || {}
+          if (data.tasks)
+            state.task.tasks = data.tasks || {}
+          if (data.tags)
+            state.tag.tags = data.tags || {}
+          if (data.folders)
+            state.folder.folders = data.folders || {}
+          if (data.lists)
+            state.list.lists = data.lists || {}
 
           state.isFirstSnapshot = false
         }
@@ -459,23 +464,39 @@ const store = new Vuex.Store({
       })
     },
     update({}, info) {
-      const batch = fire.batch()
+      const b = fire.batch()
       
       const userRef = fire.collection('users').doc(info.uid)
-      batch.set(userRef, {
+      b.set(userRef, {
         ...utils.getRelevantUserData(info),
       }, {merge: true})
-      return batch.commit()
+      return b.commit()
     },
     createUser(s, user) {
-      return fire.collection('users').doc(user.uid).set({
+      const b = fire.batch()
+
+      const ref = fire.collection('users').doc(user.uid)
+      b.set(ref, {
         ...utils.getRelevantUserData(user),
       }, {merge: true})
+      b.set(ref.collection('cache').doc('cache'), {
+        userId: user.uid,
+      }, {merge: true})
+
+      b.commit()
     },
     createAnonymousUser(c, userId) {
-      firebase.firestore().collection('users').doc(userId).set({
+      const b = fire.batch()
+      
+      const ref = fire.collection('users').doc(userId)
+      b.set(ref, {
         ...utils.getRelevantUserData(userId),
+      }, {merge: true})
+      b.set(ref.collection('cache').doc('cache'), {
+        userId: userId,
       })
+
+      b.commit()
     },
     addRecentCollaborators({state}, user) {
       const add = !state.userInfo.recentUsers || !state.userInfo.recentUsers[user.userId]

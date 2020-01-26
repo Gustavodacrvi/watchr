@@ -123,7 +123,7 @@ export default {
           this.$store.dispatch('createUser', {
             ...firebase.auth().currentUser, displayName: this.username,
           }).catch(err => {
-            auth.currentUser.delete()
+            firebase.auth().currentUser.delete()
             toastErr(err)
           })
           this.$store.dispatch('closePopup')
