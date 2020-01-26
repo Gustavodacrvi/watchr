@@ -339,9 +339,14 @@ export default {
         }
       }
 
-      utils.saveByShortcut(this, key, p, (type, task) => {
+      utils.saveByShortcut(this, key, p, (type, item) => {
         const dispatch = this.$store.dispatch
-        if ((this.isMainSelectionInTasks === null) || this.isMainSelectionInTasks || this.selectedType === 'Task') {
+
+        const isList = (this.isMainSelectionInTasks !== null || !this.isMainSelectionInTasks) && this.selectedType === 'List'
+
+        const isTask = (this.isMainSelectionInTasks === null || this.isMainSelectionInTasks) && this.selectedType !== 'List'
+
+        if (isTask) {
 
           if (fallbackItems)
             switch (type) {
@@ -352,7 +357,7 @@ export default {
               case 'save': {
                 dispatch('task/saveTasksById', {
                   ids: fallbackItems,
-                  task,
+                  task: item,
                 })
                 break
               }
@@ -360,8 +365,10 @@ export default {
                 const tasks = this.getTasksById(fallbackItems)
                 const completed = tasks.filter(t => t.completed)
                 const uncompleted = tasks.filter(t => !t.completed)
-                dispatch('task/completeTasks', uncompleted)
-                dispatch('task/uncompleteTasks', completed)
+                if (uncompleted.length > 0)
+                  dispatch('task/completeTasks', uncompleted)
+                if (completed.length > 0)
+                  dispatch('task/uncompleteTasks', completed)
                 break
               }
               case 'pomo': {
@@ -370,7 +377,7 @@ export default {
               }
             }
 
-        } else if ((this.isMainSelectionInTasks !== null && !this.isMainSelectionInTasks) || this.selectedType === 'List') {
+        } else {
 
           switch (type) {
             case 'delete': {
@@ -378,6 +385,41 @@ export default {
                 ids: fallbackItems,
                 tasks: this.savedTasks,
               })
+              break
+            }
+            case 'toggleCompletion': {
+              const lists = this.getListsById(fallbackItems)
+              const completed = lists.filter(l => l.completed)
+              const uncompleted = lists.filter(t => !t.completed)
+              if (uncompleted.length > 0)
+                dispatch('list/completeLists', uncompleted)
+              if (completed.length > 0)
+                dispatch('list/uncompleteLists', completed)
+              break
+            }
+            case 'save': {
+              if (item.tags) {
+                dispatch('list/saveListsById', {
+                  list: item,
+                  ids: fallbackItems,
+                })
+              } else if (item.calendar && item.calendar.specific) {
+                dispatch('list/saveListsById', {
+                  list: {deadline: item.calendar.specific},
+                  ids: fallbackItems
+                })
+              } else if (item.calendar || (item.calendar === null)) {
+                dispatch('list/saveListsById', {
+                  list: {calendar: item.calendar},
+                  ids: fallbackItems,
+                })
+              } else if (item.folder) {
+                dispatch('list/saveListsById', {
+                  list: {folder: item.folder},
+                  ids: fallbackItems,
+                })
+              }
+              break
             }
           }
         }

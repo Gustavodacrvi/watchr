@@ -465,6 +465,17 @@ export default {
 
       b.commit()
     },
+    saveListsById(c, {list, ids}) {
+      const b = fire.batch()
+
+      const writes = []
+      
+      ids.forEach(id => setList(b, list, listRef(id), writes))
+
+      cacheBatchedItems(b, writes)
+
+      b.commit()
+    },
     editListTags(c, {tagIds, listId}) {
       const b = fire.batch()
       

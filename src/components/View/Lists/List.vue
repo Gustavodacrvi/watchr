@@ -158,6 +158,11 @@ export default {
     canceledItem() {
       return false
     },
+    copyItem() {
+      this.$store.dispatch('list/duplicateList', {
+        list: this.item, rootTasks: this.tasks.filter(el => !el.heading && el.list === this.item.id), headingTasks: this.tasks.filter(el => el.heading && el.list === this.item.id),
+      })
+    },
     
     progressIcon() {
       return this.isSomeday ? 'pie-someday' : 'pie'

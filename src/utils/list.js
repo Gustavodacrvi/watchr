@@ -294,7 +294,7 @@ export default {
           dispatch('list/duplicateList', {
             list, rootTasks: tasks.filter(rootTaskPipe), headingTasks: tasks.filter(headingsTaskPipe),
           })
-        }
+        },
       },
     ]
     if (getters.isDesktop)
