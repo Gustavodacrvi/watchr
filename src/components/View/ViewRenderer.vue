@@ -340,10 +340,39 @@ export default {
       }
 
       utils.saveByShortcut(this, key, p, (type, task) => {
-        /* if (fallbackTasks)
-          save() */ 
-        
-        console.log(type, task)
+        if ((this.isMainSelectionInTasks === null) || this.isMainSelectionInTasks || this.selectedType === 'Task') {
+          const dispatch = this.$store.dispatch
+
+          if (fallbackTasks)
+            switch (type) {
+              case 'delete': {
+                dispatch('task/deleteTasks', fallbackTasks)
+                break
+              }
+              case 'save': {
+                dispatch('task/saveTasksById', {
+                  ids: fallbackTasks,
+                  task,
+                })
+                break
+              }
+              case 'toggleCompletion': {
+                const tasks = this.getTasksById(fallbackTasks)
+                const completed = tasks.filter(t => t.completed)
+                const uncompleted = tasks.filter(t => !t.completed)
+                dispatch('task/completeTasks', uncompleted)
+                dispatch('task/uncompleteTasks', completed)
+                break
+              }
+              case 'pomo': {
+                dispatch('pomo/save', this.selectTask(fallbackTasks)[0])
+                break
+              }
+            }
+
+        } else if (this.selectedType === 'List') {
+
+        }
       })
       
       if (this.isOnShift)
@@ -378,7 +407,7 @@ export default {
       
       if (this.isOnAlt && !this.isOnControl)
         switch (key) {
-          case "ArrowUp": {
+/*           case "ArrowUp": {
             p()
             this.moveSelected(true)
             break
@@ -387,7 +416,7 @@ export default {
             p()
             this.moveSelected(false)
             break
-          }
+          } */
           case 'c': {
             this.showCompleted = !this.showCompleted
             break
@@ -398,10 +427,10 @@ export default {
           }
         }
     },
-    moveSelected(up) {
+/*     moveSelected(up) {
       const selected = this.fallbackSelected
       if (selected) {
-        const ids = this.laseredIds
+        const ids = this.currentSelectionTypeIds
         const newOrder = ids.slice()
         const increment = up ? -1 : 1
   
@@ -420,7 +449,7 @@ export default {
   
         this.updateIds(newOrder)
       }
-    },
+    }, */
     keypress({key}) {
       this.keypressed += key
 
@@ -607,6 +636,7 @@ export default {
       viewOrders: state => state.list.viewOrders,
       selectedItems: state => state.selectedItems,
       userInfo: state => state.userInfo,
+      selectedType: state => state.selectedType,
       runningPomo: state => state.pomo.running,
       rest: state => state.pomo.rest,
       openHelper: state => state.pomo.openHelper,
@@ -637,6 +667,7 @@ export default {
       getListsByName: 'list/getListsByName',
       getFoldersByName: 'folder/getFoldersByName',
       getFoldersById: 'folder/getFoldersById',
+      getTasksById: 'task/getTasksById',
 
       doesTaskPassExclusiveFolders: 'task/doesTaskPassExclusiveFolders',
       doesTaskPassInclusiveFolder: 'task/doesTaskPassInclusiveFolder',
@@ -649,6 +680,16 @@ export default {
     }),
     allViewItemsIds() {
       return [...this.allListsIds, ...this.allViewTasksIds]
+    },
+    isMainSelectionInTasks() {
+      if (!this.mainSelection)
+        return null
+      return this.allViewTasksIds.includes(this.mainSelection)
+    },
+    currentSelectionTypeIds() {
+      if (this.isMainSelectionInTasks)
+        return this.allViewTasksIds
+      return this.allListsIds
     },
     showHeadingFloatingButton() {
       return this.viewType === 'list' && !this.isSmart

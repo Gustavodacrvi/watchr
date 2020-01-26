@@ -853,7 +853,7 @@ export default {
       getSpecificDayCalendarObj: 'task/getSpecificDayCalendarObj',
     }),
     getMainSelectionIndex() {
-      return this.isRoot ? this.mainSelectionIndex : this.lazyItems.findIndex(i => i.id === this.mainSelection)
+      return this.lazyItems.findIndex(i => i.id === this.mainSelection)
     },
     isChangingViewName() {
       return this.changingViewName || this.rootChanging

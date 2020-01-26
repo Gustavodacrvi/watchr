@@ -289,7 +289,6 @@ export default {
       isTaskSomeday: 'task/isTaskSomeday',
       isTaskCompleted: 'task/isTaskCompleted',
       isTaskCanceled: 'task/isTaskCanceled',
-      getTasksById: 'task/getTasksById',
 
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
     }),
@@ -298,9 +297,6 @@ export default {
     },
     rootNonFilteredIds() {
       return this.rootNonFiltered.map(el => el.id)
-    },
-    laseredIds() {
-      return this.sortLaseredTasks.map(el => el.id)
     },
     allViewTasks() {
       return [...this.sortLaseredTasks,...this.sortHeadings.map(

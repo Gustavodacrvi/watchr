@@ -312,7 +312,6 @@ const store = new Vuex.Store({
       }
     },
     selectType(state, type) {
-      console.log(type)
       state.selectedType = type
     },
     selectItem(state, id) {

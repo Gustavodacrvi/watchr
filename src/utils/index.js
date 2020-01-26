@@ -455,7 +455,7 @@ export default {
         iconDrop({
           comp: 'CalendarPicker',
           repeat: true,
-          content: {callback: calendar => save('save', {task: {calendar}})},
+          content: {callback: calendar => save('save', {calendar})},
         })
         break
       }
@@ -478,7 +478,11 @@ export default {
           links: vm.lists.map(t => ({
             ...t,
             icon: 'tasks',
-            callback: () => save('save', {list: t.id}),
+            callback: () => save('save', {
+              list: t.id,
+              folder: null,
+              heading: null,
+            }),
           })),
           allowSearch: true,
         })
@@ -490,7 +494,11 @@ export default {
           links: vm.folders.map(t => ({
             ...t,
             icon: 'tasks',
-            callback: () => save('save', {folder: t.id}),
+            callback: () => save('save', {
+              folder: t.id,
+              list: null,
+              heading: null,
+            }),
           })),
           allowSearch: true,
         })

@@ -14,45 +14,45 @@
         <span class="tag">Down Arrow</span>
       </div>
       <div class="line">
-        <span>Select task</span>
+        <span>Select item</span>
         <span class="tag">Control + Enter</span>
       </div>
       <div class="line">
-        <span>Select all view tasks</span>
+        <span>Select all view items</span>
         <span class="tag">Control + A</span>
       </div>
       <div class="line">
         <span>Move selection to top</span>
-        <span class="tag">Control + Up Arrow</span>
+        <span class="tag">Shift + Up Arrow</span>
       </div>
       <div class="line">
         <span>Move selection to bottom</span>
-        <span class="tag">Control + Down Arrow</span>
+        <span class="tag">Shift + Down Arrow</span>
       </div>
       <div class="line">
         <span>Extend selection to bottom</span>
-        <span class="tag">Shift + Control + Down Arrow</span>
+        <span class="tag">Control + Down Arrow</span>
       </div>
       <div class="line">
         <span>Extend selection to top</span>
-        <span class="tag">Shift + Control + Up Arrow</span>
+        <span class="tag">Control + Up Arrow</span>
       </div>
       
       <h3 class="pc">Add items</h3>
       <div class="line">
-        <span>New task at the bottom</span>
+        <span>New item at the bottom</span>
         <span class="tag">A</span>
       </div>
       <div class="line">
-        <span>New task at the top</span>
+        <span>New item at the top</span>
         <span class="tag">Shift + A</span>
       </div>
       <div class="line">
-        <span>New task after selection</span>
+        <span>New item after selection</span>
         <span class="tag">Space</span>
       </div>
       <div class="line">
-        <span>New task before selection</span>
+        <span>New item before selection</span>
         <span class="tag">Shift + Space</span>
       </div>
       <div class="line">
@@ -64,14 +64,14 @@
         <span class="tag">Shift + Control + Space</span>
       </div>
       <div class="line">
-        <span>Add checklist to task</span>
+        <span>Add checklist to item</span>
         <span class="tag">Shift + C</span>
       </div>
 
       <h3 class="pc">Edit items</h3>
 
       <div class="line">
-        <span>Duplicate task</span>
+        <span>Duplicate item</span>
         <span class="tag">Shift + D</span>
       </div>
       <div class="line">
@@ -90,42 +90,34 @@
         <span>Move to Today</span>
         <span class="tag">Shift + T</span>
       </div>
-    </div>
 
-    <h3 class="pc">Move items</h3>
-    <div class="line">
-      <span>Move selection up</span>
-      <span class="tag">Alt + Arrow Up</span>
-    </div>
-    <div class="line">
-      <span>Move selection down</span>
-      <span class="tag">Alt + Arrow Down</span>
-    </div>
-    <div class="line">
-      <span>Move to list</span>
-      <span class="tag">Alt + L</span>
-    </div>
-    <div class="line">
-      <span>Move to folder</span>
-      <span class="tag">Alt + F</span>
-    </div>
-    <div class="line">
-      <span>Use calendar on selection</span>
-      <span class="tag">Alt + S</span>
-    </div>
+      <h3 class="pc">Move items</h3>
+      <div class="line">
+        <span>Move to list</span>
+        <span class="tag">Alt + L</span>
+      </div>
+      <div class="line">
+        <span>Move to folder</span>
+        <span class="tag">Alt + F</span>
+      </div>
+      <div class="line">
+        <span>Use calendar on selection</span>
+        <span class="tag">Alt + S</span>
+      </div>
 
-    <h3 class="pc">View</h3>
-    <div class="line">
-      <span>Toggle completed tasks view</span>
-      <span class="tag">Alt + C</span>
-    </div>
-    <div class="line">
-      <span>Toggle someday tasks</span>
-      <span class="tag">Alt + O</span>
-    </div>
-    <div class="line">
-      <span>Toggle scheduler</span>
-      <span class="tag">Control + Alt + S</span>
+      <h3 class="pc">View</h3>
+      <div class="line">
+        <span>Toggle completed items view</span>
+        <span class="tag">Alt + C</span>
+      </div>
+      <div class="line">
+        <span>Toggle someday items</span>
+        <span class="tag">Alt + O</span>
+      </div>
+      <div class="line">
+        <span>Toggle scheduler</span>
+        <span class="tag">Control + Alt + S</span>
+      </div>
     </div>
   </div>
 </template>
