@@ -295,9 +295,11 @@ export default {
     }
 
     window.addEventListener('click', this.remove)
+    window.addEventListener('keydown', this.keydown)
   },
   beforeDestroy() {
     window.removeEventListener('click', this.remove)
+    window.removeEventListener('keydown', this.keydown)
   },
   mounted() {
     if (this.editAction) {
@@ -306,6 +308,18 @@ export default {
     }
   },
   methods: {
+    keydown(evt) {
+      const p = () => evt.preventDefault()
+      const {key} = evt
+
+      utils.saveByShortcut(this, key, p, (type, task) => {
+        switch (type) {
+          case 'save': {
+            this.task = {...this.task, ...task}
+          }
+        }
+      })
+    },
     onPaste(txt) {
       if (this.fallbackItem) {
         let str = ''
@@ -558,15 +572,19 @@ export default {
       iconDrop: state => state.iconDrop,
       user: state => state.user,
       userInfo: state => state.userInfo,
+
+      isOnControl: state => state.isOnControl,
+      isOnShift: state => state.isOnShift,
+      isOnAlt: state => state.isOnAlt,
     }),
     ...mapGetters({
       savedTasks: 'task/tasks',
       l: 'l',
       isDesktop: 'isDesktop',
       platform: 'platform',
-      savedLists: 'list/sortedLists',
-      savedFolders: 'folder/sortedFolders',
-      savedTags: 'tag/sortedTagsByName',
+      lists: 'list/sortedLists',
+      folders: 'folder/sortedFolders',
+      tags: 'tag/sortedTagsByName',
     }),
     showingOptions() {
       return !this.isAddingChecklist
@@ -601,7 +619,7 @@ export default {
       return {}
     },
     getTagNames() {
-      const tags = this.savedTags
+      const tags = this.tags
       const names = []
       if (this.task.tags)
         for (const id of this.task.tags) {
@@ -662,7 +680,7 @@ export default {
     },
     getTags() {
       return {
-        links: this.savedTags.map(t => ({...t, icon: 'tag'})),
+        links: this.tags.map(t => ({...t, icon: 'tag'})),
         select: true,
         onSave: names => this.task.tags = names.slice(),
         selected: this.task.tags || [],
@@ -677,7 +695,7 @@ export default {
     },
     folderOptions() {
       const arr = []
-      for (const el of this.savedFolders) {
+      for (const el of this.folders) {
         arr.push({
           name: el.name,
           icon: 'folder',
@@ -696,7 +714,7 @@ export default {
     },
     listOptions() {
       const arr = []
-      for (const el of this.savedLists) {
+      for (const el of this.lists) {
         arr.push({
           name: el.name,
           icon: 'tasks',
@@ -755,7 +773,7 @@ export default {
         }
       }
       const parseTags = () => {
-        const tags = this.savedTags
+        const tags = this.tags
         for (const tag of tags) {
           const tagName = ` #${tag.name}`
           if (n.includes(tagName)) {
@@ -775,7 +793,7 @@ export default {
         }
       }
       const parseLists = () => {
-        const lists = this.savedLists
+        const lists = this.lists
         for (const li of lists) {
           const listName = ` @${li.name}`
           if (n.includes(listName)) {
@@ -796,7 +814,7 @@ export default {
         }
       }
       const parseFolder = () => {
-        const folders = this.savedFolders
+        const folders = this.folders
         for (const f of folders) {
           const folderName = ` $${f.name}`
           if (n.includes(folderName)) {
@@ -814,7 +832,7 @@ export default {
           this.optionsType = '$'
           const word = lastWord.substr(1)
 
-          this.options = this.savedFolders.map(el => el.name).filter(el => el.toLowerCase().includes(word.toLowerCase()))
+          this.options = this.folders.map(el => el.name).filter(el => el.toLowerCase().includes(word.toLowerCase()))
           changedOptions = true
         }
       }

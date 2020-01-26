@@ -441,70 +441,70 @@ export default {
     const iconDrop = opt => vm.$store.commit('pushIconDrop', opt)
           
     if (isOnAlt && !isOnControl)
-    switch (key) {
-      case '.': {
-        save('toggleCompletion')
-        break
-      }
-      case 'p': {
-        save('pomo')
-        break
-      }
-      case 's': {
-        p()
-        iconDrop({
-          comp: 'CalendarPicker',
-          repeat: true,
-          content: {callback: calendar => save('save', {calendar})},
-        })
-        break
-      }
-      case "t": {
-        p()
-        iconDrop({
-          links: (vm.tags || []).map(t => ({...t, icon: 'tag'})),
-          select: true,
-          onSave: names => save('save', {
-            tags: (vm.tags || []).filter(t => names.includes(t.name)).map(el => el.id),
-          }),
-          selected: [],
-          allowSearch: true,
-        })
-        break
-      }
-      case "l": {
-        p()
-        iconDrop({
-          links: vm.lists.map(t => ({
-            ...t,
-            icon: 'tasks',
-            callback: () => save('save', {
-              list: t.id,
-              folder: null,
-              heading: null,
+      switch (key) {
+        case '.': {
+          save('toggleCompletion')
+          break
+        }
+        case 'p': {
+          save('pomo')
+          break
+        }
+        case 's': {
+          p()
+          iconDrop({
+            comp: 'CalendarPicker',
+            repeat: true,
+            content: {callback: calendar => save('save', {calendar})},
+          })
+          break
+        }
+        case "t": {
+          p()
+          iconDrop({
+            links: (vm.tags || []).map(t => ({...t, icon: 'tag'})),
+            select: true,
+            onSave: names => save('save', {
+              tags: (vm.tags || []).filter(t => names.includes(t.name)).map(el => el.id),
             }),
-          })),
-          allowSearch: true,
-        })
-        break
+            selected: [],
+            allowSearch: true,
+          })
+          break
+        }
+        case "l": {
+          p()
+          iconDrop({
+            links: vm.lists.map(t => ({
+              ...t,
+              icon: 'tasks',
+              callback: () => save('save', {
+                list: t.id,
+                folder: null,
+                heading: null,
+              }),
+            })),
+            allowSearch: true,
+          })
+          break
+        }
+        case "f": {
+          p()
+          iconDrop({
+            links: vm.folders.map(t => ({
+              ...t,
+              icon: 'tasks',
+              callback: () => save('save', {
+                folder: t.id,
+                list: null,
+                heading: null,
+              }),
+            })),
+            allowSearch: true,
+          })
+          break
+        }
       }
-      case "f": {
-        p()
-        iconDrop({
-          links: vm.folders.map(t => ({
-            ...t,
-            icon: 'tasks',
-            callback: () => save('save', {
-              folder: t.id,
-              list: null,
-              heading: null,
-            }),
-          })),
-          allowSearch: true,
-        })
-        break
-      }
-    }
 
   },
 }

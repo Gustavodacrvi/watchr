@@ -292,190 +292,182 @@ export default {
       }
     },
     keydown(evt) {
-      const p = () => evt.preventDefault()
-      const {key} = evt
-      const hasSelected = this.selectedItems.length > 0
-
-      const fallbackItems = this.fallbackSelected
-
       const active = document.activeElement
       const isTyping = active && (active.nodeName === 'INPUT' || active.nodeName === 'TEXTAREA')
-
       
-      if (!isTyping && (!this.mainSelection || this.mainSelectionIsNotInView)) {
+      if (!isTyping) {
+        const p = () => evt.preventDefault()
+        const {key} = evt
+        const hasSelected = this.selectedItems.length > 0
+  
+        const fallbackItems = this.fallbackSelected
+        
+        if (!isTyping && (!this.mainSelection || this.mainSelectionIsNotInView)) {
+          switch (key) {
+            case 'ArrowDown': {
+              this.go(true)
+              p()
+              break
+            }
+            case 'ArrowUp': {
+              this.go(false)
+              p()
+              break
+            }
+          }
+        }
+  
         switch (key) {
-          case 'ArrowDown': {
-            this.go(true)
-            p()
+          case 'ArrowLeft': {
+            this.go(null)
             break
           }
-          case 'ArrowUp': {
-            this.go(false)
-            p()
+          case 'ArrowRight': {
+            this.go(null)
             break
           }
         }
-      }
-
-      switch (key) {
-        case 'ArrowLeft': {
-          this.go(null)
-          break
-        }
-        case 'ArrowRight': {
-          this.go(null)
-          break
-        }
-      }
-      if (this.isOnControl) {
-        switch (key) {
-          case "a": {
-            p()
-            this.selectEverythingToggle = true
-            setTimeout(() => {
-              this.selectEverythingToggle = false
-            })
+        if (this.isOnControl) {
+          switch (key) {
+            case "a": {
+              p()
+              this.selectEverythingToggle = true
+              setTimeout(() => {
+                this.selectEverythingToggle = false
+              })
+            }
           }
         }
-      }
-
-      utils.saveByShortcut(this, key, p, (type, item) => {
-        const dispatch = this.$store.dispatch
-
-        const isList = (this.isMainSelectionInTasks !== null || !this.isMainSelectionInTasks) && this.selectedType === 'List'
-
-        const isTask = (this.isMainSelectionInTasks === null || this.isMainSelectionInTasks) && this.selectedType !== 'List'
-
-        if (isTask) {
-
-          if (fallbackItems)
+  
+        utils.saveByShortcut(this, key, p, (type, item) => {
+          const dispatch = this.$store.dispatch
+  
+          const isList = (this.isMainSelectionInTasks !== null || !this.isMainSelectionInTasks) && this.selectedType === 'List'
+  
+          const isTask = ((this.isMainSelectionInTasks === null || this.isMainSelectionInTasks) && this.selectedType !== 'List') || this.selectedType === 'Task'
+  
+          if (isTask) {
+  
+            if (fallbackItems)
+              switch (type) {
+                case 'delete': {
+                  dispatch('task/deleteTasks', fallbackItems)
+                  break
+                }
+                case 'save': {
+                  dispatch('task/saveTasksById', {
+                    ids: fallbackItems,
+                    task: item,
+                  })
+                  break
+                }
+                case 'toggleCompletion': {
+                  const tasks = this.getTasksById(fallbackItems)
+                  const completed = tasks.filter(t => t.completed)
+                  const uncompleted = tasks.filter(t => !t.completed)
+                  if (uncompleted.length > 0)
+                    dispatch('task/completeTasks', uncompleted)
+                  if (completed.length > 0)
+                    dispatch('task/uncompleteTasks', completed)
+                  break
+                }
+                case 'pomo': {
+                  dispatch('pomo/save', this.selectTask(fallbackItems)[0])
+                  break
+                }
+              }
+  
+          } else {
+  
             switch (type) {
               case 'delete': {
-                dispatch('task/deleteTasks', fallbackItems)
-                break
-              }
-              case 'save': {
-                dispatch('task/saveTasksById', {
+                dispatch('list/deleteMultipleListsByIds', {
                   ids: fallbackItems,
-                  task: item,
+                  tasks: this.tasks,
                 })
                 break
               }
               case 'toggleCompletion': {
-                const tasks = this.getTasksById(fallbackItems)
-                const completed = tasks.filter(t => t.completed)
-                const uncompleted = tasks.filter(t => !t.completed)
+                const lists = this.getListsById(fallbackItems)
+                const completed = lists.filter(l => l.completed)
+                const uncompleted = lists.filter(t => !t.completed)
                 if (uncompleted.length > 0)
-                  dispatch('task/completeTasks', uncompleted)
+                  dispatch('list/completeLists', uncompleted)
                 if (completed.length > 0)
-                  dispatch('task/uncompleteTasks', completed)
+                  dispatch('list/uncompleteLists', completed)
                 break
               }
-              case 'pomo': {
-                dispatch('pomo/save', this.selectTask(fallbackItems)[0])
+              case 'save': {
+                if (item.tags) {
+                  dispatch('list/saveListsById', {
+                    list: item,
+                    ids: fallbackItems,
+                  })
+                } else if (item.calendar && item.calendar.specific) {
+                  dispatch('list/saveListsById', {
+                    list: {deadline: item.calendar.specific},
+                    ids: fallbackItems
+                  })
+                } else if (item.calendar || (item.calendar === null)) {
+                  dispatch('list/saveListsById', {
+                    list: {calendar: item.calendar},
+                    ids: fallbackItems,
+                  })
+                } else if (item.folder) {
+                  dispatch('list/saveListsById', {
+                    list: {folder: item.folder},
+                    ids: fallbackItems,
+                  })
+                }
                 break
               }
             }
+          }
+        })
+        
+        if (this.isOnShift)
+          switch (key) {
+            case "ArrowUp": {
+              this.go(0)
+              break
+            }
+            case "ArrowDown": {
+              this.go(this.allViewItemsIds.length - 1)
+              break
+            }
+          }
+        
+        if (this.isOnControl && !this.isOnShift) {
+          switch (key) {
+            case 'd': {
+              if (this.fallbackSelected)
+                p()
+              this.addDuration()
+            }
+          }
+        }
+  
+        if (this.isOnAlt && this.isOnControl)
+          switch (key) {
+            case 's': {
+              this.toggleCalendar()
+              break
+            }
+          }
+        
+        if (this.isOnAlt && !this.isOnControl)
+          switch (key) {
 
-        } else {
-
-          switch (type) {
-            case 'delete': {
-              dispatch('list/deleteMultipleListsByIds', {
-                ids: fallbackItems,
-                tasks: this.savedTasks,
-              })
+            case 'c': {
+              this.showCompleted = !this.showCompleted
               break
             }
-            case 'toggleCompletion': {
-              const lists = this.getListsById(fallbackItems)
-              const completed = lists.filter(l => l.completed)
-              const uncompleted = lists.filter(t => !t.completed)
-              if (uncompleted.length > 0)
-                dispatch('list/completeLists', uncompleted)
-              if (completed.length > 0)
-                dispatch('list/uncompleteLists', completed)
-              break
-            }
-            case 'save': {
-              if (item.tags) {
-                dispatch('list/saveListsById', {
-                  list: item,
-                  ids: fallbackItems,
-                })
-              } else if (item.calendar && item.calendar.specific) {
-                dispatch('list/saveListsById', {
-                  list: {deadline: item.calendar.specific},
-                  ids: fallbackItems
-                })
-              } else if (item.calendar || (item.calendar === null)) {
-                dispatch('list/saveListsById', {
-                  list: {calendar: item.calendar},
-                  ids: fallbackItems,
-                })
-              } else if (item.folder) {
-                dispatch('list/saveListsById', {
-                  list: {folder: item.folder},
-                  ids: fallbackItems,
-                })
-              }
+            case 'o': {
+              this.showSomeday = !this.showSomeday
               break
             }
           }
-        }
-      })
-      
-      if (this.isOnShift)
-        switch (key) {
-          case "ArrowUp": {
-            this.go(0)
-            break
-          }
-          case "ArrowDown": {
-            this.go(this.allViewItemsIds.length - 1)
-            break
-          }
-        }
-      
-      if (this.isOnControl && !this.isOnShift) {
-        switch (key) {
-          case 'd': {
-            if (this.fallbackSelected)
-              p()
-            this.addDuration()
-          }
-        }
       }
-
-      if (this.isOnAlt && this.isOnControl)
-        switch (key) {
-          case 's': {
-            this.toggleCalendar()
-            break
-          }
-        }
-      
-      if (this.isOnAlt && !this.isOnControl)
-        switch (key) {
-/*           case "ArrowUp": {
-            p()
-            this.moveSelected(true)
-            break
-          }
-          case "ArrowDown": {
-            p()
-            this.moveSelected(false)
-            break
-          } */
-          case 'c': {
-            this.showCompleted = !this.showCompleted
-            break
-          }
-          case 'o': {
-            this.showSomeday = !this.showSomeday
-            break
-          }
-        }
     },
 /*     moveSelected(up) {
       const selected = this.fallbackSelected
@@ -698,16 +690,13 @@ export default {
       isOnAlt: state => state.isOnAlt,
     }),
     ...mapGetters({
-      tags: 'tag/tags',
       platform: 'platform',
       isDesktop: 'isDesktop',
       l: 'l',
-      lists: 'list/lists',
-      folders: 'folder/folders',
-      savedLists: 'list/sortedLists',
-      savedTasks: 'task/tasks',
-      savedFolders: 'folder/sortedFolders',
-      savedTags: 'tag/sortedTagsByName',
+      lists: 'list/sortedLists',
+      tasks: 'task/tasks',
+      folders: 'folder/sortedFolders',
+      tags: 'tag/sortedTagsByName',
       fallbackSelected: 'fallbackSelected',
 
       getTagsByName: 'tag/getTagsByName',
@@ -951,7 +940,7 @@ export default {
     },
     getIconDropOptionsTags() {
       const arr = []
-      const tags = this.savedTags
+      const tags = this.tags
       for (const t of tags) {
         arr.push({
           name: t.name,
@@ -969,7 +958,7 @@ export default {
         })
       }
       const links = []
-      const folders = this.savedFolders
+      const folders = this.folders
       for (const fold of folders) {
         links.push({
           name: fold.name,
@@ -995,7 +984,7 @@ export default {
         })
       }
       const links = []
-      const lists = this.savedLists
+      const lists = this.lists
       for (const list of lists) {
         links.push({
           name: list.name,
