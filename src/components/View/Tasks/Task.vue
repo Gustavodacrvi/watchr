@@ -385,9 +385,6 @@ export default {
       div.innerHTML = string
       return div.textContent || div.innerText || ""
     },
-    getLinkString(str) {
-      return str.replace(/\[(https?:\/\/[^\]\s]+)(?: ([^\]]*))?\]/g, "<a class='link' target='_blank' onclick='event.stopPropagation()' href='$1'>$2</a>")
-    },
   },
   computed: {
     ...mapState({
@@ -574,14 +571,16 @@ export default {
       return 100 * completed / this.item.checklist.length
     },
     parsedName() {
-      return this.getLinkString(this.escapeHTML(this.item.name))
+      let str = this.escapeHTML(this.item.name)
+      str = str.replace(/\[(https?:\/\/[^\]\s]+)(?: ([^\]]*))?\]/g, "<a class='link' target='_blank' onclick='event.stopPropagation()' href='$1'>$2</a>")
+      str = str.replace(/__(.*?)__/g, "<b>$1</b>")
+      str = str.replace(/\*(.*?)\*/g, "<i>$1</i>")
+
+      return str
     },
     isSomeday() {
       const {c} = this.getTask
       return c && c.type === 'someday'
-    },
-    urlRegex() {
-      return /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/g
     },
     haveChecklist() {
       return this.item.checklist && this.item.checklist.length > 0
