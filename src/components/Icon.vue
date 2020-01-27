@@ -106,6 +106,7 @@ import boxCheck from '@/assets/icons/box-check.svg'
 import calendarStar from '@/assets/icons/calendar-star.svg'
 import circleFilled from '@/assets/icons/circle-filled.svg'
 import circleDash from '@/assets/icons/circle-dash.svg'
+import circleCheckFilled from '@/assets/icons/circle-check-filled.svg'
 import boxClose from '@/assets/icons/box-close.svg'
 import boxCheckFilled from '@/assets/icons/box-check-filled.svg'
 import circleCheckDash from '@/assets/icons/circle-check-dash.svg'
@@ -129,6 +130,7 @@ export default {
         folder, heart, close, filter, magic, clock,
         pomo, pie, check,
         "box-close": boxClose,
+        "circle-check-filled": circleCheckFilled,
         "box-check-filled": boxCheckFilled,
         "box-dash": boxDash,
         "circle-dash": circleDash,

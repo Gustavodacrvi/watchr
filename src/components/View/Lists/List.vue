@@ -75,11 +75,6 @@
               <span v-if="deadlineStr" class='list-inf deadline'>{{ deadlineStr }}</span>
             </template>
             <span v-if="calendarStr" class="list-inf">{{ calendarStr }}</span>
-            <Icon v-if="isSomeday" class="progress-icon"
-              icon='archive'
-              width='22px'
-              color='var(--fade)'
-            />
           </div>
         </div>
       </div>
@@ -247,7 +242,9 @@ export default {
       return this.isListSomeday(this.item)
     },
     calendarStr() {
-      return this.getListCalendarStr(this.item, this.l, this.userInfo)
+      const res = this.getListCalendarStr(this.item, this.l, this.userInfo)
+      if (res === 'Someday') return null
+      return res
     },
     deadlineStr() {
       const list = this.item
