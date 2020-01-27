@@ -1,6 +1,6 @@
 <template>
   <div class="Menu cbd">
-    <div class="appbar-wrapper">
+    <div class="sidebar-wrapper">
       <span class="arrow-wrapper">
         <Icon @click="closeMenu" class="arrow primary-hover cursor" icon="arrow" color="var(--fade)" width="25px" :circle='true'/>
         <div>
@@ -16,7 +16,7 @@
         </div>
       </span>
       <transition :name="this.appSection ? 'mr' : 'ml'">
-        <Appbar class="Appbar" v-if="appSection" key="app"/>
+        <Sidebar class="Sidebar" v-if="appSection" key="app"/>
         <div v-else key="links" class="nav-links">
           <router-link class="cursor link rb" to="/">{{ l['Home'] }}</router-link>
           <router-link class="cursor link rb" to="/user">{{ l['User'] }}</router-link>
@@ -34,7 +34,7 @@
 
 <script>
 
-import AppbarVue from '../Appbar/Appbar.vue'
+import SidebarVue from '../Sidebar/Sidebar.vue'
 import IconVue from '../Icon.vue'
 import IconDropVue from '../IconDrop/IconDrop.vue'
 import VersionApp from '@/components/Version.vue'
@@ -45,7 +45,7 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   components: {
     ActionButtons,
-    Appbar: AppbarVue,
+    Sidebar: SidebarVue,
     Icon: IconVue, VersionApp,
     IconDrop: IconDropVue
   },
@@ -123,12 +123,12 @@ export default {
   overflow: hidden;
 }
 
-.appbar-wrapper {
+.sidebar-wrapper {
   position: relative;
   height: 100%;
 }
 
-.Appbar {
+.Sidebar {
   margin-top: 8px;
 }
 

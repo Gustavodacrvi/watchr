@@ -2,7 +2,7 @@
   <div class="ListRenderer floating-btn-container" :class='[platform, `${comp}-ListRenderer`]' @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration" class="illustration">
-        <Icon :icon='icon' color='var(--appnav-color)' width="150px"/>
+        <Icon :icon='icon' color='var(--sidebar-color)' width="150px"/>
       </div>
     </transition>
     <div
@@ -245,7 +245,7 @@ export default {
         const act = obj[type]
         for (const s of possibleValues)
           if (s !== type) {
-            obj[s].backgroundColor = 'var(--appnav-color)'
+            obj[s].backgroundColor = 'var(--sidebar-color)'
             obj[s].zIndex = '1'
             obj[s].boxShadow = 'none'
           }
@@ -381,7 +381,7 @@ export default {
           name: 'item-renderer',
           pull: (e,j,item) => {
             const d = item.dataset
-            if (e.el.dataset.name === 'appnav-renderer') return 'clone'
+            if (e.el.dataset.name === 'sidebar-renderer') return 'clone'
             if (d.type === 'Task') return true
             return false
           },
@@ -389,7 +389,7 @@ export default {
             const d = item.dataset
             const type = d.type
             if (type === 'headingbutton' || type === 'add-task-floatbutton') return true
-            if (type === 'appnav-element') return true
+            if (type === 'sidebar-element') return true
             if (!this.onSortableAdd) return false
             if (type === 'Task') return true
             if (type === 'subtask') return true
@@ -545,7 +545,7 @@ export default {
         },
         onEnd: evt => {
           if (!cancel) {
-            const handle = obj => this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', obj)
+            const handle = obj => this.$store.dispatch('task/handleTasksBySidebarElementDragAndDrop', obj)
             
             if (moveIsSmart)
               handle({

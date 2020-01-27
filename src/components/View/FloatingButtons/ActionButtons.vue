@@ -37,7 +37,7 @@ export default {
       this.showingTaskAdder = true
     }, 700)
     this.sortable = new Sortable(this.$el, {
-      group: {name: ['action-buttons', 'appnav'], pull: 'clone', put: false},
+      group: {name: ['action-buttons', 'sidebar'], pull: 'clone', put: false},
       handle: '.floating-button-handle',
       animation: 80,
 
@@ -142,7 +142,7 @@ export default {
   align-items: center !important;
   height: 100%;
   flex-basis: 100%;
-  background-color: var(--appnav-color);
+  background-color: var(--sidebar-color);
   border-radius: 10px;
   transition: background-color .2s, box-shadow;
 }

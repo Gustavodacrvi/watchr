@@ -11,7 +11,7 @@
               opacity='0'
             />
           </span>
-          <span class="option rb cursor remove-highlight" :class="{active: 'Appnav' === option}" @click="option = 'Appnav'">Appnav
+          <span class="option rb cursor remove-highlight" :class="{active: 'Sidebar' === option}" @click="option = 'Sidebar'">Sidebar
             <CircleBubble
               innerColor='var(--light-gray)'
               outerColor='var(--fade)'
@@ -82,7 +82,7 @@
               @input="toggleFolderFilters"
             />
           </div>
-          <div v-else class="Appnav" key="appnav">
+          <div v-else class="Sidebar" key="sidebar">
             <h4 class="title">Options</h4>
             <CheckboxApp class="rb"
               :name='l["Go to the last visited view on app start instead of the first smart view"]'
@@ -99,7 +99,7 @@
               @input='toggleSection(s.name)'
             />
             <h4 class="title">Enabled Smart Views</h4>
-            <CheckboxApp v-for="s in appnavSmartViews" :key="s.name"
+            <CheckboxApp v-for="s in sidebarSmartViews" :key="s.name"
               class="rb"
               :name="l[s.name]"
               :value='!isSmartViewHided(s.name)'
@@ -146,7 +146,7 @@ export default {
           color: 'var(--dark-blue)'
         } */
       ],
-      appnavSmartViews: [
+      sidebarSmartViews: [
         {
           name: 'Today',
           icon: 'star',

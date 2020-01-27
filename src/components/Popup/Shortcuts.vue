@@ -135,16 +135,20 @@
 
       <h3 class="pc">View</h3>
       <div class="line">
-        <span>Toggle completed items view</span>
+        <span>Hide/show completed items view</span>
         <span class="tag">Alt + C</span>
       </div>
       <div class="line">
-        <span>Toggle someday items</span>
+        <span>Hide/show someday items</span>
         <span class="tag">Alt + O</span>
       </div>
       <div class="line">
-        <span>Toggle scheduler</span>
+        <span>Hide/show scheduler</span>
         <span class="tag">Control + Alt + S</span>
+      </div>
+      <div class="line">
+        <span>Hide/show sidebar</span>
+        <span class="tag">/</span>
       </div>
     </div>
   </div>

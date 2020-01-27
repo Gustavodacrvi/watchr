@@ -2,8 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{userId} {
-    	allow create: if true;
-    	allow read: if isSignedIn();
+    	allow read, create: if isSignedIn();
       allow delete, update: if isOwner();
       
       match /info/{info} {
@@ -11,7 +10,7 @@ service cloud.firestore {
         allow read, update, delete: if isOwner();
       }
       match /cache/{cache} {
-        allow create: if true;
+        allow create: if isSignedIn();
         allow read: if isSignedIn() && isOwner();
         allow update: if isOwner();
       }

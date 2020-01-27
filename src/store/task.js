@@ -992,7 +992,7 @@ export default {
 
       b.commit()
     },
-    handleTasksByAppnavElementDragAndDrop({dispatch, getters}, {elIds, taskIds, type}) {
+    handleTasksBySidebarElementDragAndDrop({dispatch, getters}, {elIds, taskIds, type}) {
       const calObj = (mom) => {
         return getters.getSpecificDayCalendarObj(mom)
       }

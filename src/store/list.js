@@ -141,7 +141,7 @@ export default {
           })
         },
       },
-      filterAppnavLists: {
+      filterSidebarLists: {
         getter({getters}, lists) {
           return lists.filter(l =>
               !getters.isListCompleted(l) &&
@@ -391,9 +391,14 @@ export default {
 
         setList(batch, {
           completedFire: serverTimestamp(),
-          completeDate: mom().format('Y-M-D'),
-          fullCompleteDate: mom().format('Y-M-D HH:mm ss'),
+          completeDate: tod.format('Y-M-D'),
+          checkDate: tod.format('Y-M-D'),
+          fullCheckDate: tod.format('Y-M-D HH:mm ss'),
+          fullCompleteDate: tod.format('Y-M-D HH:mm ss'),
           completed: true,
+          canceled: false,
+          cancelDate: null,
+          fullCancelDate: null,
           calendar,
         }, listRef(l.id))
 
@@ -414,11 +419,43 @@ export default {
           completedFire: null,
           completeDate: null,
           completed: false,
+          checkDate: null,
+          fullCheckDate: null,
           calendar: c,
         }, listRef(l.id))
       }
 
       batch.commit()
+    },
+    async cancelLists({}, ids) {
+      const b = fire.batch()
+
+      const tod = mom()
+      await batchSetLists(b, {
+        canceled: true,
+        cancelDate: tod.format('Y-M-D'),
+        checkDate: tod.format('Y-M-D'),
+        fullCancelDate: tod.format('Y-M-D HH:mm ss'),
+        fullCheckDate: tod.format('Y-M-D HH:mm ss'),
+        completedFire: null,
+        completeDate: null,
+        completed: false,
+      }, ids)
+
+      b.commit()
+    },
+    async uncancelLists({}, ids) {
+      const b = fire.batch()
+
+      await batchSetLists(b, {
+        canceled: false,
+        cancelDate: null,
+        checkDate: null,
+        fullCancelDate: null,
+        fullCheckDate: null,
+      }, ids)
+
+      b.commit()
     },
     convertHeadingToList({state, getters}, {listId, taskIds, headingId}) {
       const list = getters.getListsById([listId])[0]

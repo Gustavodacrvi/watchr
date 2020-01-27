@@ -326,6 +326,10 @@ export default {
             this.go(null)
             break
           }
+          case '/': {
+            this.$emit('sidebar')
+            break
+          }
         }
         if (this.isOnControl) {
           switch (key) {
@@ -463,11 +467,6 @@ export default {
               this.toggleCalendar()
               break
             }
-          }
-        
-        if (this.isOnAlt && !this.isOnControl)
-          switch (key) {
-
             case 'c': {
               this.showCompleted = !this.showCompleted
               break

@@ -96,6 +96,19 @@ export default {
   },
   methods: {
     ...mapActions(['getOptions']),
+    dispatchCompleteItem() {
+      this.$store.dispatch('list/completeLists', [this.item])
+    },
+    dispatchUncompleteItem() {
+      this.$store.dispatch('list/uncompleteLists', [this.item])
+    },
+    dispatchCancelItem() {
+      this.$store.dispatch('list/cancelLists', [this.item.id])
+    },
+    dispatchUncancelItem() {
+      this.$store.dispatch('list/uncancelLists', [this.item.id])
+    },
+    
     enter(el, done) {
       const cont = this.$refs['cont-wrapper']
       if (cont) {
@@ -115,7 +128,6 @@ export default {
         }
       }
     },
-
     saveList(obj) {
       this.$store.dispatch('list/saveList', {
         id: this.item.id,
@@ -302,7 +314,7 @@ export default {
 }
 
 .sortable-ghost .cont-wrapper {
-  background-color: var(--appnav-color) !important;
+  background-color: var(--sidebar-color) !important;
   transition-duration: 0;
   height: 38px;
   padding: 0;

@@ -259,7 +259,7 @@ export default {
   white-space: nowrap;
   padding: 12px;
   font-size: .9em;
-  background-color: var(--appnav-color);
+  background-color: var(--sidebar-color);
   cursor: initial;
 }
 
@@ -271,7 +271,7 @@ export default {
   content: '';
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-bottom: 10px solid var(--appnav-color);
+  border-bottom: 10px solid var(--sidebar-color);
 }
 
 .icon {

@@ -1017,7 +1017,7 @@ export default {
 }
 
 .sortable-ghost .cont-wrapper {
-  background-color: var(--appnav-color) !important;
+  background-color: var(--sidebar-color) !important;
   transition-duration: 0;
   height: 38px;
   padding: 0;
