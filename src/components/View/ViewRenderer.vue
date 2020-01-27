@@ -511,6 +511,9 @@ export default {
         this.keypressed = ''
       }, 3000)
     },
+    selectSound(name) {
+      this.$store.commit('pomo/selectTickSound', name)
+    },
 
     
     async getComputedOptions() {
@@ -697,6 +700,9 @@ export default {
       isOnControl: state => state.isOnControl,
       isOnShift: state => state.isOnShift,
       isOnAlt: state => state.isOnAlt,
+
+      currentTickSound: state => state.pomo.currentTickSound,
+      availableSounds: state => state.pomo.availableSounds,
     }),
     ...mapGetters({
       platform: 'platform',
@@ -775,6 +781,18 @@ export default {
         const f = utils.formatQuantity
 
         return [
+          {
+            name: `Tick sound: <span class="fade">${this.currentTickSound}</span>`,
+            callback: () => this.availableSounds.map(name => ({
+              name,
+              callback: () => {
+                this.selectSound(name)
+                return getOptions({
+                  duration, shortRest, longRest,
+                }, true)
+              }
+            }))
+          },
           {
             name: `${l['Duration: ']}<span class="fade">${f(duration)}</span>`,
             callback: () => ({
