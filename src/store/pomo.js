@@ -8,21 +8,23 @@ import mom from 'moment'
 
 const TOD_STR = mom().format('Y-M-D')
 
-const tickSound = new Audio(require('@/assets/mp3/clock-tick.mp3'))
 const alarmClock = new Audio(require('@/assets/mp3/alarm-clock.mp3'))
+
+let savedVolume = localStorage.getItem('pomo_volume')
+const parsedVol = JSON.parse(savedVolume)
+const currentTickSound = localStorage.getItem('tick_sound') || 'Clock'
+
+let tickSound = new Audio(require(`@/assets/mp3/${currentTickSound}.mp3`))
 
 tickSound.loop = true
 alarmClock.loop = false
 
-let savedVolume = localStorage.getItem('pomo_volume')
 
 if (!savedVolume)
   savedVolume = .5
 
-const parsedVol = JSON.parse(savedVolume)
-
-tickSound.volume = parsedVol
 alarmClock.volume = parsedVol
+tickSound.volume = parsedVol
 
 const areEqual = (s1, s2) =>  {
   const split1 = s1.split(':')
@@ -44,12 +46,16 @@ const getValueFromTime = time => {
 export default {
   namespaced: true,
   state: {
+    currentTickSound,
     stats: null,
     volume: parsedVol,
     cycles: 0,
     current: '00:00',
     start: null,
     openHelper: false,
+    availableSounds: [
+      'Clock', 'Rain', 'Fan'
+    ],
 
     duration: '25:00',
     currentDuration: '25:00',
@@ -77,6 +83,19 @@ export default {
     },
     closeHelper(state) {
       state.openHelper = false
+    },
+    selectTickSound(state, soundName) {
+      if (state.availableSounds.includes(soundName)) {
+        localStorage.setItem('tick_sound', soundName)
+        state.currentTickSound = soundName
+        
+        tickSound.pause()
+        tickSound = new Audio(require(`@/assets/mp3/${soundName}.mp3`))
+        tickSound.volume = state.volume
+        tickSound.loop = true
+        if (state.running)
+          tickSound.play()
+      }
     },
   },
   getters: {

@@ -1,5 +1,5 @@
 <template>
-  <div class="ListRenderer floating-btn-container" :class='[platform, `${comp}-ListRenderer`]' @click='click'>
+  <div class="ListRenderer floating-btn-container" :class='[platform, `${comp}-ListRenderer`, {isHeading: !isRoot}]' @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration" class="illustration">
         <Icon :icon='icon' color='var(--sidebar-color)' width="150px"/>
@@ -192,6 +192,10 @@ export default {
       window.removeEventListener('keydown', this.keydown)
       window.removeEventListener('mousemove', this.mousemove)
     }
+  },
+  beforeUpdate() {
+/*     if (this.draggableRoot && this.header && this.header.name === 'Much better mother fucker')
+      console.log(this.draggableRoot.childNodes) */
   },
   methods: {
     getCompHeight() {
@@ -424,10 +428,33 @@ export default {
                 this.lastSelectedId = null
             })
         },
+        onRemove: (evt) => {
+          const items = evt.items
+          if (items.length === 0) items.push(evt.item)
+          const type = items[0].dataset.type
+          const indicies = evt.oldIndicies.map(el => el.index)
+          if (indicies.length === 0) indicies.push(evt.oldIndex)
+          const root = this.draggableRoot
+          
+          for (let i = 0; i < indicies.length;i++) {
+            const s = items[i].style
+            s.transitionDuration = 0
+            s.height = '0px'
+            s.overflow = 'hidden'
+            root.insertBefore(items[i], root.children[indicies[i]])
+          }
+        },
         onAdd: (evt, original) => {
           const items = evt.items
           if (items.length === 0) items.push(evt.item)
           const type = items[0].dataset.type
+          for (let i = 0; i < items.length;i++) {
+            const s = items[i].style
+            s.transitionDuration = 0
+            s.height = '0px'
+            s.overflow = 'hidden'
+            items[i].remove()
+          }
 
           const repeated = items.map(el => el.dataset.id)
           const ids = []
@@ -446,10 +473,9 @@ export default {
           } else if (type === 'Task' && this.onSortableAdd && this.sourceVueInstance) {
             this.removeEdit()
             this.sourceVueInstance.removeEdit()
-            
-            
+
             let sourceLazyTasks = this.sourceVueInstance.lazyItems
-            let destinyLazyTasks = this.lazyItems
+            const newItems = this.lazyItems
 
             const tasks = []
             for (const id of ids) {
@@ -464,11 +490,11 @@ export default {
             }
 
             for (let i = 0; i < ids.length;i++) {
-              destinyLazyTasks.splice(indicies[i], 0, tasks[i])
+              newItems.splice(indicies[i], 0, tasks[i])
             }
 
             setTimeout(() => {
-              this.onSortableAdd(evt, ids, type, destinyLazyTasks.map(el => el.id))
+              this.onSortableAdd(evt, ids, type, this.lazyItems.map(el => el.id))
             })
             this.sourceVueInstance = null
           } else {
@@ -483,9 +509,6 @@ export default {
                   this.$emit('update', this.getIds(true))
                 }, 10)
               })
-          }
-          for (const item of items) {
-            item.remove()
           }
         },
         onMove: (t, e) => {
@@ -1004,42 +1027,6 @@ export default {
 
 </script>
 
-<style>
-
-.head-t-enter {
-  transition-duration: 0s;
-  margin: 0;
-}
-
-.head-t-enter .header-wrapper, .head-t-leave-to .header-wrapper {
-  transition-duration: 0;
-  height: 0 !important;
-  margin: 0 !important;
-  margin-bottom: 0 !important;
-  padding: 0 !important;
-  opacity: 0 !important;
-}
-
-.head-t-leave-to .header-wrapper {
-  transition-duration: .6s;
-}
-
-.head-t-enter-to, .head-t-leave {
-  transition-duration: .6s;
-  margin: 14px 0;
-}
-
-.head-t-enter-to .header-wrapper, .head-t-leave .header-wrapper {
-  transition-duration: .6s;
-  margin: 14px 0 !important;
-  margin-bottom: 10px !important;
-  height: 40px !important;
-  opacity: 1 !important;
-  padding: 0 6px !important;
-}
-
-</style>
-
 <style scoped>
 
 .illustration {
@@ -1069,6 +1056,10 @@ export default {
 
 .ListRenderer {
   margin-top: 16px;
+}
+
+.isHeading {
+  margin-top: 4px;
 }
 
 .ListRenderer.mobile {

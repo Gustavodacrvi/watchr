@@ -32,14 +32,12 @@ export default {
 
     const changedKeys = !isFromHere || changed.length === 0 ? sourceKeys : changed
 
-    console.time('ignore')
     changedKeys.forEach(k => {
       if (target[k])
         this.findChangesBetweenObjs(target[k], source[k],
           (key, val) => Vue.set(target[k], key, val)
         )
     })
-    console.timeEnd('ignore')
   },
   findChangesBetweenObjs(oldObj, newObj, onFoundChange) {
     if (oldObj && newObj) {
