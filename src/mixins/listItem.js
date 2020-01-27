@@ -241,7 +241,7 @@ export default {
         this.selectItem()
       } else {
         if (!this.isSelecting) {
-          if (!this.moved && !this.stopTouchEvents) this.isEditing = true
+          if (!this.moved && !this.stopTouchEvents && !fail) this.isEditing = true
         } else {
           if (!fail) toggleItem()
         }

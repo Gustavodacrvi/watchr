@@ -67,6 +67,22 @@
         <span>Add checklist to item</span>
         <span class="tag">Shift + C</span>
       </div>
+      <div class="line">
+        <span>Open task quick add</span>
+        <span class="tag">Q</span>
+      </div>
+      <div class="line">
+        <span>Open list quick add</span>
+        <span class="tag">L</span>
+      </div>
+      <div class="line">
+        <span>Open folder quick add</span>
+        <span class="tag">F</span>
+      </div>
+      <div class="line">
+        <span>Open tag quick add</span>
+        <span class="tag">F</span>
+      </div>
 
       <h3 class="pc">Edit items</h3>
 
@@ -97,6 +113,10 @@
       <div class="line">
         <span>Move to Today</span>
         <span class="tag">Shift + T</span>
+      </div>
+      <div class="line">
+        <span>Close task editor</span>
+        <span class="tag">Esc</span>
       </div>
 
       <h3 class="pc">Move items</h3>
