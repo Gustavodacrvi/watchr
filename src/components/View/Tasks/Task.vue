@@ -380,28 +380,6 @@ export default {
         },
       })
     },
-    escapeHTML(string) {
-      let div = document.createElement("div")
-      div.innerHTML = string
-      return div.textContent || div.innerText || ""
-    },
-    getLinkString(str) {
-      const matches = str.match(this.urlRegex)
-      if (matches) {
-        const split = str.split(' ')
-        let newStr = ''
-        for (let i = 0; i < split.length;i++) {
-          const txt = split[i + 1]
-          const link = split[i]
-          if (link && matches.includes(link) && txt && !matches.includes(txt)) {
-            newStr += ` <a class='task-link' href="${link}">${txt}</a>`
-            i++
-          } else newStr += ' ' + link
-        }
-        str = newStr
-      }
-      return str
-    },
   },
   computed: {
     ...mapState({
@@ -588,14 +566,11 @@ export default {
       return 100 * completed / this.item.checklist.length
     },
     parsedName() {
-      return this.getLinkString(this.escapeHTML(this.item.name))
+      return utils.parseHTMLStr(this.item.name)
     },
     isSomeday() {
       const {c} = this.getTask
       return c && c.type === 'someday'
-    },
-    urlRegex() {
-      return /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/g
     },
     haveChecklist() {
       return this.item.checklist && this.item.checklist.length > 0

@@ -1,7 +1,7 @@
 <template>
   <div class="Notes" :class="{hasNotes: notes}">
     <span v-if="isDesktop && notes && editingNote" class="msg">Shift + Enter to save</span>
-    <p v-if="notes && !editingNote" class="saved-notes" @click="editingNote = true" :class="platform">{{ notes }}</p>
+    <p v-if="notes && !editingNote" class="saved-notes" @click="editingNote = true" :class="platform" v-html='parsedNotes'></p>
     <textarea v-show="notes && editingNote" @click.stop
     :value='note'
     @input='v => note = v.target.value'
@@ -25,6 +25,8 @@
 import AuthButton from '@/components/Auth/Button.vue'
 
 import { mapGetters } from 'vuex'
+
+import utils from '@/utils'
 
 export default {
   components: {
@@ -88,6 +90,9 @@ export default {
   },
   computed: {
     ...mapGetters(['platform', 'isDesktop']),
+    parsedNotes() {
+      return utils.parseHTMLStr(this.notes)
+    },
   },
   watch: {
     editingNote() {
