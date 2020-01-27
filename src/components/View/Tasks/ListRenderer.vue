@@ -193,6 +193,10 @@ export default {
       window.removeEventListener('mousemove', this.mousemove)
     }
   },
+  beforeUpdate() {
+/*     if (this.draggableRoot && this.header && this.header.name === 'Much better mother fucker')
+      console.log(this.draggableRoot.childNodes) */
+  },
   methods: {
     getCompHeight() {
       const el = this.$refs['item-renderer-root']
@@ -424,10 +428,28 @@ export default {
                 this.lastSelectedId = null
             })
         },
+        onRemove: (evt) => {
+          const items = evt.items
+          if (items.length === 0) items.push(evt.item)
+          const type = items[0].dataset.type
+          const indicies = evt.oldIndicies.map(el => el.index)
+          if (indicies.length === 0) indicies.push(evt.oldIndex)
+          const root = this.draggableRoot
+          
+          for (let i = 0; i < indicies.length;i++) {
+            const s = items[i].style
+            s.transitionDuration = 0
+            s.height = 0
+            root.insertBefore(items[i], root.children[indicies[i]])
+          }
+        },
         onAdd: (evt, original) => {
           const items = evt.items
           if (items.length === 0) items.push(evt.item)
           const type = items[0].dataset.type
+          for (const item of evt.items) {
+            item.remove()
+          }
 
           const repeated = items.map(el => el.dataset.id)
           const ids = []
@@ -446,10 +468,9 @@ export default {
           } else if (type === 'Task' && this.onSortableAdd && this.sourceVueInstance) {
             this.removeEdit()
             this.sourceVueInstance.removeEdit()
-            
-            
+
             let sourceLazyTasks = this.sourceVueInstance.lazyItems
-            let destinyLazyTasks = this.lazyItems
+            const newItems = this.lazyItems
 
             const tasks = []
             for (const id of ids) {
@@ -464,11 +485,11 @@ export default {
             }
 
             for (let i = 0; i < ids.length;i++) {
-              destinyLazyTasks.splice(indicies[i], 0, tasks[i])
+              newItems.splice(indicies[i], 0, tasks[i])
             }
 
             setTimeout(() => {
-              this.onSortableAdd(evt, ids, type, destinyLazyTasks.map(el => el.id))
+              this.onSortableAdd(evt, ids, type, this.lazyItems.map(el => el.id))
             })
             this.sourceVueInstance = null
           } else {
@@ -483,9 +504,6 @@ export default {
                   this.$emit('update', this.getIds(true))
                 }, 10)
               })
-          }
-          for (const item of items) {
-            item.remove()
           }
         },
         onMove: (t, e) => {

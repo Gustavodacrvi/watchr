@@ -129,10 +129,10 @@ export default {
       s.height = this.renderHeight
 
       requestAnimationFrame(() => {
-        s.transitionDuration = '.25s'
+        s.transitionDuration = '.4s'
         s.opacity = 0
         s.height = 0
-        setTimeout(done, 255)
+        setTimeout(done, 500)
       })
 
     },
@@ -268,6 +268,10 @@ export default {
   watch: {
     options() {
       this.bindOptions()
+    },
+    editing() {
+      if (!this.editing)
+        this.bindOptions()
     },
   }
 }
