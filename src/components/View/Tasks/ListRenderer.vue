@@ -439,7 +439,8 @@ export default {
           for (let i = 0; i < indicies.length;i++) {
             const s = items[i].style
             s.transitionDuration = 0
-            s.height = 0
+            s.height = '0px'
+            s.overflow = 'hidden'
             root.insertBefore(items[i], root.children[indicies[i]])
           }
         },
@@ -447,8 +448,12 @@ export default {
           const items = evt.items
           if (items.length === 0) items.push(evt.item)
           const type = items[0].dataset.type
-          for (const item of evt.items) {
-            item.remove()
+          for (let i = 0; i < items.length;i++) {
+            const s = items[i].style
+            s.transitionDuration = 0
+            s.height = '0px'
+            s.overflow = 'hidden'
+            items[i].remove()
           }
 
           const repeated = items.map(el => el.dataset.id)

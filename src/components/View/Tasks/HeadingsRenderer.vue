@@ -3,8 +3,9 @@
     <transition-group
         appear
         class="front headings-root"
-        :name="headingsTrans"
         tag="div"
+        @enter='enter'
+        @leave='leave'
       >
       <HeadingVue v-for="(h, i) in headings" :key="h.id"
         :header='h'
@@ -164,15 +165,50 @@ export default {
     addHeading(obj) {
       this.$emit("add-heading", obj)
     },
+
+    enter(el, done) {
+      const s = el.getElementsByClassName('header-wrapper')[0].style
+
+      s.transitionDuration = 0
+      s.opacity = 0
+      s.height = 0
+      s.margin = 0
+      s.padding = 0
+      s.borderBoddom = '0px solid var(--back-color)'
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.4s'
+
+        s.marginTop = '20px'
+        s.marginBottom = 0
+        s.height = '50px'
+        s.borderBottom = '1.5px solid var(--light-gray)'
+        s.opacity = 1
+        s.padding = '0 6px'
+        s.overflow = 'hidden'
+        setTimeout(done, 400)
+      })
+    },
+    leave(el, done) {
+      const s = el.getElementsByClassName('header-wrapper')[0].style
+
+      s.transitionDuration = '.4s'
+      s.opacity = 0
+      s.height = 0
+      s.margin = 0
+      s.padding = 0
+      s.borderBoddom = '0px solid var(--back-color)'
+
+      setTimeout(done, 400)
+    },
   },
   computed: {
     ...mapGetters(['isDesktop']),
     emptyHeadings() {
       return []
     },
-    headingsTrans() {
-      if (this.isDesktop) return 'head-t'
-      return (this.isChangingViewName) ? '' : 'head-t'
+    runHeadingsTransition() {
+      return this.isDesktop || this.isChangingViewName
     },
     getLazyHeadingsIds() {
       return this.headings.map(el => el.id)
@@ -191,41 +227,3 @@ export default {
 }
 
 </script>
-
-<style>
-
-.head-t-enter {
-  transition-duration: 0s;
-  margin: 0;
-}
-
-.head-t-enter .header-wrapper, .head-t-leave-to .header-wrapper {
-  transition-duration: 0;
-  height: 0 !important;
-  margin: 0 !important;
-  margin-bottom: 0 !important;
-  padding: 0 !important;
-  opacity: 0 !important;
-  border-bottom: 0px solid var(--back-color);
-}
-
-.head-t-leave-to .header-wrapper {
-  transition-duration: .6s;
-}
-
-.head-t-enter-to, .head-t-leave {
-  transition-duration: .6s;
-  margin: 14px 0;
-}
-
-.head-t-enter-to .header-wrapper, .head-t-leave .header-wrapper {
-  transition-duration: .6s;
-  margin-top: 20px;
-  margin-bottom: 0px !important;
-  height: 50px !important;
-  border-bottom: 1.5px solid var(--light-gray);
-  opacity: 1 !important;
-  padding: 0 6px !important;
-}
-
-</style>
