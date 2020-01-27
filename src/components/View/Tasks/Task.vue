@@ -163,7 +163,7 @@ import ListItemMixin from "@/mixins/listItem"
 export default {
   mixins: [ListItemMixin],
   props: ['item', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
-  'isSelecting', 'selectEverythingToggle'],
+  'selectEverythingToggle'],
   components: {
     Timeline, TaskIcons,
     Icon: IconVue,

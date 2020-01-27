@@ -12,7 +12,6 @@
       :getItemFirestoreRef='getItemFirestoreRef'
       :onAddExistingItem='onAddExistingItem'
       :selectEverythingToggle='selectEverythingToggle'
-      :disableSelect='true'
       :disableFallback='true'
       :rootFilterFunction='rootFilterFunction'
       :group='group'

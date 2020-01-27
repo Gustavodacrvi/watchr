@@ -61,6 +61,16 @@ export default {
           return JSON.stringify({i, a: [args[1], args[2]]})
         },
       },
+      isListCanceled: {
+        getter({}, list) {
+          return list.canceled
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].canceled,
+          }) 
+        },
+      },
       isListShowingOnDate: {
         getter({}, list, date) {
           if (!utilsTask.hasCalendarBinding(list) || list.calendar.type === 'someday')

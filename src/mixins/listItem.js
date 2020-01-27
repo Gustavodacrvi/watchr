@@ -6,7 +6,7 @@ import utilsMoment from '@/utils/moment'
 import utils from '@/utils/index'
 
 export default {
-  props: ['multiSelectOptions', 'comp'],
+  props: ['multiSelectOptions', 'comp', 'isSelecting'],
   data() {
     return {
       startX: 0,
@@ -194,7 +194,7 @@ export default {
       this.timeout = setTimeout(() => {
         if (!this.stopTouchEvents)
           this.openMobileOptions()
-      }, 350)
+      }, 300)
     },
     touchmove(evt) {
       this.moved = true
@@ -229,7 +229,7 @@ export default {
       clearTimeout(this.timeout)
       const time = new Date() - this.startTime
 
-      const fail = this.fail || time > 250
+      const fail = this.fail || time > 300
 
       const toggleItem = () => {
         if (!this.isItemSelected && !this.stopTouchEvents)

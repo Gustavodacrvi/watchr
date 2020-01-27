@@ -1,15 +1,45 @@
 <template>
-  <transition name="list-trans"
+  <transition
     appear
-    :css='true'
+    :css='false'
     @enter='enter'
+    @leave='leave'
   >
     <div class="List" :class="[platform, {completed, isItemMainSelection, isItemSelected}]">
-      <div v-if="!editing"
+      <div v-if="doneTransition && !isEditing && !isDesktop"
+        class="back rb"
+        ref='back'
+        :style="{height: (itemHeight - 5) + 'px'}"
+      >
+        <div class="back-icons-wrapper">
+          <Icon class="back-icon"
+            icon='circle-filled'
+            color='white'
+            width="22px"
+          />
+          <Icon class="back-icon"
+            icon='circle-filled'
+            color='white'
+            width="22px"  
+          />
+        </div>
+      </div>
+      <div v-if="!isEditing"
         class="cont-wrapper item-handle rb"
+        :class='{doneTransition}'
         ref="cont-wrapper"
+        :style="{right: right + 'px'}"
 
-        @click.stop="editing = true"
+        @mouseup='stopMouseUp'
+        @pointerdown='pointerdown'
+        @pointerup.stop
+        @touchcancel.stop
+        
+        @touchstart.passive='touchStart'
+        @touchmove.passive='touchmove'
+        @touchend.passive='touchEnd'
+
+        @click.stop="click"
       >
         <CircleBubble v-if="!isDesktop"
           innerColor='var(--light-gray)'
@@ -57,7 +87,7 @@
         <ListEdit
           :name='item.name'
           @save='save'
-          @cancel='editing = false'
+          @cancel='isEditing = false'
         />
       </div>
     </div>
@@ -88,11 +118,14 @@ export default {
   props: ['item', 'changingViewName', 'itemHeight'],
   data() {
     return {
-      editing: false,
+      isEditing: false,
+      doneTransition: false,
+
+      options: [],
     }
   },
   mounted() {
-    this.bindContextMenu()
+    this.getListOptions()
   },
   methods: {
     ...mapActions(['getOptions']),
@@ -112,6 +145,7 @@ export default {
     enter(el, done) {
       const cont = this.$refs['cont-wrapper']
       if (cont) {
+        this.doneTransition = false
         const s = cont.style
 
         if (!(this.changingViewName && !this.isDesktop)) {
@@ -123,10 +157,36 @@ export default {
             s.transitionDuration = '.25s'
             s.opacity = 1
             s.height = this.itemHeight + 'px'
+            setTimeout(() => this.doneTransition = true, 255)
             done()
           })
         }
       }
+    },
+    click() {
+      if (this.isDesktop && !this.isSelecting)
+        this.isEditing = true
+    },
+    leave(el, done) {
+      this.doneTransition = false
+
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.height = this.itemHeight = 'px'
+      s.opacity = 1
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.25s'
+        s.opacity = 0
+        s.height = 0
+
+        setTimeout(() => {
+          this.doneTransition = true
+          done()
+        }, 250)
+      })
+
     },
     saveList(obj) {
       this.$store.dispatch('list/saveList', {
@@ -136,7 +196,7 @@ export default {
     },
     save(obj) {
       this.saveList(obj)
-      this.editing = false
+      this.isEditing = false
     },
     completeList() {
       if (!this.completed)
@@ -144,8 +204,8 @@ export default {
       else this.$store.dispatch('list/uncompleteLists', [this.item])
     },
 
-    async bindContextMenu() {
-      utils.bindOptionsToEventListener(this.$el, await this.getOptions(utilsList.listOptions(this.item)), this)
+    async getListOptions() {
+      this.options = await this.getOptions(utilsList.listOptions(this.item))
     },
   },
   computed: {
@@ -161,6 +221,7 @@ export default {
 
       isListCompleted: 'list/isListCompleted',
       isListSomeday: 'list/isListSomeday',
+      isListCanceled: 'list/isListCanceled',
       getListDeadlineStr: 'list/getListDeadlineStr',
       getListCalendarStr: 'list/getListCalendarStr',
     }),
@@ -168,7 +229,7 @@ export default {
       return this.isListCompleted(this.item)
     },
     canceledItem() {
-      return false
+      return this.isListCanceled(this.item)
     },
     copyItem() {
       this.$store.dispatch('list/duplicateList', {
@@ -205,7 +266,7 @@ export default {
   },
   watch: {
     list() {
-      this.bindContextMenu()
+      this.getListOptions()
     },
   },
 }
@@ -213,6 +274,10 @@ export default {
 </script>
 
 <style scoped>
+
+.List {
+  position: relative;
+}
 
 .List .cont-wrapper {
   height: 38px;
@@ -222,9 +287,17 @@ export default {
   height: 50px;
 }
 
+.back-icons-wrapper {
+  flex-basis: 85%;
+  justify-content: space-between;
+  display: flex;
+}
+
 .cont-wrapper {
   position: relative;
   overflow: hidden;
+  background-color: var(--back-color);
+  z-index: 6;
 }
 
 .cont {
@@ -304,6 +377,23 @@ export default {
   opacity: .4;
 }
 
+.isItemSelected .back {
+  opacity: 0;
+}
+
+.back {
+  position: absolute;
+  left: 2px;
+  top: 3px;
+  background-color: var(--primary);
+  width: 98%;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  opacity: 1;
+  justify-content: center;
+}
+
 .sortable-drag {
   background-color: var(--light-gray) !important; 
   border-radius: 6px;
@@ -322,25 +412,6 @@ export default {
 
 .mobile.sortable-ghost .cont-wrapper {
   height: 50px;
-}
-
-.list-trans-leave-active, .list-trans-enter-active {
-  transition-duration: .25s !important;
-}
-
-.list-trans-leave, .list-trans-leave .cont-wrapper {
-  height: 38px;
-  opacity: 1;
-}
-
-.mobile .list-trans-leave, .list-trans-leave .cont-wrapper {
-  height: 50px;
-}
-
-.list-trans-leave-to, .list-trans-leave-to .cont-wrapper {
-  height: 0px !important;
-  opacity: 0 !important;
-  overflow: hidden !important;
 }
 
 .isItemMainSelection .cont-wrapper {
