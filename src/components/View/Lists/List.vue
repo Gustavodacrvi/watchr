@@ -48,17 +48,6 @@
         />
         <div class="cont">
           <div class="icon-wrapper">
-<!--             <Icon v-if="!completed" class="progress-icon cursor remove-highlight"
-              :icon='progressIcon'
-              width='15px'
-              :progress='getListProgress'
-              color='var(--fade)'
-            />
-            <Icon v-else class="progress-icon cursor remove-highlight"
-              :icon='circleIcon'
-              width='22px'
-              color='var(--fade)'
-            /> -->
             <ListIcons class="check-icon icon"
               :co='completed'
               :se='isSelecting'
@@ -74,6 +63,13 @@
           </div>
           <div class="name">
             <div class="list-name-wrapper">
+              <transition
+                appear
+                @enter='infoEnter'
+                @leave='infoLeave'
+              >
+                <span v-if="showCheckDate" class="check-date" ref='check-name'>{{ showCheckDate }}</span>
+              </transition>
               {{ item.name }}
               <span v-if="listTasksLength" class="list-inf fade">{{ listTasksLength }}</span>
             </div>
@@ -248,6 +244,12 @@ export default {
     progressIcon() {
       return this.isSomeday ? 'pie-someday' : 'pie'
     },
+    showCheckDate() {
+      const n = this.viewName
+      if (!(this.canceled || this.completed) || (!this.item.checkDate && !this.item.completeDate) || n === 'Completed' || n === 'Logbook' || n === 'Canceled')
+        return null
+      return utils.getHumanReadableDate(this.item.checkDate || this.item.completeDate, this.l)
+    },
     circleIcon() {
       return this.isSomeday ? 'circle-check-dash' : 'circle-check'
     },
@@ -342,6 +344,28 @@ export default {
   display: flex;
   align-items: center;
   margin-right: 6px;
+}
+
+.completed-line {
+  position: absolute;
+  top: 50%;
+  width: 0;
+  transform: translateY(-50%);
+  border-radius: 100px;
+  border: 0 solid transparent;
+  transition-duration: .25s;
+}
+
+.check-date {
+  display: inline-block;
+  position: relative;
+  top: 3px;
+  height: 100%;
+  margin-right: 8px;
+  color: var(--primary);
+  font-size: .9em;
+  overflow: hidden;
+  opacity: .4;
 }
 
 .icon-wrapper {

@@ -211,6 +211,7 @@ export default {
         react: [
           'completed',
           'canceled',
+          'folder',
           'calendar',
         ],
         getter({getters}, lists) {
@@ -405,7 +406,8 @@ export default {
           if (c.times) c.times--
           if (c.times === 0) c.times = null
         }
-
+        
+        const tod = mom()
         setList(batch, {
           completedFire: serverTimestamp(),
           completeDate: tod.format('Y-M-D'),
