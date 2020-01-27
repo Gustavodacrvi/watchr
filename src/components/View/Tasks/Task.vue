@@ -575,6 +575,7 @@ export default {
       str = str.replace(/\[(https?:\/\/[^\]\s]+)(?: ([^\]]*))?\]/g, "<a class='link' target='_blank' onclick='event.stopPropagation()' href='$1'>$2</a>")
       str = str.replace(/__(.*?)__/g, "<b>$1</b>")
       str = str.replace(/\*(.*?)\*/g, "<i>$1</i>")
+      str = str.replace(/\{(.*?)(?: ([^\]]*))?\}/g, "<span style='color: $1'>$2</span>")
 
       return str
     },
