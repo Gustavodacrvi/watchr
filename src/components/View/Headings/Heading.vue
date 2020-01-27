@@ -6,6 +6,8 @@
     <transition name="fade" mode="out-in">
       <div v-if="!editing">
         <div class="header-wrapper handle cursor remove-highlight" key="wr"
+          :class="{notRendering: !renderCont}"
+        
           @click="click"
           @touchstart.passive='touchStart'
           @touchmove.passive='touchmove'
@@ -33,8 +35,11 @@
           </div>
         </div>
         <NotesApp :notes="notes" @save-notes="saveNote"/>
-        <transition name="fade-t">
-          <div v-show="defer(2) && showing && !movingHeading" class="cont">
+        <transition
+          @enter='enterCont'
+          @leave='leaveCont'
+        >
+          <div v-if="renderCont" class="cont">
             <slot></slot>
           </div>
         </transition>
@@ -69,7 +74,7 @@ export default {
   mixins: [
     Defer(),
   ],
-  props: ['name', 'options', 'color', 'header', 'allowEdit', 'headingEditOptions', 'save', 'notes', 'movingHeading', 'progress', 'icon'],
+  props: ['name', 'options', 'color', 'header', 'allowEdit', 'length', 'headingEditOptions', 'save', 'notes', 'movingHeading', 'progress', 'icon'],
   components: {
     IconDrop: IconDropVue,
     Icon: IconVue,
@@ -97,6 +102,41 @@ export default {
     }
   },
   methods: {
+    enterCont(el, done) {
+
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.opacity = 0
+      s.height = 0
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.25s'
+        s.opacity = 1
+        s.height = this.renderHeight
+        setTimeout(() => {
+          s.height = 'auto'
+          done()
+        }, 255)
+      })
+    },
+    leaveCont(el, done) {
+
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.opacity = 1
+      s.height = this.renderHeight
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.25s'
+        s.opacity = 0
+        s.height = 0
+        setTimeout(done, 255)
+      })
+
+    },
+    
     bindOptions() {
       if (this.isDesktop) {
         const header = this.$el.getElementsByClassName('header-wrapper')[0]
@@ -203,6 +243,15 @@ export default {
   },
   computed: {
     ...mapGetters(['l', 'isDesktop']),
+    renderHeight() {
+      return ((this.length * this.itemHeight) + 4) + 'px'
+    },
+    itemHeight() {
+      return this.isDesktop ? 38 : 50
+    },
+    renderCont() {
+      return this.defer(2) && this.showing && !this.movingHeading
+    },
     showIconDrop() {
       const isDesktop = this.$store.getters.isDesktop
       if (isDesktop && this.onHover) return true
@@ -256,15 +305,21 @@ export default {
   padding: 0 6px;
   display: flex;
   align-items: center;
-  margin: 14px 0;
-  margin-bottom: 10px;
-  height: 40px;
+  margin-top: 20px;
+  margin-bottom: 0px;
+  border-bottom: 1.5px solid var(--light-gray);
+  height: 50px;
   z-index: 50;
+}
+
+.notRendering {
+  margin-top: 0px;
 }
 
 .cont {
   position: relative;
   z-index: 49;
+  overflow: hidden;
 }
 
 .icon {

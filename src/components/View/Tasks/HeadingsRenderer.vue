@@ -15,6 +15,7 @@
         :color='h.color ? h.color : ""'
         :options='h.options ? h.options(h.nonFiltered) : []'
         :movingHeading='movingHeading'
+        :length='h.items.length'
 
         @option-click='v => getOptionClick(h)(v)'
         @save-notes='v => getNotesOption(h)(v)'
@@ -191,6 +192,40 @@ export default {
 
 </script>
 
-<style scoped>
+<style>
+
+.head-t-enter {
+  transition-duration: 0s;
+  margin: 0;
+}
+
+.head-t-enter .header-wrapper, .head-t-leave-to .header-wrapper {
+  transition-duration: 0;
+  height: 0 !important;
+  margin: 0 !important;
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  border-bottom: 0px solid var(--back-color);
+}
+
+.head-t-leave-to .header-wrapper {
+  transition-duration: .6s;
+}
+
+.head-t-enter-to, .head-t-leave {
+  transition-duration: .6s;
+  margin: 14px 0;
+}
+
+.head-t-enter-to .header-wrapper, .head-t-leave .header-wrapper {
+  transition-duration: .6s;
+  margin-top: 20px;
+  margin-bottom: 0px !important;
+  height: 50px !important;
+  border-bottom: 1.5px solid var(--light-gray);
+  opacity: 1 !important;
+  padding: 0 6px !important;
+}
 
 </style>

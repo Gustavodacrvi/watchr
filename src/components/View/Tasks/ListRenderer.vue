@@ -1,5 +1,5 @@
 <template>
-  <div class="ListRenderer floating-btn-container" :class='[platform, `${comp}-ListRenderer`]' @click='click'>
+  <div class="ListRenderer floating-btn-container" :class='[platform, `${comp}-ListRenderer`, {isHeading: !isRoot}]' @click='click'>
     <transition name="illus-trans" appear>
       <div v-if="showIllustration" class="illustration">
         <Icon :icon='icon' color='var(--sidebar-color)' width="150px"/>
@@ -1004,42 +1004,6 @@ export default {
 
 </script>
 
-<style>
-
-.head-t-enter {
-  transition-duration: 0s;
-  margin: 0;
-}
-
-.head-t-enter .header-wrapper, .head-t-leave-to .header-wrapper {
-  transition-duration: 0;
-  height: 0 !important;
-  margin: 0 !important;
-  margin-bottom: 0 !important;
-  padding: 0 !important;
-  opacity: 0 !important;
-}
-
-.head-t-leave-to .header-wrapper {
-  transition-duration: .6s;
-}
-
-.head-t-enter-to, .head-t-leave {
-  transition-duration: .6s;
-  margin: 14px 0;
-}
-
-.head-t-enter-to .header-wrapper, .head-t-leave .header-wrapper {
-  transition-duration: .6s;
-  margin: 14px 0 !important;
-  margin-bottom: 10px !important;
-  height: 40px !important;
-  opacity: 1 !important;
-  padding: 0 6px !important;
-}
-
-</style>
-
 <style scoped>
 
 .illustration {
@@ -1069,6 +1033,10 @@ export default {
 
 .ListRenderer {
   margin-top: 16px;
+}
+
+.isHeading {
+  margin-top: 4px;
 }
 
 .ListRenderer.mobile {
