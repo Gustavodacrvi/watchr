@@ -199,7 +199,7 @@ export default {
   "Please toggle at least one section.": "Por favor ative pelo menos uma seção.",
   "Note: file upload/delete operations won't work while offline.": "Nota: edição de aquivos não iram funcionar enquanto offline.",
   "Add checklist": "Adicionar checklist",
-  "Appnav": "Appnav",
+  "Sidebar": "Sidebar",
   "Save options": "Salvar opções",
   "Reject invite": "Rejeitar convite",
   "Go to list": "Ir para a lista",

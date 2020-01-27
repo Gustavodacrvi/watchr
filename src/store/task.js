@@ -873,6 +873,9 @@ export default {
           fullCheckDate: tod.format('Y-M-D HH:mm ss'),
           fullCompleteDate: tod.format('Y-M-D HH:mm ss'),
           completed: true,
+          canceled: false,
+          cancelDate: null,
+          fullCancelDate: null,
           calendar,
         }, taskRef(t.id), writes)
         commit('change', [t.id], {root: true})
@@ -916,6 +919,9 @@ export default {
         checkDate: tod.format('Y-M-D'),
         fullCancelDate: tod.format('Y-M-D HH:mm ss'),
         fullCheckDate: tod.format('Y-M-D HH:mm ss'),
+        completedFire: null,
+        completeDate: null,
+        completed: false,
       }, ids)
 
       b.commit()
@@ -986,7 +992,7 @@ export default {
 
       b.commit()
     },
-    handleTasksByAppnavElementDragAndDrop({dispatch, getters}, {elIds, taskIds, type}) {
+    handleTasksBySidebarElementDragAndDrop({dispatch, getters}, {elIds, taskIds, type}) {
       const calObj = (mom) => {
         return getters.getSpecificDayCalendarObj(mom)
       }

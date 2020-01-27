@@ -1,9 +1,9 @@
 <template>
-  <div class="Appbar-wrapper"
+  <div class="Sidebar-wrapper"
     :class="[platform, {'scroll-thin': isDesktop}]"
 
-    @mouseenter="appnavHover = true"
-    @mouseleave="appnavHover = false"
+    @mouseenter="sidebarHover = true"
+    @mouseleave="sidebarHover = false"
   >
     <div class="margin-wrapper">
       <div v-if="isDesktop"
@@ -15,7 +15,7 @@
         <div>
           <div class="search-shadow" @mouseenter="showSearch" @mouseleave="hideSearch"></div>
           <transition name="bar-trans">
-          <div v-if="!isDesktop || showing" class="appbar-content">
+          <div v-if="!isDesktop || showing" class="sidebar-content">
             <transition name="search-t">
               <SearchButton v-if="showingSearch && isDesktop"
                 @click="$store.dispatch('pushPopup', {comp: 'FastSearch', naked: true})"
@@ -23,7 +23,7 @@
                 @mouseleave="hideSearch"
               />
             </transition>
-              <AppnavRenderer
+              <SidebarRenderer
                 type='list'
                 :isSmart='true'
                 :enableSort='true'
@@ -39,7 +39,7 @@
                 @update='update'
               />
               <div v-if='showFavorites' style="margin-top: 28px"></div>
-              <AppnavRenderer v-if="showFavorites"
+              <SidebarRenderer v-if="showFavorites"
                 :enableSort='true'
                 :disabled='false'
                 :disableSelection='true'
@@ -75,14 +75,14 @@
                   @enter="enter"
                 >
                   <component
-                    class="component appnav-section floating-btn-container"
+                    class="component sidebar-section floating-btn-container"
                     :is="section"
                     :active="value"
                     :viewType='viewType'
                     :viewName='viewName'
                     :showDefered='showDefered'
                     :showRepeat='showRepeat'
-                    :data-transindex="getAppnavIndex(section)"
+                    :data-transindex="getSidebarIndex(section)"
                   />
                 </transition>
               </div>
@@ -105,15 +105,15 @@
               </transition>
             </div>
             <div></div>
-            <Icon v-if="isDesktop" icon="arrow" id='appbar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" :circle='true'  @click="toggleAppbar"/>
+            <Icon v-if="isDesktop" icon="arrow" id='sidebar-arrow' class="cursor passive" :class="{hided: !showing}" color="var(--light-gray)" :primary-hover="true" :circle='true'  @click="toggleSidebar"/>
           </div>
         </div>
       </div>
     </div>
-    <div v-if="isDesktop"
-      class="appnav-handle passive"
-      :class="{appnavHover}"
-      :style="appnavHandle"
+    <div v-if="isDesktop && !sidebarHided"
+      class="sidebar-handle passive"
+      :class="{sidebarHover}"
+      :style="sidebarHandle"
 
       @pointerdown='pointerdown'
     ></div>
@@ -123,7 +123,7 @@
 <script>
 
 import IconVue from '../Icon.vue'
-import AppbarElementVue from './AppbarElement.vue'
+import SidebarElementVue from './SidebarElement.vue'
 import ListsVue from './Sections/Lists.vue'
 import FiltersVue from './Sections/Filters.vue'
 import TagsVue from './Sections/Tags.vue'
@@ -139,15 +139,15 @@ import utilsTag from '@/utils/tag'
 import utilsFolder from '@/utils/folder'
 
 export default {
-  props: ['value', 'width', 'appbarHided', 'pressingHandle'],
+  props: ['value', 'width', 'sidebarHided', 'pressingHandle'],
   components: {
     Icon: IconVue,
-    AppbarElement: AppbarElementVue,
+    SidebarElement: SidebarElementVue,
     IconDrop: IconDropVue,
     Lists: ListsVue,
     Tags: TagsVue,
     Filters: FiltersVue,
-    AppnavRenderer: RendererVue,
+    SidebarRenderer: RendererVue,
     SearchButton: SearchButtonVue,
   },
   data() {
@@ -230,7 +230,7 @@ export default {
         },
       ],
       showing: true,
-      appnavHover: false,
+      sidebarHover: false,
       transRight: true,
       showingIconDrop: true,
       showingSearch: false,
@@ -295,14 +295,14 @@ export default {
       }, 1000)
     },
     applySelectedTasks({elId, tasks}) {
-/*       this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+/*       this.$store.dispatch('task/handleTasksBySidebarElementDragAndDrop', {
         elIds: [elId],
         taskIds: tasks,
         type: elId,
       }) */
     },
     onTaskDrop({taskId, elId}) {
-      this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+      this.$store.dispatch('task/handleTasksBySidebarElementDragAndDrop', {
         elIds: [elId],
         taskIds: [taskId],
         type: elId,
@@ -332,7 +332,7 @@ export default {
 
       this.oldIndex = this.newIndex
     },
-    getAppnavIndex(name) {
+    getSidebarIndex(name) {
       const obj = {
         Lists: 1,
         Filters: 2,
@@ -340,9 +340,8 @@ export default {
       }
       return obj[name]
     },
-    toggleAppbar() {
-      this.showing = !this.showing
-      this.$emit('appbar', !this.showing)
+    toggleSidebar() {
+      this.$emit('sidebar')
     },
     moveLineToActive() {
       if (this.$el) {
@@ -425,7 +424,7 @@ export default {
       favFolders: 'folder/getFavoriteFolders',
       favTags: 'tag/getFavoriteTags',
     }),
-    appnavHandle() {
+    sidebarHandle() {
       return {
         left: (parseInt(this.width, 10) - 18) + 'px'
       }
@@ -531,7 +530,7 @@ export default {
       return this.notHidedSections.length === 1
     },
     showIconDropdown() {
-      return this.getSectionOptions && !this.appbarHided && this.showingIconDrop
+      return this.getSectionOptions && !this.sidebarHided && this.showingIconDrop
     },
     getSectionOptions() {
       return this[this.section]
@@ -646,7 +645,7 @@ export default {
       ]
     },
     newIndex() {
-      return this.getAppnavIndex(this.section)
+      return this.getSidebarIndex(this.section)
     },
   },
   watch: {
@@ -656,6 +655,9 @@ export default {
       setTimeout(() => {
         this.showingIconDrop = true
       }, 200)
+    },
+    sidebarHided() {
+      this.showing = !this.sidebarHided
     },
   }
 }
@@ -672,7 +674,7 @@ export default {
   height: 35px;
 }
 
-.appnav-handle {
+.sidebar-handle {
   position: fixed;
   background-color: var(--card);
   width: 8px;
@@ -686,26 +688,26 @@ export default {
   transition: opacity .2s, background-color .2s, width .2s, transform .2s;
 }
 
-.appnav-handle.appnavHover {
+.sidebar-handle.sidebarHover {
   opacity: 1 !important;
 }
 
-.appnav-handle:hover {
+.sidebar-handle:hover {
   cursor: grab;
   background-color: var(--light-gray);
   width: 14px;
   transform: translate(-6px, -50%);
 }
 
-.appnav-handle:active {
+.sidebar-handle:active {
   cursor: grabbing;
 }
 
-.appbar-content {
+.sidebar-content {
   position: relative;
 }
 
-.Appbar {
+.Sidebar {
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -716,19 +718,19 @@ export default {
   margin-top: 0;
 }
 
-.Appbar.mobile {
+.Sidebar.mobile {
   padding-right: 0;
 }
 
-.Appbar-wrapper {
+.Sidebar-wrapper {
   height: 100%;
 }
 
-.Appbar-wrapper.desktop::-webkit-scrollbar {
+.Sidebar-wrapper.desktop::-webkit-scrollbar {
   display: none;
 }
 
-.Appbar-wrapper.desktop {
+.Sidebar-wrapper.desktop {
   padding: 0 30px;
 }
 
@@ -777,7 +779,7 @@ export default {
 }
 
 .back-layer.showing {
-  background-color: var(--appnav-color);
+  background-color: var(--sidebar-color);
 }
 
 .line {
@@ -823,14 +825,14 @@ export default {
   color: var(--primary) !important;
 }
 
-#appbar-arrow {
+#sidebar-arrow {
   position: absolute;
   left: 3px;
   transform: translateY(5px) rotate(90deg);
   transition: opacity .3s, left .3s, transform .3s;
 }
 
-#appbar-arrow.hided {
+#sidebar-arrow.hided {
   transform: translateY(5px) rotate(-90deg);
 }
 
@@ -843,8 +845,8 @@ export default {
 }
 
 .showing .inner-footer {
-  background-color: var(--appnav-color);
-  box-shadow: 0 -3px 4px var(--appnav-color);
+  background-color: var(--sidebar-color);
+  box-shadow: 0 -3px 4px var(--sidebar-color);
 }
 
 .mobile .showing .inner-footer {

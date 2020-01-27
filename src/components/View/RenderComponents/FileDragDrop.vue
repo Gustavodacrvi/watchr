@@ -12,7 +12,7 @@
       @dragover.stop.prevent
     >
       <div class="wrapper">
-        <Icon class="icon" icon='import' width='100px' color='var(--appnav-color)'/>
+        <Icon class="icon" icon='import' width='100px' color='var(--sidebar-color)'/>
         <span class="msg">Drag it here.</span>
       </div>
     </div>

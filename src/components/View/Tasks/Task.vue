@@ -162,8 +162,8 @@ import ListItemMixin from "@/mixins/listItem"
 
 export default {
   mixins: [ListItemMixin],
-  props: ['item', 'viewName', 'viewNameValue', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
-  'isSelecting', 'selectEverythingToggle'],
+  props: ['item', 'activeTags', 'hideFolderName', 'hideListName', 'showHeadingName', 'itemHeight', 'allowCalendarStr', 'isRoot', 'itemCompletionCompareDate', 'scheduleObject', 'changingViewName',
+  'selectEverythingToggle'],
   components: {
     Timeline, TaskIcons,
     Icon: IconVue,
@@ -199,30 +199,6 @@ export default {
       this.$store.dispatch('task/copyTask', this.item)
     },
 
-    infoEnter(el) {
-      const s = el.style
-
-      const {width} = el.getBoundingClientRect()
-      s.transitionDuration = 0
-      s.width = 0
-      s.opacity = 0
-      s.marginRight = 0
-
-      requestAnimationFrame(() => {
-        s.transitionDuration = '.25s'
-        s.width = width + 'px'
-        s.marginRight = '8px'
-        s.opacity = 1
-      })
-    },
-    infoLeave(el) {
-      const s = el.style
-
-      s.transitionDuration = '.25s'
-      s.width = 0
-      s.marginRight = 0
-      s.opacity = 0
-    },
     enter(el) {
       if (!this.isEditing) {
         const co = el.style
@@ -735,9 +711,9 @@ export default {
     },
     showCheckDate() {
       const n = this.viewName
-      if (!(this.canceled || this.completed) || !this.item.checkDate || n === 'Completed' || n === 'Logbook' || n === 'Canceled')
+      if (!(this.canceled || this.completed) || (!this.item.checkDate && !this.item.completeDate) || n === 'Completed' || n === 'Logbook' || n === 'Canceled')
         return null
-      return utils.getHumanReadableDate(this.item.checkDate, this.l)
+      return utils.getHumanReadableDate(this.item.checkDate || this.item.completeDate, this.l)
     },
     nextCalEvent() {
       const {t,c} = this.getTask
@@ -1017,7 +993,7 @@ export default {
 }
 
 .sortable-ghost .cont-wrapper {
-  background-color: var(--appnav-color) !important;
+  background-color: var(--sidebar-color) !important;
   transition-duration: 0;
   height: 38px;
   padding: 0;

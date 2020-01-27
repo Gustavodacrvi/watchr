@@ -7,7 +7,7 @@
     <br>
 
     <li>Now folder lists will be shown on the folder view.</li>
-    <li>Now it's possible to complete entire lists, only uncompleted lists will be shown on appnav.</li>
+    <li>Now it's possible to complete entire lists, only uncompleted lists will be shown on sidebar.</li>
 
     <br>
     <h4>More keyboard shortcuts</h4>

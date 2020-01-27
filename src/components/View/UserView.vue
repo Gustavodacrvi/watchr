@@ -1,6 +1,6 @@
 
 <template>
-  <div class="UserView" :class="[{appbarHided}, platform]"
+  <div class="UserView" :class="[{sidebarHided}, platform]"
     @pointerup='pointerup'
     @pointermove='handlePointermove'
   >
@@ -14,13 +14,13 @@
       :class="{pressingHandle}"
       :style="[getNavTopPosition, {width: navWidth}]"
     >
-      <Appbar class="Appbar"
+      <Sidebar class="Sidebar"
         :value="viewName"
         :pressingHandle='pressingHandle'
         :view-type="viewType"
-        :appbarHided='appbarHided'
+        :sidebarHided='sidebarHided'
         :width='navWidth'
-        @appbar="toggleAppbar"
+        @sidebar="toggleSidebar"
         @section="v => section = v"
 
         @handle-pointerdown='pointerdown'
@@ -31,6 +31,7 @@
         :isSmart="isSmart"
         :viewType='viewType'
         :viewName='viewName'
+        @sidebar='toggleSidebar'
       />
     </div>
   </div>
@@ -38,7 +39,7 @@
 
 <script>
 
-import AppbarVue from '../Appbar/Appbar.vue'
+import SidebarVue from '../Sidebar/Sidebar.vue'
 import ViewControlerVue from '../View/Controller/ViewControler.vue'
 
 import { mapGetters, mapState } from 'vuex'
@@ -46,12 +47,12 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   props: ['hideNavbar'],
   components: {
-    Appbar: AppbarVue,
+    Sidebar: SidebarVue,
     ViewControler: ViewControlerVue
   },
   data() {
     return {
-      appbarHided: false,
+      sidebarHided: false,
       scrollTop: null,
       width: 450,
 
@@ -88,8 +89,8 @@ export default {
     getScrollTop() {
       this.scrollTop = window.scrollY
     },
-    toggleAppbar(isHided) {
-      this.appbarHided = isHided
+    toggleSidebar() {
+      this.sidebarHided = !this.sidebarHided
     },
   },
   computed: {
@@ -177,14 +178,14 @@ export default {
   z-index: 5;
 }
 
-.appbarHided .nav-shadow {
+.sidebarHided .nav-shadow {
   flex-basis: 0 !important;
   max-width: 0 !important;
   transition-delay: .6s;
   transition-duration: .6s;
 }
 
-.appbarHided .cont {
+.sidebarHided .cont {
   flex-basis: 925px !important;
   flex-grow: 0;
   margin-left: 0;

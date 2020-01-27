@@ -220,13 +220,13 @@ export default {
       isTaskInView: 'task/isTaskInView',
       getListsByFolderId: 'folder/getListsByFolderId',
 
-      filterAppnavLists: 'list/filterAppnavLists',
+      filterSidebarLists: 'list/filterSidebarLists',
       getListDeadlineDaysLeftStr: 'list/getListDeadlineDaysLeftStr',
     }),
     laseredFolders() {
       const sortedFolders = this.sortedFolders
       sortedFolders.forEach(fold => {
-        fold.list = this.filterAppnavLists(this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders}))
+        fold.list = this.filterSidebarLists(this.getListsByFolderId({id: fold.id, lists: this.listsWithFolders}))
       })
       return sortedFolders
     },
@@ -251,7 +251,7 @@ export default {
       return arr
     },
     filteredLists() {
-      return this.filterAppnavLists(this.getLists)
+      return this.filterSidebarLists(this.getLists)
     },
     getLists() {
       const lists = this.sortedLists

@@ -1,13 +1,13 @@
 <template>
   <div class="Renderer" :class="[{folder, movingTask}]">
-    <transition-group class="appnav-renderer appnav-renderer-root"
+    <transition-group class="sidebar-renderer sidebar-renderer-root"
       @enter='enter'
       @leave='leave'
       tag="div"
 
-      data-name='appnav-renderer'
+      data-name='sidebar-renderer'
     >
-      <AppbarElement v-for="(el,i) in list"
+      <SidebarElement v-for="(el,i) in list"
         :key="el.id"
         v-bind="{...mapNumbersBind(el), ...el}"
         class="element"
@@ -26,7 +26,7 @@
         :string='getString(el)'
 
         :data-id="el.id"
-        data-type="appnav-element"
+        data-type="sidebar-element"
       />
     </transition-group>
   </div>
@@ -34,7 +34,7 @@
 
 <script>
 
-import AppbarElementVue from './AppbarElement.vue'
+import SidebarElementVue from './SidebarElement.vue'
 
 import Sortable from 'sortablejs'
 
@@ -42,7 +42,7 @@ import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    AppbarElement: AppbarElementVue,
+    SidebarElement: SidebarElementVue,
   },
   props: ['list', 'icon', 'type', 'active', 'viewType', 'subListIcon', 'iconColor', 'mapNumbers', 'mapProgress', 'enableSort', 'isSmart', 'disabled', 'onAdd', 'disableSelection', 'mapIcon', 'mapHelpIcon', 'mapString', 'folder', 'onSortableAdd', 'showColor'],
   data() {
@@ -58,22 +58,22 @@ export default {
       disabled: this.disabled,
       animation: 80,
       direction: 'vertical',
-      group: {name: 'appnav',
+      group: {name: 'sidebar',
         pull: (e) => {
           if (this.isSmart) return false
 
           const name = e.el.dataset.name
-          if (!this.enableSort && name === 'appnav-renderer') return false
+          if (!this.enableSort && name === 'sidebar-renderer') return false
           if (name === 'folders-root') return false
-          if (name === 'appnav-renderer') return true
+          if (name === 'sidebar-renderer') return true
           if (name === 'item-renderer') return 'clone'
         }, put: (l,j,item) => {
           const type = item.dataset.type
 
           if (type === 'Task') return true
           if (this.isSmart) return false
-          if (!this.enableSort && type === 'appnav-element') return false
-          if (type === 'appnav-element') return true
+          if (!this.enableSort && type === 'sidebar-element') return false
+          if (type === 'sidebar-element') return true
           if (type === 'add-task-floatbutton') return true
         }},
       delay: 150,
@@ -113,7 +113,7 @@ export default {
             index: i,
             ids: this.getIds(),
           })
-        } else if (type === 'appnav-element') {
+        } else if (type === 'sidebar-element') {
           if (this.onSortableAdd)
             this.onSortableAdd(this.folder, item.dataset.id, this.getIds())
         }
@@ -194,7 +194,7 @@ export default {
     ...mapState(['selectedItems', 'movingTask']),
     ...mapGetters(['isDesktop']),
     draggableRoot() {
-      return this.$el.getElementsByClassName('appnav-renderer-root')[0]
+      return this.$el.getElementsByClassName('sidebar-renderer-root')[0]
     },
     apply() {
       return this.$store.state.apply.bool

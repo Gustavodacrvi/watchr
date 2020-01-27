@@ -204,8 +204,9 @@ export default {
           this.route === 'menu'
     },
     hideNavbar() {
-      if (!this.route || (!this.isDesktop && this.appRoute)) return true
       const isAnonymous = this.user && this.user.isAnonymous
+      if (!this.user || isAnonymous) return false
+      if (!this.route || (!this.isDesktop && this.appRoute)) return true
       const isNotOnUser = this.$route.path !== '/user'
       if (!this.user || this.needsUpdate || !this.isStandAlone || !this.isDesktop || isAnonymous || isNotOnUser) return false
       return this.hided

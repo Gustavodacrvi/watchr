@@ -55,7 +55,7 @@ export default {
   "No, I changed my mind": "No, I changed my mind",
   "Add username": "Add username",
   "Options": "Options",
-  "Appnav": "Appnav",
+  "Sidebar": "Sidebar",
   "Add checklist": "Add checklist",
   "Save options": "Save options",
   "Please toggle at least one section.": "Please toggle at least one section.",

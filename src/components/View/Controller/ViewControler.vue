@@ -51,6 +51,7 @@
     @remove-defer-date='removeDeferDate'
     @remove-deadline='removeDeadline'
     @remove-repeat='removeRepeat'
+    @sidebar='sidebar'
     
     @slide='slide'
     @show-completed='v => showCompleted = v'
@@ -97,6 +98,9 @@ export default {
     },
     slide(num) {
       this.$store.commit('slide', num)
+    },
+    sidebar() {
+      this.$emit('sidebar')
     },
   },
   computed: {

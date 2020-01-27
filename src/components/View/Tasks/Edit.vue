@@ -315,7 +315,28 @@ export default {
       utils.saveByShortcut(this, key, p, (type, task) => {
         switch (type) {
           case 'save': {
-            this.task = {...this.task, ...task}
+            if (task.tags && task.tags.length > 0) {
+              this.task = {
+                ...this.task,
+                tags: this.getTagsById(task.tags).map(el => el.name)
+              }
+            } else if (task.list) {
+              this.task = {
+                ...this.task,
+                list: this.getListsById([task.list]).map(el => el.name)[0],
+                heading: null,
+                folder: null,
+              }
+            } else if (task.folder) {
+              this.task = {
+                ...this.task,
+                folder: this.getFoldersById([task.folder]).map(el => el.name)[0],
+                list: null,
+                heading: null,
+              }
+            } else {
+              this.task = {...this.task, ...task}
+            }
           }
         }
       })
@@ -582,6 +603,9 @@ export default {
       l: 'l',
       isDesktop: 'isDesktop',
       platform: 'platform',
+      getTagsById: 'tag/getTagsById',
+      getListsById: 'list/getListsById',
+      getFoldersById: 'folder/getFoldersById',
       lists: 'list/sortedLists',
       folders: 'folder/sortedFolders',
       tags: 'tag/sortedTagsByName',

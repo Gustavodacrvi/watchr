@@ -74,7 +74,7 @@ export default {
   methods: {
     ...mapActions(['getOptions']),
     apply() {
-      this.$store.dispatch('task/handleTasksByAppnavElementDragAndDrop', {
+      this.$store.dispatch('task/handleTasksBySidebarElementDragAndDrop', {
         elIds: [this.id],
         taskIds: this.selected,
         type: 'folder',

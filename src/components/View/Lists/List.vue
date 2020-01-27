@@ -1,15 +1,45 @@
 <template>
-  <transition name="list-trans"
+  <transition
     appear
-    :css='true'
+    :css='false'
     @enter='enter'
+    @leave='leave'
   >
-    <div class="List" :class="[platform, {completed, isItemMainSelection, isItemSelected}]">
-      <div v-if="!editing"
+    <div class="List" :class="[platform, {completed: completed || canceled, isItemMainSelection, isItemSelected}]">
+      <div v-if="doneTransition && !isEditing && !isDesktop"
+        class="back rb"
+        ref='back'
+        :style="{height: (itemHeight - 5) + 'px'}"
+      >
+        <div class="back-icons-wrapper">
+          <Icon class="back-icon"
+            icon='circle-filled'
+            color='white'
+            width="22px"
+          />
+          <Icon class="back-icon"
+            icon='circle-filled'
+            color='white'
+            width="22px"  
+          />
+        </div>
+      </div>
+      <div v-if="!isEditing"
         class="cont-wrapper item-handle rb"
+        :class='{doneTransition}'
         ref="cont-wrapper"
+        :style="{right: right + 'px'}"
 
-        @click.stop="editing = true"
+        @mouseup='stopMouseUp'
+        @pointerdown='pointerdown'
+        @pointerup.stop
+        @touchcancel.stop
+        
+        @touchstart.passive='touchStart'
+        @touchmove.passive='touchmove'
+        @touchend.passive='touchEnd'
+
+        @click.stop="click"
       >
         <CircleBubble v-if="!isDesktop"
           innerColor='var(--light-gray)'
@@ -17,21 +47,29 @@
           opacity='0'
         />
         <div class="cont">
-          <div @click.stop="completeList" class="icon-wrapper">
-            <Icon v-if="!completed" class="progress-icon cursor remove-highlight"
-              :icon='progressIcon'
-              width='15px'
+          <div class="icon-wrapper">
+            <ListIcons class="check-icon icon"
+              :co='completed'
+              :se='isSelecting'
+              :ca='canceled'
+              :so='isSomeday'
               :progress='getListProgress'
-              color='var(--fade)'
-            />
-            <Icon v-else class="progress-icon cursor remove-highlight"
-              :icon='circleIcon'
-              width='22px'
-              color='var(--fade)'
+              @click.native.stop="desktopComplete"
+              @contextmenu.native.stop.prevent='desktopCancel'
+              
+              @touchstart.native.passive='checkTouchStart'
+              @touchend.native.passive='touchComplete'
             />
           </div>
           <div class="name">
             <div class="list-name-wrapper">
+              <transition
+                appear
+                @enter='infoEnter'
+                @leave='infoLeave'
+              >
+                <span v-if="showCheckDate" class="check-date" ref='check-name'>{{ showCheckDate }}</span>
+              </transition>
               {{ item.name }}
               <span v-if="listTasksLength" class="list-inf fade">{{ listTasksLength }}</span>
             </div>
@@ -45,11 +83,6 @@
               <span v-if="deadlineStr" class='list-inf deadline'>{{ deadlineStr }}</span>
             </template>
             <span v-if="calendarStr" class="list-inf">{{ calendarStr }}</span>
-            <Icon v-if="isSomeday" class="progress-icon"
-              icon='archive'
-              width='22px'
-              color='var(--fade)'
-            />
           </div>
         </div>
       </div>
@@ -57,7 +90,7 @@
         <ListEdit
           :name='item.name'
           @save='save'
-          @cancel='editing = false'
+          @cancel='isEditing = false'
         />
       </div>
     </div>
@@ -72,6 +105,7 @@ import utils from "@/utils"
 import utilsList from "@/utils/list"
 
 import ListEdit from "./Edit.vue"
+import ListIcons from './ListIcons.vue'
 
 import { mapGetters, mapState, mapActions } from 'vuex'
 
@@ -82,23 +116,40 @@ import ListItemMixin from "@/mixins/listItem"
 export default {
   mixins: [ListItemMixin],
   components: {
-    Icon,
+    Icon, ListIcons,
     ListEdit,
   },
   props: ['item', 'changingViewName', 'itemHeight'],
   data() {
     return {
-      editing: false,
+      isEditing: false,
+      doneTransition: false,
+
+      options: [],
     }
   },
   mounted() {
-    this.bindContextMenu()
+    this.getListOptions()
   },
   methods: {
     ...mapActions(['getOptions']),
+    dispatchCompleteItem() {
+      this.$store.dispatch('list/completeLists', [this.item])
+    },
+    dispatchUncompleteItem() {
+      this.$store.dispatch('list/uncompleteLists', [this.item])
+    },
+    dispatchCancelItem() {
+      this.$store.dispatch('list/cancelLists', [this.item.id])
+    },
+    dispatchUncancelItem() {
+      this.$store.dispatch('list/uncancelLists', [this.item.id])
+    },
+    
     enter(el, done) {
       const cont = this.$refs['cont-wrapper']
       if (cont) {
+        this.doneTransition = false
         const s = cont.style
 
         if (!(this.changingViewName && !this.isDesktop)) {
@@ -110,12 +161,37 @@ export default {
             s.transitionDuration = '.25s'
             s.opacity = 1
             s.height = this.itemHeight + 'px'
+            setTimeout(() => this.doneTransition = true, 255)
             done()
           })
         }
       }
     },
+    click() {
+      if (this.isDesktop && !this.isSelecting)
+        this.isEditing = true
+    },
+    leave(el, done) {
+      this.doneTransition = false
 
+      const s = el.style
+
+      s.transitionDuration = 0
+      s.height = this.itemHeight + 'px'
+      s.opacity = 1
+
+      requestAnimationFrame(() => {
+        s.transitionDuration = '.25s'
+        s.opacity = 0
+        s.height = 0
+
+        setTimeout(() => {
+          this.doneTransition = true
+          done()
+        }, 250)
+      })
+
+    },
     saveList(obj) {
       this.$store.dispatch('list/saveList', {
         id: this.item.id,
@@ -124,7 +200,7 @@ export default {
     },
     save(obj) {
       this.saveList(obj)
-      this.editing = false
+      this.isEditing = false
     },
     completeList() {
       if (!this.completed)
@@ -132,8 +208,8 @@ export default {
       else this.$store.dispatch('list/uncompleteLists', [this.item])
     },
 
-    async bindContextMenu() {
-      utils.bindOptionsToEventListener(this.$el, await this.getOptions(utilsList.listOptions(this.item)), this)
+    async getListOptions() {
+      this.options = await this.getOptions(utilsList.listOptions(this.item))
     },
   },
   computed: {
@@ -149,6 +225,7 @@ export default {
 
       isListCompleted: 'list/isListCompleted',
       isListSomeday: 'list/isListSomeday',
+      isListCanceled: 'list/isListCanceled',
       getListDeadlineStr: 'list/getListDeadlineStr',
       getListCalendarStr: 'list/getListCalendarStr',
     }),
@@ -156,7 +233,7 @@ export default {
       return this.isListCompleted(this.item)
     },
     canceledItem() {
-      return false
+      return this.isListCanceled(this.item)
     },
     copyItem() {
       this.$store.dispatch('list/duplicateList', {
@@ -167,6 +244,12 @@ export default {
     progressIcon() {
       return this.isSomeday ? 'pie-someday' : 'pie'
     },
+    showCheckDate() {
+      const n = this.viewName
+      if (!(this.canceled || this.completed) || (!this.item.checkDate && !this.item.completeDate) || n === 'Completed' || n === 'Logbook' || n === 'Canceled')
+        return null
+      return utils.getHumanReadableDate(this.item.checkDate || this.item.completeDate, this.l)
+    },
     circleIcon() {
       return this.isSomeday ? 'circle-check-dash' : 'circle-check'
     },
@@ -174,7 +257,9 @@ export default {
       return this.isListSomeday(this.item)
     },
     calendarStr() {
-      return this.getListCalendarStr(this.item, this.l, this.userInfo)
+      const res = this.getListCalendarStr(this.item, this.l, this.userInfo)
+      if (res === 'Someday') return null
+      return res
     },
     deadlineStr() {
       const list = this.item
@@ -193,7 +278,7 @@ export default {
   },
   watch: {
     list() {
-      this.bindContextMenu()
+      this.getListOptions()
     },
   },
 }
@@ -201,6 +286,10 @@ export default {
 </script>
 
 <style scoped>
+
+.List {
+  position: relative;
+}
 
 .List .cont-wrapper {
   height: 38px;
@@ -210,9 +299,17 @@ export default {
   height: 50px;
 }
 
+.back-icons-wrapper {
+  flex-basis: 85%;
+  justify-content: space-between;
+  display: flex;
+}
+
 .cont-wrapper {
   position: relative;
   overflow: hidden;
+  background-color: var(--back-color);
+  z-index: 6;
 }
 
 .cont {
@@ -249,6 +346,28 @@ export default {
   margin-right: 6px;
 }
 
+.completed-line {
+  position: absolute;
+  top: 50%;
+  width: 0;
+  transform: translateY(-50%);
+  border-radius: 100px;
+  border: 0 solid transparent;
+  transition-duration: .25s;
+}
+
+.check-date {
+  display: inline-block;
+  position: relative;
+  top: 3px;
+  height: 100%;
+  margin-right: 8px;
+  color: var(--primary);
+  font-size: .9em;
+  overflow: hidden;
+  opacity: .4;
+}
+
 .icon-wrapper {
   width: 35px;
   height: 100%;
@@ -256,6 +375,7 @@ export default {
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
+  opacity: .6;
 }
 
 .progress-icon {
@@ -292,6 +412,23 @@ export default {
   opacity: .4;
 }
 
+.isItemSelected .back {
+  opacity: 0;
+}
+
+.back {
+  position: absolute;
+  left: 2px;
+  top: 3px;
+  background-color: var(--primary);
+  width: 98%;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  opacity: 1;
+  justify-content: center;
+}
+
 .sortable-drag {
   background-color: var(--light-gray) !important; 
   border-radius: 6px;
@@ -302,7 +439,7 @@ export default {
 }
 
 .sortable-ghost .cont-wrapper {
-  background-color: var(--appnav-color) !important;
+  background-color: var(--sidebar-color) !important;
   transition-duration: 0;
   height: 38px;
   padding: 0;
@@ -310,25 +447,6 @@ export default {
 
 .mobile.sortable-ghost .cont-wrapper {
   height: 50px;
-}
-
-.list-trans-leave-active, .list-trans-enter-active {
-  transition-duration: .25s !important;
-}
-
-.list-trans-leave, .list-trans-leave .cont-wrapper {
-  height: 38px;
-  opacity: 1;
-}
-
-.mobile .list-trans-leave, .list-trans-leave .cont-wrapper {
-  height: 50px;
-}
-
-.list-trans-leave-to, .list-trans-leave-to .cont-wrapper {
-  height: 0px !important;
-  opacity: 0 !important;
-  overflow: hidden !important;
 }
 
 .isItemMainSelection .cont-wrapper {

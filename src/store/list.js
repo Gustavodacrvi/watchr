@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from "@/utils/task"
 import utilsMoment from "@/utils/moment"
 import MemoizeGetters from './memoFunctionGetters'
-import { listRef, setInfo, uid, listColl, taskRef, serverTimestamp, fd, setTask, folderRef, setFolder, setList, deleteList, batchSetTasks ,deleteTask, cacheBatchedItems } from '../utils/firestore'
+import { listRef, setInfo, uid, listColl, taskRef, serverTimestamp, fd, setTask, folderRef, setFolder, setList, deleteList, batchSetTasks ,deleteTask, cacheBatchedItems, batchSetLists } from '../utils/firestore'
 import router from '../router'
 
 import mom from 'moment'
@@ -59,6 +59,16 @@ export default {
             calendar: list.calendar,
           }
           return JSON.stringify({i, a: [args[1], args[2]]})
+        },
+      },
+      isListCanceled: {
+        getter({}, list) {
+          return list.canceled
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].canceled,
+          }) 
         },
       },
       isListShowingOnDate: {
@@ -141,23 +151,6 @@ export default {
           })
         },
       },
-      filterAppnavLists: {
-        getter({getters}, lists) {
-          return lists.filter(l =>
-              !getters.isListCompleted(l) &&
-              !getters.isListSomeday(l) &&
-              getters.isListShowingOnDate(l, TOD_STR)
-            )
-        },
-        cache(args) {
-          return JSON.stringify({
-            c: args[0].map(el => ({
-              c: el.completed,
-              ca: el.calendar,
-            }))
-          })
-        },
-      },
       getListDeadlineStr: {
         getter({getters}, list, date, l) {
           if (!list.deadline)
@@ -212,6 +205,31 @@ export default {
         react: ['name'],
         getter({getters}, name) {
           return getters.lists.find(l => l.name.trim() === name)
+        },
+      },
+      filterSidebarLists: {
+        react: [
+          'completed',
+          'canceled',
+          'folder',
+          'calendar',
+        ],
+        getter({getters}, lists) {
+          return lists.filter(l =>
+              !getters.isListCompleted(l) &&
+              !getters.isListCanceled(l) &&
+              !getters.isListSomeday(l) &&
+              getters.isListShowingOnDate(l, TOD_STR)
+            )
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].map(el => ({
+              c: el.completed,
+              ca: el.canceled,
+              ca: el.calendar,
+            }))
+          })
         },
       },
       getAllTasksOrderByList: {
@@ -388,12 +406,18 @@ export default {
           if (c.times) c.times--
           if (c.times === 0) c.times = null
         }
-
+        
+        const tod = mom()
         setList(batch, {
           completedFire: serverTimestamp(),
-          completeDate: mom().format('Y-M-D'),
-          fullCompleteDate: mom().format('Y-M-D HH:mm ss'),
+          completeDate: tod.format('Y-M-D'),
+          checkDate: tod.format('Y-M-D'),
+          fullCheckDate: tod.format('Y-M-D HH:mm ss'),
+          fullCompleteDate: tod.format('Y-M-D HH:mm ss'),
           completed: true,
+          canceled: false,
+          cancelDate: null,
+          fullCancelDate: null,
           calendar,
         }, listRef(l.id))
 
@@ -414,11 +438,43 @@ export default {
           completedFire: null,
           completeDate: null,
           completed: false,
+          checkDate: null,
+          fullCheckDate: null,
           calendar: c,
         }, listRef(l.id))
       }
 
       batch.commit()
+    },
+    async cancelLists({}, ids) {
+      const b = fire.batch()
+
+      const tod = mom()
+      await batchSetLists(b, {
+        canceled: true,
+        cancelDate: tod.format('Y-M-D'),
+        checkDate: tod.format('Y-M-D'),
+        fullCancelDate: tod.format('Y-M-D HH:mm ss'),
+        fullCheckDate: tod.format('Y-M-D HH:mm ss'),
+        completedFire: null,
+        completeDate: null,
+        completed: false,
+      }, ids)
+
+      b.commit()
+    },
+    async uncancelLists({}, ids) {
+      const b = fire.batch()
+
+      await batchSetLists(b, {
+        canceled: false,
+        cancelDate: null,
+        checkDate: null,
+        fullCancelDate: null,
+        fullCheckDate: null,
+      }, ids)
+
+      b.commit()
     },
     convertHeadingToList({state, getters}, {listId, taskIds, headingId}) {
       const list = getters.getListsById([listId])[0]

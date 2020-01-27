@@ -96,7 +96,7 @@ export default {
       const lower = search.toLowerCase()
       const arr = []
 
-      const filter = arr => arr.filter(el => el.name.toLowerCase().includes(lower))
+      const filter = arr => arr.filter(el => el && el.name && el.name.toLowerCase().includes(lower))
 
       const tg = filter(tags)
       const lt = filter(lists)

@@ -67,12 +67,32 @@
         <span>Add checklist to item</span>
         <span class="tag">Shift + C</span>
       </div>
+      <div class="line">
+        <span>Open task quick add</span>
+        <span class="tag">Q</span>
+      </div>
+      <div class="line">
+        <span>Open list quick add</span>
+        <span class="tag">L</span>
+      </div>
+      <div class="line">
+        <span>Open folder quick add</span>
+        <span class="tag">F</span>
+      </div>
+      <div class="line">
+        <span>Open tag quick add</span>
+        <span class="tag">F</span>
+      </div>
 
       <h3 class="pc">Edit items</h3>
 
       <div class="line">
         <span>Duplicate item</span>
         <span class="tag">Shift + D</span>
+      </div>
+      <div class="line">
+        <span>Delete selection</span>
+        <span class="tag">Delete</span>
       </div>
       <div class="line">
         <span>Add tags to selection</span>
@@ -83,12 +103,20 @@
         <span class="tag">Alt + .</span>
       </div>
       <div class="line">
+        <span>Cancel selected</span>
+        <span class="tag">Alt + ,</span>
+      </div>
+      <div class="line">
         <span>Move to Someday</span>
         <span class="tag">Shift + S</span>
       </div>
       <div class="line">
         <span>Move to Today</span>
         <span class="tag">Shift + T</span>
+      </div>
+      <div class="line">
+        <span>Close task editor</span>
+        <span class="tag">Esc</span>
       </div>
 
       <h3 class="pc">Move items</h3>
@@ -107,16 +135,20 @@
 
       <h3 class="pc">View</h3>
       <div class="line">
-        <span>Toggle completed items view</span>
+        <span>Hide/show completed items view</span>
         <span class="tag">Alt + C</span>
       </div>
       <div class="line">
-        <span>Toggle someday items</span>
+        <span>Hide/show someday items</span>
         <span class="tag">Alt + O</span>
       </div>
       <div class="line">
-        <span>Toggle scheduler</span>
+        <span>Hide/show scheduler</span>
         <span class="tag">Control + Alt + S</span>
+      </div>
+      <div class="line">
+        <span>Hide/show sidebar</span>
+        <span class="tag">/</span>
       </div>
     </div>
   </div>

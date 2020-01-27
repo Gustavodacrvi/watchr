@@ -5,26 +5,41 @@
     mode="out-in"
     tag="span"
   >
-    <Icon v-if="!ca && !co && !so" class="tra-icon cursor remove-highlight" key="1"
+    <Icon v-if="!ca && !co && !se && !so" class="tra-icon cursor remove-highlight" key="1"
       icon="pie"
-      color='var(--fade)'
-      width="15px"
+      width="16px"
       :progress='progress'
     />
-    <Icon v-else-if="!ca && !co && so" class="tra-icon cursor remove-highlight" key="2"
-      icon="pie-someday"
-      color='var(--fade)'
-      width="15px"
-      :progress='progress'
-    />
-    <Icon v-else-if="!ca && co && so" class="tra-icon cursor remove-highlight" key="3"
-      icon="circle-check-dash"
-      color='var(--fade)'
+    <Icon v-else-if="ca && !co && !se && !so" class="tra-icon cursor remove-highlight" key="2"
+      icon="circle-close"
       width="22px"
     />
-    <Icon v-else-if="!ca && co && !so" class="tra-icon cursor remove-highlight" key="4"
+    <Icon v-else-if="co && !se && !so" class="tra-icon cursor remove-highlight" key="3"
+      icon="circle-check-filled"
+      width="22px"
+    />
+    <Icon v-else-if="!co && !se && so" class="tra-icon cursor remove-highlight" key="4"
+      icon="circle-dash"
+      width="22px"
+    />
+    <Icon v-else-if="co && !se && so" class="tra-icon cursor remove-highlight" key="5"
+      icon="circle-check-dash"
+      width="22px"
+    />
+    <Icon v-else-if="!co && se && !so" class="tra-icon cursor remove-highlight" key="6"
+      icon="circle"
+      width="22px"
+    />
+    <Icon v-else-if="!co && se && so" class="tra-icon cursor remove-highlight" key="7"
+      icon="circle-dash"
+      width="22px"
+    />
+    <Icon v-else-if="co && se && !so" class="tra-icon cursor remove-highlight" key="9"
       icon="circle-check"
-      color='var(--fade)'
+      width="22px"
+    />
+    <Icon v-else-if="co && se && so" class="tra-icon cursor remove-highlight" key="10"
+      icon="circle-check-dash"
       width="22px"
     />
   </transition-group>
@@ -32,25 +47,10 @@
 
 <script>
 
-/*
-  <Icon v-if="!completed" class="progress-icon cursor remove-highlight"
-    :icon='progressIcon'
-    width='15px'
-    :progress='getListProgress'
-    color='var(--fade)'
-  />
-  <Icon v-else class="progress-icon cursor remove-highlight"
-    :icon='circleIcon'
-    width='22px'
-    color='var(--fade)'
-  />
-*/
-
-
 import Icon from "@/components/Icon.vue"
 
 export default {
-  props: ['co', 'so', 'ca', 'progress'],
+  props: ['co', 'so', 'ca', 'se', 'progress'],
   components: {Icon},
 }
 

@@ -106,9 +106,11 @@ import boxCheck from '@/assets/icons/box-check.svg'
 import calendarStar from '@/assets/icons/calendar-star.svg'
 import circleFilled from '@/assets/icons/circle-filled.svg'
 import circleDash from '@/assets/icons/circle-dash.svg'
+import circleCheckFilled from '@/assets/icons/circle-check-filled.svg'
 import boxClose from '@/assets/icons/box-close.svg'
 import boxCheckFilled from '@/assets/icons/box-check-filled.svg'
 import circleCheckDash from '@/assets/icons/circle-check-dash.svg'
+import circleClose from '@/assets/icons/circle-close.svg'
 import boxCheckDash from '@/assets/icons/box-check-dash.svg'
 
 import { mapGetters } from 'vuex'
@@ -129,6 +131,8 @@ export default {
         folder, heart, close, filter, magic, clock,
         pomo, pie, check,
         "box-close": boxClose,
+        "circle-close": circleClose,
+        "circle-check-filled": circleCheckFilled,
         "box-check-filled": boxCheckFilled,
         "box-dash": boxDash,
         "circle-dash": circleDash,
@@ -259,7 +263,7 @@ export default {
   white-space: nowrap;
   padding: 12px;
   font-size: .9em;
-  background-color: var(--appnav-color);
+  background-color: var(--sidebar-color);
   cursor: initial;
 }
 
@@ -271,7 +275,7 @@ export default {
   content: '';
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-bottom: 10px solid var(--appnav-color);
+  border-bottom: 10px solid var(--sidebar-color);
 }
 
 .icon {

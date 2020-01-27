@@ -483,7 +483,7 @@ const store = new Vuex.Store({
         userId: user.uid,
       }, {merge: true})
 
-      b.commit()
+      return b.commit()
     },
     createAnonymousUser(c, userId) {
       const b = fire.batch()
@@ -496,7 +496,7 @@ const store = new Vuex.Store({
         userId: userId,
       })
 
-      b.commit()
+      return b.commit()
     },
     addRecentCollaborators({state}, user) {
       const add = !state.userInfo.recentUsers || !state.userInfo.recentUsers[user.userId]
