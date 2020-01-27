@@ -6,7 +6,7 @@ import utils from '../utils'
 import utilsTask from "@/utils/task"
 import utilsMoment from "@/utils/moment"
 import MemoizeGetters from './memoFunctionGetters'
-import { listRef, setInfo, uid, listColl, taskRef, serverTimestamp, fd, setTask, folderRef, setFolder, setList, deleteList, batchSetTasks ,deleteTask, cacheBatchedItems } from '../utils/firestore'
+import { listRef, setInfo, uid, listColl, taskRef, serverTimestamp, fd, setTask, folderRef, setFolder, setList, deleteList, batchSetTasks ,deleteTask, cacheBatchedItems, batchSetLists } from '../utils/firestore'
 import router from '../router'
 
 import mom from 'moment'
@@ -151,23 +151,6 @@ export default {
           })
         },
       },
-      filterSidebarLists: {
-        getter({getters}, lists) {
-          return lists.filter(l =>
-              !getters.isListCompleted(l) &&
-              !getters.isListSomeday(l) &&
-              getters.isListShowingOnDate(l, TOD_STR)
-            )
-        },
-        cache(args) {
-          return JSON.stringify({
-            c: args[0].map(el => ({
-              c: el.completed,
-              ca: el.calendar,
-            }))
-          })
-        },
-      },
       getListDeadlineStr: {
         getter({getters}, list, date, l) {
           if (!list.deadline)
@@ -222,6 +205,30 @@ export default {
         react: ['name'],
         getter({getters}, name) {
           return getters.lists.find(l => l.name.trim() === name)
+        },
+      },
+      filterSidebarLists: {
+        react: [
+          'completed',
+          'canceled',
+          'calendar',
+        ],
+        getter({getters}, lists) {
+          return lists.filter(l =>
+              !getters.isListCompleted(l) &&
+              !getters.isListCanceled(l) &&
+              !getters.isListSomeday(l) &&
+              getters.isListShowingOnDate(l, TOD_STR)
+            )
+        },
+        cache(args) {
+          return JSON.stringify({
+            c: args[0].map(el => ({
+              c: el.completed,
+              ca: el.canceled,
+              ca: el.calendar,
+            }))
+          })
         },
       },
       getAllTasksOrderByList: {

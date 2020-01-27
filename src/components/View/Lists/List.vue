@@ -5,7 +5,7 @@
     @enter='enter'
     @leave='leave'
   >
-    <div class="List" :class="[platform, {completed, isItemMainSelection, isItemSelected}]">
+    <div class="List" :class="[platform, {completed: completed || canceled, isItemMainSelection, isItemSelected}]">
       <div v-if="doneTransition && !isEditing && !isDesktop"
         class="back rb"
         ref='back'
@@ -47,8 +47,8 @@
           opacity='0'
         />
         <div class="cont">
-          <div @click.stop="completeList" class="icon-wrapper">
-            <Icon v-if="!completed" class="progress-icon cursor remove-highlight"
+          <div class="icon-wrapper">
+<!--             <Icon v-if="!completed" class="progress-icon cursor remove-highlight"
               :icon='progressIcon'
               width='15px'
               :progress='getListProgress'
@@ -58,6 +58,18 @@
               :icon='circleIcon'
               width='22px'
               color='var(--fade)'
+            /> -->
+            <ListIcons class="check-icon icon"
+              :co='completed'
+              :se='isSelecting'
+              :ca='canceled'
+              :so='isSomeday'
+              :progress='getListProgress'
+              @click.native.stop="desktopComplete"
+              @contextmenu.native.stop.prevent='desktopCancel'
+              
+              @touchstart.native.passive='checkTouchStart'
+              @touchend.native.passive='touchComplete'
             />
           </div>
           <div class="name">
@@ -97,6 +109,7 @@ import utils from "@/utils"
 import utilsList from "@/utils/list"
 
 import ListEdit from "./Edit.vue"
+import ListIcons from './ListIcons.vue'
 
 import { mapGetters, mapState, mapActions } from 'vuex'
 
@@ -107,7 +120,7 @@ import ListItemMixin from "@/mixins/listItem"
 export default {
   mixins: [ListItemMixin],
   components: {
-    Icon,
+    Icon, ListIcons,
     ListEdit,
   },
   props: ['item', 'changingViewName', 'itemHeight'],
@@ -168,7 +181,7 @@ export default {
       const s = el.style
 
       s.transitionDuration = 0
-      s.height = this.itemHeight = 'px'
+      s.height = this.itemHeight + 'px'
       s.opacity = 1
 
       requestAnimationFrame(() => {
@@ -338,6 +351,7 @@ export default {
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
+  opacity: .6;
 }
 
 .progress-icon {

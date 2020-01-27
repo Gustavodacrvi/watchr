@@ -118,6 +118,7 @@ export default {
       checkMissingIdsAndSortArr: 'checkMissingIdsAndSortArr',
 
       isListCompleted: 'list/isListCompleted',
+      isListCanceled: 'list/isListCanceled',
       isListSomeday: 'list/isListSomeday',
     }),
     getFolder() {
@@ -163,6 +164,7 @@ export default {
     filterOptions() {
       return pipeBooleanFilters(
         list => this.isListCompletedPipe(list),
+        list => this.isListCanceledPipe(list),
         this.isSomedayPipe,
       )
     },
@@ -182,6 +184,11 @@ export default {
       return this.showCompleted ?
         () => true :
         list => !this.isListCompleted(list)
+    },
+    isListCanceledPipe() {
+      return this.showCompleted ?
+        () => true :
+        list => !this.isListCanceled(list)
     },
     nonFiltered() {
       return this.sortFunction(this.storeLists.filter(this.rootFilter))
