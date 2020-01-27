@@ -61,12 +61,12 @@ body, input, button, textarea {
   color: var(--txt);
 }
 
-.link {
+.parsed-link {
   color: var(--dark-blue);
   text-decoration: none;
 }
 
-.link:hover {
+.parsed-link:hover {
   text-decoration: underline;
 }
 

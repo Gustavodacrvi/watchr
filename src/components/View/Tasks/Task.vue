@@ -380,11 +380,6 @@ export default {
         },
       })
     },
-    escapeHTML(string) {
-      let div = document.createElement("div")
-      div.innerHTML = string
-      return div.textContent || div.innerText || ""
-    },
   },
   computed: {
     ...mapState({
@@ -571,13 +566,7 @@ export default {
       return 100 * completed / this.item.checklist.length
     },
     parsedName() {
-      let str = this.escapeHTML(this.item.name)
-      str = str.replace(/\[(https?:\/\/[^\]\s]+)(?: ([^\]]*))?\]/g, "<a class='link' target='_blank' onclick='event.stopPropagation()' href='$1'>$2</a>")
-      str = str.replace(/__(.*?)__/g, "<b>$1</b>")
-      str = str.replace(/\*(.*?)\*/g, "<i>$1</i>")
-      str = str.replace(/\{(.*?)(?: ([^\]]*))?\}/g, "<span style='color: $1'>$2</span>")
-
-      return str
+      return utils.parseHTMLStr(this.item.name)
     },
     isSomeday() {
       const {c} = this.getTask
