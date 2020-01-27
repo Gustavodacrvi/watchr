@@ -386,21 +386,7 @@ export default {
       return div.textContent || div.innerText || ""
     },
     getLinkString(str) {
-      const matches = str.match(this.urlRegex)
-      if (matches) {
-        const split = str.split(' ')
-        let newStr = ''
-        for (let i = 0; i < split.length;i++) {
-          const txt = split[i + 1]
-          const link = split[i]
-          if (link && matches.includes(link) && txt && !matches.includes(txt)) {
-            newStr += ` <a class='task-link' href="${link}">${txt}</a>`
-            i++
-          } else newStr += ' ' + link
-        }
-        str = newStr
-      }
-      return str
+      return str.replace(/\[(https?:\/\/[^\]\s]+)(?: ([^\]]*))?\]/g, "<a class='link' target='_blank' onclick='event.stopPropagation()' href='$1'>$2</a>")
     },
   },
   computed: {

@@ -61,6 +61,15 @@ body, input, button, textarea {
   color: var(--txt);
 }
 
+.link {
+  color: var(--dark-blue);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
 .cb {
   background-color: var(--card);
 }
